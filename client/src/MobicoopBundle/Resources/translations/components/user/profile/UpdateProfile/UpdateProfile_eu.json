@@ -36,7 +36,7 @@
         "password": "Pasahitza",
         "personnalInfos": "Informazio pertsonalak"
     },
-    "savedCo2": "Aurreztu duzu {savedCo2} t",
+    "savedCo2": "Horrenbeste urreztu duzu {savedCo2} t",
     "no": "ez",
     "yes": "bai",
     "save": "Erregistratu",
@@ -45,7 +45,7 @@
     },
     "birthDay": {
         "errors": {
-            "notadult": "16 urte behar dituzu plataforman izena emateko",
+            "notadult": "16 urte beteak behar dituzu plataforman izena emateko",
             "required": "Sorteguna beharrezkoa da"
         },
         "label": "Sorteguna"
@@ -68,18 +68,18 @@
         "verificationRoute": "/utilisateur/email/validation",
         "buttons": {
             "label": {
-                "generateEmailAgain": "Egiaztatze e-mezua gilera bidali",
+                "generateEmailAgain": "Egiaztatze e-mezu bat berriz bidali",
                 "generateEmail": "Egiaztatze e-mezu bat bidali"
             }
         },
         "tooltips": {
-            "notVerified": "Zure helbide elektronikoa ez da egiaztatua izan",
+            "notVerified": "Zure helbide elektronikoa ez da egiaztatua",
             "verified": "Zure helbide elektronikoa egiaztatua izan da"
         },
         "errors": {
             "valid": "Helbide elektronikoa formatu onean izan behar da"
         },
-        "label": "E-mezua"
+        "label": "E-mezu"
     },
     "events": {
         "route": "/user/events/created"
@@ -90,11 +90,11 @@
     "address": {
         "update": {
             "route": "/utilisateur/profil/modifier/adresse",
-            "label": "Helbidea gorde"
+            "label": "Helbidea erregistratu"
         }
     },
     "buttons": {
-        "supprimerAccount": "Nire kontuaren kentzea"
+        "supprimerAccount": "Nire kontua ezabatu"
     },
     "dialogEmail": {
         "buttons": {
@@ -107,16 +107,16 @@
     "dialog": {
         "buttons": {
             "close": "Hetsi",
-            "confirmDelete": "Ezeztatzea baieztatu"
+            "confirmDelete": "Ezabatzea baieztatzen dut"
         },
         "content": {
-            "errorCommunities": "Komunitate erreferente gisa ezin duzu zure kontua ezabatu, erreferente izaten jarraitzen duzun arte. <br/> <a href=/contact> euskarri teknikoarekin harremanetan jar zaitez </a> erreferentez aldatzeko edo komunitatea ezabatzeko.<br/>",
-            "errorEvents": "Helduko diren ekitaldi antolatzaile gisa, <br/> ezin duzu zure kontua ezabatu, antolatzaile bazira edo izango bazira. <br/> <a href=/contact> teknika euskarriarekin harremanetan jar zaitez</a>ekitaldiaren antolatzailea aldatzeko edo ezabatzeko eskaera egiteko edo ekitaldia pasatzea igurika ezazu.",
-            "deleteAccount": "Segur ote zira zure kontua ezabatu nahi duzula?<br/> Ekintza hori ezin itzulizkoa da.<br/> Ondoko ondorioak izanen ditu: <br/> - zure datu pertsonala guziak ezabatu<br/> -beste erabiltzaileekin trukatu dituzun mezu guziak ezabatuak<br/> -Autokidetza artxiboetan beste autokide batzuk anonimazatuko dituzu<br/> oraindik aktibo dituzun autokidetza iragarki guziak ezabatu<br/> - oraindik indarrean diren autokidetza eskaera guziak ezeztatu<br/> planifikatutako autokidetza guziak ezeztatu<br/> Baieztatzen duzuia?"
+            "errorCommunities": "Komunitate erreferente gisa ezin duzu zure kontua ezabatu, erreferentea zireno. <br/> <a href=/contact> Sustengu teknikoarekin harremanetan jar zaitez </a> erreferentez aldatzeko edo komunitate honen ezabatzeko.<br/>",
+            "errorEvents": "Oraino etortzekoan den ekitaldi baten antolatzaile gisa, <br/> kontu hau ezin dezakezu ezaba, honen antolatzailea zireno. <br/> <a href=/contact> Sustengu teknikoarekin harremanetan jar zaitez</a>ekitaldiaren antolatzailearen aldatzeko edo ekitaldi honen ezabatzeko edo goaita ezazu ekitaldia pasatua izan arte.",
+            "deleteAccount": "Segur ote zira zure kontua ezabatu nahi duzula?<br/> Ekintza hau ezin itzulizkoa da.<br/> Ondoko ondorioak izanen ditu: <br/> - zure datu pertsonal guziak ezabatzea<br/> -beste erabiltzaileekin trukatu dituzun mezu guziak ezabatzea<br/> - Anonimo bilakatuko zira beste autokideen autokidetza-artxiboetan <br/> oraino aktibo zenituzkeen autokidetzairagarki guzien ezabatzea <br/> - ukan dituzun eta bidean diren autokidetza eskaera guziakukatzea <br/> planifikatuak diren autokidetza guziak ezeztatzea <br/> Baieztatzen ote duzu?"
         },
         "titles": {
-            "deletionImpossible": "Zure kontua ezabatzea ezinezkoa da",
-            "deleteAccount": "Zure kontua ezabatua izan da"
+            "deletionImpossible": "Zure kontua ezin ezabatua da",
+            "deleteAccount": "Zure kontuaren ezabatzea"
         }
     },
     "phone": {
