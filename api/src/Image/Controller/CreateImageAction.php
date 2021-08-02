@@ -54,7 +54,6 @@ final class CreateImageAction
         if (is_null($request)) {
             throw new \InvalidArgumentException($this->translator->trans("Bad request"));
         }
-
         $image = new Image();
 
         // check if file is present
