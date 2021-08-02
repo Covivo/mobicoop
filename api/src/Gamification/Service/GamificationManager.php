@@ -280,21 +280,9 @@ class GamificationManager
      */
     public function getBadgesEarned(User $user): ?array
     {
-        // Get all the active badges of the platform
-        $activeBadges = $this->getBadges(Badge::STATUS_ACTIVE);
         $badges = [];
-
-        /**
-         * @var Badge $activeBadge
-         */
-        foreach ($activeBadges as $activeBadge) {
-          
-            // Determine if the badge is already earned
-            foreach ($activeBadge->getRewards() as $reward) {
-                if ($reward->getUser()->getId() == $user->getId()) {
-                    $badges[]=$activeBadge;
-                }
-            }
+        foreach ($user->getRewards() as $reward) {
+            $badges[] = $reward->getBadge();
         }
         return $badges;
     }
