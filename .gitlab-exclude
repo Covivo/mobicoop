@@ -39,6 +39,12 @@
 + /api/public/upload/icons/relaypoint-train.svg
 + /api/public/upload/icons/venue.svg
 - /api/public/upload/icons/*.svg
+/api/public/upload/editorials/images/*.jpg
+/api/public/upload/editorials/images/*.jpeg
+/api/public/upload/editorials/images/*.png
+/api/public/upload/editorials/images/versions/*.jpg
+/api/public/upload/editorials/images/versions/*.jpeg
+/api/public/upload/editorials/images/versions/*.png
 /api/public/upload/events/images/*.jpg
 /api/public/upload/events/images/*.jpeg
 /api/public/upload/events/images/*.png
