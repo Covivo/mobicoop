@@ -210,7 +210,7 @@ carpoolDeleted: bere bidaia ezeztatu du eta ez du autokidetzarik eginen zurekin,
 newAd: 'Iragarkia berria(k) ondoko lekuan '
 newCarpoolAd: Autokidetza iragarki berria(k)
 carpoolWaitingForValidation: Autokidetza baieztapen bidean da
-askRefused: Autokidetza proposamena ezeztatua izan da
+askRefused: Autokidetza proposamena ukatua izan da
 carpoolAsk: Autokidetza eskaera
 carpoolRecap: Autokidetzaren laburbilduma
 renewYourAd: Ez ezazula ahantz zure autokidetza iragarkia berritzea
@@ -218,8 +218,8 @@ lookYourMessaging: 'Zoaza "Nire Mezuak" atalera '
 newMessage: Mezu berri bat ukan duzu ondoko honen ganik
 newMatching: Iragarki berri bat argitaratua izan da zure bidaiarentzat
 appointmentIn: Zoaza "Nire iragarkiak" atalera
-newAdPublished: Zure bidaiari dagokion iragarki berri bat
-goTotheSite: 'Autokidetza berriak atzeman itzazu edo iragarki bat pausa ezazu ondoko
+newAdPublished: Iragarki berri bat bada zure bidaiari dagokiona
+goTotheSite: 'Autokidetza berriak atzeman itzazu edo iragarki bat argitara ezazu ondoko
   lekuan '
 refusedAskReguar: 'ez du ondoko autokidetza erregularra baieztatu '
 refusedAsk: 'ez du ondoko autokidetza baieztatu '
