@@ -43,7 +43,21 @@ final class SolidaryDataPersister implements ContextAwareDataPersisterInterface
 
     public function supports($data, array $context = []): bool
     {
-        return $data instanceof Solidary;
+        if ($data instanceof Solidary) {
+            switch ($context) {
+                case isset($context['collection_operation_name']):
+                    return $context['collection_operation_name'] == 'ADMIN_post';
+                    break;
+                case isset($context['item_operation_name']):
+                    return $context['item_operation_name'] == 'ADMIN_patch' || $context['item_operation_name'] == 'ADMIN_delete';
+                    break;
+                default:
+                    return false;
+                    break;
+            }
+        } else {
+            return false;
+        }
     }
 
     public function persist($data, array $context = [])
