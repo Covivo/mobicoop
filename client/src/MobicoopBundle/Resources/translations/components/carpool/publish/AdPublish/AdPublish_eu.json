@@ -2,21 +2,21 @@
     "update": {
         "popup": {
             "major_update_ads": {
-                "content": "Erabiltzaile batek zure iragarkia jadanik begiztatu du, bere behar bati erantzuten diolako eta SMS baten edo e-mezu baten bidez abisatua izan da. Zure aldaketak gaurko iragarkiaren bertsioa ezabatuko du eskaera berri baten sortzeko.",
+                "content": "Erabiltzaile batek zure iragarkia jadanik begiztatu du, bere beharrari erantzuten diolako eta SMS edo e-mezu baten bidez abisatua izan da. Zure aldaketak gaur eguneko iragarkiaren bertsioa ezabatuko du iragarki berri baten sortzeko.",
                 "title": "Erabiltzaile batek zure iragarkia jadanik begiztatu du"
             },
             "major_update_asks": {
-                "content": "Iragarki honentzat eskaera bat edo gehiago eginak izan dira. Funtsezko informazioetan aldaketak eginez, oraingo iragarkiaren bertsioa ezabatuko du berri baten sortzeko eta ondorioz bidean diren eskaera guziak ezeztatuko ditu.<br> zure aldaketa baieztatzen baduzu, zein ezu bidali nahi zenieke eskaera ezeztatu diezun autokideei?",
+                "content": "Iragarki honi loturiko eskaera bat edo gehiago jadanik eginak izan dira. Funtsezko informazioetan aldaketak eginez, oraingo iragarkiaren bertsioa ezabatuko du berri baten sortzeko eta ondorioz bidean diren eskaera guziak ezeztatuko ditu.<br> Zure aldaketa baieztatzen baduzu, zein mezu bidali nahi zenieke eskaera ezeztatu diezun autokideei?",
                 "title": "Eskaera bat bederen bada iragarki honentzat"
             },
             "minor_update_asks": {
-                "title": "Iragarki honentzat eskaerak badaude",
-                "content": "Eskaera bat edo gehiago eginak izan dira iragarki honentzat. Zure aldaketen xehetasunak igorriak izanen dira eskaera egin dizuten erabiltzaileer. <br> Zure aldaketa baieztatzen ote duzu?"
+                "title": "Eskaerak badaude iragarki honentzat",
+                "content": "Iragarki honekin lotuak diren eskaera bat edo gehiago eginak izan dira . Zure aldaketaren xehetasunak igorriak izanen dira eskaera horiek egin dituzten erabiltzaile guziei. <br> Zure aldaketa baieztatzen ote duzu?"
             }
         },
         "title": "Zure iragarkia aldatu",
-        "unavailable": "Ezin duzu iragarki hori aldatu.",
-        "error": "Zure iragarkia aldatzerakoan akats bat agertu da.",
+        "unavailable": "Iragarki hau ezin duzu aldatu.",
+        "error": "Akats bat gertatu da zure iragarkia aldatzerakoan.",
         "success": "Zure iragarkia aldatua izan da."
     },
     "create": {
@@ -24,12 +24,12 @@
         "title": "Iragarki bat argitaratu"
     },
     "messageFirstAd": {
-        "signUpDone": "Bibazu {givenName}! Zure izen ematua bururatua da",
-        "alert": "Orain, usu egiten duzu bidaiari loturiko iragarki berrien abisua eskuratzeko, zure usaiako bidaiaren lehen iragarkia argitaratu ezazu ahal bezain laster autokidetza egin ahal izateko."
+        "signUpDone": "Biba zu {givenName}! Zure izen ematea bururatua da",
+        "alert": "Orain, maiz egiten duzun bidaiari loturiko iragarki berrietaz abisatua izateko, zure bidaia erregularraren lehenbiziko iragarkia argitara ezazu ahal bezain laster autokidetzan ibiltzeko."
     },
     "stepper": {
         "buttons": {
-            "notValid": "Berriz inizializatu eta bidaiari loturiko inforazio guzia eman behar duzu zure iragarkia argitarazteko",
+            "notValid": "Erabiltzaile izena eta pasahitza sartu behar dituzu, iragarki baten argitarazteko eta bidaiari lotu informazio guziak emanak izan behar dituzu",
             "publish_ad": "Nire iragarkia argitaratu",
             "update_ad": "Nire iragarkia aldatu",
             "previous": "Aitzinekoa",
@@ -38,7 +38,7 @@
         "driverLicense": {
             "route": "/cgu",
             "link": "(Ituna)",
-            "text": "Nire iragarkia argitaratuz, nire gida baimena eta bali eta eguneratua den asurantza badudala egiaztatzen dut"
+            "text": "Nire iragarkia argitaratzean, segurtatzen dut bali eta eguneratuak diren gida baimena eta asurantza baditudala"
         },
         "content": {
             "map": {
@@ -46,40 +46,40 @@
             },
             "summary": "Laburbilduma",
             "message": {
-                "label": "Zure iragarkian, denek ikus dezaketen mezu bat utz ezazu",
+                "label": "Denek ikus dezaketen mezu bat utz ezazu zure iragarkian",
                 "title": {
-                    "passenger": "Nire mezua gidarieri",
-                    "driver": "Nire mezua bidaiarieri",
+                    "passenger": "Nire mezua gidariei",
+                    "driver": "Nire mezua bidaiariei",
                     "both": "Nire mezua"
                 }
             },
             "participation": {
-                "passengers": " Bidaiarika",
-                "price": "XXX-ren parte hartzea "
+                "passengers": " bidaiarika",
+                "price": "Ondoko(ar)en parte hartzea "
             },
             "passengers": {
                 "backSeats": {
-                    "help": "Lauki hori marka ezazu bermatzen baduzu bidaiariak ez direla 2 baino gehiago izanen gibelaldean",
-                    "label": "Gehienez bi pertsona giblean"
+                    "help": "Lauki hau marka ezazu bermatzen baduzu bidaiariak ez direla 2 baino gehiago izanen gibelean",
+                    "label": "Gehienez bi pertsona gibelean"
                 },
                 "bike": {
-                    "help": "Lauki hori marka ezazu zure ibilgailuak bizikleta bat garraiatzen ahal badu",
-                    "label": "Bizikleta bat garrai dezaket"
+                    "help": "Lauki hau marka ezazu zure ibilgailuak bizikleta bat garraiatzen ahal badu",
+                    "label": "Bizikleta bat garraia dezaket"
                 },
                 "luggage": {
-                    "help": "Lauki hau markatu zure ubilgailuak zaku lodiak garraitzen ahal baditu",
+                    "help": "Lauki hau marka ezazu, zure ibilgailuak zaku lodiak garraitzen ahal baditu",
                     "label": "Tokia badut zaku lodientzat"
                 },
                 "seats": {
-                    "passengers": " Bidaiaria(k)",
-                    "question": "Tokiak baditut XXX-rentzat "
+                    "passengers": " bidaiaria(k)",
+                    "question": "Horrenbesteko leku bad(it)ut "
                 }
             }
         },
         "header": {
             "summary": "Laburbilduma",
             "message": "Mezua",
-            "participation": "Parte hartea",
+            "participation": "Parte hartzea",
             "passengers": "Bidaiariak",
             "map": "Bidaia",
             "planification": "Planifikazioa",
@@ -94,18 +94,18 @@
         "update": "covoiturage/annonce/{id}/modifier",
         "publish": "covoiturage/publierannonce"
     },
-    "messageRoundedPrice": "Zure iragarkiko prezioa borobildu dugu, zure eta beste erabiltzaileen esperentzia hobetzeko. Ulertuko duzulakoan, eskertzen zaitugu.",
+    "messageRoundedPrice": "Zure iragarkiaren prezioa borobildu dugu, zure eta beste erabiltzaileen esperentzia hobetzeko. Ulertuko duzulakoan, eskertzen zaitugu.",
     "participation": {
-        "text": "Ibilgailu pribatuekin egiten dire bidaia pribatuei loturiko gobernuko prezio gomendioen erakuspenak ez ditu parte hartzaileak, ez plataforma ez IBM-a engaiatzen. Zerbitzuaren helburua da enplegatuen artean harremanak errextea. Xehetasun gehiagorentzat: <a href='/FAQ'>FAQ</a>.",
-        "forbidden": "Zure bidaiaren prezioak plataformak finkatutako prezioaren muga pasatzen du (0.50/km). Zure bidaia ezingo da argitaratu.",
-        "high": "Zure bidaiaren prezioa, biziki garesti da, zerga taularen batazbestekoa (0.30/km) gainditzen du: zurekin bidaiatzeko aukera biziki apala izanen da. Horrez gain, debekatua da autokidetza gastu partekatuen baitan garraio prestazio ordaiduak proposatzea.",
-        "mid": "Zure bidaia prezioa batazbestekoa baino garestiagoa da, ondorioz, zurekin bidaiatzeko aukerak apalagoak dira."
+        "text": "Gobernu gomendiek zehazten dituzten prezioak ibilgailu pribatuekin egiten diren bidaiekin lotuak dira. Ez dituzte nehondik engaiatzen parte hartzaileak, ezin ez eta plataforma edota IBM. Zerbitzuaren helburua da enplegatuen arteko harremanen errextea. Xehetasun gehiagorentzat: <a href='/FAQ'>FAQ</a>.",
+        "forbidden": "Zure bidaiaren prezioak plataformak finkatutako prezioaren muga gainditzen du (0,50/km). Zure bidaia ez da argitaratua izanen.",
+        "high": "Zure bidaiaren prezioa, biziki garestia, zerga taularen bataz bestekoa gainditzen du (0,30/km): eskaera arras guti izanen duzu. Horrez gain, debekatua da autokidetza gastu partekatuen baitan garraio prestazio ordainduak proposatzea.",
+        "mid": "Zure bidaiaren prezioa bataz bestekoa baino garestiagoa da, ondorioz, eskaera gutiago ukanen duzu."
     },
     "messageSolidaryExclusiveAd": {
         "switch": {
-            "label": "Elkartasunezko autokidetza esklusiboa"
+            "label": "Elkartasunezko autokidetza esklusiboaren iragarkia"
         },
-        "message": " Iragarki hori elkartasuneko autokidetza esklusiboa izanen da, ondoko opzioa atxikitza baduzu. Bakarrik elkartasunezko operadoreek ikusten ahalko dute elkaratsunezko galdegileekin harremanetan sartu ahal izateko. Opzio hori kentzen baduzu, zure iragarki, iragariki arrunta bilakatuko da, ikusgai izanen dena gainerateko autokideentzat eta elkartasunezko operadoreentzat."
+        "message": " Iragarki hau elkartasunezko autokidetza esklusibo bat izanen da, azpiko ondoko aukera atxikitzen baduzu. Elkartasunezko operadoreek baizik ez dute ikusten ahalko beste elkaratsunezko galdegile batekin harremanetan jarria izan zaitezen. Aukera hau desmarkatzen baduzu, zure iragarkia, iragarki arrunta bat bilakatuko da, beste autokideek eta elkartasunezko operadoreek aldi berean ikusten ahalko dutena."
     },
-    "snackBarErrorPublish": "Trajet incompatible avec vos annonces déjà publiées. Si votre annonce déjà publiée à cette date n'est plus valable, vous devez la mettre en pause, la modifier ou la supprimer."
+    "snackBarErrorPublish": "Bidaia hau jadanik argitaratu dituzun iragarkiekin baterezina da. Data honetan jadanik argitaratu duzun iragarkia ez baldin bada gehiago bali, pausan ezarri behar duzu, aldatu edo ezabatu."
 }

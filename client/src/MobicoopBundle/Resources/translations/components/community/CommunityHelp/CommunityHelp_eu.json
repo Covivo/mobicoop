@@ -2,16 +2,16 @@
     "communityforwhat": {
         "list": {
             "fourthLine": "komunitatearen sortzailearentzat, komunitatean izena eman dutenen eta autokideen estatistikak ukaitea",
-            "thirdLine": "Widget pertsonalizatu bat ukatea intranet edo webgunean instalatzeko",
-            "secondLine": "autokideak harremaneta jartzea errextea, kideen arteko konfiantza indartuz",
-            "firstLine": "haren kideei trukatzea eta elkarrekin autoa partekatzea"
+            "thirdLine": "Widget pertsonalizatu bat ukaitea intranet edo webgunean instalatzeko",
+            "secondLine": "autokideen arteko harremanak errextea, kideen arteko konfiantza indartuz",
+            "firstLine": "bere kideei trukatzea eta autoa elkarrekin partekatzea"
         },
         "title": "Komunitate baten sortzeak ahalbideratzen du:"
     },
-    "whatsCommunity": "Komunitate bat, interes berdin batentzat izena eman duten talde bat da. Enpresa bateko, aktibitate eremu bateko soldatapekoak, ikusgarri areto batetara maiz joaten diren pertsonak edo herri bateko biztanleak identifikatzea ahalbidetzen du, autokideak harremanetan jartzen lagunduz.",
+    "whatsCommunity": "Komunitate bat, interes berarentzat izena eman duten talde bat da. Adibidez, enpresa bateko, aktibitate eremu bateko langileak, ikusgarri areto batetara maiz joaten diren pertsonak edo herri bateko biztanleak identifikatzen ditu, autokideak harremanetan jartzen lagunduz.",
     "thirdQuestion": "Nork sor dezake komunitate bat?",
     "secondQuestion": "Komunitate bat, zeren egiteko?",
     "firstQuestion": "Zer ote da komunitate bat?",
     "title": "Autokidetza komunitateak",
-    "whoCanCreate": "Mobicoop-en nahi duen pertsonak edo egiturak sor dezake komunitate bat? Komunitate bat sortzea, ordainpeko zerbitzu bat da, administratzaile sarbidea ematen dizuna zure komunitatea animatzeko. Xehetasun gehiagorentzat edo komunitate bat sortzea galdegiteko, hotline-arekin harremaneta jar zaitezke, zehaztuz zure komunitate bat sortzeko xedea."
+    "whoCanCreate": "Nahi duen pertsona edo egitura orok, komunitate bat sor dezake Mobicoop-en. Komunitate baten sortzea, ordaintzen den zerbitzu bat da, administratzaile sarbidea ahalbidetuko dizuna zure komunitatearen animatzeko. Xehetasun gehiagorentzat edo komunitate sortze baten galdegiteko, hotline-arekin harremanetan jar zaitezke, zehaztuz, komunitate bat sortu nahi duzula."
 }
