@@ -551,6 +551,9 @@ services:
         arguments:
             $types: '%images%'
             $dataUri: '%env(string:DATA_URI)%'
+        tags:
+            - { name: monolog.logger, channel: maintenance }
+    
             
     # Import
     App\Import\Controller\:
