@@ -1035,7 +1035,11 @@ class SolidaryManager
             // check if beneficiary informations have been updated
             $beneficiary = $this->updateBeneficiary($beneficiary, $fields['beneficiary']);
         } else {
-            // new user
+            // new user, check if an email was set
+            if (!isset($fields['beneficiary']['email'])) {
+                // no email set => we use the structure as base for subaddressing
+                $fields['beneficiary']['email'] = $this->userManager->generateSubEmail($structure->getEmail());
+            }
             $beneficiary = $this->userManager->createUserFromArray($fields['beneficiary']);
             $newUser = true;
         }

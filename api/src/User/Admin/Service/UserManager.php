@@ -34,6 +34,7 @@ use App\Carpool\Ressource\Ad;
 use App\User\Entity\User;
 use App\Geography\Entity\Address;
 use App\Geography\Repository\TerritoryRepository;
+use App\Solidary\Entity\Structure;
 use App\User\Event\UserDelegateRegisteredEvent;
 use App\User\Event\UserDelegateRegisteredPasswordSendEvent;
 use App\User\Service\UserManager as ServiceUserManager;
@@ -282,11 +283,10 @@ class UserManager
     /**
      * Create a User object from an array
      *
-     * @param array $auser      The user to create, as an array
-     * @param bool $persist     Should we persist the new User immediately
+     * @param array $auser          The user to create, as an array
      * @return User             The User object
      */
-    public function createUserFromArray(array $auser, bool $persist = false)
+    public function createUserFromArray(array $auser)
     {
         $user = new User();
         if (isset($auser['givenName'])) {
@@ -342,12 +342,6 @@ class UserManager
         $userAuthAssignment->setAuthItem($authItem);
         $user->addUserAuthAssignment($userAuthAssignment);
 
-        // persist the user
-        if ($persist) {
-            $this->entityManager->persist($user);
-            $this->entityManager->flush();
-        }
-
         // check if the home address was set
         if (isset($auser['homeAddress'])) {
             $homeAddress = new Address();
@@ -397,12 +391,20 @@ class UserManager
             $homeAddress->setName(Address::HOME_ADDRESS);
             $homeAddress->setUser($user);
             $this->entityManager->persist($homeAddress);
-            if ($persist) {
-                $this->entityManager->flush();
-            }
         }
 
         // return the user
         return $user;
+    }
+
+    /**
+     * Generate a sub email address
+     *
+     * @param string $email     The base email
+     * @return string           The generated sub email address
+     */
+    public function generateSubEmail(string $email)
+    {
+        return $this->userManager->generateSubEmail($email);
     }
 }
