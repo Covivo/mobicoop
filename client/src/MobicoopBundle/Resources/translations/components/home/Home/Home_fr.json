@@ -3,6 +3,7 @@
     "subtitle": "Un service de covoiturage de proximité, convivial et solidaire.<br />Trouvez dès à présent votre covoiturage ou proposez votre trajet.",
     "snackbar1": "Vous avez renseigné un numéro de téléphone. Faîtes-le vérifier en envoyant un code de vérification depuis la page",
     "snackbar2": ", pour rassurer vos covoitureurs et recevoir vos alertes aussi par SMS.",
+    "snackbar3" : "Merci de confirmer votre email en cliquant sur lien reçu par email",
     "profileLink": "/utilisateur/profil/modifier/mon-profil",
     "snackbar-account-logout": "Vous êtes déconnecté.",
     "snackbar-unsubscribe-email": "Vous êtes bien désinscrit de nos liste d'emailing",
