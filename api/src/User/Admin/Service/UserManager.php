@@ -23,18 +23,13 @@
 
 namespace App\User\Admin\Service;
 
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
-use ApiPlatform\Core\DataProvider\ArrayPaginator;
-use ApiPlatform\Core\DataProvider\PaginatorInterface;
 use App\Auth\Entity\AuthItem;
 use App\Auth\Entity\UserAuthAssignment;
 use App\Auth\Repository\AuthItemRepository;
 use App\Carpool\Repository\ProposalRepository;
-use App\Carpool\Ressource\Ad;
 use App\User\Entity\User;
 use App\Geography\Entity\Address;
 use App\Geography\Repository\TerritoryRepository;
-use App\Solidary\Entity\Structure;
 use App\User\Event\UserDelegateRegisteredEvent;
 use App\User\Event\UserDelegateRegisteredPasswordSendEvent;
 use App\User\Service\UserManager as ServiceUserManager;
@@ -60,7 +55,6 @@ class UserManager
     private $chat;
     private $music;
     private $smoke;
-    private $proposalRepository;
 
     /**
      * Constructor
@@ -75,7 +69,6 @@ class UserManager
         EventDispatcherInterface $dispatcher,
         Security $security,
         ServiceUserManager $userManager,
-        ProposalRepository $proposalRepository,
         $chat,
         $smoke,
         $music
@@ -90,7 +83,6 @@ class UserManager
         $this->chat = $chat;
         $this->music = $music;
         $this->smoke = $smoke;
-        $this->proposalRepository = $proposalRepository;
     }
 
     /**
