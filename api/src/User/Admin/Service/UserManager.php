@@ -26,7 +26,6 @@ namespace App\User\Admin\Service;
 use App\Auth\Entity\AuthItem;
 use App\Auth\Entity\UserAuthAssignment;
 use App\Auth\Repository\AuthItemRepository;
-use App\Carpool\Service\ProofManager;
 use App\User\Entity\User;
 use App\Geography\Entity\Address;
 use App\Geography\Repository\TerritoryRepository;
@@ -55,7 +54,6 @@ class UserManager
     private $eventDispatcher;
     private $security;
     private $userManager;
-    private $proofManager;
     private $userRepository;
     private $chat;
     private $music;
@@ -74,7 +72,6 @@ class UserManager
         EventDispatcherInterface $dispatcher,
         Security $security,
         ServiceUserManager $userManager,
-        ProofManager $proofManager,
         UserRepository $userRepository,
         $chat,
         $smoke,
@@ -87,7 +84,6 @@ class UserManager
         $this->eventDispatcher = $dispatcher;
         $this->security = $security;
         $this->userManager = $userManager;
-        $this->proofManager = $proofManager;
         $this->userRepository = $userRepository;
         $this->chat = $chat;
         $this->music = $music;
