@@ -58,6 +58,8 @@ use App\Geography\Service\AddressManager;
 use App\Payment\Exception\PaymentException;
 use App\Solidary\Repository\SubjectRepository;
 use App\User\Entity\User;
+use App\User\Repository\UserRepository;
+use App\User\Exception\BadRequestInteroperabilityUserException;
 use DateTime;
 
 /**
@@ -89,6 +91,7 @@ class AdManager
     private $addressManager;
     private $appManager;
     private $antiFraudManager;
+    private $userRepository;
 
     private $currentMargin = null;
 
@@ -119,7 +122,8 @@ class AdManager
         SubjectRepository $subjectRepository,
         AddressManager $addressManager,
         AppManager $appManager,
-        AntiFraudManager $antiFraudManager
+        AntiFraudManager $antiFraudManager,
+        UserRepository $userRepository
     ) {
         $this->entityManager = $entityManager;
         $this->proposalManager = $proposalManager;
@@ -142,6 +146,7 @@ class AdManager
         $this->addressManager = $addressManager;
         $this->appManager = $appManager;
         $this->antiFraudManager = $antiFraudManager;
+        $this->userRepository = $userRepository;
         if ($this->params["paymentActiveDate"] = DateTime::createFromFormat("Y-m-d", $this->params["paymentActive"])) {
             $this->params["paymentActiveDate"]->setTime(0, 0);
             $this->params["paymentActive"] = true;
@@ -179,7 +184,7 @@ class AdManager
         // validation
 
         // try for an anonymous post ?
-        if (!$ad->isSearch() && !$ad->getUserId()) {
+        if (!$ad->isSearch() && !$ad->getUserId() && !$ad->isSolidaryExclusive()) {
             throw new AdException('Anonymous users can\'t post an ad');
         }
 
@@ -189,6 +194,45 @@ class AdManager
                 $outwardProposal->setUser($user);
             } else {
                 throw new UserNotFoundException('User ' . $ad->getUserId() . ' not found');
+            }
+        } else {
+            // we check if the user past exist if not we create it
+            if ($this->userRepository->findOneBy(['email'=>$ad->getUser()->getEmail()])) {
+                throw new BadRequestInteroperabilityUserException(BadRequestInteroperabilityUserException::USER_ALREADY_EXISTS);
+            } else {
+                $user = new User();
+                $user->setEmail($ad->getUser()->getEmail());
+                $user->setPassword($ad->getUser()->getPassword());
+                $user->setGivenName($ad->getUser()->getGivenName());
+                $user->setFamilyName($ad->getUser()->getFamilyName());
+                $user->setBirthDate($ad->getUser()->getBirthDate());
+                $user->setTelephone($ad->getUser()->getTelephone());
+                $user->setGender($ad->getUser()->getGender());
+                $user->setNewsSubscription(true);
+
+                // we set the home address
+                $homeAddress = new Address();
+                $homeAddress->setHouseNumber($ad->getUser()->getHomeAddress()->getHouseNumber());
+                $homeAddress->setStreet($ad->getUser()->getHomeAddress()->getStreet());
+                $homeAddress->setStreetAddress($ad->getUser()->getHomeAddress()->getStreetAddress());
+                $homeAddress->setPostalCode($ad->getUser()->getHomeAddress()->getPostalCode());
+                $homeAddress->setSubLocality($ad->getUser()->getHomeAddress()->getSubLocality());
+                $homeAddress->setAddressLocality($ad->getUser()->getHomeAddress()->getAddressLocality());
+                $homeAddress->setLocalAdmin($ad->getUser()->getHomeAddress()->getLocalAdmin());
+                $homeAddress->setCounty($ad->getUser()->getHomeAddress()->getCounty());
+                $homeAddress->setMacroCounty($ad->getUser()->getHomeAddress()->getMacroCounty());
+                $homeAddress->setRegion($ad->getUser()->getHomeAddress()->getRegion());
+                $homeAddress->setMacroRegion($ad->getUser()->getHomeAddress()->getMacroRegion());
+                $homeAddress->setAddressCountry($ad->getUser()->getHomeAddress()->getAddressCountry());
+                $homeAddress->setCountryCode($ad->getUser()->getHomeAddress()->getCountryCode());
+                $homeAddress->setLatitude($ad->getUser()->getHomeAddress()->getLatitude());
+                $homeAddress->setLongitude($ad->getUser()->getHomeAddress()->getLongitude());
+
+                $homeAddress->setHome(true);
+                $user->addAddress($homeAddress);
+
+                $user = $this->userManager->registerUser($user);
+                $outwardProposal->setUser($user);
             }
         }
 
@@ -427,6 +471,7 @@ class AdManager
             $returnCriteria->setBackSeats($outwardCriteria->hasBackSeats());
 
             // dates and times
+            $marginDuration = $ad->getReturnMarginDuration() ? $ad->getReturnMarginDuration() : ($ad->getMarginDuration() ? $ad->getMarginDuration() : $this->params['defaultMarginDuration']);
             // if no return date is specified, we use the outward date to be sure the return date is not before the outward date
             $returnCriteria->setFromDate($ad->getReturnDate() ? $ad->getReturnDate() : $outwardCriteria->getFromDate());
             if ($ad->getFrequency() == Criteria::FREQUENCY_REGULAR) {
