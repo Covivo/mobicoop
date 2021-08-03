@@ -49,7 +49,7 @@ class CommunityUserRepository
      * Find communities by criteria
      *
      * @param array $criteria
-     * @return void
+     * @return array
      */
     public function findBy(array $criteria)
     {

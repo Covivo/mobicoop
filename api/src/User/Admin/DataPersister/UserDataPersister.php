@@ -75,7 +75,7 @@ final class UserDataPersister implements ContextAwareDataPersisterInterface
     {
         // no delete item yet !
         if (isset($context['item_operation_name']) &&  $context['item_operation_name'] == 'ADMIN_delete') {
-            return $data;
+            return $this->userManager->deleteUser($data);
         }
     }
 }
