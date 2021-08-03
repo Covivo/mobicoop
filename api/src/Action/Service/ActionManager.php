@@ -295,7 +295,7 @@ class ActionManager
      * @param float $progression
      * @return void
      */
-    private function treatDiary(Action $action, User $user, User $author, ?string $comment=null, ?Solidary $solidary=null, ?SolidarySolution $solidarySolution=null, ?float $progression=null)
+    private function treatDiary(Action $action, User $user, User $author, ?string $comment=null, ?Solidary $solidary=null, ?SolidarySolution $solidarySolution=null, float $progression=0)
     {
         if ($action->isInDiary()) {
             $this->diaryManager->addDiaryEntry(
