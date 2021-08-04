@@ -3,15 +3,15 @@
     "optional": "hautuzkoa",
     "errorReturnTime": "Itzultze tenorea, abiatze tenoretik hurbilegia da.",
     "marginTooltip": "Zure iragarkia bilaketetan agertuko da, ordutegi honetako  {margin}  minutu inguruko malgutasunarekin",
-    "addSchedule": "Denbora tarte bat gehitu",
+    "addSchedule": "Tenore tarte bat gehitu",
     "returnTrip": {
         "label": "Itzultzea"
     },
     "regularReturnTime": {
-        "label": "Itzultzea"
+        "label": "Itzultze tenorea"
     },
     "regularOutwardTime": {
-        "label": "Abiatzea"
+        "label": "Abiatze lekua"
     },
     "returnTime": {
         "label": "Itzultze tenorea"
