@@ -343,6 +343,12 @@ class Campaign
     private $creatorAvatar;
 
     /**
+     * @var string|null The creator email
+     * @Groups({"aRead"})
+     */
+    private $creatorEmail;
+
+    /**
      * @var int|null The source for the deliveries.
      *
      * @ORM\Column(type="smallint", nullable=true)
@@ -660,6 +666,11 @@ class Campaign
             return $this->getUser()->getAvatars()[0];
         }
         return null;
+    }
+
+    public function getCreatorEmail(): string
+    {
+        return $this->getUser()->getEmail();
     }
 
     public function getSource(): ?int
