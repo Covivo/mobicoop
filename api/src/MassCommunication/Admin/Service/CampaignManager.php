@@ -58,6 +58,9 @@ class CampaignManager
     private $mediumRepository;
     private $mailerDomain;
     private $mailerIp;
+    private $mailerReplyTo;
+    private $mailerSenderEmail;
+    private $mailerSenderName;
     private $massEmailProvider;
     private $massSmsProvider;
 
@@ -79,6 +82,7 @@ class CampaignManager
         string $mailerClientTemplateId,
         string $mailerReplyTo,
         string $mailerSenderEmail,
+        string $mailerSenderName,
         string $mailerDomain,
         string $mailerIp,
         string $smsProvider
@@ -90,10 +94,13 @@ class CampaignManager
         $this->mailTemplate = $mailTemplate;
         $this->mailerClientName = $mailerClientName;
         $this->mailerDomain = $mailerDomain;
+        $this->mailerReplyTo = $mailerReplyTo;
+        $this->mailerSenderEmail = $mailerSenderEmail;
+        $this->mailerSenderName = $mailerSenderName;
         $this->mailerIp = $mailerIp;
         switch ($mailerProvider) {
             case self::MAIL_PROVIDER_SENDINBLUE:
-                $this->massEmailProvider = new SendinBlueProvider($mailerApiKey, $mailerClientId, $mailerReplyTo, $mailerSenderEmail, $mailerClientTemplateId);
+                $this->massEmailProvider = new SendinBlueProvider($mailerApiKey, $mailerClientId, $mailerSenderName, $mailerSenderEmail, $mailerReplyTo, $mailerClientTemplateId);
                 break;
         }
         switch ($smsProvider) {
@@ -113,9 +120,9 @@ class CampaignManager
     {
         $campaign->setMedium($this->mediumRepository->find(Medium::MEDIUM_EMAIL));
         $campaign->setUser($user);
-        $campaign->setEmail($user->getEmail());
-        $campaign->setReplyTo($user->getEmail());
-        $campaign->setFromName("Mobicoop");
+        $campaign->setEmail($this->mailerSenderEmail);
+        $campaign->setReplyTo($this->mailerReplyTo);
+        $campaign->setFromName($this->mailerSenderName);
         $this->entityManager->persist($campaign);
         $this->entityManager->flush();
         
@@ -180,7 +187,7 @@ class CampaignManager
                 // remove selection if it exists
                 $campaign->removeDeliveries();
                 $campaign->setFilters($this->stringFilters($filters));
-                $campaign->setDeliveryCount(count($users));
+                $campaign->setDeliveryCount(iterator_count($users));
                 $this->entityManager->persist($campaign);
                 break;
         }
@@ -216,7 +223,7 @@ class CampaignManager
                 // remove selection if it exists
                 $campaign->removeDeliveries();
                 $campaign->setFilters($this->stringFilters($filters));
-                $campaign->setDeliveryCount(count($members));
+                $campaign->setDeliveryCount(iterator_count($members));
                 $this->entityManager->persist($campaign);
                 break;
         }
@@ -234,7 +241,7 @@ class CampaignManager
     public function send(Campaign $campaign, iterable $users, int $mode)
     {
         // the delivery count may have changed
-        $campaign->setDeliveryCount(count($users));
+        $campaign->setDeliveryCount(iterator_count($users));
         $this->entityManager->persist($campaign);
         $this->entityManager->flush();
         switch ($campaign->getMedium()->getId()) {

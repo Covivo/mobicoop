@@ -51,7 +51,7 @@ final class SolidaryDataPersister implements ContextAwareDataPersisterInterface
         // call your persistence layer to save $data
         if (isset($context['item_operation_name']) &&  $context['item_operation_name'] == 'put') {
             $data = $this->solidaryManager->updateSolidary($data);
-        } elseif (isset($context['collection_operation_name']) &&  ($context['collection_operation_name'] == 'post' ||  $context['collection_operation_name'] == 'postUl')) {
+        } elseif (isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'post') {
             $data = $this->solidaryManager->createSolidary($data);
         }
         return $data;
