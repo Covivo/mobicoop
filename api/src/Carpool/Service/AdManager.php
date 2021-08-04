@@ -183,8 +183,9 @@ class AdManager
 
         // validation
 
+
         // try for an anonymous post ?
-        if (!$ad->isSearch() && !$ad->getUserId() && !$ad->isSolidaryExclusive() && !$ad->getUser()->getEmail() && !$ad->getUser()->getFamilyName()) {
+        if (!$ad->isSearch() && !$ad->getUserId() && !$ad->isSolidaryExclusive()) {
             throw new AdException('Anonymous users can\'t post an ad');
         }
 
