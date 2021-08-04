@@ -10,7 +10,7 @@
         },
         "fri": {
             "longName": "Ostirala",
-            "shortName": "Or."
+            "shortName": "Ol."
         },
         "thu": {
             "longName": "Osteguna",
@@ -26,13 +26,14 @@
         },
         "mon": {
             "longName": "Astelehena",
-            "shortName": "As."
+            "shortName": "Al."
         },
         "list": [
             "Al.",
             "As.",
             "Az.",
-            "Os."
+            "Os.",
+            "Ol."
         ]
     }
 }

@@ -1,5 +1,5 @@
 {
-    "error": "Huts bat agertu da",
+    "error": "Akats bat gertatu da",
     "uri": {
         "addCoordinates": "/utilisateur/coordonnees-bancaires/ajouter",
         "deleteCoordinates": "/utilisateur/coordonnees-bancaires/supprimer",
@@ -8,24 +8,24 @@
     "modalSuppr": {
         "no": "ez",
         "yes": "bai",
-        "line3": "Ekintza hori baieztatzen ote duzu?",
-        "line2": "Ezingo duzu gehiago ordainketa elektronikorik errezibitu.",
+        "line3": "Ekintza hau baieztatzen ote duzu?",
+        "line2": "Ezingo duzu gehiago ordainketa elektronikorik ukaiten ahalko.",
         "line1": "Zure banku-datuak ezabatuak izanen dira.",
         "title": "Banku-datuak ezabatu nahi dituzu?"
     },
-    "register": "Gorde",
+    "register": "Erregistratu",
     "form": {
         "errors": {
-            "bicRequired": "BIC zenbakia derrigorrezkoa da",
-            "bic": "BIC zebakia bali izan behar da",
-            "ibanRequired": "IBAN zenbakia derrigorrezkoa da",
+            "bicRequired": "BIC zenbakia baitezpadakoa da",
+            "bic": "BIC zenbakia bali izan behar da",
+            "ibanRequired": "IBAN zenbakia baitezpadakoa da",
             "iban": "IBAN zenbakia bali izan behar da",
             "cityRequired": "Hiria baitezpadakoa da",
             "cpRequired": "Posta kodea baitezpadakoa da",
             "wayRequired": "Zenbakia eta karrika baitezpadakoak dira"
         },
         "tooltip": {
-            "iban": "Zure IBAN-a eman tarterik gabe"
+            "iban": "Zure IBAN-a idatz ezazu, artekarik gabe"
         },
         "label": {
             "address": {
@@ -43,5 +43,5 @@
     "titleAddress": "2. Helbide osoa",
     "textInfo": "Linea bidezko ordainketa batzuen eskuratzeko, beharrezkoa da azpiko informazio guziei ihardestea.",
     "titleCoordinates": "1. Banku-datuak",
-    "textAddressDetails": "Ondoko eremuak beteko dira gaineko bilaketei esker. Milesker informazioen araberakotasuna egiaztatzeagatik."
+    "textAddressDetails": "Ondoko eremuak osatuko dira gaineko bilaketari esker. Milesker informazioen araberakotasuna egiaztatzeagatik."
 }

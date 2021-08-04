@@ -1,13 +1,13 @@
 {
     "pause": {
         "error": {
-            "pause": "Akats bat agertu da, zure iragarkia geldialdian ezarri da.",
-            "unpause": "Huts bat agertu da zure iragarkia ez da aktibatu"
+            "pause": "Akats bat gertatu da, zure iragarkia ez da pausan ezarria izan.",
+            "unpause": "Akats bat gertatu da, zure iragarkia ez da aktibatua izan"
         },
-        "info": "Kasu iragarkia pausan da!",
+        "info": "Kasu iragarkia pausan ezarria da!",
         "success": {
-            "unpause": "Zure iragarkia orain aktiboa da.",
-            "pause": "Zure iragarkia geldialdian da orain."
+            "unpause": "Zure iragarkia aktiboa da orain.",
+            "pause": "Zure iragarkia pausan ezarria da."
         }
     },
     "update": {
@@ -18,19 +18,19 @@
             "validate": "Baieztatu",
             "cancel": "Ezeztatu",
             "pending": {
-                "text": "Iragarki honekin lotura duten eskaera bat edo gehiago egin dira. Zure ezeztatzeak egin diren eskaerak ezabatuko ditu. Ezeztatzea baieztatzen baduzu, zein mezu bidali nahi eskaera diezu ezeztatu diezun autokidei?",
-                "title": "Iragarki honentzat gutienez eskaera bat bada"
+                "text": "Iragarki honekin lotua(k) d(ir)en eskaera bat edo gehiago jadanik egina(k) izan d(ir)a. Zure ezabatzeak, bidean diren eskaera guziak baztertuko ditu. Ezabatzea erabakitzen baduzu, zein mezu bidali nahi zenieke eskaerak baztertzen dizkiezun autokidei?",
+                "title": "Bederen eskaera bat bada iragarki honentzat"
             },
             "accepted": {
-                "text": "Autokide bat edo gehiago planifaktuak izan dira iragarki honekin. Zure iragarkia kentzen baduzu, onartutako autokidetzak ezeztatuko dira. Zure ezeztatzea baieztatzen baduzu, zein mezu igorri nahi zenieke ezeztatuko diezun autokideei?",
-                "title": "Iragarki honentzat gutienez autokide bat bada"
+                "text": "Iragarki honekin lotua(k) d(ir)en autokidetza bat edo gehiago jadanik planifikatua(k) izan d(ir)a. Ondorioz, zure iragarki-kentzeak, onartua(k) z(ir)en autokidetza hori(ek) ezeztatuko d(it)u. Zure kentzea baieztatzen baduzu, zein mezu igorri nahi zenieke ezeztatuko diezun autokideei?",
+                "title": "Gutienez autokidetza bat planifikatua izan iragarki honentzat"
             },
             "base": {
-                "text": "Kentzen den iragarkia, behin betiko da, segur ote zira iragarkia kendu nahi duzula?",
-                "title": "Segur al zira iragarki hori kendu nahi duzula?"
+                "text": "Iragarkia kentze oro behin betikoa da, segur ote zira iragarki hau kendu nahi duzula?",
+                "title": "Segur ote zira iragarki hau ezabatu nahi duzula?"
             }
         },
-        "error": "Huts bat agertu da zure iragarkia kendua izan delarik.",
+        "error": "Huts bat gertatu da zure iragarkia kentzerakoan.",
         "success": "Zure iragarkia kendua izan da.",
         "route": "/covoiturage/annonce/supprimer"
     },

@@ -2,13 +2,13 @@
     "getPopularJourneysUrl": "/covoiturages/populaires/home",
     "popularJourneys": {
         "uri": "/covoiturage/{origin}/{destination}",
-        "to": "-ra",
-        "from": "Autokidetza"
+        "to": "leku honetara",
+        "from": "Ondoko autokidetza hau"
     },
     "links": {
         "popular": {
             "uri": "/covoiturage-par-ville/populaires",
-            "title": "Autokidetzak arrakasta duten bidaiaka"
+            "title": "Autokidetzak bidaia arrakastatsuka"
         },
         "byCity": {
             "uri": "/covoiturage-par-ville",

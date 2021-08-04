@@ -1,8 +1,8 @@
 {
-    "noCommunity": "Ez da komunitaterik",
+    "noCommunity": "Komunitaterik ez",
     "urlGetCommunities": "/community/getCommunityList",
     "seeAds": "Ikus iragarkiak",
-    "linePerPage": "Linea kopurua orrialdeka",
+    "linePerPage": "Lerro kopurua orrialdeka",
     "all": "Denak",
     "search": "Bilatu",
     "createCommunity": "Komunitate bat sortu",

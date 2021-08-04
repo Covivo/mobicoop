@@ -3,8 +3,8 @@
     "links": {
         "popularJourneys": {
             "uri": "/covoiturage/{origin}/{destination}",
-            "to": "-ra",
-            "from": "Autokidetza...tik"
+            "to": "Egun honetan",
+            "from": "Ondoko egun honetako autokidetza"
         },
         "cityByCity": {
             "uri": "/covoiturage-par-ville",
