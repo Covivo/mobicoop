@@ -32,8 +32,11 @@ use App\MassCommunication\Entity\Delivery;
 use App\MassCommunication\Entity\Recipient;
 use App\MassCommunication\Entity\Sender;
 use App\MassCommunication\Exception\CampaignException;
+use App\User\Exception\UserNotFoundException;
+use App\User\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
+use Symfony\Component\HttpFoundation\Request;
 use Twig\Environment;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -56,12 +59,15 @@ class CampaignManager
     private $translator;
     private $entityManager;
     private $mediumRepository;
+    private $userRepository;
+    private $mailerProvider;
     private $mailerDomain;
     private $mailerIp;
     private $mailerReplyTo;
     private $mailerSenderEmail;
     private $mailerSenderName;
     private $massEmailProvider;
+    private $massEmailProviderIpRange;
     private $massSmsProvider;
 
     /**
@@ -74,8 +80,10 @@ class CampaignManager
         TranslatorInterface $translator,
         EntityManagerInterface $entityManager,
         MediumRepository $mediumRepository,
+        UserRepository $userRepository,
         string $mailTemplate,
         string $mailerProvider,
+        array $mailerProviderIpRange,
         string $mailerApiKey,
         string $mailerClientName,
         int $mailerClientId,
@@ -91,7 +99,9 @@ class CampaignManager
         $this->translator = $translator;
         $this->entityManager = $entityManager;
         $this->mediumRepository = $mediumRepository;
+        $this->userRepository = $userRepository;
         $this->mailTemplate = $mailTemplate;
+        $this->mailerProvider = $mailerProvider;
         $this->mailerClientName = $mailerClientName;
         $this->mailerDomain = $mailerDomain;
         $this->mailerReplyTo = $mailerReplyTo;
@@ -103,6 +113,7 @@ class CampaignManager
                 $this->massEmailProvider = new SendinBlueProvider($mailerApiKey, $mailerClientId, $mailerSenderName, $mailerSenderEmail, $mailerReplyTo, $mailerClientTemplateId);
                 break;
         }
+        $this->massEmailProviderIpRange = $mailerProviderIpRange;
         switch ($smsProvider) {
             // none yet !
             default: $this->massSmsProvider = null;
@@ -255,6 +266,39 @@ class CampaignManager
                 break;
         }
         return $campaign;
+    }
+
+    /**
+     * Handle an unsubscribe webhook
+     *
+     * @param Request $request  The request that contains the data
+     * @return array            An empty array
+     */
+    public function handleUnsubscribeHook(Request $request)
+    {
+        switch ($this->mailerProvider) {
+            case self::MAIL_PROVIDER_SENDINBLUE:
+                // Sendinblue uses ip range
+                if (ip2long($request->getClientIp()) > ip2long($this->massEmailProviderIpRange['maxIp']) || ip2long($request->getClientIp()) < ip2long($this->massEmailProviderIpRange['minIp'])) {
+                    throw new Exception("Unauthorized");
+                }
+                if (!$email = $request->get('email')) {
+                    throw new Exception("Missing email");
+                }
+                if (!$user = $this->userRepository->findOneBy(['email'=>$email])) {
+                    throw new UserNotFoundException("User not found");
+                }
+                /**
+                 * @var User $user
+                 */
+                $user->setNewsSubscription(false);
+                $this->entityManager->persist($user);
+                $this->entityManager->flush();
+                break;
+            default:
+                break;
+        }
+        return [];
     }
 
     /**

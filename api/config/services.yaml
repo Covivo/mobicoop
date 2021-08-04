@@ -612,6 +612,7 @@ services:
         arguments:
             $mailTemplate: '%env(string:MASS_MAILER_BASE_TEMPLATE)%'
             $mailerProvider: '%env(string:MASS_MAILER_PROVIDER)%'
+            $mailerProviderIpRange: '%env(json:MASS_MAILER_PROVIDER_IPRANGE)%'
             $mailerApiKey: '%env(string:MASS_MAILER_API_KEY)%'
             $mailerClientName: '%env(string:MASS_MAILER_CLIENT_NAME)%'
             $mailerClientId: '%env(int:MASS_MAILER_CLIENT_ID)%'
