@@ -1,33 +1,12 @@
-/**
- * Copyright (c) 2019, MOBICOOP. All rights reserved.
- * This project is dual licensed under AGPL and proprietary licence.
- ***************************
- *    This program is free software: you can redistribute it and/or modify
- *    it under the terms of the GNU Affero General Public License as
- *    published by the Free Software Foundation, either version 3 of the
- *    License, or (at your option) any later version.
- *
- *    This program is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *    GNU Affero General Public License for more details.
- *
- *    You should have received a copy of the GNU Affero General Public License
- *    along with this program.  If not, see <gnu.org/licenses>.
- ***************************
- *    Licence MOBICOOP described in the file
- *    LICENSE
- **************************/
-
 <template>
   <v-container>
     <!--SnackBar-->
     <v-snackbar
       v-model="snackbar"
-      :color="(this.errorUpdate)?'error':'success'"
+      :color="(errorUpdate)?'error':'success'"
       top
     >
-      {{ (this.errorUpdate)?this.textSnackError:this.textSnackOk }}
+      {{ errorUpdate ? textSnackError : textSnackOk }}
       <v-btn
         color="white"
         text
@@ -36,493 +15,600 @@
         <v-icon>mdi-close-circle-outline</v-icon>
       </v-btn>
     </v-snackbar>
-    <v-row
-      justify-center
-      text-center
+
+    <v-alert
+      v-if="savedCo2>0"
+      type="success"
+      outlined
     >
-      <v-col class="text-center">
-        <v-form
-          ref="form"
-          v-model="valid"
-          lazy-validation
-        >
-          <!--Upload Avatar-->
-          <v-row justify="center">
-            <v-col >
-              <v-avatar
-                color="lighten-3"
-                size="225px"
-              >
-                <img
-                  :src="urlAvatar"
-                  alt="avatar"
-                  id="avatar"
-                >
-              </v-avatar>
-            </v-col>
-          </v-row>
+      {{ $t('savedCo2',{savedCo2:savedCo2}) }} CO<sup>2</sup>
+    </v-alert>
 
-          <v-row justify="center">
-            <v-col cols="3"  xl="3"
-              sm="8" justify-self="center" align-self="center" v-if="!displayFileUpload">
-
-            <v-btn
-              :loading="loadingDelete"
-              color="warning"
-              class="ma-2 white--text pa-2 pr-3"
-              rounded
-              @click="avatarDelete"
-            >
-              {{ $t('avatar.delete.label') }}
-              <v-icon right dark>mdi-delete</v-icon>
-            </v-btn>
-
-
-            </v-col>
-
-            <v-col cols="5" class="text-center" justify-self="center" align-self="center" v-else>
-              <v-file-input
-                v-model="avatar"
-                :rules="avatarRules"
-                accept="image/png, image/jpeg, image/jpg, image/bmp"
-                :label="$t('avatar.label')"
-                prepend-icon="mdi-image"
-                :change="previewAvatar()"
-              />
-            </v-col>
-          </v-row>
-          <v-row class="text-left">
-            <v-col cols="6"><v-alert type="success">{{ $t('savedCo2',{savedCo2:savedCo2}) }} CO<sup>2</sup></v-alert></v-col>
-          </v-row>
-          <v-row class="text-left title font-weight-bold">
-            <v-col>{{ $t('titles.personnalInfos') }}</v-col>
-          </v-row>
-
-         
-          <!--Email-->
-          <v-row 
-            justify="start" 
+    <!-- Main form -->
+    <v-form
+      ref="form"
+      v-model="valid"
+      lazy-validation
+    >
+      <v-card
+        flat
+        color="grey lighten-4"
+        class="mb-8"
+      >
+        <v-card-title>
+          {{ $t('titles.personnalInfos') }}
+          <v-spacer />
+          <v-btn
+            color="primary"
+            class="mb-8"
+            rounded
+            @click="dialogPublicProfile = true"
           >
-            <v-col cols="9" md="6" sm="4">
+            {{ $t('publicProfile.see') }}
+          </v-btn>
+        </v-card-title>
+        <v-card-text>
+          <!-- Email -->
+          <v-row
+            no-gutters
+          >
+            <v-col 
+              :cols="email && emailVerified ? '12' : '6'"
+            >
+              <v-text-field
+                v-model="email"
+                :label="$t('email.label')"
+                type="email"
+                class="email"
+              >
+                <template v-slot:append>
+                  <v-tooltip 
+                    color="info" 
+                    top
+                  >
+                    <template v-slot:activator="{ on }">
+                      <v-icon 
+                        v-if="email && emailVerified" 
+                        color="success"  
+                        v-on="on"
+                      >
+                        mdi-check-circle-outline
+                      </v-icon>
+                      <v-icon 
+                        v-else-if="email && !emailVerified" 
+                        color="warning"  
+                        v-on="on"
+                      >
+                        mdi-alert-circle-outline
+                      </v-icon>
+                    </template>
+                    <span v-if="email && emailVerified">{{ $t('email.tooltips.verified') }}</span>
+                    <span v-else-if="email && !emailVerified">{{ $t('email.tooltips.notVerified') }}</span>
+                  </v-tooltip>
+                </template>
+              </v-text-field>
+            </v-col>
+            <v-col 
+              v-if="email && !emailVerified"
+              class="d-flex justify-center"
+              cols="6"
+            >
+              <v-btn 
+                rounded
+                color="secondary" 
+                :loading="loadingEmail" 
+                @click="sendValidationEmail"
+              >
+                {{ !emailSended ? $t('email.buttons.label.generateEmail') : $t('email.buttons.label.generateEmailAgain') }}
+              </v-btn>
+            </v-col>
+          </v-row>
+          <v-row
+            no-gutters
+            :align="phoneToken != null && telephone && !phoneVerified ? 'center' : null"
+          >
+            <!-- Telephone -->
+            <v-col 
+              :cols="telephone && phoneVerified ? '12' : '6'"
+            >
+              <v-row no-gutters>
+                <v-col>
                   <v-text-field
-                    v-model="email"
-                    :label="$t('email.label')"
-                    type="email"
-                    class="email"
-                   
+                    v-model="telephone"
+                    :label="$t('phone.label')"
+                    class="telephone"
+                    :rules="telephoneRules"
+                  >
+                    <template v-slot:append>
+                      <v-tooltip 
+                        color="info" 
+                        top
+                      >
+                        <template v-slot:activator="{ on }">
+                          <v-icon 
+                            v-if="telephone && phoneVerified" 
+                            color="success"  
+                            v-on="on"
+                          >
+                            mdi-check-circle-outline
+                          </v-icon>
+                          <v-icon 
+                            v-if="telephone && !phoneVerified" 
+                            color="warning"  
+                            v-on="on"
+                          >
+                            mdi-alert-circle-outline
+                          </v-icon>
+                        </template>
+                        <span v-if="telephone && phoneVerified">{{ $t('phone.tooltips.verified') }}</span>
+                        <span v-if="telephone && !phoneVerified">{{ $t('phone.tooltips.notVerified') }}</span>
+                      </v-tooltip>
+                    </template>
+                  </v-text-field>
+                </v-col>
+              </v-row>
+              <v-row 
+                v-if="phoneToken != null && telephone && !phoneVerified"
+                no-gutters
+              >
+                <v-col>
+                  <v-text-field
+                    v-model="token"
+                    :rules="tokenRules"
+                    :label="$t('phone.validation.label')"
                   />
-            </v-col>
-          <!-- email verified -->
-            <v-col cols="1" v-if="email && emailVerified == true" >
-              <v-tooltip 
-                color="info" 
-                top
-              >
-                <template v-slot:activator="{ on }">
-                  <v-icon 
-                    color="success" 
-                    v-on="on"  
-                    class="mt-7 ml-n12"
-                  >
-                    mdi-check-circle-outline
-                  </v-icon>
-                </template>
-                  <span> {{$t('email.tooltips.verified')}}</span>
-              </v-tooltip>
-            </v-col>
-          <!--email verification -->
-            <v-col cols="1"  v-if="emailVerified == false">
-              <v-tooltip 
-                color="info" 
-                top
-              >
-                <template 
-                  v-slot:activator="{ on }"
-                >
-                  <v-icon 
-                    color="warning" 
-                    v-on="on" 
-                    class="mt-7 ml-n12" 
-                  >
-                    mdi-alert-circle-outline
-                  </v-icon>
-                </template>
-                  <span>{{$t('email.tooltips.notVerified')}}</span>
-              </v-tooltip>
-            </v-col>
-            <v-col  v-if="emailVerified == false" align="start">
-              <v-btn 
-                rounded color="secondary" 
-                @click="sendValidationEmail" 
-                class="mt-4" 
-                :loading="loadingEmail"
-              >
-                {{ !emailSended ? $t('email.buttons.label.generateEmail') : $t('email.buttons.label.generateEmailAgain')}}
-              </v-btn>
-            </v-col>
-          </v-row>
-
-          <!--Telephone-->
-          <v-row 
-            justify="start" 
-          >
-            <v-col cols="9" md="6" sm="4">
-              <v-text-field
-                v-model="telephone"
-                :label="$t('phone.label')"
-                class="telephone"
-                :rules="telephoneRules"
-              />
-            </v-col>
-          <!-- phone number verified -->
-            <v-col cols="1" v-if="telephone && phoneVerified == true" >
-              <v-tooltip 
-                color="info" 
-                top
-              >
-                <template v-slot:activator="{ on }">
-                  <v-icon 
-                    color="success" 
-                    v-on="on"  
-                    class="mt-7 ml-n12"
-                  >
-                    mdi-check-circle-outline
-                  </v-icon>
-                </template>
-                  <span> {{$t('phone.tooltips.verified')}}</span>
-              </v-tooltip>
-            </v-col>
-          <!-- phone number verification -->
-            <v-col cols="1"  v-if="diplayVerification && telephone && phoneVerified == false">
-              <v-tooltip 
-                color="info" 
-                top
-              >
-                <template 
-                  v-slot:activator="{ on }"
-                >
-                  <v-icon 
-                    color="warning" 
-                    v-on="on" 
-                    class="mt-7 ml-n12" 
-                  >
-                    mdi-alert-circle-outline
-                  </v-icon>
-                </template>
-                  <span>{{$t('phone.tooltips.notVerified')}}</span>
-              </v-tooltip>
-            </v-col>
-            <v-col  v-if="diplayVerification && telephone && phoneVerified == false" align="start">
-              <v-btn 
-                rounded color="secondary" 
-                @click="generateToken" class="mt-4" 
-                :loading="loadingToken"
-              >
-                {{phoneToken == null ? $t('phone.buttons.label.generateToken') : $t('phone.buttons.label.generateNewToken')}}
-              </v-btn>
+                </v-col>
+              </v-row>
             </v-col>
             <v-col 
-             cols="9" md="6" sm="4"
-              v-if="phoneToken != null && telephone && phoneVerified == false"
-            >
-              <v-text-field
-                v-model="token"
-                :rules="tokenRules"
-                class="mt-2"
-                :label="$t('phone.validation.label')"
-                  />
-            </v-col>
-            <v-col cols="1"/>
-            <v-col 
-              class="justify-center" 
-              v-if="phoneToken != null && telephone && phoneVerified == false "
-              align="start"
+              v-if="telephone && displayPhoneVerification && !phoneVerified"
+              class="d-flex justify-center"
+              cols="6"
             >
               <v-btn 
                 rounded 
                 color="secondary" 
-                @click="validateToken" 
-                class="mt-4"
-                :loading="loadingValidatePhone"
+                :loading="loadingToken" 
+                @click="generateToken"
               >
-                {{$t('phone.buttons.label.validate')}}
+                {{ phoneToken == null ? $t('phone.buttons.label.generateToken') : $t('phone.buttons.label.generateNewToken') }}
               </v-btn>
             </v-col>
           </v-row>
 
-          <!-- Phone display preferences -->
-          <v-radio-group
-            :label="$t('phoneDisplay.label.general')"
-            v-model="phoneDisplay['value']"
-          >
-            <v-radio
-              color="secondary"
-              v-for="(phoneDisplay, index) in phoneDisplays"
-              :key="index"
-              :label="phoneDisplay.label"
-              :value="phoneDisplay.value"
+          <v-row no-gutters>
+            <!-- Phone display preferences -->
+            <v-radio-group
+              v-model="phoneDisplay['value']"
+              :label="$t('phoneDisplay.label.general')" 
             >
-            </v-radio>
-          </v-radio-group>
-
-          <!--GivenName-->
-          <v-text-field
-            v-model="givenName"
-            :label="$t('givenName.label')"
-            class="givenName"
-          />
-
-          <!--FamilyName-->
-          <v-text-field
-            v-model="familyName"
-            :label="$t('familyName.label')"
-            class="familyName"
-          />
-
-          <!--Gender-->
-          <v-select
-            v-model="gender"
-            :label="$t('gender.label')"
-            :items="genders"
-            item-text="gender"
-            item-value="value"
-          />
-
-          <v-menu
-            ref="menu"
-            v-model="menu"
-            :close-on-content-click="false"
-            transition="scale-transition"
-            offset-y
-            min-width="290px"
-          >
-            <template v-slot:activator="{ on }">
-              <v-text-field
-              :value ="computedBirthdateFormat"
-              :label="$t('birthDay.label')"
-              :rules="[ birthdayRules.checkIfAdult, birthdayRules.required ]"
-              readonly
-              v-on="on"
-              />
-            </template>
-            <v-date-picker
-              ref="picker"
-              v-model ="birthDay"
-              :max="maxDate()"
-              :locale="locale"
-              first-day-of-week="1"
-              @change="save"
-            />
-          </v-menu>
-
-          <!--NewsSubscription-->
-          <v-row>
-            <v-col>
-              <v-switch
-                v-model="newsSubscription"
-                :label="$t('news.label', {platform:platform})"
-                inset
+              <v-radio
+                v-for="(phDisplay, index) in phoneDisplays"
+                :key="index"
                 color="secondary"
-                @change="dialog = !newsSubscription"
+                :label="phDisplay.label"
+                :value="phDisplay.value"
+              />
+            </v-radio-group>
+            <!--NewsSubscription-->
+            <v-switch
+              v-model="newsSubscription"
+              :label="$t('news.label', {platform:platform})"
+              inset
+              color="secondary"
+              @change="dialog = !newsSubscription"
+            >
+              <v-tooltip
+                slot="append"
+                left
+                color="info"
+                :max-width="'35%'"
               >
-                <v-tooltip
-                  right
-                  slot="append"
-                  color="info"
-                  :max-width="'35%'"
+                <template v-slot:activator="{ on }">
+                  <v-icon
+                    justify="left"
+                    v-on="on"
+                  >
+                    mdi-help-circle-outline
+                  </v-icon>
+                </template>
+                <span>{{ $t('news.tooltip') }}</span>
+              </v-tooltip>
+            </v-switch>
+            <!--NewsSubscription Confirmation Popup-->
+            <v-dialog
+              v-model="dialog"
+              persistent
+              max-width="500"
+            >
+              <v-card>
+                <v-card-title class="text-h5">
+                  {{ $t('news.confirmation.title') }}
+                </v-card-title>
+                <v-card-text v-html="$t('news.confirmation.content')" />
+                <v-card-actions>
+                  <v-spacer />
+                  <v-btn
+                    color="primary darken-1"
+                    text
+                    @click="dialog=false; newsSubscription=true"
+                  >
+                    {{ $t('no') }}
+                  </v-btn>
+                  <v-btn
+                    color="secondary darken-1"
+                    text
+                    @click="dialog=false"
+                  >
+                    {{ $t('yes') }}
+                  </v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
+          </v-row>
+
+          <v-row
+            no-gutters
+            align="center"
+          >
+            <!-- Informations fields -->
+            <v-col cols="7">
+              <!--GivenName-->
+              <v-text-field
+                v-model="givenName"
+                :label="$t('givenName.label')"
+                class="givenName"
+              />
+              <!--FamilyName-->
+              <v-text-field
+                v-model="familyName"
+                :label="$t('familyName.label')"
+                class="familyName"
+              />
+              <!--Gender-->
+              <v-select
+                v-model="gender"
+                :label="$t('gender.label')"
+                :items="genders"
+                item-text="gender"
+                item-value="value"
+              />
+              <!-- Birthdate -->
+              <v-menu
+                ref="menu"
+                v-model="menu"
+                :close-on-content-click="false"
+                transition="scale-transition"
+                offset-y
+                min-width="290px"
+              >
+                <template v-slot:activator="{ on }">
+                  <v-text-field
+                    :value="computedBirthdateFormat"
+                    :label="$t('birthDay.label')"
+                    :rules="[ birthdayRules.checkIfAdult, birthdayRules.required ]"
+                    readonly
+                    v-on="on"
+                  />
+                </template>
+                <v-date-picker
+                  ref="picker"
+                  v-model="birthDay"
+                  :max="maxDate()"
+                  :locale="locale"
+                  first-day-of-week="1"
+                  @change="save"
+                />
+              </v-menu>
+            </v-col>
+            <!-- Avatar -->
+            <v-col cols="5">
+              <v-row
+                justify="center"
+                align="center"
+              >
+                <v-col
+                  align="center"
+                  class="d-flex justify-center"
                 >
-                  <template v-slot:activator="{ on }">
-                    <v-icon justify="left" v-on="on">
-                      mdi-help-circle-outline
+                  <v-avatar
+                    color="lighten-3"
+                    size="225px"
+                  >
+                    <img
+                      id="avatar"
+                      :src="urlAvatar"
+                      alt="avatar"
+                    >
+                  </v-avatar>
+                </v-col>
+              </v-row>
+              <v-row 
+                justify="center"
+              >
+                <v-col
+                  v-if="!displayFileUpload"
+                  class="d-flex justify-center"
+                >
+                  <v-btn
+                    :loading="loadingDelete"
+                    color="warning"
+                    class="ma-2 white--text pa-2 pr-3"
+                    rounded
+                    @click="avatarDelete"
+                  >
+                    {{ $t('avatar.delete.label') }}
+                    <v-icon
+                      right
+                      dark
+                    >
+                      mdi-delete
                     </v-icon>
-                  </template>
-                  <span>{{ $t('news.tooltip') }}</span>
-                </v-tooltip>
-              </v-switch>
+                  </v-btn>
+                </v-col>
+
+                <v-col
+                  v-else
+                  cols="10"
+                  class="d-flex justify-center"
+                >
+                  <v-file-input
+                    v-model="avatar"
+                    :rules="avatarRules"
+                    accept="image/png, image/jpeg, image/jpg, image/bmp"
+                    :label="$t('avatar.label')"
+                    prepend-icon="mdi-image"
+                    :change="previewAvatar()"
+                  />
+                </v-col>
+              </v-row>
             </v-col>
           </v-row>
 
-          <!--Confirmation Popup-->
-          <v-dialog v-model="dialog" persistent max-width="500">
-            <v-card>
-              <v-card-title class="text-h5">{{ $t('news.confirmation.title') }}</v-card-title>
-              <v-card-text v-html="$t('news.confirmation.content')"></v-card-text>
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn color="primary darken-1" text @click="dialog=false; newsSubscription=true">{{ $t('no') }}</v-btn>
-                <v-btn color="secondary darken-1" text @click="dialog=false">{{ $t('yes') }}</v-btn>
-              </v-card-actions>
-            </v-card>
-          </v-dialog>
+          <v-row justify="center">
+            <v-col
+              class="d-flex justify-center"
+            >
+              <!--Save Button-->
+              <v-dialog
+                v-model="dialogEmail"
+                persistent
+                max-width="450"
+              >
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn
+                    class="button saveButton"
+                    color="secondary"
+                    rounded
+                    :disabled="!valid"
+                    :loading="loading"
+                    type="button"
+                    :value="$t('save')"
+                    @click="update"
+                  >
+                    {{ $t('save') }}
+                  </v-btn>
+                </template>
+                <v-card>
+                  <v-card-title class="headline">
+                    {{ $t('dialogEmail.title') }}
+                  </v-card-title>
+                  <v-card-text v-html="$t('dialogEmail.content')" />
+                  <v-card-actions>
+                    <v-spacer />
+                    <v-btn
+                      color="error"
+                      text
+                      @click="cancel"
+                    >
+                      {{ $t('dialogEmail.buttons.cancelUpdate') }}
+                    </v-btn>
+                    <v-btn
+                      color="primary darken-1"
+                      text
+                      @click="validate"
+                    >
+                      {{ $t('dialogEmail.buttons.confirmUpdate') }}
+                    </v-btn>
+                  </v-card-actions>
+                </v-card>
+              </v-dialog>
+            </v-col>
+          </v-row>
+        </v-card-text>
+      </v-card>
+    </v-form>
 
-          <!--Save Button-->
-          <v-dialog
-            v-model="dialogEmail"
-            persistent
-            max-width="450"
-          >
-            <template v-slot:activator="{ on, attrs }">
-              <v-btn
-                class="button saveButton"
-                color="secondary"
-                rounded
-                :disabled="!valid"
-                :loading="loading"
-                type="button"
-                :value="$t('save')"
-                @click="update"
-              >
-                {{ $t('save') }}
-              </v-btn>
-          </template>
-          <v-card>
-            <v-card-title class="headline">
-              {{$t('dialogEmail.title')}}
-            </v-card-title>
-            <v-card-text v-html="$t('dialogEmail.content')"></v-card-text>
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn
-                color="error"
-                text
-                @click="cancel"
-              >
-               {{$t('dialogEmail.buttons.cancelUpdate')}}
-              </v-btn>
-              <v-btn
-                color="primary darken-1"
-                text
-                @click="validate"
-              >
-                 {{$t('dialogEmail.buttons.confirmUpdate')}}
-              </v-btn>
-            </v-card-actions>
-            </v-card>
-          </v-dialog>
-        </v-form>
-      </v-col>
-    </v-row>
-    <v-row class="justify-center">
-      <v-col cols="12"
- >
-        <!--GeoComplete-->
-        <GeoComplete
-          :url="geoSearchUrl"
-          :label="$t('homeTown.label')"
-          :token="user ? user.token : ''"
-          :init-address="homeAddress"
-          :display-name-in-selected="false"
-          @address-selected="homeAddressSelected"
-        />
-      </v-col>
-      <v-col 
-        cols="3" 
-        align="center"
-      >
-        <v-btn 
-          rounded 
-          color='secondary' 
-          class="mt-4" 
-          :disabled='disabledAddress' 
-          :loading='loadingAddress' 
-          type="button"
-          @click='updateAddress'
+    <!-- Address form -->
+    <v-card
+      flat
+      color="grey lighten-4"
+      class="mb-8"
+    >
+      <v-card-title>
+        {{ $t('homeTown.label') }}
+      </v-card-title>
+      <v-card-text>
+        <v-row no-gutters>
+          <v-col>
+            <!--GeoComplete-->
+            <GeoComplete
+              :url="geoSearchUrl"
+              :label="$t('homeTown.label')"
+              :token="user ? user.token : ''"
+              :init-address="homeAddress"
+              :display-name-in-selected="false"
+              @address-selected="homeAddressSelected"
+            />
+          </v-col>
+        </v-row>
+        <v-row 
+          no-gutters
+          justify="center"
         >
-          {{$t('address.update.label')}}
-        </v-btn>
-      </v-col>
-    </v-row>
-    <v-row class="text-left title font-weight-bold">
-      <v-col>{{ $t('titles.password') }}</v-col>
-    </v-row>
-    <v-row>
-      <ChangePassword />
-    </v-row>
-    <!-- Delete account -->
-    <v-row class="text-left title font-weight-bold">
-      <v-col>{{ $t('titles.deleteAccount') }}</v-col>
-    </v-row>
+          <v-col class="d-flex justify-center">
+            <v-btn 
+              rounded 
+              color="secondary" 
+              class="mt-4" 
+              :disabled="disabledAddress" 
+              :loading="loadingAddress" 
+              type="button"
+              @click="updateAddress"
+            >
+              {{ $t('address.update.label') }}
+            </v-btn>
+          </v-col>
+        </v-row>
+      </v-card-text>
+    </v-card>
 
-    <v-row>
 
-      <v-container>
-        <v-col class="text-center">
-      <v-dialog
+    <!-- Password form -->
+    <v-card
+      flat
+      color="grey lighten-4"
+      class="mb-8"
+    >
+      <v-card-title>
+        {{ $t('titles.password') }}
+      </v-card-title>
+      <v-card-text>
+        <ChangePassword />
+      </v-card-text>
+    </v-card>
+
+    <!-- Delete form -->
+    <v-card
+      flat
+      color="grey lighten-4"
+      class="mb-8"
+    >
+      <v-card-title>
+        {{ $t('buttons.supprimerAccount') }}
+      </v-card-title>
+      <v-card-text>
+        <v-row justify="center">
+          <v-col class="d-flex justify-center">
+            <v-dialog
               v-model="dialogDelete"
               width="500"
-      >
-        <template v-slot:activator="{ on }" >
-          <!--Delete button -->
-          <v-btn
+            >
+              <template v-slot:activator="{ on }">
+                <!--Delete button -->
+                <v-btn
                   class="button"
-                  v-on="on"
                   color="error"
                   rounded
                   :disabled="!valid || disabledCreatedEvents || disabledOwnedCommunities"
                   :loading="loading"
                   type="button"
                   :value="$t('save')"
-          >
-            {{ $t('buttons.supprimerAccount') }}
-          </v-btn>
-        </template>
+                  v-on="on"
+                >
+                  {{ $t('buttons.supprimerAccount') }}
+                </v-btn>
+              </template>
 
-        <v-card>
-          <v-card-title
+              <v-card>
+                <v-card-title
                   v-if="hasCreatedEvents || hasOwnedCommunities"
                   class="text-h5 error--text"
                   primary-title
-          >
-            {{ $t('dialog.titles.deletionImpossible') }}
-          </v-card-title>
-          <v-card-title
+                >
+                  {{ $t('dialog.titles.deletionImpossible') }}
+                </v-card-title>
+                <v-card-title
                   v-else
                   class="text-h5"
                   primary-title
+                >
+                  {{ $t('dialog.titles.deleteAccount') }}
+                </v-card-title>
+
+                <v-card-text>
+                  <p
+                    v-if="hasOwnedCommunities"
+                    v-html="$t('dialog.content.errorCommunities')"
+                  />
+                  <p
+                    v-else-if="hasCreatedEvents"
+                    v-html="$t('dialog.content.errorEvents')"
+                  />
+                  <p
+                    v-else
+                    v-html="$t('dialog.content.deleteAccount')"
+                  />
+                </v-card-text>
+
+                <v-divider />
+                <v-card-actions v-if="hasCreatedEvents || hasOwnedCommunities">
+                  <v-spacer />
+                  <v-btn
+                    color="primary darken-1"
+                    text
+                    @click="dialogDelete = false; newsSubscription = true"
+                  >
+                    {{ $t('dialog.buttons.close') }}
+                  </v-btn>
+                </v-card-actions>
+                <v-card-actions v-else>
+                  <v-spacer />
+                  <v-btn
+                    color="primary darken-1"
+                    text
+                    @click="dialogDelete = false; newsSubscription = true"
+                  >
+                    {{ $t('no') }}
+                  </v-btn>
+                  <v-btn
+                    color="primary"
+                    text
+                    :href="$t('route.supprimer')"
+                    @click="dialogDelete = false"
+                  >
+                    {{ $t('dialog.buttons.confirmDelete') }}
+                  </v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
+          </v-col>
+        </v-row>
+      </v-card-text>
+    </v-card>
+
+    <!-- PUBLIC PROFILE DIALOG -->
+    <v-dialog
+      v-model="dialogPublicProfile"
+      width="100%"
+    >
+      <v-card>
+        <v-card-title class="headline grey lighten-2">
+          {{ $t('publicProfile.title') }}
+        </v-card-title>
+
+        <v-card-text>
+          <PublicProfile
+            :user="user"
+            :show-report-button="false"
+            :age-display="ageDisplay"
+          />
+        </v-card-text>
+
+        <v-divider />
+
+        <v-card-actions>
+          <v-spacer />
+          <v-btn
+            color="primary"
+            text
+            @click="dialogPublicProfile = false"
           >
-            {{ $t('dialog.titles.deleteAccount') }}
-          </v-card-title>
-
-          <v-card-text>
-            <p v-if="hasOwnedCommunities" v-html="$t('dialog.content.errorCommunities')"></p>
-            <p v-else-if="hasCreatedEvents" v-html="$t('dialog.content.errorEvents')"></p>
-            <p v-else v-html="$t('dialog.content.deleteAccount')"></p>
-          </v-card-text>
-
-          <v-divider></v-divider>
-          <v-card-actions v-if="hasCreatedEvents || hasOwnedCommunities">
-            <v-spacer></v-spacer>
-            <v-btn
-              color="primary darken-1"
-              text
-              @click="dialogDelete = false; newsSubscription = true"
-            >
-              {{ $t('dialog.buttons.close') }}
-            </v-btn>
-          </v-card-actions>
-          <v-card-actions v-else>
-            <v-spacer></v-spacer>
-            <v-btn
-              color="primary darken-1"
-              text
-              @click="dialogDelete = false; newsSubscription = true"
-            >
-              {{ $t('no') }}
-            </v-btn>
-            <v-btn
-              color="primary"
-              text
-              :href="$t('route.supprimer')"
-              @click="dialogDelete = false"
-            >
-              {{ $t('dialog.buttons.confirmDelete') }}
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
-        </v-col>
-      </v-container>
-    </v-row>
+            {{ $t('publicProfile.close') }}
+          </v-btn>
+        </v-card-actions>
+      </v-card>      
+    </v-dialog>    
   </v-container>
 </template>
 
@@ -531,6 +617,7 @@ import maxios from "@utils/maxios";
 import moment from "moment";
 import GeoComplete from "@js/components/utilities/GeoComplete";
 import ChangePassword from "@components/user/profile/ChangePassword";
+import PublicProfile from "@components/user/profile/PublicProfile";
 import { merge } from "lodash";
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/profile/UpdateProfile/";
 import {messages_client_en, messages_client_fr, messages_client_eu, messages_client_nl} from "@clientTranslations/components/user/profile/UpdateProfile/";
@@ -550,6 +637,7 @@ export default {
     },
   },
   components: {
+    PublicProfile,
     GeoComplete,
     ChangePassword
   },
@@ -574,6 +662,10 @@ export default {
       type: String,
       default: null
     },
+    ageDisplay: {
+      type: Boolean,
+      default: true
+    },
     platform: {
       type: String,
       default: ""
@@ -583,6 +675,7 @@ export default {
     return {
       dialog: false,
       dialogDelete: false,
+      dialogPublicProfile: false,
       snackbar: false,
       textSnackOk: this.$t('snackBar.profileUpdated'),
       textSnackError: this.$t("snackBar.passwordUpdateError"),
@@ -620,10 +713,10 @@ export default {
         v => !v || v.size < this.avatarSize || this.$t("avatar.size")+" (Max "+(this.avatarSize/1000000)+"MB)"
       ],
       tokenRules: [
-         v => (/^\d{4}$/).test(v) || this.$t("phone.token.inputError")
+        v => (/^\d{4}$/).test(v) || this.$t("phone.token.inputError")
       ],
       telephoneRules: [
-          v => (/^((\+)33|0)[1-9](\d{2}){4}$/).test(v) || this.$t("phone.errors.valid")
+        v => (/^((\+)33|0)[1-9](\d{2}){4}$/).test(v) || this.$t("phone.errors.valid")
       ],
       birthdayRules : {
         required:  v => !!v || this.$t("birthDay.errors.required"),
@@ -645,7 +738,7 @@ export default {
       emailVerified: false,
       emailSended: false,
       loadingEmail: false,
-      diplayVerification: this.user.telephone ? true : false,
+      displayPhoneVerification: this.user.telephone ? true : false,
       loadingToken: false,
       loadingValidatePhone: false,
       disabledAddress: true,
@@ -656,25 +749,11 @@ export default {
       hasOwnedCommunities: false,
       disabledOwnedCommunities: false,
       disabledCreatedEvents: false,
-      locale: localStorage.getItem("X-LOCALE"),
+      locale: null,
       emailChanged: false,
       dialogEmail: false
-
-
     };
   },
-   watch: {
-    menu (val) {
-      val && setTimeout(() => (this.$refs.picker.activePicker = 'YEAR'))
-    },
-    telephone (val) {
-      this.phoneToken = null;
-      this.diplayVerification = false;
-    }, 
-    email (val) {
-      this.emailChanged = true;
-    }
-   },
   computed : {
     years () {
       const currentYear = new Date().getFullYear();
@@ -683,7 +762,7 @@ export default {
       return Array.from({length: ageMax - ageMin}, (value, index) => (currentYear - ageMin) - index)
     },
     computedBirthdateFormat () {
-       if (this.birthDay) {
+      if (this.birthDay) {
         return moment.utc(this.birthDay).format("YYYY-MM-DD");
       }
       return null;
@@ -692,7 +771,21 @@ export default {
       return Number.parseFloat(this.user.savedCo2  / 1000000 ).toPrecision(1);
     }
   },
+  watch: {
+    menu (val) {
+      val && setTimeout(() => (this.$refs.picker.activePicker = 'YEAR'))
+    },
+    telephone (val) {
+      this.phoneToken = null;
+      this.displayPhoneVerification = false;
+    }, 
+    email (val) {
+      this.emailChanged = true;
+    }
+  },
   mounted() {
+    this.locale = localStorage.getItem("X-LOCALE");
+    moment.locale(this.locale);
     this.checkVerifiedPhone();
     this.checkVerifiedEmail();
     this.getOwnedCommunities();
@@ -750,7 +843,7 @@ export default {
           if (this.user.telephone != this.telephone) {
             this.phoneValidatedDate = null;
             this.phoneToken = null;
-            this.diplayVerification = true;
+            this.displayPhoneVerification = true;
             this.checkVerifiedPhone();
             this.checkVerifiedEmail();
           }
@@ -759,7 +852,7 @@ export default {
         })
         .catch(error => {
           window.location.reload();
-      });
+        });
     },
     updateAddress () {
       this.loadingAddress = true;
@@ -811,10 +904,10 @@ export default {
       }
     },
     generateToken() {
-    this.loadingToken = true;   
-    maxios 
-      .get(this.$t('phone.token.route'))
-      .then(res => {
+      this.loadingToken = true;   
+      maxios 
+        .get(this.$t('phone.token.route'))
+        .then(res => {
           if (res.data.state) {
             this.errorUpdate = true;
             this.textSnackError = this.$t('snackBar.tokenError');
@@ -828,10 +921,10 @@ export default {
         })
     },
     sendValidationEmail() {
-    this.loadingEmail = true;   
-    maxios 
-      .get(this.$t('email.verificationRoute'))
-      .then(res => {
+      this.loadingEmail = true;   
+      maxios 
+        .get(this.$t('email.verificationRoute'))
+        .then(res => {
           if (res.data.state) {
             this.errorUpdate = true;
             this.textSnackError = this.$t('snackBar.emailError');
@@ -847,14 +940,14 @@ export default {
       this.loadingValidatePhone = true; 
       maxios
         .post(this.$t('phone.validation.route'),
-        {
-          token: this.token,
-          telephone: this.telephone
-        },{
-          headers:{
-            'content-type': 'application/json'
-          }
-        })
+          {
+            token: this.token,
+            telephone: this.telephone
+          },{
+            headers:{
+              'content-type': 'application/json'
+            }
+          })
         .then(res => {
           if(!res.data){
             this.errorUpdate = true;
@@ -865,7 +958,7 @@ export default {
             this.errorUpdate = false;
             this.textSnackOk = this.$t("snackBar.phoneValidated");
             this.snackbar = true;
-             this.phoneVerified = true;
+            this.phoneVerified = true;
           }
           this.loadingValidatePhone = false;
         })
@@ -894,11 +987,11 @@ export default {
         .then(res => {
           if (res.data.length > 0) {
             this.createdEvents = res.data;
-             this.createdEvents.forEach(createdEvent => {
-               if (moment(createdEvent.toDate.date) >= moment(new Date())) {
-                 this.hasCreatedEvents = true;
-               }
-             });
+            this.createdEvents.forEach(createdEvent => {
+              if (moment(createdEvent.toDate.date) >= moment(new Date())) {
+                this.hasCreatedEvents = true;
+              }
+            });
           }
           this.disabledCreatedEvents = false;
         });
