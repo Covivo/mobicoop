@@ -59,7 +59,7 @@ use App\Payment\Exception\PaymentException;
 use App\Solidary\Repository\SubjectRepository;
 use App\User\Entity\User;
 use App\User\Repository\UserRepository;
-use App\User\Exception\BadRequestInteroperabilityUserException;
+use App\User\Exception\UserAlreadyExistsException;
 use DateTime;
 
 /**
@@ -198,7 +198,7 @@ class AdManager
         } else {
             // we check if the user past exist if not we create it
             if ($this->userRepository->findOneBy(['email'=>$ad->getUser()->getEmail()])) {
-                throw new BadRequestInteroperabilityUserException(BadRequestInteroperabilityUserException::USER_ALREADY_EXISTS);
+                throw new UserAlreadyExistsException(UserAlreadyExistsException::USER_ALREADY_EXISTS);
             } else {
                 $user = new User();
                 $user->setEmail($ad->getUser()->getEmail());
