@@ -184,8 +184,8 @@ header3Data: senderName
 header3Name: X-JEMH- Solaskidearen izen-deiturak
 header2Data: senderEmail
 header2Name: X-JEMH- Solaskidearen helbide elektronikoa
-yourValidationToken: Zure baieztapen kodea
-updatedSefl: Zure perfilaren aldaketa
+yourValidationToken: Zure egiaztatze kodea
+updatedSefl: Zure profilaren aldaketa
 errors:
   alreadyUsed: Helbide elektroniko hau jadanik erabilia da
   wrongDomains: 'Zure helbide elektronikoa ondoko domeinu batekoa izan behar da: {domains}'
@@ -194,7 +194,7 @@ passwordChanged: Zure pasahitza berrabiarazia izan da
 newPassword: ZURE PASAHITZ BERRIA ERREGISTRATUA IZAN DA!
 renewPassword: PASAHITZA BERRABIARAZTEKO ESKAERA.
 askPassword: Pasahitza berrabiarazteko eskaera
-contactYou: '{givenName} -(e) zurekin harremanetan jarri nahi du'
+contactYou: '{givenName} -(e) zurekin harremanetan jarri da'
 findNewCarpool: 'Autokidetza berri batzuk aurki itzazu edo iragarki bat pausa ezazu
   ondoko lekuan '
 passengerAskLinkedAdDeletedUrgent: Urgentea- Bidaiari gisa agertzen zinen iragarki
