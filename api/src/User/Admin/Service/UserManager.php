@@ -26,17 +26,19 @@ namespace App\User\Admin\Service;
 use App\Auth\Entity\AuthItem;
 use App\Auth\Entity\UserAuthAssignment;
 use App\Auth\Repository\AuthItemRepository;
-use App\Carpool\Repository\ProposalRepository;
 use App\User\Entity\User;
 use App\Geography\Entity\Address;
 use App\Geography\Repository\TerritoryRepository;
 use App\User\Event\UserDelegateRegisteredEvent;
 use App\User\Event\UserDelegateRegisteredPasswordSendEvent;
+use App\User\Repository\UserRepository;
 use App\User\Service\UserManager as ServiceUserManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Core\Security;
+use App\Event\Entity\Event;
+use App\Community\Entity\Community;
 
 /**
  * User manager service for administration.
@@ -52,6 +54,7 @@ class UserManager
     private $eventDispatcher;
     private $security;
     private $userManager;
+    private $userRepository;
     private $chat;
     private $music;
     private $smoke;
@@ -69,6 +72,7 @@ class UserManager
         EventDispatcherInterface $dispatcher,
         Security $security,
         ServiceUserManager $userManager,
+        UserRepository $userRepository,
         $chat,
         $smoke,
         $music
@@ -80,9 +84,49 @@ class UserManager
         $this->eventDispatcher = $dispatcher;
         $this->security = $security;
         $this->userManager = $userManager;
+        $this->userRepository = $userRepository;
         $this->chat = $chat;
         $this->music = $music;
         $this->smoke = $smoke;
+    }
+
+    /**
+     * Get a user by its id
+     *
+     * @param integer $id   The user id
+     * @return User|null    The user if found
+     */
+    public function getUser(int $id)
+    {
+        $user = $this->userRepository->find($id);
+        $user->initOwnership(); // construct of User not called
+        
+        // check if the user is not the author of an event that is still valid
+        $events = [];
+        foreach ($user->getEvents() as $event) {
+            /**
+             * @var Event $event
+             */
+            if ($event->getToDate() >= new \DateTime()) {
+                $events[] = $event->getId() . " - " . $event->getName();
+            }
+        }
+        if (count($events)>0) {
+            $user->addOwnership(['events'=>$events]);
+        }
+
+        $communities = [];
+        foreach ($user->getCommunities() as $community) {
+            /**
+             * @var Community $community
+             */
+            $communities[] = $community->getId() . " - " . $community->getName();
+        }
+        if (count($communities)>0) {
+            $user->addOwnership(['communities'=>$communities]);
+        }
+
+        return $user;
     }
 
     /**
@@ -390,6 +434,19 @@ class UserManager
     }
 
     /**
+     * Delete a user
+     *
+     * @param User $user  The user to delete
+     * @return void
+     */
+    public function deleteUser(User $user)
+    {
+        $this->userManager->deleteUser($user);
+
+        return $user;
+    }
+
+    /*
      * Generate a sub email address
      *
      * @param string $email     The base email
