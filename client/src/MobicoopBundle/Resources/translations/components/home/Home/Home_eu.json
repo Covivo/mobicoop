@@ -24,6 +24,7 @@
     "profileLink": "/utilisateur/profil/modifier/mon-profil",
     "snackbar2": ", zure autokideak lasaitzeko eta zure alertak SMS bidez ere errezibitzeko.",
     "snackbar1": "Zure telefono zenbakia eman duzu. Egiaztaraz ezazu, egiaztatze kode bat orritik igorriz",
+    "snackbar3" : "Merci de confirmer votre adresse email en cliquant sur le lien reçu par email",
     "subtitle": "Hurbileko autokidetza zerbitzu bat, lagun artekoa eta elkartasunezkoa.<br />Zure autokideza gaurdanik atzeman ezazu edo zure bidaia proposa ezazu.",
     "title": "Autokidetza librea, </br> komisiorik gabe eta kooperatiboa"
 }
