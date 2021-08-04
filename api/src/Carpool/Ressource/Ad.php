@@ -407,7 +407,7 @@ class Ad
     /**
      * @var User|null The ad owner. Null for an anonymous search.
      *
-     * @Groups({"readCommunity","readEvent"})
+     * @Groups({"readCommunity","readEvent","write"})
      */
     private $user;
     
@@ -577,6 +577,13 @@ class Ad
      * @Groups({"read","write"})
      */
     private $marginDuration;
+
+    /**
+     * @var int|null The margin of the return of the ad
+     *
+     * @Groups({"read","write"})
+     */
+    private $returnMarginDuration;
 
     /**
      * @var \DateTimeInterface Creation date of the Ad.
@@ -1316,6 +1323,18 @@ class Ad
     public function setMarginDuration(?int $marginDuration): self
     {
         $this->marginDuration = $marginDuration;
+
+        return $this;
+    }
+
+    public function getReturnMarginDuration(): ?int
+    {
+        return $this->returnMarginDuration;
+    }
+
+    public function setReturnMarginDuration(?int $returnMarginDuration): self
+    {
+        $this->returnMarginDuration = $returnMarginDuration;
 
         return $this;
     }

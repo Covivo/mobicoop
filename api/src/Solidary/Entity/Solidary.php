@@ -74,14 +74,6 @@ use DateTime;
  *                  "tags"={"Solidary"}
  *              }
  *          },
- *          "postUl"={
- *              "method"="POST",
- *              "path"="/solidaries/postUl",
- *              "security_post_denormalize"="is_granted('solidary_create',object)",
- *              "swagger_context" = {
- *                  "tags"={"Solidary"}
- *              }
- *          },
  *          "ADMIN_get"={
  *              "path"="/admin/solidaries",
  *              "method"="GET",

@@ -1448,7 +1448,7 @@ class User implements UserInterface, EquatableInterface
 
     /**
      * @var Address The user home address
-     * @Groups({"aRead","aWrite"})
+     * @Groups({"aRead","aWrite","write"})
      */
     private $homeAddress;
 
