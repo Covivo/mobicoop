@@ -165,12 +165,18 @@ class ImageManager
         } elseif (!is_null($image->getCampaignId())) {
             // the image is an image for a campaign
             return $this->campaignRepository->find($image->getCampaignId());
-        } elseif (!is_null($image->getBadge())) {
+        } elseif (!is_null($image->getBadgeIcon())) {
             // the icon is an image for a badge
-            return $this->badgeRepository->find($image->getBadge()->getId());
-        } elseif (!is_null($image->getBadgeId())) {
+            return $this->badgeRepository->find($image->getBadgeIcon()->getId());
+        } elseif (!is_null($image->getBadgeIconId())) {
             // the icon is an image for a badge
-            return $this->badgeRepository->find($image->getBadgeId());
+            return $this->badgeRepository->find($image->getBadgeIconId());
+        } elseif (!is_null($image->getBadgeDecoratedIcon())) {
+            // the icon is an image for a badge
+            return $this->badgeRepository->find($image->getBadgeDecoratedIcon()->getId());
+        } elseif (!is_null($image->getBadgeDecoratedIconId())) {
+            // the icon is an image for a badge
+            return $this->badgeRepository->find($image->getBadgeDecoratedIconId());
         } elseif (!is_null($image->getBadgeImage())) {
             // the image is an image for a badge
             return $this->badgeRepository->find($image->getBadgeImage()->getId());

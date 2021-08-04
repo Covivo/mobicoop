@@ -193,6 +193,7 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
             "text" => $reward->getBadge()->getText(),
             "pictures" => [
                 "icon" => (!is_null($reward->getBadge()->getIcon())) ? $this->badgeImageUri.$reward->getBadge()->getIcon()->getFileName() : null,
+                "decoratedIcon" => (!is_null($reward->getBadge()->getDecoratedIcon())) ? $this->badgeImageUri.$reward->getBadge()->getDecoratedIcon()->getFileName() : null,
                 "image" => (!is_null($reward->getBadge()->getImage())) ? $this->badgeImageUri.$reward->getBadge()->getImage()->getFileName() : null,
                 "imageLight" => (!is_null($reward->getBadge()->getImageLight())) ? $this->badgeImageUri.$reward->getBadge()->getImageLight()->getFileName() : null
             ]
