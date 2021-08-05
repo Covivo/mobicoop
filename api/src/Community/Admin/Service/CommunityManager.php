@@ -39,6 +39,7 @@ use App\User\Repository\UserRepository;
 use App\Community\Event\CommunityMembershipRefusedEvent;
 use App\Community\Event\CommunityMembershipAcceptedEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use App\Community\Event\CommunityCreatedEvent;
 
 /**
  * Community manager for admin context.
@@ -141,6 +142,10 @@ class CommunityManager
             $this->entityManager->persist($address);
             $this->entityManager->flush();
         }
+
+        //  we dispatch the event associated
+        $event = new CommunityCreatedEvent($community);
+        $this->eventDispatcher->dispatch($event, CommunityCreatedEvent::NAME);
 
         return $community;
     }
