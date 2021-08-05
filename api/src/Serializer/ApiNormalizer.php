@@ -22,6 +22,8 @@
 
 namespace App\Serializer;
 
+use App\Carpool\Repository\ProposalRepository;
+use App\Carpool\Ressource\Ad;
 use App\Gamification\Entity\GamificationNotifier;
 use App\Gamification\Entity\Reward;
 use App\Gamification\Entity\RewardStep;
@@ -41,6 +43,7 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
     private $gamificationNotifier;
     private $rewardStepRepository;
     private $rewardRepository;
+    private $proposalRepository;
     private $security;
     private $entityManager;
     private $badgeImageUri;
@@ -50,6 +53,7 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
         GamificationNotifier $gamificationNotifier,
         RewardStepRepository $rewardStepRepository,
         RewardRepository $rewardRepository,
+        ProposalRepository $proposalRepository,
         Security $security,
         EntityManagerInterface $entityManager,
         string $badgeImageUri
@@ -62,6 +66,7 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
         $this->gamificationNotifier = $gamificationNotifier;
         $this->rewardStepRepository = $rewardStepRepository;
         $this->rewardRepository = $rewardRepository;
+        $this->proposalRepository = $proposalRepository;
         $this->security = $security;
         $this->entityManager = $entityManager;
         $this->badgeImageUri = $badgeImageUri;
@@ -75,6 +80,22 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
     public function normalize($object, $format = null, array $context = [])
     {
         $data = $this->decorated->normalize($object, $format, $context);
+
+        // add adType to User in admin
+        if (isset($context['collection_operation_name']) && $context['collection_operation_name'] === 'ADMIN_get' && $object instanceof User) {
+            $nbDriver = $this->proposalRepository->getNbActiveAdsForUserAndRole($data['id'], Ad::ROLE_DRIVER);
+            $nbPassenger = $this->proposalRepository->getNbActiveAdsForUserAndRole($data['id'], Ad::ROLE_PASSENGER);
+            if ($nbDriver>0 && $nbPassenger>0) {
+                $data['adType'] = User::AD_DRIVER_PASSENGER;
+            } elseif ($nbDriver>0) {
+                $data['adType'] = User::AD_DRIVER;
+            } elseif ($nbPassenger>0) {
+                $data['adType'] = User::AD_PASSENGER;
+            } else {
+                $data['adType'] = User::AD_NONE;
+            }
+            return $data;
+        }
         
         // We check if there is some gamificationNotifications entities in waiting for the current User
 
