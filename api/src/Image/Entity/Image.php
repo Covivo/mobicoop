@@ -359,19 +359,38 @@ class Image
      *
      * @ORM\OneToOne(targetEntity="\App\Gamification\Entity\Badge", inversedBy="icon", cascade={"persist","remove"}, orphanRemoval=true)
      */
-    private $badge;
+    private $badgeIcon;
 
     /**
      * @var int|null The badge id associated with the image (icon).
      * @Groups({"write","read"})
      */
-    private $badgeId;
+    private $badgeIconId;
 
     /**
      * @var File|null
      * @Vich\UploadableField(mapping="badge", fileNameProperty="fileName", originalName="originalName", size="size", mimeType="mimeType", dimensions="dimensions")
      */
-    private $badgeFile;
+    private $badgeIconFile;
+
+    /**
+     * @var Badge|null The Badge for which this image is used as icon
+     *
+     * @ORM\OneToOne(targetEntity="\App\Gamification\Entity\Badge", inversedBy="decoratedIcon", cascade={"persist","remove"}, orphanRemoval=true)
+     */
+    private $badgeDecoratedIcon;
+
+    /**
+     * @var int|null The badge id associated with the image (decorated icon).
+     * @Groups({"write","read"})
+     */
+    private $badgeDecoratedIconId;
+
+    /**
+     * @var File|null
+     * @Vich\UploadableField(mapping="badge", fileNameProperty="fileName", originalName="originalName", size="size", mimeType="mimeType", dimensions="dimensions")
+     */
+    private $badgeDecoratedIconFile;
 
     /**
      * @var Badge|null The Badge for which this image is used as reward image
@@ -833,38 +852,72 @@ class Image
         return $this;
     }
 
-    public function getBadgeId(): ?int
+    public function getBadgeIconId(): ?int
     {
-        return $this->badgeId;
+        return $this->badgeIconId;
     }
     
-    public function setBadgeId(?int $badgeId): self
+    public function setBadgeIconId(?int $badgeIconId): self
     {
-        $this->badgeId = $badgeId;
+        $this->badgeIconId = $badgeIconId;
         
         return $this;
     }
     
-    public function getBadge(): ?Badge
+    public function getBadgeIcon(): ?Badge
     {
-        return $this->badge;
+        return $this->badgeIcon;
     }
     
-    public function setBadge(?Badge $badge): self
+    public function setBadgeIcon(?Badge $badgeIcon): self
     {
-        $this->badge = $badge;
+        $this->badgeIcon = $badgeIcon;
         
         return $this;
     }
 
-    public function getBadgeFile(): ?File
+    public function getBadgeIconFile(): ?File
     {
-        return $this->badgeFile;
+        return $this->badgeIconFile;
     }
     
-    public function setBadgeFile(?File $badgeFile)
+    public function setBadgeIconFile(?File $badgeIconFile)
     {
-        $this->badgeFile = $badgeFile;
+        $this->badgeIconFile = $badgeIconFile;
+    }
+
+    public function getBadgeDecoratedIconId(): ?int
+    {
+        return $this->badgeDecoratedIconId;
+    }
+    
+    public function setBadgeDecoratedIconId(?int $badgeDecoratedIconId): self
+    {
+        $this->badgeDecoratedIconId = $badgeDecoratedIconId;
+        
+        return $this;
+    }
+    
+    public function getBadgeDecoratedIcon(): ?Badge
+    {
+        return $this->badgeDecoratedIcon;
+    }
+    
+    public function setBadgeDecoratedIcon(?Badge $badgeDecoratedIcon): self
+    {
+        $this->badgeDecoratedIcon = $badgeDecoratedIcon;
+        
+        return $this;
+    }
+
+    public function getBadgeDecoratedIconFile(): ?File
+    {
+        return $this->badgeDecoratedIconFile;
+    }
+    
+    public function setBadgeDecoratedIconFile(?File $badgeDecoratedIconFile)
+    {
+        $this->badgeDecoratedIconFile = $badgeDecoratedIconFile;
     }
 
     public function getBadgeImageId(): ?int
@@ -1063,7 +1116,8 @@ class Image
         $this->setRelayPointFile(null);
         $this->setRelayPointTypeFile(null);
         $this->setCampaignFile(null);
-        $this->setBadgeFile(null);
+        $this->setBadgeIconFile(null);
+        $this->setBadgeDecoratedIconFile(null);
         $this->setBadgeImageFile(null);
         $this->setBadgeImageLightFile(null);
         $this->setEditorialFile(null);

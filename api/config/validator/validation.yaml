@@ -55,7 +55,25 @@ App\Image\Entity\Image:
                 maxWidth: 10000
                 minHeight: 200
                 maxHeight: 10000     
-        badgeFile:
+        badgeIconFile:
+            - File:
+                maxSize: 4M
+                mimeTypes: [image/png, image/jpeg, image/svg]
+            - Image:
+                minWidth: 180
+                maxWidth: 10000
+                minHeight: 180
+                maxHeight: 10000
+        badgeDecoratedIconFile:
+            - File:
+                maxSize: 4M
+                mimeTypes: [image/png, image/jpeg, image/svg]
+            - Image:
+                minWidth: 180
+                maxWidth: 10000
+                minHeight: 180
+                maxHeight: 10000
+        badgeImageFile:
             - File:
                 maxSize: 4M
                 mimeTypes: [image/png, image/jpeg, image/gif]
@@ -64,6 +82,15 @@ App\Image\Entity\Image:
                 maxWidth: 10000
                 minHeight: 200
                 maxHeight: 10000
+        badgeImageLightFile:
+            - File:
+                maxSize: 4M
+                mimeTypes: [image/png, image/jpeg]
+            - Image:
+                minWidth: 200
+                maxWidth: 10000
+                minHeight: 200
+                maxHeight: 10000                        
 # mass matching
 App\Match\Entity\Mass:
     properties:

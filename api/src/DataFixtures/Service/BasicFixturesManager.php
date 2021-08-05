@@ -651,7 +651,7 @@ class BasicFixturesManager
         }
         if ($tab[7] !== '') {
             if ($owner = $this->badgeRepository->find($tab[7])) {
-                $image->setBadge($owner);
+                $image->setBadgeIcon($owner);
                 $toDirectory = "badges";
             } else {
                 echo "Badge not found for icon ".$tab[0];
@@ -659,14 +659,22 @@ class BasicFixturesManager
         }
         if ($tab[8] !== '') {
             if ($owner = $this->badgeRepository->find($tab[8])) {
+                $image->setBadgeDecoratedIcon($owner);
+                $toDirectory = "badges";
+            } else {
+                echo "Badge not found for decorated icon ".$tab[0];
+            }
+        }
+        if ($tab[9] !== '') {
+            if ($owner = $this->badgeRepository->find($tab[9])) {
                 $image->setBadgeImage($owner);
                 $toDirectory = "badges";
             } else {
                 echo "Badge not found for image ".$tab[0];
             }
         }
-        if ($tab[9] !== '') {
-            if ($owner = $this->badgeRepository->find($tab[9])) {
+        if ($tab[10] !== '') {
+            if ($owner = $this->badgeRepository->find($tab[10])) {
                 $image->setBadgeImageLight($owner);
                 $toDirectory = "badges";
             } else {
