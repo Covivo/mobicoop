@@ -70,7 +70,7 @@ hasUpdatedHisAd: bere iragarkia aldatu du.
 header1Data: jira-ouestgo
 header1Name: X-JEMH-assignee
 mobileUrlUpdatePassword: /#/carpools/reset-password?token=
-click: Hemen klik egizu.
+click: Klik egizu hemen.
 goToAcceptedCarpoolsTovalidate: 'Zoaza "Autokidetza onartuak" atalera, eskuz-eskuzko
   ordainketa honen baieztatzeko, edo alderantziz ordaindugabe gisa seinala ezazu.'
 asPayed: eskuz-esku pagatu balu bezala.
@@ -89,10 +89,10 @@ homeAddress: Etxea
 domicile: homeAddress
 directPayment: Eskuz-eskuzko ordainketa
 onLinePayment: Linearen bidezko ordainketa
-paymentNotDone: Pagamendu deklaratu gabekoa
+paymentNotDone: Aitortugabeko ordainketa
 passenger: Bidaiaria
 driver: Gidaria
-certified: Erregistroan egiaztatua
+certified: Erregistroa egiaztatua
 seeProofsClasses: "Ikus sailak"
 typeOfpayment: Ordainketa
 amount: Ekarpena
@@ -105,16 +105,16 @@ taxInfo: '300€ baino gehiago eskuratu dituzu 2020an: legeak manatzen dizu zerg
   deklaratzea.'
 totalReceived: Orotara eskuratua
 totalPaid: Orotara pagatua
-onTheSite: Ondoko gunean
+onTheSite: Ondoko webgunean
 carpoolRealizedBy: Ondokoak egin dituen autokidetzak
 listCrapoolPayments: Pagamenduen eta autokidetzen zerrenda
 byJourney: (bidaiaka)
-forTheCarpoolsYouHadTogether: elkarrekin egin dituzuen autokidetzentzat zor zenizkionak.
+forTheCarpoolsYouHadTogether: elkarrekin egin dituzuen autokidetzentzak zor zenizkionak.
 signalThatYouhaveToPay: autokideak seinalatzen du ondoko hauek ez dizkiozula pagatu
 iContactYouAgainAboutPayment: Zure gana natorkizu, elkarrekin egin ditugun autokidetzen
-  ordainketa honen oroitarazteko
+  ordainketa honen zenbatekoa oroitarazteko
 haveYouForgotToPayTheDriver: Zure autokidea pagatzea ahantzi ote duzu?
-yourWeekOfCarpool: 'Zure autokidetza erregular astea, ondoko honekin: '
+yourWeekOfCarpool: 'Zure autokidetza erregularraren astea, ondoko honekin: '
 haveYouPayedYourDriverForTheWeek: Iragan asteko autokidetzak pagatu ote dituzu?
 goToAcceptedCarpools: Zoaza "Autokidetza onartuak" atalera , eskuz-esku pagatutzat
   markatzeko, edo linearen bidez paga ezazu.
@@ -132,19 +132,20 @@ yourProofIsAccepted: Helarazi diguzun nortasun agiria egiaztatua eta onartua iza
   da.
 identityProofAccepted: Nortasun agiria onartua
 linkValidatePaymentRoute: /utilisateur/profil/modifier/mes-covoiturages-acceptes
-linkValidatePaymentLabel: Ordainketa bat baieztatu.
+linkValidatePaymentLabel: Ordainketa bat egiazkotu.
 clickOnlinkToConfirmOrNot: 'Ondoko loturan klik egizu, eskuz-eskuzko ordainketa baieztatzeko,
   edo alderantziz, ordaindugabe gisa seinala ezazu: '
 carpoolRegular: ondoko hauen arteko autokidetza
 hasIndicatedThatTheWeek: Ondoko aste hau markatu du
 hasIndicatedThatCarpool: zure autokidetza markatu du ondoko honetatik
-hasPayed: Eskuz-esku ordaindu dizu?
+hasPayed: Eskuz-esku pagatu ote dizu?
 thankYouTeam: Milesker, {instanceName} taldea.
 communityNewMembershipRequest: BERRIA - Erabiltzaile berri batek sartu nahi du zure
   komunitatean
 seeYouInAdmin: 'Zoaza administrazio modulora bere kide izateko eskaeraren onartzeko: '
 newMembershipSubscriber: ' komunitatean sartzea galdegin du '
-solidaryContact: Administratzaile solidario bat zurekin harremanetan jartzen da
+solidaryContact: Elkartasunezko administratzaile bat zurekin harremanetan jartzen
+  da
 massPublicTransportPotentialOver: 'Garraio publiko {massId} inportazioaren potentzialaren
   kalkulua bukatu da'
 massPublicTransportPotentialTitle: Garraio publikoaren potentzialaren kalkulua
@@ -152,7 +153,7 @@ massMatchedOver: 'Autokidetza {massId} inportazioaren potentzialaren kalkulua bu
   da'
 massMatchedOverTitle: Autokidetzaren potentzialaren kalkulua
 massMatched: '{massId} autokidetzaren potentzialaren kalkulua'
-massAnalyzeErrors: '{massId} inportazioaren azterketak hutsak dauzka'
+massAnalyzeErrors: '{massId} inportazioaren azterketak hutsak ditu'
 toUseTheService: zerbitzu hau erabiltzen dute! Zure joan-etorriak parteka itzazu eta
   zure zoriona aurki ezazu
 nowYouAreMore: Oraingo komunitate-kide kopurua
@@ -162,7 +163,7 @@ temporaryPasswordAttributed: Aldi bateko pasahitz bat emana izan zaizu
 massMigrated: Zure autokidetza kontua
 journeyDetailTime: Aurreikusia {journeyDate}-(e)an - {journeyTime}-e(t)an.
 journeyDetailDestination: '{journeyDestination}'
-journeyDetailTo: noiz/nora
+journeyDetailTo: ondokora
 journeyDetailOrigin: '{journeyOrigin}'
 journeyDetail: Mezu hau zure ondoko bidaia honi lotua da
 useDirectContact: Untsalaz, bere mezuan eman dizkizun datuak erabil ditzakezu, berekin
@@ -174,11 +175,10 @@ youReceivedExternalContact: 'Mezu bat ukan duzu ondoko leku honetan izena emana 
   autokide baten ganik'
 rdexMessage: Bere mezua
 externalContact: Kontaktu bat ukan duzu, autokidetza batentzat
-unsubscribeEmailAlertFront: 'Zure harpidetza {instanceName} Aktualitate zerbitzutik
-  kendua izan da. Berantago berriz harpidetu nahi baduzu, zoaza Perfila > Nire kontua
-  atalera.'
-unsubscribeEmail: Hemen klika ezazu, zure harpidetza {instanceName} Aktualitate zerbitzutik
-  kentzeko
+unsubscribeEmailAlertFront: 'Zure harpidetza {instanceName} Aktualitateak zerbitzutik
+  desharpidetua izan da. Berantago berriz harpidetu nahi baduzu, zoaza Profila > Nire
+  kontua atalera.'
+unsubscribeEmail: Hemen klika egizu, {instanceName} Aktualitateak zerbitzutik desharpidetzeko
 urlUnsubscribeEmail: /utilisateur/unsubscribe
 header3Data: senderName
 header3Name: X-JEMH- Solaskidearen izen-deiturak
