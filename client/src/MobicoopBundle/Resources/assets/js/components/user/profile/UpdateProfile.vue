@@ -375,7 +375,7 @@
                 persistent
                 max-width="450"
               >
-                <template v-slot:activator="{ on, attrs }">
+                <template v-slot:activator>
                   <v-btn
                     class="button saveButton"
                     color="secondary"
@@ -733,7 +733,7 @@ export default {
       },
       newsSubscription: this.user && this.user.newsSubscription !== null ? this.user.newsSubscription : null,
       urlAvatar: this.user.avatars[this.user.avatars.length-1],
-      displayFileUpload: (this.user.images[0]) ? false : true,
+      displayFileUpload: this.user.images.length == 0,
       phoneVerified: null,
       emailVerified: false,
       emailSended: false,
@@ -763,7 +763,7 @@ export default {
     },
     computedBirthdateFormat () {
       if (this.birthDay) {
-        return moment.utc(this.birthDay).format("YYYY-MM-DD");
+        return moment.utc(this.birthDay).format("DD/MM/YYYY");
       }
       return null;
     },
@@ -848,7 +848,7 @@ export default {
             this.checkVerifiedEmail();
           }
           //this.urlAvatar = res.data.versions.square_800;
-          this.displayFileUpload = false; 
+          // this.displayFileUpload = false; 
         })
         .catch(error => {
           window.location.reload();
