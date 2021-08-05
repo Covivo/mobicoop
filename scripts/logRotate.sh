@@ -35,7 +35,7 @@ if [ -d "$API_PATH" ]; then
       elif [[ $entry =~ $logRegexOther ]]
       then
         # Gz log
-        chmod 755 "$entry"
+        chmod 774 "$entry"
         gzip -9 "$entry"
       fi
     done
@@ -54,7 +54,7 @@ if [ -d "$BUNDLE_PATH" ]; then
       elif [[ $entry =~ $logRegexOther ]]
       then
         # Gz log
-        chmod 755 "$entry"
+        chmod 774 "$entry"
         gzip -9 "$entry"
       fi
     done
@@ -73,7 +73,7 @@ if [ -d "$CLIENT_PATH" ]; then
       elif [[ $entry =~ $logRegexOther ]]
       then
         # Gz log
-        chmod 755 "$entry"
+        chmod 774 "$entry"
         gzip -9 "$entry"
       fi
     done
