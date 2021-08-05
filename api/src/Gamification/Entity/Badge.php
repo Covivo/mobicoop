@@ -116,7 +116,7 @@ class Badge
     /**
      * @var string Badge's text, description.
      *
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=512)
      * @Groups({"readGamification","writeGamification"})
      */
     private $text;
