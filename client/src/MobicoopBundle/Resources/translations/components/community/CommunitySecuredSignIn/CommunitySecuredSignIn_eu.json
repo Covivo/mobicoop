@@ -3,7 +3,7 @@
     "credential2": "2. erabiltzailearen izena",
     "errors": {
         "notLogged": "Konektua izan behar zira",
-        "badCredentials": "Erabiltzaile izena okerra da",
+        "badCredentials": "Erabiltzaile izena eta pasahitza okerrak dira",
         "required": "Eremu hau baitezpadakoa da"
     },
     "credential1": "1. erabiltzaile izena",
