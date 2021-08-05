@@ -1,16 +1,16 @@
 {
     "fraudWarningText": {
-        "part2": "edo tokiko monetan eta librean. Gomendatzen diegu gure erabiltzaileei PCS edo Transcash txartelak bezalako beste ordainketa modurik ez onartzea, gehienetan iruzurreko pratikentzat egiten baitira.",
-        "textLink": "Eskuz esku edo linean ",
+        "part2": "edo tokiko monetan eta librean. Gomendatzen diegu gure erabiltzaileei PCS edo Transcash txartelak bezalako beste ordainketa motak ez onartzea, ardura iruzurrezko pratikei lotuak baitira. Erabiltzaile bat seinala diezagukezu bere profilaren bidez.",
+        "textLink": "Eskuz esku edo linearen bidez ",
         "link": "/utilisateur/profil/modifier/mes-covoiturages-acceptes",
-        "part1": "Mobicoop-en, zure autokidetzen ordainketak gehieneta horrela egiten dira "
+        "part1": "Mobicoop-en, zure autokidetzen ordainketak, gehienetan horrela egiten dira "
     },
     "tooltip": {
-        "message": "Iragakiari lotuak ez diren mezuak"
+        "message": "Iragarki bati lotuak ez diren mezuak"
     },
     "headersCategories": {
         "titleSolidary": "Elkartasunezkoa",
-        "titleLive": "Zuzena",
+        "titleLive": "Zuzenean",
         "titleCarpool": "Autokidetza"
     },
     "urlUpdateAsk": "/utilisateur/messages/updateAsk",
