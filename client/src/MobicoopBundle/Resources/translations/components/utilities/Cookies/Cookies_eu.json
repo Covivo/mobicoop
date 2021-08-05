@@ -2,28 +2,28 @@
     "checkboxes": {
         "social": {
             "mandatoryOrNot": "Hautuzko cookie-a",
-            "desc": "Sare sozialeen bidez izena ematea eta konektatzea ahalbideratu"
+            "desc": "Izen ematea eta konexioa ahalbidetu sare sozialen bidez"
         },
         "stats": {
-            "details": "Estatistika horiek ez dute merkataritza helbururik. Zerbitzua hobetzen laguntzen gaituzte",
-            "mandatoryOrNot": "Hautuzko cookie-ak",
-            "desc": "Zure bisiten estatistika anonimoak partekatu"
+            "details": "Estatistika hauek ez dute helburu komertsialik. Zerbitzua hobetzen laguntzen gaituzte",
+            "mandatoryOrNot": "Menturazko cookie-a",
+            "desc": "Zure bisitaldiaren estatistika anonimoa parteka iezaguzu"
         },
         "connectionActive": {
-            "mandatoryOrNot": "Beharrezko cookie-ak",
-            "desc": "Zure konexio aktiboa mantendu"
+            "mandatoryOrNot": "Cookie beharrezkoa",
+            "desc": "Zure konexioa indarrean atxiki"
         }
     },
     "privacyPolicy": {
         "link": {
             "uri": "/datuen-babes",
-            "label": "Konfidentzialtasun politika"
+            "label": "Konfidentzialtasunezko politika"
         },
-        "text": "Gure datu kudeaketei buruzko xehetasun gehiago XXXX-an"
+        "text": "Xehetasun gehiago gure datuen kudeaketaz, bertan"
     },
     "working": {
-        "line2": "Aktibatu nahi zenituzken cookies-ak libroki hauta itzazu",
-        "line1": "Bere funtzionamenduarentzat, webguneak cookies-ak erabiltzen ditu"
+        "line2": "Aktibatu nahi dituzun cookies-ak libreki hauta itzazu",
+        "line1": "Funtzionatzeko, webgune honek cookies-ak erabiltzen ditu"
     },
     "store": "Erregistratu",
     "yourBrowseryourChoice": "{appName} hautua ematen dauzu",

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * Copyright (c) 2021, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -41,6 +41,7 @@ use App\RelayPoint\Entity\RelayPointType;
 use App\MassCommunication\Entity\Campaign;
 use App\Editorial\Entity\Editorial;
 use App\Image\Controller\CreateImageAction;
+use App\Image\Controller\ImageRemoveFileless;
 use App\Image\Controller\CreateImageAdminCampaignController;
 use App\Image\Controller\ImportImageCommunityController;
 use App\Image\Controller\ImportImageEventController;
@@ -83,7 +84,19 @@ use App\Image\Admin\Controller\PostImageAction;
  *              "path"="/images/regenversions",
  *              "security"="is_granted('images_regenversions',object)",
  *             "swagger_context" = {
- *                  "tags"={"Pictures"}
+ *                  "tags"={"Maintenance"}
+ *             }
+ *          },
+ *          "removeFileless"={
+ *              "method"="POST",
+ *              "deserialize"=false,
+ *              "serialize"=false,
+ *              "write"=false,
+ *              "controller"=ImageRemoveFileless::class,
+ *              "path"="/images/removefileless",
+ *              "security_post_denormalize"="is_granted('maintenance',object)",
+ *             "swagger_context" = {
+ *                  "tags"={"Maintenance"}
  *             }
  *          },
  *          "ADMIN_post"={

@@ -45,7 +45,13 @@ monolog:
             type: rotating_file
             level: debug
             max_files: 30
-            path: "%kernel.logs_dir%/georouter.log"    
+            path: "%kernel.logs_dir%/georouter.log"
+        maintenance:
+            type: rotating_file
+            level: debug
+            max_files: 30
+            path: "%kernel.logs_dir%/maintenance.log"
+            channels: [maintenance]        
         mass:
             type: rotating_file
             level: debug
@@ -74,4 +80,4 @@ monolog:
             path: "%kernel.logs_dir%/%kernel.environment%.log"
             max_files: 30
             level: debug
-            channels: ["!event", "!carpool", "!carpool_dynamic", "!carpool_proof", "!communication", "!community", "!geography", "!geomatcher", "!georouter", "!mass", "!notification", "!faker", "!solidary"]
+            channels: ["!event", "!carpool", "!carpool_dynamic", "!carpool_proof", "!communication", "!community", "!geography", "!geomatcher", "!georouter", "!maintenance", "!mass", "!notification", "!faker", "!solidary"]

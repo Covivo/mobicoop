@@ -93,6 +93,13 @@ use App\Action\Entity\Log;
  *                  "tags"={"Administration"}
  *              }
  *          },
+ *          "unsubscribeHook"={
+ *              "path"="/campaigns/unsubscribe",
+ *              "method"="GET",
+ *              "swagger_context" = {
+ *                  "tags"={"Mass Communication"}
+ *              }
+ *          },
  *      },
  *      itemOperations={
  *          "get"={

@@ -3,8 +3,8 @@
         "textDetails": {
             "p3": "<<span class=\"font-weight-bold\">>Attention</span> :Wordpress bezalako argitaratze tresna batzuentzat, plugings berezi batzuk gehitu behar dira iFrame bat erabili ahal izateko.",
             "p2": "&lt;iframe src=\"{url}\" width=\"<span class=\"font-weight-bold\">100%</span>\" height=\"<span class=\"font-weight-bold\">440px</span>\" frameborder=\"0\" scrolling=\"no\"&gt;&lt;/iframe&gt;",
-            "p1": "Widget-a integratzeko, beheragoko testua kopita eta zure webgunean kolatu behar duzu.<br />Lodiz diren elementuak alda ditzakezu zure widget-a pertsonalizatzeko.",
-            "title": "widget integratu"
+            "p1": "Widget-a sartzeko, azpiko testu hau kopiatu eta zure webgunean kolatu behar duzu.<br />Lodiz diren elementuak alda ditzakezu zure widget-a pertsonalizatzeko.",
+            "title": "widget-a sartu"
         },
         "urlLogo": "/images/logo.png",
         "externalRoute": "/widget",

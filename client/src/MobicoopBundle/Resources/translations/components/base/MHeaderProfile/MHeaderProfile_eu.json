@@ -1,15 +1,15 @@
 {
     "logOut": {
         "route": "/user/logout",
-        "label": "Dekonexioa"
+        "label": "Deskonexioa"
     },
     "reviews": {
         "route": "/utilisateur/profil/modifier/avis",
-        "label": "Abisu"
+        "label": "Iritziak"
     },
     "myProfile": {
         "route": "/utilisateur/profil/modifier/mon-profil",
-        "label": "Perfila"
+        "label": "Profila"
     },
     "myAcceptedCarpools": {
         "route": "/utilisateur/profil/modifier/mes-covoiturages-acceptes",
