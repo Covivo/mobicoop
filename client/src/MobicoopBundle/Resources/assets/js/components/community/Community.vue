@@ -412,7 +412,7 @@ export default {
       default: null,
     },
     lastUsers: {
-      type: Array,
+      type: Object,
       default: null,
     },
     avatarVersion: {
@@ -604,6 +604,7 @@ export default {
     },
     joinCommunity() {
       this.loading = true;
+      localStorage.setItem('gamificationInLocalStorage','1');
       maxios
         .post(this.$t("buttons.join.route", { id: this.community.id }), {
           headers: {

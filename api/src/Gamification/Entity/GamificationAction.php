@@ -39,6 +39,11 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 class GamificationAction
 {
 
+    // List of the translatable items of this entity
+    const TRANSLATABLE_ITEMS = [
+        "title"
+    ];
+
     /**
      * @var int The GamificationAction's id
      *
@@ -51,13 +56,13 @@ class GamificationAction
     private $id;
 
     /**
-     * @var string The GamificationAction's name (for internal purpose)
+     * @var string The GamificationAction's title (can be translated)
      *
      * @ORM\Column(type="string", length=255)
      * @Groups({"readGamification","writeGamification"})
      * @MaxDepth(1)
      */
-    private $name;
+    private $title;
 
     /**
      * @var ArrayCollection|null A GamificationAction can be included in multiple SequenceItems
@@ -105,14 +110,14 @@ class GamificationAction
         return $this;
     }
 
-    public function getname(): ?string
+    public function getTitle(): ?string
     {
-        return $this->name;
+        return $this->title;
     }
 
-    public function setname(?string $name): self
+    public function setTitle(?string $title): self
     {
-        $this->name = $name;
+        $this->title = $title;
 
         return $this;
     }

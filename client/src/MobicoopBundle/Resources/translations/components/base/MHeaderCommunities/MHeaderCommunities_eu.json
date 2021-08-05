@@ -1,7 +1,7 @@
 {
     "urlCommunityDetails": "/covoiturage-communaute/{id}/{urlKey}",
     "urlCommunityList": "/covoiturage-communaute",
-    "availableCommunities": "Libro diren komunitateak",
+    "availableCommunities": "Libre diren komunitateak",
     "getCommunities": "/utilisateur/communautes",
     "title": "Nire komunitateak"
 }

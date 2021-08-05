@@ -24,13 +24,14 @@
 namespace App\Communication\EventSubscriber;
 
 use App\Carpool\Entity\Ask;
+use App\Carpool\Entity\Proposal;
 use App\Carpool\Entity\Waypoint;
 use App\Carpool\Event\AdRenewalEvent;
 use App\Carpool\Event\AskAcceptedEvent;
 use App\Carpool\Event\AskAdDeletedEvent;
 use App\Carpool\Event\AskPostedEvent;
 use App\Carpool\Event\AskRefusedEvent;
-use App\Carpool\Event\AskUpdatedEvent;
+// use App\Carpool\Event\AskUpdatedEvent;
 use App\Carpool\Event\DriverAskAdDeletedEvent;
 use App\Carpool\Event\DriverAskAdDeletedUrgentEvent;
 use App\Carpool\Event\MatchingNewEvent;
@@ -137,26 +138,26 @@ class CarpoolSubscriber implements EventSubscriberInterface
         $this->notificationManager->notifies(AskRefusedEvent::NAME, $adRecipient, $event->getAd());
     }
     
-    /**
-     * Executed when Ask is updated
-     *
-     * @param AskUpdatedEvent $event
-     * @throws ClassNotFoundException
-     */
-    public function onAskUpdated(AskUpdatedEvent $event)
-    {
-        // we must notify the recipient of the ask, the message is related to the last accepted status of the ask history
-        $lastAskHistory = $this->askHistoryRepository->findLastByAskAndstatus($event->getAsk(), Ask::STATUS_PENDING);
-        // the recipient is the user that has made the last ask history
-        // ATTENTION : Doesn't work because of ->getMessage(). There's not always a message with a askhistory
-        $askRecipient = ($event->getAsk()->getMatching()->getProposalOffer()->getUser()->getId() != $lastAskHistory->getMessage()->getUser()->getId()) ? $event->getAsk()->getMatching()->getProposalOffer()->getUser() : $event->getAsk()->getMatching()->getProposalRequest()->getUser();
+    // /**
+    //  * Executed when Ask is updated
+    //  *
+    //  * @param AskUpdatedEvent $event
+    //  * @throws ClassNotFoundException
+    //  */
+    // public function onAskUpdated(AskUpdatedEvent $event)
+    // {
+    //     // we must notify the recipient of the ask, the message is related to the last accepted status of the ask history
+    //     $lastAskHistory = $this->askHistoryRepository->findLastByAskAndstatus($event->getAsk(), Ask::STATUS_PENDING);
+    //     // the recipient is the user that has made the last ask history
+    //     // ATTENTION : Doesn't work because of ->getMessage(). There's not always a message with a askhistory
+    //     $askRecipient = ($event->getAsk()->getMatching()->getProposalOffer()->getUser()->getId() != $lastAskHistory->getMessage()->getUser()->getId()) ? $event->getAsk()->getMatching()->getProposalOffer()->getUser() : $event->getAsk()->getMatching()->getProposalRequest()->getUser();
 
 
 
-        if ($this->canNotify($event->getAsk()->getUser(), $askRecipient)) {
-            $this->notificationManager->notifies(AskUpdatedEvent::NAME, $askRecipient, $lastAskHistory);
-        }
-    }
+    //     if ($this->canNotify($event->getAsk()->getUser(), $askRecipient)) {
+    //         $this->notificationManager->notifies(AskUpdatedEvent::NAME, $askRecipient, $lastAskHistory);
+    //     }
+    // }
     
     /**
      * Executed when a new matching is discovered
@@ -168,9 +169,16 @@ class CarpoolSubscriber implements EventSubscriberInterface
     public function onNewMatching(MatchingNewEvent $event)
     {
         // the recipient is the user that is not the "sender" of the matching
-        // we check if it's not an anonymous proposal
-        if ($event->getMatching()->getProposalOffer()->getUser() && $event->getMatching()->getProposalRequest()->getUser()) {
-            $askRecipient = ($event->getMatching()->getProposalOffer()->getUser()->getId() != $event->getSender()->getId()) ? $event->getMatching()->getProposalOffer()->getUser() : $event->getMatching()->getProposalRequest()->getUser();
+        // we check if it's not an anonymous proposal, and that it's only on an outward (as we notifiy only once for a return trip)
+        if (
+            $event->getMatching()->getProposalOffer()->getUser() &&
+            $event->getMatching()->getProposalRequest()->getUser() &&
+            $event->getWay() != Proposal::TYPE_RETURN
+            ) {
+            $askRecipient =
+            ($event->getMatching()->getProposalOffer()->getUser()->getId() != $event->getSender()->getId()) ?
+            $event->getMatching()->getProposalOffer()->getUser() :
+            $event->getMatching()->getProposalRequest()->getUser();
             if ($this->canNotify($event->getSender(), $askRecipient)) {
                 $this->notificationManager->notifies(MatchingNewEvent::NAME, $askRecipient, $event->getMatching());
             }

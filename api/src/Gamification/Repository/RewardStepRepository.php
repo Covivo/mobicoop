@@ -24,6 +24,7 @@
 namespace App\Gamification\Repository;
 
 use App\Gamification\Entity\RewardStep;
+use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 
@@ -64,5 +65,22 @@ class RewardStepRepository
     public function findOneBy(array $criteria): ?RewardStep
     {
         return $this->repository->findOneBy($criteria);
+    }
+
+    /**
+     * Get the RewardStep that has not been notified yet
+     *
+     * @var User $user  The User we want to get the RewardStep in waiting
+     * @return array|null
+     */
+    public function findWaiting(User $user): ?array
+    {
+        $query = $this->repository->createQueryBuilder('rs')
+        ->where('rs.notifiedDate is null')
+        ->andWhere('rs.user = :user')
+        ->setParameter('user', $user)
+        ;
+                
+        return $query->getQuery()->getResult();
     }
 }

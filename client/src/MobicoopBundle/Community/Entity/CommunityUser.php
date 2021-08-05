@@ -26,11 +26,12 @@ namespace Mobicoop\Bundle\MobicoopBundle\Community\Entity;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
+use Mobicoop\Bundle\MobicoopBundle\Gamification\Entity\GamificationEntity;
 
 /**
  * A user related to a community.
  */
-class CommunityUser implements ResourceInterface, \JsonSerializable
+class CommunityUser extends GamificationEntity implements ResourceInterface, \JsonSerializable
 {
     const STATUS_PENDING = 0;
     const STATUS_ACCEPTED_AS_MEMBER = 1;
@@ -260,15 +261,15 @@ class CommunityUser implements ResourceInterface, \JsonSerializable
     {
         return
         [
-            'id'            => $this->getId(),
-            'iri'           => $this->getIri(),
-            'user'          => $this->getUser(),
-            'admin'         => $this->getAdmin(),
-            'createdDate'   => $this->getCreatedDate(),
-            'acceptedDate'  => $this->getAcceptedDate(),
-            'refusedDate'   => $this->getRefusedDate(),
-            'status'        => $this->getStatus(),
-            
+            'id'                        => $this->getId(),
+            'iri'                       => $this->getIri(),
+            'user'                      => $this->getUser(),
+            'admin'                     => $this->getAdmin(),
+            'createdDate'               => $this->getCreatedDate(),
+            'acceptedDate'              => $this->getAcceptedDate(),
+            'refusedDate'               => $this->getRefusedDate(),
+            'status'                    => $this->getStatus(),
+            'gamificationNotifications' => $this->getGamificationNotifications(),
         ];
     }
 }

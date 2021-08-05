@@ -350,9 +350,6 @@ class GeoMatcher
             }
         } else {
             if ($candidate1->getMaxDetourDuration()) {
-                // echo $candidate1->getMaxDetourDuration()."\n";
-                // echo $candidate1->getDuration()."\n";
-                // echo $duration."\n";
                 // in seconds
                 if ($duration<=($candidate1->getDuration()+$candidate1->getMaxDetourDuration())) {
                     $detourDuration = true;
@@ -365,8 +362,8 @@ class GeoMatcher
             }
         }
 
-        // we check the common distance
-        if ($candidate2->getDirection()) {
+        // we check the common distance (if the distance is not 0, that can happen for solidary proposals without destination)
+        if ($candidate2->getDirection() && $candidate2->getDirection()->getDistance()>0) {
             if ($candidate1->getDirection()) {
                 if (($candidate1->getDirection()->getDistance()<ProposalMatcher::getMinCommonDistanceCheck()) ||
                     (($candidate2->getDirection()->getDistance()*100/$candidate1->getDirection()->getDistance()) > ProposalMatcher::getMinCommonDistancePercent())) {
@@ -378,7 +375,7 @@ class GeoMatcher
                     $commonDistance = true;
                 }
             }
-        } else {
+        } elseif ($candidate2->getDistance()>0) {
             if ($candidate1->getDirection()) {
                 if (($candidate1->getDirection()->getDistance()<ProposalMatcher::getMinCommonDistanceCheck()) ||
                     (($candidate2->getDistance()*100/$candidate1->getDirection()->getDistance()) > ProposalMatcher::getMinCommonDistancePercent())) {
@@ -390,10 +387,9 @@ class GeoMatcher
                     $commonDistance = true;
                 }
             }
+        } else {
+            $commonDistance = true;
         }
-        // echo "detourDistance : ".$detourDistance."\n";
-        // echo "detourDuration : ".$detourDuration."\n";
-        // echo "commonDistance : ".$commonDistance."\n";
         // if the detour is acceptable we keep the candidate
         if ($detourDistance && $detourDuration && $commonDistance) {
             // we deserialize the direction if needed
@@ -402,8 +398,6 @@ class GeoMatcher
                 $direction = $this->geoRouter->getRouter()->deserializeDirection($routes[0]);
             }
             
-            // we add the zones to the direction
-            //$direction = $this->zoneManager->createZonesForDirection($direction);
             $result = [
                 'route' => is_array($points) ? $this->generateRoute($points, $direction->getDurations()) : null,
                 'originalDistance' => $candidate1->getDirection() ? $candidate1->getDirection()->getDistance() : $candidate1->getDistance(),
@@ -417,7 +411,6 @@ class GeoMatcher
                 'detourDuration' => $candidate1->getDirection() ? ($duration-$candidate1->getDirection()->getDuration()) : ($duration-$candidate1->getDuration()),
                 'detourDurationPercent' => $candidate1->getDirection() ? round($duration*100/$candidate1->getDirection()->getDuration()-100, 2) : round($duration*100/$candidate1->getDuration()-100, 2),
                 'commonDistance' => $candidate2->getDirection() ? $candidate2->getDirection()->getDistance() : $candidate2->getDistance(),
-                // 'direction' => $direction,
                 'candidate1' => $candidate1->getId(),
                 'candidate2' => $candidate2->getId()
             ];

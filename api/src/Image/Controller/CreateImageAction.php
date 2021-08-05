@@ -82,10 +82,26 @@ final class CreateImageAction
             // Campaign image
             $image->setCampaignFile($request->files->get('campaignFile'));
             $image->setCampaignId($request->request->get('campaignId'));
+        } elseif ($request->files->get('badgeFile') && $request->request->get('badgeId')) {
+            // Badge icon
+            $image->setBadgeFile($request->files->get('badgeFile'));
+            $image->setBadgeId($request->request->get('badgeId'));
+        } elseif ($request->files->get('badgeFile') && $request->request->get('badgeImageId')) {
+            // Badge image
+            $image->setBadgeFile($request->files->get('badgeFile'));
+            $image->setBadgeImageId($request->request->get('badgeImageId'));
+        } elseif ($request->files->get('badgeFile') && $request->request->get('badgeImageLightId')) {
+            // Badge image light
+            $image->setBadgeFile($request->files->get('badgeFile'));
+            $image->setBadgeImageLightId($request->request->get('badgeImageLightId'));
+        } elseif ($request->files->get('editorialFile') && $request->request->get('editorialId')) {
+            // editorial image
+            $image->setEditorialFile($request->files->get('editorialFile'));
+            $image->setEditorialId($request->request->get('editorialId'));
         } else {
             throw new BadRequestHttpException('A valid file is required');
         }
-                
+        
         $image->setName($request->request->get('name'));
         $image->setOriginalName($request->request->get('originalName'));
         $image->setTitle($request->request->get('title'));
@@ -97,8 +113,17 @@ final class CreateImageAction
 
         // we search the future owner of the image (user ? event ?...)
         if ($owner = $this->imageManager->getOwner($image)) {
-            // we associate the owner and the image
-            $owner->addImage($image);
+            if (!is_null($image->getBadgeId())) {
+                $image->setBadge($owner);
+            } elseif (!is_null($image->getBadgeImageId())) {
+                $image->setBadgeImage($owner);
+            } elseif (!is_null($image->getBadgeImageLightId())) {
+                $image->setBadgeImageLight($owner);
+            } else {
+                // we associate the owner and the image
+                $owner->addImage($image);
+            }
+            
             // we search the position of the image if not provided
             if (is_null($image->getPosition())) {
                 $image->setPosition($this->imageManager->getNextPosition($image));

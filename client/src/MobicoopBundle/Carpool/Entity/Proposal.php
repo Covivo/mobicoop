@@ -34,11 +34,12 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 use Mobicoop\Bundle\MobicoopBundle\Travel\Entity\TravelMode;
+use Mobicoop\Bundle\MobicoopBundle\Gamification\Entity\GamificationEntity;
 
 /**
  * Carpooling : proposal (offer from a driver / request from a passenger).
  */
-class Proposal implements ResourceInterface, \JsonSerializable
+class Proposal extends GamificationEntity implements ResourceInterface, \JsonSerializable
 {
     const TYPE_ONE_WAY = 1;
     const TYPE_OUTWARD = 2;
@@ -583,17 +584,19 @@ class Proposal implements ResourceInterface, \JsonSerializable
     {
         return
         [
-            'id'                => $this->getId(),
-            'matchingProposal'  => $this->getMatchingProposal(),
-            'matchingLinked'    => $this->getMatchingLinked(),
-            'askLinked'         => $this->getAskLinked(),
-            'proposalLinked'    => $this->getProposalLinked(),
-            'comment'           => $this->getComment(),
-            'user'              => $this->getUser(),
-            'criteria'          => $this->getCriteria(),
-            'type'              => $this->getType(),
-            'waypoints'         => $this->getWaypoints(),
-            'results'           => $this->getResults()
+            'id'                        => $this->getId(),
+            'matchingProposal'          => $this->getMatchingProposal(),
+            'matchingLinked'            => $this->getMatchingLinked(),
+            'askLinked'                 => $this->getAskLinked(),
+            'proposalLinked'            => $this->getProposalLinked(),
+            'comment'                   => $this->getComment(),
+            'user'                      => $this->getUser(),
+            'criteria'                  => $this->getCriteria(),
+            'type'                      => $this->getType(),
+            'waypoints'                 => $this->getWaypoints(),
+            'results'                   => $this->getResults(),
+            'gamificationNotifications' => $this->getGamificationNotifications(),
+
         ];
     }
 }

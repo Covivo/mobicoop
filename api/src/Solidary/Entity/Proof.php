@@ -36,6 +36,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use App\Solidary\Controller\CreateProofAction;
+use App\Solidary\Admin\Controller\UploadProofAction;
 
 /**
  * A solidary proof related to a solidary record or a solidaryUser
@@ -62,7 +63,19 @@ use App\Solidary\Controller\CreateProofAction;
  *              "swagger_context" = {
  *                  "tags"={"Solidary"}
  *              }
- *          }
+ *          },
+ *          "ADMIN_post"={
+ *              "path"="/admin/proofs",
+ *              "controller"=UploadProofAction::class,
+ *              "deserialize"=false,
+ *              "method"="POST",
+ *              "normalization_context"={"groups"={"aRead"}},
+ *              "denormalization_context"={"groups"={"aWrite"}},
+ *              "security_post_denormalize"="is_granted('proof_create',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Solidary"}
+ *              }
+ *          },
  *      },
  *      itemOperations={
  *          "get"={
@@ -287,9 +300,11 @@ class Proof
         return $this->file;
     }
     
-    public function setFile(?File $file)
+    public function setFile(?File $file): self
     {
         $this->file = $file;
+
+        return $this;
     }
 
     public function getSolidaryUserStructure(): ?SolidaryUserStructure
@@ -297,9 +312,11 @@ class Proof
         return $this->solidaryUserStructure;
     }
     
-    public function setSolidaryUserStructure(?SolidaryUserStructure $solidaryUserStructure)
+    public function setSolidaryUserStructure(?SolidaryUserStructure $solidaryUserStructure): self
     {
         $this->solidaryUserStructure = $solidaryUserStructure;
+
+        return $this;
     }
 
     public function getCreatedDate(): ?\DateTimeInterface

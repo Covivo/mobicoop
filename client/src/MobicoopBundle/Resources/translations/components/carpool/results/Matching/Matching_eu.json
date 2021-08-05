@@ -30,5 +30,5 @@
     "matchingUrl": "/covoiturage/recherche/matching",
     "externalUrl": "/covoiturage/annonce/{id}/externe",
     "proposalUrl": "/covoiturage/annonce/{id}/detail",
-    "title": "Autokidetzaren emaitzak {cityA} eta{cityB}ren artean"
+    "title": "Autokidetzen emaitzak {cityA} eta{cityB}-ren artean"
 }

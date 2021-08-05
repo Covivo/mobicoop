@@ -23,6 +23,7 @@
 namespace App\Solidary\Repository;
 
 use App\Action\Entity\Diary;
+use App\Carpool\Entity\Proposal;
 use App\Solidary\Entity\Solidary;
 use App\Solidary\Entity\SolidaryUser;
 use App\User\Entity\User;
@@ -135,5 +136,20 @@ class SolidaryRepository
         ->setParameter('solidaryUser', $solidaryUser);
 
         return $query->getQuery()->getResult();
+    }
+
+    /**
+     * Get the potential solidary child of a solidary record
+     *
+     * @param Solidary $solidary    The solidary record
+     * @return Solidary|null        The solidary child if found or null if not found
+     */
+    public function getChild(Solidary $solidary): ?Solidary
+    {
+        $query = $this->repository->createQueryBuilder('s')
+        ->where('s.solidary = :solidary')
+        ->setParameter('solidary', $solidary);
+
+        return $query->getQuery()->getOneOrNullResult();
     }
 }

@@ -135,44 +135,8 @@ class ActionManager
             case SolidaryAnimationPostedEvent::NAME:$this->onSolidaryAnimationPosted($event);
                 break;
             case LoginDelegateEvent::NAME:$this->onLoginDelegate($action, $event);
+                break;
         }
-    }
-
-    /**
-     * Check if a diary registration is required and do it
-     *
-     * @param Action $action
-     * @param User $user
-     * @param User $author
-     * @param string $comment
-     * @param Solidary $solidary
-     * @param SolidarySolution $solidarySolution
-     * @param float $progression
-     * @return void
-     */
-    public function treatDiary(Action $action, User $user, User $author, ?string $comment=null, ?Solidary $solidary=null, ?SolidarySolution $solidarySolution=null, ?float $progression=null)
-    {
-        if ($action->isInDiary()) {
-            $this->diaryManager->addDiaryEntry(
-                $action,
-                $user,
-                $author,
-                $comment,
-                $solidary,
-                $solidarySolution,
-                $progression
-            );
-        }
-    }
-
-    /**
-     * TO DO : Check if a log registration is required and do it
-     *
-     * @return void
-     */
-    public function treatLog()
-    {
-        // To Do
     }
 
     private function onSolidaryUserStructureAccepted(Action $action, SolidaryUserStructureAcceptedEvent $event)
@@ -319,6 +283,33 @@ class ActionManager
         $this->treatDiary($action, $event->getUserDelegated(), $event->getUser());
     }
 
+    /**
+     * Check if a diary registration is required and do it
+     *
+     * @param Action $action
+     * @param User $user
+     * @param User $author
+     * @param string $comment
+     * @param Solidary $solidary
+     * @param SolidarySolution $solidarySolution
+     * @param float $progression
+     * @return void
+     */
+    private function treatDiary(Action $action, User $user, User $author, ?string $comment=null, ?Solidary $solidary=null, ?SolidarySolution $solidarySolution=null, float $progression=0)
+    {
+        if ($action->isInDiary()) {
+            $this->diaryManager->addDiaryEntry(
+                $action,
+                $user,
+                $author,
+                $comment,
+                $solidary,
+                $solidarySolution,
+                $progression
+            );
+        }
+    }
+
     public function onAction(ActionEvent $actionEvent)
     {
         // if Action needs to be logged
@@ -382,9 +373,5 @@ class ActionManager
             $event = new LogEvent($log);
             $this->eventDispatcher->dispatch(LogEvent::NAME, $event);
         }
-        
-
-        //
-        // dsipatch un LogEvent
     }
 }

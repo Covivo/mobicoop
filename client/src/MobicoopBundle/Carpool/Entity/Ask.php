@@ -24,11 +24,12 @@
 namespace Mobicoop\Bundle\MobicoopBundle\Carpool\Entity;
 
 use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
+use Mobicoop\Bundle\MobicoopBundle\Gamification\Entity\GamificationEntity;
 
 /**
  * @author Remi Wortemann <remi.wortemann@mobicoop.org>
  */
-class Ask implements ResourceInterface, \JsonSerializable
+class Ask extends GamificationEntity implements ResourceInterface, \JsonSerializable
 {
     
     /**
@@ -68,7 +69,8 @@ class Ask implements ResourceInterface, \JsonSerializable
         return
             [
                 'id' => $this->getId(),
-                'weekItems'=> $this->getWeekItems()
+                'weekItems'=> $this->getWeekItems(),
+                'gamificationNotifications' => $this->getGamificationNotifications(),
             ];
     }
 }

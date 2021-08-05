@@ -1,11 +1,11 @@
 {
     "urlResult": "/covoiturage/annonce/{id}/resultats",
     "potentialCarpooler": {
-        "plural": "autokide potentzialak",
-        "singular": "Autokide potentziala"
+        "plural": "menturazko autokideak",
+        "singular": "menturazko autokidea"
     },
     "seat": {
-        "plural": "tokiak",
-        "singular": "toki bat"
+        "plural": "lekuak",
+        "singular": "leku"
     }
 }

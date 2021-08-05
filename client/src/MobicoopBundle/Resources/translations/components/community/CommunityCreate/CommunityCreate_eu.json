@@ -41,8 +41,8 @@
         },
         "name": {
             "required": "Komunitatearen izena baitezpadakoa da",
-            "label": "Komunitatearen izena*"
+            "label": "Komunitatearen* izena"
         }
     },
-    "title": "Zure komunitatea sortu"
+    "title": "Zure komunitatea sor ezazu"
 }

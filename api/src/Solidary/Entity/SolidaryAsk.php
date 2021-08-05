@@ -155,14 +155,21 @@ class SolidaryAsk
     private $ask;
 
     /**
-     * @var Criteria|null Criteria of this SolidaryAsk
+     * @var Criteria|null Criteria of this SolidaryAsk if the solution is a transport
      *
-     * @Assert\NotBlank
      * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Criteria", inversedBy="solidaryAsk", cascade={"persist","remove"})
-     * @ORM\JoinColumn(nullable=false)
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $criteria;
+
+    /**
+     * @var SolidaryAsk|null The linked solidary ask for return trips.
+     *
+     * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\SolidaryAsk", cascade={"persist", "remove"}, orphanRemoval=true)
+     * @ORM\JoinColumn(onDelete="CASCADE")
+     * @MaxDepth(1)
+     */
+    private $solidaryAskLinked;
 
     public function __construct()
     {
@@ -295,6 +302,24 @@ class SolidaryAsk
     public function setCriteria(Criteria $criteria): self
     {
         $this->criteria = $criteria;
+
+        return $this;
+    }
+
+    public function getSolidaryAskLinked(): ?self
+    {
+        return $this->solidaryAskLinked;
+    }
+
+    public function setSolidaryAskLinked(?self $solidaryAskLinked): self
+    {
+        $this->solidaryAskLinked = $solidaryAskLinked;
+
+        // set (or unset) the owning side of the relation if necessary
+        $newSolidaryAskLinked = $solidaryAskLinked === null ? null : $this;
+        if (!is_null($solidaryAskLinked) && $newSolidaryAskLinked !== $solidaryAskLinked->getSolidaryAskLinked()) {
+            $solidaryAskLinked->setSolidaryAskLinked($newSolidaryAskLinked);
+        }
 
         return $this;
     }

@@ -22,8 +22,8 @@
         "label": "Helmuga"
     },
     "origin": {
-        "error": "Beharrezkoa",
+        "error": "Baitezpadakoa",
         "label": "Jatorria"
     },
-    "addWaypoint": "Urrats bat gehitu"
+    "addWaypoint": "Geldialdi bat gehitu"
 }

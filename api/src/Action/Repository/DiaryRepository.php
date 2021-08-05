@@ -23,6 +23,7 @@
 namespace App\Action\Repository;
 
 use App\Action\Entity\Diary;
+use App\Solidary\Entity\Solidary;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 
@@ -44,7 +45,6 @@ class DiaryRepository
         $this->repository = $entityManager->getRepository(Diary::class);
     }
 
-
     public function find(int $id): ?Diary
     {
         return $this->repository->find($id);
@@ -55,7 +55,6 @@ class DiaryRepository
         return $this->repository->findAll();
     }
 
-
     public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null): ?array
     {
         return $this->repository->findBy($criteria, $orderBy, $limit, $offset);
@@ -64,5 +63,22 @@ class DiaryRepository
     public function findOneBy(array $criteria): ?Diary
     {
         return $this->repository->findOneBy($criteria);
+    }
+
+    /**
+     * Find the last entry for a given Solidary
+     *
+     * @param Solidary $solidary    The solidary record
+     * @return Diary|null           The progression
+     */
+    public function findLastEntryForSolidary(Solidary $solidary)
+    {
+        return $this->repository->createQueryBuilder('d')
+        ->where('d.solidary = :solidary')
+        ->orderBy('d.updatedDate', 'DESC')
+        ->setParameter('solidary', $solidary)
+        ->setMaxResults(1)
+        ->getQuery()
+        ->getOneOrNullResult();
     }
 }

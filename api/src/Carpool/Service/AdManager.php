@@ -58,6 +58,8 @@ use App\Geography\Service\AddressManager;
 use App\Payment\Exception\PaymentException;
 use App\Solidary\Repository\SubjectRepository;
 use App\User\Entity\User;
+use App\User\Repository\UserRepository;
+use App\User\Exception\UserAlreadyExistsException;
 use DateTime;
 
 /**
@@ -89,6 +91,7 @@ class AdManager
     private $addressManager;
     private $appManager;
     private $antiFraudManager;
+    private $userRepository;
 
     private $currentMargin = null;
 
@@ -119,7 +122,8 @@ class AdManager
         SubjectRepository $subjectRepository,
         AddressManager $addressManager,
         AppManager $appManager,
-        AntiFraudManager $antiFraudManager
+        AntiFraudManager $antiFraudManager,
+        UserRepository $userRepository
     ) {
         $this->entityManager = $entityManager;
         $this->proposalManager = $proposalManager;
@@ -142,6 +146,7 @@ class AdManager
         $this->addressManager = $addressManager;
         $this->appManager = $appManager;
         $this->antiFraudManager = $antiFraudManager;
+        $this->userRepository = $userRepository;
         if ($this->params["paymentActiveDate"] = DateTime::createFromFormat("Y-m-d", $this->params["paymentActive"])) {
             $this->params["paymentActiveDate"]->setTime(0, 0);
             $this->params["paymentActive"] = true;
@@ -178,8 +183,9 @@ class AdManager
 
         // validation
 
+
         // try for an anonymous post ?
-        if (!$ad->isSearch() && !$ad->getUserId()) {
+        if (!$ad->isSearch() && !$ad->getUserId() && !$ad->isSolidaryExclusive()) {
             throw new AdException('Anonymous users can\'t post an ad');
         }
 
@@ -189,6 +195,45 @@ class AdManager
                 $outwardProposal->setUser($user);
             } else {
                 throw new UserNotFoundException('User ' . $ad->getUserId() . ' not found');
+            }
+        } else {
+            // we check if the user past exist if not we create it
+            if ($this->userRepository->findOneBy(['email'=>$ad->getUser()->getEmail()])) {
+                throw new UserAlreadyExistsException(UserAlreadyExistsException::USER_ALREADY_EXISTS);
+            } else {
+                $user = new User();
+                $user->setEmail($ad->getUser()->getEmail());
+                $user->setPassword($ad->getUser()->getPassword());
+                $user->setGivenName($ad->getUser()->getGivenName());
+                $user->setFamilyName($ad->getUser()->getFamilyName());
+                $user->setBirthDate($ad->getUser()->getBirthDate());
+                $user->setTelephone($ad->getUser()->getTelephone());
+                $user->setGender($ad->getUser()->getGender());
+                $user->setNewsSubscription(true);
+
+                // we set the home address
+                $homeAddress = new Address();
+                $homeAddress->setHouseNumber($ad->getUser()->getHomeAddress()->getHouseNumber());
+                $homeAddress->setStreet($ad->getUser()->getHomeAddress()->getStreet());
+                $homeAddress->setStreetAddress($ad->getUser()->getHomeAddress()->getStreetAddress());
+                $homeAddress->setPostalCode($ad->getUser()->getHomeAddress()->getPostalCode());
+                $homeAddress->setSubLocality($ad->getUser()->getHomeAddress()->getSubLocality());
+                $homeAddress->setAddressLocality($ad->getUser()->getHomeAddress()->getAddressLocality());
+                $homeAddress->setLocalAdmin($ad->getUser()->getHomeAddress()->getLocalAdmin());
+                $homeAddress->setCounty($ad->getUser()->getHomeAddress()->getCounty());
+                $homeAddress->setMacroCounty($ad->getUser()->getHomeAddress()->getMacroCounty());
+                $homeAddress->setRegion($ad->getUser()->getHomeAddress()->getRegion());
+                $homeAddress->setMacroRegion($ad->getUser()->getHomeAddress()->getMacroRegion());
+                $homeAddress->setAddressCountry($ad->getUser()->getHomeAddress()->getAddressCountry());
+                $homeAddress->setCountryCode($ad->getUser()->getHomeAddress()->getCountryCode());
+                $homeAddress->setLatitude($ad->getUser()->getHomeAddress()->getLatitude());
+                $homeAddress->setLongitude($ad->getUser()->getHomeAddress()->getLongitude());
+
+                $homeAddress->setHome(true);
+                $user->addAddress($homeAddress);
+
+                $user = $this->userManager->registerUser($user);
+                $outwardProposal->setUser($user);
             }
         }
 
@@ -287,7 +332,13 @@ class AdManager
 
         // solidary
         $outwardCriteria->setSolidary($ad->isSolidary());
+        if ($ad->getSolidaryRecord()) {
+            $outwardProposal->setSolidary($ad->getSolidaryRecord());
+        }
         $outwardCriteria->setSolidaryExclusive($ad->isSolidaryExclusive());
+
+        // no destination ?
+        $outwardProposal->setNoDestination($ad->hasNoDestination());
 
         // prices
         $outwardCriteria->setPriceKm($ad->getPriceKm());
@@ -316,7 +367,7 @@ class AdManager
                 || $outwardCriteria->isWedCheck() || $outwardCriteria->isFriCheck() || $outwardCriteria->isThuCheck()
                 || $outwardCriteria->isSatCheck() || $outwardCriteria->isSunCheck();
             if (!$hasSchedule && !$ad->isSearch()) {
-                // for a post, we need aschedule !
+                // for a post, we need a schedule !
                 throw new AdException('At least one day should be selected for a regular trip');
             } elseif (!$hasSchedule) {
                 // for a search we set the schedule to every day
@@ -371,7 +422,7 @@ class AdManager
 
         $outwardProposal->setCriteria($outwardCriteria);
         if ($doPrepare) {
-            $outwardProposal = $this->proposalManager->prepareProposal($outwardProposal, true);
+            $outwardProposal = $this->proposalManager->prepareProposal($outwardProposal);
         }
 
         // $this->logger->info("AdManager : end creating outward " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
@@ -402,6 +453,9 @@ class AdManager
             $returnCriteria->setSolidary($outwardCriteria->isSolidary());
             $returnCriteria->setSolidaryExclusive($outwardCriteria->isSolidaryExclusive());
 
+            // no destination ?
+            $returnProposal->setNoDestination($outwardProposal->hasNoDestination());
+
             // prices
             $returnCriteria->setPriceKm($outwardCriteria->getPriceKm());
             $returnCriteria->setDriverPrice($ad->getReturnDriverPrice());
@@ -418,6 +472,7 @@ class AdManager
             $returnCriteria->setBackSeats($outwardCriteria->hasBackSeats());
 
             // dates and times
+            $marginDuration = $ad->getReturnMarginDuration() ? $ad->getReturnMarginDuration() : ($ad->getMarginDuration() ? $ad->getMarginDuration() : $this->params['defaultMarginDuration']);
             // if no return date is specified, we use the outward date to be sure the return date is not before the outward date
             $returnCriteria->setFromDate($ad->getReturnDate() ? $ad->getReturnDate() : $outwardCriteria->getFromDate());
             if ($ad->getFrequency() == Criteria::FREQUENCY_REGULAR) {
@@ -487,7 +542,7 @@ class AdManager
 
             $returnProposal->setCriteria($returnCriteria);
             if ($doPrepare) {
-                $returnProposal = $this->proposalManager->prepareProposal($returnProposal, false);
+                $returnProposal = $this->proposalManager->prepareProposal($returnProposal);
             }
             $this->entityManager->persist($returnProposal);
         }
@@ -503,6 +558,7 @@ class AdManager
         if (!$ad->isOneWay()) {
             $this->logger->info("AdManager : start related link matchings " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
             $this->matchingRepository->linkRelatedMatchings($outwardProposal->getId());
+            $this->matchingRepository->linkRelatedMatchings($returnProposal->getId());
             $proposalRefresh = true;
         }
         // if the requester can be driver and passenger, we want to link the potential opposite matching results
@@ -647,7 +703,6 @@ class AdManager
      */
     private function createTimesFromSchedule($schedules, Criteria $criteria, string $key, $marginDuration)
     {
-        // var_dump($schedules);die;
         foreach ($schedules as $schedule) {
             if (isset($schedule[$key]) && $schedule[$key] != '') {
                 if (isset($schedule['mon']) && $schedule['mon']) {
@@ -687,7 +742,6 @@ class AdManager
                 }
             }
         }
-
         return $criteria;
     }
 
@@ -806,15 +860,14 @@ class AdManager
 
         if (!is_null($proposal->getUser())) {
             $ad->setUserId($proposal->getUser()->getId());
-        }
-        else{
+        } else {
             // If the User is connected, we claim the search
-            if($this->security->getUser() instanceof User){
+            if ($this->security->getUser() instanceof User) {
                 $this->claimAd($proposal->getId());
                 $ad->setUserId($this->security->getUser()->getId());
             }
         }
-
+        
         $ad->setCreatedDate($proposal->getCreatedDate());
         $aFilters = [];
         if (!is_null($filters)) {
@@ -2261,7 +2314,7 @@ class AdManager
                 // punctual
                 $returnCriteria->setFrequency(Criteria::FREQUENCY_PUNCTUAL);
                 if ($ad->getReturnTime()) {
-                    $returnCriteria->setFromTime(\DateTime::createFromFormat('H:i', $ad->getOutwardTime()));
+                    $returnCriteria->setFromTime(\DateTime::createFromFormat('H:i', $ad->getReturnTime()));
                     $returnProposal->setUseTime(true);
                 } else {
                     $returnCriteria->setFromTime(new \DateTime("now", new \DateTimeZone('Europe/Paris')));

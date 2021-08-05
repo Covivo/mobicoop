@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2020, MOBICOOP. All rights reserved.
+ * Copyright (c) 2021, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -24,25 +24,26 @@
 namespace App\Community\Event;
 
 use Symfony\Contracts\EventDispatcher\Event;
-use App\Community\Entity\Community;
+use App\Community\Entity\CommunityUser;
 
 /**
  * Event sent when a user wants to join a community with a manual validation
  * @author Celine Jacquet <celine.jacquet@mobicoop.org>
+ * @author Remi Wortemann <remi.wortemann@mobicoop.org>
  */
 class CommunityNewMembershipRequestEvent extends Event
 {
     public const NAME = 'community_new_membership_request';
 
-    protected $community;
+    protected $communityUser;
 
-    public function __construct(Community $community)
+    public function __construct(CommunityUser $communityUser)
     {
-        $this->community = $community;
+        $this->communityUser = $communityUser;
     }
 
-    public function getCommunity()
+    public function getCommunityUser()
     {
-        return $this->community;
+        return $this->communityUser;
     }
 }

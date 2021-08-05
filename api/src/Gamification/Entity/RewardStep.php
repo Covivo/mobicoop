@@ -23,6 +23,7 @@
 
 namespace App\Gamification\Entity;
 
+use App\Gamification\Interfaces\GamificationNotificationInterface;
 use App\User\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -35,7 +36,7 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 * @ORM\Entity
 * @ORM\HasLifecycleCallbacks
 */
-class RewardStep
+class RewardStep implements GamificationNotificationInterface
 {
 
     /**
@@ -66,6 +67,14 @@ class RewardStep
      * @MaxDepth(1)
      */
     private $user;
+
+    /**
+     * @var \DateTimeInterface RewardStep's notification date. Determine if this RewardStep has been notified to the user.
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"readGamification"})
+     */
+    private $notifiedDate;
 
     /**
      * @var \DateTimeInterface RewardStep's creation date
@@ -115,6 +124,18 @@ class RewardStep
     public function setUser(?User $user): self
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    public function getNotifiedDate(): ?\DateTimeInterface
+    {
+        return $this->notifiedDate;
+    }
+
+    public function setNotifiedDate(?\DateTimeInterface $notifiedDate): self
+    {
+        $this->notifiedDate = $notifiedDate;
 
         return $this;
     }

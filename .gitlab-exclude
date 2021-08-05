@@ -39,6 +39,12 @@
 + /api/public/upload/icons/relaypoint-train.svg
 + /api/public/upload/icons/venue.svg
 - /api/public/upload/icons/*.svg
+/api/public/upload/editorials/images/*.jpg
+/api/public/upload/editorials/images/*.jpeg
+/api/public/upload/editorials/images/*.png
+/api/public/upload/editorials/images/versions/*.jpg
+/api/public/upload/editorials/images/versions/*.jpeg
+/api/public/upload/editorials/images/versions/*.png
 /api/public/upload/events/images/*.jpg
 /api/public/upload/events/images/*.jpeg
 /api/public/upload/events/images/*.png
@@ -63,6 +69,12 @@
 /api/public/upload/users/images/versions/*.jpg
 /api/public/upload/users/images/versions/*.jpeg
 /api/public/upload/users/images/versions/*.png
+/api/public/upload/badges/images/*.jpg
+/api/public/upload/badges/images/*.jpeg
+/api/public/upload/badges/images/*.png
+/api/public/upload/badges/images/versions/*.jpg
+/api/public/upload/badges/images/versions/*.jpeg
+/api/public/upload/badges/images/versions/*.png
 /api/public/upload/communities/security/*
 /api/public/upload/communities/images/*.jpg
 /api/public/upload/communities/images/*.jpeg
@@ -71,6 +83,12 @@
 /api/public/upload/communities/images/versions/*.jpeg
 /api/public/upload/communities/images/versions/*.png
 /api/public/upload/communities/security/*
+/api/public/upload/editorials/images/*.jpg
+/api/public/upload/editorials/images/*.jpeg
+/api/public/upload/editorials/images/*.png
+/api/public/upload/editorials/images/versions/*.jpg
+/api/public/upload/editorials/images/versions/*.jpeg
+/api/public/upload/editorials/images/versions/*.png
 /api/public/upload/mass/files/*.csv
 /api/public/upload/mass/files/*.xml
 /api/public/upload/mass/files/*.zip

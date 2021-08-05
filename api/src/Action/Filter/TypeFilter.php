@@ -39,8 +39,8 @@ final class TypeFilter extends AbstractContextAwareFilter
             return;
         }
 
-        if (!array_key_exists($value, Action::ACTION_TYPE_FILTER)) {
-            throw new LogicException("Unknown type. Should be in ['".implode("','", array_keys(Action::ACTION_TYPE_FILTER))."']");
+        if (!array_key_exists($value, Action::TYPE_FILTER)) {
+            throw new LogicException("Unknown type. Should be in ['".implode("','", array_keys(Action::TYPE_FILTER))."']");
         }
 
         // we will create a new querybuilder for retrieving the solidary users, to avoid modifying the one used for the original query
@@ -49,7 +49,7 @@ final class TypeFilter extends AbstractContextAwareFilter
         $alias = $queryBuilder->getRootAliases()[0];
 
         $queryBuilder
-        ->where($alias.'.type in ('."'".implode("','", Action::ACTION_TYPE_FILTER[$value])."'".')');
+        ->where($alias.'.type in ('."'".implode("','", Action::TYPE_FILTER[$value])."'".')');
         return;
     }
 
@@ -66,9 +66,9 @@ final class TypeFilter extends AbstractContextAwareFilter
                 'property' => $property,
                 'type' => 'string',
                 'required' => false,
-                'enum' => "{'".implode("','", array_keys(Action::ACTION_TYPE_FILTER))."'}",
+                'enum' => "{'".implode("','", array_keys(Action::TYPE_FILTER))."'}",
                 'swagger' => [
-                    'description' => 'Filter on Action to get only a specific type ['.implode("','", array_keys(Action::ACTION_TYPE_FILTER)).']',
+                    'description' => 'Filter on Action to get only a specific type ['.implode("','", array_keys(Action::TYPE_FILTER)).']',
                     'name' => 'type',
                     'type' => 'string',
                 ],

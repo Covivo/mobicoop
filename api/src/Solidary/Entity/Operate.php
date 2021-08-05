@@ -111,6 +111,7 @@ class Operate
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="operates")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups("aRead")
      * @MaxDepth(1)
      */
     private $user;

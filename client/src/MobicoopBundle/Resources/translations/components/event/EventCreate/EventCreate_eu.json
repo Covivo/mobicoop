@@ -25,7 +25,8 @@
         "event": {
             "required": "Izarrez markatutako eremu guziak baitezpadakoak dira",
             "create": "Ekitaldiaren sorrerak huts egin du",
-            "name": "Ekitaldi hori jadani existitzen da, beste izen bat emaiozu"
+            "name": "Ekitaldi hori jadani existitzen da, beste izen bat emaiozu",
+            "length": "Aurkezpen motza luzeegia da (512 karaktere gehienez)."
         }
     },
     "redirect": {
@@ -69,5 +70,5 @@
             "label": "Ekitaldia sortu"
         }
     },
-    "title": "Ekitaldi bat sortu"
+    "title": "Zure ekitaldia sor ezazu"
 }

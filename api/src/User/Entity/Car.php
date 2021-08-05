@@ -25,6 +25,7 @@ namespace App\User\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Action\Entity\Log;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -145,6 +146,13 @@ class Car
      * @MaxDepth(1)
      */
     private $user;
+
+    /**
+     * @var ArrayCollection The logs linked with the Car.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="car", cascade={"remove"})
+     */
+    private $logs;
 
     /**
      * @var \DateTimeInterface Creation date.
@@ -270,6 +278,34 @@ class Car
     {
         $this->updatedDate = $updatedDate;
 
+        return $this;
+    }
+
+    public function getLogs()
+    {
+        return $this->logs->getValues();
+    }
+    
+    public function addLog(Log $log): self
+    {
+        if (!$this->logs->contains($log)) {
+            $this->logs[] = $log;
+            $log->setCar($this);
+        }
+        
+        return $this;
+    }
+    
+    public function removeLog(Log $log): self
+    {
+        if ($this->logs->contains($log)) {
+            $this->logs->removeElement($log);
+            // set the owning side to null (unless already changed)
+            if ($log->getCar() === $this) {
+                $log->setCar(null);
+            }
+        }
+        
         return $this;
     }
 

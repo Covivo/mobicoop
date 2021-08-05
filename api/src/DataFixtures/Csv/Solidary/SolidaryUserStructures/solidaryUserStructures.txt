@@ -1,0 +1,6 @@
+id                  (int)
+solidary_user_id    (int)
+structure_id        (int)
+status              (0=pending, 1=accepted, 2=refused)
+accepted_date       (datetime)
+refused_date        (datetime)

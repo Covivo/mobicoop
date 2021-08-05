@@ -36,6 +36,12 @@ mobicoop-platform/api/public/robots.txt
 + mobicoop-platform/api/public/upload/icons/relaypoint-train.svg
 + mobicoop-platform/api/public/upload/icons/venue.svg
 - mobicoop-platform/api/public/upload/icons/*.svg
+mobicoop-platform/api/public/upload/editorials/images/*.jpg
+mobicoop-platform/api/public/upload/editorials/images/*.jpeg
+mobicoop-platform/api/public/upload/editorials/images/*.png
+mobicoop-platform/api/public/upload/editorials/images/versions/*.jpg
+mobicoop-platform/api/public/upload/editorials/images/versions/*.jpeg
+mobicoop-platform/api/public/upload/editorials/images/versions/*.png
 mobicoop-platform/api/public/upload/events/images/*.jpg
 mobicoop-platform/api/public/upload/events/images/*.jpeg
 mobicoop-platform/api/public/upload/events/images/*.png
@@ -60,6 +66,12 @@ mobicoop-platform/api/public/upload/users/images/*.png
 mobicoop-platform/api/public/upload/users/images/versions/*.jpg
 mobicoop-platform/api/public/upload/users/images/versions/*.jpeg
 mobicoop-platform/api/public/upload/users/images/versions/*.png
+mobicoop-platform/api/public/upload/badges/images/*.jpg
+mobicoop-platform/api/public/upload/badges/images/*.jpeg
+mobicoop-platform/api/public/upload/badges/images/*.png
+mobicoop-platform/api/public/upload/badges/images/versions/*.jpg
+mobicoop-platform/api/public/upload/badges/images/versions/*.jpeg
+mobicoop-platform/api/public/upload/badges/images/versions/*.png
 mobicoop-platform/api/public/upload/communities/security/*
 mobicoop-platform/api/public/upload/communities/images/*.jpg
 mobicoop-platform/api/public/upload/communities/images/*.jpeg
@@ -68,6 +80,12 @@ mobicoop-platform/api/public/upload/communities/images/versions/*.jpg
 mobicoop-platform/api/public/upload/communities/images/versions/*.jpeg
 mobicoop-platform/api/public/upload/communities/images/versions/*.png
 mobicoop-platform/api/public/upload/communities/security/*
+mobicoop-platform/api/public/upload/editorials/images/*.jpg
+mobicoop-platform/api/public/upload/editorials/images/*.jpeg
+mobicoop-platform/api/public/upload/editorials/images/*.png
+mobicoop-platform/api/public/upload/editorials/images/versions/*.jpg
+mobicoop-platform/api/public/upload/editorials/images/versions/*.jpeg
+mobicoop-platform/api/public/upload/editorials/images/versions/*.png
 mobicoop-platform/api/public/upload/mass/files/*.csv
 mobicoop-platform/api/public/upload/mass/files/*.xml
 mobicoop-platform/api/public/upload/mass/files/*.zip
@@ -91,6 +109,7 @@ mobicoop-platform/api/public/upload/masscommunication/images/versions/*.png
 mobicoop-platform/client/.env.dev.local
 mobicoop-platform/client/.env.test.local
 mobicoop-platform/client/.env.prod.local
+mobicoop-platform/client/var/cache/
 mobicoop-platform/client/var/log/
 mobicoop-platform/client/public/google*.html
 mobicoop-platform/client/public/robots.txt

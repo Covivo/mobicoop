@@ -212,7 +212,6 @@ export default {
       communities:[],
       communitiesUser:[],
       canCreate:false,
-      communitiesView:null,
       itemsPerPage:this.itemsPerPageDefault,
       totalItems:0,
       page:1,
@@ -251,7 +250,6 @@ export default {
             this.communities = response.data.communities;
             this.communitiesUser = response.data.communitiesUser;
             this.canCreate = response.data.canCreate;
-            this.communitiesView = response.data.communitiesView;
             this.totalItems = response.data.totalItems;
           }
           this.loading = false;

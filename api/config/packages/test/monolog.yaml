@@ -64,9 +64,14 @@ monolog:
             max_files: 30
             path: "%kernel.logs_dir%/faker.log"
             channels: [faker] 
+        solidary:
+            type: stream
+            level: debug
+            path: "%kernel.logs_dir%/solidary.log"
+            channels: [solidary]   
         main:
             type: rotating_file
             path: "%kernel.logs_dir%/%kernel.environment%.log"
             max_files: 30
             level: debug
-            channels: ["!event", "!carpool", "!carpool_dynamic", "!carpool_proof", "!communication", "!community", "!geography", "!geomatcher", "!georouter", "!mass", "!notification", "!faker"]
+            channels: ["!event", "!carpool", "!carpool_dynamic", "!carpool_proof", "!communication", "!community", "!geography", "!geomatcher", "!georouter", "!mass", "!notification", "!faker", "!solidary"]

@@ -4,12 +4,12 @@
     "leaveCommunity": {
         "popup": {
             "content": {
-                "isProposalsHidden": "Komunitate pribatu honekin loturan diren iragarkiak baldin badituzu, bali diren iragarki horiek kenduak izanen dira. <br>Bieztatzen duzu?",
+                "isProposalsHidden": "Komunitate pribatu honi lotuak diren iragarki baliodunak baldin badituzu oraino, iragarki hauek ezabatuak izanen dira. <br>Baieztatzen duzu?",
                 "isNotProposalsHidden": "Komunitate honi loturiko bali diren iragarkiak baldin badituzu, iragarki horiek ez dira gehiago komunitatean markatuak izanen komunitateik ateratzen bazira.<br>baieztatzen duzu?"
             },
-            "title": "Baietapen eskaera"
+            "title": "Baieztapen eskaera"
         },
-        "button": "Komunitatetik atera",
+        "button": "Komunitatea utzi",
         "route": "/communaute/{id}/quitter"
     },
     "snackbar": {
@@ -25,5 +25,5 @@
         "communitySecuredRegister": "/communaute/{id}/securisee/inscription",
         "community": "/covoiturage-communaute/{id}/{urlKey}"
     },
-    "members":"{members} membres"
+    "members": "{members} membres"
 }

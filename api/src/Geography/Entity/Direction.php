@@ -96,7 +96,7 @@ class Direction
     private $distance;
     
     /**
-     * @var int The total duration of the direction in milliseconds.
+     * @var int The total duration of the direction in seconds.
      * @ORM\Column(type="integer")
      * @Groups({"read","results","write","mass","thread"})
      */

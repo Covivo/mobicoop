@@ -63,7 +63,6 @@ class ArticleVoter extends Voter
             ])) {
             return false;
         }
-
         // only vote on Article objects inside this voter
         if (!in_array($attribute, [
             self::ADMIN_ARTICLE_CREATE,

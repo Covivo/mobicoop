@@ -42,7 +42,7 @@ final class SolidaryItemDataProvider implements ItemDataProviderInterface, Restr
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Solidary::class === $resourceClass;
+        return Solidary::class === $resourceClass && $operationName == 'get';
     }
 
     public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?Solidary

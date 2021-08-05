@@ -11,7 +11,7 @@
         "help": "Abiatze eta iriste tokia gibelez aitzina ezartzeko klikatu",
         "alt": "Iriste eta abiatzea gibelez aitzina ezarri"
     },
-    "subtitle": "Hurbileko autokidetza zerbitzu bat, lagun artekoa eta elkartasunezko.<br />Gaurdanik zure autokideza atzeman ezazu edo bidaia bat proposa ezazu.",
+    "subtitle": "Hurbileko autokidetza zerbitzu bat, lagun artekoa eta elkartasunezkoa.<br />Zure autokideza gaurdanik atzeman ezazu edo zure bidaia proposa ezazu.",
     "title": "Mobicoop",
     "fullDate": "ddd Do MMMM YYYY",
     "outwardDate": {
@@ -43,7 +43,7 @@
         "label": "Iristeko gunea"
     },
     "origin": {
-        "error": "Beharrezkoa",
-        "label": "Abiatzeko gunea"
+        "error": "Baitezpadakoa",
+        "label": "Abiatze lekua"
     }
 }

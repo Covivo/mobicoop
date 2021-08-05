@@ -54,7 +54,7 @@ class ParagraphRepository
      * Find the following paragraph of a given paragraph.
      *
      * @param Paragraph $paragraph
-     * @return void
+     * @return Paragraph
      */
     public function findNext(Paragraph $paragraph)
     {
@@ -73,7 +73,7 @@ class ParagraphRepository
      * Find the previous paragraph of a given paragraph.
      *
      * @param Paragraph $paragraph
-     * @return void
+     * @return Paragraph
      */
     public function findPrevious(Paragraph $paragraph)
     {
