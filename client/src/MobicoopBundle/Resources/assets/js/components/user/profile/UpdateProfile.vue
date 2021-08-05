@@ -105,60 +105,43 @@
           </v-row>
           <v-row
             no-gutters
-            :align="phoneToken != null && telephone && !phoneVerified ? 'center' : null"
           >
             <!-- Telephone -->
             <v-col 
               :cols="telephone && phoneVerified ? '12' : '6'"
             >
-              <v-row no-gutters>
-                <v-col>
-                  <v-text-field
-                    v-model="telephone"
-                    :label="$t('phone.label')"
-                    class="telephone"
-                    :rules="telephoneRules"
-                  >
-                    <template v-slot:append>
-                      <v-tooltip 
-                        color="info" 
-                        top
-                      >
-                        <template v-slot:activator="{ on }">
-                          <v-icon 
-                            v-if="telephone && phoneVerified" 
-                            color="success"  
-                            v-on="on"
-                          >
-                            mdi-check-circle-outline
-                          </v-icon>
-                          <v-icon 
-                            v-if="telephone && !phoneVerified" 
-                            color="warning"  
-                            v-on="on"
-                          >
-                            mdi-alert-circle-outline
-                          </v-icon>
-                        </template>
-                        <span v-if="telephone && phoneVerified">{{ $t('phone.tooltips.verified') }}</span>
-                        <span v-if="telephone && !phoneVerified">{{ $t('phone.tooltips.notVerified') }}</span>
-                      </v-tooltip>
-                    </template>
-                  </v-text-field>
-                </v-col>
-              </v-row>
-              <v-row 
-                v-if="phoneToken != null && telephone && !phoneVerified"
-                no-gutters
+              <v-text-field
+                v-model="telephone"
+                :label="$t('phone.label')"
+                class="telephone"
+                :rules="telephoneRules"
               >
-                <v-col>
-                  <v-text-field
-                    v-model="token"
-                    :rules="tokenRules"
-                    :label="$t('phone.validation.label')"
-                  />
-                </v-col>
-              </v-row>
+                <template v-slot:append>
+                  <v-tooltip 
+                    color="info" 
+                    top
+                  >
+                    <template v-slot:activator="{ on }">
+                      <v-icon 
+                        v-if="telephone && phoneVerified" 
+                        color="success"  
+                        v-on="on"
+                      >
+                        mdi-check-circle-outline
+                      </v-icon>
+                      <v-icon 
+                        v-else-if="telephone && !phoneVerified" 
+                        color="warning"  
+                        v-on="on"
+                      >
+                        mdi-alert-circle-outline
+                      </v-icon>
+                    </template>
+                    <span v-if="telephone && phoneVerified">{{ $t('phone.tooltips.verified') }}</span>
+                    <span v-if="telephone && !phoneVerified">{{ $t('phone.tooltips.notVerified') }}</span>
+                  </v-tooltip>
+                </template>
+              </v-text-field>
             </v-col>
             <v-col 
               v-if="telephone && displayPhoneVerification && !phoneVerified"
@@ -172,6 +155,31 @@
                 @click="generateToken"
               >
                 {{ phoneToken == null ? $t('phone.buttons.label.generateToken') : $t('phone.buttons.label.generateNewToken') }}
+              </v-btn>
+            </v-col>
+          </v-row>
+          <v-row 
+            v-if="phoneToken != null && telephone && !phoneVerified"
+            no-gutters
+          >
+            <v-col cols="6">
+              <v-text-field
+                v-model="token"
+                :rules="tokenRules"
+                :label="$t('phone.validation.label')"
+              />
+            </v-col>
+            <v-col 
+              cols="6"
+              class="d-flex justify-center"
+            >
+              <v-btn 
+                rounded 
+                color="secondary" 
+                :loading="loadingValidatePhone" 
+                @click="validateToken"
+              >
+                {{ $t('phone.buttons.label.validate') }}
               </v-btn>
             </v-col>
           </v-row>
@@ -370,25 +378,23 @@
               class="d-flex justify-center"
             >
               <!--Save Button-->
+              <v-btn
+                class="button saveButton"
+                color="secondary"
+                rounded
+                :disabled="!valid"
+                :loading="loading"
+                type="button"
+                :value="$t('save')"
+                @click="update"
+              >
+                {{ $t('save') }}
+              </v-btn>
               <v-dialog
                 v-model="dialogEmail"
                 persistent
                 max-width="450"
               >
-                <template v-slot:activator>
-                  <v-btn
-                    class="button saveButton"
-                    color="secondary"
-                    rounded
-                    :disabled="!valid"
-                    :loading="loading"
-                    type="button"
-                    :value="$t('save')"
-                    @click="update"
-                  >
-                    {{ $t('save') }}
-                  </v-btn>
-                </template>
                 <v-card>
                   <v-card-title class="headline">
                     {{ $t('dialogEmail.title') }}
