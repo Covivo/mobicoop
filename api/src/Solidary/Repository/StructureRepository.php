@@ -91,14 +91,21 @@ class StructureRepository
     {
         $conn = $this->entityManager->getConnection();
 
-        $sql = "SELECT s.* FROM structure s
+        // we get only structure's ids
+        $sql = "SELECT s.id FROM structure s
         INNER JOIN structure_territory st ON st.structure_id = s.id
         INNER JOIN territory t ON t.id = st.territory_id
         WHERE ST_INTERSECTS(t.geo_json_detail,ST_GEOMFROMTEXT('POINT($longitude $latitude)'))=1
         ";
         $stmt = $conn->prepare($sql);
         $stmt->execute();
-        $results = $stmt->fetchAll();
-        return $results;
+        $structureIds = $stmt->fetchAll();
+        
+        $structures = [];
+        // we retrieve structures with ids. We do that in two step because with the sql call we do not get linked entities infos like subjects
+        foreach ($structureIds as $structureId) {
+            $structures[] = $this->find($structureId['id']);
+        }
+        return $structures;
     }
 }
