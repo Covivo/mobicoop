@@ -183,7 +183,7 @@ class InternalMessageManager
 
     public function getMessage($idMessage)
     {
-        return $message = $this->messageRepository->find($idMessage);
+        return $this->messageRepository->find($idMessage);
     }
 
     /**

@@ -36,6 +36,10 @@ use App\Geography\Entity\Address;
 use App\User\Admin\Service\UserManager;
 use App\User\Entity\User;
 use App\User\Repository\UserRepository;
+use App\Community\Event\CommunityMembershipRefusedEvent;
+use App\Community\Event\CommunityMembershipAcceptedEvent;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use App\Community\Event\CommunityCreatedEvent;
 
 /**
  * Community manager for admin context.
@@ -50,6 +54,7 @@ class CommunityManager
     private $userRepository;
     private $userManager;
     private $authItemRepository;
+    private $eventDispatcher;
 
     /**
      * Constructor
@@ -62,7 +67,8 @@ class CommunityManager
         CommunityUserRepository $communityUserRepository,
         UserRepository $userRepository,
         UserManager $userManager,
-        AuthItemRepository $authItemRepository
+        AuthItemRepository $authItemRepository,
+        EventDispatcherInterface $eventDispatcher
     ) {
         $this->entityManager = $entityManager;
         $this->communityUserRepository = $communityUserRepository;
@@ -70,6 +76,7 @@ class CommunityManager
         $this->userRepository = $userRepository;
         $this->userManager = $userManager;
         $this->authItemRepository = $authItemRepository;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -135,6 +142,10 @@ class CommunityManager
             $this->entityManager->persist($address);
             $this->entityManager->flush();
         }
+
+        //  we dispatch the event associated
+        $event = new CommunityCreatedEvent($community);
+        $this->eventDispatcher->dispatch($event, CommunityCreatedEvent::NAME);
 
         return $community;
     }
@@ -208,6 +219,17 @@ class CommunityManager
         $this->entityManager->persist($communityUser);
         $this->entityManager->flush();
         
+        switch ($communityUser->getStatus()) {
+            case CommunityUser::STATUS_REFUSED:
+                $event = new CommunityMembershipRefusedEvent($communityUser->getCommunity(), $communityUser->getUser());
+                $this->eventDispatcher->dispatch(CommunityMembershipRefusedEvent::NAME, $event);
+                break;
+            case CommunityUser::STATUS_ACCEPTED_AS_MEMBER:
+                $event = new CommunityMembershipAcceptedEvent($communityUser->getCommunity(), $communityUser->getUser());
+                $this->eventDispatcher->dispatch(CommunityMembershipAcceptedEvent::NAME, $event);
+                break;
+        }
+
         // return the community
         return $communityUser;
     }

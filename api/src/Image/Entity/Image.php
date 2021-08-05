@@ -39,6 +39,7 @@ use App\Gamification\Entity\Badge;
 use App\RelayPoint\Entity\RelayPoint;
 use App\RelayPoint\Entity\RelayPointType;
 use App\MassCommunication\Entity\Campaign;
+use App\Editorial\Entity\Editorial;
 use App\Image\Controller\CreateImageAction;
 use App\Image\Controller\CreateImageAdminCampaignController;
 use App\Image\Controller\ImportImageCommunityController;
@@ -121,7 +122,7 @@ class Image
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"aRead","read","readUser","communities","readRelayPoint"})
+     * @Groups({"aRead","read","readUser","communities","listCommunities","readRelayPoint"})
      * @ApiProperty(identifier=true)
      */
     private $id;
@@ -130,7 +131,7 @@ class Image
      * @var string The name of the image.
      *
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read","readUser","communities","readRelayPoint"})
+     * @Groups({"read","readUser","communities","listCommunities","readRelayPoint"})
      */
     private $name;
 
@@ -138,7 +139,7 @@ class Image
      * @var string The html title of the image.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"read","readUser","communities","readRelayPoint"})
+     * @Groups({"read","readUser","communities","listCommunities","readRelayPoint"})
      */
     private $title;
     
@@ -344,28 +345,58 @@ class Image
      * @var Badge|null The Badge for which this image is used as icon
      *
      * @ORM\OneToOne(targetEntity="\App\Gamification\Entity\Badge", inversedBy="icon", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"readGamification"})
-     * @MaxDepth(1)
      */
     private $badge;
+
+    /**
+     * @var int|null The badge id associated with the image (icon).
+     * @Groups({"write","read"})
+     */
+    private $badgeId;
+
+    /**
+     * @var File|null
+     * @Vich\UploadableField(mapping="badge", fileNameProperty="fileName", originalName="originalName", size="size", mimeType="mimeType", dimensions="dimensions")
+     */
+    private $badgeFile;
 
     /**
      * @var Badge|null The Badge for which this image is used as reward image
      *
      * @ORM\OneToOne(targetEntity="\App\Gamification\Entity\Badge", inversedBy="image", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"readGamification"})
-     * @MaxDepth(1)
      */
     private $badgeImage;
+
+    /**
+     * @var int|null The badge id associated with the image.
+     * @Groups({"write","read"})
+     */
+    private $badgeImageId;
+
+    /**
+     * @var File|null
+     * @Vich\UploadableField(mapping="badge", fileNameProperty="fileName", originalName="originalName", size="size", mimeType="mimeType", dimensions="dimensions")
+     */
+    private $badgeImageFile;
 
     /**
      * @var Badge|null The Badge for which this image is used as reward image light
      *
      * @ORM\OneToOne(targetEntity="\App\Gamification\Entity\Badge", inversedBy="imageLight", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"readGamification"})
-     * @MaxDepth(1)
      */
     private $badgeImageLight;
+
+    /**
+     * @var int|null The badge id associated with the image light.
+     * @Groups({"write","read"})
+     */
+    private $badgeImageLightId;
+
+    /**
+     * @var File|null
+     * @Vich\UploadableField(mapping="badge", fileNameProperty="fileName", originalName="originalName", size="size", mimeType="mimeType", dimensions="dimensions")
+     */
+    private $badgeImageLightFile;
     
     /**
      * @var File|null
@@ -399,8 +430,27 @@ class Image
     private $campaignId;
 
     /**
+     * @var Editorial|null The editorial associated with the image.
+     *
+     * @ORM\ManyToOne(targetEntity="\App\Editorial\Entity\Editorial", inversedBy="images", cascade="persist")
+     */
+    private $editorial;
+
+    /**
+     * @var File|null
+     * @Vich\UploadableField(mapping="editorial", fileNameProperty="fileName", originalName="originalName", size="size", mimeType="mimeType", dimensions="dimensions")
+     */
+    private $editorialFile;
+    
+    /**
+     * @var int|null The editorial id associated with the image.
+     * @Groups({"read","write"})
+     */
+    private $editorialId;
+
+    /**
      * @var array|null The versions of with the image.
-     * @Groups({"read","readCommunity","readRelayPoint","readCommunityUser","readEvent","readUser","results","communities"})
+     * @Groups({"read","readCommunity","readRelayPoint","readCommunityUser","readEvent","readUser","results","communities","listCommunities"})
      */
     private $versions;
 
@@ -763,6 +813,18 @@ class Image
         
         return $this;
     }
+
+    public function getBadgeId(): ?int
+    {
+        return $this->badgeId;
+    }
+    
+    public function setBadgeId(?int $badgeId): self
+    {
+        $this->badgeId = $badgeId;
+        
+        return $this;
+    }
     
     public function getBadge(): ?Badge
     {
@@ -772,6 +834,28 @@ class Image
     public function setBadge(?Badge $badge): self
     {
         $this->badge = $badge;
+        
+        return $this;
+    }
+
+    public function getBadgeFile(): ?File
+    {
+        return $this->badgeFile;
+    }
+    
+    public function setBadgeFile(?File $badgeFile)
+    {
+        $this->badgeFile = $badgeFile;
+    }
+
+    public function getBadgeImageId(): ?int
+    {
+        return $this->badgeImageId;
+    }
+    
+    public function setBadgeImageId(?int $badgeImageId): self
+    {
+        $this->badgeImageId = $badgeImageId;
         
         return $this;
     }
@@ -788,6 +872,16 @@ class Image
         return $this;
     }
 
+    public function getBadgeImageFile(): ?File
+    {
+        return $this->badgeImageFile;
+    }
+    
+    public function setBadgeImageFile(?File $badgeImageFile)
+    {
+        $this->badgeImageFile = $badgeImageFile;
+    }
+
     public function getBadgeImageLight(): ?Badge
     {
         return $this->badgeImageLight;
@@ -798,6 +892,28 @@ class Image
         $this->badgeImageLight = $badgeImageLight;
         
         return $this;
+    }
+
+    public function getBadgeImageLightId(): ?int
+    {
+        return $this->badgeImageLightId;
+    }
+    
+    public function setBadgeImageLightId(?int $badgeImageLightId): self
+    {
+        $this->badgeImageLightId = $badgeImageLightId;
+        
+        return $this;
+    }
+
+    public function getBadgeImageLightFile(): ?File
+    {
+        return $this->badgeImageLightFile;
+    }
+    
+    public function setBadgeImageLightFile(?File $badgeImageLightFile)
+    {
+        $this->badgeImageLightFile = $badgeImageLightFile;
     }
 
     public function getRelayPointTypeFile(): ?File
@@ -851,6 +967,38 @@ class Image
     {
         $this->campaignId = $campaignId;
     }
+
+    public function getEditorial(): ?Editorial
+    {
+        return $this->editorial;
+    }
+    
+    public function setEditorial(?Editorial $editorial): self
+    {
+        $this->editorial = $editorial;
+        
+        return $this;
+    }
+    
+    public function getEditorialFile(): ?File
+    {
+        return $this->editorialFile;
+    }
+    
+    public function setEditorialFile(?File $editorialFile)
+    {
+        $this->editorialFile = $editorialFile;
+    }
+    
+    public function getEditorialId(): ?int
+    {
+        return $this->editorialId;
+    }
+    
+    public function setEditorialId($editorialId)
+    {
+        $this->editorialId = $editorialId;
+    }
     
     public function getVersions(): ?array
     {
@@ -886,6 +1034,10 @@ class Image
         $this->setRelayPointFile(null);
         $this->setRelayPointTypeFile(null);
         $this->setCampaignFile(null);
+        $this->setBadgeFile(null);
+        $this->setBadgeImageFile(null);
+        $this->setBadgeImageLightFile(null);
+        $this->setEditorialFile(null);
     }
     
     // DOCTRINE EVENTS

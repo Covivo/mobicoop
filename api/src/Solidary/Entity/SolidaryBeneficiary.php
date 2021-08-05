@@ -25,13 +25,8 @@ namespace App\Solidary\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
-use ApiPlatform\Core\Annotation\ApiSubresource;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
-use ApiPlatform\Core\Annotation\ApiFilter;
-use App\Geography\Entity\Address;
 use App\User\Entity\User;
-use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * A solidary beneficiary.
@@ -54,7 +49,19 @@ use Doctrine\Common\Collections\ArrayCollection;
  *              "swagger_context" = {
  *                  "tags"={"Solidary"}
  *              }
- *          }
+ *          },
+ *          "ADMIN_get"={
+ *              "path"="/admin/solidary_beneficiaries",
+ *              "method"="GET",
+ *              "normalization_context"={
+ *                  "groups"={"aReadCol"},
+ *                  "skip_null_values"=false
+ *              },
+ *              "security"="is_granted('admin_solidary_beneficiary_list',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
+ *          },
  *      },
  *      itemOperations={
  *          "get"={
@@ -74,10 +81,33 @@ use Doctrine\Common\Collections\ArrayCollection;
  *              "swagger_context" = {
  *                  "tags"={"Solidary"}
  *              }
- *          }
- *
+ *          },
+ *          "ADMIN_get"={
+ *              "path"="/admin/solidary_beneficiaries/{id}",
+ *              "method"="GET",
+ *              "normalization_context"={
+ *                  "groups"={"aReadItem"},
+ *                  "skip_null_values"=false
+ *              },
+ *              "security"="is_granted('admin_solidary_beneficiary_list',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
+ *          },
+ *          "ADMIN_patch"={
+ *              "path"="/admin/solidary_beneficiaries/{id}",
+ *              "method"="PATCH",
+ *              "read"=false,
+ *              "normalization_context"={"groups"={"aReadItem"}},
+ *              "denormalization_context"={"groups"={"aWrite"}},
+ *              "security"="is_granted('admin_solidary_beneficiary_update',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
+ *          },
  *      }
  * )
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class SolidaryBeneficiary
@@ -91,14 +121,14 @@ class SolidaryBeneficiary
      * @var int The id of this solidary user.
      *
      * @ApiProperty(identifier=true)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aReadCol","aReadItem","readSolidary","writeSolidary"})
      */
     private $id;
 
     /**
      * @var string The email of the user.
      *
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aReadCol","aReadItem","readSolidary","writeSolidary"})
      */
     private $email;
 
@@ -110,31 +140,31 @@ class SolidaryBeneficiary
 
     /**
      * @var int|null The gender of the user (1=female, 2=male, 3=nc)
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aReadCol","aReadItem","readSolidary","writeSolidary"})
      */
     private $gender;
 
     /**
      * @var string|null The telephone number of the user.
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aReadCol","aReadItem","readSolidary","writeSolidary"})
      */
     private $telephone;
 
     /**
      * @var string|null The first name of the user.
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aReadCol","aReadItem","readSolidary","writeSolidary"})
      */
     private $givenName;
 
     /**
      * @var string|null The family name of the user.
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aReadCol","aReadItem","readSolidary","writeSolidary"})
      */
     private $familyName;
 
     /**
      * @var \DateTimeInterface|null The birth date of the user.
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aReadItem","readSolidary","writeSolidary"})
      *
      * @ApiProperty(
      *     attributes={
@@ -146,7 +176,7 @@ class SolidaryBeneficiary
 
     /**
      * @var boolean|null The user accepts to receive news about the platform.
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aReadItem","readSolidary","writeSolidary"})
      */
     private $newsSubscription;
 
@@ -158,7 +188,7 @@ class SolidaryBeneficiary
 
     /**
      * @var array The home address of this beneficiary
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aReadItem","readSolidary","writeSolidary"})
      */
     private $homeAddress;
 
@@ -177,7 +207,7 @@ class SolidaryBeneficiary
 
     /**
      * @var array The proofs associated to this user
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aReadItem","readSolidary","writeSolidary"})
      */
     private $proofs;
     
@@ -189,7 +219,7 @@ class SolidaryBeneficiary
 
     /**
      * @var array The diaries associated to this user
-     * @Groups({"readSolidary","writeSolidary"})
+     * @Groups({"aReadItem","readSolidary","writeSolidary"})
      */
     private $diaries;
 
@@ -201,7 +231,7 @@ class SolidaryBeneficiary
 
     /**
      * @var array The solidary structures of this user
-     * @Groups({"readSolidary"})
+     * @Groups({"aReadCol","aReadItem","readSolidary"})
      */
     private $structures;
 
@@ -224,6 +254,19 @@ class SolidaryBeneficiary
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $updatedDate;
+
+    /**
+     * @var string|null The avatar of the solidary beneficiary
+     *
+     * @Groups({"aReadItem"})
+     */
+    private $avatar;
+
+    /**
+     * @var int|null The userId of the solidary user
+     * @Groups({"aReadItem"})
+     */
+    private $userId;
 
     public function __construct()
     {
@@ -481,6 +524,30 @@ class SolidaryBeneficiary
     public function setUpdatedDate(?\DateTimeInterface $updatedDate): self
     {
         $this->updatedDate = $updatedDate;
+
+        return $this;
+    }
+
+    public function getAvatar(): ?string
+    {
+        return $this->avatar;
+    }
+
+    public function setAvatar(?string $avatar): self
+    {
+        $this->avatar = $avatar;
+
+        return $this;
+    }
+
+    public function getUserId()
+    {
+        return $this->userId;
+    }
+
+    public function setUserId($userId): self
+    {
+        $this->userId = $userId;
 
         return $this;
     }

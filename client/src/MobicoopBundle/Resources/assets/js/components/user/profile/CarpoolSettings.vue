@@ -88,11 +88,15 @@
 
 <script>
 import maxios from "@utils/maxios";
-import Translations from "@translations/components/user/profile/CarpoolSettings/CarpoolSettings.js";
+import {messages_en, messages_fr, messages_eu} from "@translations/components/user/profile/CarpoolSettings/";
 
 export default {
   i18n: {
-    messages: Translations
+    messages: {
+      'en': messages_en,
+      'fr': messages_fr,
+      'eu':messages_eu
+    }
   },
   props: {
     user: {

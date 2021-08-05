@@ -102,12 +102,13 @@ then
     cd /var/www/$VERSION/$INSTANCE/public/externalCgu;
     wget https://www.mangopay.com/terms/PSP/PSP_MANGOPAY_FR.pdf
     
-    # Admin build
-    cd /var/www/$VERSION/$INSTANCE/mobicoop-platform/admin;
-    rm -Rf node_modules;
-    rm package-lock.json;
-    npm install;
-    npm run build;
+    # Fixtures for test
+    if [ $VERSION == "test" ]
+    then
+        cd /var/www/$VERSION/$INSTANCE/mobicoop-platform/api;
+        php bin/console doctrine:fixtures:load -n -v --append --group=basic --env=$VERSION_MIGRATE
+        php bin/console doctrine:fixtures:load -n -v --append --group=solidary --env=$VERSION_MIGRATE
+    fi
 
 else
 

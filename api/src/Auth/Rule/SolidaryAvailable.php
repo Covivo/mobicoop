@@ -26,7 +26,7 @@ namespace App\Auth\Rule;
 use App\Auth\Interfaces\AuthRuleInterface;
 
 /**
- *  Check that the solodary module is available
+ *  Check that the solidary module is available
  */
 class SolidaryAvailable implements AuthRuleInterface
 {

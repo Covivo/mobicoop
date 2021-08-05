@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * Copyright (c) 2021, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -30,6 +30,7 @@ use App\MassCommunication\Repository\CampaignRepository;
 use App\RelayPoint\Entity\RelayPoint;
 use App\RelayPoint\Repository\RelayPointRepository;
 use App\User\Entity\User;
+use App\Gamification\Entity\Badge;
 use App\Community\Entity\Community;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManagerInterface;
@@ -39,6 +40,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use App\Event\Repository\EventRepository;
 use App\Community\Repository\CommunityRepository;
+use App\Editorial\Entity\Editorial;
 use App\User\Repository\UserRepository;
 use App\Image\Repository\ImageRepository;
 use App\Image\Exception\OwnerNotFoundException;
@@ -46,13 +48,16 @@ use App\Image\Exception\ImageException;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use ProxyManager\Exception\FileNotWritableException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use App\Gamification\Repository\BadgeRepository;
+use App\Editorial\Repository\EditorialRepository;
 
 /**
  * Image manager.
  *
  * This service contains methods related to image manipulations.
  *
- * @author Sylvain Briat <sylvain.briat@covivo.eu>
+ * @author Sylvain Briat <sylvain.briat@mobicoop.org>
+ * @author Remi Wortemann <remi.wortemann@mobicoop.org>
  */
 class ImageManager
 {
@@ -70,6 +75,8 @@ class ImageManager
     private $logger;
     private $entityManager;
     private $dataUri;
+    private $badgeRepository;
+    private $editorialRepository;
 
 
     /**
@@ -82,6 +89,9 @@ class ImageManager
      * @param FileManager $fileManager
      * @param ContainerInterface $container
      * @param LoggerInterface $logger
+     * @param CampaignRepository $campaign
+     * @param BadgeRepository $badge
+     * @param EditorialRepository $editorial
      * @param array $types
      */
     public function __construct(
@@ -96,7 +106,9 @@ class ImageManager
         LoggerInterface $logger,
         array $types,
         CampaignRepository $campaignRepository,
-        string $dataUri
+        string $dataUri,
+        BadgeRepository $badgeRepository,
+        EditorialRepository $editorialRepository
     ) {
         $this->entityManager = $entityManager;
         $this->eventRepository = $eventRepository;
@@ -112,6 +124,8 @@ class ImageManager
         $this->dataManager = $container->get('liip_imagine.data.manager');
         $this->logger = $logger;
         $this->dataUri = $dataUri;
+        $this->badgeRepository = $badgeRepository;
+        $this->editorialRepository = $editorialRepository;
     }
     
     /**
@@ -151,6 +165,30 @@ class ImageManager
         } elseif (!is_null($image->getCampaignId())) {
             // the image is an image for a campaign
             return $this->campaignRepository->find($image->getCampaignId());
+        } elseif (!is_null($image->getBadge())) {
+            // the icon is an image for a badge
+            return $this->badgeRepository->find($image->getBadge()->getId());
+        } elseif (!is_null($image->getBadgeId())) {
+            // the icon is an image for a badge
+            return $this->badgeRepository->find($image->getBadgeId());
+        } elseif (!is_null($image->getBadgeImage())) {
+            // the image is an image for a badge
+            return $this->badgeRepository->find($image->getBadgeImage()->getId());
+        } elseif (!is_null($image->getBadgeImageId())) {
+            // the image is an image for a badge
+            return $this->badgeRepository->find($image->getBadgeImageId());
+        } elseif (!is_null($image->getBadgeImageLight())) {
+            // the imageLight is an image for a badge
+            return $this->badgeRepository->find($image->getBadgeImageLight()->getId());
+        } elseif (!is_null($image->getBadgeImageLightId())) {
+            // the imageLight is an image for a badge
+            return $this->badgeRepository->find($image->getBadgeImageLightId());
+        } elseif (!is_null($image->getEditorialId())) {
+            // the image is an image for an editorial
+            return $this->editorialRepository->find($image->getEditorialId());
+        } elseif (!is_null($image->getEditorial())) {
+            // the image is an image for an editorial
+            return $this->editorialRepository->find($image->getEditorial()->getId());
         }
         throw new OwnerNotFoundException('The owner of this image cannot be found');
     }
@@ -211,6 +249,22 @@ class ImageManager
                 // TODO : define a standard for the naming of the images (name of the owner + position ? uuid ?)
                 // for now, for an event, the filename will be the sanitized name of the event and the position of the image in the set
                 if ($fileName = $this->fileManager->sanitize($owner->getName() . " " . $image->getPosition())) {
+                    return $fileName;
+                }
+
+                break;
+            case Badge::class:
+                // TODO : define a standard for the naming of the images (name of the owner + position ? uuid ?)
+                // for now, for a badge, the filename will be the sanitized name of the event and the position of the image in the set
+                if ($fileName = $this->fileManager->sanitize($owner->getName() . " " . $image->getPosition())) {
+                    return $fileName;
+                }
+
+                break;
+            case Editorial::class:
+                // TODO : define a standard for the naming of the images (name of the owner + position ? uuid ?)
+                // for now, for a badge, the filename will be the sanitized name of the event and the position of the image in the set
+                if ($fileName = $this->fileManager->sanitize($owner->getTitle() . " " . $image->getPosition())) {
                     return $fileName;
                 }
 
@@ -368,11 +422,10 @@ class ImageManager
         string $prefix
     ) {
         $versionName = $prefix . $fileName . "." . $extension;
-
-        if (file_exists($baseFolder.$folderOrigin.$image->getFileName())) {
+        if (file_exists(dirname(__FILE__)."/../../../public/".$baseFolder.$folderOrigin.$image->getFileName())) {
             $liipImage = $this->dataManager->find($filter, $baseFolder.$folderOrigin.$image->getFileName());
             $resized = $this->filterManager->applyFilter($liipImage, $filter)->getContent();
-            $this->saveImage($resized, $versionName, $baseFolder.$folderDestination);
+            $this->saveImage($resized, $versionName, dirname(__FILE__)."/../../../public/".$baseFolder.$folderDestination);
         }
         return $versionName;
     }

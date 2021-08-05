@@ -2,7 +2,7 @@
     "infos": {
         "lastConnection": "Azken konexioa",
         "answerPct": "Erantzun tasa",
-        "carpoolRealized": "Egindako autokidetzak"
+        "carpoolRealized": "Eginak izan diren autokidetzak"
     },
     "getProfileSummaryUri": "/utilisateur/profil/resume",
     "yearsOld": "urte"

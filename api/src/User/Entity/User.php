@@ -101,6 +101,7 @@ use App\User\EntityListener\UserListener;
 use App\Event\Entity\Event;
 use App\Community\Entity\CommunityUser;
 use App\Gamification\Entity\Badge;
+use App\Gamification\Entity\Reward;
 use App\Gamification\Entity\RewardStep;
 use App\Match\Entity\MassPerson;
 use App\Payment\Ressource\BankAccount;
@@ -1087,7 +1088,7 @@ class User implements UserInterface, EquatableInterface
      * @var ArrayCollection|null A user may have many action logs.
      *
      * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"readUser","write"})
+     * @Groups({"write"})
      */
     private $logs;
 
@@ -1095,9 +1096,17 @@ class User implements UserInterface, EquatableInterface
      * @var ArrayCollection|null A user may have many action logs as an delegate.
      *
      * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="userDelegate", cascade={"persist","remove"}, orphanRemoval=true)
-     * @Groups({"readUser","write"})
+     * @Groups({"write"})
      */
     private $logsAsDelegate;
+
+    /**
+     * @var ArrayCollection|null A user may have many action logs as a user related.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="userRelated", cascade={"persist","remove"}, orphanRemoval=true)
+     * @Groups({"readUser","write"})
+     */
+    private $logsAsRelated;
 
     /**
      * @var ArrayCollection|null A user may have many action logs.
@@ -1146,18 +1155,16 @@ class User implements UserInterface, EquatableInterface
     private $import;
 
     /**
-     * @var ArrayCollection|null The Badges earned by this User.
+     * @var ArrayCollection|null The Rewards (Badges...) earned by this User.
      *
-     * @ORM\ManyToMany(targetEntity="\App\Gamification\Entity\Badge", mappedBy="users")
-     * @ORM\JoinTable(name="reward")
-     * @Groups({"readGamification"})
+     * @ORM\OneToMany(targetEntity="\App\Gamification\Entity\Reward", mappedBy="user", cascade={"remove"})
      */
-    private $badges;
+    private $rewards;
 
     /**
      * @var ArrayCollection|null The RewardSteps earned by this User.
      *
-     * @ORM\OneToMany(targetEntity="\App\Gamification\Entity\RewardStep", mappedBy="user")
+     * @ORM\OneToMany(targetEntity="\App\Gamification\Entity\RewardStep", mappedBy="user", cascade={"remove"})
      * @ORM\JoinTable(name="reward")
      * @Groups({"readGamification"})
      */
@@ -1441,7 +1448,7 @@ class User implements UserInterface, EquatableInterface
 
     /**
      * @var Address The user home address
-     * @Groups({"aRead","aWrite"})
+     * @Groups({"aRead","aWrite","write"})
      */
     private $homeAddress;
 
@@ -1479,7 +1486,7 @@ class User implements UserInterface, EquatableInterface
         $this->pushTokens = new ArrayCollection();
         $this->operates = new ArrayCollection();
         $this->communityUsers = new ArrayCollection();
-        $this->badges = new ArrayCollection();
+        $this->rewards = new ArrayCollection();
         $this->rewardSteps = new ArrayCollection();
         $this->solidaryStructures = [];
         $this->roles = [];
@@ -2433,6 +2440,34 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
+    public function getLogsAsRelated()
+    {
+        return $this->logsAsRelated->getValues();
+    }
+
+    public function addLogAsRelated(Log $logAsRelated): self
+    {
+        if (!$this->logsAsRelated->contains($logAsRelated)) {
+            $this->logsAsRelated->add($logAsRelated);
+            $logAsRelated->setUserRelated($this);
+        }
+
+        return $this;
+    }
+
+    public function removeLogAsRelated(Log $logAsRelated): self
+    {
+        if ($this->logsAsRelated->contains($logAsRelated)) {
+            $this->logsAsRelated->removeElement($logAsRelated);
+            // set the owning side to null (unless already changed)
+            if ($logAsRelated->getUserRelated() === $this) {
+                $logAsRelated->setUserRelated(null);
+            }
+        }
+
+        return $this;
+    }
+
     public function getDiaries()
     {
         return $this->diaries->getValues();
@@ -3227,24 +3262,24 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
-    public function getBadges()
+    public function getRewards()
     {
-        return $this->badges->getValues();
+        return $this->rewards->getValues();
     }
 
-    public function addBadge(Badge $badge): self
+    public function addReward(Reward $reward): self
     {
-        if (!$this->badges->contains($badge)) {
-            $this->badges[] = $badge;
+        if (!$this->rewards->contains($reward)) {
+            $this->rewards[] = $reward;
         }
         
         return $this;
     }
     
-    public function removeBadge(Badge $badge): self
+    public function removeReward(Reward $reward): self
     {
-        if ($this->badges->contains($badge)) {
-            $this->badges->removeElement($badge);
+        if ($this->rewards->contains($reward)) {
+            $this->rewards->removeElement($reward);
         }
         return $this;
     }

@@ -52,11 +52,11 @@
     "electronicPay": "Linean ordaintzen dut",
     "sumToPay": "Orotara ondaintzekoa:{price} €",
     "price": "Diru zama:{price} €",
-    "return": "Etorri",
+    "return": "Itzultzea",
     "outward": "Joan",
     "titleConfirmation": "Bidaiarien ordainketaren baieztapena",
     "titlePunctual": "Ordainketak",
-    "titleRegular": "Bidaia erregularren ordainketa",
-    "donations": "Emaitza",
-    "wallet": "Diru zorroaren kokalekua"
+    "titleRegular": "Bidaia erregularren ordainketak",
+    "donations": "Emaitzak",
+    "wallet": "Moltsaren kokalekua"
 }

@@ -31,4 +31,5 @@ class AntiFraudException extends \LogicException
     const OK = "OK";
     
     const TOO_MANY_AD = "Too many ad for this date";
+    const INVALID_TIME = "the new Ad has a departure time before the arrival of another";
 }

@@ -28,6 +28,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use App\Communication\Entity\Message;
 use App\Communication\Entity\Recipient;
+use App\Solidary\Entity\SolidaryAsk;
 use App\User\Entity\User;
 
 class MessageRepository
@@ -99,6 +100,24 @@ class MessageRepository
         ->andWhere('r.readDate is null')
         ->setParameter('user', $user);
         return $query->getQuery()->getResult();
+    }
+
+    /**
+     * Return the first message related with a SolidaryAsk, or null if not found
+     *
+     * @param SolidaryAsk $solidaryAsk  The solidaryAsk
+     * @return Message|null             The message found, or null if not found
+     */
+    public function findFirstForSolidaryAsk(SolidaryAsk $solidaryAsk)
+    {
+        $query = $this->repository->createQueryBuilder('m')
+        ->innerJoin('m.solidaryAskHistory', 'sah')
+        ->where('sah.solidaryAsk = :solidaryAsk')
+        ->orderBy('sah.createdDate', 'asc')
+        ->setMaxResults(1)
+        ->setParameter('solidaryAsk', $solidaryAsk);
+
+        return $query->getQuery()->getOneOrNullResult();
     }
 
     /**

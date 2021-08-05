@@ -335,7 +335,7 @@ class ProposalMatcher
             }
         }
         ksort($proposals);
-        //var_dump($proposals);exit;
+        // var_dump($proposals);exit;
         // echo count($proposals);die;
         $this->logger->info("ProposalMatcher : created proposals : " . count($proposals) . " " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
@@ -572,7 +572,7 @@ class ProposalMatcher
                 }
             }
         }
-
+        $this->logger->info("ProposalMatcher : nb of potential matchings : " . count($matchings) . " | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         $this->logger->info("ProposalMatcher : checkPickUp " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         
         // if we use times, we check if the pickup times match
@@ -891,9 +891,9 @@ class ProposalMatcher
      * @param Proposal $proposal1   The driver proposal
      * @param Proposal $proposal2   The passenger proposal
      * @param integer $pickupDuration   The duration from the origin to the pickup point
-     * @return void
+     * @return array
      */
-    private function getValidPickupTimes(Proposal $proposal1, Proposal $proposal2, int $pickupDuration)
+    private function getValidPickupTimes(Proposal $proposal1, Proposal $proposal2, int $pickupDuration): array
     {
         $pickupTime = $minPickupTime = $maxPickupTime = null;
         $monPickupTime = $monMinPickupTime = $monMaxPickupTime = null;

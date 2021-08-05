@@ -359,6 +359,7 @@ class SolidaryUserStructure
     /**
      * Accepted/Refused date.
      *
+     * @ORM\PrePersist
      * @ORM\PreUpdate
      */
     public function setAutoAcceptedRefusedDate()

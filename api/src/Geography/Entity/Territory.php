@@ -31,6 +31,7 @@ use App\Geography\Controller\TerritoryPost;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use App\Action\Entity\Log;
 use App\Solidary\Entity\Structure;
 use Doctrine\Common\Collections\ArrayCollection;
 
@@ -90,6 +91,15 @@ use Doctrine\Common\Collections\ArrayCollection;
  *                  "tags"={"Geography"}
  *              }
  *          },
+ *          "ADMIN_get"={
+ *              "path"="/admin/territories",
+ *              "method"="GET",
+ *              "normalization_context"={
+ *                  "groups"={"aRead"},
+ *                  "skip_null_values"=false
+ *              },
+ *              "security"="is_granted('territory_list',object)"
+ *          },
  *      },
  *      itemOperations={
  *          "get"={
@@ -109,10 +119,16 @@ use Doctrine\Common\Collections\ArrayCollection;
  *              "swagger_context" = {
  *                  "tags"={"Geography"}
  *              }
+ *          },
+ *          "ADMIN_get"={
+ *              "path"="/admin/territories/{id}",
+ *              "method"="GET",
+ *              "normalization_context"={"groups"={"aRead"}},
+ *              "security"="is_granted('territory_read',object)"
  *          }
  *      }
  * )
- * @ApiFilter(SearchFilter::class, properties={"name": "partial"})
+ * @ApiFilter(SearchFilter::class, properties={"id":"exact","name": "partial"})
  * @ApiFilter(OrderFilter::class, properties={"id", "name"}, arguments={"orderParameterName"="order"})
  */
 class Territory
@@ -124,7 +140,7 @@ class Territory
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups("read")
+     * @Groups({"aRead","read"})
      */
     private $id;
 
@@ -132,17 +148,25 @@ class Territory
      * @var string The name of the territory.
      *
      * @ORM\Column(type="string", length=100)
-     * @Groups({"read","write"})
+     * @Groups({"aRead","read","write"})
      */
     private $name;
 
     /**
      * @var string The geoJson details of the territory.
+     * /!\ ORM is disabled for performance reasons but TerritoryEventListener avoid the field to be removed on further migrations !
      *
-     * @ORM\Column(type="multipolygon")
+     * ORM\Column(type="multipolygon")
      * @Groups({"read","write"})
      */
     private $geoJsonDetail;
+
+    /**
+     * @var ArrayCollection The logs linked with the Territory.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="territory", cascade={"remove"})
+     */
+    private $logs;
 
     /**
      * @var \DateTimeInterface Creation date.
@@ -217,6 +241,34 @@ class Territory
     {
         $this->updatedDate = $updatedDate;
 
+        return $this;
+    }
+
+    public function getLogs()
+    {
+        return $this->logs->getValues();
+    }
+    
+    public function addLog(Log $log): self
+    {
+        if (!$this->logs->contains($log)) {
+            $this->logs[] = $log;
+            $log->setTerritory($this);
+        }
+        
+        return $this;
+    }
+    
+    public function removeLog(Log $log): self
+    {
+        if ($this->logs->contains($log)) {
+            $this->logs->removeElement($log);
+            // set the owning side to null (unless already changed)
+            if ($log->getTerritory() === $this) {
+                $log->setTerritory(null);
+            }
+        }
+        
         return $this;
     }
 

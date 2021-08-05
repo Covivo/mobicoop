@@ -157,7 +157,6 @@ class UserManager
             $homeAddress->setLatitude($user->getHomeAddress()->getLatitude());
             $homeAddress->setLongitude($user->getHomeAddress()->getLongitude());
             $homeAddress->setHouseNumber($user->getHomeAddress()->getHouseNumber());
-            $homeAddress->setStreetAddress($user->getHomeAddress()->getStreetAddress());
             $homeAddress->setSubLocality($user->getHomeAddress()->getSubLocality());
             $homeAddress->setLocalAdmin($user->getHomeAddress()->getLocalAdmin());
             $homeAddress->setCounty($user->getHomeAddress()->getCounty());
@@ -218,7 +217,6 @@ class UserManager
                 $homeAddress->setLatitude($user->getHomeAddress()->getLatitude());
                 $homeAddress->setLongitude($user->getHomeAddress()->getLongitude());
                 $homeAddress->setHouseNumber($user->getHomeAddress()->getHouseNumber());
-                $homeAddress->setStreetAddress($user->getHomeAddress()->getStreetAddress());
                 $homeAddress->setSubLocality($user->getHomeAddress()->getSubLocality());
                 $homeAddress->setLocalAdmin($user->getHomeAddress()->getLocalAdmin());
                 $homeAddress->setCounty($user->getHomeAddress()->getCounty());
@@ -271,5 +269,132 @@ class UserManager
             }
         }
         return false;
+    }
+
+    /**
+     * Create a User object from an array
+     *
+     * @param array $auser      The user to create, as an array
+     * @param bool $persist     Should we persist the new User immediately
+     * @return User             The User object
+     */
+    public function createUserFromArray(array $auser, bool $persist = false)
+    {
+        $user = new User();
+        if (isset($auser['givenName'])) {
+            $user->setGivenName($auser['givenName']);
+        }
+        if (isset($auser['familyName'])) {
+            $user->setFamilyName($auser['familyName']);
+        }
+        if (isset($auser['email'])) {
+            $user->setEmail($auser['email']);
+        }
+        if (isset($auser['telephone'])) {
+            $user->setTelephone($auser['telephone']);
+        }
+        if (isset($auser['gender'])) {
+            $user->setGender($auser['gender']);
+        }
+        if (isset($auser['birthDate'])) {
+            $user->setBirthDate(new \DateTime($auser['birthDate']));
+        }
+
+        if (!isset($auser['password'])) {
+            // create password if not given
+            $user->setPassword($this->userManager->randomPassword());
+        }
+        $user->setClearPassword($user->getPassword());
+        $user->setPassword($this->encoder->encodePassword($user, $user->getPassword()));
+        
+        if (!isset($auser['phoneDisplay'])) {
+            $user->setPhoneDisplay(User::PHONE_DISPLAY_RESTRICTED);
+        }
+        
+        if (!isset($auser['chat'])) {
+            $user->setChat($this->chat);
+        }
+        if (!isset($auser['music'])) {
+            $user->setMusic($this->music);
+        }
+
+        if (!isset($auser['smoke'])) {
+            $user->setSmoke($this->smoke);
+        }
+
+        // create token to validate registration
+        $user->setEmailToken($this->userManager->createToken($user));
+
+        // create token to unsubscribe from the instance news
+        $user->setUnsubscribeToken($this->userManager->createToken($user));
+
+        // set default role
+        $authItem = $this->authItemRepository->find(User::ROLE_DEFAULT);
+        $userAuthAssignment = new UserAuthAssignment();
+        $userAuthAssignment->setAuthItem($authItem);
+        $user->addUserAuthAssignment($userAuthAssignment);
+
+        // persist the user
+        if ($persist) {
+            $this->entityManager->persist($user);
+            $this->entityManager->flush();
+        }
+
+        // check if the home address was set
+        if (isset($auser['homeAddress'])) {
+            $homeAddress = new Address();
+            if (isset($auser['homeAddress']['streetAddress'])) {
+                $homeAddress->setStreetAddress($auser['homeAddress']['streetAddress']);
+            }
+            if (isset($auser['homeAddress']['postalCode'])) {
+                $homeAddress->setPostalCode($auser['homeAddress']['postalCode']);
+            }
+            if (isset($auser['homeAddress']['addressLocality'])) {
+                $homeAddress->setAddressLocality($auser['homeAddress']['addressLocality']);
+            }
+            if (isset($auser['homeAddress']['addressCountry'])) {
+                $homeAddress->setAddressCountry($auser['homeAddress']['addressCountry']);
+            }
+            if (isset($auser['homeAddress']['latitude'])) {
+                $homeAddress->setLatitude($auser['homeAddress']['latitude']);
+            }
+            if (isset($auser['homeAddress']['longitude'])) {
+                $homeAddress->setLongitude($auser['homeAddress']['longitude']);
+            }
+            if (isset($auser['homeAddress']['houseNumber'])) {
+                $homeAddress->setHouseNumber($auser['homeAddress']['houseNumber']);
+            }
+            if (isset($auser['homeAddress']['subLocality'])) {
+                $homeAddress->setSubLocality($auser['homeAddress']['subLocality']);
+            }
+            if (isset($auser['homeAddress']['localAdmin'])) {
+                $homeAddress->setLocalAdmin($auser['homeAddress']['localAdmin']);
+            }
+            if (isset($auser['homeAddress']['county'])) {
+                $homeAddress->setCounty($auser['homeAddress']['county']);
+            }
+            if (isset($auser['homeAddress']['macroCounty'])) {
+                $homeAddress->setMacroCounty($auser['homeAddress']['macroCounty']);
+            }
+            if (isset($auser['homeAddress']['region'])) {
+                $homeAddress->setRegion($auser['homeAddress']['region']);
+            }
+            if (isset($auser['homeAddress']['macroRegion'])) {
+                $homeAddress->setMacroRegion($auser['homeAddress']['macroRegion']);
+            }
+            if (isset($auser['homeAddress']['countryCode'])) {
+                $homeAddress->setCountryCode($auser['homeAddress']['countryCode']);
+            }
+            $homeAddress->setHome(true);
+            $homeAddress->setName(Address::HOME_ADDRESS);
+            $homeAddress->setUser($user);
+            $this->entityManager->persist($homeAddress);
+            if ($persist) {
+                $this->entityManager->flush();
+            }
+        }
+
+        // return the user
+        return $user;
     }
 }

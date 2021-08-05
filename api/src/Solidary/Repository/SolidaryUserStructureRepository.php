@@ -64,9 +64,9 @@ class SolidaryUserStructureRepository
     /**
      * Get a SolidaryUserStructure by its StructureId and its SolidaryUserId
      *
-     * @param integer $structureId
-     * @param integer $solidaryUserId
-     * @return SolidaryUserStructureRepository
+     * @param integer $structureId      The id of the Structure
+     * @param integer $solidaryUserId   The id of the SolidaryUser
+     * @return SolidaryUserStructure|null     The SolidaryUserStructure found, or null if not found
      */
     public function findByStructureAndSolidaryUser(int $structureId, int $solidaryUserId)
     {
@@ -78,6 +78,6 @@ class SolidaryUserStructureRepository
         ->setParameter('solidaryUserId', $solidaryUserId)
         ->setParameter('structureId', $structureId);
 
-        return $query->getQuery()->getResult();
+        return $query->getQuery()->getOneOrNullResult();
     }
 }

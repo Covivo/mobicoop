@@ -35,12 +35,14 @@ class MatchingNewEvent extends Event
     public const NAME = 'carpool_matching_new';
 
     protected $matching;
+    protected $way;
     protected $sender;
 
-    public function __construct(Matching $matching, ?User $user)
+    public function __construct(Matching $matching, User $user = null, int $way)
     {
         $this->matching = $matching;
         $this->sender = $user;
+        $this->way = $way;
     }
 
     public function getMatching()
@@ -51,5 +53,10 @@ class MatchingNewEvent extends Event
     public function getSender()
     {
         return $this->sender;
+    }
+
+    public function getWay()
+    {
+        return $this->way;
     }
 }

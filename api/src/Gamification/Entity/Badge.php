@@ -25,6 +25,7 @@ namespace App\Gamification\Entity;
 
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Gamification\Interfaces\GamificationNotificationInterface;
 use App\Geography\Entity\Territory;
 use App\Image\Entity\Image;
 use App\User\Entity\User;
@@ -69,6 +70,11 @@ class Badge
     const STATUS_DRAFT = 0;
     const STATUS_ACTIVE = 1;
     const STATUS_INACTIVE = 2;
+
+    const TRANSLATABLE_ITEMS = [
+        "title",
+        "text"
+    ];
 
     /**
      * @var int The Badge's id
@@ -125,8 +131,8 @@ class Badge
     /**
      * @var Image|null The Badges Icon
      *
-     * @ORM\OneToOne(targetEntity="\App\Image\Entity\Image", mappedBy="badge")
-     * @Groups({"readGamification"})
+     * @ORM\OneToOne(targetEntity="\App\Image\Entity\Image", mappedBy="badge", cascade={"persist","remove"})
+     * @Groups({"readGamification","writeGamification"})
      * @MaxDepth(1)
      */
     private $icon;
@@ -134,8 +140,8 @@ class Badge
     /**
      * @var Image|null The Badges reward Image
      *
-     * @ORM\OneToOne(targetEntity="\App\Image\Entity\Image", mappedBy="badgeImage")
-     * @Groups({"readGamification"})
+     * @ORM\OneToOne(targetEntity="\App\Image\Entity\Image", mappedBy="badgeImage", cascade={"persist","remove"})
+     * @Groups({"readGamification","writeGamification"})
      * @MaxDepth(1)
      */
     private $image;
@@ -143,8 +149,8 @@ class Badge
     /**
      * @var Image|null The Badges reward Image
      *
-     * @ORM\OneToOne(targetEntity="\App\Image\Entity\Image", mappedBy="badgeImageLight")
-     * @Groups({"readGamification"})
+     * @ORM\OneToOne(targetEntity="\App\Image\Entity\Image", mappedBy="badgeImageLight", cascade={"persist","remove"})
+     * @Groups({"readGamification","writeGamification"})
      * @MaxDepth(1)
      */
     private $imageLight;
@@ -185,10 +191,10 @@ class Badge
     /**
      * @var ArrayCollection|null The Users owning this Badge
      *
-     * @ORM\ManyToMany(targetEntity="\App\User\Entity\User", inversedBy="users")
+     * @ORM\OneToMany(targetEntity="\App\Gamification\Entity\Reward", mappedBy="badge")
      * @ORM\JoinTable(name="reward")
      */
-    private $users;
+    private $rewards;
 
     /**
      * @var \DateTimeInterface Badge's creation date
@@ -211,6 +217,7 @@ class Badge
         $this->sequenceItems = new ArrayCollection();
         $this->territories = new ArrayCollection();
         $this->badges = new ArrayCollection();
+        $this->rewards = new ArrayCollection();
     }
     
     public function getId(): ?int
@@ -290,7 +297,7 @@ class Badge
         return $this->icon;
     }
 
-    public function setIcon(?Image $icon): self
+    public function setIcon(Image $icon): self
     {
         $this->icon = $icon;
 
@@ -302,7 +309,7 @@ class Badge
         return $this->image;
     }
 
-    public function setImage(?Image $image): self
+    public function setImage(Image $image): self
     {
         $this->image = $image;
 
@@ -314,7 +321,7 @@ class Badge
         return $this->imageLight;
     }
 
-    public function setImageLight(?Image $imageLight): self
+    public function setImageLight(Image $imageLight): self
     {
         $this->imageLight = $imageLight;
 
@@ -391,24 +398,24 @@ class Badge
         return $this;
     }
     
-    public function getUsers()
+    public function getRewards()
     {
-        return $this->users->getValues();
+        return $this->rewards->getValues();
     }
 
-    public function addUser(User $user): self
+    public function addReward(Reward $reward): self
     {
-        if (!$this->users->contains($user)) {
-            $this->users[] = $user;
+        if (!$this->rewards->contains($reward)) {
+            $this->rewards[] = $reward;
         }
         
         return $this;
     }
     
-    public function removeUser(User $user): self
+    public function removeReward(Reward $reward): self
     {
-        if ($this->users->contains($user)) {
-            $this->users->removeElement($user);
+        if ($this->rewards->contains($reward)) {
+            $this->rewards->removeElement($reward);
         }
         return $this;
     }

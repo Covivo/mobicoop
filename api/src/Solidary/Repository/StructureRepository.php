@@ -58,18 +58,13 @@ class StructureRepository
     }
 
     /**
-     * Find the structures of a User
+     * Find the structures where a User is beneficiary
      *
      * @param User $user    The user
      * @return array|null
      */
     public function findByUser(User $user): ?array
     {
-
-        // @TODO: Remove this ugly hack
-        // I've added it to be able to work on the admin during API fix
-        // return $this->repository->findById(1);
-
         $query = $this->repository->createQueryBuilder('s')
         ->join('s.solidaryUserStructures', 'sus')
         ->join('sus.solidaryUser', 'su')
@@ -94,10 +89,16 @@ class StructureRepository
      */
     public function findByPoint(float $longitude, float $latitude)
     {
-        $query = $this->repository->createQueryBuilder('s')
-        ->join('s.territories', 't')
-        ->where('ST_INTERSECTS(t.geoJsonDetail,ST_GEOMFROMTEXT(\'POINT('.$longitude.' '.$latitude.')\'))=1');
+        $conn = $this->entityManager->getConnection();
 
-        return $query->getQuery()->getResult();
+        $sql = "SELECT s.* FROM structure s
+        INNER JOIN structure_territory st ON st.structure_id = s.id
+        INNER JOIN territory t ON t.id = st.territory_id
+        WHERE ST_INTERSECTS(t.geo_json_detail,ST_GEOMFROMTEXT('POINT($longitude $latitude)'))=1
+        ";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        $results = $stmt->fetchAll();
+        return $results;
     }
 }
