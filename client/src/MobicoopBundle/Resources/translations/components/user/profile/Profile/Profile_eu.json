@@ -8,11 +8,6 @@
         "min": "Pasahitzak gutienez 8 karaktere izan behar ditu.",
         "required": "Pasahitza beharrezkoa da"
     },
-    "publicProfile": {
-        "close": "Hetsi",
-        "see": "Ikus profil publikoa",
-        "title": "Profil publikoa"
-    },
     "snackBar": {
         "textSnackError": "Akats bat gertatu da pasahitzaren eguneraketan",
         "passwordUpdated": "Pasahitza eguneratua izan da"

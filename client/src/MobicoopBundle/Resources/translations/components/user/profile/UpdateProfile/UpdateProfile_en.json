@@ -79,5 +79,10 @@
             "cancelUpdate": "Annuler"
         }
     },
-    "savedCo2":"Vous avez économisé {savedCo2} t de"
+    "savedCo2":"Vous avez économisé {savedCo2} t de",
+    "publicProfile":{
+        "title":"Public profile",
+        "see":"See public profile",
+        "close":"Close"
+    }
 }
