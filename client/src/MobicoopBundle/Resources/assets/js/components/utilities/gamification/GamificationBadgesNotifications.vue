@@ -26,7 +26,7 @@
             <v-img
               height="150"
               contain
-              :src="badge.pictures.icon"
+              :src="badge.pictures.decoratedIcon"
             />
           </v-col>
         </v-row>
@@ -38,6 +38,7 @@
             <v-img
               height="350"
               :src="badge.pictures.image"
+              :lazy-src="badge.pictures.imageLight"
             />
           </v-row>
           <v-row
