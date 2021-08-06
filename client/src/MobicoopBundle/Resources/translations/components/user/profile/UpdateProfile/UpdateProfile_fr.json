@@ -18,7 +18,7 @@
 
     },
     "avatar": {
-        "label": "Photo",
+        "label": "Nouvelle photo",
         "size": "Vous avez dépassé la taille maximale de l'avatar",
         "delete": {
             "route": "/utilisateur/profil/avatar/supprimer",
@@ -39,9 +39,9 @@
     },
     "phoneDisplay": {
         "label": {
-            "general": "Visibilité de mon numéro de téléphone.",
-            "restricted": "Visible seulement après acceptation du covoiturage, uniquement par les participants.",
-            "all": "Visible dès la publication de l'annonce, par tous les inscrits."
+            "general": "Visibilité de mon numéro de téléphone :",
+            "restricted": "Visible seulement après acceptation du covoiturage, uniquement par les participants",
+            "all": "Visible dès la publication de l'annonce, par tous les inscrits"
         }
     },
     "phone": {
@@ -165,5 +165,10 @@
     "save": "Enregistrer",
     "yes": "oui",
     "no": "non",
-    "savedCo2":"Vous avez économisé {savedCo2} t de"
+    "savedCo2":"Vous avez économisé {savedCo2} t de",
+    "publicProfile":{
+        "title":"Profil public",
+        "see":"Voir profil public",
+        "close":"Fermer"
+    }
 }

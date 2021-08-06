@@ -25,11 +25,6 @@
         "passwordUpdated": "Password updated",
         "textSnackError": "Password update has failed"
     },
-    "publicProfile":{
-        "title":"Public profile",
-        "see":"See public profile",
-        "close":"Close"
-    },
     "errors": {
         "required": "Le mot de passe est requis",
         "min": "Le mot de passe doit comprendre 8 caractères min.",

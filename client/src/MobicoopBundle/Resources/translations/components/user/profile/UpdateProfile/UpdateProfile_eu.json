@@ -164,5 +164,10 @@
             "general": "Nire telefono zenbakiaren ikuspena.",
             "restricted": "Ikusgai soilik autokidetza onartua izan ondoren, parte hartzaileen ganik bakarrik."
         }
+    },
+    "publicProfile": {
+        "close": "Hetsi",
+        "see": "Ikus profil publikoa",
+        "title": "Profil publikoa"
     }
 }

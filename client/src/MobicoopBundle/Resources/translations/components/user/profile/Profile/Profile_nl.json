@@ -8,11 +8,6 @@
         "min": "Het wachtwoord moet minstens 8 tekens bevatten.",
         "required": "Het wachtwoord is vereist"
     },
-    "publicProfile": {
-        "close": "Sluiten",
-        "see": "Openbaar profiel weergeven",
-        "title": "Openbaar profiel"
-    },
     "snackBar": {
         "textSnackError": "Fout in de bijwerking van het wachtwoord",
         "passwordUpdated": "Wachtwoord bijgewerkt"
