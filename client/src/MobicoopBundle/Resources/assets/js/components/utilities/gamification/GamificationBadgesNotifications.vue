@@ -12,7 +12,7 @@
         :key="badge.id"
         max-width="600"
       >
-        <v-row>
+        <v-row no-gutters>
           <v-col cols="7">
             <v-card-title
               text-h5
@@ -41,6 +41,12 @@
               :lazy-src="badge.pictures.imageLight"
             />
           </v-row>
+          <p>
+            <a
+              :href="$t('urlGiphySource')"
+              target="_blank"
+            >Source: Giphy</a>
+          </p>
           <v-row
             align="center"
             justify="center"
