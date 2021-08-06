@@ -1,8 +1,11 @@
 #!/bin/bash
 
-#############################
-#   Symfony log rotation    #
-#############################
+########################################
+#         Symfony log rotation         #
+#  Must be launched in root crontab    #
+#  as gzip doesn't allow setgid's :    #
+#  we need to chmod 774 first...       #
+########################################
 
 SCRIPT_PATH="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 

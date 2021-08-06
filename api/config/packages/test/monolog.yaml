@@ -41,11 +41,13 @@ monolog:
             level: debug
             max_files: 30
             path: "%kernel.logs_dir%/geomatcher.log"    
+            channels: [geography]
         georouter:
             type: rotating_file
             level: debug
             max_files: 30
             path: "%kernel.logs_dir%/georouter.log"
+            channels: [geography]
         maintenance:
             type: rotating_file
             level: debug
@@ -71,8 +73,9 @@ monolog:
             path: "%kernel.logs_dir%/faker.log"
             channels: [faker] 
         solidary:
-            type: stream
+            type: rotating_file
             level: debug
+            max_files: 30
             path: "%kernel.logs_dir%/solidary.log"
             channels: [solidary]   
         main:
