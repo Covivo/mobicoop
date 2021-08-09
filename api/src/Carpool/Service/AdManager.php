@@ -196,7 +196,7 @@ class AdManager
             } else {
                 throw new UserNotFoundException('User ' . $ad->getUserId() . ' not found');
             }
-        } else {
+        } elseif ($ad->getUser()) {
             // we check if the user past exist if not we create it
             if ($this->userRepository->findOneBy(['email'=>$ad->getUser()->getEmail()])) {
                 throw new UserAlreadyExistsException(UserAlreadyExistsException::USER_ALREADY_EXISTS);
