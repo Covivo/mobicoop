@@ -38,7 +38,6 @@ use App\Carpool\Controller\AskPost;
 use App\Carpool\Controller\AskPut;
 use App\Payment\Entity\CarpoolItem;
 use App\Solidary\Entity\SolidaryAsk;
-use App\Action\Entity\Log;
 
 /**
  * Carpooling : ask from/to a driver and/or a passenger (after a matching between an offer and a request).
