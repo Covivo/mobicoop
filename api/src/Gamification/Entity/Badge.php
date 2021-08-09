@@ -80,6 +80,15 @@ class Badge
     const STATUS_ACTIVE = 1;
     const STATUS_INACTIVE = 2;
 
+    const BADGE_id_1 = "remove_the_mask";
+    const BADGE_id_2 = "launch";
+    const BADGE_id_3 = "first_time";
+    const BADGE_id_4 = "welcome";
+    const BADGE_id_5 = "rally";
+    const BADGE_id_6 = "km_carpooled";
+    const BADGE_id_7 = "carbon_saved";
+
+
     const TRANSLATABLE_ITEMS = [
         "title",
         "text"
@@ -116,7 +125,7 @@ class Badge
     /**
      * @var string Badge's text, description.
      *
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=512)
      * @Groups({"readGamification","writeGamification"})
      */
     private $text;
