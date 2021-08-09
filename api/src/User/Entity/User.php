@@ -2439,7 +2439,7 @@ class User implements UserInterface, EquatableInterface
 
     public function getLogs()
     {
-        return (!is_null($this->logs)?$this->logs->getValue():null);
+        return (!is_null($this->logs)?$this->logs->getValues():null);
     }
 
     public function addLog(Log $log): self
@@ -2467,7 +2467,7 @@ class User implements UserInterface, EquatableInterface
 
     public function getLogsAsDelegate()
     {
-        return (!is_null($this->logsAsDelegate)?$this->logsAsDelegate->getValue():null);
+        return (!is_null($this->logsAsDelegate)?$this->logsAsDelegate->getValues():null);
     }
 
     public function addLogAsDelegate(Log $logAsDelegate): self
@@ -2495,7 +2495,7 @@ class User implements UserInterface, EquatableInterface
 
     public function getLogsAsRelated()
     {
-        return (!is_null($this->logsAsRelated)?$this->logsAsRelated->getValue():null);
+        return (!is_null($this->logsAsRelated)?$this->logsAsRelated->getValues():null);
     }
 
     public function addLogAsRelated(Log $logAsRelated): self
