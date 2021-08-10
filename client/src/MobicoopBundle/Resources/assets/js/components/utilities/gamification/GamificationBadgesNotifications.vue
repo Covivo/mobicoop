@@ -20,7 +20,7 @@
             >
               {{ $t("wow") }}
             </v-card-title>
-            <v-card-subtitle>{{ $t("youWonABadge") }} <b>{{ $t(badge.title) }}</b></v-card-subtitle>
+            <v-card-subtitle>{{ $t("youWonABadge") }}<b>{{ $t(badge.title) }}</b>!</v-card-subtitle>
           </v-col>
           <v-col cols="5">
             <v-img
