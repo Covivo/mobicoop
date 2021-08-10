@@ -334,6 +334,13 @@ class UserManager
             }
         }
 
+        //  we dispatch the gamification event associated
+        if ($user->getHomeAddress()) {
+            $action = $this->actionRepository->findOneBy(['name'=>'user_home_address_updated']);
+            $actionEvent = new ActionEvent($action, $user);
+            $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);
+        }
+
         if (!is_null($user->getCommunityId())) {
             $communityUser = new CommunityUser();
             $communityUser->setUser($user);
@@ -623,6 +630,13 @@ class UserManager
         if ($phoneUpdate) {
             //  we dispatch the gamification event associated
             $action = $this->actionRepository->findOneBy(['name'=>'user_phone_updated']);
+            $actionEvent = new ActionEvent($action, $user);
+            $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);
+        }
+
+        //  we dispatch the gamification event associated
+        if ($user->getHomeAddress()) {
+            $action = $this->actionRepository->findOneBy(['name'=>'user_home_address_updated']);
             $actionEvent = new ActionEvent($action, $user);
             $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);
         }
