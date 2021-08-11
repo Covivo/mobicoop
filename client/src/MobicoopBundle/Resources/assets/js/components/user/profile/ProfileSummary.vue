@@ -37,15 +37,16 @@
             v-if="profileSummary.numberOfBadges > 0"
             cols="1"
             class="ml-n12"
+            align="center"
           >
-            <v-badge
-              :content="profileSummary.numberOfBadges"
-              color="secondary"
+            <v-img
+              src="/images/badge.png"
+              contain
             >
-              <v-icon color="info">
-                mdi-seal
-              </v-icon>
-            </v-badge>
+              <p class="caption text-center mt-1 primary--text font-weight-bold">
+                {{ profileSummary.numberOfBadges }}
+              </p>
+            </v-img>
           </v-col>
         </v-row>
         <v-row
