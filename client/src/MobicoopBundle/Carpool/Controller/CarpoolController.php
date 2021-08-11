@@ -37,6 +37,7 @@ use Mobicoop\Bundle\MobicoopBundle\Api\Service\Deserializer;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AdManager;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\ProposalManager;
+use Mobicoop\Bundle\MobicoopBundle\Event\Service\EventManager;
 use Mobicoop\Bundle\MobicoopBundle\PublicTransport\Service\PublicTransportManager;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -216,29 +217,36 @@ class CarpoolController extends AbstractController
      * Create a carpooling ad from a search component (home, community...)
      * (POST)
      */
-    public function carpoolAdPostFromSearch(Request $request)
+    public function carpoolAdPostFromSearch(Request $request,EventManager $eventManager)
     {
 //        $ad = new Ad();
 //        $this->denyAccessUnlessGranted('create_ad', $ad);
-        
-        return $this->render(
-            '@Mobicoop/carpool/publish.html.twig',
-            [
-                'communityIds'=>$request->request->get('communityId') ? [(int)$request->request->get('communityId')] : null,
-                'origin'=>$request->request->get('origin'),
-                'destination'=>$request->request->get('destination'),
-                'regular'=>$request->request->get('regular') ? json_decode($request->request->get('regular')) : $this->defaultRegular,
-                'date'=>$request->request->get('date'),
-                'time'=>$request->request->get('time'),
-                "pricesRange" => [
-                    "mid" => $this->midPrice,
-                    "high" => $this->highPrice,
-                    "forbidden" => $this->forbiddenPrice,
-                ],
-                "participationText"=>$this->participationText,
-                "ageDisplay"=>$this->ageDisplay
-            ]
-        );
+        $eventId = $request->query->get('eventId');
+
+        if(!empty($eventId)){
+            $event = $eventManager->getEvent($eventId);
+            $destination = json_encode($event->getAddress());
+        }
+            return $this->render(
+                '@Mobicoop/carpool/publish.html.twig',
+                [
+                    'communityIds'=>$request->request->get('communityId') ? [(int)$request->request->get('communityId')] : null,
+                    'origin'=>$request->request->get('origin'),
+                    'destination'=>$request->request->get('destination') || $destination,
+                    'eventId'=>$eventId,
+                    'regular'=>$request->request->get('regular') ? json_decode($request->request->get('regular')) : $this->defaultRegular,
+                    'date'=>$request->request->get('date'),
+                    'time'=>$request->request->get('time'),
+                    "pricesRange" => [
+                        "mid" => $this->midPrice,
+                        "high" => $this->highPrice,
+                        "forbidden" => $this->forbiddenPrice,
+                    ],
+                    "participationText"=>$this->participationText,
+                    "ageDisplay"=>$this->ageDisplay
+                ]
+            );
+        }
     }
 
     /**

@@ -838,6 +838,10 @@ export default {
     ageDisplay: {
       type: Boolean,
       default: false
+    },
+    eventId: {
+      type: Number,
+      default: null
     }
   },
   data() {

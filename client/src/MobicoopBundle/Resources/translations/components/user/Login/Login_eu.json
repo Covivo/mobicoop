@@ -13,6 +13,7 @@
     "textRecovery": "Pasahitza ahantzi duzu?",
     "urlRecovery": "/utilisateur/mot-de-passe/recuperation",
     "urlLoginResult": "/utilisateur/connexion/{id}",
+    "urlLoginEvent":"/utilisateur/connexion/evenement/{id}",
     "urlLogin": "/utilisateur/connexion",
     "userFBNotFound": "Facebook erabiltzaile honek ez du izena emana plataforman",
     "errorCredentialsFacebook": "Akats bat gertatu da Facebook-en bidez konektatzerakoan",

@@ -4,6 +4,7 @@
     "errorCredentialsFacebook": "Error in connection by Facebook",
     "urlLogin":"/user/login",
     "urlLoginResult":"/user/login/{id}",
+    "urlLoginEvent":"/utilisateur/connexion/evenement/{id}",
     "userFBNotFound": "This facebook user is not registered on the platform",
     "urlRecovery": "/user/password/recovery",
     "textRecovery": "Forgot password ?",

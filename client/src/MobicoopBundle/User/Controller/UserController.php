@@ -156,14 +156,27 @@ class UserController extends AbstractController
     /**
      * User login.
      */
-    public function login(Request $request, ?int $proposalId = null)
+    public function login(Request $request, ?int $proposalId = null, ?int $eventId = null, EventManager $eventManager)
     {
         $errorMessage =   '';
         if (in_array("bad-credentials-api", $request->getSession()->getFlashBag()->peek('notice'))) {
             $errorMessage =  'Bad credentials.';
             $request->getSession()->getFlashBag()->clear();
         }
-        
+        if($eventId !== null){
+            $event = $eventManager->getEvent($eventId);
+            $destination = $event->getAddress();
+
+            return $this->render('@Mobicoop/user/login.html.twig', [
+                "proposalId" => $proposalId,
+                "eventId" => $eventId,
+                'destination' => $destination,
+                "errorMessage"=>$errorMessage,
+                "facebook_show"=>($this->facebook_show==="true") ? true : false,
+                "facebook_appid"=>$this->facebook_appid,
+                "signUpLinkInConnection"=>$this->signUpLinkInConnection,
+            ]);
+        }
         return $this->render('@Mobicoop/user/login.html.twig', [
             "proposalId" => $proposalId,
             "errorMessage"=>$errorMessage,
@@ -176,7 +189,7 @@ class UserController extends AbstractController
     /**
      * User registration.
      */
-    public function userSignUp(UserManager $userManager, Request $request, TranslatorInterface $translator, ?int $proposalId = null)
+    public function userSignUp(UserManager $userManager, Request $request, TranslatorInterface $translator, ?int $proposalId = null, ?int $eventId = null)
     {
         $this->denyAccessUnlessGranted('register');
 
@@ -251,6 +264,7 @@ class UserController extends AbstractController
 
         return $this->render('@Mobicoop/user/signup.html.twig', [
                 "proposalId" => $proposalId,
+                "eventId" => $eventId,
                 'error' => $error,
                 "facebook_show"=>($this->facebook_show==="true") ? true : false,
                 "facebook_appid"=>$this->facebook_appid,
@@ -260,7 +274,7 @@ class UserController extends AbstractController
                 "signup_rgpd_infos"=>$this->signupRgpdInfos,
                 "required_community"=>($this->required_community==="true") ? true : false,
                 "newsSubscription" => $newsSubscription,
-                "birthDateDisplay" => $this->birthDateDisplay
+                "birthDateDisplay" => $this->birthDateDisplay,
 
         ]);
     }

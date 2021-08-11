@@ -13,6 +13,7 @@
       :show-facebook-login = "{{ facebook_show ? "true" : "false" }}"
       facebook-login-app-id = "{{ facebook_appid }}"
       :proposal-id = "{{ proposalId is defined ? (proposalId ? proposalId : 'null') : 'null' }}"
+      :event-id = "{{ eventId is defined ? (eventId ? eventId : 'null') : 'null' }}"
       :sign-up-link-in-connection = "{{ signUpLinkInConnection ? "true" : "false" }}"
   />
 {% endblock %}

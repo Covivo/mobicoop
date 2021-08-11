@@ -14,6 +14,7 @@
     "textRecovery": "Wachtwoord vergeten?",
     "urlRecovery": "/utilisateur/mot-de-passe/recuperation",
     "urlLoginResult": "/utilisateur/connexion/{id}",
+    "urlLoginEvent":"/utilisateur/connexion/evenement/{id}",
     "userFBNotFound": "Deze Facebook-gebruiker is niet geregistreerd op het platform",
     "errorCredentialsFacebook": "Fout bij het aanmelden via Facebook",
     "Unable to get an API token.": "Fout bij het aanmelden.",

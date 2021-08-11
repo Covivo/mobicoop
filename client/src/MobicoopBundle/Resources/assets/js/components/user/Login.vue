@@ -176,6 +176,10 @@ export default {
       type: Number,
       default: null
     },
+    eventId: {
+      type: Number,
+      default: null
+    },
     signUpLinkInConnection: {
       type: Boolean,
       default: false
@@ -196,10 +200,21 @@ export default {
         v => !!v || this.$t("passwordRequired")
       ],
       errorDisplay: "",
-      action: this.proposalId ? this.$t("urlLoginResult",{"id":this.proposalId}) : this.$t("urlLogin"),
+      action: this.getId,
       consent: false,
       consentSocial: false
     };
+  },
+  watch: {
+    getId(){
+      if(this.proposalId !== null){
+        this.proposalId ? this.$t("urlLoginResult",{"id":this.proposalId}) : this.$t("urlLogin")
+        return this.proposalId
+      } else {
+        this.eventId ? this.$t("urlLoginEvent",{"id":this.eventId}) : this.$t("urlLogin")
+        return this.eventId
+      }
+    },
   },
   mounted() {
     if(this.errormessage.value !== "") this.treatErrorMessage(this.errormessage);

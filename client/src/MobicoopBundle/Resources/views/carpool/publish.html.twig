@@ -26,6 +26,7 @@
     :default-time-precision="{{ timePrecision }}"
     :participation-text = "{{ participationText ? "true" : "false" }}"
     :age-display  = "{{ ageDisplay ? "true" : "false" }}"
+    :event-id = "{{ eventId is defined ? (eventId ? eventId : 'null') : 'null' }}"
   />
 
 {% endblock %}
