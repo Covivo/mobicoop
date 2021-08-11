@@ -429,6 +429,11 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
      */
     private $savedCo2;
 
+    /**
+    * @var int|null Number of badges earned by the user
+    */
+    private $numberOfBadges;
+
     public function __construct($id=null, $status=null)
     {
         if ($id) {
@@ -1291,6 +1296,18 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
         return $this;
     }
 
+    public function getNumberOfBadges(): ?int
+    {
+        return $this->numberOfBadges;
+    }
+
+    public function setNumberOfBadges(?int $numberOfBadges): self
+    {
+        $this->numberOfBadges = $numberOfBadges;
+
+        return $this;
+    }
+
     // If you want more info from user you just have to add it to the jsonSerialize function
     public function jsonSerialize()
     {
@@ -1331,7 +1348,8 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
             'unreadSolidaryMessageNumber'   => $this->getUnreadSolidaryMessageNumber(),
             'savedCo2'                      => $this->getSavedCo2(),
             'language'                      => $this->getLanguage(),
-            'gamificationNotifications'     => $this->getGamificationNotifications()
+            'gamificationNotifications'     => $this->getGamificationNotifications(),
+            'numberOfBadges'                => $this->getNumberOfBadges()
         ];
 
         if (!is_null($this->getIsCommunityReferrer())) {

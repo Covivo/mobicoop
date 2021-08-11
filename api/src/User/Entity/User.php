@@ -1486,6 +1486,13 @@ class User implements UserInterface, EquatableInterface
      */
     private $ownership;
 
+    /**
+     * @var int|null Number of badges earned by the user
+     *
+     * @Groups({"readUser","results"})
+     */
+    private $numberOfBadges;
+
 
     public function __construct($status = null)
     {
@@ -3309,6 +3316,17 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
+    public function getNumberOfBadges(): ?int
+    {
+        return count($this->rewards);
+    }
+
+    public function setNumberOfBadges(?int $numberOfBadges): self
+    {
+        $this->numberOfBadges = $numberOfBadges;
+
+        return $this;
+    }
 
     // ADMIN
 
