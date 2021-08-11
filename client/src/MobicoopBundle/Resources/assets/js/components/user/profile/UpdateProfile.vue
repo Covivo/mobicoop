@@ -961,9 +961,6 @@ export default {
             this.snackbar = true;
           }
           else{
-            this.errorUpdate = false;
-            this.textSnackOk = this.$t("snackBar.phoneValidated");
-            this.snackbar = true;
             this.phoneVerified = true;
           }
           this.loadingValidatePhone = false;

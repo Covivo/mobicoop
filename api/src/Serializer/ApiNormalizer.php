@@ -135,14 +135,29 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
 
             foreach ($this->gamificationNotifier->getNotifications() as $gamificationNotification) {
                 if ($gamificationNotification instanceof Reward) {
-                    $data['gamificationNotifications'][] = $this->formatReward($gamificationNotification);
+                    $rewardIds = [];
+                    foreach ($data["gamificationNotifications"] as $notification) {
+                        if ($notification["type"] == "Reward") {
+                            $rewardIds[] = $notification["id"];
+                        }
+                    }
+                    if (!in_array($gamificationNotification->getId(), $rewardIds)) {
+                        $data['gamificationNotifications'][] = $this->formatReward($gamificationNotification);
+                    }
                 } elseif ($gamificationNotification instanceof RewardStep) {
-                    $data['gamificationNotifications'][] = $this->formatRewardStep($gamificationNotification);
+                    $rewardStepIds = [];
+                    foreach ($data["gamificationNotifications"] as $notification) {
+                        if ($notification["type"] == "RewardStep") {
+                            $rewardStepIds[] = $notification["id"];
+                        }
+                    }
+                    if (!in_array($gamificationNotification->getId(), $rewardStepIds)) {
+                        $data['gamificationNotifications'][] = $this->formatRewardStep($gamificationNotification);
+                    }
                     $this->entityManager->persist($gamificationNotification);
                 }
             }
         }
-
         if (isset($data['gamificationNotifications'])) {
             // we remove RewardStep if he's associated to a gained badge
             $badgeIds = [];
