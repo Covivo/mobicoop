@@ -27,7 +27,7 @@ use App\Gamification\Interfaces\GamificationRuleInterface;
 use App\Communication\Repository\MessageRepository;
 
 /**
- *  Check that the requester is the author of the related Ad
+ * Check if its the first answer to an internal message
  */
 class FirstMessageAnswer implements GamificationRuleInterface
 {

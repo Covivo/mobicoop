@@ -27,7 +27,7 @@ use App\Gamification\Interfaces\GamificationRuleInterface;
 use App\User\Service\UserManager;
 
 /**
- *  Check that the requester is the author of the related Ad
+ * Check if the user has at least saved N CO²
  */
 class HasAtLeastNCarpooledCo2Saved implements GamificationRuleInterface
 {

@@ -47,6 +47,7 @@ use App\Gamification\Resource\BadgesBoard;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use App\Gamification\Interfaces\GamificationRuleInterface;
+use App\Communication\Repository\MessageRepository;
 
 /**
  * Gamification Manager
@@ -61,6 +62,7 @@ class GamificationManager
     private $entityManager;
     private $eventDispatcher;
     private $gamificationNotifier;
+    private $messageRepository;
 
     public function __construct(
         SequenceItemRepository $sequenceItemRepository,
@@ -68,7 +70,8 @@ class GamificationManager
         BadgeRepository $badgeRepository,
         EntityManagerInterface $entityManager,
         EventDispatcherInterface $eventDispatcher,
-        GamificationNotifier $gamificationNotifier
+        GamificationNotifier $gamificationNotifier,
+        MessageRepository $messageRepository
     ) {
         $this->sequenceItemRepository = $sequenceItemRepository;
         $this->logRepository = $logRepository;
@@ -76,6 +79,7 @@ class GamificationManager
         $this->entityManager = $entityManager;
         $this->eventDispatcher = $eventDispatcher;
         $this->gamificationNotifier = $gamificationNotifier;
+        $this->messageRepository = $messageRepository;
     }
     
     /**
@@ -140,7 +144,11 @@ class GamificationManager
                     /**
                      * @var GamificationRuleInterface $gamificationActionRule
                      */
-                    $gamificationActionRule = new $gamificationActionRuleName;
+                    if ($gamificationAction->getGamificationActionRule()->getName() === "FirstMessageAnswer") {
+                        $gamificationActionRule = new $gamificationActionRuleName($this->messageRepository);
+                    } else {
+                        $gamificationActionRule = new $gamificationActionRuleName;
+                    }
                     $validationStep->setValidated($validationStep->isValidated() && $gamificationActionRule->execute($log->getUser(), $log, $sequenceItem));
                 }
 

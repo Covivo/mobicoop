@@ -28,7 +28,7 @@ use App\Gamification\Interfaces\GamificationRuleInterface;
 use App\Carpool\Repository\ProposalRepository;
 
 /**
- *  Check that the requester is the author of the related Ad
+ * Check if the user carpooled in a community
  */
 class CarpoolInCommunity implements GamificationRuleInterface
 {
