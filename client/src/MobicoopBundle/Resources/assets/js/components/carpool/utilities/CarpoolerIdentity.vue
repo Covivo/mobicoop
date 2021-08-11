@@ -16,6 +16,16 @@
         {{ age }}
       </v-list-item-title>
     </v-list-item-content>
+    <v-badge
+      v-if="carpooler.numberOfBadges > 0"
+      class="mt-6"
+      :content="carpooler.numberOfBadges"
+      color="secondary"
+    >
+      <v-icon color="info">
+        mdi-seal
+      </v-icon>
+    </v-badge>
   </v-list-item>
 </template>
 
