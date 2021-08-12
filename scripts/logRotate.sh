@@ -1,8 +1,11 @@
 #!/bin/bash
 
-#############################
-#   Symfony log rotation    #
-#############################
+########################################
+#         Symfony log rotation         #
+#  Must be launched in root crontab    #
+#  as gzip doesn't allow setgid's :    #
+#  we need to chmod 774 first...       #
+########################################
 
 SCRIPT_PATH="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
 
@@ -35,6 +38,7 @@ if [ -d "$API_PATH" ]; then
       elif [[ $entry =~ $logRegexOther ]]
       then
         # Gz log
+        chmod 774 "$entry"
         gzip -9 "$entry"
       fi
     done
@@ -53,6 +57,7 @@ if [ -d "$BUNDLE_PATH" ]; then
       elif [[ $entry =~ $logRegexOther ]]
       then
         # Gz log
+        chmod 774 "$entry"
         gzip -9 "$entry"
       fi
     done
@@ -71,6 +76,7 @@ if [ -d "$CLIENT_PATH" ]; then
       elif [[ $entry =~ $logRegexOther ]]
       then
         # Gz log
+        chmod 774 "$entry"
         gzip -9 "$entry"
       fi
     done

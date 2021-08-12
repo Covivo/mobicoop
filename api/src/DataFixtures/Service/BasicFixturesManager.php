@@ -32,9 +32,6 @@ use App\Community\Entity\CommunityUser;
 use App\Community\Service\CommunityManager;
 use App\Event\Entity\Event;
 use App\Event\Repository\EventRepository;
-use App\Gamification\Entity\Badge;
-use App\Gamification\Entity\SequenceItem;
-use App\Gamification\Repository\BadgeRepository;
 use App\Gamification\Repository\GamificationActionRepository;
 use App\Geography\Service\GeoSearcher;
 use App\User\Entity\User;
@@ -69,8 +66,6 @@ class BasicFixturesManager
     private $communityManager;
     private $iconRepository;
     private $fixturesBasic;
-    private $badgeRepository;
-    private $gamificationActionRepository;
     private $eventRepository;
     private $relayPointRepository;
     private $relayPointTypeRepository;
@@ -88,8 +83,6 @@ class BasicFixturesManager
         AdManager $adManager,
         CommunityManager $communityManager,
         IconRepository $iconRepository,
-        BadgeRepository $badgeRepository,
-        GamificationActionRepository $gamificationActionRepository,
         EventRepository $eventRepository,
         RelayPointRepository $relayPointRepository,
         RelayPointTypeRepository $relayPointTypeRepository,
@@ -105,8 +98,6 @@ class BasicFixturesManager
         $this->communityManager = $communityManager;
         $this->iconRepository = $iconRepository;
         $this->fixturesBasic = $fixturesBasic;
-        $this->badgeRepository = $badgeRepository;
-        $this->gamificationActionRepository = $gamificationActionRepository;
         $this->eventRepository = $eventRepository;
         $this->relayPointRepository = $relayPointRepository;
         $this->relayPointTypeRepository = $relayPointTypeRepository;
@@ -134,7 +125,6 @@ class BasicFixturesManager
             TRUNCATE `address_territory`;
             TRUNCATE `ask`;
             TRUNCATE `ask_history`;
-            TRUNCATE `badge`;
             TRUNCATE `block`;
             TRUNCATE `campaign`;
             TRUNCATE `car`;
@@ -169,9 +159,6 @@ class BasicFixturesManager
             TRUNCATE `relay_point`;
             TRUNCATE `relay_point_import`;
             TRUNCATE `review`;
-            TRUNCATE `reward`;
-            TRUNCATE `reward_step`;
-            TRUNCATE `sequence_item`;
             TRUNCATE `territory`;
             TRUNCATE `user`;
             TRUNCATE `user_auth_assignment`;
@@ -536,60 +523,6 @@ class BasicFixturesManager
     }
 
     /**
-     * Create the Badges
-     *
-     * @param array $tab    The array containing the Badges (model in ../Csv/Basic/Badges/badges.txt)
-     * @return void
-     */
-    public function createBadges(array $tab)
-    {
-        echo "Import badges " . $tab[0] . " - " . $tab[2] . PHP_EOL;
-        $badge = new Badge();
-        $badge->setId($tab[0]);
-        $badge->setName($tab[1]);
-        $badge->setTitle($tab[2]);
-        $badge->setText($tab[3]);
-        $badge->setStatus($tab[4]);
-        $badge->setPublic($tab[5]);
-        $this->entityManager->persist($badge);
-        $this->entityManager->flush();
-    }
-
-    /**
-     * Create the SequenceItems
-     *
-     * @param array $tab    The array containing the SequenceItems (model in ../Csv/Basic/SequenceItems/sequenceItems.txt)
-     * @return void
-     */
-    public function createSequenceItems(array $tab)
-    {
-        echo "Import sequenceItems for badge " . $tab[0] . PHP_EOL;
-        $sequenceItem = new SequenceItem();
-
-        if ($tab[0] !== "NULL" && $tab[1] !== "NULL") {
-            $badge = $this->badgeRepository->find($tab[0]);
-            if (!is_null($badge)) {
-                $sequenceItem->setBadge($badge);
-                $sequenceItem->setBadge($badge);
-                $gamificationAction = $this->gamificationActionRepository->find($tab[1]);
-                if (!is_null($gamificationAction)) {
-                    $sequenceItem->setGamificationAction($gamificationAction);
-                    $sequenceItem->setPosition($tab[2]);
-                    $sequenceItem->setMinCount($tab[3]);
-                    $sequenceItem->setMinUniqueCount($tab[4]);
-                    $sequenceItem->setinDateRange($tab[5]);
-                } else {
-                    echo "GamificationAction not found : ".$tab[1]." !" . PHP_EOL;
-                }
-            } else {
-                echo "Badge not found : ".$tab[0]." !" . PHP_EOL;
-            }
-        }
-        $this->entityManager->persist($sequenceItem);
-        $this->entityManager->flush();
-    }
-
-    /**
      * Create the Images
      *
      * @param array $tab    The array containing the Images (model in ../Csv/Basic/Images/images.txt)
@@ -649,30 +582,7 @@ class BasicFixturesManager
                 echo "Campaign not found for image ".$tab[0];
             }
         }
-        if ($tab[7] !== '') {
-            if ($owner = $this->badgeRepository->find($tab[7])) {
-                $image->setBadge($owner);
-                $toDirectory = "badges";
-            } else {
-                echo "Badge not found for icon ".$tab[0];
-            }
-        }
-        if ($tab[8] !== '') {
-            if ($owner = $this->badgeRepository->find($tab[8])) {
-                $image->setBadgeImage($owner);
-                $toDirectory = "badges";
-            } else {
-                echo "Badge not found for image ".$tab[0];
-            }
-        }
-        if ($tab[9] !== '') {
-            if ($owner = $this->badgeRepository->find($tab[9])) {
-                $image->setBadgeImageLight($owner);
-                $toDirectory = "badges";
-            } else {
-                echo "Badge not found for image light ".$tab[0];
-            }
-        }
+      
 
         $file = __DIR__."/images/".$tab[0];
 

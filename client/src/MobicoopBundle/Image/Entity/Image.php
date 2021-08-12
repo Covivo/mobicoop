@@ -33,11 +33,12 @@ use Mobicoop\Bundle\MobicoopBundle\Editorial\Entity\Editorial;
 use Mobicoop\Bundle\MobicoopBundle\RelayPoint\Entity\RelayPoint;
 use Mobicoop\Bundle\MobicoopBundle\RelayPoint\Entity\RelayPointType;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
+use Mobicoop\Bundle\MobicoopBundle\Gamification\Entity\GamificationEntity;
 
 /**
  * An image.
  */
-class Image implements ResourceInterface, \JsonSerializable
+class Image extends GamificationEntity implements ResourceInterface, \JsonSerializable
 {
     /**
      * @var int The id of this image.
@@ -658,7 +659,8 @@ class Image implements ResourceInterface, \JsonSerializable
             'name'              => $this->getName(),
             'fileName'          => $this->getFileName(),
             'versions'          => $this->getVersions(),
-            'url'               => $this->getUrl()
+            'url'               => $this->getUrl(),
+            'gamificationNotifications'     => $this->getGamificationNotifications()
         ];
     }
 }

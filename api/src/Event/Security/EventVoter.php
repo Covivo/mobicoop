@@ -42,7 +42,7 @@ class EventVoter extends Voter
     const EVENT_LIST_ADS = 'event_list_ads';
 
     private $authManager;
-    private $requestStack;
+    private $request;
     private $eventManager;
 
     public function __construct(AuthManager $authManager, RequestStack $requestStack, EventManager $eventManager)

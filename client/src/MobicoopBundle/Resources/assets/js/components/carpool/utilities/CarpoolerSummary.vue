@@ -20,9 +20,9 @@
     >
       <!-- Carpooler identity -->
       <v-col
-        cols="4"
-        md="3"
-        lg="3"
+        cols="5"
+        md="4"
+        lg="4"
       >
         <carpooler-identity
           :carpooler="carpooler"
@@ -34,9 +34,9 @@
       <v-col
         v-if="enabled"
         align="left"
-        cols="2"
-        md="3"
-        lg="3"
+        cols="1"
+        md="2"
+        lg="2"
       >
         <v-tooltip
           v-for="community in communities"
@@ -70,9 +70,9 @@
       </v-col>
       <v-col
         v-else
-        cols="2"
-        md="3"
-        lg="3"
+        cols="1"
+        md="2"
+        lg="2"
       />
 
       <!-- Carpooler contact -->

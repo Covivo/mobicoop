@@ -164,5 +164,10 @@
         "deleteAccount": "Mijn account verwijderen",
         "password": "Wachtwoord",
         "personnalInfos": "Persoonsgegevens"
+    },
+    "publicProfile": {
+        "close": "Sluiten",
+        "see": "Openbaar profiel weergeven",
+        "title": "Openbaar profiel"
     }
 }

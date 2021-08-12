@@ -64,7 +64,7 @@ export default {
     rewardStepsText(){
       let text = [];
       this.rewardSteps.forEach((item, index) => {
-        text.push(this.$t(item.title));
+        text.push(this.$t(item.title)+this.$t('nextABadge',{badgeName:item.badge.title}));
       });
       return text.join("\n ");
     },

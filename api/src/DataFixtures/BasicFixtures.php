@@ -216,36 +216,6 @@ class BasicFixtures extends Fixture implements FixtureGroupInterface
                 }
             }
 
-            // load Badges infos from csv file
-            $finder = new Finder();
-            $finder->in(__DIR__ . '/Csv/Basic/Badges/');
-            $finder->name('*.csv');
-            $finder->files();
-            foreach ($finder as $file) {
-                echo "Importing : {$file->getBasename()} " . PHP_EOL;
-                if ($file = fopen($file, "r")) {
-                    while ($tab = fgetcsv($file, 4096, ';')) {
-                        // create the community user
-                        $this->fixturesManager->createBadges($tab);
-                    }
-                }
-            }
-
-            // load SequenceItems infos from csv file
-            $finder = new Finder();
-            $finder->in(__DIR__ . '/Csv/Basic/SequenceItems/');
-            $finder->name('*.csv');
-            $finder->files();
-            foreach ($finder as $file) {
-                echo "Importing : {$file->getBasename()} " . PHP_EOL;
-                if ($file = fopen($file, "r")) {
-                    while ($tab = fgetcsv($file, 4096, ';')) {
-                        // create the community user
-                        $this->fixturesManager->createSequenceItems($tab);
-                    }
-                }
-            }
-
             // load Images infos from csv file
             $finder = new Finder();
             $finder->in(__DIR__ . '/Csv/Basic/Images/');

@@ -12,7 +12,7 @@
         :key="badge.id"
         max-width="600"
       >
-        <v-row>
+        <v-row no-gutters>
           <v-col cols="7">
             <v-card-title
               text-h5
@@ -20,13 +20,13 @@
             >
               {{ $t("wow") }}
             </v-card-title>
-            <v-card-subtitle>{{ $t("youWonABadge") }} <b>{{ $t(badge.title) }}</b></v-card-subtitle>
+            <v-card-subtitle>{{ $t("youWonABadge") }} <b>{{ $t(badge.title) }}</b>!</v-card-subtitle>
           </v-col>
           <v-col cols="5">
             <v-img
               height="150"
               contain
-              :src="badge.pictures.icon"
+              :src="badge.pictures.decoratedIcon"
             />
           </v-col>
         </v-row>
@@ -38,8 +38,15 @@
             <v-img
               height="350"
               :src="badge.pictures.image"
+              :lazy-src="badge.pictures.imageLight"
             />
           </v-row>
+          <p>
+            <a
+              :href="$t('urlGiphySource')"
+              target="_blank"
+            >Source: Giphy</a>
+          </p>
           <v-row
             align="center"
             justify="center"

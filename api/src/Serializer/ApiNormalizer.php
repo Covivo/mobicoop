@@ -135,14 +135,29 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
 
             foreach ($this->gamificationNotifier->getNotifications() as $gamificationNotification) {
                 if ($gamificationNotification instanceof Reward) {
-                    $data['gamificationNotifications'][] = $this->formatReward($gamificationNotification);
+                    $rewardIds = [];
+                    foreach ($data["gamificationNotifications"] as $notification) {
+                        if ($notification["type"] == "Reward") {
+                            $rewardIds[] = $notification["id"];
+                        }
+                    }
+                    if (!in_array($gamificationNotification->getId(), $rewardIds)) {
+                        $data['gamificationNotifications'][] = $this->formatReward($gamificationNotification);
+                    }
                 } elseif ($gamificationNotification instanceof RewardStep) {
-                    $data['gamificationNotifications'][] = $this->formatRewardStep($gamificationNotification);
+                    $rewardStepIds = [];
+                    foreach ($data["gamificationNotifications"] as $notification) {
+                        if ($notification["type"] == "RewardStep") {
+                            $rewardStepIds[] = $notification["id"];
+                        }
+                    }
+                    if (!in_array($gamificationNotification->getId(), $rewardStepIds)) {
+                        $data['gamificationNotifications'][] = $this->formatRewardStep($gamificationNotification);
+                    }
                     $this->entityManager->persist($gamificationNotification);
                 }
             }
         }
-
         if (isset($data['gamificationNotifications'])) {
             // we remove RewardStep if he's associated to a gained badge
             $badgeIds = [];
@@ -193,7 +208,8 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
             "title" => $rewardStep->getSequenceItem()->getGamificationAction()->getTitle(),
             "badge" => [
                 "id" => $rewardStep->getSequenceItem()->getBadge()->getId(),
-                "name" => $rewardStep->getSequenceItem()->getBadge()->getName()
+                "name" => $rewardStep->getSequenceItem()->getBadge()->getName(),
+                "title" => $rewardStep->getSequenceItem()->getBadge()->getTitle()
             ]
         ];
     }
@@ -214,6 +230,7 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
             "text" => $reward->getBadge()->getText(),
             "pictures" => [
                 "icon" => (!is_null($reward->getBadge()->getIcon())) ? $this->badgeImageUri.$reward->getBadge()->getIcon()->getFileName() : null,
+                "decoratedIcon" => (!is_null($reward->getBadge()->getDecoratedIcon())) ? $this->badgeImageUri.$reward->getBadge()->getDecoratedIcon()->getFileName() : null,
                 "image" => (!is_null($reward->getBadge()->getImage())) ? $this->badgeImageUri.$reward->getBadge()->getImage()->getFileName() : null,
                 "imageLight" => (!is_null($reward->getBadge()->getImageLight())) ? $this->badgeImageUri.$reward->getBadge()->getImageLight()->getFileName() : null
             ]
