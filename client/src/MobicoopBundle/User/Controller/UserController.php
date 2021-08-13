@@ -156,33 +156,27 @@ class UserController extends AbstractController
     /**
      * User login.
      */
-    public function login(Request $request, ?int $proposalId = null, ?int $eventId = null, EventManager $eventManager)
+    public function login(Request $request, $destination= null, $event = null, ?int $proposalId = null, ?int $eventId = null, EventManager $eventManager)
     {
         $errorMessage =   '';
         if (in_array("bad-credentials-api", $request->getSession()->getFlashBag()->peek('notice'))) {
             $errorMessage =  'Bad credentials.';
             $request->getSession()->getFlashBag()->clear();
         }
-        if($eventId !== null){
+        if($eventId !== null && $destination == null && $event==null ){
             $event = $eventManager->getEvent($eventId);
-            $destination = $event->getAddress();
-
-            return $this->render('@Mobicoop/user/login.html.twig', [
-                "proposalId" => $proposalId,
-                "eventId" => $eventId,
-                'destination' => $destination,
-                "errorMessage"=>$errorMessage,
-                "facebook_show"=>($this->facebook_show==="true") ? true : false,
-                "facebook_appid"=>$this->facebook_appid,
-                "signUpLinkInConnection"=>$this->signUpLinkInConnection,
-            ]);
+            $destination = json_encode($event->getAddress());
         }
+        
         return $this->render('@Mobicoop/user/login.html.twig', [
+            "eventId" => $eventId,
             "proposalId" => $proposalId,
             "errorMessage"=>$errorMessage,
+            'destination'=>$destination,
             "facebook_show"=>($this->facebook_show==="true") ? true : false,
             "facebook_appid"=>$this->facebook_appid,
             "signUpLinkInConnection"=>$this->signUpLinkInConnection,
+            "event" => $event
         ]);
     }
 

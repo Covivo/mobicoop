@@ -15,5 +15,7 @@
       :proposal-id = "{{ proposalId is defined ? (proposalId ? proposalId : 'null') : 'null' }}"
       :event-id = "{{ eventId is defined ? (eventId ? eventId : 'null') : 'null' }}"
       :sign-up-link-in-connection = "{{ signUpLinkInConnection ? "true" : "false" }}"
+      :init-destination = "{{ destination is defined ? (destination ? destination : 'null') : 'null' }}"
+      :event="{{event|json_encode}}" 
   />
 {% endblock %}

@@ -217,22 +217,23 @@ class CarpoolController extends AbstractController
      * Create a carpooling ad from a search component (home, community...)
      * (POST)
      */
-    public function carpoolAdPostFromSearch(Request $request,EventManager $eventManager)
+    public function carpoolAdPostFromSearch(Request $request,EventManager $eventManager, $event=null)
     {
 //        $ad = new Ad();
 //        $this->denyAccessUnlessGranted('create_ad', $ad);
-        $eventId = $request->query->get('eventId');
+            $eventId = $request->query->get('eventId');
 
-        if(!empty($eventId)){
-            $event = $eventManager->getEvent($eventId);
-            $destination = json_encode($event->getAddress());
-        }
+            if(!empty($eventId)){
+                $event = $eventManager->getEvent($eventId);
+                $destination = json_encode($event->getAddress());
+             } else {
+                $destination = $request->request->get('destination');
+            }
             return $this->render(
                 '@Mobicoop/carpool/publish.html.twig',
                 [
                     'communityIds'=>$request->request->get('communityId') ? [(int)$request->request->get('communityId')] : null,
                     'origin'=>$request->request->get('origin'),
-                    'destination'=>$request->request->get('destination') || $destination,
                     'eventId'=>$eventId,
                     'regular'=>$request->request->get('regular') ? json_decode($request->request->get('regular')) : $this->defaultRegular,
                     'date'=>$request->request->get('date'),
@@ -243,10 +244,11 @@ class CarpoolController extends AbstractController
                         "forbidden" => $this->forbiddenPrice,
                     ],
                     "participationText"=>$this->participationText,
-                    "ageDisplay"=>$this->ageDisplay
+                    "ageDisplay"=>$this->ageDisplay,
+                    'destination'=>$destination,
+                    "event"=>$event
                 ]
             );
-        }
     }
 
     /**

@@ -27,6 +27,7 @@
     :participation-text = "{{ participationText ? "true" : "false" }}"
     :age-display  = "{{ ageDisplay ? "true" : "false" }}"
     :event-id = "{{ eventId is defined ? (eventId ? eventId : 'null') : 'null' }}"
+    :event="{{event|json_encode}}"
   />
 
 {% endblock %}

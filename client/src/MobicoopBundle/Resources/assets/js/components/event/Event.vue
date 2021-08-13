@@ -134,6 +134,8 @@
     <LoginOrRegisterFirst
       :show-dialog="loginOrRegisterDialog"
       :event-id="lEventId"
+      :event="event"
+      :init-destination="initDestination"
       @closeLoginOrRegisterDialog=" loginOrRegisterDialog = false "
     />
   </div>

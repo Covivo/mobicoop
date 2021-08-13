@@ -200,7 +200,7 @@ class Event
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"aRead","readEvent"})
+     * @Groups({"aRead","readEvent", "read" })
      * @ApiProperty(identifier=true)
      */
     private $id;

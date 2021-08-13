@@ -112,6 +112,14 @@ export default {
     showLoginBtn:{
       type: Boolean,
       default: true
+    },
+    initDestination: {
+      type: Object,
+      default: null
+    },
+    event: {
+      type: Object,
+      default: null
     }
   },
   data() {

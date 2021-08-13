@@ -842,7 +842,11 @@ export default {
     eventId: {
       type: Number,
       default: null
-    }
+    },
+    event: {
+      type: Object,
+      default: null
+    },
   },
   data() {
     return {
@@ -1130,6 +1134,11 @@ export default {
       }
     }
   },
+  created () {
+    if (this.initDestination.event == null) {
+      this.$set(this.initDestination, 'event', this.event);
+    }
+  },
   methods: {
     buildPointsToMap: function(){
       this.pointsToMap.length = 0;
@@ -1298,7 +1307,8 @@ export default {
         passenger: this.passenger,
         origin: this.origin,
         destination: this.destination,
-        solidaryExclusive: this.solidaryExclusive
+        solidaryExclusive: this.solidaryExclusive,
+        eventId : this.eventId,
       };
       if (this.isValidUpdate) postObject.id = this.ad.id;
       if (this.userDelegated) postObject.userDelegated = this.userDelegated;

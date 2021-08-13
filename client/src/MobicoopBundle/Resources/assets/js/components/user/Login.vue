@@ -180,9 +180,17 @@ export default {
       type: Number,
       default: null
     },
+    initDestination: {
+      type: Object,
+      default: null
+    },
     signUpLinkInConnection: {
       type: Boolean,
       default: false
+    },
+    event: {
+      type: Object,
+      default: null
     }
   },
   data() {
@@ -215,6 +223,9 @@ export default {
         return this.eventId
       }
     },
+  },
+  created () {
+    this.$set(this.initDestination, 'event', this.event);
   },
   mounted() {
     if(this.errormessage.value !== "") this.treatErrorMessage(this.errormessage);
