@@ -71,10 +71,12 @@ class CarpoolController extends AbstractController
     private $participationText;
     private $fraudWarningDisplay;
     private $ageDisplay;
+    private $eventManager;
 
 
     public function __construct(
         PublicTransportManager $publicTransportManager,
+        EventManager $eventManager,
         $midPrice,
         $highPrice,
         $forbiddenPrice,
@@ -99,6 +101,7 @@ class CarpoolController extends AbstractController
         $this->participationText = $participationText;
         $this->fraudWarningDisplay = $fraudWarningDisplay;
         $this->ageDisplay = $ageDisplay;
+        $this->eventManager = $eventManager;
     }
     
     /**
@@ -217,21 +220,21 @@ class CarpoolController extends AbstractController
      * Create a carpooling ad from a search component (home, community...)
      * (POST)
      */
-    public function carpoolAdPostFromSearch(Request $request,EventManager $eventManager, $event=null)
+    public function carpoolAdPostFromSearch(Request $request, $event=null)
     {
 //        $ad = new Ad();
 //        $this->denyAccessUnlessGranted('create_ad', $ad);
-            $eventId = $request->query->get('eventId');
+        $eventId = $request->query->get('eventId');
 
-            if(!empty($eventId)){
-                $event = $eventManager->getEvent($eventId);
-                $destination = json_encode($event->getAddress());
-             } else {
-                $destination = $request->request->get('destination');
-            }
-            return $this->render(
-                '@Mobicoop/carpool/publish.html.twig',
-                [
+        if (!empty($eventId)) {
+            $event = $this->eventManager->getEvent($eventId);
+            $destination = json_encode($event->getAddress());
+        } else {
+            $destination = $request->request->get('destination');
+        }
+        return $this->render(
+            '@Mobicoop/carpool/publish.html.twig',
+            [
                     'communityIds'=>$request->request->get('communityId') ? [(int)$request->request->get('communityId')] : null,
                     'origin'=>$request->request->get('origin'),
                     'eventId'=>$eventId,
@@ -248,7 +251,7 @@ class CarpoolController extends AbstractController
                     'destination'=>$destination,
                     "event"=>$event
                 ]
-            );
+        );
     }
 
     /**

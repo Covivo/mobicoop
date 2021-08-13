@@ -184,13 +184,13 @@ export default {
       type: Object,
       default: null
     },
-    signUpLinkInConnection: {
-      type: Boolean,
-      default: false
-    },
     event: {
       type: Object,
       default: null
+    },
+    signUpLinkInConnection: {
+      type: Boolean,
+      default: false
     }
   },
   data() {

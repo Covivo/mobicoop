@@ -94,6 +94,7 @@ class UserController extends AbstractController
     private $fraudWarningDisplay;
     private $ageDisplay;
     private $birthDateDisplay;
+    private $eventManager;
 
 
     /**
@@ -118,6 +119,7 @@ class UserController extends AbstractController
         SsoManager $ssoManager,
         PaymentManager $paymentManager,
         LanguageManager $languageManager,
+        EventManager $eventManager,
         $required_community,
         bool $loginDelegate,
         bool $fraudWarningDisplay,
@@ -145,7 +147,7 @@ class UserController extends AbstractController
         $this->fraudWarningDisplay= $fraudWarningDisplay;
         $this->ageDisplay = $ageDisplay;
         $this->birthDateDisplay = $birthDateDisplay;
-
+        $this->eventManager = $eventManager;
         $this->ssoManager = $ssoManager;
     }
 
@@ -156,15 +158,15 @@ class UserController extends AbstractController
     /**
      * User login.
      */
-    public function login(Request $request, $destination= null, $event = null, ?int $proposalId = null, ?int $eventId = null, EventManager $eventManager)
+    public function login(Request $request, $destination= null, $event = null, ?int $proposalId = null, ?int $eventId = null)
     {
         $errorMessage =   '';
         if (in_array("bad-credentials-api", $request->getSession()->getFlashBag()->peek('notice'))) {
             $errorMessage =  'Bad credentials.';
             $request->getSession()->getFlashBag()->clear();
         }
-        if($eventId !== null && $destination == null && $event==null ){
-            $event = $eventManager->getEvent($eventId);
+        if ($eventId !== null && $destination == null && $event==null) {
+            $event = $this->eventManager->getEvent($eventId);
             $destination = json_encode($event->getAddress());
         }
         
