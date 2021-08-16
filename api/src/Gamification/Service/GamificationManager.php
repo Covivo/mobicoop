@@ -144,11 +144,7 @@ class GamificationManager
                     /**
                      * @var GamificationRuleInterface $gamificationActionRule
                      */
-                    if ($gamificationAction->getGamificationActionRule()->getName() === "FirstMessageAnswer") {
-                        $gamificationActionRule = new $gamificationActionRuleName($this->messageRepository);
-                    } else {
-                        $gamificationActionRule = new $gamificationActionRuleName;
-                    }
+                    $gamificationActionRule = new $gamificationActionRuleName;
                     $validationStep->setValidated($validationStep->isValidated() && $gamificationActionRule->execute($log->getUser(), $log, $sequenceItem));
                 }
 
