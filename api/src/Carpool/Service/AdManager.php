@@ -705,40 +705,78 @@ class AdManager
     {
         foreach ($schedules as $schedule) {
             if (isset($schedule[$key]) && $schedule[$key] != '') {
-                if (isset($schedule['mon']) && $schedule['mon']) {
-                    $criteria->setMonCheck(true);
-                    $criteria->setMonTime(\DateTime::createFromFormat('H:i', $schedule[$key]));
-                    $criteria->setMonMarginDuration($marginDuration);
-                }
-                if (isset($schedule['tue']) && $schedule['tue']) {
-                    $criteria->setTueCheck(true);
-                    $criteria->setTueTime(\DateTime::createFromFormat('H:i', $schedule[$key]));
-                    $criteria->setTueMarginDuration($marginDuration);
-                }
-                if (isset($schedule['wed']) && $schedule['wed']) {
-                    $criteria->setWedCheck(true);
-                    $criteria->setWedTime(\DateTime::createFromFormat('H:i', $schedule[$key]));
-                    $criteria->setWedMarginDuration($marginDuration);
-                }
-                if (isset($schedule['thu']) && $schedule['thu']) {
-                    $criteria->setThuCheck(true);
-                    $criteria->setThuTime(\DateTime::createFromFormat('H:i', $schedule[$key]));
-                    $criteria->setThuMarginDuration($marginDuration);
-                }
-                if (isset($schedule['fri']) && $schedule['fri']) {
-                    $criteria->setFriCheck(true);
-                    $criteria->setFriTime(\DateTime::createFromFormat('H:i', $schedule[$key]));
-                    $criteria->setFriMarginDuration($marginDuration);
-                }
-                if (isset($schedule['sat']) && $schedule['sat']) {
-                    $criteria->setSatCheck(true);
-                    $criteria->setsatTime(\DateTime::createFromFormat('H:i', $schedule[$key]));
-                    $criteria->setSatMarginDuration($marginDuration);
-                }
-                if (isset($schedule['sun']) && $schedule['sun']) {
-                    $criteria->setSunCheck(true);
-                    $criteria->setSunTime(\DateTime::createFromFormat('H:i', $schedule[$key]));
-                    $criteria->setSunMarginDuration($marginDuration);
+                if (get_class($schedule[$key]) == 'DateTime') {
+                    if (isset($schedule['mon']) && $schedule['mon']) {
+                        $criteria->setMonCheck(true);
+                        $criteria->setMonTime($schedule[$key]);
+                        $criteria->setMonMarginDuration($marginDuration);
+                    }
+                    if (isset($schedule['tue']) && $schedule['tue']) {
+                        $criteria->setTueCheck(true);
+                        $criteria->setTueTime($schedule[$key]);
+                        $criteria->setTueMarginDuration($marginDuration);
+                    }
+                    if (isset($schedule['wed']) && $schedule['wed']) {
+                        $criteria->setWedCheck(true);
+                        $criteria->setWedTime($schedule[$key]);
+                        $criteria->setWedMarginDuration($marginDuration);
+                    }
+                    if (isset($schedule['thu']) && $schedule['thu']) {
+                        $criteria->setThuCheck(true);
+                        $criteria->setThuTime($schedule[$key]);
+                        $criteria->setThuMarginDuration($marginDuration);
+                    }
+                    if (isset($schedule['fri']) && $schedule['fri']) {
+                        $criteria->setFriCheck(true);
+                        $criteria->setFriTime($schedule[$key]);
+                        $criteria->setFriMarginDuration($marginDuration);
+                    }
+                    if (isset($schedule['sat']) && $schedule['sat']) {
+                        $criteria->setSatCheck(true);
+                        $criteria->setsatTime($schedule[$key]);
+                        $criteria->setSatMarginDuration($marginDuration);
+                    }
+                    if (isset($schedule['sun']) && $schedule['sun']) {
+                        $criteria->setSunCheck(true);
+                        $criteria->setSunTime($schedule[$key]);
+                        $criteria->setSunMarginDuration($marginDuration);
+                    }
+                } else {
+                    if (isset($schedule['mon']) && $schedule['mon']) {
+                        $criteria->setMonCheck(true);
+                        $criteria->setMonTime(\DateTime::createFromFormat('H:i', $schedule[$key]));
+                        $criteria->setMonMarginDuration($marginDuration);
+                    }
+                    if (isset($schedule['tue']) && $schedule['tue']) {
+                        $criteria->setTueCheck(true);
+                        $criteria->setTueTime(\DateTime::createFromFormat('H:i', $schedule[$key]));
+                        $criteria->setTueMarginDuration($marginDuration);
+                    }
+                    if (isset($schedule['wed']) && $schedule['wed']) {
+                        $criteria->setWedCheck(true);
+                        $criteria->setWedTime(\DateTime::createFromFormat('H:i', $schedule[$key]));
+                        $criteria->setWedMarginDuration($marginDuration);
+                    }
+                    if (isset($schedule['thu']) && $schedule['thu']) {
+                        $criteria->setThuCheck(true);
+                        $criteria->setThuTime(\DateTime::createFromFormat('H:i', $schedule[$key]));
+                        $criteria->setThuMarginDuration($marginDuration);
+                    }
+                    if (isset($schedule['fri']) && $schedule['fri']) {
+                        $criteria->setFriCheck(true);
+                        $criteria->setFriTime(\DateTime::createFromFormat('H:i', $schedule[$key]));
+                        $criteria->setFriMarginDuration($marginDuration);
+                    }
+                    if (isset($schedule['sat']) && $schedule['sat']) {
+                        $criteria->setSatCheck(true);
+                        $criteria->setsatTime(\DateTime::createFromFormat('H:i', $schedule[$key]));
+                        $criteria->setSatMarginDuration($marginDuration);
+                    }
+                    if (isset($schedule['sun']) && $schedule['sun']) {
+                        $criteria->setSunCheck(true);
+                        $criteria->setSunTime(\DateTime::createFromFormat('H:i', $schedule[$key]));
+                        $criteria->setSunMarginDuration($marginDuration);
+                    }
                 }
             }
         }
