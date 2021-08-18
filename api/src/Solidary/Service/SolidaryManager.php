@@ -441,7 +441,7 @@ class SolidaryManager
 
         // we update solidary
         $solidary->setProposal($proposal);
-        $solidary->setSolidaryUserStructure($solidaryUserStructure[0]);
+        $solidary->setSolidaryUserStructure($solidaryUserStructure);
 
         // we set the start progression
         $solidary->setProgression(0);
