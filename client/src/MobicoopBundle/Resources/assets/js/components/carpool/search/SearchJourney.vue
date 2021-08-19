@@ -57,6 +57,7 @@
           <GeoComplete
             v-show="showOrigin"
             id="from"
+            alternative-label="origin"
             :url="geoSearchUrl"
             :label="labelOrigin"
             :token="user ? user.token : ''"
@@ -103,6 +104,7 @@
           <GeoComplete
             v-show="showDestination"
             id="to"
+            alternative-label="destination"
             :url="geoSearchUrl"
             :label="labelDestination"
             :token="user ? user.token : ''"

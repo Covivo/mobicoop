@@ -1,5 +1,7 @@
 {
     "events": "Evenementen",
     "relayPoints": "Knooppunten",
-    "required": "Een adres is vereist"
+    "required": "Een adres is vereist",
+    "origin": "Lieu de départ",
+    "destination": "Lieu d'arrivée"
 }
