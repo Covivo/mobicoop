@@ -1,4 +1,4 @@
 {
     "urlGet": "/utilisateur/messages/covoiturage",
-    "noCarpool": "Vous n'avez pas encore solicité un autre inscrit pour un covoiturage."
+    "noCarpool": "Vous n'avez pas encore sollicité un autre inscrit pour un covoiturage."
 }
