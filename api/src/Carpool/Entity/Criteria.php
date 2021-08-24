@@ -878,13 +878,16 @@ class Criteria
 
     public function getArrivalDateTime(): ?\DateTimeInterface
     {
-        $fromDate = clone $this->getFromDate();
-        $fromTime = $this->getFromTime();
-        $fromDate->setTime($fromTime->format("H"), $fromTime->format("i"), $fromTime->format("s"));
+        if ($this->getFrequency()=== Criteria::FREQUENCY_PUNCTUAL) {
+            $fromDate = clone $this->getFromDate();
+            $fromTime = $this->getFromTime();
+            $fromDate->setTime($fromTime->format("H"), $fromTime->format("i"), $fromTime->format("s"));
 
-        $duration = $this->getDuration();
-        if (!is_null($duration)) {
-            return $fromDate->modify($duration." seconds");
+            $duration = $this->getDuration();
+            if (!is_null($duration)) {
+                return $fromDate->modify($duration." seconds");
+            }
+            return null;
         }
         return null;
     }
