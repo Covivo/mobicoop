@@ -23,6 +23,7 @@
                   id="from"
                   :url="geoSearchUrl"
                   :label="labelOrigin"
+                  alternative-label="origin"
                   :token="user ? user.token : ''"
                   required
                   :show-required="showRequired"
@@ -40,6 +41,7 @@
                   id="to"
                   :url="geoSearchUrl"
                   :label="labelDestination"
+                  alternative-label="destination"
                   :token="user ? user.token : ''"
                   required
                   :show-required="showRequired"
