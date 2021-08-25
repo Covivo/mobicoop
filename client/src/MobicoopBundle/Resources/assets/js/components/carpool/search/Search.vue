@@ -115,6 +115,7 @@
           :user="user"
           :init-regular="dataRegular"
           :punctual-date-optional="punctualDateOptional"
+          :elevation="horizontalElevation"
           @change="searchChanged"
           @search="search"
         />
@@ -226,6 +227,10 @@ export default {
     horizontal:{
       type: Boolean,
       default: false
+    },
+    horizontalElevation:{
+      type:Number,
+      default: 2
     }
   },
   data() {
