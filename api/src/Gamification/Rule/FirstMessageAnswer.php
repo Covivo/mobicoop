@@ -24,19 +24,12 @@
 namespace App\Gamification\Rule;
 
 use App\Gamification\Interfaces\GamificationRuleInterface;
-use App\Communication\Repository\MessageRepository;
 
 /**
  *  Check that the requester is the author of the related Ad
  */
 class FirstMessageAnswer implements GamificationRuleInterface
 {
-    private $messageRepository;
-
-    public function __construct(MessageRepository $messageRepository)
-    {
-        $this->messageRepository = $messageRepository;
-    }
 
     /**
      * First Message Answer rule
@@ -48,8 +41,15 @@ class FirstMessageAnswer implements GamificationRuleInterface
      */
     public function execute($requester, $log, $sequenceItem)
     {
-        $answers = $this->messageRepository->findAnswers($log->getUser());
-        if (count($answers)===1) {
+        $messages = $log->getUser()->getMessages();
+
+        $count = 0;
+        foreach ($messages as $message) {
+            if (is_null($message->getMessage())) {
+                $count++;
+            }
+        }
+        if ($count===1) {
             return true;
         }
         return false;
