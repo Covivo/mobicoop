@@ -28,7 +28,7 @@ use App\Gamification\Interfaces\GamificationRuleInterface;
 use App\Payment\Entity\CarpoolItem;
 
 /**
- *  Check that the requester is the author of the related Ad
+ * Check if the user has at least carpooled N km
  */
 class HasAtLeastNCarpooledKm implements GamificationRuleInterface
 {

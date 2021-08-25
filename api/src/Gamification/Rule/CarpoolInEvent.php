@@ -27,7 +27,7 @@ use App\Carpool\Entity\Ask;
 use App\Gamification\Interfaces\GamificationRuleInterface;
 
 /**
- *  Check that the requester is the author of the related Ad
+ * Check if the user carpooled for an event
  */
 class CarpoolInEvent implements GamificationRuleInterface
 {
