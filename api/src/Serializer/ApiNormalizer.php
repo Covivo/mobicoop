@@ -105,10 +105,6 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
             $data['gamificationNotifications'] = [];
             foreach ($waitingRewardSteps as $waitingRewardStep) {
                 $data['gamificationNotifications'][] = $this->formatRewardStep($waitingRewardStep);
-
-                // We update the RewardStep and flag it as notified
-                $waitingRewardStep->setNotifiedDate(new \DateTime('now'));
-                $this->entityManager->persist($waitingRewardStep);
             }
         }
 
@@ -118,10 +114,6 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
             $data['gamificationNotifications'] = [];
             foreach ($waitingRewards as $waitingReward) {
                 $data['gamificationNotifications'][] = $this->formatReward($waitingReward);
-
-                // We update the RewardStep and flag it as notified
-                $waitingReward->setNotifiedDate(new \DateTime('now'));
-                $this->entityManager->persist($waitingReward);
             }
         }
 
