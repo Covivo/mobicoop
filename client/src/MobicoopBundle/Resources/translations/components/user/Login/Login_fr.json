@@ -6,6 +6,7 @@
     "userFBNotFound": "Cet utilisateur facebook n'est pas inscrit sur la plateforme",
     "urlLogin":"/utilisateur/connexion",
     "urlLoginResult":"/utilisateur/connexion/{id}",
+    "urlLoginEvent":"/utilisateur/connexion/evenement/{id}",
     "urlRecovery": "/utilisateur/mot-de-passe/recuperation",
     "textRecovery": "Mot de passe oublié ?",
     "signUp": "Vous n'êtes pas encore inscrit ?",
