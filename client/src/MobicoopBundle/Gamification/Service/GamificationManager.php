@@ -24,6 +24,7 @@
 namespace Mobicoop\Bundle\MobicoopBundle\Gamification\Service;
 
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
+use Mobicoop\Bundle\MobicoopBundle\Gamification\Entity\Reward;
 use Mobicoop\Bundle\MobicoopBundle\Gamification\Entity\RewardStep;
 
 /**
@@ -55,5 +56,16 @@ class GamificationManager
             $response = $this->dataProvider->getSpecialItem($rewardStepsId, "tagAsNotified");
         }
         return null;
+    }
+
+    /**
+     * Tags a given reward as notified
+     * @var int $rewardId   id of the reward
+     * @return null
+     */
+    public function tagRewardAsNotified(int $rewardId)
+    {
+        $this->dataProvider->setClass(Reward::class);
+        return  $this->dataProvider->getSpecialItem($rewardId, "tagAsNotified");
     }
 }

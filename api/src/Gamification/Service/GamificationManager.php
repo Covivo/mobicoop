@@ -49,6 +49,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use App\Gamification\Interfaces\GamificationRuleInterface;
 use App\Communication\Repository\MessageRepository;
 use App\Gamification\Repository\RewardStepRepository;
+use App\Gamification\Repository\RewardRepository;
 
 /**
  * Gamification Manager
@@ -65,6 +66,7 @@ class GamificationManager
     private $gamificationNotifier;
     private $messageRepository;
     private $rewardStepRepository;
+    private $rewardRepository;
 
     public function __construct(
         SequenceItemRepository $sequenceItemRepository,
@@ -74,7 +76,8 @@ class GamificationManager
         EventDispatcherInterface $eventDispatcher,
         GamificationNotifier $gamificationNotifier,
         MessageRepository $messageRepository,
-        RewardStepRepository $rewardStepRepository
+        RewardStepRepository $rewardStepRepository,
+        RewardRepository $rewardRepository
     ) {
         $this->sequenceItemRepository = $sequenceItemRepository;
         $this->logRepository = $logRepository;
@@ -84,6 +87,7 @@ class GamificationManager
         $this->gamificationNotifier = $gamificationNotifier;
         $this->messageRepository = $messageRepository;
         $this->rewardStepRepository = $rewardStepRepository;
+        $this->rewardRepository = $rewardRepository;
     }
     
     /**
@@ -389,5 +393,22 @@ class GamificationManager
             return $rewardStep;
         }
         throw new \LogicException("No RewardStep found");
+    }
+
+    /**
+     * Tag a Reward as notified
+     *
+     * @param int $id    Id of the RewardStep to tag
+     * @return Reward
+     */
+    public function tagRewardAsNotified(int $id): Reward
+    {
+        if ($reward = $this->rewardRepository->find($id)) {
+            $reward->setNotifiedDate(new \DateTime('now'));
+            $this->entityManager->persist($reward);
+            $this->entityManager->flush();
+            return $reward;
+        }
+        throw new \LogicException("No Reward found");
     }
 }

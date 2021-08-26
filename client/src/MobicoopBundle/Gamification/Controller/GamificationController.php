@@ -52,4 +52,17 @@ class GamificationController extends AbstractController
         }
         return new JsonResponse();
     }
+
+    /**
+    * Tags a given reward as notified
+    */
+    public function tagRewardAsNotified(Request $request)
+    {
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+            $this->gamificationManager->tagRewardAsNotified($data['id']);
+            return new JsonResponse($data);
+        }
+        return new JsonResponse();
+    }
 }

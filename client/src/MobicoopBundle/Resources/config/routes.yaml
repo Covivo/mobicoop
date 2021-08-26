@@ -1589,7 +1589,7 @@ payment_week_first:
 # Gamification routes #
 #######################
 
-# Get payment periods to pay/collect (POST) AJAX
+# Tag the given rewardsteps as notified
 gamification_tag_rewardsteps_as_notified:
     methods: [POST]
     path:
@@ -1598,6 +1598,14 @@ gamification_tag_rewardsteps_as_notified:
         nl: /gamification/tagRewardStepAsNotified
     controller: Mobicoop\Bundle\MobicoopBundle\Gamification\Controller\GamificationController::tagRewardStepsAsNotified 
 
+# Tag the given reward as notified
+gamification_tag_reward_as_notified:
+    methods: [POST]
+    path:
+        fr: /gamification/tagRewardAsNotified
+        en: /gamification/tagRewardAsNotified
+        nl: /gamification/tagRewardAsNotified
+    controller: Mobicoop\Bundle\MobicoopBundle\Gamification\Controller\GamificationController::tagRewardAsNotified 
 
 ###############
 # misc routes #

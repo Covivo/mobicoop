@@ -64,7 +64,7 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 *              "path"="/reward_steps/{id}/tagAsNotified",
 *              "normalization_context"={"groups"={"tagAsNotified"}},
 *              "swagger_context" = {
-*                  "summary"="Not implemented",
+*                  "summary"="Tag a RewardStep as notified to the User",
 *                  "tags"={"Gamification"}
 *              }
 *          },

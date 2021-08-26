@@ -40,7 +40,40 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 *
 * @ORM\Entity
 * @ORM\HasLifecycleCallbacks
- */
+* @ApiResource(
+*     attributes={
+*          "force_eager"=false,
+*          "normalization_context"={"groups"={"readGamification"}, "enable_max_depth"="true"}
+*     },
+*     collectionOperations={
+*          "get"={
+*              "security"="is_granted('reject',object)",
+*              "swagger_context" = {
+*                  "summary"="Not implemented",
+*                  "tags"={"Gamification"}
+*               }
+*           }
+*      },
+*      itemOperations={
+*          "get"={
+*              "security"="is_granted('reject',object)",
+*              "swagger_context" = {
+*                  "summary"="Not implemented",
+*                  "tags"={"Gamification"}
+*              }
+*          },
+*          "tagAsNotified"={
+*              "method"="GET",
+*              "path"="/rewards/{id}/tagAsNotified",
+*              "normalization_context"={"groups"={"tagAsNotified"}},
+*              "swagger_context" = {
+*                  "summary"="Tag a Reward as notified to the User",
+*                  "tags"={"Gamification"}
+*              }
+*          },
+*      }
+* )
+*/
 class Reward implements GamificationNotificationInterface
 {
     /**
@@ -49,8 +82,9 @@ class Reward implements GamificationNotificationInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"readGamification"})
+     * @Groups({"readGamification","tagAsNotified"})
      * @MaxDepth(1)
+     * @ApiProperty(identifier=true)
      */
     private $id;
 
@@ -92,7 +126,7 @@ class Reward implements GamificationNotificationInterface
      * @var \DateTimeInterface Reward's notified date
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"readGamification"})
+     * @Groups({"readGamification","tagAsNotified"})
      */
     private $notifiedDate;
 
