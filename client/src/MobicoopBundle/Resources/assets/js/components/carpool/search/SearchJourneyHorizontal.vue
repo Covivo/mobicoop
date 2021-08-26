@@ -5,7 +5,10 @@
       dense
     >
       <v-col cols="9">
-        <v-card class="px-5 py-0">
+        <v-card
+          class="px-5 py-0"
+          :elevation="elevation"
+        >
           <v-form
             ref="form"
             v-model="valid"
@@ -187,7 +190,11 @@ export default {
     prependIconOutwardDate:{
       type: String,
       default: "mdi-calendar"
-    }    
+    },
+    elevation:{
+      type:Number,
+      default: 2
+    }
   },
   data() {
     return {
