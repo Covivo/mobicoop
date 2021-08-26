@@ -12,7 +12,7 @@
         <v-btn
           text
           v-bind="attrs"
-          @click="snackbar = false"
+          @click="snackbar = false;tagRewardStepsAsNotified()"
         >
           <v-icon
             color="primary"
@@ -28,6 +28,7 @@
   </div>
 </template>
 <script>
+import maxios from "@utils/maxios";
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/gamification/GamificationNotifications/";
 import GamificationBadgesNotifications from "@components/utilities/gamification/GamificationBadgesNotifications";
 
@@ -84,6 +85,24 @@ export default {
     }
     if(this.userGamificationNotifications){
       this.$store.commit('gn/updateGamificationNotifications',this.userGamificationNotifications);
+    }
+  },
+  methods:{
+    tagRewardStepsAsNotified(){
+      let stepsToTag = [];
+      this.rewardSteps.forEach((item, index) => {
+        if(!item.notifiedDate){
+          stepsToTag.push(item.id);
+        }
+      });
+
+      if(stepsToTag.length > 0){
+        // We tag these rewardSteps as notified
+        maxios
+          .post(this.$t('routeTagAsNotified'), stepsToTag)
+          .then(res => {
+          })
+      }
     }
   }
 }

@@ -48,6 +48,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use App\Gamification\Interfaces\GamificationRuleInterface;
 use App\Communication\Repository\MessageRepository;
+use App\Gamification\Repository\RewardStepRepository;
 
 /**
  * Gamification Manager
@@ -63,6 +64,7 @@ class GamificationManager
     private $eventDispatcher;
     private $gamificationNotifier;
     private $messageRepository;
+    private $rewardStepRepository;
 
     public function __construct(
         SequenceItemRepository $sequenceItemRepository,
@@ -71,7 +73,8 @@ class GamificationManager
         EntityManagerInterface $entityManager,
         EventDispatcherInterface $eventDispatcher,
         GamificationNotifier $gamificationNotifier,
-        MessageRepository $messageRepository
+        MessageRepository $messageRepository,
+        RewardStepRepository $rewardStepRepository
     ) {
         $this->sequenceItemRepository = $sequenceItemRepository;
         $this->logRepository = $logRepository;
@@ -80,6 +83,7 @@ class GamificationManager
         $this->eventDispatcher = $eventDispatcher;
         $this->gamificationNotifier = $gamificationNotifier;
         $this->messageRepository = $messageRepository;
+        $this->rewardStepRepository = $rewardStepRepository;
     }
     
     /**
@@ -368,5 +372,22 @@ class GamificationManager
     public function handleGamificationNotification(GamificationNotificationInterface $gamificationNotification)
     {
         $this->gamificationNotifier->addNotification($gamificationNotification);
+    }
+
+    /**
+     * Tag a RewardStep as notified
+     *
+     * @param int $id    Id of the RewardStep to tag
+     * @return RewardStep
+     */
+    public function tagRewardStepAsNotified(int $id): RewardStep
+    {
+        if ($rewardStep = $this->rewardStepRepository->find($id)) {
+            $rewardStep->setNotifiedDate(new \DateTime('now'));
+            $this->entityManager->persist($rewardStep);
+            $this->entityManager->flush();
+            return $rewardStep;
+        }
+        throw new \LogicException("No RewardStep found");
     }
 }

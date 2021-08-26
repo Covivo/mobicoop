@@ -146,6 +146,13 @@ services:
     Mobicoop\Bundle\MobicoopBundle\ExternalJourney\Service\:
         resource: '@MobicoopBundle/ExternalJourney/Service/*'
 
+    #Gamification
+    Mobicoop\Bundle\MobicoopBundle\Gamification\Controller\:
+        resource: '@MobicoopBundle/Gamification/Controller/*'
+        tags: ['controller.service_arguments']
+    Mobicoop\Bundle\MobicoopBundle\Gamification\Service\:
+        resource: '@MobicoopBundle/Gamification/Service/*'
+
     # Geography
     Mobicoop\Bundle\MobicoopBundle\Geography\Controller\:
         resource: '@MobicoopBundle/Geography/Controller/*'

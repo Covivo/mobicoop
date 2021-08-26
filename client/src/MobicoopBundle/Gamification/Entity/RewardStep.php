@@ -21,39 +21,42 @@
  *    LICENSE
  **************************/
 
-namespace Mobicoop\Bundle\MobicoopBundle\Editorial\Service;
-
-use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
-use Mobicoop\Bundle\MobicoopBundle\Editorial\Entity\Editorial;
+namespace Mobicoop\Bundle\MobicoopBundle\Gamification\Entity;
 
 /**
- * Editorial management service.
+ * A RewardStep
+ * I only declared the properties that we are currently using
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class EditorialManager
+class RewardStep
 {
-    private $dataProvider;
-
     /**
-     * @param DataProvider $dataProvider
-     * @throws \ReflectionException
+     * @var int RewardStep's id
      */
-    public function __construct(DataProvider $dataProvider)
+    private $id;
+   
+    /**
+     * @var \DateTimeInterface RewardStep's notification date. Determine if this RewardStep has been notified to the user.
+     */
+    private $notifiedDate;
+
+    public function getId(): ?int
     {
-        $this->dataProvider = $dataProvider;
-        $this->dataProvider->setClass(Editorial::class);
+        return $this->id;
+    }
+    
+    public function setId(?int $id)
+    {
+        $this->id = $id;
     }
 
-    /**
-     * Get the current Editorial
-     * @return Editorial|null
-     */
-    public function getEditorial(): ?Editorial
+    public function getNotifiedDate(): ?\DateTimeInterface
     {
-        $response = $this->dataProvider->getItem(1);
-        if ($response->getCode() == 200) {
-            return $response->getValue();
-        }
-        return null;
+        return $this->notifiedDate;
+    }
+    
+    public function setNotifiedDate(?\DateTimeInterface $notifiedDate)
+    {
+        $this->notifiedDate = $notifiedDate;
     }
 }

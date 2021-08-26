@@ -21,16 +21,16 @@
  *    LICENSE
  **************************/
 
-namespace Mobicoop\Bundle\MobicoopBundle\Editorial\Service;
+namespace Mobicoop\Bundle\MobicoopBundle\Gamification\Service;
 
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
-use Mobicoop\Bundle\MobicoopBundle\Editorial\Entity\Editorial;
+use Mobicoop\Bundle\MobicoopBundle\Gamification\Entity\RewardStep;
 
 /**
- * Editorial management service.
+ * Gamification management service.
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class EditorialManager
+class GamificationManager
 {
     private $dataProvider;
 
@@ -41,18 +41,18 @@ class EditorialManager
     public function __construct(DataProvider $dataProvider)
     {
         $this->dataProvider = $dataProvider;
-        $this->dataProvider->setClass(Editorial::class);
     }
 
     /**
-     * Get the current Editorial
-     * @return Editorial|null
+     * Tags all given rewardSteps as notified
+     * @var array $rewardStepsIds   Array of RewardSteps Ids
+     * @return null
      */
-    public function getEditorial(): ?Editorial
+    public function tagRewardStepsAsNotified(array $rewardStepsIds)
     {
-        $response = $this->dataProvider->getItem(1);
-        if ($response->getCode() == 200) {
-            return $response->getValue();
+        $this->dataProvider->setClass(RewardStep::class);
+        foreach ($rewardStepsIds as $rewardStepsId) {
+            $response = $this->dataProvider->getSpecialItem($rewardStepsId, "tagAsNotified");
         }
         return null;
     }

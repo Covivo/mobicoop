@@ -21,39 +21,35 @@
  *    LICENSE
  **************************/
 
-namespace Mobicoop\Bundle\MobicoopBundle\Editorial\Service;
+namespace Mobicoop\Bundle\MobicoopBundle\Gamification\Controller;
 
-use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
-use Mobicoop\Bundle\MobicoopBundle\Editorial\Entity\Editorial;
+use Mobicoop\Bundle\MobicoopBundle\Gamification\Service\GamificationManager;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Editorial management service.
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class EditorialManager
+class GamificationController extends AbstractController
 {
-    private $dataProvider;
+    private $gamificationManager;
 
-    /**
-     * @param DataProvider $dataProvider
-     * @throws \ReflectionException
-     */
-    public function __construct(DataProvider $dataProvider)
+    public function __construct(GamificationManager $gamificationManager)
     {
-        $this->dataProvider = $dataProvider;
-        $this->dataProvider->setClass(Editorial::class);
+        $this->gamificationManager = $gamificationManager;
     }
-
+    
     /**
-     * Get the current Editorial
-     * @return Editorial|null
-     */
-    public function getEditorial(): ?Editorial
+    * Tags all given rewardSteps as notified
+    */
+    public function tagRewardStepsAsNotified(Request $request)
     {
-        $response = $this->dataProvider->getItem(1);
-        if ($response->getCode() == 200) {
-            return $response->getValue();
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+            $this->gamificationManager->tagRewardStepsAsNotified($data);
+            return new JsonResponse($data);
         }
-        return null;
+        return new JsonResponse();
     }
 }
