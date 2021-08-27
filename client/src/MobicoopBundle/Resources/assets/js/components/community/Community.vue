@@ -105,7 +105,7 @@
                 </v-btn>
               </div>
               <!-- button if user asked to join community but is not accepted yet -->
-              <div v-else-if="askToJoin === true">
+              <div v-else-if="askToJoin === true && !isAccepted">
                 <v-tooltip
                   top
                   color="info"
@@ -119,9 +119,7 @@
                       <v-btn
                         color="secondary"
                         rounded
-                        :disabled="
-                          !publishButtonAlwaysActive && !checkValidation
-                        "
+                        :disabled="(!publishButtonAlwaysActive && !checkValidation) || !isAccepted"
                         :loading="loading"
                       >
                         {{ $t("buttons.publish.label") }}
@@ -156,7 +154,7 @@
                       <v-btn
                         color="secondary"
                         rounded
-                        :disabled="!publishButtonAlwaysActive && !checkValidation"
+                        :disabled="(!publishButtonAlwaysActive && !checkValidation) || !isLogged ||!isAccepted"
                         :loading="loading"
                         @click="publish"
                       >
@@ -266,7 +264,10 @@
         </v-col>
       </v-row>
       <!-- search journey -->
-      <v-row justify="center">
+      <v-row 
+        v-if="isAccepted"
+        justify="center"
+      >
         <v-col
           cols="12"
           lg="9"
@@ -279,7 +280,10 @@
           </h3>
         </v-col>
       </v-row>
-      <v-row justify="center">
+      <v-row
+        v-if="isAccepted"
+        justify="center"
+      >
         <search
           :default-origin="selectedOrigin"
           :default-destination="selectedDestination"

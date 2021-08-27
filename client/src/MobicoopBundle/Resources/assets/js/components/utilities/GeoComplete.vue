@@ -5,7 +5,7 @@
       v-model="address"
       :loading="isLoading"
       :items="items"
-      :label="label + (required ? ' *' : '')"
+      :label="alternativeLabel ? $t(alternativeLabel) : label + (required ? ' *' : '')"
       :hint="hint"
       :search-input.sync="search"
       hide-no-data
@@ -57,6 +57,7 @@
 </template>
 
 <script>
+import moment from "moment";  
 import axios from "axios";
 import debounce from "lodash/debounce";
 
@@ -111,7 +112,11 @@ export default {
     prependIcon:{
       type: String,
       default: ""
-    }
+    },
+    alternativeLabel:{
+      type:String,
+      default: null
+    },
   },
   data() {
     return {
@@ -173,7 +178,9 @@ export default {
   mounted() {
     if (this.dtoken === '') {
       this.dtoken = this.$root.token;
-    }
+    };
+    this.locale = localStorage.getItem("X-LOCALE");
+    moment.locale(this.locale);
   },
   methods: {
     changedAddress() {

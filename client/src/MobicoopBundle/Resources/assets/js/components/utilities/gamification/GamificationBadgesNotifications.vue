@@ -85,7 +85,7 @@
           <v-btn
             rounded
             color="error"
-            @click="dialog = false"
+            @click="dialog = false;tagRewardAsNotified(badge.id)"
           >
             {{ $t("close") }}
           </v-btn>
@@ -95,6 +95,7 @@
   </v-row>
 </template>
 <script>
+import maxios from "@utils/maxios";
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/gamification/GamificationBadgesNotifications/";
 
 export default {
@@ -117,6 +118,16 @@ export default {
       checkbox: false,
       dialog: true,
     }
+  },
+  methods:{
+    tagRewardAsNotified(id){
+      // We tag these rewardSteps as notified
+      maxios
+        .post(this.$t('routeTagAsNotified'), {id:id})
+        .then(res => {
+        })
+    }
   }
+
 }
 </script>

@@ -26,7 +26,7 @@ namespace App\Gamification\Rule;
 use App\Gamification\Interfaces\GamificationRuleInterface;
 
 /**
- *  Check that the requester is the author of the related Ad
+ * check if the user post a solidary exclusive ad
  */
 class IsSolidaryExclusive implements GamificationRuleInterface
 {

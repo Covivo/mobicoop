@@ -21,30 +21,42 @@
  *    LICENSE
  **************************/
 
-namespace App\Gamification\Rule;
-
-use App\Gamification\Interfaces\GamificationRuleInterface;
+namespace Mobicoop\Bundle\MobicoopBundle\Gamification\Entity;
 
 /**
- * Check if the user has at least saved N CO²
+ * A Reward
+ * I only declared the properties that we are currently using
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class HasAtLeastNCarpooledCo2Saved implements GamificationRuleInterface
+class Reward
 {
     /**
-     * Has at least N saved CO²
-     *
-     * @param  $requester
-     * @param  $log
-     * @param  $sequenceItem
-     * @return bool
+     * @var int Reward's id
      */
-    public function execute($requester, $log, $sequenceItem)
+    private $id;
+   
+    /**
+     * @var \DateTimeInterface Reward's notification date. Determine if this Reward has been notified to the user.
+     */
+    private $notifiedDate;
+
+    public function getId(): ?int
     {
-        // we check if the user has at least saved N CO²
-        $savedCo2 = $log->getUser()->getSavedCo2();
-        if ($savedCo2 >= $sequenceItem->getMinCount()) {
-            return true;
-        }
-        return false;
+        return $this->id;
+    }
+    
+    public function setId(?int $id)
+    {
+        $this->id = $id;
+    }
+
+    public function getNotifiedDate(): ?\DateTimeInterface
+    {
+        return $this->notifiedDate;
+    }
+    
+    public function setNotifiedDate(?\DateTimeInterface $notifiedDate)
+    {
+        $this->notifiedDate = $notifiedDate;
     }
 }

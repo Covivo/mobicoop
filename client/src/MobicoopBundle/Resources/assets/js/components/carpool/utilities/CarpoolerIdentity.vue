@@ -17,6 +17,7 @@
       </v-list-item-title>
     </v-list-item-content>
     <v-img
+      v-if="hasBadges"
       src="/images/badge.png"
       contain
       max-width="25"
@@ -57,7 +58,8 @@ export default {
   },
   data () {
     return {
-      locale: localStorage.getItem("X-LOCALE")
+      locale: localStorage.getItem("X-LOCALE"),
+      hasBadges: this.carpooler.numberOfBadges>0 ? true : false
     }
   },
   computed: {

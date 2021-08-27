@@ -1600,6 +1600,29 @@ payment_week_first:
         nl: /getFirstWeek
     controller: Mobicoop\Bundle\MobicoopBundle\Payment\Controller\PaymentController::getFirstWeek    
 
+
+#######################
+# Gamification routes #
+#######################
+
+# Tag the given rewardsteps as notified
+gamification_tag_rewardsteps_as_notified:
+    methods: [POST]
+    path:
+        fr: /gamification/tagRewardStepAsNotified
+        en: /gamification/tagRewardStepAsNotified
+        nl: /gamification/tagRewardStepAsNotified
+    controller: Mobicoop\Bundle\MobicoopBundle\Gamification\Controller\GamificationController::tagRewardStepsAsNotified 
+
+# Tag the given reward as notified
+gamification_tag_reward_as_notified:
+    methods: [POST]
+    path:
+        fr: /gamification/tagRewardAsNotified
+        en: /gamification/tagRewardAsNotified
+        nl: /gamification/tagRewardAsNotified
+    controller: Mobicoop\Bundle\MobicoopBundle\Gamification\Controller\GamificationController::tagRewardAsNotified 
+
 ###############
 # misc routes #
 ###############

@@ -470,9 +470,9 @@ class UserManager
      */
     public function getThreadsDirectMessages(User $user)
     {
-        $this->dataProvider->setFormat($this->dataProvider::RETURN_JSON);
-        $response = $this->dataProvider->getSubCollection($user->getId(), 'thread', 'threadsDirectMessages');
-        return $response->getValue();
+        $this->dataProvider->setFormat($this->dataProvider::RETURN_LDJSON);
+        $response = $this->dataProvider->getSubCollection($user->getId(), 'thread', 'threadsDirectMessages')->getValue();
+        return $response;
     }
 
     /**
@@ -484,7 +484,7 @@ class UserManager
      */
     public function getThreadsCarpoolMessages(User $user)
     {
-        $this->dataProvider->setFormat($this->dataProvider::RETURN_JSON);
+        $this->dataProvider->setFormat($this->dataProvider::RETURN_LDJSON);
         $response = $this->dataProvider->getSubCollection($user->getId(), 'thread', 'threadsCarpoolMessages');
         return $response->getValue();
     }

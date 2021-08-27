@@ -37,7 +37,6 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 */
 class GamificationActionRule
 {
-
     /**
      * @var int The GamificationActionRule's id
      *
