@@ -41,6 +41,7 @@ class FirstMessageAnswer implements GamificationRuleInterface
      */
     public function execute($requester, $log, $sequenceItem)
     {
+        return true;
         $messages = $log->getUser()->getMessages();
 
         $count = 0;

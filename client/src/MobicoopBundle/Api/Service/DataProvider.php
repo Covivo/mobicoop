@@ -85,6 +85,7 @@ class DataProvider
     const RETURN_OBJECT = 1;
     const RETURN_ARRAY = 2;
     const RETURN_JSON = 3;
+    const RETURN_LDJSON = 4;
 
     private $uri;
     private $username;
@@ -332,6 +333,9 @@ class DataProvider
             switch ($header) {
                 case 'json':
                     $headers['accept'] = 'application/json';
+                    break;
+                case 'ld+json':
+                    $headers['accept'] = 'application/ld+json';
                     break;
             }
         }
@@ -711,7 +715,10 @@ class DataProvider
             if ($this->format == self::RETURN_JSON) {
                 $headers = $this->getHeaders(['json']);
                 // var_dump($this->resource.'/'.$id.'/'.$route, ['query'=>$params, 'headers' => $headers]);die;
-
+                $clientResponse = $this->client->get($this->resource.'/'.$id.'/'.$route, ['query'=>$params, 'headers' => $headers]);
+            } elseif ($this->format == self::RETURN_LDJSON) {
+                $headers = $this->getHeaders(['ld+json']);
+                // var_dump($this->resource.'/'.$id.'/'.$route, ['query'=>$params, 'headers' => $headers]);die;
                 $clientResponse = $this->client->get($this->resource.'/'.$id.'/'.$route, ['query'=>$params, 'headers' => $headers]);
             } else {
                 $headers = $this->getHeaders();
@@ -720,6 +727,7 @@ class DataProvider
                 $clientResponse = $this->client->get($this->resource.'/'.$id.'/'.$route, ['query'=>$params, 'headers' => $headers]);
             }
             if ($clientResponse->getStatusCode() == 200) {
+                // var_dump($clientResponse->getBody()->getContents());die;
                 return new Response($clientResponse->getStatusCode(), $this->treatHydraCollection($clientResponse->getBody(), $subClassName));
             }
         } catch (ClientException|ServerException $e) {

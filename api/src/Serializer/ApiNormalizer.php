@@ -24,6 +24,7 @@ namespace App\Serializer;
 
 use App\Carpool\Repository\ProposalRepository;
 use App\Carpool\Ressource\Ad;
+use App\Communication\Entity\Message;
 use App\Gamification\Entity\GamificationNotifier;
 use App\Gamification\Entity\Reward;
 use App\Gamification\Entity\RewardStep;
@@ -31,6 +32,10 @@ use App\Gamification\Repository\RewardRepository;
 use App\Gamification\Repository\RewardStepRepository;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
@@ -47,6 +52,10 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
     private $security;
     private $entityManager;
     private $badgeImageUri;
+    private $logger;
+    private $request;
+
+    private $log = false;
 
     public function __construct(
         NormalizerInterface $decorated,
@@ -56,7 +65,9 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
         ProposalRepository $proposalRepository,
         Security $security,
         EntityManagerInterface $entityManager,
-        string $badgeImageUri
+        string $badgeImageUri,
+        LoggerInterface $logger,
+        RequestStack $request
     ) {
         if (!$decorated instanceof DenormalizerInterface) {
             throw new \InvalidArgumentException(sprintf('The decorated normalizer must implement the %s.', DenormalizerInterface::class));
@@ -70,6 +81,8 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
         $this->security = $security;
         $this->entityManager = $entityManager;
         $this->badgeImageUri = $badgeImageUri;
+        $this->logger = $logger;
+        $this->request = $request->getCurrentRequest();
     }
 
     public function supportsNormalization($data, $format = null)
@@ -79,6 +92,10 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
 
     public function normalize($object, $format = null, array $context = [])
     {
+        if ($this->log) {
+            $this->logger->info("Api Normalize on ".get_class($object));
+        }
+
         $data = $this->decorated->normalize($object, $format, $context);
 
         // add adType to User in admin
@@ -164,7 +181,6 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
                 }
             }
         }
-
         $this->entityManager->flush();
         return $data;
     }
@@ -176,6 +192,9 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
 
     public function denormalize($data, $class, $format = null, array $context = [])
     {
+        if ($this->log) {
+            $this->logger->info("Api Denormalize on ".$class);
+        }
         return $this->decorated->denormalize($data, $class, $format, $context);
     }
 
@@ -194,6 +213,10 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
      */
     private function formatRewardStep(RewardStep $rewardStep): array
     {
+        if ($this->log) {
+            $this->logger->info("Api Normalize formatRewardStep ".$rewardStep->getId());
+        }
+
         return [
             "type" => "RewardStep",
             "id" => $rewardStep->getId(),
@@ -215,6 +238,10 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
      */
     private function formatReward(Reward $reward): array
     {
+        if ($this->log) {
+            $this->logger->info("Api Normalize formatReward ".$reward->getId());
+        }
+        
         return [
             "type" => "Badge",
             "id" => $reward->getBadge()->getId(),
