@@ -8,5 +8,6 @@
         "label":"Ne plus voir ces messages"
     },
     "close":"Fermer",
-    "urlGiphySource": "/copyrighted-content_sources.txt"
+    "urlGiphySource": "/copyrighted-content_sources.txt",
+    "routeTagAsNotified":"/gamification/tagRewardAsNotified"
 }

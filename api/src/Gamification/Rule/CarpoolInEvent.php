@@ -25,20 +25,12 @@ namespace App\Gamification\Rule;
 
 use App\Carpool\Entity\Ask;
 use App\Gamification\Interfaces\GamificationRuleInterface;
-use App\Carpool\Repository\ProposalRepository;
 
 /**
- *  Check that the requester is the author of the related Ad
+ * Check if the user carpooled for an event
  */
 class CarpoolInEvent implements GamificationRuleInterface
 {
-    private $proposalRepository;
-
-    public function __construct(ProposalRepository $proposalRepository)
-    {
-        $this->proposalRepository = $proposalRepository;
-    }
-
     /**
      * Carpool In Event rule
      *
@@ -49,10 +41,10 @@ class CarpoolInEvent implements GamificationRuleInterface
      */
     public function execute($requester, $log, $sequenceItem)
     {
-        // we check if the user has at least one proposal carpooled and published in an event
         $user = $log->getUser();
+        // we check if the user has at least one proposal published for an event
         // we get all user's proposals and for each proposal we check if he's associated with an event
-        $proposals = $this->proposalRepository->findUserEventProposals($user);
+        $proposals = $user->getProposals();
         foreach ($proposals as $proposal) {
             $matchings=[];
             $matchings[]=$proposal->getMatchingOffers();
@@ -63,6 +55,7 @@ class CarpoolInEvent implements GamificationRuleInterface
                 }
             }
         }
+
         return false;
     }
 }
