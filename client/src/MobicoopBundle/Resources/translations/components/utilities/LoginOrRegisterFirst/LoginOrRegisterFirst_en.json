@@ -6,5 +6,7 @@
     "loginUrl": "/utilisateur/connexion",
     "registerUrl": "/utilisateur/inscription",
     "loginUrlProposalId": "/utilisateur/connexion/{id}",
-    "registerUrlProposalId": "/utilisateur/inscription/{id}"
+    "registerUrlProposalId": "/utilisateur/inscription/{id}",
+    "loginUrlEventId": "/utilisateur/connexion/evenement/{id}",
+    "registerUrlEventId": "/utilisateur/inscription/evenement/{id}"
 }

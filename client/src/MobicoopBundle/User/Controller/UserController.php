@@ -94,6 +94,7 @@ class UserController extends AbstractController
     private $fraudWarningDisplay;
     private $ageDisplay;
     private $birthDateDisplay;
+    private $eventManager;
 
 
     /**
@@ -118,6 +119,7 @@ class UserController extends AbstractController
         SsoManager $ssoManager,
         PaymentManager $paymentManager,
         LanguageManager $languageManager,
+        EventManager $eventManager,
         $required_community,
         bool $loginDelegate,
         bool $fraudWarningDisplay,
@@ -145,7 +147,7 @@ class UserController extends AbstractController
         $this->fraudWarningDisplay= $fraudWarningDisplay;
         $this->ageDisplay = $ageDisplay;
         $this->birthDateDisplay = $birthDateDisplay;
-
+        $this->eventManager = $eventManager;
         $this->ssoManager = $ssoManager;
     }
 
@@ -156,27 +158,34 @@ class UserController extends AbstractController
     /**
      * User login.
      */
-    public function login(Request $request, ?int $proposalId = null)
+    public function login(Request $request, $destination= null, $event = null, ?int $proposalId = null, ?int $eventId = null)
     {
         $errorMessage =   '';
         if (in_array("bad-credentials-api", $request->getSession()->getFlashBag()->peek('notice'))) {
             $errorMessage =  'Bad credentials.';
             $request->getSession()->getFlashBag()->clear();
         }
+        if ($eventId !== null && $destination == null && $event==null) {
+            $event = $this->eventManager->getEvent($eventId);
+            $destination = json_encode($event->getAddress());
+        }
         
         return $this->render('@Mobicoop/user/login.html.twig', [
+            "eventId" => $eventId,
             "proposalId" => $proposalId,
             "errorMessage"=>$errorMessage,
+            'destination'=>$destination,
             "facebook_show"=>($this->facebook_show==="true") ? true : false,
             "facebook_appid"=>$this->facebook_appid,
             "signUpLinkInConnection"=>$this->signUpLinkInConnection,
+            "event" => $event
         ]);
     }
 
     /**
      * User registration.
      */
-    public function userSignUp(UserManager $userManager, Request $request, TranslatorInterface $translator, ?int $proposalId = null)
+    public function userSignUp(UserManager $userManager, Request $request, TranslatorInterface $translator, ?int $proposalId = null, ?int $eventId = null)
     {
         $this->denyAccessUnlessGranted('register');
 
@@ -251,6 +260,7 @@ class UserController extends AbstractController
 
         return $this->render('@Mobicoop/user/signup.html.twig', [
                 "proposalId" => $proposalId,
+                "eventId" => $eventId,
                 'error' => $error,
                 "facebook_show"=>($this->facebook_show==="true") ? true : false,
                 "facebook_appid"=>$this->facebook_appid,
@@ -260,7 +270,7 @@ class UserController extends AbstractController
                 "signup_rgpd_infos"=>$this->signupRgpdInfos,
                 "required_community"=>($this->required_community==="true") ? true : false,
                 "newsSubscription" => $newsSubscription,
-                "birthDateDisplay" => $this->birthDateDisplay
+                "birthDateDisplay" => $this->birthDateDisplay,
 
         ]);
     }
