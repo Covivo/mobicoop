@@ -208,10 +208,16 @@ export default {
         v => !!v || this.$t("passwordRequired")
       ],
       errorDisplay: "",
-      action: this.getId,
-      consent: false,
-      consentSocial: false
+      action: this.getId
     };
+  },
+  computed:{
+    consent(){
+      return this.$store.getters['up/connectionActive'];
+    },
+    consentSocial(){
+      return this.$store.getters['up/social'];
+    }
   },
   watch: {
     getId(){
@@ -230,7 +236,6 @@ export default {
   mounted() {
     if(this.errormessage.value !== "") this.treatErrorMessage(this.errormessage);
     //console.log(this.$i18n.messages)
-    this.getConsent();
   },
   methods: {
     validate() {
@@ -244,11 +249,6 @@ export default {
     treatErrorMessage(errorMessage) {
       this.errorDisplay = this.$t(errorMessage.value);
       this.loading = false;
-    },
-    getConsent(){
-      let cookiesPrefs = JSON.parse(localStorage.getItem('cookies_prefs'));
-      this.consent = (cookiesPrefs && cookiesPrefs.connectionActive);
-      this.consentSocial = (cookiesPrefs && cookiesPrefs.social);
     }
   }
 };

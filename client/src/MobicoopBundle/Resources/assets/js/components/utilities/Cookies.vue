@@ -221,6 +221,7 @@ export default {
         if(!this.autoShow) this.checkboxes.connectionActiveDisabled = true;
         this.checkboxes.stats = this.defaultSettings.stats;
         this.checkboxes.social = this.defaultSettings.social;
+        this.store();
         this.disableProgressBar();
       }
       else{
@@ -239,13 +240,17 @@ export default {
       }
     },
     store(){
-      // Store settings in local storage
+      // Store settings in local storage and vuex store
       let prefs = {
         connectionActive:this.checkboxes.connectionActive,
         stats:this.checkboxes.stats,
         social:this.checkboxes.social
       }
       localStorage.setItem('cookies_prefs',JSON.stringify(prefs));
+      this.$store.commit('up/updateConnectionActive',prefs.connectionActive);
+      this.$store.commit('up/updateSocial',prefs.social);
+      this.$store.commit('up/updateStats',prefs.stats);
+
       this.close();
     },
     close(){
