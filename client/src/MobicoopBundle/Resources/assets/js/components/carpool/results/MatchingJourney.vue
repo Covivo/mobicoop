@@ -1,540 +1,573 @@
 <template>
-  <v-card
-    style="overflow:hidden"
-  >
-    <v-toolbar
-      color="primary"
+  <div>
+    <v-card
+      style="overflow:hidden"
     >
-      <v-toolbar-title class="toolbar">
-        {{ $t('detailTitle') }}
-      </v-toolbar-title>
-      
-      <v-spacer />
-
-      <v-btn 
-        icon
-        @click="$emit('close')"
+      <v-toolbar
+        color="primary"
       >
-        <v-icon>mdi-close</v-icon>
-      </v-btn>
-    </v-toolbar>
-    <v-stepper
-      v-model="step"
-      alt-labels
-      class="elevation-0"
-    >
-      <v-stepper-items>
-        <!-- Step 1 : journey detail -->
-        <v-stepper-content step="1">
-          <!-- Journey details and carpooler -->
-          <v-row dense>
-            <v-col cols="8">
-              <!-- Journey Details -->
-              <v-row dense>
-                <v-col cols="12">
-                  <v-card
-                    v-if="fraudWarningDisplay"
-                    flat
-                  >
-                    <v-card-text>{{ $t('fraudWarningText.part1') }} <a :href="$t('fraudWarningText.link')">{{ $t('fraudWarningText.textLink') }}</a>{{ $t('fraudWarningText.part2') }}</v-card-text>
-                  </v-card>
-                </v-col>
-              </v-row>
+        <v-toolbar-title class="toolbar">
+          {{ $t('detailTitle') }}
+        </v-toolbar-title>
+      
+        <v-spacer />
 
-              <v-row dense>
-                <v-col cols="12">
+        <v-btn 
+          icon
+          @click="$emit('close')"
+        >
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
+      </v-toolbar>
+      <v-stepper
+        v-model="step"
+        alt-labels
+        class="elevation-0"
+      >
+        <v-stepper-items>
+          <!-- Step 1 : journey detail -->
+          <v-stepper-content step="1">
+            <!-- Journey details and carpooler -->
+            <v-row dense>
+              <v-col cols="8">
+                <!-- Journey Details -->
+                <v-row dense>
+                  <v-col cols="12">
+                    <v-card
+                      v-if="fraudWarningDisplay"
+                      flat
+                    >
+                      <v-card-text>{{ $t('fraudWarningText.part1') }} <a :href="$t('fraudWarningText.link')">{{ $t('fraudWarningText.textLink') }}</a>{{ $t('fraudWarningText.part2') }}</v-card-text>
+                    </v-card>
+                  </v-col>
+                </v-row>
+
+                <v-row dense>
+                  <v-col cols="12">
+                    <v-card-text>
+                      <!-- Date / seats / price -->
+                      <v-row
+                        align="center"
+                        dense
+                      >
+                        <!-- Date -->
+                        <v-col
+                          v-if="!regular"
+                          cols="7"
+                          class="text-h6 text-center"
+                        >
+                          {{ computedDate }}
+                        </v-col>
+
+                        <v-col
+                          v-else
+                          cols="7"
+                          class="text-h6 text-center"
+                        >
+                          <regular-days-summary 
+                            :mon-active="lResult.monCheck"
+                            :tue-active="lResult.tueCheck"
+                            :wed-active="lResult.wedCheck"
+                            :thu-active="lResult.thuCheck"
+                            :fri-active="lResult.friCheck"
+                            :sat-active="lResult.satCheck"
+                            :sun-active="lResult.sunCheck"
+                          />
+                        </v-col>
+
+                        <!-- Seats -->
+                        <v-col
+                          cols="2"
+                          class="text-h6 text-center"
+                        >
+                          {{ $tc('places', lResult.seats, { seats: lResult.seats }) }}
+                        </v-col>
+
+                        <!-- Price -->
+                        <v-col
+                          cols="3"
+                          class="text-h6 text-center"
+                        >
+                          {{ lResult.roundedPrice ? lResult.roundedPrice +'€' : '' }}
+                          <v-tooltip
+                            slot="append"
+                            right
+                            color="info"
+                            :max-width="'35%'"
+                          >
+                            <template v-slot:activator="{ on }">
+                              <v-icon
+                                justify="left"
+                                v-on="on"
+                              >
+                                mdi-help-circle-outline
+                              </v-icon>
+                            </template>
+                            <span>{{ $t('priceTooltip') }}</span>
+                          </v-tooltip>
+                        </v-col>
+                      </v-row>
+
+                      <!-- Route / carpooler -->
+                      <v-row
+                        align="top"
+                        dense
+                      > 
+                        <!-- Route -->
+                        <v-col
+                          cols="12"
+                        >
+                          <v-row
+                            v-if="lResult.noticeableDetour"
+                            class="subtitle-2"
+                            dense
+                          >
+                            <v-col v-if="lResult.role == 1">
+                              <v-icon>mdi-clock</v-icon> {{ $t('detour.onlyDriver') }}
+                            </v-col>
+                            <v-col v-else>
+                              <v-icon>mdi-clock</v-icon> {{ $t('detour.default') }}
+                            </v-col>
+                          </v-row>
+
+                          <v-row dense>
+                            <v-col>
+                              <v-journey
+                                :time="lResult.time || lResult.outwardTime ? true : false"
+                                :waypoints="waypoints"
+                                :noticeable-detour="lResult.noticeableDetour"
+                              />
+                            </v-col>
+                          </v-row>
+                          <v-row 
+                            v-if="lResult.comment"
+                          >
+                            <v-col>
+                              <v-card
+                                outlined
+                                class="mx-auto"
+                              > 
+                                <v-card-text class="pre-formatted">
+                                  {{ lResult.comment }}
+                                </v-card-text>
+                              </v-card>
+                            </v-col>
+                          </v-row>
+                        </v-col>
+                      </v-row>
+                    </v-card-text>
+                  </v-col>
+                </v-row>
+              </v-col>
+              <v-col cols="4">
+                <!-- Carpooler -->
+                <v-card
+                  outlined
+                >
+                  <ProfileSummary
+                    :user-id="result.carpooler.id"
+                    :refresh="profileSummaryRefresh"
+                    :age-display="ageDisplay"
+                    @showProfile="step=4"
+                    @profileSummaryRefresh="refreshProfileSummary"
+                  />
                   <v-card-text>
-                    <!-- Date / seats / price -->
                     <v-row
-                      align="center"
                       dense
                     >
-                      <!-- Date -->
-                      <v-col
-                        v-if="!regular"
-                        cols="7"
-                        class="text-h6 text-center"
-                      >
-                        {{ computedDate }}
-                      </v-col>
-
-                      <v-col
-                        v-else
-                        cols="7"
-                        class="text-h6 text-center"
-                      >
-                        <regular-days-summary 
-                          :mon-active="lResult.monCheck"
-                          :tue-active="lResult.tueCheck"
-                          :wed-active="lResult.wedCheck"
-                          :thu-active="lResult.thuCheck"
-                          :fri-active="lResult.friCheck"
-                          :sat-active="lResult.satCheck"
-                          :sun-active="lResult.sunCheck"
-                        />
-                      </v-col>
-
-                      <!-- Seats -->
-                      <v-col
-                        cols="2"
-                        class="text-h6 text-center"
-                      >
-                        {{ $tc('places', lResult.seats, { seats: lResult.seats }) }}
-                      </v-col>
-
-                      <!-- Price -->
-                      <v-col
-                        cols="3"
-                        class="text-h6 text-center"
-                      >
-                        {{ lResult.roundedPrice ? lResult.roundedPrice +'€' : '' }}
-                        <v-tooltip
-                          slot="append"
-                          right
-                          color="info"
-                          :max-width="'35%'"
-                        >
-                          <template v-slot:activator="{ on }">
-                            <v-icon
-                              justify="left"
-                              v-on="on"
-                            >
-                              mdi-help-circle-outline
-                            </v-icon>
-                          </template>
-                          <span>{{ $t('priceTooltip') }}</span>
-                        </v-tooltip>
-                      </v-col>
-                    </v-row>
-
-                    <!-- Route / carpooler -->
-                    <v-row
-                      align="top"
-                      dense
-                    > 
-                      <!-- Route -->
-                      <v-col
+                      <v-col  
                         cols="12"
+                        class="text-center"
                       >
-                        <v-row
-                          v-if="lResult.noticeableDetour"
-                          class="subtitle-2"
-                          dense
+                        <v-btn
+                          v-if="!hideContact && lResult.pendingAsk == false && lResult.acceptedAsk == false && lResult.initiatedAsk == false"
+                          color="primary"
+                          :disabled="contactDisabled"
+                          :loading="contactLoading"
+                          @click="contact"
                         >
-                          <v-col v-if="lResult.role == 1">
-                            <v-icon>mdi-clock</v-icon> {{ $t('detour.onlyDriver') }}
-                          </v-col>
-                          <v-col v-else>
-                            <v-icon>mdi-clock</v-icon> {{ $t('detour.default') }}
-                          </v-col>
-                        </v-row>
-
-                        <v-row dense>
-                          <v-col>
-                            <v-journey
-                              :time="lResult.time || lResult.outwardTime ? true : false"
-                              :waypoints="waypoints"
-                              :noticeable-detour="lResult.noticeableDetour"
-                            />
-                          </v-col>
-                        </v-row>
-                        <v-row 
-                          v-if="lResult.comment"
+                          <v-icon>
+                            mdi-email
+                          </v-icon>
+                          {{ $t('contact') }}
+                        </v-btn>
+                        <v-card
+                          v-else
+                          flat
                         >
-                          <v-col>
-                            <v-card
-                              outlined
-                              class="mx-auto"
-                            > 
-                              <v-card-text class="pre-formatted">
-                                {{ lResult.comment }}
-                              </v-card-text>
-                            </v-card>
-                          </v-col>
-                        </v-row>
+                          <v-card-text
+                            v-if="lResult.acceptedAsk"
+                            class="success--text"
+                          >
+                            {{ $t('contactTips.acceptedAsk') }}
+                          </v-card-text>
+                          <v-card-text
+                            v-else-if="lResult.pendingAsk"
+                            class="warning--text"
+                          >
+                            {{ $t('contactTips.pendingAsk') }}
+                          </v-card-text>
+                          <v-card-text
+                            v-else-if="lResult.initiatedAsk"
+                            class="warning--text"
+                          >
+                            {{ $t('contactTips.initiatedAsk') }}
+                          </v-card-text>
+                        </v-card>
                       </v-col>
                     </v-row>
                   </v-card-text>
-                </v-col>
-              </v-row>
-            </v-col>
-            <v-col cols="4">
-              <!-- Carpooler -->
-              <v-card
-                outlined
-              >
-                <ProfileSummary
-                  :user-id="result.carpooler.id"
-                  :refresh="profileSummaryRefresh"
-                  :age-display="ageDisplay"
-                  @showProfile="step=4"
-                  @profileSummaryRefresh="refreshProfileSummary"
+                </v-card>
+              </v-col>
+            </v-row>
+            <!-- end Journey details and carpooler -->
+            <!-- Map -->
+            <v-row dense>
+              <v-col cols="12">
+                <m-map
+                  ref="mmap"
+                  type-map="community"
+                  :points="pointsToMap"
+                  :ways="directionWay"
+                  :markers-draggable="false"
+                  :clusters="false"
+                  class="pa-4 mt-5"
+                  :relay-points="true"
                 />
-                <v-card-text>
-                  <v-row
-                    dense
-                  >
-                    <v-col  
-                      cols="12"
-                      class="text-center"
-                    >
-                      <v-btn
-                        v-if="!hideContact && lResult.pendingAsk == false && lResult.acceptedAsk == false && lResult.initiatedAsk == false"
-                        color="primary"
-                        :disabled="contactDisabled"
-                        :loading="contactLoading"
-                        @click="contact"
-                      >
-                        <v-icon>
-                          mdi-email
-                        </v-icon>
-                        {{ $t('contact') }}
-                      </v-btn>
-                      <v-card
-                        v-else
-                        flat
-                      >
-                        <v-card-text
-                          v-if="lResult.acceptedAsk"
-                          class="success--text"
-                        >
-                          {{ $t('contactTips.acceptedAsk') }}
-                        </v-card-text>
-                        <v-card-text
-                          v-else-if="lResult.pendingAsk"
-                          class="warning--text"
-                        >
-                          {{ $t('contactTips.pendingAsk') }}
-                        </v-card-text>
-                        <v-card-text
-                          v-else-if="lResult.initiatedAsk"
-                          class="warning--text"
-                        >
-                          {{ $t('contactTips.initiatedAsk') }}
-                        </v-card-text>
-                      </v-card>
-                    </v-col>
-                  </v-row>
-                </v-card-text>
-              </v-card>
-            </v-col>
-          </v-row>
-          <!-- end Journey details and carpooler -->
-          <!-- Map -->
-          <v-row dense>
-            <v-col cols="12">
-              <m-map
-                ref="mmap"
-                type-map="community"
-                :points="pointsToMap"
-                :ways="directionWay"
-                :markers-draggable="false"
-                :clusters="false"
-                class="pa-4 mt-5"
-                :relay-points="true"
-              />
-            </v-col>
-          </v-row>
-        </v-stepper-content>
+              </v-col>
+            </v-row>
+          </v-stepper-content>
 
-        <!-- Step 2 : outward and date range -->
-        <v-stepper-content step="2">
+          <!-- Step 2 : outward and date range -->
+          <v-stepper-content step="2">
+            <v-row
+              align="center"
+            >
+              <!-- Start date -->
+              <v-col
+                cols="3"
+              >
+                <v-menu
+                  v-model="menuFromDate"
+                  :close-on-content-click="false"
+                  transition="scale-transition"
+                  offset-y
+                  min-width="290px"
+                >
+                  <template v-slot:activator="{ on }">
+                    <v-text-field
+                      :value="computedFromDate"
+                      :label="$t('fromDate')"
+                      readonly
+                      v-on="on"
+                    />
+                  </template>
+                  <v-date-picker
+                    v-model="fromDate"
+                    :locale="locale"
+                    :min="today"
+                    :max="toDate ? toDate : null"
+                    no-title.
+                    first-day-of-week="1"
+                    @input="menuFromDate = false"
+                    @change="change"
+                  />
+                </v-menu>
+              </v-col>
+
+              <!-- Slider -->
+              <v-col
+                cols="6"
+              >
+                <v-slider
+                  v-model="range"
+                  :tick-labels="$t('ranges')"
+                  max="3"
+                  step="1"
+                  ticks="always"
+                  tick-size="8"
+                  @change="change"
+                />
+              </v-col>
+
+              <!-- End date -->
+              <v-col
+                cols="3"
+              >
+                <v-menu
+                  v-model="menuMaxDate"
+                  :close-on-content-click="false"
+                  transition="scale-transition"
+                  offset-y
+                  min-width="290px"
+                >
+                  <template v-slot:activator="{ on }">
+                    <v-text-field
+                      :value="computedMaxDate"
+                      :label="$t('maxDate')"
+                      readonly
+                      :disabled="range<3"
+                      v-on="on"
+                    />
+                  </template>
+                  <v-date-picker
+                    v-model="maxDate"
+                    :locale="locale"
+                    :min="fromDate"
+                    :max="toDate ? toDate : null"
+                    no-title
+                    first-day-of-week="1"
+                    @input="menuMaxDate = false"
+                    @change="change"
+                  />
+                </v-menu>
+              </v-col>
+            </v-row>
+
+            <regular-ask 
+              :type="1"
+              :mon-check-default="monCheckDefault"
+              :tue-check-default="tueCheckDefault"
+              :wed-check-default="wedCheckDefault"
+              :thu-check-default="thuCheckDefault"
+              :fri-check-default="friCheckDefault"
+              :sat-check-default="satCheckDefault"
+              :sun-check-default="sunCheckDefault"
+              :mon-time="outwardMonTime"
+              :tue-time="outwardTueTime"
+              :wed-time="outwardWedTime"
+              :thu-time="outwardThuTime"
+              :fri-time="outwardFriTime"
+              :sat-time="outwardSatTime"
+              :sun-time="outwardSunTime"
+              :origin-driver="lResult.resultDriver ? lResult.originDriver : null"
+              :destination-driver="lResult.resultDriver ? lResult.destinationDriver : null"
+              :origin-passenger="lResult.originPassenger"
+              :destination-passenger="lResult.destinationPassenger"
+              :from-date="fromDate"
+              :max-date="maxDate"
+              @change="changeOutward"
+            />
+          </v-stepper-content>
+
+          <!-- Step 3 : return -->
+          <v-stepper-content step="3">
+            <regular-ask
+              :type="2"
+              :mon-check-default="monCheckDefault"
+              :tue-check-default="tueCheckDefault"
+              :wed-check-default="wedCheckDefault"
+              :thu-check-default="thuCheckDefault"
+              :fri-check-default="friCheckDefault"
+              :sat-check-default="satCheckDefault"
+              :sun-check-default="sunCheckDefault"
+              :mon-time="returnMonTime"
+              :tue-time="returnTueTime"
+              :wed-time="returnWedTime"
+              :thu-time="returnThuTime"
+              :fri-time="returnFriTime"
+              :sat-time="returnSatTime"
+              :sun-time="returnSunTime"
+              :origin-driver="lResult.resultDriver ? lResult.destinationDriver : null"
+              :destination-driver="lResult.resultDriver ? lResult.originDriver : null"
+              :origin-passenger="lResult.destinationPassenger"
+              :destination-passenger="lResult.originPassenger"
+              :from-date="fromDate"
+              :max-date="maxDate"
+              @change="changeReturn"
+            />
+          </v-stepper-content>
+
+          <v-stepper-content step="4">
+            <PublicProfile
+              :user="result.carpooler"
+              :refresh="refreshPublicProfile"
+              :age-display="ageDisplay"
+              @publicProfileRefresh="publicProfileRefresh"
+            />
+          </v-stepper-content>
+        </v-stepper-items>
+      </v-stepper>
+
+      <!-- Action buttons -->
+      <v-card-actions
+        v-if="(driver ^ passenger) || (driver && passenger && lResult.frequency == 1)"
+      >
+        <v-spacer />
+        <!-- Carpool (driver xor passenger) -->
+        <v-btn
+          v-if="(driver ^ passenger) && step == 1 && lResult.pendingAsk == false && lResult.acceptedAsk == false && lResult.initiatedAsk == false"
+          color="secondary"
+          :disabled="carpoolDisabled"
+          :loading="carpoolLoading"
+          @click="lResult.frequency == 1 ? (driver ? carpoolConfirm(1) : carpoolConfirm(2)) : step = 2"
+        >
+          {{ lResult.frequency == 1 ? $t('carpool') : $t('outward') }}
+        </v-btn>
+
+        <!-- Carpool (driver) --> 
+        <v-btn
+          v-if="driver && passenger && lResult.pendingAsk == false && lResult.acceptedAsk == false && lResult.initiatedAsk == false"
+          color="secondary"
+          :disabled="carpoolDisabled"
+          :loading="carpoolLoading"
+          @click="carpoolConfirm(1)"
+        >
+          {{ $t('carpoolAsDriver') }}
+        </v-btn>
+
+        <!-- Carpool (passenger) --> 
+        <v-btn
+          v-if="driver && passenger && lResult.pendingAsk == false && lResult.acceptedAsk == false && lResult.initiatedAsk == false"
+          color="secondary"
+          :disabled="carpoolDisabled"
+          :loading="carpoolLoading"
+          @click="carpoolConfirm(2)"
+        >
+          {{ $t('carpoolAsPassenger') }}
+        </v-btn>
+
+        <v-row>
+          <!-- if an ask is pending or accepted -->
           <v-row
-            align="center"
+            v-if="lResult.pendingAsk == true || lResult.acceptedAsk == true"
           >
-            <!-- Start date -->
             <v-col
-              cols="3"
+              cols="8"
+              align-self="end"
+              class="text-right"
             >
-              <v-menu
-                v-model="menuFromDate"
-                :close-on-content-click="false"
-                transition="scale-transition"
-                offset-y
-                min-width="290px"
-              >
-                <template v-slot:activator="{ on }">
-                  <v-text-field
-                    :value="computedFromDate"
-                    :label="$t('fromDate')"
-                    readonly
-                    v-on="on"
-                  />
-                </template>
-                <v-date-picker
-                  v-model="fromDate"
-                  :locale="locale"
-                  :min="today"
-                  :max="toDate ? toDate : null"
-                  no-title.
-                  first-day-of-week="1"
-                  @input="menuFromDate = false"
-                  @change="change"
-                />
-              </v-menu>
-            </v-col>
-
-            <!-- Slider -->
-            <v-col
-              cols="6"
-            >
-              <v-slider
-                v-model="range"
-                :tick-labels="$t('ranges')"
-                max="3"
-                step="1"
-                ticks="always"
-                tick-size="8"
-                @change="change"
-              />
-            </v-col>
-
-            <!-- End date -->
-            <v-col
-              cols="3"
-            >
-              <v-menu
-                v-model="menuMaxDate"
-                :close-on-content-click="false"
-                transition="scale-transition"
-                offset-y
-                min-width="290px"
-              >
-                <template v-slot:activator="{ on }">
-                  <v-text-field
-                    :value="computedMaxDate"
-                    :label="$t('maxDate')"
-                    readonly
-                    :disabled="range<3"
-                    v-on="on"
-                  />
-                </template>
-                <v-date-picker
-                  v-model="maxDate"
-                  :locale="locale"
-                  :min="fromDate"
-                  :max="toDate ? toDate : null"
-                  no-title
-                  first-day-of-week="1"
-                  @input="menuMaxDate = false"
-                  @change="change"
-                />
-              </v-menu>
+              <p class="warning--text font-weight-bold mb-n1">
+                <v-icon color="warning">
+                  mdi-alert
+                </v-icon>
+                {{ $t('alreadyAskCarpool') }}
+              </p>
             </v-col>
           </v-row>
 
-          <regular-ask 
-            :type="1"
-            :mon-check-default="monCheckDefault"
-            :tue-check-default="tueCheckDefault"
-            :wed-check-default="wedCheckDefault"
-            :thu-check-default="thuCheckDefault"
-            :fri-check-default="friCheckDefault"
-            :sat-check-default="satCheckDefault"
-            :sun-check-default="sunCheckDefault"
-            :mon-time="outwardMonTime"
-            :tue-time="outwardTueTime"
-            :wed-time="outwardWedTime"
-            :thu-time="outwardThuTime"
-            :fri-time="outwardFriTime"
-            :sat-time="outwardSatTime"
-            :sun-time="outwardSunTime"
-            :origin-driver="lResult.resultDriver ? lResult.originDriver : null"
-            :destination-driver="lResult.resultDriver ? lResult.destinationDriver : null"
-            :origin-passenger="lResult.originPassenger"
-            :destination-passenger="lResult.destinationPassenger"
-            :from-date="fromDate"
-            :max-date="maxDate"
-            @change="changeOutward"
-          />
-        </v-stepper-content>
-
-        <!-- Step 3 : return -->
-        <v-stepper-content step="3">
-          <regular-ask
-            :type="2"
-            :mon-check-default="monCheckDefault"
-            :tue-check-default="tueCheckDefault"
-            :wed-check-default="wedCheckDefault"
-            :thu-check-default="thuCheckDefault"
-            :fri-check-default="friCheckDefault"
-            :sat-check-default="satCheckDefault"
-            :sun-check-default="sunCheckDefault"
-            :mon-time="returnMonTime"
-            :tue-time="returnTueTime"
-            :wed-time="returnWedTime"
-            :thu-time="returnThuTime"
-            :fri-time="returnFriTime"
-            :sat-time="returnSatTime"
-            :sun-time="returnSunTime"
-            :origin-driver="lResult.resultDriver ? lResult.destinationDriver : null"
-            :destination-driver="lResult.resultDriver ? lResult.originDriver : null"
-            :origin-passenger="lResult.destinationPassenger"
-            :destination-passenger="lResult.originPassenger"
-            :from-date="fromDate"
-            :max-date="maxDate"
-            @change="changeReturn"
-          />
-        </v-stepper-content>
-
-        <v-stepper-content step="4">
-          <PublicProfile
-            :user="result.carpooler"
-            :refresh="refreshPublicProfile"
-            :age-display="ageDisplay"
-            @publicProfileRefresh="publicProfileRefresh"
-          />
-        </v-stepper-content>
-      </v-stepper-items>
-    </v-stepper>
-
-    <!-- Action buttons -->
-    <v-card-actions
-      v-if="(driver ^ passenger) || (driver && passenger && lResult.frequency == 1)"
-    >
-      <v-spacer />
-      <!-- Carpool (driver xor passenger) -->
-      <v-btn
-        v-if="(driver ^ passenger) && step == 1 && lResult.pendingAsk == false && lResult.acceptedAsk == false && lResult.initiatedAsk == false"
-        color="secondary"
-        :disabled="carpoolDisabled"
-        :loading="carpoolLoading"
-        @click="lResult.frequency == 1 ? (driver ? carpool(1) : carpool(2)) : step = 2"
-      >
-        {{ lResult.frequency == 1 ? $t('carpool') : $t('outward') }}
-      </v-btn>
-
-      <!-- Carpool (driver) --> 
-      <v-btn
-        v-if="driver && passenger && lResult.pendingAsk == false && lResult.acceptedAsk == false && lResult.initiatedAsk == false"
-        color="secondary"
-        :disabled="carpoolDisabled"
-        :loading="carpoolLoading"
-        @click="carpool(1)"
-      >
-        {{ $t('carpoolAsDriver') }}
-      </v-btn>
-
-      <!-- Carpool (passenger) --> 
-      <v-btn
-        v-if="driver && passenger && lResult.pendingAsk == false && lResult.acceptedAsk == false && lResult.initiatedAsk == false"
-        color="secondary"
-        :disabled="carpoolDisabled"
-        :loading="carpoolLoading"
-        @click="carpool(2)"
-      >
-        {{ $t('carpoolAsPassenger') }}
-      </v-btn>
-
-      <v-row>
-        <!-- if an ask is pending or accepted -->
-        <v-row
-          v-if="lResult.pendingAsk == true || lResult.acceptedAsk == true"
-        >
-          <v-col
-            cols="8"
-            align-self="end"
-            class="text-right"
+          <!-- if an ask is initiated -->
+          <v-row
+            v-if="lResult.initiatedAsk == true"
           >
-            <p class="warning--text font-weight-bold mb-n1">
-              <v-icon color="warning">
-                mdi-alert
-              </v-icon>
-              {{ $t('alreadyAskCarpool') }}
-            </p>
-          </v-col>
-        </v-row>
-
-        <!-- if an ask is initiated -->
-        <v-row
-          v-if="lResult.initiatedAsk == true"
-        >
-          <v-col
-            cols="8"
-            align-self="end"
-            class="text-right"
-          >
-            <p
-              class="warning--text font-weight-bold mb-n1"
+            <v-col
+              cols="8"
+              align-self="end"
+              class="text-right"
             >
-              <v-icon color="warning">
-                mdi-alert
-              </v-icon>
-              {{ $t('alreadyInitiatedCarpool') }}
-            </p>
-          </v-col>
-          <v-col
-            cols="3"
-            align-self="end"
-            class="text-right"
-          >
-            <a
-              :href="this.$t('seeMessages.route')"
-              style="text-decoration:none;"
-            >
-              <v-btn
-                color="secondary"
+              <p
+                class="warning--text font-weight-bold mb-n1"
               >
-                {{ $t('seeMessages.label') }}
-              </v-btn>
-            </a>
-          </v-col>
+                <v-icon color="warning">
+                  mdi-alert
+                </v-icon>
+                {{ $t('alreadyInitiatedCarpool') }}
+              </p>
+            </v-col>
+            <v-col
+              cols="3"
+              align-self="end"
+              class="text-right"
+            >
+              <a
+                :href="this.$t('seeMessages.route')"
+                style="text-decoration:none;"
+              >
+                <v-btn
+                  color="secondary"
+                >
+                  {{ $t('seeMessages.label') }}
+                </v-btn>
+              </a>
+            </v-col>
+          </v-row>
         </v-row>
-      </v-row>
 
-      <!-- Step 2 or 3 (previous) --> 
+        <!-- Step 2 or 3 (previous) --> 
       
-      <!-- Public profile -->
-      <v-btn
-        v-if="step == 4"
-        color="secondary"
-        outlined
-        @click="step = 1"
-      >
-        {{ $t('previous') }}
-      </v-btn>
+        <!-- Public profile -->
+        <v-btn
+          v-if="step == 4"
+          color="secondary"
+          outlined
+          @click="step = 1"
+        >
+          {{ $t('previous') }}
+        </v-btn>
       
-      <v-btn
-        v-else-if="step > 1"
-        color="secondary"
-        outlined
-        @click="step--"
-      >
-        {{ $t('previous') }}
-      </v-btn>
+        <v-btn
+          v-else-if="step > 1"
+          color="secondary"
+          outlined
+          @click="step--"
+        >
+          {{ $t('previous') }}
+        </v-btn>
 
-      <!-- Step 2 (regular outward, return available) --> 
-      <v-btn
-        v-if="step == 2 && lResult.return"
-        color="secondary"
-        @click="step = 3"
-      >
-        {{ $t('return') }}
-      </v-btn>
+        <!-- Step 2 (regular outward, return available) --> 
+        <v-btn
+          v-if="step == 2 && lResult.return"
+          color="secondary"
+          @click="step = 3"
+        >
+          {{ $t('return') }}
+        </v-btn>
 
-      <!-- Step 2 (regular outward, no return) --> 
-      <v-btn
-        v-if="step == 2 && !lResult.return && outwardTrip.length>0 && lResult.pendingAsk == false && lResult.acceptedAsk == false && lResult.initiatedAsk == false"
-        color="secondary"
-        :disabled="carpoolDisabled"
-        :loading="carpoolLoading"
-        @click="driver ? carpool(1) : carpool(2)"
-      >
-        {{ $t('carpool') }}
-      </v-btn>
+        <!-- Step 2 (regular outward, no return) --> 
+        <v-btn
+          v-if="step == 2 && !lResult.return && outwardTrip.length>0 && lResult.pendingAsk == false && lResult.acceptedAsk == false && lResult.initiatedAsk == false"
+          color="secondary"
+          :disabled="carpoolDisabled"
+          :loading="carpoolLoading"
+          @click="driver ? carpoolConfirm(1) : carpoolConfirm(2)"
+        >
+          {{ $t('carpool') }}
+        </v-btn>
 
-      <!-- Step 3 (regular return) --> 
-      <v-btn
-        v-if="step == 3 && (outwardTrip.length > 0 || returnTrip.length>0) && lResult.pendingAsk == false && lResult.acceptedAsk == false && lResult.initiatedAsk == false"
-        color="secondary"
-        :disabled="carpoolDisabled"
-        :loading="carpoolLoading"
-        @click="driver ? carpool(1) : carpool(2)"
-      >
-        {{ $t('carpool') }}
-      </v-btn>
-    </v-card-actions>
-  </v-card>
+        <!-- Step 3 (regular return) --> 
+        <v-btn
+          v-if="step == 3 && (outwardTrip.length > 0 || returnTrip.length>0) && lResult.pendingAsk == false && lResult.acceptedAsk == false && lResult.initiatedAsk == false"
+          color="secondary"
+          :disabled="carpoolDisabled"
+          :loading="carpoolLoading"
+          @click="driver ? carpoolConfirm(1) : carpoolConfirm(2)"
+        >
+          {{ $t('carpool') }}
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  
+    <!-- confirm carpool dialog -->
+    <v-dialog
+      v-model="carpoolDialog"
+      max-width="600"
+    >
+      <v-card>
+        <v-card-title>
+          {{ $t('confirmCarpoolTitle') }}
+        </v-card-title>
+        <v-card-text>
+          {{ $t('confirmCarpool', { carpooler: lResult.carpooler.givenName }) }}
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer />
+          <v-btn
+            color="green darken-1"
+            text
+            @click="carpoolDialog = false"
+          >
+            {{ $t('cancel') }}
+          </v-btn>
+          <v-btn
+            color="primary"
+            @click="carpool(carpoolRole)"
+          >
+            {{ $t('confirm') }}
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </div>
 </template>
 
 <script>
@@ -712,7 +745,9 @@ export default {
       geoRouteUrl:"/georoute",
       route:[],
       routeRequester:[],
-      routeCarpooler:[]
+      routeCarpooler:[],
+      carpoolDialog: false,
+      carpoolRole: null
     }
   },
   computed: {
@@ -934,7 +969,12 @@ export default {
       };
       this.$emit('contact', params);
     },
+    carpoolConfirm(role) {
+      this.carpoolRole = role;
+      this.carpoolDialog = true;
+    },
     carpool(role) {
+      this.carpoolDialog = false;
       this.carpoolLoading = true;
       this.contactDisabled = true;
       let params = {

@@ -5,6 +5,10 @@
     "carpool": "Carpool",
     "carpoolAsDriver": "Carpool as driver",
     "carpoolAsPassenger": "Carpool as passenger",
+    "confirmCarpoolTitle": "Confirm the carpool",
+    "confirmCarpool": "Vous allez faire une demande formelle de covoiturage à {carpooler} qui pourra accepter ou refuser le covoiturage",
+    "confirm": "Confirm",
+    "cancel": "Cancel",
     "alreadyAskCarpool": "You have already made a request on this proposal.",
     "alreadyInitiatedCarpool": "Vous avez déjà pris contact sur cette annonce.",
     "seeMessages": {
