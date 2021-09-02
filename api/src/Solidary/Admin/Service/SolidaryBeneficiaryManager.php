@@ -31,6 +31,7 @@ use App\Solidary\Entity\SolidaryUser;
 use App\Solidary\Entity\SolidaryUserStructure;
 use App\Solidary\Entity\Solidary;
 use App\Action\Entity\Diary;
+use App\Paginator\MobicoopPaginator;
 use App\Service\FormatDataManager;
 use App\Solidary\Entity\Proof;
 use App\Solidary\Entity\Structure;
@@ -71,7 +72,7 @@ class SolidaryBeneficiaryManager
     }
 
     /**
-     * Get Solidary Beneficiary records
+     * Get Solidary Beneficiary records (transform SolidaryUsers to SolidaryBeneficiaries)
      *
      * @param PaginatorInterface $solidaryUsers  The solidary user objects
      * @return array|null The solidary beneficiary records
@@ -85,7 +86,8 @@ class SolidaryBeneficiaryManager
              */
             $solidaryBeneficiaries[] = $this->createSolidaryBeneficiaryFromSolidaryUser($solidaryUser);
         }
-        return $solidaryBeneficiaries;
+        // we need to return a paginator, we already have all informations but we need to build a custom paginator object
+        return new MobicoopPaginator($solidaryBeneficiaries, $solidaryUsers->getCurrentPage(), $solidaryUsers->getItemsPerPage(), $solidaryUsers->getTotalItems());
     }
 
     /**

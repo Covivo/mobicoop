@@ -28,10 +28,25 @@
           class="title"
         >
           <v-col
-            cols="12"
+            cols="11"
             class="text-center"
           >
             {{ profileSummary.givenName }} {{ profileSummary.shortFamilyName }}
+          </v-col>
+          <v-col
+            v-if="profileSummary.numberOfBadges > 0"
+            cols="1"
+            class="ml-n12"
+            align="center"
+          >
+            <v-img
+              src="/images/badge.png"
+              contain
+            >
+              <p class="caption text-center mt-1 primary--text font-weight-bold">
+                {{ profileSummary.numberOfBadges }}
+              </p>
+            </v-img>
           </v-col>
         </v-row>
         <v-row

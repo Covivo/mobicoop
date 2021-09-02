@@ -23,6 +23,8 @@
 
 namespace App\Gamification\Entity;
 
+use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Gamification\Interfaces\GamificationNotificationInterface;
 use App\User\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
@@ -35,6 +37,39 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 *
 * @ORM\Entity
 * @ORM\HasLifecycleCallbacks
+* @ApiResource(
+*     attributes={
+*          "force_eager"=false,
+*          "normalization_context"={"groups"={"readGamification"}, "enable_max_depth"="true"}
+*     },
+*     collectionOperations={
+*          "get"={
+*              "security"="is_granted('reject',object)",
+*              "swagger_context" = {
+*                  "summary"="Not implemented",
+*                  "tags"={"Gamification"}
+*               }
+*           }
+*      },
+*      itemOperations={
+*          "get"={
+*              "security"="is_granted('reject',object)",
+*              "swagger_context" = {
+*                  "summary"="Not implemented",
+*                  "tags"={"Gamification"}
+*              }
+*          },
+*          "tagAsNotified"={
+*              "method"="GET",
+*              "path"="/reward_steps/{id}/tagAsNotified",
+*              "normalization_context"={"groups"={"tagAsNotified"}},
+*              "swagger_context" = {
+*                  "summary"="Tag a RewardStep as notified to the User",
+*                  "tags"={"Gamification"}
+*              }
+*          },
+*      }
+* )
 */
 class RewardStep implements GamificationNotificationInterface
 {
@@ -45,8 +80,9 @@ class RewardStep implements GamificationNotificationInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"readGamification"})
+     * @Groups({"readGamification","tagAsNotified"})
      * @MaxDepth(1)
+     * @ApiProperty(identifier=true)
      */
     private $id;
 
@@ -72,7 +108,7 @@ class RewardStep implements GamificationNotificationInterface
      * @var \DateTimeInterface RewardStep's notification date. Determine if this RewardStep has been notified to the user.
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"readGamification"})
+     * @Groups({"readGamification","tagAsNotified"})
      */
     private $notifiedDate;
 

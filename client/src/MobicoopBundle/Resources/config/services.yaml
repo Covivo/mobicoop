@@ -112,6 +112,14 @@ services:
         arguments:
             $searchComponentHorizontal: '%env(bool:CARPOOL_SEARCH_HORIZONTAL)%'
 
+
+    # Editorial
+    Mobicoop\Bundle\MobicoopBundle\Editorial\Controller\:
+        resource: '@MobicoopBundle/Editorial/Controller/*'
+        tags: ['controller.service_arguments']
+    Mobicoop\Bundle\MobicoopBundle\Editorial\Service\:
+        resource: '@MobicoopBundle/Editorial/Service/*'
+
     # Event
     Mobicoop\Bundle\MobicoopBundle\Event\Controller\:
         resource: '@MobicoopBundle/Event/Controller/*'
@@ -137,6 +145,13 @@ services:
     # External journey
     Mobicoop\Bundle\MobicoopBundle\ExternalJourney\Service\:
         resource: '@MobicoopBundle/ExternalJourney/Service/*'
+
+    #Gamification
+    Mobicoop\Bundle\MobicoopBundle\Gamification\Controller\:
+        resource: '@MobicoopBundle/Gamification/Controller/*'
+        tags: ['controller.service_arguments']
+    Mobicoop\Bundle\MobicoopBundle\Gamification\Service\:
+        resource: '@MobicoopBundle/Gamification/Service/*'
 
     # Geography
     Mobicoop\Bundle\MobicoopBundle\Geography\Controller\:
@@ -235,3 +250,10 @@ services:
     # I18n
     Mobicoop\Bundle\MobicoopBundle\I18n\Service\:
         resource: '@MobicoopBundle/I18n/Service/*'
+
+    # Stats
+    Mobicoop\Bundle\MobicoopBundle\Stats\Controller\:
+        resource: '@MobicoopBundle/Stats/Controller/*'
+        tags: ['controller.service_arguments']
+    Mobicoop\Bundle\MobicoopBundle\Stats\Service\:
+        resource: '@MobicoopBundle/Stats/Service/*'

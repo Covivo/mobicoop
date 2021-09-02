@@ -127,7 +127,6 @@ final class UserCampaignSendCollectionDataProvider implements CollectionDataProv
                 // we force the selection to the users that have accepted the news subscription
                 $rootAlias = $queryBuilder->getRootAliases()[0];
                 $queryBuilder->andWhere("$rootAlias.newsSubscription = 1");
-                
                 foreach ($this->collectionExtensions as $extension) {
                     $extension->applyToCollection($queryBuilder, $queryNameGenerator, $resourceClass, $operationName, $context);
                     // remove pagination
@@ -143,6 +142,6 @@ final class UserCampaignSendCollectionDataProvider implements CollectionDataProv
         // send the campaign (or the test)
         $this->campaignManager->send($campaign, $users, $this->request->get('mode'));
 
-        return [count($users)];
+        return [iterator_count($users)];
     }
 }

@@ -9,7 +9,7 @@
       :active="informativeMessageActive"
       :text="informativeMessageText"
     />   
-    <v-row v-if="displayVerifiedMessage">
+    <v-row v-if="displayVerifiedMessagePhone">
       <v-col class="pa-0">
         <v-snackbar
           v-model="snackbar"
@@ -25,6 +25,34 @@
               " {{ $t('myProfile') }} "
             </a>
             {{ $t('snackbar2') }}
+          </div>
+          <v-btn
+            color="info"
+            elevation="0"
+            @click="snackbar = false"
+          >
+            <v-icon
+              color="primary"
+            >
+              mdi-close
+            </v-icon>
+          </v-btn>
+        </v-snackbar>
+      </v-col>
+    </v-row>
+
+    <v-row v-if="displayVerifiedMessageEmail">
+      <v-col class="pa-0">
+        <v-snackbar
+          v-model="snackbar"
+          top
+          multi-line
+          color="info"
+          vertical
+          :timeout="10000"
+        >
+          <div>
+            {{ $t('snackbar3') }}
           </div>
           <v-btn
             color="info"
@@ -248,17 +276,28 @@ export default {
   data () {
     return {
       snackbar: true,
-      displayVerifiedMessage: false,
+      displayVerifiedMessagePhone: false,
       mobileUrl: this.urlMobile,
+      displayVerifiedMessageEmail: false
     }
   },
   mounted() {
-    this.checkVerifiedPhone();
+    if (this.user !==null && this.user.validatedDate !== null){
+      this.checkVerifiedPhone();
+    } else {
+      this.checkVerifiedEmail();
+    }
+
   },
   methods:{
     checkVerifiedPhone() {
       if (this.user !==null && this.user.telephone !== null) {
-        this.displayVerifiedMessage = this.user.phoneValidatedDate ? false : true;
+        this.displayVerifiedMessagePhone = this.user.phoneValidatedDate ? false : true;
+      }
+    },
+    checkVerifiedEmail() {
+      if (this.user !==null && this.user.email !== null) {
+        this.displayVerifiedMessageEmail = this.user.validatedDate ? false : true;
       }
     }
   }

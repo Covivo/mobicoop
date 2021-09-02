@@ -92,6 +92,12 @@ class PublicProfile implements ResourceInterface, \JsonSerializable
      */
     private $reviews;
 
+    /**
+     * @var array|null Badges won by this user
+     *
+     */
+    private $badges;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -199,6 +205,18 @@ class PublicProfile implements ResourceInterface, \JsonSerializable
 
         return $this;
     }
+
+    public function getBadges(): ?array
+    {
+        return $this->badges;
+    }
+
+    public function setBadges(?array $badges): self
+    {
+        $this->badges = $badges;
+
+        return $this;
+    }
     
     public function jsonSerialize()
     {
@@ -221,7 +239,8 @@ class PublicProfile implements ResourceInterface, \JsonSerializable
             'createdDate'               => $this->getProfileSummary()->getCreatedDate(),
             'reviewActive'              => $this->isReviewActive(),
             'reviews'                   => $this->getReviews(),
-            'savedCo2'                  => $this->getProfileSummary()->getSavedCo2()
+            'savedCo2'                  => $this->getProfileSummary()->getSavedCo2(),
+            'badges'                    => $this->getBadges()
         ];
 
         return $userSerialized;

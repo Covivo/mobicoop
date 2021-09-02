@@ -139,6 +139,12 @@ security:
             stateless: true
             anonymous: true
 
+        # firewall for Campaign unsubscribe hook
+        campaignUnsubscribeHook:
+            pattern:  ^/campaigns/unsubscribe
+            stateless: true
+            anonymous: true
+
         # firewall for dev (profiler)
         dev:
             pattern: ^/(_(profiler|wdt)|css|js)/
@@ -166,4 +172,5 @@ security:
         - { path: ^/token/refresh, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/mango-payins, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/mango-kyc, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/campaigns/unsubscribe, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/, roles: IS_AUTHENTICATED_FULLY }

@@ -87,6 +87,7 @@ use App\User\Filter\SolidaryFilter;
 use App\User\Filter\SolidaryCandidateFilter;
 use App\User\Filter\EmailTokenFilter;
 use App\User\Filter\UnsubscribeTokenFilter;
+use App\User\Filter\SolidaryExclusiveFilter;
 use App\Communication\Entity\Notified;
 use App\Action\Entity\Log;
 use App\App\Entity\App;
@@ -96,6 +97,7 @@ use App\MassCommunication\Entity\Campaign;
 use App\MassCommunication\Entity\Delivery;
 use App\Auth\Entity\UserAuthAssignment;
 use App\Carpool\Entity\CarpoolProof;
+use App\Community\Entity\Community;
 use App\Solidary\Entity\Solidary;
 use App\User\EntityListener\UserListener;
 use App\Event\Entity\Event;
@@ -564,6 +566,7 @@ use App\I18n\Entity\Language;
  * @ApiFilter(SolidaryFilter::class, properties={"solidary"})
  * @ApiFilter(BooleanFilter::class, properties={"solidaryUser.volunteer","solidaryUser.beneficiary"})
  * @ApiFilter(SolidaryCandidateFilter::class, properties={"solidaryCandidate"})
+ * @ApiFilter(SolidaryExclusiveFilter::class)
  * @ApiFilter(DateFilter::class, properties={"createdDate": DateFilter::EXCLUDE_NULL,"lastActivityDate": DateFilter::EXCLUDE_NULL})
  * @ApiFilter(OrderFilter::class, properties={"id", "givenName", "status","familyName", "email", "gender", "nationality", "birthDate", "createdDate", "validatedDate", "lastActivityDate", "telephone"}, arguments={"orderParameterName"="order"})
  */
@@ -610,6 +613,11 @@ class User implements UserInterface, EquatableInterface
     const SMOKE_NO = 0;
     const SMOKE_NOT_IN_CAR = 1;
     const SMOKE = 2;
+
+    const AD_NONE = 0;
+    const AD_DRIVER = 1;
+    const AD_PASSENGER = 2;
+    const AD_DRIVER_PASSENGER = 3;
 
     /**
      * @var int The id of this user.
@@ -995,6 +1003,13 @@ class User implements UserInterface, EquatableInterface
      * @ORM\OneToMany(targetEntity="\App\Event\Entity\Event", mappedBy="user", cascade={"remove"}, orphanRemoval=true)
      */
     private $events;
+
+    /**
+     * @var ArrayCollection|null A user may be the creator of many communities.
+     *
+     * @ORM\OneToMany(targetEntity="\App\Community\Entity\Community", mappedBy="user")
+     */
+    private $communities;
 
     /**
     * @var ArrayCollection|null The communityUser associated to this user
@@ -1458,6 +1473,27 @@ class User implements UserInterface, EquatableInterface
      */
     private $rolesTerritory;
 
+    /**
+     * @var int|null Ad type for the user (0 = none, 1 = as driver only, 2 = as passenger only, 3 = as driver and passenger)
+     * @Groups("aRead")
+     */
+    private $adType;
+
+    /**
+     * @var array The related items for which the user is owner (events, community...)
+     *
+     * @Groups("aRead")
+     */
+    private $ownership;
+
+    /**
+     * @var int|null Number of badges earned by the user
+     *
+     * @Groups({"readUser","results"})
+     */
+    private $numberOfBadges;
+
+
     public function __construct($status = null)
     {
         $this->id = self::DEFAULT_ID;
@@ -1493,6 +1529,7 @@ class User implements UserInterface, EquatableInterface
         $this->rolesTerritory = [];
         $this->bankAccounts = [];
         $this->wallets = [];
+        $this->ownership = [];
         if (is_null($status)) {
             $status = self::STATUS_ACTIVE;
         }
@@ -2195,6 +2232,30 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
+    public function getCommunities()
+    {
+        return $this->communities->getValues();
+    }
+
+    public function addCommunity(Community $community): self
+    {
+        if (!$this->communities->contains($community)) {
+            $this->communities->add($community);
+            $community->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCommunity(Community $community): self
+    {
+        if ($this->communities->contains($community)) {
+            $this->communities->removeElement($community);
+        }
+
+        return $this;
+    }
+
     public function getCommunityUsers()
     {
         return $this->communityUsers->getValues();
@@ -2283,7 +2344,6 @@ class User implements UserInterface, EquatableInterface
             $this->masses->add($mass);
             $mass->setUser($this);
         }
-
         return $this;
     }
 
@@ -3212,6 +3272,62 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
+    public function getRewards()
+    {
+        return $this->rewards->getValues();
+    }
+
+    public function addReward(Reward $reward): self
+    {
+        if (!$this->rewards->contains($reward)) {
+            $this->rewards[] = $reward;
+        }
+        
+        return $this;
+    }
+    
+    public function removeReward(Reward $reward): self
+    {
+        if ($this->rewards->contains($reward)) {
+            $this->rewards->removeElement($reward);
+        }
+        return $this;
+    }
+
+    public function getRewardSteps()
+    {
+        return $this->rewardSteps->getValues();
+    }
+
+    public function addRewardStep(RewardStep $rewardStep): self
+    {
+        if (!$this->rewardSteps->contains($rewardStep)) {
+            $this->rewardSteps[] = $rewardStep;
+        }
+        
+        return $this;
+    }
+    
+    public function removeRewardStep(RewardStep $rewardStep): self
+    {
+        if ($this->rewardSteps->contains($rewardStep)) {
+            $this->rewardSteps->removeElement($rewardStep);
+        }
+        return $this;
+    }
+
+    public function getNumberOfBadges(): ?int
+    {
+        return count($this->rewards);
+    }
+
+    public function setNumberOfBadges(?int $numberOfBadges): self
+    {
+        $this->numberOfBadges = $numberOfBadges;
+
+        return $this;
+    }
+
     // ADMIN
 
     public function getImage(): ?string
@@ -3262,49 +3378,18 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
-    public function getRewards()
+    public function getAdType(): ?int
     {
-        return $this->rewards->getValues();
+        return $this->adType;
     }
 
-    public function addReward(Reward $reward): self
+    public function setAdType(int $adType): self
     {
-        if (!$this->rewards->contains($reward)) {
-            $this->rewards[] = $reward;
-        }
-        
+        $this->adType = $adType;
+
         return $this;
     }
     
-    public function removeReward(Reward $reward): self
-    {
-        if ($this->rewards->contains($reward)) {
-            $this->rewards->removeElement($reward);
-        }
-        return $this;
-    }
-
-    public function getRewardSteps()
-    {
-        return $this->rewardSteps->getValues();
-    }
-
-    public function addRewardStep(RewardStep $rewardStep): self
-    {
-        if (!$this->rewardSteps->contains($rewardStep)) {
-            $this->rewardSteps[] = $rewardStep;
-        }
-        
-        return $this;
-    }
-    
-    public function removeRewardStep(RewardStep $rewardStep): self
-    {
-        if ($this->rewardSteps->contains($rewardStep)) {
-            $this->rewardSteps->removeElement($rewardStep);
-        }
-        return $this;
-    }
     
     public function getBlocks()
     {
@@ -3361,6 +3446,26 @@ class User implements UserInterface, EquatableInterface
         
         return $this;
     }
+
+    public function getOwnership(): ?array
+    {
+        return $this->ownership;
+    }
+
+    public function initOwnership(): self
+    {
+        $this->ownership = [];
+
+        return $this;
+    }
+
+    public function addOwnership(array $item): self
+    {
+        $this->ownership[] = $item;
+
+        return $this;
+    }
+
 
     // DOCTRINE EVENTS
 

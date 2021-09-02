@@ -26,6 +26,7 @@ use App\Solidary\Entity\SolidaryAsk;
 use App\Solidary\Entity\SolidaryMatching;
 use App\Solidary\Entity\SolidarySolution;
 use App\Solidary\Entity\SolidaryUser;
+use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 
@@ -135,6 +136,30 @@ class SolidaryAskRepository
         ->join('ss.solidary', 's')
         ->where('s.id = :solidaryId')
         ->setParameter('solidaryId', $solidaryId);
+
+        return $query->getQuery()->getResult();
+    }
+
+    /**
+     * Find the solidaryAsks of a given user as driver
+     *
+     * @param User $user        The User
+     * @return array|null
+     */
+    public function findSolidaryAsksForDriver(User $user)
+    {
+        $query = $this->repository->createQueryBuilder('sa')
+        ->join('sa.solidarySolution', 'ss')
+        ->join('ss.solidaryMatching', 'sm')
+        ->leftJoin('sm.matching', 'm')
+        ->leftJoin('m.proposalOffer', 'po')
+        ->leftJoin('po.user', 'pou')
+        ->leftJoin('sm.solidaryUser', 'su')
+        ->leftJoin('su.user', 'suu')
+        ->orWhere('pou.id = :user')
+        ->orWhere('suu.id = :user')
+        ->setParameter('user', $user->getId())
+        ->orderBy('sa.updatedDate', 'DESC');
 
         return $query->getQuery()->getResult();
     }

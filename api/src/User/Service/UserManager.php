@@ -80,6 +80,11 @@ use App\Payment\Repository\PaymentProfileRepository;
 use App\I18n\Repository\LanguageRepository;
 use App\Action\Event\ActionEvent;
 use App\Action\Repository\ActionRepository;
+use App\Carpool\Entity\Criteria;
+use App\Solidary\Repository\SolidaryAskHistoryRepository;
+use App\Solidary\Repository\SolidaryAskRepository;
+use App\Solidary\Entity\SolidaryAsk;
+use App\Gamification\Service\GamificationManager;
 
 /**
  * User manager service.
@@ -102,6 +107,8 @@ class UserManager
     private $userRepository;
     private $proofManager;
     private $solidaryRepository;
+    private $solidaryAskRepository;
+    private $solidaryAskHistoryRepository;
     private $structureRepository;
     private $logger;
     private $eventDispatcher;
@@ -115,6 +122,7 @@ class UserManager
     private $paymentActive;
     private $languageRepository;
     private $actionRepository;
+    private $gamificationManager;
 
     // Default carpool settings
     private $chat;
@@ -157,6 +165,8 @@ class UserManager
         TranslatorInterface $translator,
         Security $security,
         SolidaryRepository $solidaryRepository,
+        SolidaryAskRepository $solidaryAskRepository,
+        SolidaryAskHistoryRepository $solidaryAskHistoryRepository,
         StructureRepository $structureRepository,
         string $fakeFirstMail,
         string $fakeFirstToken,
@@ -171,7 +181,8 @@ class UserManager
         PaymentProfileRepository $paymentProfileRepository,
         GeoTools $geoTools,
         LanguageRepository $languageRepository,
-        ActionRepository $actionRepository
+        ActionRepository $actionRepository,
+        GamificationManager $gamificationManager
     ) {
         $this->entityManager = $entityManager;
         $this->imageManager = $imageManager;
@@ -191,6 +202,8 @@ class UserManager
         $this->userRepository = $userRepository;
         $this->proofManager = $proofManager;
         $this->solidaryRepository = $solidaryRepository;
+        $this->solidaryAskRepository = $solidaryAskRepository;
+        $this->solidaryAskHistoryRepository = $solidaryAskHistoryRepository;
         $this->structureRepository = $structureRepository;
         $this->chat = $chat;
         $this->music = $music;
@@ -209,6 +222,7 @@ class UserManager
         $this->geoTools = $geoTools;
         $this->languageRepository = $languageRepository;
         $this->actionRepository = $actionRepository;
+        $this->gamificationManager = $gamificationManager;
     }
 
     /**
@@ -318,6 +332,13 @@ class UserManager
                 $event = new UserDelegateRegisteredPasswordSendEvent($user);
                 $this->eventDispatcher->dispatch(UserDelegateRegisteredPasswordSendEvent::NAME, $event);
             }
+        }
+
+        //  we dispatch the gamification event associated
+        if ($user->getHomeAddress()) {
+            $action = $this->actionRepository->findOneBy(['name'=>'user_home_address_updated']);
+            $actionEvent = new ActionEvent($action, $user);
+            $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);
         }
 
         if (!is_null($user->getCommunityId())) {
@@ -612,6 +633,13 @@ class UserManager
             $actionEvent = new ActionEvent($action, $user);
             $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);
         }
+
+        //  we dispatch the gamification event associated
+        if ($user->getHomeAddress()) {
+            $action = $this->actionRepository->findOneBy(['name'=>'user_home_address_updated']);
+            $actionEvent = new ActionEvent($action, $user);
+            $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);
+        }
        
         // return the user
         return $user;
@@ -729,7 +757,7 @@ class UserManager
         } elseif ($type==Message::TYPE_CARPOOL) {
             $threads = $this->askRepository->findAskByUser($user, Ask::ASKS_WITHOUT_SOLIDARY);
         } elseif ($type==Message::TYPE_SOLIDARY) {
-            $threads = $this->askRepository->findAskByUser($user, Ask::ASKS_WITH_SOLIDARY);
+            $threads = $this->solidaryAskRepository->findSolidaryAsksForDriver($user);
         } else {
             return [];
         }
@@ -741,23 +769,30 @@ class UserManager
                 case Message::TYPE_DIRECT:
                     $messages = $this->parseThreadsDirectMessages($user, $threads);
                 break;
-                case Message::TYPE_CARPOOL:
                 case Message::TYPE_SOLIDARY:
-                        $messages = $this->parseThreadsCarpoolMessages($user, $threads);
-                break;
+                    $messages = $this->parseThreadsSolidaryMessages($user, $threads);
+                    break;
+                case Message::TYPE_CARPOOL:
+                    $messages = $this->parseThreadsCarpoolMessages($user, $threads);
+                    break;
             }
             return $messages;
         }
     }
 
+    /**
+     * Parse the given threads into direct messages
+     *
+     * @param User $user        The mailbox owner
+     * @param array $threads    The threads (an array of Message objects)
+     * @return array            The parsed messages
+     */
     public function parseThreadsDirectMessages(User $user, array $threads)
     {
         // $threads is a Message[]
         
         $messages = [];
         foreach ($threads as $message) {
-
-
             
             // To Do : We support only one recipient at this time...
             $currentMessage = [
@@ -802,8 +837,10 @@ class UserManager
         return $messages;
     }
 
-
-    public static function sortThread($a, $b)
+    /**
+     * Sort function
+     */
+    private static function sortThread($a, $b)
     {
         if ($a['date'] == $b['date']) {
             return 0;
@@ -811,10 +848,138 @@ class UserManager
         return ($a['date'] < $b['date']) ? 1 : -1;
     }
 
-    public function parseThreadsCarpoolMessages(User $user, array $threads)
+    /**
+     * Parse the given threads into solidary messages
+     *
+     * @param User $user        The mailbox owner
+     * @param array $threads    The threads (an array of SolidaryAsk objects)
+     * @return array            The parsed messages
+     */
+    public function parseThreadsSolidaryMessages(User $user, array $threads)
     {
         $messages = [];
 
+        foreach ($threads as $solidaryAsk) {
+            /**
+             * @var SolidaryAsk $solidaryAsk
+             */
+            // we check if the solidary ask has at least on message thru the solidary ask histories
+            if ($lastSolidaryAskHistory = $this->solidaryAskHistoryRepository->findLastSolidaryAskHistory($solidaryAsk)) {
+                $message = $lastSolidaryAskHistory->getMessage();
+
+                $beneficiary = $solidaryAsk->getSolidarySolution()->getSolidaryMatching()->getSolidary()->getSolidaryUserStructure()->getSolidaryUser()->getUser();
+
+                // find the driver : can be either a carpooler or a volunteer
+                if ($solidaryAsk->getSolidarySolution()->getSolidaryMatching()->getMatching()) {
+                    // carpooler
+                    $driver = $solidaryAsk->getSolidarySolution()->getSolidaryMatching()->getMatching()->getProposalOffer()->getUser();
+                    // the waypoints are the waypoints of the matching
+                    $waypoints = $solidaryAsk->getSolidarySolution()->getSolidaryMatching()->getMatching()->getWaypoints();
+                } elseif ($solidaryAsk->getSolidarySolution()->getSolidaryMatching()->getSolidaryUser()) {
+                    // volunteer
+                    $driver = $solidaryAsk->getSolidarySolution()->getSolidaryMatching()->getSolidaryUser()->getUser();
+                    // the waypoints are the waypoints of the solidary proposal
+                    $waypoints = $solidaryAsk->getSolidarySolution()->getSolidaryMatching()->getSolidary()->getProposal()->getWaypoints();
+                } else {
+                    // whaaaaat ?
+                    return [];
+                }
+
+                $recipient = $user->getId() === $driver->getId() ? $beneficiary : $driver;
+
+                $currentThread = [
+                    'idSolidaryAskHistory'=>$lastSolidaryAskHistory->getId(),
+                    'idSolidaryAsk'=>$solidaryAsk->getId(),
+                    'idRecipient' => $recipient->getId(),
+                    'avatarsRecipient' => $recipient->getAvatars()[0],
+                    'givenName' => $recipient->getGivenName(),
+                    'shortFamilyName' => $recipient->getShortFamilyName(),
+                    'date' => ($message===null) ? $lastSolidaryAskHistory->getCreatedDate() : $message->getCreatedDate(),
+                    'selected' => false,
+                    'unreadMessages' => 0
+                ];
+
+                // The message id : the one linked to the last solidary ask history or we try to find the last existing one
+                $idMessage = -99;
+                if ($message !== null) {
+                    ($message->getMessage()!==null) ? $idMessage = $message->getMessage()->getId() :  $idMessage = $message->getId();
+                } else {
+                    if ($formerSolidaryAskHistory = $this->solidaryAskHistoryRepository->findLastSolidaryAskHistoryWithMessage($solidaryAsk)) {
+                        if ($formerSolidaryAskHistory->getMessage()->getMessage()) {
+                            $idMessage = $formerSolidaryAskHistory->getMessage()->getMessage()->getId();
+                        } else {
+                            $idMessage = $formerSolidaryAskHistory->getMessage()->getId();
+                        }
+                    }
+                }
+
+                // For each message, we check the all chain to determined the unread messages
+                if ($idMessage !== -99) {
+                    $completeThreadMessages = $this->internalMessageManager->getCompleteThread($idMessage);
+                    foreach ($completeThreadMessages as $currentMessage) {
+                        foreach ($currentMessage->getRecipients() as $recipient) {
+                            if ($user->getId() == $recipient->getUser()->getId() && is_null($recipient->getReadDate())) {
+                                $currentThread['unreadMessages']++;
+                            }
+                        }
+                    }
+                }
+                
+                $currentThread['idMessage'] = $idMessage;
+                // for now, the criteria is the one of the beneficiary proposal
+                $criteria = $solidaryAsk->getSolidarySolution()->getSolidaryMatching()->getSolidary()->getProposal()->getCriteria();
+                $currentThread["carpoolInfos"] = [
+                    "solidaryAskHistoryId" => $lastSolidaryAskHistory->getId(),
+                    "origin" => $waypoints[0]->getAddress()->getAddressLocality(),
+                    "destination" => $waypoints[count($waypoints)-1]->getAddress()->getAddressLocality(),
+                    "criteria" => [
+                        "frequency" => $criteria->getFrequency(),
+                        "fromDate" => $criteria->getFromDate(),
+                        "fromTime" => $criteria->getFromTime(),
+                        "monCheck" => $criteria->isMonCheck(),
+                        "tueCheck" => $criteria->isTueCheck(),
+                        "wedCheck" => $criteria->isWedCheck(),
+                        "thuCheck" => $criteria->isThuCheck(),
+                        "friCheck" => $criteria->isFriCheck(),
+                        "satCheck" => $criteria->isSatCheck(),
+                        "sunCheck" => $criteria->isSunCheck()
+                    ]
+                ];
+
+                // We check if the user and it's carpooler are involved in a block
+                // $user2 = ($user->getId() === $ask->getUserRelated()->getId() ? $ask->getUser() : $ask->getUserRelated());
+                // $blocks = $this->blockManager->getInvolvedInABlock($user, $user2);
+                // $currentThread['blockerId'] = null;
+                // if (is_array($blocks) && count($blocks)>0) {
+                //     foreach ($blocks as $block) {
+                //         if ($block->getUser()->getId() == $user->getId()) {
+                //             // The blocker is the current User
+                //             $currentThread['blockerId'] = $user->getId();
+                //             break;
+                //         }
+                //         $currentThread['blockerId'] = $user2->getId();
+                //     }
+                // }
+
+                $messages[] = $currentThread;
+            }
+        }
+
+        // Sort with the last message received first
+        usort($messages, array($this, 'sortThread'));
+        return $messages;
+    }
+
+    /**
+     * Parse the given threads into carpool messages
+     *
+     * @param User $user        The mailbox owner
+     * @param array $threads    The threads (an array of Ask objects)
+     * @return array            The parsed messages
+     */
+    public function parseThreadsCarpoolMessages(User $user, array $threads)
+    {
+        $messages = [];
 
         foreach ($threads as $ask) {
             $askHistories = $this->askHistoryRepository->findLastAskHistory($ask);
@@ -823,7 +988,6 @@ class UserManager
             // Only one-way or outward of a round trip.
             if (count($askHistories)>0 && ($ask->getType()==1 || $ask->getType()==2)) {
                 $askHistory = $askHistories[0];
-
 
                 $message = $askHistory->getMessage();
 
@@ -1659,6 +1823,9 @@ class UserManager
             }
         }
 
+        // Set number of earned badges
+        $profileSummary->setNumberOfBadges(count($this->gamificationManager->getBadgesEarned($user)));
+
         return $profileSummary;
     }
 
@@ -1684,6 +1851,9 @@ class UserManager
         // Get the reviews about this user
         $publicProfile->setReviewActive($this->profile['userReview']);
         $publicProfile->setReviews($this->reviewManager->getSpecificReviews(null, $user));
+
+        // Get the user's badges
+        $publicProfile->setBadges($this->gamificationManager->getBadgesEarned($user));
 
         return $publicProfile;
     }

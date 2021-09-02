@@ -27,7 +27,7 @@ use App\Gamification\Interfaces\GamificationRuleInterface;
 use App\Payment\Entity\CarpoolItem;
 
 /**
- *  Check that the requester is the author of the related Ad
+ * check that the user has only one electronic payment
  */
 class HasOnlyOneElectronicPayment implements GamificationRuleInterface
 {

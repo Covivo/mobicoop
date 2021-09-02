@@ -5,7 +5,7 @@ payment:
 relaypoints:
   title: Geldialdi guneak
 toolbox:
-  title: Esku-tresna ontzia
+  title: Tresna ontzia
 widget:
   title: Widget
 events:
@@ -29,13 +29,13 @@ communities:
 solidary:
   title: Elkartasunezko autokidetza eskaera bat egin
 contact:
-  title: Gurekin harremanetan sartu
+  title: Gurekin harremanetan jarri
 journey:
   from_to:
-    title2: ' -tik '
-    title1: 'Komisiorik gabeko autokidetzak '
+    title2: ' Ondoko lekura '
+    title1: 'Komisiorik gabeko autokidetza '
   to:
-    title: 'Autokidetzak ondoko tokitik iritsiz '
+    title: 'Autokidetza ondoko tokitik iritsiz '
   from:
     title: 'Autokidetzak ondoko tokitik abiatuz '
   cities:
@@ -55,9 +55,9 @@ user:
   profile_password_update:
     title: Nire pasahitza eguneratu
   profile_update:
-    title: Nire perfila eguneratu
+    title: Nire profila eguneratu
   profile:
-    title: Nire perfila
+    title: Nire profila
   login:
     title: Konexioa
   signupValidation:

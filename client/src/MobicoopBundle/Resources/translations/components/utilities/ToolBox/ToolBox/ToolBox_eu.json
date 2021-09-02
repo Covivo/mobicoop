@@ -1,8 +1,8 @@
 {
     "widget": {
-        "text": "Zure webgunean sar daiteken widget-a lortzeko eta honen egiteko argibideak eskuratzeko",
+        "text": "Zure webgunean sar daitekeen widget bat eskuratzeko eta honen egiteko instrukzioak ukan",
         "link": "/widget/get",
-        "textLink": "Hitzordua orrialde honetan",
+        "textLink": "Zoaza orrialde honetara",
         "title": "Widget-a"
     },
     "subtitle": "Komunikazio tresnak",

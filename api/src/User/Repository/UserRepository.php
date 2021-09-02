@@ -158,4 +158,20 @@ class UserRepository
         ->setParameter('ids', $ids)
         ->getQuery()->getResult();
     }
+
+    /**
+     * Get the active users (with a connection in the last 6 months)
+     *
+     * @return User[]|null
+     */
+    public function findActiveUsers(): ?array
+    {
+        $now = new \DateTime();
+        $last6Months = $now->modify('-6 months');
+        
+        return $this->repository->createQueryBuilder('u')
+        ->where("u.lastActivityDate >= :last6months")
+        ->setParameter('last6months', $last6Months)
+        ->getQuery()->getResult();
+    }
 }

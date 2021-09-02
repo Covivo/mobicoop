@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * Copyright (c) 2021, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -41,6 +41,7 @@ use App\RelayPoint\Entity\RelayPointType;
 use App\MassCommunication\Entity\Campaign;
 use App\Editorial\Entity\Editorial;
 use App\Image\Controller\CreateImageAction;
+use App\Image\Controller\ImageRemoveFileless;
 use App\Image\Controller\CreateImageAdminCampaignController;
 use App\Image\Controller\ImportImageCommunityController;
 use App\Image\Controller\ImportImageEventController;
@@ -83,7 +84,19 @@ use App\Image\Admin\Controller\PostImageAction;
  *              "path"="/images/regenversions",
  *              "security"="is_granted('images_regenversions',object)",
  *             "swagger_context" = {
- *                  "tags"={"Pictures"}
+ *                  "tags"={"Maintenance"}
+ *             }
+ *          },
+ *          "removeFileless"={
+ *              "method"="POST",
+ *              "deserialize"=false,
+ *              "serialize"=false,
+ *              "write"=false,
+ *              "controller"=ImageRemoveFileless::class,
+ *              "path"="/images/removefileless",
+ *              "security_post_denormalize"="is_granted('maintenance',object)",
+ *             "swagger_context" = {
+ *                  "tags"={"Maintenance"}
  *             }
  *          },
  *          "ADMIN_post"={
@@ -122,7 +135,7 @@ class Image
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"aRead","read","readUser","communities","listCommunities","readRelayPoint"})
+     * @Groups({"aRead","read","readUser","communities","listCommunities","readRelayPoint","readEditorial"})
      * @ApiProperty(identifier=true)
      */
     private $id;
@@ -131,7 +144,7 @@ class Image
      * @var string The name of the image.
      *
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read","readUser","communities","listCommunities","readRelayPoint"})
+     * @Groups({"read","readUser","communities","listCommunities","readRelayPoint","readEditorial"})
      */
     private $name;
 
@@ -139,7 +152,7 @@ class Image
      * @var string The html title of the image.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"read","readUser","communities","listCommunities","readRelayPoint"})
+     * @Groups({"read","readUser","communities","listCommunities","readRelayPoint","readEditorial"})
      */
     private $title;
     
@@ -187,7 +200,7 @@ class Image
      * @var string The final file name of the image.
      *
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read","results","write","readUser","readRelayPoint"})
+     * @Groups({"read","results","write","readUser","readRelayPoint","readEditorial"})
      */
     private $fileName;
     
@@ -346,19 +359,38 @@ class Image
      *
      * @ORM\OneToOne(targetEntity="\App\Gamification\Entity\Badge", inversedBy="icon", cascade={"persist","remove"}, orphanRemoval=true)
      */
-    private $badge;
+    private $badgeIcon;
 
     /**
      * @var int|null The badge id associated with the image (icon).
      * @Groups({"write","read"})
      */
-    private $badgeId;
+    private $badgeIconId;
 
     /**
      * @var File|null
      * @Vich\UploadableField(mapping="badge", fileNameProperty="fileName", originalName="originalName", size="size", mimeType="mimeType", dimensions="dimensions")
      */
-    private $badgeFile;
+    private $badgeIconFile;
+
+    /**
+     * @var Badge|null The Badge for which this image is used as icon
+     *
+     * @ORM\OneToOne(targetEntity="\App\Gamification\Entity\Badge", inversedBy="decoratedIcon", cascade={"persist","remove"}, orphanRemoval=true)
+     */
+    private $badgeDecoratedIcon;
+
+    /**
+     * @var int|null The badge id associated with the image (decorated icon).
+     * @Groups({"write","read"})
+     */
+    private $badgeDecoratedIconId;
+
+    /**
+     * @var File|null
+     * @Vich\UploadableField(mapping="badge", fileNameProperty="fileName", originalName="originalName", size="size", mimeType="mimeType", dimensions="dimensions")
+     */
+    private $badgeDecoratedIconFile;
 
     /**
      * @var Badge|null The Badge for which this image is used as reward image
@@ -462,10 +494,16 @@ class Image
 
     /**
      * @var string|null The default avatar
-     * @Groups({"aRead"})
+     * @Groups({"aRead","readPublicProfile"})
      */
     private $avatar;
         
+    /**
+     * @var string|null The full url of the image. Used in specific situation (need a Listener)
+     * @Groups({"readEditorial"})
+     */
+    private $url;
+
     public function __construct($id=null)
     {
         $this->id = $id;
@@ -814,38 +852,72 @@ class Image
         return $this;
     }
 
-    public function getBadgeId(): ?int
+    public function getBadgeIconId(): ?int
     {
-        return $this->badgeId;
+        return $this->badgeIconId;
     }
     
-    public function setBadgeId(?int $badgeId): self
+    public function setBadgeIconId(?int $badgeIconId): self
     {
-        $this->badgeId = $badgeId;
+        $this->badgeIconId = $badgeIconId;
         
         return $this;
     }
     
-    public function getBadge(): ?Badge
+    public function getBadgeIcon(): ?Badge
     {
-        return $this->badge;
+        return $this->badgeIcon;
     }
     
-    public function setBadge(?Badge $badge): self
+    public function setBadgeIcon(?Badge $badgeIcon): self
     {
-        $this->badge = $badge;
+        $this->badgeIcon = $badgeIcon;
         
         return $this;
     }
 
-    public function getBadgeFile(): ?File
+    public function getBadgeIconFile(): ?File
     {
-        return $this->badgeFile;
+        return $this->badgeIconFile;
     }
     
-    public function setBadgeFile(?File $badgeFile)
+    public function setBadgeIconFile(?File $badgeIconFile)
     {
-        $this->badgeFile = $badgeFile;
+        $this->badgeIconFile = $badgeIconFile;
+    }
+
+    public function getBadgeDecoratedIconId(): ?int
+    {
+        return $this->badgeDecoratedIconId;
+    }
+    
+    public function setBadgeDecoratedIconId(?int $badgeDecoratedIconId): self
+    {
+        $this->badgeDecoratedIconId = $badgeDecoratedIconId;
+        
+        return $this;
+    }
+    
+    public function getBadgeDecoratedIcon(): ?Badge
+    {
+        return $this->badgeDecoratedIcon;
+    }
+    
+    public function setBadgeDecoratedIcon(?Badge $badgeDecoratedIcon): self
+    {
+        $this->badgeDecoratedIcon = $badgeDecoratedIcon;
+        
+        return $this;
+    }
+
+    public function getBadgeDecoratedIconFile(): ?File
+    {
+        return $this->badgeDecoratedIconFile;
+    }
+    
+    public function setBadgeDecoratedIconFile(?File $badgeDecoratedIconFile)
+    {
+        $this->badgeDecoratedIconFile = $badgeDecoratedIconFile;
     }
 
     public function getBadgeImageId(): ?int
@@ -1026,6 +1098,16 @@ class Image
         return null;
     }
     
+    public function getUrl(): ?string
+    {
+        return $this->url;
+    }
+    
+    public function setUrl(string $url)
+    {
+        $this->url = $url;
+    }
+
     public function preventSerialization()
     {
         $this->setEventFile(null);
@@ -1034,7 +1116,8 @@ class Image
         $this->setRelayPointFile(null);
         $this->setRelayPointTypeFile(null);
         $this->setCampaignFile(null);
-        $this->setBadgeFile(null);
+        $this->setBadgeIconFile(null);
+        $this->setBadgeDecoratedIconFile(null);
         $this->setBadgeImageFile(null);
         $this->setBadgeImageLightFile(null);
         $this->setEditorialFile(null);

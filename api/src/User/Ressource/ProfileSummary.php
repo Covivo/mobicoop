@@ -152,6 +152,13 @@ class ProfileSummary
      */
     private $savedCo2;
 
+    /**
+     * @var int|null The number of earned badges by the User
+     *
+     * @Groups({"readProfileSummary","readPublicProfile"})
+     */
+    private $numberOfBadges;
+
     public function __construct($id=null)
     {
         if (!is_null($id)) {
@@ -311,6 +318,18 @@ class ProfileSummary
     public function setSavedCo2(?int $savedCo2): self
     {
         $this->savedCo2 = $savedCo2;
+
+        return $this;
+    }
+
+    public function getNumberOfBadges(): ?int
+    {
+        return $this->numberOfBadges;
+    }
+
+    public function setNumberOfBadges(?int $numberOfBadges): self
+    {
+        $this->numberOfBadges = $numberOfBadges;
 
         return $this;
     }

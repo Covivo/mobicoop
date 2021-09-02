@@ -39,7 +39,12 @@ monolog:
         #     type: stream
         #     level: debug
         #     path: "%kernel.logs_dir%/georouter.log"
-        #     channels: [georouter]              
+        #     channels: [georouter]   
+        maintenance:
+            type: stream
+            level: debug
+            path: "%kernel.logs_dir%/maintenance.log"
+            channels: [maintenance]   
         mass:
             type: stream
             level: debug
@@ -64,7 +69,7 @@ monolog:
             type: stream
             path: "%kernel.logs_dir%/%kernel.environment%.log"
             level: debug
-            channels: ["!event", "!carpool", "!carpool_dynamic", "!carpool_proof", "!communication", "!community", "!geography", "!geomatcher", "!georouter", "!mass", "!notification", "!faker", "!solidary"]
+            channels: ["!event", "!carpool", "!carpool_dynamic", "!carpool_proof", "!communication", "!community", "!geography", "!geomatcher", "!georouter", "!maintenance", "!mass", "!notification", "!faker", "!solidary"]
    
         # uncomment to get logging in your browser
         # you may have to allow bigger header sizes in your Web server configuration

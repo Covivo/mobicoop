@@ -2,5 +2,7 @@
     "geoSearchUrl": "",
     "required": "Une adresse est requise",
     "relayPoints": "Points relais",
-    "events": "Evénements"
+    "events": "Evénements",
+    "origin": "Lieu de départ",
+    "destination": "Lieu d'arrivée"
 }

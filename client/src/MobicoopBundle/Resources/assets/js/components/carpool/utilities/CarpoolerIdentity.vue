@@ -16,6 +16,16 @@
         {{ age }}
       </v-list-item-title>
     </v-list-item-content>
+    <v-img
+      v-if="hasBadges"
+      src="/images/badge.png"
+      contain
+      max-width="25"
+    >
+      <p class="caption text-center mt-1 primary--text font-weight-bold">
+        {{ carpooler.numberOfBadges }}
+      </p>
+    </v-img>
   </v-list-item>
 </template>
 
@@ -48,7 +58,8 @@ export default {
   },
   data () {
     return {
-      locale: localStorage.getItem("X-LOCALE")
+      locale: localStorage.getItem("X-LOCALE"),
+      hasBadges: this.carpooler.numberOfBadges>0 ? true : false
     }
   },
   computed: {

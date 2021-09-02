@@ -182,7 +182,7 @@ use App\App\Entity\App;
  *          },
  *      }
  * )
- * @ApiFilter(OrderFilter::class, properties={"id", "fromDate", "name", "toDate"}, arguments={"orderParameterName"="order"})
+ * @ApiFilter(OrderFilter::class, properties={"id", "fromDate", "name", "toDate","createdDate"}, arguments={"orderParameterName"="order"})
  * @ApiFilter(DateFilter::class, properties={"toDate","fromDate"})
  * @ApiFilter(SearchFilter::class, properties={"name":"partial"})
  * @ApiFilter(TerritoryFilter::class, properties={"territory"})
@@ -200,7 +200,7 @@ class Event
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"aRead","readEvent"})
+     * @Groups({"aRead","readEvent", "read" })
      * @ApiProperty(identifier=true)
      */
     private $id;

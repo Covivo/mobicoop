@@ -23,6 +23,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
     const USER_LOGIN_ROUTE = "user_login";
     const USER_LOGIN_DELEGATE_ROUTE = "user_login_delegate";
     const USER_LOGIN_RESULT_ROUTE = "user_login_result";
+    const USER_LOGIN_EVENT_ROUTE = "user_login_event";
     const USER_LOGIN_TOKEN_ROUTE = "user_login_token";
     const USER_LOGIN_TOKEN_ROUTE_EMAIL = "user_login_token_email";
     const USER_SIGN_UP_VALIDATION_ROUTE = "user_sign_up_validation";
@@ -60,6 +61,16 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
         switch ($request->get('_route')) {
             case self::USER_LOGIN_ROUTE:
             case self::USER_LOGIN_RESULT_ROUTE:
+                if (
+                    $request->isMethod('POST') &&
+                    $request->get('email') != '' && $request->get('password') != ''
+                ) {
+                    $this->dataProvider->setPassword($request->get('password'));
+                    $this->dataProvider->setUsername($request->get('email'));
+                    return true;
+                }
+                // no break
+            case self::USER_LOGIN_EVENT_ROUTE:
                 if (
                     $request->isMethod('POST') &&
                     $request->get('email') != '' && $request->get('password') != ''
@@ -186,6 +197,8 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
                 return new RedirectResponse($this->router->generate('home'));
             case self::USER_LOGIN_RESULT_ROUTE:
                 return new RedirectResponse($this->router->generate('carpool_ad_results_after_authentication', ['id'=>$request->get('proposalId')]));
+            case self::USER_LOGIN_EVENT_ROUTE:
+                return new RedirectResponse($this->router->generate('carpool_ad_post_search', ['eventId'=>$request->get('eventId')]));
             case self::USER_EMAIL_VALIDATION_ROUTE:
                 return new RedirectResponse($this->router->generate('user_profile_update', ['tabDefault'=>'mon-profil']));
             default:

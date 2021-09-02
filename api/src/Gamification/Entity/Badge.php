@@ -52,6 +52,15 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
  *                  "summary"="Get the badges list of the instance",
  *                  "tags"={"Gamification"}
  *               }
+ *           },
+ *          "earned"={
+ *              "method"="GET",
+ *              "path"="/badges/earned",
+ *              "security"="is_granted('badge_list',object)",
+ *              "swagger_context" = {
+ *                  "summary"="Get the badges earned by a user",
+ *                  "tags"={"Gamification"}
+ *               }
  *           }
  *      },
  *      itemOperations={
@@ -71,6 +80,15 @@ class Badge
     const STATUS_ACTIVE = 1;
     const STATUS_INACTIVE = 2;
 
+    const BADGE_id_1 = "remove_the_mask";
+    const BADGE_id_2 = "launch";
+    const BADGE_id_3 = "first_time";
+    const BADGE_id_4 = "welcome";
+    const BADGE_id_5 = "rally";
+    const BADGE_id_6 = "km_carpooled";
+    const BADGE_id_7 = "carbon_saved";
+
+
     const TRANSLATABLE_ITEMS = [
         "title",
         "text"
@@ -83,7 +101,7 @@ class Badge
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"readGamification"})
+     * @Groups({"readGamification","readPublicProfile"})
      * @MaxDepth(1)
      */
     private $id;
@@ -100,14 +118,14 @@ class Badge
      * @var string Badge's title. Used for display.
      *
      * @ORM\Column(type="string", length=255)
-     * @Groups({"readGamification","writeGamification"})
+     * @Groups({"readGamification","writeGamification","readPublicProfile"})
      */
     private $title;
 
     /**
      * @var string Badge's text, description.
      *
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=512)
      * @Groups({"readGamification","writeGamification"})
      */
     private $text;
@@ -129,16 +147,25 @@ class Badge
     private $public;
 
     /**
-     * @var Image|null The Badges Icon
+     * @var Image|null The Badge's icon
      *
-     * @ORM\OneToOne(targetEntity="\App\Image\Entity\Image", mappedBy="badge", cascade={"persist","remove"})
-     * @Groups({"readGamification","writeGamification"})
+     * @ORM\OneToOne(targetEntity="\App\Image\Entity\Image", mappedBy="badgeIcon", cascade={"persist","remove"})
+     * @Groups({"readGamification","writeGamification","readPublicProfile"})
      * @MaxDepth(1)
      */
     private $icon;
 
     /**
-     * @var Image|null The Badges reward Image
+     * @var Image|null The Badge's decorated icon
+     *
+     * @ORM\OneToOne(targetEntity="\App\Image\Entity\Image", mappedBy="badgeDecoratedIcon", cascade={"persist","remove"})
+     * @Groups({"readGamification","writeGamification","readPublicProfile"})
+     * @MaxDepth(1)
+     */
+    private $decoratedIcon;
+
+    /**
+     * @var Image|null The Badge's reward image
      *
      * @ORM\OneToOne(targetEntity="\App\Image\Entity\Image", mappedBy="badgeImage", cascade={"persist","remove"})
      * @Groups({"readGamification","writeGamification"})
@@ -147,7 +174,7 @@ class Badge
     private $image;
 
     /**
-     * @var Image|null The Badges reward Image
+     * @var Image|null The Badge's reward image light
      *
      * @ORM\OneToOne(targetEntity="\App\Image\Entity\Image", mappedBy="badgeImageLight", cascade={"persist","remove"})
      * @Groups({"readGamification","writeGamification"})
@@ -300,6 +327,18 @@ class Badge
     public function setIcon(Image $icon): self
     {
         $this->icon = $icon;
+
+        return $this;
+    }
+
+    public function getDecoratedIcon(): ?Image
+    {
+        return $this->decoratedIcon;
+    }
+
+    public function setDecoratedIcon(Image $decoratedIcon): self
+    {
+        $this->decoratedIcon = $decoratedIcon;
 
         return $this;
     }
