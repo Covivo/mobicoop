@@ -131,6 +131,13 @@
         />
       </v-row>
     </v-container>
+    <LoginOrRegisterFirst
+      :show-dialog="loginOrRegisterDialog"
+      :event-id="lEventId"
+      :event="event"
+      :init-destination="initDestination"
+      @closeLoginOrRegisterDialog=" loginOrRegisterDialog = false "
+    />
   </div>
 </template>
 <script>
@@ -139,13 +146,18 @@ import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/
 import EventInfos from "@components/event/EventInfos";
 import Report from "@components/utilities/Report";
 import Search from "@components/carpool/search/Search";
+import LoginOrRegisterFirst from '@components/utilities/LoginOrRegisterFirst';
 import MMap from "@components/utilities/MMap/MMap"
 import L from "leaflet";
 import moment from "moment";
 
 export default {
   components: {
-    Report, EventInfos, Search, MMap
+    Report, 
+    EventInfos, 
+    Search, 
+    MMap,
+    LoginOrRegisterFirst
   },
   i18n: {
     messages: {
@@ -234,6 +246,8 @@ export default {
       defaultDestination: this.initDestination,
       regular: false,
       eventPassed: false,
+      loginOrRegisterDialog: false,
+      lEventId: this.event.id ? this.event.id : null,
     }
   },
   computed: {
@@ -299,8 +313,8 @@ export default {
           ...this.params
         };
         this.post(`${this.$t("buttons.publish.route")}`, lParams);
-      }else{
-        window.location.href=this.$t("buttons.login.route");
+      } else {
+        this.loginOrRegister();
       }
     },
 
@@ -400,8 +414,10 @@ export default {
       if (now > moment(this.event.toDate.date)) {
         this.eventPassed = true;
       }  
+    },
+    loginOrRegister() {
+      this.loginOrRegisterDialog = true;
     }
-
   }
 }
 </script>

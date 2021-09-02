@@ -54,7 +54,6 @@ final class CreateImageAction
         if (is_null($request)) {
             throw new \InvalidArgumentException($this->translator->trans("Bad request"));
         }
-
         $image = new Image();
 
         // check if file is present
@@ -82,17 +81,21 @@ final class CreateImageAction
             // Campaign image
             $image->setCampaignFile($request->files->get('campaignFile'));
             $image->setCampaignId($request->request->get('campaignId'));
-        } elseif ($request->files->get('badgeFile') && $request->request->get('badgeId')) {
+        } elseif ($request->files->get('badgeIconFile') && $request->request->get('badgeIconId')) {
             // Badge icon
-            $image->setBadgeFile($request->files->get('badgeFile'));
-            $image->setBadgeId($request->request->get('badgeId'));
-        } elseif ($request->files->get('badgeFile') && $request->request->get('badgeImageId')) {
+            $image->setBadgeIconFile($request->files->get('badgeIconFile'));
+            $image->setBadgeIconId($request->request->get('badgeIconId'));
+        } elseif ($request->files->get('badgeDecoratedIconFile') && $request->request->get('badgeDecoratedIconId')) {
+            // Badge decorated icon
+            $image->setBadgeDecoratedIconFile($request->files->get('badgeDecoratedIconFile'));
+            $image->setBadgeDecoratedIconId($request->request->get('badgeDecoratedIconId'));
+        } elseif ($request->files->get('badgeImageFile') && $request->request->get('badgeImageId')) {
             // Badge image
-            $image->setBadgeFile($request->files->get('badgeFile'));
+            $image->setBadgeImageFile($request->files->get('badgeImageFile'));
             $image->setBadgeImageId($request->request->get('badgeImageId'));
-        } elseif ($request->files->get('badgeFile') && $request->request->get('badgeImageLightId')) {
+        } elseif ($request->files->get('badgeImageLightFile') && $request->request->get('badgeImageLightId')) {
             // Badge image light
-            $image->setBadgeFile($request->files->get('badgeFile'));
+            $image->setBadgeImageLightFile($request->files->get('badgeImageLightFile'));
             $image->setBadgeImageLightId($request->request->get('badgeImageLightId'));
         } elseif ($request->files->get('editorialFile') && $request->request->get('editorialId')) {
             // editorial image
@@ -113,8 +116,10 @@ final class CreateImageAction
 
         // we search the future owner of the image (user ? event ?...)
         if ($owner = $this->imageManager->getOwner($image)) {
-            if (!is_null($image->getBadgeId())) {
-                $image->setBadge($owner);
+            if (!is_null($image->getBadgeIconId())) {
+                $image->setBadgeIcon($owner);
+            } elseif (!is_null($image->getBadgeDecoratedIconId())) {
+                $image->setBadgeDecoratedIcon($owner);
             } elseif (!is_null($image->getBadgeImageId())) {
                 $image->setBadgeImage($owner);
             } elseif (!is_null($image->getBadgeImageLightId())) {

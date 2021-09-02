@@ -44,6 +44,7 @@ use App\Import\Entity\RelayPointImport;
 use App\Solidary\Entity\Structure;
 use App\RelayPoint\Filter\TerritoryFilter;
 use App\RelayPoint\Filter\RelayPointAddressTerritoryFilter;
+use DateTime;
 
 /**
  * A relay point.
@@ -269,6 +270,27 @@ class RelayPoint
      * @Groups({"aRead","aWrite","readRelayPoint","writeRelayPoint"})
      */
     private $permalink;
+
+    /**
+     * @var string|null The external id of the relay point, if the relay point is imported.
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $externalId;
+
+    /**
+     * @var string|null The external author of the relay point, if the relay point is imported.
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $externalAuthor;
+
+    /**
+     * @var \DateTimeInterface The external updated date of the relay point, if the relay point is imported.
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $externalUpdatedDate;
 
     /**
     * @var \DateTimeInterface Creation date of the relay point.
@@ -560,6 +582,42 @@ class RelayPoint
     public function setPermalink(?string $permalink)
     {
         $this->permalink = $permalink;
+    }
+
+    public function getExternalId(): ?string
+    {
+        return $this->externalId;
+    }
+    
+    public function setExternalId(?string $externalId): self
+    {
+        $this->externalId = $externalId;
+
+        return $this;
+    }
+
+    public function getExternalAuthor(): ?string
+    {
+        return $this->externalAuthor;
+    }
+    
+    public function setExternalAuthor(?string $externalAuthor): self
+    {
+        $this->externalAuthor = $externalAuthor;
+
+        return $this;
+    }
+
+    public function getExternalUpdatedDate(): ?\DateTimeInterface
+    {
+        return $this->externalUpdatedDate;
+    }
+    
+    public function setExternalUpdatedDate(\DateTimeInterface $externalUpdatedDate): self
+    {
+        $this->externalUpdatedDate = $externalUpdatedDate;
+
+        return $this;
     }
 
     public function getAddress(): ?Address

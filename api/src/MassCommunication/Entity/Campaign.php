@@ -93,6 +93,13 @@ use App\Action\Entity\Log;
  *                  "tags"={"Administration"}
  *              }
  *          },
+ *          "unsubscribeHook"={
+ *              "path"="/campaigns/unsubscribe",
+ *              "method"="GET",
+ *              "swagger_context" = {
+ *                  "tags"={"Mass Communication"}
+ *              }
+ *          },
  *      },
  *      itemOperations={
  *          "get"={
@@ -341,6 +348,12 @@ class Campaign
      * @Groups({"aRead"})
      */
     private $creatorAvatar;
+
+    /**
+     * @var string|null The creator email
+     * @Groups({"aRead"})
+     */
+    private $creatorEmail;
 
     /**
      * @var int|null The source for the deliveries.
@@ -660,6 +673,11 @@ class Campaign
             return $this->getUser()->getAvatars()[0];
         }
         return null;
+    }
+
+    public function getCreatorEmail(): string
+    {
+        return $this->getUser()->getEmail();
     }
 
     public function getSource(): ?int

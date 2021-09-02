@@ -255,18 +255,11 @@ class CommunityManager
     {
         $ads = [];
 
-        $refIdProposals = [];
-        foreach ($community->getProposals() as $proposal) {
-            if (!in_array($proposal->getId(), $refIdProposals) && !$proposal->isPrivate()) {
-                // we check if the proposal is still valid if yes we retrieve the proposal
-                $LimitDate = $proposal->getCriteria()->getToDate() ? $proposal->getCriteria()->getToDate() : $proposal->getCriteria()->getFromDate();
-                if ($LimitDate >= new \DateTime()) {
-                    $ads[] = $this->adManager->makeAdForCommunityOrEvent($proposal);
-                    if (!is_null($proposal->getProposalLinked())) {
-                        $refIdProposals[$proposal->getId()] = $proposal->getProposalLinked()->getId();
-                    }
-                }
-            }
+        // We get only the public proposal (we exclude searches)
+        $proposals = $this->proposalRepository->findCommunityAds($community);
+
+        foreach ($proposals as $proposal) {
+            $ads[] = $this->adManager->makeAdForCommunityOrEvent($proposal);
         }
         $community->setAds($ads);
     }

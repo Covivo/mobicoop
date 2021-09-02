@@ -11,6 +11,7 @@
     "textRecovery": "Passwort vergessen?",
     "urlRecovery": "/benutzer/passwort/wiederherstellung",
     "urlLoginResult": "/benutzer/anmeldung/{id}",
+    "urlLoginEvent":"/utilisateur/connexion/evenement/{id}",
     "urlLogin": "/benutzer/anmeldung",
     "userFBNotFound": "Dieser Facebook-Nutzer ist nicht auf der Plattform registriert",
     "errorCredentialsFacebook": "Fehler beim Anmelden über Facebook",

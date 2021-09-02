@@ -28,7 +28,7 @@
         </p>
       </v-card-text>
 
-      <v-card-actions>
+      <v-card-actions v-if="proposalId">
         <v-spacer />
         <v-btn
           v-if="showLoginBtn"
@@ -53,6 +53,31 @@
           </span>
         </v-btn>
       </v-card-actions>
+      <v-card-actions v-if="eventId">
+        <v-spacer />
+        <v-btn
+          v-if="showLoginBtn"
+          rounded
+          color="secondary"
+          large
+          :href="eventId ? $t('loginUrlEventId',{'id':eventId}) : $t('loginUrl')"
+        >
+          <span>
+            {{ $t('login') }}
+          </span>
+        </v-btn>
+        <v-btn
+          v-if="showRegisterBtn"
+          rounded
+          color="secondary"
+          large
+          :href="eventId ? $t('registerUrlEventId',{'id':eventId}) : $t('registerUrl')"
+        >
+          <span>
+            {{ $t('register') }}
+          </span>
+        </v-btn>
+      </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
@@ -66,8 +91,13 @@ export default {
       'fr': messages_fr,
       'eu':messages_eu
     },
-  },  props:{
+  },  
+  props:{
     proposalId:{
+      type: Number,
+      default: null
+    },
+    eventId:{
       type: Number,
       default: null
     },
@@ -82,6 +112,14 @@ export default {
     showLoginBtn:{
       type: Boolean,
       default: true
+    },
+    initDestination: {
+      type: Object,
+      default: null
+    },
+    event: {
+      type: Object,
+      default: null
     }
   },
   data() {

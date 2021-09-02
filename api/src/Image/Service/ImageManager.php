@@ -72,7 +72,7 @@ class ImageManager
     private $types;
     private $filterManager;
     private $dataManager;
-    private $logger;
+    private $loggerMaintenance;
     private $entityManager;
     private $dataUri;
     private $badgeRepository;
@@ -88,7 +88,7 @@ class ImageManager
      * @param ImageRepository $imageRepository
      * @param FileManager $fileManager
      * @param ContainerInterface $container
-     * @param LoggerInterface $logger
+     * @param LoggerInterface $loggerMaintenance
      * @param CampaignRepository $campaign
      * @param BadgeRepository $badge
      * @param EditorialRepository $editorial
@@ -103,7 +103,7 @@ class ImageManager
         ImageRepository $imageRepository,
         FileManager $fileManager,
         ContainerInterface $container,
-        LoggerInterface $logger,
+        LoggerInterface $maintenanceLogger,
         array $types,
         CampaignRepository $campaignRepository,
         string $dataUri,
@@ -122,7 +122,7 @@ class ImageManager
         $this->types = $types;
         $this->filterManager = $container->get('liip_imagine.filter.manager');
         $this->dataManager = $container->get('liip_imagine.data.manager');
-        $this->logger = $logger;
+        $this->loggerMaintenance = $maintenanceLogger;
         $this->dataUri = $dataUri;
         $this->badgeRepository = $badgeRepository;
         $this->editorialRepository = $editorialRepository;
@@ -165,12 +165,18 @@ class ImageManager
         } elseif (!is_null($image->getCampaignId())) {
             // the image is an image for a campaign
             return $this->campaignRepository->find($image->getCampaignId());
-        } elseif (!is_null($image->getBadge())) {
+        } elseif (!is_null($image->getBadgeIcon())) {
             // the icon is an image for a badge
-            return $this->badgeRepository->find($image->getBadge()->getId());
-        } elseif (!is_null($image->getBadgeId())) {
+            return $this->badgeRepository->find($image->getBadgeIcon()->getId());
+        } elseif (!is_null($image->getBadgeIconId())) {
             // the icon is an image for a badge
-            return $this->badgeRepository->find($image->getBadgeId());
+            return $this->badgeRepository->find($image->getBadgeIconId());
+        } elseif (!is_null($image->getBadgeDecoratedIcon())) {
+            // the icon is an image for a badge
+            return $this->badgeRepository->find($image->getBadgeDecoratedIcon()->getId());
+        } elseif (!is_null($image->getBadgeDecoratedIconId())) {
+            // the icon is an image for a badge
+            return $this->badgeRepository->find($image->getBadgeDecoratedIconId());
         } elseif (!is_null($image->getBadgeImage())) {
             // the image is an image for a badge
             return $this->badgeRepository->find($image->getBadgeImage()->getId());
@@ -484,6 +490,74 @@ class ImageManager
                 }
             }
         }
+    }
+
+    /**
+     * Remove all images without associated file
+     *
+     * @return void
+     */
+    public function removeFileless()
+    {
+        $images = $this->imageRepository->findAll();
+        foreach ($images as $image) {
+            $owner = $this->getOwner($image);
+            $getRealClass =  ClassUtils::getClass($owner);
+            switch ($getRealClass) {
+                case Event::class:
+                    if (!file_exists(dirname(__FILE__)."/../../../public/upload/events/images/".$image->getFileName())) {
+                        $this->loggerMaintenance->info("ImageManager : remove image ". $image->getFileName() ." without associated file of the Event n°". $owner->getId() . " ." . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+                        $this->deleteVersions($image);
+                        $this->deleteBase($image, false);
+                    }
+                    break;
+                case Community::class:
+                    if (!file_exists(dirname(__FILE__)."/../../../public/upload/communities/images/".$image->getFileName())) {
+                        $this->loggerMaintenance->info("ImageManager : remove image ". $image->getFileName() ." without associated file of the Community n°". $owner->getId() . " ." . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+                        $this->deleteVersions($image);
+                        $this->deleteBase($image, false);
+                    }
+                    break;
+                case RelayPoint::class:
+                    if (!file_exists(dirname(__FILE__)."/../../../public/upload/relaypoints/images/".$image->getFileName())) {
+                        $this->loggerMaintenance->info("ImageManager : remove image ". $image->getFileName() ." without associated file of the RelayPoint n°". $owner->getId() . " ." . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+                        $this->deleteVersions($image);
+                        $this->deleteBase($image, false);
+                    }
+                    break;
+                case User::class:
+                    if (!file_exists(dirname(__FILE__)."/../../../public/upload/users/images/".$image->getFileName())) {
+                        $this->loggerMaintenance->info("ImageManager : remove image ". $image->getFileName() ." without associated file of the User n°". $owner->getId() . " ." . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+                        $this->deleteVersions($image);
+                        $this->deleteBase($image, false);
+                    }
+                    break;
+                case Campaign::class:
+                    if (!file_exists(dirname(__FILE__)."/../../../public/upload/masscommunication/images/".$image->getFileName())) {
+                        $this->loggerMaintenance->info("ImageManager : remove image ". $image->getFileName() ." without associated file of the Campaign n°". $owner->getId() . " ." . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+                        $this->deleteVersions($image);
+                        $this->deleteBase($image, false);
+                    }
+                    break;
+                case Badge::class:
+                    if (!file_exists(dirname(__FILE__)."/../../../public/upload/badges/images/".$image->getFileName())) {
+                        $this->loggerMaintenance->info("ImageManager : remove image ". $image->getFileName() ." without associated file of the Badge n°". $owner->getId() . " ." . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+                        $this->deleteVersions($image);
+                        $this->deleteBase($image, false);
+                    }
+                    break;
+                case Editorial::class:
+                    if (!file_exists(dirname(__FILE__)."/../../../public/upload/editorials/images/".$image->getFileName())) {
+                        $this->loggerMaintenance->info("ImageManager : remove image ". $image->getFileName() ." without associated file of the Editorial n°". $owner->getId() . " ." . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+                        $this->deleteVersions($image);
+                        $this->deleteBase($image, false);
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+        $this->entityManager->flush();
     }
 
     /** TODO : create methods to :

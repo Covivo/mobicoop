@@ -1,0 +1,18 @@
+{% set ad = context.ad %}
+{% set recipient = context.user %}
+{% set sender = context.sender %}
+{% set result = context.result %}
+{% set outwardOrigin = context.outwardOrigin %}
+{% set outwardDestination = context.outwardDestination %}
+{% set returnOrigin = context.returnOrigin %}
+{% set returnDestination = context.returnDestination %}
+
+Bonjour {{context.user.givenName|capitalize}} {{context.user.shortFamilyName|capitalize}}
+{% if ad.results[0].frequency == 1 %}
+Covoiturage confirmé avec {{sender.givenName|capitalize}} {{sender.shortFamilyName|capitalize}} le {{ ad.results[0].date|date("d/m/Y") }} à {{outwardOrigin.time|date('H:i')}} de {{ outwardOrigin.address.displayLabel[0] }} à {{ outwardDestination.address.displayLabel[0] }}. Voir l annonce sur {{api_env('SMS_PLATFORM_NAME')|raw}}.
+Vous pouvez le contacter par téléphone : {{sender.telephone}}
+{% else %}
+Covoiturage régulier confirmé avec {{sender.givenName|capitalize}} {{sender.shortFamilyName|capitalize}} entre  {{ outwardOrigin.address.displayLabel[0] }} et {{ outwardDestination.address.displayLabel[0] }}. Voir l annonce sur  {{api_env('SMS_PLATFORM_NAME')|raw}}.
+Vous pouvez le contacter par téléphone : {{sender.telephone}}
+{% endif %}
+A bientôt sur {{api_env('SMS_PLATFORM_NAME')|raw}}

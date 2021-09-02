@@ -57,6 +57,7 @@
           <GeoComplete
             v-show="showOrigin"
             id="from"
+            alternative-label="origin"
             :url="geoSearchUrl"
             :label="labelOrigin"
             :token="user ? user.token : ''"
@@ -103,6 +104,7 @@
           <GeoComplete
             v-show="showDestination"
             id="to"
+            alternative-label="destination"
             :url="geoSearchUrl"
             :label="labelDestination"
             :token="user ? user.token : ''"
@@ -288,7 +290,7 @@ export default {
   },
   data() {
     return {
-      locale: localStorage.getItem("X-LOCALE"),
+      locale: null,
       date: this.initOutwardDate,
       outwardDateClicked: false,
       menu: false,
@@ -335,8 +337,9 @@ export default {
       this.destination = this.initDestination;
     }
   },
-  created() {
-    moment.locale(this.locale); // DEFINE DATE LANGUAGE
+  mounted() {
+    this.locale = localStorage.getItem("X-LOCALE");
+    moment.locale(this.locale);
   },
   methods: {
     originSelected: function(address) {

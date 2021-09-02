@@ -27,10 +27,12 @@ use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\Proposal;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Carpool\Entity\Criteria;
+use App\Carpool\Ressource\Ad;
 use App\User\Service\UserManager;
 use App\Community\Entity\Community;
 use App\Geography\Service\GeoTools;
 use App\User\Entity\User;
+use DateTime;
 
 /**
  * @method Proposal|null find($id, $lockMode = null, $lockVersion = null)
@@ -1204,7 +1206,7 @@ class ProposalRepository
     }
 
     /**
-     * Get the proposals (private only) valid for a specific date (optional : a specific user)
+     * Get the proposals (not private only) valid for a specific date (optional : a specific user)
      *
      * @param \Datetime $date                   The date we want the Proposal valid for
      * @param User $user                        Optional : A specific User
@@ -1283,6 +1285,81 @@ class ProposalRepository
         ->where("p.event IS NOT NULL")
         ->andWhere("p.user = :user")
         ->setParameter("user", $user);
+        return $query->getQuery()->getResult();
+    }
+
+    /**
+     * Get the number of active ad for a given user and a given role
+     *
+     * @param int $userId    The user id
+     * @param int $role     The role
+     * @return int          The number of ads
+     */
+    public function getNbActiveAdsForUserAndRole(int $userId, int $role): int
+    {
+        $now = new DateTime();
+        $qb = $this->repository->createQueryBuilder('p')
+            ->leftJoin('p.criteria', 'c')
+            ->leftJoin('p.user', 'u')
+            ->select('count(c.id) as nb')
+            ->andWhere('u.id = :id and (p.private is null or p.private = 0)');
+        if ($role == Ad::ROLE_DRIVER) {
+            $qb->andWhere('c.driver = 1 and (
+                (c.frequency = 1 and c.fromDate >= :now) or
+                (c.frequency = 2 and c.fromDate <= :now and c.toDate >= :now)
+            )');
+        } elseif ($role == Ad::ROLE_PASSENGER) {
+            $qb->andWhere('c.passenger = 1 and (
+                (c.frequency = 1 and c.fromDate >= :now) or
+                (c.frequency = 2 and c.fromDate <= :now and c.toDate >= :now)
+            )');
+        }
+        $result = $qb->setParameter('id', $userId)
+            ->setParameter('now', $now->format('Y-m-d'))
+            ->getQuery()->getOneOrNullResult();
+
+        if (!is_null($result['nb'])) {
+            return (int)$result['nb'];
+        }
+        return 0;
+    }
+
+    /**
+     * Find proposals (only not private and of type 1 or 2) created between startDate and endDate
+     *
+     * @param \DateTime $startDate  Range start date
+     * @param \DateTime $endDate    Range end date
+     * @return Proposals[]|null
+     */
+    public function findBetweenCreateDate(\DateTime $startDate, \DateTime $endDate)
+    {
+        $query = $this->repository->createQueryBuilder('p')
+        ->where("p.createdDate between :startDate and :endDate ")
+        ->andWhere("p.private = 0")
+        ->andWhere("p.type = :typeOneWay or p.type = :typeOutward")
+        ->setParameter("startDate", $startDate)
+        ->setParameter("endDate", $endDate)
+        ->setParameter("typeOneWay", Proposal::TYPE_ONE_WAY)
+        ->setParameter("typeOutward", Proposal::TYPE_OUTWARD);
+        return $query->getQuery()->getResult();
+    }
+
+    /**
+     * Find the public proposals linked to a Community
+     */
+    public function findCommunityAds(Community $community)
+    {
+        $now = new \DateTime("now");
+
+        $query = $this->repository->createQueryBuilder('p')
+        ->join("p.communities", "com")
+        ->join("p.criteria", "c")
+        ->where("com.id = :communityId")
+        ->andWhere("p.private = 0")
+        ->andWhere("p.type = 1 or p.type = 2")
+        ->andWhere("c.toDate > :toDate")
+        ->setParameter("communityId", $community->getId())
+        ->setParameter("toDate", $now->format("Y-m-d 00:00:00"));
         return $query->getQuery()->getResult();
     }
 }

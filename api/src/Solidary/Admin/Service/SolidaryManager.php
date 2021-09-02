@@ -1035,7 +1035,11 @@ class SolidaryManager
             // check if beneficiary informations have been updated
             $beneficiary = $this->updateBeneficiary($beneficiary, $fields['beneficiary']);
         } else {
-            // new user
+            // new user, check if an email was set
+            if (!isset($fields['beneficiary']['email'])) {
+                // no email set => we use the structure as base for subaddressing
+                $fields['beneficiary']['email'] = $this->userManager->generateSubEmail($structure->getEmail());
+            }
             $beneficiary = $this->userManager->createUserFromArray($fields['beneficiary']);
             $newUser = true;
         }
@@ -2441,7 +2445,8 @@ class SolidaryManager
             }
         }
 
-        return $this->adManager->createAd($ad);
+        // do not retrieve results to avoid unwanted side effects (as results can require data that is not present / not well formed on the current ad, eg. flexible ads)
+        return $this->adManager->createAd($ad, true, true, false);
     }
 
     private function getTimeAndMarginForStructure(Structure $structure)

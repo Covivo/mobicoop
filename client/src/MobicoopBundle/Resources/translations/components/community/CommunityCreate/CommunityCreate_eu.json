@@ -9,38 +9,38 @@
         }
     },
     "error": {
-        "image": "Irudia ez da gorde",
+        "image": "Irudia ez da erregistratua izan",
         "community": {
-            "required": "Izar batez markatuak diren eremu guziak baitezpadakoak dira",
-            "create": "Komunitatearen sortzeak huts egin du",
-            "name": "Komunitate hori jadanik existitzen da, beste izen bat erabil ezazu otoi"
+            "required": "Izar batez markatuak diren idatz-eremuak beharrezkoak dira",
+            "create": "Komunitate sortzeak huts egin du",
+            "name": "Komunitate hau bada jadanik, beste izen bat erabil ezazu"
         }
     },
     "form": {
         "domain": {
-            "error": "Sailaren izena zehatz ezazu formatu onean",
-            "label": "Sailaren murrizketa",
-            "tooltips": "Komunitatearen sarbidea e-mezu berezi batzuetara mugatu nahi baduzu, sail honetako izenak balia itzazu (adibidez: monentreprise.fr)"
+            "error": "Domeinu izena idatz ezazu formatu egokian",
+            "label": "Domeinuaren murrizketa",
+            "tooltips": "Komunitatearen sartzea helbide elektroniko zerbitzu batzueri mugatu nahi baduzu, domeinu izen hauek idatz itzazu (adibidez: monentreprise.fr) ; batez bereizia"
         },
         "address": {
-            "required": "Komunitatearen helbidea baitezpadakoa da",
-            "label": "Elkargoaren helbidea*"
+            "required": "Komunitatearen helbidea beharrezkoa da",
+            "label": "Komunitatearen helbidea*"
         },
         "avatar": {
-            "size": "Avatar-aren neurri handiena gainditua da",
-            "required": "Elkargoaren avatar-a baitezpadakoa da",
-            "label": "Elkargoaren avatar-a*"
+            "size": "Abatarraren gehienezko izaria pasatu duzu",
+            "required": "Komunitatearen abatarra beharrezkoa da",
+            "label": "Komunitatearen abatarra*"
         },
         "fullDescription": {
-            "required": "Komunitatearen aurkezpen zehatzak baitezpadakoa da",
-            "label": "Komunitatearen xehetsun zehatzak*"
+            "required": "Komunitatearen deskribapen zehatza beharrezkoa da",
+            "label": "Komunitatearen deskribapen zehatza*"
         },
         "description": {
-            "required": "Komunitatearen aurkezpen laburra baitezpadakoa da",
-            "label": "Komunitateaaren aurkezpen laburra*"
+            "required": "Komunitatearen deskribapen laburra beharrezkoa da",
+            "label": "Komunitatearen deskribapen motza*"
         },
         "name": {
-            "required": "Komunitatearen izena baitezpadakoa da",
+            "required": "Komunitatearen izena beharrezkoa da",
             "label": "Komunitatearen* izena"
         }
     },

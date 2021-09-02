@@ -47,6 +47,9 @@ use App\Gamification\Resource\BadgesBoard;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use App\Gamification\Interfaces\GamificationRuleInterface;
+use App\Communication\Repository\MessageRepository;
+use App\Gamification\Repository\RewardStepRepository;
+use App\Gamification\Repository\RewardRepository;
 
 /**
  * Gamification Manager
@@ -61,6 +64,9 @@ class GamificationManager
     private $entityManager;
     private $eventDispatcher;
     private $gamificationNotifier;
+    private $messageRepository;
+    private $rewardStepRepository;
+    private $rewardRepository;
 
     public function __construct(
         SequenceItemRepository $sequenceItemRepository,
@@ -68,7 +74,10 @@ class GamificationManager
         BadgeRepository $badgeRepository,
         EntityManagerInterface $entityManager,
         EventDispatcherInterface $eventDispatcher,
-        GamificationNotifier $gamificationNotifier
+        GamificationNotifier $gamificationNotifier,
+        MessageRepository $messageRepository,
+        RewardStepRepository $rewardStepRepository,
+        RewardRepository $rewardRepository
     ) {
         $this->sequenceItemRepository = $sequenceItemRepository;
         $this->logRepository = $logRepository;
@@ -76,6 +85,9 @@ class GamificationManager
         $this->entityManager = $entityManager;
         $this->eventDispatcher = $eventDispatcher;
         $this->gamificationNotifier = $gamificationNotifier;
+        $this->messageRepository = $messageRepository;
+        $this->rewardStepRepository = $rewardStepRepository;
+        $this->rewardRepository = $rewardRepository;
     }
     
     /**
@@ -273,6 +285,21 @@ class GamificationManager
     }
 
     /**
+     * Get the Badges earned by a User
+     *
+     * @param User $user
+     * @return array|null
+     */
+    public function getBadgesEarned(User $user): ?array
+    {
+        $badges = [];
+        foreach ($user->getRewards() as $reward) {
+            $badges[] = $reward->getBadge();
+        }
+        return $badges;
+    }
+
+    /**
      * Take a ValidationStep and take the necessary actions about it (RewardStep, Badge...)
      *
      * @param ValidationStep $validationStep   The ValidationStep to treat
@@ -349,5 +376,39 @@ class GamificationManager
     public function handleGamificationNotification(GamificationNotificationInterface $gamificationNotification)
     {
         $this->gamificationNotifier->addNotification($gamificationNotification);
+    }
+
+    /**
+     * Tag a RewardStep as notified
+     *
+     * @param int $id    Id of the RewardStep to tag
+     * @return RewardStep
+     */
+    public function tagRewardStepAsNotified(int $id): RewardStep
+    {
+        if ($rewardStep = $this->rewardStepRepository->find($id)) {
+            $rewardStep->setNotifiedDate(new \DateTime('now'));
+            $this->entityManager->persist($rewardStep);
+            $this->entityManager->flush();
+            return $rewardStep;
+        }
+        throw new \LogicException("No RewardStep found");
+    }
+
+    /**
+     * Tag a Reward as notified
+     *
+     * @param int $id    Id of the RewardStep to tag
+     * @return Reward
+     */
+    public function tagRewardAsNotified(int $id): Reward
+    {
+        if ($reward = $this->rewardRepository->find($id)) {
+            $reward->setNotifiedDate(new \DateTime('now'));
+            $this->entityManager->persist($reward);
+            $this->entityManager->flush();
+            return $reward;
+        }
+        throw new \LogicException("No Reward found");
     }
 }

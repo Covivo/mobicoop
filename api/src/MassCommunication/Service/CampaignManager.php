@@ -68,6 +68,7 @@ class CampaignManager
         string $mailerClientTemplateId,
         string $mailerReplyTo,
         string $mailerSenderEmail,
+        string $mailerSenderName,
         string $mailerIp,
         string $mailerDomain,
         string $smsProvider,
@@ -92,11 +93,12 @@ class CampaignManager
         $this->mailerClientTemplateId = $mailerClientTemplateId;
         $this->mailerReplyTo = $mailerReplyTo;
         $this->mailerSenderEmail = $mailerSenderEmail;
+        $this->mailerSenderName = $mailerSenderName;
         $this->mailerIp = $mailerIp;
         $this->mailerDomain = $mailerDomain;
         switch ($mailerProvider) {
             case self::MAIL_PROVIDER_SENDINBLUE:
-                $this->massEmailProvider = new SendinBlueProvider($mailerApiKey, $mailerClientId, $mailerReplyTo, $mailerSenderEmail, $mailerClientTemplateId);
+                $this->massEmailProvider = new SendinBlueProvider($mailerApiKey, $mailerClientId, $mailerSenderName, $mailerSenderEmail, $mailerReplyTo, $mailerClientTemplateId);
                 break;
         }
     }

@@ -385,11 +385,15 @@ services:
     'App\Editorial\Admin\DataProvider\EditorialCollectionDataProvider':
         arguments:
             $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
+    
     App\Editorial\EntityListener\EditorialListener:
-        arguments: ['@App\Editorial\Repository\EditorialRepository']
+        arguments:
+            $editorialRepository: '@App\Editorial\Repository\EditorialRepository'
+            $dataUri: '%env(string:DATA_URI)%'
         tags:
             - { name: doctrine.orm.entity_listener, event: postPersist, lazy: true } # lazy set to true to avoid doctrine UnitOfWork error on insert
             - { name: doctrine.orm.entity_listener, event: postUpdate, lazy: true }  # lazy set to true to avoid doctrine UnitOfWork error on insert
+            - { name: doctrine.orm.entity_listener, event: postLoad, lazy: true }  # lazy set to true to avoid doctrine UnitOfWork error on insert
 
     # Event
     App\Event\Controller\:
@@ -547,6 +551,9 @@ services:
         arguments:
             $types: '%images%'
             $dataUri: '%env(string:DATA_URI)%'
+        tags:
+            - { name: monolog.logger, channel: maintenance }
+    
             
     # Import
     App\Import\Controller\:
@@ -594,6 +601,7 @@ services:
             $mailerClientTemplateId: '%env(string:MASS_MAILER_CLIENT_TEMPLATE_ID)%'
             $mailerReplyTo: '%env(string:MASS_MAILER_REPLYTO)%'
             $mailerSenderEmail: '%env(string:MASS_MAILER_SENDER_EMAIL)%'
+            $mailerSenderName: '%env(string:MASS_MAILER_SENDER_NAME)%'
             $mailerDomain: '%env(string:MASS_MAILER_DOMAIN)%'
             $mailerIp: '%env(string:MASS_MAILER_IP)%'
             $smsProvider: '%env(string:MASS_SMS_PROVIDER)%'
@@ -604,12 +612,14 @@ services:
         arguments:
             $mailTemplate: '%env(string:MASS_MAILER_BASE_TEMPLATE)%'
             $mailerProvider: '%env(string:MASS_MAILER_PROVIDER)%'
+            $mailerProviderIpRange: '%env(json:MASS_MAILER_PROVIDER_IPRANGE)%'
             $mailerApiKey: '%env(string:MASS_MAILER_API_KEY)%'
             $mailerClientName: '%env(string:MASS_MAILER_CLIENT_NAME)%'
             $mailerClientId: '%env(int:MASS_MAILER_CLIENT_ID)%'
             $mailerClientTemplateId: '%env(string:MASS_MAILER_CLIENT_TEMPLATE_ID)%'
             $mailerReplyTo: '%env(string:MASS_MAILER_REPLYTO)%'
             $mailerSenderEmail: '%env(string:MASS_MAILER_SENDER_EMAIL)%'
+            $mailerSenderName: '%env(string:MASS_MAILER_SENDER_NAME)%'
             $mailerDomain: '%env(string:MASS_MAILER_DOMAIN)%'
             $mailerIp: '%env(string:MASS_MAILER_IP)%'
             $smsProvider: '%env(string:MASS_SMS_PROVIDER)%'
@@ -841,6 +851,10 @@ services:
             $params:
                 avatarSizes: '%env(string:AVATAR_SIZES)%'
                 avatarDefaultFolder: '%env(string:AVATAR_DEFAULT_FOLDER)%'          
+
+    App\User\Admin\DataProvider\UserCollectionDataProvider:
+        arguments:
+            $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
 
     # Utility
     App\Utility\Service\VersionManager:

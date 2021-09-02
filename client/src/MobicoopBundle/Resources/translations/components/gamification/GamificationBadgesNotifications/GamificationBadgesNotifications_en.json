@@ -7,5 +7,7 @@
     "checkbox": {
         "label":"Ne plus voir ces messages"
     },
-    "close":"Fermer"
+    "close":"Fermer",
+    "urlGiphySource": "/copyrighted-content_sources.txt",
+    "routeTagAsNotified":"/gamification/tagRewardAsNotified"
 }

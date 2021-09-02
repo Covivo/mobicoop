@@ -2,24 +2,24 @@
     "rgpd": {
         "link": {
             "route": "/cgu",
-            "label": "Zure datuen kudeaketa eta eskubideei buruz gehiago jakiteko."
+            "label": "Zure datuen kudeaketaz eta eskubideetaz buruz gehiago jakiteko."
         },
-        "infos": "Formulario honetik biltzen diren argibideak beharrezkoak dira Mobicoop aplikazioak proposatzen dituen zerbitzuen erabiltzeko.",
-        "socialServicesUnavailableWithoutConsent": "Erabilia izateko, sare sozialetik konektatzeko funtzionalitatea, orrialde azpian eskuratu dezakezun \"cookies kudeaketa\" tresna onartu beharko duzu.",
-        "consent": "Konektatu ahal izateko orri azpian atxemnen duzu loturan \"konexio aktiboa mantendu\" onartu beharko duzu , \"cookies kudeaketa\" tresnari esker."
+        "infos": "Formulario honetatik biltzen diren argibideak beharrezkoak dira Mobicoop aplikazioak proposatzen dituen zerbitzuen erabiltzeko.",
+        "socialServicesUnavailableWithoutConsent": "Erabilia izateko, sare sozialetik konektatzeko funtzionalitatea, orri-oinean eskura dezakezu \"cookies kudeaketa\" tresnari esker onartu behar duzuna.",
+        "consent": "Konektatua izateko, \"Zure konexioa aktibo atxiki\" onartua izan behar duzu \"Cookies-en kudeaketa\" orri-oineko loturan eskuragarri den tresnari esker, eta orria erreberri ezazu."
     },
     "button": {
         "register": "Izena ematen dut",
-        "next": "Hurrengoa",
+        "next": "Ondokoa",
         "previous": "Aitzinekoa"
     },
     "urlLogin": "/utilisateur/connexion/",
-    "login": "Jadanik kontu bat baduzu? Identifika zaitez!",
+    "login": "Kontu bat baduzu Jadanik ? Identifika zaitez!",
     "snackbar": {
         "joinCommunity": {
-            "textError": "Huts bat agertu da, berriz saia ezazu.",
-            "textOkAutoValidation": "Zure kidetza eskaera onartua izan da.",
-            "textOkManualValidation": "Zure kidetza eskaera igorria izan zaio erreferenteari. E-mezuz informatua izan zira."
+            "textError": "Huts bat gertatu da, berriz entsea zaitez.",
+            "textOkAutoValidation": "Zure kide izateko eskaera onartua da.",
+            "textOkManualValidation": "Zure kide izateko eskaera igorria izan zaio erreferenteari. E-mezuz jakinean ezarria izanen zira."
         }
     },
     "steps": {
@@ -27,61 +27,61 @@
         "4": "Sorteguna",
         "3": "Generoa",
         "2": "Nortasuna",
-        "1": "Erabiltzailearen izena"
+        "1": "Erabiltzailearen izena eta pasahitza"
     },
-    "step": "Urratsa",
+    "step": "Etapa",
     "communities": {
         "route": "/utilisateur/inscription/liste-des-communautes",
-        "label": "Komunitatean sartu"
+        "label": "Komunitate batean sartu"
     },
     "legalAge": {
-        "required": "Baitezpadakoa",
+        "required": "Beharrezkoa",
         "text": "Baieztatzen dut gutienez 18 urte ditudala"
     },
     "newsSubscription": {
-        "text": "Onartzen dut zerbitzuaren egunerokotasunak eskuratzea (autokidetza egiteko informazio baliagarriak, zerbitzu berriak edo funtzionalitate berriak)"
+        "text": "Onartzen dut zerbitzuaren aktualitateak ukaitea (autokidetzan ibiltzeko informazio baliagarriak, zerbitzu berriak edo funtzionalitate berriak)"
     },
     "chart": {
-        "required": "Ituna baieztatzea baitezpadakoa da",
+        "required": "Itunaren baieztapena beharrezkoa da",
         "route": "/cgu",
-        "link": "plataformaren ituna eta bere datuak babesteko politika",
+        "link": "plataformaren ituna eta bere datuen babesteko duen politika",
         "text": "Onartzen dut "
     },
     "checkEmail": {
-        "error": "Helbide elektroniko hori jadanik hartua da",
+        "error": "Helbide elektroniko hau jadanik erabilia da",
         "url": "/utilisateur/verif/email"
     },
     "password": {
         "errors": {
             "number": "Pasahitzak zenbaki bat izan behar du.",
-            "lower": "Pasahitza minuskula bat izan behar du.",
+            "lower": "Pasahitzak minuskula bat izan behar du.",
             "upper": "Pasahitzak maiuskula bat izan behar du.",
-            "min": "Pasahitzak gutxienez 8 karaktere ditu.",
-            "required": "Pasahitza baitezpadakoa da"
+            "min": "Pasahitzak gutienez 8 karaktere izan behar ditu.",
+            "required": "Pasahitza beharrezkoa da"
         },
         "placeholder": "Pasahitza"
     },
     "phone": {
         "errors": {
-            "valid": "Mugikor telefonoa bali izan behar da",
-            "required": "Mugikor zenbakia baitezpadakoa da"
+            "valid": "Telefono zenbakia bali izan behar da",
+            "required": "Telefono zenbakia beharrezkoa da"
         },
-        "placeholder": "Mugikorra"
+        "placeholder": "Telefono mugikorra"
     },
     "email": {
         "errors": {
-            "valid": "Helbide elektrioa bali izan behar da",
-            "required": "Helbide elektronikoa baitezpadakoa da"
+            "valid": "Helbide elektronikoa bali izan behar da",
+            "required": "Helbide elektronikoa beharrezkoa da"
         },
         "placeholder": "Helbide elektronikoa"
     },
     "homeTown": {
-        "placeholder": "Bzilekuaren herria"
+        "placeholder": "Bizileku herria"
     },
     "birthDay": {
         "errors": {
-            "notadult": "16 urte behar dituzu plataforman izena emateko",
-            "required": "Sorteguna baitezpadakoa da"
+            "notadult": "16 urte beteak behar dituzu plataforman izena emateko",
+            "required": "Sorteguna beharrezkoa da"
         }
     },
     "birthDate": {
@@ -89,19 +89,19 @@
     },
     "familyName": {
         "errors": {
-            "required": "Deitura baitezpadakoa da"
+            "required": "Deitura beharrezkoa da"
         },
         "placeholder": "Deitura"
     },
     "givenName": {
         "errors": {
-            "required": "Izena baitezpadakoa da"
+            "required": "Izena beharrezkoa da"
         },
         "placeholder": "Izena"
     },
     "gender": {
         "errors": {
-            "required": "Zibilitatea baitezpadakoa da"
+            "required": "Zibilitatea beharrezkoa da"
         },
         "values": {
             "other": "Beste",

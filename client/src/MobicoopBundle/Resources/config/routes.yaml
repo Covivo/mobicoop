@@ -86,6 +86,14 @@ user_login_result:
         de: /benutzer/anmeldung/{proposalId}
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::login
 
+user_login_event:
+    path:
+        fr: /utilisateur/connexion/evenement/{eventId}
+        en: /user/login/event/{eventId}
+        nl: /user/login/event/{eventId}
+        de: /user/login/event/{eventId}
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::login
+
 user_login_token:
     path:
         fr: /utilisateur/login-token
@@ -134,6 +142,14 @@ user_sign_up_result:
         fr: /utilisateur/inscription/{proposalId}
         en: /user/signup/{proposalId}
         nl: /user/signup/{proposalId}
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userSignUp
+
+
+user_sign_up_event:
+    path:
+        fr: /utilisateur/inscription/evenement/{eventId}
+        en: /user/signup/evenement/{eventId}
+        nl: /user/signup/evenement/{eventId}
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userSignUp
 
 user_sign_up_validation:
@@ -1305,6 +1321,31 @@ LastExternalArticles:
         nl: /articles/last/extern
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::lastExternalArticles
 
+# display "I'm a private person"
+iAmAPerson:
+    path:
+        fr: /je-suis-un-particulier
+        en: /i-am-private-person
+        nl: /i-am-private-person
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showIAmPrivatePerson
+
+# display "I'm a private person"
+iAmASociety:
+    path:
+        fr: /je-suis-une-entreprise
+        en: /i-am-society
+        nl: /i-am-society
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showIAmSociety
+
+# Get the last external articles (AJAX)
+editorial:
+    methods: [POST]
+    path:
+        fr: /editorials
+        en: /editorials
+        nl: /editorials
+    controller: Mobicoop\Bundle\MobicoopBundle\Editorial\Controller\EditorialController::getEditorial
+
 
 ####################
 # geography routes #
@@ -1378,6 +1419,15 @@ event_get_list:
         en: /events/getEventList
         nl: /events/getEventList
     controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::getEventList
+
+get_last_events_created:
+    methods: [POST]
+    path:
+        fr: /evenements/getLastEventsCreated
+        en: /events/getLastEventsCreated
+        nl: /events/getLastEventsCreated
+    controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::getLastEventCreated
+
 
 # display events
 event_list:
@@ -1550,6 +1600,29 @@ payment_week_first:
         nl: /getFirstWeek
     controller: Mobicoop\Bundle\MobicoopBundle\Payment\Controller\PaymentController::getFirstWeek    
 
+
+#######################
+# Gamification routes #
+#######################
+
+# Tag the given rewardsteps as notified
+gamification_tag_rewardsteps_as_notified:
+    methods: [POST]
+    path:
+        fr: /gamification/tagRewardStepAsNotified
+        en: /gamification/tagRewardStepAsNotified
+        nl: /gamification/tagRewardStepAsNotified
+    controller: Mobicoop\Bundle\MobicoopBundle\Gamification\Controller\GamificationController::tagRewardStepsAsNotified 
+
+# Tag the given reward as notified
+gamification_tag_reward_as_notified:
+    methods: [POST]
+    path:
+        fr: /gamification/tagRewardAsNotified
+        en: /gamification/tagRewardAsNotified
+        nl: /gamification/tagRewardAsNotified
+    controller: Mobicoop\Bundle\MobicoopBundle\Gamification\Controller\GamificationController::tagRewardAsNotified 
+
 ###############
 # misc routes #
 ###############
@@ -1585,3 +1658,14 @@ page_no_longer_exists:
         en: /page-no-longer-exists
         nl: /page-no-longer-exists
     controller: Mobicoop\Bundle\MobicoopBundle\Controller\DefaultController::getPageNoLongerExists
+
+###############
+# stats routes #
+###############
+home_stats_indicators:
+    methods: [POST]
+    path:
+        fr: /stats/home
+        en: /stats/home
+        nl: /stats/home
+    controller: Mobicoop\Bundle\MobicoopBundle\Stats\Controller\StatsController::getHomeStatsIndicators

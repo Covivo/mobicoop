@@ -41,8 +41,9 @@ use Exception;
 class SendinBlueProvider implements CampaignProviderInterface
 {
     private $folderId;
-    private $replyTo;
+    private $senderName;
     private $senderEmail;
+    private $replyTo;
     private $templateId;
     private $contactsApi;
     private $emailCampaignApi;
@@ -58,15 +59,17 @@ class SendinBlueProvider implements CampaignProviderInterface
      *
      * @param string $key           The api key
      * @param int $folderId         The ID for the SendinBlue folder
-     * @param string $replyTo       The replayTo email
-     * @param string $sender        The sender Email
-     * @param string $templateId   The ID for the SendinBlue template
+     * @param string $senderName    The sender name
+     * @param string $senderEmail   The sender email
+     * @param string $replyTo       The replyTo email
+     * @param string $templateId    The ID for the SendinBlue template
      */
-    public function __construct(string $key, int $folderId, string $replyTo, string $senderEmail, string $templateId)
+    public function __construct(string $key, int $folderId, string $senderName, string $senderEmail, string $replyTo, string $templateId)
     {
         $this->folderId = $folderId;
         $this->replyTo = $replyTo;
         $this->senderEmail = $senderEmail;
+        $this->senderName = $senderName;
         $this->templateId = $templateId;
         // implement sendinBlue php library
         $config = SendinBlueClient\Configuration::getDefaultConfiguration()->setApiKey('api-key', $key);
@@ -141,7 +144,7 @@ class SendinBlueProvider implements CampaignProviderInterface
 
         // We create the campaign
         $emailCampaigns = new SendinBlueClient\Model\CreateEmailCampaign();
-        $emailCampaigns['sender'] = ['name' => $sender->getUser()->getGivenName().' '.$sender->getUser()->getShortFamilyName(), 'email' => $this->senderEmail];
+        $emailCampaigns['sender'] = ['name' => $this->senderName, 'email' => $this->senderEmail];
         $emailCampaigns['name'] = $createList['name'];
         $emailCampaigns['htmlContent'] = $body;
         if ($this->templateId != '') {

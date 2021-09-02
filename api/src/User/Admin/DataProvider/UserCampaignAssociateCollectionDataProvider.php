@@ -153,6 +153,6 @@ final class UserCampaignAssociateCollectionDataProvider implements CollectionDat
         // "associate" the users to the campaign (just complete the informations of the campaign, and create deliveries if selection)
         $this->campaignManager->associateUsers($campaign, $users, $filters);
 
-        return [count($users)];
+        return [iterator_count($users)];
     }
 }

@@ -1,4 +1,6 @@
 {
     "gamification":"Action de ludification",
-    "community_joined":"Vous avez rejoins une communauté"
+    "community_joined":"Vous avez rejoins une communauté",
+    "nextABadge": " Bientôt le badge '{badgeName}'?",
+    "routeTagAsNotified":"/gamification/tagRewardStepAsNotified"
 }

@@ -11,6 +11,8 @@ cache:
 stages:
   - deploy
   - prod_deploy
+  - admin_test_deploy
+  - admin_prod_deploy 
       
 #
 # Deployment for dev branch

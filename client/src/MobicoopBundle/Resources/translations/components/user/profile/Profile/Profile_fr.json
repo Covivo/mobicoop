@@ -24,11 +24,6 @@
     "snackBar": {
         "passwordUpdated": "Mot de passe mis à jour",
         "textSnackError": "Erreur dans la mise à jour du mot de passe"
-    },    
-    "publicProfile":{
-        "title":"Profil public",
-        "see":"Voir profil public",
-        "close":"Fermer"
     },
     "errors": {
         "required": "Le mot de passe est requis",

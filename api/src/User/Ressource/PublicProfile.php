@@ -131,6 +131,13 @@ class PublicProfile
      */
     private $reviews;
 
+    /**
+     * @var array|null Badges won by this user
+     *
+     * @Groups({"readPublicProfile"})
+     */
+    private $badges;
+
     public function __construct($id=null)
     {
         if (!is_null($id)) {
@@ -244,6 +251,18 @@ class PublicProfile
     public function setReviews(?array $reviews): self
     {
         $this->reviews = $reviews;
+
+        return $this;
+    }
+
+    public function getBadges(): ?array
+    {
+        return $this->badges;
+    }
+
+    public function setBadges(?array $badges): self
+    {
+        $this->badges = $badges;
 
         return $this;
     }

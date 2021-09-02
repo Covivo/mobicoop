@@ -29,14 +29,16 @@ use Symfony\Component\HttpFoundation\File\File;
 use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
 use Mobicoop\Bundle\MobicoopBundle\Event\Entity\Event;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community;
+use Mobicoop\Bundle\MobicoopBundle\Editorial\Entity\Editorial;
 use Mobicoop\Bundle\MobicoopBundle\RelayPoint\Entity\RelayPoint;
 use Mobicoop\Bundle\MobicoopBundle\RelayPoint\Entity\RelayPointType;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
+use Mobicoop\Bundle\MobicoopBundle\Gamification\Entity\GamificationEntity;
 
 /**
  * An image.
  */
-class Image implements ResourceInterface, \JsonSerializable
+class Image extends GamificationEntity implements ResourceInterface, \JsonSerializable
 {
     /**
      * @var int The id of this image.
@@ -167,6 +169,11 @@ class Image implements ResourceInterface, \JsonSerializable
     private $relayPointType;
     
     /**
+     * @var Editorial |null The Editorial associated with the image.
+     */
+    private $editorial;
+
+    /**
      * @var array|null The versions of with the image.
      *
      */
@@ -261,7 +268,12 @@ class Image implements ResourceInterface, \JsonSerializable
      * @Groups({"post","put"})
      */
     private $relayPointTypeId;
-        
+
+    /**
+     * @var string|null The full url of the image. Used in specific situation (need a Listener)
+     */
+    private $url;
+
     public function __construct($id=null)
     {
         if ($id) {
@@ -506,6 +518,18 @@ class Image implements ResourceInterface, \JsonSerializable
         return $this;
     }
 
+    public function getEditorial(): ?Editorial
+    {
+        return $this->editorial;
+    }
+    
+    public function setEditorial(?Editorial $editorial): self
+    {
+        $this->editorial = $editorial;
+        
+        return $this;
+    }
+
     public function getVersions(): ?array
     {
         return $this->versions;
@@ -616,6 +640,16 @@ class Image implements ResourceInterface, \JsonSerializable
         $this->relayPointTypeId = $relayPointTypeId;
     }
 
+    public function getUrl(): ?string
+    {
+        return $this->url;
+    }
+    
+    public function setUrl(?string $url)
+    {
+        $this->url = $url;
+    }
+
     public function jsonSerialize()
     {
         return
@@ -623,7 +657,10 @@ class Image implements ResourceInterface, \JsonSerializable
             'id'                => $this->getId(),
             'iri'               => $this->getIri(),
             'name'              => $this->getName(),
+            'fileName'          => $this->getFileName(),
             'versions'          => $this->getVersions(),
+            'url'               => $this->getUrl(),
+            'gamificationNotifications'     => $this->getGamificationNotifications()
         ];
     }
 }

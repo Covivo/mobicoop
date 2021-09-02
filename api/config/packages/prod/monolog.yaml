@@ -1,10 +1,11 @@
 monolog:
     handlers:
         main:
-            type:               fingers_crossed
+            type:               rotating_file
             action_level:       info
+            max_files: 30
             handler:            grouped
-            channels:           ["!carpool", "!carpool_dynamic", "!carpool_proof", "!communication", "!community", "!geography", "!mass", "!notification", "!faker", "!solidary"]
+            channels:           ["!carpool", "!carpool_dynamic", "!carpool_proof", "!communication", "!community", "!geography", "!maintenance", "!mass", "!notification", "!faker", "!solidary"]
         grouped:
             type:               group
             members:            [streamed]
@@ -56,6 +57,24 @@ monolog:
             max_files: 30
             path: "%kernel.logs_dir%/geography.log"
             channels: [geography]
+        geomatcher:
+            type: rotating_file
+            level: debug
+            max_files: 30
+            path: "%kernel.logs_dir%/geomatcher.log"    
+            channels: [geography]
+        georouter:
+            type: rotating_file
+            level: debug
+            max_files: 30
+            path: "%kernel.logs_dir%/georouter.log"
+            channels: [geography]
+        maintenance:
+            type: rotating_file
+            level: info
+            max_files: 30
+            path: "%kernel.logs_dir%/maintenance.log"
+            channels: [maintenance]    
         mass:
             type: rotating_file
             level: info

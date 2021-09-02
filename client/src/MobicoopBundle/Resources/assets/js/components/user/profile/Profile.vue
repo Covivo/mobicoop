@@ -61,21 +61,12 @@
               </v-tab>
               <!-- ACCOUNT -->
               <v-tab-item>
-                <div class="text-right">
-                  <v-btn
-                    class="mt-4"
-                    color="primary"
-                    rounded
-                    @click="dialog = true"
-                  >
-                    {{ $t('publicProfile.see') }}
-                  </v-btn>
-                </div>
                 <UpdateProfile
                   :user="user"
                   :geo-search-url="geoSearchUrl"
                   :age-min="ageMin"
                   :age-max="ageMax"
+                  :age-display="ageDisplay"
                   :avatar-size="avatarSize"
                   :url-alt-avatar="urlAltAvatar"
                   :avatar-version="avatarVersion"
@@ -141,39 +132,6 @@
         </v-tabs>
       </v-col>
     </v-row>
-
-    <!-- PUBLIC PROFILE DIALOG -->
-    <v-dialog
-      v-model="dialog"
-      width="100%"
-    >
-      <v-card>
-        <v-card-title class="headline grey lighten-2">
-          {{ $t('publicProfile.title') }}
-        </v-card-title>
-
-        <v-card-text>
-          <PublicProfile
-            :user="user"
-            :show-report-button="false"
-            :age-display="ageDisplay"
-          />
-        </v-card-text>
-
-        <v-divider />
-
-        <v-card-actions>
-          <v-spacer />
-          <v-btn
-            color="primary"
-            text
-            @click="dialog = false"
-          >
-            {{ $t('publicProfile.close') }}
-          </v-btn>
-        </v-card-actions>
-      </v-card>      
-    </v-dialog>    
   </v-container>
 </template>
 
@@ -186,7 +144,6 @@ import Alerts from "@components/user/profile/Alerts";
 import CarpoolSettings from "@components/user/profile/CarpoolSettings";
 import BankAccount from "@components/user/profile/payment/BankAccount";
 import ProfileSummary from "@components/user/profile/ProfileSummary";
-import PublicProfile from "@components/user/profile/PublicProfile";
 import ReviewDashboard from "@components/user/profile/review/ReviewDashboard";
 
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/profile/Profile/";
@@ -208,7 +165,6 @@ export default {
     Carpools,
     BankAccount,
     ProfileSummary,
-    PublicProfile,
     ReviewDashboard
   },
   props: {
@@ -272,7 +228,6 @@ export default {
   data(){
     return{
       modelTabs:(this.tabDefault !== "") ? this.tabDefault : "myAds",
-      dialog:false,
       publishedAds: {},
       acceptedAds: {}
     }
