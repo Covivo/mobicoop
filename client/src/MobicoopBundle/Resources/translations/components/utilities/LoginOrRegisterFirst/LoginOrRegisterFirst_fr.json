@@ -8,5 +8,7 @@
     "loginUrlProposalId": "/utilisateur/connexion/{id}",
     "registerUrlProposalId": "/utilisateur/inscription/{id}",
     "loginUrlEventId": "/utilisateur/connexion/evenement/{id}",
-    "registerUrlEventId": "/utilisateur/inscription/evenement/{id}"
+    "registerUrlEventId": "/utilisateur/inscription/evenement/{id}",
+    "loginUrlPublish": "/utilisateur/connexion/redirect/publier",
+    "registerUrlPublish": "/utilisateur/inscription/redirect/publier"
 }

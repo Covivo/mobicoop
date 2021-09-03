@@ -111,8 +111,12 @@
         "placeholder": "Aanspreektitel",
         "label": "Aanspreektitel"
     },
+    "urlRedirectAfterSignUpPublish": "/utilisateur/connexion/redirect/publier",
+    "urlRedirectAfterSignUpCommunity": "/utilisateur/connexion/communaute/{id}",
+    "urlRedirectAfterSignUpEvent": "/utilisateur/connexion/evenement/{id}",
     "urlRedirectAfterSignUpResult": "/utilisateur/connexion/{id}",
     "urlRedirectAfterSignUp": "/utilisateur/inscription/validation/{email}",
+    "urlSignUpEvent": "/utilisateur/inscription/evenement/{id}",
     "urlSignUpResult": "/utilisateur/inscription/{id}",
     "urlSignUp": "/utilisateur/inscription",
     "title": "Registreren"

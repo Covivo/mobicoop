@@ -41,50 +41,21 @@
           :cols="fullSize ? 12 : 6"
         >
           <v-row>
-            <v-tooltip
-            
-              bottom
-              color="info"
+            <v-col
+              cols="12"
+              md="6"
+              :class="classAlignSearchButton"
             >
-              <template v-slot:activator="{ on }">
-                <v-col
-                  v-if="!logged"
-                  cols="12"
-                  md="6"
-                  :class="classAlignPublishButton"
-                  v-on="on"
-                >
-                  <v-btn
-                    v-if="!hidePublish"
-                    outlined
-                    :disabled="(searchUnavailable || !logged) && !publishButtonAlwaysActive"
-                    rounded
-                    :loading="loadingPublish"
-                    @click="publish"
-                  >
-                    {{ $t('buttons.publish.label') }}
-                  </v-btn>
-                </v-col>
-                <v-col
-                  v-if="logged"
-                  cols="12"
-                  md="6"
-                  :class="classAlignSearchButton"
-                >
-                  <v-btn
-                    v-if="!hidePublish"
-                    outlined
-                    :disabled="searchUnavailable || !logged"
-                    rounded
-                    :loading="loadingPublish"
-                    @click="publish"
-                  >
-                    {{ $t('buttons.publish.label') }}
-                  </v-btn>
-                </v-col>
-              </template>
-              <span> {{ $t('tooltips.needConnection') }}</span>
-            </v-tooltip>
+              <v-btn
+                v-if="!hidePublish"
+                outlined
+                rounded
+                :loading="loadingPublish"
+                @click="publish"
+              >
+                {{ $t('buttons.publish.label') }}
+              </v-btn>
+            </v-col>
             <v-col
               :class="classAlignSearchButton"
               cols="12"
@@ -121,6 +92,11 @@
         />
       </v-col>
     </v-row>
+    <LoginOrRegisterFirst
+      :show-dialog="loginOrRegisterDialog"
+      type="publish"
+      @closeLoginOrRegisterDialog=" loginOrRegisterDialog = false "
+    />
   </v-main>
 </template>
 
@@ -131,6 +107,7 @@ import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/
 import {messages_client_en, messages_client_fr, messages_client_eu, messages_client_nl} from "@clientTranslations/components/carpool/search/Search/";
 import SearchJourney from "@components/carpool/search/SearchJourney";
 import SearchJourneyHorizontal from '@components/carpool/search/SearchJourneyHorizontal.vue';
+import LoginOrRegisterFirst from '@components/utilities/LoginOrRegisterFirst';
 
 let MessagesMergedEn = merge(messages_en, messages_client_en);
 let MessagesMergedNl = merge(messages_nl, messages_client_nl);
@@ -148,7 +125,8 @@ export default {
   },
   components: {
     SearchJourney,
-    SearchJourneyHorizontal
+    SearchJourneyHorizontal,
+    LoginOrRegisterFirst
   },
   props: {
     geoSearchUrl: {
@@ -244,6 +222,7 @@ export default {
       origin: this.defaultOrigin,
       destination: this.defaultDestination,
       locale: localStorage.getItem("X-LOCALE"),
+      loginOrRegisterDialog: false,
     };
   },
   computed: {
@@ -312,7 +291,8 @@ export default {
         };
         this.post(`${this.$t("buttons.publish.route")}`, lParams);
       }else{
-        window.location.href=this.$t("/utilisateur/connexion");
+        //window.location.href=this.$t("/utilisateur/connexion");
+        this.loginOrRegisterDialog = true;
       }
     },
   },
