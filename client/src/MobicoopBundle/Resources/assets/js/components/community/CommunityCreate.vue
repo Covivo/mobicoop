@@ -205,7 +205,6 @@ export default {
         newCommunity.append("address", JSON.stringify(this.communityAddress));
         if (this.domain) newCommunity.append("domain", this.domain);
         
-        localStorage.setItem('gamificationInLocalStorage','1');
         maxios 
           .post(this.$t('buttons.create.route'), newCommunity, {
             headers:{
