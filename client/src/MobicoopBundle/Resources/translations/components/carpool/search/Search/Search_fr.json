@@ -23,6 +23,10 @@
             "label": "Rechercher",
             "route": "covoiturage/recherche",
             "widgetRoute": "event/{id}/recherche/covoiturage"
+        },
+        "shareAnAd": {
+            "label": "Publier une annonce",
+            "route": "/covoiturage/publierannonce"
         }
     },
     "tooltips": {

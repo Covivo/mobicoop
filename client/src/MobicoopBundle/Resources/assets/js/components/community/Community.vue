@@ -164,31 +164,17 @@
                   </template>
                   <span>{{ $t("tooltips.connected") }}</span>
                 </v-tooltip>
-                <v-tooltip
-                  top
-                  color="info"
-                  :disabled="isLogged"
+                <v-btn
+                  v-if="isSecured == false"
+                  color="secondary"
+                  class="mt-3"
+                  rounded
+                  :loading="loading || (checkValidation && isLogged)"
+                  :disabled="checkValidation"
+                  @click="isLogged ? joinCommunityDialog = true : loginOrRegisterDialog = true"
                 >
-                  <template v-slot:activator="{ on, attrs }">
-                    <div
-                      v-bind="attrs"
-                      v-on="on"                    
-                    >
-                      <v-btn
-                        v-if="isSecured == false"
-                        color="secondary"
-                        class="mt-3"
-                        rounded
-                        :loading="loading || (checkValidation && isLogged)"
-                        :disabled="!isLogged || checkValidation"
-                        @click="joinCommunityDialog = true"
-                      >
-                        {{ $t("buttons.join.label") }}
-                      </v-btn>
-                    </div>
-                  </template>
-                  <span>{{ $t("tooltips.connected") }}</span>
-                </v-tooltip>
+                  {{ $t("buttons.join.label") }}
+                </v-btn>
               </div>
 
               <!-- widget -->
@@ -370,6 +356,12 @@
         </v-card>
       </v-dialog>
     </v-container>
+    <LoginOrRegisterFirst
+      :id="community.id"
+      :show-dialog="loginOrRegisterDialog"
+      type="community"
+      @closeLoginOrRegisterDialog="loginOrRegisterDialog = false "
+    />
   </div>
 </template>
 <script>
@@ -378,6 +370,7 @@ import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/
 import CommunityMemberList from "@components/community/CommunityMemberList";
 import CommunityInfos from "@components/community/CommunityInfos";
 import Search from "@components/carpool/search/Search";
+import LoginOrRegisterFirst from '@components/utilities/LoginOrRegisterFirst';
 import CommunityLastUsers from "@components/community/CommunityLastUsers";
 import MMap from "@components/utilities/MMap/MMap";
 import L from "leaflet";
@@ -389,6 +382,7 @@ export default {
     Search,
     MMap,
     CommunityLastUsers,
+    LoginOrRegisterFirst
   },
   i18n: {
     messages: {
@@ -490,6 +484,7 @@ export default {
       directionWay: [],
       leaveCommunityDialog: false,
       joinCommunityDialog: false,
+      loginOrRegisterDialog: false,
       loading: false,
       snackbar: false,
       textSnackbar: null,

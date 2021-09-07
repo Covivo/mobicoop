@@ -47,7 +47,6 @@
                 <v-btn
                   v-if="!eventPassed"
                   color="secondary"
-                  :disabled="!publishButtonAlwaysActive && !isLogged"
                   rounded
                   @click="publish"
                 >

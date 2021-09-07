@@ -96,27 +96,27 @@ export default {
   },
   computed: {
     hrefLogin() {
-      if (this.id === null && this.type !== 'publish') return this.$t("loginUrl");
+      if (this.id === null) return this.$t("loginUrl");
       switch (this.type) {
       case 'proposal':
         return this.$t("loginUrlProposalId", {"id":this.id} );
       case 'event':
         return this.$t("loginUrlEventId", {"id":this.id} );
-      case 'publish':
-        return this.$t("loginUrlPublish");
+      case 'community':
+        return this.$t("loginUrlCommunityId", {"id":this.id} );
       default:
         return this.$t("loginUrl");
       }
     },
     hrefRegister() {
-      if (this.id === null && this.type !== 'publish') return this.$t("registerUrl");
+      if (this.id === null) return this.$t("registerUrl");
       switch (this.type) {
       case 'proposal':
         return this.$t("registerUrlProposalId", {"id":this.id} );
       case 'event':
         return this.$t("registerUrlEventId", {"id":this.id} );
-      case 'publish':
-        return this.$t("registerUrlPublish");
+      case 'community':
+        return this.$t("registerUrlCommunityId", {"id":this.id} );
       default:
         return this.$t("registerUrl");
       }

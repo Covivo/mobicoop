@@ -9,6 +9,6 @@
     "registerUrlProposalId": "/utilisateur/inscription/{id}",
     "loginUrlEventId": "/utilisateur/connexion/evenement/{id}",
     "registerUrlEventId": "/utilisateur/inscription/evenement/{id}",
-    "loginUrlPublish": "/utilisateur/connexion/redirect/publier",
-    "registerUrlPublish": "/utilisateur/inscription/redirect/publier"
+    "loginUrlCommunityId": "/utilisateur/connexion/communaute/{id}",
+    "registerUrlCommunityId": "/utilisateur/inscription/communaute/{id}"
 }

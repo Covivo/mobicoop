@@ -51,7 +51,7 @@
                 outlined
                 rounded
                 :loading="loadingPublish"
-                @click="publish"
+                :href="$t('buttons.shareAnAd.route')"
               >
                 {{ $t('buttons.publish.label') }}
               </v-btn>

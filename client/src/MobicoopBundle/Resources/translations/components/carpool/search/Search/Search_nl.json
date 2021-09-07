@@ -12,6 +12,10 @@
         "publish": {
             "route": "covoiturage/recherche/poster",
             "label": "Een advertentie publiceren"
+        },
+        "shareAnAd": {
+            "route": "/covoiturage/publierannonce",
+            "label": "Een advertentie publiceren"
         }
     },
     "datePicker": {
