@@ -30,7 +30,12 @@
                         <ul>
                             <li>Nom: <a style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}" href="{{api_env('EMAILS_PLATFORM_URL')}}/covoiturages-evenements/{{context.event.id}}/{{context.event.urlKey}}">{{ context.event.name }} </a></li>
                             <li>Adresse: {{ context.event.address.displayLabel[0] }} </li>
-                            <li>Description: {{ context.event.description }} </li>
+                            <li>Description: {{ context.event.description }} </li>  
+                            {% if context.event.private == true %} 
+                                <li> Lien de l'évenement privé à partager : <a style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}" href="{{api_env('EMAILS_PLATFORM_URL')}}/covoiturages-evenements/{{context.event.id}}/{{context.event.urlKey}}">{{api_env('EMAILS_PLATFORM_URL')}}/covoiturages-evenements/{{context.event.id}}/{{context.event.urlKey}}</a></li>
+                            {% endif %}
+
+
                         </ul>
                     </td>
                 </tr>    
