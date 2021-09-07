@@ -107,12 +107,18 @@ class TerritoryRepository
      *
      * @param float $latitude   Latitude of the point
      * @param float $longitude  Longitude of the point
-     * @return Territory[]|null       The territories
+     * @return array|null       The territories
      */
     public function findPointTerritories(float $latitude, float $longitude)
     {
-        $query = $this->repository->createQueryBuilder('t')
-            ->Where('ST_INTERSECTS(t.geoJsonDetail,ST_GEOMFROMTEXT(\'POINT('.$longitude.' '.$latitude.')\'))=1');
-        return $query->getQuery()->getResult();
+        $conn = $this->entityManager->getConnection();
+
+        // we get only structure's ids
+        $sql = "SELECT t.id FROM territory t
+        WHERE ST_INTERSECTS(t.geo_json_detail,ST_GEOMFROMTEXT('POINT($longitude $latitude)'))=1
+        ";
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll();
     }
 }
