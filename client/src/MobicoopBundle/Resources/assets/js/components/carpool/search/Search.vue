@@ -51,7 +51,7 @@
                 outlined
                 rounded
                 :loading="loadingPublish"
-                :href="$t('buttons.shareAnAd.route')"
+                @click="publish"
               >
                 {{ $t('buttons.publish.label') }}
               </v-btn>
@@ -92,11 +92,6 @@
         />
       </v-col>
     </v-row>
-    <LoginOrRegisterFirst
-      :show-dialog="loginOrRegisterDialog"
-      type="publish"
-      @closeLoginOrRegisterDialog=" loginOrRegisterDialog = false "
-    />
   </v-main>
 </template>
 
@@ -107,7 +102,6 @@ import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/
 import {messages_client_en, messages_client_fr, messages_client_eu, messages_client_nl} from "@clientTranslations/components/carpool/search/Search/";
 import SearchJourney from "@components/carpool/search/SearchJourney";
 import SearchJourneyHorizontal from '@components/carpool/search/SearchJourneyHorizontal.vue';
-import LoginOrRegisterFirst from '@components/utilities/LoginOrRegisterFirst';
 
 let MessagesMergedEn = merge(messages_en, messages_client_en);
 let MessagesMergedNl = merge(messages_nl, messages_client_nl);
@@ -125,8 +119,7 @@ export default {
   },
   components: {
     SearchJourney,
-    SearchJourneyHorizontal,
-    LoginOrRegisterFirst
+    SearchJourneyHorizontal
   },
   props: {
     geoSearchUrl: {
@@ -221,8 +214,7 @@ export default {
       time: null,
       origin: this.defaultOrigin,
       destination: this.defaultDestination,
-      locale: localStorage.getItem("X-LOCALE"),
-      loginOrRegisterDialog: false,
+      locale: localStorage.getItem("X-LOCALE")
     };
   },
   computed: {
@@ -291,8 +283,7 @@ export default {
         };
         this.post(`${this.$t("buttons.publish.route")}`, lParams);
       }else{
-        //window.location.href=this.$t("/utilisateur/connexion");
-        this.loginOrRegisterDialog = true;
+        window.location.href=this.$t("buttons.shareAnAd.route");
       }
     },
   },
