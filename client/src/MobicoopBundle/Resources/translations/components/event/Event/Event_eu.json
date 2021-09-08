@@ -33,7 +33,7 @@
             "route": "/utilisateur/connexion"
         },
         "publish": {
-            "route": "covoiturage/recherche/poster",
+            "route": "covoiturage/evenement/{id}/poster",
             "label": "Iragarki bat argitaratu"
         }
     }

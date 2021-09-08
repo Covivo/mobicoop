@@ -12,6 +12,8 @@
     "urlRecovery": "/benutzer/passwort/wiederherstellung",
     "urlLoginResult": "/benutzer/anmeldung/{id}",
     "urlLoginEvent":"/utilisateur/connexion/evenement/{id}",
+    "urlLoginCommunity":"/utilisateur/connexion/communaute/{id}",
+    "urlLoginPublish":"/utilisateur/connexion/redirect/publier",
     "urlLogin": "/benutzer/anmeldung",
     "userFBNotFound": "Dieser Facebook-Nutzer ist nicht auf der Plattform registriert",
     "errorCredentialsFacebook": "Fehler beim Anmelden über Facebook",

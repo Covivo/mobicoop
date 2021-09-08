@@ -72,7 +72,6 @@
                   <span class="font-weight-black"> {{ $t('endEvent.label') }} :  </span>{{ computedDateFormat(event.toDate.date) }}
                 </p>
                 <p
-                  v-id="event.url"
                   class="text-body-1 pa-3"
                 >
                   <span class="font-weight-black">{{ $t('website') }} : </span>

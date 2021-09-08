@@ -233,8 +233,9 @@
     
     <!-- login or register dialog -->
     <LoginOrRegisterFirst
+      :id="lProposalId"
       :show-dialog="loginOrRegisterDialog"
-      :proposal-id="lProposalId"
+      type="proposal"
       @closeLoginOrRegisterDialog=" loginOrRegisterDialog = false "
     />
   </div>

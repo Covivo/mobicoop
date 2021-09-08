@@ -22,6 +22,10 @@
         "search": {
             "label": "Search",
             "route": "carpool/search"
+        },
+        "shareAnAd": {
+            "label": "Publish",
+            "route": "/carpool/ad/post"
         }
     },
     "urlDate": "YMMDD"

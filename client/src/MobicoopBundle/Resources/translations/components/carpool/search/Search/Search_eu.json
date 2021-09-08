@@ -12,6 +12,10 @@
         "publish": {
             "route": "covoiturage/recherche/poster",
             "label": "Iragarki bat argitaratu"
+        },
+        "shareAnAd": {
+            "route": "/covoiturage/publierannonce",
+            "label": "Iragarki bat argitaratu"
         }
     },
     "datePicker": {

@@ -59,12 +59,12 @@
             <v-text-field
               id="password"
               v-model="password"
-              :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
+              :append-icon="showPwd ? 'mdi-eye' : 'mdi-eye-off'"
               :rules="passwordRules"
-              :type="show1 ? 'text' : 'password'"
+              :type="showPwd ? 'text' : 'password'"
               name="password"
               :label="$t('password')"
-              @click:append="show1 = !show1"
+              @click:append="showPwd = !showPwd"
             />
 
             <v-alert
@@ -172,21 +172,13 @@ export default {
       type: String,
       default: null
     },
-    proposalId: {
+    id: {
       type: Number,
       default: null
     },
-    eventId: {
-      type: Number,
-      default: null
-    },
-    initDestination: {
-      type: Object,
-      default: null
-    },
-    event: {
-      type: Object,
-      default: null
+    type: {
+      type: String,
+      default: 'default'
     },
     signUpLinkInConnection: {
       type: Boolean,
@@ -202,34 +194,35 @@ export default {
         v => !!v || this.$t("emailRequired"),
         v => /.+@.+/.test(v) || this.$t("emailInvalid")
       ],
-      show1: false,
+      showPwd: false,
       password: "",
       passwordRules: [
         v => !!v || this.$t("passwordRequired")
       ],
       errorDisplay: "",
-      action: this.getId,
       consent: false,
       consentSocial: false
     };
   },
-  watch: {
-    getId(){
-      if(this.proposalId !== null){
-        this.proposalId ? this.$t("urlLoginResult",{"id":this.proposalId}) : this.$t("urlLogin")
-        return this.proposalId
-      } else {
-        this.eventId ? this.$t("urlLoginEvent",{"id":this.eventId}) : this.$t("urlLogin")
-        return this.eventId
+  computed: {
+    action() {
+      if (this.id === null && this.type !== 'publish') return this.$t("urlLogin");
+      switch (this.type) {
+      case 'proposal':
+        return this.$t("urlLoginResult", {"id":this.id} );
+      case 'event':
+        return this.$t("urlLoginEvent", {"id":this.id} );
+      case 'community':
+        return this.$t("urlLoginCommunity", {"id":this.id} );
+      case 'publish':
+        return this.$t("urlLoginPublish");
+      default:
+        return this.$t("urlLogin");
       }
-    },
-  },
-  created () {
-    this.$set(this.initDestination, 'event', this.event);
+    }
   },
   mounted() {
     if(this.errormessage.value !== "") this.treatErrorMessage(this.errormessage);
-    //console.log(this.$i18n.messages)
     this.getConsent();
   },
   methods: {

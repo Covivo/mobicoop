@@ -2,7 +2,7 @@
     "buttons": {
         "publish": {
             "label": "Publier une annonce",
-            "route": "covoiturage/recherche/poster"
+            "route": "covoiturage/evenement/{id}/poster"
         },
         "login": {
             "route": "/utilisateur/connexion"

@@ -70,6 +70,8 @@ user_send_identity_validation_document:
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::sendIdentityValidationDocument
 
 # login
+
+## default login
 user_login:
     path:
         fr: /utilisateur/connexion
@@ -78,14 +80,16 @@ user_login:
         de: /benutzer/anmeldung
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::login
 
+## login after search
 user_login_result:
     path:
-        fr: /utilisateur/connexion/{proposalId}
-        en: /user/login/{proposalId}
-        nl: /user/login/{proposalId}
-        de: /benutzer/anmeldung/{proposalId}
+        fr: /utilisateur/connexion/{id}
+        en: /user/login/{id}
+        nl: /user/login/{id}
+        de: /benutzer/anmeldung/{id}
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::login
 
+## login from event page
 user_login_event:
     path:
         fr: /utilisateur/connexion/evenement/{eventId}
@@ -94,6 +98,27 @@ user_login_event:
         de: /user/login/event/{eventId}
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::login
 
+## login from community page
+user_login_community:
+    path:
+        fr: /utilisateur/connexion/communaute/{communityId}
+        en: /user/login/community/{communityId}
+        nl: /user/login/community/{communityId}
+        de: /user/login/community/{communityId}
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::login
+
+## login before publish
+user_login_publish:
+    path:
+        fr: /utilisateur/connexion/redirect/publier
+        en: /user/login/redirect/publish
+        nl: /user/login/redirect/publish
+        de: /user/login/redirect/publish
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::login
+    defaults:
+        redirect: "publish"
+
+## login after signup validation
 user_login_token:
     path:
         fr: /utilisateur/login-token
@@ -101,6 +126,7 @@ user_login_token:
         nl: /user/login-token
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userSignUpValidationCheck
 
+## login after email validation
 user_login_token_email:
     path:
         fr: /utilisateur/login-token/email
@@ -108,6 +134,7 @@ user_login_token_email:
         nl: /user/login-token/email
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userEmailValidationCheck
 
+## login delegation
 user_login_delegate:
     path:
         fr: /login-admin/{email}/{delegateEmail}
@@ -120,6 +147,8 @@ user_logout:
     path: /user/logout
 
 # sign up
+
+## default sign up
 user_sign_up:
     path:
         fr: /utilisateur/inscription
@@ -137,20 +166,39 @@ user_sign_up_community_list:
         nl: /user/register/community-list
     controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::getCommunityListForRegistration
 
+## signup after search result
 user_sign_up_result:
     path:
-        fr: /utilisateur/inscription/{proposalId}
-        en: /user/signup/{proposalId}
-        nl: /user/signup/{proposalId}
+        fr: /utilisateur/inscription/{id}
+        en: /user/signup/{id}
+        nl: /user/signup/{id}
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userSignUp
 
-
+## signup before publish for an event
 user_sign_up_event:
     path:
         fr: /utilisateur/inscription/evenement/{eventId}
         en: /user/signup/evenement/{eventId}
         nl: /user/signup/evenement/{eventId}
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userSignUp
+
+## signup before joining a community
+user_sign_up_community:
+    path:
+        fr: /utilisateur/inscription/communaute/{communityId}
+        en: /user/signup/community/{communityId}
+        nl: /user/signup/community/{communityId}
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userSignUp
+
+## signup before publish
+user_sign_up_publish:
+    path:
+        fr: /utilisateur/inscription/redirect/publier
+        en: /user/signup/redirect/publish
+        nl: /user/signup/redirect/publish
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userSignUp
+    defaults:
+        redirect: "publish"
 
 user_sign_up_validation:
     path:
@@ -619,6 +667,14 @@ carpool_ad_post_search:
         fr: /covoiturage/recherche/poster
         en: /carpool/search/post
         nl: /carpool/search/post
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdPostFromSearch
+
+# post an ad from an event
+carpool_ad_post_event:
+    path:
+        fr: /covoiturage/evenement/{eventId}/poster
+        en: /carpool/event/{eventId}/post
+        nl: /carpool/event/{eventId}/post
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdPostFromSearch
 
 # results
