@@ -62,6 +62,10 @@ class CarpoolProofGouvProvider implements ProviderInterface
      */
     public function postCollection(CarpoolProof $carpoolProof)
     {
+        if (is_null($carpoolProof->getAsk())) {
+            return new Response(418);
+        }
+
         // creation of the dataProvider
         $dataProvider = new DataProvider($this->uri, self::RESSOURCE_POST);
         

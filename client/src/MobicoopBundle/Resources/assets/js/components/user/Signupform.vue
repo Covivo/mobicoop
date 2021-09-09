@@ -87,7 +87,24 @@
           <SsoLogins class="justify-self-center" />
         </v-col>
       </v-row>
-
+      <v-row
+        v-if="signupRgpdInfos"
+      >
+        <v-col
+          cols="12"
+          align="center"
+        >
+          <p>
+            {{ $t('rgpd.infos') }}
+          </p>
+          <a
+            class="primary--text"
+            target="_blank"
+            :href="$t('rgpd.link.route')"
+          >{{ $t('rgpd.link.label') }}
+          </a>
+        </v-col>
+      </v-row>
       <v-row
         justify="center"
         align="center"
@@ -467,24 +484,6 @@
           </v-alert>
         </v-col>
       </v-row>
-      <v-row
-        v-if="signupRgpdInfos"
-      >
-        <v-col
-          cols="12"
-          align="center"
-        >
-          <p>
-            {{ $t('rgpd.infos') }}
-          </p>
-          <a
-            class="primary--text"
-            target="_blank"
-            :href="$t('rgpd.link.route')"
-          >{{ $t('rgpd.link.label') }}
-          </a>
-        </v-col>
-      </v-row>
     </v-container>
   </div>
 </template>
@@ -706,9 +705,7 @@ export default {
       },
       communities: [],
       selectedCommunity: null,
-      locale: localStorage.getItem("X-LOCALE"),
-      consent:false,
-      consentSocial: false
+      locale: localStorage.getItem("X-LOCALE")
     };
   },
   computed: {
@@ -754,6 +751,12 @@ export default {
       }
       return false;
     },
+    consent(){
+      return this.$store.getters['up/connectionActive'];
+    },
+    consentSocial(){
+      return this.$store.getters['up/social'];
+    }
   },
   watch: {
     menu(val) {
@@ -771,7 +774,6 @@ export default {
     },
   },
   mounted: function() {
-    this.getConsent();
     //get scroll target
     (this.container = document.getElementById("scroll-target")),
     this.getCommunities();
@@ -934,11 +936,6 @@ export default {
       maxios.post(this.$t("communities.route")).then((res) => {
         this.communities = res.data;
       });
-    },
-    getConsent(){
-      let cookiesPrefs = JSON.parse(localStorage.getItem('cookies_prefs'));
-      this.consent = (cookiesPrefs && cookiesPrefs.connectionActive);
-      this.consentSocial = (cookiesPrefs && cookiesPrefs.social);
     }
   },
 };

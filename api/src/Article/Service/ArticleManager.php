@@ -266,7 +266,7 @@ class ArticleManager
             libxml_clear_errors();
 
             if ($dom->getElementsByTagName('img')->length > 0) {
-                $image = $dom->getElementsByTagName('img')->item(0)->getAttribute('src');
+                $image = utf8_decode($dom->getElementsByTagName('img')->item(0)->getAttribute('src'));
                 $rssElement->setImage($image);
             }
 

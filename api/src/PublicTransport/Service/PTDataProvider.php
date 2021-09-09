@@ -102,8 +102,8 @@ class PTDataProvider
             $territories = $this->territoryRepository->findPointTerritories($origin_latitude, $origin_longitude);
             foreach ($territories as $territory) {
                 // If the territoryId is in the providers.json for PT, we use this one
-                if (isset($this->PTProviders[$territory->getId()])) {
-                    $territoryId = $territory->getId();
+                if (isset($this->PTProviders[$territory['id']])) {
+                    $territoryId = $territory['id'];
                     break;
                 }
             }
