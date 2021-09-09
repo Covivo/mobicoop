@@ -612,6 +612,11 @@ class UserManager
                 }
             }
         }
+
+        // check if the user is also a solidary user
+        if ($user->getHomeAddress() && $user->getSolidaryUser() && $user->getSolidaryUser()->isVolunteer()) {
+            $user->getSolidaryUser()->setAddress($user->getHomeAddress());
+        }
                
         // persist the user
         $this->entityManager->persist($user);
