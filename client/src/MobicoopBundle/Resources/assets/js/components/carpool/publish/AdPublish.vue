@@ -1215,7 +1215,6 @@ export default {
     postAd() {
       let postObject = this.buildAdObject();
       this.loading = true;
-      localStorage.setItem('gamificationInLocalStorage','1');
       maxios.post(this.buildUrl(this.$t('route.publish')),postObject,{
         headers:{
           'content-type': 'application/json'

@@ -45,17 +45,24 @@ class CarpoolInCommunity implements GamificationRuleInterface
         $user = $log->getUser();
         $proposals = $user->getProposals();
         // we get all user's proposals and for each proposal we check if he's associated with a community
-        $communities = [];
         foreach ($proposals as $proposal) {
-            $communities[] = $proposal->getCommunities();
+            $communities = $proposal->getCommunities();
             // at the first proposal associated to a community we return true since we need at least one proposal associated to a community
             if (count($communities) > 0) {
-                $matchings=[];
-                $matchings[]=$proposal->getMatchingOffers();
-                $matchings[]=$proposal->getMatchingRequests();
-                foreach ($matchings as $matching) {
-                    if ($matching->getAsk()->getStatus() === Ask::STATUS_ACCEPTED_AS_DRIVER || $matching->getAsk()->getStatus() === Ask::STATUS_ACCEPTED_AS_PASSENGER) {
-                        return true;
+                $matchingsOffers=$proposal->getMatchingOffers();
+                $matchingsRequests=$proposal->getMatchingRequests();
+                foreach ($matchingsOffers as $matching) {
+                    foreach ($matching->getAsks() as $ask) {
+                        if ($ask->getStatus() === Ask::STATUS_ACCEPTED_AS_DRIVER || $ask->getStatus() === Ask::STATUS_ACCEPTED_AS_PASSENGER) {
+                            return true;
+                        }
+                    }
+                }
+                foreach ($matchingsRequests as $matching) {
+                    foreach ($matching->getAsks() as $ask) {
+                        if ($ask->getStatus() === Ask::STATUS_ACCEPTED_AS_DRIVER || $ask->getStatus() === Ask::STATUS_ACCEPTED_AS_PASSENGER) {
+                            return true;
+                        }
                     }
                 }
             }

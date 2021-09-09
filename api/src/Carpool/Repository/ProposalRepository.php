@@ -1343,4 +1343,23 @@ class ProposalRepository
         ->setParameter("typeOutward", Proposal::TYPE_OUTWARD);
         return $query->getQuery()->getResult();
     }
+
+    /**
+     * Find the public proposals linked to a Community
+     */
+    public function findCommunityAds(Community $community)
+    {
+        $now = new \DateTime("now");
+
+        $query = $this->repository->createQueryBuilder('p')
+        ->join("p.communities", "com")
+        ->join("p.criteria", "c")
+        ->where("com.id = :communityId")
+        ->andWhere("p.private = 0")
+        ->andWhere("p.type = 1 or p.type = 2")
+        ->andWhere("c.toDate > :toDate")
+        ->setParameter("communityId", $community->getId())
+        ->setParameter("toDate", $now->format("Y-m-d 00:00:00"));
+        return $query->getQuery()->getResult();
+    }
 }

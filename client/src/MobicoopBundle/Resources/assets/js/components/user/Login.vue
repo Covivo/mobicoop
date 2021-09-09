@@ -199,9 +199,7 @@ export default {
       passwordRules: [
         v => !!v || this.$t("passwordRequired")
       ],
-      errorDisplay: "",
-      consent: false,
-      consentSocial: false
+      errorDisplay: ""
     };
   },
   computed: {
@@ -219,11 +217,27 @@ export default {
       default:
         return this.$t("urlLogin");
       }
+    },
+    consent(){
+      return this.$store.getters['up/connectionActive'];
+    },
+    consentSocial(){
+      return this.$store.getters['up/social'];
+    }
+  },
+  watch: {
+    getId(){
+      if(this.proposalId !== null){
+        this.proposalId ? this.$t("urlLoginResult",{"id":this.proposalId}) : this.$t("urlLogin")
+        return this.proposalId
+      } else {
+        this.eventId ? this.$t("urlLoginEvent",{"id":this.eventId}) : this.$t("urlLogin")
+        return this.eventId
+      }
     }
   },
   mounted() {
     if(this.errormessage.value !== "") this.treatErrorMessage(this.errormessage);
-    this.getConsent();
   },
   methods: {
     validate() {
@@ -237,11 +251,6 @@ export default {
     treatErrorMessage(errorMessage) {
       this.errorDisplay = this.$t(errorMessage.value);
       this.loading = false;
-    },
-    getConsent(){
-      let cookiesPrefs = JSON.parse(localStorage.getItem('cookies_prefs'));
-      this.consent = (cookiesPrefs && cookiesPrefs.connectionActive);
-      this.consentSocial = (cookiesPrefs && cookiesPrefs.social);
     }
   }
 };
