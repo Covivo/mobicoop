@@ -52,7 +52,7 @@ class HasAtLeastNCarpooledKm implements GamificationRuleInterface
                 $carpoolItems = $ask->getCarpoolItems();
                 $numberOfTravel = null;
                 foreach ($carpoolItems as $carpoolItem) {
-                    if ($carpoolItem->getStatus() == CarpoolItem::STATUS_REALIZED) {
+                    if ($carpoolItem->getItemStatus() == CarpoolItem::STATUS_REALIZED) {
                         $numberOfTravel = + 1;
                     }
                 }
