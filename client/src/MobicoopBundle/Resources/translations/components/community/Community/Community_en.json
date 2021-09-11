@@ -5,8 +5,8 @@
     },
     "buttons": {
         "publish": {
-            "label": "Publish an ad",
-            "route": "carpool/search/post"
+            "label": "Post a proposal",
+            "route": "/carpool/search/post"
         },
         "search": {
             "label": "Search",
@@ -58,7 +58,7 @@
     },
     "yes": "yes",
     "no": "no",
-    "infos":{
-        "members":"{members} members"
+    "infos": {
+        "members": "{members} members"
     }
 }
