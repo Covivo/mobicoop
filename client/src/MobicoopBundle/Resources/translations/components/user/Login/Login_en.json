@@ -17,10 +17,10 @@
     "password": "Password",
     "email": "Email",
     "emailRequired": "An email address is required",
-    "emailInvalid": "Invalid email",
-    "passwordRequired": "Password is required",
-    "consent": "Pour pouvoir vous connecter vous devez avoir accepté de \"Maintenir votre connexion active\" grâce à l'outil de \"Gestion des cookies\" accessible par un lien en pied de page puis rafraichir la page.",
-    "socialServicesUnavailableWithoutConsent": "Pour être utilisée, la fonctionnalité de connexion via les réseaux sociaux doit être acceptée grâce à l'outil de \"Gestion des cookies\" accessible par un lien en pied de page.",
+    "emailInvalid": "The email address must be valid",
+    "passwordRequired": "The password is required",
+    "consent": "To be able to login in you must have agreed to \"Keep your connection active\" using the \"Cookie management\" tool accessible by a link at the bottom of the page then refresh the page.",
+    "socialServicesUnavailableWithoutConsent": "To be used, the login functionality via social networks must be accepted using the \"Cookie management\" tool accessible by a link at the bottom of the page.",
     "Unable to get an API token.": "Error while logging in.",
     "Bad credentials.": "Incorrect user name or password."
 }
