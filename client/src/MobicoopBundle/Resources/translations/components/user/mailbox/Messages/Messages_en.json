@@ -14,10 +14,10 @@
     "tooltip": {
         "message": "Messages non liés à une annonce"
     },
-    "fraudWarningText":{
-        "part1":"Sur Mobicoop, les paiements pour vos covoiturages se réalisent essentiellement ",
-        "link":"/user/profile/update/accepted-carpools",
-        "textLink":"à la main ou en ligne ",
-        "part2":"ou en monnaie locale et libre. Nous déconseillons nos utilisateurs d'accepter d'autres moyens de paiement type coupons PCS ou Transcash généralement associés à des pratiques frauduleuses . Vous pouvez nous signaler un·e utilisateur·rice depuis son profil."
+    "fraudWarningText": {
+        "part1": "On Mobicoop, payments for your carpools are mainly made ",
+        "link": "/user/profile/change/my-accepted-carpools",
+        "textLink": "by hand or online ",
+        "part2": "or in local and free currency. We advise our users not to accept other means of payment such as PCS or Transcash coupons generally associated with fraudulent practices. You can report a user to us from their profile."
     }
 }
