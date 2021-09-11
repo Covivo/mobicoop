@@ -1,38 +1,38 @@
 {
-    "birthYears": "ans",
+    "birthYears": "years",
     "seeDetails": "voir détails",
-    "externalResult":{
-        "go":"S'y rendre",
-        "contact":{
-            "button":{
-                "label":"Contacter",
-                "tooltip":"Vous devez être connecté pour contacter un covoitureur"
+    "externalResult": {
+        "go": "S'y rendre",
+        "contact": {
+            "button": {
+                "label": "Contacter",
+                "tooltip": "Vous devez être connecté pour contacter un covoitureur"
             },
-            "popup":{
-                "title":"Contacter",
-                "intro":"Cette annonce ne provient pas de notre site de covoiturage mais du site partenaire {origin}",
-                "instructions":{
-                    "line1":"Merci de compléter ou de modifier le message ci-dessous.",
-                    "line2":"Pensez à laisser au moins un moyen de contact, tel que votre addresse email et/ou numéro de téléphone afin que le covoitureur du site partenaire puisse vous contacter"
+            "popup": {
+                "title": "Contacter",
+                "intro": "Cette annonce ne provient pas de notre site de covoiturage mais du site partenaire {origin}",
+                "instructions": {
+                    "line1": "Merci de compléter ou de modifier le message ci-dessous.",
+                    "line2": "Pensez à laisser au moins un moyen de contact, tel que votre addresse email et/ou numéro de téléphone afin que le covoitureur du site partenaire puisse vous contacter"
                 },
-                "cancel":"Annuler",
-                "textarea":{
-                    "label":"Votre message",
-                    "content":{
-                        "hello":"Bonjour",
-                        "carpool":"Votre covoiturage entre {origin} et {destination} est susceptible de m'intéresser. Nous ne sommes pas inscrits auprès du même réseaux de covoiturage c'est pourquoi je vous laisse directement mes coordonnées pour que nous puissions nous contacter",
-                        "name":"Mon nom est {name}",
-                        "email":"Mon mail est {email}",
-                        "phone":"Mon numéro de téléphone est le {phone}",
-                        "seeya":"A bientôt"
+                "cancel": "Annuler",
+                "textarea": {
+                    "label": "Votre message",
+                    "content": {
+                        "hello": "Bonjour",
+                        "carpool": "Votre covoiturage entre {origin} et {destination} est susceptible de m'intéresser. Nous ne sommes pas inscrits auprès du même réseaux de covoiturage c'est pourquoi je vous laisse directement mes coordonnées pour que nous puissions nous contacter",
+                        "name": "Mon nom est {name}",
+                        "email": "Mon mail est {email}",
+                        "phone": "Mon numéro de téléphone est le {phone}",
+                        "seeya": "A bientôt"
                     }
                 },
-                "send":"Envoyer"
+                "send": "Envoyer"
             },
-            "urlSendContact":"/carpool/rdexConnection",
-            "return":{
-                "ok":"Le message a bien été envoyé.",
-                "error":"Suite à un problème technique le message n'a pas pu être envoyé"
+            "urlSendContact": "/carpool/rdexConnection",
+            "return": {
+                "ok": "Le message a bien été envoyé.",
+                "error": "Suite à un problème technique le message n'a pas pu être envoyé"
             }
         }
     },
