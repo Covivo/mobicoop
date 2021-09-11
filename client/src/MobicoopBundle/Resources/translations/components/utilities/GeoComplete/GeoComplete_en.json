@@ -4,6 +4,5 @@
     "relayPoints": "Relay points",
     "events": "Events",
     "origin": "Departure location",
-    "destination": "Arrival location"
-
+    "destination": "Destination"
 }

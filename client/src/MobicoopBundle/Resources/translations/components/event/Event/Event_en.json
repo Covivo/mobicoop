@@ -1,7 +1,7 @@
 {
     "buttons": {
         "publish": {
-            "label": "Publish an ad",
+            "label": "Post a proposal",
             "route": "carpool/event/{id}/post"
         },
         "widget": {

@@ -2,11 +2,11 @@
     "addWaypoint": "Ajouter une étape",
     "origin": {
         "label": "Origine",
-        "error": "Obligatoire"
+        "error": "Required"
     },
     "destination": {
         "label": "Destination",
-        "error": "Obligatoire"
+        "error": "Required"
     },
     "waypoint1": {
         "label": "Etape 1"

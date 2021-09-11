@@ -6,5 +6,5 @@
     "journeyFromCity": "Journey from {city}",
     "journeyToCity": "Journey to {city}",
     "routeFromCity": "/cities/carpool/{city}",
-    "routeToCity": "/cities/carpool-to-{city}"
+    "routeToCity": "/cities/carpool to {city}"
 }

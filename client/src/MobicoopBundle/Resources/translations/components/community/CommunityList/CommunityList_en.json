@@ -1,10 +1,11 @@
 {
-    "communitiesAvailable": "Communities available",
+    "communitiesAvailable": "Available communities",
     "myCommunities": "My communities",
     "createCommunity": "Create my community",
     "search": "Search",
     "all": "All",
-    "linePerPage": "Number of line per page",
-    "seeAds": "See the ads",
-    "urlGetCommunities": "/community/getCommunityList"
+    "linePerPage": "Number of lines per page",
+    "seeAds": "View the announcements",
+    "urlGetCommunities": "/community/getCommunityList",
+    "noCommunity": "No communities"
 }

@@ -48,7 +48,7 @@
             "required": "Tous les champs marqués d'une étoile sont requis",
             "length": "Description courte trop longue (512 caractères maximum)."
         },
-        "image": "L'image n'a pas été enregistrée"
+        "image": "The image has not been saved"
     },
     "startDate": {
         "label": "Date de début*",
