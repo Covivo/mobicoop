@@ -9,8 +9,8 @@
             "route": "/utilisateur/connexion"
         },
         "shareAnAd": {
-            "label": "Publier une annonce",
-            "route": "/covoiturage/annonce/poster"
+            "label": "Post an announcement",
+            "route": "/carpool/postproposal"
         },
         "messages": {
             "label": "Messages",
