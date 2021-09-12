@@ -1,17 +1,17 @@
 {
-    "title": "Les communautés de covoiturage",
-    "firstQuestion": "Qu'est-ce qu'une communauté ?",
-    "secondQuestion": "Une communauté, pour quoi faire ?",
-    "thirdQuestion": "Qui peut créer une communauté ?",
-    "whatsCommunity": "Une communauté est un regroupement d’inscrits ayant un intérêt en commun. Elle permet par exemple d’identifier les salariés d’une entreprise, d’une zone d’activités, les personnes fréquentant une salle de spectacle ou encore les habitants d’une commune, pour faciliter les mises en relation des covoitureurs.",
+    "title": "Carpooling communities",
+    "firstQuestion": "What is a community?",
+    "secondQuestion": "What is the purpose of a community?",
+    "thirdQuestion": "Who can create a community?",
+    "whatsCommunity": "A community is a group of subscribers with a common interest. It enables, for example, you to identify the employees of a company, of a business zone, the people attending an auditorium or the inhabitants of a town, to facilitate carpooling connections.",
     "communityforwhat": {
-        "title": "La création d’une communauté permet :",
+        "title": "The creation of a community enables:",
         "list": {
-            "firstLine": "à ses membres d’échanger et de covoiturer ensemble",
-            "secondLine": "de faciliter la mise en relation des covoitureurs en augmentant la confiance entre membres",
-            "thirdLine": "de disposer d’un widget personnalisé à installer par exemple sur un intranet et/ou une page web",
-            "fourthLine": "de disposer, pour le créateur de la communauté, de statistiques sur les inscrits et les covoitureurs de sa communauté"
+            "firstLine": "its members to exchange and carpool together",
+            "secondLine": "to facilitate the connection of carpoolers by increasing trust between members",
+            "thirdLine": "to have a custom widget to install on an intranet and/or a web page for example",
+            "fourthLine": "to have, for the creator of the community, statistics on the members and carpoolers of their community"
         }
     },
-    "whoCanCreate": "Toute personne ou structure qui le souhaite peut créer une communauté sur Mobicoop. La création d'une communauté est un service payant qui vous donnera accès à l'administrateur pour pouvoir animer votre communauté. Pour en savoir plus ou demander une création de communauté, vous pouvez contacter la hotline en précisant que votre demande est une création de communauté."
+    "whoCanCreate": "Any person or organization that wishes to do so can create a community on Mobicoop. The creation of a community is a paying service that will give you access to the administrator to be able to animate your community. To find out more or to request the creation of a community, you can contact the hotline and specify that your request is for the creation of a community."
 }
