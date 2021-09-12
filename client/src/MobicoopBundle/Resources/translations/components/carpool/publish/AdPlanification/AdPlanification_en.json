@@ -3,26 +3,26 @@
         "label": "Departure date"
     },
     "returnDate": {
-        "label": "Date de retour"
+        "label": "Date of return"
     },
     "outwardTime": {
-        "label": "Heure de départ"
+        "label": "Departure time"
     },
     "returnTime": {
-        "label": "Heure de retour"
+        "label": "Return time"
     },
     "regularOutwardTime": {
-        "label": "Départ à"
+        "label": "Start at"
     },
     "regularReturnTime": {
-        "label": "Retour à"
+        "label": "Return at"
     },
     "returnTrip": {
-        "label": "Retour"
+        "label": "Return"
     },
-    "addSchedule": "Ajouter un créneau",
-    "marginTooltip": "Votre annonce apparaîtra dans des recherches avec une flexibilité de {margin} minutes autour de cet horaire",
-    "errorReturnTime": "L'heure de retour est trop proche de l'heure de départ.",
-    "optional": "facultatif",
+    "addSchedule": "Add a time slot",
+    "marginTooltip": "Your proposal will appear in searches with a flexibility of {margin} minutes around this time",
+    "errorReturnTime": "The return time is too close to the departure time.",
+    "optional": "optional",
     "fullDate": "ddd Do MMMM YYYY"
 }
