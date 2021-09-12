@@ -1,12 +1,12 @@
 {
     "buttons": {
         "signup": {
-            "label": "Inscription",
-            "route": "/utilisateur/inscription"
+            "label": "Register",
+            "route": "/user/registration"
         },
         "logIn": {
-            "label": "Connexion",
-            "route": "/utilisateur/connexion"
+            "label": "Login",
+            "route": "/user/login"
         },
         "shareAnAd": {
             "label": "Post an announcement",
@@ -14,22 +14,22 @@
         },
         "messages": {
             "label": "Messages",
-            "route": "/utilisateur/messages"
+            "route": "/user/messages"
         },
         "myProfile": {
-            "label": "Mon profil",
-            "route": "/utilisateur/profil/modifier"
+            "label": "My profile",
+            "route": "/user/profile/edit"
         },
         "logOut": {
-            "label": "Déconnexion",
+            "label": "Logout",
             "route": "/user/logout"
         },
         "solidary": {
-            "label": "Devenir conducteur solidaire",
+            "label": "Become a solidarity driver",
             "route": "http://solidaires.mobicoop.fr/"
         }
     },
     "snackbar": {
-        "needConnection": "Veuillez vous connecter ou vous inscrire pour publier une annonce"
+        "needConnection": "Please login or register to post a proposal"
     }
 }
