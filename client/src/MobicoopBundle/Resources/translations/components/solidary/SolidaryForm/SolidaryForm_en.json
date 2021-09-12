@@ -1,46 +1,46 @@
 {
     "gender": {
-        "placeholder": "Civilité",
+        "placeholder": "Gender",
         "values": {
-            "male": "Monsieur",
-            "female": "Madame",
-            "other": "Autre"
+            "male": "Mr",
+            "female": "Mrs/Ms",
+            "other": "Other"
         },
         "errors": {
-            "required": "La civilité est requise"
+            "required": "Gender is required"
         }
     },
     "familyName": {
-        "placeholder": "Nom",
+        "placeholder": "Name",
         "errors": {
-            "required": "Le nom est requis"
+            "required": "Name is required"
         }
     },
     "givenName": {
-        "placeholder": "Prénom",
+        "placeholder": "First name",
         "errors": {
-            "required": "Le prénom est requis"
+            "required": "First name is required"
         }
     },
     "email": {
         "placeholder": "Email",
         "errors": {
-            "required": "L'adresse email est requise",
-            "valid": "L'adresse email doit être valide"
+            "required": "Email address is required",
+            "valid": "Email address must be valid"
         }
     },
     "phone": {
-        "placeholder": "Téléphone portable",
+        "placeholder": "Mobile phone",
         "errors": {
-            "required": "Le numéro de téléphone est requis",
-            "valid": "Le numéro de téléphone doit être valide"
+            "required": "Phone number is required",
+            "valid": "The phone number must be valid"
         }
     },
     "ui": {
         "buttons": {
             "validate": {
                 "label": "Validate",
-                "route": "/solidary/ask"
+                "route": "/solidarity/request"
             },
             "cancel": {
                 "label": "Cancel"
@@ -52,19 +52,20 @@
         "placeholder": "Year of birth"
     },
     "hasRSA": {
-        "label": "",
-        "placeholder": ""
+        "label": "RSA beneficiary",
+        "placeholder": "RSA beneficiary"
     },
     "subject": {
-        "label": "",
-        "placeholder": ""
+        "label": "Purpose of the trip",
+        "placeholder": "Purpose of the trip"
     },
     "structure": {
-        "label": "",
-        "placeholder": ""
+        "label": "Support structure",
+        "placeholder": "Support structure"
     },
     "other": {
         "label": "Other",
         "placeholder": "Other"
-    }
+    },
+    "success": "Your request for a helping hand has been sent!"
 }
