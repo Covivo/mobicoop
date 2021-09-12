@@ -1,6 +1,6 @@
 {
-    "outward": "Aller",
-    "return": "Retour",
+    "outward": "Outward",
+    "return": "Return",
     "multiple": "multiples",
     "fullMultiple": "Les horaires diffèrent selon les jours",
     "hourMinute": "HH[h]mm"
