@@ -1,115 +1,123 @@
 {
-    "title": "Sign Up",
+    "title": "Register",
     "urlSignUp": "/user/registration",
-    "urlSignUpResult": "/user/signup/{id}",
-    "urlSignUpEvent": "/user/signup/event/{id}",
-    "urlRedirectAfterSignUp": "/user/signup/validation/{email}",
+    "urlSignUpResult": "/user/registration/{id}",
+    "urlSignUpEvent": "/user/registration/event/{id}",
+    "urlRedirectAfterSignUp": "/user/registration/validation/{email}",
     "urlRedirectAfterSignUpResult": "/user/login/{id}",
     "urlRedirectAfterSignUpEvent": "/user/login/event/{id}",
     "urlRedirectAfterSignUpCommunity": "/user/login/community/{id}",
-    "urlRedirectAfterSignUpPublish": "/user/login/redirect/publish",
+    "urlRedirectAfterSignUpPublish": "/user/login/redirect/post",
     "gender": {
-        "label": "Civilité",
-        "placeholder": "Civilité",
+        "label": "Gender",
+        "placeholder": "Gender",
         "values": {
-            "male": "Monsieur",
-            "female": "Madame",
-            "other": "Autre"
+            "male": "Mr",
+            "female": "Mrs/Ms",
+            "other": "Other"
         },
         "errors": {
-            "required": "La civilité est requise"
+            "required": "Gender is required"
         }
     },
     "givenName": {
-        "placeholder": "Prénom",
+        "placeholder": "First name",
         "errors": {
-            "required": "Le prénom est requis"
+            "required": "First name is required"
         }
     },
     "familyName": {
-        "placeholder": "Nom",
+        "placeholder": "Name",
         "errors": {
-            "required": "Le nom est requis"
+            "required": "Name is required"
         }
     },
     "birthDate": {
-        "placeholder": "Date de naissance"
+        "placeholder": "Date of birth"
     },
     "birthDay": {
         "errors": {
-            "required": "La date de naissance est requise",
-            "notadult": "Vous devez avoir 16 ans pour vous inscrire sur la plateforme"
+            "required": "Date of birth is required",
+            "notadult": "You must be 16 years old to register on the platform"
         }
     },
     "homeTown": {
-        "placeholder": "Commune de résidence"
+        "placeholder": "Place of residence"
     },
     "email": {
         "placeholder": "Email",
         "errors": {
-            "required": "L'adresse email est requise",
-            "valid": "L'adresse email doit être valide"
+            "required": "Email address is required",
+            "valid": "Email address must be valid"
         }
     },
     "phone": {
-        "placeholder": "Téléphone portable",
+        "placeholder": "Mobile phone",
         "errors": {
-            "required": "Le numéro de téléphone est requis",
-            "valid": "Le numéro de téléphone doit être valide"
+            "required": "Phone number is required",
+            "valid": "The phone number must be valid"
         }
     },
     "password": {
-        "placeholder": "Mot de passe",
+        "placeholder": "Password",
         "errors": {
-            "required": "Le mot de passe est requis",
-            "min": "Le mot de passe doit comprendre 8 caractères min.",
-            "upper": "Le mot de passe doit comprendre 1 majuscule.",
-            "lower": "Le mot de passe doit comprendre 1 minuscule.",
-            "number": "Le mot de passe doit comprendre 1 chiffre."
+            "required": "Password is required",
+            "min": "The password must be at least 8 characters in length.",
+            "upper": "The password must contain 1 uppercase letter.",
+            "lower": "The password must contain 1 lower case letter.",
+            "number": "The password must contain 1 digit."
         }
     },
     "checkEmail": {
-        "url": "/user/check/email",
-        "error": "This email is already attached to an account"
+        "url": "/user/verify/email",
+        "error": "This email is already in use"
     },
     "chart": {
         "text": "I accept ",
-        "link": "the platform chart and its data protection policy",
-        "route": "/cgu",
-        "required": "La validation de la charte est requise"
+        "link": "the platform charter and its data protection policy",
+        "route": "/gcu",
+        "required": "Validation of the charter is required"
     },
     "newsSubscription": {
-        "text": "J'accepte de recevoir les actualités du service (informations utiles pour covoiturer, et nouveaux services ou nouvelles fonctionnalités)"
+        "text": "I agree to receive news about the service (useful information for carpooling, and new services or new features)"
     },
     "legalAge": {
-        "text": "Je confirme être âgé d'au moins 18 ans",
-        "required": "Requis"
+        "text": "I confirm that I am at least 18 years old",
+        "required": "Required"
     },
     "communities": {
-        "route": "/user/register/community-list"
+        "route": "/user/register/community-list",
+        "label": "Join a community"
     },
     "step": "Step",
     "steps": {
-        "1": "Credentials",
+        "1": "Identifiers",
         "2": "Identity",
         "3": "Gender",
-        "4": "Birthdate",
-        "5": "Home town"
+        "4": "Date of Birth",
+        "5": "City of residence"
     },
-    "login": "Already have an account ? Login !",
+    "login": "Already have an account? Login!",
     "urlLogin": "/user/login/",
     "button": {
-        "previous": "Précédent",
-        "next": "Suivant",
-        "register": "Je m'inscris"
+        "previous": "Previous",
+        "next": "Next",
+        "register": "I am registering"
     },
     "rgpd": {
-        "infos": "Les informations recueillies à partir de ce formulaire sont nécessaires à l’utilisation des services proposés par l’application Mobicoop.",
+        "infos": "The information collected from this form is necessary for using the services offered by the Mobicoop application.",
         "link": {
-            "label": "Pour en savoir plus sur la gestion de vos données et vos droits.",
-            "route": "/cgu"
+            "label": "Learn more about the management of your data and your rights.",
+            "route": "/gcu"
         },
-        "consent": "Pour pouvoir vous connecter vous devez avoir accepté de \"Maintenir votre connexion active\" grâce à l'outil de \"Gestion des cookies\" accessible par un lien en pied de page puis rafraichir la page.",
-        "socialServicesUnavailableWithoutConsent": "Pour être utilisée, la fonctionnalité de connexion via les réseaux sociaux doit être acceptée grâce à l'outil de \"Gestion des cookies\" accessible par un lien en pied de page."
+        "consent": "To be able to login in you must have agreed to \"Keep your connection active\" using the \"Cookie management\" tool accessible from a link at the bottom of the page then refresh the page.",
+        "socialServicesUnavailableWithoutConsent": "To be used, the login functionality via social networks must be accepted using the \"Cookie management\" tool accessible from a link at the bottom of the page."
+    },
+    "snackbar": {
+        "joinCommunity": {
+            "textError": "An error has occurred please try again.",
+            "textOkAutoValidation": "Your membership request is validated.",
+            "textOkManualValidation": "Your membership request has been sent to the referrer. You will be informed by email."
+        }
     }
 }
