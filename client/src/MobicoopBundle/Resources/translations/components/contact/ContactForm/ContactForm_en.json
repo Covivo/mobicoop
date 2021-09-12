@@ -18,13 +18,13 @@
         "placeholder": "Your email",
         "hint": "",
         "errors": {
-            "required": "Email is required",
-            "valid": "Email must be valid"
+            "required": "Email address is required",
+            "valid": "Email must be valid."
         }
     },
     "demand": {
-        "label": "Your demand",
-        "placeholder": "Your demand",
+        "label": "Your request",
+        "placeholder": "Your request",
         "items": {
             "infos": "Information",
             "technicalIssues": "Technical issue",
@@ -32,7 +32,7 @@
             "community": "Community creation"
         },
         "errors": {
-            "required": "L'objet de votre demande est requis"
+            "required": "The subject of the request is required"
         }
     },
     "message": {
@@ -50,11 +50,11 @@
         }
     },
     "dataPolicy": {
-        "text": "Pour connaitre et exercer vos droits, notamment de retrait de votre consentement à l'utilisation de données collectées par ce formulaire, veuillez consulter",
-        "link": "notre politique de protection des données",
+        "text": "To know and exercise your rights, in particular to withdraw your consent to the use of data collected by this form, please consult",
+        "link": "our data protection policy",
         "route": "/data-policy"
     },
-    "success": "Your message has been sent successfully",
-    "error": "An error happened",
-    "getContactItemsUri":"/contact/getItems"
+    "success": "Your message has been sent successfully.",
+    "error": "An error has occurred.",
+    "getContactItemsUri": "/contact/getItems"
 }
