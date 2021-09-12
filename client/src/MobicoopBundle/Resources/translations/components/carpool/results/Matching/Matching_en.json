@@ -1,32 +1,34 @@
 {
     "title": "Carpool results between {cityA} and {cityB}",
-    "proposalUrl": "/carpool/ad/{id}/detail",
-    "externalUrl": "/carpool/ad/{id}/external",
+    "proposalUrl": "/carpool/proposal/{id}/detail",
+    "externalUrl": "/carpool/proposal/{id}/external",
     "matchingUrl": "/carpool/search/matching",
-    "carpoolUrl": "/carpool/ask",
-    "contactUrl": "/utilisateur/messages/new",
+    "carpoolUrl": "/carpool/request",
+    "contactUrl": "/user/messages/new",
     "mailboxUrl": "/user/messages/carpool/{askId}",
     "externalJourneyUrl": "/carpool/rdexJourney",
     "ptSearchUrl": "/public-transport/search",
     "search": "Searching...",
-    "search2": "Patience, we found many potential carpoolers !",
+    "search2": "Please wait, we found many potential carpoolers!",
     "search3": "Almost there...",
-    "matchingNumber": "No carpooling ad found... | {number} carpooling ad found | {number} carpooling ads found",
-    "includePassengers": "Show also passengers carpools",
-    "alsoIncludePassengers": "This research includes also passengers carpools",
+    "matchingNumber": "No carpooling proposal found... | {number} carpooling proposal found | {number} carpooling proposals found",
+    "includePassengers": "Show also passengers proposals",
+    "alsoIncludePassengers": "This search also includes passengers proposals",
     "snackBar": {
-        "success": "Contact has been successfuly established",
-        "error": "Due to a technical difficuly, the contact hasn't been established"
+        "success": "The contact has been sent",
+        "error": "Due to a technical issue the contact could not be sent"
     },
     "tabs": {
         "carpools": "{platform} carpools",
         "otherCarpools": "Other carpools",
-        "ptresults": "Public transports"
+        "ptresults": "Public transport"
     },
-    "loginOrRegisterTitle": "Connection or registering required",
+    "loginOrRegisterTitle": "Login or registering required",
     "loginOrRegister": "You need to login or register to continue",
     "login": "Login",
     "register": "Register",
     "loginUrl": "/user/login/{id}",
-    "registerUrl": "/user/register/{id}"
+    "registerUrl": "/user/register/{id}",
+    "AskNewSearch": "Try again by modifying your search? Another route ?",
+    "newSearch": "New search"
 }
