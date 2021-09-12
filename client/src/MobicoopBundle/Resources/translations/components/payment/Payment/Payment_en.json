@@ -4,8 +4,8 @@
     "titleRegular": "Paiements trajets réguliers",
     "titlePunctual": "Paiements",
     "titleConfirmation": "Confirmation paiement passagers",
-    "outward": "Aller",
-    "return": "Retour",
+    "outward": "Outward",
+    "return": "Return",
     "price": "Montant: {price} €",
     "sumToPay": "Total à payer: {price} €",
     "electronicPay": "Je paie en ligne",
@@ -52,11 +52,11 @@
         "line1": "Votre profil n'étant pas complet vous ne pouvez pas payer en ligne.",
         "line2": "Vous devez par exemple saisir votre adresse complète (numéro, nom de rue...) et non uniquement votre commune de résidence."
     },
-    "noMoreItems":"Il n'y a plus de paiement à réaliser ou en attente de confirmation.",
-    "loadingPageText":"Chargement des paiements à réaliser ou à confirmer",
-    "tipsEncouragement":{
-        "text":"{platformName} est un service libre, sans commission et sans publicité. Mais pour contribuer à maintenir la plateforme, vous pouvez nous donner un coup de pouce en nous faisant",
-        "textLink":"un don ici",
-        "link":"https://www.zeste.coop/fr/mobicoop"
+    "noMoreItems": "Il n'y a plus de paiement à réaliser ou en attente de confirmation.",
+    "loadingPageText": "Chargement des paiements à réaliser ou à confirmer",
+    "tipsEncouragement": {
+        "text": "{platformName} est un service libre, sans commission et sans publicité. Mais pour contribuer à maintenir la plateforme, vous pouvez nous donner un coup de pouce en nous faisant",
+        "textLink": "un don ici",
+        "link": "https://www.zeste.coop/fr/mobicoop"
     }
 }
