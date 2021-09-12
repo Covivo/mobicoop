@@ -1,7 +1,7 @@
 {
-    "addWaypoint": "Ajouter une étape",
+    "addWaypoint": "Add a step",
     "origin": {
-        "label": "Origine",
+        "label": "Origin",
         "error": "Required"
     },
     "destination": {
@@ -9,21 +9,21 @@
         "error": "Required"
     },
     "waypoint1": {
-        "label": "Etape 1"
+        "label": "Step 1"
     },
     "waypoint2": {
-        "label": "Etape 2"
+        "label": "Step 2"
     },
     "waypoint3": {
-        "label": "Etape 3"
+        "label": "Step 3"
     },
     "waypoint4": {
-        "label": "Etape 4"
+        "label": "Step 4"
     },
-    "avoidMotorway": "Eviter l'autoroute",
+    "avoidMotorway": "Avoid the motorway",
     "communities": {
-        "label": "Publier l'annonce dans ces communautés",
-        "route": "/utilisateur/communautes"
+        "label": "Publish the proposal in these communities",
+        "route": "/user/communities"
     },
     "distance": "Distance"
 }
