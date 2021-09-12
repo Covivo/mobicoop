@@ -39,20 +39,20 @@
         }
     },
     "articles": {
-        "title":"Quoi de neuf chez Mobicoop ?"
+        "title": "Quoi de neuf chez Mobicoop ?"
     },
-    "items":[
+    "items": [
         {
-            "title":"Covoiturage sans commission",
-            "text":"Héritière des valeurs du covoiturage libre, Mobicoop est un service de covoiturage gratuit, c'est-à-dire que le site ne prélève aucune commission sur les trajets, et c’est aussi sans publicité ! Les trajets sont donc moins chers pour les covoitureurs qui en partagent les frais."
+            "title": "Covoiturage sans commission",
+            "text": "Heir to the values of free carpooling, Mobicoop is a free carpooling service, which means that the site takes no commission on journeys, and it is also free of advertising! The journeys are therefore less expensive for the carpoolers who share the costs."
         },
         {
-            "title":"Un logiciel libre",
-            "text":"La liberté numérique est au cœur des valeurs de Mobicoop. En faisant le choix de produire un site entièrement en logiciel libre nous garantissons ainsi la souveraineté numérique de tous les usagers du covoiturage et la protection des données. Chacun peut contribuer au code source et faire de la mobilité partagée un bien commun."
+            "title": "Free software",
+            "text": "Digital freedom is at the heart of Mobicoop's values. By choosing to produce a site entirely from free software, we guarantee the digital sovereignty of all carpooling users and the protection of data. Everyone can contribute to the source code and make shared mobility a common good."
         },
         {
-            "title":"La coopérative du covoiturage",
-            "text":"Mobicoop est une coopérative, la plateforme appartient donc à ses sociétaires dans la logique 1 sociétaire = 1 voix. Ce statut permet une gouvernance ouverte entre sociétaires, salariés, utilisateurs de la plateforme et clients. Toutefois il n’est pas obligatoire d’être sociétaire pour utiliser le service de covoiturage."
+            "title": "The carpooling cooperative",
+            "text": "Mobicoop is a cooperative, so the platform belongs to its members on the principle of 1 member = 1 vote. This status allows for open governance between members, employees, platform users and customers. However, it is not mandatory to be a member to use the carpooling service."
         }
     ],
     "routes": {
@@ -60,5 +60,5 @@
     },
     "urlBackground2": "/images/pages/home/background_middle.svg",
     "urlBackground3": "/images/pages/home/background_bottom.svg",
-    "mustMeLogged":"Vous devez être connecté"
+    "mustMeLogged": "Vous devez être connecté"
 }
