@@ -1,62 +1,62 @@
 {
-  "items": [
-    {
-      "key": "smoke",
-      "title": "En ce qui concerne le tabac en voiture...",
-      "radios": [
+    "items": [
         {
-          "label": "Je ne fume pas",
-          "value": 0
+            "key": "smoke",
+            "title": "Regarding smoking in the car...",
+            "radios": [
+                {
+                    "label": "I don't smoke",
+                    "value": 0
+                },
+                {
+                    "label": "I do not smoke in the car",
+                    "value": 1
+                },
+                {
+                    "label": "I am a smoker",
+                    "value": 2
+                }
+            ]
         },
         {
-          "label": "Je ne fume pas en voiture",
-          "value": 1
+            "key": "music",
+            "title": "Regarding music in the car...",
+            "radios": [
+                {
+                    "label": "I prefer to ride without background sound",
+                    "value": 0
+                },
+                {
+                    "label": "I listen to the radio or music",
+                    "value": 1
+                }
+            ],
+            "favorite": {
+                "label": "Favorite radio stations and/or music"
+            }
         },
         {
-          "label": "Je fume",
-          "value": 2
+            "key": "chat",
+            "title": "As far as chatting in the car is concerned...",
+            "radios": [
+                {
+                    "label": "I am not talkative",
+                    "value": 0
+                },
+                {
+                    "label": "I chat",
+                    "value": 1
+                }
+            ],
+            "favorite": {
+                "label": "Preferred topics"
+            }
         }
-      ]
+    ],
+    "button": {
+        "label": "Save",
+        "route": "/user/preferences-carpooling/change"
     },
-    {
-      "key": "music",
-      "title": "En ce qui concerne la musique en voiture...",
-      "radios": [
-        {
-          "label": "Je préfère rouler sans fond sonore",
-          "value": 0
-        },
-        {
-          "label": "J’écoute la radio ou de la musique",
-          "value": 1
-        }
-      ],
-      "favorite": {
-        "label": "Radios et/ou musiques préférées"
-      }
-    },
-    {
-      "key": "chat",
-      "title": "En ce qui concerne le bavardage en voiture...",
-      "radios": [
-        {
-          "label": "Je ne suis pas bavard",
-          "value": 0
-        },
-        {
-          "label": "Je discute",
-          "value": 1
-        }
-      ],
-      "favorite": {
-        "label": "Sujets préférés"
-      }
-    }
-  ],
-  "button": {
-    "label": "Enregistrer",
-    "route": "/utilisateur/preferences-covoiturage/modifier"
-  },
-  "success": "Préférences de covoiturage mises à jour avec succès !",
-  "error":  "Une erreur est survenue."
+    "success": "Carpooling preferences successfully updated!",
+    "error": "An error has occurred."
 }
