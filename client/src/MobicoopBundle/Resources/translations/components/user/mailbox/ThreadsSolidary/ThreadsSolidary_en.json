@@ -1,4 +1,4 @@
 {
-    "urlGet": "/user/messages/solidary",
-    "noSolidary": "Vous n'avez pas encore sollicité un autre inscrit pour un trajet solidaire."
+    "urlGet": "/user/messages/solidarity",
+    "noSolidary": "You have not yet requested another registrant for a solidarity ride."
 }
