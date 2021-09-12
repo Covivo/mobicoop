@@ -1,6 +1,6 @@
 {
     "title": "Mobicoop",
-    "subtitle": "A local, friendly and united carpooling service. <br /> Find your carpooling now or suggest your trip.",
+    "subtitle": "A local, friendly and united carpooling service. <br /> Find your carpooling now or propose your trip.",
     "origin": {
         "error": "Required",
         "label": "Place of departure"
