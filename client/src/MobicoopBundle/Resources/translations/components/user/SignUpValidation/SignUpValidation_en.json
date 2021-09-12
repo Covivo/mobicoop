@@ -1,15 +1,15 @@
 {
-    "title": "Email validation",
+    "title": "Verify your email",
     "token": "Your validation code",
     "urlSignUpValidation": "/user/login-token",
     "urlEmailValidation": "/user/login-token/email",
     "tokenRequired": "Your validation code is required",
-    "errorCredentials": "Unrecognized token",
-    "validate": "Sign up validation",
+    "errorCredentials": "Verification code not recognized",
+    "validate": "Confirm your registration",
     "alreadyValidated": "Your account has already been validated",
-    "updateError": "This validation code does't match any registered account",
+    "updateError": "This validation code doesn't match any registered account",
     "unknown": "This code is unknown",
-    "almostDone": "The sign up is almost done",
-    "validationMailSend": "A validation email has been sent",
-    "canValid": "You can <strong>click on the validation link</strong> inside the email or<strong>paste the code directly</strong> below."
+    "almostDone": "Registration is almost complete.",
+    "validationMailSend": "A validation email has been sent.",
+    "canValid": "You can now validate your account by <strong>clicking on the validation link</strong> contained in the email or <strong>copying and pasting the code</strong> directly below."
 }
