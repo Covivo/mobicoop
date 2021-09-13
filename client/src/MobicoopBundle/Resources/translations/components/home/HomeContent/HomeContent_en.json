@@ -1,49 +1,49 @@
 {
     "community": {
-        "title": "COMMUNAUTÉS",
-        "text": "Reconnaître les membres de mon club ou de mon entreprise.",
+        "title": "COMMUNITIES",
+        "text": "Recognize members of my club or company.",
         "button": {
-            "label": "Voir les communautés",
+            "label": "View the communities",
             "route": "/carpool-community"
         }
     },
     "event": {
-        "title": "ÉVÉNEMENTS",
-        "text": "Trouver des covoitureurs allant au même événement.",
+        "title": "EVENTS",
+        "text": "Find carpoolers going to the same event.",
         "button": {
-            "label": "Voir les événements",
+            "label": "View the events",
             "route": "/carpools-events"
         }
     },
     "solidary": {
-        "title": "COVOITURAGE SOLIDAIRE",
-        "text": "S'entraider pour l'accès à l'emploi",
+        "title": "SOLIDARITY CARPOOLING",
+        "text": "Help each other to access employment",
         "button": {
-            "label": "Je demande un coup de pouce",
-            "route": "/#/carpools/solidary/home/request"
+            "label": "I'm asking for a helping hand",
+            "route": "/#/carpools/solidarity/home/request"
         },
         "button2": {
-            "label": "Donner un coup de pouce",
-            "route": "/covoiturage/publierannonce/solidaire"
+            "label": "Give a helping hand",
+            "route": "/carpool/postproposal/solidarity"
         }
     },
     "events": {
-        "title": "Organisez du covoiturage pour vos événements",
+        "title": "Organize carpooling for your events",
         "button1": {
-            "label": "Voir les événements",
-            "route": "/evenements"
+            "label": "View the events",
+            "route": "/events"
         },
         "button2": {
-            "label": "Ajouter un événement",
-            "route": "/evenement/creer"
+            "label": "Add an event",
+            "route": "/event/create"
         }
     },
     "articles": {
-        "title": "Quoi de neuf chez Mobicoop ?"
+        "title": "What's new at Mobicoop?"
     },
     "items": [
         {
-            "title": "Covoiturage sans commission",
+            "title": "Carpool without commission",
             "text": "Heir to the values of free carpooling, Mobicoop is a free carpooling service, which means that the site takes no commission on journeys, and it is also free of advertising! The journeys are therefore less expensive for the carpoolers who share the costs."
         },
         {
@@ -60,5 +60,5 @@
     },
     "urlBackground2": "/images/pages/home/background_middle.svg",
     "urlBackground3": "/images/pages/home/background_bottom.svg",
-    "mustMeLogged": "Vous devez être connecté"
+    "mustMeLogged": "You have to be logged in"
 }
