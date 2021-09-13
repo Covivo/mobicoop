@@ -1,22 +1,22 @@
 {
-    "title":{
-        "part1":"De commune...",
-        "part2":"... à commune"
+    "title": {
+        "part1": "From city ...",
+        "part2": "... to city"
     },
-    "links":{
-        "byCity":{
-            "title":"Les covoiturages par communes",
-            "uri":"/carpool-from-city"
+    "links": {
+        "byCity": {
+            "title": "Carpools by city",
+            "uri": "/carpool-by-city"
         },
-        "popular":{
-            "title":"Les covoiturages par trajets populaires",
-            "uri":"/carpool-from-city/popular"
+        "popular": {
+            "title": "Carpools by popular routes",
+            "uri": "/carpool-by-city/popular"
         }
     },
-    "popularJourneys":{
-        "from":"Covoiturage de",
-        "to":"à",
-        "uri":"/carpool/{origin}/{destination}"
+    "popularJourneys": {
+        "from": "Carpool from",
+        "to": "to",
+        "uri": "/carpool/{origin}/{destination}"
     },
-    "getPopularJourneysUrl":"/carpool/popular/home"
+    "getPopularJourneysUrl": "/carpool/popular/home"
 }
