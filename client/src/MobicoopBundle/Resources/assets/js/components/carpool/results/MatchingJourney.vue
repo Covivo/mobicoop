@@ -711,8 +711,8 @@ export default {
       lResult: this.result,
       contactLoading: false,
       carpoolLoading: false,
-      contactDisabled: false,
-      carpoolDisabled: false,
+      contactDisabled: this.result.myOwn,
+      carpoolDisabled: this.result.myOwn,
       step:this.defaultStep,
       fromDate: this.result.startDate ? this.result.startDate : null,
       menuFromDate: false,
@@ -829,6 +829,8 @@ export default {
       this.lResult = val;
       this.fromDate = val.startDate ? val.startDate : null;
       this.toDate = val.toDate ? val.toDate : null;
+      this.contactDisabled = this.result.myOwn;
+      this.carpoolDisabled = this.result.myOwn;
       this.computeTimes();
     },
     resetStep(){
