@@ -19,7 +19,7 @@
         "hint": "",
         "errors": {
             "required": "Email address is required",
-            "valid": "Email must be valid."
+            "valid": "The email address must be valid."
         }
     },
     "demand": {
