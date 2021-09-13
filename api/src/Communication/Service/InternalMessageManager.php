@@ -34,7 +34,7 @@ use App\Communication\Repository\MediumRepository;
 use App\User\Entity\User;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use App\Communication\Event\InternalMessageReceivedEvent;
-use App\Communication\Exception\MessageNotFoundException;
+use App\Communication\Exception\MessageException;
 use App\Communication\Interfaces\MessagerInterface;
 use App\Communication\Repository\MessageRepository;
 use App\Solidary\Entity\SolidaryAskHistory;
@@ -155,7 +155,7 @@ class InternalMessageManager
     {
         $message = $this->messageRepository->find($idMessage);
         if (empty($message)) {
-            throw new MessageNotFoundException("Message not found");
+            throw new MessageException(MessageException::NOT_FOUND);
         }
         $messages = array_merge([$message], $message->getMessages());
         
