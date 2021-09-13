@@ -33,6 +33,7 @@ use App\Carpool\Entity\ResultItem;
 use App\Carpool\Entity\ResultRole;
 use App\Carpool\Repository\AskRepository;
 use App\Carpool\Repository\MatchingRepository;
+use App\Carpool\Repository\ProposalRepository;
 use App\Service\FormatDataManager;
 use App\User\Entity\User;
 use App\User\Repository\ReviewRepository;
@@ -61,6 +62,7 @@ class ResultManager
     private $userReview;
     private $carpoolNoticeableDetourDurationPercent;
     private $carpoolNoticeableDetourDistancePercent;
+    private $proposalRepository;
 
     /**
      * Constructor.
@@ -79,6 +81,7 @@ class ResultManager
         BlockManager $blockManager,
         ReviewRepository $reviewRepository,
         ReviewManager $reviewManager,
+        ProposalRepository $proposalRepository,
         bool $userReview,
         int $carpoolNoticeableDetourDurationPercent,
         int $carpoolNoticeableDetourDistancePercent
@@ -94,6 +97,7 @@ class ResultManager
         $this->userReview = $userReview;
         $this->carpoolNoticeableDetourDurationPercent = $carpoolNoticeableDetourDurationPercent;
         $this->carpoolNoticeableDetourDistancePercent = $carpoolNoticeableDetourDistancePercent;
+        $this->proposalRepository = $proposalRepository;
     }
 
     // set the params
@@ -517,7 +521,6 @@ class ResultManager
         $result = new Result();
         $result->setId($proposal->getId());
         $result->setUserId($proposal->getId());
-        $result->setMyOwn($proposal->getUser()->getId()===$this->security->getUser()->getId());
         $resultDriver = new ResultRole();
         $resultPassenger = new ResultRole();
         $communities = [];
@@ -1614,6 +1617,10 @@ class ResultManager
 
         $result->setCommunities($communities);
 
+        // Check if the matching proposal is owned by the caller
+        $matchingProposal = $this->proposalRepository->find($matchingProposalId);
+        $result->setMyOwn($matchingProposal->getUser()->getId()===$this->security->getUser()->getId());
+        
         return $result;
     }
 
