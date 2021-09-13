@@ -1,28 +1,28 @@
 {
-    "title": "3. Vérification d'identité",
-    "text": "<p>La vérification d'identité sur la base d'un document d'identité à jour (carte d'identité recto-verso, passeport, permis de conduire) est une obligation légale pour recevoir des paiements.Cette obligation est motivée par la lutte contre le blanchiment.</p><p>La vérification d'identité nécessaire au paiement se fait par comparaison entre les prénom et nom renseignés dans votre profil, et ceux sur votre document d'identité. Veillez donc à avoir des informations justes dans votre profil.</p><p>Vous pouvez lire les conditions de validation d'un document d'identité chez notre partenaire <a target='_blank' href='https://support.mangopay.com/s/article/What-are-the-reasons-for-a-document-rejection?language=fr'>ici</a>.</p>",
+    "title": "3. Identity verification",
+    "text": "<p>The verification of identity on the basis of an updated identity document (ID card, passport, driver's license) is a legal obligation to receive payments. This obligation is motivated by the fight against money laundering. </p><p>The verification of identity required for payment is done by comparing the first and last name entered in your profile and those on your identity document. Please make sure that you have the correct information in your profile. </p><p>You can read the conditions of validation of an identity document from our partner <a target='_blank' href='https://support.mangopay.com/s/article/What-are-the-reasons-for-a-document-rejection?language=fr'>here</a>.</p>",
     "fileInput": {
-        "label" : "Document d'identité à jour",
-        "error": "Le document ne doit pas dépasser 6MB",
-        "tooltip": "Le document doit être au format jpg, jpeg, png ou pdf et ne doit pas excéder 6MB"
+        "label": "Up-to-date identity document",
+        "error": "The document must not be larger than 6 MB",
+        "tooltip": "The document must be in jpg, jpeg, png or pdf format and must not be larger than 6 MB"
     },
-    "send": "Envoyer",
+    "send": "Send",
     "status": {
-        "pending": "Document en cours de validation",
-        "validated": "Identité vérifiée",
-        "outdated": "Document expiré",
+        "pending": "Document being validated",
+        "validated": "Identity verified",
+        "outdated": "Document expired",
         "refused": {
-            "0" : "Document refusé",
-            "1" : "Vos données personnelles ont changé veuillez valider à nouveau votre identité",
-            "2" : "Document refusé car vous devez être majeur",
-            "3" : "Document refusé car falsifié",
-            "4" : "Document refusé car le fichier est vide",
-            "5" : "Document refusé car le document a expiré",
-            "6" : "Document refusé car type de document non accepté",
-            "7" : "Document refusé car les données ne correspondent pas à celles de l'utilisateur",
-            "8" : "Document refusé car illisible",
-            "9" : "Document refusé car incomplet"
+            "0": "Document rejected",
+            "1": "Your personal data has changed please validate your identity again",
+            "2": "Document refused because you must be of legal age",
+            "3": "Document refused because falsified",
+            "4": "Document refused because the file is empty",
+            "5": "Document rejected because it has expired",
+            "6": "Document rejected because document type not accepted",
+            "7": "Document rejected because the data does not match the user data",
+            "8": "Document rejected because illegible",
+            "9": "Document rejected because incomplete"
         }
     },
-    "sendUrl": "/utilisateur/document-validation-identite/envoyer"
+    "sendUrl": "/user/document-validation-identification/send"
 }
