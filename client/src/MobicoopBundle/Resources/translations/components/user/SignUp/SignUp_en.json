@@ -48,7 +48,7 @@
         "placeholder": "Email",
         "errors": {
             "required": "Email address is required",
-            "valid": "Email address must be valid"
+            "valid": "The email address must be valid"
         }
     },
     "phone": {
@@ -115,7 +115,7 @@
     },
     "snackbar": {
         "joinCommunity": {
-            "textError": "An error has occurred please try again.",
+            "textError": "An error has occurred, please try again.",
             "textOkAutoValidation": "Your membership request is validated.",
             "textOkManualValidation": "Your membership request has been sent to the referrer. You will be informed by email."
         }
