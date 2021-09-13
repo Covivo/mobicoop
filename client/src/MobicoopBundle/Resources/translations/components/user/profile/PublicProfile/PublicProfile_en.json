@@ -7,7 +7,7 @@
     "subscribedOn": "Registered on",
     "savedCo2": " saved: {savedCo2} t",
     "params": {
-        "chat": "I discuss",
+        "chat": "I chat",
         "noChat": "I am not talkative",
         "music": "I listen to the radio or music",
         "noMusic": "I prefer to ride without background sound",
