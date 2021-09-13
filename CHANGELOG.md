@@ -1,3 +1,6 @@
+# Release 1.36.0
+* User can now see their own Ad in search results
+
 # Release 1.33.0
 * Alternate horizontal version of Search component
 * Add editable editorial content
