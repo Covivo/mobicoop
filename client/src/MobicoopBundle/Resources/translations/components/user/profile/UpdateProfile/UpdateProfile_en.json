@@ -39,7 +39,7 @@
     "email": {
         "label": "Email",
         "errors": {
-            "valid": "The email address must be in the right format"
+            "valid": "The email address must be in the correct format"
         },
         "tooltips": {
             "verified": "Your email address is verified",
