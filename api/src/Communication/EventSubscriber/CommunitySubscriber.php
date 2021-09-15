@@ -69,19 +69,20 @@ class CommunitySubscriber implements EventSubscriberInterface
      */
     public function onCommunityNewMembershipRequest(CommunityNewMembershipRequestEvent $event)
     {
-        // $communityUsers = $event->getCommunityUser()->getCommunity()->getCommunityUsers();
-        // foreach ($communityUsers as $communityUser) {
-        //     if ($communityUser->getStatus() === CommunityUser::STATUS_ACCEPTED_AS_MODERATOR) {
-        //         $communityRecipient = $communityUser->getUser();
-        //     }
-        //     $this->notificationManager->notifies(CommunityNewMembershipRequestEvent::NAME, $communityRecipient, $event->getCommunityUser());
-        // }
-
         // the recipient is the creator of community
         $communityRecipient = ($event->getCommunityUser()->getCommunity()->getUser());
 
         // we must notify the creator of the community
         $this->notificationManager->notifies(CommunityNewMembershipRequestEvent::NAME, $communityRecipient, $event->getCommunityUser());
+        
+        // we also need to notify community's moderators
+        $communityUsers = $event->getCommunityUser()->getCommunity()->getCommunityUsers();
+        foreach ($communityUsers as $communityUser) {
+            if ($communityUser->getStatus() === CommunityUser::STATUS_ACCEPTED_AS_MODERATOR) {
+                $communityRecipient = $communityUser->getUser();
+                $this->notificationManager->notifies(CommunityNewMembershipRequestEvent::NAME, $communityRecipient, $event->getCommunityUser());
+            }
+        }
     }
 
     /**
@@ -92,13 +93,20 @@ class CommunitySubscriber implements EventSubscriberInterface
      */
     public function onCommunityMember(CommunityNewMemberEvent $event)
     {
-        // $communityUsers = $event->getCommunityUser()->getCommunity()->getCommunityUsers();
-        // foreach ($communityUsers as $communityUser) {
-        //     if ($communityUser->getStatus() === CommunityUser::STATUS_ACCEPTED_AS_MODERATOR) {
-        //         $communityRecipient = $communityUser->getUser();
-        //     }
-        //     $this->notificationManager->notifies(CommunityNewMembershipRequestEvent::NAME, $communityRecipient, $event->getCommunityUser());
-        // }
+        // the recipient is the new community member
+        $communityRecipient = ($event->getCommunityUser()->getCommunity()->getUser());
+        
+        // we must notify the creator of the community
+        $this->notificationManager->notifies(CommunityNewMemberEvent::NAME, $communityRecipient, $event->getCommunityUser());
+        
+        // we also need to notify community's moderators
+        $communityUsers = $event->getCommunityUser()->getCommunity()->getCommunityUsers();
+        foreach ($communityUsers as $communityUser) {
+            if ($communityUser->getStatus() === CommunityUser::STATUS_ACCEPTED_AS_MODERATOR) {
+                $communityRecipient = $communityUser->getUser();
+                $this->notificationManager->notifies(CommunityNewMemberEvent::NAME, $communityRecipient, $event->getCommunityUser());
+            }
+        }
 
         // the recipient is the new community member
         $communityRecipient = ($event->getCommunityUser()->getCommunity()->getUser());
