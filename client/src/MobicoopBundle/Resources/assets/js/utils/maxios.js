@@ -56,13 +56,7 @@ class MAxios {
   };
   updateStore(response){
     if(response.data.gamificationNotifications){
-      if(localStorage.getItem('gamificationInLocalStorage')=='1'){
-        localStorage.setItem('gamificationNotifications',JSON.stringify(response.data.gamificationNotifications));
-        localStorage.removeItem('gamificationInLocalStorage');
-      }
-      else{
-        store.commit('gn/updateGamificationNotifications',response.data.gamificationNotifications);
-      }
+      store.commit('gn/updateGamificationNotifications',response.data.gamificationNotifications);
     }
   }
 }

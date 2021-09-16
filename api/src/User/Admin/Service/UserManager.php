@@ -271,6 +271,11 @@ class UserManager
                 $homeAddress->setCountryCode($user->getHomeAddress()->getCountryCode());
                 $this->entityManager->persist($homeAddress);
                 $this->entityManager->flush();
+
+                // check if the user is also a solidary user
+                if ($user->getSolidaryUser() && $user->getSolidaryUser()->isVolunteer()) {
+                    $user->getSolidaryUser()->setAddress($homeAddress);
+                }
             }
         }
 

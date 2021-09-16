@@ -171,8 +171,9 @@ class EventManager
         $params['order[id]'] = $order;
         $params['perPage'] = $limit;
         $params['page'] = $page;
+        $params['private'] = false;
         $response = $this->dataProvider->getCollection($params);
-        if ($response->getCode() >=200 && $response->getCode() <= 300) {
+        if ($response->getCode() >= 200 && $response->getCode() <= 300) {
             return $response->getValue();
         }
         return $response->getValue();

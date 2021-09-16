@@ -73,6 +73,7 @@ class ArticleController extends AbstractController
     const LEGAL_NOTICE = 33;
     const I_AM_PRIVATE_PERSON = 34;
     const I_AM_SOCIETY = 35;
+    const GUARANTEED_RETURN = 36;
 
 
     /**
@@ -392,6 +393,16 @@ class ArticleController extends AbstractController
     public function showIAmSociety(ArticleManager $articleManager)
     {
         return $this->showArticle($articleManager->getArticle(self::I_AM_SOCIETY));
+    }
+
+
+    /**
+    * Display of the GUARANTEED_RETURN page
+    *
+    */
+    public function showGuaranteedReturn(ArticleManager $articleManager)
+    {
+        return $this->showArticle($articleManager->getArticle(self::GUARANTEED_RETURN));
     }
 
     /**

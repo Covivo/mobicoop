@@ -245,6 +245,7 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
         return [
             "type" => "Badge",
             "id" => $reward->getBadge()->getId(),
+            "rewardId" => $reward->getId(),
             "name" => $reward->getBadge()->getName(),
             "title" => $reward->getBadge()->getTitle(),
             "notifiedDate" => $reward->getNotifiedDate(),
