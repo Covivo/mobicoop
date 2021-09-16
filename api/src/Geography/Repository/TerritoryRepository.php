@@ -107,7 +107,7 @@ class TerritoryRepository
      *
      * @param float $latitude   Latitude of the point
      * @param float $longitude  Longitude of the point
-     * @return Territory[]|null       The territories
+     * @return array|null       The territories
      */
     public function findPointTerritories(float $latitude, float $longitude)
     {

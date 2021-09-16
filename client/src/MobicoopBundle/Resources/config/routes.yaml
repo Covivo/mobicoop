@@ -1329,13 +1329,21 @@ iAmAPerson:
         nl: /i-am-private-person
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showIAmPrivatePerson
 
-# display "I'm a private person"
+# display "I'm a society"
 iAmASociety:
     path:
         fr: /je-suis-une-entreprise
         en: /i-am-society
         nl: /i-am-society
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showIAmSociety
+
+# display "I'm a private person"
+guaranteedReturn:
+    path:
+        fr: /retour-garanti
+        en: /guaranteed-return
+        nl: /guaranteed-return
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showGuaranteedReturn
 
 # Get the last external articles (AJAX)
 editorial:

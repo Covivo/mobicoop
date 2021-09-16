@@ -85,7 +85,7 @@
           <v-btn
             rounded
             color="error"
-            @click="dialog = false;tagRewardAsNotified(badge.id)"
+            @click="dialog = false;tagRewardAsNotified(badge.rewardId)"
           >
             {{ $t("close") }}
           </v-btn>

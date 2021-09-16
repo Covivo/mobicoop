@@ -73,6 +73,7 @@
 </template>
 
 <script>
+import { merge } from "lodash";
 import maxios from "@utils/maxios";
 import { merge } from "lodash";
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/relayPoints/RelayPoints/";
