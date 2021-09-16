@@ -75,7 +75,6 @@
 <script>
 import { merge } from "lodash";
 import maxios from "@utils/maxios";
-import { merge } from "lodash";
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/relayPoints/RelayPoints/";
 import {messages_client_en, messages_client_fr, messages_client_eu, messages_client_nl} from "@clientTranslations/components/relayPoints/RelayPoints/";
 import Search from "@components/carpool/search/Search";
