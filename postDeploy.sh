@@ -186,10 +186,10 @@ else
     rm /var/www/$INSTANCE/$VERSION/client/public/maintenance.enable
 
     #Admin build
-    cd /var/www/$INSTANCE/$VERSION/admin;
-    rm -Rf node_modules;
-    rm package-lock.json;
-    npm install;
-    npm run build;
+    # cd /var/www/$INSTANCE/$VERSION/admin;
+    # rm -Rf node_modules;
+    # rm package-lock.json;
+    # npm install;
+    # npm run build;
 
 fi
