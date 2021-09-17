@@ -1617,9 +1617,11 @@ class ResultManager
 
         $result->setCommunities($communities);
 
-        // Check if the matching proposal is owned by the caller
-        $matchingProposal = $this->proposalRepository->find($matchingProposalId);
-        $result->setMyOwn($matchingProposal->getUser()->getId()===$this->security->getUser()->getId());
+        // Check if the matching proposal is owned by the caller (if not anonymous)
+        if(!is_null($proposal->getUser())){
+            $matchingProposal = $this->proposalRepository->find($matchingProposalId);
+            $result->setMyOwn($matchingProposal->getUser()->getId()===$proposal->getUser()->getId());
+        }
         
         return $result;
     }
