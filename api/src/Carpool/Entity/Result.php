@@ -356,6 +356,12 @@ class Result
      */
     private $userId;
 
+    /**
+     * @var boolean If the Result is owned by the caller
+     * @Groups("results")
+     */
+    private $myOwn;
+
     public function __construct()
     {
         $this->id = self::DEFAULT_ID;
@@ -988,6 +994,18 @@ class Result
     public function setUserId(int $userId): self
     {
         $this->userId = $userId;
+
+        return $this;
+    }
+
+    public function isMyOwn(): bool
+    {
+        return $this->myOwn ? true : false;
+    }
+
+    public function setMyOwn(?bool $myOwn): self
+    {
+        $this->myOwn = $myOwn;
 
         return $this;
     }

@@ -184,7 +184,7 @@ class ProposalManager
      */
     public function prepareProposal(Proposal $proposal): Proposal
     {
-        return $this->treatProposal($this->setDefaults($proposal), true, true);
+        return $this->treatProposal($this->setDefaults($proposal), true, $proposal->isPrivate() ? false : true);
     }
 
     /**

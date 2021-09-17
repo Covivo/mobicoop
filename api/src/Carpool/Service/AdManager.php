@@ -966,17 +966,7 @@ class AdManager
         if ($proposal->getProposalLinked()) {
             $proposal->getProposalLinked()->setUser($this->security->getUser());
         }
-        // we remove the self matchings eventually
-        foreach ($proposal->getMatchingOffers() as $matchingOffer) {
-            if ($matchingOffer->getProposalOffer()->getUser()->getId() == $this->security->getUser()->getId()) {
-                $proposal->removeMatchingOffer($matchingOffer);
-            }
-        }
-        foreach ($proposal->getMatchingRequests() as $matchingRequest) {
-            if ($matchingRequest->getProposal()->getUser()->getId() == $this->security->getUser()->getId()) {
-                $proposal->removeMatchingRequest($matchingRequest);
-            }
-        }
+
         $this->entityManager->persist($proposal);
         $this->entityManager->flush();
 
