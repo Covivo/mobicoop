@@ -486,6 +486,7 @@ class ResultManager
                         $blockedRequest = true;
                     }
                 }
+                $matchingProposal = $matching['request']->getProposalRequest();
             }
             if (isset($matching['offer'])) {
                 $user1 = $matching['offer']->getProposalOffer()->getUser();
@@ -497,10 +498,11 @@ class ResultManager
                         $blockedOffer = true;
                     }
                 }
+                $matchingProposal = $matching['offer']->getProposalOffer();
             }
             
             if (!$blockedRequest && !$blockedOffer) {
-                $result = $this->createMatchingResult($proposal, $matchingProposalId, $matching, $return);
+                $result = $this->createMatchingResult($proposal, $matchingProposal, $matching, $return);
                 $results[$matchingProposalId] = $result;
             }
         }
@@ -511,12 +513,12 @@ class ResultManager
      * Create results for a given matching of a proposal
      *
      * @param Proposal $proposal            The proposal
-     * @param integer $matchingProposalId   The proposal that matches
+     * @param Proposal $matchingProposal   The proposal that matches
      * @param array $matching               The array of the matchings of the proposal (an array with the matching proposal as offer and/or request)
      * @param boolean $return               The matching concerns a return (=false if it's the outward)
      * @return Result                       The result object
      */
-    private function createMatchingResult(Proposal $proposal, int $matchingProposalId, array $matching, bool $return)
+    private function createMatchingResult(Proposal $proposal, Proposal $matchingProposal, array $matching, bool $return)
     {
         $result = new Result();
         $result->setId($proposal->getId());
@@ -584,7 +586,7 @@ class ResultManager
             // outward
             $item = new ResultItem();
             // we set the proposalId
-            $item->setProposalId($matchingProposalId);
+            $item->setProposalId($matchingProposal->getId());
             if ($matching['request']->getId() !== Matching::DEFAULT_ID) {
                 $item->setMatchingId($matching['request']->getId());
             }
@@ -1107,7 +1109,7 @@ class ResultManager
             // outward
             $item = new ResultItem();
             // we set the proposalId
-            $item->setProposalId($matchingProposalId);
+            $item->setProposalId($matchingProposal->getId());
             if ($matching['offer']->getId() !== Matching::DEFAULT_ID) {
                 $item->setMatchingId($matching['offer']->getId());
             }
@@ -1618,8 +1620,7 @@ class ResultManager
         $result->setCommunities($communities);
 
         // Check if the matching proposal is owned by the caller (if not anonymous)
-        if(!is_null($proposal->getUser())){
-            $matchingProposal = $this->proposalRepository->find($matchingProposalId);
+        if (!is_null($proposal->getUser())) {
             $result->setMyOwn($matchingProposal->getUser()->getId()===$proposal->getUser()->getId());
         }
         
