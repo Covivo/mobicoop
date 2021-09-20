@@ -451,7 +451,17 @@ class CommunityManager
     {
         $mCommunities = [];
         $communities = $this->communityRepository->findAvailableCommunitiesForUser($user instanceof User ? $user->getId() : null, ['c.name' => 'asc']);
+        $temporaryCommuities = [];
+        
         foreach ($communities as $community) {
+            if ($community->getValidationType() === Community::DOMAIN_VALIDATION && str_contains($userEmail, $community->getDomain())) {
+                $temporaryCommuities[] = $community;
+            } elseif ($community->getValidationType() === Community::MANUAL_VALIDATION || $community->getValidationType() === Community::AUTO_VALIDATION) {
+                $temporaryCommuities[] = $community;
+            }
+        }
+
+        foreach ($temporaryCommuities as $community) {
             /**
              * @var Community $community
              */
