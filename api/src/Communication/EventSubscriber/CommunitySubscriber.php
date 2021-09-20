@@ -107,12 +107,6 @@ class CommunitySubscriber implements EventSubscriberInterface
                 $this->notificationManager->notifies(CommunityNewMemberEvent::NAME, $communityRecipient, $event->getCommunityUser());
             }
         }
-
-        // the recipient is the new community member
-        $communityRecipient = ($event->getCommunityUser()->getCommunity()->getUser());
-
-        // we must notify the creator of the community
-        $this->notificationManager->notifies(CommunityNewMemberEvent::NAME, $communityRecipient, $event->getCommunityUser());
     }
 
     /**
