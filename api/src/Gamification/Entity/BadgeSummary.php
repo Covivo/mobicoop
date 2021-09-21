@@ -56,6 +56,30 @@ class BadgeSummary
      */
     private $sequences;
 
+    /**
+     * @var string Badge's icon
+     * @Groups({"readGamification"})
+     */
+    private $icon;
+
+    /**
+     * @var string Badge's deteriorated icon
+     * @Groups({"readGamification"})
+     */
+    private $decoratedIcon;
+
+    /**
+     * @var string Badge's image (when we earn the badge)
+     * @Groups({"readGamification"})
+     */
+    private $image;
+
+    /**
+     * @var string Badge's image light version (when we earn the badge)
+     * @Groups({"readGamification"})
+     */
+    private $imageLight;
+
 
     public function getBadgeId(): ?int
     {
@@ -101,6 +125,54 @@ class BadgeSummary
     public function setSequences(array $sequences): self
     {
         $this->sequences = $sequences;
+
+        return $this;
+    }
+
+    public function getIcon(): ?string
+    {
+        return $this->icon;
+    }
+
+    public function setIcon(?string $icon): self
+    {
+        $this->icon = $icon;
+
+        return $this;
+    }
+
+    public function getDecoratedIcon(): ?string
+    {
+        return $this->decoratedIcon;
+    }
+
+    public function setDecoratedIcon(?string $decoratedIcon): self
+    {
+        $this->decoratedIcon = $decoratedIcon;
+
+        return $this;
+    }
+
+    public function getImage(): ?string
+    {
+        return $this->image;
+    }
+
+    public function setImage(?string $image): self
+    {
+        $this->image = $image;
+
+        return $this;
+    }
+
+    public function getImageLight(): ?string
+    {
+        return $this->imageLight;
+    }
+
+    public function setImageLight(?string $imageLight): self
+    {
+        $this->imageLight = $imageLight;
 
         return $this;
     }

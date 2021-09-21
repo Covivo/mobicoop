@@ -460,6 +460,9 @@ services:
     App\Gamification\EventSubscriber\LogSubscriber:
         arguments:
             $active: '%env(bool:GAMIFICATION_ACTIVE)%'
+    App\Gamification\Service\GamificationManager:
+        arguments:
+            $badgeImageUri: '%env(string:GAMIFICATION_BADGE_IMAGE_URI)%'            
     
     
     # Geocoder; alias to allow this type to be autowired

@@ -67,6 +67,7 @@ class GamificationManager
     private $messageRepository;
     private $rewardStepRepository;
     private $rewardRepository;
+    private $badgeImageUri;
 
     public function __construct(
         SequenceItemRepository $sequenceItemRepository,
@@ -77,7 +78,8 @@ class GamificationManager
         GamificationNotifier $gamificationNotifier,
         MessageRepository $messageRepository,
         RewardStepRepository $rewardStepRepository,
-        RewardRepository $rewardRepository
+        RewardRepository $rewardRepository,
+        string $badgeImageUri
     ) {
         $this->sequenceItemRepository = $sequenceItemRepository;
         $this->logRepository = $logRepository;
@@ -88,6 +90,7 @@ class GamificationManager
         $this->messageRepository = $messageRepository;
         $this->rewardStepRepository = $rewardStepRepository;
         $this->rewardRepository = $rewardRepository;
+        $this->badgeImageUri = $badgeImageUri;
     }
     
     /**
@@ -253,6 +256,12 @@ class GamificationManager
             $badgeSummary->setBadgeId($activeBadge->getId());
             $badgeSummary->setBadgeName($activeBadge->getName());
             $badgeSummary->setBadgeTitle($activeBadge->getTitle());
+
+            // images
+            $badgeSummary->setIcon((!is_null($activeBadge->getIcon())) ? $this->badgeImageUri.$activeBadge->getIcon()->getFileName() : null);
+            $badgeSummary->setDecoratedIcon((!is_null($activeBadge->getDecoratedIcon())) ? $this->badgeImageUri.$activeBadge->getDecoratedIcon()->getFileName() : null);
+            $badgeSummary->setImage((!is_null($activeBadge->getImage())) ? $this->badgeImageUri.$activeBadge->getImage()->getFileName() : null);
+            $badgeSummary->setImageLight((!is_null($activeBadge->getImageLight())) ? $this->badgeImageUri.$activeBadge->getImageLight()->getFileName() : null);
 
             // We get the sequence and check if the current user validated it
             $sequences = [];
