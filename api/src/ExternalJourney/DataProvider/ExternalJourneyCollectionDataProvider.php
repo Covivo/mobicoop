@@ -194,20 +194,27 @@ final class ExternalJourneyCollectionDataProvider implements CollectionDataProvi
 
             // The carpooler
             $carpooler = new User();
-            $carpooler->setId($currentJourney['driver']['uuid']);
-            $carpooler->setGivenName($currentJourney['driver']['alias']);
+
+            if (isset($currentJourney['driver']['uuid'])) {
+                $currentJourneyCarpooler = $currentJourney['driver'];
+            } else {
+                $currentJourneyCarpooler = $currentJourney['passenger'];
+            }
+
+            $carpooler->setId($currentJourneyCarpooler['uuid']);
+            $carpooler->setGivenName($currentJourneyCarpooler['alias']);
             $carpooler->setGender(User::GENDER_FEMALE);
-            if ($currentJourney['driver']['gender']==="male") {
+            if ($currentJourneyCarpooler['gender']==="male") {
                 $carpooler->setGender(User::GENDER_MALE);
             }
-            if (is_null($currentJourney['driver']['image'])) {
+            if (is_null($currentJourneyCarpooler['image'])) {
                 foreach (json_decode($this->params['avatarSizes']) as $size) {
                     if (in_array($size, User::AUTHORIZED_SIZES_DEFAULT_AVATAR)) {
                         $carpooler->addAvatar($this->params['avatarDefaultFolder'].$size.".svg");
                     }
                 }
             } else {
-                $carpooler->addAvatar($currentJourney['driver']['image']);
+                $carpooler->addAvatar($currentJourneyCarpooler['image']);
             }
             $result->setCarpooler($carpooler);
 
@@ -269,7 +276,7 @@ final class ExternalJourneyCollectionDataProvider implements CollectionDataProvi
             $origin->setLatitude($currentJourney['from']['latitude']);
             $origin->setLongitude($currentJourney['from']['longitude']);
             $origin->setStreetAddress($currentJourney['from']['address']);
-            $origin->setPostalCode($currentJourney['from']['postalcode']);
+            $origin->setPostalCode(isset($currentJourney['from']['postalcode']) ? $currentJourney['from']['postalcode'] : null);
             $origin->setAddressLocality($currentJourney['from']['city']);
             $origin->setAddressCountry($currentJourney['from']['country']);
             $result->setOrigin($origin);
@@ -279,7 +286,7 @@ final class ExternalJourneyCollectionDataProvider implements CollectionDataProvi
             $destination->setLatitude($currentJourney['to']['latitude']);
             $destination->setLongitude($currentJourney['to']['longitude']);
             $destination->setStreetAddress($currentJourney['to']['address']);
-            $destination->setPostalCode($currentJourney['to']['postalcode']);
+            $destination->setPostalCode(isset($currentJourney['to']['postalcode']) ? $currentJourney['to']['postalcode'] : null);
             $destination->setAddressLocality($currentJourney['to']['city']);
             $destination->setAddressCountry($currentJourney['to']['country']);
             $result->setDestination($destination);
@@ -288,7 +295,7 @@ final class ExternalJourneyCollectionDataProvider implements CollectionDataProvi
             // price - seats - distance - duration
             $result->setTime(($time!=="") ? $time : null);
             $result->setRoundedPrice(round(($currentJourney['distance'] / 1000) * $currentJourney['cost']['variable'], 2));
-            $result->setSeats($currentJourney['driver']['seats']);
+            $result->setSeats(isset($currentJourney['driver']['seats']) ? $currentJourney['driver']['seats'] : 0);
 
             // return trip ?
             $result->setReturn(false);
@@ -307,11 +314,16 @@ final class ExternalJourneyCollectionDataProvider implements CollectionDataProvi
                 $result->setResultDriver($resultDriver);
             }
 
-            if (strpos($currentJourney['url'], 'http')!==false) {
-                $result->setExternalUrl($currentJourney['url']);
+            if (!isset($currentJourney['url']) || trim($currentJourney['url']) === "") {
+                $result->setExternalUrl($currentJourney['origin']);
             } else {
-                $result->setExternalUrl('https://'.$currentJourney['url']);
+                if (strpos($currentJourney['url'], 'http')!==false) {
+                    $result->setExternalUrl($currentJourney['url']);
+                } else {
+                    $result->setExternalUrl('https://'.$currentJourney['url']);
+                }
             }
+            
             $result->setExternalOrigin($currentJourney['origin']);
             $result->setExternalOperator($currentJourney['operator']);
             $result->setExternalOperator($currentJourney['operator']);
