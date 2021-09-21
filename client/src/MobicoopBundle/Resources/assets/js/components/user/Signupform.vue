@@ -777,7 +777,7 @@ export default {
       });
     },
     step() {
-      if (this.step == 3) {
+      if (this.step == 3 && this.communityShow) {
         this.loadingCommunity = true;
         this.getCommunities();
       }
