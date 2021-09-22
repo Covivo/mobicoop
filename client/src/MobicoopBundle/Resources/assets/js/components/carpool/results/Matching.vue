@@ -608,8 +608,8 @@ export default {
     searchExternalJourneys(){
       this.loadingExternal = true;
       let postParams = {
-        "driver": 1, // TO DO : Dynamic
-        "passenger": 0, // TO DO : Dynamic
+        "driver": 0, // TO DO : Dynamic
+        "passenger": 1, // TO DO : Dynamic
         "from_latitude": this.origin.latitude,
         "from_longitude": this.origin.longitude,
         "to_latitude": this.destination.latitude,
