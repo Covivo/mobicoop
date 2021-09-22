@@ -1,3 +1,12 @@
 {
-    "getBadgesUrl":"/gamification/badgesboard"
+    "getBadgesUrl":"/gamification/badgesboard",
+    "badgesEarned":{
+        "title":"Badges gagnés"
+    },
+    "badgesInProgress":{
+        "title":"Badges en cours"
+    },
+    "otherBadges":{
+        "title":"Les autres badges"
+    }
 }

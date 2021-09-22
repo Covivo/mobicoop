@@ -1,6 +1,78 @@
 <template>
   <v-container fluid>
-    yo les badges
+    <v-row>
+      <v-col cols="12">
+        <h2>{{ $t("badgesEarned.title") }}</h2>
+      </v-col>
+    </v-row>
+    <v-row v-if="badges && badgesEarned">
+      <v-col cols="12">
+        <v-img
+          v-for="badgeEarned in badgesEarned"
+          :key="badgeEarned.badgeSummary.badgeId"
+          :src="badgeEarned.badgeSummary.decoratedIcon"
+          max-width="50px"
+        />
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="12">
+        <h2>{{ $t("badgesInProgress.title") }}</h2>
+      </v-col>
+    </v-row>
+    <v-row v-if="badges && badgesInProgress">
+      <v-col cols="12">
+        <v-row
+          v-for="badgeInProgress in badgesInProgress"
+          :key="badgeInProgress.badgeSummary.badgeId"
+          align="center"
+        >
+          <v-col
+            cols="1"
+          >
+            <v-img
+              :src="badgeInProgress.badgeSummary.icon"
+              max-width="50px"
+            />
+          </v-col>
+          <v-col
+            cols="11"
+            justify="left"
+          >
+            {{ badgeInProgress.badgeSummary.badgeTitle }}
+          </v-col>
+        </v-row>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="12">
+        <h2>{{ $t("otherBadges.title") }}</h2>
+      </v-col>
+    </v-row>
+    <v-row v-if="badges && otherBadges">
+      <v-col cols="12">
+        <v-row
+          v-for="otherBadge in otherBadges"
+          :key="otherBadge.badgeSummary.badgeId"
+          align="center"
+        >
+          <v-col
+            cols="1"
+          >
+            <v-img
+              :src="otherBadge.badgeSummary.icon"
+              max-width="50px"
+            />
+          </v-col>
+          <v-col
+            cols="11"
+            justify="left"
+          >
+            {{ otherBadge.badgeSummary.badgeTitle }}
+          </v-col>
+        </v-row>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 <script>
@@ -44,7 +116,7 @@ export default {
       maxios
         .post(this.$t('getBadgesUrl'))
         .then(res => {
-          console.log(res.data);
+        //   console.log(res.data);
           this.badges = res.data.badges;
         })
         .catch(error => {

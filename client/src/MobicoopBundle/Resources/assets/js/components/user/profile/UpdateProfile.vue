@@ -627,7 +627,7 @@
     <!-- BADGES DIALOG -->
     <v-dialog
       v-model="dialogBadges"
-      width="70%"
+      width="850px"
     >
       <v-card>
         <v-card-title class="headline grey lighten-2">
