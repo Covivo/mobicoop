@@ -64,7 +64,7 @@
             <v-expansion-panel-header>
               <v-row>
                 <v-col
-                  cols="1"
+                  cols="2"
                 >
                   <v-img
                     :src="badgeInProgress.badgeSummary.icon"
@@ -72,7 +72,7 @@
                   />
                 </v-col>
                 <v-col
-                  cols="11"
+                  cols="10"
                   justify="left"
                 >
                   {{ badgeInProgress.badgeSummary.badgeTitle }}
