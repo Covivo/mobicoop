@@ -13,22 +13,30 @@
             :key="badgeEarned.badgeSummary.badgeId"
             cols="2"
           >
-            <v-row justify="center">
-              <v-cols
+            <v-row
+              justify="center"
+              dense
+            >
+              <v-col
                 cols="12"
+                align="center"
               >
                 <v-img
                   :src="badgeEarned.badgeSummary.decoratedIcon"
                   max-width="50px"
                 />
-              </v-cols>
+              </v-col>
             </v-row>
-            <v-row justify="center">
-              <v-cols
+            <v-row
+              justify="center"
+              dense
+            >
+              <v-col
                 cols="12"
+                align="center"
               >
                 {{ badgeEarned.badgeSummary.badgeTitle }}
-              </v-cols>
+              </v-col>
             </v-row>
           </v-col>
         </v-row>
@@ -44,35 +52,64 @@
     </v-row>
     <v-row v-if="badges && badgesInProgress && badgesInProgress.length>0">
       <v-col cols="12">
-        <v-row
-          v-for="badgeInProgress in badgesInProgress"
-          :key="badgeInProgress.badgeSummary.badgeId"
-          align="center"
+        <v-expansion-panels
+          accordion
+          flat
         >
-          <v-col
-            cols="1"
+          <v-expansion-panel
+            v-for="badgeInProgress in badgesInProgress"
+            :key="badgeInProgress.badgeSummary.badgeId"
+            align="center"
           >
-            <v-img
-              :src="badgeInProgress.badgeSummary.icon"
-              max-width="50px"
-            />
-          </v-col>
-          <v-col
-            cols="11"
-            justify="left"
-          >
-            {{ badgeInProgress.badgeSummary.badgeTitle }}
-            <v-progress-linear
-              v-model="badgeInProgress.earningPercentage"
-              color="primary"
-              height="25"
-            >
-              <template v-slot:default="{ value }">
-                <strong>{{ Math.ceil(value) }}%</strong>
-              </template>
-            </v-progress-linear>            
-          </v-col>
-        </v-row>
+            <v-expansion-panel-header>
+              <v-row>
+                <v-col
+                  cols="1"
+                >
+                  <v-img
+                    :src="badgeInProgress.badgeSummary.icon"
+                    max-width="50px"
+                  />
+                </v-col>
+                <v-col
+                  cols="11"
+                  justify="left"
+                >
+                  {{ badgeInProgress.badgeSummary.badgeTitle }}
+                  <v-progress-linear
+                    :value="badgeInProgress.earningPercentage"
+                    color="primary"
+                    height="25"
+                  >
+                    <template v-slot:default="{ value }">
+                      <strong>{{ Math.ceil(value) }}%</strong>
+                    </template>
+                  </v-progress-linear>            
+                </v-col>
+              </v-row>
+            </v-expansion-panel-header>
+            <v-expansion-panel-content>
+              <v-list dense>
+                <v-list-item
+                  v-for="(sequence, i) in badgeInProgress.badgeSummary.sequences"
+                  :key="i"
+                >
+                  <v-list-item-icon>
+                    <v-icon v-if="sequence.validated">
+                      mdi-checkbox-marked
+                    </v-icon>
+                    <v-icon v-else>
+                      mdi-checkbox-blank-outline
+                    </v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-content>
+                    {{ sequence.title }}
+                  </v-list-item-content>
+                </v-list-item>                
+              </v-list>
+            </v-expansion-panel-content>          
+          </v-expansion-panel>
+        </v-expansion-panels>
       </v-col>
     </v-row>
     <v-row v-else>
