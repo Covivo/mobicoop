@@ -47,6 +47,7 @@
             {{ $t('publicProfile.see') }}
           </v-btn>
           <v-btn
+            v-if="gamificationActive"
             color="primary"
             class="mb-8 ml-2"
             rounded
@@ -714,7 +715,11 @@ export default {
     platform: {
       type: String,
       default: ""
-    }
+    },
+    gamificationActive: {
+      type: Boolean,
+      default: false
+    }    
   },
   data() {
     return {

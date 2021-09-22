@@ -71,6 +71,7 @@
                   :url-alt-avatar="urlAltAvatar"
                   :avatar-version="avatarVersion"
                   :platform="platform"
+                  :gamification-active="gamificationActive"
                 />
               </v-tab-item>
 
@@ -224,6 +225,10 @@ export default {
       type: Boolean,
       default: true
     },
+    gamificationActive: {
+      type: Boolean,
+      default: false
+    }
   },
   data(){
     return{

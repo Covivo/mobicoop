@@ -95,6 +95,7 @@ class UserController extends AbstractController
     private $ageDisplay;
     private $birthDateDisplay;
     private $eventManager;
+    private $gamificationActive;
 
 
     /**
@@ -124,7 +125,8 @@ class UserController extends AbstractController
         bool $loginDelegate,
         bool $fraudWarningDisplay,
         bool $ageDisplay,
-        bool $birthDateDisplay
+        bool $birthDateDisplay,
+        bool $gamificationActive
     ) {
         $this->encoder = $encoder;
         $this->facebook_show = $facebook_show;
@@ -149,6 +151,7 @@ class UserController extends AbstractController
         $this->birthDateDisplay = $birthDateDisplay;
         $this->eventManager = $eventManager;
         $this->ssoManager = $ssoManager;
+        $this->gamificationActive = $gamificationActive;
     }
 
     /***********
@@ -532,7 +535,8 @@ class UserController extends AbstractController
             'paymentElectronicActive' => $this->paymentElectronicActive,
             'validationDocsAuthorizedExtensions' => $this->validationDocsAuthorizedExtensions,
             'showReviews' => $user->isUserReviewsActive(),
-            "ageDisplay"=>$this->ageDisplay
+            "ageDisplay"=>$this->ageDisplay,
+            "gamificationActive"=>$this->gamificationActive
         ]);
     }
 
