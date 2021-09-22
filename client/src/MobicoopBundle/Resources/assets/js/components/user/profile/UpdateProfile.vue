@@ -46,6 +46,14 @@
           >
             {{ $t('publicProfile.see') }}
           </v-btn>
+          <v-btn
+            color="primary"
+            class="mb-8 ml-2"
+            rounded
+            @click="dialogBadges = true"
+          >
+            {{ $t('badges.see') }}
+          </v-btn>          
         </v-card-title>
         <v-card-text>
           <!-- Email -->
@@ -615,6 +623,35 @@
         </v-card-actions>
       </v-card>      
     </v-dialog>    
+
+    <!-- BADGES DIALOG -->
+    <v-dialog
+      v-model="dialogBadges"
+      width="70%"
+    >
+      <v-card>
+        <v-card-title class="headline grey lighten-2">
+          {{ $t('badges.title') }}
+        </v-card-title>
+
+        <v-card-text>
+          <Badges />
+        </v-card-text>
+
+        <v-divider />
+
+        <v-card-actions>
+          <v-spacer />
+          <v-btn
+            color="primary"
+            text
+            @click="dialogBadges = false"
+          >
+            {{ $t('badges.close') }}
+          </v-btn>
+        </v-card-actions>
+      </v-card>      
+    </v-dialog>
   </v-container>
 </template>
 
@@ -624,6 +661,7 @@ import moment from "moment";
 import GeoComplete from "@js/components/utilities/GeoComplete";
 import ChangePassword from "@components/user/profile/ChangePassword";
 import PublicProfile from "@components/user/profile/PublicProfile";
+import Badges from "@components/user/profile/Badges";
 import { merge } from "lodash";
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/profile/UpdateProfile/";
 import {messages_client_en, messages_client_fr, messages_client_eu, messages_client_nl} from "@clientTranslations/components/user/profile/UpdateProfile/";
@@ -645,7 +683,8 @@ export default {
   components: {
     PublicProfile,
     GeoComplete,
-    ChangePassword
+    ChangePassword,
+    Badges
   },
   props: {
     avatarSize: {
@@ -682,6 +721,7 @@ export default {
       dialog: false,
       dialogDelete: false,
       dialogPublicProfile: false,
+      dialogBadges: false,
       snackbar: false,
       textSnackOk: this.$t('snackBar.profileUpdated'),
       textSnackError: this.$t("snackBar.passwordUpdateError"),

@@ -170,5 +170,10 @@
         "title":"Profil public",
         "see":"Voir profil public",
         "close":"Fermer"
-    }
+    },
+    "badges":{
+        "title":"Badges",
+        "see":"Voir les badges",
+        "close":"Fermer"
+    }    
 }
