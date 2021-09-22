@@ -7,7 +7,7 @@
     </v-row>
     <v-row v-if="badges && badgesEarned">
       <v-col cols="12">
-        <v-row>
+        <v-row v-if="badgesEarned.length>0">
           <v-col
             v-for="badgeEarned in badgesEarned"
             :key="badgeEarned.badgeSummary.badgeId"
@@ -32,6 +32,9 @@
             </v-row>
           </v-col>
         </v-row>
+        <v-row v-else>
+          <v-col>{{ $t('badgesEarned.nobadges') }}.</v-col>
+        </v-row>
       </v-col>
     </v-row>
     <v-row>
@@ -39,7 +42,7 @@
         <h2>{{ $t("badgesInProgress.title") }}</h2>
       </v-col>
     </v-row>
-    <v-row v-if="badges && badgesInProgress">
+    <v-row v-if="badges && badgesInProgress && badgesInProgress.length>0">
       <v-col cols="12">
         <v-row
           v-for="badgeInProgress in badgesInProgress"
@@ -72,12 +75,17 @@
         </v-row>
       </v-col>
     </v-row>
+    <v-row v-else>
+      <v-col>
+        {{ $t('badgesInProgress.nobadges') }}.
+      </v-col>
+    </v-row>
     <v-row>
       <v-col cols="12">
         <h2>{{ $t("otherBadges.title") }}</h2>
       </v-col>
     </v-row>
-    <v-row v-if="badges && otherBadges">
+    <v-row v-if="badges && otherBadges && otherBadges.length>0">
       <v-col
         v-for="otherBadge in otherBadges"
         :key="otherBadge.badgeSummary.badgeId"
@@ -103,6 +111,9 @@
           </v-col>
         </v-row>
       </v-col>
+    </v-row>
+    <v-row v-else>
+      <v-col>{{ $t('otherBadges.nobadges') }}.</v-col>
     </v-row>
   </v-container>
 </template>

@@ -1,12 +1,15 @@
 {
     "getBadgesUrl":"/gamification/badgesboard",
     "badgesEarned":{
-        "title":"Badges gagnés"
+        "title":"Badges gagnés",
+        "nobadges":"Vous n'avez encore gagnés aucun badges"
     },
     "badgesInProgress":{
-        "title":"Badges en cours"
+        "title":"Badges en cours",
+        "nobadges":"Vous n'avez aucun badges en cours d'acquisition"
     },
     "otherBadges":{
-        "title":"Les autres badges"
+        "title":"Les autres badges",
+        "nobadges":"Il n'y a aucun autre badge à gagner"
     }
 }
