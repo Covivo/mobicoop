@@ -7,12 +7,31 @@
     </v-row>
     <v-row v-if="badges && badgesEarned">
       <v-col cols="12">
-        <v-img
-          v-for="badgeEarned in badgesEarned"
-          :key="badgeEarned.badgeSummary.badgeId"
-          :src="badgeEarned.badgeSummary.decoratedIcon"
-          max-width="50px"
-        />
+        <v-row>
+          <v-col
+            v-for="badgeEarned in badgesEarned"
+            :key="badgeEarned.badgeSummary.badgeId"
+            cols="2"
+          >
+            <v-row justify="center">
+              <v-cols
+                cols="12"
+              >
+                <v-img
+                  :src="badgeEarned.badgeSummary.decoratedIcon"
+                  max-width="50px"
+                />
+              </v-cols>
+            </v-row>
+            <v-row justify="center">
+              <v-cols
+                cols="12"
+              >
+                {{ badgeEarned.badgeSummary.badgeTitle }}
+              </v-cols>
+            </v-row>
+          </v-col>
+        </v-row>
       </v-col>
     </v-row>
     <v-row>
@@ -40,6 +59,15 @@
             justify="left"
           >
             {{ badgeInProgress.badgeSummary.badgeTitle }}
+            <v-progress-linear
+              v-model="badgeInProgress.earningPercentage"
+              color="primary"
+              height="25"
+            >
+              <template v-slot:default="{ value }">
+                <strong>{{ Math.ceil(value) }}%</strong>
+              </template>
+            </v-progress-linear>            
           </v-col>
         </v-row>
       </v-col>
@@ -50,14 +78,17 @@
       </v-col>
     </v-row>
     <v-row v-if="badges && otherBadges">
-      <v-col cols="12">
+      <v-col
+        v-for="otherBadge in otherBadges"
+        :key="otherBadge.badgeSummary.badgeId"
+        cols="6"
+      >
         <v-row
-          v-for="otherBadge in otherBadges"
-          :key="otherBadge.badgeSummary.badgeId"
           align="center"
+          dense
         >
           <v-col
-            cols="1"
+            cols="2"
           >
             <v-img
               :src="otherBadge.badgeSummary.icon"
@@ -65,7 +96,7 @@
             />
           </v-col>
           <v-col
-            cols="11"
+            cols="10"
             justify="left"
           >
             {{ otherBadge.badgeSummary.badgeTitle }}
