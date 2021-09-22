@@ -43,7 +43,7 @@ class HasAtLeastNCarpooledCo2Saved implements GamificationRuleInterface
         // we check if the user has at least saved N CO²
         // we divide it by 1000 since the amount of savedCo2 is calculated in grams and we want kg)
         $savedCo2 = ($log->getUser()->getSavedCo2() / 1000);
-        if ($savedCo2 >= $sequenceItem->getMinCount()) {
+        if ($savedCo2 >= $sequenceItem->getValue ()) {
             return true;
         }
         return false;
