@@ -17,7 +17,7 @@
       </v-list-item-title>
     </v-list-item-content>
     <v-img
-      v-if="hasBadges"
+      v-if="hasBadges && gamificationActive"
       src="/images/badge.png"
       contain
       max-width="25"
@@ -69,7 +69,10 @@ export default {
       } else {
         return null;
       }
-    }
+    },
+    gamificationActive(){
+      return this.$store.getters['g/isActive'];
+    }    
   },
   created() {
     moment.locale(this.locale); // DEFINE DATE LANGUAGE
