@@ -15,6 +15,9 @@
          {% block stylesheets %}
          {% endblock %}
 
+
+        {% set currentPath = path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params')) %}
+
         {% if matomoUrl is defined and matomoUrl is not null and matomoUrl != '' %}
             {% include '@Mobicoop/matomo.html.twig' %}
         {% endif %}
@@ -22,6 +25,20 @@
         {% if googleAnalyticsId is defined and googleAnalyticsId is not null and googleAnalyticsId != '' %}
             {% include '@Mobicoop/googleAnalytics.html.twig' %}
         {% endif %}
+
+        {% if currentPath == 'home' %}
+            {% if googleAnalyticsHome is defined and googleAnalyticsHome is not null and googleAnalyticsHome != '' %}
+                {% include '@Mobicoop/googleAnalyticsHome.html.twig' %}
+            {% endif %}
+        {% endif %}
+
+        {% if currentPath == 'carpool_first_ad_post' %}
+            {% if googleAnalyticsFirstAd is defined and googleAnalyticsFirstAd is not null and googleAnalyticsFirstAd != '' %}
+                {% include '@Mobicoop/googleAnalyticsFirstAd.html.twig' %}
+            {% endif %}
+        {% endif %}
+
+
     </head>
     {% endblock %}
     <body>

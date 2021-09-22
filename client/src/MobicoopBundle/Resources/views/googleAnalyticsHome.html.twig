@@ -1,0 +1,17 @@
+<!--
+Extrait d'événement pour MOVICI2021 - Inscription site sur
+https://movici.auvergnerhonealpes.fr/utilisateur/inscription/validation/ : veillez à ne pas le supprimer.
+Placez cet extrait sur les pages comportant des événements pour lesquels vous effectuez un suivi.
+Date de création : 09/17/2021
+-->
+<script>
+ gtag('event', 'conversion', {
+ 'allow_custom_scripts': true,
+ 'send_to': '{{ googleAnalyticsId }}'+'/movici/'+'{{ googleAnalyticsHome }}'
+ });
+</script>
+<noscript>
+<img
+src= "{{ googleAnalyticsHomeSource }}" width="1" height="1" alt=""/>
+</noscript>
+<!-- Fin de l'extrait d'événement : veillez à ne pas le supprimer -->
