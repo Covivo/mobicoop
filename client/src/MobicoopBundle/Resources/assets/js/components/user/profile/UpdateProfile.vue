@@ -715,11 +715,7 @@ export default {
     platform: {
       type: String,
       default: ""
-    },
-    gamificationActive: {
-      type: Boolean,
-      default: false
-    }    
+    } 
   },
   data() {
     return {
@@ -820,7 +816,10 @@ export default {
     },
     savedCo2(){
       return Number.parseFloat(this.user.savedCo2  / 1000000 ).toPrecision(1);
-    }
+    },
+    gamificationActive(){
+      return this.$store.getters['g/isActive'];
+    },
   },
   watch: {
     menu (val) {

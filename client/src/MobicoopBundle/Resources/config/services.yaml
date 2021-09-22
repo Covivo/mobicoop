@@ -234,7 +234,6 @@ services:
             $fraudWarningDisplay: '%env(bool:FRAUD_WARNING_DISPLAY)%'
             $ageDisplay: '%env(bool:AGE_DISPLAY)%'
             $birthDateDisplay: '%env(bool:BIRTHDATE_DISPLAY)%'
-            $gamificationActive: '%env(bool:GAMIFICATION_ACTIVE)%'
         tags: ['controller.service_arguments']
     Mobicoop\Bundle\MobicoopBundle\User\Service\:
         resource: '@MobicoopBundle/User/Service/*'
