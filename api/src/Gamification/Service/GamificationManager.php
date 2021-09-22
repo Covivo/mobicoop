@@ -269,6 +269,7 @@ class GamificationManager
             foreach ($activeBadge->getSequenceItems() as $sequenceItem) {
                 $sequenceStatus = new SequenceStatus();
                 $sequenceStatus->setSequenceItemId($sequenceItem->getId());
+                $sequenceStatus->setTitle($sequenceItem->getGamificationAction()->getTitle());
                 
                 
                 // We look into the rewardSteps previously existing for this SequenceItem
