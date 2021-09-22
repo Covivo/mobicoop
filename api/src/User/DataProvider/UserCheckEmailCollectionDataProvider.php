@@ -67,6 +67,6 @@ final class UserCheckEmailCollectionDataProvider implements CollectionDataProvid
                 return new JsonResponse(["error"=>true,"message"=>$this->translator->trans('errors.wrongDomains', ['domains' => $state ])]);
             }
         }
-        return null;
+        return [];
     }
 }
