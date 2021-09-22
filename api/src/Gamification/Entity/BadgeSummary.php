@@ -80,7 +80,6 @@ class BadgeSummary
      */
     private $imageLight;
 
-
     public function getBadgeId(): ?int
     {
         return $this->badgeId;
