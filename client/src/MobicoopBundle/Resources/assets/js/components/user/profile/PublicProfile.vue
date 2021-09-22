@@ -140,7 +140,7 @@
             cols="4"
             sm="12"
           >
-            <v-row v-if="publicProfile && publicProfile.badges.length > 0">
+            <v-row v-if="publicProfile && publicProfile.badges.length > 0 && gamificationActive">
               <v-col cols="12">
                 <Badges :badges="publicProfile.badges" />
               </v-col>
@@ -254,7 +254,10 @@ export default {
     },
     savedCo2(){
       return Number.parseFloat(this.publicProfile.savedCo2  / 1000000 ).toPrecision(1);
-    }
+    },
+    gamificationActive(){
+      return this.$store.getters['g/isActive'];
+    } 
   },
   watch:{
     refresh(){

@@ -34,7 +34,7 @@
             {{ profileSummary.givenName }} {{ profileSummary.shortFamilyName }}
           </v-col>
           <v-col
-            v-if="profileSummary.numberOfBadges > 0"
+            v-if="profileSummary.numberOfBadges > 0 && gamificationActive"
             cols="1"
             class="ml-n12"
             align="center"
@@ -161,6 +161,9 @@ export default {
       return "-";
       
     },
+    gamificationActive(){
+      return this.$store.getters['g/isActive'];
+    } 
   },
   watch:{
     refresh(){
