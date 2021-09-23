@@ -425,6 +425,10 @@ export default {
     publishButtonAlwaysActive:{
       type: Boolean,
       default:false
+    },
+    gamificationActive:{
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -448,6 +452,7 @@ export default {
     } else {
       this.dlocale = this.defaultLocale;
     }
+    this.$store.commit('g/setActive',this.gamificationActive);
   },
   created() {
     this.$root.token = this.token;

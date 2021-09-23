@@ -43,6 +43,12 @@ class BadgeProgression
      */
     private $earned;
 
+    /**
+     * @var int Badge's earning percentage based on the necessary reward steps to obtain it.
+     * @Groups({"readGamification"})
+     */
+    private $earningPercentage;
+
     public function getBadgeSummary(): ?BadgeSummary
     {
         return $this->badgeSummary;
@@ -63,6 +69,18 @@ class BadgeProgression
     public function setEarned(bool $earned): self
     {
         $this->earned = $earned;
+
+        return $this;
+    }
+
+    public function getEarningPercentage(): ?int
+    {
+        return $this->earningPercentage;
+    }
+
+    public function setEarningPercentage(int $earningPercentage): self
+    {
+        $this->earningPercentage = $earningPercentage;
 
         return $this;
     }

@@ -56,7 +56,7 @@ class MAxios {
   };
   updateStore(response){
     if(response.data.gamificationNotifications){
-      store.commit('gn/updateGamificationNotifications',response.data.gamificationNotifications);
+      store.commit('g/updateGamificationNotifications',response.data.gamificationNotifications);
     }
   }
 }

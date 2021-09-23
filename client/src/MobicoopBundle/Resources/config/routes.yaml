@@ -1661,6 +1661,15 @@ payment_week_first:
 # Gamification routes #
 #######################
 
+# Get the badges board of a User
+user_badges_board:
+    methods: [POST]
+    path:
+        fr: /gamification/badgesboard
+        en: /gamification/badgesboard
+        nl: /gamification/badgesboard
+    controller: Mobicoop\Bundle\MobicoopBundle\Gamification\Controller\GamificationController::badgesBoard
+
 # Tag the given rewardsteps as notified
 gamification_tag_rewardsteps_as_notified:
     methods: [POST]

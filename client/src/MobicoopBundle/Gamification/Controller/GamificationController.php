@@ -65,4 +65,15 @@ class GamificationController extends AbstractController
         }
         return new JsonResponse();
     }
+
+    /**
+    * Get the Badges Board of a User
+    */
+    public function badgesBoard(Request $request)
+    {
+        if ($request->isMethod('POST')) {
+            return new JsonResponse($this->gamificationManager->badgesBoard());
+        }
+        return new JsonResponse();
+    }
 }
