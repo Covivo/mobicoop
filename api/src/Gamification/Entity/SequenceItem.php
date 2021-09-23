@@ -231,6 +231,7 @@ class SequenceItem
     {
         if (!$this->rewardSteps->contains($rewardStep)) {
             $this->rewardSteps[] = $rewardStep;
+            $rewardStep->setSequenceItem($this);
         }
         
         return $this;

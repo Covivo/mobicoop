@@ -50,6 +50,7 @@ use App\Gamification\Interfaces\GamificationRuleInterface;
 use App\Communication\Repository\MessageRepository;
 use App\Gamification\Repository\RewardStepRepository;
 use App\Gamification\Repository\RewardRepository;
+use Psr\Log\LoggerInterface;
 
 /**
  * Gamification Manager
@@ -67,6 +68,7 @@ class GamificationManager
     private $messageRepository;
     private $rewardStepRepository;
     private $rewardRepository;
+    private $logger;
 
     public function __construct(
         SequenceItemRepository $sequenceItemRepository,
@@ -77,7 +79,8 @@ class GamificationManager
         GamificationNotifier $gamificationNotifier,
         MessageRepository $messageRepository,
         RewardStepRepository $rewardStepRepository,
-        RewardRepository $rewardRepository
+        RewardRepository $rewardRepository,
+        LoggerInterface $logger
     ) {
         $this->sequenceItemRepository = $sequenceItemRepository;
         $this->logRepository = $logRepository;
@@ -88,6 +91,7 @@ class GamificationManager
         $this->messageRepository = $messageRepository;
         $this->rewardStepRepository = $rewardStepRepository;
         $this->rewardRepository = $rewardRepository;
+        $this->logger = $logger;
     }
     
     /**
@@ -256,7 +260,6 @@ class GamificationManager
             foreach ($activeBadge->getSequenceItems() as $sequenceItem) {
                 $sequenceStatus = new SequenceStatus();
                 $sequenceStatus->setSequenceItemId($sequenceItem->getId());
-                
                 // We look into the rewardSteps previously existing for this SequenceItem
                 // If there is one for the current User, we know that it has already been validated
                 $sequenceStatus->setValidated(false);
@@ -320,15 +323,16 @@ class GamificationManager
                             $newValidation = true;
                             $rewardStep = new RewardStep();
                             $rewardStep->setUser($validationStep->getUser());
-                            $rewardStep->setSequenceItem($validationStep->getSequenceItem());
-                            $this->entityManager->persist($rewardStep);
+                            $validationStep->getSequenceItem()->addRewardStep($rewardStep);
+
+                            $this->entityManager->persist($validationStep->getSequenceItem());
 
                             // We also update the current SequenceStatus to evaluate further it this is enough to earn badge
                             $sequenceStatus->setValidated(true);
 
                             // Dispatch the event
-                            $validationStepEvent = new RewardStepEarnedEvent($rewardStep);
-                            $this->eventDispatcher->dispatch(RewardStepEarnedEvent::NAME, $validationStepEvent);
+                            $rewardStepEarnedEvent = new RewardStepEarnedEvent($rewardStep);
+                            $this->eventDispatcher->dispatch(RewardStepEarnedEvent::NAME, $rewardStepEarnedEvent);
                         }
                     }
                     // We store the status of the current SequenceItem. If all validated, maybe the user earned a Badge
@@ -342,12 +346,12 @@ class GamificationManager
                         $badge = $this->badgeRepository->find($badgeSummary->getBadgeId());
                         $reward = new Reward();
                         $reward->setUser($validationStep->getUser());
-                        $reward->setBadge($badge);
-                        $this->entityManager->persist($reward);
+                        $badge->addReward($reward);
+                        $this->entityManager->persist($badge);
 
                         // Dispatch the event
-                        $badgeEvent = new BadgeEarnedEvent($reward);
-                        $this->eventDispatcher->dispatch(BadgeEarnedEvent::NAME, $badgeEvent);
+                        $badgeEarnedEvent = new BadgeEarnedEvent($reward);
+                        $this->eventDispatcher->dispatch(BadgeEarnedEvent::NAME, $badgeEarnedEvent);
                     }
                 }
             }
