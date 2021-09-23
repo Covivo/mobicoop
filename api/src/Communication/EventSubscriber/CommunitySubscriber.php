@@ -33,6 +33,7 @@ use App\Community\Event\CommunityMembershipRefusedEvent;
 use App\Action\Event\ActionEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use App\Action\Repository\ActionRepository;
+use App\Community\Entity\CommunityUser;
 
 class CommunitySubscriber implements EventSubscriberInterface
 {
@@ -73,6 +74,15 @@ class CommunitySubscriber implements EventSubscriberInterface
 
         // we must notify the creator of the community
         $this->notificationManager->notifies(CommunityNewMembershipRequestEvent::NAME, $communityRecipient, $event->getCommunityUser());
+        
+        // we also need to notify community's moderators
+        $communityUsers = $event->getCommunityUser()->getCommunity()->getCommunityUsers();
+        foreach ($communityUsers as $communityUser) {
+            if ($communityUser->getStatus() === CommunityUser::STATUS_ACCEPTED_AS_MODERATOR) {
+                $communityRecipient = $communityUser->getUser();
+                $this->notificationManager->notifies(CommunityNewMembershipRequestEvent::NAME, $communityRecipient, $event->getCommunityUser());
+            }
+        }
     }
 
     /**
@@ -85,9 +95,18 @@ class CommunitySubscriber implements EventSubscriberInterface
     {
         // the recipient is the new community member
         $communityRecipient = ($event->getCommunityUser()->getCommunity()->getUser());
-
+        
         // we must notify the creator of the community
         $this->notificationManager->notifies(CommunityNewMemberEvent::NAME, $communityRecipient, $event->getCommunityUser());
+        
+        // we also need to notify community's moderators
+        $communityUsers = $event->getCommunityUser()->getCommunity()->getCommunityUsers();
+        foreach ($communityUsers as $communityUser) {
+            if ($communityUser->getStatus() === CommunityUser::STATUS_ACCEPTED_AS_MODERATOR) {
+                $communityRecipient = $communityUser->getUser();
+                $this->notificationManager->notifies(CommunityNewMemberEvent::NAME, $communityRecipient, $event->getCommunityUser());
+            }
+        }
     }
 
     /**

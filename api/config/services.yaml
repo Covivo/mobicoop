@@ -526,6 +526,8 @@ services:
             $sigPrioritizeRegion: '%env(string:SIG_GEOCODER_PRIORITIZE_REGION)%'
 
     App\Geography\Service\TerritoryManager:
+        arguments:
+            $batchTemp: '%env(resolve:SIG_GEOROUTER_BATCH_TEMP)%'
         tags:
             - { name: monolog.logger, channel: geography }
 

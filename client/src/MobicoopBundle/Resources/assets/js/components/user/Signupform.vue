@@ -344,6 +344,8 @@
                   :items="communities"
                   outlined
                   chips
+                  :loading="loadingCommunity"
+                  :disabled="loadingCommunity"
                   :label="requiredCommunity ? $t('communities.label')+` *` : $t('communities.label')"
                   item-text="name"
                   item-value="id"
@@ -585,6 +587,8 @@ export default {
       step: 1,
       event: null,
       loading: false,
+      loadingCommunity: false,
+
       //snackbar
       snackbar: false,
       errorUpdate: false,
@@ -772,11 +776,16 @@ export default {
         }
       });
     },
+    step() {
+      if (this.step == 3 && this.communityShow) {
+        this.loadingCommunity = true;
+        this.getCommunities();
+      }
+    }
   },
   mounted: function() {
     //get scroll target
-    (this.container = document.getElementById("scroll-target")),
-    this.getCommunities();
+    (this.container = document.getElementById("scroll-target"))
   },
   methods: {
     maxDate() {
@@ -933,9 +942,22 @@ export default {
 
     // should be get all communities
     getCommunities() {
-      maxios.post(this.$t("communities.route")).then((res) => {
-        this.communities = res.data;
-      });
+      maxios
+        .post(
+          this.$t("communities.route"),
+          {
+            email: this.form.email,
+          },
+          {
+            headers: {
+              "content-type": "application/json",
+            },
+          }
+        )
+        .then((res) => {
+          this.communities = res.data;
+          this.loadingCommunity = false;
+        });
     }
   },
 };

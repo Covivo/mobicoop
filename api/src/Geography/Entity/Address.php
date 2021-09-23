@@ -147,6 +147,7 @@ class Address implements \JsonSerializable
 
     const LAYER_LOCALITY = 1;
     const LAYER_ADDRESS = 2;
+    const LAYER_LOCALADMIN = 3;
 
     /**
      * @var int The id of this address.

@@ -45,7 +45,7 @@ class HasAtLeastNCarpooledKm implements GamificationRuleInterface
         // we check if the user has carpool at least N Km
         $user = $log->getUser();
         // we get all user's asks
-        $asks = $user->getAsks();
+        $asks = array_merge($user->getAsks(), $user->getAsksRelated());
         $carpooledKm = null;
         foreach ($asks as $ask) {
             if ($ask->getStatus() == Ask::STATUS_ACCEPTED_AS_DRIVER || $ask->getStatus() == Ask::STATUS_ACCEPTED_AS_PASSENGER) {
@@ -60,7 +60,7 @@ class HasAtLeastNCarpooledKm implements GamificationRuleInterface
             }
         }
         // if a proposal he's carpooled and associated to a community we return true
-        if (($carpooledKm / 1000) >= $sequenceItem->getMinCount()) {
+        if (($carpooledKm / 1000) >= $sequenceItem->getValue()) {
             return true;
         }
         return false;

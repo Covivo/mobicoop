@@ -28,6 +28,7 @@ stages:
   - deploy
   - prod_deploy
   - admin_test_deploy
+  - admin_prod_deploy
   - doc
   - reports
 
@@ -364,6 +365,37 @@ admin_test_deploy:
     variables:
       - $CI_COMMIT_MESSAGE =~ /skipci/    # job not executed when commit message contains this expression
 
+admin_prod_deploy:
+  image: alpine:3.6
+  stage: admin_prod_deploy
+  environment:
+    name: prod
+    url: https://admin.mobicoop.fr/
+  only:
+    - master
+  # variables:
+  #   APP_ENV: test   # /!\ important : symfony env variable /!\
+  before_script:
+    - apk update && apk add openssh-client bash
+  script:
+    # run ssh-agent
+    - eval $(ssh-agent -s)
+    # add ssh key stored in SSH_PROD_PRIVATE_KEY variable to the agent store
+    - bash -c 'ssh-add <(echo "$SSH_PROD_PRIVATE_KEY")'
+    # create ssh directory
+    - mkdir -p ~/.ssh
+    # add server prod ip to known hosts
+    - ssh-keyscan -H $SSH_PROD_IP >> ~/.ssh/known_hosts
+    # disable strict host key checking, to avoid error if server ip changes !
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+    # ru docker container
+    - ssh -o StrictHostKeyChecking=no -p ${SSH_PORT} ${SSH_PROD_USER}@${SSH_PROD_IP} "cd /var/www/mobicoop/prod/; docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}; docker stop ${ADMIN_CONTAINER_NAME}; docker pull ${CI_REGISTRY_IMAGE}; docker run -d --env-file=admin.prod.env --name=${ADMIN_CONTAINER_NAME} -p 127.0.0.1:${ADMIN_DOCKER_PORT}:80/tcp --rm ${CI_REGISTRY_IMAGE}"
+  when: manual      # /!\ important : job executed manually /!\  
+  except:
+    refs:
+      - tags    # job not executed on tags
+    variables:
+      - $CI_COMMIT_MESSAGE =~ /skipci/    # job not executed when commit message contains this expression
 
 ###############################################################################################
 ########## Deploy the produciton documentation based on  master branch ###################

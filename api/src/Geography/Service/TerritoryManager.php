@@ -39,21 +39,24 @@ use Psr\Log\LoggerInterface;
 class TerritoryManager
 {
     private const BATCH_ADDRESSES = 100;
+    private const CHECK_RUNNING_FILE = 'updateAddressesAndDirections.txt';
 
     private $entityManager;
     private $territoryRepository;
     private $logger;
+    private $batchTemp;
    
     /**
      * Constructor.
      *
      * @param EntityManagerInterface $entityManager
      */
-    public function __construct(EntityManagerInterface $entityManager, TerritoryRepository $territoryRepository, LoggerInterface $logger)
+    public function __construct(EntityManagerInterface $entityManager, TerritoryRepository $territoryRepository, LoggerInterface $logger, string $batchTemp)
     {
         $this->entityManager = $entityManager;
         $this->territoryRepository = $territoryRepository;
         $this->logger = $logger;
+        $this->batchTemp = $batchTemp;
     }
 
     /**
@@ -260,6 +263,16 @@ class TerritoryManager
      */
     public function updateAddressesAndDirections()
     {
+        // check if an update is already running
+        if (file_exists($this->batchTemp . self::CHECK_RUNNING_FILE)) {
+            $this->logger->info("Import already running | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+            return;
+        }
+
+        // create update file check
+        $fp = fopen($this->batchTemp . self::CHECK_RUNNING_FILE, 'w');
+        fwrite($fp, '+');
+
         $conn = $this->entityManager->getConnection();
 
         // ADDRESSES
@@ -456,6 +469,10 @@ class TerritoryManager
         $stmt = $conn->prepare($sql);
         $stmt->execute();
         $this->logger->info("Insert into direction_territory finished | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+
+        // close and delete update file check
+        fclose($fp);
+        unlink($this->batchTemp . self::CHECK_RUNNING_FILE);
 
         // END TERRITORIES
     }
