@@ -411,7 +411,7 @@ class CommunityManager
     /**
     * Get all communities available for registration
     */
-    public function getCommunityListForRegistration(String $email=null)
+    public function getCommunityListForRegistration(?string $email=null)
     {
         $this->dataProvider->setClass(MCommunity::class);
         $response = $this->dataProvider->getCollection(['userEmail' => $email]);

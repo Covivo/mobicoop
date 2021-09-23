@@ -447,7 +447,7 @@ class CommunityManager
      * @param UserInterface $user   The current user
      * @return array    The communities found
      */
-    public function getMCommunities(UserInterface $user, String $userEmail = null)
+    public function getMCommunities(UserInterface $user, ?string $userEmail = null)
     {
         $mCommunities = [];
         $communities = $this->communityRepository->findAvailableCommunitiesForUser($user instanceof User ? $user->getId() : null, ['c.name' => 'asc']);
