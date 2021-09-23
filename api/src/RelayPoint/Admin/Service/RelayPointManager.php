@@ -86,6 +86,14 @@ class RelayPointManager
             }
         }
 
+        if ($relayPoint->getCommunityId()) {
+            if ($community = $this->communityRepository->find($relayPoint->getCommunityId())) {
+                $relayPoint->setCommunity($community);
+            } else {
+                throw new RelayPointException("Community not found");
+            }
+        }
+
         // persist the relay point
         $this->entityManager->persist($relayPoint);
         $this->entityManager->flush();
