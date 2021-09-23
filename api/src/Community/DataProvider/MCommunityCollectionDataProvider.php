@@ -56,6 +56,6 @@ final class MCommunityCollectionDataProvider implements CollectionDataProviderIn
 
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
-        return $this->communityManager->getMCommunities($this->security->getUser());
+        return $this->communityManager->getMCommunities($this->security->getUser(), $this->request->get("userEmail"));
     }
 }
