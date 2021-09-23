@@ -20,10 +20,10 @@
         <v-btn
           color="secondary"
           rounded
-          :disabled="nbMatchings <= 0"
+          :disabled="nbMatchings <= 0 || isArchived"
           :href="$t('urlResult',{id:id})"
         >
-          {{ nbMatchings }}&nbsp;{{ nbMatchings > 1 ? $t('potentialCarpooler.plural') : $t('potentialCarpooler.singular') }}
+          {{ potentialCarpooler }}
         </v-btn>
       </v-col>
     </v-row>
@@ -62,6 +62,23 @@ export default {
     nbMatchings:{
       type: Number,
       default: 0
+    },
+    isArchived:{
+      type: Boolean,
+      default: false
+    }
+  },
+  computed:{
+    potentialCarpooler(){
+      if(this.isArchived){
+        return this.$t('isArchived');
+      }
+      else if(this.nbMatchings > 1){
+        return this.nbMatchings+' '+this.$t('potentialCarpooler.plural');
+      }
+      else{
+        return this.nbMatchings+' '+this.$t('potentialCarpooler.singular');
+      }
     }
   }
 }

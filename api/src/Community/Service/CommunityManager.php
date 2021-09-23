@@ -447,11 +447,21 @@ class CommunityManager
      * @param UserInterface $user   The current user
      * @return array    The communities found
      */
-    public function getMCommunities(UserInterface $user)
+    public function getMCommunities(UserInterface $user, ?string $userEmail = null)
     {
         $mCommunities = [];
         $communities = $this->communityRepository->findAvailableCommunitiesForUser($user instanceof User ? $user->getId() : null, ['c.name' => 'asc']);
+        $temporaryCommuities = [];
+        
         foreach ($communities as $community) {
+            if ($community->getValidationType() === Community::DOMAIN_VALIDATION && str_contains($userEmail, $community->getDomain())) {
+                $temporaryCommuities[] = $community;
+            } elseif ($community->getValidationType() === Community::MANUAL_VALIDATION || $community->getValidationType() === Community::AUTO_VALIDATION) {
+                $temporaryCommuities[] = $community;
+            }
+        }
+
+        foreach ($temporaryCommuities as $community) {
             /**
              * @var Community $community
              */

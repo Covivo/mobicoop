@@ -34,6 +34,7 @@
         :price="(ad.roleDriver && !ad.rolePassenger) ? ad.price : null"
         :id-message="lastMessageId"
         :nb-matchings="ad.carpoolers"
+        :is-archived="isArchived"
       />
     </v-card-actions>
   </v-card>

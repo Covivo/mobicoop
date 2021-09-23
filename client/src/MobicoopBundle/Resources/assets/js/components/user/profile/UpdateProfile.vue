@@ -769,7 +769,7 @@ export default {
         required:  v => !!v || this.$t("birthDay.errors.required"),
         checkIfAdult : value =>{
           var d1 = new Date();
-          var d2 = new Date(value);
+          var d2 = moment(value, "DD/MM/YYYY").toDate();
 
           var diff =(d1.getTime() - d2.getTime()) / 1000;
           diff /= (60 * 60 * 24);

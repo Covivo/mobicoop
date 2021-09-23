@@ -59,7 +59,7 @@ class SequenceItem
     private $position;
 
     /**
-     * @var int Minimum iteration/quantity of the sequenceItem to earn the badge
+     * @var int Minimum iteration of the sequenceItem to earn the badge
      *
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"readGamification","writeGamification"})
@@ -68,7 +68,16 @@ class SequenceItem
     private $minCount;
 
     /**
-     * @var int Minimum different iteration/quantity of the sequenceItem to earn the badge
+     * @var int Minimum quantity of the sequenceItem to earn the badge
+     *
+     * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"readGamification","writeGamification"})
+     * @MaxDepth(1)
+     */
+    private $value;
+
+    /**
+     * @var int Minimum different iteration of the sequenceItem to earn the badge
      *
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"readGamification","writeGamification"})
@@ -153,6 +162,18 @@ class SequenceItem
         return $this;
     }
 
+    public function getValue(): ?int
+    {
+        return $this->value;
+    }
+
+    public function setValue(?int $value): self
+    {
+        $this->value = $value;
+
+        return $this;
+    }
+
     public function getMinUniqueCount(): ?int
     {
         return $this->minUniqueCount;
@@ -210,6 +231,7 @@ class SequenceItem
     {
         if (!$this->rewardSteps->contains($rewardStep)) {
             $this->rewardSteps[] = $rewardStep;
+            $rewardStep->setSequenceItem($this);
         }
         
         return $this;

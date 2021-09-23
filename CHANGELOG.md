@@ -2,6 +2,9 @@
 * User can now see their own Ad in search results
 * User have a Badges board in their profile to follow their progress
 
+# Release 1.35.0
+* Fix : Cannot longer contact someone from an archived Ad
+
 # Release 1.33.0
 * Alternate horizontal version of Search component
 * Add editable editorial content
