@@ -1,8 +1,14 @@
 <script>
-    gtag('event', 'conversion', {
-        'allow_custom_scripts': true,
-        'send_to': '{{ googleAnalyticsId }}{{ googleAnalyticsFirstAd }}'
-    });
+    /*  /!\ Without consent, we dont send any informations */
+
+    let cookiesPrefs = JSON.parse(localStorage.getItem('cookies_prefs'));
+    let sendStats = (cookiesPrefs && cookiesPrefs.stats)
+    if(sendStats){    
+        gtag('event', 'conversion', {
+            'allow_custom_scripts': true,
+            'send_to': '{{ googleAnalyticsId }}{{ googleAnalyticsFirstAd }}'
+        });
+    }
 </script>
 <noscript>
     <img src="{{ googleAnalyticsFirstAdSource }}" width="1" height="1" alt=""/> 
