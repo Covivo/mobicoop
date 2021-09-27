@@ -26,11 +26,12 @@
       </v-col>
     </v-row>
     <v-row
-      justify="center"
+      justify="left"
     >
       <v-col
         v-for="(item, itemIndex) in $t('items')"
         :key="itemIndex"
+        cols="4"
       >
         <v-card
           :height="cardHeight"
@@ -127,6 +128,10 @@ export default {
           // returned value from bundle is boolean, so we have to check null, true or false to show correct value
           value: !this.user || this.user.chat === null ? null : this.user.chat ? 1 : 0,
           favorite: this.user && this.user.chatFavorites && this.user.chatFavorites.length > 0 ? this.user.chatFavorites : ""
+        },
+        gamification: {
+          // returned value from bundle is boolean, so we have to check null, true or false to show correct value
+          value: !this.user || this.user.gamification === null ? null : this.user.gamification ? 1 : 0
         }
       }
     }
@@ -141,7 +146,8 @@ export default {
         music: this.form.music.value,
         musicFavorites: this.form.music.favorite,
         chat: this.form.chat.value,
-        chatFavorites: this.form.chat.favorite
+        chatFavorites: this.form.chat.favorite,
+        gamification: this.form.gamification.value
       })
         .then(function (response) {
           if (response.data && response.data.message) {

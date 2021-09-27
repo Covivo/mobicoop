@@ -1123,6 +1123,7 @@ class UserController extends AbstractController
             $user->setMusicFavorites($data["musicFavorites"]);
             $user->setChat($data["chat"]);
             $user->setChatFavorites($data["chatFavorites"]);
+            $user->setGamification($data["gamification"]);
 
             if ($response = $userManager->updateUser($user)) {
                 $reponseofmanager= $this->handleManagerReturnValue($response);
