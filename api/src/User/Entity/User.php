@@ -857,6 +857,16 @@ class User implements UserInterface, EquatableInterface
     private $chatFavorites;
 
     /**
+     * @var boolean|null Gamification preferences.
+     * 0 = no gamification
+     * 1 = accept gamification
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"aRead","aWrite","readUser","write"})
+     */
+    private $gamification;
+    
+    /**
      * @var boolean|null The user accepts to receive news about the platform.
      *
      * @ORM\Column(type="boolean", nullable=true)
@@ -1530,6 +1540,7 @@ class User implements UserInterface, EquatableInterface
         $this->bankAccounts = [];
         $this->wallets = [];
         $this->ownership = [];
+        $this->gamification = true;
         if (is_null($status)) {
             $status = self::STATUS_ACTIVE;
         }
@@ -1864,6 +1875,18 @@ class User implements UserInterface, EquatableInterface
     public function setChatFavorites(?string $chatFavorites): self
     {
         $this->chatFavorites = $chatFavorites;
+
+        return $this;
+    }
+
+    public function hasGamification(): ?bool
+    {
+        return $this->gamification;
+    }
+
+    public function setGamification(?bool $gamification): self
+    {
+        $this->gamification = $gamification;
 
         return $this;
     }
