@@ -455,7 +455,7 @@ export default {
     this.$store.commit('g/setActive',this.gamificationActive);
   },
   created() {
-    this.$store.commit('a/setToken',this.token);
+    this.$store.commit('a/setToken',this.user?.token ? this.user.token : this.token);
     if(this.user){
       localStorage.setItem('X-LOCALE',this.dlocale);
     }
