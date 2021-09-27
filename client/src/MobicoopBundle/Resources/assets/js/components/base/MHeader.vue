@@ -422,6 +422,10 @@ export default {
       type: String,
       default: ''
     },
+    refreshToken: {
+      type: String,
+      default: ''
+    },
     publishButtonAlwaysActive:{
       type: Boolean,
       default:false
@@ -455,7 +459,7 @@ export default {
     this.$store.commit('g/setActive',this.gamificationActive);
   },
   created() {
-    this.$root.token = this.token;
+    this.$store.commit('a/setToken',this.token);
     if(this.user){
       localStorage.setItem('X-LOCALE',this.dlocale);
     }
