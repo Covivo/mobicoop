@@ -422,10 +422,6 @@ export default {
       type: String,
       default: ''
     },
-    refreshToken: {
-      type: String,
-      default: ''
-    },
     publishButtonAlwaysActive:{
       type: Boolean,
       default:false
