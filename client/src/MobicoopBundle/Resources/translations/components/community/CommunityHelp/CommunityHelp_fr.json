@@ -13,5 +13,5 @@
             "fourthLine": "de disposer, pour le créateur de la communauté, de statistiques sur les inscrits et les covoitureurs de sa communauté"
         }
     },
-    "whoCanCreate": "Toute personne ou structure qui le souhaite peut créer une communauté sur Mobicoop. La création d'une communauté est un service payant qui vous donnera accès à l'administrateur pour pouvoir animer votre communauté. Pour en savoir plus ou demander une création de communauté, vous pouvez contacter la hotline en précisant que votre demande est une création de communauté."
+    "whoCanCreate": "Toute personne ou structure qui le souhaite peut créer une communauté sur Mobicoop. La création d'une communauté est un service payant qui vous donnera accès à l'administrateur pour pouvoir animer votre communauté. Pour en savoir plus ou demander une création de communauté, vous pouvez contacter <a href='https://www.mobicoop.fr/contact'>notre équipe</a> en précisant que votre demande est une création de communauté."
 }
