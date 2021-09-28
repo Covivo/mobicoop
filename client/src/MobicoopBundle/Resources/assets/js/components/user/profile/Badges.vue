@@ -1,5 +1,12 @@
 <template>
   <v-container fluid>
+    <v-row v-if="!acceptGamification">
+      <v-col>
+        <v-alert type="info">
+          {{ $t('dontAcceptGamification') }}
+        </v-alert>
+      </v-col>
+    </v-row>
     <v-row>
       <v-col cols="12">
         <h2>{{ $t("badgesEarned.title") }}</h2>
@@ -206,7 +213,8 @@ export default {
   data(){
     return{
       badges: null,
-      loading:true
+      loading:true,
+      acceptGamification:true
     }
   },
   computed:{
@@ -218,7 +226,7 @@ export default {
     },
     otherBadges(){
       return this.badges.filter( item => item.earningPercentage == 0 && !item.earned );
-    }
+    }    
   },
   mounted(){
     this.getBadgesBoard();
@@ -231,6 +239,7 @@ export default {
         .then(res => {
         //   console.log(res.data);
           this.badges = res.data.badges;
+          this.acceptGamification = res.data.acceptGamification;
           this.loading = false;
         });
     }
