@@ -105,7 +105,10 @@
                   :validation-docs-authorized-extensions="validationDocsAuthorizedExtensions"
                 />
               </v-tab-item>
-              <v-tab class="text-subtitle-1">
+              <v-tab
+                v-if="gamificationActive"
+                class="text-subtitle-1"
+              >
                 {{ $t("tabs.myBadges") }}
               </v-tab>
               <!-- ACCOUNT -->
