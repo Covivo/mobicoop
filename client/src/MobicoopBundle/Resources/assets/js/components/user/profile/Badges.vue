@@ -7,7 +7,16 @@
     </v-row>
     <v-row v-if="badges && badgesEarned">
       <v-col cols="12">
-        <v-row v-if="badgesEarned.length>0">
+        <v-row v-if="loading">
+          <v-col>
+            <v-skeleton-loader
+              class="mx-auto"
+              max-width="100%"
+              type="avatar"
+            />
+          </v-col>     
+        </v-row>
+        <v-row v-else-if="badgesEarned.length>0">
           <v-col
             v-for="badgeEarned in badgesEarned"
             :key="badgeEarned.badgeSummary.badgeId"
@@ -50,7 +59,16 @@
         <h2>{{ $t("badgesInProgress.title") }}</h2>
       </v-col>
     </v-row>
-    <v-row v-if="badges && badgesInProgress && badgesInProgress.length>0">
+    <v-row v-if="loading">
+      <v-col>
+        <v-skeleton-loader
+          class="mx-auto"
+          max-width="100%"
+          type="list-item-avatar@3"
+        />
+      </v-col>
+    </v-row>    
+    <v-row v-else-if="badges && badgesInProgress && badgesInProgress.length>0">
       <v-col cols="12">
         <v-expansion-panels
           accordion
@@ -122,7 +140,16 @@
         <h2>{{ $t("otherBadges.title") }}</h2>
       </v-col>
     </v-row>
-    <v-row v-if="badges && otherBadges && otherBadges.length>0">
+    <v-row v-if="loading">
+      <v-col>
+        <v-skeleton-loader
+          class="mx-auto"
+          max-width="100%"
+          type="list-item-avatar@3"
+        />
+      </v-col>
+    </v-row>
+    <v-row v-else-if="badges && otherBadges && otherBadges.length>0">
       <v-col
         v-for="otherBadge in otherBadges"
         :key="otherBadge.badgeSummary.badgeId"
@@ -173,7 +200,8 @@ export default {
   },
   data(){
     return{
-      badges: null
+      badges: null,
+      loading:true
     }
   },
   computed:{
@@ -192,14 +220,13 @@ export default {
   },
   methods:{
     getBadgesBoard(){
+      this.loading = true;
       maxios
         .post(this.$t('getBadgesUrl'))
         .then(res => {
         //   console.log(res.data);
           this.badges = res.data.badges;
-        })
-        .catch(error => {
-          window.location.reload();
+          this.loading = false;
         });
     }
   }
