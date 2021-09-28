@@ -104,7 +104,14 @@
                   :geo-search-url="geoSearchUrl"
                   :validation-docs-authorized-extensions="validationDocsAuthorizedExtensions"
                 />
-              </v-tab-item>              
+              </v-tab-item>
+              <v-tab class="text-subtitle-1">
+                {{ $t("tabs.myBadges") }}
+              </v-tab>
+              <!-- ACCOUNT -->
+              <v-tab-item v-if="gamificationActive">
+                <Badges />
+              </v-tab-item>                            
             </v-tabs>
           </v-tab-item>
 
@@ -146,7 +153,7 @@ import CarpoolSettings from "@components/user/profile/CarpoolSettings";
 import BankAccount from "@components/user/profile/payment/BankAccount";
 import ProfileSummary from "@components/user/profile/ProfileSummary";
 import ReviewDashboard from "@components/user/profile/review/ReviewDashboard";
-
+import Badges from "@components/user/profile/Badges";
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/profile/Profile/";
 
 export default {
@@ -166,7 +173,8 @@ export default {
     Carpools,
     BankAccount,
     ProfileSummary,
-    ReviewDashboard
+    ReviewDashboard,
+    Badges
   },
   props: {
     user: {
@@ -224,10 +232,6 @@ export default {
     ageDisplay: {
       type: Boolean,
       default: true
-    },
-    gamificationActive: {
-      type: Boolean,
-      default: false
     }
   },
   data(){
@@ -236,6 +240,11 @@ export default {
       publishedAds: {},
       acceptedAds: {}
     }
+  },
+  computed:{
+    gamificationActive(){
+      return this.$store.getters['g/isActive'];
+    },
   },
   mounted(){
     maxios.get(this.$t("getMyCarpools"))
