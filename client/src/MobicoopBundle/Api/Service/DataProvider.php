@@ -343,6 +343,9 @@ class DataProvider
         return $headers;
     }
 
+    /**
+     * Get a valid token, or create one if it's not valid anymore
+     */
     public function createToken()
     {
         if (is_null($this->jwtToken)) {

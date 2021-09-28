@@ -32,6 +32,11 @@ sessionLanguage:
         nl: /setLanguage
     controller: Mobicoop\Bundle\MobicoopBundle\Controller\DefaultController::setSessionLanguage    
 
+# refresh token route
+refresh_token:
+    path:
+        fr: /refreshToken
+    controller: Mobicoop\Bundle\MobicoopBundle\Controller\DefaultController::refreshToken 
 
 ###############
 # user routes #

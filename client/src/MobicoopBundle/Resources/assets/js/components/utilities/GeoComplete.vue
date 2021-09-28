@@ -79,10 +79,6 @@ export default {
   props: {
     url: defaultString,
     label: defaultString,
-    token: {
-      type: String,
-      default: ''
-    },
     disabled: {
       type: Boolean,
       default: false
@@ -125,8 +121,7 @@ export default {
       search: null,
       address: null,
       filter: null,
-      cancelSource: null,
-      dtoken: this.token
+      cancelSource: null
     };
   },
   computed: {
@@ -176,9 +171,6 @@ export default {
     }
   },
   mounted() {
-    if (this.dtoken === '') {
-      this.dtoken = this.$root.token;
-    };
     this.locale = localStorage.getItem("X-LOCALE");
     moment.locale(this.locale);
   },
@@ -192,9 +184,14 @@ export default {
       this.cancelRequest(); // CANCEL PREVIOUS REQUEST
       this.cancelSource = axios.CancelToken.source();
 
+      this.getData(val);
+    }, 1000),
+
+    getData(val) {
+      let self = this;
       axios
         .get(`${this.url}${val}`, {
-          headers: { Authorization: 'Bearer ' + this.dtoken },
+          headers: { Authorization: 'Bearer ' + this.$store.getters['a/token'] },
           cancelToken: this.cancelSource.token
         })
         .then(res => {
@@ -236,7 +233,7 @@ export default {
               ? address.streetAddress
               : (address.street ? address.street : "");
             if (addressLocality || addressStreet) {
-            // If there is no locality or street returned, do not show them (region, department ..)
+              // If there is no locality or street returned, do not show them (region, department ..)
               if (address.name) {
                 resultsNamed.push(address);
               } else if (address.relayPoint) {
@@ -285,17 +282,44 @@ export default {
           if (this.isLoading) return; // Another request is fetching, we do not show the previous one
           this.entries = [...results];
         })
-        .catch(err => {
-          this.items = [];
-          console.error(err);
+        .catch(error => {
+          if (error.response) {
+            // The request was made and the server responded with a status code
+            // that falls out of the range of 2xx 
+            switch (error.response.status) {
+            case 401: 
+              //  unauthorized
+              if (error.response.data.message == 'Expired JWT Token') {
+                // check refreshToken
+                return self.refreshToken()
+                  .then( () => {
+                    // try again !
+                    this.getData(val);
+                  });
+              }
+            }
+          }
+          this.entries = [];
         })
         .finally(() => (this.isLoading = false));
-    }, 1000),
-
+    },
     cancelRequest() {
       if(this.cancelSource) {
         this.cancelSource.cancel('Start new search, stop active search');
       }
+    },
+    refreshToken() {
+      return axios
+        .post(this.$t('refreshRoute'))
+        .then( response => {
+          if (response.data.token) {
+            this.$store.commit('a/setToken',response.data.token);
+          }
+          return Promise.resolve();
+        })
+        .catch( error => {
+          return Promise.reject(error);
+        });
     }
   }
 };
