@@ -88,7 +88,6 @@
                 <v-col
                   cols="2"
                   no-gutters
-                  class="mr-0 text-right"
                 >
                   <v-img
                     :src="badgeInProgress.badgeSummary.icon"
@@ -117,8 +116,9 @@
                 <v-list-item
                   v-for="(sequence, i) in badgeInProgress.badgeSummary.sequences"
                   :key="i"
+                  align="center"
                 >
-                  <v-list-item-icon>
+                  <v-list-item-icon class="ma-2">
                     <v-icon v-if="sequence.validated">
                       mdi-check
                     </v-icon>
