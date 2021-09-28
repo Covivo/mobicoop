@@ -39,9 +39,11 @@ mobicoop-platform/api/public/robots.txt
 mobicoop-platform/api/public/upload/badges/images/*.jpg
 mobicoop-platform/api/public/upload/badges/images/*.jpeg
 mobicoop-platform/api/public/upload/badges/images/*.png
+mobicoop-platform/api/public/upload/badges/images/*.gif
 mobicoop-platform/api/public/upload/badges/images/versions/*.jpg
 mobicoop-platform/api/public/upload/badges/images/versions/*.jpeg
 mobicoop-platform/api/public/upload/badges/images/versions/*.png
+mobicoop-platform/api/public/upload/badges/images/versions/*.gif
 mobicoop-platform/api/public/upload/editorials/images/*.jpg
 mobicoop-platform/api/public/upload/editorials/images/*.jpeg
 mobicoop-platform/api/public/upload/editorials/images/*.png

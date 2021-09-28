@@ -5,7 +5,17 @@
         <h2>{{ $t("badgesEarned.title") }}</h2>
       </v-col>
     </v-row>
-    <v-row v-if="badges && badgesEarned">
+    <v-row v-if="loading">
+      <v-col>
+        <v-skeleton-loader
+          class="mx-auto"
+          max-width="100%"
+          type="avatar"
+        />
+      </v-col>     
+    </v-row>
+
+    <v-row v-else-if="badges && badgesEarned">
       <v-col cols="12">
         <v-row v-if="badgesEarned.length>0">
           <v-col
@@ -23,7 +33,7 @@
               >
                 <v-img
                   :src="badgeEarned.badgeSummary.decoratedIcon"
-                  max-width="50px"
+                  max-width="100px"
                 />
               </v-col>
             </v-row>
@@ -50,7 +60,16 @@
         <h2>{{ $t("badgesInProgress.title") }}</h2>
       </v-col>
     </v-row>
-    <v-row v-if="badges && badgesInProgress && badgesInProgress.length>0">
+    <v-row v-if="loading">
+      <v-col>
+        <v-skeleton-loader
+          class="mx-auto"
+          max-width="100%"
+          type="list-item-avatar@3"
+        />
+      </v-col>
+    </v-row>    
+    <v-row v-else-if="badges && badgesInProgress && badgesInProgress.length>0">
       <v-col cols="12">
         <v-expansion-panels
           accordion
@@ -62,13 +81,17 @@
             align="center"
           >
             <v-expansion-panel-header>
-              <v-row>
+              <v-row
+                align="center"
+                no-gutters
+              >
                 <v-col
                   cols="2"
+                  no-gutters
                 >
                   <v-img
                     :src="badgeInProgress.badgeSummary.icon"
-                    max-width="50px"
+                    max-width="100px"
                   />
                 </v-col>
                 <v-col
@@ -93,17 +116,17 @@
                 <v-list-item
                   v-for="(sequence, i) in badgeInProgress.badgeSummary.sequences"
                   :key="i"
+                  align="center"
                 >
-                  <v-list-item-icon>
+                  <v-list-item-icon class="ma-2">
                     <v-icon v-if="sequence.validated">
-                      mdi-checkbox-marked
-                    </v-icon>
-                    <v-icon v-else>
-                      mdi-checkbox-blank-outline
+                      mdi-check
                     </v-icon>
                   </v-list-item-icon>
-                  <v-list-item-content>
-                    {{ sequence.title }}
+                  <v-list-item-content class="text-left">
+                    <span
+                      :style="(sequence.validated) ? 'font-weight:bold;' : ''"
+                    >{{ sequence.title }}</span>
                   </v-list-item-content>
                 </v-list-item>                
               </v-list>
@@ -122,7 +145,16 @@
         <h2>{{ $t("otherBadges.title") }}</h2>
       </v-col>
     </v-row>
-    <v-row v-if="badges && otherBadges && otherBadges.length>0">
+    <v-row v-if="loading">
+      <v-col>
+        <v-skeleton-loader
+          class="mx-auto"
+          max-width="100%"
+          type="list-item-avatar@3"
+        />
+      </v-col>
+    </v-row>
+    <v-row v-else-if="badges && otherBadges && otherBadges.length>0">
       <v-col
         v-for="otherBadge in otherBadges"
         :key="otherBadge.badgeSummary.badgeId"
@@ -133,15 +165,15 @@
           dense
         >
           <v-col
-            cols="2"
+            cols="3"
           >
             <v-img
               :src="otherBadge.badgeSummary.icon"
-              max-width="50px"
+              max-width="100px"
             />
           </v-col>
           <v-col
-            cols="10"
+            cols="9"
             justify="left"
           >
             {{ otherBadge.badgeSummary.badgeTitle }}
@@ -173,7 +205,8 @@ export default {
   },
   data(){
     return{
-      badges: null
+      badges: null,
+      loading:true
     }
   },
   computed:{
@@ -192,14 +225,13 @@ export default {
   },
   methods:{
     getBadgesBoard(){
+      this.loading = true;
       maxios
         .post(this.$t('getBadgesUrl'))
         .then(res => {
         //   console.log(res.data);
           this.badges = res.data.badges;
-        })
-        .catch(error => {
-          window.location.reload();
+          this.loading = false;
         });
     }
   }
