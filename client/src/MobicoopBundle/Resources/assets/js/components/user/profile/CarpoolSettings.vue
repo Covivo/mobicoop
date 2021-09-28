@@ -141,6 +141,7 @@ export default {
       const self = this;
       this.resetAlert();
       this.loading = true;
+      this.$store.commit('g/setUserAccept',this.form.gamification.value);
       maxios.put(this.$t('button.route'), {
         smoke: this.form.smoke.value,
         music: this.form.music.value,

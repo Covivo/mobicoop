@@ -214,7 +214,6 @@ export default {
     return{
       badges: null,
       loading:true,
-      acceptGamification:true
     }
   },
   computed:{
@@ -226,7 +225,10 @@ export default {
     },
     otherBadges(){
       return this.badges.filter( item => item.earningPercentage == 0 && !item.earned );
-    }    
+    },
+    acceptGamification(){
+      return this.$store.getters['g/hasUserAccept'];
+    }  
   },
   mounted(){
     this.getBadgesBoard();
@@ -239,7 +241,7 @@ export default {
         .then(res => {
         //   console.log(res.data);
           this.badges = res.data.badges;
-          this.acceptGamification = res.data.acceptGamification;
+          this.$store.commit('g/setUserAccept',res.data.acceptGamification);
           this.loading = false;
         });
     }
