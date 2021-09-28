@@ -265,7 +265,7 @@
           class="ma-2 black--text"
         >
           {{ version }}
-        </v-chip> by Mobicoop team. The source code is licensed AGPL3. The website content is licensed AGPL3 too
+        </v-chip> by Mobicoop team. The source code is licensed AGPL3.
       </v-row>
       <cookies
         :show="showCookies"

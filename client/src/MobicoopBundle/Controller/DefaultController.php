@@ -23,6 +23,7 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\Controller;
 
+use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\JsonLD\Entity\Hydra;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -34,9 +35,11 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 class DefaultController extends AbstractController
 {
     private $searchComponentHorizontal;
+    private $dataProvider;
 
-    public function __construct(bool $searchComponentHorizontal)
+    public function __construct(DataProvider $dataProvider, bool $searchComponentHorizontal)
     {
+        $this->dataProvider = $dataProvider;
         $this->searchComponentHorizontal = $searchComponentHorizontal;
     }
 
@@ -125,6 +128,19 @@ class DefaultController extends AbstractController
     {
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
+        }
+        return new JsonResponse();
+    }
+
+    /**
+     * Refresh the api token
+     *
+     * @return void
+     */
+    public function refreshToken(Request $request)
+    {
+        if ($request->isMethod('POST')) {
+            return new JsonResponse(['token' => $this->dataProvider->getToken()]);
         }
         return new JsonResponse();
     }
