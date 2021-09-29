@@ -1705,6 +1705,9 @@ class UserManager
                 // We update the user with ssoId and ssoProvider and return it
                 $user->setSsoId($ssoUser->getSub());
                 $user->setSsoProvider($ssoUser->getProvider());
+                if (is_null($user->getCreatedSsoDate())) {
+                    $user->setCreatedSsoDate(new \DateTime('now'));
+                }
                 $this->entityManager->persist($user);
                 $this->entityManager->flush();
                 return $user;
@@ -1714,6 +1717,7 @@ class UserManager
             $user = new User();
             $user->setSsoId($ssoUser->getSub());
             $user->setSsoProvider($ssoUser->getProvider());
+            $user->setCreatedSsoDate(new \DateTime('now'));
             $user->setGivenName($ssoUser->getFirstname());
             $user->setFamilyName($ssoUser->getLastname());
             $user->setEmail($ssoUser->getEmail());
