@@ -405,15 +405,6 @@ class ArticleController extends AbstractController
     }
 
     /**
-    * Display of the GUARANTEED_RETURN page
-    *
-    */
-    public function showGuaranteedReturn(ArticleManager $articleManager)
-    {
-        return $this->showArticle($articleManager->getArticle(self::GUARANTEED_RETURN));
-    }
-
-    /**
      * Show an article
      *
      * @param Article $article The article to show
