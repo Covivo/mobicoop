@@ -344,6 +344,8 @@
                   :items="communities"
                   outlined
                   chips
+                  :loading="loadingCommunity"
+                  :disabled="loadingCommunity"
                   :label="requiredCommunity ? $t('communities.label')+` *` : $t('communities.label')"
                   item-text="name"
                   item-value="id"
@@ -555,9 +557,13 @@ export default {
       type: Boolean,
       default: false,
     },
-    proposalId: {
+    id: {
       type: Number,
       default: null,
+    },
+    type: {
+      type: String,
+      default: 'default'
     },
     loginLinkInConnection: {
       type: Boolean,
@@ -581,6 +587,8 @@ export default {
       step: 1,
       event: null,
       loading: false,
+      loadingCommunity: false,
+
       //snackbar
       snackbar: false,
       errorUpdate: false,
@@ -595,7 +603,6 @@ export default {
       menu: false,
 
       //scrolling data
-      type: "selector",
       selected: null,
       duration: 1000,
       offset: 180,
@@ -604,9 +611,6 @@ export default {
 
       emailAlreadyTaken: false,
       loadingCheckEmailAldreadyTaken: false,
-      action: this.proposalId
-        ? this.$t("urlSignUpResult", { id: this.proposalId })
-        : this.$t("urlSignUp"),
       form: {
         createToken: this.sentToken,
         email: null,
@@ -709,6 +713,17 @@ export default {
     };
   },
   computed: {
+    action() {
+      if (this.id === null) return this.$t("urlSignUp");
+      switch (this.type) {
+      case 'proposal':
+        return this.$t("urlSignUpResult", { id: this.id });
+      case 'event':
+        return this.$t("urlSignUpEvent", { id: this.id });
+      default:
+        return this.$t("urlSignUp");
+      }
+    },
     years() {
       const currentYear = new Date().getFullYear();
       const ageMin = Number(this.ageMin);
@@ -761,11 +776,16 @@ export default {
         }
       });
     },
+    step() {
+      if (this.step == 3 && this.communityShow) {
+        this.loadingCommunity = true;
+        this.getCommunities();
+      }
+    }
   },
   mounted: function() {
     //get scroll target
-    (this.container = document.getElementById("scroll-target")),
-    this.getCommunities();
+    (this.container = document.getElementById("scroll-target"))
   },
   methods: {
     maxDate() {
@@ -804,19 +824,24 @@ export default {
           }
         )
         .then((res) => {
-          console.log(this.proposalId);
           this.errorUpdate = res.data.state;
           this.textSnackbar = this.errorUpdate
             ? this.$t("snackbar.joinCommunity.textError")
             : this.textSnackOk;
           this.snackbar = true;
-          if (this.proposalId) {
-            // proposal id provided, we need to login automatically (it will redirect to the results of the proposal)
+          if (this.id) {
+            // an id is provided, we need to login automatically (it will redirect to the results of the proposal, the publish page for an event, the community...)
             const loginForm = document.createElement("form");
             loginForm.method = "post";
-            loginForm.action = this.$t("urlRedirectAfterSignUpResult", {
-              id: this.proposalId,
-            });
+            if (this.type === 'proposal') {
+              loginForm.action = this.$t("urlRedirectAfterSignUpResult", { id: this.id});
+            } else if (this.type === 'event') {
+              loginForm.action = this.$t("urlRedirectAfterSignUpEvent", { id: this.id});
+            } else if (this.type === 'community') {
+              loginForm.action = this.$t("urlRedirectAfterSignUpCommunity", { id: this.id});
+            } else if (this.type === 'publish') {
+              loginForm.action = this.$t("urlRedirectAfterSignUpPublish");
+            }
             const hiddenFieldEmail = document.createElement("input");
             hiddenFieldEmail.name = "email";
             hiddenFieldEmail.value = this.form.email;
@@ -917,9 +942,22 @@ export default {
 
     // should be get all communities
     getCommunities() {
-      maxios.post(this.$t("communities.route")).then((res) => {
-        this.communities = res.data;
-      });
+      maxios
+        .post(
+          this.$t("communities.route"),
+          {
+            email: this.form.email,
+          },
+          {
+            headers: {
+              "content-type": "application/json",
+            },
+          }
+        )
+        .then((res) => {
+          this.communities = res.data;
+          this.loadingCommunity = false;
+        });
     }
   },
 };

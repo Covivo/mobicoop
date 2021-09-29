@@ -2,7 +2,7 @@
     "buttons": {
         "publish": {
             "label": "Publish an ad",
-            "route": "carpool/search/post"
+            "route": "carpool/event/{id}/post"
         },
         "widget": {
             "label": "See Widget",

@@ -7,6 +7,8 @@
     "urlLogin":"/utilisateur/connexion",
     "urlLoginResult":"/utilisateur/connexion/{id}",
     "urlLoginEvent":"/utilisateur/connexion/evenement/{id}",
+    "urlLoginCommunity":"/utilisateur/connexion/communaute/{id}",
+    "urlLoginPublish":"/utilisateur/connexion/redirect/publier",
     "urlRecovery": "/utilisateur/mot-de-passe/recuperation",
     "textRecovery": "Mot de passe oublié ?",
     "signUp": "Vous n'êtes pas encore inscrit ?",

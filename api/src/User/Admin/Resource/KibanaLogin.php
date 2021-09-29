@@ -26,9 +26,6 @@ namespace App\User\Admin\Resource;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
-use Symfony\Component\Validator\Constraints as Assert;
-use App\User\Entity\User;
 
 /**
  * Kibana Logins
@@ -36,7 +33,7 @@ use App\User\Entity\User;
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
- *          "normalization_context"={"groups"={"readKibanaLogin"}, "enable_max_depth"="true"},
+ *          "normalization_context"={"groups"={"aRead"}, "enable_max_depth"="true"},
  *      },
  *      collectionOperations={
  *          "ADMIN_kibana_logins"={
@@ -69,21 +66,21 @@ class KibanaLogin
      * @var int The id of this KibanaLogin
      *
      * @ApiProperty(identifier=true)
-     * @Groups({"readKibanaLogin"})
+     * @Groups({"aRead"})
      */
     private $id;
 
     /**
      * @var string Username
      *
-     * @Groups({"readKibanaLogin"})
+     * @Groups({"aRead"})
      */
     private $username;
 
     /**
      * @var string Password
      *
-     * @Groups({"readKibanaLogin"})
+     * @Groups({"aRead"})
      */
     private $password;
 

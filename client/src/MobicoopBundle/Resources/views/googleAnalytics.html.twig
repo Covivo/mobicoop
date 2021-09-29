@@ -1,9 +1,9 @@
 <script>
     /*  /!\ Without consent, we dont send any informations */
 
-    let cookiesPrefs = JSON.parse(localStorage.getItem('cookies_prefs'));
-    let sendStats = (cookiesPrefs && cookiesPrefs.stats)
-    if(sendStats){
+    let cookiesPrefsGA = JSON.parse(localStorage.getItem('cookies_prefs'));
+    let sendStatsGA = (cookiesPrefsGA && cookiesPrefsGA.stats)
+    if(sendStatsGA){
       let header = document.getElementsByTagName("head")[0];
       let scriptTag = document.createElement("script");
       scriptTag.src = "https://www.googletagmanager.com/gtag/js?id={{ googleAnalyticsId }}"

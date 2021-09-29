@@ -241,7 +241,7 @@ class GeoSearcher
             /**
              * @var PeliasAddress $geoResult
              */
-            
+
             // ?? todo : exclude all results that doesn't include any input word at all
             $address = new Address();
             // set address icon
@@ -320,11 +320,28 @@ class GeoSearcher
             // We set the similarity (algorithm method)
             $address->setSimilarityWithSearch(levenshtein($input, $address->getAddressLocality()));
 
+
+            // Before adding a new address we check if there is a similar already in the array
+            // If so, we take the tinier layer index
+            $addAddress = true;
+            foreach ($result as $address_key => $previous_address) {
+                if (count(array_diff($address->getDisplayLabel(), $previous_address->getDisplayLabel()))==0) {
+                    if ($address->getLayer()<$previous_address->getLayer()) {
+                        $result[$address_key] = $address;
+                    }
+
+                    $addAddress = false;
+                    break;
+                }
+            }
+
+            if ($addAddress) {
+                $result[] = $address;
+            }
+
             usort($result, function ($a, $b) {
                 return $a->getSimilarityWithSearch()>$b->getSimilarityWithSearch();
             });
-
-            $result[] = $address;
         }
 
         if ($this->distanceOrder) {
@@ -601,6 +618,7 @@ class GeoSearcher
         switch ($layer) {
             case 'address': return Address::LAYER_ADDRESS;
             case 'locality': return Address::LAYER_LOCALITY;
+            case 'localadmin': return Address::LAYER_LOCALADMIN;
             default: return null;
         }
     }

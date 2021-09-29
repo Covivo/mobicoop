@@ -487,7 +487,8 @@ class CommunityController extends AbstractController
     public function getCommunityListForRegistration(CommunityManager $communityManager, Request $request)
     {
         if ($request->isMethod('POST')) {
-            return new JsonResponse($communityManager->getCommunityListForRegistration());
+            $data = json_decode($request->getContent(), true);
+            return new JsonResponse($communityManager->getCommunityListForRegistration($data['email']));
         } else {
             return new JsonResponse("bad method");
         }

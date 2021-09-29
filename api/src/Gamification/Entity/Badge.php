@@ -218,7 +218,7 @@ class Badge
     /**
      * @var ArrayCollection|null The Users owning this Badge
      *
-     * @ORM\OneToMany(targetEntity="\App\Gamification\Entity\Reward", mappedBy="badge")
+     * @ORM\OneToMany(targetEntity="\App\Gamification\Entity\Reward", mappedBy="badge", cascade={"persist"})
      * @ORM\JoinTable(name="reward")
      */
     private $rewards;
@@ -446,6 +446,7 @@ class Badge
     {
         if (!$this->rewards->contains($reward)) {
             $this->rewards[] = $reward;
+            $reward->setBadge($this);
         }
         
         return $this;

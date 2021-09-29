@@ -544,6 +544,9 @@ class AdManager
                 $ad->setEventId(str_replace("/events/", "", $event));
             }
         }
+        if (isset($data['eventId'])) {
+            $ad->setEventId($data['eventId']);
+        }
         
         // filters
         if (isset($data['filters'])) {

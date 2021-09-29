@@ -7,5 +7,6 @@
         "singular": "covoitureur potentiel",
         "plural": "covoitureurs potentiels"
     },
-    "urlResult": "/covoiturage/annonce/{id}/resultats"
+    "urlResult": "/covoiturage/annonce/{id}/resultats",
+    "isArchived": "Archivée"
 }

@@ -20,15 +20,17 @@ use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
 
 class TokenAuthenticator extends AbstractGuardAuthenticator
 {
-    const USER_LOGIN_ROUTE = "user_login";
-    const USER_LOGIN_DELEGATE_ROUTE = "user_login_delegate";
-    const USER_LOGIN_RESULT_ROUTE = "user_login_result";
-    const USER_LOGIN_EVENT_ROUTE = "user_login_event";
-    const USER_LOGIN_TOKEN_ROUTE = "user_login_token";
-    const USER_LOGIN_TOKEN_ROUTE_EMAIL = "user_login_token_email";
-    const USER_SIGN_UP_VALIDATION_ROUTE = "user_sign_up_validation";
-    const USER_EMAIL_VALIDATION_ROUTE = "user_email_form_validation";
-    const USER_LOGIN_SSO_ROUTE = "user_login_sso";
+    const USER_LOGIN_ROUTE = "user_login";                              // default login route
+    const USER_LOGIN_DELEGATE_ROUTE = "user_login_delegate";            // login delegate
+    const USER_LOGIN_RESULT_ROUTE = "user_login_result";                // login then redirect to result
+    const USER_LOGIN_EVENT_ROUTE = "user_login_event";                  // login then redirect to publish for event
+    const USER_LOGIN_COMMUNITY_ROUTE = "user_login_community";          // login then redirect to community
+    const USER_LOGIN_PUBLISH_ROUTE = "user_login_publish";              // login then redirect to publish
+    const USER_LOGIN_TOKEN_ROUTE = "user_login_token";                  // login using a token
+    const USER_LOGIN_TOKEN_ROUTE_EMAIL = "user_login_token_email";      // login after email validation
+    const USER_SIGN_UP_VALIDATION_ROUTE = "user_sign_up_validation";    // signup validation
+    const USER_EMAIL_VALIDATION_ROUTE = "user_email_form_validation";   // email validation form
+    const USER_LOGIN_SSO_ROUTE = "user_login_sso";                      // login using sso
 
     private $dataProvider;
     private $router;
@@ -61,16 +63,9 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
         switch ($request->get('_route')) {
             case self::USER_LOGIN_ROUTE:
             case self::USER_LOGIN_RESULT_ROUTE:
-                if (
-                    $request->isMethod('POST') &&
-                    $request->get('email') != '' && $request->get('password') != ''
-                ) {
-                    $this->dataProvider->setPassword($request->get('password'));
-                    $this->dataProvider->setUsername($request->get('email'));
-                    return true;
-                }
-                // no break
             case self::USER_LOGIN_EVENT_ROUTE:
+            case self::USER_LOGIN_COMMUNITY_ROUTE:
+            case self::USER_LOGIN_PUBLISH_ROUTE:
                 if (
                     $request->isMethod('POST') &&
                     $request->get('email') != '' && $request->get('password') != ''
@@ -92,15 +87,6 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
                 }
                 // no break
             case self::USER_LOGIN_TOKEN_ROUTE:
-                if (
-                    $request->isMethod('POST') &&
-                    $request->get('emailToken') != '' && $request->get('email') != ''
-                ) {
-                    $this->dataProvider->setUsername($request->get('email'));
-                    $this->dataProvider->setEmailToken($request->get('emailToken'));
-                    return true;
-                }
-                // no break
             case self::USER_LOGIN_TOKEN_ROUTE_EMAIL:
                 if (
                     $request->isMethod('POST') &&
@@ -112,12 +98,6 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
                 }
                 // no break
             case self::USER_SIGN_UP_VALIDATION_ROUTE:
-                if (($request->attributes->get('email') != '' &&  $request->attributes->get('token') != '')) {
-                    $this->dataProvider->setUsername($request->attributes->get('email'));
-                    $this->dataProvider->setEmailToken($request->attributes->get('token'));
-                    return true;
-                }
-                // no break
             case self::USER_EMAIL_VALIDATION_ROUTE:
                 if (($request->attributes->get('email') != '' &&  $request->attributes->get('token') != '')) {
                     $this->dataProvider->setUsername($request->attributes->get('email'));
@@ -196,9 +176,13 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
             case self::USER_LOGIN_SSO_ROUTE:
                 return new RedirectResponse($this->router->generate('home'));
             case self::USER_LOGIN_RESULT_ROUTE:
-                return new RedirectResponse($this->router->generate('carpool_ad_results_after_authentication', ['id'=>$request->get('proposalId')]));
+                return new RedirectResponse($this->router->generate('carpool_ad_results_after_authentication', ['id'=>$request->get('id')]));
             case self::USER_LOGIN_EVENT_ROUTE:
-                return new RedirectResponse($this->router->generate('carpool_ad_post_search', ['eventId'=>$request->get('eventId')]));
+                return new RedirectResponse($this->router->generate('carpool_ad_post_event', ['eventId'=>$request->get('eventId')]));
+            case self::USER_LOGIN_COMMUNITY_ROUTE:
+                return new RedirectResponse($this->router->generate('community_show', ['id'=>$request->get('communityId')]));
+            case self::USER_LOGIN_PUBLISH_ROUTE:
+                return new RedirectResponse($this->router->generate('carpool_ad_post_search'));
             case self::USER_EMAIL_VALIDATION_ROUTE:
                 return new RedirectResponse($this->router->generate('user_profile_update', ['tabDefault'=>'mon-profil']));
             default:

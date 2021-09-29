@@ -77,7 +77,10 @@ class KibanaLoginManager
             $rights[] = $authItem->getAuthItem()->getName();
         }
 
-        if (in_array("ROLE_ADMIN", $rights)) {
+        if (
+            in_array("ROLE_ADMIN", $rights) &&
+            array_key_exists('username', $this->loginsAdmin) &&
+            array_key_exists('password', $this->loginsAdmin)) {
             $kibanaLogin = new KibanaLogin();
             $kibanaLogin->setUsername($this->loginsAdmin['username']);
             $kibanaLogin->setPassword($this->loginsAdmin['password']);
@@ -85,17 +88,27 @@ class KibanaLoginManager
         }
 
         if (
-            in_array("ROLE_COMMUNITY_MANAGER", $rights) ||
-            in_array("ROLE_COMMUNITY_MANAGER_PUBLIC", $rights) ||
-            in_array("ROLE_COMMUNITY_MANAGER_PRIVATE", $rights) ||
-            in_array("ROLE_ADMIN", $rights)) {
+            (
+                in_array("ROLE_COMMUNITY_MANAGER", $rights) ||
+                in_array("ROLE_COMMUNITY_MANAGER_PUBLIC", $rights) ||
+                in_array("ROLE_COMMUNITY_MANAGER_PRIVATE", $rights) ||
+                in_array("ROLE_ADMIN", $rights)
+            ) &&
+            array_key_exists('username', $this->loginsCommunityManager) &&
+            array_key_exists('password', $this->loginsCommunityManager)) {
             $kibanaLogin = new KibanaLogin();
             $kibanaLogin->setUsername($this->loginsCommunityManager['username']);
             $kibanaLogin->setPassword($this->loginsCommunityManager['password']);
             $logins[] = $kibanaLogin;
         }
 
-        if (in_array("ROLE_SOLIDARY_MANAGER", $rights) || in_array("ROLE_ADMIN", $rights)) {
+        if (
+            (
+                in_array("ROLE_SOLIDARY_MANAGER", $rights) ||
+                in_array("ROLE_ADMIN", $rights)
+            ) &&
+            array_key_exists('username', $this->loginsSolidaryOperator) &&
+            array_key_exists('password', $this->loginsSolidaryOperator)) {
             $kibanaLogin = new KibanaLogin();
             $kibanaLogin->setUsername($this->loginsSolidaryOperator['username']);
             $kibanaLogin->setPassword($this->loginsSolidaryOperator['password']);

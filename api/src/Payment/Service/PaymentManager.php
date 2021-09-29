@@ -615,6 +615,18 @@ class PaymentManager
                     }
                 }
                 $this->entityManager->persist($carpoolItem);
+                
+                // we dispatch the gamification event associated to the carpoolItem
+                // we dispatch for the debtor
+                $action = $this->actionRepository->findOneBy(['name'=>'carpool_done']);
+                $actionEvent = new ActionEvent($action, $carpoolItem->getDebtorUser());
+                $actionEvent->setCarpoolItem($carpoolItem);
+                $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);
+                // we also dispatch for the creditor
+                $action = $this->actionRepository->findOneBy(['name'=>'carpool_done']);
+                $actionEvent = new ActionEvent($action, $carpoolItem->getCreditorUser());
+                $actionEvent->setCarpoolItem($carpoolItem);
+                $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);
             }
             $this->entityManager->flush();
             
@@ -728,6 +740,18 @@ class PaymentManager
                     $carpoolItem->setItemStatus(CarpoolItem::STATUS_NOT_REALIZED);
                 }
                 $this->entityManager->persist($carpoolItem);
+                
+                // we dispatch the gamification event associated to the carpoolItem
+                // we dispatch for the debtor
+                $action = $this->actionRepository->findOneBy(['name'=>'carpool_done']);
+                $actionEvent = new ActionEvent($action, $carpoolItem->getDebtorUser());
+                $actionEvent->setCarpoolItem($carpoolItem);
+                $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);
+                // we also dispatch for the creditor
+                $action = $this->actionRepository->findOneBy(['name'=>'carpool_done']);
+                $actionEvent = new ActionEvent($action, $carpoolItem->getCreditorUser());
+                $actionEvent->setCarpoolItem($carpoolItem);
+                $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);
 
                 // Flush also all the carpoolpayments
                 $this->entityManager->flush();
@@ -917,18 +941,6 @@ class PaymentManager
                                 $askIds[] = $carpoolItem->getAsk()->getAskLinked()->getId();
                             }
                         }
-
-                        // we dispatch the gamification event associated to the carpoolItem
-                        // we dispatch for the debtor
-                        $action = $this->actionRepository->findOneBy(['name'=>'carpool_done']);
-                        $actionEvent = new ActionEvent($action, $carpoolItem->getDebtorUser());
-                        $actionEvent->setCarpoolItem($carpoolItem);
-                        $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);
-                        // we also dispatch for the creditor
-                        $action = $this->actionRepository->findOneBy(['name'=>'carpool_done']);
-                        $actionEvent = new ActionEvent($action, $carpoolItem->getCreditorUser());
-                        $actionEvent->setCarpoolItem($carpoolItem);
-                        $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);
                     }
 
                     if ($curDate->format('Y-m-d') == $toDate->format('Y-m-d') || $curDate->format('Y-m-d') == $ask->getCriteria()->getToDate()->format('Y-m-d')) {

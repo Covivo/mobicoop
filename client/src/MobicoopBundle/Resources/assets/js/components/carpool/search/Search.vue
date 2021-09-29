@@ -41,50 +41,21 @@
           :cols="fullSize ? 12 : 6"
         >
           <v-row>
-            <v-tooltip
-            
-              bottom
-              color="info"
+            <v-col
+              cols="12"
+              md="6"
+              :class="classAlignSearchButton"
             >
-              <template v-slot:activator="{ on }">
-                <v-col
-                  v-if="!logged"
-                  cols="12"
-                  md="6"
-                  :class="classAlignPublishButton"
-                  v-on="on"
-                >
-                  <v-btn
-                    v-if="!hidePublish"
-                    outlined
-                    :disabled="(searchUnavailable || !logged) && !publishButtonAlwaysActive"
-                    rounded
-                    :loading="loadingPublish"
-                    @click="publish"
-                  >
-                    {{ $t('buttons.publish.label') }}
-                  </v-btn>
-                </v-col>
-                <v-col
-                  v-if="logged"
-                  cols="12"
-                  md="6"
-                  :class="classAlignSearchButton"
-                >
-                  <v-btn
-                    v-if="!hidePublish"
-                    outlined
-                    :disabled="searchUnavailable || !logged"
-                    rounded
-                    :loading="loadingPublish"
-                    @click="publish"
-                  >
-                    {{ $t('buttons.publish.label') }}
-                  </v-btn>
-                </v-col>
-              </template>
-              <span> {{ $t('tooltips.needConnection') }}</span>
-            </v-tooltip>
+              <v-btn
+                v-if="!hidePublish"
+                outlined
+                rounded
+                :loading="loadingPublish"
+                @click="publish"
+              >
+                {{ $t('buttons.publish.label') }}
+              </v-btn>
+            </v-col>
             <v-col
               :class="classAlignSearchButton"
               cols="12"
@@ -243,7 +214,7 @@ export default {
       time: null,
       origin: this.defaultOrigin,
       destination: this.defaultDestination,
-      locale: localStorage.getItem("X-LOCALE"),
+      locale: localStorage.getItem("X-LOCALE")
     };
   },
   computed: {
@@ -312,7 +283,7 @@ export default {
         };
         this.post(`${this.$t("buttons.publish.route")}`, lParams);
       }else{
-        window.location.href=this.$t("/utilisateur/connexion");
+        window.location.href=this.$t("buttons.shareAnAd.route");
       }
     },
   },

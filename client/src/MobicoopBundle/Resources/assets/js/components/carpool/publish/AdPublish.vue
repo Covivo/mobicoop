@@ -842,11 +842,7 @@ export default {
     eventId: {
       type: Number,
       default: null
-    },
-    event: {
-      type: Object,
-      default: null
-    },
+    }
   },
   data() {
     return {
@@ -1132,11 +1128,6 @@ export default {
           this.passenger = this.ad.role === 2 || this.ad.role === 3;
         }
       }
-    }
-  },
-  created () {
-    if (this.initDestination.event == null) {
-      this.$set(this.initDestination, 'event', this.event);
     }
   },
   methods: {

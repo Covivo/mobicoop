@@ -47,7 +47,6 @@
                 <v-btn
                   v-if="!eventPassed"
                   color="secondary"
-                  :disabled="!publishButtonAlwaysActive && !isLogged "
                   rounded
                   @click="publish"
                 >
@@ -132,11 +131,10 @@
       </v-row>
     </v-container>
     <LoginOrRegisterFirst
+      :id="lEventId"
       :show-dialog="loginOrRegisterDialog"
-      :event-id="lEventId"
-      :event="event"
-      :init-destination="initDestination"
-      @closeLoginOrRegisterDialog=" loginOrRegisterDialog = false "
+      type="event"
+      @closeLoginOrRegisterDialog="loginOrRegisterDialog = false "
     />
   </div>
 </template>
@@ -312,7 +310,7 @@ export default {
           time: null,
           ...this.params
         };
-        this.post(`${this.$t("buttons.publish.route")}`, lParams);
+        this.post(`${this.$t("buttons.publish.route", {id: this.lEventId})}`, lParams);
       } else {
         this.loginOrRegister();
       }
