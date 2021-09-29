@@ -97,6 +97,7 @@ class UserManager
             $userEntity->setGender($user->getGender());
             $userEntity->setEmail($user->getEmail());
             $userEntity->setNewsSubscription($user->hasNewsSubscription());
+            $userEntity->setSsoId($user->getExternalId());
 
             $this->entityManager->persist($userEntity);
             $this->entityManager->flush();
@@ -138,6 +139,7 @@ class UserManager
         $user->setGender($userEntity->getGender());
         $user->setEmail($userEntity->getEmail());
         $user->setNewsSubscription($userEntity->hasNewsSubscription());
+        $user->setExternalId($userEntity->getSsoId());
 
         return $user;
     }
@@ -159,6 +161,7 @@ class UserManager
         $userEntity->setPassword($user->getPassword());
         $userEntity->setNewsSubscription($user->hasNewsSubscription());
         $userEntity->setAppDelegate($this->security->getUser());
+        $userEntity->setSsoId($user->getExternalId());
         return $userEntity;
     }
 }

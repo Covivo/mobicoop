@@ -40,6 +40,10 @@ class InteroperabilityUserCreator implements AuthRuleInterface
             return false;
         }
         
-        return $params['user']->getAppDelegate()->getId() == $requester->getId();
+        if (!is_null($params['user']->getAppDelegate())) {
+            return $params['user']->getAppDelegate()->getId() == $requester->getId();
+        }
+
+        return false;
     }
 }

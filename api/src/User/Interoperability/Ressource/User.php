@@ -90,6 +90,12 @@ use Symfony\Component\Validator\Constraints as Assert;
  *                          "type" = "boolean",
  *                          "required" = false,
  *                          "description" = "News subscription"
+ *                      },
+ *                      {
+ *                          "name" = "externalId",
+ *                          "type" = "int",
+ *                          "required" = false,
+ *                          "description" = "External id of the user (the id used in the partner's system)"
  *                      }
  *                  }
  *              }
@@ -133,7 +139,7 @@ class User
     ];
 
     /**
-     * @var int The id of this Block
+     * @var int The id of this User
      *
      * @ApiProperty(identifier=true)
      * @Groups({"readUser","writeUser"})
@@ -185,6 +191,13 @@ class User
      * @Groups({"readUser","writeUser"})
      */
     private $newsSubscription;
+
+    /**
+     * @var int The external id of this User
+     *
+     * @Groups({"readUser","writeUser"})
+     */
+    private $externalId;
 
     public function __construct(int $id = null)
     {
@@ -276,6 +289,18 @@ class User
     {
         $this->newsSubscription = $newsSubscription;
 
+        return $this;
+    }
+
+    public function getExternalId(): ?int
+    {
+        return $this->externalId;
+    }
+
+    public function setExternalId(?int $externalId): self
+    {
+        $this->externalId = $externalId;
+        
         return $this;
     }
 }
