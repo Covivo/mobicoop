@@ -23,6 +23,7 @@
 namespace App\Stats\Service;
 
 use App\Carpool\Entity\CarpoolProof;
+use App\Carpool\Repository\AskRepository;
 use App\Carpool\Repository\CarpoolProofRepository;
 use App\Carpool\Repository\ProposalRepository;
 use App\Community\Repository\CommunityRepository;
@@ -41,17 +42,20 @@ class StatsManager
     private $communityRepository;
     private $carpoolProofRepository;
     private $userRepository;
+    private $askRepository;
 
     public function __construct(
         ProposalRepository $proposalRepository,
         CommunityRepository $communityRepository,
         CarpoolProofRepository $carpoolProofRepository,
-        UserRepository $userRepository
+        UserRepository $userRepository,
+        AskRepository $askRepository
     ) {
         $this->proposalRepository = $proposalRepository;
         $this->communityRepository = $communityRepository;
         $this->carpoolProofRepository = $carpoolProofRepository;
         $this->userRepository = $userRepository;
+        $this->askRepository = $askRepository;
     }
 
     /**
@@ -78,13 +82,25 @@ class StatsManager
         $users = $this->userRepository->findActiveUsers();
         $indicators = $this->addIndicator($indicators, "users_active", (is_array($users)) ? count($users) : 0);
 
+        // Available ads
+        $proposals = $this->proposalRepository->findAll();
+        $indicators = $this->addIndicator($indicators, "available_ads", (is_array($proposals)) ? count($proposals) : 0);
+
+        // All users
+        $users = $this->userRepository->findActiveUsers();
+        $indicators = $this->addIndicator($indicators, "users", (is_array($users)) ? count($users) : 0);
+
         // Number of communities
         $communities = $this->communityRepository->findAll();
         $indicators = $this->addIndicator($indicators, "communities_count", (is_array($communities)) ? count($communities) : 0);
 
-        // last month proofs
+        // Last month proofs
         $proofs = $this->carpoolProofRepository->findByTypesAndPeriod([CarpoolProof::TYPE_LOW,CarpoolProof::TYPE_MID,CarpoolProof::TYPE_HIGH], $startDate, $endDate, [CarpoolProof::STATUS_SENT]);
         $indicators = $this->addIndicator($indicators, "carpool_proofs_last_month", (is_array($proofs)) ? count($proofs) : 0);
+
+        // Carpoolers connected
+        $asks = $this->askRepository->findAll();
+        $indicators = $this->addIndicator($indicators, "carpoolers_connected", (is_array($asks)) ? count($asks) : 0);
 
         return $indicators;
     }

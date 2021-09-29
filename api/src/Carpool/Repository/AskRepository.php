@@ -52,6 +52,11 @@ class AskRepository
         return $this->repository->findBy($criteria, $orderBy, $limit, $offset);
     }
     
+    public function findAll(): ?array
+    {
+        return $this->repository->findAll();
+    }
+    
     /**
      * Get the Asks of a user
      *

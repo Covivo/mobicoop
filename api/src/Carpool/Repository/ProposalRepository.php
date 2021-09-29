@@ -110,6 +110,7 @@ class ProposalRepository
      * @param bool $driversOnly         Exclude the matching proposals as passenger (used for import)
      * @return mixed|\Doctrine\DBAL\Driver\Statement|array|NULL
      */
+
     public function findMatchingProposals(Proposal $proposal, bool $excludeProposalUser=true, bool $driversOnly = false)
     {
         // the "master" proposal is simply called the "proposal"
@@ -1005,6 +1006,11 @@ class ProposalRepository
     public function findOneBy(array $criteria): ?Proposal
     {
         return $this->repository->findOneBy($criteria);
+    }
+
+    public function findAll(): ?array
+    {
+        return $this->repository->findAll();
     }
 
     /**
