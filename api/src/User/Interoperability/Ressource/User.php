@@ -107,8 +107,16 @@ use Symfony\Component\Validator\Constraints as Assert;
  *             "method"="GET",
  *             "security"="is_granted('interop_user_read',object)",
  *             "swagger_context" = {
- *               "summary"="Get a User created via interoperability",
- *               "tags"={"Interoperability"}
+ *               "summary"="Get a User created via interoperability. You can only GET the Users that you created",
+ *               "tags"={"Interoperability"},
+ *               "parameters" = {
+ *                   {
+ *                       "name" = "id",
+ *                       "type" = "int",
+ *                       "required" = true,
+ *                       "description" = "User's id in our system"
+ *                   }
+ *               }
  *             }
  *          },
  *          "interop_put"={
