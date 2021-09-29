@@ -27,6 +27,7 @@ use App\App\Entity\App;
 use App\User\Exception\BadRequestInteroperabilityUserException;
 use App\User\Interoperability\Ressource\User;
 use App\User\Interoperability\Service\UserManager;
+use Symfony\Component\Security\Core\Security;
 
 final class UserCollectionDataPersister implements ContextAwareDataPersisterInterface
 {
@@ -34,9 +35,10 @@ final class UserCollectionDataPersister implements ContextAwareDataPersisterInte
     private $security;
     private $userManager;
 
-    public function __construct(UserManager $userManager)
+    public function __construct(UserManager $userManager, Security $security)
     {
         $this->userManager = $userManager;
+        $this->security = $security;
     }
 
     public function supports($data, array $context = []): bool
