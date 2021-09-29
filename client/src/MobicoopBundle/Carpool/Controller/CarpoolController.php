@@ -217,40 +217,40 @@ class CarpoolController extends AbstractController
     }
 
     /**
-     * Create a carpooling ad from a search component (home, community...)
+     * Create a carpooling ad from a search component (home, community...) or event component
      * (POST)
      */
-    public function carpoolAdPostFromSearch(Request $request, $event=null)
+    public function carpoolAdPostFromSearch(Request $request, ?int $eventId = null)
     {
-//        $ad = new Ad();
-//        $this->denyAccessUnlessGranted('create_ad', $ad);
-        $eventId = $request->query->get('eventId');
+        // init destination if provided
+        $destination = $request->request->get('destination');
 
-        if (!empty($eventId)) {
-            $event = $this->eventManager->getEvent($eventId);
+        // ad for an event ?
+        if (!is_null($eventId) && $event = $this->eventManager->getEvent($eventId)) {
             $destination = json_encode($event->getAddress());
         } else {
-            $destination = $request->request->get('destination');
+            // force eventId to null if event doesn't exist !
+            $eventId = null;
         }
+        
         return $this->render(
             '@Mobicoop/carpool/publish.html.twig',
             [
-                    'communityIds'=>$request->request->get('communityId') ? [(int)$request->request->get('communityId')] : null,
-                    'origin'=>$request->request->get('origin'),
-                    'eventId'=>$eventId,
-                    'regular'=>$request->request->get('regular') ? json_decode($request->request->get('regular')) : $this->defaultRegular,
-                    'date'=>$request->request->get('date'),
-                    'time'=>$request->request->get('time'),
-                    "pricesRange" => [
-                        "mid" => $this->midPrice,
-                        "high" => $this->highPrice,
-                        "forbidden" => $this->forbiddenPrice,
-                    ],
-                    "participationText"=>$this->participationText,
-                    "ageDisplay"=>$this->ageDisplay,
-                    'destination'=>$destination,
-                    "event"=>$event
-                ]
+                'communityIds'=>$request->request->get('communityId') ? [(int)$request->request->get('communityId')] : null,
+                'origin'=>$request->request->get('origin'),
+                'destination'=>$destination,
+                'eventId'=>$eventId,
+                'regular'=>$request->request->get('regular') ? json_decode($request->request->get('regular')) : $this->defaultRegular,
+                'date'=>$request->request->get('date'),
+                'time'=>$request->request->get('time'),
+                "pricesRange" => [
+                    "mid" => $this->midPrice,
+                    "high" => $this->highPrice,
+                    "forbidden" => $this->forbiddenPrice,
+                ],
+                "participationText"=>$this->participationText,
+                "ageDisplay"=>$this->ageDisplay
+            ]
         );
     }
 

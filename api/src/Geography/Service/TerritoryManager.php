@@ -45,7 +45,7 @@ class TerritoryManager
     private $territoryRepository;
     private $logger;
     private $batchTemp;
-
+   
     /**
      * Constructor.
      *

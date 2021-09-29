@@ -305,3 +305,12 @@ shortdayThursday: Do
 shortdayWednesday: Mi
 shortdayTuesday: Di
 shortdayMonday: Mo
+reason1: "Vos données personnelles ont changé veuillez valider à nouveau votre identité"
+reason2: "Document refusé car vous devez être majeur"
+reason3: "Document refusé car il fait l'objet d'une suspicion de falsification"
+reason4: "Document refusé car le fichier est vide"
+reason5: "Document refusé car le document a expiré"
+reason6: "Document refusé car type de document non accepté"
+reason7: "Document refusé car les données ne correspondent pas à celles de l'utilisateur"
+reason8: "Document refusé car illisible"
+reason9: "Document refusé car incomplet"

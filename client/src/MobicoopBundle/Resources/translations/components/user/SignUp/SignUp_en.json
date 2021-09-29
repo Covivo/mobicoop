@@ -2,8 +2,12 @@
     "title": "Sign Up",
     "urlSignUp": "/user/signup",
     "urlSignUpResult": "/user/signup/{id}",
+    "urlSignUpEvent": "/user/signup/event/{id}",
     "urlRedirectAfterSignUp": "/user/signup/validation/{email}",
     "urlRedirectAfterSignUpResult": "/user/login/{id}",
+    "urlRedirectAfterSignUpEvent": "/user/login/event/{id}",
+    "urlRedirectAfterSignUpCommunity": "/user/login/community/{id}",
+    "urlRedirectAfterSignUpPublish": "/user/login/redirect/publish",
     "gender": {
         "label": "Civilité",
         "placeholder": "Civilité",

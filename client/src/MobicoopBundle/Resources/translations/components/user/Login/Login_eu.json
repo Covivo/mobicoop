@@ -14,6 +14,8 @@
     "urlRecovery": "/utilisateur/mot-de-passe/recuperation",
     "urlLoginResult": "/utilisateur/connexion/{id}",
     "urlLoginEvent":"/utilisateur/connexion/evenement/{id}",
+    "urlLoginCommunity":"/utilisateur/connexion/communaute/{id}",
+    "urlLoginPublish":"/utilisateur/connexion/redirect/publier",
     "urlLogin": "/utilisateur/connexion",
     "userFBNotFound": "Facebook erabiltzaile honek ez du izena emana plataforman",
     "errorCredentialsFacebook": "Akats bat gertatu da Facebook-en bidez konektatzerakoan",

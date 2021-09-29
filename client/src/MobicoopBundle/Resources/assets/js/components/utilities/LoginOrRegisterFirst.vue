@@ -28,14 +28,14 @@
         </p>
       </v-card-text>
 
-      <v-card-actions v-if="proposalId">
+      <v-card-actions v-if="showLoginBtn || showRegisterBtn">
         <v-spacer />
         <v-btn
           v-if="showLoginBtn"
           rounded
           color="secondary"
           large
-          :href="proposalId ? $t('loginUrlProposalId',{'id':proposalId}) : $t('loginUrl')"
+          :href="hrefLogin"
         >
           <span>
             {{ $t('login') }}
@@ -46,32 +46,7 @@
           rounded
           color="secondary"
           large
-          :href="proposalId ? $t('registerUrlProposalId',{'id':proposalId}) : $t('registerUrl')"
-        >
-          <span>
-            {{ $t('register') }}
-          </span>
-        </v-btn>
-      </v-card-actions>
-      <v-card-actions v-if="eventId">
-        <v-spacer />
-        <v-btn
-          v-if="showLoginBtn"
-          rounded
-          color="secondary"
-          large
-          :href="eventId ? $t('loginUrlEventId',{'id':eventId}) : $t('loginUrl')"
-        >
-          <span>
-            {{ $t('login') }}
-          </span>
-        </v-btn>
-        <v-btn
-          v-if="showRegisterBtn"
-          rounded
-          color="secondary"
-          large
-          :href="eventId ? $t('registerUrlEventId',{'id':eventId}) : $t('registerUrl')"
+          :href="hrefRegister"
         >
           <span>
             {{ $t('register') }}
@@ -93,13 +68,13 @@ export default {
     },
   },  
   props:{
-    proposalId:{
+    id:{
       type: Number,
       default: null
     },
-    eventId:{
-      type: Number,
-      default: null
+    type:{
+      type: String,
+      default: 'default'
     },
     showDialog:{
       type: Boolean,
@@ -112,19 +87,39 @@ export default {
     showLoginBtn:{
       type: Boolean,
       default: true
-    },
-    initDestination: {
-      type: Object,
-      default: null
-    },
-    event: {
-      type: Object,
-      default: null
     }
   },
   data() {
     return {
       dialog: this.showDialog
+    }
+  },
+  computed: {
+    hrefLogin() {
+      if (this.id === null) return this.$t("loginUrl");
+      switch (this.type) {
+      case 'proposal':
+        return this.$t("loginUrlProposalId", {"id":this.id} );
+      case 'event':
+        return this.$t("loginUrlEventId", {"id":this.id} );
+      case 'community':
+        return this.$t("loginUrlCommunityId", {"id":this.id} );
+      default:
+        return this.$t("loginUrl");
+      }
+    },
+    hrefRegister() {
+      if (this.id === null) return this.$t("registerUrl");
+      switch (this.type) {
+      case 'proposal':
+        return this.$t("registerUrlProposalId", {"id":this.id} );
+      case 'event':
+        return this.$t("registerUrlEventId", {"id":this.id} );
+      case 'community':
+        return this.$t("registerUrlCommunityId", {"id":this.id} );
+      default:
+        return this.$t("registerUrl");
+      }
     }
   },
   watch:{

@@ -188,8 +188,10 @@ class EventManager
     public function getEvent(int $id)
     {
         $response = $this->dataProvider->getItem($id);
-
-        return $response->getValue();
+        if ($response->getCode() >=200 && $response->getCode() <= 300) {
+            return $response->getValue();
+        }
+        return null;
     }
     
     /**
