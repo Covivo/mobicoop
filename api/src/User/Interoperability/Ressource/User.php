@@ -96,6 +96,12 @@ use Symfony\Component\Validator\Constraints as Assert;
  *                          "type" = "int",
  *                          "required" = false,
  *                          "description" = "External id of the user (the id used in the partner's system)"
+ *                      },
+ *                      {
+ *                          "name" = "previouslyExisting",
+ *                          "type" = "boolean",
+ *                          "required" = false,
+ *                          "description" = "If the User has been attached to an already existing User not created by SSO"
  *                      }
  *                  }
  *              }
@@ -107,7 +113,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *             "method"="GET",
  *             "security"="is_granted('interop_user_read',object)",
  *             "swagger_context" = {
- *               "summary"="Get a User created via interoperability. You can only GET the Users that you created",
+ *               "summary"="Get a User created via interoperability. You can only GET the Users that you created.",
  *               "tags"={"Interoperability"},
  *               "parameters" = {
  *                   {
@@ -124,7 +130,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *             "method"="PUT",
  *             "security"="is_granted('interop_user_update',object)",
  *             "swagger_context" = {
- *               "summary"="Update a User created via interoperability",
+ *               "summary"="Update a User created via interoperability. You can only update the Users that you created.",
  *               "tags"={"Interoperability"}
  *             }
  *          }
@@ -206,6 +212,13 @@ class User
      * @Groups({"readUser","writeUser"})
      */
     private $externalId;
+
+    /**
+     * @var bool If the User has been attached to an already existing User not created by SSO
+     *
+     * @Groups({"readUser"})
+     */
+    private $previouslyExisting;
 
     public function __construct(int $id = null)
     {
@@ -309,6 +322,18 @@ class User
     {
         $this->externalId = $externalId;
         
+        return $this;
+    }
+
+    public function isPreviouslyExisting(): ?bool
+    {
+        return $this->previouslyExisting;
+    }
+
+    public function setPreviouslyExisting(?bool $previouslyExisting): self
+    {
+        $this->previouslyExisting = $previouslyExisting;
+
         return $this;
     }
 }

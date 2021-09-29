@@ -74,22 +74,32 @@ class UserManager
      */
     public function registerUser(User $user): User
     {
-        if (!is_null($this->userEntityManager->getUserByEmail($user->getEmail()))) {
-            throw new BadRequestInteroperabilityUserException(BadRequestInteroperabilityUserException::USER_ALREADY_EXISTS);
+        $userEntity = $this->userEntityManager->getUserByEmail($user->getEmail());
+        if (!is_null($userEntity)) {
+            // Existing User, it pretty much an update with attach specified (for app and createdSsoDate)
+            $user->setId($userEntity->getId());
+            $user = $this->updateUser($user, true);
+            $user->setPreviouslyExisting(true);
+        } else {
+            // New User
+            $userEntity = $this->buildUserEntityFromUser($user);
+            $userEntity->setCreatedSsoDate(new \DateTime('now'));
+            $userEntity = $this->userEntityManager->registerUser($userEntity);
+            $user = $this->buildUserFromUserEntity($userEntity);
+            $user->setPreviouslyExisting(false);
         }
-        $userEntity = $this->buildUserEntityFromUser($user);
-        $userEntity = $this->userEntityManager->registerUser($userEntity);
 
-        return $this->buildUserFromUserEntity($userEntity);
+        return $user;
     }
 
     /**
      * Update the entity User associated to an Interoperability User
      *
      * @param User $user The interoperability User
+     * @param bool $attach True if it's an attachment to a previous user
      * @return User The interoperability User
      */
-    public function updateUser(User $user): User
+    public function updateUser(User $user, bool $attach=false): User
     {
         if ($userEntity = $this->userEntityManager->getUser($user->getId())) {
             $userEntity->setGivenName($user->getGivenName());
@@ -98,6 +108,11 @@ class UserManager
             $userEntity->setEmail($user->getEmail());
             $userEntity->setNewsSubscription($user->hasNewsSubscription());
             $userEntity->setSsoId($user->getExternalId());
+
+            if ($attach) {
+                $userEntity->setAppDelegate($this->security->getUser());
+                $userEntity->setCreatedSsoDate(new \DateTime('now'));
+            }
 
             $this->entityManager->persist($userEntity);
             $this->entityManager->flush();
@@ -140,6 +155,11 @@ class UserManager
         $user->setEmail($userEntity->getEmail());
         $user->setNewsSubscription($userEntity->hasNewsSubscription());
         $user->setExternalId($userEntity->getSsoId());
+
+        $user->setPreviouslyExisting(false);
+        if ($userEntity->getCreatedDate() < $userEntity->getCreatedSsoDate()) {
+            $user->setPreviouslyExisting(true);
+        }
 
         return $user;
     }
