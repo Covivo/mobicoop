@@ -354,7 +354,12 @@ class AskRepository
         return $query->getQuery()->getResult();
     }
 
-    public function countCarpoolersConnected()
+    /**
+     * Count carpoolers connected
+     *
+     * @return int
+     */
+    public function countCarpoolersConnected() :?int
     {
         $query = $this->repository->createQueryBuilder('a')
         ->select('count(a.id)');
