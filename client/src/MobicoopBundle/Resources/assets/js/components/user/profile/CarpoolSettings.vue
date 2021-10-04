@@ -25,9 +25,7 @@
         </v-snackbar>
       </v-col>
     </v-row>
-    <v-row
-      justify="left"
-    >
+    <v-row>
       <v-col
         v-for="(item, itemIndex) in $t('items')"
         :key="itemIndex"
@@ -128,10 +126,6 @@ export default {
           // returned value from bundle is boolean, so we have to check null, true or false to show correct value
           value: !this.user || this.user.chat === null ? null : this.user.chat ? 1 : 0,
           favorite: this.user && this.user.chatFavorites && this.user.chatFavorites.length > 0 ? this.user.chatFavorites : ""
-        },
-        gamification: {
-          // returned value from bundle is boolean, so we have to check null, true or false to show correct value
-          value: !this.user || this.user.gamification === null ? null : this.user.gamification ? 1 : 0
         }
       }
     }
@@ -141,14 +135,12 @@ export default {
       const self = this;
       this.resetAlert();
       this.loading = true;
-      this.$store.commit('g/setUserAccept',this.form.gamification.value);
       maxios.put(this.$t('button.route'), {
         smoke: this.form.smoke.value,
         music: this.form.music.value,
         musicFavorites: this.form.music.favorite,
         chat: this.form.chat.value,
         chatFavorites: this.form.chat.favorite,
-        gamification: this.form.gamification.value
       })
         .then(function (response) {
           if (response.data && response.data.message) {

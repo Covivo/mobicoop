@@ -1123,7 +1123,6 @@ class UserController extends AbstractController
             $user->setMusicFavorites($data["musicFavorites"]);
             $user->setChat($data["chat"]);
             $user->setChatFavorites($data["chatFavorites"]);
-            $user->setGamification($data["gamification"]);
 
             if ($response = $userManager->updateUser($user)) {
                 $reponseofmanager= $this->handleManagerReturnValue($response);
@@ -1457,7 +1456,7 @@ class UserController extends AbstractController
     }
 
     /**
-     * Get the Review Dashboard of a User
+     * Update the User's Language
      *
      * @param Request $request
      * @return void
@@ -1475,6 +1474,28 @@ class UserController extends AbstractController
             
             $this->userManager->updateUserLanguage($user);
             return new JsonResponse(["success"=>true]);
+        }
+        return new JsonResponse();
+    }
+
+    /**
+     * Update the User's Gamification prefs
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function userUpdateGamification(Request $request)
+    {
+        if ($request->isMethod('PUT') && $this->userManager->getLoggedUser()) {
+            $user = $this->userManager->getLoggedUser();
+            $data = json_decode($request->getContent(), true);
+            if (isset($data['gamification']) && $data['gamification'] !== '') {
+                $user->setGamification($data['gamification']);
+                
+                $this->userManager->updateUser($user);
+            
+                return new JsonResponse(["success"=>true]);
+            }
         }
         return new JsonResponse();
     }

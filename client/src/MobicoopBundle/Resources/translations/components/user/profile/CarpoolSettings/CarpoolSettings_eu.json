@@ -51,21 +51,7 @@
       "favorite": {
         "label": "Sujets préférés"
       }
-    },
-    {
-      "key": "gamification",
-      "title": "La ludification",
-      "radios": [
-        {
-          "label": "Je ne veux pas gagner de badges",
-          "value": 0
-        },
-        {
-          "label": "J'accepte de gagner des badges",
-          "value": 1
-        }
-      ]
-    }  
+    }
   ],
   "button": {
     "label": "Enregistrer",
