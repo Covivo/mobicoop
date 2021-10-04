@@ -1008,11 +1008,6 @@ class ProposalRepository
         return $this->repository->findOneBy($criteria);
     }
 
-    public function findAll(): ?array
-    {
-        return $this->repository->findAll();
-    }
-
     /**
      * Find proposals linked to imported users
      * We exclude proposals with wrong directions (can happen when importing data, when we can't sanitize the input data such as bad geographical coordinates)
@@ -1335,11 +1330,12 @@ class ProposalRepository
      *
      * @param \DateTime $startDate  Range start date
      * @param \DateTime $endDate    Range end date
-     * @return Proposals[]|null
+     * @return integer
      */
-    public function findBetweenCreateDate(\DateTime $startDate, \DateTime $endDate)
+    public function countProposalsBetweenCreateDate(\DateTime $startDate, \DateTime $endDate) :?int
     {
         $query = $this->repository->createQueryBuilder('p')
+        ->select('count(p.id)')
         ->where("p.createdDate between :startDate and :endDate ")
         ->andWhere("p.private = 0")
         ->andWhere("p.type = :typeOneWay or p.type = :typeOutward")
@@ -1347,7 +1343,7 @@ class ProposalRepository
         ->setParameter("endDate", $endDate)
         ->setParameter("typeOneWay", Proposal::TYPE_ONE_WAY)
         ->setParameter("typeOutward", Proposal::TYPE_OUTWARD);
-        return $query->getQuery()->getResult();
+        return $query->getQuery()->getSingleScalarResult();
     }
 
     /**
@@ -1367,5 +1363,26 @@ class ProposalRepository
         ->setParameter("communityId", $community->getId())
         ->setParameter("toDate", $now->format("Y-m-d 00:00:00"));
         return $query->getQuery()->getResult();
+    }
+    
+    /**
+     * Count the avalaible ads
+     *
+     * @return integer
+     */
+    public function countAvailableAds(): ?int
+    {
+        $now = new \DateTime("now");
+
+        $query = $this->repository->createQueryBuilder('p')
+        ->join('p.criteria', 'c')
+        ->select('count(p.id)')
+        ->where('p.private = 0 OR p.private IS NULL')
+        ->andWhere("(c.frequency = :punctual AND c.fromDate >= :date) OR (c.frequency = :regular AND c.toDate >= :date)")
+        ->setParameter('punctual', Criteria::FREQUENCY_PUNCTUAL)
+        ->setParameter('regular', Criteria::FREQUENCY_REGULAR)
+        ->setParameter("date", $now->format("Y-m-d 00:00:00"));
+
+        return $query->getQuery()->getSingleScalarResult();
     }
 }

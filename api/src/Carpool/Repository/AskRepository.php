@@ -358,4 +358,11 @@ class AskRepository
                 
         return $query->getQuery()->getResult();
     }
+
+    public function countCarpoolersConnected()
+    {
+        $query = $this->repository->createQueryBuilder('a')
+        ->select('count(a.id)');
+        return $query->getQuery()->getSingleScalarResult();
+    }
 }
