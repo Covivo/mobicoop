@@ -844,10 +844,11 @@ class PaymentManager
         // we initiate empty array of askIds
         $askIds = [];
 
+        $consumptionFeedbackToken = null;
         if (count($asks)>0 && $this->consumptionFeedbackProvider->isActive()) {
-            echo $this->consumptionFeedbackProvider->auth();
+            $consumptionFeedbackToken = $this->consumptionFeedbackProvider->auth();
         }
-        die;
+
         // then we create the corresponding items
         foreach ($asks as $ask) {
             /**
@@ -869,7 +870,12 @@ class PaymentManager
                         $carpoolItem->setDebtorStatus(CarpoolItem::DEBTOR_STATUS_NULL);
                         $carpoolItem->setCreditorStatus(CarpoolItem::CREDITOR_STATUS_NULL);
                     }
+
                     $this->entityManager->persist($carpoolItem);
+
+                    if ($this->consumptionFeedbackProvider->isActive() && !is_null($consumptionFeedbackToken)) {
+                        $this->consumptionFeedbackProvider->sendConsumptionFeedback($carpoolItem);
+                    }
 
                     if ($carpoolItem->getDebtorStatus() !== CarpoolItem::DEBTOR_STATUS_NULL) {
                         // we execute event to inform passenger to pay for the carpool only if the deptor status is not null
@@ -939,6 +945,9 @@ class PaymentManager
                         }
                         $this->entityManager->persist($carpoolItem);
 
+                        if ($this->consumptionFeedbackProvider->isActive() && !is_null($consumptionFeedbackToken)) {
+                            $this->consumptionFeedbackProvider->sendConsumptionFeedback($carpoolItem);
+                        }
 
                         // We send only one email for the all week
                         // We check in array if we already send an email for the ask

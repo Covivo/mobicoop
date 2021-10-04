@@ -24,6 +24,8 @@
 namespace App\DataProvider\Entity;
 
 use App\DataProvider\Service\DataProvider;
+use App\Payment\Entity\CarpoolItem;
+use App\User\Entity\User;
 use App\User\Interfaces\ConsumptionFeedbackInterface;
 
 /**
@@ -34,12 +36,29 @@ class WorldlineProvider implements ConsumptionFeedbackInterface
 {
     const AUTHORIZATION_URL = "auth/realms/Partners/protocol/openid-connect/token";
     const GRANT_TYPE = "client_credentials";
+    const CONSUMPTION_TYPE = "FIXED_FEE";
+
+    const STEPS_TYPE = "TRAVEL";
+    const STEPS_TRANSPORT_MODE = "MOVICI";
+    const STEPS_IS_PM_CHARGEABLE = false;
+
+    const ADDITIONAL_INFOS = [
+        ["key" => "TYPE", "value" => "CONSUMPTION"]
+    ];
 
     private $clientId;
     private $clientSecret;
     private $baseUrl;
     private $authChain;
-    
+
+    /**
+     * @var CarpoolItem
+     */
+    private $consumptionCarpoolItem;
+    /**
+     * @var User
+     */
+    private $consumptionUser;
     
 
     public function __construct(string $clientId, string $clientSecret, string $baseUrl)
@@ -73,5 +92,70 @@ class WorldlineProvider implements ConsumptionFeedbackInterface
         }
         
         return $data['access_token'];
+    }
+
+    /**
+     * Send a consumption feedback
+     *
+     * @return CarpoolItem The CarpoolItem related to this consumption
+     */
+    public function sendConsumptionFeedback(CarpoolItem $carpoolItem)
+    {
+        $this->consumptionCarpoolItem = $carpoolItem;
+
+        $this->consumptionUser = $carpoolItem->getDebtorUser();
+        //if($this->checkUserForSso()){
+        var_dump(json_encode($this->buildConsumptionFeedbackForUser()));
+        //}
+
+        $this->consumptionUser = $carpoolItem->getCreditorUser();
+        //if($this->checkUserForSso()){
+        var_dump(json_encode($this->buildConsumptionFeedbackForUser()));
+        //}
+        
+        die;
+    }
+
+    /**
+     * Check if the User has been created by Sso
+     *
+     * @param User $user
+     * @return boolean
+     */
+    private function checkUserForSso(): bool
+    {
+        return is_null($this->consumptionUser->getSsoId());
+    }
+
+
+    private function buildConsumptionFeedbackForUser(): array
+    {
+        if ($this->consumptionUser->getId()==$this->consumptionCarpoolItem->getAsk()->getMatching()->getProposalOffer()->getUser()->getId()) {
+            $externalActivityId = $this->consumptionCarpoolItem->getAsk()->getMatching()->getProposalOffer()->getId();
+        } elseif ($this->consumptionUser->getId()==$this->consumptionCarpoolItem->getAsk()->getMatching()->getProposalRequest()->getUser()->getId()) {
+            $externalActivityId = $this->consumptionCarpoolItem->getAsk()->getMatching()->getProposalRequest()->getId();
+        } else {
+            return [];
+        }
+        
+        return [
+            "accoundId" => $this->consumptionUser->getSsoId(),
+            "consumptionType" => self::CONSUMPTION_TYPE,
+            "externalActivityId" => $externalActivityId,
+            "steps" => [
+                [
+                    "beginDate" => "",
+                    "endDate" => "",
+                    "type" => self::STEPS_TYPE,
+                    "transportMode" => self::STEPS_TRANSPORT_MODE,
+                    "financialData" => [
+                        "initialAmount" => 0,
+                        "initialAmountExcdTax" => 0.0,
+                        "isPMChargeable" => self::STEPS_IS_PM_CHARGEABLE
+                    ]
+                ]
+            ],
+            "additionalInformations" => self::ADDITIONAL_INFOS
+        ];
     }
 }
