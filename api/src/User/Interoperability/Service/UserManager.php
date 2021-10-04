@@ -41,6 +41,7 @@ class UserManager
     private $userEntityManager;
     private $security;
     private $entityManager;
+    private $detachSso;
 
     public function __construct(UserEntityManager $userEntityManager, Security $security, EntityManagerInterface $entityManager)
     {
@@ -128,16 +129,54 @@ class UserManager
      */
     public function detachUser(DetachSso $detachSso): DetachSso
     {
-        if ($userEntity = $this->userEntityManager->getUserBySsoId($detachSso->getUuid())) {
-            $userEntity->setSsoId(null);
-            $userEntity->setSsoProvider(null);
+        $this->detachSso = $detachSso;
+        $this->setDetachSsoUser($detachSso);
 
-            $this->entityManager->persist($userEntity);
-            $this->entityManager->flush();
-
-            $detachSso->setUserId($userEntity->getId());
+        if ($detachSso->getUser()->getCreatedDate() < $detachSso->getUser()->getCreatedSsoDate()) {
+            $this->detachPreviouslyExistingUser();
+        } else {
+            $this->detachSsoCreatedUser();
         }
-        return $detachSso;
+
+        return $this->detachSso;
+    }
+
+    /**
+     * Set the User to the DetachSso object
+     *
+     * @param DetachSso $detachSso
+     * @return void
+     */
+    private function setDetachSsoUser(DetachSso $detachSso)
+    {
+        if ($userEntity = $this->userEntityManager->getUserBySsoId($detachSso->getUuid())) {
+            $this->detachSso->setUser($userEntity);
+        } else {
+            throw new \LogicException("Unknown User");
+        }
+    }
+    
+    /**
+     * Detach a previously existing user (not created by SSO). We keep the User and erase the SSO data
+     */
+    private function detachPreviouslyExistingUser()
+    {
+        $userEntity = $this->detachSso->getUser();
+        $userEntity->setSsoId(null);
+        $userEntity->setSsoProvider(null);
+        $this->entityManager->persist($userEntity);
+        $this->entityManager->flush();
+        $this->detachSso->setPreviouslyExisting(true);
+        $this->detachSso->setUserId($userEntity->getId());
+    }
+
+    /**
+     * Detach a SSO Created User. We need to delete it.
+     */
+    private function detachSsoCreatedUser()
+    {
+        $this->userEntityManager->deleteUser($this->detachSso->getUser());
+        $this->detachSso->setPreviouslyExisting(false);
     }
 
     /**
