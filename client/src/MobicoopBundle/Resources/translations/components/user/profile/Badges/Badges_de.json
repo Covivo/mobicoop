@@ -12,5 +12,9 @@
         "title":"Les autres badges",
         "nobadges":"Il n'y a aucun autre badge à gagner"
     },
-    "dontAcceptGamification":"Vous n'acceptez actuellement pas de gagner de badge. Vos précédents gains sont conservés mais vous ne progresserez plus. Vous pouvez changer cela en vous rendant dans votre onglet \"Préférences\"."
+    "dontAcceptGamification":"Vous n'acceptez actuellement pas de gagner de badge. Vos précédents gains sont conservés mais vous ne progresserez plus. Vous pouvez changer cela en vous rendant dans votre onglet \"Préférences\".",
+    "acceptBadges":{
+        "text":"J'accepte de gagner des badges",
+        "url":"/user/updateGamification"
+    }
 }
