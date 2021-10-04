@@ -626,6 +626,14 @@ carpool_ad_update:
         nl: /carpool/ad/{id}/update/
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdUpdate
 
+# save a carpool search
+carpool_save_search:
+    path:
+        fr: /covoiturage/recherche/{id}/enregistrer
+        en: /carpool/search/{id}/save/
+        nl: /carpool/search/{id}/save/
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolSearchSave    
+
 # delete an ad (AJAX)
 carpool_ad_delete:
     path:

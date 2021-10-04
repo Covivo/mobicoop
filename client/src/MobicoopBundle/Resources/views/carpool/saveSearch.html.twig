@@ -1,0 +1,22 @@
+{% extends '@Mobicoop/base.html.twig' %}
+{% block title %}{% trans from 'meta' %}meta.publish.title{% endtrans %}{{ app_name }}{% endblock %}
+{% block main %}
+    <ad-publish
+        geo-search-url="{{ geoCompleteUri }}"
+        :ad="{{ ad | json_encode }}"
+        :user="{{ app.user | json_encode }}"
+        :is-update="true"
+        :is-search-to-save="true"
+        :map-provider="{{ mapProvider|json_encode }}"
+        :url-tiles="{{ urlTiles|json_encode }}"
+        :attribution-copyright="{{ attributionCopyright|json_encode }}"
+        :init-origin="{{ ad.origin | json_encode }}"
+        :init-destination="{{ ad.destination | json_encode}}"
+        :init-regular="{% if (ad.frequency == 2) %}true{% else %}false{% endif %}"
+        :default-margin-time="{{ marginDuration }}"
+        :has-asks="{% if (hasAsks == true) %}true{% else %}false{% endif %}" {# renvoie des entiers sinon #}
+        :has-potential-ads="{% if (hasPotentialAds == true) %}true{% else %}false{% endif %}" {# renvoie des entiers sinon #}
+    	:default-time-precision="{{ timePrecision }}"
+        :solidary-exclusive-ad="{% if (solidaryExclusive == true) %}true{% else %}false{% endif %}"
+    />
+{% endblock %}

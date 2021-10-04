@@ -107,5 +107,11 @@
     "create": {
         "subtitle": "Uw advertentie aanmaken",
         "title": "Een advertentie publiceren"
+    },
+    "searchToSave": {
+        "success": "Votre annonce a été sauvegardée avec succès.",
+        "error": "Une erreur est survenue lors de la sauvegarde de votre annonce.",
+        "messageTitle": "Vous avez converti votre recherche en ce début d'annonce.",
+        "message": "Complétez et publiez-la, pour être alerté des prochains résultats voire être contacté par d'autres covoitureurs pour le même trajet."
     }
 }
