@@ -164,6 +164,7 @@ class UserManager
         $userEntity = $this->detachSso->getUser();
         $userEntity->setSsoId(null);
         $userEntity->setSsoProvider(null);
+        $userEntity->setCreatedSSoDate(null);
         $this->entityManager->persist($userEntity);
         $this->entityManager->flush();
         $this->detachSso->setPreviouslyExisting(true);
