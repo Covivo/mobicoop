@@ -381,6 +381,16 @@ services:
         arguments:
             $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
     
+    
+    # Consumption feedback
+    App\User\DataProvider\ConsumptionFeedbackDataProvider:
+        arguments:
+            $active: '%env(bool:CONSUMPTION_FEEDBACK_ACTIVE)%'
+            $provider: '%env(string:CONSUMPTION_FEEDBACK_PROVIDER)%'
+            $baseUrl: '%env(string:CONSUMPTION_FEEDBACK_BASE_URL)%'
+            $clientId: '%env(string:CONSUMPTION_FEEDBACK_CLIENTID)%'
+            $clientSecret: '%env(string:CONSUMPTION_FEEDBACK_CLIENT_SECRET)%'
+    
     # Editorial
     'App\Editorial\Admin\DataProvider\EditorialCollectionDataProvider':
         arguments:

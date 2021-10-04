@@ -160,7 +160,11 @@ class DataProvider
             }
             if ($body) {
                 if (is_null($bodyType)) {
-                    $options[self::BODY_TYPE_JSON]=$body;
+                    switch ($bodyType) {
+                        case self::BODY_TYPE_JSON: $options[self::BODY_TYPE_JSON]=$body;break;
+                        case self::BODY_TYPE_FORM_PARAMS: $options[self::BODY_TYPE_FORM_PARAMS]=$body;break;
+                        default: $options[self::BODY_TYPE_JSON]=$body;
+                    }
                 } else {
                     $options[$bodyType]=$body;
                 }

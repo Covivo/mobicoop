@@ -61,6 +61,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use App\Action\Event\ActionEvent;
 use App\Action\Repository\ActionRepository;
+use App\User\DataProvider\ConsumptionFeedbackDataProvider;
 
 /**
  * Payment manager service.
@@ -92,6 +93,7 @@ class PaymentManager
     private $validationDocsAuthorizedExtensions;
     private $eventDispatcher;
     private $actionRepository;
+    private $consumptionFeedbackProvider;
     private $logger;
 
     /**
@@ -108,6 +110,10 @@ class PaymentManager
      * @param string $securityToken                                 The payment security token (for hooks)
      * @param string $validationDocsPath                            Path to the temp directory for validation documents
      * @param array $validationDocsAuthorizedExtensions             Authorized extensions for validation documents
+     * @param array $exportPath
+     * @param EventDispatcherInterface $eventDispatcher
+     * @param ActionRepository $actionRepository
+     * @param ConsumptionFeedbackDataProvider $consumptionFeedbackProvider
      */
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -126,7 +132,8 @@ class PaymentManager
         array $validationDocsAuthorizedExtensions,
         string $exportPath,
         EventDispatcherInterface $eventDispatcher,
-        ActionRepository $actionRepository
+        ActionRepository $actionRepository,
+        ConsumptionFeedbackDataProvider $consumptionFeedbackProvider
     ) {
         $this->entityManager = $entityManager;
         $this->carpoolItemRepository = $carpoolItemRepository;
@@ -150,6 +157,7 @@ class PaymentManager
         $this->eventDispatcher = $eventDispatcher;
         $this->actionRepository = $actionRepository;
         $this->logger = $logger;
+        $this->consumptionFeedbackProvider = $consumptionFeedbackProvider;
     }
 
     /**
@@ -836,6 +844,10 @@ class PaymentManager
         // we initiate empty array of askIds
         $askIds = [];
 
+        if (count($asks)>0 && $this->consumptionFeedbackProvider->isActive()) {
+            echo $this->consumptionFeedbackProvider->auth();
+        }
+        die;
         // then we create the corresponding items
         foreach ($asks as $ask) {
             /**
