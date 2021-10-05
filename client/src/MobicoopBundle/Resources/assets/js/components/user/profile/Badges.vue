@@ -1,5 +1,12 @@
 <template>
   <v-container fluid>
+    <v-row v-if="!acceptGamification">
+      <v-col>
+        <v-alert type="info">
+          {{ $t('dontAcceptGamification') }}
+        </v-alert>
+      </v-col>
+    </v-row>
     <v-row>
       <v-col cols="12">
         <h2>{{ $t("badgesEarned.title") }}</h2>
@@ -184,6 +191,18 @@
     <v-row v-else>
       <v-col>{{ $t('otherBadges.nobadges') }}.</v-col>
     </v-row>
+    <v-row>
+      <v-col
+        cols="12"
+        class="text-left"
+      >
+        <v-switch
+          v-model="acceptBadges"
+          :label="$t('acceptBadges.text')"
+          @change="updateAcceptBadges"
+        />        
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 <script>
@@ -206,7 +225,8 @@ export default {
   data(){
     return{
       badges: null,
-      loading:true
+      loading:true,
+      acceptBadges:false
     }
   },
   computed:{
@@ -218,9 +238,18 @@ export default {
     },
     otherBadges(){
       return this.badges.filter( item => item.earningPercentage == 0 && !item.earned );
+    },
+    acceptGamification(){
+      return this.$store.getters['g/hasUserAccept'];
+    }  
+  },
+  watch:{
+    acceptGamification(newValue, oldValue){
+      this.acceptBadges = newValue;
     }
   },
   mounted(){
+    this.acceptBadges = this.$store.getters['g/hasUserAccept'];
     this.getBadgesBoard();
   },
   methods:{
@@ -231,8 +260,21 @@ export default {
         .then(res => {
         //   console.log(res.data);
           this.badges = res.data.badges;
+          this.$store.commit('g/setUserAccept',res.data.acceptGamification);
           this.loading = false;
         });
+    },
+    updateAcceptBadges(){
+      this.$store.commit('g/setUserAccept',this.acceptBadges);
+      maxios.put(this.$t('acceptBadges.url'), {
+        gamification: this.acceptBadges
+      })
+        .then(function (response) {         
+        })
+        .catch(function (error) {
+          console.error(error);
+        })
+
     }
   }
 }

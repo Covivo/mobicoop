@@ -25,12 +25,11 @@
         </v-snackbar>
       </v-col>
     </v-row>
-    <v-row
-      justify="center"
-    >
+    <v-row>
       <v-col
         v-for="(item, itemIndex) in $t('items')"
         :key="itemIndex"
+        cols="4"
       >
         <v-card
           :height="cardHeight"
@@ -141,7 +140,7 @@ export default {
         music: this.form.music.value,
         musicFavorites: this.form.music.favorite,
         chat: this.form.chat.value,
-        chatFavorites: this.form.chat.favorite
+        chatFavorites: this.form.chat.favorite,
       })
         .then(function (response) {
           if (response.data && response.data.message) {

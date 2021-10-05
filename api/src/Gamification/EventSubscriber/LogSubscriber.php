@@ -33,12 +33,12 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 class LogSubscriber implements EventSubscriberInterface
 {
     private $gamificationManager;
-    private $active;
+    private $gamificationActive;
 
-    public function __construct(GamificationManager $gamificationManager, bool $active)
+    public function __construct(GamificationManager $gamificationManager, bool $gamificationActive)
     {
         $this->gamificationManager = $gamificationManager;
-        $this->active = $active;
+        $this->gamificationActive = $gamificationActive;
     }
 
     public static function getSubscribedEvents()
@@ -50,7 +50,7 @@ class LogSubscriber implements EventSubscriberInterface
 
     public function onLogEvent(LogEvent $event)
     {
-        if ($this->active) {
+        if ($this->gamificationActive && $event->getLog()->getUser()->hasGamification()) {
             $this->gamificationManager->handleLog($event->getLog());
         }
     }

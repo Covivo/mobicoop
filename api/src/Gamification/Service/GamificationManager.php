@@ -233,6 +233,11 @@ class GamificationManager
     {
         $badgesBoard = new BadgesBoard();
         
+        // Set if the user accept Gamification tracking
+        $badgesBoard->setAcceptGamification($user->hasGamification());
+
+        
+        
         // Get all the active badges of the platform
         $activeBadges = $this->getBadges(Badge::STATUS_ACTIVE);
         $badges = [];
