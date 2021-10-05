@@ -74,7 +74,7 @@ class StatsManager
 
         $this->addCommunitiesNumberIndicator();
 
-        $this->addCarpoolersConnectedNumberIndicator();
+        $this->addAsksNumberIndicator();
 
         return $this->indicators;
     }
@@ -97,7 +97,6 @@ class StatsManager
     /**
      * Add the number of avalaibles ads in indicator
      *
-     * @return int
      */
     private function addAvalaibleAdsNumberIndicator()
     {
@@ -107,7 +106,6 @@ class StatsManager
     /**
      * Add the number of users in indicator
      *
-     * @return int
      */
     private function addUsersNumberIndicator()
     {
@@ -117,7 +115,6 @@ class StatsManager
     /**
      * Add the number of communities in indicator
      *
-     * @return int
      */
     private function addCommunitiesNumberIndicator()
     {
@@ -125,19 +122,17 @@ class StatsManager
     }
 
     /**
-     * Add the number of the carpoolers connected in indicator
+     * Add the number of the aks in indicator
      *
-     * @return int
      */
-    private function addCarpoolersConnectedNumberIndicator()
+    private function addAsksNumberIndicator()
     {
-        $this->addIndicator("carpoolers_connected", $this->askRepository->countCarpoolersConnected());
+        $this->addIndicator("carpoolers_connected", $this->askRepository->countAsks());
     }
 
     /**
      * Add the number of the last ads published in the last month in indicator
      *
-     * @return int
      */
     private function addLastMonthAdsNumberIndicator()
     {
@@ -153,7 +148,6 @@ class StatsManager
     /**
      * Add the number of active users in indicator
      *
-     * @return int
      */
     private function addActiveUsersNumberIndicator()
     {
@@ -164,7 +158,6 @@ class StatsManager
     /**
      * Add the number of carpool proofs published in the last month in indicator
      *
-     * @return int
      */
     private function addCarpoolProofsLastMonthNumberIndicator()
     {
