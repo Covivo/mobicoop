@@ -127,7 +127,7 @@ class StatsManager
      */
     private function addAsksNumberIndicator()
     {
-        $this->addIndicator("carpoolers_connected", $this->askRepository->countAsks());
+        $this->addIndicator("aks", $this->askRepository->countAsks());
     }
 
     /**
