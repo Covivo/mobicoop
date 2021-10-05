@@ -34,7 +34,6 @@ use App\User\Interfaces\ConsumptionFeedbackInterface;
  */
 class WorldlineProvider implements ConsumptionFeedbackInterface
 {
-    const AUTHORIZATION_URL = "auth/realms/Partners/protocol/openid-connect/token";
     const GRANT_TYPE = "client_credentials";
     const CONSUMPTION_TYPE = "FIXED_FEE";
 
@@ -48,7 +47,9 @@ class WorldlineProvider implements ConsumptionFeedbackInterface
 
     private $clientId;
     private $clientSecret;
+    private $baseUrlAuth;
     private $baseUrl;
+    private $apiKey;
     private $authChain;
 
     /**
@@ -61,12 +62,14 @@ class WorldlineProvider implements ConsumptionFeedbackInterface
     private $consumptionUser;
     
 
-    public function __construct(string $clientId, string $clientSecret, string $baseUrl)
+    public function __construct(string $clientId, string $clientSecret, string $baseUrlAuth, string $baseUrl, string $apiKey)
     {
         $this->clientId = $clientId;
         $this->clientSecret = $clientSecret;
+        $this->baseUrlAuth = $baseUrlAuth;
         $this->baseUrl = $baseUrl;
         $this->authChain = "Basic ".base64_encode($clientId.":".$clientSecret);
+        $this->apiKey = $apiKey;
     }
 
     /**
@@ -76,7 +79,7 @@ class WorldlineProvider implements ConsumptionFeedbackInterface
      */
     public function auth(): string
     {
-        $dataProvider = new DataProvider($this->baseUrl."/".self::AUTHORIZATION_URL);
+        $dataProvider = new DataProvider($this->baseUrlAuth);
 
         $body['grant_type'] = self::GRANT_TYPE;
 
@@ -141,7 +144,7 @@ class WorldlineProvider implements ConsumptionFeedbackInterface
         return [
             "accoundId" => $this->consumptionUser->getSsoId(),
             "consumptionType" => self::CONSUMPTION_TYPE,
-            "externalActivityId" => $externalActivityId,
+            "externalActivityId" => time()."-".$externalActivityId,
             "steps" => [
                 [
                     "beginDate" => "",

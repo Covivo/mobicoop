@@ -387,9 +387,11 @@ services:
         arguments:
             $active: '%env(bool:CONSUMPTION_FEEDBACK_ACTIVE)%'
             $provider: '%env(string:CONSUMPTION_FEEDBACK_PROVIDER)%'
+            $baseUrlAuth: '%env(string:CONSUMPTION_FEEDBACK_AUTH_BASE_URL)%'
             $baseUrl: '%env(string:CONSUMPTION_FEEDBACK_BASE_URL)%'
             $clientId: '%env(string:CONSUMPTION_FEEDBACK_CLIENTID)%'
             $clientSecret: '%env(string:CONSUMPTION_FEEDBACK_CLIENT_SECRET)%'
+            $apiKey: '%env(string:CONSUMPTION_FEEDBACK_APIKEY)%'
     
     # Editorial
     'App\Editorial\Admin\DataProvider\EditorialCollectionDataProvider':
