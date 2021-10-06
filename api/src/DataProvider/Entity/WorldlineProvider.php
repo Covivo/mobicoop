@@ -71,7 +71,7 @@ class WorldlineProvider implements ConsumptionFeedbackInterface
     /**
      * @var array
      */
-    private $requestBody;    
+    private $requestBody;
 
     public function __construct(string $clientId, string $clientSecret, string $baseUrlAuth, string $baseUrl, string $apiKey)
     {
@@ -113,13 +113,13 @@ class WorldlineProvider implements ConsumptionFeedbackInterface
     {
         $this->setConsumptionUser($this->getConsumptionCarpoolItem()->getDebtorUser());
         //if($this->checkUserForSso()){
-            $this->sendConsumptionFeedbackRequest();
+        $this->sendConsumptionFeedbackRequest();
         var_dump(json_encode($this->getRequestBody()));
         //}
 
         $this->setConsumptionUser($this->getConsumptionCarpoolItem()->getCreditorUser());
         //if($this->checkUserForSso()){
-            $this->sendConsumptionFeedbackRequest();
+        $this->sendConsumptionFeedbackRequest();
         var_dump(json_encode($this->getRequestBody()));
         //}
 
@@ -233,7 +233,7 @@ class WorldlineProvider implements ConsumptionFeedbackInterface
                         "transportMode" => self::STEPS_TRANSPORT_MODE,
                         "financialData" => [
                             "initialAmount" => $price,
-                            "initialAmountExcdTax" => round($price / (1 + 0.20),2),
+                            "initialAmountExcdTax" => round($price / (1 + 0.20), 2),
                             "isPMChargeable" => self::STEPS_IS_PM_CHARGEABLE
                         ]
                     ]
@@ -272,7 +272,7 @@ class WorldlineProvider implements ConsumptionFeedbackInterface
     public function setConsumptionUser(?User $consumptionUser)
     {
         $this->consumptionUser = $consumptionUser;
-    }  
+    }
 
     public function getConsumptionCarpoolItem(): ?CarpoolItem
     {
@@ -282,7 +282,7 @@ class WorldlineProvider implements ConsumptionFeedbackInterface
     public function setConsumptionCarpoolItem(?CarpoolItem $consumptionCarpoolItem)
     {
         $this->consumptionCarpoolItem = $consumptionCarpoolItem;
-    }  
+    }
 
     public function getAccessToken(): ?string
     {
@@ -302,5 +302,5 @@ class WorldlineProvider implements ConsumptionFeedbackInterface
     public function setRequestBody(array $requestBody)
     {
         $this->requestBody = $requestBody;
-    }     
+    }
 }

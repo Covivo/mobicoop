@@ -98,5 +98,5 @@ class ConsumptionFeedbackDataProvider
     public function setConsumptionCarpoolItem(?CarpoolItem $consumptionCarpoolItem)
     {
         $this->providerInstance->setConsumptionCarpoolItem($consumptionCarpoolItem);
-    }     
+    }
 }
