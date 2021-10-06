@@ -25,6 +25,7 @@ namespace App\User\DataProvider;
 
 use App\DataProvider\Entity\WorldlineProvider;
 use App\Payment\Entity\CarpoolItem;
+use App\User\Entity\User;
 
 /**
  * Consumption Feedback DataProvider
@@ -57,22 +58,18 @@ class ConsumptionFeedbackDataProvider
 
     /**
      * Get the auth token
-     *
-     * @return string The auth token
      */
-    public function auth(): string
+    public function auth()
     {
-        return $this->providerInstance->auth();
+        $this->providerInstance->auth();
     }
 
     /**
      * Send a consumption feedback
-     *
-     * @return CarpoolItem The CarpoolItem related to this consumption
      */
-    public function sendConsumptionFeedback(CarpoolItem $carpoolItem)
+    public function sendConsumptionFeedback()
     {
-        $this->providerInstance->sendConsumptionFeedback($carpoolItem);
+        $this->providerInstance->sendConsumptionFeedback();
     }
 
     /**
@@ -82,4 +79,24 @@ class ConsumptionFeedbackDataProvider
     {
         return $this->active && !is_null($this->providerInstance);
     }
+
+    /**
+     * Return the access token
+     *
+     * @return string|null
+     */
+    public function getAccessToken(): ?string
+    {
+        return $this->providerInstance->getAccessToken();
+    }
+    
+    public function getConsumptionCarpoolItem(): ?CarpoolItem
+    {
+        return $this->providerInstance->getConsumptionCarpoolItem();
+    }
+
+    public function setConsumptionCarpoolItem(?CarpoolItem $consumptionCarpoolItem)
+    {
+        $this->providerInstance->setConsumptionCarpoolItem($consumptionCarpoolItem);
+    }     
 }

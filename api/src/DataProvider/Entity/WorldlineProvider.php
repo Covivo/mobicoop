@@ -54,14 +54,24 @@ class WorldlineProvider implements ConsumptionFeedbackInterface
     private $authChain;
 
     /**
+     * @var string
+     */
+    private $accessToken;
+
+    /**
      * @var CarpoolItem
      */
     private $consumptionCarpoolItem;
+    
     /**
      * @var User
      */
     private $consumptionUser;
     
+    /**
+     * @var array
+     */
+    private $requestBody;    
 
     public function __construct(string $clientId, string $clientSecret, string $baseUrlAuth, string $baseUrl, string $apiKey)
     {
@@ -71,14 +81,13 @@ class WorldlineProvider implements ConsumptionFeedbackInterface
         $this->baseUrl = $baseUrl;
         $this->authChain = "Basic ".base64_encode($clientId.":".$clientSecret);
         $this->apiKey = $apiKey;
+        $this->requestBody = [];
     }
 
     /**
      * Get the auth token
-     *
-     * @return string The auth token
      */
-    public function auth(): string
+    public function auth()
     {
         $dataProvider = new DataProvider($this->baseUrlAuth);
 
@@ -94,28 +103,29 @@ class WorldlineProvider implements ConsumptionFeedbackInterface
         } else {
             throw new \LogicException("Auth failed");
         }
-        
-        return $data['access_token'];
+        $this->setAccessToken($data['access_token']);
     }
 
     /**
      * Send a consumption feedback
-     *
-     * @return CarpoolItem The CarpoolItem related to this consumption
      */
-    public function sendConsumptionFeedback(CarpoolItem $carpoolItem)
+    public function sendConsumptionFeedback()
     {
-        $this->consumptionCarpoolItem = $carpoolItem;
-
-        $this->consumptionUser = $carpoolItem->getDebtorUser();
+        $this->setConsumptionUser($this->getConsumptionCarpoolItem()->getDebtorUser());
         //if($this->checkUserForSso()){
-        var_dump(json_encode($this->buildConsumptionFeedbackForUser()));
+            $this->sendConsumptionFeedbackRequest();
+        var_dump(json_encode($this->getRequestBody()));
         //}
 
-        $this->consumptionUser = $carpoolItem->getCreditorUser();
+        $this->setConsumptionUser($this->getConsumptionCarpoolItem()->getCreditorUser());
         //if($this->checkUserForSso()){
-        var_dump(json_encode($this->buildConsumptionFeedbackForUser()));
+            $this->sendConsumptionFeedbackRequest();
+        var_dump(json_encode($this->getRequestBody()));
         //}
+
+        $this->setConsumptionUser(null);
+        $this->setConsumptionCarpoolItem(null);
+        $this->setRequestBody([]);
     }
 
     /**
@@ -132,17 +142,15 @@ class WorldlineProvider implements ConsumptionFeedbackInterface
 
     /**
      * Build the body of the request of consumption feedback
-     *
-     * @return array
      */
-    private function buildConsumptionFeedbackForUser(): array
+    private function buildConsumptionFeedbackForUser()
     {
-        if ($this->consumptionUser->getId()==$this->consumptionCarpoolItem->getAsk()->getMatching()->getProposalOffer()->getUser()->getId()) {
-            $externalActivityId = $this->consumptionCarpoolItem->getAsk()->getMatching()->getProposalOffer()->getId();
-            $price =  $this->consumptionCarpoolItem->getAsk()->getCriteria()->getDriverComputedRoundedPrice();
-        } elseif ($this->consumptionUser->getId()==$this->consumptionCarpoolItem->getAsk()->getMatching()->getProposalRequest()->getUser()->getId()) {
-            $externalActivityId = $this->consumptionCarpoolItem->getAsk()->getMatching()->getProposalRequest()->getId();
-            $price =  $this->consumptionCarpoolItem->getAsk()->getCriteria()->getPassengerComputedRoundedPrice();
+        if ($this->getConsumptionUser()->getId()==$this->getConsumptionCarpoolItem()->getAsk()->getMatching()->getProposalOffer()->getUser()->getId()) {
+            $externalActivityId = $this->getConsumptionCarpoolItem()->getAsk()->getMatching()->getProposalOffer()->getId();
+            $price =  $this->getConsumptionCarpoolItem()->getAsk()->getCriteria()->getDriverComputedRoundedPrice();
+        } elseif ($this->getConsumptionUser()->getId()==$this->getConsumptionCarpoolItem()->getAsk()->getMatching()->getProposalRequest()->getUser()->getId()) {
+            $externalActivityId = $this->getConsumptionCarpoolItem()->getAsk()->getMatching()->getProposalRequest()->getId();
+            $price =  $this->getConsumptionCarpoolItem()->getAsk()->getCriteria()->getPassengerComputedRoundedPrice();
         } else {
             return [];
         }
@@ -150,16 +158,16 @@ class WorldlineProvider implements ConsumptionFeedbackInterface
         $carpooled = false;
 
         // start date
-        $askCriteria = $this->consumptionCarpoolItem->getAsk()->getCriteria();
+        $askCriteria = $this->getConsumptionCarpoolItem()->getAsk()->getCriteria();
 
         $beginDate = $askCriteria->getFromDate();
         if ($askCriteria->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
             $beginDate->setTime($askCriteria->getFromTime()->format('H'), $askCriteria->getFromTime()->format('i'), $askCriteria->getFromTime()->format('s'));
             $endDate = clone $beginDate;
-            $endDate = $endDate->modify("+".$this->consumptionCarpoolItem->getAsk()->getMatching()->getNewDuration()." second");
+            $endDate = $endDate->modify("+".$this->getConsumptionCarpoolItem()->getAsk()->getMatching()->getNewDuration()." second");
             $carpooled = true;
         } else {
-            switch ($this->consumptionCarpoolItem->getCreatedDate()->format("w")) {
+            switch ($this->getConsumptionCarpoolItem()->getCreatedDate()->format("w")) {
                 case 0:
                     if ($askCriteria->isSunCheck()) {
                         $beginDate->setTime($askCriteria->getSunTime()->format('H'), $askCriteria->getSunTime()->format('i'), $askCriteria->getSunTime()->format('s'));
@@ -207,16 +215,16 @@ class WorldlineProvider implements ConsumptionFeedbackInterface
             
             if ($carpooled) {
                 $endDate = clone $beginDate;
-                $endDate = $endDate->modify("+".$this->consumptionCarpoolItem->getAsk()->getMatching()->getNewDuration()." second");
+                $endDate = $endDate->modify("+".$this->getConsumptionCarpoolItem()->getAsk()->getMatching()->getNewDuration()." second");
             }
         }
 
 
         if ($carpooled) {
-            return [
+            $this->setRequestBody([
                 "accoundId" => $this->consumptionUser->getSsoId(),
                 "consumptionType" => self::CONSUMPTION_TYPE,
-                "externalActivityId" => time()."-".$externalActivityId,
+                "externalActivityId" => (microtime(true)*10000)."-".$externalActivityId,
                 "steps" => [
                     [
                         "beginDate" => $beginDate,
@@ -225,19 +233,74 @@ class WorldlineProvider implements ConsumptionFeedbackInterface
                         "transportMode" => self::STEPS_TRANSPORT_MODE,
                         "financialData" => [
                             "initialAmount" => $price,
-                            "initialAmountExcdTax" => 0.0,
+                            "initialAmountExcdTax" => round($price / (1 + 0.20),2),
                             "isPMChargeable" => self::STEPS_IS_PM_CHARGEABLE
                         ]
                     ]
                 ],
                 "additionalInformations" => self::ADDITIONAL_INFOS
-            ];
+            ]);
         }
-        
-        return [];
     }
 
-    private function sendConsumptionFeedbackRequest(array $body)
+    private function sendConsumptionFeedbackRequest()
     {
+        $this->buildConsumptionFeedbackForUser();
+
+        // $dataProvider = new DataProvider($this->baseUrl);
+
+        // $headers = [
+        //     "Authorization" => "Bearer ".$this->access_token
+        // ];
+
+        // $response = $dataProvider->postCollection($this->getRequestBody(), $headers, null, DataProvider::BODY_TYPE_FORM_PARAMS);
+        // if ($response->getCode() == 200) {
+        //     $data = json_decode($response->getValue(), true);
+        // } else {
+        //     throw new \LogicException("Auth failed");
+        // }
     }
+
+    
+    // Getters / Setters
+    
+    public function getConsumptionUser(): ?User
+    {
+        return $this->consumptionUser;
+    }
+
+    public function setConsumptionUser(?User $consumptionUser)
+    {
+        $this->consumptionUser = $consumptionUser;
+    }  
+
+    public function getConsumptionCarpoolItem(): ?CarpoolItem
+    {
+        return $this->consumptionCarpoolItem;
+    }
+
+    public function setConsumptionCarpoolItem(?CarpoolItem $consumptionCarpoolItem)
+    {
+        $this->consumptionCarpoolItem = $consumptionCarpoolItem;
+    }  
+
+    public function getAccessToken(): ?string
+    {
+        return $this->accessToken;
+    }
+
+    public function setAccessToken(string $accessToken)
+    {
+        $this->accessToken = $accessToken;
+    }
+
+    public function getRequestBody(): ?array
+    {
+        return $this->requestBody;
+    }
+
+    public function setRequestBody(array $requestBody)
+    {
+        $this->requestBody = $requestBody;
+    }     
 }

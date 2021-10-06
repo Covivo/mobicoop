@@ -24,6 +24,7 @@
 namespace App\User\Interfaces;
 
 use App\Payment\Entity\CarpoolItem;
+use App\User\Entity\User;
 
 /**
  * Consumption Feedback Interface.
@@ -35,15 +36,23 @@ interface ConsumptionFeedbackInterface
 {
     /**
      * Get the auth token
-     *
-     * @return string The auth token
      */
-    public function auth(): string;
+    public function auth();
 
     /**
      * Send a consumption feedback
-     *
-     * @return CarpoolItem The CarpoolItem related to this consumption
      */
-    public function sendConsumptionFeedback(CarpoolItem $carpoolItem);
+    public function sendConsumptionFeedback();
+
+    /**
+     * Get the CarpoolItem related to this consumption feedback
+     *
+     * @return CarpoolItem|null
+     */
+    public function getConsumptionCarpoolItem(): ?CarpoolItem;
+
+    /**
+     * @param CarpoolItem|null $consumptionCarpoolItem  The CarpoolItem related to this consumption feedback
+     */
+    public function setConsumptionCarpoolItem(?CarpoolItem $consumptionCarpoolItem);
 }

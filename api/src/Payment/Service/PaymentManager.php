@@ -844,9 +844,8 @@ class PaymentManager
         // we initiate empty array of askIds
         $askIds = [];
 
-        $consumptionFeedbackToken = null;
         if (count($asks)>0 && $this->consumptionFeedbackProvider->isActive()) {
-            $consumptionFeedbackToken = $this->consumptionFeedbackProvider->auth();
+            $this->consumptionFeedbackProvider->auth();
         }
 
         // then we create the corresponding items
@@ -873,8 +872,9 @@ class PaymentManager
 
                     $this->entityManager->persist($carpoolItem);
 
-                    if ($this->consumptionFeedbackProvider->isActive() && !is_null($consumptionFeedbackToken)) {
-                        $this->consumptionFeedbackProvider->sendConsumptionFeedback($carpoolItem);
+                    if ($this->consumptionFeedbackProvider->isActive() && !is_null($this->consumptionFeedbackProvider->getAccessToken())) {
+                        $this->consumptionFeedbackProvider->setConsumptionCarpoolItem($carpoolItem);
+                        $this->consumptionFeedbackProvider->sendConsumptionFeedback();
                     }
 
                     if ($carpoolItem->getDebtorStatus() !== CarpoolItem::DEBTOR_STATUS_NULL) {
@@ -945,8 +945,9 @@ class PaymentManager
                         }
                         $this->entityManager->persist($carpoolItem);
 
-                        if ($this->consumptionFeedbackProvider->isActive() && !is_null($consumptionFeedbackToken)) {
-                            $this->consumptionFeedbackProvider->sendConsumptionFeedback($carpoolItem);
+                        if ($this->consumptionFeedbackProvider->isActive() && !is_null($this->consumptionFeedbackProvider->getAccessToken())) {
+                            $this->consumptionFeedbackProvider->setConsumptionCarpoolItem($carpoolItem);
+                            $this->consumptionFeedbackProvider->sendConsumptionFeedback();
                         }
 
                         // We send only one email for the all week
