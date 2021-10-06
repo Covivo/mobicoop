@@ -51,7 +51,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *             "method"="POST",
  *             "security_post_denormalize"="is_granted('interop_user_create',object)",
  *             "swagger_context" = {
- *                  "summary"="Create a User created via interoperability",
+ *                  "summary"="Create a User created via interoperability. If a User with the same email already exists in our database, we will attache this account and not create a new one.",
  *                  "tags"={"Interoperability"},
  *                  "parameters" = {
  *                      {

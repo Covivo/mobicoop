@@ -23,6 +23,7 @@
 
 namespace App\DataProvider\Entity;
 
+use App\Carpool\Entity\Criteria;
 use App\DataProvider\Service\DataProvider;
 use App\Payment\Entity\CarpoolItem;
 use App\User\Entity\User;
@@ -115,8 +116,6 @@ class WorldlineProvider implements ConsumptionFeedbackInterface
         //if($this->checkUserForSso()){
         var_dump(json_encode($this->buildConsumptionFeedbackForUser()));
         //}
-        
-        die;
     }
 
     /**
@@ -131,34 +130,114 @@ class WorldlineProvider implements ConsumptionFeedbackInterface
     }
 
 
+    /**
+     * Build the body of the request of consumption feedback
+     *
+     * @return array
+     */
     private function buildConsumptionFeedbackForUser(): array
     {
         if ($this->consumptionUser->getId()==$this->consumptionCarpoolItem->getAsk()->getMatching()->getProposalOffer()->getUser()->getId()) {
             $externalActivityId = $this->consumptionCarpoolItem->getAsk()->getMatching()->getProposalOffer()->getId();
+            $price =  $this->consumptionCarpoolItem->getAsk()->getCriteria()->getDriverComputedRoundedPrice();
         } elseif ($this->consumptionUser->getId()==$this->consumptionCarpoolItem->getAsk()->getMatching()->getProposalRequest()->getUser()->getId()) {
             $externalActivityId = $this->consumptionCarpoolItem->getAsk()->getMatching()->getProposalRequest()->getId();
+            $price =  $this->consumptionCarpoolItem->getAsk()->getCriteria()->getPassengerComputedRoundedPrice();
         } else {
             return [];
         }
         
-        return [
-            "accoundId" => $this->consumptionUser->getSsoId(),
-            "consumptionType" => self::CONSUMPTION_TYPE,
-            "externalActivityId" => time()."-".$externalActivityId,
-            "steps" => [
-                [
-                    "beginDate" => "",
-                    "endDate" => "",
-                    "type" => self::STEPS_TYPE,
-                    "transportMode" => self::STEPS_TRANSPORT_MODE,
-                    "financialData" => [
-                        "initialAmount" => 0,
-                        "initialAmountExcdTax" => 0.0,
-                        "isPMChargeable" => self::STEPS_IS_PM_CHARGEABLE
+        $carpooled = false;
+
+        // start date
+        $askCriteria = $this->consumptionCarpoolItem->getAsk()->getCriteria();
+
+        $beginDate = $askCriteria->getFromDate();
+        if ($askCriteria->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
+            $beginDate->setTime($askCriteria->getFromTime()->format('H'), $askCriteria->getFromTime()->format('i'), $askCriteria->getFromTime()->format('s'));
+            $endDate = clone $beginDate;
+            $endDate = $endDate->modify("+".$this->consumptionCarpoolItem->getAsk()->getMatching()->getNewDuration()." second");
+            $carpooled = true;
+        } else {
+            switch ($this->consumptionCarpoolItem->getCreatedDate()->format("w")) {
+                case 0:
+                    if ($askCriteria->isSunCheck()) {
+                        $beginDate->setTime($askCriteria->getSunTime()->format('H'), $askCriteria->getSunTime()->format('i'), $askCriteria->getSunTime()->format('s'));
+                        $carpooled = true;
+                    }
+                    break;
+                case 1:
+                    if ($askCriteria->isMonCheck()) {
+                        $beginDate->setTime($askCriteria->getMonTime()->format('H'), $askCriteria->getMonTime()->format('i'), $askCriteria->getMonTime()->format('s'));
+                        $carpooled = true;
+                    }
+                    break;
+                case 2:
+                    if ($askCriteria->isTueCheck()) {
+                        $beginDate->setTime($askCriteria->getTueTime()->format('H'), $askCriteria->getTueTime()->format('i'), $askCriteria->getTueTime()->format('s'));
+                        $carpooled = true;
+                    }
+                    break;
+                case 3:
+                    if ($askCriteria->isWedCheck()) {
+                        $beginDate->setTime($askCriteria->getWedTime()->format('H'), $askCriteria->getWedTime()->format('i'), $askCriteria->getWedTime()->format('s'));
+                        $carpooled = true;
+                    }
+                    break;
+                case 4:
+                    if ($askCriteria->isThuCheck()) {
+                        $beginDate->setTime($askCriteria->getThuTime()->format('H'), $askCriteria->getThuTime()->format('i'), $askCriteria->getThuTime()->format('s'));
+                        $carpooled = true;
+                    }
+                    break;
+                case 5:
+                    if ($askCriteria->isFriCheck()) {
+                        $beginDate->setTime($askCriteria->getFriTime()->format('H'), $askCriteria->getFriTime()->format('i'), $askCriteria->getFriTime()->format('s'));
+                        $carpooled = true;
+                    }
+                    break;
+                case 6:
+                    if ($askCriteria->isSatCheck()) {
+                        $beginDate->setTime($askCriteria->getSatTime()->format('H'), $askCriteria->getSatTime()->format('i'), $askCriteria->getSatTime()->format('s'));
+                        $carpooled = true;
+                    }
+                    break;
+                default: break;
+            }
+            
+            if ($carpooled) {
+                $endDate = clone $beginDate;
+                $endDate = $endDate->modify("+".$this->consumptionCarpoolItem->getAsk()->getMatching()->getNewDuration()." second");
+            }
+        }
+
+
+        if ($carpooled) {
+            return [
+                "accoundId" => $this->consumptionUser->getSsoId(),
+                "consumptionType" => self::CONSUMPTION_TYPE,
+                "externalActivityId" => time()."-".$externalActivityId,
+                "steps" => [
+                    [
+                        "beginDate" => $beginDate,
+                        "endDate" => $endDate,
+                        "type" => self::STEPS_TYPE,
+                        "transportMode" => self::STEPS_TRANSPORT_MODE,
+                        "financialData" => [
+                            "initialAmount" => $price,
+                            "initialAmountExcdTax" => 0.0,
+                            "isPMChargeable" => self::STEPS_IS_PM_CHARGEABLE
+                        ]
                     ]
-                ]
-            ],
-            "additionalInformations" => self::ADDITIONAL_INFOS
-        ];
+                ],
+                "additionalInformations" => self::ADDITIONAL_INFOS
+            ];
+        }
+        
+        return [];
+    }
+
+    private function sendConsumptionFeedbackRequest(array $body)
+    {
     }
 }
