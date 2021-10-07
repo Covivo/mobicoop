@@ -28,6 +28,7 @@ use App\DataProvider\Service\DataProvider;
 use App\Payment\Entity\CarpoolItem;
 use App\User\Entity\User;
 use App\User\Interfaces\ConsumptionFeedbackInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * Worldline Provider
@@ -55,6 +56,7 @@ class WorldlineProvider implements ConsumptionFeedbackInterface
     private $apiKey;
     private $appId;
     private $authChain;
+    private $logger;
 
     /**
      * @var string
@@ -76,7 +78,12 @@ class WorldlineProvider implements ConsumptionFeedbackInterface
      */
     private $requestBody;
 
-    public function __construct(string $clientId, string $clientSecret, string $baseUrlAuth, string $baseUrl, string $apiKey, int $appId)
+    /**
+     * @var string
+     */
+    private $externalActivityId;
+
+    public function __construct(string $clientId, string $clientSecret, string $baseUrlAuth, string $baseUrl, string $apiKey, int $appId, LoggerInterface $logger)
     {
         $this->clientId = $clientId;
         $this->clientSecret = $clientSecret;
@@ -86,6 +93,7 @@ class WorldlineProvider implements ConsumptionFeedbackInterface
         $this->apiKey = $apiKey;
         $this->appId = $appId;
         $this->requestBody = [];
+        $this->logger = $logger;
     }
 
     /**
@@ -101,7 +109,12 @@ class WorldlineProvider implements ConsumptionFeedbackInterface
             "Authorization" => $this->authChain
         ];
 
+        $this->logger->info("Authentification : ".$this->baseUrlAuth);
+
         $response = $dataProvider->postCollection($body, $headers, null, DataProvider::BODY_TYPE_FORM_PARAMS);
+
+        $this->logger->info("Result Code : ".$response->getCode());
+
         if ($response->getCode() == 200) {
             $data = json_decode($response->getValue(), true);
         } else {
@@ -116,9 +129,9 @@ class WorldlineProvider implements ConsumptionFeedbackInterface
     public function sendConsumptionFeedback()
     {
         $this->setConsumptionUser($this->getConsumptionCarpoolItem()->getDebtorUser());
-        if ($this->checkUserForSso()) {
-            $this->sendConsumptionFeedbackRequest();
-        }
+        // if ($this->checkUserForSso()) {
+        $this->sendConsumptionFeedbackRequest();
+        // }
 
         $this->setConsumptionUser($this->getConsumptionCarpoolItem()->getCreditorUser());
         if ($this->checkUserForSso()) {
@@ -138,7 +151,7 @@ class WorldlineProvider implements ConsumptionFeedbackInterface
      */
     private function checkUserForSso(): bool
     {
-        return is_null($this->consumptionUser->getSsoId()) && !is_null($this->consumptionUser->getAppDelegate()) && $this->consumptionUser->getAppDelegate()->getId() === $this->appId;
+        return is_null($this->getConsumptionUser()->getSsoId()) && !is_null($this->getConsumptionUser()->getAppDelegate()) && $this->getConsumptionUser()->getAppDelegate()->getId() === $this->appId;
     }
 
 
@@ -147,6 +160,7 @@ class WorldlineProvider implements ConsumptionFeedbackInterface
      */
     private function buildConsumptionFeedbackForUser()
     {
+        $this->setExternalActivityId(null);
         if ($this->getConsumptionUser()->getId()==$this->getConsumptionCarpoolItem()->getAsk()->getMatching()->getProposalOffer()->getUser()->getId()) {
             $externalActivityId = $this->getConsumptionCarpoolItem()->getAsk()->getMatching()->getProposalOffer()->getId();
             $price =  $this->getConsumptionCarpoolItem()->getAsk()->getCriteria()->getDriverComputedRoundedPrice();
@@ -223,10 +237,11 @@ class WorldlineProvider implements ConsumptionFeedbackInterface
 
 
         if ($carpooled) {
+            $this->setExternalActivityId((microtime(true)*10000)."-".$externalActivityId);
             $this->setRequestBody([
-                "accoundId" => (defined('static::TEST_SSO_ACCOUNT_ID')) ? self::TEST_SSO_ACCOUNT_ID : $this->consumptionUser->getId(),
+                "accoundId" => (defined('static::TEST_SSO_ACCOUNT_ID')) ? self::TEST_SSO_ACCOUNT_ID : $this->getConsumptionUser()->getId(),
                 "consumptionType" => self::CONSUMPTION_TYPE,
-                "externalActivityId" => (microtime(true)*10000)."-".$externalActivityId,
+                "externalActivityId" => $this->getExternalActivityId(),
                 "steps" => [
                     [
                         "beginDate" => $beginDate->format('c'),
@@ -252,23 +267,24 @@ class WorldlineProvider implements ConsumptionFeedbackInterface
     {
         $this->buildConsumptionFeedbackForUser();
 
-        var_dump(json_encode($this->getRequestBody()));
-
         $dataProvider = new DataProvider($this->baseUrl);
 
         $headers = [
             "Authorization" => "Bearer ".$this->getAccessToken()
         ];
 
+        $this->logger->info("Send consumption feedback for User ".$this->getConsumptionUser()->getId()." externalActivityId : ".$this->getExternalActivityId());
+        $this->logger->info(json_encode($this->getRequestBody()));
+
         $response = $dataProvider->putItem($this->getRequestBody(), $headers, null, DataProvider::BODY_TYPE_FORM_PARAMS);
-        var_dump($response->getCode());
+
+        $this->logger->info("Result Code : ".$response->getCode());
+        
         if ($response->getCode() == 200) {
             $data = json_decode($response->getValue(), true);
-            var_dump($data);
         } else {
             throw new \LogicException("Request failed");
         }
-        die;
     }
 
     
@@ -312,5 +328,15 @@ class WorldlineProvider implements ConsumptionFeedbackInterface
     public function setRequestBody(array $requestBody)
     {
         $this->requestBody = $requestBody;
+    }
+
+    public function getExternalActivityId(): ?string
+    {
+        return $this->externalActivityId;
+    }
+
+    public function setExternalActivityId(?string $externalActivityId)
+    {
+        $this->externalActivityId = $externalActivityId;
     }
 }

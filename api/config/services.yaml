@@ -393,7 +393,9 @@ services:
             $clientId: '%env(string:CONSUMPTION_FEEDBACK_CLIENTID)%'
             $clientSecret: '%env(string:CONSUMPTION_FEEDBACK_CLIENT_SECRET)%'
             $apiKey: '%env(string:CONSUMPTION_FEEDBACK_APIKEY)%'
-    
+        tags:
+            - { name: monolog.logger, channel: consumptionFeedback }
+
     # Editorial
     'App\Editorial\Admin\DataProvider\EditorialCollectionDataProvider':
         arguments:

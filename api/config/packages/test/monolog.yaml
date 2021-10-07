@@ -78,9 +78,14 @@ monolog:
             max_files: 30
             path: "%kernel.logs_dir%/solidary.log"
             channels: [solidary]   
+        consumptionFeedback:
+            type: stream
+            level: debug
+            path: "%kernel.logs_dir%/consumptionFeedback.log"
+            channels: [consumptionFeedback]   
         main:
             type: rotating_file
             path: "%kernel.logs_dir%/%kernel.environment%.log"
             max_files: 30
             level: debug
-            channels: ["!event", "!carpool", "!carpool_dynamic", "!carpool_proof", "!communication", "!community", "!geography", "!geomatcher", "!georouter", "!maintenance", "!mass", "!notification", "!faker", "!solidary"]
+            channels: ["!event", "!carpool", "!carpool_dynamic", "!carpool_proof", "!communication", "!community", "!geography", "!geomatcher", "!georouter", "!maintenance", "!mass", "!notification", "!faker", "!solidary", '!consumptionFeedback']

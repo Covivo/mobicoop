@@ -26,6 +26,7 @@ namespace App\User\DataProvider;
 use App\DataProvider\Entity\WorldlineProvider;
 use App\Payment\Entity\CarpoolItem;
 use App\User\Entity\User;
+use Psr\Log\LoggerInterface;
 
 /**
  * Consumption Feedback DataProvider
@@ -43,13 +44,13 @@ class ConsumptionFeedbackDataProvider
     private $providerInstance;
     private $active;
 
-    public function __construct(bool $active, string $provider, int $appId, string $baseUrlAuth, string $baseUrl, string $clientId, string $clientSecret, string $apiKey)
+    public function __construct(bool $active, string $provider, int $appId, string $baseUrlAuth, string $baseUrl, string $clientId, string $clientSecret, string $apiKey, LoggerInterface $logger)
     {
         $this->active = $active;
         if ($active && $provider!=="") {
             if (isset(self::SUPPORTED_PROVIDERS[$provider])) {
                 $providerClass = self::SUPPORTED_PROVIDERS[$provider];
-                $this->providerInstance = new $providerClass($clientId, $clientSecret, $baseUrlAuth, $baseUrl, $apiKey, $appId);
+                $this->providerInstance = new $providerClass($clientId, $clientSecret, $baseUrlAuth, $baseUrl, $apiKey, $appId, $logger);
             }
         } else {
             return;

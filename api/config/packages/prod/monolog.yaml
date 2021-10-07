@@ -93,6 +93,11 @@ monolog:
             max_files: 30
             path: "%kernel.logs_dir%/solidary.log"
             channels: [solidary]     
+        consumptionFeedback:
+            type: stream
+            level: debug
+            path: "%kernel.logs_dir%/consumptionFeedback.log"
+            channels: [consumptionFeedback]   
         faker:
             type: stream
             level: debug
