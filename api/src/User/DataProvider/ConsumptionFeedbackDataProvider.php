@@ -43,13 +43,13 @@ class ConsumptionFeedbackDataProvider
     private $providerInstance;
     private $active;
 
-    public function __construct(bool $active, string $provider, string $baseUrlAuth, string $baseUrl, string $clientId, string $clientSecret, string $apiKey)
+    public function __construct(bool $active, string $provider, int $appId, string $baseUrlAuth, string $baseUrl, string $clientId, string $clientSecret, string $apiKey)
     {
         $this->active = $active;
         if ($active && $provider!=="") {
             if (isset(self::SUPPORTED_PROVIDERS[$provider])) {
                 $providerClass = self::SUPPORTED_PROVIDERS[$provider];
-                $this->providerInstance = new $providerClass($clientId, $clientSecret, $baseUrlAuth, $baseUrl, $apiKey);
+                $this->providerInstance = new $providerClass($clientId, $clientSecret, $baseUrlAuth, $baseUrl, $apiKey, $appId);
             }
         } else {
             return;

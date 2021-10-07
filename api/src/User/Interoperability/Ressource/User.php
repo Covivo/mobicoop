@@ -101,7 +101,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *                          "name" = "previouslyExisting",
  *                          "type" = "boolean",
  *                          "required" = false,
- *                          "description" = "If the User has been attached to an already existing User not created by SSO"
+ *                          "description" = "ONLY GET - If the User has been attached to an already existing User not created by SSO"
  *                      }
  *                  }
  *              }

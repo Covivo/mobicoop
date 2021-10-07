@@ -42,6 +42,8 @@ class WorldlineProvider implements ConsumptionFeedbackInterface
     const STEPS_TRANSPORT_MODE = "MOVICI";
     const STEPS_IS_PM_CHARGEABLE = false;
 
+    const TEST_SSO_ACCOUNT_ID = "368";
+
     const ADDITIONAL_INFOS = [
         ["key" => "TYPE", "value" => "CONSUMPTION"]
     ];
@@ -51,6 +53,7 @@ class WorldlineProvider implements ConsumptionFeedbackInterface
     private $baseUrlAuth;
     private $baseUrl;
     private $apiKey;
+    private $appId;
     private $authChain;
 
     /**
@@ -73,7 +76,7 @@ class WorldlineProvider implements ConsumptionFeedbackInterface
      */
     private $requestBody;
 
-    public function __construct(string $clientId, string $clientSecret, string $baseUrlAuth, string $baseUrl, string $apiKey)
+    public function __construct(string $clientId, string $clientSecret, string $baseUrlAuth, string $baseUrl, string $apiKey, int $appId)
     {
         $this->clientId = $clientId;
         $this->clientSecret = $clientSecret;
@@ -81,6 +84,7 @@ class WorldlineProvider implements ConsumptionFeedbackInterface
         $this->baseUrl = $baseUrl;
         $this->authChain = "Basic ".base64_encode($clientId.":".$clientSecret);
         $this->apiKey = $apiKey;
+        $this->appId = $appId;
         $this->requestBody = [];
     }
 
@@ -112,16 +116,14 @@ class WorldlineProvider implements ConsumptionFeedbackInterface
     public function sendConsumptionFeedback()
     {
         $this->setConsumptionUser($this->getConsumptionCarpoolItem()->getDebtorUser());
-        //if($this->checkUserForSso()){
-        $this->sendConsumptionFeedbackRequest();
-        var_dump(json_encode($this->getRequestBody()));
-        //}
+        if ($this->checkUserForSso()) {
+            $this->sendConsumptionFeedbackRequest();
+        }
 
         $this->setConsumptionUser($this->getConsumptionCarpoolItem()->getCreditorUser());
-        //if($this->checkUserForSso()){
-        $this->sendConsumptionFeedbackRequest();
-        var_dump(json_encode($this->getRequestBody()));
-        //}
+        if ($this->checkUserForSso()) {
+            $this->sendConsumptionFeedbackRequest();
+        }
 
         $this->setConsumptionUser(null);
         $this->setConsumptionCarpoolItem(null);
@@ -136,7 +138,7 @@ class WorldlineProvider implements ConsumptionFeedbackInterface
      */
     private function checkUserForSso(): bool
     {
-        return is_null($this->consumptionUser->getSsoId());
+        return is_null($this->consumptionUser->getSsoId()) && !is_null($this->consumptionUser->getAppDelegate()) && $this->consumptionUser->getAppDelegate()->getId() === $this->appId;
     }
 
 
@@ -222,17 +224,17 @@ class WorldlineProvider implements ConsumptionFeedbackInterface
 
         if ($carpooled) {
             $this->setRequestBody([
-                "accoundId" => $this->consumptionUser->getSsoId(),
+                "accoundId" => (defined('static::TEST_SSO_ACCOUNT_ID')) ? self::TEST_SSO_ACCOUNT_ID : $this->consumptionUser->getId(),
                 "consumptionType" => self::CONSUMPTION_TYPE,
                 "externalActivityId" => (microtime(true)*10000)."-".$externalActivityId,
                 "steps" => [
                     [
-                        "beginDate" => $beginDate,
-                        "endDate" => $endDate,
+                        "beginDate" => $beginDate->format('c'),
+                        "endDate" => $endDate->format('c'),
                         "type" => self::STEPS_TYPE,
                         "transportMode" => self::STEPS_TRANSPORT_MODE,
                         "financialData" => [
-                            "initialAmount" => $price,
+                            "initialAmount" => round($price, 2),
                             "initialAmountExcdTax" => round($price / (1 + 0.20), 2),
                             "isPMChargeable" => self::STEPS_IS_PM_CHARGEABLE
                         ]
@@ -243,22 +245,30 @@ class WorldlineProvider implements ConsumptionFeedbackInterface
         }
     }
 
+    /**
+     * Send the consumption feedback to the API
+     */
     private function sendConsumptionFeedbackRequest()
     {
         $this->buildConsumptionFeedbackForUser();
 
-        // $dataProvider = new DataProvider($this->baseUrl);
+        var_dump(json_encode($this->getRequestBody()));
 
-        // $headers = [
-        //     "Authorization" => "Bearer ".$this->access_token
-        // ];
+        $dataProvider = new DataProvider($this->baseUrl);
 
-        // $response = $dataProvider->postCollection($this->getRequestBody(), $headers, null, DataProvider::BODY_TYPE_FORM_PARAMS);
-        // if ($response->getCode() == 200) {
-        //     $data = json_decode($response->getValue(), true);
-        // } else {
-        //     throw new \LogicException("Auth failed");
-        // }
+        $headers = [
+            "Authorization" => "Bearer ".$this->getAccessToken()
+        ];
+
+        $response = $dataProvider->putItem($this->getRequestBody(), $headers, null, DataProvider::BODY_TYPE_FORM_PARAMS);
+        var_dump($response->getCode());
+        if ($response->getCode() == 200) {
+            $data = json_decode($response->getValue(), true);
+            var_dump($data);
+        } else {
+            throw new \LogicException("Request failed");
+        }
+        die;
     }
 
     

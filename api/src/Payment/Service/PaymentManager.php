@@ -974,7 +974,7 @@ class PaymentManager
                 }
             }
         }
-        die; /** REMOVE BEFORE DEPLOYMENT !!!! */
+        //die; /** REMOVE BEFORE DEPLOYMENT !!!! */
         $this->entityManager->flush();
     }
 

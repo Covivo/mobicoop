@@ -387,6 +387,7 @@ services:
         arguments:
             $active: '%env(bool:CONSUMPTION_FEEDBACK_ACTIVE)%'
             $provider: '%env(string:CONSUMPTION_FEEDBACK_PROVIDER)%'
+            $appId: '%env(string:CONSUMPTION_FEEDBACK_APP_ID)%'
             $baseUrlAuth: '%env(string:CONSUMPTION_FEEDBACK_AUTH_BASE_URL)%'
             $baseUrl: '%env(string:CONSUMPTION_FEEDBACK_BASE_URL)%'
             $clientId: '%env(string:CONSUMPTION_FEEDBACK_CLIENTID)%'
