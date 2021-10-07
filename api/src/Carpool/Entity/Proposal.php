@@ -214,7 +214,7 @@ class Proposal
     /**
      * @var Proposal|null Linked proposal for a round trip (return or outward journey).
      *
-     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Proposal", cascade={"persist", "remove"}, orphanRemoval=true)
+     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Proposal", cascade={"persist"})
      * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"read","results","write"})
      * @MaxDepth(1)
@@ -226,6 +226,7 @@ class Proposal
      * Can be null for an anonymous search.
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="proposals")
+     * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"read","results","write"})
      * @MaxDepth(1)
      */
@@ -235,6 +236,7 @@ class Proposal
      * @var User|null User that create the proposal for another user.
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="proposalsDelegate")
+     * @ORM\JoinColumn(onDelete="SET NULL")
      * @Groups({"read","write"})
      * @MaxDepth(1)
      */
@@ -244,6 +246,7 @@ class Proposal
      * @var App|null App that create the user.
      *
      * @ORM\ManyToOne(targetEntity="\App\App\Entity\App")
+     * @ORM\JoinColumn(onDelete="SET NULL")
      * @Groups({"readUser","write"})
      * @MaxDepth(1)
      */
@@ -253,7 +256,7 @@ class Proposal
      * @var ArrayCollection The waypoints of the proposal.
      *
      * @Assert\NotBlank
-     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Waypoint", mappedBy="proposal", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Waypoint", mappedBy="proposal", cascade={"persist"})
      * @ORM\OrderBy({"position" = "ASC"})
      * @Groups({"read","write"})
      * @MaxDepth(1)
@@ -281,7 +284,7 @@ class Proposal
     /**
      * @var ArrayCollection|null The matchings of the proposal (if proposal is a request).
      *
-     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Matching", mappedBy="proposalRequest", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Matching", mappedBy="proposalRequest", cascade={"persist"})
      * @Groups({"read","results"})
      * @MaxDepth(1)
      */
@@ -290,7 +293,7 @@ class Proposal
     /**
      * @var ArrayCollection|null The matching of the proposal (if proposal is an offer).
      *
-     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Matching", mappedBy="proposalOffer", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Matching", mappedBy="proposalOffer", cascade={"persist"})
      * @Groups({"read","results"})
      * @MaxDepth(1)
      */
@@ -305,8 +308,8 @@ class Proposal
      * But it is not acceptable as a criteria can be related with other entities (ask and matching) so we would have multiple nullable foreign keys.
      *
      * @Assert\NotBlank
-     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Criteria", inversedBy="proposal", cascade={"persist", "remove"}, orphanRemoval=true)
-     * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
+     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Criteria", inversedBy="proposal", cascade={"persist"})
+     * @ORM\JoinColumn(nullable=true)
      * @Groups({"read","results","write","thread"})
      * @MaxDepth(1)
      */
@@ -315,7 +318,7 @@ class Proposal
     /**
      * @var ArrayCollection The individual stops of the proposal.
      *
-     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\IndividualStop", mappedBy="proposal", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\IndividualStop", mappedBy="proposal", cascade={"persist"})
      * @ORM\OrderBy({"position" = "ASC"})
      * @Groups({"read"})
      */
@@ -324,7 +327,7 @@ class Proposal
     /**
      * @var ArrayCollection|null The notifications sent for the proposal.
      *
-     * @ORM\OneToMany(targetEntity="\App\Communication\Entity\Notified", mappedBy="proposal", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Communication\Entity\Notified", mappedBy="proposal", cascade={"persist"})
      * @Groups({"read","write"})
      * @MaxDepth(1)
      */
@@ -355,6 +358,7 @@ class Proposal
      * @var Event related for the proposal
      *
      * @ORM\ManyToOne(targetEntity="App\Event\Entity\Event", inversedBy="proposals")
+     * @ORM\JoinColumn(onDelete="SET NULL")
      * @Groups({"read","write"})
      * @MaxDepth(1)
      */
@@ -363,7 +367,7 @@ class Proposal
     /**
      * @var Position The last position given for dynamic carpooling.
      *
-     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Position", mappedBy="proposal", cascade={"persist", "remove"}, orphanRemoval=true)
+     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Position", mappedBy="proposal", cascade={"persist"})
      * @Groups({"read","results","write","thread"})
      */
     private $position;
@@ -378,6 +382,7 @@ class Proposal
     /**
      * @var Subject A Proposal can be linked to a specific Subject
      * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Subject", inversedBy="proposals")
+     * @ORM\JoinColumn(onDelete="SET NULL")
      * @MaxDepth(1)
      * @Groups({"read","write"})
      */
@@ -398,7 +403,7 @@ class Proposal
     /**
      * @var ArrayCollection The logs linked with the Proposal.
      *
-     * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="proposal", cascade={"remove"})
+     * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="proposal")
      */
     private $logs;
 

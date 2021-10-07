@@ -100,7 +100,7 @@ class Delivery
      * @var Campaign The campaign.
      *
      * @ORM\ManyToOne(targetEntity="\App\MassCommunication\Entity\Campaign")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Groups({"read_campaign","write_campaign","update_campaign"})
      * @MaxDepth(1)
      */
@@ -110,7 +110,7 @@ class Delivery
      * @var User The user recipient.
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="deliveries")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Groups({"read_campaign","write_campaign","update_campaign"})
      * @MaxDepth(1)
      */

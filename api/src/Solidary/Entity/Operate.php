@@ -101,7 +101,7 @@ class Operate
      * @var Structure The structure concerned
      *
      * @ORM\ManyToOne(targetEntity="\App\Solidary\Entity\Structure", inversedBy="operates")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @MaxDepth(1)
      */
     private $structure;
@@ -110,7 +110,7 @@ class Operate
      * @var User The user concerned
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="operates")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Groups("aRead")
      * @MaxDepth(1)
      */

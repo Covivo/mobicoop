@@ -312,7 +312,7 @@ class RelayPoint
      * @var Address The address of the relay point.
      *
      * @Assert\NotBlank
-     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", inversedBy="relayPoint", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", inversedBy="relayPoint", cascade={"persist"}, orphanRemoval=true)
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Groups({"aRead","aWrite","readRelayPoint","writeRelayPoint"})
      * @MaxDepth(1)
@@ -324,7 +324,7 @@ class RelayPoint
      *
      * @Assert\NotBlank(groups={"writeRelayPoint"})
      * @ORM\ManyToOne(targetEntity="App\User\Entity\User")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Groups({"readRelayPoint","writeRelayPoint"})
      */
     private $user;
@@ -333,7 +333,7 @@ class RelayPoint
      * @var Community|null The community of the relay point.
      *
      * @ORM\ManyToOne(targetEntity="App\Community\Entity\Community")
-     * @ORM\JoinColumn(nullable=true)
+     * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
      * @Groups({"readRelayPoint","writeRelayPoint"})
      */
     private $community;
@@ -342,14 +342,14 @@ class RelayPoint
      * @var Structure|null The solidary structure of the relay point.
      *
      * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Structure")
-     * @ORM\JoinColumn(nullable=true)
+     * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
      * @Groups({"readRelayPoint","writeRelayPoint"})
      */
     private $structure;
 
     /**
      * @ORM\ManyToOne(targetEntity="\App\RelayPoint\Entity\RelayPointType")
-     * @ORM\JoinColumn(nullable=true)
+     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
      * @Groups({"readRelayPoint","writeRelayPoint"})
      */
     private $relayPointType;
@@ -357,14 +357,14 @@ class RelayPoint
     /**
      * @var RelayPointImport|null Relay point imported in the platform.
      *
-     * @ORM\OneToMany(targetEntity="\App\Import\Entity\RelayPointImport", mappedBy="relay", cascade={"remove"})
+     * @ORM\OneToMany(targetEntity="\App\Import\Entity\RelayPointImport", mappedBy="relay")
      */
     private $relayPointImport;
 
     /**
      * @var ArrayCollection|null The images of the relay point.
      *
-     * @ORM\OneToMany(targetEntity="\App\Image\Entity\Image", mappedBy="relayPoint", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Image\Entity\Image", mappedBy="relayPoint", cascade={"persist"})
      * @ORM\OrderBy({"position" = "ASC"})
      * @Groups({"readRelayPoint","writeRelayPoint"})
      * @MaxDepth(1)

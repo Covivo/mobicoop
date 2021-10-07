@@ -77,6 +77,7 @@ class CarpoolPayment
      * @var User The user that pays
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User")
+     * @ORM\JoinColumn(onDelete="SET NULL")
      */
     private $user;
 
@@ -142,7 +143,7 @@ class CarpoolPayment
     /**
      * @var ArrayCollection The logs linked with the carpool payment
      *
-     * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="carpoolPayment", cascade={"remove"})
+     * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="carpoolPayment")
      */
     private $logs;
 

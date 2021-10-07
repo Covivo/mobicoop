@@ -50,7 +50,7 @@ class Position
      * @var Proposal|null The proposal related to the position.
      *
      * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Proposal")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      */
     private $proposal;
         
@@ -58,15 +58,15 @@ class Position
      * @var Waypoint The floating waypoint corresponding to the position.
      *
      * @Assert\NotBlank
-     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Waypoint", cascade={"persist","remove"}, orphanRemoval=true)
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Waypoint", cascade={"persist"})
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      */
     private $waypoint;
 
     /**
      * @var Direction|null Direction related to the dynamic carpool - updated at each position update.
      *
-     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Direction", cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Direction", cascade={"persist"})
      * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private $direction;

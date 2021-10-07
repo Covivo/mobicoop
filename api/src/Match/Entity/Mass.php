@@ -362,7 +362,7 @@ class Mass
      * @var User The user that imports the file.
      *
      * @ORM\ManyToOne(targetEntity="App\User\Entity\User", inversedBy="masses")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
      * @Groups("write")
      */
     private $user;
@@ -402,7 +402,7 @@ class Mass
     /**
      * @var array|null The persons concerned by the file.
      *
-     * @ORM\OneToMany(targetEntity="\App\Match\Entity\MassPerson", mappedBy="mass", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Match\Entity\MassPerson", mappedBy="mass", cascade={"persist"})
      * @Groups({"massCompute"})
      */
     private $persons;
@@ -486,6 +486,7 @@ class Mass
      * @var Community The community created after the migration of this mass users
      *
      * @ORM\ManyToOne(targetEntity="App\Community\Entity\Community", inversedBy="mass")
+     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
      * @Groups({"mass","massMigrate"})
      */
     private $community;

@@ -107,6 +107,7 @@ class PTLine
      * @var PTCompany The company that manage this line.
      *
      * @ORM\ManyToOne(targetEntity="App\PublicTransport\Entity\PTCompany")
+     * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
      * @Groups("pt")
      */
     private $ptcompany;
@@ -115,6 +116,7 @@ class PTLine
      * @var TravelMode|null The transport mode of this line.
      *
      * @ORM\ManyToOne(targetEntity="App\Travel\Entity\TravelMode")
+     * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
      * @Groups("pt")
      */
     private $travelMode;

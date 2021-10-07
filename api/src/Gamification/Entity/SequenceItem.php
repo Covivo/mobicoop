@@ -98,7 +98,7 @@ class SequenceItem
      * @var Badge The Badge this SequenceItem is required to be earned
      *
      * @ORM\ManyToOne(targetEntity="\App\Gamification\Entity\Badge", inversedBy="sequenceItems")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @MaxDepth(1)
      */
     private $badge;
@@ -107,7 +107,7 @@ class SequenceItem
      * @var GamificationAction The GamificationAction this SequenceItem is linked
      *
      * @ORM\ManyToOne(targetEntity="\App\Gamification\Entity\GamificationAction", inversedBy="sequenceItems")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Groups({"readGamification","writeGamification"})
      * @MaxDepth(1)
      */
@@ -116,7 +116,7 @@ class SequenceItem
     /**
      * @var ArrayCollection|null The RewarSteps where this SequenceItem is involved
      *
-     * @ORM\OneToMany(targetEntity="\App\Gamification\Entity\RewardStep", mappedBy="sequenceItem", cascade={"persist","remove"})
+     * @ORM\OneToMany(targetEntity="\App\Gamification\Entity\RewardStep", mappedBy="sequenceItem", cascade={"persist"})
      * @MaxDepth(1)
      */
     private $rewardSteps;

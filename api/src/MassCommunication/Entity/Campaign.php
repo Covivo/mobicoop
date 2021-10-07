@@ -275,7 +275,7 @@ class Campaign
      * @var Medium The medium used for the campaign.
      *
      * @ORM\ManyToOne(targetEntity="\App\Communication\Entity\Medium")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Groups({"read_campaign","write_campaign","update_campaign"})
      */
     private $medium;
@@ -284,6 +284,7 @@ class Campaign
      * @var CampaignTemplate The template used for the campaign.
      *
      * @ORM\ManyToOne(targetEntity="\App\MassCommunication\Entity\CampaignTemplate")
+     * @ORM\JoinColumn(onDelete="SET NULL")
      * @Groups({"read_campaign","write_campaign","update_campaign"})
      * @MaxDepth(1)
      */
@@ -293,7 +294,7 @@ class Campaign
      * @var User The user that creates the campaign.
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="campaigns")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
      * @Groups({"read_campaign","write_campaign","update_campaign"})
      * @MaxDepth(1)
      */
@@ -318,7 +319,7 @@ class Campaign
     /**
      * @var ArrayCollection|null The deliveries related to this campaign, if the filter type is selection.
      *
-     * @ORM\OneToMany(targetEntity="\App\MassCommunication\Entity\Delivery", mappedBy="campaign", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\MassCommunication\Entity\Delivery", mappedBy="campaign", cascade={"persist"})
      * @Groups({"read_campaign","write_campaign","update_campaign"})
      */
     private $deliveries;
@@ -326,7 +327,7 @@ class Campaign
     /**
      * @var ArrayCollection The images of the campaign.
      *
-     * @ORM\OneToMany(targetEntity="\App\Image\Entity\Image", mappedBy="campaign", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Image\Entity\Image", mappedBy="campaign", cascade={"persist"})
      * @Groups({"read_campaign","write_campaign","update_campaign"})
      */
     private $images;
@@ -405,7 +406,7 @@ class Campaign
     /**
      * @var ArrayCollection The logs linked with the Campaign.
      *
-     * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="campaign", cascade={"remove"})
+     * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="campaign")
      */
     private $logs;
 

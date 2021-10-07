@@ -116,6 +116,7 @@ class PTStep
      * @var PTLeg The parent leg of this step.
      *
      * @ORM\ManyToOne(targetEntity="App\PublicTransport\Entity\PTLeg", inversedBy="ptsteps")
+     * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
      * @Groups("pt")
      */
     private $ptleg;
@@ -124,6 +125,7 @@ class PTStep
      * @var PTDeparture The departure of this step.
      *
      * @ORM\ManyToOne(targetEntity="App\PublicTransport\Entity\PTDeparture")
+     * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
      * @Groups("pt")
      */
     private $ptdeparture;
@@ -132,6 +134,7 @@ class PTStep
      * @var PTArrival The arrival of this step.
      *
      * @ORM\ManyToOne(targetEntity="App\PublicTransport\Entity\PTArrival")
+     * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
      * @Groups("pt")
      */
     private $ptarrival;

@@ -49,7 +49,7 @@ class MassPTJourney
 
     /**
      * @var MassPerson The mass person linked to this Journey
-     * @ORM\ManyToOne(targetEntity="\App\Match\Entity\MassPerson", cascade={"persist","remove"}, inversedBy="massPTJourneys")
+     * @ORM\ManyToOne(targetEntity="\App\Match\Entity\MassPerson", cascade={"persist"}, inversedBy="massPTJourneys")
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @MaxDepth(1)
      */

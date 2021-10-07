@@ -100,7 +100,8 @@ class SolidaryUserStructure
      * @var SolidaryUser Solidary User linked to this structure
      *
      * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\SolidaryUser", inversedBy="solidaryUserStructures", cascade={"persist","remove"})
+     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\SolidaryUser", inversedBy="solidaryUserStructures", cascade={"persist"})
+     * @ORM\JoinColumn(onDelete="CASCADE")
      * @MaxDepth(1)
      */
     private $solidaryUser;
@@ -109,30 +110,29 @@ class SolidaryUserStructure
      * @var Structure Structure.
      *
      * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Structure", inversedBy="solidaryUserStructures", cascade={"persist","remove"})
+     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Structure", inversedBy="solidaryUserStructures", cascade={"persist"})
+     * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"readUser","readSolidaryUserStructure", "readSolidary"})
      * @MaxDepth(1)
      */
     private $structure;
 
     /**
-     * @var ArrayCollection The ask history items linked with the ask.
+     * @var ArrayCollection The proofs for this SolidaryUserStructure.
      *
-     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Proof", mappedBy="solidaryUserStructure", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Proof", mappedBy="solidaryUserStructure", cascade={"persist"})
      * @Groups({"readUser","readSolidaryUserStructure"})
      * @MaxDepth(1)
      */
     private $proofs;
 
-
     /**
      * @var ArrayCollection|null The solidary records for this solidary user.
      *
-     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Solidary", mappedBy="solidaryUserStructure", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Solidary", mappedBy="solidaryUserStructure", cascade={"persist"})
      * @MaxDepth(1)
      */
     private $solidaries;
-
 
     /**
      * @var \DateTimeInterface Creation date.

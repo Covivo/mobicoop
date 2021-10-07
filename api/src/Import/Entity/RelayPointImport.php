@@ -55,7 +55,7 @@ class RelayPointImport
     /**
      * @var RelayPoint|null Relay point imported in the platform.
      *
-     * @ORM\OneToOne(targetEntity="\App\RelayPoint\Entity\RelayPoint", cascade={"persist", "remove"}, orphanRemoval=true)
+     * @ORM\OneToOne(targetEntity="\App\RelayPoint\Entity\RelayPoint", cascade={"persist"})
      * @Groups({"read","write"})
      * @MaxDepth(1)
      */
