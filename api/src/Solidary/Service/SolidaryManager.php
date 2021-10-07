@@ -677,39 +677,39 @@ class SolidaryManager
         $origin = new Address();
         $destination = null;
         
-        $origin->setHouseNumber($solidary->getOrigin()['houseNumber']);
-        $origin->setStreet($solidary->getOrigin()['street']);
-        $origin->setStreetAddress($solidary->getOrigin()['streetAddress']);
-        $origin->setPostalCode($solidary->getOrigin()['postalCode']);
-        $origin->setSubLocality($solidary->getOrigin()['subLocality']);
-        $origin->setAddressLocality($solidary->getOrigin()['addressLocality']);
-        $origin->setLocalAdmin($solidary->getOrigin()['localAdmin']);
-        $origin->setCounty($solidary->getOrigin()['county']);
-        $origin->setMacroCounty($solidary->getOrigin()['macroCounty']);
-        $origin->setRegion($solidary->getOrigin()['region']);
-        $origin->setMacroRegion($solidary->getOrigin()['macroRegion']);
-        $origin->setAddressCountry($solidary->getOrigin()['addressCountry']);
-        $origin->setCountryCode($solidary->getOrigin()['countryCode']);
-        $origin->setLatitude($solidary->getOrigin()['latitude']);
-        $origin->setLongitude($solidary->getOrigin()['longitude']);
+        $origin->setHouseNumber(isset($solidary->getOrigin()['houseNumber']) ? $solidary->getOrigin()['houseNumber'] : null);
+        $origin->setStreet(isset($solidary->getOrigin()['street']) ? $solidary->getOrigin()['street'] : null);
+        $origin->setStreetAddress(isset($solidary->getOrigin()['streetAddress']) ? $solidary->getOrigin()['streetAddress'] : null);
+        $origin->setPostalCode(isset($solidary->getOrigin()['postalCode']) ? $solidary->getOrigin()['postalCode'] : null);
+        $origin->setSubLocality(isset($solidary->getOrigin()['subLocality']) ? $solidary->getOrigin()['subLocality'] : null);
+        $origin->setAddressLocality(isset($solidary->getOrigin()['addressLocality']) ? $solidary->getOrigin()['addressLocality'] : null);
+        $origin->setLocalAdmin(isset($solidary->getOrigin()['localAdmin']) ? $solidary->getOrigin()['localAdmin'] : null);
+        $origin->setCounty(isset($solidary->getOrigin()['county']) ? $solidary->getOrigin()['county'] : null);
+        $origin->setMacroCounty(isset($solidary->getOrigin()['macroCounty']) ? $solidary->getOrigin()['macroCounty'] : null);
+        $origin->setRegion(isset($solidary->getOrigin()['region']) ? $solidary->getOrigin()['region'] : null);
+        $origin->setMacroRegion(isset($solidary->getOrigin()['macroRegion']) ? $solidary->getOrigin()['macroRegion'] : null);
+        $origin->setAddressCountry(isset($solidary->getOrigin()['addressCountry']) ? $solidary->getOrigin()['addressCountry'] : null);
+        $origin->setCountryCode(isset($solidary->getOrigin()['countryCode']) ? $solidary->getOrigin()['countryCode'] : null);
+        $origin->setLatitude(isset($solidary->getOrigin()['latitude']) ? $solidary->getOrigin()['latitude'] : null);
+        $origin->setLongitude(isset($solidary->getOrigin()['longitude']) ? $solidary->getOrigin()['longitude'] : null);
         
         if ($solidary->getDestination()) {
             $destination = new Address();
-            $destination->setHouseNumber($solidary->getDestination()['houseNumber']);
-            $destination->setStreet($solidary->getDestination()['street']);
-            $destination->setStreetAddress($solidary->getDestination()['streetAddress']);
-            $destination->setPostalCode($solidary->getDestination()['postalCode']);
-            $destination->setSubLocality($solidary->getDestination()['subLocality']);
-            $destination->setAddressLocality($solidary->getDestination()['addressLocality']);
-            $destination->setLocalAdmin($solidary->getDestination()['localAdmin']);
-            $destination->setCounty($solidary->getDestination()['county']);
-            $destination->setMacroCounty($solidary->getDestination()['macroCounty']);
-            $destination->setRegion($solidary->getDestination()['region']);
-            $destination->setMacroRegion($solidary->getDestination()['macroRegion']);
-            $destination->setAddressCountry($solidary->getDestination()['addressCountry']);
-            $destination->setCountryCode($solidary->getDestination()['countryCode']);
-            $destination->setLatitude($solidary->getDestination()['latitude']);
-            $destination->setLongitude($solidary->getDestination()['longitude']);
+            $destination->setHouseNumber(isset($solidary->getDestination()['houseNumber']) ? $solidary->getDestination()['houseNumber'] : null);
+            $destination->setStreet(isset($solidary->getDestination()['street']) ? $solidary->getDestination()['street'] : null);
+            $destination->setStreetAddress(isset($solidary->getDestination()['streetAddress']) ? $solidary->getDestination()['streetAddress'] : null);
+            $destination->setPostalCode(isset($solidary->getDestination()['postalCode']) ? $solidary->getDestination()['postalCode'] : null);
+            $destination->setSubLocality(isset($solidary->getDestination()['subLocality']) ? $solidary->getDestination()['subLocality'] : null);
+            $destination->setAddressLocality(isset($solidary->getDestination()['addressLocality']) ? $solidary->getDestination()['addressLocality'] : null);
+            $destination->setLocalAdmin(isset($solidary->getDestination()['localAdmin']) ? $solidary->getDestination()['localAdmin'] : null);
+            $destination->setCounty(isset($solidary->getDestination()['county']) ? $solidary->getDestination()['county'] : null);
+            $destination->setMacroCounty(isset($solidary->getDestination()['macroCounty']) ? $solidary->getDestination()['macroCounty'] : null);
+            $destination->setRegion(isset($solidary->getDestination()['region']) ? $solidary->getDestination()['region'] : null);
+            $destination->setMacroRegion(isset($solidary->getDestination()['macroRegion']) ? $solidary->getDestination()['macroRegion'] : null);
+            $destination->setAddressCountry(isset($solidary->getDestination()['addressCountry']) ? $solidary->getDestination()['addressCountry'] : null);
+            $destination->setCountryCode(isset($solidary->getDestination()['countryCode']) ? $solidary->getDestination()['countryCode'] : null);
+            $destination->setLatitude(isset($solidary->getDestination()['latitude']) ? $solidary->getDestination()['latitude'] : null);
+            $destination->setLongitude(isset($solidary->getDestination()['longitude']) ? $solidary->getDestination()['longitude'] : null);
         }
         
         // Set role of the ad
