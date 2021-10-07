@@ -39,9 +39,8 @@ use Doctrine\Common\Collections\ArrayCollection;
  * A geographical territory, represented by a geojson multipolygon.
  *
  * @ORM\Entity
- * @ORM\Table(indexes={@ORM\Index(name="IDX_LATITUDE", columns={"minLatitude", "maxLatitude"})})
- * @ORM\Table(indexes={@ORM\Index(name="IDX_LONGITUDE", columns={"minLongitude", "maxLongitude"})})
- * @ORM\Table(indexes={@ORM\Index(columns={"geoJsonDetail"},flags={"spatial"})})
+ * @ORM\Table(indexes={@ORM\Index(name="IDX_LATITUDE", columns={"min_latitude", "max_latitude"})})
+ * @ORM\Table(indexes={@ORM\Index(name="IDX_LONGITUDE", columns={"min_longitude", "max_longitude"})})
  * @ORM\HasLifecycleCallbacks
  * @ApiResource(
  *      attributes={
