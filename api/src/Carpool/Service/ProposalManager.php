@@ -69,6 +69,8 @@ class ProposalManager
     const ROLE_PASSENGER = 2;
     const ROLE_BOTH = 3;
 
+    const CLEAN_PRIVATE_DELAY = 200;
+
     private $entityManager;
     private $proposalMatcher;
     private $proposalRepository;
@@ -1012,5 +1014,19 @@ class ProposalManager
             $minTime,
             $maxTime
         ];
+    }
+
+    public function clean()
+    {
+        $date = new \DateTime();
+        $date->sub(new \DateInterval('P' . self::CLEAN_PRIVATE_DELAY . 'D'));
+
+        $this->entityManager->getConnection()->getConfiguration()->setSQLLogger(null);
+
+        $outdatedProposals = $this->proposalRepository->getOutdatedProposals($date);
+
+        foreach ($outdatedProposals as $outdatedProposal) {
+            $this->entityManager->remove($outdatedProposal);
+        }
     }
 }
