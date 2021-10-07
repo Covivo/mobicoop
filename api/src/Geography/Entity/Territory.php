@@ -41,6 +41,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  * @ORM\Entity
  * @ORM\Table(indexes={@ORM\Index(name="IDX_LATITUDE", columns={"minLatitude", "maxLatitude"})})
  * @ORM\Table(indexes={@ORM\Index(name="IDX_LONGITUDE", columns={"minLongitude", "maxLongitude"})})
+ * @ORM\Table(indexes={@ORM\Index(columns={"geoJsonDetail"},flags={"spatial"})})
  * @ORM\HasLifecycleCallbacks
  * @ApiResource(
  *      attributes={
