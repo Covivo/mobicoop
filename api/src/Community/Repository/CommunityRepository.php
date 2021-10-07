@@ -242,4 +242,16 @@ class CommunityRepository
         ->setParameter('statuses', $statuses)
         ->getQuery()->getResult();
     }
+    
+    /**
+     * Count communities
+     *
+     * @return integer
+     */
+    public function countCommunities():  ?int
+    {
+        $query = $this->repository->createQueryBuilder('c')
+        ->select('count(c.id)');
+        return $query->getQuery()->getSingleScalarResult();
+    }
 }
