@@ -58,7 +58,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  *          "territoriesPoint"={
  *              "method"="GET",
  *              "path"="/territories/point",
- *              "security"="is_granted('territory_list',object)",   
+ *              "security"="is_granted('territory_list',object)",
  *              "swagger_context" = {
  *                  "tags"={"Geography"},
  *                  "parameters" = {
