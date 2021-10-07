@@ -28,5 +28,14 @@
     "login": "Login",
     "register": "Register",
     "loginUrl": "/user/login/{id}",
-    "registerUrl": "/user/register/{id}"
+    "registerUrl": "/user/register/{id}",
+    "saveSearch": {
+		"route": "/covoiturage/recherche/{id}/enregistrer",
+        "noAd": "Créer une alerte",
+        "noCorrectAd": "Aucune annonce satisfaisante?",
+        "message": "Pour être alerté de prochains résultats voire être contacté par d'autres covoitureurs pour le même trajet, cliquez ci-dessous pour convertir votre recherche en annonce.",
+        "button": {
+            "label": "Créer une alerte"
+        }
+	}
 }

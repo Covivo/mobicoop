@@ -30,5 +30,14 @@
     "matchingUrl": "/covoiturage/recherche/matching",
     "externalUrl": "/covoiturage/annonce/{id}/externe",
     "proposalUrl": "/covoiturage/annonce/{id}/detail",
-    "title": "Carpoolresultaten tussen {cityA} en {cityB}"
+    "title": "Carpoolresultaten tussen {cityA} en {cityB}",
+    "saveSearch": {
+		"route": "/covoiturage/recherche/{id}/enregistrer",
+        "noAd": "Créer une alerte",
+        "noCorrectAd": "Aucune annonce satisfaisante?",
+        "message": "Pour être alerté de prochains résultats voire être contacté par d'autres covoitureurs pour le même trajet, cliquez ci-dessous pour convertir votre recherche en annonce.",
+        "button": {
+            "label": "Créer une alerte"
+        }
+	}
 }

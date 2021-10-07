@@ -207,6 +207,63 @@
           </v-tabs-items>
         </v-col>
       </v-row>
+      <v-row
+        v-if="user && !loading"
+        justify="center"
+      >
+        <v-col
+          cols="8"
+          md="8"
+          xl="6"
+          align="center"
+        >
+          <v-card
+            style="height: 100%;"
+            outlined
+          >
+            <v-card-text class="pb-0">
+              <v-icon
+                color="primary"
+              >
+                mdi-bell
+              </v-icon>
+              <p
+                v-if="nbCarpoolPlatform > 0"
+                class="text-h4 text--primary"
+              >
+                {{ $t('saveSearch.noCorrectAd') }}
+              </p>
+              <p
+                v-else
+                class="text-h4 text--primary"
+              >
+                {{ $t('saveSearch.noAd') }}
+              </p>
+              <p>{{ $t('saveSearch.message') }}</p>
+            </v-card-text>
+            <v-card-actions class="pt-0">
+              <v-col
+                cols="9"
+                md="7"
+                xl="9"
+                sm="4"
+                class="mr-10"
+              />
+              <v-btn
+                color="primary"
+                rounded
+                @click="saveSearch()"
+              >
+                <v-icon
+                  color="white"
+                >
+                  mdi-bell
+                </v-icon>{{ $t('saveSearch.button.label') }}
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-col>
+      </v-row>
     </v-container>
 
     <!-- carpool dialog -->
@@ -251,6 +308,7 @@ import MatchingJourney from "@components/carpool/results/MatchingJourney";
 import MatchingPTResults from "@components/carpool/results/publicTransport/MatchingPTResults";
 import LoginOrRegisterFirst from '@components/utilities/LoginOrRegisterFirst';
 import Search from "@components/carpool/search/Search";
+import formData from "../../../utils/request";
 
 export default {
   components: {
@@ -362,6 +420,7 @@ export default {
       carpoolDialog: false,
       loginOrRegisterDialog: false,
       results: null,
+      searchId: null,
       externalRDEXResults:null,
       result: null,
       ptResults:null,
@@ -590,6 +649,7 @@ export default {
           })
           .then((response) => {
             this.results = response.data.results;
+            this.searchId = response.data.searchId;
             this.nbCarpoolPlatform = response.data.nb > 0 ? response.data.nb : "-"
             if (this.results.length>0 && this.results[0].id) {
               this.lProposalId = this.results[0].id;
@@ -746,6 +806,9 @@ export default {
     },
     mapRefreshed(){
       this.refreshMapMatchingJourney = false;
+    },
+    saveSearch(){
+      formData(this.$t('saveSearch.route', {id : this.searchId}), null, 'GET');
     }
   }
 };

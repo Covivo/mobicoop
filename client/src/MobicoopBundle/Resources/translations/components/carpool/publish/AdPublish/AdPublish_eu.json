@@ -107,5 +107,11 @@
         },
         "message": " Iragarki hau elkartasunezko autokidetza esklusibo bat izanen da, azpiko ondoko aukera atxikitzen baduzu. Elkartasunezko operadoreek baizik ez dute ikusten ahalko beste elkaratsunezko galdegile batekin harremanetan jarria izan zaitezen. Aukera hau desmarkatzen baduzu, zure iragarkia, iragarki arrunta bat bilakatuko da, beste autokideek eta elkartasunezko operadoreek aldi berean ikusten ahalko dutena."
     },
-    "snackBarErrorPublish": "Bidaia hau jadanik argitaratu dituzun iragarkiekin baterezina da. Data honetan jadanik argitaratu duzun iragarkia ez baldin bada gehiago bali, pausan ezarri behar duzu, aldatu edo ezabatu."
+    "snackBarErrorPublish": "Bidaia hau jadanik argitaratu dituzun iragarkiekin baterezina da. Data honetan jadanik argitaratu duzun iragarkia ez baldin bada gehiago bali, pausan ezarri behar duzu, aldatu edo ezabatu.",
+    "searchToSave": {
+        "success": "Votre annonce a été sauvegardée avec succès.",
+        "error": "Une erreur est survenue lors de la sauvegarde de votre annonce.",
+        "messageTitle": "Vous avez converti votre recherche en ce début d'annonce.",
+        "message": "Complétez et publiez-la, pour être alerté des prochains résultats voire être contacté par d'autres covoitureurs pour le même trajet."
+    }
 }
