@@ -39,9 +39,6 @@ use Doctrine\Common\Collections\ArrayCollection;
  * A geographical territory, represented by a geojson multipolygon.
  *
  * @ORM\Entity
- * @ORM\Table(indexes={@ORM\Index(name="IDX_LATITUDE", columns={"minLatitude", "maxLatitude"})})
- * @ORM\Table(indexes={@ORM\Index(name="IDX_LONGITUDE", columns={"minLongitude", "maxLongitude"})})
- * @ORM\Table(indexes={@ORM\Index(columns={"geoJsonDetail"},flags={"spatial"})})
  * @ORM\HasLifecycleCallbacks
  * @ApiResource(
  *      attributes={
@@ -59,7 +56,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  *          "territoriesPoint"={
  *              "method"="GET",
  *              "path"="/territories/point",
- *              "security"="is_granted('territory_list',object)",   
+ *              "security"="is_granted('territory_list',object)",
  *              "swagger_context" = {
  *                  "tags"={"Geography"},
  *                  "parameters" = {
@@ -165,47 +162,6 @@ class Territory
     private $geoJsonDetail;
 
     /**
-     * @var int|null The administrative level of this territory.
-     * Source for levels : https://en.wikipedia.org/wiki/List_of_administrative_divisions_by_country
-     *
-     * @ORM\Column(type="integer", nullable=true))
-     * @Groups({"read","write"})
-     */
-    private $adminLevel;
-
-    /**
-     * @var float|null The minimal latitude of the territory.
-     *
-     * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
-     * @Groups({"read","write"})
-     */
-    private $minLatitude;
-
-    /**
-     * @var float|null The maximal latitude of the territory.
-     *
-     * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
-     * @Groups({"read","write"})
-     */
-    private $maxLatitude;
-
-    /**
-     * @var float|null The minimal longitude of the territory.
-     *
-     * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
-     * @Groups({"read","write"})
-     */
-    private $minLongitude;
-
-    /**
-     * @var float|null The maximal longitude of the territory.
-     *
-     * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
-     * @Groups({"read","write"})
-     */
-    private $maxLongitude;
-
-    /**
      * @var ArrayCollection The logs linked with the Territory.
      *
      * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="territory", cascade={"remove"})
@@ -227,18 +183,6 @@ class Territory
      * @Groups({"read"})
      */
     private $updatedDate;
-
-    /**
-     * @var ArrayCollection|null The parent territories of this Territory
-     *
-     * @ORM\ManyToMany(targetEntity="\App\Geography\Entity\Territory")
-     * @ORM\JoinTable(name="territory_parent",
-     *      joinColumns={@ORM\JoinColumn(name="child_id", referencedColumnName="id")},
-     *      inverseJoinColumns={@ORM\JoinColumn(name="parent_id", referencedColumnName="id")}
-     *      )
-     */
-    private $parents;
-
 
     public function getId(): ?int
     {
@@ -274,56 +218,6 @@ class Territory
         $this->geoJsonDetail = $geoJsonDetail;
 
         return $this;
-    }
-
-    public function getAdminLevel(): ?int
-    {
-        return $this->adminLevel;
-    }
-
-    public function setAdminLevel(?int $adminLevel)
-    {
-        $this->adminLevel = $adminLevel;
-    }
-
-    public function getMinLatitude()
-    {
-        return $this->minLatitude;
-    }
-
-    public function setMinLatitude($latitude)
-    {
-        $this->minLatitude = $latitude;
-    }
-
-    public function getMaxLatitude()
-    {
-        return $this->maxLatitude;
-    }
-
-    public function setMaxLatitude($latitude)
-    {
-        $this->maxLatitude = $latitude;
-    }
-
-    public function getMinLongitude()
-    {
-        return $this->minLongitude;
-    }
-
-    public function setMinLongitude($longitude)
-    {
-        $this->minLongitude = $longitude;
-    }
-
-    public function getMaxLongitude()
-    {
-        return $this->maxLongitude;
-    }
-
-    public function setMaxLongitude($longitude)
-    {
-        $this->maxLongitude = $longitude;
     }
 
     public function getCreatedDate(): ?\DateTimeInterface
@@ -375,28 +269,6 @@ class Territory
             }
         }
         
-        return $this;
-    }
-
-    public function getParents()
-    {
-        return $this->parents->getValues();
-    }
-
-    public function addParent(Territory $parent): self
-    {
-        if (!$this->parents->contains($parent)) {
-            $this->parents[] = $parent;
-        }
-        
-        return $this;
-    }
-    
-    public function removeParent(Territory $parent): self
-    {
-        if ($this->parents->contains($parent)) {
-            $this->parents->removeElement($parent);
-        }
         return $this;
     }
 
