@@ -16,7 +16,7 @@ final class Version20210927140754 extends AbstractMigration
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE user ADD gamification TINYINT(1) DEFAULT NULL');
-        $this->addSql('ALTER TABLE `user` CHANGE `gamification` `gamification` TINYINT(1) NULL DEFAULT \'1\' AFTER `chat_favorites`');
+        $this->addSql('ALTER TABLE `user` CHANGE `gamification` `gamification` TINYINT(1) NULL AFTER `chat_favorites`');
         $this->addSql('UPDATE `user` SET `gamification` = 1');
     }
 
