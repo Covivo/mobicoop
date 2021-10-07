@@ -51,7 +51,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *             "method"="POST",
  *             "security_post_denormalize"="is_granted('interop_user_create',object)",
  *             "swagger_context" = {
- *                  "summary"="Create a User created via interoperability",
+ *                  "summary"="Create a User created via interoperability. If a User with the same email already exists in our database, we will attache this account and not create a new one.",
  *                  "tags"={"Interoperability"},
  *                  "parameters" = {
  *                      {
@@ -90,6 +90,18 @@ use Symfony\Component\Validator\Constraints as Assert;
  *                          "type" = "boolean",
  *                          "required" = false,
  *                          "description" = "News subscription"
+ *                      },
+ *                      {
+ *                          "name" = "externalId",
+ *                          "type" = "int",
+ *                          "required" = false,
+ *                          "description" = "External id of the user (the id used in the partner's system)"
+ *                      },
+ *                      {
+ *                          "name" = "previouslyExisting",
+ *                          "type" = "boolean",
+ *                          "required" = false,
+ *                          "description" = "ONLY GET - If the User has been attached to an already existing User not created by SSO"
  *                      }
  *                  }
  *              }
@@ -101,8 +113,16 @@ use Symfony\Component\Validator\Constraints as Assert;
  *             "method"="GET",
  *             "security"="is_granted('interop_user_read',object)",
  *             "swagger_context" = {
- *               "summary"="Get a User created via interoperability",
- *               "tags"={"Interoperability"}
+ *               "summary"="Get a User created via interoperability. You can only GET the Users that you created.",
+ *               "tags"={"Interoperability"},
+ *               "parameters" = {
+ *                   {
+ *                       "name" = "id",
+ *                       "type" = "int",
+ *                       "required" = true,
+ *                       "description" = "User's id in our system"
+ *                   }
+ *               }
  *             }
  *          },
  *          "interop_put"={
@@ -110,7 +130,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *             "method"="PUT",
  *             "security"="is_granted('interop_user_update',object)",
  *             "swagger_context" = {
- *               "summary"="Update a User created via interoperability",
+ *               "summary"="Update a User created via interoperability. You can only update the Users that you created.",
  *               "tags"={"Interoperability"}
  *             }
  *          }
@@ -133,7 +153,7 @@ class User
     ];
 
     /**
-     * @var int The id of this Block
+     * @var int The id of this User
      *
      * @ApiProperty(identifier=true)
      * @Groups({"readUser","writeUser"})
@@ -185,6 +205,20 @@ class User
      * @Groups({"readUser","writeUser"})
      */
     private $newsSubscription;
+
+    /**
+     * @var int The external id of this User
+     *
+     * @Groups({"readUser","writeUser"})
+     */
+    private $externalId;
+
+    /**
+     * @var bool If the User has been attached to an already existing User not created by SSO
+     *
+     * @Groups({"readUser"})
+     */
+    private $previouslyExisting;
 
     public function __construct(int $id = null)
     {
@@ -275,6 +309,30 @@ class User
     public function setNewsSubscription(?bool $newsSubscription): self
     {
         $this->newsSubscription = $newsSubscription;
+
+        return $this;
+    }
+
+    public function getExternalId(): ?int
+    {
+        return $this->externalId;
+    }
+
+    public function setExternalId(?int $externalId): self
+    {
+        $this->externalId = $externalId;
+        
+        return $this;
+    }
+
+    public function isPreviouslyExisting(): ?bool
+    {
+        return $this->previouslyExisting;
+    }
+
+    public function setPreviouslyExisting(?bool $previouslyExisting): self
+    {
+        $this->previouslyExisting = $previouslyExisting;
 
         return $this;
     }

@@ -160,7 +160,11 @@ class DataProvider
             }
             if ($body) {
                 if (is_null($bodyType)) {
-                    $options[self::BODY_TYPE_JSON]=$body;
+                    switch ($bodyType) {
+                        case self::BODY_TYPE_JSON: $options[self::BODY_TYPE_JSON]=$body;break;
+                        case self::BODY_TYPE_FORM_PARAMS: $options[self::BODY_TYPE_FORM_PARAMS]=$body;break;
+                        default: $options[self::BODY_TYPE_JSON]=$body;
+                    }
                 } else {
                     $options[$bodyType]=$body;
                 }
@@ -192,7 +196,7 @@ class DataProvider
      * @param mixed|null $params    An array or string of parameters
      * @return Response The response of the operation.
      */
-    public function putItem($body=null, $headers=null, $params=null): Response
+    public function putItem($body=null, $headers=null, $params=null, $bodyType=null): Response
     {
         try {
             $options=[];
@@ -203,7 +207,15 @@ class DataProvider
                 $options['headers']=$headers;
             }
             if ($body) {
-                $options[RequestOptions::JSON]=$body;
+                if (is_null($bodyType)) {
+                    switch ($bodyType) {
+                        case self::BODY_TYPE_JSON: $options[self::BODY_TYPE_JSON]=$body;break;
+                        case self::BODY_TYPE_FORM_PARAMS: $options[self::BODY_TYPE_FORM_PARAMS]=$body;break;
+                        default: $options[self::BODY_TYPE_JSON]=$body;
+                    }
+                } else {
+                    $options[$bodyType]=$body;
+                }
             }
             
             // echo json_encode($body);die;

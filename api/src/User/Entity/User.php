@@ -1248,6 +1248,14 @@ class User implements UserInterface, EquatableInterface
     private $ssoProvider;
 
     /**
+     * @var \DateTimeInterface Creation date of the user by Sso (attachment date if already existing)
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"aRead","readUser"})
+     */
+    private $createdSsoDate;
+
+    /**
      * @var User|null Admin that create the user.
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User")
@@ -2964,6 +2972,18 @@ class User implements UserInterface, EquatableInterface
     public function setSsoProvider(?string $ssoProvider): self
     {
         $this->ssoProvider = $ssoProvider;
+        return $this;
+    }
+
+    public function getCreatedSsoDate(): ?\DateTimeInterface
+    {
+        return $this->createdSsoDate;
+    }
+
+    public function setCreatedSsoDate(?\DateTimeInterface $createdSsoDate): self
+    {
+        $this->createdSsoDate = $createdSsoDate;
+
         return $this;
     }
 

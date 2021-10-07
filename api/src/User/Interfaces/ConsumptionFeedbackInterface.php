@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2020, MOBICOOP. All rights reserved.
+ * Copyright (c) 2021, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,29 +21,38 @@
  *    LICENSE
  **************************/
 
-namespace App\Auth\Rule;
+namespace App\User\Interfaces;
 
-use App\Auth\Interfaces\AuthRuleInterface;
-use App\User\Entity\PushToken;
+use App\Payment\Entity\CarpoolItem;
+use App\User\Entity\User;
 
 /**
- *  Check that the requester is the owner of the related Push Token
+ * Consumption Feedback Interface.
+ *
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ *
  */
-class InteroperabilityUserCreator implements AuthRuleInterface
+interface ConsumptionFeedbackInterface
 {
     /**
-     * {@inheritdoc}
+     * Get the auth token
      */
-    public function execute($requester, $item, $params)
-    {
-        if (!isset($params['user'])) {
-            return false;
-        }
-        
-        if (!is_null($params['user']->getAppDelegate())) {
-            return $params['user']->getAppDelegate()->getId() == $requester->getId();
-        }
+    public function auth();
 
-        return false;
-    }
+    /**
+     * Send a consumption feedback
+     */
+    public function sendConsumptionFeedback();
+
+    /**
+     * Get the CarpoolItem related to this consumption feedback
+     *
+     * @return CarpoolItem|null
+     */
+    public function getConsumptionCarpoolItem(): ?CarpoolItem;
+
+    /**
+     * @param CarpoolItem|null $consumptionCarpoolItem  The CarpoolItem related to this consumption feedback
+     */
+    public function setConsumptionCarpoolItem(?CarpoolItem $consumptionCarpoolItem);
 }

@@ -61,6 +61,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use App\Action\Event\ActionEvent;
 use App\Action\Repository\ActionRepository;
+use App\User\DataProvider\ConsumptionFeedbackDataProvider;
 
 /**
  * Payment manager service.
@@ -92,6 +93,7 @@ class PaymentManager
     private $validationDocsAuthorizedExtensions;
     private $eventDispatcher;
     private $actionRepository;
+    private $consumptionFeedbackProvider;
     private $logger;
 
     /**
@@ -108,6 +110,10 @@ class PaymentManager
      * @param string $securityToken                                 The payment security token (for hooks)
      * @param string $validationDocsPath                            Path to the temp directory for validation documents
      * @param array $validationDocsAuthorizedExtensions             Authorized extensions for validation documents
+     * @param array $exportPath
+     * @param EventDispatcherInterface $eventDispatcher
+     * @param ActionRepository $actionRepository
+     * @param ConsumptionFeedbackDataProvider $consumptionFeedbackProvider
      */
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -126,7 +132,8 @@ class PaymentManager
         array $validationDocsAuthorizedExtensions,
         string $exportPath,
         EventDispatcherInterface $eventDispatcher,
-        ActionRepository $actionRepository
+        ActionRepository $actionRepository,
+        ConsumptionFeedbackDataProvider $consumptionFeedbackProvider
     ) {
         $this->entityManager = $entityManager;
         $this->carpoolItemRepository = $carpoolItemRepository;
@@ -150,6 +157,7 @@ class PaymentManager
         $this->eventDispatcher = $eventDispatcher;
         $this->actionRepository = $actionRepository;
         $this->logger = $logger;
+        $this->consumptionFeedbackProvider = $consumptionFeedbackProvider;
     }
 
     /**
@@ -836,6 +844,10 @@ class PaymentManager
         // we initiate empty array of askIds
         $askIds = [];
 
+        if (count($asks)>0 && $this->consumptionFeedbackProvider->isActive()) {
+            $this->consumptionFeedbackProvider->auth();
+        }
+
         // then we create the corresponding items
         foreach ($asks as $ask) {
             /**
@@ -857,7 +869,13 @@ class PaymentManager
                         $carpoolItem->setDebtorStatus(CarpoolItem::DEBTOR_STATUS_NULL);
                         $carpoolItem->setCreditorStatus(CarpoolItem::CREDITOR_STATUS_NULL);
                     }
+
                     $this->entityManager->persist($carpoolItem);
+
+                    if ($this->consumptionFeedbackProvider->isActive() && !is_null($this->consumptionFeedbackProvider->getAccessToken())) {
+                        $this->consumptionFeedbackProvider->setConsumptionCarpoolItem($carpoolItem);
+                        $this->consumptionFeedbackProvider->sendConsumptionFeedback();
+                    }
 
                     if ($carpoolItem->getDebtorStatus() !== CarpoolItem::DEBTOR_STATUS_NULL) {
                         // we execute event to inform passenger to pay for the carpool only if the deptor status is not null
@@ -927,6 +945,10 @@ class PaymentManager
                         }
                         $this->entityManager->persist($carpoolItem);
 
+                        if ($this->consumptionFeedbackProvider->isActive() && !is_null($this->consumptionFeedbackProvider->getAccessToken())) {
+                            $this->consumptionFeedbackProvider->setConsumptionCarpoolItem($carpoolItem);
+                            $this->consumptionFeedbackProvider->sendConsumptionFeedback();
+                        }
 
                         // We send only one email for the all week
                         // We check in array if we already send an email for the ask
@@ -952,6 +974,7 @@ class PaymentManager
                 }
             }
         }
+        // die; /** REMOVE BEFORE DEPLOYMENT !!!! */
         $this->entityManager->flush();
     }
 
