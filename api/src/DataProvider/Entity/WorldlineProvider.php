@@ -130,7 +130,7 @@ class WorldlineProvider implements ConsumptionFeedbackInterface
     {
         $this->setConsumptionUser($this->getConsumptionCarpoolItem()->getDebtorUser());
         // if ($this->checkUserForSso()) {
-            $this->sendConsumptionFeedbackRequest();
+        $this->sendConsumptionFeedbackRequest();
         // }
 
         $this->setConsumptionUser($this->getConsumptionCarpoolItem()->getCreditorUser());
@@ -138,8 +138,6 @@ class WorldlineProvider implements ConsumptionFeedbackInterface
             $this->sendConsumptionFeedbackRequest();
         }
 
-        $this->setConsumptionUser(null);
-        $this->setConsumptionCarpoolItem(null);
         $this->setRequestBody([]);
     }
 
@@ -171,19 +169,20 @@ class WorldlineProvider implements ConsumptionFeedbackInterface
             return [];
         }
         
+        // Just a fail safe but if we have a carpool item, it's obviously a carpooled day
         $carpooled = false;
 
         // start date
         $askCriteria = $this->getConsumptionCarpoolItem()->getAsk()->getCriteria();
 
-        $beginDate = $askCriteria->getFromDate();
+        $beginDate = $this->getConsumptionCarpoolItem()->getItemDate();
         if ($askCriteria->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
             $beginDate->setTime($askCriteria->getFromTime()->format('H'), $askCriteria->getFromTime()->format('i'), $askCriteria->getFromTime()->format('s'));
             $endDate = clone $beginDate;
             $endDate = $endDate->modify("+".$this->getConsumptionCarpoolItem()->getAsk()->getMatching()->getNewDuration()." second");
             $carpooled = true;
         } else {
-            switch ($this->getConsumptionCarpoolItem()->getCreatedDate()->format("w")) {
+            switch ($this->getConsumptionCarpoolItem()->getItemDate()->format("w")) {
                 case 0:
                     if ($askCriteria->isSunCheck()) {
                         $beginDate->setTime($askCriteria->getSunTime()->format('H'), $askCriteria->getSunTime()->format('i'), $askCriteria->getSunTime()->format('s'));
@@ -267,8 +266,8 @@ class WorldlineProvider implements ConsumptionFeedbackInterface
     {
         $this->buildConsumptionFeedbackForUser();
 
-        if(is_null($this->getRequestBody()) || count($this->getRequestBody())==0){
-           return;
+        if (is_null($this->getRequestBody()) || count($this->getRequestBody())==0) {
+            return;
         }
 
         $dataProvider = new DataProvider($this->baseUrl);
@@ -288,9 +287,15 @@ class WorldlineProvider implements ConsumptionFeedbackInterface
         if ($response->getCode() == 200) {
             $data = json_decode($response->getValue(), true);
         } else {
-            $this->logger->info("Request failed ! ");die;
+            $this->logger->info("Request failed ! ");
+            die;
             //throw new \LogicException("Request failed");
         }
+
+        // Store some data
+        $this->consumptionCarpoolItem->setConsumptionFeedbackExternalId($this->getExternalActivityId());
+        $this->consumptionCarpoolItem->setConsumptionFeedbackDate(new \DateTime('now'));
+        $this->consumptionCarpoolItem->setConsumptionFeedbackReturnCode($response->getCode());
     }
 
     

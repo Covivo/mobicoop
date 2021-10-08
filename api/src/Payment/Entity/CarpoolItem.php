@@ -176,6 +176,33 @@ class CarpoolItem
     private $logs;
 
     /**
+     * @var int Consumption feedback reponse code of the external service
+     * ONLY If this carpool item has been involved in a Consumption feedback
+     *
+     * @ORM\Column(type="integer", nullable=true)
+     * @MaxDepth(1)
+     */
+    private $consumptionFeedbackReturnCode;
+
+    /**
+     * @var string Consumption feedback external id that has been sent to the service
+     * ONLY If this carpool item has been involved in a Consumption feedback
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @MaxDepth(1)
+     */
+    private $consumptionFeedbackExternalId;
+
+    /**
+     * @var \DateTimeInterface Last try on sending a consumption feedback
+     * ONLY If this carpool item has been involved in a Consumption feedback
+     *
+     * @ORM\Column(type="datetime")
+     * @MaxDepth(1)
+     */
+    private $consumptionFeedbackDate;
+
+    /**
      * @var \DateTimeInterface Creation date.
      *
      * @ORM\Column(type="datetime")
@@ -391,6 +418,42 @@ class CarpoolItem
             }
         }
         
+        return $this;
+    }
+
+    public function getConsumptionFeedbackReturnCode(): ?int
+    {
+        return $this->consumptionFeedbackReturnCode;
+    }
+
+    public function setConsumptionFeedbackReturnCode(?int $consumptionFeedbackReturnCode): self
+    {
+        $this->consumptionFeedbackReturnCode = $consumptionFeedbackReturnCode;
+
+        return $this;
+    }
+
+    public function getConsumptionFeedbackExternalId(): ?string
+    {
+        return $this->consumptionFeedbackExternalId;
+    }
+
+    public function setConsumptionFeedbackExternalId(?string $consumptionFeedbackExternalId): self
+    {
+        $this->consumptionFeedbackExternalId = $consumptionFeedbackExternalId;
+
+        return $this;
+    }
+
+    public function getConsumptionFeedbackDate(): ?\DateTimeInterface
+    {
+        return $this->consumptionFeedbackDate;
+    }
+
+    public function setConsumptionFeedbackDate(?\DateTimeInterface $consumptionFeedbackDate): self
+    {
+        $this->consumptionFeedbackDate = $consumptionFeedbackDate;
+
         return $this;
     }
 
