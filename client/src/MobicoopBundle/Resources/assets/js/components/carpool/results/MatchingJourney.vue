@@ -396,7 +396,7 @@
         <v-spacer />
         <!-- Carpool regular(driver) --> 
         <v-btn
-          v-if="driver && passenger && lResult.pendingAsk == false && lResult.acceptedAsk == false && lResult.initiatedAsk == false && lResult.frequency == 2 && !carpoolRole"
+          v-if="driver && passenger && lResult.pendingAsk == false && lResult.acceptedAsk == false && lResult.initiatedAsk == false && lResult.frequency == 2 && !carpoolRoleSelected"
           color="secondary"
           :disabled="carpoolDisabled"
           :loading="carpoolLoading"
@@ -407,7 +407,7 @@
 
         <!-- Carpool regular(passenger) --> 
         <v-btn
-          v-if="driver && passenger && lResult.pendingAsk == false && lResult.acceptedAsk == false && lResult.initiatedAsk == false && lResult.frequency == 2 && !carpoolRole"
+          v-if="driver && passenger && lResult.pendingAsk == false && lResult.acceptedAsk == false && lResult.initiatedAsk == false && lResult.frequency == 2 && !carpoolRoleSelected"
           color="secondary"
           :disabled="carpoolDisabled"
           :loading="carpoolLoading"
@@ -418,7 +418,7 @@
 
         <!-- Carpool (driver xor passenger) -->
         <v-btn
-          v-if="((driver ^ passenger) && step == 1 && lResult.pendingAsk == false && lResult.acceptedAsk == false && lResult.initiatedAsk == false) || (carpoolRole && step == 1)"
+          v-if="((driver ^ passenger) && step == 1 && lResult.pendingAsk == false && lResult.acceptedAsk == false && lResult.initiatedAsk == false) || (carpoolRoleSelected && step == 1)"
           color="secondary"
           :disabled="carpoolDisabled"
           :loading="carpoolLoading"
@@ -521,7 +521,7 @@
           v-else-if="step > 1"
           color="secondary"
           outlined
-          @click="test()"
+          @click="step--"
         >
           {{ $t('previous') }}
         </v-btn>
@@ -541,7 +541,7 @@
           color="secondary"
           :disabled="carpoolDisabled"
           :loading="carpoolLoading"
-          @click="driver ? carpoolConfirm(1) : carpoolConfirm(2)"
+          @click="carpoolRoleSelected ? carpoolConfirm(carpoolRoleSelected) : driver ? carpoolConfirm(1) : carpoolConfirm(2)"
         >
           {{ $t('carpool') }}
         </v-btn>
@@ -552,7 +552,7 @@
           color="secondary"
           :disabled="carpoolDisabled"
           :loading="carpoolLoading"
-          @click="driver ? carpoolConfirm(1) : carpoolConfirm(2)"
+          @click="carpoolRoleSelected ? carpoolConfirm(carpoolRoleSelected) : driver ? carpoolConfirm(1) : carpoolConfirm(2)"
         >
           {{ $t('carpool') }}
         </v-btn>
@@ -769,7 +769,8 @@ export default {
       routeRequester:[],
       routeCarpooler:[],
       carpoolDialog: false,
-      carpoolRole: null
+      carpoolRole: null,
+      carpoolRoleSelected: null,
     }
   },
   computed: {
@@ -865,7 +866,7 @@ export default {
       if(this.step==4){
         this.refreshPublicProfile = true;
       } else if (this.step==1) {
-        this.carpoolRole = null;
+        this.carpoolRoleSelected = null;
       }
     },
     route(){
@@ -949,7 +950,7 @@ export default {
           this.returnSatTime = this.lResult.resultDriver.return.satTime ? moment.utc(this.lResult.resultDriver.return.satTime).format(this.$t('i18n.time.format.hourMinute')) : null;
           this.returnSunTime = this.lResult.resultDriver.return.sunTime ? moment.utc(this.lResult.resultDriver.return.sunTime).format(this.$t('i18n.time.format.hourMinute')) : null;  
         }
-      } else if (this.lResult.frequency == 2 && this.lResult.resultDriver && this.lResult.resultPassenger && this.carpoolRole == 1) {  
+      } else if (this.lResult.frequency == 2 && this.lResult.resultDriver && this.lResult.resultPassenger && this.carpoolRoleSelected == 1) {  
         if (this.lResult.resultDriver.outward) {
           this.outwardMonTime = this.lResult.resultDriver.outward.monTime ? moment.utc(this.lResult.resultDriver.outward.monTime).format(this.$t('i18n.time.format.hourMinute')) : null;
           this.outwardTueTime = this.lResult.resultDriver.outward.tueTime ? moment.utc(this.lResult.resultDriver.outward.tueTime).format(this.$t('i18n.time.format.hourMinute')) : null;
@@ -968,24 +969,24 @@ export default {
           this.returnSatTime = this.lResult.resultDriver.return.satTime ? moment.utc(this.lResult.resultDriver.return.satTime).format(this.$t('i18n.time.format.hourMinute')) : null;
           this.returnSunTime = this.lResult.resultDriver.return.sunTime ? moment.utc(this.lResult.resultDriver.return.sunTime).format(this.$t('i18n.time.format.hourMinute')) : null;  
         }
-      } else if (this.lResult.frequency == 2 && this.lResult.resultDriver && this.lResult.resultPassenger && this.carpoolRole == 2) {  
-        if (this.lResult.resultDriver.outward) {
-          this.outwardMonTime = this.lResult.resultDriver.outward.monTime ? moment.utc(this.lResult.resultDriver.outward.monTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-          this.outwardTueTime = this.lResult.resultDriver.outward.tueTime ? moment.utc(this.lResult.resultDriver.outward.tueTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-          this.outwardWedTime = this.lResult.resultDriver.outward.wedTime ? moment.utc(this.lResult.resultDriver.outward.wedTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-          this.outwardThuTime = this.lResult.resultDriver.outward.thuTime ? moment.utc(this.lResult.resultDriver.outward.thuTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-          this.outwardFriTime = this.lResult.resultDriver.outward.friTime ? moment.utc(this.lResult.resultDriver.outward.friTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-          this.outwardSatTime = this.lResult.resultDriver.outward.satTime ? moment.utc(this.lResult.resultDriver.outward.satTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-          this.outwardSunTime = this.lResult.resultDriver.outward.sunTime ? moment.utc(this.lResult.resultDriver.outward.sunTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+      } else if (this.lResult.frequency == 2 && this.lResult.resultDriver && this.lResult.resultPassenger && this.carpoolRoleSelected == 2) {  
+        if (this.lResult.resultPassenger.outward) {
+          this.outwardMonTime = this.lResult.resultPassenger.outward.monTime ? moment.utc(this.lResult.resultPassenger.outward.monTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+          this.outwardTueTime = this.lResult.resultPassenger.outward.tueTime ? moment.utc(this.lResult.resultPassenger.outward.tueTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+          this.outwardWedTime = this.lResult.resultPassenger.outward.wedTime ? moment.utc(this.lResult.resultPassenger.outward.wedTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+          this.outwardThuTime = this.lResult.resultPassenger.outward.thuTime ? moment.utc(this.lResult.resultPassenger.outward.thuTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+          this.outwardFriTime = this.lResult.resultPassenger.outward.friTime ? moment.utc(this.lResult.resultPassenger.outward.friTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+          this.outwardSatTime = this.lResult.resultPassenger.outward.satTime ? moment.utc(this.lResult.resultPassenger.outward.satTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+          this.outwardSunTime = this.lResult.resultPassenger.outward.sunTime ? moment.utc(this.lResult.resultPassenger.outward.sunTime).format(this.$t('i18n.time.format.hourMinute')) : null;
         }
-        if (this.lResult.resultDriver.return) {
-          this.returnMonTime = this.lResult.resultDriver.return.monTime ? moment.utc(this.lResult.resultDriver.return.monTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-          this.returnTueTime = this.lResult.resultDriver.return.tueTime ? moment.utc(this.lResult.resultDriver.return.tueTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-          this.returnWedTime = this.lResult.resultDriver.return.wedTime ? moment.utc(this.lResult.resultDriver.return.wedTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-          this.returnThuTime = this.lResult.resultDriver.return.thuTime ? moment.utc(this.lResult.resultDriver.return.thuTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-          this.returnFriTime = this.lResult.resultDriver.return.friTime ? moment.utc(this.lResult.resultDriver.return.friTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-          this.returnSatTime = this.lResult.resultDriver.return.satTime ? moment.utc(this.lResult.resultDriver.return.satTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-          this.returnSunTime = this.lResult.resultDriver.return.sunTime ? moment.utc(this.lResult.resultDriver.return.sunTime).format(this.$t('i18n.time.format.hourMinute')) : null;  
+        if (this.lResult.resultPassenger.return) {
+          this.returnMonTime = this.lResult.resultPassenger.return.monTime ? moment.utc(this.lResult.resultPassenger.return.monTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+          this.returnTueTime = this.lResult.resultPassenger.return.tueTime ? moment.utc(this.lResult.resultPassenger.return.tueTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+          this.returnWedTime = this.lResult.resultPassenger.return.wedTime ? moment.utc(this.lResult.resultPassenger.return.wedTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+          this.returnThuTime = this.lResult.resultPassenger.return.thuTime ? moment.utc(this.lResult.resultPassenger.return.thuTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+          this.returnFriTime = this.lResult.resultPassenger.return.friTime ? moment.utc(this.lResult.resultPassenger.return.friTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+          this.returnSatTime = this.lResult.resultPassenger.return.satTime ? moment.utc(this.lResult.resultPassenger.return.satTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+          this.returnSunTime = this.lResult.resultPassenger.return.sunTime ? moment.utc(this.lResult.resultPassenger.return.sunTime).format(this.$t('i18n.time.format.hourMinute')) : null;  
         }
       }
     },
@@ -1038,12 +1039,8 @@ export default {
       this.carpoolDialog = true;
     },
     carpoolConfirmRegular(role) {
-      this.carpoolRole = role;
+      this.carpoolRoleSelected = role;
       this.computeTimes();
-    },
-    test(){
-      this.step=this.step-1;
-      console.log(this.step);
     },
     carpool(role) {
       this.carpoolDialog = false;
@@ -1208,7 +1205,6 @@ export default {
     getRoute() {
 
       if(this.lResult.role == 3){
-        console.log('peu importe');
 
         let paramsRequester = "?";
         let paramsCarpooler = "?";
