@@ -172,7 +172,10 @@ class DataProvider
             if (!is_null($auth)) {
                 $options[RequestOptions::AUTH] = $auth;
             }
-            // echo json_encode($body);die;
+            
+            // echo json_encode($body);
+            // var_dump($options);
+            // die;
             
             $clientResponse = $this->client->post($this->resource, $options);
             switch ($clientResponse->getStatusCode()) {
@@ -218,13 +221,18 @@ class DataProvider
                 }
             }
             
-            // echo json_encode($body);die;
+            // echo json_encode($body);
+            // var_dump($options);
+            // die;
             
             $clientResponse = $this->client->put($this->resource, $options);
             switch ($clientResponse->getStatusCode()) {
                 case 200:
                 case 201:
-                    return new Response($clientResponse->getStatusCode(), $clientResponse->getBody());
+                    return new Response($clientResponse->getStatusCode(), $clientResponse->getBody());break;
+                default:
+                    var_dump($clientResponse->getStatusCode());
+                    var_dump($clientResponse->getBody());die;
             }
         } catch (TransferException $e) {
             return new Response($e->getCode());

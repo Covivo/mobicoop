@@ -43,7 +43,7 @@ class WorldlineProvider implements ConsumptionFeedbackInterface
     const STEPS_TRANSPORT_MODE = "MOVICI";
     const STEPS_IS_PM_CHARGEABLE = false;
 
-    //const TEST_SSO_ACCOUNT_ID = "368";
+    const TEST_SSO_ACCOUNT_ID = "36";
 
     const ADDITIONAL_INFOS = [
         ["key" => "TYPE", "value" => "CONSUMPTION"]
@@ -130,7 +130,7 @@ class WorldlineProvider implements ConsumptionFeedbackInterface
     {
         $this->setConsumptionUser($this->getConsumptionCarpoolItem()->getDebtorUser());
         // if ($this->checkUserForSso()) {
-        $this->sendConsumptionFeedbackRequest();
+            $this->sendConsumptionFeedbackRequest();
         // }
 
         $this->setConsumptionUser($this->getConsumptionCarpoolItem()->getCreditorUser());
@@ -237,9 +237,9 @@ class WorldlineProvider implements ConsumptionFeedbackInterface
 
 
         if ($carpooled) {
-            $this->setExternalActivityId((microtime(true)*10000)."-".$externalActivityId);
+            $this->setExternalActivityId((microtime(true)*10000)."|".$externalActivityId);
             $this->setRequestBody([
-                "accoundId" => (defined('static::TEST_SSO_ACCOUNT_ID')) ? self::TEST_SSO_ACCOUNT_ID : $this->getConsumptionUser()->getId(),
+                "accountId" => (defined('static::TEST_SSO_ACCOUNT_ID')) ? self::TEST_SSO_ACCOUNT_ID : $this->getConsumptionUser()->getId(),
                 "consumptionType" => self::CONSUMPTION_TYPE,
                 "externalActivityId" => $this->getExternalActivityId(),
                 "steps" => [
@@ -267,23 +267,29 @@ class WorldlineProvider implements ConsumptionFeedbackInterface
     {
         $this->buildConsumptionFeedbackForUser();
 
+        if(is_null($this->getRequestBody()) || count($this->getRequestBody())==0){
+           return;
+        }
+
         $dataProvider = new DataProvider($this->baseUrl);
 
         $headers = [
-            "Authorization" => "Bearer ".$this->getAccessToken()
+            "Authorization" => "Bearer ".$this->getAccessToken(),
+            "x-apikey" => $this->apiKey
         ];
 
         $this->logger->info("Send consumption feedback for User ".$this->getConsumptionUser()->getId()." externalActivityId : ".$this->getExternalActivityId());
         $this->logger->info(json_encode($this->getRequestBody()));
 
-        $response = $dataProvider->putItem($this->getRequestBody(), $headers, null, DataProvider::BODY_TYPE_FORM_PARAMS);
+        $response = $dataProvider->putItem($this->getRequestBody(), $headers, null, DataProvider::BODY_TYPE_JSON);
 
         $this->logger->info("Result Code : ".$response->getCode());
         
         if ($response->getCode() == 200) {
             $data = json_decode($response->getValue(), true);
         } else {
-            throw new \LogicException("Request failed");
+            $this->logger->info("Request failed ! ");die;
+            //throw new \LogicException("Request failed");
         }
     }
 
