@@ -848,6 +848,10 @@ class PaymentManager
             $this->consumptionFeedbackProvider->auth();
         }
 
+        if ($this->consumptionFeedbackProvider->isActive() && !is_null($this->consumptionFeedbackProvider->getAccessToken())) {
+            $this->resendConsumptionFeedbackInError();
+        }
+
         // then we create the corresponding items
         foreach ($asks as $ask) {
             /**
@@ -982,6 +986,23 @@ class PaymentManager
         
         $this->entityManager->flush();
     }
+
+    /**
+     * Resend the previous consumption feedback that failed previouly
+     */
+    private function resendConsumptionFeedbackInError()
+    {
+        $carpoolItems = $this->carpoolItemRepository->findConsumptionFeedbackInError();
+
+        foreach ($carpoolItems as $carpoolItem) {
+            $this->consumptionFeedbackProvider->setConsumptionCarpoolItem($carpoolItem);
+            $this->consumptionFeedbackProvider->sendConsumptionFeedback();
+            $carpoolItem = $this->consumptionFeedbackProvider->getConsumptionCarpoolItem();
+            $this->consumptionFeedbackProvider->setConsumptionUser(null);
+            $this->consumptionFeedbackProvider->setConsumptionCarpoolItem(null);
+        }
+    }
+
 
     /**
      * Get the carpool payment items for the given frequency, type, period and user

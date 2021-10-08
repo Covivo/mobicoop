@@ -229,10 +229,7 @@ class DataProvider
             switch ($clientResponse->getStatusCode()) {
                 case 200:
                 case 201:
-                    return new Response($clientResponse->getStatusCode(), $clientResponse->getBody());break;
-                default:
-                    var_dump($clientResponse->getStatusCode());
-                    var_dump($clientResponse->getBody());die;
+                    return new Response($clientResponse->getStatusCode(), $clientResponse->getBody());
             }
         } catch (TransferException $e) {
             return new Response($e->getCode());

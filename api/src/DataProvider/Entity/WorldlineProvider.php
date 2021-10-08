@@ -43,7 +43,7 @@ class WorldlineProvider implements ConsumptionFeedbackInterface
     const STEPS_TRANSPORT_MODE = "MOVICI";
     const STEPS_IS_PM_CHARGEABLE = false;
 
-    const TEST_SSO_ACCOUNT_ID = "36";
+    //const TEST_SSO_ACCOUNT_ID = "36";
 
     const ADDITIONAL_INFOS = [
         ["key" => "TYPE", "value" => "CONSUMPTION"]
@@ -129,12 +129,12 @@ class WorldlineProvider implements ConsumptionFeedbackInterface
     public function sendConsumptionFeedback()
     {
         $this->setConsumptionUser($this->getConsumptionCarpoolItem()->getDebtorUser());
-        // if ($this->checkUserForSso()) {
-        $this->sendConsumptionFeedbackRequest();
-        // }
+        if ($this->checkUserForSso() && $this->getConsumptionCarpoolItem()->getDebtorConsumptionFeedbackReturnCode()!==200) {
+            $this->sendConsumptionFeedbackRequest();
+        }
 
         $this->setConsumptionUser($this->getConsumptionCarpoolItem()->getCreditorUser());
-        if ($this->checkUserForSso()) {
+        if ($this->checkUserForSso() && $this->getConsumptionCarpoolItem()->getDebtorConsumptionFeedbackReturnCode()!==200) {
             $this->sendConsumptionFeedbackRequest();
         }
 

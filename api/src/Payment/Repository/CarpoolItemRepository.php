@@ -144,4 +144,19 @@ class CarpoolItemRepository
         
         return $query->getQuery()->getResult();
     }
+
+    /**
+     * Find carpoolItems where the consumption feedback is in error
+     *
+     * @return array
+     */
+    public function findConsumptionFeedbackInError()
+    {
+        $query = $this->repository->createQueryBuilder('ci')
+        ->where('ci.debtorConsumptionFeedbackDate is not null OR ci.creditorConsumptionFeedbackDate is not null')
+        ->andWhere('(ci.debtorConsumptionFeedbackReturnCode is not null and ci.debtorConsumptionFeedbackReturnCode <> 200) OR (ci.creditorConsumptionFeedbackReturnCode is not null and ci.creditorConsumptionFeedbackReturnCode <> 200)');
+        
+        
+        return $query->getQuery()->getResult();
+    }
 }
