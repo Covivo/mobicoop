@@ -293,9 +293,15 @@ class WorldlineProvider implements ConsumptionFeedbackInterface
         }
 
         // Store some data
-        $this->consumptionCarpoolItem->setConsumptionFeedbackExternalId($this->getExternalActivityId());
-        $this->consumptionCarpoolItem->setConsumptionFeedbackDate(new \DateTime('now'));
-        $this->consumptionCarpoolItem->setConsumptionFeedbackReturnCode($response->getCode());
+        if ($this->getConsumptionCarpoolItem()->getDebtorUser()->getId()===$this->getConsumptionUser()->getId()) {
+            $this->getConsumptionCarpoolItem()->setDebtorConsumptionFeedbackExternalId($this->getExternalActivityId());
+            $this->getConsumptionCarpoolItem()->setDebtorConsumptionFeedbackDate(new \DateTime('now'));
+            $this->getConsumptionCarpoolItem()->setDebtorConsumptionFeedbackReturnCode($response->getCode());
+        } else {
+            $this->getConsumptionCarpoolItem()->setCreditorConsumptionFeedbackExternalId($this->getExternalActivityId());
+            $this->getConsumptionCarpoolItem()->setCreditorConsumptionFeedbackDate(new \DateTime('now'));
+            $this->getConsumptionCarpoolItem()->setCreditorConsumptionFeedbackReturnCode($response->getCode());
+        }
     }
 
     
