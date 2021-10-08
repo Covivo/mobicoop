@@ -91,6 +91,16 @@ class ConsumptionFeedbackDataProvider
         return $this->providerInstance->getAccessToken();
     }
     
+    public function getConsumptionUser(): ?User
+    {
+        return $this->providerInstance->getConsumptionUser();
+    }
+
+    public function setConsumptionUser(?User $consumptionUser)
+    {
+        $this->providerInstance->setConsumptionUser($consumptionUser);
+    }
+
     public function getConsumptionCarpoolItem(): ?CarpoolItem
     {
         return $this->providerInstance->getConsumptionCarpoolItem();
