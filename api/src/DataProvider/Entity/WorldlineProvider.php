@@ -43,7 +43,8 @@ class WorldlineProvider implements ConsumptionFeedbackInterface
     const STEPS_TRANSPORT_MODE = "MOVICI";
     const STEPS_IS_PM_CHARGEABLE = false;
 
-    //const TEST_SSO_ACCOUNT_ID = "36";
+    // const TEST_SSO_ACCOUNT_ID = "36";
+    const TEST_SSO_ACCOUNT_ID = null;
 
     const ADDITIONAL_INFOS = [
         ["key" => "TYPE", "value" => "CONSUMPTION"]
@@ -134,7 +135,7 @@ class WorldlineProvider implements ConsumptionFeedbackInterface
         }
 
         $this->setConsumptionUser($this->getConsumptionCarpoolItem()->getCreditorUser());
-        if ($this->checkUserForSso() && $this->getConsumptionCarpoolItem()->getDebtorConsumptionFeedbackReturnCode()!==200) {
+        if ($this->checkUserForSso() && $this->getConsumptionCarpoolItem()->getCreditorConsumptionFeedbackReturnCode()!==200) {
             $this->sendConsumptionFeedbackRequest();
         }
 
@@ -149,7 +150,7 @@ class WorldlineProvider implements ConsumptionFeedbackInterface
      */
     private function checkUserForSso(): bool
     {
-        return is_null($this->getConsumptionUser()->getSsoId()) && !is_null($this->getConsumptionUser()->getAppDelegate()) && $this->getConsumptionUser()->getAppDelegate()->getId() === $this->appId;
+        return !is_null($this->getConsumptionUser()->getSsoId()) && !is_null($this->getConsumptionUser()->getAppDelegate()) && $this->getConsumptionUser()->getAppDelegate()->getId() === $this->appId;
     }
 
 
@@ -238,7 +239,7 @@ class WorldlineProvider implements ConsumptionFeedbackInterface
         if ($carpooled) {
             $this->setExternalActivityId((microtime(true)*10000)."|".$externalActivityId);
             $this->setRequestBody([
-                "accountId" => (defined('static::TEST_SSO_ACCOUNT_ID')) ? self::TEST_SSO_ACCOUNT_ID : $this->getConsumptionUser()->getId(),
+                "accountId" => (!is_null(self::TEST_SSO_ACCOUNT_ID)) ? self::TEST_SSO_ACCOUNT_ID : "".$this->getConsumptionUser()->getId(),
                 "consumptionType" => self::CONSUMPTION_TYPE,
                 "externalActivityId" => $this->getExternalActivityId(),
                 "steps" => [
@@ -288,8 +289,6 @@ class WorldlineProvider implements ConsumptionFeedbackInterface
             $data = json_decode($response->getValue(), true);
         } else {
             $this->logger->info("Request failed ! ");
-            die;
-            //throw new \LogicException("Request failed");
         }
 
         // Store some data
