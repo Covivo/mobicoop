@@ -809,6 +809,25 @@ class SolidaryUserManager
             $user->addUserAuthAssignment($userAuthAssignment);
         }
 
+        // Proofs
+        if ($solidaryVolunteer->getProofs()) {
+            foreach ($solidaryVolunteer->getProofs() as $givenProof) {
+                // We get the structure proof and we create a proof to persist
+                $structureProofId = null;
+                if (strrpos($givenProof['id'], '/')) {
+                    $structureProofId = substr($givenProof['id'], strrpos($givenProof['id'], '/') + 1);
+                }
+                    
+                $structureProof = $this->structureProofRepository->find($structureProofId);
+                if (!is_null($structureProof) && isset($givenProof['value']) && !is_null($givenProof['value'])) {
+                    $proof = new Proof();
+                    $proof->setStructureProof($structureProof);
+                    $proof->setValue($givenProof['value']);
+                    $solidaryUserStructure->addProof($proof);
+                }
+            }
+        }
+
         $solidaryUser->addSolidaryUserStructure($solidaryUserStructure);
 
         // Availabilities : First we set those given, next we fill the blanks with the structure default
