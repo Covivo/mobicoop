@@ -50,4 +50,4 @@ twig:
         cookiesShowAuto: '%env(bool:COOKIES_SHOW_AUTO)%'
         facebookShow: '%env(bool:FACEBOOK_SHOW)%'
         gamificationActive: '%env(bool:GAMIFICATION_ACTIVE)%'
-        diplayLogoNoResult: '%env(bool:DISPLAY_LOGO_NO_RESULT)%'
+        displayLogoNoResult: '%env(bool:DISPLAY_LOGO_NO_RESULT)%'

@@ -223,7 +223,7 @@
           >
             <v-card-text class="pb-0">
               <v-img 
-                v-if="nbCarpoolPlatform == '-' && diplayLogoNoResult"
+                v-if="nbCarpoolPlatform == '-' && displayLogoNoResult"
                 max-height="90px"
                 contain 
                 :src="$t('logoNoResult')"
@@ -407,7 +407,7 @@ export default {
       type: Boolean,
       default: false
     },
-    diplayLogoNoResult: {
+    displayLogoNoResult: {
       type: Boolean,
       default: false
     }
