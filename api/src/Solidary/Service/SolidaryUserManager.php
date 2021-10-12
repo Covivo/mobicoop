@@ -610,6 +610,11 @@ class SolidaryUserManager
         $solidaryUserStructure->setStructure($solidaryBeneficiaryStructure);
         $solidaryUserStructure->setSolidaryUser($solidaryUser);
 
+        //we check if the structure need proofs before validation if not we validate automaticaly the candidate
+        if (count($solidaryUserStructure->getStructure()->getStructureProofs()) == 0) {
+            $solidaryBeneficiary->setValidatedCandidate(true);
+        }
+
         if ($solidaryBeneficiary->isValidatedCandidate()) {
             // Already accepted. We set the date a give the appropriate role to the user
             $solidaryUserStructure->setAcceptedDate(new \Datetime());
@@ -799,6 +804,11 @@ class SolidaryUserManager
         $solidaryUserStructure->setStructure($solidaryVolunteerStructure);
         $solidaryUserStructure->setSolidaryUser($solidaryUser);
 
+        //we check if the structure need proofs before validation if not we validate automaticaly the candidate
+        if (count($solidaryUserStructure->getStructure()->getStructureProofs()) == 0) {
+            $solidaryVolunteer->setValidatedCandidate(true);
+        }
+        
         if ($solidaryVolunteer->isValidatedCandidate()) {
             // Already accepted. We set the date a give the appropriate role to the user
             $solidaryUserStructure->setAcceptedDate(new \Datetime());
