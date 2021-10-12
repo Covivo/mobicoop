@@ -240,7 +240,8 @@ class PublicProfile implements ResourceInterface, \JsonSerializable
             'reviewActive'              => $this->isReviewActive(),
             'reviews'                   => $this->getReviews(),
             'savedCo2'                  => $this->getProfileSummary()->getSavedCo2(),
-            'badges'                    => $this->getBadges()
+            'badges'                    => $this->getBadges(),
+            'experienced'               => $this->getProfileSummary()->isExperienced()
         ];
 
         return $userSerialized;
