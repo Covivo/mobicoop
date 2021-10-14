@@ -51,6 +51,16 @@ class SolidaryVolunteerManager
     private $fileFolder;
     
     /**
+     * @var SolidaryUser
+     */
+    private $solidaryUser;
+
+    /**
+     * @var array The fields that we are trying to update
+     */
+    private $fields;
+
+    /**
      * Constructor
      *
      * @param EntityManagerInterface $entityManager
@@ -225,38 +235,80 @@ class SolidaryVolunteerManager
             throw new SolidaryException(sprintf(SolidaryException::VOLUNTEER_NOT_FOUND, $id));
         }
         
+        $this->setSolidaryUser($solidaryUser);
+        $this->setFields($fields);
+
+        $this->updateAvailabilities();
+
         // check if a new validation has been made
-        if (array_key_exists('validation', $fields)) {
-            return $this->treatValidation($solidaryUser, $fields['validation']);
+        if (array_key_exists('validation', $this->getFields())) {
+            return $this->treatValidation();
         }
 
         // persist the solidary volunteer
-        $this->entityManager->persist($solidaryUser->getUser());
+        $this->entityManager->persist($this->getSolidaryUser()->getUser());
         $this->entityManager->flush();
 
-        return $this->getSolidaryVolunteer($solidaryUser->getId());
+        return $this->getSolidaryVolunteer($this->getSolidaryUser()->getId());
+    }
+
+    /**
+     * Update the availabilities of a Volunteer
+     */
+    private function updateAvailabilities()
+    {
+        $this->updateDaysAvailabilities();
+        $this->updateTimesRangeAvailabilities();
+    }
+
+    /**
+     * Update the days availabilities of a Volunteer
+     */
+    private function updateDaysAvailabilities()
+    {
+        foreach (SolidaryVolunteer::DAYS_SLOTS as $slot) {
+            if (array_key_exists($slot, $this->getFields())) {
+                $setter = "set".ucFirst($slot);
+                if (method_exists($this->getSolidaryUser(), "set".ucFirst($slot))) {
+                    $this->getSolidaryUser()->$setter($this->getFields()[$slot]);
+                }
+            }
+        }
+    }
+
+    /**
+     * Update the time range availabilities of a Volunteer
+     */
+    private function updateTimesRangeAvailabilities()
+    {
+        foreach (SolidaryVolunteer::TIMES_SLOTS as $slot) {
+            if (array_key_exists($slot, $this->getFields())) {
+                $setter = "set".ucFirst($slot);
+                if (method_exists($this->getSolidaryUser(), "set".ucFirst($slot))) {
+                    $this->getSolidaryUser()->$setter($this->getFields()[$slot]);
+                }
+            }
+        }
     }
 
     /**
      * Treat a validation for a solidary volunteer.
      *
-     * @param SolidaryUser          $solidaryUser           The solidaryUser corresponding to the solidaryVolunteer to update
-     * @param array                 $validation             The validation fields
      * @return SolidaryVolunteer  The solidaryVolunteer updated
      */
-    private function treatValidation(SolidaryUser $solidaryUser, array $validation)
+    private function treatValidation()
     {
-        if (!array_key_exists('validate', $validation)) {
+        if (!array_key_exists('validate', $this->getFields()['validation'])) {
             throw new SolidaryException(SolidaryException::VOLUNTEER_VALIDATION_VALUE_REQUIRED);
         }
-        if (!array_key_exists('id', $validation)) {
+        if (!array_key_exists('id', $this->getFields()['validation'])) {
             throw new SolidaryException(SolidaryException::VOLUNTEER_VALIDATION_ID_REQUIRED);
         }
-        if (!$solidaryUserStructure = $this->solidaryUserStructureRepository->find($validation['id'])) {
-            throw new SolidaryException(sprintf(SolidaryException::SOLIDARY_USER_STRUCTURE_NOT_FOUND, $validation['id']));
+        if (!$solidaryUserStructure = $this->solidaryUserStructureRepository->find($this->getFields()['validation']['id'])) {
+            throw new SolidaryException(sprintf(SolidaryException::SOLIDARY_USER_STRUCTURE_NOT_FOUND, $this->getFields()['validation']['id']));
         }
 
-        $solidaryUserStructure->setStatus($validation['validate'] === true ? SolidaryUserStructure::STATUS_ACCEPTED : SolidaryUserStructure::STATUS_REFUSED);
+        $solidaryUserStructure->setStatus($this->getFields()['validation']['validate'] === true ? SolidaryUserStructure::STATUS_ACCEPTED : SolidaryUserStructure::STATUS_REFUSED);
         $this->entityManager->persist($solidaryUserStructure);
         $this->entityManager->flush();
 
@@ -264,6 +316,26 @@ class SolidaryVolunteerManager
         $event = new VolunteerStatusChangedEvent($solidaryUserStructure);
         $this->eventDispatcher->dispatch($event, VolunteerStatusChangedEvent::NAME);
 
-        return $this->getSolidaryVolunteer($solidaryUser->getId());
+        return $this->getSolidaryVolunteer($this->getSolidaryUser()->getId());
+    }
+
+    /** Getters Setters */
+
+    private function getSolidaryUser(): SolidaryUser
+    {
+        return $this->solidaryUser;
+    }
+    private function setSolidaryUser(SolidaryUser $solidaryUser)
+    {
+        $this->solidaryUser = $solidaryUser;
+    }
+
+    private function getFields(): array
+    {
+        return $this->fields;
+    }
+    private function setFields(array $fields)
+    {
+        $this->fields = $fields;
     }
 }
