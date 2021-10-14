@@ -286,7 +286,9 @@ class SolidaryVolunteerManager
                 $setter = "set".ucFirst($slot);
                 if (method_exists($this->getSolidaryUser(), "set".ucFirst($slot))) {
                     $datetime = new \DateTime($this->getFields()[$slot]);
-                    if(!$datetime) throw new \LogicException("Datetime invalid");
+                    if (!$datetime) {
+                        throw new \LogicException("Datetime invalid");
+                    }
                     $this->getSolidaryUser()->$setter($datetime);
                 }
             }
