@@ -44,6 +44,7 @@ use App\MassCommunication\Repository\CampaignRepository;
 use App\RelayPoint\Entity\RelayPointType;
 use App\RelayPoint\Repository\RelayPointRepository;
 use App\RelayPoint\Repository\RelayPointTypeRepository;
+use App\Gamification\Repository\BadgeRepository;
 use App\User\Service\UserManager;
 use DateInterval;
 use DateTime;
@@ -70,6 +71,7 @@ class BasicFixturesManager
     private $relayPointRepository;
     private $relayPointTypeRepository;
     private $campaignRepository;
+    private $badgeRepository;
     private $imageManager;
     private $dataUri;
 
@@ -87,6 +89,7 @@ class BasicFixturesManager
         RelayPointRepository $relayPointRepository,
         RelayPointTypeRepository $relayPointTypeRepository,
         CampaignRepository $campaignRepository,
+        BadgeRepository $badgeRepository,
         ImageManager $imageManager,
         bool $fixturesBasic,
         string $dataUri
@@ -102,6 +105,7 @@ class BasicFixturesManager
         $this->relayPointRepository = $relayPointRepository;
         $this->relayPointTypeRepository = $relayPointTypeRepository;
         $this->campaignRepository = $campaignRepository;
+        $this->badgeRepository = $badgeRepository;
         $this->imageManager = $imageManager;
         $this->dataUri = $dataUri;
     }
@@ -580,6 +584,38 @@ class BasicFixturesManager
                 $toDirectory = "masscommunication";
             } else {
                 echo "Campaign not found for image ".$tab[0];
+            }
+        }
+        if ($tab[7] !== '') {
+            if ($owner = $this->badgeRepository->find($tab[7])) {
+                $image->setBadgeIcon($owner);
+                $toDirectory = "badges";
+            } else {
+                echo "v not found for image ".$tab[0];
+            }
+        }
+        if ($tab[8] !== '') {
+            if ($owner = $this->badgeRepository->find($tab[8])) {
+                $image->setBadgeDecoratedIcon($owner);
+                $toDirectory = "badges";
+            } else {
+                echo "Badge not found for image ".$tab[0];
+            }
+        }
+        if ($tab[9] !== '') {
+            if ($owner = $this->badgeRepository->find($tab[9])) {
+                $image->setBadgeImage($owner);
+                $toDirectory = "badges";
+            } else {
+                echo "Badge not found for image ".$tab[0];
+            }
+        }
+        if ($tab[10] !== '') {
+            if ($owner = $this->badgeRepository->find($tab[10])) {
+                $image->setBadgeImageLight($owner);
+                $toDirectory = "badges";
+            } else {
+                echo "Badge not found for image ".$tab[0];
             }
         }
       
