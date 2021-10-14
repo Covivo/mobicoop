@@ -266,7 +266,7 @@ export default {
       default: null
     },
     communities: {
-      type: Array,
+      type: Object,
       default: null
     },
     ageDisplay: {

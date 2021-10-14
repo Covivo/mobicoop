@@ -57,7 +57,7 @@ export default {
   },
   computed:{
     gamificationNotifications(){
-      return this.$store.getters['gn/gamificationNotifications'];
+      return this.$store.getters['g/gamificationNotifications'];
     },
     rewardSteps(){
       return this.gamificationNotifications.filter( item => item.type == "RewardStep" );
@@ -80,11 +80,11 @@ export default {
   },
   mounted(){
     if(localStorage.getItem("gamificationNotifications")){
-      this.$store.commit('gn/updateGamificationNotifications',JSON.parse(localStorage.getItem("gamificationNotifications")));
+      this.$store.commit('g/updateGamificationNotifications',JSON.parse(localStorage.getItem("gamificationNotifications")));
       localStorage.removeItem("gamificationNotifications");
     }
     if(this.userGamificationNotifications){
-      this.$store.commit('gn/updateGamificationNotifications',this.userGamificationNotifications);
+      this.$store.commit('g/updateGamificationNotifications',this.userGamificationNotifications);
     }
   },
   methods:{

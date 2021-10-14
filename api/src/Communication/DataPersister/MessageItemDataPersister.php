@@ -33,6 +33,7 @@ use Symfony\Component\Security\Core\Security;
 use App\Carpool\Service\AdManager;
 use App\Carpool\Service\AskManager;
 use App\Carpool\Service\ProposalManager;
+use App\Communication\Exception\MessageException;
 
 /**
  * Post a Message
@@ -78,6 +79,12 @@ final class MessageItemDataPersister implements ContextAwareDataPersisterInterfa
         // TO DO : Don't block the whole send if only one User is involved in a block
         $recipients = $data->getRecipients();
         foreach ($recipients as $recipient) {
+
+            // Check that the sender and the recipient are not the same person
+            if ($data->getUser()->getId() == $recipient->getUser()->getId()) {
+                throw new MessageException(MessageException::SAME_SENDER_RECIPIENT);
+            }
+
             $blocks = $this->blockManager->getInvolvedInABlock($this->security->getUser(), $recipient->getUser());
             if (is_array($blocks) && count($blocks)>0) {
                 throw new BlockException(BlockException::MESSAGE_INVOLVED_IN_BLOCK);

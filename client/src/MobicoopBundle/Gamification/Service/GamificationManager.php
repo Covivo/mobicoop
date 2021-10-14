@@ -24,6 +24,7 @@
 namespace Mobicoop\Bundle\MobicoopBundle\Gamification\Service;
 
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
+use Mobicoop\Bundle\MobicoopBundle\Gamification\Entity\BadgesBoard;
 use Mobicoop\Bundle\MobicoopBundle\Gamification\Entity\Reward;
 use Mobicoop\Bundle\MobicoopBundle\Gamification\Entity\RewardStep;
 
@@ -67,5 +68,17 @@ class GamificationManager
     {
         $this->dataProvider->setClass(Reward::class);
         return  $this->dataProvider->getSpecialItem($rewardId, "tagAsNotified");
+    }
+
+    /**
+     * Get the Badges Board of a User
+     * @return null
+     */
+    public function badgesBoard()
+    {
+        $this->dataProvider->setClass(BadgesBoard::class);
+        $this->dataProvider->setFormat(DataProvider::RETURN_JSON);
+        $response = $this->dataProvider->getCollection();
+        return $response->getValue();
     }
 }

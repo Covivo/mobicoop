@@ -1,3 +1,7 @@
+# Release 1.36.0
+* User can now see their own Ad in search results
+* User have a Badges board in their profile to follow their progress
+
 # Release 1.35.0
 * Fix : Cannot longer contact someone from an archived Ad
 

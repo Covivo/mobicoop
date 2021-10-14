@@ -11,7 +11,8 @@
         "bankCoordinates": "Identité bancaire",
         "carpoolsAccepted": "Covoiturages acceptés",
         "myAccount":"Compte",
-        "reviews":"Avis"
+        "reviews":"Avis",
+        "myBadges":"Badges"
     },
     "form": {
         "newPassword": "Nouveau mot de passe",

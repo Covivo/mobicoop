@@ -206,7 +206,7 @@ class SolidaryVolunteer
 
     /**
      * @var array The proofs associated to this user
-     * @Groups({"aReadItem"})
+     * @Groups({"writeSolidary","aReadItem" })
      */
     private $proofs;
 

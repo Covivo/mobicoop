@@ -3,15 +3,17 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 
-import { gamificationNotifications } from './gamificationnotifications.module';
+import { gamification } from './gamification.module';
 import { userPrefs } from './userprefs.module';
+import { auth } from './auth.module';
 
 Vue.use(Vuex);
 
 export const store = new Vuex.Store({
   modules: {
-    gn:gamificationNotifications,
+    g:gamification,
     up:userPrefs,
+    a:auth
   },
   state: {},
   actions: {},

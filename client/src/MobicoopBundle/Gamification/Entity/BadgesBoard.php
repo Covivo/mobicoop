@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * Copyright (c) 2021, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,9 +21,28 @@
  *    LICENSE
  **************************/
 
-namespace App\Carpool\Exception;
+namespace Mobicoop\Bundle\MobicoopBundle\Gamification\Entity;
 
-class AdException extends \LogicException
+/**
+ * A BadgesBoard
+ * Only used for ajax call via the Bundle. Since we get a direct json response we don't need (for now) all the properties in this entity
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ */
+class BadgesBoard
 {
-    const SELF_MATCHING = 'You cannot ask a carpool to yourself';
+    /**
+     * @var int Reward's id
+     */
+    private $id;
+   
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+    
+    public function setId(?int $id)
+    {
+        $this->id = $id;
+    }
 }

@@ -44,6 +44,12 @@ class SequenceStatus
      */
     private $validated;
 
+    /**
+     * @var string Sequence's title according the gamificationAction title
+     * @Groups({"readGamification"})
+     */
+    private $title;
+
 
     public function getSequenceItemId(): ?int
     {
@@ -65,6 +71,18 @@ class SequenceStatus
     public function setValidated(bool $validated): self
     {
         $this->validated = $validated;
+
+        return $this;
+    }
+
+    public function getTitle(): ?string
+    {
+        return $this->title;
+    }
+
+    public function setTitle(string $title): self
+    {
+        $this->title = $title;
 
         return $this;
     }

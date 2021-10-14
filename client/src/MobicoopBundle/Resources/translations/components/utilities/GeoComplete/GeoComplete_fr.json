@@ -4,5 +4,6 @@
     "relayPoints": "Points relais",
     "events": "Evénements",
     "origin": "Lieu de départ",
-    "destination": "Lieu d'arrivée"
+    "destination": "Lieu d'arrivée",
+    "refreshRoute": "/refreshToken"
 }

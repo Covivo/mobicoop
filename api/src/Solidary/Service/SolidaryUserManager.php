@@ -611,6 +611,11 @@ class SolidaryUserManager
         $solidaryUserStructure->setStructure($solidaryBeneficiaryStructure);
         $solidaryUserStructure->setSolidaryUser($solidaryUser);
 
+        //we check if the structure need proofs before validation if not we validate automaticaly the candidate
+        if (count($solidaryUserStructure->getStructure()->getStructureProofs()) == 0) {
+            $solidaryBeneficiary->setValidatedCandidate(true);
+        }
+
         if ($solidaryBeneficiary->isValidatedCandidate()) {
             // Already accepted. We set the date a give the appropriate role to the user
             $solidaryUserStructure->setAcceptedDate(new \Datetime());
@@ -772,7 +777,7 @@ class SolidaryUserManager
         $solidaryUser->setComment($solidaryVolunteer->getComment());
         $solidaryUser->setVehicle($solidaryVolunteer->hasVehicle());
         $solidaryUser->setMaxDistance($solidaryVolunteer->getMaxDistance());
-       
+
         //we create the needs associated to the solidary user
         if ($solidaryVolunteer->getNeeds()) {
             foreach ($solidaryVolunteer->getNeeds() as $need) {
@@ -780,7 +785,6 @@ class SolidaryUserManager
                 $solidaryUser->addNeed($this->needRepository->find($needId));
             }
         }
-       
         // If there a Structure given, we use it. Otherwise we use the first admin structure
         $solidaryVolunteerStructure = $solidaryVolunteer->getStructure();
         if (is_null($solidaryVolunteerStructure) && ($this->security->getUser() instanceof User)) {
@@ -791,7 +795,6 @@ class SolidaryUserManager
                 $solidaryVolunteerStructure = $structures[0];
             }
         }
-        
         if (is_null($solidaryVolunteerStructure)) {
             throw new SolidaryException(SolidaryException::NO_STRUCTURE);
         }
@@ -799,6 +802,11 @@ class SolidaryUserManager
         $solidaryUserStructure = new SolidaryUserStructure();
         $solidaryUserStructure->setStructure($solidaryVolunteerStructure);
         $solidaryUserStructure->setSolidaryUser($solidaryUser);
+
+        //we check if the structure need proofs before validation if not we validate automaticaly the candidate
+        if (count($solidaryUserStructure->getStructure()->getStructureProofs()) == 0) {
+            $solidaryVolunteer->setValidatedCandidate(true);
+        }
 
         if ($solidaryVolunteer->isValidatedCandidate()) {
             // Already accepted. We set the date a give the appropriate role to the user
@@ -808,6 +816,25 @@ class SolidaryUserManager
             $userAuthAssignment = new UserAuthAssignment();
             $userAuthAssignment->setAuthItem($authItem);
             $user->addUserAuthAssignment($userAuthAssignment);
+        }
+
+        // Proofs
+        if ($solidaryVolunteer->getProofs()) {
+            foreach ($solidaryVolunteer->getProofs() as $givenProof) {
+                // We get the structure proof and we create a proof to persist
+                $structureProofId = null;
+                if (strrpos($givenProof['id'], '/')) {
+                    $structureProofId = substr($givenProof['id'], strrpos($givenProof['id'], '/') + 1);
+                }
+                    
+                $structureProof = $this->structureProofRepository->find($structureProofId);
+                if (!is_null($structureProof) && isset($givenProof['value']) && !is_null($givenProof['value'])) {
+                    $proof = new Proof();
+                    $proof->setStructureProof($structureProof);
+                    $proof->setValue($givenProof['value']);
+                    $solidaryUserStructure->addProof($proof);
+                }
+            }
         }
 
         $solidaryUser->addSolidaryUserStructure($solidaryUserStructure);

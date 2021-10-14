@@ -54,6 +54,7 @@ use DateTime;
 use Symfony\Component\Security\Core\Security;
 use App\Action\Event\ActionEvent;
 use App\Action\Repository\ActionRepository;
+use App\Carpool\Exception\AdException;
 
 /**
  * Ask manager service.
@@ -185,6 +186,11 @@ class AskManager
         $ask = new Ask();
         $matching = $this->matchingRepository->find($ad->getMatchingId());
         
+        // We check that the user isn't matching with himself
+        if ($matching->getProposalRequest()->getUser()->getId()==$matching->getProposalOffer()->getUser()->getId()) {
+            throw new AdException(AdException::SELF_MATCHING);
+        }
+
         if ($ad->getAdId() == $matching->getProposalOffer()->getId()) {
             // the carpooler is the driver, the requester is the passenger
             $ask->setType($matching->getProposalRequest()->getType());

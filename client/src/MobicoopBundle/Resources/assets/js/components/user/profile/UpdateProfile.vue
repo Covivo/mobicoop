@@ -675,7 +675,7 @@ export default {
     platform: {
       type: String,
       default: ""
-    }
+    } 
   },
   data() {
     return {
