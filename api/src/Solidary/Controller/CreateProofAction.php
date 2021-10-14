@@ -29,6 +29,7 @@ use App\Solidary\Exception\SolidaryException;
 use App\Solidary\Repository\SolidaryRepository;
 use App\Solidary\Repository\SolidaryUserStructureRepository;
 use App\Solidary\Repository\StructureProofRepository;
+use App\Solidary\Repository\SolidaryUserRepository;
 use App\TranslatorTrait;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -38,17 +39,20 @@ final class CreateProofAction
     private $structureProofRepository;
     private $solidaryUserStructureRepository;
     private $solidaryRepository;
+    private $solidaryUserRepository;
     private $fileManager;
     
     public function __construct(
         StructureProofRepository $structureProofRepository,
         SolidaryUserStructureRepository $solidaryUserStructureRepository,
         SolidaryRepository $solidaryRepository,
+        SolidaryUserRepository $solidaryUserRepository,
         FileManager $fileManager
     ) {
         $this->structureProofRepository = $structureProofRepository;
         $this->solidaryUserStructureRepository = $solidaryUserStructureRepository;
         $this->solidaryRepository = $solidaryRepository;
+        $this->solidaryUserRepository = $solidaryUserRepository;
         $this->fileManager = $fileManager;
     }
     
@@ -60,17 +64,30 @@ final class CreateProofAction
 
         $proof = new Proof();
 
+        if (empty($request->request->get('solidary')) && empty($request->request->get('solidaryVolunteer'))) {
+            throw new SolidaryException(SolidaryException::NO_ID);
+        }
 
-        if (empty($request->request->get('solidary'))) {
-            throw new SolidaryException(SolidaryException::NO_SOLIDARY_ID);
+        if (!empty($request->request->get('solidary')) && empty($request->request->get('solidaryVolunteer'))) {
+            $solidaryId = $request->request->get('solidary');
+            if (strrpos($solidaryId, '/')) {
+                $solidaryId = substr($solidaryId, strrpos($solidaryId, '/') + 1);
+            }
+            $solidary = $this->solidaryRepository->find($solidaryId);
+            if (is_null($solidary)) {
+                throw new SolidaryException(SolidaryException::SOLIDARY_NOT_FOUND);
+            }
         }
-        $solidaryId = $request->request->get('solidary');
-        if (strrpos($solidaryId, '/')) {
-            $solidaryId = substr($solidaryId, strrpos($solidaryId, '/') + 1);
-        }
-        $solidary = $this->solidaryRepository->find($solidaryId);
-        if (is_null($solidary)) {
-            throw new SolidaryException(SolidaryException::SOLIDARY_NOT_FOUND);
+
+        if (empty($request->request->get('solidary')) && !empty($request->request->get('solidaryVolunteer'))) {
+            $solidaryVolunteerId = $request->request->get('solidaryVolunteer');
+            if (strrpos($solidaryVolunteerId, '/')) {
+                $solidaryVolunteerId = substr($solidaryVolunteerId, strrpos($solidaryVolunteerId, '/') + 1);
+            }
+            $solidaryVolunteer = $this->solidaryUserRepository->find($solidaryVolunteerId);
+            if (is_null($solidaryVolunteer)) {
+                throw new SolidaryException(SolidaryException::SOLIDARY_USER_NOT_FOUND);
+            }
         }
 
         if (empty($request->request->get('structureProof'))) {
@@ -103,13 +120,18 @@ final class CreateProofAction
             } else {
                 $fileName = time();
             }
-            $proof->setFileName($solidary->getId()."-".$fileName);
+            $proof->setFileName($structureProof->getId()."-".$fileName);
         }
-  
+
+        if (isset($solidary)) {
+            $solidaryUserStructure=$solidary->getSolidaryUserStructure();
+        } elseif (isset($solidaryVolunteer)) {
+            $solidaryUserStructure=$this->solidaryUserStructureRepository->findByStructureAndSolidaryUser($structureProof->getStructure()->getId(), $solidaryVolunteer->getId());
+        }
 
         $proof->setValue($request->request->get('value'));
         $proof->setStructureProof($structureProof);
-        $proof->setSolidaryUserStructure($solidary->getSolidaryUserStructure());
+        $proof->setSolidaryUserStructure($solidaryUserStructure);
 
         return $proof;
     }
