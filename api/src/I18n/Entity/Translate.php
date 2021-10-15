@@ -89,7 +89,7 @@ class Translate
      * @var Language The language concerned
      *
      * @ORM\ManyToOne(targetEntity="\App\I18n\Entity\Language", inversedBy="translates")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Groups({"aRead","read","write"})
      * @MaxDepth(1)
      */

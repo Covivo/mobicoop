@@ -149,7 +149,7 @@ class Badge
     /**
      * @var Image|null The Badge's icon
      *
-     * @ORM\OneToOne(targetEntity="\App\Image\Entity\Image", mappedBy="badgeIcon", cascade={"persist","remove"})
+     * @ORM\OneToOne(targetEntity="\App\Image\Entity\Image", mappedBy="badgeIcon", cascade={"persist"})
      * @Groups({"readGamification","writeGamification","readPublicProfile"})
      * @MaxDepth(1)
      */
@@ -158,7 +158,7 @@ class Badge
     /**
      * @var Image|null The Badge's decorated icon
      *
-     * @ORM\OneToOne(targetEntity="\App\Image\Entity\Image", mappedBy="badgeDecoratedIcon", cascade={"persist","remove"})
+     * @ORM\OneToOne(targetEntity="\App\Image\Entity\Image", mappedBy="badgeDecoratedIcon", cascade={"persist"})
      * @Groups({"readGamification","writeGamification","readPublicProfile"})
      * @MaxDepth(1)
      */
@@ -167,7 +167,7 @@ class Badge
     /**
      * @var Image|null The Badge's reward image
      *
-     * @ORM\OneToOne(targetEntity="\App\Image\Entity\Image", mappedBy="badgeImage", cascade={"persist","remove"})
+     * @ORM\OneToOne(targetEntity="\App\Image\Entity\Image", mappedBy="badgeImage", cascade={"persist"})
      * @Groups({"readGamification","writeGamification"})
      * @MaxDepth(1)
      */
@@ -176,7 +176,7 @@ class Badge
     /**
      * @var Image|null The Badge's reward image light
      *
-     * @ORM\OneToOne(targetEntity="\App\Image\Entity\Image", mappedBy="badgeImageLight", cascade={"persist","remove"})
+     * @ORM\OneToOne(targetEntity="\App\Image\Entity\Image", mappedBy="badgeImageLight", cascade={"persist"})
      * @Groups({"readGamification","writeGamification"})
      * @MaxDepth(1)
      */
@@ -201,7 +201,7 @@ class Badge
     /**
      * @var ArrayCollection|null A Badge needs multiple SequenceItems to be earned
      *
-     * @ORM\OneToMany(targetEntity="\App\Gamification\Entity\SequenceItem", mappedBy="badge", cascade={"persist","remove"})
+     * @ORM\OneToMany(targetEntity="\App\Gamification\Entity\SequenceItem", mappedBy="badge", cascade={"persist"})
      * @Groups({"readGamification","writeGamification"})
      * @MaxDepth(1)
      */

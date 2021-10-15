@@ -127,6 +127,7 @@ class AskHistory implements MessagerInterface
      * @var Ask|null The linked ask.
      *
      * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Ask", inversedBy="askHistories")
+     * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"read","write","threads","thread"})
      * @MaxDepth(1)
      */
@@ -135,7 +136,8 @@ class AskHistory implements MessagerInterface
     /**
      * @var Message|null The message linked the ask history item.
      *
-     * @ORM\OneToOne(targetEntity="\App\Communication\Entity\Message", inversedBy="askHistory", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToOne(targetEntity="\App\Communication\Entity\Message", inversedBy="askHistory", cascade={"persist"})
+     * @ORM\JoinColumn(onDelete="SET NULL")
      * @Groups({"read","write"})
      * @MaxDepth(1)
      */
@@ -144,7 +146,7 @@ class AskHistory implements MessagerInterface
     /**
      * @var ArrayCollection|null The notifications sent for the ask history.
      *
-     * @ORM\OneToMany(targetEntity="\App\Communication\Entity\Notified", mappedBy="askHistory", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Communication\Entity\Notified", mappedBy="askHistory", cascade={"persist"})
      * @Groups({"read","write"})
      * @MaxDepth(1)
      */

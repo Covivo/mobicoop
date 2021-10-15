@@ -117,7 +117,7 @@ class SolidaryAsk
      *
      * @Assert\NotBlank
      * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\SolidarySolution", inversedBy="solidaryAsk")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @MaxDepth(1)
      * @Groups({"readSolidary","writeSolidary"})
      */
@@ -126,7 +126,7 @@ class SolidaryAsk
     /**
      * @var ArrayCollection The ask history items linked with the ask.
      *
-     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\SolidaryAskHistory", mappedBy="solidaryAsk", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\SolidaryAskHistory", mappedBy="solidaryAsk", cascade={"persist"})
      * @ORM\OrderBy({"id" = "ASC"})
      * @Groups({"readSolidary","writeSolidary"})
      * @MaxDepth(1)
@@ -149,7 +149,8 @@ class SolidaryAsk
     /**
      * @var Ask|null The Ask possibly linked to this SolidaryAsk
      *
-     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Ask", inversedBy="solidaryAsk", cascade={"persist","remove"})
+     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Ask", inversedBy="solidaryAsk", cascade={"persist"})
+     * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $ask;
@@ -157,7 +158,7 @@ class SolidaryAsk
     /**
      * @var Criteria|null Criteria of this SolidaryAsk if the solution is a transport
      *
-     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Criteria", inversedBy="solidaryAsk", cascade={"persist","remove"})
+     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Criteria", inversedBy="solidaryAsk", cascade={"persist"})
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $criteria;
@@ -165,7 +166,7 @@ class SolidaryAsk
     /**
      * @var SolidaryAsk|null The linked solidary ask for return trips.
      *
-     * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\SolidaryAsk", cascade={"persist", "remove"}, orphanRemoval=true)
+     * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\SolidaryAsk", cascade={"persist"})
      * @ORM\JoinColumn(onDelete="CASCADE")
      * @MaxDepth(1)
      */

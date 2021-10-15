@@ -99,6 +99,7 @@ class Waypoint
      * @var Proposal|null The proposal that created the point.
      *
      * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal", inversedBy="waypoints")
+     * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private $proposal;
     
@@ -106,6 +107,7 @@ class Waypoint
      * @var Matching The matching that created the point.
      *
      * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Matching", inversedBy="waypoints")
+     * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private $matching;
     
@@ -113,6 +115,7 @@ class Waypoint
      * @var Ask The ask that created the point.
      *
      * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Ask", inversedBy="waypoints")
+     * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private $ask;
     
@@ -120,7 +123,7 @@ class Waypoint
      * @var Address The address of the point.
      *
      * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="\App\Geography\Entity\Address", inversedBy="waypoint", cascade={"persist","remove"})
+     * @ORM\ManyToOne(targetEntity="\App\Geography\Entity\Address", inversedBy="waypoint", cascade={"persist"})
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Groups({"read","results","write","threads","thread","readCommunity","readEvent"})
      * @MaxDepth(1)

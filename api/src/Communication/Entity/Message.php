@@ -114,7 +114,7 @@ class Message
      * @var User The creator of the message.
      *
      * @ORM\ManyToOne(targetEntity="App\User\Entity\User", inversedBy="messages")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Groups({"read","write","threads","thread"})
      */
     private $user;
@@ -123,6 +123,7 @@ class Message
     * @var User|null The user who send the message in the name of the creator.
     *
     * @ORM\ManyToOne(targetEntity="App\User\Entity\User")
+    * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
     * @Groups({"read","write","threads","thread"})
     */
     private $userDelegate;
@@ -184,6 +185,7 @@ class Message
      * @var Message|null The original message if the message is a reply to another message.
      *
      * @ORM\ManyToOne(targetEntity="\App\Communication\Entity\Message", inversedBy="messages")
+     * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"read","write"})
      * @MaxDepth(1)
      */
@@ -192,7 +194,7 @@ class Message
     /**
      * @var ArrayCollection The recipients linked with the message.
      *
-     * @ORM\OneToMany(targetEntity="\App\Communication\Entity\Recipient", mappedBy="message", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Communication\Entity\Recipient", mappedBy="message", cascade={"persist"})
      * @ORM\OrderBy({"id" = "ASC"})
      * @Groups({"read","write","threads","thread"})
      * @MaxDepth(1)
@@ -202,7 +204,7 @@ class Message
     /**
      * @var ArrayCollection The messages linked with the message.
      *
-     * @ORM\OneToMany(targetEntity="\App\Communication\Entity\Message", mappedBy="message", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Communication\Entity\Message", mappedBy="message", cascade={"persist"})
      * @ORM\OrderBy({"createdDate" = "ASC"})
      * @Groups({"thread"})
      * @MaxDepth(1)
@@ -212,7 +214,7 @@ class Message
     /**
      * @var ArrayCollection The logs linked with the message.
      *
-     * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="message", cascade={"remove"})
+     * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="message")
      */
     private $logs;
 

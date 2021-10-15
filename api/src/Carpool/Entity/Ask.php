@@ -176,7 +176,7 @@ class Ask
      *
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="asks")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Groups({"read","write","thread"})
      * @MaxDepth(1)
      */
@@ -188,16 +188,17 @@ class Ask
      *
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="asksRelated")
-     * @ORM\JoinColumn(nullable=true)
+     * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
      * @Groups({"read","write","thread"})
      * @MaxDepth(1)
      */
     private $userRelated;
 
     /**
-     * @var User|null User that create the proposal for another user.
+     * @var User|null User that create the ask for another user.
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="asksDelegate")
+     * @ORM\JoinColumn(onDelete="SET NULL")
      * @Groups({"read","write"})
      * @MaxDepth(1)
      */
@@ -218,6 +219,7 @@ class Ask
      * @var Ask|null The linked ask if a user proposes another ask.
      *
      * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Ask")
+     * @ORM\JoinColumn(onDelete="SET NULL")
      * @Groups({"read","threads","thread"})
      * @MaxDepth(1)
      */
@@ -226,7 +228,7 @@ class Ask
     /**
      * @var Ask|null The linked ask for return trips.
      *
-     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Ask", cascade={"persist", "remove"}, orphanRemoval=true)
+     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Ask", cascade={"persist"})
      * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"read","threads","thread"})
      * @MaxDepth(1)
@@ -236,7 +238,7 @@ class Ask
     /**
      * @var Ask|null Related ask for opposite role : driver ask if the current ask is as passenger, passenger ask if the current ask is as driver.
      * Used when the ask is created with an undefined role.
-     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Ask", cascade={"persist", "remove"}, orphanRemoval=true)
+     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Ask", cascade={"persist"})
      * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"read","threads","thread"})
      * @MaxDepth(1)
@@ -247,8 +249,8 @@ class Ask
      * @var Criteria The criteria applied to the ask.
      *
      * @Assert\NotBlank
-     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Criteria", cascade={"persist", "remove"}, orphanRemoval=true)
-     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
+     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Criteria", cascade={"persist"})
+     * @ORM\JoinColumn(nullable=false)
      * @Groups({"read","write"})
      * @MaxDepth(1)
      */
@@ -258,9 +260,8 @@ class Ask
      * @var ArrayCollection The waypoints of the ask.
      *
      * @Assert\NotBlank
-     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Waypoint", mappedBy="ask", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Waypoint", mappedBy="ask", cascade={"persist"})
      * @ORM\OrderBy({"position" = "ASC"})
-     * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"read","write","threads","thread"})
      * @MaxDepth(1)
      * ApiSubresource(maxDepth=1)
@@ -270,7 +271,7 @@ class Ask
     /**
      * @var ArrayCollection The ask history items linked with the ask.
      *
-     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\AskHistory", mappedBy="ask", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\AskHistory", mappedBy="ask", cascade={"persist"})
      * @ORM\OrderBy({"id" = "ASC"})
      * @Groups({"read","write"})
      * @MaxDepth(1)
@@ -308,15 +309,15 @@ class Ask
     /**
      * @var SolidaryAsk|null The SolidaryAsk possibly linked to this Ask
      *
-     * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\SolidaryAsk", mappedBy="ask", cascade={"persist","remove"})
+     * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\SolidaryAsk", mappedBy="ask", cascade={"persist"})
      * @Groups({"read"})
      */
     private $solidaryAsk;
 
     /**
-     * @var ArrayCollection|null A user may have many action logs.
+     * @var ArrayCollection|null An ask may have many carpool items.
      *
-     * @ORM\OneToMany(targetEntity="\App\Payment\Entity\CarpoolItem", mappedBy="ask", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Payment\Entity\CarpoolItem", mappedBy="ask", cascade={"persist"})
      * @ORM\OrderBy({"itemDate" = "ASC"})
      */
     private $carpoolItems;
@@ -354,7 +355,7 @@ class Ask
     /**
      * @var ArrayCollection The logs linked with the Ask.
      *
-     * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="ask", cascade={"remove"})
+     * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="ask")
      */
     private $logs;
 

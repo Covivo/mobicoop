@@ -123,6 +123,7 @@ class Need
      * @var Solidary Solidary if the need was created for a specific solidary record.
      *
      * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Solidary")
+     * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"readUser","readSolidary","writeSolidary"})
      * @MaxDepth(1)
      */

@@ -305,7 +305,7 @@ class Event
      *
      * @ApiProperty(push=true)
      * @ORM\ManyToOne(targetEntity="App\User\Entity\User")
-     * @ORM\JoinColumn(nullable=true)
+     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
      * @Groups({"readEvent","write"})
      * @MaxDepth(1)
      */
@@ -316,7 +316,7 @@ class Event
      *
      * @ApiProperty(push=true)
      * @ORM\ManyToOne(targetEntity="App\App\Entity\App")
-     * @ORM\JoinColumn(nullable=true)
+     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
      * @Groups({"readEvent","write"})
      * @MaxDepth(1)
      */
@@ -337,7 +337,7 @@ class Event
      *
      * @ApiProperty(push=true)
      * @Assert\NotBlank
-     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", inversedBy="event", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", inversedBy="event", cascade={"persist"}, orphanRemoval=true)
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Groups({"aRead","aWrite","readEvent","write"})
      * @MaxDepth(1)
@@ -347,7 +347,7 @@ class Event
     /**
      * @var ArrayCollection The images of the event.
      *
-     * @ORM\OneToMany(targetEntity="\App\Image\Entity\Image", mappedBy="event", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Image\Entity\Image", mappedBy="event", cascade={"persist"})
      * @ORM\OrderBy({"position" = "ASC"})
      * @Groups("readEvent")
      * @MaxDepth(1)
@@ -418,7 +418,7 @@ class Event
     /**
      * @var ArrayCollection The logs linked with the Event.
      *
-     * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="event", cascade={"remove"})
+     * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="event")
      */
     private $logs;
 
@@ -680,11 +680,17 @@ class Event
 
     public function getCreator(): string
     {
+        if (!$this->getUser()) {
+            return "";
+        }
         return ucfirst(strtolower($this->getUser()->getGivenName())) . " " . $this->getUser()->getShortFamilyName();
     }
 
-    public function getCreatorId(): int
+    public function getCreatorId(): ?int
     {
+        if (!$this->getUser()) {
+            return null;
+        }
         if (is_null($this->creatorId)) {
             return $this->getUser()->getId();
         }
@@ -698,6 +704,9 @@ class Event
 
     public function getCreatorAvatar(): ?string
     {
+        if (!$this->getUser()) {
+            return null;
+        }
         if (count($this->getUser()->getAvatars())>0) {
             return $this->getUser()->getAvatars()[0];
         }

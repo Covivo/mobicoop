@@ -58,10 +58,9 @@ class GamificationActionRule
     private $name;
 
     /**
-     * @var ArrayCollection|null A GamificationAction can be included in multiple SequenceItems
+     * @var ArrayCollection|null A GamificationActionRule can be included in multiple GamificationActions
      *
-     * @ORM\OneToMany(targetEntity="\App\Gamification\Entity\GamificationAction", mappedBy="gamificationActionRule", cascade={"persist","remove"})
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\OneToMany(targetEntity="\App\Gamification\Entity\GamificationAction", mappedBy="gamificationActionRule", cascade={"persist"})
      * @Groups({"readGamification","writeGamification"})
      * @MaxDepth(1)
      */

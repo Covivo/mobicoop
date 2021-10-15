@@ -197,7 +197,7 @@ class StructureProof
      *
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Structure", inversedBy="structureProofs")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Groups({"readSolidary","writeSolidary"})
      * @MaxDepth(1)
      */
@@ -222,7 +222,7 @@ class StructureProof
     /**
      * @var ArrayCollection|null The proofs using this structure proof.
      *
-     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Proof", mappedBy="structureProof", cascade={"remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Proof", mappedBy="structureProof")
      * @Groups({"writeSolidary"})
      * @MaxDepth(1)
      */

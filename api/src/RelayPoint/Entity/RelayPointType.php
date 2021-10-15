@@ -164,7 +164,7 @@ class RelayPointType
     /**
     * @var ArrayCollection|null The images of the relay point type.
     *
-    * @ORM\OneToMany(targetEntity="\App\Image\Entity\Image", mappedBy="relayPointType", cascade={"persist","remove"}, orphanRemoval=true)
+    * @ORM\OneToMany(targetEntity="\App\Image\Entity\Image", mappedBy="relayPointType", cascade={"persist"})
     * @ORM\OrderBy({"position" = "ASC"})
     * @Groups({"readRelayPoint","writeRelayPoint"})
     * @MaxDepth(1)
@@ -176,6 +176,7 @@ class RelayPointType
      * @var Icon|null The icon related to the relayPointType.
      *
      * @ORM\ManyToOne(targetEntity="\App\Image\Entity\Icon", inversedBy="relayPointTypes")
+     * @ORM\JoinColumn(onDelete="SET NULL")
      * @Groups({"readRelayPoint","writeRelayPoint"})
      * @MaxDepth(1)
      */
