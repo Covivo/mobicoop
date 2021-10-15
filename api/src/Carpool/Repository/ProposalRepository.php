@@ -1362,13 +1362,4 @@ class ProposalRepository
         ->setParameter("toDate", $now->format("Y-m-d 00:00:00"));
         return $query->getQuery()->getResult();
     }
-
-    public function getOutdatedProposals(\DateTime $date)
-    {
-        $query = $this->repository->createQueryBuilder('p')
-        ->leftJoin("p.matchingOffers", "mo")
-        ->leftJoin("mo.asks", "a")
-        ->where("p.private = 1 AND p.externalId IS NOT NULL AND (mo.id IS NULL OR a.id IS NULL) AND p.createdDate <= '" . $date->format('Y-m-d') . "'");
-        return $query->getQuery()->getResult();
-    }
 }

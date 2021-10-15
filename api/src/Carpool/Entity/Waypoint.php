@@ -123,7 +123,7 @@ class Waypoint
      * @var Address The address of the point.
      *
      * @Assert\NotBlank
-     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", inversedBy="waypoint", cascade={"persist"}, orphanRemoval=true)
+     * @ORM\ManyToOne(targetEntity="\App\Geography\Entity\Address", inversedBy="waypoint", cascade={"persist"})
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Groups({"read","results","write","threads","thread","readCommunity","readEvent"})
      * @MaxDepth(1)

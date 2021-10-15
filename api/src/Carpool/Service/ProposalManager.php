@@ -47,7 +47,6 @@ use App\Geography\Interfaces\GeorouterInterface;
 use App\Geography\Repository\DirectionRepository;
 use App\Geography\Service\GeoRouter;
 use App\Geography\Service\TerritoryManager;
-use App\Geography\Service\ZoneManager;
 use App\Service\FormatDataManager;
 use App\User\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -69,14 +68,15 @@ class ProposalManager
     const ROLE_PASSENGER = 2;
     const ROLE_BOTH = 3;
 
-    const CLEAN_PRIVATE_DELAY = 200;
+    const OUTDATED_SEARCHES_AFTER_DAYS = 30;
+    const CHECK_OUTDATED_SEARCHES_RUNNING_FILE = 'outdatedSearches.txt';
+    const CHECK_REMOVE_ORPHANS_RUNNING_FILE = 'removeOrphans.txt';
 
     private $entityManager;
     private $proposalMatcher;
     private $proposalRepository;
     private $matchingRepository;
     private $geoRouter;
-    private $zoneManager;
     private $directionRepository;
     private $territoryManager;
     private $userRepository;
@@ -98,7 +98,6 @@ class ProposalManager
      * @param ProposalRepository $proposalRepository
      * @param DirectionRepository $directionRepository
      * @param GeoRouter $geoRouter
-     * @param ZoneManager $zoneManager
      */
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -107,7 +106,6 @@ class ProposalManager
         MatchingRepository $matchingRepository,
         DirectionRepository $directionRepository,
         GeoRouter $geoRouter,
-        ZoneManager $zoneManager,
         TerritoryManager $territoryManager,
         LoggerInterface $logger,
         UserRepository $userRepository,
@@ -126,7 +124,6 @@ class ProposalManager
         $this->matchingRepository = $matchingRepository;
         $this->directionRepository = $directionRepository;
         $this->geoRouter = $geoRouter;
-        $this->zoneManager = $zoneManager;
         $this->territoryManager = $territoryManager;
         $this->logger = $logger;
         $this->userRepository = $userRepository;
@@ -397,8 +394,6 @@ class ProposalManager
                 // (problem : the route has no id, we should pass the whole route to check which route is chosen by the user...
                 //      => we would have to think of a way to simplify...)
                 $direction = $routes[0];
-                // creation of the crossed zones
-                //$direction = $this->zoneManager->createZonesForDirection($direction);
                 $direction->setAutoGeoJsonDetail();
                 $proposal->getCriteria()->setDirectionDriver($direction);
                 $proposal->getCriteria()->setMaxDetourDistance($direction->getDistance()*$this->proposalMatcher::getMaxDetourDistancePercent()/100);
@@ -424,8 +419,6 @@ class ProposalManager
                     $direction->setBboxMinLon($addresses[0]->getLongitude());
                 }
                 if ($routes) {
-                    // creation of the crossed zones
-                    //$direction = $this->zoneManager->createZonesForDirection($direction);
                     $direction->setAutoGeoJsonDetail();
                     $proposal->getCriteria()->setDirectionPassenger($direction);
                 }
@@ -776,7 +769,6 @@ class ProposalManager
                 // foreach ($criterias as $criteria) {
                 if (isset($owner[$criteria->getId()]['driver']) && isset($ownerRoutes[$owner[$criteria->getId()]['driver']])) {
                     $direction = $this->geoRouter->getRouter()->deserializeDirection($ownerRoutes[$owner[$criteria->getId()]['driver']][0]);
-                    //$direction = $this->zoneManager->createZonesForDirection($direction);
                     $direction->setSaveGeoJson(true);
                     $criteria->setDirectionDriver($direction);
                     $criteria->setMaxDetourDistance($direction->getDistance()*$this->proposalMatcher::getMaxDetourDistancePercent()/100);
@@ -784,7 +776,6 @@ class ProposalManager
                 }
                 if (isset($owner[$criteria->getId()]['passenger']) && isset($ownerRoutes[$owner[$criteria->getId()]['passenger']])) {
                     $direction = $this->geoRouter->getRouter()->deserializeDirection($ownerRoutes[$owner[$criteria->getId()]['passenger']][0]);
-                    //$direction = $this->zoneManager->createZonesForDirection($direction);
                     $direction->setSaveGeoJson(true);
                     $criteria->setDirectionPassenger($direction);
                 }
@@ -993,8 +984,6 @@ class ProposalManager
         }
     }
 
-
-
     // returns the min and max time from a time and a margin
     private static function getMinMaxTime($time, $margin)
     {
@@ -1016,17 +1005,179 @@ class ProposalManager
         ];
     }
 
-    public function clean()
+    public function removeOutdatedExternalSearches(?int $numberOfDays = null)
     {
+        if (file_exists($this->params['batchTemp'] . self::CHECK_OUTDATED_SEARCHES_RUNNING_FILE)) {
+            $this->logger->info("Remove outdated searches already running | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+            return false;
+        }
+
+        set_time_limit(3600);
+        ini_set('memory_limit', '8192M');
+
+        $fp = fopen($this->params['batchTemp'] . self::CHECK_OUTDATED_SEARCHES_RUNNING_FILE, 'w');
+        fwrite($fp, '+');
+        
+        if (is_null($numberOfDays)) {
+            $numberOfDays = self::OUTDATED_SEARCHES_AFTER_DAYS;
+        }
+
         $date = new \DateTime();
-        $date->sub(new \DateInterval('P' . self::CLEAN_PRIVATE_DELAY . 'D'));
+        $date->sub(new \DateInterval('P' . $numberOfDays . 'D'));
 
         $this->entityManager->getConnection()->getConfiguration()->setSQLLogger(null);
 
-        $outdatedProposals = $this->proposalRepository->getOutdatedProposals($date);
+        $this->entityManager->getConnection()->prepare(
+            "CREATE TEMPORARY TABLE outdated_proposals (
+            id int NOT NULL,
+            PRIMARY KEY(id));
+        "
+        )->execute() &&
+        $this->entityManager->getConnection()->prepare(
+            "INSERT INTO outdated_proposals (id)
+            (SELECT DISTINCT proposal.id FROM proposal
+            LEFT JOIN matching m1 ON m1.proposal_offer_id = proposal.id
+            LEFT JOIN matching m2 ON m2.proposal_request_id = proposal.id
+            LEFT JOIN ask a1 ON a1.matching_id = m1.id
+            LEFT JOIN ask a2 ON a2.matching_id = m2.id
+            WHERE
+            proposal.private = 1 AND 
+            proposal.external_id IS NOT NULL AND 
+            proposal.created_date <= '" . $date->format('Y-m-d') . "' AND
+            (m1.id IS NULL OR a1.id IS NULL) AND
+            (m2.id IS NULL OR a2.id IS NULL));
+            "
+        )->execute() &&
+        $this->entityManager->getConnection()->prepare("DELETE FROM proposal WHERE id in (select id from outdated_proposals);")->execute() &&
+        $this->entityManager->getConnection()->prepare("DROP TABLE outdated_proposals;")->execute();
 
-        foreach ($outdatedProposals as $outdatedProposal) {
-            $this->entityManager->remove($outdatedProposal);
+        fclose($fp);
+        unlink($this->params['batchTemp'] . self::CHECK_OUTDATED_SEARCHES_RUNNING_FILE);
+
+        return $this->removeOrphans();
+    }
+
+    public function removeOrphans()
+    {
+        if (file_exists($this->params['batchTemp'] . self::CHECK_REMOVE_ORPHANS_RUNNING_FILE)) {
+            $this->logger->info("Remove orphans already running | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+            return false;
         }
+        
+        $fp = fopen($this->params['batchTemp'] . self::CHECK_REMOVE_ORPHANS_RUNNING_FILE, 'w');
+        fwrite($fp, '+');
+
+        $result = $this->removeOrphanCriteria() && $this->removeOrphanAddresses() && $this->removeOrphanDirections();
+
+        fclose($fp);
+        unlink($this->params['batchTemp'] . self::CHECK_REMOVE_ORPHANS_RUNNING_FILE);
+
+        return $result;
+    }
+
+    private function removeOrphanCriteria()
+    {
+        return
+            $this->entityManager->getConnection()->prepare(
+                "CREATE TEMPORARY TABLE outdated_criteria (
+                id int NOT NULL,
+                PRIMARY KEY(id));
+            "
+            )->execute() &&
+        $this->entityManager->getConnection()->prepare(
+            "INSERT INTO outdated_criteria (id)
+            (SELECT criteria.id FROM criteria 
+            LEFT JOIN ask ON ask.criteria_id = criteria.id
+            LEFT JOIN matching ON matching.criteria_id = criteria.id
+            LEFT JOIN proposal ON proposal.criteria_id = criteria.id
+            LEFT JOIN solidary_ask ON solidary_ask.criteria_id = criteria.id
+            LEFT JOIN solidary_matching ON solidary_matching.criteria_id = criteria.id
+            WHERE
+            ask.criteria_id IS NULL AND
+            matching.criteria_id IS NULL AND
+            proposal.criteria_id IS NULL AND
+            solidary_ask.criteria_id IS NULL AND
+            solidary_matching.criteria_id IS NULL);
+            "
+        )->execute() &&
+        $this->entityManager->getConnection()->prepare("DELETE FROM criteria WHERE id in (select id from outdated_criteria);")->execute() &&
+        $this->entityManager->getConnection()->prepare("DROP TABLE outdated_criteria;")->execute();
+    }
+
+    private function removeOrphanAddresses()
+    {
+        return
+            $this->entityManager->getConnection()->prepare(
+                "CREATE TEMPORARY TABLE outdated_address (
+                id int NOT NULL,
+                PRIMARY KEY(id));
+            "
+            )->execute() &&
+            $this->entityManager->getConnection()->prepare(
+                "INSERT INTO outdated_address (id)
+                (SELECT address.id FROM address 
+                LEFT JOIN user ON address.user_id = user.id 
+                LEFT JOIN waypoint ON waypoint.address_id = address.id
+                LEFT JOIN community ON community.address_id = address.id
+                LEFT JOIN event ON event.address_id = address.id
+                LEFT JOIN relay_point ON relay_point.address_id = address.id
+                LEFT JOIN mass_person mp1 ON mp1.personal_address_id = address.id
+                LEFT JOIN mass_person mp2 ON mp2.work_address_id = address.id
+                LEFT JOIN carpool_proof cp1 ON cp1.pick_up_passenger_address_id = address.id
+                LEFT JOIN carpool_proof cp2 ON cp2.pick_up_driver_address_id = address.id
+                LEFT JOIN carpool_proof cp3 ON cp3.drop_off_passenger_address_id = address.id
+                LEFT JOIN carpool_proof cp4 ON cp4.drop_off_driver_address_id = address.id
+                LEFT JOIN carpool_proof cp5 ON cp5.origin_driver_address_id = address.id
+                LEFT JOIN carpool_proof cp6 ON cp6.destination_driver_address_id = address.id
+                WHERE 
+                    user.id IS NULL AND 
+                    waypoint.id IS NULL AND
+                    community.id IS NULL AND
+                    event.id IS NULL AND
+                    relay_point.id IS NULL AND
+                    mp1.personal_address_id IS NULL AND
+                    mp2.work_address_id IS NULL AND
+                    cp1.pick_up_passenger_address_id IS NULL AND
+                    cp2.pick_up_driver_address_id IS NULL AND
+                    cp3.drop_off_passenger_address_id IS NULL AND
+                    cp4.drop_off_driver_address_id IS NULL AND
+                    cp5.origin_driver_address_id IS NULL AND
+                    cp6.destination_driver_address_id IS NULL);
+                "
+            )->execute() &&
+            $this->entityManager->getConnection()->prepare("DELETE FROM address WHERE id in (SELECT id FROM outdated_address);")->execute() &&
+            $this->entityManager->getConnection()->prepare("DROP TABLE outdated_address;")->execute();
+    }
+
+    private function removeOrphanDirections()
+    {
+        return
+            $this->entityManager->getConnection()->prepare(
+                "CREATE TEMPORARY TABLE outdated_direction (
+                id int NOT NULL,
+                PRIMARY KEY(id));
+            "
+            )->execute() &&
+            $this->entityManager->getConnection()->prepare(
+                "INSERT INTO outdated_direction (id)
+                (SELECT direction.id FROM direction 
+                LEFT JOIN criteria c1 ON c1.direction_driver_id = direction.id
+                LEFT JOIN criteria c2 ON c2.direction_passenger_id = direction.id
+                LEFT JOIN position ON position.direction_id = direction.id
+                LEFT JOIN carpool_proof ON carpool_proof.direction_id = direction.id
+                WHERE 
+                c1.direction_driver_id IS NULL AND
+                c2.direction_passenger_id IS NULL AND
+                position.direction_id IS NULL AND
+                carpool_proof.direction_id IS NULL);
+                "
+            )->execute() &&
+            $this->entityManager->getConnection()->prepare("DELETE FROM direction WHERE id in (SELECT id FROM outdated_direction);")->execute() &&
+            $this->entityManager->getConnection()->prepare("DROP TABLE outdated_direction;")->execute();
+    }
+
+    public function optimizeCarpoolRelatedTables()
+    {
+        return  $this->entityManager->getConnection()->prepare("OPTIMIZE TABLE proposal, criteria, waypoint, address, address_territory, direction, direction_territory;")->execute();
     }
 }

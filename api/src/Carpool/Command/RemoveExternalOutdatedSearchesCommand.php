@@ -24,19 +24,18 @@
 namespace App\Carpool\Command;
 
 use App\Carpool\Service\ProposalManager;
-use DateTime;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Clean carpools.
  * This command deletes outdated external carpool searches.
  *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
  */
 
-class CarpoolCleanCommand extends Command
+class RemoveExternalOutdatedSearchesCommand extends Command
 {
     private $proposalManager;
     
@@ -50,14 +49,15 @@ class CarpoolCleanCommand extends Command
     protected function configure()
     {
         $this
-        ->setName('app:carpool:clean')
-        ->setDescription('Clean proposals.')
+        ->setName('app:carpool:remove-external-outdated-searches')
+        ->addArgument('delay', InputArgument::OPTIONAL, 'The number of days to consider a search outdated')
+        ->setDescription('Deletes outdated external carpool searches.')
         ->setHelp('Deletes outdated external carpool searches.')
         ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        return $this->proposalManager->clean();
+        return (int)!$this->proposalManager->removeOutdatedExternalSearches((int)$input->getArgument('delay'));
     }
 }

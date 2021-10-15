@@ -365,12 +365,12 @@ class Proposal
     private $event;
 
     /**
-     * @var Position The last position given for dynamic carpooling.
+     * @var ArrayCollection The last position given for dynamic carpooling (ManyToOne instead of OneToOne for performance reasons => should be 'position' but handled as an ArrayCollection).
      *
-     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Position", mappedBy="proposal", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Position", mappedBy="proposal", cascade={"persist"})
      * @Groups({"read","results","write","thread"})
      */
-    private $position;
+    private $positions;
 
     /**
      * @var string The external origin of this proposal (i.e. for an RDEX request we store the public api key)
@@ -389,11 +389,11 @@ class Proposal
     private $subject;
 
     /**
-     * @var Solidary The solidary linked with this proposal
+     * @var ArrayCollection The solidary linked with this proposal (ManyToOne instead of OneToOne for performance reasons => should be 'solidary' but handled as an ArrayCollection).
      *
-     * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\Solidary", mappedBy="proposal")
+     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Solidary", mappedBy="proposal")
      */
-    private $solidary;
+    private $solidaries;
 
     /**
      * @var bool Use search time or not
@@ -420,6 +420,8 @@ class Proposal
         $this->matchingRequests = new ArrayCollection();
         $this->individualStops = new ArrayCollection();
         $this->notifieds = new ArrayCollection();
+        $this->positions = new ArrayCollection();
+        $this->solidaries = new ArrayCollection();
         $this->setPrivate(false);
         $this->setPaused(false);
         $this->setExposed(false);
@@ -435,6 +437,8 @@ class Proposal
         $this->matchingRequests = new ArrayCollection();
         $this->individualStops = new ArrayCollection();
         $this->notifieds = new ArrayCollection();
+        $this->positions = new ArrayCollection();
+        $this->solidaries = new ArrayCollection();
         $this->results = [];
         $this->setProposalLinked(null);
     }
@@ -898,16 +902,34 @@ class Proposal
 
     public function getPosition(): ?Position
     {
-        return $this->position;
+        return count($this->positions)>0 ? $this->positions->getValues()[0] : null;
     }
 
-    public function setPosition(Position $position): self
+    public function getPositions()
     {
-        if ($position->getProposal() !== $this) {
+        return $this->positions->getValues();
+    }
+
+    public function addPosition(Position $position): self
+    {
+        if (!$this->position->contains($position)) {
+            $this->positions[] = $position;
             $position->setProposal($this);
         }
-        $this->position = $position;
-
+        
+        return $this;
+    }
+    
+    public function removePosition(Position $position): self
+    {
+        if ($this->positions->contains($position)) {
+            $this->positions->removeElement($position);
+            // set the owning side to null (unless already changed)
+            if ($position->getProposal() === $this) {
+                $position->setProposal(null);
+            }
+        }
+        
         return $this;
     }
         
@@ -1029,13 +1051,34 @@ class Proposal
 
     public function getSolidary(): ?Solidary
     {
-        return $this->solidary;
+        return count($this->solidaries)>0 ? $this->solidaries->getValues()[0] : null;
     }
 
-    public function setSolidary(Solidary $solidary): self
+    public function getSolidaries()
     {
-        $this->solidary = $solidary;
+        return $this->solidaries->getValues();
+    }
 
+    public function addSolidary(Solidary $solidary): self
+    {
+        if (!$this->solidary->contains($solidary)) {
+            $this->solidaries[] = $solidary;
+            $solidary->setProposal($this);
+        }
+        
+        return $this;
+    }
+    
+    public function removesolidary(solidary $solidary): self
+    {
+        if ($this->solidaries->contains($solidary)) {
+            $this->solidaries->removeElement($solidary);
+            // set the owning side to null (unless already changed)
+            if ($solidary->getProposal() === $this) {
+                $solidary->setProposal(null);
+            }
+        }
+        
         return $this;
     }
 }

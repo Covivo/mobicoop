@@ -47,9 +47,9 @@ class Position
     private $id;
 
     /**
-     * @var Proposal|null The proposal related to the position.
+     * @var Proposal The proposal related to the position.
      *
-     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Proposal")
+     * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal", inversedBy="positions")
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      */
     private $proposal;
