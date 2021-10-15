@@ -239,11 +239,7 @@ class SolidaryVolunteerManager
         $this->setFields($fields);
 
         $this->updateAvailabilities();
-
-        // check if a new validation has been made
-        if (array_key_exists('validation', $this->getFields())) {
-            return $this->treatValidation();
-        }
+        $this->treatValidation();
 
         // persist the solidary volunteer
         $this->entityManager->persist($this->getSolidaryUser()->getUser());
@@ -252,39 +248,30 @@ class SolidaryVolunteerManager
         return $this->getSolidaryVolunteer($this->getSolidaryUser()->getId());
     }
 
-    /**
-     * Update the availabilities of a Volunteer
-     */
     private function updateAvailabilities()
     {
         $this->updateDaysAvailabilities();
         $this->updateTimesRangeAvailabilities();
     }
 
-    /**
-     * Update the days availabilities of a Volunteer
-     */
     private function updateDaysAvailabilities()
     {
         foreach (SolidaryVolunteer::DAYS_SLOTS as $slot) {
             if (array_key_exists($slot, $this->getFields())) {
                 $setter = "set".ucFirst($slot);
-                if (method_exists($this->getSolidaryUser(), "set".ucFirst($slot))) {
+                if (method_exists($this->getSolidaryUser(), $setter)) {
                     $this->getSolidaryUser()->$setter($this->getFields()[$slot]);
                 }
             }
         }
     }
 
-    /**
-     * Update the time range availabilities of a Volunteer
-     */
     private function updateTimesRangeAvailabilities()
     {
         foreach (SolidaryVolunteer::TIMES_SLOTS as $slot) {
             if (array_key_exists($slot, $this->getFields())) {
                 $setter = "set".ucFirst($slot);
-                if (method_exists($this->getSolidaryUser(), "set".ucFirst($slot))) {
+                if (method_exists($this->getSolidaryUser(), $setter)) {
                     $datetime = new \DateTime($this->getFields()[$slot]);
                     if (!$datetime) {
                         throw new \LogicException("Datetime invalid");
@@ -295,13 +282,12 @@ class SolidaryVolunteerManager
         }
     }
 
-    /**
-     * Treat a validation for a solidary volunteer.
-     *
-     * @return SolidaryVolunteer  The solidaryVolunteer updated
-     */
     private function treatValidation()
     {
+        if (!array_key_exists('validation', $this->getFields())) {
+            return;
+        }
+
         if (!array_key_exists('validate', $this->getFields()['validation'])) {
             throw new SolidaryException(SolidaryException::VOLUNTEER_VALIDATION_VALUE_REQUIRED);
         }
@@ -319,8 +305,6 @@ class SolidaryVolunteerManager
         // dispatch the event
         $event = new VolunteerStatusChangedEvent($solidaryUserStructure);
         $this->eventDispatcher->dispatch($event, VolunteerStatusChangedEvent::NAME);
-
-        return $this->getSolidaryVolunteer($this->getSolidaryUser()->getId());
     }
 
     /** Getters Setters */
