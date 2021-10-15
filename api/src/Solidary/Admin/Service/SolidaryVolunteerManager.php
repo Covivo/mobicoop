@@ -81,6 +81,24 @@ class SolidaryVolunteerManager
         $this->fileFolder = $fileFolder;
     }
 
+    private function getSolidaryUser(): SolidaryUser
+    {
+        return $this->solidaryUser;
+    }
+    private function setSolidaryUser(SolidaryUser $solidaryUser)
+    {
+        $this->solidaryUser = $solidaryUser;
+    }
+
+    private function getFields(): array
+    {
+        return $this->fields;
+    }
+    private function setFields(array $fields)
+    {
+        $this->fields = $fields;
+    }
+
     /**
      * Get Solidary Volunteer records (transform SolidaryUsers to SolidaryVolunteers)
      *
@@ -305,25 +323,5 @@ class SolidaryVolunteerManager
         // dispatch the event
         $event = new VolunteerStatusChangedEvent($solidaryUserStructure);
         $this->eventDispatcher->dispatch($event, VolunteerStatusChangedEvent::NAME);
-    }
-
-    /** Getters Setters */
-
-    private function getSolidaryUser(): SolidaryUser
-    {
-        return $this->solidaryUser;
-    }
-    private function setSolidaryUser(SolidaryUser $solidaryUser)
-    {
-        $this->solidaryUser = $solidaryUser;
-    }
-
-    private function getFields(): array
-    {
-        return $this->fields;
-    }
-    private function setFields(array $fields)
-    {
-        $this->fields = $fields;
     }
 }
