@@ -365,7 +365,7 @@ class Proposal
     private $event;
 
     /**
-     * @var ArrayCollection The last position given for dynamic carpooling (ManyToOne instead of OneToOne for performance reasons => should be 'position' but handled as an ArrayCollection).
+     * @var ArrayCollection The last position given for dynamic carpooling (OneToMany instead of OneToOne for performance reasons => should be 'position' but handled as an ArrayCollection).
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Position", mappedBy="proposal", cascade={"persist"})
      * @Groups({"read","results","write","thread"})
@@ -389,7 +389,7 @@ class Proposal
     private $subject;
 
     /**
-     * @var ArrayCollection The solidary linked with this proposal (ManyToOne instead of OneToOne for performance reasons => should be 'solidary' but handled as an ArrayCollection).
+     * @var ArrayCollection The solidary linked with this proposal (OneToMany instead of OneToOne for performance reasons => should be 'solidary' but handled as an ArrayCollection).
      *
      * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Solidary", mappedBy="proposal")
      */
