@@ -195,18 +195,11 @@ class EventController extends AbstractController
                     $date = $date->format('Y-m-d');
                 }
                 $currentAd = [
-                    "frequency"=>($ad["frequency"]==Ad::FREQUENCY_PUNCTUAL) ? 'puntual' : 'regular',
+                    "frequency"=>($ad["frequency"]==Ad::FREQUENCY_PUNCTUAL) ? 'punctual' : 'regular',
                     "carpoolerFirstName" => $ad["user"]["givenName"],
                     "carpoolerLastName" => $ad["user"]["shortFamilyName"],
                     "waypoints"=>[]
                 ];
-                foreach ($ad["outwardWaypoints"] as $waypoint) {
-                    $currentAd["waypoints"][] = [
-                        "title"=>$waypoint["address"]["addressLocality"],
-                        "destination"=>$waypoint['destination'],
-                        "latLng"=>["lat"=>$waypoint["address"]["latitude"],"lon"=>$waypoint["address"]["longitude"]]
-                    ];
-                }
                 foreach ($ad["outwardWaypoints"] as $waypoint) {
                     if ($waypoint['position'] === 0) {
                         $origin = $waypoint["address"];
