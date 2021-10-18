@@ -1012,6 +1012,7 @@ class ProposalManager
             return false;
         }
 
+        $this->logger->info("Start removing outdated external searches | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         set_time_limit(3600);
         ini_set('memory_limit', '8192M');
 
@@ -1054,6 +1055,8 @@ class ProposalManager
         fclose($fp);
         unlink($this->params['batchTemp'] . self::CHECK_OUTDATED_SEARCHES_RUNNING_FILE);
 
+        $this->logger->info("End removing outdated external searches | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+
         return $this->removeOrphans();
     }
 
@@ -1064,6 +1067,8 @@ class ProposalManager
             return false;
         }
         
+        $this->logger->info("Start removing carpool orphans | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+
         $fp = fopen($this->params['batchTemp'] . self::CHECK_REMOVE_ORPHANS_RUNNING_FILE, 'w');
         fwrite($fp, '+');
 
@@ -1071,6 +1076,8 @@ class ProposalManager
 
         fclose($fp);
         unlink($this->params['batchTemp'] . self::CHECK_REMOVE_ORPHANS_RUNNING_FILE);
+
+        $this->logger->info("End removing carpool orphans | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
         return $result;
     }
@@ -1178,6 +1185,9 @@ class ProposalManager
 
     public function optimizeCarpoolRelatedTables()
     {
-        return  $this->entityManager->getConnection()->prepare("OPTIMIZE TABLE proposal, criteria, waypoint, address, address_territory, direction, direction_territory;")->execute();
+        $this->logger->info("Start optimizing carpool related tables | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        $result = $this->entityManager->getConnection()->prepare("OPTIMIZE TABLE proposal, criteria, matching, waypoint, address, address_territory, direction, direction_territory;")->execute();
+        $this->logger->info("End optimizing carpool related tables | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        return $result;
     }
 }

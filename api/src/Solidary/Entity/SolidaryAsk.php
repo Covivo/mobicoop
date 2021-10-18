@@ -159,6 +159,7 @@ class SolidaryAsk
      * @var Criteria|null Criteria of this SolidaryAsk if the solution is a transport
      *
      * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Criteria", inversedBy="solidaryAsk", cascade={"persist"})
+     * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $criteria;
