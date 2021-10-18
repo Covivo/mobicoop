@@ -1359,9 +1359,11 @@ class ProposalRepository
         ->where("com.id = :communityId")
         ->andWhere("p.private = 0")
         ->andWhere("p.type = 1 or p.type = 2")
-        ->andWhere("c.toDate > :toDate")
+        ->andWhere("(c.frequency = :punctual AND c.fromDate is not null AND c.fromDate >= :date) OR (c.frequency = :regular AND c.toDate is not null and c.toDate >= :date)")
         ->setParameter("communityId", $community->getId())
-        ->setParameter("toDate", $now->format("Y-m-d 00:00:00"));
+        ->setParameter('punctual', Criteria::FREQUENCY_PUNCTUAL)
+        ->setParameter('regular', Criteria::FREQUENCY_REGULAR)
+        ->setParameter("date", $now->format("Y-m-d 00:00:00"));
         return $query->getQuery()->getResult();
     }
     
