@@ -1346,9 +1346,6 @@ class ProposalRepository
         return $query->getQuery()->getSingleScalarResult();
     }
 
-    /**
-     * Find the public proposals linked to a Community
-     */
     public function findCommunityAds(Community $community)
     {
         $now = new \DateTime("now");
