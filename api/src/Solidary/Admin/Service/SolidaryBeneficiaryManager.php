@@ -37,6 +37,8 @@ use App\Solidary\Entity\Proof;
 use App\Solidary\Entity\Structure;
 use App\Solidary\Repository\SolidaryUserRepository;
 use App\Solidary\Repository\SolidaryUserStructureRepository;
+use App\Solidary\Admin\Event\BeneficiaryStatusChangedEvent;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use DateTime;
 
 /**
@@ -50,6 +52,7 @@ class SolidaryBeneficiaryManager
     private $solidaryUserRepository;
     private $solidaryUserStructureRepository;
     private $formatDataManager;
+    private $eventDispatcher;
     private $fileFolder;
     
     /**
@@ -62,12 +65,14 @@ class SolidaryBeneficiaryManager
         SolidaryUserRepository $solidaryUserRepository,
         SolidaryUserStructureRepository $solidaryUserStructureRepository,
         FormatDataManager $formatDataManager,
+        EventDispatcherInterface $eventDispatcher,
         string $fileFolder
     ) {
         $this->entityManager = $entityManager;
         $this->solidaryUserRepository = $solidaryUserRepository;
         $this->solidaryUserStructureRepository = $solidaryUserStructureRepository;
         $this->formatDataManager = $formatDataManager;
+        $this->eventDispatcher = $eventDispatcher;
         $this->fileFolder = $fileFolder;
     }
 
@@ -401,6 +406,10 @@ class SolidaryBeneficiaryManager
         $solidaryUserStructure->setStatus($validation['validate'] === true ? SolidaryUserStructure::STATUS_ACCEPTED : SolidaryUserStructure::STATUS_REFUSED);
         $this->entityManager->persist($solidaryUserStructure);
         $this->entityManager->flush();
+
+        // dispatch the event
+        $event = new BeneficiaryStatusChangedEvent($solidaryUserStructure);
+        $this->eventDispatcher->dispatch($event, BeneficiaryStatusChangedEvent::NAME);
 
         return $this->getSolidaryBeneficiary($solidaryUser->getId());
     }
