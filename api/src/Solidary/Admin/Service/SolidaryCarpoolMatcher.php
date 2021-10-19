@@ -43,7 +43,13 @@ class SolidaryCarpoolMatcher
         $this->solidaryManager = $solidaryManager;
     }
 
-   
+    
+    /**
+     * Create all solidaryMatchings of a given solidaryUserStructure
+     *
+     * @param SolidaryUserStructure $solidaryUserStructure
+     * @return void
+     */
     public function createSolidaryMatching(SolidaryUserStructure $solidaryUserStructure)
     {
         foreach ($solidaryUserStructure->getSolidaries() as $solidary) {
