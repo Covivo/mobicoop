@@ -24,31 +24,23 @@
 namespace App\Carpool\Service;
 
 use App\Carpool\Entity\Ask;
-use App\Carpool\Entity\AskHistory;
 use App\Carpool\Entity\Criteria;
 use App\Carpool\Entity\Proposal;
-use App\Carpool\Entity\Waypoint;
 use App\Carpool\Event\AskAdDeletedEvent;
 use App\Carpool\Event\DriverAskAdDeletedEvent;
 use App\Carpool\Event\DriverAskAdDeletedUrgentEvent;
 use App\Carpool\Event\MatchingNewEvent;
 use App\Carpool\Event\PassengerAskAdDeletedEvent;
 use App\Carpool\Event\PassengerAskAdDeletedUrgentEvent;
-use App\Carpool\Event\ProposalPostedEvent;
 use App\Carpool\Repository\CriteriaRepository;
 use App\Carpool\Repository\MatchingRepository;
 use App\Carpool\Repository\ProposalRepository;
-use App\Communication\Entity\Message;
 use App\Communication\Service\InternalMessageManager;
 use App\DataProvider\Entity\Response;
 use App\Geography\Entity\Address;
-use App\Geography\Entity\Zone;
 use App\Geography\Interfaces\GeorouterInterface;
-use App\Geography\Repository\DirectionRepository;
 use App\Geography\Service\GeoRouter;
-use App\Geography\Service\TerritoryManager;
 use App\Service\FormatDataManager;
-use App\User\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -83,9 +75,6 @@ class ProposalManager
     private $proposalRepository;
     private $matchingRepository;
     private $geoRouter;
-    private $directionRepository;
-    private $territoryManager;
-    private $userRepository;
     private $logger;
     private $eventDispatcher;
     private $askManager;
@@ -98,23 +87,14 @@ class ProposalManager
 
     /**
      * Constructor.
-     *
-     * @param EntityManagerInterface $entityManager
-     * @param ProposalMatcher $proposalMatcher
-     * @param ProposalRepository $proposalRepository
-     * @param DirectionRepository $directionRepository
-     * @param GeoRouter $geoRouter
      */
     public function __construct(
         EntityManagerInterface $entityManager,
         ProposalMatcher $proposalMatcher,
         ProposalRepository $proposalRepository,
         MatchingRepository $matchingRepository,
-        DirectionRepository $directionRepository,
         GeoRouter $geoRouter,
-        TerritoryManager $territoryManager,
         LoggerInterface $logger,
-        UserRepository $userRepository,
         EventDispatcherInterface $dispatcher,
         AskManager $askManager,
         ResultManager $resultManager,
@@ -128,11 +108,8 @@ class ProposalManager
         $this->proposalMatcher = $proposalMatcher;
         $this->proposalRepository = $proposalRepository;
         $this->matchingRepository = $matchingRepository;
-        $this->directionRepository = $directionRepository;
         $this->geoRouter = $geoRouter;
-        $this->territoryManager = $territoryManager;
         $this->logger = $logger;
-        $this->userRepository = $userRepository;
         $this->eventDispatcher = $dispatcher;
         $this->askManager = $askManager;
         $this->resultManager = $resultManager;
