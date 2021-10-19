@@ -591,7 +591,7 @@ class BasicFixturesManager
                 $image->setBadgeIcon($owner);
                 $toDirectory = "badges";
             } else {
-                echo "v not found for image ".$tab[0];
+                echo "Badge not found for image ".$tab[0];
             }
         }
         if ($tab[8] !== '') {
