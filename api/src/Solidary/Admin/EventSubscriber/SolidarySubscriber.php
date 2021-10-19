@@ -25,10 +25,10 @@ namespace App\Solidary\Admin\EventSubscriber;
 
 use App\Solidary\Admin\Event\BeneficiaryStatusChangedEvent;
 use App\Solidary\Admin\Service\SolidaryTransportMatcher;
+use App\Solidary\Admin\Service\SolidaryCarpoolMatcher;
 use App\Solidary\Entity\SolidaryUserStructure;
 use App\Solidary\Admin\Event\VolunteerStatusChangedEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use App\Solidary\Admin\Service\SolidaryManager;
 
 /**
  * Subscriber for solidary related events
@@ -36,12 +36,12 @@ use App\Solidary\Admin\Service\SolidaryManager;
 class SolidarySubscriber implements EventSubscriberInterface
 {
     private $solidaryTransportMatcher;
-    private $solidaryManager;
+    private $solidaryCarpoolMatcher;
 
-    public function __construct(SolidaryTransportMatcher $solidaryTransportMatcher, SolidaryManager $solidaryManager)
+    public function __construct(SolidaryTransportMatcher $solidaryTransportMatcher, SolidaryCarpoolMatcher $solidaryCarpoolMatcher)
     {
         $this->solidaryTransportMatcher = $solidaryTransportMatcher;
-        $this->solidaryManager = $solidaryManager;
+        $this->solidaryCarpoolMatcher = $solidaryCarpoolMatcher;
     }
     
     public static function getSubscribedEvents()
@@ -74,12 +74,7 @@ class SolidarySubscriber implements EventSubscriberInterface
     public function onBeneficiaryStatusChanged(BeneficiaryStatusChangedEvent $event)
     {
         if ($event->getSolidaryUserStructure()->getStatus() == SolidaryUserStructure::STATUS_ACCEPTED) {
-            foreach ($event->getSolidaryUserStructure()->getSolidaries() as $solidary) {
-                $solidary->getProposal()->getMatchingOffers();
-                foreach ($solidary->getProposal()->getMatchingOffers() as $matching) {
-                    $this->solidaryManager->createSolidaryMatchingFromCarpoolMatching($matching, $matching->getProposalRequest()->getSolidary());
-                }
-            }
+            $this->solidaryCarpoolMatcher->createSolidaryMatching($event->getSolidaryUserStructure());
             $this->solidaryTransportMatcher->matchForStructure($event->getSolidaryUserStructure()->getStructure());
         }
     }
