@@ -69,6 +69,12 @@ class ProposalManager
     const ROLE_BOTH = 3;
 
     const OUTDATED_SEARCHES_AFTER_DAYS = 30;
+    const OUTDATED_SEARCHES_EXECUTION_LIMIT_IN_SECONDS = 7200;
+    const REMOVE_ORPHANS_EXECUTION_LIMIT_IN_SECONDS = 21600;
+    const OPTIMIZE_EXECUTION_LIMIT_IN_SECONDS = 21600;
+    const OUTDATED_SEARCHES_MEMORY_LIMIT_IN_MO = 8192;
+    const REMOVE_ORPHANS_MEMORY_LIMIT_IN_MO = 8192;
+    const OPTIMIZE_MEMORY_LIMIT_IN_MO = 8192;
     const CHECK_OUTDATED_SEARCHES_RUNNING_FILE = 'outdatedSearches.txt';
     const CHECK_REMOVE_ORPHANS_RUNNING_FILE = 'removeOrphans.txt';
 
@@ -1013,8 +1019,8 @@ class ProposalManager
         }
 
         $this->logger->info("Start removing outdated external searches | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-        set_time_limit(3600);
-        ini_set('memory_limit', '8192M');
+        set_time_limit(self::OUTDATED_SEARCHES_EXECUTION_LIMIT_IN_SECONDS);
+        ini_set('memory_limit', self::OUTDATED_SEARCHES_MEMORY_LIMIT_IN_MO . 'M');
 
         $fp = fopen($this->params['batchTemp'] . self::CHECK_OUTDATED_SEARCHES_RUNNING_FILE, 'w');
         fwrite($fp, '+');
@@ -1068,6 +1074,8 @@ class ProposalManager
         }
         
         $this->logger->info("Start removing carpool orphans | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        set_time_limit(self::REMOVE_ORPHANS_EXECUTION_LIMIT_IN_SECONDS);
+        ini_set('memory_limit', self::REMOVE_ORPHANS_MEMORY_LIMIT_IN_MO . 'M');
 
         $fp = fopen($this->params['batchTemp'] . self::CHECK_REMOVE_ORPHANS_RUNNING_FILE, 'w');
         fwrite($fp, '+');
@@ -1186,6 +1194,8 @@ class ProposalManager
     public function optimizeCarpoolRelatedTables()
     {
         $this->logger->info("Start optimizing carpool related tables | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        set_time_limit(self::OPTIMIZE_EXECUTION_LIMIT_IN_SECONDS);
+        ini_set('memory_limit', self::OPTIMIZE_MEMORY_LIMIT_IN_MO . 'M');
         $result = $this->entityManager->getConnection()->prepare("OPTIMIZE TABLE proposal, criteria, matching, waypoint, address, address_territory, direction, direction_territory;")->execute();
         $this->logger->info("End optimizing carpool related tables | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         return $result;
