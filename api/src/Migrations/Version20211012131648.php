@@ -135,6 +135,11 @@ final class Version20211012131648 extends AbstractMigration
             (editorial_id is not null and editorial_id not in (select id from editorial)) or
             (badge_decorated_icon_id is not null and badge_decorated_icon_id not in (select id from badge));
         ');
+        $this->addSql('update mass set community_id = null where community_id is not null and community_id not in (select id from community);');
+        $this->addSql('update mass_person set user_id = null where user_id is not null and user_id not in (select id from user);');
+        $this->addSql('update mass_person set proposal_id = null where proposal_id is not null and proposal_id not in (select id from proposal);');
+        $this->addSql('delete from reward where user_id is not null and user_id not in (select id from user);');
+        $this->addSql('delete from reward_step where user_id is not null and user_id not in (select id from user);');
 
         $this->addSql('ALTER TABLE diary DROP FOREIGN KEY FK_917BEDE29D32F035');
         $this->addSql('ALTER TABLE diary DROP FOREIGN KEY FK_917BEDE2A76ED395');

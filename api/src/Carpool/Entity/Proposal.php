@@ -1061,7 +1061,7 @@ class Proposal
 
     public function addSolidary(Solidary $solidary): self
     {
-        if (!$this->solidary->contains($solidary)) {
+        if (!$this->solidaries->contains($solidary)) {
             $this->solidaries[] = $solidary;
             $solidary->setProposal($this);
         }
