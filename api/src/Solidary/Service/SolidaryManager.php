@@ -456,9 +456,6 @@ class SolidaryManager
             
             $this->solidaryTransportMatcher->match($solidary);
 
-            $this->entityManager->persist($solidary);
-            $this->entityManager->flush();
-
             // We trigger the event
             $event = new SolidaryCreatedEvent($user ? $user : $solidary->getSolidaryUserStructure()->getSolidaryUser()->getUser(), $this->security->getUser(), $solidary);
             $this->eventDispatcher->dispatch(SolidaryCreatedEvent::NAME, $event);
