@@ -23,9 +23,7 @@
 
 namespace App\Solidary\Admin\EventSubscriber;
 
-use App\Solidary\Admin\Event\BeneficiaryStatusChangedEvent;
 use App\Solidary\Admin\Service\SolidaryTransportMatcher;
-use App\Solidary\Admin\Service\SolidaryCarpoolMatcher;
 use App\Solidary\Entity\SolidaryUserStructure;
 use App\Solidary\Admin\Event\VolunteerStatusChangedEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -36,19 +34,16 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 class SolidarySubscriber implements EventSubscriberInterface
 {
     private $solidaryTransportMatcher;
-    private $solidaryCarpoolMatcher;
 
-    public function __construct(SolidaryTransportMatcher $solidaryTransportMatcher, SolidaryCarpoolMatcher $solidaryCarpoolMatcher)
+    public function __construct(SolidaryTransportMatcher $solidaryTransportMatcher)
     {
         $this->solidaryTransportMatcher = $solidaryTransportMatcher;
-        $this->solidaryCarpoolMatcher = $solidaryCarpoolMatcher;
     }
     
     public static function getSubscribedEvents()
     {
         return [
             VolunteerStatusChangedEvent::NAME => 'onVolunteerStatusChanged',
-            BeneficiaryStatusChangedEvent::NAME => 'onBeneficiaryStatusChanged',
         ];
     }
         
@@ -61,20 +56,6 @@ class SolidarySubscriber implements EventSubscriberInterface
     public function onVolunteerStatusChanged(VolunteerStatusChangedEvent $event)
     {
         if ($event->getSolidaryUserStructure()->getStatus() == SolidaryUserStructure::STATUS_ACCEPTED) {
-            $this->solidaryTransportMatcher->matchForStructure($event->getSolidaryUserStructure()->getStructure());
-        }
-    }
-
-    /**
-     * Executed when a beneficiary status is changed within a Structure.
-     *
-     * @param BeneficiaryStatusChangedEvent $event   The event
-     * @return void
-     */
-    public function onBeneficiaryStatusChanged(BeneficiaryStatusChangedEvent $event)
-    {
-        if ($event->getSolidaryUserStructure()->getStatus() == SolidaryUserStructure::STATUS_ACCEPTED) {
-            $this->solidaryCarpoolMatcher->createSolidaryMatching($event->getSolidaryUserStructure());
             $this->solidaryTransportMatcher->matchForStructure($event->getSolidaryUserStructure()->getStructure());
         }
     }
