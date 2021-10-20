@@ -451,9 +451,6 @@ class SolidaryManager
             $ad = $this->createJourneyFromSolidary($solidary, $userId);
             $proposal = $this->proposalRepository->find($ad->getId());
             
-            // we update solidary
-            $solidary->setProposal($proposal);
-            
             $this->solidaryTransportMatcher->match($solidary);
 
             // We trigger the event
