@@ -113,6 +113,7 @@ final class UserCampaignSendCollectionDataProvider implements CollectionDataProv
                     if ($delivery->getUser()->hasNewsSubscription()) {
                         $users[] = $delivery->getUser();
                     }
+                    $users = new \ArrayIterator($users);
                 }
                 break;
             case Campaign::FILTER_TYPE_FILTER:
