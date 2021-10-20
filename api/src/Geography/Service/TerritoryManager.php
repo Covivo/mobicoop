@@ -476,4 +476,31 @@ class TerritoryManager
 
         // END TERRITORIES
     }
+
+    public function linkAddressesWithTerritories()
+    {
+        if (file_exists($this->batchTemp . self::CHECK_RUNNING_FILE)) {
+            $this->logger->info("Link addresses with territories already running | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+            return;
+        }
+
+        $this->logger->info("Start linking addresses with territories | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+
+        $fp = fopen($this->params['batchTemp'] . self::CHECK_RUNNING_FILE, 'w');
+        fwrite($fp, '+');
+
+        $result = $this->entityManager->getConnection()->prepare(
+            "CREATE TEMPORARY TABLE outdated_proposals (
+            id int NOT NULL,
+            PRIMARY KEY(id));
+        "
+        )->execute();
+
+        fclose($fp);
+        unlink($this->params['batchTemp'] . self::CHECK_RUNNING_FILE);
+
+        $this->logger->info("End linking addresses with territories | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+
+        return $result;
+    }
 }
