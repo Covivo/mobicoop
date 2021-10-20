@@ -88,6 +88,13 @@ class Article implements ResourceInterface, \JsonSerializable
     private $pubDate;
 
     /**
+     * @var string The link of the article.
+     *
+     * @Groups({"post","put"})
+     */
+    private $link;
+
+    /**
      * @var int The status of publication of the article.
      *
      * @Groups({"post","put"})
@@ -188,6 +195,18 @@ class Article implements ResourceInterface, \JsonSerializable
         return $this;
     }
 
+    public function getLink(): ?string
+    {
+        return $this->link;
+    }
+    
+    public function setLink(?string $link): self
+    {
+        $this->link = $link;
+        
+        return $this;
+    }
+
     public function getStatus()
     {
         return $this->status;
@@ -238,6 +257,7 @@ class Article implements ResourceInterface, \JsonSerializable
             'image' => $this->getImage(),
             'iframe' => $this->getIFrame(),
             'pubDate' => $this->getPubDate(),
+            'link' => $this->getLink(),
         ];
     }
 }

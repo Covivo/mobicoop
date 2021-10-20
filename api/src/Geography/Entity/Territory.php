@@ -207,7 +207,7 @@ class Territory
     /**
      * @var ArrayCollection The logs linked with the Territory.
      *
-     * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="territory", cascade={"remove"})
+     * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="territory")
      */
     private $logs;
 

@@ -67,19 +67,17 @@ class GamificationAction
     /**
      * @var ArrayCollection|null A GamificationAction can be included in multiple SequenceItems
      *
-     * @ORM\OneToMany(targetEntity="\App\Gamification\Entity\SequenceItem", mappedBy="gamificationAction", cascade={"persist","remove"})
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\OneToMany(targetEntity="\App\Gamification\Entity\SequenceItem", mappedBy="gamificationAction", cascade={"persist"})
      * @Groups({"writeGamification"})
      * @MaxDepth(1)
      */
     private $sequenceItems;
 
-
     /**
      * @var Action The Action related to this GamificationAction
      *
      * @ORM\ManyToOne(targetEntity="\App\Action\Entity\Action", inversedBy="gamificationActions")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @MaxDepth(1)
      */
     private $action;
@@ -88,6 +86,7 @@ class GamificationAction
      * @var GamificationActionRule The GamificationActionRule related to this GamificationAction
      *
      * @ORM\ManyToOne(targetEntity="\App\Gamification\Entity\GamificationActionRule", inversedBy="gamificationActions")
+     * @ORM\JoinColumn(onDelete="SET NULL")
      * @MaxDepth(1)
      */
     private $gamificationActionRule;

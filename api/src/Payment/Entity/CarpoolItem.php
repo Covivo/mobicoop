@@ -33,6 +33,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Carpool item : a carpool journey effectively done, or supposed to be done.
+ * The item must be kept even if related entities are deleted (eg. a user deletes its account, the carpooler must keep the item)
  *
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
@@ -137,6 +138,7 @@ class CarpoolItem
      * @var Ask The ask related to the item.
      *
      * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Ask", inversedBy="carpoolItems")
+     * @ORM\JoinColumn(onDelete="SET NULL")
      * @Groups({"readExport"})
      * @MaxDepth(1)
      */
@@ -146,6 +148,7 @@ class CarpoolItem
      * @var User Debtor user (the user that pays)
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User")
+     * @ORM\JoinColumn(onDelete="SET NULL")
      * @Groups({"readExport"})
      * @MaxDepth(1)
      */
@@ -155,6 +158,7 @@ class CarpoolItem
      * @var User Creditor user (the user paid)
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User")
+     * @ORM\JoinColumn(onDelete="SET NULL")
      * @Groups({"readExport"})
      * @MaxDepth(1)
      */
@@ -171,7 +175,7 @@ class CarpoolItem
     /**
      * @var ArrayCollection The logs linked with the carpoolitem.
      *
-     * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="carpoolItem", cascade={"remove"})
+     * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="carpoolItem")
      */
     private $logs;
 

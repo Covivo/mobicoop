@@ -143,7 +143,7 @@ class Notification
      * @var Action The action.
      *
      * @ORM\ManyToOne(targetEntity="\App\Action\Entity\Action")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Groups({"read","write"})
      * @MaxDepth(1)
      */
@@ -153,7 +153,7 @@ class Notification
      * @var Medium The medium.
      *
      * @ORM\ManyToOne(targetEntity="\App\Communication\Entity\Medium")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Groups({"read","write"})
      * @MaxDepth(1)
      */

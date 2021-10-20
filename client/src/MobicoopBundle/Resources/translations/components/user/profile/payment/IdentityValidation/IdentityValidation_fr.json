@@ -3,8 +3,8 @@
     "text": "<p>La vérification d'identité sur la base d'un document d'identité à jour (carte d'identité recto-verso, passeport, permis de conduire) est une obligation légale pour recevoir des paiements.Cette obligation est motivée par la lutte contre le blanchiment.</p><p>La vérification d'identité nécessaire au paiement se fait par comparaison entre les prénom et nom renseignés dans votre profil, et ceux sur votre document d'identité. Veillez donc à avoir des informations justes dans votre profil.</p><p>Vous pouvez lire les conditions de validation d'un document d'identité chez notre partenaire <a target='_blank' href='https://support.mangopay.com/s/article/What-are-the-reasons-for-a-document-rejection?language=fr'>ici</a>.</p>",
     "fileInput": {
         "label" : "Document d'identité à jour",
-        "error": "Le document ne doit pas dépasser 6MB",
-        "tooltip": "Le document doit être au format jpg, jpeg, png ou pdf et ne doit pas excéder 6MB"
+        "error": "Taille du document non valide",
+        "tooltip": "Le document doit être au format jpg, jpeg, png ou pdf. Le taille du document doit être supérieure à 32kB et inférieure à 6MB"
     },
     "send": "Envoyer",
     "status": {

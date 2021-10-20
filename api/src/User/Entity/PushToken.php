@@ -104,7 +104,7 @@ class PushToken
      * @var User The owner of the token.
      *
      * @ORM\ManyToOne(targetEntity="App\User\Entity\User", inversedBy="pushTokens")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @MaxDepth(1)
      */
     private $user;

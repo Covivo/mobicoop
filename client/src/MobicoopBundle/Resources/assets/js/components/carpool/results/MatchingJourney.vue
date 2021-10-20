@@ -267,7 +267,7 @@
                     :locale="locale"
                     :min="today"
                     :max="toDate ? toDate : null"
-                    no-title.
+                    no-title
                     first-day-of-week="1"
                     @input="menuFromDate = false"
                     @change="change"
