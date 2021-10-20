@@ -100,7 +100,7 @@ class MassPerson
     
     /**
      * @var Address The personal address of the person.
-     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist"}, orphanRemoval=true)
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Assert\NotBlank(groups={"mass"})
      * @Assert\Valid
@@ -110,7 +110,7 @@ class MassPerson
 
     /**
      * @var Address The work address of the person.
-     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist"}, orphanRemoval=true)
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Assert\NotBlank(groups={"mass"})
      * @Assert\Valid
@@ -171,7 +171,7 @@ class MassPerson
      * @var Mass The original mass file of the person.
      *
      * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="\App\Match\Entity\Mass", cascade={"persist","remove"}, inversedBy="persons")
+     * @ORM\ManyToOne(targetEntity="\App\Match\Entity\Mass", cascade={"persist"}, inversedBy="persons")
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @MaxDepth(1)
      */
@@ -180,7 +180,7 @@ class MassPerson
     /**
      * @var ArrayCollection|null The potential matchings if the person is driver.
      *
-     * @ORM\OneToMany(targetEntity="\App\Match\Entity\MassMatching", mappedBy="massPerson1", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Match\Entity\MassMatching", mappedBy="massPerson1", cascade={"persist"})
      * @MaxDepth(1)
      * @Groups({"mass","massCompute"})
      */
@@ -189,7 +189,7 @@ class MassPerson
     /**
      * @var ArrayCollection|null The potential matchings if the person is passenger.
      *
-     * @ORM\OneToMany(targetEntity="\App\Match\Entity\MassMatching", mappedBy="massPerson2", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Match\Entity\MassMatching", mappedBy="massPerson2", cascade={"persist"})
      * @MaxDepth(1)
      * @Groups({"mass","massCompute"})
      */
@@ -253,6 +253,7 @@ class MassPerson
      * @var User|null The User created based on this MassPerson
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="massPerson")
+     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
      * @MaxDepth(1)
      * @Groups({"read"})
      */
@@ -262,6 +263,7 @@ class MassPerson
      * @var Proposal|null The Proposal created based on this MassPerson journey (only the outward for round trip)
      *
      * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Proposal")
+     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
      * @MaxDepth(1)
      * @Groups({"read"})
      */
@@ -270,7 +272,7 @@ class MassPerson
     /**
      * @var ArrayCollection|null The MassPTJourneys linked to this mass person
      *
-     * @ORM\OneToMany(targetEntity="\App\Match\Entity\MassPTJourney", mappedBy="massPerson", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Match\Entity\MassPTJourney", mappedBy="massPerson", cascade={"persist"})
      * @MaxDepth(1)
      * @Groups({"pt"})
      */

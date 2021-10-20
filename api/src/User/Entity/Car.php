@@ -141,7 +141,7 @@ class Car
      *
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="App\User\Entity\User", inversedBy="cars")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Groups({"read"})
      * @MaxDepth(1)
      */
@@ -150,7 +150,7 @@ class Car
     /**
      * @var ArrayCollection The logs linked with the Car.
      *
-     * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="car", cascade={"remove"})
+     * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="car")
      */
     private $logs;
 

@@ -97,8 +97,8 @@ class Matching
      * @var Proposal The offer proposal.
      *
      * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal", inversedBy="matchingRequests")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal", inversedBy="matchingRequests", cascade={"persist"})
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Groups({"read","results","threads","thread"})
      * @MaxDepth(1)
      */
@@ -108,8 +108,8 @@ class Matching
      * @var Proposal The request proposal.
      *
      * @Assert\NotBlank
-     * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal", inversedBy="matchingOffers")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal", inversedBy="matchingOffers", cascade={"persist"})
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Groups({"read","results","threads","thread"})
      * @MaxDepth(1)
      */
@@ -119,8 +119,8 @@ class Matching
      * @var Criteria The criteria applied to this matching.
      *
      * @Assert\NotBlank
-     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Criteria", cascade={"persist", "remove"}, orphanRemoval=true)
-     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
+     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Criteria", cascade={"persist"})
+     * @ORM\JoinColumn(nullable=false)
      * @Groups({"read","results","threads","thread"})
      * @MaxDepth(1)
      */
@@ -135,7 +135,7 @@ class Matching
     /**
      * @var Matching|null Linked matching for return trip.
      *
-     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Matching", cascade={"persist", "remove"}, orphanRemoval=true)
+     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Matching", cascade={"persist"})
      * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"read","results","write"})
      * @MaxDepth(1)
@@ -145,7 +145,7 @@ class Matching
     /**
      * @var Matching|null Opposite matching (if proposal and request can be switched, so if driver and passenger can switch roles).
      *
-     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Matching", cascade={"persist", "remove"}, orphanRemoval=true)
+     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Matching", cascade={"persist"})
      * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"read","results","write"})
      * @MaxDepth(1)
@@ -155,17 +155,17 @@ class Matching
     /**
      * @var ArrayCollection The asks made for this matching.
      *
-     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Ask", mappedBy="matching", cascade={"remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Ask", mappedBy="matching")
      * @Groups({"read"})
      * @MaxDepth(1)
      */
     private $asks;
 
     /**
-     * @var ArrayCollection The waypoints of the proposal.
+     * @var ArrayCollection The waypoints of the matching.
      *
      * @Assert\NotBlank
-     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Waypoint", mappedBy="matching", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Waypoint", mappedBy="matching", cascade={"persist"})
      * @ORM\OrderBy({"position" = "ASC"})
      * @Groups({"read","write","threads","thread"})
      * @MaxDepth(1)
@@ -175,7 +175,7 @@ class Matching
     /**
      * @var ArrayCollection|null The notifications sent for the matching.
      *
-     * @ORM\OneToMany(targetEntity="\App\Communication\Entity\Notified", mappedBy="matching", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Communication\Entity\Notified", mappedBy="matching", cascade={"persist"})
      * @Groups({"read","write"})
      * @MaxDepth(1)
      */
@@ -281,7 +281,7 @@ class Matching
     /**
      * @var SolidaryMatching|null The solidary matching if there is any
      *
-     * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\SolidaryMatching", mappedBy="matching", cascade={"persist","remove"})
+     * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\SolidaryMatching", mappedBy="matching", cascade={"persist"})
      * @Groups({"read","results","readSolidary"})
      * @MaxDepth(1)
      */
@@ -290,7 +290,7 @@ class Matching
     /**
      * @var ArrayCollection The logs linked with the Matching.
      *
-     * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="matching", cascade={"remove"})
+     * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="matching")
      */
     private $logs;
 

@@ -120,7 +120,7 @@ class Icon
     /**
      * @var Icon|null Linked icon for the private related item.
      *
-     * @ORM\OneToOne(targetEntity="\App\Image\Entity\Icon", cascade={"persist", "remove"}, orphanRemoval=true)
+     * @ORM\OneToOne(targetEntity="\App\Image\Entity\Icon", cascade={"persist"})
      * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"read","readRelayPoint"})
      * @MaxDepth(1)

@@ -106,7 +106,7 @@ class UserImport
     /**
      * @var User|null User imported in the platform.
      *
-     * @ORM\OneToOne(targetEntity="\App\User\Entity\User", cascade={"persist", "remove"}, orphanRemoval=true)
+     * @ORM\OneToOne(targetEntity="\App\User\Entity\User", cascade={"persist"})
      * @Groups({"read","write"})
      * @MaxDepth(1)
      */

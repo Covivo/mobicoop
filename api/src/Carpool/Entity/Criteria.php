@@ -733,6 +733,7 @@ class Criteria
      * @var Car|null The car used in the journey.
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\Car")
+     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
      * @Groups({"read","write","thread"})
      * @MaxDepth(1)
      */
@@ -741,7 +742,7 @@ class Criteria
     /**
      * @var Direction|null The direction used in the journey as a driver.
      *
-     * @ORM\ManyToOne(targetEntity="\App\Geography\Entity\Direction", inversedBy="criteriaDrivers", cascade={"persist", "remove"})
+     * @ORM\ManyToOne(targetEntity="\App\Geography\Entity\Direction", inversedBy="criteriaDrivers", cascade={"persist"})
      * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
      * @Groups({"read","results"})
      */
@@ -750,7 +751,7 @@ class Criteria
     /**
      * @var Direction|null The direction used in the journey as a passenger.
      *
-     * @ORM\ManyToOne(targetEntity="\App\Geography\Entity\Direction", inversedBy="criteriaPassengers", cascade={"persist", "remove"})
+     * @ORM\ManyToOne(targetEntity="\App\Geography\Entity\Direction", inversedBy="criteriaPassengers", cascade={"persist"})
      * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
      * @Groups({"read","results","thread"})
      */
@@ -766,6 +767,7 @@ class Criteria
      * @var PTJourney|null The public transport journey used.
      *
      * @ORM\ManyToOne(targetEntity="\App\PublicTransport\Entity\PTJourney")
+     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
      * @Groups({"read","write"})
      */
     private $ptjourney;

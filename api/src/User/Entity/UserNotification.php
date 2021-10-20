@@ -51,7 +51,7 @@ class UserNotification
      * @var Notification The notification involved.
      *
      * @ORM\ManyToOne(targetEntity="\App\Communication\Entity\Notification")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Groups({"read","write"})
      * @MaxDepth(1)
      */
@@ -62,7 +62,7 @@ class UserNotification
      *
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="App\User\Entity\User", inversedBy="userNotifications")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Groups({"read"})
      * @MaxDepth(1)
      */

@@ -129,7 +129,7 @@ class Proof
      *
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\StructureProof", inversedBy="proofs")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Groups({"readProof","writeProof"})
      * @MaxDepth(1)
      */
@@ -177,8 +177,8 @@ class Proof
     /**
      * @var SolidaryUserStructure SolidaryUser Structure relation
      *
-     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\SolidaryUserStructure", inversedBy="proofs", cascade={"persist","remove"})
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\SolidaryUserStructure", inversedBy="proofs", cascade={"persist"})
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Groups({"readProof","writeProof"})
      * @MaxDepth(1)
      */

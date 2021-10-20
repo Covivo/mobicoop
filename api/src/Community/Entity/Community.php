@@ -354,9 +354,8 @@ class Community
      * @var User The creator of the community.
      *
      * @ApiProperty(push=true)
-     * @Assert\NotBlank(groups={"write"})
      * @ORM\ManyToOne(targetEntity="App\User\Entity\User")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(onDelete="SET NULL")
      * @Groups({"readCommunity","readCommunityUser","write","results","existsCommunity"})
      */
     private $user;
@@ -366,7 +365,7 @@ class Community
      *
      * @ApiProperty(push=true)
      * @Assert\NotBlank
-     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist"}, orphanRemoval=true)
      * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"aRead","aWrite","readCommunity","write"})
      * @MaxDepth(1)
@@ -377,7 +376,7 @@ class Community
      * @var ArrayCollection|null The images of the community.
      *
      * @ApiProperty(push=true)
-     * @ORM\OneToMany(targetEntity="\App\Image\Entity\Image", mappedBy="community", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Image\Entity\Image", mappedBy="community", cascade={"persist"})
      * @ORM\OrderBy({"position" = "ASC"})
      * @Groups({"readCommunity","readCommunityUser","write","listCommunities"})
      * @MaxDepth(1)
@@ -404,7 +403,7 @@ class Community
      * @var ArrayCollection|null The members of the community.
      *
      * @ApiProperty(push=true)
-     * @ORM\OneToMany(targetEntity="\App\Community\Entity\CommunityUser", mappedBy="community", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Community\Entity\CommunityUser", mappedBy="community", cascade={"persist"})
      * @Groups({"readCommunity","readCommunityUser","write","results","existsCommunity","readCommunityPublic"})
      * @MaxDepth(1)
      * @ApiSubresource(maxDepth=1)
@@ -414,7 +413,7 @@ class Community
     /**
      * @var ArrayCollection|null The security files of the community.
      *
-     * @ORM\OneToMany(targetEntity="\App\Community\Entity\CommunitySecurity", mappedBy="community", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Community\Entity\CommunitySecurity", mappedBy="community", cascade={"persist"})
      * @Groups({"readCommunity","write","listCommunities"})
      * @MaxDepth(1)
      * @ApiSubresource(maxDepth=1)
@@ -424,7 +423,7 @@ class Community
     /**
      * @var ArrayCollection|null The relay points related to the community.
      *
-     * @ORM\OneToMany(targetEntity="\App\RelayPoint\Entity\RelayPoint", mappedBy="community", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\RelayPoint\Entity\RelayPoint", mappedBy="community", cascade={"persist"})
      * @Groups({"readCommunity","write"})
      * @MaxDepth(1)
      */
@@ -489,7 +488,7 @@ class Community
     /**
      * @var ArrayCollection The logs linked with the Community.
      *
-     * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="community", cascade={"remove"})
+     * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="community")
      */
     private $logs;
 
