@@ -30,7 +30,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Link Addresses with Territories.
- * This command links the addresses that are not linked yet with any territory.
+ * This command links the addresses with their territories.
  *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
  */
@@ -50,8 +50,8 @@ class LinkAddressTerritoryCommand extends Command
     {
         $this
         ->setName('app:geography:link-address-territory')
-        ->setDescription('Link addresses with territories if not linked yet.')
-        ->setHelp('Find addresses that are not linked yet with any territories, then find their territories and link them.')
+        ->setDescription('Link addresses with territories.')
+        ->setHelp('Link addresses with territories.')
         ;
     }
 

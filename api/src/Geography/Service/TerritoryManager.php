@@ -486,21 +486,92 @@ class TerritoryManager
 
         $this->logger->info("Start linking addresses with territories | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
-        $fp = fopen($this->params['batchTemp'] . self::CHECK_RUNNING_FILE, 'w');
+        $fp = fopen($this->batchTemp . self::CHECK_RUNNING_FILE, 'w');
         fwrite($fp, '+');
 
-        $result = $this->entityManager->getConnection()->prepare(
-            "CREATE TEMPORARY TABLE outdated_proposals (
-            id int NOT NULL,
-            PRIMARY KEY(id));
-        "
-        )->execute();
+        if (!$this->addGeoJsonTerritoryIndex()) {
+            return false;
+        }
+
+        if (!$level = $this->entityManager->getConnection()->prepare("SELECT max(admin_level) as level from territory")->execute()) {
+            return $this->dropGeoJsonTerritoryIndex() && false;
+        }
+
+        if (!$result =
+            $this->entityManager->getConnection()->prepare("start transaction;")->execute() &&
+            $this->entityManager->getConnection()->prepare("
+                insert into address_territory (address_id, territory_id)
+                select a.id, t.id 
+                from address a 
+                    inner join territory t on a.latitude between t.min_latitude and t.max_latitude and a.longitude between t.min_longitude and t.max_longitude
+                where a.id not in (select address_id from address_territory at inner join territory t on t.id = at.territory_id where t.admin_level = $level) 
+                    and t.admin_level = $level 
+                    and st_contains(t.geo_json_detail, a.geo_json)=1;")->execute() &&
+            $this->entityManager->getConnection()->prepare("commit;")->execute()
+        ) {
+            return $this->dropGeoJsonTerritoryIndex() && false;
+        }
+
+        for ($i = ($level-1); $i > 0; $i--) {
+            if (!$result =
+                $this->entityManager->getConnection()->prepare("start transaction;")->execute() &&
+                $this->entityManager->getConnection()->prepare("
+                    insert into address_territory (address_id, territory_id) 
+                    select a.id, tt.parent_id
+                    from address a 
+                        inner join address_territory at3 on at3.address_id = a.id
+                        inner join territory t3 on t3.id = at3.territory_id and t3.admin_level = " . (1 + $i) . " and t3.id in (select tt.child_id from territory_parent as tt where 1 group by child_id having count(*)=1)
+                        inner join territory_parent tt on tt.child_id = t3.id
+                    where a.id not in (select at2.address_id from address_territory at2 inner join territory t2 on t2.id = at2.territory_id and t2.admin_level = $i);")->execute() &&
+                $this->entityManager->getConnection()->prepare("commit;")->execute()
+            ) {
+                return $this->dropGeoJsonTerritoryIndex() && false;
+            }
+            if (!$result =
+                $this->entityManager->getConnection()->prepare("start transaction;")->execute() &&
+                $this->entityManager->getConnection()->prepare("
+                    insert into address_territory (address_id, territory_id) 
+                    select a.id, t2.id
+                    from address a 
+                        inner join address_territory at3 on at3.address_id = a.id
+                        inner join territory t3 on t3.id = at3.territory_id and t3.admin_level = " . (1 + $i) . " and t3.id in (select tt.child_id from territory_parent as tt where 1 group by child_id having count(*)>1)
+                        inner join territory t2 on t2.admin_level = $i and a.latitude between t2.min_latitude and t2.max_latitude and a.longitude between t2.min_longitude and t2.max_longitude
+                    where a.id not in (select at2.address_id from address_territory at2 inner join territory t2 on t2.id = at2.territory_id and t2.admin_level = $i)
+                        and st_contains(t2.geo_json_detail, a.geo_json)=1;")->execute() &&
+                $this->entityManager->getConnection()->prepare("commit;")->execute()
+            ) {
+                return $this->dropGeoJsonTerritoryIndex() && false;
+            }
+        }
+
+        if (!$result =
+            $this->entityManager->getConnection()->prepare("start transaction;")->execute() &&
+            $this->entityManager->getConnection()->prepare("
+                insert into address_territory (address_id, territory_id) 
+                select a.id, t.id 
+                from address a 
+                    inner join territory t on t.id not in (select territory_id from address_territory where address_id=a.id) and a.latitude between t.min_latitude and t.max_latitude and a.longitude between t.min_longitude and t.max_longitude
+                where st_contains(t.geo_json_detail, a.geo_json)=1;")->execute() &&
+            $this->entityManager->getConnection()->prepare("commit;")->execute()
+        ) {
+            return $this->dropGeoJsonTerritoryIndex() && false;
+        }
 
         fclose($fp);
-        unlink($this->params['batchTemp'] . self::CHECK_RUNNING_FILE);
+        unlink($this->batchTemp . self::CHECK_RUNNING_FILE);
 
         $this->logger->info("End linking addresses with territories | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
-        return $result;
+        return $this->dropGeoJsonTerritoryIndex() && $result;
+    }
+
+    private function addGeoJsonTerritoryIndex()
+    {
+        return $this->entityManager->getConnection()->prepare("CREATE SPATIAL INDEX IDX_GEOJSON_DETAIL ON territory (geo_json_detail);")->execute();
+    }
+
+    private function dropGeoJsonTerritoryIndex()
+    {
+        return $this->entityManager->getConnection()->prepare("DROP INDEX IDX_GEOJSON_DETAIL ON territory;")->execute();
     }
 }
