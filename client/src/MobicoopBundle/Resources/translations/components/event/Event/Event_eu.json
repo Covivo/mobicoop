@@ -1,7 +1,10 @@
 {
     "urlCommunityUser": "/community-user",
     "map": {
-        "origin": "Abiatzea"
+        "origin": "Abiatzea",
+        "search": {
+            "label": "Chercher les covoiturages correspondants"
+        }
     },
     "title": {
         "searchCarpool": "Bidaia bat bilatu ekitaldiarentzat"

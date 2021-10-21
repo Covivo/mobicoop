@@ -68,7 +68,7 @@ class MassMatching
 
     /**
      * @var MassPerson The first person.
-     * @ORM\ManyToOne(targetEntity="\App\Match\Entity\MassPerson", cascade={"persist","remove"}, inversedBy="matchingsAsDriver")
+     * @ORM\ManyToOne(targetEntity="\App\Match\Entity\MassPerson", cascade={"persist"}, inversedBy="matchingsAsDriver")
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @MaxDepth(1)
      */
@@ -76,7 +76,7 @@ class MassMatching
 
     /**
      * @var MassPerson The second person.
-     * @ORM\ManyToOne(targetEntity="\App\Match\Entity\MassPerson", cascade={"persist","remove"}, inversedBy="matchingsAsPassenger")
+     * @ORM\ManyToOne(targetEntity="\App\Match\Entity\MassPerson", cascade={"persist"}, inversedBy="matchingsAsPassenger")
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @MaxDepth(1)
      */

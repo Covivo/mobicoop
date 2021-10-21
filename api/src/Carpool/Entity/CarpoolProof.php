@@ -104,7 +104,7 @@ class CarpoolProof
     /**
      * @var Address Origin of the driver.
      *
-     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist"})
      * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private $originDriverAddress;
@@ -112,7 +112,7 @@ class CarpoolProof
     /**
      * @var Address Destination of the driver.
      *
-     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist"})
      * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private $destinationDriverAddress;
@@ -148,7 +148,7 @@ class CarpoolProof
     /**
      * @var Address Position of the passenger when pickup certification is asked.
      *
-     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist"})
      * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private $pickUpPassengerAddress;
@@ -156,7 +156,7 @@ class CarpoolProof
     /**
      * @var Address Position of the driver when pickup certification is asked.
      *
-     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist"})
      * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private $pickUpDriverAddress;
@@ -164,7 +164,7 @@ class CarpoolProof
     /**
      * @var Address Position of the passenger when dropoff certification is asked.
      *
-     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist"})
      * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private $dropOffPassengerAddress;
@@ -172,7 +172,7 @@ class CarpoolProof
     /**
      * @var Address Position of the driver when dropoff certification is asked.
      *
-     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist"})
      * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private $dropOffDriverAddress;
@@ -180,7 +180,7 @@ class CarpoolProof
     /**
      * @var Direction|null The direction related with the proof.
      *
-     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Direction", cascade={"persist", "remove"}, orphanRemoval=true)
+     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Direction", cascade={"persist"})
      * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private $direction;
@@ -195,7 +195,7 @@ class CarpoolProof
      * @var User|null The driver, used to keep a link to the driver if the passenger deletes its ad (the ask may be deleted aswell).
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="carpoolProofsAsDriver")
-     * @ORM\JoinColumn(nullable=true)
+     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
      */
     private $driver;
 
@@ -203,7 +203,7 @@ class CarpoolProof
      * @var User|null The passenger, used to keep a link to the passenger if the driver deletes its ad (the ask may be deleted aswell).
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="carpoolProofsAsPassenger")
-     * @ORM\JoinColumn(nullable=true)
+     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
      */
     private $passenger;
 

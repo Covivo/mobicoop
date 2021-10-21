@@ -172,7 +172,10 @@ class DataProvider
             if (!is_null($auth)) {
                 $options[RequestOptions::AUTH] = $auth;
             }
-            // echo json_encode($body);die;
+            
+            // echo json_encode($body);
+            // var_dump($options);
+            // die;
             
             $clientResponse = $this->client->post($this->resource, $options);
             switch ($clientResponse->getStatusCode()) {
@@ -218,7 +221,9 @@ class DataProvider
                 }
             }
             
-            // echo json_encode($body);die;
+            // echo json_encode($body);
+            // var_dump($options);
+            // die;
             
             $clientResponse = $this->client->put($this->resource, $options);
             switch ($clientResponse->getStatusCode()) {

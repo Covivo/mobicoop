@@ -151,7 +151,7 @@ export default {
       document:null,
       loading:false,
       identityProofRules: [
-        value => !value ||  value.size < 6291456 || this.$t("fileInput.error")
+        value => !value ||  (value.size < 6291456 && value.size > 32768) || this.$t("fileInput.error")
       ],
       disabledSendFile:false
     }
@@ -175,7 +175,7 @@ export default {
   },
   watch: {
     document() {
-      this.disabledSendFile = (this.document) ? ((this.document.size > 6291456) ? true : false) : false;
+      this.disabledSendFile = (this.document) ? ((this.document.size > 6291456 || this.document.size < 32768 ) ? true : false) : false;
     }
   },
   mounted(){

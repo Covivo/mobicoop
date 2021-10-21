@@ -91,8 +91,9 @@ class SolidaryException extends \LogicException
     const SOLIDARY_VOLUNTEER_ID_INVALID = "Invalid SolidaryVolunteerId";
 
     // Proof
-    const NO_SOLIDARY_ID = "Missing Solidary";
+    const NO_ID = "Missing Solidary or SolidaryVolunteer";
     const SOLIDARY_NOT_FOUND = "Solidary not found";
+    const SOLIDARY_USER_NOT_FOUND= "SolidaryUser not found";
     const NO_FILE = "Missing file";
     const NO_STRUCTURE_PROOF = "Missing StructureProof";
     const STRUCTURE_PROOF_NOT_FOUND = "StructureProof not found";

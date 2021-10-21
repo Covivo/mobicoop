@@ -219,47 +219,41 @@
         >
           <v-card
             style="height: 100%;"
-            outlined
+            flat
           >
             <v-card-text class="pb-0">
-              <v-icon
-                color="primary"
-              >
-                mdi-bell
-              </v-icon>
-              <p
-                v-if="nbCarpoolPlatform > 0"
-                class="text-h4 text--primary"
-              >
-                {{ $t('saveSearch.noCorrectAd') }}
+              <v-img 
+                v-if="nbCarpoolPlatform == '-' && displayLogoNoResult"
+                max-height="90px"
+                contain 
+                :src="$t('logoNoResult')"
+                alt="no result logo"
+              />
+              <p 
+                v-if="nbCarpoolPlatform == '-'"
+                class="text-h6"
+                v-html="$t('saveSearch.noAd', {'cityA':displayOrigin, 'cityB':displayDestination})"
+              />
+              <p class="black--text">
+                {{ $t('saveSearch.message') }}
               </p>
-              <p
-                v-else
-                class="text-h4 text--primary"
-              >
-                {{ $t('saveSearch.noAd') }}
-              </p>
-              <p>{{ $t('saveSearch.message') }}</p>
             </v-card-text>
             <v-card-actions class="pt-0">
               <v-col
-                cols="9"
-                md="7"
-                xl="9"
-                sm="4"
-                class="mr-10"
-              />
-              <v-btn
-                color="primary"
-                rounded
-                @click="saveSearch()"
+                cols="12"
               >
-                <v-icon
-                  color="white"
+                <v-btn
+                  color="primary"
+                  rounded
+                  @click="saveSearch()"
                 >
-                  mdi-bell
-                </v-icon>{{ $t('saveSearch.button.label') }}
-              </v-btn>
+                  <v-icon
+                    color="white"
+                  >
+                    mdi-bell
+                  </v-icon>{{ $t('saveSearch.button.label') }}
+                </v-btn>
+              </v-col>
             </v-card-actions>
           </v-card>
         </v-col>
@@ -410,6 +404,10 @@ export default {
       default: false
     },
     ageDisplay: {
+      type: Boolean,
+      default: false
+    },
+    displayLogoNoResult: {
       type: Boolean,
       default: false
     }

@@ -43,7 +43,8 @@ class WorldlineProvider implements ConsumptionFeedbackInterface
     const STEPS_TRANSPORT_MODE = "MOVICI";
     const STEPS_IS_PM_CHARGEABLE = false;
 
-    //const TEST_SSO_ACCOUNT_ID = "368";
+    // const TEST_SSO_ACCOUNT_ID = "36";
+    const TEST_SSO_ACCOUNT_ID = null;
 
     const ADDITIONAL_INFOS = [
         ["key" => "TYPE", "value" => "CONSUMPTION"]
@@ -129,17 +130,15 @@ class WorldlineProvider implements ConsumptionFeedbackInterface
     public function sendConsumptionFeedback()
     {
         $this->setConsumptionUser($this->getConsumptionCarpoolItem()->getDebtorUser());
-        // if ($this->checkUserForSso()) {
-        $this->sendConsumptionFeedbackRequest();
-        // }
-
-        $this->setConsumptionUser($this->getConsumptionCarpoolItem()->getCreditorUser());
-        if ($this->checkUserForSso()) {
+        if ($this->checkUserForSso() && $this->getConsumptionCarpoolItem()->getDebtorConsumptionFeedbackReturnCode()!==200) {
             $this->sendConsumptionFeedbackRequest();
         }
 
-        $this->setConsumptionUser(null);
-        $this->setConsumptionCarpoolItem(null);
+        $this->setConsumptionUser($this->getConsumptionCarpoolItem()->getCreditorUser());
+        if ($this->checkUserForSso() && $this->getConsumptionCarpoolItem()->getCreditorConsumptionFeedbackReturnCode()!==200) {
+            $this->sendConsumptionFeedbackRequest();
+        }
+
         $this->setRequestBody([]);
     }
 
@@ -151,7 +150,7 @@ class WorldlineProvider implements ConsumptionFeedbackInterface
      */
     private function checkUserForSso(): bool
     {
-        return is_null($this->getConsumptionUser()->getSsoId()) && !is_null($this->getConsumptionUser()->getAppDelegate()) && $this->getConsumptionUser()->getAppDelegate()->getId() === $this->appId;
+        return !is_null($this->getConsumptionUser()->getSsoId()) && !is_null($this->getConsumptionUser()->getAppDelegate()) && $this->getConsumptionUser()->getAppDelegate()->getId() === $this->appId;
     }
 
 
@@ -171,19 +170,20 @@ class WorldlineProvider implements ConsumptionFeedbackInterface
             return [];
         }
         
+        // Just a fail safe but if we have a carpool item, it's obviously a carpooled day
         $carpooled = false;
 
         // start date
         $askCriteria = $this->getConsumptionCarpoolItem()->getAsk()->getCriteria();
 
-        $beginDate = $askCriteria->getFromDate();
+        $beginDate = $this->getConsumptionCarpoolItem()->getItemDate();
         if ($askCriteria->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
             $beginDate->setTime($askCriteria->getFromTime()->format('H'), $askCriteria->getFromTime()->format('i'), $askCriteria->getFromTime()->format('s'));
             $endDate = clone $beginDate;
             $endDate = $endDate->modify("+".$this->getConsumptionCarpoolItem()->getAsk()->getMatching()->getNewDuration()." second");
             $carpooled = true;
         } else {
-            switch ($this->getConsumptionCarpoolItem()->getCreatedDate()->format("w")) {
+            switch ($this->getConsumptionCarpoolItem()->getItemDate()->format("w")) {
                 case 0:
                     if ($askCriteria->isSunCheck()) {
                         $beginDate->setTime($askCriteria->getSunTime()->format('H'), $askCriteria->getSunTime()->format('i'), $askCriteria->getSunTime()->format('s'));
@@ -237,9 +237,9 @@ class WorldlineProvider implements ConsumptionFeedbackInterface
 
 
         if ($carpooled) {
-            $this->setExternalActivityId((microtime(true)*10000)."-".$externalActivityId);
+            $this->setExternalActivityId((microtime(true)*10000)."|".$externalActivityId);
             $this->setRequestBody([
-                "accoundId" => (defined('static::TEST_SSO_ACCOUNT_ID')) ? self::TEST_SSO_ACCOUNT_ID : $this->getConsumptionUser()->getId(),
+                "accountId" => (!is_null(self::TEST_SSO_ACCOUNT_ID)) ? self::TEST_SSO_ACCOUNT_ID : "".$this->getConsumptionUser()->getId(),
                 "consumptionType" => self::CONSUMPTION_TYPE,
                 "externalActivityId" => $this->getExternalActivityId(),
                 "steps" => [
@@ -267,23 +267,39 @@ class WorldlineProvider implements ConsumptionFeedbackInterface
     {
         $this->buildConsumptionFeedbackForUser();
 
+        if (is_null($this->getRequestBody()) || count($this->getRequestBody())==0) {
+            return;
+        }
+
         $dataProvider = new DataProvider($this->baseUrl);
 
         $headers = [
-            "Authorization" => "Bearer ".$this->getAccessToken()
+            "Authorization" => "Bearer ".$this->getAccessToken(),
+            "x-apikey" => $this->apiKey
         ];
 
         $this->logger->info("Send consumption feedback for User ".$this->getConsumptionUser()->getId()." externalActivityId : ".$this->getExternalActivityId());
         $this->logger->info(json_encode($this->getRequestBody()));
 
-        $response = $dataProvider->putItem($this->getRequestBody(), $headers, null, DataProvider::BODY_TYPE_FORM_PARAMS);
+        $response = $dataProvider->putItem($this->getRequestBody(), $headers, null, DataProvider::BODY_TYPE_JSON);
 
         $this->logger->info("Result Code : ".$response->getCode());
         
         if ($response->getCode() == 200) {
             $data = json_decode($response->getValue(), true);
         } else {
-            throw new \LogicException("Request failed");
+            $this->logger->info("Request failed ! ");
+        }
+
+        // Store some data
+        if ($this->getConsumptionCarpoolItem()->getDebtorUser()->getId()===$this->getConsumptionUser()->getId()) {
+            $this->getConsumptionCarpoolItem()->setDebtorConsumptionFeedbackExternalId($this->getExternalActivityId());
+            $this->getConsumptionCarpoolItem()->setDebtorConsumptionFeedbackDate(new \DateTime('now'));
+            $this->getConsumptionCarpoolItem()->setDebtorConsumptionFeedbackReturnCode($response->getCode());
+        } else {
+            $this->getConsumptionCarpoolItem()->setCreditorConsumptionFeedbackExternalId($this->getExternalActivityId());
+            $this->getConsumptionCarpoolItem()->setCreditorConsumptionFeedbackDate(new \DateTime('now'));
+            $this->getConsumptionCarpoolItem()->setCreditorConsumptionFeedbackReturnCode($response->getCode());
         }
     }
 

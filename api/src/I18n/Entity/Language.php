@@ -117,7 +117,7 @@ class Language
     /**
      * @var ArrayCollection|null A Language can have multiple entry in Translate
      *
-     * @ORM\OneToMany(targetEntity="\App\I18n\Entity\Translate", mappedBy="language", cascade={"persist","remove"})
+     * @ORM\OneToMany(targetEntity="\App\I18n\Entity\Translate", mappedBy="language", cascade={"persist"})
      * @MaxDepth(1)
      */
     private $translates;

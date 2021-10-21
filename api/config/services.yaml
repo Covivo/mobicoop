@@ -240,6 +240,7 @@ services:
                 defaultRegularLifeTime: '%env(int:CARPOOL_REGULAR_LIFETIME)%'
                 defaultAnyRouteAsPassenger: '%env(bool:CARPOOL_ANY_ROUTE_PASSENGER)%'
                 defaultPriceKm: '%env(float:CARPOOL_PRICE)%'
+                batchTemp: '%env(resolve:SIG_GEOROUTER_BATCH_TEMP)%'
         tags:
             - { name: monolog.logger, channel: carpool }
     

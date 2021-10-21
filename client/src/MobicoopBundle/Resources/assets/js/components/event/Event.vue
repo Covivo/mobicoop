@@ -361,11 +361,16 @@ export default {
         currentProposal.desc += "<p style='text-align:left;'><strong>"+this.$t('map.origin')+"</strong> : "+infosForPopUp.origin+"<br />";
         if(proposal.frequency=='regular') currentProposal.desc += "<em>"+this.$t('map.regular')+"</em>";
 
+        // We add link to make the same search
+        currentProposal.desc +=
+            "<p><a href='" +
+            proposal.searchLink +
+            "'>" +
+            this.$t("map.search.label") +
+            "</a></p>";        
+
         // And now the content of a tooltip (same as popup but without the button)
         currentProposal.title = currentProposal.desc;
-                
-        // We add the button to the popup (To Do: Button isn't functionnal. Find a good way to launch a research)
-        //currentProposal.desc += "<br /><button type='button' class='v-btn v-btn--contained v-btn--rounded theme--light v-size--small secondary text-overline'>"+this.$t('map.findMatchings')+"</button>";
 
         // We are closing the two p
         currentProposal.title += "</p>";

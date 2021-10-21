@@ -33,11 +33,11 @@
     "registerUrl": "/utilisateur/inscription/{id}",
     "saveSearch": {
 		"route": "/covoiturage/recherche/{id}/enregistrer",
-        "noAd": "Créer une alerte",
-        "noCorrectAd": "Aucune annonce satisfaisante?",
-        "message": "Pour être alerté de prochains résultats voire être contacté par d'autres covoitureurs pour le même trajet, cliquez ci-dessous pour convertir votre recherche en annonce.",
+        "noAd": "Il n'y a pas encore de covoiturage </br> disponible entre {cityA} et {cityB}",
+        "message": "Soyez alerté des demandes des prochains covoiturages en publiant une annonce.",
         "button": {
             "label": "Créer une alerte"
         }
-	}
+	},
+    "logoNoResult": "/images/pages/results/logoNoResult.png"    
 }

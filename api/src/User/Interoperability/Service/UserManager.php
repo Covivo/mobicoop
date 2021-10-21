@@ -41,6 +41,10 @@ class UserManager
     private $userEntityManager;
     private $security;
     private $entityManager;
+    
+    /**
+     * @var DetachSso
+     */
     private $detachSso;
 
     public function __construct(UserEntityManager $userEntityManager, Security $security, EntityManagerInterface $entityManager)
@@ -165,6 +169,7 @@ class UserManager
         $userEntity->setSsoId(null);
         $userEntity->setSsoProvider(null);
         $userEntity->setCreatedSSoDate(null);
+        $userEntity->setAppDelegate(null);
         $this->entityManager->persist($userEntity);
         $this->entityManager->flush();
         $this->detachSso->setPreviouslyExisting(true);

@@ -848,6 +848,10 @@ class PaymentManager
             $this->consumptionFeedbackProvider->auth();
         }
 
+        if ($this->consumptionFeedbackProvider->isActive() && !is_null($this->consumptionFeedbackProvider->getAccessToken())) {
+            $this->resendConsumptionFeedbackInError();
+        }
+
         // then we create the corresponding items
         foreach ($asks as $ask) {
             /**
@@ -869,12 +873,14 @@ class PaymentManager
                         $carpoolItem->setDebtorStatus(CarpoolItem::DEBTOR_STATUS_NULL);
                         $carpoolItem->setCreditorStatus(CarpoolItem::CREDITOR_STATUS_NULL);
                     }
-
                     $this->entityManager->persist($carpoolItem);
 
                     if ($this->consumptionFeedbackProvider->isActive() && !is_null($this->consumptionFeedbackProvider->getAccessToken())) {
                         $this->consumptionFeedbackProvider->setConsumptionCarpoolItem($carpoolItem);
                         $this->consumptionFeedbackProvider->sendConsumptionFeedback();
+                        $carpoolItem = $this->consumptionFeedbackProvider->getConsumptionCarpoolItem();
+                        $this->consumptionFeedbackProvider->setConsumptionUser(null);
+                        $this->consumptionFeedbackProvider->setConsumptionCarpoolItem(null);
                     }
 
                     if ($carpoolItem->getDebtorStatus() !== CarpoolItem::DEBTOR_STATUS_NULL) {
@@ -948,6 +954,9 @@ class PaymentManager
                         if ($this->consumptionFeedbackProvider->isActive() && !is_null($this->consumptionFeedbackProvider->getAccessToken())) {
                             $this->consumptionFeedbackProvider->setConsumptionCarpoolItem($carpoolItem);
                             $this->consumptionFeedbackProvider->sendConsumptionFeedback();
+                            $carpoolItem = $this->consumptionFeedbackProvider->getConsumptionCarpoolItem();
+                            $this->consumptionFeedbackProvider->setConsumptionUser(null);
+                            $this->consumptionFeedbackProvider->setConsumptionCarpoolItem(null);
                         }
 
                         // We send only one email for the all week
@@ -974,9 +983,26 @@ class PaymentManager
                 }
             }
         }
-        // die; /** REMOVE BEFORE DEPLOYMENT !!!! */
+        
         $this->entityManager->flush();
     }
+
+    /**
+     * Resend the previous consumption feedback that failed previouly
+     */
+    private function resendConsumptionFeedbackInError()
+    {
+        $carpoolItems = $this->carpoolItemRepository->findConsumptionFeedbackInError();
+
+        foreach ($carpoolItems as $carpoolItem) {
+            $this->consumptionFeedbackProvider->setConsumptionCarpoolItem($carpoolItem);
+            $this->consumptionFeedbackProvider->sendConsumptionFeedback();
+            $carpoolItem = $this->consumptionFeedbackProvider->getConsumptionCarpoolItem();
+            $this->consumptionFeedbackProvider->setConsumptionUser(null);
+            $this->consumptionFeedbackProvider->setConsumptionCarpoolItem(null);
+        }
+    }
+
 
     /**
      * Get the carpool payment items for the given frequency, type, period and user
