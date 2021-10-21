@@ -55,7 +55,7 @@ class EventImport
     /**
      * @var event|null Event imported in the platform.
      *
-     * @ORM\OneToOne(targetEntity="\App\Event\Entity\Event", cascade={"persist", "remove"}, orphanRemoval=true)
+     * @ORM\OneToOne(targetEntity="\App\Event\Entity\Event", cascade={"persist"})
      * @Groups({"read","write"})
      * @MaxDepth(1)
      */

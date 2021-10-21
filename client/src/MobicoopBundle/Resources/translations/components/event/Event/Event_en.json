@@ -32,7 +32,10 @@
         "searchCarpool": "Search a journey for the event"
     },
     "map": {
-        "origin": "Origin"
+        "origin": "Origin",
+        "search": {
+            "label": "Chercher les covoiturages correspondants"
+        }
     },
     "urlCommunityUser": "/community-user"
 }

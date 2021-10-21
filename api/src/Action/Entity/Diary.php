@@ -64,7 +64,7 @@ class Diary
      * @var Action The action.
      *
      * @ORM\ManyToOne(targetEntity="\App\Action\Entity\Action")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Groups({"read","write","readUser","readSolidary"})
      * @MaxDepth(1)
      */
@@ -92,7 +92,7 @@ class Diary
      *
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="App\User\Entity\User", inversedBy="diaries")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Groups({"read"})
      * @MaxDepth(1)
      */
@@ -104,7 +104,7 @@ class Diary
      *
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="App\User\Entity\User", inversedBy="diariesAuthor")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(onDelete="SET NULL")
      * @Groups({"read"})
      * @MaxDepth(1)
      */
@@ -114,6 +114,7 @@ class Diary
      * @var Solidary|null The solidary record if the action concerns a solidary record.
      *
      * @ORM\ManyToOne(targetEntity="\App\Solidary\Entity\Solidary")
+     * @ORM\JoinColumn(onDelete="SET NULL")
      * @Groups({"read","write", "readSolidary"})
      * @MaxDepth(1)
      */
@@ -123,6 +124,7 @@ class Diary
      * @var SolidarySolution|null The solidary solution if the action concerns a solidary record solution.
      *
      * @ORM\ManyToOne(targetEntity="\App\Solidary\Entity\SolidarySolution")
+     * @ORM\JoinColumn(onDelete="SET NULL")
      * @Groups({"read","write", "readSolidary"})
      * @MaxDepth(1)
      */

@@ -100,7 +100,8 @@ class SolidaryAskHistory implements MessagerInterface
     /**
      * @var SolidaryAsk|null The linked solidary ask.
      *
-     * @ORM\ManyToOne(targetEntity="\App\Solidary\Entity\SolidaryAsk", inversedBy="solidaryAskHistories", cascade={"persist","remove"})
+     * @ORM\ManyToOne(targetEntity="\App\Solidary\Entity\SolidaryAsk", inversedBy="solidaryAskHistories", cascade={"persist"})
+     * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
      * @Groups({"readSolidary","writeSolidary"})
      * @MaxDepth(1)
      */
@@ -109,7 +110,8 @@ class SolidaryAskHistory implements MessagerInterface
     /**
      * @var Message|null The message linked the solidary ask history item.
      *
-     * @ORM\OneToOne(targetEntity="\App\Communication\Entity\Message", inversedBy="solidaryAskHistory", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToOne(targetEntity="\App\Communication\Entity\Message", inversedBy="solidaryAskHistory", cascade={"persist"})
+     * @ORM\JoinColumn(onDelete="SET NULL")
      * @Groups({"readSolidary","writeSolidary"})
      * @MaxDepth(1)
      */

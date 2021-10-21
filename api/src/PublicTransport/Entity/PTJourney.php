@@ -184,7 +184,7 @@ class PTJourney
      * @var PTDeparture The departure of this journey.
      *
      * @ORM\ManyToOne(targetEntity="App\PublicTransport\Entity\PTDeparture")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Groups("pt")
      */
     private $ptdeparture;
@@ -193,7 +193,7 @@ class PTJourney
      * @var PTArrival The arrival of this journey.
      *
      * @ORM\ManyToOne(targetEntity="App\PublicTransport\Entity\PTArrival")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Groups("pt")
      */
     private $ptarrival;
@@ -201,8 +201,7 @@ class PTJourney
     /**
      * @var ArrayCollection The legs of this journey.
      *
-     * @ORM\OneToMany(targetEntity="\App\PublicTransport\Entity\PTLeg", mappedBy="ptjourney", cascade={"persist","remove"}, orphanRemoval=true)
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\OneToMany(targetEntity="\App\PublicTransport\Entity\PTLeg", mappedBy="ptjourney", cascade={"persist"})
      * @Groups("pt")
      */
     private $ptlegs;

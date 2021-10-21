@@ -123,7 +123,7 @@ class CampaignTemplate
      * @var Medium The medium used for the campaign template.
      *
      * @ORM\ManyToOne(targetEntity="\App\Communication\Entity\Medium")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Groups({"read_campaign","write_campaign"})
      * @MaxDepth(1)
      */

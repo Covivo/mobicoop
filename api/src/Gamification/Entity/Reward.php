@@ -92,7 +92,7 @@ class Reward implements GamificationNotificationInterface
      * @var Badge Reward's Badge
      *
      * @ORM\ManyToOne(targetEntity="\App\Gamification\Entity\Badge", inversedBy="badges")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Groups({"readGamification","writeGamification"})
      */
     private $badge;
@@ -101,7 +101,7 @@ class Reward implements GamificationNotificationInterface
      * @var User The User who has been rewarded by a Badge
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="rewards")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Groups({"readGamification","writeGamification"})
      */
     private $user;

@@ -475,6 +475,7 @@ class Structure
      * @var Structure Parent structure.
      *
      * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Structure", inversedBy="structures")
+     * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $structure;
@@ -482,7 +483,7 @@ class Structure
     /**
      * @var ArrayCollection|null Child structures.
      *
-     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Structure", mappedBy="structure", cascade={"remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Structure", mappedBy="structure")
      * @Groups({"readSolidary","writeSolidary"})
      * @MaxDepth(1)
      */
@@ -491,7 +492,7 @@ class Structure
     /**
      * @var ArrayCollection|null The solidary user for this structure.
      *
-     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\SolidaryUserStructure", mappedBy="structure", cascade={"remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\SolidaryUserStructure", mappedBy="structure")
      * @MaxDepth(1)
      */
     private $solidaryUserStructures;
@@ -499,7 +500,7 @@ class Structure
     /**
      * @var ArrayCollection|null The subjects for this structure.
      *
-     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Subject", mappedBy="structure", cascade={"persist"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Subject", mappedBy="structure", cascade={"persist"})
      * @Groups({"aRead","readSolidary", "writeSolidary"})
      * @MaxDepth(1)
      */
@@ -517,7 +518,7 @@ class Structure
     /**
      * @var ArrayCollection|null The relay points related to the structure.
      *
-     * @ORM\OneToMany(targetEntity="\App\RelayPoint\Entity\RelayPoint", mappedBy="structure", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\RelayPoint\Entity\RelayPoint", mappedBy="structure", cascade={"persist"})
      * @MaxDepth(1)
      */
     private $relayPoints;
@@ -525,7 +526,7 @@ class Structure
     /**
      * @var ArrayCollection|null The proofs for this structure.
      *
-     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\StructureProof", mappedBy="structure", cascade={"persist"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\StructureProof", mappedBy="structure", cascade={"persist"})
      * @ORM\OrderBy({"position" = "ASC"})
      * @Groups({"aRead","readSolidary", "writeSolidary"})
      * @MaxDepth(1)
@@ -536,7 +537,7 @@ class Structure
     /**
      * @var ArrayCollection|null A Structure can have multiple entry in Operate
      *
-     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Operate", mappedBy="structure", cascade={"persist"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Operate", mappedBy="structure", cascade={"persist"})
      * @MaxDepth(1)
      */
     private $operates;

@@ -178,6 +178,7 @@ class SolidaryVolunteerManager
 
             $volunteerStructures[] = [
                 "id" => $solidaryUserStructure->getStructure()->getId(),
+                "userStructureId" => $solidaryUserStructure->getId(),
                 "name" => $solidaryUserStructure->getStructure()->getName(),
                 "status" => $solidaryUserStructure->getStatus()
             ];

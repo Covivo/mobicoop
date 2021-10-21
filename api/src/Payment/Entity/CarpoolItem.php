@@ -33,6 +33,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Carpool item : a carpool journey effectively done, or supposed to be done.
+ * The item must be kept even if related entities are deleted (eg. a user deletes its account, the carpooler must keep the item)
  *
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
@@ -137,6 +138,7 @@ class CarpoolItem
      * @var Ask The ask related to the item.
      *
      * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Ask", inversedBy="carpoolItems")
+     * @ORM\JoinColumn(onDelete="SET NULL")
      * @Groups({"readExport"})
      * @MaxDepth(1)
      */
@@ -146,6 +148,7 @@ class CarpoolItem
      * @var User Debtor user (the user that pays)
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User")
+     * @ORM\JoinColumn(onDelete="SET NULL")
      * @Groups({"readExport"})
      * @MaxDepth(1)
      */
@@ -155,6 +158,7 @@ class CarpoolItem
      * @var User Creditor user (the user paid)
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User")
+     * @ORM\JoinColumn(onDelete="SET NULL")
      * @Groups({"readExport"})
      * @MaxDepth(1)
      */
@@ -171,9 +175,63 @@ class CarpoolItem
     /**
      * @var ArrayCollection The logs linked with the carpoolitem.
      *
-     * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="carpoolItem", cascade={"remove"})
+     * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="carpoolItem")
      */
     private $logs;
+
+    /**
+     * @var int Debtor Consumption feedback reponse code of the external service
+     * ONLY If this carpool item has been involved in a Consumption feedback
+     *
+     * @ORM\Column(type="integer", nullable=true)
+     * @MaxDepth(1)
+     */
+    private $debtorConsumptionFeedbackReturnCode;
+
+    /**
+     * @var string Debtor Consumption feedback external id that has been sent to the service
+     * ONLY If this carpool item has been involved in a Consumption feedback
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @MaxDepth(1)
+     */
+    private $debtorConsumptionFeedbackExternalId;
+
+    /**
+     * @var \DateTimeInterface Last try on sending a Debtor consumption feedback
+     * ONLY If this carpool item has been involved in a Consumption feedback
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @MaxDepth(1)
+     */
+    private $debtorConsumptionFeedbackDate;
+
+    /**
+     * @var int Creditor Consumption feedback reponse code of the external service
+     * ONLY If this carpool item has been involved in a Consumption feedback
+     *
+     * @ORM\Column(type="integer", nullable=true)
+     * @MaxDepth(1)
+     */
+    private $creditorConsumptionFeedbackReturnCode;
+
+    /**
+     * @var string Creditor Consumption feedback external id that has been sent to the service
+     * ONLY If this carpool item has been involved in a Consumption feedback
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @MaxDepth(1)
+     */
+    private $creditorConsumptionFeedbackExternalId;
+
+    /**
+     * @var \DateTimeInterface Last try on sending a Creditor consumption feedback
+     * ONLY If this carpool item has been involved in a Consumption feedback
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @MaxDepth(1)
+     */
+    private $creditorConsumptionFeedbackDate;
 
     /**
      * @var \DateTimeInterface Creation date.
@@ -391,6 +449,78 @@ class CarpoolItem
             }
         }
         
+        return $this;
+    }
+
+    public function getDebtorConsumptionFeedbackReturnCode(): ?int
+    {
+        return $this->debtorConsumptionFeedbackReturnCode;
+    }
+
+    public function setDebtorConsumptionFeedbackReturnCode(?int $debtorConsumptionFeedbackReturnCode): self
+    {
+        $this->debtorConsumptionFeedbackReturnCode = $debtorConsumptionFeedbackReturnCode;
+
+        return $this;
+    }
+
+    public function getDebtorConsumptionFeedbackExternalId(): ?string
+    {
+        return $this->debtorConsumptionFeedbackExternalId;
+    }
+
+    public function setDebtorConsumptionFeedbackExternalId(?string $debtorConsumptionFeedbackExternalId): self
+    {
+        $this->debtorConsumptionFeedbackExternalId = $debtorConsumptionFeedbackExternalId;
+
+        return $this;
+    }
+
+    public function getDebtorConsumptionFeedbackDate(): ?\DateTimeInterface
+    {
+        return $this->debtorConsumptionFeedbackDate;
+    }
+
+    public function setDebtorConsumptionFeedbackDate(?\DateTimeInterface $debtorConsumptionFeedbackDate): self
+    {
+        $this->debtorConsumptionFeedbackDate = $debtorConsumptionFeedbackDate;
+
+        return $this;
+    }
+
+    public function getCreditorConsumptionFeedbackReturnCode(): ?int
+    {
+        return $this->creditorConsumptionFeedbackReturnCode;
+    }
+
+    public function setCreditorConsumptionFeedbackReturnCode(?int $creditorConsumptionFeedbackReturnCode): self
+    {
+        $this->creditorConsumptionFeedbackReturnCode = $creditorConsumptionFeedbackReturnCode;
+
+        return $this;
+    }
+
+    public function getCreditorConsumptionFeedbackExternalId(): ?string
+    {
+        return $this->creditorConsumptionFeedbackExternalId;
+    }
+
+    public function setCreditorConsumptionFeedbackExternalId(?string $creditorConsumptionFeedbackExternalId): self
+    {
+        $this->creditorConsumptionFeedbackExternalId = $creditorConsumptionFeedbackExternalId;
+
+        return $this;
+    }
+
+    public function getCreditorConsumptionFeedbackDate(): ?\DateTimeInterface
+    {
+        return $this->creditorConsumptionFeedbackDate;
+    }
+
+    public function setCreditorConsumptionFeedbackDate(?\DateTimeInterface $creditorConsumptionFeedbackDate): self
+    {
+        $this->creditorConsumptionFeedbackDate = $creditorConsumptionFeedbackDate;
+
         return $this;
     }
 
