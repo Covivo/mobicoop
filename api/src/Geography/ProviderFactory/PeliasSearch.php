@@ -55,7 +55,7 @@ final class PeliasSearch extends AbstractHttpProvider implements Provider
     const REVERSE_ENDPOINT_URL = 'reverse?point.lat=%f&point.lon=%f&size=%d&lang=%s';
 
     // minimum confidence to consider a result as pertinent
-    const MIN_CONFIDENCE = 0.85;
+    const MIN_CONFIDENCE = 0.80;
 
     /**
      * @var string
