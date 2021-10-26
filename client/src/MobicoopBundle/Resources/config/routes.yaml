@@ -225,9 +225,9 @@ user_homeAddress_update:
 # profile update
 user_profile_update:
     path:
-        fr: /utilisateur/profil/modifier/{tabDefault?}
-        en: /user/profile/update/{tabDefault?}
-        nl: /user/profile/update/{tabDefault?}
+        fr: /utilisateur/profil/modifier/{tabDefault?}/{selectedTab?}
+        en: /user/profile/update/{tabDefault?}/{selectedTab?}
+        nl: /user/profile/update/{tabDefault?}/{selectedTab?}
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userProfileUpdate
 
 user_ads:

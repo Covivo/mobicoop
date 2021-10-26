@@ -449,7 +449,7 @@ class UserController extends AbstractController
     /**
      * User profile update.
      */
-    public function userProfileUpdate(UserManager $userManager, Request $request, ImageManager $imageManager, AddressManager $addressManager, TranslatorInterface $translator, $tabDefault)
+    public function userProfileUpdate(UserManager $userManager, Request $request, ImageManager $imageManager, AddressManager $addressManager, TranslatorInterface $translator, $tabDefault,$selectedTab)
     {
         $user = $userManager->getLoggedUser();
         
@@ -525,6 +525,11 @@ class UserController extends AbstractController
             $tabDefault = 'reviews';
         }
 
+        $tab = 'myAccount';
+        if ($selectedTab == 'mes-badges') {
+            $tab = 'myBadges';
+        }
+
         return $this->render('@Mobicoop/user/updateProfile.html.twig', [
             'error' => $error,
             'alerts' => $userManager->getAlerts($user)['alerts'],
@@ -532,7 +537,8 @@ class UserController extends AbstractController
             'paymentElectronicActive' => $this->paymentElectronicActive,
             'validationDocsAuthorizedExtensions' => $this->validationDocsAuthorizedExtensions,
             'showReviews' => $user->isUserReviewsActive(),
-            "ageDisplay"=>$this->ageDisplay
+            "ageDisplay"=>$this->ageDisplay,
+            'selectedTab' => $tab
         ]);
     }
 

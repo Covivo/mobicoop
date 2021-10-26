@@ -17,6 +17,7 @@
         	:alerts="{{ alerts|json_encode }}"
 			:platform="{{ app_name|json_encode }}"
             tab-default="{{ tabDefault }}"
+			selected-tab="{{ selectedTab }}"
 			:payment-electronic-active = "{{ paymentElectronicActive|json_encode }}"
 			validation-docs-authorized-extensions="{{ validationDocsAuthorizedExtensions }}"
 			:show-reviews="{{ showReviews ? "true" : "false" }}"
