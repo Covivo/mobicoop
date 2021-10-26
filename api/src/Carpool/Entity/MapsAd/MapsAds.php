@@ -21,9 +21,10 @@
  *    LICENSE
  **************************/
 
-namespace App\Carpool\Entity;
+namespace App\Carpool\Entity\MapsAd;
 
 use Symfony\Component\Serializer\Annotation\Groups;
+use App\Carpool\Entity\MapsAd\MapsAd;
 
 /**
  * Map's Ads. Contains a collection of Map's Ad
@@ -32,7 +33,27 @@ class MapsAds
 {
 
     /**
-     * @var array
-     */
+     * @var MapsAd[]
+     * @Groups({"readCommunityAds"})
+    */
     private $mapsAds;
+
+    public function __construct(array $mapsAds = null)
+    {
+        if(!is_null($mapsAds)){
+            $this->setMapsAds($mapsAds);
+        }
+    }
+
+    public function getMapsAds(): ?array
+    {
+        return $this->mapsAds;
+    }
+
+    public function setMapsAds(?array $mapsAds): self
+    {
+        $this->mapsAds = $mapsAds;
+
+        return $this;
+    }
 }

@@ -46,6 +46,10 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use App\Action\Event\ActionEvent;
 use App\Action\Repository\ActionRepository;
+use App\Carpool\Entity\MapsAd\MapsAd;
+use App\Carpool\Entity\MapsAd\MapsAds;
+use App\Carpool\Entity\MapsAd\MapsAdWaypoint;
+use App\Carpool\Entity\Proposal;
 use App\Community\Repository\CommunityUserRepository;
 
 /**
@@ -256,16 +260,42 @@ class CommunityManager
      */
     public function getAdsOfCommunity(int $communityId)
     {
-        $ads = [];
+        $mapsAds = [];
 
         // We get only the public proposal (we exclude searches)
         $proposals = $this->proposalRepository->findCommunityAds($this->communityRepository->find($communityId));
 
         foreach ($proposals as $proposal) {
-            $ads[] = $this->adManager->makeAdForCommunityOrEvent($proposal);
+            $mapsAds[] = $this->makeMapsAdFromProposal($proposal);
         }
-        //$community->setMapsAds($ads);
-        return $ads;
+
+        return new mapsAds($mapsAds);
+    }
+
+    private function makeMapsAdFromProposal(Proposal $proposal): MapsAd
+    {
+        $mapsAd = new MapsAd();
+
+        $origin = new MapsAdWaypoint();
+        $origin->setLatitude($proposal->getWaypoints()[0]->getAddress()->getLatitude());
+        $origin->setLongitude($proposal->getWaypoints()[0]->getAddress()->getLongitude());
+        $origin->setDisplayLabel(implode(", ",$proposal->getWaypoints()[0]->getAddress()->getDisplayLabel()));
+        $mapsAd->setOrigin($origin);
+
+        $destination = new MapsAdWaypoint();
+        $destination->setLatitude($proposal->getWaypoints()[count($proposal->getWaypoints())-1]->getAddress()->getLatitude());
+        $destination->setLongitude($proposal->getWaypoints()[count($proposal->getWaypoints())-1]->getAddress()->getLongitude());
+        $destination->setDisplayLabel(implode(", ",$proposal->getWaypoints()[count($proposal->getWaypoints())-1]->getAddress()->getDisplayLabel()));
+        $mapsAd->setDestination($destination);
+
+        $mapsAd->setProposalId($proposal->getId());
+
+        $mapsAd->setOneWay(true);
+        if ($proposal->getProposalLinked()) {
+            $mapsAd->setOneWay(false);
+        }
+
+        return $mapsAd;
     }
 
     /**

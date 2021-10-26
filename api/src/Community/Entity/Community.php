@@ -820,6 +820,9 @@ class Community
 
     public function isMember(): ?bool
     {
+        if(!isset($this->member)){
+            return false;
+        }
         return $this->member;
     }
 
@@ -832,6 +835,9 @@ class Community
 
     public function getMemberStatus(): ?int
     {
+        if(!isset($this->memberStatus)){
+            return 0;
+        }
         return $this->memberStatus;
     }
 
