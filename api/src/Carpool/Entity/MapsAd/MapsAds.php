@@ -40,7 +40,7 @@ class MapsAds
 
     public function __construct(array $mapsAds = null)
     {
-        if(!is_null($mapsAds)){
+        if (!is_null($mapsAds)) {
             $this->setMapsAds($mapsAds);
         }
     }

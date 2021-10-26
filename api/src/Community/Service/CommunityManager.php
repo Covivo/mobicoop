@@ -279,13 +279,13 @@ class CommunityManager
         $origin = new MapsAdWaypoint();
         $origin->setLatitude($proposal->getWaypoints()[0]->getAddress()->getLatitude());
         $origin->setLongitude($proposal->getWaypoints()[0]->getAddress()->getLongitude());
-        $origin->setDisplayLabel(implode(", ",$proposal->getWaypoints()[0]->getAddress()->getDisplayLabel()));
+        $origin->setDisplayLabel(implode(", ", $proposal->getWaypoints()[0]->getAddress()->getDisplayLabel()));
         $mapsAd->setOrigin($origin);
 
         $destination = new MapsAdWaypoint();
         $destination->setLatitude($proposal->getWaypoints()[count($proposal->getWaypoints())-1]->getAddress()->getLatitude());
         $destination->setLongitude($proposal->getWaypoints()[count($proposal->getWaypoints())-1]->getAddress()->getLongitude());
-        $destination->setDisplayLabel(implode(", ",$proposal->getWaypoints()[count($proposal->getWaypoints())-1]->getAddress()->getDisplayLabel()));
+        $destination->setDisplayLabel(implode(", ", $proposal->getWaypoints()[count($proposal->getWaypoints())-1]->getAddress()->getDisplayLabel()));
         $mapsAd->setDestination($destination);
 
         $mapsAd->setProposalId($proposal->getId());

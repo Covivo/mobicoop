@@ -65,7 +65,7 @@ class MapsAd
         $this->origin = $origin;
 
         return $this;
-    }    
+    }
 
     public function getDestination(): ?MapsAdWaypoint
     {
@@ -101,5 +101,5 @@ class MapsAd
         $this->oneWay = $oneWay;
 
         return $this;
-    }     
+    }
 }

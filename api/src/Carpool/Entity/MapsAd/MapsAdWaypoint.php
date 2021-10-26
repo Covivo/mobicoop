@@ -59,7 +59,7 @@ class MapsAdWaypoint
         $this->latitude = $latitude;
 
         return $this;
-    }    
+    }
 
     public function getLongitude(): ?string
     {
@@ -83,5 +83,5 @@ class MapsAdWaypoint
         $this->displayLabel = $displayLabel;
 
         return $this;
-    }    
+    }
 }
