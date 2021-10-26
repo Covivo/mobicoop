@@ -187,8 +187,17 @@ use App\Community\Filter\CommunityAddressTerritoryFilter;
  *          },
  *          "public"={
  *              "method"="GET",
+ *              "security"="is_granted('community_read',object)",
  *              "path"="/communities/{id}/public",
  *              "normalization_context"={"groups"={"readCommunityPublic"}},
+ *              "swagger_context" = {
+ *                  "tags"={"Communities"}
+ *              }
+ *          },
+ *          "mapsAds"={
+ *              "method"="GET",
+ *              "path"="/communities/{id}/mapsAds",
+ *              "normalization_context"={"groups"={"readCommunityAds"}},
  *              "swagger_context" = {
  *                  "tags"={"Communities"}
  *              }
@@ -404,7 +413,7 @@ class Community
      *
      * @ApiProperty(push=true)
      * @ORM\OneToMany(targetEntity="\App\Community\Entity\CommunityUser", mappedBy="community", cascade={"persist"})
-     * @Groups({"readCommunityUser","write","results","existsCommunity","readCommunityPublic"})
+     * @Groups({"readCommunityUser","write","results","existsCommunity"})
      * @MaxDepth(1)
      * @ApiSubresource(maxDepth=1)
      */
@@ -448,10 +457,10 @@ class Community
     private $nbMembers;
     
     /**
-     * @var array|null Store the ads of the community
-     * @Groups({"readCommunityUser","write","results","existsCommunity","readCommunityPublic"})
+     * @var array|null Store the MapAds of the community
+     * @Groups({"readCommunityUser","write","results","existsCommunity"})
      */
-    private $ads;
+    private $mapsAds;
 
     /**
      * @var Mass The community created after the migration of this mass users
@@ -845,14 +854,14 @@ class Community
         return $this;
     }
 
-    public function getAds()
+    public function getMapsAds()
     {
-        return $this->ads;
+        return $this->mapsAds;
     }
 
-    public function setAds(?array $ads): self
+    public function setMapsAds(?array $mapsAds): self
     {
-        $this->ads = $ads;
+        $this->mapsAds = $mapsAds;
 
         return $this;
     }

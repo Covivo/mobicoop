@@ -251,20 +251,21 @@ class CommunityManager
     /**
      * Set the ads of a community
      *
-     * @param Community Community
+     * @param int Community's id
      * @return Community
      */
-    private function getAdsOfCommunity(Community $community)
+    public function getAdsOfCommunity(int $communityId)
     {
         $ads = [];
 
         // We get only the public proposal (we exclude searches)
-        $proposals = $this->proposalRepository->findCommunityAds($community);
+        $proposals = $this->proposalRepository->findCommunityAds($this->communityRepository->find($communityId));
 
         foreach ($proposals as $proposal) {
             $ads[] = $this->adManager->makeAdForCommunityOrEvent($proposal);
         }
-        $community->setAds($ads);
+        //$community->setMapsAds($ads);
+        return $ads;
     }
 
     /**
