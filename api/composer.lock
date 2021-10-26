@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ac6c47305e5aee8996ffcbf5a146ffb3",
+    "content-hash": "7999eb81b2112e42550a5eb4ae6686c0",
     "packages": [
         {
             "name": "api-platform/api-pack",
@@ -1915,6 +1915,56 @@
             "time": "2020-04-27T06:40:36+00:00"
         },
         {
+            "name": "geo6/geocoder-php-addok-provider",
+            "version": "v1.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/geo6/geocoder-php-addok-provider.git",
+                "reference": "f4434f2d9d32542b7dbc51565da119f2f6786d3f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/geo6/geocoder-php-addok-provider/zipball/f4434f2d9d32542b7dbc51565da119f2f6786d3f",
+                "reference": "f4434f2d9d32542b7dbc51565da119f2f6786d3f",
+                "shasum": ""
+            },
+            "require": {
+                "geocoder-php/common-http": "^4.0",
+                "php": "^7.0",
+                "willdurand/geocoder": "^4.0"
+            },
+            "provide": {
+                "geocoder-php/provider-implementation": "1.0"
+            },
+            "require-dev": {
+                "geocoder-php/provider-integration-tests": "^1.0",
+                "php-http/curl-client": "^1.7 || ^2.0",
+                "php-http/message": "^1.0",
+                "phpunit/phpunit": "^6.5 || ^7.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Geocoder\\Provider\\Addok\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jonathan Beliën",
+                    "email": "jbe@geo6.be"
+                }
+            ],
+            "description": "Geocoder addok adapter",
+            "time": "2020-02-09T15:42:11+00:00"
+        },
+        {
             "name": "geocoder-php/bing-maps-provider",
             "version": "4.0.0",
             "source": {
@@ -2606,12 +2656,12 @@
             "version": "1.2.3",
             "source": {
                 "type": "git",
-                "url": "https://github.com/avalanche123/Imagine.git",
+                "url": "https://github.com/php-imagine/Imagine.git",
                 "reference": "cb2361e5bb4410b681462d8e4f912bc5dabf84ab"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/avalanche123/Imagine/zipball/cb2361e5bb4410b681462d8e4f912bc5dabf84ab",
+                "url": "https://api.github.com/repos/php-imagine/Imagine/zipball/cb2361e5bb4410b681462d8e4f912bc5dabf84ab",
                 "reference": "cb2361e5bb4410b681462d8e4f912bc5dabf84ab",
                 "shasum": ""
             },
