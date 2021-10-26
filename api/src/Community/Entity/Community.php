@@ -404,7 +404,7 @@ class Community
      *
      * @ApiProperty(push=true)
      * @ORM\OneToMany(targetEntity="\App\Community\Entity\CommunityUser", mappedBy="community", cascade={"persist"})
-     * @Groups({"readCommunity","readCommunityUser","write","results","existsCommunity","readCommunityPublic"})
+     * @Groups({"readCommunityUser","write","results","existsCommunity","readCommunityPublic"})
      * @MaxDepth(1)
      * @ApiSubresource(maxDepth=1)
      */
@@ -424,7 +424,7 @@ class Community
      * @var ArrayCollection|null The relay points related to the community.
      *
      * @ORM\OneToMany(targetEntity="\App\RelayPoint\Entity\RelayPoint", mappedBy="community", cascade={"persist"})
-     * @Groups({"readCommunity","write"})
+     * @Groups({"write"})
      * @MaxDepth(1)
      */
     private $relayPoints;
@@ -436,6 +436,12 @@ class Community
     private $member;
 
     /**
+     * @var int|null If the current user asking is member of the community this is his membership status (cf. CommunityUser status)
+     * @Groups({"readCommunity","listCommunities"})
+     */
+    private $memberStatus;
+
+    /**
      * @var int|null Number of members of this community
      * @Groups({"aRead","readCommunity","listCommunities"})
      */
@@ -443,7 +449,7 @@ class Community
     
     /**
      * @var array|null Store the ads of the community
-     * @Groups({"readCommunity","readCommunityUser","write","results","existsCommunity","readCommunityPublic"})
+     * @Groups({"readCommunityUser","write","results","existsCommunity","readCommunityPublic"})
      */
     private $ads;
 
@@ -451,7 +457,6 @@ class Community
      * @var Mass The community created after the migration of this mass users
      *
      * @ORM\OneToOne(targetEntity="App\Match\Entity\Mass", mappedBy="community")
-     * @Groups({"readCommunity"})
      */
     private $mass;
 
@@ -812,6 +817,18 @@ class Community
     public function setMember(?bool $member): self
     {
         $this->member = $member;
+
+        return $this;
+    }
+
+    public function getMemberStatus(): ?int
+    {
+        return $this->memberStatus;
+    }
+
+    public function setMemberStatus(?int $memberStatus): self
+    {
+        $this->memberStatus = $memberStatus;
 
         return $this;
     }

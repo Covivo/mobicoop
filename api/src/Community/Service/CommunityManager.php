@@ -46,6 +46,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use App\Action\Event\ActionEvent;
 use App\Action\Repository\ActionRepository;
+use App\Community\Repository\CommunityUserRepository;
 
 /**
  * Community manager.
@@ -63,6 +64,7 @@ class CommunityManager
     private $securityPath;
     private $userRepository;
     private $communityRepository;
+    private $communityUserRepository;
     private $proposalRepository;
     private $authItemRepository;
     private $userManager;
@@ -82,6 +84,7 @@ class CommunityManager
         string $securityPath,
         UserRepository $userRepository,
         CommunityRepository $communityRepository,
+        CommunityUserRepository $communityUserRepository,
         ProposalRepository $proposalRepository,
         AuthItemRepository $authItemRepository,
         UserManager $userManager,
@@ -94,6 +97,7 @@ class CommunityManager
         $this->securityPath = $securityPath;
         $this->userRepository = $userRepository;
         $this->communityRepository = $communityRepository;
+        $this->communityUserRepository = $communityUserRepository;
         $this->proposalRepository = $proposalRepository;
         $this->authItemRepository = $authItemRepository;
         $this->userManager = $userManager;
@@ -237,9 +241,8 @@ class CommunityManager
     {
         if ($community = $this->communityRepository->find($communityId)) {
             $community->setUrlKey($this->generateUrlKey($community));
-            $this->getAdsOfCommunity($community);
             if ($user) {
-                $this->checkIfCurrentUserIsMember($community, $user);
+                $this->setCommunityUserInfo($community, $user);
             }
         }
         return $community;
@@ -269,11 +272,16 @@ class CommunityManager
      *
      * @param Community $community
      * @param User $user  If a user is provided check and set that if he's in community
-     * @return bool
      */
-    private function checkIfCurrentUserIsMember(Community $community, User $user)
+    private function setCommunityUserInfo(Community $community, User $user)
     {
-        $community->setMember($this->communityRepository->isRegistered($community, $user));
+        $communityUsers = $this->communityUserRepository->findBy(['community'=>$community]);
+
+        $community->setMember(false);
+        if (!is_null($communityUsers) and count($communityUsers)>0) {
+            $community->setMember(true);
+            $community->setMemberStatus($communityUsers[0]->getStatus());
+        }
     }
 
 

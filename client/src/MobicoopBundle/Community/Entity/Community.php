@@ -187,6 +187,11 @@ class Community implements ResourceInterface, \JsonSerializable
     private $member;
 
     /**
+     * @var int|null If the current user asking is member of the community this is his membership status (cf. CommunityUser status)
+     */
+    private $memberStatus;
+
+    /**
      * @var boolean|null Number of members of this community
      */
     private $nbMembers;
@@ -504,6 +509,18 @@ class Community implements ResourceInterface, \JsonSerializable
         return $this;
     }
 
+    public function getMemberStatus(): ?int
+    {
+        return $this->memberStatus;
+    }
+
+    public function setMemberStatus(?int $memberStatus): self
+    {
+        $this->memberStatus = $memberStatus;
+
+        return $this;
+    }
+
     public function getAds()
     {
         return $this->ads;
@@ -548,6 +565,7 @@ class Community implements ResourceInterface, \JsonSerializable
             'validationType'    => $this->getValidationType(),
             'domain'            => $this->getDomain(),
             'isMember'          => $this->isMember(),
+            'memberStatus'          => $this->getMemberStatus(),
             'ads'               => $this->getAds(),
             'nbMembers'         => $this->getNbMembers()
         ];
