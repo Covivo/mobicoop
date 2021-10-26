@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace DoctrineMigrations;
 
@@ -10,7 +12,7 @@ use Doctrine\Migrations\AbstractMigration;
  */
 final class Version20211012131648 extends AbstractMigration
 {
-    public function up(Schema $schema) : void
+    public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
@@ -140,6 +142,7 @@ final class Version20211012131648 extends AbstractMigration
         $this->addSql('update mass_person set proposal_id = null where proposal_id is not null and proposal_id not in (select id from proposal);');
         $this->addSql('delete from reward where user_id is not null and user_id not in (select id from user);');
         $this->addSql('delete from reward_step where user_id is not null and user_id not in (select id from user);');
+        $this->addSql('delete from proof where solidary_user_structure_id is not null and solidary_user_structure_id not in (select id from solidary_user_structure);');
 
         $this->addSql('ALTER TABLE diary DROP FOREIGN KEY FK_917BEDE29D32F035');
         $this->addSql('ALTER TABLE diary DROP FOREIGN KEY FK_917BEDE2A76ED395');
@@ -467,7 +470,7 @@ final class Version20211012131648 extends AbstractMigration
         $this->addSql('ALTER TABLE user_notification ADD CONSTRAINT FK_3F980AC8EF1A9D84 FOREIGN KEY (notification_id) REFERENCES notification (id) ON DELETE CASCADE');
     }
 
-    public function down(Schema $schema) : void
+    public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
