@@ -400,7 +400,13 @@ class CommunityManager
         return $lastUsersFormated;
     }
 
-
+    public function communityMapsAds(int $id)
+    {
+        $this->dataProvider->setClass(Community::class);
+        $this->dataProvider->setFormat(DataProvider::RETURN_JSON);
+        $response = $this->dataProvider->getSpecialItem($id, "mapsAds");
+        return $response->getValue();
+    }
 
     /******************
      *                *

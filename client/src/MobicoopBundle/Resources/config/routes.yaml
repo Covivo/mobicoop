@@ -1011,6 +1011,17 @@ community_leave:
     requirements:
         id: '\d+'
 
+# get a community user (AJAX)
+community_get_mapsads:
+    methods: [POST]
+    path:
+        fr: /community/{id}/mapsAds
+        en: /community/{id}/mapsAds
+        nl: /community/{id}/mapsAds
+    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityMapsAds
+    requirements:
+        id: '\d+'
+
 # display one community
 community_show:
     path:
@@ -1052,16 +1063,6 @@ community_member_list:
         en: /community/memberList
         nl: /community/memberList
     controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityMemberList
-    requirements:
-        id: '\d+'
-
-# get all community proposals (AJAX)
-community_proposals:
-    path:
-        fr: /community-proposals/{id}
-        en: /community-proposals/{id}
-        nl: /community-proposals/{id}
-    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityProposals
     requirements:
         id: '\d+'
 

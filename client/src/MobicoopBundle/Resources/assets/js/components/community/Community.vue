@@ -532,6 +532,16 @@ export default {
     this.getRelayPointsMap(); 
   },
   methods: {
+    getMapsAds(){
+      maxios
+        .post("/community/"+this.community.id+"/mapsAds")
+        .then(res => {
+          console.log(res.data);
+        })
+        .catch(err => {
+          console.error(err);
+        });
+    },
     post: function(path, params, method = "post") {
       const form = document.createElement("form");
       form.method = method;
@@ -630,7 +640,7 @@ export default {
       }
     },
     checkDomain() {
-      if (this.community.validationType == 2) {
+      if (this.community.validationType == 2 && this.user) {
         let mailDomain = this.user.email.split("@")[1];
         if (!this.community.domain.includes(mailDomain)) {
           return (this.domain = false);
@@ -676,6 +686,11 @@ export default {
         });
     },
     showCommunityProposals() {
+
+      if(!this.points){
+        return;
+      }
+
       this.pointsToMap.length = 0;
       // add the community address to display on the map
       if (this.community.address && this.community.address.latitude !== null) {

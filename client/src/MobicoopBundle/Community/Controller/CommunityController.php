@@ -393,40 +393,9 @@ class CommunityController extends AbstractController
         }
     }
 
-    /**
-     * Get all proposals of a community
-     * Ajax
-     *
-     * @param integer $id
-     * @param CommunityManager $communityManager
-     * @return void
-     */
-    public function communityProposals(int $id, CommunityManager $communityManager)
+    public function communityMapsAds(int $id, CommunityManager $communityManager)
     {
-        $community = $communityManager->getCommunity($id);
-        $this->denyAccessUnlessGranted('show', $community);
-
-        $proposals = $communityManager->getProposals($id);
-        $ways = [];
-        if (null !== $proposals) {
-            foreach ($proposals as $proposal) {
-                $currentProposal = [
-                    "type"=>($proposal["type"]==Proposal::TYPE_ONE_WAY) ? 'one-way' : ($proposal["type"]==Proposal::TYPE_OUTWARD) ? 'outward' : 'return',
-                    "frequency"=>($proposal["criteria"]["frequency"]==Ad::FREQUENCY_PUNCTUAL) ? 'puntual' : 'regular',
-                    "waypoints"=>[]
-                ];
-                foreach ($proposal["waypoints"] as $waypoint) {
-                    $currentProposal["waypoints"][] = [
-                        "title"=>(is_array($waypoint["address"]["displayLabel"])) ? $waypoint["address"]["displayLabel"][0] : $waypoint["address"]["displayLabel"],
-                        "destination"=>$waypoint['destination'],
-                        "latLng"=>["lat"=>$waypoint["address"]["latitude"],"lon"=>$waypoint["address"]["longitude"]]
-                    ];
-                }
-                $ways[] = $currentProposal;
-            }
-        }
-
-        return new Response(json_encode($ways));
+        return new Response($communityManager->communityMapsAds($id));
     }
 
     /**
