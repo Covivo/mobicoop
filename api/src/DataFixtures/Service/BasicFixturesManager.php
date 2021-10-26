@@ -624,7 +624,7 @@ class BasicFixturesManager
 
         $image->setName($owner->getName());
         $image->setOriginalName($tab[0]);
-        $image->setFileName($this->imageManager->generateFilename($image).".jpg");
+        $image->setFileName($this->imageManager->generateFilename($image));
         $image->setPosition(1);
 
         $infos = getimagesize($file);
