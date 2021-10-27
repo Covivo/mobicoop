@@ -800,7 +800,7 @@ class MassImportManager
                         if (method_exists($workAddress, $setter)) {
                             $workAddress->$setter($tab[$i]);
                         }
-                    } elseif ($fields[$i] == "outwardTime") {
+                    } elseif ($fields[$i] == "outwardTime" && $tab[$i]!=="") {
                         $outwardtime = \DateTime::createFromFormat('H:i', $tab[$i]);
                         if (!$outwardtime) {
                             $error = true;
