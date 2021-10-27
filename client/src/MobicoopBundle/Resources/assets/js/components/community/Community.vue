@@ -227,7 +227,6 @@
               <community-last-users
                 :refresh="refreshLastUsers"
                 :community="community"
-                :given-last-users="lastUsers"
                 :hidden="!isAccepted && community.membersHidden"
                 @refreshed="lastUsersRefreshed"
               />
@@ -406,10 +405,6 @@ export default {
       default: ""
     },
     community: {
-      type: Object,
-      default: null,
-    },
-    lastUsers: {
       type: Object,
       default: null,
     },

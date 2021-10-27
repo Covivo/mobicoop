@@ -432,8 +432,10 @@ class CommunityController extends AbstractController
         ]);
     }
 
-
-
+    public function communityLastUsers(int $id, CommunityManager $communityManager)
+    {
+        return new Response($communityManager->getLastUsers($id));
+    }
 
     /******************
      *                *

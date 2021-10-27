@@ -379,32 +379,29 @@ class CommunityManager
 
     /**
      * Get last accepted community users and format them
-     * @param Community  $community
-     * @param int $status Status we want to get, init to 1
+     * @param int Community's id
      * @return array|null The last users formated
      */
-    public function getLastUsers(Community $community, int $status = 1)
+    public function getLastUsers(int $communityId)
     {
-        //Declare array we need
-        $allmembers = $lastUsersFormated = array();
+        $lastUsersFormated = [];
+
+        $this->dataProvider->setClass(Community::class);
+        $this->dataProvider->setFormat(DataProvider::RETURN_JSON);
+        $response = $this->dataProvider->getSpecialItem($communityId, "lastUsers");
+        $communityUsers = json_decode($response->getValue(), true);
         $cpt = 0;
-
-        //We stock the member with array_unshift so we can have the last members in first position
-        foreach ($community->getCommunityUsers() as $member) {
-            array_unshift($allmembers, $member);
-        }
-
-        //While we get result in member OR we get to the limit we want to display (.env -> COMMUNITY_LIMIT_MEMBER_DISPLAY_ON_FRONT )
-        while ($cpt < count($allmembers) && count($lastUsersFormated) < $this->communityLimitMemberDisplayOnFront) {
-            $currentUser = $allmembers[$cpt];
-            if ($currentUser->getStatus() == $status) {
-                $lastUsersFormated[$cpt]["name"]=ucfirst($currentUser->getUser()->getGivenName())." ".$currentUser->getUser()->getShortFamilyName();
-                $lastUsersFormated[$cpt]["acceptedDate"]=$currentUser->getAcceptedDate()->format('d/m/Y');
+        foreach ($communityUsers as $communityUser) {
+            if ($cpt < $this->communityLimitMemberDisplayOnFront) {
+                $acceptedDate = new \DateTime($communityUser['acceptedDate']);
+                $lastUsersFormated[] = [
+                    "name" => ucfirst($communityUser['user']['givenName'])." ".$communityUser['user']['shortFamilyName'],
+                    "acceptedDate" => $acceptedDate->format("d/m/Y")
+                ];
             }
-            $cpt ++;
+            $cpt++;
         }
-
-        return $lastUsersFormated;
+        return json_encode($lastUsersFormated);
     }
 
     public function communityMapsAds(int $id)

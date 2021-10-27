@@ -84,7 +84,6 @@ class CommunityManager
     public function __construct(
         EntityManagerInterface $entityManager,
         LoggerInterface $logger,
-        string $securityPath,
         UserRepository $userRepository,
         CommunityRepository $communityRepository,
         CommunityUserRepository $communityUserRepository,
@@ -93,7 +92,8 @@ class CommunityManager
         UserManager $userManager,
         AdManager $adManager,
         EventDispatcherInterface $eventDispatcher,
-        ActionRepository $actionRepository
+        ActionRepository $actionRepository,
+        string $securityPath
     ) {
         $this->entityManager = $entityManager;
         $this->logger = $logger;
@@ -448,6 +448,18 @@ class CommunityManager
         return $communityUser;
     }
 
+
+    /**
+     * @param integer $communityId
+     * @return array
+     */
+    public function getLastUsers(int $communityId): array
+    {
+        if ($community = $this->communityRepository->find($communityId)) {
+            return $this->communityUserRepository->findNLastUsersOfACommunity($community);
+        }
+        return [];
+    }
 
     /*************************
     *                        *

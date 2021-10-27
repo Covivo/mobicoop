@@ -370,13 +370,14 @@ services:
 
     App\Community\Service\CommunityManager:
         arguments:
-            $securityPath: '%env(resolve:COMMUNITY_SECURITY_PATH)%'
+            $securityPath: '%env(string:COMMUNITY_SECURITY_PATH)%'
         tags:
             - { name: monolog.logger, channel: community }
 
     App\Community\Repository\CommunityUserRepository:
         arguments:
             $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
+            $communityNbLastUser: '%env(int:COMMUNITY_NB_LAST_USERS)%'
 
     'App\Community\Admin\DataProvider\CommunityUserCampaignAssociateCollectionDataProvider':
         arguments:

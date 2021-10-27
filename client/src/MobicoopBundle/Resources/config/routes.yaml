@@ -992,6 +992,16 @@ community_secured_register:
         id: '\d+'
 
 # join a community (AJAX)
+community_last_users:
+    path:
+        fr: /communaute/{id}/lastUsers
+        en: /community/{id}/lastUsers
+        nl: /community/{id}/lastUsers
+    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityLastUsers
+    requirements:
+        id: '\d+'
+
+# join a community (AJAX)
 community_join:
     path:
         fr: /communaute/{id}/rejoindre

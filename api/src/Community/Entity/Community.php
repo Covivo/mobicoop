@@ -202,6 +202,14 @@ use App\Community\Filter\CommunityAddressTerritoryFilter;
  *                  "tags"={"Communities"}
  *              }
  *          },
+ *          "lastUsers"={
+ *              "method"="GET",
+ *              "path"="/communities/{id}/lastUsers",
+ *              "normalization_context"={"groups"={"readCommunity"}},
+ *              "swagger_context" = {
+ *                  "tags"={"Communities"}
+ *              }
+ *          },
  *          "put"={
  *              "method"="PUT",
  *              "security"="is_granted('community_update',object)",

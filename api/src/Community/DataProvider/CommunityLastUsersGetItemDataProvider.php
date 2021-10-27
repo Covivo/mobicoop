@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2021, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -31,12 +31,12 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Security;
 
 /**
- * Get the Ads related to a Community
+ * Get the last n members of a community
  *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  *
  */
-final class CommunityMapsAdsGetItemDataProvider implements ItemDataProviderInterface, RestrictedDataProviderInterface
+final class CommunityLastUsersGetItemDataProvider implements ItemDataProviderInterface, RestrictedDataProviderInterface
 {
     protected $request;
     private $communityManager;
@@ -52,11 +52,11 @@ final class CommunityMapsAdsGetItemDataProvider implements ItemDataProviderInter
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Community::class === $resourceClass && $operationName === "mapsAds";
+        return Community::class === $resourceClass && $operationName === "lastUsers";
     }
 
-    public function getItem(string $resourceClass, $id, string $operationName = null, array $context = [])
+    public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): array
     {
-        return $this->communityManager->getAdsOfCommunity($id);
+        return $this->communityManager->getLastUsers($id);
     }
 }
