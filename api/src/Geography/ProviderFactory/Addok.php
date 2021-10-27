@@ -23,14 +23,6 @@
 
 declare(strict_types=1);
 
-/*
- * This file is part of the Geocoder package.
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- *
- * @license    MIT License
- */
-
 namespace App\Geography\ProviderFactory;
 
 use Geocoder\Collection;
@@ -57,26 +49,15 @@ final class Addok extends AbstractHttpProvider implements Provider
     const TYPE_MUNICIPALITY = 'municipality';
     const COUNTRY = 'France';
     const MIN_SCORE = 0.7;
-<<<<<<< HEAD
 
     /**
      * @var string
      */
     const GEOCODE_ENDPOINT_URL = '/search/?q=%s&limit=%d&autocomplete=0';
-=======
->>>>>>> d5484049666a4b55ca707043d7792b6f297e1978
 
     /**
      * @var string
      */
-<<<<<<< HEAD
-=======
-    const GEOCODE_ENDPOINT_URL = '/search/?q=%s&limit=%d&autocomplete=0';
-
-    /**
-     * @var string
-     */
->>>>>>> d5484049666a4b55ca707043d7792b6f297e1978
     const GEOCODE_ENDPOINT_PRIORITIZATION = '&lat=%f&lon=%f';
 
     /**
