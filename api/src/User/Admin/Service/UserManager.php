@@ -223,7 +223,7 @@ class UserManager
         $event = new UserDelegateRegisteredEvent($user);
         $this->eventDispatcher->dispatch(UserDelegateRegisteredEvent::NAME, $event);
         // send password ?
-        if ($user->getPasswordSendType() == User::PWD_SEND_TYPE_SMS) {
+        if (!is_null($user->getTelephone())) {
             $event = new UserDelegateRegisteredPasswordSendEvent($user);
             $this->eventDispatcher->dispatch(UserDelegateRegisteredPasswordSendEvent::NAME, $event);
         }
