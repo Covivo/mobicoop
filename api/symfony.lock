@@ -119,6 +119,9 @@
     "fig/link-util": {
         "version": "1.0.0"
     },
+    "geo6/geocoder-php-addok-provider": {
+        "version": "v1.2.0"
+    },
     "geocoder-php/bing-maps-provider": {
         "version": "4.0.0"
     },

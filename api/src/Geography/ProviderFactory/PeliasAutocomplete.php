@@ -42,7 +42,7 @@ final class PeliasAutocomplete extends AbstractHttpProvider implements Provider
     /**
      * @var string
      */
-    const GEOCODE_ENDPOINT_URL = 'autocomplete?text=%s&size=%d&lang=%s&layers=locality,localAdmin';
+    const GEOCODE_ENDPOINT_URL = '/autocomplete?text=%s&size=%d&lang=%s&layers=locality,localAdmin';
 
     /**
      * @var string
@@ -52,7 +52,7 @@ final class PeliasAutocomplete extends AbstractHttpProvider implements Provider
     /**
      * @var string
      */
-    const REVERSE_ENDPOINT_URL = 'reverse?point.lat=%f&point.lon=%f&size=%d&lang=%s';
+    const REVERSE_ENDPOINT_URL = '/reverse?point.lat=%f&point.lon=%f&size=%d&lang=%s';
 
     /**
      * @var string
@@ -66,10 +66,11 @@ final class PeliasAutocomplete extends AbstractHttpProvider implements Provider
      * @param HttpClient $client an HTTP adapter
      * @param string     $uri the api uri
      */
-    public function __construct(HttpClient $client, string $uri=null)
+    public function __construct(HttpClient $client, string $uri = null)
     {
-        $this->uri = $uri;
         parent::__construct($client);
+
+        $this->uri = rtrim($uri, '/');
     }
 
     /**
@@ -78,7 +79,7 @@ final class PeliasAutocomplete extends AbstractHttpProvider implements Provider
     public function geocodeQuery(GeocodeQuery $query): Collection
     {
         $address = $query->getText();
-        $url = sprintf($this->uri.self::GEOCODE_ENDPOINT_URL, urlencode($address), $query->getLimit(), $query->getLocale());
+        $url = sprintf($this->uri . self::GEOCODE_ENDPOINT_URL, urlencode($address), $query->getLimit(), $query->getLocale());
         if (!is_null($query->getData('userPrioritize'))) {
             $userPrioritize = $query->getData('userPrioritize');
             $url .= sprintf(self::GEOCODE_ENDPOINT_PRIORITIZATION, $userPrioritize['latitude'], $userPrioritize['longitude']);
@@ -95,7 +96,7 @@ final class PeliasAutocomplete extends AbstractHttpProvider implements Provider
         $coordinates = $query->getCoordinates();
         $longitude = $coordinates->getLongitude();
         $latitude = $coordinates->getLatitude();
-        $url = sprintf($this->uri.self::REVERSE_ENDPOINT_URL, $latitude, $longitude, $query->getLimit(), $query->getLocale());
+        $url = sprintf($this->uri . self::REVERSE_ENDPOINT_URL, $latitude, $longitude, $query->getLimit(), $query->getLocale());
         return $this->executeQuery($url);
     }
     /**
@@ -156,7 +157,7 @@ final class PeliasAutocomplete extends AbstractHttpProvider implements Provider
             if (isset($props['distance'])) {
                 $distance = $props['distance'];
             }
-            
+
             $bounds = [
                 'south' => null,
                 'west' => null,
@@ -171,7 +172,7 @@ final class PeliasAutocomplete extends AbstractHttpProvider implements Provider
                     'east' => $location['bbox'][0],
                 ];
             }
-            
+
             $adminLevels = [];
             foreach (['localadmin', 'county', 'macrocounty', 'region', 'macroregion'] as $i => $component) {
                 if (isset($props[$component])) {
@@ -196,7 +197,7 @@ final class PeliasAutocomplete extends AbstractHttpProvider implements Provider
                 'country' => isset($props['country']) ? $props['country'] : null,
                 'countryCode' => isset($props['country_a']) ? strtoupper($props['country_a']) : null
             ]);
-        
+
             $result->setId($id);
             $result->setVenue($venue);
             $result->setDistance($distance);
