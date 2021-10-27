@@ -266,8 +266,10 @@ class MassMigrateManager
                 // We link the proposal with the MassPerson
                 $massPerson->setProposal($this->proposalManager->get($ad->getId()));
                 $this->entityManager->persist($massPerson);
+            }
 
-                // Finally we send an event to inform the user of its migration
+            // Finally we send an event to inform the user of its migration
+            if (!$user->isAlreadyRegistered()) {
                 $event = new MassMigrateUserMigratedEvent($massPerson);
                 $this->eventDispatcher->dispatch(MassMigrateUserMigratedEvent::NAME, $event);
             }

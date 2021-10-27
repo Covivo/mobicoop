@@ -224,7 +224,7 @@ class ImageManager
             case Event::class:
                 // TODO : define a standard for the naming of the images (name of the owner + position ? uuid ?)
                 // for now, for an event, the filename will be the sanitized name of the event and the position of the image in the set
-                if ($fileName = $this->fileManager->sanitize($owner->getName() . " " . $image->getPosition())) {
+                if ($fileName = $this->fileManager->sanitize($owner->getName() . " " . $image->getPosition()).".jpg") {
                     return $fileName;
                 }
                 break;
@@ -232,14 +232,14 @@ class ImageManager
             case Community::class:
                 // TODO : define a standard for the naming of the images (name of the owner + position ? uuid ?)
                 // for now, for a community, the filename will be the sanitized name of the community and the position of the image in the set
-                if ($fileName = $this->fileManager->sanitize($owner->getName() . " " . $image->getPosition())) {
+                if ($fileName = $this->fileManager->sanitize($owner->getName() . " " . $image->getPosition()).".jpg") {
                     return $fileName;
                 }
                 break;
             case RelayPoint::class:
                 // TODO : define a standard for the naming of the images (name of the owner + position ? uuid ?)
                 // for now, for a community, the filename will be the sanitized name of the community and the position of the image in the set
-                if ($fileName = $this->fileManager->sanitize($owner->getName() . " " . $image->getPosition())) {
+                if ($fileName = $this->fileManager->sanitize($owner->getName() . " " . $image->getPosition()).".jpg") {
                     return $fileName;
                 }
                 break;
@@ -247,22 +247,22 @@ class ImageManager
             case User::class:
                 // TODO : define a standard for the naming of the images (name of the owner + position ? uuid ?)
                 // for now, for an user, the filename will be the sanitized name of the user and the position of the image in the set
-                if ($fileName = $this->fileManager->sanitize($this->generateRandomName() . " " . $image->getPosition())) {
+                if ($fileName = $this->fileManager->sanitize($this->generateRandomName() . " " . $image->getPosition()).".jpg") {
                     return $fileName;
                 }
                 break;
             case Campaign::class:
                 // TODO : define a standard for the naming of the images (name of the owner + position ? uuid ?)
                 // for now, for an event, the filename will be the sanitized name of the event and the position of the image in the set
-                if ($fileName = $this->fileManager->sanitize($owner->getName() . " " . $image->getPosition())) {
+                if ($fileName = $this->fileManager->sanitize($owner->getName() . " " . $image->getPosition()).".jpg") {
                     return $fileName;
                 }
 
                 break;
             case Badge::class:
                 // TODO : define a standard for the naming of the images (name of the owner + position ? uuid ?)
-                // for now, for a badge, the filename will be the sanitized name of the event and the position of the image in the set
-                if ($fileName = $this->fileManager->sanitize($owner->getName() . " " . $image->getPosition())) {
+                // for now, for a badge, the original filename will be used
+                if ($fileName = $image->getOriginalName()) {
                     return $fileName;
                 }
 
@@ -270,7 +270,7 @@ class ImageManager
             case Editorial::class:
                 // TODO : define a standard for the naming of the images (name of the owner + position ? uuid ?)
                 // for now, for a badge, the filename will be the sanitized name of the event and the position of the image in the set
-                if ($fileName = $this->fileManager->sanitize($owner->getTitle() . " " . $image->getPosition())) {
+                if ($fileName = $this->fileManager->sanitize($owner->getTitle() . " " . $image->getPosition()).".jpg") {
                     return $fileName;
                 }
 
