@@ -8,9 +8,10 @@ bazinga_geocoder:
       aliases:
         - Addok
       options:
-        uri: '%env(SIG_ADDOK_URI)%'
+        uri: '%env(SIG_GEOCODER_MAIN_URI)%'
       plugins:
         - "Georouter.query_data_plugin"
+        
     gmaps:
       factory: Bazinga\GeocoderBundle\ProviderFactory\GoogleMapsFactory
       # cache: 'app.simple_cache'
@@ -40,7 +41,7 @@ bazinga_geocoder:
       aliases:
         - PeliasAutocomplete
       options:
-        uri: '%env(SIG_GEOCODER_URI)%'
+        uri: '%env(SIG_GEOCODER_SECONDARY_URI)%'
       plugins:
         - "Georouter.query_data_plugin"
 
@@ -52,7 +53,7 @@ bazinga_geocoder:
       aliases:
         - PeliasSearch
       options:
-        uri: '%env(SIG_GEOCODER_URI)%'
+        uri: '%env(SIG_GEOCODER_SECONDARY_URI)%'
       plugins:
         - "Georouter.query_data_plugin"
 
