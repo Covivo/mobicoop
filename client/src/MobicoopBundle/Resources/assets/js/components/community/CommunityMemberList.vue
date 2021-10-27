@@ -142,7 +142,7 @@ export default {
     }
   },
   created(){
-    this.getCommunityMemberList();
+    //this.getCommunityMemberList();
   },
   methods: {
     getCommunityMemberList () {

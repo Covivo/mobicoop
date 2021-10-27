@@ -373,7 +373,7 @@ import Search from "@components/carpool/search/Search";
 import LoginOrRegisterFirst from '@components/utilities/LoginOrRegisterFirst';
 import CommunityLastUsers from "@components/community/CommunityLastUsers";
 import MMap from "@components/utilities/MMap/MMap";
-import L from "leaflet";
+import L, { LatLng } from "leaflet";
 
 export default {
   components: {
@@ -441,10 +441,6 @@ export default {
       type: String,
       default: "",
     },
-    points: {
-      type: Array,
-      default: null,
-    },
     userCommunityStatus: {
       type: Number,
       default: -1,
@@ -479,6 +475,7 @@ export default {
         { text: "Nom", value: "familyName" },
         { text: "Prenom", value: "givenName" },
       ],
+      points:null,
       pointsToMap: [],
       relayPointsMap: [],
       directionWay: [],
@@ -527,8 +524,8 @@ export default {
     }
 
     this.checkIfUserLogged();
-    this.showCommunityProposals();
     this.checkDomain();
+    this.getMapsAds();
     this.getRelayPointsMap(); 
   },
   methods: {
@@ -536,7 +533,8 @@ export default {
       maxios
         .post("/community/"+this.community.id+"/mapsAds")
         .then(res => {
-          console.log(res.data);
+          this.points = res.data.mapsAds;
+          this.showCommunityProposals();
         })
         .catch(err => {
           console.error(err);
@@ -734,29 +732,39 @@ export default {
             infosForPopUp.carpoolerLastName +
             "</strong></p>";
 
-          proposal.waypoints.forEach((waypoint, index) => {
-            currentProposal.latLngs.push(waypoint.latLng);
-            if (index == 0) {
-              infosForPopUp.origin = waypoint.title;
-              infosForPopUp.originLat = waypoint.latLng.lat;
-              infosForPopUp.originLon = waypoint.latLng.lon;
-            } else if (waypoint.destination) {
-              infosForPopUp.destination = waypoint.title;
-              infosForPopUp.destinationLat = waypoint.latLng.lat;
-              infosForPopUp.destinationLon = waypoint.latLng.lon;
-            }
-            this.pointsToMap.push(
-              this.buildPoint(
-                waypoint.latLng.lat,
-                waypoint.latLng.lon,
-                currentProposal.desc,
-                "",
-                [],
-                [],
-                "<p>" + waypoint.title + "</p>"
-              )
-            );
-          });
+          currentProposal.latLngs.push(L.latLng(proposal.origin.latitude, proposal.origin.longitude));
+          currentProposal.latLngs.push(L.latLng(proposal.destination.latitude, proposal.destination.longitude));
+          infosForPopUp.origin = proposal.origin.displayLabel[0];
+          infosForPopUp.originLat = proposal.origin.latitude;
+          infosForPopUp.originLon = proposal.origin.longitude;
+          this.pointsToMap.push(
+            this.buildPoint(
+              proposal.origin.latitude,
+              proposal.origin.longitude,
+              currentProposal.desc,
+              "",
+              [],
+              [],
+              "<p>" + proposal.origin.displayLabel[0] + "</p>"
+            )
+          );
+
+
+          infosForPopUp.destination = proposal.destination.displayLabel[0];
+          infosForPopUp.destinationLat = proposal.destination.latitude;
+          infosForPopUp.destinationLon = proposal.destination.longitude;
+
+          this.pointsToMap.push(
+            this.buildPoint(
+              proposal.destination.latitude,
+              proposal.destination.longitude,
+              currentProposal.desc,
+              "",
+              [],
+              [],
+              "<p>" + proposal.destination.displayLabel[0] + "</p>"
+            )
+          );
 
           currentProposal.desc +=
             "<p style='text-align:left;'><strong>" +
@@ -783,9 +791,6 @@ export default {
 
           // And now the content of a tooltip (same as popup but without the button)
           currentProposal.title = currentProposal.desc;
-
-          // We add the button to the popup (To Do: Button isn't functionnal. Find a good way to launch a research)
-          //currentProposal.desc += "<br /><button type='button' class='v-btn v-btn--contained v-btn--rounded theme--light v-size--small secondary text-overline'>"+this.$t('map.findMatchings')+"</button>";
 
           // We are closing the two p
           currentProposal.title += "</p>";

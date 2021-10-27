@@ -36,7 +36,7 @@ class Response
     private $code;
     
     /**
-     * @var object|array $value The value of the response.
+     * @var object|string|array $value The value of the response.
      */
     private $value;
     

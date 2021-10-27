@@ -23,6 +23,7 @@
 
 namespace App\Carpool\Entity\MapsAd;
 
+use App\Geography\Entity\Address;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
@@ -31,13 +32,13 @@ use Symfony\Component\Serializer\Annotation\Groups;
 class MapsAd
 {
     /**
-     * @var MapsAdWaypoint
+     * @var Address
      * @Groups({"readCommunityAds"})
     */
     private $origin;
 
     /**
-     * @var MapsAdWaypoint
+     * @var Address
      * @Groups({"readCommunityAds"})
     */
     private $destination;
@@ -54,25 +55,59 @@ class MapsAd
     */
     private $oneWay;
 
+    /**
+     * @var bool
+     * @Groups({"readCommunityAds"})
+    */
+    private $regular;
 
-    public function getOrigin(): ?MapsAdWaypoint
+    /**
+     * @var \DateTime|null ONLY FOR PUNCTUAL
+     * @Groups({"readCommunityAds"})
+    */
+    private $outwardDate;
+
+    /**
+     * @var int The linked entity's id (Community...)
+     * @Groups({"readCommunityAds"})
+    */
+    private $entityId;
+
+    /**
+     * @var string
+     * @Groups({"readCommunityAds"})
+    */
+    private $carpoolerFirstName;
+
+    /**
+     * @var string
+     * @Groups({"readCommunityAds"})
+    */
+    private $carpoolerLastName;
+
+    public function __construct()
+    {
+        $this->outwardDate = null;
+    }
+    
+    public function getOrigin(): ?Address
     {
         return $this->origin;
     }
 
-    public function setOrigin(?MapsAdWaypoint $origin): self
+    public function setOrigin(?Address $origin): self
     {
         $this->origin = $origin;
 
         return $this;
     }
 
-    public function getDestination(): ?MapsAdWaypoint
+    public function getDestination(): ?Address
     {
         return $this->destination;
     }
 
-    public function setDestination(?MapsAdWaypoint $destination): self
+    public function setDestination(?Address $destination): self
     {
         $this->destination = $destination;
 
@@ -99,6 +134,66 @@ class MapsAd
     public function setOneWay(?bool $oneWay): self
     {
         $this->oneWay = $oneWay;
+
+        return $this;
+    }
+
+    public function isRegular(): ?bool
+    {
+        return $this->regular;
+    }
+
+    public function setRegular(?bool $regular): self
+    {
+        $this->regular = $regular;
+
+        return $this;
+    }
+
+    public function getOutwardDate(): ?\DateTime
+    {
+        return $this->outwardDate;
+    }
+
+    public function setOutwardDate(?\DateTime $outwardDate): self
+    {
+        $this->outwardDate = $outwardDate;
+
+        return $this;
+    }
+
+    public function getEntityId(): ?int
+    {
+        return $this->entityId;
+    }
+
+    public function setEntityId(?int $entityId): self
+    {
+        $this->entityId = $entityId;
+
+        return $this;
+    }
+
+    public function getCarpoolerFirstName(): ?string
+    {
+        return $this->carpoolerFirstName;
+    }
+
+    public function setCarpoolerFirstName(?string $carpoolerFirstName): self
+    {
+        $this->carpoolerFirstName = $carpoolerFirstName;
+
+        return $this;
+    }
+
+    public function getCarpoolerLastName(): ?string
+    {
+        return $this->carpoolerLastName;
+    }
+
+    public function setCarpoolerLastName(?string $carpoolerLastName): self
+    {
+        $this->carpoolerLastName = $carpoolerLastName;
 
         return $this;
     }

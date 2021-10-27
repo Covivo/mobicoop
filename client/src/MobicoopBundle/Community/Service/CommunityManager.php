@@ -412,7 +412,21 @@ class CommunityManager
         $this->dataProvider->setClass(Community::class);
         $this->dataProvider->setFormat(DataProvider::RETURN_JSON);
         $response = $this->dataProvider->getSpecialItem($id, "mapsAds");
-        return $response->getValue();
+        $communities = json_decode($response->getValue(), true);
+        if (isset($communities['mapsAds']) && is_array($communities['mapsAds'])) {
+            foreach ($communities['mapsAds'] as &$mapsAd) {
+                $date = (isset($mapsAd['outwardDate']) && !is_null($mapsAd['outwardDate'])) ? $mapsAd['outwardDate'] : null;
+                $searchLinkParams = [
+                    "origin" => json_encode($mapsAd['origin']),
+                    "destination" => json_encode($mapsAd['destination']),
+                    "regular" => $mapsAd['regular'],
+                    "date" => $date,
+                    "cid" => $mapsAd['entityId']
+                ];
+                $mapsAd["searchLink"] = $this->router->generate("carpool_search_result_get", $searchLinkParams, UrlGeneratorInterface::ABSOLUTE_URL);
+            }
+        }
+        return json_encode($communities);
     }
 
     /******************
