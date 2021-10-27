@@ -139,7 +139,7 @@ use App\I18n\Entity\Language;
  *          "communities"={
  *              "method"="GET",
  *              "path"="/users/communities",
- *              "normalization_context"={"groups"={"readUserCommunities"}},
+ *              "normalization_context"={"groups"={"listCommunities"}},
  *              "security"="is_granted('user_list',object)",
  *              "swagger_context" = {
  *                  "tags"={"Users"}

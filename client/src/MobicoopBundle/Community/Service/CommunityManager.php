@@ -93,25 +93,32 @@ class CommunityManager
             $order[$data['order']] = $data['orderWay'];
         }
 
-        $returnCommunitiesUser = [];
+        // if ($user) {
+        //     // We get all the communities
+        //     $communities = $this->getCommunities($user->getId(), $perPage, $page, $search, $order, $showAllCommunities);
+        //     // We get the communities of the user
+        //     $communitiesUser = $this->getAllCommunityUser($user->getId());
+        //     if ($communitiesUser != null) {
+        //         foreach ($communitiesUser as $communityUser) {
+        //             $returnCommunitiesUser[] = $communityUser->getCommunity();
+        //         }
+        //     }
+        // } else {
+        //     $communities = $this->getCommunities(null, $perPage, $page, $search, $order, $showAllCommunities);
+        // }
+
+        // We get all the communities
+        $communities = $this->getCommunities(($user) ? $user->getId() : null, $perPage, $page, $search, $order, $showAllCommunities);
+        $communitiesUser = [];
         if ($user) {
-            // We get all the communities
-            $communities = $this->getCommunities($user->getId(), $perPage, $page, $search, $order, $showAllCommunities);
             // We get the communities of the user
-            $communitiesUser = $this->getAllCommunityUser($user->getId());
-            if ($communitiesUser != null) {
-                foreach ($communitiesUser as $communityUser) {
-                    $returnCommunitiesUser[] = $communityUser->getCommunity();
-                }
-            }
-        } else {
-            $communities = $this->getCommunities(null, $perPage, $page, $search, $order, $showAllCommunities);
+            $communitiesUser = $this->getAllCommunityUser();
         }
 
         $return['communitiesMember'] = $communities->getMember();
         $return['communitiesTotalItems'] = $communities->getTotalItems();
 
-        $return['communitiesUser'] = $returnCommunitiesUser;
+        $return['communitiesUser'] = $communitiesUser;
         return $return;
     }
 

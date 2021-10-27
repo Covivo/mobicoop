@@ -264,7 +264,7 @@ class Community
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"aRead","readCommunity","readCommunityUser","results","existsCommunity","listCommunities","readUserAdmin","readUserCommunities"})
+     * @Groups({"aRead","readCommunity","readCommunityUser","results","existsCommunity","listCommunities","readUserAdmin"})
      * @ApiProperty(identifier=true)
      */
     private $id;
@@ -274,14 +274,14 @@ class Community
      *
      * @Assert\NotBlank
      * @ORM\Column(type="string", length=255)
-     * @Groups({"aRead","aWrite","readCommunity","readCommunityUser","write","results","existsCommunity","readCommunityPublic","readUserAdmin","readUser","listCommunities","readUserCommunities"})
+     * @Groups({"aRead","aWrite","readCommunity","readCommunityUser","write","results","existsCommunity","readCommunityPublic","readUserAdmin","readUser","listCommunities"})
      */
     private $name;
 
     /**
      * @var string UrlKey of the community.
      *
-     * @Groups({"readCommunity","readCommunityUser","write","results","existsCommunity","readCommunityPublic","readUserAdmin","readUser","listCommunities","readUserCommunities"})
+     * @Groups({"readCommunity","readCommunityUser","write","results","existsCommunity","readCommunityPublic","readUserAdmin","readUser","listCommunities"})
      */
     private $urlKey;
 
