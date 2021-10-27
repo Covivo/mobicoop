@@ -28,6 +28,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * Map's Ad. The necessary data for displaying an Ad on a map
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class MapsAd
 {

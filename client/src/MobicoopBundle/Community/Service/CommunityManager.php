@@ -426,6 +426,14 @@ class CommunityManager
         return json_encode($communities);
     }
 
+    public function communityMembers(int $id, array $params = [])
+    {
+        $this->dataProvider->setClass(Community::class);
+        $this->dataProvider->setFormat(DataProvider::RETURN_JSON);
+        $response = $this->dataProvider->getSpecialItem($id, "members", $params);
+        return $response->getValue();
+    }
+
     /******************
      *                *
      * Refactor start *

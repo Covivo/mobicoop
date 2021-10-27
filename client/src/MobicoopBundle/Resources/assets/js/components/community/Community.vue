@@ -215,7 +215,6 @@
               <community-member-list
                 :community-id="community.id"
                 :refresh="refreshMemberList"
-                :given-users="users"
                 :hidden="!isAccepted && community.membersHidden"
                 :direct-message="directMessage"
                 @contact="contact"
@@ -495,7 +494,6 @@ export default {
       refreshMemberList: false,
       refreshLastUsers: false,
       params: { communityId: this.community.id },
-      users: [],
       isCreator: false,
       selectedDestination: null,
       selectedOrigin: null
@@ -583,6 +581,7 @@ export default {
       this.$refs.mmap.redrawMap();
     },
     getCommunityUser() {
+      console.log("getCommunityUser");
       if (this.user) {
         this.checkValidation = true;
         maxios

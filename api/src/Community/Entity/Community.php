@@ -210,6 +210,14 @@ use App\Community\Filter\CommunityAddressTerritoryFilter;
  *                  "tags"={"Communities"}
  *              }
  *          },
+ *          "members"={
+ *              "method"="GET",
+ *              "path"="/communities/{id}/members",
+ *              "normalization_context"={"groups"={"readCommunityMember"}},
+ *              "swagger_context" = {
+ *                  "tags"={"Communities"}
+ *              }
+ *          },
  *          "put"={
  *              "method"="PUT",
  *              "security"="is_granted('community_update',object)",

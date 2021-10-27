@@ -21,39 +21,61 @@
  *    LICENSE
  **************************/
 
-namespace App\Carpool\Entity\MapsAd;
+namespace App\Community\Entity;
 
 use Symfony\Component\Serializer\Annotation\Groups;
-use App\Carpool\Entity\MapsAd\MapsAd;
 
 /**
- * Map's Ads. Contains a collection of Map's Ad
+ * Community Members List
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class MapsAds
+class CommunityMembersList
 {
+    /**
+     * @var CommunityMember[]
+     * @Groups({"readCommunityMember"})
+    */
+    private $members;
 
     /**
-     * @var MapsAd[]
-     * @Groups({"readCommunityAds"})
+     * @var int
+     * @Groups({"readCommunityMember"})
     */
-    private $mapsAds;
+    private $totalMembers;
 
-    public function __construct(array $mapsAds = null)
+    public function __construct(array $members = null, int $totalMembers = null)
     {
-        if (!is_null($mapsAds)) {
-            $this->setMapsAds($mapsAds);
+        $this->members = [];
+        if (!is_null($members)) {
+            $this->members = $members;
+        }
+
+        $this->totalMembers = 0;
+        if (!is_null($totalMembers)) {
+            $this->totalMembers = $totalMembers;
         }
     }
-
-    public function getMapsAds(): ?array
+    
+    public function getMembers(): ?array
     {
-        return $this->mapsAds;
+        return $this->members;
     }
 
-    public function setMapsAds(?array $mapsAds): self
+    public function setMembers(?array $members): self
     {
-        $this->mapsAds = $mapsAds;
+        $this->members = $members;
+
+        return $this;
+    }
+
+    public function getTotalMembers(): ?string
+    {
+        return $this->totalMembers;
+    }
+
+    public function setTotalMembers(?string $totalMembers): self
+    {
+        $this->totalMembers = $totalMembers;
 
         return $this;
     }

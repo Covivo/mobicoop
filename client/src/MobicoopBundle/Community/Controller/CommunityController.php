@@ -353,40 +353,17 @@ class CommunityController extends AbstractController
     {
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
-            $community = $communityManager->getCommunity($data['id']);
-            $reponseofmanager = $this->handleManagerReturnValue($community);
-            if (!empty($reponseofmanager)) {
-                return $reponseofmanager;
-            }
-            $this->denyAccessUnlessGranted('show', $community);
 
-            $referrer = $community->getUser();
-            $users = [];
+            $params = [
+                "page" => $data['page'],
+                "perPage" => $data['perPage']
+            ];
 
-            //test if the community has members
-            if (count($community->getCommunityUsers()) > 0) {
-                foreach ($community->getCommunityUsers() as $communityUser) {
-                    // community referrer is always accepted
-                    if ($communityUser->getUser()->getId() === $referrer->getId()) {
-                        $user = $communityUser->getUser();
-                        $user->setIsCommunityReferrer(true);
-                        array_unshift($users, $user);
-                    } elseif ($communityUser->getStatus() == 2) {
-                        // get all community Users accepted_as_moderator
-                        $user = $communityUser->getUser();
-                        $user->setIsCommunityModerator(true);
-                        array_unshift($users, $user);
-                    } elseif ($communityUser->getStatus() == 1) {
-                        // get all community Users accepted_as_member
-                        array_push($users, $communityUser->getUser());
-                    }
-                }
-            }
-            $totalItems = count($users);
+            $communityMembersList = $communityManager->communityMembers($data['id'], $params);
 
             return new JsonResponse([
-                "users"=>$users,
-                "totalItems"=>$totalItems
+                "users"=>json_decode($communityMembersList)->members,
+                "totalItems"=>(int)json_decode($communityMembersList)->totalMembers
             ]);
         } else {
             return new JsonResponse();

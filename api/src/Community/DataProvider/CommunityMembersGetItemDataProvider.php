@@ -26,17 +26,18 @@ namespace App\Community\DataProvider;
 use ApiPlatform\Core\DataProvider\ItemDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\Community\Entity\Community;
+use App\Community\Entity\CommunityMembersList;
 use App\Community\Service\CommunityManager;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Security;
 
 /**
- * Get the last n members of a community
+ * Get the members of a community
  *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  *
  */
-final class CommunityLastUsersGetItemDataProvider implements ItemDataProviderInterface, RestrictedDataProviderInterface
+final class CommunityMembersGetItemDataProvider implements ItemDataProviderInterface, RestrictedDataProviderInterface
 {
     protected $request;
     private $communityManager;
@@ -52,11 +53,11 @@ final class CommunityLastUsersGetItemDataProvider implements ItemDataProviderInt
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Community::class === $resourceClass && $operationName === "lastUsers";
+        return Community::class === $resourceClass && $operationName === "members";
     }
 
-    public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): array
+    public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): CommunityMembersList
     {
-        return $this->communityManager->getLastUsers($id);
+        return $this->communityManager->getMembers($id, $context, $operationName);
     }
 }

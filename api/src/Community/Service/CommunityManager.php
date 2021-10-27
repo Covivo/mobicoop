@@ -49,6 +49,8 @@ use App\Action\Repository\ActionRepository;
 use App\Carpool\Entity\MapsAd\MapsAd;
 use App\Carpool\Entity\MapsAd\MapsAds;
 use App\Carpool\Entity\Proposal;
+use App\Community\Entity\CommunityMember;
+use App\Community\Entity\CommunityMembersList;
 use App\Community\Repository\CommunityUserRepository;
 
 /**
@@ -459,6 +461,43 @@ class CommunityManager
             return $this->communityUserRepository->findNLastUsersOfACommunity($community);
         }
         return [];
+    }
+
+    /**
+     * @param integer $communityId
+     * @return CommunityMembersList
+     */
+    public function getMembers(int $communityId, array $context = [], string $operationName): CommunityMembersList
+    {
+        $communityMembers = [];
+
+        $community = $this->communityRepository->find($communityId);
+        
+        if ($community) {
+            $communityUsers = $this->communityUserRepository->findForCommunity($community, $context, $operationName);
+            
+            foreach ($communityUsers as $communityUser) {
+                $communityMember = new CommunityMember();
+                $communityMember->setId($communityUser->getUser()->getId());
+                $communityMember->setFirstName($communityUser->getUser()->getGivenName());
+                $communityMember->setShortFamilyName($communityUser->getUser()->getShortFamilyName());
+
+                if ($community->getUser()->getId() == $communityUser->getUser()->getId()) {
+                    $communityMember->setReferrer(true);
+                }
+
+                if ($communityUser->getStatus() == CommunityUser::STATUS_ACCEPTED_AS_MODERATOR) {
+                    $communityMember->setModerator(true);
+                }
+                if (is_array($communityUser->getUser()->getAvatars()) && count($communityUser->getUser()->getAvatars())>0) {
+                    $communityMember->setAvatar($communityUser->getUser()->getAvatars()[count($communityUser->getUser()->getAvatars())-1]);
+                }
+
+                $communityMembers[] = $communityMember;
+            }
+        }
+
+        return new CommunityMembersList($communityMembers, (is_array($community->getCommunityUsers())) ? count($community->getCommunityUsers()) : 0);
     }
 
     /*************************
