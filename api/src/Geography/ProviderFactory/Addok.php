@@ -57,15 +57,26 @@ final class Addok extends AbstractHttpProvider implements Provider
     const TYPE_MUNICIPALITY = 'municipality';
     const COUNTRY = 'France';
     const MIN_SCORE = 0.7;
+<<<<<<< HEAD
 
     /**
      * @var string
      */
     const GEOCODE_ENDPOINT_URL = '/search/?q=%s&limit=%d&autocomplete=0';
+=======
+>>>>>>> d5484049666a4b55ca707043d7792b6f297e1978
 
     /**
      * @var string
      */
+<<<<<<< HEAD
+=======
+    const GEOCODE_ENDPOINT_URL = '/search/?q=%s&limit=%d&autocomplete=0';
+
+    /**
+     * @var string
+     */
+>>>>>>> d5484049666a4b55ca707043d7792b6f297e1978
     const GEOCODE_ENDPOINT_PRIORITIZATION = '&lat=%f&lon=%f';
 
     /**
