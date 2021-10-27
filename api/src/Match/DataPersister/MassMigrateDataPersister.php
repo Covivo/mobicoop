@@ -54,8 +54,8 @@ final class MassMigrateDataPersister implements ContextAwareDataPersisterInterfa
             throw new MassException(MassException::BAD_TYPE);
         }
 
-        // Only analyzed Mass can be migrated
-        if (is_null($data->getAnalyzedDate())) {
+        // Only analyzed Mass can be migrated (or specific migration)
+        if ($data->getMassType() !== Mass::TYPE_MIGRATION && is_null($data->getAnalyzedDate())) {
             throw new MassException(MassException::MASS_NOT_ANALYZED);
         }
 
