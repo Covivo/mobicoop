@@ -84,5 +84,11 @@
             },
             "title": "Baieztapen eskaera"
         }
+    },
+    "mapsAds":{
+        "url":"/community/{communityId}/mapsAds"
+    },
+    "relaypoints":{
+        "url":"/community/relay-point/map/"
     }
 }

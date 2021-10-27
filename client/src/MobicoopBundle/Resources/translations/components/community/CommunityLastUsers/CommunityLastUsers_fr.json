@@ -1,4 +1,5 @@
 {
     "title": "Ils nous ont rejoints",
-    "hidden": "La liste n'est visible que par les membres de la communauté"
+    "hidden": "La liste n'est visible que par les membres de la communauté",
+    "getLastUserUrl":"/community/{communityId}/lastUsers"
 }

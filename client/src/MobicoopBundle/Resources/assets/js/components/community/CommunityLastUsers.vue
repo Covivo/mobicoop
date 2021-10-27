@@ -85,7 +85,7 @@ export default {
   methods:{
     getLastUser(){
       maxios
-        .post("/community/"+this.community.id+"/lastUsers")
+        .post(this.$t('getLastUserUrl', {'communityId':this.community.id}))
         .then(res => {
           this.lastUsers = res.data;
         })

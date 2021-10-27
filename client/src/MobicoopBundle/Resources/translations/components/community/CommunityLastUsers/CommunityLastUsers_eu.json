@@ -1,4 +1,5 @@
 {
     "hidden": "Komunitateko kideek bakarrik ikus dezakete zerrenda",
-    "title": "Gure gana etorri dira"
+    "title": "Gure gana etorri dira",
+    "getLastUserUrl":"/community/{communityId}/lastUsers"
 }

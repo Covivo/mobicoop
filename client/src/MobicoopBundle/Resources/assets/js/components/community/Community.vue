@@ -526,7 +526,7 @@ export default {
   methods: {
     getMapsAds(){
       maxios
-        .post("/community/"+this.community.id+"/mapsAds")
+        .post(this.$t('mapsAds.url',{'communityId':this.community.id}))
         .then(res => {
           this.points = res.data.mapsAds;
           this.showCommunityProposals();
@@ -557,7 +557,7 @@ export default {
         'communityId': this.community.id
       };
       maxios
-        .post("/community/relay-point/map/",params)
+        .post(this.$t("relaypoints.url"),params)
         .then(res => {
           this.relayPointsMap = res.data;
           // console.log(res.data);
