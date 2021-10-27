@@ -251,13 +251,13 @@ class CommunityManager
 
     /**
      * Get all the community_user of a user
-     * @param int $userId       Id of the User to test
      */
-    public function getAllCommunityUser(int $userId)
+    public function getAllCommunityUser()
     {
-        $this->dataProvider->setClass(CommunityUser::class);
-        $response = $this->dataProvider->getCollection(['user'=>$userId]);
-        return $response->getValue()->getMember();
+        $this->dataProvider->setClass(User::class);
+        $this->dataProvider->setFormat(DataProvider::RETURN_JSON);
+        $response = $this->dataProvider->getSpecialCollection("communities");
+        return $response->getValue();
     }
 
     /**

@@ -1160,11 +1160,8 @@ class UserController extends AbstractController
             if (!is_null($userCommunitiesInSession)) {
                 return new JsonResponse($userCommunitiesInSession);
             } else {
-                if ($communityUsers = $communityManager->getAllCommunityUser($data['userId'])) {
-                    foreach ($communityUsers as $communityUser) {
-                        $communities[] = $communityUser->getCommunity();
-                    }
-                    // We store de communities in session
+                $communities = $communityManager->getAllCommunityUser($data['userId']);
+                if (is_array($communities)) {
                     $session->set(Community::SESSION_VAR_NAME, $communities);
                 }
             }
