@@ -38,21 +38,16 @@ use App\User\Event\UserPasswordChangedEvent;
 use App\User\Event\UserSendValidationEmailEvent;
 use App\User\Service\UserManager;
 use App\Communication\Service\SmsManager;
-use App\Communication\Entity\Sms;
 
 class UserSubscriber implements EventSubscriberInterface
 {
     private $notificationManager;
     private $userManager;
-    private $smsManager;
-    private $smsTemplatePath;
 
-    public function __construct(NotificationManager $notificationManager, UserManager $userManager, SmsManager $smsManager, string $smsTemplatePath)
+    public function __construct(NotificationManager $notificationManager, UserManager $userManager)
     {
         $this->notificationManager = $notificationManager;
         $this->userManager = $userManager;
-        $this->smsManager = $smsManager;
-        $this->smsTemplatePath = $smsTemplatePath;
     }
 
     public static function getSubscribedEvents()
@@ -84,11 +79,7 @@ class UserSubscriber implements EventSubscriberInterface
 
     public function onUserDelegateRegisteredPasswordSend(UserDelegateRegisteredPasswordSendEvent $event)
     {
-        //This sms needs to be sent in any cases so we send it directly without using the notificationManager
-        $sms = new Sms();
-        $sms->setRecipientTelephone($event->getUser()->getTelephone());
-        $bodyContext = ['user'=>$event->getUser()];
-        $this->smsManager->send($sms, $this->smsTemplatePath . UserDelegateRegisteredPasswordSendEvent::NAME, $bodyContext);
+        $this->notificationManager->notifies(UserDelegateRegisteredPasswordSendEvent::NAME, $event->getUser());
     }
 
     public function onUserUpdatedSelf(UserUpdatedSelfEvent $event)

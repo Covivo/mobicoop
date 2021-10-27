@@ -201,8 +201,6 @@ class NotificationManager
                             break;
                         }
                         $this->notifyBySMS($notification, $recipient, $object);
-                        $this->createNotified($notification, $recipient, $object);
-                        $this->logger->info("Sms notification for $action / " . $recipient->getEmail());
                         break;
                     case Medium::MEDIUM_PUSH:
                         if (!$this->pushEnabled) {
@@ -484,7 +482,10 @@ class NotificationManager
      */
     private function notifyBySms(Notification $notification, User $recipient, ?object $object = null)
     {
-        if (is_null($recipient->getTelephone()) || (is_null($recipient->getPhoneValidatedDate()) && is_null($recipient->getPhoneToken()))) {
+        if (is_null($recipient->getTelephone())) {
+            return;
+        }
+        if (!$notification->isPermissive() && is_null($recipient->getPhoneValidatedDate()) && is_null($recipient->getPhoneToken())) {
             return;
         }
         $sms = new Sms();
@@ -633,6 +634,9 @@ class NotificationManager
 
         // if a template is associated with the action in the notification, we us it; otherwise we try the name of the action as template name
         $this->smsManager->send($sms, $notification->getTemplateBody() ? $this->smsTemplatePath . $notification->getTemplateBody() : $this->smsTemplatePath . $notification->getAction()->getName(), $bodyContext);
+        
+        $this->createNotified($notification, $recipient, $object);
+        $this->logger->info("Sms notification for $notification->getAction()->getName() / " . $recipient->getEmail());
     }
 
     /**
