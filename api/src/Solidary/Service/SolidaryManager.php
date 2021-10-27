@@ -738,6 +738,11 @@ class SolidaryManager
         $ad->setReturnDate($solidary->getReturnDatetime() ? $solidary->getReturnDatetime() : null);
         $ad->setOutwardTime($solidary->getOutwardDatetime()->format("H:i"));
         $ad->setReturnTime($solidary->getReturnDatetime() ? $solidary->getReturnDatetime()->format("H:i") : null);
+        
+        if ($solidary->getReturnDatetime() != null) {
+            $ad->setOneWay(false);
+        }
+
         if ($solidary->getFrequency() === criteria::FREQUENCY_REGULAR) {
             $ad->setFrequency(Criteria::FREQUENCY_REGULAR);
 
