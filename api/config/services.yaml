@@ -362,10 +362,6 @@ services:
         arguments:
             $emailTemplatePath: '%env(string:NOTIFICATION_TEMPLATE_EMAIL_PATH)%'
             $emailTitleTemplatePath: '%env(string:COMMUNICATION_TEMPLATE_EMAIL_PATH)%%env(string:NOTIFICATION_TITLE_TEMPLATE_EMAIL_PATH)%'
-
-    App\Communication\EventSubscriber\UserSubscriber:
-        arguments:
-            $smsTemplatePath: '%env(resolve:NOTIFICATION_TEMPLATE_SMS_PATH)%'
         
     # Community
     App\Community\Controller\:
