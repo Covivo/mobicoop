@@ -213,6 +213,15 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
     private $chat;
 
     /**
+     * @var boolean|null Gamification preferences.
+     * 0 = no Gamification tracking
+     * 1 = Gamification tracking
+     *
+     * @Groups({"post","put"})
+     */
+    private $gamification;
+
+    /**
      * @var string|null Chat favorite subjects.
      *
      * @Groups({"post","put"})
@@ -699,6 +708,18 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
     public function setChatFavorites(?string $chatFavorites): self
     {
         $this->chatFavorites = $chatFavorites;
+
+        return $this;
+    }
+
+    public function hasGamification(): ?bool
+    {
+        return $this->gamification;
+    }
+
+    public function setGamification(?bool $gamification): self
+    {
+        $this->gamification = $gamification;
 
         return $this;
     }
@@ -1331,6 +1352,7 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
             'chatFavorites'                 => $this->getChatFavorites(),
             'music'                         => $this->hasMusic(),
             'musicFavorites'                => $this->getMusicFavorites(),
+            'gamification'                  => $this->hasGamification(),
             'newsSubscription'              => $this->hasNewsSubscription(),
             'phoneDisplay'                  => $this->getPhoneDisplay(),
             'phoneValidatedDate'            => $this->getPhoneValidatedDate(),

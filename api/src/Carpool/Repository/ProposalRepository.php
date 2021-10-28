@@ -110,6 +110,7 @@ class ProposalRepository
      * @param bool $driversOnly         Exclude the matching proposals as passenger (used for import)
      * @return mixed|\Doctrine\DBAL\Driver\Statement|array|NULL
      */
+
     public function findMatchingProposals(Proposal $proposal, bool $excludeProposalUser=true, bool $driversOnly = false)
     {
         // the "master" proposal is simply called the "proposal"
@@ -1329,11 +1330,12 @@ class ProposalRepository
      *
      * @param \DateTime $startDate  Range start date
      * @param \DateTime $endDate    Range end date
-     * @return Proposals[]|null
+     * @return integer
      */
-    public function findBetweenCreateDate(\DateTime $startDate, \DateTime $endDate)
+    public function countProposalsBetweenCreateDate(\DateTime $startDate, \DateTime $endDate) :?int
     {
         $query = $this->repository->createQueryBuilder('p')
+        ->select('count(p.id)')
         ->where("p.createdDate between :startDate and :endDate ")
         ->andWhere("p.private = 0")
         ->andWhere("p.type = :typeOneWay or p.type = :typeOutward")
@@ -1341,12 +1343,9 @@ class ProposalRepository
         ->setParameter("endDate", $endDate)
         ->setParameter("typeOneWay", Proposal::TYPE_ONE_WAY)
         ->setParameter("typeOutward", Proposal::TYPE_OUTWARD);
-        return $query->getQuery()->getResult();
+        return $query->getQuery()->getSingleScalarResult();
     }
 
-    /**
-     * Find the public proposals linked to a Community
-     */
     public function findCommunityAds(Community $community)
     {
         $now = new \DateTime("now");
@@ -1363,5 +1362,26 @@ class ProposalRepository
         ->setParameter('regular', Criteria::FREQUENCY_REGULAR)
         ->setParameter("date", $now->format("Y-m-d 00:00:00"));
         return $query->getQuery()->getResult();
+    }
+    
+    /**
+     * Count the avalaible ads
+     *
+     * @return integer
+     */
+    public function countAvailableAds(): ?int
+    {
+        $now = new \DateTime("now");
+
+        $query = $this->repository->createQueryBuilder('p')
+        ->join('p.criteria', 'c')
+        ->select('count(p.id)')
+        ->where('p.private = 0 OR p.private IS NULL')
+        ->andWhere("(c.frequency = :punctual AND c.fromDate >= :date) OR (c.frequency = :regular AND c.toDate >= :date)")
+        ->setParameter('punctual', Criteria::FREQUENCY_PUNCTUAL)
+        ->setParameter('regular', Criteria::FREQUENCY_REGULAR)
+        ->setParameter("date", $now->format("Y-m-d 00:00:00"));
+
+        return $query->getQuery()->getSingleScalarResult();
     }
 }

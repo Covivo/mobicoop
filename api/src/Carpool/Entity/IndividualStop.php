@@ -83,7 +83,7 @@ class IndividualStop
      *
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal", inversedBy="individualStops")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      */
     private $proposal;
     
@@ -91,7 +91,7 @@ class IndividualStop
      * @var Address The address of the stop.
      *
      * @Assert\NotBlank
-     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist"}, orphanRemoval=true)
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Groups({"read","write"})
      * @MaxDepth(1)

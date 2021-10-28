@@ -103,7 +103,7 @@ class Recipient
      * @var User The recipient user of the message.
      *
      * @ORM\ManyToOne(targetEntity="App\User\Entity\User", inversedBy="recipients", cascade={"persist"})
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Groups({"read","write","threads","thread"})
      * @MaxDepth(1)
      */
@@ -112,8 +112,8 @@ class Recipient
     /**
      * @var Message The message.
      *
-     * @ORM\ManyToOne(targetEntity="\App\Communication\Entity\Message", inversedBy="recipients",  cascade={"persist","remove"})
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\ManyToOne(targetEntity="\App\Communication\Entity\Message", inversedBy="recipients", cascade={"persist"})
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Groups({"read","write","threads"})
      * @MaxDepth(2)
      */
@@ -138,7 +138,7 @@ class Recipient
     /**
      * @var ArrayCollection|null The notifications sent for the recipient.
      *
-     * @ORM\OneToMany(targetEntity="\App\Communication\Entity\Notified", mappedBy="recipient", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Communication\Entity\Notified", mappedBy="recipient", cascade={"persist"})
      * @Groups({"read","write","thread"})
      * @MaxDepth(1)
      */

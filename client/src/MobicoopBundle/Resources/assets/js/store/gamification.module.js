@@ -2,7 +2,8 @@ export const gamification = {
   namespaced: true,
   state: {
     active: false,
-    gamificationNotifications: []
+    gamificationNotifications: [],
+    userAccept: true
   },
   mutations: {
     updateGamificationNotifications (state, gamificationNotifications) {
@@ -10,6 +11,9 @@ export const gamification = {
     },
     setActive (state, active) {
       state.active = active;
+    },
+    setUserAccept (state, userAccept) {
+      state.userAccept = userAccept;
     }    
   },
   getters: {
@@ -18,6 +22,9 @@ export const gamification = {
     },
     isActive (state) {
       return state.active;
+    },
+    hasUserAccept (state) {
+      return state.userAccept;
     }
   } 
 }

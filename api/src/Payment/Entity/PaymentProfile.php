@@ -74,7 +74,7 @@ class PaymentProfile
      *
      * @ApiProperty(push=true)
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Groups({"readPayment","writePayment"})
      * @MaxDepth(1)
      * @Assert\NotBlank

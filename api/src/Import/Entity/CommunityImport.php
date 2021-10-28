@@ -55,7 +55,7 @@ class CommunityImport
     /**
      * @var Community|null Community imported in the platform.
      *
-     * @ORM\OneToOne(targetEntity="\App\Community\Entity\Community", cascade={"persist", "remove"}, orphanRemoval=true)
+     * @ORM\OneToOne(targetEntity="\App\Community\Entity\Community", cascade={"persist"})
      * @Groups({"read","write"})
      * @MaxDepth(1)
      */

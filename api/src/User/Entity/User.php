@@ -857,6 +857,16 @@ class User implements UserInterface, EquatableInterface
     private $chatFavorites;
 
     /**
+     * @var boolean|null Gamification preferences.
+     * 0 = no gamification
+     * 1 = accept gamification
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"aRead","aWrite","readUser","write"})
+     */
+    private $gamification;
+    
+    /**
      * @var boolean|null The user accepts to receive news about the platform.
      *
      * @ORM\Column(type="boolean", nullable=true)
@@ -940,6 +950,7 @@ class User implements UserInterface, EquatableInterface
      * @var Language|null The language of the user.
      *
      * @ORM\ManyToOne(targetEntity="\App\I18n\Entity\Language", inversedBy="users")
+     * @ORM\JoinColumn(onDelete="SET NULL")
      * @Groups({"read","readUser","write"})
      * @MaxDepth(1)
      */
@@ -948,7 +959,7 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var ArrayCollection|null A user may have many addresses.
      *
-     * @ORM\OneToMany(targetEntity="\App\Geography\Entity\Address", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Geography\Entity\Address", mappedBy="user", cascade={"persist"})
      * @MaxDepth(1)
      * @ApiSubresource
      * @Groups({"readUser","write"})
@@ -958,7 +969,7 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var ArrayCollection|null A user may have many cars.
      *
-     * @ORM\OneToMany(targetEntity="\App\User\Entity\Car", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\User\Entity\Car", mappedBy="user", cascade={"persist"})
      * @Groups({"readUser","write"})
      */
     private $cars;
@@ -966,7 +977,7 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var ArrayCollection|null A user may have many push token ids.
      *
-     * @ORM\OneToMany(targetEntity="\App\User\Entity\PushToken", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\User\Entity\PushToken", mappedBy="user", cascade={"persist"})
      * @Groups({"readUser","write"})
      */
     private $pushTokens;
@@ -974,7 +985,7 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var ArrayCollection|null The proposals made for this user (in general by the user itself, except when it is a "posting for").
      *
-     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Proposal", mappedBy="user", cascade={"remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Proposal", mappedBy="user")
      * @MaxDepth(1)
      * @Groups({"proposals", "get"})
      * @Apisubresource
@@ -984,7 +995,7 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var ArrayCollection|null The proposals made by this user for another user.
      *
-     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Proposal", mappedBy="userDelegate", cascade={"remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Proposal", mappedBy="userDelegate")
      * @MaxDepth(1)
      * @Apisubresource
      */
@@ -993,14 +1004,14 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var ArrayCollection|null The asks made by this user.
      *
-     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Ask", mappedBy="user", cascade={"remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Ask", mappedBy="user")
      */
     private $asks;
 
     /**
      * @var ArrayCollection|null The events made by this user.
      *
-     * @ORM\OneToMany(targetEntity="\App\Event\Entity\Event", mappedBy="user", cascade={"remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Event\Entity\Event", mappedBy="user")
      */
     private $events;
 
@@ -1014,7 +1025,7 @@ class User implements UserInterface, EquatableInterface
     /**
     * @var ArrayCollection|null The communityUser associated to this user
     *
-    * @ORM\OneToMany(targetEntity="\App\Community\Entity\CommunityUser", mappedBy="user", cascade={"remove"}, orphanRemoval=true)
+    * @ORM\OneToMany(targetEntity="\App\Community\Entity\CommunityUser", mappedBy="user")
     */
     private $communityUsers;
 
@@ -1027,21 +1038,21 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var ArrayCollection|null The asks made for this user.
      *
-     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Ask", mappedBy="userRelated", cascade={"remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Ask", mappedBy="userRelated")
      */
     private $asksRelated;
 
     /**
      * @var ArrayCollection|null The asks made by this user (in general by the user itself, except when it is a "posting for").
      *
-     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Ask", mappedBy="userDelegate", cascade={"remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Ask", mappedBy="userDelegate")
      */
     private $asksDelegate;
 
     /**
      * @var ArrayCollection|null The images of the user.
      *
-     * @ORM\OneToMany(targetEntity="\App\Image\Entity\Image", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Image\Entity\Image", mappedBy="user", cascade={"persist"})
      * @ORM\OrderBy({"position" = "ASC"})
      * @Groups({"readUser","results","write"})
      * @MaxDepth(1)
@@ -1052,7 +1063,7 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var ArrayCollection|null A user may have many auth assignments.
      *
-     * @ORM\OneToMany(targetEntity="\App\Auth\Entity\UserAuthAssignment", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Auth\Entity\UserAuthAssignment", mappedBy="user", cascade={"persist"})
      * @Groups({"readUser","write"})
      * @MaxDepth(1)
      */
@@ -1067,7 +1078,7 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var ArrayCollection|null The mass import files of the user.
      *
-     * @ORM\OneToMany(targetEntity="\App\Match\Entity\Mass", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Match\Entity\Mass", mappedBy="user", cascade={"persist"})
      * @Groups({"mass"})
      * @MaxDepth(1)
      * @ApiSubresource
@@ -1077,7 +1088,7 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var ArrayCollection|null The messages sent by the user.
      *
-     * @ORM\OneToMany(targetEntity="\App\Communication\Entity\Message", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Communication\Entity\Message", mappedBy="user", cascade={"persist"})
      * @MaxDepth(1)
      * @ApiSubresource
      */
@@ -1086,7 +1097,7 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var ArrayCollection|null The messages received by the user.
      *
-     * @ORM\OneToMany(targetEntity="\App\Communication\Entity\Recipient", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Communication\Entity\Recipient", mappedBy="user", cascade={"persist"})
      * @MaxDepth(1)
      * ApiSubresource
      */
@@ -1095,14 +1106,14 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var ArrayCollection|null The notifications sent to the user.
      *
-     * @ORM\OneToMany(targetEntity="\App\Communication\Entity\Notified", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Communication\Entity\Notified", mappedBy="user", cascade={"persist"})
      */
     private $notifieds;
 
     /**
      * @var ArrayCollection|null A user may have many action logs.
      *
-     * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="user", cascade={"persist"})
      * @Groups({"write"})
      */
     private $logs;
@@ -1110,7 +1121,7 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var ArrayCollection|null A user may have many action logs as an delegate.
      *
-     * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="userDelegate", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="userDelegate", cascade={"persist"})
      * @Groups({"write"})
      */
     private $logsAsDelegate;
@@ -1118,7 +1129,7 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var ArrayCollection|null A user may have many action logs as a user related.
      *
-     * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="userRelated", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="userRelated", cascade={"persist"})
      * @Groups({"readUser","write"})
      */
     private $logsAsRelated;
@@ -1126,7 +1137,7 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var ArrayCollection|null A user may have many action logs.
      *
-     * @ORM\OneToMany(targetEntity="\App\Action\Entity\Diary", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Action\Entity\Diary", mappedBy="user", cascade={"persist"})
      * @Groups({"readUser","write"})
      */
     private $diaries;
@@ -1134,7 +1145,7 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var ArrayCollection|null A user may have many diary action logs.
      *
-     * @ORM\OneToMany(targetEntity="\App\Action\Entity\Diary", mappedBy="author", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Action\Entity\Diary", mappedBy="author", cascade={"persist"})
      * @Groups({"write"})
      */
     private $diariesAuthor;
@@ -1142,21 +1153,21 @@ class User implements UserInterface, EquatableInterface
     /**
     * @var ArrayCollection|null A user may have many user notification preferences.
     *
-    * @ORM\OneToMany(targetEntity="\App\User\Entity\UserNotification", mappedBy="user", cascade={"persist","remove"}, orphanRemoval=true)
+    * @ORM\OneToMany(targetEntity="\App\User\Entity\UserNotification", mappedBy="user", cascade={"persist"})
     */
     private $userNotifications;
 
     /**
      * @var ArrayCollection|null The campaigns made by this user.
      *
-     * @ORM\OneToMany(targetEntity="\App\MassCommunication\Entity\Campaign", mappedBy="user", cascade={"remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\MassCommunication\Entity\Campaign", mappedBy="user")
      */
     private $campaigns;
 
     /**
      * @var ArrayCollection|null The campaing deliveries where this user is recipient.
      *
-     * @ORM\OneToMany(targetEntity="\App\MassCommunication\Entity\Delivery", mappedBy="user", cascade={"remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\MassCommunication\Entity\Delivery", mappedBy="user")
      */
     private $deliveries;
 
@@ -1172,14 +1183,14 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var ArrayCollection|null The Rewards (Badges...) earned by this User.
      *
-     * @ORM\OneToMany(targetEntity="\App\Gamification\Entity\Reward", mappedBy="user", cascade={"remove"})
+     * @ORM\OneToMany(targetEntity="\App\Gamification\Entity\Reward", mappedBy="user")
      */
     private $rewards;
 
     /**
      * @var ArrayCollection|null The RewardSteps earned by this User.
      *
-     * @ORM\OneToMany(targetEntity="\App\Gamification\Entity\RewardStep", mappedBy="user", cascade={"remove"})
+     * @ORM\OneToMany(targetEntity="\App\Gamification\Entity\RewardStep", mappedBy="user")
      * @ORM\JoinTable(name="reward")
      * @Groups({"readGamification"})
      */
@@ -1238,9 +1249,18 @@ class User implements UserInterface, EquatableInterface
     private $ssoProvider;
 
     /**
+     * @var \DateTimeInterface Creation date of the user by Sso (attachment date if already existing)
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"aRead","readUser"})
+     */
+    private $createdSsoDate;
+
+    /**
      * @var User|null Admin that create the user.
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User")
+     * @ORM\JoinColumn(onDelete="SET NULL")
      * @Groups({"readUser","write"})
      * @MaxDepth(1)
      */
@@ -1250,6 +1270,7 @@ class User implements UserInterface, EquatableInterface
      * @var App|null App that create the user.
      *
      * @ORM\ManyToOne(targetEntity="\App\App\Entity\App")
+     * @ORM\JoinColumn(onDelete="SET NULL")
      * @Groups({"readUser","write"})
      * @MaxDepth(1)
      */
@@ -1320,7 +1341,8 @@ class User implements UserInterface, EquatableInterface
 
     /**
      * @var SolidaryUser|null The SolidaryUser possibly linked to this User
-     * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\SolidaryUser", inversedBy="user", cascade={"persist","remove"})
+     * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\SolidaryUser", inversedBy="user", cascade={"persist"})
+     * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"readUser","write","writeSolidary"})
      * @MaxDepth(1)
      */
@@ -1358,7 +1380,7 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var ArrayCollection|null A User can have multiple entry in Operate
      *
-     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Operate", mappedBy="user", cascade={"persist","remove"})
+     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Operate", mappedBy="user", cascade={"persist"})
      * @Groups({"readUser", "write"})
      * @MaxDepth(1)
      */
@@ -1442,14 +1464,14 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var ArrayCollection The Blocks made by this User
      *
-     * @ORM\OneToMany(targetEntity="\App\User\Entity\Block", mappedBy="user", cascade={"remove"})
+     * @ORM\OneToMany(targetEntity="\App\User\Entity\Block", mappedBy="user")
      */
     private $blocks;
 
     /**
      * @var ArrayCollection The Blocks where this User is blocked
      *
-     * @ORM\OneToMany(targetEntity="\App\User\Entity\Block", mappedBy="blockedUser", cascade={"remove"})
+     * @ORM\OneToMany(targetEntity="\App\User\Entity\Block", mappedBy="blockedUser")
      */
     private $blockBys;
 
@@ -1530,6 +1552,7 @@ class User implements UserInterface, EquatableInterface
         $this->bankAccounts = [];
         $this->wallets = [];
         $this->ownership = [];
+        $this->gamification = true;
         if (is_null($status)) {
             $status = self::STATUS_ACTIVE;
         }
@@ -1864,6 +1887,18 @@ class User implements UserInterface, EquatableInterface
     public function setChatFavorites(?string $chatFavorites): self
     {
         $this->chatFavorites = $chatFavorites;
+
+        return $this;
+    }
+
+    public function hasGamification(): ?bool
+    {
+        return $this->gamification;
+    }
+
+    public function setGamification(?bool $gamification): self
+    {
+        $this->gamification = $gamification;
 
         return $this;
     }
@@ -2941,6 +2976,18 @@ class User implements UserInterface, EquatableInterface
     public function setSsoProvider(?string $ssoProvider): self
     {
         $this->ssoProvider = $ssoProvider;
+        return $this;
+    }
+
+    public function getCreatedSsoDate(): ?\DateTimeInterface
+    {
+        return $this->createdSsoDate;
+    }
+
+    public function setCreatedSsoDate(?\DateTimeInterface $createdSsoDate): self
+    {
+        $this->createdSsoDate = $createdSsoDate;
+
         return $this;
     }
 

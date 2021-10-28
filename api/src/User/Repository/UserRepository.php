@@ -160,18 +160,31 @@ class UserRepository
     }
 
     /**
-     * Get the active users (with a connection in the last 6 months)
+     * Count the active users (with a connection in the last 6 months)
      *
-     * @return User[]|null
+     * @return integer
      */
-    public function findActiveUsers(): ?array
+    public function countActiveUsers(): ?int
     {
         $now = new \DateTime();
         $last6Months = $now->modify('-6 months');
         
-        return $this->repository->createQueryBuilder('u')
+        $query = $this->repository->createQueryBuilder('u')
+        ->select('count(u.id)')
         ->where("u.lastActivityDate >= :last6months")
-        ->setParameter('last6months', $last6Months)
-        ->getQuery()->getResult();
+        ->setParameter('last6months', $last6Months);
+        return $query->getQuery()->getSingleScalarResult();
+    }
+
+    /**
+     * Count users
+     *
+     * @return integer
+     */
+    public function countUsers(): ?int
+    {
+        $query = $this->repository->createQueryBuilder('u')
+        ->select('count(u.id)');
+        return $query->getQuery()->getSingleScalarResult();
     }
 }

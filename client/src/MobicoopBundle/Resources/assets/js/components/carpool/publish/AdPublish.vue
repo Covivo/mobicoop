@@ -56,7 +56,7 @@
         xl="8"
         align="center"
       >
-        <h1>{{ $t( isUpdate ? 'update.title' : 'create.title') }}</h1>
+        <h1>{{ $t( isUpdate && !isSearchToSave ? 'update.title' : 'create.title') }}</h1>
         <h3 style="height: 30px">
           {{ step === 1 && !isUpdate ? $t('create.subtitle') : "" }}
         </h3>
@@ -103,6 +103,20 @@
         <v-alert type="info">
           <p>{{ $t("messageFirstAd.signUpDone", {'givenName':user.givenName}) }}.</p>
           <p>{{ $t("messageFirstAd.alert") }}</p>
+        </v-alert>
+      </v-col>
+    </v-row>
+    <v-row
+      v-if="isSearchToSave"
+      justify="center"
+    >
+      <v-col
+        cols="12"
+        xl="8"
+      >
+        <v-alert type="info">
+          <p>{{ $t("searchToSave.messageTitle") }}</p>
+          <p>{{ $t("searchToSave.message") }}</p>
         </v-alert>
       </v-col>
     </v-row>
@@ -654,7 +668,7 @@
               align-center
               @click="isUpdate ? (hasAsks || hasPotentialAds ? dialog = true : updateAd()) : postAd()"
             >
-              {{ isUpdate ? $t('stepper.buttons.update_ad', {id: ad.id}) : $t('stepper.buttons.publish_ad') }}
+              {{ isUpdate && !isSearchToSave ? $t('stepper.buttons.update_ad', {id: ad.id}) : $t('stepper.buttons.publish_ad') }}
             </v-btn>
           </div>
         </template>
@@ -814,6 +828,10 @@ export default {
       default: null
     },
     isUpdate: {
+      type: Boolean,
+      default: false
+    },
+    isSearchToSave: {
       type: Boolean,
       default: false
     },
@@ -1263,14 +1281,14 @@ export default {
         .then(response => {
           if (response.data && response.data.result.id) {
             this.snackbar = {
-              message: this.$t('update.success'),
+              message: this.isSearchToSave ? this.$t('searchToSave.success') : this.$t('update.success'),
               color: "success",
               show: true
             };
             window.location.href = this.$t('route.myAds');
           } else {
             this.snackbar = {
-              message: this.$t('update.error'),
+              message: this.isSearchToSave ? this.$t('searchToSave.error') : this.$t('update.error'),
               color: "error",
               show: true
             };
@@ -1280,7 +1298,7 @@ export default {
         .catch(error => {
           console.log(error);
           this.snackbar = {
-            message: this.$t('update.error'),
+            message: this.isSearchToSave ? this.$t('searchToSave.error') : this.$t('update.error'),
             color: "error",
             show: true
           };

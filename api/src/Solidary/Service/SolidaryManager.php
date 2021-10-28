@@ -60,6 +60,7 @@ use App\User\Repository\UserRepository;
 use DateTime;
 use App\Solidary\Entity\SolidaryVolunteerPlanning\SolidaryVolunteerPlanning;
 use App\Solidary\Entity\SolidaryVolunteerPlanning\SolidaryVolunteerPlanningItem;
+use App\Solidary\Admin\Service\SolidaryTransportMatcher;
 use Negotiation\Accept;
 
 /**
@@ -84,8 +85,9 @@ class SolidaryManager
     private $structureProofRepository;
     private $structureRepository;
     private $authItemRepository;
+    private $solidaryTransportMatcher;
 
-    public function __construct(EntityManagerInterface $entityManager, EventDispatcherInterface $eventDispatcher, Security $security, SolidaryRepository $solidaryRepository, SolidaryUserRepository $solidaryUserRepository, AdManager $adManager, SolidaryMatcher $solidaryMatcher, SolidaryAskRepository $solidaryAskRepository, AddressRepository $addressRepository, ProposalRepository $proposalRepository, SolidaryUserStructureRepository $solidaryUserStructureRepository, UserManager $userManager, UserRepository $userRepository, StructureProofRepository $structureProofRepository, StructureRepository $structureRepository, AuthItemRepository $authItemRepository)
+    public function __construct(EntityManagerInterface $entityManager, EventDispatcherInterface $eventDispatcher, Security $security, SolidaryRepository $solidaryRepository, SolidaryUserRepository $solidaryUserRepository, AdManager $adManager, SolidaryMatcher $solidaryMatcher, SolidaryAskRepository $solidaryAskRepository, AddressRepository $addressRepository, ProposalRepository $proposalRepository, SolidaryUserStructureRepository $solidaryUserStructureRepository, UserManager $userManager, UserRepository $userRepository, StructureProofRepository $structureProofRepository, StructureRepository $structureRepository, AuthItemRepository $authItemRepository, SolidaryTransportMatcher $solidaryTransportMatcher)
     {
         $this->entityManager = $entityManager;
         $this->eventDispatcher = $eventDispatcher;
@@ -103,6 +105,7 @@ class SolidaryManager
         $this->structureProofRepository = $structureProofRepository;
         $this->structureRepository = $structureRepository;
         $this->authItemRepository = $authItemRepository;
+        $this->solidaryTransportMatcher = $solidaryTransportMatcher;
     }
 
     public function getSolidary($id): ?Solidary
@@ -426,10 +429,6 @@ class SolidaryManager
             $userId = $user->getId();
         }
         
-        // Create an ad and get the associated proposal
-        $ad = $this->createJourneyFromSolidary($solidary, $userId);
-        $proposal = $this->proposalRepository->find($ad->getId());
-
         // we get solidaryUserStructure
         $solidaryUserId = $solidary->getSolidaryUser() ? $solidary->getSolidaryUser()->getId() : $user->getSolidaryUser()->getId();
         $solidaryUserStructure = $this->solidaryUserStructureRepository->findByStructureAndSolidaryUser($solidaryStructureId, $solidaryUserId);
@@ -439,8 +438,6 @@ class SolidaryManager
             $solidary->setDeadlineDate($solidary->getOutwardDeadlineDatetime());
         }
 
-        // we update solidary
-        $solidary->setProposal($proposal);
         $solidary->setSolidaryUserStructure($solidaryUserStructure);
 
         // we set the start progression
@@ -452,6 +449,12 @@ class SolidaryManager
         if ($solidary->isPassenger()) {
             $this->entityManager->persist($solidary);
             $this->entityManager->flush();
+
+            // Create an ad and get the associated proposal
+            $ad = $this->createJourneyFromSolidary($solidary, $userId);
+            $proposal = $this->proposalRepository->find($ad->getId());
+            
+            $this->solidaryTransportMatcher->match($solidary);
 
             // We trigger the event
             $event = new SolidaryCreatedEvent($user ? $user : $solidary->getSolidaryUserStructure()->getSolidaryUser()->getUser(), $this->security->getUser(), $solidary);
@@ -729,6 +732,7 @@ class SolidaryManager
 
         // we set the ad as a solidary ad
         $ad->setSolidary(true);
+        $ad->setSolidaryRecord($solidary);
 
         // Frequency
         $ad->setFrequency(Criteria::FREQUENCY_PUNCTUAL);
@@ -737,6 +741,11 @@ class SolidaryManager
         $ad->setReturnDate($solidary->getReturnDatetime() ? $solidary->getReturnDatetime() : null);
         $ad->setOutwardTime($solidary->getOutwardDatetime()->format("H:i"));
         $ad->setReturnTime($solidary->getReturnDatetime() ? $solidary->getReturnDatetime()->format("H:i") : null);
+        
+        if ($solidary->getReturnDatetime() != null) {
+            $ad->setOneWay(false);
+        }
+
         if ($solidary->getFrequency() === criteria::FREQUENCY_REGULAR) {
             $ad->setFrequency(Criteria::FREQUENCY_REGULAR);
 

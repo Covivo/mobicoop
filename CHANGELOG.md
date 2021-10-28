@@ -1,3 +1,8 @@
+# Release 1.37.0
+* Add externalId and a boolean to know if a User created by interroperability already existed in the database
+* Add a Consumption feedback provider Interface related to the CarpoolItem's creation
+* Launch a carpool search from event map
+
 # Release 1.36.0
 * User can now see their own Ad in search results
 * User have a Badges board in their profile to follow their progress

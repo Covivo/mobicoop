@@ -333,7 +333,7 @@ class AdManager
         // solidary
         $outwardCriteria->setSolidary($ad->isSolidary());
         if ($ad->getSolidaryRecord()) {
-            $outwardProposal->setSolidary($ad->getSolidaryRecord());
+            $outwardProposal->addSolidary($ad->getSolidaryRecord());
         }
         $outwardCriteria->setSolidaryExclusive($ad->isSolidaryExclusive());
 

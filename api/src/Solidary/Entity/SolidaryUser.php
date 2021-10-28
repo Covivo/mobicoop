@@ -330,7 +330,7 @@ class SolidaryUser
      * @var Address The center address of the accepted perimeter.
      *
      * @Assert\NotBlank
-     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist"}, orphanRemoval=true)
      * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"readSolidary","writeSolidary"})
      */
@@ -355,7 +355,7 @@ class SolidaryUser
      * @var User The user associated with the solidaryUser.
      *
      * @Assert\NotBlank
-     * @ORM\OneToOne(targetEntity="\App\User\Entity\User", cascade={"persist","remove"}, orphanRemoval=true, mappedBy="solidaryUser")
+     * @ORM\OneToOne(targetEntity="\App\User\Entity\User", cascade={"persist"}, mappedBy="solidaryUser")
      * @Groups({"readSolidary","writeSolidary"})
      * @MaxDepth(1)
      */
@@ -381,7 +381,7 @@ class SolidaryUser
     /**
      * @var ArrayCollection The solidary user structures
      *
-     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\SolidaryUserStructure", mappedBy="solidaryUser", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\SolidaryUserStructure", mappedBy="solidaryUser", cascade={"persist"})
      * @Groups({"readUser","readSolidary","writeSolidary"})
      * @MaxDepth(1)
      */
@@ -390,7 +390,7 @@ class SolidaryUser
     /**
      * @var ArrayCollection|null Solidary matchings.
      *
-     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\SolidaryMatching", mappedBy="solidaryUser", cascade={"remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\SolidaryMatching", mappedBy="solidaryUser")
      * @Groups({"readSolidary","writeSolidary"})
      * @MaxDepth(1)
      */

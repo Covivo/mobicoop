@@ -86,7 +86,7 @@ class PTDeparture
      * @var Address The address of this departure.
      *
      * @ORM\ManyToOne(targetEntity="App\Geography\Entity\Address")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Groups("pt")
      */
     private $address;

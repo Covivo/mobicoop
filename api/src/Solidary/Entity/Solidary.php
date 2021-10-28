@@ -339,7 +339,7 @@ class Solidary
     /**
      * @var Solidary|null Original solidary record if updated solidary record.
      *
-     * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\Solidary", cascade={"persist", "remove"}, orphanRemoval=true)
+     * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\Solidary", cascade={"persist"})
      * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups("aRead")
      * @MaxDepth(1)
@@ -366,7 +366,7 @@ class Solidary
      * @var ArrayCollection|null Diary entry.
      * Ordered desc to get the last entry first.
      *
-     * @ORM\OneToMany(targetEntity="\App\Action\Entity\Diary", mappedBy="solidary", cascade={"remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Action\Entity\Diary", mappedBy="solidary")
      * @ORM\OrderBy({"id" = "DESC"})
      */
     private $diaries;
@@ -374,7 +374,8 @@ class Solidary
     /**
      * @var SolidaryUserStructure The SolidaryUserStructure related with the solidary record.
      *
-     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\SolidaryUserStructure", inversedBy="solidaries", cascade={"persist","remove"})
+     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\SolidaryUserStructure", inversedBy="solidaries", cascade={"persist"})
+     * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"writeSolidary", "readSolidary"})
      * @MaxDepth(1)
      */
@@ -386,6 +387,7 @@ class Solidary
      * The proposal will then be set a short time after the solidary record is created.
      *
      * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal")
+     * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"writeSolidary"})
      * @MaxDepth(1)
      */
@@ -395,8 +397,8 @@ class Solidary
      * @var Subject Subject of the solidary record.
      *
      * @Assert\NotBlank(groups={"writeSolidary"})
-     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Subject", inversedBy="solidaries", cascade={"persist","remove"})
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Subject", inversedBy="solidaries", cascade={"persist"})
+     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
      * @Groups({"aRead","readSolidary","writeSolidary"})
      */
     private $subject;
@@ -404,7 +406,7 @@ class Solidary
     /**
      * @var ArrayCollection|null The special needs for this solidary record.
      *
-     * @ORM\ManyToMany(targetEntity="\App\Solidary\Entity\Need", cascade={"persist","remove"})
+     * @ORM\ManyToMany(targetEntity="\App\Solidary\Entity\Need", cascade={"persist"})
      * @Groups({"aReadItem","readSolidary","writeSolidary"})
      * @MaxDepth(1)
      */
@@ -413,7 +415,7 @@ class Solidary
     /**
      * @var ArrayCollection|null Solidary solutions.
      *
-     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\SolidarySolution", mappedBy="solidary", cascade={"remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\SolidarySolution", mappedBy="solidary")
      * @Groups({"writeSolidary"})
      * @MaxDepth(1)
      * @ApiSubresource(maxDepth=1)
@@ -423,7 +425,7 @@ class Solidary
     /**
      * @var ArrayCollection|null Solidary matchings.
      *
-     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\SolidaryMatching", mappedBy="solidary", cascade={"remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\SolidaryMatching", mappedBy="solidary")
      * @Groups({"writeSolidary"})
      * @MaxDepth(1)
      */
@@ -653,7 +655,7 @@ class Solidary
     /**
      * @var ArrayCollection The logs linked with the Solidary.
      *
-     * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="solidary", cascade={"remove"})
+     * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="solidary")
      */
     private $logs;
 
