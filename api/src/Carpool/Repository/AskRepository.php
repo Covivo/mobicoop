@@ -353,4 +353,16 @@ class AskRepository
                 
         return $query->getQuery()->getResult();
     }
+
+    /**
+     * Count all aks
+     *
+     * @return int
+     */
+    public function countAsks() :?int
+    {
+        $query = $this->repository->createQueryBuilder('a')
+        ->select('count(a.id)');
+        return $query->getQuery()->getSingleScalarResult();
+    }
 }

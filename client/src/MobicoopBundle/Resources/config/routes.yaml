@@ -594,6 +594,15 @@ user_update_language:
         nl: /user/updateLanguage
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userUpdateLanguage
 
+# Set User's gamification preferences (AJAX)
+user_update_gamification_prefs:
+    methods: [PUT]
+    path:
+        fr: /user/updateGamification
+        en: /user/updateGamification
+        nl: /user/updateGamification
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userUpdateGamification
+
 ##################
 # carpool routes #
 ##################
@@ -625,6 +634,14 @@ carpool_ad_update:
         en: /carpool/ad/{id}/update/
         nl: /carpool/ad/{id}/update/
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdUpdate
+
+# save a carpool search
+carpool_save_search:
+    path:
+        fr: /covoiturage/recherche/{id}/enregistrer
+        en: /carpool/search/{id}/save/
+        nl: /carpool/search/{id}/save/
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolSearchSave    
 
 # delete an ad (AJAX)
 carpool_ad_delete:

@@ -27,7 +27,10 @@
     },
     "urlCommunityUser": "/community-user",
     "map": {
-        "origin": "Vertrek"
+        "origin": "Vertrek",
+        "search": {
+            "label": "Chercher les covoiturages correspondants"
+        }
     },
     "title": {
         "searchCarpool": "Een traject zoeken voor het evenement"

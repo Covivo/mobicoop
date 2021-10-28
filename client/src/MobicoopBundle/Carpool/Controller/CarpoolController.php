@@ -172,6 +172,31 @@ class CarpoolController extends AbstractController
     }
 
     /**
+     * Save a carpooling search.
+     */
+    public function carpoolSearchSave(int $id, AdManager $adManager, Request $request)
+    {
+        $ad = $adManager->getFullAd($id);
+        $this->denyAccessUnlessGranted('update_ad', $ad);
+
+        $hasAsks = false;
+        $hasPotentialAds = false;
+        if ($ad->getPotentialCarpoolers() > 0) {
+            $hasPotentialAds = true;
+        }
+        if (count($ad->getAsks()) > 0) {
+            $hasAsks = true;
+        }
+
+        return $this->render('@Mobicoop/carpool/saveSearch.html.twig', [
+            "ad" => $ad,
+            "hasAsks" => $hasAsks,
+            "hasPotentialAds" => $hasPotentialAds,
+            "solidaryExclusive" => $ad->isSolidaryExclusive()
+        ]);
+    }
+
+    /**
      * Create the first carpooling ad.
      */
     public function carpoolFirstAdPost()
@@ -551,7 +576,8 @@ class CarpoolController extends AbstractController
         )) {
             $result = [
                 "results"=>$ad->getResults(),
-                "nb"=>$ad->getNbResults()
+                "nb"=>$ad->getNbResults(),
+                "searchId"=>$ad->getId()
             ];
         }
 

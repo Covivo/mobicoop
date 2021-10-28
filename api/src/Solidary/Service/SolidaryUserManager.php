@@ -807,7 +807,7 @@ class SolidaryUserManager
         if (count($solidaryUserStructure->getStructure()->getStructureProofs()) == 0) {
             $solidaryVolunteer->setValidatedCandidate(true);
         }
-
+        
         if ($solidaryVolunteer->isValidatedCandidate()) {
             // Already accepted. We set the date a give the appropriate role to the user
             $solidaryUserStructure->setAcceptedDate(new \Datetime());

@@ -477,7 +477,6 @@ class RdexManager
             $journey->setNumberOfWaypoints(0);
 
             // If there is a return
-            // TO DO : We don't treat return matching so we don't do it in RDEX also. Maybe one day...
             if (isset($parameters["return"]) && !is_null($parameters["return"]) && $result->hasReturn()) {
                 $infos = $this->buildJourneyDetails($result, $roleRequester, "return");
                 $journey->setReturn($infos['journey']);

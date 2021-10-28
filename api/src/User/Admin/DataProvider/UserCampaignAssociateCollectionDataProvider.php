@@ -115,7 +115,7 @@ final class UserCampaignAssociateCollectionDataProvider implements CollectionDat
                 if (!$this->request->get('user')) {
                     throw new CampaignException('At least one user id is mandatory');
                 }
-                $users = $this->userRepository->findDeliveriesByIds($this->request->get('user'));
+                $users = new \ArrayIterator($this->userRepository->findDeliveriesByIds($this->request->get('user')));
                 break;
             case Campaign::FILTER_TYPE_FILTER:
                 $manager = $this->managerRegistry->getManagerForClass($resourceClass);

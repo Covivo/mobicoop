@@ -275,6 +275,7 @@ class Image
      * @var Event|null The event associated with the image.
      *
      * @ORM\ManyToOne(targetEntity="\App\Event\Entity\Event", inversedBy="images", cascade="persist")
+     * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private $event;
 
@@ -294,6 +295,7 @@ class Image
      * @var Community|null The community associated with the image.
      *
      * @ORM\ManyToOne(targetEntity="\App\Community\Entity\Community", inversedBy="images", cascade="persist")
+     * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private $community;
 
@@ -319,6 +321,7 @@ class Image
      * @var User|null The user associated with the image.
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="images", cascade="persist")
+     * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private $user;
 
@@ -332,6 +335,7 @@ class Image
      * @var RelayPoint|null The relay point associated with the image.
      *
      * @ORM\ManyToOne(targetEntity="\App\RelayPoint\Entity\RelayPoint", inversedBy="images", cascade="persist")
+     * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private $relayPoint;
 
@@ -351,13 +355,15 @@ class Image
      * @var RelayPointType|null The relay point type associated with the image.
      *
      * @ORM\ManyToOne(targetEntity="\App\RelayPoint\Entity\RelayPointType", inversedBy="images", cascade="persist")
+     * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private $relayPointType;
 
     /**
      * @var Badge|null The Badge for which this image is used as icon
      *
-     * @ORM\OneToOne(targetEntity="\App\Gamification\Entity\Badge", inversedBy="icon", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToOne(targetEntity="\App\Gamification\Entity\Badge", inversedBy="icon", cascade={"persist"})
+     * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private $badgeIcon;
 
@@ -376,7 +382,8 @@ class Image
     /**
      * @var Badge|null The Badge for which this image is used as icon
      *
-     * @ORM\OneToOne(targetEntity="\App\Gamification\Entity\Badge", inversedBy="decoratedIcon", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToOne(targetEntity="\App\Gamification\Entity\Badge", inversedBy="decoratedIcon", cascade={"persist"})
+     * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private $badgeDecoratedIcon;
 
@@ -395,7 +402,8 @@ class Image
     /**
      * @var Badge|null The Badge for which this image is used as reward image
      *
-     * @ORM\OneToOne(targetEntity="\App\Gamification\Entity\Badge", inversedBy="image", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToOne(targetEntity="\App\Gamification\Entity\Badge", inversedBy="image", cascade={"persist"})
+     * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private $badgeImage;
 
@@ -414,7 +422,8 @@ class Image
     /**
      * @var Badge|null The Badge for which this image is used as reward image light
      *
-     * @ORM\OneToOne(targetEntity="\App\Gamification\Entity\Badge", inversedBy="imageLight", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToOne(targetEntity="\App\Gamification\Entity\Badge", inversedBy="imageLight", cascade={"persist"})
+     * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private $badgeImageLight;
 
@@ -446,6 +455,7 @@ class Image
      * @var Campaign|null The campaign associated with the image.
      *
      * @ORM\ManyToOne(targetEntity="\App\MassCommunication\Entity\Campaign", inversedBy="images", cascade="persist")
+     * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private $campaign;
 
@@ -465,6 +475,7 @@ class Image
      * @var Editorial|null The editorial associated with the image.
      *
      * @ORM\ManyToOne(targetEntity="\App\Editorial\Entity\Editorial", inversedBy="images", cascade="persist")
+     * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private $editorial;
 

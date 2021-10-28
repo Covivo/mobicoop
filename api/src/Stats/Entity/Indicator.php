@@ -97,13 +97,6 @@ class Indicator
     private $value;
 
     /**
-     * @var int The rounded integer value of this Indicator
-     *
-     * @Groups({"readStats"})
-     */
-    private $roundedIntValue;
-
-    /**
      * @var boolean True if this Indicator is used on Home Page
      */
     private $home;
@@ -145,18 +138,6 @@ class Indicator
     public function setvalue(?float $value): self
     {
         $this->value = $value;
-
-        return $this;
-    }
-
-    public function getRoundedIntValue(): ?int
-    {
-        return round($this->value, 0);
-    }
-
-    public function setRoundedIntValue(?int $roundedIntValue): self
-    {
-        $this->roundedIntValue = $roundedIntValue;
 
         return $this;
     }

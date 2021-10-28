@@ -85,7 +85,7 @@ class SolidarySolution
      * @var Solidary The solidary record.
      *
      * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Solidary", inversedBy="solidarySolutions")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Groups({"readSolidary","writeSolidary"})
      * @MaxDepth(1)
      */
@@ -94,7 +94,8 @@ class SolidarySolution
     /**
      * @var SolidaryMatching|null SolidaryMatching of this SolidarySolution
      *
-     * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\SolidaryMatching", inversedBy="solidarySolution", cascade={"persist","remove"})
+     * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\SolidaryMatching", inversedBy="solidarySolution", cascade={"persist"})
+     * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"readSolidary","writeSolidary"})
      * @MaxDepth(1)
      */
@@ -120,7 +121,7 @@ class SolidarySolution
     /**
      * @var SolidarySolution|null The linked solidary solution for return trips.
      *
-     * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\SolidarySolution", cascade={"persist", "remove"}, orphanRemoval=true)
+     * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\SolidarySolution", cascade={"persist"})
      * @ORM\JoinColumn(onDelete="CASCADE")
      * @MaxDepth(1)
      */

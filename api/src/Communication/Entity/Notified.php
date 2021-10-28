@@ -110,7 +110,7 @@ class Notified
      * @var Notification The notification.
      *
      * @ORM\ManyToOne(targetEntity="\App\Communication\Entity\Notification")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Groups({"read","write"})
      * @MaxDepth(1)
      */
@@ -120,7 +120,7 @@ class Notified
      * @var User The user.
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="notifieds")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Groups({"read","write"})
      * @MaxDepth(1)
      */
@@ -170,6 +170,7 @@ class Notified
      * @var Proposal The proposal if the notified is linked to a proposal.
      *
      * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal", inversedBy="notifieds")
+     * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"read","write"})
      * @MaxDepth(1)
      */
@@ -179,6 +180,7 @@ class Notified
      * @var Community The community if the notified is linked to a community.
      *
      * @ORM\ManyToOne(targetEntity="\App\Community\Entity\Community", inversedBy="notifieds")
+     * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"read","write"})
      * @MaxDepth(1)
      */
@@ -188,6 +190,7 @@ class Notified
      * @var Matching The matching if the notified is linked to a matching.
      *
      * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Matching", inversedBy="notifieds")
+     * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"read","write"})
      * @MaxDepth(1)
      */
@@ -197,6 +200,7 @@ class Notified
      * @var AskHistory The askHistory if the notified is linked to an askHistory.
      *
      * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\AskHistory", inversedBy="notifieds")
+     * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"read","write"})
      * @MaxDepth(1)
      */
@@ -206,6 +210,7 @@ class Notified
      * @var Recipient The recipient if the notified is linked to a recipient.
      *
      * @ORM\ManyToOne(targetEntity="\App\Communication\Entity\Recipient", inversedBy="notifieds")
+     * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"read","write"})
      * @MaxDepth(1)
      */

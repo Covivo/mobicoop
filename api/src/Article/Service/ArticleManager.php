@@ -204,6 +204,7 @@ class ArticleManager
         $article->setDescription($rssElement->getDescription());
         $article->setImage($rssElement->getImage());
         $article->setPubDate($rssElement->getPubDate());
+        $article->setLink($rssElement->getLink());
         
         if (!is_null($rssElement->getIframe())) {
             $rssIframe = $rssElement->getIframe();
@@ -239,6 +240,8 @@ class ArticleManager
 
             $rssElement->setTitle((string) $item->title);
             $rssElement->setPubDate(date('d M Y', strtotime($item->pubDate)));
+
+            $rssElement->setLink((string) $item->link);
 
             $description = (string) $item->description;
 

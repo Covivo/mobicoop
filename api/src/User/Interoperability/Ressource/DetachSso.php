@@ -25,6 +25,7 @@ namespace App\User\Interoperability\Ressource;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use App\User\Entity\User;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -88,6 +89,18 @@ class DetachSso
      */
     private $userId;
 
+    /**
+     * @var bool If the User that has been detached was an already existing User not created by SSO
+     *
+     * @Groups({"readUser"})
+     */
+    private $previouslyExisting;
+
+    /**
+     * @var User The User related to the detachment
+     */
+    private $user;
+
     public function getUuid(): ?string
     {
         return $this->uuid;
@@ -108,6 +121,30 @@ class DetachSso
     public function setUserId(string $userId): self
     {
         $this->userId = $userId;
+        
+        return $this;
+    }
+
+    public function isPreviouslyExisting(): ?bool
+    {
+        return $this->previouslyExisting;
+    }
+
+    public function setPreviouslyExisting(?bool $previouslyExisting): self
+    {
+        $this->previouslyExisting = $previouslyExisting;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(User $user): self
+    {
+        $this->user = $user;
         
         return $this;
     }

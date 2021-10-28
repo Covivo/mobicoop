@@ -125,6 +125,7 @@ class PTLeg
      * @var PTJourney The parent journey of this leg.
      *
      * @ORM\ManyToOne(targetEntity="App\PublicTransport\Entity\PTJourney", inversedBy="ptlegs")
+     * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
      * @Groups("pt")
      */
     private $ptjourney;
@@ -133,6 +134,7 @@ class PTLeg
      * @var PTDeparture The departure of this leg.
      *
      * @ORM\ManyToOne(targetEntity="App\PublicTransport\Entity\PTDeparture")
+     * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
      * @Groups("pt")
      */
     private $ptdeparture;
@@ -141,6 +143,7 @@ class PTLeg
      * @var PTArrival The arrival of this leg.
      *
      * @ORM\ManyToOne(targetEntity="App\PublicTransport\Entity\PTArrival")
+     * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
      * @Groups("pt")
      */
     private $ptarrival;
@@ -149,6 +152,7 @@ class PTLeg
      * @var TravelMode The transport mode of this leg.
      *
      * @ORM\ManyToOne(targetEntity="App\Travel\Entity\TravelMode")
+     * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
      * @Groups("pt")
      */
     private $travelMode;
@@ -157,6 +161,7 @@ class PTLeg
      * @var PTLine The public transport line of this leg.
      *
      * @ORM\ManyToOne(targetEntity="App\PublicTransport\Entity\PTLine")
+     * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
      * @Groups("pt")
      */
     private $ptline;
@@ -172,7 +177,7 @@ class PTLeg
     /**
      * @var PTStep[] The steps of this leg.
      *
-     * @ORM\OneToMany(targetEntity="App\PublicTransport\Entity\PTStep", mappedBy="ptleg", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="App\PublicTransport\Entity\PTStep", mappedBy="ptleg", cascade={"persist"})
      * @Groups("pt")
      */
     private $ptsteps;

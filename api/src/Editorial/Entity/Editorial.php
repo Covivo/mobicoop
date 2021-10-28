@@ -172,7 +172,7 @@ class Editorial
     /**
      * @var ArrayCollection The images of the editorial.
      *
-     * @ORM\OneToMany(targetEntity="\App\Image\Entity\Image", mappedBy="editorial", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Image\Entity\Image", mappedBy="editorial", cascade={"persist"})
      * @ORM\OrderBy({"position" = "ASC"})
      * @Groups("readEditorial")
      * @MaxDepth(1)

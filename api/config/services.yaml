@@ -240,6 +240,7 @@ services:
                 defaultRegularLifeTime: '%env(int:CARPOOL_REGULAR_LIFETIME)%'
                 defaultAnyRouteAsPassenger: '%env(bool:CARPOOL_ANY_ROUTE_PASSENGER)%'
                 defaultPriceKm: '%env(float:CARPOOL_PRICE)%'
+                batchTemp: '%env(resolve:SIG_GEOROUTER_BATCH_TEMP)%'
         tags:
             - { name: monolog.logger, channel: carpool }
     
@@ -381,6 +382,21 @@ services:
         arguments:
             $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
     
+    
+    # Consumption feedback
+    App\User\DataProvider\ConsumptionFeedbackDataProvider:
+        arguments:
+            $active: '%env(bool:CONSUMPTION_FEEDBACK_ACTIVE)%'
+            $provider: '%env(string:CONSUMPTION_FEEDBACK_PROVIDER)%'
+            $appId: '%env(string:CONSUMPTION_FEEDBACK_APP_ID)%'
+            $baseUrlAuth: '%env(string:CONSUMPTION_FEEDBACK_AUTH_BASE_URL)%'
+            $baseUrl: '%env(string:CONSUMPTION_FEEDBACK_BASE_URL)%'
+            $clientId: '%env(string:CONSUMPTION_FEEDBACK_CLIENTID)%'
+            $clientSecret: '%env(string:CONSUMPTION_FEEDBACK_CLIENT_SECRET)%'
+            $apiKey: '%env(string:CONSUMPTION_FEEDBACK_APIKEY)%'
+        tags:
+            - { name: monolog.logger, channel: consumptionFeedback }
+
     # Editorial
     'App\Editorial\Admin\DataProvider\EditorialCollectionDataProvider':
         arguments:
@@ -459,7 +475,7 @@ services:
             - { name: doctrine.event_listener, event: postLoad }
     App\Gamification\EventSubscriber\LogSubscriber:
         arguments:
-            $active: '%env(bool:GAMIFICATION_ACTIVE)%'
+            $gamificationActive: '%env(bool:GAMIFICATION_ACTIVE)%'
     App\Gamification\Service\GamificationManager:
         arguments:
             $badgeImageUri: '%env(string:GAMIFICATION_BADGE_IMAGE_URI)%'            

@@ -95,7 +95,8 @@ class SolidaryMatching
     /**
      * @var Matching|null The carpool matching if there is any
      *
-     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Matching", inversedBy="solidaryMatching", cascade={"persist","remove"})
+     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Matching", inversedBy="solidaryMatching", cascade={"persist"})
+     * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"read","results",})
      * @MaxDepth(1)
      */
@@ -105,15 +106,17 @@ class SolidaryMatching
      * @var SolidaryUser The solidary User if needed.
      *
      * @ORM\ManyToOne(targetEntity="\App\Solidary\Entity\SolidaryUser", inversedBy="solidaryMatchings")
+     * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"readSolidary","writeSolidary"})
      * @MaxDepth(1)
      */
     private $solidaryUser;
 
     /**
-     * @var Solidary The solidary User if needed.
+     * @var Solidary The solidary.
      *
      * @ORM\ManyToOne(targetEntity="\App\Solidary\Entity\Solidary", inversedBy="solidaryMatchings")
+     * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"readSolidary","writeSolidary"})
      * @MaxDepth(1)
      */
@@ -123,7 +126,8 @@ class SolidaryMatching
      * @var Criteria|null Criteria of this SolidaryAsk
      *
      * @Assert\NotBlank
-     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Criteria", inversedBy="solidaryMatching", cascade={"persist","remove"})
+     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Criteria", inversedBy="solidaryMatching", cascade={"persist"})
+     * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $criteria;
@@ -131,7 +135,7 @@ class SolidaryMatching
     /**
      * @var SolidarySolution|null SolidarySolution of this SolidaryMatching
      *
-     * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\SolidarySolution", mappedBy="solidaryMatching", cascade={"persist","remove"})
+     * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\SolidarySolution", mappedBy="solidaryMatching", cascade={"persist"})
      * @Groups({"readSolidary","writeSolidary"})
      * @MaxDepth(1)
      */
@@ -140,7 +144,7 @@ class SolidaryMatching
     /**
      * @var SolidaryMatching|null The linked solidary matching for return trips.
      *
-     * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\SolidaryMatching", cascade={"persist", "remove"}, orphanRemoval=true)
+     * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\SolidaryMatching", cascade={"persist"})
      * @ORM\JoinColumn(onDelete="CASCADE")
      * @MaxDepth(1)
      */

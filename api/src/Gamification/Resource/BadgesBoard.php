@@ -76,6 +76,12 @@ class BadgesBoard
      */
     private $badges;
 
+    /**
+     * @var bool If the User owning this board accept the gamification tracking
+     * @Groups({"readGamification"})
+     */
+    private $acceptGamification;
+
     public function __construct($id = null)
     {
         $this->id = self::DEFAULT_ID;
@@ -104,6 +110,18 @@ class BadgesBoard
     public function setBadges(array $badges): self
     {
         $this->badges = $badges;
+
+        return $this;
+    }
+
+    public function hasAcceptGamification(): ?bool
+    {
+        return $this->acceptGamification;
+    }
+
+    public function setAcceptGamification(bool $acceptGamification): self
+    {
+        $this->acceptGamification = $acceptGamification;
 
         return $this;
     }

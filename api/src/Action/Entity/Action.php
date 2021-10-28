@@ -159,7 +159,7 @@ class Action
     /**
      * @var ArrayCollection|null An Action can have multiple GamificationActions related
      *
-     * @ORM\OneToMany(targetEntity="\App\Gamification\Entity\GamificationAction", mappedBy="action", cascade={"persist","remove"})
+     * @ORM\OneToMany(targetEntity="\App\Gamification\Entity\GamificationAction", mappedBy="action", cascade={"persist"})
      * @Groups({"readUser", "write"})
      * @MaxDepth(1)
      */

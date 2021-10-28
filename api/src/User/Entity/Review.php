@@ -49,7 +49,7 @@ class Review
      * @var User The User who left this Review
      *
      * @ORM\ManyToOne(targetEntity="App\User\Entity\User")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @MaxDepth(1)
      */
     private $reviewer;
@@ -58,7 +58,7 @@ class Review
      * @var User The User targeted by this Review
      *
      * @ORM\ManyToOne(targetEntity="App\User\Entity\User")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @MaxDepth(1)
      */
     private $reviewed;

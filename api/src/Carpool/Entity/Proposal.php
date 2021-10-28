@@ -214,7 +214,7 @@ class Proposal
     /**
      * @var Proposal|null Linked proposal for a round trip (return or outward journey).
      *
-     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Proposal", cascade={"persist", "remove"}, orphanRemoval=true)
+     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Proposal", cascade={"persist"})
      * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"read","results","write"})
      * @MaxDepth(1)
@@ -226,6 +226,7 @@ class Proposal
      * Can be null for an anonymous search.
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="proposals")
+     * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"read","results","write"})
      * @MaxDepth(1)
      */
@@ -235,6 +236,7 @@ class Proposal
      * @var User|null User that create the proposal for another user.
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="proposalsDelegate")
+     * @ORM\JoinColumn(onDelete="SET NULL")
      * @Groups({"read","write"})
      * @MaxDepth(1)
      */
@@ -244,6 +246,7 @@ class Proposal
      * @var App|null App that create the user.
      *
      * @ORM\ManyToOne(targetEntity="\App\App\Entity\App")
+     * @ORM\JoinColumn(onDelete="SET NULL")
      * @Groups({"readUser","write"})
      * @MaxDepth(1)
      */
@@ -253,7 +256,7 @@ class Proposal
      * @var ArrayCollection The waypoints of the proposal.
      *
      * @Assert\NotBlank
-     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Waypoint", mappedBy="proposal", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Waypoint", mappedBy="proposal", cascade={"persist"})
      * @ORM\OrderBy({"position" = "ASC"})
      * @Groups({"read","write"})
      * @MaxDepth(1)
@@ -281,7 +284,7 @@ class Proposal
     /**
      * @var ArrayCollection|null The matchings of the proposal (if proposal is a request).
      *
-     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Matching", mappedBy="proposalRequest", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Matching", mappedBy="proposalRequest", cascade={"persist"})
      * @Groups({"read","results"})
      * @MaxDepth(1)
      */
@@ -290,7 +293,7 @@ class Proposal
     /**
      * @var ArrayCollection|null The matching of the proposal (if proposal is an offer).
      *
-     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Matching", mappedBy="proposalOffer", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Matching", mappedBy="proposalOffer", cascade={"persist"})
      * @Groups({"read","results"})
      * @MaxDepth(1)
      */
@@ -305,8 +308,8 @@ class Proposal
      * But it is not acceptable as a criteria can be related with other entities (ask and matching) so we would have multiple nullable foreign keys.
      *
      * @Assert\NotBlank
-     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Criteria", inversedBy="proposal", cascade={"persist", "remove"}, orphanRemoval=true)
-     * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
+     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Criteria", inversedBy="proposal", cascade={"persist"})
+     * @ORM\JoinColumn(nullable=true)
      * @Groups({"read","results","write","thread"})
      * @MaxDepth(1)
      */
@@ -315,7 +318,7 @@ class Proposal
     /**
      * @var ArrayCollection The individual stops of the proposal.
      *
-     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\IndividualStop", mappedBy="proposal", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\IndividualStop", mappedBy="proposal", cascade={"persist"})
      * @ORM\OrderBy({"position" = "ASC"})
      * @Groups({"read"})
      */
@@ -324,7 +327,7 @@ class Proposal
     /**
      * @var ArrayCollection|null The notifications sent for the proposal.
      *
-     * @ORM\OneToMany(targetEntity="\App\Communication\Entity\Notified", mappedBy="proposal", cascade={"persist","remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Communication\Entity\Notified", mappedBy="proposal", cascade={"persist"})
      * @Groups({"read","write"})
      * @MaxDepth(1)
      */
@@ -355,18 +358,19 @@ class Proposal
      * @var Event related for the proposal
      *
      * @ORM\ManyToOne(targetEntity="App\Event\Entity\Event", inversedBy="proposals")
+     * @ORM\JoinColumn(onDelete="SET NULL")
      * @Groups({"read","write"})
      * @MaxDepth(1)
      */
     private $event;
 
     /**
-     * @var Position The last position given for dynamic carpooling.
+     * @var ArrayCollection The last position given for dynamic carpooling (OneToMany instead of OneToOne for performance reasons => should be 'position' but handled as an ArrayCollection).
      *
-     * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Position", mappedBy="proposal", cascade={"persist", "remove"}, orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Position", mappedBy="proposal", cascade={"persist"})
      * @Groups({"read","results","write","thread"})
      */
-    private $position;
+    private $positions;
 
     /**
      * @var string The external origin of this proposal (i.e. for an RDEX request we store the public api key)
@@ -378,17 +382,18 @@ class Proposal
     /**
      * @var Subject A Proposal can be linked to a specific Subject
      * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Subject", inversedBy="proposals")
+     * @ORM\JoinColumn(onDelete="SET NULL")
      * @MaxDepth(1)
      * @Groups({"read","write"})
      */
     private $subject;
 
     /**
-     * @var Solidary The solidary linked with this proposal
+     * @var ArrayCollection The solidary linked with this proposal (OneToMany instead of OneToOne for performance reasons => should be 'solidary' but handled as an ArrayCollection).
      *
-     * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\Solidary", mappedBy="proposal")
+     * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Solidary", mappedBy="proposal")
      */
-    private $solidary;
+    private $solidaries;
 
     /**
      * @var bool Use search time or not
@@ -398,7 +403,7 @@ class Proposal
     /**
      * @var ArrayCollection The logs linked with the Proposal.
      *
-     * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="proposal", cascade={"remove"})
+     * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="proposal")
      */
     private $logs;
 
@@ -415,6 +420,8 @@ class Proposal
         $this->matchingRequests = new ArrayCollection();
         $this->individualStops = new ArrayCollection();
         $this->notifieds = new ArrayCollection();
+        $this->positions = new ArrayCollection();
+        $this->solidaries = new ArrayCollection();
         $this->setPrivate(false);
         $this->setPaused(false);
         $this->setExposed(false);
@@ -430,6 +437,8 @@ class Proposal
         $this->matchingRequests = new ArrayCollection();
         $this->individualStops = new ArrayCollection();
         $this->notifieds = new ArrayCollection();
+        $this->positions = new ArrayCollection();
+        $this->solidaries = new ArrayCollection();
         $this->results = [];
         $this->setProposalLinked(null);
     }
@@ -893,16 +902,34 @@ class Proposal
 
     public function getPosition(): ?Position
     {
-        return $this->position;
+        return count($this->positions)>0 ? $this->positions->getValues()[0] : null;
     }
 
-    public function setPosition(Position $position): self
+    public function getPositions()
     {
-        if ($position->getProposal() !== $this) {
+        return $this->positions->getValues();
+    }
+
+    public function addPosition(Position $position): self
+    {
+        if (!$this->position->contains($position)) {
+            $this->positions[] = $position;
             $position->setProposal($this);
         }
-        $this->position = $position;
-
+        
+        return $this;
+    }
+    
+    public function removePosition(Position $position): self
+    {
+        if ($this->positions->contains($position)) {
+            $this->positions->removeElement($position);
+            // set the owning side to null (unless already changed)
+            if ($position->getProposal() === $this) {
+                $position->setProposal(null);
+            }
+        }
+        
         return $this;
     }
         
@@ -1023,13 +1050,34 @@ class Proposal
 
     public function getSolidary(): ?Solidary
     {
-        return $this->solidary;
+        return count($this->solidaries)>0 ? $this->solidaries->getValues()[0] : null;
     }
 
-    public function setSolidary(Solidary $solidary): self
+    public function getSolidaries()
     {
-        $this->solidary = $solidary;
+        return $this->solidaries->getValues();
+    }
 
+    public function addSolidary(Solidary $solidary): self
+    {
+        if (!$this->solidaries->contains($solidary)) {
+            $this->solidaries[] = $solidary;
+            $solidary->setProposal($this);
+        }
+        
+        return $this;
+    }
+    
+    public function removesolidary(solidary $solidary): self
+    {
+        if ($this->solidaries->contains($solidary)) {
+            $this->solidaries->removeElement($solidary);
+            // set the owning side to null (unless already changed)
+            if ($solidary->getProposal() === $this) {
+                $solidary->setProposal(null);
+            }
+        }
+        
         return $this;
     }
 }

@@ -59,6 +59,11 @@ class RssElement
      */
     private $pubDate;
 
+    /**
+     * @var string The link of the post
+     */
+    private $link;
+
     public function getId(): ?string
     {
         return $this->id;
@@ -127,6 +132,18 @@ class RssElement
     public function setPubDate(?string $pubDate): self
     {
         $this->pubDate = $pubDate;
+        
+        return $this;
+    }
+
+    public function getLink(): ?string
+    {
+        return $this->link;
+    }
+
+    public function setLink(?string $link): self
+    {
+        $this->link = $link;
         
         return $this;
     }

@@ -24,16 +24,11 @@
 namespace App\User\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * A Block between two Users
- *
- * Note : force eager is set to false to avoid max number of nested relations (can occure despite of maxdepth... https://github.com/api-platform/core/issues/1910)
  *
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
@@ -57,7 +52,7 @@ class Block
      * @var User The User who made the Block
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="blocks")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
     */
     private $user;
 
@@ -65,7 +60,7 @@ class Block
      * @var User The User blocked by $user
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="blockBys")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      */
     private $blockedUser;
 

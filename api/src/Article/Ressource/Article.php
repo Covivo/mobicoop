@@ -114,6 +114,13 @@ class Article
      */
     private $pubDate;
 
+    /**
+     * @var string The link of the post
+     *
+     * @Groups({"readArticle"})
+     */
+    private $link;
+
     public function __construct(int $id=null)
     {
         if (!is_null($id)) {
@@ -191,6 +198,18 @@ class Article
     public function setPubDate(?string $pubDate): self
     {
         $this->pubDate = $pubDate;
+        
+        return $this;
+    }
+
+    public function getLink(): ?string
+    {
+        return $this->link;
+    }
+
+    public function setLink(?string $link): self
+    {
+        $this->link = $link;
         
         return $this;
     }

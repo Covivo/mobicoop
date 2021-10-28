@@ -90,6 +90,7 @@ class RewardStep implements GamificationNotificationInterface
      * @var SequenceItem The SequenceItem's of this RewardStep
      *
      * @ORM\ManyToOne(targetEntity="\App\Gamification\Entity\SequenceItem", inversedBy="rewardSteps")
+     * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"readGamification","writeGamification"})
      * @MaxDepth(1)
      */
@@ -99,6 +100,7 @@ class RewardStep implements GamificationNotificationInterface
      * @var User The User who validated this RewardStep
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="rewardSteps")
+     * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"readGamification","writeGamification"})
      * @MaxDepth(1)
      */
