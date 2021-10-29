@@ -533,6 +533,23 @@ export default {
           console.error(err);
         });
     },
+    post: function(path, params, method = "post") {
+      const form = document.createElement("form");
+      form.method = method;
+      form.action = window.location.origin + "/" + path;
+
+      for (const key in params) {
+        if (params.hasOwnProperty(key)) {
+          const hiddenField = document.createElement("input");
+          hiddenField.type = "hidden";
+          hiddenField.name = key;
+          hiddenField.value = params[key];
+          form.appendChild(hiddenField);
+        }
+      }
+      document.body.appendChild(form);
+      form.submit();
+    },    
     getRelayPointsMap() {
       let params = {
         'communityId': this.community.id
@@ -828,6 +845,7 @@ export default {
       this.selectedOrigin = origin;
     },
     contact: function(data) {
+      console.log(data);
       const form = document.createElement("form");
       form.method = "post";
       form.action = this.$t("buttons.contact.route");
@@ -836,10 +854,9 @@ export default {
         carpool: 0,
         idRecipient: data.id,
         shortFamilyName: data.shortFamilyName,
-        givenName: data.givenName,
-        avatar: data.avatars[0],
+        givenName: data.firstName,
+        avatar: data.avatar,
       };
-
       for (const key in params) {
         if (params.hasOwnProperty(key)) {
           const hiddenField = document.createElement("input");
