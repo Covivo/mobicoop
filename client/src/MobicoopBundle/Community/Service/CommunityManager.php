@@ -194,15 +194,15 @@ class CommunityManager
     /**
      * Join a community
      *
-     * @param CommunityUser $communityUser
+     * @param Community $community
      *
-     * @return CommunityUser|null
+     * @return Community|null
      */
-    public function joinCommunity(CommunityUser $communityUser)
+    public function joinCommunity(Community $community)
     {
-        $this->dataProvider->setClass(CommunityUser::class);
-        $response = $this->dataProvider->post($communityUser);
-        if ($response->getCode() == 201) {
+        $this->dataProvider->setClass(Community::class);
+        $response = $this->dataProvider->putSpecial($community, null, "join");
+        if ($response->getCode() == 200) {
             return $response->getValue();
         }
         return null;
@@ -211,15 +211,14 @@ class CommunityManager
     /**
      * Leave a community
      *
-     * @param int $communityId
-     * @param int $userId
+     * @param Community $community
      *
      * @return array|object|null
      */
-    public function leaveCommunity(int $communityId, int $userId)
+    public function leaveCommunity(Community $community)
     {
-        $this->dataProvider->setClass(CommunityUser::class);
-        $response = $this->dataProvider->delete($communityUser->getId(), []);
+        $this->dataProvider->setClass(Community::class);
+        $response = $this->dataProvider->putSpecial($community, null, "leave");
         if ($response->getCode() == 201) {
             return $response->getValue();
         }

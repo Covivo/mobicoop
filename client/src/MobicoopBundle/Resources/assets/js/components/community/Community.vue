@@ -614,14 +614,10 @@ export default {
         .then((res) => {
           (res.data.id) ? this.errorUpdate = false : this.errorUpdate = true;
           this.askedToJoin = true;
-          this.isAccepted = false;
           this.snackbar = true;
           this.textSnackbar = this.errorUpdate
             ? this.$t("snackbar.joinCommunity.textError")
             : this.textSnackOk;
-          this.refreshMemberList = true;
-          this.refreshLastUsers = true;
-          this.getCommunityUser();
           this.loading = false;
           location.reload();
         });
@@ -665,14 +661,10 @@ export default {
         .then((res) => {
           this.errorUpdate = res.data.state;
           this.askedToJoin = false;
-          this.isAccepted = false;
           this.textSnackbar = this.errorUpdate
             ? this.$t("snackbar.leaveCommunity.textError")
             : this.$t("snackbar.leaveCommunity.textOk");
           this.snackbar = true;
-          this.refreshMemberList = true;
-          this.refreshLastUsers = true;
-          this.getCommunityUser();
           this.loading = false;
           location.reload(); // Yes, i know it's the lazy method to update the map...
         });

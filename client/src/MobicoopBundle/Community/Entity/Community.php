@@ -201,6 +201,18 @@ class Community implements ResourceInterface, \JsonSerializable
      */
     private $ads;
 
+    /**
+     * @var string The login to join the community if the community is secured.
+     * @Groups({"put"})
+     */
+    private $login;
+
+    /**
+     * @var string The password to join the community if the community is secured.
+     * @Groups({"put"})
+     */
+    private $password;
+
     public function __construct($id=null)
     {
         if ($id) {
@@ -544,6 +556,31 @@ class Community implements ResourceInterface, \JsonSerializable
 
         return $this;
     }
+
+    public function getLogin(): ?string
+    {
+        return $this->login;
+    }
+
+    public function setLogin(?string $login): self
+    {
+        $this->login = $login;
+
+        return $this;
+    }
+    
+    public function getPassword(): ?string
+    {
+        return $this->password;
+    }
+
+    public function setPassword(?string $password): self
+    {
+        $this->password = $password;
+
+        return $this;
+    }
+
 
     public function jsonSerialize()
     {

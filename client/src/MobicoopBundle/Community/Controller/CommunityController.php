@@ -253,25 +253,12 @@ class CommunityController extends AbstractController
      */
     public function communityJoin($id, CommunityManager $communityManager, UserManager $userManager)
     {
-        $community = $communityManager->getCommunity($id);
+        $community = new Community($id);
 
         $this->denyAccessUnlessGranted('join', $community);
 
-        $user = $userManager->getLoggedUser();
-        $reponseofmanager = $this->handleManagerReturnValue($user);
-        if (!empty($reponseofmanager)) {
-            return $reponseofmanager;
-        }
-        //test if the user logged is not already a member of the community
-        if ($user && '' !== $user && !$community->isMember()) {
-            $communityUser = new CommunityUser();
-            $communityUser->setCommunity($community);
-            $communityUser->setUser($user);
-            $data = $communityManager->joinCommunity($communityUser);
-            $session = $this->get('session');
-            $session->remove(Community::SESSION_VAR_NAME); // To reload communities list in the header
-
-            return new JsonResponse($data);
+        if ($userManager->getLoggedUser()) {
+            return new JsonResponse($communityManager->joinCommunity($community));
         }
 
         return new JsonResponse();
@@ -282,12 +269,12 @@ class CommunityController extends AbstractController
      */
     public function communityLeave($id, CommunityManager $communityManager, UserManager $userManager)
     {
-        $community = $communityManager->getCommunity($id);
+        $community = new Community($id);
 
         $this->denyAccessUnlessGranted('leave', $community);
 
         if ($userManager->getLoggedUser()) {
-            $data = $communityManager->leaveCommunity($communityUserToDelete);
+            return new JsonResponse($communityManager->leaveCommunity($community));
         }
 
         return new Response();
