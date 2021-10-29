@@ -283,7 +283,7 @@ class CommunityManager
      */
     private function setCommunityUserInfo(Community $community, User $user)
     {
-        $communityUsers = $this->communityUserRepository->findBy(['community'=>$community]);
+        $communityUsers = $this->communityUserRepository->findBy(['community'=>$community, 'user'=>$user]);
 
         $community->setMember(false);
         if (!is_null($communityUsers) and count($communityUsers)>0) {
@@ -541,10 +541,26 @@ class CommunityManager
     }
 
     /**
+     * @param integer $communityId
+     * @param User $user
+     * @return CommunityUser|null
+     */
+    public function leaveCommunity(int $communityId, User $user): ?CommunityUser
+    {
+        if ($community = $this->getCommunity($communityId)) {
+            $communityUser = $this->communityUserRepository->findBy(['community'=>$community, 'user'=>$user]);
+            if (is_array($communityUser) && count($communityUser)>0) {
+                return $this->deleteCommunityUser($communityUser[0]);
+            }
+        }
+        return null;
+    }
+
+    /**
     * Delete a community user
     *
     * @param CommunityUser $communityUser  The community user to delete
-    * @return void
+    * @return CommunityUser
     */
     public function deleteCommunityUser(CommunityUser $communityUser)
     {

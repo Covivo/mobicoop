@@ -105,7 +105,7 @@
                 </v-btn>
               </div>
               <!-- button if user asked to join community but is not accepted yet -->
-              <div v-else-if="askToJoin === true && !isAccepted">
+              <div v-else-if="askedToJoin === true && !isAccepted">
                 <v-tooltip
                   top
                   color="info"
@@ -486,7 +486,7 @@ export default {
       textSnackError: this.$t("snackbar.joinCommunity.textError"),
       errorUpdate: false,
       isAccepted: false,
-      askToJoin: false,
+      askedToJoin: false,
       checkValidation: false,
       isLogged: false,
       domain: true,
@@ -505,10 +505,10 @@ export default {
     }
   },
   mounted() {
-    if (this.userCommunityStatus >= 0) {
+    if (this.userCommunityStatus > 0) {
       this.isAccepted =
         this.userCommunityStatus == 1 || this.userCommunityStatus == 2;
-      this.askToJoin = true;
+      this.askedToJoin = true;
     }
 
     //If the current user = creator : we show the btton for acces to admin
@@ -594,7 +594,7 @@ export default {
               //accepted as user or moderator
               this.isAccepted =
                 res.data[0].status == 1 || res.data[0].status == 2;
-              this.askToJoin = true;
+              this.askedToJoin = true;
             }
             this.checkValidation = false;
             this.loading = false;
@@ -613,7 +613,7 @@ export default {
         })
         .then((res) => {
           (res.data.id) ? this.errorUpdate = false : this.errorUpdate = true;
-          this.askToJoin = true;
+          this.askedToJoin = true;
           this.isAccepted = false;
           this.snackbar = true;
           this.textSnackbar = this.errorUpdate
@@ -664,7 +664,7 @@ export default {
         })
         .then((res) => {
           this.errorUpdate = res.data.state;
-          this.askToJoin = false;
+          this.askedToJoin = false;
           this.isAccepted = false;
           this.textSnackbar = this.errorUpdate
             ? this.$t("snackbar.leaveCommunity.textError")

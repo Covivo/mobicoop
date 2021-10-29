@@ -125,8 +125,6 @@ class CommunityController extends AbstractController
                     $image->setCommunityId($community->getId());
                     $image->setName($community->getName());
                     if ($image = $imageManager->createImage($image)) {
-                        $session = $this->get('session');
-                        $session->remove(Community::SESSION_VAR_NAME); // To reload communities list in the header
                         return new Response();
                     }
                     //If an error occur on upload image, the community is already create, so we delete her
@@ -288,31 +286,8 @@ class CommunityController extends AbstractController
 
         $this->denyAccessUnlessGranted('leave', $community);
 
-        $user = $userManager->getLoggedUser();
-        $reponseofmanager = $this->handleManagerReturnValue($user);
-        if (!empty($reponseofmanager)) {
-            return $reponseofmanager;
-        }
-
-        // TEST IF USER IS LOGGED
-        if (null !== $user) {
-            $communityUserToDelete = null;
-            foreach ($community->getCommunityUsers() as $communityUser) {
-                if ($communityUser->getUser()->getId() == $user->getId()) {
-                    $communityUserToDelete = $communityUser;
-                    break;
-                }
-            }
-
-            if ($communityUserToDelete) {
-                $data = $communityManager->leaveCommunity($communityUserToDelete);
-                $reponseofmanager = $this->handleManagerReturnValue($data);
-                $session = $this->get('session');
-                $session->remove(Community::SESSION_VAR_NAME); // To reload communities list in the header
-                if (!empty($reponseofmanager)) {
-                    return $reponseofmanager;
-                }
-            }
+        if ($userManager->getLoggedUser()) {
+            $data = $communityManager->leaveCommunity($communityUserToDelete);
         }
 
         return new Response();

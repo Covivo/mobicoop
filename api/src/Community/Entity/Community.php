@@ -218,6 +218,14 @@ use App\Community\Filter\CommunityAddressTerritoryFilter;
  *                  "tags"={"Communities"}
  *              }
  *          },
+ *          "leave"={
+ *              "method"="GET",
+ *              "path"="/communities/{id}/leave",
+ *              "security"="is_granted('community_update',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Communities"}
+ *              }
+ *          },
  *          "put"={
  *              "method"="PUT",
  *              "security"="is_granted('community_update',object)",

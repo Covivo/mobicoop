@@ -211,13 +211,12 @@ class CommunityManager
     /**
      * Leave a community
      *
-     * @param CommunityUser $communityUser
+     * @param int $communityId
+     * @param int $userId
      *
      * @return array|object|null
-     *
-     * @throws \ReflectionException
      */
-    public function leaveCommunity(CommunityUser $communityUser)
+    public function leaveCommunity(int $communityId, int $userId)
     {
         $this->dataProvider->setClass(CommunityUser::class);
         $response = $this->dataProvider->delete($communityUser->getId(), []);
