@@ -37,40 +37,40 @@ stages:
 ############# Everything under this is execute for all push (branch) ##########################
 ###############################################################################################
 
-#
-# Tests for all branches except dev, master & tagged branches
-#
-branch_features:   # name of the job
-  stage: tests
-#  variables:
-#    APP_ENV: dev    # /!\ important : symfony env variable /!\
-  before_script:
-    - npm install --unsafe-perm # Install the dependencies in the local node_modules folder
-    - npm run install-all-ci # Install the dependencies in the local node_modules folder
+# #
+# # Tests for all branches except dev, master & tagged branches
+# #
+# branch_features:   # name of the job
+#   stage: tests
+# #  variables:
+# #    APP_ENV: dev    # /!\ important : symfony env variable /!\
+#   before_script:
+#     - npm install --unsafe-perm # Install the dependencies in the local node_modules folder
+#     - npm run install-all-ci # Install the dependencies in the local node_modules folder
 
-  script:
-    - npm test
-    # - npm test --prefix=admin
+#   script:
+#     - npm test
+#     # - npm test --prefix=admin
 
-  only:
-    - pushes # job executed only on test
-  except:       
-    refs:   # job not executed for these branches & tags
-      - tags    
-      - dev
-      - test
-      - master
-      - /^*.-next$/
-    variables:
-      - $CI_COMMIT_MESSAGE =~ /skip/    # job not executed when commit message contains this expression
-  cache:
-    key: "$CI_JOB_STAGE-$CI_COMMIT_REF_SLUG"
-    paths:    # excluded : not cached
-    - node_modules/
-    - api/vendor/
-    - client/vendor/
-    - client/node_modules/
-    - admin/node_modules/
+#   only:
+#     - pushes # job executed only on test
+#   except:       
+#     refs:   # job not executed for these branches & tags
+#       - tags    
+#       - dev
+#       - test
+#       - master
+#       - /^*.-next$/
+#     variables:
+#       - $CI_COMMIT_MESSAGE =~ /skip/    # job not executed when commit message contains this expression
+#   cache:
+#     key: "$CI_JOB_STAGE-$CI_COMMIT_REF_SLUG"
+#     paths:    # excluded : not cached
+#     - node_modules/
+#     - api/vendor/
+#     - client/vendor/
+#     - client/node_modules/
+#     - admin/node_modules/
 
 
 ###############################################################################################
@@ -100,7 +100,7 @@ dev_deploy:
     - npm run install-all-ci # Install the dependencies in the local node_modules folder
     # - npm run update-db
   script:
-    - npm run test-and-coverage
+    # - npm run test-and-coverage
     - cd client && npm run compile && cd ../   
     - npm run start-ci & wait-on client/public/build/entrypoints.json
     # - npm run test-functional-ci-cypress 
@@ -154,9 +154,9 @@ test_deploy:
     - npm run install-all-ci # Install the dependencies in the local node_modules folder
     - npm run update-db
   script:
-    - npm run test-and-coverage    
+    # - npm run test-and-coverage    
     - npm run start-ci & wait-on client/public/build/entrypoints.json
-    - npm run test-functional-ci || true 
+    # - npm run test-functional-ci || true 
     #  Kill all node & php process if the e2e test are greatfully passed
     - killall node || true
     - killall php || true                                            
