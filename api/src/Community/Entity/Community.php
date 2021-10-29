@@ -219,8 +219,18 @@ use App\Community\Filter\CommunityAddressTerritoryFilter;
  *              }
  *          },
  *          "leave"={
- *              "method"="GET",
+ *              "method"="PUT",
  *              "path"="/communities/{id}/leave",
+ *              "denormalization_context"={"groups"={"writeLeaveCommunity"}},
+ *              "security"="is_granted('community_update',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Communities"}
+ *              }
+ *          },
+ *          "join"={
+ *              "method"="PUT",
+ *              "path"="/communities/{id}/join",
+ *              "denormalization_context"={"groups"={"writeJoinCommunity"}},
  *              "security"="is_granted('community_update',object)",
  *              "swagger_context" = {
  *                  "tags"={"Communities"}
@@ -296,7 +306,7 @@ class Community
     /**
      * @var string The name of the community.
      *
-     * @Assert\NotBlank
+     * @Assert\NotBlank(groups={"write"})
      * @ORM\Column(type="string", length=255)
      * @Groups({"aRead","aWrite","readCommunity","readCommunityUser","write","results","existsCommunity","readCommunityPublic","readUserAdmin","readUser","listCommunities"})
      */
@@ -352,7 +362,7 @@ class Community
     /**
      * @var string The short description of the community.
      *
-     * @Assert\NotBlank
+     * @Assert\NotBlank(groups={"write"})
      * @ORM\Column(type="string", length=255)
      * @Groups({"aRead","aWrite","readCommunity","write"})
      */
@@ -361,7 +371,7 @@ class Community
     /**
      * @var string The full description of the community.
      *
-     * @Assert\NotBlank
+     * @Assert\NotBlank(groups={"write"})
      * @ORM\Column(type="text")
      * @Groups({"aRead","aWrite","readCommunity","write"})
      */
@@ -397,7 +407,7 @@ class Community
      * @var Address The address of the community.
      *
      * @ApiProperty(push=true)
-     * @Assert\NotBlank
+     * @Assert\NotBlank(groups={"write"})
      * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist"}, orphanRemoval=true)
      * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"aRead","aWrite","readCommunity","write"})

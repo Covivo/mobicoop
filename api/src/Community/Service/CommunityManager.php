@@ -117,34 +117,40 @@ class CommunityManager
      * To join a closed community, a user needs to give credentials, we will call them login and password
      * even if they represent other kind of information (id, date of birth...).
      *
-     * @param CommunityUser $communityUser
-     * @param boolean $checkDomain say if we check the domain or not
+     * @param User $user
+     * @param Community $community
      * @return bool
      */
-    public function canJoin(CommunityUser $communityUser, bool $checkDomain)
+    public function canJoin(User $user, Community $community)
     {
         $authorized = true;
-        // we check if the community is secured
-        $community= $communityUser->getCommunity();
-        if (count($community->getCommunitySecurities()) > 0) {
-            $authorized = false;
-            // we check the values of the credentials for each possible security file
-            if (!is_null($communityUser->getLogin()) && !is_null($communityUser->getPassword())) {
-                foreach ($communityUser->getCommunity()->getCommunitySecurities() as $communitySecurity) {
-                    if ($this->checkSecurity($communitySecurity, $communityUser->getLogin(), $communityUser->getPassword())) {
-                        $authorized = true;
-                        break;
-                    }
-                }
-            }
+
+        $communityUser = $this->communityUserRepository->findBy(['community'=>$community, 'user'=>$user]);
+        if (is_array($communityUser) && count($communityUser)>0) {
+            throw new \LogicException("Aleady member of this community");
         }
+
+        // we check if the community is secured
+        
+        // if (count($community->getCommunitySecurities()) > 0) {
+        //     $authorized = false;
+        //     // we check the values of the credentials for each possible security file
+        //     if (!is_null($communityUser->getLogin()) && !is_null($communityUser->getPassword())) {
+        //         foreach ($communityUser->getCommunity()->getCommunitySecurities() as $communitySecurity) {
+        //             if ($this->checkSecurity($communitySecurity, $communityUser->getLogin(), $communityUser->getPassword())) {
+        //                 $authorized = true;
+        //                 break;
+        //             }
+        //         }
+        //     }
+        // }
         if (!$authorized) {
             return false;
         }
-        if ($checkDomain && $community->getValidationType() == Community::DOMAIN_VALIDATION) {
+        if ($community->getValidationType() == Community::DOMAIN_VALIDATION) {
             $authorized = false; // Unauthorized by default.
 
-            $userDomain = explode("@", $communityUser->getUser()->getEmail())[1];
+            $userDomain = explode("@", $user->getEmail())[1];
 
             $communityDomains = explode(";", str_replace("@", "", $community->getDomain()));
 
@@ -404,15 +410,14 @@ class CommunityManager
      * Persist and save community User for POST
      *
      * @param CommunityUser       $communityUser           The community user to create
-     * @return void
+     * @return CommunityUser
      */
-    public function saveCommunityUser(CommunityUser $communityUser)
+    public function saveCommunityUser(CommunityUser $communityUser): CommunityUser
     {
         $this->entityManager->persist($communityUser);
         $this->entityManager->flush();
 
         $community = $communityUser->getCommunity();
-        $user = $community->getUser();
 
         switch ($communityUser->getStatus()) {
             case CommunityUser::STATUS_PENDING:
@@ -541,32 +546,56 @@ class CommunityManager
     }
 
     /**
-     * @param integer $communityId
+     * @param Community $community
      * @param User $user
      * @return CommunityUser|null
      */
-    public function leaveCommunity(int $communityId, User $user): ?CommunityUser
+    public function joinCommunity(Community $community, User $user): ?CommunityUser
     {
-        if ($community = $this->getCommunity($communityId)) {
-            $communityUser = $this->communityUserRepository->findBy(['community'=>$community, 'user'=>$user]);
-            if (is_array($communityUser) && count($communityUser)>0) {
-                return $this->deleteCommunityUser($communityUser[0]);
-            }
+        if (!$this->canJoin($user, $community, false)) {
+            throw new \InvalidArgumentException("You can't join this community");
+        } else {
+            return $this->saveCommunityUser($this->makeCommunityUserForJoining($community, $user));
         }
         return null;
+    }
+
+    private function makeCommunityUserForJoining(Community $community, User $user): CommunityUser
+    {
+        $communityUser = new CommunityUser();
+        $communityUser->setCommunity($community);
+        $communityUser->setUser($user);
+
+        $communityUser->setStatus(CommunityUser::STATUS_ACCEPTED_AS_MEMBER);
+        if ($community->getValidationType()==Community::MANUAL_VALIDATION) {
+            $communityUser->setStatus(CommunityUser::STATUS_PENDING);
+        }
+        return $communityUser;
+    }
+
+    /**
+     * @param Community $community
+     * @param User $user
+     * @return Community
+     */
+    public function leaveCommunity(Community $community, User $user): ?Community
+    {
+        $communityUser = $this->communityUserRepository->findBy(['community'=>$community, 'user'=>$user]);
+        if (is_array($communityUser) && count($communityUser)>0) {
+            $this->deleteCommunityUser($communityUser[0]);
+        }
+        return $community;
     }
 
     /**
     * Delete a community user
     *
     * @param CommunityUser $communityUser  The community user to delete
-    * @return CommunityUser
     */
     public function deleteCommunityUser(CommunityUser $communityUser)
     {
         $this->entityManager->remove($communityUser);
         $this->entityManager->flush();
-        return $communityUser;
     }
 
     /**
