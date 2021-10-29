@@ -5,7 +5,7 @@ monolog:
             action_level:       info
             max_files: 30
             handler:            grouped
-            channels:           ["!carpool", "!carpool_dynamic", "!carpool_proof", "!communication", "!community", "!geography", "!maintenance", "!mass", "!notification", "!faker", "!solidary"]
+            channels:           ["!carpool", "!carpool_dynamic", "!carpool_proof", "!communication", "!community", "!consumptionFeedback", "!faker", "!geography", "!geomatcher", "!georouter", "!maintenance", "!mass", "!notification", "!solidary"]
         grouped:
             type:               group
             members:            [streamed]
@@ -51,6 +51,18 @@ monolog:
             max_files: 30
             path: "%kernel.logs_dir%/community.log"
             channels: [community]
+        consumptionFeedback:
+            type: rotating_file
+            level: debug
+            max_files: 30
+            path: "%kernel.logs_dir%/consumptionFeedback.log"
+            channels: [consumptionFeedback]
+        faker:
+            type: rotating_file
+            level: debug
+            max_files: 30
+            path: "%kernel.logs_dir%/faker.log"
+            channels: [faker]
         geography:
             type: rotating_file
             level: debug
@@ -92,18 +104,7 @@ monolog:
             level: debug
             max_files: 30
             path: "%kernel.logs_dir%/solidary.log"
-            channels: [solidary]     
-        consumptionFeedback:
-            type: stream
-            level: debug
-            path: "%kernel.logs_dir%/consumptionFeedback.log"
-            channels: [consumptionFeedback]   
-        faker:
-            type: stream
-            level: debug
-            max_files: 30
-            path: "%kernel.logs_dir%/faker.log"
-            channels: [faker]
+            channels: [solidary]        
         console:
             type: console
             process_psr_3_messages: false

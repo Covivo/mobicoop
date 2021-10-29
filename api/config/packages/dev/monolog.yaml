@@ -25,21 +25,31 @@ monolog:
             level: debug
             path: "%kernel.logs_dir%/community.log"
             channels: [community]
+        consumptionFeedback:
+            type: stream
+            level: debug
+            path: "%kernel.logs_dir%/consumptionFeedback.log"
+            channels: [consumptionFeedback]
+        faker:
+            type: stream
+            level: debug
+            path: "%kernel.logs_dir%/faker.log"
+            channels: [faker]   
         geography:
             type: stream
             level: debug
             path: "%kernel.logs_dir%/geography.log"
             channels: [geography]
-        # geomatcher:
-        #     type: stream
-        #     level: debug
-        #     path: "%kernel.logs_dir%/geomatcher.log"
-        #     channels: [geomatcher]
-        # georouter:
-        #     type: stream
-        #     level: debug
-        #     path: "%kernel.logs_dir%/georouter.log"
-        #     channels: [georouter]   
+        geomatcher:
+            type: stream
+            level: debug
+            path: "%kernel.logs_dir%/geomatcher.log"
+            channels: [geomatcher]
+        georouter:
+            type: stream
+            level: debug
+            path: "%kernel.logs_dir%/georouter.log"
+            channels: [georouter]   
         maintenance:
             type: stream
             level: debug
@@ -54,27 +64,17 @@ monolog:
             type: stream
             level: debug
             path: "%kernel.logs_dir%/notification.log"
-            channels: [notification]    
-        faker:
-            type: stream
-            level: debug
-            path: "%kernel.logs_dir%/faker.log"
-            channels: [faker]    
+            channels: [notification]     
         solidary:
             type: stream
             level: debug
             path: "%kernel.logs_dir%/solidary.log"
-            channels: [solidary]   
-        consumptionFeedback:
-            type: stream
-            level: debug
-            path: "%kernel.logs_dir%/consumptionFeedback.log"
-            channels: [consumptionFeedback]   
+            channels: [solidary]      
         main:
             type: stream
             path: "%kernel.logs_dir%/%kernel.environment%.log"
             level: debug
-            channels: ["!event", "!carpool", "!carpool_dynamic", "!carpool_proof", "!communication", "!community", "!geography", "!geomatcher", "!georouter", "!maintenance", "!mass", "!notification", "!faker", "!solidary", '!consumptionFeedback']
+            channels: ["!event", "!carpool", "!carpool_dynamic", "!carpool_proof", "!communication", "!community", "!consumptionFeedback", "!faker", "!geography", "!geomatcher", "!georouter", "!maintenance", "!mass", "!notification", "!solidary"]
    
         # uncomment to get logging in your browser
         # you may have to allow bigger header sizes in your Web server configuration
