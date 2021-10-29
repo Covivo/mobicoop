@@ -44,7 +44,6 @@ class CommunityManager
 
     private $dataProvider;
     private $territoryFilter;
-    private $communityLimitMemberDisplayOnFront;
     private $router;
 
     /**
@@ -52,12 +51,11 @@ class CommunityManager
      *
      * @param DataProvider $dataProvider
      */
-    public function __construct(DataProvider $dataProvider, array $territoryFilter, int $communityLimitMemberDisplayOnFront, UrlGeneratorInterface $router)
+    public function __construct(DataProvider $dataProvider, array $territoryFilter, UrlGeneratorInterface $router)
     {
         $this->dataProvider = $dataProvider;
         $this->dataProvider->setClass(Community::class);
         $this->territoryFilter = $territoryFilter;
-        $this->communityLimitMemberDisplayOnFront = $communityLimitMemberDisplayOnFront;
         $this->router = $router;
     }
 
@@ -394,16 +392,12 @@ class CommunityManager
         $this->dataProvider->setFormat(DataProvider::RETURN_JSON);
         $response = $this->dataProvider->getSpecialItem($communityId, "lastUsers");
         $communityUsers = json_decode($response->getValue(), true);
-        $cpt = 0;
         foreach ($communityUsers as $communityUser) {
-            if ($cpt < $this->communityLimitMemberDisplayOnFront) {
-                $acceptedDate = new \DateTime($communityUser['acceptedDate']);
-                $lastUsersFormated[] = [
-                    "name" => ucfirst($communityUser['user']['givenName'])." ".$communityUser['user']['shortFamilyName'],
-                    "acceptedDate" => $acceptedDate->format("d/m/Y")
-                ];
-            }
-            $cpt++;
+            $acceptedDate = new \DateTime($communityUser['acceptedDate']);
+            $lastUsersFormated[] = [
+                "name" => ucfirst($communityUser['user']['givenName'])." ".$communityUser['user']['shortFamilyName'],
+                "acceptedDate" => $acceptedDate->format("d/m/Y")
+            ];
         }
         return json_encode($lastUsersFormated);
     }
