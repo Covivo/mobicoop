@@ -46,7 +46,7 @@
               class="text-center"
             >
               <!-- button if domain validation -->
-              <div v-if="domain == false && isSecured == false">
+              <div v-if="domain == false && isSecured == false && isAccepted == false">
                 <v-tooltip
                   left
                   color="info"

@@ -185,6 +185,12 @@ class CommunityController extends AbstractController
     {
         // retreive community;
         $community = $communityManager->getCommunity($id);
+        if (is_numeric($community)) {
+            if ($community==400) {
+                // secured community
+                return $this->redirectToRoute('community_secured_register', ['id'=>$id]);
+            }
+        }
 
         $this->denyAccessUnlessGranted('show', $community);
 

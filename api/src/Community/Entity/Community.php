@@ -187,7 +187,6 @@ use App\Community\Filter\CommunityAddressTerritoryFilter;
  *          },
  *          "public"={
  *              "method"="GET",
- *              "security"="is_granted('community_read',object)",
  *              "path"="/communities/{id}/public",
  *              "normalization_context"={"groups"={"readCommunityPublic"}},
  *              "swagger_context" = {

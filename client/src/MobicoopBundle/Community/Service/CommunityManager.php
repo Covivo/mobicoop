@@ -25,6 +25,7 @@
 namespace Mobicoop\Bundle\MobicoopBundle\Community\Service;
 
 use App\Carpool\Entity\Proposal;
+use Mobicoop\Bundle\MobicoopBundle\Traits\HydraControllerTrait;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\CommunityUser;
@@ -39,6 +40,8 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  */
 class CommunityManager
 {
+    use HydraControllerTrait;
+
     private $dataProvider;
     private $territoryFilter;
     private $communityLimitMemberDisplayOnFront;
@@ -183,11 +186,14 @@ class CommunityManager
     /**
      * Get one community
      *
-     * @return Community|null
+     * @return Community|int|null
      */
     public function getCommunity($id)
     {
         $response = $this->dataProvider->getItem($id);
+        if ($response->getCode()==400) {
+            return $response->getCode();
+        }
         return $response->getValue();
     }
 
