@@ -222,33 +222,10 @@ class CommunityController extends AbstractController
         }
         $this->denyAccessUnlessGranted('show', $community);
 
-        if ($request->isMethod('POST')) {
-            // If it's a post, we know that's a secured community credential
-            $communityUser = new CommunityUser();
-            $communityUser->setUser($user);
-            $communityUser->setCommunity($community);
-            $communityUser->setStatus(CommunityUser::STATUS_ACCEPTED_AS_MEMBER);
-
-            // the credentials
-            $communityUser->setLogin($request->request->get("credential1"));
-            $communityUser->setPassword($request->request->get("credential2"));
-            $communityUser = $communityManager->joinCommunity($communityUser);
-            if (null === $communityUser) {
-                $error = true;
-            } else {
-                $error = false;
-                $session = $this->get('session');
-                $session->remove(Community::SESSION_VAR_NAME); // To reload communities list in the header
-                $communityUser = [$communityUser]; // To fit the getCommunityUser behavior we need to have an array
-
-                // Redirect to the community
-                return $this->redirectToRoute('community_show', ['id'=>$id]);
-            }
-        }
-
         return $this->render('@Mobicoop/community/community_secured_register.html.twig', [
             'communityId' => $id,
             'communityName' => $community->getName(),
+            'communityUrlKey' => $community->getUrlKey(),
             'userId' => (!is_null($user)) ? $user->getId() : null,
             'error' => (isset($error)) ? $error : false
         ]);
@@ -267,6 +244,35 @@ class CommunityController extends AbstractController
             return new JsonResponse($communityManager->joinCommunity($community));
         }
 
+        return new JsonResponse();
+    }
+
+    /**
+     * Join a secured community
+     */
+    public function communitySecuredRegisterJoin($id, CommunityManager $communityManager, UserManager $userManager, Request $request)
+    {
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+
+            if (
+                !isset($data['credential1']) || trim($data['credential1']) == "" ||
+                !isset($data['credential2']) || trim($data['credential2']) == ""
+            ) {
+                return new JsonResponse();
+            }
+
+            $community = new Community($id);
+            $community->setLogin($data['credential1']);
+            $community->setPassword($data['credential2']);
+
+            $this->denyAccessUnlessGranted('join', $community);
+
+            if ($userManager->getLoggedUser()) {
+                return new JsonResponse($communityManager->joinCommunity($community));
+            }
+            return new JsonResponse();
+        }
         return new JsonResponse();
     }
 

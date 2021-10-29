@@ -3,11 +3,12 @@
     "titleWithName": "Rejoindre la communauté",
     "credential1": "1er identifiant",
     "credential2": "2nd identifiant",
-    "urlSignIn": "/communaute/{id}/securisee/inscription",
+    "urlJoin": "/communaute/{id}/securisee/inscription/join",
+    "urlRedirectAfterJoin": "/communaute/{id}/{urlKey}",
     "join": "Rejoindre la communauté",
     "errors": {
         "required": "Ce champs est obligatoire",
-        "badCredentials": "Identifiants incorrects",
+        "badCredentials": "Erreur ou Identifiants incorrects",
         "notLogged": "Vous devez être connecté"
     }
 }

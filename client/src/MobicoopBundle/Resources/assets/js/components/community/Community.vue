@@ -533,23 +533,6 @@ export default {
           console.error(err);
         });
     },
-    post: function(path, params, method = "post") {
-      const form = document.createElement("form");
-      form.method = method;
-      form.action = window.location.origin + "/" + path;
-
-      for (const key in params) {
-        if (params.hasOwnProperty(key)) {
-          const hiddenField = document.createElement("input");
-          hiddenField.type = "hidden";
-          hiddenField.name = key;
-          hiddenField.value = params[key];
-          form.appendChild(hiddenField);
-        }
-      }
-      document.body.appendChild(form);
-      form.submit();
-    },
     getRelayPointsMap() {
       let params = {
         'communityId': this.community.id
@@ -581,7 +564,6 @@ export default {
       this.$refs.mmap.redrawMap();
     },
     getCommunityUser() {
-      console.log("getCommunityUser");
       if (this.user) {
         this.checkValidation = true;
         maxios
