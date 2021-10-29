@@ -540,6 +540,19 @@ class Community
      */
     private $logs;
 
+    /**
+     * @var string The login to join the community if the community is secured.
+     * @Groups("writeJoinCommunity")
+     */
+    private $login;
+
+    /**
+     * @var string The password to join the community if the community is secured.
+     * @Groups("writeJoinCommunity")
+     */
+    private $password;
+
+
     public function __construct($id=null)
     {
         $this->id = $id;
@@ -988,6 +1001,30 @@ class Community
         return $this;
     }
 
+    public function getLogin(): ?string
+    {
+        return $this->login;
+    }
+
+    public function setLogin(?string $login): self
+    {
+        $this->login = $login;
+
+        return $this;
+    }
+
+    public function getPassword(): ?string
+    {
+        return $this->password;
+    }
+
+    public function setPassword(?string $password): self
+    {
+        $this->password = $password;
+
+        return $this;
+    }
+    
     // DOCTRINE EVENTS
 
     /**

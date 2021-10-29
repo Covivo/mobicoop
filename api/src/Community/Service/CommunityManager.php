@@ -132,18 +132,19 @@ class CommunityManager
 
         // we check if the community is secured
         
-        // if (count($community->getCommunitySecurities()) > 0) {
-        //     $authorized = false;
-        //     // we check the values of the credentials for each possible security file
-        //     if (!is_null($communityUser->getLogin()) && !is_null($communityUser->getPassword())) {
-        //         foreach ($communityUser->getCommunity()->getCommunitySecurities() as $communitySecurity) {
-        //             if ($this->checkSecurity($communitySecurity, $communityUser->getLogin(), $communityUser->getPassword())) {
-        //                 $authorized = true;
-        //                 break;
-        //             }
-        //         }
-        //     }
-        // }
+        if (count($community->getCommunitySecurities()) > 0) {
+            $authorized = false;
+            // we check the values of the credentials for each possible security file
+            if (!is_null($community->getLogin()) && !is_null($community->getPassword())) {
+                foreach ($community->getCommunitySecurities() as $communitySecurity) {
+                    if ($this->checkSecurity($communitySecurity, $community->getLogin(), $community->getPassword())) {
+                        $authorized = true;
+                        break;
+                    }
+                }
+            }
+        }
+
         if (!$authorized) {
             return false;
         }
