@@ -74,13 +74,13 @@ monolog:
             level: debug
             max_files: 30
             path: "%kernel.logs_dir%/geomatcher.log"    
-            channels: [geography]
+            channels: [geomatcher]
         georouter:
             type: rotating_file
             level: debug
             max_files: 30
             path: "%kernel.logs_dir%/georouter.log"
-            channels: [geography]
+            channels: [georouter]
         maintenance:
             type: rotating_file
             level: info
