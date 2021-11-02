@@ -25,6 +25,7 @@
 namespace Mobicoop\Bundle\MobicoopBundle\Community\Service;
 
 use App\Carpool\Entity\Proposal;
+use Mobicoop\Bundle\MobicoopBundle\Traits\HydraControllerTrait;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\CommunityUser;
@@ -39,9 +40,10 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
  */
 class CommunityManager
 {
+    use HydraControllerTrait;
+
     private $dataProvider;
     private $territoryFilter;
-    private $communityLimitMemberDisplayOnFront;
     private $router;
 
     /**
@@ -49,12 +51,11 @@ class CommunityManager
      *
      * @param DataProvider $dataProvider
      */
-    public function __construct(DataProvider $dataProvider, array $territoryFilter, int $communityLimitMemberDisplayOnFront, UrlGeneratorInterface $router)
+    public function __construct(DataProvider $dataProvider, array $territoryFilter, UrlGeneratorInterface $router)
     {
         $this->dataProvider = $dataProvider;
         $this->dataProvider->setClass(Community::class);
         $this->territoryFilter = $territoryFilter;
-        $this->communityLimitMemberDisplayOnFront = $communityLimitMemberDisplayOnFront;
         $this->router = $router;
     }
 
@@ -93,25 +94,32 @@ class CommunityManager
             $order[$data['order']] = $data['orderWay'];
         }
 
-        $returnCommunitiesUser = [];
+        // if ($user) {
+        //     // We get all the communities
+        //     $communities = $this->getCommunities($user->getId(), $perPage, $page, $search, $order, $showAllCommunities);
+        //     // We get the communities of the user
+        //     $communitiesUser = $this->getAllCommunityUser($user->getId());
+        //     if ($communitiesUser != null) {
+        //         foreach ($communitiesUser as $communityUser) {
+        //             $returnCommunitiesUser[] = $communityUser->getCommunity();
+        //         }
+        //     }
+        // } else {
+        //     $communities = $this->getCommunities(null, $perPage, $page, $search, $order, $showAllCommunities);
+        // }
+
+        // We get all the communities
+        $communities = $this->getCommunities(($user) ? $user->getId() : null, $perPage, $page, $search, $order, $showAllCommunities);
+        $communitiesUser = [];
         if ($user) {
-            // We get all the communities
-            $communities = $this->getCommunities($user->getId(), $perPage, $page, $search, $order, $showAllCommunities);
             // We get the communities of the user
-            $communitiesUser = $this->getAllCommunityUser($user->getId());
-            if ($communitiesUser != null) {
-                foreach ($communitiesUser as $communityUser) {
-                    $returnCommunitiesUser[] = $communityUser->getCommunity();
-                }
-            }
-        } else {
-            $communities = $this->getCommunities(null, $perPage, $page, $search, $order, $showAllCommunities);
+            $communitiesUser = $this->getAllCommunityUser();
         }
 
         $return['communitiesMember'] = $communities->getMember();
         $return['communitiesTotalItems'] = $communities->getTotalItems();
 
-        $return['communitiesUser'] = $returnCommunitiesUser;
+        $return['communitiesUser'] = $communitiesUser;
         return $return;
     }
 
@@ -176,26 +184,29 @@ class CommunityManager
     /**
      * Get one community
      *
-     * @return Community|null
+     * @return Community|int|null
      */
     public function getCommunity($id)
     {
         $response = $this->dataProvider->getItem($id);
+        if ($response->getCode()==400) {
+            return $response->getCode();
+        }
         return $response->getValue();
     }
 
     /**
      * Join a community
      *
-     * @param CommunityUser $communityUser
+     * @param Community $community
      *
-     * @return CommunityUser|null
+     * @return Community|null
      */
-    public function joinCommunity(CommunityUser $communityUser)
+    public function joinCommunity(Community $community)
     {
-        $this->dataProvider->setClass(CommunityUser::class);
-        $response = $this->dataProvider->post($communityUser);
-        if ($response->getCode() == 201) {
+        $this->dataProvider->setClass(Community::class);
+        $response = $this->dataProvider->putSpecial($community, null, "join");
+        if ($response->getCode() == 200) {
             return $response->getValue();
         }
         return null;
@@ -204,16 +215,14 @@ class CommunityManager
     /**
      * Leave a community
      *
-     * @param CommunityUser $communityUser
+     * @param Community $community
      *
      * @return array|object|null
-     *
-     * @throws \ReflectionException
      */
-    public function leaveCommunity(CommunityUser $communityUser)
+    public function leaveCommunity(Community $community)
     {
-        $this->dataProvider->setClass(CommunityUser::class);
-        $response = $this->dataProvider->delete($communityUser->getId(), []);
+        $this->dataProvider->setClass(Community::class);
+        $response = $this->dataProvider->putSpecial($community, null, "leave");
         if ($response->getCode() == 201) {
             return $response->getValue();
         }
@@ -251,13 +260,13 @@ class CommunityManager
 
     /**
      * Get all the community_user of a user
-     * @param int $userId       Id of the User to test
      */
-    public function getAllCommunityUser(int $userId)
+    public function getAllCommunityUser()
     {
-        $this->dataProvider->setClass(CommunityUser::class);
-        $response = $this->dataProvider->getCollection(['user'=>$userId]);
-        return $response->getValue()->getMember();
+        $this->dataProvider->setClass(User::class);
+        $this->dataProvider->setFormat(DataProvider::RETURN_JSON);
+        $response = $this->dataProvider->getSpecialCollection("communities");
+        return $response->getValue();
     }
 
     /**
@@ -372,35 +381,56 @@ class CommunityManager
 
     /**
      * Get last accepted community users and format them
-     * @param Community  $community
-     * @param int $status Status we want to get, init to 1
+     * @param int Community's id
      * @return array|null The last users formated
      */
-    public function getLastUsers(Community $community, int $status = 1)
+    public function getLastUsers(int $communityId)
     {
-        //Declare array we need
-        $allmembers = $lastUsersFormated = array();
-        $cpt = 0;
+        $lastUsersFormated = [];
 
-        //We stock the member with array_unshift so we can have the last members in first position
-        foreach ($community->getCommunityUsers() as $member) {
-            array_unshift($allmembers, $member);
+        $this->dataProvider->setClass(Community::class);
+        $this->dataProvider->setFormat(DataProvider::RETURN_JSON);
+        $response = $this->dataProvider->getSpecialItem($communityId, "lastUsers");
+        $communityUsers = json_decode($response->getValue(), true);
+        foreach ($communityUsers as $communityUser) {
+            $acceptedDate = new \DateTime($communityUser['acceptedDate']);
+            $lastUsersFormated[] = [
+                "name" => ucfirst($communityUser['user']['givenName'])." ".$communityUser['user']['shortFamilyName'],
+                "acceptedDate" => $acceptedDate->format("d/m/Y")
+            ];
         }
-
-        //While we get result in member OR we get to the limit we want to display (.env -> COMMUNITY_LIMIT_MEMBER_DISPLAY_ON_FRONT )
-        while ($cpt < count($allmembers) && count($lastUsersFormated) < $this->communityLimitMemberDisplayOnFront) {
-            $currentUser = $allmembers[$cpt];
-            if ($currentUser->getStatus() == $status) {
-                $lastUsersFormated[$cpt]["name"]=ucfirst($currentUser->getUser()->getGivenName())." ".$currentUser->getUser()->getShortFamilyName();
-                $lastUsersFormated[$cpt]["acceptedDate"]=$currentUser->getAcceptedDate()->format('d/m/Y');
-            }
-            $cpt ++;
-        }
-
-        return $lastUsersFormated;
+        return json_encode($lastUsersFormated);
     }
 
+    public function communityMapsAds(int $id)
+    {
+        $this->dataProvider->setClass(Community::class);
+        $this->dataProvider->setFormat(DataProvider::RETURN_JSON);
+        $response = $this->dataProvider->getSpecialItem($id, "mapsAds");
+        $communities = json_decode($response->getValue(), true);
+        if (isset($communities['mapsAds']) && is_array($communities['mapsAds'])) {
+            foreach ($communities['mapsAds'] as &$mapsAd) {
+                $date = (isset($mapsAd['outwardDate']) && !is_null($mapsAd['outwardDate'])) ? $mapsAd['outwardDate'] : null;
+                $searchLinkParams = [
+                    "origin" => json_encode($mapsAd['origin']),
+                    "destination" => json_encode($mapsAd['destination']),
+                    "regular" => $mapsAd['regular'],
+                    "date" => $date,
+                    "cid" => $mapsAd['entityId']
+                ];
+                $mapsAd["searchLink"] = $this->router->generate("carpool_search_result_get", $searchLinkParams, UrlGeneratorInterface::ABSOLUTE_URL);
+            }
+        }
+        return json_encode($communities);
+    }
 
+    public function communityMembers(int $id, array $params = [])
+    {
+        $this->dataProvider->setClass(Community::class);
+        $this->dataProvider->setFormat(DataProvider::RETURN_JSON);
+        $response = $this->dataProvider->getSpecialItem($id, "members", $params);
+        return $response->getValue();
+    }
 
     /******************
      *                *

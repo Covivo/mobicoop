@@ -92,7 +92,6 @@ use Mobicoop\Bundle\MobicoopBundle\User\Entity\ReviewDashboard;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\SsoConnection;
 use Mobicoop\Bundle\MobicoopBundle\I18n\Entity\Language;
 use Mobicoop\Bundle\MobicoopBundle\Editorial\Entity\Editorial;
-use Mobicoop\Bundle\MobicoopBundle\Gamification\Entity\BadgesBoard;
 use Mobicoop\Bundle\MobicoopBundle\Stats\Entity\Indicator;
 
 /**

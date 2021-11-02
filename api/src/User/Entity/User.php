@@ -136,6 +136,15 @@ use App\I18n\Entity\Language;
  *                  "tags"={"Users"}
  *              }
  *          },
+ *          "communities"={
+ *              "method"="GET",
+ *              "path"="/users/communities",
+ *              "normalization_context"={"groups"={"listCommunities"}},
+ *              "security"="is_granted('user_list',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Users"}
+ *              }
+ *          },
  *          "checkEmail"={
  *              "method"="GET",
  *              "path"="/users/checkEmail",

@@ -60,5 +60,11 @@
     "no": "no",
     "infos":{
         "members":"{members} members"
+    },
+    "mapsAds":{
+        "url":"/community/{communityId}/mapsAds"
+    },
+    "relaypoints":{
+        "url":"/community/relay-point/map/"
     }
 }

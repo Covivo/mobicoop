@@ -46,7 +46,7 @@
               class="text-center"
             >
               <!-- button if domain validation -->
-              <div v-if="domain == false && isSecured == false">
+              <div v-if="domain == false && isSecured == false && isAccepted == false">
                 <v-tooltip
                   left
                   color="info"
@@ -105,7 +105,7 @@
                 </v-btn>
               </div>
               <!-- button if user asked to join community but is not accepted yet -->
-              <div v-else-if="askToJoin === true && !isAccepted">
+              <div v-else-if="askedToJoin === true && !isAccepted">
                 <v-tooltip
                   top
                   color="info"
@@ -215,7 +215,6 @@
               <community-member-list
                 :community-id="community.id"
                 :refresh="refreshMemberList"
-                :given-users="users"
                 :hidden="!isAccepted && community.membersHidden"
                 :direct-message="directMessage"
                 @contact="contact"
@@ -227,7 +226,6 @@
               <community-last-users
                 :refresh="refreshLastUsers"
                 :community="community"
-                :given-last-users="lastUsers"
                 :hidden="!isAccepted && community.membersHidden"
                 @refreshed="lastUsersRefreshed"
               />
@@ -373,7 +371,7 @@ import Search from "@components/carpool/search/Search";
 import LoginOrRegisterFirst from '@components/utilities/LoginOrRegisterFirst';
 import CommunityLastUsers from "@components/community/CommunityLastUsers";
 import MMap from "@components/utilities/MMap/MMap";
-import L from "leaflet";
+import L, { LatLng } from "leaflet";
 
 export default {
   components: {
@@ -409,10 +407,6 @@ export default {
       type: Object,
       default: null,
     },
-    lastUsers: {
-      type: Object,
-      default: null,
-    },
     avatarVersion: {
       type: String,
       default: null,
@@ -440,10 +434,6 @@ export default {
     attributionCopyright: {
       type: String,
       default: "",
-    },
-    points: {
-      type: Array,
-      default: null,
     },
     userCommunityStatus: {
       type: Number,
@@ -479,6 +469,7 @@ export default {
         { text: "Nom", value: "familyName" },
         { text: "Prenom", value: "givenName" },
       ],
+      points:null,
       pointsToMap: [],
       relayPointsMap: [],
       directionWay: [],
@@ -495,7 +486,7 @@ export default {
       textSnackError: this.$t("snackbar.joinCommunity.textError"),
       errorUpdate: false,
       isAccepted: false,
-      askToJoin: false,
+      askedToJoin: false,
       checkValidation: false,
       isLogged: false,
       domain: true,
@@ -503,7 +494,6 @@ export default {
       refreshMemberList: false,
       refreshLastUsers: false,
       params: { communityId: this.community.id },
-      users: [],
       isCreator: false,
       selectedDestination: null,
       selectedOrigin: null
@@ -515,10 +505,10 @@ export default {
     }
   },
   mounted() {
-    if (this.userCommunityStatus >= 0) {
+    if (this.userCommunityStatus > 0) {
       this.isAccepted =
         this.userCommunityStatus == 1 || this.userCommunityStatus == 2;
-      this.askToJoin = true;
+      this.askedToJoin = true;
     }
 
     //If the current user = creator : we show the btton for acces to admin
@@ -527,11 +517,22 @@ export default {
     }
 
     this.checkIfUserLogged();
-    this.showCommunityProposals();
     this.checkDomain();
+    this.getMapsAds();
     this.getRelayPointsMap(); 
   },
   methods: {
+    getMapsAds(){
+      maxios
+        .post(this.$t('mapsAds.url',{'communityId':this.community.id}))
+        .then(res => {
+          this.points = res.data.mapsAds;
+          this.showCommunityProposals();
+        })
+        .catch(err => {
+          console.error(err);
+        });
+    },
     post: function(path, params, method = "post") {
       const form = document.createElement("form");
       form.method = method;
@@ -548,13 +549,13 @@ export default {
       }
       document.body.appendChild(form);
       form.submit();
-    },
+    },    
     getRelayPointsMap() {
       let params = {
         'communityId': this.community.id
       };
       maxios
-        .post("/community/relay-point/map/",params)
+        .post(this.$t("relaypoints.url"),params)
         .then(res => {
           this.relayPointsMap = res.data;
           // console.log(res.data);
@@ -592,7 +593,7 @@ export default {
               //accepted as user or moderator
               this.isAccepted =
                 res.data[0].status == 1 || res.data[0].status == 2;
-              this.askToJoin = true;
+              this.askedToJoin = true;
             }
             this.checkValidation = false;
             this.loading = false;
@@ -611,15 +612,11 @@ export default {
         })
         .then((res) => {
           (res.data.id) ? this.errorUpdate = false : this.errorUpdate = true;
-          this.askToJoin = true;
-          this.isAccepted = false;
+          this.askedToJoin = true;
           this.snackbar = true;
           this.textSnackbar = this.errorUpdate
             ? this.$t("snackbar.joinCommunity.textError")
             : this.textSnackOk;
-          this.refreshMemberList = true;
-          this.refreshLastUsers = true;
-          this.getCommunityUser();
           this.loading = false;
           location.reload();
         });
@@ -630,7 +627,7 @@ export default {
       }
     },
     checkDomain() {
-      if (this.community.validationType == 2) {
+      if (this.community.validationType == 2 && this.user) {
         let mailDomain = this.user.email.split("@")[1];
         if (!this.community.domain.includes(mailDomain)) {
           return (this.domain = false);
@@ -662,20 +659,21 @@ export default {
         })
         .then((res) => {
           this.errorUpdate = res.data.state;
-          this.askToJoin = false;
-          this.isAccepted = false;
+          this.askedToJoin = false;
           this.textSnackbar = this.errorUpdate
             ? this.$t("snackbar.leaveCommunity.textError")
             : this.$t("snackbar.leaveCommunity.textOk");
           this.snackbar = true;
-          this.refreshMemberList = true;
-          this.refreshLastUsers = true;
-          this.getCommunityUser();
           this.loading = false;
           location.reload(); // Yes, i know it's the lazy method to update the map...
         });
     },
     showCommunityProposals() {
+
+      if(!this.points){
+        return;
+      }
+
       this.pointsToMap.length = 0;
       // add the community address to display on the map
       if (this.community.address && this.community.address.latitude !== null) {
@@ -719,29 +717,39 @@ export default {
             infosForPopUp.carpoolerLastName +
             "</strong></p>";
 
-          proposal.waypoints.forEach((waypoint, index) => {
-            currentProposal.latLngs.push(waypoint.latLng);
-            if (index == 0) {
-              infosForPopUp.origin = waypoint.title;
-              infosForPopUp.originLat = waypoint.latLng.lat;
-              infosForPopUp.originLon = waypoint.latLng.lon;
-            } else if (waypoint.destination) {
-              infosForPopUp.destination = waypoint.title;
-              infosForPopUp.destinationLat = waypoint.latLng.lat;
-              infosForPopUp.destinationLon = waypoint.latLng.lon;
-            }
-            this.pointsToMap.push(
-              this.buildPoint(
-                waypoint.latLng.lat,
-                waypoint.latLng.lon,
-                currentProposal.desc,
-                "",
-                [],
-                [],
-                "<p>" + waypoint.title + "</p>"
-              )
-            );
-          });
+          currentProposal.latLngs.push(L.latLng(proposal.origin.latitude, proposal.origin.longitude));
+          currentProposal.latLngs.push(L.latLng(proposal.destination.latitude, proposal.destination.longitude));
+          infosForPopUp.origin = proposal.origin.displayLabel[0];
+          infosForPopUp.originLat = proposal.origin.latitude;
+          infosForPopUp.originLon = proposal.origin.longitude;
+          this.pointsToMap.push(
+            this.buildPoint(
+              proposal.origin.latitude,
+              proposal.origin.longitude,
+              currentProposal.desc,
+              "",
+              [],
+              [],
+              "<p>" + proposal.origin.displayLabel[0] + "</p>"
+            )
+          );
+
+
+          infosForPopUp.destination = proposal.destination.displayLabel[0];
+          infosForPopUp.destinationLat = proposal.destination.latitude;
+          infosForPopUp.destinationLon = proposal.destination.longitude;
+
+          this.pointsToMap.push(
+            this.buildPoint(
+              proposal.destination.latitude,
+              proposal.destination.longitude,
+              currentProposal.desc,
+              "",
+              [],
+              [],
+              "<p>" + proposal.destination.displayLabel[0] + "</p>"
+            )
+          );
 
           currentProposal.desc +=
             "<p style='text-align:left;'><strong>" +
@@ -768,9 +776,6 @@ export default {
 
           // And now the content of a tooltip (same as popup but without the button)
           currentProposal.title = currentProposal.desc;
-
-          // We add the button to the popup (To Do: Button isn't functionnal. Find a good way to launch a research)
-          //currentProposal.desc += "<br /><button type='button' class='v-btn v-btn--contained v-btn--rounded theme--light v-size--small secondary text-overline'>"+this.$t('map.findMatchings')+"</button>";
 
           // We are closing the two p
           currentProposal.title += "</p>";
@@ -840,6 +845,7 @@ export default {
       this.selectedOrigin = origin;
     },
     contact: function(data) {
+      console.log(data);
       const form = document.createElement("form");
       form.method = "post";
       form.action = this.$t("buttons.contact.route");
@@ -848,10 +854,9 @@ export default {
         carpool: 0,
         idRecipient: data.id,
         shortFamilyName: data.shortFamilyName,
-        givenName: data.givenName,
-        avatar: data.avatars[0],
+        givenName: data.firstName,
+        avatar: data.avatar,
       };
-
       for (const key in params) {
         if (params.hasOwnProperty(key)) {
           const hiddenField = document.createElement("input");

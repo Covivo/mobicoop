@@ -1346,7 +1346,11 @@ class ProposalRepository
         return $query->getQuery()->getSingleScalarResult();
     }
 
-    public function findCommunityAds(Community $community)
+    /**
+     * @param Community $community
+     * @return Proposal[]|null
+     */
+    public function findCommunityAds(Community $community): ?array
     {
         $now = new \DateTime("now");
 

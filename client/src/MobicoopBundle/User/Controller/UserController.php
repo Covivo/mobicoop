@@ -1159,21 +1159,7 @@ class UserController extends AbstractController
     {
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
-            // We get de communities in session. If it exists we don't need to make the api call
-            $session = $this->get('session');
-            $userCommunitiesInSession = $session->get(Community::SESSION_VAR_NAME);
-            $communities = [];
-            if (!is_null($userCommunitiesInSession)) {
-                return new JsonResponse($userCommunitiesInSession);
-            } else {
-                if ($communityUsers = $communityManager->getAllCommunityUser($data['userId'])) {
-                    foreach ($communityUsers as $communityUser) {
-                        $communities[] = $communityUser->getCommunity();
-                    }
-                    // We store de communities in session
-                    $session->set(Community::SESSION_VAR_NAME, $communities);
-                }
-            }
+            $communities = $communityManager->getAllCommunityUser($data['userId']);
             return new JsonResponse($communities);
         }
         return new JsonResponse(['error'=>'errorUpdateAlert']);

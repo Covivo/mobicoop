@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * Copyright (c) 2021, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,54 +21,40 @@
  *    LICENSE
  **************************/
 
-namespace Mobicoop\Bundle\MobicoopBundle\Api\Entity;
+namespace App\Carpool\Entity\MapsAd;
+
+use Symfony\Component\Serializer\Annotation\Groups;
+use App\Carpool\Entity\MapsAd\MapsAd;
 
 /**
- * A DataProvider response.
+ * Map's Ads. Contains a collection of Map's Ad
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class Response
+class MapsAds
 {
-    const DEFAULT_CODE = 404;
-    
+
     /**
-     * @var int $code The response code.
-     */
-    private $code;
-    
-    /**
-     * @var object|string|array $value The value of the response.
-     */
-    private $value;
-    
-    /**
-     * Constructor.
-     *
-     * @param integer $code
-     * @param [type] $value
-     */
-    public function __construct(int $code=self::DEFAULT_CODE, $value=null)
+     * @var MapsAd[]
+     * @Groups({"readCommunityAds"})
+    */
+    private $mapsAds;
+
+    public function __construct(array $mapsAds = null)
     {
-        $this->setCode($code);
-        $this->setValue($value);
-    }
-    
-    public function getCode(): int
-    {
-        return $this->code;
+        if (!is_null($mapsAds)) {
+            $this->setMapsAds($mapsAds);
+        }
     }
 
-    public function getValue()
+    public function getMapsAds(): ?array
     {
-        return $this->value;
+        return $this->mapsAds;
     }
 
-    public function setCode(int $code)
+    public function setMapsAds(?array $mapsAds): self
     {
-        $this->code = $code;
-    }
+        $this->mapsAds = $mapsAds;
 
-    public function setValue($value)
-    {
-        $this->value = $value;
+        return $this;
     }
 }
