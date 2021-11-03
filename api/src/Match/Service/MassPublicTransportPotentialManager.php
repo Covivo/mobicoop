@@ -111,15 +111,12 @@ class MassPublicTransportPotentialManager
              * @var MassPerson $person
              */
             $results = $this->pTDataProvider->getJourneys(
-                $this->params['ptProvider'],
+                null,
                 $person->getPersonalAddress()->getLatitude(),
                 $person->getPersonalAddress()->getLongitude(),
                 $person->getWorkAddress()->getLatitude(),
                 $person->getWorkAddress()->getLongitude(),
-                new \DateTime(Date("Y-m-d").' '.$person->getOutwardTime()->format("H:i:s"), new \DateTimeZone('Europe/Paris')),
-                "departure",
-                $this->params['ptAlgorithm'],
-                "PT"
+                new \DateTime(Date("Y-m-d").' '.$person->getOutwardTime()->format("H:i:s"), new \DateTimeZone('Europe/Paris'))
             );
             // var_dump($results);die;
             foreach ($results as $ptjourney) {
@@ -160,6 +157,8 @@ class MassPublicTransportPotentialManager
         $massPTJourney->setDuration($ptjourney->getDuration());
 
         $massPTJourney->setDistance($ptjourney->getDistance());
+
+        $massPTJourney->setProvider($ptjourney->getProvider());
 
         // Duration from home
         $legFromHome = $ptjourney->getPTLegs()[0];
