@@ -138,18 +138,32 @@ class ClassicProof
     private $status;
 
     /**
-     * @var boolean The passenger or the driver has certified the pickUp
+     * @var boolean The the driver has certified the pickUp
      *
-     * @Groups({"writeClassicProof"})
+     * @Groups({"readClassicProof"})
      */
-    private $certifiedPickUp;
+    private $driverCertifiedPickUp;
 
     /**
-     * @var boolean The passenger or the driver has certified the dropOff
+     * @var boolean The driver has certified the dropOff
      *
-     * @Groups({"writeClassicProof"})
+     * @Groups({"readClassicProof"})
      */
-    private $certifiedDropOff;
+    private $driverCertifiedDropOff;
+
+    /**
+    * @var boolean The passenger has certified the pickUp
+    *
+    * @Groups({"readClassicProof"})
+    */
+    private $passengerCertifiedPickUp;
+
+    /**
+     * @var boolean The passenger has certified the dropOff
+     *
+     * @Groups({"readClassicProof"})
+     */
+    private $passengerCertifiedDropOff;
 
     public function __construct()
     {
@@ -224,26 +238,50 @@ class ClassicProof
         return $this;
     }
 
-    public function hasCertifiedPickUp(): ?bool
+    public function hasDriverCertifiedPickUp(): ?bool
     {
-        return $this->certifiedPickUp;
+        return $this->driverCertifiedPickUp;
     }
 
-    public function setCertifiedPickUp(?bool $certifiedPickUp): self
+    public function setDriverCertifiedPickUp(?bool $driverCertifiedPickUp): self
     {
-        $this->certifiedPickUp = $certifiedPickUp;
+        $this->driverCertifiedPickUp = $driverCertifiedPickUp;
 
         return $this;
     }
 
-    public function hasCertifiedDropOff(): ?bool
+    public function hasDriverCertifiedDropOff(): ?bool
     {
-        return $this->certifiedDropOff;
+        return $this->driverCertifiedDropOff;
     }
 
-    public function setCertifiedDropOff(?bool $certifiedDropOff): self
+    public function setDriverCertifiedDropOff(?bool $driverCertifiedDropOff): self
     {
-        $this->certifiedDropOff = $certifiedDropOff;
+        $this->driverCertifiedDropOff = $driverCertifiedDropOff;
+
+        return $this;
+    }
+
+    public function hasPassengerCertifiedPickUp(): ?bool
+    {
+        return $this->passengerCertifiedPickUp;
+    }
+
+    public function setPassengerCertifiedPickUp(?bool $passengerCertifiedPickUp): self
+    {
+        $this->passengerCertifiedPickUp = $passengerCertifiedPickUp;
+
+        return $this;
+    }
+
+    public function hasPassengerCertifiedDropOff(): ?bool
+    {
+        return $this->passengerCertifiedDropOff;
+    }
+
+    public function setPassengerCertifiedDropOff(?bool $passengerCertifiedDropOff): self
+    {
+        $this->passengerCertifiedDropOff = $passengerCertifiedDropOff;
 
         return $this;
     }
