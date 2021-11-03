@@ -67,7 +67,7 @@ class MassImportManager
     const DEFAULT_OUTWARD_TIME = '08:00:00';
     const DEFAULT_RETURN_TIME = '18:00:00';
 
-    const TIME_LIMIT = 3600;
+    const TIME_LIMIT = 14400;
 
     private $entityManager;
     private $massRepository;
@@ -211,8 +211,6 @@ class MassImportManager
     }
 
     /**
-     * Analyze mass file data.
-     *
      * @param Mass $mass The mass to update
      * @param int $status The final status
      * @return void
