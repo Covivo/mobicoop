@@ -64,6 +64,9 @@ class MassImportManager
     const MIMETYPE_PLAIN = 'text/plain';
     const MIMETYPE_JSON = 'application/json';
 
+    const DEFAULT_OUTWARD_TIME = '08:00:00';
+    const DEFAULT_RETURN_TIME = '18:00:00';
+
     private $entityManager;
     private $massRepository;
     private $massPersonRepository;
@@ -813,6 +816,8 @@ class MassImportManager
                         } else {
                             $massPerson->setOutwardTime($outwardtime->format('H:i:s'));
                         }
+                    } elseif ($fields[$i] == "outwardTime" && $tab[$i]=="") {
+                        $massPerson->setOutwardTime(self::DEFAULT_OUTWARD_TIME);
                     } elseif ($fields[$i] == "returnTime" && $tab[$i]!=="") {
                         $returntime = \DateTime::createFromFormat('H:i', $tab[$i]);
                         if (!$returntime) {
@@ -826,6 +831,8 @@ class MassImportManager
                         } else {
                             $massPerson->setReturnTime($returntime->format('H:i:s'));
                         }
+                    } elseif ($fields[$i] == "returnTime" && $tab[$i]=="") {
+                        $massPerson->setReturnTime(self::DEFAULT_RETURN_TIME);
                     } elseif (method_exists($massPerson, $setter)) {
                         $massPerson->$setter($tab[$i]);
                     }

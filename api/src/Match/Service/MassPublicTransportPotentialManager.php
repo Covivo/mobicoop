@@ -55,6 +55,11 @@ class MassPublicTransportPotentialManager
     private $params;
     private $eventDispatcher;
 
+    private $exludedForPtMaxConnections;
+    private $exludedForPtMaxDistanceWalkFromHome;
+    private $exludedForPtMaxDistanceWalkFromWork;
+    private $exludedForPtMaxNbCarDuration;
+
     private const ROUND_TRIP_COMPUTE = true; // Multiply the computed numbers by two
 
     public function __construct(
@@ -73,6 +78,10 @@ class MassPublicTransportPotentialManager
         $this->geoTools = $geoTools;
         $this->eventDispatcher = $eventDispatcher;
         $this->params = $params;
+        $this->exludedForPtMaxConnections = 0;
+        $this->exludedForPtMaxDistanceWalkFromHome = 0;
+        $this->exludedForPtMaxDistanceWalkFromWork = 0;
+        $this->exludedForPtMaxNbCarDuration = 0;
     }
 
     /**
@@ -187,21 +196,25 @@ class MassPublicTransportPotentialManager
     {
         // Number of connections
         if ($massPTJourney->getChangeNumber() > $this->params['ptMaxConnections']) {
+            $this->exludedForPtMaxConnections++;
             return false;
         }
         
         // The maximum distance of walk from home to the last step
         if ($massPTJourney->getDistanceWalkFromHome()> $this->params['ptMaxDistanceWalkFromHome']) {
+            $this->exludedForPtMaxDistanceWalkFromHome++;
             return false;
         }
 
         // The maximum distance of walk to work from the last step
         if ($massPTJourney->getDistanceWalkFromWork()> $this->params['ptMaxDistanceWalkFromWork']) {
+            $this->exludedForPtMaxDistanceWalkFromWork++;
             return false;
         }
 
         // The maximum duration of PT journey must be < xN the duration in car
         if ($massPTJourney->getDuration() > ($massPTJourney->getMassPerson()->getDuration()*$this->params['ptMaxNbCarDuration'])) {
+            $this->exludedForPtMaxNbCarDuration++;
             return false;
         }
 
@@ -228,6 +241,7 @@ class MassPublicTransportPotentialManager
         $computedData = [
             "totalPerson" => count($persons),
             "totalPTSolutions" => 0,
+            "totalPTSolutionsExcluded" => [],
             "totalPersonWithValidPTSolution" => 0,
             "PTPotential" => 0,
             "totalTravelDistance" => 0,
@@ -319,6 +333,15 @@ class MassPublicTransportPotentialManager
             $computedData['roundtripComputed'] = false;
         }
         
+        $computedData["totalPTSolutionsExcluded"] = [
+            "forPtMaxConnections" => $this->exludedForPtMaxConnections,
+            "forPtMaxDistanceWalkFromHome" => $this->exludedForPtMaxDistanceWalkFromHome,
+            "forPtMaxDistanceWalkFromWork" => $this->exludedForPtMaxDistanceWalkFromWork,
+            "forPtMaxNbCarDuration" => $this->exludedForPtMaxNbCarDuration,
+            "total" => $this->exludedForPtMaxConnections + $this->exludedForPtMaxDistanceWalkFromHome + $this->exludedForPtMaxDistanceWalkFromWork + $this->exludedForPtMaxNbCarDuration
+        ];
+
+
 
         $mass->setPublicTransportPotential($computedData);
 
