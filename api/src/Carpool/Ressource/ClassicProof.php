@@ -137,6 +137,20 @@ class ClassicProof
      */
     private $status;
 
+    /**
+     * @var boolean The passenger or the driver has certified the pickUp
+     *
+     * @Groups({"writeClassicProof"})
+     */
+    private $certifiedPickUp;
+
+    /**
+     * @var boolean The passenger or the driver has certified the dropOff
+     *
+     * @Groups({"writeClassicProof"})
+     */
+    private $certifiedDropOff;
+
     public function __construct()
     {
         $this->id = self::DEFAULT_ID;
@@ -206,6 +220,30 @@ class ClassicProof
     public function setStatus(int $status): self
     {
         $this->status = $status;
+
+        return $this;
+    }
+
+    public function hasCertifiedPickUp(): ?bool
+    {
+        return $this->certifiedPickUp;
+    }
+
+    public function setCertifiedPickUp(?bool $certifiedPickUp): self
+    {
+        $this->certifiedPickUp = $certifiedPickUp;
+
+        return $this;
+    }
+
+    public function hasCertifiedDropOff(): ?bool
+    {
+        return $this->certifiedDropOff;
+    }
+
+    public function setCertifiedDropOff(?bool $certifiedDropOff): self
+    {
+        $this->certifiedDropOff = $certifiedDropOff;
 
         return $this;
     }

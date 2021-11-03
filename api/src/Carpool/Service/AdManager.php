@@ -2003,6 +2003,12 @@ class AdManager
 
         $carpoolProof = $this->proofManager->createProof($ask, $classicProof->getLongitude(), $classicProof->getLatitude(), CarpoolProof::TYPE_UNDETERMINED_CLASSIC, $classicProof->getUser(), $ask->getMatching()->getProposalOffer()->getUser(), $ask->getMatching()->getProposalRequest()->getUser());
         $classicProof->setId($carpoolProof->getId());
+        if (!is_null($carpoolProof->getPickUpDriverDate()) || !is_null($carpoolProof->getPickUpPassengerDate())) {
+            $classicProof->setCertifiedPickUp(true);
+        }
+        if (!is_null($carpoolProof->getDropOffDriverDate()) || !is_null($carpoolProof->getDropOffPassengerDate())) {
+            $classicProof->setCertifiedDropOff(true);
+        }
 
         return $classicProof;
     }
@@ -2029,6 +2035,12 @@ class AdManager
         try {
             $carpoolProof = $this->proofManager->updateProof($id, $classicProofData->getLongitude(), $classicProofData->getLatitude(), $classicProofData->getUser(), $carpoolProof->getAsk()->getMatching()->getProposalRequest()->getUser(), $this->params['carpoolProofDistance']);
             $classicProofData->setId($carpoolProof->getId());
+            if (!is_null($carpoolProof->getPickUpDriverDate()) || !is_null($carpoolProof->getPickUpPassengerDate())) {
+                $classicProofData->setCertifiedPickUp(true);
+            }
+            if (!is_null($carpoolProof->getDropOffDriverDate()) || !is_null($carpoolProof->getDropOffPassengerDate())) {
+                $classicProofData->setCertifiedDropOff(true);
+            }
         } catch (ProofException $proofException) {
             throw new AdException($proofException->getMessage());
         }
