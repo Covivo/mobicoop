@@ -510,7 +510,7 @@ services:
             $batchScriptArgs: '%env(resolve:SIG_GEOROUTER_BATCH_SCRIPT_ARGS)%'
             $batchTemp: '%env(resolve:SIG_GEOROUTER_BATCH_TEMP)%'
         tags:
-            - { name: monolog.logger, channel: carpool }
+            - { name: monolog.logger, channel: georouter }
 
     App\Geography\Service\GeoTools:
         arguments:
@@ -652,7 +652,7 @@ services:
 
     App\Match\Service\GeoMatcher:
         tags:
-            - { name: monolog.logger, channel: carpool }
+            - { name: monolog.logger, channel: geomatcher }
 
     App\Match\Service\MassImportManager:
         arguments:
