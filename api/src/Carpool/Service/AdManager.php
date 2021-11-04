@@ -2000,7 +2000,6 @@ class AdManager
             // the proof already exists, it's an update
             return $this->updateCarpoolProof($carpoolProof->getId(), $classicProof);
         }
-
         $carpoolProof = $this->proofManager->createProof($ask, $classicProof->getLongitude(), $classicProof->getLatitude(), CarpoolProof::TYPE_UNDETERMINED_CLASSIC, $classicProof->getUser(), $ask->getMatching()->getProposalOffer()->getUser(), $ask->getMatching()->getProposalRequest()->getUser());
 
         return $classicProof;
@@ -2054,7 +2053,7 @@ class AdManager
 
         $classicProof = new ClassicProof();
         $classicProof->setId($carpoolProof->getId());
-        $classicProof->setStatus($carpoolProof->getStatus());
+        $classicProof->setRegisteredStatus($carpoolProof->getStatus());
         
         return $classicProof;
     }

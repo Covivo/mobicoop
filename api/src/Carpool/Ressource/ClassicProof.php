@@ -103,7 +103,7 @@ class ClassicProof
     /**
      * @var User|null The current user.
      *
-     * @Groups("readClassicProof")
+     * @Groups({"readClassicProof","writeClassicProof","updateClassicProof"})
      */
     private $user;
 
@@ -135,35 +135,26 @@ class ClassicProof
      * @var int Proof status (0 = pending, 1 = sent to the register; 2 = error while sending to the register).
      * @Groups("cancelClassicProof")
      */
+    private $registeredStatus;
+
+    /**
+     * @var string Proof live status, as a 4 digits binary ABCD number (eg : 1101) :
+     * - A => passenger pickup proof (0/1)
+     * - B => driver pickup proof (0/1)
+     * - C => passenger dropoff proof (0/1)
+     * - D => driver dropoff proof (0/1)
+     *
+     * @Groups({"readClassicProof","writeClassicProof","updateClassicProof"})
+     */
     private $status;
 
     /**
-     * @var boolean The the driver has certified the pickUp
+     * @var \DateTimeInterface|null The date of the proof
      *
-     * @Groups({"readClassicProof"})
-     */
-    private $driverCertifiedPickUp;
-
-    /**
-     * @var boolean The driver has certified the dropOff
+     * @Groups({"readClassicProof","writeClassicProof","updateClassicProof"})
      *
-     * @Groups({"readClassicProof"})
      */
-    private $driverCertifiedDropOff;
-
-    /**
-    * @var boolean The passenger has certified the pickUp
-    *
-    * @Groups({"readClassicProof"})
-    */
-    private $passengerCertifiedPickUp;
-
-    /**
-     * @var boolean The passenger has certified the dropOff
-     *
-     * @Groups({"readClassicProof"})
-     */
-    private $passengerCertifiedDropOff;
+    private $proofDate;
 
     public function __construct()
     {
@@ -226,62 +217,38 @@ class ClassicProof
         return $this;
     }
 
-    public function getStatus(): ?int
+    public function getRegisteredStatus(): ?int
+    {
+        return $this->registeredStatus;
+    }
+
+    public function setRegisteredStatus(int $registeredStatus): self
+    {
+        $this->registeredStatus = $registeredStatus;
+
+        return $this;
+    }
+
+    public function getStatus(): ?string
     {
         return $this->status;
     }
 
-    public function setStatus(int $status): self
+    public function setStatus(?string $status): self
     {
         $this->status = $status;
 
         return $this;
     }
 
-    public function hasDriverCertifiedPickUp(): ?bool
+    public function getProofDate(): ?\DateTimeInterface
     {
-        return $this->driverCertifiedPickUp;
+        return $this->proofDate;
     }
 
-    public function setDriverCertifiedPickUp(?bool $driverCertifiedPickUp): self
+    public function setProofDate(?\DateTimeInterface $proofDate): self
     {
-        $this->driverCertifiedPickUp = $driverCertifiedPickUp;
-
-        return $this;
-    }
-
-    public function hasDriverCertifiedDropOff(): ?bool
-    {
-        return $this->driverCertifiedDropOff;
-    }
-
-    public function setDriverCertifiedDropOff(?bool $driverCertifiedDropOff): self
-    {
-        $this->driverCertifiedDropOff = $driverCertifiedDropOff;
-
-        return $this;
-    }
-
-    public function hasPassengerCertifiedPickUp(): ?bool
-    {
-        return $this->passengerCertifiedPickUp;
-    }
-
-    public function setPassengerCertifiedPickUp(?bool $passengerCertifiedPickUp): self
-    {
-        $this->passengerCertifiedPickUp = $passengerCertifiedPickUp;
-
-        return $this;
-    }
-
-    public function hasPassengerCertifiedDropOff(): ?bool
-    {
-        return $this->passengerCertifiedDropOff;
-    }
-
-    public function setPassengerCertifiedDropOff(?bool $passengerCertifiedDropOff): self
-    {
-        $this->passengerCertifiedDropOff = $passengerCertifiedDropOff;
+        $this->proofDate = $proofDate;
 
         return $this;
     }

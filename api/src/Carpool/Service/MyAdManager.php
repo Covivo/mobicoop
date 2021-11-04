@@ -213,9 +213,21 @@ class MyAdManager
                         $proposal->getUser(),
                         $ask->getUser()->getId() == $proposal->getUser()->getId() ? $ask->getUserRelated() : $ask->getUser()
                     );
-                    foreach ($ask->getCarpoolProofs() as $carpoolProof) {
-                        if ($carpoolProof->getDriver()->getId() === $driver['id']) {
-                            $driver['classicProof'] = $this->proofManager->getClassicProof($carpoolProof->getId());
+
+                    if ($ask->getCriteria()->getFrequency() === CRITERIA::FREQUENCY_PUNCTUAL) {
+                        foreach ($ask->getCarpoolProofs() as $carpoolProof) {
+                            if ($carpoolProof->getDriver()->getId() === $driver['id']) {
+                                $driver['classicProof'] = $this->proofManager->getClassicProof($carpoolProof->getId());
+                            }
+                        }
+                    } else {
+                        $today = new DateTime('Today');
+                        foreach ($ask->getCarpoolProofs() as $carpoolProof) {
+                            $date = $carpoolProof->getStartDriverDate();
+                            $date->setTime(0, 0, 0);
+                            if (($carpoolProof->getDriver()->getId() === $driver['id']) && $today == $date) {
+                                $driver['classicProof'] = $this->proofManager->getClassicProof($carpoolProof->getId());
+                            }
                         }
                     }
                     // the overall payment status is the driver payment status
@@ -266,9 +278,20 @@ class MyAdManager
                     } elseif ($myAd->getPaymentStatus() == MyAd::PAYMENT_STATUS_NULL) {
                         $myAd->setPaymentStatus($passenger['payment']['status']);
                     }
-                    foreach ($ask->getCarpoolProofs() as $carpoolProof) {
-                        if ($carpoolProof->getPassenger()->getId() === $passenger['id']) {
-                            $passenger['classicProof'] = $this->proofManager->getClassicProof($carpoolProof->getId());
+                    if ($ask->getCriteria()->getFrequency() === CRITERIA::FREQUENCY_PUNCTUAL) {
+                        foreach ($ask->getCarpoolProofs() as $carpoolProof) {
+                            if ($carpoolProof->getPassenger()->getId() === $passenger['id']) {
+                                $passenger['classicProof'] = $this->proofManager->getClassicProof($carpoolProof->getId());
+                            }
+                        }
+                    } else {
+                        $today = new DateTime('Today');
+                        foreach ($ask->getCarpoolProofs() as $carpoolProof) {
+                            $date = $carpoolProof->getStartDriverDate();
+                            $date->setTime(0, 0, 0);
+                            if (($carpoolProof->getPassenger()->getId() === $passenger['id']) && $today == $date) {
+                                $passenger['classicProof'] = $this->proofManager->getClassicProof($carpoolProof->getId());
+                            }
                         }
                     }
                     $passengers[] = $passenger;

@@ -139,10 +139,13 @@ class ProofManager
         $carpoolProof = $this->carpoolProofRepository->find($id);
         $classicProof = new ClassicProof;
         $classicProof->setId($id);
-        $classicProof->setDriverCertifiedPickUp(!is_null($carpoolProof->getPickUpDriverDate()) ? true : false);
-        $classicProof->setPassengerCertifiedPickUp(!is_null($carpoolProof->getPickUpPassengerDate()) ? true : false);
-        $classicProof->setDriverCertifiedDropOff(!is_null($carpoolProof->getDropOffDriverDate()) ? true : false);
-        $classicProof->setPassengerCertifiedDropOff(!is_null($carpoolProof->getDropOffPassengerDate()) ? true : false);
+        $classicProof->setStatus(
+            ($carpoolProof->getPickUpPassengerDate() ? '1' : '0') .
+            ($carpoolProof->getPickUpDriverDate() ? '1' : '0') .
+            ($carpoolProof->getDropOffPassengerDate() ? '1' : '0') .
+            ($carpoolProof->getDropOffDriverDate() ? '1' : '0')
+        );
+        $classicProof->setProofDate($carpoolProof->getStartDriverDate());
         
         return $classicProof;
     }
