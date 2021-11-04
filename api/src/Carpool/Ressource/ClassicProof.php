@@ -103,7 +103,7 @@ class ClassicProof
     /**
      * @var User|null The current user.
      *
-     * @Groups("readClassicProof")
+     * @Groups({"readClassicProof","writeClassicProof","updateClassicProof"})
      */
     private $user;
 
@@ -135,7 +135,26 @@ class ClassicProof
      * @var int Proof status (0 = pending, 1 = sent to the register; 2 = error while sending to the register).
      * @Groups("cancelClassicProof")
      */
+    private $registeredStatus;
+
+    /**
+     * @var string Proof live status, as a 4 digits binary ABCD number (eg : 1101) :
+     * - A => passenger pickup proof (0/1)
+     * - B => driver pickup proof (0/1)
+     * - C => passenger dropoff proof (0/1)
+     * - D => driver dropoff proof (0/1)
+     *
+     * @Groups({"readClassicProof","writeClassicProof","updateClassicProof"})
+     */
     private $status;
+
+    /**
+     * @var \DateTimeInterface|null The date of the proof
+     *
+     * @Groups({"readClassicProof","writeClassicProof","updateClassicProof"})
+     *
+     */
+    private $proofDate;
 
     public function __construct()
     {
@@ -198,14 +217,38 @@ class ClassicProof
         return $this;
     }
 
-    public function getStatus(): ?int
+    public function getRegisteredStatus(): ?int
+    {
+        return $this->registeredStatus;
+    }
+
+    public function setRegisteredStatus(int $registeredStatus): self
+    {
+        $this->registeredStatus = $registeredStatus;
+
+        return $this;
+    }
+
+    public function getStatus(): ?string
     {
         return $this->status;
     }
 
-    public function setStatus(int $status): self
+    public function setStatus(?string $status): self
     {
         $this->status = $status;
+
+        return $this;
+    }
+
+    public function getProofDate(): ?\DateTimeInterface
+    {
+        return $this->proofDate;
+    }
+
+    public function setProofDate(?\DateTimeInterface $proofDate): self
+    {
+        $this->proofDate = $proofDate;
 
         return $this;
     }
