@@ -681,8 +681,6 @@ services:
     App\Match\Service\MassPublicTransportPotentialManager:
         arguments:
             $params:
-                ptProvider: '%env(string:MOBIMATCH_PT_PROVIDER)%'
-                ptAlgorithm: '%env(string:MOBIMATCH_PT_ALGORITHM)%'
                 ptMaxConnections: '%env(int:MOBIMATCH_PT_MAXIMAL_CONNECTIONS)%'
                 ptMaxDistanceWalkFromHome: '%env(int:MOBIMATCH_PT_MAXIMUM_DISTANCE_WALK_FROM_HOME)%'
                 ptMaxDistanceWalkFromWork: '%env(int:MOBIMATCH_PT_MAXIMUM_DISTANCE_WALK_FROM_WORK)%'
