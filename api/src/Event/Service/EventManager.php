@@ -140,6 +140,17 @@ class EventManager
     }
 
     /**
+    * retrive events
+    *
+    * @return void
+    */
+    public function getEvents()
+    {
+        $events = $this->eventRepository->getEvents();
+        return $events;
+    }
+
+    /**
      * Generate the UrlKey of an Event
      *
      * @param Event $event

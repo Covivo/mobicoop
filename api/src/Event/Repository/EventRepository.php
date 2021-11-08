@@ -94,6 +94,20 @@ class EventRepository
         return $query;
     }
 
+    /**
+    *Get all events (except private events and deactivated events)
+    *
+    * @return void
+    */
+    public function getEvents()
+    {
+        $query = $this->repository->createQueryBuilder('e')
+        ->where('e.status = 1')
+        ->andWhere('e.private = false')
+        ->getQuery()->getResult();
+        return $query;
+    }
+
 
     /**
      * Find One event by criteria
