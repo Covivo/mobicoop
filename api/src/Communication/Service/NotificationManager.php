@@ -636,7 +636,7 @@ class NotificationManager
         $this->smsManager->send($sms, $notification->getTemplateBody() ? $this->smsTemplatePath . $notification->getTemplateBody() : $this->smsTemplatePath . $notification->getAction()->getName(), $bodyContext);
         
         $this->createNotified($notification, $recipient, $object);
-        $this->logger->info("Sms notification for $notification->getAction()->getName() / " . $recipient->getEmail());
+        $this->logger->info("Sms notification for ". $notification->getAction()->getName() . " / " . $recipient->getEmail());
     }
 
     /**
