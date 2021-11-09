@@ -169,7 +169,8 @@ class MyAdManager
                     'region' => $waypoint->getAddress()->getRegion(),
                     'addressCountry' => $waypoint->getAddress()->getAddressCountry(),
                     'longitude' => $waypoint->getAddress()->getLongitude(),
-                    'latitude' => $waypoint->getAddress()->getLatitude()
+                    'latitude' => $waypoint->getAddress()->getLatitude(),
+                    'addressId' => $waypoint->getAddress()->getId()
                 ];
             }
         }
