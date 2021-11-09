@@ -196,6 +196,7 @@ use App\Community\Filter\CommunityAddressTerritoryFilter;
  *          "mapsAds"={
  *              "method"="GET",
  *              "path"="/communities/{id}/mapsAds",
+ *              "security"="is_granted('community_ads',object)",
  *              "normalization_context"={"groups"={"readCommunityAds"}},
  *              "swagger_context" = {
  *                  "tags"={"Communities"}
@@ -204,6 +205,7 @@ use App\Community\Filter\CommunityAddressTerritoryFilter;
  *          "lastUsers"={
  *              "method"="GET",
  *              "path"="/communities/{id}/lastUsers",
+ *              "security"="is_granted('community_last_members',object)",
  *              "normalization_context"={"groups"={"readCommunity"}},
  *              "swagger_context" = {
  *                  "tags"={"Communities"}
@@ -221,7 +223,7 @@ use App\Community\Filter\CommunityAddressTerritoryFilter;
  *              "method"="PUT",
  *              "path"="/communities/{id}/leave",
  *              "denormalization_context"={"groups"={"writeLeaveCommunity"}},
- *              "security"="is_granted('community_update',object)",
+ *              "security"="is_granted('community_read',object)",
  *              "swagger_context" = {
  *                  "tags"={"Communities"}
  *              }
@@ -230,7 +232,7 @@ use App\Community\Filter\CommunityAddressTerritoryFilter;
  *              "method"="PUT",
  *              "path"="/communities/{id}/join",
  *              "denormalization_context"={"groups"={"writeJoinCommunity"}},
- *              "security"="is_granted('community_update',object)",
+ *              "security"="is_granted('community_read',object)",
  *              "swagger_context" = {
  *                  "tags"={"Communities"}
  *              }
