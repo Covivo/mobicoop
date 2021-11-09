@@ -752,6 +752,10 @@ services:
         arguments:
             $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
 
+    App\RelayPoint\Admin\DataProvider\RelayPointCollectionDataProvider:
+        arguments:
+            $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
+
     # Solidary
     App\Solidary\Controller\:
         resource: '../src/Solidary/Controller'
