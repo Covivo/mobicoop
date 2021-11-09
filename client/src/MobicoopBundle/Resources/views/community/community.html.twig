@@ -19,6 +19,7 @@
         {{ searchRegular ? 'regular' : '' }}
         {{ searchPunctualDate ? 'punctual-date-optional' : '' }}
         :user-community-status="{{ communityUserStatus }}"
+        :is-member="{{ isMember ? "true" : "false" }}"
         :url-admin="{{urlAdmin|json_encode}}"
         :can-access-admin-from-community="{{canAccessAdminFromCommunity}}"
         :publish-button-always-active="{{ publishButtonAlwaysActive ? "true" : "false" }}"

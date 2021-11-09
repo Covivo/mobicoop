@@ -203,6 +203,7 @@ class CommunityController extends AbstractController
             'searchRoute' => "covoiturage/recherche",
             'error' => (isset($error)) ? $error : false,
             'communityUserStatus' => $community->getMemberStatus(),
+            'isMember' => $community->isMember(),
             'communityUserDirectMessage' => $this->communityUserDirectMessage
         ]);
     }
