@@ -139,15 +139,9 @@ class EventManager
         return $createdEvents;
     }
 
-    /**
-    * retrive events
-    *
-    * @return void
-    */
     public function getEvents()
     {
-        $events = $this->eventRepository->getEvents();
-        return $events;
+        return $this->eventRepository->getEvents();
     }
 
     /**
