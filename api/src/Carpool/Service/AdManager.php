@@ -1320,8 +1320,6 @@ class AdManager
     {
         $proposal = $this->proposalRepository->find($ad->getId());
         $oldAd = $this->makeAd($proposal, $ad->getUserId());
-        $oldProposal = clone $proposal;
-        $oldProposal->setCriteria(clone $proposal->getCriteria());
         $proposalAsks = $this->askManager->getAsksFromProposal($proposal);
 
         // Pause is apart and do not needs notifications by now
