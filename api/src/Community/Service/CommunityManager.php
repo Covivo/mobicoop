@@ -293,7 +293,6 @@ class CommunityManager
         $communityUsers = $this->communityUserRepository->findBy(['community'=>$community, 'user'=>$user]);
 
         $community->setMember(false);
-        //$community->setMemberStatus(-1);
         if (!is_null($communityUsers) and count($communityUsers)>0) {
             $community->setMember(true);
             $community->setMemberStatus($communityUsers[0]->getStatus());
