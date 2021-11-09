@@ -10,7 +10,8 @@
         :href="$t('link.route.badges')"
         style="text-decoration:none;"
         class="white--text"
-      >{{ rewardStepsText }}</a>
+        v-html="rewardStepsText"
+      />
 
       <template v-slot:action="{ attrs }">
         <v-btn
