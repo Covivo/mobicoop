@@ -439,6 +439,10 @@ export default {
       type: Number,
       default: -1,
     },
+    isMember: {
+      type: Boolean,
+      default: false,
+    },
     urlAdmin: {
       type: String,
       default: null,
@@ -508,6 +512,9 @@ export default {
     if (this.userCommunityStatus > 0) {
       this.isAccepted =
         this.userCommunityStatus == 1 || this.userCommunityStatus == 2;
+      this.askedToJoin = true;
+    }
+    else if(this.isMember){
       this.askedToJoin = true;
     }
 
