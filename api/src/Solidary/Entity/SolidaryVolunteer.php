@@ -121,6 +121,8 @@ class SolidaryVolunteer
     const TYPE = "volunteer";
     const AUTHORIZED_GENERIC_FILTERS = ['familyName','givenName','email'];
     const VALIDATED_CANDIDATE_FILTER = 'validatedCandidate';
+    const DAYS_SLOTS = ['mMon','aMon','eMon','mTue','aTue','eTue','mWed','aWed','eWed','mThu','aThu','eThu','mFri','aFri','eFri','mSat','aSat','eSat','mSun','aSun','eSun'];
+    const TIMES_SLOTS = ['mMinTime','mMaxTime','aMinTime','aMaxTime','eMinTime','eMaxTime'];
 
     /**
      * @var int The id of this solidary user.

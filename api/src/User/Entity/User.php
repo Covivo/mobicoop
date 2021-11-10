@@ -1515,6 +1515,12 @@ class User implements UserInterface, EquatableInterface
      */
     private $numberOfBadges;
 
+    /**
+     * @var boolean|null If the User has a verified identity
+     *
+     * @Groups({"readUser","results","write", "threads", "thread", "readCommunity", "readCommunityUser", "readEvent", "readPublicProfile","readReview","aRead"})
+     */
+    private $verifiedIdentity;
 
     public function __construct($status = null)
     {
@@ -3513,6 +3519,17 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
+    public function hasVerifiedIdentity(): ?bool
+    {
+        return false; // TO DO : Implements the real value after the identity verification development
+    }
+
+    public function setVerifiedIdentity(?bool $verifiedIdentity): self
+    {
+        $this->verifiedIdentity = $verifiedIdentity;
+
+        return $this;
+    }
 
     // DOCTRINE EVENTS
 

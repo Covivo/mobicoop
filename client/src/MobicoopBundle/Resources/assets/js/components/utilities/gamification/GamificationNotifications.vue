@@ -5,9 +5,8 @@
       top
       timeout="-1"
       style="white-space: pre-line;"
+      v-html="rewardStepsText"
     >
-      {{ rewardStepsText }}
-
       <template v-slot:action="{ attrs }">
         <v-btn
           text

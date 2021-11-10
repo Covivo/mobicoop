@@ -105,6 +105,7 @@
             </v-col>
           </v-row>
           <v-row
+            v-if="addressValidation"
             justify="center"
           >
             <v-col
@@ -161,7 +162,7 @@
                 rounded
                 color="secondary" 
                 class="mt-4 justify-self-center"
-                :disabled="!valid"
+                :disabled="!addressValidation || !valid"
                 @click="addBankCoordinates"
               >
                 {{ $t('register') }}
@@ -348,7 +349,8 @@ export default {
       loading:false,
       title:this.$t('title'),
       dialog:false,
-      error:false
+      error:false,
+      addressValidation: false
     }
   },
   computed:{
@@ -435,6 +437,7 @@ export default {
         this.form.addressDetail.cp = address.postalCode;
         this.form.addressDetail.city = address.addressLocality;
       }
+      this.addressValidation = true;
     },
     identityDocumentSent(data){
       if(!data.id){

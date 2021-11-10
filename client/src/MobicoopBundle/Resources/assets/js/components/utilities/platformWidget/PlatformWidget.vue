@@ -110,7 +110,7 @@ export default {
   },
   created() {
     moment.locale(this.locale); // DEFINE DATE LANGUAGE
-    this.$root.token = this.token;
+    this.$store.commit('a/setToken', this.token);
   }
 }
 </script>
