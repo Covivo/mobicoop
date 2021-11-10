@@ -98,7 +98,7 @@ class Waypoint
     /**
      * @var Proposal|null The proposal that created the point.
      *
-     * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal", inversedBy="waypoints")
+     * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal", inversedBy="waypoints", cascade={"persist"})
      * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private $proposal;

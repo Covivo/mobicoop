@@ -18,11 +18,13 @@
           cols="12"
           align="center"
         >
-          <img
+          <v-img
             class="logo"
             :src="$t('widget.urlLogo')"
             alt="Mobicoop"
-          >
+            contain
+            height="150px"
+          />
         </v-col>
       </v-row>
       <v-row

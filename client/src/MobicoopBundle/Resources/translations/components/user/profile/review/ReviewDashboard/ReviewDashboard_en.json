@@ -1,11 +1,11 @@
 {
-    "tabs":{
-        "givenReviews":"Avis donné(s)",
-        "receivedReviews":"Avis reçu(s)",
-        "reviewsToGive":"Avis à donner"
+    "tabs": {
+        "givenReviews": "Review(s) given",
+        "receivedReviews": "Review(s) received",
+        "reviewsToGive": "Review to be given"
     },
-    "getDashboardUri":"/user/review/dashboard",
-    "noReviewToGive":"Aucun avis à donner",
-    "noReceivedReviews":"Aucun avis reçu",
-    "noGivenReviews":"Aucun avis donné"
+    "getDashboardUri": "/user/review/dashboard",
+    "noReviewToGive": "No review to give",
+    "noReceivedReviews": "No review received",
+    "noGivenReviews": "No review given"
 }

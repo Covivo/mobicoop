@@ -7,7 +7,7 @@
     "date": {
         "from": "From",
         "to": "To",
-        "at": "at",
+        "at": "on",
         "the": "The"
     },
     "shortCompleteDate": "DD/MM/YYYY",

@@ -1,16 +1,16 @@
 {
-    "title": "Paiement en ligne",
+    "title": "Online payment",
     "wait": {
-        "line1": "Merci pour votre paiement en ligne.",
-        "line2": "Veuillez patienter pendant la validation de la transaction."
+        "line1": "Thank you for your online payment.",
+        "line2": "Please wait while the transaction is completed."
     },
     "checkUrl": "/payment/status",
-    "noPaymentPaymentId": "Impossible de retrouver le status de ce paiement.",
-    "paymentSucceeded": "Votre paiement a bien été enregistré.",
-    "paymentFailed": "Une erreur est survenue, votre paiement n'a pas été enregistré.",
-    "tipsEncouragement":{
-        "text":"{platformName} est un service libre, sans commission et sans publicité. Mais pour contribuer à maintenir la plateforme, vous pouvez nous donner un coup de pouce en nous faisant",
-        "textLink":"un don ici",
-        "link":"https://www.helloasso.com/associations/resautom/collectes/le-covoiturage-est-mort-vive-le-covoiturage-libre"
+    "noPaymentPaymentId": "Unable to find the status of this payment.",
+    "paymentSucceeded": "Your payment has been registered.",
+    "paymentFailed": "An error has occurred, your payment has not been saved.",
+    "tipsEncouragement": {
+        "text": "{platformName} is a free service, without commission and without advertising. But to contribute to maintain the platform, you can give us a helping hand by making",
+        "textLink": "a donation here",
+        "link": "https://www.helloasso.com/associations/resautom/collectes/le-covoiturage-est-mort-vive-le-covoiturage-libre"
     }
 }

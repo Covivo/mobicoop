@@ -25,6 +25,7 @@ namespace App\Community\Security;
 
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
 use App\Auth\Service\AuthManager;
+use App\Carpool\Entity\MapsAd\MapsAds;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use App\Community\Entity\Community;
@@ -40,6 +41,7 @@ class CommunityVoter extends Voter
     const COMMUNITY_DELETE = 'community_delete';
     const COMMUNITY_LIST = 'community_list';
     const COMMUNITY_ADS = 'community_ads';
+    const COMMUNITY_LAST_MEMBERS = 'community_last_members';
 
     private $request;
     private $communityManager;
@@ -60,7 +62,8 @@ class CommunityVoter extends Voter
             self::COMMUNITY_UPDATE,
             self::COMMUNITY_DELETE,
             self::COMMUNITY_LIST,
-            self::COMMUNITY_ADS
+            self::COMMUNITY_ADS,
+            self::COMMUNITY_LAST_MEMBERS
             ])) {
             return false;
         }
@@ -72,8 +75,9 @@ class CommunityVoter extends Voter
             self::COMMUNITY_UPDATE,
             self::COMMUNITY_DELETE,
             self::COMMUNITY_LIST,
-            self::COMMUNITY_ADS
-            ]) && !($subject instanceof Paginator) && !($subject instanceof Community)) {
+            self::COMMUNITY_ADS,
+            self::COMMUNITY_LAST_MEMBERS
+            ]) && !($subject instanceof Paginator) && !($subject instanceof Community) && !($subject instanceof MapsAds) && !is_array($subject)) {
             return false;
         }
         return true;
@@ -93,10 +97,17 @@ class CommunityVoter extends Voter
             case self::COMMUNITY_LIST:
                 return $this->canListCommunity();
             case self::COMMUNITY_ADS:
-                // here we don't have the denormalized event, we need to get it from the request
-                if ($community = $this->communityManager->getCommunity($this->request->get('id'))) {
-                    return $this->canReadCommunity($community);
+                if (count($subject->getMapsAds())==0) {
+                    // No Ads
+                    return true;
                 }
+                return $this->canReadCommunity($this->communityManager->getCommunity($subject->getMapsAds()[0]->getEntityId()));
+            case self::COMMUNITY_LAST_MEMBERS:
+                if (count($subject)==0) {
+                    // No members
+                    return true;
+                }
+                return $this->canReadCommunity($subject[0]->getCommunity());
         }
 
         throw new \LogicException('This code should not be reached!');

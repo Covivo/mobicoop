@@ -1,30 +1,30 @@
 {
-    "title": "Covoiturage libre, </br>sans commission et coopératif",
-    "subtitle": "Un service de covoiturage de proximité, convivial et solidaire.<br />Trouvez dès à présent votre covoiturage ou proposez votre trajet.",
-    "snackbar1": "Vous avez renseigné un numéro de téléphone. Faîtes-le vérifier en envoyant un code de vérification depuis la page",
-    "snackbar2": ", pour rassurer vos covoitureurs et recevoir vos alertes aussi par SMS.",
-    "snackbar3" : "Merci de confirmer votre adresse email en cliquant sur le lien reçu par email",
-    "profileLink": "/utilisateur/profil/modifier/mon-profil",
-    "snackbar-account-logout": "Vous êtes déconnecté.",
-    "snackbar-unsubscribe-email": "Vous êtes bien désinscrit de nos liste d'emailing",
-    "myProfile": "Profil",
+    "title": "Free carpooling, </br>without commission and cooperative",
+    "subtitle": "A local, friendly and united carpooling service. <br /> Find your carpooling now or propose your trip.",
+    "snackbar1": "You have entered a phone number. Have it verified by sending a verification code from the page",
+    "snackbar2": ", to reassure your carpoolers and also to receive your alerts by text message.",
+    "snackbar3": "Please confirm your email address by clicking on the link received by email",
+    "profileLink": "/user/profile/change/my-profile",
+    "snackbar-account-logout": "You are logged out.",
+    "snackbar-unsubscribe-email": "You have been unsubscribed from our emailing list",
+    "myProfile": "Profile",
     "urlArticle": "#",
-    "altUrlArticle": "cliquez-ici",
-    "clickHere": "Cliquez-ici",
+    "altUrlArticle": "Click here",
+    "clickHere": "Click here",
     "urlImageSwap": "/images/PictoInterchanger.svg",
     "urlBackground": "/images/pages/home/background_top.svg",
-    "items":[
+    "items": [
         {
-            "title":"Une plateforme sans commission",
-            "text":"Héritière des valeurs du covoiturage libre, Mobicoop est un service de covoiturage gratuit, c'est-à-dire que le site ne prélève aucune commission sur les trajets, et c’est aussi sans publicité ! Les trajets sont donc moins chers pour les covoitureurs qui en partagent les frais."
+            "title": "A commission-free platform",
+            "text": "Heir to the values of free carpooling, Mobicoop is a free carpooling service, which means that the site takes no commission on journeys, and it is also free of advertising! The journeys are therefore less expensive for the carpoolers who share the costs."
         },
         {
-            "title":"Un logiciel libre",
-            "text":"La liberté numérique est au cœur des valeurs de Mobicoop. En faisant le choix de produire un site entièrement en logiciel libre nous garantissons ainsi la souveraineté numérique de tous les usagers du covoiturage et la protection des données. Chacun peut contribuer au code source et faire de la mobilité partagée un bien commun."
+            "title": "Free software",
+            "text": "Digital freedom is at the heart of Mobicoop's values. By choosing to produce a site entirely from free software, we guarantee the digital sovereignty of all carpooling users and the protection of data. Everyone can contribute to the source code and make shared mobility a common good."
         },
         {
-            "title":"La coopérative du covoiturage",
-            "text":"Mobicoop est une coopérative, la plateforme appartient donc à ses sociétaires dans la logique 1 sociétaire = 1 voix. Ce statut permet une gouvernance ouverte entre sociétaires, salariés, utilisateurs de la plateforme et clients. Toutefois il n’est pas obligatoire d’être sociétaire pour utiliser le service de covoiturage."
+            "title": "The carpooling cooperative",
+            "text": "Mobicoop is a cooperative, so the platform belongs to its members on the principle of 1 member = 1 vote. This status allows for open governance between members, employees, platform users and customers. However, it is not mandatory to be a member to use the carpooling service."
         }
     ]
 }
