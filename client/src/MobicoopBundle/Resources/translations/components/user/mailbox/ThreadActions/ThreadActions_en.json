@@ -1,9 +1,9 @@
 {
-    "notLinkedToACarpool": "There is no carpool linked to this thread",
+    "notLinkedToACarpool": "This discussion thread is not linked to a carpool",
     "roundTrip": "Round trip",
-    "urlGetAdAsk": "/user/messages/actions/infos",
+    "urlGetAdAsk": "/user/messages/actions/info",
     "regular": {
-        "ask": "Ask a regular carpool"
+        "ask": "Propose a regular carpool"
     },
     "distance": "Distance",
     "distanceTooltip": "Carpooled distance including driver detour",

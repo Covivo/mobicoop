@@ -2,6 +2,6 @@
     "title": "My communities",
     "getCommunities": "/user/communities",
     "availableCommunities": "Available communities",
-    "urlCommunityList": "/community",
-    "urlCommunityDetails": "/community/{id}/{urlKey}"
+    "urlCommunityList": "/carpool-communities",
+    "urlCommunityDetails": "/carpool-community/{id}/{urlKey}"
 }

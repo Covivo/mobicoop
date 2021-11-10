@@ -1,5 +1,5 @@
 {
-    "at": "at",
+    "at": "on",
     "Mon": "Mon",
     "Tue": "Tue",
     "Wed": "Wed",
@@ -7,6 +7,6 @@
     "Fri": "Fri",
     "Sat": "Sat",
     "Sun": "Sun",
-    "userDelete": "Unsubscribe user",
-    "unread":"{nb} non lus"
+    "userDelete": "Unsubscribed user",
+    "unread": "{nb} unread"
 }

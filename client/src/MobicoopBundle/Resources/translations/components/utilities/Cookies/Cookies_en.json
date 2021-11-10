@@ -1,32 +1,32 @@
 {
-    "title": "Gestion des cookies",
-    "privateLife": "Vie privée",
-    "yourBrowseryourChoice": "Vous avez le choix",
-    "store":"Enregister",
-    "working":{
-        "line1":"Pour son fonctionnement, ce site utilise des cookies",
-        "line2":"Choisissez librement les cookies que vous souhaitez activer"
+    "title": "Cookie management",
+    "privateLife": "Privacy",
+    "yourBrowseryourChoice": "{appName} lets you choose",
+    "store": "Register",
+    "working": {
+        "line1": "For its operation, this site uses cookies",
+        "line2": "Choose freely the cookies you wish to activate"
     },
-    "privacyPolicy":{
-        "text": "Plus de détails sur notre gestion des données dans la",
+    "privacyPolicy": {
+        "text": "More details on our data management in the",
         "link": {
-            "label":"Politique de confidentialité",
-            "uri":"/protection-donnees"
+            "label": "Privacy policy",
+            "uri": "/data-protection"
         }
     },
-    "checkboxes":{
-        "connectionActive":{
-            "desc":"Maintenir votre connexion active",
-            "mandatoryOrNot":"Cookie nécessaire"
+    "checkboxes": {
+        "connectionActive": {
+            "desc": "Keep your connection active",
+            "mandatoryOrNot": "Cookie required"
         },
-        "stats":{
-            "desc":"Nous partager les statistiques anonymes de votre visite",
-            "mandatoryOrNot":"Cookie optionnel",
-            "details":"Ces statistiques sont sans finalité commerciale. Elles nous aident à améliorer le service"
+        "stats": {
+            "desc": "We share anonymous statistics about your visit",
+            "mandatoryOrNot": "Optional cookie",
+            "details": "These statistics have no commercial purpose. They help us to improve the service"
         },
-        "social":{
-            "desc":"Permettre inscription et connexion via les réseaux sociaux",
-            "mandatoryOrNot":"Cookie optionnel"
+        "social": {
+            "desc": "Allow registration and login via social networks",
+            "mandatoryOrNot": "Optional cookie"
         }
     }
 }

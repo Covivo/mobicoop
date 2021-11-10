@@ -1,4 +1,4 @@
 {
-    "cannotBePaid": "Aucun paiement ne peut être reçu : il manque des informations d'identité bancaire",
-    "canBePaid": "Vous pouvez recevoir des paiements"
+    "cannotBePaid": "No payment can be received: bank details are missing",
+    "canBePaid": "You can receive payments"
 }

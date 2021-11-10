@@ -1,5 +1,48 @@
 {
     "redirect": {
         "route": "/communities"
-    }
+    },
+    "error": {
+        "image": "The image has not been saved",
+        "community": {
+            "required": "All fields marked with an asterisk are required",
+            "create": "The community creation failed",
+            "name": "This community already exists please use another name"
+        }
+    },
+    "form": {
+        "domain": {
+            "error": "Please enter a domain name in the correct format",
+            "tooltips": "If you wish to restrict access to the community to specific email domains, enter these domain names (example: mon entreprise.fr) separated by a ;",
+            "label": "Domain restriction"
+        },
+        "address": {
+            "required": "The address of the community is required",
+            "label": "Address of the community*"
+        },
+        "avatar": {
+            "size": "You have exceeded the maximum avatar size",
+            "required": "The community avatar is required",
+            "label": "Community avatar*"
+        },
+        "fullDescription": {
+            "required": "The detailed description of the community is required",
+            "label": "Detailed description of the community*"
+        },
+        "description": {
+            "required": "The short description of the community is required",
+            "label": "Short description of the community*"
+        },
+        "name": {
+            "required": "The community name is required",
+            "label": "Name of the community*"
+        }
+    },
+    "buttons": {
+        "create": {
+            "route": "/community/create",
+            "label": "Create the community"
+        }
+    },
+    "title": "Create your community"
 }

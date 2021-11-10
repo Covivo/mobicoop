@@ -1,11 +1,11 @@
 {
     "carpools": {
-        "active": "Covoiturages en cours",
-        "archived": "Covoiturages passés"
+        "active": "Active carpools",
+        "archived": "Archived carpools"
     },
-    "needCarpoolProofs": "Besoin d’une preuve de covoiturage ?",
-    "clickAndGetFile": "En cliquant sur «Exporter» vous pouvez télécharger tous vos covoiturages au format pdf.",
-    "export": "Exporter",
-    "tooltip": "Actif dès que des covoiturages seront validés",
+    "needCarpoolProofs": "Need carpool proofs?",
+    "clickAndGetFile": "Click on \"Export\" to download your carpools in PDF format.",
+    "export": "Export",
+    "tooltip": "Active as soon as carpools are validated",
     "exportUrl": "/utilisateur/profil/modifier/mes-covoiturages-acceptes/export"
 }

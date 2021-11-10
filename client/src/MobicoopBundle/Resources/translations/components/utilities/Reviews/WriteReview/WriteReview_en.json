@@ -1,6 +1,6 @@
 {
-    "label":"You can write your review",
-    "leaveReviewUri":"/user/review/write",
-    "validate":"Validate",
-    "fail":"Erreur dans le dépot de l'avis"
+    "label": "You can write your review",
+    "leaveReviewUri": "/user/review/write",
+    "validate": "Validate",
+    "fail": "Error in filing the review"
 }

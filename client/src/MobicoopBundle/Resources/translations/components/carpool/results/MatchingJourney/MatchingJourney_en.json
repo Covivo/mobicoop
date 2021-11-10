@@ -1,26 +1,26 @@
 {
-    "priceTooltip": "",
-    "detailTitle": "Journey detail",
-    "places": "{seats} seat | {seats} seats",
-    "carpool": "Carpool",
-    "carpoolAsDriver": "Carpool as driver",
-    "carpoolAsPassenger": "Carpool as passenger",
-    "confirmCarpoolTitle": "Confirm the carpool",
-    "confirmCarpool": "Vous allez faire une demande formelle de covoiturage à {carpooler} qui pourra accepter ou refuser le covoiturage",
+    "priceTooltip": "Indicative price",
+    "detailTitle": "Carpool details",
+    "places": "{seats} place | {seats} places",
+    "carpool": "Make a request",
+    "carpoolAsDriver": "Make a request as driver",
+    "carpoolAsPassenger": "Make a request as a passenger",
+    "confirmCarpoolTitle": "Confirm the request",
+    "confirmCarpool": "You will make a formal request for carpooling to {carpooler} who will be able to accept or refuse the carpool",
     "confirm": "Confirm",
     "cancel": "Cancel",
     "alreadyAskCarpool": "You have already made a request on this proposal.",
-    "alreadyInitiatedCarpool": "Vous avez déjà pris contact sur cette annonce.",
+    "alreadyInitiatedCarpool": "You have already made contact on this proposal.",
     "seeMessages": {
-        "label": "Voir messages",
-        "route": "/utilisateur/messages"
+        "label": "View messages",
+        "route": "/user/messages"
     },
     "birthYears": "years",
     "contact": "Contact",
     "contactTips": {
-        "acceptedAsk": "Vous avez déjà planifié un covoiturage avec ce covoitureur",
-        "pendingAsk": "Une demande vers ce covoitureur est en attente de réponse",
-        "initiatedAsk": "Une demande vers ce covoitureur est en attente de réponse"
+        "acceptedAsk": "You have already planned a carpooling with this carpooler",
+        "pendingAsk": "A request to this carpooler is waiting for a response",
+        "initiatedAsk": "A request to this carpooler is waiting for a response"
     },
     "outward": "Choose outward",
     "return": "Choose return",
@@ -29,10 +29,10 @@
     "fromDate": "From",
     "maxDate": "To",
     "ranges": [
-        "1 semaine",
-        "1 mois",
-        "3 mois",
-        "Jusqu'au"
+        "1 week",
+        "1 month",
+        "3 months",
+        "Until"
     ],
     "i18n": {
         "date": {
@@ -48,10 +48,14 @@
             }
         }
     },
-    "fraudWarningText":{
-        "part1":"Sur Mobicoop, les paiements pour vos covoiturages se réalisent essentiellement ",
-        "link":"/user/profile/update/accepted-carpools",
-        "textLink":"à la main ou en ligne ",
-        "part2":"ou en monnaie locale et libre. Nous déconseillons nos utilisateurs d'accepter d'autres moyens de paiement type coupons PCS ou Transcash généralement associés à des pratiques frauduleuses . Vous pouvez nous signaler un·e utilisateur·rice depuis son profil."
+    "fraudWarningText": {
+        "part1": "On Mobicoop, payments for your carpools are mainly made ",
+        "link": "/user/profile/change/my-accepted-carpools",
+        "textLink": "directly or online ",
+        "part2": "or in local and free currency. We advise our users not to accept other means of payment such as PCS or Transcash coupons generally associated with fraudulent practices. You can report a user to us from their profile."
+    },
+    "detour": {
+        "onlyDriver": "This calculated route includes a detour. Contact the driver.",
+        "default": "This calculated route contains a detour."
     }
 }
