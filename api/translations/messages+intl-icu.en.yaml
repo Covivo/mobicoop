@@ -1,368 +1,397 @@
 #BASE
-hello: "Bonjour"
-AQuestion: "Une question?"
+hello: "Welcome"
+AQuestion: "Do you have a question?"
 FAQ: "FAQ"
-EmailsAlerts: "Gérer vos alertes email"
-URLEmailsAlerts: "utilisateur/profil/modifier/mon-profil"
-Download: "Téléchargez l'application <b>Android</b> ou <b>IOS</b>"
-FollowUs: "Suivez-nous"
-signature: "A bientôt sur"
-shortdayMonday: "Lu"
-shortdayTuesday: "Ma"
-shortdayWednesday: "Me"
-shortdayThursday: "Je"
-shortdayFriday: "Ve"
-shortdaySaturday: "Sa"
-shortdaySunday: "Di"
+EmailsAlerts: "Manage your email alerts"
+URLEmailsAlerts: "user/profile/change/my-profile"
+Download: "Download the application <b>Android</b> or <b>IOS</b>"
+FollowUs: "Follow us"
+signature: "See you soon on"
+shortdayMonday: "Mon"
+shortdayTuesday: "Tue"
+shortdayWednesday: "Wed"
+shortdayThursday: "Thurs"
+shortdayFriday: "Fri"
+shortdaySaturday: "Sat"
+shortdaySunday: "Sun"
 
 # CONTACT OBJECTS
-contactInfos: "Nouvelle demande de renseignements"
-contactTechnicalIssues: "Nouvelle demande de support"
-contactPartnership: "Nouvelle demande de partenariat"
-contactCommunity: "Demande de création de communauté"
+contactInfos: "New request for information"
+contactTechnicalIssues: "New support request"
+contactPartnership: "New partnership request"
+contactCommunity: "Community creation request"
 
 # CARPOOL_AD_RENEWAL
 
-beCarefulFewDaysAnnouncementNotValid: "Attention dans quelques jours vos trajets enregistrés ne seront plus valables sur votre profil et ne seront donc plus visibles par les autres covoitureurs"
-nowYouAreMore: "Vous êtes maintenant plus de"
-toUseTheService: "à utiliser le service ! Partagez vos trajets et trouvez votre bonheur"
+beCarefulFewDaysAnnouncementNotValid: "Please note that in a few days your recorded\
+  \ journeys will no longer be valid on your profile and will therefore no longer\
+  \ be visible to other carpoolers"
+nowYouAreMore: "You have now"
+toUseTheService: "been using the service longer! Share your journeys and find your\
+  \ happiness"
 
 # CARPOOL_ASK_ACCEPTED
-acceptedCarpool: "VOTRE COVOITURAGE EST CONFIRMÉ !"
-yourCarpoolWith: "Votre covoiturage avec"
-isConfirmed: "est confirmé!"
-occasionalCarpool: "Récapitulatif de votre trajet occasionnel du"
-regularCarpool: "Récapitulatif de votre trajet régulier du"
-to: "au"
-outward: "ALLER"
-return: "RETOUR"
-multipleShedules: "Horaires multiples"
-pickUp: "Prise en charge à "
-dropOff: "Dépose à "
-seatsSelected: "Place(s) réservée(s) : "
-indicativePrice: "Prix indicatif : "
+acceptedCarpool: "YOUR CARPOOL IS CONFIRMED!"
+yourCarpoolWith: "Your carpool with"
+isConfirmed: "is confirmed!"
+occasionalCarpool: "Summary of your occasional trip from"
+regularCarpool: "Summary of your regular trip from"
+to: "to"
+outward: "OUTWARD"
+return: "RETURN"
+multipleShedules: "Multiple schedules"
+pickUp: "Pick up at "
+dropOff: "Drop off at "
+seatsSelected: "Place(s) reserved: "
+indicativePrice: "Indicated price: "
 # CARPOOL_PROPOSAL_POSTED
-newCarpoolAsk: "VOUS AVEZ UNE DEMANDE DE COVOITURAGE!"
-askForCarpool: "vous sollicite pour un covoiturage."
-occasionalCarpoolAsk: "Récapitulatif de la demande de covoiturage occasionnel le "
-regularCarpoolAsk: "Récapitulatif de la demande de covoiturage régulier du "
+newCarpoolAsk: "YOU HAVE A CARPOOL REQUEST!"
+askForCarpool: "is asking you for a carpool."
+occasionalCarpoolAsk: "Summary of the occasional carpooling request on "
+regularCarpoolAsk: "Summary of the request for regular carpooling from "
 # CARPOOL_ASK_REFUSED
-refusedCarpool: "VOTRE COVOITURAGE N'EST PAS VALIDÉ."
-refusedOccasionalCarpool: " n'a pas validé le covoiturage pour le trajet du "
-refusedRegularCarpool: " n'a pas validé le covoiturage pour le trajet régulier du "
-noPanic: "Pas de panique, vous pouvez rechercher un nouveau trajet ou publier une annonce."
+refusedCarpool: "YOUR CARPOOL IS NOT VALIDATED."
+refusedOccasionalCarpool: " did not validate the carpooling for the trip on "
+refusedRegularCarpool: " has not validated the carpooling for the regular trip on "
+noPanic: "Don't panic, you can search for a new trip or post a proposal."
 # CARPOOL_LINKED_AD_DELETED
-canceledCarpool: "VOTRE COVOITURAGE EST ANNULÉ."
-canceledOccasionalCarpool: " a annulé son trajet et ne pourra pas covoiturer avec vous le "
-canceledRegularCarpool: "  a annulé son trajet régulier et ne pourra pas covoiturer avec vous du "
-deletedAccountOccasionalCarpool: " a supprimé son compte et ne pourra pas covoiturer avec vous le "
-deletedAccountRegularCarpool: " a supprimé son compte et ne pourra pas covoiturer avec vous du "
-urlPublish: "/covoiturage/publierannonce"
+canceledCarpool: "YOUR CARPOOL IS CANCELLED."
+canceledOccasionalCarpool: " has canceled their trip and will not be able to carpool\
+  \ with you on "
+canceledRegularCarpool: "  has canceled their regular trip and will not be able to\
+  \ carpool with you on "
+deletedAccountOccasionalCarpool: " has deleted their account and will not be able\
+  \ to carpool with you on "
+deletedAccountRegularCarpool: " has deleted their account and will not be able to\
+  \ carpool with you on "
+urlPublish: "/carpool/postproposal"
 
 # CARPOOL_MATCHING_NEW
-newCarpoolAdMatchingYourCommute: "Une nouvelle annonce de covoiturage correspondant à votre trajet entre"
-seeYouIn: "Rendez-vous dans"
-myAds: "Mes annonces"
-linkMyAds: "/utilisateur/profil/modifier/mes-annonces"
-toConsultCorrespondingAdsAndMakeContact: "pour consulter les annonces correspondantes et prendre contact"
-justPublished: "vient d'être publiée"
+newCarpoolAdMatchingYourCommute: "A new carpooling proposal corresponding to your\
+  \ trip between"
+seeYouIn: "See you in"
+myAds: "My proposals"
+linkMyAds: "/user/profile/change/my-proposals"
+toConsultCorrespondingAdsAndMakeContact: "to view the corresponding proposals and\
+  \ get in touch"
+justPublished: "just posted"
 
 # CARPOOL UPDATED
-carpoolProposalUpdated: "L'annonce liée à votre demande a été modifiée"
-updatedCarpool: "Covoiturage modifié"
-hasBeenUpdated: "a été modifié"
-updateFieldsListTitle: "Voici le détail des informations modifiées :"
-field: "Champ"
-bike: "Vélo"
-backSeats: "2 à l'arrière"
-luggage: "Bagages volumineux"
-seatsDriver: "Sièges disponibles"
-comment: "Commentaire"
-old: "Ancien"
-new: "Nouveau"
-yes: "Oui"
-no: "Non"
-hasBeenCancelledBecause: "a été annulé car"
-hasUpdatedHisAd: "a modifié son annonce."
-cancelledCarpool: "Covoiturage annulé"
-ownerMessage: "Voici le message du propriétaire de l'annonce :"
-clickNewSearch: "Vous pouvez cliquer sur ce lien afin de relancer votre recherche"
-updatedCarpoolDetails: "Des détails de votre covoiturage de {origin} à {destination} ont été modifiés par"
+carpoolProposalUpdated: "The proposal related to your request has been changed"
+updatedCarpool: "Carpooling changed"
+hasBeenUpdated: "has been changed"
+updateFieldsListTitle: "Here are the details of the information changed:"
+field: "Field"
+bike: "Bicycle"
+backSeats: "2 in the back"
+luggage: "Bulky luggage"
+seatsDriver: "Seats available"
+comment: "Comment"
+old: "Old"
+new: "New"
+yes: "Yes"
+no: "No"
+hasBeenCancelledBecause: "was canceled because"
+hasUpdatedHisAd: "changed their proposal."
+cancelledCarpool: "Carpooling canceled"
+ownerMessage: "Here is the message from the owner of the proposal:"
+clickNewSearch: "You can click on this link to relaunch your search"
+updatedCarpoolDetails: "Details of your carpooling from {origin} to {destination}\
+  \ have been changed by"
 
 # COMMUNICATION_INTERNAL_MESSAGE_RECEIVED
 
-youHaveAMessage: "Vous avez reçu un nouveau message"
-canAnswerViaEmailFrom: "Vous pouvez répondre à ce message via la messagerie de"
-clickHere: "en cliquant ici"
-doNotReply: "Merci de ne pas répondre à ce mail directement."
-getProblem: "Si ce mail comporte un message ne respectant pas la charte, n'hésitez pas à nous contacter"
-mailBox: "votre messagerie"
+youHaveAMessage: "You have received a new message"
+canAnswerViaEmailFrom: "You can reply to this message via the mailbox of"
+clickHere: "and clicking here"
+doNotReply: "Please do not reply to this email directly."
+getProblem: "If this email contains a message that does not comply with the charter,\
+  \ do not hesitate to contact us"
+mailBox: "your mailbox"
 
 # CONTACT_EMAIL_POSTED
 
-newContactAsk: "Bonjour vous avez une nouvelle demande de contact"
-name: "Nom"
-firstname: "Prénom"
+newContactAsk: "Hello, you have a new contact request"
+name: "Name"
+firstname: "First name"
 email: "Email"
-ask: "Demande"
+ask: "Request"
 message: "Message"
-thankYou: "Merci"
-notMentioned: "Non renseigné"
-infos: "Informations"
-technicalIssues: "Problèmes techniques"
-partnership: "Demande de partenariat"
+thankYou: "Thank you"
+notMentioned: "Not specified"
+infos: "Information"
+technicalIssues: "Technical issues"
+partnership: "Partnership request"
 
 # USER_PASSWORD_CHANGED
 
-askNewPasswordTitle: "Nouveau mot de passe"
-askNewPassword: "Vous avez demandé un nouveau mot de passe"
-clickHereToChangePassword: "Veuillez cliquer sur ce lien pour changer votre mot de passe"
-linkChangePassword: "Lien de changement de mot de passe"
-urlUpdatePassword: "/utilisateur/mot-de-passe/reset/"
+askNewPasswordTitle: "New password"
+askNewPassword: "You requested a new password"
+clickHereToChangePassword: "Please click on this link to change your password"
+linkChangePassword: "Password change link"
+urlUpdatePassword: "/user/password/reset/"
 mobileUrlUpdatePassword: "/#/carpools/reset-password?token="
-yourPassword: "Votre mot de passe"
-successfullyChanged: "a bien été changé"
-thanksForUse: "Merci d’utiliser"
-changeYourPassword: "Changez votre mot de passe"
+yourPassword: "Your password"
+successfullyChanged: "has been changed"
+thanksForUse: "Please use"
+changeYourPassword: "Change your password"
 
 # USER_REGISTERED
-inscriptionAt: "VOTRE INSCRIPTION EST VALIDÉE!"
-yourInscriptionAt: "Votre inscription au service"
-yourInscriptionAtByTiers: "Votre inscription au service {instanceName} par un tiers"
-wellTakenIntoAccount: "est bien prise en compte"
-clickHereToConfirm: "Veuillez cliquer sur ce lien pour confirmer votre email"
-orUseTheValidationCode: "Ou utilisez le code de validation directement sur le site"
-urlEmailValidation: "/utilisateur/inscription/validation/"
+inscriptionAt: "YOUR REGISTRATION IS VALIDATED!"
+yourInscriptionAt: "Your service registration"
+yourInscriptionAtByTiers: "Your registration for the {instanceName} service by a third\
+  \ person"
+wellTakenIntoAccount: "has been taken into account"
+clickHereToConfirm: "Please click on this link to confirm your email"
+orUseTheValidationCode: "Or use the validation code directly on the site"
+urlEmailValidation: "/user/registration/validation/"
 urlMobileEmailValidation: "/#/confirm-registration/"
-yourPasswordIs: "Votre mot de passe est"
-yourPasswordHasBeenSendBySms: "Votre mot de passe vous a été envoyé par SMS."
+yourPasswordIs: "Your password is"
+yourPasswordHasBeenSendBySms: "Your password has been sent to you by text message."
 
 # USER_SEND_VALIDATION_EMAIL
-emailValidation: "Validation de votre adresse email"
-emailValidationUrl: "/utilisateur/email/validation/"
+emailValidation: "Validation of your email address"
+emailValidationUrl: "/user/email/validation/"
 
 # USER_UPDATED_SELF
 
-theModificationIsConfirmed: "La modification de votre profil est confirmée"
-profilUpdate: "MISE À JOUR DE VOTRE PROFIL CONFIRMÉE!"
+theModificationIsConfirmed: "Your profile change is confirmed"
+profilUpdate: "YOUR PROFILE UPDATE IS CONFIRMED!"
 
-urlMailBox: "/utilisateur/messages"
+urlMailBox: "/user/messages"
 CheckoutForAnyURLMisspellingOr: "messages"
 
 # DRIVER_CARPOOL_LINKED_AD_DELETED
 
-yourCarpoolBetween: "Votre covoiturage entre"
-yourAskCarpoolBetween: "Votre demande de covoiturage entre"
-withThePassenger: "avec le.la passager.ère"
-withTheDriver: "avec le.la conducteur.rice"
-with: "avec"
-isCanceledBecause: "a été annulé, car"
-hasDeletedTheAssociateAd: "a supprimé son annonce associée."
-clickOnLinkToSearchAgain: "Cliquez sur ce lien pour relancer votre recherche"
-noPenaltyApplied: "Il n'y a pas de pénalité pour l'annulation de ce covoiturage. Cependant afin de garantir la fiabilité des annonces et protéger les covoitureurs d'annulations trop répétées, nous nous réservons le droit de suspendre les possibilités de publier des annonces si un covoitureur annule trop souvent."
+yourCarpoolBetween: "Your carpooling between"
+yourAskCarpoolBetween: "Your carpooling request between"
+withThePassenger: "with the passenger"
+withTheDriver: "with the driver"
+with: "with"
+isCanceledBecause: "has been canceled because"
+hasDeletedTheAssociateAd: "has deleted their associated proposal."
+clickOnLinkToSearchAgain: "Click on this link to relaunch your search"
+noPenaltyApplied: "There is no penalty for canceling this carpooling. However, in\
+  \ order to guarantee the reliability of the proposals and to protect the carpoolers\
+  \ from too frequent cancellations, we reserve the right to suspend the possibilities\
+  \ of posting proposals if a carpooler cancels too often."
 
 # EVEN CREATED
 
-eventCreated: "Votre événement a bien été enregistré!"
-event: "VOTRE ÉVÉNEMENT EST ENREGISTRÉ!"
-eventDetail: "Voici les détails de votre événement :"
-eventName: "Nom: "
-eventLocation: "Adresse: "
+eventCreated: "Your event has been registered!"
+event: "YOUR EVENT IS REGISTERED!"
+eventDetail: "Here are the details of your event:"
+eventName: "Name: "
+eventLocation: "Address: "
 eventDescription: "Description: "
-eventUrl: "/covoiturages-evenements/"
+eventUrl: "/carpooling-events/"
 
 # EVENT REPORT
 
-eventReportTitle: "Signalement d'un événement"
-eventReport: "Un événement a été signalé"
-theUser: "L'utilisateur"
-reportThatEvent: "à signaler l'événement"
-detailsTextEventReport: "Les détails sur le signalement :"
+eventReportTitle: "Event report"
+eventReport: "An event has been reported"
+theUser: "User"
+reportThatEvent: "has reported the event"
+detailsTextEventReport: "Detail of the report:"
 
 # USER REPORT
 
-userReportTitle: "Signalement d'un usager"
-userReport: "Un Usager a été signalé"
-theReportedUser: "Il s'agit de {givenName} {familyName} ({email})"
-theReporterUser: "L'email de l'usager ayant fait le signalement est {emailReporter}"
-detailsTextUserReport: "Les détails sur le signalement :"
+userReportTitle: "Report by a user"
+userReport: "A user has reported"
+theReportedUser: "This is {givenName} {familyName} ({email})"
+theReporterUser: "The email address of the user who made the report is {emailReporter}"
+detailsTextUserReport: "The report details:"
 
 # REVIEW
-reviewReceivedTitle: "Vous avez reçu un avis"
-reviewReceived: "Vous avez reçu un avis de la part de {givenName} {shortFamilyName}"
-seeReview: "Vous pouvez consulter cet avis en vous rendant dans votre profil"
+reviewReceivedTitle: "You have received a review"
+reviewReceived: "You have received a review from {givenName} {shortFamilyName}"
+seeReview: "You can view this review by going to your profile"
 
 ######      SMS      ######
 
 # CARPOOL_AD_RENEWAL
 
-inFewDays: "Dans quelques jours,  vos annonces de covoiturage ne seront plus valides"
-renewYourAdsOn: "Renouvelez votre annonce sur"
+inFewDays: "In a few days, your carpooling proposals will no longer be valid"
+renewYourAdsOn: "Renew your proposal on"
 
 # CARPOOL_ASK_ACCEPTED
 
-carpoolAskAcceptedRegular: "Covoiturage régulier confirmé avec "
-between: "entre "
-and: "et "
-the: "le "
-from: "de "
-at: "à "
-seeTheAd: "Voir l annonce sur "
-carpoolAskAccepted: "Covoiturage confirmé avec "
+carpoolAskAcceptedRegular: "Regular carpooling confirmed with "
+between: "between "
+and: "and "
+the: "on "
+from: "from "
+at: "to "
+seeTheAd: "View the proposal on "
+carpoolAskAccepted: "Carpooling confirmed with "
 
 # CARPOOL_ASK_POSTED
 
-askYouCarpoolRegular: "vous propose un covoiturage régulier de "
-findTheProposalIn: "Acceptez ou refusez la demande dans 'Mes Messages' sur "
-askYouCarpool: "vous propose un covoiturage de"
-clickHereToValidate: "Cliquez ici pour répondre à cette demande de covoiturage via votre messagerie"
+askYouCarpoolRegular: "offers you regular carpooling from "
+findTheProposalIn: "Accept or decline the request in 'My Messages' on "
+askYouCarpool: "offers you a carpooling from"
+clickHereToValidate: "Click here to respond to this carpooling request via your mailbox"
 
 # CARPOOL_ASK_REFUSED
 
-refusedAsk: "n a pas validé le covoiturage de "
-refusedAskReguar: "n a pas validé le covoiturage régulier de "
-goTotheSite: "Trouvez de nouveaux covoiturages ou déposez une annonce sur "
+refusedAsk: "has not validated the carpooling on "
+refusedAskReguar: "has not validated the regular carpooling on "
+goTotheSite: "Search for new carpools or post a proposal on "
 
 # CARPOOL_MATCHING_NEW
 
-newAdPublished: "Une nouvelle annonce correspond à votre trajet"
-appointmentIn: "Rdv dans 'Mes annonces' sur"
-newMatching: "Une nouvelle annonce a été publiée pour votre trajet"
+newAdPublished: "A new proposal matches your trip"
+appointmentIn: "Reply in 'My proposals' on"
+newMatching: "A new proposal has been posted for your trip"
 
 # CARPOOL_INTERNAL_MESSAGE_RECEIVED
 
-newMessage: "Vous avez reçu un nouveau message de"
-lookYourMessaging: "RDV dans 'Mes Messages' sur "
+newMessage: "You have received a new message from"
+lookYourMessaging: "Reply in 'My Messages' on "
 
 ######      TITLE      ######
 
 # CARPOOL_AD_RENEWAL
 
-renewYourAd: "Pensez à renouveler votre annonce de covoiturage"
+renewYourAd: "Consider renewing your carpooling proposal"
 
 # CARPOOL_ASK_ACCEPTED
 
-carpoolRecap: "Récapitulatif covoiturage"
+carpoolRecap: "Carpool summary"
 
 # CARPOOL_ASK_POSTED
 
-carpoolAsk: "Demande de covoiturage"
+carpoolAsk: "Carpooling request"
 
 # CARPOOL_ASK_REFUSED
 
-askRefused: "Proposition de covoiturage déclinée"
+askRefused: "Carpooling request declined"
 # CARPOOL_ASK_UPDATED
 
-carpoolWaitingForValidation: "Covoiturage en attente de validation"
+carpoolWaitingForValidation: "Carpooling waiting for validation"
 
 # CARPOOL_MATCHING_NEW
 
-newCarpoolAd: "Nouvelle(s) annonce(s) de covoiturage"
+newCarpoolAd: "New carpooling proposal(s)"
 
 # CARPOOL_PROPOSAL_POSTED
 
-newAd: "Nouvelle(s) annonce(s) sur "
+newAd: "New proposal(s) on "
 
 # AD_DELETED
-carpoolDeleted: "a annulé son trajet et ne pourra pas covoiturer avec vous de"
-accountDeleted: "a supprimé son compte et ne pourra pas covoiturer avec vous de"
-askLinkedAdDeleted: "Une annonce à laquelle vous aviez postulé a été supprimée"
-driverAskLinkedAdDeleted: "Une annonce pour laquelle vous êtiez conducteur a été supprimée"
-driverAskLinkedAdDeletedUrgent: "Urgent - Une annonce pour laquelle vous êtiez conducteur a été supprimée"
-passengerAskLinkedAdDeleted: "Une annonce pour laquelle vous êtiez passagé a été supprimée"
-passengerAskLinkedAdDeletedUrgent: "Urgent - Une annonce pour laquelle vous êtiez passagé a été supprimée"
-findNewCarpool: "Trouvez de nouveaux covoiturages ou déposez une annonce sur "
+carpoolDeleted: "has canceled their trip and will not be able to carpool with you\
+  \ from"
+accountDeleted: "has deleted their account and will not be able to carpool with you\
+  \ from"
+askLinkedAdDeleted: "A proposal you applied for has been deleted"
+driverAskLinkedAdDeleted: "A proposal for which you were the driver has been deleted"
+driverAskLinkedAdDeletedUrgent: "Urgent - A proposal for which you were the driver\
+  \ has been deleted"
+passengerAskLinkedAdDeleted: "A proposal for which you were a passenger has been deleted"
+passengerAskLinkedAdDeletedUrgent: "Urgent - A proposal for which you were a passenger\
+  \ has been deleted"
+findNewCarpool: "Search for new carpoolings and post a proposal on "
 
 # COMMUNICATION_INTERNAL_MESSAGE_RECEIVED
 
-contactYou: "{givenName} vous contacte"
+contactYou: "{givenName} contacted you"
 
 # USER_PASSWORD_CHANGED
 
-askPassword: "Demande de ré-initialisation de mot de passe"
-renewPassword: "DEMANDE DE RE-INITIALISATION DE MOT DE PASSE."
-newPassword: "VOTRE NOUVEAU MOT DE PASSE EST BIEN ENREGISTRÉ!"
-passwordChanged: "Confirmation de ré-initialisation de mot de passe"
+askPassword: "Password reset request"
+renewPassword: "PASSWORD RESET REQUEST."
+newPassword: "YOUR NEW PASSWORD HAS BEEN SAVED!"
+passwordChanged: "Password reset confirmation"
 
 # USER_REGISTERED
 
-yourInscription: "Votre inscription"
+yourInscription: "Your registration"
 errors:
-  wrongDomains: "Votre adresse email doit être dans un de ces domaines : {domains}"
-  alreadyUsed: "Cette adresse e-mail est déjà utilisée"
+  wrongDomains: "Your email address must be in one of these domains: {domains}"
+  alreadyUsed: "This email address is already in use"
 # USER_UPDATED_SELF
 
-updatedSefl: "Modification de votre profil"
+updatedSefl: "Change your profile"
 
 # USER_GENERATE_PHONE_TOKEN_ASKED
 
-yourValidationToken: "Votre code de validation"
+yourValidationToken: "Your validation code"
 
 # EMAIL ADDITIONAL HEADERS (ouestgo)
 header1Name: "X-JEMH-assignee"
 header1Data: "jira-ouestgo"
-header2Name: "X-JEMH-Adresse mail interlocuteur"
+header2Name: "X-JEMH-Address mail contact"
 header2Data: "senderEmail"
-header3Name: "X-JEMH-Nom et prenom interlocuteur"
+header3Name: "X-JEMH-Name and contact first name"
 header3Data: "senderName"
 
 # EMAIL Masscommunication : send from admin
-urlUnsubscribeEmail: "/utilisateur/unsubscribe"
-unsubscribeEmail: "Cliquez ici pour vous désabonner des Actualités du service {instanceName}"
-unsubscribeEmailAlertFront: "Vous êtes bien désinscrit des Actualités du service {instanceName}. Pour vous réinscrire ultérieurement, vous pouvez vous rendre dans Profil > Mon compte."
+urlUnsubscribeEmail: "/user/unsubscribe"
+unsubscribeEmail: "Click here to unsubscribe from the news from the {instanceName}\
+  \ service"
+unsubscribeEmailAlertFront: "You have successfully unsubscribed from the news from\
+  \ the {instanceName} service. To re-register later, you can go to Profile > My account."
 
 # External Contact
-externalContact: "Contact pour un covoiturage"
-rdexMessage: "Son message"
-youReceivedExternalContact: "Vous avez reçu un message de la part d'un covoitureur inscrit sur"
+externalContact: "Contact for a carpooling"
+rdexMessage: "Their message"
+youReceivedExternalContact: "You have received a message from a carpooler registered\
+  \ on"
 youReceivedExternalContactOrigin: "{origin}"
-noDirectResponse: "Cet usager étant inscrit sur une autre platforme de covoiturage, vous ne pouvez pas lui répondre via {instanceName}."
-useDirectContact: "Vous pouvez utiliser les coordonnées qu'il vous a, en principe, transmis dans son message pour le contacter directement."
-journeyDetail: "Ce message concerne votre trajet de"
+noDirectResponse: "As this user is registered on another carpooling platform, you\
+  \ cannot reply to them via {instanceName}."
+useDirectContact: "You can use the contact details that they gave you, in principle,\
+  \ in their message to contact them directly."
+journeyDetail: "This message concerns your journey from"
 journeyDetailOrigin: "{journeyOrigin}"
-journeyDetailTo: "à"
+journeyDetailTo: "to"
 journeyDetailDestination: "{journeyDestination}"
-journeyDetailTime: "prévu le {journeyDate} à {journeyTime}."
+journeyDetailTime: "scheduled for {journeyDate} at {journeyTime}."
 
 # Mobimatch
-massMigrated: "Votre compte de covoiturage"
-temporaryPasswordAttributed: "Un mot de passe temporaire vous a été attribué"
+massMigrated: "Your carpooling account"
+temporaryPasswordAttributed: "You have been assigned a temporary password"
 temporaryPassword: "{password}"
-changePassword: "Nous vous encourageons fortement à le modifier lors de votre prochaine connexion"
-massAnalyzeErrors: "L'analyse de l'import n°{massId} comporte des erreurs"
-massMatched: "Calcul du potentiel de covoiturage n°{massId}"
-massMatchedOverTitle: "Calcul du potentiel de covoiturage"
-massMatchedOver: "Le calcul du potentiel de covoiturage de l'import n°{massId} est terminé"
-massPublicTransportPotentialTitle: "Calcul du potentiel de transport en commun"
-massPublicTransportPotentialOver: "Le calcul du potentiel de transport en commun de l'import n°{massId} est terminé"
+changePassword: "We strongly encourage you to change it the next time you log in"
+massAnalyzeErrors: "The analysis of the import No. {massId} contains errors"
+massMatched: "Calculation of the carpooling potential No. {massId}"
+massMatchedOverTitle: "Calculate the carpooling potential"
+massMatchedOver: "The calculation of the carpooling potential of import No. {massId}\
+  \ is completed"
+massPublicTransportPotentialTitle: "Calculation of the public transportation potential"
+massPublicTransportPotentialOver: "The calculation of the public transport potential\
+  \ of import No. {massId} is completed"
 
 # Solidary
-solidaryContact: "Un administrateur solidaire vous contacte"
+solidaryContact: "A solidarity administrator will contact you"
 
 # COMMUNITY_NEW_MEMBERSHIP_REQUEST
-newMembershipSubscriber: " a demandé à rejoindre la communauté "
-seeYouInAdmin: "Rendez-vous dans le module d'administration pour valider son adhésion : "
-communityNewMembershipRequest: "NOUVEAU - Un nouvel utilisateur veut rejoindre votre communauté"
-thankYouTeam: "Merci, l'équipe {instanceName}."
+newMembershipSubscriber: " to ask to join the community "
+seeYouInAdmin: "Go to the administration module to approve their membership: "
+communityNewMembershipRequest: "NEW - A new user wants to join your community"
+thankYouTeam: "Thank you, the team {instanceName}."
 
 # CONFIRM_DIRECT_PAYEMENT
-hasPayed: "vous a-t-il bien payé à la main ?"
-hasIndicatedThatCarpool: "a marqué votre covoiturage de"
-hasIndicatedThatTheWeek: "a marqué la semaine du"
-carpoolRegular: "de covoiturage entre"
+hasPayed: "did they pay you directly?"
+hasIndicatedThatCarpool: "has flagged your carpooling on"
+hasIndicatedThatTheWeek: "has flagged the week of"
+carpoolRegular: "the carpooling between"
 asPayedByhand: "comme payé à la main."
-clickOnlinkToConfirmOrNot: "Cliquez sur le lien suivant pour confirmer ce paiement à la main, ou au contraire signaler un impayé : "
-goToAcceptedCarpoolsTovalidate: "Rendez-vous dans « Covoiturages acceptés » pour confirmer ce paiement à la main, ou au contraire signaler un impayé."
-linkValidatePaymentLabel: "Valider un paiement."
-linkValidatePaymentRoute: "/utilisateur/profil/modifier/mes-covoiturages-acceptes"
+clickOnlinkToConfirmOrNot: "Click on the following link to confirm this direct payment,\
+  \ or on the contrary to report an payment not paid: "
+goToAcceptedCarpoolsTovalidate: "Go to \"Carpools accepted\" to confirm this direct\
+  \ payment, or on the contrary to report a payment not paid."
+linkValidatePaymentLabel: "Validate a payment."
+linkValidatePaymentRoute: "/user/profile/change/my-accepted-carpoolings"
 
 #IDENTITY_PROOF_ACCEPTED
-identityProofAccepted: "Document d’identité accepté"
-yourProofIsAccepted: "Votre document d’identité transmis a été vérifié et accepté."
+identityProofAccepted: "Identity document accepted"
+yourProofIsAccepted: "The identity document you sent has been verified and accepted."
 
 #IDENTITY_PROOF_REJECTED
-identityProofRejected: "Document d’identité rejeté"
-yourProofIsRejected: "Votre document d’identité transmis a été rejeté. Veuillez transmettre un autre document d’identité à jour pour pouvoir recevoir des paiements."
+identityProofRejected: "Identity document rejected"
+yourProofIsRejected: "The identity document you sent has been rejected. Please submit\
+  \ another up-to-date identity document to be able to receive payments."
 reason1: "Vos données personnelles ont changé veuillez valider à nouveau votre identité"
 reason2: "Document refusé car vous devez être majeur"
 reason3: "Document refusé car il fait l'objet d'une suspicion de falsification"
@@ -374,52 +403,59 @@ reason8: "Document refusé car illisible"
 reason9: "Document refusé car incomplet"
 
 #IDENTITY_PROOF_OUTDATED
-identityProofOutdated: "Document d’identité expiré"
-yourProofIsOutdated: "Votre document d’identité transmis a expiré. Veuillez transmettre un autre document d’identité à jour pour pouvoir recevoir des paiements"
+identityProofOutdated: "Identity document expired"
+yourProofIsOutdated: "The identity document you sent has expired. Please submit another\
+  \ up-to-date identity document to be able to receive payments"
 
 #PAY_AFTER_CARPOOL
-haveYouPayedYourDriver: "Avez-vous indemnisé votre covoitureur ?"
-isDone: "est terminé."
-clickOnLinkToPay: "Cliquez sur le lien suivant pour le marquer comme payé à la main si vous avez déjà réglé le conducteur ou le payer en ligne si vous ne l’avez pas encore indemnisé :"
-goToAcceptedCarpools: "Rendez-vous dans « Covoiturages acceptés » pour le marquer comme payé à la main ou le payer en ligne."
+haveYouPayedYourDriver: "Have you compensated your carpooler?"
+isDone: "is completed."
+clickOnLinkToPay: "Click on the following link to mark it as paid directly if you\
+  \ have already paid the driver or pay it online if you have not yet compensated\
+  \ the driver:"
+goToAcceptedCarpools: "Go to \"Carpools accepted\" to mark it as paid directly or\
+  \ pay for it online."
 
 #PAY_AFTER_CARPOOL_REGULAR
-haveYouPayedYourDriverForTheWeek: "Avez-vous payé les covoiturages de la semaine passée ?"
-yourWeekOfCarpool: "Votre semaine de covoiturage régulier, avec "
-click: "Cliquez ici."
+haveYouPayedYourDriverForTheWeek: "Have you paid for the carpools of the past week?"
+yourWeekOfCarpool: "Your regular carpooling week, with "
+click: "Click here."
 
 #SIGNAL_DEPT
-haveYouForgotToPayTheDriver: "Avez-vous oublié d’indemniser votre covoitureur ?"
-iContactYouAgainAboutPayment: "Je me permets de vous relancer concernant le paiement des covoiturages que nous avons réalisés ensemble pour un montant de"
-signalThatYouhaveToPay: "signale que vous ne l’avez pas encore indemnisé des"
-forTheCarpoolsYouHadTogether: "que vous lui deviez pour les covoiturages que vous avez réalisés ensemble."
-byJourney: "(par trajet)"
+haveYouForgotToPayTheDriver: "Have you forgotten to compensate your carpooler?"
+iContactYouAgainAboutPayment: "I am taking the liberty of getting back to you concerning\
+  \ the payment of the carpools that we have done together for an amount of"
+signalThatYouhaveToPay: "indicates that you have not yet been compensated for"
+forTheCarpoolsYouHadTogether: "that you owed them for the carpools you completed together."
+byJourney: "(per journey)"
 
 #EXPORT CARPOOL
-listCrapoolPayments: "Liste Paiements et covoiturages"
-carpoolRealizedBy: "Covoiturages réalisés par"
-onTheSite: "sur le site"
-totalPaid: "Total payé"
-totalReceived: "Total reçu"
-taxInfo : "Vous avez reçu plus de 300,00€ en 2020 : la loi vous impose de le déclarer aux impôts."
+listCrapoolPayments: "List of payments and carpoolings"
+carpoolRealizedBy: "Carpools carried out by"
+onTheSite: "on the site"
+totalPaid: "Total paid"
+totalReceived: "Total received"
+taxInfo: "You received more than € 300 in 2020: you are required by law to declare\
+  \ it for tax."
 date: "Date"
-role: "Rôle"
-carpooler: "Covoitureur"
-pickUpLocality: "Prise en charge"
-dropOffLocality: "Dépose"
+role: "Role"
+carpooler: "Carpooler"
+pickUpLocality: "Taken into account"
+dropOffLocality: "Drop off"
 amount: "Contribution"
-typeOfpayment: "Paiement"
-certified: "Certifié registre"
-seeProofsClasses: "voir les classes"
-driver: "Conducteur"
-passenger: "Passager"
-paymentNotDone: "Paiement non déclaré"
-onLinePayment: "Paiement en ligne"
-directPayment: "Paiement à la main"
+typeOfpayment: "Payment"
+certified: "Certified register"
+seeProofsClasses: "view the classes"
+driver: "Driver"
+passenger: "Passenger"
+paymentNotDone: "Payment not declared"
+onLinePayment: "Payment online"
+directPayment: "Direct payment"
 
 
 
 
 # GEOGRAPHY SERVICE
-domicile: 'home'
+domicile: 'homeAddress'
 homeAddress: 'Home'
+asPayed: as paid directly.

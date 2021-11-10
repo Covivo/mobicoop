@@ -1,7 +1,7 @@
 {
-    "priceTooltip": "",
-    "priceTooltipSolidaryExclusive": "",
-    "places": "",
+    "priceTooltip": "Indicative price",
+    "priceTooltipSolidaryExclusive": "Solidarity announcement only",
+    "places": "{seats} place | {seats} places",
     "shortDate": "ddd DD/MM",
     "hourMinute": "HH[h]mm"
 }

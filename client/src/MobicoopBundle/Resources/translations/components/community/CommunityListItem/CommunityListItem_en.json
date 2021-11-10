@@ -1,22 +1,29 @@
 {
     "leaveCommunity": {
         "button": "Leave community",
-        "route": "/community/{id}/leave"
+        "route": "/community/{id}/leave",
+        "popup": {
+            "content": {
+                "isNotProposalsHidden": "If you still have valid proposals associated with that community, those proposals will no longer be marked as being linked to the community once you leave.<br>Confirm?",
+                "isProposalsHidden": "If you still have valid proposals associated with this private community, those proposals will be deleted.<br>Confirm?"
+            },
+            "title": "Request for confirmation"
+        }
     },
     "snackbar": {
         "leaveCommunity": {
-            "textOk": "",
-            "textError": ""
+            "textOk": "You are no longer part of this community",
+            "textError": "An error has occurred please try again"
         }
     },
     "routes": {
         "community": "/carpool-community/{id}/{urlKey}",
         "communitySecuredRegister": "/community/{id}/secured/register"
     },
-    "communityDetails": "Community details",
+    "communityDetails": "View the community",
     "join": "Join the community",
-    "protected": "This community is only visible by its members",
-    "yes": "yes",
-    "no": "no",
-    "members":"{members} membres"
+    "protected": "This community is only visible to its members",
+    "yes": "Yes",
+    "no": "No",
+    "members": "{members} members"
 }

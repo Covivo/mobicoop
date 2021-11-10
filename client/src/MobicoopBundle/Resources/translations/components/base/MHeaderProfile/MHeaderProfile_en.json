@@ -1,19 +1,19 @@
 {
     "myAds": {
         "label": "My proposals",
-        "route": "/user/profile/update/myAds"
+        "route": "/user/profile/change/my-proposals"
     },
     "myAcceptedCarpools": {
         "label": "Accepted carpools",
-        "route": "/user/profile/update/carpoolsAccepted"
+        "route": "/user/profile/change/my-accepted-carpools"
     },
     "myProfile": {
         "label": "Profile",
-        "route": "/user/profile/update/myProfile"
+        "route": "/user/profile/change/my-profile"
     },
     "reviews": {
-        "label": "Avis",
-        "route": "/user/profile/update/reviews"
+        "label": "Review",
+        "route": "/user/profile/change/review"
     },
     "logOut": {
         "label": "Logout",

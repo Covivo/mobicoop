@@ -1,46 +1,46 @@
 {
-    "birthYears": "ans",
-    "seeDetails": "voir détails",
-    "externalResult":{
-        "go":"S'y rendre",
-        "contact":{
-            "button":{
-                "label":"Contacter",
-                "tooltip":"Vous devez être connecté pour contacter un covoitureur"
+    "birthYears": "years",
+    "seeDetails": "see details",
+    "externalResult": {
+        "go": "Getting there",
+        "contact": {
+            "button": {
+                "label": "Contact",
+                "tooltip": "You must be logged in to contact a carpooler"
             },
-            "popup":{
-                "title":"Contacter",
-                "intro":"Cette annonce ne provient pas de notre site de covoiturage mais du site partenaire {origin}",
-                "instructions":{
-                    "line1":"Merci de compléter ou de modifier le message ci-dessous.",
-                    "line2":"Pensez à laisser au moins un moyen de contact, tel que votre addresse email et/ou numéro de téléphone afin que le covoitureur du site partenaire puisse vous contacter"
+            "popup": {
+                "title": "Contact",
+                "intro": "This proposal does not come from our carpooling site but from the partner site {origin}",
+                "instructions": {
+                    "line1": "Please complete or modify the message below.",
+                    "line2": "Remember to leave at least one means of contact, such as your email address and/or telephone number so that the carpooler on the partner site can contact you"
                 },
-                "cancel":"Annuler",
-                "textarea":{
-                    "label":"Votre message",
-                    "content":{
-                        "hello":"Bonjour",
-                        "carpool":"Votre covoiturage entre {origin} et {destination} est susceptible de m'intéresser. Nous ne sommes pas inscrits auprès du même réseaux de covoiturage c'est pourquoi je vous laisse directement mes coordonnées pour que nous puissions nous contacter",
-                        "name":"Mon nom est {name}",
-                        "email":"Mon mail est {email}",
-                        "phone":"Mon numéro de téléphone est le {phone}",
-                        "seeya":"A bientôt"
+                "cancel": "Cancel",
+                "textarea": {
+                    "label": "Your message",
+                    "content": {
+                        "hello": "Welcome",
+                        "carpool": "Your carpooling between {origin} and {destination} is likely to interest me. We are not registered with the same carpooling network, so I am leaving you my contact details so that we can contact each other",
+                        "name": "My name is {name}",
+                        "email": "My email is {email}",
+                        "phone": "My phone number is {phone}",
+                        "seeya": "See you soon"
                     }
                 },
-                "send":"Envoyer"
+                "send": "Send"
             },
-            "urlSendContact":"/carpool/rdexConnection",
-            "return":{
-                "ok":"Le message a bien été envoyé.",
-                "error":"Suite à un problème technique le message n'a pas pu être envoyé"
+            "urlSendContact": "/carpool/rdexConnection",
+            "return": {
+                "ok": "The message has been sent.",
+                "error": "Due to a technical issue the message could not be sent"
             }
         }
     },
-    "needTobeConnected": "Vous devez être connecté pour effectuer cette action.",
-    "inDev": "En cours de développement.",
+    "needTobeConnected": "You must be logged in to perform this action.",
+    "inDev": "Under development.",
     "route": {
         "user": {
-            "message": "/utilisateur/messages"
+            "message": "/user/messages"
         }
     }
 }

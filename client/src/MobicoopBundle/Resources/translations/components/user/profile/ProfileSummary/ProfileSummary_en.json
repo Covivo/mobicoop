@@ -1,8 +1,9 @@
 {
-    "yearsOld":"years old",
-    "getProfileSummaryUri":"/user/profile/summary",
-    "infos":{
-        "carpoolRealized":"Carpool realized",
-        "answerPct":"Answering rates"
+    "yearsOld": "years old",
+    "getProfileSummaryUri": "/user/profile/summary",
+    "infos": {
+        "carpoolRealized": "Carpools completed",
+        "answerPct": "Response rate",
+        "lastConnection": "Last login"
     }
 }

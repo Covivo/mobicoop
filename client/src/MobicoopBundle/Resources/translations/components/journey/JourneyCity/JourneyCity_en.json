@@ -1,10 +1,10 @@
 {
-    "title": "Carpools city by city",
+    "title": "Carpools by city",
     "subtitle": "Get all the carpools for your city",
     "fromCity": "From city...",
     "toCity": "... to city",
-    "journeyFromCity": "Journey from {city}",
-    "journeyToCity": "Journey to {city}",
+    "journeyFromCity": "Carpool from {city}",
+    "journeyToCity": "Carpool to {city}",
     "routeFromCity": "/cities/carpool/{city}",
     "routeToCity": "/cities/carpool-to-{city}"
 }

@@ -1,7 +1,7 @@
 {
-    "tooltip":"Leave a review",
-    "intro":{
-        "part1":"Vous pouvez laisser un avis à {user}",
-        "part2":"Ce commentaire sera visible de tous les utilisateurs."
+    "tooltip": "Leave a review",
+    "intro": {
+        "part1": "You can leave a review for {user}",
+        "part2": "This comment will be visible to all users."
     }
 }

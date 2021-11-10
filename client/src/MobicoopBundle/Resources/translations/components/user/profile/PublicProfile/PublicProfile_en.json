@@ -1,18 +1,19 @@
 {
-    "getPublicProfileUri":"/user/profile/public",
-    "yearsOld":"years old",
-    "carpoolRealized":"Carpool realized",
-    "lastConnection":"Last connection",
-    "answerRate":"Answering rate",
-    "subscribedOn":"Subscribed on",
-    "savedCo2":" économisé : {savedCo2} t",
-    "params":{
-        "chat":"Je discute",
-        "noChat":"Je ne suis pas bavard",
-        "music":"J'écoute la radio ou de la musique",
-        "noMusic":"Je préfére rouler sans fond sonore",
-        "smoke":"Je fume",
-        "noSmoke":"Je ne fume pas",
-        "noSmoleInCar":"Je ne fume pas en voiture"
+    "getPublicProfileUri": "/user/profile/public",
+    "yearsOld": "years old",
+    "carpoolRealized": "Carpool completed",
+    "lastConnection": "Last login on",
+    "answerRate": "Response rate",
+    "subscribedOn": "Registered on",
+    "savedCo2": " saved: {savedCo2} t",
+    "params": {
+        "chat": "I chat",
+        "noChat": "I am not talkative",
+        "music": "I listen to the radio or music",
+        "noMusic": "I prefer to ride without background sound",
+        "smoke": "I am a smoker",
+        "noSmoke": "I don't smoke",
+        "noSmoleInCar": "Je ne fume pas en voiture",
+        "noSmokeInCar": "I do not smoke in the car"
     }
 }

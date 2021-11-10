@@ -5,74 +5,74 @@
             "label": "Contact us"
         }
     },
-    "category":{
-        "cooperative":"La coopérative",
-        "tools":"Les outils",
-        "services":"Les services mobicoop",
-        "contacts":"Contacts",
-        "need":"Besoin d’une solution de covoiturage pour votre structure ?",
-        "download":"TÉLÉCHARGEZ L’APPLICATION MOBICOOP"
+    "category": {
+        "cooperative": "The cooperative",
+        "tools": "The tools",
+        "services": "Mobicoop services",
+        "contacts": "Contacts",
+        "need": "Need a carpooling solution for your organization?",
+        "download": "DOWNLOAD THE MOBICOOP APPLICATION"
     },
-    "cooperative":{
+    "cooperative": {
         "talkAboutUs": {
-            "title":"Qui sommes-nous ?",
-            "link":"https://pro.mobicoop.fr/cooperative/"
+            "title": "Who are we?",
+            "link": "https://pro.mobicoop.fr/cooperative/"
         },
-        "joinUs":{
-            "title":"Devenir sociétaire",
-            "link":"https://lacampagne.mobicoop.fr/"
+        "joinUs": {
+            "title": "Become a member",
+            "link": "https://lacampagne.mobicoop.fr/"
         }
     },
-    "services":{
-        "mobicoop":{
-            "title":"pro.mobicoop.fr",
-            "link":"https://pro.mobicoop.fr/"
+    "services": {
+        "mobicoop": {
+            "title": "pro.mobicoop.fr",
+            "link": "https://pro.mobicoop.fr/"
         },
-        "covievent" :{
-            "title":"www.covievent.org",
-            "link":"https://www.covievent.org/"
+        "covievent": {
+            "title": "www.covievent.org",
+            "link": "https://www.covievent.org/"
         }
     },
-    "tools":{
-        "map":{
-            "title":"La carte des aires de covoiturage",
-            "link":"/points-relais"
+    "tools": {
+        "map": {
+            "title": "The map of carpooling areas",
+            "link": "/relay-points"
         },
-        "events" :{
-            "title":"Les événements en covoiturage",
-            "link":"/covoiturages-evenements"
+        "events": {
+            "title": "The carpool events",
+            "link": "/carpools-events"
         },
-        "faq":{
-            "title":"FAQ",
-            "link":"/FAQ"
+        "faq": {
+            "title": "FAQ",
+            "link": "/FAQ"
         },
-        "cgu":{
-            "title":"CGU",
-            "link":"/cgu"
+        "cgu": {
+            "title": "GCU",
+            "link": "/gcu"
         },
-        "dataPolicy":{
-            "title":"Data policy",
-            "link":"/data-policy"
+        "dataPolicy": {
+            "title": "Data protection policy",
+            "link": "/data-protection"
         },
-        "cookies":{
-            "title":"Gestion des cookies",
-            "link":"#"
-        }
-   },
-    "contacts":{
-        "hotline":{
-            "title":"Hotline",
-            "link":"/contact"
-        },
-        "presse" :{
-            "title":"Presse",
-            "link":"https://pro.mobicoop.fr/category/revue-de-presse/"
+        "cookies": {
+            "title": "Cookie management",
+            "link": "#"
         }
     },
-    "need":{
-        "community":{
-            "title":"Créez une communauté sur mobicoop.fr !",
-            "link":"covoiturage-communaute"
+    "contacts": {
+        "hotline": {
+            "title": "Hotline",
+            "link": "/contact"
+        },
+        "presse": {
+            "title": "Press",
+            "link": "https://pro.mobicoop.fr/category/revue-de-presse/"
+        }
+    },
+    "need": {
+        "community": {
+            "title": "Create a community on mobicoop.fr!",
+            "link": "/carpool-community"
         }
     },
     "urlIosLogo": "/images/footer/IOS.svg",

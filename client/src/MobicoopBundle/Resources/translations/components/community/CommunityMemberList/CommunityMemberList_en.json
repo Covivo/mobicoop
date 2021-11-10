@@ -1,5 +1,5 @@
 {
-    "title": "Members list",
+    "title": "List of members",
     "table": {
         "search": "Search",
         "lineNumber": "Rows per page",
@@ -10,7 +10,7 @@
             "actions": "Actions"
         }
     },
-    "hidden": "The list is only visible for the community's members",
+    "hidden": "The list is only visible to the community's members",
     "urlMembersList": "/community/memberList",
     "referrer": "Referrer",
     "moderator": "Moderator",

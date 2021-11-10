@@ -1,36 +1,36 @@
 {
-    "button": "Signaler",
+    "button": "Report",
     "snackbar": {
-        "thankyou": "Merci pour ce signalement",
-        "error": "Une erreur s'est produite durant le signalement"
+        "thankyou": "Thank you for this report",
+        "error": "An error occurred during reporting"
     },
     "popup": {
         "event": {
-            "title": "Signalement d'événement",
-            "content": "Vous avez constaté du contenu inapproprié sur l'événement \"<strong>{eventName}</strong>\" ?<br/>Signalez-le à notre équipe qui prendra les mesures nécessaires.<br/><br/>Merci de préciser ce qui vous paraît inapproprié :"
+            "title": "Event report",
+            "content": "Did you see any inappropriate content in the event \"<strong> {eventName} </strong>\"? <br/> Report it to our team who will take the necessary action. <br/> <br/> Please specify what you think is inappropriate:"
         },
         "user": {
-            "title": "Signalement d'un utilisateur",
-            "content": "Vous souhaitez signaler le comportement inapproprié de \"<strong>{userName}</strong>\" ? "
+            "title": "Report by a user",
+            "content": "Do you want to report the inappropriate behavior of \"<strong>{userName}</strong>\"? "
         },
         "form": {
             "email": {
-                "label": "Merci de renseigner votre email",
+                "label": "Please enter your email",
                 "errors": {
-                    "required": "L'adresse email est requise",
-                    "valid": "L'adresse email doit être valide."
+                    "required": "An email address is required",
+                    "valid": "The email address must be valid."
                 }
             },
             "text": {
-                "label": "Explication",
+                "label": "Explanation",
                 "errors": {
-                    "required": "Une explication est nécessaire"
+                    "required": "An explanation is required"
                 }
             }
         },
         "button": {
-            "report": "Signaler",
-            "cancel": "Annuler"
+            "report": "Report",
+            "cancel": "Cancel"
         }
     },
     "routes": {

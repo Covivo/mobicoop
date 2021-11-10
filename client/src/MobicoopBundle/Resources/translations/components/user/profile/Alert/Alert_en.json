@@ -1,23 +1,33 @@
 {
     "alerts": {
-        "carpool_ask_posted": "Carpool ask",
+        "carpool_ask_posted": "Carpool request",
         "communication_internal_message_received": "New message in the mailbox",
         "carpool_matching_new": "New potential carpools",
         "carpool_ask_accepted": "Carpool accepted",
-        "carpool_ask_refused": "Carpool refused",
-        "carpool_ad_renewal": "Renew my near outdated proposals",
-        "carpool_ad_deleted": "Carpool cancelling",
-        "*******": "Leave an evaluation"
+        "carpool_ask_refused": "Carpool declined",
+        "carpool_ad_renewal": "Renew my journeys at the end of their validity",
+        "carpool_ad_deleted": "Carpool cancelled *",
+        "*******": "Leave an evaluation",
+        "confirm_direct_payment_regular": "Confirm payment for a week of carpooling",
+        "confirm_direct_payment": "Confirm paying for a carpooling",
+        "pay_after_carpool_regular": "Pay for a week of carpooling",
+        "pay_after_carpool": "Pay for a completed carpool",
+        "event_created": "Confirm creating an event",
+        "carpool_ad_deleted_with_pending_drivers_urgent": "Delete the proposal linked to a carpooling accepted as a driver and imminent",
+        "carpool_ad_deleted_with_pending_drivers": "Delete the proposal related to carpooling accepted as a driver",
+        "carpool_ad_deleted_with_pending_passengers_urgent": "Delete the proposal linked to a carpooling accepted as a passenger and imminent",
+        "carpool_ad_deleted_with_pending_passengers": "Delete the proposal linked to a carpooling accepted as a passenger",
+        "carpool_ask_linked_ad_deleted": "Delete the proposal subject of my request"
     },
     "medium": {
         "media1": "Message",
         "media2": "Email",
-        "media3": "SMS",
+        "media3": "Text message",
         "media4": "Push"
     },
     "popup": {
         "title": "Information",
-        "content": ""
+        "content": "Please note that you no longer have any external notifications activated in case of {alert}. You can only be informed about this by logging in to the platform yourself."
     },
     "ok": "OK"
 }

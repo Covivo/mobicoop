@@ -1,9 +1,9 @@
 {
-    "walkFromToStop": "Walk from {departure} to {arrival} stop",
+    "walkFromToStop": "Walk from <span class='primary--text'>{departure}</span> to <span class='primary--text'>{arrival}</span>",
     "walkFromToDestination": "Walk from <span class='primary--text'>{departure}</span> to <span class='primary--text'>{arrival}</span>",
-    "estimatedDuration": "Estimated duration : {duration}",
+    "estimatedDuration": "Estimated duration: {duration}",
     "waiting": "Wait {duration}",
-    "direction": "To",
-    "hopOn": "Hop on",
-    "hopOff": "hop off"
+    "direction": "Direction",
+    "hopOn": "Get on",
+    "hopOff": "get off"
 }

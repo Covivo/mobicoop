@@ -2,5 +2,5 @@
     "shortDate": "ddd Y/MM/DD",
     "hourMinute": "HH[h]mm",
     "age": " | |{age} years",
-    "carpool": "Find corresponding carpools"
+    "carpool": "Find matching carpools"
 }
