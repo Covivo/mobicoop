@@ -1,14 +1,14 @@
 {
-    "default":{
-        "title":"Houston, nous avons un problème...",
-        "desc":"La page que vous souhaitez afficher est inaccessible. Merci de réessayer ultérieurement ou de nous faire part du problème via le formulaire dédié."
+    "default": {
+        "title": "Houston, we have a problem ...",
+        "desc": "The page you want to display is inaccessible. Please try again later or let us know about the problem via the dedicated form."
     },
-    "404":{
-        "title":"Houston, nous avons un problème...",
-        "desc":"La page que vous souhaitez afficher est inaccessible. Merci de réessayer ultérieurement ou de nous faire part du problème via le formulaire dédié."
+    "404": {
+        "title": "Houston, we have a problem ...",
+        "desc": "The page you want to display is inaccessible. Please try again later or let us know about the problem via the dedicated form."
     },
-    "returnHome":{
-        "text":"Vous pouvez revenir",
-        "link":"en page d'accueil"
+    "returnHome": {
+        "text": "You can go back",
+        "link": "to the home page"
     }
 }

@@ -1,32 +1,36 @@
 {
     "title": "Mobicoop",
-    "subtitle": "Explanation in english",
+    "subtitle": "A local, friendly and united carpooling service. <br /> Find your carpooling now or propose your trip.",
     "origin": "Departure location",
-    "destination": "Arrival location",
+    "destination": "Destination",
     "swap": {
-        "alt": "Swap origin and destination addresses",
-        "help": "Click to swap origin and destination addresses"
+        "alt": "Swap start and destination addresses",
+        "help": "Click to swap start and destination addresses"
     },
     "switch": {
-        "label": "Regular ride",
-        "help": "Switch to indicate a regular ride"
+        "label": "Regular journey",
+        "help": "Click this switch to specify that your trip is regular"
     },
     "datePicker": {
         "label": "Departure date"
     },
     "buttons": {
         "publish": {
-            "label": "Publish",
-            "route": "/carpool/search/publish"
+            "label": "Post a proposal",
+            "route": "/carpool/search/post"
         },
         "search": {
             "label": "Search",
-            "route": "carpool/search"
+            "route": "carpool/search",
+            "widgetRoute": "event/{id}/search/carpooling"
         },
         "shareAnAd": {
-            "label": "Publish",
-            "route": "/carpool/ad/post"
+            "label": "Post an announcement",
+            "route": "/carpool/postproposal"
         }
     },
-    "urlDate": "YMMDD"
+    "urlDate": "YMMDD",
+    "tooltips": {
+        "needConnection": "Please login or register to post a proposal"
+    }
 }

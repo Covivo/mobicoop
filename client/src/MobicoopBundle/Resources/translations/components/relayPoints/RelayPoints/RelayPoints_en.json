@@ -1,5 +1,5 @@
 {
-    "title": "Les aires de covoiturages",
-    "search": "Chercher un trajet",
-    "relayPointList": "/points-relais/getRelayPointList"
+    "title": "Carpooling areas",
+    "search": "Find a journey",
+    "relayPointList": "/relay-points/getRelayPointList"
 }

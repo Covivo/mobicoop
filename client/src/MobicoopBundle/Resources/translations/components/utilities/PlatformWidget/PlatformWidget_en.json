@@ -1,15 +1,15 @@
 {
     "widget": {
-        "title": "Search a journey",
-        "label": "See Widget",
+        "title": "Search for a journey",
+        "label": "View the Widget",
         "route": "/widget/get",
         "externalRoute": "/widget",
         "urlLogo": "/images/logo.png",
         "textDetails": {
-            "title": "Intégrer le widget",
-            "p1": "Pour intégrer le widget, il faut copier le texte ci-dessous et le coller sur votre site web.<br />Vous pouvez modifier les éléments en gras afin de personnaliser votre widget.",
+            "title": "Include the widget",
+            "p1": "To include the widget, you must copy the text below and paste it on your website. <br /> You can change the elements in bold to personalize your widget.",
             "p2": "&lt;iframe src=\"{url}\" width=\"<span class=\"font-weight-bold\">100%</span>\" height=\"<span class=\"font-weight-bold\">440px</span>\" frameborder=\"0\" scrolling=\"no\"&gt;&lt;/iframe&gt;",
-            "p3": "<<span class=\"font-weight-bold\">>Attention</span> : Certains outils de publication comme Wordpress nécessitent l'ajout de plugins spécifiques pour pouvoir utiliser une iFrame."
+            "p3": "<span class=\"font-weight-bold\">Note</span>: Some publishing tools like Wordpress require the addition of specific plugins to be able to use an iFrame."
         }
     }
 }

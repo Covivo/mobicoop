@@ -1,12 +1,19 @@
 {
     "leaveCommunity": {
         "button": "Leave community",
-        "route": "/community/{id}/leave"
+        "route": "/community/{id}/leave",
+        "popup": {
+            "content": {
+                "isNotProposalsHidden": "If you still have valid proposals associated with that community, those proposals will no longer be marked as being linked to the community once you leave.<br>Confirm?",
+                "isProposalsHidden": "If you still have valid proposals associated with this private community, those proposals will be deleted.<br>Confirm?"
+            },
+            "title": "Request for confirmation"
+        }
     },
     "buttons": {
         "publish": {
-            "label": "Publish an ad",
-            "route": "carpool/search/post"
+            "label": "Post a proposal",
+            "route": "/carpool/search/post"
         },
         "search": {
             "label": "Search",
@@ -18,47 +25,66 @@
         },
         "contact": {
             "route": "/user/messages/new"
+        },
+        "accessAdmin": {
+            "label": "Manage my community"
+        },
+        "login": {
+            "route": "/user/login"
         }
     },
     "tooltips": {
-        "connected": "You have to be connected",
+        "connected": "You have to be logged in",
         "validation": "Pending validation",
-        "domain": "You email address must be in the domain:"
+        "domain": "Your email address must be in one of these domains:"
     },
     "snackbar": {
         "joinCommunity": {
             "textOk": "Your application has been send to the community manager. You will be notified by email.",
-            "textError": "We reached a technical difficulty. Please try again."
+            "textError": "An error has occurred, your membership has not been taken into account.",
+            "textOkAutoValidation": "Your membership request is validated.",
+            "textOkManualValidation": "Your membership request has been sent to the referrer. You will be informed by email."
         },
         "leaveCommunity": {
-            "textOk": "",
-            "textError": "We reached a technical difficulty. Please try again."
+            "textOk": "You are no longer part of this community",
+            "textError": "An error has occurred please try again"
         }
     },
     "title": {
-        "searchCarpool": "Search a journey in the community"
+        "searchCarpool": "Search for a journey in the community"
     },
     "map": {
-        "findMatchings": "Find the matchings ads",
-        "origin": "Origin",
+        "findMatchings": "<strong>Search for matching proposals </strong>",
+        "origin": "Start",
         "destination": "Destination",
-        "regular": "Regular journey"
+        "regular": "Regular journey",
+        "search": {
+            "label": "Find corresponding carpools"
+        }
     },
     "urlCommunityUser": "/community-user",
     "widget": {
-        "label": "See Widget",
+        "label": "View the Widget",
         "route": "/community/widget/get/{id}",
         "externalRoute": "/community/widget/{id}",
         "textDetails": {
-            "title": "Intégrer le widget",
-            "p1": "Pour intégrer le widget, il faut copier le texte ci-dessous et le coller sur votre site web.<br />Vous pouvez modifier les éléments en gras afin de personnaliser votre widget.",
+            "title": "Include the widget",
+            "p1": "To include the widget, you must copy the text below and paste it on your website. <br /> You can change the elements in bold to personalize your widget.",
             "p2": "&lt;iframe src=\"{url}\" width=\"<span class=\"font-weight-bold\">100%</span>\" height=\"<span class=\"font-weight-bold\">440px</span>\" frameborder=\"0\" scrolling=\"no\"&gt;&lt;/iframe&gt;",
-            "p3": "<span class=\"font-weight-bold\">Attention</span> : Certains outils de publication comme Wordpress nécessitent l'ajout de plugins spécifiques pour pouvoir utiliser une iFrame."
+            "p3": "<span class=\"font-weight-bold\">Attention</span>: Some publishing tools like Wordpress require the addition of specific plugins to be able to use an iFrame."
         }
     },
-    "yes": "yes",
-    "no": "no",
-    "infos":{
-        "members":"{members} members"
+    "yes": "Yes",
+    "no": "No",
+    "infos": {
+        "members": "{members} members"
+    },
+    "joinCommunity": {
+        "popup": {
+            "content": {
+                "printPhoneNumberWarning": "Your phone number will be visible to the referrer of the community. <br> Are you sure?"
+            },
+            "title": "Request for confirmation"
+        }
     }
 }

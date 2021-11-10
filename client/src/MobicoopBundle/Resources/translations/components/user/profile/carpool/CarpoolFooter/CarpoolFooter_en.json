@@ -1,18 +1,18 @@
 {
     "ui": {
         "button": {
-            "cancel": "Annuler"
+            "cancel": "Cancel"
         }
     },
     "seat": {
-        "booked": "0 | 1 place réservée | {bookedSeats} / {seats} places réservées"
+        "booked": "0 | 1 reserved seat| {bookedSeats} / {seats} reserved seats"
     },
     "passengers": {
-        "show": "voir le passager | voir les passagers",
-        "hide": "masquer le passager | masquer les passagers"
+        "show": "see the passenger | see the passengers",
+        "hide": "hide the passenger| hide the passengers"
     },
     "driver": {
-        "show": "voir le conducteur",
-        "hide": "masquer le conducteur"
+        "show": "see the driver",
+        "hide": "hide the driver"
     }
 }

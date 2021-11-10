@@ -1,47 +1,47 @@
 {
-    "titleCoordinates": "1. Coordonnées bancaires",
-    "textInfo": "Pour recevoir des paiements en ligne, il est nécessaire de renseigner l'ensemble des informations ci-dessous.",
-    "titleAddress": "2. Adresse complète",
-    "textAddress": "Merci de rechercher votre adresse complète (numéro, nom de rue...) et non uniquement votre commune de résidence.",
-    "textAddressDetails": "Les champs suivant vont se remplir grâce à la recherche ci-dessus. Merci de vérifier la conformité des informations.",
-    "titleAlreadyRegistered": "Mes coordonnées bancaires",
+    "titleCoordinates": "1. Bank details",
+    "textInfo": "To receive online payments, you must fill in all the information below.",
+    "titleAddress": "2. Full address",
+    "textAddress": "Please search for your complete address (number, street name, etc.) and not only your place of residence.",
+    "textAddressDetails": "The following fields will be filled in thanks to the search above. Please check the information matches.",
+    "titleAlreadyRegistered": "My bank details",
     "form": {
         "label": {
             "iban": "IBAN",
             "bic": "BIC",
             "address": {
-                "check":"Recherchez votre adresse complète",
-                "way":"Rue et numéro",
-                "cp":"Code postal",
-                "city":"Ville"
+                "check": "Search for your full address",
+                "way": "Street and number",
+                "cp": "Postal code",
+                "city": "City"
             }
         },
         "tooltip": {
-            "iban": "Renseignez votre IBAN sans espace"
+            "iban": "Enter your IBAN without spaces"
         },
         "errors": {
-            "iban": "Le numéro IBAN doit être valide",
-            "ibanRequired": "Le numéro IBAN est obligatoire",
-            "bic": "Le numéro BIC doit être valide",
-            "bicRequired": "Le numéro BIC est obligatoire",
-            "wayRequired": "Le numéro et la rue sont obligatoires",
-            "cpRequired": "Le code postale est obligatoire",
-            "cityRequired": "La ville est obligatoire"
+            "iban": "The IBAN number must be valid",
+            "ibanRequired": "IBAN number is required",
+            "bic": "BIC number must be valid",
+            "bicRequired": "BIC number is required",
+            "wayRequired": "The number and the street are mandatory",
+            "cpRequired": "The postal code is mandatory",
+            "cityRequired": "The city is required"
         }
     },
-    "register": "Enregistrer",
+    "register": "Save",
     "modalSuppr": {
-        "title": "Suppression des coordonnées bancaires ?",
-        "line1": "Vos coordonnées bancaires vont-être supprimée.",
-        "line2": "Vous ne serez plus en mesure de recevoir de paiement électronique.",
-        "line3": "Confirmez-vous cette action ?",
-        "yes": "oui",
-        "no": "non"
+        "title": "Delete the bank details?",
+        "line1": "Your bank details will be deleted.",
+        "line2": "You will no longer be able to receive electronic payments.",
+        "line3": "Do you confirm this action?",
+        "yes": "Yes",
+        "no": "No"
     },
     "uri": {
-        "getCoordinates": "/utilisateur/coordonnees-bancaires",
-        "deleteCoordinates": "/utilisateur/coordonnees-bancaires/supprimer",
-        "addCoordinates": "/utilisateur/coordonnees-bancaires/ajouter"
+        "getCoordinates": "/user/bank-details",
+        "deleteCoordinates": "/user/bank-details/delete",
+        "addCoordinates": "/user/bank-details/add"
     },
-    "error": "Une erreur est survenue"
+    "error": "An error has occurred"
 }

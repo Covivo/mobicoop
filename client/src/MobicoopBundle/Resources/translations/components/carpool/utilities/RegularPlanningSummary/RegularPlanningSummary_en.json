@@ -1,7 +1,7 @@
 {
-    "outward": "Aller",
-    "return": "Retour",
-    "multiple": "multiples",
-    "fullMultiple": "Les horaires diffèrent selon les jours",
+    "outward": "Outward",
+    "return": "Return",
+    "multiple": "multiple",
+    "fullMultiple": "The hours differ from day to day",
     "hourMinute": "HH[h]mm"
 }

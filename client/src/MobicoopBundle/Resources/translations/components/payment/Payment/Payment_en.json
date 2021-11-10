@@ -1,39 +1,39 @@
 {
-    "wallet": "Emplacement porte monnaie",
-    "donations": "Dons",
-    "titleRegular": "Paiements trajets réguliers",
-    "titlePunctual": "Paiements",
-    "titleConfirmation": "Confirmation paiement passagers",
-    "outward": "Aller",
-    "return": "Retour",
-    "price": "Montant: {price} €",
-    "sumToPay": "Total à payer: {price} €",
-    "electronicPay": "Je paie en ligne",
-    "directPay": "J’ai payé à la main",
-    "directPaymentReceived": "Paiement reçu à la main | Paiements reçus à la main",
+    "wallet": "Wallet location",
+    "donations": "Donations",
+    "titleRegular": "Regular route payments",
+    "titlePunctual": "Payments",
+    "titleConfirmation": "Passenger payment confirmation",
+    "outward": "Outward",
+    "return": "Return",
+    "price": "Amount: € {price}",
+    "sumToPay": "Total to pay: € {price}",
+    "electronicPay": "I am paying online",
+    "directPay": "I have paid directly",
+    "directPaymentReceived": "Payment received directly | Payments received directly",
     "report": {
-        "label": "Signaler un impayé",
-        "text1": "Vous déclarez ne pas avoir été payé pour ce covoiturage. Veuillez cliquer sur «Valider» pour confirmer.",
-        "text2": "Une notification sera envoyée au passager. Nous vous invitons à prendre contact via la messagerie, avec le passager, pour régler le problème.",
-        "cancel": "Annuler",
-        "valid": "Valider",
-        "labelIsReported": "Impayé"
+        "label": "Report an outstanding payment",
+        "text1": "You declare that you have not been paid for this carpooling. Please click on \"Validate\" to confirm.",
+        "text2": "A notification will be sent to the passenger. We invite you to contact the passenger via the messaging system to resolve the problem.",
+        "cancel": "Cancel",
+        "valid": "Validate",
+        "labelIsReported": "Not paid"
     },
     "buttons": {
-        "previous": "Précedent",
-        "next": "Suivant",
+        "previous": "Previous",
+        "next": "Next",
         "back": {
-            "label": "Retour",
-            "route": "/utilisateur/profil/modifier/mes-covoiturages-acceptes"
+            "label": "Return",
+            "route": "/user/profile/change/my-accepted-carpools"
         },
-        "validate": "Valider",
-        "confirm": "Confirmer",
-        "directPay": "J’ai payé à la main",
-        "directPayConfirm": "Confirmer paiement à la main",
-        "isConfirmed": "Paiement à la main confirmé"
+        "validate": "Validate",
+        "confirm": "Confirm",
+        "directPay": "I have paid directly",
+        "directPayConfirm": "Confirm direct payment",
+        "isConfirmed": "Direct payment confirmed"
     },
     "select": {
-        "label": "Période"
+        "label": "Period"
     },
     "payments": {
         "getPayments": "/payments/get",
@@ -42,21 +42,21 @@
         "getFirstWeek": "/getFirstWeek"
     },
     "tooltip": {
-        "message": "Vous ne pouvez pas payer en ligne car le conducteur n'a pas rempli ses coordonnées bancaires."
+        "message": "You cannot pay online because the driver has not entered their bank details."
     },
-    "regularInfo": "Si vous n'avez pas covoituré avec {driver} certains jours, vous pouvez les décocher ci-dessous.",
-    "redirectAfterPayment": "/utilisateur/profil/modifier/mes-covoiturages-acceptes",
-    "from": "du ",
-    "to": " au ",
+    "regularInfo": "If you haven't carpooled with {driver} on some days, you can uncheck them below.",
+    "redirectAfterPayment": "/user/profile/change/my-accepted-carpools",
+    "from": "from ",
+    "to": " to ",
     "noOnlinePayment": {
-        "line1": "Votre profil n'étant pas complet vous ne pouvez pas payer en ligne.",
-        "line2": "Vous devez par exemple saisir votre adresse complète (numéro, nom de rue...) et non uniquement votre commune de résidence."
+        "line1": "Your profile is not complete and you cannot pay online.",
+        "line2": "For example, you must enter your full address (number, street name, etc.) and not just your place of residence."
     },
-    "noMoreItems":"Il n'y a plus de paiement à réaliser ou en attente de confirmation.",
-    "loadingPageText":"Chargement des paiements à réaliser ou à confirmer",
-    "tipsEncouragement":{
-        "text":"{platformName} est un service libre, sans commission et sans publicité. Mais pour contribuer à maintenir la plateforme, vous pouvez nous donner un coup de pouce en nous faisant",
-        "textLink":"un don ici",
-        "link":"https://www.zeste.coop/fr/mobicoop"
+    "noMoreItems": "There are no more payments to be made or pending confirmation.",
+    "loadingPageText": "Load payments to be made or confirmed",
+    "tipsEncouragement": {
+        "text": "{platformName} is a free service, without commission and without advertising. But to contribute to maintain the platform, you can give us a helping hand by making",
+        "textLink": "a donation here",
+        "link": "https://www.zeste.coop/fr/mobicoop"
     }
 }

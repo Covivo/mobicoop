@@ -1,14 +1,18 @@
 {
-    "eventsAvailable": "Carpool events",
-    "eventsPassed": "Passed events",
+    "eventsAvailable": "Available events",
+    "eventsPassed": "Past events",
     "createEvent": "Create an event",
     "search": "Search",
     "all": "All",
-    "linePerPage": "Nomber of line per page",
-    "seeAds": "See the ads",
-    "noEvent": "No event",
+    "linePerPage": "Number of lines per page",
+    "seeAds": "View the announcements",
+    "noEvent": "No events",
     "routes": {
         "event": "/carpools-events/{id}/{urlKey}",
-        "getList": "/events/getEventList"
-    }
+        "getList": "/events/getEventList",
+        "login": "/user/log in"
+    },
+    "endEvent": "End",
+    "startEvent": "Start",
+    "events": "The carpool events"
 }
