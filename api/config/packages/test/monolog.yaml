@@ -30,6 +30,17 @@ monolog:
             max_files: 30
             path: "%kernel.logs_dir%/community.log"
             channels: [community]
+        consumptionFeedback:
+            type: stream
+            level: debug
+            path: "%kernel.logs_dir%/consumptionFeedback.log"
+            channels: [consumptionFeedback]
+        faker:
+            type: rotating_file
+            level: debug
+            max_files: 30
+            path: "%kernel.logs_dir%/faker.log"
+            channels: [faker] 
         geography:
             type: rotating_file
             level: debug
@@ -41,13 +52,13 @@ monolog:
             level: debug
             max_files: 30
             path: "%kernel.logs_dir%/geomatcher.log"    
-            channels: [geography]
+            channels: [geomatcher]
         georouter:
             type: rotating_file
             level: debug
             max_files: 30
             path: "%kernel.logs_dir%/georouter.log"
-            channels: [geography]
+            channels: [georouter]
         maintenance:
             type: rotating_file
             level: debug
@@ -66,26 +77,15 @@ monolog:
             max_files: 30
             path: "%kernel.logs_dir%/notification.log"
             channels: [notification]     
-        faker:
-            type: rotating_file
-            level: debug
-            max_files: 30
-            path: "%kernel.logs_dir%/faker.log"
-            channels: [faker] 
         solidary:
             type: rotating_file
             level: debug
             max_files: 30
             path: "%kernel.logs_dir%/solidary.log"
-            channels: [solidary]   
-        consumptionFeedback:
-            type: stream
-            level: debug
-            path: "%kernel.logs_dir%/consumptionFeedback.log"
-            channels: [consumptionFeedback]   
+            channels: [solidary]      
         main:
             type: rotating_file
             path: "%kernel.logs_dir%/%kernel.environment%.log"
             max_files: 30
             level: debug
-            channels: ["!event", "!carpool", "!carpool_dynamic", "!carpool_proof", "!communication", "!community", "!geography", "!geomatcher", "!georouter", "!maintenance", "!mass", "!notification", "!faker", "!solidary", '!consumptionFeedback']
+            channels: ["!event", "!carpool", "!carpool_dynamic", "!carpool_proof", "!communication", "!community", "!consumptionFeedback", "!faker", "!geography", "!geomatcher", "!georouter", "!maintenance", "!mass", "!notification", "!solidary"]

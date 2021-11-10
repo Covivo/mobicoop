@@ -1321,8 +1321,6 @@ class AdManager
     {
         $proposal = $this->proposalRepository->find($ad->getId());
         $oldAd = $this->makeAd($proposal, $ad->getUserId());
-        $oldProposal = clone $proposal;
-        $oldProposal->setCriteria(clone $proposal->getCriteria());
         $proposalAsks = $this->askManager->getAsksFromProposal($proposal);
 
         // Pause is apart and do not needs notifications by now
@@ -2014,9 +2012,7 @@ class AdManager
             // the proof already exists, it's an update
             return $this->updateCarpoolProof($carpoolProof->getId(), $classicProof);
         }
-
         $carpoolProof = $this->proofManager->createProof($ask, $classicProof->getLongitude(), $classicProof->getLatitude(), CarpoolProof::TYPE_UNDETERMINED_CLASSIC, $classicProof->getUser(), $ask->getMatching()->getProposalOffer()->getUser(), $ask->getMatching()->getProposalRequest()->getUser());
-        $classicProof->setId($carpoolProof->getId());
 
         return $classicProof;
     }
@@ -2042,7 +2038,6 @@ class AdManager
 
         try {
             $carpoolProof = $this->proofManager->updateProof($id, $classicProofData->getLongitude(), $classicProofData->getLatitude(), $classicProofData->getUser(), $carpoolProof->getAsk()->getMatching()->getProposalRequest()->getUser(), $this->params['carpoolProofDistance']);
-            $classicProofData->setId($carpoolProof->getId());
         } catch (ProofException $proofException) {
             throw new AdException($proofException->getMessage());
         }
@@ -2070,7 +2065,7 @@ class AdManager
 
         $classicProof = new ClassicProof();
         $classicProof->setId($carpoolProof->getId());
-        $classicProof->setStatus($carpoolProof->getStatus());
+        $classicProof->setRegisteredStatus($carpoolProof->getStatus());
         
         return $classicProof;
     }

@@ -32,6 +32,7 @@ use App\Carpool\Exception\ProofException;
 use App\Carpool\Repository\AskRepository;
 use App\Carpool\Repository\CarpoolProofRepository;
 use App\Carpool\Repository\WaypointRepository;
+use App\Carpool\Ressource\ClassicProof;
 use App\DataProvider\Entity\CarpoolProofGouvProvider;
 use App\Geography\Entity\Direction;
 use App\Geography\Service\GeoSearcher;
@@ -125,6 +126,28 @@ class ProofManager
     public function getProof(int $id)
     {
         return $this->carpoolProofRepository->find($id);
+    }
+
+    /**
+    * Get a carpool proof by its id.
+    *
+    * @param integer $id   The id of the proof
+    * @return ClassicProof
+    */
+    public function getClassicProof(int $id)
+    {
+        $carpoolProof = $this->carpoolProofRepository->find($id);
+        $classicProof = new ClassicProof;
+        $classicProof->setId($id);
+        $classicProof->setStatus(
+            ($carpoolProof->getPickUpPassengerDate() ? '1' : '0') .
+            ($carpoolProof->getPickUpDriverDate() ? '1' : '0') .
+            ($carpoolProof->getDropOffPassengerDate() ? '1' : '0') .
+            ($carpoolProof->getDropOffDriverDate() ? '1' : '0')
+        );
+        $classicProof->setProofDate($carpoolProof->getStartDriverDate());
+        
+        return $classicProof;
     }
 
     /**
