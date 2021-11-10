@@ -1,14 +1,14 @@
 {
     "places": "place | places",
-    "outward": "Aller",
-    "return": "Retour",
-    "mon": "L",
-    "tue": "M",
-    "wed": "Me",
-    "thu": "J",
-    "fri": "V",
-    "sat": "S",
-    "sun": "D",
+    "outward": "Outward",
+    "return": "Return",
+    "mon": "Mon",
+    "tue": "Tue",
+    "wed": "Wed",
+    "thu": "Thu",
+    "fri": "Fri",
+    "sat": "Sat",
+    "sun": "Sun",
     "fullDate": "ddd Do MMMM YYYY",
     "hourMinute": "HH[h]mm"
 }

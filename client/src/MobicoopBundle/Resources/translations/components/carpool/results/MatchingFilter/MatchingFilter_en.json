@@ -1,80 +1,80 @@
 {
-    "filters": "Filtres",
+    "filters": "Filters",
     "select": {
         "order": {
-            "label": "Ordre",
+            "label": "Sort",
             "date": {
-                "increasing": "Par date croissante",
-                "decreasing": "Par date décroissante"
+                "increasing": "In ascending order of date",
+                "decreasing": "In descending order of date"
             }
         },
         "filter": {
             "role": {
-                "label": "Type d'annonce",
+                "label": "Type of proposal",
                 "driver": {
-                    "label": "Conducteur",
+                    "label": "Driver",
                     "value": "1"
                 },
                 "passenger": {
-                    "label": "Passager",
+                    "label": "Passenger",
                     "value": "2"
                 },
                 "both": {
-                    "label": "Conducteur et passager",
+                    "label": "Driver and passenger",
                     "value": "3"
                 }
             },
             "gender": {
-                "label": "Civilité",
+                "label": "Gender",
                 "female": {
-                    "label": "Madame",
+                    "label": "Mrs/Ms",
                     "value": "1"
                 },
                 "male": {
-                    "label": "Monsieur",
+                    "label": "Mr",
                     "value": "2"
                 },
                 "other": {
-                    "label": "Autre",
+                    "label": "Other",
                     "value": "3"
                 }
             },
             "community": {
-                "label": "Communauté"
+                "label": "Community"
             }
         },
         "hour": {
-            "label": "Heure",
-            "help": "Affichage des annonces à partir de l'heure sélectionnée."
+            "label": "Time",
+            "help": "Display the proposals from the selected time."
         }
     },
     "chips": {
         "date": {
             "label": "Date",
             "value": {
-                "ASC": "croissante",
-                "DESC": "décroissante"
+                "ASC": "increasing",
+                "DESC": "decreasing"
             }
         },
-        "hour": "Heure",
+        "hour": "Time",
         "role": {
             "label": "Type",
             "value": {
-                "1": "Conducteur",
-                "2": "Passager",
-                "3": "Conducteur et passager"
+                "1": "Driver",
+                "2": "Passenger",
+                "3": "Driver and passenger"
             }
         },
         "gender": {
-            "label": "Civilité",
+            "label": "Gender",
             "value": {
-                "1": "Madame",
-                "2": "Monsieur",
-                "3": "Autre"
+                "1": "Mrs/Ms",
+                "2": "Mr",
+                "3": "Other"
             }
         },
         "community": {
-            "label": "Communauté"
+            "label": "Community"
         }
     }
 }

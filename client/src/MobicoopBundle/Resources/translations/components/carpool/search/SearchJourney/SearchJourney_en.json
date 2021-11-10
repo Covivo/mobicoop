@@ -1,19 +1,25 @@
 {
     "title": "Mobicoop",
-    "subtitle": "Explanation in english",
-    "origin": "Departure location",
-    "destination": "Arrival location",
+    "subtitle": "A local, friendly and united carpooling service. <br /> Find your carpooling now or propose your trip.",
+    "origin": {
+        "error": "Required",
+        "label": "Place of departure"
+    },
+    "destination": {
+        "error": "Required",
+        "label": "Destination"
+    },
     "swap": {
-        "alt": "Swap origin and destination addresses",
-        "help": "Click to swap origin and destination addresses"
+        "alt": "Swap start and destination addresses",
+        "help": "Click to swap start and destination addresses"
     },
     "switch": {
         "regular": {
-            "label": "Regular ride",
-            "help": "Switch to indicate a punctual ride then select a date"
+            "label": "Regular journey",
+            "help": "Click this switch to specify that your trip is occasional then choose a date"
         },
         "punctual": {
-            "help": "Switch to indicate a regular ride"
+            "help": "Click this switch to specify that your trip is regular"
         }
     },
     "datePicker": {
@@ -21,11 +27,26 @@
     },
     "buttons": {
         "shareAnAd": {
-            "label": "Share an ad"
+            "label": "Post an announcement"
         },
         "search": {
             "label": "Search"
         }
     },
-    "fullDate": "ddd Do MMMM YYYY"
+    "fullDate": "ddd Do MMMM YYYY",
+    "outwardDate": {
+        "error": "Required",
+        "label": "Departure date"
+    },
+    "radio": {
+        "both": {
+            "label": "Not important"
+        },
+        "passenger": {
+            "label": "I am a passenger"
+        },
+        "driver": {
+            "label": "I am the driver"
+        }
+    }
 }

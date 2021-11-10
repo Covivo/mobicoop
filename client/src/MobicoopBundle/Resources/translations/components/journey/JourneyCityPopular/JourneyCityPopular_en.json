@@ -1,18 +1,18 @@
 {
-    "title":"Les covoiturages par trajets populaires",
-    "subtitle":"Accédez aux covoiturages qui vous intéressent",
-    "intro":"Parcourez ci-dessous la liste des trajets en covoiturage les plus populaires ou consulter ",
-    "popularJourneys":"Les trajets les plus populaires",
-    "links":{
-        "cityByCity":{
-            "label":"les covoiturages par communes",
-            "uri":"/covoiturage-par-ville"
+    "title": "Carpools by popular routes",
+    "subtitle": "Access the carpools that interest you",
+    "intro": "Browse the list of the most popular carpooling trips below or view ",
+    "popularJourneys": "The most popular routes",
+    "links": {
+        "cityByCity": {
+            "label": "the carpools by city",
+            "uri": "/carpool-by-city"
         },
-        "popularJourneys":{
-            "from":"Covoiturage de",
-            "to":"à",
-            "uri":"/covoiturage/{origin}/{destination}"
+        "popularJourneys": {
+            "from": "Carpool from",
+            "to": "to",
+            "uri": "/carpool/{origin}/{destination}"
         }
     },
-    "getPopularJourneysUrl":"/covoiturages/populaires"
+    "getPopularJourneysUrl": "/carpools/popular"
 }

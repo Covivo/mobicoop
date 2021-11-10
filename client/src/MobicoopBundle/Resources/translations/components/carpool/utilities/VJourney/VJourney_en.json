@@ -1,8 +1,8 @@
 {
-    "driverOrigin": "Départ du conducteur",
-    "driverDestination": "Arrivée du conducteur",
-    "step": "Point de passage",
-    "pickUp": "Pris en charge",
-    "dropOff": "Dépose",
+    "driverOrigin": "Driver's departure",
+    "driverDestination": "Driver's arrival",
+    "step": "Crossing point",
+    "pickUp": "Taken into account",
+    "dropOff": "Drop off",
     "hourMinute": "HH[h]mm"
 }
