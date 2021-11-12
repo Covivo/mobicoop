@@ -444,6 +444,7 @@ class GamificationManager
     {
         // Badge 1 Remove the mask
         // Sequence 1
+        $bagde1 = [];
         if (!is_null($user->getValidatedDate())) {
             $rewardStep = new RewardStep;
             $rewardStep->setUser($user);
@@ -452,6 +453,7 @@ class GamificationManager
             $rewardStep->setNotifiedDate(new \DateTime('now'));
             $this->entityManager->persist($rewardStep);
             $this->entityManager->flush();
+            $badge1[] = 1;
         }
         // Sequence 2
         if (!is_null($user->getPhoneValidatedDate())) {
@@ -462,6 +464,7 @@ class GamificationManager
             $rewardStep->setNotifiedDate(new \DateTime('now'));
             $this->entityManager->persist($rewardStep);
             $this->entityManager->flush();
+            $badge1[] = 2;
         }
         // Sequence 3
         if (!is_null($user->getImages()) && count($user->getImages()) > 0) {
@@ -472,6 +475,7 @@ class GamificationManager
             $rewardStep->setNotifiedDate(new \DateTime('now'));
             $this->entityManager->persist($rewardStep);
             $this->entityManager->flush();
+            $badge1[] = 3;
         }
         // Sequence 4
         foreach ($user->getAddresses() as $address) {
@@ -483,8 +487,19 @@ class GamificationManager
                 $rewardStep->setNotifiedDate(new \DateTime('now'));
                 $this->entityManager->persist($rewardStep);
                 $this->entityManager->flush();
+                $badge1[] = 4;
                 continue;
             }
+        }
+        // Badge 
+        if (count($badge1) === 4) {
+            $reward = new Reward;
+            $reward->setUser($user);
+            $reward->setBadge($this->badgeRepository->find(1));
+            $reward->setCreatedDate(new \DateTime('now'));
+            $reward->setNotifiedDate(new \DateTime('now'));
+            $this->entityManager->persist($reward);
+            $this->entityManager->flush();
         }
     }
 }
