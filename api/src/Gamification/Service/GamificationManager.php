@@ -431,4 +431,60 @@ class GamificationManager
         }
         throw new \LogicException("No Reward found");
     }
+
+    
+    public function retroactivelyGenerateRewards()
+    {
+        foreach ($this->userRepository->findAll() as $user) {
+            $this->generateRewards($user);
+        }
+    }
+
+    public function generateRewards(User $user)
+    {
+        // Badge 1 Remove the mask
+        // Sequence 1
+        if (!is_null($user->getValidatedDate())) {
+            $rewardStep = new RewardStep;
+            $rewardStep->setUser($user);
+            $rewardStep->setSequenceItem($this->sequenceItemRepository->find(1));
+            $rewardStep->setCreatedDate(new \DateTime('now'));
+            $rewardStep->setNotifiedDate(new \DateTime('now'));
+            $this->entityManager->persist($rewardStep);
+            $this->entityManager->flush();
+        }
+        // Sequence 2
+        if (!is_null($user->getPhoneValidatedDate())) {
+            $rewardStep = new RewardStep;
+            $rewardStep->setUser($user);
+            $rewardStep->setSequenceItem($this->sequenceItemRepository->find(2));
+            $rewardStep->setCreatedDate(new \DateTime('now'));
+            $rewardStep->setNotifiedDate(new \DateTime('now'));
+            $this->entityManager->persist($rewardStep);
+            $this->entityManager->flush();
+        }
+        // Sequence 3
+        if (!is_null($user->getImages()) && count($user->getImages()) > 0) {
+            $rewardStep = new RewardStep;
+            $rewardStep->setUser($user);
+            $rewardStep->setSequenceItem($this->sequenceItemRepository->find(3));
+            $rewardStep->setCreatedDate(new \DateTime('now'));
+            $rewardStep->setNotifiedDate(new \DateTime('now'));
+            $this->entityManager->persist($rewardStep);
+            $this->entityManager->flush();
+        }
+        // Sequence 4
+        foreach ($user->getAddresses() as $address) {
+            if ($address->isHome()) {
+                $rewardStep = new RewardStep;
+                $rewardStep->setUser($user);
+                $rewardStep->setSequenceItem($this->sequenceItemRepository->find(4));
+                $rewardStep->setCreatedDate(new \DateTime('now'));
+                $rewardStep->setNotifiedDate(new \DateTime('now'));
+                $this->entityManager->persist($rewardStep);
+                $this->entityManager->flush();
+                continue;
+            }
+        }
+    }
 }
