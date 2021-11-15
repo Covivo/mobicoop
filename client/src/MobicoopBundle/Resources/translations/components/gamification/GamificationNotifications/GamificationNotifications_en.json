@@ -1,6 +1,11 @@
 {
     "gamification":"Action de ludification",
     "community_joined":"Vous avez rejoins une communauté",
-    "nextABadge": " Bientôt le badge \"{badgeName}\" ?",
-    "routeTagAsNotified":"/gamification/tagRewardStepAsNotified"
+    "nextABadge": " Bientôt le badge <u>\"{badgeName}\"</u> ?",
+    "routeTagAsNotified":"/gamification/tagRewardStepAsNotified",
+    "link": {
+        "route": {
+            "badges":"/utilisateur/profil/modifier/mon-profil/mes-badges"
+        }
+    }
 }

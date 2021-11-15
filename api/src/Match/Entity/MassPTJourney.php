@@ -127,6 +127,14 @@ class MassPTJourney
      */
     private $updatedDate;
 
+    /**
+     * @var string PT provider used to compute this journey.
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups("pt")
+     */
+    private $provider;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -250,6 +258,18 @@ class MassPTJourney
     {
         $this->updatedDate = $updatedDate;
 
+        return $this;
+    }
+
+    public function getProvider(): ?string
+    {
+        return $this->provider;
+    }
+    
+    public function setProvider(?string $provider): self
+    {
+        $this->provider = $provider;
+        
         return $this;
     }
 

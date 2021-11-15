@@ -1,41 +1,41 @@
 {
-    "title": "Créez votre événement",
+    "title": "Create your event",
     "buttons": {
         "create": {
-            "label": "Créer l'événement",
-            "route": "/evenement/creer"
+            "label": "Create the event",
+            "route": "/event/create"
         }
     },
     "form": {
         "name": {
-            "label": "Nom de l'événement*",
-            "required": "Le nom de l'événement est requis"
+            "label": "Name of the event",
+            "required": "The name of the event is required"
         },
         "description": {
-            "label": "Description courte de l'événement*",
-            "required": "La courte description de l'événement est requise"
+            "label": "Short description of the event*",
+            "required": "The short description of the event is required"
         },
         "fullDescription": {
-            "label": "Description détaillée de l'événement*",
-            "required": "La description détaillée de l'événement est requise"
+            "label": "Detailed description of the event*",
+            "required": "The detailed description of the event is required"
         },
         "avatar": {
-            "label": "Image de l'événement*",
-            "required": "L'image de l'événement est requis",
-            "size": "Vous avez dépassé a taille maximale de l'image"
+            "label": "Event image*",
+            "required": "The event image is required",
+            "size": "You have exceeded the maximum image size"
         },
         "address": {
-            "label": "Adresse de l'événement*",
-            "required": "L'adesse de l'événement est requise"
+            "label": "Address of the event*",
+            "required": "The address of the event is required"
         },
         "urlEvent": {
-            "label": "URL de l'événement",
-            "tooltips": "L'adresse du site web de l'événement",
-            "error": "Veuillez renseigner un site web au format valide"
+            "label": "Event URL",
+            "tooltips": "The address of the event website",
+            "error": "Please enter a website in a valid format"
         },
         "private": {
-            "label": "Evénement privé (n'apparait pas dans la liste des événements)",
-            "tooltip": "Vous pourrez transmettre le lien direct reçu dans l'email de confirmation"
+            "label": "Private event (does not appear in the list of events)",
+            "tooltip": "You will be able to send the direct link received in the confirmation email"
         }
     },
     "redirect": {
@@ -43,32 +43,32 @@
     },
     "error": {
         "event": {
-            "name": "Cet événement existe déjà veuillez utiliser un autre nom",
-            "create": "La création de l'événement a échoué",
-            "required": "Tous les champs marqués d'une étoile sont requis",
-            "length": "Description courte trop longue (512 caractères maximum)."
+            "name": "This event already exists, please use another name",
+            "create": "Event creation failed",
+            "required": "All fields marked with an asterisk are required",
+            "length": "Short description too long (512 characters maximum)."
         },
-        "image": "L'image n'a pas été enregistrée"
+        "image": "The image has not been saved"
     },
     "startDate": {
-        "label": "Date de début*",
-        "error": "Obligatoire"
+        "label": "Start date*",
+        "error": "Required"
     },
     "endDate": {
-        "label": "Date de fin*",
-        "error": "Obligatoire"
+        "label": "End date*",
+        "error": "Required"
     },
     "startTime": {
-        "label": "Heure de début"
+        "label": "Start time"
     },
     "endTime": {
-        "label": "Heure de fin"
+        "label": "End time"
     },
     "popUp": {
-        "title": "Confirmation de création de l'événement",
-        "label": "J'ai bien compris que cette fonctionnalité ne sert PAS à publier mon annonce de covoiturage personnelle, mais permet de créer un espace dédié à l'événement que j'organise (pour regrouper tous les trajets qui s'y rendent ou qui en partent).\nPour publier votre annonce personnelle, inscrivez-vous (ou connectez-vous si vous êtes déjà inscrit) et créez votre nouvelle annonce depuis votre profil.",
-        "validation": "Publier l'événement",
-        "cancel": "Annuler"
+        "title": "Confirmation of event creation",
+        "label": "I understand that this feature is NOT for posting my personal carpooling proposal, but for creating a space dedicated to the event I am organizing (to group all the trips to and from it).\nTo post your personal proposal, register (or login if you are already registered) and create your new proposal from your profile.",
+        "validation": "Publish the event",
+        "cancel": "Cancel"
     },
     "fullDate": "ddd Do MMMM YYYY"
 }

@@ -30,8 +30,6 @@
           ref="form"
           v-model="valid"
           lazy-validation
-          :action="$t('urlSignIn', {id:communityId})"
-          method="POST"
         >
           <v-text-field
             v-model="credential1"
@@ -59,6 +57,7 @@
                   :disabled="!valid || userId === null"
                   color="secondary"
                   type="submit"
+                  :loading="loading"
                   rounded
                   @click="validate"
                 >
@@ -75,7 +74,7 @@
 </template>
 
 <script>
-
+import maxios from "@utils/maxios";
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/community/CommunitySecuredSignIn/";
 
 export default {
@@ -96,18 +95,20 @@ export default {
       type: String,
       default: null
     },
+    urlKey: {
+      type: String,
+      default: null
+    },
     userId:{
       type: Number,
       default: null
     },
-    error:{
-      type: Boolean,
-      default: false
-    }
   },
   data () {
     return {
+      loading:false,
       valid:false,
+      error:null,
       credential1:"",
       credential2:"",
       credentialsRules: [
@@ -119,8 +120,24 @@ export default {
     validate() {
       event.preventDefault();
       if (this.$refs.form.validate()) {
-        document.getElementById("formSecuredSignIn").submit();
-
+        this.loading = true;
+        this.error = false;
+        let params = { 
+          "credential1": this.credential1,
+          "credential2": this.credential2
+        }
+        maxios
+          .post(this.$t("urlJoin", { "id": this.communityId }), params)
+          .then((res) => {
+            if(res.data.id){
+              this.loading = false;
+              window.location.href = this.$t("urlRedirectAfterJoin", {'id':this.communityId, 'urlKey':this.urlKey});
+            }
+            else{
+              this.error = true;
+              this.loading = false;
+            }
+          });
       }
     },
   }

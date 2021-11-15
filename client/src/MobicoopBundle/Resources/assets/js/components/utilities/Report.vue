@@ -16,7 +16,7 @@
       </v-btn>
     </v-snackbar>
 
-    <div v-if="!isSent">
+    <div>
       <v-btn
         color="error"
         rounded
@@ -195,6 +195,7 @@ export default {
           }
           this.isSnackbarOpened = true;
           this.isLoading = false;
+          this.$refs.form.reset();
         });
     }
   },

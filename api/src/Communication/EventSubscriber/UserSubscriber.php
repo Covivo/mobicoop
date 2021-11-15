@@ -37,6 +37,7 @@ use App\User\Event\UserPasswordChangeAskedEvent;
 use App\User\Event\UserPasswordChangedEvent;
 use App\User\Event\UserSendValidationEmailEvent;
 use App\User\Service\UserManager;
+use App\Communication\Service\SmsManager;
 
 class UserSubscriber implements EventSubscriberInterface
 {

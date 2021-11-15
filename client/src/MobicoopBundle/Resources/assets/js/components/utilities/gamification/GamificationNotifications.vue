@@ -6,7 +6,12 @@
       timeout="-1"
       style="white-space: pre-line;"
     >
-      {{ rewardStepsText }}
+      <a
+        :href="$t('link.route.badges')"
+        style="text-decoration:none;"
+        class="white--text"
+        v-html="rewardStepsText"
+      />
 
       <template v-slot:action="{ attrs }">
         <v-btn

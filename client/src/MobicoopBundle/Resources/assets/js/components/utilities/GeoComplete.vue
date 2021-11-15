@@ -232,8 +232,8 @@ export default {
             let addressStreet = address.streetAddress
               ? address.streetAddress
               : (address.street ? address.street : "");
-            if (addressLocality || addressStreet) {
-              // If there is no locality or street returned, do not show them (region, department ..)
+            if (addressLocality || addressStreet || address.name || address.relayPoint || address.event) {
+              // If there is no locality or street returned, and not a qualified address, do not show them (region, department ..)
               if (address.name) {
                 resultsNamed.push(address);
               } else if (address.relayPoint) {

@@ -1,3 +1,6 @@
+# Release 1.38.0
+* Solidary : Can update Volunteers availabilities via PATCH route.
+
 # Release 1.37.0
 * Add externalId and a boolean to know if a User created by interroperability already existed in the database
 * Add a Consumption feedback provider Interface related to the CarpoolItem's creation

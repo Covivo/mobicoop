@@ -1,88 +1,173 @@
 {
     "titles": {
-        "personnalInfos": "Personnal Informations",
+        "personnalInfos": "Personal information",
         "password": "Password",
         "deleteAccount": "Delete my account"
     },
     "snackBar": {
-        "profileUpdated": "Your profile has been updated",
-        "errorProfileUpdate": "Error, your profile hasn't been updated",
-        "phoneValidated": "Your phone number has been verified.",
+        "profileUpdated": "Your profile has been updated!",
+        "errorProfileUpdate": "Error, your profile hasn't been updated.",
+        "phoneValidated": "Your telephone number has been verified.",
         "unknown": "Your validation code is incorrect.",
-        "tokenOk": "Le code de validation a bien été envoyé.",
-        "tokenError": "Erreur le code n'a pas été envoyé",
-        "emailOk": "L'email de validation a bien été envoyé.",
-        "emailError": "Erreur l'email n'a pas été envoyé"
+        "tokenOk": "The validation code has been sent.",
+        "tokenError": "Error, the code has not been sent",
+        "emailOk": "The validation email has been sent.",
+        "emailError": "Error the email has not been sent",
+        "phoneUpdate": "Error your telephone number has not been verified.",
+        "phoneAlreadyVerified": "Your telephone number is already verified."
     },
     "avatar": {
-        "label": "Avatar",
+        "label": "New photo",
         "size": "The size of your avatar exceeds the maximum limit",
         "delete": {
-            "route": "/user/profile/avatar/delete"
+            "route": "/user/profile/avatar/delete",
+            "label": "Delete the image"
         }
     },
     "route": {
-        "update": "/user/profile/update"
+        "update": "/user/profile/update",
+        "supprimer": "/user/profile/delete"
     },
     "news": {
-        "label": "News of"
+        "label": "News of the {platform} service (useful information for carpooling, and new services or new features)",
+        "confirmation": {
+            "content": "Please note, by unsubscribing from these service news, you will no longer receive any information on all of the following:<br><ul><li>new platform features and services</li><li>carpooling news from your region</li><li>news from your communities</li><li>personalized support</li></ul><br>Are you sure you want to unsubscribe?",
+            "title": "Confirmation of ending subscription"
+        },
+        "tooltip": "The news of the service are emails that used only to keep you informed of the changes to the service and promote your practice of carpooling. Such as updates to the platform or emails from the referent of a community to which you belong. This information may concern updates to the platform. No commercial solicitation is made via these emails."
     },
     "email": {
         "label": "Email",
         "errors": {
-            "valid": "L'adresse email doit être au bon format"
+            "valid": "The email address must be in the correct format"
         },
         "tooltips": {
-            "verified": "Votre adresse email est vérifiée",
-            "notVerified": "Votre adresse email n'est pas vérifiée"
+            "verified": "Your email address is verified",
+            "notVerified": "Your email address is not verified"
         },
         "buttons": {
             "label": {
-                "generateEmail": "Envoyer un email de vérification",
-                "generateEmailAgain": "Renvoyer un email de vérification"
+                "generateEmail": "Send a verification email",
+                "generateEmailAgain": "Send a verification email"
             }
-        },    
-        "verificationRoute":"/utilisateur/email/validation"    
+        },
+        "verificationRoute": "/user/email/validation/"
     },
     "givenName": {
-        "label": "Prénom"
+        "label": "First name"
     },
     "familyName": {
-        "label": "Nom"
+        "label": "Name"
     },
     "gender": {
-        "label": "Civilité",
+        "label": "Gender",
         "values": {
-            "male": "Monsieur",
-            "female": "Madame",
-            "other": "Autre"
+            "male": "Mr",
+            "female": "Mrs/Ms",
+            "other": "Other"
         }
     },
     "birthDay": {
-        "label": "Date de naissance",
+        "label": "Date of birth",
         "errors": {
-            "required": "La date de naissance est requise",
-            "notadult": "Vous devez avoir 16 ans pour vous inscrire sur la plateforme"
+            "required": "Date of birth is required",
+            "notadult": "You must be 16 years old to register on the platform"
         }
     },
     "homeTown": {
-        "label": "Commune de résidence"
+        "label": "Place of residence"
     },
-    "save": "Enregistrer",
-    "yes": "oui",
-    "no": "non",
+    "save": "Register",
+    "yes": "Yes",
+    "no": "No",
     "dialogEmail": {
-        "title": "Vous avez modifié votre adresse email",
-        "content": "<p>Vous avez modifié votre adresse email.</p><p>Si vous poursuivez, un email de validation de votre adresse email va vous être envoyé, et vous allez être déconnecté.</p><p>Voulez-vous poursuivre ?</p>",
+        "title": "You have changed your email address",
+        "content": "<p>You have changed your email address.</p><p>If you continue, an email validating your email address will be sent to you, and you will be logged out.</p><p>Do you want to continue?</p>",
         "buttons": {
-            "confirmUpdate": "Je modifie mon adresse email",
-            "cancelUpdate": "Annuler"
+            "confirmUpdate": "I am changing my email address",
+            "cancelUpdate": "Cancel"
         }
     },
-    "savedCo2":"Vous avez économisé {savedCo2} t de",
-    "publicProfile":{
-        "title":"Public profile",
-        "see":"See public profile",
-        "close":"Close"
+    "savedCo2": "You have saved {savedCo2} t of",
+    "publicProfile": {
+        "title": "Public profile",
+        "see": "View public profile",
+        "close": "Close"
+    },
+    "events": {
+        "route": "/user/events/created"
+    },
+    "communities": {
+        "route": "/user/communities/owned"
+    },
+    "address": {
+        "update": {
+            "route": "/user/profile/change/address",
+            "label": "Save address"
+        }
+    },
+    "buttons": {
+        "supprimerAccount": "Delete my account"
+    },
+    "dialog": {
+        "buttons": {
+            "close": "Close",
+            "confirmDelete": "I confirm the deletion"
+        },
+        "content": {
+            "errorCommunities": "As a referrer of a community you cannot delete your account as long as you are a referrer.<br/> <a href=/contact>Contact Technical Support</a> to change your referrer or delete that community. <br/>",
+            "errorEvents": "As the author of an event that is still to come,<br/> you cannot delete your account while you are the author of the event or while it is still to come.<br/> <a href=/contact>Contact Technical Support</a> to change the author of the event or ask for it to be deleted, or wait until the event has passed.",
+            "deleteAccount": "Are you sure you want to delete your account? <br/> This action is irreversible.<br/> It will result in :<br/> - deleting all your personal data <br/>- deleting all your messages exchanged with other users <br/>- making you anonymous in the carpooling archives of other carpoolers <br/>- delete all still active carpool proposals you have <br/>- decline all current carpool requests <br/>- cancel all planned carpools <br/><br/>Do you confirm?"
+        },
+        "titles": {
+            "deletionImpossible": "Unable to delete your account",
+            "deleteAccount": "Delete your account"
+        }
+    },
+    "phone": {
+        "i18n": {
+            "time": {
+                "format": {
+                    "hourMinute": "HH[h]mm"
+                }
+            },
+            "date": {
+                "format": {
+                    "computeDate": "YYYY-MM-DD",
+                    "shortDate": "DD/MM/YYYY",
+                    "fullDate": "ddd Do MMMM YYYY"
+                }
+            }
+        },
+        "token": {
+            "inputError": "The validation code consists of 4 digits.",
+            "route": "/user/phone/token"
+        },
+        "validation": {
+            "route": "/user/phone/validation",
+            "label": "Your validation code"
+        },
+        "buttons": {
+            "label": {
+                "validate": "Validate",
+                "generateNewToken": "Send a new code",
+                "generateToken": "Send a verification code"
+            }
+        },
+        "tooltips": {
+            "notVerified": "Your mobile number is not verified",
+            "verified": "Your mobile number is verified"
+        },
+        "errors": {
+            "valid": "The phone number must be valid"
+        },
+        "label": "Mobile phone"
+    },
+    "phoneDisplay": {
+        "label": {
+            "all": "Visible on posting the proposal, by all subscribers",
+            "restricted": "Visible only after accepting the carpooling , only by participants",
+            "general": "Visibility of my telephone number:"
+        }
     }
 }

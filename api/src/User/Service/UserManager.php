@@ -1971,4 +1971,22 @@ class UserManager
 
         return $user;
     }
+
+    /**
+     * Get the communities where the User is accepted or pending
+     *
+     * @param User $user
+     * @return Community[]
+     */
+    public function getUserCommunities(User $user)
+    {
+        $communityUsers = $this->communityUserRepository->findBy(["user"=>$user]);
+        $communities = [];
+        if (!is_null($communityUsers) && count($communityUsers)>0) {
+            foreach ($communityUsers as $communityUser) {
+                $communities[] = $communityUser->getCommunity();
+            }
+        }
+        return $communities;
+    }
 }

@@ -38,11 +38,13 @@ class CommunityUserRepository
      */
     private $repository;
     private $collectionExtensions;
+    private $communityNbLastUser;
     
-    public function __construct(EntityManagerInterface $entityManager, iterable $collectionExtensions)
+    public function __construct(EntityManagerInterface $entityManager, iterable $collectionExtensions, int $communityNbLastUser)
     {
         $this->repository = $entityManager->getRepository(CommunityUser::class);
         $this->collectionExtensions = $collectionExtensions;
+        $this->communityNbLastUser = $communityNbLastUser;
     }
 
     /**
@@ -125,6 +127,24 @@ class CommunityUserRepository
         ->where("cu.id IN(:ids) and u.newsSubscription=1 and cu.status IN (:statuses)")
         ->setParameter('ids', $ids)
         ->setParameter('statuses', [CommunityUser::STATUS_ACCEPTED_AS_MEMBER,CommunityUser::STATUS_ACCEPTED_AS_MODERATOR])
+        ->getQuery()->getResult();
+    }
+
+    /**
+     * @param Community $community
+     * @return CommunityUser[]
+     */
+    public function findNLastUsersOfACommunity(Community $community): array
+    {
+        return $this->repository->createQueryBuilder('cu')
+        ->where('cu.community = :community')
+        ->andWhere('cu.status != :pending')
+        ->andWhere('cu.status != :refused')
+        ->orderBy('cu.createdDate', 'DESC')
+        ->setMaxResults($this->communityNbLastUser)
+        ->setParameter('community', $community)
+        ->setParameter('pending', CommunityUser::STATUS_PENDING)
+        ->setParameter('refused', CommunityUser::STATUS_REFUSED)
         ->getQuery()->getResult();
     }
 }

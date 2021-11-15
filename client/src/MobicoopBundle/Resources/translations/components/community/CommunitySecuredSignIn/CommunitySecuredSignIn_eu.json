@@ -1,5 +1,5 @@
 {
-    "urlSignIn": "/communaute/{id}/securisee/inscription",
+    "urlJoin": "/community/{id}/secured/register/join",
     "credential2": "2. erabiltzailearen izena",
     "errors": {
         "notLogged": "Konektua izan behar zira",

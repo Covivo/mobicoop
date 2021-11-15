@@ -1,56 +1,71 @@
 # pages
 user:
-    signup:
-        title: 'Sign up'
-    signupValidation:
-        title: 'Email validation'
-    login:
-        title: 'Login'
-    profile:
-        title: 'My profile'
-    profile_update:
-        title: 'Update my profile'
-    profile_password_update:
-        title: 'Update my password'
-    messages:
-        title: 'Mailbox'
-    password_recovery:
-        title: 'Password recovery'
+  signup:
+    title: 'Register'
+  signupValidation:
+    title: 'Verify your email'
+  login:
+    title: 'Login'
+  profile:
+    title: 'My profile'
+  profile_update:
+    title: 'Update my profile'
+  profile_password_update:
+    title: 'Update my password'
+  messages:
+    title: 'Mailbox'
+  password_recovery:
+    title: 'Password recovery'
 carpool:
-    ad_create:
-        title: 'Post a carpool ad'
-    ad_update:
-        title: 'Update your carpool ad'
-    results:
-        title: 'Carpool results'
+  ad_create:
+    title: 'Post a carpool announcement'
+  ad_update:
+    title: 'Change your carpool announcement'
+  results:
+    title: 'Carpool results'
 journey:
-    results:
-        title: "Journey by city"
+  results:
+    title: "Journey by city"
+  from_to:
+    title2: ' to '
+    title1: 'Carpools without commission from '
+  to:
+    title: 'Carpools arriving from '
+  from:
+    title: 'Carpools from '
+  cities:
+    title: Carpools by city
 contact:
-    title: "Contact us"
+  title: "Contact us"
 solidary:
-    title: "Post a solidary carpool ad"
+  title: "Post a solidarity carpool announcement"
 communities:
-    community:
-        title: "Community"
-    communities:
-        title: "Communities"
-    create:
-        title: "Create a community"
+  community:
+    title: "Community"
+  communities:
+    title: "Communities"
+  create:
+    title: "Create a community"
+  widget:
+    title: Community widget
 events:
-    events:
-        title: "Events"
-    event:
-        title: "Event"
-    create:
-        title: "Create an event"
+  events:
+    title: "Events"
+  event:
+    title: "Event"
+  create:
+    title: "Create an event"
+  widget:
+    title: Event widget
 widget:
-    title: "Widget"
+  title: "Widget"
 toolsbox:
-    title: "Tool Box"
+  title: "Tool Box"
 relaypoints:
-    title: "Relay points"
+  title: "Relay points"
 payment:
-    title: "Payments"
+  title: "Payments"
 rssfeeds:
-    title: "Rss feeds"      
+  title: "RSS feeds"
+toolbox:
+  title: Toolbox

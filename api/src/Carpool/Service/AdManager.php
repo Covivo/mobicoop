@@ -50,6 +50,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Security\Core\Security;
 use App\Auth\Service\AuthManager;
 use App\Carpool\Entity\CarpoolProof;
+use App\Carpool\Entity\MapsAd\MapsAd;
 use App\Carpool\Exception\AntiFraudException;
 use App\Carpool\Ressource\ClassicProof;
 use App\Carpool\Exception\ProofException;
@@ -1320,8 +1321,6 @@ class AdManager
     {
         $proposal = $this->proposalRepository->find($ad->getId());
         $oldAd = $this->makeAd($proposal, $ad->getUserId());
-        $oldProposal = clone $proposal;
-        $oldProposal->setCriteria(clone $proposal->getCriteria());
         $proposalAsks = $this->askManager->getAsksFromProposal($proposal);
 
         // Pause is apart and do not needs notifications by now
@@ -2000,9 +1999,7 @@ class AdManager
             // the proof already exists, it's an update
             return $this->updateCarpoolProof($carpoolProof->getId(), $classicProof);
         }
-
         $carpoolProof = $this->proofManager->createProof($ask, $classicProof->getLongitude(), $classicProof->getLatitude(), CarpoolProof::TYPE_UNDETERMINED_CLASSIC, $classicProof->getUser(), $ask->getMatching()->getProposalOffer()->getUser(), $ask->getMatching()->getProposalRequest()->getUser());
-        $classicProof->setId($carpoolProof->getId());
 
         return $classicProof;
     }
@@ -2028,7 +2025,6 @@ class AdManager
 
         try {
             $carpoolProof = $this->proofManager->updateProof($id, $classicProofData->getLongitude(), $classicProofData->getLatitude(), $classicProofData->getUser(), $carpoolProof->getAsk()->getMatching()->getProposalRequest()->getUser(), $this->params['carpoolProofDistance']);
-            $classicProofData->setId($carpoolProof->getId());
         } catch (ProofException $proofException) {
             throw new AdException($proofException->getMessage());
         }
@@ -2056,7 +2052,7 @@ class AdManager
 
         $classicProof = new ClassicProof();
         $classicProof->setId($carpoolProof->getId());
-        $classicProof->setStatus($carpoolProof->getStatus());
+        $classicProof->setRegisteredStatus($carpoolProof->getStatus());
         
         return $classicProof;
     }
@@ -2362,5 +2358,35 @@ class AdManager
         }
         
         return $ad;
+    }
+
+
+    public function makeMapsAdFromProposal(Proposal $proposal): MapsAd
+    {
+        $mapsAd = new MapsAd();
+
+        $mapsAd->setOrigin($proposal->getWaypoints()[0]->getAddress());
+
+        $mapsAd->setDestination($proposal->getWaypoints()[count($proposal->getWaypoints())-1]->getAddress());
+
+        $mapsAd->setProposalId($proposal->getId());
+
+        $mapsAd->setOneWay(true);
+        if ($proposal->getProposalLinked()) {
+            $mapsAd->setOneWay(false);
+        }
+
+        $mapsAd->setRegular(false);
+        if ($proposal->getCriteria()->getFrequency() == Criteria::FREQUENCY_REGULAR) {
+            $mapsAd->setRegular(true);
+            $mapsAd->setOutwardDate(null);
+        } else {
+            $mapsAd->setOutwardDate($proposal->getCriteria()->getFromDate());
+        }
+
+        $mapsAd->setCarpoolerFirstName($proposal->getUser()->getGivenName());
+        $mapsAd->setCarpoolerLastName($proposal->getUser()->getFamilyName());
+
+        return $mapsAd;
     }
 }

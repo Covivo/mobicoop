@@ -207,7 +207,6 @@ class BasicFixturesManager
 
         $user = $this->userManager->createAlerts($user, false);
         $user->setValidatedDate(new \DateTime());
-        $user->setPhoneValidatedDate(new \DateTime());
         $addresses = $this->geoSearcher->geoCode($tab[7]);
         if (count($addresses)>0) {
             /**
@@ -624,7 +623,7 @@ class BasicFixturesManager
 
         $image->setName($owner->getName());
         $image->setOriginalName($tab[0]);
-        $image->setFileName($this->imageManager->generateFilename($image).".jpg");
+        $image->setFileName($this->imageManager->generateFilename($image));
         $image->setPosition(1);
 
         $infos = getimagesize($file);

@@ -18,11 +18,13 @@
           cols="12"
           align="center"
         >
-          <img
+          <v-img
             class="logo"
             :src="$t('widget.urlLogo')"
             alt="Mobicoop"
-          >
+            contain
+            height="150px"
+          />
         </v-col>
       </v-row>
       <v-row
@@ -110,7 +112,7 @@ export default {
   },
   created() {
     moment.locale(this.locale); // DEFINE DATE LANGUAGE
-    this.$root.token = this.token;
+    this.$store.commit('a/setToken', this.token);
   }
 }
 </script>

@@ -1,11 +1,10 @@
 {
-    "title": "Tool box",
+    "title": "Toolbox",
     "subtitle": "Communication tools",
     "widget": {
         "title": "The widget",
         "textLink": "Go to this page",
         "link": "/widget/get",
-        "text": "to download an embedable widget and learn the instructions to do it"
-    },
-    "items": []
+        "text": "to get an embeddable widget on your website and instructions for doing so"
+    }
 }
