@@ -26,6 +26,7 @@ namespace App\Gamification\Service;
 use App\Action\Entity\Action;
 use App\Action\Entity\Log;
 use App\Action\Repository\LogRepository;
+use App\Carpool\Entity\Ask;
 use App\Gamification\Entity\Badge;
 use App\Gamification\Entity\GamificationAction;
 use App\Gamification\Repository\SequenceItemRepository;
@@ -50,7 +51,9 @@ use App\Gamification\Interfaces\GamificationRuleInterface;
 use App\Communication\Repository\MessageRepository;
 use App\Gamification\Repository\RewardStepRepository;
 use App\Gamification\Repository\RewardRepository;
+use App\Payment\Entity\CarpoolItem;
 use Psr\Log\LoggerInterface;
+use App\User\Repository\UserRepository;
 
 /**
  * Gamification Manager
@@ -70,6 +73,7 @@ class GamificationManager
     private $rewardRepository;
     private $badgeImageUri;
     private $logger;
+    private $userRepository;
 
     public function __construct(
         SequenceItemRepository $sequenceItemRepository,
@@ -82,7 +86,8 @@ class GamificationManager
         RewardStepRepository $rewardStepRepository,
         RewardRepository $rewardRepository,
         string $badgeImageUri,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        UserRepository $userRepository
     ) {
         $this->sequenceItemRepository = $sequenceItemRepository;
         $this->logRepository = $logRepository;
@@ -95,6 +100,7 @@ class GamificationManager
         $this->rewardRepository = $rewardRepository;
         $this->badgeImageUri = $badgeImageUri;
         $this->logger = $logger;
+        $this->userRepository = $userRepository;
     }
     
     /**
@@ -436,15 +442,22 @@ class GamificationManager
     public function retroactivelyGenerateRewards()
     {
         foreach ($this->userRepository->findAll() as $user) {
-            $this->generateRewards($user);
+            // $this->generateBadgeOneRewards($user);
+            // $this->generateBadgeTwoRewards($user);
+            // $this->generateBadgeThreeRewards($user);
+            // $this->generateBadgeFourRewards($user);
+            $this->generateBadgeFiveRewards($user);
+            // $this->generateBadgeSixRewards($user);
+            // $this->generateBadgeSevenRewards($user);
         }
+        return;
     }
 
-    public function generateRewards(User $user)
+    public function generateBadgeOneRewards(User $user)
     {
-        // Badge 1 Remove the mask
-        // Sequence 1
-        $bagde1 = [];
+        // Badge 1 "Remove the mask" composed by 4 sequences (1, 2, 3 and 4)
+        // Sequence 1 (vérifier son adresse email)
+        $badge1 = [];
         if (!is_null($user->getValidatedDate())) {
             $rewardStep = new RewardStep;
             $rewardStep->setUser($user);
@@ -455,7 +468,7 @@ class GamificationManager
             $this->entityManager->flush();
             $badge1[] = 1;
         }
-        // Sequence 2
+        // Sequence 2 (vérifier son téléphone)
         if (!is_null($user->getPhoneValidatedDate())) {
             $rewardStep = new RewardStep;
             $rewardStep->setUser($user);
@@ -466,7 +479,7 @@ class GamificationManager
             $this->entityManager->flush();
             $badge1[] = 2;
         }
-        // Sequence 3
+        // Sequence 3 (avoir une image de profil)
         if (!is_null($user->getImages()) && count($user->getImages()) > 0) {
             $rewardStep = new RewardStep;
             $rewardStep->setUser($user);
@@ -477,7 +490,7 @@ class GamificationManager
             $this->entityManager->flush();
             $badge1[] = 3;
         }
-        // Sequence 4
+        // Sequence 4 (avoir renseigné sa commune de résidence)
         foreach ($user->getAddresses() as $address) {
             if ($address->isHome()) {
                 $rewardStep = new RewardStep;
@@ -491,7 +504,7 @@ class GamificationManager
                 continue;
             }
         }
-        // Badge 
+        // Badge 1
         if (count($badge1) === 4) {
             $reward = new Reward;
             $reward->setUser($user);
@@ -501,5 +514,270 @@ class GamificationManager
             $this->entityManager->persist($reward);
             $this->entityManager->flush();
         }
+        return;
+    }
+
+    public function generateBadgeTwoRewards(User $user)
+    {
+        // Badge 2 "launch" composed by sequence 5
+        // Sequence 5
+        $nbAds = 0;
+        foreach ($user->getProposals() as $proposal) {
+            if (!$proposal->isPrivate()) {
+                $nbAds++;
+            }
+        }
+        if ($nbAds >= 1) {
+            $rewardStep = new RewardStep;
+            $rewardStep->setUser($user);
+            $rewardStep->setSequenceItem($this->sequenceItemRepository->find(5));
+            $rewardStep->setCreatedDate(new \DateTime('now'));
+            $rewardStep->setNotifiedDate(new \DateTime('now'));
+            $this->entityManager->persist($rewardStep);
+            $this->entityManager->flush();
+            $reward = new Reward;
+            $reward->setUser($user);
+            $reward->setBadge($this->badgeRepository->find(2));
+            $reward->setCreatedDate(new \DateTime('now'));
+            $reward->setNotifiedDate(new \DateTime('now'));
+            $this->entityManager->persist($reward);
+            $this->entityManager->flush();
+        }
+        return;
+    }
+
+    public function generateBadgeThreeRewards(User $user)
+    {
+        // Badge 3 "first time" composed by 2 sequences (6, 7)
+        $badge3 = [];
+        // Sequence 6 (premier message répondu)
+        $messages = $user->getMessages();
+        $count = 0;
+        foreach ($messages as $message) {
+            if (is_null($message->getMessage())) {
+                $count++;
+            }
+        }
+        if ($count >= 1) {
+            $rewardStep = new RewardStep;
+            $rewardStep->setUser($user);
+            $rewardStep->setSequenceItem($this->sequenceItemRepository->find(6));
+            $rewardStep->setCreatedDate(new \DateTime('now'));
+            $rewardStep->setNotifiedDate(new \DateTime('now'));
+            $this->entityManager->persist($rewardStep);
+            $this->entityManager->flush();
+            $badge3[] = 1;
+        }
+        // Sequence 7 (covoiturage accepté)
+        $asks = array_merge($user->getAsks(), $user->getAsksRelated());
+        $isCarpooled = false;
+        foreach ($asks as $ask) {
+            if ($ask->getStatus() == Ask::STATUS_ACCEPTED_AS_DRIVER || $ask->getStatus() == Ask::STATUS_ACCEPTED_AS_PASSENGER) {
+                $isCarpooled = true;
+            }
+        }
+        if ($isCarpooled) {
+            $rewardStep = new RewardStep;
+            $rewardStep->setUser($user);
+            $rewardStep->setSequenceItem($this->sequenceItemRepository->find(7));
+            $rewardStep->setCreatedDate(new \DateTime('now'));
+            $rewardStep->setNotifiedDate(new \DateTime('now'));
+            $this->entityManager->persist($rewardStep);
+            $this->entityManager->flush();
+            $badge3[] = 1;
+        }
+        // Badge 3
+        if (count($badge3) == 2) {
+            $reward = new Reward;
+            $reward->setUser($user);
+            $reward->setBadge($this->badgeRepository->find(3));
+            $reward->setCreatedDate(new \DateTime('now'));
+            $reward->setNotifiedDate(new \DateTime('now'));
+            $this->entityManager->persist($reward);
+            $this->entityManager->flush();
+        }
+        return;
+    }
+
+    public function generateBadgeFourRewards(User $user)
+    {
+        // Badge 4 "welcome" composed by 3 sequences (8, 9 and 10)
+        $badge4 = [];
+        // Sequence 8 (rejoindre une communauté)
+        if (count($user->getCommunityUsers()) >= 1) {
+            $rewardStep = new RewardStep;
+            $rewardStep->setUser($user);
+            $rewardStep->setSequenceItem($this->sequenceItemRepository->find(8));
+            $rewardStep->setCreatedDate(new \DateTime('now'));
+            $rewardStep->setNotifiedDate(new \DateTime('now'));
+            $this->entityManager->persist($rewardStep);
+            $this->entityManager->flush();
+            $badge4[] = 1;
+        }
+        // Sequence 9 (publier une annonce dans une commuanuté)
+
+        $proposals = $user->getProposals();
+        // we get all user's proposals and for each proposal we check if he's associated with a community
+        foreach ($proposals as $proposal) {
+            $communities = $proposal->getCommunities();
+            // at the first proposal associated to a community we return true since we need at least one proposal associated to a community
+            if (count($communities) > 0) {
+                $rewardStep = new RewardStep;
+                $rewardStep->setUser($user);
+                $rewardStep->setSequenceItem($this->sequenceItemRepository->find(9));
+                $rewardStep->setCreatedDate(new \DateTime('now'));
+                $rewardStep->setNotifiedDate(new \DateTime('now'));
+                $this->entityManager->persist($rewardStep);
+                $this->entityManager->flush();
+                $badge4[] = 2;
+            }
+        }
+        // Sequence 10 (accepter un covoiturage dans une commuanuté)
+        $proposals = $user->getProposals();
+        // we get all user's proposals and for each proposal we check if he's associated with a community
+        $hasAcceptedCarpool = false;
+        foreach ($proposals as $proposal) {
+            $communities = $proposal->getCommunities();
+            // at the first proposal associated to a community we return true since we need at least one proposal associated to a community
+            if (count($communities) > 0) {
+                $matchingsOffers=$proposal->getMatchingOffers();
+                $matchingsRequests=$proposal->getMatchingRequests();
+                foreach ($matchingsOffers as $matching) {
+                    foreach ($matching->getAsks() as $ask) {
+                        if ($ask->getStatus() === Ask::STATUS_ACCEPTED_AS_DRIVER || $ask->getStatus() === Ask::STATUS_ACCEPTED_AS_PASSENGER) {
+                            $hasAcceptedCarpool = true;
+                        }
+                    }
+                }
+                foreach ($matchingsRequests as $matching) {
+                    foreach ($matching->getAsks() as $ask) {
+                        if ($ask->getStatus() === Ask::STATUS_ACCEPTED_AS_DRIVER || $ask->getStatus() === Ask::STATUS_ACCEPTED_AS_PASSENGER) {
+                            $hasAcceptedCarpool = true;
+                        }
+                    }
+                }
+            }
+        }
+        if ($hasAcceptedCarpool) {
+            $rewardStep = new RewardStep;
+            $rewardStep->setUser($user);
+            $rewardStep->setSequenceItem($this->sequenceItemRepository->find(10));
+            $rewardStep->setCreatedDate(new \DateTime('now'));
+            $rewardStep->setNotifiedDate(new \DateTime('now'));
+            $this->entityManager->persist($rewardStep);
+            $this->entityManager->flush();
+            $badge4[] = 3;
+        }
+        // Badge 4
+        if (count($badge4) === 3) {
+            $reward = new Reward;
+            $reward->setUser($user);
+            $reward->setBadge($this->badgeRepository->find(4));
+            $reward->setCreatedDate(new \DateTime('now'));
+            $reward->setNotifiedDate(new \DateTime('now'));
+            $this->entityManager->persist($reward);
+            $this->entityManager->flush();
+        }
+        return;
+    }
+
+    public function generateBadgeFiveRewards(User $user)
+    {
+        // Badge 5 "rally" composed by sequence 11
+        // Sequence 11 (au moins N annonces publiées)
+        $proposals = $user->getProposals();
+        $publishedProposals = [];
+        // we check that the proposal is a published proposal and not a search
+        foreach ($proposals as $proposal) {
+            if (!$proposal->isPrivate()) {
+                $publishedProposals[] = $proposal;
+            }
+        }
+        if (count($publishedProposals) >= $this->sequenceItemRepository->find(11)->getMinCount()) {
+            $rewardStep = new RewardStep;
+            $rewardStep->setUser($user);
+            $rewardStep->setSequenceItem($this->sequenceItemRepository->find(11));
+            $rewardStep->setCreatedDate(new \DateTime('now'));
+            $rewardStep->setNotifiedDate(new \DateTime('now'));
+            $this->entityManager->persist($rewardStep);
+            $this->entityManager->flush();
+            // Badge 5
+            $reward = new Reward;
+            $reward->setUser($user);
+            $reward->setBadge($this->badgeRepository->find(5));
+            $reward->setCreatedDate(new \DateTime('now'));
+            $reward->setNotifiedDate(new \DateTime('now'));
+            $this->entityManager->persist($reward);
+            $this->entityManager->flush();
+        }
+        return;
+    }
+
+    public function generateBadgeSixRewards(User $user)
+    {
+        var_dump('badge6');
+
+        // Badge 6 "km_carpooled" composed by sequence 12
+        // Sequence 12 (au moins N km covoiturés)
+        $asks = array_merge($user->getAsks(), $user->getAsksRelated());
+        $carpooledKm = null;
+        foreach ($asks as $ask) {
+            if ($ask->getStatus() == Ask::STATUS_ACCEPTED_AS_DRIVER || $ask->getStatus() == Ask::STATUS_ACCEPTED_AS_PASSENGER) {
+                $carpoolItems = $ask->getCarpoolItems();
+                $numberOfTravel = null;
+                foreach ($carpoolItems as $carpoolItem) {
+                    if ($carpoolItem->getItemStatus() == CarpoolItem::STATUS_REALIZED) {
+                        $numberOfTravel = + 1;
+                    }
+                }
+                $carpooledKm = $carpooledKm + ($ask->getMatching()->getCommonDistance() * $numberOfTravel);
+            }
+        }
+        // if a proposal he's carpooled and associated to a community we return true
+        if (($carpooledKm / 1000) >= $this->sequenceItemRepository->find(12)->getValue()) {
+            $rewardStep = new RewardStep;
+            $rewardStep->setUser($user);
+            $rewardStep->setSequenceItem($this->sequenceItemRepository->find(12));
+            $rewardStep->setCreatedDate(new \DateTime('now'));
+            $rewardStep->setNotifiedDate(new \DateTime('now'));
+            $this->entityManager->persist($rewardStep);
+            $this->entityManager->flush();
+            // Badge 6
+            $reward = new Reward;
+            $reward->setUser($user);
+            $reward->setBadge($this->badgeRepository->find(6));
+            $reward->setCreatedDate(new \DateTime('now'));
+            $reward->setNotifiedDate(new \DateTime('now'));
+            $this->entityManager->persist($reward);
+            $this->entityManager->flush();
+        }
+        return;
+    }
+
+    public function generateBadgeSevenRewards(User $user)
+    {
+        var_dump('badge7');
+
+        // Badge 7 "km_carpooled" composed by sequence 13
+        // Sequence 13 (au moins N CO² économisés en covoiturant)
+        $savedCo2 = $user->getSavedCo2() / 1000;
+        if ($savedCo2 >= $this->sequenceItemRepository->find(13)->getValue()) {
+            $rewardStep = new RewardStep;
+            $rewardStep->setUser($user);
+            $rewardStep->setSequenceItem($this->sequenceItemRepository->find(13));
+            $rewardStep->setCreatedDate(new \DateTime('now'));
+            $rewardStep->setNotifiedDate(new \DateTime('now'));
+            $this->entityManager->persist($rewardStep);
+            $this->entityManager->flush();
+            // Badge 7
+            $reward = new Reward;
+            $reward->setUser($user);
+            $reward->setBadge($this->badgeRepository->find(7));
+            $reward->setCreatedDate(new \DateTime('now'));
+            $reward->setNotifiedDate(new \DateTime('now'));
+            $this->entityManager->persist($reward);
+            $this->entityManager->flush();
+        }
+        return;
     }
 }

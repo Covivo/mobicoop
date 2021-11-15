@@ -26,6 +26,7 @@ namespace App\Gamification\Command;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use App\Gamification\Service\GamificationManager;
 
 /**
  * This command generate rewards and rewardsteps retroactively after the activation of the gamification
@@ -35,15 +36,19 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class retroactivelyGenerateRewardsCommand extends Command
 {
-    public function __construct()
+    private $gamificationManager;
+
+    public function __construct(GamificationManager $gamificationManager)
     {
+        $this->gamificationManager = $gamificationManager;
+
         parent::__construct();
     }
     
     protected function configure()
     {
         $this
-        ->setName("app:gamification:retroactively:generate")
+        ->setName("app:gamification:retroactively-generate")
         ->setDescription("Generate rewards and rewardSteps retroactively gamification's activation date.")
         ->setHelp("Generate rewards and rewardSteps retroactively gamification's activation date.")
         ;

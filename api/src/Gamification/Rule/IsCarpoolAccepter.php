@@ -39,7 +39,7 @@ class IsCarpoolAccepter implements GamificationRuleInterface
         // we check if the user accpeted at least a carpool
         $user = $log->getUser();
         // we get all asks of the user
-        $asks = $user->getAsks();
+        $asks = array_merge($user->getAsks(), $user->getAsksRelated());
         $isCarpooled = false;
         foreach ($asks as $ask) {
             if ($ask->getStatus() == Ask::STATUS_ACCEPTED_AS_DRIVER || $ask->getStatus() == Ask::STATUS_ACCEPTED_AS_PASSENGER) {
