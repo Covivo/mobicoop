@@ -24,6 +24,7 @@
 namespace App\Gamification\Repository;
 
 use App\Gamification\Entity\RewardStep;
+use App\Gamification\Entity\SequenceItem;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
@@ -79,6 +80,25 @@ class RewardStepRepository
         ->where('rs.notifiedDate is null')
         ->andWhere('rs.user = :user')
         ->setParameter('user', $user)
+        ;
+                
+        return $query->getQuery()->getResult();
+    }
+
+    /**
+     * Get rewardStep by user and sequenceItem
+     *
+     * @param User $user
+     * @param SequenceItem $sequenceItem
+     * @return array|null
+     */
+    public function findRewardStepByUserAndSequenceItem(User $user, SequenceItem $sequenceItem): ?array
+    {
+        $query = $this->repository->createQueryBuilder('rs')
+        ->where('rs.sequenceItem = :sequenceItem')
+        ->andWhere('rs.user = :user')
+        ->setParameter('user', $user)
+        ->setParameter('sequenceItem', $sequenceItem)
         ;
                 
         return $query->getQuery()->getResult();

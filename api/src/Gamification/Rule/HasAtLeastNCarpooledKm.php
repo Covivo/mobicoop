@@ -35,12 +35,11 @@ class HasAtLeastNCarpooledKm implements GamificationRuleInterface
     /**
      * has at least N carpooled Km rule
      *
-     * @param $requester
      * @param $log
      * @param $sequenceItem
      * @return bool
      */
-    public function execute($requester, $log, $sequenceItem)
+    public function execute($log, $sequenceItem)
     {
         // we check if the user has carpool at least N Km
         $user = $log->getUser();

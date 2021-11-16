@@ -41,7 +41,6 @@ class FirstMessageAnswer implements GamificationRuleInterface
      */
     public function execute($requester, $log, $sequenceItem)
     {
-        return true;
         $messages = $log->getUser()->getMessages();
 
         $count = 0;
@@ -50,7 +49,7 @@ class FirstMessageAnswer implements GamificationRuleInterface
                 $count++;
             }
         }
-        if ($count===1) {
+        if ($count>=1) {
             return true;
         }
         return false;

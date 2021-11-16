@@ -33,12 +33,11 @@ class HasAtLeastNCarpooledCo2Saved implements GamificationRuleInterface
     /**
      * Has at least N saved CO²
      *
-     * @param  $requester
      * @param  $log
      * @param  $sequenceItem
      * @return bool
      */
-    public function execute($requester, $log, $sequenceItem)
+    public function execute($log, $sequenceItem)
     {
         // we check if the user has at least saved N CO²
         // we divide it by 1000 since the amount of savedCo2 is calculated in grams and we want kg)
