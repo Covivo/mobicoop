@@ -24,16 +24,20 @@
 namespace App\Gamification\Service;
 
 use App\Action\Entity\Log;
+use App\Gamification\Entity\Badge;
+use App\Gamification\Entity\BadgeProgression;
+use App\Gamification\Entity\BadgeSummary;
 use App\Gamification\Entity\GamificationAction;
 use App\Gamification\Entity\Reward;
 use App\Gamification\Entity\RewardStep;
 use App\Gamification\Entity\SequenceItem;
+use App\Gamification\Entity\SequenceStatus;
 use App\Gamification\Entity\ValidationStep;
 use App\User\Repository\UserRepository;
 use App\Gamification\Repository\BadgeRepository;
 use App\User\Entity\User;
 use App\Gamification\Repository\RewardStepRepository;
-use App\Gamification\Service\GamificationManager;
+use App\Gamification\Resource\BadgesBoard;
 
 /**
  *
@@ -70,26 +74,28 @@ class RetroactivelyRewardService
 
     private $userRepository;
 
-    public function __construct(UserRepository $userRepository, BadgeRepository $badgeRepository, RewardStepRepository $rewardStepRepository, GamificationManager $gamificationManager)
+    public function __construct(UserRepository $userRepository, BadgeRepository $badgeRepository, RewardStepRepository $rewardStepRepository)
     {
         $this->userRepository = $userRepository;
         $this->badgeRepository = $badgeRepository;
         $this->rewardStepRepository = $rewardStepRepository;
-        $this->gamificationManager = $gamificationManager;
     }
 
     public function retroactivelyRewardUsers()
     {
+        $count = 0;
         foreach ($this->userRepository->findAll() as $user) {
             $this->retroactivelyRewardUser($user);
+            $count++;
         }
+        return $count;
     }
 
     private function retroactivelyRewardUser($user)
     {
         foreach ($this->badgeRepository->findAll() as $badge) {
             foreach ($badge->getSequenceItems() as $sequenceItem) {
-                if ($this->hasAlreadyRewardStep($user, $sequenceItem, )) {
+                if ($this->hasAlreadyRewardStep($user, $sequenceItem)) {
                     continue;
                 }
                 $hasGamificationAction = true;
@@ -121,7 +127,7 @@ class RetroactivelyRewardService
         $validationStep = new ValidationStep;
         $validationStep->setSequenceItem($this->sequenceItemRepository->find($sequenceItemId));
         $validationStep->setUser($user);
-        $badgesBoard = $this->gamificationManager->getBadgesBoard($validationStep->getUser());
+        $badgesBoard = $this->getBadgesBoard($user);
         foreach ($badgesBoard->getBadges() as $badgeProgression) {
             $badgeSummary = $badgeProgression->getBadgeSummary();
             $currentSequenceValidation = []; // We will store the status of every SequenceItem
@@ -161,6 +167,105 @@ class RetroactivelyRewardService
             }
         }
         $this->entityManager->flush();
+    }
+
+    /**
+     * Get the Badges board of a User
+     *
+     * @param User $user    The User
+     * @return BadgesBoard
+     */
+    public function getBadgesBoard(User $user): BadgesBoard
+    {
+        $badgesBoard = new BadgesBoard();
+        
+        // Set if the user accept Gamification tracking
+        $badgesBoard->setAcceptGamification($user->hasGamification());
+
+        
+        
+        // Get all the active badges of the platform
+        $activeBadges = $this->badgeRepository->findBy(["status"=>Badge::STATUS_ACTIVE]);
+        $badges = [];
+
+        /**
+         * @var Badge $activeBadge
+         */
+        foreach ($activeBadges as $activeBadge) {
+            $badgeProgression = new BadgeProgression();
+            
+            // Determine if the badge is already earned
+            $badgeProgression->setEarned(false);
+            foreach ($activeBadge->getRewards() as $reward) {
+                if ($reward->getUser()->getId() == $user->getId()) {
+                    $badgeProgression->setEarned(true);
+                    break;
+                }
+            }
+
+            // Minimum data about the current badge
+            $badgeSummary = new BadgeSummary();
+            $badgeSummary->setBadgeId($activeBadge->getId());
+            $badgeSummary->setBadgeName($activeBadge->getName());
+            $badgeSummary->setBadgeTitle($activeBadge->getTitle());
+
+            // images
+            $badgeSummary->setIcon((!is_null($activeBadge->getIcon())) ? $this->badgeImageUri.$activeBadge->getIcon()->getFileName() : null);
+            $badgeSummary->setDecoratedIcon((!is_null($activeBadge->getDecoratedIcon())) ? $this->badgeImageUri.$activeBadge->getDecoratedIcon()->getFileName() : null);
+            $badgeSummary->setImage((!is_null($activeBadge->getImage())) ? $this->badgeImageUri.$activeBadge->getImage()->getFileName() : null);
+            $badgeSummary->setImageLight((!is_null($activeBadge->getImageLight())) ? $this->badgeImageUri.$activeBadge->getImageLight()->getFileName() : null);
+
+            // We get the sequence and check if the current user validated it
+            $sequences = [];
+            $nbValidatedSequences = 0;
+            foreach ($activeBadge->getSequenceItems() as $sequenceItem) {
+                $sequenceStatus = new SequenceStatus();
+                $sequenceStatus->setSequenceItemId($sequenceItem->getId());
+                $sequenceStatus->setTitle($sequenceItem->getGamificationAction()->getTitle());
+                
+                
+                // We look into the rewardSteps previously existing for this SequenceItem
+                // If there is one for the current User, we know that it has already been validated
+                $sequenceStatus->setValidated(false);
+                foreach ($sequenceItem->getRewardSteps() as $rewardStep) {
+                    if ($rewardStep->getUser()->getId() == $user->getId()) {
+                        $sequenceStatus->setValidated(true);
+                        $nbValidatedSequences++;
+                        break;
+                    }
+                }
+                $sequences[] = $sequenceStatus;
+            }
+            $badgeSummary->setSequences($sequences);
+
+            $badgeProgression->setBadgeSummary($badgeSummary);
+
+            // Compute the earned percentage
+            $badgeProgression->setEarningPercentage(0);
+            if ($nbValidatedSequences==0) {
+                $badgeProgression->setEarningPercentage(0);
+            } else {
+                $badgeProgression->setEarningPercentage($nbValidatedSequences/count($activeBadge->getSequenceItems())*100);
+            }
+
+            $badges[] = $badgeProgression;
+        }
+        
+        $badgesBoard->setBadges($badges);
+
+        return $badgesBoard;
+    }
+
+    public function checkRule(User $user, SequenceItem $sequenceItem)
+    {
+        $gamificationActionRuleName = "\\App\\Gamification\Rule\\" . $sequenceItem->getGamificationAction()->getGamificationActionRule()->getName();
+        /**
+         * @var GamificationRuleInterface $gamificationActionRule
+         */
+        $gamificationActionRule = new $gamificationActionRuleName;
+        $log = new Log;
+        $log->setUser($user);
+        return $gamificationActionRule->execute($log, $sequenceItem);
     }
 
     private function hasEmailValidated(User $user, SequenceItem $sequenceItem)
@@ -211,211 +316,91 @@ class RetroactivelyRewardService
 
     private function hasNpublishedAds(User $user, SequenceItem $sequenceItem)
     {
-        // at this point a rule is associated, we need to execute it
-        $gamificationActionRuleName = "\\App\\Gamification\Rule\\" . $sequenceItem->getGamificationAction()->getGamificationActionRule()->getName();
-        /**
-         * @var GamificationRuleInterface $gamificationActionRule
-         */
-        $gamificationActionRule = new $gamificationActionRuleName;
-        $log = new Log;
-        $log->setUser($user);
-        $gamificationActionRule->execute($log, $sequenceItem);
+        return $this->checkRule($user, $sequenceItem);
     }
 
     private function hasJoinedCommunity(User $user, SequenceItem $sequenceItem)
     {
+        return (count($user->getCommunityUsers()) >= 1);
     }
 
     private function hasPublishedAnAdInCommunity(User $user, SequenceItem $sequenceItem)
     {
+        return $this->checkRule($user, $sequenceItem);
     }
 
     private function hasAnAcceptedCarpool(User $user, SequenceItem $sequenceItem)
     {
+        return $this->checkRule($user, $sequenceItem);
     }
 
     private function hasAnAcceptedCarpoolInCommunity(User $user, SequenceItem $sequenceItem)
     {
+        return $this->checkRule($user, $sequenceItem);
     }
 
     private function hasPublishedASolidaryExclusiveAd(User $user, SequenceItem $sequenceItem)
     {
+        return $this->checkRule($user, $sequenceItem);
     }
 
     private function hasCarpooledNkm(User $user, SequenceItem $sequenceItem)
     {
+        return $this->checkRule($user, $sequenceItem);
     }
 
     private function hasSavedNkgOfCO2(User $user, SequenceItem $sequenceItem)
     {
+        return $this->checkRule($user, $sequenceItem);
     }
 
     private function hasAnsweredAMessage(User $user, SequenceItem $sequenceItem)
     {
+        return $this->checkRule($user, $sequenceItem);
     }
 
     private function hasRepublishedAnExpiredAd(User $user, SequenceItem $sequenceItem)
     {
+        // Todo check this gamaification action
     }
 
     private function hasPublishAnAdWithRelayPoint(User $user, SequenceItem $sequenceItem)
     {
+        return $this->checkRule($user, $sequenceItem);
     }
 
     private function hasPublishedAnAdInEvent(User $user, SequenceItem $sequenceItem)
     {
+        return $this->checkRule($user, $sequenceItem);
     }
 
     private function hasValidatedBankIdentity(User $user, SequenceItem $sequenceItem)
     {
+        return (!is_null($user->getPaymentProfileId()));
     }
 
     private function hasRealizedAnOnlinePayment(User $user, SequenceItem $sequenceItem)
     {
+        return $this->checkRule($user, $sequenceItem);
     }
 
     private function hasPhoneNumber(User $user, SequenceItem $sequenceItem)
     {
+        return (!is_null($user->getTelephone()));
     }
 
     private function hasCreatedAnEvent(User $user, SequenceItem $sequenceItem)
     {
+        return (count($user->getEvents()) >= 1);
     }
 
     private function hasCreatedACommunity(User $user, SequenceItem $sequenceItem)
     {
+        return (count($user->getCommunities()) >= 1);
     }
 
     private function hasAnAcceptedCarpoolInEvent(User $user, SequenceItem $sequenceItem)
     {
-    }
-
-    public function generateBadgeThreeRewards(User $user, GamificationAction $gamificationAction)
-    {
-        // Badge 3 "first time" composed by 2 sequences (6, 7)
-        // Sequence 6
-        $messages = $user->getMessages();
-        $count = 0;
-        foreach ($messages as $message) {
-            if (is_null($message->getMessage())) {
-                $count++;
-            }
-        }
-        if ($count >= 1) {
-            $this->handleRetroactivelyRewards($user, 6);
-        }
-        // Sequence 7
-        $asks = array_merge($user->getAsks(), $user->getAsksRelated());
-        $isCarpooled = false;
-        foreach ($asks as $ask) {
-            if ($ask->getStatus() == Ask::STATUS_ACCEPTED_AS_DRIVER || $ask->getStatus() == Ask::STATUS_ACCEPTED_AS_PASSENGER) {
-                $isCarpooled = true;
-            }
-        }
-        if ($isCarpooled) {
-            $this->handleRetroactivelyRewards($user, 7);
-        }
-        return;
-    }
-
-    public function generateBadgeFourRewards(User $user)
-    {
-        // Badge 4 "welcome" composed by 3 sequences (8, 9 and 10)
-        // Sequence 8
-        if (count($user->getCommunityUsers()) >= 1) {
-            $this->handleRetroactivelyRewards($user, 8);
-        }
-        // Sequence 9
-        $proposals = $user->getProposals();
-        // we get all user's proposals and for each proposal we check if he's associated with a community
-        foreach ($proposals as $proposal) {
-            $communities = $proposal->getCommunities();
-            if (count($communities) > 0) {
-                $this->handleRetroactivelyRewards($user, 9);
-            }
-        }
-        // Sequence 10
-        $proposals = $user->getProposals();
-        // we get all user's proposals and for each proposal we check if he's associated with a community
-        $hasAcceptedCarpool = false;
-        foreach ($proposals as $proposal) {
-            $communities = $proposal->getCommunities();
-            if (count($communities) > 0) {
-                $matchingsOffers=$proposal->getMatchingOffers();
-                $matchingsRequests=$proposal->getMatchingRequests();
-                foreach ($matchingsOffers as $matching) {
-                    foreach ($matching->getAsks() as $ask) {
-                        if ($ask->getStatus() === Ask::STATUS_ACCEPTED_AS_DRIVER || $ask->getStatus() === Ask::STATUS_ACCEPTED_AS_PASSENGER) {
-                            $hasAcceptedCarpool = true;
-                        }
-                    }
-                }
-                foreach ($matchingsRequests as $matching) {
-                    foreach ($matching->getAsks() as $ask) {
-                        if ($ask->getStatus() === Ask::STATUS_ACCEPTED_AS_DRIVER || $ask->getStatus() === Ask::STATUS_ACCEPTED_AS_PASSENGER) {
-                            $hasAcceptedCarpool = true;
-                        }
-                    }
-                }
-            }
-        }
-        if ($hasAcceptedCarpool) {
-            $this->handleRetroactivelyRewards($user, 10);
-        }
-        return;
-    }
-
-    public function generateBadgeFiveRewards(User $user)
-    {
-        // Badge 5 "rally" composed by sequence 11
-        // Sequence 11
-        $proposals = $user->getProposals();
-        $publishedProposals = [];
-        // we check that the proposal is a published proposal and not a search
-        foreach ($proposals as $proposal) {
-            if (!$proposal->isPrivate()) {
-                $publishedProposals[] = $proposal;
-            }
-        }
-        if (count($publishedProposals) >= $this->sequenceItemRepository->find(11)->getMinCount()) {
-            $this->handleRetroactivelyRewards($user, 11);
-        }
-        return;
-    }
-
-    public function generateBadgeSixRewards(User $user)
-    {
-        // Badge 6 "km_carpooled" composed by sequence 12
-        // Sequence 12
-        $asks = array_merge($user->getAsks(), $user->getAsksRelated());
-        $carpooledKm = null;
-        foreach ($asks as $ask) {
-            if ($ask->getStatus() == Ask::STATUS_ACCEPTED_AS_DRIVER || $ask->getStatus() == Ask::STATUS_ACCEPTED_AS_PASSENGER) {
-                $carpoolItems = $ask->getCarpoolItems();
-                $numberOfTravel = null;
-                foreach ($carpoolItems as $carpoolItem) {
-                    if ($carpoolItem->getItemStatus() == CarpoolItem::STATUS_REALIZED) {
-                        $numberOfTravel = + 1;
-                    }
-                }
-                $carpooledKm = $carpooledKm + ($ask->getMatching()->getCommonDistance() * $numberOfTravel);
-            }
-        }
-        if (($carpooledKm / 1000) >= $this->sequenceItemRepository->find(12)->getValue()) {
-            $validationStep = new ValidationStep;
-            $this->handleRetroactivelyRewards($user, 12);
-        }
-        return;
-    }
-
-    public function generateBadgeSevenRewards(User $user)
-    {
-        // Badge 7 "carbon_saved" composed by sequence 13
-        // Sequence 13
-        $savedCo2 = $user->getSavedCo2() / 1000;
-        if ($savedCo2 >= $this->sequenceItemRepository->find(13)->getValue()) {
-            $this->handleRetroactivelyRewards($user, 13);
-        }
-        return;
+        return $this->checkRule($user, $sequenceItem);
     }
 }

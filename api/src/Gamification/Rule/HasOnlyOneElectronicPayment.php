@@ -49,7 +49,7 @@ class HasOnlyOneElectronicPayment implements GamificationRuleInterface
                 $payedCarpoolItems[] = $carpoolItem;
             }
         }
-        if (count($payedCarpoolItems) === 1) {
+        if (count($payedCarpoolItems) >= 1) {
             return true;
         }
         return false;

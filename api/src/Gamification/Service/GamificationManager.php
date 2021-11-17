@@ -54,6 +54,7 @@ use App\Gamification\Repository\RewardRepository;
 use App\Payment\Entity\CarpoolItem;
 use Psr\Log\LoggerInterface;
 use App\User\Repository\UserRepository;
+use App\Gamification\Service\RetroactivelyRewardService;
 
 /**
  * Gamification Manager
@@ -74,6 +75,7 @@ class GamificationManager
     private $badgeImageUri;
     private $logger;
     private $userRepository;
+    private $retroactivelyRewardService;
 
     public function __construct(
         SequenceItemRepository $sequenceItemRepository,
@@ -87,7 +89,8 @@ class GamificationManager
         RewardRepository $rewardRepository,
         string $badgeImageUri,
         LoggerInterface $logger,
-        UserRepository $userRepository
+        UserRepository $userRepository,
+        RetroactivelyRewardService $retroactivelyRewardService
     ) {
         $this->sequenceItemRepository = $sequenceItemRepository;
         $this->logRepository = $logRepository;
@@ -101,6 +104,7 @@ class GamificationManager
         $this->badgeImageUri = $badgeImageUri;
         $this->logger = $logger;
         $this->userRepository = $userRepository;
+        $this->retroactivelyRewardService = $retroactivelyRewardService;
     }
     
     /**
@@ -441,6 +445,6 @@ class GamificationManager
     
     public function retroactivelyGenerateRewards()
     {
-        return;
+        return $this->retroactivelyRewardService->retroactivelyRewardUsers();
     }
 }
