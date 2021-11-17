@@ -44,7 +44,7 @@ class FirstMessageAnswer implements GamificationRuleInterface
 
         $count = 0;
         foreach ($messages as $message) {
-            if (is_null($message->getMessage())) {
+            if (!is_null($message->getMessage())) {
                 $count++;
             }
         }
