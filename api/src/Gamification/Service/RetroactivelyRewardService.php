@@ -66,7 +66,6 @@ class RetroactivelyRewardService
         21 => "hasCreatedAnEvent",
         22 => "hasCreatedACommunity",
         23 => "hasAnAcceptedCarpoolInEvent"
-
     ];
 
     private $userRepository;
@@ -274,11 +273,6 @@ class RetroactivelyRewardService
     private function hasAnsweredAMessage(User $user, SequenceItem $sequenceItem)
     {
         return $this->checkRule($user, $sequenceItem);
-    }
-
-    private function hasRepublishedAnExpiredAd(User $user, SequenceItem $sequenceItem)
-    {
-        // Todo check this gamaification action
     }
 
     private function hasPublishAnAdWithRelayPoint(User $user, SequenceItem $sequenceItem)
