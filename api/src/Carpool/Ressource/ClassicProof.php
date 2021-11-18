@@ -156,7 +156,7 @@ class ClassicProof
      */
     private $proofDate;
 
-     public function __construct(int $id=null)
+    public function __construct(int $id=null)
     {
         $this->id = self::DEFAULT_ID;
         if (!is_null($id)) {
