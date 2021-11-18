@@ -46,7 +46,7 @@ Address: `address of the employer`
 
 Country: `country of the employer`
 
-Git email or login of the employee granted to contribute: `git_email | login of granted employee`
+Git email or login of the employee granted to contribute: `git_email | git_name of granted employee`
 
 
 **<<<**_End of additional information for Organizational contributor case [not required for individual contributor]_
@@ -56,7 +56,7 @@ Signed,
 
 `name surname`
 
-`git_email | login`
+`git_email | git_name`
 
 
 
