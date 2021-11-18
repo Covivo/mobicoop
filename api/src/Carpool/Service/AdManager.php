@@ -2000,6 +2000,7 @@ class AdManager
             return $this->updateCarpoolProof($carpoolProof->getId(), $classicProof);
         }
         $carpoolProof = $this->proofManager->createProof($ask, $classicProof->getLongitude(), $classicProof->getLatitude(), CarpoolProof::TYPE_UNDETERMINED_CLASSIC, $classicProof->getUser(), $ask->getMatching()->getProposalOffer()->getUser(), $ask->getMatching()->getProposalRequest()->getUser());
+        $classicProof->setId($carpoolProof->getId());
 
         return $classicProof;
     }
