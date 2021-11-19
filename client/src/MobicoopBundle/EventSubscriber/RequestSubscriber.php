@@ -1,4 +1,5 @@
 <?php
+
 namespace Mobicoop\Bundle\MobicoopBundle\EventSubscriber;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -31,6 +32,7 @@ class RequestSubscriber implements EventSubscriberInterface
             || 'user_password_forgot' === $request->attributes->get('_route')
             || 'user_password_reset' === $request->attributes->get('_route')
             || 'home_logout' === $request->attributes->get('_route')
+            || 'user_sign_up' === $request->attributes->get('_route')
         ) {
             return;
         }
