@@ -89,6 +89,7 @@ class UserManager
             // New User
             $userEntity = $this->buildUserEntityFromUser($user);
             $userEntity->setCreatedSsoDate(new \DateTime('now'));
+            $userEntity->setCreatedBySso(true);
             $userEntity = $this->userEntityManager->registerUser($userEntity);
             $user = $this->buildUserFromUserEntity($userEntity);
             $user->setPreviouslyExisting(false);
@@ -117,6 +118,7 @@ class UserManager
             if ($attach) {
                 $userEntity->setAppDelegate($this->security->getUser());
                 $userEntity->setCreatedSsoDate(new \DateTime('now'));
+                $userEntity->setCreatedBySso(false);
             }
 
             $this->entityManager->persist($userEntity);
@@ -136,10 +138,10 @@ class UserManager
         $this->detachSso = $detachSso;
         $this->setDetachSsoUser($detachSso);
 
-        if ($detachSso->getUser()->getCreatedDate() < $detachSso->getUser()->getCreatedSsoDate()) {
-            $this->detachPreviouslyExistingUser();
-        } else {
+        if ($detachSso->getUser()->isCreatedBySso()) {
             $this->detachSsoCreatedUser();
+        } else {
+            $this->detachPreviouslyExistingUser();
         }
 
         return $this->detachSso;
@@ -153,8 +155,18 @@ class UserManager
      */
     private function setDetachSsoUser(DetachSso $detachSso)
     {
-        if ($userEntity = $this->userEntityManager->getUserBySsoId($detachSso->getUuid())) {
+        if (!is_null($detachSso->getUserId())) {
+            $userEntity = $this->userEntityManager->getUser($detachSso->getUserId());
+        } elseif (!is_null($detachSso->getUuid())) {
+            $userEntity = $this->userEntityManager->getUserBySsoId($detachSso->getUuid());
+        } else {
+            throw new \LogicException("Uuid or userId must be filled");
+        }
+        
+        if ($userEntity) {
             $this->detachSso->setUser($userEntity);
+            $this->detachSso->setUserId($userEntity->getId());
+            $this->detachSso->setUuid($userEntity->getSsoId());
         } else {
             throw new \LogicException("Unknown User");
         }
@@ -170,6 +182,7 @@ class UserManager
         $userEntity->setSsoProvider(null);
         $userEntity->setCreatedSSoDate(null);
         $userEntity->setAppDelegate(null);
+        $userEntity->setCreatedBySso(null);
         $this->entityManager->persist($userEntity);
         $this->entityManager->flush();
         $this->detachSso->setPreviouslyExisting(true);
