@@ -81,6 +81,10 @@ class UserManager
     {
         $userEntity = $this->userEntityManager->getUserByEmail($user->getEmail());
         if (!is_null($userEntity)) {
+            if (!is_null($userEntity->getSsoId())) {
+                throw new \LogicException("This user is already attached to an Sso provider");
+            }
+            
             // Existing User, it pretty much an update with attach specified (for app and createdSsoDate)
             $user->setId($userEntity->getId());
             $user = $this->updateUser($user, true);
@@ -95,7 +99,7 @@ class UserManager
             $user->setPreviouslyExisting(false);
         }
 
-        return $user;
+        return $this->buildUserFromUserEntity($userEntity);
     }
 
     /**
@@ -108,10 +112,24 @@ class UserManager
     public function updateUser(User $user, bool $attach=false): User
     {
         if ($userEntity = $this->userEntityManager->getUser($user->getId())) {
-            $userEntity->setGivenName($user->getGivenName());
-            $userEntity->setFamilyName($user->getFamilyName());
-            $userEntity->setGender($user->getGender());
-            $userEntity->setEmail($user->getEmail());
+            if (!is_null($user->getGivenName()) && $user->getGivenName() !== "") {
+                $userEntity->setGivenName($user->getGivenName());
+            }
+            if (!is_null($user->getFamilyName()) && $user->getFamilyName() !== "") {
+                $userEntity->setFamilyName($user->getFamilyName());
+            }
+            if (!is_null($user->getGender()) && $user->getGender() !== "") {
+                $userEntity->setGender($user->getGender());
+            }
+            if (!is_null($user->getEmail()) && $user->getEmail() !== "") {
+                $userEntity->setEmail($user->getEmail());
+            }
+            if (!is_null($user->getBirthDate()) && $user->getBirthDate() !== "") {
+                $userEntity->setBirthDate($user->getBirthDate());
+            }
+            if (!is_null($user->getTelephone()) && $user->getTelephone() !== "") {
+                $userEntity->setTelephone($user->getTelephone());
+            }
             $userEntity->setNewsSubscription($user->hasNewsSubscription());
             $userEntity->setSsoId($user->getExternalId());
 
@@ -124,7 +142,7 @@ class UserManager
             $this->entityManager->persist($userEntity);
             $this->entityManager->flush();
         }
-        return $user;
+        return $this->buildUserFromUserEntity($userEntity);
     }
 
     /**
@@ -211,6 +229,8 @@ class UserManager
         $user->setFamilyName($userEntity->getFamilyName());
         $user->setGender($userEntity->getGender());
         $user->setEmail($userEntity->getEmail());
+        $user->setBirthDate($userEntity->getBirthDate());
+        $user->setTelephone($userEntity->getTelephone());
         $user->setNewsSubscription($userEntity->hasNewsSubscription());
         $user->setExternalId($userEntity->getSsoId());
 
@@ -236,6 +256,8 @@ class UserManager
         $userEntity->setFamilyName($user->getFamilyName());
         $userEntity->setGender($user->getGender());
         $userEntity->setEmail($user->getEmail());
+        $userEntity->setBirthDate($user->getBirthDate());
+        $userEntity->setTelephone($user->getTelephone());
         $userEntity->setPassword($user->getPassword());
         $userEntity->setNewsSubscription($user->hasNewsSubscription());
         $userEntity->setAppDelegate($this->security->getUser());
