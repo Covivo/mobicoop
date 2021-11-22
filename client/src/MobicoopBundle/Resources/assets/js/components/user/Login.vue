@@ -21,7 +21,7 @@
         align="center"
         class="text-center"
       >
-        <v-col class="col-4">
+        <v-col class="col-5">
           <v-alert
             v-if="errorDisplay!==''"
             type="error"

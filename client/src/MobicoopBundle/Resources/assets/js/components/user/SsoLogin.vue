@@ -29,10 +29,10 @@
       rounded
       @click="click"
     >
-      {{ $t('useSsoService', {'service':service}) }} <span v-if="picto"><v-img
+      {{ $t('useSsoService', {'service':service}) }} <span v-if="picto"><img
         :src="picto"
         width="30"
-      /></span>
+      ></span>
     </v-btn>
   </div>
 </template>
