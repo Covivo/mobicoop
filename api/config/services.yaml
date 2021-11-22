@@ -877,6 +877,7 @@ services:
         arguments:
             $ssoServicesActive: "%env(bool:SSO_SERVICES_ACTIVE)%"
             $ssoServices: "%env(json:file:resolve:SSO_SERVICES)%"
+            $ssoUseButtonIcon: "%env(bool:SSO_USE_BUTTON_ICON)%"
 
     App\ExternalJourney\DataProvider\ExternalJourneyCollectionDataProvider:
         arguments:

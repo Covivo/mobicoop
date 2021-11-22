@@ -5,6 +5,8 @@
       :key="ssoConnection.service"
       :url="ssoConnection.uri"
       :button-icon="ssoConnection.buttonIcon"
+      :picto="ssoConnection.picto"
+      :use-button-icon="ssoConnection.useButtonIcon"
       :service="ssoConnection.service"
     />      
   </div>

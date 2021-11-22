@@ -39,17 +39,19 @@ class SsoManager
     private $userManager;
     private $ssoServices;
     private $ssoServicesActive;
+    private $ssoUseButtonIcon;
 
     private const SUPPORTED_PROVIDERS = [
         OpenIdSsoProvider::SSO_PROVIDER_GLCONNECT => OpenIdSsoProvider::class,
         OpenIdSsoProvider::SSO_PROVIDER_PASSMOBILITE => OpenIdSsoProvider::class
     ];
 
-    public function __construct(UserManager $userManager, array $ssoServices, bool $ssoServicesActive)
+    public function __construct(UserManager $userManager, array $ssoServices, bool $ssoServicesActive, bool $ssoUseButtonIcon)
     {
         $this->userManager = $userManager;
         $this->ssoServices = $ssoServices;
         $this->ssoServicesActive = $ssoServicesActive;
+        $this->ssoUseButtonIcon = $ssoUseButtonIcon;
     }
 
     
@@ -85,6 +87,7 @@ class SsoManager
                     $ssoConnection->setClientId($ssoService['clientId']);
                     $ssoConnection->setService($ssoService['name']);
                     $ssoConnection->setSsoProvider($serviceName);
+                    $ssoConnection->setUseButtonIcon($this->ssoUseButtonIcon);
                     $ssoServices[] = $ssoConnection;
                 }
             }

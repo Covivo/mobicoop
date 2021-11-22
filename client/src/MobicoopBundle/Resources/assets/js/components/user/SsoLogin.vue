@@ -1,22 +1,39 @@
 <template>
-  <div
-    v-if="buttonIcon"
-    :style="'max-width:'+maxWidth+'px;'"
-    class="mx-auto"
-  >
-    <v-tooltip bottom>
-      <template v-slot:activator="{ on, attrs }">
-        <v-img
-          id="buttonWithImage"
-          :src="buttonIcon"
-          style="cursor:pointer"
-          v-bind="attrs"
-          v-on="on"
-          @click="click"
-        />
-      </template>
-      <span>{{ $t('useSsoService', {'service':service}) }}</span>
-    </v-tooltip>
+  <div>
+    <div
+      v-if="useButtonIcon && buttonIcon"
+      :style="'max-width:'+maxWidth+'px;'"
+      class="mx-auto"
+    >
+      <v-tooltip
+        bottom
+      >
+        <template v-slot:activator="{ on, attrs }">
+          <v-img
+            id="buttonWithImage"
+            :src="buttonIcon"
+            style="cursor:pointer"
+            v-bind="attrs"
+            v-on="on"
+            @click="click"
+          />
+        </template>
+        <span>{{ $t('useSsoService', {'service':service}) }}</span>
+      </v-tooltip>
+    </div>
+    <v-btn
+      v-else
+      class="pa-5"
+      color="secondary"
+      type="button"
+      rounded
+      @click="click"
+    >
+      {{ $t('useSsoService', {'service':service}) }} <span v-if="picto"><v-img
+        :src="picto"
+        width="30"
+      /></span>
+    </v-btn>
   </div>
 </template>
 <script>
@@ -39,6 +56,14 @@ export default {
     },
     buttonIcon:{
       type: String,
+      default: null
+    },
+    picto:{
+      type: String,
+      default: null
+    },
+    useButtonIcon:{
+      type: Boolean,
       default: null
     },
     service:{
