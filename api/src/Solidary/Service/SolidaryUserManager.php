@@ -957,17 +957,7 @@ class SolidaryUserManager
         }
 
         $solidaryUser = $user->getSolidaryUser();
-
-        // Accepted/Refused
-        if (is_null($solidaryVolunteer->isValidatedCandidate())) {
-            // Don't do anything, it's not an acceptation or refulsal action
-        } elseif (!$solidaryVolunteer->isValidatedCandidate()) {
-            // We change the status of the SolidaryUserStructure
-            $this->acceptOrRefuseCandidate($solidaryUser, false, true, $solidaryUser->getSolidaryUserStructures()[0]->getStructure());
-        } elseif ($solidaryVolunteer->isValidatedCandidate()) {
-            // We change the status of the SolidaryUserStructure
-            $this->acceptOrRefuseCandidate($solidaryUser, true, false, $solidaryUser->getSolidaryUserStructures()[0]->getStructure());
-        }
+       
         if (!is_null($solidaryVolunteer->getMMinTime())) {
             $solidaryUser->setMMinTime($solidaryVolunteer->getMMinTime());
         }
@@ -1050,81 +1040,16 @@ class SolidaryUserManager
         if (!is_null($solidaryVolunteer->hasESun())) {
             $solidaryUser->setESun($solidaryVolunteer->hasESun());
         }
+        if (!is_null($solidaryVolunteer->getMaxDistance())) {
+            $solidaryUser->setMaxDistance($solidaryVolunteer->getMaxDistance());
+        }
 
         $this->entityManager->persist($user);
         $this->entityManager->flush();
 
         return $this->getSolidaryVolunteer($solidaryUser->getId());
     }
-
-    /**
-     * Accept or refuse a SolidaryUser for a Structure (given or the admin's)
-     *
-     * @param SolidaryUser $solidaryUser   The SolidaryUser
-     * @param boolean $acceptCandidate     Accept this SolidaryUser for a Structure to be determined
-     * @param boolean $refuseCandidate     Refuse this SolidaryUser for a Structure to be determined
-     * @param Structure $structure         The structure (if there is no structure we use the admin one)
-     * @return void
-     */
-    public function acceptOrRefuseCandidate(SolidaryUser $solidaryUser, bool $acceptCandidate = false, bool $refuseCandidate = false, Structure $structure = null)
-    {
-        // Handle the status of the candidate
-        $solidaryUserStructures = $solidaryUser->getSolidaryUserStructures();
-
-        // If there a Structure given, we use it. Otherwise we use the first admin structure
-        if (is_null($structure)) {
-            // We get the Structure of the Admin to set the SolidaryUserStructure
-            $structures = $this->security->getUser()->getSolidaryStructures();
-            if (!is_null($structures) || count($structures)>0) {
-                $structure = $structures[0];
-            }
-        }
-      
-        // We search the right solidaryUserStructure to update
-        $solidaryUserStructureToUpdate = null;
-        foreach ($solidaryUserStructures as $solidaryUserStructure) {
-            if ($solidaryUserStructure->getStructure()->getId() == $structure->getId()) {
-                $solidaryUserStructureToUpdate = $solidaryUserStructure;
-                break;
-            }
-        }
-
-        // We check if this candidate has already been accepted or refused
-        if (!is_null($solidaryUserStructureToUpdate->getAcceptedDate())) {
-            throw new SolidaryException(SolidaryException::ALREADY_ACCEPTED);
-        }
-        if (!is_null($solidaryUserStructureToUpdate->getRefusedDate())) {
-            throw new SolidaryException(SolidaryException::ALREADY_REFUSED);
-        }
-
-        if ($acceptCandidate && $solidaryUserStructureToUpdate->getAcceptedDate()=="" && $solidaryUserStructureToUpdate->getRefusedDate()=="") {
-            $solidaryUserStructureToUpdate->setAcceptedDate(new \DateTime());
-            $solidaryUserStructureToUpdate->setStatus(SolidaryUserStructure::STATUS_ACCEPTED);
-            // We add the role to the user
-            if ($solidaryUser->isVolunteer()) {
-                $authItem = $this->authItemRepository->find(AuthItem::ROLE_SOLIDARY_VOLUNTEER);
-            } elseif ($solidaryUser->isBeneficiary()) {
-                $authItem = $this->authItemRepository->find(AuthItem::ROLE_SOLIDARY_BENEFICIARY);
-            } else {
-                throw new SolidaryException(SolidaryException::NO_ROLE);
-            }
-            $userAuthAssignment = new UserAuthAssignment();
-            $userAuthAssignment->setAuthItem($authItem);
-            $user = $solidaryUser->getUser();
-            $user->addUserAuthAssignment($userAuthAssignment);
-
-            // We dispatch the event
-            $event = new SolidaryUserStructureAcceptedEvent($solidaryUserStructureToUpdate, $this->security->getUser());
-            $this->eventDispatcher->dispatch(SolidaryUserStructureAcceptedEvent::NAME, $event);
-        } elseif ($refuseCandidate && $solidaryUserStructureToUpdate->getAcceptedDate()=="" && $solidaryUserStructureToUpdate->getRefusedDate()=="") {
-            $solidaryUserStructureToUpdate->setRefusedDate(new \DateTime());
-            $solidaryUserStructureToUpdate->setStatus(SolidaryUserStructure::STATUS_REFUSED);
-            // We dispatch the event
-            $event = new SolidaryUserStructureRefusedEvent($solidaryUserStructureToUpdate, $this->security->getUser());
-            $this->eventDispatcher->dispatch(SolidaryUserStructureRefusedEvent::NAME, $event);
-        }
-    }
-    
+       
     /**
      * Add Proofs to an existing SolidaryUserStructure of a SolidaryUser (for a given Structure or not)
      *
