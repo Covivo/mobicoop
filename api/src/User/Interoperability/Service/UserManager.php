@@ -41,17 +41,19 @@ class UserManager
     private $userEntityManager;
     private $security;
     private $entityManager;
+    private $notificationSsoRegistration;
     
     /**
      * @var DetachSso
      */
     private $detachSso;
 
-    public function __construct(UserEntityManager $userEntityManager, Security $security, EntityManagerInterface $entityManager)
+    public function __construct(UserEntityManager $userEntityManager, Security $security, EntityManagerInterface $entityManager, bool $notificationSsoRegistration)
     {
         $this->userEntityManager = $userEntityManager;
         $this->security = $security;
         $this->entityManager = $entityManager;
+        $this->notificationSsoRegistration = $notificationSsoRegistration;
     }
 
     
@@ -93,6 +95,9 @@ class UserManager
             // New User
             $userEntity = $this->buildUserEntityFromUser($user);
             $userEntity->setCreatedSsoDate(new \DateTime('now'));
+            if (!$this->notificationSsoRegistration) {
+                $userEntity->setValidatedDate(new \DateTime('now'));
+            }
             $userEntity->setCreatedBySso(true);
             $userEntity = $this->userEntityManager->registerUser($userEntity);
             $user = $this->buildUserFromUserEntity($userEntity);

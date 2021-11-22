@@ -358,6 +358,10 @@ services:
             $emailTemplatePath: '%env(string:NOTIFICATION_TEMPLATE_EMAIL_PATH)%'
             $platformName: '%env(string:EMAILS_PLATFORM_NAME)%'
 
+    App\Communication\EventSubscriber\UserSubscriber:
+        arguments:
+            $notificationSsoRegistration: '%env(bool:NOTIFICATION_SSO_REGISTRATION)%'
+
     App\Communication\Service\ReportManager:
         arguments:
             $emailTemplatePath: '%env(string:NOTIFICATION_TEMPLATE_EMAIL_PATH)%'
@@ -860,7 +864,11 @@ services:
                 userReview: '%env(bool:USER_REVIEW)%'
             $passwordTokenValidity: '%env(int:PASSWORD_TOKEN_VALIDITY)%'
             $paymentActive: '%env(string:PAYMENT_ACTIVE)%'    
-    
+
+    App\User\Interoperability\Service\UserManager:
+        arguments:
+            $notificationSsoRegistration: '%env(bool:NOTIFICATION_SSO_REGISTRATION)%'
+            
     App\User\Service\ReviewManager:
         arguments:
             $userReview: '%env(bool:USER_REVIEW)%'
