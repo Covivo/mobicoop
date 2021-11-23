@@ -17,21 +17,11 @@
     </v-row>
     <div class="pt-12">
       <v-row
-        v-if="consent"
-        class="text-center justify-center"
-      >
-        <v-col
-          class="col-4"
-        >
-          <SsoLogins />
-        </v-col>
-      </v-row>
-      <v-row
         justify="center"
         align="center"
         class="text-center"
       >
-        <v-col class="col-4">
+        <v-col class="col-5">
           <v-alert
             v-if="errorDisplay!==''"
             type="error"
@@ -86,6 +76,12 @@
               {{ $t('connection') }}
             </v-btn>
           </v-form>
+
+          <SsoLogins
+            v-if="consent"
+            class="mt-5"
+          />
+
           <v-card-text>
             <a
               :href="$t('urlRecovery')"

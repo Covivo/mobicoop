@@ -63,6 +63,7 @@ class SsoConnection
 
     const RETURN_URL = "user/sso/login";
     const LOGIN_BUTTON_ICON = "/images/sso/{serviceId}-sso-login.png";
+    const LOGIN_BUTTON_PICTO = "/images/sso/{serviceId}-sso-login-picto.svg";
 
     /**
      * @var int The id of this Block
@@ -116,7 +117,19 @@ class SsoConnection
      * @Groups({"readSSOConnection"})
      */
     private $buttonIcon;
+
+    /**
+     * @var string|null The SSO service picto for the text button
+     * @Groups({"readSSOConnection"})
+     */
+    private $picto;
     
+    /**
+     * @var bool|null true : use the Button icon, false use the picto
+     * @Groups({"readSSOConnection"})
+     */
+    private $useButtonIcon;
+
     public function __construct(string $id=null)
     {
         (is_null($id)) ? $this->id = self::DEFAULT_ID : $this->id = $id;
@@ -214,6 +227,30 @@ class SsoConnection
     public function setButtonIcon(?string $buttonIcon): self
     {
         $this->buttonIcon = $buttonIcon;
+        
+        return $this;
+    }
+
+    public function getPicto(): ?string
+    {
+        return str_replace('{serviceId}', $this->id, self::LOGIN_BUTTON_PICTO);
+    }
+    
+    public function setPicto(?string $picto): self
+    {
+        $this->picto = $picto;
+        
+        return $this;
+    }
+
+    public function hasUseButtonIcon(): ?bool
+    {
+        return (!is_null($this->useButtonIcon)) ? $this->useButtonIcon : false;
+    }
+    
+    public function setUseButtonIcon(?bool $useButtonIcon): self
+    {
+        $this->useButtonIcon = $useButtonIcon;
         
         return $this;
     }

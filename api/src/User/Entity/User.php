@@ -1266,6 +1266,12 @@ class User implements UserInterface, EquatableInterface
     private $createdSsoDate;
 
     /**
+     * @var bool|null true : the user has been created by sso (false mean no sso or only attached a previously existing account)
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $createdBySso;
+
+    /**
      * @var User|null Admin that create the user.
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User")
@@ -3002,6 +3008,18 @@ class User implements UserInterface, EquatableInterface
     public function setCreatedSsoDate(?\DateTimeInterface $createdSsoDate): self
     {
         $this->createdSsoDate = $createdSsoDate;
+
+        return $this;
+    }
+
+    public function isCreatedBySso(): ?bool
+    {
+        return (is_null($this->createdBySso)) ? false : $this->createdBySso;
+    }
+
+    public function setCreatedBySso(?bool $createdBySso): self
+    {
+        $this->createdBySso = $createdBySso;
 
         return $this;
     }

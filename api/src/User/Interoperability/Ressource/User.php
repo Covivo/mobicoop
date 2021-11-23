@@ -179,11 +179,24 @@ class User
     /**
      * @var string The email of the user.
      *
-     * @Assert\NotBlank
      * @Assert\Email()
      * @Groups({"readUser","writeUser"})
      */
     private $email;
+
+    /**
+     * @var \DateTimeInterface|null The birth date of the user
+     *
+     * @Groups({"readUser","writeUser"})
+     */
+    private $birthDate;
+
+    /**
+     * @var string|null The telephone number of the user
+     *
+     * @Groups({"readUser","writeUser"})
+     */
+    private $telephone;
 
     /**
      * @var string The encoded password of the user.
@@ -273,6 +286,30 @@ class User
     public function setEmail(?string $email): self
     {
         $this->email = $email;
+
+        return $this;
+    }
+
+    public function getBirthDate(): ?\DateTimeInterface
+    {
+        return $this->birthDate;
+    }
+
+    public function setBirthDate(?\DateTimeInterface $birthDate): self
+    {
+        $this->birthDate = $birthDate;
+
+        return $this;
+    }
+
+    public function getTelephone(): ?string
+    {
+        return $this->telephone;
+    }
+
+    public function setTelephone(?string $telephone): self
+    {
+        $this->telephone = $telephone;
 
         return $this;
     }
