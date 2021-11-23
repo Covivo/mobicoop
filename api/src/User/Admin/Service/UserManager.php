@@ -100,7 +100,7 @@ class UserManager
     {
         $user = $this->userRepository->find($id);
         $user->initOwnership(); // construct of User not called
-        
+
         // check if the user is not the author of an event that is still valid
         $events = [];
         foreach ($user->getEvents() as $event) {
@@ -166,11 +166,11 @@ class UserManager
         }
         $user->setClearPassword($user->getPassword());
         $user->setPassword($this->encoder->encodePassword($user, $user->getPassword()));
-        
+
         if (is_null($user->getPhoneDisplay())) {
             $user->setPhoneDisplay(User::PHONE_DISPLAY_RESTRICTED);
         }
-        
+
         if (is_null($user->hasChat())) {
             $user->setChat($this->chat);
         }
@@ -253,8 +253,8 @@ class UserManager
             if (!is_null($homeAddress)) {
                 // we have to update each field...
                 /**
-                * @var Address $homeAddress
-                */
+                 * @var Address $homeAddress
+                 */
                 $homeAddress->setStreetAddress($user->getHomeAddress()->getStreetAddress());
                 $homeAddress->setPostalCode($user->getHomeAddress()->getPostalCode());
                 $homeAddress->setAddressLocality($user->getHomeAddress()->getAddressLocality());
@@ -281,6 +281,11 @@ class UserManager
 
         // check if roles were updated
         if (in_array('rolesTerritory', array_keys($fields))) {
+            foreach ($user->getUserAuthAssignments() as $userAuthAssignment) {
+                $this->entityManager->remove($userAuthAssignment);
+            }
+            $this->entityManager->flush();
+
             // remove current roles
             $user->removeUserAuthAssignments();
             // add each role
@@ -295,11 +300,11 @@ class UserManager
                 $user->addUserAuthAssignment($userAuthAssignment);
             }
         }
-        
+
         // persist the user
         $this->entityManager->persist($user);
         $this->entityManager->flush();
-        
+
         // return the user
         return $user;
     }
@@ -355,11 +360,11 @@ class UserManager
         }
         $user->setClearPassword($user->getPassword());
         $user->setPassword($this->encoder->encodePassword($user, $user->getPassword()));
-        
+
         if (!isset($auser['phoneDisplay'])) {
             $user->setPhoneDisplay(User::PHONE_DISPLAY_RESTRICTED);
         }
-        
+
         if (!isset($auser['chat'])) {
             $user->setChat($this->chat);
         }
