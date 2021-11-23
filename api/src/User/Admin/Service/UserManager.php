@@ -47,418 +47,424 @@ use App\Community\Entity\Community;
  */
 class UserManager
 {
-    private $entityManager;
-    private $authItemRepository;
-    private $territoryRepository;
-    private $encoder;
-    private $eventDispatcher;
-    private $security;
-    private $userManager;
-    private $userRepository;
-    private $chat;
-    private $music;
-    private $smoke;
+	private $entityManager;
+	private $authItemRepository;
+	private $territoryRepository;
+	private $encoder;
+	private $eventDispatcher;
+	private $security;
+	private $userManager;
+	private $userRepository;
+	private $chat;
+	private $music;
+	private $smoke;
 
-    /**
-     * Constructor
-     *
-     * @param EntityManagerInterface $entityManager The entity manager
-     */
-    public function __construct(
-        EntityManagerInterface $entityManager,
-        AuthItemRepository $authItemRepository,
-        TerritoryRepository $territoryRepository,
-        UserPasswordEncoderInterface $encoder,
-        EventDispatcherInterface $dispatcher,
-        Security $security,
-        ServiceUserManager $userManager,
-        UserRepository $userRepository,
-        $chat,
-        $smoke,
-        $music
-    ) {
-        $this->entityManager = $entityManager;
-        $this->authItemRepository = $authItemRepository;
-        $this->territoryRepository = $territoryRepository;
-        $this->encoder = $encoder;
-        $this->eventDispatcher = $dispatcher;
-        $this->security = $security;
-        $this->userManager = $userManager;
-        $this->userRepository = $userRepository;
-        $this->chat = $chat;
-        $this->music = $music;
-        $this->smoke = $smoke;
-    }
+	/**
+	 * Constructor
+	 *
+	 * @param EntityManagerInterface $entityManager The entity manager
+	 */
+	public function __construct(
+		EntityManagerInterface $entityManager,
+		AuthItemRepository $authItemRepository,
+		TerritoryRepository $territoryRepository,
+		UserPasswordEncoderInterface $encoder,
+		EventDispatcherInterface $dispatcher,
+		Security $security,
+		ServiceUserManager $userManager,
+		UserRepository $userRepository,
+		$chat,
+		$smoke,
+		$music
+	) {
+		$this->entityManager = $entityManager;
+		$this->authItemRepository = $authItemRepository;
+		$this->territoryRepository = $territoryRepository;
+		$this->encoder = $encoder;
+		$this->eventDispatcher = $dispatcher;
+		$this->security = $security;
+		$this->userManager = $userManager;
+		$this->userRepository = $userRepository;
+		$this->chat = $chat;
+		$this->music = $music;
+		$this->smoke = $smoke;
+	}
 
-    /**
-     * Get a user by its id
-     *
-     * @param integer $id   The user id
-     * @return User|null    The user if found
-     */
-    public function getUser(int $id)
-    {
-        $user = $this->userRepository->find($id);
-        $user->initOwnership(); // construct of User not called
-        
-        // check if the user is not the author of an event that is still valid
-        $events = [];
-        foreach ($user->getEvents() as $event) {
-            /**
-             * @var Event $event
-             */
-            if ($event->getToDate() >= new \DateTime()) {
-                $events[] = $event->getId() . " - " . $event->getName();
-            }
-        }
-        if (count($events)>0) {
-            $user->addOwnership(['events'=>$events]);
-        }
+	/**
+	 * Get a user by its id
+	 *
+	 * @param integer $id   The user id
+	 * @return User|null    The user if found
+	 */
+	public function getUser(int $id)
+	{
+		$user = $this->userRepository->find($id);
+		$user->initOwnership(); // construct of User not called
 
-        $communities = [];
-        foreach ($user->getCommunities() as $community) {
-            /**
-             * @var Community $community
-             */
-            $communities[] = $community->getId() . " - " . $community->getName();
-        }
-        if (count($communities)>0) {
-            $user->addOwnership(['communities'=>$communities]);
-        }
+		// check if the user is not the author of an event that is still valid
+		$events = [];
+		foreach ($user->getEvents() as $event) {
+			/**
+			 * @var Event $event
+			 */
+			if ($event->getToDate() >= new \DateTime()) {
+				$events[] = $event->getId() . " - " . $event->getName();
+			}
+		}
+		if (count($events) > 0) {
+			$user->addOwnership(['events' => $events]);
+		}
 
-        return $user;
-    }
+		$communities = [];
+		foreach ($user->getCommunities() as $community) {
+			/**
+			 * @var Community $community
+			 */
+			$communities[] = $community->getId() . " - " . $community->getName();
+		}
+		if (count($communities) > 0) {
+			$user->addOwnership(['communities' => $communities]);
+		}
 
-    /**
-     * Add a user.
-     *
-     * @param User      $user               The user to register
-     * @return User     The user created
-     */
-    public function addUser(User $user)
-    {
-        // add delegation
-        $user->setUserDelegate($this->security->getUser());
-        // check if roles were set
-        if (count($user->getRolesTerritory())>0) {
-            // roles are set => add each role
-            foreach ($user->getRolesTerritory() as $roleTerritory) {
-                $userAuthAssignment = new UserAuthAssignment();
-                $authItem = $this->authItemRepository->find($roleTerritory['role']);
-                $userAuthAssignment->setAuthItem($authItem);
-                if (isset($roleTerritory['territory'])) {
-                    $territory = $this->territoryRepository->find($roleTerritory['territory']);
-                    $userAuthAssignment->setTerritory($territory);
-                }
-                $user->addUserAuthAssignment($userAuthAssignment);
-            }
-        } else {
-            // no role set => add the default role
-            $authItem = $this->authItemRepository->find(User::ROLE_DEFAULT);
-            $userAuthAssignment = new UserAuthAssignment();
-            $userAuthAssignment->setAuthItem($authItem);
-            $user->addUserAuthAssignment($userAuthAssignment);
-        }
+		return $user;
+	}
 
-        // create password if not given
-        if (is_null($user->getPassword())) {
-            $user->setPassword($this->userManager->randomPassword());
-        }
-        $user->setClearPassword($user->getPassword());
-        $user->setPassword($this->encoder->encodePassword($user, $user->getPassword()));
-        
-        if (is_null($user->getPhoneDisplay())) {
-            $user->setPhoneDisplay(User::PHONE_DISPLAY_RESTRICTED);
-        }
-        
-        if (is_null($user->hasChat())) {
-            $user->setChat($this->chat);
-        }
-        if (is_null($user->hasMusic())) {
-            $user->setMusic($this->music);
-        }
+	/**
+	 * Add a user.
+	 *
+	 * @param User      $user               The user to register
+	 * @return User     The user created
+	 */
+	public function addUser(User $user)
+	{
+		// add delegation
+		$user->setUserDelegate($this->security->getUser());
+		// check if roles were set
+		if (count($user->getRolesTerritory()) > 0) {
+			// roles are set => add each role
+			foreach ($user->getRolesTerritory() as $roleTerritory) {
+				$userAuthAssignment = new UserAuthAssignment();
+				$authItem = $this->authItemRepository->find($roleTerritory['role']);
+				$userAuthAssignment->setAuthItem($authItem);
+				if (isset($roleTerritory['territory'])) {
+					$territory = $this->territoryRepository->find($roleTerritory['territory']);
+					$userAuthAssignment->setTerritory($territory);
+				}
+				$user->addUserAuthAssignment($userAuthAssignment);
+			}
+		} else {
+			// no role set => add the default role
+			$authItem = $this->authItemRepository->find(User::ROLE_DEFAULT);
+			$userAuthAssignment = new UserAuthAssignment();
+			$userAuthAssignment->setAuthItem($authItem);
+			$user->addUserAuthAssignment($userAuthAssignment);
+		}
 
-        if (is_null($user->getSmoke())) {
-            $user->setSmoke($this->smoke);
-        }
+		// create password if not given
+		if (is_null($user->getPassword())) {
+			$user->setPassword($this->userManager->randomPassword());
+		}
+		$user->setClearPassword($user->getPassword());
+		$user->setPassword($this->encoder->encodePassword($user, $user->getPassword()));
 
-        // create token to validate regisration
-        $user->setEmailToken($this->userManager->createToken($user));
+		if (is_null($user->getPhoneDisplay())) {
+			$user->setPhoneDisplay(User::PHONE_DISPLAY_RESTRICTED);
+		}
 
-        // create token to unsubscribe from the instance news
-        $user->setUnsubscribeToken($this->userManager->createToken($user));
+		if (is_null($user->hasChat())) {
+			$user->setChat($this->chat);
+		}
+		if (is_null($user->hasMusic())) {
+			$user->setMusic($this->music);
+		}
 
-        // persist the user
-        $this->entityManager->persist($user);
-        $this->entityManager->flush();
+		if (is_null($user->getSmoke())) {
+			$user->setSmoke($this->smoke);
+		}
 
-        // check if the home address was set
-        if (!is_null($user->getHomeAddress())) {
-            $homeAddress = new Address();
-            $homeAddress->setStreetAddress($user->getHomeAddress()->getStreetAddress());
-            $homeAddress->setPostalCode($user->getHomeAddress()->getPostalCode());
-            $homeAddress->setAddressLocality($user->getHomeAddress()->getAddressLocality());
-            $homeAddress->setAddressCountry($user->getHomeAddress()->getAddressCountry());
-            $homeAddress->setLatitude($user->getHomeAddress()->getLatitude());
-            $homeAddress->setLongitude($user->getHomeAddress()->getLongitude());
-            $homeAddress->setHouseNumber($user->getHomeAddress()->getHouseNumber());
-            $homeAddress->setSubLocality($user->getHomeAddress()->getSubLocality());
-            $homeAddress->setLocalAdmin($user->getHomeAddress()->getLocalAdmin());
-            $homeAddress->setCounty($user->getHomeAddress()->getCounty());
-            $homeAddress->setMacroCounty($user->getHomeAddress()->getMacroCounty());
-            $homeAddress->setRegion($user->getHomeAddress()->getRegion());
-            $homeAddress->setMacroRegion($user->getHomeAddress()->getMacroRegion());
-            $homeAddress->setCountryCode($user->getHomeAddress()->getCountryCode());
-            $homeAddress->setHome(true);
-            $homeAddress->setName(Address::HOME_ADDRESS);
-            $homeAddress->setUser($user);
-            $this->entityManager->persist($homeAddress);
-            $this->entityManager->flush();
-        }
+		// create token to validate regisration
+		$user->setEmailToken($this->userManager->createToken($user));
 
-        // create of the alert preferences
-        $user = $this->userManager->createAlerts($user);
+		// create token to unsubscribe from the instance news
+		$user->setUnsubscribeToken($this->userManager->createToken($user));
 
-        // dispatch the delegate registration event
-        $event = new UserDelegateRegisteredEvent($user);
-        $this->eventDispatcher->dispatch(UserDelegateRegisteredEvent::NAME, $event);
-        // send password ?
-        if (!is_null($user->getTelephone())) {
-            $event = new UserDelegateRegisteredPasswordSendEvent($user);
-            $this->eventDispatcher->dispatch(UserDelegateRegisteredPasswordSendEvent::NAME, $event);
-        }
+		// persist the user
+		$this->entityManager->persist($user);
+		$this->entityManager->flush();
 
-        return $user;
-    }
+		// check if the home address was set
+		if (!is_null($user->getHomeAddress())) {
+			$homeAddress = new Address();
+			$homeAddress->setStreetAddress($user->getHomeAddress()->getStreetAddress());
+			$homeAddress->setPostalCode($user->getHomeAddress()->getPostalCode());
+			$homeAddress->setAddressLocality($user->getHomeAddress()->getAddressLocality());
+			$homeAddress->setAddressCountry($user->getHomeAddress()->getAddressCountry());
+			$homeAddress->setLatitude($user->getHomeAddress()->getLatitude());
+			$homeAddress->setLongitude($user->getHomeAddress()->getLongitude());
+			$homeAddress->setHouseNumber($user->getHomeAddress()->getHouseNumber());
+			$homeAddress->setSubLocality($user->getHomeAddress()->getSubLocality());
+			$homeAddress->setLocalAdmin($user->getHomeAddress()->getLocalAdmin());
+			$homeAddress->setCounty($user->getHomeAddress()->getCounty());
+			$homeAddress->setMacroCounty($user->getHomeAddress()->getMacroCounty());
+			$homeAddress->setRegion($user->getHomeAddress()->getRegion());
+			$homeAddress->setMacroRegion($user->getHomeAddress()->getMacroRegion());
+			$homeAddress->setCountryCode($user->getHomeAddress()->getCountryCode());
+			$homeAddress->setHome(true);
+			$homeAddress->setName(Address::HOME_ADDRESS);
+			$homeAddress->setUser($user);
+			$this->entityManager->persist($homeAddress);
+			$this->entityManager->flush();
+		}
 
-    /**
-     * Patch a user.
-     *
-     * @param User $user    The user to update
-     * @param array $fields The updated fields
-     * @return User         The user updated
-     */
-    public function patchUser(User $user, array $fields)
-    {
-        // check if the home address was updated
-        if (in_array('homeAddress', array_keys($fields))) {
-            // home address updated, we search the original home address
-            $homeAddress = null;
-            foreach ($user->getAddresses() as $address) {
-                if ($address->isHome()) {
-                    $homeAddress = $address;
-                    break;
-                }
-            }
-            if (!is_null($homeAddress)) {
-                // we have to update each field...
-                /**
-                * @var Address $homeAddress
-                */
-                $homeAddress->setStreetAddress($user->getHomeAddress()->getStreetAddress());
-                $homeAddress->setPostalCode($user->getHomeAddress()->getPostalCode());
-                $homeAddress->setAddressLocality($user->getHomeAddress()->getAddressLocality());
-                $homeAddress->setAddressCountry($user->getHomeAddress()->getAddressCountry());
-                $homeAddress->setLatitude($user->getHomeAddress()->getLatitude());
-                $homeAddress->setLongitude($user->getHomeAddress()->getLongitude());
-                $homeAddress->setHouseNumber($user->getHomeAddress()->getHouseNumber());
-                $homeAddress->setSubLocality($user->getHomeAddress()->getSubLocality());
-                $homeAddress->setLocalAdmin($user->getHomeAddress()->getLocalAdmin());
-                $homeAddress->setCounty($user->getHomeAddress()->getCounty());
-                $homeAddress->setMacroCounty($user->getHomeAddress()->getMacroCounty());
-                $homeAddress->setRegion($user->getHomeAddress()->getRegion());
-                $homeAddress->setMacroRegion($user->getHomeAddress()->getMacroRegion());
-                $homeAddress->setCountryCode($user->getHomeAddress()->getCountryCode());
-                $this->entityManager->persist($homeAddress);
-                $this->entityManager->flush();
+		// create of the alert preferences
+		$user = $this->userManager->createAlerts($user);
 
-                // check if the user is also a solidary user
-                if ($user->getSolidaryUser() && $user->getSolidaryUser()->isVolunteer()) {
-                    $user->getSolidaryUser()->setAddress($homeAddress);
-                }
-            }
-        }
+		// dispatch the delegate registration event
+		$event = new UserDelegateRegisteredEvent($user);
+		$this->eventDispatcher->dispatch(UserDelegateRegisteredEvent::NAME, $event);
+		// send password ?
+		if (!is_null($user->getTelephone())) {
+			$event = new UserDelegateRegisteredPasswordSendEvent($user);
+			$this->eventDispatcher->dispatch(UserDelegateRegisteredPasswordSendEvent::NAME, $event);
+		}
 
-        // check if roles were updated
-        if (in_array('rolesTerritory', array_keys($fields))) {
-            // remove current roles
-            $user->removeUserAuthAssignments();
-            // add each role
-            foreach ($fields['rolesTerritory'] as $roleTerritory) {
-                $userAuthAssignment = new UserAuthAssignment();
-                $authItem = $this->authItemRepository->find($roleTerritory['role']);
-                $userAuthAssignment->setAuthItem($authItem);
-                if (isset($roleTerritory['territory'])) {
-                    $territory = $this->territoryRepository->find($roleTerritory['territory']);
-                    $userAuthAssignment->setTerritory($territory);
-                }
-                $user->addUserAuthAssignment($userAuthAssignment);
-            }
-        }
-        
-        // persist the user
-        $this->entityManager->persist($user);
-        $this->entityManager->flush();
-        
-        // return the user
-        return $user;
-    }
+		return $user;
+	}
 
-    /**
-     * Check if a user have a specific AuthItem
-     *
-     * @param User      $user       The user
-     * @param AuthItem  $authItem   The authItem
-     * @return boolean  True if the user have the authItem, false otherwise
-     */
-    public function userHaveAuthItem(User $user, AuthItem $authItem)
-    {
-        foreach ($user->getUserAuthAssignments() as $userAuthAssignment) {
-            if ($userAuthAssignment->getAuthItem() == $authItem) {
-                return true;
-            }
-        }
-        return false;
-    }
+	/**
+	 * Patch a user.
+	 *
+	 * @param User $user    The user to update
+	 * @param array $fields The updated fields
+	 * @return User         The user updated
+	 */
+	public function patchUser(User $user, array $fields)
+	{
+		// check if the home address was updated
+		if (in_array('homeAddress', array_keys($fields))) {
+			// home address updated, we search the original home address
+			$homeAddress = null;
+			foreach ($user->getAddresses() as $address) {
+				if ($address->isHome()) {
+					$homeAddress = $address;
+					break;
+				}
+			}
+			if (!is_null($homeAddress)) {
+				// we have to update each field...
+				/**
+				 * @var Address $homeAddress
+				 */
+				$homeAddress->setStreetAddress($user->getHomeAddress()->getStreetAddress());
+				$homeAddress->setPostalCode($user->getHomeAddress()->getPostalCode());
+				$homeAddress->setAddressLocality($user->getHomeAddress()->getAddressLocality());
+				$homeAddress->setAddressCountry($user->getHomeAddress()->getAddressCountry());
+				$homeAddress->setLatitude($user->getHomeAddress()->getLatitude());
+				$homeAddress->setLongitude($user->getHomeAddress()->getLongitude());
+				$homeAddress->setHouseNumber($user->getHomeAddress()->getHouseNumber());
+				$homeAddress->setSubLocality($user->getHomeAddress()->getSubLocality());
+				$homeAddress->setLocalAdmin($user->getHomeAddress()->getLocalAdmin());
+				$homeAddress->setCounty($user->getHomeAddress()->getCounty());
+				$homeAddress->setMacroCounty($user->getHomeAddress()->getMacroCounty());
+				$homeAddress->setRegion($user->getHomeAddress()->getRegion());
+				$homeAddress->setMacroRegion($user->getHomeAddress()->getMacroRegion());
+				$homeAddress->setCountryCode($user->getHomeAddress()->getCountryCode());
+				$this->entityManager->persist($homeAddress);
+				$this->entityManager->flush();
 
-    /**
-     * Create a User object from an array
-     *
-     * @param array $auser          The user to create, as an array
-     * @return User             The User object
-     */
-    public function createUserFromArray(array $auser)
-    {
-        $user = new User();
-        if (isset($auser['givenName'])) {
-            $user->setGivenName($auser['givenName']);
-        }
-        if (isset($auser['familyName'])) {
-            $user->setFamilyName($auser['familyName']);
-        }
-        if (isset($auser['email'])) {
-            $user->setEmail($auser['email']);
-        }
-        if (isset($auser['telephone'])) {
-            $user->setTelephone($auser['telephone']);
-        }
-        if (isset($auser['gender'])) {
-            $user->setGender($auser['gender']);
-        }
-        if (isset($auser['birthDate'])) {
-            $user->setBirthDate(new \DateTime($auser['birthDate']));
-        }
+				// check if the user is also a solidary user
+				if ($user->getSolidaryUser() && $user->getSolidaryUser()->isVolunteer()) {
+					$user->getSolidaryUser()->setAddress($homeAddress);
+				}
+			}
+		}
 
-        if (!isset($auser['password'])) {
-            // create password if not given
-            $user->setPassword($this->userManager->randomPassword());
-        }
-        $user->setClearPassword($user->getPassword());
-        $user->setPassword($this->encoder->encodePassword($user, $user->getPassword()));
-        
-        if (!isset($auser['phoneDisplay'])) {
-            $user->setPhoneDisplay(User::PHONE_DISPLAY_RESTRICTED);
-        }
-        
-        if (!isset($auser['chat'])) {
-            $user->setChat($this->chat);
-        }
-        if (!isset($auser['music'])) {
-            $user->setMusic($this->music);
-        }
+		// check if roles were updated
+		if (in_array('rolesTerritory', array_keys($fields))) {
+			foreach ($user->getUserAuthAssignments() as $userAuthAssignment) {
+				$this->entityManager->remove($userAuthAssignment);
+			}
+			$this->entityManager->flush();
 
-        if (!isset($auser['smoke'])) {
-            $user->setSmoke($this->smoke);
-        }
+			// remove current roles
+			$user->removeUserAuthAssignments();
 
-        // create token to validate registration
-        $user->setEmailToken($this->userManager->createToken($user));
+			// add each role
+			foreach ($fields['rolesTerritory'] as $roleTerritory) {
+				$userAuthAssignment = new UserAuthAssignment();
+				$authItem = $this->authItemRepository->find($roleTerritory['role']);
+				$userAuthAssignment->setAuthItem($authItem);
+				if (isset($roleTerritory['territory'])) {
+					$territory = $this->territoryRepository->find($roleTerritory['territory']);
+					$userAuthAssignment->setTerritory($territory);
+				}
+				$user->addUserAuthAssignment($userAuthAssignment);
+			}
+		}
 
-        // create token to unsubscribe from the instance news
-        $user->setUnsubscribeToken($this->userManager->createToken($user));
+		// persist the user
+		$this->entityManager->persist($user);
+		$this->entityManager->flush();
 
-        // set default role
-        $authItem = $this->authItemRepository->find(User::ROLE_DEFAULT);
-        $userAuthAssignment = new UserAuthAssignment();
-        $userAuthAssignment->setAuthItem($authItem);
-        $user->addUserAuthAssignment($userAuthAssignment);
+		// return the user
+		return $user;
+	}
 
-        // check if the home address was set
-        if (isset($auser['homeAddress'])) {
-            $homeAddress = new Address();
-            if (isset($auser['homeAddress']['streetAddress'])) {
-                $homeAddress->setStreetAddress($auser['homeAddress']['streetAddress']);
-            }
-            if (isset($auser['homeAddress']['postalCode'])) {
-                $homeAddress->setPostalCode($auser['homeAddress']['postalCode']);
-            }
-            if (isset($auser['homeAddress']['addressLocality'])) {
-                $homeAddress->setAddressLocality($auser['homeAddress']['addressLocality']);
-            }
-            if (isset($auser['homeAddress']['addressCountry'])) {
-                $homeAddress->setAddressCountry($auser['homeAddress']['addressCountry']);
-            }
-            if (isset($auser['homeAddress']['latitude'])) {
-                $homeAddress->setLatitude($auser['homeAddress']['latitude']);
-            }
-            if (isset($auser['homeAddress']['longitude'])) {
-                $homeAddress->setLongitude($auser['homeAddress']['longitude']);
-            }
-            if (isset($auser['homeAddress']['houseNumber'])) {
-                $homeAddress->setHouseNumber($auser['homeAddress']['houseNumber']);
-            }
-            if (isset($auser['homeAddress']['subLocality'])) {
-                $homeAddress->setSubLocality($auser['homeAddress']['subLocality']);
-            }
-            if (isset($auser['homeAddress']['localAdmin'])) {
-                $homeAddress->setLocalAdmin($auser['homeAddress']['localAdmin']);
-            }
-            if (isset($auser['homeAddress']['county'])) {
-                $homeAddress->setCounty($auser['homeAddress']['county']);
-            }
-            if (isset($auser['homeAddress']['macroCounty'])) {
-                $homeAddress->setMacroCounty($auser['homeAddress']['macroCounty']);
-            }
-            if (isset($auser['homeAddress']['region'])) {
-                $homeAddress->setRegion($auser['homeAddress']['region']);
-            }
-            if (isset($auser['homeAddress']['macroRegion'])) {
-                $homeAddress->setMacroRegion($auser['homeAddress']['macroRegion']);
-            }
-            if (isset($auser['homeAddress']['countryCode'])) {
-                $homeAddress->setCountryCode($auser['homeAddress']['countryCode']);
-            }
-            $homeAddress->setHome(true);
-            $homeAddress->setName(Address::HOME_ADDRESS);
-            $homeAddress->setUser($user);
-            $this->entityManager->persist($homeAddress);
-        }
+	/**
+	 * Check if a user have a specific AuthItem
+	 *
+	 * @param User      $user       The user
+	 * @param AuthItem  $authItem   The authItem
+	 * @return boolean  True if the user have the authItem, false otherwise
+	 */
+	public function userHaveAuthItem(User $user, AuthItem $authItem)
+	{
+		foreach ($user->getUserAuthAssignments() as $userAuthAssignment) {
+			if ($userAuthAssignment->getAuthItem() == $authItem) {
+				return true;
+			}
+		}
+		return false;
+	}
 
-        // return the user
-        return $user;
-    }
+	/**
+	 * Create a User object from an array
+	 *
+	 * @param array $auser          The user to create, as an array
+	 * @return User             The User object
+	 */
+	public function createUserFromArray(array $auser)
+	{
+		$user = new User();
+		if (isset($auser['givenName'])) {
+			$user->setGivenName($auser['givenName']);
+		}
+		if (isset($auser['familyName'])) {
+			$user->setFamilyName($auser['familyName']);
+		}
+		if (isset($auser['email'])) {
+			$user->setEmail($auser['email']);
+		}
+		if (isset($auser['telephone'])) {
+			$user->setTelephone($auser['telephone']);
+		}
+		if (isset($auser['gender'])) {
+			$user->setGender($auser['gender']);
+		}
+		if (isset($auser['birthDate'])) {
+			$user->setBirthDate(new \DateTime($auser['birthDate']));
+		}
 
-    /**
-     * Delete a user
-     *
-     * @param User $user  The user to delete
-     * @return void
-     */
-    public function deleteUser(User $user)
-    {
-        $this->userManager->deleteUser($user);
+		if (!isset($auser['password'])) {
+			// create password if not given
+			$user->setPassword($this->userManager->randomPassword());
+		}
+		$user->setClearPassword($user->getPassword());
+		$user->setPassword($this->encoder->encodePassword($user, $user->getPassword()));
 
-        return $user;
-    }
+		if (!isset($auser['phoneDisplay'])) {
+			$user->setPhoneDisplay(User::PHONE_DISPLAY_RESTRICTED);
+		}
 
-    /*
+		if (!isset($auser['chat'])) {
+			$user->setChat($this->chat);
+		}
+		if (!isset($auser['music'])) {
+			$user->setMusic($this->music);
+		}
+
+		if (!isset($auser['smoke'])) {
+			$user->setSmoke($this->smoke);
+		}
+
+		// create token to validate registration
+		$user->setEmailToken($this->userManager->createToken($user));
+
+		// create token to unsubscribe from the instance news
+		$user->setUnsubscribeToken($this->userManager->createToken($user));
+
+		// set default role
+		$authItem = $this->authItemRepository->find(User::ROLE_DEFAULT);
+		$userAuthAssignment = new UserAuthAssignment();
+		$userAuthAssignment->setAuthItem($authItem);
+		$user->addUserAuthAssignment($userAuthAssignment);
+
+		// check if the home address was set
+		if (isset($auser['homeAddress'])) {
+			$homeAddress = new Address();
+			if (isset($auser['homeAddress']['streetAddress'])) {
+				$homeAddress->setStreetAddress($auser['homeAddress']['streetAddress']);
+			}
+			if (isset($auser['homeAddress']['postalCode'])) {
+				$homeAddress->setPostalCode($auser['homeAddress']['postalCode']);
+			}
+			if (isset($auser['homeAddress']['addressLocality'])) {
+				$homeAddress->setAddressLocality($auser['homeAddress']['addressLocality']);
+			}
+			if (isset($auser['homeAddress']['addressCountry'])) {
+				$homeAddress->setAddressCountry($auser['homeAddress']['addressCountry']);
+			}
+			if (isset($auser['homeAddress']['latitude'])) {
+				$homeAddress->setLatitude($auser['homeAddress']['latitude']);
+			}
+			if (isset($auser['homeAddress']['longitude'])) {
+				$homeAddress->setLongitude($auser['homeAddress']['longitude']);
+			}
+			if (isset($auser['homeAddress']['houseNumber'])) {
+				$homeAddress->setHouseNumber($auser['homeAddress']['houseNumber']);
+			}
+			if (isset($auser['homeAddress']['subLocality'])) {
+				$homeAddress->setSubLocality($auser['homeAddress']['subLocality']);
+			}
+			if (isset($auser['homeAddress']['localAdmin'])) {
+				$homeAddress->setLocalAdmin($auser['homeAddress']['localAdmin']);
+			}
+			if (isset($auser['homeAddress']['county'])) {
+				$homeAddress->setCounty($auser['homeAddress']['county']);
+			}
+			if (isset($auser['homeAddress']['macroCounty'])) {
+				$homeAddress->setMacroCounty($auser['homeAddress']['macroCounty']);
+			}
+			if (isset($auser['homeAddress']['region'])) {
+				$homeAddress->setRegion($auser['homeAddress']['region']);
+			}
+			if (isset($auser['homeAddress']['macroRegion'])) {
+				$homeAddress->setMacroRegion($auser['homeAddress']['macroRegion']);
+			}
+			if (isset($auser['homeAddress']['countryCode'])) {
+				$homeAddress->setCountryCode($auser['homeAddress']['countryCode']);
+			}
+			$homeAddress->setHome(true);
+			$homeAddress->setName(Address::HOME_ADDRESS);
+			$homeAddress->setUser($user);
+			$this->entityManager->persist($homeAddress);
+		}
+
+		// return the user
+		return $user;
+	}
+
+	/**
+	 * Delete a user
+	 *
+	 * @param User $user  The user to delete
+	 * @return void
+	 */
+	public function deleteUser(User $user)
+	{
+		$this->userManager->deleteUser($user);
+
+		return $user;
+	}
+
+	/*
      * Generate a sub email address
      *
      * @param string $email     The base email
      * @return string           The generated sub email address
      */
-    public function generateSubEmail(string $email)
-    {
-        return $this->userManager->generateSubEmail($email);
-    }
+	public function generateSubEmail(string $email)
+	{
+		return $this->userManager->generateSubEmail($email);
+	}
 }
