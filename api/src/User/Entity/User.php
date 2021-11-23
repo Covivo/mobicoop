@@ -1268,7 +1268,6 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var bool|null true : the user has been created by sso (false mean no sso or only attached a previously existing account)
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"massMigrate"})
      */
     private $createdBySso;
 
