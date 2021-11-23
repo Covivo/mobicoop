@@ -19,18 +19,18 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Match\Repository;
 
+use App\Match\Entity\Mass;
 use App\Match\Entity\MassPerson;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use App\Match\Entity\Mass;
 
 /**
- * @method MassPerson|null find($id, $lockMode = null, $lockVersion = null)
- * @method MassPerson|null findOneBy(array $criteria, array $orderBy = null)
+ * @method null|MassPerson find($id, $lockMode = null, $lockVersion = null)
+ * @method null|MassPerson findOneBy(array $criteria, array $orderBy = null)
  * @method MassPerson[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 class MassPersonRepository
@@ -51,19 +51,22 @@ class MassPersonRepository
     }
 
     /**
-     * Find All the PassPerson by criteria
+     * Find All the PassPerson by criteria.
      *
-     * @return User|null
+     * @param null|mixed $limit
+     * @param null|mixed $offset
+     *
+     * @return null|User
      */
     public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null): ?array
     {
         return $this->repository->findBy($criteria, $orderBy, $limit, $offset);
     }
-    
+
     /**
      * Return all destinations for a mass.
      *
-     * @return mixed|NULL|\Doctrine\DBAL\Driver\Statement|array     The destinations (Address) found
+     * @return null|array|\Doctrine\DBAL\Driver\Statement|mixed The destinations (Address) found
      */
     public function findAllDestinationsForMass(Mass $mass)
     {
@@ -72,29 +75,52 @@ class MassPersonRepository
             ->leftJoin('mp.workAddress', 'wa')
             ->andWhere('mp.mass = :mass')
             ->setParameter('mass', $mass)
-            ->getQuery();
+            ->getQuery()
+        ;
+
+        return $query->getResult();
+    }
+
+    /**
+     * Return all origins for a mass.
+     *
+     * @return null|array|\Doctrine\DBAL\Driver\Statement|mixed The origins (Address) found
+     */
+    public function findAllOriginsForMass(Mass $mass)
+    {
+        $query = $this->repository->createQueryBuilder('mp')
+            ->select('DISTINCT pa.houseNumber, pa.street, pa.postalCode, pa.addressLocality, pa.addressCountry, pa.latitude, pa.longitude')
+            ->leftJoin('mp.personalAddress', 'pa')
+            ->andWhere('mp.mass = :mass')
+            ->setParameter('mass', $mass)
+            ->getQuery()
+        ;
 
         return $query->getResult();
     }
 
     /**
      * Return all the MassPersons related to a mass.
+     *
      * @param Mass $mass The Mass
-     * @param int $mass The mininum id of the mass persons returned
+     * @param int  $mass The mininum id of the mass persons returned
+     *
      * @return array
      */
     public function findAllByMass(Mass $mass, int $idMassPersonMin = null)
     {
         $query = $this->repository->createQueryBuilder('mp')
-            ->where('mp.mass = :mass');
-            
+            ->where('mp.mass = :mass')
+        ;
+
         $query = $query->setParameter('mass', $mass);
 
         if (!is_null($idMassPersonMin)) {
-            $query->andWhere("mp.id >= :idMassPersonMin")->setParameter('idMassPersonMin', $idMassPersonMin);
+            $query->andWhere('mp.id >= :idMassPersonMin')->setParameter('idMassPersonMin', $idMassPersonMin);
         }
 
         $query = $query->getQuery();
+
         return $query->getResult();
     }
 }
