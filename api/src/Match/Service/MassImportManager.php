@@ -442,7 +442,7 @@ class MassImportManager
     ) {
         set_time_limit(self::TIME_LIMIT);
         ini_set('memory_limit', self::MEMORY_LIMIT.'M');
-        $this->entityManager->getConnection()->getConfiguration()->setSQLLogger(null);
+        //$this->entityManager->getConnection()->getConfiguration()->setSQLLogger(null);
 
         //gc_enable();
         $this->print_mem(1);
