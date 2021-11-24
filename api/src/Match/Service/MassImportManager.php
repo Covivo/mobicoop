@@ -649,7 +649,7 @@ class MassImportManager
         try {
             return $this->createAddressFromLocation($this->geocoder->geocodeQuery(GeocodeQuery::create($input))->first());
         } catch (Exception $e) {
-            throw $e;
+            return false;
         }
     }
 
