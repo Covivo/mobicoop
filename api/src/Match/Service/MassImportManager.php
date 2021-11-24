@@ -217,11 +217,11 @@ class MassImportManager
         $geocodedDestinations = [];
         $this->logger->info('Mass analyze | Geocode destinations start '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
         foreach ($destinations as $key => $destination) {
-            $input = str_replace(
+            $input = trim(str_replace(
                 ',',
                 '',
-                trim($destination['houseNumber']).' '.trim($destination['street']).' '.trim($destination['postalCode']).' '.trim($destination['addressLocality']).' '.trim($destination['addressCountry'])
-            );
+                trim($destination['houseNumber']).' '.trim($destination['street']).' '.trim($destination['postalCode']).' '.trim($destination['addressLocality'])
+            ));
             if (!$address = $this->geoCode($input)) {
                 $analyseErrors[] = 'Destination address <'.$input.'> not found';
                 $this->logger->info('Mass analyze | Destination address <'.$input.'> not found | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
@@ -248,13 +248,16 @@ class MassImportManager
                 $geocodedOrigins = [];
                 $this->logger->info('Mass analyze | Geocode origins start '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
                 foreach ($origins as $key => $origin) {
-                    $input = str_replace(
+                    $input = trim(str_replace(
                         ',',
                         '',
-                        trim($origin['houseNumber']).' '.trim($origin['street']).' '.trim($origin['postalCode']).' '.trim($origin['addressLocality']).' '.trim($origin['addressCountry'])
-                    );
+                        trim($origin['houseNumber']).' '.trim($origin['street']).' '.trim($origin['postalCode']).' '.trim($origin['addressLocality'])
+                    ));
                     if (!$address = $this->geoCode($input)) {
                         $analyseErrors[] = 'Origin address <'.$input.'> not found';
+                        $this->logger->info('Mass analyze | Origin address <'.$input.'> not found | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
+
+                        continue;
                     }
 
                     $geocodedOrigins[$key] = $address;
