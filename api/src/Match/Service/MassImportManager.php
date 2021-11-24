@@ -224,6 +224,9 @@ class MassImportManager
             );
             if (!$address = $this->geoCode($input)) {
                 $analyseErrors[] = 'Destination address <'.$input.'> not found';
+                $this->logger->info('Mass analyze | Destination address <'.$input.'> not found | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
+
+                continue;
             }
 
             $geocodedDestinations[$key] = $address;
