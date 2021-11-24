@@ -281,6 +281,11 @@ class UserManager
 
         // check if roles were updated
         if (in_array('rolesTerritory', array_keys($fields))) {
+            foreach ($user->getUserAuthAssignments() as $userAuthAssignment) {
+                $this->entityManager->remove($userAuthAssignment);
+            }
+            $this->entityManager->flush();
+
             // remove current roles
             $user->removeUserAuthAssignments();
             // add each role
@@ -295,11 +300,11 @@ class UserManager
                 $user->addUserAuthAssignment($userAuthAssignment);
             }
         }
-        
+
         // persist the user
         $this->entityManager->persist($user);
         $this->entityManager->flush();
-        
+
         // return the user
         return $user;
     }
