@@ -47,7 +47,7 @@
   </div>
 </template>
 <script>
-
+import maxios from "@utils/maxios";
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/community/CommunityLastUsers/";
 
 export default {
@@ -71,17 +71,28 @@ export default {
     hidden: {
       type: Boolean,
       default: false
-    },
-    givenLastUsers: {
-      type: Array,
-      default: null
     }
   },
   data () {
     return {
-      lastUsers: this.givenLastUsers ? this.givenLastUsers : null,
+      lastUsers: null,
       loading: false
     }
   },
+  mounted(){
+    this.getLastUser()
+  },
+  methods:{
+    getLastUser(){
+      maxios
+        .post(this.$t('getLastUserUrl', {'communityId':this.community.id}))
+        .then(res => {
+          this.lastUsers = res.data;
+        })
+        .catch(err => {
+          console.error(err);
+        });
+    }
+  }
 }
 </script>

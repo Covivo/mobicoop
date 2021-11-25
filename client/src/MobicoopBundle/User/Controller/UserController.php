@@ -449,7 +449,7 @@ class UserController extends AbstractController
     /**
      * User profile update.
      */
-    public function userProfileUpdate(UserManager $userManager, Request $request, ImageManager $imageManager, AddressManager $addressManager, TranslatorInterface $translator, $tabDefault)
+    public function userProfileUpdate(UserManager $userManager, Request $request, ImageManager $imageManager, AddressManager $addressManager, TranslatorInterface $translator, $tabDefault, $selectedTab)
     {
         $user = $userManager->getLoggedUser();
         
@@ -525,6 +525,11 @@ class UserController extends AbstractController
             $tabDefault = 'reviews';
         }
 
+        $tab = 'myAccount';
+        if ($selectedTab == 'mes-badges') {
+            $tab = 'myBadges';
+        }
+
         return $this->render('@Mobicoop/user/updateProfile.html.twig', [
             'error' => $error,
             'alerts' => $userManager->getAlerts($user)['alerts'],
@@ -532,7 +537,8 @@ class UserController extends AbstractController
             'paymentElectronicActive' => $this->paymentElectronicActive,
             'validationDocsAuthorizedExtensions' => $this->validationDocsAuthorizedExtensions,
             'showReviews' => $user->isUserReviewsActive(),
-            "ageDisplay"=>$this->ageDisplay
+            "ageDisplay"=>$this->ageDisplay,
+            'selectedTab' => $tab
         ]);
     }
 
@@ -1153,21 +1159,7 @@ class UserController extends AbstractController
     {
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
-            // We get de communities in session. If it exists we don't need to make the api call
-            $session = $this->get('session');
-            $userCommunitiesInSession = $session->get(Community::SESSION_VAR_NAME);
-            $communities = [];
-            if (!is_null($userCommunitiesInSession)) {
-                return new JsonResponse($userCommunitiesInSession);
-            } else {
-                if ($communityUsers = $communityManager->getAllCommunityUser($data['userId'])) {
-                    foreach ($communityUsers as $communityUser) {
-                        $communities[] = $communityUser->getCommunity();
-                    }
-                    // We store de communities in session
-                    $session->set(Community::SESSION_VAR_NAME, $communities);
-                }
-            }
+            $communities = $communityManager->getAllCommunityUser($data['userId']);
             return new JsonResponse($communities);
         }
         return new JsonResponse(['error'=>'errorUpdateAlert']);

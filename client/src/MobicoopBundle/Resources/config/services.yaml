@@ -90,7 +90,6 @@ services:
     Mobicoop\Bundle\MobicoopBundle\Community\Service\CommunityManager:
         arguments:
             $territoryFilter: '%env(json:COMMUNITY_TERRITORY_FILTER)%'
-            $communityLimitMemberDisplayOnFront: '%env(resolve:COMMUNITY_LIMIT_MEMBER_DISPLAY_ON_FRONT)%'
 
     # DataProvider
     Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider :

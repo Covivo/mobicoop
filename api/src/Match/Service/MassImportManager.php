@@ -64,6 +64,11 @@ class MassImportManager
     const MIMETYPE_PLAIN = 'text/plain';
     const MIMETYPE_JSON = 'application/json';
 
+    const DEFAULT_OUTWARD_TIME = '08:00:00';
+    const DEFAULT_RETURN_TIME = '18:00:00';
+
+    const TIME_LIMIT = 600000;
+
     private $entityManager;
     private $massRepository;
     private $massPersonRepository;
@@ -206,8 +211,6 @@ class MassImportManager
     }
 
     /**
-     * Analyze mass file data.
-     *
      * @param Mass $mass The mass to update
      * @param int $status The final status
      * @return void
@@ -227,7 +230,7 @@ class MassImportManager
      */
     public function analyzeMass(Mass $mass)
     {
-        set_time_limit(300);
+        set_time_limit(self::TIME_LIMIT);
         
         $this->logger->info('Mass analyze | Start ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
@@ -414,7 +417,7 @@ class MassImportManager
         bool $bearingCheck=true,
         int $bearingRange=10
     ) {
-        set_time_limit(1200);
+        set_time_limit(self::TIME_LIMIT);
         $candidates = [];
         
         $this->logger->info('Mass match | Start ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
@@ -813,6 +816,8 @@ class MassImportManager
                         } else {
                             $massPerson->setOutwardTime($outwardtime->format('H:i:s'));
                         }
+                    } elseif ($fields[$i] == "outwardTime" && $tab[$i]=="") {
+                        $massPerson->setOutwardTime(self::DEFAULT_OUTWARD_TIME);
                     } elseif ($fields[$i] == "returnTime" && $tab[$i]!=="") {
                         $returntime = \DateTime::createFromFormat('H:i', $tab[$i]);
                         if (!$returntime) {
@@ -826,6 +831,8 @@ class MassImportManager
                         } else {
                             $massPerson->setReturnTime($returntime->format('H:i:s'));
                         }
+                    } elseif ($fields[$i] == "returnTime" && $tab[$i]=="") {
+                        $massPerson->setReturnTime(self::DEFAULT_RETURN_TIME);
                     } elseif (method_exists($massPerson, $setter)) {
                         $massPerson->$setter($tab[$i]);
                     }

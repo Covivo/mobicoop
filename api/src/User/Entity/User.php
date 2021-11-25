@@ -136,6 +136,15 @@ use App\I18n\Entity\Language;
  *                  "tags"={"Users"}
  *              }
  *          },
+ *          "communities"={
+ *              "method"="GET",
+ *              "path"="/users/communities",
+ *              "normalization_context"={"groups"={"listCommunities"}},
+ *              "security"="is_granted('user_list',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Users"}
+ *              }
+ *          },
  *          "checkEmail"={
  *              "method"="GET",
  *              "path"="/users/checkEmail",
@@ -2343,8 +2352,8 @@ class User implements UserInterface, EquatableInterface
     public function addUserAuthAssignment(UserAuthAssignment $userAuthAssignment): self
     {
         if (!$this->userAuthAssignments->contains($userAuthAssignment)) {
-            $this->userAuthAssignments->add($userAuthAssignment);
             $userAuthAssignment->setUser($this);
+            $this->userAuthAssignments->add($userAuthAssignment);
         }
 
         return $this;
@@ -2356,22 +2365,19 @@ class User implements UserInterface, EquatableInterface
         if ($this->userAuthAssignments->contains($userAuthAssignment)) {
             $this->userAuthAssignments->removeElement($userAuthAssignment);
             // set the owning side to null (unless already changed)
-            if ($userAuthAssignment->getUser() === $this) {
-                $userAuthAssignment->setUser(null);
-            }
+            // if ($userAuthAssignment->getUser() === $this) {
+            // 	$userAuthAssignment->setUser(null);
+            // }
         }
-
         return $this;
     }
 
     public function removeUserAuthAssignments()
     {
         foreach ($this->userAuthAssignments as $userAuthAssignment) {
-            $this->userAuthAssignments->removeElement($userAuthAssignment);
-            if ($userAuthAssignment->getUser() === $this) {
-                $userAuthAssignment->setUser(null);
-            }
+            $this->removeUserAuthAssignment($userAuthAssignment);
         }
+        $this->rolesTerritory = [];
     }
 
     public function getMasses()

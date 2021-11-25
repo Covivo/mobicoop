@@ -3,7 +3,7 @@
     "titleWithName": "Join this community",
     "credential1": "First identification",
     "credential2": "Second identification",
-    "urlSignIn": "/community/{id}/secured/register",
+    "urlJoin": "/community/{id}/secured/register/join",
     "join": "Join the community",
     "errors": {
         "required": "This field is required",

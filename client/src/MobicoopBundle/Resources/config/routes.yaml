@@ -225,9 +225,9 @@ user_homeAddress_update:
 # profile update
 user_profile_update:
     path:
-        fr: /utilisateur/profil/modifier/{tabDefault?}
-        en: /user/profile/update/{tabDefault?}
-        nl: /user/profile/update/{tabDefault?}
+        fr: /utilisateur/profil/modifier/{tabDefault?}/{selectedTab?}
+        en: /user/profile/update/{tabDefault?}/{selectedTab?}
+        nl: /user/profile/update/{tabDefault?}/{selectedTab?}
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userProfileUpdate
 
 user_ads:
@@ -992,6 +992,28 @@ community_secured_register:
         id: '\d+'
 
 # join a community (AJAX)
+community_secured_register_join:
+    methods: [POST]
+    path:
+        fr: /communaute/{id}/securisee/inscription/join
+        en: /community/{id}/secured/register/join
+        nl: /community/{id}/secured/register/join
+    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communitySecuredRegisterJoin
+    requirements:
+        id: '\d+'
+
+# join a community (AJAX)
+community_last_users:
+    methods: [POST]
+    path:
+        fr: /communaute/{id}/lastUsers
+        en: /community/{id}/lastUsers
+        nl: /community/{id}/lastUsers
+    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityLastUsers
+    requirements:
+        id: '\d+'
+
+# join a community (AJAX)
 community_join:
     path:
         fr: /communaute/{id}/rejoindre
@@ -1008,6 +1030,17 @@ community_leave:
         en: /community/{id}/leave
         nl: /community/{id}/leave
     controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityLeave
+    requirements:
+        id: '\d+'
+
+# get a community user (AJAX)
+community_get_mapsads:
+    methods: [POST]
+    path:
+        fr: /community/{id}/mapsAds
+        en: /community/{id}/mapsAds
+        nl: /community/{id}/mapsAds
+    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityMapsAds
     requirements:
         id: '\d+'
 
@@ -1052,16 +1085,6 @@ community_member_list:
         en: /community/memberList
         nl: /community/memberList
     controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityMemberList
-    requirements:
-        id: '\d+'
-
-# get all community proposals (AJAX)
-community_proposals:
-    path:
-        fr: /community-proposals/{id}
-        en: /community-proposals/{id}
-        nl: /community-proposals/{id}
-    controller: Mobicoop\Bundle\MobicoopBundle\Community\Controller\CommunityController::communityProposals
     requirements:
         id: '\d+'
 

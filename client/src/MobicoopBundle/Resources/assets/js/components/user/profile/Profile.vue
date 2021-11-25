@@ -11,7 +11,7 @@
       >
         <!-- VERTICAL TABS -->
         <v-tabs
-          v-model="modelTabs"
+          v-model="modelTabsV"
           slider-color="primary"
           color="primary"
           vertical
@@ -55,12 +55,20 @@
             lighten-5
           >
             <!-- HORIZONTAL SUB TABS -->
-            <v-tabs grow>
-              <v-tab class="text-subtitle-1">
+            <v-tabs 
+              v-model="modelTabsH" 
+              grow
+            >
+              <v-tab 
+                class="text-subtitle-1"
+                :href="`#myAccount`"
+              >
                 {{ $t("tabs.myAccount") }}
               </v-tab>
               <!-- ACCOUNT -->
-              <v-tab-item>
+              <v-tab-item
+                :value="'myAccount'"
+              >
                 <UpdateProfile
                   :user="user"
                   :geo-search-url="geoSearchUrl"
@@ -108,11 +116,15 @@
               <v-tab
                 v-if="gamificationActive"
                 class="text-subtitle-1"
+                href="#myBadges"
               >
                 {{ $t("tabs.myBadges") }}
               </v-tab>
               <!-- ACCOUNT -->
-              <v-tab-item v-if="gamificationActive">
+              <v-tab-item
+                v-if="gamificationActive"
+                value="myBadges"
+              >
                 <Badges />
               </v-tab-item>                            
             </v-tabs>
@@ -220,6 +232,10 @@ export default {
       type: String,
       default: null
     },
+    selectedTab: {
+      type: String,
+      default: null
+    },
     paymentElectronicActive: {
       type: Boolean,
       default: false
@@ -239,7 +255,8 @@ export default {
   },
   data(){
     return{
-      modelTabs:(this.tabDefault !== "") ? this.tabDefault : "myAds",
+      modelTabsV:(this.tabDefault !== "") ? this.tabDefault : "myAds",
+      modelTabsH:(this.selectedTab !== "") ? this.selectedTab : "myAccount",
       publishedAds: {},
       acceptedAds: {}
     }

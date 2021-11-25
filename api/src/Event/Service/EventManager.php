@@ -139,6 +139,11 @@ class EventManager
         return $createdEvents;
     }
 
+    public function getEvents()
+    {
+        return $this->eventRepository->getEvents();
+    }
+
     /**
      * Generate the UrlKey of an Event
      *

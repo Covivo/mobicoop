@@ -80,6 +80,10 @@ use App\Communication\Entity\Medium;
  */
 class Notification
 {
+    const USER_REGISTERED_DELEGATE_PASSWORD_SEND_SMS = 65;
+    const PERMISSIVES = [
+        self::USER_REGISTERED_DELEGATE_PASSWORD_SEND_SMS
+    ];
 
     /**
      * @var int The id of this notification.
@@ -298,6 +302,11 @@ class Notification
         $this->updatedDate = $updatedDate;
 
         return $this;
+    }
+
+    public function isPermissive(): bool
+    {
+        return in_array($this->getId(), self::PERMISSIVES);
     }
 
     // DOCTRINE EVENTS

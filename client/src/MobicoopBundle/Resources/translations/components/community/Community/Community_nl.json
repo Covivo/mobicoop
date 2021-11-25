@@ -84,5 +84,11 @@
         },
         "route": "/communaute/{id}/quitter",
         "button": "De community verlaten"
+    },
+    "mapsAds":{
+        "url":"/community/{communityId}/mapsAds"
+    },
+    "relaypoints":{
+        "url":"/community/relay-point/map/"
     }
 }

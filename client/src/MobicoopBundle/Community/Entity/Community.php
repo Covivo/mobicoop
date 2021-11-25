@@ -187,6 +187,11 @@ class Community implements ResourceInterface, \JsonSerializable
     private $member;
 
     /**
+     * @var int|null If the current user asking is member of the community this is his membership status (cf. CommunityUser status)
+     */
+    private $memberStatus;
+
+    /**
      * @var boolean|null Number of members of this community
      */
     private $nbMembers;
@@ -195,6 +200,18 @@ class Community implements ResourceInterface, \JsonSerializable
      * @var array|null Store the ads of the community
      */
     private $ads;
+
+    /**
+     * @var string The login to join the community if the community is secured.
+     * @Groups({"put"})
+     */
+    private $login;
+
+    /**
+     * @var string The password to join the community if the community is secured.
+     * @Groups({"put"})
+     */
+    private $password;
 
     public function __construct($id=null)
     {
@@ -504,6 +521,18 @@ class Community implements ResourceInterface, \JsonSerializable
         return $this;
     }
 
+    public function getMemberStatus(): ?int
+    {
+        return $this->memberStatus;
+    }
+
+    public function setMemberStatus(?int $memberStatus): self
+    {
+        $this->memberStatus = $memberStatus;
+
+        return $this;
+    }
+
     public function getAds()
     {
         return $this->ads;
@@ -528,6 +557,31 @@ class Community implements ResourceInterface, \JsonSerializable
         return $this;
     }
 
+    public function getLogin(): ?string
+    {
+        return $this->login;
+    }
+
+    public function setLogin(?string $login): self
+    {
+        $this->login = $login;
+
+        return $this;
+    }
+    
+    public function getPassword(): ?string
+    {
+        return $this->password;
+    }
+
+    public function setPassword(?string $password): self
+    {
+        $this->password = $password;
+
+        return $this;
+    }
+
+
     public function jsonSerialize()
     {
         return
@@ -548,6 +602,7 @@ class Community implements ResourceInterface, \JsonSerializable
             'validationType'    => $this->getValidationType(),
             'domain'            => $this->getDomain(),
             'isMember'          => $this->isMember(),
+            'memberStatus'          => $this->getMemberStatus(),
             'ads'               => $this->getAds(),
             'nbMembers'         => $this->getNbMembers()
         ];

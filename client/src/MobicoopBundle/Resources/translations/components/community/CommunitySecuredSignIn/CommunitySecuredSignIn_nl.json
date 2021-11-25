@@ -5,7 +5,7 @@
         "required": "Dit veld is verplicht"
     },
     "join": "Lid worden van de community",
-    "urlSignIn": "/communaute/{id}/securisee/inscription",
+    "urlJoin": "/community/{id}/secured/register/join",
     "credential2": "2e identificator",
     "credential1": "1e identificator",
     "titleWithName": "Lid worden van de community",

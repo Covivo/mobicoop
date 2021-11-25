@@ -13,6 +13,7 @@
         "doctrine/doctrine-migrations-bundle": "^1.3",
         "doctrine/migrations": "^1.8",
         "edwinhoksberg/php-fcm": "^1.0",
+        "geo6/geocoder-php-addok-provider": "^1.2",
         "geocoder-php/bing-maps-provider": "^4.0",
         "geocoder-php/chain-provider": "^4.0",
         "geocoder-php/google-maps-provider": "^4.2",
