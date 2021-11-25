@@ -420,6 +420,9 @@ services:
     App\Event\Controller\:
         resource: '../src/Event/Controller'
         tags: ['controller.service_arguments']
+    App\Event\DataProvider\EventCollectionDataProvider:
+        arguments:
+            $collectionFilters: !tagged api_platform.doctrine.orm.query_extension.collection
     App\Event\Service\EventManager:
         arguments:
             $eventProvider: '%env(resolve:EVENT_PROVIDER)%'
