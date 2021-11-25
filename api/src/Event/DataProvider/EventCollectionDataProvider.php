@@ -25,6 +25,8 @@ namespace App\Event\DataProvider;
 
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryResultCollectionExtensionInterface;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGenerator;
 use App\Event\Entity\Event;
 use App\Event\Service\EventManager;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -39,20 +41,34 @@ final class EventCollectionDataProvider implements CollectionDataProviderInterfa
 {
     protected $request;
     private $eventManager;
+    private $context;
     
-    public function __construct(RequestStack $requestStack, eventManager $eventManager)
+    public function __construct(RequestStack $requestStack, eventManager $eventManager, iterable $collectionFilters)
     {
         $this->request = $requestStack->getCurrentRequest();
         $this->eventManager = $eventManager;
+        $this->collectionFilters = $collectionFilters;
     }
     
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
+        $this->context = $context;
         return Event::class === $resourceClass && $operationName === "get";
     }
     
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
-        return $this->eventManager->getEvents();
+        $queryBuilder = $this->eventManager->getEvents();
+
+        // We're browsing every available filters
+        foreach ($this->collectionFilters as $collectionFilter) {
+            $collectionFilter->applyToCollection($queryBuilder, new QueryNameGenerator(), $resourceClass, $operationName, $this->context);
+
+            if ($collectionFilter instanceof QueryResultCollectionExtensionInterface && $collectionFilter->supportsResult($resourceClass, $operationName)) {
+                return $collectionFilter->getResult($queryBuilder, $resourceClass, $operationName);
+            }
+        }
+
+        return $queryBuilder->getQuery()->getResult();
     }
 }
