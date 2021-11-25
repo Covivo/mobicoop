@@ -33,15 +33,18 @@
     <v-data-table
       v-if="!hidden && !loading"
       :headers="headers"
-      :items="usersShowned"
+      :items="users"
       :search="search"
       :footer-props="{
         'items-per-page-options': itemsPerPageOptions,
         'items-per-page-all-text': $t('table.all'),
-        'itemsPerPageText': $t('table.lineNumber'),
+        'itemsPerPageText': $t('table.lineNumber')
       }"
+      :page="page"
+      :items-per-page="perPage"
       :server-items-length="totalItems"
-      @update:options="updateOptions"
+      @update:page="updateListPage"
+      @update:items-per-page="updateListItemPerPage"
     >
       <template v-slot:item.member="{ item }">
         {{ displayUserName(item) }} - <b>{{ displayModerator(item) }}</b><b>{{ displayReferrer(item) }}</b>
@@ -103,10 +106,6 @@ export default {
       type: Boolean,
       default: false
     },
-    givenUsers: {
-      type: Array,
-      default: null
-    },
     directMessage: {
       type: Boolean,
       default: false
@@ -118,10 +117,11 @@ export default {
       search: '',
       dialog: false,
       itemsPerPageOptions: [1, 10, 20, 50, 100, -1],
-      users: this.givenUsers ? this.givenUsers : [],
-      usersShowned:[],
+      users: [],
       loading:true,
-      totalItems:0
+      totalItems:0,
+      page:1,
+      perPage:10
     }
   },
   computed:{
@@ -134,11 +134,23 @@ export default {
       }
 
       return headers;
-    }
+    },
+    listStartItem(){
+      return this.perPage*(this.page-1);
+    },
+    listEndItem(){
+      return this.listStartItem+this.perPage;
+    },
   },
   watch: {
     refresh(){
       (this.refresh) ? this.getCommunityMemberList() : ''
+    },
+    page(){
+      this.getCommunityMemberList();
+    },
+    perPage(){
+      this.getCommunityMemberList();
     }
   },
   created(){
@@ -148,7 +160,9 @@ export default {
     getCommunityMemberList () {
       this.loading = true;
       let data = {
-        "id":this.communityId
+        "id":this.communityId,
+        "page":this.page,
+        "perPage":this.perPage
       }
       maxios 
         .post(this.$t("urlMembersList"), data)
@@ -156,28 +170,27 @@ export default {
           this.users = res.data.users;
           this.totalItems = res.data.totalItems;
           this.loading = false;
-          this.$emit("refreshed");
         });
     },
     contactItem(item){
       this.$emit("contact",item);
     },
-    updateOptions(data){
-      let page = 0+data.page;
-      let startItem = data.itemsPerPage*(page-1);
-      let endItem = startItem+data.itemsPerPage;
-      this.usersShowned = this.users.slice(startItem,endItem);
+    updateListPage(data){
+      this.page = data;
+    },
+    updateListItemPerPage(data){
+      this.perPage = data;
     },
     displayUserName(user) {
-      return  user.givenName + ' ' + user.shortFamilyName;
+      return  user.firstName + ' ' + user.shortFamilyName;
     },
     displayReferrer(user) {
-      if (user.isCommunityReferrer) {
+      if (user.referrer) {
         return this.$t('referrer');
       }
     },
     displayModerator(user) {
-      if (user.isCommunityModerator) {
+      if (user.moderator) {
         return this.$t('moderator');
       }
     }

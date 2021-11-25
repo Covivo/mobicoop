@@ -193,6 +193,50 @@ use App\Community\Filter\CommunityAddressTerritoryFilter;
  *                  "tags"={"Communities"}
  *              }
  *          },
+ *          "mapsAds"={
+ *              "method"="GET",
+ *              "path"="/communities/{id}/mapsAds",
+ *              "security"="is_granted('community_ads',object)",
+ *              "normalization_context"={"groups"={"readCommunityAds"}},
+ *              "swagger_context" = {
+ *                  "tags"={"Communities"}
+ *              }
+ *          },
+ *          "lastUsers"={
+ *              "method"="GET",
+ *              "path"="/communities/{id}/lastUsers",
+ *              "security"="is_granted('community_last_members',object)",
+ *              "normalization_context"={"groups"={"readCommunity"}},
+ *              "swagger_context" = {
+ *                  "tags"={"Communities"}
+ *              }
+ *          },
+ *          "members"={
+ *              "method"="GET",
+ *              "path"="/communities/{id}/members",
+ *              "normalization_context"={"groups"={"readCommunityMember"}},
+ *              "swagger_context" = {
+ *                  "tags"={"Communities"}
+ *              }
+ *          },
+ *          "leave"={
+ *              "method"="PUT",
+ *              "path"="/communities/{id}/leave",
+ *              "denormalization_context"={"groups"={"writeLeaveCommunity"}},
+ *              "security"="is_granted('community_read',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Communities"}
+ *              }
+ *          },
+ *          "join"={
+ *              "method"="PUT",
+ *              "path"="/communities/{id}/join",
+ *              "denormalization_context"={"groups"={"writeJoinCommunity"}},
+ *              "security"="is_granted('community_list',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Communities"}
+ *              }
+ *          },
  *          "put"={
  *              "method"="PUT",
  *              "security"="is_granted('community_update',object)",
@@ -263,7 +307,7 @@ class Community
     /**
      * @var string The name of the community.
      *
-     * @Assert\NotBlank
+     * @Assert\NotBlank(groups={"write"})
      * @ORM\Column(type="string", length=255)
      * @Groups({"aRead","aWrite","readCommunity","readCommunityUser","write","results","existsCommunity","readCommunityPublic","readUserAdmin","readUser","listCommunities"})
      */
@@ -319,7 +363,7 @@ class Community
     /**
      * @var string The short description of the community.
      *
-     * @Assert\NotBlank
+     * @Assert\NotBlank(groups={"write"})
      * @ORM\Column(type="string", length=255)
      * @Groups({"aRead","aWrite","readCommunity","write"})
      */
@@ -328,7 +372,7 @@ class Community
     /**
      * @var string The full description of the community.
      *
-     * @Assert\NotBlank
+     * @Assert\NotBlank(groups={"write"})
      * @ORM\Column(type="text")
      * @Groups({"aRead","aWrite","readCommunity","write"})
      */
@@ -364,7 +408,7 @@ class Community
      * @var Address The address of the community.
      *
      * @ApiProperty(push=true)
-     * @Assert\NotBlank
+     * @Assert\NotBlank(groups={"write"})
      * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist"}, orphanRemoval=true)
      * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"aRead","aWrite","readCommunity","write"})
@@ -404,7 +448,7 @@ class Community
      *
      * @ApiProperty(push=true)
      * @ORM\OneToMany(targetEntity="\App\Community\Entity\CommunityUser", mappedBy="community", cascade={"persist"})
-     * @Groups({"readCommunity","readCommunityUser","write","results","existsCommunity","readCommunityPublic"})
+     * @Groups({"readCommunityUser","write","results","existsCommunity"})
      * @MaxDepth(1)
      * @ApiSubresource(maxDepth=1)
      */
@@ -424,7 +468,7 @@ class Community
      * @var ArrayCollection|null The relay points related to the community.
      *
      * @ORM\OneToMany(targetEntity="\App\RelayPoint\Entity\RelayPoint", mappedBy="community", cascade={"persist"})
-     * @Groups({"readCommunity","write"})
+     * @Groups({"write"})
      * @MaxDepth(1)
      */
     private $relayPoints;
@@ -436,22 +480,27 @@ class Community
     private $member;
 
     /**
+     * @var int|null If the current user asking is member of the community this is his membership status (cf. CommunityUser status)
+     * @Groups({"readCommunity","listCommunities"})
+     */
+    private $memberStatus;
+
+    /**
      * @var int|null Number of members of this community
      * @Groups({"aRead","readCommunity","listCommunities"})
      */
     private $nbMembers;
     
     /**
-     * @var array|null Store the ads of the community
-     * @Groups({"readCommunity","readCommunityUser","write","results","existsCommunity","readCommunityPublic"})
+     * @var array|null Store the MapAds of the community
+     * @Groups({"readCommunityUser","write","results","existsCommunity"})
      */
-    private $ads;
+    private $mapsAds;
 
     /**
      * @var Mass The community created after the migration of this mass users
      *
      * @ORM\OneToOne(targetEntity="App\Match\Entity\Mass", mappedBy="community")
-     * @Groups({"readCommunity"})
      */
     private $mass;
 
@@ -491,6 +540,19 @@ class Community
      * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="community")
      */
     private $logs;
+
+    /**
+     * @var string The login to join the community if the community is secured.
+     * @Groups("writeJoinCommunity")
+     */
+    private $login;
+
+    /**
+     * @var string The password to join the community if the community is secured.
+     * @Groups("writeJoinCommunity")
+     */
+    private $password;
+
 
     public function __construct($id=null)
     {
@@ -806,12 +868,30 @@ class Community
 
     public function isMember(): ?bool
     {
+        if (!isset($this->member)) {
+            return false;
+        }
         return $this->member;
     }
 
     public function setMember(?bool $member): self
     {
         $this->member = $member;
+
+        return $this;
+    }
+
+    public function getMemberStatus(): ?int
+    {
+        if (!isset($this->memberStatus)) {
+            return 0;
+        }
+        return $this->memberStatus;
+    }
+
+    public function setMemberStatus(?int $memberStatus): self
+    {
+        $this->memberStatus = $memberStatus;
 
         return $this;
     }
@@ -828,14 +908,14 @@ class Community
         return $this;
     }
 
-    public function getAds()
+    public function getMapsAds()
     {
-        return $this->ads;
+        return $this->mapsAds;
     }
 
-    public function setAds(?array $ads): self
+    public function setMapsAds(?array $mapsAds): self
     {
-        $this->ads = $ads;
+        $this->mapsAds = $mapsAds;
 
         return $this;
     }
@@ -922,6 +1002,30 @@ class Community
         return $this;
     }
 
+    public function getLogin(): ?string
+    {
+        return $this->login;
+    }
+
+    public function setLogin(?string $login): self
+    {
+        $this->login = $login;
+
+        return $this;
+    }
+
+    public function getPassword(): ?string
+    {
+        return $this->password;
+    }
+
+    public function setPassword(?string $password): self
+    {
+        $this->password = $password;
+
+        return $this;
+    }
+    
     // DOCTRINE EVENTS
 
     /**

@@ -18,9 +18,8 @@
         avatar-version="{{ communityAvatarVersion }}"
         {{ searchRegular ? 'regular' : '' }}
         {{ searchPunctualDate ? 'punctual-date-optional' : '' }}
-        :points="{{ points|json_encode }}"
-        :last-users="{{ lastUsers|json_encode }}"
         :user-community-status="{{ communityUserStatus }}"
+        :is-member="{{ isMember ? "true" : "false" }}"
         :url-admin="{{urlAdmin|json_encode}}"
         :can-access-admin-from-community="{{canAccessAdminFromCommunity}}"
         :publish-button-always-active="{{ publishButtonAlwaysActive ? "true" : "false" }}"

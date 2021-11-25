@@ -46,6 +46,12 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use App\Action\Event\ActionEvent;
 use App\Action\Repository\ActionRepository;
+use App\Carpool\Entity\MapsAd\MapsAd;
+use App\Carpool\Entity\MapsAd\MapsAds;
+use App\Carpool\Entity\Proposal;
+use App\Community\Entity\CommunityMember;
+use App\Community\Entity\CommunityMembersList;
+use App\Community\Repository\CommunityUserRepository;
 
 /**
  * Community manager.
@@ -63,6 +69,7 @@ class CommunityManager
     private $securityPath;
     private $userRepository;
     private $communityRepository;
+    private $communityUserRepository;
     private $proposalRepository;
     private $authItemRepository;
     private $userManager;
@@ -79,21 +86,23 @@ class CommunityManager
     public function __construct(
         EntityManagerInterface $entityManager,
         LoggerInterface $logger,
-        string $securityPath,
         UserRepository $userRepository,
         CommunityRepository $communityRepository,
+        CommunityUserRepository $communityUserRepository,
         ProposalRepository $proposalRepository,
         AuthItemRepository $authItemRepository,
         UserManager $userManager,
         AdManager $adManager,
         EventDispatcherInterface $eventDispatcher,
-        ActionRepository $actionRepository
+        ActionRepository $actionRepository,
+        string $securityPath
     ) {
         $this->entityManager = $entityManager;
         $this->logger = $logger;
         $this->securityPath = $securityPath;
         $this->userRepository = $userRepository;
         $this->communityRepository = $communityRepository;
+        $this->communityUserRepository = $communityUserRepository;
         $this->proposalRepository = $proposalRepository;
         $this->authItemRepository = $authItemRepository;
         $this->userManager = $userManager;
@@ -108,34 +117,41 @@ class CommunityManager
      * To join a closed community, a user needs to give credentials, we will call them login and password
      * even if they represent other kind of information (id, date of birth...).
      *
-     * @param CommunityUser $communityUser
-     * @param boolean $checkDomain say if we check the domain or not
+     * @param User $user
+     * @param Community $community
      * @return bool
      */
-    public function canJoin(CommunityUser $communityUser, bool $checkDomain)
+    public function canJoin(User $user, Community $community)
     {
         $authorized = true;
+
+        $communityUser = $this->communityUserRepository->findBy(['community'=>$community, 'user'=>$user]);
+        if (is_array($communityUser) && count($communityUser)>0) {
+            throw new \LogicException("Aleady member of this community");
+        }
+
         // we check if the community is secured
-        $community= $communityUser->getCommunity();
+        
         if (count($community->getCommunitySecurities()) > 0) {
             $authorized = false;
             // we check the values of the credentials for each possible security file
-            if (!is_null($communityUser->getLogin()) && !is_null($communityUser->getPassword())) {
-                foreach ($communityUser->getCommunity()->getCommunitySecurities() as $communitySecurity) {
-                    if ($this->checkSecurity($communitySecurity, $communityUser->getLogin(), $communityUser->getPassword())) {
+            if (!is_null($community->getLogin()) && !is_null($community->getPassword())) {
+                foreach ($community->getCommunitySecurities() as $communitySecurity) {
+                    if ($this->checkSecurity($communitySecurity, $community->getLogin(), $community->getPassword())) {
                         $authorized = true;
                         break;
                     }
                 }
             }
         }
+
         if (!$authorized) {
             return false;
         }
-        if ($checkDomain && $community->getValidationType() == Community::DOMAIN_VALIDATION) {
+        if ($community->getValidationType() == Community::DOMAIN_VALIDATION) {
             $authorized = false; // Unauthorized by default.
 
-            $userDomain = explode("@", $communityUser->getUser()->getEmail())[1];
+            $userDomain = explode("@", $user->getEmail())[1];
 
             $communityDomains = explode(";", str_replace("@", "", $community->getDomain()));
 
@@ -237,9 +253,8 @@ class CommunityManager
     {
         if ($community = $this->communityRepository->find($communityId)) {
             $community->setUrlKey($this->generateUrlKey($community));
-            $this->getAdsOfCommunity($community);
             if ($user) {
-                $this->checkIfCurrentUserIsMember($community, $user);
+                $this->setCommunityUserInfo($community, $user);
             }
         }
         return $community;
@@ -248,20 +263,23 @@ class CommunityManager
     /**
      * Set the ads of a community
      *
-     * @param Community Community
+     * @param int Community's id
      * @return Community
      */
-    private function getAdsOfCommunity(Community $community)
+    public function getAdsOfCommunity(int $communityId)
     {
-        $ads = [];
+        $mapsAds = [];
 
         // We get only the public proposal (we exclude searches)
-        $proposals = $this->proposalRepository->findCommunityAds($community);
+        $proposals = $this->proposalRepository->findCommunityAds($this->communityRepository->find($communityId));
 
         foreach ($proposals as $proposal) {
-            $ads[] = $this->adManager->makeAdForCommunityOrEvent($proposal);
+            $mapsAd = $this->adManager->makeMapsAdFromProposal($proposal);
+            $mapsAd->setEntityId($communityId);
+            $mapsAds[] = $mapsAd;
         }
-        $community->setAds($ads);
+
+        return new mapsAds($mapsAds);
     }
 
     /**
@@ -269,11 +287,16 @@ class CommunityManager
      *
      * @param Community $community
      * @param User $user  If a user is provided check and set that if he's in community
-     * @return bool
      */
-    private function checkIfCurrentUserIsMember(Community $community, User $user)
+    private function setCommunityUserInfo(Community $community, User $user)
     {
-        $community->setMember($this->communityRepository->isRegistered($community, $user));
+        $communityUsers = $this->communityUserRepository->findBy(['community'=>$community, 'user'=>$user]);
+
+        $community->setMember(false);
+        if (!is_null($communityUsers) and count($communityUsers)>0) {
+            $community->setMember(true);
+            $community->setMemberStatus($communityUsers[0]->getStatus());
+        }
     }
 
 
@@ -388,15 +411,14 @@ class CommunityManager
      * Persist and save community User for POST
      *
      * @param CommunityUser       $communityUser           The community user to create
-     * @return void
+     * @return CommunityUser
      */
-    public function saveCommunityUser(CommunityUser $communityUser)
+    public function saveCommunityUser(CommunityUser $communityUser): CommunityUser
     {
         $this->entityManager->persist($communityUser);
         $this->entityManager->flush();
 
         $community = $communityUser->getCommunity();
-        $user = $community->getUser();
 
         switch ($communityUser->getStatus()) {
             case CommunityUser::STATUS_PENDING:
@@ -434,6 +456,55 @@ class CommunityManager
         return $communityUser;
     }
 
+
+    /**
+     * @param integer $communityId
+     * @return array
+     */
+    public function getLastUsers(int $communityId): array
+    {
+        if ($community = $this->communityRepository->find($communityId)) {
+            return $this->communityUserRepository->findNLastUsersOfACommunity($community);
+        }
+        return [];
+    }
+
+    /**
+     * @param integer $communityId
+     * @return CommunityMembersList
+     */
+    public function getMembers(int $communityId, array $context = [], string $operationName): CommunityMembersList
+    {
+        $communityMembers = [];
+
+        $community = $this->communityRepository->find($communityId);
+        
+        if ($community) {
+            $communityUsers = $this->communityUserRepository->findForCommunity($community, $context, $operationName);
+            
+            foreach ($communityUsers as $communityUser) {
+                $communityMember = new CommunityMember();
+                $communityMember->setId($communityUser->getUser()->getId());
+                $communityMember->setFirstName($communityUser->getUser()->getGivenName());
+                $communityMember->setShortFamilyName($communityUser->getUser()->getShortFamilyName());
+
+                if ($community->getUser()->getId() == $communityUser->getUser()->getId()) {
+                    $communityMember->setReferrer(true);
+                }
+
+                if ($communityUser->getStatus() == CommunityUser::STATUS_ACCEPTED_AS_MODERATOR) {
+                    $communityMember->setModerator(true);
+                }
+                if (is_array($communityUser->getUser()->getAvatars()) && count($communityUser->getUser()->getAvatars())>0) {
+                    $communityMember->setAvatar($communityUser->getUser()->getAvatars()[count($communityUser->getUser()->getAvatars())-1]);
+                }
+
+                $communityMembers[] = $communityMember;
+            }
+        }
+
+        return new CommunityMembersList($communityMembers, (is_array($community->getCommunityUsers())) ? count($community->getCommunityUsers()) : 0);
+    }
 
     /*************************
     *                        *
@@ -476,16 +547,56 @@ class CommunityManager
     }
 
     /**
+     * @param Community $community
+     * @param User $user
+     * @return CommunityUser|null
+     */
+    public function joinCommunity(Community $community, User $user): ?CommunityUser
+    {
+        if (!$this->canJoin($user, $community, false)) {
+            throw new \InvalidArgumentException("You can't join this community");
+        } else {
+            return $this->saveCommunityUser($this->makeCommunityUserForJoining($community, $user));
+        }
+        return null;
+    }
+
+    private function makeCommunityUserForJoining(Community $community, User $user): CommunityUser
+    {
+        $communityUser = new CommunityUser();
+        $communityUser->setCommunity($community);
+        $communityUser->setUser($user);
+
+        $communityUser->setStatus(CommunityUser::STATUS_ACCEPTED_AS_MEMBER);
+        if ($community->getValidationType()==Community::MANUAL_VALIDATION) {
+            $communityUser->setStatus(CommunityUser::STATUS_PENDING);
+        }
+        return $communityUser;
+    }
+
+    /**
+     * @param Community $community
+     * @param User $user
+     * @return Community
+     */
+    public function leaveCommunity(Community $community, User $user): ?Community
+    {
+        $communityUser = $this->communityUserRepository->findBy(['community'=>$community, 'user'=>$user]);
+        if (is_array($communityUser) && count($communityUser)>0) {
+            $this->deleteCommunityUser($communityUser[0]);
+        }
+        return $community;
+    }
+
+    /**
     * Delete a community user
     *
     * @param CommunityUser $communityUser  The community user to delete
-    * @return void
     */
     public function deleteCommunityUser(CommunityUser $communityUser)
     {
         $this->entityManager->remove($communityUser);
         $this->entityManager->flush();
-        return $communityUser;
     }
 
     /**

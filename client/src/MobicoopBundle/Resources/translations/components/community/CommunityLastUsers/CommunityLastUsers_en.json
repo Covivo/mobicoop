@@ -1,4 +1,5 @@
 {
     "title": "They have joined us",
-    "hidden": "The list is only visible to the community's members"
+    "hidden": "The list is only visible to the community's members",
+    "getLastUserUrl":"/community/{communityId}/lastUsers"
 }

@@ -233,7 +233,11 @@ class UserManager
      */
     public function getUser(int $id)
     {
-        return $this->userRepository->find($id);
+        $user = $this->userRepository->find($id);
+        if ($user) {
+            $user = $this->getUnreadMessageNumber($user);
+        }
+        return $user;
     }
 
     /**
@@ -1970,5 +1974,23 @@ class UserManager
         $this->entityManager->flush();
 
         return $user;
+    }
+
+    /**
+     * Get the communities where the User is accepted or pending
+     *
+     * @param User $user
+     * @return Community[]
+     */
+    public function getUserCommunities(User $user)
+    {
+        $communityUsers = $this->communityUserRepository->findBy(["user"=>$user]);
+        $communities = [];
+        if (!is_null($communityUsers) && count($communityUsers)>0) {
+            foreach ($communityUsers as $communityUser) {
+                $communities[] = $communityUser->getCommunity();
+            }
+        }
+        return $communities;
     }
 }

@@ -94,6 +94,14 @@ class EventRepository
         return $query;
     }
 
+    public function getEvents()
+    {
+        return $this->repository->createQueryBuilder('e')
+        ->where('e.status = 1')
+        ->andWhere('e.private = false')
+        ->getQuery()->getResult();
+    }
+
 
     /**
      * Find One event by criteria

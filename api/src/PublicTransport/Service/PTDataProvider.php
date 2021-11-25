@@ -169,6 +169,8 @@ class PTDataProvider
                 $arrivalAddress = $leg->getPTArrival()->getAddress();
                 $arrivalAddress->setDisplayLabel($this->geoTools->getDisplayLabel($arrivalAddress));
             }
+
+            $journey->setProvider($provider);
         }
 
         return $journeys;

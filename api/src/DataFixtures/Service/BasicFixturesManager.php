@@ -207,7 +207,6 @@ class BasicFixturesManager
 
         $user = $this->userManager->createAlerts($user, false);
         $user->setValidatedDate(new \DateTime());
-        $user->setPhoneValidatedDate(new \DateTime());
         $addresses = $this->geoSearcher->geoCode($tab[7]);
         if (count($addresses)>0) {
             /**

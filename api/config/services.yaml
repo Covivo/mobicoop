@@ -362,7 +362,7 @@ services:
         arguments:
             $emailTemplatePath: '%env(string:NOTIFICATION_TEMPLATE_EMAIL_PATH)%'
             $emailTitleTemplatePath: '%env(string:COMMUNICATION_TEMPLATE_EMAIL_PATH)%%env(string:NOTIFICATION_TITLE_TEMPLATE_EMAIL_PATH)%'
-
+        
     # Community
     App\Community\Controller\:
         resource: '../src/Community/Controller'
@@ -370,13 +370,14 @@ services:
 
     App\Community\Service\CommunityManager:
         arguments:
-            $securityPath: '%env(resolve:COMMUNITY_SECURITY_PATH)%'
+            $securityPath: '%env(string:COMMUNITY_SECURITY_PATH)%'
         tags:
             - { name: monolog.logger, channel: community }
 
     App\Community\Repository\CommunityUserRepository:
         arguments:
             $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
+            $communityNbLastUser: '%env(int:COMMUNITY_NB_LAST_USERS)%'
 
     'App\Community\Admin\DataProvider\CommunityUserCampaignAssociateCollectionDataProvider':
         arguments:
@@ -680,8 +681,6 @@ services:
     App\Match\Service\MassPublicTransportPotentialManager:
         arguments:
             $params:
-                ptProvider: '%env(string:MOBIMATCH_PT_PROVIDER)%'
-                ptAlgorithm: '%env(string:MOBIMATCH_PT_ALGORITHM)%'
                 ptMaxConnections: '%env(int:MOBIMATCH_PT_MAXIMAL_CONNECTIONS)%'
                 ptMaxDistanceWalkFromHome: '%env(int:MOBIMATCH_PT_MAXIMUM_DISTANCE_WALK_FROM_HOME)%'
                 ptMaxDistanceWalkFromWork: '%env(int:MOBIMATCH_PT_MAXIMUM_DISTANCE_WALK_FROM_WORK)%'
@@ -750,6 +749,10 @@ services:
         tags:
             - { name: doctrine.orm.entity_listener, lazy: true }    # lazy set to true to avoid doctrine UnitOfWork error on insert
     App\RelayPoint\Repository\RelayPointRepository:
+        arguments:
+            $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
+
+    App\RelayPoint\Admin\DataProvider\RelayPointCollectionDataProvider:
         arguments:
             $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
 

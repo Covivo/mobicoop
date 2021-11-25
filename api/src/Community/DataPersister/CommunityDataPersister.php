@@ -27,6 +27,7 @@ use App\Community\Entity\Community;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Security;
 use App\Community\Service\CommunityManager;
+use App\User\Entity\User;
 
 /**
  * Data persister for Community
@@ -38,13 +39,13 @@ use App\Community\Service\CommunityManager;
 
 final class CommunityDataPersister implements ContextAwareDataPersisterInterface
 {
-    private $request;
     private $communityManager;
+    private $security;
 
-    public function __construct(RequestStack $requestStack, CommunityManager $communityManager)
+    public function __construct(CommunityManager $communityManager, Security $security)
     {
-        $this->request = $requestStack->getCurrentRequest();
         $this->communityManager = $communityManager;
+        $this->security = $security;
     }
 
     public function supports($data, array $context = []): bool
@@ -56,15 +57,23 @@ final class CommunityDataPersister implements ContextAwareDataPersisterInterface
     public function persist($data, array $context = [])
     {
         if (is_null($data)) {
-            throw new \InvalidArgumentException($this->translator->trans("bad community id is provided"));
+            throw new \InvalidArgumentException($this->translator->trans("bad community is provided"));
         }
        
         if (isset($context['item_operation_name']) &&  $context['item_operation_name'] == 'put') {
-            // only for validation or update availabilities
             $data = $this->communityManager->updateCommunity($data);
         } elseif (isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'post') {
-            // create
             $data = $this->communityManager->save($data);
+        } elseif (isset($context['item_operation_name']) &&  $context['item_operation_name'] == 'join') {
+            if (!($this->security->getUser() instanceof User)) {
+                throw new \LogicException("Only a User can join a Community");
+            }
+            $data = $this->communityManager->joinCommunity($data, $this->security->getUser());
+        } elseif (isset($context['item_operation_name']) &&  $context['item_operation_name'] == 'leave') {
+            if (!($this->security->getUser() instanceof User)) {
+                throw new \LogicException("Only a User can leave a Community");
+            }
+            $data = $this->communityManager->leaveCommunity($data, $this->security->getUser());
         }
         return $data;
     }

@@ -1,4 +1,5 @@
 {
     "hidden": "De lijst kan alleen bekeken worden door de leden van de community",
-    "title": "Zij zijn lid geworden"
+    "title": "Zij zijn lid geworden",
+    "getLastUserUrl":"/community/{communityId}/lastUsers"
 }

@@ -74,10 +74,16 @@
             "p3": "<span class=\"font-weight-bold\">Attention</span>: Some publishing tools like Wordpress require the addition of specific plugins to be able to use an iFrame."
         }
     },
-    "yes": "Yes",
-    "no": "No",
-    "infos": {
-        "members": "{members} members"
+    "yes": "yes",
+    "no": "no",
+    "infos":{
+        "members":"{members} members"
+    },
+    "mapsAds":{
+        "url":"/community/{communityId}/mapsAds"
+    },
+    "relaypoints":{
+        "url":"/community/relay-point/map/"
     },
     "joinCommunity": {
         "popup": {
