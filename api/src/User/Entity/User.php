@@ -1070,6 +1070,17 @@ class User implements UserInterface, EquatableInterface
     private $images;
 
     /**
+     * @var ArrayCollection|null The identityProofs of the user.
+     *
+     * @ORM\OneToMany(targetEntity="\App\User\Entity\IdentityProof", mappedBy="user", cascade={"persist"})
+     * @ORM\OrderBy({"position" = "ASC"})
+     * @Groups({"results","write"})
+     * @MaxDepth(1)
+     * @ApiSubresource(maxDepth=1)
+     */
+    private $identityProofs;
+
+    /**
      * @var ArrayCollection|null A user may have many auth assignments.
      *
      * @ORM\OneToMany(targetEntity="\App\Auth\Entity\UserAuthAssignment", mappedBy="user", cascade={"persist"})
@@ -1544,6 +1555,7 @@ class User implements UserInterface, EquatableInterface
         $this->userAuthAssignments = new ArrayCollection();
         $this->masses = new ArrayCollection();
         $this->images = new ArrayCollection();
+        $this->identityProofs = new ArrayCollection();
         $this->messages = new ArrayCollection();
         $this->recipients = new ArrayCollection();
         $this->notifieds = new ArrayCollection();
@@ -2025,6 +2037,28 @@ class User implements UserInterface, EquatableInterface
             }
         }
 
+        return $this;
+    }
+
+    public function getIdentityProofs()
+    {
+        return $this->identityProofs->getValues();
+    }
+
+    public function addIdentityProof(IdentityProof $identityProof): self
+    {
+        if (!$this->identityProofs->contains($identityProof)) {
+            $this->identityProofs[] = $identityProof;
+            $identityProof->setUser($this);
+        }
+        return $this;
+    }
+
+    public function removeIdentityProof(IdentityProof $identityProof): self
+    {
+        if ($this->identityProofs->contains($identityProof)) {
+            $this->identityProofs->removeElement($identityProof);
+        }
         return $this;
     }
 

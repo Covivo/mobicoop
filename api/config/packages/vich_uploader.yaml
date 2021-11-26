@@ -89,4 +89,12 @@ vich_uploader:
             upload_destination: '%kernel.project_dir%/public/upload/editorials/images/'
             namer:
                 service: Vich\UploaderBundle\Naming\PropertyNamer
+                options: { property: 'fileName'}    
+        
+        # mapping for solidary proof files
+        identityProof:
+            uri_prefix: /upload/user/identityProofs/
+            upload_destination: '%kernel.project_dir%/public/upload/user/identityProofs/'
+            namer:
+                service: Vich\UploaderBundle\Naming\PropertyNamer
                 options: { property: 'fileName'}        
