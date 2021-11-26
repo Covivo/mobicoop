@@ -133,9 +133,7 @@
                     </v-col>
                     <v-col :cols="displayInfo ? 12 : 12">
                       <v-row>
-                        {{ (route && route.origin) ? route.origin.addressLocality : null }}<br>
-                        {{ (route && route.origin && route.origin.streetAddress!=='') ? route.origin.streetAddress : null }}
-                        {{ (route && route.origin && route.origin.venue!=='') ? route.origin.venue : null }}
+                        {{ (route && route.origin) ? displayAddress(route.origin) : '' }}
                       </v-row>
                       <v-row />                      
                     </v-col>
@@ -160,9 +158,7 @@
                         class="mr-3"
                       >
                         mdi-arrow-right-bold
-                      </v-icon> {{ waypoint.address.addressLocality }}<br>
-                      {{ (waypoint.address.streetAddress!=='') ? waypoint.address.streetAddress : null }}
-                      {{ (waypoint.address.venue!=='') ? waypoint.address.venue : null }}
+                      </v-icon> {{ displayAddress(waypoint.address) }}
                     </v-row>
                   </v-col>
                 </v-row>
@@ -181,9 +177,7 @@
                       <strong>{{ computedDestinationTime }}</strong>
                     </v-col>
                     <v-col :cols="displayInfo ? 12 : 12">
-                      {{ (route && route.destination) ? route.destination.addressLocality : null }}<br>
-                      {{ (route && route.destination && route.destination.streetAddress!=='') ? route.destination.streetAddress : null }}
-                      {{ (route && route.destination && route.destination.venue!=='') ? route.destination.venue : null }}
+                      {{ (route && route.destination) ? displayAddress(route.destination) : '' }}
                     </v-col>
                   </v-row>
                 </v-timeline-item>
@@ -785,7 +779,15 @@ export default {
     reversedArray(array) {
       // slice to make a copy of array, then reverse the copy
       return array.slice().reverse()
-    } 
+    },
+    displayAddress(address){
+      if(address.relayPoint && address.relayPoint.name){
+        return address.relayPoint.name;
+      }
+      else{
+        address.addressLocality + '\n' + address.streetAddress + ' ' + address.venue
+      }
+    }
   }
 };
 </script>
