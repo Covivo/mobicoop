@@ -365,7 +365,7 @@ class Community
      *
      * @Assert\NotBlank(groups={"write"})
      * @ORM\Column(type="string", length=255)
-     * @Groups({"aRead","aWrite","readCommunity","write"})
+     * @Groups({"aRead","aWrite","readCommunity","write","listCommunities"})
      */
     private $description;
 

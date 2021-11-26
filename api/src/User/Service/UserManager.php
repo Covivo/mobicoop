@@ -233,7 +233,11 @@ class UserManager
      */
     public function getUser(int $id)
     {
-        return $this->userRepository->find($id);
+        $user = $this->userRepository->find($id);
+        if ($user) {
+            $user = $this->getUnreadMessageNumber($user);
+        }
+        return $user;
     }
 
     /**
