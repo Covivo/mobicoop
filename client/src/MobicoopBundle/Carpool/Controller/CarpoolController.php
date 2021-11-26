@@ -298,8 +298,7 @@ class CarpoolController extends AbstractController
             }
             // add the id of the deleter
             $data['deleterId'] = $userManager->getLoggedUser()->getId();
-
-            return $this->json($response = $adManager->deleteAd($data['adId'], $data));
+            return $this->json($adManager->deleteAd($data['adId'], $data));
         }
     }
 
