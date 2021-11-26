@@ -52,6 +52,16 @@ class SsoConnection implements \JsonSerializable
      */
     private $buttonIcon;
     
+    /**
+     * @var string|null The SSO service picto for the text button
+     */
+    private $picto;
+
+    /**
+     * @var bool|null true : use the Button icon, false use the picto
+     */
+    private $useButtonIcon;
+
     public function getService(): string
     {
         return $this->service;
@@ -88,6 +98,18 @@ class SsoConnection implements \JsonSerializable
         return $this;
     }
 
+    public function getPicto(): ?string
+    {
+        return $this->picto;
+    }
+    
+    public function setPicto(?string $picto): self
+    {
+        $this->picto = $picto;
+        
+        return $this;
+    }
+
     public function getButtonIcon(): ?string
     {
         return $this->buttonIcon;
@@ -100,6 +122,18 @@ class SsoConnection implements \JsonSerializable
         return $this;
     }
 
+    public function hasUseButtonIcon(): ?bool
+    {
+        return $this->useButtonIcon;
+    }
+    
+    public function setUseButtonIcon(?bool $useButtonIcon): self
+    {
+        $this->useButtonIcon = $useButtonIcon;
+        
+        return $this;
+    }
+
     // If you want more info from user you just have to add it to the jsonSerialize function
     public function jsonSerialize()
     {
@@ -107,7 +141,9 @@ class SsoConnection implements \JsonSerializable
             'service'               => $this->getService(),
             'ssoProvider'           => $this->getSsoProvider(),
             'uri'                   => $this->getUri(),
-            'buttonIcon'            => $this->getButtonIcon()
+            'buttonIcon'            => $this->getButtonIcon(),
+            'picto'                 => $this->getPicto(),
+            'useButtonIcon'         => $this->hasUseButtonIcon()
         ];
     }
 }
