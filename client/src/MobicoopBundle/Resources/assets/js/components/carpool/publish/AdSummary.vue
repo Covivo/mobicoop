@@ -785,7 +785,10 @@ export default {
         return address.relayPoint.name;
       }
       else{
-        address.addressLocality + '\n' + address.streetAddress + ' ' + address.venue
+        let display = address.addressLocality;
+        if(address.streetAddress) display += '\n' + address.streetAddress;
+        if(address.venue) display += '\n' + address.venue;
+        return display;
       }
     }
   }
