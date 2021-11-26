@@ -629,11 +629,6 @@ class AdManager
      */
     public function createAddressFromPoint($point)
     {
-
-        if (isset($point['relayPoint'])) {
-            
-        }
-
         $address = new Address();
 
         if (isset($point['layer'])) {
@@ -647,8 +642,7 @@ class AdManager
         }
         if (isset($point['relayPoint']) && trim($point['relayPoint']['name'])!=="") {
             $address->setStreetAddress($point['relayPoint']['name']);
-        }
-        else{
+        } else {
             if (isset($point['streetAddress'])) {
                 $address->setStreetAddress($point['streetAddress']);
             }
