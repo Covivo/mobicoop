@@ -1177,4 +1177,13 @@ class ProposalManager
         $this->logger->info("End optimizing carpool related tables | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         return $result;
     }
+
+    public function cleanOrphanProposals()
+    {
+        $orphanProposals = $this->proposalRepository->findOrphanProposals();
+        foreach ($orphanProposals as $orphanProposal) {
+            $this->entityManager->remove($orphanProposal);
+        }
+        $this->entityManager->flush();
+    }
 }

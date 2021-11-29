@@ -1319,7 +1319,7 @@ class AdManager
      */
     public function updateAd(Ad $ad, bool $withSolidaries = true)
     {
-        $proposal = $this->proposalRepository->find($ad->getId());
+        $proposal = $this->proposalRepository->find($ad->getProposalId());
         $oldAd = $this->makeAd($proposal, $ad->getUserId());
         $proposalAsks = $this->askManager->getAsksFromProposal($proposal);
 
@@ -1334,7 +1334,6 @@ class AdManager
         elseif ($this->checkForMajorUpdate($oldAd, $ad)) {
             $this->proposalManager->deleteProposal($proposal);
             $ad = $this->createAd($ad, true, $withSolidaries);
-
         // minor update
         } elseif ($oldAd->hasBike() !== $ad->hasBike()
             || $oldAd->hasBackSeats() !== $ad->hasBackSeats()

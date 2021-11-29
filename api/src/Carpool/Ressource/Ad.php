@@ -153,6 +153,7 @@ use App\Solidary\Entity\Solidary;
  *          "put"={
  *              "method"="PUT",
  *              "path"="/carpools/{id}",
+ *              "read"=false,
  *              "security"="is_granted('ad_update',object)",
  *              "swagger_context" = {
  *                  "tags"={"Carpool"}
