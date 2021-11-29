@@ -37,7 +37,7 @@ use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
- * A 
+ * A
  *
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
@@ -49,18 +49,21 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *      },
  *      collectionOperations={
  *          "get"={
- *            
+ *
  *          },
  *          "post"={
- *             
+ *              "security_post_denormalize"="is_granted('readUser',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Users"}
+ *              }
  *          },
  *      },
  *      itemOperations={
  *          "get"={
- *             
+ *
  *          },
  *          "delete"={
- *             
+ *
  *          }
  *      }
  * )
