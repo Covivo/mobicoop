@@ -640,12 +640,8 @@ class AdManager
         if (isset($point['street'])) {
             $address->setStreet($point['street']);
         }
-        if (isset($point['relayPoint']) && trim($point['relayPoint']['name'])!=="") {
-            $address->setStreetAddress($point['relayPoint']['name']);
-        } else {
-            if (isset($point['streetAddress'])) {
-                $address->setStreetAddress($point['streetAddress']);
-            }
+        if (isset($point['streetAddress'])) {
+            $address->setStreetAddress($point['streetAddress']);
         }
         if (isset($point['postalCode'])) {
             $address->setPostalCode($point['postalCode']);
@@ -686,8 +682,12 @@ class AdManager
         if (isset($point['elevation'])) {
             $address->setElevation($point['elevation']);
         }
-        if (isset($point['name'])) {
-            $address->setName($point['name']);
+        if (isset($point['relayPoint']) && trim($point['relayPoint']['name'])!=="") {
+            $address->setName($point['relayPoint']['name']);
+        } else {
+            if (isset($point['name'])) {
+                $address->setName($point['name']);
+            }
         }
         if (isset($point['home'])) {
             $address->setHome($point['home']);

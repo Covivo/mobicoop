@@ -108,13 +108,15 @@ export default {
     origin () {
       return {
         streetAddress: this.ad.waypoints.find(el => el.position === 0)['streetAddress'],
-        addressLocality: this.ad.waypoints.find(el => el.position === 0)['addressLocality']
+        addressLocality: this.ad.waypoints.find(el => el.position === 0)['addressLocality'],
+        name: this.ad.waypoints.find(el => el.position === 0)['name']
       }
     },
     destination () {
       return {
         streetAddress: this.ad.waypoints.find(el => el.destination === true)['streetAddress'],
-        addressLocality: this.ad.waypoints.find(el => el.destination === true)['addressLocality']
+        addressLocality: this.ad.waypoints.find(el => el.destination === true)['addressLocality'],
+        name: this.ad.waypoints.find(el => el.destination === true)['name']
       }
     }
   }
