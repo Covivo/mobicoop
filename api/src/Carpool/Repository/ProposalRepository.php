@@ -132,6 +132,7 @@ class ProposalRepository
             'w.position',
             'w.destination',
             'w.reached',
+            'a.name as addressName',
             'a.longitude',
             'a.latitude',
             'a.streetAddress',

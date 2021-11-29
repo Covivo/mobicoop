@@ -682,8 +682,12 @@ class AdManager
         if (isset($point['elevation'])) {
             $address->setElevation($point['elevation']);
         }
-        if (isset($point['name'])) {
-            $address->setName($point['name']);
+        if (isset($point['relayPoint']) && trim($point['relayPoint']['name'])!=="") {
+            $address->setName($point['relayPoint']['name']);
+        } else {
+            if (isset($point['name'])) {
+                $address->setName($point['name']);
+            }
         }
         if (isset($point['home'])) {
             $address->setHome($point['home']);
