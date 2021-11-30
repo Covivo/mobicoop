@@ -171,6 +171,14 @@ class CarpoolController extends AbstractController
         ]);
     }
 
+    public function carpoolAdCleanOrphanProposals(Request $request, AdManager $adManager)
+    {
+        if ($request->isMethod('POST')) {
+            $adManager->cleanOrphanUserProposals();
+        }
+        return new JsonResponse();
+    }
+
     /**
      * Save a carpooling search.
      */

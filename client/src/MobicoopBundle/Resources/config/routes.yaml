@@ -635,6 +635,14 @@ carpool_ad_update:
         nl: /carpool/ad/{id}/update/
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdUpdate
 
+# update an ad
+carpool_ad_clean_orphan_proposals:
+    path:
+        fr: /covoiturage/cleanOrphanProposals
+        en: /covoiturage/cleanOrphanProposals
+        nl: /covoiturage/cleanOrphanProposals
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdCleanOrphanProposals
+
 # save a carpool search
 carpool_save_search:
     path:

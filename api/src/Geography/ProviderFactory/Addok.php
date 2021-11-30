@@ -48,6 +48,7 @@ final class Addok extends AbstractHttpProvider implements Provider
     const TYPE_LOCALITY = 'locality';
     const TYPE_MUNICIPALITY = 'municipality';
     const COUNTRY = 'France';
+    const COUNTRY_CODE = 'FR';
     const MIN_SCORE = 0.7;
 
     /**
@@ -198,6 +199,7 @@ final class Addok extends AbstractHttpProvider implements Provider
                 'locality'     => $locality,
                 'postalCode'   => $postalCode,
                 'country'      => self::COUNTRY,
+                'countryCode'  => self::COUNTRY_CODE,
                 'adminLevels'  => $adminLevels
             ]);
         }

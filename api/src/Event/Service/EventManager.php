@@ -32,6 +32,7 @@ use App\Action\Repository\ActionRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use App\Geography\Service\GeoTools;
+use Doctrine\ORM\QueryBuilder;
 use Exception;
 
 /**
@@ -139,7 +140,7 @@ class EventManager
         return $createdEvents;
     }
 
-    public function getEvents()
+    public function getEvents(): QueryBuilder
     {
         return $this->eventRepository->getEvents();
     }
