@@ -1394,11 +1394,13 @@ class ProposalRepository
     /**
      * @return Proposal[]|null
      */
-    public function findOrphanProposals(): ?array
+    public function findUserOrphanProposals(User $user): ?array
     {
         $query = $this->repository->createQueryBuilder('p')
         ->leftJoin('p.waypoints', 'w')
-        ->where('w.proposal is null');
+        ->where('p.user = :user')
+        ->andWhere('w.proposal is null')
+        ->setParameter('user', $user);
         return $query->getQuery()->getResult();
     }
 }

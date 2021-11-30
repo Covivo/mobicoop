@@ -96,6 +96,15 @@ use App\Solidary\Entity\Solidary;
  *                  "tags"={"Carpool"}
  *              }
  *          },
+ *          "cleanOrphans"={
+ *              "method"="POST",
+ *              "path"="/carpools/cleanOrphans",
+ *              "normalization_context"={"groups"={"results"}},
+ *              "security_post_denormalize"="is_granted('ad_search_create',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Carpool"}
+ *              }
+ *          },
  *      },
  *      itemOperations={
  *          "get"={

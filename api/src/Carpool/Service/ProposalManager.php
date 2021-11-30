@@ -1178,9 +1178,9 @@ class ProposalManager
         return $result;
     }
 
-    public function cleanOrphanProposals()
+    public function cleanUserOrphanProposals(User $user)
     {
-        $orphanProposals = $this->proposalRepository->findOrphanProposals();
+        $orphanProposals = $this->proposalRepository->findUserOrphanProposals($user);
         foreach ($orphanProposals as $orphanProposal) {
             $this->entityManager->remove($orphanProposal);
         }
