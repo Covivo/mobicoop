@@ -567,4 +567,13 @@ class AdManager
 
         return $ad;
     }
+
+    public function cleanOrphanUserProposals()
+    {
+        $ad = new Ad();
+        if ($response = $this->dataProvider->post($ad, "cleanOrphans")) {
+            return $response->getValue();
+        }
+        return null;
+    }
 }
