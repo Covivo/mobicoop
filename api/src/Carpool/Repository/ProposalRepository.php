@@ -27,6 +27,7 @@ use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\Proposal;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Carpool\Entity\Criteria;
+use App\Carpool\Entity\Waypoint;
 use App\Carpool\Ressource\Ad;
 use App\User\Service\UserManager;
 use App\Community\Entity\Community;
@@ -60,6 +61,7 @@ class ProposalRepository
     
     public function __construct(EntityManagerInterface $entityManager, UserManager $userManager, GeoTools $geoTools, array $params)
     {
+        $this->entityManager = $entityManager;
         $this->repository = $entityManager->getRepository(Proposal::class);
         $this->userManager = $userManager;
         $this->geoTools = $geoTools;
@@ -1388,5 +1390,18 @@ class ProposalRepository
         ->setParameter("date", $now->format("Y-m-d 00:00:00"));
 
         return $query->getQuery()->getSingleScalarResult();
+    }
+
+    /**
+     * @return Proposal[]|null
+     */
+    public function findUserOrphanProposals(User $user): ?array
+    {
+        $query = $this->repository->createQueryBuilder('p')
+        ->leftJoin('p.waypoints', 'w')
+        ->where('p.user = :user')
+        ->andWhere('w.proposal is null')
+        ->setParameter('user', $user);
+        return $query->getQuery()->getResult();
     }
 }
