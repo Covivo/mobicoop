@@ -52,8 +52,8 @@ class OpenIdSsoProvider implements SsoProviderInterface
         ],
         self::SSO_PROVIDER_PASSMOBILITE => [
             self::AUTHORIZATION_URL => "auth/realms/Passmobilite/protocol/openid-connect/auth/?client_id={CLIENT_ID}&scope=openid profile email&response_type=code&state={SERVICE_NAME}&redirect_uri={REDIRECT_URI}",
-            self::TOKEN_URL => "auth/realms/Passmobilite/protocol/openid-connect/token/",
-            self::USERINFOS_URL => "auth/realms/Passmobilite/protocol/openid-connect/userinfo"
+            self::TOKEN_URL => "auth/realms/Partners/protocol/openid-connect/token/",
+            self::USERINFOS_URL => "auth/realms/Partners/protocol/openid-connect/userinfo"
         ]
     ];
 
