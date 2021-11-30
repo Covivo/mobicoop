@@ -103,7 +103,8 @@
         "publish": "/carpool/postproposal",
         "update": "carpool/proposal/{id}/change",
         "myAds": "/user/profile/change/my-proposals",
-        "roundPrice": "/price/round-up"
+        "roundPrice": "/price/round-up",
+        "cleanOrphans": "/covoiturage/cleanOrphanProposals"
     },
     "snackBarErrorPublish": "Journey incompatible with your already published proposals. If your proposal already published on this date is no longer valid, you must pause, change or delete it.",
     "yes": "Yes",
