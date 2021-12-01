@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2020, MOBICOOP. All rights reserved.
+ * Copyright (c) 2021, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -20,39 +20,32 @@
  *    LICENSE
  **************************/
 
- namespace App\User\DataPersister;
+namespace App\User\DataPersister;
 
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
-use App\User\Entity\User;
-use App\User\Exception\BlockException;
-use App\User\Ressource\Block;
-use App\User\Service\BlockManager;
-use LogicException;
-use Symfony\Component\Security\Core\Security;
+use App\User\Ressource\PhoneValidation;
+use App\User\Service\UserManager;
 
-final class BlockDataPersister implements ContextAwareDataPersisterInterface
+/**
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ */
+final class PhoneValidationDataPersister implements ContextAwareDataPersisterInterface
 {
-    private $security;
-    private $blockManager;
-    
-    public function __construct(Security $security, BlockManager $blockManager)
+    private $userManager;
+
+    public function __construct(UserManager $userManager)
     {
-        $this->security = $security;
-        $this->blockManager = $blockManager;
+        $this->userManager = $userManager;
     }
 
     public function supports($data, array $context = []): bool
     {
-        return $data instanceof Block && isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'post';
+        return $data instanceof PhoneValidation && isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'post';
     }
 
     public function persist($data, array $context = [])
     {
-        if (!($this->security->getUser() instanceof User)) {
-            throw new \LogicException("Only a User can perform this action");
-        }
-        
-        return $this->blockManager->handleBlock($this->security->getUser(), $data->getUser());
+        return $this->userManager->isPhoneValid($data);
     }
 
     public function remove($data, array $context = [])

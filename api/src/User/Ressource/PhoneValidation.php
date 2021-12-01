@@ -128,7 +128,7 @@ class PhoneValidation
         return (!is_null($this->valid)) ? $this->valid : false;
     }
 
-    public function setCreatedDate(bool $valid): self
+    public function setValid(bool $valid): self
     {
         $this->valid = $valid;
 
