@@ -2001,6 +2001,10 @@ class UserManager
 
     public function isPhoneValid(PhoneValidation $phoneValidation): PhoneValidation
     {
-        return $phoneValidation->setValid(preg_match($this->phoneValidationRegex, $phoneValidation->getPhoneNumber()));
+        $phoneValidation->setValid(preg_match($this->phoneValidationRegex, $phoneValidation->getPhoneNumber()));
+        if (!$phoneValidation->isValid()) {
+            $phoneValidation->setMessage($this->translator->trans('errors.phoneNumberInvalid'));
+        }
+        return $phoneValidation;
     }
 }

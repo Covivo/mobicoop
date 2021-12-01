@@ -49,6 +49,11 @@ class PhoneValidation implements ResourceInterface
      */
     private $valid;
     
+    /**
+     * @var string Message (i.e. if the phone number is invalid)
+     */
+    private $message;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -81,6 +86,18 @@ class PhoneValidation implements ResourceInterface
     public function setValid(bool $valid): self
     {
         $this->valid = $valid;
+
+        return $this;
+    }
+
+    public function getMessage(): ?string
+    {
+        return $this->message;
+    }
+
+    public function setMessage(string $message): self
+    {
+        $this->message = $message;
 
         return $this;
     }

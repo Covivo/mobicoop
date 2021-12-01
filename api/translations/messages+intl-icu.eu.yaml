@@ -188,6 +188,7 @@ yourValidationToken: Zure egiaztatze kodea
 updatedSefl: Zure profilaren aldaketa
 errors:
   alreadyUsed: Helbide elektroniko hau jadanik erabilia da
+  phoneNumberInvalid: "Ce numéro de téléphone n'est pas valide"
   wrongDomains: 'Zure helbide elektronikoa ondoko domeinu batekoa izan behar da: {domains}'
 yourInscription: Zure izen ematea
 passwordChanged: Zure pasahitza berrabiarazia izan da
