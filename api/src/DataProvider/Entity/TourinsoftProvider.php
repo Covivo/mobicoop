@@ -37,145 +37,144 @@ use Exception;
  */
 class TourinsoftProvider implements EventProviderInterface
 {
-    const SERVER_URL = 'https://wcf.tourinsoft.com/Syndication/3.0/cdt11/8132036e-2b56-4710-a160-4737c6493c98/Objects';
+	const SERVER_URL = 'https://wcf.tourinsoft.com/Syndication/3.0/cdt11/8132036e-2b56-4710-a160-4737c6493c98/Objects';
 
-    const PROVIDER = "Tourinsoft";
+	const PROVIDER = "Tourinsoft";
 
-    public function __construct()
-    {
-        $this->serverUrl = self::SERVER_URL;
-    }
+	public function __construct()
+	{
+		$this->serverUrl = self::SERVER_URL;
+	}
 
-    /**
-     * Get tourinsoft event
-     *
-     * @return void
-     */
-    public function getEvent()
-    {
-    }
+	/**
+	 * Get tourinsoft event
+	 *
+	 * @return void
+	 */
+	public function getEvent()
+	{
+	}
 
-    /**
-     * Get tourinsoft events
-     *
-     * @return Array array of events
-     */
-    public function getEvents()
-    {
-        $dataProvider = new DataProvider($this->serverUrl);
+	/**
+	 * Get tourinsoft events
+	 *
+	 * @return Array array of events
+	 */
+	public function getEvents()
+	{
+		$dataProvider = new DataProvider($this->serverUrl);
 
-        // we set an empty array of tourinsoft events
-        $tourinsoftEvents = [];
-        // We call tourinsoft api to get all events
-        $queryParams = [
-            '$format' => "JSON",
-            '$filter' => "CodePostal  eq  '11350'",
-            '$select' => "SyndicObjectName,MoyenDeCom,Description,ObjectTypeName,Adresse1,Adresse2,Adresse3,GmapLatitude,GmapLongitude,PeriodeOuverture,Photos,CodePostal,Commune,LieuManifestation"
-        ];
+		// we set an empty array of tourinsoft events
+		$tourinsoftEvents = [];
+		// We call tourinsoft api to get all events
+		$queryParams = [
+			'$format' => "JSON",
+			'$filter' => "CodePostal  eq  '11350'",
+			'$select' => "SyndicObjectID,SyndicObjectName,MoyenDeCom,Description,ObjectTypeName,Adresse1,Adresse2,Adresse3,GmapLatitude,GmapLongitude,PeriodeOuverture,Photos,CodePostal,Commune,LieuManifestation"
+		];
 
-        $response = $dataProvider->getItem($queryParams);
-        $events = json_decode($response->getValue(), false);
+		$response = $dataProvider->getItem($queryParams);
+		$events = json_decode($response->getValue(), false);
 
-        foreach ($events->value as $event) {
-            $tourinsoftEvents[] = $event;
-        }
-        return $this->createEvents($tourinsoftEvents);
-    }
+		foreach ($events->value as $event) {
+			$tourinsoftEvents[] = $event;
+		}
 
-    /**
-     * Create Event Object from Tourinsoft Event
-     *
-     * @param Array $tourinsoftEvents array of Tourinsoft Events
-     * @return Array array of events
-     */
-    public function createEvents($tourinsoftEvents)
-    {
-        //https://wcf.tourinsoft.com/Syndication/3.0/cdt11/8132036e-2b56-4710-a160-4737c6493c98/doc/syndication
-        //http://api-doc.tourinsoft.com/#/syndication-3x#api-format
+		return $this->createEvents($tourinsoftEvents);
+	}
 
-        $newEvents = [];
+	/**
+	 * Create Event Object from Tourinsoft Event
+	 *
+	 * @param Array $tourinsoftEvents array of Tourinsoft Events
+	 * @return Array array of events
+	 */
+	public function createEvents($tourinsoftEvents)
+	{
+		// var_dump($tourinsoftEvents);
+		// die;
+		//https://wcf.tourinsoft.com/Syndication/3.0/cdt11/8132036e-2b56-4710-a160-4737c6493c98/doc/syndication
+		//http://api-doc.tourinsoft.com/#/syndication-3x#api-format
 
-        foreach ($tourinsoftEvents as $event) {
-            $newEvent = new Event();
-            $newEvent->setExternalSource(self::PROVIDER);
+		$newEvents = [];
 
-            if (isset($event->SyndicObjectName)) {
-                $newEvent->setName($event->SyndicObjectName);
-            } else {
-                throw new Exception("Event name is mandatory", 1);
-            }
+		foreach ($tourinsoftEvents as $event) {
+			$newEvent = new Event();
+			$newEvent->setExternalId($event->SyndicObjectID);
+			$newEvent->setExternalSource(self::PROVIDER);
 
-            if (isset($event->PeriodeOuverture)) {
-                $dates = $event->PeriodeOuverture;
-                $array = explode('|', $dates);
+			if (isset($event->SyndicObjectName)) {
+				$newEvent->setName($event->SyndicObjectName);
+			} else {
+				throw new Exception("Event name is mandatory", 1);
+			}
 
-                $startDate = DateTime::createFromFormat('d/m/Y', $array[0]);
-                $endDate = DateTime::createFromFormat('d/m/Y', $array[1]);
+			if (isset($event->PeriodeOuverture)) {
+				$dates = $event->PeriodeOuverture;
+				$array = explode('|', $dates);
 
-                $fromDate = $startDate->format('Y-m-d');
-                $toDate =  $endDate->format('Y-m-d');
+				$startDate = DateTime::createFromFormat('d/m/Y', $array[0]);
+				$endDate = DateTime::createFromFormat('d/m/Y', $array[1]);
 
-                // some events are annual so we check first if the year is up to date if not we set the actual year
-                $year = (new \DateTime($fromDate))->format('Y');
-                $startDate = new \DateTime($fromDate);
-                $endDate = new \DateTime($toDate);
-                $actualYear = (new \DateTime('now'))->format('Y');
-                if ($year < $actualYear) {
-                    $newEvent->setFromDate($startDate->setDate($actualYear, $startDate->format('m'), $startDate->format('d')));
-                    $newEvent->setToDate($endDate->setDate($actualYear, $endDate->format('m'), $endDate->format('d')));
-                } else {
-                    $newEvent->setFromDate($startDate);
-                    $newEvent->setToDate($endDate);
-                }
-            } else {
-                throw new Exception("Start and end dates are mandatory", 1);
-            }
+				$fromDate = $startDate->format('Y-m-d');
+				$toDate =  $endDate->format('Y-m-d');
 
-            if (isset($event->ObjectTypeName)) {
-                $newEvent->setDescription($event->ObjectTypeName);
-            } else {
-                throw new Exception("Description is mandatory", 1);
-            }
+				// some events are annual so we check first if the year is up to date if not we set the actual year
+				$year = (new \DateTime($fromDate))->format('Y');
+				$startDate = new \DateTime($fromDate);
+				$endDate = new \DateTime($toDate);
+				$actualYear = (new \DateTime('now'))->format('Y');
+				if ($year < $actualYear) {
+					$newEvent->setFromDate($startDate->setDate($actualYear, $startDate->format('m'), $startDate->format('d')));
+					$newEvent->setToDate($endDate->setDate($actualYear, $endDate->format('m'), $endDate->format('d')));
+				} else {
+					$newEvent->setFromDate($startDate);
+					$newEvent->setToDate($endDate);
+				}
+			} else {
+				throw new Exception("Start and end dates are mandatory", 1);
+			}
 
-            if (isset($event->Description)) {
-                $newEvent->setFullDescription($event->Description);
-            } else {
-                throw new Exception("Description is mandatory", 1);
-            }
+			if (isset($event->ObjectTypeName)) {
+				$newEvent->setDescription($event->ObjectTypeName);
+			} else {
+				throw new Exception("Description is mandatory", 1);
+			}
 
-            $newEvent->setExternalImageUrl($event->Photos);
+			if (isset($event->Description)) {
+				$newEvent->setFullDescription($event->Description);
+			} else {
+				throw new Exception("Description is mandatory", 1);
+			}
+
+			$newEvent->setExternalImageUrl($event->Photos);
 
 
-            // if (isset($event->MoyenDeCom)) {
-            // 	$informations = $event->MoyenDeCom;
-            // 	$array = explode('|', $informations);
-            // 	$webUrl = $array[3];
-            // 	$newEvent->setUrl($webUrl);
-            // }
+			// if (isset($event->MoyenDeCom)) {
+			// 	$informations = $event->MoyenDeCom;
+			// 	$array = explode('|', $informations);
+			// 	$webUrl = $array[3];
+			// 	$newEvent->setUrl($webUrl);
+			// }
 
-            // we create and set the address
-            $address = new Address();
+			// we create and set the address
+			$address = new Address();
 
-            if (isset($event->GmapLatitude) && ($event->GmapLatitude)) {
-                $address->setLatitude($event->GmapLatitude);
-                $address->setLongitude($event->GmapLongitude);
-            } else {
-                throw new Exception("Latitude and longitude are mandatory", 1);
-            }
-            //TODO:Check three addresses
-            if (isset($event->adresse1)) {
-                $address->setStreetAddress(isset($event->adresse1) ? $event->adresse1 : (isset($event->LieuManifestation) ? $event->LieuManifestation : ""));
-                $address->setAddressLocality($event->commune);
-                $address->setPostalCode($event->codePostal);
-            }
-            $newEvent->setAddress($address);
+			if (isset($event->GmapLatitude) && ($event->GmapLatitude)) {
+				$address->setLatitude($event->GmapLatitude);
+				$address->setLongitude($event->GmapLongitude);
+			} else {
+				throw new Exception("Latitude and longitude are mandatory", 1);
+			}
 
-            // We pass the newEvent in array
-            $newEvents[] = $newEvent;
-        }
+			$newEvent->setAddress($address);
 
-        // var_dump($newEvents);
-        // die;
-        return $newEvents;
-    }
+			// We pass the newEvent in array
+			$newEvents[] = $newEvent;
+		}
+		$toto = [
+			$newEvents[0]
+		];
+		return  $toto;
+	}
 }

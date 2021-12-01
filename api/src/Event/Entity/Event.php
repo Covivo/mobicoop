@@ -93,7 +93,7 @@ use App\App\Entity\App;
  *          "valide_create_event"={
  *              "method"="POST",
  *              "path"="/events/{id}/valide_create_event",
-*               "requirements"={"id"="\d+"},
+ *               "requirements"={"id"="\d+"},
  *              "controller"=ValidateCreateEventController::class,
  *              "security"="is_granted('event_create',object)",
  *              "swagger_context" = {
@@ -191,622 +191,622 @@ use App\App\Entity\App;
  */
 class Event
 {
-    const STATUS_PENDING = 0;
-    const STATUS_ACTIVE = 1;
-    const STATUS_INACTIVE = 2;
-    /**
-     * @var int The id of this event.
-     *
-     * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
-     * @Groups({"aRead","readEvent", "read" })
-     * @ApiProperty(identifier=true)
-     */
-    private $id;
-    
-    /**
-     * @var string The name of the event.
-     *
-     * @ORM\Column(type="string", length=255)
-     * @Groups({"aRead","aWrite","readEvent","write"})
-     */
-    private $name;
+	const STATUS_PENDING = 0;
+	const STATUS_ACTIVE = 1;
+	const STATUS_INACTIVE = 2;
+	/**
+	 * @var int The id of this event.
+	 *
+	 * @ORM\Id
+	 * @ORM\GeneratedValue
+	 * @ORM\Column(type="integer")
+	 * @Groups({"aRead","readEvent", "read" })
+	 * @ApiProperty(identifier=true)
+	 */
+	private $id;
 
-    /**
-     * @var string Urlkey of the event
-     *
-     * @Groups({"readEvent"})
-     */
-    private $urlKey;
+	/**
+	 * @var string The name of the event.
+	 *
+	 * @ORM\Column(type="string", length=255)
+	 * @Groups({"aRead","aWrite","readEvent","write"})
+	 */
+	private $name;
 
-    /**
-     * @var int The status of the event (active/inactive).
-     *
-     * @ORM\Column(type="smallint")
-     * @Groups({"aRead","aWrite","readEvent","write"})
-     */
-    private $status;
+	/**
+	 * @var string Urlkey of the event
+	 *
+	 * @Groups({"readEvent"})
+	 */
+	private $urlKey;
 
-    /**
-     * @var boolean Private event. Should be filtered when event list is publicly displayed.
-     *
-     * @ORM\Column(type="boolean", options={"default":0})
-     * @Groups({"aRead","aWrite","readEvent","write"})
-     */
-    private $private;
-    
-    /**
-     * @var string The short description of the event.
-     *
-     * @ORM\Column(type="string", length=512)
-     * @Groups({"aRead","aWrite","readEvent","write"})
-     */
-    private $description;
-    
-    /**
-     * @var string The full description of the event.
-     *
-     * @ORM\Column(type="text")
-     * @Groups({"aRead","aWrite","readEvent","write"})
-     */
-    private $fullDescription;
-    
-    /**
-     * @var \DateTimeInterface The starting date of the event.
-     *
-     * @Assert\NotBlank
-     * @ORM\Column(type="datetime")
-     * @Groups({"aRead","aWrite","readEvent","write"})
-     */
-    private $fromDate;
+	/**
+	 * @var int The status of the event (active/inactive).
+	 *
+	 * @ORM\Column(type="smallint")
+	 * @Groups({"aRead","aWrite","readEvent","write"})
+	 */
+	private $status;
 
-    /**
-     * @var \DateTimeInterface The ending date of the event.
-     *
-     * @Assert\NotBlank
-     * @ORM\Column(type="datetime")
-     * @Groups({"aRead","aWrite","readEvent","write"})
-     */
-    private $toDate;
-    
-    /**
-     * @var boolean Use the time for the starting and ending date of the event.
-     *
-     * @ORM\Column(type="boolean")
-     * @Groups({"aRead","aWrite","readEvent","write"})
-     */
-    private $useTime;
-    
-    /**
-     * @var string The information url for the event.
-     *
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"aRead","aWrite","readEvent","write"})
-     */
-    private $url;
-    
-    /**
-    * @var \DateTimeInterface Creation date of the event.
-    *
-    * @ORM\Column(type="datetime")
-    */
-    private $createdDate;
+	/**
+	 * @var boolean Private event. Should be filtered when event list is publicly displayed.
+	 *
+	 * @ORM\Column(type="boolean", options={"default":0})
+	 * @Groups({"aRead","aWrite","readEvent","write"})
+	 */
+	private $private;
 
-    /**
-     * @var \DateTimeInterface Updated date of the event.
-     *
-     * @ORM\Column(type="datetime", nullable=true)
-     */
-    private $updatedDate;
-    
-    /**
-     * @var User The creator of the event.
-     *
-     * @ApiProperty(push=true)
-     * @ORM\ManyToOne(targetEntity="App\User\Entity\User")
-     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
-     * @Groups({"readEvent","write"})
-     * @MaxDepth(1)
-     */
-    private $user;
+	/**
+	 * @var string The short description of the event.
+	 *
+	 * @ORM\Column(type="string", length=512)
+	 * @Groups({"aRead","aWrite","readEvent","write"})
+	 */
+	private $description;
 
-    /**
-     * @var App The app creator of the event.
-     *
-     * @ApiProperty(push=true)
-     * @ORM\ManyToOne(targetEntity="App\App\Entity\App")
-     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
-     * @Groups({"readEvent","write"})
-     * @MaxDepth(1)
-     */
-    private $app;
+	/**
+	 * @var string The full description of the event.
+	 *
+	 * @ORM\Column(type="text")
+	 * @Groups({"aRead","aWrite","readEvent","write"})
+	 */
+	private $fullDescription;
 
-    /**
-     * @var Event Event related for the proposal
-     *
-     * @ORM\OneToMany(targetEntity="App\Carpool\Entity\Proposal", mappedBy="event")
-     * @Groups({"readEvent","write"})
-     * @ApiSubresource(maxDepth=1)
-     * @MaxDepth(1)
-     */
-    private $proposals;
-    
-    /**
-     * @var Address The address of the event.
-     *
-     * @ApiProperty(push=true)
-     * @Assert\NotBlank
-     * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", inversedBy="event", cascade={"persist"}, orphanRemoval=true)
-     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
-     * @Groups({"aRead","aWrite","readEvent","write"})
-     * @MaxDepth(1)
-     */
-    private $address;
-    
-    /**
-     * @var ArrayCollection The images of the event.
-     *
-     * @ORM\OneToMany(targetEntity="\App\Image\Entity\Image", mappedBy="event", cascade={"persist"})
-     * @ORM\OrderBy({"position" = "ASC"})
-     * @Groups("readEvent")
-     * @MaxDepth(1)
-     * @ApiSubresource(maxDepth=1)
-     */
-    private $images;
+	/**
+	 * @var \DateTimeInterface The starting date of the event.
+	 *
+	 * @Assert\NotBlank
+	 * @ORM\Column(type="datetime")
+	 * @Groups({"aRead","aWrite","readEvent","write"})
+	 */
+	private $fromDate;
 
-    /**
-     * @var string $defaultAvatar Url of the default Avatar for an event
-     * @Groups("readEvent")
-     */
-    private $defaultAvatar;
+	/**
+	 * @var \DateTimeInterface The ending date of the event.
+	 *
+	 * @Assert\NotBlank
+	 * @ORM\Column(type="datetime")
+	 * @Groups({"aRead","aWrite","readEvent","write"})
+	 */
+	private $toDate;
 
-    /**
-     * @var int The id of this external event.
-     *
-     * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"readEvent","write"})
-     */
-    private $externalId;
-    
-    /**
-     * @var string The source of the external event.
-     *
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readEvent","write"})
-     */
-    private $externalSource;
+	/**
+	 * @var boolean Use the time for the starting and ending date of the event.
+	 *
+	 * @ORM\Column(type="boolean")
+	 * @Groups({"aRead","aWrite","readEvent","write"})
+	 */
+	private $useTime;
 
-    /**
-     * @var string The url of the image of the external event.
-     *
-     * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readEvent","write"})
-     */
-    private $externalImageUrl;
+	/**
+	 * @var string The information url for the event.
+	 *
+	 * @ORM\Column(type="string", length=255, nullable=true)
+	 * @Groups({"aRead","aWrite","readEvent","write"})
+	 */
+	private $url;
 
-    /**
-     * @var string The creator
-     * @Groups({"aRead","aWrite"})
-     */
-    private $creator;
+	/**
+	 * @var \DateTimeInterface Creation date of the event.
+	 *
+	 * @ORM\Column(type="datetime")
+	 */
+	private $createdDate;
 
-    /**
-     * @var int The creator id
-     * @Groups({"aRead","aWrite"})
-     */
-    private $creatorId;
+	/**
+	 * @var \DateTimeInterface Updated date of the event.
+	 *
+	 * @ORM\Column(type="datetime", nullable=true)
+	 */
+	private $updatedDate;
 
-    /**
-     * @var string|null The creator avatar
-     * @Groups({"aRead"})
-     */
-    private $creatorAvatar;
+	/**
+	 * @var User The creator of the event.
+	 *
+	 * @ApiProperty(push=true)
+	 * @ORM\ManyToOne(targetEntity="App\User\Entity\User")
+	 * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
+	 * @Groups({"readEvent","write"})
+	 * @MaxDepth(1)
+	 */
+	private $user;
 
-    /**
-     * @var string|null The event main image
-     * @Groups("aRead")
-     */
-    private $image;
+	/**
+	 * @var App The app creator of the event.
+	 *
+	 * @ApiProperty(push=true)
+	 * @ORM\ManyToOne(targetEntity="App\App\Entity\App")
+	 * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
+	 * @Groups({"readEvent","write"})
+	 * @MaxDepth(1)
+	 */
+	private $app;
 
-    /**
-     * @var string|null The event avatar
-     * @Groups("aRead")
-     */
-    private $avatar;
-    
-    /**
-     * @var ArrayCollection The logs linked with the Event.
-     *
-     * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="event")
-     */
-    private $logs;
+	/**
+	 * @var Event Event related for the proposal
+	 *
+	 * @ORM\OneToMany(targetEntity="App\Carpool\Entity\Proposal", mappedBy="event")
+	 * @Groups({"readEvent","write"})
+	 * @ApiSubresource(maxDepth=1)
+	 * @MaxDepth(1)
+	 */
+	private $proposals;
 
-    public function __construct($id=null)
-    {
-        $this->id = $id;
-        $this->images = new ArrayCollection();
-        $this->proposals = new ArrayCollection();
-    }
-    
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-    
-    public function setId($id)
-    {
-        $this->id = $id;
-    }
-    
-    public function getName(): string
-    {
-        return $this->name;
-    }
-    
-    public function setName(string $name)
-    {
-        $this->name = $name;
-    }
-    
-    public function getUrlKey(): ?string
-    {
-        return $this->urlKey;
-    }
-    
-    public function setUrlKey(?string $urlKey)
-    {
-        $this->urlKey = $urlKey;
-    }
+	/**
+	 * @var Address The address of the event.
+	 *
+	 * @ApiProperty(push=true)
+	 * @Assert\NotBlank
+	 * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", inversedBy="event", cascade={"persist"}, orphanRemoval=true)
+	 * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
+	 * @Groups({"aRead","aWrite","readEvent","write"})
+	 * @MaxDepth(1)
+	 */
+	private $address;
 
-    public function getStatus(): int
-    {
-        return $this->status;
-    }
-    
-    public function setStatus(int $status)
-    {
-        $this->status = $status;
-    }
+	/**
+	 * @var ArrayCollection The images of the event.
+	 *
+	 * @ORM\OneToMany(targetEntity="\App\Image\Entity\Image", mappedBy="event", cascade={"persist"})
+	 * @ORM\OrderBy({"position" = "ASC"})
+	 * @Groups("readEvent")
+	 * @MaxDepth(1)
+	 * @ApiSubresource(maxDepth=1)
+	 */
+	private $images;
 
-    public function isPrivate(): bool
-    {
-        return $this->private ? true : false;
-    }
+	/**
+	 * @var string $defaultAvatar Url of the default Avatar for an event
+	 * @Groups("readEvent")
+	 */
+	private $defaultAvatar;
 
-    public function setPrivate(bool $private): self
-    {
-        $this->private = $private;
+	/**
+	 * @var string The id of this external event.
+	 *
+	 * @ORM\Column(type="string", length=255, nullable=true)
+	 * @Groups({"readEvent","write"})
+	 */
+	private $externalId;
 
-        return $this;
-    }
-    
-    public function getDescription(): string
-    {
-        return $this->description;
-    }
-    
-    public function setDescription(string $description)
-    {
-        $this->description = $description;
-    }
-    
-    public function getFullDescription(): string
-    {
-        return $this->fullDescription;
-    }
-    
-    public function setFullDescription(string $fullDescription)
-    {
-        $this->fullDescription = $fullDescription;
-    }
-    
-    public function getFromDate(): \DateTimeInterface
-    {
-        return $this->fromDate;
-    }
-    
-    public function setFromDate(\DateTimeInterface $fromDate): self
-    {
-        $this->fromDate = $fromDate;
-        
-        return $this;
-    }
-    
-    public function getToDate(): \DateTimeInterface
-    {
-        return $this->toDate;
-    }
-    
-    public function setToDate(\DateTimeInterface $toDate): self
-    {
-        $this->toDate = $toDate;
-        
-        return $this;
-    }
-    
-    public function getUseTime(): bool
-    {
-        return $this->useTime;
-    }
-    
-    public function setUseTime(bool $useTime): self
-    {
-        $this->useTime = $useTime;
-        
-        return $this;
-    }
-    
-    public function getUrl(): ?string
-    {
-        return $this->url;
-    }
-    
-    public function setUrl(?string $url)
-    {
-        $this->url = $url;
-    }
-    
-    public function getCreatedDate(): ?\DateTimeInterface
-    {
-        return $this->createdDate;
-    }
-    
-    public function setCreatedDate(\DateTimeInterface $createdDate): self
-    {
-        $this->createdDate = $createdDate;
-        
-        return $this;
-    }
+	/**
+	 * @var string The source of the external event.
+	 *
+	 * @ORM\Column(type="string", length=255, nullable=true)
+	 * @Groups({"readEvent","write"})
+	 */
+	private $externalSource;
 
-    public function getUpdatedDate(): ?\DateTimeInterface
-    {
-        return $this->updatedDate;
-    }
+	/**
+	 * @var string The url of the image of the external event.
+	 *
+	 * @ORM\Column(type="string", length=255, nullable=true)
+	 * @Groups({"readEvent","write"})
+	 */
+	private $externalImageUrl;
 
-    public function setUpdatedDate(\DateTimeInterface $updatedDate): self
-    {
-        $this->updatedDate = $updatedDate;
+	/**
+	 * @var string The creator
+	 * @Groups({"aRead","aWrite"})
+	 */
+	private $creator;
 
-        return $this;
-    }
-    
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
-    
-    public function setUser(?User $user): self
-    {
-        $this->user = $user;
-        
-        return $this;
-    }
+	/**
+	 * @var int The creator id
+	 * @Groups({"aRead","aWrite"})
+	 */
+	private $creatorId;
 
-    public function getApp(): ?App
-    {
-        return $this->app;
-    }
-    
-    public function setApp(?App $app): self
-    {
-        $this->app = $app;
-        
-        return $this;
-    }
+	/**
+	 * @var string|null The creator avatar
+	 * @Groups({"aRead"})
+	 */
+	private $creatorAvatar;
 
-    public function getAddress(): Address
-    {
-        return $this->address;
-    }
+	/**
+	 * @var string|null The event main image
+	 * @Groups("aRead")
+	 */
+	private $image;
 
-    public function setAddress(Address $address): self
-    {
-        $this->address = $address;
-        $address->setEvent($this);
+	/**
+	 * @var string|null The event avatar
+	 * @Groups("aRead")
+	 */
+	private $avatar;
 
-        return $this;
-    }
+	/**
+	 * @var ArrayCollection The logs linked with the Event.
+	 *
+	 * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="event")
+	 */
+	private $logs;
 
-    public function setDefaultAvatar(?string $defaultAvatar): self
-    {
-        $this->defaultAvatar = $defaultAvatar;
+	public function __construct($id = null)
+	{
+		$this->id = $id;
+		$this->images = new ArrayCollection();
+		$this->proposals = new ArrayCollection();
+	}
 
-        return $this;
-    }
+	public function getId(): ?int
+	{
+		return $this->id;
+	}
 
-    public function getDefaultAvatar(): ?string
-    {
-        return $this->defaultAvatar;
-    }
-    
-    public function getImages()
-    {
-        return $this->images->getValues();
-    }
-    
-    public function addImage(Image $image): self
-    {
-        if (!$this->images->contains($image)) {
-            $this->images[] = $image;
-            $image->setEvent($this);
-        }
-        
-        return $this;
-    }
-    
-    public function removeImage(Image $image): self
-    {
-        if ($this->images->contains($image)) {
-            $this->images->removeElement($image);
-            // set the owning side to null (unless already changed)
-            if ($image->getEvent() === $this) {
-                $image->setEvent(null);
-            }
-        }
-        
-        return $this;
-    }
+	public function setId($id)
+	{
+		$this->id = $id;
+	}
 
-    public function getExternalId(): ?int
-    {
-        return $this->externalId;
-    }
-    
-    public function setExternalId(?int $externalId)
-    {
-        $this->externalId = $externalId;
-    }
+	public function getName(): string
+	{
+		return $this->name;
+	}
 
-    public function getExternalSource(): ?string
-    {
-        return $this->externalSource;
-    }
-    
-    public function setExternalSource(?string $externalSource)
-    {
-        $this->externalSource = $externalSource;
-    }
+	public function setName(string $name)
+	{
+		$this->name = $name;
+	}
 
-    public function getExternalImageUrl(): ?string
-    {
-        return $this->externalImageUrl;
-    }
-    
-    public function setExternalImageUrl(?string $externalImageUrl)
-    {
-        $this->externalImageUrl = $externalImageUrl;
-    }
+	public function getUrlKey(): ?string
+	{
+		return $this->urlKey;
+	}
 
-    public function getCreator(): string
-    {
-        if (!$this->getUser()) {
-            return "";
-        }
-        return ucfirst(strtolower($this->getUser()->getGivenName())) . " " . $this->getUser()->getShortFamilyName();
-    }
+	public function setUrlKey(?string $urlKey)
+	{
+		$this->urlKey = $urlKey;
+	}
 
-    public function getCreatorId(): ?int
-    {
-        if (!$this->getUser()) {
-            return null;
-        }
-        if (is_null($this->creatorId)) {
-            return $this->getUser()->getId();
-        }
-        return $this->creatorId;
-    }
+	public function getStatus(): int
+	{
+		return $this->status;
+	}
 
-    public function setCreatorId(?int $creatorId)
-    {
-        $this->creatorId = $creatorId;
-    }
+	public function setStatus(int $status)
+	{
+		$this->status = $status;
+	}
 
-    public function getCreatorAvatar(): ?string
-    {
-        if (!$this->getUser()) {
-            return null;
-        }
-        if (count($this->getUser()->getAvatars())>0) {
-            return $this->getUser()->getAvatars()[0];
-        }
-        return null;
-    }
+	public function isPrivate(): bool
+	{
+		return $this->private ? true : false;
+	}
 
-    public function getImage(): ?string
-    {
-        if (count($this->getImages())>0 && isset($this->getImages()[0]->getVersions()['square_800'])) {
-            return $this->getImages()[0]->getVersions()['square_800'];
-        }
-        return null;
-    }
+	public function setPrivate(bool $private): self
+	{
+		$this->private = $private;
 
-    public function getAvatar(): ?string
-    {
-        if (count($this->getImages())>0 && isset($this->getImages()[0]->getVersions()['square_250'])) {
-            return $this->getImages()[0]->getVersions()['square_250'];
-        }
-        return null;
-    }
-    
-    // DOCTRINE EVENTS
-    
-    /**
-     * Creation date.
-     *
-     * @ORM\PrePersist
-     */
-    public function setAutoCreatedDate()
-    {
-        $this->setCreatedDate(new \Datetime());
-    }
+		return $this;
+	}
 
-    /**
-     * Update date.
-     *
-     * @ORM\PreUpdate
-     */
-    public function setAutoUpdatedDate()
-    {
-        $this->setUpdatedDate(new \Datetime());
-    }
+	public function getDescription(): string
+	{
+		return $this->description;
+	}
 
-    /**
-     * @return Collection|Proposal[]
-     */
-    public function getProposals(): Collection
-    {
-        return $this->proposals;
-    }
+	public function setDescription(string $description)
+	{
+		$this->description = $description;
+	}
 
-    public function addProposal(Proposal $proposal): self
-    {
-        if (!$this->proposals->contains($proposal)) {
-            $this->proposals[] = $proposal;
-            $proposal->setEvent($this);
-        }
+	public function getFullDescription(): string
+	{
+		return $this->fullDescription;
+	}
 
-        return $this;
-    }
+	public function setFullDescription(string $fullDescription)
+	{
+		$this->fullDescription = $fullDescription;
+	}
 
-    public function removeProposal(Proposal $proposal): self
-    {
-        if ($this->proposals->contains($proposal)) {
-            $this->proposals->removeElement($proposal);
-            // set the owning side to null (unless already changed)
-            if ($proposal->getEvent() === $this) {
-                $proposal->setEvent(null);
-            }
-        }
+	public function getFromDate(): \DateTimeInterface
+	{
+		return $this->fromDate;
+	}
 
-        return $this;
-    }
+	public function setFromDate(\DateTimeInterface $fromDate): self
+	{
+		$this->fromDate = $fromDate;
 
-    public function getLogs()
-    {
-        return $this->logs->getValues();
-    }
-    
-    public function addLog(Log $log): self
-    {
-        if (!$this->logs->contains($log)) {
-            $this->logs[] = $log;
-            $log->setEvent($this);
-        }
-        
-        return $this;
-    }
-    
-    public function removeLog(Log $log): self
-    {
-        if ($this->logs->contains($log)) {
-            $this->logs->removeElement($log);
-            // set the owning side to null (unless already changed)
-            if ($log->getEvent() === $this) {
-                $log->setEvent(null);
-            }
-        }
-        
-        return $this;
-    }
+		return $this;
+	}
+
+	public function getToDate(): \DateTimeInterface
+	{
+		return $this->toDate;
+	}
+
+	public function setToDate(\DateTimeInterface $toDate): self
+	{
+		$this->toDate = $toDate;
+
+		return $this;
+	}
+
+	public function getUseTime(): bool
+	{
+		return $this->useTime;
+	}
+
+	public function setUseTime(bool $useTime): self
+	{
+		$this->useTime = $useTime;
+
+		return $this;
+	}
+
+	public function getUrl(): ?string
+	{
+		return $this->url;
+	}
+
+	public function setUrl(?string $url)
+	{
+		$this->url = $url;
+	}
+
+	public function getCreatedDate(): ?\DateTimeInterface
+	{
+		return $this->createdDate;
+	}
+
+	public function setCreatedDate(\DateTimeInterface $createdDate): self
+	{
+		$this->createdDate = $createdDate;
+
+		return $this;
+	}
+
+	public function getUpdatedDate(): ?\DateTimeInterface
+	{
+		return $this->updatedDate;
+	}
+
+	public function setUpdatedDate(\DateTimeInterface $updatedDate): self
+	{
+		$this->updatedDate = $updatedDate;
+
+		return $this;
+	}
+
+	public function getUser(): ?User
+	{
+		return $this->user;
+	}
+
+	public function setUser(?User $user): self
+	{
+		$this->user = $user;
+
+		return $this;
+	}
+
+	public function getApp(): ?App
+	{
+		return $this->app;
+	}
+
+	public function setApp(?App $app): self
+	{
+		$this->app = $app;
+
+		return $this;
+	}
+
+	public function getAddress(): Address
+	{
+		return $this->address;
+	}
+
+	public function setAddress(Address $address): self
+	{
+		$this->address = $address;
+		$address->setEvent($this);
+
+		return $this;
+	}
+
+	public function setDefaultAvatar(?string $defaultAvatar): self
+	{
+		$this->defaultAvatar = $defaultAvatar;
+
+		return $this;
+	}
+
+	public function getDefaultAvatar(): ?string
+	{
+		return $this->defaultAvatar;
+	}
+
+	public function getImages()
+	{
+		return $this->images->getValues();
+	}
+
+	public function addImage(Image $image): self
+	{
+		if (!$this->images->contains($image)) {
+			$this->images[] = $image;
+			$image->setEvent($this);
+		}
+
+		return $this;
+	}
+
+	public function removeImage(Image $image): self
+	{
+		if ($this->images->contains($image)) {
+			$this->images->removeElement($image);
+			// set the owning side to null (unless already changed)
+			if ($image->getEvent() === $this) {
+				$image->setEvent(null);
+			}
+		}
+
+		return $this;
+	}
+
+	public function getExternalId(): string
+	{
+		return $this->externalId;
+	}
+
+	public function setExternalId(?string $externalId)
+	{
+		$this->externalId = $externalId;
+	}
+
+	public function getExternalSource(): ?string
+	{
+		return $this->externalSource;
+	}
+
+	public function setExternalSource(?string $externalSource)
+	{
+		$this->externalSource = $externalSource;
+	}
+
+	public function getExternalImageUrl(): ?string
+	{
+		return $this->externalImageUrl;
+	}
+
+	public function setExternalImageUrl(?string $externalImageUrl)
+	{
+		$this->externalImageUrl = $externalImageUrl;
+	}
+
+	public function getCreator(): string
+	{
+		if (!$this->getUser()) {
+			return "";
+		}
+		return ucfirst(strtolower($this->getUser()->getGivenName())) . " " . $this->getUser()->getShortFamilyName();
+	}
+
+	public function getCreatorId(): ?int
+	{
+		if (!$this->getUser()) {
+			return null;
+		}
+		if (is_null($this->creatorId)) {
+			return $this->getUser()->getId();
+		}
+		return $this->creatorId;
+	}
+
+	public function setCreatorId(?int $creatorId)
+	{
+		$this->creatorId = $creatorId;
+	}
+
+	public function getCreatorAvatar(): ?string
+	{
+		if (!$this->getUser()) {
+			return null;
+		}
+		if (count($this->getUser()->getAvatars()) > 0) {
+			return $this->getUser()->getAvatars()[0];
+		}
+		return null;
+	}
+
+	public function getImage(): ?string
+	{
+		if (count($this->getImages()) > 0 && isset($this->getImages()[0]->getVersions()['square_800'])) {
+			return $this->getImages()[0]->getVersions()['square_800'];
+		}
+		return null;
+	}
+
+	public function getAvatar(): ?string
+	{
+		if (count($this->getImages()) > 0 && isset($this->getImages()[0]->getVersions()['square_250'])) {
+			return $this->getImages()[0]->getVersions()['square_250'];
+		}
+		return null;
+	}
+
+	// DOCTRINE EVENTS
+
+	/**
+	 * Creation date.
+	 *
+	 * @ORM\PrePersist
+	 */
+	public function setAutoCreatedDate()
+	{
+		$this->setCreatedDate(new \Datetime());
+	}
+
+	/**
+	 * Update date.
+	 *
+	 * @ORM\PreUpdate
+	 */
+	public function setAutoUpdatedDate()
+	{
+		$this->setUpdatedDate(new \Datetime());
+	}
+
+	/**
+	 * @return Collection|Proposal[]
+	 */
+	public function getProposals(): Collection
+	{
+		return $this->proposals;
+	}
+
+	public function addProposal(Proposal $proposal): self
+	{
+		if (!$this->proposals->contains($proposal)) {
+			$this->proposals[] = $proposal;
+			$proposal->setEvent($this);
+		}
+
+		return $this;
+	}
+
+	public function removeProposal(Proposal $proposal): self
+	{
+		if ($this->proposals->contains($proposal)) {
+			$this->proposals->removeElement($proposal);
+			// set the owning side to null (unless already changed)
+			if ($proposal->getEvent() === $this) {
+				$proposal->setEvent(null);
+			}
+		}
+
+		return $this;
+	}
+
+	public function getLogs()
+	{
+		return $this->logs->getValues();
+	}
+
+	public function addLog(Log $log): self
+	{
+		if (!$this->logs->contains($log)) {
+			$this->logs[] = $log;
+			$log->setEvent($this);
+		}
+
+		return $this;
+	}
+
+	public function removeLog(Log $log): self
+	{
+		if ($this->logs->contains($log)) {
+			$this->logs->removeElement($log);
+			// set the owning side to null (unless already changed)
+			if ($log->getEvent() === $this) {
+				$log->setEvent(null);
+			}
+		}
+
+		return $this;
+	}
 }
