@@ -29,6 +29,7 @@ use App\Event\Entity\Event;
 use App\Event\Event\EventCreatedEvent;
 use App\Event\Repository\EventRepository;
 use App\Action\Repository\ActionRepository;
+use App\Geography\Service\AddressManager;
 use App\DataProvider\Entity\TourinsoftProvider;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -52,6 +53,7 @@ class EventManager
 	private $geoTools;
 	private $provider;
 	private $appRepository;
+	private $addressManager;
 
 	const EVENT_PROVIDER_APIDAE = 'apidae';
 	const EVENT_PROVIDER_TOURINSOFT = 'tourinsoft';
@@ -66,6 +68,7 @@ class EventManager
 		EventDispatcherInterface $dispatcher,
 		GeoTools $geoTools,
 		AppRepository $appRepository,
+		AddressManager $addressManager,
 		String $eventProvider,
 		String $eventProviderApiKey,
 		String $eventProviderProjectId,
@@ -80,6 +83,7 @@ class EventManager
 		$this->eventProviderProjectId = $eventProviderProjectId;
 		$this->eventProviderSelectionId = $eventProviderSelectionId;
 		$this->appRepository = $appRepository;
+		$this->addressManager = $addressManager;
 		switch ($eventProvider) {
 			case self::EVENT_PROVIDER_APIDAE:
 				$this->provider = new ApidaeProvider($this->eventProviderApiKey, $this->eventProviderProjectId, $this->eventProviderSelectionId);
@@ -181,7 +185,6 @@ class EventManager
 	{
 		$eventsToImport = $this->provider->getEvents();
 
-
 		foreach ($eventsToImport as $eventToImport) {
 			$event = $this->eventRepository->findOneBy(["externalId" => $eventToImport->getExternalId(), "externalSource" => $eventToImport->getExternalSource()]);
 			if (isset($event) && !is_null($event)) {
@@ -203,6 +206,11 @@ class EventManager
 				$event->setDescription($eventToImport->getDescription());
 				$event->setFullDescription($eventToImport->getFullDescription());
 				// $event->setAddress($eventToImport->getAddress());
+				if ($eventToImport->getExternalSource() === 'tourinsoft') {
+					$event->setAddress($this->addressManager->reverseGeocodeAddress($eventToImport->getAddress()));
+				} else {
+					$event->setAddress($eventToImport->getAddress());
+				}
 				$event->setAddress($this->addressManager->reverseGeocodeAddress($eventToImport->getAddress()));
 				$event->setUrl($eventToImport->getUrl());
 				$event->setExternalImageUrl($eventToImport->getExternalImageUrl());

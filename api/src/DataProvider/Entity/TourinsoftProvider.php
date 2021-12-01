@@ -40,6 +40,9 @@ class TourinsoftProvider implements EventProviderInterface
 	const SERVER_URL = 'https://wcf.tourinsoft.com/Syndication/3.0/cdt11/8132036e-2b56-4710-a160-4737c6493c98/Objects';
 
 	const PROVIDER = "Tourinsoft";
+	const FORMAT = "JSON";
+	const COMMUNICATION_MEDIA_WEBSITE_KEY = "#Site web";
+	const SELECT = "SyndicObjectID,SyndicObjectName,MoyenDeCom,Description,ObjectTypeName,Adresse1,Adresse2,Adresse3,GmapLatitude,GmapLongitude,PeriodeOuverture,Photos,CodePostal,Commune,LieuManifestation";
 
 	public function __construct()
 	{
@@ -68,9 +71,10 @@ class TourinsoftProvider implements EventProviderInterface
 		$tourinsoftEvents = [];
 		// We call tourinsoft api to get all events
 		$queryParams = [
-			'$format' => "JSON",
-			'$filter' => "CodePostal  eq  '11350'",
-			'$select' => "SyndicObjectID,SyndicObjectName,MoyenDeCom,Description,ObjectTypeName,Adresse1,Adresse2,Adresse3,GmapLatitude,GmapLongitude,PeriodeOuverture,Photos,CodePostal,Commune,LieuManifestation"
+			'$format' => self::FORMAT,
+			//TODO: delete to mep
+			'$filter' => "CodePostal  eq  '11000'",
+			'$select' => self::SELECT
 		];
 
 		$response = $dataProvider->getItem($queryParams);
@@ -91,8 +95,6 @@ class TourinsoftProvider implements EventProviderInterface
 	 */
 	public function createEvents($tourinsoftEvents)
 	{
-		// var_dump($tourinsoftEvents);
-		// die;
 		//https://wcf.tourinsoft.com/Syndication/3.0/cdt11/8132036e-2b56-4710-a160-4737c6493c98/doc/syndication
 		//http://api-doc.tourinsoft.com/#/syndication-3x#api-format
 
@@ -147,15 +149,22 @@ class TourinsoftProvider implements EventProviderInterface
 				throw new Exception("Description is mandatory", 1);
 			}
 
-			$newEvent->setExternalImageUrl($event->Photos);
+			if (isset($event->Photos)) {
+				$url = $event->Photos;
+				$picture = explode('|', $url);
+				$picture = $picture[0];
+				$newEvent->setExternalImageUrl($picture);
+			}
 
+			if (isset($event->MoyenDeCom)) {
+				$informations = $event->MoyenDeCom;
+				$communicationMedia = explode('|', $informations);
 
-			// if (isset($event->MoyenDeCom)) {
-			// 	$informations = $event->MoyenDeCom;
-			// 	$array = explode('|', $informations);
-			// 	$webUrl = $array[3];
-			// 	$newEvent->setUrl($webUrl);
-			// }
+				if (in_array(self::COMMUNICATION_MEDIA_WEBSITE_KEY, $communicationMedia)) {
+					$communicationMediaKey = array_search(self::COMMUNICATION_MEDIA_WEBSITE_KEY, $communicationMedia);
+					$newEvent->setUrl($communicationMedia[$communicationMediaKey + 1]);
+				}
+			}
 
 			// we create and set the address
 			$address = new Address();
@@ -172,9 +181,6 @@ class TourinsoftProvider implements EventProviderInterface
 			// We pass the newEvent in array
 			$newEvents[] = $newEvent;
 		}
-		$toto = [
-			$newEvents[0]
-		];
-		return  $toto;
+		return  $newEvents;
 	}
 }
