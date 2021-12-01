@@ -29,6 +29,7 @@ use App\Event\Entity\Event;
 use App\Event\Event\EventCreatedEvent;
 use App\Event\Repository\EventRepository;
 use App\Action\Repository\ActionRepository;
+use App\DataProvider\Entity\TourinsoftProvider;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use App\Geography\Service\GeoTools;
@@ -53,8 +54,9 @@ class EventManager
     private $appRepository;
 
     const EVENT_PROVIDER_APIDAE = 'apidae';
+    const EVENT_PROVIDER_TOURINSOFT = 'tourinsoft';
     const APP_ID = 1;
-    
+
     /**
      * Constructor.
      */
@@ -82,6 +84,9 @@ class EventManager
             case self::EVENT_PROVIDER_APIDAE:
                 $this->provider = new ApidaeProvider($this->eventProviderApiKey, $this->eventProviderProjectId, $this->eventProviderSelectionId);
                 break;
+            case self::EVENT_PROVIDER_TOURINSOFT:
+                $this->provider = new TourinsoftProvider();
+                break;
         }
     }
 
@@ -98,7 +103,7 @@ class EventManager
         }
         $this->entityManager->persist($event);
         $this->entityManager->flush();
-        
+
         // We set the displayLabel of the event's address
         $event->getAddress()->setDisplayLabel($this->geoTools->getDisplayLabel($event->getAddress()));
         // we set the urlKey
@@ -106,7 +111,7 @@ class EventManager
 
         $eventEvent = new EventCreatedEvent($event);
         $this->dispatcher->dispatch($eventEvent, EventCreatedEvent::NAME);
-                
+
         return $event;
     }
 
@@ -129,11 +134,11 @@ class EventManager
     }
 
     /**
-    * retrive events created by a user
-    *
-    * @param Int $userId
-    * @return void
-    */
+     * retrive events created by a user
+     *
+     * @param Int $userId
+     * @return void
+     */
     public function getCreatedEvents(Int $userId)
     {
         $createdEvents = $this->eventRepository->getCreatedEvents($userId);
@@ -160,10 +165,10 @@ class EventManager
         $urlKey = preg_replace('/[^A-Za-z0-9\-]/', '', $urlKey);
 
         // We don't want to finish with a single "-"
-        if (substr($urlKey, -1)=="-") {
-            $urlKey = substr($urlKey, 0, strlen($urlKey)-1);
+        if (substr($urlKey, -1) == "-") {
+            $urlKey = substr($urlKey, 0, strlen($urlKey) - 1);
         }
-        
+
         return $urlKey;
     }
 
@@ -177,7 +182,7 @@ class EventManager
         $eventsToImport = $this->provider->getEvents();
 
         foreach ($eventsToImport as $eventToImport) {
-            $event = $this->eventRepository->findOneBy(["externalId" => $eventToImport->getExternalId(), "externalSource"=>$eventToImport->getExternalSource()]);
+            $event = $this->eventRepository->findOneBy(["externalId" => $eventToImport->getExternalId(), "externalSource" => $eventToImport->getExternalSource()]);
             if (isset($event) && !is_null($event)) {
                 $event->setName($eventToImport->getName());
                 $event->setFromDate($eventToImport->getFromDate());
@@ -204,7 +209,7 @@ class EventManager
                 $event->setUseTime(0);
                 $event->setApp($this->appRepository->find(self::APP_ID));
             }
-            
+
             if (is_null($event->getUser()) && is_null($event->getApp())) {
                 throw new Exception("User or App are mandatory", 1);
             }
