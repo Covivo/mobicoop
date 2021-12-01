@@ -68,7 +68,7 @@ class MassImportManager
     public const DEFAULT_OUTWARD_TIME = '08:00:00';
     public const DEFAULT_RETURN_TIME = '18:00:00';
 
-    public const TIME_LIMIT = 600000;
+    public const TIME_LIMIT = 3 * 24 * 60 * 60;
     private const MEMORY_LIMIT = 4096;
 
     private const COMMON_ORIGIN_THRESHOLD_PERCENT = 30;
@@ -146,6 +146,8 @@ class MassImportManager
      */
     public function createMass(Mass $mass)
     {
+        set_time_limit(self::TIME_LIMIT);
+
         // we associate the user and the mass
         $mass->getUser()->addMass($mass);
         // we rename the file
@@ -316,8 +318,6 @@ class MassImportManager
                         unset($address);
                         $input = null;
                         unset($input);
-                        $massPerson = null;
-                        unset($massPerson);
                     } else {
                         $analyseErrors[] = 'Personal address <'.$input.'> not found for id #'.$massPerson->getGivenId();
                     }
@@ -448,17 +448,17 @@ class MassImportManager
     ) {
         set_time_limit(self::TIME_LIMIT);
         ini_set('memory_limit', self::MEMORY_LIMIT.'M');
-        //$this->entityManager->getConnection()->getConfiguration()->setSQLLogger(null);
+        $this->entityManager->getConnection()->getConfiguration()->setSQLLogger(null);
 
         //gc_enable();
         $this->print_mem(1);
 
         $this->logger->info('Mass match | Start '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
 
-        // $mass->setStatus(Mass::STATUS_MATCHING);
-        // $mass->setCalculationDate(new \Datetime());
-        // $this->entityManager->persist($mass);
-        // $this->entityManager->flush();
+        $mass->setStatus(Mass::STATUS_MATCHING);
+        $mass->setCalculationDate(new \Datetime());
+        $this->entityManager->persist($mass);
+        $this->entityManager->flush();
 
         $batch = 0;
         $candidates = [];
@@ -485,6 +485,8 @@ class MassImportManager
             $candidateDriver->setAddresses([$driverPerson->getPersonalAddress(), $driverPerson->getWorkAddress()]);
             $candidateDriver->setMaxDetourDurationPercent($maxDetourDurationPercent);
             $candidateDriver->setMaxDetourDistancePercent($maxDetourDistancePercent);
+            $candidateDriver->setDistance($driverPerson->getDistance());
+            $candidateDriver->setDuration($driverPerson->getDuration());
             $candidateDriver->setId($driverPerson->getId());
             $candidateDriver->setMassPerson($driverPerson);
             $candidatePassengers = [];
@@ -565,79 +567,79 @@ class MassImportManager
                 $candidatePassengers[] = $candidatePassenger;
             }
 
-            // $candidates[] = [
-            //     'driver' => $candidateDriver,
-            //     'passengers' => $candidatePassengers,
-            // ];
-
-            $candidates = [
-                'candidate' => $candidateDriver,
-                'candidates' => $candidatePassengers,
-                'master' => true,
+            $candidates[] = [
+                'driver' => $candidateDriver,
+                'passengers' => $candidatePassengers,
             ];
+
+            // $candidates = [
+            //     'candidate' => $candidateDriver,
+            //     'candidates' => $candidatePassengers,
+            //     'master' => true,
+            // ];
 
             $this->logger->info('Mass match | Searching candidates for person n°'.$driverPerson->getId().' end '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
             $this->print_mem(3);
 
-            if ($matches = $this->geoMatcher->singleMatch([$candidates])) {
-                if (is_array($matches) && count($matches) > 0) {
-                    foreach ($matches as $match) {
-                        foreach ($match['matches'] as $matched) {
-                            $massMatching = new MassMatching();
-                            $massMatching->setMassPerson1($match['driver']->getMassPerson());
-                            $massMatching->setMassPerson2($match['passenger']->getMassPerson());
-                            $massMatching->setDistance($matched['newDistance']);
-                            $massMatching->setDuration($matched['newDuration']);
-                            $this->entityManager->persist($massMatching);
-                        }
-                    }
-                }
-            }
-
-            // ++$batch;
-
-            // if ($batch >= self::BATCH_GEOROUTER) {
-            //     // we try to match with the candidates
-            //     $this->logger->info('Mass match | Creating matches records start '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
-            //     if ($matches = $this->geoMatcher->multiMatch($candidates, true)) {
-            //         if (is_array($matches) && count($matches) > 0) {
-            //             foreach ($matches as $match) {
-            //                 foreach ($match['matches'] as $matched) {
-            //                     $massMatching = new MassMatching();
-            //                     $massMatching->setMassPerson1($match['driver']->getMassPerson());
-            //                     $massMatching->setMassPerson2($match['passenger']->getMassPerson());
-            //                     $massMatching->setDistance($matched['newDistance']);
-            //                     $massMatching->setDuration($matched['newDuration']);
-            //                     $this->entityManager->persist($massMatching);
-            //                 }
+            // if ($matches = $this->geoMatcher->singleMatch([$candidates])) {
+            //     if (is_array($matches) && count($matches) > 0) {
+            //         foreach ($matches as $match) {
+            //             foreach ($match['matches'] as $matched) {
+            //                 $massMatching = new MassMatching();
+            //                 $massMatching->setMassPerson1($match['driver']->getMassPerson());
+            //                 $massMatching->setMassPerson2($match['passenger']->getMassPerson());
+            //                 $massMatching->setDistance($matched['newDistance']);
+            //                 $massMatching->setDuration($matched['newDuration']);
+            //                 $this->entityManager->persist($massMatching);
             //             }
             //         }
             //     }
-            //     $mass->setStatus(Mass::STATUS_MATCHED);
-            //     $mass->setCalculatedDate(new \Datetime());
-            //     $this->entityManager->persist($mass);
-            //     $this->entityManager->flush();
-
-            //     $candidates = [];
-            //     $batch = 0;
             // }
+
+            ++$batch;
+
+            if ($batch >= self::BATCH_GEOROUTER) {
+                // we try to match with the candidates
+                $this->logger->info('Mass match | Creating matches records start '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
+                if ($matches = $this->geoMatcher->multiMatch($candidates, true)) {
+                    if (is_array($matches) && count($matches) > 0) {
+                        foreach ($matches as $match) {
+                            foreach ($match['matches'] as $matched) {
+                                $massMatching = new MassMatching();
+                                $massMatching->setMassPerson1($match['driver']->getMassPerson());
+                                $massMatching->setMassPerson2($match['passenger']->getMassPerson());
+                                $massMatching->setDistance($matched['newDistance']);
+                                $massMatching->setDuration($matched['newDuration']);
+                                $this->entityManager->persist($massMatching);
+                            }
+                        }
+                    }
+                }
+                $mass->setStatus(Mass::STATUS_MATCHED);
+                $mass->setCalculatedDate(new \Datetime());
+                $this->entityManager->persist($mass);
+                $this->entityManager->flush();
+
+                $candidates = [];
+                $batch = 0;
+            }
         }
         // we try to match with the candidates a last time
-        // $this->logger->info('Mass match | Creating matches records start '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
-        // if ($matches = $this->geoMatcher->multiMatch($candidates, true)) {
-        //     if (is_array($matches) && count($matches) > 0) {
-        //         foreach ($matches as $match) {
-        //             foreach ($match['matches'] as $matched) {
-        //                 $massMatching = new MassMatching();
-        //                 $massMatching->setMassPerson1($match['driver']->getMassPerson());
-        //                 $massMatching->setMassPerson2($match['passenger']->getMassPerson());
-        //                 $massMatching->setDistance($matched['newDistance']);
-        //                 $massMatching->setDuration($matched['newDuration']);
-        //                 $this->entityManager->persist($massMatching);
-        //             }
-        //         }
-        //     }
-        // }
+        $this->logger->info('Mass match | Creating matches records start '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
+        if ($matches = $this->geoMatcher->multiMatch($candidates, true)) {
+            if (is_array($matches) && count($matches) > 0) {
+                foreach ($matches as $match) {
+                    foreach ($match['matches'] as $matched) {
+                        $massMatching = new MassMatching();
+                        $massMatching->setMassPerson1($match['driver']->getMassPerson());
+                        $massMatching->setMassPerson2($match['passenger']->getMassPerson());
+                        $massMatching->setDistance($matched['newDistance']);
+                        $massMatching->setDuration($matched['newDuration']);
+                        $this->entityManager->persist($massMatching);
+                    }
+                }
+            }
+        }
         $mass->setStatus(Mass::STATUS_MATCHED);
         $mass->setCalculatedDate(new \Datetime());
         $this->entityManager->persist($mass);
