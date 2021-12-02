@@ -29,6 +29,8 @@ use App\Event\Entity\Event;
 use App\Event\Event\EventCreatedEvent;
 use App\Event\Repository\EventRepository;
 use App\Action\Repository\ActionRepository;
+use App\Geography\Service\AddressManager;
+use App\DataProvider\Entity\TourinsoftProvider;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use App\Geography\Service\GeoTools;
@@ -45,172 +47,184 @@ use Exception;
  */
 class EventManager
 {
-    private $eventRepository;
-    private $dispatcher;
-    private $entityManager;
-    private $geoTools;
-    private $provider;
-    private $appRepository;
+	private $eventRepository;
+	private $dispatcher;
+	private $entityManager;
+	private $geoTools;
+	private $provider;
+	private $appRepository;
+	private $addressManager;
 
-    const EVENT_PROVIDER_APIDAE = 'apidae';
-    const APP_ID = 1;
-    
-    /**
-     * Constructor.
-     */
-    public function __construct(
-        EntityManagerInterface $entityManager,
-        EventRepository $eventRepository,
-        EventDispatcherInterface $dispatcher,
-        GeoTools $geoTools,
-        AppRepository $appRepository,
-        String $eventProvider,
-        String $eventProviderApiKey,
-        String $eventProviderProjectId,
-        String $eventProviderSelectionId
-    ) {
-        $this->entityManager = $entityManager;
-        $this->eventRepository = $eventRepository;
-        $this->dispatcher = $dispatcher;
-        $this->geoTools = $geoTools;
-        $this->eventProvider = $eventProvider;
-        $this->eventProviderApiKey = $eventProviderApiKey;
-        $this->eventProviderProjectId = $eventProviderProjectId;
-        $this->eventProviderSelectionId = $eventProviderSelectionId;
-        $this->appRepository = $appRepository;
-        switch ($eventProvider) {
-            case self::EVENT_PROVIDER_APIDAE:
-                $this->provider = new ApidaeProvider($this->eventProviderApiKey, $this->eventProviderProjectId, $this->eventProviderSelectionId);
-                break;
-        }
-    }
+	const EVENT_PROVIDER_APIDAE = 'apidae';
+	const EVENT_PROVIDER_TOURINSOFT = 'tourinsoft';
+	const APP_ID = 1;
 
-    /**
-     * Create an event
-     *
-     * @param Event $event  The event to create
-     * @return Event        The event created
-     */
-    public function createEvent(Event $event)
-    {
-        if (is_null($event->getUser()) && is_null($event->getApp())) {
-            throw new Exception("User or App are mandatory", 1);
-        }
-        $this->entityManager->persist($event);
-        $this->entityManager->flush();
-        
-        // We set the displayLabel of the event's address
-        $event->getAddress()->setDisplayLabel($this->geoTools->getDisplayLabel($event->getAddress()));
-        // we set the urlKey
-        $event->setUrlKey($this->generateUrlKey($event));
+	/**
+	 * Constructor.
+	 */
+	public function __construct(
+		EntityManagerInterface $entityManager,
+		EventRepository $eventRepository,
+		EventDispatcherInterface $dispatcher,
+		GeoTools $geoTools,
+		AppRepository $appRepository,
+		AddressManager $addressManager,
+		string $eventProvider,
+		string $eventProviderApiKey,
+		string $eventProviderProjectId,
+		string $eventProviderSelectionId,
+		string $eventProviderServerUrl
+	) {
+		$this->entityManager = $entityManager;
+		$this->eventRepository = $eventRepository;
+		$this->dispatcher = $dispatcher;
+		$this->geoTools = $geoTools;
+		$this->eventProvider = $eventProvider;
+		$this->eventProviderApiKey = $eventProviderApiKey;
+		$this->eventProviderProjectId = $eventProviderProjectId;
+		$this->eventProviderSelectionId = $eventProviderSelectionId;
+		$this->appRepository = $appRepository;
+		$this->addressManager = $addressManager;
+		switch ($eventProvider) {
+			case self::EVENT_PROVIDER_APIDAE:
+				$this->provider = new ApidaeProvider($this->eventProviderApiKey, $this->eventProviderProjectId, $this->eventProviderSelectionId);
+				break;
+			case self::EVENT_PROVIDER_TOURINSOFT:
+				$this->provider = new TourinsoftProvider($eventProviderServerUrl);
+				break;
+		}
+	}
 
-        $eventEvent = new EventCreatedEvent($event);
-        $this->dispatcher->dispatch($eventEvent, EventCreatedEvent::NAME);
-                
-        return $event;
-    }
+	/**
+	 * Create an event
+	 *
+	 * @param Event $event  The event to create
+	 * @return Event        The event created
+	 */
+	public function createEvent(Event $event)
+	{
+		if (is_null($event->getUser()) && is_null($event->getApp())) {
+			throw new Exception("User or App are mandatory", 1);
+		}
+		$this->entityManager->persist($event);
+		$this->entityManager->flush();
 
-    /**
-     * Get an event by its id
-     *
-     * @param integer $eventId
-     * @return Event|null
-     */
-    public function getEvent(int $eventId)
-    {
-        return $this->eventRepository->find($eventId);
-    }
+		// We set the displayLabel of the event's address
+		$event->getAddress()->setDisplayLabel($this->geoTools->getDisplayLabel($event->getAddress()));
+		// we set the urlKey
+		$event->setUrlKey($this->generateUrlKey($event));
 
-    // very useful method :-|
-    public function canReport()
-    {
-        // EVERYONE CAN REPORT EVENT
-        return true;
-    }
+		$eventEvent = new EventCreatedEvent($event);
+		$this->dispatcher->dispatch($eventEvent, EventCreatedEvent::NAME);
 
-    /**
-    * retrive events created by a user
-    *
-    * @param Int $userId
-    * @return void
-    */
-    public function getCreatedEvents(Int $userId)
-    {
-        $createdEvents = $this->eventRepository->getCreatedEvents($userId);
-        return $createdEvents;
-    }
+		return $event;
+	}
 
-    public function getEvents(): QueryBuilder
-    {
-        return $this->eventRepository->getEvents();
-    }
+	/**
+	 * Get an event by its id
+	 *
+	 * @param integer $eventId
+	 * @return Event|null
+	 */
+	public function getEvent(int $eventId)
+	{
+		return $this->eventRepository->find($eventId);
+	}
 
-    /**
-     * Generate the UrlKey of an Event
-     *
-     * @param Event $event
-     * @return string The url key
-     */
-    public function generateUrlKey(Event $event): string
-    {
-        $urlKey = $event->getName();
-        $urlKey = str_replace(" ", "-", $urlKey);
-        $urlKey = str_replace("'", "-", $urlKey);
-        $urlKey = strtr(utf8_decode($urlKey), utf8_decode('àáâãäçèéêëìíîïñòóôõöùúûüýÿÀÁÂÃÄÇÈÉÊËÌÍÎÏÑÒÓÔÕÖÙÚÛÜÝ'), 'aaaaaceeeeiiiinooooouuuuyyAAAAACEEEEIIIINOOOOOUUUUY');
-        $urlKey = preg_replace('/[^A-Za-z0-9\-]/', '', $urlKey);
+	// very useful method :-|
+	public function canReport()
+	{
+		// EVERYONE CAN REPORT EVENT
+		return true;
+	}
 
-        // We don't want to finish with a single "-"
-        if (substr($urlKey, -1)=="-") {
-            $urlKey = substr($urlKey, 0, strlen($urlKey)-1);
-        }
-        
-        return $urlKey;
-    }
+	/**
+	 * retrive events created by a user
+	 *
+	 * @param Int $userId
+	 * @return void
+	 */
+	public function getCreatedEvents(Int $userId)
+	{
+		$createdEvents = $this->eventRepository->getCreatedEvents($userId);
+		return $createdEvents;
+	}
 
-    /**
-     * method to import external events
-     *
-     * @return void
-     */
-    public function importEvents()
-    {
-        $eventsToImport = $this->provider->getEvents();
+	public function getEvents(): QueryBuilder
+	{
+		return $this->eventRepository->getEvents();
+	}
 
-        foreach ($eventsToImport as $eventToImport) {
-            $event = $this->eventRepository->findOneBy(["externalId" => $eventToImport->getExternalId(), "externalSource"=>$eventToImport->getExternalSource()]);
-            if (isset($event) && !is_null($event)) {
-                $event->setName($eventToImport->getName());
-                $event->setFromDate($eventToImport->getFromDate());
-                $event->setToDate($eventToImport->getToDate());
-                $event->setDescription($eventToImport->getDescription());
-                $event->setFullDescription($eventToImport->getFullDescription());
-                $event->setAddress($eventToImport->getAddress());
-                $event->setUrl($eventToImport->getUrl());
-                $event->setExternalImageUrl($eventToImport->getExternalImageUrl());
-            } else {
-                $event = new Event();
-                $event->setExternalId($eventToImport->getExternalId());
-                $event->setExternalSource($eventToImport->getExternalSource());
-                $event->setName($eventToImport->getName());
-                $event->setFromDate($eventToImport->getFromDate());
-                $event->setToDate($eventToImport->getToDate());
-                $event->setDescription($eventToImport->getDescription());
-                $event->setFullDescription($eventToImport->getFullDescription());
-                $event->setAddress($eventToImport->getAddress());
-                $event->setUrl($eventToImport->getUrl());
-                $event->setExternalImageUrl($eventToImport->getExternalImageUrl());
-                $event->setStatus(1);
-                $event->setPrivate(0);
-                $event->setUseTime(0);
-                $event->setApp($this->appRepository->find(self::APP_ID));
-            }
-            
-            if (is_null($event->getUser()) && is_null($event->getApp())) {
-                throw new Exception("User or App are mandatory", 1);
-            }
-            $this->entityManager->persist($event);
-            $this->entityManager->flush();
-        }
-        return;
-    }
+	/**
+	 * Generate the UrlKey of an Event
+	 *
+	 * @param Event $event
+	 * @return string The url key
+	 */
+	public function generateUrlKey(Event $event): string
+	{
+		$urlKey = $event->getName();
+		$urlKey = str_replace(" ", "-", $urlKey);
+		$urlKey = str_replace("'", "-", $urlKey);
+		$urlKey = strtr(utf8_decode($urlKey), utf8_decode('àáâãäçèéêëìíîïñòóôõöùúûüýÿÀÁÂÃÄÇÈÉÊËÌÍÎÏÑÒÓÔÕÖÙÚÛÜÝ'), 'aaaaaceeeeiiiinooooouuuuyyAAAAACEEEEIIIINOOOOOUUUUY');
+		$urlKey = preg_replace('/[^A-Za-z0-9\-]/', '', $urlKey);
+
+		// We don't want to finish with a single "-"
+		if (substr($urlKey, -1) == "-") {
+			$urlKey = substr($urlKey, 0, strlen($urlKey) - 1);
+		}
+
+		return $urlKey;
+	}
+
+	/**
+	 * method to import external events
+	 *
+	 * @return void
+	 */
+	public function importEvents()
+	{
+		$eventsToImport = $this->provider->getEvents();
+
+		foreach ($eventsToImport as $eventToImport) {
+			$event = $this->eventRepository->findOneBy(["externalId" => $eventToImport->getExternalId(), "externalSource" => $eventToImport->getExternalSource()]);
+			if (isset($event) && !is_null($event)) {
+				$event->setName($eventToImport->getName());
+				$event->setFromDate($eventToImport->getFromDate());
+				$event->setToDate($eventToImport->getToDate());
+				$event->setDescription($eventToImport->getDescription());
+				$event->setFullDescription($eventToImport->getFullDescription());
+				$event->setAddress($eventToImport->getAddress());
+				$event->setUrl($eventToImport->getUrl());
+				$event->setExternalImageUrl($eventToImport->getExternalImageUrl());
+			} else {
+				$event = new Event();
+				$event->setExternalId($eventToImport->getExternalId());
+				$event->setExternalSource($eventToImport->getExternalSource());
+				$event->setName($eventToImport->getName());
+				$event->setFromDate($eventToImport->getFromDate());
+				$event->setToDate($eventToImport->getToDate());
+				$event->setDescription($eventToImport->getDescription());
+				$event->setFullDescription($eventToImport->getFullDescription());
+				if ($eventToImport->getExternalSource() == self::EVENT_PROVIDER_TOURINSOFT) {
+					$event->setAddress($this->addressManager->reverseGeocodeAddress($eventToImport->getAddress()));
+				} else {
+					$event->setAddress($eventToImport->getAddress());
+				}
+				$event->setAddress($this->addressManager->reverseGeocodeAddress($eventToImport->getAddress()));
+				$event->setUrl($eventToImport->getUrl());
+				$event->setExternalImageUrl($eventToImport->getExternalImageUrl());
+				$event->setStatus(1);
+				$event->setPrivate(0);
+				$event->setUseTime(0);
+				$event->setApp($this->appRepository->find(self::APP_ID));
+			}
+			if (is_null($event->getUser()) && is_null($event->getApp())) {
+				throw new Exception("User or App are mandatory", 1);
+			}
+			$this->entityManager->persist($event);
+			$this->entityManager->flush();
+		}
+		return;
+	}
 }
