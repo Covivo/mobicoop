@@ -1183,6 +1183,22 @@ class UserController extends AbstractController
     }
 
     /**
+     * Check if an email is already registered by a user
+     * AJAX
+     */
+    public function userPhoneNumberValidity(Request $request, UserManager $userManager)
+    {
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+            if (isset($data['telephone']) && $data['telephone']!=="") {
+                return new JsonResponse($userManager->checkPhoneNumberValidity($data['telephone']));
+            }
+            return new JsonResponse(['error'=>true, 'message'=>'Empty phone']);
+        }
+        return new JsonResponse(['error'=>true, 'message'=>'Only POST is allowed']);
+    }
+
+    /**
     * Unsubscribe email for a user
     */
     public function userUnsubscribeFromEmail(UserManager $userManager, string $token)
