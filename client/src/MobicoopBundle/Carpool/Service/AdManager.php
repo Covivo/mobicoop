@@ -322,8 +322,8 @@ class AdManager
      */
     public function deleteAd(int $id, ?array $data)
     {
-        if ($response = $this->dataProvider->delete($id, $data)) {
-            return $response->getValue();
+        if ($this->dataProvider->delete($id, $data)) {
+            return 'success';
         }
         return null;
     }
