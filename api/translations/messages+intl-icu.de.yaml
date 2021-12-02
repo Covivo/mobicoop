@@ -278,6 +278,7 @@ massMatched: Berechnung des Fahrgemeinschaftspotenzials Nr. {massId}
 massAnalyzeErrors: Die Analyse des Imports Nr. {massId} enthält Fehler
 errors:
   alreadyUsed: Diese E-Mail-Adresse wird bereits verwendet
+  phoneNumberInvalid: "Ce numéro de téléphone n'est pas valide"
   wrongDomains: 'Ihre E-Mail-Adresse muss sich in einer der folgenden Domänen befinden:
     {domains}'
 seeReview: Sie können diese Bewertung einsehen, indem Sie zu Ihrem Profil gehen

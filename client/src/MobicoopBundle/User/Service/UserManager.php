@@ -39,6 +39,7 @@ use Mobicoop\Bundle\MobicoopBundle\Community\Entity\CommunityUser;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\BankAccount;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\ValidationDocument;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\Block;
+use Mobicoop\Bundle\MobicoopBundle\User\Entity\PhoneValidation;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\ProfileSummary;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\PublicProfile;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\SsoConnection;
@@ -783,6 +784,25 @@ class UserManager
         $this->dataProvider->setFormat(DataProvider::RETURN_JSON);
         $response = $this->dataProvider->getSpecialCollection('checkEmail', ['email' => $email]);
         return $response->getValue();
+    }
+
+    /**
+     * Check if the phone number is valid
+     *
+     * @param string $phoneNumber
+     * @return void
+     */
+    public function checkPhoneNumberValidity(string $phoneNumber)
+    {
+        $phoneValidation = new PhoneValidation($phoneNumber);
+        $phoneValidation->setPhoneNumber($phoneNumber);
+        $this->dataProvider->setClass(PhoneValidation::class);
+        $this->dataProvider->setFormat(DataProvider::RETURN_JSON);
+        $response = $this->dataProvider->post($phoneValidation);
+        if ($response->getCode() == 201) {
+            return json_decode($response->getValue());
+        }
+        return null;
     }
 
     /**

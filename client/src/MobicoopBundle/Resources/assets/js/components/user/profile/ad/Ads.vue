@@ -109,8 +109,11 @@ export default {
     deleteAd(isArchived, id, message) {
       let type = isArchived ? "archived" : "active";
       this.localAds[type] = omit(this.localAds[type], id);
-      this.alert.message = message;
-      this.snackbar = true;
+      this.$emit('ad-deleted')
+      setTimeout(() => {
+        this.alert.message = message;
+        this.snackbar = true;
+      }, 2500);
     }
   }
 }

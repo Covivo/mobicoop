@@ -63,6 +63,7 @@ class MessageRepository
 
     public function findThreadsDirectMessages(User $user)
     {
+        $this->repository = $this->entityManager->getRepository(Message::class);
         $query = $this->repository->createQueryBuilder('m')
         ->join('m.recipients', 'r')
         ->leftJoin('m.askHistory', 'ah')
@@ -76,6 +77,7 @@ class MessageRepository
 
     public function findThreadsCarpoolMessages(User $user)
     {
+        $this->repository = $this->entityManager->getRepository(Message::class);
         $query = $this->repository->createQueryBuilder('m')
         ->leftJoin('m.askHistory', 'ah')
         ->leftJoin('m.messages', 'ms')
