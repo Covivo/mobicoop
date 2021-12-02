@@ -37,16 +37,17 @@ use Exception;
  */
 class TourinsoftProvider implements EventProviderInterface
 {
-	const SERVER_URL = 'https://wcf.tourinsoft.com/Syndication/3.0/cdt11/8132036e-2b56-4710-a160-4737c6493c98/Objects';
 
 	const PROVIDER = "Tourinsoft";
 	const FORMAT = "JSON";
 	const COMMUNICATION_MEDIA_WEBSITE_KEY = "#Site web";
-	const SELECT = "SyndicObjectID,SyndicObjectName,MoyenDeCom,Description,ObjectTypeName,Adresse1,Adresse2,Adresse3,GmapLatitude,GmapLongitude,PeriodeOuverture,Photos,CodePostal,Commune,LieuManifestation";
+	const REQUESTED_FIELDS = "SyndicObjectID,SyndicObjectName,MoyenDeCom,Description,ObjectTypeName,Adresse1,Adresse2,Adresse3,GmapLatitude,GmapLongitude,PeriodeOuverture,Photos,CodePostal,Commune,LieuManifestation";
 
-	public function __construct()
+	private $eventProviderServerUrl;
+
+	public function __construct(string $eventProviderServerUrl)
 	{
-		$this->serverUrl = self::SERVER_URL;
+		$this->eventProviderServerUrl = $eventProviderServerUrl;
 	}
 
 	/**
@@ -65,14 +66,14 @@ class TourinsoftProvider implements EventProviderInterface
 	 */
 	public function getEvents()
 	{
-		$dataProvider = new DataProvider($this->serverUrl);
+		$dataProvider = new DataProvider($this->eventProviderServerUrl);
 
 		// we set an empty array of tourinsoft events
 		$tourinsoftEvents = [];
 		// We call tourinsoft api to get all events
 		$queryParams = [
 			'$format' => self::FORMAT,
-			'$select' => self::SELECT
+			'$select' => self::REQUESTED_FIELDS
 		];
 
 		$response = $dataProvider->getItem($queryParams);
@@ -171,7 +172,7 @@ class TourinsoftProvider implements EventProviderInterface
 				$address->setLatitude($event->GmapLatitude);
 				$address->setLongitude($event->GmapLongitude);
 			} else {
-				throw new Exception("Latitude and longitude are mandatory", 1);
+				continue;
 			}
 
 			$newEvent->setAddress($address);

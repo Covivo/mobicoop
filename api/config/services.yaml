@@ -429,6 +429,7 @@ services:
             $eventProviderApiKey: '%env(resolve:EVENT_PROVIDER_API_KEY)%'
             $eventProviderProjectId: '%env(resolve:EVENT_PROVIDER_PROJECT_ID)%'
             $eventProviderSelectionId: '%env(resolve:EVENT_PROVIDER_SELECTION_ID)%'
+            $eventProviderServerUrl: '%env(string:EVENT_PROVIDER_SERVER_URL)%'
     App\Event\Command\EventImportCommand:
         arguments:
             $eventImportEnabled: '%env(bool:EVENT_IMPORT_ENABLED)%'
