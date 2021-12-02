@@ -235,7 +235,6 @@ class GeoSearcher
         }
 
         $geoResults = $this->geocoder->geocodeQuery($query)->all();
-        
 
         foreach ($geoResults as $geoResult) {
             /**
