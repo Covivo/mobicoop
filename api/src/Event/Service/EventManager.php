@@ -206,7 +206,7 @@ class EventManager
 				$event->setToDate($eventToImport->getToDate());
 				$event->setDescription($eventToImport->getDescription());
 				$event->setFullDescription($eventToImport->getFullDescription());
-				if ($eventToImport->getExternalSource() == self::EVENT_PROVIDER_TOURINSOFT && $eventToImport) {
+				if ($eventToImport->getExternalSource() == self::EVENT_PROVIDER_TOURINSOFT) {
 					$event->setAddress($this->addressManager->reverseGeocodeAddress($eventToImport->getAddress()));
 				} else {
 					$event->setAddress($eventToImport->getAddress());
