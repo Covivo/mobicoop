@@ -211,7 +211,6 @@ class EventManager
 				} else {
 					$event->setAddress($eventToImport->getAddress());
 				}
-				$event->setAddress($this->addressManager->reverseGeocodeAddress($eventToImport->getAddress()));
 				$event->setUrl($eventToImport->getUrl());
 				$event->setExternalImageUrl($eventToImport->getExternalImageUrl());
 				$event->setStatus(1);
