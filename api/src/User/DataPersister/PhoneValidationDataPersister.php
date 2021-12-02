@@ -1,7 +1,6 @@
 <?php
-
 /**
- * Copyright (c) 2020, MOBICOOP. All rights reserved.
+ * Copyright (c) 2021, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,32 +20,36 @@
  *    LICENSE
  **************************/
 
-namespace App\Carpool\DataProvider;
+namespace App\User\DataPersister;
 
-use ApiPlatform\Core\DataProvider\ItemDataProviderInterface;
-use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use App\Carpool\Ressource\Ad;
-use App\Carpool\Service\AdManager;
+use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
+use App\User\Ressource\PhoneValidation;
+use App\User\Service\UserManager;
 
 /**
- * Item data provider for put Ad.
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-final class AdPutDataProvider implements RestrictedDataProviderInterface, ItemDataProviderInterface
+final class PhoneValidationDataPersister implements ContextAwareDataPersisterInterface
 {
-    protected $adManager;
+    private $userManager;
 
-    public function __construct(AdManager $adManager)
+    public function __construct(UserManager $userManager)
     {
-        $this->adManager = $adManager;
-    }
-    
-    public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
-    {
-        return Ad::class === $resourceClass && $operationName === "put";
+        $this->userManager = $userManager;
     }
 
-    public function getItem(string $resourceClass, $id, string $operationName = null, array $context = [])
+    public function supports($data, array $context = []): bool
     {
-        return $this->adManager->getFullAd($id);
+        return $data instanceof PhoneValidation && isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'post';
+    }
+
+    public function persist($data, array $context = [])
+    {
+        return $this->userManager->isPhoneValid($data);
+    }
+
+    public function remove($data, array $context = [])
+    {
+        // call your persistence layer to delete $data
     }
 }

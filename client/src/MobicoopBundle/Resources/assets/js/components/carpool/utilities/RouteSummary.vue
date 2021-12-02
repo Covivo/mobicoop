@@ -194,10 +194,11 @@ export default {
   },
   computed: {
     originFirstLine() {
-      if (this.type == 1 && !this.regular) {
-        // return (this.origin.streetAddress ? this.origin.streetAddress+', ' : '')+this.origin.addressLocality
+      if(this.origin.name){
+        return this.origin.name;
+      }
+      else if (this.type == 1 && !this.regular) {
         return (this.origin.streetAddress) ? this.origin.streetAddress : this.origin.addressLocality
-
       } else if (this.type == 1 && this.regular) {
         return this.origin.streetAddress
       } else if (this.type == 2 && !this.regular) {
@@ -207,8 +208,10 @@ export default {
       }
     },
     destinationFirstLine() {
-      if (this.type == 1 && !this.regular) {
-        //        return (this.destination.streetAddress ? this.destination.streetAddress+', ' : '')+this.destination.addressLocality
+      if(this.destination.name){
+        return this.destination.name;
+      }
+      else if (this.type == 1 && !this.regular) {
         return (this.destination.streetAddress) ? this.destination.streetAddress : this.destination.addressLocality
       } else if (this.type == 1 && this.regular) {
         return (this.destination.streetAddress) ? this.destination.streetAddress : this.destination.addressLocality

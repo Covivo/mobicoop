@@ -24,7 +24,10 @@
             {{ $t("tabs.myAds") }}
           </v-tab>
           <v-tab-item value="myAds">
-            <Ads :ads="publishedAds" />
+            <Ads
+              :ads="publishedAds"
+              @ad-deleted="deleteAd"
+            />
           </v-tab-item>
 
           <!-- ACCEPTED CARPOOLS -->
@@ -267,15 +270,23 @@ export default {
     },
   },
   mounted(){
-    maxios.get(this.$t("getMyCarpools"))
-      .then(res => {
-        this.publishedAds = res.data.published;
-        this.acceptedAds = res.data.accepted;
-      })
-      .catch(function (error) {
-        
-      });
+    this.getAds();
   },
+  methods: {
+    getAds() {
+      maxios.get(this.$t("getMyCarpools"))
+        .then(res => {
+          this.publishedAds = res.data.published;
+          this.acceptedAds = res.data.accepted;
+        })
+        .catch(function (error) {
+        
+        });
+    },
+    deleteAd() {
+      this.getAds()
+    }
+  }
 }
 </script>
 <style lang="scss" scoped>

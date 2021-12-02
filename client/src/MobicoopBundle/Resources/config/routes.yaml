@@ -523,7 +523,16 @@ user_check_email_exists:
         nl: /user/check/email
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userCheckEmailExists
 
-# Unsubscribe user from email
+# Check if the telephone number is valid (POST)
+user_check_phone_number_validity:
+    methods: [POST]
+    path:
+        fr: /utilisateur/verif/telephone
+        en: /user/check/telephone
+        nl: /user/check/telephone
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userPhoneNumberValidity
+
+    # Unsubscribe user from email
 user_unsubscribe_email:
     path:
       fr: /utilisateur/unsubscribe/{token}
@@ -634,6 +643,14 @@ carpool_ad_update:
         en: /carpool/ad/{id}/update/
         nl: /carpool/ad/{id}/update/
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdUpdate
+
+# update an ad
+carpool_ad_clean_orphan_proposals:
+    path:
+        fr: /covoiturage/cleanOrphanProposals
+        en: /covoiturage/cleanOrphanProposals
+        nl: /covoiturage/cleanOrphanProposals
+    controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolAdCleanOrphanProposals
 
 # save a carpool search
 carpool_save_search:

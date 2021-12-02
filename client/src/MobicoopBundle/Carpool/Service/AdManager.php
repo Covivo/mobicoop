@@ -322,8 +322,8 @@ class AdManager
      */
     public function deleteAd(int $id, ?array $data)
     {
-        if ($response = $this->dataProvider->delete($id, $data)) {
-            return $response->getValue();
+        if ($this->dataProvider->delete($id, $data)) {
+            return 'success';
         }
         return null;
     }
@@ -566,5 +566,14 @@ class AdManager
         }
 
         return $ad;
+    }
+
+    public function cleanOrphanUserProposals()
+    {
+        $ad = new Ad();
+        if ($response = $this->dataProvider->post($ad, "cleanOrphans")) {
+            return $response->getValue();
+        }
+        return null;
     }
 }
