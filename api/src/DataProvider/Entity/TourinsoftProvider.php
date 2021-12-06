@@ -168,11 +168,38 @@ class TourinsoftProvider implements EventProviderInterface
 			// we create and set the address
 			$address = new Address();
 
+			$fullStreetAddress = [];
+
+			if (isset($event->Adresse1) || trim($event->Adresse1 !== "")) {
+				array_push($fullStreetAddress, $event->Adresse1);
+			}
+			if (isset($event->Adresse2) || trim($event->Adresse2 !== "")) {
+				array_push($fullStreetAddress, $event->Adresse2);
+			}
+
+			if (isset($event->Adresse3) || trim($event->Adresse3 !== "")) {
+				array_push($fullStreetAddress, $event->Adresse3);
+			}
+
+			$fullStreetAddressString = implode(" ", $fullStreetAddress);
+
+			if (!is_null($fullStreetAddressString)) {
+				$address->setStreetAddress(isset($fullStreetAddressString) ? $fullStreetAddressString : (isset($event->LieuManifestation) ? $event->LieuManifestation : ""));
+			}
+
+			if (isset($event->Commune)) {
+				$address->setAddressLocality(isset($event->Commune) ? $event->Commune : null);
+			}
+
+			if (isset($event->CodePostal)) {
+				$address->setPostalCode(isset($event->CodePostal) ? $event->CodePostal : null);
+			}
+
 			if (isset($event->GmapLatitude) && ($event->GmapLatitude)) {
 				$address->setLatitude($event->GmapLatitude);
 				$address->setLongitude($event->GmapLongitude);
 			} else {
-				continue;
+				throw new Exception("Latitude and longiture are mandatory", 1);
 			}
 
 			$newEvent->setAddress($address);
