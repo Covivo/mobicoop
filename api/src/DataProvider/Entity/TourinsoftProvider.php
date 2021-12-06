@@ -37,7 +37,6 @@ use Exception;
  */
 class TourinsoftProvider implements EventProviderInterface
 {
-
 	const PROVIDER = "Tourinsoft";
 	const FORMAT = "JSON";
 	const COMMUNICATION_MEDIA_WEBSITE_KEY = "#Site web";
@@ -195,11 +194,11 @@ class TourinsoftProvider implements EventProviderInterface
 				$address->setPostalCode(isset($event->CodePostal) ? $event->CodePostal : null);
 			}
 
-			if (isset($event->GmapLatitude) && ($event->GmapLatitude)) {
+			if (isset($event->GmapLatitude) && ($event->GmapLongitude)) {
 				$address->setLatitude($event->GmapLatitude);
 				$address->setLongitude($event->GmapLongitude);
 			} else {
-				throw new Exception("Latitude and longiture are mandatory", 1);
+				continue;
 			}
 
 			$newEvent->setAddress($address);
