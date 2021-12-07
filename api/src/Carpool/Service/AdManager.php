@@ -682,8 +682,12 @@ class AdManager
         if (isset($point['elevation'])) {
             $address->setElevation($point['elevation']);
         }
-        if (isset($point['name'])) {
-            $address->setName($point['name']);
+        if (isset($point['relayPoint']) && trim($point['relayPoint']['name'])!=="") {
+            $address->setName($point['relayPoint']['name']);
+        } else {
+            if (isset($point['name'])) {
+                $address->setName($point['name']);
+            }
         }
         if (isset($point['home'])) {
             $address->setHome($point['home']);
@@ -1319,7 +1323,7 @@ class AdManager
      */
     public function updateAd(Ad $ad, bool $withSolidaries = true)
     {
-        $proposal = $this->proposalRepository->find($ad->getId());
+        $proposal = $this->proposalRepository->find($ad->getProposalId());
         $oldAd = $this->makeAd($proposal, $ad->getUserId());
         $proposalAsks = $this->askManager->getAsksFromProposal($proposal);
 
@@ -1334,7 +1338,6 @@ class AdManager
         elseif ($this->checkForMajorUpdate($oldAd, $ad)) {
             $this->proposalManager->deleteProposal($proposal);
             $ad = $this->createAd($ad, true, $withSolidaries);
-
         // minor update
         } elseif ($oldAd->hasBike() !== $ad->hasBike()
             || $oldAd->hasBackSeats() !== $ad->hasBackSeats()
@@ -2000,6 +2003,7 @@ class AdManager
             return $this->updateCarpoolProof($carpoolProof->getId(), $classicProof);
         }
         $carpoolProof = $this->proofManager->createProof($ask, $classicProof->getLongitude(), $classicProof->getLatitude(), CarpoolProof::TYPE_UNDETERMINED_CLASSIC, $classicProof->getUser(), $ask->getMatching()->getProposalOffer()->getUser(), $ask->getMatching()->getProposalRequest()->getUser());
+        $classicProof->setId($carpoolProof->getId());
 
         return $classicProof;
     }

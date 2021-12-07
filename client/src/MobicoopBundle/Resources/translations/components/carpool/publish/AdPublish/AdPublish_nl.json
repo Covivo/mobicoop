@@ -6,7 +6,8 @@
         "roundPrice": "/prix/arrondir",
         "myAds": "/utilisateur/profil/modifier/mes-annonces",
         "update": "covoiturage/annonce/{id}/modifier",
-        "publish": "covoiturage/publierannonce"
+        "publish": "covoiturage/publierannonce",
+        "cleanOrphans": "/covoiturage/cleanOrphanProposals"
     },
     "messageRoundedPrice": "We hebben het tarief van uw advertentie afgerond om uw ervaring en die van de andere gebruikers te verbeteren. We danken u voor uw begrip.",
     "participation": {

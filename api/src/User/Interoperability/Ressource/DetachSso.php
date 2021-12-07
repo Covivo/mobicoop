@@ -45,14 +45,20 @@ use Symfony\Component\Validator\Constraints as Assert;
  *             "method"="POST",
  *             "security"="is_granted('interop_user_create',object)",
  *             "swagger_context" = {
- *               "summary"="Erase the SsoId and the SsoProvider informations of the user account",
+ *               "summary"="Erase the SsoId and the SsoProvider informations of the user account. Uuid or userId MUST BE FILLED. If both given, Uuid is ignored",
  *               "tags"={"Interoperability"},
  *               "parameters" = {
  *                    {
  *                        "name" = "uuid",
  *                        "type" = "string",
- *                        "required" = true,
+ *                        "required" = false,
  *                        "description" = "User's id in the sso provider's internal system"
+ *                    },
+ *                    {
+ *                        "name" = "userId",
+ *                        "type" = "int",
+ *                        "required" = false,
+ *                        "description" = "Instance user's id"
  *                    }
  *                }
  *             }
@@ -74,10 +80,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 class DetachSso
 {
     /**
-     * @var string The User's id in the sso provider's system
+     * @var string The User's id in the sso provider's system (if successful. null otherwise)
      *
      * @ApiProperty(identifier=true)
-     * @Assert\NotBlank
      * @Groups({"readUser","writeUser"})
      */
     private $uuid;
@@ -85,7 +90,7 @@ class DetachSso
     /**
      * @var int The User's id that has been detached (if successful. null otherwise)
      *
-     * @Groups({"readUser"})
+     * @Groups({"readUser","writeUser"})
      */
     private $userId;
 

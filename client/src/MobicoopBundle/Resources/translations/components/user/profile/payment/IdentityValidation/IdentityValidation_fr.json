@@ -4,7 +4,7 @@
     "fileInput": {
         "label" : "Document d'identité à jour",
         "error": "Taille du document non valide",
-        "tooltip": "Le document doit être au format jpg, jpeg, png ou pdf. Le taille du document doit être supérieure à 32kB et inférieure à 6MB"
+        "tooltip": "Le document doit être au format jpg, jpeg, png ou pdf. Le taille du document doit être supérieure à 32Ko et inférieure à 6Mo"
     },
     "send": "Envoyer",
     "status": {

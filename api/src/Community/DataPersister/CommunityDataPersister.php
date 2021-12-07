@@ -27,6 +27,7 @@ use App\Community\Entity\Community;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Security;
 use App\Community\Service\CommunityManager;
+use App\User\Entity\User;
 
 /**
  * Data persister for Community
@@ -60,16 +61,18 @@ final class CommunityDataPersister implements ContextAwareDataPersisterInterface
         }
        
         if (isset($context['item_operation_name']) &&  $context['item_operation_name'] == 'put') {
-            // only for validation or update availabilities
             $data = $this->communityManager->updateCommunity($data);
         } elseif (isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'post') {
-            // create
             $data = $this->communityManager->save($data);
         } elseif (isset($context['item_operation_name']) &&  $context['item_operation_name'] == 'join') {
-            // join
+            if (!($this->security->getUser() instanceof User)) {
+                throw new \LogicException("Only a User can join a Community");
+            }
             $data = $this->communityManager->joinCommunity($data, $this->security->getUser());
         } elseif (isset($context['item_operation_name']) &&  $context['item_operation_name'] == 'leave') {
-            // join
+            if (!($this->security->getUser() instanceof User)) {
+                throw new \LogicException("Only a User can leave a Community");
+            }
             $data = $this->communityManager->leaveCommunity($data, $this->security->getUser());
         }
         return $data;

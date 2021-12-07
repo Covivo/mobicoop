@@ -48,7 +48,7 @@
           </v-icon>
           <v-icon v-if="noticeableDetour && waypoint.role=='passenger'">
             mdi-clock
-          </v-icon><span :class="'passenger' == waypoint.role ? 'font-weight-bold' : ''">{{ waypoint.address.addressLocality }}</span> {{ waypoint.address.venue ? ' - ' + waypoint.address.venue : waypoint.address.streetAddress ? ' - ' + waypoint.address.streetAddress : null }}
+          </v-icon><span :class="'passenger' == waypoint.role ? 'font-weight-bold' : ''">{{ waypoint.address.addressLocality }}</span> {{ displayLabel(waypoint) }}
         </v-col>
       </v-row>
     </v-timeline-item>
@@ -123,7 +123,22 @@ export default {
     }, 
     formatTime(time) {
       if(time) return moment.utc(time).format(this.$t("hourMinute")); 
+    },
+    displayLabel(waypoint){
+
+      if(waypoint.address.name){
+        return ' - ' + waypoint.address.name;
+      }
+      else if(waypoint.address.venue){
+        return ' - ' + waypoint.address.venue;
+      }
+      else if(waypoint.address.streetAddress){
+        return ' - ' + waypoint.address.streetAddress;
+      }
+
+      return "";
     }
+
   }
 };
 </script>

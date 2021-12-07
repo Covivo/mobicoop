@@ -29,9 +29,12 @@ use App\Event\Entity\Event;
 use App\Event\Event\EventCreatedEvent;
 use App\Event\Repository\EventRepository;
 use App\Action\Repository\ActionRepository;
+use App\Geography\Service\AddressManager;
+use App\DataProvider\Entity\TourinsoftProvider;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use App\Geography\Service\GeoTools;
+use Doctrine\ORM\QueryBuilder;
 use Exception;
 
 /**
@@ -50,10 +53,12 @@ class EventManager
     private $geoTools;
     private $provider;
     private $appRepository;
+    private $addressManager;
 
     const EVENT_PROVIDER_APIDAE = 'apidae';
+    const EVENT_PROVIDER_TOURINSOFT = 'tourinsoft';
     const APP_ID = 1;
-    
+
     /**
      * Constructor.
      */
@@ -63,10 +68,12 @@ class EventManager
         EventDispatcherInterface $dispatcher,
         GeoTools $geoTools,
         AppRepository $appRepository,
-        String $eventProvider,
-        String $eventProviderApiKey,
-        String $eventProviderProjectId,
-        String $eventProviderSelectionId
+        AddressManager $addressManager,
+        string $eventProvider,
+        string $eventProviderApiKey,
+        string $eventProviderProjectId,
+        string $eventProviderSelectionId,
+        string $eventProviderServerUrl
     ) {
         $this->entityManager = $entityManager;
         $this->eventRepository = $eventRepository;
@@ -77,9 +84,13 @@ class EventManager
         $this->eventProviderProjectId = $eventProviderProjectId;
         $this->eventProviderSelectionId = $eventProviderSelectionId;
         $this->appRepository = $appRepository;
+        $this->addressManager = $addressManager;
         switch ($eventProvider) {
             case self::EVENT_PROVIDER_APIDAE:
                 $this->provider = new ApidaeProvider($this->eventProviderApiKey, $this->eventProviderProjectId, $this->eventProviderSelectionId);
+                break;
+            case self::EVENT_PROVIDER_TOURINSOFT:
+                $this->provider = new TourinsoftProvider($eventProviderServerUrl);
                 break;
         }
     }
@@ -97,7 +108,7 @@ class EventManager
         }
         $this->entityManager->persist($event);
         $this->entityManager->flush();
-        
+
         // We set the displayLabel of the event's address
         $event->getAddress()->setDisplayLabel($this->geoTools->getDisplayLabel($event->getAddress()));
         // we set the urlKey
@@ -105,7 +116,7 @@ class EventManager
 
         $eventEvent = new EventCreatedEvent($event);
         $this->dispatcher->dispatch($eventEvent, EventCreatedEvent::NAME);
-                
+
         return $event;
     }
 
@@ -128,18 +139,18 @@ class EventManager
     }
 
     /**
-    * retrive events created by a user
-    *
-    * @param Int $userId
-    * @return void
-    */
+     * retrive events created by a user
+     *
+     * @param Int $userId
+     * @return void
+     */
     public function getCreatedEvents(Int $userId)
     {
         $createdEvents = $this->eventRepository->getCreatedEvents($userId);
         return $createdEvents;
     }
 
-    public function getEvents()
+    public function getEvents(): QueryBuilder
     {
         return $this->eventRepository->getEvents();
     }
@@ -159,10 +170,10 @@ class EventManager
         $urlKey = preg_replace('/[^A-Za-z0-9\-]/', '', $urlKey);
 
         // We don't want to finish with a single "-"
-        if (substr($urlKey, -1)=="-") {
-            $urlKey = substr($urlKey, 0, strlen($urlKey)-1);
+        if (substr($urlKey, -1) == "-") {
+            $urlKey = substr($urlKey, 0, strlen($urlKey) - 1);
         }
-        
+
         return $urlKey;
     }
 
@@ -176,7 +187,7 @@ class EventManager
         $eventsToImport = $this->provider->getEvents();
 
         foreach ($eventsToImport as $eventToImport) {
-            $event = $this->eventRepository->findOneBy(["externalId" => $eventToImport->getExternalId(), "externalSource"=>$eventToImport->getExternalSource()]);
+            $event = $this->eventRepository->findOneBy(["externalId" => $eventToImport->getExternalId(), "externalSource" => $eventToImport->getExternalSource()]);
             if (isset($event) && !is_null($event)) {
                 $event->setName($eventToImport->getName());
                 $event->setFromDate($eventToImport->getFromDate());
@@ -195,7 +206,11 @@ class EventManager
                 $event->setToDate($eventToImport->getToDate());
                 $event->setDescription($eventToImport->getDescription());
                 $event->setFullDescription($eventToImport->getFullDescription());
-                $event->setAddress($eventToImport->getAddress());
+                if ($eventToImport->getExternalSource() == self::EVENT_PROVIDER_TOURINSOFT) {
+                    $event->setAddress($this->addressManager->reverseGeocodeAddress($eventToImport->getAddress()));
+                } else {
+                    $event->setAddress($eventToImport->getAddress());
+                }
                 $event->setUrl($eventToImport->getUrl());
                 $event->setExternalImageUrl($eventToImport->getExternalImageUrl());
                 $event->setStatus(1);
@@ -203,7 +218,6 @@ class EventManager
                 $event->setUseTime(0);
                 $event->setApp($this->appRepository->find(self::APP_ID));
             }
-            
             if (is_null($event->getUser()) && is_null($event->getApp())) {
                 throw new Exception("User or App are mandatory", 1);
             }

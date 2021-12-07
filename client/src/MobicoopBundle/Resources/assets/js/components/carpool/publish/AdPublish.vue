@@ -1280,12 +1280,15 @@ export default {
       })
         .then(response => {
           if (response.data && response.data.result.id) {
-            this.snackbar = {
-              message: this.isSearchToSave ? this.$t('searchToSave.success') : this.$t('update.success'),
-              color: "success",
-              show: true
-            };
-            window.location.href = this.$t('route.myAds');
+            maxios.post(this.$t("route.cleanOrphans"), {})
+              .then(res => {
+                this.snackbar = {
+                  message: this.isSearchToSave ? this.$t('searchToSave.success') : this.$t('update.success'),
+                  color: "success",
+                  show: true
+                };
+                window.location.href = this.$t('route.myAds');
+              });            
           } else {
             this.snackbar = {
               message: this.isSearchToSave ? this.$t('searchToSave.error') : this.$t('update.error'),

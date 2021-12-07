@@ -358,6 +358,10 @@ services:
             $emailTemplatePath: '%env(string:NOTIFICATION_TEMPLATE_EMAIL_PATH)%'
             $platformName: '%env(string:EMAILS_PLATFORM_NAME)%'
 
+    App\Communication\EventSubscriber\UserSubscriber:
+        arguments:
+            $notificationSsoRegistration: '%env(bool:NOTIFICATION_SSO_REGISTRATION)%'
+
     App\Communication\Service\ReportManager:
         arguments:
             $emailTemplatePath: '%env(string:NOTIFICATION_TEMPLATE_EMAIL_PATH)%'
@@ -416,12 +420,16 @@ services:
     App\Event\Controller\:
         resource: '../src/Event/Controller'
         tags: ['controller.service_arguments']
+    App\Event\DataProvider\EventCollectionDataProvider:
+        arguments:
+            $collectionFilters: !tagged api_platform.doctrine.orm.query_extension.collection
     App\Event\Service\EventManager:
         arguments:
             $eventProvider: '%env(resolve:EVENT_PROVIDER)%'
             $eventProviderApiKey: '%env(resolve:EVENT_PROVIDER_API_KEY)%'
             $eventProviderProjectId: '%env(resolve:EVENT_PROVIDER_PROJECT_ID)%'
             $eventProviderSelectionId: '%env(resolve:EVENT_PROVIDER_SELECTION_ID)%'
+            $eventProviderServerUrl: '%env(string:EVENT_PROVIDER_SERVER_URL)%'
     App\Event\Command\EventImportCommand:
         arguments:
             $eventImportEnabled: '%env(bool:EVENT_IMPORT_ENABLED)%'
@@ -859,8 +867,13 @@ services:
                 experiencedTagMinAnswerPctDefault : '%env(int:USER_EXPERIENCED_TAG_MIN_ANSWER_PCT_DEFAULT)%'
                 userReview: '%env(bool:USER_REVIEW)%'
             $passwordTokenValidity: '%env(int:PASSWORD_TOKEN_VALIDITY)%'
-            $paymentActive: '%env(string:PAYMENT_ACTIVE)%'    
-    
+            $paymentActive: '%env(string:PAYMENT_ACTIVE)%'
+            $phoneValidationRegex: '%env(string:USER_PHONE_FORMAT)%'
+
+    App\User\Interoperability\Service\UserManager:
+        arguments:
+            $notificationSsoRegistration: '%env(bool:NOTIFICATION_SSO_REGISTRATION)%'
+            
     App\User\Service\ReviewManager:
         arguments:
             $userReview: '%env(bool:USER_REVIEW)%'
@@ -869,6 +882,7 @@ services:
         arguments:
             $ssoServicesActive: "%env(bool:SSO_SERVICES_ACTIVE)%"
             $ssoServices: "%env(json:file:resolve:SSO_SERVICES)%"
+            $ssoUseButtonIcon: "%env(bool:SSO_USE_BUTTON_ICON)%"
 
     App\ExternalJourney\DataProvider\ExternalJourneyCollectionDataProvider:
         arguments:

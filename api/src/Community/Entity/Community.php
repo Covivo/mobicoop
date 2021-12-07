@@ -232,7 +232,7 @@ use App\Community\Filter\CommunityAddressTerritoryFilter;
  *              "method"="PUT",
  *              "path"="/communities/{id}/join",
  *              "denormalization_context"={"groups"={"writeJoinCommunity"}},
- *              "security"="is_granted('community_read',object)",
+ *              "security"="is_granted('community_list',object)",
  *              "swagger_context" = {
  *                  "tags"={"Communities"}
  *              }
@@ -365,7 +365,7 @@ class Community
      *
      * @Assert\NotBlank(groups={"write"})
      * @ORM\Column(type="string", length=255)
-     * @Groups({"aRead","aWrite","readCommunity","write"})
+     * @Groups({"aRead","aWrite","readCommunity","write","listCommunities"})
      */
     private $description;
 
