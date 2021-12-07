@@ -350,12 +350,12 @@ class User
         return $this;
     }
 
-    public function getExternalId(): ?int
+    public function getExternalId(): ?string
     {
         return $this->externalId;
     }
 
-    public function setExternalId(?int $externalId): self
+    public function setExternalId(?string $externalId): self
     {
         $this->externalId = $externalId;
         
