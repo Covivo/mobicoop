@@ -93,7 +93,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *                      },
  *                      {
  *                          "name" = "externalId",
- *                          "type" = "int",
+ *                          "type" = "string",
  *                          "required" = false,
  *                          "description" = "External id of the user (the id used in the partner's system)"
  *                      },
