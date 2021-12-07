@@ -191,6 +191,39 @@
                           </v-icon>
                           {{ $t('contact') }}
                         </v-btn>
+                        <!-- Carpool (driver xor passenger) -->
+                        <v-btn
+                          v-if="((driver ^ passenger) && step == 1 && lResult.pendingAsk == false && lResult.acceptedAsk == false && lResult.initiatedAsk == false) || (carpoolRoleSelected && step == 1)"
+                          class="mt-4"
+                          color="secondary"
+                          :disabled="carpoolDisabled"
+                          :loading="carpoolLoading"
+                          @click="lResult.frequency == 1 ? (driver ? carpoolConfirm(1) : carpoolConfirm(2)) : step = 2"
+                        >
+                          {{ lResult.frequency == 1 ? $t('carpool') : $t('outward') }}
+                        </v-btn>
+
+                        <!-- Step 2 (regular outward, no return) -->
+                        <v-btn
+                          v-if="step == 2 && !lResult.return && outwardTrip.length>0 && lResult.pendingAsk == false && lResult.acceptedAsk == false && lResult.initiatedAsk == false"
+                          color="secondary"
+                          :disabled="carpoolDisabled"
+                          :loading="carpoolLoading"
+                          @click="carpoolRoleSelected ? carpoolConfirm(carpoolRoleSelected) : driver ? carpoolConfirm(1) : carpoolConfirm(2)"
+                        >
+                          {{ $t('carpool') }}
+                        </v-btn>
+
+                        <!-- Step 3 (regular return) -->
+                        <v-btn
+                          v-if="step == 3 && (outwardTrip.length > 0 || returnTrip.length>0) && lResult.pendingAsk == false && lResult.acceptedAsk == false && lResult.initiatedAsk == false"
+                          color="secondary"
+                          :disabled="carpoolDisabled"
+                          :loading="carpoolLoading"
+                          @click="carpoolRoleSelected ? carpoolConfirm(carpoolRoleSelected) : driver ? carpoolConfirm(1) : carpoolConfirm(2)"
+                        >
+                          {{ $t('carpool') }}
+                        </v-btn>
                         <v-card
                           v-else
                           flat
@@ -415,16 +448,6 @@
         >
           {{ $t('carpoolAsPassenger') }}
         </v-btn>
-
-        <!-- Carpool (driver xor passenger) -->
-        <v-btn
-          v-if="((driver ^ passenger) && step == 1 && lResult.pendingAsk == false && lResult.acceptedAsk == false && lResult.initiatedAsk == false) || (carpoolRoleSelected && step == 1)"
-          color="secondary"
-          :disabled="carpoolDisabled"
-          :loading="carpoolLoading"
-          @click="lResult.frequency == 1 ? (driver ? carpoolConfirm(1) : carpoolConfirm(2)) : step = 2"
-        >
-          {{ lResult.frequency == 1 ? $t('carpool') : $t('outward') }}
         </v-btn>
 
         <!-- Carpool punctual(driver) --> 
@@ -533,28 +556,6 @@
           @click="step = 3"
         >
           {{ $t('return') }}
-        </v-btn>
-
-        <!-- Step 2 (regular outward, no return) --> 
-        <v-btn
-          v-if="step == 2 && !lResult.return && outwardTrip.length>0 && lResult.pendingAsk == false && lResult.acceptedAsk == false && lResult.initiatedAsk == false"
-          color="secondary"
-          :disabled="carpoolDisabled"
-          :loading="carpoolLoading"
-          @click="carpoolRoleSelected ? carpoolConfirm(carpoolRoleSelected) : driver ? carpoolConfirm(1) : carpoolConfirm(2)"
-        >
-          {{ $t('carpool') }}
-        </v-btn>
-
-        <!-- Step 3 (regular return) --> 
-        <v-btn
-          v-if="step == 3 && (outwardTrip.length > 0 || returnTrip.length>0) && lResult.pendingAsk == false && lResult.acceptedAsk == false && lResult.initiatedAsk == false"
-          color="secondary"
-          :disabled="carpoolDisabled"
-          :loading="carpoolLoading"
-          @click="carpoolRoleSelected ? carpoolConfirm(carpoolRoleSelected) : driver ? carpoolConfirm(1) : carpoolConfirm(2)"
-        >
-          {{ $t('carpool') }}
         </v-btn>
       </v-card-actions>
     </v-card>
