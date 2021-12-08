@@ -495,10 +495,10 @@ class TerritoryManager
         }
 
         $this->logger->info('Get min and max levels | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
-        if (
-            !$minLevel = $this->entityManager->getConnection()->fetchColumn('SELECT min(admin_level) as level from territory')
-                && !$maxLevel = $this->entityManager->getConnection()->fetchColumn('SELECT max(admin_level) as level from territory')
-        ) {
+        if (!(
+            $minLevel = $this->entityManager->getConnection()->fetchColumn('SELECT min(admin_level) as level from territory')
+                && $maxLevel = $this->entityManager->getConnection()->fetchColumn('SELECT max(admin_level) as level from territory')
+        )) {
             return $this->dropGeoJsonTerritoryIndex() && $this->closeRunningFile() && false;
         }
 
