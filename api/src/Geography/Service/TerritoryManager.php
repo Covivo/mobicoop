@@ -46,6 +46,8 @@ class TerritoryManager
     private $logger;
     private $batchTemp;
 
+    private $filePointer;
+
     /**
      * Constructor.
      */
@@ -55,6 +57,7 @@ class TerritoryManager
         $this->territoryRepository = $territoryRepository;
         $this->logger = $logger;
         $this->batchTemp = $batchTemp;
+        $this->filePointer = null;
     }
 
     /**
@@ -485,8 +488,7 @@ class TerritoryManager
 
         $this->logger->info('Start linking addresses with territories | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
 
-        $fp = fopen($this->batchTemp.self::CHECK_RUNNING_FILE, 'w');
-        fwrite($fp, '+');
+        $this->createRunningFile();
 
         if (!$this->addGeoJsonTerritoryIndex()) {
             return false;
@@ -494,10 +496,10 @@ class TerritoryManager
 
         $this->logger->info('Get min and max levels | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
         if (
-            !$minLevel = $this->entityManager->getConnection()->prepare('SELECT min(admin_level) as level from territory')->execute()
-                && !$maxLevel = $this->entityManager->getConnection()->prepare('SELECT max(admin_level) as level from territory')->execute()
+            !$minLevel = $this->entityManager->getConnection()->fetchColumn('SELECT min(admin_level) as level from territory')
+                && !$maxLevel = $this->entityManager->getConnection()->fetchColumn('SELECT max(admin_level) as level from territory')
         ) {
-            return $this->dropGeoJsonTerritoryIndex() && false;
+            return $this->dropGeoJsonTerritoryIndex() && $this->closeRunningFile() && false;
         }
 
         $this->logger->info('Phase 1 | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
@@ -512,7 +514,7 @@ class TerritoryManager
                     and t.admin_level = {$maxLevel} 
                     and st_contains(t.geo_json_detail, a.geo_json)=1;")->execute()
             && $this->entityManager->getConnection()->prepare('commit;')->execute()) {
-            return $this->dropGeoJsonTerritoryIndex() && false;
+            return $this->dropGeoJsonTerritoryIndex() && $this->closeRunningFile() && false;
         }
 
         $this->logger->info('Phase 2 | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
@@ -528,7 +530,7 @@ class TerritoryManager
                         inner join territory_parent tt on tt.child_id = t3.id
                     where a.id not in (select at2.address_id from address_territory at2 inner join territory t2 on t2.id = at2.territory_id and t2.admin_level = {$i});")->execute()
                 && $this->entityManager->getConnection()->prepare('commit;')->execute()) {
-                return $this->dropGeoJsonTerritoryIndex() && false;
+                return $this->dropGeoJsonTerritoryIndex() && $this->closeRunningFile() && false;
             }
             if (!$result =
                 $this->entityManager->getConnection()->prepare('start transaction;')->execute()
@@ -542,7 +544,7 @@ class TerritoryManager
                     where a.id not in (select at2.address_id from address_territory at2 inner join territory t2 on t2.id = at2.territory_id and t2.admin_level = {$i})
                         and st_contains(t2.geo_json_detail, a.geo_json)=1;")->execute()
                 && $this->entityManager->getConnection()->prepare('commit;')->execute()) {
-                return $this->dropGeoJsonTerritoryIndex() && false;
+                return $this->dropGeoJsonTerritoryIndex() && $this->closeRunningFile() && false;
             }
         }
 
@@ -556,15 +558,23 @@ class TerritoryManager
                     inner join territory t on t.id not in (select territory_id from address_territory where address_id=a.id) and a.latitude between t.min_latitude and t.max_latitude and a.longitude between t.min_longitude and t.max_longitude
                 where st_contains(t.geo_json_detail, a.geo_json)=1;')->execute()
             && $this->entityManager->getConnection()->prepare('commit;')->execute()) {
-            return $this->dropGeoJsonTerritoryIndex() && false;
+            return $this->dropGeoJsonTerritoryIndex() && $this->closeRunningFile() && false;
         }
-
-        fclose($fp);
-        unlink($this->batchTemp.self::CHECK_RUNNING_FILE);
 
         $this->logger->info('End linking addresses with territories | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
 
-        return $this->dropGeoJsonTerritoryIndex() && $result;
+        return $this->closeRunningFile() && $this->dropGeoJsonTerritoryIndex() && $result;
+    }
+
+    private function createRunningFile()
+    {
+        $this->filePointer = fopen($this->batchTemp.self::CHECK_RUNNING_FILE, 'w');
+        fwrite($this->filePointer, '+');
+    }
+
+    private function closeRunningFile()
+    {
+        return fclose($this->filePointer) && unlink($this->batchTemp.self::CHECK_RUNNING_FILE);
     }
 
     private function addGeoJsonTerritoryIndex()
