@@ -1336,8 +1336,8 @@ class AdManager
             $this->entityManager->persist($proposal);
         } // major update
         elseif ($this->checkForMajorUpdate($oldAd, $ad)) {
-            $this->proposalManager->deleteProposal($proposal);
             $ad = $this->createAd($ad, true, $withSolidaries);
+            $this->proposalManager->deleteProposal($proposal);
         // minor update
         } elseif ($oldAd->hasBike() !== $ad->hasBike()
             || $oldAd->hasBackSeats() !== $ad->hasBackSeats()
