@@ -1279,24 +1279,10 @@ export default {
         }
       })
         .then(response => {
-          if (response.data && response.data.result.id) {
-            maxios.post(this.$t("route.cleanOrphans"), {})
-              .then(res => {
-                this.snackbar = {
-                  message: this.isSearchToSave ? this.$t('searchToSave.success') : this.$t('update.success'),
-                  color: "success",
-                  show: true
-                };
-                window.location.href = this.$t('route.myAds');
-              });            
-          } else {
-            this.snackbar = {
-              message: this.isSearchToSave ? this.$t('searchToSave.error') : this.$t('update.error'),
-              color: "error",
-              show: true
-            };
-            this.loading = false;
-          }
+          maxios.post(this.$t("route.cleanOrphans"), {})
+            .then(res => {
+              window.location.href = this.$t('route.myAds');
+            });
         })
         .catch(error => {
           console.log(error);
