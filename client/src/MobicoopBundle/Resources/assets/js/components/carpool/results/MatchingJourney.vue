@@ -448,7 +448,6 @@
         >
           {{ $t('carpoolAsPassenger') }}
         </v-btn>
-        </v-btn>
 
         <!-- Carpool punctual(driver) --> 
         <v-btn
