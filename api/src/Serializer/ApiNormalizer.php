@@ -84,8 +84,6 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
 
     public function supportsNormalization($data, $format = null)
     {
-        return false;
-
         return $this->decorated->supportsNormalization($data, $format) && $this->security->getUser() instanceof User;
     }
 

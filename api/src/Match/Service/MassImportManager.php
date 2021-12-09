@@ -31,7 +31,6 @@ use App\Geography\Service\GeoTools;
 use App\Match\Entity\Candidate;
 use App\Match\Entity\Mass;
 use App\Match\Entity\MassData;
-use App\Match\Entity\MassMatching;
 use App\Match\Entity\MassPerson;
 use App\Match\Event\MassAnalyzeErrorsEvent;
 use App\Match\Event\MassMatchedEvent;
@@ -448,7 +447,7 @@ class MassImportManager
     ) {
         set_time_limit(self::TIME_LIMIT);
         ini_set('memory_limit', self::MEMORY_LIMIT.'M');
-        $this->entityManager->getConnection()->getConfiguration()->setSQLLogger(null);
+        //$this->entityManager->getConnection()->getConfiguration()->setSQLLogger(null);
 
         //gc_enable();
         $this->print_mem(1);
@@ -462,6 +461,7 @@ class MassImportManager
 
         $batch = 0;
         $candidates = [];
+        $insertValues = [];
 
         // we search the matches for all the persons
         foreach ($mass->getPersons() as $driverPerson) {
@@ -572,29 +572,8 @@ class MassImportManager
                 'passengers' => $candidatePassengers,
             ];
 
-            // $candidates = [
-            //     'candidate' => $candidateDriver,
-            //     'candidates' => $candidatePassengers,
-            //     'master' => true,
-            // ];
-
             $this->logger->info('Mass match | Searching candidates for person n°'.$driverPerson->getId().' end '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
             $this->print_mem(3);
-
-            // if ($matches = $this->geoMatcher->singleMatch([$candidates])) {
-            //     if (is_array($matches) && count($matches) > 0) {
-            //         foreach ($matches as $match) {
-            //             foreach ($match['matches'] as $matched) {
-            //                 $massMatching = new MassMatching();
-            //                 $massMatching->setMassPerson1($match['driver']->getMassPerson());
-            //                 $massMatching->setMassPerson2($match['passenger']->getMassPerson());
-            //                 $massMatching->setDistance($matched['newDistance']);
-            //                 $massMatching->setDuration($matched['newDuration']);
-            //                 $this->entityManager->persist($massMatching);
-            //             }
-            //         }
-            //     }
-            // }
 
             ++$batch;
 
@@ -605,25 +584,28 @@ class MassImportManager
                     if (is_array($matches) && count($matches) > 0) {
                         foreach ($matches as $match) {
                             foreach ($match['matches'] as $matched) {
-                                $this->entityManager->getConnection()->prepare(
-                                    'insert into mass_matching 
-                                    (mass_person1_id, mass_person2_id, distance, duration) values ('.
-                                    $driverPerson->getId().','.
-                                    $match['passenger']->getMassPerson()->getId().','.
-                                    $matched['newDistance'].','.
-                                    $matched['newDuration'].');'
-                                )->execute();
+                                $insertValues[] = [
+                                    $driverPerson->getId(),
+                                    $match['passenger']->getMassPerson()->getId(),
+                                    $matched['newDistance'],
+                                    $matched['newDuration'],
+                                ];
                             }
                         }
                     }
                 }
-                // $mass->setStatus(Mass::STATUS_MATCHED);
-                // $mass->setCalculatedDate(new \Datetime());
-                // $this->entityManager->persist($mass);
-                // $this->entityManager->flush();
-
                 $candidates = [];
                 $batch = 0;
+            }
+
+            if (count($insertValues) >= 1000) {
+                $insertRequest = 'insert into mass_matching (mass_person1_id, mass_person2_id, distance, duration) values ';
+                foreach ($insertValues as $value) {
+                    $insertRequest .= '('.implode(',', $value).')';
+                }
+                $insertRequest .= rtrim($insertRequest, ',').';';
+                $this->entityManager->getConnection()->prepare($insertRequest)->execute();
+                $insertValues = [];
             }
         }
         // we try to match with the candidates a last time
@@ -632,18 +614,25 @@ class MassImportManager
             if (is_array($matches) && count($matches) > 0) {
                 foreach ($matches as $match) {
                     foreach ($match['matches'] as $matched) {
-                        $this->entityManager->getConnection()->prepare(
-                            'insert into mass_matching 
-                            (mass_person1_id, mass_person2_id, distance, duration) values ('.
-                            $driverPerson->getId().','.
-                            $match['passenger']->getMassPerson()->getId().','.
-                            $matched['newDistance'].','.
-                            $matched['newDuration'].');'
-                        )->execute();
+                        $insertValues[] = [
+                            $driverPerson->getId(),
+                            $match['passenger']->getMassPerson()->getId(),
+                            $matched['newDistance'],
+                            $matched['newDuration'],
+                        ];
                     }
                 }
             }
         }
+        if (count($insertValues) > 0) {
+            $insertRequest = 'insert into mass_matching (mass_person1_id, mass_person2_id, distance, duration) values ';
+            foreach ($insertValues as $value) {
+                $insertRequest .= '('.implode(',', $value).')';
+            }
+            $insertRequest .= rtrim($insertRequest, ',').';';
+            $this->entityManager->getConnection()->prepare($insertRequest)->execute();
+        }
+
         $mass->setStatus(Mass::STATUS_MATCHED);
         $mass->setCalculatedDate(new \Datetime());
         $this->entityManager->persist($mass);

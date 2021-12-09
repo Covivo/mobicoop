@@ -216,7 +216,6 @@ class GeoMatcher
             $this->logger->debug('Multi Match | End multiple async routes for mass');
             // we treat the routes to check if they match
             foreach ($ownerRoutes as $ownerId => $routes) {
-                $this->logger->debug('Multi Match | Treat routes for owner '.$ownerId);
                 if ($matches = $this->checkMassMultiMatch(
                     $candidates[$routesOwner[$ownerId]['actors']]['driver'],
                     $candidates[$routesOwner[$ownerId]['actors']]['passengers'][$routesOwner[$ownerId]['passenger']],
