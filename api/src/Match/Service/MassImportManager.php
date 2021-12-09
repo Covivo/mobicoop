@@ -603,7 +603,7 @@ class MassImportManager
                 foreach ($insertValues as $value) {
                     $insertRequest .= '('.implode(',', $value).'),';
                 }
-                $insertRequest .= rtrim($insertRequest, ',').';';
+                $insertRequest = rtrim($insertRequest, ',').';';
                 $this->logger->info('Mass match | Insert mass matchings | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
                 $this->entityManager->getConnection()->prepare($insertRequest)->execute();
                 $insertValues = [];
@@ -630,7 +630,7 @@ class MassImportManager
             foreach ($insertValues as $value) {
                 $insertRequest .= '('.implode(',', $value).'),';
             }
-            $insertRequest .= rtrim($insertRequest, ',').';';
+            $insertRequest = rtrim($insertRequest, ',').';';
             $this->logger->info('Mass match | Insert mass matchings | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
             $this->entityManager->getConnection()->prepare($insertRequest)->execute();
         }
