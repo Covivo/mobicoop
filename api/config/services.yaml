@@ -40,6 +40,7 @@ services:
     'App\Serializer\ApiNormalizer':
         arguments:
             $badgeImageUri: '%env(string:GAMIFICATION_BADGE_IMAGE_URI)%'
+            $gamificationActive: '%env(bool:GAMIFICATION_ACTIVE)%'
         decorates: 'api_platform.jsonld.normalizer.item'    
 
     # EVENT LISTENERS
