@@ -682,8 +682,12 @@ class AdManager
         if (isset($point['elevation'])) {
             $address->setElevation($point['elevation']);
         }
-        if (isset($point['name'])) {
-            $address->setName($point['name']);
+        if (isset($point['relayPoint']) && trim($point['relayPoint']['name'])!=="") {
+            $address->setName($point['relayPoint']['name']);
+        } else {
+            if (isset($point['name'])) {
+                $address->setName($point['name']);
+            }
         }
         if (isset($point['home'])) {
             $address->setHome($point['home']);
@@ -1320,7 +1324,7 @@ class AdManager
      */
     public function updateAd(Ad $ad, bool $withSolidaries = true)
     {
-        $proposal = $this->proposalRepository->find($ad->getId());
+        $proposal = $this->proposalRepository->find($ad->getProposalId());
         $oldAd = $this->makeAd($proposal, $ad->getUserId());
         $proposalAsks = $this->askManager->getAsksFromProposal($proposal);
 
@@ -1333,9 +1337,8 @@ class AdManager
             $this->entityManager->persist($proposal);
         } // major update
         elseif ($this->checkForMajorUpdate($oldAd, $ad)) {
-            $this->proposalManager->deleteProposal($proposal);
             $ad = $this->createAd($ad, true, $withSolidaries);
-
+            $this->proposalManager->deleteProposal($proposal);
         // minor update
         } elseif (
             $oldAd->hasBike() !== $ad->hasBike()

@@ -93,7 +93,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *                      },
  *                      {
  *                          "name" = "externalId",
- *                          "type" = "int",
+ *                          "type" = "string",
  *                          "required" = false,
  *                          "description" = "External id of the user (the id used in the partner's system)"
  *                      },
@@ -179,11 +179,24 @@ class User
     /**
      * @var string The email of the user.
      *
-     * @Assert\NotBlank
      * @Assert\Email()
      * @Groups({"readUser","writeUser"})
      */
     private $email;
+
+    /**
+     * @var \DateTimeInterface|null The birth date of the user
+     *
+     * @Groups({"readUser","writeUser"})
+     */
+    private $birthDate;
+
+    /**
+     * @var string|null The telephone number of the user
+     *
+     * @Groups({"readUser","writeUser"})
+     */
+    private $telephone;
 
     /**
      * @var string The encoded password of the user.
@@ -277,6 +290,30 @@ class User
         return $this;
     }
 
+    public function getBirthDate(): ?\DateTimeInterface
+    {
+        return $this->birthDate;
+    }
+
+    public function setBirthDate(?\DateTimeInterface $birthDate): self
+    {
+        $this->birthDate = $birthDate;
+
+        return $this;
+    }
+
+    public function getTelephone(): ?string
+    {
+        return $this->telephone;
+    }
+
+    public function setTelephone(?string $telephone): self
+    {
+        $this->telephone = $telephone;
+
+        return $this;
+    }
+
     public function getPassword(): ?string
     {
         return $this->password;
@@ -313,12 +350,12 @@ class User
         return $this;
     }
 
-    public function getExternalId(): ?int
+    public function getExternalId(): ?string
     {
         return $this->externalId;
     }
 
-    public function setExternalId(?int $externalId): self
+    public function setExternalId(?string $externalId): self
     {
         $this->externalId = $externalId;
         

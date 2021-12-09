@@ -137,6 +137,7 @@ yourValidationToken: Uw validatiecode
 updatedSefl: Wijziging van uw profiel
 errors:
   alreadyUsed: Dit e-mailadres werd al gebruikt
+  phoneNumberInvalid: "Ce numéro de téléphone n'est pas valide"
   wrongDomains: 'Uw e-mailadres moet er een van de volgende domeinen zijn: {domains}'
 yourInscription: Uw registratie
 passwordChanged: Bevestiging voor opnieuw instellen van wachtwoord

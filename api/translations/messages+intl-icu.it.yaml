@@ -67,3 +67,8 @@ reason6: "Document refusé car type de document non accepté"
 reason7: "Document refusé car les données ne correspondent pas à celles de l'utilisateur"
 reason8: "Document refusé car illisible"
 reason9: "Document refusé car incomplet"
+yourInscription: "Your registration"
+errors:
+  wrongDomains: "Your email address must be in one of these domains: {domains}"
+  alreadyUsed: "This email address is already in use"
+  phoneNumberInvalid: "This phone number is not valid"

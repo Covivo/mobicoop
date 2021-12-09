@@ -43,11 +43,13 @@ class UserSubscriber implements EventSubscriberInterface
 {
     private $notificationManager;
     private $userManager;
+    private $notificationSsoRegistration;
 
-    public function __construct(NotificationManager $notificationManager, UserManager $userManager)
+    public function __construct(NotificationManager $notificationManager, UserManager $userManager, bool $notificationSsoRegistration)
     {
         $this->notificationManager = $notificationManager;
         $this->userManager = $userManager;
+        $this->notificationSsoRegistration = $notificationSsoRegistration;
     }
 
     public static function getSubscribedEvents()
@@ -69,6 +71,9 @@ class UserSubscriber implements EventSubscriberInterface
 
     public function onUserRegistered(UserRegisteredEvent $event)
     {
+        if (!is_null($event->getUser()->getSsoId()) && $event->getUser()->getSsoId() !== "" && !$this->notificationSsoRegistration) {
+            return;
+        }
         $this->notificationManager->notifies(UserRegisteredEvent::NAME, $event->getUser());
     }
 

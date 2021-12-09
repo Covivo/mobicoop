@@ -51,6 +51,10 @@
         "error": "Dit e-mailadres is al in gebruik",
         "url": "/utilisateur/verif/email"
     },
+    "checkPhoneValidity": {
+        "url": "/utilisateur/verif/telephone",
+        "error": "Ce numéro de téléphone n'est pas valide"
+    },
     "password": {
         "errors": {
             "number": "Het wachtwoord moet 1 cijfer bevatten.",

@@ -172,7 +172,15 @@
                   :rules="form.telephoneRules"
                   name="telephone"
                   @keypress="isNumber(event)"
+                  @focusin="phoneNumberValid = true"
+                  @focusout="checkPhoneNumberValidity"
                 />
+                <v-alert
+                  v-if="!phoneNumberValid"
+                  type="error"
+                >
+                  {{ $t('checkPhoneValidity.error') }}
+                </v-alert>
                 <v-text-field
                   id="password"
                   v-model="form.password"
@@ -197,7 +205,7 @@
                   class="my-13"
                   color="secondary"
                   type="submit"
-                  :disabled="!step1 || !consent"
+                  :disabled="!step1 || !consent || isDisable"
                   @click="nextStep(1)"
                 >
                   {{ $t("button.next") }}
@@ -427,7 +435,24 @@
                   </template>
                 </v-checkbox>
 
-
+                <v-row
+                  v-if="emailAlreadyTaken || !phoneNumberValid"
+                  justify="center"
+                  align="center"
+                >
+                  <v-alert
+                    v-if="emailAlreadyTaken"
+                    type="error"
+                  >
+                    {{ textEmailError }}
+                  </v-alert>
+                  <v-alert
+                    v-if="!phoneNumberValid"
+                    type="error"
+                  >
+                    {{ $t('checkPhoneValidity.error') }}
+                  </v-alert>
+                </v-row>
                 <v-row
                   justify="center"
                   align="center"
@@ -436,7 +461,7 @@
                   <v-btn
                     ref="button"
                     rounded
-                    class="my-13 mr-12"
+                    class="my-5 mr-12"
                     color="secondary"
                     @click="--step"
                   >
@@ -445,7 +470,7 @@
                   <v-btn
                     color="secondary"
                     rounded
-                    class="my-13"
+                    class="my-5"
                     :loading="loading"
                     :disabled="
                       !step3 || !step2 || !step1 || loading || isDisable
@@ -610,6 +635,7 @@ export default {
       container: "scroll-target",
 
       emailAlreadyTaken: false,
+      phoneNumberValid: true,
       loadingCheckEmailAldreadyTaken: false,
       form: {
         createToken: this.sentToken,
@@ -649,7 +675,7 @@ export default {
         telephoneRules: [
           (v) => !!v || this.$t("phone.errors.required"),
           (v) =>
-            /^((\+)33|0)[1-9](\d{2}){4}$/.test(v) ||
+            this.phoneNumberValid ||
             this.$t("phone.errors.valid"),
         ],
         password: null,
@@ -747,7 +773,7 @@ export default {
       if (this.requiredHomeAddress && !this.form.homeAddress) {
         return true;
       }
-      if (this.emailAlreadyTaken) {
+      if (this.emailAlreadyTaken || !this.phoneNumberValid) {
         return true;
       }
       if (this.requiredCommunity && !this.selectedCommunity) {
@@ -883,6 +909,9 @@ export default {
       this.form.idFacebook = data.id;
     },
     checkEmail() {
+      if(!this.form.email){
+        return
+      }
       this.loadingCheckEmailAldreadyTaken = true;
       maxios
         .post(
@@ -913,8 +942,37 @@ export default {
           this.loadingCheckEmailAldreadyTaken = false;
         });
     },
+    checkPhoneNumberValidity(){
+      if(!this.form.telephone){
+        return
+      }
+      maxios
+        .post(
+          this.$t("checkPhoneValidity.url"),
+          {
+            telephone: this.form.telephone,
+          },
+          {
+            headers: {
+              "content-type": "application/json",
+            },
+          }
+        )
+        .then((response) => {
+          if(response.data.valid){
+            this.phoneNumberValid = response.data.valid
+          }
+          else{
+            this.phoneNumberValid = false;
+          }
+        })
+        .catch(function(error) {
+          console.error(error);
+          this.phoneNumberValid = false;
+        });      
+    },
     nextStep(n) {
-      this.step += 1;
+      this.step += 1;   
     },
     previousStep(n) {
       this.step -= 1;

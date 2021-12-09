@@ -309,6 +309,7 @@ yourInscription: "Your registration"
 errors:
   wrongDomains: "Your email address must be in one of these domains: {domains}"
   alreadyUsed: "This email address is already in use"
+  phoneNumberInvalid: "This phone number is not valid"
 # USER_UPDATED_SELF
 
 updatedSefl: "Change your profile"
