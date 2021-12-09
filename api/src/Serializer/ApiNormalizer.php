@@ -18,13 +18,12 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Serializer;
 
 use App\Carpool\Repository\ProposalRepository;
 use App\Carpool\Ressource\Ad;
-use App\Communication\Entity\Message;
 use App\Gamification\Entity\GamificationNotifier;
 use App\Gamification\Entity\Reward;
 use App\Gamification\Entity\RewardStep;
@@ -32,9 +31,7 @@ use App\Gamification\Repository\RewardRepository;
 use App\Gamification\Repository\RewardStepRepository;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
-use Exception;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
@@ -87,38 +84,41 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
 
     public function supportsNormalization($data, $format = null)
     {
+        return false;
+
         return $this->decorated->supportsNormalization($data, $format) && $this->security->getUser() instanceof User;
     }
 
     public function normalize($object, $format = null, array $context = [])
     {
         if ($this->log) {
-            $this->logger->info("Api Normalize on ".get_class($object));
+            $this->logger->info('Api Normalize on '.get_class($object));
         }
 
         $data = $this->decorated->normalize($object, $format, $context);
 
         // add adType to User in admin
-        if (isset($context['collection_operation_name']) && $context['collection_operation_name'] === 'ADMIN_get' && $object instanceof User) {
+        if (isset($context['collection_operation_name']) && 'ADMIN_get' === $context['collection_operation_name'] && $object instanceof User) {
             $nbDriver = $this->proposalRepository->getNbActiveAdsForUserAndRole($data['id'], Ad::ROLE_DRIVER);
             $nbPassenger = $this->proposalRepository->getNbActiveAdsForUserAndRole($data['id'], Ad::ROLE_PASSENGER);
-            if ($nbDriver>0 && $nbPassenger>0) {
+            if ($nbDriver > 0 && $nbPassenger > 0) {
                 $data['adType'] = User::AD_DRIVER_PASSENGER;
-            } elseif ($nbDriver>0) {
+            } elseif ($nbDriver > 0) {
                 $data['adType'] = User::AD_DRIVER;
-            } elseif ($nbPassenger>0) {
+            } elseif ($nbPassenger > 0) {
                 $data['adType'] = User::AD_PASSENGER;
             } else {
                 $data['adType'] = User::AD_NONE;
             }
+
             return $data;
         }
-        
+
         // We check if there is some gamificationNotifications entities in waiting for the current User
 
         // Waiting RewardSteps
         $waitingRewardSteps = $this->rewardStepRepository->findWaiting($this->security->getUser());
-        if ($object instanceof User && is_array($data) && is_array($waitingRewardSteps) && count($waitingRewardSteps)>0) {
+        if ($object instanceof User && is_array($data) && is_array($waitingRewardSteps) && count($waitingRewardSteps) > 0) {
             $data['gamificationNotifications'] = [];
             foreach ($waitingRewardSteps as $waitingRewardStep) {
                 $data['gamificationNotifications'][] = $this->formatRewardStep($waitingRewardStep);
@@ -127,7 +127,7 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
 
         // Waiting Rewards
         $waitingRewards = $this->rewardRepository->findWaiting($this->security->getUser());
-        if ($object instanceof User && is_array($data) && is_array($waitingRewards) && count($waitingRewards)>0) {
+        if ($object instanceof User && is_array($data) && is_array($waitingRewards) && count($waitingRewards) > 0) {
             $data['gamificationNotifications'] = [];
             foreach ($waitingRewards as $waitingReward) {
                 $data['gamificationNotifications'][] = $this->formatReward($waitingReward);
@@ -135,8 +135,7 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
         }
 
         // New gamification notifications
-        if (is_array($data) && count($this->gamificationNotifier->getNotifications())>0) {
-            
+        if (is_array($data) && count($this->gamificationNotifier->getNotifications()) > 0) {
             // We init the array only if it's not already filled
             if (!isset($data['gamificationNotifications'])) {
                 $data['gamificationNotifications'] = [];
@@ -145,9 +144,9 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
             foreach ($this->gamificationNotifier->getNotifications() as $gamificationNotification) {
                 if ($gamificationNotification instanceof Reward) {
                     $rewardIds = [];
-                    foreach ($data["gamificationNotifications"] as $notification) {
-                        if ($notification["type"] == "Reward") {
-                            $rewardIds[] = $notification["id"];
+                    foreach ($data['gamificationNotifications'] as $notification) {
+                        if ('Reward' == $notification['type']) {
+                            $rewardIds[] = $notification['id'];
                         }
                     }
                     if (!in_array($gamificationNotification->getId(), $rewardIds)) {
@@ -155,9 +154,9 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
                     }
                 } elseif ($gamificationNotification instanceof RewardStep) {
                     $rewardStepIds = [];
-                    foreach ($data["gamificationNotifications"] as $notification) {
-                        if ($notification["type"] == "RewardStep") {
-                            $rewardStepIds[] = $notification["id"];
+                    foreach ($data['gamificationNotifications'] as $notification) {
+                        if ('RewardStep' == $notification['type']) {
+                            $rewardStepIds[] = $notification['id'];
                         }
                     }
                     if (!in_array($gamificationNotification->getId(), $rewardStepIds)) {
@@ -170,18 +169,19 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
         if (isset($data['gamificationNotifications'])) {
             // we remove RewardStep if he's associated to a gained badge
             $badgeIds = [];
-            foreach ($data["gamificationNotifications"] as $gamificationNotification) {
-                if ($gamificationNotification["type"] == "Badge") {
-                    $badgeIds[] = $gamificationNotification["id"];
+            foreach ($data['gamificationNotifications'] as $gamificationNotification) {
+                if ('Badge' == $gamificationNotification['type']) {
+                    $badgeIds[] = $gamificationNotification['id'];
                 }
             }
-            foreach ($data["gamificationNotifications"] as $key => $gamificationNotification) {
-                if ($gamificationNotification["type"] == "RewardStep" && in_array($gamificationNotification["badge"]["id"], $badgeIds)) {
-                    unset($data["gamificationNotifications"][$key]);
+            foreach ($data['gamificationNotifications'] as $key => $gamificationNotification) {
+                if ('RewardStep' == $gamificationNotification['type'] && in_array($gamificationNotification['badge']['id'], $badgeIds)) {
+                    unset($data['gamificationNotifications'][$key]);
                 }
             }
         }
         $this->entityManager->flush();
+
         return $data;
     }
 
@@ -193,8 +193,9 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
     public function denormalize($data, $class, $format = null, array $context = [])
     {
         if ($this->log) {
-            $this->logger->info("Api Denormalize on ".$class);
+            $this->logger->info('Api Denormalize on '.$class);
         }
+
         return $this->decorated->denormalize($data, $class, $format, $context);
     }
 
@@ -206,56 +207,50 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
     }
 
     /**
-     * Format a RewardStep to be notified
-     *
-     * @param RewardStep $rewardStep
-     * @return array
+     * Format a RewardStep to be notified.
      */
     private function formatRewardStep(RewardStep $rewardStep): array
     {
         if ($this->log) {
-            $this->logger->info("Api Normalize formatRewardStep ".$rewardStep->getId());
+            $this->logger->info('Api Normalize formatRewardStep '.$rewardStep->getId());
         }
 
         return [
-            "type" => "RewardStep",
-            "id" => $rewardStep->getId(),
-            "title" => $rewardStep->getSequenceItem()->getGamificationAction()->getTitle(),
-            "notifiedDate" => $rewardStep->getNotifiedDate(),
-            "badge" => [
-                "id" => $rewardStep->getSequenceItem()->getBadge()->getId(),
-                "name" => $rewardStep->getSequenceItem()->getBadge()->getName(),
-                "title" => $rewardStep->getSequenceItem()->getBadge()->getTitle()
-            ]
+            'type' => 'RewardStep',
+            'id' => $rewardStep->getId(),
+            'title' => $rewardStep->getSequenceItem()->getGamificationAction()->getTitle(),
+            'notifiedDate' => $rewardStep->getNotifiedDate(),
+            'badge' => [
+                'id' => $rewardStep->getSequenceItem()->getBadge()->getId(),
+                'name' => $rewardStep->getSequenceItem()->getBadge()->getName(),
+                'title' => $rewardStep->getSequenceItem()->getBadge()->getTitle(),
+            ],
         ];
     }
 
     /**
-     * Format a Reward to be notified
-     *
-     * @param Reward $reward
-     * @return array
+     * Format a Reward to be notified.
      */
     private function formatReward(Reward $reward): array
     {
         if ($this->log) {
-            $this->logger->info("Api Normalize formatReward ".$reward->getId());
+            $this->logger->info('Api Normalize formatReward '.$reward->getId());
         }
-        
+
         return [
-            "type" => "Badge",
-            "id" => $reward->getBadge()->getId(),
-            "rewardId" => $reward->getId(),
-            "name" => $reward->getBadge()->getName(),
-            "title" => $reward->getBadge()->getTitle(),
-            "notifiedDate" => $reward->getNotifiedDate(),
-            "text" => $reward->getBadge()->getText(),
-            "pictures" => [
-                "icon" => (!is_null($reward->getBadge()->getIcon())) ? $this->badgeImageUri.$reward->getBadge()->getIcon()->getFileName() : null,
-                "decoratedIcon" => (!is_null($reward->getBadge()->getDecoratedIcon())) ? $this->badgeImageUri.$reward->getBadge()->getDecoratedIcon()->getFileName() : null,
-                "image" => (!is_null($reward->getBadge()->getImage())) ? $this->badgeImageUri.$reward->getBadge()->getImage()->getFileName() : null,
-                "imageLight" => (!is_null($reward->getBadge()->getImageLight())) ? $this->badgeImageUri.$reward->getBadge()->getImageLight()->getFileName() : null
-            ]
+            'type' => 'Badge',
+            'id' => $reward->getBadge()->getId(),
+            'rewardId' => $reward->getId(),
+            'name' => $reward->getBadge()->getName(),
+            'title' => $reward->getBadge()->getTitle(),
+            'notifiedDate' => $reward->getNotifiedDate(),
+            'text' => $reward->getBadge()->getText(),
+            'pictures' => [
+                'icon' => (!is_null($reward->getBadge()->getIcon())) ? $this->badgeImageUri.$reward->getBadge()->getIcon()->getFileName() : null,
+                'decoratedIcon' => (!is_null($reward->getBadge()->getDecoratedIcon())) ? $this->badgeImageUri.$reward->getBadge()->getDecoratedIcon()->getFileName() : null,
+                'image' => (!is_null($reward->getBadge()->getImage())) ? $this->badgeImageUri.$reward->getBadge()->getImage()->getFileName() : null,
+                'imageLight' => (!is_null($reward->getBadge()->getImageLight())) ? $this->badgeImageUri.$reward->getBadge()->getImageLight()->getFileName() : null,
+            ],
         ];
     }
 }
