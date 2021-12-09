@@ -460,7 +460,7 @@ class MassImportManager
         $this->entityManager->persist($mass);
         $this->entityManager->flush();
 
-        $batch = 0;
+        // $batch = 0;
         $candidates = [];
 
         // we search the matches for all the persons
@@ -581,23 +581,32 @@ class MassImportManager
                 if (is_array($matches) && count($matches) > 0 && isset($matches['driver']) && is_array($matches['driver']) && count($matches['driver']) > 0) {
                     foreach ($matches['driver'] as $candidateId => $matchesDriver) {
                         usort($matchesDriver, self::build_sorter('newDuration'));
-                        $massMatching = new MassMatching();
-                        $massMatching->setMassPerson1($driverPerson);
-                        $massMatching->setMassPerson2($candidatePassengers[$candidateId]->getMassPerson());
-                        $massMatching->setDistance($matchesDriver[0]['newDistance']);
-                        $massMatching->setDuration($matchesDriver[0]['newDuration']);
-                        $this->entityManager->persist($massMatching);
+                        $this->entityManager->getConnection()->prepare(
+                            'insert into mass_matching 
+                            (mass_person1_id, mass_person2_id, distance, duration) values ('.
+                            $driverPerson->getId().','.
+                            $candidateId.','.
+                            $matchesDriver[0]['newDistance'].','.
+                            $matchesDriver[0]['newDuration'].');'
+                        )->execute();
+
+                        // $massMatching = new MassMatching();
+                        // $massMatching->setMassPerson1($driverPerson);
+                        // $massMatching->setMassPerson2($candidatePassengers[$candidateId]->getMassPerson());
+                        // $massMatching->setDistance($matchesDriver[0]['newDistance']);
+                        // $massMatching->setDuration($matchesDriver[0]['newDuration']);
+                        // $this->entityManager->persist($massMatching);
                     }
                 }
                 $this->logger->info('Mass match | Persist matches done for person n°'.$driverPerson->getId().' end '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
             }
 
-            ++$batch;
+            // ++$batch;
 
-            if ($batch >= self::BATCH_GEOROUTER) {
-                $this->entityManager->flush();
-                $batch = 0;
-            }
+            // if ($batch >= self::BATCH_GEOROUTER) {
+            //     $this->entityManager->flush();
+            //     $batch = 0;
+            // }
 
             $candidatePassengers = null;
             unset($candidatePassengers);
