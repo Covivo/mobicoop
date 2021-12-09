@@ -577,6 +577,7 @@ class MassImportManager
             $this->print_mem(3);
 
             if ($matches = $this->geoMatcher->singleMatch([$candidates])) {
+                $this->logger->info('Mass match | Compute matches done for person n°'.$driverPerson->getId().' end '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
                 if (is_array($matches) && count($matches) > 0 && isset($matches['driver']) && is_array($matches['driver']) && count($matches['driver']) > 0) {
                     foreach ($matches['driver'] as $candidateId => $matchesDriver) {
                         usort($matchesDriver, self::build_sorter('newDuration'));
@@ -588,6 +589,7 @@ class MassImportManager
                         $this->entityManager->persist($massMatching);
                     }
                 }
+                $this->logger->info('Mass match | Persist matches done for person n°'.$driverPerson->getId().' end '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
             }
 
             ++$batch;
