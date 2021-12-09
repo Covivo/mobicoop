@@ -564,82 +564,43 @@ class MassImportManager
                 $candidatePassenger->setAddresses([$passengerPerson->getPersonalAddress(), $passengerPerson->getWorkAddress()]);
                 $candidatePassenger->setId($passengerPerson->getId());
                 $candidatePassenger->setMassPerson($passengerPerson);
-                $candidatePassengers[] = $candidatePassenger;
+                $candidatePassengers[$passengerPerson->getId()] = $candidatePassenger;
             }
 
-            $candidates[] = [
-                'driver' => $candidateDriver,
-                'passengers' => $candidatePassengers,
+            $candidates = [
+                'candidate' => $candidateDriver,
+                'candidates' => $candidatePassengers,
+                'master' => true,
             ];
-
-            // $candidates = [
-            //     'candidate' => $candidateDriver,
-            //     'candidates' => $candidatePassengers,
-            //     'master' => true,
-            // ];
 
             $this->logger->info('Mass match | Searching candidates for person n°'.$driverPerson->getId().' end '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
             $this->print_mem(3);
 
-            // if ($matches = $this->geoMatcher->singleMatch([$candidates])) {
-            //     if (is_array($matches) && count($matches) > 0) {
-            //         foreach ($matches as $match) {
-            //             foreach ($match['matches'] as $matched) {
-            //                 $massMatching = new MassMatching();
-            //                 $massMatching->setMassPerson1($match['driver']->getMassPerson());
-            //                 $massMatching->setMassPerson2($match['passenger']->getMassPerson());
-            //                 $massMatching->setDistance($matched['newDistance']);
-            //                 $massMatching->setDuration($matched['newDuration']);
-            //                 $this->entityManager->persist($massMatching);
-            //             }
-            //         }
-            //     }
-            // }
-
-            ++$batch;
-
-            if ($batch >= self::BATCH_GEOROUTER) {
-                // we try to match with the candidates
-                $this->logger->info('Mass match | Creating matches records start '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
-                if ($matches = $this->geoMatcher->multiMatch($candidates, true)) {
-                    if (is_array($matches) && count($matches) > 0) {
-                        foreach ($matches as $match) {
-                            foreach ($match['matches'] as $matched) {
-                                $massMatching = new MassMatching();
-                                $massMatching->setMassPerson1($match['driver']->getMassPerson());
-                                $massMatching->setMassPerson2($match['passenger']->getMassPerson());
-                                $massMatching->setDistance($matched['newDistance']);
-                                $massMatching->setDuration($matched['newDuration']);
-                                $this->entityManager->persist($massMatching);
-                            }
-                        }
-                    }
-                }
-                $mass->setStatus(Mass::STATUS_MATCHED);
-                $mass->setCalculatedDate(new \Datetime());
-                $this->entityManager->persist($mass);
-                $this->entityManager->flush();
-
-                $candidates = [];
-                $batch = 0;
-            }
-        }
-        // we try to match with the candidates a last time
-        $this->logger->info('Mass match | Creating matches records start '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
-        if ($matches = $this->geoMatcher->multiMatch($candidates, true)) {
-            if (is_array($matches) && count($matches) > 0) {
-                foreach ($matches as $match) {
-                    foreach ($match['matches'] as $matched) {
+            if ($matches = $this->geoMatcher->singleMatch([$candidates])) {
+                if (is_array($matches) && count($matches) > 0 && isset($matches['driver']) && is_array($matches['driver']) && count($matches['driver']) > 0) {
+                    foreach ($matches['driver'] as $candidateId => $matchesDriver) {
+                        usort($matchesDriver, self::build_sorter('newDuration'));
                         $massMatching = new MassMatching();
-                        $massMatching->setMassPerson1($match['driver']->getMassPerson());
-                        $massMatching->setMassPerson2($match['passenger']->getMassPerson());
-                        $massMatching->setDistance($matched['newDistance']);
-                        $massMatching->setDuration($matched['newDuration']);
+                        $massMatching->setMassPerson1($driverPerson);
+                        $massMatching->setMassPerson2($candidatePassengers[$candidateId]->getMassPerson());
+                        $massMatching->setDistance($matchesDriver[0]['newDistance']);
+                        $massMatching->setDuration($matchesDriver[0]['newDuration']);
                         $this->entityManager->persist($massMatching);
                     }
                 }
             }
+
+            ++$batch;
+
+            if ($batch >= self::BATCH_GEOROUTER) {
+                $this->entityManager->flush();
+                $batch = 0;
+            }
+
+            $candidatePassengers = null;
+            unset($candidatePassengers);
         }
+
         $mass->setStatus(Mass::STATUS_MATCHED);
         $mass->setCalculatedDate(new \Datetime());
         $this->entityManager->persist($mass);
@@ -650,6 +611,22 @@ class MassImportManager
         // $this->eventDispatcher->dispatch(MassMatchedEvent::NAME, $event);
 
         $this->logger->info('Mass match | Creating matches records end '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
+    }
+
+    /**
+     * Callback function for array sort.
+     *
+     * @param mixed $key
+     */
+    private static function build_sorter($key)
+    {
+        return function ($a, $b) use ($key) {
+            if ($a[$key] == $b[$key]) {
+                return 0;
+            }
+
+            return ($a[$key] < $b[$key]) ? -1 : 1;
+        };
     }
 
     private function geoCode(string $input)
