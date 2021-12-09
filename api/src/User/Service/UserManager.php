@@ -85,6 +85,7 @@ use App\Solidary\Repository\SolidaryAskHistoryRepository;
 use App\Solidary\Repository\SolidaryAskRepository;
 use App\Solidary\Entity\SolidaryAsk;
 use App\Gamification\Service\GamificationManager;
+use App\User\Ressource\PhoneValidation;
 
 /**
  * User manager service.
@@ -137,6 +138,8 @@ class UserManager
 
     private $geoTools;
 
+    private $phoneValidationRegex;
+
     /**
         * Constructor.
         *
@@ -182,7 +185,8 @@ class UserManager
         GeoTools $geoTools,
         LanguageRepository $languageRepository,
         ActionRepository $actionRepository,
-        GamificationManager $gamificationManager
+        GamificationManager $gamificationManager,
+        string $phoneValidationRegex
     ) {
         $this->entityManager = $entityManager;
         $this->imageManager = $imageManager;
@@ -223,6 +227,7 @@ class UserManager
         $this->languageRepository = $languageRepository;
         $this->actionRepository = $actionRepository;
         $this->gamificationManager = $gamificationManager;
+        $this->phoneValidationRegex = $phoneValidationRegex;
     }
 
     /**
@@ -1992,5 +1997,14 @@ class UserManager
             }
         }
         return $communities;
+    }
+
+    public function isPhoneValid(PhoneValidation $phoneValidation): PhoneValidation
+    {
+        $phoneValidation->setValid(preg_match($this->phoneValidationRegex, $phoneValidation->getPhoneNumber()));
+        if (!$phoneValidation->isValid()) {
+            $phoneValidation->setMessage($this->translator->trans('errors.phoneNumberInvalid'));
+        }
+        return $phoneValidation;
     }
 }

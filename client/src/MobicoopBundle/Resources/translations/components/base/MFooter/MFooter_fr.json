@@ -72,7 +72,7 @@
     "need":{
         "community":{
             "title":"Créez une communauté sur mobicoop.fr !",
-            "link":"covoiturage-communaute"
+            "link":"/covoiturage-communaute"
         }
     },
     "urlIosLogo": "/images/footer/IOS.svg",

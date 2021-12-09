@@ -93,7 +93,7 @@ use App\App\Entity\App;
  *          "valide_create_event"={
  *              "method"="POST",
  *              "path"="/events/{id}/valide_create_event",
-*               "requirements"={"id"="\d+"},
+ *               "requirements"={"id"="\d+"},
  *              "controller"=ValidateCreateEventController::class,
  *              "security"="is_granted('event_create',object)",
  *              "swagger_context" = {
@@ -204,7 +204,7 @@ class Event
      * @ApiProperty(identifier=true)
      */
     private $id;
-    
+
     /**
      * @var string The name of the event.
      *
@@ -235,7 +235,7 @@ class Event
      * @Groups({"aRead","aWrite","readEvent","write"})
      */
     private $private;
-    
+
     /**
      * @var string The short description of the event.
      *
@@ -243,7 +243,7 @@ class Event
      * @Groups({"aRead","aWrite","readEvent","write"})
      */
     private $description;
-    
+
     /**
      * @var string The full description of the event.
      *
@@ -251,7 +251,7 @@ class Event
      * @Groups({"aRead","aWrite","readEvent","write"})
      */
     private $fullDescription;
-    
+
     /**
      * @var \DateTimeInterface The starting date of the event.
      *
@@ -269,7 +269,7 @@ class Event
      * @Groups({"aRead","aWrite","readEvent","write"})
      */
     private $toDate;
-    
+
     /**
      * @var boolean Use the time for the starting and ending date of the event.
      *
@@ -277,7 +277,7 @@ class Event
      * @Groups({"aRead","aWrite","readEvent","write"})
      */
     private $useTime;
-    
+
     /**
      * @var string The information url for the event.
      *
@@ -285,12 +285,12 @@ class Event
      * @Groups({"aRead","aWrite","readEvent","write"})
      */
     private $url;
-    
+
     /**
-    * @var \DateTimeInterface Creation date of the event.
-    *
-    * @ORM\Column(type="datetime")
-    */
+     * @var \DateTimeInterface Creation date of the event.
+     *
+     * @ORM\Column(type="datetime")
+     */
     private $createdDate;
 
     /**
@@ -299,7 +299,7 @@ class Event
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $updatedDate;
-    
+
     /**
      * @var User The creator of the event.
      *
@@ -331,7 +331,7 @@ class Event
      * @MaxDepth(1)
      */
     private $proposals;
-    
+
     /**
      * @var Address The address of the event.
      *
@@ -343,7 +343,7 @@ class Event
      * @MaxDepth(1)
      */
     private $address;
-    
+
     /**
      * @var ArrayCollection The images of the event.
      *
@@ -362,13 +362,13 @@ class Event
     private $defaultAvatar;
 
     /**
-     * @var int The id of this external event.
+     * @var string The id of this external event.
      *
-     * @ORM\Column(type="integer", nullable=true)
+     * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"readEvent","write"})
      */
     private $externalId;
-    
+
     /**
      * @var string The source of the external event.
      *
@@ -414,7 +414,7 @@ class Event
      * @Groups("aRead")
      */
     private $avatar;
-    
+
     /**
      * @var ArrayCollection The logs linked with the Event.
      *
@@ -422,38 +422,38 @@ class Event
      */
     private $logs;
 
-    public function __construct($id=null)
+    public function __construct($id = null)
     {
         $this->id = $id;
         $this->images = new ArrayCollection();
         $this->proposals = new ArrayCollection();
     }
-    
+
     public function getId(): ?int
     {
         return $this->id;
     }
-    
+
     public function setId($id)
     {
         $this->id = $id;
     }
-    
+
     public function getName(): string
     {
         return $this->name;
     }
-    
+
     public function setName(string $name)
     {
         $this->name = $name;
     }
-    
+
     public function getUrlKey(): ?string
     {
         return $this->urlKey;
     }
-    
+
     public function setUrlKey(?string $urlKey)
     {
         $this->urlKey = $urlKey;
@@ -463,7 +463,7 @@ class Event
     {
         return $this->status;
     }
-    
+
     public function setStatus(int $status)
     {
         $this->status = $status;
@@ -480,82 +480,82 @@ class Event
 
         return $this;
     }
-    
+
     public function getDescription(): string
     {
         return $this->description;
     }
-    
+
     public function setDescription(string $description)
     {
         $this->description = $description;
     }
-    
+
     public function getFullDescription(): string
     {
         return $this->fullDescription;
     }
-    
+
     public function setFullDescription(string $fullDescription)
     {
         $this->fullDescription = $fullDescription;
     }
-    
+
     public function getFromDate(): \DateTimeInterface
     {
         return $this->fromDate;
     }
-    
+
     public function setFromDate(\DateTimeInterface $fromDate): self
     {
         $this->fromDate = $fromDate;
-        
+
         return $this;
     }
-    
+
     public function getToDate(): \DateTimeInterface
     {
         return $this->toDate;
     }
-    
+
     public function setToDate(\DateTimeInterface $toDate): self
     {
         $this->toDate = $toDate;
-        
+
         return $this;
     }
-    
+
     public function getUseTime(): bool
     {
         return $this->useTime;
     }
-    
+
     public function setUseTime(bool $useTime): self
     {
         $this->useTime = $useTime;
-        
+
         return $this;
     }
-    
+
     public function getUrl(): ?string
     {
         return $this->url;
     }
-    
+
     public function setUrl(?string $url)
     {
         $this->url = $url;
     }
-    
+
     public function getCreatedDate(): ?\DateTimeInterface
     {
         return $this->createdDate;
     }
-    
+
     public function setCreatedDate(\DateTimeInterface $createdDate): self
     {
         $this->createdDate = $createdDate;
-        
+
         return $this;
     }
 
@@ -570,16 +570,16 @@ class Event
 
         return $this;
     }
-    
+
     public function getUser(): ?User
     {
         return $this->user;
     }
-    
+
     public function setUser(?User $user): self
     {
         $this->user = $user;
-        
+
         return $this;
     }
 
@@ -587,11 +587,11 @@ class Event
     {
         return $this->app;
     }
-    
+
     public function setApp(?App $app): self
     {
         $this->app = $app;
-        
+
         return $this;
     }
 
@@ -619,22 +619,22 @@ class Event
     {
         return $this->defaultAvatar;
     }
-    
+
     public function getImages()
     {
         return $this->images->getValues();
     }
-    
+
     public function addImage(Image $image): self
     {
         if (!$this->images->contains($image)) {
             $this->images[] = $image;
             $image->setEvent($this);
         }
-        
+
         return $this;
     }
-    
+
     public function removeImage(Image $image): self
     {
         if ($this->images->contains($image)) {
@@ -644,16 +644,16 @@ class Event
                 $image->setEvent(null);
             }
         }
-        
+
         return $this;
     }
 
-    public function getExternalId(): ?int
+    public function getExternalId(): ?string
     {
         return $this->externalId;
     }
-    
-    public function setExternalId(?int $externalId)
+
+    public function setExternalId(?string $externalId)
     {
         $this->externalId = $externalId;
     }
@@ -662,7 +662,7 @@ class Event
     {
         return $this->externalSource;
     }
-    
+
     public function setExternalSource(?string $externalSource)
     {
         $this->externalSource = $externalSource;
@@ -672,7 +672,7 @@ class Event
     {
         return $this->externalImageUrl;
     }
-    
+
     public function setExternalImageUrl(?string $externalImageUrl)
     {
         $this->externalImageUrl = $externalImageUrl;
@@ -707,7 +707,7 @@ class Event
         if (!$this->getUser()) {
             return null;
         }
-        if (count($this->getUser()->getAvatars())>0) {
+        if (count($this->getUser()->getAvatars()) > 0) {
             return $this->getUser()->getAvatars()[0];
         }
         return null;
@@ -715,7 +715,7 @@ class Event
 
     public function getImage(): ?string
     {
-        if (count($this->getImages())>0 && isset($this->getImages()[0]->getVersions()['square_800'])) {
+        if (count($this->getImages()) > 0 && isset($this->getImages()[0]->getVersions()['square_800'])) {
             return $this->getImages()[0]->getVersions()['square_800'];
         }
         return null;
@@ -723,14 +723,14 @@ class Event
 
     public function getAvatar(): ?string
     {
-        if (count($this->getImages())>0 && isset($this->getImages()[0]->getVersions()['square_250'])) {
+        if (count($this->getImages()) > 0 && isset($this->getImages()[0]->getVersions()['square_250'])) {
             return $this->getImages()[0]->getVersions()['square_250'];
         }
         return null;
     }
-    
+
     // DOCTRINE EVENTS
-    
+
     /**
      * Creation date.
      *
@@ -786,17 +786,17 @@ class Event
     {
         return $this->logs->getValues();
     }
-    
+
     public function addLog(Log $log): self
     {
         if (!$this->logs->contains($log)) {
             $this->logs[] = $log;
             $log->setEvent($this);
         }
-        
+
         return $this;
     }
-    
+
     public function removeLog(Log $log): self
     {
         if ($this->logs->contains($log)) {
@@ -806,7 +806,7 @@ class Event
                 $log->setEvent(null);
             }
         }
-        
+
         return $this;
     }
 }
