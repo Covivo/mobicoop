@@ -601,9 +601,10 @@ class MassImportManager
             if (count($insertValues) >= 1000) {
                 $insertRequest = 'insert into mass_matching (mass_person1_id, mass_person2_id, distance, duration) values ';
                 foreach ($insertValues as $value) {
-                    $insertRequest .= '('.implode(',', $value).')';
+                    $insertRequest .= '('.implode(',', $value).'),';
                 }
                 $insertRequest .= rtrim($insertRequest, ',').';';
+                $this->logger->info('Mass match | Insert mass matchings | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
                 $this->entityManager->getConnection()->prepare($insertRequest)->execute();
                 $insertValues = [];
             }
@@ -627,9 +628,10 @@ class MassImportManager
         if (count($insertValues) > 0) {
             $insertRequest = 'insert into mass_matching (mass_person1_id, mass_person2_id, distance, duration) values ';
             foreach ($insertValues as $value) {
-                $insertRequest .= '('.implode(',', $value).')';
+                $insertRequest .= '('.implode(',', $value).'),';
             }
             $insertRequest .= rtrim($insertRequest, ',').';';
+            $this->logger->info('Mass match | Insert mass matchings | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
             $this->entityManager->getConnection()->prepare($insertRequest)->execute();
         }
 
