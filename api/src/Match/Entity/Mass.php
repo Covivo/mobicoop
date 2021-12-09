@@ -121,7 +121,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *          "match"={
  *              "method"="GET",
  *              "path"="/masses/{id}/match",
- *              "normalization_context"={"groups"={"massPost"}},
+ *              "normalization_context"={"groups"={"massMatch"}},
  *              "controller"=MassMatchAction::class,
  *              "security"="is_granted('mass_create',object)",
  *              "swagger_context"={

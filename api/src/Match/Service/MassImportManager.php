@@ -580,15 +580,12 @@ class MassImportManager
                 $this->logger->info('Mass match | Compute matches done for person n°'.$driverPerson->getId().' end '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
                 if (is_array($matches) && count($matches) > 0 && isset($matches['driver']) && is_array($matches['driver']) && count($matches['driver']) > 0) {
                     foreach ($matches['driver'] as $candidateId => $matchesDriver) {
-                        $this->logger->info('Mass match | Treating match for candidate n°'.$candidateId.' start '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
                         usort($matchesDriver, self::build_sorter('newDuration'));
-                        $this->logger->info('Mass match | Treating match for candidate n°'.$candidateId.' after sort persist '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
                         $massMatching = new MassMatching();
                         $massMatching->setMassPerson1($driverPerson);
                         $massMatching->setMassPerson2($candidatePassengers[$candidateId]->getMassPerson());
                         $massMatching->setDistance($matchesDriver[0]['newDistance']);
                         $massMatching->setDuration($matchesDriver[0]['newDuration']);
-                        $this->logger->info('Mass match | Treating match for candidate n°'.$candidateId.' before persist '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
                         $this->entityManager->persist($massMatching);
                     }
                 }
