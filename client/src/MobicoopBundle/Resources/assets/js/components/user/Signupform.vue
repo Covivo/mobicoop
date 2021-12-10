@@ -205,7 +205,7 @@
                   class="my-13"
                   color="secondary"
                   type="submit"
-                  :disabled="!step1 || !consent || isDisable"
+                  :disabled="!step1 || !consent"
                   @click="nextStep(1)"
                 >
                   {{ $t("button.next") }}
