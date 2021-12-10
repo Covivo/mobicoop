@@ -35,6 +35,7 @@ use App\Gamification\Repository\RewardStepRepository;
 use App\Gamification\Service\BadgesBoardManager;
 use App\Gamification\Repository\SequenceItemRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  *
@@ -74,6 +75,7 @@ class RetroactivelyRewardService
     private $badgesBoardManager;
     private $sequenceItemRepository;
     private $entityManager;
+    private $logger;
 
 
     public function __construct(
@@ -82,7 +84,8 @@ class RetroactivelyRewardService
         RewardStepRepository $rewardStepRepository,
         BadgesBoardManager $badgesBoardManager,
         SequenceItemRepository $sequenceItemRepository,
-        EntityManagerInterface $entityManager
+        EntityManagerInterface $entityManager,
+        LoggerInterface $logger
     ) {
         $this->userRepository = $userRepository;
         $this->badgeRepository = $badgeRepository;
@@ -90,26 +93,105 @@ class RetroactivelyRewardService
         $this->badgesBoardManager = $badgesBoardManager;
         $this->sequenceItemRepository = $sequenceItemRepository;
         $this->entityManager = $entityManager;
+        $this->logger = $logger;
     }
 
     public function retroactivelyRewardUsers()
     {
-        $count = 0;
-        foreach ($this->userRepository->findAll() as $user) {
-            $this->retroactivelyRewardUser($user);
-            $count++;
+        $this->logger->info("start retroactivelyRewardUsers | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        
+        $limit = 10;
+        $limit = 10000;
+        #$limit = 100000;
+        // select u.id, count(i.id) from user u left join image i on i.user_id = u.id group by u.id;
+        $stmt = $this->entityManager->getConnection()->prepare(
+            "select user.id, reward_step.sequence_item_id 
+            from user 
+            left join reward_step on reward_step.user_id = user.id 
+            limit $limit;"
+        );
+        $stmt->execute();
+        $resultsUsers = $stmt->fetchAll();
+
+        $users = [];
+        foreach ($resultsUsers as $user) {
+            if (array_key_exists($user['id'], $users)) {
+                array_push($users[$user['id']], $user['sequence_item_id']);
+            } else {
+                $users[$user['id']] = [$user['sequence_item_id']];
+            }
         }
-        return $count;
+
+        $stmt = $this->entityManager->getConnection()->prepare(
+            "select b.id, si.id as sequence_item_id, ga.id as gamification_action_id, gar.name as rule_name
+            from badge b 
+            left join sequence_item si on b.id = si.badge_id
+            left join gamification_action ga on ga.id = si.gamification_action_id
+            left join gamification_action_rule gar on gar.id = ga.gamification_action_rule_id;"
+        );
+        $stmt->execute();
+        $resultBadges = $stmt->fetchAll();
+        
+        $badges = [];
+        foreach ($resultBadges as $badge) {
+            if (array_key_exists($badge['id'], $badges)) {
+                array_push(
+                    $badges[$badge['id']], 
+                    [
+                        'si_id' => $badge['sequence_item_id'],
+                        'ga_id' => $badge['gamification_action_id'],
+                        'rule_name' => $badge['rule_name']
+                    ]
+                );
+            } else {
+                $badges[$badge['id']] = [
+                        [
+                            'si_id' => $badge['sequence_item_id'],
+                            'ga_id' => $badge['gamification_action_id'],
+                            'rule_name' => $badge['rule_name']
+                        ]    
+                ];
+            }
+        }
+        // var_dump($badges);exit;
+
+        // $badges = $this->badgeRepository->findAll();
+        foreach ($users as $id => $sequenceItemsIds) {
+            $this->retroactivelyRewardUser($id, $sequenceItemsIds, $badges);
+        }
+        $this->logger->info("end retroactivelyRewardUsers | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        return count($users);
+
+
+
+
+        // $count = 0;
+        // foreach ($this->userRepository->findAll() as $user) {
+        //     $this->retroactivelyRewardUser($user);
+        //     $count++;
+        // }
+        //return $count;
     }
 
-    private function retroactivelyRewardUser($user)
+    private function retroactivelyRewardUser(int $id, array $sequenceItemsIds, array $badges)
     {
-        foreach ($this->badgeRepository->findAll() as $badge) {
-            foreach ($badge->getSequenceItems() as $sequenceItem) {
-                if ($this->hasAlreadyRewardStep($user, $sequenceItem)) {
-                    continue;
-                }
-                $method = Self::GAMIFICATION_ACTION_DONE[$sequenceItem->getGamificationAction()->getId()];
+        // $this->logger->info("start retroactivelyRewardUser | " . $id . " | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+
+        foreach ($badges as $badge) {
+            // $this->logger->info("checkbadge | " . $badge->getId() . " | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+
+            foreach ($badge as $sequenceItem) {
+                // $this->logger->info("checkSequenceItem | " . $sequenceItem->getId() . " | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+
+                if (in_array($sequenceItem['si_id'], $sequenceItemsIds)) continue;
+
+
+                // if ($this->hasAlreadyRewardStep($user, $sequenceItem)) {
+                //     continue;
+                // }
+
+                $method = Self::GAMIFICATION_ACTION_DONE[$sequenceItem['ga_id']];
+
                 if ($this->$method($user, $sequenceItem)) {
                     $this->handleRetroactivelyRewards($user, $sequenceItem->getId());
                 }
@@ -117,13 +199,15 @@ class RetroactivelyRewardService
         }
     }
 
-    public function hasAlreadyRewardStep(User $user, SequenceItem $sequenceItem)
-    {
-        if (count($this->rewardStepRepository->findRewardStepByUserAndSequenceItem($user, $sequenceItem)) >= 1) {
-            return true;
-        }
-        return false;
-    }
+    // public function hasAlreadyRewardStep(int $id, SequenceItem $sequenceItem)
+    // {
+    //     return $this->entityManager->getConnection()
+    //     ->fetchColumn('SELECT id from reward_step WHERE sequence_item_id = ' . $sequenceItem->getId() . ' AND user_id = ' . $id);
+    //     // if (count($this->rewardStepRepository->findRewardStepByUserAndSequenceItem($id, $sequenceItem)) >= 1) {
+    //         // return true;
+    //     // }
+    //     // return false;
+    // }
    
     public function handleRetroactivelyRewards(User $user, int $sequenceItemId)
     {

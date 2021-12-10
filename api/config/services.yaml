@@ -478,12 +478,15 @@ services:
     App\Gamification\EventSubscriber\LogSubscriber:
         arguments:
             $gamificationActive: '%env(bool:GAMIFICATION_ACTIVE)%'
+    App\Gamification\Service\BadgesBoardManager:
+        arguments:
+            $badgeImageUri: '%env(string:GAMIFICATION_BADGE_IMAGE_URI)%' 
     App\Gamification\Service\GamificationManager:
         arguments:
             $badgeImageUri: '%env(string:GAMIFICATION_BADGE_IMAGE_URI)%'
-    App\Gamification\Service\BadgesBoardManager:
-        arguments:
-            $badgeImageUri: '%env(string:GAMIFICATION_BADGE_IMAGE_URI)%'                    
+    App\Gamification\Service\RetroactivelyRewardService:
+        tags:
+            - { name: monolog.logger, channel: gamification }                                   
     
     # Geocoder; alias to allow this type to be autowired
     Geocoder\Plugin\PluginProvider: '@bazinga_geocoder.provider.chain'

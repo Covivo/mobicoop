@@ -85,22 +85,22 @@ class RewardStepRepository
         return $query->getQuery()->getResult();
     }
 
-    /**
-     * Get rewardStep by user and sequenceItem
-     *
-     * @param User $user
-     * @param SequenceItem $sequenceItem
-     * @return array|null
-     */
-    public function findRewardStepByUserAndSequenceItem(User $user, SequenceItem $sequenceItem): ?array
-    {
-        $query = $this->repository->createQueryBuilder('rs')
-        ->where('rs.sequenceItem = :sequenceItem')
-        ->andWhere('rs.user = :user')
-        ->setParameter('user', $user)
-        ->setParameter('sequenceItem', $sequenceItem)
-        ;
+    // /**
+    //  * Get rewardStep by user and sequenceItem
+    //  *
+    //  * @param User $user
+    //  * @param SequenceItem $sequenceItem
+    //  * @return array|null
+    //  */
+    // public function findRewardStepByUserAndSequenceItem(int $user, SequenceItem $sequenceItem): ?array
+    // {
+    //     $query = $this->repository->createQueryBuilder('rs')
+    //     ->where('rs.sequenceItem = :sequenceItem')
+    //     ->andWhere('rs.user_id = :user')
+    //     ->setParameter('user', $user)
+    //     ->setParameter('sequenceItem', $sequenceItem)
+    //     ;
                 
-        return $query->getQuery()->getResult();
-    }
+    //     return $query->getQuery()->getResult();
+    // }
 }
