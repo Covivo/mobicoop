@@ -454,7 +454,7 @@ class Mass
 
     /**
      * @var MassMatrix Matrix of carpools
-     *                 Groups({"massCompute"})
+     * @Groups({"massCompute"})
      */
     private $massMatrix;
 

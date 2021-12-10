@@ -669,6 +669,7 @@ services:
             $roundTripCompute: '%env(bool:MOBIMATCH_ROUNDTRIP_COMPUTE)%'
             $aberrantCoefficient: '%env(int:MOBIMATCH_ABERRANT_COEFFICIENT)%'
             $kilometerPrice: '%env(float:MOBIMATCH_KILOMETER_PRICE)%'
+            $computeMatrix: '%env(bool:MOBIMATCH_COMPUTE_MATRIX)%'
         tags:
             - { name: monolog.logger, channel: mass }
 
