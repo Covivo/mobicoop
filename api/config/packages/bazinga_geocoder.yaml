@@ -13,7 +13,7 @@ bazinga_geocoder:
         - "Georouter.query_data_plugin"
         
     gmaps:
-      factory: Bazinga\GeocoderBundle\ProviderFactory\GoogleMapsFactory
+      factory: App\Geography\ProviderFactory\GoogleMapsFactory
       # cache: 'app.simple_cache'
       # cache_lifetime: 3600
       aliases:

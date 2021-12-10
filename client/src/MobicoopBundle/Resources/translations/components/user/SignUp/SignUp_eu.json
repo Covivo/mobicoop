@@ -51,6 +51,10 @@
         "error": "Helbide elektroniko hau jadanik erabilia da",
         "url": "/utilisateur/verif/email"
     },
+    "checkPhoneValidity": {
+        "url": "/utilisateur/verif/telephone",
+        "error": "Ce numéro de téléphone n'est pas valide"
+    },
     "password": {
         "errors": {
             "number": "Pasahitzak zenbaki bat izan behar du.",

@@ -49,6 +49,7 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
     private $security;
     private $entityManager;
     private $badgeImageUri;
+    private $gamificationActive;
     private $logger;
     private $request;
 
@@ -63,6 +64,7 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
         Security $security,
         EntityManagerInterface $entityManager,
         string $badgeImageUri,
+        string $gamificationActive,
         LoggerInterface $logger,
         RequestStack $request
     ) {
@@ -78,6 +80,7 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
         $this->security = $security;
         $this->entityManager = $entityManager;
         $this->badgeImageUri = $badgeImageUri;
+        $this->gamificationActive = $gamificationActive;
         $this->logger = $logger;
         $this->request = $request->getCurrentRequest();
     }
@@ -111,75 +114,76 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
 
             return $data;
         }
+        if ($this->gamificationActive == true) {
+            // We check if there is some gamificationNotifications entities in waiting for the current User
 
-        // We check if there is some gamificationNotifications entities in waiting for the current User
-
-        // Waiting RewardSteps
-        $waitingRewardSteps = $this->rewardStepRepository->findWaiting($this->security->getUser());
-        if ($object instanceof User && is_array($data) && is_array($waitingRewardSteps) && count($waitingRewardSteps) > 0) {
-            $data['gamificationNotifications'] = [];
-            foreach ($waitingRewardSteps as $waitingRewardStep) {
-                $data['gamificationNotifications'][] = $this->formatRewardStep($waitingRewardStep);
-            }
-        }
-
-        // Waiting Rewards
-        $waitingRewards = $this->rewardRepository->findWaiting($this->security->getUser());
-        if ($object instanceof User && is_array($data) && is_array($waitingRewards) && count($waitingRewards) > 0) {
-            $data['gamificationNotifications'] = [];
-            foreach ($waitingRewards as $waitingReward) {
-                $data['gamificationNotifications'][] = $this->formatReward($waitingReward);
-            }
-        }
-
-        // New gamification notifications
-        if (is_array($data) && count($this->gamificationNotifier->getNotifications()) > 0) {
-            // We init the array only if it's not already filled
-            if (!isset($data['gamificationNotifications'])) {
+            // Waiting RewardSteps
+            $waitingRewardSteps = $this->rewardStepRepository->findWaiting($this->security->getUser());
+            if ($object instanceof User && is_array($data) && is_array($waitingRewardSteps) && count($waitingRewardSteps)>0) {
                 $data['gamificationNotifications'] = [];
+                foreach ($waitingRewardSteps as $waitingRewardStep) {
+                    $data['gamificationNotifications'][] = $this->formatRewardStep($waitingRewardStep);
+                }
             }
 
-            foreach ($this->gamificationNotifier->getNotifications() as $gamificationNotification) {
-                if ($gamificationNotification instanceof Reward) {
-                    $rewardIds = [];
-                    foreach ($data['gamificationNotifications'] as $notification) {
-                        if ('Reward' == $notification['type']) {
-                            $rewardIds[] = $notification['id'];
-                        }
-                    }
-                    if (!in_array($gamificationNotification->getId(), $rewardIds)) {
-                        $data['gamificationNotifications'][] = $this->formatReward($gamificationNotification);
-                    }
-                } elseif ($gamificationNotification instanceof RewardStep) {
-                    $rewardStepIds = [];
-                    foreach ($data['gamificationNotifications'] as $notification) {
-                        if ('RewardStep' == $notification['type']) {
-                            $rewardStepIds[] = $notification['id'];
-                        }
-                    }
-                    if (!in_array($gamificationNotification->getId(), $rewardStepIds)) {
-                        $data['gamificationNotifications'][] = $this->formatRewardStep($gamificationNotification);
-                    }
-                    $this->entityManager->persist($gamificationNotification);
+            // Waiting Rewards
+            $waitingRewards = $this->rewardRepository->findWaiting($this->security->getUser());
+            if ($object instanceof User && is_array($data) && is_array($waitingRewards) && count($waitingRewards)>0) {
+                $data['gamificationNotifications'] = [];
+                foreach ($waitingRewards as $waitingReward) {
+                    $data['gamificationNotifications'][] = $this->formatReward($waitingReward);
                 }
             }
-        }
-        if (isset($data['gamificationNotifications'])) {
-            // we remove RewardStep if he's associated to a gained badge
-            $badgeIds = [];
-            foreach ($data['gamificationNotifications'] as $gamificationNotification) {
-                if ('Badge' == $gamificationNotification['type']) {
-                    $badgeIds[] = $gamificationNotification['id'];
-                }
-            }
-            foreach ($data['gamificationNotifications'] as $key => $gamificationNotification) {
-                if ('RewardStep' == $gamificationNotification['type'] && in_array($gamificationNotification['badge']['id'], $badgeIds)) {
-                    unset($data['gamificationNotifications'][$key]);
-                }
-            }
-        }
-        $this->entityManager->flush();
 
+            // New gamification notifications
+            if (is_array($data) && count($this->gamificationNotifier->getNotifications())>0) {
+
+                // We init the array only if it's not already filled
+                if (!isset($data['gamificationNotifications'])) {
+                    $data['gamificationNotifications'] = [];
+                }
+
+                foreach ($this->gamificationNotifier->getNotifications() as $gamificationNotification) {
+                    if ($gamificationNotification instanceof Reward) {
+                        $rewardIds = [];
+                        foreach ($data["gamificationNotifications"] as $notification) {
+                            if ($notification["type"] == "Reward") {
+                                $rewardIds[] = $notification["id"];
+                            }
+                        }
+                        if (!in_array($gamificationNotification->getId(), $rewardIds)) {
+                            $data['gamificationNotifications'][] = $this->formatReward($gamificationNotification);
+                        }
+                    } elseif ($gamificationNotification instanceof RewardStep) {
+                        $rewardStepIds = [];
+                        foreach ($data["gamificationNotifications"] as $notification) {
+                            if ($notification["type"] == "RewardStep") {
+                                $rewardStepIds[] = $notification["id"];
+                            }
+                        }
+                        if (!in_array($gamificationNotification->getId(), $rewardStepIds)) {
+                            $data['gamificationNotifications'][] = $this->formatRewardStep($gamificationNotification);
+                        }
+                        $this->entityManager->persist($gamificationNotification);
+                    }
+                }
+            }
+            if (isset($data['gamificationNotifications'])) {
+                // we remove RewardStep if he's associated to a gained badge
+                $badgeIds = [];
+                foreach ($data["gamificationNotifications"] as $gamificationNotification) {
+                    if ($gamificationNotification["type"] == "Badge") {
+                        $badgeIds[] = $gamificationNotification["id"];
+                    }
+                }
+                foreach ($data["gamificationNotifications"] as $key => $gamificationNotification) {
+                    if ($gamificationNotification["type"] == "RewardStep" && in_array($gamificationNotification["badge"]["id"], $badgeIds)) {
+                        unset($data["gamificationNotifications"][$key]);
+                    }
+                }
+            }
+            $this->entityManager->flush();
+        }
         return $data;
     }
 

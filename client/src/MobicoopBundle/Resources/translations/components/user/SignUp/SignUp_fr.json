@@ -72,6 +72,10 @@
         "url": "/utilisateur/verif/email",
         "error": "Cet email est déjà pris"
     },
+    "checkPhoneValidity": {
+        "url": "/utilisateur/verif/telephone",
+        "error": "Ce numéro de téléphone n'est pas valide"
+    },
     "chart": {
         "text": "J'accepte ",
         "link": "la charte de la plateforme et sa politique de protection des données",

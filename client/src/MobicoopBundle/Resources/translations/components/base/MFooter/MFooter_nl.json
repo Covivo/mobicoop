@@ -13,7 +13,7 @@
     "urlIosLogo": "/images/footer/IOS.svg",
     "need": {
         "community": {
-            "link": "covoiturage-communaute",
+            "link": "/covoiturage-communaute",
             "title": "Maak een community aan op mobicoop.fr!"
         }
     },

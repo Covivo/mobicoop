@@ -302,7 +302,8 @@ class ProposalMatcher
                             'macroCounty'=>$proposalFound['macroCounty'],
                             'region'=>$proposalFound['region'],
                             'macroRegion'=>$proposalFound['macroRegion'],
-                            'countryCode'=>$proposalFound['countryCode']
+                            'countryCode'=>$proposalFound['countryCode'],
+                            'name'=>$proposalFound['addressName']
                         ]
                     ]
                 ];
@@ -327,7 +328,8 @@ class ProposalMatcher
                     'macroCounty'=>$proposalFound['macroCounty'],
                     'region'=>$proposalFound['region'],
                     'macroRegion'=>$proposalFound['macroRegion'],
-                    'countryCode'=>$proposalFound['countryCode']
+                    'countryCode'=>$proposalFound['countryCode'],
+                    'name'=>$proposalFound['addressName']
                 ];
                 if (!in_array($element, $proposals[$proposalFound['pid']]['addresses'])) {
                     $proposals[$proposalFound['pid']]['addresses'][] = $element;
@@ -388,7 +390,7 @@ class ProposalMatcher
                         $address->setAddressCountry($waypoint['addressCountry']);
                         $address->setElevation($waypoint['elevation']);
                         $address->setHouseNumber($waypoint['houseNumber']);
-                        $address->setStreetAddress($waypoint['street']);
+                        $address->setStreet($waypoint['street']);
                         $address->setSubLocality($waypoint['subLocality']);
                         $address->setLocalAdmin($waypoint['localAdmin']);
                         $address->setCounty($waypoint['county']);
@@ -396,6 +398,7 @@ class ProposalMatcher
                         $address->setRegion($waypoint['region']);
                         $address->setMacroRegion($waypoint['macroRegion']);
                         $address->setCountryCode($waypoint['countryCode']);
+                        $address->setName($waypoint['name']);
                         $addressesCandidate[] = $address;
                     }
                 }
@@ -446,7 +449,7 @@ class ProposalMatcher
                         $address->setAddressCountry($waypoint['addressCountry']);
                         $address->setElevation($waypoint['elevation']);
                         $address->setHouseNumber($waypoint['houseNumber']);
-                        $address->setStreetAddress($waypoint['street']);
+                        $address->setStreet($waypoint['street']);
                         $address->setSubLocality($waypoint['subLocality']);
                         $address->setLocalAdmin($waypoint['localAdmin']);
                         $address->setCounty($waypoint['county']);
@@ -454,6 +457,7 @@ class ProposalMatcher
                         $address->setRegion($waypoint['region']);
                         $address->setMacroRegion($waypoint['macroRegion']);
                         $address->setCountryCode($waypoint['countryCode']);
+                        $address->setName($waypoint['name']);
                         $addressesCandidate[] = $address;
                     }
                 }
@@ -594,7 +598,6 @@ class ProposalMatcher
         
         // we complete the matchings with the waypoints and criteria
         foreach ($matchings as $matching) {
-
             // waypoints
             foreach ($matching->getFilters()['route'] as $key=>$point) {
                 $waypoint = new Waypoint();

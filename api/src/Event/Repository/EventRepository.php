@@ -94,12 +94,11 @@ class EventRepository
         return $query;
     }
 
-    public function getEvents()
+    public function getEvents(): QueryBuilder
     {
         return $this->repository->createQueryBuilder('e')
         ->where('e.status = 1')
-        ->andWhere('e.private = false')
-        ->getQuery()->getResult();
+        ->andWhere('e.private = false');
     }
 
 

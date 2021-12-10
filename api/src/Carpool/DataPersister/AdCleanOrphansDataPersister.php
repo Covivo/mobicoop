@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
@@ -20,30 +21,28 @@
  *    LICENSE
  **************************/
 
- namespace App\User\DataPersister;
+namespace App\Carpool\DataPersister;
 
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
+use App\Carpool\Ressource\Ad;
+use App\Carpool\Service\ProposalManager;
 use App\User\Entity\User;
-use App\User\Exception\BlockException;
-use App\User\Ressource\Block;
-use App\User\Service\BlockManager;
-use LogicException;
 use Symfony\Component\Security\Core\Security;
 
-final class BlockDataPersister implements ContextAwareDataPersisterInterface
+final class AdCleanOrphansDataPersister implements ContextAwareDataPersisterInterface
 {
+    private $proposalManager;
     private $security;
-    private $blockManager;
-    
-    public function __construct(Security $security, BlockManager $blockManager)
-    {
-        $this->security = $security;
-        $this->blockManager = $blockManager;
-    }
 
+    public function __construct(ProposalManager $proposalManager, Security $security)
+    {
+        $this->proposalManager = $proposalManager;
+        $this->security = $security;
+    }
+  
     public function supports($data, array $context = []): bool
     {
-        return $data instanceof Block && isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'post';
+        return $data instanceof Ad && isset($context['collection_operation_name']) && $context['collection_operation_name'] === 'cleanOrphans';
     }
 
     public function persist($data, array $context = [])
@@ -52,7 +51,7 @@ final class BlockDataPersister implements ContextAwareDataPersisterInterface
             throw new \LogicException("Only a User can perform this action");
         }
         
-        return $this->blockManager->handleBlock($this->security->getUser(), $data->getUser());
+        return $this->proposalManager->cleanUserOrphanProposals($this->security->getUser());
     }
 
     public function remove($data, array $context = [])

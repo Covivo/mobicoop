@@ -874,7 +874,7 @@ class User implements UserInterface, EquatableInterface
      * @Groups({"aRead","aWrite","readUser","write"})
      */
     private $gamification;
-    
+
     /**
      * @var boolean|null The user accepts to receive news about the platform.
      *
@@ -1032,16 +1032,16 @@ class User implements UserInterface, EquatableInterface
     private $communities;
 
     /**
-    * @var ArrayCollection|null The communityUser associated to this user
-    *
-    * @ORM\OneToMany(targetEntity="\App\Community\Entity\CommunityUser", mappedBy="user")
-    */
+     * @var ArrayCollection|null The communityUser associated to this user
+     *
+     * @ORM\OneToMany(targetEntity="\App\Community\Entity\CommunityUser", mappedBy="user")
+     */
     private $communityUsers;
 
     /**
-    * @var int|null Community choose by a user
-    * @Groups({"readUser","write"})
-    */
+     * @var int|null Community choose by a user
+     * @Groups({"readUser","write"})
+     */
     private $communityId;
 
     /**
@@ -1160,10 +1160,10 @@ class User implements UserInterface, EquatableInterface
     private $diariesAuthor;
 
     /**
-    * @var ArrayCollection|null A user may have many user notification preferences.
-    *
-    * @ORM\OneToMany(targetEntity="\App\User\Entity\UserNotification", mappedBy="user", cascade={"persist"})
-    */
+     * @var ArrayCollection|null A user may have many user notification preferences.
+     *
+     * @ORM\OneToMany(targetEntity="\App\User\Entity\UserNotification", mappedBy="user", cascade={"persist"})
+     */
     private $userNotifications;
 
     /**
@@ -1264,6 +1264,12 @@ class User implements UserInterface, EquatableInterface
      * @Groups({"aRead","readUser"})
      */
     private $createdSsoDate;
+
+    /**
+     * @var bool|null true : the user has been created by sso (false mean no sso or only attached a previously existing account)
+     * @ORM\Column(type="boolean", nullable=true)
+     */
+    private $createdBySso;
 
     /**
      * @var User|null Admin that create the user.
@@ -1402,7 +1408,7 @@ class User implements UserInterface, EquatableInterface
      * @MaxDepth(1)
      */
     private $paymentProfileId;
-    
+
     /**
      * @var array|null BankAccounts of a User
      *
@@ -1420,17 +1426,17 @@ class User implements UserInterface, EquatableInterface
     private $wallets;
 
     /**
-    * @var string|null CarpoolExport of a User
-    *
-    * @Groups({"carpoolExport"})
-    * @MaxDepth(1)
-    */
+     * @var string|null CarpoolExport of a User
+     *
+     * @Groups({"carpoolExport"})
+     * @MaxDepth(1)
+     */
     private $carpoolExport;
 
     /**
      * @var bool|null If the User can receive a review from the current User (used in Carpool Results)
      *
-    * @Groups({"results"})
+     * @Groups({"results"})
      */
     private $canReceiveReview;
 
@@ -2352,8 +2358,8 @@ class User implements UserInterface, EquatableInterface
     public function addUserAuthAssignment(UserAuthAssignment $userAuthAssignment): self
     {
         if (!$this->userAuthAssignments->contains($userAuthAssignment)) {
-            $this->userAuthAssignments->add($userAuthAssignment);
             $userAuthAssignment->setUser($this);
+            $this->userAuthAssignments->add($userAuthAssignment);
         }
 
         return $this;
@@ -2365,22 +2371,19 @@ class User implements UserInterface, EquatableInterface
         if ($this->userAuthAssignments->contains($userAuthAssignment)) {
             $this->userAuthAssignments->removeElement($userAuthAssignment);
             // set the owning side to null (unless already changed)
-            if ($userAuthAssignment->getUser() === $this) {
-                $userAuthAssignment->setUser(null);
-            }
+            // if ($userAuthAssignment->getUser() === $this) {
+            // 	$userAuthAssignment->setUser(null);
+            // }
         }
-
         return $this;
     }
 
     public function removeUserAuthAssignments()
     {
         foreach ($this->userAuthAssignments as $userAuthAssignment) {
-            $this->userAuthAssignments->removeElement($userAuthAssignment);
-            if ($userAuthAssignment->getUser() === $this) {
-                $userAuthAssignment->setUser(null);
-            }
+            $this->removeUserAuthAssignment($userAuthAssignment);
         }
+        $this->rolesTerritory = [];
     }
 
     public function getMasses()
@@ -2950,7 +2953,7 @@ class User implements UserInterface, EquatableInterface
         if (is_array($this->getAvatars()) && count($this->getAvatars())>0) {
             return $this->getAvatars()[count($this->getAvatars())-1];
         }
-        
+
         return $avatar;
     }
 
@@ -3002,6 +3005,18 @@ class User implements UserInterface, EquatableInterface
     public function setCreatedSsoDate(?\DateTimeInterface $createdSsoDate): self
     {
         $this->createdSsoDate = $createdSsoDate;
+
+        return $this;
+    }
+
+    public function isCreatedBySso(): ?bool
+    {
+        return (is_null($this->createdBySso)) ? false : $this->createdBySso;
+    }
+
+    public function setCreatedBySso(?bool $createdBySso): self
+    {
+        $this->createdBySso = $createdBySso;
 
         return $this;
     }
@@ -3176,7 +3191,7 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
-    
+
     public function getOperates()
     {
         return $this->operates->getValues();
@@ -3260,7 +3275,7 @@ class User implements UserInterface, EquatableInterface
 
         return $this;
     }
-    
+
     public function isUserReviewsActive(): ?bool
     {
         return $this->userReviewsActive;
@@ -3344,10 +3359,10 @@ class User implements UserInterface, EquatableInterface
         if (!$this->rewards->contains($reward)) {
             $this->rewards[] = $reward;
         }
-        
+
         return $this;
     }
-    
+
     public function removeReward(Reward $reward): self
     {
         if ($this->rewards->contains($reward)) {
@@ -3366,10 +3381,10 @@ class User implements UserInterface, EquatableInterface
         if (!$this->rewardSteps->contains($rewardStep)) {
             $this->rewardSteps[] = $rewardStep;
         }
-        
+
         return $this;
     }
-    
+
     public function removeRewardStep(RewardStep $rewardStep): self
     {
         if ($this->rewardSteps->contains($rewardStep)) {
@@ -3451,23 +3466,23 @@ class User implements UserInterface, EquatableInterface
 
         return $this;
     }
-    
-    
+
+
     public function getBlocks()
     {
         return $this->blocks->getValues();
     }
-    
+
     public function addBlock(Block $block): self
     {
         if (!$this->blocks->contains($block)) {
             $this->blocks[] = $block;
             $block->setUser($this);
         }
-        
+
         return $this;
     }
-    
+
     public function removeBlock(Block $block): self
     {
         if ($this->blocks->contains($block)) {
@@ -3477,7 +3492,7 @@ class User implements UserInterface, EquatableInterface
                 $block->setUser(null);
             }
         }
-        
+
         return $this;
     }
 
@@ -3485,17 +3500,17 @@ class User implements UserInterface, EquatableInterface
     {
         return $this->blockBys->getValues();
     }
-    
+
     public function addBlockBy(Block $blockBy): self
     {
         if (!$this->blockBys->contains($blockBy)) {
             $this->blockBys[] = $blockBy;
             $blockBy->setBlockedUser($this);
         }
-        
+
         return $this;
     }
-    
+
     public function removeBlockBy(Block $blockBy): self
     {
         if ($this->blockBys->contains($blockBy)) {
@@ -3505,7 +3520,7 @@ class User implements UserInterface, EquatableInterface
                 $blockBy->setBlockedUser(null);
             }
         }
-        
+
         return $this;
     }
 
