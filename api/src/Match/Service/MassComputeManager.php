@@ -50,7 +50,6 @@ class MassComputeManager
     private $roundTripCompute;
     private $aberrantCoefficient;
     private $kilometerPrice;
-    private $computeMatrix;
     private $logger;
 
     private $mass;
@@ -58,6 +57,7 @@ class MassComputeManager
     private $persons;
     private $massMatrix;
     private $tabCoords;
+    private $personsIndexed;
 
     public function __construct(
         FormatDataManager $formatDataManager,
@@ -66,8 +66,7 @@ class MassComputeManager
         LoggerInterface $logger,
         bool $roundTripCompute,
         int $aberrantCoefficient,
-        float $kilometerPrice,
-        bool $computeMatrix
+        float $kilometerPrice
     ) {
         $this->formatDataManager = $formatDataManager;
         $this->geoTools = $geoTools;
@@ -75,7 +74,6 @@ class MassComputeManager
         $this->roundTripCompute = $roundTripCompute;
         $this->aberrantCoefficient = $aberrantCoefficient;
         $this->kilometerPrice = $kilometerPrice;
-        $this->computeMatrix = $computeMatrix;
         $this->logger = $logger;
     }
 
@@ -120,12 +118,12 @@ class MassComputeManager
 
         // J'indexe le tableau des personnes pour y accéder ensuite en direct
         $this->logger->info('Mass Compute | Index persons started '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
-        $personsIndexed = [];
+        $this->personsIndexed = [];
         foreach ($this->persons as $person) {
-            $personsIndexed[$person->getId()] = $person;
+            $this->personsIndexed[$person->getId()] = $person;
         }
 
-        $this->logger->info('Mass Compute | Index finished for '.count($personsIndexed).' persons | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
+        $this->logger->info('Mass Compute | Index finished for '.count($this->personsIndexed).' persons | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
 
         $this->tabCoords = [];
 
@@ -198,9 +196,7 @@ class MassComputeManager
             $this->logger->info('Mass Compute | Start Building Matrix | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
 
             // Only if the matching has been done.
-            if ($this->computeMatrix) {
-                $this->buildCarpoolersMatrix($personsIndexed);
-            }
+            $this->buildCarpoolersMatrix();
 
             $this->logger->info('Mass Compute | End Building Matrix | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
 
@@ -309,16 +305,13 @@ class MassComputeManager
      *
      * @return MassMatrix
      */
-    private function buildCarpoolersMatrix(array $personsIndexed)
+    private function buildCarpoolersMatrix()
     {
         foreach ($this->persons as $person) {
-            echo "--------------------\n";
-            echo "Person : ".$person->getId()."\n";
-            echo "--------------------\n";
             $this->logger->info('Mass Compute | Start Building Matrix for person '.$person->getId().' | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
             $matchingsAsDriver = $person->getMatchingsAsDriver();
             $matchingsAsPassenger = $person->getMatchingsAsPassenger();
-            $this->massMatrix = $this->linkCarpoolers(array_merge($matchingsAsDriver, $matchingsAsPassenger), $personsIndexed);
+            $this->linkCarpoolers(array_merge($matchingsAsDriver, $matchingsAsPassenger));
             $this->logger->info('Mass Compute | End Building Matrix for person '.$person->getId().' | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
         }
     }
@@ -328,7 +321,7 @@ class MassComputeManager
      *
      * @return MassMatrix
      */
-    private function linkCarpoolers(array $matchings, array $personsIndexed)
+    private function linkCarpoolers(array $matchings)
     {
         if (count($matchings) > 0) {
             $fastestMassPerson1Id = null;
@@ -338,8 +331,6 @@ class MassComputeManager
             $fastestCO2 = 0;
             $biggestGain = -1;
             foreach ($matchings as $matching) {
-                echo "----------Debut matching\n";
-                echo "Matching ID : ".$matching->getId()."\n";
                 $journeyPerson1 = $this->massMatrix->getJourneyOfAPerson($matching->getMassPerson1Id());
                 $journeyPerson2 = $this->massMatrix->getJourneyOfAPerson($matching->getMassPerson2Id());
 
@@ -362,9 +353,9 @@ class MassComputeManager
             }
 
             // As soon as they are linked, we ignore them both. We do not know if it's the best match of all the MassMatchings but it's good enough
-            if (null !== $fastestMassPerson1Id && null !== $fastestMassPerson2Id && 0 == count($this->massMatrix->getCarpoolsOfAPerson($fastestMassPerson1Id)) && 0 == count($this->massMatrix->getCarpoolsofAPerson($fastestMassPerson2Id))) {
-                $person1 = $personsIndexed[$fastestMassPerson1Id];
-                $person2 = $personsIndexed[$fastestMassPerson2Id];
+            if (null !== $fastestMassPerson1Id && null !== $fastestMassPerson2Id) {
+                $person1 = $this->personsIndexed[$fastestMassPerson1Id];
+                $person2 = $this->personsIndexed[$fastestMassPerson2Id];
 
                 $this->massMatrix->addCarpools(new MassCarpool(
                     $person1,
