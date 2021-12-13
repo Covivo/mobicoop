@@ -556,7 +556,8 @@ class TerritoryManager
                 select a.id, t.id 
                 from address a 
                     inner join territory t on t.id not in (select territory_id from address_territory where address_id=a.id) and a.latitude between t.min_latitude and t.max_latitude and a.longitude between t.min_longitude and t.max_longitude
-                where st_contains(t.geo_json_detail, a.geo_json)=1;')->execute()
+                where a.id not in (select at.address_id from address_territory at)
+                    and st_contains(t.geo_json_detail, a.geo_json)=1;')->execute()
             && $this->entityManager->getConnection()->prepare('commit;')->execute()) {
             return $this->dropGeoJsonTerritoryIndex() && $this->closeRunningFile() && false;
         }
