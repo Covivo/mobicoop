@@ -68,6 +68,13 @@ class RetroactivelyRewardService
         22 => "hasCreatedACommunity",
         23 => "hasAnAcceptedCarpoolInEvent"
     ];
+    const SIMPLE_GAMIFICATION_ACTION = [1,2,3,4,5,6,7,20,21,22];
+    const GAMIFICATION_ACTION_WITH_PROPOSAL = [8,17,10,23, ];
+    const GAMIFICATION_ACTION_WITH_ASK = [9,12];
+    const GAMIFICATION_ACTION_WITH_MESSAGE = [14];
+    const GAMIFICATION_ACTION_WITH_USER = [13];
+    const GAMIFICATION_ACTION_WITH_CARPOOLITEM = [19];
+
 
     private $userRepository;
     private $badgeRepository;
@@ -100,28 +107,65 @@ class RetroactivelyRewardService
     {
         $this->logger->info("start retroactivelyRewardUsers | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         
-        $limit = 10;
+        $limit = 20;
         $limit = 10000;
-        #$limit = 100000;
-        // select u.id, count(i.id) from user u left join image i on i.user_id = u.id group by u.id;
+        // $limit = 100000;
         $stmt = $this->entityManager->getConnection()->prepare(
-            "select user.id, reward_step.sequence_item_id 
-            from user 
-            left join reward_step on reward_step.user_id = user.id 
+            "select u.id, reward_step.sequence_item_id, u.validated_date, u.phone_validated_date, u.telephone, count(i.id) as nb_images, count(e.id) as nb_events, count(cu.id) as nb_community_users, count(c.id) as nb_communities, count(a.id) as nb_asks, count(p.id) as nb_proposals
+            from user u
+            left join reward_step on reward_step.user_id = u.id
+            left join image i on i.user_id = u.id 
+            left join event e on e.user_id = u.id
+            left join community_user cu on cu.user_id = u.id
+            left join community c on c.user_id = u.id
+            left join proposal p on p.user_id = u.id and p.private=0
+            left join ask a on a.user_id = u.id or a.user_related_id = u.id
+            group by u.id, reward_step.sequence_item_id, u.validated_date, u.phone_validated_date, u.telephone
             limit $limit;"
         );
         $stmt->execute();
         $resultsUsers = $stmt->fetchAll();
-
         $users = [];
         foreach ($resultsUsers as $user) {
             if (array_key_exists($user['id'], $users)) {
-                array_push($users[$user['id']], $user['sequence_item_id']);
+                array_push(
+                    $users[$user['id']], 
+                    [
+                        'user_id' => $user['id'],
+                        'sequence_item_id' => $user['sequence_item_id'],
+                        'validated_date' => $user['validated_date'],
+                        'phone_validated_date' => $user['phone_validated_date'],
+                        'telephone' => $user['telephone'],
+                        'nb_images' => $user['nb_images'],
+                        'nb_events' => $user['nb_events'],
+                        'nb_community_users' => $user['nb_community_users'],
+                        'nb_communities' => $user['nb_communities'],
+                        'nb_asks' => $user['nb_asks'],
+                        'nb_proposals' => $user['nb_proposals']
+                    ]
+                );
             } else {
-                $users[$user['id']] = [$user['sequence_item_id']];
+                $users[$user['id']] = [
+                        [
+                            'user_id' => $user['id'],
+                            'sequence_item_id' => $user['sequence_item_id'],
+                            'validated_date' => $user['validated_date'],
+                            'phone_validated_date' => $user['phone_validated_date'],
+                            'telephone' => $user['telephone'],
+                            'nb_images' => $user['nb_images'],
+                            'nb_events' => $user['nb_events'],
+                            'nb_community_users' => $user['nb_community_users'],
+                            'nb_communities' => $user['nb_communities'],
+                            'nb_asks' => $user['nb_asks'],
+                            'nb_proposals' => $user['nb_proposals']
+                        ]    
+                ];
             }
         }
-
+        
+        $this->logger->info("end retroactivelyRewardUsers | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        var_dump(count($users));die;
+       
         $stmt = $this->entityManager->getConnection()->prepare(
             "select b.id, si.id as sequence_item_id, ga.id as gamification_action_id, gar.name as rule_name
             from badge b 
@@ -131,7 +175,7 @@ class RetroactivelyRewardService
         );
         $stmt->execute();
         $resultBadges = $stmt->fetchAll();
-        
+
         $badges = [];
         foreach ($resultBadges as $badge) {
             if (array_key_exists($badge['id'], $badges)) {
@@ -153,11 +197,9 @@ class RetroactivelyRewardService
                 ];
             }
         }
-        // var_dump($badges);exit;
 
-        // $badges = $this->badgeRepository->findAll();
-        foreach ($users as $id => $sequenceItemsIds) {
-            $this->retroactivelyRewardUser($id, $sequenceItemsIds, $badges);
+        foreach ($users as $user) {
+            $this->retroactivelyRewardUser($user, $sequenceItemsIds, $badges);
         }
         $this->logger->info("end retroactivelyRewardUsers | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         return count($users);
@@ -185,16 +227,26 @@ class RetroactivelyRewardService
 
                 if (in_array($sequenceItem['si_id'], $sequenceItemsIds)) continue;
 
-
-                // if ($this->hasAlreadyRewardStep($user, $sequenceItem)) {
-                //     continue;
-                // }
-
                 $method = Self::GAMIFICATION_ACTION_DONE[$sequenceItem['ga_id']];
 
-                if ($this->$method($user, $sequenceItem)) {
-                    $this->handleRetroactivelyRewards($user, $sequenceItem->getId());
+                // faire un tableau avec les id de action ne necessitant pas le user complet si dans tableau exécuter 
+                if (in_array($sequenceItem['ga_id'], self::SIMPLE_GAMIFICATION_ACTION)) {
+                    if ($this->$method($user, $sequenceItem)) {
+                            $this->handleRetroactivelyRewards($user, $sequenceItem->getId());
+                    }
+                } elseif(in_array($sequenceItem['ga_id'], self::GAMIFICATION_ACTION_WITH_PROPOSAL)) {
+                    if ($user['nb_proposal'] == 0) continue;
+                    $user = $this->userRepository->find($user['user_id']);
+                    if ($this->$method($user, $sequenceItem)) {
+                        $this->handleRetroactivelyRewards($user, $sequenceItem->getId());
+                    }
                 }
+                
+                
+                
+                // if ($this->$method($user, $sequenceItem)) {
+                //     $this->handleRetroactivelyRewards($user, $sequenceItem->getId());
+                // }
             }
         }
     }
@@ -211,6 +263,9 @@ class RetroactivelyRewardService
    
     public function handleRetroactivelyRewards(User $user, int $sequenceItemId)
     {
+        $user = new User;
+        $user->setId($user["user_id"]);
+
         $validationStep = new ValidationStep;
         $validationStep->setSequenceItem($this->sequenceItemRepository->find($sequenceItemId));
         $validationStep->setUser($user);
