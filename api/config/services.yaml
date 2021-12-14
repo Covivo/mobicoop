@@ -891,6 +891,12 @@ services:
                 avatarSizes: '%env(string:AVATAR_SIZES)%'
                 avatarDefaultFolder: '%env(string:AVATAR_DEFAULT_FOLDER)%'          
 
+    App\ExternalJourney\Admin\DataProvider\ExternalJourneyCollectionDataProvider:
+        arguments:
+            $params:
+                avatarSizes: '%env(string:AVATAR_SIZES)%'
+                avatarDefaultFolder: '%env(string:AVATAR_DEFAULT_FOLDER)%'          
+
     App\User\Admin\DataProvider\UserCollectionDataProvider:
         arguments:
             $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
