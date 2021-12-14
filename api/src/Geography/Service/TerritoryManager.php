@@ -555,9 +555,21 @@ class TerritoryManager
                 insert into address_territory (address_id, territory_id) 
                 select a.id, t.id 
                 from address a 
-                    inner join territory t on t.id not in (select territory_id from address_territory where address_id=a.id) and a.latitude between t.min_latitude and t.max_latitude and a.longitude between t.min_longitude and t.max_longitude
-                where a.id not in (select at.address_id from address_territory at)
-                    and st_contains(t.geo_json_detail, a.geo_json)=1;')->execute()
+                    inner join territory t on a.latitude between t.min_latitude and t.max_latitude and a.longitude between t.min_longitude and t.max_longitude 
+                where a.id not in (select at.address_id from address_territory at) and st_contains(t.geo_json_detail, a.geo_json)=1;')->execute()
+            && $this->entityManager->getConnection()->prepare('commit;')->execute()) {
+            return $this->dropGeoJsonTerritoryIndex() && $this->closeRunningFile() && false;
+        }
+
+        $this->logger->info('Phase 4 | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
+        if (!$result =
+            $this->entityManager->getConnection()->prepare('start transaction;')->execute()
+            && $this->entityManager->getConnection()->prepare('
+                insert into address_territory (address_id, territory_id) 
+                select a.id, t.id 
+                from address a 
+                    inner join territory t on a.latitude between t.min_latitude and t.max_latitude and a.longitude between t.min_longitude and t.max_longitude 
+                where a.id not in (select at.address_id from address_territory at where at.territory_id = t.id) and st_contains(t.geo_json_detail, a.geo_json)=1;')->execute()
             && $this->entityManager->getConnection()->prepare('commit;')->execute()) {
             return $this->dropGeoJsonTerritoryIndex() && $this->closeRunningFile() && false;
         }
