@@ -223,7 +223,24 @@ class ExternalJourneyManager
             $currentJourney = $journey['journeys'];
             $carpool = [
                 "external" => true,
-                "externalProvider" => $this->getCurrentProvider()->getName()
+                "externalProvider" => $this->getCurrentProvider()->getName(),
+                'matchingId' => null,
+                'carpoolerId' => null,
+                'carpoolerGivenName' => null,
+                'carpoolerFamilyName' => null,
+                'carpoolerAvatar' => null,
+                'frequency' => null,
+                // type is used to determine if the carpool has only an outward or also a return
+                'type' => null,
+                'passenger' => null,
+                'driver' => null,
+                'solidaryExclusive' => null,
+                'fromDate' => null,
+                'fromTime' => null,
+                'toDate' => null,
+                'carpoolerFromDate' => null,
+                'carpoolerFromTime' => null,
+                'carpoolerToDate' => null
             ];
 
             $results[] = $carpool;
