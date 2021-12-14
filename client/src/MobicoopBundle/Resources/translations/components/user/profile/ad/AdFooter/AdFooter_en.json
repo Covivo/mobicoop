@@ -7,5 +7,6 @@
         "singular": "potential carpooler",
         "plural": "potentials carpoolers"
     },
-    "urlResult": "/carpool/ad/{id}/results"
+    "urlResult": "/carpool/ad/{id}/results",
+    "isArchived": "Archived"
 }
