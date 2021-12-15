@@ -1001,7 +1001,7 @@ class SolidaryManager
         //we check if the structure need proofs before validation if not we validate automaticaly the candidate
         if (count($solidaryUserStructure->getStructure()->getStructureProofs()) == 0) {
             $solidaryUserStructure->setStatus(true);
-            $solidaryUserStructure->setAcceptedDate(new DateTime());
+            $solidaryUserStructure->setAcceptedDate(new \DateTime('now'));
         }
         // We add the proofs associated to the demand
         foreach ($solidary->getProofs() as $givenProof) {
