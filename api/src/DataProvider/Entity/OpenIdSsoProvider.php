@@ -110,8 +110,8 @@ class OpenIdSsoProvider implements SsoProviderInterface
     {
         /** Mock data for dev purpose */
         // $ssoUser = new SsoUser();
-        // $ssoUser->setSub("1");
-        // $ssoUser->setEmail("test@yopmail.com");
+        // $ssoUser->setSub("0");
+        // $ssoUser->setEmail("testtoop.mobic1@yopmail.com");
         // $ssoUser->setFirstname("Johnny");
         // $ssoUser->setLastname("Sso");
         // $ssoUser->setProvider($this->serviceName);

@@ -135,6 +135,9 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
         try {
             $response = $this->dataProvider->getSpecialCollection("me");
         } catch (Exception $e) {
+            if ($request->get('_route')==self::USER_LOGIN_SSO_ROUTE) {
+                return new User();
+            }
             return null;
         }
 
@@ -174,7 +177,12 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
                 }
                 return new RedirectResponse($this->router->generate('home'));
             case self::USER_LOGIN_SSO_ROUTE:
-                return new RedirectResponse($this->router->generate('home'));
+                if (!is_null($token->getUser()->getId())) {
+                    return new RedirectResponse($this->router->generate('home'));
+                } else {
+                    return new RedirectResponse($this->router->generate('user_login'));
+                }
+                // no break
             case self::USER_LOGIN_RESULT_ROUTE:
                 return new RedirectResponse($this->router->generate('carpool_ad_results_after_authentication', ['id'=>$request->get('id')]));
             case self::USER_LOGIN_EVENT_ROUTE:

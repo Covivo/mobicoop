@@ -1326,6 +1326,7 @@ class UserController extends AbstractController
 
     /**
      * Return page after a SSO Login
+     * Url is something like /user/sso/login?state=PassMobilite&code=1
      */
     public function userReturnConnectSSO(Request $request)
     {
@@ -1338,7 +1339,8 @@ class UserController extends AbstractController
     }
 
     /**
-     * Return page after a SSO Login
+     * Login route with sso credentials
+     * Something like /user/sso/login/autolog?ssoId=1&ssoProvider=PassMobilite&baseSiteUri=http://localhost:8081
      */
     public function userLoginSso(Request $request)
     {
