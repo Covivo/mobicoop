@@ -997,7 +997,12 @@ class SolidaryManager
                 }
             }
         }
-        
+        // Proofs
+        //we check if the structure need proofs before validation if not we validate automaticaly the candidate
+        if (count($solidaryUserStructure->getStructure()->getStructureProofs()) == 0) {
+            $solidaryUserStructure->setStatus(true);
+            $solidaryUserStructure->setAcceptedDate(new DateTime());
+        }
         // We add the proofs associated to the demand
         foreach ($solidary->getProofs() as $givenProof) {
             // We get the structure proof and we create a proof to persist
@@ -1014,6 +1019,18 @@ class SolidaryManager
                 $solidaryUserStructure->addProof($proof);
             }
         }
+
+        // we set a default value for not mandatory proofs if the benefiiary didn't completed them
+        if (count($solidary->getProofs()) == 0) {
+            $notMandatoryBeneficiaryStructureProofs = $this->structureProofRepository->findNotMandatoryBeneficiaryStructureProofs($structure);
+            foreach ($notMandatoryBeneficiaryStructureProofs as $notMandatoryProof) {
+                $proof = new Proof();
+                $proof->setStructureProof($notMandatoryProof);
+                $proof->setValue(null);
+                $solidaryUserStructure->addProof($proof);
+            }
+        }
+
         $solidaryUser->addSolidaryUserStructure($solidaryUserStructure);
 
         $this->entityManager->persist($user);
