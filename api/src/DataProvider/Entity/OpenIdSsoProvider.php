@@ -66,10 +66,11 @@ class OpenIdSsoProvider implements SsoProviderInterface
     private $redirectUri;
     private $private;
     private $baseSiteUri;
+    private $autoCreateAccount;
     
     private $code;
 
-    public function __construct(string $serviceName, string $baseSiteUri, string $baseUri, string $clientId, string $clientSecret, string $redirectUrl)
+    public function __construct(string $serviceName, string $baseSiteUri, string $baseUri, string $clientId, string $clientSecret, string $redirectUrl, bool $autoCreateAccount)
     {
         if (!isset(self::URLS[$serviceName])) {
             throw new \LogicException("Service unknown");
@@ -82,6 +83,7 @@ class OpenIdSsoProvider implements SsoProviderInterface
         $this->redirectUrl = $redirectUrl;
         $this->baseSiteUri = $baseSiteUri;
         $this->redirectUri = $this->baseSiteUri."/".$this->redirectUrl;
+        $this->autoCreateAccount = $autoCreateAccount;
     }
 
     public function setCode(string $code)
@@ -106,6 +108,20 @@ class OpenIdSsoProvider implements SsoProviderInterface
      */
     public function getUserProfile(string $code): SsoUser
     {
+        /** Mock data for dev purpose */
+        // $ssoUser = new SsoUser();
+        // $ssoUser->setSub("1");
+        // $ssoUser->setEmail("test@yopmail.com");
+        // $ssoUser->setFirstname("Johnny");
+        // $ssoUser->setLastname("Sso");
+        // $ssoUser->setProvider($this->serviceName);
+        // $ssoUser->setGender(User::GENDER_MALE);
+        // $ssoUser->setBirthdate(null);
+        // $ssoUser->setAutoCreateAccount($this->autoCreateAccount);
+
+        // return $ssoUser;
+        /****** end mock data */
+
         $token = $this->getToken($code);
 
         $dataProvider = new DataProvider($this->baseUri, self::URLS[$this->serviceName][self::USERINFOS_URL]);
@@ -125,6 +141,7 @@ class OpenIdSsoProvider implements SsoProviderInterface
             $ssoUser->setProvider($this->serviceName);
             $ssoUser->setGender((isset($data['gender'])) ? $data['gender'] : User::GENDER_OTHER);
             $ssoUser->setBirthdate((isset($data['birthdate'])) ? $data['birthdate'] : null);
+            $ssoUser->setAutoCreateAccount($this->autoCreateAccount);
             
 
             if (

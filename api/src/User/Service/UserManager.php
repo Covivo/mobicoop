@@ -1722,6 +1722,10 @@ class UserManager
                 return $user;
             }
 
+            if (!$ssoUser->hasAutoCreateAccount()) {
+                throw new \LogicException("Autocreate account disable", 400);
+            }
+
             // Create a new one
             $user = new User();
             $user->setSsoId($ssoUser->getSub());
