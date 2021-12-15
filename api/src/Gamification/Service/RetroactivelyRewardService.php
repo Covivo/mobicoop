@@ -113,7 +113,7 @@ class RetroactivelyRewardService
             left join carpool_item ci on ci.debtor_user_id = u.id
             left join address ad on ad.user_id = u.id and ad.home = 1
             left join payment_profile pp on pp.user_id = u.id and pp.validation_status = 1
-            group by u.id
+            group by u.id, u.validated_date, u.phone_validated_date, u.telephone
             limit $limit;"
         );
         $stmt->execute();
@@ -163,8 +163,6 @@ class RetroactivelyRewardService
         }
         
         $this->logger->info("end retroactivelyRewardUsers | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-        var_dump(count($users));
-        die;
        
         $stmt = $this->entityManager->getConnection()->prepare(
             "select b.id, si.id as sequence_item_id, ga.id as gamification_action_id, gar.name as rule_name, si.min_count, si.min_unique_count, si.in_date_range, si.value
@@ -205,16 +203,15 @@ class RetroactivelyRewardService
                 ];
             }
         }
-        var_dump($badges);
-        die;
         foreach ($users as $user) {
-            $this->retroactivelyRewardUser($user, $user['sequence_item_id'], $badges);
+            $sequenceItemsIds = (!is_null($user[0]['sequence_item_id'])) ?  $user[0]['sequence_item_id'] : [];
+            $this->retroactivelyRewardUser($user, $sequenceItemsIds, $badges);
         }
         $this->logger->info("end retroactivelyRewardUsers | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         return count($users);
     }
 
-    private function retroactivelyRewardUser(array $user, array $sequenceItemsIds, array $badges)
+    private function retroactivelyRewardUser(array $user, ?array $sequenceItemsIds, array $badges)
     {
         // $this->logger->info("start retroactivelyRewardUser | " . $id . " | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
@@ -236,8 +233,8 @@ class RetroactivelyRewardService
                         $this->handleRetroactivelyRewards($user, $sequenceItem['si_id']);
                     }
                 } else {
-                    if ($user["nb_proposals"] > 0 || $user["nb_asks"] > 0 || $user["nb_messages"] > 0 || $user["nb_carpool_items"]) {
-                        $user = $this->userRepository->find($user["user_id"]);
+                    if ($user[0]["nb_proposals"] > 0 || $user[0]["nb_asks"] > 0 || $user[0]["nb_messages"] > 0 || $user[0]["nb_carpool_items"]) {
+                        $user = $this->userRepository->find($user[0]["user_id"]);
                         if ($this->$method($user, $sequenceItem)) {
                             $this->handleRetroactivelyRewards($user, $sequenceItem->getId());
                         }
@@ -248,11 +245,11 @@ class RetroactivelyRewardService
         }
     }
    
-    public function handleRetroactivelyRewards($user, int $sequenceItemId)
+    public function handleRetroactivelyRewards($userToUse, int $sequenceItemId)
     {
-        if (!($user instanceof User)) {
+        if (!($userToUse instanceof User)) {
             $user = new User;
-            $user->setId($user["user_id"]);
+            $user->setId($userToUse[0]["user_id"]);
         }
 
         $validationStep = new ValidationStep;
@@ -314,37 +311,37 @@ class RetroactivelyRewardService
 
     private function hasEmailValidated($user, $sequenceItem)
     {
-        return (!is_null($user["validated_date"]));
+        return (!is_null($user[0]["validated_date"]));
     }
 
     private function hasPhoneValidated($user, $sequenceItem)
     {
-        return (!is_null($user["phone_validated_date"]));
+        return (!is_null($user[0]["phone_validated_date"]));
     }
 
     private function hasAvatar($user, $sequenceItem)
     {
-        return ($user["nb_images"] > 0);
+        return ($user[0]["nb_images"] > 0);
     }
 
     private function hasHomeAddress($user, $sequenceItem)
     {
-        return ($user["nb_addresses"] > 0);
+        return ($user[0]["nb_addresses"] > 0);
     }
 
     private function hasPublishedAnAd($user, $sequenceItem)
     {
-        return ($user["nb_proposals"] >= 1);
+        return ($user[0]["nb_proposals"] >= 1);
     }
 
     private function hasNpublishedAds($user, $sequenceItem)
     {
-        return ($user["nb_proposals"] >= $sequenceItem["min_count"]);
+        return ($user[0]["nb_proposals"] >= $sequenceItem["min_count"]);
     }
 
     private function hasJoinedCommunity($user, $sequenceItem)
     {
-        return $user["nb_community_users"] >= 1;
+        return $user[0]["nb_community_users"] >= 1;
     }
 
     private function hasPublishedAnAdInCommunity($user, $sequenceItem)
@@ -394,7 +391,7 @@ class RetroactivelyRewardService
 
     private function hasValidatedBankIdentity($user, $sequenceItem)
     {
-        return ($user["nb_payment_profiles"] >= 1);
+        return ($user[0]["nb_payment_profiles"] >= 1);
     }
 
     private function hasRealizedAnOnlinePayment($user, $sequenceItem)
@@ -404,17 +401,17 @@ class RetroactivelyRewardService
 
     private function hasPhoneNumber($user, $sequenceItem)
     {
-        return (!is_null($user["telephone"]));
+        return (!is_null($user[0]["telephone"]));
     }
 
     private function hasCreatedAnEvent($user, $sequenceItem)
     {
-        return ($user["nb_events"] >= 1);
+        return ($user[0]["nb_events"] >= 1);
     }
 
     private function hasCreatedACommunity($user, $sequenceItem)
     {
-        return ($user["nb_communities"] >= 1);
+        return ($user[0]["nb_communities"] >= 1);
     }
 
     private function hasAnAcceptedCarpoolInEvent($user, $sequenceItem)
