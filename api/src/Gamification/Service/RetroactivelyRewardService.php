@@ -97,13 +97,9 @@ class RetroactivelyRewardService
     {
         $this->logger->info("start retroactivelyRewardUsers | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         
-        $limit = 20;
-        $limit = 10000;
-        // $limit = 100000;
         $stmt = $this->entityManager->getConnection()->prepare(
-            "select u.id, reward_step.sequence_item_id, u.validated_date, u.phone_validated_date, u.telephone, count(i.id) as nb_images, count(e.id) as nb_events, count(cu.id) as nb_community_users, count(c.id) as nb_communities, count(a.id) as nb_asks, count(p.id) as nb_proposals, count(ci.id) as nb_carpool_items, count(ad.id) as nb_addresses, count(pp.id) as nb_payment_profiles
+            "select u.id, u.validated_date, u.phone_validated_date, u.telephone, count(distinct i.id) as nb_images, count(distinct e.id) as nb_events, count(distinct cu.id) as nb_community_users, count(distinct c.id) as nb_communities, count(distinct a.id) as nb_asks, count(distinct p.id) as nb_proposals, count(distinct ci.id) as nb_carpool_items, count(distinct ad.id) as nb_addresses, count(distinct pp.id) as nb_payment_profiles, count(distinct m.id) as nb_messages
             from user u
-            left join reward_step on reward_step.user_id = u.id
             left join image i on i.user_id = u.id 
             left join event e on e.user_id = u.id
             left join community_user cu on cu.user_id = u.id
@@ -113,8 +109,8 @@ class RetroactivelyRewardService
             left join carpool_item ci on ci.debtor_user_id = u.id
             left join address ad on ad.user_id = u.id and ad.home = 1
             left join payment_profile pp on pp.user_id = u.id and pp.validation_status = 1
-            group by u.id, u.validated_date, u.phone_validated_date, u.telephone
-            limit $limit;"
+            left join message m on m.user_id = u.id
+            group by u.id, u.validated_date, u.phone_validated_date, u.telephone;"
         );
         $stmt->execute();
         $resultsUsers = $stmt->fetchAll();
@@ -125,7 +121,6 @@ class RetroactivelyRewardService
                     $users[$user['id']],
                     [
                         'user_id' => $user['id'],
-                        'sequence_item_id' => $user['sequence_item_id'],
                         'validated_date' => $user['validated_date'],
                         'phone_validated_date' => $user['phone_validated_date'],
                         'telephone' => $user['telephone'],
@@ -137,14 +132,15 @@ class RetroactivelyRewardService
                         'nb_proposals' => $user['nb_proposals'],
                         'nb_carpool_items' => $user['nb_carpool_items'],
                         'nb_address' => $user['nb_address'],
-                        'nb_payment_profiles' => $user['nb_payment_profiles']
+                        'nb_payment_profiles' => $user['nb_payment_profiles'],
+                        'nb_messages' => $user['nb_messages'],
+                        'sequence_item_ids' => []
                     ]
                 );
             } else {
                 $users[$user['id']] = [
                         [
                             'user_id' => $user['id'],
-                            'sequence_item_id' => $user['sequence_item_id'],
                             'validated_date' => $user['validated_date'],
                             'phone_validated_date' => $user['phone_validated_date'],
                             'telephone' => $user['telephone'],
@@ -156,14 +152,27 @@ class RetroactivelyRewardService
                             'nb_proposals' => $user['nb_proposals'],
                             'nb_carpool_items' => $user['nb_carpool_items'],
                             'nb_addresses' => $user['nb_addresses'],
-                            'nb_payment_profiles' => $user['nb_payment_profiles']
+                            'nb_payment_profiles' => $user['nb_payment_profiles'],
+                            'nb_messages' => $user['nb_messages'],
+                            'sequence_item_ids' => []
                         ]
                 ];
             }
         }
+
+        $stmt = $this->entityManager->getConnection()->prepare(
+            "select reward_step.user_id, reward_step.sequence_item_id
+            from reward_step  
+            order by `reward_step`.`user_id` asc;"
+        );
+        $stmt->execute();
+        $sequenceItems = $stmt->fetchAll();
+        foreach ($sequenceItems as $sequenceItem) {
+            if (array_key_exists($sequenceItem['user_id'], $users)) {
+                array_push($users[$sequenceItem['user_id']][0]['sequence_item_ids'], $sequenceItem['sequence_item_id']);
+            }
+        }
         
-        $this->logger->info("end retroactivelyRewardUsers | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-       
         $stmt = $this->entityManager->getConnection()->prepare(
             "select b.id, si.id as sequence_item_id, ga.id as gamification_action_id, gar.name as rule_name, si.min_count, si.min_unique_count, si.in_date_range, si.value
             from badge b 
@@ -203,10 +212,13 @@ class RetroactivelyRewardService
                 ];
             }
         }
+        $this->logger->info("end test | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+
         foreach ($users as $user) {
-            $sequenceItemsIds = (!is_null($user[0]['sequence_item_id'])) ?  $user[0]['sequence_item_id'] : [];
+            $sequenceItemsIds = (!is_null($user[0]['sequence_item_ids'])) ?  $user[0]['sequence_item_ids'] : [];
             $this->retroactivelyRewardUser($user, $sequenceItemsIds, $badges);
         }
+        
         $this->logger->info("end retroactivelyRewardUsers | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         return count($users);
     }
@@ -220,7 +232,7 @@ class RetroactivelyRewardService
 
             foreach ($badge as $sequenceItem) {
                 // $this->logger->info("checkSequenceItem | " . $sequenceItem->getId() . " | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-
+                
                 if (in_array($sequenceItem['si_id'], $sequenceItemsIds)) {
                     continue;
                 }
@@ -234,9 +246,9 @@ class RetroactivelyRewardService
                     }
                 } else {
                     if ($user[0]["nb_proposals"] > 0 || $user[0]["nb_asks"] > 0 || $user[0]["nb_messages"] > 0 || $user[0]["nb_carpool_items"]) {
-                        $user = $this->userRepository->find($user[0]["user_id"]);
-                        if ($this->$method($user, $sequenceItem)) {
-                            $this->handleRetroactivelyRewards($user, $sequenceItem->getId());
+                        $trueUser = $this->userRepository->find($user[0]["user_id"]);
+                        if ($this->$method($trueUser, $sequenceItem)) {
+                            $this->handleRetroactivelyRewards($trueUser, $sequenceItem['si_id']);
                         }
                     }
                     continue;
@@ -297,7 +309,7 @@ class RetroactivelyRewardService
         $this->entityManager->flush();
     }
 
-    public function checkRule(User $user, SequenceItem $sequenceItem)
+    public function checkRule(User $user, $sequenceItem)
     {
         $gamificationActionRuleName = "\\App\\Gamification\Rule\\" . $sequenceItem['rule_name'];
         /**
@@ -336,7 +348,7 @@ class RetroactivelyRewardService
 
     private function hasNpublishedAds($user, $sequenceItem)
     {
-        return ($user[0]["nb_proposals"] >= $sequenceItem["min_count"]);
+        return ($user[0]["nb_proposals"] >= $sequenceItem["si_min_count"]);
     }
 
     private function hasJoinedCommunity($user, $sequenceItem)
