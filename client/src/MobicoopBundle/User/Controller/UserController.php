@@ -198,6 +198,19 @@ class UserController extends AbstractController
         ]);
     }
 
+    public function loginSsoError(Request $request)
+    {
+        return $this->render('@Mobicoop/user/login.html.twig', [
+            "id" => null,
+            "type" => 'default',
+            "errorMessage"=>"errorSso",
+            "service"=>$request->get('service'),
+            "facebook_show"=>($this->facebook_show==="true") ? true : false,
+            "facebook_appid"=>$this->facebook_appid,
+            "signUpLinkInConnection"=>$this->signUpLinkInConnection
+        ]);
+    }
+
     /**
      * User registration.
      */
@@ -1326,6 +1339,7 @@ class UserController extends AbstractController
 
     /**
      * Return page after a SSO Login
+     * Url is something like /user/sso/login?state=PassMobilite&code=1
      */
     public function userReturnConnectSSO(Request $request)
     {
@@ -1334,11 +1348,22 @@ class UserController extends AbstractController
         // We add the front url to the parameters
         (isset($_SERVER['HTTPS'])) ? $params['baseSiteUri'] = 'https://'.$_SERVER['HTTP_HOST']  : $params['baseSiteUri'] = 'http://'.$_SERVER['HTTP_HOST'];
 
+        // We add the service name
+        $services = $this->userManager->getSsoServices();
+        if (!is_null($services) && is_array($services)) {
+            foreach ($services as $service) {
+                if ($service->getSsoProvider()==$params['ssoProvider']) {
+                    $params['ssoProviderName'] = $service->getService();
+                }
+            }
+        }
+        
         return $this->redirectToRoute('user_login_sso', $params);
     }
 
     /**
-     * Return page after a SSO Login
+     * Login route with sso credentials
+     * Something like /user/sso/login/autolog?ssoId=1&ssoProvider=PassMobilite&baseSiteUri=http://localhost:8081
      */
     public function userLoginSso(Request $request)
     {

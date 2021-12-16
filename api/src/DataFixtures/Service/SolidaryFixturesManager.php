@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\DataFixtures\Service;
 
@@ -50,6 +50,9 @@ use Doctrine\ORM\EntityManagerInterface;
  */
 class SolidaryFixturesManager
 {
+    private const SOURCE_PROOF_PATH = __DIR__.'/../File/Solidary/Proofs/';
+    private const DESTINATION_PROOF_PATH = __DIR__.'/../../../public/upload/solidary/proofs/';
+
     private $entityManager;
     private $userManager;
     private $territoryManager;
@@ -63,7 +66,7 @@ class SolidaryFixturesManager
     private $structureProofRepository;
 
     /**
-     * Constructor
+     * Constructor.
      */
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -82,7 +85,7 @@ class SolidaryFixturesManager
         $this->userManager = $userManager;
         $this->fixturesSolidary = $fixturesSolidary;
         $this->territoryManager = $territoryManager;
-        $this->structureManager= $structureManager;
+        $this->structureManager = $structureManager;
         $this->solidaryManager = $solidaryManager;
         $this->needRepository = $needRepository;
         $this->solidaryUserRepository = $solidaryUserRepository;
@@ -92,20 +95,18 @@ class SolidaryFixturesManager
     }
 
     /**
-     * Clear the database : remove all non essential data
-     *
-     * @return void
+     * Clear the database : remove all non essential data.
      */
     public function clearSolidaryData()
     {
         $conn = $this->entityManager->getConnection();
-        $sql = "SET FOREIGN_KEY_CHECKS = 0;";
+        $sql = 'SET FOREIGN_KEY_CHECKS = 0;';
         $stmt = $conn->prepare($sql);
         $stmt->execute();
-        
+
         if ($this->fixturesSolidary) {
-            echo "Clearing Solidary database... " . PHP_EOL;
-            $sql = "
+            echo 'Clearing Solidary database... '.PHP_EOL;
+            $sql = '
             TRUNCATE `need`;
             TRUNCATE `operate`;
             TRUNCATE `proof`;
@@ -123,36 +124,35 @@ class SolidaryFixturesManager
             TRUNCATE `structure_proof`;
             TRUNCATE `structure_territory`;
             TRUNCATE `subject`;
-            ";
-            
+            ';
+
             $stmt = $conn->prepare($sql);
             $stmt->execute();
         }
 
-        $sql = "
-        SET FOREIGN_KEY_CHECKS = 1;";
+        $sql = '
+        SET FOREIGN_KEY_CHECKS = 1;';
         $stmt = $conn->prepare($sql);
         $stmt->execute();
     }
 
     /**
-     * Create structure from an array
+     * Create structure from an array.
      *
-     * @param array $tab    The array containing the structure (model in ../Csv/Solidary/Structures/structures.txt)
-     * @return void
+     * @param array $tab The array containing the structure (model in ../Csv/Solidary/Structures/structures.txt)
      */
-    public function createStructures(array $tab)
+    public function createStructure(array $tab)
     {
-        echo "Import Structure " . $tab[0]." - " . $tab[1] . PHP_EOL;
+        echo 'Import Structure '.$tab[0].' - '.$tab[1].PHP_EOL;
         $structure = new Structure();
         $structure->setId($tab[0]);
         $structure->setName($tab[1]);
-        $structure->setMMinTime(\Datetime::createFromFormat("H:i:s", $tab[2]));
-        $structure->setMMaxTime(\Datetime::createFromFormat("H:i:s", $tab[3]));
-        $structure->setAMinTime(\Datetime::createFromFormat("H:i:s", $tab[4]));
-        $structure->setAMaxTime(\Datetime::createFromFormat("H:i:s", $tab[5]));
-        $structure->setEMinTime(\Datetime::createFromFormat("H:i:s", $tab[6]));
-        $structure->setEMaxTime(\Datetime::createFromFormat("H:i:s", $tab[7]));
+        $structure->setMMinTime(\Datetime::createFromFormat('H:i:s', $tab[2]));
+        $structure->setMMaxTime(\Datetime::createFromFormat('H:i:s', $tab[3]));
+        $structure->setAMinTime(\Datetime::createFromFormat('H:i:s', $tab[4]));
+        $structure->setAMaxTime(\Datetime::createFromFormat('H:i:s', $tab[5]));
+        $structure->setEMinTime(\Datetime::createFromFormat('H:i:s', $tab[6]));
+        $structure->setEMaxTime(\Datetime::createFromFormat('H:i:s', $tab[7]));
         $structure->setMMon($tab[8]);
         $structure->setAMon($tab[9]);
         $structure->setEMon($tab[10]);
@@ -174,12 +174,12 @@ class SolidaryFixturesManager
         $structure->setMSun($tab[26]);
         $structure->setASun($tab[27]);
         $structure->setESun($tab[28]);
-        $structure->setMMinRangeTime(\Datetime::createFromFormat("H:i:s", $tab[29]));
-        $structure->setMMaxRangeTime(\Datetime::createFromFormat("H:i:s", $tab[30]));
-        $structure->setAMinRangeTime(\Datetime::createFromFormat("H:i:s", $tab[31]));
-        $structure->setAMaxRangeTime(\Datetime::createFromFormat("H:i:s", $tab[32]));
-        $structure->setEMinRangeTime(\Datetime::createFromFormat("H:i:s", $tab[33]));
-        $structure->setEMaxRangeTime(\Datetime::createFromFormat("H:i:s", $tab[34]));
+        $structure->setMMinRangeTime(\Datetime::createFromFormat('H:i:s', $tab[29]));
+        $structure->setMMaxRangeTime(\Datetime::createFromFormat('H:i:s', $tab[30]));
+        $structure->setAMinRangeTime(\Datetime::createFromFormat('H:i:s', $tab[31]));
+        $structure->setAMaxRangeTime(\Datetime::createFromFormat('H:i:s', $tab[32]));
+        $structure->setEMinRangeTime(\Datetime::createFromFormat('H:i:s', $tab[33]));
+        $structure->setEMaxRangeTime(\Datetime::createFromFormat('H:i:s', $tab[34]));
         $structure->setEmail($tab[35]);
         $structure->setTelephone($tab[36]);
         $structure->setBeneficiaryAutoApproval($tab[37]);
@@ -189,36 +189,34 @@ class SolidaryFixturesManager
     }
 
     /**
-     * Link structure and territories
+     * Link structure and territory.
      *
-     * @param array $tab    The array containing the links (model in ../Csv/Solidary/StructureTerritories/structureTerritories.txt)
-     * @return void
+     * @param array $tab The array containing the links (model in ../Csv/Solidary/StructureTerritories/structureTerritories.txt)
      */
-    public function createStructureTerritories(array $tab)
+    public function createStructureTerritory(array $tab)
     {
-        echo "Link structure " . $tab[0] . " with territory : " . $tab[1] . PHP_EOL;
+        echo 'Link structure '.$tab[0].' with territory : '.$tab[1].PHP_EOL;
         if ($structure = $this->structureManager->getStructure($tab[0])) {
             if ($territory = $this->territoryManager->getTerritory($tab[1])) {
                 $structure->addTerritory($territory);
                 $this->entityManager->persist($structure);
                 $this->entityManager->flush();
             } else {
-                echo "Territory not found !" . PHP_EOL;
+                echo 'Territory not found !'.PHP_EOL;
             }
         } else {
-            echo "Structure not found !" . PHP_EOL;
+            echo 'Structure not found !'.PHP_EOL;
         }
     }
 
     /**
-     * Create the structure proofs
+     * Create the structure proof.
      *
-     * @param array $tab    The array containing the links (model in ../Csv/Solidary/StructureTerritories/structureTerritories.txt)
-     * @return void
+     * @param array $tab The array containing the links (model in ../Csv/Solidary/StructureTerritories/structureTerritories.txt)
      */
-    public function createStructureProofs(array $tab)
+    public function createStructureProof(array $tab)
     {
-        echo "Import structureProof " . $tab[0] . " " . $tab[1] . PHP_EOL;
+        echo 'Import structureProof '.$tab[0].' '.$tab[1].PHP_EOL;
         if ($structure = $this->structureManager->getStructure($tab[0])) {
             $structureProof = new StructureProof();
             $structureProof->setStructure($structure);
@@ -236,68 +234,65 @@ class SolidaryFixturesManager
             $this->entityManager->persist($structureProof);
             $this->entityManager->flush();
         } else {
-            echo "Structure not found !" . PHP_EOL;
+            echo 'Structure not found !'.PHP_EOL;
         }
     }
 
     /**
-     * Create the needs
+     * Create the need.
      *
-     * @param array $tab    The array containing the links (model in ../Csv/Solidary/Needs/needs.txt)
-     * @return void
+     * @param array $tab The array containing the links (model in ../Csv/Solidary/Needs/needs.txt)
      */
-    public function createNeeds(array $tab)
+    public function createNeed(array $tab)
     {
-        echo "Import need " . $tab[0] . " " . $tab[2] . PHP_EOL;
+        echo 'Import need '.$tab[0].' '.$tab[2].PHP_EOL;
         $need = new Need();
         $need->setId($tab[0]);
-        
-        if ($tab[1] !== "") {
+
+        if ('' !== $tab[1]) {
             if (!is_null($solidary = $this->solidaryManager->getSolidary($tab[1]))) {
                 $need->setSolidary($solidary);
             } else {
-                echo "Solidary not found !" . PHP_EOL;
+                echo 'Solidary not found !'.PHP_EOL;
             }
         }
-        
+
         $need->setLabel($tab[2]);
         $need->setPrivate($tab[3]);
         $need->setLabelVolunteer($tab[4]);
         $this->entityManager->persist($need);
         $this->entityManager->flush();
     }
-    
+
     /**
-     * Link the structure and the needs
+     * Link the structure and the need.
      *
-     * @param array $tab    The array containing the links (model in ../Csv/Solidary/StructureNeeds/structureNeeds.txt)
-     * @return void
+     * @param array $tab The array containing the links (model in ../Csv/Solidary/StructureNeeds/structureNeeds.txt)
      */
-    public function createStructureNeeds(array $tab)
+    public function createStructureNeed(array $tab)
     {
-        echo "Link structure " . $tab[0] . " with Need : " . $tab[1] . PHP_EOL;
+        echo 'Link structure '.$tab[0].' with Need : '.$tab[1].PHP_EOL;
         if ($structure = $this->structureManager->getStructure($tab[0])) {
             if ($need = $this->needRepository->find($tab[1])) {
                 $structure->addNeed($need);
                 $this->entityManager->persist($structure);
                 $this->entityManager->flush();
             } else {
-                echo "Need not found !" . PHP_EOL;
+                echo 'Need not found !'.PHP_EOL;
             }
         } else {
-            echo "Structure not found !" . PHP_EOL;
+            echo 'Structure not found !'.PHP_EOL;
         }
     }
 
     /**
-     * Create the subjects
+     * Create the subject.
      *
-     * @param array $tab    The array containing the links (model in ../Csv/Solidary/Subjects/subjects.txt)
-     * @return void
+     * @param array $tab The array containing the links (model in ../Csv/Solidary/Subjects/subjects.txt)
      */
-    public function createSubjects(array $tab)
+    public function createSubject(array $tab)
     {
-        echo "Import subjects " . $tab[0] . " for structure " . $tab[1] . PHP_EOL;
+        echo 'Import subject '.$tab[0].' for structure '.$tab[1].PHP_EOL;
         if ($structure = $this->structureManager->getStructure($tab[1])) {
             $subject = new Subject();
             $subject->setStructure($structure);
@@ -306,19 +301,18 @@ class SolidaryFixturesManager
             $this->entityManager->persist($structure);
             $this->entityManager->flush();
         } else {
-            echo "Structure not found !" . PHP_EOL;
+            echo 'Structure not found !'.PHP_EOL;
         }
     }
 
     /**
-     * Link the user and the structure in Operate
+     * Link the user and the structure in Operate.
      *
-     * @param array $tab    The array containing the links (model in ../Csv/Solidary/Operates/operates.txt)
-     * @return void
+     * @param array $tab The array containing the links (model in ../Csv/Solidary/Operates/operates.txt)
      */
-    public function createOperates(array $tab)
+    public function createOperate(array $tab)
     {
-        echo "Link structure " . $tab[0] . " with User : " . $tab[1] . PHP_EOL;
+        echo 'Link structure '.$tab[0].' with User : '.$tab[1].PHP_EOL;
         if ($structure = $this->structureManager->getStructure($tab[0])) {
             if ($user = $this->userManager->getUser($tab[1])) {
                 $operate = new Operate();
@@ -327,25 +321,24 @@ class SolidaryFixturesManager
                 $this->entityManager->persist($operate);
                 $this->entityManager->flush();
             } else {
-                echo "User not found !" . PHP_EOL;
+                echo 'User not found !'.PHP_EOL;
             }
         } else {
-            echo "Structure not found !" . PHP_EOL;
+            echo 'Structure not found !'.PHP_EOL;
         }
     }
 
     /**
-     * Create the SolidaryUsers
+     * Create a SolidaryUser.
      *
-     * @param array $tab    The array containing the solidaryUsers (model in ../Csv/Solidary/SolidaryUsers/solidaryUsers.txt)
-     * @return void
+     * @param array $tab The array containing the solidaryUser (model in ../Csv/Solidary/SolidaryUsers/solidaryUsers.txt)
      */
-    public function createSolidaryUsers(array $tab)
+    public function createSolidaryUser(array $tab)
     {
-        echo "SolidaryUser of User : " . $tab[39] . PHP_EOL;
+        echo 'SolidaryUser of User : '.$tab[39].PHP_EOL;
         if ($user = $this->userManager->getUser($tab[39])) {
             $solidaryUser = new SolidaryUser();
-            
+
             // Address of the solidary User
             $address = new Address();
             $address->setHouseNumber($tab[0]);
@@ -359,94 +352,94 @@ class SolidaryFixturesManager
 
             $solidaryUser->setBeneficiary($tab[7]);
             $solidaryUser->setVolunteer($tab[8]);
-            if ("" !== $tab[9]) {
-                $solidaryUser->setMMinTime(\Datetime::createFromFormat("H:i:s", $tab[9]));
+            if ('' !== $tab[9]) {
+                $solidaryUser->setMMinTime(\Datetime::createFromFormat('H:i:s', $tab[9]));
             }
-            if ("" !== $tab[10]) {
-                $solidaryUser->setMMaxTime(\Datetime::createFromFormat("H:i:s", $tab[10]));
+            if ('' !== $tab[10]) {
+                $solidaryUser->setMMaxTime(\Datetime::createFromFormat('H:i:s', $tab[10]));
             }
-            if ("" !== $tab[11]) {
-                $solidaryUser->setAMinTime(\Datetime::createFromFormat("H:i:s", $tab[11]));
+            if ('' !== $tab[11]) {
+                $solidaryUser->setAMinTime(\Datetime::createFromFormat('H:i:s', $tab[11]));
             }
-            if ("" !== $tab[12]) {
-                $solidaryUser->setAMaxTime(\Datetime::createFromFormat("H:i:s", $tab[12]));
+            if ('' !== $tab[12]) {
+                $solidaryUser->setAMaxTime(\Datetime::createFromFormat('H:i:s', $tab[12]));
             }
-            if ("" !== $tab[13]) {
-                $solidaryUser->setEMinTime(\Datetime::createFromFormat("H:i:s", $tab[13]));
+            if ('' !== $tab[13]) {
+                $solidaryUser->setEMinTime(\Datetime::createFromFormat('H:i:s', $tab[13]));
             }
-            if ("" !== $tab[14]) {
-                $solidaryUser->setEMaxTime(\Datetime::createFromFormat("H:i:s", $tab[14]));
+            if ('' !== $tab[14]) {
+                $solidaryUser->setEMaxTime(\Datetime::createFromFormat('H:i:s', $tab[14]));
             }
-            
-            if ("" !== $tab[15]) {
+
+            if ('' !== $tab[15]) {
                 $solidaryUser->setMMon($tab[15]);
             }
-            if ("" !== $tab[16]) {
+            if ('' !== $tab[16]) {
                 $solidaryUser->setAMon($tab[16]);
             }
-            if ("" !== $tab[17]) {
+            if ('' !== $tab[17]) {
                 $solidaryUser->setEMon($tab[17]);
             }
-            if ("" !== $tab[18]) {
+            if ('' !== $tab[18]) {
                 $solidaryUser->setMTue($tab[18]);
             }
-            if ("" !== $tab[19]) {
+            if ('' !== $tab[19]) {
                 $solidaryUser->setATue($tab[19]);
             }
-            if ("" !== $tab[20]) {
+            if ('' !== $tab[20]) {
                 $solidaryUser->setETue($tab[20]);
             }
-            if ("" !== $tab[21]) {
+            if ('' !== $tab[21]) {
                 $solidaryUser->setMWed($tab[21]);
             }
-            if ("" !== $tab[22]) {
+            if ('' !== $tab[22]) {
                 $solidaryUser->setAWed($tab[22]);
             }
-            if ("" !== $tab[23]) {
+            if ('' !== $tab[23]) {
                 $solidaryUser->setEWed($tab[23]);
             }
-            if ("" !== $tab[24]) {
+            if ('' !== $tab[24]) {
                 $solidaryUser->setMThu($tab[24]);
             }
-            if ("" !== $tab[25]) {
+            if ('' !== $tab[25]) {
                 $solidaryUser->setAThu($tab[25]);
             }
-            if ("" !== $tab[26]) {
+            if ('' !== $tab[26]) {
                 $solidaryUser->setEThu($tab[26]);
             }
-            if ("" !== $tab[27]) {
+            if ('' !== $tab[27]) {
                 $solidaryUser->setMFri($tab[27]);
             }
-            if ("" !== $tab[28]) {
+            if ('' !== $tab[28]) {
                 $solidaryUser->setAFri($tab[28]);
             }
-            if ("" !== $tab[29]) {
+            if ('' !== $tab[29]) {
                 $solidaryUser->setEFri($tab[29]);
             }
-            if ("" !== $tab[30]) {
+            if ('' !== $tab[30]) {
                 $solidaryUser->setMSat($tab[30]);
             }
-            if ("" !== $tab[31]) {
+            if ('' !== $tab[31]) {
                 $solidaryUser->setASat($tab[31]);
             }
-            if ("" !== $tab[32]) {
+            if ('' !== $tab[32]) {
                 $solidaryUser->setESat($tab[32]);
             }
-            if ("" !== $tab[33]) {
+            if ('' !== $tab[33]) {
                 $solidaryUser->setMSun($tab[33]);
             }
-            if ("" !== $tab[34]) {
+            if ('' !== $tab[34]) {
                 $solidaryUser->setASun($tab[34]);
             }
-            if ("" !== $tab[35]) {
+            if ('' !== $tab[35]) {
                 $solidaryUser->setESun($tab[35]);
             }
 
-            if ("" !== $tab[36]) {
+            if ('' !== $tab[36]) {
                 $solidaryUser->setMaxDistance($tab[36]);
             }
-            
-            if ("" !== $tab[37]) {
+
+            if ('' !== $tab[37]) {
                 $solidaryUser->setVehicle($tab[37]);
             }
             $solidaryUser->setComment($tab[38]);
@@ -455,19 +448,18 @@ class SolidaryFixturesManager
             $this->entityManager->persist($user);
             $this->entityManager->flush();
         } else {
-            echo "User not found !" . PHP_EOL;
+            echo 'User not found !'.PHP_EOL;
         }
     }
 
     /**
-     * Link SolidaryUsers and Structures
+     * Link SolidaryUsers and Structures.
      *
-     * @param array $tab    The array containing the links (model in ../Csv/Solidary/SolidaryUserStructures/solidaryUserStructures.txt)
-     * @return void
+     * @param array $tab The array containing the links (model in ../Csv/Solidary/SolidaryUserStructures/solidaryUserStructures.txt)
      */
     public function createSolidaryUserStructure(array $tab)
     {
-        echo "Link SolidaryUser " . $tab[1] . " with structure : " . $tab[2] . PHP_EOL;
+        echo 'Link SolidaryUser '.$tab[1].' with structure : '.$tab[2].PHP_EOL;
         if ($solidaryUser = $this->solidaryUserRepository->find($tab[1])) {
             if ($structure = $this->structureRepository->find($tab[2])) {
                 $solidaryUserStructure = new SolidaryUserStructure();
@@ -475,45 +467,78 @@ class SolidaryFixturesManager
                 $solidaryUserStructure->setSolidaryUser($solidaryUser);
                 $solidaryUserStructure->setStructure($structure);
                 $solidaryUserStructure->setStatus($tab[3]);
-                if ("" !== $tab[4]) {
-                    $solidaryUserStructure->setAcceptedDate(\Datetime::createFromFormat("Y-m-d H:i:s", $tab[4]));
+                if ('' !== $tab[4]) {
+                    $solidaryUserStructure->setAcceptedDate(\Datetime::createFromFormat('Y-m-d H:i:s', $tab[4]));
                 }
-                if ("" !== $tab[5]) {
-                    $solidaryUserStructure->setRefusedDate(\Datetime::createFromFormat("Y-m-d H:i:s", $tab[5]));
+                if ('' !== $tab[5]) {
+                    $solidaryUserStructure->setRefusedDate(\Datetime::createFromFormat('Y-m-d H:i:s', $tab[5]));
                 }
                 $this->entityManager->persist($solidaryUserStructure);
                 $this->entityManager->flush();
             } else {
-                echo "Structure not found !" . PHP_EOL;
+                echo 'Structure not found !'.PHP_EOL;
             }
         } else {
-            echo "SolidaryUser not found !" . PHP_EOL;
+            echo 'SolidaryUser not found !'.PHP_EOL;
         }
     }
 
     /**
-     * Create the proofs
+     * Create the proofs.
      *
-     * @param array $tab    The array containing the proofs (model in ../Csv/Solidary/Proofs/proofs.txt)
-     * @return void
+     * @param array $tab The array containing the proofs (model in ../Csv/Solidary/Proofs/proofs.txt)
      */
     public function createProof(array $tab)
     {
-        echo "Import proof for SolidaryUserStructure" . $tab[2] . " and StructureProof " . $tab[0] . PHP_EOL;
+        echo 'Import proof for StructureProof '.$tab[0].' and SolidaryUserStructure '.$tab[1].PHP_EOL;
         $proof = new Proof();
-        if ($solidaryUserStructure = $this->solidaryUserStructureRepository->find($tab[2])) {
-            $proof->setSolidaryUserStructure($solidaryUserStructure);
-        } else {
-            echo "SolidaryUserStructure not found !" . PHP_EOL;
-        }
         if ($structureProof = $this->structureProofRepository->find($tab[0])) {
             $proof->setStructureProof($structureProof);
         } else {
-            echo "StructureProof not found !" . PHP_EOL;
+            echo 'StructureProof not found !'.PHP_EOL;
+
+            return;
         }
-        $proof->setValue($tab[1]);
+        if ($solidaryUserStructure = $this->solidaryUserStructureRepository->find($tab[1])) {
+            $proof->setSolidaryUserStructure($solidaryUserStructure);
+        } else {
+            echo 'SolidaryUserStructure not found !'.PHP_EOL;
+
+            return;
+        }
+        $proof->setValue($tab[2]);
+        /**
+         * @var StructureProof $structureProof
+         */
         if ($structureProof->isCheckbox()) {
             $proof->setValue(filter_var($tab[1], FILTER_VALIDATE_BOOLEAN));
+        }
+
+        if ($structureProof->isFile()) {
+            if ('' !== $tab[3]) {
+                $proof->setFileName($tab[3]);
+            } else {
+                echo 'Filename not found !'.PHP_EOL;
+
+                return;
+            }
+            $file = self::SOURCE_PROOF_PATH.$tab[3];
+            if (!is_file($file)) {
+                echo 'File '.$file.' not found !'.PHP_EOL;
+
+                return;
+            }
+            if ('' !== $tab[4]) {
+                $proof->setOriginalName($tab[4]);
+            }
+            $infos = getimagesize($file);
+            $proof->setMimeType($infos['mime']);
+            $proof->setSize(filesize($file));
+            if (!copy($file, self::DESTINATION_PROOF_PATH.$proof->getFileName())) {
+                echo 'File copy failed !'.PHP_EOL;
+
+                return;
+            }
         }
         $this->entityManager->persist($proof);
         $this->entityManager->flush();

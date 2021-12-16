@@ -61,4 +61,14 @@ class StructureProofRepository
         ->setParameter('structure', $structure);
         return $query->getQuery()->getResult();
     }
+
+    public function findNotMandatoryBeneficiaryStructureProofs(Structure $structure)
+    {
+        $query = $this->repository->createQueryBuilder('sp')
+        ->where('sp.structure = :structure')
+        ->andwhere('sp.mandatory = 0')
+        ->andwhere('sp.type = 1')
+        ->setParameter('structure', $structure);
+        return $query->getQuery()->getResult();
+    }
 }

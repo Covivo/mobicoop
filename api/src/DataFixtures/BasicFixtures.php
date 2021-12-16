@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\DataFixtures;
 
@@ -28,15 +28,15 @@ use App\Carpool\Ressource\Ad;
 use App\Carpool\Service\ProposalManager;
 use App\DataFixtures\Service\BasicFixturesManager;
 use App\Geography\Service\TerritoryManager;
-use Doctrine\Bundle\FixturesBundle\Fixture;
-use Doctrine\Persistence\ObjectManager;
-use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
-use Symfony\Component\Finder\Finder;
 use App\Image\Service\ImageManager;
+use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
+use Doctrine\Persistence\ObjectManager;
+use Symfony\Component\Finder\Finder;
 
 class BasicFixtures extends Fixture implements FixtureGroupInterface
 {
-    const BATCH = 50;                   // batch number for multi treatment
+    public const BATCH = 50;                   // batch number for multi treatment
 
     private $fixturesManager;
     private $proposalManager;
@@ -71,27 +71,26 @@ class BasicFixtures extends Fixture implements FixtureGroupInterface
     public function load(ObjectManager $manager)
     {
         if (!$this->fixturesEnabled) {
-            echo "Fixtures disabled". PHP_EOL;
+            echo 'Fixtures disabled'.PHP_EOL;
+
             exit;
         }
-        
+
         // clear database
         if ($this->fixturesClearBase) {
             $this->fixturesManager->clearBasicData();
         }
 
         if ($this->fixturesBasic) {
-
             // load icons infos from csv file
             $finder = new Finder();
-            $finder->in(__DIR__ . '/Csv/Basic/Icons/');
+            $finder->in(__DIR__.'/Csv/Basic/Icons/');
             $finder->name('*.csv');
             $finder->files();
             foreach ($finder as $file) {
-                echo "Importing : {$file->getBasename()} " . PHP_EOL;
-                if ($file = fopen($file, "r")) {
+                echo "Importing : {$file->getBasename()} ".PHP_EOL;
+                if ($file = fopen($file, 'r')) {
                     while ($tab = fgetcsv($file, 4096, ';')) {
-                        // create the community user
                         $this->fixturesManager->createIcons($tab);
                     }
                 }
@@ -99,14 +98,13 @@ class BasicFixtures extends Fixture implements FixtureGroupInterface
 
             // load users info from csv file
             $finder = new Finder();
-            $finder->in(__DIR__ . '/Csv/Basic/Users/');
+            $finder->in(__DIR__.'/Csv/Basic/Users/');
             $finder->name('*.csv');
             $finder->files();
             foreach ($finder as $file) {
-                echo "Importing : {$file->getBasename()} " . PHP_EOL;
-                if ($file = fopen($file, "r")) {
+                echo "Importing : {$file->getBasename()} ".PHP_EOL;
+                if ($file = fopen($file, 'r')) {
                     while ($tab = fgetcsv($file, 4096, ';')) {
-                        // create the user
                         $this->fixturesManager->createUser($tab);
                     }
                 }
@@ -114,12 +112,12 @@ class BasicFixtures extends Fixture implements FixtureGroupInterface
 
             // load ads info from csv file
             $finder = new Finder();
-            $finder->in(__DIR__ . '/Csv/Basic/Ads/');
+            $finder->in(__DIR__.'/Csv/Basic/Ads/');
             $finder->name('*.csv');
             $finder->files();
             foreach ($finder as $file) {
-                echo "Importing : {$file->getBasename()} " . PHP_EOL;
-                if ($file = fopen($file, "r")) {
+                echo "Importing : {$file->getBasename()} ".PHP_EOL;
+                if ($file = fopen($file, 'r')) {
                     while ($tab = fgetcsv($file, 4096, ';')) {
                         // create the ad
                         if ($ad = $this->fixturesManager->createAd($tab)) {
@@ -128,7 +126,7 @@ class BasicFixtures extends Fixture implements FixtureGroupInterface
                                 $returnProposal = $this->proposalManager->prepareProposal($this->proposalManager->get($outwardProposal->getProposalLinked()->getId()));
                                 $this->matchingRepository->linkRelatedMatchings($outwardProposal->getId());
                             }
-                            if ($ad->getRole() == Ad::ROLE_DRIVER_OR_PASSENGER) {
+                            if (Ad::ROLE_DRIVER_OR_PASSENGER == $ad->getRole()) {
                                 // linking for the outward
                                 $this->matchingRepository->linkOppositeMatchings($outwardProposal->getId());
                                 if (!$ad->isOneWay()) {
@@ -143,14 +141,13 @@ class BasicFixtures extends Fixture implements FixtureGroupInterface
 
             // load events info from csv file
             $finder = new Finder();
-            $finder->in(__DIR__ . '/Csv/Basic/Events/');
+            $finder->in(__DIR__.'/Csv/Basic/Events/');
             $finder->name('*.csv');
             $finder->files();
             foreach ($finder as $file) {
-                echo "Importing : {$file->getBasename()} " . PHP_EOL;
-                if ($file = fopen($file, "r")) {
+                echo "Importing : {$file->getBasename()} ".PHP_EOL;
+                if ($file = fopen($file, 'r')) {
                     while ($tab = fgetcsv($file, 4096, ';')) {
-                        // create the event
                         $this->fixturesManager->createEvent($tab);
                     }
                 }
@@ -158,14 +155,13 @@ class BasicFixtures extends Fixture implements FixtureGroupInterface
 
             // load communities info from csv file
             $finder = new Finder();
-            $finder->in(__DIR__ . '/Csv/Basic/Communities/');
+            $finder->in(__DIR__.'/Csv/Basic/Communities/');
             $finder->name('*.csv');
             $finder->files();
             foreach ($finder as $file) {
-                echo "Importing : {$file->getBasename()} " . PHP_EOL;
-                if ($file = fopen($file, "r")) {
+                echo "Importing : {$file->getBasename()} ".PHP_EOL;
+                if ($file = fopen($file, 'r')) {
                     while ($tab = fgetcsv($file, 4096, ';')) {
-                        // create the community
                         $this->fixturesManager->createCommunity($tab);
                     }
                 }
@@ -173,14 +169,13 @@ class BasicFixtures extends Fixture implements FixtureGroupInterface
 
             // load communities users info from csv file
             $finder = new Finder();
-            $finder->in(__DIR__ . '/Csv/Basic/CommunityUsers/');
+            $finder->in(__DIR__.'/Csv/Basic/CommunityUsers/');
             $finder->name('*.csv');
             $finder->files();
             foreach ($finder as $file) {
-                echo "Importing : {$file->getBasename()} " . PHP_EOL;
-                if ($file = fopen($file, "r")) {
+                echo "Importing : {$file->getBasename()} ".PHP_EOL;
+                if ($file = fopen($file, 'r')) {
                     while ($tab = fgetcsv($file, 4096, ';')) {
-                        // create the community user
                         $this->fixturesManager->createCommunityUser($tab);
                     }
                 }
@@ -188,50 +183,48 @@ class BasicFixtures extends Fixture implements FixtureGroupInterface
 
             // Territories (direct SQL requests in the file because of geographic data)
             $finder = new Finder();
-            $finder->in(__DIR__ . '/Csv/Basic/Territories/');
+            $finder->in(__DIR__.'/Csv/Basic/Territories/');
             $finder->name('*.sql');
             $finder->files();
             foreach ($finder as $file) {
-                echo "Importing : {$file->getBasename()} " . PHP_EOL;
-                if ($file = fopen($file, "r")) {
+                echo "Importing : {$file->getBasename()} ".PHP_EOL;
+                if ($file = fopen($file, 'r')) {
                     while (!feof($file)) {
-                        // create the community user
-                        $this->fixturesManager->createTerritories(fgets($file));
+                        $this->fixturesManager->createTerritory(fgets($file));
                     }
                 }
             }
 
             // load relayPointTypes infos from csv file
             $finder = new Finder();
-            $finder->in(__DIR__ . '/Csv/Basic/RelayPointTypes/');
+            $finder->in(__DIR__.'/Csv/Basic/RelayPointTypes/');
             $finder->name('*.csv');
             $finder->files();
             foreach ($finder as $file) {
-                echo "Importing : {$file->getBasename()} " . PHP_EOL;
-                if ($file = fopen($file, "r")) {
+                echo "Importing : {$file->getBasename()} ".PHP_EOL;
+                if ($file = fopen($file, 'r')) {
                     while ($tab = fgetcsv($file, 4096, ';')) {
-                        // create the community user
-                        $this->fixturesManager->createRelayPointTypes($tab);
+                        $this->fixturesManager->createRelayPointType($tab);
                     }
                 }
             }
 
             // load Images infos from csv file
             $finder = new Finder();
-            $finder->in(__DIR__ . '/Csv/Basic/Images/');
+            $finder->in(__DIR__.'/Csv/Basic/Images/');
             $finder->name('*.csv');
             $finder->files();
             foreach ($finder as $file) {
-                echo "Importing : {$file->getBasename()} " . PHP_EOL;
-                if ($file = fopen($file, "r")) {
+                echo "Importing : {$file->getBasename()} ".PHP_EOL;
+                if ($file = fopen($file, 'r')) {
                     while ($tab = fgetcsv($file, 4096, ';')) {
-                        // create the community user
-                        $this->fixturesManager->createImages($tab);
+                        // create the image
+                        $this->fixturesManager->createImage($tab);
                     }
                 }
             }
         }
-        
+
         // Link addresses and territories
         $this->territoryManager->updateAddressesAndDirections();
 
@@ -243,7 +236,7 @@ class BasicFixtures extends Fixture implements FixtureGroupInterface
         // $this->proposalManager->createMatchingsForAllProposals();
         // echo "Done !" . PHP_EOL;
     }
-    
+
     public static function getGroups(): array
     {
         return ['basic'];
