@@ -642,6 +642,17 @@ class SolidaryUserManager
             }
         }
 
+        // we set a default value for not mandatory proofs if the benefiiary didn't completed them
+        if (count($solidaryBeneficiaryStructure->getProofs()) == 0) {
+            $notMandatoryBeneficiaryStructureProofs = $this->structureProofRepository->findNotMandatoryBeneficiaryStructureProofs($solidaryBeneficiaryStructure);
+            foreach ($notMandatoryBeneficiaryStructureProofs as $notMandatoryProof) {
+                $proof = new Proof();
+                $proof->setStructureProof($notMandatoryProof);
+                $proof->setValue(null);
+                $solidaryUserStructure->addProof($proof);
+            }
+        }
+
         $solidaryUser->addSolidaryUserStructure($solidaryUserStructure);
 
         $this->entityManager->persist($user);
