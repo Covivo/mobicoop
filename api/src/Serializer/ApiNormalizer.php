@@ -18,13 +18,12 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Serializer;
 
 use App\Carpool\Repository\ProposalRepository;
 use App\Carpool\Ressource\Ad;
-use App\Communication\Entity\Message;
 use App\Gamification\Entity\GamificationNotifier;
 use App\Gamification\Entity\Reward;
 use App\Gamification\Entity\RewardStep;
@@ -32,9 +31,7 @@ use App\Gamification\Repository\RewardRepository;
 use App\Gamification\Repository\RewardStepRepository;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
-use Exception;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
@@ -96,24 +93,25 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
     public function normalize($object, $format = null, array $context = [])
     {
         if ($this->log) {
-            $this->logger->info("Api Normalize on ".get_class($object));
+            $this->logger->info('Api Normalize on '.get_class($object));
         }
 
         $data = $this->decorated->normalize($object, $format, $context);
 
         // add adType to User in admin
-        if (isset($context['collection_operation_name']) && $context['collection_operation_name'] === 'ADMIN_get' && $object instanceof User) {
+        if (isset($context['collection_operation_name']) && 'ADMIN_get' === $context['collection_operation_name'] && $object instanceof User) {
             $nbDriver = $this->proposalRepository->getNbActiveAdsForUserAndRole($data['id'], Ad::ROLE_DRIVER);
             $nbPassenger = $this->proposalRepository->getNbActiveAdsForUserAndRole($data['id'], Ad::ROLE_PASSENGER);
-            if ($nbDriver>0 && $nbPassenger>0) {
+            if ($nbDriver > 0 && $nbPassenger > 0) {
                 $data['adType'] = User::AD_DRIVER_PASSENGER;
-            } elseif ($nbDriver>0) {
+            } elseif ($nbDriver > 0) {
                 $data['adType'] = User::AD_DRIVER;
-            } elseif ($nbPassenger>0) {
+            } elseif ($nbPassenger > 0) {
                 $data['adType'] = User::AD_PASSENGER;
             } else {
                 $data['adType'] = User::AD_NONE;
             }
+
             return $data;
         }
         if ($this->gamificationActive == true) {
@@ -197,8 +195,9 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
     public function denormalize($data, $class, $format = null, array $context = [])
     {
         if ($this->log) {
-            $this->logger->info("Api Denormalize on ".$class);
+            $this->logger->info('Api Denormalize on '.$class);
         }
+
         return $this->decorated->denormalize($data, $class, $format, $context);
     }
 
@@ -210,56 +209,50 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
     }
 
     /**
-     * Format a RewardStep to be notified
-     *
-     * @param RewardStep $rewardStep
-     * @return array
+     * Format a RewardStep to be notified.
      */
     private function formatRewardStep(RewardStep $rewardStep): array
     {
         if ($this->log) {
-            $this->logger->info("Api Normalize formatRewardStep ".$rewardStep->getId());
+            $this->logger->info('Api Normalize formatRewardStep '.$rewardStep->getId());
         }
 
         return [
-            "type" => "RewardStep",
-            "id" => $rewardStep->getId(),
-            "title" => $rewardStep->getSequenceItem()->getGamificationAction()->getTitle(),
-            "notifiedDate" => $rewardStep->getNotifiedDate(),
-            "badge" => [
-                "id" => $rewardStep->getSequenceItem()->getBadge()->getId(),
-                "name" => $rewardStep->getSequenceItem()->getBadge()->getName(),
-                "title" => $rewardStep->getSequenceItem()->getBadge()->getTitle()
-            ]
+            'type' => 'RewardStep',
+            'id' => $rewardStep->getId(),
+            'title' => $rewardStep->getSequenceItem()->getGamificationAction()->getTitle(),
+            'notifiedDate' => $rewardStep->getNotifiedDate(),
+            'badge' => [
+                'id' => $rewardStep->getSequenceItem()->getBadge()->getId(),
+                'name' => $rewardStep->getSequenceItem()->getBadge()->getName(),
+                'title' => $rewardStep->getSequenceItem()->getBadge()->getTitle(),
+            ],
         ];
     }
 
     /**
-     * Format a Reward to be notified
-     *
-     * @param Reward $reward
-     * @return array
+     * Format a Reward to be notified.
      */
     private function formatReward(Reward $reward): array
     {
         if ($this->log) {
-            $this->logger->info("Api Normalize formatReward ".$reward->getId());
+            $this->logger->info('Api Normalize formatReward '.$reward->getId());
         }
-        
+
         return [
-            "type" => "Badge",
-            "id" => $reward->getBadge()->getId(),
-            "rewardId" => $reward->getId(),
-            "name" => $reward->getBadge()->getName(),
-            "title" => $reward->getBadge()->getTitle(),
-            "notifiedDate" => $reward->getNotifiedDate(),
-            "text" => $reward->getBadge()->getText(),
-            "pictures" => [
-                "icon" => (!is_null($reward->getBadge()->getIcon())) ? $this->badgeImageUri.$reward->getBadge()->getIcon()->getFileName() : null,
-                "decoratedIcon" => (!is_null($reward->getBadge()->getDecoratedIcon())) ? $this->badgeImageUri.$reward->getBadge()->getDecoratedIcon()->getFileName() : null,
-                "image" => (!is_null($reward->getBadge()->getImage())) ? $this->badgeImageUri.$reward->getBadge()->getImage()->getFileName() : null,
-                "imageLight" => (!is_null($reward->getBadge()->getImageLight())) ? $this->badgeImageUri.$reward->getBadge()->getImageLight()->getFileName() : null
-            ]
+            'type' => 'Badge',
+            'id' => $reward->getBadge()->getId(),
+            'rewardId' => $reward->getId(),
+            'name' => $reward->getBadge()->getName(),
+            'title' => $reward->getBadge()->getTitle(),
+            'notifiedDate' => $reward->getNotifiedDate(),
+            'text' => $reward->getBadge()->getText(),
+            'pictures' => [
+                'icon' => (!is_null($reward->getBadge()->getIcon())) ? $this->badgeImageUri.$reward->getBadge()->getIcon()->getFileName() : null,
+                'decoratedIcon' => (!is_null($reward->getBadge()->getDecoratedIcon())) ? $this->badgeImageUri.$reward->getBadge()->getDecoratedIcon()->getFileName() : null,
+                'image' => (!is_null($reward->getBadge()->getImage())) ? $this->badgeImageUri.$reward->getBadge()->getImage()->getFileName() : null,
+                'imageLight' => (!is_null($reward->getBadge()->getImageLight())) ? $this->badgeImageUri.$reward->getBadge()->getImageLight()->getFileName() : null,
+            ],
         ];
     }
 }

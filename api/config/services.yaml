@@ -664,6 +664,14 @@ services:
         tags:
             - { name: monolog.logger, channel: geomatcher }
 
+    App\Match\Service\MassComputeManager:
+        arguments:
+            $roundTripCompute: '%env(bool:MOBIMATCH_ROUNDTRIP_COMPUTE)%'
+            $aberrantCoefficient: '%env(int:MOBIMATCH_ABERRANT_COEFFICIENT)%'
+            $kilometerPrice: '%env(float:MOBIMATCH_KILOMETER_PRICE)%'
+        tags:
+            - { name: monolog.logger, channel: mass }
+
     App\Match\Service\MassImportManager:
         arguments:
             $params: '%mass%'
@@ -679,14 +687,6 @@ services:
         tags:
             - { name: monolog.logger, channel: mass }
 
-    App\Match\Service\MassComputeManager:
-        arguments:
-            $roundTripCompute: '%env(bool:MOBIMATCH_ROUNDTRIP_COMPUTE)%'
-            $aberrantCoefficient: '%env(int:MOBIMATCH_ABERRANT_COEFFICIENT)%'
-            $kilometerPrice: '%env(float:MOBIMATCH_KILOMETER_PRICE)%'
-
-        tags:
-            - { name: monolog.logger, channel: mass }
     App\Match\Service\MassPublicTransportPotentialManager:
         arguments:
             $params:

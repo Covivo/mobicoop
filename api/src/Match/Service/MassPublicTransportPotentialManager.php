@@ -38,6 +38,7 @@ use App\Geography\Service\GeoTools;
 use App\Match\Entity\MassPTJourney;
 use App\Match\Event\MassPublicTransportSolutionsGatheredEvent;
 use App\Match\Repository\MassPTJourneyRepository;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -60,7 +61,9 @@ class MassPublicTransportPotentialManager
     private $exludedForPtMaxDistanceWalkFromWork;
     private $exludedForPtMaxNbCarDuration;
 
-    private const ROUND_TRIP_COMPUTE = true; // Multiply the computed numbers by two
+    private $logger;
+
+    private const TIME_LIMIT = 3 * 60 * 60;
 
     public function __construct(
         MassRepository $massRepository,
@@ -69,6 +72,7 @@ class MassPublicTransportPotentialManager
         MassPTJourneyRepository $massPTJourneyRepository,
         GeoTools $geoTools,
         EventDispatcherInterface $eventDispatcher,
+        LoggerInterface $logger,
         array $params
     ) {
         $this->massRepository = $massRepository;
@@ -82,6 +86,7 @@ class MassPublicTransportPotentialManager
         $this->exludedForPtMaxDistanceWalkFromHome = 0;
         $this->exludedForPtMaxDistanceWalkFromWork = 0;
         $this->exludedForPtMaxNbCarDuration = 0;
+        $this->logger = $logger;
     }
 
     /**
@@ -92,6 +97,10 @@ class MassPublicTransportPotentialManager
      */
     public function getPublicTransportPotential(int $id): Mass
     {
+        $this->logger->info('Mass PT Potential | Start '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
+        
+        set_time_limit(self::TIME_LIMIT);
+
         $mass = $this->massRepository->find($id);
 
         if ($mass->getStatus() < 4) {
@@ -103,10 +112,18 @@ class MassPublicTransportPotentialManager
         $this->entityManager->flush();
 
         // We remove the previous PTJourneys
+        $this->logger->info('Mass PT Potential | Remove previous Mass PTJourney '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
         $this->massPTJourneyRepository->deleteMassPTJourneysOfAMass($id);
 
         $TPPotential = [];
+        // $cpt = 0;
         foreach ($mass->getPersons() as $person) {
+            // $cpt++;
+            // if ($cpt>10) {
+            //     break;
+            // }
+
+            $this->logger->info('Mass PT Potential | Get PT potential for person id = '.$person->getId().' '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
             /**
              * @var MassPerson $person
              */
@@ -139,6 +156,8 @@ class MassPublicTransportPotentialManager
         // Send an email to the operator
         $event = new MassPublicTransportSolutionsGatheredEvent($mass);
         $this->eventDispatcher->dispatch(MassPublicTransportSolutionsGatheredEvent::NAME, $event);
+
+        $this->logger->info('Mass PT Potential | End '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
 
         return $mass;
     }

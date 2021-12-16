@@ -19,19 +19,19 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Match\Service;
 
 use App\Geography\Service\GeoTools;
 use App\Match\Entity\Mass;
-use App\Match\Entity\MassMatrix;
-use App\Match\Entity\MassJourney;
 use App\Match\Entity\MassCarpool;
+use App\Match\Entity\MassJourney;
+use App\Match\Entity\MassMatrix;
 use App\Match\Entity\MassPerson;
 use App\Match\Repository\MassPersonRepository;
-use Doctrine\Common\Collections\ArrayCollection;
 use App\Service\FormatDataManager;
+use Psr\Log\LoggerInterface;
 
 /**
  * Mass compute manager.
@@ -42,17 +42,28 @@ use App\Service\FormatDataManager;
  */
 class MassComputeManager
 {
+    private const TIME_LIMIT = 3 * 24 * 60 * 60;
+
     private $formatDataManager;
     private $geoTools;
     private $massPersonRepository;
     private $roundTripCompute;
     private $aberrantCoefficient;
     private $kilometerPrice;
+    private $logger;
+
+    private $mass;
+    private $computedData;
+    private $persons;
+    private $massMatrix;
+    private $tabCoords;
+    private $personsIndexed;
 
     public function __construct(
         FormatDataManager $formatDataManager,
         GeoTools $geoTools,
         MassPersonRepository $massPersonRepository,
+        LoggerInterface $logger,
         bool $roundTripCompute,
         int $aberrantCoefficient,
         float $kilometerPrice
@@ -63,85 +74,207 @@ class MassComputeManager
         $this->roundTripCompute = $roundTripCompute;
         $this->aberrantCoefficient = $aberrantCoefficient;
         $this->kilometerPrice = $kilometerPrice;
+        $this->logger = $logger;
     }
 
     /**
-     * Compute all necessary calculations for a mass
+     * Compute all necessary calculations for a mass.
      *
      * @return Mass
      */
     public function computeResults(Mass $mass)
     {
-        $computedData = [
-            "totalTravelDistance" => 0,
-            "totalTravelDistanceCO2" => 0,
-            "totalTravelDistancePerYear" => 0,
-            "totalTravelDistancePerYearCO2" => 0,
-            "averageTravelDistance" => 0,
-            "averageTravelDistanceCO2" => 0,
-            "averageTravelDistancePerYear" => 0,
-            "averageTravelDistancePerYearCO2" => 0,
-            "totalTravelDuration" => 0,
-            "totalTravelDurationPerYear" => 0,
-            "averageTravelDuration" => 0,
-            "averageTravelDurationPerYear" => 0,
-            "nbCarpoolersAsDrivers" => 0,
-            "nbCarpoolersAsPassengers" => 0,
-            "nbCarpoolersAsBoth" => 0,
-            "nbCarpoolersTotal" => 0,
-            "humanTotalTravelDuration" => "",
-            "humanTotalTravelDurationPerYear" => "",
-            "humanAverageTravelDuration" => "",
-            "humanAverageTravelDurationPerYear" => "",
-            "kilometerPrice" => $this->kilometerPrice
+        set_time_limit(self::TIME_LIMIT);
+
+        $this->mass = $mass;
+
+        $this->logger->info('Mass Compute | Start '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
+
+        $this->computedData = [
+            'totalTravelDistance' => 0,
+            'totalTravelDistanceCO2' => 0,
+            'totalTravelDistancePerYear' => 0,
+            'totalTravelDistancePerYearCO2' => 0,
+            'averageTravelDistance' => 0,
+            'averageTravelDistanceCO2' => 0,
+            'averageTravelDistancePerYear' => 0,
+            'averageTravelDistancePerYearCO2' => 0,
+            'totalTravelDuration' => 0,
+            'totalTravelDurationPerYear' => 0,
+            'averageTravelDuration' => 0,
+            'averageTravelDurationPerYear' => 0,
+            'nbCarpoolersAsDrivers' => 0,
+            'nbCarpoolersAsPassengers' => 0,
+            'nbCarpoolersAsBoth' => 0,
+            'nbCarpoolersTotal' => 0,
+            'humanTotalTravelDuration' => '',
+            'humanTotalTravelDurationPerYear' => '',
+            'humanAverageTravelDuration' => '',
+            'humanAverageTravelDurationPerYear' => '',
+            'kilometerPrice' => $this->kilometerPrice,
         ];
 
-        $persons = $mass->getPersons();
-
-
+        $this->persons = $this->mass->getPersons();
 
         // J'indexe le tableau des personnes pour y accéder ensuite en direct
-        $personsIndexed = [];
-        foreach ($persons as $person) {
-            $personsIndexed[$person->getId()] = $person;
+        $this->logger->info('Mass Compute | Index persons started '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
+        $this->personsIndexed = [];
+        foreach ($this->persons as $person) {
+            $this->personsIndexed[$person->getId()] = $person;
         }
 
-        $tabCoords = [];
+        $this->logger->info('Mass Compute | Index finished for '.count($this->personsIndexed).' persons | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
 
-        $matrix = new MassMatrix();
+        $this->tabCoords = [];
 
-        foreach ($persons as $person) {
-            $tabCoords[] = array(
-                "id"=>$person->getPersonalAddress()->getId(),
-                "latitude"=>$person->getPersonalAddress()->getLatitude(),
-                "longitude"=>$person->getPersonalAddress()->getLongitude(),
-                "distance"=>$person->getDistance(),
-                "duration"=>$person->getDuration(),
-                "address"=>$person->getPersonalAddress()->getHouseNumber()." ".$person->getPersonalAddress()->getStreet()." ".$person->getPersonalAddress()->getPostalCode()." ".$person->getPersonalAddress()->getAddressLocality()
-            );
-            $computedData["totalTravelDistance"] += $person->getDistance();
-            $computedData["totalTravelDuration"] += $person->getDuration();
+        $this->massMatrix = new MassMatrix();
+
+        $this->computeData();
+
+        $this->buildMatrixOriginalsJourneys();
+
+        $this->buildPersonsCoords();
+
+        // Workingplace storage
+//        $this->mass->setLatWorkingPlace($this->persons[0]->getWorkAddress()->getLatitude());
+//        $this->mass->setLonWorkingPlace($this->persons[0]->getWorkAddress()->getLongitude());
+
+        $this->mass->setWorkingPlaces($this->getAllWorkingPlaces());
+
+        // Averages
+        $this->computedData['averageTravelDistance'] = $this->computedData['totalTravelDistance'] / count($this->persons);
+        $this->computedData['averageTravelDistancePerYear'] = $this->computedData['averageTravelDistance'] * Mass::NB_WORKING_DAY;
+        $this->computedData['totalTravelDistancePerYear'] = $this->computedData['totalTravelDistance'] * Mass::NB_WORKING_DAY;
+        $this->computedData['averageTravelDuration'] = $this->computedData['totalTravelDuration'] / count($this->persons);
+        $this->computedData['averageTravelDurationPerYear'] = $this->computedData['averageTravelDuration'] * Mass::NB_WORKING_DAY;
+        $this->computedData['totalTravelDurationPerYear'] = $this->computedData['totalTravelDuration'] * Mass::NB_WORKING_DAY;
+
+        // Conversion of some data to human readable versions (like durations in hours, minutes, seconds)
+        $this->computedData['humanTotalTravelDuration'] = $this->formatDataManager->convertSecondsToHuman($this->computedData['totalTravelDuration']);
+        $this->computedData['humanTotalTravelDurationPerYear'] = $this->formatDataManager->convertSecondsToHuman($this->computedData['totalTravelDurationPerYear']);
+        $this->computedData['humanAverageTravelDuration'] = $this->formatDataManager->convertSecondsToHuman($this->computedData['averageTravelDuration']);
+        $this->computedData['humanAverageTravelDurationPerYear'] = $this->formatDataManager->convertSecondsToHuman($this->computedData['averageTravelDurationPerYear']);
+
+        // CO2 consumption
+        $this->computedData['averageTravelDistanceCO2'] = $this->geoTools->getCO2($this->computedData['averageTravelDistance']);
+        $this->computedData['averageTravelDistancePerYearCO2'] = $this->geoTools->getCO2($this->computedData['averageTravelDistancePerYear']);
+        $this->computedData['totalTravelDistanceCO2'] = $this->geoTools->getCO2($this->computedData['totalTravelDistance']);
+        $this->computedData['totalTravelDistancePerYearCO2'] = $this->geoTools->getCO2($this->computedData['totalTravelDistancePerYear']);
+
+        // If we compute for round trip, we multiply everything by two
+        if ($this->roundTripCompute) {
+            // Not a blacklist 'cause... you know...
+            $coloredList = [
+                'nbCarpoolersAsDrivers',
+                'nbCarpoolersAsPassengers',
+                'nbCarpoolersAsBoth',
+                'nbCarpoolersTotal',
+                'kilometerPrice',
+            ];
+
+            foreach ($this->computedData as $key => $data) {
+                if (is_numeric($data) && !in_array($key, $coloredList)) {
+                    $this->computedData[$key] = $data * 2;
+                }
+            }
+
+            // We have to redefined the human version of several computed data
+            $this->computedData['humanTotalTravelDuration'] = $this->formatDataManager->convertSecondsToHuman($this->computedData['totalTravelDuration']);
+            $this->computedData['humanTotalTravelDurationPerYear'] = $this->formatDataManager->convertSecondsToHuman($this->computedData['totalTravelDurationPerYear']);
+            $this->computedData['humanAverageTravelDuration'] = $this->formatDataManager->convertSecondsToHuman($this->computedData['averageTravelDuration']);
+            $this->computedData['humanAverageTravelDurationPerYear'] = $this->formatDataManager->convertSecondsToHuman($this->computedData['averageTravelDurationPerYear']);
+
+            $this->computedData['roundtripComputed'] = true;
+        } else {
+            $this->computedData['roundtripComputed'] = false;
+        }
+
+        $mass->setComputedData($this->computedData);
+
+        // Build the carpooler matrix
+        if (Mass::STATUS_MATCHED == $mass->getStatus()) {
+            $this->logger->info('Mass Compute | Start Building Matrix | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
+
+            // Only if the matching has been done.
+            $this->buildCarpoolersMatrix();
+
+            $this->logger->info('Mass Compute | End Building Matrix | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
+
+            // Compute the gains between original total and carpool total
+            $totalDurationCarpools = 0;
+            $totalDistanceCarpools = 0;
+            $totalCO2Carpools = 0;
+            foreach ($this->massMatrix->getCarpools() as $currentCarpool) {
+                $totalDistanceCarpools += $currentCarpool->getJourney()->getDistance();
+                $totalDurationCarpools += $currentCarpool->getJourney()->getDuration();
+                $totalCO2Carpools += $currentCarpool->getJourney()->getCO2();
+            }
+            $this->massMatrix->setSavedDistance($this->computedData['totalTravelDistance'] - $totalDistanceCarpools);
+            $this->massMatrix->setSavedMoney(round(($this->massMatrix->getSavedDistance() / 1000) * $this->kilometerPrice));
+            $this->massMatrix->setSavedDuration($this->computedData['totalTravelDuration'] - $totalDurationCarpools);
+            $this->massMatrix->setHumanReadableSavedDuration($this->formatDataManager->convertSecondsToHuman($this->computedData['totalTravelDuration'] - $totalDurationCarpools));
+            $this->massMatrix->setSavedCO2($this->computedData['totalTravelDistanceCO2'] - $totalCO2Carpools);
+
+            $this->mass->setMassMatrix($this->massMatrix);
+        }
+
+        // check for aberrant addresses
+        $this->mass->setAberrantAddresses($this->checkAberrantAddresses());
+
+        return $this->mass;
+    }
+
+    private function buildPersonsCoords()
+    {
+        $this->logger->info('Mass Compute | Begin buildPersonsCoords | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
+        foreach ($this->persons as $person) {
+            $this->tabCoords[] = [
+                'id' => $person->getPersonalAddress()->getId(),
+                'latitude' => $person->getPersonalAddress()->getLatitude(),
+                'longitude' => $person->getPersonalAddress()->getLongitude(),
+                'distance' => $person->getDistance(),
+                'duration' => $person->getDuration(),
+                'address' => $person->getPersonalAddress()->getHouseNumber().' '.$person->getPersonalAddress()->getStreet().' '.$person->getPersonalAddress()->getPostalCode().' '.$person->getPersonalAddress()->getAddressLocality(),
+            ];
+        }
+        $this->mass->setPersonsCoords($this->tabCoords);
+        $this->logger->info('Mass Compute | End buildPersonsCoords | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
+    }
+    
+    private function computeData()
+    {
+        $this->logger->info('Mass Compute | Begin computeData | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
+        foreach ($this->persons as $person) {
+            $this->computedData['totalTravelDistance'] += $person->getDistance();
+            $this->computedData['totalTravelDuration'] += $person->getDuration();
 
             // Can this person carpool ? AsDriver or AsPassenger ? Both ?
             $carpoolAsDriver = false;
             $carpoolAsPassenger = false;
-            if (count($person->getMatchingsAsDriver())>0) {
-                $computedData["nbCarpoolersAsDrivers"]++;
+            if (count($person->getMatchingsAsDriver()) > 0) {
+                ++$this->computedData['nbCarpoolersAsDrivers'];
                 $carpoolAsDriver = true;
             }
-            if (count($person->getMatchingsAsPassenger())>0) {
-                $computedData["nbCarpoolersAsPassengers"]++;
+            if (count($person->getMatchingsAsPassenger()) > 0) {
+                ++$this->computedData['nbCarpoolersAsPassengers'];
                 $carpoolAsPassenger = true;
             }
             if ($carpoolAsDriver && $carpoolAsPassenger) {
-                $computedData["nbCarpoolersAsBoth"]++;
+                ++$this->computedData['nbCarpoolersAsBoth'];
             }
             if ($carpoolAsDriver || $carpoolAsPassenger) {
-                $computedData["nbCarpoolersTotal"]++;
+                ++$this->computedData['nbCarpoolersTotal'];
             }
+        }
+        $this->logger->info('Mass Compute | End computeData | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
+    }
 
+    private function buildMatrixOriginalsJourneys()
+    {
+        $this->logger->info('Mass Compute | Begin buildMatrixOriginalsJourneys | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
+        foreach ($this->persons as $person) {
             // Store the original journey to calculate the gains between original and carpool
-            if ($mass->getStatus()==Mass::STATUS_MATCHED && $person->getDistance()!==null) {
+            if (Mass::STATUS_MATCHED == $this->mass->getStatus() && null !== $person->getDistance()) {
                 // Only if the matching has been done.
                 $journey = new MassJourney(
                     $person->getDistance(),
@@ -149,128 +282,48 @@ class MassComputeManager
                     $this->geoTools->getCO2($person->getDistance()),
                     $person->getId()
                 );
-                $matrix->addOriginalsJourneys($journey);
+                $this->massMatrix->addOriginalsJourneys($journey);
             }
         }
-
-        $mass->setPersonsCoords($tabCoords);
-
-        // Workingplace storage
-//        $mass->setLatWorkingPlace($persons[0]->getWorkAddress()->getLatitude());
-//        $mass->setLonWorkingPlace($persons[0]->getWorkAddress()->getLongitude());
-
-        $mass->setWorkingPlaces($this->massPersonRepository->findAllDestinationsForMass($mass));
-
-        // Averages
-        $computedData["averageTravelDistance"] = $computedData["totalTravelDistance"] / count($persons);
-        $computedData["averageTravelDistancePerYear"] = $computedData["averageTravelDistance"] * Mass::NB_WORKING_DAY;
-        $computedData["totalTravelDistancePerYear"] = $computedData["totalTravelDistance"] * Mass::NB_WORKING_DAY;
-        $computedData["averageTravelDuration"] = $computedData["totalTravelDuration"] / count($persons);
-        $computedData["averageTravelDurationPerYear"] = $computedData["averageTravelDuration"] * Mass::NB_WORKING_DAY;
-        $computedData["totalTravelDurationPerYear"] = $computedData["totalTravelDuration"] * Mass::NB_WORKING_DAY;
-
-        // Conversion of some data to human readable versions (like durations in hours, minutes, seconds)
-        $computedData["humanTotalTravelDuration"] = $this->formatDataManager->convertSecondsToHuman($computedData["totalTravelDuration"]);
-        $computedData["humanTotalTravelDurationPerYear"] = $this->formatDataManager->convertSecondsToHuman($computedData["totalTravelDurationPerYear"]);
-        $computedData["humanAverageTravelDuration"] = $this->formatDataManager->convertSecondsToHuman($computedData["averageTravelDuration"]);
-        $computedData["humanAverageTravelDurationPerYear"] = $this->formatDataManager->convertSecondsToHuman($computedData["averageTravelDurationPerYear"]);
-
-        // CO2 consumption
-        $computedData["averageTravelDistanceCO2"] = $this->geoTools->getCO2($computedData["averageTravelDistance"]);
-        $computedData["averageTravelDistancePerYearCO2"] = $this->geoTools->getCO2($computedData["averageTravelDistancePerYear"]);
-        $computedData["totalTravelDistanceCO2"] = $this->geoTools->getCO2($computedData["totalTravelDistance"]);
-        $computedData["totalTravelDistancePerYearCO2"] = $this->geoTools->getCO2($computedData["totalTravelDistancePerYear"]);
-
-        
-        // If we compute for round trip, we multiply everything by two
-        if ($this->roundTripCompute) {
-            // Not a blacklist 'cause... you know...
-            $coloredList = [
-                "nbCarpoolersAsDrivers",
-                "nbCarpoolersAsPassengers",
-                "nbCarpoolersAsBoth",
-                "nbCarpoolersTotal",
-                "kilometerPrice"
-            ];
-
-            foreach ($computedData as $key => $data) {
-                if (is_numeric($data) && !in_array($key, $coloredList)) {
-                    $computedData[$key] = $data * 2;
-                }
-            }
-
-            // We have to redefined the human version of several computed data
-            $computedData["humanTotalTravelDuration"] = $this->formatDataManager->convertSecondsToHuman($computedData["totalTravelDuration"]);
-            $computedData["humanTotalTravelDurationPerYear"] = $this->formatDataManager->convertSecondsToHuman($computedData["totalTravelDurationPerYear"]);
-            $computedData["humanAverageTravelDuration"] = $this->formatDataManager->convertSecondsToHuman($computedData["averageTravelDuration"]);
-            $computedData["humanAverageTravelDurationPerYear"] = $this->formatDataManager->convertSecondsToHuman($computedData["averageTravelDurationPerYear"]);
-
-            $computedData['roundtripComputed'] = true;
-        } else {
-            $computedData['roundtripComputed'] = false;
-        }
-
-        $mass->setComputedData($computedData);
-
-
-
-        // Build the carpooler matrix
-        if ($mass->getStatus()==Mass::STATUS_MATCHED) {
-            // Only if the matching has been done.
-            $matrix = $this->buildCarpoolersMatrix($persons, $matrix, $personsIndexed);
-
-            // Compute the gains between original total and carpool total
-            $totalDurationCarpools = 0;
-            $totalDistanceCarpools = 0;
-            $totalCO2Carpools = 0;
-            foreach ($matrix->getCarpools() as $currentCarpool) {
-                $totalDistanceCarpools += $currentCarpool->getJourney()->getDistance();
-                $totalDurationCarpools += $currentCarpool->getJourney()->getDuration();
-                $totalCO2Carpools += $currentCarpool->getJourney()->getCO2();
-            }
-            $matrix->setSavedDistance($computedData["totalTravelDistance"] - $totalDistanceCarpools);
-            $matrix->setSavedMoney(round(($matrix->getSavedDistance()/1000)*$this->kilometerPrice));
-            $matrix->setSavedDuration($computedData["totalTravelDuration"] - $totalDurationCarpools);
-            $matrix->setHumanReadableSavedDuration($this->formatDataManager->convertSecondsToHuman($computedData["totalTravelDuration"] - $totalDurationCarpools));
-            $matrix->setSavedCO2($computedData["totalTravelDistanceCO2"] - $totalCO2Carpools);
-
-            $mass->setMassMatrix($matrix);
-        }
-
-        // check for aberrant addresses
-        $mass->setAberrantAddresses($this->checkAberrantAddresses($persons));
-        
-        return $mass;
+        $this->logger->info('Mass Compute | Begin buildMatrixOriginalsJourneys | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
     }
 
     /**
-     * Build the carpoolers matrix
-     * @param array $persons
-     * @param MassMatrix $matrix
-     * @param array $personsIndexed
+     * Return all different working places of a Mass.
+     *
+     * @return array
+     */
+    public function getAllWorkingPlaces()
+    {
+        $this->logger->info('Mass Compute | Begin getAllWorkingPlaces | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
+        return $this->massPersonRepository->findAllDestinationsForMass($this->mass);
+        $this->logger->info('Mass Compute | End getAllWorkingPlaces | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
+    }
+
+    /**
+     * Build the carpoolers matrix.
+     *
      * @return MassMatrix
      */
-    private function buildCarpoolersMatrix(array $persons, MassMatrix $matrix, array $personsIndexed)
+    private function buildCarpoolersMatrix()
     {
-        foreach ($persons as $person) {
+        foreach ($this->persons as $person) {
+            $this->logger->info('Mass Compute | Start Building Matrix for person '.$person->getId().' | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
             $matchingsAsDriver = $person->getMatchingsAsDriver();
             $matchingsAsPassenger = $person->getMatchingsAsPassenger();
-            $matrix = $this->linkCarpoolers(array_merge($matchingsAsDriver, $matchingsAsPassenger), $matrix, $personsIndexed);
+            $this->linkCarpoolers(array_merge($matchingsAsDriver, $matchingsAsPassenger));
+            $this->logger->info('Mass Compute | End Building Matrix for person '.$person->getId().' | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
         }
-
-        return $matrix;
     }
 
     /**
-     * Link carpoolers by keeping the fastest match for the current MassMatching
-     * @param array $matchings
-     * @param MassMatrix $matrix
-     * @param array $personsIndexed
+     * Link carpoolers by keeping the fastest match for the current MassMatching.
+     *
      * @return MassMatrix
      */
-    private function linkCarpoolers(array $matchings, MassMatrix $matrix, array $personsIndexed)
+    private function linkCarpoolers(array $matchings)
     {
-        if (count($matchings)>0) {
+        if (count($matchings) > 0) {
             $fastestMassPerson1Id = null;
             $fastestMassPerson2Id = null;
             $fastestDistance = 0;
@@ -278,14 +331,14 @@ class MassComputeManager
             $fastestCO2 = 0;
             $biggestGain = -1;
             foreach ($matchings as $matching) {
-                $journeyPerson1 = $matrix->getJourneyOfAPerson($matching->getMassPerson1Id());
-                $journeyPerson2 = $matrix->getJourneyOfAPerson($matching->getMassPerson2Id());
+                $journeyPerson1 = $this->massMatrix->getJourneyOfAPerson($matching->getMassPerson1Id());
+                $journeyPerson2 = $this->massMatrix->getJourneyOfAPerson($matching->getMassPerson2Id());
 
                 // This is the duration if the two peoples drive separately
                 $durationJourneySeparately = $journeyPerson1->getDuration() + $journeyPerson2->getDuration();
 
                 // This is the gain between the two peoples driving separately and their carpool
-                $gainDurationJourneyCarpool = $durationJourneySeparately-$matching->getDuration();
+                $gainDurationJourneyCarpool = $durationJourneySeparately - $matching->getDuration();
 
                 // We keep the biggest gain
 
@@ -300,71 +353,58 @@ class MassComputeManager
             }
 
             // As soon as they are linked, we ignore them both. We do not know if it's the best match of all the MassMatchings but it's good enough
-            if (count($matrix->getCarpoolsOfAPerson($fastestMassPerson1Id))==0 && count($matrix->getCarpoolsofAPerson($fastestMassPerson2Id))==0) {
-                $person1 = $personsIndexed[$fastestMassPerson1Id];
-                $person2 = $personsIndexed[$fastestMassPerson2Id];
+            if (null !== $fastestMassPerson1Id && null !== $fastestMassPerson2Id) {
+                $person1 = $this->personsIndexed[$fastestMassPerson1Id];
+                $person2 = $this->personsIndexed[$fastestMassPerson2Id];
 
-                $matrix->addCarpools(new MassCarpool(
+                $this->massMatrix->addCarpools(new MassCarpool(
                     $person1,
                     $person2,
                     new MassJourney($fastestDistance, $fastestDuration, $fastestCO2)
                 ));
             }
         }
-
-        return $matrix;
     }
 
-    /**
-     * Return all different working places of a Mass
-     * @param Mass $mass
-     * @return array
-     */
-    public function getAllWorkingPlaces(Mass $mass)
+    private function checkAberrantAddresses(): array
     {
-        $workingPlaces = $this->massPersonRepository->findAllDestinationsForMass($mass);
+        $this->logger->info('Mass Compute | Start Check Aberrant addresses | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
 
-        return $workingPlaces;
-    }
-
-
-    private function checkAberrantAddresses(array $massPersons): array
-    {
         $aberrantAddresses = [];
 
         // Compute the average distance
         $totalDistance = 0;
-        foreach ($massPersons as $massPerson) {
-            /**
-             * @var MassPerson $massPerson
-             */
+        foreach ($this->persons as $massPerson) {
+            // @var MassPerson $massPerson
             $totalDistance += $massPerson->getDistance();
         }
-        $averageDistance = $totalDistance / count($massPersons);
+        $averageDistance = $totalDistance / count($this->persons);
 
-        foreach ($massPersons as $massPerson) {
+        foreach ($this->persons as $massPerson) {
             /**
              * @var MassPerson $massPerson
              */
-            if ($massPerson->getDistance() > ($averageDistance*$this->aberrantCoefficient)) {
+            if ($massPerson->getDistance() > ($averageDistance * $this->aberrantCoefficient)) {
                 $origin = trim(
-                    $massPerson->getPersonalAddress()->getHouseNumber() . " " .
-                    $massPerson->getPersonalAddress()->getStreet() . " " .
-                    $massPerson->getPersonalAddress()->getPostalCode() . " " .
-                    $massPerson->getPersonalAddress()->getAddressLocality() . " " .
+                    $massPerson->getPersonalAddress()->getHouseNumber().' '.
+                    $massPerson->getPersonalAddress()->getStreet().' '.
+                    $massPerson->getPersonalAddress()->getPostalCode().' '.
+                    $massPerson->getPersonalAddress()->getAddressLocality().' '.
                     $massPerson->getPersonalAddress()->getAddressCountry()
                 );
                 $destination = trim(
-                    $massPerson->getWorkAddress()->getHouseNumber() . " " .
-                    $massPerson->getWorkAddress()->getStreet() . " " .
-                    $massPerson->getWorkAddress()->getPostalCode() . " " .
-                    $massPerson->getWorkAddress()->getAddressLocality() . " " .
+                    $massPerson->getWorkAddress()->getHouseNumber().' '.
+                    $massPerson->getWorkAddress()->getStreet().' '.
+                    $massPerson->getWorkAddress()->getPostalCode().' '.
+                    $massPerson->getWorkAddress()->getAddressLocality().' '.
                     $massPerson->getWorkAddress()->getAddressCountry()
                 );
 
-                $aberrantAddresses[] = '<' . $origin . '> => <' . $destination . '>, Distance : '.round($massPerson->getDistance()/1000, 1).' kms, id #' . $massPerson->getGivenId();
+                $aberrantAddresses[] = '<'.$origin.'> => <'.$destination.'>, Distance : '.round($massPerson->getDistance() / 1000, 1).' kms, id #'.$massPerson->getGivenId();
             }
         }
+
+        $this->logger->info('Mass Compute | End Check Aberrant addresses | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
 
         return $aberrantAddresses;
     }

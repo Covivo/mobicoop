@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Match\Entity;
 
@@ -31,52 +31,52 @@ use App\Geography\Entity\Direction;
 class Candidate
 {
     /**
-     * @var int The id of this candidate.
+     * @var int the id of this candidate
      */
     private $id;
 
     /**
-     * @var Address[] The address points of the candidate.
+     * @var Address[] the address points of the candidate
      */
     private $addresses;
 
     /**
-     * @var Direction|null The base direction of the candidate.
+     * @var null|Direction the base direction of the candidate
      */
     private $direction;
 
     /**
-     * @var int The direction time (in seconds).
+     * @var int the direction time (in seconds)
      */
     private $duration;
-    
+
     /**
-     * @var int The direction distance (in metres).
+     * @var int the direction distance (in metres)
      */
     private $distance;
 
     /**
-     * @var int The maximum detour time (in seconds) accepted to match.
+     * @var int the maximum detour time (in seconds) accepted to match
      */
     private $maxDetourDuration;
-    
+
     /**
-     * @var int The maximum detour distance (in metres) accepted to match.
+     * @var int the maximum detour distance (in metres) accepted to match
      */
     private $maxDetourDistance;
 
     /**
-     * @var int The maximum detour time (in percentage of the original duration) accepted to match.
+     * @var int the maximum detour time (in percentage of the original duration) accepted to match
      */
     private $maxDetourDurationPercent;
-    
+
     /**
-     * @var int The maximum detour distance (in percentage of the original distance) accepted to match.
+     * @var int the maximum detour distance (in percentage of the original distance) accepted to match
      */
     private $maxDetourDistancePercent;
 
     /**
-     * @var int The minimum common travel distance in percentage of the original distance accepted to match.
+     * @var int the minimum common travel distance in percentage of the original distance accepted to match
      */
     private $minCommonDistancePercent;
 
@@ -85,7 +85,6 @@ class Candidate
      */
     private $massPerson;
 
-    
     public function getId(): ?int
     {
         return $this->id;
@@ -112,11 +111,11 @@ class Candidate
     {
         return $this->direction;
     }
-    
+
     public function setDirection(?Direction $direction): self
     {
         $this->direction = $direction;
-        
+
         return $this;
     }
 
@@ -124,11 +123,11 @@ class Candidate
     {
         return $this->duration;
     }
-    
+
     public function setDuration(int $duration): self
     {
         $this->duration = $duration;
-        
+
         return $this;
     }
 
@@ -136,11 +135,11 @@ class Candidate
     {
         return $this->distance;
     }
-    
+
     public function setDistance(int $distance): self
     {
         $this->distance = $distance;
-        
+
         return $this;
     }
 
@@ -148,11 +147,11 @@ class Candidate
     {
         return $this->maxDetourDuration;
     }
-    
+
     public function setMaxDetourDuration(int $maxDetourDuration): self
     {
         $this->maxDetourDuration = $maxDetourDuration;
-        
+
         return $this;
     }
 
@@ -160,11 +159,11 @@ class Candidate
     {
         return $this->maxDetourDistance;
     }
-    
+
     public function setMaxDetourDistance(int $maxDetourDistance): self
     {
         $this->maxDetourDistance = $maxDetourDistance;
-        
+
         return $this;
     }
 
@@ -172,11 +171,11 @@ class Candidate
     {
         return $this->maxDetourDurationPercent;
     }
-    
+
     public function setMaxDetourDurationPercent(int $maxDetourDurationPercent): self
     {
         $this->maxDetourDurationPercent = $maxDetourDurationPercent;
-        
+
         return $this;
     }
 
@@ -184,11 +183,11 @@ class Candidate
     {
         return $this->maxDetourDistancePercent;
     }
-    
+
     public function setMaxDetourDistancePercent(int $maxDetourDistancePercent): self
     {
         $this->maxDetourDistancePercent = $maxDetourDistancePercent;
-        
+
         return $this;
     }
 
@@ -196,11 +195,11 @@ class Candidate
     {
         return $this->minCommonDistancePercent;
     }
-    
+
     public function setMinCommonDistancePercent(int $minCommonDistancePercent): self
     {
         $this->minCommonDistancePercent = $minCommonDistancePercent;
-        
+
         return $this;
     }
 
@@ -208,11 +207,11 @@ class Candidate
     {
         return $this->massPerson;
     }
-    
+
     public function setMassPerson(?MassPerson $massPerson): self
     {
         $this->massPerson = $massPerson;
-        
+
         return $this;
     }
 }

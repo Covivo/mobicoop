@@ -19,31 +19,28 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Match\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-use Doctrine\ORM\Events;
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Community\Entity\Community;
 use App\Geography\Entity\Address;
-use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Validator\Constraints as Assert;
 use App\Match\Controller\CreateMassImportAction;
 use App\Match\Controller\MassAnalyzeAction;
-use App\Match\Controller\MassMatchAction;
 use App\Match\Controller\MassComputeAction;
-use App\Match\Controller\MassWorkingPlacesAction;
+use App\Match\Controller\MassMatchAction;
 use App\Match\Controller\MassReAnalyzeAction;
 use App\Match\Controller\MassReMatchAction;
-use App\Match\Controller\MassMigrateAction;
-use Symfony\Component\HttpFoundation\File\File;
-use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use App\Match\Controller\MassWorkingPlacesAction;
 use App\User\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Events;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
  * A mass matching file import.
@@ -124,7 +121,7 @@ use Doctrine\Common\Collections\Collection;
  *          "match"={
  *              "method"="GET",
  *              "path"="/masses/{id}/match",
- *              "normalization_context"={"groups"={"massPost"}},
+ *              "normalization_context"={"groups"={"massMatch"}},
  *              "controller"=MassMatchAction::class,
  *              "security"="is_granted('mass_create',object)",
  *              "swagger_context"={
@@ -270,29 +267,29 @@ use Doctrine\Common\Collections\Collection;
  */
 class Mass
 {
-    const STATUS_INCOMING = 0;
-    const STATUS_VALID = 1;
-    const STATUS_INVALID = 2;
-    const STATUS_ANALYZING = 3;
-    const STATUS_ANALYZED = 4;
-    const STATUS_MATCHING = 5;
-    const STATUS_MATCHED = 6;
-    const STATUS_ERROR = 7;
-    const STATUS_MIGRATING = 8;
-    const STATUS_MIGRATED = 9;
+    public const STATUS_INCOMING = 0;
+    public const STATUS_VALID = 1;
+    public const STATUS_INVALID = 2;
+    public const STATUS_ANALYZING = 3;
+    public const STATUS_ANALYZED = 4;
+    public const STATUS_MATCHING = 5;
+    public const STATUS_MATCHED = 6;
+    public const STATUS_ERROR = 7;
+    public const STATUS_MIGRATING = 8;
+    public const STATUS_MIGRATED = 9;
 
-    const TYPE_ANONYMOUS = 0;
-    const TYPE_QUALIFIED = 1;
-    const TYPE_MIGRATION = 2;
+    public const TYPE_ANONYMOUS = 0;
+    public const TYPE_QUALIFIED = 1;
+    public const TYPE_MIGRATION = 2;
 
-    const NB_WORKING_DAY = 228;
-    const EARTH_CIRCUMFERENCE_IN_KILOMETERS = 40070; // Of course it's a joke... put away the forks and pikes ;)
-    const FLAT_EARTH_CIRCUMFERENCE_IN_MILES = 78186;
-    const AVERAGE_EARTH_MOON_DISTANCE_IN_KILOMETERS = 384400;
-    const PARIS_NEW_YORK_CO2_IN_GRAM = 875700; // For 1 passenger
+    public const NB_WORKING_DAY = 228;
+    public const EARTH_CIRCUMFERENCE_IN_KILOMETERS = 40070; // Of course it's a joke... put away the forks and pikes ;)
+    public const FLAT_EARTH_CIRCUMFERENCE_IN_MILES = 78186;
+    public const AVERAGE_EARTH_MOON_DISTANCE_IN_KILOMETERS = 384400;
+    public const PARIS_NEW_YORK_CO2_IN_GRAM = 875700; // For 1 passenger
 
     /**
-     * @var int The id of this import.
+     * @var int the id of this import
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -303,7 +300,7 @@ class Mass
     private $id;
 
     /**
-     * @var int The status of this import.
+     * @var int the status of this import
      *
      * @ORM\Column(type="integer")
      * @Groups({"mass","massPost", "massCompute", "massMigrate", "massPTPotential"})
@@ -311,7 +308,7 @@ class Mass
     private $status;
 
     /**
-     * @var string The final file name of the import.
+     * @var string the final file name of the import
      *
      * @ORM\Column(type="string", length=255)
      * @Groups({"mass","massPost","write", "massCompute"})
@@ -319,7 +316,7 @@ class Mass
     private $fileName;
 
     /**
-     * @var string The original file name of the import.
+     * @var string the original file name of the import
      *
      * @ORM\Column(type="string", length=255)
      * @Groups({"mass","massPost","write", "massCompute"})
@@ -327,7 +324,7 @@ class Mass
     private $originalName;
 
     /**
-     * @var int The size in bytes of the import.
+     * @var int the size in bytes of the import
      *
      * @ORM\Column(type="integer")
      * @Groups({"mass","massPost","write", "massCompute"})
@@ -335,7 +332,7 @@ class Mass
     private $size;
 
     /**
-     * @var string The mime type of the import.
+     * @var string the mime type of the import
      *
      * @ORM\Column(type="string", length=255)
      * @Groups({"mass","massPost", "massCompute"})
@@ -343,7 +340,7 @@ class Mass
     private $mimeType;
 
     /**
-     * @var \DateTimeInterface Creation date of the import.
+     * @var \DateTimeInterface creation date of the import
      *
      * @ORM\Column(type="datetime")
      * @Groups({"mass","massPost", "massCompute"})
@@ -351,7 +348,7 @@ class Mass
     private $createdDate;
 
     /**
-     * @var \DateTimeInterface Updated date of the import.
+     * @var \DateTimeInterface updated date of the import
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"mass","massPost", "massCompute"})
@@ -359,7 +356,7 @@ class Mass
     private $updatedDate;
 
     /**
-     * @var User The user that imports the file.
+     * @var User the user that imports the file
      *
      * @ORM\ManyToOne(targetEntity="App\User\Entity\User", inversedBy="masses")
      * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
@@ -368,7 +365,7 @@ class Mass
     private $user;
 
     /**
-     * @var \DateTimeInterface Analyzed date of the import.
+     * @var \DateTimeInterface analyzed date of the import
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"mass","massPost", "massCompute"})
@@ -376,7 +373,7 @@ class Mass
     private $analyzingDate;
 
     /**
-     * @var \DateTimeInterface Analyzing start date of the import.
+     * @var \DateTimeInterface analyzing start date of the import
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"mass","massPost", "massCompute"})
@@ -384,7 +381,7 @@ class Mass
     private $analyzedDate;
 
     /**
-     * @var \DateTimeInterface Calculation start date of the import.
+     * @var \DateTimeInterface calculation start date of the import
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"mass","massPost", "massCompute"})
@@ -392,7 +389,7 @@ class Mass
     private $calculationDate;
 
     /**
-     * @var \DateTimeInterface Calculated date of the import.
+     * @var \DateTimeInterface calculated date of the import
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"mass","massPost", "massCompute"})
@@ -400,10 +397,10 @@ class Mass
     private $calculatedDate;
 
     /**
-     * @var array|null The persons concerned by the file.
+     * @var null|array the persons concerned by the file
      *
      * @ORM\OneToMany(targetEntity="\App\Match\Entity\MassPerson", mappedBy="mass", cascade={"persist"})
-     * @Groups({"massCompute"})
+     * Groups({"massCompute"})
      */
     private $persons;
 
@@ -414,31 +411,31 @@ class Mass
     private $numberOfPersons;
 
     /**
-     * @var File|null
+     * @var null|File
      * @Vich\UploadableField(mapping="mass", fileNameProperty="fileName", originalName="originalName", size="size", mimeType="mimeType")
      */
     private $file;
 
     /**
-     * @var int|null The user id associated with the file.
+     * @var null|int the user id associated with the file
      * @Groups({"write"})
      */
     private $userId;
 
     /**
-     * @var array The errors.
+     * @var array the errors
      * @Groups({"mass","massPost"})
      */
     private $errors;
 
     /**
-     * @var array The abberant addresses.
+     * @var array the abberant addresses
      * @Groups({"massCompute"})
      */
     private $aberrantAddresses;
 
     /**
-     * @var array people's coordinates of this mass.
+     * @var array people's coordinates of this mass
      * @Groups({"massCompute"})
      */
     private $personsCoords;
@@ -450,7 +447,7 @@ class Mass
     private $workingPlaces;
 
     /**
-     * @var array Computed data of this mass.
+     * @var array computed data of this mass
      * @Groups({"massCompute"})
      */
     private $computedData;
@@ -492,13 +489,13 @@ class Mass
     private $community;
 
     /**
-     * @var array|null The migrated users
+     * @var null|array The migrated users
      * @Groups({"massMigrate"})
      */
     private $migratedUsers;
 
     /**
-     * @var \DateTimeInterface Date of migration's beginning.
+     * @var \DateTimeInterface date of migration's beginning
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"mass"})
@@ -506,7 +503,7 @@ class Mass
     private $migrationDate;
 
     /**
-     * @var \DateTimeInterface Date of migration's end.
+     * @var \DateTimeInterface date of migration's end
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"mass"})
@@ -518,29 +515,29 @@ class Mass
      * @Groups({"mass","massMigrate"})
      */
     private $setHomeAddress;
-    
+
     /**
      * @var int The id of an existing community. The migrated users will be joining this community.
-     * If there is a communityId, the other community fields (name, desc etc...) will be ignored
+     *          If there is a communityId, the other community fields (name, desc etc...) will be ignored
      * @Groups({"mass","massMigrate"})
      */
     private $communityId;
 
     /**
      * @var string The name of the new community that will be created if we migrate the users.
-     * All the migrated user will join this new community.
+     *             All the migrated user will join this new community.
      * @Groups({"mass","massMigrate"})
      */
     private $communityName;
 
     /**
-     * @var string The short description of the community.
+     * @var string the short description of the community
      * @Groups({"mass","massMigrate"})
      */
     private $communityDescription;
 
     /**
-     * @var string The full description of the community.
+     * @var string the full description of the community
      * @Groups({"mass","massMigrate"})
      */
     private $communityFullDescription;
@@ -958,7 +955,7 @@ class Mass
     {
         $this->setHomeAddress = $setHomeAddress;
     }
-    
+
     public function getCommunityId(): ?int
     {
         return $this->communityId;
@@ -1020,7 +1017,7 @@ class Mass
 
         return $this;
     }
-    
+
     public function getGotPublicTransportationPotentialDate(): ?\DateTimeInterface
     {
         return $this->gotPublicTransportationPotentialDate;
@@ -1032,7 +1029,7 @@ class Mass
 
         return $this;
     }
-    
+
     public function getPublicTransportPotential(): ?array
     {
         return $this->publicTransportPotential;
