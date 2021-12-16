@@ -241,7 +241,7 @@ pickUpLocality: Übernahme
 carpooler: Mitfahrgelegenheit
 role: Rolle
 date: Datum
-taxInfo: 'Sie haben im Jahr 2020 mehr als 300,- € erhalten: das Gesetz verlangt, dass
+taxInfo: 'Sie haben im Jahr 2020 mehr als 300,- € erhalten: das Gesetz verlangt, dass
   Sie dies beim Finanzamt angeben.'
 totalPaid: Total bezahlt
 onTheSite: auf der Website
@@ -269,13 +269,13 @@ communityNewMembershipRequest: NEU - Ein/e neue/r Benutzer/in möchte Ihrer Geme
 seeYouInAdmin: 'Besuchen Sie das Admin-Modul, um seine Mitgliedschaft zu bestätigen: '
 newMembershipSubscriber: ' hat darum gebeten, der Gemeinschaft beizutreten '
 massPublicTransportPotentialOver: Die Berechnung des öffentlichen Verkehrspotentials
-  des Imports Nr. {massId} ist abgeschlossen
+  des Imports Nr. {massId} ist abgeschlossen
 massPublicTransportPotentialTitle: Berechnung des öffentlichen Verkehrspotenzials
-massMatchedOver: Die Berechnung des Mitfahrpotenzials des Imports Nr. {massId} ist
+massMatchedOver: Die Berechnung des Mitfahrpotenzials des Imports Nr. {massId} ist
   abgeschlossen
 massMatchedOverTitle: Berechnung des Fahrgemeinschaftspotenzials
-massMatched: Berechnung des Fahrgemeinschaftspotenzials Nr. {massId}
-massAnalyzeErrors: Die Analyse des Imports Nr. {massId} enthält Fehler
+massMatched: Berechnung des Fahrgemeinschaftspotenzials Nr. {massId}
+massAnalyzeErrors: Die Analyse des Imports Nr. {massId} enthält Fehler
 errors:
   alreadyUsed: Diese E-Mail-Adresse wird bereits verwendet
   phoneNumberInvalid: "Ce numéro de téléphone n'est pas valide"

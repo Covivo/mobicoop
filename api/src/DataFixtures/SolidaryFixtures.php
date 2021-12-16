@@ -19,20 +19,20 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\DataFixtures;
 
 use App\Carpool\Service\ProposalManager;
 use App\DataFixtures\Service\SolidaryFixturesManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
-use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
+use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\Finder\Finder;
 
 class SolidaryFixtures extends Fixture implements FixtureGroupInterface
 {
-    const BATCH = 50;                   // batch number for multi treatment
+    public const BATCH = 50;                   // batch number for multi treatment
 
     private $fixturesManager;
     private $proposalManager;
@@ -58,10 +58,11 @@ class SolidaryFixtures extends Fixture implements FixtureGroupInterface
     public function load(ObjectManager $manager)
     {
         if (!$this->fixturesEnabled) {
-            echo "Fixtures disabled". PHP_EOL;
+            echo 'Fixtures disabled'.PHP_EOL;
+
             exit;
         }
-        
+
         // clear database
         if ($this->fixturesClearBase) {
             $this->fixturesManager->clearSolidaryData();
@@ -80,129 +81,133 @@ class SolidaryFixtures extends Fixture implements FixtureGroupInterface
         // echo "Done !" . PHP_EOL;
     }
 
+    public static function getGroups(): array
+    {
+        return ['solidary'];
+    }
+
     private function solidaryFixtures()
     {
-
         // Structures
         $finder = new Finder();
-        $finder->in(__DIR__ . '/Csv/Solidary/Structures/');
+        $finder->in(__DIR__.'/Csv/Solidary/Structures/');
         $finder->name('*.csv');
         $finder->files();
         foreach ($finder as $file) {
-            echo "Importing : {$file->getBasename()} " . PHP_EOL;
-            if ($file = fopen($file, "r")) {
+            echo "Importing : {$file->getBasename()} ".PHP_EOL;
+            if ($file = fopen($file, 'r')) {
                 while ($tab = fgetcsv($file, 4096, ';')) {
-                    $this->fixturesManager->createStructures($tab);
+                    $this->fixturesManager->createStructure($tab);
                 }
             }
         }
 
         // Link structures and territories
         $finder = new Finder();
-        $finder->in(__DIR__ . '/Csv/Solidary/StructureTerritories/');
+        $finder->in(__DIR__.'/Csv/Solidary/StructureTerritories/');
         $finder->name('*.csv');
         $finder->files();
         foreach ($finder as $file) {
-            echo "Importing : {$file->getBasename()} " . PHP_EOL;
-            if ($file = fopen($file, "r")) {
+            echo "Importing : {$file->getBasename()} ".PHP_EOL;
+            if ($file = fopen($file, 'r')) {
                 while ($tab = fgetcsv($file, 4096, ';')) {
-                    $this->fixturesManager->createStructureTerritories($tab);
+                    $this->fixturesManager->createStructureTerritory($tab);
                 }
             }
         }
 
         // Structure proofs
         $finder = new Finder();
-        $finder->in(__DIR__ . '/Csv/Solidary/StructureProofs/');
+        $finder->in(__DIR__.'/Csv/Solidary/StructureProofs/');
         $finder->name('*.csv');
         $finder->files();
         foreach ($finder as $file) {
-            echo "Importing : {$file->getBasename()} " . PHP_EOL;
-            if ($file = fopen($file, "r")) {
+            echo "Importing : {$file->getBasename()} ".PHP_EOL;
+            if ($file = fopen($file, 'r')) {
                 while ($tab = fgetcsv($file, 4096, ';')) {
-                    $this->fixturesManager->createStructureProofs($tab);
+                    $this->fixturesManager->createStructureProof($tab);
                 }
             }
         }
 
         // Needs
         $finder = new Finder();
-        $finder->in(__DIR__ . '/Csv/Solidary/Needs/');
+        $finder->in(__DIR__.'/Csv/Solidary/Needs/');
         $finder->name('*.csv');
         $finder->files();
         foreach ($finder as $file) {
-            echo "Importing : {$file->getBasename()} " . PHP_EOL;
-            if ($file = fopen($file, "r")) {
+            echo "Importing : {$file->getBasename()} ".PHP_EOL;
+            if ($file = fopen($file, 'r')) {
                 while ($tab = fgetcsv($file, 4096, ';')) {
-                    $this->fixturesManager->createNeeds($tab);
+                    $this->fixturesManager->createNeed($tab);
                 }
             }
         }
 
         // Link structure and needs
         $finder = new Finder();
-        $finder->in(__DIR__ . '/Csv/Solidary/StructureNeeds/');
+        $finder->in(__DIR__.'/Csv/Solidary/StructureNeeds/');
         $finder->name('*.csv');
         $finder->files();
         foreach ($finder as $file) {
-            echo "Importing : {$file->getBasename()} " . PHP_EOL;
-            if ($file = fopen($file, "r")) {
+            echo "Importing : {$file->getBasename()} ".PHP_EOL;
+            if ($file = fopen($file, 'r')) {
                 while ($tab = fgetcsv($file, 4096, ';')) {
-                    $this->fixturesManager->createStructureNeeds($tab);
+                    $this->fixturesManager->createStructureNeed($tab);
                 }
             }
         }
 
         // Subjects
         $finder = new Finder();
-        $finder->in(__DIR__ . '/Csv/Solidary/Subjects/');
+        $finder->in(__DIR__.'/Csv/Solidary/Subjects/');
         $finder->name('*.csv');
         $finder->files();
         foreach ($finder as $file) {
-            echo "Importing : {$file->getBasename()} " . PHP_EOL;
-            if ($file = fopen($file, "r")) {
+            echo "Importing : {$file->getBasename()} ".PHP_EOL;
+            if ($file = fopen($file, 'r')) {
                 while ($tab = fgetcsv($file, 4096, ';')) {
-                    $this->fixturesManager->createSubjects($tab);
+                    $this->fixturesManager->createSubject($tab);
                 }
             }
         }
 
         // Operate (define where solidary managers can operate)
         $finder = new Finder();
-        $finder->in(__DIR__ . '/Csv/Solidary/Operates/');
+        $finder->in(__DIR__.'/Csv/Solidary/Operates/');
         $finder->name('*.csv');
         $finder->files();
         foreach ($finder as $file) {
-            echo "Importing : {$file->getBasename()} " . PHP_EOL;
-            if ($file = fopen($file, "r")) {
+            echo "Importing : {$file->getBasename()} ".PHP_EOL;
+            if ($file = fopen($file, 'r')) {
                 while ($tab = fgetcsv($file, 4096, ';')) {
-                    $this->fixturesManager->createOperates($tab);
+                    $this->fixturesManager->createOperate($tab);
                 }
             }
         }
 
         // SolidaryUsers
         $finder = new Finder();
-        $finder->in(__DIR__ . '/Csv/Solidary/SolidaryUsers/');
+        $finder->in(__DIR__.'/Csv/Solidary/SolidaryUsers/');
         $finder->name('*.csv');
         $finder->files();
         foreach ($finder as $file) {
-            echo "Importing : {$file->getBasename()} " . PHP_EOL;
-            if ($file = fopen($file, "r")) {
+            echo "Importing : {$file->getBasename()} ".PHP_EOL;
+            if ($file = fopen($file, 'r')) {
                 while ($tab = fgetcsv($file, 4096, ';')) {
-                    $this->fixturesManager->createSolidaryUsers($tab);
+                    $this->fixturesManager->createSolidaryUser($tab);
                 }
             }
         }
 
         // Link SolidaryUsers and Structures
         $finder = new Finder();
-        $finder->in(__DIR__ . '/Csv/Solidary/SolidaryUserStructures/');
+        $finder->in(__DIR__.'/Csv/Solidary/SolidaryUserStructures/');
         $finder->name('*.csv');
         $finder->files();
         foreach ($finder as $file) {
-            echo "Importing : {$file->getBasename()} " . PHP_EOL;
-            if ($file = fopen($file, "r")) {
+            echo "Importing : {$file->getBasename()} ".PHP_EOL;
+            if ($file = fopen($file, 'r')) {
                 while ($tab = fgetcsv($file, 4096, ';')) {
                     $this->fixturesManager->createSolidaryUserStructure($tab);
                 }
@@ -211,21 +216,16 @@ class SolidaryFixtures extends Fixture implements FixtureGroupInterface
 
         // SolidaryUsers proofs
         $finder = new Finder();
-        $finder->in(__DIR__ . '/Csv/Solidary/Proofs/');
+        $finder->in(__DIR__.'/Csv/Solidary/Proofs/');
         $finder->name('*.csv');
         $finder->files();
         foreach ($finder as $file) {
-            echo "Importing : {$file->getBasename()} " . PHP_EOL;
-            if ($file = fopen($file, "r")) {
+            echo "Importing : {$file->getBasename()} ".PHP_EOL;
+            if ($file = fopen($file, 'r')) {
                 while ($tab = fgetcsv($file, 4096, ';')) {
                     $this->fixturesManager->createProof($tab);
                 }
             }
         }
-    }
-    
-    public static function getGroups(): array
-    {
-        return ['solidary'];
     }
 }
