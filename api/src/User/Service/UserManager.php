@@ -1723,7 +1723,7 @@ class UserManager
             }
 
             if (!$ssoUser->hasAutoCreateAccount()) {
-                throw new \LogicException("Autocreate account disable", 400);
+                throw new \LogicException("Autocreate account disable");
             }
 
             // Create a new one

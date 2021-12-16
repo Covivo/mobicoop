@@ -22,5 +22,6 @@
     "consent": "To be able to login in you must have agreed to \"Keep your connection active\" using the \"Cookie management\" tool accessible by a link at the bottom of the page then refresh the page.",
     "socialServicesUnavailableWithoutConsent": "To be used, the login functionality via social networks must be accepted using the \"Cookie management\" tool accessible by a link at the bottom of the page.",
     "Unable to get an API token.": "Error while logging in.",
-    "Bad credentials.": "Incorrect user name or password."
+    "Bad credentials.": "Incorrect user name or password.",
+    "errorSso":"Connexion impossible, car aucun compte utilisateur existant sur {appName} n'est lié à '{service}'"
 }
