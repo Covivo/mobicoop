@@ -180,7 +180,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
                 if (!is_null($token->getUser()->getId())) {
                     return new RedirectResponse($this->router->generate('home'));
                 } else {
-                    return new RedirectResponse($this->router->generate('user_login'));
+                    return new RedirectResponse($this->router->generate('user_login_sso_failed', ['service'=>$request->get('ssoProviderName')]));
                 }
                 // no break
             case self::USER_LOGIN_RESULT_ROUTE:
