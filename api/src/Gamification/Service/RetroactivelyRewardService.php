@@ -97,6 +97,11 @@ class RetroactivelyRewardService
     {
         $this->logger->info("start retroactivelyRewardUsers | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         
+        $limit = 20;
+        $limit = 1000;
+        $limit = 10000;
+        // $limit = 100000;
+        // $limit = 1000000;
         $stmt = $this->entityManager->getConnection()->prepare(
             "select u.id, u.validated_date, u.phone_validated_date, u.telephone, count(distinct i.id) as nb_images, count(distinct e.id) as nb_events, count(distinct cu.id) as nb_community_users, count(distinct c.id) as nb_communities, count(distinct a.id) as nb_asks, count(distinct p.id) as nb_proposals, count(distinct ci.id) as nb_carpool_items, count(distinct ad.id) as nb_addresses, count(distinct pp.id) as nb_payment_profiles, count(distinct m.id) as nb_messages
             from user u
@@ -110,7 +115,8 @@ class RetroactivelyRewardService
             left join address ad on ad.user_id = u.id and ad.home = 1
             left join payment_profile pp on pp.user_id = u.id and pp.validation_status = 1
             left join message m on m.user_id = u.id
-            group by u.id, u.validated_date, u.phone_validated_date, u.telephone;"
+            group by u.id, u.validated_date, u.phone_validated_date, u.telephone
+            limit $limit;"
         );
         $stmt->execute();
         $resultsUsers = $stmt->fetchAll();
@@ -212,15 +218,12 @@ class RetroactivelyRewardService
                 ];
             }
         }
-        $this->logger->info("end test | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
         foreach ($users as $user) {
             $sequenceItemsIds = (!is_null($user[0]['sequence_item_ids'])) ?  $user[0]['sequence_item_ids'] : [];
             $this->retroactivelyRewardUser($user, $sequenceItemsIds, $badges);
         }
-        
         $this->logger->info("end retroactivelyRewardUsers | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-        return count($users);
     }
 
     private function retroactivelyRewardUser(array $user, ?array $sequenceItemsIds, array $badges)
@@ -260,8 +263,9 @@ class RetroactivelyRewardService
     public function handleRetroactivelyRewards($userToUse, int $sequenceItemId)
     {
         if (!($userToUse instanceof User)) {
-            $user = new User;
-            $user->setId($userToUse[0]["user_id"]);
+            $user = $this->userRepository->find($userToUse[0]["user_id"]);
+        } else {
+            $user = $userToUse;
         }
 
         $validationStep = new ValidationStep;
