@@ -304,7 +304,7 @@ class TerritoryManager
                         FROM address a LEFT JOIN address_territory adt ON a.id = adt.address_id 
                         WHERE adt.address_id IS NULL AND a.latitude IS NOT NULL AND a.longitude IS NOT NULL AND a.geo_json IS NOT NULL
                     )
-                );')->execute()) {
+                ;')->execute()) {
             return $this->dropGeoJsonTerritoryIndex() && $this->closeRunningFile() && false;
         }
         $out = new \DateTime('UTC');
