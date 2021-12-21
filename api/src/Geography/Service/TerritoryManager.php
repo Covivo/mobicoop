@@ -319,6 +319,19 @@ class TerritoryManager
         $result = $stmt->fetch();
         $this->logger->info('NB address '.$result['cid'].' | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
 
+        $this->logger->info('CREATE TEMP adterbbox | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
+        if (!$result =
+            $this->entityManager->getConnection()->prepare('
+                CREATE TEMPORARY TABLE adterbbox (
+                    aid int NOT NULL,
+                    geo POINT NOT NULL,
+                    lat decimal(10,6) NOT NULL,
+                    lon decimal(10,6) NOT NULL,
+                    SPATIAL INDEX(geo),
+                    PRIMARY KEY(aid)
+                );')->execute()) {
+            return $this->dropGeoJsonTerritoryIndex() && $this->closeRunningFile() && false;
+        }
         $this->logger->info('CREATE TEMP adter | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
         if (!$result =
             $this->entityManager->getConnection()->prepare('
@@ -331,7 +344,7 @@ class TerritoryManager
             return $this->dropGeoJsonTerritoryIndex() && $this->closeRunningFile() && false;
         }
 
-        $sqlt = 'SELECT id from territory order by id asc;';
+        $sqlt = 'SELECT id, min_latitude, max_latitude, min_longitude_, max_longitude from territory order by id asc;';
         $stmtt = $conn->prepare($sqlt);
         $stmtt->execute();
         $resultst = $stmtt->fetchAll();
@@ -340,11 +353,20 @@ class TerritoryManager
             $in = new \DateTime('UTC');
             if (!$result =
                 $this->entityManager->getConnection()->prepare('
+                    DELETE FROM adterbbox; INSERT INTO adterbbox (aid,geo,lat,lon)
+                        SELECT id, geo, lat, lon
+                        FROM disaddress a
+                        WHERE lat between '.$resultt['min_latitude'].' and '.$resultt['max_latitude'].' and 
+                        lon between '.$resultt['min_longitude'].' and '.$resultt['max_longtude'].';')->execute()) {
+                return $this->dropGeoJsonTerritoryIndex() && $this->closeRunningFile() && false;
+            }
+            if (!$result =
+                $this->entityManager->getConnection()->prepare('
                     DELETE FROM adter; INSERT INTO adter (aid,tid,lat,lon)
                         SELECT a.id, t.id, lat, lon
-                        FROM disaddress a
-                        JOIN territory t
-                        WHERE t.id='.$resultt['id'].' and ST_INTERSECTS(a.geo, t.geo_json_detail)=1
+                        FROM adterbbox a
+                        JOIN territory t ON t.id = '.$resultt['id'].'
+                        WHERE ST_INTERSECTS(a.geo, t.geo_json_detail)=1
                     ;')->execute()) {
                 return $this->dropGeoJsonTerritoryIndex() && $this->closeRunningFile() && false;
             }
@@ -367,7 +389,7 @@ class TerritoryManager
             }
         }
 
-        $sql = 'DROP TABLE disaddress;DROP TABLE adter;';
+        $sql = 'DROP TABLE disaddress;DROP TABLE adter;DROP TABLE adterbbox;';
         $stmt = $conn->prepare($sql);
         $stmt->execute();
         $this->logger->info('Insert into address_territory finished | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
