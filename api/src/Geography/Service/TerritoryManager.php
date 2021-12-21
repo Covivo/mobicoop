@@ -345,14 +345,14 @@ class TerritoryManager
                 $this->entityManager->getConnection()->prepare('
                     DELETE FROM adter; 
                     INSERT INTO adter (aid,tid,geo,lat,lon) 
-                        SELECT a.id,'.$resultt['id'].',geo, lat, lon FROM disaddress a 
+                        SELECT a.id, t.id, geo, lat, lon FROM disaddress a 
                         JOIN territory t ON t.id = '.$resultt['id'].'
                         WHERE ST_DISTANCE(geo, Polygon(ST_ExteriorRing(ST_ConvexHull(geo_json_detail))))=0
                     ;')->execute()) {
                 return $this->dropGeoJsonTerritoryIndex() && $this->closeRunningFile() && false;
             }
             if (!$result =
-                $this->entityManager->getConnection()->prepare('DELETE adter FROM adter INNER JOIN territory t ON t.id = 1 WHERE ST_DISTANCE(geo, geo_json_detail)>0;')->execute()) {
+                $this->entityManager->getConnection()->prepare('DELETE adter FROM adter INNER JOIN territory t ON t.id = '.$resultt['id'].' WHERE ST_DISTANCE(geo, geo_json_detail)>0;')->execute()) {
                 return $this->dropGeoJsonTerritoryIndex() && $this->closeRunningFile() && false;
             }
 
