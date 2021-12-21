@@ -102,10 +102,7 @@ class ExternalJourneyManager
         $this->params = $params;
 
         // initialize client API for any request
-        $client = new Client([
-            //10s because i'm working on long requests but you can change it
-            'timeout'  => 10.0,
-        ]);
+        $client = new Client();
         // we collect search parameters here
         $providerName = $request->get("provider");
         $driver = $request->get("driver");
