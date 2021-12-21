@@ -309,8 +309,8 @@ class ExternalJourneyManager
             $destination->setAddressCountry($currentJourney['to']['country']);
             $carpool['destination'] = $destination->jsonSerialize();
 
-            $carpool['detourDuration'] = $currentJourney['distance'];
-            $carpool['detourDistance'] = $currentJourney['duration'];
+            $carpool['detourDuration'] = $currentJourney['duration'];
+            $carpool['detourDistance'] = $currentJourney['distance'];
 
 
             $results[] = $carpool;
