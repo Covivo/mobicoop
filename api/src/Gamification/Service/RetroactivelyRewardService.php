@@ -97,25 +97,79 @@ class RetroactivelyRewardService
     {
         $this->logger->info("start retroactivelyRewardUsers | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         
-        $limit = 20;
-        $limit = 1000;
-        $limit = 10000;
+        // $limit = 20;
+        // $limit = 1000;
+        // $limit = 10000;
         // $limit = 100000;
-        // $limit = 1000000;
+        $limit = 1000000;
+        $this->entityManager->getConnection()->prepare('
+        CREATE TEMPORARY TABLE tuser (
+            id int not null,
+            validated_date datetime, 
+            phone_validated_date datetime, 
+            telephone varchar(255), 
+            nb_images int not null default 0, 
+            nb_events int not null default 0, 
+            nb_community_users int not null default 0, 
+            nb_communities int not null default 0, 
+            nb_asks int not null default 0, 
+            nb_proposals int not null default 0, 
+            nb_carpool_items int not null default 0, 
+            nb_addresses int not null default 0, 
+            nb_payment_profiles int not null default 0, 
+            nb_messages int not null default 0
+        );')->execute();
+        $stmt = $this->entityManager->getConnection()->prepare('
+            INSERT INTO tuser (id, validated_date, phone_validated_date, telephone)
+            (select u.id, u.validated_date, u.phone_validated_date, u.telephone from user u);
+        );')->execute();
+        $stmt = $this->entityManager->getConnection()->prepare('
+            UPDATE tuser t
+            SET t.nb_images = (select count(distinct i.id) from image i where i.user_id = t.id);
+        );')->execute();
+        $stmt = $this->entityManager->getConnection()->prepare('
+            UPDATE tuser t
+            SET t.nb_events = (select count(distinct e.id) from event e where e.user_id = t.id);
+        );')->execute();
+        $stmt = $this->entityManager->getConnection()->prepare('
+            UPDATE tuser t
+            SET t.nb_communities = (select count(distinct c.id) from community c where c.user_id = t.id);
+        );')->execute();
+        $stmt = $this->entityManager->getConnection()->prepare('
+            UPDATE tuser t
+            SET t.nb_community_users = (select count(distinct cu.id) from community_user cu where cu.user_id = t.id);
+        );')->execute();
+        $stmt = $this->entityManager->getConnection()->prepare('
+            UPDATE tuser t
+            SET t.nb_proposals = (select count(distinct p.id) from proposal p where p.user_id = t.id and p.private = 0);
+        );')->execute();
+        $stmt = $this->entityManager->getConnection()->prepare('
+            UPDATE tuser t
+            SET t.nb_asks = (select count(distinct a.id) from ask a where a.user_id = t.id);
+        );')->execute();
+        $stmt = $this->entityManager->getConnection()->prepare('
+            UPDATE tuser t
+            SET t.nb_asks = (select count(distinct a.id) from ask a where a.user_related_id = t.id);
+        );')->execute();
+        $stmt = $this->entityManager->getConnection()->prepare('
+            UPDATE tuser t
+            SET t.nb_carpool_items = (select count(distinct ci.id) from carpool_item ci where ci.debtor_user_id = t.id);
+        );')->execute();
+        $stmt = $this->entityManager->getConnection()->prepare('
+            UPDATE tuser t
+            SET t.nb_addresses = (select count(distinct a.id) from address a where a.user_id = t.id and a.home = 1);
+        );')->execute();
+        $stmt = $this->entityManager->getConnection()->prepare('
+            UPDATE tuser t
+            SET t.nb_payment_profiles = (select count(distinct pp.id) from payment_profile pp where pp.user_id = t.id and pp.validation_status = 1);
+        );')->execute();
+        $stmt = $this->entityManager->getConnection()->prepare('
+            UPDATE tuser t
+            SET t.nb_messages = (select count(distinct m.id) from message m where m.user_id = t.id);
+        );')->execute();
+
         $stmt = $this->entityManager->getConnection()->prepare(
-            "select u.id, u.validated_date, u.phone_validated_date, u.telephone, count(distinct i.id) as nb_images, count(distinct e.id) as nb_events, count(distinct cu.id) as nb_community_users, count(distinct c.id) as nb_communities, count(distinct a.id) as nb_asks, count(distinct p.id) as nb_proposals, count(distinct ci.id) as nb_carpool_items, count(distinct ad.id) as nb_addresses, count(distinct pp.id) as nb_payment_profiles, count(distinct m.id) as nb_messages
-            from user u
-            left join image i on i.user_id = u.id 
-            left join event e on e.user_id = u.id
-            left join community_user cu on cu.user_id = u.id
-            left join community c on c.user_id = u.id
-            left join proposal p on p.user_id = u.id and p.private=0
-            left join ask a on a.user_id = u.id or a.user_related_id = u.id
-            left join carpool_item ci on ci.debtor_user_id = u.id
-            left join address ad on ad.user_id = u.id and ad.home = 1
-            left join payment_profile pp on pp.user_id = u.id and pp.validation_status = 1
-            left join message m on m.user_id = u.id
-            group by u.id, u.validated_date, u.phone_validated_date, u.telephone
+            "select * from tuser
             limit $limit;"
         );
         $stmt->execute();
@@ -263,6 +317,8 @@ class RetroactivelyRewardService
     public function handleRetroactivelyRewards($userToUse, int $sequenceItemId)
     {
         if (!($userToUse instanceof User)) {
+            // $user = new User;
+            // $user->setId($userToUse[0]["user_id"]);
             $user = $this->userRepository->find($userToUse[0]["user_id"]);
         } else {
             $user = $userToUse;
