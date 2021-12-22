@@ -95,6 +95,7 @@ class CitywayProvider implements ProviderInterface
     private const CW_PT_MODE_WALK = "WALK";
     private const CW_PT_MODE_ON_DEMAND = "TOD";
     private const CW_PT_MODE_METRO = "METRO";
+    private const CW_PT_MODE_TROLLEY_BUS = "TROLLEY_BUS";
 
     private const CW_COUNTRY = "France";
     private const CW_NC = "";
@@ -135,7 +136,7 @@ class CitywayProvider implements ProviderInterface
             case PTJourney::class:
                 $this->getCollectionJourneys($class, $params);
                 return $this->collection;
-               break;
+                break;
             case PTTripPoint::class:
                 $this->getCollectionTripPoints($class, $params);
                 return $this->collection;
@@ -676,6 +677,10 @@ class CitywayProvider implements ProviderInterface
             } elseif ($data["PTRide"]["TransportMode"] == self::CW_PT_MODE_METRO) {
                 // Metro
                 $travelMode = new TravelMode(TravelMode::TRAVEL_MODE_METRO);
+                $leg->setTravelMode($travelMode);
+            } elseif ($data["PTRide"]["TransportMode"] == self::CW_PT_MODE_TROLLEY_BUS) {
+                // Trolley bus
+                $travelMode = new TravelMode(TravelMode::TRAVEL_MODE_TROLLEY_BUS);
                 $leg->setTravelMode($travelMode);
             }
 

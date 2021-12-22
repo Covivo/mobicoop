@@ -59,7 +59,8 @@ class TravelMode
     const TRAVEL_UNKNOWN = "UNKNOWN";
     const TRAVEL_MODE_ON_DEMAND = "TOD";
     const TRAVEL_MODE_METRO = "METRO";
-    
+    const TRAVEL_MODE_TROLLEY_BUS = "TROLLEY_BUS";
+
     private const TRAVEL_MODES = [
         self::TRAVEL_MODE_CAR => 1,
         self::TRAVEL_MODE_BUS => 2,
@@ -73,9 +74,11 @@ class TravelMode
         self::TRAVEL_MODE_SUBWAY => 10,
         self::TRAVEL_MODE_WAITING => 11,
         self::TRAVEL_MODE_ON_DEMAND => 12,
-        self::TRAVEL_MODE_METRO => 13
+        self::TRAVEL_MODE_METRO => 13,
+        self::TRAVEL_MODE_TROLLEY_BUS => 14
+
     ];
-    
+
     private const TRAVEL_MODES_MDI_ICONS = [
         self::TRAVEL_MODE_CAR => "mdi-car",
         self::TRAVEL_MODE_BUS => "mdi-bus",
@@ -90,7 +93,8 @@ class TravelMode
         self::TRAVEL_MODE_WAITING => "mdi-account-clock",
         self::TRAVEL_MODE_ON_DEMAND => "mdi-bus-clock",
         self::TRAVEL_UNKNOWN => "mdi-help-circle",
-        self::TRAVEL_MODE_METRO => "mdi-subway-variant"
+        self::TRAVEL_MODE_METRO => "mdi-subway-variant",
+        self::TRAVEL_MODE_TROLLEY_BUS => "mdi-bus-electric"
     ];
 
     /**
@@ -118,7 +122,7 @@ class TravelMode
      * @Groups({"read","pt"})
      */
     private $mdiIcon;
-    
+
     /**
      * @var \DateTimeInterface Creation date.
      *
@@ -140,19 +144,19 @@ class TravelMode
         $this->setId(self::TRAVEL_MODES[$mode]);
         $this->setName($mode);
     }
-    
+
     public function getId(): ?int
     {
         return $this->id;
     }
-    
+
     public function setId(int $id): self
     {
         $this->id = $id;
-        
+
         return $this;
     }
-    
+
     public function getName(): ?string
     {
         return $this->name;
@@ -176,7 +180,7 @@ class TravelMode
 
         return $this;
     }
-    
+
     public function getCreatedDate(): ?\DateTimeInterface
     {
         return $this->createdDate;
@@ -202,7 +206,7 @@ class TravelMode
     }
 
     // DOCTRINE EVENTS
-    
+
     /**
      * Creation date.
      *
