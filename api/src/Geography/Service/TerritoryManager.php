@@ -374,7 +374,6 @@ class TerritoryManager
             $stmtp->execute();
             $resultsp = $stmtp->fetchAll();
             foreach ($resultsp as $resultp) {
-                $this->logger->info('Insert into address_territory | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
                 $territories[] = $resultp['id'];
             }
 
