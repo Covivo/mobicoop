@@ -280,7 +280,7 @@ class TerritoryManager
         }
 
         // ADDRESSES
-        $this->logger->info('CREATE TEMP disaddress | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
+        // $this->logger->info('CREATE TEMP disaddress | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
         $in = new \DateTime('UTC');
         if (!$result =
             $this->entityManager->getConnection()->prepare('
@@ -319,7 +319,7 @@ class TerritoryManager
         }
         $this->logger->info('NB address '.$nbAddresses.' | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
 
-        $this->logger->info('CREATE TEMP adter | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
+        // $this->logger->info('CREATE TEMP adter | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
         if (!$result =
             $this->entityManager->getConnection()->prepare('
                 CREATE TEMPORARY TABLE adter (
@@ -340,7 +340,7 @@ class TerritoryManager
         $resultst = $stmtt->fetchAll();
         foreach ($resultst as $resultt) {
             $territories = [$resultt['id']];
-            $this->logger->info('Treat territory '.$resultt['id'].' | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
+            // $this->logger->info('Treat territory '.$resultt['id'].' | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
             $in = new \DateTime('UTC');
             if (!$result =
                 $this->entityManager->getConnection()->prepare('
@@ -378,7 +378,7 @@ class TerritoryManager
             }
             $stmtp->closeCursor();
 
-            $this->logger->info('Insert into address_territory | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
+            // $this->logger->info('Insert into address_territory | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
             $in = new \DateTime('UTC');
             $sql = 'SELECT SQL_NO_CACHE aid,tid,lat,lon FROM adter';
             $stmt = $this->entityManager->getConnection()->prepare($sql);
