@@ -334,11 +334,12 @@ class TerritoryManager
             return $this->dropGeoJsonTerritoryIndex() && $this->closeRunningFile() && false;
         }
 
-        $sqlt = 'SELECT id from territory order by id asc;';
+        $sqlt = 'SELECT id, admin_level from territory order by admin_level asc, id asc;';
         $stmtt = $conn->prepare($sqlt);
         $stmtt->execute();
         $resultst = $stmtt->fetchAll();
         foreach ($resultst as $resultt) {
+            $territories = [$resultt['id']];
             $this->logger->info('Treat territory '.$resultt['id'].' | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
             $in = new \DateTime('UTC');
             if (!$result =
@@ -347,7 +348,8 @@ class TerritoryManager
                     INSERT INTO adter (aid,tid,geo,lat,lon) 
                         SELECT a.id, t.id, geo, lat, lon FROM disaddress a 
                         JOIN territory t ON t.id = '.$resultt['id'].'
-                        WHERE ST_DISTANCE(geo, Polygon(ST_ExteriorRing(ST_ConvexHull(geo_json_detail))))=0
+                        LEFT JOIN address_territory at ON at.address_id = a.id AND at.territory_id = '.$resultt['id'].'
+                        WHERE ST_DISTANCE(geo, Polygon(ST_ExteriorRing(ST_ConvexHull(geo_json_detail))))=0 AND at.address_id IS NULL
                     ;')->execute()) {
                 return $this->dropGeoJsonTerritoryIndex() && $this->closeRunningFile() && false;
             }
@@ -361,6 +363,20 @@ class TerritoryManager
             $secs = ((($diff->format('%a') * 24) + $diff->format('%H')) * 60 + $diff->format('%i')) * 60 + $diff->format('%s');
             $this->logger->info('DURATION '.$secs.' | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
 
+            // search for parent territories
+            $sqlp = '
+                SELECT id from territory parent
+                JOIN territory child ON child.id = '.$resultt['id'].'
+                WHERE parent.admin_level > '.$resultt['admin_level'].' 
+                AND ST_CONTAINS(parent.geo_json_detail,child.geo_json_detail)=1;
+            ';
+            $stmtp = $conn->prepare($sqlp);
+            $stmtp->execute();
+            $resultsp = $stmtp->fetchAll();
+            foreach ($resultsp as $resultp) {
+                $territories[] = $resultp['id'];
+            }
+
             $this->logger->info('Insert into address_territory | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
             $in = new \DateTime('UTC');
             $sql = 'SELECT SQL_NO_CACHE aid,tid,lat,lon FROM adter';
@@ -368,9 +384,11 @@ class TerritoryManager
             $stmt->execute();
             $results = $stmt->fetchAll();
             foreach ($results as $result) {
-                $sqli = 'INSERT IGNORE INTO address_territory (address_id, territory_id) SELECT id, '.$result['tid'].' from address WHERE latitude='.$result['lat'].' and longitude='.$result['lon'];
-                $stmti = $conn->prepare($sqli);
-                $stmti->execute();
+                foreach ($territories as $territory) {
+                    $sqli = 'INSERT IGNORE INTO address_territory (address_id, territory_id) SELECT id, '.$territory.' from address WHERE latitude='.$result['lat'].' and longitude='.$result['lon'];
+                    $stmti = $conn->prepare($sqli);
+                    $stmti->execute();
+                }
             }
         }
 
