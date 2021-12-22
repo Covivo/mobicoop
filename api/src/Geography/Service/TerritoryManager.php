@@ -280,7 +280,6 @@ class TerritoryManager
         }
 
         // ADDRESSES
-        // $this->logger->info('CREATE TEMP disaddress | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
         $in = new \DateTime('UTC');
         if (!$result =
             $this->entityManager->getConnection()->prepare('
@@ -319,7 +318,6 @@ class TerritoryManager
         }
         $this->logger->info('NB address '.$nbAddresses.' | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
 
-        // $this->logger->info('CREATE TEMP adter | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
         if (!$result =
             $this->entityManager->getConnection()->prepare('
                 CREATE TEMPORARY TABLE adter (
@@ -340,8 +338,6 @@ class TerritoryManager
         $resultst = $stmtt->fetchAll();
         foreach ($resultst as $resultt) {
             $territories = [$resultt['id']];
-            // $this->logger->info('Treat territory '.$resultt['id'].' | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
-            $in = new \DateTime('UTC');
             if (!$result =
                 $this->entityManager->getConnection()->prepare('
                     DELETE FROM adter; 
@@ -358,11 +354,6 @@ class TerritoryManager
                 return $this->dropGeoJsonTerritoryIndex() && $this->closeRunningFile() && false;
             }
 
-            $out = new \DateTime('UTC');
-            $diff = $out->diff($in);
-            $secs = ((($diff->format('%a') * 24) + $diff->format('%H')) * 60 + $diff->format('%i')) * 60 + $diff->format('%s');
-            $this->logger->info('DURATION '.$secs.' | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
-
             // search for parent territories
             $sqlp = '
                 SELECT parent.id from territory parent
@@ -378,8 +369,6 @@ class TerritoryManager
             }
             $stmtp->closeCursor();
 
-            // $this->logger->info('Insert into address_territory | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
-            $in = new \DateTime('UTC');
             $sql = 'SELECT SQL_NO_CACHE aid,tid,lat,lon FROM adter';
             $stmt = $this->entityManager->getConnection()->prepare($sql);
             $stmt->execute();
@@ -402,121 +391,6 @@ class TerritoryManager
         $this->logger->info('Insert into address_territory finished | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
 
         return $this->closeRunningFile() && $this->dropGeoJsonTerritoryIndex() && $result;
-        // END ADDRESSES
-
-        // // TERRITORIES
-        // $this->logger->info('CREATE TEMP disterritory | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
-        // $in = new \DateTime('UTC');
-        // $sql = 'CREATE TEMPORARY TABLE disterritory (
-        //     id int AUTO_INCREMENT NOT NULL,
-        //     distance int not null,
-        //     duration int not null,
-        //     bbox_min_lon decimal(10,6) not null,
-        //     bbox_min_lat decimal(10,6) not null,
-        //     bbox_max_lon decimal(10,6) not null,
-        //     bbox_max_lat decimal(10,6) not null,
-        //     geo linestring not null,
-        //     SPATIAL INDEX(geo),
-        //     PRIMARY KEY(id))
-        // ';
-        // $stmt = $conn->prepare($sql);
-        // $stmt->execute();
-
-        // // in the following, we will assume directions with same exact distance, duration and bbox are equals, so they have the same territories...
-        // $sql = 'INSERT INTO disterritory (distance,duration,bbox_min_lon,bbox_min_lat,bbox_max_lon,bbox_max_lat,geo)
-        //     (SELECT SQL_NO_CACHE distinct d.distance,d.duration,d.bbox_min_lon,d.bbox_min_lat,d.bbox_max_lon,d.bbox_max_lat,d.geo_json_simplified
-        //     FROM direction d LEFT JOIN direction_territory dt ON d.id = dt.direction_id
-        //     WHERE dt.direction_id IS NULL AND
-        //     d.geo_json_simplified IS NOT NULL AND
-        //     d.distance>0 AND
-        //     d.duration>0 AND
-        //     d.bbox_min_lon IS NOT NULL AND
-        //     d.bbox_min_lat IS NOT NULL AND
-        //     d.bbox_max_lon IS NOT NULL AND
-        //     d.bbox_max_lat IS NOT NULL
-        // )';
-        // $stmt = $conn->prepare($sql);
-        // $stmt->execute();
-
-        // $out = new \DateTime('UTC');
-        // $diff = $out->diff($in);
-        // $secs = ((($diff->format('%a') * 24) + $diff->format('%H')) * 60 + $diff->format('%i')) * 60 + $diff->format('%s');
-        // $this->logger->info('DURATION '.$secs.' | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
-
-        // $sql = 'SELECT count(*) as cid from disterritory';
-        // $stmt = $conn->prepare($sql);
-        // $stmt->execute();
-
-        // $result = $stmt->fetch();
-        // $this->logger->info('NB directions '.$result['cid'].' | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
-
-        // $this->logger->info('CREATE TEMP dirter | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
-        // $sql = 'CREATE TEMPORARY TABLE dirter (
-        //     did int NOT NULL,
-        //     tid int NOT NULL,
-        //     distance int not null,
-        //     duration int not null,
-        //     bbox_min_lon decimal(10,6) not null,
-        //     bbox_min_lat decimal(10,6) not null,
-        //     bbox_max_lon decimal(10,6) not null,
-        //     bbox_max_lat decimal(10,6) not null
-        // )';
-        // $stmt = $conn->prepare($sql);
-        // $stmt->execute();
-
-        // $sqlt = 'SELECT id from territory';
-        // $stmtt = $conn->prepare($sqlt);
-        // $stmtt->execute();
-        // $resultst = $stmtt->fetchAll();
-        // foreach ($resultst as $resultt) {
-        //     $this->logger->info('Treat territory '.$resultt['id'].' | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
-        //     $in = new \DateTime('UTC');
-        //     $sql = 'DELETE FROM dirter; INSERT INTO dirter (did,tid,distance,duration,bbox_min_lon,bbox_min_lat,bbox_max_lon,bbox_max_lat)
-        //     SELECT SQL_NO_CACHE d.id, t.id, d.distance, d.duration, d.bbox_min_lon, d.bbox_min_lat, d.bbox_max_lon, d.bbox_max_lat
-        //     FROM disterritory d
-        //     JOIN territory t
-        //     WHERE t.id='.$resultt['id'].' and ST_INTERSECTS(d.geo, t.geo_json_detail)=1;
-        //     ';
-        //     $stmt = $conn->prepare($sql);
-        //     $stmt->execute();
-
-        //     $out = new \DateTime('UTC');
-        //     $diff = $out->diff($in);
-        //     $secs = ((($diff->format('%a') * 24) + $diff->format('%H')) * 60 + $diff->format('%i')) * 60 + $diff->format('%s');
-        //     $this->logger->info('DURATION '.$secs.' | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
-
-        //     $this->logger->info('Insert into direction_territory | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
-        //     $in = new \DateTime('UTC');
-        //     $sql = 'SELECT SQL_NO_CACHE did,tid,distance,duration,bbox_min_lon,bbox_min_lat,bbox_max_lon,bbox_max_lat
-        //     FROM dirter';
-        //     $stmt = $conn->prepare($sql);
-        //     $stmt->execute();
-        //     $results = $stmt->fetchAll();
-        //     foreach ($results as $result) {
-        //         $sqli = '
-        //         INSERT IGNORE INTO direction_territory (direction_id, territory_id)
-        //         SELECT d.id, '.$result['tid'].' from direction d
-        //         WHERE d.distance = '.$result['distance'].' AND
-        //         d.duration = '.$result['duration'].' AND
-        //         d.bbox_min_lon = '.$result['bbox_min_lon'].' AND
-        //         d.bbox_min_lat = '.$result['bbox_min_lat'].' AND
-        //         d.bbox_max_lon = '.$result['bbox_max_lon'].' AND
-        //         d.bbox_max_lat = '.$result['bbox_max_lat'];
-        //         $stmti = $conn->prepare($sqli);
-        //         $stmti->execute();
-        //     }
-        // }
-
-        // $sql = 'DROP TABLE disterritory;DROP TABLE dirter;';
-        // $stmt = $conn->prepare($sql);
-        // $stmt->execute();
-        // $this->logger->info('Insert into direction_territory finished | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
-
-        // close and delete update file check
-        // fclose($fp);
-        // unlink($this->batchTemp.self::CHECK_RUNNING_FILE);
-
-        // END TERRITORIES
     }
 
     public function linkAddressesWithTerritories()
