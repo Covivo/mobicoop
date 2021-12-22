@@ -334,7 +334,7 @@ class TerritoryManager
             return $this->dropGeoJsonTerritoryIndex() && $this->closeRunningFile() && false;
         }
 
-        $sqlt = 'SELECT id, admin_level from territory order by admin_level asc, id asc;';
+        $sqlt = 'SELECT id, admin_level from territory order by admin_level desc, id asc;';
         $stmtt = $conn->prepare($sqlt);
         $stmtt->execute();
         $resultst = $stmtt->fetchAll();
