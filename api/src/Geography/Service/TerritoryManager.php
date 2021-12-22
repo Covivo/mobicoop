@@ -312,12 +312,12 @@ class TerritoryManager
         $secs = ((($diff->format('%a') * 24) + $diff->format('%H')) * 60 + $diff->format('%i')) * 60 + $diff->format('%s');
         $this->logger->info('DURATION '.$secs.' | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
 
-        $sql = 'SELECT count(*) as cid from disaddress';
-        $stmt = $conn->prepare($sql);
-        $stmt->execute();
-
-        $result = $stmt->fetch();
-        $this->logger->info('NB address '.$result['cid'].' | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
+        if (!(
+            $nbAddresses = $this->entityManager->getConnection()->fetchColumn('SELECT count(*) as cid from disaddress;')
+        )) {
+            return $this->dropGeoJsonTerritoryIndex() && $this->closeRunningFile() && false;
+        }
+        $this->logger->info('NB address '.$nbAddresses.' | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
 
         $this->logger->info('CREATE TEMP adter | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
         if (!$result =
@@ -376,6 +376,7 @@ class TerritoryManager
             foreach ($resultsp as $resultp) {
                 $territories[] = $resultp['id'];
             }
+            $stmtp->closeCursor();
 
             $this->logger->info('Insert into address_territory | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
             $in = new \DateTime('UTC');
@@ -390,7 +391,9 @@ class TerritoryManager
                     $stmti->execute();
                 }
             }
+            $stmt->closeCursor();
         }
+        $stmtt->closeCursor();
 
         $sql = 'DROP TABLE disaddress;DROP TABLE adter;';
         $stmt = $conn->prepare($sql);
