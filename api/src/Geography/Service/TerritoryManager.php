@@ -263,6 +263,8 @@ class TerritoryManager
      */
     public function updateAddressesAndDirections()
     {
+        $this->entityManager->getConnection()->getConfiguration()->setSQLLogger(null);
+
         if (file_exists($this->batchTemp.self::CHECK_RUNNING_FILE)) {
             $this->logger->info('Link addresses with territories already running | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
 
