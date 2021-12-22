@@ -277,8 +277,6 @@ class TerritoryManager
             return false;
         }
 
-        $conn = $this->entityManager->getConnection();
-
         // ADDRESSES
         $this->logger->info('CREATE TEMP disaddress | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
         $in = new \DateTime('UTC');
@@ -335,7 +333,7 @@ class TerritoryManager
         }
 
         $sqlt = 'SELECT id, admin_level from territory order by admin_level desc, id asc;';
-        $stmtt = $conn->prepare($sqlt);
+        $stmtt = $this->entityManager->getConnection()->prepare($sqlt);
         $stmtt->execute();
         $resultst = $stmtt->fetchAll();
         foreach ($resultst as $resultt) {
@@ -370,7 +368,7 @@ class TerritoryManager
                 WHERE parent.admin_level < '.$resultt['admin_level'].' 
                 AND ST_CONTAINS(parent.geo_json_detail,child.geo_json_detail)=1;
             ';
-            $stmtp = $conn->prepare($sqlp);
+            $stmtp = $this->entityManager->getConnection()->prepare($sqlp);
             $stmtp->execute();
             $resultsp = $stmtp->fetchAll();
             foreach ($resultsp as $resultp) {
@@ -381,13 +379,13 @@ class TerritoryManager
             $this->logger->info('Insert into address_territory | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
             $in = new \DateTime('UTC');
             $sql = 'SELECT SQL_NO_CACHE aid,tid,lat,lon FROM adter';
-            $stmt = $conn->prepare($sql);
+            $stmt = $this->entityManager->getConnection()->prepare($sql);
             $stmt->execute();
             $results = $stmt->fetchAll();
             foreach ($results as $result) {
                 foreach ($territories as $territory) {
                     $sqli = 'INSERT IGNORE INTO address_territory (address_id, territory_id) SELECT id, '.$territory.' from address WHERE latitude='.$result['lat'].' and longitude='.$result['lon'];
-                    $stmti = $conn->prepare($sqli);
+                    $stmti = $this->entityManager->getConnection()->prepare($sqli);
                     $stmti->execute();
                 }
             }
@@ -396,8 +394,9 @@ class TerritoryManager
         $stmtt->closeCursor();
 
         $sql = 'DROP TABLE disaddress;DROP TABLE adter;';
-        $stmt = $conn->prepare($sql);
+        $stmt = $this->entityManager->getConnection()->prepare($sql);
         $stmt->execute();
+        $stmt->closeCursor();
         $this->logger->info('Insert into address_territory finished | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
 
         return $this->closeRunningFile() && $this->dropGeoJsonTerritoryIndex() && $result;
@@ -633,7 +632,7 @@ class TerritoryManager
     private function addGeoJsonTerritoryIndex()
     {
         $this->logger->info('Add spatial index to territory | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
-        $result = $this->entityManager->getConnection()->prepare('CREATE SPATIAL INDEX IDX_GEOJSON_DETAIL ON territory (geo_json_detail);')->execute();
+        $result = $this->entityManager->getConnection()->prepare('CREATE SPATIAL INDEX IF NOT EXISTS IDX_GEOJSON_DETAIL ON territory (geo_json_detail);')->execute();
         $this->logger->info('End add spatial index to territory | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
 
         return $result;
