@@ -255,6 +255,7 @@ class ExternalJourneyManager
             $carpool = [
                 "external" => true,
                 "externalProvider" => $this->getCurrentProvider()->getName(),
+                "journeyId" => $currentJourney['uuid'],
                 'matchingId' => null,
                 'carpoolerId' => $currentJourneyCarpooler['uuid'],
                 'carpoolerGivenName' => $currentJourneyCarpooler['alias'],
