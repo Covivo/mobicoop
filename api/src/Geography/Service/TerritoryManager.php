@@ -367,13 +367,14 @@ class TerritoryManager
             $sqlp = '
                 SELECT parent.id from territory parent
                 JOIN territory child ON child.id = '.$resultt['id'].'
-                WHERE parent.admin_level > '.$resultt['admin_level'].' 
+                WHERE parent.admin_level < '.$resultt['admin_level'].' 
                 AND ST_CONTAINS(parent.geo_json_detail,child.geo_json_detail)=1;
             ';
             $stmtp = $conn->prepare($sqlp);
             $stmtp->execute();
             $resultsp = $stmtp->fetchAll();
             foreach ($resultsp as $resultp) {
+                $this->logger->info('Insert into address_territory | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
                 $territories[] = $resultp['id'];
             }
 
