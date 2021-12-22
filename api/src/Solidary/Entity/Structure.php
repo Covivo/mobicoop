@@ -169,7 +169,7 @@ class Structure
      * @var string|null The telephone number of the structure.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"aRead","aWrite","readSolidary","writeSolidary","readUser"})
+     * @Groups({"aRead","aReadCol","aWrite","readSolidary","writeSolidary","readUser"})
      */
     private $telephone;
 
