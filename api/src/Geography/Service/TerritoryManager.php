@@ -365,7 +365,7 @@ class TerritoryManager
 
             // search for parent territories
             $sqlp = '
-                SELECT id from territory parent
+                SELECT parent.id from territory parent
                 JOIN territory child ON child.id = '.$resultt['id'].'
                 WHERE parent.admin_level > '.$resultt['admin_level'].' 
                 AND ST_CONTAINS(parent.geo_json_detail,child.geo_json_detail)=1;
