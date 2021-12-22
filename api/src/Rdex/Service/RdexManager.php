@@ -328,7 +328,22 @@ class RdexManager
          */
         foreach ($ad->getResults() as $result) {
 
-            // For each result we need to check if the times matching the requested min and max time (if specified)
+            // For each result we need to check if the date matches the requested max date (if specified) because of the api carpool settings especialy on the punctuals
+            if ($parameters["outward"]['maxdate']) {
+                $maxDateParameter = \DateTime::createFromFormat("Y-m-d", $parameters["outward"]['maxdate']);
+                if ($result->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
+                    // For punctual, we check the requested date
+                    $resultDate = $result->getDate();
+                } else {
+                    // For regular, we check the start date
+                    $resultDate = $result->getStartDate();
+                }
+                
+                if ($resultDate > $maxDateParameter) {
+                    // Invalid, we ignore this result
+                    continue;
+                }
+            }
 
             if ($result->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
                 // For punctual, we check the requested date
@@ -338,6 +353,7 @@ class RdexManager
                 $resultDay = strtolower($result->getStartDate()->format('l'));
             }
 
+            // For each result we need to check if the times matching the requested min and max time (if specified)
             if (isset($parameters["outward"][$resultDay])) {
                 // The search has a data parameter. We need to check if there is a minitime, maxtime or both
                 if (isset($parameters["outward"][$resultDay]['mintime'])) {
