@@ -60,7 +60,7 @@ class TravelMode
     const TRAVEL_MODE_ON_DEMAND = "TOD";
     const TRAVEL_MODE_METRO = "METRO";
     const TRAVEL_MODE_TROLLEY_BUS = "TROLLEY_BUS";
-	const TRAVEL_MODE_UNKNOWN = "UNKNOWN";
+    const TRAVEL_MODE_UNKNOWN = "UNKNOWN";
 
     private const TRAVEL_MODES = [
         self::TRAVEL_MODE_CAR => 1,
@@ -77,7 +77,7 @@ class TravelMode
         self::TRAVEL_MODE_ON_DEMAND => 12,
         self::TRAVEL_MODE_METRO => 13,
         self::TRAVEL_MODE_TROLLEY_BUS => 14,
-		self::TRAVEL_MODE_UNKNOWN => 99
+        self::TRAVEL_MODE_UNKNOWN => 99
 
     ];
 
@@ -97,7 +97,7 @@ class TravelMode
         self::TRAVEL_UNKNOWN => "mdi-help-circle",
         self::TRAVEL_MODE_METRO => "mdi-subway-variant",
         self::TRAVEL_MODE_TROLLEY_BUS => "mdi-bus",
-		self::TRAVEL_MODE_UNKNOWN => "mdi-help-circle-outline"
+        self::TRAVEL_MODE_UNKNOWN => "mdi-help-circle-outline"
     ];
 
     /**
