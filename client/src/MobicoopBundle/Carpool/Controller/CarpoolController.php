@@ -547,8 +547,8 @@ class CarpoolController extends AbstractController
         $params = json_decode($request->getContent(), true);
         $date = null;
         if (isset($params['date']) && $params['date'] != '') {
-			$date = new DateTime($params['date']);        
-		}
+            $date = new DateTime($params['date']);
+        }
         //  else {
         //     $date = new \DateTime();
         // }
