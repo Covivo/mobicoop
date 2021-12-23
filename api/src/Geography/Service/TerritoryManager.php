@@ -38,7 +38,6 @@ use Psr\Log\LoggerInterface;
  */
 class TerritoryManager
 {
-    private const BATCH_ADDRESSES = 100;
     private const CHECK_RUNNING_FILE = 'updateAddressesAndDirections.txt';
 
     private $entityManager;
