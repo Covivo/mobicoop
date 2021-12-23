@@ -14,6 +14,7 @@
             :avatar-version="avatarVersion"
             :display-description="false"
             :is-widget="true"
+            :justify-title="justifyTitle"
           />
         </v-col>
       </v-row>
@@ -101,6 +102,10 @@ export default {
     token: {
       type: String,
       default: ''
+    },
+    justifyTitle: {
+      type: String,
+      default: "text-h5 text-center font-weight-bold",
     }
   },
   data () {

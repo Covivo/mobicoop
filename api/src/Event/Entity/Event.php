@@ -648,7 +648,7 @@ class Event
         return $this;
     }
 
-    public function getExternalId(): string
+    public function getExternalId(): ?string
     {
         return $this->externalId;
     }

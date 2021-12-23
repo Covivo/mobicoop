@@ -37,6 +37,7 @@
             :community="community"
             :url-alt-avatar="urlAltAvatar"
             :avatar-version="avatarVersion"
+            :display-description="true"
           />
           <p>{{ user && user.isCommunityReferrer }}</p>
           <!-- community buttons and map -->

@@ -15,6 +15,8 @@
             :avatar-version="avatarVersion"
             :display-description="false"
             :is-widget="true"
+            :justify-title="justifyTitle"
+            :justify-address-locality="justifyAddressLocality"
           />
         </v-col>
       </v-row>
@@ -101,7 +103,15 @@ export default {
     token: {
       type: String,
       default: ''
-    }
+    },
+    justifyTitle: {
+      type: String,
+      default: "text-h5 text-center font-weight-bold"
+    },
+    justifyAddressLocality : {
+      type: String,
+      default: "text-h5 text-center text-subtitle-1"
+  	},
   },
   data () {
     return {

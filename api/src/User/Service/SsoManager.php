@@ -65,7 +65,7 @@ class SsoManager
         if (isset(self::SUPPORTED_PROVIDERS[$serviceName])) {
             $service = $this->ssoServices[$serviceName];
             $providerClass = self::SUPPORTED_PROVIDERS[$serviceName];
-            return new $providerClass($serviceName, $baseSiteUri, $service['baseUri'], $service['clientId'], $service['clientSecret'], SsoConnection::RETURN_URL);
+            return new $providerClass($serviceName, $baseSiteUri, $service['baseUri'], $service['clientId'], $service['clientSecret'], SsoConnection::RETURN_URL, $service['autoCreateAccount']);
         }
         return null;
     }

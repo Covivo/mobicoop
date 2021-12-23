@@ -21,5 +21,6 @@
     "emailInvalid": "L'adresse email doit être valide",
     "passwordRequired": "Le mot de passe est requis",
     "consent":"Pour pouvoir vous connecter vous devez avoir accepté de \"Maintenir votre connexion active\" grâce à l'outil de \"Gestion des cookies\" accessible par un lien en pied de page puis rafraichir la page.",
-    "socialServicesUnavailableWithoutConsent":"Pour être utilisée, la fonctionnalité de connexion via les réseaux sociaux doit être acceptée grâce à l'outil de \"Gestion des cookies\" accessible par un lien en pied de page."
+    "socialServicesUnavailableWithoutConsent":"Pour être utilisée, la fonctionnalité de connexion via les réseaux sociaux doit être acceptée grâce à l'outil de \"Gestion des cookies\" accessible par un lien en pied de page.",
+    "errorSso":"Connexion impossible, car aucun compte utilisateur existant sur {appName} n'est lié à '{service}'"
 }

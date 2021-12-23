@@ -349,13 +349,13 @@ communityNewMembershipRequest: "NOUVEAU - Un nouvel utilisateur veut rejoindre v
 thankYouTeam: "Merci, l'équipe {instanceName}."
 
 # CONFIRM_DIRECT_PAYEMENT
-hasPayed: "vous a-t-il bien payé à la main ?"
+hasPayed: "vous a-t-il bien payé à la main ?"
 hasIndicatedThatCarpool: "a marqué votre covoiturage de"
 hasIndicatedThatTheWeek: "a marqué la semaine du"
 carpoolRegular: "de covoiturage entre"
 asPayed: "comme payé à la main."
-clickOnlinkToConfirmOrNot: "Cliquez sur le lien suivant pour confirmer ce paiement à la main, ou au contraire signaler un impayé : "
-goToAcceptedCarpoolsTovalidate: "Rendez-vous dans « Covoiturages acceptés » pour confirmer ce paiement à la main, ou au contraire signaler un impayé."
+clickOnlinkToConfirmOrNot: "Cliquez sur le lien suivant pour confirmer ce paiement à la main, ou au contraire signaler un impayé : "
+goToAcceptedCarpoolsTovalidate: "Rendez-vous dans « Covoiturages acceptés » pour confirmer ce paiement à la main, ou au contraire signaler un impayé."
 linkValidatePaymentLabel: "Valider un paiement."
 linkValidatePaymentRoute: "/utilisateur/profil/modifier/mes-covoiturages-acceptes"
 
@@ -381,13 +381,13 @@ identityProofOutdated: "Document d’identité expiré"
 yourProofIsOutdated: "Votre document d’identité transmis a expiré. Veuillez transmettre un autre document d’identité à jour pour pouvoir recevoir des paiements"
 
 #PAY_AFTER_CARPOOL
-haveYouPayedYourDriver: "Avez-vous indemnisé votre covoitureur ?"
+haveYouPayedYourDriver: "Avez-vous indemnisé votre covoitureur ?"
 isDone: "est terminé."
-clickOnLinkToPay: "Cliquez sur le lien suivant pour le marquer comme payé à la main si vous avez déjà réglé le conducteur ou le payer en ligne si vous ne l’avez pas encore indemnisé :"
-goToAcceptedCarpools: "Rendez-vous dans « Covoiturages acceptés » pour le marquer comme payé à la main ou le payer en ligne."
+clickOnLinkToPay: "Cliquez sur le lien suivant pour le marquer comme payé à la main si vous avez déjà réglé le conducteur ou le payer en ligne si vous ne l’avez pas encore indemnisé :"
+goToAcceptedCarpools: "Rendez-vous dans « Covoiturages acceptés » pour le marquer comme payé à la main ou le payer en ligne."
 
 #PAY_AFTER_CARPOOL_REGULAR
-haveYouPayedYourDriverForTheWeek: "Avez-vous payé les covoiturages de la semaine passée ?"
+haveYouPayedYourDriverForTheWeek: "Avez-vous payé les covoiturages de la semaine passée ?"
 yourWeekOfCarpool: "Votre semaine de covoiturage régulier, avec "
 click: "Cliquez ici."
 

@@ -38,7 +38,7 @@
             justify="center"
           >
             <v-card-text>
-              <h3 class="text-h5  text-left font-weight-bold">
+              <h3 :class="justifyTitle">
                 {{ event.name }}
                 <v-chip 
                   v-if="event.private" 
@@ -48,7 +48,7 @@
                   {{ $t('private') }}
                 </v-chip>
               </h3>
-              <p class="text-h5 text-left text-subtitle-1">
+              <p :class="justifyAddressLocality">
                 {{ event.address.addressLocality }}
               </p>
               <p
@@ -114,7 +114,15 @@ export default {
     isWidget: {
       type: Boolean,
       default: false
-    }
+    },
+    justifyTitle: {
+      type: String,
+      default: "text-h5 text-left font-weight-bold",
+    },
+    justifyAddressLocality : {
+      type: String,
+      default: "text-h5 text-left text-subtitle-1"
+  	},
   },
   i18n: {
     messages: {

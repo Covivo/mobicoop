@@ -63,6 +63,7 @@ class SsoUser
     private $professional_mobile_phone;
     private $professional_phone;
     private $birthdepartment;
+    private $autoCreateAccount;
 
     public function getProvider()
     {
@@ -362,5 +363,15 @@ class SsoUser
     public function setBirthdepartment($birthdepartment)
     {
         $this->birthdepartment = $birthdepartment;
+    }
+
+    public function hasAutoCreateAccount(): ?bool
+    {
+        return (!is_null($this->autoCreateAccount)) ? $this->autoCreateAccount : true;
+    }
+
+    public function setAutoCreateAccount(?bool $autoCreateAccount)
+    {
+        $this->autoCreateAccount = $autoCreateAccount;
     }
 }

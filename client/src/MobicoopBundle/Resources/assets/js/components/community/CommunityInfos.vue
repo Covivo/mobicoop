@@ -25,7 +25,7 @@
         justify="center"
       >
         <v-card-text>
-          <h3 class="text-h5 text-justify font-weight-bold">
+          <h3 :class="justifyTitle">
             {{ community.name }}
           </h3>
           <v-chip
@@ -38,10 +38,12 @@
             {{ $t('infos.members', {members:community.nbMembers}) }}
           </v-chip>
           <p
+            v-if="displayDescription"
             class="text-body-1 text-justify"
-            v-html="community.description"
+            v-html="community.description" 
           />
           <p
+            v-if="displayDescription"
             class="text-body-2 text-justify"
             v-html="community.fullDescription"
           />
@@ -74,6 +76,14 @@ export default {
     avatarVersion: {
       type: String,
       default: null,
+    },
+    displayDescription:{
+	  type: Boolean,
+      default: true,
+    },
+    justifyTitle: {
+      type: String,
+      default: "text-h5 text-justify font-weight-bold",
     }
   },
 };
