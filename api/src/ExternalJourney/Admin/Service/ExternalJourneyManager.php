@@ -329,4 +329,11 @@ class ExternalJourneyManager
         $returnHour->setTimestamp($middleHour);
         return $returnHour;
     }
+
+    public function getExternalProviders(): array
+    {
+        var_dump($this->providers);
+        die;
+        return [];
+    }
 }

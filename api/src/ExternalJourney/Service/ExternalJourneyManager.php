@@ -74,7 +74,7 @@ class ExternalJourneyManager
 
     public function getProviders()
     {
-        return $this->providers;
+        return (!is_null($this->providers) && is_array($this->providers)) ? $this->providers : [];
     }
 
     public function getExternalJourneys(Request $request, array $params): array
