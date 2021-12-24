@@ -24,6 +24,7 @@
 namespace Mobicoop\Bundle\MobicoopBundle\User\EventSubscriber;
 
 use Mobicoop\Bundle\MobicoopBundle\User\Event\LogoutEvent;
+use Mobicoop\Bundle\MobicoopBundle\User\Service\SsoManager;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -31,8 +32,11 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 class LogoutSubscriber implements EventSubscriberInterface
 {
-    public function __construct()
+    private $ssoManager;
+    
+    public function __construct(SsoManager $ssoManager)
     {
+        $this->ssoManager = $ssoManager;
     }
 
     public static function getSubscribedEvents()
@@ -44,7 +48,7 @@ class LogoutSubscriber implements EventSubscriberInterface
 
     public function onLogoutEvent(LogoutEvent $logoutEvent)
     {
-        dump($logoutEvent->getUser());
-        die;
+        $this->ssoManager->setUser($logoutEvent->getUser());
+        $this->ssoManager->logOut();
     }
 }

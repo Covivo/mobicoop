@@ -23,11 +23,26 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\User\Service;
 
+use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
+
 /**
  * Sso management service.
  */
 class SsoManager
 {
+    private $user;
+
+    public function getUser(): User
+    {
+        return $this->user;
+    }
+
+    public function setUser(User $user): self
+    {
+        $this->user = $user;
+
+        return $this;
+    }
 
     /**
      * Guess and return the parameters for a SSO connection
@@ -48,5 +63,10 @@ class SsoManager
         }
 
         return $return;
+    }
+
+    public function logOut()
+    {
+        // call logout route api
     }
 }
