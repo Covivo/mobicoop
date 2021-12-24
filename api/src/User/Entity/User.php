@@ -310,6 +310,15 @@ use App\I18n\Entity\Language;
  *                  "tags"={"Users"}
  *              }
  *          },
+ *          "logoutSso"={
+ *              "method"="GET",
+ *              "path"="/logout_sso",
+ *              "normalization_context"={"groups"={"readUser"}},
+ *              "security"="is_granted('user_read',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Users"}
+ *              }
+ *          },
  *          "ADMIN_get"={
  *              "path"="/admin/users",
  *              "method"="GET",

@@ -109,4 +109,17 @@ class SsoManager
         $provider->setCode($code);
         return $this->userManager->getUserFromSso($provider->getUserProfile($code));
     }
+
+    /**
+     * Logout on the distant SsoService
+     *
+     * @param User $user
+     * @return User
+     */
+    public function logoutSso(User $user): User
+    {
+        if ($this->ssoServicesActive) {
+        }
+        return $user;
+    }
 }
