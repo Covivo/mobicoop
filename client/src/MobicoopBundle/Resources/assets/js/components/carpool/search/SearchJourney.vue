@@ -337,7 +337,7 @@ export default {
       this.destination = this.initDestination;
     }
   },
-  mounted() {
+  beforeUpdate() {
     this.locale = localStorage.getItem("X-LOCALE");
     moment.locale(this.locale);
   },
