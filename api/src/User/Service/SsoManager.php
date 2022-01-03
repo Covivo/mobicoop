@@ -60,7 +60,7 @@ class SsoManager
      * @var string $serviceName Name of the SSO Service
      * @param string $baseSiteUri   Url of the calling website
      */
-    private function getSsoProvider(string $serviceName, string $baseSiteUri)
+    private function getSsoProvider(string $serviceName, string $baseSiteUri = "")
     {
         if (isset(self::SUPPORTED_PROVIDERS[$serviceName])) {
             $service = $this->ssoServices[$serviceName];
@@ -111,15 +111,22 @@ class SsoManager
     }
 
     /**
-     * Logout on the distant SsoService
+     * Get the logout routes of the Sso Services
      *
-     * @param User $user
-     * @return User
+     * @return array
      */
-    public function logoutSso(User $user): User
+    public function logoutSso(): array
     {
         if ($this->ssoServicesActive) {
+            $logoutUrls = [];
+            foreach ($this->ssoServices as $serviceName => $ssoService) {
+                $provider = $this->getSsoProvider($serviceName);
+                if (!is_null($provider)) {
+                    $logoutUrls[$serviceName] = $provider->getLogoutUrls();
+                }
+            }
+            return [$logoutUrls];
         }
-        return $user;
+        return [];
     }
 }

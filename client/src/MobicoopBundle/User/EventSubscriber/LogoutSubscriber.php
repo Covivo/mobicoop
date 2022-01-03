@@ -26,6 +26,7 @@ namespace Mobicoop\Bundle\MobicoopBundle\User\EventSubscriber;
 use Mobicoop\Bundle\MobicoopBundle\User\Event\LogoutEvent;
 use Mobicoop\Bundle\MobicoopBundle\User\Service\SsoManager;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>

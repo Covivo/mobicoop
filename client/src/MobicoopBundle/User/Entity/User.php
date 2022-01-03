@@ -443,6 +443,11 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
     */
     private $numberOfBadges;
 
+    /**
+     * @var string|null External Provider for a SSO connection
+     */
+    private $ssoProvider;
+
     public function __construct($id=null, $status=null)
     {
         if ($id) {
@@ -1329,6 +1334,17 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
         return $this;
     }
 
+    public function getSsoProvider(): ?string
+    {
+        return $this->ssoProvider;
+    }
+
+    public function setSsoProvider(?string $ssoProvider): self
+    {
+        $this->ssoProvider = $ssoProvider;
+        return $this;
+    }
+
     // If you want more info from user you just have to add it to the jsonSerialize function
     public function jsonSerialize()
     {
@@ -1371,7 +1387,8 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
             'savedCo2'                      => $this->getSavedCo2(),
             'language'                      => $this->getLanguage(),
             'gamificationNotifications'     => $this->getGamificationNotifications(),
-            'numberOfBadges'                => $this->getNumberOfBadges()
+            'numberOfBadges'                => $this->getNumberOfBadges(),
+            'ssoProvider'                   => $this->getSsoProvider()
         ];
 
         if (!is_null($this->getIsCommunityReferrer())) {

@@ -28,7 +28,6 @@ use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
 use App\User\Service\SsoManager;
-use Symfony\Component\Security\Core\Security;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
@@ -37,11 +36,9 @@ use Symfony\Component\Security\Core\Security;
 final class UserLogoutSsoCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
     private $ssoManager;
-    private $security;
 
-    public function __construct(SsoManager $ssoManager, Security $security)
+    public function __construct(SsoManager $ssoManager)
     {
-        $this->security = $security;
         $this->ssoManager = $ssoManager;
     }
 
@@ -50,14 +47,8 @@ final class UserLogoutSsoCollectionDataProvider implements CollectionDataProvide
         return User::class === $resourceClass && $operationName === "logoutSso";
     }
 
-    public function getCollection(string $resourceClass, string $operationName = null, array $context = []): ?User
+    public function getCollection(string $resourceClass, string $operationName = null, array $context = []): array
     {
-        if (!($this->security->getUser() instanceof User)) {
-            throw new \LogicException("Only a User can perform this action");
-        }
-        if ($user = $this->ssoManager->logoutSso($this->security->getUser())) {
-            return $user;
-        }
-        return null;
+        return $this->ssoManager->logoutSso();
     }
 }

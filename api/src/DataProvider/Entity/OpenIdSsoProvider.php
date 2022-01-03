@@ -179,4 +179,9 @@ class OpenIdSsoProvider implements SsoProviderInterface
             throw new \LogicException("Error get Token");
         }
     }
+
+    public function getLogoutUrls(): ?string
+    {
+        return (isset(self::URLS[$this->serviceName][self::LOGOUT_URL])) ? $this->baseUri."".self::URLS[$this->serviceName][self::LOGOUT_URL] : null;
+    }
 }

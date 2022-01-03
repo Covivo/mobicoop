@@ -312,9 +312,8 @@ use App\I18n\Entity\Language;
  *          },
  *          "logoutSso"={
  *              "method"="GET",
- *              "path"="/logout_sso",
+ *              "path"="/users/logout_sso",
  *              "normalization_context"={"groups"={"readUser"}},
- *              "security"="is_granted('user_read',object)",
  *              "swagger_context" = {
  *                  "tags"={"Users"}
  *              }
@@ -1263,6 +1262,7 @@ class User implements UserInterface, EquatableInterface
      * @var string|null External Provider for a SSO connection
      *
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"readUser"})
      */
     private $ssoProvider;
 
