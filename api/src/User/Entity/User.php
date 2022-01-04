@@ -1254,7 +1254,6 @@ class User implements UserInterface, EquatableInterface
      * @var string|null External Provider for a SSO connection
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readUser"})
      */
     private $ssoProvider;
 
