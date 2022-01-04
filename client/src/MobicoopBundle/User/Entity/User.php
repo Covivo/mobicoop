@@ -1329,17 +1329,6 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
         return $this;
     }
 
-    public function getSsoProvider(): ?string
-    {
-        return $this->ssoProvider;
-    }
-
-    public function setSsoProvider(?string $ssoProvider): self
-    {
-        $this->ssoProvider = $ssoProvider;
-        return $this;
-    }
-
     // If you want more info from user you just have to add it to the jsonSerialize function
     public function jsonSerialize()
     {
