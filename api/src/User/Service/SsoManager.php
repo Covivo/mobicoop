@@ -129,4 +129,16 @@ class SsoManager
         }
         return [];
     }
+
+    public function getSsoLogoutUrl(User $user): ?string
+    {
+        foreach ($this->logoutSso() as $logOutUrls) {
+            foreach ($logOutUrls as $provider => $logOutUrl) {
+                if ($provider == $user->getSsoProvider()) {
+                    return $logOutUrl;
+                }
+            }
+        }
+        return null;
+    }
 }

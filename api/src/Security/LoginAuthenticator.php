@@ -22,14 +22,22 @@
 
 namespace App\Security;
 
+use App\User\Entity\User;
+use App\User\Service\SsoManager;
 use Lexik\Bundle\JWTAuthenticationBundle\Event\AuthenticationSuccessEvent;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class LoginAuthenticator
 {
+    private $ssoManager;
+
+    public function __construct(SsoManager $ssoManager)
+    {
+        $this->ssoManager = $ssoManager;
+    }
+    
     /**
      * @param AuthenticationSuccessEvent $event
      */
@@ -38,11 +46,13 @@ class LoginAuthenticator
         $data = $event->getData();
         $user = $event->getUser();
 
-        if (!$user instanceof UserInterface) {
+        if (!$user instanceof User) {
             return;
         }
 
-        $data['logoutUrl'] = "https://www.google.com";
+        if (!is_null($user->getSsoProvider())) {
+            $data['logoutUrl'] = $this->ssoManager->getSsoLogoutUrl($user);
+        }
 
         $event->setData($data);
     }
