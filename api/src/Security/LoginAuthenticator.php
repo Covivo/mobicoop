@@ -1,7 +1,6 @@
 <?php
-
 /**
- * Copyright (c) 2021, MOBICOOP. All rights reserved.
+ * Copyright (c) 2022, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,31 +20,30 @@
  *    LICENSE
  **************************/
 
-namespace Mobicoop\Bundle\MobicoopBundle\User\Event;
+namespace App\Security;
 
-use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
-use Symfony\Component\EventDispatcher\Event;
+use Lexik\Bundle\JWTAuthenticationBundle\Event\AuthenticationSuccessEvent;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
- * Event sent when there is a logout action
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class LogoutEvent extends Event
+class LoginAuthenticator
 {
-    public const NAME = 'logout_action';
-
-    private $user;
-
-    public function __construct(User $user)
-    {
-        $this->user = $user;
-    }
-
     /**
-     * @return User
+     * @param AuthenticationSuccessEvent $event
      */
-    public function getUser(): User
+    public function onAuthenticationSuccessResponse(AuthenticationSuccessEvent $event)
     {
-        return $this->user;
+        $data = $event->getData();
+        $user = $event->getUser();
+
+        if (!$user instanceof UserInterface) {
+            return;
+        }
+
+        $data['logoutUrl'] = "https://www.google.com";
+
+        $event->setData($data);
     }
 }

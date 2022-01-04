@@ -66,7 +66,6 @@ class OpenIdSsoProvider implements SsoProviderInterface
     private $clientSecret;
     private $redirectUrl;
     private $redirectUri;
-    private $private;
     private $baseSiteUri;
     private $autoCreateAccount;
     

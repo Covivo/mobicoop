@@ -39,28 +39,28 @@ class LogoutListener implements LogoutSuccessHandlerInterface
     protected $router;
     protected $tokenStorage;
     private $session;
-    private $eventDispatcher;
 
-    public function __construct(Router $router, TokenStorageInterface $tokenStorage, SessionInterface $session, EventDispatcherInterface $eventDispatcher)
+    public function __construct(Router $router, TokenStorageInterface $tokenStorage, SessionInterface $session)
     {
         $this->router = $router;
         $this->tokenStorage = $tokenStorage;
         $this->session = $session;
-        $this->eventDispatcher = $eventDispatcher;
     }
 
     public function onLogoutSuccess(Request $request)
     {
+        if ($this->session->get('logoutUrl') && trim($this->session->get('logoutUrl')) !== '') {
+            $routeToCall = $this->session->get('logoutUrl');
+        } else {
+            $routeToCall = $this->tokenStorage->getToken()->getUser() == 'anon.' ?
+                $this->router->generate('home_logout', [], UrlGenerator::ABSOLUTE_PATH) :
+                $this->router->generate('home', [], UrlGenerator::ABSOLUTE_PATH);
+        }
+
+
         $this->session->remove('apiToken');
         $this->session->remove('apiRefreshToken');
-        $routeToCall = $this->tokenStorage->getToken()->getUser() == 'anon.' ?
-            $this->router->generate('home_logout', [], UrlGenerator::ABSOLUTE_PATH) :
-            $this->router->generate('home', [], UrlGenerator::ABSOLUTE_PATH);
 
-        // Dispatch a LogoutEvent
-        $event = new LogoutEvent($this->tokenStorage->getToken()->getUser());
-        $this->eventDispatcher->dispatch(LogoutEvent::NAME, $event);
-        
         return new RedirectResponse($routeToCall);
     }
 }

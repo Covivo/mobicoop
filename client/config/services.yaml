@@ -36,8 +36,3 @@ services:
         arguments:
             $router: "@router"
             $tokenStorage : "@security.token_storage"
-
-    # Logout Event Subscriber
-    Mobicoop\Bundle\MobicoopBundle\User\EventSubscriber\LogoutSubscriber:
-        tags:
-            - { name: kernel.event_subscriber, event: kernel.request }
