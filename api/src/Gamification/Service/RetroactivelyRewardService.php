@@ -97,11 +97,11 @@ class RetroactivelyRewardService
     {
         $this->logger->info("start retroactivelyRewardUsers | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         
-        // $limit = 20;
-        // $limit = 1000;
+        $limit = 50;
+        // $limit = 1500;
         // $limit = 10000;
         // $limit = 100000;
-        $limit = 1000000;
+        // $limit = 1000000;
         $this->entityManager->getConnection()->prepare('
         CREATE TEMPORARY TABLE tuser (
             id int not null,
@@ -317,33 +317,32 @@ class RetroactivelyRewardService
     public function handleRetroactivelyRewards($userToUse, int $sequenceItemId)
     {
         if (!($userToUse instanceof User)) {
-            // $user = new User;
-            // $user->setId($userToUse[0]["user_id"]);
-            $user = $this->userRepository->find($userToUse[0]["user_id"]);
+            $user = new User;
+            $user->setId($userToUse[0]["user_id"]);
+            // $user = $this->userRepository->find($userToUse[0]["user_id"]);
         } else {
             $user = $userToUse;
         }
 
-        $validationStep = new ValidationStep;
-        $validationStep->setSequenceItem($this->sequenceItemRepository->find($sequenceItemId));
-        $validationStep->setUser($user);
+        $sequenceItem = $this->sequenceItemRepository->find($sequenceItemId);
         $badgesBoard = $this->badgesBoardManager->getBadgesBoard($user);
+
         foreach ($badgesBoard->getBadges() as $badgeProgression) {
             $badgeSummary = $badgeProgression->getBadgeSummary();
             $currentSequenceValidation = []; // We will store the status of every SequenceItem
             $newValidation = false;
             foreach ($badgeSummary->getSequences() as $sequenceStatus) {
                 // We found the right sequence
-                if ($sequenceStatus->getSequenceItemId() == $validationStep->getSequenceItem()->getId()) {
+                if ($sequenceStatus->getSequenceItemId() == $sequenceItem->getId()) {
                     // If it's a new validation, We store it be inserting a line in RewardStep for the User
                     if (!$sequenceStatus->isValidated()) {
                         $newValidation = true;
                         $rewardStep = new RewardStep();
-                        $rewardStep->setUser($validationStep->getUser());
+                        $rewardStep->setUser($user);
                         $rewardStep->setCreatedDate(new \DateTime('now'));
                         $rewardStep->setNotifiedDate(new \DateTime('now'));
-                        $validationStep->getSequenceItem()->addRewardStep($rewardStep);
-                        $this->entityManager->persist($validationStep->getSequenceItem());
+                        $sequenceItem->addRewardStep($rewardStep);
+                        $this->entityManager->persist($sequenceItem);
                         // We also update the current SequenceStatus to evaluate further it this is enough to earn badge
                         $sequenceStatus->setValidated(true);
                     }
@@ -360,7 +359,7 @@ class RetroactivelyRewardService
                     $reward = new Reward();
                     $reward->setCreatedDate(new \DateTime('now'));
                     $reward->setNotifiedDate(new \DateTime('now'));
-                    $reward->setUser($validationStep->getUser());
+                    $reward->setUser($user);
                     $badge->addReward($reward);
                     $this->entityManager->persist($badge);
                 }
