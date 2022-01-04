@@ -310,14 +310,6 @@ use App\I18n\Entity\Language;
  *                  "tags"={"Users"}
  *              }
  *          },
- *          "logoutSso"={
- *              "method"="GET",
- *              "path"="/users/logout_sso",
- *              "normalization_context"={"groups"={"readUser"}},
- *              "swagger_context" = {
- *                  "tags"={"Users"}
- *              }
- *          },
  *          "ADMIN_get"={
  *              "path"="/admin/users",
  *              "method"="GET",

@@ -23,36 +23,11 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\User\Service;
 
-use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
-use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-
 /**
  * Sso management service.
  */
-class SsoManager extends AbstractController
+class SsoManager
 {
-    private $dataProvider;
-    private $user;
-
-    public function __construct(DataProvider $dataProvider)
-    {
-        $this->dataProvider = $dataProvider;
-    }
-
-    public function getUser(): User
-    {
-        return $this->user;
-    }
-
-    public function setUser(User $user): self
-    {
-        $this->user = $user;
-
-        return $this;
-    }
-
     /**
      * Guess and return the parameters for a SSO connection
      *
@@ -72,24 +47,5 @@ class SsoManager extends AbstractController
         }
 
         return $return;
-    }
-
-    public function logOut()
-    {
-        return new RedirectResponse('http://www.google.com');
-        if (!is_null($this->user->getSsoProvider()) && $this->user->getSsoProvider() !== "") {
-            $this->dataProvider->setClass(User::class);
-            $this->dataProvider->setFormat(DataProvider::RETURN_JSON);
-            $response = $this->dataProvider->getSpecialCollection("logout_sso");
-            if ($response->getCode()==200) {
-                foreach ($response->getValue() as $logoutUrls) {
-                    foreach ($logoutUrls as $provider => $logoutUrl) {
-                        if ($provider == $this->user->getSsoProvider()) {
-                            return $this->redirect($logoutUrl);
-                        }
-                    }
-                }
-            }
-        }
     }
 }

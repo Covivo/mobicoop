@@ -443,11 +443,6 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
     */
     private $numberOfBadges;
 
-    /**
-     * @var string|null External Provider for a SSO connection
-     */
-    private $ssoProvider;
-
     public function __construct($id=null, $status=null)
     {
         if ($id) {
@@ -1387,8 +1382,7 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
             'savedCo2'                      => $this->getSavedCo2(),
             'language'                      => $this->getLanguage(),
             'gamificationNotifications'     => $this->getGamificationNotifications(),
-            'numberOfBadges'                => $this->getNumberOfBadges(),
-            'ssoProvider'                   => $this->getSsoProvider()
+            'numberOfBadges'                => $this->getNumberOfBadges()
         ];
 
         if (!is_null($this->getIsCommunityReferrer())) {
