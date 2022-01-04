@@ -67,7 +67,6 @@ class RetroactivelyRewardService
         22 => "hasCreatedACommunity",
         23 => "hasAnAcceptedCarpoolInEvent"
     ];
-    const SIMPLE_GAMIFICATION_ACTION = [1,2,3,4,5,6,7,18,20,21,22];
 
     private $userRepository;
     private $badgeRepository;
@@ -97,8 +96,9 @@ class RetroactivelyRewardService
     {
         $this->logger->info("start retroactivelyRewardUsers | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         
-        $limit = 50;
-        // $limit = 1500;
+        $limit = 10;
+        // $limit = 100;
+        // $limit = 1000;
         // $limit = 10000;
         // $limit = 100000;
         // $limit = 1000000;
@@ -113,7 +113,15 @@ class RetroactivelyRewardService
             nb_community_users int not null default 0, 
             nb_communities int not null default 0, 
             nb_asks int not null default 0, 
-            nb_proposals int not null default 0, 
+            nb_asks_related int not null default 0, 
+            nb_asks_community int not null default 0, 
+            nb_asks_related_community int not null default 0, 
+            nb_asks_event int not null default 0, 
+            nb_asks_related_event int not null default 0, 
+            nb_proposals int not null default 0,
+            nb_proposals_community int not null default 0,
+            nb_proposals_event int not null default 0,
+            nb_proposals_solidary_exclusive int not null default 0,
             nb_carpool_items int not null default 0, 
             nb_addresses int not null default 0, 
             nb_payment_profiles int not null default 0, 
@@ -145,15 +153,43 @@ class RetroactivelyRewardService
         );')->execute();
         $stmt = $this->entityManager->getConnection()->prepare('
             UPDATE tuser t
-            SET t.nb_asks = (select count(distinct a.id) from ask a where a.user_id = t.id);
+            SET t.nb_proposals_community = (select count(distinct p.id) FROM proposal p join proposal_community pc on p.id = pc.proposal_id where p.private = 0 and p.user_id = t.id);
         );')->execute();
         $stmt = $this->entityManager->getConnection()->prepare('
             UPDATE tuser t
-            SET t.nb_asks = (select count(distinct a.id) from ask a where a.user_related_id = t.id);
+            SET t.nb_proposals_event = (select count(distinct p.id) from proposal p where p.user_id = t.id and p.private = 0 and p.event_id is not null);
         );')->execute();
         $stmt = $this->entityManager->getConnection()->prepare('
             UPDATE tuser t
-            SET t.nb_carpool_items = (select count(distinct ci.id) from carpool_item ci where ci.debtor_user_id = t.id);
+            SET t.nb_proposals_solidary_exclusive = (select count(distinct p.id) from proposal p join criteria c on p.criteria_id = c.id where p.user_id = t.id and p.private = 0 and c.solidary_exclusive = 1);
+        );')->execute();
+        $stmt = $this->entityManager->getConnection()->prepare('
+            UPDATE tuser t
+            SET t.nb_asks = (select count(distinct a.id) from ask a where a.user_id = t.id and a.status in (4,5));
+        );')->execute();
+        $stmt = $this->entityManager->getConnection()->prepare('
+            UPDATE tuser t
+            SET t.nb_asks_related = (select count(distinct a.id) from ask a where a.user_related_id = t.id and a.status in (4,5));
+        );')->execute();
+        $stmt = $this->entityManager->getConnection()->prepare('
+            UPDATE tuser t
+            SET t.nb_asks_community = (select count(distinct a.id) from ask a join matching m on a.matching_id = m.id join proposal p on m.proposal_offer_id = p.id or m.proposal_request_id = p.id where a.user_id = t.id and p.event_id is not null and a.status in (4,5));
+        );')->execute();
+        $stmt = $this->entityManager->getConnection()->prepare('
+            UPDATE tuser t
+            SET t.nb_asks_related_community = (select count(distinct a.id) from ask a join matching m on a.matching_id = m.id join proposal p on m.proposal_offer_id = p.id or m.proposal_request_id = p.id where a.user_related_id = t.id and p.event_id is not null and a.status in (4,5));
+        );')->execute();
+        $stmt = $this->entityManager->getConnection()->prepare('
+            UPDATE tuser t
+            SET t.nb_asks_event = (select count(distinct a.id) from ask a join matching m on a.matching_id = m.id join proposal p on m.proposal_offer_id = p.id or m.proposal_request_id = p.id where a.user_id = t.id and p.event_id is not null and a.status in (4,5));
+        );')->execute();
+        $stmt = $this->entityManager->getConnection()->prepare('
+            UPDATE tuser t
+            SET t.nb_asks_related_event = (select count(distinct a.id) from ask a join matching m on a.matching_id = m.id join proposal p on m.proposal_offer_id = p.id or m.proposal_request_id = p.id where a.user_related_id = t.id and p.event_id is not null and a.status in (4,5));
+        );')->execute();
+        $stmt = $this->entityManager->getConnection()->prepare('
+            UPDATE tuser t
+            SET t.nb_carpool_items = (select count(distinct ci.id) from carpool_item ci where ci.debtor_user_id = t.id and ci.debtor_status = 3);
         );')->execute();
         $stmt = $this->entityManager->getConnection()->prepare('
             UPDATE tuser t
@@ -189,12 +225,22 @@ class RetroactivelyRewardService
                         'nb_community_users' => $user['nb_community_users'],
                         'nb_communities' => $user['nb_communities'],
                         'nb_asks' => $user['nb_asks'],
+                        'nb_asks_related' => $user['nb_asks_related'],
+                        'nb_asks_community' => $user['nb_asks_community'],
+                        'nb_asks_related_community' => $user['nb_asks_related_community'],
+                        'nb_asks_event' => $user['nb_asks_event'],
+                        'nb_asks_related_event' => $user['nb_asks_related_event'],
                         'nb_proposals' => $user['nb_proposals'],
+                        'nb_proposals_community' => $user['nb_proposals_community'],
+                        'nb_proposals_event' => $user['nb_proposals_event'],
+                        'nb_proposals_solidary_exclusive' => $user['nb_proposals_solidary_exclusive'],
                         'nb_carpool_items' => $user['nb_carpool_items'],
                         'nb_address' => $user['nb_address'],
                         'nb_payment_profiles' => $user['nb_payment_profiles'],
                         'nb_messages' => $user['nb_messages'],
-                        'sequence_item_ids' => []
+                        'sequence_item_ids' => [],
+                        'badge_ids' => []
+
                     ]
                 );
             } else {
@@ -209,12 +255,22 @@ class RetroactivelyRewardService
                             'nb_community_users' => $user['nb_community_users'],
                             'nb_communities' => $user['nb_communities'],
                             'nb_asks' => $user['nb_asks'],
+                            'nb_asks_related' => $user['nb_asks_related'],
+                            'nb_asks_community' => $user['nb_asks_community'],
+                            'nb_asks_related_community' => $user['nb_asks_related_community'],
+                            'nb_asks_event' => $user['nb_asks_event'],
+                            'nb_asks_related_event' => $user['nb_asks_related_event'],
                             'nb_proposals' => $user['nb_proposals'],
+                            'nb_proposals_community' => $user['nb_proposals_community'],
+                            'nb_proposals_event' => $user['nb_proposals_event'],
+                            'nb_proposals_solidary_exclusive' => $user['nb_proposals_solidary_exclusive'],
                             'nb_carpool_items' => $user['nb_carpool_items'],
                             'nb_addresses' => $user['nb_addresses'],
                             'nb_payment_profiles' => $user['nb_payment_profiles'],
                             'nb_messages' => $user['nb_messages'],
-                            'sequence_item_ids' => []
+                            'sequence_item_ids' => [],
+                            'badge_ids' => []
+
                         ]
                 ];
             }
@@ -232,9 +288,26 @@ class RetroactivelyRewardService
                 array_push($users[$sequenceItem['user_id']][0]['sequence_item_ids'], $sequenceItem['sequence_item_id']);
             }
         }
-        
+
         $stmt = $this->entityManager->getConnection()->prepare(
-            "select b.id, si.id as sequence_item_id, ga.id as gamification_action_id, gar.name as rule_name, si.min_count, si.min_unique_count, si.in_date_range, si.value
+            "select reward.user_id, reward.badge_id
+            from reward  
+            order by `reward`.`user_id` asc;"
+        );
+        $stmt->execute();
+        $badges = $stmt->fetchAll();
+        foreach ($badges as $badge) {
+            if (array_key_exists($badge['user_id'], $users)) {
+                array_push($users[$badge['user_id']][0]['badge_ids'], $badge['badge_id']);
+            }
+        }
+     
+        // $this->logger->info("end retroactivelyRewardUsers | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
+        // // var_dump($users);
+        // die;
+
+        $stmt = $this->entityManager->getConnection()->prepare(
+            "select b.id as badge_id, si.id as sequence_item_id, ga.id as gamification_action_id, gar.name as rule_name, si.min_count, si.min_unique_count, si.in_date_range, si.value
             from badge b 
             left join sequence_item si on b.id = si.badge_id
             left join gamification_action ga on ga.id = si.gamification_action_id
@@ -245,9 +318,9 @@ class RetroactivelyRewardService
 
         $badges = [];
         foreach ($resultBadges as $badge) {
-            if (array_key_exists($badge['id'], $badges)) {
+            if (array_key_exists($badge['badge_id'], $badges)) {
                 array_push(
-                    $badges[$badge['id']],
+                    $badges[$badge['badge_id']],
                     [
                         'si_id' => $badge['sequence_item_id'],
                         'ga_id' => $badge['gamification_action_id'],
@@ -259,7 +332,7 @@ class RetroactivelyRewardService
                     ]
                 );
             } else {
-                $badges[$badge['id']] = [
+                $badges[$badge['badge_id']] = [
                         [
                             'si_id' => $badge['sequence_item_id'],
                             'ga_id' => $badge['gamification_action_id'],
@@ -272,113 +345,100 @@ class RetroactivelyRewardService
                 ];
             }
         }
-
+        
         foreach ($users as $user) {
             $sequenceItemsIds = (!is_null($user[0]['sequence_item_ids'])) ?  $user[0]['sequence_item_ids'] : [];
-            $this->retroactivelyRewardUser($user, $sequenceItemsIds, $badges);
+            $badgeIds = (!is_null($user[0]['badge_ids'])) ?  $user[0]['badge_ids'] : [];
+            $this->retroactivelyRewardUser($user, $sequenceItemsIds, $badgeIds, $badges);
         }
         $this->logger->info("end retroactivelyRewardUsers | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
     }
 
-    private function retroactivelyRewardUser(array $user, ?array $sequenceItemsIds, array $badges)
+    private function retroactivelyRewardUser(array $user, ?array $sequenceItemsIds, ?array $badgeIds, array $badges)
     {
-        // $this->logger->info("start retroactivelyRewardUser | " . $id . " | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-
-        foreach ($badges as $badge) {
-            // $this->logger->info("checkbadge | " . $badge->getId() . " | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-
+        foreach ($badges as $key => $badge) {
+            if (in_array($key, $badgeIds)) {
+                continue;
+            }
             foreach ($badge as $sequenceItem) {
-                // $this->logger->info("checkSequenceItem | " . $sequenceItem->getId() . " | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-                
                 if (in_array($sequenceItem['si_id'], $sequenceItemsIds)) {
                     continue;
                 }
-
                 $method = Self::GAMIFICATION_ACTION_DONE[$sequenceItem['ga_id']];
-
-                // faire un tableau avec les id de action ne necessitant pas le user complet si dans tableau exécuter
-                if (in_array($sequenceItem['ga_id'], self::SIMPLE_GAMIFICATION_ACTION)) {
-                    if ($this->$method($user, $sequenceItem)) {
-                        $this->handleRetroactivelyRewards($user, $sequenceItem['si_id']);
-                    }
-                } else {
-                    if ($user[0]["nb_proposals"] > 0 || $user[0]["nb_asks"] > 0 || $user[0]["nb_messages"] > 0 || $user[0]["nb_carpool_items"]) {
-                        $trueUser = $this->userRepository->find($user[0]["user_id"]);
-                        if ($this->$method($trueUser, $sequenceItem)) {
-                            $this->handleRetroactivelyRewards($trueUser, $sequenceItem['si_id']);
-                        }
-                    }
+                if ($this->$method($user, $sequenceItem)) {
                     continue;
+                    // $this->handleRetroactivelyRewards($user, $sequenceItem['si_id']);
                 }
+                continue;
             }
         }
     }
    
-    public function handleRetroactivelyRewards($userToUse, int $sequenceItemId)
-    {
-        if (!($userToUse instanceof User)) {
-            $user = new User;
-            $user->setId($userToUse[0]["user_id"]);
-            // $user = $this->userRepository->find($userToUse[0]["user_id"]);
-        } else {
-            $user = $userToUse;
-        }
+    // public function handleRetroactivelyRewards($userToUse, int $sequenceItemId)
+    // {
+    //     if (!($userToUse instanceof User)) {
+    //         $user = new User;
+    //         $user->setId($userToUse[0]["user_id"]);
+    //     // $user = $this->userRepository->find($userToUse[0]["user_id"]);
+    //     } else {
+    //         $user = $userToUse;
+    //     }
 
-        $sequenceItem = $this->sequenceItemRepository->find($sequenceItemId);
-        $badgesBoard = $this->badgesBoardManager->getBadgesBoard($user);
+    //     $sequenceItem = $this->sequenceItemRepository->find($sequenceItemId);
+    //     $badgesBoard = $this->badgesBoardManager->getBadgesBoard($user);
 
-        foreach ($badgesBoard->getBadges() as $badgeProgression) {
-            $badgeSummary = $badgeProgression->getBadgeSummary();
-            $currentSequenceValidation = []; // We will store the status of every SequenceItem
-            $newValidation = false;
-            foreach ($badgeSummary->getSequences() as $sequenceStatus) {
-                // We found the right sequence
-                if ($sequenceStatus->getSequenceItemId() == $sequenceItem->getId()) {
-                    // If it's a new validation, We store it be inserting a line in RewardStep for the User
-                    if (!$sequenceStatus->isValidated()) {
-                        $newValidation = true;
-                        $rewardStep = new RewardStep();
-                        $rewardStep->setUser($user);
-                        $rewardStep->setCreatedDate(new \DateTime('now'));
-                        $rewardStep->setNotifiedDate(new \DateTime('now'));
-                        $sequenceItem->addRewardStep($rewardStep);
-                        $this->entityManager->persist($sequenceItem);
-                        // We also update the current SequenceStatus to evaluate further it this is enough to earn badge
-                        $sequenceStatus->setValidated(true);
-                    }
-                }
-                // We store the status of the current SequenceItem. If all validated, maybe the user earned a Badge
-                $currentSequenceValidation[] = $sequenceStatus->isValidated();
-            }
-            if (!in_array(false, $currentSequenceValidation)) {
-                // All steps are valid !
-                if ($newValidation) {
-                    // There was a new validation, a new Badge is earned !
-                    // We get the badge involved and add a User owning this Badge (add a line in Reward table)
-                    $badge = $this->badgeRepository->find($badgeSummary->getBadgeId());
-                    $reward = new Reward();
-                    $reward->setCreatedDate(new \DateTime('now'));
-                    $reward->setNotifiedDate(new \DateTime('now'));
-                    $reward->setUser($user);
-                    $badge->addReward($reward);
-                    $this->entityManager->persist($badge);
-                }
-            }
-        }
-        $this->entityManager->flush();
-    }
+    //     foreach ($badgesBoard->getBadges() as $badgeProgression) {
+    //         $badgeSummary = $badgeProgression->getBadgeSummary();
+    //         $currentSequenceValidation = []; // We will store the status of every SequenceItem
+    //         $newValidation = false;
+    //         foreach ($badgeSummary->getSequences() as $sequenceStatus) {
+    //             // We found the right sequence
+    //             if ($sequenceStatus->getSequenceItemId() == $sequenceItem->getId()) {
+    //                 // If it's a new validation, We store it be inserting a line in RewardStep for the User
+    //                 if (!$sequenceStatus->isValidated()) {
+    //                     $newValidation = true;
+    //                     $rewardStep = new RewardStep();
+    //                     $rewardStep->setUser($user);
+    //                     $rewardStep->setCreatedDate(new \DateTime('now'));
+    //                     $rewardStep->setNotifiedDate(new \DateTime('now'));
+    //                     $sequenceItem->addRewardStep($rewardStep);
+    //                     $this->entityManager->persist($sequenceItem);
+    //                     // We also update the current SequenceStatus to evaluate further it this is enough to earn badge
+    //                     $sequenceStatus->setValidated(true);
+    //                 }
+    //             }
+    //             // We store the status of the current SequenceItem. If all validated, maybe the user earned a Badge
+    //             $currentSequenceValidation[] = $sequenceStatus->isValidated();
+    //         }
+    //         if (!in_array(false, $currentSequenceValidation)) {
+    //             // All steps are valid !
+    //             if ($newValidation) {
+    //                 // There was a new validation, a new Badge is earned !
+    //                 // We get the badge involved and add a User owning this Badge (add a line in Reward table)
+    //                 $badge = $this->badgeRepository->find($badgeSummary->getBadgeId());
+    //                 $reward = new Reward();
+    //                 $reward->setCreatedDate(new \DateTime('now'));
+    //                 $reward->setNotifiedDate(new \DateTime('now'));
+    //                 $reward->setUser($user);
+    //                 $badge->addReward($reward);
+    //                 $this->entityManager->persist($badge);
+    //             }
+    //         }
+    //     }
+    //     $this->entityManager->flush();
+    // }
 
-    public function checkRule(User $user, $sequenceItem)
-    {
-        $gamificationActionRuleName = "\\App\\Gamification\Rule\\" . $sequenceItem['rule_name'];
-        /**
-         * @var GamificationRuleInterface $gamificationActionRule
-         */
-        $gamificationActionRule = new $gamificationActionRuleName;
-        $log = new Log;
-        $log->setUser($user);
-        return $gamificationActionRule->execute($log, $sequenceItem);
-    }
+    // public function checkRule(User $user, $sequenceItem)
+    // {
+    //     $gamificationActionRuleName = "\\App\\Gamification\Rule\\" . $sequenceItem['rule_name'];
+    //     /**
+    //      * @var GamificationRuleInterface $gamificationActionRule
+    //      */
+    //     $gamificationActionRule = new $gamificationActionRuleName;
+    //     $log = new Log;
+    //     $log->setUser($user);
+    //     return $gamificationActionRule->execute($log, $sequenceItem);
+    // }
 
     private function hasEmailValidated($user, $sequenceItem)
     {
@@ -417,47 +477,49 @@ class RetroactivelyRewardService
 
     private function hasPublishedAnAdInCommunity($user, $sequenceItem)
     {
-        return $this->checkRule($user, $sequenceItem);
+        return ($user[0]["nb_proposals_community"] >= 1);
     }
 
     private function hasAnAcceptedCarpool($user, $sequenceItem)
     {
-        return $this->checkRule($user, $sequenceItem);
+        return ($user[0]["nb_asks"] >= 1 || $user[0]["nb_asks_related"] >= 1);
     }
 
     private function hasAnAcceptedCarpoolInCommunity($user, $sequenceItem)
     {
-        return $this->checkRule($user, $sequenceItem);
+        return ($user[0]["nb_asks_community"] >= 1 || $user[0]["nb_asks_related_community"] >= 1);
     }
 
     private function hasPublishedASolidaryExclusiveAd($user, $sequenceItem)
     {
-        return $this->checkRule($user, $sequenceItem);
+        return ($user[0]["nb_proposals_solidary_exclusive"] >= 1);
     }
 
     private function hasCarpooledNkm($user, $sequenceItem)
     {
-        return $this->checkRule($user, $sequenceItem);
+        // return $this->checkRule($user, $sequenceItem);
+        return false;
     }
 
     private function hasSavedNkgOfCO2($user, $sequenceItem)
     {
-        return $this->checkRule($user, $sequenceItem);
+        // return $this->checkRule($user, $sequenceItem);
+        return false;
     }
 
     private function hasAnsweredAMessage($user, $sequenceItem)
     {
-        return $this->checkRule($user, $sequenceItem);
+        return ($user[0]["nb_messages"] >= 1);
     }
 
     private function hasPublishAnAdWithRelayPoint($user, $sequenceItem)
     {
-        return $this->checkRule($user, $sequenceItem);
+        return false;
     }
 
     private function hasPublishedAnAdInEvent($user, $sequenceItem)
     {
-        return $this->checkRule($user, $sequenceItem);
+        return ($user[0]["nb_proposals_event"] >= 1);
     }
 
     private function hasValidatedBankIdentity($user, $sequenceItem)
@@ -467,7 +529,7 @@ class RetroactivelyRewardService
 
     private function hasRealizedAnOnlinePayment($user, $sequenceItem)
     {
-        return $this->checkRule($user, $sequenceItem);
+        return ($user[0]["nb_carpool_items"] >= 1);
     }
 
     private function hasPhoneNumber($user, $sequenceItem)
@@ -487,6 +549,6 @@ class RetroactivelyRewardService
 
     private function hasAnAcceptedCarpoolInEvent($user, $sequenceItem)
     {
-        return $this->checkRule($user, $sequenceItem);
+        return ($user[0]["nb_asks_event"] >= 1 || $user[0]["nb_asks_related_event"] >= 1);
     }
 }
