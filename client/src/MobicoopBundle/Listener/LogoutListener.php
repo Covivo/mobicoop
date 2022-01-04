@@ -23,7 +23,6 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\Listener;
 
-use Mobicoop\Bundle\MobicoopBundle\User\Event\LogoutEvent;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -32,7 +31,6 @@ use Symfony\Component\Routing\Generator\UrlGenerator;
 use Symfony\Component\Routing\Router;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Http\Logout\LogoutSuccessHandlerInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class LogoutListener implements LogoutSuccessHandlerInterface
 {

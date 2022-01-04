@@ -130,6 +130,12 @@ class SsoManager
         return [];
     }
 
+    /**
+     * Get the logout route of a User
+     *
+     * @param User $user
+     * @return string|null
+     */
     public function getSsoLogoutUrl(User $user): ?string
     {
         foreach ($this->logoutSso() as $logOutUrls) {
