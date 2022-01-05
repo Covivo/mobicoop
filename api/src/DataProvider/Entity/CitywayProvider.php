@@ -95,7 +95,9 @@ class CitywayProvider implements ProviderInterface
     private const CW_PT_MODE_WALK = "WALK";
     private const CW_PT_MODE_ON_DEMAND = "TOD";
     private const CW_PT_MODE_METRO = "METRO";
-
+    private const CW_PT_MODE_TROLLEY_BUS = "TROLLEY_BUS";
+    private const CW_PT_MODE_UNKNOWN = "UNKNOWN";
+ 
     private const CW_COUNTRY = "France";
     private const CW_NC = "";
 
@@ -135,7 +137,7 @@ class CitywayProvider implements ProviderInterface
             case PTJourney::class:
                 $this->getCollectionJourneys($class, $params);
                 return $this->collection;
-               break;
+                break;
             case PTTripPoint::class:
                 $this->getCollectionTripPoints($class, $params);
                 return $this->collection;
@@ -677,13 +679,15 @@ class CitywayProvider implements ProviderInterface
                 // Metro
                 $travelMode = new TravelMode(TravelMode::TRAVEL_MODE_METRO);
                 $leg->setTravelMode($travelMode);
+            } elseif ($data["PTRide"]["TransportMode"] == self::CW_PT_MODE_TROLLEY_BUS) {
+                // Trolley bus
+                $travelMode = new TravelMode(TravelMode::TRAVEL_MODE_TROLLEY_BUS);
+                $leg->setTravelMode($travelMode);
+            } elseif (is_null($travelMode)){
+                // Unknown
+                $travelMode = new TravelMode(TravelMode::TRAVEL_MODE_UNKNOWN);
+                $leg->setTravelMode($travelMode);
             }
-
-            if (is_null($travelMode)) {
-                throw new MassException(MassException::UNKNOWN_TRANSPORT_MODE." ".$data["PTRide"]["TransportMode"]);
-            }
-
-
             if (isset($data["PTRide"]["Departure"])) {
                 $departure = new PTDeparture(1); // we have to set an id as it's mandatory when using a custom data provider (see https://api-platform.com/docs/core/data-providers)
                 if (isset($data["PTRide"]["Departure"]["Time"])) {
