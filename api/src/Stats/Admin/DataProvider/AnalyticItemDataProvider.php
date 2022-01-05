@@ -26,13 +26,16 @@ use ApiPlatform\Core\DataProvider\ItemDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\Stats\Admin\Resource\Analytic;
 use App\Stats\Admin\Service\AnalyticManager;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 final class AnalyticItemDataProvider implements ItemDataProviderInterface, RestrictedDataProviderInterface
 {
+    private $request;
     private $analyticManager;
 
-    public function __construct(AnalyticManager $analyticManager)
+    public function __construct(RequestStack $requestStack, AnalyticManager $analyticManager)
     {
+        $this->request = $requestStack->getCurrentRequest();
         $this->analyticManager = $analyticManager;
     }
 
@@ -43,6 +46,6 @@ final class AnalyticItemDataProvider implements ItemDataProviderInterface, Restr
 
     public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?Analytic
     {
-        return $this->analyticManager->getAnalytic($id);
+        return $this->analyticManager->getAnalytic($id, $this->request->get('filter'));
     }
 }

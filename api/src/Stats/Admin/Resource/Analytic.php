@@ -36,7 +36,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *      collectionOperations={
  *          "ADMIN_get"={
  *              "method"="GET",
- *              "security"="is_granted('access_admin',object)",
+ *              "security"="is_granted('analytic_list',object)",
  *              "path"="/admin/analytics",
  *              "swagger_context" = {
  *                  "tags"={"Administration"}
@@ -46,7 +46,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *      itemOperations={
  *          "ADMIN_get"={
  *              "method"="GET",
- *              "security"="is_granted('access_admin',object)",
+ *              "security"="is_granted('analytic_read',object)",
  *              "path"="/admin/analytics/{id}",
  *              "swagger_context" = {
  *                  "tags"={"Administration"}

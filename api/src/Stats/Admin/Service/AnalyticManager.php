@@ -23,6 +23,7 @@
 namespace App\Stats\Admin\Service;
 
 use App\Stats\Admin\Resource\Analytic;
+use Exception;
 
 class AnalyticManager
 {
@@ -33,11 +34,11 @@ class AnalyticManager
     public const DOMAIN_MISC = 'misc';
 
     public const DOMAINS = [
-        self::DOMAIN_USER,
-        self::DOMAIN_AD,
-        self::DOMAIN_COMMUNITY,
-        self::DOMAIN_SOLIDARY,
-        self::DOMAIN_MISC,
+        1 => self::DOMAIN_USER,
+        2 => self::DOMAIN_AD,
+        3 => self::DOMAIN_COMMUNITY,
+        4 => self::DOMAIN_SOLIDARY,
+        5 => self::DOMAIN_MISC,
     ];
 
     public function __construct()
@@ -49,11 +50,15 @@ class AnalyticManager
         return [$this->getAnalytic(1)];
     }
 
-    public function getAnalytic(int $id): Analytic
+    public function getAnalytic(int $id, array $filter = []): Analytic
     {
+        if (!array_key_exists($id, self::DOMAINS)) {
+            throw new Exception('Unknown Id');
+        }
+
         $analytic = new Analytic();
         $analytic->setId($id);
-        $analytic->setDomain(self::DOMAIN_USER);
+        $analytic->setDomain(self::DOMAINS[$id]);
         $analytic->setValueType(Analytic::VALUE_TYPE_SCALAR);
         $analytic->setValue(12);
 
