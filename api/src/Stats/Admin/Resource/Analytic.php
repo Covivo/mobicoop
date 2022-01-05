@@ -57,9 +57,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
  */
 class Analytic
 {
-    public const VALUE_TYPE_SCALAR = 'scalar';
-    public const VALUE_TYPE_COMPOSITE = 'composite';
-
     /**
      * @var int The id of this Analytic
      *
@@ -67,20 +64,6 @@ class Analytic
      * @Groups({"aRead"})
      */
     private $id;
-
-    /**
-     * @var string Analytic domain
-     *
-     * @Groups({"aRead"})
-     */
-    private $domain;
-
-    /**
-     * @var string Analytic value type
-     *
-     * @Groups({"aRead"})
-     */
-    private $valueType;
 
     /**
      * Analytic value.
@@ -97,30 +80,6 @@ class Analytic
     public function setId(int $id): self
     {
         $this->id = $id;
-
-        return $this;
-    }
-
-    public function getDomain(): ?string
-    {
-        return $this->domain;
-    }
-
-    public function setDomain(string $domain): self
-    {
-        $this->domain = $domain;
-
-        return $this;
-    }
-
-    public function getValueType(): ?string
-    {
-        return $this->valueType;
-    }
-
-    public function setValueType(string $valueType): self
-    {
-        $this->valueType = $valueType;
 
         return $this;
     }

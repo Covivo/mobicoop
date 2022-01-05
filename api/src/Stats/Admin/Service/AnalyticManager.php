@@ -27,18 +27,12 @@ use Exception;
 
 class AnalyticManager
 {
-    public const DOMAIN_USER = 'user';
-    public const DOMAIN_AD = 'ad';
-    public const DOMAIN_COMMUNITY = 'community';
-    public const DOMAIN_SOLIDARY = 'solidary';
-    public const DOMAIN_MISC = 'misc';
-
-    public const DOMAINS = [
-        1 => self::DOMAIN_USER,
-        2 => self::DOMAIN_AD,
-        3 => self::DOMAIN_COMMUNITY,
-        4 => self::DOMAIN_SOLIDARY,
-        5 => self::DOMAIN_MISC,
+    public const IDS = [
+        1,
+        2,
+        3,
+        4,
+        5,
     ];
 
     public function __construct()
@@ -52,15 +46,55 @@ class AnalyticManager
 
     public function getAnalytic(int $id, ?array $filter = []): Analytic
     {
-        if (!array_key_exists($id, self::DOMAINS)) {
+        if (!array_key_exists($id, self::IDS)) {
             throw new Exception('Unknown Id');
         }
 
         $analytic = new Analytic();
         $analytic->setId($id);
-        $analytic->setDomain(self::DOMAINS[$id]);
-        $analytic->setValueType(Analytic::VALUE_TYPE_SCALAR);
-        $analytic->setValue(12);
+
+        switch ($id) {
+            case 1:
+                $analytic->setValue([
+                    'total' => 65765,
+                    'dashboard' => [
+                        2019 => [
+                            'new_validated' => 150,
+                            'new_unvalidated' => 93,
+                        ],
+                        2020 => [
+                            'new_validated' => 140,
+                            'new_unvalidated' => 84,
+                        ],
+                        2021 => [
+                            'new_validated' => 188,
+                            'new_unvalidated' => 64,
+                        ],
+                    ],
+                ]);
+
+                break;
+
+            case 2:
+                $analytic->setValue(['total' => 12744]);
+
+                break;
+
+            case 3:
+                $analytic->setValue(['total' => 635]);
+
+                break;
+
+            case 4:
+                $analytic->setValue(['total' => 45]);
+
+                break;
+
+            case 5:
+                $analytic->setValue(['total' => 3745]);
+
+                break;
+        }
 
         return $analytic;
     }
