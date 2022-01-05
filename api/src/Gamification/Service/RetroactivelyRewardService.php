@@ -2,9 +2,9 @@
 
 /**
  * Copyright (c) 2021, MOBICOOP. All rights reserved.
- * This project is dual licensed under AGPL and proprietary licence.
+ * This project is dual licensed under AGPL AND proprietary licence.
  ***************************
- *    This program is free software: you can redistribute it and/or modify
+ *    This program is free software: you can redistribute it AND/or modify
  *    it under the terms of the GNU Affero General Public License as
  *    published by the Free Software Foundation, either version 3 of the
  *    License, or (at your option) any later version.
@@ -68,6 +68,16 @@ class RetroactivelyRewardService
         23 => "hasAnAcceptedCarpoolInEvent"
     ];
 
+    const BADGES = [
+        1 => [1,2,3,4],
+        2 => [5],
+        3 => [6,7],
+        4 => [8,9,10],
+        5 => [11],
+        6 => [12],
+        7 => [13]
+    ];
+
     private $userRepository;
     private $badgeRepository;
     private $badgesBoardManager;
@@ -96,12 +106,12 @@ class RetroactivelyRewardService
     {
         $this->logger->info("start retroactivelyRewardUsers | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         
-        $limit = 10;
+        $limit = 1;
         // $limit = 100;
         // $limit = 1000;
         // $limit = 10000;
         // $limit = 100000;
-        // $limit = 1000000;
+        $limit = 1000000;
         $this->entityManager->getConnection()->prepare('
         CREATE TEMPORARY TABLE tuser (
             id int not null,
@@ -125,87 +135,126 @@ class RetroactivelyRewardService
             nb_carpool_items int not null default 0, 
             nb_addresses int not null default 0, 
             nb_payment_profiles int not null default 0, 
-            nb_messages int not null default 0
+            nb_messages int not null default 0,
+            nb_km_carpooled int default 0,
+            nb_km_carpooled_related int default 0
         );')->execute();
         $stmt = $this->entityManager->getConnection()->prepare('
             INSERT INTO tuser (id, validated_date, phone_validated_date, telephone)
-            (select u.id, u.validated_date, u.phone_validated_date, u.telephone from user u);
+            (SELECT u.id, u.validated_date, u.phone_validated_date, u.telephone FROM user u);
         );')->execute();
         $stmt = $this->entityManager->getConnection()->prepare('
             UPDATE tuser t
-            SET t.nb_images = (select count(distinct i.id) from image i where i.user_id = t.id);
+            SET t.nb_images = (SELECT COUNT(distinct i.id) FROM image i 
+            WHERE i.user_id = t.id);
         );')->execute();
         $stmt = $this->entityManager->getConnection()->prepare('
             UPDATE tuser t
-            SET t.nb_events = (select count(distinct e.id) from event e where e.user_id = t.id);
+            SET t.nb_events = (SELECT COUNT(distinct e.id) FROM event e 
+            WHERE e.user_id = t.id);
         );')->execute();
         $stmt = $this->entityManager->getConnection()->prepare('
             UPDATE tuser t
-            SET t.nb_communities = (select count(distinct c.id) from community c where c.user_id = t.id);
+            SET t.nb_communities = (SELECT COUNT(distinct c.id) FROM community c WHERE c.user_id = t.id);
         );')->execute();
         $stmt = $this->entityManager->getConnection()->prepare('
             UPDATE tuser t
-            SET t.nb_community_users = (select count(distinct cu.id) from community_user cu where cu.user_id = t.id);
+            SET t.nb_community_users = (SELECT COUNT(distinct cu.id) FROM community_user cu 
+            WHERE cu.user_id = t.id);
         );')->execute();
         $stmt = $this->entityManager->getConnection()->prepare('
             UPDATE tuser t
-            SET t.nb_proposals = (select count(distinct p.id) from proposal p where p.user_id = t.id and p.private = 0);
+            SET t.nb_proposals = (SELECT COUNT(distinct p.id) FROM proposal p 
+            WHERE p.user_id = t.id AND p.private = 0);
         );')->execute();
         $stmt = $this->entityManager->getConnection()->prepare('
             UPDATE tuser t
-            SET t.nb_proposals_community = (select count(distinct p.id) FROM proposal p join proposal_community pc on p.id = pc.proposal_id where p.private = 0 and p.user_id = t.id);
+            SET t.nb_proposals_community = (SELECT COUNT(distinct p.id) FROM proposal p 
+            INNER JOIN proposal_community pc on p.id = pc.proposal_id 
+            WHERE p.private = 0 AND p.user_id = t.id);
         );')->execute();
         $stmt = $this->entityManager->getConnection()->prepare('
             UPDATE tuser t
-            SET t.nb_proposals_event = (select count(distinct p.id) from proposal p where p.user_id = t.id and p.private = 0 and p.event_id is not null);
+            SET t.nb_proposals_event = (SELECT COUNT(distinct p.id) FROM proposal p 
+            WHERE p.user_id = t.id AND p.private = 0 AND p.event_id is not null);
         );')->execute();
         $stmt = $this->entityManager->getConnection()->prepare('
             UPDATE tuser t
-            SET t.nb_proposals_solidary_exclusive = (select count(distinct p.id) from proposal p join criteria c on p.criteria_id = c.id where p.user_id = t.id and p.private = 0 and c.solidary_exclusive = 1);
+            SET t.nb_proposals_solidary_exclusive = (SELECT COUNT(distinct p.id) FROM proposal p 
+            INNER JOIN criteria c on p.criteria_id = c.id 
+            WHERE p.user_id = t.id AND p.private = 0 AND c.solidary_exclusive = 1);
         );')->execute();
         $stmt = $this->entityManager->getConnection()->prepare('
             UPDATE tuser t
-            SET t.nb_asks = (select count(distinct a.id) from ask a where a.user_id = t.id and a.status in (4,5));
+            SET t.nb_asks = (SELECT COUNT(distinct a.id) FROM ask a 
+            WHERE a.user_id = t.id AND a.status IN (4,5));
         );')->execute();
         $stmt = $this->entityManager->getConnection()->prepare('
             UPDATE tuser t
-            SET t.nb_asks_related = (select count(distinct a.id) from ask a where a.user_related_id = t.id and a.status in (4,5));
+            SET t.nb_asks_related = (SELECT COUNT(distinct a.id) FROM ask a 
+            WHERE a.user_related_id = t.id AND a.status IN (4,5));
         );')->execute();
         $stmt = $this->entityManager->getConnection()->prepare('
             UPDATE tuser t
-            SET t.nb_asks_community = (select count(distinct a.id) from ask a join matching m on a.matching_id = m.id join proposal p on m.proposal_offer_id = p.id or m.proposal_request_id = p.id where a.user_id = t.id and p.event_id is not null and a.status in (4,5));
+            SET t.nb_asks_community = (SELECT COUNT(distinct a.id) FROM ask a 
+            INNER JOIN matching m on a.matching_id = m.id JOIN proposal p on m.proposal_offer_id = p.id or m.proposal_request_id = p.id 
+            WHERE a.user_id = t.id AND p.event_id is not null AND a.status IN (4,5));
         );')->execute();
         $stmt = $this->entityManager->getConnection()->prepare('
             UPDATE tuser t
-            SET t.nb_asks_related_community = (select count(distinct a.id) from ask a join matching m on a.matching_id = m.id join proposal p on m.proposal_offer_id = p.id or m.proposal_request_id = p.id where a.user_related_id = t.id and p.event_id is not null and a.status in (4,5));
+            SET t.nb_asks_related_community = (SELECT COUNT(distinct a.id) FROM ask a 
+            INNER JOIN matching m on a.matching_id = m.id JOIN proposal p on m.proposal_offer_id = p.id or m.proposal_request_id = p.id 
+            WHERE a.user_related_id = t.id AND p.event_id is not null AND a.status IN (4,5));
         );')->execute();
         $stmt = $this->entityManager->getConnection()->prepare('
             UPDATE tuser t
-            SET t.nb_asks_event = (select count(distinct a.id) from ask a join matching m on a.matching_id = m.id join proposal p on m.proposal_offer_id = p.id or m.proposal_request_id = p.id where a.user_id = t.id and p.event_id is not null and a.status in (4,5));
+            SET t.nb_asks_event = (SELECT COUNT(distinct a.id) FROM ask a 
+            INNER JOIN matching m on a.matching_id = m.id 
+            INNER JOIN proposal p on m.proposal_offer_id = p.id or m.proposal_request_id = p.id 
+            WHERE a.user_id = t.id AND p.event_id is not null AND a.status IN (4,5));
         );')->execute();
         $stmt = $this->entityManager->getConnection()->prepare('
             UPDATE tuser t
-            SET t.nb_asks_related_event = (select count(distinct a.id) from ask a join matching m on a.matching_id = m.id join proposal p on m.proposal_offer_id = p.id or m.proposal_request_id = p.id where a.user_related_id = t.id and p.event_id is not null and a.status in (4,5));
+            SET t.nb_asks_related_event = (SELECT COUNT(distinct a.id) FROM ask a 
+            INNER JOIN matching m on a.matching_id = m.id JOIN proposal p on m.proposal_offer_id = p.id or m.proposal_request_id = p.id 
+            WHERE a.user_related_id = t.id AND p.event_id is not null AND a.status IN (4,5));
         );')->execute();
         $stmt = $this->entityManager->getConnection()->prepare('
             UPDATE tuser t
-            SET t.nb_carpool_items = (select count(distinct ci.id) from carpool_item ci where ci.debtor_user_id = t.id and ci.debtor_status = 3);
+            SET t.nb_carpool_items = (SELECT COUNT(distinct ci.id) FROM carpool_item ci 
+            WHERE ci.debtor_user_id = t.id AND ci.debtor_status = 3);
         );')->execute();
         $stmt = $this->entityManager->getConnection()->prepare('
             UPDATE tuser t
-            SET t.nb_addresses = (select count(distinct a.id) from address a where a.user_id = t.id and a.home = 1);
+            SET t.nb_addresses = (SELECT COUNT(distinct a.id) FROM address a 
+            WHERE a.user_id = t.id AND a.home = 1);
         );')->execute();
         $stmt = $this->entityManager->getConnection()->prepare('
             UPDATE tuser t
-            SET t.nb_payment_profiles = (select count(distinct pp.id) from payment_profile pp where pp.user_id = t.id and pp.validation_status = 1);
+            SET t.nb_payment_profiles = (SELECT COUNT(distinct pp.id) FROM payment_profile pp 
+            WHERE pp.user_id = t.id AND pp.validation_status = 1);
         );')->execute();
         $stmt = $this->entityManager->getConnection()->prepare('
             UPDATE tuser t
-            SET t.nb_messages = (select count(distinct m.id) from message m where m.user_id = t.id);
+            SET t.nb_messages = (SELECT COUNT(distinct m.id) FROM message m 
+            WHERE m.user_id = t.id);
         );')->execute();
-
+        $stmt = $this->entityManager->getConnection()->prepare('
+            UPDATE tuser t
+            SET t.nb_km_carpooled = (SELECT SUM(m.common_distance)/1000 FROM carpool_item ci
+            INNER JOIN ask a on a.id = ci.ask_id
+            INNER JOIN matching m on m.id = a.matching_id
+            WHERE ci.item_status = 1 AND a.user_id = t.id);
+        );')->execute();
+        $stmt = $this->entityManager->getConnection()->prepare('
+            UPDATE tuser t
+            SET t.nb_km_carpooled_related = (SELECT SUM(m.common_distance)/1000 FROM carpool_item ci
+            INNER JOIN ask a on a.id = ci.ask_id
+            INNER JOIN matching m on m.id = a.matching_id
+            WHERE ci.item_status = 1 AND a.user_related_id = t.id);
+        );')->execute();
         $stmt = $this->entityManager->getConnection()->prepare(
-            "select * from tuser
+            "SELECT * FROM tuser
             limit $limit;"
         );
         $stmt->execute();
@@ -238,6 +287,8 @@ class RetroactivelyRewardService
                         'nb_address' => $user['nb_address'],
                         'nb_payment_profiles' => $user['nb_payment_profiles'],
                         'nb_messages' => $user['nb_messages'],
+                        'nb_km_carpooled' => $user['nb_km_carpooled'],
+                        'nb_km_carpooled_related' => $user['nb_km_carpooled_related'],
                         'sequence_item_ids' => [],
                         'badge_ids' => []
 
@@ -268,18 +319,19 @@ class RetroactivelyRewardService
                             'nb_addresses' => $user['nb_addresses'],
                             'nb_payment_profiles' => $user['nb_payment_profiles'],
                             'nb_messages' => $user['nb_messages'],
+                            'nb_km_carpooled' => $user['nb_km_carpooled'],
+                            'nb_km_carpooled_related' => $user['nb_km_carpooled_related'],
                             'sequence_item_ids' => [],
                             'badge_ids' => []
-
                         ]
                 ];
             }
         }
 
         $stmt = $this->entityManager->getConnection()->prepare(
-            "select reward_step.user_id, reward_step.sequence_item_id
-            from reward_step  
-            order by `reward_step`.`user_id` asc;"
+            "SELECT reward_step.user_id, reward_step.sequence_item_id
+            FROM reward_step  
+            ORDER BY `reward_step`.`user_id` ASC;"
         );
         $stmt->execute();
         $sequenceItems = $stmt->fetchAll();
@@ -290,9 +342,9 @@ class RetroactivelyRewardService
         }
 
         $stmt = $this->entityManager->getConnection()->prepare(
-            "select reward.user_id, reward.badge_id
-            from reward  
-            order by `reward`.`user_id` asc;"
+            "SELECT reward.user_id, reward.badge_id
+            FROM reward  
+            ORDER BY `reward`.`user_id` ASC;"
         );
         $stmt->execute();
         $badges = $stmt->fetchAll();
@@ -307,11 +359,11 @@ class RetroactivelyRewardService
         // die;
 
         $stmt = $this->entityManager->getConnection()->prepare(
-            "select b.id as badge_id, si.id as sequence_item_id, ga.id as gamification_action_id, gar.name as rule_name, si.min_count, si.min_unique_count, si.in_date_range, si.value
-            from badge b 
-            left join sequence_item si on b.id = si.badge_id
-            left join gamification_action ga on ga.id = si.gamification_action_id
-            left join gamification_action_rule gar on gar.id = ga.gamification_action_rule_id;"
+            "SELECT b.id as badge_id, si.id as sequence_item_id, ga.id as gamification_action_id, gar.name as rule_name, si.min_count, si.min_unique_count, si.in_date_range, si.value
+            FROM badge b 
+            LEFT JOIN sequence_item si on b.id = si.badge_id
+            LEFT JOIN gamification_action ga on ga.id = si.gamification_action_id
+            LEFT JOIN gamification_action_rule gar on gar.id = ga.gamification_action_rule_id;"
         );
         $stmt->execute();
         $resultBadges = $stmt->fetchAll();
@@ -349,13 +401,19 @@ class RetroactivelyRewardService
         foreach ($users as $user) {
             $sequenceItemsIds = (!is_null($user[0]['sequence_item_ids'])) ?  $user[0]['sequence_item_ids'] : [];
             $badgeIds = (!is_null($user[0]['badge_ids'])) ?  $user[0]['badge_ids'] : [];
-            $this->retroactivelyRewardUser($user, $sequenceItemsIds, $badgeIds, $badges);
+
+            $newSequenceItems = $this->retroactivelyRewardUser($user, $sequenceItemsIds, $badgeIds, $badges);
+            if (count($newSequenceItems) > 0) {
+                $this->persistRewardStep($newSequenceItems, $user[0]['user_id']);
+            }
         }
+        
         $this->logger->info("end retroactivelyRewardUsers | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
     }
 
     private function retroactivelyRewardUser(array $user, ?array $sequenceItemsIds, ?array $badgeIds, array $badges)
     {
+        $newSequenceItemsIds = [];
         foreach ($badges as $key => $badge) {
             if (in_array($key, $badgeIds)) {
                 continue;
@@ -366,68 +424,14 @@ class RetroactivelyRewardService
                 }
                 $method = Self::GAMIFICATION_ACTION_DONE[$sequenceItem['ga_id']];
                 if ($this->$method($user, $sequenceItem)) {
-                    continue;
-                    // $this->handleRetroactivelyRewards($user, $sequenceItem['si_id']);
+                    $newSequenceItemsIds[] = $sequenceItem['si_id'];
                 }
                 continue;
             }
         }
+        return $newSequenceItemsIds;
     }
    
-    // public function handleRetroactivelyRewards($userToUse, int $sequenceItemId)
-    // {
-    //     if (!($userToUse instanceof User)) {
-    //         $user = new User;
-    //         $user->setId($userToUse[0]["user_id"]);
-    //     // $user = $this->userRepository->find($userToUse[0]["user_id"]);
-    //     } else {
-    //         $user = $userToUse;
-    //     }
-
-    //     $sequenceItem = $this->sequenceItemRepository->find($sequenceItemId);
-    //     $badgesBoard = $this->badgesBoardManager->getBadgesBoard($user);
-
-    //     foreach ($badgesBoard->getBadges() as $badgeProgression) {
-    //         $badgeSummary = $badgeProgression->getBadgeSummary();
-    //         $currentSequenceValidation = []; // We will store the status of every SequenceItem
-    //         $newValidation = false;
-    //         foreach ($badgeSummary->getSequences() as $sequenceStatus) {
-    //             // We found the right sequence
-    //             if ($sequenceStatus->getSequenceItemId() == $sequenceItem->getId()) {
-    //                 // If it's a new validation, We store it be inserting a line in RewardStep for the User
-    //                 if (!$sequenceStatus->isValidated()) {
-    //                     $newValidation = true;
-    //                     $rewardStep = new RewardStep();
-    //                     $rewardStep->setUser($user);
-    //                     $rewardStep->setCreatedDate(new \DateTime('now'));
-    //                     $rewardStep->setNotifiedDate(new \DateTime('now'));
-    //                     $sequenceItem->addRewardStep($rewardStep);
-    //                     $this->entityManager->persist($sequenceItem);
-    //                     // We also update the current SequenceStatus to evaluate further it this is enough to earn badge
-    //                     $sequenceStatus->setValidated(true);
-    //                 }
-    //             }
-    //             // We store the status of the current SequenceItem. If all validated, maybe the user earned a Badge
-    //             $currentSequenceValidation[] = $sequenceStatus->isValidated();
-    //         }
-    //         if (!in_array(false, $currentSequenceValidation)) {
-    //             // All steps are valid !
-    //             if ($newValidation) {
-    //                 // There was a new validation, a new Badge is earned !
-    //                 // We get the badge involved and add a User owning this Badge (add a line in Reward table)
-    //                 $badge = $this->badgeRepository->find($badgeSummary->getBadgeId());
-    //                 $reward = new Reward();
-    //                 $reward->setCreatedDate(new \DateTime('now'));
-    //                 $reward->setNotifiedDate(new \DateTime('now'));
-    //                 $reward->setUser($user);
-    //                 $badge->addReward($reward);
-    //                 $this->entityManager->persist($badge);
-    //             }
-    //         }
-    //     }
-    //     $this->entityManager->flush();
-    // }
-
     // public function checkRule(User $user, $sequenceItem)
     // {
     //     $gamificationActionRuleName = "\\App\\Gamification\Rule\\" . $sequenceItem['rule_name'];
@@ -439,6 +443,21 @@ class RetroactivelyRewardService
     //     $log->setUser($user);
     //     return $gamificationActionRule->execute($log, $sequenceItem);
     // }
+ 
+
+    private function persistRewardStep(?array $sequenceItems, int $userId)
+    {
+        $string = "";
+        $date = (new \DateTime("now"))->format("Y-m-d");
+        foreach ($sequenceItems as $sequenceItem) {
+            $string = $string . "(".$sequenceItem.",'".$date."',".$userId.",'".$date."'),";
+        }
+        $string = substr($string, 0, -1);
+        $this->entityManager->getConnection()->prepare('
+            INSERT INTO reward_step (sequence_item_id,created_date,user_id,notified_date)
+            VALUE '.$string.'
+        ;')->execute();
+    }
 
     private function hasEmailValidated($user, $sequenceItem)
     {
@@ -497,13 +516,18 @@ class RetroactivelyRewardService
 
     private function hasCarpooledNkm($user, $sequenceItem)
     {
-        // return $this->checkRule($user, $sequenceItem);
-        return false;
+        $kmCarpool = 0;
+        if (!is_null($user[0]['nb_km_carpooled'])) {
+            $kmCarpool = $user[0]['nb_km_carpooled'];
+        }
+        if (!is_null($user[0]['nb_km_carpooled_related'])) {
+            $kmCarpool += $user[0]['nb_km_carpooled'];
+        }
+        return $kmCarpool >= $sequenceItem["si_value"];
     }
 
     private function hasSavedNkgOfCO2($user, $sequenceItem)
     {
-        // return $this->checkRule($user, $sequenceItem);
         return false;
     }
 
