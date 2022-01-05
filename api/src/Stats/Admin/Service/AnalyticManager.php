@@ -50,7 +50,7 @@ class AnalyticManager
         return [$this->getAnalytic(1)];
     }
 
-    public function getAnalytic(int $id, array $filter = []): Analytic
+    public function getAnalytic(int $id, ?array $filter = []): Analytic
     {
         if (!array_key_exists($id, self::DOMAINS)) {
             throw new Exception('Unknown Id');
