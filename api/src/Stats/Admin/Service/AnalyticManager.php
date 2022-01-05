@@ -41,12 +41,17 @@ class AnalyticManager
 
     public function getAnalytics(): array
     {
-        return [$this->getAnalytic(1)];
+        $analytics = [];
+        foreach (self::IDS as $id) {
+            $analytics[] = $this->getAnalytic($id);
+        }
+
+        return $analytics;
     }
 
     public function getAnalytic(int $id, ?array $filter = []): Analytic
     {
-        if (!array_key_exists($id, self::IDS)) {
+        if (!in_array($id, self::IDS)) {
             throw new Exception('Unknown Id');
         }
 
