@@ -19,25 +19,25 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Geography\Service;
 
+use App\Community\Entity\CommunityUser;
 use App\Event\Entity\Event;
 use App\Event\Repository\EventRepository;
 use App\Geography\Entity\Address;
-use App\Community\Entity\CommunityUser;
+use App\Geography\ProviderFactory\PeliasAddress;
+use App\Geography\Repository\AddressRepository;
+use App\Image\Repository\IconRepository;
+use App\RelayPoint\Entity\RelayPoint;
+use App\RelayPoint\Repository\RelayPointRepository;
+use App\User\Entity\User;
+use App\User\Repository\UserRepository;
+use Geocoder\Model\Bounds;
 use Geocoder\Plugin\PluginProvider;
 use Geocoder\Query\GeocodeQuery;
 use Geocoder\Query\ReverseQuery;
-use App\Geography\Repository\AddressRepository;
-use App\RelayPoint\Repository\RelayPointRepository;
-use App\RelayPoint\Entity\RelayPoint;
-use App\User\Repository\UserRepository;
-use App\Image\Repository\IconRepository;
-use App\Geography\ProviderFactory\PeliasAddress;
-use App\User\Entity\User;
-use Geocoder\Model\Bounds;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -48,12 +48,12 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class GeoSearcher
 {
-    const ICON_ADDRESS_ANY = 1;
-    const ICON_ADDRESS_PERSONAL = 2;
-    const ICON_COMMUNITY = 3;
-    const ICON_EVENT = 4;
-    const ICON_VENUE = 23;
-    
+    public const ICON_ADDRESS_ANY = 1;
+    public const ICON_ADDRESS_PERSONAL = 2;
+    public const ICON_COMMUNITY = 3;
+    public const ICON_EVENT = 4;
+    public const ICON_VENUE = 23;
+
     private $geocoder;
     private $geoTools;
     private $userRepository;
@@ -122,10 +122,11 @@ class GeoSearcher
     }
 
     /**
-     * Returns an array of result addresses (named addresses, relaypoints, sig addresses...)
+     * Returns an array of result addresses (named addresses, relaypoints, sig addresses...).
      *
-     * @param string $input     The string representing the user input
-     * @return array            The results
+     * @param string $input The string representing the user input
+     *
+     * @return array The results
      */
     public function geoCode(string $input)
     {
@@ -148,8 +149,9 @@ class GeoSearcher
                 if ($address->isHome()) {
                     $userPrioritize = [
                         'latitude' => $address->getLatitude(),
-                        'longitude' => $address->getLongitude()
+                        'longitude' => $address->getLongitude(),
                     ];
+
                     break;
                 }
             }
@@ -158,20 +160,20 @@ class GeoSearcher
         // 1 - named addresses
         if ($user instanceof User) {
             $namedAddresses = $this->addressRepository->findByName($this->translator->trans($input), $user->getId());
-            if (count($namedAddresses)>0) {
+            if (count($namedAddresses) > 0) {
                 $i = 0;
                 foreach ($namedAddresses as $address) {
                     $address->setDisplayLabel($this->geoTools->getDisplayLabel($address, $user));
                     $address->setIcon($this->dataPath.$this->iconPath.$this->iconRepository->find(self::ICON_ADDRESS_PERSONAL)->getFileName());
                     $result[] = $address;
-                    $i++;
-                    if ($i>=$this->defaultNamedResultNumber) {
+                    ++$i;
+                    if ($i >= $this->defaultNamedResultNumber) {
                         break;
                     }
                 }
             }
         }
-        
+
         // 2 - sig addresses
 
         // The query always include SIG_GEOCODER_PRIORITIZE_COORDINATES (see services.yaml Georouter.query_data_plugin)
@@ -182,10 +184,7 @@ class GeoSearcher
 
         // If there is viewbox in .env SIG_GEOCODER_PRIORITIZE_COORDINATES
         if (
-            isset($this->sigPrioritizeCoordinates['minLatitude']) &&
-            isset($this->sigPrioritizeCoordinates['maxLatitude']) &&
-            isset($this->sigPrioritizeCoordinates['minLongitude']) &&
-            isset($this->sigPrioritizeCoordinates['maxLongitude'])
+            isset($this->sigPrioritizeCoordinates['minLatitude'], $this->sigPrioritizeCoordinates['maxLatitude'], $this->sigPrioritizeCoordinates['minLongitude'], $this->sigPrioritizeCoordinates['maxLongitude'])
         ) {
             $optionBounds = true;
         }
@@ -196,42 +195,49 @@ class GeoSearcher
         }
 
         // Specific region using ccTLD standard (https://en.wikipedia.org/wiki/CcTLD)
-        $optionRegion = $this->sigPrioritizeRegion!=="";
+        $optionRegion = '' !== $this->sigPrioritizeRegion;
 
         // Considering the options, we build the request
-        
+
         if ($optionUserPrioritize && !$optionBounds && !$optionRegion) {
             $query = GeocodeQuery::create($input)
-            ->withLimit($this->defaultSigResultNumber)
-            ->withData('userPrioritize', $userPrioritize);
+                ->withLimit($this->defaultSigResultNumber)
+                ->withData('userPrioritize', $userPrioritize)
+            ;
         } elseif (!$optionUserPrioritize && $optionBounds && !$optionRegion) {
             $query = GeocodeQuery::create($input)
-            ->withLimit($this->defaultSigResultNumber)
-            ->withBounds(new Bounds($this->sigPrioritizeCoordinates['minLatitude'], $this->sigPrioritizeCoordinates['minLongitude'], $this->sigPrioritizeCoordinates['maxLatitude'], $this->sigPrioritizeCoordinates['maxLongitude']));
+                ->withLimit($this->defaultSigResultNumber)
+                ->withBounds(new Bounds($this->sigPrioritizeCoordinates['minLatitude'], $this->sigPrioritizeCoordinates['minLongitude'], $this->sigPrioritizeCoordinates['maxLatitude'], $this->sigPrioritizeCoordinates['maxLongitude']))
+            ;
         } elseif (!$optionUserPrioritize && !$optionBounds && $optionRegion) {
             $query = GeocodeQuery::create($input)
-            ->withLimit($this->defaultSigResultNumber)
-            ->withData('region', $this->sigPrioritizeRegion);
+                ->withLimit($this->defaultSigResultNumber)
+                ->withData('region', $this->sigPrioritizeRegion)
+            ;
         } elseif ($optionUserPrioritize && $optionBounds && !$optionRegion) {
             $query = GeocodeQuery::create($input)
-            ->withLimit($this->defaultSigResultNumber)
-            ->withData('userPrioritize', $userPrioritize)
-            ->withBounds(new Bounds($this->sigPrioritizeCoordinates['minLatitude'], $this->sigPrioritizeCoordinates['minLongitude'], $this->sigPrioritizeCoordinates['maxLatitude'], $this->sigPrioritizeCoordinates['maxLongitude']));
+                ->withLimit($this->defaultSigResultNumber)
+                ->withData('userPrioritize', $userPrioritize)
+                ->withBounds(new Bounds($this->sigPrioritizeCoordinates['minLatitude'], $this->sigPrioritizeCoordinates['minLongitude'], $this->sigPrioritizeCoordinates['maxLatitude'], $this->sigPrioritizeCoordinates['maxLongitude']))
+            ;
         } elseif (!$optionUserPrioritize && $optionBounds && $optionRegion) {
             $query = GeocodeQuery::create($input)
-            ->withLimit($this->defaultSigResultNumber)
-            ->withData('region', $this->sigPrioritizeRegion)
-            ->withBounds(new Bounds($this->sigPrioritizeCoordinates['minLatitude'], $this->sigPrioritizeCoordinates['minLongitude'], $this->sigPrioritizeCoordinates['maxLatitude'], $this->sigPrioritizeCoordinates['maxLongitude']));
+                ->withLimit($this->defaultSigResultNumber)
+                ->withData('region', $this->sigPrioritizeRegion)
+                ->withBounds(new Bounds($this->sigPrioritizeCoordinates['minLatitude'], $this->sigPrioritizeCoordinates['minLongitude'], $this->sigPrioritizeCoordinates['maxLatitude'], $this->sigPrioritizeCoordinates['maxLongitude']))
+            ;
         } elseif ($optionUserPrioritize && $optionBounds && $optionRegion) {
             $query = GeocodeQuery::create($input)
-            ->withLimit($this->defaultSigResultNumber)
-            ->withData('userPrioritize', $userPrioritize)
-            ->withData('region', $this->sigPrioritizeRegion)
-            ->withBounds(new Bounds($this->sigPrioritizeCoordinates['minLatitude'], $this->sigPrioritizeCoordinates['minLongitude'], $this->sigPrioritizeCoordinates['maxLatitude'], $this->sigPrioritizeCoordinates['maxLongitude']));
+                ->withLimit($this->defaultSigResultNumber)
+                ->withData('userPrioritize', $userPrioritize)
+                ->withData('region', $this->sigPrioritizeRegion)
+                ->withBounds(new Bounds($this->sigPrioritizeCoordinates['minLatitude'], $this->sigPrioritizeCoordinates['minLongitude'], $this->sigPrioritizeCoordinates['maxLatitude'], $this->sigPrioritizeCoordinates['maxLongitude']))
+            ;
         } else {
             // Not specific option
             $query = GeocodeQuery::create($input)
-            ->withLimit($this->defaultSigResultNumber);
+                ->withLimit($this->defaultSigResultNumber)
+            ;
         }
 
         $geoResults = $this->geocoder->geocodeQuery($query)->all();
@@ -246,32 +252,41 @@ class GeoSearcher
             // set address icon
             $address->setIcon($this->dataPath.$this->iconPath.$this->iconRepository->find(self::ICON_ADDRESS_ANY)->getFileName());
             if ($geoResult->getCoordinates() && $geoResult->getCoordinates()->getLatitude()) {
-                $address->setLatitude((string)$geoResult->getCoordinates()->getLatitude());
+                $address->setLatitude((string) $geoResult->getCoordinates()->getLatitude());
             }
             if ($geoResult->getCoordinates() && $geoResult->getCoordinates()->getLongitude()) {
-                $address->setLongitude((string)$geoResult->getCoordinates()->getLongitude());
+                $address->setLongitude((string) $geoResult->getCoordinates()->getLongitude());
             }
             $address->setHouseNumber($geoResult->getStreetNumber());
             $address->setStreet($geoResult->getStreetName());
-            $address->setStreetAddress($geoResult->getStreetName() ? trim(($geoResult->getStreetNumber() ? $geoResult->getStreetNumber() : '') . ' ' . $geoResult->getStreetName()) : null);
+            $address->setStreetAddress($geoResult->getStreetName() ? trim(($geoResult->getStreetNumber() ? $geoResult->getStreetNumber() : '').' '.$geoResult->getStreetName()) : null);
             $address->setSubLocality($geoResult->getSubLocality());
             $address->setAddressLocality($geoResult->getLocality());
             foreach ($geoResult->getAdminLevels() as $level) {
                 switch ($level->getLevel()) {
                     case 1:
                         $address->setLocalAdmin($level->getName());
+
                         break;
+
                     case 2:
                         $address->setCounty($level->getName());
+
                         break;
+
                     case 3:
                         $address->setMacroCounty($level->getName());
+
                         break;
+
                     case 4:
                         $address->setRegion($level->getName());
+
                         break;
+
                     case 5:
                         $address->setMacroRegion($level->getName());
+
                         break;
                 }
             }
@@ -290,10 +305,10 @@ class GeoSearcher
             if (method_exists($geoResult, 'getVenue')) {
                 $address->setVenue($geoResult->getVenue());
             }
-            if ((method_exists($geoResult, 'getEstablishment')) && ($geoResult->getEstablishment() != null)) {
+            if ((method_exists($geoResult, 'getEstablishment')) && (null != $geoResult->getEstablishment())) {
                 $address->setVenue($geoResult->getEstablishment());
             }
-            if ((method_exists($geoResult, 'getPointOfInterest')) && ($geoResult->getPointOfInterest() != null)) {
+            if ((method_exists($geoResult, 'getPointOfInterest')) && (null != $geoResult->getPointOfInterest())) {
                 $address->setVenue($geoResult->getPointOfInterest());
             }
 
@@ -319,17 +334,17 @@ class GeoSearcher
             // We set the similarity (algorithm method)
             $address->setSimilarityWithSearch(levenshtein($input, $address->getAddressLocality()));
 
-
             // Before adding a new address we check if there is a similar already in the array
             // If so, we take the tinier layer index
             $addAddress = true;
             foreach ($result as $address_key => $previous_address) {
-                if (count(array_diff($address->getDisplayLabel(), $previous_address->getDisplayLabel()))==0) {
-                    if ($address->getLayer()<$previous_address->getLayer()) {
+                if (0 == count(array_diff($address->getDisplayLabel(), $previous_address->getDisplayLabel()))) {
+                    if ($address->getLayer() < $previous_address->getLayer()) {
                         $result[$address_key] = $address;
                     }
 
                     $addAddress = false;
+
                     break;
                 }
             }
@@ -339,18 +354,17 @@ class GeoSearcher
             }
 
             usort($result, function ($a, $b) {
-                return $a->getSimilarityWithSearch()>$b->getSimilarityWithSearch();
+                return $a->getSimilarityWithSearch() > $b->getSimilarityWithSearch();
             });
         }
 
         if ($this->distanceOrder) {
             usort($result, function ($a, $b) {
-                return $a->getDistance()>$b->getDistance();
+                return $a->getDistance() > $b->getDistance();
             });
         }
-        
+
         $result = array_slice($result, 0, $this->defaultSigReturnedResultNumber);
-        
 
         // 3 - relay points
         $relayPoints = $this->relayPointRepository->findByNameAndStatus($input, RelayPoint::STATUS_ACTIVE);
@@ -365,6 +379,7 @@ class GeoSearcher
                     foreach ($relayPoint->getCommunity()->getCommunityUsers() as $communityUser) {
                         if ($communityUser->getUser()->getId() == $user->getId() && $communityUser->getStatus() == (CommunityUser::STATUS_ACCEPTED_AS_MEMBER or CommunityUser::STATUS_ACCEPTED_AS_MODERATOR)) {
                             $exclude = false;
+
                             break;
                         }
                     }
@@ -389,8 +404,8 @@ class GeoSearcher
                 }
                 $address->setDisplayLabel($this->geoTools->getDisplayLabel($address, $user));
                 $result[] = $address;
-                $i++;
-                if ($i>=$this->defaultRelayPointResultNumber) {
+                ++$i;
+                if ($i >= $this->defaultRelayPointResultNumber) {
                     break;
                 }
             }
@@ -406,8 +421,8 @@ class GeoSearcher
             $address->setDisplayLabel($this->geoTools->getDisplayLabel($address, $user));
             $address->setIcon($this->dataPath.$this->iconPath.$this->iconRepository->find(self::ICON_EVENT)->getFileName());
             $result[] = $address;
-            $i++;
-            if ($i>=$this->defaultEventResultNumber) {
+            ++$i;
+            if ($i >= $this->defaultEventResultNumber) {
                 break;
             }
         }
@@ -416,11 +431,12 @@ class GeoSearcher
     }
 
     /**
-     * Returns an array of reversed geocoded addresses
+     * Returns an array of reversed geocoded addresses.
      *
-     * @param float $lat     The latitude
-     * @param float $lon     The longitude
-     * @return array         The array of addresses found
+     * @param float $lat The latitude
+     * @param float $lon The longitude
+     *
+     * @return array The array of addresses found
      */
     public function reverseGeoCode(float $lat, float $lon)
     {
@@ -430,32 +446,41 @@ class GeoSearcher
                 $address = new Address();
                 $address->setIcon($this->dataPath.$this->iconPath.$this->iconRepository->find(self::ICON_ADDRESS_ANY)->getFileName());
                 if ($geoResult->getCoordinates() && $geoResult->getCoordinates()->getLatitude()) {
-                    $address->setLatitude((string)$geoResult->getCoordinates()->getLatitude());
+                    $address->setLatitude((string) $geoResult->getCoordinates()->getLatitude());
                 }
                 if ($geoResult->getCoordinates() && $geoResult->getCoordinates()->getLongitude()) {
-                    $address->setLongitude((string)$geoResult->getCoordinates()->getLongitude());
+                    $address->setLongitude((string) $geoResult->getCoordinates()->getLongitude());
                 }
                 $address->setHouseNumber($geoResult->getStreetNumber());
                 $address->setStreet($geoResult->getStreetName());
-                $address->setStreetAddress($geoResult->getStreetName() ? trim(($geoResult->getStreetNumber() ? $geoResult->getStreetNumber() : '') . ' ' . $geoResult->getStreetName()) : null);
+                $address->setStreetAddress($geoResult->getStreetName() ? trim(($geoResult->getStreetNumber() ? $geoResult->getStreetNumber() : '').' '.$geoResult->getStreetName()) : null);
                 $address->setSubLocality($geoResult->getSubLocality());
                 $address->setAddressLocality($geoResult->getLocality());
                 foreach ($geoResult->getAdminLevels() as $level) {
                     switch ($level->getLevel()) {
                         case 1:
                             $address->setLocalAdmin($level->getName());
+
                             break;
+
                         case 2:
                             $address->setCounty($level->getName());
+
                             break;
+
                         case 3:
                             $address->setMacroCounty($level->getName());
+
                             break;
+
                         case 4:
                             $address->setRegion($level->getName());
+
                             break;
+
                         case 5:
                             $address->setMacroRegion($level->getName());
+
                             break;
                     }
                 }
@@ -474,11 +499,11 @@ class GeoSearcher
                 if (method_exists($geoResult, 'getVenue')) {
                     $address->setVenue($geoResult->getVenue());
                 }
-                if ((method_exists($geoResult, 'getEstablishment')) && ($geoResult->getEstablishment() != null)) {
+                if ((method_exists($geoResult, 'getEstablishment')) && (null != $geoResult->getEstablishment())) {
                     $address->setVenue($geoResult->getEstablishment());
                 }
 
-                if ((method_exists($geoResult, 'getPointOfInterest')) && ($geoResult->getPointOfInterest() != null)) {
+                if ((method_exists($geoResult, 'getPointOfInterest')) && (null != $geoResult->getPointOfInterest())) {
                     $address->setVenue($geoResult->getPointOfInterest());
                 }
                 if ($address->getVenue()) {
@@ -494,8 +519,10 @@ class GeoSearcher
 
                 $addresses[] = $address;
             }
+
             return $addresses;
         }
+
         return false;
     }
 
@@ -503,7 +530,8 @@ class GeoSearcher
      * Get an address using an array. The array may contain only some informations like latitude or longitude.
      * The other informations are retrieved from the GeoSearcher.
      *
-     * @param array $point  The point
+     * @param array $point The point
+     *
      * @return Address
      */
     public function getAddressByPartialAddressArray(array $point)
@@ -520,7 +548,7 @@ class GeoSearcher
 
         // then we reverse geocode, to get a full address if the other properties are not sent
         if ($addresses = $this->reverseGeoCode($address->getLatitude(), $address->getLongitude())) {
-            if (count($addresses)>0) {
+            if (count($addresses) > 0) {
                 $address = $addresses[0];
             }
         }
@@ -582,43 +610,54 @@ class GeoSearcher
         if (isset($point['home'])) {
             $address->setHome($point['home']);
         }
+
         return $address;
     }
 
     /**
      * Fix potential wrong addresses.
      *
-     * @param string $id        The id of the source data
-     * @param Address $address  The address to fix
+     * @param string  $id      The id of the source data
+     * @param Address $address The address to fix
+     *
      * @return Address The address fixed
      */
     private function fixAddress(string $id, Address $address)
     {
         // we search in the fixes if there's one corresponding to the id
         if (array_key_exists($id, $this->geoDataFixes)) {
-            foreach ($this->geoDataFixes[$id] as $property=>$value) {
+            foreach ($this->geoDataFixes[$id] as $property => $value) {
                 if (method_exists($address, 'set'.ucfirst($property))) {
                     $method = 'set'.ucfirst($property);
-                    $address->$method($value);
+                    $address->{$method}($value);
                 }
             }
         }
+
         return $address;
     }
 
     /**
-     * Get layer id by layer string
+     * Get layer id by layer string.
      *
      * @param string $layer The string layer
-     * @return int|null  The int layer or null
+     *
+     * @return null|int The int layer or null
      */
     private function getLayer(string $layer): ?int
     {
         switch ($layer) {
-            case 'address': return Address::LAYER_ADDRESS;
-            case 'locality': return Address::LAYER_LOCALITY;
-            case 'localadmin': return Address::LAYER_LOCALADMIN;
-            default: return null;
+            case 'address':
+                return Address::LAYER_ADDRESS;
+
+            case 'locality':
+                return Address::LAYER_LOCALITY;
+
+            case 'localadmin':
+                return Address::LAYER_LOCALADMIN;
+
+            default:
+                return null;
         }
     }
 }
