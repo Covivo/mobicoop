@@ -1282,7 +1282,7 @@ export default {
           maxios.post(this.$t("route.cleanOrphans"), {})
             .then(res => {
               window.location.href = this.$t('route.myAds');
-            });
+            });            
         })
         .catch(error => {
           console.log(error);

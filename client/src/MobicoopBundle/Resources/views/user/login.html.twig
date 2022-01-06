@@ -14,6 +14,8 @@
       facebook-login-app-id = "{{ facebook_appid }}"
       :id="{{ id is defined ? (id ? id : 'null') : 'null' }}"
       type="{{ type }}"
-      :sign-up-link-in-connection = "{{ signUpLinkInConnection ? "true" : "false" }}"      
+      :sign-up-link-in-connection = "{{ signUpLinkInConnection ? "true" : "false" }}"
+      service="{{ service is defined ? service : 'null' }}"
+      app-name="{{ app_name }}"
   />
 {% endblock %}

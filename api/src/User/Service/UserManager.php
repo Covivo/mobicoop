@@ -1711,6 +1711,18 @@ class UserManager
             // check if a user with this email already exists
             $user = $this->userRepository->findOneBy(['email'=>$ssoUser->getEmail()]);
             if (!is_null($user)) {
+                
+                // AutoCreate Autoattach disable. If the User isn't already attached to this SSO provider we reject it
+                if (!$ssoUser->hasAutoCreateAccount()) {
+                    if ($user->getSsoId() !== $ssoUser->getSub() || $user->getSsoProvider() !== $ssoUser->getProvider()) {
+                        if (!$ssoUser->hasAutoCreateAccount()) {
+                            throw new \LogicException("Autocreate/Autoattach account disable");
+                        }
+                    } else {
+                        return $user;
+                    }
+                }
+
                 // We update the user with ssoId and ssoProvider and return it
                 $user->setSsoId($ssoUser->getSub());
                 $user->setSsoProvider($ssoUser->getProvider());
@@ -1720,6 +1732,10 @@ class UserManager
                 $this->entityManager->persist($user);
                 $this->entityManager->flush();
                 return $user;
+            }
+
+            if (!$ssoUser->hasAutoCreateAccount()) {
+                throw new \LogicException("Autocreate/Autoattach account disable");
             }
 
             // Create a new one

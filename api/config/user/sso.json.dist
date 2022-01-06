@@ -3,6 +3,7 @@
         "name":"Service name",
         "baseUri":"https://serviceBaseUri/",
         "clientId":"clientId",
-        "clientSecret":"clientSecret"
+        "clientSecret":"clientSecret",
+        "autoCreateAccount":true
     }
 }

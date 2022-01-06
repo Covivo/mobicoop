@@ -43,6 +43,7 @@ class OpenIdSsoProvider implements SsoProviderInterface
     const AUTHORIZATION_URL = "Authorization_Url";
     const TOKEN_URL = "Token_Url";
     const USERINFOS_URL = "UserInfos_Url";
+    const LOGOUT_URL = "Logout_Url";
 
     const URLS = [
         self::SSO_PROVIDER_GLCONNECT => [
@@ -53,7 +54,8 @@ class OpenIdSsoProvider implements SsoProviderInterface
         self::SSO_PROVIDER_PASSMOBILITE => [
             self::AUTHORIZATION_URL => "auth/realms/Passmobilite/protocol/openid-connect/auth/?client_id={CLIENT_ID}&scope=openid profile email&response_type=code&state={SERVICE_NAME}&redirect_uri={REDIRECT_URI}",
             self::TOKEN_URL => "auth/realms/Passmobilite/protocol/openid-connect/token/",
-            self::USERINFOS_URL => "auth/realms/Passmobilite/protocol/openid-connect/userinfo"
+            self::USERINFOS_URL => "auth/realms/Passmobilite/protocol/openid-connect/userinfo",
+            self::LOGOUT_URL => "auth/realms/Passmobilite/protocol/openid-connect/logout",
         ]
     ];
 
@@ -64,12 +66,12 @@ class OpenIdSsoProvider implements SsoProviderInterface
     private $clientSecret;
     private $redirectUrl;
     private $redirectUri;
-    private $private;
     private $baseSiteUri;
+    private $autoCreateAccount;
     
     private $code;
 
-    public function __construct(string $serviceName, string $baseSiteUri, string $baseUri, string $clientId, string $clientSecret, string $redirectUrl)
+    public function __construct(string $serviceName, string $baseSiteUri, string $baseUri, string $clientId, string $clientSecret, string $redirectUrl, bool $autoCreateAccount)
     {
         if (!isset(self::URLS[$serviceName])) {
             throw new \LogicException("Service unknown");
@@ -82,6 +84,7 @@ class OpenIdSsoProvider implements SsoProviderInterface
         $this->redirectUrl = $redirectUrl;
         $this->baseSiteUri = $baseSiteUri;
         $this->redirectUri = $this->baseSiteUri."/".$this->redirectUrl;
+        $this->autoCreateAccount = $autoCreateAccount;
     }
 
     public function setCode(string $code)
@@ -106,6 +109,20 @@ class OpenIdSsoProvider implements SsoProviderInterface
      */
     public function getUserProfile(string $code): SsoUser
     {
+        /** Mock data for dev purpose */
+        // $ssoUser = new SsoUser();
+        // $ssoUser->setSub("19");
+        // $ssoUser->setEmail("tenshikuroi18@yopmail.com");
+        // $ssoUser->setFirstname("Johnny");
+        // $ssoUser->setLastname("Sso");
+        // $ssoUser->setProvider("machin");
+        // $ssoUser->setGender(User::GENDER_MALE);
+        // $ssoUser->setBirthdate(null);
+        // $ssoUser->setAutoCreateAccount($this->autoCreateAccount);
+
+        // return $ssoUser;
+        /****** end mock data */
+
         $token = $this->getToken($code);
 
         $dataProvider = new DataProvider($this->baseUri, self::URLS[$this->serviceName][self::USERINFOS_URL]);
@@ -125,6 +142,7 @@ class OpenIdSsoProvider implements SsoProviderInterface
             $ssoUser->setProvider($this->serviceName);
             $ssoUser->setGender((isset($data['gender'])) ? $data['gender'] : User::GENDER_OTHER);
             $ssoUser->setBirthdate((isset($data['birthdate'])) ? $data['birthdate'] : null);
+            $ssoUser->setAutoCreateAccount($this->autoCreateAccount);
             
 
             if (
@@ -159,5 +177,10 @@ class OpenIdSsoProvider implements SsoProviderInterface
         } else {
             throw new \LogicException("Error get Token");
         }
+    }
+
+    public function getLogoutUrls(): ?string
+    {
+        return (isset(self::URLS[$this->serviceName][self::LOGOUT_URL])) ? $this->baseUri."".self::URLS[$this->serviceName][self::LOGOUT_URL] : null;
     }
 }
