@@ -142,7 +142,10 @@ class UserManager
             $userEntity->setSsoId($user->getExternalId());
 
             if ($attach) {
-                $userEntity->setAppDelegate($this->security->getUser());
+                if ($this->security->getUser() instanceof App) {
+                    $userEntity->setAppDelegate($this->security->getUser());
+                    $userEntity->setSsoProvider($this->security->getUser()->getName());
+                }
                 $userEntity->setCreatedSsoDate(new \DateTime('now'));
                 $userEntity->setCreatedBySso(false);
             }
