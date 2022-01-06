@@ -68,36 +68,16 @@ class RetroactivelyRewardService
         23 => "hasAnAcceptedCarpoolInEvent"
     ];
 
-    const BADGES = [
-        1 => [1,2,3,4],
-        2 => [5],
-        3 => [6,7],
-        4 => [8,9,10],
-        5 => [11],
-        6 => [12],
-        7 => [13]
-    ];
+    const BADGES = [1,2,3,4,5,6,7];
 
-    private $userRepository;
-    private $badgeRepository;
-    private $badgesBoardManager;
-    private $sequenceItemRepository;
     private $entityManager;
     private $logger;
 
 
     public function __construct(
-        UserRepository $userRepository,
-        BadgeRepository $badgeRepository,
-        BadgesBoardManager $badgesBoardManager,
-        SequenceItemRepository $sequenceItemRepository,
         EntityManagerInterface $entityManager,
         LoggerInterface $logger
     ) {
-        $this->userRepository = $userRepository;
-        $this->badgeRepository = $badgeRepository;
-        $this->badgesBoardManager = $badgesBoardManager;
-        $this->sequenceItemRepository = $sequenceItemRepository;
         $this->entityManager = $entityManager;
         $this->logger = $logger;
     }
@@ -107,7 +87,7 @@ class RetroactivelyRewardService
         $this->logger->info("start retroactivelyRewardUsers | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         
         $limit = 1;
-        // $limit = 100;
+        $limit = 100;
         // $limit = 1000;
         // $limit = 10000;
         // $limit = 100000;
@@ -355,7 +335,7 @@ class RetroactivelyRewardService
         }
      
         // $this->logger->info("end retroactivelyRewardUsers | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-        // // var_dump($users);
+        // var_dump($users);
         // die;
 
         $stmt = $this->entityManager->getConnection()->prepare(
@@ -405,17 +385,19 @@ class RetroactivelyRewardService
             $newSequenceItems = $this->retroactivelyRewardUser($user, $sequenceItemsIds, $badgeIds, $badges);
             if (count($newSequenceItems) > 0) {
                 $this->persistRewardStep($newSequenceItems, $user[0]['user_id']);
+                
+                $sequenceItems = array_merge($sequenceItemsIds, $newSequenceItems);
+                $this->persistReward($sequenceItems, $user[0]['user_id'], $badgeIds);
             }
         }
-        
         $this->logger->info("end retroactivelyRewardUsers | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
     }
 
     private function retroactivelyRewardUser(array $user, ?array $sequenceItemsIds, ?array $badgeIds, array $badges)
     {
         $newSequenceItemsIds = [];
-        foreach ($badges as $key => $badge) {
-            if (in_array($key, $badgeIds)) {
+        foreach ($badges as $id => $badge) {
+            if (in_array($id, $badgeIds)) {
                 continue;
             }
             foreach ($badge as $sequenceItem) {
@@ -432,18 +414,67 @@ class RetroactivelyRewardService
         return $newSequenceItemsIds;
     }
    
-    // public function checkRule(User $user, $sequenceItem)
-    // {
-    //     $gamificationActionRuleName = "\\App\\Gamification\Rule\\" . $sequenceItem['rule_name'];
-    //     /**
-    //      * @var GamificationRuleInterface $gamificationActionRule
-    //      */
-    //     $gamificationActionRule = new $gamificationActionRuleName;
-    //     $log = new Log;
-    //     $log->setUser($user);
-    //     return $gamificationActionRule->execute($log, $sequenceItem);
-    // }
- 
+    private function persistReward(?array $sequenceItems, int $userId, ?array $badgeIds)
+    {
+        $string = "";
+        $date = (new \DateTime("now"))->format("Y-m-d");
+        foreach (self::BADGES as $badgeId) {
+            if (in_array($badgeId, $badgeIds)) {
+                continue;
+            }
+            switch ($badgeId) {
+                // badge 1 needed sequences 1,2,3,4 to be validated
+                case 1:
+                   if (in_array(1, $sequenceItems) && in_array(2, $sequenceItems) && in_array(3, $sequenceItems) && in_array(4, $sequenceItems)) {
+                       $string = $string . "(".$badgeId.",".$userId.",'".$date."','".$date."'),";
+                   }
+                    break;
+                // badge 2 needed sequence 5 to be validated
+                case 2:
+                    if (in_array(5, $sequenceItems)) {
+                        $string = $string . "(".$badgeId.",".$userId.",'".$date."','".$date."'),";
+                    }
+                    break;
+                // badge 3 needed sequences 6,7 to be validated
+                case 3:
+                    if (in_array(6, $sequenceItems) && in_array(7, $sequenceItems)) {
+                        $string = $string . "(".$badgeId.",".$userId.",'".$date."','".$date."'),";
+                    }
+                    break;
+                // badge 4 needed sequences 8,9,10 to be validated
+                case 4:
+                    if (in_array(8, $sequenceItems) && in_array(9, $sequenceItems) && in_array(10, $sequenceItems)) {
+                        $string = $string . "(".$badgeId.",".$userId.",'".$date."','".$date."'),";
+                    }
+                break;
+                // badge 5 needed sequence 11 to be validated
+                case 5:
+                    if (in_array(11, $sequenceItems)) {
+                        $string = $string . "(".$badgeId.",".$userId.",'".$date."','".$date."'),";
+                    }
+                    break;
+                // badge 6 needed sequence 12 to be validated
+                case 6:
+                    if (in_array(12, $sequenceItems)) {
+                        $string = $string . "(".$badgeId.",".$userId.",'".$date."','".$date."'),";
+                    }
+                    break;
+                // badge 7 needed sequence 13 to be validated
+                case 7:
+                    if (in_array(13, $sequenceItems)) {
+                        $string = $string . "(".$badgeId.",".$userId.",'".$date."','".$date."'),";
+                    }
+                    break;
+            }
+        }
+        if (strlen($string) > 0) {
+            $string = substr($string, 0, -1);
+            $this->entityManager->getConnection()->prepare('
+                INSERT INTO reward (badge_id,user_id,created_date,notified_date)
+                VALUE '.$string.'
+            ;')->execute();
+        }
+    }
 
     private function persistRewardStep(?array $sequenceItems, int $userId)
     {
