@@ -23,16 +23,6 @@
 
 namespace App\Gamification\Service;
 
-use App\Action\Entity\Log;
-use App\Gamification\Entity\Reward;
-use App\Gamification\Entity\RewardStep;
-use App\Gamification\Entity\SequenceItem;
-use App\Gamification\Entity\ValidationStep;
-use App\User\Repository\UserRepository;
-use App\Gamification\Repository\BadgeRepository;
-use App\User\Entity\User;
-use App\Gamification\Service\BadgesBoardManager;
-use App\Gamification\Repository\SequenceItemRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 
@@ -86,12 +76,7 @@ class RetroactivelyRewardService
     {
         $this->logger->info("start retroactivelyRewardUsers | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         
-        $limit = 1;
-        $limit = 100;
-        // $limit = 1000;
-        // $limit = 10000;
-        // $limit = 100000;
-        $limit = 1000000;
+        // get all users with all needed informations
         $this->entityManager->getConnection()->prepare('
         CREATE TEMPORARY TABLE tuser (
             id int not null,
@@ -234,11 +219,12 @@ class RetroactivelyRewardService
             WHERE ci.item_status = 1 AND a.user_related_id = t.id);
         );')->execute();
         $stmt = $this->entityManager->getConnection()->prepare(
-            "SELECT * FROM tuser
-            limit $limit;"
+            "SELECT * FROM tuser;"
         );
         $stmt->execute();
         $resultsUsers = $stmt->fetchAll();
+
+        // format users
         $users = [];
         foreach ($resultsUsers as $user) {
             if (array_key_exists($user['id'], $users)) {
@@ -308,6 +294,7 @@ class RetroactivelyRewardService
             }
         }
 
+        // get all sequences_items already earned of each user
         $stmt = $this->entityManager->getConnection()->prepare(
             "SELECT reward_step.user_id, reward_step.sequence_item_id
             FROM reward_step  
@@ -321,6 +308,7 @@ class RetroactivelyRewardService
             }
         }
 
+        // get all badges  already earned of each user
         $stmt = $this->entityManager->getConnection()->prepare(
             "SELECT reward.user_id, reward.badge_id
             FROM reward  
@@ -334,10 +322,6 @@ class RetroactivelyRewardService
             }
         }
      
-        // $this->logger->info("end retroactivelyRewardUsers | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-        // var_dump($users);
-        // die;
-
         $stmt = $this->entityManager->getConnection()->prepare(
             "SELECT b.id as badge_id, si.id as sequence_item_id, ga.id as gamification_action_id, gar.name as rule_name, si.min_count, si.min_unique_count, si.in_date_range, si.value
             FROM badge b 
@@ -348,6 +332,7 @@ class RetroactivelyRewardService
         $stmt->execute();
         $resultBadges = $stmt->fetchAll();
 
+        // get badges and sequence_items infos
         $badges = [];
         foreach ($resultBadges as $badge) {
             if (array_key_exists($badge['badge_id'], $badges)) {
@@ -377,12 +362,12 @@ class RetroactivelyRewardService
                 ];
             }
         }
-        
+
         foreach ($users as $user) {
             $sequenceItemsIds = (!is_null($user[0]['sequence_item_ids'])) ?  $user[0]['sequence_item_ids'] : [];
             $badgeIds = (!is_null($user[0]['badge_ids'])) ?  $user[0]['badge_ids'] : [];
 
-            $newSequenceItems = $this->retroactivelyRewardUser($user, $sequenceItemsIds, $badgeIds, $badges);
+            $newSequenceItems = $this->checkSequenceItemsEarned($user, $sequenceItemsIds, $badgeIds, $badges);
             if (count($newSequenceItems) > 0) {
                 $this->persistRewardStep($newSequenceItems, $user[0]['user_id']);
                 
@@ -393,7 +378,16 @@ class RetroactivelyRewardService
         $this->logger->info("end retroactivelyRewardUsers | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
     }
 
-    private function retroactivelyRewardUser(array $user, ?array $sequenceItemsIds, ?array $badgeIds, array $badges)
+    /**
+     * add sequence_item newly earned
+     *
+     * @param array $user concerned
+     * @param array|null $sequenceItemsIds already earned sequence_items ids
+     * @param array|null $badgeIds already earned badges ids
+     * @param array $badges badges
+     * @return array new sequence_items earned
+     */
+    private function checkSequenceItemsEarned(array $user, ?array $sequenceItemsIds, ?array $badgeIds, array $badges)
     {
         $newSequenceItemsIds = [];
         foreach ($badges as $id => $badge) {
@@ -414,6 +408,35 @@ class RetroactivelyRewardService
         return $newSequenceItemsIds;
     }
    
+    /**
+     * persist all earned reward_steps
+     *
+     * @param array|null $sequenceItems sequence_items earned
+     * @param integer $userId id of the concerned user
+     * @return void
+     */
+    private function persistRewardStep(?array $sequenceItems, int $userId)
+    {
+        $string = "";
+        $date = (new \DateTime("now"))->format("Y-m-d");
+        foreach ($sequenceItems as $sequenceItem) {
+            $string = $string . "(".$sequenceItem.",'".$date."',".$userId.",'".$date."'),";
+        }
+        $string = substr($string, 0, -1);
+        $this->entityManager->getConnection()->prepare('
+            INSERT INTO reward_step (sequence_item_id,created_date,user_id,notified_date)
+            VALUE '.$string.'
+        ;')->execute();
+    }
+
+    /**
+    * persist all earned rewards
+    *
+    * @param array|null $sequenceItems all earned sequence_items ids
+    * @param integer $userId  id of the concerned user
+    * @param array|null $badgeIds already earned badges ids
+    * @return void
+    */
     private function persistReward(?array $sequenceItems, int $userId, ?array $badgeIds)
     {
         $string = "";
@@ -476,19 +499,6 @@ class RetroactivelyRewardService
         }
     }
 
-    private function persistRewardStep(?array $sequenceItems, int $userId)
-    {
-        $string = "";
-        $date = (new \DateTime("now"))->format("Y-m-d");
-        foreach ($sequenceItems as $sequenceItem) {
-            $string = $string . "(".$sequenceItem.",'".$date."',".$userId.",'".$date."'),";
-        }
-        $string = substr($string, 0, -1);
-        $this->entityManager->getConnection()->prepare('
-            INSERT INTO reward_step (sequence_item_id,created_date,user_id,notified_date)
-            VALUE '.$string.'
-        ;')->execute();
-    }
 
     private function hasEmailValidated($user, $sequenceItem)
     {
