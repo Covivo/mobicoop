@@ -683,7 +683,7 @@ class CitywayProvider implements ProviderInterface
                 // Trolley bus
                 $travelMode = new TravelMode(TravelMode::TRAVEL_MODE_TROLLEY_BUS);
                 $leg->setTravelMode($travelMode);
-            } elseif (is_null($travelMode)){
+            } elseif (is_null($travelMode)) {
                 // Unknown
                 $travelMode = new TravelMode(TravelMode::TRAVEL_MODE_UNKNOWN);
                 $leg->setTravelMode($travelMode);
