@@ -21,5 +21,6 @@
     "errorCredentialsFacebook": "Akats bat gertatu da Facebook-en bidez konektatzerakoan",
     "Unable to get an API token.": "Akats bat gertatu da konektatzerakoan.",
     "Bad credentials.": "Erabiltzaile izena edo pasahitz okerra.",
-    "title": "Konexioa"
+    "title": "Konexioa",
+    "errorSso":"Connexion impossible, car aucun compte utilisateur existant sur {appName} n'est lié à '{service}'"
 }

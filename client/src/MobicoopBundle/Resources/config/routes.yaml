@@ -85,6 +85,15 @@ user_login:
         de: /benutzer/anmeldung
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::login
 
+## default login
+user_login_sso_failed:
+    path:
+        fr: /utilisateur/connexion/erreurSso/{service}
+        en: /user/login/ssoError/{service}
+        nl: /user/login/ssoError/{service}
+        de: /benutzer/anmeldung
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::loginSsoError
+
 ## login after search
 user_login_result:
     path:

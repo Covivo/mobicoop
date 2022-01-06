@@ -1,7 +1,6 @@
 <?php
-
 /**
- * Copyright (c) 2020, MOBICOOP. All rights reserved.
+ * Copyright (c) 2022, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,31 +20,40 @@
  *    LICENSE
  **************************/
 
-namespace Mobicoop\Bundle\MobicoopBundle\User\Service;
+namespace App\Security;
+
+use App\User\Entity\User;
+use App\User\Service\SsoManager;
+use Lexik\Bundle\JWTAuthenticationBundle\Event\AuthenticationSuccessEvent;
 
 /**
- * Sso management service.
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class SsoManager
+class LoginAuthenticator
 {
-    /**
-     * Guess and return the parameters for a SSO connection
-     *
-     * @param array $params
-     * @return array
-     */
-    public function guessSsoParameters(array $params)
+    private $ssoManager;
+
+    public function __construct(SsoManager $ssoManager)
     {
-        $return = [];
-        if (isset($params['state'])) {
-            switch ($params['state']) {
-                case "GLConnect":
-                case "PassMobilite":
-                    $return = ['ssoId'=>$params['code'], 'ssoProvider'=>$params['state']];
-                break;
-            }
+        $this->ssoManager = $ssoManager;
+    }
+    
+    /**
+     * @param AuthenticationSuccessEvent $event
+     */
+    public function onAuthenticationSuccessResponse(AuthenticationSuccessEvent $event)
+    {
+        $data = $event->getData();
+        $user = $event->getUser();
+
+        if (!$user instanceof User) {
+            return;
         }
 
-        return $return;
+        if (!is_null($user->getSsoProvider())) {
+            $data['logoutUrl'] = $this->ssoManager->getSsoLogoutUrl($user);
+        }
+
+        $event->setData($data);
     }
 }

@@ -19,5 +19,6 @@
     "errorCredentialsFacebook": "Fehler beim Anmelden über Facebook",
     "Unable to get an API token.": "Fehler beim Anmelden.",
     "Bad credentials.": "Benutzername oder Passwort falsch.",
-    "title": "Anmeldung"
+    "title": "Anmeldung",
+    "errorSso":"Connexion impossible, car aucun compte utilisateur existant sur {appName} n'est lié à '{service}'"
 }

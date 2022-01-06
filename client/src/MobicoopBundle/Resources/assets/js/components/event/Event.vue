@@ -33,6 +33,7 @@
             :event="event"
             :url-alt-avatar="urlAltAvatar"
             :avatar-version="avatarVersion"
+            :title="title"
           />
           <!-- event buttons and map -->
           <v-row

@@ -179,6 +179,14 @@ export default {
     signUpLinkInConnection: {
       type: Boolean,
       default: false
+    },
+    service: {
+      type: String,
+      default: null
+    },
+    appName: {
+      type: String,
+      default: null
     }
   },
   data() {
@@ -245,7 +253,7 @@ export default {
       this.treatErrorMessage({'value':data})
     },
     treatErrorMessage(errorMessage) {
-      this.errorDisplay = this.$t(errorMessage.value);
+      this.errorDisplay = this.$t(errorMessage.value, {'appName':this.appName,'service':this.service});
       this.loading = false;
     }
   }

@@ -35,4 +35,4 @@ services:
         class: Mobicoop\Bundle\MobicoopBundle\Listener\LogoutListener
         arguments:
             $router: "@router"
-            $tokenStorage : "@security.token_storage"   
+            $tokenStorage : "@security.token_storage"

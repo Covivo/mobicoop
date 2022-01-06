@@ -892,7 +892,7 @@ class UserManager
      *
      * @return void
      */
-    public function getSsoServices()
+    public function getSsoServices(): ?array
     {
         $this->dataProvider->setClass(SsoConnection::class);
 

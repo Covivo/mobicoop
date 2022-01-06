@@ -21,5 +21,6 @@
     "errorCredentialsFacebook": "Fout bij het aanmelden via Facebook",
     "Unable to get an API token.": "Fout bij het aanmelden.",
     "Bad credentials.": "Gebruikersnaam of wachtwoord niet juist.",
-    "title": "Aanmelden"
+    "title": "Aanmelden",
+    "errorSso":"Connexion impossible, car aucun compte utilisateur existant sur {appName} n'est lié à '{service}'"
 }
