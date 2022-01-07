@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * Copyright (c) 2021, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,23 +21,19 @@
  *    LICENSE
  **************************/
 
-namespace App\ExternalJourney\DataProvider;
+namespace App\ExternalJourney\Admin\DataProvider;
 
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 use App\ExternalJourney\Entity\ExternalJourney;
-use App\ExternalJourney\Service\ExternalJourneyManager;
+use App\ExternalJourney\Admin\Service\ExternalJourneyManager;
 
 /**
- * Collection data provider for External Journey entity.
+ * Collection data provider for External Journey in administration context.
  *
- * Automatically associated to External Journey entity thanks to autowiring (see 'supports' method).
- *
- * @author Sofiane Belaribi <sofiane.belaribi@covivo.eu>
- *
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org> *
  */
 final class ExternalJourneyCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
@@ -55,7 +51,7 @@ final class ExternalJourneyCollectionDataProvider implements CollectionDataProvi
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return ExternalJourney::class === $resourceClass && $operationName == "get";
+        return ExternalJourney::class === $resourceClass && $operationName == "ADMIN_get";
     }
 
     public function getCollection(string $resourceClass, string $operationName = null): array

@@ -263,6 +263,9 @@ class SolidaryManager
             if ($solidaryMatching->getMatching()) {
                 // carpool matching
                 $carpool = [
+                    'external' => false,
+                    'externalProvider' => null,
+                    'journeyId' => null,
                     'matchingId' => $solidaryMatching->getId(),
                     'carpoolerId' => $solidaryMatching->getMatching()->getProposalOffer()->getUser()->getId(),
                     'carpoolerGivenName' => $solidaryMatching->getMatching()->getProposalOffer()->getUser()->getGivenName(),
