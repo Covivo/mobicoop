@@ -360,18 +360,67 @@ class RetroactivelyRewardService
             }
         }
 
+        $rewardSteps = [];
+        $rewards = [];
         foreach ($users as $user) {
             $sequenceItemsIds = (!is_null($user[0]['sequence_item_ids'])) ? $user[0]['sequence_item_ids'] : [];
             $badgeIds = (!is_null($user[0]['badge_ids'])) ? $user[0]['badge_ids'] : [];
 
             $newSequenceItems = $this->checkSequenceItemsEarned($user, $sequenceItemsIds, $badgeIds, $badges);
             if (count($newSequenceItems) > 0) {
-                $this->persistRewardStep($newSequenceItems, $user[0]['user_id']);
+                $rewardSteps = $this->persistRewardStep($newSequenceItems, $user[0]['user_id'], $rewardSteps);
 
                 $sequenceItems = array_merge($sequenceItemsIds, $newSequenceItems);
-                $this->persistReward($sequenceItems, $user[0]['user_id'], $badgeIds);
+                $rewards = $this->persistReward($sequenceItems, $user[0]['user_id'], $badgeIds, $rewards);
             }
         }
+
+        $i = 0;
+        $string = '';
+        foreach ($rewardSteps as $rewardStep) {
+            $string .= $rewardStep.',';
+            ++$i;
+            if ($i >= 5000) {
+                $string = substr($string, 0, -1);
+                $this->entityManager->getConnection()->prepare('
+                    INSERT INTO reward_step (sequence_item_id,created_date,user_id,notified_date)
+                    VALUES '.$string.'
+                ;')->execute();
+                $i = 0;
+                $string = '';
+            }
+        }
+        if (strlen($string) > 0) {
+            $string = substr($string, 0, -1);
+            $this->entityManager->getConnection()->prepare('
+                INSERT INTO reward_step (sequence_item_id,created_date,user_id,notified_date)
+                VALUES '.$string.'
+            ;')->execute();
+        }
+
+        $i = 0;
+        $string = '';
+        foreach ($rewards as $reward) {
+            $string .= $reward.',';
+            ++$i;
+            if ($i >= 5000) {
+                $string = substr($string, 0, -1);
+                $this->entityManager->getConnection()->prepare('
+                    INSERT INTO reward (badge_id,user_id,created_date,notified_date)
+                    VALUES '.$string.'
+                ;')->execute();
+                $i = 0;
+                $string = '';
+            }
+        }
+        if (strlen($string) > 0) {
+            $string = substr($string, 0, -1);
+            $this->entityManager->getConnection()->prepare('
+                INSERT INTO reward (badge_id,user_id,created_date,notified_date)
+                VALUES '.$string.'
+            ;')->execute();
+        }
+
         $this->logger->info('end retroactivelyRewardUsers | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
     }
 
@@ -414,18 +463,14 @@ class RetroactivelyRewardService
      * @param null|array $sequenceItems sequence_items earned
      * @param int        $userId        id of the concerned user
      */
-    private function persistRewardStep(?array $sequenceItems, int $userId)
+    private function persistRewardStep(?array $sequenceItems, int $userId, ?array $rewardSteps)
     {
-        $string = '';
         $date = (new \DateTime('now'))->format('Y-m-d');
         foreach ($sequenceItems as $sequenceItem) {
-            $string = $string.'('.$sequenceItem.",'".$date."',".$userId.",'".$date."'),";
+            $rewardSteps[] = '('.$sequenceItem.",'".$date."',".$userId.",'".$date."')";
         }
-        $string = substr($string, 0, -1);
-        $this->entityManager->getConnection()->prepare('
-            INSERT INTO reward_step (sequence_item_id,created_date,user_id,notified_date)
-            VALUE '.$string.'
-        ;')->execute();
+
+        return $rewardSteps;
     }
 
     /**
@@ -435,9 +480,8 @@ class RetroactivelyRewardService
      * @param int        $userId        id of the concerned user
      * @param null|array $badgeIds      already earned badges ids
      */
-    private function persistReward(?array $sequenceItems, int $userId, ?array $badgeIds)
+    private function persistReward(?array $sequenceItems, int $userId, ?array $badgeIds, ?array $rewards)
     {
-        $string = '';
         $date = (new \DateTime('now'))->format('Y-m-d');
         foreach (self::BADGES as $badgeId) {
             if (in_array($badgeId, $badgeIds)) {
@@ -448,61 +492,56 @@ class RetroactivelyRewardService
                 // badge 1 needed sequences 1,2,3,4 to be validated
                 case 1:
                    if (in_array(1, $sequenceItems) && in_array(2, $sequenceItems) && in_array(3, $sequenceItems) && in_array(4, $sequenceItems)) {
-                       $string = $string.'('.$badgeId.','.$userId.",'".$date."','".$date."'),";
+                       $rewards[] = '('.$badgeId.','.$userId.",'".$date."','".$date."')";
                    }
 
                     break;
                 // badge 2 needed sequence 5 to be validated
                 case 2:
                     if (in_array(5, $sequenceItems)) {
-                        $string = $string.'('.$badgeId.','.$userId.",'".$date."','".$date."'),";
+                        $rewards[] = '('.$badgeId.','.$userId.",'".$date."','".$date."')";
                     }
 
                     break;
                 // badge 3 needed sequences 6,7 to be validated
                 case 3:
                     if (in_array(6, $sequenceItems) && in_array(7, $sequenceItems)) {
-                        $string = $string.'('.$badgeId.','.$userId.",'".$date."','".$date."'),";
+                        $rewards[] = '('.$badgeId.','.$userId.",'".$date."','".$date."')";
                     }
 
                     break;
                 // badge 4 needed sequences 8,9,10 to be validated
                 case 4:
                     if (in_array(8, $sequenceItems) && in_array(9, $sequenceItems) && in_array(10, $sequenceItems)) {
-                        $string = $string.'('.$badgeId.','.$userId.",'".$date."','".$date."'),";
+                        $rewards[] = '('.$badgeId.','.$userId.",'".$date."','".$date."')";
                     }
 
                 break;
                 // badge 5 needed sequence 11 to be validated
                 case 5:
                     if (in_array(11, $sequenceItems)) {
-                        $string = $string.'('.$badgeId.','.$userId.",'".$date."','".$date."'),";
+                        $rewards[] = '('.$badgeId.','.$userId.",'".$date."','".$date."')";
                     }
 
                     break;
                 // badge 6 needed sequence 12 to be validated
                 case 6:
                     if (in_array(12, $sequenceItems)) {
-                        $string = $string.'('.$badgeId.','.$userId.",'".$date."','".$date."'),";
+                        $rewards[] = '('.$badgeId.','.$userId.",'".$date."','".$date."')";
                     }
 
                     break;
                 // badge 7 needed sequence 13 to be validated
                 case 7:
                     if (in_array(13, $sequenceItems)) {
-                        $string = $string.'('.$badgeId.','.$userId.",'".$date."','".$date."'),";
+                        $rewards[] = '('.$badgeId.','.$userId.",'".$date."','".$date."')";
                     }
 
                     break;
             }
         }
-        if (strlen($string) > 0) {
-            $string = substr($string, 0, -1);
-            $this->entityManager->getConnection()->prepare('
-                INSERT INTO reward (badge_id,user_id,created_date,notified_date)
-                VALUE '.$string.'
-            ;')->execute();
-        }
+
+        return $rewards;
     }
 
     private function hasEmailValidated($user, $sequenceItem)
