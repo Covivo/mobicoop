@@ -132,12 +132,10 @@ class NavitiaProvider implements ProviderInterface
         if (200 == $response->getCode()) {
             $data = json_decode($response->getValue(), true);
 
-            if (!isset($data['error'])) {
-                foreach ($data['journeys'] as $journey) {
-                    $this->collection[] = $this->deserialize($class, $journey);
-                }
+            foreach ($data['journeys'] as $journey) {
+                $this->collection[] = $this->deserialize($class, $journey);
             }
-        } elseif (510 == $response->getCode() || 404 == $response->getCode()) {
+        } elseif (510 == $response->getCode() || 404 == $response->getCode() || 500 == $response->getCode()) {
             // Out of bound
             //throw new DataProviderException(DataProviderException::OUT_OF_BOUND);
             // For out of bound we do nothing. We just treat it as a no found solution
