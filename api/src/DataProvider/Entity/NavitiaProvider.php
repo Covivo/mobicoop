@@ -154,7 +154,7 @@ class NavitiaProvider implements ProviderInterface
         if (isset($data['duration'])) {
             $journey->setDuration($data['duration']);
         }
-        if (isset($data['nbConnections'])) {
+        if (isset($data['nb_transfers'])) {
             $journey->setChangeNumber($data['nb_transfers']);
         }
 
