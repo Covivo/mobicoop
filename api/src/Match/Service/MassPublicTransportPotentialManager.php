@@ -19,25 +19,21 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Match\Service;
 
+use App\Geography\Service\GeoTools;
 use App\Match\Entity\Mass;
-use App\Match\Entity\MassJourney;
-use App\Match\Entity\MassMatrix;
 use App\Match\Entity\MassPerson;
+use App\Match\Entity\MassPTJourney;
+use App\Match\Event\MassPublicTransportSolutionsGatheredEvent;
 use App\Match\Exception\MassException;
+use App\Match\Repository\MassPTJourneyRepository;
 use App\Match\Repository\MassRepository;
 use App\PublicTransport\Entity\PTJourney;
 use App\PublicTransport\Service\PTDataProvider;
-use DateInterval;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Geography\Service\GeoTools;
-use App\Match\Entity\MassPTJourney;
-use App\Match\Event\MassPublicTransportSolutionsGatheredEvent;
-use App\Match\Repository\MassPTJourneyRepository;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -48,6 +44,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 class MassPublicTransportPotentialManager
 {
+    private const TIME_LIMIT = 3 * 60 * 60;
     private $massRepository;
     private $pTDataProvider;
     private $entityManager;
@@ -62,8 +59,6 @@ class MassPublicTransportPotentialManager
     private $exludedForPtMaxNbCarDuration;
 
     private $logger;
-
-    private const TIME_LIMIT = 3 * 60 * 60;
 
     public function __construct(
         MassRepository $massRepository,
@@ -90,15 +85,14 @@ class MassPublicTransportPotentialManager
     }
 
     /**
-     * Get the public transport potential of a Mass from a PT Api
+     * Get the public transport potential of a Mass from a PT Api.
      *
-     * @param integer $id   Id of the Mass
-     * @return Mass
+     * @param int $id Id of the Mass
      */
     public function getPublicTransportPotential(int $id): Mass
     {
         $this->logger->info('Mass PT Potential | Start '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
-        
+
         set_time_limit(self::TIME_LIMIT);
 
         $mass = $this->massRepository->find($id);
@@ -124,6 +118,7 @@ class MassPublicTransportPotentialManager
             // }
 
             $this->logger->info('Mass PT Potential | Get PT potential for person id = '.$person->getId().' '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
+            $this->logger->info('Mass PT Potential | From = '.$person->getPersonalAddress()->getLatitude().':'.$person->getPersonalAddress()->getLongitude().' To : '.$person->getWorkAddress()->getLatitude().':'.$person->getWorkAddress()->getLongitude().' '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
             /**
              * @var MassPerson $person
              */
@@ -133,7 +128,7 @@ class MassPublicTransportPotentialManager
                 $person->getPersonalAddress()->getLongitude(),
                 $person->getWorkAddress()->getLatitude(),
                 $person->getWorkAddress()->getLongitude(),
-                new \DateTime(Date("Y-m-d").' '.$person->getOutwardTime()->format("H:i:s"), new \DateTimeZone('Europe/Paris'))
+                new \DateTime(date('Y-m-d').' '.$person->getOutwardTime()->format('H:i:s'), new \DateTimeZone('Europe/Paris'))
             );
             // var_dump($results);die;
             foreach ($results as $ptjourney) {
@@ -162,17 +157,15 @@ class MassPublicTransportPotentialManager
         return $mass;
     }
 
-    
     /**
-     * Build the MassPTJourney from a PTJourney
+     * Build the MassPTJourney from a PTJourney.
      *
-     * @param PTJourney $ptjourney  The PTJourney
-     * @return MassPTJourney
+     * @param PTJourney $ptjourney The PTJourney
      */
     public function buildMassPTJourney(PTJourney $ptjourney): MassPTJourney
     {
         $massPTJourney = new MassPTJourney();
-        
+
         $massPTJourney->setDuration($ptjourney->getDuration());
 
         $massPTJourney->setDistance($ptjourney->getDistance());
@@ -184,13 +177,12 @@ class MassPublicTransportPotentialManager
         $durationFromHome = $legFromHome->getDuration();
         $massPTJourney->setDurationWalkFromHome($durationFromHome);
 
-
         // Distance from home
         $distanceFromHome = 4000 * $durationFromHome / 3600;
         $massPTJourney->setDistanceWalkFromHome($distanceFromHome);
 
         // Duration from Work
-        $legFromWork = $ptjourney->getPTLegs()[count($ptjourney->getPTLegs())-1];
+        $legFromWork = $ptjourney->getPTLegs()[count($ptjourney->getPTLegs()) - 1];
         $durationFromWork = $legFromWork->getDuration();
         $massPTJourney->setDurationWalkFromWork($durationFromWork);
 
@@ -203,36 +195,39 @@ class MassPublicTransportPotentialManager
 
         return $massPTJourney;
     }
-     
 
     /**
-     * Check if a MassPTJourney is valid for public transport potential
-     * @var MassPTJourney $pTPotentialJourney The potential journey to check
-     * @return boolean
+     * Check if a MassPTJourney is valid for public transport potential.
+     *
+     * @var MassPTJourney The potential journey to check
      */
     public function checkValidMassPTJourney(MassPTJourney $massPTJourney): bool
     {
         // Number of connections
         if ($massPTJourney->getChangeNumber() > $this->params['ptMaxConnections']) {
-            $this->exludedForPtMaxConnections++;
+            ++$this->exludedForPtMaxConnections;
+
             return false;
         }
-        
+
         // The maximum distance of walk from home to the last step
-        if ($massPTJourney->getDistanceWalkFromHome()> $this->params['ptMaxDistanceWalkFromHome']) {
-            $this->exludedForPtMaxDistanceWalkFromHome++;
+        if ($massPTJourney->getDistanceWalkFromHome() > $this->params['ptMaxDistanceWalkFromHome']) {
+            ++$this->exludedForPtMaxDistanceWalkFromHome;
+
             return false;
         }
 
         // The maximum distance of walk to work from the last step
-        if ($massPTJourney->getDistanceWalkFromWork()> $this->params['ptMaxDistanceWalkFromWork']) {
-            $this->exludedForPtMaxDistanceWalkFromWork++;
+        if ($massPTJourney->getDistanceWalkFromWork() > $this->params['ptMaxDistanceWalkFromWork']) {
+            ++$this->exludedForPtMaxDistanceWalkFromWork;
+
             return false;
         }
 
         // The maximum duration of PT journey must be < xN the duration in car
-        if ($massPTJourney->getDuration() > ($massPTJourney->getMassPerson()->getDuration()*$this->params['ptMaxNbCarDuration'])) {
-            $this->exludedForPtMaxNbCarDuration++;
+        if ($massPTJourney->getDuration() > ($massPTJourney->getMassPerson()->getDuration() * $this->params['ptMaxNbCarDuration'])) {
+            ++$this->exludedForPtMaxNbCarDuration;
+
             return false;
         }
 
@@ -240,15 +235,16 @@ class MassPublicTransportPotentialManager
     }
 
     /**
-     * Compute the public transport potential of a Mass from a PT Api
+     * Compute the public transport potential of a Mass from a PT Api.
      *
-     * @param integer $id   Id of the Mass
-     * @return Mass         The mass with the publicTransportPotential property filled
+     * @param int $id Id of the Mass
+     *
+     * @return Mass The mass with the publicTransportPotential property filled
      */
     public function computePublicTransportPotential(int $id): Mass
     {
         $mass = $this->massRepository->find($id);
-        
+
         if (is_null($mass->getPersons())) {
             throw new MassException(MassException::NO_MASSPERSON);
         }
@@ -257,52 +253,50 @@ class MassPublicTransportPotentialManager
         $persons = $mass->getPersons();
 
         $computedData = [
-            "totalPerson" => count($persons),
-            "totalPTSolutions" => 0,
-            "totalPTSolutionsExcluded" => [],
-            "totalPersonWithValidPTSolution" => 0,
-            "PTPotential" => 0,
-            "totalTravelDistance" => 0,
-            "totalPTDistance" => 0,
-            "totalTravelDistanceCO2" => 0,
-            "totalTravelDistancePerYear" => 0,
-            "totalTravelDistancePerYearCO2" => 0,
-            "totalTravelDuration" => 0,
-            "totalPTDuration" => 0,
-            "totalTravelDurationPerYear" => 0,
-            "savedDistanceByCar" => 0,
-            "savedDurationByCar" => 0,
-            "savedDistanceByCarPerYear" => 0,
-            "savedDurationByCarPerYear" => 0,
-            "savedCO2" => 0,
-            "savedCO2PerYear" => 0,
-            "humanReadableSavedDuration" => "",
-            "criteria" => [
-                "ptMaxConnections" => $this->params['ptMaxConnections'],
-                "ptMaxDistanceWalkFromHome" => $this->params['ptMaxDistanceWalkFromHome'],
-                "ptMaxDistanceWalkFromWork" => $this->params['ptMaxDistanceWalkFromWork'],
-                "ptMaxNbCarDuration" => $this->params['ptMaxNbCarDuration']
-            ]
+            'totalPerson' => count($persons),
+            'totalPTSolutions' => 0,
+            'totalPTSolutionsExcluded' => [],
+            'totalPersonWithValidPTSolution' => 0,
+            'PTPotential' => 0,
+            'totalTravelDistance' => 0,
+            'totalPTDistance' => 0,
+            'totalTravelDistanceCO2' => 0,
+            'totalTravelDistancePerYear' => 0,
+            'totalTravelDistancePerYearCO2' => 0,
+            'totalTravelDuration' => 0,
+            'totalPTDuration' => 0,
+            'totalTravelDurationPerYear' => 0,
+            'savedDistanceByCar' => 0,
+            'savedDurationByCar' => 0,
+            'savedDistanceByCarPerYear' => 0,
+            'savedDurationByCarPerYear' => 0,
+            'savedCO2' => 0,
+            'savedCO2PerYear' => 0,
+            'humanReadableSavedDuration' => '',
+            'criteria' => [
+                'ptMaxConnections' => $this->params['ptMaxConnections'],
+                'ptMaxDistanceWalkFromHome' => $this->params['ptMaxDistanceWalkFromHome'],
+                'ptMaxDistanceWalkFromWork' => $this->params['ptMaxDistanceWalkFromWork'],
+                'ptMaxNbCarDuration' => $this->params['ptMaxNbCarDuration'],
+            ],
         ];
 
         foreach ($persons as $person) {
-            
             // Original travel
-            if (count($person->getMassPTJourneys())>0) {
+            if (count($person->getMassPTJourneys()) > 0) {
                 $ptjourneys = $person->getMassPTJourneys();
                 $computedData['totalPTSolutions'] += count($person->getMassPTJourneys());
 
                 foreach ($ptjourneys as $ptjourney) {
                     if ($this->checkValidMassPTJourney($ptjourney)) {
-                        $computedData['totalPersonWithValidPTSolution']++;
+                        ++$computedData['totalPersonWithValidPTSolution'];
 
-                        $computedData["totalTravelDistance"] += $person->getDistance();
-                        $computedData["totalTravelDuration"] += $person->getDuration();
-
-                        
+                        $computedData['totalTravelDistance'] += $person->getDistance();
+                        $computedData['totalTravelDuration'] += $person->getDuration();
 
                         $computedData['totalPTDistance'] += $ptjourney->getDistance();
                         $computedData['totalPTDuration'] += $ptjourney->getDuration();
+
                         break;
                     }
                 }
@@ -310,7 +304,7 @@ class MassPublicTransportPotentialManager
         }
 
         // CO2 consumption of original travel
-        $computedData["totalTravelDistanceCO2"] = $this->geoTools->getCO2($computedData["totalTravelDistance"]);
+        $computedData['totalTravelDistanceCO2'] = $this->geoTools->getCO2($computedData['totalTravelDistance']);
 
         // PT Potential
         $computedData['PTPotential'] = $computedData['totalPersonWithValidPTSolution'] / $computedData['totalPerson'] * 100;
@@ -318,48 +312,46 @@ class MassPublicTransportPotentialManager
         // Co2 saved
         // It's a percentage of the total CO2 of a regular travel by car using the PT Potential.
         // We assume that PT travel consume 0 Co2
-        $computedData['savedCO2'] = $computedData["totalTravelDistanceCO2"] * $computedData['PTPotential'] / 100;
+        $computedData['savedCO2'] = $computedData['totalTravelDistanceCO2'] * $computedData['PTPotential'] / 100;
 
         // Distance and Duration saved
         // It's a percentage of the total distance and duration of a regular travel by car using the PT Potential.
         // It's the distance and duration that are not made by car.
-        $computedData['savedDurationByCar'] = $computedData["totalTravelDuration"] * $computedData['PTPotential'] / 100;
-        $computedData['savedDistanceByCar'] = $computedData["totalTravelDistance"] * $computedData['PTPotential'] / 100;
-        
-        // Per year
-        $computedData["totalTravelDistancePerYear"] = $computedData["totalTravelDistance"] * Mass::NB_WORKING_DAY;
-        $computedData["totalTravelDurationPerYear"] = $computedData["totalTravelDuration"] * Mass::NB_WORKING_DAY;
-        $computedData['savedCO2PerYear'] = $computedData["savedCO2"] * Mass::NB_WORKING_DAY;
-        $computedData["savedDurationByCarPerYear"] = $computedData["savedDurationByCar"] * Mass::NB_WORKING_DAY;
-        $computedData["savedDistanceByCarPerYear"] = $computedData["savedDistanceByCar"] * Mass::NB_WORKING_DAY;
+        $computedData['savedDurationByCar'] = $computedData['totalTravelDuration'] * $computedData['PTPotential'] / 100;
+        $computedData['savedDistanceByCar'] = $computedData['totalTravelDistance'] * $computedData['PTPotential'] / 100;
 
-        $computedData["totalTravelDistancePerYearCO2"] = $this->geoTools->getCO2($computedData["totalTravelDistancePerYear"]);
+        // Per year
+        $computedData['totalTravelDistancePerYear'] = $computedData['totalTravelDistance'] * Mass::NB_WORKING_DAY;
+        $computedData['totalTravelDurationPerYear'] = $computedData['totalTravelDuration'] * Mass::NB_WORKING_DAY;
+        $computedData['savedCO2PerYear'] = $computedData['savedCO2'] * Mass::NB_WORKING_DAY;
+        $computedData['savedDurationByCarPerYear'] = $computedData['savedDurationByCar'] * Mass::NB_WORKING_DAY;
+        $computedData['savedDistanceByCarPerYear'] = $computedData['savedDistanceByCar'] * Mass::NB_WORKING_DAY;
+
+        $computedData['totalTravelDistancePerYearCO2'] = $this->geoTools->getCO2($computedData['totalTravelDistancePerYear']);
 
         if ($this->params['roundTripCompute']) {
-            $computedData["totalTravelDistanceCO2"] *= 2;
+            $computedData['totalTravelDistanceCO2'] *= 2;
             $computedData['savedCO2'] *= 2;
             $computedData['savedDurationByCar'] *= 2;
             $computedData['savedDistanceByCar'] *= 2;
-            $computedData["totalTravelDistancePerYear"] *= 2;
-            $computedData["totalTravelDurationPerYear"] *= 2;
+            $computedData['totalTravelDistancePerYear'] *= 2;
+            $computedData['totalTravelDurationPerYear'] *= 2;
             $computedData['savedCO2PerYear'] *= 2;
-            $computedData["savedDurationByCarPerYear"] *= 2;
-            $computedData["savedDistanceByCarPerYear"] *= 2;
-        
+            $computedData['savedDurationByCarPerYear'] *= 2;
+            $computedData['savedDistanceByCarPerYear'] *= 2;
+
             $computedData['roundtripComputed'] = true;
         } else {
             $computedData['roundtripComputed'] = false;
         }
-        
-        $computedData["totalPTSolutionsExcluded"] = [
-            "forPtMaxConnections" => $this->exludedForPtMaxConnections,
-            "forPtMaxDistanceWalkFromHome" => $this->exludedForPtMaxDistanceWalkFromHome,
-            "forPtMaxDistanceWalkFromWork" => $this->exludedForPtMaxDistanceWalkFromWork,
-            "forPtMaxNbCarDuration" => $this->exludedForPtMaxNbCarDuration,
-            "total" => $this->exludedForPtMaxConnections + $this->exludedForPtMaxDistanceWalkFromHome + $this->exludedForPtMaxDistanceWalkFromWork + $this->exludedForPtMaxNbCarDuration
+
+        $computedData['totalPTSolutionsExcluded'] = [
+            'forPtMaxConnections' => $this->exludedForPtMaxConnections,
+            'forPtMaxDistanceWalkFromHome' => $this->exludedForPtMaxDistanceWalkFromHome,
+            'forPtMaxDistanceWalkFromWork' => $this->exludedForPtMaxDistanceWalkFromWork,
+            'forPtMaxNbCarDuration' => $this->exludedForPtMaxNbCarDuration,
+            'total' => $this->exludedForPtMaxConnections + $this->exludedForPtMaxDistanceWalkFromHome + $this->exludedForPtMaxDistanceWalkFromWork + $this->exludedForPtMaxNbCarDuration,
         ];
-
-
 
         $mass->setPublicTransportPotential($computedData);
 
