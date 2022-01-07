@@ -6,7 +6,9 @@
     "join": "Připojte se k události",
     "date": {
         "from": "Z",
-        "to": "Na"
+        "to": "Na",
+        "at": "à",
+        "the": " "
     },
     "hourMinute": "HH[h]mm",
     "shortCompleteDate": "DD/MM/RRRR"
