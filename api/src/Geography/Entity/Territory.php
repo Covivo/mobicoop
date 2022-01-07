@@ -19,21 +19,18 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Geography\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-use ApiPlatform\Core\Annotation\ApiResource;
-use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
-use App\Geography\Controller\TerritoryPost;
 use ApiPlatform\Core\Annotation\ApiFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Action\Entity\Log;
-use App\Solidary\Entity\Structure;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * A geographical territory, represented by a geojson multipolygon.
@@ -137,9 +134,8 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class Territory
 {
-
     /**
-     * @var int The id of this territory.
+     * @var int the id of this territory
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -149,16 +145,16 @@ class Territory
     private $id;
 
     /**
-     * @var string The name of the territory.
+     * @var string the name of the territory
      *
      * @ORM\Column(type="string", length=100)
-     * @Groups({"aRead","read","write"})
+     * @Groups({"aRead","read","readSolidary","write"})
      */
     private $name;
 
     /**
      * @var string The geoJson details of the territory.
-     * /!\ ORM is disabled for performance reasons but TerritoryEventListener avoid the field to be removed on further migrations !
+     *             /!\ ORM is disabled for performance reasons but TerritoryEventListener avoid the field to be removed on further migrations !
      *
      * ORM\Column(type="multipolygon")
      * @Groups({"read","write"})
@@ -166,8 +162,8 @@ class Territory
     private $geoJsonDetail;
 
     /**
-     * @var int|null The administrative level of this territory.
-     * Source for levels : https://en.wikipedia.org/wiki/List_of_administrative_divisions_by_country
+     * @var null|int The administrative level of this territory.
+     *               Source for levels : https://en.wikipedia.org/wiki/List_of_administrative_divisions_by_country
      *
      * @ORM\Column(type="integer", nullable=true))
      * @Groups({"read","write"})
@@ -175,7 +171,7 @@ class Territory
     private $adminLevel;
 
     /**
-     * @var float|null The minimal latitude of the territory.
+     * @var null|float the minimal latitude of the territory
      *
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
      * @Groups({"read","write"})
@@ -183,7 +179,7 @@ class Territory
     private $minLatitude;
 
     /**
-     * @var float|null The maximal latitude of the territory.
+     * @var null|float the maximal latitude of the territory
      *
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
      * @Groups({"read","write"})
@@ -191,7 +187,7 @@ class Territory
     private $maxLatitude;
 
     /**
-     * @var float|null The minimal longitude of the territory.
+     * @var null|float the minimal longitude of the territory
      *
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
      * @Groups({"read","write"})
@@ -199,7 +195,7 @@ class Territory
     private $minLongitude;
 
     /**
-     * @var float|null The maximal longitude of the territory.
+     * @var null|float the maximal longitude of the territory
      *
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
      * @Groups({"read","write"})
@@ -207,14 +203,14 @@ class Territory
     private $maxLongitude;
 
     /**
-     * @var ArrayCollection The logs linked with the Territory.
+     * @var ArrayCollection the logs linked with the Territory
      *
      * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="territory")
      */
     private $logs;
 
     /**
-     * @var \DateTimeInterface Creation date.
+     * @var \DateTimeInterface creation date
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read"})
@@ -222,7 +218,7 @@ class Territory
     private $createdDate;
 
     /**
-     * @var \DateTimeInterface Updated date.
+     * @var \DateTimeInterface updated date
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read"})
@@ -230,7 +226,7 @@ class Territory
     private $updatedDate;
 
     /**
-     * @var ArrayCollection|null The parent territories of this Territory
+     * @var null|ArrayCollection The parent territories of this Territory
      *
      * @ORM\ManyToMany(targetEntity="\App\Geography\Entity\Territory")
      * @ORM\JoinTable(name="territory_parent",
@@ -239,7 +235,6 @@ class Territory
      *      )
      */
     private $parents;
-
 
     public function getId(): ?int
     {
@@ -355,17 +350,17 @@ class Territory
     {
         return $this->logs->getValues();
     }
-    
+
     public function addLog(Log $log): self
     {
         if (!$this->logs->contains($log)) {
             $this->logs[] = $log;
             $log->setTerritory($this);
         }
-        
+
         return $this;
     }
-    
+
     public function removeLog(Log $log): self
     {
         if ($this->logs->contains($log)) {
@@ -375,7 +370,7 @@ class Territory
                 $log->setTerritory(null);
             }
         }
-        
+
         return $this;
     }
 
@@ -389,15 +384,16 @@ class Territory
         if (!$this->parents->contains($parent)) {
             $this->parents[] = $parent;
         }
-        
+
         return $this;
     }
-    
+
     public function removeParent(Territory $parent): self
     {
         if ($this->parents->contains($parent)) {
             $this->parents->removeElement($parent);
         }
+
         return $this;
     }
 
