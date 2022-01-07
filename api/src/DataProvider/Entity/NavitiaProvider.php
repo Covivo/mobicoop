@@ -129,7 +129,7 @@ class NavitiaProvider implements ProviderInterface
 
         $response = $dataProvider->getCollection($params, $header);
 
-        if (200 == $response->getCode()) {
+        if (200 == $response->getCode() && !isset($data['error'])) {
             $data = json_decode($response->getValue(), true);
 
             foreach ($data['journeys'] as $journey) {
