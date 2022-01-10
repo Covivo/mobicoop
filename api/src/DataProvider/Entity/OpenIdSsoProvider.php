@@ -27,6 +27,7 @@ use App\DataProvider\Service\DataProvider;
 use App\User\Entity\SsoUser;
 use App\User\Entity\User;
 use App\User\Interfaces\SsoProviderInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * OpenId SSO Provider.
@@ -40,7 +41,6 @@ class OpenIdSsoProvider implements SsoProviderInterface
     public const SSO_PROVIDER_PASSMOBILITE = 'PassMobilite';
 
     public const AUTHORIZATION_URL = 'Authorization_Url';
-    public const GRANT_TYPE = 'Grant_Type';
     public const TOKEN_URL = 'Token_Url';
     public const USERINFOS_URL = 'UserInfos_Url';
     public const LOGOUT_URL = 'Logout_Url';
@@ -48,16 +48,14 @@ class OpenIdSsoProvider implements SsoProviderInterface
     public const URLS = [
         self::SSO_PROVIDER_GLCONNECT => [
             self::AUTHORIZATION_URL => 'idp/oidc/authorize/?client_id={CLIENT_ID}&scope=openid profile email&response_type=code&state={SERVICE_NAME}&redirect_uri={REDIRECT_URI}',
-            self::GRANT_TYPE => 'authorization_code',
             self::TOKEN_URL => 'idp/oidc/token/',
             self::USERINFOS_URL => 'idp/oidc/user_info',
         ],
         self::SSO_PROVIDER_PASSMOBILITE => [
             self::AUTHORIZATION_URL => 'auth/realms/Passmobilite/protocol/openid-connect/auth/?client_id={CLIENT_ID}&scope=openid profile email&response_type=code&state={SERVICE_NAME}&redirect_uri={REDIRECT_URI}',
-            self::GRANT_TYPE => 'authorization_code',
-            self::TOKEN_URL => 'auth/realms/Partners/protocol/openid-connect/token/',
-            self::USERINFOS_URL => 'auth/realms/Partners/protocol/openid-connect/userinfo',
-            self::LOGOUT_URL => 'auth/realms/Partners/protocol/openid-connect/logout',
+            self::TOKEN_URL => 'auth/realms/Passmobilite/protocol/openid-connect/token/',
+            self::USERINFOS_URL => 'auth/realms/Passmobilite/protocol/openid-connect/userinfo',
+            self::LOGOUT_URL => 'auth/realms/Passmobilite/protocol/openid-connect/logout',
         ],
     ];
 
@@ -71,6 +69,7 @@ class OpenIdSsoProvider implements SsoProviderInterface
     private $autoCreateAccount;
 
     private $code;
+    private $logger;
 
     public function __construct(string $serviceName, string $baseSiteUri, string $baseUri, string $clientId, string $clientSecret, string $redirectUrl, bool $autoCreateAccount)
     {
@@ -91,6 +90,11 @@ class OpenIdSsoProvider implements SsoProviderInterface
     public function setCode(string $code)
     {
         $this->code = $code;
+    }
+
+    public function setLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
     }
 
     /**
@@ -136,7 +140,7 @@ class OpenIdSsoProvider implements SsoProviderInterface
         if (200 == $response->getCode()) {
             $data = json_decode($response->getValue(), true);
             $ssoUser = new SsoUser();
-            $ssoUser->setSub($this->autoCreateAccount ? $data['sub'] : $code);
+            $ssoUser->setSub((isset($data['sub'])) ? $data['sub'] : null);
             $ssoUser->setEmail((isset($data['email'])) ? $data['email'] : null);
             $ssoUser->setFirstname((isset($data['first_name'])) ? $data['first_name'] : ((isset($data['given_name'])) ? $data['given_name'] : null));
             $ssoUser->setLastname((isset($data['last_name'])) ? $data['last_name'] : ((isset($data['family_name'])) ? $data['family_name'] : null));
@@ -168,7 +172,7 @@ class OpenIdSsoProvider implements SsoProviderInterface
     private function getToken($code)
     {
         $body = [
-            'grant_type' => self::URLS[$this->serviceName][self::GRANT_TYPE],
+            'grant_type' => 'authorization_code',
             'code' => $code,
             'redirect_uri' => $this->redirectUri,
         ];

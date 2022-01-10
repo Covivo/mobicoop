@@ -93,8 +93,6 @@ class SsoManager
     {
         $provider = $this->getSsoProvider($serviceName, $baseSiteUri);
         $provider->setCode($code);
-        $this->logger->info('Try SSO Login serviceName : '.$serviceName);
-        $this->logger->info('Try SSO Login ssoId : '.$code);
 
         return $this->userManager->getUserFromSso($provider->getUserProfile($code));
     }
@@ -147,8 +145,10 @@ class SsoManager
         if (isset(self::SUPPORTED_PROVIDERS[$serviceName])) {
             $service = $this->ssoServices[$serviceName];
             $providerClass = self::SUPPORTED_PROVIDERS[$serviceName];
+            $provider = new $providerClass($serviceName, $baseSiteUri, $service['baseUri'], $service['clientId'], $service['clientSecret'], SsoConnection::RETURN_URL, $service['autoCreateAccount']);
+            $provider->setLogger($this->logger);
 
-            return new $providerClass($serviceName, $baseSiteUri, $service['baseUri'], $service['clientId'], $service['clientSecret'], SsoConnection::RETURN_URL, $service['autoCreateAccount']);
+            return $provider;
         }
 
         return null;

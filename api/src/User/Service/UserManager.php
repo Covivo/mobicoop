@@ -19,73 +19,72 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\Service;
 
+use App\Action\Event\ActionEvent;
+use App\Action\Repository\ActionRepository;
 use App\Auth\Entity\AuthItem;
 use App\Auth\Entity\UserAuthAssignment;
+use App\Auth\Repository\AuthItemRepository;
 use App\Carpool\Entity\Ask;
-use App\Event\Entity\Event;
+use App\Carpool\Entity\Criteria;
 use App\Carpool\Repository\AskHistoryRepository;
 use App\Carpool\Repository\AskRepository;
-use App\Carpool\Service\AskManager;
-use App\Communication\Entity\Medium;
-use App\Community\Repository\CommunityUserRepository;
-use App\Image\Service\ImageManager;
-use App\User\Entity\User;
-use App\User\Event\UserDeleteAccountWasDriverEvent;
-use App\User\Event\UserDeleteAccountWasPassengerEvent;
-use App\User\Event\UserPasswordChangeAskedEvent;
-use App\User\Event\UserPasswordChangedEvent;
-use App\User\Event\UserSendValidationEmailEvent;
-use Doctrine\ORM\EntityManagerInterface;
-use Psr\Log\LoggerInterface;
-use App\Auth\Repository\AuthItemRepository;
 use App\Carpool\Service\ProofManager;
+use App\Communication\Entity\Medium;
 use App\Communication\Entity\Message;
-use App\Community\Repository\CommunityRepository;
-use App\Community\Entity\CommunityUser;
-use App\User\Event\UserRegisteredEvent;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use App\Communication\Repository\MessageRepository;
 use App\Communication\Repository\NotificationRepository;
 use App\Communication\Service\InternalMessageManager;
+use App\Community\Entity\CommunityUser;
+use App\Community\Repository\CommunityRepository;
+use App\Community\Repository\CommunityUserRepository;
+use App\Event\Entity\Event;
+use App\Gamification\Service\GamificationManager;
 use App\Geography\Service\GeoTools;
+use App\I18n\Repository\LanguageRepository;
+use App\Image\Service\ImageManager;
+use App\Payment\Repository\PaymentProfileRepository;
+use App\Payment\Ressource\BankAccount;
 use App\Payment\Service\PaymentDataProvider;
 use App\Solidary\Entity\Operate;
+use App\Solidary\Entity\SolidaryAsk;
 use App\Solidary\Entity\SolidaryUser;
 use App\Solidary\Entity\Structure;
 use App\Solidary\Exception\SolidaryException;
+use App\Solidary\Repository\SolidaryAskHistoryRepository;
+use App\Solidary\Repository\SolidaryAskRepository;
 use App\Solidary\Repository\SolidaryRepository;
 use App\Solidary\Repository\StructureRepository;
-use App\User\Repository\UserNotificationRepository;
+use App\User\Entity\SsoUser;
+use App\User\Entity\User;
 use App\User\Entity\UserNotification;
 use App\User\Event\UserDelegateRegisteredEvent;
 use App\User\Event\UserDelegateRegisteredPasswordSendEvent;
+use App\User\Event\UserDeleteAccountWasDriverEvent;
+use App\User\Event\UserDeleteAccountWasPassengerEvent;
 use App\User\Event\UserGeneratePhoneTokenAskedEvent;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use App\User\Event\UserPasswordChangeAskedEvent;
+use App\User\Event\UserPasswordChangedEvent;
+use App\User\Event\UserRegisteredEvent;
+use App\User\Event\UserSendValidationEmailEvent;
 use App\User\Event\UserUpdatedSelfEvent;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use App\User\Repository\UserRepository;
-use Symfony\Component\Security\Core\Security;
-use Symfony\Contracts\Translation\TranslatorInterface;
 use App\User\Exception\UserDeleteException;
-use App\Payment\Ressource\BankAccount;
-use App\User\Entity\SsoUser;
 use App\User\Exception\UserNotFoundException;
+use App\User\Repository\UserNotificationRepository;
+use App\User\Repository\UserRepository;
+use App\User\Ressource\PhoneValidation;
 use App\User\Ressource\ProfileSummary;
 use App\User\Ressource\PublicProfile;
-use App\Payment\Repository\PaymentProfileRepository;
-use App\I18n\Repository\LanguageRepository;
-use App\Action\Event\ActionEvent;
-use App\Action\Repository\ActionRepository;
-use App\Carpool\Entity\Criteria;
-use App\Solidary\Repository\SolidaryAskHistoryRepository;
-use App\Solidary\Repository\SolidaryAskRepository;
-use App\Solidary\Entity\SolidaryAsk;
-use App\Gamification\Service\GamificationManager;
-use App\User\Ressource\PhoneValidation;
+use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\Security\Core\Security;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * User manager service.
@@ -141,11 +140,13 @@ class UserManager
     private $phoneValidationRegex;
 
     /**
-        * Constructor.
-        *
-        * @param EntityManagerInterface $entityManager
-        * @param LoggerInterface $logger
-        */
+     * Constructor.
+     *
+     * @param mixed $chat
+     * @param mixed $smoke
+     * @param mixed $music
+     * @param mixed $passwordTokenValidity
+     */
     public function __construct(
         EntityManagerInterface $entityManager,
         ImageManager $imageManager,
@@ -233,8 +234,7 @@ class UserManager
     /**
      * Get a user by its id.
      *
-     * @param integer $id
-     * @return User|null
+     * @return null|User
      */
     public function getUser(int $id)
     {
@@ -242,6 +242,7 @@ class UserManager
         if ($user) {
             $user = $this->getUnreadMessageNumber($user);
         }
+
         return $user;
     }
 
@@ -249,76 +250,81 @@ class UserManager
      * Get a user by its email.
      *
      * @param string $email The email to find
-     * @return User|null    The user found
+     *
+     * @return null|User The user found
      */
     public function getUserByEmail(string $email)
     {
-        return $this->userRepository->findOneBy(["email"=>$email]);
+        return $this->userRepository->findOneBy(['email' => $email]);
     }
 
-
     /**
-     * Check if an email is already used by someone; returns a code
+     * Check if an email is already used by someone; returns a code.
      *
      * @param string $email The email to check
-     * @return string       The code
+     *
+     * @return string The code
      */
     public function checkEmail(string $email)
     {
         //Email already exist in db
-        if ($this->userRepository->findOneBy(["email"=>$email])) {
+        if ($this->userRepository->findOneBy(['email' => $email])) {
             return 'email-exist';
         }
 
         foreach ($this->domains as $name => $domain) {
-            if (explode("@", $email)[1] == $domain) {
+            if (explode('@', $email)[1] == $domain) {
                 return 'authorized';
             }
         }
-        
-        return implode(", ", $this->domains);
+
+        return implode(', ', $this->domains);
     }
 
     /**
-     * Check if a password token and password token date exist
+     * Check if a password token and password token date exist.
      *
      * @param string $pwdToken The password token to check
-     * @return string|null The checked token or null if token invalid
+     *
+     * @return null|string The checked token or null if token invalid
      */
     public function checkPasswordToken(string $pwdToken)
     {
-        if ($user=$this->userRepository->findOneBy(["pwdToken"=>$pwdToken])) {
-            if ((time() - (int)$user->getPwdTokenDate()->getTimestamp()) > $this->passwordTokenValidity) {
+        if ($user = $this->userRepository->findOneBy(['pwdToken' => $pwdToken])) {
+            if ((time() - (int) $user->getPwdTokenDate()->getTimestamp()) > $this->passwordTokenValidity) {
                 return null;
             }
+
             return $pwdToken;
         }
+
         return null;
     }
 
     /**
      * Get a user by security token.
      *
-     * @return User|null
+     * @return null|User
      */
     public function getMe()
     {
-        $user = $this->userRepository->findOneBy(["email"=>$this->security->getUser()->getUsername()]);
-        $user = $this->getUnreadMessageNumber($user);
-        return $user;
+        $user = $this->userRepository->findOneBy(['email' => $this->security->getUser()->getUsername()]);
+
+        return $this->getUnreadMessageNumber($user);
     }
 
     /**
      * Registers a user.
      *
-     * @param User      $user               The user to register
-     * @param boolean   $encodePassword     True to encode password
-     * @return User     The user created
+     * @param User $user           The user to register
+     * @param bool $encodePassword True to encode password
+     *
+     * @return User The user created
      */
-    public function registerUser(User $user, bool $encodePassword=true)
+    public function registerUser(User $user, bool $encodePassword = true)
     {
         $user = $this->prepareUser($user, $encodePassword);
- 
+
         // persist the user
         $this->entityManager->persist($user);
         $this->entityManager->flush();
@@ -328,7 +334,6 @@ class UserManager
 
         // dispatch en event
         if (is_null($user->getUserDelegate())) {
-
             // registration by the user itself
             $event = new UserRegisteredEvent($user);
             $this->eventDispatcher->dispatch(UserRegisteredEvent::NAME, $event);
@@ -337,7 +342,7 @@ class UserManager
             $event = new UserDelegateRegisteredEvent($user);
             $this->eventDispatcher->dispatch(UserDelegateRegisteredEvent::NAME, $event);
             // send password ?
-            if ($user->getPasswordSendType() == User::PWD_SEND_TYPE_SMS) {
+            if (User::PWD_SEND_TYPE_SMS == $user->getPasswordSendType()) {
                 $event = new UserDelegateRegisteredPasswordSendEvent($user);
                 $this->eventDispatcher->dispatch(UserDelegateRegisteredPasswordSendEvent::NAME, $event);
             }
@@ -345,7 +350,7 @@ class UserManager
 
         //  we dispatch the gamification event associated
         if ($user->getHomeAddress()) {
-            $action = $this->actionRepository->findOneBy(['name'=>'user_home_address_updated']);
+            $action = $this->actionRepository->findOneBy(['name' => 'user_home_address_updated']);
             $actionEvent = new ActionEvent($action, $user);
             $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);
         }
@@ -363,17 +368,15 @@ class UserManager
         return $user;
     }
 
-
     /**
      * Set the default availabilities of a SolidaryUser
      * If no availabilitie already given, we take the structure default
-     * For the days check, if there is no indication, we consider the user available
+     * For the days check, if there is no indication, we consider the user available.
      *
-     * @param SolidaryUser $solidaryUser    The SolidaryUser
-     * @param Structure $structure          The Structure (if there is no Structure, we take the admin's one)
-     * @return SolidaryUser
+     * @param SolidaryUser $solidaryUser The SolidaryUser
+     * @param Structure    $structure    The Structure (if there is no Structure, we take the admin's one)
      */
-    public function setDefaultSolidaryUserAvailabilities(SolidaryUser $solidaryUser, Structure $structure=null): SolidaryUser
+    public function setDefaultSolidaryUserAvailabilities(SolidaryUser $solidaryUser, Structure $structure = null): SolidaryUser
     {
         $solidaryUserstructure = null;
         if (!is_null($structure)) {
@@ -382,6 +385,7 @@ class UserManager
             foreach ($solidaryUserstructures as $currentSolidaryUserstructure) {
                 if ($currentSolidaryUserstructure->getStructure()->getId() == $structure->getId()) {
                     $solidaryUserstructure = $currentSolidaryUserstructure;
+
                     break;
                 }
             }
@@ -398,100 +402,102 @@ class UserManager
         }
 
         // Times
-        if ($solidaryUser->getMMinTime()=="") {
+        if ('' == $solidaryUser->getMMinTime()) {
             $solidaryUser->setMMinTime($solidaryUserstructure->getStructure()->getMMinTime());
         }
-        if ($solidaryUser->getMMaxTime()=="") {
+        if ('' == $solidaryUser->getMMaxTime()) {
             $solidaryUser->setMMaxTime($solidaryUserstructure->getStructure()->getMMaxTime());
         }
-        if ($solidaryUser->getAMinTime()=="") {
+        if ('' == $solidaryUser->getAMinTime()) {
             $solidaryUser->setAMinTime($solidaryUserstructure->getStructure()->getAMinTime());
         }
-        if ($solidaryUser->getAMaxTime()=="") {
+        if ('' == $solidaryUser->getAMaxTime()) {
             $solidaryUser->setAMaxTime($solidaryUserstructure->getStructure()->getAMaxTime());
         }
-        if ($solidaryUser->getEMinTime()=="") {
+        if ('' == $solidaryUser->getEMinTime()) {
             $solidaryUser->setEMinTime($solidaryUserstructure->getStructure()->getEMinTime());
         }
-        if ($solidaryUser->getEMaxTime()=="") {
+        if ('' == $solidaryUser->getEMaxTime()) {
             $solidaryUser->setEMaxTime($solidaryUserstructure->getStructure()->getEMaxTime());
         }
 
         // Days
-        if ($solidaryUser->hasMMon()!==false) {
+        if (false !== $solidaryUser->hasMMon()) {
             $solidaryUser->setMMon(true);
         }
-        if ($solidaryUser->hasAMon()!==false) {
+        if (false !== $solidaryUser->hasAMon()) {
             $solidaryUser->setAMon(true);
         }
-        if ($solidaryUser->hasEMon()!==false) {
+        if (false !== $solidaryUser->hasEMon()) {
             $solidaryUser->setEMon(true);
         }
-        if ($solidaryUser->hasMTue()!==false) {
+        if (false !== $solidaryUser->hasMTue()) {
             $solidaryUser->setMTue(true);
         }
-        if ($solidaryUser->hasATue()!==false) {
+        if (false !== $solidaryUser->hasATue()) {
             $solidaryUser->setATue(true);
         }
-        if ($solidaryUser->hasETue()!==false) {
+        if (false !== $solidaryUser->hasETue()) {
             $solidaryUser->setETue(true);
         }
-        if ($solidaryUser->hasMWed()!==false) {
+        if (false !== $solidaryUser->hasMWed()) {
             $solidaryUser->setMWed(true);
         }
-        if ($solidaryUser->hasAWed()!==false) {
+        if (false !== $solidaryUser->hasAWed()) {
             $solidaryUser->setAWed(true);
         }
-        if ($solidaryUser->hasEWed()!==false) {
+        if (false !== $solidaryUser->hasEWed()) {
             $solidaryUser->setEWed(true);
         }
-        if ($solidaryUser->hasMThu()!==false) {
+        if (false !== $solidaryUser->hasMThu()) {
             $solidaryUser->setMThu(true);
         }
-        if ($solidaryUser->hasAThu()!==false) {
+        if (false !== $solidaryUser->hasAThu()) {
             $solidaryUser->setAThu(true);
         }
-        if ($solidaryUser->hasEThu()!==false) {
+        if (false !== $solidaryUser->hasEThu()) {
             $solidaryUser->setEThu(true);
         }
-        if ($solidaryUser->hasMFri()!==false) {
+        if (false !== $solidaryUser->hasMFri()) {
             $solidaryUser->setMFri(true);
         }
-        if ($solidaryUser->hasAFri()!==false) {
+        if (false !== $solidaryUser->hasAFri()) {
             $solidaryUser->setAFri(true);
         }
-        if ($solidaryUser->hasEFri()!==false) {
+        if (false !== $solidaryUser->hasEFri()) {
             $solidaryUser->setEFri(true);
         }
-        if ($solidaryUser->hasMSat()!==false) {
+        if (false !== $solidaryUser->hasMSat()) {
             $solidaryUser->setMSat(true);
         }
-        if ($solidaryUser->hasASat()!==false) {
+        if (false !== $solidaryUser->hasASat()) {
             $solidaryUser->setASat(true);
         }
-        if ($solidaryUser->hasESat()!==false) {
+        if (false !== $solidaryUser->hasESat()) {
             $solidaryUser->setESat(true);
         }
-        if ($solidaryUser->hasMSun()!==false) {
+        if (false !== $solidaryUser->hasMSun()) {
             $solidaryUser->setMSun(true);
         }
-        if ($solidaryUser->hasASun()!==false) {
+        if (false !== $solidaryUser->hasASun()) {
             $solidaryUser->setASun(true);
         }
-        if ($solidaryUser->hasESun()!==false) {
+        if (false !== $solidaryUser->hasESun()) {
             $solidaryUser->setESun(true);
         }
+
         return $solidaryUser;
     }
 
     /**
-     * Prepare a user for registration : set default values
+     * Prepare a user for registration : set default values.
      *
-     * @param User      $user               The user to prepare
-     * @param boolean   $encodePassword     True to encode password
-     * @return User     The prepared user
+     * @param User $user           The user to prepare
+     * @param bool $encodePassword True to encode password
+     *
+     * @return User The prepared user
      */
-    public function prepareUser(User $user, bool $encodePassword=false)
+    public function prepareUser(User $user, bool $encodePassword = false)
     {
         // We add the default roles we set in User Entity
         $authItem = $this->authItemRepository->find(User::ROLE_DEFAULT);
@@ -503,7 +509,7 @@ class UserManager
         if (is_null($user->getPassword())) {
             $user->setPassword($this->randomPassword());
         }
-        
+
         if ($encodePassword) {
             $user->setClearPassword($user->getPassword());
             $user->setPassword($this->encoder->encodePassword($user, $user->getPassword()));
@@ -528,11 +534,12 @@ class UserManager
     }
 
     /**
-     * Add an auth item to a user
+     * Add an auth item to a user.
      *
-     * @param User $user            The user
-     * @param integer $authItemId   The auth item id
-     * @return User                 The user with the new auth item added
+     * @param User $user       The user
+     * @param int  $authItemId The auth item id
+     *
+     * @return User The user with the new auth item added
      */
     public function addAuthItem(User $user, int $authItemId)
     {
@@ -541,14 +548,16 @@ class UserManager
             $userAuthAssignment->setAuthItem($authItem);
             $user->addUserAuthAssignment($userAuthAssignment);
         }
+
         return $user;
     }
 
     /**
      * Update a user.
      *
-     * @param User $user    The user to update
-     * @return User         The user updated
+     * @param User $user The user to update
+     *
+     * @return User The user updated
      */
     public function updateUser(User $user)
     {
@@ -598,7 +607,7 @@ class UserManager
                 // we add the new structures not present in the array of structures to the user
                 if (!in_array($solidaryStructure['id'], $structuresIds)) {
                     $structure = $this->structureRepository->find($solidaryStructure['id']);
-                    $operate = new Operate;
+                    $operate = new Operate();
                     $operate->setStructure($structure);
                     $operate->setCreatedDate(new \DateTime());
                     $operate->setUpdatedDate(new \DateTime());
@@ -611,7 +620,6 @@ class UserManager
             }
             // we execute only if we have updated the structures
             if ($updateStructures) {
-              
                 // we remove the structures not present in  the new array of structures
                 foreach ($user->getOperates() as $operate) {
                     if (!in_array($operate->getStructure()->getId(), $newStructuresIds)) {
@@ -626,15 +634,15 @@ class UserManager
         if ($user->getHomeAddress() && $user->getSolidaryUser() && $user->getSolidaryUser()->isVolunteer()) {
             $user->getSolidaryUser()->setAddress($user->getHomeAddress());
         }
-               
+
         // persist the user
         $this->entityManager->persist($user);
         $this->entityManager->flush();
-        
+
         // dispatch an event
         $event = new UserUpdatedSelfEvent($user);
         $this->eventDispatcher->dispatch(UserUpdatedSelfEvent::NAME, $event);
-        
+
         // if the email has changed we send a validation email
         if ($emailUpdate) {
             $event = new UserSendValidationEmailEvent($user);
@@ -643,48 +651,48 @@ class UserManager
 
         if ($phoneUpdate) {
             //  we dispatch the gamification event associated
-            $action = $this->actionRepository->findOneBy(['name'=>'user_phone_updated']);
+            $action = $this->actionRepository->findOneBy(['name' => 'user_phone_updated']);
             $actionEvent = new ActionEvent($action, $user);
             $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);
         }
 
         //  we dispatch the gamification event associated
         if ($user->getHomeAddress()) {
-            $action = $this->actionRepository->findOneBy(['name'=>'user_home_address_updated']);
+            $action = $this->actionRepository->findOneBy(['name' => 'user_home_address_updated']);
             $actionEvent = new ActionEvent($action, $user);
             $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);
         }
-       
+
         // return the user
         return $user;
     }
 
     /**
-     * Update the user infos on the payment provider platform
+     * Update the user infos on the payment provider platform.
      *
-     * @param User $user
      * @return User
      */
     public function updatePaymentProviderUser(User $user)
     {
         // We check if the user have a payment profile
         if ($this->paymentActive) {
-            $paymentProfiles = $this->paymentProfileRepository->findBy(['user'=>$user]);
-            if (is_null($paymentProfiles) || count($paymentProfiles)==0 || is_null($paymentProfiles[0]->getIdentifier())) {
+            $paymentProfiles = $this->paymentProfileRepository->findBy(['user' => $user]);
+            if (is_null($paymentProfiles) || 0 == count($paymentProfiles) || is_null($paymentProfiles[0]->getIdentifier())) {
                 return $user;
             }
             $this->paymentProvider->updateUser($user);
         }
+
         return $user;
     }
 
-
     /**
-     * Encode a password for a user
+     * Encode a password for a user.
      *
-     * @param User $user        The user
-     * @param string $password  The password to encode
-     * @return string           The encoded password
+     * @param User   $user     The user
+     * @param string $password The password to encode
+     *
+     * @return string The encoded password
      */
     public function encodePassword(User $user, string $password)
     {
@@ -692,11 +700,12 @@ class UserManager
     }
 
     /**
-     * Check a password for a user
+     * Check a password for a user.
      *
-     * @param User $user        The user
-     * @param string $password  The password to check
-     * @return bool             The password matches or not
+     * @param User   $user     The user
+     * @param string $password The password to check
+     *
+     * @return bool The password matches or not
      */
     public function isValidPassword(User $user, string $password)
     {
@@ -707,13 +716,14 @@ class UserManager
      * Treat a user : set default parameters.
      * Used for example for imports.
      *
-     * @param User $user    The user to treat
-     * @return User         The user treated
+     * @param User $user The user to treat
+     *
+     * @return User The user treated
      */
     public function treatUser(User $user)
     {
         // we treat the role
-        if (count($user->getUserAuthAssignments()) == 0) {
+        if (0 == count($user->getUserAuthAssignments())) {
             // default role : user registered full
             $authItem = $this->authItemRepository->find(AuthItem::ROLE_USER_REGISTERED_FULL);
             $userAuthAssignment = new UserAuthAssignment();
@@ -722,7 +732,7 @@ class UserManager
         }
 
         // we treat the notifications
-        if (count($user->getUserNotifications()) == 0) {
+        if (0 == count($user->getUserNotifications())) {
             // we have to create the default user notifications, we don't persist immediately
             $user = $this->createAlerts($user, false);
         }
@@ -736,16 +746,16 @@ class UserManager
      * Get the private communities of the given user.
      *
      * @param User $user
-     * @return array
      */
     public function getPrivateCommunities(?User $user): array
     {
         if (is_null($user)) {
             return [];
         }
-        if ($communities = $this->communityRepository->findByUser($user, true, null, [CommunityUser::STATUS_ACCEPTED_AS_MODERATOR,CommunityUser::STATUS_ACCEPTED_AS_MEMBER])) {
+        if ($communities = $this->communityRepository->findByUser($user, true, null, [CommunityUser::STATUS_ACCEPTED_AS_MODERATOR, CommunityUser::STATUS_ACCEPTED_AS_MEMBER])) {
             return $communities;
         }
+
         return [];
     }
 
@@ -754,23 +764,24 @@ class UserManager
         if ($threads = $this->messageRepository->findThreads($user)) {
             return $threads;
         }
+
         return [];
     }
 
-
     /**
-     * Build messages threads considering the type (Direct or Carpool)
-     * @param User $user    The User involved
-     * @param String $type  Type of messages Direct or Carpool
+     * Build messages threads considering the type (Direct or Carpool).
+     *
+     * @param User   $user The User involved
+     * @param string $type Type of messages Direct or Carpool
      */
-    public function getThreadsMessages(User $user, $type=Message::TYPE_DIRECT): array
+    public function getThreadsMessages(User $user, $type = Message::TYPE_DIRECT): array
     {
         $threads = [];
-        if ($type==Message::TYPE_DIRECT) {
+        if (Message::TYPE_DIRECT == $type) {
             $threads = $this->messageRepository->findThreadsDirectMessages($user);
-        } elseif ($type==Message::TYPE_CARPOOL) {
+        } elseif (Message::TYPE_CARPOOL == $type) {
             $threads = $this->askRepository->findAskByUser($user, Ask::ASKS_WITHOUT_SOLIDARY);
-        } elseif ($type==Message::TYPE_SOLIDARY) {
+        } elseif (Message::TYPE_SOLIDARY == $type) {
             $threads = $this->solidaryAskRepository->findSolidaryAsksForDriver($user);
         } else {
             return [];
@@ -778,36 +789,42 @@ class UserManager
 
         if (!$threads) {
             return [];
-        } else {
-            switch ($type) {
+        }
+
+        switch ($type) {
                 case Message::TYPE_DIRECT:
                     $messages = $this->parseThreadsDirectMessages($user, $threads);
+
                 break;
+
                 case Message::TYPE_SOLIDARY:
                     $messages = $this->parseThreadsSolidaryMessages($user, $threads);
+
                     break;
+
                 case Message::TYPE_CARPOOL:
                     $messages = $this->parseThreadsCarpoolMessages($user, $threads);
+
                     break;
             }
-            return $messages;
-        }
+
+        return $messages;
     }
 
     /**
-     * Parse the given threads into direct messages
+     * Parse the given threads into direct messages.
      *
-     * @param User $user        The mailbox owner
-     * @param array $threads    The threads (an array of Message objects)
-     * @return array            The parsed messages
+     * @param User  $user    The mailbox owner
+     * @param array $threads The threads (an array of Message objects)
+     *
+     * @return array The parsed messages
      */
     public function parseThreadsDirectMessages(User $user, array $threads)
     {
         // $threads is a Message[]
-        
+
         $messages = [];
         foreach ($threads as $message) {
-            
             // To Do : We support only one recipient at this time...
             $currentMessage = [
                 'idMessage' => $message->getId(),
@@ -815,9 +832,9 @@ class UserManager
                 'avatarsRecipient' => ($user->getId() === $message->getUser('user')->getId()) ? $message->getRecipients()[0]->getUser('user')->getAvatars()[0] : $message->getUser('user')->getAvatars()[0],
                 'givenName' => ($user->getId() === $message->getUser('user')->getId()) ? $message->getRecipients()[0]->getUser('user')->getGivenName() : $message->getUser('user')->getGivenName(),
                 'shortFamilyName' => ($user->getId() === $message->getUser('user')->getId()) ? $message->getRecipients()[0]->getUser('user')->getShortFamilyName() : $message->getUser('user')->getShortFamilyName(),
-                'date' => ($message->getLastMessage()===null) ? $message->getCreatedDate() : $message->getLastMessage()->getCreatedDate(),
+                'date' => (null === $message->getLastMessage()) ? $message->getCreatedDate() : $message->getLastMessage()->getCreatedDate(),
                 'selected' => false,
-                'unreadMessages' => 0
+                'unreadMessages' => 0,
             ];
 
             // For each message, we check the all chain to determined the unread messages
@@ -825,20 +842,21 @@ class UserManager
             foreach ($completeThreadMessages as $message) {
                 foreach ($message->getRecipients() as $recipient) {
                     if ($user->getId() == $recipient->getUser()->getId() && is_null($recipient->getReadDate())) {
-                        $currentMessage['unreadMessages']++;
+                        ++$currentMessage['unreadMessages'];
                     }
                 }
             }
-            
+
             // We check if the user and it's carpooler are involved in a block
             $user2 = ($user->getId() === $message->getRecipients()[0]->getUser()->getId() ? $message->getUser() : $message->getRecipients()[0]->getUser());
             $blocks = $this->blockManager->getInvolvedInABlock($user, $user2);
             $currentMessage['blockerId'] = null;
-            if (is_array($blocks) && count($blocks)>0) {
+            if (is_array($blocks) && count($blocks) > 0) {
                 foreach ($blocks as $block) {
                     if ($block->getUser()->getId() == $user->getId()) {
                         // The blocker is the current User
                         $currentMessage['blockerId'] = $user->getId();
+
                         break;
                     }
                     $currentMessage['blockerId'] = $user2->getId();
@@ -847,27 +865,18 @@ class UserManager
             $messages[] = $currentMessage;
         }
         // Sort with the last message received first
-        usort($messages, array($this, 'sortThread'));
+        usort($messages, [$this, 'sortThread']);
+
         return $messages;
     }
 
     /**
-     * Sort function
-     */
-    private static function sortThread($a, $b)
-    {
-        if ($a['date'] == $b['date']) {
-            return 0;
-        }
-        return ($a['date'] < $b['date']) ? 1 : -1;
-    }
-
-    /**
-     * Parse the given threads into solidary messages
+     * Parse the given threads into solidary messages.
      *
-     * @param User $user        The mailbox owner
-     * @param array $threads    The threads (an array of SolidaryAsk objects)
-     * @return array            The parsed messages
+     * @param User  $user    The mailbox owner
+     * @param array $threads The threads (an array of SolidaryAsk objects)
+     *
+     * @return array The parsed messages
      */
     public function parseThreadsSolidaryMessages(User $user, array $threads)
     {
@@ -902,21 +911,21 @@ class UserManager
                 $recipient = $user->getId() === $driver->getId() ? $beneficiary : $driver;
 
                 $currentThread = [
-                    'idSolidaryAskHistory'=>$lastSolidaryAskHistory->getId(),
-                    'idSolidaryAsk'=>$solidaryAsk->getId(),
+                    'idSolidaryAskHistory' => $lastSolidaryAskHistory->getId(),
+                    'idSolidaryAsk' => $solidaryAsk->getId(),
                     'idRecipient' => $recipient->getId(),
                     'avatarsRecipient' => $recipient->getAvatars()[0],
                     'givenName' => $recipient->getGivenName(),
                     'shortFamilyName' => $recipient->getShortFamilyName(),
-                    'date' => ($message===null) ? $lastSolidaryAskHistory->getCreatedDate() : $message->getCreatedDate(),
+                    'date' => (null === $message) ? $lastSolidaryAskHistory->getCreatedDate() : $message->getCreatedDate(),
                     'selected' => false,
-                    'unreadMessages' => 0
+                    'unreadMessages' => 0,
                 ];
 
                 // The message id : the one linked to the last solidary ask history or we try to find the last existing one
                 $idMessage = -99;
-                if ($message !== null) {
-                    ($message->getMessage()!==null) ? $idMessage = $message->getMessage()->getId() :  $idMessage = $message->getId();
+                if (null !== $message) {
+                    (null !== $message->getMessage()) ? $idMessage = $message->getMessage()->getId() : $idMessage = $message->getId();
                 } else {
                     if ($formerSolidaryAskHistory = $this->solidaryAskHistoryRepository->findLastSolidaryAskHistoryWithMessage($solidaryAsk)) {
                         if ($formerSolidaryAskHistory->getMessage()->getMessage()) {
@@ -928,36 +937,36 @@ class UserManager
                 }
 
                 // For each message, we check the all chain to determined the unread messages
-                if ($idMessage !== -99) {
+                if (-99 !== $idMessage) {
                     $completeThreadMessages = $this->internalMessageManager->getCompleteThread($idMessage);
                     foreach ($completeThreadMessages as $currentMessage) {
                         foreach ($currentMessage->getRecipients() as $recipient) {
                             if ($user->getId() == $recipient->getUser()->getId() && is_null($recipient->getReadDate())) {
-                                $currentThread['unreadMessages']++;
+                                ++$currentThread['unreadMessages'];
                             }
                         }
                     }
                 }
-                
+
                 $currentThread['idMessage'] = $idMessage;
                 // for now, the criteria is the one of the beneficiary proposal
                 $criteria = $solidaryAsk->getSolidarySolution()->getSolidaryMatching()->getSolidary()->getProposal()->getCriteria();
-                $currentThread["carpoolInfos"] = [
-                    "solidaryAskHistoryId" => $lastSolidaryAskHistory->getId(),
-                    "origin" => $waypoints[0]->getAddress()->getAddressLocality(),
-                    "destination" => $waypoints[count($waypoints)-1]->getAddress()->getAddressLocality(),
-                    "criteria" => [
-                        "frequency" => $criteria->getFrequency(),
-                        "fromDate" => $criteria->getFromDate(),
-                        "fromTime" => $criteria->getFromTime(),
-                        "monCheck" => $criteria->isMonCheck(),
-                        "tueCheck" => $criteria->isTueCheck(),
-                        "wedCheck" => $criteria->isWedCheck(),
-                        "thuCheck" => $criteria->isThuCheck(),
-                        "friCheck" => $criteria->isFriCheck(),
-                        "satCheck" => $criteria->isSatCheck(),
-                        "sunCheck" => $criteria->isSunCheck()
-                    ]
+                $currentThread['carpoolInfos'] = [
+                    'solidaryAskHistoryId' => $lastSolidaryAskHistory->getId(),
+                    'origin' => $waypoints[0]->getAddress()->getAddressLocality(),
+                    'destination' => $waypoints[count($waypoints) - 1]->getAddress()->getAddressLocality(),
+                    'criteria' => [
+                        'frequency' => $criteria->getFrequency(),
+                        'fromDate' => $criteria->getFromDate(),
+                        'fromTime' => $criteria->getFromTime(),
+                        'monCheck' => $criteria->isMonCheck(),
+                        'tueCheck' => $criteria->isTueCheck(),
+                        'wedCheck' => $criteria->isWedCheck(),
+                        'thuCheck' => $criteria->isThuCheck(),
+                        'friCheck' => $criteria->isFriCheck(),
+                        'satCheck' => $criteria->isSatCheck(),
+                        'sunCheck' => $criteria->isSunCheck(),
+                    ],
                 ];
 
                 // We check if the user and it's carpooler are involved in a block
@@ -980,16 +989,18 @@ class UserManager
         }
 
         // Sort with the last message received first
-        usort($messages, array($this, 'sortThread'));
+        usort($messages, [$this, 'sortThread']);
+
         return $messages;
     }
 
     /**
-     * Parse the given threads into carpool messages
+     * Parse the given threads into carpool messages.
      *
-     * @param User $user        The mailbox owner
-     * @param array $threads    The threads (an array of Ask objects)
-     * @return array            The parsed messages
+     * @param User  $user    The mailbox owner
+     * @param array $threads The threads (an array of Ask objects)
+     *
+     * @return array The parsed messages
      */
     public function parseThreadsCarpoolMessages(User $user, array $threads)
     {
@@ -1000,27 +1011,27 @@ class UserManager
 
             // Only the Ask with at least one AskHistory
             // Only one-way or outward of a round trip.
-            if (count($askHistories)>0 && ($ask->getType()==1 || $ask->getType()==2)) {
+            if (count($askHistories) > 0 && (1 == $ask->getType() || 2 == $ask->getType())) {
                 $askHistory = $askHistories[0];
 
                 $message = $askHistory->getMessage();
 
                 $currentThread = [
-                    'idAskHistory'=>$askHistory->getId(),
-                    'idAsk'=>$ask->getId(),
+                    'idAskHistory' => $askHistory->getId(),
+                    'idAsk' => $ask->getId(),
                     'idRecipient' => ($user->getId() === $ask->getUser('user')->getId()) ? $ask->getUserRelated()->getId() : $ask->getUser('user')->getId(),
                     'avatarsRecipient' => ($user->getId() === $ask->getUser('user')->getId()) ? $ask->getUserRelated()->getAvatars()[0] : $ask->getUser('user')->getAvatars()[0],
                     'givenName' => ($user->getId() === $ask->getUser('user')->getId()) ? $ask->getUserRelated()->getGivenName() : $ask->getUser('user')->getGivenName(),
                     'shortFamilyName' => ($user->getId() === $ask->getUser('user')->getId()) ? $ask->getUserRelated()->getShortFamilyName() : $ask->getUser('user')->getShortFamilyName(),
-                    'date' => ($message===null) ? $askHistory->getCreatedDate() : $message->getCreatedDate(),
+                    'date' => (null === $message) ? $askHistory->getCreatedDate() : $message->getCreatedDate(),
                     'selected' => false,
-                    'unreadMessages' => 0
+                    'unreadMessages' => 0,
                 ];
 
                 // The message id : the one linked to the current askHistory or we try to find the last existing one
                 $idMessage = -99;
-                if ($message !== null) {
-                    ($message->getMessage()!==null) ? $idMessage = $message->getMessage()->getId() :  $idMessage = $message->getId();
+                if (null !== $message) {
+                    (null !== $message->getMessage()) ? $idMessage = $message->getMessage()->getId() : $idMessage = $message->getId();
                 } else {
                     if ($formerAskHistory = $this->askHistoryRepository->findLastAskHistoryWithMessage($ask)) {
                         if ($formerAskHistory->getMessage()->getMessage()) {
@@ -1032,60 +1043,61 @@ class UserManager
                 }
 
                 // For each message, we check the all chain to determined the unread messages
-                if ($idMessage !== -99) {
+                if (-99 !== $idMessage) {
                     $completeThreadMessages = $this->internalMessageManager->getCompleteThread($idMessage);
                     foreach ($completeThreadMessages as $currentMessage) {
                         foreach ($currentMessage->getRecipients() as $recipient) {
                             if ($user->getId() == $recipient->getUser()->getId() && is_null($recipient->getReadDate())) {
-                                $currentThread['unreadMessages']++;
+                                ++$currentThread['unreadMessages'];
                             }
                         }
                     }
                 }
-                
+
                 $currentThread['idMessage'] = $idMessage;
                 $waypoints = $ask->getMatching()->getWaypoints();
                 $criteria = $ask->getCriteria();
-                $currentThread["carpoolInfos"] = [
-                    "askHistoryId" => $askHistory->getId(),
-                    "origin" => $waypoints[0]->getAddress()->getAddressLocality(),
-                    "destination" => $waypoints[count($waypoints)-1]->getAddress()->getAddressLocality(),
-                    "criteria" => [
-                        "frequency" => $criteria->getFrequency(),
-                        "fromDate" => $criteria->getFromDate(),
-                        "fromTime" => $criteria->getFromTime(),
-                        "monCheck" => $criteria->isMonCheck(),
-                        "tueCheck" => $criteria->isTueCheck(),
-                        "wedCheck" => $criteria->isWedCheck(),
-                        "thuCheck" => $criteria->isThuCheck(),
-                        "friCheck" => $criteria->isFriCheck(),
-                        "satCheck" => $criteria->isSatCheck(),
-                        "sunCheck" => $criteria->isSunCheck()
-                    ]
+                $currentThread['carpoolInfos'] = [
+                    'askHistoryId' => $askHistory->getId(),
+                    'origin' => $waypoints[0]->getAddress()->getAddressLocality(),
+                    'destination' => $waypoints[count($waypoints) - 1]->getAddress()->getAddressLocality(),
+                    'criteria' => [
+                        'frequency' => $criteria->getFrequency(),
+                        'fromDate' => $criteria->getFromDate(),
+                        'fromTime' => $criteria->getFromTime(),
+                        'monCheck' => $criteria->isMonCheck(),
+                        'tueCheck' => $criteria->isTueCheck(),
+                        'wedCheck' => $criteria->isWedCheck(),
+                        'thuCheck' => $criteria->isThuCheck(),
+                        'friCheck' => $criteria->isFriCheck(),
+                        'satCheck' => $criteria->isSatCheck(),
+                        'sunCheck' => $criteria->isSunCheck(),
+                    ],
                 ];
 
                 // We check if the user and it's carpooler are involved in a block
                 $user2 = ($user->getId() === $ask->getUserRelated()->getId() ? $ask->getUser() : $ask->getUserRelated());
                 $blocks = $this->blockManager->getInvolvedInABlock($user, $user2);
                 $currentThread['blockerId'] = null;
-                if (is_array($blocks) && count($blocks)>0) {
+                if (is_array($blocks) && count($blocks) > 0) {
                     foreach ($blocks as $block) {
                         if ($block->getUser()->getId() == $user->getId()) {
                             // The blocker is the current User
                             $currentThread['blockerId'] = $user->getId();
+
                             break;
                         }
                         $currentThread['blockerId'] = $user2->getId();
                     }
                 }
 
-
                 $messages[] = $currentThread;
             }
         }
 
         // Sort with the last message received first
-        usort($messages, array($this, 'sortThread'));
+        usort($messages, [$this, 'sortThread']);
+
         return $messages;
     }
 
@@ -1105,17 +1117,18 @@ class UserManager
     }
 
     /**
-       * User password change request.
-       *
-       * @param User $user
-       * @return Response
-       */
+     * User password change request.
+     *
+     * @param User $user
+     *
+     * @return Response
+     */
     public function updateUserPasswordRequest(User $data)
     {
         // We get the way the password update was asked (app, android, ios)
-        $mobileRegistration=$data->getMobileRegistration();
+        $mobileRegistration = $data->getMobileRegistration();
         // Get the user
-        $user = $this->userRepository->findOneBy(["email"=>$data->getEmail()]);
+        $user = $this->userRepository->findOneBy(['email' => $data->getEmail()]);
         if (!is_null($user)) {
             // Create a password token
             $user->setPwdToken($this->createToken($user));
@@ -1127,20 +1140,23 @@ class UserManager
             $user->setMobileRegistration($mobileRegistration);
             $event = new UserPasswordChangeAskedEvent($user);
             $this->eventDispatcher->dispatch($event, UserPasswordChangeAskedEvent::NAME);
+
             return $user;
         }
+
         return new JsonResponse();
     }
 
     /**
-       * User password change confirmation.
-       *
-       * @param User $user
-       * @return Response
-       */
+     * User password change confirmation.
+     *
+     * @param User $user
+     *
+     * @return Response
+     */
     public function updateUserPassword(User $data)
     {
-        $user = $this->userRepository->findOneBy(["pwdToken"=>$data->getPwdToken()]);
+        $user = $this->userRepository->findOneBy(['pwdToken' => $data->getPwdToken()]);
         if (!is_null($user)) {
             $user->setPassword($this->encoder->encodePassword($user, $data->getPassword()));
             // we reset tokens
@@ -1155,36 +1171,37 @@ class UserManager
             // return the user
             return $user;
         }
+
         return new JsonResponse();
     }
 
     /**
-     * Get user alert preferences
+     * Get user alert preferences.
      *
-     * @param User $user
      * @return User
      */
     public function getAlerts(User $user)
     {
         // if no alerts are detected we create them
-        if (count($user->getUserNotifications()) == 0) {
+        if (0 == count($user->getUserNotifications())) {
             $user = $this->createAlerts($user);
         }
         $alerts = [];
         $actions = [];
         // first pass to get the actions
         foreach ($user->getUserNotifications() as $userNotification) {
-            if ($userNotification->getNotification()->getMedium()->getId() == Medium::MEDIUM_SMS && is_null($user->getPhoneValidatedDate())) {
+            if (Medium::MEDIUM_SMS == $userNotification->getNotification()->getMedium()->getId() && is_null($user->getPhoneValidatedDate())) {
                 // check telephone for sms
                 continue;
-            } elseif ($userNotification->getNotification()->getMedium()->getId() == Medium::MEDIUM_PUSH && !$user->hasMobile()) {
+            }
+            if (Medium::MEDIUM_PUSH == $userNotification->getNotification()->getMedium()->getId() && !$user->hasMobile()) {
                 // check apps for push
                 continue;
             }
             if (!in_array($userNotification->getNotification()->getAction()->getName(), $alerts)) {
                 $alerts[$userNotification->getNotification()->getAction()->getId()] = [
                     'action' => $userNotification->getNotification()->getAction()->getName(),
-                    'alert' => []
+                    'alert' => [],
                 ];
                 $actions[$userNotification->getNotification()->getAction()->getId()] = $userNotification->getNotification()->getAction()->getId();
             }
@@ -1193,20 +1210,21 @@ class UserManager
         // second pass to get the media
         $media = [];
         foreach ($user->getUserNotifications() as $userNotification) {
-            if ($userNotification->getNotification()->getMedium()->getId() == Medium::MEDIUM_SMS && is_null($user->getPhoneValidatedDate())) {
+            if (Medium::MEDIUM_SMS == $userNotification->getNotification()->getMedium()->getId() && is_null($user->getPhoneValidatedDate())) {
                 // check telephone for sms
                 continue;
-            } elseif ($userNotification->getNotification()->getMedium()->getId() == Medium::MEDIUM_PUSH && !$user->hasMobile()) {
+            }
+            if (Medium::MEDIUM_PUSH == $userNotification->getNotification()->getMedium()->getId() && !$user->hasMobile()) {
                 // check apps for push
                 continue;
             }
             $media[$userNotification->getNotification()->getAction()->getId()][$userNotification->getNotification()->getPosition()] = [
                 'medium' => $userNotification->getNotification()->getMedium()->getId(),
                 'id' => $userNotification->getId(),
-                'active' => $userNotification->isActive()
+                'active' => $userNotification->isActive(),
             ];
         }
-       
+
         // third pass to order media
         $mediaOrdered = [];
         foreach ($media as $actionID => $unorderedMedia) {
@@ -1219,27 +1237,30 @@ class UserManager
             $alerts[$actions[$actionID]]['alert'] = $orderedMedia;
         }
         $user->setAlerts($alerts);
+
         return $user;
     }
 
     /**
-     * Create user alerts
+     * Create user alerts.
      *
-     * @param User $user        The user to treat
-     * @param boolean $perist   Persist immediately (false for mass import)
+     * @param User  $user    The user to treat
+     * @param bool  $perist  Persist immediately (false for mass import)
+     * @param mixed $persist
+     *
      * @return User
      */
-    public function createAlerts(User $user, $persist=true)
+    public function createAlerts(User $user, $persist = true)
     {
         $notifications = $this->notificationRepository->findUserEditable();
         foreach ($notifications as $notification) {
             $userNotification = new UserNotification();
             $userNotification->setNotification($notification);
             $userNotification->setActive($notification->isUserActiveDefault());
-            if ($userNotification->getNotification()->getMedium()->getId() == Medium::MEDIUM_SMS && is_null($user->getPhoneValidatedDate())) {
+            if (Medium::MEDIUM_SMS == $userNotification->getNotification()->getMedium()->getId() && is_null($user->getPhoneValidatedDate())) {
                 // check telephone for sms
                 $userNotification->setActive(false);
-            } elseif ($userNotification->getNotification()->getMedium()->getId() == Medium::MEDIUM_PUSH && !$user->hasMobile()) {
+            } elseif (Medium::MEDIUM_PUSH == $userNotification->getNotification()->getMedium()->getId() && !$user->hasMobile()) {
                 // check apps for push
                 $userNotification->setActive(false);
             }
@@ -1249,14 +1270,12 @@ class UserManager
         if ($persist) {
             $this->entityManager->flush();
         }
+
         return $user;
     }
 
     /**
-     * Update user alerts
-     *
-     * @param User $user
-     * @return void
+     * Update user alerts.
      */
     public function updateAlerts(User $user)
     {
@@ -1269,20 +1288,18 @@ class UserManager
             }
             $this->entityManager->flush();
         }
+
         return $this->getAlerts($user);
     }
 
     /**
-     * set sms notification to active when phone is validated
-     *
-     * @param User $user
-     * @return void
+     * set sms notification to active when phone is validated.
      */
     public function activateSmsNotification(User $user)
     {
         $userNotifications = $this->userNotificationRepository->findUserNotifications($user->getId());
         foreach ($userNotifications as $userNotification) {
-            if ($userNotification->getNotification()->getMedium()->getId() == Medium::MEDIUM_SMS) {
+            if (Medium::MEDIUM_SMS == $userNotification->getNotification()->getMedium()->getId()) {
                 // check telephone for sms
                 $userNotification->setActive(true);
                 $userNotification->setUser($user);
@@ -1290,39 +1307,35 @@ class UserManager
             }
         }
         $this->entityManager->flush();
+
         return $user;
     }
 
     /**
-    * set sms notification to non active when phone change or is removed
-    *
-    * @param User $user
-    * @return void
-    */
+     * set sms notification to non active when phone change or is removed.
+     */
     public function deActivateSmsNotification(User $user)
     {
         $userNotifications = $this->userNotificationRepository->findUserNotifications($user->getId());
         foreach ($userNotifications as $userNotification) {
-            if ($userNotification->getNotification()->getMedium()->getId() == Medium::MEDIUM_SMS) {
+            if (Medium::MEDIUM_SMS == $userNotification->getNotification()->getMedium()->getId()) {
                 $userNotification->setActive(false);
                 $userNotification->setUser($user);
                 $this->entityManager->persist($userNotification);
             }
         }
         $this->entityManager->flush();
+
         return $user;
     }
 
     /**
-     * Generate a phone token
-     *
-     * @param User $user
-     * @return void
+     * Generate a phone token.
      */
     public function generatePhoneToken(User $user)
     {
         // Generate the token
-        $phoneToken= strval(mt_rand(1000, 9999));
+        $phoneToken = strval(mt_rand(1000, 9999));
         $user->setPhoneToken($phoneToken);
         // dispatch the event
         $event = new UserGeneratePhoneTokenAskedEvent($user);
@@ -1330,13 +1343,12 @@ class UserManager
         // Persist user
         $this->entityManager->persist($user);
         $this->entityManager->flush();
+
         return $user;
     }
 
-
     /**
-     * Delete the user
-     *
+     * Delete the user.
      */
     public function deleteUser(User $user)
     {
@@ -1344,22 +1356,21 @@ class UserManager
         foreach ($user->getEvents() as $event) {
             if (($event->getUser()->getId() == $user->getId()) && ($event->getToDate() >= new \DateTime())) {
                 // to do throw exception
-                throw new UserDeleteException("An Event of the user is still runing");
+                throw new UserDeleteException('An Event of the user is still runing');
             }
         }
         // Check if the user is not the author of a community
         foreach ($user->getCommunityUsers() as $communityUser) {
             if ($communityUser->getCommunity()->getUser()->getId() == $user->getId()) {
                 // todo throw execption
-                throw new UserDeleteException("The user is a community owner");
-            } else {
-                //delete all community subscriptions
-                $this->deleteCommunityUsers($user);
+                throw new UserDeleteException('The user is a community owner');
             }
+            //delete all community subscriptions
+            $this->deleteCommunityUsers($user);
         }
         // check if the user have pending proofs, and remove the links
         $this->proofManager->removeProofs($user);
-                    
+
         // We check if the user have ads.
         // If he have ads we check if a carpool is initiated if yes we send an email to the carpooler
         foreach ($user->getProposals() as $proposal) {
@@ -1369,7 +1380,7 @@ class UserManager
             foreach ($proposal->getMatchingRequests() as $matching) {
                 foreach ($matching->getAsks() as $ask) {
                     // todo : find why class of $ask can be a proxy of Ask class
-                    if (get_class($ask) !== Ask::class) {
+                    if (Ask::class !== get_class($ask)) {
                         continue;
                     }
                     $event = new UserDeleteAccountWasDriverEvent($ask, $user->getId());
@@ -1379,7 +1390,7 @@ class UserManager
             foreach ($proposal->getMatchingOffers() as $matching) {
                 foreach ($matching->getAsks() as $ask) {
                     // todo : find why class of $ask can be a proxy of Ask class
-                    if (get_class($ask) !== Ask::class) {
+                    if (Ask::class !== get_class($ask)) {
                         continue;
                     }
                     $event = new UserDeleteAccountWasPassengerEvent($ask, $user->getId());
@@ -1399,71 +1410,50 @@ class UserManager
         $this->entityManager->flush();
     }
 
-    //Delete images associated to the user
-    // deleteBase -> delete the base image and remove the entry
-    private function deleteUserImages(User $user)
-    {
-        foreach ($user->getImages() as $image) {
-            $this->imageManager->deleteVersions($image);
-            $this->imageManager->deleteBase($image);
-        }
-    }
-
-    //Delete link between the delete account and his communities
-    private function deleteCommunityUsers(User $user)
-    {
-        $myCommunityUsers = $this->communityUserRepository->findBy(array('user'=>$user));
-
-        foreach ($myCommunityUsers as $myCommunityUser) {
-            $this->entityManager->remove($myCommunityUser);
-        }
-        $this->entityManager->flush();
-    }
-
-
     //Get asks for an user -> use for check if a ask is already done on a proposal
     public function getAsks(User $user): array
     {
         if ($asks = $this->askRepository->findAskByAsker($user)) {
-            $arrayAsks = array();
+            $arrayAsks = [];
             foreach ($asks as $ask) {
                 $arrayAsks['offers'][] = $ask->getMatching()->getProposalOffer()->getId();
                 $arrayAsks['request'][] = $ask->getMatching()->getProposalRequest()->getId();
             }
+
             return $arrayAsks;
         }
+
         return [];
     }
 
     public function checkPhoneToken($data)
     {
-        $userFound = $this->userRepository->findOneBy(["phoneToken"=>$data->getPhoneToken()]);
+        $userFound = $this->userRepository->findOneBy(['phoneToken' => $data->getPhoneToken()]);
 
         if (!is_null($userFound)) {
-            if ($data->getTelephone()===$userFound->getTelephone()) {
+            if ($data->getTelephone() === $userFound->getTelephone()) {
                 // User found by token match with the given Telephone. We update de validated date, persist, then return the user found
                 $userFound->setPhoneValidatedDate(new \Datetime());
                 $this->entityManager->persist($userFound);
                 $this->entityManager->flush();
 
                 //  we dispatch the gamification event associated
-                $action = $this->actionRepository->findOneBy(['name'=>'user_phone_validation']);
+                $action = $this->actionRepository->findOneBy(['name' => 'user_phone_validation']);
                 $actionEvent = new ActionEvent($action, $userFound);
                 $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);
-        
+
                 return $userFound;
-            } else {
-                // User found by token doesn't match with the given telephone. We return nothing.
-                return new JsonResponse();
             }
-        } else {
-            // No user found. We return nothing.
+            // User found by token doesn't match with the given telephone. We return nothing.
             return new JsonResponse();
         }
+        // No user found. We return nothing.
+        return new JsonResponse();
+
         return new JsonResponse();
     }
 
-    public function unsubscribeFromEmail(User $user, $lang='fr_FR')
+    public function unsubscribeFromEmail(User $user, $lang = 'fr_FR')
     {
         if (!is_null($user->getLanguage())) {
             $lang = $user->getLanguage();
@@ -1486,9 +1476,9 @@ class UserManager
     }
 
     /**
-     * Update the activity of an user
+     * Update the activity of an user.
      *
-     * @param User      $user               The user to update
+     * @param User $user The user to update
      */
     public function updateActivity(User $user)
     {
@@ -1499,10 +1489,11 @@ class UserManager
     }
 
     /**
-     * Get the solidaries of a user
+     * Get the solidaries of a user.
      *
-     * @param int $userId    The user id we want to get the solidaries
-     * @return User|null
+     * @param int $userId The user id we want to get the solidaries
+     *
+     * @return null|User
      */
     public function getSolidaries(int $userId)
     {
@@ -1520,10 +1511,11 @@ class UserManager
     }
 
     /**
-     * Get the structures of a user
+     * Get the structures of a user.
      *
-     * @param int $userId    The user id we want to get the structures
-     * @return User|null
+     * @param int $userId The user id we want to get the structures
+     *
+     * @return null|User
      */
     public function getStructures(int $userId)
     {
@@ -1543,8 +1535,9 @@ class UserManager
     /**
      * Create a random token for a user.
      *
-     * @param User $user    The user
-     * @return string   The token generated
+     * @param User $user The user
+     *
+     * @return string The token generated
      */
     public function createToken(User $user)
     {
@@ -1554,39 +1547,18 @@ class UserManager
 
         if ($user->getEmail() == $this->fakeFirstMail) {
             return $this->fakeFirstToken;
-        } else {
-            return $this->sanitizeString(hash("sha256", $user->getEmail() . rand() . $time . rand() . $user->getSalt()));
         }
+
+        return $this->sanitizeString(hash('sha256', $user->getEmail().rand().$time.rand().$user->getSalt()));
     }
 
     /**
-     * Sanitize a string by replacing non-letter or digits by letters or digits.
+     * Check if an user $user have a specific AuthItem $authItem.
      *
-     * @param string $string    The string to sanitize
-     * @return string The sanitized string
-     */
-    private function sanitizeString(string $string)
-    {
-        return preg_replace('/[^\w]/', $this->getRandomChar(), $string);
-    }
-
-    /**
-     * Get a random letter or digit
+     * @param User     $user     The user to check
+     * @param AuthItem $AuthItem The auth item to check
      *
-     * @return string A letter or digit
-     */
-    private function getRandomChar()
-    {
-        $seed = str_split('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789');
-        return $seed[array_rand($seed)];
-    }
-
-    /**
-     * Check if an user $user have a specific AuthItem $authItem
-     *
-     * @param User $user    The user to check
-     * @param AuthItem $AuthItem    The auth item to check
-     * @return boolean True if user have item
+     * @return bool True if user have item
      */
     public function checkUserHaveAuthItem(User $user, AuthItem $authItem)
     {
@@ -1595,50 +1567,55 @@ class UserManager
                 return true;
             }
         }
+
         return false;
     }
 
     /**
-     * Generate a random string
+     * Generate a random string.
      *
-     * @param integer $length   The length of the string to generate
-     * @return String   The generated string
+     * @param int $length The length of the string to generate
+     *
+     * @return string The generated string
      */
     public function randomString(int $length = 10)
     {
         $alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
         $string = []; //remember to declare $string as an array
         $alphaLength = strlen($alphabet) - 1; //put the length -1 in cache
-        for ($i = 0; $i < $length; $i++) {
+        for ($i = 0; $i < $length; ++$i) {
             $n = rand(0, $alphaLength);
             $string[] = $alphabet[$n];
         }
+
         return implode($string); //turn the array into a string
     }
 
     /**
-     * Generate a sub email address
+     * Generate a sub email address.
      *
-     * @param string $email     The base email
-     * @param integer $length   The length of the generated random string
-     * @param string $glue      The string to add before the random string
-     * @return string   The generated sub email address
+     * @param string $email  The base email
+     * @param int    $length The length of the generated random string
+     * @param string $glue   The string to add before the random string
+     *
+     * @return string The generated sub email address
      */
-    public function generateSubEmail(string $email, int $length=10, string $glue='+')
+    public function generateSubEmail(string $email, int $length = 10, string $glue = '+')
     {
         $exploded = explode('@', $email);
-        return $exploded[0] . $glue . $this->randomString($length) . '@' . $exploded[1];
+
+        return $exploded[0].$glue.$this->randomString($length).'@'.$exploded[1];
     }
 
     /**
-     * Get the payment profile (bankaccounts, wallets...) of the User
+     * Get the payment profile (bankaccounts, wallets...) of the User.
      *
-     * @return User|null
+     * @return null|User
      */
-    public function getPaymentProfile(User $user=null)
+    public function getPaymentProfile(User $user = null)
     {
         if (is_null($user)) {
-            $user = $this->userRepository->findOneBy(["email"=>$this->security->getUser()->getUsername()]);
+            $user = $this->userRepository->findOneBy(['email' => $this->security->getUser()->getUsername()]);
         }
         $paymentProfiles = $this->paymentProvider->getPaymentProfiles($user);
         $bankAccounts = $wallets = [];
@@ -1648,20 +1625,20 @@ class UserManager
                     /**
                      * @var BankAccount $bankaccount
                      */
-                    
+
                     // We replace some characters in Iban and Bic by *
                     $iban = $bankaccount->getIban();
-                    for ($i=4 ; $i<strlen($iban)-4 ; $i++) {
-                        $iban[$i] = "*";
+                    for ($i = 4; $i < strlen($iban) - 4; ++$i) {
+                        $iban[$i] = '*';
                     }
                     $bic = $bankaccount->getBic();
-                    for ($i=2 ; $i<strlen($bic)-2 ; $i++) {
-                        $bic[$i] = "*";
+                    for ($i = 2; $i < strlen($bic) - 2; ++$i) {
+                        $bic[$i] = '*';
                     }
-                    
+
                     $bankaccount->setIban($iban);
                     $bankaccount->setBic($bic);
-                    
+
                     $bankaccount->setRefusalReason($paymentProfile->getRefusalReason());
 
                     $bankAccounts[] = $bankaccount;
@@ -1675,54 +1652,50 @@ class UserManager
         }
         $user->setBankAccounts($bankAccounts);
         $user->setWallets($wallets);
+
         return $user;
     }
-    
+
     /**
-     * Generate a randomPassword
+     * Generate a randomPassword.
      *
      * @return string
      */
     public function randomPassword()
     {
         $alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
-        $pass = array(); //remember to declare $pass as an array
+        $pass = []; //remember to declare $pass as an array
         $alphaLength = strlen($alphabet) - 1; //put the length -1 in cache
-        for ($i = 0; $i < 10; $i++) {
+        for ($i = 0; $i < 10; ++$i) {
             $n = rand(0, $alphaLength);
             $pass[] = $alphabet[$n];
         }
+
         return implode($pass); //turn the array into a string
     }
 
-    
     /**
      * Return a User from a SsoUser
-     * Existing user or a new one
-     *
-     * @param SsoUser $ssoUser
-     * @return User|null
+     * Existing user or a new one.
      */
     public function getUserFromSso(SsoUser $ssoUser): ?User
     {
-        $user = $this->userRepository->findOneBy(['ssoId'=>$ssoUser->getSub(), 'ssoProvider'=>$ssoUser->getProvider()]);
+        $user = $this->userRepository->findOneBy(['ssoId' => $ssoUser->getSub(), 'ssoProvider' => $ssoUser->getProvider()]);
         if (is_null($user)) {
-
             // check if a user with this email already exists
-            $user = $this->userRepository->findOneBy(['email'=>$ssoUser->getEmail()]);
+            $user = $this->userRepository->findOneBy(['email' => $ssoUser->getEmail()]);
             if (!is_null($user)) {
-                
                 // AutoCreate Autoattach disable. If the User isn't already attached to this SSO provider we reject it
                 if (!$ssoUser->hasAutoCreateAccount()) {
-                    if ($user->getSsoId() !== $ssoUser->getSub() || $user->getSsoProvider() !== $ssoUser->getProvider()) {
+                    if ($user->getSsoProvider() !== $ssoUser->getProvider()) {
                         if (!$ssoUser->hasAutoCreateAccount()) {
-                            throw new \LogicException("Autocreate/Autoattach account disable");
+                            throw new \LogicException('Autocreate/Autoattach account disable');
                         }
                     } else {
                         return $user;
                     }
                 }
-                
+
                 // We update the user with ssoId and ssoProvider and return it
                 $user->setSsoId($ssoUser->getSub());
                 $user->setSsoProvider($ssoUser->getProvider());
@@ -1731,11 +1704,12 @@ class UserManager
                 }
                 $this->entityManager->persist($user);
                 $this->entityManager->flush();
+
                 return $user;
             }
 
             if (!$ssoUser->hasAutoCreateAccount()) {
-                throw new \LogicException("Autocreate/Autoattach account disable");
+                throw new \LogicException('Autocreate/Autoattach account disable');
             }
 
             // Create a new one
@@ -1749,39 +1723,43 @@ class UserManager
 
             // Gender
             switch ($ssoUser->getGender()) {
-                case SsoUser::GENDER_MALE:$user->setGender(User::GENDER_MALE);break;
-                case SsoUser::GENDER_FEMALE:$user->setGender(User::GENDER_FEMALE);break;
+                case SsoUser::GENDER_MALE:$user->setGender(User::GENDER_MALE);
+
+break;
+
+                case SsoUser::GENDER_FEMALE:$user->setGender(User::GENDER_FEMALE);
+
+break;
+
                 default: $user->setGender(User::GENDER_OTHER);
             }
 
-            if (trim($ssoUser->getBirthdate())!="") {
-                $user->setBirthDate(\DateTime::createFromFormat("Y-m-d", $ssoUser->getBirthdate()));
+            if ('' != trim($ssoUser->getBirthdate())) {
+                $user->setBirthDate(\DateTime::createFromFormat('Y-m-d', $ssoUser->getBirthdate()));
             }
 
             $user = $this->registerUser($user);
         }
+
         return $user;
     }
 
     /**
-     * Get a User by it's SsoId
-     *
-     * @param string $ssoId
-     * @return User|null
+     * Get a User by it's SsoId.
      */
     public function getUserBySsoId(string $ssoId): ?User
     {
-        if ($user = $this->userRepository->findOneBy(['ssoId'=>$ssoId])) {
+        if ($user = $this->userRepository->findOneBy(['ssoId' => $ssoId])) {
             return $user;
         }
+
         return null;
     }
 
     /**
-     * Get the profile summary of a User
+     * Get the profile summary of a User.
      *
-     * @param User $user   The User
-     * @return ProfileSummary
+     * @param User $user The User
      */
     public function getProfileSummary(User $user): ProfileSummary
     {
@@ -1794,11 +1772,11 @@ class UserManager
         $profileSummary->setAge($user->getBirthDate() ? $user->getBirthDate()->diff(new \DateTime())->y : null);
 
         $profileSummary->setPhoneDisplay($user->getPhoneDisplay());
-        if ($user->getPhoneDisplay()==User::PHONE_DISPLAY_ALL) {
+        if (User::PHONE_DISPLAY_ALL == $user->getPhoneDisplay()) {
             $profileSummary->setTelephone($user->getTelephone());
         }
-        if (is_array($user->getAvatars()) && count($user->getAvatars())>0) {
-            $profileSummary->setAvatar($user->getAvatars()[count($user->getAvatars())-1]);
+        if (is_array($user->getAvatars()) && count($user->getAvatars()) > 0) {
+            $profileSummary->setAvatar($user->getAvatars()[count($user->getAvatars()) - 1]);
         }
 
         // Number of realized carpool (number of accepted Aks as driver or passenger)
@@ -1807,10 +1785,10 @@ class UserManager
         $nbAsks = 0;
         $totalSavedCo2 = 0;
         foreach ($asks as $ask) {
-            if ($ask->getType() == Ask::TYPE_ONE_WAY || $ask->getType() == Ask::TYPE_OUTWARD_ROUNDTRIP) {
+            if (Ask::TYPE_ONE_WAY == $ask->getType() || Ask::TYPE_OUTWARD_ROUNDTRIP == $ask->getType()) {
                 // Compute the saved Co2 for this Ask
                 $totalSavedCo2 += $this->computeSavedCo2($ask, $user->getId());
-                $nbAsks++;
+                ++$nbAsks;
             }
         }
         $profileSummary->setCarpoolRealized($nbAsks);
@@ -1823,26 +1801,27 @@ class UserManager
         $nbMessagesAnswered = 0;
         foreach ($threads as $firstMessage) {
             // We keep only the XX last messages (.env variable)
-            if ($nbMessageConsidered>=$this->profile['maxMessagesForAnswerRate']) {
+            if ($nbMessageConsidered >= $this->profile['maxMessagesForAnswerRate']) {
                 break;
             }
 
             // We keep only the messages where the user was recipient
             if ($firstMessage->getRecipients()[0]->getUser()->getId() == $user->getId()) {
-                $nbMessagesTotal++;
+                ++$nbMessagesTotal;
                 //We check if the User sent an anwser to this message
                 $completeThread = $this->internalMessageManager->getCompleteThread($firstMessage->getId());
                 foreach ($completeThread as $message) {
                     if ($message->getUser()->getid() == $user->getId()) {
-                        $nbMessagesAnswered++;
+                        ++$nbMessagesAnswered;
+
                         break;
                     }
                 }
-                $nbMessageConsidered++;
+                ++$nbMessageConsidered;
             }
         }
-        $profileSummary->setAnswerPct(($nbMessagesTotal==0) ? $this->profile['experiencedTagMinAnswerPctDefault'] : round(($nbMessagesAnswered/$nbMessagesTotal)*100));
-        
+        $profileSummary->setAnswerPct((0 == $nbMessagesTotal) ? $this->profile['experiencedTagMinAnswerPctDefault'] : round(($nbMessagesAnswered / $nbMessagesTotal) * 100));
+
         // Experienced user
         // To be experienced :
         // The User has to have a number of realized carpools >= experiencedTagMinCarpools(.env)
@@ -1850,8 +1829,8 @@ class UserManager
         $profileSummary->setExperienced(false);
         if ($this->profile['experiencedTag']) {
             if (
-                $profileSummary->getCarpoolRealized()>=$this->profile['experiencedTagMinCarpools'] &&
-                $profileSummary->getAnswerPct()>=$this->profile['experiencedTagMinAnswerPct']
+                $profileSummary->getCarpoolRealized() >= $this->profile['experiencedTagMinCarpools']
+                && $profileSummary->getAnswerPct() >= $this->profile['experiencedTagMinAnswerPct']
             ) {
                 $profileSummary->setExperienced(true);
             }
@@ -1864,10 +1843,9 @@ class UserManager
     }
 
     /**
-     * Get the public profile of a User
+     * Get the public profile of a User.
      *
-     * @param User $user   The User
-     * @return PublicProfile
+     * @param User $user The User
      */
     public function getPublicProfile(User $user): PublicProfile
     {
@@ -1893,53 +1871,29 @@ class UserManager
     }
 
     /**
-    * Send a verification email
-    *
-    * @param string $email The email to verify
-    * @return User|null    The user found
-    */
+     * Send a verification email.
+     *
+     * @param string $email The email to verify
+     *
+     * @return null|User The user found
+     */
     public function sendValidationEmail(string $email)
     {
-        if ($user = $this->userRepository->findOneBy(["email"=>$email])) {
+        if ($user = $this->userRepository->findOneBy(['email' => $email])) {
             $event = new UserSendValidationEmailEvent($user);
             $this->eventDispatcher->dispatch(UserSendValidationEmailEvent::NAME, $event);
+
             return $user;
-        } else {
-            throw new UserNotFoundException("Unknow email", 1) ;
         }
+
+        throw new UserNotFoundException('Unknow email', 1);
     }
 
     /**
-     * Get the number of unread message of a User
+     * Compute the saved Co2 on a Ask by a user.
      *
-     * @param User $user
-     * @return User
-     */
-    private function getUnreadMessageNumber(User $user): User
-    {
-        $user->setUnreadCarpoolMessageNumber(0);
-        $user->setUnreadDirectMessageNumber(0);
-        $user->setUnreadSolidaryMessageNumber(0);
-        
-        $recipients = $this->messageRepository->findUnreadMessages($user);
-        foreach ($recipients as $recipient) {
-            if (!is_null($recipient->getMessage()->getSolidaryAskHistory())) {
-                $user->setUnreadSolidaryMessageNumber($user->getUnreadSolidaryMessageNumber()+1);
-            } elseif (!is_null($recipient->getMessage()->getAskHistory())) {
-                $user->setUnreadCarpoolMessageNumber($user->getUnreadCarpoolMessageNumber()+1);
-            } else {
-                $user->setUnreadDirectMessageNumber($user->getUnreadDirectMessageNumber()+1);
-            }
-        }
-        return $user;
-    }
-
-    /**
-     * Compute the saved Co2 on a Ask by a user
-     *
-     * @param Ask $ask          The Ask
-     * @param integer $userId   The User id
-     * @return integer
+     * @param Ask $ask    The Ask
+     * @param int $userId The User id
      */
     public function computeSavedCo2(Ask $ask, int $userId): int
     {
@@ -1956,7 +1910,7 @@ class UserManager
         $detourDistance = $ask->getMatching()->getDetourDistance();
 
         // The saved distance depends if you're the driver or the passenger
-        
+
         if ($driver) {
             // ********* If you are the driver :
             // Without carpool you would've traveled $originalDriverDistance
@@ -1979,16 +1933,15 @@ class UserManager
 
         return $this->geoTools->getCO2($savedDistance);
     }
-    
+
     /**
-     * Update user's language
+     * Update user's language.
      *
-     * @param User $user
      * @return User
      */
     public function updateLanguage(User $user)
     {
-        $language = $this->languageRepository->findOneBy(['code'=>$user->getLanguage()->getCode()]);
+        $language = $this->languageRepository->findOneBy(['code' => $user->getLanguage()->getCode()]);
         $user->setLanguage($language);
 
         $this->entityManager->persist($user);
@@ -1998,20 +1951,20 @@ class UserManager
     }
 
     /**
-     * Get the communities where the User is accepted or pending
+     * Get the communities where the User is accepted or pending.
      *
-     * @param User $user
      * @return Community[]
      */
     public function getUserCommunities(User $user)
     {
-        $communityUsers = $this->communityUserRepository->findBy(["user"=>$user]);
+        $communityUsers = $this->communityUserRepository->findBy(['user' => $user]);
         $communities = [];
-        if (!is_null($communityUsers) && count($communityUsers)>0) {
+        if (!is_null($communityUsers) && count($communityUsers) > 0) {
             foreach ($communityUsers as $communityUser) {
                 $communities[] = $communityUser->getCommunity();
             }
         }
+
         return $communities;
     }
 
@@ -2021,6 +1974,90 @@ class UserManager
         if (!$phoneValidation->isValid()) {
             $phoneValidation->setMessage($this->translator->trans('errors.phoneNumberInvalid'));
         }
+
         return $phoneValidation;
+    }
+
+    /**
+     * Sort function.
+     *
+     * @param mixed $a
+     * @param mixed $b
+     */
+    private static function sortThread($a, $b)
+    {
+        if ($a['date'] == $b['date']) {
+            return 0;
+        }
+
+        return ($a['date'] < $b['date']) ? 1 : -1;
+    }
+
+    //Delete images associated to the user
+    // deleteBase -> delete the base image and remove the entry
+    private function deleteUserImages(User $user)
+    {
+        foreach ($user->getImages() as $image) {
+            $this->imageManager->deleteVersions($image);
+            $this->imageManager->deleteBase($image);
+        }
+    }
+
+    //Delete link between the delete account and his communities
+    private function deleteCommunityUsers(User $user)
+    {
+        $myCommunityUsers = $this->communityUserRepository->findBy(['user' => $user]);
+
+        foreach ($myCommunityUsers as $myCommunityUser) {
+            $this->entityManager->remove($myCommunityUser);
+        }
+        $this->entityManager->flush();
+    }
+
+    /**
+     * Sanitize a string by replacing non-letter or digits by letters or digits.
+     *
+     * @param string $string The string to sanitize
+     *
+     * @return string The sanitized string
+     */
+    private function sanitizeString(string $string)
+    {
+        return preg_replace('/[^\w]/', $this->getRandomChar(), $string);
+    }
+
+    /**
+     * Get a random letter or digit.
+     *
+     * @return string A letter or digit
+     */
+    private function getRandomChar()
+    {
+        $seed = str_split('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789');
+
+        return $seed[array_rand($seed)];
+    }
+
+    /**
+     * Get the number of unread message of a User.
+     */
+    private function getUnreadMessageNumber(User $user): User
+    {
+        $user->setUnreadCarpoolMessageNumber(0);
+        $user->setUnreadDirectMessageNumber(0);
+        $user->setUnreadSolidaryMessageNumber(0);
+
+        $recipients = $this->messageRepository->findUnreadMessages($user);
+        foreach ($recipients as $recipient) {
+            if (!is_null($recipient->getMessage()->getSolidaryAskHistory())) {
+                $user->setUnreadSolidaryMessageNumber($user->getUnreadSolidaryMessageNumber() + 1);
+            } elseif (!is_null($recipient->getMessage()->getAskHistory())) {
+                $user->setUnreadCarpoolMessageNumber($user->getUnreadCarpoolMessageNumber() + 1);
+            } else {
+                $user->setUnreadDirectMessageNumber($user->getUnreadDirectMessageNumber() + 1);
+            }
+        }
+
+        return $user;
     }
 }
