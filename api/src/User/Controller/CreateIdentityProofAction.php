@@ -23,38 +23,31 @@
 
 namespace App\User\Controller;
 
-use App\Service\FileManager;
 use App\User\Entity\IdentityProof;
+use App\User\Service\IdentityProofManager;
+use Exception;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Security;
 
 final class CreateIdentityProofAction
 {
     private $user;
-    private $fileManager;
+    private $identityProofManager;
 
     public function __construct(
         Security $security,
-        FileManager $fileManager
+        IdentityProofManager $identityProofManager
     ) {
         $this->user = $security->getUser();
-        $this->fileManager = $fileManager;
+        $this->identityProofManager = $identityProofManager;
     }
 
     public function __invoke(Request $request): IdentityProof
     {
-        $identityProof = new IdentityProof();
-
-        $identityProof->setFile($request->files->get('file'));
-        $identityProof->setUser($this->user);
-
-        if (!empty($request->request->get('fileName'))) {
-            $fileName = $this->fileManager->sanitize($request->request->get('fileName'));
-        } else {
-            $fileName = time();
+        if (!$request->files->get('file')) {
+            throw new Exception('File is mandatory');
         }
-        $identityProof->setFileName($this->user->getId().'-'.$fileName);
 
-        return $identityProof;
+        return $this->identityProofManager->createIdentityProof($this->user, $request->files->get('file'));
     }
 }

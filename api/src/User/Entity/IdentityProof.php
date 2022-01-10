@@ -45,6 +45,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *      },
  *      collectionOperations={
  *          "get"={
+ *              "security"="is_granted('reject',object)",
  *              "swagger_context" = {
  *                  "tags"={"Users"}
  *              }
@@ -60,17 +61,40 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *      },
  *      itemOperations={
  *          "get"={
- *              "security"="is_granted('user_read',object)",
+ *              "security"="is_granted('reject',object)",
  *              "swagger_context" = {
  *                  "tags"={"Users"}
  *              }
- *          }
+ *          },
+ *          "ADMIN_get"={
+ *              "path"="/admin/identity_proofs/{id}",
+ *              "method"="GET",
+ *              "normalization_context"={"groups"={"aRead"}},
+ *              "security"="is_granted('admin_user_read',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
+ *          },
+ *          "ADMIN_patch"={
+ *              "path"="/admin/identity_proofs/{id}",
+ *              "method"="PATCH",
+ *              "normalization_context"={"groups"={"aRead"}},
+ *              "denormalization_context"={"groups"={"aWrite"}},
+ *              "security"="is_granted('admin_user_proof',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
+ *          },
  *      }
  * )
  * @Vich\Uploadable
  */
 class IdentityProof
 {
+    public const STATUS_PENDING = 0;
+    public const STATUS_ACCEPTED = 1;
+    public const STATUS_REFUSED = 2;
+
     /**
      * @var int the id of this identity proof
      *
@@ -83,8 +107,8 @@ class IdentityProof
 
     /**
      * @var int the status of the proof (pending/accepted/refused)
-     *
-     * @Groups({"post","put"})
+     * @ORM\Column(type="integer")
+     * @Groups({"aRead","aWrite","readUser"})
      */
     private $status;
 
@@ -93,7 +117,6 @@ class IdentityProof
      *
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", cascade={"persist"}, inversedBy="identityProofs")
-     * @Groups({"post","put"})
      * @MaxDepth(1)
      */
     private $user;
@@ -106,8 +129,7 @@ class IdentityProof
 
     /**
      * @var User the user that validates/invalidates the proof
-     *
-     * @Groups({"post","put"})
+     * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", cascade={"persist"})
      */
     private $admin;
 
@@ -115,7 +137,7 @@ class IdentityProof
      * @var string the final file name of the proof
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"read","readUser","aRead"})
      */
     private $fileName;
 
@@ -123,7 +145,7 @@ class IdentityProof
      * @var string the original file name of the proof
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"read","aRead"})
      */
     private $originalName;
 
@@ -131,7 +153,7 @@ class IdentityProof
      * @var int the size in bytes of the file
      *
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"read","aRead"})
      */
     private $size;
 
@@ -139,12 +161,13 @@ class IdentityProof
      * @var string the mime type of the file
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"read","write"})
+     * @Groups({"read","aRead"})
      */
     private $mimeType;
 
     /**
-     * @var null|File
+     * @var File
+     * @Assert\NotBlank(groups={"write"})
      * @Vich\UploadableField(mapping="identityProof", fileNameProperty="fileName", originalName="originalName", size="size", mimeType="mimeType")
      * @Groups({"write"})
      */
@@ -153,7 +176,7 @@ class IdentityProof
     /**
      * @var \DateTimeInterface creation date of the proof
      * @ORM\Column(type="datetime")
-     * @Groups({"post","put"})
+     * @Groups({"aRead","readUser"})
      */
     private $createdDate;
 
@@ -166,16 +189,23 @@ class IdentityProof
     /**
      * @var \DateTimeInterface accepted date
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"post","put"})
+     * @Groups("aRead")
      */
     private $acceptedDate;
 
     /**
      * @var \DateTimeInterface refusal date
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"post","put"})
+     * @Groups("aRead")
      */
     private $refusedDate;
+
+    /**
+     * @var bool validate the user identity
+     *
+     * @Groups("aWrite")
+     */
+    private $validate;
 
     public function getId(): int
     {
@@ -187,9 +217,14 @@ class IdentityProof
         return $this->status;
     }
 
-    public function setStatus(?int $status)
+    public function setStatus(int $status)
     {
         $this->status = $status;
+        if (self::STATUS_ACCEPTED == $this->status) {
+            $this->setAcceptedDate(new \Datetime());
+        } elseif (self::STATUS_REFUSED == $this->status) {
+            $this->setRefusedDate(new \Datetime());
+        }
     }
 
     public function getUser(): ?User
@@ -273,7 +308,7 @@ class IdentityProof
         return $this->file;
     }
 
-    public function setFile(?File $file): self
+    public function setFile(File $file): self
     {
         $this->file = $file;
 
@@ -328,7 +363,24 @@ class IdentityProof
         return $this;
     }
 
+    public function setValidate(bool $validate): self
+    {
+        $this->validate = $validate;
+
+        return $this;
+    }
+
     // DOCTRINE EVENTS
+
+    /**
+     * Status.
+     *
+     * @ORM\PrePersist
+     */
+    public function setAutoStatus()
+    {
+        $this->setStatus(self::STATUS_PENDING);
+    }
 
     /**
      * Creation date.
