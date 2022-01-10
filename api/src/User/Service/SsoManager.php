@@ -107,7 +107,7 @@ class SsoManager
             foreach ($this->ssoServices as $serviceName => $ssoService) {
                 $provider = $this->getSsoProvider($serviceName);
                 if (!is_null($provider)) {
-                    $logoutUrls[$serviceName] = $provider->getLogoutUrls();
+                    $logoutUrls[$serviceName] = $provider->getLogoutUrl();
                 }
             }
 
@@ -145,7 +145,7 @@ class SsoManager
         if (isset(self::SUPPORTED_PROVIDERS[$serviceName])) {
             $service = $this->ssoServices[$serviceName];
             $providerClass = self::SUPPORTED_PROVIDERS[$serviceName];
-            $provider = new $providerClass($serviceName, $baseSiteUri, $service['baseUri'], $service['clientId'], $service['clientSecret'], SsoConnection::RETURN_URL, $service['autoCreateAccount']);
+            $provider = new $providerClass($serviceName, $baseSiteUri, $service['baseUri'], $service['clientId'], $service['clientSecret'], SsoConnection::RETURN_URL, $service['autoCreateAccount'], $service['logOutRedirectUri']);
             $provider->setLogger($this->logger);
 
             return $provider;

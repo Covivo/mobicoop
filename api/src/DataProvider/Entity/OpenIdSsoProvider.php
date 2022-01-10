@@ -55,7 +55,7 @@ class OpenIdSsoProvider implements SsoProviderInterface
             self::AUTHORIZATION_URL => 'auth/realms/Passmobilite/protocol/openid-connect/auth/?client_id={CLIENT_ID}&scope=openid profile email&response_type=code&state={SERVICE_NAME}&redirect_uri={REDIRECT_URI}',
             self::TOKEN_URL => 'auth/realms/Passmobilite/protocol/openid-connect/token/',
             self::USERINFOS_URL => 'auth/realms/Passmobilite/protocol/openid-connect/userinfo',
-            self::LOGOUT_URL => 'auth/realms/Passmobilite/protocol/openid-connect/logout',
+            self::LOGOUT_URL => 'auth/realms/Passmobilite/protocol/openid-connect/logout?post_logout_redirect_uri={REDIRECT_URI}',
         ],
     ];
 
@@ -67,11 +67,12 @@ class OpenIdSsoProvider implements SsoProviderInterface
     private $redirectUri;
     private $baseSiteUri;
     private $autoCreateAccount;
+    private $logOutRedirectUri;
 
     private $code;
     private $logger;
 
-    public function __construct(string $serviceName, string $baseSiteUri, string $baseUri, string $clientId, string $clientSecret, string $redirectUrl, bool $autoCreateAccount)
+    public function __construct(string $serviceName, string $baseSiteUri, string $baseUri, string $clientId, string $clientSecret, string $redirectUrl, bool $autoCreateAccount, string $logOutRedirectUri = '')
     {
         if (!isset(self::URLS[$serviceName])) {
             throw new \LogicException('Service unknown');
@@ -85,6 +86,7 @@ class OpenIdSsoProvider implements SsoProviderInterface
         $this->baseSiteUri = $baseSiteUri;
         $this->redirectUri = $this->baseSiteUri.'/'.$this->redirectUrl;
         $this->autoCreateAccount = $autoCreateAccount;
+        $this->logOutRedirectUri = $logOutRedirectUri;
     }
 
     public function setCode(string $code)
@@ -164,9 +166,15 @@ class OpenIdSsoProvider implements SsoProviderInterface
         throw new \LogicException('Error get Token');
     }
 
-    public function getLogoutUrls(): ?string
+    public function getLogoutUrl(): ?string
     {
-        return (isset(self::URLS[$this->serviceName][self::LOGOUT_URL])) ? $this->baseUri.''.self::URLS[$this->serviceName][self::LOGOUT_URL] : null;
+        $url = null;
+        if (isset(self::URLS[$this->serviceName][self::LOGOUT_URL])) {
+            $url = $this->baseUri.''.self::URLS[$this->serviceName][self::LOGOUT_URL];
+            $url = str_replace('{REDIRECT_URI}', $this->logOutRedirectUri, $url);
+        }
+
+        return $url;
     }
 
     private function getToken($code)
