@@ -66,15 +66,6 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *                  "tags"={"Users"}
  *              }
  *          },
- *          "ADMIN_get"={
- *              "path"="/admin/identity_proofs/{id}",
- *              "method"="GET",
- *              "normalization_context"={"groups"={"aRead"}},
- *              "security"="is_granted('admin_user_read',object)",
- *              "swagger_context" = {
- *                  "tags"={"Administration"}
- *              }
- *          },
  *          "ADMIN_patch"={
  *              "path"="/admin/identity_proofs/{id}",
  *              "method"="PATCH",
