@@ -70,6 +70,6 @@ class GetDataCommand extends Command
 
         $this->dataManager->setStartDate($startDate);
         $this->dataManager->setEndDate($endDate);
-        $this->dataManager->getData();
+        var_dump($this->dataManager->getData());
     }
 }

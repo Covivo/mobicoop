@@ -28,15 +28,25 @@ namespace App\Stats\Admin\Service;
 class DataManager
 {
     public const DATA_NAME_VALIDATED_USERS = 'ValidatedUsers';
+    public const DATA_NAME_REGISTRATIONS = 'Registrations';
+
+    public const PREFIX_AUTO_CALL_METHOD = 'build';
+    public const SUFFIX_AUTO_CALL_METHOD = 'Request';
 
     public const DATA_NAMES = [
-        0 => self::DATA_NAME_VALIDATED_USERS,
+        self::DATA_NAME_VALIDATED_USERS,
+        self::DATA_NAME_REGISTRATIONS,
     ];
 
     private const REQUEST_TIMOUT = 30000;
     private const DATE_FORMAT = 'c';
     private const DEFAULT_START_DATE_MODIFICATOR = '-1 year';
     private const DEFAULT_END_DATE_MODIFICATOR = '';
+
+    private const BASE_REQUEST = [
+        'size' => 0,
+        'query' => ['bool' => ['filters' => []]],
+    ];
 
     private $baseUri;
     private $instance;
@@ -47,6 +57,9 @@ class DataManager
     private $startDate;
     private $endDate;
     private $request;
+    private $requestResponse;
+
+    private $response;
 
     public function __construct(string $baseUri, string $instance, string $username, string $password)
     {
@@ -104,42 +117,54 @@ class DataManager
         return $this->endDate;
     }
 
-    public function getData()
+    public function getData(): array
     {
         if (!in_array($this->getDataName(), self::DATA_NAMES)) {
             throw new \LogicException('Unkwnown data name');
         }
+        $this->buildRequest();
 
-        $functionName = 'build'.$this->getDataName().'Request';
+        $this->sendRequest();
+
+        $this->deserializeDataResponse();
+
+        return $this->response;
+    }
+
+    private function buildRequest()
+    {
+        $this->request = self::BASE_REQUEST;
+        $functionName = self::PREFIX_AUTO_CALL_METHOD.$this->getDataName().self::SUFFIX_AUTO_CALL_METHOD;
         if (!is_callable([$this, $functionName])) {
             throw new \LogicException('Unkwnown method to retrieve this data name');
         }
 
         $this->{$functionName}();
 
-        echo $this->sendRequest();
+        $this->addFilters();
+    }
+
+    private function addFilters()
+    {
+        $this->request['query']['bool']['filter'][] = [
+            'range' => [
+                'user_created_date' => [
+                    'gte' => $this->getStartDate()->format(self::DATE_FORMAT),
+                    'lte' => $this->getEndDate()->format(self::DATE_FORMAT),
+                ],
+            ],
+        ];
     }
 
     private function buildValidatedUsersRequest()
     {
-        $this->request = [
-            'size' => 0,
-            'query' => [
-                'bool' => [
-                    'filter' => [
-                        [
-                            'match_phrase' => [
-                                'user_status_label' => [
-                                    'query' => 'Validé',
-                                ],
-                            ],
-                        ],
-                        [
-                            'range' => [
-                                'user_created_date' => [
-                                    'gte' => $this->getStartDate()->format(self::DATE_FORMAT),
-                                    'lte' => $this->getEndDate()->format(self::DATE_FORMAT),
-                                ],
+        $this->request['query'] = [
+            'bool' => [
+                'filter' => [
+                    [
+                        'match_phrase' => [
+                            'user_status_label' => [
+                                'query' => 'Validé',
                             ],
                         ],
                     ],
@@ -148,7 +173,38 @@ class DataManager
         ];
     }
 
-    private function sendRequest(): string
+    private function buildRegistrationsRequest()
+    {
+        $this->request['aggs'] = [
+            1 => [
+                'date_histogram' => [
+                    'field' => 'user_created_date',
+                    'calendar_interval' => '1M',
+                    'time_zone' => 'Europe/Paris',
+                    'min_doc_count' => 1,
+                ],
+            ],
+        ];
+
+        $this->request['query'] = [
+            'bool' => [
+                'must_not' => [
+                    [
+                        'match_phrase' => [
+                            'user_status_label' => 'Désinscrit',
+                        ],
+                    ],
+                    [
+                        'match_phrase' => [
+                            'user_status_label' => 'Désinscrit',
+                        ],
+                    ],
+                ],
+            ],
+        ];
+    }
+
+    private function sendRequest()
     {
         $curl = curl_init();
 
@@ -156,16 +212,43 @@ class DataManager
             CURLOPT_URL => $this->baseUri.$this->instance.'*/_search?rest_total_hits_as_int=true&ignore_unavailable=true&ignore_throttled=true&timeout='.self::REQUEST_TIMOUT.'ms',
             CURLOPT_CUSTOMREQUEST => 'POST',
             CURLOPT_POSTFIELDS => json_encode($this->request),
+            CURLOPT_RETURNTRANSFER => true,
             CURLOPT_USERPWD => $this->username.':'.$this->password,
             CURLOPT_HTTPHEADER => [
                 'Content-Type: application/json',
             ],
         ]);
 
-        $response = curl_exec($curl);
+        $this->requestResponse = curl_exec($curl);
 
         curl_close($curl);
+    }
 
-        return $response;
+    private function deserializeDataResponse()
+    {
+        $dataResponse = json_decode($this->requestResponse, true);
+
+        $this->response = [];
+
+        if (isset($dataResponse['hits'])) {
+            $this->response['total'] = $dataResponse['hits']['total'];
+        }
+
+        if (isset($dataResponse['aggregations'])) {
+            $this->response['data'] = [];
+            foreach ($dataResponse['aggregations'] as $collection) {
+                $dataCollection = [];
+                if (isset($collection['buckets'])) {
+                    foreach ($collection['buckets'] as $value) {
+                        $dataCollection[] = [
+                            'key' => $value['key'],
+                            'keyAsString' => $value['key_as_string'],
+                            'value' => $value['doc_count'],
+                        ];
+                    }
+                    $this->response['data'][] = $dataCollection;
+                }
+            }
+        }
     }
 }
