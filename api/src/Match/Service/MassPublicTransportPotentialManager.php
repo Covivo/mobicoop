@@ -44,7 +44,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 class MassPublicTransportPotentialManager
 {
-    private const TIME_LIMIT = 3 * 60 * 60;
+    private const TIME_LIMIT = 6 * 60 * 60;
     private $massRepository;
     private $pTDataProvider;
     private $entityManager;
