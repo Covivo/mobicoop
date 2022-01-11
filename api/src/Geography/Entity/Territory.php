@@ -140,7 +140,7 @@ class Territory
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"aRead","read"})
+     * @Groups({"aRead","read","readSolidary"})
      */
     private $id;
 
