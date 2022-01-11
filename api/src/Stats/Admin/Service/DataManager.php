@@ -34,6 +34,9 @@ class DataManager
     ];
 
     private const REQUEST_TIMOUT = 30000;
+    private const DATE_FORMAT = 'c';
+    private const DEFAULT_START_DATE_MODIFICATOR = '-1 year';
+    private const DEFAULT_END_DATE_MODIFICATOR = '';
 
     private $baseUri;
     private $instance;
@@ -41,6 +44,8 @@ class DataManager
     private $password;
 
     private $dataName;
+    private $startDate;
+    private $endDate;
     private $request;
 
     public function __construct(string $baseUri, string $instance, string $username, string $password)
@@ -59,6 +64,44 @@ class DataManager
     public function getDataName(): string
     {
         return $this->dataName;
+    }
+
+    public function setStartDate(?\DateTime $startDate)
+    {
+        $this->startDate = $startDate;
+    }
+
+    public function getStartDate(): ?\DateTime
+    {
+        if (is_null($this->startDate)) {
+            $startDate = new \DateTime('now');
+            if (self::DEFAULT_START_DATE_MODIFICATOR !== '') {
+                $startDate->modify(self::DEFAULT_START_DATE_MODIFICATOR);
+            }
+
+            return $startDate;
+        }
+
+        return $this->startDate;
+    }
+
+    public function setEndDate(?\DateTime $endDate)
+    {
+        $this->endDate = $endDate;
+    }
+
+    public function getEndDate(): ?\DateTime
+    {
+        if (is_null($this->endDate)) {
+            $endDate = new \DateTime('now');
+            if (self::DEFAULT_END_DATE_MODIFICATOR !== '') {
+                $endDate->modify(self::DEFAULT_END_DATE_MODIFICATOR);
+            }
+
+            return $endDate;
+        }
+
+        return $this->endDate;
     }
 
     public function getData()
@@ -84,26 +127,18 @@ class DataManager
             'query' => [
                 'bool' => [
                     'filter' => [
-                        0 => [
+                        [
                             'match_phrase' => [
                                 'user_status_label' => [
                                     'query' => 'Validé',
                                 ],
                             ],
                         ],
-                        1 => [
-                            'match_phrase' => [
-                                'user_status_label' => [
-                                    'query' => 'Validé',
-                                ],
-                            ],
-                        ],
-                        2 => [
+                        [
                             'range' => [
                                 'user_created_date' => [
-                                    'gte' => '2017-01-05T15:11:00.528Z',
-                                    'lte' => '2022-01-05T15:11:00.528Z',
-                                    'format' => 'strict_date_optional_time',
+                                    'gte' => $this->getStartDate()->format(self::DATE_FORMAT),
+                                    'lte' => $this->getEndDate()->format(self::DATE_FORMAT),
                                 ],
                             ],
                         ],

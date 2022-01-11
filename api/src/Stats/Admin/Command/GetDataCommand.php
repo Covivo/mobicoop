@@ -50,8 +50,8 @@ class GetDataCommand extends Command
         $this
             ->setName('app:stats:getData')
             ->addArgument('dataName', InputArgument::REQUIRED, 'Name of the data to retreive')
-            ->addArgument('fromDate', InputArgument::OPTIONAL, 'The start day of the period')
-            ->addArgument('toDate', InputArgument::OPTIONAL, 'The end day of the period')
+            ->addArgument('startDate', InputArgument::OPTIONAL, 'The start day of the period YYYYMMDD')
+            ->addArgument('endDate', InputArgument::OPTIONAL, 'The end day of the period YYYYMMDD')
             ->setDescription('Get the data')
         ;
     }
@@ -59,6 +59,17 @@ class GetDataCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->dataManager->setDataName($input->getArgument('dataName'));
+
+        $startDate = $endDate = null;
+        if (!is_null($input->getArgument('startDate')) && '' !== $input->getArgument('startDate')) {
+            $startDate = \DateTime::createFromFormat('Ymd', $input->getArgument('startDate'));
+        }
+        if (!is_null($input->getArgument('endDate')) && '' !== $input->getArgument('endDate')) {
+            $endDate = \DateTime::createFromFormat('Ymd', $input->getArgument('endDate'));
+        }
+
+        $this->dataManager->setStartDate($startDate);
+        $this->dataManager->setEndDate($endDate);
         $this->dataManager->getData();
     }
 }
