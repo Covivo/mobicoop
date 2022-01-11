@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace DoctrineMigrations;
 
@@ -6,13 +8,12 @@ use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
 /**
- * Login delegate
+ * Relaypoint type.
  */
 final class Version20220111102600 extends AbstractMigration
 {
-    public function up(Schema $schema) : void
+    public function up(Schema $schema): void
     {
-
         $this->addSql("INSERT INTO `icon` (`id`, `private_icon_linked_id`, `name`, `file_name`) VALUES (24, NULL, 'private-relaypoint-rezopouce', 'private-relaypoint-rezopouce.svg');");
 
         $this->addSql("INSERT INTO `icon` (`id`, `private_icon_linked_id`, `name`, `file_name`) VALUES (25, 24, 'relaypoint-rezopouce', 'relaypoint-rezopouce.svg');");
@@ -43,9 +44,9 @@ final class Version20220111102600 extends AbstractMigration
         $this->addSql("UPDATE `relay_point_type` SET `icon_id` = '17' WHERE `relay_point_type`.`id` = 11;");
     }
 
-    public function down(Schema $schema) : void
+    public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
     }
 }
