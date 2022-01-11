@@ -28,7 +28,7 @@ final class Version20220111132900 extends AbstractMigration
         (8, 'Bâtiment', NOW(), NULL, 23),
         (9, 'Taxi', NOW(), NULL, 12),
         (10, 'Communaute', NOW(), NULL, 3),
-        (11, 'Arrêt-covoiturage', NOW(), NULL, 17);
+        (11, 'Arrêt-covoiturage', NOW(), NULL, 17),
         (12, 'Arrêt Rezo Pouce', NOW(), NULL, 24);
         ");
     }
