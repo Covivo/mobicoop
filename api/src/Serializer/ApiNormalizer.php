@@ -114,12 +114,11 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
 
             return $data;
         }
+        // We check if there is some gamificationNotifications entities in waiting for the current User
         if (true == $this->gamificationActive && $object instanceof User && $object->getId() === $this->security->getUser()->getId()) {
-            // We check if there is some gamificationNotifications entities in waiting for the current User
-
             // Waiting RewardSteps
             $waitingRewardSteps = $this->rewardStepRepository->findWaiting($this->security->getUser());
-            if ($object instanceof User && is_array($data) && is_array($waitingRewardSteps) && count($waitingRewardSteps) > 0) {
+            if (is_array($data) && is_array($waitingRewardSteps) && count($waitingRewardSteps) > 0) {
                 $data['gamificationNotifications'] = [];
                 foreach ($waitingRewardSteps as $waitingRewardStep) {
                     $data['gamificationNotifications'][] = $this->formatRewardStep($waitingRewardStep);
@@ -128,7 +127,7 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
 
             // Waiting Rewards
             $waitingRewards = $this->rewardRepository->findWaiting($this->security->getUser());
-            if ($object instanceof User && is_array($data) && is_array($waitingRewards) && count($waitingRewards) > 0) {
+            if (is_array($data) && is_array($waitingRewards) && count($waitingRewards) > 0) {
                 $data['gamificationNotifications'] = [];
                 foreach ($waitingRewards as $waitingReward) {
                     $data['gamificationNotifications'][] = $this->formatReward($waitingReward);
