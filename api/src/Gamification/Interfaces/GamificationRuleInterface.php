@@ -41,5 +41,5 @@ interface GamificationRuleInterface
      * @param Log                   $log associated to the rule
      * @return bool True if the rule is validated, false either
      */
-    public function execute(object $requester, Log $log, SequenceItem $sequenceItem);
+    public function execute(Log $log, SequenceItem $sequenceItem);
 }

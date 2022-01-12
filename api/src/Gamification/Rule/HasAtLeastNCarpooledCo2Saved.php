@@ -23,6 +23,7 @@
 
 namespace App\Gamification\Rule;
 
+use App\Gamification\Entity\SequenceItem;
 use App\Gamification\Interfaces\GamificationRuleInterface;
 
 /**
@@ -33,17 +34,22 @@ class HasAtLeastNCarpooledCo2Saved implements GamificationRuleInterface
     /**
      * Has at least N saved CO²
      *
-     * @param  $requester
      * @param  $log
      * @param  $sequenceItem
      * @return bool
      */
-    public function execute($requester, $log, $sequenceItem)
+    public function execute($log, $sequenceItem)
     {
         // we check if the user has at least saved N CO²
         // we divide it by 1000 since the amount of savedCo2 is calculated in grams and we want kg)
         $savedCo2 = ($log->getUser()->getSavedCo2() / 1000);
-        if ($savedCo2 >= $sequenceItem->getValue()) {
+        if ($sequenceItem instanceof SequenceItem) {
+            if ($savedCo2 >= $sequenceItem->getValue()) {
+                return true;
+            }
+            return false;
+        }
+        if ($savedCo2 >= $sequenceItem['si_value']) {
             return true;
         }
         return false;

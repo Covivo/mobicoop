@@ -34,12 +34,11 @@ class CarpoolInCommunity implements GamificationRuleInterface
     /**
      * Carpool In Community rule
      *
-     * @param  $requester
      * @param  $log
      * @param  $sequenceItem
      * @return bool
      */
-    public function execute($requester, $log, $sequenceItem)
+    public function execute($log, $sequenceItem)
     {
         // we check if the user has at least one proposal published in a community
         $user = $log->getUser();

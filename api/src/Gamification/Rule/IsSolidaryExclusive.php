@@ -33,7 +33,7 @@ class IsSolidaryExclusive implements GamificationRuleInterface
     /**
      * {@inheritdoc}
      */
-    public function execute($requester, $log, $sequenceItem)
+    public function execute($log, $sequenceItem)
     {
         // We check if the proposal is solidary exclusive
         if ($log->getProposal()->getCriteria()->isSolidaryExclusive()) {

@@ -26,9 +26,9 @@ use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
 use App\Gamification\Resource\BadgesBoard;
-use App\Gamification\Service\GamificationManager;
 use App\User\Entity\User;
 use Symfony\Component\Security\Core\Security;
+use App\Gamification\Service\BadgesBoardManager;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
@@ -38,10 +38,10 @@ final class BadgesBoardCollectionDataProvider implements CollectionDataProviderI
     private $security;
     private $reviewManager;
     
-    public function __construct(Security $security, GamificationManager $gamificationManager)
+    public function __construct(Security $security, BadgesBoardManager $badgesBoardManager)
     {
         $this->security = $security;
-        $this->gamificationManager = $gamificationManager;
+        $this->badgesBoardManager = $badgesBoardManager;
     }
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
@@ -54,6 +54,6 @@ final class BadgesBoardCollectionDataProvider implements CollectionDataProviderI
         if (!($this->security->getUser() instanceof User)) {
             throw new \LogicException("Only a User can get its board");
         }
-        return $this->gamificationManager->getBadgesBoard($this->security->getUser());
+        return $this->badgesBoardManager->getBadgesBoard($this->security->getUser());
     }
 }
