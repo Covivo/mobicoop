@@ -28,15 +28,15 @@ use Exception;
 class AnalyticManager
 {
     public const IDS = [
-        1,
-        2,
-        3,
-        4,
-        5,
+        1 => DataManager::DATA_NAME_REGISTRATIONS,
+        2 => DataManager::DATA_NAME_VALIDATED_USERS,
     ];
 
-    public function __construct()
+    private $dataManager;
+
+    public function __construct(DataManager $dataManager)
     {
+        $this->dataManager = $dataManager;
     }
 
     public function getAnalytics(): array
@@ -51,55 +51,19 @@ class AnalyticManager
 
     public function getAnalytic(int $id, ?array $filter = []): Analytic
     {
-        if (!in_array($id, self::IDS)) {
+        if (!in_array($id, array_keys(self::IDS))) {
             throw new Exception('Unknown Id');
         }
 
         $analytic = new Analytic();
         $analytic->setId($id);
 
-        switch ($id) {
-            case 1:
-                $analytic->setValue([
-                    'total' => 65765,
-                    'dashboard' => [
-                        2019 => [
-                            'new_validated' => 150,
-                            'new_unvalidated' => 93,
-                        ],
-                        2020 => [
-                            'new_validated' => 140,
-                            'new_unvalidated' => 84,
-                        ],
-                        2021 => [
-                            'new_validated' => 188,
-                            'new_unvalidated' => 64,
-                        ],
-                    ],
-                ]);
-
-                break;
-
-            case 2:
-                $analytic->setValue(['total' => 12744]);
-
-                break;
-
-            case 3:
-                $analytic->setValue(['total' => 635]);
-
-                break;
-
-            case 4:
-                $analytic->setValue(['total' => 45]);
-
-                break;
-
-            case 5:
-                $analytic->setValue(['total' => 3745]);
-
-                break;
-        }
+        $this->dataManager->setDataName(self::IDS[$id]);
+        $data = $this->dataManager->getData();
+        $analytic->setValue([
+            'total' => $data['total'],
+            'data' => $data['data'],
+        ]);
 
         return $analytic;
     }
