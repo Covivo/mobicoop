@@ -221,10 +221,6 @@ class RetroactivelyRewardService
         );
         $stmt->execute();
         $resultsUsers = $stmt->fetchAll();
-        $this->logger->info('end fetchall | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
-
-        $stmt = $this->entityManager->getConnection()->prepare('DROP TABLE tuser;')->execute();
-        $this->logger->info('end drop table | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
 
         // format users
         $users = [];
@@ -363,7 +359,6 @@ class RetroactivelyRewardService
                 ];
             }
         }
-        $this->logger->info('start rewards | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
 
         $rewardSteps = [];
         $rewards = [];
@@ -385,7 +380,7 @@ class RetroactivelyRewardService
         foreach ($rewardSteps as $rewardStep) {
             $string .= $rewardStep.',';
             ++$i;
-            if ($i >= 500) {
+            if ($i >= 1250) {
                 $string = substr($string, 0, -1);
                 $this->entityManager->getConnection()->prepare('
                     INSERT INTO reward_step (sequence_item_id,created_date,user_id,notified_date)
@@ -408,7 +403,7 @@ class RetroactivelyRewardService
         foreach ($rewards as $reward) {
             $string .= $reward.',';
             ++$i;
-            if ($i >= 500) {
+            if ($i >= 1250) {
                 $string = substr($string, 0, -1);
                 $this->entityManager->getConnection()->prepare('
                     INSERT INTO reward (badge_id,user_id,created_date,notified_date)
