@@ -114,12 +114,11 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
 
             return $data;
         }
-        if ($this->gamificationActive == true) {
-            // We check if there is some gamificationNotifications entities in waiting for the current User
-
+        // We check if there is some gamificationNotifications entities in waiting for the current User
+        if (true == $this->gamificationActive && $object instanceof User && $object->getId() === $this->security->getUser()->getId()) {
             // Waiting RewardSteps
             $waitingRewardSteps = $this->rewardStepRepository->findWaiting($this->security->getUser());
-            if ($object instanceof User && is_array($data) && is_array($waitingRewardSteps) && count($waitingRewardSteps)>0) {
+            if (is_array($data) && is_array($waitingRewardSteps) && count($waitingRewardSteps) > 0) {
                 $data['gamificationNotifications'] = [];
                 foreach ($waitingRewardSteps as $waitingRewardStep) {
                     $data['gamificationNotifications'][] = $this->formatRewardStep($waitingRewardStep);
@@ -128,7 +127,7 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
 
             // Waiting Rewards
             $waitingRewards = $this->rewardRepository->findWaiting($this->security->getUser());
-            if ($object instanceof User && is_array($data) && is_array($waitingRewards) && count($waitingRewards)>0) {
+            if (is_array($data) && is_array($waitingRewards) && count($waitingRewards) > 0) {
                 $data['gamificationNotifications'] = [];
                 foreach ($waitingRewards as $waitingReward) {
                     $data['gamificationNotifications'][] = $this->formatReward($waitingReward);
@@ -136,8 +135,7 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
             }
 
             // New gamification notifications
-            if (is_array($data) && count($this->gamificationNotifier->getNotifications())>0) {
-
+            if (is_array($data) && count($this->gamificationNotifier->getNotifications()) > 0) {
                 // We init the array only if it's not already filled
                 if (!isset($data['gamificationNotifications'])) {
                     $data['gamificationNotifications'] = [];
@@ -146,9 +144,9 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
                 foreach ($this->gamificationNotifier->getNotifications() as $gamificationNotification) {
                     if ($gamificationNotification instanceof Reward) {
                         $rewardIds = [];
-                        foreach ($data["gamificationNotifications"] as $notification) {
-                            if ($notification["type"] == "Reward") {
-                                $rewardIds[] = $notification["id"];
+                        foreach ($data['gamificationNotifications'] as $notification) {
+                            if ('Reward' == $notification['type']) {
+                                $rewardIds[] = $notification['id'];
                             }
                         }
                         if (!in_array($gamificationNotification->getId(), $rewardIds)) {
@@ -156,9 +154,9 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
                         }
                     } elseif ($gamificationNotification instanceof RewardStep) {
                         $rewardStepIds = [];
-                        foreach ($data["gamificationNotifications"] as $notification) {
-                            if ($notification["type"] == "RewardStep") {
-                                $rewardStepIds[] = $notification["id"];
+                        foreach ($data['gamificationNotifications'] as $notification) {
+                            if ('RewardStep' == $notification['type']) {
+                                $rewardStepIds[] = $notification['id'];
                             }
                         }
                         if (!in_array($gamificationNotification->getId(), $rewardStepIds)) {
@@ -171,19 +169,20 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
             if (isset($data['gamificationNotifications'])) {
                 // we remove RewardStep if he's associated to a gained badge
                 $badgeIds = [];
-                foreach ($data["gamificationNotifications"] as $gamificationNotification) {
-                    if ($gamificationNotification["type"] == "Badge") {
-                        $badgeIds[] = $gamificationNotification["id"];
+                foreach ($data['gamificationNotifications'] as $gamificationNotification) {
+                    if ('Badge' == $gamificationNotification['type']) {
+                        $badgeIds[] = $gamificationNotification['id'];
                     }
                 }
-                foreach ($data["gamificationNotifications"] as $key => $gamificationNotification) {
-                    if ($gamificationNotification["type"] == "RewardStep" && in_array($gamificationNotification["badge"]["id"], $badgeIds)) {
-                        unset($data["gamificationNotifications"][$key]);
+                foreach ($data['gamificationNotifications'] as $key => $gamificationNotification) {
+                    if ('RewardStep' == $gamificationNotification['type'] && in_array($gamificationNotification['badge']['id'], $badgeIds)) {
+                        unset($data['gamificationNotifications'][$key]);
                     }
                 }
             }
             $this->entityManager->flush();
         }
+
         return $data;
     }
 
