@@ -851,6 +851,10 @@ services:
         # Uncomment only if autoconfiguration isn't enabled
         #tags: [ 'api_platform.filter' ]
 
+    App\User\Service\IdentityProofManager:
+        arguments:
+            $uploadPath: '%kernel.project_dir%/public/upload/users/proofs/' 
+
     App\User\Service\UserManager:
         arguments:
             $chat: '%env(int:CARPOOL_DEFAULT_CHAT)%'
