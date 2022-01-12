@@ -60,6 +60,7 @@ class DataManager
     private $requestResponse;
 
     private $response;
+    private $keyType;
 
     public function __construct(string $baseUri, string $instance, string $username, string $password)
     {
@@ -175,6 +176,8 @@ class DataManager
 
     private function buildRegistrationsRequest()
     {
+        $this->keyType = 'utc-datetime';
+
         $this->request['aggs'] = [
             1 => [
                 'date_histogram' => [
@@ -230,19 +233,20 @@ class DataManager
 
         $this->response = [];
 
+        $this->response['total'] = 0;
         if (isset($dataResponse['hits'])) {
             $this->response['total'] = $dataResponse['hits']['total'];
         }
 
+        $this->response['data'] = [];
         if (isset($dataResponse['aggregations'])) {
-            $this->response['data'] = [];
             foreach ($dataResponse['aggregations'] as $collection) {
                 $dataCollection = [];
                 if (isset($collection['buckets'])) {
                     foreach ($collection['buckets'] as $value) {
                         $dataCollection[] = [
-                            'key' => $value['key'],
-                            'keyAsString' => $value['key_as_string'],
+                            'key' => $value['key_as_string'],
+                            'keyType' => $this->keyType = 'utc-datetime',
                             'value' => $value['doc_count'],
                         ];
                     }
