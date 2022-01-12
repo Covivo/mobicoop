@@ -31,8 +31,9 @@ monolog:
             path: "%kernel.logs_dir%/community.log"
             channels: [community]
         consumptionFeedback:
-            type: stream
+            type: rotating_file
             level: debug
+            max_files: 30
             path: "%kernel.logs_dir%/consumptionFeedback.log"
             channels: [consumptionFeedback]
         faker:
