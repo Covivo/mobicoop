@@ -818,6 +818,14 @@ services:
         arguments:
             $fileFolder: '%env(string:SOLIDARY_FILE_FOLDER)%'
 
+    # Stats
+    App\Stats\Admin\Service\DataManager:
+        arguments:
+            $baseUri: '%env(string:ANALYTICS_URI)%'
+            $instance: '%env(string:ANALYTICS_INSTANCE)%'
+            $username: '%env(string:ANALYTICS_USERNAME)%'
+            $password: '%env(string:ANALYTICS_PASSWORD)%'
+
     # User
     App\User\Admin\Service\UserManager:
         arguments:
