@@ -1240,7 +1240,7 @@ export default {
       })
         .then(response => {
           if (response.data) {
-            if(response.data.result == undefined){
+            if(response.data.message == 'error'){
               this.snackErrorPublish.show = true;
               this.loading = false;
             }
