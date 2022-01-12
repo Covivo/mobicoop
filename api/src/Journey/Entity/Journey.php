@@ -37,9 +37,11 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
  *
  * @ORM\Entity
- * @ORM\Table(indexes={@ORM\Index(name="IDX_ORIGIN", columns={"origin"})})
- * @ORM\Table(indexes={@ORM\Index(name="IDX_DESTINATION", columns={"destination"})})
- * @ORM\Table(indexes={@ORM\Index(name="IDX_ORIGIN_DESTINATION", columns={"origin","destination"})})
+ * @ORM\Table(indexes={
+ *  @ORM\Index(name="IDX_ORIGIN", columns={"origin"}),
+ *  @ORM\Index(name="IDX_DESTINATION", columns={"destination"}),
+ *  @ORM\Index(name="IDX_ORIGIN_DESTINATION", columns={"origin","destination"})
+ * })
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,

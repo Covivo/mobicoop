@@ -859,6 +859,10 @@ services:
         # Uncomment only if autoconfiguration isn't enabled
         #tags: [ 'api_platform.filter' ]
 
+    App\User\Service\IdentityProofManager:
+        arguments:
+            $uploadPath: '%kernel.project_dir%/public/upload/users/proofs/' 
+
     App\User\Service\UserManager:
         arguments:
             $chat: '%env(int:CARPOOL_DEFAULT_CHAT)%'
@@ -891,6 +895,18 @@ services:
             $ssoServicesActive: "%env(bool:SSO_SERVICES_ACTIVE)%"
             $ssoServices: "%env(json:file:resolve:SSO_SERVICES)%"
             $ssoUseButtonIcon: "%env(bool:SSO_USE_BUTTON_ICON)%"
+
+    App\ExternalJourney\Admin\DataProvider\ExternalJourneyCollectionDataProvider:
+        arguments:
+            $params:
+                avatarSizes: '%env(string:AVATAR_SIZES)%'
+                avatarDefaultFolder: '%env(string:AVATAR_DEFAULT_FOLDER)%'          
+
+    App\ExternalJourney\Admin\Service\ExternalJourneyManager:
+        arguments:
+            $operator: '%env(json:file:resolve:RDEX_OPERATOR)%'
+            $clients: '%env(json:file:resolve:RDEX_CLIENTS)%'
+            $providers: '%env(json:file:resolve:RDEX_PROVIDERS)%'
 
     App\ExternalJourney\DataProvider\ExternalJourneyCollectionDataProvider:
         arguments:
