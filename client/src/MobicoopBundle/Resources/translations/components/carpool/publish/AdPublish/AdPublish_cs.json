@@ -1,1 +1,9 @@
-{}
+{
+    "create": {
+        "title": "Zveřejnění inzerátu",
+        "subtitle": "Spusťte inzerát"
+    },
+    "update": {
+        "title": "Upravte svůj inzerát"
+    }
+}
