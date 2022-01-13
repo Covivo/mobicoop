@@ -1,8 +1,13 @@
-<?php namespace App\Security;
+<?php
+
+namespace App\Security;
 
 use App\User\Entity\User;
 use App\User\Service\SsoManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Gesdinet\JWTRefreshTokenBundle\Model\RefreshTokenManagerInterface;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -11,9 +16,6 @@ use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
-use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
-use Gesdinet\JWTRefreshTokenBundle\Model\RefreshTokenManagerInterface;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class SsoAuthenticator extends AbstractGuardAuthenticator
 {
@@ -50,13 +52,13 @@ class SsoAuthenticator extends AbstractGuardAuthenticator
     {
         $decodeRequest = json_decode($request->getContent());
         if (
-            isset($decodeRequest->ssoId) && !empty($decodeRequest->ssoId) &&
-            isset($decodeRequest->ssoProvider) && !empty($decodeRequest->ssoProvider) &&
-            isset($decodeRequest->baseSiteUri) && !empty($decodeRequest->baseSiteUri)
+            isset($decodeRequest->ssoId) && !empty($decodeRequest->ssoId)
+            && isset($decodeRequest->ssoProvider) && !empty($decodeRequest->ssoProvider)
+            && isset($decodeRequest->baseSiteUri) && !empty($decodeRequest->baseSiteUri)
         ) {
-            $credentials['ssoId'] =  $decodeRequest->ssoId;
-            $credentials['ssoProvider'] =  $decodeRequest->ssoProvider;
-            $credentials['baseSiteUri'] =  $decodeRequest->baseSiteUri;
+            $credentials['ssoId'] = $decodeRequest->ssoId;
+            $credentials['ssoProvider'] = $decodeRequest->ssoProvider;
+            $credentials['baseSiteUri'] = $decodeRequest->baseSiteUri;
         } else {
             return false;
         }
@@ -65,11 +67,11 @@ class SsoAuthenticator extends AbstractGuardAuthenticator
     }
 
     /**
-     * Searching User by ssoId and ssoProvider
+     * Searching User by ssoId and ssoProvider.
      *
      * @param array $credentials
-     * @param UserProviderInterface $userProvider
-     * @return User|null
+     *
+     * @return null|User
      */
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
@@ -78,6 +80,7 @@ class SsoAuthenticator extends AbstractGuardAuthenticator
             // Code 401 "Unauthorized"
             return null;
         }
+
         return $this->ssoManager->getUser($credentials['ssoProvider'], $credentials['ssoId'], $credentials['baseSiteUri']);
     }
 
@@ -95,7 +98,7 @@ class SsoAuthenticator extends AbstractGuardAuthenticator
         $user = $token->getUser();
 
         //Time for valid refresh token, define in gesdinet_jwt_refresh_token, careful to let this value in secondes
-        $addTime = "PT".$this->params->get('gesdinet_jwt_refresh_token.ttl')."S";
+        $addTime = 'PT'.$this->params->get('gesdinet_jwt_refresh_token.ttl').'S';
 
         $now = new \DateTime('now');
         $now->add(new \DateInterval($addTime));
@@ -109,28 +112,28 @@ class SsoAuthenticator extends AbstractGuardAuthenticator
 
         // on success, let the request continue
         return new JsonResponse([
-          'token'=>$this->jwtTokenManagerInterface->create($token->getUser()),
-          'refreshToken' => $refreshToken->getRefreshToken()
+            'token' => $this->jwtTokenManagerInterface->create($token->getUser()),
+            'refreshToken' => $refreshToken->getRefreshToken(),
+            'logoutUrl' => (!is_null($user->getSsoProvider())) ? $this->ssoManager->getSsoLogoutUrl($user) : null,
         ]);
     }
-
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
     {
         $data = [
-            'message' => strtr($exception->getMessageKey(), $exception->getMessageData())
+            'message' => strtr($exception->getMessageKey(), $exception->getMessageData()),
         ];
 
         return new JsonResponse($data, Response::HTTP_UNAUTHORIZED);
     }
 
     /**
-     * Called when authentication is needed, but it's not sent
+     * Called when authentication is needed, but it's not sent.
      */
     public function start(Request $request, AuthenticationException $authException = null)
     {
         $data = [
-            'message' => 'Authentication Required'
+            'message' => 'Authentication Required',
         ];
 
         return new JsonResponse($data, Response::HTTP_UNAUTHORIZED);

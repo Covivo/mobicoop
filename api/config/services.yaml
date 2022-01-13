@@ -54,6 +54,12 @@ services:
         arguments:
             $decorated: '@App\EventListener\DeserializeListener.inner'
 
+    # Authentication success listener (classic login)
+    mobicoop.event.authentication_success_listener:
+        class: App\Security\LoginAuthenticator
+        tags:
+            - { name: kernel.event_listener, event: lexik_jwt_authentication.on_authentication_success, method: onAuthenticationSuccessResponse }
+
     # JWT Event Listener
     mobicoop.event.jwt_created_listener:
         class: App\Security\EventListener\JWTCreatedListener

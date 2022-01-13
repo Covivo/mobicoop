@@ -312,13 +312,13 @@ class MassPublicTransportPotentialManager
         // Co2 saved
         // It's a percentage of the total CO2 of a regular travel by car using the PT Potential.
         // We assume that PT travel consume 0 Co2
-        $computedData['savedCO2'] = $computedData['totalTravelDistanceCO2'] * $computedData['PTPotential'] / 100;
+        $computedData['savedCO2'] = $computedData['totalTravelDistanceCO2'] * $computedData['PTPotential'];
 
         // Distance and Duration saved
         // It's a percentage of the total distance and duration of a regular travel by car using the PT Potential.
         // It's the distance and duration that are not made by car.
-        $computedData['savedDurationByCar'] = $computedData['totalTravelDuration'] * $computedData['PTPotential'] / 100;
-        $computedData['savedDistanceByCar'] = $computedData['totalTravelDistance'] * $computedData['PTPotential'] / 100;
+        $computedData['savedDurationByCar'] = $computedData['totalTravelDuration'] * $computedData['PTPotential'];
+        $computedData['savedDistanceByCar'] = $computedData['totalTravelDistance'] * $computedData['PTPotential'];
 
         // Per year
         $computedData['totalTravelDistancePerYear'] = $computedData['totalTravelDistance'] * Mass::NB_WORKING_DAY;

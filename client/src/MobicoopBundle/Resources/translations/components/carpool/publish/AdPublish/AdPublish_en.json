@@ -100,10 +100,10 @@
     },
     "messageRoundedPrice": "We have rounded up the rate for your proposal to improve your experience and that of other users. Thank you for your understanding.",
     "route": {
-        "publish": "/carpool/postproposal",
+        "publish": "carpool/postad",
         "update": "carpool/proposal/{id}/change",
-        "myAds": "/user/profile/change/my-proposals",
-        "roundPrice": "/price/round-up",
+        "myAds": "/user/profile/update/myAds",
+        "roundPrice": "/price/round",
         "cleanOrphans": "/covoiturage/cleanOrphanProposals"
     },
     "snackBarErrorPublish": "Journey incompatible with your already published proposals. If your proposal already published on this date is no longer valid, you must pause, change or delete it.",

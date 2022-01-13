@@ -9,7 +9,7 @@
         }
     },
     "delete": {
-        "route": "/carpool/proposal/delete",
+        "route": "/carpool/ad/delete",
         "success": "Your proposal has been successfully deleted.",
         "error": "An error occurred while deleting your proposal.",
         "dialog": {
