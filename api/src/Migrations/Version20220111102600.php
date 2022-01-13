@@ -8,40 +8,36 @@ use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
 /**
- * Relaypoint type.
+ * Auto-generated Migration: Please modify to your needs!
  */
 final class Version20220111102600 extends AbstractMigration
 {
     public function up(Schema $schema): void
     {
-        $this->addSql("INSERT INTO `icon` (`id`, `private_icon_linked_id`, `name`, `file_name`) VALUES (24, NULL, 'private-relaypoint-rezopouce', 'private-relaypoint-rezopouce.svg');");
+        // this up() migration is auto-generated, please modify it to your needs
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
-        $this->addSql("INSERT INTO `icon` (`id`, `private_icon_linked_id`, `name`, `file_name`) VALUES (25, 24, 'relaypoint-rezopouce', 'relaypoint-rezopouce.svg');");
+        //private icon
+        $this->addSql("INSERT IGNORE INTO `icon` (`id`, `private_icon_linked_id`, `name`, `file_name`) VALUES (24, NULL, 'private-relaypoint-rezopouce', 'private-relaypoint-rezopouce.svg');");
 
-        $this->addSql("INSERT INTO `relay_point_type` (`id`, `name`, `created_date`, `updated_date`, `icon_id`) VALUES ('12', 'Arrêt Rezo Pouce', '2022-01-11 09:39:13.000000', NULL, '25');");
-
-        //Aire-Covoiturage
-        $this->addSql("UPDATE `relay_point_type` SET `icon_id` = '15' WHERE `relay_point_type`.`id` = 1;");
-        //P+R
-        $this->addSql("UPDATE `relay_point_type` SET `icon_id` = '19' WHERE `relay_point_type`.`id` = 2;");
-        //Gare
-        $this->addSql("UPDATE `relay_point_type` SET `icon_id` = '22' WHERE `relay_point_type`.`id` = 3;");
-        //Parking
-        $this->addSql("UPDATE `relay_point_type` SET `icon_id` = '20' WHERE `relay_point_type`.`id` = 4;");
-        //Zone d'activité
-        $this->addSql("UPDATE `relay_point_type` SET `icon_id` = '1' WHERE `relay_point_type`.`id` = 5;");
-        //Aucun
-        $this->addSql("UPDATE `relay_point_type` SET `icon_id` = '1' WHERE `relay_point_type`.`id` = 6;");
-        //Arrêt
-        $this->addSql("UPDATE `relay_point_type` SET `icon_id` = '14' WHERE `relay_point_type`.`id` = 7;");
-        //Bâtiment
-        $this->addSql("UPDATE `relay_point_type` SET `icon_id` = '23' WHERE `relay_point_type`.`id` = 8;");
-        //Taxi
-        $this->addSql("UPDATE `relay_point_type` SET `icon_id` = '12' WHERE `relay_point_type`.`id` = 9;");
-        //Communauté
-        $this->addSql("UPDATE `relay_point_type` SET `icon_id` = '3' WHERE `relay_point_type`.`id` = 10;");
-        //Arrêt-covoiturage
-        $this->addSql("UPDATE `relay_point_type` SET `icon_id` = '17' WHERE `relay_point_type`.`id` = 11;");
+         // icon
+         $this->addSql("INSERT IGNORE INTO `icon` (`id`, `private_icon_linked_id`, `name`, `file_name`) VALUES (25, 24, 'relaypoint-rezopouce', 'relaypoint-rezopouce.svg');");
+        
+        //relay_point_type
+        $this->addSql("INSERT IGNORE INTO `relay_point_type` (`id`, `name`, `created_date`, `updated_date`, `icon_id`) VALUES
+        (1, 'Aire-covoiturage', NOW(), NULL, 15),
+        (2, 'P+R', NOW(), NULL, 19),
+        (3, 'Gare', NOW(), NULL, 22),
+        (4, 'Parking', NOW(), NULL, 20),
+        (5, 'Zone activité', NOW(), NULL, 1),
+        (6, 'aucun', NOW(), NULL, 1),
+        (7, 'Arrêt', NOW(), NULL, 14),
+        (8, 'Bâtiment', NOW(), NULL, 23),
+        (9, 'Taxi', NOW(), NULL, 12),
+        (10, 'Communaute', NOW(), NULL, 3),
+        (11, 'Arrêt-covoiturage', NOW(), NULL, 17),
+        (12, 'Arrêt Rezo Pouce', NOW(), NULL, 25);
+        ");
     }
 
     public function down(Schema $schema): void
