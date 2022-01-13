@@ -296,8 +296,8 @@ export default {
       menu: false,
       regular: this.initRegular,
       role: this.initRole ? this.initRole : (this.solidaryExclusiveAd ? 1 : 3),
-      passenger: true,
-      driver: true,
+      passenger: this.initRole == 2 ? true : (this.initRole == 3 || this.initRole == null ? true : false),
+      driver: this.initRole == 1 ? true : (this.initRole == 3 || this.initRole == null ? true : false),
       labelOrigin: this.$t("origin.label"),
       labelDestination: this.$t("destination.label"),
       requiredErrorOrigin: this.$t("origin.error"),
@@ -337,7 +337,7 @@ export default {
       this.destination = this.initDestination;
     }
   },
-  mounted() {
+  beforeUpdate() {
     this.locale = localStorage.getItem("X-LOCALE");
     moment.locale(this.locale);
   },

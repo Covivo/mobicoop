@@ -42,7 +42,7 @@
   },
   "config": {
     "ghooks": {
-      "pre-commit": "php bin/php-cs-fixer.phar fix --using-cache=false api/src &&  php bin/php-cs-fixer.phar fix --using-cache=false client/src",
+      "pre-commit": "php bin/php-cs-fixer.phar fix --using-cache=no api/src &&  php bin/php-cs-fixer.phar fix --using-cache=no client/src",
       "pre-push": "npm run contributor-checker"
     }
   },

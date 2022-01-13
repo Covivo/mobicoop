@@ -10,7 +10,7 @@
     "start": "php bin/console server:run 0.0.0.0:9091 & npm run compile-and-watch-vue",
     "test": "node src/MobicoopBundle/spec/runtests.js",
     "testAndCoverage": "node src/MobicoopBundle/spec/runtests.js -c",
-    "testFixAndCoverage": "php vendor/bin/php-cs-fixer.phar fix --using-cache=false src &&  php vendor/bin/php-cs-fixer.phar fix --using-cache=false src/MobicoopBundle/spec && node src/MobicoopBundle/spec/runtests.js -c",
+    "testFixAndCoverage": "php vendor/bin/php-cs-fixer.phar fix --using-cache=no src &&  php vendor/bin/php-cs-fixer.phar fix --using-cache=no src/MobicoopBundle/spec && node src/MobicoopBundle/spec/runtests.js -c",
     "compile": "encore production",
     "compile-and-watch": "encore dev-server --public --host 0.0.0.0 --port 9089 --disable-host-check",
     "compile-and-watch-vue": "encore dev-server  --public --host 0.0.0.0 --port 9089 --disable-host-check --hot",

@@ -378,6 +378,9 @@ class DataProvider
                 // private request, store in session
                 $this->session->set('apiToken', $this->jwtToken);
                 $this->session->set('apiRefreshToken', $this->refreshToken);
+                if (isset($tokens['logoutUrl']) && $tokens['logoutUrl'] !== '') {
+                    $this->session->set('logoutUrl', $tokens['logoutUrl']);
+                }
             } else {
                 // public request, store in system cache
                 $cachedToken = $this->cache->getItem($this->tokenId . '.jwt.token');

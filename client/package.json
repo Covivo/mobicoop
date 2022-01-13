@@ -14,7 +14,7 @@
     "test-functional": "PERCY_TOKEN=aaabbbcccdddeeefff PERCY_BRANCH=local percy exec -- cypress run --browser chrome",
     "test-functional-ci": "percy exec -- cypress run --record",
     "test-functional-ci-cypress": "cypress run",
-    "test-fix-and-coverage": "php vendor/bin/php-cs-fixer.phar fix --using-cache=false src &&  php vendor/bin/php-cs-fixer.phar fix --using-cache=false src/MobicoopBundle/spec && node src/MobicoopBundle/spec/runtests.js -c",
+    "test-fix-and-coverage": "php vendor/bin/php-cs-fixer.phar fix --using-cache=no src &&  php vendor/bin/php-cs-fixer.phar fix --using-cache=no src/MobicoopBundle/spec && node src/MobicoopBundle/spec/runtests.js -c",
     "compile": "encore production",
     "compile-and-watch": "encore dev-server --public --host 0.0.0.0 --port 8079 --disable-host-check",
     "compile-and-watch-vue": "encore dev-server  --public --host 0.0.0.0 --port 8079 --disable-host-check --hot",
