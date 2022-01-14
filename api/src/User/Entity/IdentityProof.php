@@ -114,7 +114,7 @@ class IdentityProof
 
     /**
      * @var null|int the user id associated with the proof
-     * @Groups({"write"})
+     * @Groups({"aWrite"})
      */
     private $userId;
 
