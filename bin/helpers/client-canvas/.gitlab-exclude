@@ -25,6 +25,7 @@ mobicoop-platform/api/public/robots.txt
 + mobicoop-platform/api/public/upload/icons/private-relaypoint-parking.svg
 + mobicoop-platform/api/public/upload/icons/private-relaypoint-taxi.svg
 + mobicoop-platform/api/public/upload/icons/private-relaypoint-train.svg
++ mobicoop-platform/api/public/upload/icons/private-relaypoint-rezopouce.svg
 + mobicoop-platform/api/public/upload/icons/relaypoint-bus.svg
 + mobicoop-platform/api/public/upload/icons/relaypoint-carpool-area.svg
 + mobicoop-platform/api/public/upload/icons/relaypoint-carpool-stop.svg
@@ -34,6 +35,7 @@ mobicoop-platform/api/public/robots.txt
 + mobicoop-platform/api/public/upload/icons/relaypoint-parking.svg
 + mobicoop-platform/api/public/upload/icons/relaypoint-taxi.svg
 + mobicoop-platform/api/public/upload/icons/relaypoint-train.svg
++ mobicoop-platform/api/public/upload/icons/relaypoint-rezopouce.svg
 + mobicoop-platform/api/public/upload/icons/venue.svg
 - mobicoop-platform/api/public/upload/icons/*.svg
 mobicoop-platform/api/public/upload/badges/images/*.jpg
