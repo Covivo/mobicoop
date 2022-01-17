@@ -28,6 +28,7 @@
 + /api/public/upload/icons/private-relaypoint-parking.svg
 + /api/public/upload/icons/private-relaypoint-taxi.svg
 + /api/public/upload/icons/private-relaypoint-train.svg
++ /api/public/upload/icons/private-relaypoint-rezopouce.svg
 + /api/public/upload/icons/relaypoint-bus.svg
 + /api/public/upload/icons/relaypoint-carpool-area.svg
 + /api/public/upload/icons/relaypoint-carpool-stop.svg
@@ -37,6 +38,7 @@
 + /api/public/upload/icons/relaypoint-parking.svg
 + /api/public/upload/icons/relaypoint-taxi.svg
 + /api/public/upload/icons/relaypoint-train.svg
++ /api/public/upload/icons/relaypoint-rezopouce.svg
 + /api/public/upload/icons/venue.svg
 - /api/public/upload/icons/*.svg
 /api/public/upload/editorials/images/*.jpg
