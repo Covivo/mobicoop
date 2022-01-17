@@ -19,17 +19,17 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\ExternalJourney\Service;
 
-use App\ExternalJourney\Entity\ExternalJourneyProvider;
 use App\Carpool\Entity\Criteria;
 use App\Carpool\Entity\Result;
 use App\Carpool\Entity\ResultRole;
-use GuzzleHttp\Client;
+use App\ExternalJourney\Entity\ExternalJourneyProvider;
 use App\Geography\Entity\Address;
 use App\User\Entity\User;
+use GuzzleHttp\Client;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -40,18 +40,17 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class ExternalJourneyManager
 {
+    private const EXTERNAL_JOURNEY_HASH = 'sha256';         // hash algorithm
     private $operator;
     private $clients;
     private $providers;
     private $params;
 
-    private const EXTERNAL_JOURNEY_HASH = "sha256";         // hash algorithm
-
     public function __construct(?array $operator = [], ?array $clients = [], ?array $providers = [])
     {
         $this->operator = $operator;
         $this->clients = $clients;
-        foreach ($providers as $providerName=>$details) {
+        foreach ($providers as $providerName => $details) {
             $provider = new ExternalJourneyProvider();
             $provider->setName($providerName);
             $provider->setUrl($details['url']);
@@ -83,57 +82,55 @@ class ExternalJourneyManager
 
         // initialize client API for any request
         $client = new Client();
-        
+
         // we collect search parameters here
-        $providerName = $request->get("provider");
-        $driver = $request->get("driver");
-        $passenger = $request->get("passenger");
-        $fromLatitude = $request->get("from_latitude");
-        $fromLongitude = $request->get("from_longitude");
-        $toLatitude = $request->get("to_latitude");
-        $toLongitude = $request->get("to_longitude");
-        $outwardMinDate = $request->get("outward_mindate");
-        $outwardMaxDate = $request->get("outward_maxdate");
-        $frequency = $request->get("frequency");
-        $rawJson = $request->get("rawJson");
-        $days = ["monday","tuesday","wednesday","thursday","friday","saturday","sunday"];
+        $providerName = $request->get('provider');
+        $driver = $request->get('driver');
+        $passenger = $request->get('passenger');
+        $fromLatitude = $request->get('from_latitude');
+        $fromLongitude = $request->get('from_longitude');
+        $toLatitude = $request->get('to_latitude');
+        $toLongitude = $request->get('to_longitude');
+        $outwardMinDate = $request->get('outward_mindate');
+        $outwardMaxDate = $request->get('outward_maxdate');
+        $frequency = $request->get('frequency');
+        $rawJson = $request->get('rawJson');
+        $days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 
         // then we set these parameters
-        $searchParameters  = [
-            'driver'  => [
-                'state'   => $driver
+        $searchParameters = [
+            'driver' => [
+                'state' => $driver,
             ],
             'passenger' => [
-                'state'   => $passenger
+                'state' => $passenger,
             ],
-            'from'    => [
-                'latitude'  => $fromLatitude,
-                'longitude' => $fromLongitude
+            'from' => [
+                'latitude' => $fromLatitude,
+                'longitude' => $fromLongitude,
             ],
-            'to'    => [
-                'latitude'  => $toLatitude,
-                'longitude' => $toLongitude
-            ]
+            'to' => [
+                'latitude' => $toLatitude,
+                'longitude' => $toLongitude,
+            ],
         ];
 
-
-        if ($frequency!=="" && ($frequency=="regular" || $frequency=="punctual")) {
+        if ('' !== $frequency && ('regular' == $frequency || 'punctual' == $frequency)) {
             $searchParameters['frequency'] = $frequency;
         }
 
-        if ($outwardMinDate!=="") {
+        if ('' !== $outwardMinDate) {
             $searchParameters['outward']['mindate'] = $outwardMinDate;
         }
-        if ($outwardMaxDate!=="") {
+        if ('' !== $outwardMaxDate) {
             $searchParameters['outward']['maxdate'] = $outwardMaxDate;
         }
-
 
         // Days treatment for regular journeys
         // which days
         foreach ($days as $day) {
-            $currentday = $request->get("days_".$day);
-            if ($currentday !== "") {
+            $currentday = $request->get('days_'.$day);
+            if ('' !== $currentday) {
                 $searchParameters['days'][$day] = $currentday;
             } else {
                 $searchParameters['days'][$day] = 0;
@@ -142,36 +139,36 @@ class ExternalJourneyManager
 
         // mintime and maxtime for days
         foreach ($days as $day) {
-            $mintime = $request->get($day."_mintime");
-            if ($mintime!=="") {
-                $searchParameters['outward'][$day]["mintime"] = $mintime;
+            $mintime = $request->get($day.'_mintime');
+            if ('' !== $mintime) {
+                $searchParameters['outward'][$day]['mintime'] = $mintime;
             }
-            $maxtime = $request->get($day."_maxtime");
-            if ($maxtime!=="") {
-                $searchParameters['outward'][$day]["maxtime"] = $maxtime;
+            $maxtime = $request->get($day.'_maxtime');
+            if ('' !== $maxtime) {
+                $searchParameters['outward'][$day]['maxtime'] = $maxtime;
             }
         }
 
         $aggregatedResults = [];
         $providers = $this->getProviders();
-        
+
         // If a provider is given in parameters, we take only this one
         // Otherwise, we use all providers
-        if ($providerName !== '') {
+        if ('' !== $providerName) {
             foreach ($providers as $provider) {
                 if ($provider->getName() == $providerName) {
                     $providers = [$provider];
                 }
             }
         }
-        
+
         // @todo error management (api not responding, bad parameters...)
         foreach ($providers as $provider) {
-            $query = array(
+            $query = [
                 'timestamp' => time(),
-                'apikey'    => $provider->getApiKey(),
-                'p'         => $searchParameters
-            );
+                'apikey' => $provider->getApiKey(),
+                'p' => $searchParameters,
+            ];
             // construct the requested url
             $url = $provider->getUrl().'/'.$provider->getResource().'?'.http_build_query($query);
             $signature = hash_hmac(self::EXTERNAL_JOURNEY_HASH, $url, $provider->getPrivateKey());
@@ -180,8 +177,8 @@ class ExternalJourneyManager
             $data = $client->request('GET', $signedUrl);
             $data = $data->getBody()->getContents();
 
-            if ($data!=="") {
-                if ($rawJson==1) {
+            if ('' !== $data) {
+                if (1 == $rawJson) {
                     // rawJson flag set. We return RDEX format.
                     $aggregatedResults = json_decode($data, true);
                 } else {
@@ -192,6 +189,7 @@ class ExternalJourneyManager
                 }
             }
         }
+
         return $aggregatedResults;
     }
 
@@ -215,21 +213,19 @@ class ExternalJourneyManager
             $carpooler->setId($currentJourneyCarpooler['uuid']);
             $carpooler->setGivenName($currentJourneyCarpooler['alias']);
             $carpooler->setGender(User::GENDER_FEMALE);
-            if ($currentJourneyCarpooler['gender']==="male") {
+            if ('male' === $currentJourneyCarpooler['gender']) {
                 $carpooler->setGender(User::GENDER_MALE);
             }
             if (is_null($currentJourneyCarpooler['image'])) {
                 foreach (json_decode($this->params['avatarSizes']) as $size) {
                     if (in_array($size, User::AUTHORIZED_SIZES_DEFAULT_AVATAR)) {
-                        $carpooler->addAvatar($this->params['avatarDefaultFolder'].$size.".svg");
+                        $carpooler->addAvatar($this->params['avatarDefaultFolder'].$size.'.svg');
                     }
                 }
             } else {
                 $carpooler->addAvatar($currentJourneyCarpooler['image']);
             }
             $result->setCarpooler($carpooler);
-
-
 
             // Days checked
             $result->setMonCheck($currentJourney['days']['monday']);
@@ -241,39 +237,40 @@ class ExternalJourneyManager
             $result->setSunCheck($currentJourney['days']['sunday']);
 
             // We check all times and if they are all the same, we set the time of the Result
-            $days = array('monday','tuesday','wednesday','thursday','friday','saturday','sunday');
-            $currentTime = "";
+            $days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+            $currentTime = '';
             $returnTime = true;
-            $time = "";
+            $time = '';
             foreach ($days as $day) {
                 // Only for checked days
                 if ($currentJourney['days'][$day]) {
                     $time = $this->middleHour($currentJourney['outward'][$day]['mintime'], $currentJourney['outward'][$day]['maxtime'], $currentJourney['outward']['mindate'], $currentJourney['outward']['mindate']);
-                    
+
                     // Only the first time to init the reference
-                    if ($currentTime==="") {
-                        $currentTime=$time;
+                    if ('' === $currentTime) {
+                        $currentTime = $time;
                     }
-                    
+
                     if ($currentTime !== $time) {
                         $returnTime = false;
+
                         break;
                     }
                 }
             }
 
             // Regular/Punctual treatment
-            if ($currentJourney['frequency']==="regular") {
+            if ('regular' === $currentJourney['frequency']) {
                 // REGULAR
                 $result->setFrequency(Criteria::FREQUENCY_REGULAR);
-                $result->setOutwardTime(($time!=="") ? $time : null);
+                $result->setOutwardTime(('' !== $time) ? $time : null);
 
                 // We need to find the first valid date
                 $firsValidDay = new \DateTime();
                 $cptDay = 0;
-                while ($cptDay<6 && !$currentJourney['days'][lcfirst($firsValidDay->format('l'))]) {
-                    $cptDay++;
-                    $firsValidDay = new \DateTime("now +".$cptDay." days");
+                while ($cptDay < 6 && !$currentJourney['days'][lcfirst($firsValidDay->format('l'))]) {
+                    ++$cptDay;
+                    $firsValidDay = new \DateTime('now +'.$cptDay.' days');
                 }
                 $result->setDate($firsValidDay);
             } else {
@@ -302,15 +299,14 @@ class ExternalJourneyManager
             $destination->setAddressCountry($currentJourney['to']['country']);
             $result->setDestination($destination);
 
-
             // price - seats - distance - duration
-            $result->setTime(($time!=="") ? $time : null);
+            $result->setTime(('' !== $time) ? $time : null);
             $result->setRoundedPrice(round(($currentJourney['distance'] / 1000) * $currentJourney['cost']['variable'], 2));
             $result->setSeats(isset($currentJourney['driver']['seats']) ? $currentJourney['driver']['seats'] : 0);
 
             // return trip ?
             $result->setReturn(false);
-            if ($currentJourney["type"]==="round-trip") {
+            if ('round-trip' === $currentJourney['type']) {
                 $result->setReturn(true);
             }
 
@@ -325,18 +321,17 @@ class ExternalJourneyManager
                 $result->setResultDriver($resultDriver);
             }
 
-            if (!isset($currentJourney['url']) || trim($currentJourney['url']) === "") {
+            if (!isset($currentJourney['url']) || '' === trim($currentJourney['url'])) {
                 $result->setExternalUrl($currentJourney['origin']);
             } else {
-                if (strpos($currentJourney['url'], 'http')!==false) {
+                if (false !== strpos($currentJourney['url'], 'http')) {
                     $result->setExternalUrl($currentJourney['url']);
                 } else {
                     $result->setExternalUrl('https://'.$currentJourney['url']);
                 }
             }
-            
+
             $result->setExternalOrigin($currentJourney['origin']);
-            $result->setExternalOperator($currentJourney['operator']);
             $result->setExternalOperator($currentJourney['operator']);
             $result->setExternalProvider($provider->getName());
             $result->setExternalJourneyId($currentJourney['uuid']);
@@ -348,14 +343,15 @@ class ExternalJourneyManager
 
     private function middleHour($heureMin, $heureMax, $dateMin, $dateMax)
     {
-        $min = \DateTime::createFromFormat('Y-m-d H:i:s', $dateMin . " " . $heureMin, new \DateTimeZone('UTC'));
+        $min = \DateTime::createFromFormat('Y-m-d H:i:s', $dateMin.' '.$heureMin, new \DateTimeZone('UTC'));
         $mintime = $min->getTimestamp();
-        $max = \DateTime::createFromFormat('Y-m-d H:i:s', $dateMax . " " . $heureMax, new \DateTimeZone('UTC'));
+        $max = \DateTime::createFromFormat('Y-m-d H:i:s', $dateMax.' '.$heureMax, new \DateTimeZone('UTC'));
         $maxtime = $max->getTimestamp();
         $marge = ($maxtime - $mintime) / 2;
         $middleHour = $mintime + $marge;
         $returnHour = new \DateTime();
         $returnHour->setTimestamp($middleHour);
+
         return $returnHour;
     }
 }
