@@ -166,8 +166,9 @@ export default {
       return (this.pickUp.addressLocality) ? this.pickUp.addressLocality : '';
     },
   },
-  created() {
-    moment.locale(this.locale); // DEFINE DATE LANGUAGE
+  beforeUpdate() {
+    this.locale = localStorage.getItem("X-LOCALE");
+    moment.locale(this.locale);
   },
   methods: {
   }
