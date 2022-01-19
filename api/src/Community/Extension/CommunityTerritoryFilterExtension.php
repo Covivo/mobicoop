@@ -26,6 +26,7 @@ namespace App\Community\Extension;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryCollectionExtensionInterface;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryItemExtensionInterface;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
+use App\App\Entity\App;
 use App\Auth\Service\AuthManager;
 use App\Community\Entity\Community;
 use App\Geography\Entity\Territory;
@@ -59,7 +60,7 @@ final class CommunityTerritoryFilterExtension implements QueryCollectionExtensio
     private function addWhere(QueryBuilder $queryBuilder, string $resourceClass, bool $isItem, string $operationName = null, array $identifiers = [], array $context = []): void
     {
         // concerns only Community resource, and User users (not Apps)
-        if (Community::class !== $resourceClass) {
+        if (Community::class !== $resourceClass || (null === $user = $this->security->getUser()) || $this->security->getUser() instanceof App) {
             return;
         }
 

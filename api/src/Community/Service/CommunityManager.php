@@ -465,7 +465,7 @@ class CommunityManager
      */
     public function getMCommunitiesRequest(UserInterface $user, ?string $userEmail = null)
     {
-        return $this->communityRepository->findAvailableCommunitiesForUser($user instanceof User ? $user->getId() : null, ['c.name' => 'asc']);
+        return $this->communityRepository->findAvailableCommunitiesForUser($user instanceof User ? $user : null, ['c.name' => 'asc']);
     }
 
     /**
