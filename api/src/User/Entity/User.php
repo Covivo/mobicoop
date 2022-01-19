@@ -974,6 +974,7 @@ class User implements UserInterface, EquatableInterface
      * @var null|ArrayCollection a user may have many identity proofs
      *
      * @ORM\OneToMany(targetEntity="\App\User\Entity\IdentityProof", mappedBy="user", cascade={"persist"})
+     * @ORM\OrderBy({"id" = "DESC"})
      * @MaxDepth(1)
      * @Groups({"aWrite","aRead"})
      */
@@ -3645,14 +3646,7 @@ class User implements UserInterface, EquatableInterface
 
     public function hasVerifiedIdentity(): ?bool
     {
-        return false; // TO DO : Implements the real value after the identity verification development
-    }
-
-    public function setVerifiedIdentity(?bool $verifiedIdentity): self
-    {
-        $this->verifiedIdentity = $verifiedIdentity;
-
-        return $this;
+        return IdentityProof::STATUS_ACCEPTED == $this->identityStatus;
     }
 
     // DOCTRINE EVENTS

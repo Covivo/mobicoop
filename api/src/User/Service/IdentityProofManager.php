@@ -37,13 +37,15 @@ class IdentityProofManager
     private $identityProofRepository;
     private $entityManager;
     private $uploadPath;
+    private $urlPath;
 
-    public function __construct(Security $security, IdentityProofRepository $identityProofRepository, EntityManagerInterface $entityManager, string $uploadPath)
+    public function __construct(Security $security, IdentityProofRepository $identityProofRepository, EntityManagerInterface $entityManager, string $uploadPath, string $urlPath)
     {
         $this->admin = $security->getUser();
         $this->identityProofRepository = $identityProofRepository;
         $this->entityManager = $entityManager;
         $this->uploadPath = $uploadPath;
+        $this->urlPath = $urlPath;
     }
 
     public function createIdentityProof(User $user, File $file): IdentityProof
@@ -84,6 +86,15 @@ class IdentityProofManager
         }
 
         return $identityProof;
+    }
+
+    public function getFileUrl(IdentityProof $identityProof)
+    {
+        if (IdentityProof::STATUS_PENDING == $identityProof->getStatus()) {
+            return $this->urlPath.rawurlencode($identityProof->getFileName());
+        }
+
+        return null;
     }
 
     private function validateIdentityProof(IdentityProof $identityProof, bool $validate): IdentityProof

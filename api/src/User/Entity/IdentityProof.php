@@ -200,6 +200,20 @@ class IdentityProof
      */
     private $validate;
 
+    /**
+     * @var null|string human readable size of the file
+     *
+     * @Groups({"aRead"})
+     */
+    private $fileSize;
+
+    /**
+     * @var string validator of the user identity
+     *
+     * @Groups("aRead")
+     */
+    private $validator;
+
     public function getId(): int
     {
         return $this->id;
@@ -362,6 +376,23 @@ class IdentityProof
         $this->validate = $validate;
 
         return $this;
+    }
+
+    public function getFileSize(): ?string
+    {
+        return $this->fileSize;
+    }
+
+    public function setFileSize(?string $fileSize): self
+    {
+        $this->fileSize = $fileSize;
+
+        return $this;
+    }
+
+    public function getValidator(): ?string
+    {
+        return $this->admin ? $this->admin->getGivenName().' '.$this->admin->getShortFamilyName() : null;
     }
 
     // DOCTRINE EVENTS
