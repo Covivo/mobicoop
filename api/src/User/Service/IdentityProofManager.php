@@ -53,7 +53,9 @@ class IdentityProofManager
         }
         $pendingProof = $this->getPendingProofForUser($user);
         if ($pendingProof) {
-            $this->entityManager->remove($pendingProof);
+            $pendingProof->setStatus(IdentityProof::STATUS_CANCELED);
+            $this->removeProofFile($pendingProof);
+            $this->entityManager->persist($pendingProof);
             $this->entityManager->flush();
         }
         $identityProof = new IdentityProof();
@@ -90,9 +92,7 @@ class IdentityProofManager
         $identityProof->setStatus($validate ? IdentityProof::STATUS_ACCEPTED : IdentityProof::STATUS_REFUSED);
         $this->entityManager->persist($identityProof);
         $this->entityManager->flush();
-        if (file_exists($this->uploadPath.$identityProof->getFileName())) {
-            unlink($this->uploadPath.$identityProof->getFileName());
-        }
+        $this->removeProofFile($identityProof);
 
         return $identityProof;
     }
@@ -111,5 +111,12 @@ class IdentityProofManager
             'user' => $user,
             'status' => IdentityProof::STATUS_PENDING,
         ]);
+    }
+
+    private function removeProofFile(IdentityProof $identityProof)
+    {
+        if (file_exists($this->uploadPath.$identityProof->getFileName())) {
+            unlink($this->uploadPath.$identityProof->getFileName());
+        }
     }
 }

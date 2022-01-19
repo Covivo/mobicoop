@@ -82,9 +82,11 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  */
 class IdentityProof
 {
-    public const STATUS_PENDING = 0;
-    public const STATUS_ACCEPTED = 1;
-    public const STATUS_REFUSED = 2;
+    public const STATUS_NONE = 0;
+    public const STATUS_PENDING = 1;
+    public const STATUS_ACCEPTED = 2;
+    public const STATUS_REFUSED = 3;
+    public const STATUS_CANCELED = 4;
 
     /**
      * @var int the id of this identity proof
@@ -211,6 +213,7 @@ class IdentityProof
     public function setStatus(int $status)
     {
         $this->status = $status;
+        $this->getUser()->setIdentityStatus($status);
         if (self::STATUS_ACCEPTED == $this->status) {
             $this->setAcceptedDate(new \Datetime());
         } elseif (self::STATUS_REFUSED == $this->status) {

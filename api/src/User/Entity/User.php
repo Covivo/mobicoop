@@ -77,6 +77,7 @@ use App\User\Filter\HomeAddressDirectionTerritoryFilter;
 use App\User\Filter\HomeAddressODTerritoryFilter;
 use App\User\Filter\HomeAddressTerritoryFilter;
 use App\User\Filter\HomeAddressWaypointTerritoryFilter;
+use App\User\Filter\IdentityStatusFilter;
 use App\User\Filter\IsInCommunityFilter;
 use App\User\Filter\LoginFilter;
 use App\User\Filter\ODRangeDestinationFilter;
@@ -559,12 +560,13 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ApiFilter(PwdTokenFilter::class, properties={"pwdToken"})
  * @ApiFilter(UnsubscribeTokenFilter::class, properties={"unsubscribeToken"})
  * @ApiFilter(EmailTokenFilter::class, properties={"emailToken"})
+ * @ApiFilter(IdentityStatusFilter::class, properties={"identityStatus"})
  * @ApiFilter(SolidaryFilter::class, properties={"solidary"})
  * @ApiFilter(BooleanFilter::class, properties={"solidaryUser.volunteer","solidaryUser.beneficiary"})
  * @ApiFilter(SolidaryCandidateFilter::class, properties={"solidaryCandidate"})
  * @ApiFilter(SolidaryExclusiveFilter::class)
  * @ApiFilter(DateFilter::class, properties={"createdDate": DateFilter::EXCLUDE_NULL,"lastActivityDate": DateFilter::EXCLUDE_NULL})
- * @ApiFilter(OrderFilter::class, properties={"id", "givenName", "status","familyName", "email", "gender", "nationality", "birthDate", "createdDate", "validatedDate", "lastActivityDate", "telephone"}, arguments={"orderParameterName"="order"})
+ * @ApiFilter(OrderFilter::class, properties={"id", "givenName", "status","familyName", "email", "gender", "identityStatus", "nationality", "birthDate", "createdDate", "validatedDate", "lastActivityDate", "telephone"}, arguments={"orderParameterName"="order"})
  */
 class User implements UserInterface, EquatableInterface
 {
@@ -956,7 +958,7 @@ class User implements UserInterface, EquatableInterface
      * @var bool the user can be driver for a hitch hike
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"read","readUser","write"})
+     * @Groups({"read","readUser","write","aRead"})
      */
     private $hitchHikeDriver;
 
@@ -964,7 +966,7 @@ class User implements UserInterface, EquatableInterface
      * @var bool the user can be passenger for a hitch hike
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"read","readUser","write"})
+     * @Groups({"read","readUser","write","aRead"})
      */
     private $hitchHikePassenger;
 
@@ -973,9 +975,16 @@ class User implements UserInterface, EquatableInterface
      *
      * @ORM\OneToMany(targetEntity="\App\User\Entity\IdentityProof", mappedBy="user", cascade={"persist"})
      * @MaxDepth(1)
-     * @Groups({"readUser","write"})
+     * @Groups({"aWrite","aRead"})
      */
     private $identityProofs;
+
+    /**
+     * @var int The status of the current identity proof
+     * @ORM\Column(type="smallint", nullable=true)
+     * @Groups({"aRead"})
+     */
+    private $identityStatus;
 
     /**
      * @var null|ArrayCollection a user may have many addresses
@@ -2098,6 +2107,18 @@ class User implements UserInterface, EquatableInterface
                 $identityProof->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getIdentityStatus(): int
+    {
+        return $this->identityStatus ? $this->identityStatus : IdentityProof::STATUS_NONE;
+    }
+
+    public function setIdentityStatus(int $identityStatus): self
+    {
+        $this->identityStatus = $identityStatus;
 
         return $this;
     }
