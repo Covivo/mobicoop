@@ -1,6 +1,6 @@
 {
   "name": "mobicoop-platform",
-  "version": "1.41.0",
+  "version": "1.42.0",
   "description": "API, Front & admin mobicoop carpool app",
   "main": "package.json",
   "scripts": {
@@ -42,7 +42,7 @@
   },
   "config": {
     "ghooks": {
-      "pre-commit": "php bin/php-cs-fixer.phar fix --using-cache=false api/src &&  php bin/php-cs-fixer.phar fix --using-cache=false client/src",
+      "pre-commit": "php bin/php-cs-fixer.phar fix --using-cache=no api/src &&  php bin/php-cs-fixer.phar fix --using-cache=no client/src",
       "pre-push": "npm run contributor-checker"
     }
   },

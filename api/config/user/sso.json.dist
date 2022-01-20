@@ -4,6 +4,7 @@
         "baseUri":"https://serviceBaseUri/",
         "clientId":"clientId",
         "clientSecret":"clientSecret",
-        "autoCreateAccount":true
+        "autoCreateAccount":true,
+        "logOutRedirectUri":""
     }
 }

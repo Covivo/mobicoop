@@ -42,7 +42,7 @@ class MassMatrix
 
     /**
      * @var array of MassCarpools
-     * @Groups({"mass","massCompute"})
+     * Groups({"mass","massCompute"})
      */
     private $carpools;
 

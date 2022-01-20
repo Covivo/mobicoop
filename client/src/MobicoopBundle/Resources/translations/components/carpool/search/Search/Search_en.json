@@ -17,7 +17,7 @@
     "buttons": {
         "publish": {
             "label": "Post a proposal",
-            "route": "/carpool/search/post"
+            "route": "carpool/search/post"
         },
         "search": {
             "label": "Search",
@@ -26,7 +26,7 @@
         },
         "shareAnAd": {
             "label": "Post an announcement",
-            "route": "/carpool/postproposal"
+            "route": "carpool/postad"
         }
     },
     "urlDate": "YMMDD",
