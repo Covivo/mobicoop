@@ -25,9 +25,11 @@ namespace App\User\Service;
 
 use App\User\Entity\IdentityProof;
 use App\User\Entity\User;
+use App\User\Event\IdentityProofModeratedEvent;
 use App\User\Repository\IdentityProofRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Security\Core\Security;
 
@@ -36,14 +38,22 @@ class IdentityProofManager
     private $admin;
     private $identityProofRepository;
     private $entityManager;
+    private $eventDispatcher;
     private $uploadPath;
     private $urlPath;
 
-    public function __construct(Security $security, IdentityProofRepository $identityProofRepository, EntityManagerInterface $entityManager, string $uploadPath, string $urlPath)
-    {
+    public function __construct(
+        Security $security,
+        IdentityProofRepository $identityProofRepository,
+        EntityManagerInterface $entityManager,
+        EventDispatcherInterface $eventDispatcher,
+        string $uploadPath,
+        string $urlPath
+    ) {
         $this->admin = $security->getUser();
         $this->identityProofRepository = $identityProofRepository;
         $this->entityManager = $entityManager;
+        $this->eventDispatcher = $eventDispatcher;
         $this->uploadPath = $uploadPath;
         $this->urlPath = $urlPath;
     }
@@ -61,7 +71,6 @@ class IdentityProofManager
             $this->entityManager->flush();
         }
         $identityProof = new IdentityProof();
-
         $identityProof->setFile($file);
         $identityProof->setUser($user);
         $identityProof->setFileName($user->getId().'-'.time());
@@ -104,6 +113,9 @@ class IdentityProofManager
         $this->entityManager->persist($identityProof);
         $this->entityManager->flush();
         $this->removeProofFile($identityProof);
+
+        $event = new IdentityProofModeratedEvent($identityProof);
+        $this->eventDispatcher->dispatch(IdentityProofModeratedEvent::NAME, $event);
 
         return $identityProof;
     }

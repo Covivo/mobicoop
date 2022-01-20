@@ -29,6 +29,7 @@ use App\User\Event\UserRegisteredEvent;
 use App\User\Event\UserUpdatedSelfEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use App\Communication\Service\NotificationManager;
+use App\User\Entity\IdentityProof;
 use App\User\Event\ReviewReceivedEvent;
 use App\User\Event\UserDelegateRegisteredEvent;
 use App\User\Event\UserDelegateRegisteredPasswordSendEvent;
@@ -37,7 +38,7 @@ use App\User\Event\UserPasswordChangeAskedEvent;
 use App\User\Event\UserPasswordChangedEvent;
 use App\User\Event\UserSendValidationEmailEvent;
 use App\User\Service\UserManager;
-use App\Communication\Service\SmsManager;
+use App\User\Event\IdentityProofModeratedEvent;
 
 class UserSubscriber implements EventSubscriberInterface
 {
@@ -65,7 +66,8 @@ class UserSubscriber implements EventSubscriberInterface
             UserDeleteAccountWasDriverEvent::NAME => 'onUserDeleteAccountWasDriverEvent',
             UserDeleteAccountWasPassengerEvent::NAME => 'onUserDeleteAccountWasPassengerEvent',
             ReviewReceivedEvent::NAME => 'onReviewReceivedEvent',
-            UserSendValidationEmailEvent::NAME => 'onUserSendValidationEmail'
+            UserSendValidationEmailEvent::NAME => 'onUserSendValidationEmail',
+            IdentityProofModeratedEvent::NAME => 'onIdentityProofModerated'
         ];
     }
 
@@ -134,5 +136,14 @@ class UserSubscriber implements EventSubscriberInterface
     public function onUserSendValidationEmail(UserSendValidationEmailEvent $event)
     {
         $this->notificationManager->notifies(UserSendValidationEmailEvent::NAME, $event->getUser());
+    }
+
+    public function onIdentityProofModerated(IdentityProofModeratedEvent $event)
+    {
+        if ($event->getIdentityProof()->getStatus() == IdentityProof::STATUS_ACCEPTED) {
+            $this->notificationManager->notifies(IdentityProofModeratedEvent::NAME_ACCEPTED, $event->getIdentityProof()->getUser());
+        } elseif ($event->getIdentityProof()->getStatus() == IdentityProof::STATUS_REFUSED) {
+            $this->notificationManager->notifies(IdentityProofModeratedEvent::NAME_REJECTED, $event->getIdentityProof()->getUser());
+        }
     }
 }

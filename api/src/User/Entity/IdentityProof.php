@@ -94,7 +94,7 @@ class IdentityProof
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups("read")
+     * @Groups({"read","aRead"})
      */
     private $id;
 
@@ -176,6 +176,7 @@ class IdentityProof
     /**
      * @var \DateTimeInterface updated date of the proof
      * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"aRead"})
      */
     private $updatedDate;
 

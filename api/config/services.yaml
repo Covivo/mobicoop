@@ -866,7 +866,7 @@ services:
     App\User\Service\IdentityProofManager:
         arguments:
             $uploadPath: '%kernel.project_dir%/public/upload/users/proofs/' 
-            $urlPath: '%env(string:DATA_URI)%/users/proofs/'
+            $urlPath: '%env(string:DATA_URI)%users/proofs/'
 
     App\User\Service\UserManager:
         arguments:

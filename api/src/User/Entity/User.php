@@ -958,7 +958,7 @@ class User implements UserInterface, EquatableInterface
      * @var bool the user can be driver for a hitch hike
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"read","readUser","write","aRead"})
+     * @Groups({"read","readUser","write","aRead","aWrite"})
      */
     private $hitchHikeDriver;
 
@@ -966,7 +966,7 @@ class User implements UserInterface, EquatableInterface
      * @var bool the user can be passenger for a hitch hike
      *
      * @ORM\Column(type="boolean", nullable=true)
-     * @Groups({"read","readUser","write","aRead"})
+     * @Groups({"read","readUser","write","aRead","aWrite"})
      */
     private $hitchHikePassenger;
 
