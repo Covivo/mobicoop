@@ -30,6 +30,7 @@ class AnalyticManager
     public const IDS = [
         1 => DataManager::DATA_NAME_REGISTRATIONS_LIST,
         2 => DataManager::DATA_NAME_VALIDATED_USERS,
+        3 => DataManager::DATA_NAME_VALIDATED_USERS_LIST,
     ];
 
     private $dataManager;

@@ -29,19 +29,16 @@ class DataManager
 {
     public const DATA_NAME_VALIDATED_USERS = 'ValidatedUsers';
     public const DATA_NAME_REGISTRATIONS_LIST = 'RegistrationsList';
+    public const DATA_NAME_VALIDATED_USERS_LIST = 'ValidatedUsersList';
+
+    public const DATA_NAMES = [
+        self::DATA_NAME_VALIDATED_USERS => ['parentMethod' => '', 'keyType' => ''],
+        self::DATA_NAME_REGISTRATIONS_LIST => ['parentMethod' => '', 'keyType' => 'utc-datetime'],
+        self::DATA_NAME_VALIDATED_USERS_LIST => ['parentMethod' => '', 'keyType' => 'utc-datetime'],
+    ];
 
     public const PREFIX_AUTO_CALL_METHOD = 'build';
     public const SUFFIX_AUTO_CALL_METHOD = 'Request';
-
-    public const USER_STATUS_LABEL_UNREGISTERED = 'Désinscrit';
-    public const USER_STATUS_LABEL_VALIDATED = 'Validé';
-    public const USER_STATUS_LABEL_NOT_VALIDATED = 'Non validé';
-    public const USER_STATUS_LABEL_INACTIVE = 'Inactif';
-
-    public const DATA_NAMES = [
-        self::DATA_NAME_VALIDATED_USERS,
-        self::DATA_NAME_REGISTRATIONS_LIST,
-    ];
 
     private const REQUEST_TIMOUT = 30000;
     private const DATE_FORMAT = 'c';
@@ -59,6 +56,7 @@ class DataManager
     private $instance;
     private $username;
     private $password;
+    private $requestLibrary;
 
     private $dataName;
     private $startDate;
@@ -77,6 +75,7 @@ class DataManager
         $this->instance = $instance;
         $this->username = $username;
         $this->password = $password;
+        $this->requestLibrary = new RequestLibrary();
     }
 
     public function setDataName(string $dataName)
@@ -137,6 +136,8 @@ class DataManager
         if (is_null($this->period)) {
             return self::DEFAULT_PERIOD;
         }
+
+        return $this->period;
     }
 
     public function setReferenceField(?string $referenceField)
@@ -149,11 +150,13 @@ class DataManager
         if (is_null($this->referenceField)) {
             return self::DEFAULT_REFERENCE_FIELD;
         }
+
+        return $this->referenceField;
     }
 
     public function getData(): array
     {
-        if (!in_array($this->getDataName(), self::DATA_NAMES)) {
+        if (!isset(self::DATA_NAMES[$this->getDataName()])) {
             throw new \LogicException('Unkwnown data name');
         }
         $this->buildRequest();
@@ -168,13 +171,22 @@ class DataManager
     private function buildRequest()
     {
         $this->request = self::BASE_REQUEST;
-        $functionName = self::PREFIX_AUTO_CALL_METHOD.$this->getDataName().self::SUFFIX_AUTO_CALL_METHOD;
-        if (!is_callable([$this, $functionName])) {
+
+        if ('' == self::DATA_NAMES[$this->getDataName()]['parentMethod']) {
+            $functionName = self::PREFIX_AUTO_CALL_METHOD.$this->getDataName().self::SUFFIX_AUTO_CALL_METHOD;
+        } else {
+            $functionName = self::DATA_NAMES[$this->getDataName()];
+        }
+
+        if (!is_callable([$this->requestLibrary, $functionName])) {
             throw new \LogicException('Unkwnown method to retrieve this data name');
         }
 
-        $this->{$functionName}();
-
+        $this->requestLibrary->setPeriod($this->getPeriod());
+        $this->requestLibrary->setReferenceField($this->getReferenceField());
+        $this->requestLibrary->setRequest($this->request);
+        $this->requestLibrary->{$functionName}();
+        $this->request = $this->requestLibrary->getRequest();
         $this->addFilters();
     }
 
@@ -190,55 +202,9 @@ class DataManager
         ];
     }
 
-    private function buildValidatedUsersRequest()
-    {
-        $this->request['query'] = [
-            'bool' => [
-                'filter' => [
-                    [
-                        'match_phrase' => [
-                            'user_status_label' => [
-                                'query' => self::USER_STATUS_LABEL_VALIDATED,
-                            ],
-                        ],
-                    ],
-                ],
-            ],
-        ];
-    }
-
-    private function buildRegistrationsListRequest()
-    {
-        $this->keyType = 'utc-datetime';
-
-        $this->request['aggs'] = [
-            1 => [
-                'date_histogram' => [
-                    'field' => $this->getReferenceField(),
-                    'calendar_interval' => $this->getPeriod(),
-                    'time_zone' => 'Europe/Paris',
-                    'min_doc_count' => 1,
-                ],
-            ],
-        ];
-
-        $this->request['query'] = [
-            'bool' => [
-                'must_not' => [
-                    [
-                        'match_phrase' => [
-                            'user_status_label' => self::USER_STATUS_LABEL_UNREGISTERED,
-                        ],
-                    ],
-                ],
-            ],
-        ];
-    }
-
     private function sendRequest()
     {
         $curl = curl_init();
-
         curl_setopt_array($curl, [
             CURLOPT_URL => $this->baseUri.$this->instance.'*/_search?rest_total_hits_as_int=true&ignore_unavailable=true&ignore_throttled=true&timeout='.self::REQUEST_TIMOUT.'ms',
             CURLOPT_CUSTOMREQUEST => 'POST',
@@ -274,7 +240,7 @@ class DataManager
                     foreach ($collection['buckets'] as $value) {
                         $dataCollection[] = [
                             'key' => $value['key_as_string'],
-                            'keyType' => $this->keyType = 'utc-datetime',
+                            'keyType' => self::DATA_NAMES[$this->getDataName()]['keyType'],
                             'value' => $value['doc_count'],
                         ];
                     }
