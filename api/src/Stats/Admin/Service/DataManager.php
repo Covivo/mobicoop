@@ -30,11 +30,17 @@ class DataManager
     public const DATA_NAME_VALIDATED_USERS = 'ValidatedUsers';
     public const DATA_NAME_REGISTRATIONS_LIST = 'RegistrationsList';
     public const DATA_NAME_VALIDATED_USERS_LIST = 'ValidatedUsersList';
+    public const DATA_NAME_NOT_VALIDATED_USERS_LIST = 'NotValidatedUsersList';
+    public const DATA_NAME_UNREGISTERED_USERS_LIST = 'UnregisteredUsersList';
+    public const DATA_NAME_USERS_STATS_LIST = 'UsersStatsList';
 
     public const DATA_NAMES = [
-        self::DATA_NAME_VALIDATED_USERS => ['parentMethod' => '', 'keyType' => ''],
-        self::DATA_NAME_REGISTRATIONS_LIST => ['parentMethod' => '', 'keyType' => 'utc-datetime'],
-        self::DATA_NAME_VALIDATED_USERS_LIST => ['parentMethod' => '', 'keyType' => 'utc-datetime'],
+        self::DATA_NAME_VALIDATED_USERS => ['childrenMethods' => [], 'keyType' => ''],
+        self::DATA_NAME_REGISTRATIONS_LIST => ['childrenMethods' => [], 'keyType' => 'utc-datetime'],
+        self::DATA_NAME_VALIDATED_USERS_LIST => ['childrenMethods' => [], 'keyType' => 'utc-datetime'],
+        self::DATA_NAME_NOT_VALIDATED_USERS_LIST => ['childrenMethods' => [], 'keyType' => 'utc-datetime'],
+        self::DATA_NAME_UNREGISTERED_USERS_LIST => ['childrenMethods' => [], 'keyType' => 'utc-datetime'],
+        self::DATA_NAME_USERS_STATS_LIST => ['childrenMethods' => [self::DATA_NAME_VALIDATED_USERS_LIST, self::DATA_NAME_NOT_VALIDATED_USERS_LIST, self::DATA_NAME_UNREGISTERED_USERS_LIST], 'keyType' => ''],
     ];
 
     public const PREFIX_AUTO_CALL_METHOD = 'build';
@@ -66,6 +72,7 @@ class DataManager
     private $request;
     private $requestResponse;
 
+    private $lastRequestResponse;
     private $response;
     private $keyType;
 
@@ -157,29 +164,44 @@ class DataManager
     public function getData(): array
     {
         if (!isset(self::DATA_NAMES[$this->getDataName()])) {
-            throw new \LogicException('Unkwnown data name');
+            throw new \LogicException('Unkwnown data name {'.$this->getDataName().'}');
         }
+
+        if (count(self::DATA_NAMES[$this->getDataName()]['childrenMethods']) > 0) {
+            $this->treatMultipleRequests();
+        } else {
+            $this->treatSimpleRequest();
+        }
+
+        return $this->response;
+    }
+
+    private function treatSimpleRequest()
+    {
         $this->buildRequest();
 
         $this->sendRequest();
 
         $this->deserializeDataResponse();
 
-        return $this->response;
+        $this->response[] = $this->lastRequestResponse;
+    }
+
+    private function treatMultipleRequests()
+    {
+        foreach (self::DATA_NAMES[$this->getDataName()]['childrenMethods'] as $childrenMethods) {
+            $this->setDataName($childrenMethods);
+            $this->treatSimpleRequest();
+        }
     }
 
     private function buildRequest()
     {
         $this->request = self::BASE_REQUEST;
 
-        if ('' == self::DATA_NAMES[$this->getDataName()]['parentMethod']) {
-            $functionName = self::PREFIX_AUTO_CALL_METHOD.$this->getDataName().self::SUFFIX_AUTO_CALL_METHOD;
-        } else {
-            $functionName = self::DATA_NAMES[$this->getDataName()];
-        }
-
+        $functionName = self::PREFIX_AUTO_CALL_METHOD.$this->getDataName().self::SUFFIX_AUTO_CALL_METHOD;
         if (!is_callable([$this->requestLibrary, $functionName])) {
-            throw new \LogicException('Unkwnown method to retrieve this data name');
+            throw new \LogicException('Unkwnown method to retrieve this data name {'.$this->getDataName().'}');
         }
 
         $this->requestLibrary->setPeriod($this->getPeriod());
@@ -225,26 +247,27 @@ class DataManager
     {
         $dataResponse = json_decode($this->requestResponse, true);
 
-        $this->response = [];
+        $this->lastRequestResponse = [];
 
-        $this->response['total'] = 0;
+        $this->lastRequestResponse['total'] = 0;
         if (isset($dataResponse['hits'])) {
-            $this->response['total'] = $dataResponse['hits']['total'];
+            $this->lastRequestResponse['total'] = $dataResponse['hits']['total'];
         }
 
-        $this->response['data'] = [];
+        $this->lastRequestResponse['data'] = [];
         if (isset($dataResponse['aggregations'])) {
             foreach ($dataResponse['aggregations'] as $collection) {
                 $dataCollection = [];
                 if (isset($collection['buckets'])) {
                     foreach ($collection['buckets'] as $value) {
                         $dataCollection[] = [
+                            'dataName' => $this->getDataName(),
                             'key' => $value['key_as_string'],
                             'keyType' => self::DATA_NAMES[$this->getDataName()]['keyType'],
                             'value' => $value['doc_count'],
                         ];
                     }
-                    $this->response['data'][] = $dataCollection;
+                    $this->lastRequestResponse['data'] = $dataCollection;
                 }
             }
         }

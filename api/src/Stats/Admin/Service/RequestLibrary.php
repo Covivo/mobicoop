@@ -124,7 +124,7 @@ class RequestLibrary
         ];
     }
 
-    public function buildUnregisteredListRequest()
+    public function buildUnregisteredUsersListRequest()
     {
         $this->addAggregationParams();
 

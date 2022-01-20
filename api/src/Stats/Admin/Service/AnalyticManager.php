@@ -31,6 +31,7 @@ class AnalyticManager
         1 => DataManager::DATA_NAME_REGISTRATIONS_LIST,
         2 => DataManager::DATA_NAME_VALIDATED_USERS,
         3 => DataManager::DATA_NAME_VALIDATED_USERS_LIST,
+        4 => DataManager::DATA_NAME_USERS_STATS_LIST,
     ];
 
     private $dataManager;
@@ -61,10 +62,7 @@ class AnalyticManager
 
         $this->dataManager->setDataName(self::IDS[$id]);
         $data = $this->dataManager->getData();
-        $analytic->setValue([
-            'total' => $data['total'],
-            'data' => $data['data'],
-        ]);
+        $analytic->setValue($data);
 
         return $analytic;
     }
