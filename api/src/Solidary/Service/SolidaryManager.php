@@ -18,7 +18,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\Service;
 
@@ -26,42 +26,40 @@ use App\Action\Entity\Action;
 use App\Auth\Entity\AuthItem;
 use App\Auth\Entity\UserAuthAssignment;
 use App\Auth\Repository\AuthItemRepository;
-use App\Carpool\Ressource\Ad;
 use App\Carpool\Entity\Criteria;
 use App\Carpool\Repository\ProposalRepository;
+use App\Carpool\Ressource\Ad;
 use App\Carpool\Service\AdManager;
 use App\Geography\Entity\Address;
 use App\Geography\Repository\AddressRepository;
+use App\Solidary\Admin\Service\SolidaryTransportMatcher;
 use App\Solidary\Entity\Need;
 use App\Solidary\Entity\Proof;
 use App\Solidary\Entity\Solidary;
+use App\Solidary\Entity\SolidaryAsk;
 use App\Solidary\Entity\SolidaryAsksListItem;
 use App\Solidary\Entity\SolidarySearch;
+use App\Solidary\Entity\SolidarySolution;
+use App\Solidary\Entity\SolidaryUser;
+use App\Solidary\Entity\SolidaryUserStructure;
+use App\Solidary\Entity\SolidaryVolunteerPlanning\SolidaryVolunteerPlanning;
+use App\Solidary\Entity\SolidaryVolunteerPlanning\SolidaryVolunteerPlanningItem;
+use App\Solidary\Entity\Structure;
 use App\Solidary\Event\SolidaryCreatedEvent;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use App\Solidary\Event\SolidaryUpdatedEvent;
 use App\Solidary\Exception\SolidaryException;
 use App\Solidary\Repository\SolidaryAskRepository;
 use App\Solidary\Repository\SolidaryRepository;
 use App\Solidary\Repository\SolidaryUserRepository;
-use Symfony\Component\Security\Core\Security;
-use App\Solidary\Entity\SolidaryAsk;
-use App\Solidary\Entity\SolidarySolution;
-use App\Solidary\Entity\SolidaryUser;
-use App\Solidary\Entity\SolidaryUserStructure;
-use App\Solidary\Entity\Structure;
 use App\Solidary\Repository\SolidaryUserStructureRepository;
 use App\Solidary\Repository\StructureProofRepository;
 use App\Solidary\Repository\StructureRepository;
 use App\User\Entity\User;
-use App\User\Service\UserManager;
 use App\User\Repository\UserRepository;
-use DateTime;
-use App\Solidary\Entity\SolidaryVolunteerPlanning\SolidaryVolunteerPlanning;
-use App\Solidary\Entity\SolidaryVolunteerPlanning\SolidaryVolunteerPlanningItem;
-use App\Solidary\Admin\Service\SolidaryTransportMatcher;
-use Negotiation\Accept;
+use App\User\Service\UserManager;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Security\Core\Security;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
@@ -118,10 +116,10 @@ class SolidaryManager
         // we get the origin and destination associated to the demand
         $solidary->setOrigin(json_decode(json_encode($solidary->getProposal()->getWaypoints()[0]->getAddress()), true));
         $solidary->setDestination(json_decode(json_encode($solidary->getProposal()->getWaypoints()[1]->getAddress()), true));
-        
+
         // we get the solidaryuser associated to the demand
         $solidary->setSolidaryUser($solidary->getSolidaryUserStructure()->getSolidaryUser());
-        
+
         // we get the date and time associated to the demand
         $outwardDatetime = $solidary->getProposal()->getCriteria()->getFromDate();
         $outwardDealineDatetime = null;
@@ -129,9 +127,9 @@ class SolidaryManager
         $returnDealineDatetime = null;
         $outwardHours = null;
         $outwardMinutes = null;
-        $outwardTimes = ['mon'=>null,'tue'=>null,'wed'=>null,'thu'=>null,"fri"=>null,"sat"=>null,"sun"=>null];
+        $outwardTimes = ['mon' => null, 'tue' => null, 'wed' => null, 'thu' => null, 'fri' => null, 'sat' => null, 'sun' => null];
         // we set time if it's a regular proposal
-        if ($solidary->getProposal()->getCriteria()->getFrequency() == Criteria::FREQUENCY_REGULAR) {
+        if (Criteria::FREQUENCY_REGULAR == $solidary->getProposal()->getCriteria()->getFrequency()) {
             if ($solidary->getProposal()->getCriteria()->isMonCheck()) {
                 $outwardHours = $solidary->getProposal()->getCriteria()->getMonTime()->format('H');
                 $outwardMinutes = $solidary->getProposal()->getCriteria()->getMonTime()->format('i');
@@ -176,18 +174,18 @@ class SolidaryManager
             $outwardHours = $solidary->getProposal()->getCriteria()->getFromTime()->format('H');
             $outwardMinutes = $solidary->getProposal()->getCriteria()->getFromTime()->format('i');
         }
-        
+
         date_time_set($outwardDatetime, $outwardHours, $outwardMinutes);
         $solidary->setOutwardDatetime($outwardDatetime);
         // we set the margin duration
         $solidary->setMarginDuration($solidary->getProposal()->getCriteria()->getMarginDuration());
         // we do the same if we have a return
-        $returnTimes = ['mon'=>null,'tue'=>null,'wed'=>null,'thu'=>null,"fri"=>null,"sat"=>null,"sun"=>null];
-        if ($solidary->getProposal()->getProposalLinked() !== null) {
+        $returnTimes = ['mon' => null, 'tue' => null, 'wed' => null, 'thu' => null, 'fri' => null, 'sat' => null, 'sun' => null];
+        if (null !== $solidary->getProposal()->getProposalLinked()) {
             $returnDatetime = $solidary->getProposal()->getProposalLinked()->getCriteria()->getFromDate();
             $returnHours = null;
             $returnMinutes = null;
-            if ($solidary->getProposal()->getProposalLinked()->getCriteria()->getFrequency() == Criteria::FREQUENCY_REGULAR) {
+            if (Criteria::FREQUENCY_REGULAR == $solidary->getProposal()->getProposalLinked()->getCriteria()->getFrequency()) {
                 if ($solidary->getProposal()->getProposalLinked()->getCriteria()->isMonCheck()) {
                     $returnHours = $solidary->getProposal()->getProposalLinked()->getCriteria()->getMonTime()->format('H');
                     $returnMinutes = $solidary->getProposal()->getProposalLinked()->getCriteria()->getMonTime()->format('i');
@@ -241,9 +239,9 @@ class SolidaryManager
             $solidary->setReturnTimes($returnTimes);
         }
 
-        $days = ['mon' => false, 'tue' => false,'wed' => false,'thu' => false,'fri' => false, 'sat' => false, 'sun' => false];
+        $days = ['mon' => false, 'tue' => false, 'wed' => false, 'thu' => false, 'fri' => false, 'sat' => false, 'sun' => false];
         $criteria = $solidary->getProposal()->getCriteria();
-        if ($solidary->getProposal()->getCriteria()->getFrequency() == Criteria::FREQUENCY_REGULAR) {
+        if (Criteria::FREQUENCY_REGULAR == $solidary->getProposal()->getCriteria()->getFrequency()) {
             if ($criteria->isMonCheck()) {
                 $days['mon'] = true;
             }
@@ -268,15 +266,15 @@ class SolidaryManager
             $solidary->setDays($days);
         }
         $solidary->setFrequency($solidary->getProposal()->getCriteria()->getFrequency());
-       
+
         // we check the solidary is a demand or a volunteer proposal
         $solidary->setPassenger($solidary->getProposal()->getCriteria()->isPassenger() ? true : false);
         $solidary->setDriver($solidary->getProposal()->getCriteria()->isDriver() ? true : false);
-       
+
         $solidary->setAsksList($this->getAsksList($solidary->getId()));
         // the display label of the solidary 'subject : origin -> destination'
         if ($solidary->getOrigin() && $solidary->getDestination()) {
-            $solidary->setDisplayLabel($solidary->getSubject()->getLabel().": ".$solidary->getOrigin()['addressLocality']."->".$solidary->getDestination()['addressLocality']);
+            $solidary->setDisplayLabel($solidary->getSubject()->getLabel().': '.$solidary->getOrigin()['addressLocality'].'->'.$solidary->getDestination()['addressLocality']);
         }
         $solidary->setDisplayLabel($solidary->getSubject()->getLabel());
         // We find the last entry of diary for this solidary to get the progression and the author of the last update
@@ -284,11 +282,11 @@ class SolidaryManager
         $solidary->setOperator(null);
         // we get all diaries order by DESC so the first one is the most recent
         $diariesEntries = $this->solidaryRepository->getDiaries($solidary);
-        if (count($diariesEntries)>0) {
+        if (count($diariesEntries) > 0) {
             $solidary->setProgression($diariesEntries[0]->getProgression());
             $solidary->setLastAction($diariesEntries[0]->getAction()->getName());
             foreach ($diariesEntries as $diary) {
-                if ($diary->getAction()->getId() === Action::SOLIDARY_CREATE && $diary->getAuthor()->getId() !== $diary->getUser()->getId()) {
+                if (Action::SOLIDARY_CREATE === $diary->getAction()->getId() && $diary->getAuthor()->getId() !== $diary->getUser()->getId()) {
                     $solidary->setOperator($diary->getAuthor());
                 }
             }
@@ -314,7 +312,7 @@ class SolidaryManager
                 $solution['Telephone'] = $solidarySolution->getSolidaryMatching()->getMatching()->getProposalOffer()->getUser()->getTelephone();
                 $solution['UserId'] = $solidarySolution->getSolidaryMatching()->getMatching()->getProposalOffer()->getUser()->getId();
             }
-            $solutions[]=$solution;
+            $solutions[] = $solution;
         }
         $solidary->setSolutions($solutions);
 
@@ -322,19 +320,16 @@ class SolidaryManager
     }
 
     /**
-     * Get solidaries of a user
-     *
-     * @param User $user
-     * @return void
+     * Get solidaries of a user.
      */
     public function getMySolidaries(User $user)
     {
         $fullSolidaries = [];
         if (is_null($user->getSolidaryUser())) {
-            throw new SolidaryException(SolidaryException:: NO_SOLIDARY_USER);
+            throw new SolidaryException(SolidaryException::NO_SOLIDARY_USER);
         }
         $solidaries = $user->getSolidaryUser()->getSolidaryUserStructures()[0]->getSolidaries();
-        
+
         foreach ($solidaries as $solidary) {
             $fullSolidaries[] = $this->getSolidary($solidary->getId());
         }
@@ -343,14 +338,12 @@ class SolidaryManager
     }
 
     /**
-    *  Get solidaries of a structure and can be filtered by solidaryUser and/or progression
-    *
-    * @param Structure $structure
-    * @param Int $solidaryUserId id of the solidaryUser
-    * @param Int $progression level of progression
-    * @return void
-    */
-    public function getSolidaries(Structure $structure, Int $solidaryUserId=null, Int $progression=null)
+     *  Get solidaries of a structure and can be filtered by solidaryUser and/or progression.
+     *
+     * @param int $solidaryUserId id of the solidaryUser
+     * @param int $progression    level of progression
+     */
+    public function getSolidaries(Structure $structure, int $solidaryUserId = null, int $progression = null)
     {
         $solidaries = null;
         $fullSolidaries = [];
@@ -392,13 +385,13 @@ class SolidaryManager
                 }
             }
         }
+
         return $fullSolidaries;
     }
 
     /**
-     * Create a solidary
+     * Create a solidary.
      *
-     * @param Solidary $solidary
      * @return Solidary
      */
     public function createSolidary(Solidary $solidary)
@@ -407,7 +400,7 @@ class SolidaryManager
         if (is_null($solidary->isPassenger()) && is_null($solidary->isDriver())) {
             $solidary->setPassenger(true);
         }
-        
+
         // We create a new user if necessary if it's a demand from the front
         $userId = null;
         $user = null;
@@ -417,7 +410,7 @@ class SolidaryManager
         // - otherwise the email is mandatory
         $solidaryStructureId = $solidary->getStructure() ? substr($solidary->getStructure(), strrpos($solidary->getStructure(), '/') + 1) : $this->security->getUser()->getSolidaryStructures()[0]->getId();
         $structure = $this->structureRepository->find($solidaryStructureId);
-        
+
         if (is_null($solidary->getEmail()) && is_null($solidary->getUser()) && is_null($solidary->getTelephone())) {
             throw new SolidaryException(SolidaryException::MANDATORY_EMAIL_OR_PHONE);
         }
@@ -428,7 +421,7 @@ class SolidaryManager
             $user = $this->solidaryCreateUser($solidary, $structure);
             $userId = $user->getId();
         }
-        
+
         // we get solidaryUserStructure
         $solidaryUserId = $solidary->getSolidaryUser() ? $solidary->getSolidaryUser()->getId() : $user->getSolidaryUser()->getId();
         $solidaryUserStructure = $this->solidaryUserStructureRepository->findByStructureAndSolidaryUser($solidaryStructureId, $solidaryUserId);
@@ -453,14 +446,13 @@ class SolidaryManager
             // Create an ad and get the associated proposal
             $ad = $this->createJourneyFromSolidary($solidary, $userId);
             $proposal = $this->proposalRepository->find($ad->getId());
-            
+
             $this->solidaryTransportMatcher->match($solidary);
 
             // We trigger the event
             $event = new SolidaryCreatedEvent($user ? $user : $solidary->getSolidaryUserStructure()->getSolidaryUser()->getUser(), $this->security->getUser(), $solidary);
             $this->eventDispatcher->dispatch(SolidaryCreatedEvent::NAME, $event);
         }
-        
 
         return $solidary;
     }
@@ -476,36 +468,30 @@ class SolidaryManager
     }
 
     /**
-     * Get the results for a Solidary Transport Search
-     *
-     * @param SolidarySearch $solidarySearch
-     * @return SolidarySearch
+     * Get the results for a Solidary Transport Search.
      */
     public function getSolidaryTransportSearchResults(SolidarySearch $solidarySearch): SolidarySearch
     {
         $solidarySearch->setResults($this->solidaryUserRepository->findForASolidaryTransportSearch($solidarySearch));
-        
+
         return $solidarySearch;
     }
 
     /**
-     * Get the results for a Solidary Carpool Search
-     *
-     * @param SolidarySearch $solidarySearch
-     * @return SolidarySearch
+     * Get the results for a Solidary Carpool Search.
      */
     public function getSolidaryCarpoolSearchSearchResults(SolidarySearch $solidarySearch): SolidarySearch
     {
-
         // We make an Ad from the proposal linked to the solidary (if it's on the return, we take the ProposalLinked)
         // I'll have the results directly in the Ad
-        
-        if ($solidarySearch->getWay()=="outward") {
+
+        if ('outward' == $solidarySearch->getWay()) {
             $proposal = $solidarySearch->getSolidary()->getProposal();
         } else {
             if (!is_null($solidarySearch->getSolidary()->getProposal()->getProposalLinked())) {
                 $proposal = $solidarySearch->getSolidary()->getProposal()->getProposalLinked();
             }
+
             throw new SolidaryException(SolidaryException::NO_RETURN_PROPOSAL);
         }
 
@@ -514,7 +500,7 @@ class SolidaryManager
         $withDestination = false;
         foreach ($waypoints as $waypoint) {
             if ($waypoint->isDestination()) {
-                $withDestination=true;
+                $withDestination = true;
             }
         }
         if (!$withDestination) {
@@ -540,10 +526,11 @@ class SolidaryManager
     }
 
     /**
-     * Get the solidary solutions of a solidary
+     * Get the solidary solutions of a solidary.
      *
      * @param int $solidaryId Id of the Solidary
-     * @return array|null
+     *
+     * @return null|array
      */
     public function getSolidarySolutions(int $solidaryId): array
     {
@@ -551,9 +538,8 @@ class SolidaryManager
     }
 
     /**
-     * Get the list of all the Asks (Solidary or not) linked to a Solidary
+     * Get the list of all the Asks (Solidary or not) linked to a Solidary.
      *
-     * @param integer $solidaryId
      * @return Solidary
      */
     public function getAsksList(int $solidaryId): array
@@ -563,11 +549,9 @@ class SolidaryManager
         $solidaryAsks = $this->solidaryAskRepository->findSolidaryAsks($solidaryId);
 
         foreach ($solidaryAsks as $solidaryAsk) {
-
             /**
              * @var SolidaryAsk $solidaryAsk
              */
-
             $solidaryAsksItem = new SolidaryAsksListItem();
 
             $askCriteria = $askCriteriaReturn = null;
@@ -591,74 +575,74 @@ class SolidaryManager
             // Messages
             $messages = [];
             foreach ($solidaryAsk->getSolidaryAskHistories() as $solidaryAskHistory) {
-                if ($solidaryAskHistory->getMessage() !== null) {
+                if (null !== $solidaryAskHistory->getMessage()) {
                     $userDelegate = $solidaryAskHistory->getMessage()->getUserDelegate();
 
                     $messages[] = [
-                        "userDelegateId" => $userDelegate ? $userDelegate->getId() : null,
-                        "userDelegateFamilyName" => $userDelegate ? $userDelegate->getFamilyName() : null,
-                        "userDelegateGivenName" => $userDelegate ? $userDelegate->getGivenName() : null,
-                        "userId" => $solidaryAskHistory->getMessage()->getUser()->getId(),
-                        "userFamilyName" => $solidaryAskHistory->getMessage()->getUser()->getFamilyName(),
-                        "userGivenName" => $solidaryAskHistory->getMessage()->getUser()->getGivenName(),
-                        "text" => $solidaryAskHistory->getMessage()->getText(),
-                        "createdDate" => $solidaryAskHistory->getMessage()->getCreatedDate()];
+                        'userDelegateId' => $userDelegate ? $userDelegate->getId() : null,
+                        'userDelegateFamilyName' => $userDelegate ? $userDelegate->getFamilyName() : null,
+                        'userDelegateGivenName' => $userDelegate ? $userDelegate->getGivenName() : null,
+                        'userId' => $solidaryAskHistory->getMessage()->getUser()->getId(),
+                        'userFamilyName' => $solidaryAskHistory->getMessage()->getUser()->getFamilyName(),
+                        'userGivenName' => $solidaryAskHistory->getMessage()->getUser()->getGivenName(),
+                        'text' => $solidaryAskHistory->getMessage()->getText(),
+                        'createdDate' => $solidaryAskHistory->getMessage()->getCreatedDate(), ];
                 }
             }
             $solidaryAsksItem->setMessages($messages);
             // Frequency
             $solidaryAsksItem->setFrequency($askCriteria->getFrequency());
-            
+
             // Status
             $solidaryAsksItem->setStatus($solidaryAsk->getStatus());
 
             // FromDate, to date
             $solidaryAsksItem->setFromDate($askCriteria->getFromDate());
-            $days = ["mon","tue","wed","thu","fri","sat","sun"];
+            $days = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
 
             $schedule = [];
-            if ($askCriteria->getFrequency()==Criteria::FREQUENCY_REGULAR) {
+            if (Criteria::FREQUENCY_REGULAR == $askCriteria->getFrequency()) {
                 // Regular journey
                 $solidaryAsksItem->setToDate($askCriteria->getToDate());
-                
+
                 $schedule = $this->adManager->getScheduleFromCriteria($askCriteria, $askCriteriaReturn);
             } else {
                 // Punctual journey
-                $schedule[0]['outwardTime'] = $askCriteria->getFromTime()->format("H:i");
+                $schedule[0]['outwardTime'] = $askCriteria->getFromTime()->format('H:i');
                 if (!is_null($askCriteriaReturn)) {
-                    $schedule[0]['returnTime'] = $askCriteriaReturn->getFromTime()->format("H:i");
+                    $schedule[0]['returnTime'] = $askCriteriaReturn->getFromTime()->format('H:i');
                 }
                 // init days
                 foreach ($days as $day) {
                     $schedule[0][$day] = false;
                 }
                 if ($askCriteria->isMonCheck()) {
-                    $schedule[0]["mon"]=true;
+                    $schedule[0]['mon'] = true;
                 }
                 if ($askCriteria->isTueCheck()) {
-                    $schedule[0]["tue"]=true;
+                    $schedule[0]['tue'] = true;
                 }
                 if ($askCriteria->isWedCheck()) {
-                    $schedule[0]["wed"]=true;
+                    $schedule[0]['wed'] = true;
                 }
                 if ($askCriteria->isThuCheck()) {
-                    $schedule[0]["thu"]=true;
+                    $schedule[0]['thu'] = true;
                 }
                 if ($askCriteria->isFriCheck()) {
-                    $schedule[0]["fri"]=true;
+                    $schedule[0]['fri'] = true;
                 }
                 if ($askCriteria->isSatCheck()) {
-                    $schedule[0]["sat"]=true;
+                    $schedule[0]['sat'] = true;
                 }
                 if ($askCriteria->isSunCheck()) {
-                    $schedule[0]["sun"]=true;
+                    $schedule[0]['sun'] = true;
                 }
             }
 
             $solidaryAsksItem->setSchedule($schedule);
 
             // The driver
-            $solidaryAsksItem->setDriver($user->getGivenName()." ".$user->getFamilyName());
+            $solidaryAsksItem->setDriver($user->getGivenName().' '.$user->getFamilyName());
             $solidaryAsksItem->setTelephone($user->getTelephone());
 
             // SolidarySolutionId (usefull for a SolidaryContact)
@@ -671,18 +655,87 @@ class SolidaryManager
     }
 
     /**
-      * We create the ad associated to the solidary
-      *
-      * @param Solidary $solidary
-      * @return Ad
-      */
+     * Build a volunteer's planning between two dates.
+     */
+    public function buildSolidaryVolunteerPlanning(\DateTimeInterface $startDate, \DateTimeInterface $endDate, int $solidaryVolunteerId): array
+    {
+        // We get the Volunteer and we check if it's really a volunteer
+        $solidaryVolunteer = $this->solidaryUserRepository->find($solidaryVolunteerId);
+
+        if (!$solidaryVolunteer->isVolunteer()) {
+            throw new SolidaryException(SolidaryException::NO_SOLIDARY_VOLUNTEER);
+        }
+
+        $solidaryAsks = $this->solidaryAskRepository->findBetweenTwoDates($startDate, $endDate, $solidaryVolunteer);
+
+        $fullPlanning = [];
+        $currentDate = $startDate;
+        // We make the schedule. Day by day.
+        while ($currentDate <= $endDate) {
+            $solidaryVolunteerPlanning = new SolidaryVolunteerPlanning();
+            $solidaryVolunteerPlanning->setDate($currentDate);
+
+            // We check if we found a solidaryAsk for this day
+            foreach ($solidaryAsks as $solidaryAsk) {
+                /**
+                 * @var SolidaryAsk $solidaryAsk
+                 */
+                if (
+                   (Criteria::FREQUENCY_PUNCTUAL == $solidaryAsk->getCriteria()->getFrequency() && $solidaryAsk->getCriteria()->getFromDate()->format('d/m/Y') == $currentDate->format('d/m/Y'))
+                   || (Criteria::FREQUENCY_REGULAR == $solidaryAsk->getCriteria()->getFrequency() && $solidaryAsk->getCriteria()->getFromDate()->format('d/m/Y') <= $currentDate->format('d/m/Y') && $solidaryAsk->getCriteria()->getToDate()->format('d/m/Y') >= $currentDate->format('d/m/Y'))
+                ) {
+                    // Determine the hour slot
+                    $structure = $solidaryAsk->getSolidarySolution()->getSolidary()->getSolidaryUserStructure()->getStructure();
+                    $slot = $this->solidaryMatcher->getHourSlot($solidaryAsk->getCriteria()->getFromTime(), $solidaryAsk->getCriteria()->getFromTime(), $structure);
+
+                    $solidaryVolunteerPlanningItem = new SolidaryVolunteerPlanningItem();
+
+                    // The beneficiary
+                    $beneficiary = $solidaryAsk->getSolidarySolution()->getSolidary()->getSolidaryUserStructure()->getSolidaryUser()->getUser();
+                    $solidaryVolunteerPlanningItem->setBeneficiary($beneficiary->getGivenName().' '.$beneficiary->getFamilyName());
+
+                    // different usefull ids
+                    $solidaryVolunteerPlanningItem->setSolidaryId($solidaryAsk->getSolidarySolution()->getSolidary()->getId());
+                    $solidaryVolunteerPlanningItem->setSolidarySolutionId($solidaryAsk->getSolidarySolution()->getId());
+
+                    // status
+                    $solidaryVolunteerPlanningItem->setStatus($solidaryAsk->getStatus());
+
+                    switch ($slot) {
+                        case 'm': $solidaryVolunteerPlanning->setMorningSlot($solidaryVolunteerPlanningItem);
+
+break;
+
+                        case 'a': $solidaryVolunteerPlanning->setAfternoonSlot($solidaryVolunteerPlanningItem);
+
+break;
+
+                        case 'e': $solidaryVolunteerPlanning->setEveningSlot($solidaryVolunteerPlanningItem);
+
+break;
+                    }
+                }
+            }
+
+            $fullPlanning[] = $solidaryVolunteerPlanning;
+
+            $currentDate = clone $currentDate;
+            $currentDate->modify('+1 day');
+        }
+
+        return $fullPlanning;
+    }
+
+    /**
+     * We create the ad associated to the solidary.
+     */
     private function createJourneyFromSolidary(Solidary $solidary, int $userId = null): Ad
     {
         $ad = new Ad();
         // we get and set the origin and destination of the demand
         $origin = new Address();
         $destination = null;
-        
+
         $origin->setHouseNumber(isset($solidary->getOrigin()['houseNumber']) ? $solidary->getOrigin()['houseNumber'] : null);
         $origin->setStreet(isset($solidary->getOrigin()['street']) ? $solidary->getOrigin()['street'] : null);
         $origin->setStreetAddress(isset($solidary->getOrigin()['streetAddress']) ? $solidary->getOrigin()['streetAddress'] : null);
@@ -698,7 +751,7 @@ class SolidaryManager
         $origin->setCountryCode(isset($solidary->getOrigin()['countryCode']) ? $solidary->getOrigin()['countryCode'] : null);
         $origin->setLatitude(isset($solidary->getOrigin()['latitude']) ? $solidary->getOrigin()['latitude'] : null);
         $origin->setLongitude(isset($solidary->getOrigin()['longitude']) ? $solidary->getOrigin()['longitude'] : null);
-        
+
         if ($solidary->getDestination()) {
             $destination = new Address();
             $destination->setHouseNumber(isset($solidary->getDestination()['houseNumber']) ? $solidary->getDestination()['houseNumber'] : null);
@@ -717,7 +770,7 @@ class SolidaryManager
             $destination->setLatitude(isset($solidary->getDestination()['latitude']) ? $solidary->getDestination()['latitude'] : null);
             $destination->setLongitude(isset($solidary->getDestination()['longitude']) ? $solidary->getDestination()['longitude'] : null);
         }
-        
+
         // Set role of the ad
         if ($solidary->isPassenger() && $solidary->isDriver()) {
             $ad->setRole(Ad::ROLE_DRIVER_OR_PASSENGER);
@@ -739,14 +792,14 @@ class SolidaryManager
         // We set the date and time of the demand
         $ad->setOutwardDate($solidary->getOutwardDatetime());
         $ad->setReturnDate($solidary->getReturnDatetime() ? $solidary->getReturnDatetime() : null);
-        $ad->setOutwardTime($solidary->getOutwardDatetime()->format("H:i"));
-        $ad->setReturnTime($solidary->getReturnDatetime() ? $solidary->getReturnDatetime()->format("H:i") : null);
-        
-        if ($solidary->getReturnDatetime() != null) {
+        $ad->setOutwardTime($solidary->getOutwardDatetime()->format('H:i'));
+        $ad->setReturnTime($solidary->getReturnDatetime() ? $solidary->getReturnDatetime()->format('H:i') : null);
+
+        if (null != $solidary->getReturnDatetime()) {
             $ad->setOneWay(false);
         }
 
-        if ($solidary->getFrequency() === criteria::FREQUENCY_REGULAR) {
+        if (criteria::FREQUENCY_REGULAR === $solidary->getFrequency()) {
             $ad->setFrequency(Criteria::FREQUENCY_REGULAR);
 
             // we set the schedule and the limit date of the regular demand
@@ -761,8 +814,8 @@ class SolidaryManager
             }
             foreach ($days as $outwardDay => $outwardDayChecked) {
                 if (
-                    !array_key_exists($outwardDay, $outwardTimes) ||
-                    ((bool)$outwardDayChecked && is_null($outwardTimes[$outwardDay]))
+                    !array_key_exists($outwardDay, $outwardTimes)
+                    || ((bool) $outwardDayChecked && is_null($outwardTimes[$outwardDay]))
                 ) {
                     throw new SolidaryException(SolidaryException::DAY_CHECK_BUT_NO_OUTWARD_TIME);
                 }
@@ -777,8 +830,8 @@ class SolidaryManager
                 // Check if there is a return time for each given day
                 foreach ($days as $returnDay => $returnDayChecked) {
                     if (
-                        !array_key_exists($returnDay, $returnTimes) ||
-                        (true===$returnDayChecked && is_null($returnTimes[$returnDay]))
+                        !array_key_exists($returnDay, $returnTimes)
+                        || (true === $returnDayChecked && is_null($returnTimes[$returnDay]))
                     ) {
                         throw new SolidaryException(SolidaryException::DAY_CHECK_BUT_NO_RETURN_TIME);
                     }
@@ -795,13 +848,13 @@ class SolidaryManager
         $ad->setMarginDuration($solidary->getMarginDuration() ? $solidary->getMarginDuration() : null);
 
         // If the destination is not specified we use the origin
-        if ($destination == null) {
+        if (null == $destination) {
             $destination = $origin;
         }
         // Outward waypoint
         $outwardWaypoints = [
             clone $origin,
-            clone $destination
+            clone $destination,
         ];
 
         $ad->setOutwardWaypoints($outwardWaypoints);
@@ -809,11 +862,11 @@ class SolidaryManager
         // return waypoint
         $returnWaypoints = [
             clone $destination,
-            clone $origin
+            clone $origin,
         ];
 
         $ad->setReturnWaypoints($returnWaypoints);
-        
+
         // The User
         $ad->setUserId($userId ? $userId : $solidary->getSolidaryUser()->getUser()->getId());
 
@@ -823,27 +876,28 @@ class SolidaryManager
         return $this->adManager->createAd($ad);
     }
 
-
     /**
-     * Build a schedule for an Ad from the Solidary $days and $outwardTimes/$returnTimes
+     * Build a schedule for an Ad from the Solidary $days and $outwardTimes/$returnTimes.
      *
-     * @param array $days   Solidary days
-     * @param array $outwardTimes  Solidary $outwardTimes
+     * @param array $days         Solidary days
+     * @param array $outwardTimes Solidary $outwardTimes
      * @param array $returnTimes  Solidary $returnTimesTimes
+     *
      * @return array The builded schedules
      */
     private function buildSchedulesForAd(array $days, array $outwardTimes, ?array $returnTimes): array
     {
         $returnSchedules = [];
-        
+
         foreach ($days as $day => $value) {
             $alreadySet = false;
             // Check if the day is checked
-            if ($value == 1) {
+            if (1 == $value) {
                 // Check if the current time has been already set in a sub schedule
                 foreach ($returnSchedules as $key => $outwardSchedule) {
-                    if ($outwardSchedule['outwardTime']==$outwardTimes[$day]) {
+                    if ($outwardSchedule['outwardTime'] == $outwardTimes[$day]) {
                         $alreadySet = true;
+
                         break;
                     }
                 }
@@ -854,24 +908,23 @@ class SolidaryManager
                 } else {
                     // Not set already, we create a new sub schedule
                     $returnSchedules[] = [
-                        "outwardTime" => (isset($outwardTimes[$day])) ? $outwardTimes[$day] : null,
-                        "returnTime" => (isset($returnTimes) && $returnTimes[$day]) ? $returnTimes[$day] : null,
-                        $day => true
+                        'outwardTime' => (isset($outwardTimes[$day])) ? $outwardTimes[$day] : null,
+                        'returnTime' => (isset($returnTimes) && $returnTimes[$day]) ? $returnTimes[$day] : null,
+                        $day => true,
                     ];
                 }
             }
         }
-        
+
         return $returnSchedules;
     }
-    
+
     /**
      * We create the user associate to the solidary demand if the user is not already created
-     * We also create the solidaryUser associated if necessary
+     * We also create the solidaryUser associated if necessary.
      *
-     * @param Solidary $solidary    The solidary
-     * @param Structure $structure  The structure (used for email generation if needed)
-     * @return User
+     * @param Solidary  $solidary  The solidary
+     * @param Structure $structure The structure (used for email generation if needed)
      */
     private function solidaryCreateUser(Solidary $solidary, Structure $structure): User
     {
@@ -881,37 +934,38 @@ class SolidaryManager
             // no user provided
             if (!is_null($solidary->getEmail())) {
                 // email provided
-                $user = $this->userRepository->findOneBy(['email'=>$solidary->getEmail()]);
+                $user = $this->userRepository->findOneBy(['email' => $solidary->getEmail()]);
                 $solidary->setUser($user);
             } elseif (!is_null($structure->getEmail())) {
                 // no email provided => we try the structure email
                 $solidary->setEmail($this->userManager->generateSubEmail($structure->getEmail()));
             }
         }
-           
+
         // we set the home address
         $homeAddress = null;
         if ($solidary->getHomeAddress()) {
             $homeAddress = new Address();
-            $homeAddress->setHouseNumber($solidary->getHomeAddress()['houseNumber']);
-            $homeAddress->setStreet($solidary->getHomeAddress()['street']);
-            $homeAddress->setStreetAddress($solidary->getHomeAddress()['streetAddress']);
-            $homeAddress->setPostalCode($solidary->getHomeAddress()['postalCode']);
-            $homeAddress->setSubLocality($solidary->getHomeAddress()['subLocality']);
-            $homeAddress->setAddressLocality($solidary->getHomeAddress()['addressLocality']);
-            $homeAddress->setLocalAdmin($solidary->getHomeAddress()['localAdmin']);
-            $homeAddress->setCounty($solidary->getHomeAddress()['county']);
-            $homeAddress->setMacroCounty($solidary->getHomeAddress()['macroCounty']);
-            $homeAddress->setRegion($solidary->getHomeAddress()['region']);
-            $homeAddress->setMacroRegion($solidary->getHomeAddress()['macroRegion']);
-            $homeAddress->setAddressCountry($solidary->getHomeAddress()['addressCountry']);
-            $homeAddress->setCountryCode($solidary->getHomeAddress()['countryCode']);
-            $homeAddress->setLatitude($solidary->getHomeAddress()['latitude']);
-            $homeAddress->setLongitude($solidary->getHomeAddress()['longitude']);
+            $homeAddress->setHouseNumber(isset($solidary->getHomeAddress()['houseNumber']) ? $solidary->getHomeAddress()['houseNumber'] : null);
+            $homeAddress->setStreet(isset($solidary->getHomeAddress()['street']) ? $solidary->getHomeAddress()['street'] : null);
+            $homeAddress->setStreetAddress(isset($solidary->getHomeAddress()['streetAddress']) ? $solidary->getHomeAddress()['streetAddress'] : null);
+            $homeAddress->setPostalCode(isset($solidary->getHomeAddress()['postalCode']) ? $solidary->getHomeAddress()['postalCode'] : null);
+            $homeAddress->setSubLocality(isset($solidary->getHomeAddress()['subLocality']) ? $solidary->getHomeAddress()['subLocality'] : null);
+            $homeAddress->setAddressLocality(isset($solidary->getHomeAddress()['addressLocality']) ? $solidary->getHomeAddress()['addressLocality'] : null);
+            $homeAddress->setLocalAdmin(isset($solidary->getHomeAddress()['localAdmin']) ? $solidary->getHomeAddress()['localAdmin'] : null);
+            $homeAddress->setCounty(isset($solidary->getHomeAddress()['county']) ? $solidary->getHomeAddress()['county'] : null);
+            $homeAddress->setMacroCounty(isset($solidary->getHomeAddress()['macroCounty']) ? $solidary->getHomeAddress()['macroCounty'] : null);
+            $homeAddress->setRegion(isset($solidary->getHomeAddress()['region']) ? $solidary->getHomeAddress()['region'] : null);
+            $homeAddress->setMacroRegion(isset($solidary->getHomeAddress()['macroRegion']) ? $solidary->getHomeAddress()['macroRegion'] : null);
+            $homeAddress->setAddressCountry(isset($solidary->getHomeAddress()['addressCountry']) ? $solidary->getHomeAddress()['addressCountry'] : null);
+            $homeAddress->setCountryCode(isset($solidary->getHomeAddress()['countryCode']) ? $solidary->getHomeAddress()['countryCode'] : null);
+            $homeAddress->setLatitude(isset($solidary->getHomeAddress()['latitude']) ? $solidary->getHomeAddress()['latitude'] : null);
+            $homeAddress->setLongitude(isset($solidary->getHomeAddress()['longitude']) ? $solidary->getHomeAddress()['longitude'] : null);
         } elseif (!is_null($solidary->getUser()) && !is_null($solidary->getUser()->getAddresses())) {
             foreach ($solidary->getUser()->getAddresses() as $address) {
                 if ($address->isHome()) {
                     $homeAddress = $address;
+
                     break;
                 }
             }
@@ -919,8 +973,8 @@ class SolidaryManager
         if (is_null($homeAddress)) {
             throw new SolidaryException(SolidaryException::NO_HOME_ADDRESS);
         }
-     
-        if ($user == null) {
+
+        if (null == $user) {
             // We create a new user
             $user = new User();
             $user->setEmail($solidary->getEmail());
@@ -931,7 +985,7 @@ class SolidaryManager
             $user->setTelephone($solidary->getTelephone());
             $user->setGender($solidary->getGender());
             $user->setNewsSubscription(true);
-            
+
             $homeAddress->setHome(true);
             $user->addAddress($homeAddress);
 
@@ -961,7 +1015,7 @@ class SolidaryManager
         } else {
             $solidaryUser = $user->getSolidaryUser();
         }
-        
+
         // We create the solidaryUserStructure associated to the demand
         $structure = null;
 
@@ -983,7 +1037,7 @@ class SolidaryManager
         $solidaryUserStructure = null;
         $solidaryUserStructures = $solidaryUser->getSolidaryUserStructures();
         // first we check if the solidaryUser is already linked to a structure
-        if (count($solidaryUser->getSolidaryUserStructures()) === 0) {
+        if (0 === count($solidaryUser->getSolidaryUserStructures())) {
             $solidaryUserStructure = new SolidaryUserStructure();
             $solidaryUserStructure->setStructure($structure);
             $solidaryUserStructure->setSolidaryUser($solidaryUser);
@@ -991,17 +1045,17 @@ class SolidaryManager
             foreach ($solidaryUserStructures as $currentSolidaryUserStructure) {
                 if ($structure->getId() === $currentSolidaryUserStructure->getStructure()->getId()) {
                     $solidaryUserStructure = $currentSolidaryUserStructure;
+
                     break;
-                } else {
-                    $solidaryUserStructure = new SolidaryUserStructure();
-                    $solidaryUserStructure->setStructure($structure);
-                    $solidaryUserStructure->setSolidaryUser($solidaryUser);
                 }
+                $solidaryUserStructure = new SolidaryUserStructure();
+                $solidaryUserStructure->setStructure($structure);
+                $solidaryUserStructure->setSolidaryUser($solidaryUser);
             }
         }
         // Proofs
         //we check if the structure need proofs before validation if not we validate automaticaly the candidate
-        if (count($solidaryUserStructure->getStructure()->getStructureProofs()) == 0) {
+        if (0 == count($solidaryUserStructure->getStructure()->getStructureProofs())) {
             $solidaryUserStructure->setStatus(true);
             $solidaryUserStructure->setAcceptedDate(new \DateTime('now'));
         }
@@ -1012,7 +1066,7 @@ class SolidaryManager
             if (strrpos($givenProof['id'], '/')) {
                 $structureProofId = substr($givenProof['id'], strrpos($givenProof['id'], '/') + 1);
             }
-                
+
             $structureProof = $this->structureProofRepository->find($structureProofId);
             if (!is_null($structureProof) && isset($givenProof['value']) && !is_null($givenProof['value'])) {
                 $proof = new Proof();
@@ -1023,7 +1077,7 @@ class SolidaryManager
         }
 
         // we set a default value for not mandatory proofs if the benefiiary didn't completed them
-        if (count($solidary->getProofs()) == 0) {
+        if (0 == count($solidary->getProofs())) {
             $notMandatoryBeneficiaryStructureProofs = $this->structureProofRepository->findNotMandatoryBeneficiaryStructureProofs($structure);
             foreach ($notMandatoryBeneficiaryStructureProofs as $notMandatoryProof) {
                 $proof = new Proof();
@@ -1039,76 +1093,5 @@ class SolidaryManager
         $this->entityManager->flush();
 
         return $user;
-    }
-
-    /**
-     * Build a volunteer's planning between two dates.
-     *
-     * @param \DateTimeInterface $startDate
-     * @param \DateTimeInterface $endDate
-     * @param integer $solidaryVolunteerId
-     * @return array
-     */
-    public function buildSolidaryVolunteerPlanning(\DateTimeInterface $startDate, \DateTimeInterface  $endDate, int $solidaryVolunteerId): array
-    {
-        // We get the Volunteer and we check if it's really a volunteer
-        $solidaryVolunteer = $this->solidaryUserRepository->find($solidaryVolunteerId);
-        
-        if (!$solidaryVolunteer->isVolunteer()) {
-            throw new SolidaryException(SolidaryException::NO_SOLIDARY_VOLUNTEER);
-        }
-        
-        $solidaryAsks = $this->solidaryAskRepository->findBetweenTwoDates($startDate, $endDate, $solidaryVolunteer);
-
-        $fullPlanning = [];
-        $currentDate = $startDate;
-        // We make the schedule. Day by day.
-        while ($currentDate<=$endDate) {
-            $solidaryVolunteerPlanning = new SolidaryVolunteerPlanning();
-            $solidaryVolunteerPlanning->setDate($currentDate);
-            
-            // We check if we found a solidaryAsk for this day
-            foreach ($solidaryAsks as $solidaryAsk) {
-                /**
-                 * @var SolidaryAsk $solidaryAsk
-                 */
-                if (
-                   ($solidaryAsk->getCriteria()->getFrequency()==Criteria::FREQUENCY_PUNCTUAL && $solidaryAsk->getCriteria()->getFromDate()->format("d/m/Y")==$currentDate->format("d/m/Y")) ||
-                   ($solidaryAsk->getCriteria()->getFrequency()==Criteria::FREQUENCY_REGULAR && $solidaryAsk->getCriteria()->getFromDate()->format("d/m/Y")<=$currentDate->format("d/m/Y") && $solidaryAsk->getCriteria()->getToDate()->format("d/m/Y")>=$currentDate->format("d/m/Y"))
-                ) {
-
-                    // Determine the hour slot
-                    $structure = $solidaryAsk->getSolidarySolution()->getSolidary()->getSolidaryUserStructure()->getStructure();
-                    $slot = $this->solidaryMatcher->getHourSlot($solidaryAsk->getCriteria()->getFromTime(), $solidaryAsk->getCriteria()->getFromTime(), $structure);
-
-                    $solidaryVolunteerPlanningItem = new SolidaryVolunteerPlanningItem();
-
-                    // The beneficiary
-                    $beneficiary = $solidaryAsk->getSolidarySolution()->getSolidary()->getSolidaryUserStructure()->getSolidaryUser()->getUser();
-                    $solidaryVolunteerPlanningItem->setBeneficiary($beneficiary->getGivenName()." ".$beneficiary->getFamilyName());
-
-
-                    // different usefull ids
-                    $solidaryVolunteerPlanningItem->setSolidaryId($solidaryAsk->getSolidarySolution()->getSolidary()->getId());
-                    $solidaryVolunteerPlanningItem->setSolidarySolutionId($solidaryAsk->getSolidarySolution()->getId());
-
-                    // status
-                    $solidaryVolunteerPlanningItem->setStatus($solidaryAsk->getStatus());
-
-                    switch ($slot) {
-                        case 'm': $solidaryVolunteerPlanning->setMorningSlot($solidaryVolunteerPlanningItem);break;
-                        case 'a': $solidaryVolunteerPlanning->setAfternoonSlot($solidaryVolunteerPlanningItem);break;
-                        case 'e': $solidaryVolunteerPlanning->setEveningSlot($solidaryVolunteerPlanningItem);break;
-                    }
-                }
-            }
-
-            $fullPlanning[] = $solidaryVolunteerPlanning;
-            
-            $currentDate = clone $currentDate;
-            $currentDate->modify('+1 day');
-        }
-
-        return $fullPlanning;
     }
 }

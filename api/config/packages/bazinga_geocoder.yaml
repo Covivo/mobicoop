@@ -62,6 +62,7 @@ bazinga_geocoder:
       factory: Bazinga\GeocoderBundle\ProviderFactory\ChainFactory
       options:
         # This is the order in which Providers will be called. Note that it stops its iteration when a provider returns a result.
-        services: ['@Addok','@PeliasAutocomplete','@PeliasSearch','@LocationIQ','@GMaps']
+        services: ['@Addok','@PeliasAutocomplete','@PeliasSearch','@GMaps']
+        # services: ['@Addok','@PeliasAutocomplete','@PeliasSearch','@LocationIQ','@GMaps']
         # services: ['@LocationIQ','@PeliasAutocomplete','@PeliasSearch','@GMaps']
         

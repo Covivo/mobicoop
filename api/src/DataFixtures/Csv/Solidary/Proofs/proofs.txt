@@ -1,3 +1,5 @@
 structure_proof_id          (int)
-value                       (string, use 'true' or 'false' for boolean)
 solidary_user_structure_id  (int)
+value                       (string, use 'true' or 'false' for boolean)
+file_name                   (string, for file)
+original_name               (string, for file)
