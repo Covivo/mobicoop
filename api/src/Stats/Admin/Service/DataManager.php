@@ -28,20 +28,27 @@ namespace App\Stats\Admin\Service;
 class DataManager
 {
     public const DATA_NAME_VALIDATED_USERS = 'ValidatedUsers';
-    public const DATA_NAME_REGISTRATIONS = 'Registrations';
+    public const DATA_NAME_REGISTRATIONS_LIST = 'RegistrationsList';
 
     public const PREFIX_AUTO_CALL_METHOD = 'build';
     public const SUFFIX_AUTO_CALL_METHOD = 'Request';
 
+    public const USER_STATUS_LABEL_UNREGISTERED = 'Désinscrit';
+    public const USER_STATUS_LABEL_VALIDATED = 'Validé';
+    public const USER_STATUS_LABEL_NOT_VALIDATED = 'Non validé';
+    public const USER_STATUS_LABEL_INACTIVE = 'Inactif';
+
     public const DATA_NAMES = [
         self::DATA_NAME_VALIDATED_USERS,
-        self::DATA_NAME_REGISTRATIONS,
+        self::DATA_NAME_REGISTRATIONS_LIST,
     ];
 
     private const REQUEST_TIMOUT = 30000;
     private const DATE_FORMAT = 'c';
     private const DEFAULT_START_DATE_MODIFICATOR = '-1 year';
     private const DEFAULT_END_DATE_MODIFICATOR = '';
+    private const DEFAULT_PERIOD = '1M';
+    private const DEFAULT_REFERENCE_FIELD = 'user_created_date';
 
     private const BASE_REQUEST = [
         'size' => 0,
@@ -56,6 +63,8 @@ class DataManager
     private $dataName;
     private $startDate;
     private $endDate;
+    private $period;
+    private $referenceField;
     private $request;
     private $requestResponse;
 
@@ -118,6 +127,30 @@ class DataManager
         return $this->endDate;
     }
 
+    public function setPeriod(?string $period)
+    {
+        $this->period = $period;
+    }
+
+    public function getPeriod(): ?string
+    {
+        if (is_null($this->period)) {
+            return self::DEFAULT_PERIOD;
+        }
+    }
+
+    public function setReferenceField(?string $referenceField)
+    {
+        $this->referenceField = $referenceField;
+    }
+
+    public function getReferenceField(): ?string
+    {
+        if (is_null($this->referenceField)) {
+            return self::DEFAULT_REFERENCE_FIELD;
+        }
+    }
+
     public function getData(): array
     {
         if (!in_array($this->getDataName(), self::DATA_NAMES)) {
@@ -165,7 +198,7 @@ class DataManager
                     [
                         'match_phrase' => [
                             'user_status_label' => [
-                                'query' => 'Validé',
+                                'query' => self::USER_STATUS_LABEL_VALIDATED,
                             ],
                         ],
                     ],
@@ -174,15 +207,15 @@ class DataManager
         ];
     }
 
-    private function buildRegistrationsRequest()
+    private function buildRegistrationsListRequest()
     {
         $this->keyType = 'utc-datetime';
 
         $this->request['aggs'] = [
             1 => [
                 'date_histogram' => [
-                    'field' => 'user_created_date',
-                    'calendar_interval' => '1M',
+                    'field' => $this->getReferenceField(),
+                    'calendar_interval' => $this->getPeriod(),
                     'time_zone' => 'Europe/Paris',
                     'min_doc_count' => 1,
                 ],
@@ -194,12 +227,7 @@ class DataManager
                 'must_not' => [
                     [
                         'match_phrase' => [
-                            'user_status_label' => 'Désinscrit',
-                        ],
-                    ],
-                    [
-                        'match_phrase' => [
-                            'user_status_label' => 'Désinscrit',
+                            'user_status_label' => self::USER_STATUS_LABEL_UNREGISTERED,
                         ],
                     ],
                 ],

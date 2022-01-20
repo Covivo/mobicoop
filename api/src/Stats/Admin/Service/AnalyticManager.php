@@ -28,7 +28,7 @@ use Exception;
 class AnalyticManager
 {
     public const IDS = [
-        1 => DataManager::DATA_NAME_REGISTRATIONS,
+        1 => DataManager::DATA_NAME_REGISTRATIONS_LIST,
         2 => DataManager::DATA_NAME_VALIDATED_USERS,
     ];
 
@@ -42,7 +42,7 @@ class AnalyticManager
     public function getAnalytics(): array
     {
         $analytics = [];
-        foreach (self::IDS as $id) {
+        foreach (self::IDS as $id => $label) {
             $analytics[] = $this->getAnalytic($id);
         }
 
