@@ -70,6 +70,6 @@ final class MCommunityCollectionDataProvider implements CollectionDataProviderIn
             }
         }
 
-        return $this->communityManager->getMCommunities($communities);
+        return $this->communityManager->getMCommunities($this->request->get('userEmail'), $communities);
     }
 }

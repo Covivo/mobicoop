@@ -476,7 +476,7 @@ class CommunityManager
      *
      * @return array The communities
      */
-    public function getMCommunities($communities)
+    public function getMCommunities(?string $userEmail, $communities)
     {
         $mCommunities = [];
         $temporaryCommuities = [];
