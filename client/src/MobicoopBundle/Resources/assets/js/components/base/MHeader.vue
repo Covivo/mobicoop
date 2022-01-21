@@ -72,8 +72,8 @@
             mdi-facebook
           </v-icon></a>
         <a
-          :href="$t('pad.social.facebook.link')"
-          :alt="$t('pad.social.facebook.title')"
+          :href="$t('pad.social.twitter.link')"
+          :alt="$t('pad.social.twitter.title')"
           target="_blank"
         >
           <v-icon class="white--text mx-2">
@@ -81,8 +81,8 @@
           </v-icon>
         </a>
         <a
-          :href="$t('pad.social.facebook.link')"
-          :alt="$t('pad.social.facebook.title')"
+          :href="$t('pad.social.linkedin.link')"
+          :alt="$t('pad.social.linkedin.title')"
           target="_blank"
         >
           <v-icon class="white--text mx-2">
