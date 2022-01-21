@@ -429,7 +429,7 @@
         <v-spacer />
         <!-- Carpool regular(driver) --> 
         <v-btn
-          v-if="driver && passenger && lResult.pendingAsk == false && lResult.acceptedAsk == false && lResult.initiatedAsk == false && lResult.frequency == 2 && !carpoolRoleSelected"
+          v-if="(lResult.return && step == 3 || !lResult.return && step == 2 ) && driver && lResult.pendingAsk == false && lResult.acceptedAsk == false && lResult.initiatedAsk == false && lResult.frequency == 2 && !carpoolRoleSelected"
           color="secondary"
           :disabled="carpoolDisabled"
           :loading="carpoolLoading"
@@ -440,7 +440,7 @@
 
         <!-- Carpool regular(passenger) --> 
         <v-btn
-          v-if="driver && passenger && lResult.pendingAsk == false && lResult.acceptedAsk == false && lResult.initiatedAsk == false && lResult.frequency == 2 && !carpoolRoleSelected"
+          v-if="(lResult.return && step == 3 || !lResult.return && step == 2 ) && !driver && passenger && lResult.pendingAsk == false && lResult.acceptedAsk == false && lResult.initiatedAsk == false && lResult.frequency == 2 && !carpoolRoleSelected"
           color="secondary"
           :disabled="carpoolDisabled"
           :loading="carpoolLoading"
@@ -451,7 +451,7 @@
 
         <!-- Carpool punctual(driver) --> 
         <v-btn
-          v-if="driver && passenger && lResult.pendingAsk == false && lResult.acceptedAsk == false && lResult.initiatedAsk == false && lResult.frequency == 1"
+          v-if="driver && lResult.pendingAsk == false && lResult.acceptedAsk == false && lResult.initiatedAsk == false && lResult.frequency == 1"
           color="secondary"
           :disabled="carpoolDisabled"
           :loading="carpoolLoading"
@@ -462,7 +462,7 @@
 
         <!-- Carpool punctual(passenger) --> 
         <v-btn
-          v-if="driver && passenger && lResult.pendingAsk == false && lResult.acceptedAsk == false && lResult.initiatedAsk == false && lResult.frequency == 1"
+          v-if="!driver && passenger && lResult.pendingAsk == false && lResult.acceptedAsk == false && lResult.initiatedAsk == false && lResult.frequency == 1"
           color="secondary"
           :disabled="carpoolDisabled"
           :loading="carpoolLoading"
@@ -1040,7 +1040,9 @@ export default {
     },
     carpoolConfirmRegular(role) {
       this.carpoolRoleSelected = role;
+      this.carpoolRole = role;
       this.computeTimes();
+      this.carpoolDialog = true;
     },
     carpool(role) {
       this.carpoolDialog = false;
