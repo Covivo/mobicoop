@@ -115,7 +115,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
 
         //Email token is not null = we activate account from email -> we set token at null and the validated date at today
         if ($user->getEmailToken() != null) {
-            $user->setValidatedDate($now);
+            $user->setValidatedDate(new \DateTime('now'));
             $user->setEmailToken(null);
 
             //  we dispatch the gamification event associated
