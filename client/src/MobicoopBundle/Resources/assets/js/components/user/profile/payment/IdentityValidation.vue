@@ -82,7 +82,7 @@
             :label="$t('fileInput.label')"
             :disabled="!formActive"
             :rules="identityProofRules"
-            :show-size="1000"
+            show-size
             counter
           />
         </template>

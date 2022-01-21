@@ -17,7 +17,11 @@
             "route": "/utilisateur/profil/avatar/supprimer"
         },
         "size": "Abatarraren gehieneko izaria gainditu duzu",
-        "label": "Argazkia"
+        "mbSize": "You have exceeded the maximum avatar size (Max {size} Mb)",
+        "pxSize": "The image is too small : {width}x{height}px (Min {size}x{size}px)",
+        "label": "Argazkia",
+        "minPxSize": "Minimum size {size}x{size}px",
+        "maxMbSize": "maximum weight {size} Mb"
     },
     "snackBar": {
         "emailError": "Huts bat gertatu da, e-mezua ez da bidalia izan",

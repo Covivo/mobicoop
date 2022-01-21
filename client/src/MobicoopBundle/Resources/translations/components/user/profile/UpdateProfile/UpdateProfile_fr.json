@@ -19,7 +19,10 @@
     },
     "avatar": {
         "label": "Nouvelle photo",
-        "size": "Vous avez dépassé la taille maximale de l'avatar",
+        "mbSize": "Vous avez dépassé la taille maximale de l'avatar (Max {size} Mb)",
+        "pxSize": "L'image n'est pas assez grande : {width}x{height}px (Min {size}x{size}px)",
+        "minPxSize": "Taille minimum {size}x{size}px",
+        "maxMbSize": "poids maximum {size} Mb",
         "delete": {
             "route": "/utilisateur/profil/avatar/supprimer",
             "label": "Supprimer l'image"

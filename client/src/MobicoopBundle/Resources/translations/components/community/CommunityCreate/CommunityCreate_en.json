@@ -21,9 +21,12 @@
             "label": "Address of the community*"
         },
         "avatar": {
-            "size": "You have exceeded the maximum avatar size",
             "required": "The community avatar is required",
-            "label": "Community avatar*"
+            "label": "Community avatar*",
+            "minPxSize": "Minimum size {size}x{size}px",
+            "maxMbSize": "maximum weight {size} Mb",
+            "mbSize": "You have exceeded the maximum avatar size (Max {size} Mb)",
+            "pxSize": "The image is too small : {width}x{height}px (Min {size}x{size}px)"
         },
         "fullDescription": {
             "required": "The detailed description of the community is required",

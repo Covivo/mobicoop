@@ -12,7 +12,6 @@
           <event-infos
             :event="event"
             :url-alt-avatar="urlAltAvatar"
-            :avatar-version="avatarVersion"
             :display-description="false"
             :is-widget="true"
             :justify-title="justifyTitle"
@@ -82,10 +81,6 @@ export default {
     },
     event:{
       type: Object,
-      default: null
-    },
-    avatarVersion: {
-      type: String,
       default: null
     },
     urlAltAvatar: {

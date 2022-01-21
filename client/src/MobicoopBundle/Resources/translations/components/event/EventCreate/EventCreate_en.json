@@ -22,7 +22,10 @@
         "avatar": {
             "label": "Event image*",
             "required": "The event image is required",
-            "size": "You have exceeded the maximum image size"
+            "mbSize": "You have exceeded the maximum avatar size (Max {size} Mb)",
+            "pxSize": "The image is too small : {width}x{height}px (Min {size}x{size}px)",
+            "minPxSize": "Minimum size {size}x{size}px",
+            "maxMbSize": "maximum weight {size} Mb"
         },
         "address": {
             "label": "Address of the event*",
