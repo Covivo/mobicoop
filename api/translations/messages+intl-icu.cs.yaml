@@ -1,1 +1,56 @@
 hello: Dobrý den
+AQuestion: Nějaké dotazy?
+FAQ: Časté dotazy
+EmailsAlerts: Správa e-mailových upozornění
+URLEmailsAlerts: utilisateur/profil/modifier/mon-profil
+Download: Stáhněte si aplikaci pro <b>Android</b> nebo <b>IOS</b>
+FollowUs: Sledujte nás
+signature: Brzy se uvidíme na
+shortdayMonday: Po
+shortdayTuesday: Út
+shortdayWednesday: St
+shortdayThursday: Čt
+shortdayFriday: Pá
+shortdaySaturday: So
+shortdaySunday: Ne
+contactInfos: Nová žádost o informace
+contactTechnicalIssues: Nová žádost o podporu
+contactPartnership: Nová žádost o partnerství
+contactCommunity: Žádost o vytvoření komunity
+beCarefulFewDaysAnnouncementNotValid: Vezměte prosím na vědomí, že za několik dní
+  přestanou být vaše registrované jízdy ve vašem profilu platné, a proto nebudou viditelné
+  pro ostatní spolujezdce.
+nowYouAreMore: Nyní jste více než
+toUseTheService: využívat tuto službu! Podělte se o své cesty a najděte své štěstí
+acceptedCarpool: VAŠE SPOLUJÍZDA JE POTVRZENA!
+yourCarpoolWith: Vaše spolujízda s
+isConfirmed: je potvrzena!
+occasionalCarpool: Shrnutí vaší příležitostné cesty z
+regularCarpool: Shrnutí vaší pravidelné trasy z
+to: na
+outward: PŘEJÍT NA
+return: VRÁTIT
+multipleShedules: Více rozvrhů
+pickUp: 'Podpora v '
+dropOff: 'Odstranění v '
+seatsSelected: 'Vyhrazené(á) místo(a) : '
+indicativePrice: 'Orientační cena : '
+newCarpoolAsk: MÁTE POŽADAVEK NA SPOLUJÍZDU!
+askForCarpool: vás žádá o spolujízdu.
+occasionalCarpoolAsk: 'Shrnutí poptávky po příležitostném sdílení automobilů na '
+regularCarpoolAsk: 'Shrnutí poptávky po pravidelném sdílení automobilů od '
+refusedCarpool: VAŠE SPOLUJÍZDA NENÍ POTVRZENA.
+refusedOccasionalCarpool: ' nepotvrdil spolujízdu pro '
+noPanic: Nepropadejte panice, můžete si vyhledat novou trasu nebo zveřejnit inzerát.
+canceledCarpool: VAŠE SPOLUJÍZDA JE ZRUŠENA.
+canceledOccasionalCarpool: ' zrušil svou cestu a nebude s vámi moci jet. '
+refusedRegularCarpool: ' nepotvrdil spolujízdu pro pravidelné '
+canceledRegularCarpool: '  zrušil svou pravidelnou trasu a nebude s vámi moci jezdit
+  z letiště '
+deletedAccountOccasionalCarpool: ' smazal svůj účet a nebude s vámi moci spolujízdu
+  na '
+deletedAccountRegularCarpool: ' smazal svůj účet a nebude s vámi moci spolujízdu od '
+urlPublish: /covoiturage/publierannonce
+newCarpoolAdMatchingYourCommute: Nová reklama na spolujízdu odpovídající vaší cestě
+  mezi
+seeYouIn: Na shledanou v
