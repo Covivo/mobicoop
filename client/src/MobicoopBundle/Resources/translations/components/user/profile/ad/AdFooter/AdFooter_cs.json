@@ -2,5 +2,11 @@
     "seat": {
         "singular": "místo",
         "plural": "místa"
-    }
+    },
+    "potentialCarpooler": {
+        "plural": "potenciální spolujezdci",
+        "singular": "potenciální spolucestovatel"
+    },
+    "isArchived": "Archivováno",
+    "urlResult": "/covoiturage/annonce/{id}/resultats"
 }
