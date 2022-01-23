@@ -1,1 +1,41 @@
-{}
+{
+    "community": {
+        "button": {
+            "label": "Podívejte se na komunity",
+            "route": "/covoiturage-communaute"
+        },
+        "text": "Poznejte členy mého klubu nebo společnosti.",
+        "title": "KOMUNITY"
+    },
+    "event": {
+        "title": "UDÁLOSTI",
+        "text": "Najděte spolujezdce, kteří jedou na stejnou akci.",
+        "button": {
+            "label": "Podívejte se na události",
+            "route": "/covoiturages-evenements"
+        }
+    },
+    "solidary": {
+        "title": "SOLIDÁRNÍ SPOLUJÍZDA",
+        "button": {
+            "label": "Prosím o pomocnou ruku",
+            "route": "/#/carpools/solidary/home/request"
+        },
+        "button2": {
+            "label": "Podání pomocné ruky",
+            "route": "/covoiturage/publierannonce/solidaire"
+        },
+        "text": "Vzájemná pomoc při hledání zaměstnání"
+    },
+    "events": {
+        "button1": {
+            "label": "Podívejte se na události",
+            "route": "/evenements"
+        },
+        "button2": {
+            "route": "/evenement/creer",
+            "label": "Přidání události"
+        },
+        "title": "Zorganizujte pro své akce spolujízdu"
+    }
+}
