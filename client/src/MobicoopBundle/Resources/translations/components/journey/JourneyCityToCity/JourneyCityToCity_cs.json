@@ -1,1 +1,21 @@
-{}
+{
+    "title": {
+        "part1": "Z komunity...",
+        "part2": "... do komunity"
+    },
+    "links": {
+        "byCity": {
+            "title": "Spolujízdy podle obcí",
+            "uri": "/covoiturage-par-ville"
+        },
+        "popular": {
+            "title": "Spolujízdy podle oblíbených tras",
+            "uri": "/covoiturage-par-ville/populaires"
+        }
+    },
+    "popularJourneys": {
+        "from": "Spolujízda z",
+        "uri": "/covoiturage/{origin}/{destination}"
+    },
+    "getPopularJourneysUrl": "/covoiturages/populaires/home"
+}
