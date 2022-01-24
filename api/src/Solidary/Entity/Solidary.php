@@ -1634,7 +1634,7 @@ class Solidary
      */
     public function getAdminlastAction(): ?string
     {
-        return count($this->getDiaries()) > 0 ? $this->getDiaries()[0]->getAction()->getName() : '';
+        return count($this->getDiaries()) > 0 ? $this->getDiaries()[0]->getAction()->getName() : null;
     }
 
     /**
