@@ -28,6 +28,7 @@ use App\Community\Entity\CommunityUser;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\QueryBuilder;
 
 class CommunityRepository
 {
@@ -84,7 +85,7 @@ class CommunityRepository
      * @param null|User  $user    The user
      * @param null|array $orderBy The order of the results
      *
-     * @return array The communities found
+     * @return QueryBuilder
      */
     public function findAvailableCommunitiesForUser(?User $user, ?array $orderBy = null)
     {

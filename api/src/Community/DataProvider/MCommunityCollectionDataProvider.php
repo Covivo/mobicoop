@@ -27,6 +27,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryResultCollectionExtensio
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGenerator;
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
+use App\Community\Entity\Community;
 use App\Community\Resource\MCommunity;
 use App\Community\Service\CommunityManager;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -63,10 +64,10 @@ final class MCommunityCollectionDataProvider implements CollectionDataProviderIn
 
         // We're browsing every available filters
         foreach ($this->collectionFilters as $collectionFilter) {
-            $collectionFilter->applyToCollection($queryBuilder, new QueryNameGenerator(), MCommunity::ENTITY_RELATED, $operationName, $context);
+            $collectionFilter->applyToCollection($queryBuilder, new QueryNameGenerator(), Community::class, $operationName, $context);
 
-            if ($collectionFilter instanceof QueryResultCollectionExtensionInterface && $collectionFilter->supportsResult(MCommunity::ENTITY_RELATED, $operationName)) {
-                $communities = $collectionFilter->getResult($queryBuilder, MCommunity::ENTITY_RELATED, $operationName);
+            if ($collectionFilter instanceof QueryResultCollectionExtensionInterface && $collectionFilter->supportsResult(Community::class, $operationName)) {
+                $communities = $collectionFilter->getResult($queryBuilder, Community::class, $operationName);
             }
         }
 
