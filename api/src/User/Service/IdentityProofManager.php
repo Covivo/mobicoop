@@ -26,6 +26,7 @@ namespace App\User\Service;
 use App\User\Entity\IdentityProof;
 use App\User\Entity\User;
 use App\User\Event\IdentityProofModeratedEvent;
+use App\User\Event\IdentityProofValidationReminderEvent;
 use App\User\Repository\IdentityProofRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
@@ -110,7 +111,8 @@ class IdentityProofManager
     {
         $identityProofs = $this->identityProofRepository->findBy(['status' => IdentityProof::STATUS_PENDING]);
         foreach ($identityProofs as $identityProof) {
-            echo $identityProof->getId()."\n";
+            $event = new IdentityProofValidationReminderEvent($identityProof);
+            $this->eventDispatcher->dispatch(IdentityProofValidationReminderEvent::NAME, $event);
         }
     }
 
