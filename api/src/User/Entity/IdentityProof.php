@@ -82,9 +82,11 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  */
 class IdentityProof
 {
-    public const STATUS_PENDING = 0;
-    public const STATUS_ACCEPTED = 1;
-    public const STATUS_REFUSED = 2;
+    public const STATUS_NONE = 0;
+    public const STATUS_PENDING = 1;
+    public const STATUS_ACCEPTED = 2;
+    public const STATUS_REFUSED = 3;
+    public const STATUS_CANCELED = 4;
 
     /**
      * @var int the id of this identity proof
@@ -92,7 +94,7 @@ class IdentityProof
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups("read")
+     * @Groups({"read","aRead"})
      */
     private $id;
 
@@ -174,6 +176,7 @@ class IdentityProof
     /**
      * @var \DateTimeInterface updated date of the proof
      * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"aRead"})
      */
     private $updatedDate;
 
@@ -198,6 +201,20 @@ class IdentityProof
      */
     private $validate;
 
+    /**
+     * @var null|string human readable size of the file
+     *
+     * @Groups({"aRead"})
+     */
+    private $fileSize;
+
+    /**
+     * @var string validator of the user identity
+     *
+     * @Groups("aRead")
+     */
+    private $validator;
+
     public function getId(): int
     {
         return $this->id;
@@ -211,6 +228,7 @@ class IdentityProof
     public function setStatus(int $status)
     {
         $this->status = $status;
+        $this->getUser()->setIdentityStatus($status);
         if (self::STATUS_ACCEPTED == $this->status) {
             $this->setAcceptedDate(new \Datetime());
         } elseif (self::STATUS_REFUSED == $this->status) {
@@ -359,6 +377,23 @@ class IdentityProof
         $this->validate = $validate;
 
         return $this;
+    }
+
+    public function getFileSize(): ?string
+    {
+        return $this->fileSize;
+    }
+
+    public function setFileSize(?string $fileSize): self
+    {
+        $this->fileSize = $fileSize;
+
+        return $this;
+    }
+
+    public function getValidator(): ?string
+    {
+        return $this->admin ? $this->admin->getGivenName().' '.$this->admin->getShortFamilyName() : null;
     }
 
     // DOCTRINE EVENTS
