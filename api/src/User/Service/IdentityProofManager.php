@@ -108,7 +108,10 @@ class IdentityProofManager
 
     public function sendReminders()
     {
-        echo 'yo';
+        $identityProofs = $this->identityProofRepository->findBy(['status' => IdentityProof::STATUS_PENDING]);
+        foreach ($identityProofs as $identityProof) {
+            echo $identityProof->getId()."\n";
+        }
     }
 
     private function validateIdentityProof(IdentityProof $identityProof, bool $validate): IdentityProof
