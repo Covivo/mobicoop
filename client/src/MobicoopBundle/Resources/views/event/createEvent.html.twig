@@ -12,7 +12,8 @@
     <event-create
 			:user="{{ app.user|json_encode }}"
             geo-search-url="{{ geoCompleteUri }}" 
-            avatar-size="{{ eventImageSize }}">
+            :image-min-px-size="{{ imageMinPxSize }}"
+            :image-max-mb-size="{{ imageMaxMbSize }}">
     </event-create>
    
 {% endblock %}

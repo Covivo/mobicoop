@@ -100,11 +100,16 @@
           <v-row justify="center">
             <v-col cols="6">
               <v-file-input
+                ref="avatar"
                 v-model="avatar"
                 :rules="avatarRules"
-                accept="image/png, image/jpeg, image/bmp"
+                accept="image/png, image/jpeg, image/jpg"
                 :label="$t('form.avatar.label')"
                 prepend-icon="mdi-image"
+                :hint="$t('form.avatar.minPxSize', {size: imageMinPxSize})+', '+$t('form.avatar.maxMbSize', {size: imageMaxMbSize})"
+                persistent-hint
+                show-size
+                @change="selectedAvatar"
               />
             </v-col>
           </v-row>
@@ -156,8 +161,12 @@ export default {
       type: String,
       default: null
     },
-    avatarSize: {
-      type: String,
+    imageMinPxSize: {
+      type: Number,
+      default: null
+    },
+    imageMaxMbSize: {
+      type: Number,
       default: null
     }
   },
@@ -165,7 +174,9 @@ export default {
     return {
       avatarRules: [
         v => !!v || this.$t("form.avatar.required"),
-        v => !v || v.size < this.avatarSize || this.$t("form.avatar.size")+" (Max "+(this.avatarSize/1000000)+"MB)"
+        v => !v || v.size < this.imageMaxMbSize*1024*1024 || this.$t("form.avatar.mbSize", { size: this.imageMaxMbSize }),
+        v => !v || this.avatarHeight >= this.imageMinPxSize || this.$t("form.avatar.pxSize", { size: this.imageMinPxSize, height: this.avatarHeight, width: this.avatarWidth }),
+        v => !v || this.avatarWidth >= this.imageMinPxSize || this.$t("form.avatar.pxSize", { size: this.imageMinPxSize, height: this.avatarHeight, width: this.avatarWidth }),
       ],
       communityAddress: null,
       name: null,
@@ -181,6 +192,8 @@ export default {
         v => !!v || this.$t("form.fullDescription.required"),
       ],
       avatar: null,
+      avatarHeight: null,
+      avatarWidth: null,
       loading: false,
       snackError: null,
       snackbar: false,
@@ -225,6 +238,26 @@ export default {
         this.loading = false;
       }    
     },
+    selectedAvatar() {
+      this.avatarWidth = null;
+      this.avatarHeight = null;
+
+      if (!this.avatar) return;
+      let reader = new FileReader();
+      
+      reader.readAsDataURL(this.avatar);
+      reader.onload = evt => {
+        let self = this;
+        let img = new Image();
+        img.onload = () => {
+          self.avatarHeight = img.height;
+          self.avatarWidth = img.width;
+          self.$refs.avatar.validate()
+        }
+        img.src = evt.target.result;
+      }
+      
+    }
   }
 }
 </script>

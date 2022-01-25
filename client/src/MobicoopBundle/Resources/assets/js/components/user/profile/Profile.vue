@@ -78,9 +78,9 @@
                   :age-min="ageMin"
                   :age-max="ageMax"
                   :age-display="ageDisplay"
-                  :avatar-size="avatarSize"
+                  :image-min-px-size="imageMinPxSize"
+                  :image-max-mb-size="imageMaxMbSize"
                   :url-alt-avatar="urlAltAvatar"
-                  :avatar-version="avatarVersion"
                   :platform="platform"
                   :gamification-active="gamificationActive"
                 />
@@ -211,12 +211,12 @@ export default {
       type: String,
       default: null
     },
-    avatarSize: {
-      type: String,
+    imageMinPxSize: {
+      type: Number,
       default: null
     },
-    avatarVersion: {
-      type: String,
+    imageMaxMbSize: {
+      type: Number,
       default: null
     },
     urlAltAvatar: {
