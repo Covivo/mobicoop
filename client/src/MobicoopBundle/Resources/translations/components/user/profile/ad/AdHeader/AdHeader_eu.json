@@ -2,7 +2,8 @@
     "pause": {
         "error": {
             "pause": "Akats bat gertatu da, zure iragarkia ez da pausan ezarria izan.",
-            "unpause": "Akats bat gertatu da, zure iragarkia ez da aktibatua izan"
+            "unpause": "Akats bat gertatu da, zure iragarkia ez da aktibatua izan",
+			"antifraud": "Trajet incompatible avec vos annonces déjà publiées. Si votre annonce déjà publiée à cette date n'est plus valable, vous devez la mettre en pause, la modifier ou la supprimer."
         },
         "info": "Kasu iragarkia pausan ezarria da!",
         "success": {
