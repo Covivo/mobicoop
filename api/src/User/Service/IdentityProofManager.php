@@ -109,10 +109,19 @@ class IdentityProofManager
 
     public function sendReminders()
     {
+        $now = new \DateTime('now');
         $identityProofs = $this->identityProofRepository->findBy(['status' => IdentityProof::STATUS_PENDING]);
         foreach ($identityProofs as $identityProof) {
-            $event = new IdentityProofValidationReminderEvent($identityProof);
-            $this->eventDispatcher->dispatch(IdentityProofValidationReminderEvent::NAME, $event);
+            foreach (IdentityProof::INTERVALS_REMINDER as $interval) {
+                $modifiedDate = clone $identityProof->getCreatedDate();
+                $modifiedDate->modify($interval);
+                if ($modifiedDate->format('d/m/Y') === $now->format('d/m/Y')) {
+                    $event = new IdentityProofValidationReminderEvent($identityProof);
+                    $this->eventDispatcher->dispatch(IdentityProofValidationReminderEvent::NAME, $event);
+
+                    break;
+                }
+            }
         }
     }
 

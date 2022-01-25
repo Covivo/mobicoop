@@ -88,6 +88,12 @@ class IdentityProof
     public const STATUS_REFUSED = 3;
     public const STATUS_CANCELED = 4;
 
+    public const INTERVALS_REMINDER = [
+        '+7 day',
+        '+14 day',
+        '+21 day',
+    ];
+
     /**
      * @var int the id of this identity proof
      *
