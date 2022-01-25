@@ -106,6 +106,11 @@ class IdentityProofManager
         return null;
     }
 
+    public function sendReminders()
+    {
+        echo 'yo';
+    }
+
     private function validateIdentityProof(IdentityProof $identityProof, bool $validate): IdentityProof
     {
         $identityProof->setAdmin($this->admin);
