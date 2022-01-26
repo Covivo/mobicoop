@@ -73,6 +73,7 @@ class GeoSearcher
     private $distanceOrder;
     private $sigPrioritizeCoordinates;
     private $sigPrioritizeRegion;
+    private $sigShowVenues;
 
     /**
      * Constructor.
@@ -97,7 +98,8 @@ class GeoSearcher
         array $geoDataFixes,
         bool $distanceOrder,
         array $sigPrioritizeCoordinates,
-        string $sigPrioritizeRegion
+        string $sigPrioritizeRegion,
+        bool $sigShowVenues
     ) {
         $this->geocoder = $geocoder;
         $this->geoTools = $geoTools;
@@ -119,6 +121,7 @@ class GeoSearcher
         $this->distanceOrder = $distanceOrder;
         $this->sigPrioritizeCoordinates = $sigPrioritizeCoordinates;
         $this->sigPrioritizeRegion = $sigPrioritizeRegion;
+        $this->sigShowVenues = $sigShowVenues;
     }
 
     /**
@@ -315,6 +318,9 @@ class GeoSearcher
             $address->setProvidedBy($geoResult->getProvidedBy());
 
             if ($address->getVenue()) {
+                if (!$this->sigShowVenues) {
+                    continue;
+                }
                 $address->setIcon($this->dataPath.$this->iconPath.$this->iconRepository->find(self::ICON_VENUE)->getFileName());
             }
 
