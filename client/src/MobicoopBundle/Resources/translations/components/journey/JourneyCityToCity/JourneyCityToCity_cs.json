@@ -15,7 +15,8 @@
     },
     "popularJourneys": {
         "from": "Spolujízda z",
-        "uri": "/covoiturage/{origin}/{destination}"
+        "uri": "/covoiturage/{origin}/{destination}",
+        "to": "à"
     },
     "getPopularJourneysUrl": "/covoiturages/populaires/home"
 }
