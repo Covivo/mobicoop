@@ -99,6 +99,45 @@
     },
     "dialogEmail": {
         "title": "Změnili jste e-mailovou adresu",
-        "content": "<p>Změnili jste svou e-mailovou adresu.</p><p>Pokud budete pokračovat, bude vám zaslán e-mail s ověřením vaší e-mailové adresy a budete odhlášeni.</p><p>Chcete pokračovat?</p>"
+        "content": "<p>Změnili jste svou e-mailovou adresu.</p><p>Pokud budete pokračovat, bude vám zaslán e-mail s ověřením vaší e-mailové adresy a budete odhlášeni.</p><p>Chcete pokračovat?</p>",
+        "buttons": {
+            "confirmUpdate": "Měním svou e-mailovou adresu",
+            "cancelUpdate": "Zrušit"
+        }
+    },
+    "buttons": {
+        "supprimerAccount": "Smazat můj účet"
+    },
+    "address": {
+        "update": {
+            "label": "Registrační adresa",
+            "route": "/utilisateur/profil/modifier/adresse"
+        }
+    },
+    "communities": {
+        "route": "/user/communities/owned"
+    },
+    "events": {
+        "route": "/user/events/created"
+    },
+    "email": {
+        "label": "E-mail",
+        "errors": {
+            "valid": "E-mailová adresa musí být ve správném formátu"
+        },
+        "tooltips": {
+            "verified": "Vaše e-mailová adresa je ověřena",
+            "notVerified": "Vaše e-mailová adresa není ověřena"
+        },
+        "buttons": {
+            "label": {
+                "generateEmail": "Odeslání ověřovacího e-mailu",
+                "generateEmailAgain": "Opětovné odeslání ověřovacího e-mailu"
+            }
+        },
+        "verificationRoute": "/utilisateur/email/validation"
+    },
+    "givenName": {
+        "label": "Jméno"
     }
 }
