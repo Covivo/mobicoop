@@ -63,7 +63,7 @@
                       text
                       rounded
                       class="ma-0 text-body-2"
-                      :class="cardTextColorButtonTwo+' '+cardColorButtonTwo"
+                      :class="cardTextColorButtonTwo+' '+cardColorButtonTwo +' '+classButtonTwo"
                       :href="hrefButtonTwo"
                       width="95%"
                     >
@@ -114,6 +114,10 @@ export default {
       default: "white--text"
     }, 
     classButton: {
+      type: String,
+      default:"mb-4 text-body-2"
+    },
+    classButtonTwo: {
       type: String,
       default:"mb-4 text-body-2"
     },
