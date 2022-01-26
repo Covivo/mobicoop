@@ -37,5 +37,28 @@
             "label": "Přidání události"
         },
         "title": "Zorganizujte pro své akce spolujízdu"
-    }
+    },
+    "items": [
+        {
+            "title": "Spolujízda bez provize",
+            "text": "Služba Mobicoop, která zdědila hodnoty bezplatného sdílení aut, je bezplatnou službou sdílení aut, což znamená, že si neúčtuje žádnou provizi za jízdy a je také bez reklamy! Cesty jsou tak pro spolujezdce, kteří se dělí o náklady, levnější."
+        },
+        {
+            "text": "Základem hodnot společnosti Mobicoop je digitální svoboda. Tím, že jsme se rozhodli vytvořit stránky výhradně ve svobodném softwaru, zaručujeme digitální suverenitu všech uživatelů spolujízdy a ochranu dat. Každý může přispět do zdrojového kódu a učinit sdílenou mobilitu společným dobrem.",
+            "title": "Software s otevřeným zdrojovým kódem"
+        },
+        {
+            "title": "Sdružení pro spolujízdu",
+            "text": "Mobicoop je družstvo, takže platforma patří jeho členům v logice 1 člen = 1 hlas. Tento status umožňuje otevřené řízení mezi členy, zaměstnanci, uživateli platformy a zákazníky. Pro využívání služby spolujízdy však není nutné být jejím členem."
+        }
+    ],
+    "articles": {
+        "title": "Co je nového v Mobicoop?"
+    },
+    "routes": {
+        "getList": "/events/getLastEventsCreated"
+    },
+    "urlBackground2": "/images/pages/home/background_middle.svg",
+    "urlBackground3": "/images/pages/home/background_bottom.svg",
+    "mustMeLogged": "Musíte být přihlášeni"
 }
