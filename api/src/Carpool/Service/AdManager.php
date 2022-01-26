@@ -1241,7 +1241,7 @@ class AdManager
         if ($ad->isPaused() !== $oldAd->isPaused()) {
             if (false == $ad->isPaused()) {
                 /** Anti-Fraud check */
-                $antiFraudResponse = $this->antiFraudManager->validAd($ad);
+                $antiFraudResponse = $this->antiFraudManager->validAd($ad, true);
                 if (!$antiFraudResponse->isValid()) {
                     throw new AntiFraudException($antiFraudResponse->getMessage());
                 }
