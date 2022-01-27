@@ -31,7 +31,8 @@
         },
         "error": {
             "unpause": "Er heeft zich een fout voorgedaan. Uw advertentie werd niet geactiveerd",
-            "pause": "Er heeft zich een fout voorgedaan. Uw advertentie werd niet op pauze gezet."
+            "pause": "Er heeft zich een fout voorgedaan. Uw advertentie werd niet op pauze gezet.",
+			"antifraud": "Trajet incompatible avec vos annonces déjà publiées. Si votre annonce déjà publiée à cette date n'est plus valable, vous devez la mettre en pause, la modifier ou la supprimer."
         }
     },
     "ads": {
