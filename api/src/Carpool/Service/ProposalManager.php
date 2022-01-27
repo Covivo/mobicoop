@@ -1113,6 +1113,7 @@ class ProposalManager
                 "INSERT INTO outdated_address (id)
                 (SELECT address.id FROM address 
                 LEFT JOIN user ON address.user_id = user.id 
+                LEFT JOIN solidary_user ON solidary_user.address_id = address.id
                 LEFT JOIN waypoint ON waypoint.address_id = address.id
                 LEFT JOIN community ON community.address_id = address.id
                 LEFT JOIN event ON event.address_id = address.id
@@ -1127,6 +1128,7 @@ class ProposalManager
                 LEFT JOIN carpool_proof cp6 ON cp6.destination_driver_address_id = address.id
                 WHERE 
                     user.id IS NULL AND 
+                    solidary_user.id IS NULL AND
                     waypoint.id IS NULL AND
                     community.id IS NULL AND
                     event.id IS NULL AND
