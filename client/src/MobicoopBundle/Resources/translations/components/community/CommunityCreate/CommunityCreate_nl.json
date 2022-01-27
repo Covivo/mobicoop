@@ -23,7 +23,11 @@
         "avatar": {
             "size": "U hebt de maximumgrootte van de avatar overschreden",
             "required": "De avatar van de community is vereist",
-            "label": "Avatar van de community*"
+            "label": "Avatar van de community*",
+            "minPxSize": "Minimum size {size}x{size}px",
+            "maxMbSize": "maximum weight {size} Mb",
+            "mbSize": "You have exceeded the maximum avatar size (Max {size} Mb)",
+            "pxSize": "The image is too small : {width}x{height}px (Min {size}x{size}px)"
         },
         "fullDescription": {
             "required": "De gedetailleerde beschrijving van de community is vereist",

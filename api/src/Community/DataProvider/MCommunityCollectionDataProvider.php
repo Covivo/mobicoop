@@ -19,12 +19,15 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Community\DataProvider;
 
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryResultCollectionExtensionInterface;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGenerator;
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
+use App\Community\Entity\Community;
 use App\Community\Resource\MCommunity;
 use App\Community\Service\CommunityManager;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -34,28 +37,40 @@ use Symfony\Component\Security\Core\Security;
  * Collection data provider for MCommunity resource.
  *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
- *
  */
 final class MCommunityCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
-    protected $request;
+    private $request;
     private $communityManager;
     private $security;
+    private $collectionFilters;
 
-    public function __construct(RequestStack $requestStack, CommunityManager $communityManager, Security $security)
+    public function __construct(RequestStack $requestStack, CommunityManager $communityManager, Security $security, iterable $collectionFilters)
     {
         $this->request = $requestStack->getCurrentRequest();
         $this->communityManager = $communityManager;
         $this->security = $security;
+        $this->collectionFilters = $collectionFilters;
     }
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return MCommunity::class === $resourceClass && $operationName === "get";
+        return MCommunity::class === $resourceClass && 'get' === $operationName;
     }
 
-    public function getCollection(string $resourceClass, string $operationName = null): ?array
+    public function getCollection(string $resourceClass, string $operationName = null, array $context = []): ?array
     {
-        return $this->communityManager->getMCommunities($this->security->getUser(), $this->request->get("userEmail"));
+        $queryBuilder = $this->communityManager->getMCommunitiesRequest($this->security->getUser(), $this->request->get('userEmail'));
+
+        // We're browsing every available filters
+        foreach ($this->collectionFilters as $collectionFilter) {
+            $collectionFilter->applyToCollection($queryBuilder, new QueryNameGenerator(), Community::class, $operationName, $context);
+
+            if ($collectionFilter instanceof QueryResultCollectionExtensionInterface && $collectionFilter->supportsResult(Community::class, $operationName)) {
+                $communities = $collectionFilter->getResult($queryBuilder, Community::class, $operationName);
+            }
+        }
+
+        return $this->communityManager->getMCommunities($this->request->get('userEmail'), $communities);
     }
 }

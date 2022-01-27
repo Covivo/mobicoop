@@ -231,6 +231,15 @@ user_homeAddress_update:
         nl: /user/profile/update/address
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::UserAddressUpdate
 
+# list of payments and carpools
+list_payments_carpools:
+    path:
+        fr: /utilisateur/profil/modifier/mes-covoiturages-acceptes/export
+        en: /user/profile/update/accepted-carpools/export
+        nl: /user/profile/update/accepted-carpools/export
+        eu: /erabiltzaile/perfila/aldatu/nire-autokidetzak-baieztatuak/esportatu
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::getExport
+
 # profile update
 user_profile_update:
     path:
@@ -263,15 +272,6 @@ user_profile_public:
         en: /user/profile/public
         nl: /user/profile/public
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userProfilePublic
-
-# list of payments and carpools
-list_payments_carpools:
-    path:
-        fr: /utilisateur/profil/modifier/mes-covoiturages-acceptes/export
-        en: /user/profile/update/accepted-carpools/export
-        nl: /user/profile/update/accepted-carpools/export
-        eu: /erabiltzaile/perfila/aldatu/nire-autokidetzak-baieztatuak/esportatu
-    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::getExport
 
 # Delete user by anonymise
 user_delete:

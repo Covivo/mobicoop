@@ -22,7 +22,10 @@
         "avatar": {
             "label": "Avatar de la communauté*",
             "required": "L'avatar de la communauté est requis",
-            "size": "Vous avez dépassé a taille maximale de l'avatar"
+            "mbSize": "Vous avez dépassé la taille maximale de l'avatar (Max {size} Mb)",
+            "pxSize": "L'image n'est pas assez grande : {width}x{height}px (Min {size}x{size}px)",
+            "minPxSize": "Taille minimum {size}x{size}px",
+            "maxMbSize": "poids maximum {size} Mb"
         },
         "address": {
             "label": "Adresse de la communauté*",

@@ -103,10 +103,6 @@ export default {
       type: String,
       default: null
     },
-    avatarVersion: {
-      type: String,
-      default: null
-    },
     displayDescription: {
       type: Boolean,
       default: true

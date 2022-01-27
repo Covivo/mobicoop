@@ -372,6 +372,10 @@ services:
         resource: '../src/Community/Controller'
         tags: ['controller.service_arguments']
 
+    App\Community\DataProvider\MCommunityCollectionDataProvider:
+        arguments:
+            $collectionFilters: !tagged api_platform.doctrine.orm.query_extension.collection
+
     App\Community\Service\CommunityManager:
         arguments:
             $securityPath: '%env(string:COMMUNITY_SECURITY_PATH)%'
