@@ -26,6 +26,7 @@ namespace App\User\Service;
 use App\User\Entity\IdentityProof;
 use App\User\Entity\User;
 use App\User\Event\IdentityProofModeratedEvent;
+use App\User\Event\IdentityProofValidationReminderEvent;
 use App\User\Repository\IdentityProofRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
@@ -104,6 +105,24 @@ class IdentityProofManager
         }
 
         return null;
+    }
+
+    public function sendReminders()
+    {
+        $now = new \DateTime('now');
+        $identityProofs = $this->identityProofRepository->findBy(['status' => IdentityProof::STATUS_PENDING]);
+        foreach ($identityProofs as $identityProof) {
+            foreach (IdentityProof::INTERVALS_REMINDER as $interval) {
+                $modifiedDate = clone $identityProof->getCreatedDate();
+                $modifiedDate->modify($interval);
+                if ($modifiedDate->format('d/m/Y') === $now->format('d/m/Y')) {
+                    $event = new IdentityProofValidationReminderEvent($identityProof);
+                    $this->eventDispatcher->dispatch(IdentityProofValidationReminderEvent::NAME, $event);
+
+                    break;
+                }
+            }
+        }
     }
 
     private function validateIdentityProof(IdentityProof $identityProof, bool $validate): IdentityProof
