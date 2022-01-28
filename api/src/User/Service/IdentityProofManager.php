@@ -25,9 +25,12 @@ namespace App\User\Service;
 
 use App\User\Entity\IdentityProof;
 use App\User\Entity\User;
+use App\User\Event\IdentityProofModeratedEvent;
+use App\User\Event\IdentityProofValidationReminderEvent;
 use App\User\Repository\IdentityProofRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Security\Core\Security;
 
@@ -36,14 +39,24 @@ class IdentityProofManager
     private $admin;
     private $identityProofRepository;
     private $entityManager;
+    private $eventDispatcher;
     private $uploadPath;
+    private $urlPath;
 
-    public function __construct(Security $security, IdentityProofRepository $identityProofRepository, EntityManagerInterface $entityManager, string $uploadPath)
-    {
+    public function __construct(
+        Security $security,
+        IdentityProofRepository $identityProofRepository,
+        EntityManagerInterface $entityManager,
+        EventDispatcherInterface $eventDispatcher,
+        string $uploadPath,
+        string $urlPath
+    ) {
         $this->admin = $security->getUser();
         $this->identityProofRepository = $identityProofRepository;
         $this->entityManager = $entityManager;
+        $this->eventDispatcher = $eventDispatcher;
         $this->uploadPath = $uploadPath;
+        $this->urlPath = $urlPath;
     }
 
     public function createIdentityProof(User $user, File $file): IdentityProof
@@ -53,11 +66,12 @@ class IdentityProofManager
         }
         $pendingProof = $this->getPendingProofForUser($user);
         if ($pendingProof) {
-            $this->entityManager->remove($pendingProof);
+            $pendingProof->setStatus(IdentityProof::STATUS_CANCELED);
+            $this->removeProofFile($pendingProof);
+            $this->entityManager->persist($pendingProof);
             $this->entityManager->flush();
         }
         $identityProof = new IdentityProof();
-
         $identityProof->setFile($file);
         $identityProof->setUser($user);
         $identityProof->setFileName($user->getId().'-'.time());
@@ -84,15 +98,43 @@ class IdentityProofManager
         return $identityProof;
     }
 
+    public function getFileUrl(IdentityProof $identityProof)
+    {
+        if (IdentityProof::STATUS_PENDING == $identityProof->getStatus()) {
+            return $this->urlPath.rawurlencode($identityProof->getFileName());
+        }
+
+        return null;
+    }
+
+    public function sendReminders()
+    {
+        $now = new \DateTime('now');
+        $identityProofs = $this->identityProofRepository->findBy(['status' => IdentityProof::STATUS_PENDING]);
+        foreach ($identityProofs as $identityProof) {
+            foreach (IdentityProof::INTERVALS_REMINDER as $interval) {
+                $modifiedDate = clone $identityProof->getCreatedDate();
+                $modifiedDate->modify($interval);
+                if ($modifiedDate->format('d/m/Y') === $now->format('d/m/Y')) {
+                    $event = new IdentityProofValidationReminderEvent($identityProof);
+                    $this->eventDispatcher->dispatch(IdentityProofValidationReminderEvent::NAME, $event);
+
+                    break;
+                }
+            }
+        }
+    }
+
     private function validateIdentityProof(IdentityProof $identityProof, bool $validate): IdentityProof
     {
         $identityProof->setAdmin($this->admin);
         $identityProof->setStatus($validate ? IdentityProof::STATUS_ACCEPTED : IdentityProof::STATUS_REFUSED);
         $this->entityManager->persist($identityProof);
         $this->entityManager->flush();
-        if (file_exists($this->uploadPath.$identityProof->getFileName())) {
-            unlink($this->uploadPath.$identityProof->getFileName());
-        }
+        $this->removeProofFile($identityProof);
+
+        $event = new IdentityProofModeratedEvent($identityProof);
+        $this->eventDispatcher->dispatch(IdentityProofModeratedEvent::NAME, $event);
 
         return $identityProof;
     }
@@ -111,5 +153,12 @@ class IdentityProofManager
             'user' => $user,
             'status' => IdentityProof::STATUS_PENDING,
         ]);
+    }
+
+    private function removeProofFile(IdentityProof $identityProof)
+    {
+        if (file_exists($this->uploadPath.$identityProof->getFileName())) {
+            unlink($this->uploadPath.$identityProof->getFileName());
+        }
     }
 }
