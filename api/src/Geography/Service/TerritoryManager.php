@@ -258,16 +258,16 @@ class TerritoryManager
     }
 
     /**
-     * Affect addresses and directions that are not linked yet to their territories.
+     * Affect new addresses that are not linked yet to their territories.
      */
-    public function updateAddressesAndDirections()
+    public function linkNewAddressesWithTerritories()
     {
         $this->entityManager->getConnection()->getConfiguration()->setSQLLogger(null);
 
         if (file_exists($this->batchTemp.self::CHECK_RUNNING_FILE)) {
             $this->logger->info('Link addresses with territories already running | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
 
-            return;
+            return false;
         }
 
         $this->logger->info('Start linking addresses with territories | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
@@ -372,6 +372,7 @@ class TerritoryManager
             $stmt = $this->entityManager->getConnection()->prepare($sql);
             $stmt->execute();
             $results = $stmt->fetchAll();
+            $this->entityManager->getConnection()->prepare('start transaction;')->execute();
             foreach ($results as $result) {
                 foreach ($territories as $territory) {
                     $sqli = 'INSERT IGNORE INTO address_territory (address_id, territory_id) SELECT id, '.$territory.' from address WHERE latitude='.$result['lat'].' and longitude='.$result['lon'];
@@ -379,6 +380,7 @@ class TerritoryManager
                     $stmti->execute();
                 }
             }
+            $this->entityManager->getConnection()->prepare('commit;')->execute();
             $stmt->closeCursor();
         }
         $stmtt->closeCursor();
@@ -389,7 +391,7 @@ class TerritoryManager
         $stmt->closeCursor();
         $this->logger->info('Insert into address_territory finished | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
 
-        return $this->closeRunningFile() && $this->dropGeoJsonTerritoryIndex() && $result;
+        return $this->closeRunningFile() && $this->dropGeoJsonTerritoryIndex();
     }
 
     public function linkAddressesWithTerritories()
