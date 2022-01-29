@@ -1,1 +1,49 @@
-{}
+{
+    "create": {
+        "title": "Zveřejnění inzerátu",
+        "subtitle": "Spusťte inzerát"
+    },
+    "update": {
+        "title": "Upravte svůj inzerát",
+        "popup": {
+            "major_update_ads": {
+                "title": "Uživatel si již všiml vašeho inzerátu",
+                "content": "Uživatel již identifikoval váš inzerát jako odpovídající potřebě a mohl být upozorněn pomocí SMS nebo e-mailu. Vaše úprava odstraní aktuální verzi inzerátu a vytvoří novou."
+            },
+            "major_update_asks": {
+                "title": "Pro tento inzerát existuje alespoň jedna poptávka",
+                "content": "V souvislosti s tímto inzerátem již byla podána jedna nebo více poptávek. Vaše změna základních informací smaže aktuální verzi vašeho inzerátu a vytvoří novou, a proto odmítne všechny aktuální poptávky.<br>Pokud svou změnu potvrdíte, jakou zprávu chcete poslat spolujezdcům, jejichž poptávky odmítáte?"
+            },
+            "minor_update_asks": {
+                "title": "Pro tento inzerát existují aplikace",
+                "content": "V souvislosti s tímto inzerátem již byl podán jeden nebo více požadavků. Podrobnosti o vaší úpravě budou zaslány všem uživatelům, kteří tyto požadavky vznesli.<br>Potvrzujete svou úpravu?"
+            }
+        },
+        "success": "Váš inzerát byl úspěšně upraven.",
+        "unavailable": "Tento inzerát nelze upravovat.",
+        "error": "Při úpravě inzerátu došlo k chybě."
+    },
+    "stepper": {
+        "header": {
+            "search_journey": "Spusťte svůj inzerát",
+            "planification": "Plánování",
+            "map": "Trajet",
+            "passengers": "Cestující",
+            "participation": "Účast",
+            "message": "Zpráva",
+            "summary": "Shrnutí"
+        },
+        "content": {
+            "passengers": {
+                "seats": {
+                    "question": "Mám místo pro ",
+                    "passengers": " cestující(ch)"
+                },
+                "luggage": {
+                    "label": "Mám místo pro velká zavazadla",
+                    "help": "Zaškrtněte toto políčko, pokud vaše vozidlo může přepravovat velká zavazadla"
+                }
+            }
+        }
+    }
+}
