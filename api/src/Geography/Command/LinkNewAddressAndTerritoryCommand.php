@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2020, MOBICOOP. All rights reserved.
+ * Copyright (c) 2022, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Geography\Command;
 
@@ -29,35 +29,33 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Link Directions and Addresses with territories.
- * This command links the directions and addresses that are not linked yet with any territory.
+ * Link new Addresses with territories.
+ * This command links the addresses that are not linked yet with any territory.
  *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
  */
-
-class TerritoryLinkBatchCommand extends Command
+class LinkNewAddressAndTerritoryCommand extends Command
 {
     private $territoryManager;
-    
+
     public function __construct(TerritoryManager $territoryManager)
     {
         $this->territoryManager = $territoryManager;
-        
+
         parent::__construct();
     }
-    
+
     protected function configure()
     {
         $this
-        ->setName('app:geography:territory-link-batch')
-        ->setDescription('Link directions and addresses with territories if not linked yet.')
-        ->setHelp('Find directions and addresses that are not linked yet with any territories, then find their territories and link them.')
+            ->setName('app:geography:territory-link-new-addresses')
+            ->setDescription('Link addresses with territories if not linked yet.')
+            ->setHelp('Find addresses that are not linked yet with any territories, then find their territories and link them.')
         ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->territoryManager->updateAddressesAndDirections();
-        return 0;
+        return (int) !$this->territoryManager->linkNewAddressesWithTerritories();
     }
 }
