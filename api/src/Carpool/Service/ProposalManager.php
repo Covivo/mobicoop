@@ -1032,7 +1032,9 @@ class ProposalManager
             (m2.id IS NULL OR a2.id IS NULL));
             "
         )->execute() &&
+        $this->entityManager->getConnection()->prepare('start transaction;')->execute() &&
         $this->entityManager->getConnection()->prepare("DELETE FROM proposal WHERE id in (select id from outdated_proposals);")->execute() &&
+        $this->entityManager->getConnection()->prepare('commit;')->execute() &&
         $this->entityManager->getConnection()->prepare("DROP TABLE outdated_proposals;")->execute();
 
         fclose($fp);
@@ -1092,7 +1094,9 @@ class ProposalManager
             solidary_matching.criteria_id IS NULL);
             "
         )->execute() &&
+        $this->entityManager->getConnection()->prepare('start transaction;')->execute() &&
         $this->entityManager->getConnection()->prepare("DELETE FROM criteria WHERE id in (select id from outdated_criteria);")->execute() &&
+        $this->entityManager->getConnection()->prepare('commit;')->execute() &&
         $this->entityManager->getConnection()->prepare("DROP TABLE outdated_criteria;")->execute();
     }
 
@@ -1137,7 +1141,9 @@ class ProposalManager
                     cp6.destination_driver_address_id IS NULL);
                 "
             )->execute() &&
+            $this->entityManager->getConnection()->prepare('start transaction;')->execute() &&
             $this->entityManager->getConnection()->prepare("DELETE FROM address WHERE id in (SELECT id FROM outdated_address);")->execute() &&
+            $this->entityManager->getConnection()->prepare('commit;')->execute() &&
             $this->entityManager->getConnection()->prepare("DROP TABLE outdated_address;")->execute();
     }
 
@@ -1164,7 +1170,9 @@ class ProposalManager
                 carpool_proof.direction_id IS NULL);
                 "
             )->execute() &&
+            $this->entityManager->getConnection()->prepare('start transaction;')->execute() &&
             $this->entityManager->getConnection()->prepare("DELETE FROM direction WHERE id in (SELECT id FROM outdated_direction);")->execute() &&
+            $this->entityManager->getConnection()->prepare('commit;')->execute() &&
             $this->entityManager->getConnection()->prepare("DROP TABLE outdated_direction;")->execute();
     }
 
