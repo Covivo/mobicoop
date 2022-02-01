@@ -26,7 +26,10 @@
         },
         "social": {
             "desc": "Allow registration and login via social networks",
-            "mandatoryOrNot": "Optional cookie"
+            "mandatoryOrNot": "Optional cookie",
+            "several": {
+                "title":"Social networks features"
+            }
         }
     }
 }

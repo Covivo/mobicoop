@@ -26,7 +26,10 @@
         },
         "social":{
             "desc":"Permettre inscription et connexion via les réseaux sociaux",
-            "mandatoryOrNot":"Cookie optionnel"
+            "mandatoryOrNot":"Cookie optionnel",
+            "several": {
+                "title":"Fonctionnalités liées aux réseaux sociaux"
+            }
         }
     }
 }
