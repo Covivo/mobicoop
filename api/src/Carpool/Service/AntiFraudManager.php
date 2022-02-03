@@ -115,6 +115,10 @@ class AntiFraudManager
             if (!$response->isValid()) {
                 // we check if the arrival date is after the start date of the proposal we are trying to post or unpaused on the same day
                 foreach ($this->sameDayProposals as $sameDayProposal) {
+                    if ($ad->getProposalId() == $sameDayProposal->getId()) {
+                        // In case of adding a return, we avoid checkin the Ad against the outward proposal
+                        continue;
+                    }
                     if ($unpausedAd) {
                         $response = $this->checkValidHoursUnpausedAd($ad, $sameDayProposal);
                         if (!$response->isValid()) {
@@ -176,14 +180,20 @@ class AntiFraudManager
             $dayOfTheProposal = $sameDayProposal->getCriteria()->getFromDate()->format('D');
 
             $arrivalProposalDateTime = $sameDayProposal->getCriteria()->getArrivalDateTime();
-            foreach ($ad->getSchedule() as $schedule) {
-                if (isset($schedule[strtolower($dayOfTheProposal)]) && $schedule[strtolower($dayOfTheProposal)]) {
-                    $adOutwardDateTime = DateTime::createFromFormat('U', $sameDayProposal->getCriteria()->getFromDate()->getTimestamp());
-                    $outwardTime = explode(':', $schedule['outwardTime']);
-                    $adOutwardDateTime->setTime((int) $outwardTime[0], (int) $outwardTime[1]);
+            if (Criteria::FREQUENCY_REGULAR == $ad->getFrequency()) {
+                foreach ($ad->getSchedule() as $schedule) {
+                    if (isset($schedule[strtolower($dayOfTheProposal)]) && $schedule[strtolower($dayOfTheProposal)]) {
+                        $adOutwardDateTime = DateTime::createFromFormat('U', $sameDayProposal->getCriteria()->getFromDate()->getTimestamp());
+                        $outwardTime = explode(':', $schedule['outwardTime']);
+                        $adOutwardDateTime->setTime((int) $outwardTime[0], (int) $outwardTime[1]);
 
-                    break;
+                        break;
+                    }
                 }
+            } else {
+                $adOutwardDateTime = DateTime::createFromFormat('U', $sameDayProposal->getCriteria()->getFromDate()->getTimestamp());
+                $outwardTime = explode(':', $ad->getOutwardTime());
+                $adOutwardDateTime->setTime((int) $outwardTime[0], (int) $outwardTime[1]);
             }
 
             if ($adOutwardDateTime <= $arrivalProposalDateTime) {
