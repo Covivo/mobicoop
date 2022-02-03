@@ -26,6 +26,7 @@ namespace App\Gamification\Service;
 use App\Action\Entity\Action;
 use App\Action\Entity\Log;
 use App\Action\Repository\LogRepository;
+use App\Carpool\Entity\Ask;
 use App\Gamification\Entity\Badge;
 use App\Gamification\Entity\GamificationAction;
 use App\Gamification\Repository\SequenceItemRepository;
@@ -50,7 +51,11 @@ use App\Gamification\Interfaces\GamificationRuleInterface;
 use App\Communication\Repository\MessageRepository;
 use App\Gamification\Repository\RewardStepRepository;
 use App\Gamification\Repository\RewardRepository;
+use App\Payment\Entity\CarpoolItem;
 use Psr\Log\LoggerInterface;
+use App\User\Repository\UserRepository;
+use App\Gamification\Service\RetroactivelyRewardService;
+use App\Gamification\Service\BadgesBoardManager;
 
 /**
  * Gamification Manager
@@ -70,6 +75,9 @@ class GamificationManager
     private $rewardRepository;
     private $badgeImageUri;
     private $logger;
+    private $userRepository;
+    private $retroactivelyRewardService;
+    private $badgesBoardManager;
 
     public function __construct(
         SequenceItemRepository $sequenceItemRepository,
@@ -82,7 +90,10 @@ class GamificationManager
         RewardStepRepository $rewardStepRepository,
         RewardRepository $rewardRepository,
         string $badgeImageUri,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        UserRepository $userRepository,
+        RetroactivelyRewardService $retroactivelyRewardService,
+        BadgesBoardManager $badgesBoardManager
     ) {
         $this->sequenceItemRepository = $sequenceItemRepository;
         $this->logRepository = $logRepository;
@@ -95,20 +106,9 @@ class GamificationManager
         $this->rewardRepository = $rewardRepository;
         $this->badgeImageUri = $badgeImageUri;
         $this->logger = $logger;
-    }
-    
-    /**
-     * Get all the Badges of the instance
-     * @param int $status  Get only the Badges of this status (default : null, every badges are returned)
-     * @return Badges[]|null
-     */
-    public function getBadges(int $status=null): ?array
-    {
-        if (is_null($status)) {
-            return $this->badgeRepository->findAll();
-        } else {
-            return $this->badgeRepository->findBy(["status"=>$status]);
-        }
+        $this->userRepository = $userRepository;
+        $this->retroactivelyRewardService = $retroactivelyRewardService;
+        $this->badgesBoardManager = $badgesBoardManager;
     }
     
     /**
@@ -159,7 +159,7 @@ class GamificationManager
                      * @var GamificationRuleInterface $gamificationActionRule
                      */
                     $gamificationActionRule = new $gamificationActionRuleName;
-                    $validationStep->setValidated($validationStep->isValidated() && $gamificationActionRule->execute($log->getUser(), $log, $sequenceItem));
+                    $validationStep->setValidated($validationStep->isValidated() && $gamificationActionRule->execute($log, $sequenceItem));
                 }
                 // This related action needs to be made a minimum amount of time
                 if (!is_null($sequenceItem->getMinCount()) && $sequenceItem->getMinCount()>0) {
@@ -224,93 +224,6 @@ class GamificationManager
     }
 
     /**
-     * Get the Badges board of a User
-     *
-     * @param User $user    The User
-     * @return BadgesBoard
-     */
-    public function getBadgesBoard(User $user): BadgesBoard
-    {
-        $badgesBoard = new BadgesBoard();
-        
-        // Set if the user accept Gamification tracking
-        $badgesBoard->setAcceptGamification($user->hasGamification());
-
-        
-        
-        // Get all the active badges of the platform
-        $activeBadges = $this->getBadges(Badge::STATUS_ACTIVE);
-        $badges = [];
-
-        /**
-         * @var Badge $activeBadge
-         */
-        foreach ($activeBadges as $activeBadge) {
-            $badgeProgression = new BadgeProgression();
-            
-            // Determine if the badge is already earned
-            $badgeProgression->setEarned(false);
-            foreach ($activeBadge->getRewards() as $reward) {
-                if ($reward->getUser()->getId() == $user->getId()) {
-                    $badgeProgression->setEarned(true);
-                    break;
-                }
-            }
-
-            // Minimum data about the current badge
-            $badgeSummary = new BadgeSummary();
-            $badgeSummary->setBadgeId($activeBadge->getId());
-            $badgeSummary->setBadgeName($activeBadge->getName());
-            $badgeSummary->setBadgeTitle($activeBadge->getTitle());
-
-            // images
-            $badgeSummary->setIcon((!is_null($activeBadge->getIcon())) ? $this->badgeImageUri.$activeBadge->getIcon()->getFileName() : null);
-            $badgeSummary->setDecoratedIcon((!is_null($activeBadge->getDecoratedIcon())) ? $this->badgeImageUri.$activeBadge->getDecoratedIcon()->getFileName() : null);
-            $badgeSummary->setImage((!is_null($activeBadge->getImage())) ? $this->badgeImageUri.$activeBadge->getImage()->getFileName() : null);
-            $badgeSummary->setImageLight((!is_null($activeBadge->getImageLight())) ? $this->badgeImageUri.$activeBadge->getImageLight()->getFileName() : null);
-
-            // We get the sequence and check if the current user validated it
-            $sequences = [];
-            $nbValidatedSequences = 0;
-            foreach ($activeBadge->getSequenceItems() as $sequenceItem) {
-                $sequenceStatus = new SequenceStatus();
-                $sequenceStatus->setSequenceItemId($sequenceItem->getId());
-                $sequenceStatus->setTitle($sequenceItem->getGamificationAction()->getTitle());
-                
-                
-                // We look into the rewardSteps previously existing for this SequenceItem
-                // If there is one for the current User, we know that it has already been validated
-                $sequenceStatus->setValidated(false);
-                foreach ($sequenceItem->getRewardSteps() as $rewardStep) {
-                    if ($rewardStep->getUser()->getId() == $user->getId()) {
-                        $sequenceStatus->setValidated(true);
-                        $nbValidatedSequences++;
-                        break;
-                    }
-                }
-                $sequences[] = $sequenceStatus;
-            }
-            $badgeSummary->setSequences($sequences);
-
-            $badgeProgression->setBadgeSummary($badgeSummary);
-
-            // Compute the earned percentage
-            $badgeProgression->setEarningPercentage(0);
-            if ($nbValidatedSequences==0) {
-                $badgeProgression->setEarningPercentage(0);
-            } else {
-                $badgeProgression->setEarningPercentage($nbValidatedSequences/count($activeBadge->getSequenceItems())*100);
-            }
-
-            $badges[] = $badgeProgression;
-        }
-        
-        $badgesBoard->setBadges($badges);
-
-        return $badgesBoard;
-    }
-
-    /**
      * Get the Badges earned by a User
      *
      * @param User $user
@@ -336,7 +249,7 @@ class GamificationManager
         if ($validationStep->isValidated()) {
             // The ValidationStep has been validated
             // First we get the BadgesBoard of this User. With it, we can check if this particular step has alteady been validated
-            $badgesBoard = $this->getBadgesBoard($validationStep->getUser());
+            $badgesBoard = $this->badgesBoardManager->getBadgesBoard($validationStep->getUser());
             foreach ($badgesBoard->getBadges() as $badgeProgression) {
                 $badgeSummary = $badgeProgression->getBadgeSummary();
 
@@ -430,5 +343,11 @@ class GamificationManager
             return $reward;
         }
         throw new \LogicException("No Reward found");
+    }
+
+    
+    public function retroactivelyGenerateRewards()
+    {
+        return $this->retroactivelyRewardService->retroactivelyRewardUsers();
     }
 }

@@ -36,7 +36,6 @@
           <community-infos
             :community="community"
             :url-alt-avatar="urlAltAvatar"
-            :avatar-version="avatarVersion"
             :display-description="true"
           />
           <p>{{ user && user.isCommunityReferrer }}</p>
@@ -406,10 +405,6 @@ export default {
     },
     community: {
       type: Object,
-      default: null,
-    },
-    avatarVersion: {
-      type: String,
       default: null,
     },
     urlAltAvatar: {

@@ -7,6 +7,10 @@
         
         <meta content="width=device-width, initial-scale=1" name="viewport">
         
+        {% if urlMobile != '' %}
+        <link rel="alternate" media="only screen and (max-width: 920px)" href="{{ urlMobile }}">
+        {% endif %}
+        
         <meta name="description" content="{% if metaDescription is defined %}{{metaDescription}}{% else %}{% block desc %}{% trans from 'meta' %}meta.default.description{% endtrans %}{% endblock %}{% endif %}">
 
         {{ encore_entry_link_tags("#{assets_prefix ?? ''}main") }}

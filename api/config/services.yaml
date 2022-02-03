@@ -100,13 +100,6 @@ services:
         tags:
             - { name: doctrine.event_listener, event: postLoad }
 
-    # Community User Load Listener
-    mobicoop.community_user.community_user_load_listener:
-        class: App\Community\EventListener\CommunityUserLoadListener
-        arguments: ['@request_stack']
-        tags:
-            - { name: doctrine.event_listener, event: postLoad }
-
     # Community User Save Listener
     mobicoop.community_user.community_user_save_listener:
         class: App\Community\EventListener\CommunityUserSaveListener
@@ -379,6 +372,10 @@ services:
         resource: '../src/Community/Controller'
         tags: ['controller.service_arguments']
 
+    App\Community\DataProvider\MCommunityCollectionDataProvider:
+        arguments:
+            $collectionFilters: !tagged api_platform.doctrine.orm.query_extension.collection
+
     App\Community\Service\CommunityManager:
         arguments:
             $securityPath: '%env(string:COMMUNITY_SECURITY_PATH)%'
@@ -491,10 +488,15 @@ services:
     App\Gamification\EventSubscriber\LogSubscriber:
         arguments:
             $gamificationActive: '%env(bool:GAMIFICATION_ACTIVE)%'
+    App\Gamification\Service\BadgesBoardManager:
+        arguments:
+            $badgeImageUri: '%env(string:GAMIFICATION_BADGE_IMAGE_URI)%' 
     App\Gamification\Service\GamificationManager:
         arguments:
-            $badgeImageUri: '%env(string:GAMIFICATION_BADGE_IMAGE_URI)%'            
-    
+            $badgeImageUri: '%env(string:GAMIFICATION_BADGE_IMAGE_URI)%'
+    App\Gamification\Service\RetroactivelyRewardService:
+        tags:
+            - { name: monolog.logger, channel: gamification }                                   
     
     # Geocoder; alias to allow this type to be autowired
     Geocoder\Plugin\PluginProvider: '@bazinga_geocoder.provider.chain'
@@ -824,6 +826,14 @@ services:
         arguments:
             $fileFolder: '%env(string:SOLIDARY_FILE_FOLDER)%'
 
+    # Stats
+    App\Stats\Admin\Service\DataManager:
+        arguments:
+            $baseUri: '%env(string:ANALYTICS_URI)%'
+            $instance: '%env(string:ANALYTICS_INSTANCE)%'
+            $username: '%env(string:ANALYTICS_USERNAME)%'
+            $password: '%env(string:ANALYTICS_PASSWORD)%'
+
     # User
     App\User\Admin\Service\UserManager:
         arguments:
@@ -857,6 +867,10 @@ services:
         # Uncomment only if autoconfiguration isn't enabled
         #tags: [ 'api_platform.filter' ]
 
+    App\User\Service\IdentityProofManager:
+        arguments:
+            $uploadPath: '%kernel.project_dir%/public/upload/users/proofs/' 
+
     App\User\Service\UserManager:
         arguments:
             $chat: '%env(int:CARPOOL_DEFAULT_CHAT)%'
@@ -889,6 +903,18 @@ services:
             $ssoServicesActive: "%env(bool:SSO_SERVICES_ACTIVE)%"
             $ssoServices: "%env(json:file:resolve:SSO_SERVICES)%"
             $ssoUseButtonIcon: "%env(bool:SSO_USE_BUTTON_ICON)%"
+
+    App\ExternalJourney\Admin\DataProvider\ExternalJourneyCollectionDataProvider:
+        arguments:
+            $params:
+                avatarSizes: '%env(string:AVATAR_SIZES)%'
+                avatarDefaultFolder: '%env(string:AVATAR_DEFAULT_FOLDER)%'          
+
+    App\ExternalJourney\Admin\Service\ExternalJourneyManager:
+        arguments:
+            $operator: '%env(json:file:resolve:RDEX_OPERATOR)%'
+            $clients: '%env(json:file:resolve:RDEX_CLIENTS)%'
+            $providers: '%env(json:file:resolve:RDEX_PROVIDERS)%'
 
     App\ExternalJourney\DataProvider\ExternalJourneyCollectionDataProvider:
         arguments:

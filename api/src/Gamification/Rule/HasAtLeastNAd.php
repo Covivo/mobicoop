@@ -33,12 +33,11 @@ class HasAtLeastNAd implements GamificationRuleInterface
     /**
      * Has at least N proposal
      *
-     * @param  $requester
      * @param  $log
      * @param  $sequenceItem
      * @return bool
      */
-    public function execute($requester, $log, $sequenceItem)
+    public function execute($log, $sequenceItem)
     {
         // we check if the user has at least N proposals published
         $user = $log->getUser();

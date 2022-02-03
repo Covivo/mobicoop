@@ -48,8 +48,12 @@
         },
         "avatar": {
             "size": "Irudiaren gehieneko izaria gainditu duzu",
+            "mbSize": "You have exceeded the maximum avatar size (Max {size} Mb)",
+            "pxSize": "The image is too small : {width}x{height}px (Min {size}x{size}px)",
             "required": "Ekitaldiaren irudia beharrezkoa da",
-            "label": "Ekitaldiaren irudia*"
+            "label": "Ekitaldiaren irudia*",
+            "minPxSize": "Minimum size {size}x{size}px",
+            "maxMbSize": "maximum weight {size} Mb"
         },
         "fullDescription": {
             "required": "Ekitaldiaren aurkezpen xehea beharrezkoa da",

@@ -223,6 +223,7 @@ class MassImportManager
                 '',
                 trim($destination['houseNumber']).' '.trim($destination['street']).' '.trim($destination['postalCode']).' '.trim($destination['addressLocality'])
             ));
+            $this->logger->info('Mass analyze | Geocode '.$input.' '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
             if (!$address = $this->geoCode($input)) {
                 $analyseErrors[] = 'Destination address <'.$input.'> not found';
                 $this->logger->info('Mass analyze | Destination address <'.$input.'> not found | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
@@ -960,15 +961,15 @@ class MassImportManager
             $massPerson->setFamilyName($person->familyName);
             $personalAddress = new Address();
             $personalAddress->setHouseNumber($person->personalAddress->houseNumber);
-            $personalAddress->setStreet($person->personalAddress->street);
+            $personalAddress->setStreet(strtoupper($person->personalAddress->street));
             $personalAddress->setPostalCode($person->personalAddress->postalCode);
-            $personalAddress->setAddressLocality($person->personalAddress->addressLocality);
+            $personalAddress->setAddressLocality(strtoupper($person->personalAddress->addressLocality));
             $massPerson->setPersonalAddress($personalAddress);
             $workAddress = new Address();
             $workAddress->setHouseNumber($person->workAddress->houseNumber);
-            $workAddress->setStreet($person->workAddress->street);
+            $workAddress->setStreet(strtoupper($person->workAddress->street));
             $workAddress->setPostalCode($person->workAddress->postalCode);
-            $workAddress->setAddressLocality($person->workAddress->addressLocality);
+            $workAddress->setAddressLocality(strtoupper($person->workAddress->addressLocality));
             $massPerson->setWorkAddress($workAddress);
             $massPerson->setOutwardTime($person->outwardTime);
             $massPerson->setReturnTime($person->returnTime);
@@ -1044,12 +1045,12 @@ class MassImportManager
                     if ('personalAddress.' == substr($fields[$i], 0, 16)) {
                         $setter = 'set'.ucwords(substr($fields[$i], 16));
                         if (method_exists($personalAddress, $setter)) {
-                            $personalAddress->{$setter}($tab[$i]);
+                            $personalAddress->{$setter}(strtoupper($tab[$i]));
                         }
                     } elseif ('workAddress.' == substr($fields[$i], 0, 12)) {
                         $setter = 'set'.ucwords(substr($fields[$i], 12));
                         if (method_exists($workAddress, $setter)) {
-                            $workAddress->{$setter}($tab[$i]);
+                            $workAddress->{$setter}(strtoupper($tab[$i]));
                         }
                     } elseif ('outwardTime' == $fields[$i] && '' !== $tab[$i]) {
                         $outwardtime = \DateTime::createFromFormat('H:i', $tab[$i]);

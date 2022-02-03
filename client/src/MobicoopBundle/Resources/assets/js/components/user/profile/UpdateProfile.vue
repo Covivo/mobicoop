@@ -361,12 +361,17 @@
                   class="d-flex justify-center"
                 >
                   <v-file-input
+                    ref="avatar"
                     v-model="avatar"
                     :rules="avatarRules"
-                    accept="image/png, image/jpeg, image/jpg, image/bmp"
+                    accept="image/png, image/jpeg, image/jpg"
                     :label="$t('avatar.label')"
                     prepend-icon="mdi-image"
                     :change="previewAvatar()"
+                    :hint="$t('avatar.minPxSize', {size: imageMinPxSize})+', '+$t('avatar.maxMbSize', {size: imageMaxMbSize})"
+                    persistent-hint
+                    show-size
+                    @change="selectedAvatar"
                   />
                 </v-col>
               </v-row>
@@ -648,10 +653,6 @@ export default {
     ChangePassword
   },
   props: {
-    avatarSize: {
-      type: String,
-      default: null
-    },
     geoSearchUrl: {
       type: String,
       default: null
@@ -675,7 +676,15 @@ export default {
     platform: {
       type: String,
       default: ""
-    } 
+    },
+    imageMinPxSize: {
+      type: Number,
+      default: null
+    },
+    imageMaxMbSize: {
+      type: Number,
+      default: null
+    }
   },
   data() {
     return {
@@ -715,8 +724,12 @@ export default {
         { value: 2, label: this.$t('phoneDisplay.label.all')}
       ],
       avatar: null,
+      avatarHeight: null,
+      avatarWidth: null,
       avatarRules: [
-        v => !v || v.size < this.avatarSize || this.$t("avatar.size")+" (Max "+(this.avatarSize/1000000)+"MB)"
+        v => !v || v.size < this.imageMaxMbSize*1024*1024 || this.$t("avatar.size")+" (Max "+(this.imageMaxMbSize)+"MB)",
+        v => !v || this.avatarHeight >= this.imageMinPxSize || this.$t("avatar.pxSize", { size: this.imageMinPxSize, height: this.avatarHeight, width: this.avatarWidth }),
+        v => !v || this.avatarWidth >= this.imageMinPxSize || this.$t("avatar.pxSize", { size: this.imageMinPxSize, height: this.avatarHeight, width: this.avatarWidth }),
       ],
       tokenRules: [
         v => (/^\d{4}$/).test(v) || this.$t("phone.token.inputError")
@@ -885,6 +898,8 @@ export default {
           this.displayFileUpload = true;
           this.loadingDelete = false;
           this.urlAvatar = res.data[res.data.length-1];
+          this.avatarWidth = null;
+          this.avatarHeight = null;
         });
     },
     previewAvatar() {
@@ -898,6 +913,26 @@ export default {
       // else {
       //   this.urlAvatar = this.user.avatars[this.user.avatars.length-1]; // RESET AVATAR
       // }
+    },
+    selectedAvatar() {
+      this.avatarWidth = null;
+      this.avatarHeight = null;
+
+      if (!this.avatar) return;
+      let reader = new FileReader();
+      
+      reader.readAsDataURL(this.avatar);
+      reader.onload = evt => {
+        let self = this;
+        let img = new Image();
+        img.onload = () => {
+          self.avatarHeight = img.height;
+          self.avatarWidth = img.width;
+          self.$refs.avatar.validate()
+        }
+        img.src = evt.target.result;
+      }
+      
     },
     checkVerifiedPhone() {
       if (this.telephone !== null) {

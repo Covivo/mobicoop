@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Community\Resource;
 
@@ -59,10 +59,11 @@ use Symfony\Component\Serializer\Annotation\Groups;
  */
 class MCommunity
 {
-    const DEFAULT_ID = 999999999999;
+    public const DEFAULT_ID = 999999999999;
+    public const ENTITY_RELATED = 'App\\Community\\Entity\\Community';
 
     /**
-     * @var int The id of this community.
+     * @var int the id of this community
      * @Groups({"readCommunity"})
      *
      * @ApiProperty(identifier=true)
@@ -70,19 +71,19 @@ class MCommunity
     private $id;
 
     /**
-     * @var string|null The name of the community.
+     * @var null|string the name of the community
      * @Groups({"readCommunity"})
      */
     private $name;
 
     /**
-     * @var string|null The urlKey of the community.
+     * @var null|string the urlKey of the community
      * @Groups({"readCommunity"})
      */
     private $urlKey;
 
     /**
-     * @var int|null The type of validation (automatic/manual/domain).
+     * @var null|int the type of validation (automatic/manual/domain)
      * @Groups({"readCommunity"})
      */
     private $validationType;

@@ -40,6 +40,13 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *              "swagger_context" = {
  *                  "tags"={"Carpool"}
  *              }
+ *          },
+ *          "ADMIN_get"={
+ *              "method"="GET",
+ *              "path"="/admin/external_journey_providers",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
  *          }
  *      },
  *      itemOperations={

@@ -88,8 +88,21 @@ use ApiPlatform\Core\Annotation\ApiProperty;
  *              }
  *           }
  *      }
- *    }
- * },
+ *    },
+*          "ADMIN_get"={
+ *              "path"="/admin/external_journeys",
+ *              "method"="GET",
+ *              "normalization_context"={
+ *                  "groups"={"externalJourney"},
+ *                  "skip_null_values"=false
+ *              },
+ *              "security"="is_granted('external_journey_list',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
+ *          },
+
+ *      },
  *      itemOperations={
  *          "get" = {
  *              "security"="is_granted('reject',object)",

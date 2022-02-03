@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Community\Extension;
 
@@ -27,9 +27,9 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryCollectionExtensionInter
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryItemExtensionInterface;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use App\App\Entity\App;
+use App\Auth\Service\AuthManager;
 use App\Community\Entity\Community;
 use App\Geography\Entity\Territory;
-use App\Auth\Service\AuthManager;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Security;
@@ -69,35 +69,36 @@ final class CommunityTerritoryFilterExtension implements QueryCollectionExtensio
         // we check if the user has limited territories
         if ($isItem) {
         } else {
-            if ($this->request->get("showAllCommunities", false)) {
+            if ($this->request->get('showAllCommunities', false)) {
                 return;
-            } else {
-                switch ($operationName) {
-                    case "get":
-                    case "manage":
-                        $territories = $this->authManager->getTerritoriesForItem("community_list");
-                }
             }
+
+            switch ($operationName) {
+                    case 'get':
+                    case 'manage':
+                        $territories = $this->authManager->getTerritoriesForItem('community_list');
+                }
         }
-       
-        if (count($territories)>0) {
+
+        if (count($territories) > 0) {
             $rootAlias = $queryBuilder->getRootAliases()[0];
-            $queryBuilder->leftJoin(sprintf("%s.address", $rootAlias), 'a');
-            $where = "(";
+            $queryBuilder->leftJoin(sprintf('%s.address', $rootAlias), 'a');
+            $where = '(';
             /**
              * @var Territory $territory
              */
             foreach ($territories as $territory) {
-                if ($where != '(') {
-                    $where .= " OR ";
+                if ('(' != $where) {
+                    $where .= ' OR ';
                 }
                 $territoryFrom = 'territory'.$territory;
                 $queryBuilder->leftJoin('a.territories', $territoryFrom);
-                $where .= sprintf("%s.id = %s", $territoryFrom, $territory);
+                $where .= sprintf('%s.id = %s', $territoryFrom, $territory);
             }
-            $where .= ")";
+            $where .= ')';
             $queryBuilder
-            ->andWhere($where);
+                ->andWhere($where)
+            ;
         }
     }
 }
