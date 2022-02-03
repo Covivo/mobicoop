@@ -34,23 +34,21 @@ class FirstMessageAnswer implements GamificationRuleInterface
     /**
      * First Message Answer rule
      *
-     * @param  $requester
      * @param  $log
      * @param  $sequenceItem
      * @return bool
      */
-    public function execute($requester, $log, $sequenceItem)
+    public function execute($log, $sequenceItem)
     {
-        return true;
         $messages = $log->getUser()->getMessages();
 
         $count = 0;
         foreach ($messages as $message) {
-            if (is_null($message->getMessage())) {
+            if (!is_null($message->getMessage())) {
                 $count++;
             }
         }
-        if ($count===1) {
+        if ($count>=1) {
             return true;
         }
         return false;

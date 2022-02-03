@@ -19,99 +19,86 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\Entity;
 
-use DateTime;
-use Doctrine\ORM\Mapping as ORM;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\PersistentCollection;
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
-use ApiPlatform\Core\Annotation\ApiProperty;
-use ApiPlatform\Core\Annotation\ApiFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\NumericFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\NumericFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Action\Entity\Diary;
-use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
-use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use App\Geography\Entity\Address;
-use App\Carpool\Entity\Proposal;
-use App\Carpool\Entity\Ask;
-use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Security\Core\User\EquatableInterface;
-use App\Match\Entity\Mass;
-use App\Image\Entity\Image;
-use App\Communication\Entity\Message;
-use App\Communication\Entity\Recipient;
-use App\User\Controller\UserRegistration;
-use App\User\Controller\UserDelegateRegistration;
-use App\User\Controller\UserPermissions;
-use App\User\Controller\UserAlerts;
-use App\User\Controller\UserAlertsUpdate;
-use App\User\Controller\UserLogin;
-use App\User\Controller\UserAsks;
-use App\User\Controller\UserThreads;
-use App\User\Controller\UserThreadsDirectMessages;
-use App\User\Controller\UserThreadsCarpoolMessages;
-use App\User\Controller\UserThreadsSolidaryMessages;
-use App\User\Controller\UserUpdatePassword;
-use App\User\Controller\UserGeneratePhoneToken;
-use App\User\Controller\UserUpdate;
-use App\User\Controller\UserDelete;
-use App\User\Controller\UserCheckPhoneToken;
-use App\User\Controller\UserUnsubscribeFromEmail;
-use App\User\Controller\UserMe;
-use App\User\Filter\HomeAddressTerritoryFilter;
-use App\User\Filter\DirectionTerritoryFilter;
-use App\User\Filter\IsInCommunityFilter;
-use App\User\Filter\ProposalValidFilter;
-use App\User\Filter\ODRangeDestinationFilter;
-use App\User\Filter\ODRangeOriginFilter;
-use App\User\Filter\ODRangeRadiusFilter;
-use App\User\Filter\HomeAddressDirectionTerritoryFilter;
-use App\User\Filter\ODTerritoryFilter;
-use App\User\Filter\WaypointTerritoryFilter;
-use App\User\Filter\HomeAddressODTerritoryFilter;
-use App\User\Filter\HomeAddressWaypointTerritoryFilter;
-use App\User\Filter\FamilyAndGivenNameFilter;
-use App\User\Filter\LoginFilter;
-use App\User\Filter\PwdTokenFilter;
-use App\User\Filter\SolidaryFilter;
-use App\User\Filter\SolidaryCandidateFilter;
-use App\User\Filter\EmailTokenFilter;
-use App\User\Filter\UnsubscribeTokenFilter;
-use App\User\Filter\SolidaryExclusiveFilter;
-use App\Communication\Entity\Notified;
 use App\Action\Entity\Log;
 use App\App\Entity\App;
 use App\Auth\Entity\AuthItem;
+use App\Auth\Entity\UserAuthAssignment;
+use App\Carpool\Entity\Ask;
+use App\Carpool\Entity\CarpoolProof;
+use App\Carpool\Entity\Proposal;
+use App\Communication\Entity\Message;
+use App\Communication\Entity\Notified;
+use App\Communication\Entity\Recipient;
+use App\Community\Entity\Community;
+use App\Community\Entity\CommunityUser;
+use App\Event\Entity\Event;
+use App\Gamification\Entity\Reward;
+use App\Gamification\Entity\RewardStep;
+use App\Geography\Entity\Address;
+use App\I18n\Entity\Language;
+use App\Image\Entity\Image;
 use App\Import\Entity\UserImport;
 use App\MassCommunication\Entity\Campaign;
 use App\MassCommunication\Entity\Delivery;
-use App\Auth\Entity\UserAuthAssignment;
-use App\Carpool\Entity\CarpoolProof;
-use App\Community\Entity\Community;
-use App\Solidary\Entity\Solidary;
-use App\User\EntityListener\UserListener;
-use App\Event\Entity\Event;
-use App\Community\Entity\CommunityUser;
-use App\Gamification\Entity\Badge;
-use App\Gamification\Entity\Reward;
-use App\Gamification\Entity\RewardStep;
+use App\Match\Entity\Mass;
 use App\Match\Entity\MassPerson;
-use App\Payment\Ressource\BankAccount;
 use App\Solidary\Entity\Operate;
+use App\Solidary\Entity\Solidary;
 use App\Solidary\Entity\SolidaryUser;
-use App\User\Controller\UserCanUseEmail;
+use App\User\Controller\UserAlerts;
+use App\User\Controller\UserAlertsUpdate;
+use App\User\Controller\UserAsks;
+use App\User\Controller\UserCheckPhoneToken;
+use App\User\Controller\UserDelete;
+use App\User\Controller\UserGeneratePhoneToken;
+use App\User\Controller\UserRegistration;
 use App\User\Controller\UserSendValidationEmail;
-use App\I18n\Entity\Language;
+use App\User\Controller\UserThreads;
+use App\User\Controller\UserUnsubscribeFromEmail;
+use App\User\Controller\UserUpdatePassword;
+use App\User\Filter\DirectionTerritoryFilter;
+use App\User\Filter\EmailTokenFilter;
+use App\User\Filter\FamilyAndGivenNameFilter;
+use App\User\Filter\HomeAddressDirectionTerritoryFilter;
+use App\User\Filter\HomeAddressODTerritoryFilter;
+use App\User\Filter\HomeAddressTerritoryFilter;
+use App\User\Filter\HomeAddressWaypointTerritoryFilter;
+use App\User\Filter\IsInCommunityFilter;
+use App\User\Filter\LoginFilter;
+use App\User\Filter\ODRangeDestinationFilter;
+use App\User\Filter\ODRangeOriginFilter;
+use App\User\Filter\ODRangeRadiusFilter;
+use App\User\Filter\ODTerritoryFilter;
+use App\User\Filter\ProposalValidFilter;
+use App\User\Filter\PwdTokenFilter;
+use App\User\Filter\SolidaryCandidateFilter;
+use App\User\Filter\SolidaryExclusiveFilter;
+use App\User\Filter\SolidaryFilter;
+use App\User\Filter\UnsubscribeTokenFilter;
+use App\User\Filter\WaypointTerritoryFilter;
+use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Security\Core\User\EquatableInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * A user.
@@ -581,55 +568,55 @@ use App\I18n\Entity\Language;
  */
 class User implements UserInterface, EquatableInterface
 {
-    const DEFAULT_ID = 999999999999;
+    public const DEFAULT_ID = 999999999999;
 
-    const MAX_DETOUR_DURATION = 600;
-    const MAX_DETOUR_DISTANCE = 10000;
+    public const MAX_DETOUR_DURATION = 600;
+    public const MAX_DETOUR_DISTANCE = 10000;
 
-    const STATUS_ACTIVE = 1;
-    const STATUS_DISABLED = 2;
-    const STATUS_ANONYMIZED = 3;
+    public const STATUS_ACTIVE = 1;
+    public const STATUS_DISABLED = 2;
+    public const STATUS_ANONYMIZED = 3;
 
-    const GENDER_FEMALE = 1;
-    const GENDER_MALE = 2;
-    const GENDER_OTHER = 3;
+    public const GENDER_FEMALE = 1;
+    public const GENDER_MALE = 2;
+    public const GENDER_OTHER = 3;
 
-    const GENDERS = [
+    public const GENDERS = [
         self::GENDER_FEMALE,
         self::GENDER_MALE,
-        self::GENDER_OTHER
+        self::GENDER_OTHER,
     ];
 
-    const PHONE_DISPLAY_RESTRICTED = 1;
-    const PHONE_DISPLAY_ALL = 2;
+    public const PHONE_DISPLAY_RESTRICTED = 1;
+    public const PHONE_DISPLAY_ALL = 2;
 
-    const AUTHORIZED_SIZES_DEFAULT_AVATAR = [
-        "square_100",
-        "square_250",
-        "square_800"
+    public const AUTHORIZED_SIZES_DEFAULT_AVATAR = [
+        'square_100',
+        'square_250',
+        'square_800',
     ];
 
-    const PWD_SEND_TYPE_NONE = 0;    // password not sent
-    const PWD_SEND_TYPE_SMS = 1;     // password sent by sms if phone present
-    const PWD_SEND_TYPE_EMAIL = 2;   // password sent by email
+    public const PWD_SEND_TYPE_NONE = 0;    // password not sent
+    public const PWD_SEND_TYPE_SMS = 1;     // password sent by sms if phone present
+    public const PWD_SEND_TYPE_EMAIL = 2;   // password sent by email
 
-    const MOBILE_APP_WEB = 1;
-    const MOBILE_APP_IOS = 2;
-    const MOBILE_APP_ANDROID = 3;
+    public const MOBILE_APP_WEB = 1;
+    public const MOBILE_APP_IOS = 2;
+    public const MOBILE_APP_ANDROID = 3;
 
-    const ROLE_DEFAULT = 3;  // Role we want to add by default when user register, ID is in auth_item (ROLE_USER_REGISTERED_FULL now)
+    public const ROLE_DEFAULT = 3;  // Role we want to add by default when user register, ID is in auth_item (ROLE_USER_REGISTERED_FULL now)
 
-    const SMOKE_NO = 0;
-    const SMOKE_NOT_IN_CAR = 1;
-    const SMOKE = 2;
+    public const SMOKE_NO = 0;
+    public const SMOKE_NOT_IN_CAR = 1;
+    public const SMOKE = 2;
 
-    const AD_NONE = 0;
-    const AD_DRIVER = 1;
-    const AD_PASSENGER = 2;
-    const AD_DRIVER_PASSENGER = 3;
+    public const AD_NONE = 0;
+    public const AD_DRIVER = 1;
+    public const AD_PASSENGER = 2;
+    public const AD_DRIVER_PASSENGER = 3;
 
     /**
-     * @var int The id of this user.
+     * @var int the id of this user
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -640,7 +627,7 @@ class User implements UserInterface, EquatableInterface
     private $id;
 
     /**
-     * @var int User status (1 = active; 2 = disabled; 3 = anonymized).
+     * @var int user status (1 = active; 2 = disabled; 3 = anonymized)
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
@@ -649,7 +636,7 @@ class User implements UserInterface, EquatableInterface
     private $status;
 
     /**
-     * @var string|null The first name of the user.
+     * @var null|string the first name of the user
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"aRead","aWrite","readUser","readCommunity","readCommunityUser","results","write", "threads", "thread","externalJourney", "readEvent", "massMigrate","communities", "readSolidary", "readAnimation", "readExport","readPublicProfile","readReview"})
@@ -657,7 +644,7 @@ class User implements UserInterface, EquatableInterface
     private $givenName;
 
     /**
-     * @var string|null The family name of the user.
+     * @var null|string the family name of the user
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"aRead","aWrite","readUser","write","communities", "readSolidary", "readAnimation", "readExport"})
@@ -665,14 +652,14 @@ class User implements UserInterface, EquatableInterface
     private $familyName;
 
     /**
-     * @var string|null The shorten family name of the user.
+     * @var null|string the shorten family name of the user
      *
      * @Groups({"aRead","readUser","results","write", "threads", "thread", "readCommunity", "readCommunityUser", "readEvent", "massMigrate", "readExport","readPublicProfile","readReview"})
      */
     private $shortFamilyName;
 
     /**
-     * @var string|null The name of the user in a professional context.
+     * @var null|string the name of the user in a professional context
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"readUser","write"})
@@ -680,7 +667,7 @@ class User implements UserInterface, EquatableInterface
     private $proName;
 
     /**
-     * @var string The email of the user.
+     * @var string the email of the user
      *
      * @Assert\NotBlank
      * @Assert\Email()
@@ -690,13 +677,13 @@ class User implements UserInterface, EquatableInterface
     private $email;
 
     /**
-     * @var string|null The email of the user.
+     * @var null|string the email of the user
      * @Groups({"readUser", "write"})
      */
     private $oldEmail;
 
     /**
-     * @var string The email of the user in a professional context.
+     * @var string the email of the user in a professional context
      *
      * @Assert\Email()
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -705,7 +692,7 @@ class User implements UserInterface, EquatableInterface
     private $proEmail;
 
     /**
-     * @var string The encoded password of the user.
+     * @var string the encoded password of the user
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"readUser","write","passwordUpdate"})
@@ -713,21 +700,21 @@ class User implements UserInterface, EquatableInterface
     private $password;
 
     /**
-     * @var string The clear password of the user, used for delegation (not persisted !).
+     * @var string the clear password of the user, used for delegation (not persisted !)
      *
      * @Groups({"write"})
      */
     private $clearPassword;
 
     /**
-     * @var int|null If indirect registration, how we want to send the password to the user (0 = not sent, 1 = by sms, 2 = by email)
+     * @var null|int If indirect registration, how we want to send the password to the user (0 = not sent, 1 = by sms, 2 = by email)
      *
      * @Groups("write")
      */
     private $passwordSendType;
 
     /**
-     * @var int|null The gender of the user (1=female, 2=male, 3=nc)
+     * @var null|int The gender of the user (1=female, 2=male, 3=nc)
      *
      * @ORM\Column(type="smallint")
      * @Groups({"aRead","aWrite","readUser","results","write","externalJourney"})
@@ -735,7 +722,7 @@ class User implements UserInterface, EquatableInterface
     private $gender;
 
     /**
-     * @var string|null The nationality of the user.
+     * @var null|string the nationality of the user
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"aRead","aWrite","readUser","write"})
@@ -743,7 +730,7 @@ class User implements UserInterface, EquatableInterface
     private $nationality;
 
     /**
-     * @var \DateTimeInterface|null The birth date of the user.
+     * @var null|\DateTimeInterface the birth date of the user
      *
      * @ORM\Column(type="date", nullable=true)
      * @Groups({"aRead","aWrite","readUser","write"})
@@ -757,14 +744,14 @@ class User implements UserInterface, EquatableInterface
     private $birthDate;
 
     /**
-     * @var \DateTimeInterface|null The birth year of the user.
+     * @var null|\DateTimeInterface the birth year of the user
      *
      * @Groups({"readUser","results"})
      */
     private $birthYear;
 
     /**
-     * @var string|null The telephone number of the user.
+     * @var null|string the telephone number of the user
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"aRead","aWrite","readUser","write","checkPhoneToken","results", "readSolidary"})
@@ -772,13 +759,13 @@ class User implements UserInterface, EquatableInterface
     private $telephone;
 
     /**
-     * @var string|null The telephone number of the user.
+     * @var null|string the telephone number of the user
      * @Groups({"readUser", "write"})
      */
     private $oldTelephone;
 
     /**
-     * @var int phone display configuration (1 = restricted (default); 2 = all).
+     * @var int phone display configuration (1 = restricted (default); 2 = all)
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
@@ -787,7 +774,7 @@ class User implements UserInterface, EquatableInterface
     private $phoneDisplay;
 
     /**
-     * @var int|null The maximum detour duration (in seconds) as a driver to accept a request proposal.
+     * @var null|int the maximum detour duration (in seconds) as a driver to accept a request proposal
      *
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"readUser","write"})
@@ -795,7 +782,7 @@ class User implements UserInterface, EquatableInterface
     private $maxDetourDuration;
 
     /**
-     * @var int|null The maximum detour distance (in metres) as a driver to accept a request proposal.
+     * @var null|int the maximum detour distance (in metres) as a driver to accept a request proposal
      *
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"readUser","write"})
@@ -803,7 +790,7 @@ class User implements UserInterface, EquatableInterface
     private $maxDetourDistance;
 
     /**
-     * @var boolean|null The user accepts any route as a passenger from its origin to the destination.
+     * @var null|bool the user accepts any route as a passenger from its origin to the destination
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"readUser","write"})
@@ -811,7 +798,7 @@ class User implements UserInterface, EquatableInterface
     private $anyRouteAsPassenger;
 
     /**
-     * @var boolean|null The user accepts any transportation mode.
+     * @var null|bool the user accepts any transportation mode
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"readUser","write"})
@@ -819,10 +806,10 @@ class User implements UserInterface, EquatableInterface
     private $multiTransportMode;
 
     /**
-     * @var int|null Smoking preferences.
-     * 0 = i don't smoke
-     * 1 = i don't smoke in car
-     * 2 = i smoke
+     * @var null|int Smoking preferences.
+     *               0 = i don't smoke
+     *               1 = i don't smoke in car
+     *               2 = i smoke
      *
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"aRead","aWrite","readUser","write"})
@@ -830,9 +817,9 @@ class User implements UserInterface, EquatableInterface
     private $smoke;
 
     /**
-     * @var boolean|null Music preferences.
-     * 0 = no music
-     * 1 = i listen to music or radio
+     * @var null|bool Music preferences.
+     *                0 = no music
+     *                1 = i listen to music or radio
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"aRead","aWrite","readUser","write"})
@@ -840,7 +827,7 @@ class User implements UserInterface, EquatableInterface
     private $music;
 
     /**
-     * @var string|null Music favorites.
+     * @var null|string music favorites
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"aRead","aWrite","readUser","write"})
@@ -848,9 +835,9 @@ class User implements UserInterface, EquatableInterface
     private $musicFavorites;
 
     /**
-     * @var boolean|null Chat preferences.
-     * 0 = no chat
-     * 1 = chat
+     * @var null|bool Chat preferences.
+     *                0 = no chat
+     *                1 = chat
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"aRead","aWrite","readUser","write"})
@@ -858,7 +845,7 @@ class User implements UserInterface, EquatableInterface
     private $chat;
 
     /**
-     * @var string|null Chat favorite subjects.
+     * @var null|string chat favorite subjects
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"aRead","aWrite","readUser","write"})
@@ -866,9 +853,9 @@ class User implements UserInterface, EquatableInterface
     private $chatFavorites;
 
     /**
-     * @var boolean|null Gamification preferences.
-     * 0 = no gamification
-     * 1 = accept gamification
+     * @var null|bool Gamification preferences.
+     *                0 = no gamification
+     *                1 = accept gamification
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"aRead","aWrite","readUser","write"})
@@ -876,7 +863,7 @@ class User implements UserInterface, EquatableInterface
     private $gamification;
 
     /**
-     * @var boolean|null The user accepts to receive news about the platform.
+     * @var null|bool the user accepts to receive news about the platform
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"aRead","aWrite","readUser","write","readCommunity","readCommunityUser"})
@@ -884,7 +871,7 @@ class User implements UserInterface, EquatableInterface
     private $newsSubscription;
 
     /**
-     * @var \DateTimeInterface Creation date of the user.
+     * @var \DateTimeInterface creation date of the user
      *
      * @ORM\Column(type="datetime")
      * @Groups({"aRead","readUser"})
@@ -892,7 +879,7 @@ class User implements UserInterface, EquatableInterface
     private $createdDate;
 
     /**
-     * @var \DateTimeInterface Validation date of the user.
+     * @var \DateTimeInterface validation date of the user
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"readUser","write"})
@@ -900,7 +887,7 @@ class User implements UserInterface, EquatableInterface
     private $validatedDate;
 
     /**
-     * @var string|null Token for account validation by email
+     * @var null|string Token for account validation by email
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"readUser","write","checkValidationToken"})
@@ -908,7 +895,7 @@ class User implements UserInterface, EquatableInterface
     private $emailToken;
 
     /**
-     * @var \DateTimeInterface Updated date of the user.
+     * @var \DateTimeInterface updated date of the user
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups("readUser")
@@ -916,7 +903,7 @@ class User implements UserInterface, EquatableInterface
     private $updatedDate;
 
     /**
-     * @var DateTime|null  Date of password token generation modification.
+     * @var null|DateTime date of password token generation modification
      *
      * @ORM\Column(type="datetime", length=255, nullable=true)
      * @Groups({"readUser","write"})
@@ -924,7 +911,7 @@ class User implements UserInterface, EquatableInterface
     private $pwdTokenDate;
 
     /**
-     * @var string|null Token for password modification.
+     * @var null|string token for password modification
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"readUser","write","passwordUpdateRequest","passwordUpdate"})
@@ -932,7 +919,7 @@ class User implements UserInterface, EquatableInterface
     private $pwdToken;
 
     /**
-     * @var string|null Token for phone validation.
+     * @var null|string token for phone validation
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"readUser","write","checkPhoneToken"})
@@ -940,7 +927,7 @@ class User implements UserInterface, EquatableInterface
     private $phoneToken;
 
     /**
-     * @var \DateTimeInterface|null Validation date of the phone number.
+     * @var null|\DateTimeInterface validation date of the phone number
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"readUser","write"})
@@ -948,7 +935,7 @@ class User implements UserInterface, EquatableInterface
     private $phoneValidatedDate;
 
     /**
-     * @var bool|null Mobile user
+     * @var null|bool Mobile user
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"readUser","write"})
@@ -956,7 +943,7 @@ class User implements UserInterface, EquatableInterface
     private $mobile;
 
     /**
-     * @var Language|null The language of the user.
+     * @var null|Language the language of the user
      *
      * @ORM\ManyToOne(targetEntity="\App\I18n\Entity\Language", inversedBy="users")
      * @ORM\JoinColumn(onDelete="SET NULL")
@@ -966,7 +953,32 @@ class User implements UserInterface, EquatableInterface
     private $language;
 
     /**
-     * @var ArrayCollection|null A user may have many addresses.
+     * @var bool the user can be driver for a hitch hike
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","readUser","write"})
+     */
+    private $hitchHikeDriver;
+
+    /**
+     * @var bool the user can be passenger for a hitch hike
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","readUser","write"})
+     */
+    private $hitchHikePassenger;
+
+    /**
+     * @var null|ArrayCollection a user may have many identity proofs
+     *
+     * @ORM\OneToMany(targetEntity="\App\User\Entity\IdentityProof", mappedBy="user", cascade={"persist"})
+     * @MaxDepth(1)
+     * @Groups({"readUser","write"})
+     */
+    private $identityProofs;
+
+    /**
+     * @var null|ArrayCollection a user may have many addresses
      *
      * @ORM\OneToMany(targetEntity="\App\Geography\Entity\Address", mappedBy="user", cascade={"persist"})
      * @MaxDepth(1)
@@ -976,7 +988,7 @@ class User implements UserInterface, EquatableInterface
     private $addresses;
 
     /**
-     * @var ArrayCollection|null A user may have many cars.
+     * @var null|ArrayCollection a user may have many cars
      *
      * @ORM\OneToMany(targetEntity="\App\User\Entity\Car", mappedBy="user", cascade={"persist"})
      * @Groups({"readUser","write"})
@@ -984,7 +996,7 @@ class User implements UserInterface, EquatableInterface
     private $cars;
 
     /**
-     * @var ArrayCollection|null A user may have many push token ids.
+     * @var null|ArrayCollection a user may have many push token ids
      *
      * @ORM\OneToMany(targetEntity="\App\User\Entity\PushToken", mappedBy="user", cascade={"persist"})
      * @Groups({"readUser","write"})
@@ -992,7 +1004,7 @@ class User implements UserInterface, EquatableInterface
     private $pushTokens;
 
     /**
-     * @var ArrayCollection|null The proposals made for this user (in general by the user itself, except when it is a "posting for").
+     * @var null|ArrayCollection the proposals made for this user (in general by the user itself, except when it is a "posting for")
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Proposal", mappedBy="user")
      * @MaxDepth(1)
@@ -1002,7 +1014,7 @@ class User implements UserInterface, EquatableInterface
     private $proposals;
 
     /**
-     * @var ArrayCollection|null The proposals made by this user for another user.
+     * @var null|ArrayCollection the proposals made by this user for another user
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Proposal", mappedBy="userDelegate")
      * @MaxDepth(1)
@@ -1011,55 +1023,55 @@ class User implements UserInterface, EquatableInterface
     private $proposalsDelegate;
 
     /**
-     * @var ArrayCollection|null The asks made by this user.
+     * @var null|ArrayCollection the asks made by this user
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Ask", mappedBy="user")
      */
     private $asks;
 
     /**
-     * @var ArrayCollection|null The events made by this user.
+     * @var null|ArrayCollection the events made by this user
      *
      * @ORM\OneToMany(targetEntity="\App\Event\Entity\Event", mappedBy="user")
      */
     private $events;
 
     /**
-     * @var ArrayCollection|null A user may be the creator of many communities.
+     * @var null|ArrayCollection a user may be the creator of many communities
      *
      * @ORM\OneToMany(targetEntity="\App\Community\Entity\Community", mappedBy="user")
      */
     private $communities;
 
     /**
-     * @var ArrayCollection|null The communityUser associated to this user
+     * @var null|ArrayCollection The communityUser associated to this user
      *
      * @ORM\OneToMany(targetEntity="\App\Community\Entity\CommunityUser", mappedBy="user")
      */
     private $communityUsers;
 
     /**
-     * @var int|null Community choose by a user
+     * @var null|int Community choose by a user
      * @Groups({"readUser","write"})
      */
     private $communityId;
 
     /**
-     * @var ArrayCollection|null The asks made for this user.
+     * @var null|ArrayCollection the asks made for this user
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Ask", mappedBy="userRelated")
      */
     private $asksRelated;
 
     /**
-     * @var ArrayCollection|null The asks made by this user (in general by the user itself, except when it is a "posting for").
+     * @var null|ArrayCollection the asks made by this user (in general by the user itself, except when it is a "posting for")
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Ask", mappedBy="userDelegate")
      */
     private $asksDelegate;
 
     /**
-     * @var ArrayCollection|null The images of the user.
+     * @var null|ArrayCollection the images of the user
      *
      * @ORM\OneToMany(targetEntity="\App\Image\Entity\Image", mappedBy="user", cascade={"persist"})
      * @ORM\OrderBy({"position" = "ASC"})
@@ -1070,7 +1082,7 @@ class User implements UserInterface, EquatableInterface
     private $images;
 
     /**
-     * @var ArrayCollection|null A user may have many auth assignments.
+     * @var null|ArrayCollection a user may have many auth assignments
      *
      * @ORM\OneToMany(targetEntity="\App\Auth\Entity\UserAuthAssignment", mappedBy="user", cascade={"persist"})
      * @Groups({"readUser","write"})
@@ -1085,7 +1097,7 @@ class User implements UserInterface, EquatableInterface
     private $roles;
 
     /**
-     * @var ArrayCollection|null The mass import files of the user.
+     * @var null|ArrayCollection the mass import files of the user
      *
      * @ORM\OneToMany(targetEntity="\App\Match\Entity\Mass", mappedBy="user", cascade={"persist"})
      * @Groups({"mass"})
@@ -1095,7 +1107,7 @@ class User implements UserInterface, EquatableInterface
     private $masses;
 
     /**
-     * @var ArrayCollection|null The messages sent by the user.
+     * @var null|ArrayCollection the messages sent by the user
      *
      * @ORM\OneToMany(targetEntity="\App\Communication\Entity\Message", mappedBy="user", cascade={"persist"})
      * @MaxDepth(1)
@@ -1104,7 +1116,7 @@ class User implements UserInterface, EquatableInterface
     private $messages;
 
     /**
-     * @var ArrayCollection|null The messages received by the user.
+     * @var null|ArrayCollection the messages received by the user
      *
      * @ORM\OneToMany(targetEntity="\App\Communication\Entity\Recipient", mappedBy="user", cascade={"persist"})
      * @MaxDepth(1)
@@ -1113,14 +1125,14 @@ class User implements UserInterface, EquatableInterface
     private $recipients;
 
     /**
-     * @var ArrayCollection|null The notifications sent to the user.
+     * @var null|ArrayCollection the notifications sent to the user
      *
      * @ORM\OneToMany(targetEntity="\App\Communication\Entity\Notified", mappedBy="user", cascade={"persist"})
      */
     private $notifieds;
 
     /**
-     * @var ArrayCollection|null A user may have many action logs.
+     * @var null|ArrayCollection a user may have many action logs
      *
      * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="user", cascade={"persist"})
      * @Groups({"write"})
@@ -1128,7 +1140,7 @@ class User implements UserInterface, EquatableInterface
     private $logs;
 
     /**
-     * @var ArrayCollection|null A user may have many action logs as an delegate.
+     * @var null|ArrayCollection a user may have many action logs as an delegate
      *
      * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="userDelegate", cascade={"persist"})
      * @Groups({"write"})
@@ -1136,7 +1148,7 @@ class User implements UserInterface, EquatableInterface
     private $logsAsDelegate;
 
     /**
-     * @var ArrayCollection|null A user may have many action logs as a user related.
+     * @var null|ArrayCollection a user may have many action logs as a user related
      *
      * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="userRelated", cascade={"persist"})
      * @Groups({"readUser","write"})
@@ -1144,7 +1156,7 @@ class User implements UserInterface, EquatableInterface
     private $logsAsRelated;
 
     /**
-     * @var ArrayCollection|null A user may have many action logs.
+     * @var null|ArrayCollection a user may have many action logs
      *
      * @ORM\OneToMany(targetEntity="\App\Action\Entity\Diary", mappedBy="user", cascade={"persist"})
      * @Groups({"readUser","write"})
@@ -1152,7 +1164,7 @@ class User implements UserInterface, EquatableInterface
     private $diaries;
 
     /**
-     * @var ArrayCollection|null A user may have many diary action logs.
+     * @var null|ArrayCollection a user may have many diary action logs
      *
      * @ORM\OneToMany(targetEntity="\App\Action\Entity\Diary", mappedBy="author", cascade={"persist"})
      * @Groups({"write"})
@@ -1160,28 +1172,28 @@ class User implements UserInterface, EquatableInterface
     private $diariesAuthor;
 
     /**
-     * @var ArrayCollection|null A user may have many user notification preferences.
+     * @var null|ArrayCollection a user may have many user notification preferences
      *
      * @ORM\OneToMany(targetEntity="\App\User\Entity\UserNotification", mappedBy="user", cascade={"persist"})
      */
     private $userNotifications;
 
     /**
-     * @var ArrayCollection|null The campaigns made by this user.
+     * @var null|ArrayCollection the campaigns made by this user
      *
      * @ORM\OneToMany(targetEntity="\App\MassCommunication\Entity\Campaign", mappedBy="user")
      */
     private $campaigns;
 
     /**
-     * @var ArrayCollection|null The campaing deliveries where this user is recipient.
+     * @var null|ArrayCollection the campaing deliveries where this user is recipient
      *
      * @ORM\OneToMany(targetEntity="\App\MassCommunication\Entity\Delivery", mappedBy="user")
      */
     private $deliveries;
 
     /**
-     * @var UserImport|null The user import data.
+     * @var null|UserImport the user import data
      *
      * @ORM\OneToOne(targetEntity="\App\Import\Entity\UserImport", mappedBy="user", cascade={"remove"})
      * @Groups({"readUser"})
@@ -1190,14 +1202,14 @@ class User implements UserInterface, EquatableInterface
     private $import;
 
     /**
-     * @var ArrayCollection|null The Rewards (Badges...) earned by this User.
+     * @var null|ArrayCollection The Rewards (Badges...) earned by this User.
      *
      * @ORM\OneToMany(targetEntity="\App\Gamification\Entity\Reward", mappedBy="user")
      */
     private $rewards;
 
     /**
-     * @var ArrayCollection|null The RewardSteps earned by this User.
+     * @var null|ArrayCollection the RewardSteps earned by this User
      *
      * @ORM\OneToMany(targetEntity="\App\Gamification\Entity\RewardStep", mappedBy="user")
      * @ORM\JoinTable(name="reward")
@@ -1206,37 +1218,37 @@ class User implements UserInterface, EquatableInterface
     private $rewardSteps;
 
     /**
-     * @var array|null The avatars of the user
+     * @var null|array The avatars of the user
      * @Groups({"readUser","readCommunity","results","threads","thread","externalJourney", "readSolidary", "readAnimation"})
      */
     private $avatars;
 
     /**
-     * @var string|null Default avatar of the user
+     * @var null|string Default avatar of the user
      * @Groups({"aRead","readUser","readPublicProfile","readReview"})
      */
     private $avatar;
 
     /**
-     * @var array|null The threads of the user
+     * @var null|array The threads of the user
      * @Groups("threads")
      */
     private $threads;
 
     /**
-     * @var array|null The permissions granted
+     * @var null|array The permissions granted
      * @Groups({"permissions"})
      */
     private $permissions;
 
     /**
-     * @var array|null The user alerts preferences
+     * @var null|array The user alerts preferences
      * @Groups("alerts")
      */
     private $alerts;
 
     /**
-     * @var string|null Facebook ID of the user
+     * @var null|string Facebook ID of the user
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"readUser","write"})
@@ -1244,14 +1256,14 @@ class User implements UserInterface, EquatableInterface
     private $facebookId;
 
     /**
-     * @var string|null External ID of the user for a SSO connection
+     * @var null|string External ID of the user for a SSO connection
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $ssoId;
 
     /**
-     * @var string|null External Provider for a SSO connection
+     * @var null|string External Provider for a SSO connection
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      */
@@ -1266,13 +1278,13 @@ class User implements UserInterface, EquatableInterface
     private $createdSsoDate;
 
     /**
-     * @var bool|null true : the user has been created by sso (false mean no sso or only attached a previously existing account)
+     * @var null|bool true : the user has been created by sso (false mean no sso or only attached a previously existing account)
      * @ORM\Column(type="boolean", nullable=true)
      */
     private $createdBySso;
 
     /**
-     * @var User|null Admin that create the user.
+     * @var null|User admin that create the user
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User")
      * @ORM\JoinColumn(onDelete="SET NULL")
@@ -1282,7 +1294,7 @@ class User implements UserInterface, EquatableInterface
     private $userDelegate;
 
     /**
-     * @var App|null App that create the user.
+     * @var null|App app that create the user
      *
      * @ORM\ManyToOne(targetEntity="\App\App\Entity\App")
      * @ORM\JoinColumn(onDelete="SET NULL")
@@ -1292,21 +1304,21 @@ class User implements UserInterface, EquatableInterface
     private $appDelegate;
 
     /**
-     * @var ArrayCollection|null The carpool proofs of the user as a driver.
+     * @var null|ArrayCollection the carpool proofs of the user as a driver
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\CarpoolProof", mappedBy="driver")
      */
     private $carpoolProofsAsDriver;
 
     /**
-     * @var ArrayCollection|null The carpool proofs of the user as a driver.
+     * @var null|ArrayCollection the carpool proofs of the user as a driver
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\CarpoolProof", mappedBy="passenger")
      */
     private $carpoolProofsAsPassenger;
 
     /**
-     * @var string|null Token for news unsubscription
+     * @var null|string Token for news unsubscription
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"readUser","write"})
@@ -1322,26 +1334,26 @@ class User implements UserInterface, EquatableInterface
     private $unsubscribeDate;
 
     /**
-     * @var string|null the unsubscribe message we return to client : change this later By listener
+     * @var null|string the unsubscribe message we return to client : change this later By listener
      * @Groups({"readUser"})
      */
     private $unsubscribeMessage;
 
     /**
-     * @var bool|null used to indicate a attempt to import this already registered user.
+     * @var null|bool used to indicate a attempt to import this already registered user
      * @Groups({"massMigrate"})
      */
     private $alreadyRegistered;
 
     /**
-     * @var int|null Registration from mobile (web app:1, iOS:2, Android:3)
+     * @var null|int Registration from mobile (web app:1, iOS:2, Android:3)
      *
      * @Groups({"readUser","write","passwordUpdateRequest"})
      */
     private $mobileRegistration;
 
     /**
-     * @var string|null The link used to validate the email (useful for mobile apps)
+     * @var null|string The link used to validate the email (useful for mobile apps)
      * @Groups({"readUser","write","passwordUpdateRequest"})
      */
     private $backLink;
@@ -1355,7 +1367,7 @@ class User implements UserInterface, EquatableInterface
     private $lastActivityDate;
 
     /**
-     * @var SolidaryUser|null The SolidaryUser possibly linked to this User
+     * @var null|SolidaryUser The SolidaryUser possibly linked to this User
      * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\SolidaryUser", inversedBy="user", cascade={"persist"})
      * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"readUser","write","writeSolidary"})
@@ -1364,27 +1376,27 @@ class User implements UserInterface, EquatableInterface
     private $solidaryUser;
 
     /**
-     * @var array|null used to get the solidaries of a user
+     * @var null|array used to get the solidaries of a user
      * @Groups({"readSolidary"})
      * @MaxDepth(1)
      */
     private $solidaries;
 
     /**
-     * @var array|null Get User Solidary Structures
+     * @var null|array Get User Solidary Structures
      * @Groups({"readUser", "write"})
      * @MaxDepth(1)
      */
     private $solidaryStructures;
 
     /**
-     * @var CommunityUser|null The communityUser link to the user, use in admin for get the record CommunityUser from the User ressource
+     * @var null|CommunityUser The communityUser link to the user, use in admin for get the record CommunityUser from the User ressource
      * @Groups({"readUserAdmin" })
      */
     private $adminCommunityUser;
 
     /**
-     * @var MassPerson|null The Mass person related to the suer if the user is imported from a Mass migration
+     * @var null|MassPerson The Mass person related to the suer if the user is imported from a Mass migration
      *
      * @ORM\OneToOne(targetEntity="\App\Match\Entity\MassPerson", mappedBy="user")
      * @MaxDepth(1)
@@ -1393,7 +1405,7 @@ class User implements UserInterface, EquatableInterface
     private $massPerson;
 
     /**
-     * @var ArrayCollection|null A User can have multiple entry in Operate
+     * @var null|ArrayCollection A User can have multiple entry in Operate
      *
      * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Operate", mappedBy="user", cascade={"persist"})
      * @Groups({"readUser", "write"})
@@ -1402,7 +1414,7 @@ class User implements UserInterface, EquatableInterface
     private $operates;
 
     /**
-     * @var int|null PaymentProfileId of a User
+     * @var null|int PaymentProfileId of a User
      *
      * @Groups({"readPayment"})
      * @MaxDepth(1)
@@ -1410,7 +1422,7 @@ class User implements UserInterface, EquatableInterface
     private $paymentProfileId;
 
     /**
-     * @var array|null BankAccounts of a User
+     * @var null|array BankAccounts of a User
      *
      * @Groups({"readPayment"})
      * @MaxDepth(1)
@@ -1418,7 +1430,7 @@ class User implements UserInterface, EquatableInterface
     private $bankAccounts;
 
     /**
-     * @var array|null Wallets of a User
+     * @var null|array Wallets of a User
      *
      * @Groups({"readPayment"})
      * @MaxDepth(1)
@@ -1426,7 +1438,7 @@ class User implements UserInterface, EquatableInterface
     private $wallets;
 
     /**
-     * @var string|null CarpoolExport of a User
+     * @var null|string CarpoolExport of a User
      *
      * @Groups({"carpoolExport"})
      * @MaxDepth(1)
@@ -1434,44 +1446,44 @@ class User implements UserInterface, EquatableInterface
     private $carpoolExport;
 
     /**
-     * @var bool|null If the User can receive a review from the current User (used in Carpool Results)
+     * @var null|bool If the User can receive a review from the current User (used in Carpool Results)
      *
      * @Groups({"results"})
      */
     private $canReceiveReview;
 
     /**
-     * @var bool|null If the Reviews are enable on this instance
+     * @var null|bool If the Reviews are enable on this instance
      * @Groups({"readUser", "readReview"})
      */
     private $userReviewsActive;
 
     /**
-     * @var bool|null If the User is an experienced carpooler
+     * @var null|bool If the User is an experienced carpooler
      * @Groups({"readUser","results","write", "threads", "thread", "readCommunity", "readCommunityUser", "readEvent", "massMigrate", "readExport","readPublicProfile","readReview"})
      */
     private $experienced;
 
     /**
-     * @var int|null Number of unread carpool messages
+     * @var null|int Number of unread carpool messages
      * @Groups({"readUser"})
      */
     private $unreadCarpoolMessageNumber;
 
     /**
-     * @var int|null Number of unread direct messages
+     * @var null|int Number of unread direct messages
      * @Groups({"readUser"})
      */
     private $unreadDirectMessageNumber;
 
     /**
-     * @var int|null Number of unread solidary messages
+     * @var null|int Number of unread solidary messages
      * @Groups({"readUser"})
      */
     private $unreadSolidaryMessageNumber;
 
     /**
-     * @var int|null The savedCo2 of this user in grams
+     * @var null|int The savedCo2 of this user in grams
      * @Groups({"readUser","results","write", "threads", "thread", "readCommunity", "readCommunityUser", "readEvent", "massMigrate", "readExport","readPublicProfile","readReview"})
      */
     private $savedCo2;
@@ -1493,7 +1505,7 @@ class User implements UserInterface, EquatableInterface
     // ADMIN
 
     /**
-     * @var string|null The user main image
+     * @var null|string The user main image
      * @Groups({"aRead","aWrite"})
      */
     private $image;
@@ -1505,13 +1517,13 @@ class User implements UserInterface, EquatableInterface
     private $homeAddress;
 
     /**
-     * @var array|null The user roles
+     * @var null|array The user roles
      * @Groups({"aRead","aWrite"})
      */
     private $rolesTerritory;
 
     /**
-     * @var int|null Ad type for the user (0 = none, 1 = as driver only, 2 = as passenger only, 3 = as driver and passenger)
+     * @var null|int Ad type for the user (0 = none, 1 = as driver only, 2 = as passenger only, 3 = as driver and passenger)
      * @Groups("aRead")
      */
     private $adType;
@@ -1524,14 +1536,14 @@ class User implements UserInterface, EquatableInterface
     private $ownership;
 
     /**
-     * @var int|null Number of badges earned by the user
+     * @var null|int Number of badges earned by the user
      *
      * @Groups({"readUser","results"})
      */
     private $numberOfBadges;
 
     /**
-     * @var boolean|null If the User has a verified identity
+     * @var null|bool If the User has a verified identity
      *
      * @Groups({"readUser","results","write", "threads", "thread", "readCommunity", "readCommunityUser", "readEvent", "readPublicProfile","readReview","aRead"})
      */
@@ -1567,6 +1579,7 @@ class User implements UserInterface, EquatableInterface
         $this->communityUsers = new ArrayCollection();
         $this->rewards = new ArrayCollection();
         $this->rewardSteps = new ArrayCollection();
+        $this->identityProofs = new ArrayCollection();
         $this->solidaryStructures = [];
         $this->roles = [];
         $this->rolesTerritory = [];
@@ -1633,14 +1646,14 @@ class User implements UserInterface, EquatableInterface
 
     public function getShortFamilyName(): ?string
     {
-        if (is_null($this->familyName) || $this->familyName==="" || !isset($this->familyName[0])) {
-            return ".";
+        if (is_null($this->familyName) || '' === $this->familyName || !isset($this->familyName[0])) {
+            return '.';
         }
 
-        $familyName=utf8_decode($this->familyName);
-        $familyName=strtoupper($familyName[0]). ".";
-        $familyName=utf8_encode($familyName);
-        return $familyName;
+        $familyName = utf8_decode($this->familyName);
+        $familyName = strtoupper($familyName[0]).'.';
+
+        return utf8_encode($familyName);
     }
 
     public function getProName(): ?string
@@ -1765,7 +1778,7 @@ class User implements UserInterface, EquatableInterface
 
     public function getBirthYear(): ?int
     {
-        return ($this->birthDate ? $this->birthDate->format('Y') : null);
+        return $this->birthDate ? $this->birthDate->format('Y') : null;
     }
 
     public function getTelephone(): ?string
@@ -1806,7 +1819,7 @@ class User implements UserInterface, EquatableInterface
 
     public function getMaxDetourDuration(): ?int
     {
-        return (!is_null($this->maxDetourDuration) ? $this->maxDetourDuration : self::MAX_DETOUR_DURATION);
+        return !is_null($this->maxDetourDuration) ? $this->maxDetourDuration : self::MAX_DETOUR_DURATION;
     }
 
     public function setMaxDetourDuration(?int $maxDetourDuration): self
@@ -1818,7 +1831,7 @@ class User implements UserInterface, EquatableInterface
 
     public function getMaxDetourDistance(): ?int
     {
-        return (!is_null($this->maxDetourDistance) ? $this->maxDetourDistance : self::MAX_DETOUR_DISTANCE);
+        return !is_null($this->maxDetourDistance) ? $this->maxDetourDistance : self::MAX_DETOUR_DISTANCE;
     }
 
     public function setMaxDetourDistance(?int $maxDetourDistance): self
@@ -1945,6 +1958,7 @@ class User implements UserInterface, EquatableInterface
     {
         $this->pwdToken = $pwdToken;
         $this->setPwdTokenDate($pwdToken ? new \DateTime() : null);
+
         return $this;
     }
 
@@ -1956,6 +1970,7 @@ class User implements UserInterface, EquatableInterface
     public function setPwdTokenDate(?DateTime $pwdTokenDate): self
     {
         $this->pwdTokenDate = $pwdTokenDate;
+
         return $this;
     }
 
@@ -1967,6 +1982,7 @@ class User implements UserInterface, EquatableInterface
     public function setPhoneToken(?string $phoneToken): self
     {
         $this->phoneToken = $phoneToken;
+
         return $this;
     }
 
@@ -2006,6 +2022,30 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
+    public function isHitchHikeDriver(): ?bool
+    {
+        return $this->hitchHikeDriver;
+    }
+
+    public function setHitchHikeDriver(bool $isHitchHikeDriver): self
+    {
+        $this->hitchHikeDriver = $isHitchHikeDriver;
+
+        return $this;
+    }
+
+    public function isHitchHikePassenger(): ?bool
+    {
+        return $this->hitchHikePassenger;
+    }
+
+    public function setHitchHikePassenger(bool $isHitchHikePassenger): self
+    {
+        $this->hitchHikePassenger = $isHitchHikePassenger;
+
+        return $this;
+    }
+
     public function getAddresses()
     {
         return $this->addresses->getValues();
@@ -2028,6 +2068,34 @@ class User implements UserInterface, EquatableInterface
             // set the owning side to null (unless already changed)
             if ($address->getUser() === $this) {
                 $address->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getIdentityProofs()
+    {
+        return $this->identityProofs->getValues();
+    }
+
+    public function addIdentityProof(IdentityProof $identityProof): self
+    {
+        if (!$this->identityProofs->contains($identityProof)) {
+            $this->identityProofs->add($identityProof);
+            $identityProof->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeIdentityProof(IdentityProof $identityProof): self
+    {
+        if ($this->identityProofs->contains($identityProof)) {
+            $this->identityProofs->removeElement($identityProof);
+            // set the owning side to null (unless already changed)
+            if ($identityProof->getUser() === $this) {
+                $identityProof->setUser(null);
             }
         }
 
@@ -2202,8 +2270,6 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
-
-
     public function getAsksRelated()
     {
         return $this->asksRelated->getValues();
@@ -2375,6 +2441,7 @@ class User implements UserInterface, EquatableInterface
             // 	$userAuthAssignment->setUser(null);
             // }
         }
+
         return $this;
     }
 
@@ -2397,6 +2464,7 @@ class User implements UserInterface, EquatableInterface
             $this->masses->add($mass);
             $mass->setUser($this);
         }
+
         return $this;
     }
 
@@ -2499,7 +2567,7 @@ class User implements UserInterface, EquatableInterface
 
     public function getLogs()
     {
-        return (!is_null($this->logs) ? $this->logs->getValues() : null);
+        return !is_null($this->logs) ? $this->logs->getValues() : null;
     }
 
     public function addLog(Log $log): self
@@ -2527,7 +2595,7 @@ class User implements UserInterface, EquatableInterface
 
     public function getLogsAsDelegate()
     {
-        return (!is_null($this->logsAsDelegate) ? $this->logsAsDelegate->getValues() : null);
+        return !is_null($this->logsAsDelegate) ? $this->logsAsDelegate->getValues() : null;
     }
 
     public function addLogAsDelegate(Log $logAsDelegate): self
@@ -2555,7 +2623,7 @@ class User implements UserInterface, EquatableInterface
 
     public function getLogsAsRelated(): ?array
     {
-        return (!is_null($this->logsAsRelated) ? $this->logsAsRelated->getValues() : null);
+        return !is_null($this->logsAsRelated) ? $this->logsAsRelated->getValues() : null;
     }
 
     public function addLogAsRelated(Log $logAsRelated): self
@@ -2833,6 +2901,7 @@ class User implements UserInterface, EquatableInterface
     public function setEmailToken(?string $emailToken): self
     {
         $this->emailToken = $emailToken;
+
         return $this;
     }
 
@@ -2840,17 +2909,17 @@ class User implements UserInterface, EquatableInterface
     {
         // we return an array of ROLE_***
         foreach ($this->userAuthAssignments as $userAuthAssignment) {
-            if ($userAuthAssignment->getAuthItem()->getType() == AuthItem::TYPE_ROLE) {
+            if (AuthItem::TYPE_ROLE == $userAuthAssignment->getAuthItem()->getType()) {
                 $this->roles[] = $userAuthAssignment->getAuthItem()->getName();
             }
         }
         //Security : if an user has no roles but it shouldn't be possible
-        return $this->roles ? array_unique($this->roles) : array(AuthItem::ROLE_USER_REGISTERED_FULL);
+        return $this->roles ? array_unique($this->roles) : [AuthItem::ROLE_USER_REGISTERED_FULL];
     }
 
     public function getSalt()
     {
-        return  null;
+        return null;
     }
 
     public function getUsername()
@@ -2933,8 +3002,9 @@ class User implements UserInterface, EquatableInterface
             $this->avatars = [];
         }
         if (!in_array($avatar, $this->avatars)) {
-            $this->avatars[]=$avatar;
+            $this->avatars[] = $avatar;
         }
+
         return $this->avatars;
     }
 
@@ -2943,15 +3013,16 @@ class User implements UserInterface, EquatableInterface
         if ($key = array_search($avatar, $this->avatars)) {
             unset($this->avatars[$key]);
         }
+
         return $this->avatars;
     }
 
     public function getAvatar(): ?string
     {
         // By default, return the last avatar
-        $avatar = "";
-        if (is_array($this->getAvatars()) && count($this->getAvatars())>0) {
-            return $this->getAvatars()[count($this->getAvatars())-1];
+        $avatar = '';
+        if (is_array($this->getAvatars()) && count($this->getAvatars()) > 0) {
+            return $this->getAvatars()[count($this->getAvatars()) - 1];
         }
 
         return $avatar;
@@ -2972,6 +3043,7 @@ class User implements UserInterface, EquatableInterface
     public function setFacebookId(?string $facebookId): self
     {
         $this->facebookId = $facebookId;
+
         return $this;
     }
 
@@ -2983,6 +3055,7 @@ class User implements UserInterface, EquatableInterface
     public function setSsoId(?string $ssoId): self
     {
         $this->ssoId = $ssoId;
+
         return $this;
     }
 
@@ -2994,6 +3067,7 @@ class User implements UserInterface, EquatableInterface
     public function setSsoProvider(?string $ssoProvider): self
     {
         $this->ssoProvider = $ssoProvider;
+
         return $this;
     }
 
@@ -3053,6 +3127,7 @@ class User implements UserInterface, EquatableInterface
     public function setUnsubscribeToken(?string $unsubscribeToken): self
     {
         $this->unsubscribeToken = $unsubscribeToken;
+
         return $this;
     }
 
@@ -3088,9 +3163,10 @@ class User implements UserInterface, EquatableInterface
     public function setMobileRegistration(?int $mobileRegistration): self
     {
         $this->mobileRegistration = $mobileRegistration;
-        if ($this->mobileRegistration == self::MOBILE_APP_IOS || $this->mobileRegistration == self::MOBILE_APP_ANDROID) {
+        if (self::MOBILE_APP_IOS == $this->mobileRegistration || self::MOBILE_APP_ANDROID == $this->mobileRegistration) {
             $this->setMobile(true);
         }
+
         return $this;
     }
 
@@ -3158,8 +3234,8 @@ class User implements UserInterface, EquatableInterface
                 $structures[] = $operate->getStructure();
             }
         }
+
         return $structures;
-        ;
     }
 
     public function setSolidaryStructures(?array $solidaryStructures): self
@@ -3190,7 +3266,6 @@ class User implements UserInterface, EquatableInterface
 
         return $this;
     }
-
 
     public function getOperates()
     {
@@ -3312,7 +3387,6 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
-
     public function getUnreadDirectMessageNumber(): ?int
     {
         return $this->unreadDirectMessageNumber;
@@ -3368,6 +3442,7 @@ class User implements UserInterface, EquatableInterface
         if ($this->rewards->contains($reward)) {
             $this->rewards->removeElement($reward);
         }
+
         return $this;
     }
 
@@ -3390,6 +3465,7 @@ class User implements UserInterface, EquatableInterface
         if ($this->rewardSteps->contains($rewardStep)) {
             $this->rewardSteps->removeElement($rewardStep);
         }
+
         return $this;
     }
 
@@ -3409,9 +3485,10 @@ class User implements UserInterface, EquatableInterface
 
     public function getImage(): ?string
     {
-        if (count($this->getImages())>0 && isset($this->getImages()[0]->getVersions()['square_800'])) {
+        if (count($this->getImages()) > 0 && isset($this->getImages()[0]->getVersions()['square_800'])) {
             return $this->getImages()[0]->getVersions()['square_800'];
         }
+
         return null;
     }
 
@@ -3421,10 +3498,12 @@ class User implements UserInterface, EquatableInterface
             foreach ($this->addresses as $address) {
                 if ($address->isHome()) {
                     $this->homeAddress = $address;
+
                     break;
                 }
             }
         }
+
         return $this->homeAddress;
     }
 
@@ -3438,13 +3517,14 @@ class User implements UserInterface, EquatableInterface
     public function getRolesTerritory(): ?array
     {
         foreach ($this->userAuthAssignments as $userAuthAssignment) {
-            if ($userAuthAssignment->getAuthItem()->getType() == AuthItem::TYPE_ROLE) {
+            if (AuthItem::TYPE_ROLE == $userAuthAssignment->getAuthItem()->getType()) {
                 $this->rolesTerritory[] = [
                     'role' => $userAuthAssignment->getAuthItem()->getId(),
-                    'territory' => $userAuthAssignment->getTerritory() ? $userAuthAssignment->getTerritory()->getId() : null
+                    'territory' => $userAuthAssignment->getTerritory() ? $userAuthAssignment->getTerritory()->getId() : null,
                 ];
             }
         }
+
         return $this->rolesTerritory;
     }
 
@@ -3466,7 +3546,6 @@ class User implements UserInterface, EquatableInterface
 
         return $this;
     }
-
 
     public function getBlocks()
     {

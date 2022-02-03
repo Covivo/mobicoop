@@ -32,7 +32,6 @@
           <event-infos
             :event="event"
             :url-alt-avatar="urlAltAvatar"
-            :avatar-version="avatarVersion"
             :title="title"
           />
           <!-- event buttons and map -->
@@ -185,10 +184,6 @@ export default {
     },
     lastUsers: {
       type: Array,
-      default: null
-    },
-    avatarVersion: {
-      type: String,
       default: null
     },
     urlAltAvatar: {

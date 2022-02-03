@@ -24,6 +24,7 @@
 namespace App\Gamification\Rule;
 
 use App\Carpool\Entity\Ask;
+use App\Gamification\Entity\SequenceItem;
 use App\Gamification\Interfaces\GamificationRuleInterface;
 use App\Payment\Entity\CarpoolItem;
 
@@ -35,12 +36,11 @@ class HasAtLeastNCarpooledKm implements GamificationRuleInterface
     /**
      * has at least N carpooled Km rule
      *
-     * @param $requester
      * @param $log
      * @param $sequenceItem
      * @return bool
      */
-    public function execute($requester, $log, $sequenceItem)
+    public function execute($log, $sequenceItem)
     {
         // we check if the user has carpool at least N Km
         $user = $log->getUser();
@@ -60,7 +60,13 @@ class HasAtLeastNCarpooledKm implements GamificationRuleInterface
             }
         }
         // if a proposal he's carpooled and associated to a community we return true
-        if (($carpooledKm / 1000) >= $sequenceItem->getValue()) {
+        if ($sequenceItem instanceof SequenceItem) {
+            if (($carpooledKm / 1000) >= $sequenceItem->getValue()) {
+                return true;
+            }
+            return false;
+        }
+        if (($carpooledKm / 1000) >= $sequenceItem['si_value']) {
             return true;
         }
         return false;

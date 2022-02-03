@@ -5,7 +5,7 @@ monolog:
             action_level:       info
             max_files: 30
             handler:            grouped
-            channels:           ["!carpool", "!carpool_dynamic", "!carpool_proof", "!communication", "!community", "!consumptionFeedback", "!faker", "!geography", "!geomatcher", "!georouter", "!maintenance", "!mass", "!notification", "!solidary"]
+            channels:           ["!carpool", "!carpool_dynamic", "!carpool_proof", "!communication", "!community", "!consumptionFeedback", "!faker", "!gamification", "!geography", "!geomatcher", "!georouter", "!maintenance", "!mass", "!notification", "!solidary"]
         grouped:
             type:               group
             members:            [streamed]
@@ -63,6 +63,12 @@ monolog:
             max_files: 30
             path: "%kernel.logs_dir%/faker.log"
             channels: [faker]
+        gamification:
+            type: rotating_file
+            level: debug
+            max_files: 30
+            path: "%kernel.logs_dir%/gamification.log"
+            channels: [gamification]    
         geography:
             type: rotating_file
             level: debug

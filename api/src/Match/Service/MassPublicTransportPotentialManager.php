@@ -44,7 +44,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 class MassPublicTransportPotentialManager
 {
-    private const TIME_LIMIT = 3 * 60 * 60;
+    private const TIME_LIMIT = 6 * 60 * 60;
     private $massRepository;
     private $pTDataProvider;
     private $entityManager;
@@ -118,6 +118,7 @@ class MassPublicTransportPotentialManager
             // }
 
             $this->logger->info('Mass PT Potential | Get PT potential for person id = '.$person->getId().' '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
+            $this->logger->info('Mass PT Potential | From = '.$person->getPersonalAddress()->getLatitude().':'.$person->getPersonalAddress()->getLongitude().' To : '.$person->getWorkAddress()->getLatitude().':'.$person->getWorkAddress()->getLongitude().' '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
             /**
              * @var MassPerson $person
              */

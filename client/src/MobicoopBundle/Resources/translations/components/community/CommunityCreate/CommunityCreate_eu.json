@@ -28,8 +28,12 @@
         },
         "avatar": {
             "size": "Abatarraren gehienezko izaria pasatu duzu",
+            "mbSize": "You have exceeded the maximum avatar size (Max {size} Mb)",
+            "pxSize": "The image is too small : {width}x{height}px (Min {size}x{size}px)",
             "required": "Komunitatearen abatarra beharrezkoa da",
-            "label": "Komunitatearen abatarra*"
+            "label": "Komunitatearen abatarra*",
+            "minPxSize": "Minimum size {size}x{size}px",
+            "maxMbSize": "maximum weight {size} Mb"
         },
         "fullDescription": {
             "required": "Komunitatearen deskribapen zehatza beharrezkoa da",

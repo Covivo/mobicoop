@@ -18,7 +18,10 @@
     },
     "avatar": {
         "label": "New photo",
-        "size": "The size of your avatar exceeds the maximum limit",
+        "mbSize": "You have exceeded the maximum avatar size (Max {size} Mb)",
+        "pxSize": "The image is too small : {width}x{height}px (Min {size}x{size}px)",
+        "minPxSize": "Minimum size {size}x{size}px",
+        "maxMbSize": "maximum weight {size} Mb",
         "delete": {
             "route": "/user/profile/avatar/delete",
             "label": "Delete the image"

@@ -146,6 +146,7 @@ api_platform:
         - '%kernel.project_dir%/src/DataProvider/Ressource'
         - '%kernel.project_dir%/src/Communication/Ressource'
         - '%kernel.project_dir%/src/RelayPoint/Resource'
+        - '%kernel.project_dir%/src/Stats/Admin/Resource'
         
     formats:
         jsonld:   ['application/ld+json']
