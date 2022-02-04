@@ -156,7 +156,7 @@ class AntiFraudManager
             $user = $this->userManager->getUser($ad->getUserId());
         }
 
-        $proposals = $this->proposalRepository->findByDate($dateTime, $user, true, $this->distanceMinCheck * 1000);
+        $proposals = $this->proposalRepository->findByDate($dateTime, $user, true, $this->distanceMinCheck * 1000, null, [$ad->getProposalId()]);
 
         if (!is_null($proposals) && is_array($proposals) && count($proposals) >= $this->nbCarpoolsMax) {
             $this->sameDayProposals = $proposals;
