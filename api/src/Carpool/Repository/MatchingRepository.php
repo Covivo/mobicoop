@@ -19,22 +19,23 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Carpool\Repository;
 
 use App\Carpool\Entity\Matching;
+use App\Carpool\Entity\Proposal;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
- * @method Matching|null find($id, $lockMode = null, $lockVersion = null)
- * @method Matching|null findOneBy(array $criteria, array $orderBy = null)
+ * @method null|Matching find($id, $lockMode = null, $lockVersion = null)
+ * @method null|Matching findOneBy(array $criteria, array $orderBy = null)
  */
 class MatchingRepository
 {
     private $repository;
     private $entityManager;
-    
+
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->repository = $entityManager->getRepository(Matching::class);
@@ -53,15 +54,14 @@ class MatchingRepository
 
     /**
      * Link related matchings for a Proposal
-     * (link outward and return matchings)
+     * (link outward and return matchings).
      *
-     * @param integer $proposalId   The proposal id
-     * @return void
+     * @param int $proposalId The proposal id
      */
     public function linkRelatedMatchings(int $proposalId)
     {
         $conn = $this->entityManager->getConnection();
-        $sql = "
+        $sql = '
             UPDATE matching AS MRA
             INNER JOIN proposal AS POA ON POA.id = MRA.proposal_offer_id
             INNER JOIN proposal AS PRA ON PRA.id = MRA.proposal_request_id
@@ -73,22 +73,21 @@ class MatchingRepository
                     POR.id = POA.proposal_linked_id AND
                     PRR.id = PRA.proposal_linked_id
             ) 
-            WHERE MRA.matching_linked_id IS NULL AND (MRA.proposal_offer_id = " . $proposalId . " OR MRA.proposal_request_id = " . $proposalId . ")";
+            WHERE MRA.matching_linked_id IS NULL AND (MRA.proposal_offer_id = '.$proposalId.' OR MRA.proposal_request_id = '.$proposalId.')';
         $stmt = $conn->prepare($sql);
         $stmt->execute();
     }
 
     /**
      * Link opposite matchings for a Proposal
-     * (link matchings as driver and passenger)
+     * (link matchings as driver and passenger).
      *
-     * @param integer $proposalId   The proposal id
-     * @return void
+     * @param int $proposalId The proposal id
      */
     public function linkOppositeMatchings(int $proposalId)
     {
         $conn = $this->entityManager->getConnection();
-        $sql = "
+        $sql = '
             UPDATE matching AS MR
             INNER JOIN proposal AS PO ON PO.id = MR.proposal_offer_id
             SET matching_opposite_id = (
@@ -96,8 +95,32 @@ class MatchingRepository
                 INNER JOIN proposal AS PR ON PR.id = MO.proposal_request_id
                 WHERE PO.id = PR.id AND MR.proposal_request_id = MO.proposal_offer_id
             )
-            WHERE MR.matching_opposite_id IS NULL AND (MR.proposal_offer_id = " . $proposalId . ")";
+            WHERE MR.matching_opposite_id IS NULL AND (MR.proposal_offer_id = '.$proposalId.')';
         $stmt = $conn->prepare($sql);
         $stmt->execute();
+    }
+
+    public function getProposalMatchingAsOffersWithBothUsers(Proposal $proposal): ?array
+    {
+        $query = $this->repository->createQueryBuilder('m')
+            ->join('m.proposalOffer', 'p')
+            ->where('m.proposalRequest = :proposal')
+            ->andWhere('p.user is not null')
+            ->setParameter('proposal', $proposal)
+        ;
+
+        return $query->getQuery()->getResult();
+    }
+
+    public function getProposalMatchingAsRequestsWithBothUsers(Proposal $proposal): ?array
+    {
+        $query = $this->repository->createQueryBuilder('m')
+            ->join('m.proposalRequest', 'p')
+            ->where('m.proposalOffer = :proposal')
+            ->andWhere('p.user is not null')
+            ->setParameter('proposal', $proposal)
+        ;
+
+        return $query->getQuery()->getResult();
     }
 }
