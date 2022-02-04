@@ -7,20 +7,21 @@
         }
     },
     "form": {
+        "mandatoryCharacter":"*",
         "name": {
             "label": "Name of the event",
             "required": "The name of the event is required"
         },
         "description": {
-            "label": "Short description of the event*",
+            "label": "Short description of the event",
             "required": "The short description of the event is required"
         },
         "fullDescription": {
-            "label": "Detailed description of the event*",
+            "label": "Detailed description of the event",
             "required": "The detailed description of the event is required"
         },
         "avatar": {
-            "label": "Event image*",
+            "label": "Event image",
             "required": "The event image is required",
             "mbSize": "You have exceeded the maximum avatar size (Max {size} Mb)",
             "pxSize": "The image is too small : {width}x{height}px (Min {size}x{size}px)",
