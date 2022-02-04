@@ -222,9 +222,9 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
     private function replaceDynamicValuesInRewardStep(string $chain): string
     {
         $chain = str_replace('{minCount}', $this->getCurrentRewardStep()->getSequenceItem()->getMinCount(), $chain);
-        $chain = str_replace('{minUniqueCount}', $this->getCurrentRewardStep()->getSequenceItem()->getMinCount(), $chain);
+        $chain = str_replace('{minUniqueCount}', $this->getCurrentRewardStep()->getSequenceItem()->getMinUniqueCount(), $chain);
 
-        return str_replace('{value}', $this->getCurrentRewardStep()->getSequenceItem()->getMinCount(), $chain);
+        return str_replace('{value}', $this->getCurrentRewardStep()->getSequenceItem()->getValue(), $chain);
     }
 
     /**
