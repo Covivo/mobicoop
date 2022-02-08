@@ -210,7 +210,7 @@ export default {
       loadingPublish: false,
       logged: this.user ? true : false,
       dataRegular: this.regular,
-      date: null,
+      date: this.defaultOutwardDate,
       time: null,
       origin: this.defaultOrigin,
       destination: this.defaultDestination,
