@@ -337,38 +337,40 @@ class GeoSearcher
 
             $address->setDisplayLabel($this->geoTools->getDisplayLabel($address, $user));
 
-            // We set the similarity (algorithm method)
-            $address->setSimilarityWithSearch(levenshtein($input, $address->getAddressLocality()));
+            $result[] = $address;
 
-            // Before adding a new address we check if there is a similar already in the array
-            // If so, we take the tinier layer index
-            $addAddress = true;
-            foreach ($result as $address_key => $previous_address) {
-                if (0 == count(array_diff($address->getDisplayLabel(), $previous_address->getDisplayLabel()))) {
-                    if ($address->getLayer() < $previous_address->getLayer()) {
-                        $result[$address_key] = $address;
-                    }
+            // // We set the similarity (algorithm method)
+            // $address->setSimilarityWithSearch(levenshtein($input, $address->getAddressLocality()));
 
-                    $addAddress = false;
+            // // Before adding a new address we check if there is a similar already in the array
+            // // If so, we take the tinier layer index
+            // $addAddress = true;
+            // foreach ($result as $address_key => $previous_address) {
+            //     if (0 == count(array_diff($address->getDisplayLabel(), $previous_address->getDisplayLabel()))) {
+            //         if ($address->getLayer() < $previous_address->getLayer()) {
+            //             $result[$address_key] = $address;
+            //         }
 
-                    break;
-                }
-            }
+            //         $addAddress = false;
 
-            if ($addAddress) {
-                $result[] = $address;
-            }
+            //         break;
+            //     }
+            // }
 
-            usort($result, function ($a, $b) {
-                return $a->getSimilarityWithSearch() > $b->getSimilarityWithSearch();
-            });
+            // if ($addAddress) {
+            //     $result[] = $address;
+            // }
+
+            // usort($result, function ($a, $b) {
+            //     return $a->getSimilarityWithSearch() > $b->getSimilarityWithSearch();
+            // });
         }
 
-        if ($this->distanceOrder) {
-            usort($result, function ($a, $b) {
-                return $a->getDistance() > $b->getDistance();
-            });
-        }
+        // if ($this->distanceOrder) {
+        //     usort($result, function ($a, $b) {
+        //         return $a->getDistance() > $b->getDistance();
+        //     });
+        // }
 
         $result = array_slice($result, 0, $this->defaultSigReturnedResultNumber);
 
