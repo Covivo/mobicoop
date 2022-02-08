@@ -19,25 +19,24 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Carpool\Repository;
 
 use App\Carpool\Entity\Ask;
-use App\Carpool\Entity\Proposal;
-use Doctrine\ORM\EntityManagerInterface;
 use App\Carpool\Entity\Criteria;
-use App\Carpool\Entity\Waypoint;
+use App\Carpool\Entity\Proposal;
 use App\Carpool\Ressource\Ad;
-use App\User\Service\UserManager;
 use App\Community\Entity\Community;
 use App\Geography\Service\GeoTools;
 use App\User\Entity\User;
+use App\User\Service\UserManager;
 use DateTime;
+use Doctrine\ORM\EntityManagerInterface;
 
 /**
- * @method Proposal|null find($id, $lockMode = null, $lockVersion = null)
- * @method Proposal|null findOneBy(array $criteria, array $orderBy = null)
+ * @method null|Proposal find($id, $lockMode = null, $lockVersion = null)
+ * @method null|Proposal findOneBy(array $criteria, array $orderBy = null)
  * @method Proposal[]    findAll()
  * @method Proposal[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
@@ -58,7 +57,7 @@ class ProposalRepository
     private $repository;
     private $userManager;
     private $geoTools;
-    
+
     public function __construct(EntityManagerInterface $entityManager, UserManager $userManager, GeoTools $geoTools, array $params)
     {
         $this->entityManager = $entityManager;
@@ -75,7 +74,7 @@ class ProposalRepository
         $this->use_passenger_proportion = $params['usePassengerProportion'];
         $this->use_distance = $params['useDistance'];
     }
-    
+
     /**
      * Find proposals matching the proposal passed as an argument.
      *
@@ -107,13 +106,13 @@ class ProposalRepository
      *      we should use the original and the resulting proposal and use the best match (the shortest in time)
      * => the driver seats should be reduced by the number of passengers in the new matchingProposal->criteria object
      *
-     * @param Proposal $proposal        The proposal to match
-     * @param bool $excludeProposalUser Exclude the matching proposals made by the proposal user
-     * @param bool $driversOnly         Exclude the matching proposals as passenger (used for import)
-     * @return mixed|\Doctrine\DBAL\Driver\Statement|array|NULL
+     * @param Proposal $proposal            The proposal to match
+     * @param bool     $excludeProposalUser Exclude the matching proposals made by the proposal user
+     * @param bool     $driversOnly         Exclude the matching proposals as passenger (used for import)
+     *
+     * @return null|array|\Doctrine\DBAL\Driver\Statement|mixed
      */
-
-    public function findMatchingProposals(Proposal $proposal, bool $excludeProposalUser=true, bool $driversOnly = false)
+    public function findMatchingProposals(Proposal $proposal, bool $excludeProposalUser = true, bool $driversOnly = false)
     {
         // the "master" proposal is simply called the "proposal"
         // the potential matching proposals are called the "candidates"
@@ -150,28 +149,28 @@ class ProposalRepository
             'a.macroCounty',
             'a.region',
             'a.macroRegion',
-            'a.countryCode'
+            'a.countryCode',
         ];
         if (!$driversOnly) {
             $selection[] = 'dd.duration as ddduration';
             $selection[] = 'dd.distance as dddistance';
         }
-        
+
         $query->select($selection);
-        
+
         //->select(['p','u','p.id as proposalId','SUM(ac.seats) as nbSeats'])
         // we need the criteria (for the dates, number of seats...)
         $query->join('p.criteria', 'c')
         // we will need the user informations
-        ->join('p.user', 'u')
+            ->join('p.user', 'u')
         // we need the directions and the geographical zones
-        ->leftJoin('c.directionPassenger', 'dp')
-        ->leftJoin('p.waypoints', 'w')
-        ->leftJoin('w.address', 'a')
+            ->leftJoin('c.directionPassenger', 'dp')
+            ->leftJoin('p.waypoints', 'w')
+            ->leftJoin('w.address', 'a')
         // we need the matchings and asks to check the available seats
         //->leftJoin('p.matchingOffers', 'm')->leftjoin('m.asks', 'a')->leftJoin('a.criteria', 'ac')->addGroupBy('proposalId')
         //we need the communities
-        ->leftJoin('p.communities', 'co')
+            ->leftJoin('p.communities', 'co')
         ;
 
         if (!$driversOnly) {
@@ -181,7 +180,8 @@ class ProposalRepository
         // do we exclude the user itself if the proposal isn't anonymous ?
         if ($excludeProposalUser && $proposal->getUser()) {
             $query->andWhere('p.user != :userProposal')
-            ->setParameter('userProposal', $proposal->getUser());
+                ->setParameter('userProposal', $proposal->getUser())
+            ;
         }
 
         // exclude private proposals
@@ -210,25 +210,25 @@ class ProposalRepository
 
         // COMMUNITIES
         // here we exclude the proposals that are posted in communities for which the user is not member
-        $filterUserCommunities = "(co.proposalsHidden = 0 OR co.proposalsHidden is null)";
+        $filterUserCommunities = '(co.proposalsHidden = 0 OR co.proposalsHidden is null)';
         // this function returns the id of a Community object
         $fCommunities = function (Community $community) {
             return $community->getId();
         };
         // we use the fCommunities function to create an array of ids of the user's private communities
         $privateCommunities = array_map($fCommunities, $this->userManager->getPrivateCommunities($proposal->getUser()));
-        if (is_array($privateCommunities) && count($privateCommunities)>0) {
+        if (is_array($privateCommunities) && count($privateCommunities) > 0) {
             // we finally implode this array for filtering
-            $filterUserCommunities .= " OR (co.id IN (" . implode(',', $privateCommunities) . "))";
+            $filterUserCommunities .= ' OR (co.id IN ('.implode(',', $privateCommunities).'))';
         }
         $query->andWhere($filterUserCommunities);
 
         // here we filter to the given proposal communities
         if ($proposal->getCommunities()) {
             $communities = array_map($fCommunities, $proposal->getCommunities());
-            if (is_array($communities) && count($communities)>0) {
+            if (is_array($communities) && count($communities) > 0) {
                 // we finally implode this array for filtering
-                $query->andWhere("co.id IN (" . implode(',', $communities) . ")");
+                $query->andWhere('co.id IN ('.implode(',', $communities).')');
             }
         }
 
@@ -244,21 +244,21 @@ class ProposalRepository
                 && !is_null($proposal->getProposalLinked()->getCriteria()->getDirectionDriver())) {
                 $proposal->getCriteria()->setDirectionDriver($proposal->getProposalLinked()->getCriteria()->getDirectionDriver());
             }
-            $zonePassengerWhere = "";
-            
+            $zonePassengerWhere = '';
+
             // bearing => we exclude the proposals if their direction is outside the authorize range (opposite bearing +/- BEARING_RANGE degrees)
             // restriction not applied for solidary proposals without destination
             if ($this->use_bearing) {
-                if ($zonePassengerWhere != "") {
-                    $zonePassengerWhere .= " and ";
+                if ('' != $zonePassengerWhere) {
+                    $zonePassengerWhere .= ' and ';
                 }
                 $range = $this->geoTools->getOppositeBearing($proposal->getCriteria()->getDirectionDriver()->getBearing(), $this->bearing_range);
-                if ($range['min']<=$range['max']) {
+                if ($range['min'] <= $range['max']) {
                     // usual case, eg. 140 to 160
                     $zonePassengerWhere .= '(p.noDestination = 1 or dp.bearing <= :minDriverRange or dp.bearing >= :maxDriverRange)';
                     $query->setParameter('minDriverRange', $range['min']);
                     $query->setParameter('maxDriverRange', $range['max']);
-                } elseif ($range['min']>$range['max']) {
+                } elseif ($range['min'] > $range['max']) {
                     // the range is like between 350 and 10
                     $zonePassengerWhere .= '(p.noDestination = 1 or dp.bearing >= :maxDriverRange and dp.bearing <= :minDriverRange)';
                     $query->setParameter('minDriverRange', $range['min']);
@@ -268,10 +268,10 @@ class ProposalRepository
 
             // bounding box
             if ($this->use_bbox) {
-                if ($zonePassengerWhere != "") {
-                    $zonePassengerWhere .= " and ";
+                if ('' != $zonePassengerWhere) {
+                    $zonePassengerWhere .= ' and ';
                 }
-                $zonePassengerWhere .= '(ST_INTERSECTS(dp.geoJsonBbox,ST_GeomFromText(\'' .
+                $zonePassengerWhere .= '(ST_INTERSECTS(dp.geoJsonBbox,ST_GeomFromText(\''.
                     $this->getGeoPolygon(
                         $this->geoTools->moveGeoLon(
                             $proposal->getCriteria()->getDirectionDriver()->getBboxMinLon(),
@@ -291,54 +291,54 @@ class ProposalRepository
                             $proposal->getCriteria()->getDirectionDriver()->getBboxMaxLat(),
                             $this->getBBoxExtension($proposal->getCriteria()->getDirectionDriver()->getDistance())
                         )
-                    ) . '\'))=1)';
+                    ).'\'))=1)';
             }
 
             // passenger proportion
             // restriction not applied for solidary proposals without destination
             if ($this->use_passenger_proportion) {
-                if ($zonePassengerWhere != "") {
-                    $zonePassengerWhere .= " and ";
+                if ('' != $zonePassengerWhere) {
+                    $zonePassengerWhere .= ' and ';
                 }
-                $zonePassengerWhere .= '(p.noDestination = 1 or dp.distance >= ' . $proposal->getCriteria()->getDirectionDriver()->getDistance()*$this->passenger_proportion . ')';
+                $zonePassengerWhere .= '(p.noDestination = 1 or dp.distance >= '.$proposal->getCriteria()->getDirectionDriver()->getDistance() * $this->passenger_proportion.')';
             }
 
             // distance to passenger
             if ($this->use_distance) {
-                if ($zonePassengerWhere != "") {
-                    $zonePassengerWhere .= " and ";
+                if ('' != $zonePassengerWhere) {
+                    $zonePassengerWhere .= ' and ';
                 }
-                $maxDistance = $proposal->getCriteria()->getFrequency() == Criteria::FREQUENCY_PUNCTUAL ?
+                $maxDistance = Criteria::FREQUENCY_PUNCTUAL == $proposal->getCriteria()->getFrequency() ?
                     ($proposal->getCriteria()->getDirectionDriver()->getDistance() * $this->max_distance_punctual / $this->distance_ratio) :
                     ($proposal->getCriteria()->getDirectionDriver()->getDistance() * $this->max_distance_regular / $this->distance_ratio);
                 $query
-                ->join('p.waypoints', 'w2')
-                ->join('p.waypoints', 'w3')
-                ->join('w2.address', 'a2')
-                ->join('w3.address', 'a3')
-                ->join('\App\Geography\Entity\Direction', 'dirDri')
-                ->andWhere('w2.position = 0 and w3.destination = 1')
-                ->andWhere('dirDri.id = :dirDriId');
-                $zonePassengerWhere .= "ST_Distance(dirDri.geoJsonSimplified,a2.geoJson)<=".$maxDistance." and ST_Distance(dirDri.geoJsonSimplified,a3.geoJson)<=".$maxDistance;
+                    ->join('p.waypoints', 'w2')
+                    ->join('p.waypoints', 'w3')
+                    ->join('w2.address', 'a2')
+                    ->join('w3.address', 'a3')
+                    ->join('\App\Geography\Entity\Direction', 'dirDri')
+                    ->andWhere('w2.position = 0 and w3.destination = 1')
+                    ->andWhere('dirDri.id = :dirDriId')
+                ;
+                $zonePassengerWhere .= 'ST_Distance(dirDri.geoJsonSimplified,a2.geoJson)<='.$maxDistance.' and ST_Distance(dirDri.geoJsonSimplified,a3.geoJson)<='.$maxDistance;
                 $query->setParameter('dirDriId', $proposal->getCriteria()->getDirectionDriver()->getId());
             }
         }
 
         if (!$driversOnly && $proposal->getCriteria()->isPassenger()) {
-
             // bearing => we exclude the proposals if their direction is outside the authorize range (opposite bearing +/- BEARING_RANGE degrees)
             // restriction not applied for solidary proposals without destination
             if ($this->use_bearing && $proposal->getCriteria()->getDirectionPassenger()->getDistance() > 0) {
-                if ($zoneDriverWhere != "") {
-                    $zoneDriverWhere .= " and ";
+                if ('' != $zoneDriverWhere) {
+                    $zoneDriverWhere .= ' and ';
                 }
                 $range = $this->geoTools->getOppositeBearing($proposal->getCriteria()->getDirectionPassenger()->getBearing(), $this->bearing_range);
-                if ($range['min']<=$range['max']) {
+                if ($range['min'] <= $range['max']) {
                     // usual case, eg. 140 to 160
                     $zoneDriverWhere .= '(dd.bearing <= :minPassengerRange or dd.bearing >= :maxPassengerRange)';
                     $query->setParameter('minPassengerRange', $range['min']);
                     $query->setParameter('maxPassengerRange', $range['max']);
-                } elseif ($range['min']>$range['max']) {
+                } elseif ($range['min'] > $range['max']) {
                     // the range is like between 350 and 10
                     $zoneDriverWhere .= '(dd.bearing >= :maxPassengerRange and dd.bearing <= :minPassengerRange)';
                     $query->setParameter('minPassengerRange', $range['min']);
@@ -348,10 +348,10 @@ class ProposalRepository
 
             // bounding box
             if ($this->use_bbox) {
-                if ($zoneDriverWhere != "") {
-                    $zoneDriverWhere .= " and ";
+                if ('' != $zoneDriverWhere) {
+                    $zoneDriverWhere .= ' and ';
                 }
-                $zoneDriverWhere .= '(ST_INTERSECTS(dd.geoJsonBbox,ST_GeomFromText(\'' .
+                $zoneDriverWhere .= '(ST_INTERSECTS(dd.geoJsonBbox,ST_GeomFromText(\''.
                 $this->getGeoPolygon(
                     $this->geoTools->moveGeoLon(
                         $proposal->getCriteria()->getDirectionPassenger()->getBboxMinLon(),
@@ -371,15 +371,15 @@ class ProposalRepository
                         $proposal->getCriteria()->getDirectionPassenger()->getBboxMaxLat(),
                         $this->getBBoxExtension($proposal->getCriteria()->getDirectionPassenger()->getDistance())
                     )
-                ) . '\'))=1)';
+                ).'\'))=1)';
             }
 
             // passenger proportion
             if ($this->use_passenger_proportion && $proposal->getCriteria()->getDirectionPassenger()->getDistance() > 0) {
-                if ($zoneDriverWhere != "") {
-                    $zoneDriverWhere .= " and ";
+                if ('' != $zoneDriverWhere) {
+                    $zoneDriverWhere .= ' and ';
                 }
-                $zoneDriverWhere .= '(dd.distance >= ' . $proposal->getCriteria()->getDirectionPassenger()->getDistance()*(1-$this->passenger_proportion) . ')';
+                $zoneDriverWhere .= '(dd.distance >= '.$proposal->getCriteria()->getDirectionPassenger()->getDistance() * (1 - $this->passenger_proportion).')';
             }
 
             // distance to passenger
@@ -387,14 +387,14 @@ class ProposalRepository
                 $origin = 0;
                 $destination = 0;
                 foreach ($proposal->getWaypoints() as $waypoint) {
-                    if ($waypoint->getPosition() == 0) {
-                        $origin = "Point('" . $waypoint->getAddress()->getLongitude() . "','" . $waypoint->getAddress()->getLatitude() . "')";
-                    } elseif ($waypoint->isDestination() == 1) {
-                        $destination = "Point('" . $waypoint->getAddress()->getLongitude() . "','" . $waypoint->getAddress()->getLatitude() . "')";
+                    if (0 == $waypoint->getPosition()) {
+                        $origin = "Point('".$waypoint->getAddress()->getLongitude()."','".$waypoint->getAddress()->getLatitude()."')";
+                    } elseif (1 == $waypoint->isDestination()) {
+                        $destination = "Point('".$waypoint->getAddress()->getLongitude()."','".$waypoint->getAddress()->getLatitude()."')";
                     }
                 }
-                if ($zoneDriverWhere != "") {
-                    $zoneDriverWhere .= " and ";
+                if ('' != $zoneDriverWhere) {
+                    $zoneDriverWhere .= ' and ';
                 }
                 // $query
                 // ->join('p.waypoints', 'w4')
@@ -402,15 +402,15 @@ class ProposalRepository
                 // ->join('w4.address','a4')
                 // ->join('w5.address','a5')
                 // ->andWhere('w4.position = 0 and w5.destination = 1');
-                $zoneDriverWhere .= "((c.frequency=" . Criteria::FREQUENCY_PUNCTUAL . " and ST_Distance(dd.geoJsonSimplified," . $origin . ")<=(dd.distance*".$this->max_distance_punctual."/".$this->distance_ratio.")) OR ";
-                $zoneDriverWhere .= "(c.frequency=" . Criteria::FREQUENCY_REGULAR . " and ST_Distance(dd.geoJsonSimplified," . $origin . ")<=(dd.distance*".$this->max_distance_regular."/".$this->distance_ratio."))";
-                $zoneDriverWhere .= ") and ";
-                $zoneDriverWhere .= "((c.frequency=" . Criteria::FREQUENCY_PUNCTUAL . " and ST_Distance(dd.geoJsonSimplified," . $destination . ")<=(dd.distance*".$this->max_distance_punctual."/".$this->distance_ratio.")) OR ";
-                $zoneDriverWhere .= "(c.frequency=" . Criteria::FREQUENCY_REGULAR . " and ST_Distance(dd.geoJsonSimplified," . $destination . ")<=(dd.distance*".$this->max_distance_regular."/".$this->distance_ratio."))";
-                $zoneDriverWhere .= ")";
+                $zoneDriverWhere .= '((c.frequency='.Criteria::FREQUENCY_PUNCTUAL.' and ST_Distance(dd.geoJsonSimplified,'.$origin.')<=(dd.distance*'.$this->max_distance_punctual.'/'.$this->distance_ratio.')) OR ';
+                $zoneDriverWhere .= '(c.frequency='.Criteria::FREQUENCY_REGULAR.' and ST_Distance(dd.geoJsonSimplified,'.$origin.')<=(dd.distance*'.$this->max_distance_regular.'/'.$this->distance_ratio.'))';
+                $zoneDriverWhere .= ') and ';
+                $zoneDriverWhere .= '((c.frequency='.Criteria::FREQUENCY_PUNCTUAL.' and ST_Distance(dd.geoJsonSimplified,'.$destination.')<=(dd.distance*'.$this->max_distance_punctual.'/'.$this->distance_ratio.')) OR ';
+                $zoneDriverWhere .= '(c.frequency='.Criteria::FREQUENCY_REGULAR.' and ST_Distance(dd.geoJsonSimplified,'.$destination.')<=(dd.distance*'.$this->max_distance_regular.'/'.$this->distance_ratio.'))';
+                $zoneDriverWhere .= ')';
             }
         }
-        
+
         // SEATS AVAILABLE
         // $seatsDriverWhere = '(1=1)';
         // if ($proposal->getCriteria()->isDriver()) {
@@ -420,20 +420,19 @@ class ProposalRepository
         // we search if the user can be passenger and/or driver
         if (!$driversOnly && $proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
             // $query->andWhere('((c.driver = 1 and ' . $zoneDriverWhere . ' and ' . $seatsDriverWhere . ') OR (c.passenger = 1 and ' . $zonePassengerWhere . '))');
-            $query->andWhere('(c.driver = 1 and ' . $zoneDriverWhere . ') OR (c.passenger = 1 and ' . $zonePassengerWhere . ')');
+            $query->andWhere('(c.driver = 1 and '.$zoneDriverWhere.') OR (c.passenger = 1 and '.$zonePassengerWhere.')');
         } elseif ($proposal->getCriteria()->isDriver()) {
-            $query->andWhere('c.passenger = 1 and ' . $zonePassengerWhere);
+            $query->andWhere('c.passenger = 1 and '.$zonePassengerWhere);
         } elseif ($proposal->getCriteria()->isPassenger()) {
-            $query->andWhere('c.driver = 1 and ' . $zoneDriverWhere);
+            $query->andWhere('c.driver = 1 and '.$zoneDriverWhere);
         }
-        
-        // FREQUENCIES
-        $punctualAndWhere = "";
-        $regularAndWhere = "";
-        switch ($proposal->getCriteria()->getFrequency()) {
-            
-            case Criteria::FREQUENCY_PUNCTUAL:
 
+        // FREQUENCIES
+        $punctualAndWhere = '';
+        $regularAndWhere = '';
+
+        switch ($proposal->getCriteria()->getFrequency()) {
+            case Criteria::FREQUENCY_PUNCTUAL:
                 // DATES AND TIME
 
                 // for a punctual proposal, we search for punctual proposals (and regular candidate proposals if parametered)
@@ -462,9 +461,9 @@ class ProposalRepository
                 // 'where' part of punctual candidates
                 $punctualAndWhere = '(';
                 if ($proposal->getCriteria()->isStrictDate()) {
-                    $punctualAndWhere .= 'c.frequency=' . Criteria::FREQUENCY_PUNCTUAL . ' and c.fromDate = :fromDate';
+                    $punctualAndWhere .= 'c.frequency='.Criteria::FREQUENCY_PUNCTUAL.' and c.fromDate = :fromDate';
                 } else {
-                    $punctualAndWhere .= 'c.frequency=' . Criteria::FREQUENCY_PUNCTUAL . ' and c.fromDate >= :fromDate';
+                    $punctualAndWhere .= 'c.frequency='.Criteria::FREQUENCY_PUNCTUAL.' and c.fromDate >= :fromDate';
                     if (!is_null($proposal->getCriteria()->getToDate())) {
                         $punctualAndWhere .= ' and c.fromDate <= :toDate';
                         $setToDate = true;
@@ -488,12 +487,12 @@ class ProposalRepository
                     }
                 }
                 $punctualAndWhere .= ')';
-                
+
                 // 'where' part of regular candidates
-                $regularAndWhere = "";
+                $regularAndWhere = '';
                 if (!$proposal->getCriteria()->isStrictPunctual()) {
-                    $proposalFromDate = \DateTime::createFromFormat("U", $proposal->getCriteria()->getFromDate()->format('U'));
-                    $regularAndWhere = " (";
+                    $proposalFromDate = \DateTime::createFromFormat('U', $proposal->getCriteria()->getFromDate()->format('U'));
+                    $regularAndWhere = ' (';
 
                     // we search for regular proposal that have :
                     // - their fromDate strictly after the proposal fromDate if the proposal fromDate is non strict (the regular proposal is in the future and it's fine !)
@@ -504,19 +503,19 @@ class ProposalRepository
                     //   OR
                     //   - the day or one of the 7 next days of the proposal fromDate is one carpooled for the regular proposal AND the proposal fromDate is non strict
                     if (!$proposal->getCriteria()->isStrictDate()) {
-                        $regularAndWhere .= "c.fromDate > '".$proposalFromDate->format('Y-m-d'). "' or (";
+                        $regularAndWhere .= "c.fromDate > '".$proposalFromDate->format('Y-m-d')."' or (";
                     }
-                    $regularAndWhere .= "c.fromDate <= '".$proposalFromDate->format('Y-m-d'). "' and ";
-                                        
+                    $regularAndWhere .= "c.fromDate <= '".$proposalFromDate->format('Y-m-d')."' and ";
+
                     // we may loop for a whole week to find a corresponding carpool day
                     // if we search for a strict date, we will loop only once : this particular day
                     $nbLoop = ($proposal->getCriteria()->isStrictDate()) ? 0 : 7;
-                    for ($offset = 0 ; $offset <= $nbLoop ; $offset++) {
+                    for ($offset = 0; $offset <= $nbLoop; ++$offset) {
                         list($where, $minTime, $maxTime) = $this->buildRegularAndWhere(
                             $proposalFromDate,
                             $offset,
-                            $proposal->getCriteria()->isDriver() === true ? true : false,
-                            $proposal->getCriteria()->isPassenger() === true ? true : false,
+                            true === $proposal->getCriteria()->isDriver() ? true : false,
+                            true === $proposal->getCriteria()->isPassenger() ? true : false,
                             $driversOnly,
                             $proposal->getCriteria()->getFromTime() && $proposal->getUseTime()
                         );
@@ -529,9 +528,9 @@ class ProposalRepository
                         }
                     }
                     if (!$proposal->getCriteria()->isStrictDate()) {
-                        $regularAndWhere .= ")";
+                        $regularAndWhere .= ')';
                     }
-                    $regularAndWhere .= ")";
+                    $regularAndWhere .= ')';
                 }
 
                 //var_dump($regularAndWhere);die;
@@ -541,10 +540,10 @@ class ProposalRepository
                 if ($setMaxTime) {
                     $query->setParameter('maxTime', $proposal->getCriteria()->getMaxTime()->format('H:i'));
                 }
-                break;
-        
-            case Criteria::FREQUENCY_REGULAR:
 
+                break;
+
+            case Criteria::FREQUENCY_REGULAR:
                 // DATES AND TIME
 
                 // for a regular proposal, we search for regular proposals (and punctual candidate proposals if parametered)
@@ -565,31 +564,31 @@ class ProposalRepository
 
                 $setToDate = true;
                 $setMonMinTime = $setMonMaxTime = false;    // ---
-                $setTueMinTime = $setTueMaxTime = false;    //
-                $setWedMinTime = $setWedMaxTime = false;    //
+                $setTueMinTime = $setTueMaxTime = false;
+                $setWedMinTime = $setWedMaxTime = false;
                 $setThuMinTime = $setThuMaxTime = false;    // Flags for regular min/max times
-                $setFriMinTime = $setFriMaxTime = false;    //
-                $setSatMinTime = $setSatMaxTime = false;    //
+                $setFriMinTime = $setFriMaxTime = false;
+                $setSatMinTime = $setSatMaxTime = false;
                 $setSunMinTime = $setSunMaxTime = false;    // ---
                 $setMinTime = false;  // ---
-                $setMaxTime = false;  //
-                $setMonTime = false;  //
-                $setTueTime = false;  //
+                $setMaxTime = false;
+                $setMonTime = false;
+                $setTueTime = false;
                 $setWedTime = false;  // Flags for punctual min/max times
-                $setThuTime = false;  //
-                $setFriTime = false;  //
-                $setSatTime = false;  //
+                $setThuTime = false;
+                $setFriTime = false;
+                $setSatTime = false;
                 $setSunTime = false;  // ---
-                $regularSunDay = $regularMonDay = $regularTueDay = $regularWedDay = $regularThuDay = $regularFriDay = $regularSatDay = "";
+                $regularSunDay = $regularMonDay = $regularTueDay = $regularWedDay = $regularThuDay = $regularFriDay = $regularSatDay = '';
 
-                $days = "";         // used to check if a given punctual candidate day is matching
-                $minTime = "(";
-                $maxTime = "(";
-                $regularDay = "";
-                $regularTime = "";
+                $days = '';         // used to check if a given punctual candidate day is matching
+                $minTime = '(';
+                $maxTime = '(';
+                $regularDay = '';
+                $regularTime = '';
                 if ($proposal->getCriteria()->isSunCheck()) {
                     $regularSunDay = 'c.sunCheck = 1';
-                    $days .= "1,"; // used for punctual candidate
+                    $days .= '1,'; // used for punctual candidate
                     if ($proposal->getCriteria()->getSunTime()) {
                         if (!$driversOnly && $proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
                             $regularSunDay .= ' and (
@@ -606,7 +605,7 @@ class ProposalRepository
                             $setSunMaxTime = true;
                         }
                         if (!$proposal->getCriteria()->isStrictRegular()) {
-                            $minTime .= '(DAYOFWEEK(c.fromDate) = 1 and c.maxTime >= :sunMinTime) OR '; //
+                            $minTime .= '(DAYOFWEEK(c.fromDate) = 1 and c.maxTime >= :sunMinTime) OR ';
                             $maxTime .= '(DAYOFWEEK(c.fromDate) = 1 and c.minTime <= :sunMaxTime) OR '; // used for punctual candidate
                             $setSunTime = true;
                         }
@@ -614,7 +613,7 @@ class ProposalRepository
                 }
                 if ($proposal->getCriteria()->isMonCheck()) {
                     $regularMonDay = 'c.monCheck = 1';
-                    $days .= "2,"; // used for punctual candidate
+                    $days .= '2,'; // used for punctual candidate
                     if ($proposal->getCriteria()->getMonTime()) {
                         if (!$driversOnly && $proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
                             $regularMonDay .= ' and (
@@ -631,7 +630,7 @@ class ProposalRepository
                             $setMonMaxTime = true;
                         }
                         if (!$proposal->getCriteria()->isStrictRegular()) {
-                            $minTime .= '(DAYOFWEEK(c.fromDate) = 2 and c.maxTime >= :monMinTime) OR '; //
+                            $minTime .= '(DAYOFWEEK(c.fromDate) = 2 and c.maxTime >= :monMinTime) OR ';
                             $maxTime .= '(DAYOFWEEK(c.fromDate) = 2 and c.minTime <= :monMaxTime) OR '; // used for punctual candidate
                             $setMonTime = true;
                         }
@@ -639,7 +638,7 @@ class ProposalRepository
                 }
                 if ($proposal->getCriteria()->isTueCheck()) {
                     $regularTueDay = 'c.tueCheck = 1';
-                    $days .= "3,"; // used for punctual candidate
+                    $days .= '3,'; // used for punctual candidate
                     if ($proposal->getCriteria()->getTueTime()) {
                         if (!$driversOnly && $proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
                             $regularTueDay .= ' and (
@@ -656,7 +655,7 @@ class ProposalRepository
                             $setTueMaxTime = true;
                         }
                         if (!$proposal->getCriteria()->isStrictRegular()) {
-                            $minTime .= '(DAYOFWEEK(c.fromDate) = 3 and c.maxTime >= :tueMinTime) OR '; //
+                            $minTime .= '(DAYOFWEEK(c.fromDate) = 3 and c.maxTime >= :tueMinTime) OR ';
                             $maxTime .= '(DAYOFWEEK(c.fromDate) = 3 and c.minTime <= :tueMaxTime) OR '; // used for punctual candidate
                             $setTueTime = true;
                         }
@@ -664,7 +663,7 @@ class ProposalRepository
                 }
                 if ($proposal->getCriteria()->isWedCheck()) {
                     $regularWedDay = 'c.wedCheck = 1';
-                    $days .= "4,"; // used for punctual candidate
+                    $days .= '4,'; // used for punctual candidate
                     if ($proposal->getCriteria()->getWedTime()) {
                         if (!$driversOnly && $proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
                             $regularWedDay .= ' and (
@@ -681,7 +680,7 @@ class ProposalRepository
                             $setWedMaxTime = true;
                         }
                         if (!$proposal->getCriteria()->isStrictRegular()) {
-                            $minTime .= '(DAYOFWEEK(c.fromDate) = 4 and c.maxTime >= :wedMinTime) OR '; //
+                            $minTime .= '(DAYOFWEEK(c.fromDate) = 4 and c.maxTime >= :wedMinTime) OR ';
                             $maxTime .= '(DAYOFWEEK(c.fromDate) = 4 and c.minTime <= :wedMaxTime) OR '; // used for punctual candidate
                             $setWedTime = true;
                         }
@@ -689,7 +688,7 @@ class ProposalRepository
                 }
                 if ($proposal->getCriteria()->isThuCheck()) {
                     $regularThuDay = 'c.thuCheck = 1';
-                    $days .= "5,"; // used for punctual candidate
+                    $days .= '5,'; // used for punctual candidate
                     if ($proposal->getCriteria()->getThuTime()) {
                         if (!$driversOnly && $proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
                             $regularThuDay .= ' and (
@@ -706,7 +705,7 @@ class ProposalRepository
                             $setThuMaxTime = true;
                         }
                         if (!$proposal->getCriteria()->isStrictRegular()) {
-                            $minTime .= '(DAYOFWEEK(c.fromDate) = 5 and c.maxTime >= :thuMinTime) OR '; //
+                            $minTime .= '(DAYOFWEEK(c.fromDate) = 5 and c.maxTime >= :thuMinTime) OR ';
                             $maxTime .= '(DAYOFWEEK(c.fromDate) = 5 and c.minTime <= :thuMaxTime) OR '; // used for punctual candidate
                             $setThuTime = true;
                         }
@@ -714,7 +713,7 @@ class ProposalRepository
                 }
                 if ($proposal->getCriteria()->isFriCheck()) {
                     $regularFriDay = 'c.friCheck = 1';
-                    $days .= "6,"; // used for punctual candidate
+                    $days .= '6,'; // used for punctual candidate
                     if ($proposal->getCriteria()->getFriTime()) {
                         if (!$driversOnly && $proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
                             $regularFriDay .= ' and (
@@ -731,7 +730,7 @@ class ProposalRepository
                             $setFriMaxTime = true;
                         }
                         if (!$proposal->getCriteria()->isStrictRegular()) {
-                            $minTime .= '(DAYOFWEEK(c.fromDate) = 6 and c.maxTime >= :friMinTime) OR '; //
+                            $minTime .= '(DAYOFWEEK(c.fromDate) = 6 and c.maxTime >= :friMinTime) OR ';
                             $maxTime .= '(DAYOFWEEK(c.fromDate) = 6 and c.minTime <= :friMaxTime) OR '; // used for punctual candidate
                             $setFriTime = true;
                         }
@@ -739,7 +738,7 @@ class ProposalRepository
                 }
                 if ($proposal->getCriteria()->isSatCheck()) {
                     $regularSatDay = 'c.satCheck = 1';
-                    $days .= "7,"; // used for punctual candidate
+                    $days .= '7,'; // used for punctual candidate
                     if ($proposal->getCriteria()->getSatTime()) {
                         if (!$driversOnly && $proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
                             $regularSatDay .= ' and (
@@ -756,7 +755,7 @@ class ProposalRepository
                             $setSatMaxTime = true;
                         }
                         if (!$proposal->getCriteria()->isStrictRegular()) {
-                            $minTime .= '(DAYOFWEEK(c.fromDate) = 7 and c.maxTime >= :satMinTime) OR '; //
+                            $minTime .= '(DAYOFWEEK(c.fromDate) = 7 and c.maxTime >= :satMinTime) OR ';
                             $maxTime .= '(DAYOFWEEK(c.fromDate) = 7 and c.minTime <= :satMaxTime) OR '; // used for punctual candidate
                             $setSatTime = true;
                         }
@@ -767,41 +766,41 @@ class ProposalRepository
                 $days = substr($days, 0, -1);
 
                 // delete the last OR
-                if ($minTime != "(") {
-                    $minTime = substr($minTime, 0, -4) . ')';
+                if ('(' != $minTime) {
+                    $minTime = substr($minTime, 0, -4).')';
                 } else {
-                    $minTime = "";
+                    $minTime = '';
                 }
-                if ($maxTime != "(") {
-                    $maxTime = substr($maxTime, 0, -4) . ')';
+                if ('(' != $maxTime) {
+                    $maxTime = substr($maxTime, 0, -4).')';
                 } else {
-                    $maxTime = "";
+                    $maxTime = '';
                 }
 
                 // 'where' part of punctual candidates
                 if (!$proposal->getCriteria()->isStrictRegular()) {
                     // if the proposal is not strictly regualr, we include the punctual proposals
                     $punctualAndWhere = '(';
-                    $punctualAndWhere .= 'c.frequency=' . Criteria::FREQUENCY_PUNCTUAL . ' and c.fromDate >= :fromDate and c.fromDate <= :toDate and DAYOFWEEK(c.fromDate) IN (' . $days . ')';
+                    $punctualAndWhere .= 'c.frequency='.Criteria::FREQUENCY_PUNCTUAL.' and c.fromDate >= :fromDate and c.fromDate <= :toDate and DAYOFWEEK(c.fromDate) IN ('.$days.')';
                     if (!$driversOnly && $proposal->getCriteria()->isDriver() && $proposal->getCriteria()->isPassenger()) {
                         $punctualAndWhere .= ' and (
-                            (c.passenger = 1' . ($minTime != "" ? ' and ' . $minTime : '') . ') or 
-                            (c.driver = 1' . ($maxTime != "" ? ' and ' . $maxTime : '') . ')
+                            (c.passenger = 1'.('' != $minTime ? ' and '.$minTime : '').') or 
+                            (c.driver = 1'.('' != $maxTime ? ' and '.$maxTime : '').')
                         )';
                         $setMinTime = true;
                         $setMaxTime = true;
                     } elseif ($proposal->getCriteria()->isDriver()) {
-                        $punctualAndWhere .= ' and c.passenger = 1' . ($minTime != "" ? ' and ' . $minTime : '');
+                        $punctualAndWhere .= ' and c.passenger = 1'.('' != $minTime ? ' and '.$minTime : '');
                         $setMinTime = true;
                     } else {
-                        $punctualAndWhere .= ' and c.driver = 1' . ($maxTime != "" ? ' and ' . $maxTime : '');
+                        $punctualAndWhere .= ' and c.driver = 1'.('' != $maxTime ? ' and '.$maxTime : '');
                         $setMaxTime = true;
                     }
                     $punctualAndWhere .= ')';
                 }
 
                 // 'where' part of regular candidates
-                $regularAndWhere = '(c.frequency=' . Criteria::FREQUENCY_REGULAR . ' and (';
+                $regularAndWhere = '(c.frequency='.Criteria::FREQUENCY_REGULAR.' and (';
 
                 // we have to check that date ranges match (P = proposal; C = candidate)
                 //              min             max
@@ -812,21 +811,21 @@ class ProposalRepository
                 // (4)                       |-----C-----|     OK
                 // (5)  |--C--|                                NOT OK
                 // (6)                              |---C---|  NOT OK
-                
+
                 $regularAndWhere .= '(c.fromDate <= :fromDate and c.fromDate <= :toDate and c.toDate >= :toDate and c.toDate >= :fromDate) OR ';  // (1)
                 $regularAndWhere .= '(c.fromDate >= :fromDate and c.fromDate <= :toDate and c.toDate <= :toDate and c.toDate >= :fromDate) OR ';  // (2)
                 $regularAndWhere .= '(c.fromDate <= :fromDate and c.fromDate <= :toDate and c.toDate <= :toDate and c.toDate >= :fromDate) OR ';  // (3)
                 $regularAndWhere .= '(c.fromDate >= :fromDate and c.fromDate <= :toDate and c.toDate >= :toDate and c.toDate >= :fromDate)';      // (4)
-                $regularAndWhere .= ") and (" .
-                (($regularSunDay<>"") ? '(' . $regularSunDay . ') OR ' : '') .
-                (($regularMonDay<>"") ? '(' . $regularMonDay . ') OR ' : '') .
-                (($regularTueDay<>"") ? '(' . $regularTueDay . ') OR ' : '') .
-                (($regularWedDay<>"") ? '(' . $regularWedDay . ') OR ' : '') .
-                (($regularThuDay<>"") ? '(' . $regularThuDay . ') OR ' : '') .
-                (($regularFriDay<>"") ? '(' . $regularFriDay . ') OR ' : '') .
-                (($regularSatDay<>"") ? '(' . $regularSatDay . ') OR ' : '');
+                $regularAndWhere .= ') and ('.
+                (('' != $regularSunDay) ? '('.$regularSunDay.') OR ' : '').
+                (('' != $regularMonDay) ? '('.$regularMonDay.') OR ' : '').
+                (('' != $regularTueDay) ? '('.$regularTueDay.') OR ' : '').
+                (('' != $regularWedDay) ? '('.$regularWedDay.') OR ' : '').
+                (('' != $regularThuDay) ? '('.$regularThuDay.') OR ' : '').
+                (('' != $regularFriDay) ? '('.$regularFriDay.') OR ' : '').
+                (('' != $regularSatDay) ? '('.$regularSatDay.') OR ' : '');
                 // delete the last OR
-                $regularAndWhere = substr($regularAndWhere, 0, -4) . '))';
+                $regularAndWhere = substr($regularAndWhere, 0, -4).'))';
 
                 if ($setMonMinTime || ($setMinTime && $setMonTime)) {
                     $query->setParameter('monMinTime', $proposal->getCriteria()->getMonMinTime()->format('H:i'));
@@ -870,15 +869,15 @@ class ProposalRepository
                 if ($setSunMaxTime || ($setMaxTime && $setSunTime)) {
                     $query->setParameter('sunMaxTime', $proposal->getCriteria()->getSunMaxTime()->format('H:i'));
                 }
+
                 break;
-        
         }
 
-        if ($punctualAndWhere != "" && $regularAndWhere != '') {
-            $query->andWhere('(' . $punctualAndWhere . ' or ' .$regularAndWhere . ')');
-        } elseif ($punctualAndWhere != "") {
+        if ('' != $punctualAndWhere && '' != $regularAndWhere) {
+            $query->andWhere('('.$punctualAndWhere.' or '.$regularAndWhere.')');
+        } elseif ('' != $punctualAndWhere) {
             $query->andWhere($punctualAndWhere);
-        } elseif ($regularAndWhere != "") {
+        } elseif ('' != $regularAndWhere) {
             $query->andWhere($regularAndWhere);
         }
         $query->setParameter('fromDate', $proposal->getCriteria()->getFromDate()->format('Y-m-d'));
@@ -898,104 +897,6 @@ class ProposalRepository
         return $query->getQuery()->getResult();
     }
 
-    /**
-     * Build the regular where part for a punctual proposal
-     *
-     * @param \DateTime $fromDate   The date of the journey
-     * @param integer $offset       The day offset
-     * @param boolean $driver       If the proposal is for a driver
-     * @param boolean $passenger    If the proposal is for a passenger
-     * @param boolean $driversOnly  If we search only drivers
-     * @param boolean $useTime      If we use the time
-     * @return array
-     */
-    private function buildRegularAndWhere(
-        \DateTime $fromDate,
-        int $offset,
-        bool $driver,
-        bool $passenger,
-        bool $driversOnly,
-        bool $useTime
-    ): array {
-        $regularAndWhere = "";
-        
-        $day = clone $fromDate;
-        $day->modify("+".$offset." day");
-        $dayLitteral = strtolower($day->format('D'));
-
-        if ($offset > 0) {
-            $regularAndWhere = ' or ';
-        }
-
-        $regularAndWhere .= '(c.'.$dayLitteral.'Check = 1';
-        $setMinTime = $setMaxTime = false;
-        if (!$driversOnly && $driver && $passenger) {
-            if ($useTime) {
-                $regularAndWhere .= ' and (
-                    (c.passenger = 1' .(($offset==0) ? ' and c.'.$dayLitteral.'MaxTime >= :minTime' : '').') or 
-                    (c.driver = 1' .(($offset==0) ? ' and c.'.$dayLitteral.'MinTime <= :maxTime' : '').')
-                )';
-                $setMinTime = true;
-                $setMaxTime = true;
-            }
-        } elseif ($driver) {
-            if ($useTime) {
-                $regularAndWhere .= ' and (c.passenger = 1' .(($offset==0) ? ' and c.'.$dayLitteral.'MaxTime >= :minTime' : '').')';
-                $setMinTime = true;
-            }
-        } else {
-            if ($useTime) {
-                $regularAndWhere .= ' and (c.driver = 1' .(($offset==0) ? ' and c.'.$dayLitteral.'MinTime <= :maxTime' : '').')';
-                $setMaxTime = true;
-            }
-        }
-
-        $regularAndWhere .= ' and (c.frequency=' . Criteria::FREQUENCY_REGULAR . ' and ';
-        //$regularAndWhere .= "c.fromDate <= '".$day->format('Y-m-d')."' and ";
-        $regularAndWhere .= "c.toDate >= '".$day->format('Y-m-d'). "'))";
-
-        return [
-            $regularAndWhere,
-            $setMinTime,
-            $setMaxTime
-        ];
-    }
-
-    /**
-     * Return the geoJson string representation of a bounding box polygon
-     *
-     * @param float $minLon
-     * @param float $minLat
-     * @param float $maxLon
-     * @param float $maxLat
-     * @return void
-     */
-    private function getGeoPolygon(float $minLon, float $minLat, float $maxLon, float $maxLat)
-    {
-        return 'POLYGON((' . $minLon . ' ' . $minLat . ',' . $minLon . ' ' . $maxLat . ',' . $maxLon . ' ' . $maxLat . ',' . $maxLon . ' ' . $minLat . ',' . $minLon . ' ' . $minLat . '))';
-    }
-
-    /**
-     * Get the extension length of the bounding box from the original distance of the direction.
-     *
-     * @param int $distance The distance in metres
-     * @return int          The extension in metres
-     */
-    private function getBBoxExtension(int $distance)
-    {
-        if ($distance<20000) {
-            return 3000;
-        } elseif ($distance<30000) {
-            return 5000;
-        } elseif ($distance<50000) {
-            return 8000;
-        } elseif ($distance<100000) {
-            return 10000;
-        } else {
-            return 20000;
-        }
-    }
-
     public function find(int $id): ?Proposal
     {
         return $this->repository->find($id);
@@ -1013,65 +914,70 @@ class ProposalRepository
 
     /**
      * Find proposals linked to imported users
-     * We exclude proposals with wrong directions (can happen when importing data, when we can't sanitize the input data such as bad geographical coordinates)
+     * We exclude proposals with wrong directions (can happen when importing data, when we can't sanitize the input data such as bad geographical coordinates).
      *
-     * @param integer $status
      * @return array
      */
     public function findImportedProposals(int $status)
     {
         $query = $this->repository->createQueryBuilder('p')
-        ->select('p.id')
-        ->join('p.criteria', 'c')
-        ->join('c.directionDriver', 'd')
-        ->join('p.user', 'u')
-        ->join('u.import', 'i')
-        ->where('i.status = :status and d.distance>0')
-        ->andwhere('((c.frequency = 1 and c.fromDate >= :limitDate) or (c.frequency = 2 and c.toDate >= :limitDate and c.monCheck = 1 or c.tueCheck = 1 or c.wedCheck = 1 or c.thuCheck = 1 or c.friCheck = 1 or c.satCheck = 1 or c.sunCheck = 1)) and (p.private is null or p.private = 0)')
-        ->setParameter('limitDate', (new \DateTime())->format('Y-m-d'))
-        ->setParameter('status', $status);
+            ->select('p.id')
+            ->join('p.criteria', 'c')
+            ->join('c.directionDriver', 'd')
+            ->join('p.user', 'u')
+            ->join('u.import', 'i')
+            ->where('i.status = :status and d.distance>0')
+            ->andwhere('((c.frequency = 1 and c.fromDate >= :limitDate) or (c.frequency = 2 and c.toDate >= :limitDate and c.monCheck = 1 or c.tueCheck = 1 or c.wedCheck = 1 or c.thuCheck = 1 or c.friCheck = 1 or c.satCheck = 1 or c.sunCheck = 1)) and (p.private is null or p.private = 0)')
+            ->setParameter('limitDate', (new \DateTime())->format('Y-m-d'))
+            ->setParameter('status', $status)
+        ;
+
         return $query->getQuery()->getResult();
     }
 
     /**
      * Find all valid proposals ids
-     * We exclude proposals with wrong directions (can happen when importing data, when we can't sanitize the input data such as bad geographical coordinates)
+     * We exclude proposals with wrong directions (can happen when importing data, when we can't sanitize the input data such as bad geographical coordinates).
      *
-     * @param integer $status
+     * @param int $status
+     *
      * @return array
      */
     public function findAllValidWithoutMatchingsProposalIds()
     {
         $query = $this->repository->createQueryBuilder('p')
-        ->select('p.id')
-        ->join('p.criteria', 'c')
-        ->join('c.directionDriver', 'd')
-        ->join('p.user', 'u')
-        ->leftJoin('p.matchingRequests', 'mr')
-        ->leftJoin('p.matchingOffers', 'mo')
-        ->where('d.distance>0 and mr.id is null and mo.id is null')
-        ->andwhere('(c.frequency = 1 or (c.monCheck = 1 or c.tueCheck = 1 or c.wedCheck = 1 or c.thuCheck = 1 or c.friCheck = 1 or c.satCheck = 1 or c.sunCheck = 1)) and (p.private is null or p.private = 0)');
+            ->select('p.id')
+            ->join('p.criteria', 'c')
+            ->join('c.directionDriver', 'd')
+            ->join('p.user', 'u')
+            ->leftJoin('p.matchingRequests', 'mr')
+            ->leftJoin('p.matchingOffers', 'mo')
+            ->where('d.distance>0 and mr.id is null and mo.id is null')
+            ->andwhere('(c.frequency = 1 or (c.monCheck = 1 or c.tueCheck = 1 or c.wedCheck = 1 or c.thuCheck = 1 or c.friCheck = 1 or c.satCheck = 1 or c.sunCheck = 1)) and (p.private is null or p.private = 0)')
+        ;
+
         return $query->getQuery()->getResult();
     }
 
     /**
      * Find all proposals for a given user :
      * - the published ads
-     * - the unpublished ads with accepted asks
+     * - the unpublished ads with accepted asks.
      *
-     * @param User $user    The user
-     * @return array|null   The proposals found
+     * @param User $user The user
+     *
+     * @return null|array The proposals found
      */
     public function findAllForUser(User $user)
     {
         // first we search the published outward proposals (returns will be included later)
         $query = $this->repository->createQueryBuilder('p')
-        ->join('p.user', 'u')
-        ->join('p.criteria', 'c')
-        ->where('p.user = :user and p.private <> 1 and p.type <> :return')
-        ->orderBy('c.fromDate', 'ASC')
-        ->setParameter('user', $user)
-        ->setParameter('return', Proposal::TYPE_RETURN)
+            ->join('p.user', 'u')
+            ->join('p.criteria', 'c')
+            ->where('p.user = :user and p.private <> 1 and p.type <> :return')
+            ->orderBy('c.fromDate', 'ASC')
+            ->setParameter('user', $user)
+            ->setParameter('return', Proposal::TYPE_RETURN)
         ;
         $proposals = $query->getQuery()->getResult();
 
@@ -1084,6 +990,7 @@ class ProposalRepository
             foreach ($proposals as $proposal) {
                 if ($proposal->getId() == $acceptedProposal->getId()) {
                     $found = true;
+
                     break;
                 }
             }
@@ -1096,34 +1003,35 @@ class ProposalRepository
     }
 
     /**
-     * Find accepted proposals for a given user
+     * Find accepted proposals for a given user.
      *
-     * @param User $user    The user
-     * @return array|null   The proposals found
+     * @param User $user The user
+     *
+     * @return null|array The proposals found
      */
     public function findAcceptedProposals(User $user)
     {
         // first we search the accepted proposals as driver
         $query = $this->repository->createQueryBuilder('p')
-        ->join('p.user', 'u')
-        ->join('p.matchingRequests', 'mr')
-        ->join('mr.asks', 'a')
-        ->where('p.user = :user and (a.status = :acceptedAsDriver or a.status = :acceptedAsPassenger)')
-        ->setParameter('user', $user)
-        ->setParameter('acceptedAsDriver', Ask::STATUS_ACCEPTED_AS_DRIVER)
-        ->setParameter('acceptedAsPassenger', Ask::STATUS_ACCEPTED_AS_PASSENGER)
+            ->join('p.user', 'u')
+            ->join('p.matchingRequests', 'mr')
+            ->join('mr.asks', 'a')
+            ->where('p.user = :user and (a.status = :acceptedAsDriver or a.status = :acceptedAsPassenger)')
+            ->setParameter('user', $user)
+            ->setParameter('acceptedAsDriver', Ask::STATUS_ACCEPTED_AS_DRIVER)
+            ->setParameter('acceptedAsPassenger', Ask::STATUS_ACCEPTED_AS_PASSENGER)
         ;
         $proposalsDriver = $query->getQuery()->getResult();
 
         // then we search the accepted proposals as passenger
         $query = $this->repository->createQueryBuilder('p')
-        ->join('p.user', 'u')
-        ->join('p.matchingOffers', 'mo')
-        ->join('mo.asks', 'a')
-        ->where('p.user = :user and (a.status = :acceptedAsDriver or a.status = :acceptedAsPassenger)')
-        ->setParameter('user', $user)
-        ->setParameter('acceptedAsDriver', Ask::STATUS_ACCEPTED_AS_DRIVER)
-        ->setParameter('acceptedAsPassenger', Ask::STATUS_ACCEPTED_AS_PASSENGER)
+            ->join('p.user', 'u')
+            ->join('p.matchingOffers', 'mo')
+            ->join('mo.asks', 'a')
+            ->where('p.user = :user and (a.status = :acceptedAsDriver or a.status = :acceptedAsPassenger)')
+            ->setParameter('user', $user)
+            ->setParameter('acceptedAsDriver', Ask::STATUS_ACCEPTED_AS_DRIVER)
+            ->setParameter('acceptedAsPassenger', Ask::STATUS_ACCEPTED_AS_PASSENGER)
         ;
         $proposalsPassenger = $query->getQuery()->getResult();
 
@@ -1132,11 +1040,12 @@ class ProposalRepository
         // we start with the proposals as driver
         foreach ($proposalsDriver as $proposalDriver) {
             // we have to check for an existing outward for a return proposal => we keep only outward
-            if ($proposalDriver->getType() == Proposal::TYPE_RETURN) {
+            if (Proposal::TYPE_RETURN == $proposalDriver->getType()) {
                 $foundOutward = false;
                 foreach ($proposalsDriver as $proposal) {
                     if ($proposal->getId() == $proposalDriver->getProposalLinked()->getId()) {
                         $foundOutward = true;
+
                         break;
                     }
                 }
@@ -1146,6 +1055,7 @@ class ProposalRepository
                     foreach ($proposals as $proposal) {
                         if ($proposal->getId() == $proposalDriver->getId()) {
                             $found = true;
+
                             break;
                         }
                     }
@@ -1159,6 +1069,7 @@ class ProposalRepository
                 foreach ($proposals as $proposal) {
                     if ($proposal->getId() == $proposalDriver->getId()) {
                         $found = true;
+
                         break;
                     }
                 }
@@ -1170,11 +1081,12 @@ class ProposalRepository
         // we merge the proposals as passenger
         foreach ($proposalsPassenger as $proposalPassenger) {
             // we have to check for an existing outward for a return proposal => we keep only outward
-            if ($proposalPassenger->getType() == Proposal::TYPE_RETURN) {
+            if (Proposal::TYPE_RETURN == $proposalPassenger->getType()) {
                 $foundOutward = false;
                 foreach ($proposalsPassenger as $proposal) {
                     if ($proposal->getId() == $proposalPassenger->getProposalLinked()->getId()) {
                         $foundOutward = true;
+
                         break;
                     }
                 }
@@ -1184,6 +1096,7 @@ class ProposalRepository
                     foreach ($proposals as $proposal) {
                         if ($proposal->getId() == $proposalPassenger->getId()) {
                             $found = true;
+
                             break;
                         }
                     }
@@ -1197,6 +1110,7 @@ class ProposalRepository
                 foreach ($proposals as $proposal) {
                     if ($proposal->getId() == $proposalPassenger->getId()) {
                         $found = true;
+
                         break;
                     }
                 }
@@ -1210,52 +1124,60 @@ class ProposalRepository
     }
 
     /**
-     * Get the proposals (not private only) valid for a specific date (optional : a specific user)
+     * Get the proposals (not private only) valid for a specific date (optional : a specific user).
      *
-     * @param \Datetime $date                   The date we want the Proposal valid for
-     * @param User $user                        Optional : A specific User
-     * @param bool $onlyOneWayOrOutward         Optional : Return only oneway and ouward proposals
-     * @param int $minDistanceDriver            Optional : Return only if driver's direction distance is > $minDistanceDriver (in meters)
-     * @param int $minDistancePassenger         Optional : Return only if passenger's direction distance is > $minDistancePassenger (in meters)
+     * @param \Datetime $date                 The date we want the Proposal valid for
+     * @param User      $user                 Optional : A specific User
+     * @param bool      $onlyOneWayOrOutward  Optional : Return only oneway and ouward proposals
+     * @param int       $minDistanceDriver    Optional : Return only if driver's direction distance is > $minDistanceDriver (in meters)
+     * @param int       $minDistancePassenger Optional : Return only if passenger's direction distance is > $minDistancePassenger (in meters)
+     * @param array     $excludedProposalIds  Optional : Array if proposal id we want to exclude
+     *
      * @return Proposal[]
      */
-    public function findByDate(\Datetime $date, User $user=null, bool $onlyOneWayOrOutward = false, int $minDistanceDriver = null, int $minDistancePassenger = null): array
+    public function findByDate(\Datetime $date, User $user = null, bool $onlyOneWayOrOutward = false, int $minDistanceDriver = null, int $minDistancePassenger = null, array $excludedProposalIds = []): array
     {
         $query = $this->repository->createQueryBuilder('p')
-        ->join('p.criteria', 'c')
-        ->where('(c.frequency = :punctualFrequency and c.fromDate = :date) or 
-                    (c.frequency = :regularFrequency and c.fromDate <= :date and c.toDate >= :date and c.'.strtolower($date->format("D")).'Check=1) ')
-        ->andWhere('p.private = 0')
-        ->andWhere('p.paused = 0')
-        ->setParameter('punctualFrequency', Criteria::FREQUENCY_PUNCTUAL)
-        ->setParameter('regularFrequency', Criteria::FREQUENCY_REGULAR)
-        ->setParameter('date', $date->format('Ymd'))
+            ->join('p.criteria', 'c')
+            ->where('(c.frequency = :punctualFrequency and c.fromDate = :date) or 
+                    (c.frequency = :regularFrequency and c.fromDate <= :date and c.toDate >= :date and c.'.strtolower($date->format('D')).'Check=1) ')
+            ->andWhere('p.private = 0')
+            ->andWhere('p.paused = 0')
+            ->setParameter('punctualFrequency', Criteria::FREQUENCY_PUNCTUAL)
+            ->setParameter('regularFrequency', Criteria::FREQUENCY_REGULAR)
+            ->setParameter('date', $date->format('Ymd'))
         ;
 
         if (!is_null($onlyOneWayOrOutward)) {
             $query->andWhere('p.type = :typeOneWay or p.type = :typeOutward')
-            ->setParameter('typeOneWay', Proposal::TYPE_ONE_WAY)
-            ->setParameter('typeOutward', Proposal::TYPE_OUTWARD)
+                ->setParameter('typeOneWay', Proposal::TYPE_ONE_WAY)
+                ->setParameter('typeOutward', Proposal::TYPE_OUTWARD)
             ;
         }
 
         if (!is_null($user)) {
-            $query->andWhere("p.user = :user")
-            ->setParameter('user', $user)
+            $query->andWhere('p.user = :user')
+                ->setParameter('user', $user)
             ;
         }
 
         if (!is_null($minDistanceDriver)) {
-            $query->join("c.directionDriver", "dv")
-            ->andWhere("dv.distance > :minDistanceDriver")
-            ->setParameter('minDistanceDriver', $minDistanceDriver)
+            $query->join('c.directionDriver', 'dv')
+                ->andWhere('dv.distance > :minDistanceDriver')
+                ->setParameter('minDistanceDriver', $minDistanceDriver)
             ;
         }
 
         if (!is_null($minDistancePassenger)) {
-            $query->join("c.directionPassenger", "dp")
-            ->andWhere("dp.distance > :minDistancePassenger")
-            ->setParameter('minDistancePassenger', $minDistancePassenger)
+            $query->join('c.directionPassenger', 'dp')
+                ->andWhere('dp.distance > :minDistancePassenger')
+                ->setParameter('minDistancePassenger', $minDistancePassenger)
+            ;
+        }
+
+        if (count($excludedProposalIds) > 0) {
+            $query->andWhere('p.id not in (:excludedProposalIds)')
+                ->setParameter('excludedProposalIds', $excludedProposalIds)
             ;
         }
 
@@ -1263,41 +1185,44 @@ class ProposalRepository
     }
 
     /**
-     * get proposals of a user linked to a community
+     * get proposals of a user linked to a community.
      *
-     * @param User $user
-     * @return Proposal[]|null
+     * @return null|Proposal[]
      */
     public function findUserCommunityProposals(User $user)
     {
         $query = $this->repository->createQueryBuilder('p')
-        ->join("p.communities", "co")
-        ->where("p.user = :user")
-        ->setParameter("user", $user);
+            ->join('p.communities', 'co')
+            ->where('p.user = :user')
+            ->setParameter('user', $user)
+        ;
+
         return $query->getQuery()->getResult();
     }
 
     /**
-     * get proposals of a user linked to an event
+     * get proposals of a user linked to an event.
      *
-     * @param User $user
-     * @return Proposal[]|null
+     * @return null|Proposal[]
      */
     public function findUserEventProposals(User $user)
     {
         $query = $this->repository->createQueryBuilder('p')
-        ->where("p.event IS NOT NULL")
-        ->andWhere("p.user = :user")
-        ->setParameter("user", $user);
+            ->where('p.event IS NOT NULL')
+            ->andWhere('p.user = :user')
+            ->setParameter('user', $user)
+        ;
+
         return $query->getQuery()->getResult();
     }
 
     /**
-     * Get the number of active ad for a given user and a given role
+     * Get the number of active ad for a given user and a given role.
      *
-     * @param int $userId    The user id
-     * @param int $role     The role
-     * @return int          The number of ads
+     * @param int $userId The user id
+     * @param int $role   The role
+     *
+     * @return int The number of ads
      */
     public function getNbActiveAdsForUserAndRole(int $userId, int $role): int
     {
@@ -1306,13 +1231,14 @@ class ProposalRepository
             ->leftJoin('p.criteria', 'c')
             ->leftJoin('p.user', 'u')
             ->select('count(c.id) as nb')
-            ->andWhere('u.id = :id and (p.private is null or p.private = 0)');
-        if ($role == Ad::ROLE_DRIVER) {
+            ->andWhere('u.id = :id and (p.private is null or p.private = 0)')
+        ;
+        if (Ad::ROLE_DRIVER == $role) {
             $qb->andWhere('c.driver = 1 and (
                 (c.frequency = 1 and c.fromDate >= :now) or
                 (c.frequency = 2 and c.fromDate <= :now and c.toDate >= :now)
             )');
-        } elseif ($role == Ad::ROLE_PASSENGER) {
+        } elseif (Ad::ROLE_PASSENGER == $role) {
             $qb->andWhere('c.passenger = 1 and (
                 (c.frequency = 1 and c.fromDate >= :now) or
                 (c.frequency = 2 and c.fromDate <= :now and c.toDate >= :now)
@@ -1323,85 +1249,188 @@ class ProposalRepository
             ->getQuery()->getOneOrNullResult();
 
         if (!is_null($result['nb'])) {
-            return (int)$result['nb'];
+            return (int) $result['nb'];
         }
+
         return 0;
     }
 
     /**
-     * Find proposals (only not private and of type 1 or 2) created between startDate and endDate
+     * Find proposals (only not private and of type 1 or 2) created between startDate and endDate.
      *
-     * @param \DateTime $startDate  Range start date
-     * @param \DateTime $endDate    Range end date
-     * @return integer
+     * @param \DateTime $startDate Range start date
+     * @param \DateTime $endDate   Range end date
+     *
+     * @return int
      */
-    public function countProposalsBetweenCreateDate(\DateTime $startDate, \DateTime $endDate) :?int
+    public function countProposalsBetweenCreateDate(DateTime $startDate, DateTime $endDate): ?int
     {
         $query = $this->repository->createQueryBuilder('p')
-        ->select('count(p.id)')
-        ->where("p.createdDate between :startDate and :endDate ")
-        ->andWhere("p.private = 0")
-        ->andWhere("p.type = :typeOneWay or p.type = :typeOutward")
-        ->setParameter("startDate", $startDate)
-        ->setParameter("endDate", $endDate)
-        ->setParameter("typeOneWay", Proposal::TYPE_ONE_WAY)
-        ->setParameter("typeOutward", Proposal::TYPE_OUTWARD);
+            ->select('count(p.id)')
+            ->where('p.createdDate between :startDate and :endDate ')
+            ->andWhere('p.private = 0')
+            ->andWhere('p.type = :typeOneWay or p.type = :typeOutward')
+            ->setParameter('startDate', $startDate)
+            ->setParameter('endDate', $endDate)
+            ->setParameter('typeOneWay', Proposal::TYPE_ONE_WAY)
+            ->setParameter('typeOutward', Proposal::TYPE_OUTWARD)
+        ;
+
         return $query->getQuery()->getSingleScalarResult();
     }
 
     /**
-     * @param Community $community
-     * @return Proposal[]|null
+     * @return null|Proposal[]
      */
     public function findCommunityAds(Community $community): ?array
     {
-        $now = new \DateTime("now");
+        $now = new \DateTime('now');
 
         $query = $this->repository->createQueryBuilder('p')
-        ->join("p.communities", "com")
-        ->join("p.criteria", "c")
-        ->where("com.id = :communityId")
-        ->andWhere("p.private = 0")
-        ->andWhere("p.type = 1 or p.type = 2")
-        ->andWhere("(c.frequency = :punctual AND c.fromDate is not null AND c.fromDate >= :date) OR (c.frequency = :regular AND c.toDate is not null and c.toDate >= :date)")
-        ->setParameter("communityId", $community->getId())
-        ->setParameter('punctual', Criteria::FREQUENCY_PUNCTUAL)
-        ->setParameter('regular', Criteria::FREQUENCY_REGULAR)
-        ->setParameter("date", $now->format("Y-m-d 00:00:00"));
+            ->join('p.communities', 'com')
+            ->join('p.criteria', 'c')
+            ->where('com.id = :communityId')
+            ->andWhere('p.private = 0')
+            ->andWhere('p.type = 1 or p.type = 2')
+            ->andWhere('(c.frequency = :punctual AND c.fromDate is not null AND c.fromDate >= :date) OR (c.frequency = :regular AND c.toDate is not null and c.toDate >= :date)')
+            ->setParameter('communityId', $community->getId())
+            ->setParameter('punctual', Criteria::FREQUENCY_PUNCTUAL)
+            ->setParameter('regular', Criteria::FREQUENCY_REGULAR)
+            ->setParameter('date', $now->format('Y-m-d 00:00:00'))
+        ;
+
         return $query->getQuery()->getResult();
     }
-    
+
     /**
-     * Count the avalaible ads
+     * Count the avalaible ads.
      *
-     * @return integer
+     * @return int
      */
     public function countAvailableAds(): ?int
     {
-        $now = new \DateTime("now");
+        $now = new \DateTime('now');
 
         $query = $this->repository->createQueryBuilder('p')
-        ->join('p.criteria', 'c')
-        ->select('count(p.id)')
-        ->where('p.private = 0 OR p.private IS NULL')
-        ->andWhere("(c.frequency = :punctual AND c.fromDate >= :date) OR (c.frequency = :regular AND c.toDate >= :date)")
-        ->setParameter('punctual', Criteria::FREQUENCY_PUNCTUAL)
-        ->setParameter('regular', Criteria::FREQUENCY_REGULAR)
-        ->setParameter("date", $now->format("Y-m-d 00:00:00"));
+            ->join('p.criteria', 'c')
+            ->select('count(p.id)')
+            ->where('p.private = 0 OR p.private IS NULL')
+            ->andWhere('(c.frequency = :punctual AND c.fromDate >= :date) OR (c.frequency = :regular AND c.toDate >= :date)')
+            ->setParameter('punctual', Criteria::FREQUENCY_PUNCTUAL)
+            ->setParameter('regular', Criteria::FREQUENCY_REGULAR)
+            ->setParameter('date', $now->format('Y-m-d 00:00:00'))
+        ;
 
         return $query->getQuery()->getSingleScalarResult();
     }
 
     /**
-     * @return Proposal[]|null
+     * @return null|Proposal[]
      */
     public function findUserOrphanProposals(User $user): ?array
     {
         $query = $this->repository->createQueryBuilder('p')
-        ->leftJoin('p.waypoints', 'w')
-        ->where('p.user = :user')
-        ->andWhere('w.proposal is null')
-        ->setParameter('user', $user);
+            ->leftJoin('p.waypoints', 'w')
+            ->where('p.user = :user')
+            ->andWhere('w.proposal is null')
+            ->setParameter('user', $user)
+        ;
+
         return $query->getQuery()->getResult();
+    }
+
+    /**
+     * Build the regular where part for a punctual proposal.
+     *
+     * @param \DateTime $fromDate    The date of the journey
+     * @param int       $offset      The day offset
+     * @param bool      $driver      If the proposal is for a driver
+     * @param bool      $passenger   If the proposal is for a passenger
+     * @param bool      $driversOnly If we search only drivers
+     * @param bool      $useTime     If we use the time
+     */
+    private function buildRegularAndWhere(
+        DateTime $fromDate,
+        int $offset,
+        bool $driver,
+        bool $passenger,
+        bool $driversOnly,
+        bool $useTime
+    ): array {
+        $regularAndWhere = '';
+
+        $day = clone $fromDate;
+        $day->modify('+'.$offset.' day');
+        $dayLitteral = strtolower($day->format('D'));
+
+        if ($offset > 0) {
+            $regularAndWhere = ' or ';
+        }
+
+        $regularAndWhere .= '(c.'.$dayLitteral.'Check = 1';
+        $setMinTime = $setMaxTime = false;
+        if (!$driversOnly && $driver && $passenger) {
+            if ($useTime) {
+                $regularAndWhere .= ' and (
+                    (c.passenger = 1'.((0 == $offset) ? ' and c.'.$dayLitteral.'MaxTime >= :minTime' : '').') or 
+                    (c.driver = 1'.((0 == $offset) ? ' and c.'.$dayLitteral.'MinTime <= :maxTime' : '').')
+                )';
+                $setMinTime = true;
+                $setMaxTime = true;
+            }
+        } elseif ($driver) {
+            if ($useTime) {
+                $regularAndWhere .= ' and (c.passenger = 1'.((0 == $offset) ? ' and c.'.$dayLitteral.'MaxTime >= :minTime' : '').')';
+                $setMinTime = true;
+            }
+        } else {
+            if ($useTime) {
+                $regularAndWhere .= ' and (c.driver = 1'.((0 == $offset) ? ' and c.'.$dayLitteral.'MinTime <= :maxTime' : '').')';
+                $setMaxTime = true;
+            }
+        }
+
+        $regularAndWhere .= ' and (c.frequency='.Criteria::FREQUENCY_REGULAR.' and ';
+        //$regularAndWhere .= "c.fromDate <= '".$day->format('Y-m-d')."' and ";
+        $regularAndWhere .= "c.toDate >= '".$day->format('Y-m-d')."'))";
+
+        return [
+            $regularAndWhere,
+            $setMinTime,
+            $setMaxTime,
+        ];
+    }
+
+    /**
+     * Return the geoJson string representation of a bounding box polygon.
+     */
+    private function getGeoPolygon(float $minLon, float $minLat, float $maxLon, float $maxLat)
+    {
+        return 'POLYGON(('.$minLon.' '.$minLat.','.$minLon.' '.$maxLat.','.$maxLon.' '.$maxLat.','.$maxLon.' '.$minLat.','.$minLon.' '.$minLat.'))';
+    }
+
+    /**
+     * Get the extension length of the bounding box from the original distance of the direction.
+     *
+     * @param int $distance The distance in metres
+     *
+     * @return int The extension in metres
+     */
+    private function getBBoxExtension(int $distance)
+    {
+        if ($distance < 20000) {
+            return 3000;
+        }
+        if ($distance < 30000) {
+            return 5000;
+        }
+        if ($distance < 50000) {
+            return 8000;
+        }
+        if ($distance < 100000) {
+            return 10000;
+        }
+
+        return 20000;
     }
 }
