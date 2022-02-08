@@ -52,13 +52,13 @@
                 {{ event.address.addressLocality }}
               </p>
               <p
-                v-if="displayDescription && formatedDescription!==''"
+                v-if="displayDescription && formatedDescription!=='' && formatedDescription!=='null'"
                 class="text-body-1"
                 md="6"
                 v-html="formatedDescription"
               />
               <p
-                v-if="displayDescription && formatedFullDescription!==''"
+                v-if="displayDescription && formatedFullDescription!=='' && formatedFullDescription!=='null'"
                 class="text-body-2"
                 md="6"
                 v-html="formatedFullDescription"

@@ -122,6 +122,11 @@ services:
     # Event
     Mobicoop\Bundle\MobicoopBundle\Event\Controller\:
         resource: '@MobicoopBundle/Event/Controller/*'
+        arguments:
+            $mandatoryDescription: '%env(bool:EVENT_MANDATORY_DESCRIPTION)%'
+            $mandatoryFullDescription: '%env(bool:EVENT_MANDATORY_FULL_DESCRIPTION)%'
+            $mandatoryImage: '%env(bool:EVENT_MANDATORY_IMAGE)%'
+
     Mobicoop\Bundle\MobicoopBundle\Event\Service\:
         resource: '@MobicoopBundle/Event/Service/*'
     Mobicoop\Bundle\MobicoopBundle\Event\Security\:

@@ -49,8 +49,8 @@
             <v-col cols="6">
               <v-text-field
                 v-model="description"
-                :rules="descriptionRules"
-                :label="$t('form.description.label')"
+                :rules="(mandatoryDescription) ? descriptionRules : null"
+                :label="(mandatoryDescription) ? $t('form.description.label')+''+$t('form.mandatoryCharacter') : $t('form.description.label')"
                 counter="512"
               />
             </v-col>
@@ -59,8 +59,8 @@
             <v-col cols="6">
               <v-textarea
                 v-model="fullDescription"
-                :rules="fullDescriptionRules"
-                :label="$t('form.fullDescription.label')"
+                :rules="(mandatoryFullDescription) ? fullDescriptionRules : null"
+                :label="(mandatoryFullDescription) ? $t('form.fullDescription.label')+''+$t('form.mandatoryCharacter') : $t('form.fullDescription.label')"
                 auto-grow
                 clearable
                 outlined
@@ -290,9 +290,9 @@
               <v-file-input
                 ref="avatar"
                 v-model="avatar"
-                :rules="avatarRules"
+                :rules="(mandatoryFullDescription) ? avatarRules : null"
                 accept="image/png, image/jpeg, image/jpg"
-                :label="$t('form.avatar.label')"
+                :label="(mandatoryFullDescription) ? $t('form.avatar.label')+' '+$t('form.mandatoryCharacter') : $t('form.avatar.label')"
                 prepend-icon="mdi-image"
                 :hint="$t('form.avatar.minPxSize', {size: imageMinPxSize})+', '+$t('form.avatar.maxMbSize', {size: imageMaxMbSize})"
                 persistent-hint
@@ -398,7 +398,19 @@ export default {
     imageMaxMbSize: {
       type: Number,
       default: null
-    }
+    },
+    mandatoryDescription: {
+      type: Boolean,
+      default: true
+    },
+    mandatoryFullDescription: {
+      type: Boolean,
+      default: true
+    },
+    mandatoryImage: {
+      type: Boolean,
+      default: true
+    },
   },
   data () {
     return {
@@ -465,6 +477,22 @@ export default {
         ? moment(this.endDate).format(this.$t("fullDate"))
         : "";
     },
+    validFields(){
+      if (!this.name  || !this.eventAddress || !this.startDate || !this.endDate) {
+        return false;
+      }
+      if(this.mandatoryDescription && !this.description){
+        return false;
+      }
+      if(this.mandatoryFullDescription && !this.fullDescription){
+        return false;
+      }
+      if(this.mandatoryImage && !this.avatar){
+        return false;
+      }
+
+      return true;
+    }
   },
   created() {
     moment.locale(this.locale); // DEFINE DATE LANGUAGE
@@ -476,7 +504,7 @@ export default {
     createEvent() {
       this.dialog = false;
       this.loading = true;
-      if (this.name  && this.description && this.fullDescription && this.avatar && this.eventAddress && this.startDate && this.endDate) {
+      if (this.validFields) {
         let newEvent = new FormData();
         newEvent.append("name", this.name);
         newEvent.append("fullDescription", this.fullDescription);

@@ -19,33 +19,33 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Event\Entity;
 
-use App\Carpool\Entity\Proposal;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping as ORM;
-use Doctrine\Common\Collections\ArrayCollection;
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
-use ApiPlatform\Core\Annotation\ApiProperty;
-use ApiPlatform\Core\Annotation\ApiFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Action\Entity\Log;
+use App\App\Entity\App;
+use App\Carpool\Entity\Proposal;
+use App\Event\Controller\ValidateCreateEventController;
+use App\Event\Filter\EventAddressTerritoryFilter;
+use App\Event\Filter\TerritoryFilter;
 use App\Geography\Entity\Address;
 use App\Image\Entity\Image;
 use App\User\Entity\User;
-use App\Event\Controller\ValidateCreateEventController;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
-use App\Event\Filter\TerritoryFilter;
-use App\Event\Filter\EventAddressTerritoryFilter;
-use App\App\Entity\App;
 
 /**
  * An event : a social occasion or activity.
@@ -191,11 +191,12 @@ use App\App\Entity\App;
  */
 class Event
 {
-    const STATUS_PENDING = 0;
-    const STATUS_ACTIVE = 1;
-    const STATUS_INACTIVE = 2;
+    public const STATUS_PENDING = 0;
+    public const STATUS_ACTIVE = 1;
+    public const STATUS_INACTIVE = 2;
+
     /**
-     * @var int The id of this event.
+     * @var int the id of this event
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -206,7 +207,7 @@ class Event
     private $id;
 
     /**
-     * @var string The name of the event.
+     * @var string the name of the event
      *
      * @ORM\Column(type="string", length=255)
      * @Groups({"aRead","aWrite","readEvent","write"})
@@ -221,7 +222,7 @@ class Event
     private $urlKey;
 
     /**
-     * @var int The status of the event (active/inactive).
+     * @var int the status of the event (active/inactive)
      *
      * @ORM\Column(type="smallint")
      * @Groups({"aRead","aWrite","readEvent","write"})
@@ -229,7 +230,7 @@ class Event
     private $status;
 
     /**
-     * @var boolean Private event. Should be filtered when event list is publicly displayed.
+     * @var bool Private event. Should be filtered when event list is publicly displayed.
      *
      * @ORM\Column(type="boolean", options={"default":0})
      * @Groups({"aRead","aWrite","readEvent","write"})
@@ -237,23 +238,23 @@ class Event
     private $private;
 
     /**
-     * @var string The short description of the event.
+     * @var string the short description of the event
      *
-     * @ORM\Column(type="string", length=512)
+     * @ORM\Column(type="string", length=512, nullable=true)
      * @Groups({"aRead","aWrite","readEvent","write"})
      */
     private $description;
 
     /**
-     * @var string The full description of the event.
+     * @var string the full description of the event
      *
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="text", nullable=true)
      * @Groups({"aRead","aWrite","readEvent","write"})
      */
     private $fullDescription;
 
     /**
-     * @var \DateTimeInterface The starting date of the event.
+     * @var \DateTimeInterface the starting date of the event
      *
      * @Assert\NotBlank
      * @ORM\Column(type="datetime")
@@ -262,7 +263,7 @@ class Event
     private $fromDate;
 
     /**
-     * @var \DateTimeInterface The ending date of the event.
+     * @var \DateTimeInterface the ending date of the event
      *
      * @Assert\NotBlank
      * @ORM\Column(type="datetime")
@@ -271,7 +272,7 @@ class Event
     private $toDate;
 
     /**
-     * @var boolean Use the time for the starting and ending date of the event.
+     * @var bool use the time for the starting and ending date of the event
      *
      * @ORM\Column(type="boolean")
      * @Groups({"aRead","aWrite","readEvent","write"})
@@ -279,7 +280,7 @@ class Event
     private $useTime;
 
     /**
-     * @var string The information url for the event.
+     * @var string the information url for the event
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"aRead","aWrite","readEvent","write"})
@@ -287,21 +288,21 @@ class Event
     private $url;
 
     /**
-     * @var \DateTimeInterface Creation date of the event.
+     * @var \DateTimeInterface creation date of the event
      *
      * @ORM\Column(type="datetime")
      */
     private $createdDate;
 
     /**
-     * @var \DateTimeInterface Updated date of the event.
+     * @var \DateTimeInterface updated date of the event
      *
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $updatedDate;
 
     /**
-     * @var User The creator of the event.
+     * @var User the creator of the event
      *
      * @ApiProperty(push=true)
      * @ORM\ManyToOne(targetEntity="App\User\Entity\User")
@@ -312,7 +313,7 @@ class Event
     private $user;
 
     /**
-     * @var App The app creator of the event.
+     * @var App the app creator of the event
      *
      * @ApiProperty(push=true)
      * @ORM\ManyToOne(targetEntity="App\App\Entity\App")
@@ -333,7 +334,7 @@ class Event
     private $proposals;
 
     /**
-     * @var Address The address of the event.
+     * @var Address the address of the event
      *
      * @ApiProperty(push=true)
      * @Assert\NotBlank
@@ -345,7 +346,7 @@ class Event
     private $address;
 
     /**
-     * @var ArrayCollection The images of the event.
+     * @var ArrayCollection the images of the event
      *
      * @ORM\OneToMany(targetEntity="\App\Image\Entity\Image", mappedBy="event", cascade={"persist"})
      * @ORM\OrderBy({"position" = "ASC"})
@@ -356,13 +357,13 @@ class Event
     private $images;
 
     /**
-     * @var string $defaultAvatar Url of the default Avatar for an event
+     * @var string Url of the default Avatar for an event
      * @Groups("readEvent")
      */
     private $defaultAvatar;
 
     /**
-     * @var string The id of this external event.
+     * @var string the id of this external event
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"readEvent","write"})
@@ -370,7 +371,7 @@ class Event
     private $externalId;
 
     /**
-     * @var string The source of the external event.
+     * @var string the source of the external event
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"readEvent","write"})
@@ -378,7 +379,7 @@ class Event
     private $externalSource;
 
     /**
-     * @var string The url of the image of the external event.
+     * @var string the url of the image of the external event
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"readEvent","write"})
@@ -398,25 +399,25 @@ class Event
     private $creatorId;
 
     /**
-     * @var string|null The creator avatar
+     * @var null|string The creator avatar
      * @Groups({"aRead"})
      */
     private $creatorAvatar;
 
     /**
-     * @var string|null The event main image
+     * @var null|string The event main image
      * @Groups("aRead")
      */
     private $image;
 
     /**
-     * @var string|null The event avatar
+     * @var null|string The event avatar
      * @Groups("aRead")
      */
     private $avatar;
 
     /**
-     * @var ArrayCollection The logs linked with the Event.
+     * @var ArrayCollection the logs linked with the Event
      *
      * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="event")
      */
@@ -681,9 +682,10 @@ class Event
     public function getCreator(): string
     {
         if (!$this->getUser()) {
-            return "";
+            return '';
         }
-        return ucfirst(strtolower($this->getUser()->getGivenName())) . " " . $this->getUser()->getShortFamilyName();
+
+        return ucfirst(strtolower($this->getUser()->getGivenName())).' '.$this->getUser()->getShortFamilyName();
     }
 
     public function getCreatorId(): ?int
@@ -694,6 +696,7 @@ class Event
         if (is_null($this->creatorId)) {
             return $this->getUser()->getId();
         }
+
         return $this->creatorId;
     }
 
@@ -710,6 +713,7 @@ class Event
         if (count($this->getUser()->getAvatars()) > 0) {
             return $this->getUser()->getAvatars()[0];
         }
+
         return null;
     }
 
@@ -718,6 +722,7 @@ class Event
         if (count($this->getImages()) > 0 && isset($this->getImages()[0]->getVersions()['square_800'])) {
             return $this->getImages()[0]->getVersions()['square_800'];
         }
+
         return null;
     }
 
@@ -726,6 +731,7 @@ class Event
         if (count($this->getImages()) > 0 && isset($this->getImages()[0]->getVersions()['square_250'])) {
             return $this->getImages()[0]->getVersions()['square_250'];
         }
+
         return null;
     }
 

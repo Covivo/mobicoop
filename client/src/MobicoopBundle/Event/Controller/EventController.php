@@ -18,15 +18,12 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace Mobicoop\Bundle\MobicoopBundle\Event\Controller;
 
-use GuzzleHttp\RequestOptions;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
-use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Criteria;
-use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
 use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\Report;
 use Mobicoop\Bundle\MobicoopBundle\Event\Entity\Event;
 use Mobicoop\Bundle\MobicoopBundle\Event\Service\EventManager;
@@ -48,27 +45,36 @@ class EventController extends AbstractController
 {
     use HydraControllerTrait;
 
-    const DEFAULT_NB_EVENTS_PER_PAGE = 10; // Nb items per page by default
+    public const DEFAULT_NB_EVENTS_PER_PAGE = 10; // Nb items per page by default
 
     private $router;
+    private $mandatoryDescription;
+    private $mandatoryFullDescription;
+    private $mandatoryImage;
 
-    public function __construct(UrlGeneratorInterface $router)
+    public function __construct(UrlGeneratorInterface $router, bool $mandatoryDescription, bool $mandatoryFullDescription, bool $mandatoryImage)
     {
         $this->router = $router;
+        $this->mandatoryDescription = $mandatoryDescription;
+        $this->mandatoryFullDescription = $mandatoryFullDescription;
+        $this->mandatoryImage = $mandatoryImage;
     }
-    
+
     /**
      * Events list controller.
+     *
+     * @param mixed $tabDefault
      */
     public function eventList($tabDefault)
     {
         $tab = 'tab-current';
-        if ($tabDefault == 'evenements-passes') {
+        if ('evenements-passes' == $tabDefault) {
             $tab = 'tab-passed';
         }
+
         return $this->render('@Mobicoop/event/events.html.twig', [
             'defaultItemsPerPage' => self::DEFAULT_NB_EVENTS_PER_PAGE,
-            'tabDefault' => $tab
+            'tabDefault' => $tab,
         ]);
     }
 
@@ -86,7 +92,7 @@ class EventController extends AbstractController
                 $search = (isset($data['searchPassed']) && !is_null($data['searchPassed'])) ? $data['searchPassed'] : [];
             }
 
-            $apiEvents = $eventManager->getEvents($data['coming'], null, "fromDate", "asc", $data['perPage'], $data['page'], $search);
+            $apiEvents = $eventManager->getEvents($data['coming'], null, 'fromDate', 'asc', $data['perPage'], $data['page'], $search);
             $events = $apiEvents->getMember();
             $eventsTotalItems = $apiEvents->getTotalItems();
             $pointsComing = [];
@@ -104,24 +110,24 @@ class EventController extends AbstractController
                 'eventComing' => ($data['coming']) ? $events : null,
                 'eventPassed' => (!$data['coming']) ? $events : null,
                 'points' => $pointsComing,
-                'totalItems' => $eventsTotalItems
+                'totalItems' => $eventsTotalItems,
             ]);
         }
     }
 
     /**
-    * Get last events created.
-    */
+     * Get last events created.
+     */
     public function getLastEventCreated(EventManager $eventManager, Request $request)
     {
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
 
-            $apiEvents = $eventManager->getLastEventsCreated("createdDate", "desc", $data['perPage'], $data['page']);
+            $apiEvents = $eventManager->getLastEventsCreated('createdDate', 'desc', $data['perPage'], $data['page']);
             $events = $apiEvents->getMember();
 
             return new JsonResponse([
-                'eventComing' => ($data['coming']) ? $events : null
+                'eventComing' => ($data['coming']) ? $events : null,
             ]);
         }
     }
@@ -139,38 +145,48 @@ class EventController extends AbstractController
         $this->denyAccessUnlessGranted('create', $event);
         $user = $userManager->getLoggedUser();
 
-        # Redirect to user_login
+        // Redirect to user_login
         if (!$user instanceof User) {
             $user = null;
-            return $this->redirectToRoute("user_login");
+
+            return $this->redirectToRoute('user_login');
         }
 
         if ($request->isMethod('POST')) {
             // Create event and return response code
             if ($event = $eventManager->createEvent($request->request, $event, $user)) {
                 // Post avatar of the event
-                $image = new Image();
-                $image->setEventFile($request->files->get('avatar'));
-                $image->setEventId($event->getId());
-                $image->setName($event->getName());
-                if ($image = $imageManager->createImage($image)) {
-                    return new Response();
+                if ($this->mandatoryImage) {
+                    $image = new Image();
+                    $image->setEventFile($request->files->get('avatar'));
+                    $image->setEventId($event->getId());
+                    $image->setName($event->getName());
+                    if ($image = $imageManager->createImage($image)) {
+                        return new Response();
+                    }
+                    //If an error occur on upload image, the event is already create, so we delete him
+                    $eventManager->deleteEvent($event->getId());
+                    // return error if image post didnt't work
+                    return new Response(json_encode('error.image'));
                 }
-                //If an error occur on upload image, the event is already create, so we delete him
-                $eventManager->deleteEvent($event->getId());
-                // return error if image post didnt't work
-                return new Response(json_encode('error.image'));
+
+                return new Response();
             }
             // return error if event post didn't work
             return new Response(json_encode('error.event.create'));
         }
 
         return $this->render('@Mobicoop/event/createEvent.html.twig', [
+            'mandatoryDescription' => $this->mandatoryDescription,
+            'mandatoryFullDescription' => $this->mandatoryFullDescription,
+            'mandatoryImage' => $this->mandatoryImage,
         ]);
     }
 
     /**
      * Show a event.
+     *
+     * @param mixed $id
      */
     public function eventShow($id, EventManager $eventManager, UserManager $userManager, Request $request)
     {
@@ -181,45 +197,45 @@ class EventController extends AbstractController
         // get event's proposals
         $ads = $eventManager->getAds($id);
         $ways = [];
-        if (count($ads)>0) {
+        if (count($ads) > 0) {
             foreach ($ads as $ad) {
                 $origin = null;
                 $destination = null;
                 $isRegular = null;
                 $date = null;
 
-                if ($ad["frequency"] === Ad::FREQUENCY_REGULAR) {
+                if (Ad::FREQUENCY_REGULAR === $ad['frequency']) {
                     $isRegular = true;
                 } else {
-                    $date = new \DateTime($ad["outwardDate"]);
+                    $date = new \DateTime($ad['outwardDate']);
                     $date = $date->format('Y-m-d');
                 }
                 $currentAd = [
-                    "frequency"=>($ad["frequency"]==Ad::FREQUENCY_PUNCTUAL) ? 'punctual' : 'regular',
-                    "carpoolerFirstName" => $ad["user"]["givenName"],
-                    "carpoolerLastName" => $ad["user"]["shortFamilyName"],
-                    "waypoints"=>[]
+                    'frequency' => (Ad::FREQUENCY_PUNCTUAL == $ad['frequency']) ? 'punctual' : 'regular',
+                    'carpoolerFirstName' => $ad['user']['givenName'],
+                    'carpoolerLastName' => $ad['user']['shortFamilyName'],
+                    'waypoints' => [],
                 ];
-                foreach ($ad["outwardWaypoints"] as $waypoint) {
-                    if ($waypoint['position'] === 0) {
-                        $origin = $waypoint["address"];
+                foreach ($ad['outwardWaypoints'] as $waypoint) {
+                    if (0 === $waypoint['position']) {
+                        $origin = $waypoint['address'];
                     } elseif ($waypoint['destination']) {
-                        $destination = $waypoint["address"];
+                        $destination = $waypoint['address'];
                     }
-                    $currentAd["waypoints"][] = [
-                        "title"=>$waypoint["address"]["addressLocality"],
-                        "destination"=>$waypoint['destination'],
-                        "latLng"=>["lat"=>$waypoint["address"]["latitude"],"lon"=>$waypoint["address"]["longitude"]]
+                    $currentAd['waypoints'][] = [
+                        'title' => $waypoint['address']['addressLocality'],
+                        'destination' => $waypoint['destination'],
+                        'latLng' => ['lat' => $waypoint['address']['latitude'], 'lon' => $waypoint['address']['longitude']],
                     ];
                 }
                 $searchLinkParams = [
-                    "origin" => json_encode($origin),
-                    "destination" => json_encode($destination),
-                    "regular" => $isRegular,
-                    "date" => $date,
-                    "eid" => $event->getId()
+                    'origin' => json_encode($origin),
+                    'destination' => json_encode($destination),
+                    'regular' => $isRegular,
+                    'date' => $date,
+                    'eid' => $event->getId(),
                 ];
-                $currentAd["searchLink"] = $this->router->generate("carpool_search_result_get", $searchLinkParams, UrlGeneratorInterface::ABSOLUTE_URL);
+                $currentAd['searchLink'] = $this->router->generate('carpool_search_result_get', $searchLinkParams, UrlGeneratorInterface::ABSOLUTE_URL);
                 $ways[] = $currentAd;
             }
         }
@@ -237,6 +253,8 @@ class EventController extends AbstractController
 
     /**
      * Show a event widget.
+     *
+     * @param mixed $id
      */
     public function eventWidget($id, EventManager $eventManager, UserManager $userManager, Request $request)
     {
@@ -250,12 +268,14 @@ class EventController extends AbstractController
         return $this->render('@Mobicoop/event/event-widget.html.twig', [
             'event' => $event,
             'user' => $user,
-            'searchRoute' => 'covoiturage/recherche'
+            'searchRoute' => 'covoiturage/recherche',
         ]);
     }
 
     /**
      * Show an event widget page to get the widget.
+     *
+     * @param mixed $id
      */
     public function eventGetWidget($id, EventManager $eventManager, UserManager $userManager, Request $request)
     {
@@ -263,12 +283,14 @@ class EventController extends AbstractController
         $event = $eventManager->getEvent($id);
         //$this->denyAccessUnlessGranted('show', $community);
         return $this->render('@Mobicoop/event/event-get-widget.html.twig', [
-            'event' => $event
+            'event' => $event,
         ]);
     }
 
     /**
      * Report an event.
+     *
+     * @param mixed $id
      */
     public function eventReport($id, EventManager $eventManager, DataProvider $dataProvider, Request $request)
     {
@@ -279,8 +301,8 @@ class EventController extends AbstractController
 
             // Post the Report
             if (
-                isset($data['email']) && isset($data['text']) &&
-                $data['email'] !== '' && $data['text'] !== ''
+                isset($data['email'], $data['text'])
+                && '' !== $data['email'] && '' !== $data['text']
             ) {
                 $dataProvider->setClass(Report::class);
 
@@ -296,6 +318,7 @@ class EventController extends AbstractController
                 }
             }
         }
+
         return new JsonResponse(['success' => $success]);
     }
 }
