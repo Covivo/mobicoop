@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Geography\Command;
 
@@ -34,29 +34,28 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
  */
-
 class LinkAddressTerritoryCommand extends Command
 {
     private $territoryManager;
-    
+
     public function __construct(TerritoryManager $territoryManager)
     {
         $this->territoryManager = $territoryManager;
-        
+
         parent::__construct();
     }
-    
+
     protected function configure()
     {
         $this
-        ->setName('app:geography:link-address-territory')
-        ->setDescription('Link addresses with territories.')
-        ->setHelp('Link addresses with territories.')
+            ->setName('app:geography:link-address-territory')
+            ->setDescription('Link addresses with territories.')
+            ->setHelp('Link addresses with territories.')
         ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        return (int)!$this->territoryManager->linkAddressesWithTerritories();
+        return (int) !$this->territoryManager->linkAddressesWithTerritories();
     }
 }
