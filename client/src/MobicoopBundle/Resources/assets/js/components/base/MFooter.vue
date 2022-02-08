@@ -271,6 +271,7 @@
         :app-name="appName"
         :auto-show="cookiesShowAuto"
         :social-networks-active="socialNetworksActive"
+        :social-cookies="socialCookies"
         @dialogClosed="dialogCookiesClosed"
       />
     </v-container>
@@ -313,7 +314,11 @@ export default {
     socialNetworksActive:{
       type: Boolean,
       default: false
-    }
+    },
+    socialCookies:{
+      type: Array,
+      default: null
+    }  
   },
   data() {
     return {

@@ -226,7 +226,23 @@ export default {
       return this.$store.getters['up/connectionActive'];
     },
     consentSocial(){
-      return this.$store.getters['up/social'];
+      let social = this.$store.getters['up/social'];
+      let socialCookies = this.$store.getters['up/socialCookies'];
+
+      if(social){
+        if(socialCookies.length > 0){
+          if(socialCookies.filter((socialItem) => socialItem == 'Facebook').length > 0){
+            return true;
+          }
+          else{
+            return false;
+          }
+        }
+        
+        return true;
+      }
+
+      return social;
     }
   },
   watch: {

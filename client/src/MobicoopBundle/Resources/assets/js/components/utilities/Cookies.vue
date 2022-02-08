@@ -87,7 +87,7 @@
             </p>
           </v-col>
           <v-col
-            v-if="socialNetworksActive || forceShowSocial"
+            v-if="socialCookies.length == 0 && (socialNetworksActive || forceShowSocial)"
             cols="3"
           >
             <v-checkbox
@@ -97,6 +97,26 @@
               @click="disableProgressBar()"
             />
             <span class="font-italic subtitle-2">{{ $t('checkboxes.social.mandatoryOrNot') }}</span>
+          </v-col>
+          <v-col v-else-if="socialNetworksActive || forceShowSocial">
+            <p class="text-subtitle-1">
+              {{ $t('checkboxes.social.several.title') }}
+            </p>
+            <ul>
+              <li
+                v-for="(socialCookie,i) in socialCookies"
+                :key="i"
+                style="list-style-type: none"
+              >
+                <v-checkbox
+                  v-model="checkboxes.socialCookies"
+                  class="ma-0"
+                  :label="socialCookie"
+                  :value="socialCookie"
+                  @click="disableProgressBar()"
+                />
+              </li>
+            </ul>
           </v-col>
         </v-row>
       </v-card-text>
@@ -159,6 +179,10 @@ export default {
       type: Boolean,
       default: false
     },
+    socialCookies:{
+      type: Array,
+      default: null
+    }
   },
   data(){
     return{
@@ -170,7 +194,8 @@ export default {
         connectionActive:this.connectionActiveCheckDefault,
         connectionActiveDisabled:this.connectionActiveCheckDefault ? true : false,
         stats:this.statsCheckDefault,
-        social:this.socialCheckDefault
+        social:this.socialCheckDefault,
+        socialCookies:[]
       }
     }
   },
@@ -185,10 +210,16 @@ export default {
   watch:{
     show(){
       this.dialog = this.show;
-    }
+    },
+    'checkboxes.socialCookies': function() {
+      (this.checkboxes.socialCookies.length>0) ? this.checkboxes.social = true : this.checkboxes.social = false
+    }    
   },
   mounted(){
     this.getDefault();
+    if(this.socialCookies.length > 0){
+      this.disableProgressBar();
+    }
   },
   methods:{
     updatePrefs(){
@@ -220,7 +251,8 @@ export default {
         this.checkboxes.connectionActive = this.defaultSettings.connectionActive;
         if(!this.autoShow) this.checkboxes.connectionActiveDisabled = true;
         this.checkboxes.stats = this.defaultSettings.stats;
-        this.checkboxes.social = this.defaultSettings.social;
+        this.checkboxes.socialCookies = this.defaultSettings.socialCookies;
+        this.checkboxes.social = (this.checkboxes.socialCookies.length > 0) || this.defaultSettings.social;
         this.store();
         this.disableProgressBar();
       }
@@ -244,11 +276,13 @@ export default {
       let prefs = {
         connectionActive:this.checkboxes.connectionActive,
         stats:this.checkboxes.stats,
+        socialCookies:this.checkboxes.socialCookies,
         social:this.checkboxes.social
       }
       localStorage.setItem('cookies_prefs',JSON.stringify(prefs));
       this.$store.commit('up/updateConnectionActive',prefs.connectionActive);
       this.$store.commit('up/updateSocial',prefs.social);
+      this.$store.commit('up/updateSocialCookies',prefs.socialCookies);
       this.$store.commit('up/updateStats',prefs.stats);
 
       this.close();
