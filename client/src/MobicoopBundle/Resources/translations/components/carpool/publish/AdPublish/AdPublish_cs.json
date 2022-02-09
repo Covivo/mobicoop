@@ -42,8 +42,55 @@
                 "luggage": {
                     "label": "Mám místo pro velká zavazadla",
                     "help": "Zaškrtněte toto políčko, pokud vaše vozidlo může přepravovat velká zavazadla"
+                },
+                "bike": {
+                    "label": "Mohu převážet jízdní kolo",
+                    "help": "Zaškrtněte toto políčko, pokud vaše vozidlo může přepravovat jízdní kolo"
+                },
+                "backSeats": {
+                    "label": "Maximálně 2 osoby vzadu",
+                    "help": "Zaškrtněte toto políčko, pokud zaručujete, že na zadním sedadle nebudou sedět více než 2 cestující"
                 }
+            },
+            "participation": {
+                "price": "Účast v ",
+                "passengers": " na cestujícího"
+            },
+            "message": {
+                "label": "Zanechte v inzerátu zprávu, aby ji všichni viděli"
+            },
+            "summary": "Shrnutí",
+            "map": {
+                "myproposal": "Vaše navrhovaná trasa"
             }
+        },
+        "driverLicense": {
+            "text": "Zveřejněním inzerátu potvrzuji, že mám platný a aktuální řidičský průkaz a pojištění",
+            "link": "(Mapa)",
+            "route": "/cgu"
+        },
+        "buttons": {
+            "next": "Další",
+            "previous": "Předchozí",
+            "publish_ad": "Zveřejnit můj inzerát",
+            "update_ad": "Upravit můj inzerát",
+            "notValid": "Pro vložení inzerátu musíte být přihlášeni a zadat všechny informace o trase"
+        }
+    },
+    "participation": {
+        "high": "Cena vaší cesty, která je velmi vysoká, je vyšší než průměrná daňová sazba (0,30 €/km): vaše šance na kontaktování bude proto velmi nízká a je zakázáno nabízet placené dopravní služby, které nespadají do rámce sdílených výdajů v rámci spolujízdy.",
+        "mid": "Cena vaší cesty je vyšší než průměrná, takže vaše šance na kontaktování se sníží.",
+        "forbidden": "Cena vaší cesty přesahuje maximální hranici stanovenou naší platformou (0,50 €/km). Vaše cesta nemůže být zveřejněna.",
+        "text": "Ceny uvedené z vládních doporučení se týkají soukromých cest soukromými vozidly, nezavazují účastníky, platformu ani IBM. Cílem služby je pouze usnadnit vztahy mezi zaměstnanci. Další informace o <a href='/FAQ'>častých dotazech</a>."
+    },
+    "messageFirstAd": {
+        "signUpDone": "Gratulujeme {givenName} ! Vaše registrace je nyní dokončena",
+        "alert": "Chcete-li být nyní upozorněni na nové inzeráty odpovídající vaší nejčastější cestě, neprodleně zveřejněte svůj první inzerát na pravidelnou cestu, abyste mohli rychle spolujízdu uskutečnit."
+    },
+    "messageSolidaryExclusiveAd": {
+        "message": " Pokud si ponecháte níže uvedenou možnost, bude tento inzerát exkluzivním inzerátem na spolujízdu. Poté bude viditelný pouze pro solidární operátory, kteří vás zkontaktují s žadatelem o solidaritu. Pokud tuto možnost zrušíte, stane se vaše reklama běžnou reklamou viditelnou pro ostatní spolujízdce i solidární provozovatele.",
+        "switch": {
+            "label": "Exkluzivní reklama na spolujízdu"
         }
     }
 }
