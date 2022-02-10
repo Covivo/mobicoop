@@ -55,6 +55,8 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
 
     private $log = false;
 
+    private $currentRewardStep;
+
     public function __construct(
         NormalizerInterface $decorated,
         GamificationNotifier $gamificationNotifier,
@@ -83,6 +85,16 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
         $this->gamificationActive = $gamificationActive;
         $this->logger = $logger;
         $this->request = $request->getCurrentRequest();
+    }
+
+    public function getCurrentRewardStep(): RewardStep
+    {
+        return $this->currentRewardStep;
+    }
+
+    public function setCurrentRewardStep(RewardStep $rewardStep)
+    {
+        $this->currentRewardStep = $rewardStep;
     }
 
     public function supportsNormalization($data, $format = null)
@@ -207,6 +219,14 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
         }
     }
 
+    private function replaceDynamicValuesInRewardStep(string $chain): string
+    {
+        $chain = str_replace('{minCount}', $this->getCurrentRewardStep()->getSequenceItem()->getMinCount(), $chain);
+        $chain = str_replace('{minUniqueCount}', $this->getCurrentRewardStep()->getSequenceItem()->getMinUniqueCount(), $chain);
+
+        return str_replace('{value}', $this->getCurrentRewardStep()->getSequenceItem()->getValue(), $chain);
+    }
+
     /**
      * Format a RewardStep to be notified.
      */
@@ -216,10 +236,12 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
             $this->logger->info('Api Normalize formatRewardStep '.$rewardStep->getId());
         }
 
+        $this->setCurrentRewardStep($rewardStep);
+
         return [
             'type' => 'RewardStep',
             'id' => $rewardStep->getId(),
-            'title' => $rewardStep->getSequenceItem()->getGamificationAction()->getTitle(),
+            'title' => $this->replaceDynamicValuesInRewardStep($rewardStep->getSequenceItem()->getGamificationAction()->getTitle()),
             'notifiedDate' => $rewardStep->getNotifiedDate(),
             'badge' => [
                 'id' => $rewardStep->getSequenceItem()->getBadge()->getId(),
