@@ -524,7 +524,7 @@ class UserManager
         $user->setSmoke($this->smoke);
 
         // Create token to validate inscription
-        $user->setEmailToken($this->createToken($user));
+        $user->setEmailToken($this->createToken($user, true));
 
         // Create token to unscubscribe from the instance news
         $user->setUnsubscribeToken($this->createToken($user));
@@ -1433,7 +1433,7 @@ class UserManager
         if (!is_null($userFound)) {
             if ($data->getTelephone() === $userFound->getTelephone()) {
                 // User found by token match with the given Telephone. We update de validated date, persist, then return the user found
-                $userFound->setPhoneValidatedDate(new \Datetime());
+                $userFound->setPhoneValidatedDate(new \DateTime());
                 $this->entityManager->persist($userFound);
                 $this->entityManager->flush();
 
@@ -1465,7 +1465,7 @@ class UserManager
         $messageUnsubscribe = $this->translator->trans('unsubscribeEmailAlertFront', ['instanceName' => $_ENV['EMAILS_PLATFORM_NAME']]);
 
         $user->setNewsSubscription(0);
-        $user->setUnsubscribeDate(new \Datetime());
+        $user->setUnsubscribeDate(new \DateTime());
 
         $user->setUnsubscribeMessage($messageUnsubscribe);
 
@@ -1539,8 +1539,12 @@ class UserManager
      *
      * @return string The token generated
      */
-    public function createToken(User $user)
+    public function createToken(User $user, bool $isEmailValidation = false)
     {
+        if (true === $isEmailValidation) {
+            return strval(rand(100000, 999999));
+        }
+
         $datetime = new \DateTime();
         $time = $datetime->getTimestamp();
         // note : we replace the '/' by an arbitrary 'a' as the token could be used in a url
