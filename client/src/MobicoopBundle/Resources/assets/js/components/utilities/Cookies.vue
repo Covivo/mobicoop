@@ -87,7 +87,7 @@
             </p>
           </v-col>
           <v-col
-            v-if="socialCookies.length == 0 && (socialNetworksActive || forceShowSocial)"
+            v-if="socialCookies && socialCookies.length == 0 && (socialNetworksActive || forceShowSocial)"
             cols="3"
           >
             <v-checkbox
@@ -212,14 +212,23 @@ export default {
       this.dialog = this.show;
     },
     'checkboxes.socialCookies': function() {
-      (this.checkboxes.socialCookies.length>0) ? this.checkboxes.social = true : this.checkboxes.social = false
+      if(this.socialCookies && this.socialCookies.length > 0){
+        if(this.checkboxes.socialCookies.length>0){
+          this.checkboxes.social = true
+        }
+        else{
+          this.checkboxes.social = false
+        }
+      }
     }    
   },
   mounted(){
     this.getDefault();
-    if(this.socialCookies.length > 0){
+    console.log(this.checkboxes.social);
+    if(this.socialCookies && this.socialCookies.length > 0){
       this.disableProgressBar();
     }
+    console.log(this.checkboxes.social);
   },
   methods:{
     updatePrefs(){
@@ -251,8 +260,10 @@ export default {
         this.checkboxes.connectionActive = this.defaultSettings.connectionActive;
         if(!this.autoShow) this.checkboxes.connectionActiveDisabled = true;
         this.checkboxes.stats = this.defaultSettings.stats;
-        this.checkboxes.socialCookies = this.defaultSettings.socialCookies;
-        this.checkboxes.social = (this.checkboxes.socialCookies.length > 0) || this.defaultSettings.social;
+        this.checkboxes.socialCookies = this.defaultSettings.socialCookies ? this.defaultSettings.socialCookies : [];
+        console.log(this.defaultSettings.social);
+        this.checkboxes.social = (this.checkboxes.socialCookies && this.checkboxes.socialCookies.length > 0) || this.defaultSettings.social;
+        console.log(this.checkboxes.social);
         this.store();
         this.disableProgressBar();
       }
