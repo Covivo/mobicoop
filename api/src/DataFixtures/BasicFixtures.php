@@ -226,7 +226,7 @@ class BasicFixtures extends Fixture implements FixtureGroupInterface
         }
 
         // Link addresses and territories
-        $this->territoryManager->updateAddressesAndDirections();
+        $this->territoryManager->linkNewAddressesWithTerritories();
 
         // // we compute the directions and default values for the generated proposals
         // echo "Creating directions and matchings... ";
