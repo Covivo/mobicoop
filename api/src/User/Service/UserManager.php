@@ -524,7 +524,7 @@ class UserManager
         $user->setSmoke($this->smoke);
 
         // Create token to validate inscription
-        $user->setEmailToken($this->createToken($user, true));
+        $user->setEmailToken($this->createShortToken());
 
         // Create token to unscubscribe from the instance news
         $user->setUnsubscribeToken($this->createToken($user));
@@ -579,7 +579,7 @@ class UserManager
         $emailUpdate = false;
         // check if the email is updated and if so set a new Token and reset the validatedDate
         if ($user->getEmail() != $user->getOldEmail()) {
-            $user->setEmailToken($this->createToken($user));
+            $user->setEmailToken($this->createShortToken());
             $user->setValidatedDate(null);
             $emailUpdate = true;
         }
@@ -1539,12 +1539,8 @@ class UserManager
      *
      * @return string The token generated
      */
-    public function createToken(User $user, bool $isEmailValidation = false)
+    public function createToken(User $user)
     {
-        if (true === $isEmailValidation) {
-            return strval(rand(100000, 999999));
-        }
-
         $datetime = new \DateTime();
         $time = $datetime->getTimestamp();
         // note : we replace the '/' by an arbitrary 'a' as the token could be used in a url
@@ -1554,6 +1550,14 @@ class UserManager
         }
 
         return $this->sanitizeString(hash('sha256', $user->getEmail().rand().$time.rand().$user->getSalt()));
+    }
+
+    /**
+     * Create a random token for an email validation.
+     */
+    public function createShortToken(): string
+    {
+        return strval(rand(100000, 999999));
     }
 
     /**
