@@ -1,1 +1,10 @@
-{}
+{
+    "wallet": "Umístění peněženky na mince",
+    "donations": "Dary",
+    "titleRegular": "Pravidelné platby na trase",
+    "titlePunctual": "Platby",
+    "titleConfirmation": "Potvrzení o platbě pro cestující",
+    "outward": "Přejít na",
+    "return": "Zpět",
+    "price": "Částka: {price} €"
+}
