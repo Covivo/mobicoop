@@ -554,6 +554,10 @@ class ProofManager
             /**
              * @var CarpoolProof $proof
              */
+            if (CarpoolProof::STATUS_PENDING !== $proof->getStatus()) {
+                continue;
+            }
+
             $result = $this->provider->postCollection($proof);
             $this->logger->info('Result of the send for proof #'.$proof->getId().' : code '.$result->getCode().' | value : '.$result->getValue());
             if (200 == $result->getCode()) {
