@@ -12,6 +12,8 @@
       :icon-anchor="point.icon.anchor"
       :icon-url="point.icon.url"
     />
+      
+  
     <l-tooltip
       v-if="point.title!==''"
     >
@@ -19,9 +21,11 @@
         class="font-weight-bold"
         v-html="point.title"
       />
+  
       <p
         v-if="point.popup"
         id="description-tooltip"
+        class="tooltip"
         v-html="point.popup.description"
       />
       <MMapRelayPointDescription
@@ -29,15 +33,19 @@
         :data="point.misc"
       />
     </l-tooltip>
-
-    <l-popup v-if="point.popup">
+    <l-popup
+      v-if="point.popup"
+      class="popup"
+    >
       <h3 v-html="point.popup.title" />
       <img
         v-if="point.popup.images && point.popup.images[0]"
         :src="point.popup.images[0]['versions']['square_100']"
         alt="avatar"
       >
-      <p v-html="point.popup.description" />
+      <p
+        v-html="point.popup.description"
+      />
       <p v-if="point.popup.date_begin && point.popup.date_end">
         {{ point.popup.date_begin }}<br> {{ point.popup.date_end }}
       </p>
@@ -89,3 +97,19 @@ export default {
   }
 }
 </script>
+<style lang="scss" scoped>
+.popup{
+  overflow: scroll;
+  overflow-x: auto;
+    overflow-y: auto;
+
+  max-height: 400px;
+  }
+.tooltip{
+  overflow: hidden;
+  max-width: 300px;
+  white-space: nowrap; 
+  text-overflow: ellipsis; 
+
+  }
+</style>
