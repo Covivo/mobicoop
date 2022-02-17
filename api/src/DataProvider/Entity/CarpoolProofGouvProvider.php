@@ -42,6 +42,7 @@ class CarpoolProofGouvProvider implements ProviderInterface
 
     private $uri;
     private $token;
+    private $prefix;
     private $logger;
 
     public function __construct(string $uri, string $token, ?string $prefix = null, LoggerInterface $logger)
