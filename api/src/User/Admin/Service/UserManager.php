@@ -19,26 +19,28 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\Admin\Service;
 
 use App\Auth\Entity\AuthItem;
 use App\Auth\Entity\UserAuthAssignment;
 use App\Auth\Repository\AuthItemRepository;
-use App\User\Entity\User;
+use App\Community\Entity\Community;
+use App\Event\Entity\Event;
 use App\Geography\Entity\Address;
 use App\Geography\Repository\TerritoryRepository;
+use App\Service\FormatDataManager;
+use App\User\Entity\User;
 use App\User\Event\UserDelegateRegisteredEvent;
 use App\User\Event\UserDelegateRegisteredPasswordSendEvent;
 use App\User\Repository\UserRepository;
+use App\User\Service\IdentityProofManager;
 use App\User\Service\UserManager as ServiceUserManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Core\Security;
-use App\Event\Entity\Event;
-use App\Community\Entity\Community;
 
 /**
  * User manager service for administration.
@@ -55,14 +57,19 @@ class UserManager
     private $security;
     private $userManager;
     private $userRepository;
+    private $formatDataManager;
+    private $identityProofManager;
     private $chat;
     private $music;
     private $smoke;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param EntityManagerInterface $entityManager The entity manager
+     * @param mixed                  $chat
+     * @param mixed                  $smoke
+     * @param mixed                  $music
      */
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -73,6 +80,8 @@ class UserManager
         Security $security,
         ServiceUserManager $userManager,
         UserRepository $userRepository,
+        FormatDataManager $formatDataManager,
+        IdentityProofManager $identityProofManager,
         $chat,
         $smoke,
         $music
@@ -85,16 +94,19 @@ class UserManager
         $this->security = $security;
         $this->userManager = $userManager;
         $this->userRepository = $userRepository;
+        $this->formatDataManager = $formatDataManager;
+        $this->identityProofManager = $identityProofManager;
         $this->chat = $chat;
         $this->music = $music;
         $this->smoke = $smoke;
     }
 
     /**
-     * Get a user by its id
+     * Get a user by its id.
      *
-     * @param integer $id   The user id
-     * @return User|null    The user if found
+     * @param int $id The user id
+     *
+     * @return null|User The user if found
      */
     public function getUser(int $id)
     {
@@ -108,22 +120,25 @@ class UserManager
              * @var Event $event
              */
             if ($event->getToDate() >= new \DateTime()) {
-                $events[] = $event->getId() . " - " . $event->getName();
+                $events[] = $event->getId().' - '.$event->getName();
             }
         }
-        if (count($events)>0) {
-            $user->addOwnership(['events'=>$events]);
+        if (count($events) > 0) {
+            $user->addOwnership(['events' => $events]);
         }
 
         $communities = [];
         foreach ($user->getCommunities() as $community) {
-            /**
-             * @var Community $community
-             */
-            $communities[] = $community->getId() . " - " . $community->getName();
+            // @var Community $community
+            $communities[] = $community->getId().' - '.$community->getName();
         }
-        if (count($communities)>0) {
-            $user->addOwnership(['communities'=>$communities]);
+        if (count($communities) > 0) {
+            $user->addOwnership(['communities' => $communities]);
+        }
+
+        foreach ($user->getIdentityProofs() as $proof) {
+            $proof->setFileSize($this->formatDataManager->convertFilesize($proof->getSize()));
+            $proof->setFileName($this->identityProofManager->getFileUrl($proof));
         }
 
         return $user;
@@ -132,15 +147,16 @@ class UserManager
     /**
      * Add a user.
      *
-     * @param User      $user               The user to register
-     * @return User     The user created
+     * @param User $user The user to register
+     *
+     * @return User The user created
      */
     public function addUser(User $user)
     {
         // add delegation
         $user->setUserDelegate($this->security->getUser());
         // check if roles were set
-        if (count($user->getRolesTerritory())>0) {
+        if (count($user->getRolesTerritory()) > 0) {
             // roles are set => add each role
             foreach ($user->getRolesTerritory() as $roleTerritory) {
                 $userAuthAssignment = new UserAuthAssignment();
@@ -234,9 +250,10 @@ class UserManager
     /**
      * Patch a user.
      *
-     * @param User $user    The user to update
+     * @param User  $user   The user to update
      * @param array $fields The updated fields
-     * @return User         The user updated
+     *
+     * @return User The user updated
      */
     public function patchUser(User $user, array $fields)
     {
@@ -247,14 +264,13 @@ class UserManager
             foreach ($user->getAddresses() as $address) {
                 if ($address->isHome()) {
                     $homeAddress = $address;
+
                     break;
                 }
             }
             if (!is_null($homeAddress)) {
                 // we have to update each field...
-                /**
-                 * @var Address $homeAddress
-                 */
+                // @var Address $homeAddress
                 $homeAddress->setStreetAddress($user->getHomeAddress()->getStreetAddress());
                 $homeAddress->setPostalCode($user->getHomeAddress()->getPostalCode());
                 $homeAddress->setAddressLocality($user->getHomeAddress()->getAddressLocality());
@@ -310,11 +326,12 @@ class UserManager
     }
 
     /**
-     * Check if a user have a specific AuthItem
+     * Check if a user have a specific AuthItem.
      *
-     * @param User      $user       The user
-     * @param AuthItem  $authItem   The authItem
-     * @return boolean  True if the user have the authItem, false otherwise
+     * @param User     $user     The user
+     * @param AuthItem $authItem The authItem
+     *
+     * @return bool True if the user have the authItem, false otherwise
      */
     public function userHaveAuthItem(User $user, AuthItem $authItem)
     {
@@ -323,14 +340,16 @@ class UserManager
                 return true;
             }
         }
+
         return false;
     }
 
     /**
-     * Create a User object from an array
+     * Create a User object from an array.
      *
-     * @param array $auser          The user to create, as an array
-     * @return User             The User object
+     * @param array $auser The user to create, as an array
+     *
+     * @return User The User object
      */
     public function createUserFromArray(array $auser)
     {
@@ -444,10 +463,9 @@ class UserManager
     }
 
     /**
-     * Delete a user
+     * Delete a user.
      *
-     * @param User $user  The user to delete
-     * @return void
+     * @param User $user The user to delete
      */
     public function deleteUser(User $user)
     {

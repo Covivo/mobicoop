@@ -40,7 +40,8 @@
         },
         "error": {
             "unpause": "An error has occurred your proposal has not been activated",
-            "pause": "An error occurred and your proposal has not been paused."
+            "pause": "An error occurred and your proposal has not been paused.",
+			"antifraud": "Trajet incompatible avec vos annonces déjà publiées. Si votre annonce déjà publiée à cette date n'est plus valable, vous devez la mettre en pause, la modifier ou la supprimer."
         }
     }
 }

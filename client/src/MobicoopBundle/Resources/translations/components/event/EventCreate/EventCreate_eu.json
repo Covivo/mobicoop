@@ -33,6 +33,7 @@
         "route": "/covoiturages-evenements"
     },
     "form": {
+        "mandatoryCharacter":"*",
         "private": {
             "tooltip": "Baieztapen e-mezuan ukan duzun lotura zuzena helarazten ahalko duzu",
             "label": "Ekitaldi pribatua (ez da ekitaldi zerrendan agertzen)"
@@ -51,17 +52,17 @@
             "mbSize": "You have exceeded the maximum avatar size (Max {size} Mb)",
             "pxSize": "The image is too small : {width}x{height}px (Min {size}x{size}px)",
             "required": "Ekitaldiaren irudia beharrezkoa da",
-            "label": "Ekitaldiaren irudia*",
+            "label": "Ekitaldiaren irudia",
             "minPxSize": "Minimum size {size}x{size}px",
             "maxMbSize": "maximum weight {size} Mb"
         },
         "fullDescription": {
             "required": "Ekitaldiaren aurkezpen xehea beharrezkoa da",
-            "label": "Ekitaldiaren aurkezpen zehatza*"
+            "label": "Ekitaldiaren aurkezpen zehatza"
         },
         "description": {
             "required": "Ekitaldiaren deskribapen laburra beharrezkoa da",
-            "label": "Ekitaldiaren deskribapen laburra*"
+            "label": "Ekitaldiaren deskribapen laburra"
         },
         "name": {
             "required": "Ekitaldiaren izena beharrezkoa da",

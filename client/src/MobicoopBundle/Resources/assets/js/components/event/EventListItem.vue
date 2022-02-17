@@ -42,8 +42,11 @@
             </p>
           </div>
         </v-card-title>
-        <v-divider />
-        <v-list dense>
+        <v-divider v-if="item.description && item.description !== 'null'" />
+        <v-list
+          v-if="item.description && item.description !== 'null'"
+          dense
+        >
           <v-list-item>
             <v-list-item-content class="text-justify">
               {{ item.description }}

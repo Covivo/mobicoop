@@ -2,7 +2,7 @@
   <v-container class="py-0">
     <v-snackbar
       v-model="snackbar"
-      :color="(alert.type === 'error')?'error':'success'"
+      :color="(alert.type === 'error')?'error':(alert.type === 'warning') ? 'warning' : 'success'"
       top
     >
       {{ alert.message }}
@@ -337,7 +337,15 @@ export default {
             }
           })
         .then(res => {
-          if (res.data && res.data.result.id) {
+          console.error(res.data);
+          if (res.data && res.data.message == 'error') {
+            this.alert = {
+              type: "warning",
+              message: this.$t("pause.error.antifraud")
+            };
+            this.paused = !this.paused;
+          }
+          else if (res.data && res.data.result.id) {
             this.alert = {
               type: "success",
               message: res.data.result.paused ? this.$t("pause.success.pause") : this.$t("pause.success.unpause")

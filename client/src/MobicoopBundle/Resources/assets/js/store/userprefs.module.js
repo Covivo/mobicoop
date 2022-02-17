@@ -3,6 +3,7 @@ export const userPrefs = {
   state: {
     connectionActive: false,
     social: false,
+    socialCookies: [],
     stats: false
   },
   mutations: {
@@ -11,6 +12,9 @@ export const userPrefs = {
     },
     updateSocial (state, social) {
       state.social = social;
+    },
+    updateSocialCookies (state, socialCookies) {
+      state.socialCookies = socialCookies;
     },
     updateStats (state, stats) {
       state.stats = stats;
@@ -25,6 +29,9 @@ export const userPrefs = {
     },
     stats (state) {
       return state.stats;
+    },
+    socialCookies (state) {
+      return state.socialCookies;
     }
   } 
 }

@@ -2,7 +2,10 @@
     "checkboxes": {
         "social": {
             "mandatoryOrNot": "Hautuzko cookie-a",
-            "desc": "Izen ematea eta konexioa ahalbidetu sare sozialen bidez"
+            "desc": "Izen ematea eta konexioa ahalbidetu sare sozialen bidez",
+            "several": {
+                "title":"Fonctionnalités liées aux réseaux sociaux"
+            }
         },
         "stats": {
             "details": "Estatistika hauek ez dute helburu komertsialik. Zerbitzua hobetzen laguntzen gaituzte",

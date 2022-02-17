@@ -2,7 +2,10 @@
     "checkboxes": {
         "social": {
             "mandatoryOrNot": "Optionele cookie",
-            "desc": "Inschrijving en aanmelding via de sociale media mogelijk maken"
+            "desc": "Inschrijving en aanmelding via de sociale media mogelijk maken",
+            "several": {
+                "title":"Fonctionnalités liées aux réseaux sociaux"
+            }
         },
         "stats": {
             "details": "Aan deze statistieken zijn geen commerciële doeleinden verbonden. Ze helpen ons onze dienstverlening te verbeteren",

@@ -524,7 +524,7 @@ class UserManager
         $user->setSmoke($this->smoke);
 
         // Create token to validate inscription
-        $user->setEmailToken($this->createToken($user));
+        $user->setEmailToken($this->createShortToken());
 
         // Create token to unscubscribe from the instance news
         $user->setUnsubscribeToken($this->createToken($user));
@@ -579,7 +579,7 @@ class UserManager
         $emailUpdate = false;
         // check if the email is updated and if so set a new Token and reset the validatedDate
         if ($user->getEmail() != $user->getOldEmail()) {
-            $user->setEmailToken($this->createToken($user));
+            $user->setEmailToken($this->createShortToken());
             $user->setValidatedDate(null);
             $emailUpdate = true;
         }
@@ -1433,7 +1433,7 @@ class UserManager
         if (!is_null($userFound)) {
             if ($data->getTelephone() === $userFound->getTelephone()) {
                 // User found by token match with the given Telephone. We update de validated date, persist, then return the user found
-                $userFound->setPhoneValidatedDate(new \Datetime());
+                $userFound->setPhoneValidatedDate(new \DateTime());
                 $this->entityManager->persist($userFound);
                 $this->entityManager->flush();
 
@@ -1465,7 +1465,7 @@ class UserManager
         $messageUnsubscribe = $this->translator->trans('unsubscribeEmailAlertFront', ['instanceName' => $_ENV['EMAILS_PLATFORM_NAME']]);
 
         $user->setNewsSubscription(0);
-        $user->setUnsubscribeDate(new \Datetime());
+        $user->setUnsubscribeDate(new \DateTime());
 
         $user->setUnsubscribeMessage($messageUnsubscribe);
 
@@ -1550,6 +1550,14 @@ class UserManager
         }
 
         return $this->sanitizeString(hash('sha256', $user->getEmail().rand().$time.rand().$user->getSalt()));
+    }
+
+    /**
+     * Create a random token for an email validation.
+     */
+    public function createShortToken(): string
+    {
+        return strval(rand(100000, 999999));
     }
 
     /**

@@ -160,7 +160,12 @@ class CarpoolController extends AbstractController
             $data = json_decode($request->getContent(), true);
             $data['mailSearchLink'] = $this->generateUrl('carpool_search_result_get', [], UrlGeneratorInterface::ABSOLUTE_URL);
 
-            return $this->json(['result' => $adManager->updateAd($data, $ad)]);
+            $result = $adManager->updateAd($data, $ad);
+            if ($result instanceof Ad) {
+                return $this->json(['result' => $result]);
+            }
+
+            return new JsonResponse(['message' => 'error']);
         }
 
         return $this->render('@Mobicoop/carpool/update.html.twig', [

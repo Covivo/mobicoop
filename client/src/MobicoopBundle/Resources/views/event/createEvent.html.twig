@@ -10,10 +10,13 @@
 
 
     <event-create
-			:user="{{ app.user|json_encode }}"
-            geo-search-url="{{ geoCompleteUri }}" 
-            :image-min-px-size="{{ imageMinPxSize }}"
-            :image-max-mb-size="{{ imageMaxMbSize }}">
-    </event-create>
+        :user="{{ app.user|json_encode }}"
+        geo-search-url="{{ geoCompleteUri }}" 
+        :image-min-px-size="{{ imageMinPxSize }}"
+        :image-max-mb-size="{{ imageMaxMbSize }}"
+        :mandatory-description = "{{ mandatoryDescription  ? "true" : "false" }}"
+        :mandatory-full-description = "{{ mandatoryFullDescription  ? "true" : "false" }}"
+        :mandatory-image = "{{ mandatoryImage  ? "true" : "false" }}"
+    />
    
 {% endblock %}

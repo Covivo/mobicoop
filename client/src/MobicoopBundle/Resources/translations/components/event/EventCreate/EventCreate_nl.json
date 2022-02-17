@@ -33,6 +33,7 @@
         "route": "/covoiturages-evenements"
     },
     "form": {
+        "mandatoryCharacter":"*",
         "private": {
             "tooltip": "U zult de rechtstreekse link die u ontvangen hebt via de bevestigingsmail kunnen doorsturen",
             "label": "Privaat evenement (verschijnt niet in de evenementenlijst)"
@@ -49,15 +50,15 @@
         "avatar": {
             "size": "U hebt de maximumgrootte van de afbeelding overschreden",
             "required": "De afbeelding van het evenement is vereist",
-            "label": "Afbeelding van het evenement*"
+            "label": "Afbeelding van het evenement"
         },
         "fullDescription": {
             "required": "De gedetailleerde beschrijving van het evenement is vereist",
-            "label": "Gedetailleerde beschrijving van het evenement*"
+            "label": "Gedetailleerde beschrijving van het evenement"
         },
         "description": {
             "required": "De korte beschrijving van het evenement is vereist",
-            "label": "Korte beschrijving van het evenement*"
+            "label": "Korte beschrijving van het evenement"
         },
         "name": {
             "required": "De naam van het evenement is vereist",
