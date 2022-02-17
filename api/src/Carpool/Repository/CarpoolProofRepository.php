@@ -19,20 +19,20 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Carpool\Repository;
 
 use App\Carpool\Entity\Ask;
-use Doctrine\ORM\EntityManagerInterface;
 use App\Carpool\Entity\CarpoolProof;
 use App\User\Entity\User;
 use DateTime;
+use Doctrine\ORM\EntityManagerInterface;
 
 class CarpoolProofRepository
 {
     private $repository;
-    
+
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->repository = $entityManager->getRepository(CarpoolProof::class);
@@ -49,11 +49,12 @@ class CarpoolProofRepository
     }
 
     /**
-     * Find a proof by ask and date
+     * Find a proof by ask and date.
      *
-     * @param Ask $ask          The ask
-     * @param DateTime $date    The date
-     * @return CarpoolProof|null    The carpool proof found or null if not found
+     * @param Ask      $ask  The ask
+     * @param DateTime $date The date
+     *
+     * @return null|CarpoolProof The carpool proof found or null if not found
      */
     public function findByAskAndDate(Ask $ask, DateTime $date)
     {
@@ -63,38 +64,43 @@ class CarpoolProofRepository
         $endDate->setTime(23, 59, 59, 999);
 
         $query = $this->repository->createQueryBuilder('cp')
-        ->where('cp.ask = :ask')
-        ->andWhere('(cp.pickUpPassengerDate BETWEEN :startDate and :endDate) or (cp.pickUpDriverDate BETWEEN :startDate and :endDate)')
-        ->setParameter('ask', $ask)
-        ->setParameter('startDate', $startDate->format('Y-m-d H:i:s'))
-        ->setParameter('endDate', $endDate->format('Y-m-d H:i:s'));
+            ->where('cp.ask = :ask')
+            ->andWhere('(cp.pickUpPassengerDate BETWEEN :startDate and :endDate) or (cp.pickUpDriverDate BETWEEN :startDate and :endDate)')
+            ->setParameter('ask', $ask)
+            ->setParameter('startDate', $startDate->format('Y-m-d H:i:s'))
+            ->setParameter('endDate', $endDate->format('Y-m-d H:i:s'))
+            ->setMaxResults(1)
+        ;
 
         return $query->getQuery()->getOneOrNullResult();
     }
 
     /**
-     * Find the remaining proofs for a user (driver or passenger) : used to find proofs related to a deleted ask
+     * Find the remaining proofs for a user (driver or passenger) : used to find proofs related to a deleted ask.
      *
-     * @param User $user    The user
-     * @return CarpoolProof[]|null    The carpool proofs found or null if not found
+     * @param User $user The user
+     *
+     * @return null|CarpoolProof[] The carpool proofs found or null if not found
      */
     public function findRemainingByUser(User $user)
     {
         $query = $this->repository->createQueryBuilder('cp')
-        ->where('cp.ask is null')
-        ->andWhere('(cp.driver = :user or cp.passenger = :user)')
-        ->setParameter('user', $user);
+            ->where('cp.ask is null')
+            ->andWhere('(cp.driver = :user or cp.passenger = :user)')
+            ->setParameter('user', $user)
+        ;
 
         return $query->getQuery()->getResult();
     }
 
     /**
-     * Find proofs with given types and given period
+     * Find proofs with given types and given period.
      *
-     * @param array $types          The possible types
-     * @param DateTime $startDate   The start date of the period
-     * @param DateTime $endDate     The end date of the period
-     * @param array $status         The possible status
+     * @param array    $types     The possible types
+     * @param DateTime $startDate The start date of the period
+     * @param DateTime $endDate   The end date of the period
+     * @param array    $status    The possible status
+     *
      * @return CarpoolProof[] The carpool proofs found
      */
     public function findByTypesAndPeriod(array $types, DateTime $startDate, DateTime $endDate, array $status = null)
@@ -103,18 +109,21 @@ class CarpoolProofRepository
         $endDate->setTime(23, 59, 59, 999);
 
         $query = $this->repository->createQueryBuilder('cp')
-        ->where('cp.type in (:types)')
-        ->andWhere('(cp.pickUpPassengerDate BETWEEN :startDate and :endDate) or (cp.pickUpDriverDate BETWEEN :startDate and :endDate)');
+            ->where('cp.type in (:types)')
+            ->andWhere('(cp.pickUpPassengerDate BETWEEN :startDate and :endDate) or (cp.pickUpDriverDate BETWEEN :startDate and :endDate)')
+        ;
 
         if (!is_null($status)) {
             $query->andWhere('cp.status in (:status)')
-            ->setParameter('status', $status);
+                ->setParameter('status', $status)
+            ;
         }
 
         $query
-        ->setParameter('types', $types)
-        ->setParameter('startDate', $startDate->format('Y-m-d H:i:s'))
-        ->setParameter('endDate', $endDate->format('Y-m-d H:i:s'));
+            ->setParameter('types', $types)
+            ->setParameter('startDate', $startDate->format('Y-m-d H:i:s'))
+            ->setParameter('endDate', $endDate->format('Y-m-d H:i:s'))
+        ;
 
         return $query->getQuery()->getResult();
     }
