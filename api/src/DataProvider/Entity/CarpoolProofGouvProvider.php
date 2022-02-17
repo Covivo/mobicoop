@@ -207,8 +207,6 @@ break;
         $this->logger->info('Send Proof #'.$carpoolProof->getId());
         $this->logger->info(json_encode($journey));
 
-        return new Response(200, '');
-
         return $dataProvider->postCollection($journey, $headers);
     }
 
