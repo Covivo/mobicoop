@@ -74,7 +74,7 @@
                     </v-main>
                 {% endblock %}
                 {% block footer %}
-                    <m-footer app-name="{{ app_name }}" :cookies-show-auto="{{ cookiesShowAuto ? 'true' : 'false'}}" :social-networks-active="{{ facebookShow ? 'true' : 'false'}}"></m-footer>
+                    <m-footer app-name="{{ app_name }}" :cookies-show-auto="{{ cookiesShowAuto ? 'true' : 'false'}}" :social-networks-active="{{ facebookShow ? 'true' : 'false'}}" :social-cookies="{{socialCookies|json_encode}}"></m-footer>
                 {% endblock %}
             </v-app>
         </div>

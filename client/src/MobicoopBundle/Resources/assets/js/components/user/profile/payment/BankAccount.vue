@@ -47,7 +47,6 @@
                 <template v-slot:activator="{ on }">
                   <v-text-field
                     v-model="form.iban"
-                    :counter="34"
                     :label="$t('form.label.iban')"
                     :rules="form.rules.ibanRules"
                     required
@@ -65,7 +64,6 @@
             >
               <v-text-field
                 v-model="form.bic"
-                :counter="11"
                 :label="$t('form.label.bic')"
                 :rules="form.rules.bicRules"
                 required

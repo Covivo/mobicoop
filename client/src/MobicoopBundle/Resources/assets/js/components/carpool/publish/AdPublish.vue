@@ -1279,10 +1279,18 @@ export default {
         }
       })
         .then(response => {
-          maxios.post(this.$t("route.cleanOrphans"), {})
-            .then(res => {
-              window.location.href = this.$t('route.myAds');
-            });            
+          if (response.data) {
+            if(response.data.message == 'error'){
+              this.snackErrorPublish.show = true;
+              this.loading = false;
+            }
+            else{
+              maxios.post(this.$t("route.cleanOrphans"), {})
+                .then(res => {
+                  window.location.href = this.$t('route.myAds');
+                });            
+            }
+          }
         })
         .catch(error => {
           console.log(error);

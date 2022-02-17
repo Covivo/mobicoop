@@ -19,25 +19,27 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Communication\EventSubscriber;
 
-use App\User\Event\UserDeleteAccountWasDriverEvent;
-use App\User\Event\UserDeleteAccountWasPassengerEvent;
-use App\User\Event\UserRegisteredEvent;
-use App\User\Event\UserUpdatedSelfEvent;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use App\Communication\Service\NotificationManager;
+use App\User\Entity\IdentityProof;
+use App\User\Event\IdentityProofModeratedEvent;
+use App\User\Event\IdentityProofValidationReminderEvent;
 use App\User\Event\ReviewReceivedEvent;
 use App\User\Event\UserDelegateRegisteredEvent;
 use App\User\Event\UserDelegateRegisteredPasswordSendEvent;
+use App\User\Event\UserDeleteAccountWasDriverEvent;
+use App\User\Event\UserDeleteAccountWasPassengerEvent;
 use App\User\Event\UserGeneratePhoneTokenAskedEvent;
 use App\User\Event\UserPasswordChangeAskedEvent;
 use App\User\Event\UserPasswordChangedEvent;
+use App\User\Event\UserRegisteredEvent;
 use App\User\Event\UserSendValidationEmailEvent;
+use App\User\Event\UserUpdatedSelfEvent;
 use App\User\Service\UserManager;
-use App\Communication\Service\SmsManager;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class UserSubscriber implements EventSubscriberInterface
 {
@@ -65,13 +67,15 @@ class UserSubscriber implements EventSubscriberInterface
             UserDeleteAccountWasDriverEvent::NAME => 'onUserDeleteAccountWasDriverEvent',
             UserDeleteAccountWasPassengerEvent::NAME => 'onUserDeleteAccountWasPassengerEvent',
             ReviewReceivedEvent::NAME => 'onReviewReceivedEvent',
-            UserSendValidationEmailEvent::NAME => 'onUserSendValidationEmail'
+            UserSendValidationEmailEvent::NAME => 'onUserSendValidationEmail',
+            IdentityProofModeratedEvent::NAME => 'onIdentityProofModerated',
+            IdentityProofValidationReminderEvent::NAME => 'onIdentityProofValidationReminder',
         ];
     }
 
     public function onUserRegistered(UserRegisteredEvent $event)
     {
-        if (!is_null($event->getUser()->getSsoId()) && $event->getUser()->getSsoId() !== "" && !$this->notificationSsoRegistration) {
+        if (!is_null($event->getUser()->getSsoId()) && '' !== $event->getUser()->getSsoId() && !$this->notificationSsoRegistration) {
             return;
         }
         $this->notificationManager->notifies(UserRegisteredEvent::NAME, $event->getUser());
@@ -134,5 +138,19 @@ class UserSubscriber implements EventSubscriberInterface
     public function onUserSendValidationEmail(UserSendValidationEmailEvent $event)
     {
         $this->notificationManager->notifies(UserSendValidationEmailEvent::NAME, $event->getUser());
+    }
+
+    public function onIdentityProofModerated(IdentityProofModeratedEvent $event)
+    {
+        if (IdentityProof::STATUS_ACCEPTED == $event->getIdentityProof()->getStatus()) {
+            $this->notificationManager->notifies(IdentityProofModeratedEvent::NAME_ACCEPTED, $event->getIdentityProof()->getUser());
+        } elseif (IdentityProof::STATUS_REFUSED == $event->getIdentityProof()->getStatus()) {
+            $this->notificationManager->notifies(IdentityProofModeratedEvent::NAME_REJECTED, $event->getIdentityProof()->getUser());
+        }
+    }
+
+    public function onIdentityProofValidationReminder(IdentityProofValidationReminderEvent $event)
+    {
+        $this->notificationManager->notifies(IdentityProofValidationReminderEvent::NAME, $event->getIdentityProof()->getUser());
     }
 }

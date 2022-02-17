@@ -7,20 +7,21 @@
         }
     },
     "form": {
+        "mandatoryCharacter":"*",
         "name": {
             "label": "Nom de l'événement*",
             "required": "Le nom de l'événement est requis"
         },
         "description": {
-            "label": "Description courte de l'événement*",
+            "label": "Description courte de l'événement",
             "required": "La courte description de l'événement est requise"
         },
         "fullDescription": {
-            "label": "Description détaillée de l'événement*",
+            "label": "Description détaillée de l'événement",
             "required": "La description détaillée de l'événement est requise"
         },
         "avatar": {
-            "label": "Image de l'événement*",
+            "label": "Image de l'événement",
             "required": "L'image de l'événement est requis",
             "mbSize": "Vous avez dépassé la taille maximale de l'image (Max {size} Mb)",
             "pxSize": "L'image n'est pas assez grande : {width}x{height}px (Min {size}x{size}px)",

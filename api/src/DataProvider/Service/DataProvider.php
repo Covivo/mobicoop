@@ -19,16 +19,15 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\DataProvider\Service;
 
 use App\DataProvider\Entity\Response;
-
 use GuzzleHttp\Client;
-use GuzzleHttp\Promise;
-use GuzzleHttp\Exception\TransferException;
 use GuzzleHttp\Exception\ConnectException;
+use GuzzleHttp\Exception\TransferException;
+use GuzzleHttp\Promise;
 use GuzzleHttp\RequestOptions;
 
 /**
@@ -36,24 +35,23 @@ use GuzzleHttp\RequestOptions;
  * Uses an API to retrieve/send data.
  *
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
- *
  */
 class DataProvider
 {
-    const BODY_TYPE_JSON = RequestOptions::JSON;
-    const BODY_TYPE_FORM_PARAMS = RequestOptions::FORM_PARAMS;
-    
+    public const BODY_TYPE_JSON = RequestOptions::JSON;
+    public const BODY_TYPE_FORM_PARAMS = RequestOptions::FORM_PARAMS;
+
     /**
-     * @var Client $client
+     * @var Client
      */
     private $client;
     private $resource;
-    
+
     /**
      * Constructor.
      *
-     * @param string        $uri
-     * @param string        $resource   Resource name for normal resource
+     * @param string $uri
+     * @param string $resource Resource name for normal resource
      */
     public function __construct(?string $uri = null, ?string $resource = null)
     {
@@ -66,7 +64,7 @@ class DataProvider
     public function setUri(string $uri)
     {
         $this->client = new Client([
-            'base_uri' => $uri
+            'base_uri' => $uri,
         ]);
     }
 
@@ -76,108 +74,123 @@ class DataProvider
     }
 
     /**
-    * Get item operation
-    *
-    * @param int       $id         The id of the item
-    *
-    * @return Response The response of the operation.
-    */
+     * Get item operation.
+     *
+     * @param int $id The id of the item
+     *
+     * @return Response the response of the operation
+     */
     public function getItem(array $params): Response
     {
         try {
-            $clientResponse = $this->client->get($this->resource."?".http_build_query($params));
+            $clientResponse = $this->client->get($this->resource.'?'.http_build_query($params));
+
             return new Response($clientResponse->getStatusCode(), $clientResponse->getBody()->getContents());
         } catch (TransferException $e) {
             return new Response($e->getCode());
         }
+
         return new Response();
     }
-    
+
     /**
-     * Get collection operation
+     * Get collection operation.
      *
-     * @param mixed|null    $params         An array or string of parameters
-     * @param array|null    $headers        An array of headers
+     * @param null|mixed $params  An array or string of parameters
+     * @param null|array $headers An array of headers
      *
-     * @return Response The response of the operation.
+     * @return Response the response of the operation
      */
-    public function getCollection($params=null, $headers=null): Response
+    public function getCollection($params = null, $headers = null): Response
     {
         try {
-            $clientResponse = $this->client->get($this->resource, ['query'=>$params, 'headers'=>$headers]);
-            if ($clientResponse->getStatusCode() == 200) {
+            $clientResponse = $this->client->get($this->resource, ['query' => $params, 'headers' => $headers]);
+            if (200 == $clientResponse->getStatusCode()) {
                 return new Response($clientResponse->getStatusCode(), $clientResponse->getBody());
             }
         } catch (TransferException $e) {
             return new Response($e->getCode());
         }
+
         return new Response();
     }
 
     /**
-     * Get async collection operation
+     * Get async collection operation.
      *
-     * @param mixed|null    $params         An array of parameters
+     * @param null|mixed $params An array of parameters
      *
-     * @return Response The response of the operation.
+     * @return Response the response of the operation
      */
-    public function getAsyncCollection($params=null): Response
+    public function getAsyncCollection($params = null): Response
     {
         $promises = [];
-        foreach ($params as $key=>$resource) {
-            $promises[$key] = $this->client->getAsync($this->resource, ['query'=>$resource]);
+        foreach ($params as $key => $resource) {
+            $promises[$key] = $this->client->getAsync($this->resource, ['query' => $resource]);
         }
+
         try {
             $results = Promise\unwrap($promises);
             $bodies = [];
-            foreach ($results as $key=>$result) {
+            foreach ($results as $key => $result) {
                 $bodies[$key] = $result->getBody();
             }
+
             return new Response(200, $bodies);
         } catch (ConnectException $e) {
             return new Response($e->getCode());
         }
+
         return new Response();
     }
 
     /**
-     * Get collection operation
+     * Get collection operation.
      *
-     * @param mixed|null $body      The body
-     * @param array|null $headers   An array of headers
-     * @param mixed|null $params    An array or string of parameters
-     * @return Response The response of the operation.
+     * @param null|mixed $body     The body
+     * @param null|array $headers  An array of headers
+     * @param null|mixed $params   An array or string of parameters
+     * @param null|mixed $bodyType
+     *
+     * @return Response the response of the operation
      */
-    public function postCollection($body=null, $headers=null, $params=null, $bodyType=null, array $auth=null): Response
+    public function postCollection($body = null, $headers = null, $params = null, $bodyType = null, array $auth = null): Response
     {
         try {
-            $options=[];
+            $options = [];
             if ($params) {
-                $options['query']=$params;
+                $options['query'] = $params;
             }
             if ($headers) {
-                $options['headers']=$headers;
+                $options['headers'] = $headers;
             }
             if ($body) {
                 if (is_null($bodyType)) {
                     switch ($bodyType) {
-                        case self::BODY_TYPE_JSON: $options[self::BODY_TYPE_JSON]=$body;break;
-                        case self::BODY_TYPE_FORM_PARAMS: $options[self::BODY_TYPE_FORM_PARAMS]=$body;break;
-                        default: $options[self::BODY_TYPE_JSON]=$body;
+                        case self::BODY_TYPE_JSON: $options[self::BODY_TYPE_JSON] = $body;
+
+break;
+
+                        case self::BODY_TYPE_FORM_PARAMS: $options[self::BODY_TYPE_FORM_PARAMS] = $body;
+
+break;
+
+                        default: $options[self::BODY_TYPE_JSON] = $body;
                     }
                 } else {
-                    $options[$bodyType]=$body;
+                    $options[$bodyType] = $body;
                 }
             }
             if (!is_null($auth)) {
                 $options[RequestOptions::AUTH] = $auth;
             }
-            
+
             // echo json_encode($body);
             // var_dump($options);
             // die;
-            
+
             $clientResponse = $this->client->post($this->resource, $options);
+
             switch ($clientResponse->getStatusCode()) {
                 case 200:
                 case 201:
@@ -186,46 +199,56 @@ class DataProvider
             }
         } catch (TransferException $e) {
             // var_dump($e->getMessage());die;
-            return new Response($e->getCode());
+            return new Response($e->getCode(), $e->getMessage());
         }
+
         return new Response();
     }
 
     /**
-     * Put item operation
+     * Put item operation.
      *
-     * @param mixed|null $body      The body
-     * @param array|null $headers   An array of headers
-     * @param mixed|null $params    An array or string of parameters
-     * @return Response The response of the operation.
+     * @param null|mixed $body     The body
+     * @param null|array $headers  An array of headers
+     * @param null|mixed $params   An array or string of parameters
+     * @param null|mixed $bodyType
+     *
+     * @return Response the response of the operation
      */
-    public function putItem($body=null, $headers=null, $params=null, $bodyType=null): Response
+    public function putItem($body = null, $headers = null, $params = null, $bodyType = null): Response
     {
         try {
-            $options=[];
+            $options = [];
             if ($params) {
-                $options['query']=$params;
+                $options['query'] = $params;
             }
             if ($headers) {
-                $options['headers']=$headers;
+                $options['headers'] = $headers;
             }
             if ($body) {
                 if (is_null($bodyType)) {
                     switch ($bodyType) {
-                        case self::BODY_TYPE_JSON: $options[self::BODY_TYPE_JSON]=$body;break;
-                        case self::BODY_TYPE_FORM_PARAMS: $options[self::BODY_TYPE_FORM_PARAMS]=$body;break;
-                        default: $options[self::BODY_TYPE_JSON]=$body;
+                        case self::BODY_TYPE_JSON: $options[self::BODY_TYPE_JSON] = $body;
+
+break;
+
+                        case self::BODY_TYPE_FORM_PARAMS: $options[self::BODY_TYPE_FORM_PARAMS] = $body;
+
+break;
+
+                        default: $options[self::BODY_TYPE_JSON] = $body;
                     }
                 } else {
-                    $options[$bodyType]=$body;
+                    $options[$bodyType] = $body;
                 }
             }
-            
+
             // echo json_encode($body);
             // var_dump($options);
             // die;
-            
+
             $clientResponse = $this->client->put($this->resource, $options);
+
             switch ($clientResponse->getStatusCode()) {
                 case 200:
                 case 201:
@@ -234,6 +257,7 @@ class DataProvider
         } catch (TransferException $e) {
             return new Response($e->getCode());
         }
+
         return new Response();
     }
 }
