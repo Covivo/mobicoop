@@ -19,21 +19,23 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Gamification\Service;
 
 use App\Gamification\Entity\Badge;
-use App\User\Entity\User;
-use App\Gamification\Repository\BadgeRepository;
 use App\Gamification\Entity\BadgeProgression;
 use App\Gamification\Entity\BadgeSummary;
 use App\Gamification\Entity\SequenceStatus;
+use App\Gamification\Repository\BadgeRepository;
+use App\Gamification\Repository\RewardRepository;
+use App\Gamification\Repository\RewardStepRepository;
 use App\Gamification\Resource\BadgesBoard;
+use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
- * Gamification Manager
+ * Gamification Manager.
  *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
@@ -41,44 +43,51 @@ class BadgesBoardManager
 {
     private $badgeRepository;
     private $badgeImageUri;
+    private $rewardRepository;
+    private $rewardStepRepository;
 
     public function __construct(
         BadgeRepository $badgeRepository,
         EntityManagerInterface $entityManager,
+        RewardRepository $rewardRepository,
+        RewardStepRepository $rewardStepRepository,
         string $badgeImageUri
     ) {
         $this->badgeRepository = $badgeRepository;
         $this->entityManager = $entityManager;
         $this->badgeImageUri = $badgeImageUri;
+        $this->rewardRepository = $rewardRepository;
+        $this->rewardStepRepository = $rewardStepRepository;
     }
-    
+
     /**
-     * Get all the Badges of the instance
-     * @param int $status  Get only the Badges of this status (default : null, every badges are returned)
-     * @return Badges[]|null
+     * Get all the Badges of the instance.
+     *
+     * @param int $status Get only the Badges of this status (default : null, every badges are returned)
+     *
+     * @return null|Badges[]
      */
-    public function getBadges(int $status=null): ?array
+    public function getBadges(int $status = null): ?array
     {
         if (is_null($status)) {
             return $this->badgeRepository->findAll();
-        } else {
-            return $this->badgeRepository->findBy(["status"=>$status]);
         }
+
+        return $this->badgeRepository->findBy(['status' => $status]);
     }
-    
+
     /**
-     * Get the Badges board of a User
+     * Get the Badges board of a User.
      *
-     * @param User $user    The User
-     * @return BadgesBoard
+     * @param User $user The User
      */
     public function getBadgesBoard(User $user): BadgesBoard
     {
         $badgesBoard = new BadgesBoard();
-        
+
         // Set if the user accept Gamification tracking
         $badgesBoard->setAcceptGamification($user->hasGamification());
-        
+
         // Get all the active badges of the platform
         $activeBadges = $this->getBadges(Badge::STATUS_ACTIVE);
         $badges = [];
@@ -88,12 +97,14 @@ class BadgesBoardManager
          */
         foreach ($activeBadges as $activeBadge) {
             $badgeProgression = new BadgeProgression();
-            
+
             // Determine if the badge is already earned
             $badgeProgression->setEarned(false);
-            foreach ($activeBadge->getRewards() as $reward) {
+            $rewards = $this->rewardRepository->findBy(['badge' => $activeBadge, 'user' => $user]);
+            foreach ($rewards as $reward) {
                 if ($reward->getUser()->getId() == $user->getId()) {
                     $badgeProgression->setEarned(true);
+
                     break;
                 }
             }
@@ -117,15 +128,16 @@ class BadgesBoardManager
                 $sequenceStatus = new SequenceStatus();
                 $sequenceStatus->setSequenceItemId($sequenceItem->getId());
                 $sequenceStatus->setTitle($sequenceItem->getGamificationAction()->getTitle());
-                
-                
+
                 // We look into the rewardSteps previously existing for this SequenceItem
                 // If there is one for the current User, we know that it has already been validated
                 $sequenceStatus->setValidated(false);
-                foreach ($sequenceItem->getRewardSteps() as $rewardStep) {
+                $rewardSteps = $this->rewardStepRepository->findBy(['sequenceItem' => $sequenceItem, 'user' => $user]);
+                foreach ($rewardSteps as $rewardStep) {
                     if ($rewardStep->getUser()->getId() == $user->getId()) {
                         $sequenceStatus->setValidated(true);
-                        $nbValidatedSequences++;
+                        ++$nbValidatedSequences;
+
                         break;
                     }
                 }
@@ -137,15 +149,15 @@ class BadgesBoardManager
 
             // Compute the earned percentage
             $badgeProgression->setEarningPercentage(0);
-            if ($nbValidatedSequences==0) {
+            if (0 == $nbValidatedSequences) {
                 $badgeProgression->setEarningPercentage(0);
             } else {
-                $badgeProgression->setEarningPercentage($nbValidatedSequences/count($activeBadge->getSequenceItems())*100);
+                $badgeProgression->setEarningPercentage($nbValidatedSequences / count($activeBadge->getSequenceItems()) * 100);
             }
 
             $badges[] = $badgeProgression;
         }
-        
+
         $badgesBoard->setBadges($badges);
 
         return $badgesBoard;
