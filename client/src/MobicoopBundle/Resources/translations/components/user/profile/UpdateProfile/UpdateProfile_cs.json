@@ -22,7 +22,8 @@
         "delete": {
             "label": "Odstranit obrázek",
             "route": "/utilisateur/profil/avatar/supprimer"
-        }
+        },
+        "mbSize": "Překročili jste maximální velikost avatara (Max {size} Mb)."
     },
     "route": {
         "update": "/utilisateur/profil/modifier",
