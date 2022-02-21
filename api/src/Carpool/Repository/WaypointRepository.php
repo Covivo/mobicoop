@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Carpool\Repository;
 
@@ -28,13 +28,13 @@ use App\Carpool\Entity\Waypoint;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
- * @method Waypoint|null find($id, $lockMode = null, $lockVersion = null)
- * @method Waypoint|null findOneBy(array $criteria, array $orderBy = null)
+ * @method null|Waypoint find($id, $lockMode = null, $lockVersion = null)
+ * @method null|Waypoint findOneBy(array $criteria, array $orderBy = null)
  */
 class WaypointRepository
 {
     private $repository;
-    
+
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->repository = $entityManager->getRepository(Waypoint::class);
@@ -51,26 +51,28 @@ class WaypointRepository
     }
 
     /**
-     * Find the first waypoint for an ask and a role
+     * Find the first waypoint for an ask and a role.
      *
-     * @param Ask $ask          The ask
-     * @param integer $role     The role
-     * @return Waypoint|null    The waypoint found or null
+     * @param Ask $ask  The ask
+     * @param int $role The role
+     *
+     * @return null|Waypoint The waypoint found or null
      */
     public function findMinPositionForAskAndRole(Ask $ask, int $role)
     {
         $query = $this->repository->createQueryBuilder('w')
-        ->select('MIN(w.position) AS min_position')
-        ->where('w.ask = :ask')
-        ->andwhere('w.role = :role')
-        ->setParameter('ask', $ask)
-        ->setParameter('role', $role);
+            ->select('MIN(w.position) AS min_position')
+            ->where('w.ask = :ask')
+            ->andwhere('w.role = :role')
+            ->setParameter('ask', $ask)
+            ->setParameter('role', $role)
+        ;
 
         if ($result = $query->getQuery()->getOneOrNullResult()) {
             return $this->findOneby([
-                'position'=>$result['min_position'],
-                'ask'=>$ask,
-                'role'=>$role
+                'position' => $result['min_position'],
+                'ask' => $ask,
+                'role' => $role,
             ]);
         }
 
@@ -78,26 +80,49 @@ class WaypointRepository
     }
 
     /**
-     * Find the last waypoint for an ask and a role
+     * Find the last waypoint for an ask and a role.
      *
-     * @param Ask $ask          The ask
-     * @param integer $role     The role
-     * @return Waypoint|null    The waypoint found or null
+     * @param Ask $ask  The ask
+     * @param int $role The role
+     *
+     * @return null|Waypoint The waypoint found or null
      */
     public function findMaxPositionForAskAndRole(Ask $ask, int $role)
     {
         $query = $this->repository->createQueryBuilder('w')
-        ->select('MAX(w.position) AS max_position')
-        ->where('w.ask = :ask')
-        ->andwhere('w.role = :role')
-        ->setParameter('ask', $ask)
-        ->setParameter('role', $role);
+            ->select('MAX(w.position) AS max_position')
+            ->where('w.ask = :ask')
+            ->andwhere('w.role = :role')
+            ->setParameter('ask', $ask)
+            ->setParameter('role', $role)
+        ;
 
         if ($result = $query->getQuery()->getOneOrNullResult()) {
             return $this->findOneby([
-                'position'=>$result['max_position'],
-                'ask'=>$ask,
-                'role'=>$role
+                'position' => $result['max_position'],
+                'ask' => $ask,
+                'role' => $role,
+            ]);
+        }
+
+        return null;
+    }
+
+    public function findDestinationWaypon(Pro $ask, int $role)
+    {
+        $query = $this->repository->createQueryBuilder('w')
+            ->select('MAX(w.position) AS max_position')
+            ->where('w.ask = :ask')
+            ->andwhere('w.role = :role')
+            ->setParameter('ask', $ask)
+            ->setParameter('role', $role)
+        ;
+
+        if ($result = $query->getQuery()->getOneOrNullResult()) {
+            return $this->findOneby([
+                'position' => $result['max_position'],
+                'ask' => $ask,
+                'role' => $role,
             ]);
         }
 

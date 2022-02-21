@@ -28,10 +28,12 @@ use App\Carpool\Entity\Criteria;
 use App\Carpool\Entity\Proposal;
 use App\Carpool\Exception\AntiFraudException;
 use App\Carpool\Repository\ProposalRepository;
+use App\Carpool\Repository\WaypointRepository;
 use App\Carpool\Ressource\Ad;
 use App\Geography\Entity\Address;
 use App\Geography\Service\GeoRouter;
 use App\User\Service\UserManager;
+use DateInterval;
 use DateTime;
 
 /**
@@ -44,6 +46,7 @@ class AntiFraudManager
     private $geoRouter;
     private $proposalRepository;
     private $userManager;
+    private $waypointRepository;
 
     // Parameters
     private $distanceMinCheck;
@@ -60,11 +63,13 @@ class AntiFraudManager
     public function __construct(
         GeoRouter $geoRouter,
         ProposalRepository $proposalRepository,
+        WaypointRepository $waypointRepository,
         UserManager $userManager,
         array $params
     ) {
         $this->geoRouter = $geoRouter;
         $this->proposalRepository = $proposalRepository;
+        $this->waypointRepository = $waypointRepository;
         $this->userManager = $userManager;
         $this->distanceMinCheck = $params['distanceMinCheck'];
         $this->nbCarpoolsMax = $params['nbCarpoolsMax'];
@@ -111,7 +116,6 @@ class AntiFraudManager
         if (($route[0]->getDistance() / 1000) > $this->distanceMinCheck) {
             // FIRST CHECK
             $response = $this->validAdFirstCheck($ad);
-
             if (!$response->isValid()) {
                 // we check if the arrival date is after the start date of the proposal we are trying to post or unpaused on the same day
                 foreach ($this->sameDayProposals as $sameDayProposal) {
@@ -124,8 +128,16 @@ class AntiFraudManager
                         if (!$response->isValid()) {
                             return $response;
                         }
+                        $response = $this->checkTravelCanBeMade($ad, $sameDayProposal);
+                        if (!$response->isValid()) {
+                            return $response;
+                        }
                     }
                     $response = $this->checkValidHours($ad, $sameDayProposal);
+                    if (!$response->isValid()) {
+                        return $response;
+                    }
+                    $response = $this->checkTravelCanBeMade($ad, $sameDayProposal);
                     if (!$response->isValid()) {
                         return $response;
                     }
@@ -134,6 +146,95 @@ class AntiFraudManager
         }
 
         return $response;
+    }
+
+    public function checkTravelCanBeMade(Ad $ad, Proposal $sameDayProposal): AntiFraudResponse
+    {
+        $adAddressOrigin = new Address();
+        $adAddressOrigin->setLatitude($ad->getOutwardWaypoints()[0]['latitude']);
+        $adAddressOrigin->setLongitude($ad->getOutwardWaypoints()[0]['longitude']);
+
+        $proposalWayponintDestination = $this->waypointRepository->findOneBy(['proposal' => $sameDayProposal, 'destination' => 1]);
+
+        $ODToCheck = [$proposalWayponintDestination->getAddress(), $adAddressOrigin];
+
+        $routeBetweenProposalDestinationAndAdOrigin = $this->geoRouter->getRoutes($ODToCheck, false, true);
+        $travelDurationBetweenProposalDestinationAndAdOrigin = $routeBetweenProposalDestinationAndAdOrigin[0]->getDuration();
+
+        // punctual Ad
+        if (Criteria::FREQUENCY_PUNCTUAL == $ad->getFrequency()) {
+            $adOutwardTime = new DateTime($ad->getOutwardTime());
+            $adOriginDateTime = $ad->getOutwardDate()->setTime($adOutwardTime->format('H'), $adOutwardTime->format('i'), 0);
+
+            $arrivalDateTimeOfProposal = $sameDayProposal->getCriteria()->getArrivalDateTime();
+            $arrivalHourToNextOrigin = $arrivalDateTimeOfProposal->add(new DateInterval('PT'.$travelDurationBetweenProposalDestinationAndAdOrigin.'S'));
+
+            if ($adOriginDateTime <= $arrivalHourToNextOrigin) {
+                return new AntiFraudResponse(false, AntiFraudException::NOT_ENOUGH_TIME);
+            }
+        }
+
+        // regular Ad
+        if (Criteria::FREQUENCY_REGULAR == $ad->getFrequency()) {
+            $days = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+
+            foreach ($days as $day) {
+                // We check if the Ad we are trying to post as a monday check in a schedule
+                foreach ($ad->getSchedule() as $schedule) {
+                    if (isset($schedule[$day]) && $schedule[$day]) {
+                        $adOriginDateTime = new \DateTime('now');
+                        $outwardTime = explode(':', $schedule['outwardTime']);
+                        $adOriginDateTime->setTime((int) $outwardTime[0], (int) $outwardTime[1]);
+
+                        // We check if there is a time for this day in the matching proposal
+                        switch ($day) {
+                                    case 'sun':
+                                        $arrivalHourToNextOrigin = ($sameDayProposal->getCriteria()->getArrivalSunTime())->add(new DateInterval('PT'.$travelDurationBetweenProposalDestinationAndAdOrigin.'S'));
+
+                                    break;
+
+                                    case 'mon':
+                                        $arrivalHourToNextOrigin = ($sameDayProposal->getCriteria()->getArrivalMonTime())->add(new DateInterval('PT'.$travelDurationBetweenProposalDestinationAndAdOrigin.'S'));
+
+                                    break;
+
+                                    case 'tue':
+                                        $arrivalHourToNextOrigin = ($sameDayProposal->getCriteria()->getArrivalTueTime())->add(new DateInterval('PT'.$travelDurationBetweenProposalDestinationAndAdOrigin.'S'));
+
+                                    break;
+
+                                    case 'wed':
+                                        $arrivalHourToNextOrigin = ($sameDayProposal->getCriteria()->getArrivalWedTime())->add(new DateInterval('PT'.$travelDurationBetweenProposalDestinationAndAdOrigin.'S'));
+
+                                    break;
+
+                                    case 'thu':
+                                        $arrivalHourToNextOrigin = ($sameDayProposal->getCriteria()->getArrivalThuTime())->add(new DateInterval('PT'.$travelDurationBetweenProposalDestinationAndAdOrigin.'S'));
+
+                                    break;
+
+                                    case 'fri':
+                                        $arrivalHourToNextOrigin = ($sameDayProposal->getCriteria()->getArrivalFriTime())->add(new DateInterval('PT'.$travelDurationBetweenProposalDestinationAndAdOrigin.'S'));
+
+                                    break;
+
+                                    case 'sat':
+                                        $arrivalHourToNextOrigin = ($sameDayProposal->getCriteria()->getArrivalSatTime())->add(new DateInterval('PT'.$travelDurationBetweenProposalDestinationAndAdOrigin.'S'));
+
+                                    break;
+                                }
+
+                        if (!is_null($arrivalHourToNextOrigin)) {
+                            if ($adOriginDateTime <= $arrivalHourToNextOrigin) {
+                                return new AntiFraudResponse(false, AntiFraudException::NOT_ENOUGH_TIME);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return new AntiFraudResponse(true, AntiFraudException::OK);
     }
 
     /**
@@ -168,15 +269,14 @@ class AntiFraudManager
     }
 
     /**
-     * Check if the hours are valid regarding an unpaused ad that is active on the same day.
+     * Check if the hours are valid regarding a proposal that is active on the same day.
      *
-     * @param Ad       $ad              The Ad we are trying to unpaused
+     * @param Ad       $ad              The Ad we are trying to post
      * @param Proposal $sameDayProposal The Proposal active on the same day that the Ad
      */
     private function checkValidHours(Ad $ad, Proposal $sameDayProposal): AntiFraudResponse
     {
         if (Criteria::FREQUENCY_PUNCTUAL == $sameDayProposal->getCriteria()->getFrequency()) {
-            // We try to unpaused a Regular Ad that matches a punctual ad
             $dayOfTheProposal = $sameDayProposal->getCriteria()->getFromDate()->format('D');
 
             $arrivalProposalDateTime = $sameDayProposal->getCriteria()->getArrivalDateTime();
@@ -203,8 +303,6 @@ class AntiFraudManager
             return new AntiFraudResponse(true, AntiFraudException::OK);
         }
         // Regular journey
-
-        // We unpaused a regular ad that matches a Regular
 
         // We will only compare the hours without considering the date
 
@@ -263,21 +361,14 @@ class AntiFraudManager
     }
 
     /**
-     * Check if the hours are valid regarding a proposal that is active on the same day.
+     * Check if the hours are valid regarding an unpaused ad that is active on the same day.
      *
-     * @param Ad       $ad              The Ad we are trying to post
+     * @param Ad       $ad              The Ad we are trying to unpaused
      * @param Proposal $sameDayProposal The Proposal active on the same day that the Ad
      */
     private function checkValidHoursUnpausedAd(Ad $ad, Proposal $sameDayProposal): AntiFraudResponse
     {
-        if (!is_null($sameDayProposal->getCriteria()->getDirectionDriver())) {
-            $duration = $sameDayProposal->getCriteria()->getDirectionDriver()->getDuration();
-        } else {
-            $duration = $sameDayProposal->getCriteria()->getDirectionPassenger()->getDuration();
-        }
-
         if (Criteria::FREQUENCY_PUNCTUAL == $sameDayProposal->getCriteria()->getFrequency()) {
-            // Punctual journey matches puntucal journey
             if (Criteria::FREQUENCY_PUNCTUAL == $ad->getFrequency()) {
                 $outwardDate = DateTime::createFromFormat('U', $ad->getOutwardDate()->getTimestamp());
                 $outwardTime = explode(':', $ad->getOutwardTime());
@@ -288,7 +379,6 @@ class AntiFraudManager
                     return new AntiFraudResponse(false, AntiFraudException::INVALID_TIME);
                 }
             } else {
-                // We try to post a Regular Ad that matches a punctual ad
                 $dayOfTheProposal = $sameDayProposal->getCriteria()->getFromDate()->format('D');
 
                 $arrivalProposalDateTime = $sameDayProposal->getCriteria()->getArrivalDateTime();
@@ -342,8 +432,6 @@ class AntiFraudManager
                 return new AntiFraudResponse(true, AntiFraudException::OK);
             }
         } else {
-            // Regular journey
-            // We post a punctual that matches a Regular
             if (Criteria::FREQUENCY_PUNCTUAL == $ad->getFrequency()) {
                 $dayOfTheAd = $ad->getOutwardDate()->format('D');
 
