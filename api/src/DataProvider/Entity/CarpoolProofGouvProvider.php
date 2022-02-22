@@ -132,7 +132,7 @@ class CarpoolProofGouvProvider implements ProviderInterface
                 'start' => [
                     'lon' => (!is_null($carpoolProof->getPickUpDriverAddress())) ? (float) $carpoolProof->getPickUpDriverAddress()->getLongitude() : null,
                     'lat' => (!is_null($carpoolProof->getPickUpDriverAddress())) ? (float) $carpoolProof->getPickUpDriverAddress()->getLatitude() : null,
-                    'datetime' => $carpoolProof->getStartDriverDate()->format(self::ISO6801),
+                    'datetime' => (!is_null($carpoolProof->getPickUpDriverDate())) ? $carpoolProof->getPickUpDriverDate()->format(self::ISO6801) : null,
                 ],
                 'end' => [
                     'lon' => (!is_null($carpoolProof->getDropOffDriverAddress())) ? (float) $carpoolProof->getDropOffDriverAddress()->getLongitude() : null,
@@ -147,9 +147,7 @@ class CarpoolProofGouvProvider implements ProviderInterface
 
         // Passenger or driver start and end need to be filled with lat/lon to be valid
         // In organized journey, we don't have pickup or dropoff for passengers. We use it's origin/destination
-        if ((CarpoolProof::TYPE_LOW == $carpoolProof->getType() || CarpoolProof::TYPE_MID == $carpoolProof->getType())
-            && !isset($journey['passenger']['start']['lon']) && !isset($journey['passenger']['end']['lon'])
-        ) {
+        if ((CarpoolProof::TYPE_LOW == $carpoolProof->getType() || CarpoolProof::TYPE_MID == $carpoolProof->getType())) {
             if ($carpoolProof->getAsk()->getMatching()->getProposalRequest()->getUser()->getId() == $carpoolProof->getPassenger()->getId()) {
                 $passengerProposal = $carpoolProof->getAsk()->getMatching()->getProposalRequest();
                 $passengerWaypoints = $passengerProposal->getWaypoints();
@@ -218,6 +216,11 @@ break;
                 $dropOffTime = $fromTime->modify('+ '.$carpoolProof->getAsk()->getMatching()->getDropOffDuration().' second');
                 $passengerEndDate = clone $fromDate;
                 $journey['passenger']['end']['datetime'] = $passengerEndDate->setTime($dropOffTime->format('H'), $dropOffTime->format('i'), $dropOffTime->format('s'))->format(self::ISO6801);
+            }
+
+            if (is_null($journey['driver']['start']['datetime']) && is_null($journey['driver']['end']['datetime'])) {
+                $journey['driver']['start']['datetime'] = $journey['passenger']['start']['datetime'];
+                $journey['driver']['end']['datetime'] = $journey['passenger']['end']['datetime'];
             }
         }
 
