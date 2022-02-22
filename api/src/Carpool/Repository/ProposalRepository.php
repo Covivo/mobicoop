@@ -1174,12 +1174,15 @@ class ProposalRepository
                 ->setParameter('minDistancePassenger', $minDistancePassenger)
             ;
         }
+        // var_dump($excludedProposalIds);
+        // var_dump(count($excludedProposalIds));
 
-        if (count($excludedProposalIds) > 0) {
-            $query->andWhere('p.id not in (:excludedProposalIds)')
-                ->setParameter('excludedProposalIds', $excludedProposalIds)
-            ;
-        }
+        // exit;
+        // if (count($excludedProposalIds) > 0) {
+        //     $query->andWhere('p.id not in (:excludedProposalIds)')
+        //         ->setParameter('excludedProposalIds', $excludedProposalIds)
+        //     ;
+        // }
 
         return $query->getQuery()->getResult();
     }
