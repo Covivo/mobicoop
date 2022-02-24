@@ -155,9 +155,9 @@ class AntiFraudManager
         $adAddressOrigin->setLatitude($ad->getOutwardWaypoints()[0]['address']['latitude']);
         $adAddressOrigin->setLongitude($ad->getOutwardWaypoints()[0]['address']['longitude']);
 
-        $proposalWayponintDestination = $this->waypointRepository->findOneBy(['proposal' => $sameDayProposal, 'destination' => 1]);
+        $proposalWaypointDestination = $this->waypointRepository->findOneBy(['proposal' => $sameDayProposal, 'destination' => 1]);
 
-        $ODToCheck = [$proposalWayponintDestination->getAddress(), $adAddressOrigin];
+        $ODToCheck = [$proposalWaypointDestination->getAddress(), $adAddressOrigin];
 
         $routeBetweenProposalDestinationAndAdOrigin = $this->geoRouter->getRoutes($ODToCheck, false, true);
         $travelDurationBetweenProposalDestinationAndAdOrigin = $routeBetweenProposalDestinationAndAdOrigin[0]->getDuration();
@@ -230,9 +230,9 @@ class AntiFraudManager
         $adAddressOrigin->setLatitude($ad->getOutwardWaypoints()[0]['latitude']);
         $adAddressOrigin->setLongitude($ad->getOutwardWaypoints()[0]['longitude']);
 
-        $proposalWayponintDestination = $this->waypointRepository->findOneBy(['proposal' => $sameDayProposal, 'destination' => 1]);
+        $proposalWaypointDestination = $this->waypointRepository->findOneBy(['proposal' => $sameDayProposal, 'destination' => 1]);
 
-        $ODToCheck = [$proposalWayponintDestination->getAddress(), $adAddressOrigin];
+        $ODToCheck = [$proposalWaypointDestination->getAddress(), $adAddressOrigin];
 
         $routeBetweenProposalDestinationAndAdOrigin = $this->geoRouter->getRoutes($ODToCheck, false, true);
         $travelDurationBetweenProposalDestinationAndAdOrigin = $routeBetweenProposalDestinationAndAdOrigin[0]->getDuration();

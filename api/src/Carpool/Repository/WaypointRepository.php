@@ -107,25 +107,4 @@ class WaypointRepository
 
         return null;
     }
-
-    public function findDestinationWaypon(Pro $ask, int $role)
-    {
-        $query = $this->repository->createQueryBuilder('w')
-            ->select('MAX(w.position) AS max_position')
-            ->where('w.ask = :ask')
-            ->andwhere('w.role = :role')
-            ->setParameter('ask', $ask)
-            ->setParameter('role', $role)
-        ;
-
-        if ($result = $query->getQuery()->getOneOrNullResult()) {
-            return $this->findOneby([
-                'position' => $result['max_position'],
-                'ask' => $ask,
-                'role' => $role,
-            ]);
-        }
-
-        return null;
-    }
 }
