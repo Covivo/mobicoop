@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Gamification\Entity;
 
@@ -29,15 +29,15 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 /**
-* Gamification : A SequenceItem a user need to validate in order to be reward by a Badge
-* @author Maxime Bardot <maxime.bardot@mobicoop.org>
-*
-* @ORM\Entity
-* @ORM\HasLifecycleCallbacks
-*/
+ * Gamification : A SequenceItem a user need to validate in order to be reward by a Badge.
+ *
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ *
+ * @ORM\Entity
+ * @ORM\HasLifecycleCallbacks
+ */
 class SequenceItem
 {
-
     /**
      * @var int The SequenceItem's id
      *
@@ -86,7 +86,7 @@ class SequenceItem
     private $minUniqueCount;
 
     /**
-     * @var boolean Indicate if the sequenceItem need to be validated during a specific laps of time
+     * @var bool Indicate if the sequenceItem need to be validated during a specific laps of time
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"readGamification","writeGamification"})
@@ -114,7 +114,7 @@ class SequenceItem
     private $gamificationAction;
 
     /**
-     * @var ArrayCollection|null The RewarSteps where this SequenceItem is involved
+     * @var null|ArrayCollection The RewarSteps where this SequenceItem is involved
      *
      * @ORM\OneToMany(targetEntity="\App\Gamification\Entity\RewardStep", mappedBy="sequenceItem", cascade={"persist"})
      * @MaxDepth(1)
@@ -229,19 +229,16 @@ class SequenceItem
 
     public function addRewardStep(RewardStep $rewardStep): self
     {
-        if (!$this->rewardSteps->contains($rewardStep)) {
-            $this->rewardSteps[] = $rewardStep;
-            $rewardStep->setSequenceItem($this);
-        }
-        
+        $this->rewardSteps[] = $rewardStep;
+        $rewardStep->setSequenceItem($this);
+
         return $this;
     }
-    
+
     public function removeRewardStep(RewardStep $rewardStep): self
     {
-        if ($this->rewardSteps->contains($rewardStep)) {
-            $this->rewardSteps->removeElement($rewardStep);
-        }
+        $this->rewardSteps->removeElement($rewardStep);
+
         return $this;
     }
 }

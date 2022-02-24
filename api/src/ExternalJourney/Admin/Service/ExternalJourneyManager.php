@@ -110,6 +110,7 @@ class ExternalJourneyManager
         $fromLongitude = $request->get('from_longitude');
         $toLatitude = $request->get('to_latitude');
         $toLongitude = $request->get('to_longitude');
+        $date = $request->get('date');
         $outwardMinDate = $request->get('outward_mindate');
         $outwardMaxDate = $request->get('outward_maxdate');
         $frequency = $request->get('frequency');
@@ -138,11 +139,16 @@ class ExternalJourneyManager
             $searchParameters['frequency'] = $frequency;
         }
 
-        if ('' !== $outwardMinDate) {
+        if (!is_null($outwardMinDate) && '' !== $outwardMinDate) {
             $searchParameters['outward']['mindate'] = $outwardMinDate;
         }
-        if ('' !== $outwardMaxDate) {
+        if (!is_null($outwardMaxDate) && '' !== $outwardMaxDate) {
             $searchParameters['outward']['maxdate'] = $outwardMaxDate;
+        }
+        // Override
+        if (!is_null($date) && '' !== $date) {
+            $searchParameters['outward']['mindate'] = $date;
+            $searchParameters['outward']['maxdate'] = $date;
         }
 
         // Days treatment for regular journeys

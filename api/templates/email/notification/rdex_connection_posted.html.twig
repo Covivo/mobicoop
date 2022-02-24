@@ -15,7 +15,7 @@
     </tr> 
     <tr>
         <td>
-            <p>Ce message concerne votre trajet de <strong>{{ context.journeyOrigin }}</strong> à <strong>{{ context.journeyDestination }}</strong> prévu le {{ context.journeyDate }} à {{ context.journeyTime }}</p>
+            <p>Ce message concerne votre trajet de <strong>{{ context.journeyOrigin }}</strong> à <strong>{{ context.journeyDestination }}</strong>{% if context.journeyDate != '' and context.journeyTime != '' %} prévu le {{ context.journeyDate }} à {{ context.journeyTime }}{% endif %}.</p>
         </td>
     </tr> 
     <tr>

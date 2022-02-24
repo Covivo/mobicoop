@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Carpool\Exception;
 
@@ -28,8 +28,9 @@ namespace App\Carpool\Exception;
  */
 class AntiFraudException extends \LogicException
 {
-    const OK = "OK";
-    
-    const TOO_MANY_AD = "Too many ad for this date";
-    const INVALID_TIME = "the new Ad has a departure time before the arrival of another";
+    public const OK = 'OK';
+
+    public const TOO_MANY_AD = 'Too many ad for this date';
+    public const INVALID_TIME = 'the new Ad has a departure time before the arrival of another';
+    public const NOT_ENOUGH_TIME = 'Not enough time between the new ad and the others';
 }

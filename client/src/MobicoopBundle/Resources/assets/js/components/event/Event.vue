@@ -127,6 +127,7 @@
           :regular="regular"
           :default-destination="defaultDestination"
           :publish-button-always-active="publishButtonAlwaysActive"
+          :default-outward-date="date"
         />
       </v-row>
     </v-container>
@@ -242,6 +243,7 @@ export default {
       eventPassed: false,
       loginOrRegisterDialog: false,
       lEventId: this.event.id ? this.event.id : null,
+      date: this.event.fromDate.date
     }
   },
   computed: {

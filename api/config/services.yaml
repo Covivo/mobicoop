@@ -754,6 +754,7 @@ services:
         arguments:
             $clients: '%env(json:file:resolve:RDEX_CLIENTS)%'
             $operator: '%env(json:file:resolve:RDEX_OPERATOR)%'
+            $defaultMarginDuration: '%env(int:CARPOOL_MARGIN_DURATION)%'
 
     # RelayPoint
     App\RelayPoint\Service\RelayPointMapManager:

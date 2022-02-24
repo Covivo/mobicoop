@@ -19,56 +19,57 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Communication\Service;
 
-use App\Carpool\Ressource\Ad;
-use App\Carpool\Entity\Waypoint;
-use App\Communication\Interfaces\MessagerInterface;
-use App\Event\Entity\Event;
-use Psr\Log\LoggerInterface;
-use App\Communication\Repository\NotificationRepository;
-use App\User\Repository\UserNotificationRepository;
-use App\Communication\Entity\Medium;
-use App\User\Entity\User;
-use App\Communication\Entity\Notified;
-use App\Communication\Entity\Notification;
-use Doctrine\ORM\EntityManagerInterface;
-use App\Communication\Entity\Email;
-use App\Communication\Entity\Sms;
-use App\Carpool\Entity\Proposal;
-use App\Carpool\Entity\Matching;
-use App\Communication\Entity\Recipient;
-use App\Carpool\Entity\AskHistory;
 use App\Carpool\Entity\Ask;
+use App\Carpool\Entity\AskHistory;
 use App\Carpool\Entity\Criteria;
-use App\Communication\Entity\Message;
-use App\Rdex\Entity\RdexConnection;
-use App\User\Service\UserManager;
-use Symfony\Contracts\Translation\TranslatorInterface;
-use Twig\Environment;
+use App\Carpool\Entity\Matching;
+use App\Carpool\Entity\Proposal;
+use App\Carpool\Entity\Waypoint;
+use App\Carpool\Ressource\Ad;
 use App\Carpool\Service\AdManager;
+use App\Carpool\Service\ProposalManager;
+use App\Communication\Entity\Email;
+use App\Communication\Entity\Medium;
+use App\Communication\Entity\Message;
+use App\Communication\Entity\Notification;
+use App\Communication\Entity\Notified;
 use App\Communication\Entity\Push;
-use App\User\Entity\PushToken;
-use App\Solidary\Entity\SolidaryAskHistory;
-use App\Solidary\Entity\SolidaryContact;
+use App\Communication\Entity\Recipient;
+use App\Communication\Entity\Sms;
+use App\Communication\Interfaces\MessagerInterface;
+use App\Communication\Repository\NotificationRepository;
 use App\Community\Entity\Community;
 use App\Community\Entity\CommunityUser;
+use App\Event\Entity\Event;
 use App\Match\Entity\Mass;
 use App\Match\Entity\MassPerson;
 use App\Payment\Entity\CarpoolItem;
 use App\Payment\Entity\PaymentProfile;
+use App\Rdex\Entity\RdexConnection;
+use App\Solidary\Entity\SolidaryContact;
+use App\User\Entity\PushToken;
 use App\User\Entity\Review;
+use App\User\Entity\User;
+use App\User\Repository\UserNotificationRepository;
+use App\User\Service\UserManager;
 use Doctrine\Common\Util\ClassUtils;
+use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
+use Twig\Environment;
 
 /**
- * Notification manager
+ * Notification manager.
  *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
  */
 class NotificationManager
 {
+    public const LANG = 'fr_FR';
     private $entityManager;
     private $internalMessageManager;
     private $emailManager;
@@ -90,8 +91,7 @@ class NotificationManager
     private $translator;
     private $userManager;
     private $adManager;
-    const LANG = 'fr_FR';
-
+    private $proposalManager;
 
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -114,7 +114,8 @@ class NotificationManager
         bool $pushEnabled,
         TranslatorInterface $translator,
         UserManager $userManager,
-        AdManager $adManager
+        AdManager $adManager,
+        ProposalManager $proposalManager
     ) {
         $this->entityManager = $entityManager;
         $this->internalMessageManager = $internalMessageManager;
@@ -137,15 +138,15 @@ class NotificationManager
         $this->translator = $translator;
         $this->userManager = $userManager;
         $this->adManager = $adManager;
+        $this->proposalManager = $proposalManager;
     }
 
     /**
      * Send a notification for the action/user.
      *
      * @param string $action    The action
-     * @param User $recipient   The user to be notified
+     * @param User   $recipient The user to be notified
      * @param object $object    The object linked to the notification (if more information is needed to be joined in the notification)
-     * @return void
      */
     public function notifies(string $action, User $recipient, ?object $object = null)
     {
@@ -155,7 +156,7 @@ class NotificationManager
         }
 
         // Check if the user is anonymised if yes we don't send notifications
-        if ($recipient->getStatus() == USER::STATUS_ANONYMIZED) {
+        if (USER::STATUS_ANONYMIZED == $recipient->getStatus()) {
             return;
         }
 
@@ -164,8 +165,8 @@ class NotificationManager
 
         // we check the user notifications
         $userNotifications = $this->userNotificationRepository->findActiveByAction($action, $recipient->getId());
-       
-        if (count($userNotifications)>0) {
+
+        if (count($userNotifications) > 0) {
             // the user should have notifications...
             $notifications = [];
             foreach ($userNotifications as $userNotification) {
@@ -181,51 +182,100 @@ class NotificationManager
                 switch ($notification->getMedium()->getId()) {
                     case Medium::MEDIUM_MESSAGE:
                         if (!is_null($object)) {
-                            $this->logger->info("Internal message notification for $action / " . get_class($object) . " / " . $recipient->getEmail());
+                            $this->logger->info("Internal message notification for {$action} / ".get_class($object).' / '.$recipient->getEmail());
                             if ($object instanceof MessagerInterface && !is_null($object->getMessage())) {
                                 $this->internalMessageManager->sendForObject([$recipient], $object);
                             }
                         }
                         $this->createNotified($notification, $recipient, $object);
+
                         break;
+
                     case Medium::MEDIUM_EMAIL:
                         if (!$this->mailsEnabled) {
                             break;
                         }
                         $this->notifyByEmail($notification, $recipient, $object);
                         $this->createNotified($notification, $recipient, $object);
-                        $this->logger->info("Email notification for $action / " . $recipient->getEmail());
+                        $this->logger->info("Email notification for {$action} / ".$recipient->getEmail());
+
                         break;
+
                     case Medium::MEDIUM_SMS:
                         if (!$this->smsEnabled) {
                             break;
                         }
                         $this->notifyBySMS($notification, $recipient, $object);
+
                         break;
+
                     case Medium::MEDIUM_PUSH:
                         if (!$this->pushEnabled) {
                             break;
                         }
                         $this->notifyByPush($notification, $recipient, $object);
                         $this->createNotified($notification, $recipient, $object);
-                        $this->logger->info("Push notification for $action / " . $recipient->getEmail());
+                        $this->logger->info("Push notification for {$action} / ".$recipient->getEmail());
+
                         break;
                 }
             }
         }
     }
 
-    
+    /**
+     * Create a notified object.
+     *
+     * @param Notification $notification The notification at the origin of the notified
+     * @param User         $user         The recipient of the notification
+     * @param null|object  $object       The object linked with the notification
+     */
+    public function createNotified(Notification $notification, User $user, ?object $object)
+    {
+        $notified = new Notified();
+        $notified->setStatus(Notified::STATUS_SENT);
+        $notified->setSentDate(new \DateTime());
+        $notified->setNotification($notification);
+        $notified->setUser($user);
+        if ($object) {
+            switch (get_class($object)) {
+                case Proposal::class:
+                    $notified->setProposal($object);
+
+                    break;
+
+                case Community::class:
+                    $notified->setCommunity($object);
+
+                    break;
+
+                case Matching::class:
+                    $notified->setMatching($object);
+
+                    break;
+
+                case AskHistory::class:
+                    $notified->setAskHistory($object);
+
+                    break;
+
+                case Recipient::class:
+                    $notified->setRecipient($object);
+
+                    break;
+            }
+        }
+        $this->entityManager->persist($notified);
+        $this->entityManager->flush();
+    }
+
     /**
      * Notify a user by email.
      * Different variables can be passed to the notification body and title depending on the object linked to the notification.
      *
-     * @param Notification  $notification
-     * @param User          $recipient
-     * @param object|null   $object
-     * @return void
+     * @param mixed $lang
      */
-    private function notifyByEmail(Notification $notification, User $recipient, ?object $object = null, $lang='fr_FR')
+    private function notifyByEmail(Notification $notification, User $recipient, ?object $object = null, $lang = 'fr_FR')
     {
         $email = new Email();
         $email->setRecipientEmail($recipient->getEmail());
@@ -235,27 +285,35 @@ class NotificationManager
             switch (ClassUtils::getRealClass(get_class($object))) {
                 case Proposal::class:
                     $titleContext = [];
-                    $bodyContext = ['user'=>$recipient, 'notification'=> $notification];
+                    $bodyContext = ['user' => $recipient, 'notification' => $notification];
+
                     break;
+
                 case Matching::class:
                     $titleContext = [];
-                    $bodyContext = ['user'=>$recipient, 'notification'=> $notification, 'matching'=> $object];
+                    $bodyContext = ['user' => $recipient, 'notification' => $notification, 'matching' => $object];
+
                     break;
+
                 case AskHistory::class:
                     $titleContext = [];
-                    $bodyContext = ['user'=>$recipient, 'askHistory'=>$object];
+                    $bodyContext = ['user' => $recipient, 'askHistory' => $object];
+
                     break;
+
                 case Ask::class:
                     $titleContext = [];
                     foreach ($object->getMatching()->getProposalRequest()->getWaypoints() as $waypoint) {
-                        if ($waypoint->getPosition() == 0) {
+                        if (0 == $waypoint->getPosition()) {
                             $passengerOriginWaypoint = $waypoint;
-                        } elseif ($waypoint->isDestination() == true) {
+                        } elseif (true == $waypoint->isDestination()) {
                             $passengerDestinationWaypoint = $waypoint;
                         }
-                    };
-                    $bodyContext = ['user'=>$recipient, 'ask'=>$object, 'origin'=>$passengerOriginWaypoint, 'destination'=>$passengerDestinationWaypoint];
+                    }
+                    $bodyContext = ['user' => $recipient, 'ask' => $object, 'origin' => $passengerOriginWaypoint, 'destination' => $passengerDestinationWaypoint];
+
                     break;
+
                 case Ad::class:
                     $titleContext = [];
                     $outwardOrigin = null;
@@ -263,177 +321,200 @@ class NotificationManager
                     $returnOrigin = null;
                     $returnDestination = null;
                     $sender = $this->userManager->getUser($object->getUserId());
-                    if ($object->getResults()[0]->getResultPassenger() !== null) {
+                    if (null !== $object->getResults()[0]->getResultPassenger()) {
                         $result = $object->getResults()[0]->getResultPassenger();
                     } else {
                         $result = $object->getResults()[0]->getResultDriver();
-                    };
-                    if ($result->getOutward() !== null) {
+                    }
+                    if (null !== $result->getOutward()) {
                         foreach ($result->getOutward()->getWaypoints() as $waypoint) {
-                            if ($waypoint['role'] == 'passenger' && $waypoint['type'] == 'origin') {
+                            if ('passenger' == $waypoint['role'] && 'origin' == $waypoint['type']) {
                                 $outwardOrigin = $waypoint;
-                            } elseif ($waypoint['role'] == 'passenger' && $waypoint['type'] == 'destination') {
+                            } elseif ('passenger' == $waypoint['role'] && 'destination' == $waypoint['type']) {
                                 $outwardDestination = $waypoint;
                             }
                         }
                         // We check if there is really at least one day checked. Otherwide, we force the $result->outward at null to hide it in the mail
                         // It's the case when the user who made the ask only checked return days
-                        if ($object->getFrequency() == Criteria::FREQUENCY_REGULAR &&
-                        !$result->getOutward()->isMonCheck() &&
-                        !$result->getOutward()->isTueCheck() &&
-                        !$result->getOutward()->isWedCheck() &&
-                        !$result->getOutward()->isThuCheck() &&
-                        !$result->getOutward()->isFriCheck() &&
-                        !$result->getOutward()->isSatCheck() &&
-                        !$result->getOutward()->isSunCheck()
+                        if (Criteria::FREQUENCY_REGULAR == $object->getFrequency()
+                        && !$result->getOutward()->isMonCheck()
+                        && !$result->getOutward()->isTueCheck()
+                        && !$result->getOutward()->isWedCheck()
+                        && !$result->getOutward()->isThuCheck()
+                        && !$result->getOutward()->isFriCheck()
+                        && !$result->getOutward()->isSatCheck()
+                        && !$result->getOutward()->isSunCheck()
                         ) {
                             $result->setOutward(null);
                         }
                     }
-                    if ($result->getReturn() !== null) {
+                    if (null !== $result->getReturn()) {
                         foreach ($result->getReturn()->getWaypoints() as $waypoint) {
-                            if ($waypoint['role'] == 'passenger' && $waypoint['type'] == 'origin') {
+                            if ('passenger' == $waypoint['role'] && 'origin' == $waypoint['type']) {
                                 $returnOrigin = $waypoint;
-                            } elseif ($waypoint['role'] == 'passenger' && $waypoint['type'] == 'destination') {
+                            } elseif ('passenger' == $waypoint['role'] && 'destination' == $waypoint['type']) {
                                 $returnDestination = $waypoint;
                             }
                         }
                     }
                     $bodyContext = [
-                        'user'=>$recipient,
-                        'ad'=>$object,
-                        'sender'=>$sender,
-                        'result'=>$result,
-                        'outwardOrigin'=>$outwardOrigin,
-                        'outwardDestination'=>$outwardDestination,
-                        'returnOrigin'=>$returnOrigin,
-                        'returnDestination'=>$returnDestination
+                        'user' => $recipient,
+                        'ad' => $object,
+                        'sender' => $sender,
+                        'result' => $result,
+                        'outwardOrigin' => $outwardOrigin,
+                        'outwardDestination' => $outwardDestination,
+                        'returnOrigin' => $returnOrigin,
+                        'returnDestination' => $returnDestination,
                     ];
+
                     break;
+
                 case Recipient::class:
                     $titleContext = [];
                     $bodyContext = [];
+
                     break;
+
                 case User::class:
                     $titleContext = [];
-                    $bodyContext = ['user'=>$recipient];
+                    $bodyContext = ['user' => $recipient];
+
                     break;
+
                 case Event::class:
                     $titleContext = [];
-                    $bodyContext = ['user'=>$recipient, 'event' => $object];
+                    $bodyContext = ['user' => $recipient, 'event' => $object];
+
                     break;
+
                 case Community::class:
                     $sender = null;
                     $titleContext = [
                         'community' => $object,
                     ];
                     $bodyContext = [
-                        'recipient'=> $recipient,
-                        'community' => $object
+                        'recipient' => $recipient,
+                        'community' => $object,
                     ];
+
                     break;
+
                 case CommunityUser::class:
                     $sender = null;
                     $bodyContext = [
-                        'recipient'=> $recipient,
+                        'recipient' => $recipient,
                         'community' => $object->getCommunity(),
-                        'senderGivenName'=> $object->getUser()->getGivenName(),
-                        'senderShortFamilyName'=> $object->getUser()->getShortFamilyName()
+                        'senderGivenName' => $object->getUser()->getGivenName(),
+                        'senderShortFamilyName' => $object->getUser()->getShortFamilyName(),
                     ];
+
                     break;
+
                 case Message::class:
-                    $titleContext = ['user'=>$object->getUser()];
-                    $bodyContext = ['text'=>$object->getText(), 'user'=>$recipient];
+                    $titleContext = ['user' => $object->getUser()];
+                    $bodyContext = ['text' => $object->getText(), 'user' => $recipient];
+
                 break;
+
                 case RdexConnection::class:
                     $titleContext = [];
-                    $ad = $this->adManager->getAd($object->getJourneysId());
-                    if (!is_null($object->getDriver()->getUuid())) {
-                        if (!is_null($ad->getResults()[0]->getResultPassenger())) {
-                            $journey = $ad->getResults()[0]->getResultPassenger();
-                        } else {
-                            $journey = $ad->getResults()[0]->getResultDriver();
+                    $proposal = $this->proposalManager->get($object->getJourneysId());
+
+                    $origin = $proposal->getWaypoints()[0]->getAddress()->getAddressLocality();
+                    $destination = $proposal->getWaypoints()[count($proposal->getWaypoints()) - 1]->getAddress()->getAddressLocality();
+
+                    $date = $time = '';
+                    if (Criteria::FREQUENCY_PUNCTUAL == $proposal->getCriteria()->getFrequency()) {
+                        if (!is_null($proposal->getCriteria()->getFromDate())) {
+                            $date = $proposal->getCriteria()->getFromDate()->format('d/m/Y');
+                        }
+                        if (!is_null($proposal->getCriteria()->getFromTime())) {
+                            $date = $proposal->getCriteria()->getFromDate();
                         }
                     }
 
-                    $origin = $journey->getOutward()->getOrigin()->getAddressLocality();
-                    $destination = $journey->getOutward()->getDestination()->getAddressLocality();
-                    $date = "";
-                    if (!is_null($journey->getOutward()->getDate())) {
-                        $date = $journey->getOutward()->getDate()->format("d/m/Y");
-                    } elseif (!is_null($journey->getOutward()->getFromDate())) {
-                        $date = $journey->getOutward()->getFromDate()->format("d/m/Y");
-                    }
-                    $time = "";
-                    if (!is_null($journey->getOutward()->getTime())) {
-                        $time = $journey->getOutward()->getTime()->format("H\hi");
-                    }
                     $bodyContext = [
-                        'text'=>$object->getDetails(),
-                        'user'=>$recipient,
-                        'operator'=>$object->getOperator(),
-                        'origin'=>$object->getOrigin(),
+                        'text' => $object->getDetails(),
+                        'user' => $recipient,
+                        'operator' => $object->getOperator(),
+                        'origin' => $object->getOrigin(),
                         'journeyOrigin' => $origin,
                         'journeyDestination' => $destination,
                         'journeyDate' => $date,
-                        'journeyTime' => $time
+                        'journeyTime' => $time,
                     ];
+
                 break;
+
                 case SolidaryContact::class:
-                    $titleContext = ['user'=>$object->getSolidarySolution()->getSolidary()->getSolidaryUserStructure()->getSolidaryUser()->getUser()];
-                    $bodyContext = ['text'=>$object->getContent(), 'recipient'=>$recipient];
+                    $titleContext = ['user' => $object->getSolidarySolution()->getSolidary()->getSolidaryUserStructure()->getSolidaryUser()->getUser()];
+                    $bodyContext = ['text' => $object->getContent(), 'recipient' => $recipient];
+
                 break;
+
                 case Mass::class:
-                    $titleContext = ['massId'=>$object->getId()];
-                    $bodyContext = ['massId'=>$object->getId(), 'errors' => $object->getErrors()];
+                    $titleContext = ['massId' => $object->getId()];
+                    $bodyContext = ['massId' => $object->getId(), 'errors' => $object->getErrors()];
+
                     break;
+
                 case MassPerson::class:
                     $titleContext = [];
-                    $bodyContext = ['user'=>$recipient, 'clearPassword'=>$object->getClearPassword()];
+                    $bodyContext = ['user' => $recipient, 'clearPassword' => $object->getClearPassword()];
+
                     break;
+
                 case CarpoolItem::class:
-                    $titleContext = ['deptor'=>$object->getDebtorUser()];
+                    $titleContext = ['deptor' => $object->getDebtorUser()];
                     foreach ($object->getAsk()->getMatching()->getProposalRequest()->getWaypoints() as $waypoint) {
-                        if ($waypoint->getPosition() == 0) {
+                        if (0 == $waypoint->getPosition()) {
                             $passengerOrigin = $waypoint->getAddress()->getAddressLocality();
-                        } elseif ($waypoint->isDestination() == true) {
+                        } elseif (true == $waypoint->isDestination()) {
                             $passengerDestination = $waypoint->getAddress()->getAddressLocality();
                         }
-                    };
+                    }
                     // if regular we get the first day of the week
                     $firstDayOfWeek = null;
-                    if ($object->getAsk()->getCriteria()->getFrequency() == Criteria::FREQUENCY_REGULAR) {
+                    if (Criteria::FREQUENCY_REGULAR == $object->getAsk()->getCriteria()->getFrequency()) {
                         $day = new \DateTime($object->getItemDate()->format('d-m-Y'));
-                        $day->setISODate((int)$day->format('o'), (int)$day->format('W'), 1);
+                        $day->setISODate((int) $day->format('o'), (int) $day->format('W'), 1);
                         $firstDayOfWeek = $day->format('l d F Y');
-                    };
+                    }
                     $bodyContext = [
-                        'deptor'=>$object->getDebtorUser(),
-                        'creditor'=>$object->getCreditorUser(),
-                        'amount'=>$object->getAmount(),
-                        'origin'=>$passengerOrigin,
-                        'destination'=>$passengerDestination,
-                        'week'=>$firstDayOfWeek
+                        'deptor' => $object->getDebtorUser(),
+                        'creditor' => $object->getCreditorUser(),
+                        'amount' => $object->getAmount(),
+                        'origin' => $passengerOrigin,
+                        'destination' => $passengerDestination,
+                        'week' => $firstDayOfWeek,
                     ];
+
                     break;
+
                 case PaymentProfile::class:
                     $titleContext = [];
-                    $bodyContext = ['paymentProfile'=>$object];
+                    $bodyContext = ['paymentProfile' => $object];
+
                     break;
+
                 case Review::class:
                     $titleContext = [];
                     $bodyContext = [
-                        'givenName'=>$object->getReviewer()->getGivenName(),
-                        'shortFamilyName'=>$object->getReviewer()->getShortFamilyName()
+                        'givenName' => $object->getReviewer()->getGivenName(),
+                        'shortFamilyName' => $object->getReviewer()->getShortFamilyName(),
                     ];
+
                     break;
+
                 default:
-                    if (isset($object->new) && isset($object->old) && isset($object->ask) && isset($object->sender)) {
+                    if (isset($object->new, $object->old, $object->ask, $object->sender)) {
                         $outwardOrigin = null;
                         $outwardDestination = null;
+
                         /** @var Waypoint $waypoint */
                         foreach ($object->ask->getWaypoints() as $waypoint) {
-                            if ($waypoint->getPosition() == 0) {
+                            if (0 == $waypoint->getPosition()) {
                                 $outwardOrigin = $waypoint;
                             } elseif ($waypoint->isDestination()) {
                                 $outwardDestination = $waypoint;
@@ -444,14 +525,14 @@ class NotificationManager
                             'notification' => $notification,
                             'object' => $object,
                             'origin' => $outwardOrigin,
-                            'destination' => $outwardDestination
+                            'destination' => $outwardDestination,
                         ];
                     }
             }
         } else {
-            $bodyContext = ['user'=>$recipient, 'notification'=> $notification];
+            $bodyContext = ['user' => $recipient, 'notification' => $notification];
         }
-        
+
         $lang = self::LANG;
         if (!is_null($recipient->getLanguage())) {
             $lang = $recipient->getLanguage();
@@ -459,26 +540,21 @@ class NotificationManager
         } else {
             $this->translator->setLocale($lang);
         }
-        
+
         $email->setObject($this->templating->render(
-            $notification->getTemplateTitle() ? $this->emailTitleTemplatePath . $notification->getTemplateTitle() : $this->emailTitleTemplatePath . $notification->getAction()->getName().'.html.twig',
+            $notification->getTemplateTitle() ? $this->emailTitleTemplatePath.$notification->getTemplateTitle() : $this->emailTitleTemplatePath.$notification->getAction()->getName().'.html.twig',
             [
-                'context' => $titleContext
+                'context' => $titleContext,
             ]
         ));
-        
+
         // if a template is associated with the action in the notification, we us it; otherwise we try the name of the action as template name
-        $this->emailManager->send($email, $notification->getTemplateBody() ? $this->emailTemplatePath . $notification->getTemplateBody() : $this->emailTemplatePath . $notification->getAction()->getName(), $bodyContext, $lang);
+        $this->emailManager->send($email, $notification->getTemplateBody() ? $this->emailTemplatePath.$notification->getTemplateBody() : $this->emailTemplatePath.$notification->getAction()->getName(), $bodyContext, $lang);
     }
 
     /**
      * Notify a user by sms.
      * Different variables can be passed to the notification body and title depending on the object linked to the notification.
-     *
-     * @param Notification  $notification
-     * @param User          $recipient
-     * @param object|null   $object
-     * @return void
      */
     private function notifyBySms(Notification $notification, User $recipient, ?object $object = null)
     {
@@ -494,110 +570,134 @@ class NotificationManager
         if ($object) {
             switch (get_class($object)) {
                 case Proposal::class:
-                    $bodyContext = ['user'=>$recipient, 'notification'=> $notification, 'object' => $object];
+                    $bodyContext = ['user' => $recipient, 'notification' => $notification, 'object' => $object];
+
                     break;
+
                 case Matching::class:
-                    $bodyContext = ['user'=>$recipient, 'notification'=> $notification, 'matching'=> $object];
+                    $bodyContext = ['user' => $recipient, 'notification' => $notification, 'matching' => $object];
+
                     break;
+
                 case AskHistory::class:
-                    $bodyContext = ['user'=>$recipient];
+                    $bodyContext = ['user' => $recipient];
+
                     break;
+
                 case Ask::class:
                     foreach ($object->getMatching()->getProposalRequest()->getWaypoints() as $waypoint) {
-                        if ($waypoint->getPosition() == 0) {
+                        if (0 == $waypoint->getPosition()) {
                             $passengerOriginWaypoint = $waypoint;
-                        } elseif ($waypoint->isDestination() == true) {
+                        } elseif (true == $waypoint->isDestination()) {
                             $passengerDestinationWaypoint = $waypoint;
                         }
-                    };
-                    $bodyContext = ['user'=>$recipient, 'ask'=>$object, 'origin'=>$passengerOriginWaypoint, 'destination'=>$passengerDestinationWaypoint];
+                    }
+                    $bodyContext = ['user' => $recipient, 'ask' => $object, 'origin' => $passengerOriginWaypoint, 'destination' => $passengerDestinationWaypoint];
+
                     break;
+
                 case Ad::class:
                     $outwardOrigin = null;
                     $outwardDestination = null;
                     $returnOrigin = null;
                     $returnDestination = null;
                     $sender = $this->userManager->getUser($object->getUserId());
-                    if ($object->getResults()[0]->getResultPassenger() !== null) {
+                    if (null !== $object->getResults()[0]->getResultPassenger()) {
                         $result = $object->getResults()[0]->getResultPassenger();
                     } else {
                         $result = $object->getResults()[0]->getResultDriver();
-                    };
-                    if ($result->getOutward() !== null) {
+                    }
+                    if (null !== $result->getOutward()) {
                         foreach ($result->getOutward()->getWaypoints() as $waypoint) {
-                            if ($waypoint['role'] == 'passenger' && $waypoint['type'] == 'origin') {
+                            if ('passenger' == $waypoint['role'] && 'origin' == $waypoint['type']) {
                                 $outwardOrigin = $waypoint;
-                            } elseif ($waypoint['role'] == 'passenger' && $waypoint['type'] == 'destination') {
+                            } elseif ('passenger' == $waypoint['role'] && 'destination' == $waypoint['type']) {
                                 $outwardDestination = $waypoint;
                             }
                         }
                     }
-                    if ($result->getReturn() !== null) {
+                    if (null !== $result->getReturn()) {
                         foreach ($result->getReturn()->getWaypoints() as $waypoint) {
-                            if ($waypoint['role'] == 'passenger' && $waypoint['type'] == 'origin') {
+                            if ('passenger' == $waypoint['role'] && 'origin' == $waypoint['type']) {
                                 $returnOrigin = $waypoint;
-                            } elseif ($waypoint['role'] == 'passenger' && $waypoint['type'] == 'destination') {
+                            } elseif ('passenger' == $waypoint['role'] && 'destination' == $waypoint['type']) {
                                 $returnDestination = $waypoint;
                             }
                         }
                     }
                     $bodyContext = [
-                        'user'=>$recipient,
-                        'ad'=>$object,
-                        'sender'=>$sender,
-                        'result'=>$result,
-                        'outwardOrigin'=>$outwardOrigin,
-                        'outwardDestination'=>$outwardDestination,
-                        'returnOrigin'=>$returnOrigin,
-                        'returnDestination'=>$returnDestination
+                        'user' => $recipient,
+                        'ad' => $object,
+                        'sender' => $sender,
+                        'result' => $result,
+                        'outwardOrigin' => $outwardOrigin,
+                        'outwardDestination' => $outwardDestination,
+                        'returnOrigin' => $returnOrigin,
+                        'returnDestination' => $returnDestination,
                     ];
+
                     break;
+
                 case Recipient::class:
                     $bodyContext = [];
+
                     break;
+
                 case User::class:
-                    $bodyContext = ['user'=>$recipient];
+                    $bodyContext = ['user' => $recipient];
+
                     break;
+
                 case Message::class:
-                    $bodyContext = ['text'=>$object->getText(), 'user'=>$recipient];
+                    $bodyContext = ['text' => $object->getText(), 'user' => $recipient];
+
                     break;
+
                 case SolidaryContact::class:
-                    $bodyContext = ['text'=>$object->getContent(), 'recipient'=>$recipient];
+                    $bodyContext = ['text' => $object->getContent(), 'recipient' => $recipient];
+
                     break;
+
                 case CarpoolItem::class:
                     foreach ($object->getAsk()->getMatching()->getProposalRequest()->getWaypoints() as $waypoint) {
-                        if ($waypoint->getPosition() == 0) {
+                        if (0 == $waypoint->getPosition()) {
                             $passengerOrigin = $waypoint->getAddress()->getAddressLocality();
-                        } elseif ($waypoint->isDestination() == true) {
+                        } elseif (true == $waypoint->isDestination()) {
                             $passengerDestination = $waypoint->getAddress()->getAddressLocality();
                         }
-                    };
+                    }
                     $firstDayOfWeek = null;
-                    if ($object->getAsk()->getCriteria()->getFrequency() == Criteria::FREQUENCY_REGULAR) {
+                    if (Criteria::FREQUENCY_REGULAR == $object->getAsk()->getCriteria()->getFrequency()) {
                         $day = new \DateTime($object->getItemDate()->format('d-m-Y'));
-                        $day->setISODate((int)$day->format('o'), (int)$day->format('W'), 1);
+                        $day->setISODate((int) $day->format('o'), (int) $day->format('W'), 1);
                         $firstDayOfWeek = $day->format('l d F Y');
-                    };
+                    }
                     $bodyContext = [
-                        'deptor'=>$object->getDebtorUser(),
-                        'creditor'=>$object->getCreditorUser(),
-                        'amount'=>$object->getAmount(),
-                        'origin'=>$passengerOrigin,
-                        'destination'=>$passengerDestination,
-                        'week'=>$firstDayOfWeek
+                        'deptor' => $object->getDebtorUser(),
+                        'creditor' => $object->getCreditorUser(),
+                        'amount' => $object->getAmount(),
+                        'origin' => $passengerOrigin,
+                        'destination' => $passengerDestination,
+                        'week' => $firstDayOfWeek,
                     ];
+
                     break;
+
                 case PaymentProfile::class:
-                    $bodyContext = ['paymentProfile'=>$object];
+                    $bodyContext = ['paymentProfile' => $object];
+
                     break;
+
                 case Review::class:
                     $bodyContext = [
-                        'givenName'=>$object->getReviewer()->getGivenName(),
-                        'shortFamilyName'=>$object->getReviewer()->getShortFamilyName()
+                        'givenName' => $object->getReviewer()->getGivenName(),
+                        'shortFamilyName' => $object->getReviewer()->getShortFamilyName(),
                     ];
+
                     break;
+
                 default:
-                    if (isset($object->new) && isset($object->old) && isset($object->ask) && isset($object->sender)) {
+                    if (isset($object->new, $object->old, $object->ask, $object->sender)) {
                         $outwardOrigin = null;
                         $outwardDestination = null;
 
@@ -612,7 +712,7 @@ class NotificationManager
                         }
 
                         foreach ($waypoints as $waypoint) {
-                            if ($waypoint->getPosition() == 0) {
+                            if (0 == $waypoint->getPosition()) {
                                 $outwardOrigin = $waypoint;
                             } elseif ($waypoint->isDestination()) {
                                 $outwardDestination = $waypoint;
@@ -624,42 +724,39 @@ class NotificationManager
                             'notification' => $notification,
                             'object' => $object,
                             'origin' => $outwardOrigin,
-                            'destination' => $outwardDestination
+                            'destination' => $outwardDestination,
                         ];
                     }
             }
         } else {
-            $bodyContext = ['user'=>$recipient, 'notification'=> $notification];
+            $bodyContext = ['user' => $recipient, 'notification' => $notification];
         }
 
         // if a template is associated with the action in the notification, we us it; otherwise we try the name of the action as template name
-        $this->smsManager->send($sms, $notification->getTemplateBody() ? $this->smsTemplatePath . $notification->getTemplateBody() : $this->smsTemplatePath . $notification->getAction()->getName(), $bodyContext);
-        
+        $this->smsManager->send($sms, $notification->getTemplateBody() ? $this->smsTemplatePath.$notification->getTemplateBody() : $this->smsTemplatePath.$notification->getAction()->getName(), $bodyContext);
+
         $this->createNotified($notification, $recipient, $object);
-        $this->logger->info("Sms notification for ". $notification->getAction()->getName() . " / " . $recipient->getEmail());
+        $this->logger->info('Sms notification for '.$notification->getAction()->getName().' / '.$recipient->getEmail());
     }
 
     /**
      * Notify a user by push notification.
      * Different variables can be passed to the notification body and title depending on the object linked to the notification.
      *
-     * @param Notification  $notification   The notification
-     * @param User          $recipient      The recipient user
-     * @param object|null   $object         The object to use
-     * @return void
+     * @param Notification $notification The notification
+     * @param User         $recipient    The recipient user
+     * @param null|object  $object       The object to use
      */
     private function notifyByPush(Notification $notification, User $recipient, ?object $object = null)
     {
         $push = new Push();
-        $recipientDeviceIds=[];
+        $recipientDeviceIds = [];
         foreach ($recipient->getPushTokens() as $pushToken) {
-            /**
-             * @var PushToken $pushToken
-             */
+            // @var PushToken $pushToken
             $recipientDeviceIds[] = $pushToken->getToken();
         }
         // we check if the recipient has at least one push token id
-        if (count($recipientDeviceIds)==0) {
+        if (0 == count($recipientDeviceIds)) {
             return;
         }
         $push->setRecipientDeviceIds($recipientDeviceIds);
@@ -668,27 +765,35 @@ class NotificationManager
             switch (get_class($object)) {
                 case Proposal::class:
                     $titleContext = [];
-                    $bodyContext = ['user'=>$recipient, 'notification'=> $notification, 'object' => $object];
+                    $bodyContext = ['user' => $recipient, 'notification' => $notification, 'object' => $object];
+
                     break;
+
                 case Matching::class:
                     $titleContext = [];
-                    $bodyContext = ['user'=>$recipient, 'notification'=> $notification, 'matching'=> $object];
+                    $bodyContext = ['user' => $recipient, 'notification' => $notification, 'matching' => $object];
+
                     break;
+
                 case AskHistory::class:
                     $titleContext = [];
-                    $bodyContext = ['user'=>$recipient];
+                    $bodyContext = ['user' => $recipient];
+
                     break;
+
                 case Ask::class:
                     $titleContext = [];
                     foreach ($object->getMatching()->getProposalRequest()->getWaypoints() as $waypoint) {
-                        if ($waypoint->getPosition() == 0) {
+                        if (0 == $waypoint->getPosition()) {
                             $passengerOriginWaypoint = $waypoint;
-                        } elseif ($waypoint->isDestination() == true) {
+                        } elseif (true == $waypoint->isDestination()) {
                             $passengerDestinationWaypoint = $waypoint;
                         }
-                    };
-                    $bodyContext = ['user'=>$recipient, 'ask'=>$object, 'origin'=>$passengerOriginWaypoint, 'destination'=>$passengerDestinationWaypoint];
+                    }
+                    $bodyContext = ['user' => $recipient, 'ask' => $object, 'origin' => $passengerOriginWaypoint, 'destination' => $passengerDestinationWaypoint];
+
                     break;
+
                 case Ad::class:
                     $titleContext = [];
                     $outwardOrigin = null;
@@ -696,95 +801,110 @@ class NotificationManager
                     $returnOrigin = null;
                     $returnDestination = null;
                     $sender = $this->userManager->getUser($object->getUserId());
-                    if ($object->getResults()[0]->getResultPassenger() !== null) {
+                    if (null !== $object->getResults()[0]->getResultPassenger()) {
                         $result = $object->getResults()[0]->getResultPassenger();
                     } else {
                         $result = $object->getResults()[0]->getResultDriver();
-                    };
-                    if ($result->getOutward() !== null) {
+                    }
+                    if (null !== $result->getOutward()) {
                         foreach ($result->getOutward()->getWaypoints() as $waypoint) {
-                            if ($waypoint['role'] == 'passenger' && $waypoint['type'] == 'origin') {
+                            if ('passenger' == $waypoint['role'] && 'origin' == $waypoint['type']) {
                                 $outwardOrigin = $waypoint;
-                            } elseif ($waypoint['role'] == 'passenger' && $waypoint['type'] == 'destination') {
+                            } elseif ('passenger' == $waypoint['role'] && 'destination' == $waypoint['type']) {
                                 $outwardDestination = $waypoint;
                             }
                         }
                     }
-                    if ($result->getReturn() !== null) {
+                    if (null !== $result->getReturn()) {
                         foreach ($result->getReturn()->getWaypoints() as $waypoint) {
-                            if ($waypoint['role'] == 'passenger' && $waypoint['type'] == 'origin') {
+                            if ('passenger' == $waypoint['role'] && 'origin' == $waypoint['type']) {
                                 $returnOrigin = $waypoint;
-                            } elseif ($waypoint['role'] == 'passenger' && $waypoint['type'] == 'destination') {
+                            } elseif ('passenger' == $waypoint['role'] && 'destination' == $waypoint['type']) {
                                 $returnDestination = $waypoint;
                             }
                         }
                     }
                     $bodyContext = [
-                        'user'=>$recipient,
-                        'ad'=>$object,
-                        'sender'=>$sender,
-                        'result'=>$result,
-                        'outwardOrigin'=>$outwardOrigin,
-                        'outwardDestination'=>$outwardDestination,
-                        'returnOrigin'=>$returnOrigin,
-                        'returnDestination'=>$returnDestination
+                        'user' => $recipient,
+                        'ad' => $object,
+                        'sender' => $sender,
+                        'result' => $result,
+                        'outwardOrigin' => $outwardOrigin,
+                        'outwardDestination' => $outwardDestination,
+                        'returnOrigin' => $returnOrigin,
+                        'returnDestination' => $returnDestination,
                     ];
+
                     break;
+
                 case Recipient::class:
                     $titleContext = [];
                     $bodyContext = [];
+
                     break;
+
                 case User::class:
                     $titleContext = [];
-                    $bodyContext = ['user'=>$recipient];
+                    $bodyContext = ['user' => $recipient];
+
                     break;
+
                 case Message::class:
-                    $titleContext = ['user'=>$object->getUser()];
-                    $bodyContext = ['text'=>$object->getText(), 'user'=>$recipient];
+                    $titleContext = ['user' => $object->getUser()];
+                    $bodyContext = ['text' => $object->getText(), 'user' => $recipient];
+
                     break;
+
                 case CarpoolItem::class:
-                    $titleContext = ['deptor'=>$object->getDebtorUser()];
+                    $titleContext = ['deptor' => $object->getDebtorUser()];
                     foreach ($object->getAsk()->getMatching()->getProposalRequest()->getWaypoints() as $waypoint) {
-                        if ($waypoint->getPosition() == 0) {
+                        if (0 == $waypoint->getPosition()) {
                             $passengerOrigin = $waypoint->getAddress()->getAddressLocality();
-                        } elseif ($waypoint->isDestination() == true) {
+                        } elseif (true == $waypoint->isDestination()) {
                             $passengerDestination = $waypoint->getAddress()->getAddressLocality();
                         }
-                    };
+                    }
                     $firstDayOfWeek = null;
-                    if ($object->getAsk()->getCriteria()->getFrequency() == Criteria::FREQUENCY_REGULAR) {
+                    if (Criteria::FREQUENCY_REGULAR == $object->getAsk()->getCriteria()->getFrequency()) {
                         $day = new \DateTime($object->getItemDate()->format('d-m-Y'));
-                        $day->setISODate((int)$day->format('o'), (int)$day->format('W'), 1);
+                        $day->setISODate((int) $day->format('o'), (int) $day->format('W'), 1);
                         $firstDayOfWeek = $day->format('l d F Y');
-                    };
+                    }
                     $bodyContext = [
-                        'deptor'=>$object->getDebtorUser(),
-                        'creditor'=>$object->getCreditorUser(),
-                        'amount'=>$object->getAmount(),
-                        'origin'=>$passengerOrigin,
-                        'destination'=>$passengerDestination,
-                        'week'=>$firstDayOfWeek
+                        'deptor' => $object->getDebtorUser(),
+                        'creditor' => $object->getCreditorUser(),
+                        'amount' => $object->getAmount(),
+                        'origin' => $passengerOrigin,
+                        'destination' => $passengerDestination,
+                        'week' => $firstDayOfWeek,
                     ];
+
                     break;
+
                 case PaymentProfile::class:
                     $titleContext = [];
-                    $bodyContext = ['paymentProfile'=>$object];
+                    $bodyContext = ['paymentProfile' => $object];
+
                     break;
+
                 case Review::class:
                     $titleContext = [];
                     $bodyContext = [
-                        'givenName'=>$object->getReviewer()->getGivenName(),
-                        'shortFamilyName'=>$object->getReviewer()->getShortFamilyName()
+                        'givenName' => $object->getReviewer()->getGivenName(),
+                        'shortFamilyName' => $object->getReviewer()->getShortFamilyName(),
                     ];
+
                     break;
+
                 default:
                     $titleContext = [];
-                    if (isset($object->new) && isset($object->old) && isset($object->ask) && isset($object->sender)) {
+                    if (isset($object->new, $object->old, $object->ask, $object->sender)) {
                         $outwardOrigin = null;
                         $outwardDestination = null;
+
                         /** @var Waypoint $waypoint */
                         foreach ($object->ask->getWaypoints() as $waypoint) {
-                            if ($waypoint->getPosition() == 0) {
+                            if (0 == $waypoint->getPosition()) {
                                 $outwardOrigin = $waypoint;
                             } elseif ($waypoint->isDestination()) {
                                 $outwardDestination = $waypoint;
@@ -795,13 +915,13 @@ class NotificationManager
                             'notification' => $notification,
                             'object' => $object,
                             'origin' => $outwardOrigin,
-                            'destination' => $outwardDestination
+                            'destination' => $outwardDestination,
                         ];
                     }
             }
         } else {
             $titleContext = [];
-            $bodyContext = ['user'=>$recipient, 'notification'=> $notification];
+            $bodyContext = ['user' => $recipient, 'notification' => $notification];
         }
 
         $lang = self::LANG;
@@ -812,52 +932,13 @@ class NotificationManager
             $this->translator->setLocale($lang);
         }
         $push->setTitle($this->templating->render(
-            $notification->getTemplateTitle() ? $this->pushTitleTemplatePath . $notification->getTemplateTitle() : $this->pushTitleTemplatePath . $notification->getAction()->getName().'.html.twig',
+            $notification->getTemplateTitle() ? $this->pushTitleTemplatePath.$notification->getTemplateTitle() : $this->pushTitleTemplatePath.$notification->getAction()->getName().'.html.twig',
             [
-                'context' => $titleContext
+                'context' => $titleContext,
             ]
         ));
 
         // if a template is associated with the action in the notification, we us it; otherwise we try the name of the action as template name
-        $this->pushManager->send($push, $notification->getTemplateBody() ? $this->pushTemplatePath . $notification->getTemplateBody() : $this->pushTemplatePath . $notification->getAction()->getName(), $bodyContext);
-    }
-
-
-    /**
-     * Create a notified object.
-     *
-     * @param Notification  $notification   The notification at the origin of the notified
-     * @param User          $user           The recipient of the notification
-     * @param object|null   $object         The object linked with the notification
-     * @return void
-     */
-    public function createNotified(Notification $notification, User $user, ?object $object)
-    {
-        $notified = new Notified();
-        $notified->setStatus(Notified::STATUS_SENT);
-        $notified->setSentDate(new \Datetime());
-        $notified->setNotification($notification);
-        $notified->setUser($user);
-        if ($object) {
-            switch (get_class($object)) {
-                case Proposal::class:
-                    $notified->setProposal($object);
-                    break;
-                case Community::class:
-                    $notified->setCommunity($object);
-                    break;
-                case Matching::class:
-                    $notified->setMatching($object);
-                    break;
-                case AskHistory::class:
-                    $notified->setAskHistory($object);
-                    break;
-                case Recipient::class:
-                    $notified->setRecipient($object);
-                    break;
-            }
-        }
-        $this->entityManager->persist($notified);
-        $this->entityManager->flush();
+        $this->pushManager->send($push, $notification->getTemplateBody() ? $this->pushTemplatePath.$notification->getTemplateBody() : $this->pushTemplatePath.$notification->getAction()->getName(), $bodyContext);
     }
 }

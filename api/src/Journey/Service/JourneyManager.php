@@ -19,11 +19,10 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Journey\Service;
 
-use App\Carpool\Repository\ProposalRepository;
 use App\Carpool\Ressource\Ad;
 use App\Carpool\Service\AdManager;
 use App\Carpool\Service\ProposalManager;
@@ -52,8 +51,6 @@ class JourneyManager
 
     /**
      * Constructor.
-     *
-     * @param EntityManagerInterface $entityManager
      */
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -76,9 +73,7 @@ class JourneyManager
     }
 
     /**
-     * Hydrate journey
-     *
-     * @return void
+     * Hydrate journey.
      */
     public function hydrate()
     {
@@ -87,7 +82,7 @@ class JourneyManager
         $conn = $this->entityManager->getConnection();
 
         // delete existing journeys
-        $sql = "truncate journey;";
+        $sql = 'truncate journey;';
         $stmt = $conn->prepare($sql);
         $stmt->execute();
 
@@ -154,23 +149,22 @@ class JourneyManager
             )
         ),null);
         ";
-        
+
         $stmt = $conn->prepare($sql);
         $stmt->execute();
 
         // remove unwanted journeys
-        $sql = "delete from journey where frequency=0;";
+        $sql = 'delete from journey where frequency=0;';
         $stmt = $conn->prepare($sql);
         $stmt->execute();
 
-        $sql = "delete from journey where frequency=1 and from_date<CURDATE();";
-        $stmt = $conn->prepare($sql);
-        $stmt->execute();
-       
-        $sql = "delete from journey where frequency<>1 and to_date<CURDATE();";
+        $sql = 'delete from journey where frequency=1 and from_date<CURDATE();';
         $stmt = $conn->prepare($sql);
         $stmt->execute();
 
+        $sql = 'delete from journey where frequency<>1 and to_date<CURDATE();';
+        $stmt = $conn->prepare($sql);
+        $stmt->execute();
 
         // add user
         $sql = "
@@ -190,24 +184,25 @@ class JourneyManager
     }
 
     /**
-     * Get all cities with given first letter
+     * Get all cities with given first letter.
      *
-     * @param string|null $letter   The starting letter
-     * @return array                The cities found
+     * @param null|string $letter The starting letter
+     *
+     * @return array The cities found
      */
     public function getCities(?string $letter)
     {
         $conn = $this->entityManager->getConnection();
-        $sql = "SELECT distinct origin as city FROM journey";
+        $sql = 'SELECT distinct origin as city FROM journey';
         if ($letter) {
-            $sql .= " WHERE origin like '" . $letter . "%' order by origin asc";
+            $sql .= " WHERE origin like '".$letter."%' order by origin asc";
         }
         $stmt = $conn->prepare($sql);
         $stmt->execute();
         $origins = $stmt->fetchAll();
-        $sql = "SELECT distinct destination as city FROM journey";
+        $sql = 'SELECT distinct destination as city FROM journey';
         if ($letter) {
-            $sql .= " WHERE destination like '" . $letter . "%' order by destination asc";
+            $sql .= " WHERE destination like '".$letter."%' order by destination asc";
         }
         $stmt = $conn->prepare($sql);
         $stmt->execute();
@@ -221,22 +216,24 @@ class JourneyManager
             return ucfirst(strtolower($word));
         }, $result);
         sort($result, SORT_STRING);
+
         return array_unique($result);
     }
 
     /**
-     * Get all journeys for the given origin
+     * Get all journeys for the given origin.
      *
      * @param string $origin        The origin
      * @param string $operationName The api operation name (needed for pagination)
-     * @param array $context        The api context (needed for pagination)
-     * @return Journey[]            The journeys found
+     * @param array  $context       The api context (needed for pagination)
+     *
+     * @return Journey[] The journeys found
      */
     public function getFrom(string $origin, string $operationName, array $context = [])
     {
         // first we search the city in the journeys as origin
         $conn = $this->entityManager->getConnection();
-        $sql = "SELECT * FROM journey WHERE LOWER(LEFT(TRIM(origin),1)) like '" . strtolower(substr($origin, 0, 1)) . "'";
+        $sql = "SELECT * FROM journey WHERE LOWER(LEFT(TRIM(origin),1)) like '".strtolower(substr($origin, 0, 1))."'";
         $stmt = $conn->prepare($sql);
         $stmt->execute();
         $journeys = $stmt->fetchAll();
@@ -253,18 +250,19 @@ class JourneyManager
     }
 
     /**
-     * Get all destinations for the given origin
+     * Get all destinations for the given origin.
      *
      * @param string $origin        The origin
      * @param string $operationName The api operation name (needed for pagination)
-     * @param array $context        The api context (needed for pagination)
-     * @return Journey[]            The journeys found
+     * @param array  $context       The api context (needed for pagination)
+     *
+     * @return Journey[] The journeys found
      */
     public function getDestinationsForOrigin(string $origin)
     {
         // first we search the city in the journeys as origin
         $conn = $this->entityManager->getConnection();
-        $sql = "SELECT * FROM journey WHERE LOWER(LEFT(TRIM(origin),1)) like '" . strtolower(substr($origin, 0, 1)) . "'";
+        $sql = "SELECT * FROM journey WHERE LOWER(LEFT(TRIM(origin),1)) like '".strtolower(substr($origin, 0, 1))."'";
         $stmt = $conn->prepare($sql);
         $stmt->execute();
         $journeys = $stmt->fetchAll();
@@ -281,18 +279,19 @@ class JourneyManager
     }
 
     /**
-     * Get all journeys for the given destination
+     * Get all journeys for the given destination.
      *
      * @param string $destination   The destination
      * @param string $operationName The api operation name (needed for pagination)
-     * @param array $context        The api context (needed for pagination)
-     * @return Journey[]            The journeys found
+     * @param array  $context       The api context (needed for pagination)
+     *
+     * @return Journey[] The journeys found
      */
     public function getTo(string $destination, string $operationName, array $context = [])
     {
         // first we search the city in the journeys as destination
         $conn = $this->entityManager->getConnection();
-        $sql = "SELECT * FROM journey WHERE LOWER(LEFT(TRIM(destination),1)) like '" . strtolower(substr($destination, 0, 1)) . "'";
+        $sql = "SELECT * FROM journey WHERE LOWER(LEFT(TRIM(destination),1)) like '".strtolower(substr($destination, 0, 1))."'";
         $stmt = $conn->prepare($sql);
         $stmt->execute();
         $journeys = $stmt->fetchAll();
@@ -309,18 +308,19 @@ class JourneyManager
     }
 
     /**
-     * Get all origins for the given destination
+     * Get all origins for the given destination.
      *
      * @param string $destination   The destination
      * @param string $operationName The api operation name (needed for pagination)
-     * @param array $context        The api context (needed for pagination)
-     * @return Journey[]            The journeys found
+     * @param array  $context       The api context (needed for pagination)
+     *
+     * @return Journey[] The journeys found
      */
     public function getOriginsForDestination(string $destination)
     {
         // first we search the city in the journeys as destination
         $conn = $this->entityManager->getConnection();
-        $sql = "SELECT * FROM journey WHERE LOWER(LEFT(TRIM(destination),1)) like '" . strtolower(substr($destination, 0, 1)) . "'";
+        $sql = "SELECT * FROM journey WHERE LOWER(LEFT(TRIM(destination),1)) like '".strtolower(substr($destination, 0, 1))."'";
         $stmt = $conn->prepare($sql);
         $stmt->execute();
         $journeys = $stmt->fetchAll();
@@ -337,23 +337,24 @@ class JourneyManager
     }
 
     /**
-     * Get all journeys for the given origin and destination
+     * Get all journeys for the given origin and destination.
      *
      * @param string $origin        The origin
      * @param string $destination   The destination
      * @param string $operationName The api operation name (needed for pagination)
-     * @param array $context        The api context (needed for pagination)
-     * @return Journey[]            The journeys found
+     * @param array  $context       The api context (needed for pagination)
+     *
+     * @return Journey[] The journeys found
      */
     public function getFromTo(string $origin, string $destination, string $operationName, array $context = [])
     {
         // first we search the city in the journeys as origin and destination
         $conn = $this->entityManager->getConnection();
-        $sql = "SELECT * FROM journey WHERE LOWER(LEFT(TRIM(origin),1)) like '" . strtolower(substr($origin, 0, 1)) . "'";
+        $sql = "SELECT * FROM journey WHERE LOWER(LEFT(TRIM(origin),1)) like '".strtolower(substr($origin, 0, 1))."'";
         $stmt = $conn->prepare($sql);
         $stmt->execute();
         $journeysOrigin = $stmt->fetchAll();
-        $sql = "SELECT * FROM journey WHERE LOWER(LEFT(TRIM(destination),1)) like '" . strtolower(substr($destination, 0, 1)) . "'";
+        $sql = "SELECT * FROM journey WHERE LOWER(LEFT(TRIM(destination),1)) like '".strtolower(substr($destination, 0, 1))."'";
         $stmt = $conn->prepare($sql);
         $stmt->execute();
         $journeysDestination = $stmt->fetchAll();
@@ -376,39 +377,38 @@ class JourneyManager
         return $this->journeyRepository->getAllFromTo($citiesOrigin, $citiesDestination, $operationName, $context);
     }
 
-    
     /**
-     * Return de most popular journeys (see .env for the max number and criteria)
+     * Return de most popular journeys (see .env for the max number and criteria).
+     *
      * @param bool $home true if it's for home
-     * @return Journey[]|null
+     *
+     * @return null|Journey[]
      */
     public function getPopularJourneys(bool $home = false): ?array
     {
         if (!$home) {
             return $this->journeyRepository->getPopularJourneys($this->popularJourneyMinOccurences, $this->popularJourneyMaxNumber);
-        } else {
-            // For Home, we are inducing a little bit of randomization. We take x times (see Journey.php constant) the max home number of items
-            // we shuffle it and return the right amount of journeys
-            $journeys = $this->journeyRepository->getPopularJourneys($this->popularJourneyMinOccurences, $this->popularJourneyHomeMaxNumber*Journey::POPULAR_RANDOMIZATION_FACTOR);
-            shuffle($journeys);
-
-            return array_slice($journeys, 0, $this->popularJourneyHomeMaxNumber);
         }
+        // For Home, we are inducing a little bit of randomization. We take x times (see Journey.php constant) the max home number of items
+        // we shuffle it and return the right amount of journeys
+        $journeys = $this->journeyRepository->getPopularJourneys($this->popularJourneyMinOccurences, $this->popularJourneyHomeMaxNumber * Journey::POPULAR_RANDOMIZATION_FACTOR);
+        shuffle($journeys);
+
+        return array_slice($journeys, 0, $this->popularJourneyHomeMaxNumber);
     }
 
     public function findCarpools(int $proposalId, User $user)
     {
-        
         // We get the original Proposal
         $proposal = $this->proposalManager->get($proposalId);
         if (!$proposal) {
-            throw new LogicException("Unknown Proposal");
+            throw new LogicException('Unknown Proposal');
         }
 
-        
         // Make a new "search" Ad with this Proposal. Same structure that a simple search.
         $ad = new Ad();
         $ad->setUser($user);
+        $ad->setUserId($user->getId());
 
         // It's a search without a specific role
         $ad->setSearch(true);
@@ -424,10 +424,9 @@ class JourneyManager
         }
         $ad->setOutwardWaypoints($outwardWaypoint);
 
-
         // Like in a simple search, we use "now" as outwardDateTime
-        $ad->setOutwardDate(new \DateTime("now", new \DateTimeZone('Europe/Paris')));
-        $ad->setFilters(["page"=>1]);
+        $ad->setOutwardDate(new \DateTime('now', new \DateTimeZone('Europe/Paris')));
+        $ad->setFilters(['page' => 1]);
         $ad->setPaused(false);
 
         $ad = $this->adManager->createAd($ad, true, false);

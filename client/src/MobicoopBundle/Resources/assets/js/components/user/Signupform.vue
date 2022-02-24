@@ -84,7 +84,10 @@
         <v-col
           class="col-4"
         >
-          <SsoLogins class="justify-self-center" />
+          <SsoLogins
+            v-if="ssoButtonDisplay"
+            class="justify-self-center"
+          />
         </v-col>
       </v-row>
       <v-row
@@ -605,6 +608,10 @@ export default {
     birthDateDisplay: {
       type: Boolean,
       default: false
+    },
+    ssoButtonDisplay:{
+      type: Boolean,
+      default:true
     }
   },
   data() {
