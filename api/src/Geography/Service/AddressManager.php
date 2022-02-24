@@ -19,17 +19,17 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Geography\Service;
 
+use App\Action\Event\ActionEvent;
+use App\Action\Repository\ActionRepository;
 use App\Geography\Entity\Address;
 use App\Geography\Repository\AddressRepository;
 use App\Geography\Repository\TerritoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
-use App\Action\Event\ActionEvent;
-use App\Action\Repository\ActionRepository;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -46,13 +46,12 @@ class AddressManager
     private $logger;
     private $actionRepository;
     private $eventDispatcher;
-   
+    private $geoTools;
+
     /**
      * Constructor.
-     *
-     * @param EntityManagerInterface $entityManager
      */
-    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, TerritoryRepository $territoryRepository, AddressRepository $addressRepository, GeoSearcher $geoSearcher, ActionRepository $actionRepository, EventDispatcherInterface $eventDispatcher)
+    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, TerritoryRepository $territoryRepository, AddressRepository $addressRepository, GeoSearcher $geoSearcher, ActionRepository $actionRepository, EventDispatcherInterface $eventDispatcher, GeoTools $geoTools)
     {
         $this->entityManager = $entityManager;
         $this->territoryRepository = $territoryRepository;
@@ -61,19 +60,21 @@ class AddressManager
         $this->logger = $logger;
         $this->actionRepository = $actionRepository;
         $this->eventDispatcher = $eventDispatcher;
+        $this->geoTools = $geoTools;
     }
 
     /**
      * Create territories for an Address.
      *
-     * @param Address $address  The address
-     * @return Address          The address with its territories
+     * @param Address $address The address
+     *
+     * @return Address The address with its territories
      */
     public function createAddressTerritories(Address $address)
     {
         //$this->logger->info('Address Manager | Create address territories for Address #' . $address->getId() . ' | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         // first we check that the address is not linked yet to territories
-        if (count($address->getTerritories())==0) {
+        if (0 == count($address->getTerritories())) {
             // we search the territories
             if ($territories = $this->territoryRepository->findAddressTerritories($address)) {
                 foreach ($territories as $territory) {
@@ -81,14 +82,16 @@ class AddressManager
                 }
             }
         }
+
         return $address;
     }
 
     /**
      * Update territories for an Address.
      *
-     * @param Address $address  The address
-     * @return Address          The address with its territories
+     * @param Address $address The address
+     *
+     * @return Address The address with its territories
      */
     public function updateAddressTerritories(Address $address)
     {
@@ -101,9 +104,9 @@ class AddressManager
                 $address->addTerritory($territory);
             }
         }
+
         return $address;
     }
-
 
     /**
      * Create territories for an Address, only if the address is directly related to 'useful' entities :
@@ -112,10 +115,11 @@ class AddressManager
      * - event
      * - relay point
      * - proposal waypoint
-     * - todo : add useful entities
+     * - todo : add useful entities.
      *
-     * @param Address $address  The address
-     * @return Address          The address (with its territories if needed)
+     * @param Address $address The address
+     *
+     * @return Address The address (with its territories if needed)
      */
     public function createAddressTerritoriesForUsefulEntity(Address $address)
     {
@@ -142,13 +146,12 @@ class AddressManager
         if ($createLink) {
             return $this->createAddressTerritories($address);
         }
+
         return $address;
     }
 
     /**
      * Complete minimal addresses by reverse geocoding.
-     *
-     * @return void
      */
     public function completeMinimalAddresses()
     {
@@ -163,10 +166,11 @@ class AddressManager
     }
 
     /**
-     * Reverse geocoding on a partial Address (using Lat/Lon)
+     * Reverse geocoding on a partial Address (using Lat/Lon).
      *
-     * @param Address $address  Address to complete
-     * @return Address  Completed address
+     * @param Address $address Address to complete
+     *
+     * @return Address Completed address
      */
     public function reverseGeocodeAddress(Address $address): Address
     {
@@ -197,11 +201,12 @@ class AddressManager
     }
 
     /**
-    * Create an Address.
-    *
-    * @param Address $address  The address
-    * @return Address          The address
-    */
+     * Create an Address.
+     *
+     * @param Address $address The address
+     *
+     * @return Address The address
+     */
     public function createAddress(Address $address)
     {
         $this->entityManager->persist($address);
@@ -209,7 +214,7 @@ class AddressManager
 
         if ($address->isHome()) {
             //  we dispatch the gamification event associated
-            $action = $this->actionRepository->findOneBy(['name'=>'user_home_address_updated']);
+            $action = $this->actionRepository->findOneBy(['name' => 'user_home_address_updated']);
             $actionEvent = new ActionEvent($action, $address->getUser());
             $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);
         }
@@ -220,17 +225,20 @@ class AddressManager
     /**
      * Update an address.
      *
-     * @param Address $address  The address data used to update the address
+     * @param Address $address The address data used to update the address
+     *
      * @return Address The address updated
      */
     public function updateAddress(Address $address)
     {
         $this->entityManager->persist($address);
         $this->entityManager->flush();
-        
+
+        $address->setDisplayLabel($this->geoTools->getDisplayLabel($address, $address->getUser()));
+
         if ($address->isHome()) {
             //  we dispatch the gamification event associated
-            $action = $this->actionRepository->findOneBy(['name'=>'user_home_address_updated']);
+            $action = $this->actionRepository->findOneBy(['name' => 'user_home_address_updated']);
             $actionEvent = new ActionEvent($action, $address->getUser());
             $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);
         }
