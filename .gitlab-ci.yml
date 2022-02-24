@@ -164,6 +164,7 @@ test_deploy:
     - chmod 700 id_rsa                                          # ssh identification on docker side 
     - mv id_rsa ${HOME}/.ssh                                    #
     - echo "${SSH_TEST_HOST_KEY}" > "${HOME}/.ssh/known_hosts"  #
+    - ssh -o StrictHostKeyChecking=no -p ${SSH_PORT} ${SSH_TEST_USER}@${SSH_TESt_IP} "cd /var/www/test/mobicoop/client/; touch ./public/maintenance.enable; cd /var/www/test/mobicoop/api/; touch ./public/maintenance.enable;"    # put the site on maintenance
     - rsync --stats --quiet --group=www-data -hrvz --exclude-from=.gitlab-exclude --delete  -e "ssh -o StrictHostKeyChecking=no -p $SSH_PORT" ./ ${SSH_TEST_USER}@${SSH_TEST_IP}:/var/www/test/mobicoop    # rsync the files on the server
     - ssh -o StrictHostKeyChecking=no -p ${SSH_PORT} ${SSH_TEST_USER}@${SSH_TEST_IP} "cd /var/www/test/mobicoop/; chmod +x postDeploy.sh; ./postDeploy.sh --version=test --version-migrate=test --instance=mobicoop"    # database migration and other after deploy works
   after_script:
@@ -312,7 +313,7 @@ prod_deploy:
     - chmod 700 id_rsa                                              #
     - mv id_rsa ${HOME}/.ssh                                        # ssh identification on docker side
     - echo "${SSH_PROD_HOST_KEY}" > "${HOME}/.ssh/known_hosts"      #
-    - ssh -o StrictHostKeyChecking=no -p ${SSH_PORT} ${SSH_PROD_USER}@${SSH_PROD_IP} "cd /var/www/mobicoop/prod/client/; touch ./public/maintenance.enable;"    # put the site on maintenance
+    - ssh -o StrictHostKeyChecking=no -p ${SSH_PORT} ${SSH_PROD_USER}@${SSH_PROD_IP} "cd /var/www/mobicoop/prod/client/; touch ./public/maintenance.enable; cd /var/www/mobicoop/prod/api/; touch ./public/maintenance.enable;"    # put the site on maintenance
     - rsync --stats --quiet --group=www-data -hrvz --exclude-from=.gitlab-exclude --delete  -e "ssh -o StrictHostKeyChecking=no -p $SSH_PORT" ./ ${SSH_PROD_USER}@${SSH_PROD_IP}:/var/www/mobicoop/prod    # rsync the files on the server
     - ssh -o StrictHostKeyChecking=no -p ${SSH_PORT} ${SSH_PROD_USER}@${SSH_PROD_IP} "cd /var/www/mobicoop/prod/; chmod +x postDeploy.sh; ./postDeploy.sh --version=prod --version-migrate=prod --instance=mobicoop"    # database migration and other after deploy works
   when: manual      # /!\ important : job executed manually /!\
