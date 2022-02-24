@@ -42,6 +42,7 @@ use App\Rdex\Entity\RdexPassenger;
 use App\Rdex\Entity\RdexTripDate;
 use App\Rdex\Event\RdexConnectionEvent;
 use App\User\Service\UserManager;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -81,12 +82,15 @@ class RdexManager
      */
     private $client;    // Current client
 
+    private $logger;
+    private $defaultMarginDuration;
+
     /**
      * Constructor.
      *
      * @param ProposalManager $proposalManager
      */
-    public function __construct(AdManager $adManager, NotificationManager $notificationManager, UserManager $userManager, array $operator, array $clients)
+    public function __construct(AdManager $adManager, NotificationManager $notificationManager, UserManager $userManager, LoggerInterface $logger, array $operator, array $clients, int $defaultMarginDuration)
     {
         $this->adManager = $adManager;
         $this->notificationManager = $notificationManager;
@@ -94,6 +98,8 @@ class RdexManager
         $this->clients = $clients;
         $this->operator = new RdexOperator($operator['name'], $operator['origin'], $operator['url'], $operator['resultRoute']);
         $this->client = null;
+        $this->logger = $logger;
+        $this->defaultMarginDuration = $defaultMarginDuration;
     }
 
     /**
@@ -719,12 +725,18 @@ class RdexManager
         if (1 == $frequency) {
             // Punctual
             $puntualTime = $result->getTime();
+            $punctualMargin = $this->defaultMarginDuration;
+            if (!is_null($journey->getMarginDuration())) {
+                $punctualMargin = $journey->getMarginDuration();
+            }
             $date = $result->getDate();
 
             switch ($date->format('w')) {
                 case 0:
                     $days->setSunday(1);
-                    $punctualMargin = !is_null($journey->getMarginDuration()) ? $journey->getMarginDuration() : $journey->getSunMarginDuration();
+                    if (!is_null($journey->getSunMarginDuration())) {
+                        $punctualMargin = $journey->getSunMarginDuration();
+                    }
                     $minMaxTime = $this->computeMinMaxTime($puntualTime, $punctualMargin);
                     $rdexDayTime = new RdexDayTime();
                     $rdexDayTime->setMintime($minMaxTime[0]->format('H:i:s'));
@@ -735,7 +747,9 @@ class RdexManager
 
                 case 1:
                     $days->setMonday(1);
-                    $punctualMargin = !is_null($journey->getMarginDuration()) ? $journey->getMarginDuration() : $journey->getMonMarginDuration();
+                    if (!is_null($journey->getMonMarginDuration())) {
+                        $punctualMargin = $journey->getMonMarginDuration();
+                    }
                     $minMaxTime = $this->computeMinMaxTime($puntualTime, $punctualMargin);
                     $rdexDayTime = new RdexDayTime();
                     $rdexDayTime->setMintime($minMaxTime[0]->format('H:i:s'));
@@ -746,7 +760,9 @@ class RdexManager
 
                 case 2:
                     $days->setTuesday(1);
-                    $punctualMargin = !is_null($journey->getMarginDuration()) ? $journey->getMarginDuration() : $journey->getTueMarginDuration();
+                    if (!is_null($journey->getTueMarginDuration())) {
+                        $punctualMargin = $journey->getTueMarginDuration();
+                    }
                     $minMaxTime = $this->computeMinMaxTime($puntualTime, $punctualMargin);
                     $rdexDayTime = new RdexDayTime();
                     $rdexDayTime->setMintime($minMaxTime[0]->format('H:i:s'));
@@ -757,7 +773,9 @@ class RdexManager
 
                 case 3:
                     $days->setWednesday(1);
-                    $punctualMargin = !is_null($journey->getMarginDuration()) ? $journey->getMarginDuration() : $journey->getWedMarginDuration();
+                    if (!is_null($journey->getWedMarginDuration())) {
+                        $punctualMargin = $journey->getWedMarginDuration();
+                    }
                     $minMaxTime = $this->computeMinMaxTime($puntualTime, $punctualMargin);
                     $rdexDayTime = new RdexDayTime();
                     $rdexDayTime->setMintime($minMaxTime[0]->format('H:i:s'));
@@ -768,7 +786,9 @@ class RdexManager
 
                 case 4:
                     $days->setThursday(1);
-                    $punctualMargin = !is_null($journey->getMarginDuration()) ? $journey->getMarginDuration() : $journey->getThuMarginDuration();
+                    if (!is_null($journey->getThuMarginDuration())) {
+                        $punctualMargin = $journey->getThuMarginDuration();
+                    }
                     $minMaxTime = $this->computeMinMaxTime($puntualTime, $punctualMargin);
                     $rdexDayTime = new RdexDayTime();
                     $rdexDayTime->setMintime($minMaxTime[0]->format('H:i:s'));
@@ -779,7 +799,9 @@ class RdexManager
 
                 case 5:
                     $days->setFriday(1);
-                    $punctualMargin = !is_null($journey->getMarginDuration()) ? $journey->getMarginDuration() : $journey->getFriMarginDuration();
+                    if (!is_null($journey->getFriMarginDuration())) {
+                        $punctualMargin = $journey->getFriMarginDuration();
+                    }
                     $minMaxTime = $this->computeMinMaxTime($puntualTime, $punctualMargin);
                     $rdexDayTime = new RdexDayTime();
                     $rdexDayTime->setMintime($minMaxTime[0]->format('H:i:s'));
@@ -790,7 +812,9 @@ class RdexManager
 
                 case 6:
                     $days->setSaturday(1);
-                    $punctualMargin = !is_null($journey->getMarginDuration()) ? $journey->getMarginDuration() : $journey->getSatMarginDuration();
+                    if (!is_null($journey->getSatMarginDuration())) {
+                        $punctualMargin = $journey->getSatMarginDuration();
+                    }
                     $minMaxTime = $this->computeMinMaxTime($puntualTime, $punctualMargin);
                     $rdexDayTime = new RdexDayTime();
                     $rdexDayTime->setMintime($minMaxTime[0]->format('H:i:s'));
