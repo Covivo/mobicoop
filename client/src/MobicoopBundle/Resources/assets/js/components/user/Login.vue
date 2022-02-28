@@ -190,7 +190,7 @@ export default {
     },
     ssoButtonDisplay:{
       type: Boolean,
-      default:true
+      default:false
     }
   },
   data() {
