@@ -867,7 +867,7 @@ export default {
       locale: localStorage.getItem("X-LOCALE"),
       distance: 0, 
       duration: 0,
-      outwardDate: this.initDate,
+      outwardDate: this.dateFormated,
       outwardTime: this.initTime,
       returnDate: null,
       returnTime: null,
@@ -938,6 +938,10 @@ export default {
           "forbidden":0.5
         }
       }
+    },
+    dateFormated() {
+      return moment.utc(this.initDate).format("ddd DD MMM YYYY");
+      ;
     },
     hintPricePerKm() {
       let pricePerKm = this.pricePerKm;
