@@ -1472,6 +1472,46 @@ guaranteedReturn:
         nl: /guaranteed-return
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showGuaranteedReturn
 
+# display "I'm a private person"
+GoodPracticesAlt:
+    path:
+        fr: /les-bonnes-pratiques
+        en: /good-practices-alt
+        nl: /good-practices-alt
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showGoodPracticesAlt
+
+# display "I'm a private person"
+faqAlt:
+    path:
+        fr: /foire-aux-questions
+        en: /faq-alt
+        nl: /faq-alt
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showFAQAlt
+
+# display "I'm a private person"
+cguAlt:
+    path:
+        fr: /conditions-generales
+        en: /CGU-alt
+        nl: /CGU-alt
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showCguAlt
+
+# display "I'm a private person"
+dataPolicyAlt:
+    path:
+        fr: /politique-confidentialite
+        en: /privacy-policy-alt
+        nl: /privacy-policy-alt
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showDataPolicyAlt
+
+# display "I'm a private person"
+dataProtectionAlt:
+    path:
+        fr: /protection-des-donnees
+        en: /data-policy-alt
+        nl: /data-policy-alt
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showDataProtectionAlt
+
 # Get the last external articles (AJAX)
 editorial:
     methods: [POST]
