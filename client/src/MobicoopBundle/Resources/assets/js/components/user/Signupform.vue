@@ -337,6 +337,7 @@
                   :url="geoSearchUrl"
                   persistent-hint
                   :required="requiredHomeAddress"
+                  :prioritize-relaypoints="prioritizeRelaypoints"
                   @address-selected="selectedGeo"
                 />
                 <!-- community -->
@@ -612,6 +613,10 @@ export default {
     ssoButtonDisplay:{
       type: Boolean,
       default:true
+    },
+    prioritizeRelaypoints: {
+      type: Boolean,
+      default: false
     }
   },
   data() {

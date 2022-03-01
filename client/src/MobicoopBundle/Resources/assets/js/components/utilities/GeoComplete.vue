@@ -113,6 +113,10 @@ export default {
       type:String,
       default: null
     },
+    prioritizeRelaypoints: {
+      type: Boolean,
+      default: false
+    }
   },
   data() {
     return {
@@ -121,7 +125,12 @@ export default {
       search: null,
       address: null,
       filter: null,
-      cancelSource: null
+      cancelSource: null,
+      results: [],
+      resultsNamed: [],
+      resultsSig: [],
+      resultsRelayPoint: [],
+      resultsEvent: []
     };
   },
   computed: {
@@ -189,6 +198,7 @@ export default {
 
     getData(val) {
       let self = this;
+      if (this.results.length) { this.deletePreviousResults(); }
       axios
         .get(`${this.url}${val}`, {
           headers: { Authorization: 'Bearer ' + this.$store.getters['a/token'] },
@@ -197,12 +207,6 @@ export default {
         .then(res => {
           this.cancelSource = null;
           this.isLoading = false;
-
-          let results = [];
-          let resultsNamed = [];
-          let resultsSig = [];
-          let resultsRelayPoint = [];
-          let resultsEvent = [];
 
           // Modify property displayLabel to be shown into the autocomplete field after selection
           let addresses = res.data["hydra:member"];
@@ -235,52 +239,22 @@ export default {
             if (addressLocality || addressStreet || address.name || address.relayPoint || address.event) {
               // If there is no locality or street returned, and not a qualified address, do not show them (region, department ..)
               if (address.name) {
-                resultsNamed.push(address);
+                this.resultsNamed.push(address);
               } else if (address.relayPoint) {
-                resultsRelayPoint.push(address);
+                this.resultsRelayPoint.push(address);
               } else if (address.event) {
-                resultsEvent.push(address);
+                this.resultsEvent.push(address);
               } else {
-                resultsSig.push(address);
+                this.resultsSig.push(address);
               }
             } 
           });
 
-          if (resultsNamed.length>0) {
-            resultsNamed.forEach((address) => {
-              results.push(address);
-            });
-          }
-
-          if (resultsSig.length>0) {
-            resultsSig.forEach((address) => {
-              results.push(address);
-            });
-          }
-
-          if (resultsRelayPoint.length>0) {
-            if (results.length>0) {
-              results.push({'divider':'true'});
-              results.push({'header':this.$t('relayPoints')});
-            }
-            resultsRelayPoint.forEach((address) => {
-              results.push(address);
-            });
-          }
-
-          if (resultsEvent.length>0) {
-            if (results.length>0) {
-              results.push({'divider':'true'});
-              results.push({'header':this.$t('events')});
-            }
-            resultsEvent.forEach((address) => {
-              results.push(address);
-            });
-          }
+          this.buildResultsToDisplayed();
 
           // Set Data & show them
           if (this.isLoading) return; // Another request is fetching, we do not show the previous one
-          this.entries = [...results];
+          this.entries = [...this.results];
         })
         .catch(error => {
           if (error.response) {
@@ -303,9 +277,68 @@ export default {
         })
         .finally(() => (this.isLoading = false));
     },
+    buildResultsToDisplayed()
+    {
+      if (true === this.prioritizeRelaypoints) { this.insertRelaypoints(); }
+
+      if (this.results.length>0) { this.results.push({'divider':'true'}); }
+
+      this.insertNamedAdresses();
+
+      this.insertSigAddresses();
+
+      if (false === this.prioritizeRelaypoints) {
+        this.insertRelaypoints(); }
+
+      this.insertEventpoints();
+    },
     cancelRequest() {
       if(this.cancelSource) {
         this.cancelSource.cancel('Start new search, stop active search');
+      }
+    },
+    deletePreviousResults() {
+      this.results = [];
+      this.resultsNamed = [];
+      this.resultsSig = [];
+      this.resultsRelayPoint = [];
+      this.resultsEvent = [];
+    },
+    insertEventpoints() {
+      if (this.resultsEvent.length>0) {
+        if (this.results.length>0) {
+          this.results.push({'divider':'true'});
+          this.results.push({'header':this.$t('events')});
+        }
+        this.resultsEvent.forEach((address) => {
+          this.results.push(address);
+        });
+      }
+    },
+    insertNamedAdresses()
+    {
+      if (this.resultsNamed.length>0) {
+        this.resultsNamed.forEach((address) => {
+          this.results.push(address);
+        });
+      }
+    },
+    insertRelaypoints() {
+      if (this.resultsRelayPoint.length>0) {
+        if (this.results.length>0) {
+          this.results.push({'divider':'true'});
+          this.results.push({'header':this.$t('relayPoints')});
+        }
+        this.resultsRelayPoint.forEach((address) => {
+          this.results.push(address);
+        });
+      }
+    },
+    insertSigAddresses() {
+      if (this.resultsSig.length>0) {
+        this.resultsSig.forEach((address) => {
+          this.results.push(address);
+        });
       }
     },
     refreshToken() {
