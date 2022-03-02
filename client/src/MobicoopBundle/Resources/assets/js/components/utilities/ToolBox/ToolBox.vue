@@ -3,6 +3,7 @@
     <v-row
       align="center"
       justify="center"
+      class="mt-10"
     >
       <v-col
         :cols="nbCols"
