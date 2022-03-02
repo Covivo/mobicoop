@@ -28,14 +28,14 @@ namespace App\Stats\Admin\Service;
 class DataManager
 {
     public const DATA_NAME_VALIDATED_USERS = 'ValidatedUsers';
-    public const DATA_NAME_REGISTRATIONS = 'Registrations';
+    public const DATA_NAME_REGISTRATIONS_DETAILED = 'RegistrationsDetailed';
 
     public const PREFIX_AUTO_CALL_METHOD = 'build';
     public const SUFFIX_AUTO_CALL_METHOD = 'Request';
 
     public const DATA_NAMES = [
         self::DATA_NAME_VALIDATED_USERS,
-        self::DATA_NAME_REGISTRATIONS,
+        self::DATA_NAME_REGISTRATIONS_DETAILED,
     ];
 
     private const REQUEST_TIMOUT = 30000;
@@ -174,7 +174,7 @@ class DataManager
         ];
     }
 
-    private function buildRegistrationsRequest()
+    private function buildRegistrationsDetailedRequest()
     {
         $this->keyType = 'utc-datetime';
 

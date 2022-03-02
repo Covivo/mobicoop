@@ -28,7 +28,7 @@ use Exception;
 class AnalyticManager
 {
     public const IDS = [
-        1 => DataManager::DATA_NAME_REGISTRATIONS,
+        1 => DataManager::DATA_NAME_REGISTRATIONS_DETAILED,
         2 => DataManager::DATA_NAME_VALIDATED_USERS,
     ];
 
