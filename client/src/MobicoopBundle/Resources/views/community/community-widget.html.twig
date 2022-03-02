@@ -9,5 +9,6 @@
         :user="{{ app.user|json_encode }}"
         url-alt-avatar="{{ community.defaultAvatar }}"
         token="{{token.getToken}}"
+        {{ searchRegular ? 'regular' : '' }}
     ></community-widget>
 {% endblock %}

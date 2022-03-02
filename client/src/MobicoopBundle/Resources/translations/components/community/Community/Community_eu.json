@@ -3,7 +3,7 @@
         "externalRoute": "/communaute/widget/{id}",
         "route": "/communaute/widget/get/{id}",
         "textDetails": {
-            "p2": "&lt;iframe src=\"{url}\" width=\"<span class=\"font-weight-bold\">100%</span>\" height=\"<span class=\"font-weight-bold\">440px</span>\" frameborder=\"0\" scrolling=\"no\"&gt;&lt;/iframe&gt;",
+            "p2": "&lt;iframe src=\"{url}\" width=\"<span class=\"font-weight-bold\">100%</span>\" height=\"<span class=\"font-weight-bold\">640px</span>\" frameborder=\"0\" scrolling=\"no\"&gt;&lt;/iframe&gt;",
             "p3": "<span class=\"font-weight-bold\">Attention</span> : Wordpress bezalako argitaratze tresna batzuek plugings berezi batzuren gehitzea behartzen dute iFrame baten erabiltzeko.",
             "p1": "Widget-a sartzeko, azpiko testu hau kopiatu eta zure webgunean kolatu behar duzu.<br />Lodiz diren elementuak alda ditzakezu zure widget-a pertsonalizatzeko.",
             "title": "widget-a sartu"
