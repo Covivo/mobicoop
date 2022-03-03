@@ -19,16 +19,16 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\PublicTransport\Service;
 
-use App\PublicTransport\Entity\PTJourney;
 use App\DataProvider\Entity\CitywayProvider;
 use App\DataProvider\Entity\ConduentPTProvider;
 use App\DataProvider\Entity\NavitiaProvider;
 use App\Geography\Repository\TerritoryRepository;
 use App\Geography\Service\GeoTools;
+use App\PublicTransport\Entity\PTJourney;
 use App\PublicTransport\Entity\PTLineStop;
 use App\PublicTransport\Entity\PTTripPoint;
 
@@ -44,21 +44,21 @@ use App\PublicTransport\Entity\PTTripPoint;
  */
 class PTDataProvider
 {
-    const PROVIDERS = [
-        "cityway" => CitywayProvider::class,
-        "conduentPT" => ConduentPTProvider::class,
-        "navitia" => NavitiaProvider::class
+    public const PROVIDERS = [
+        'cityway' => CitywayProvider::class,
+        'conduentPT' => ConduentPTProvider::class,
+        'navitia' => NavitiaProvider::class,
     ];
-    
-    const DATETIME_FORMAT = \DateTime::RFC3339;
-    
-    const DATETYPE_DEPARTURE = "departure";
-    const DATETYPE_ARRIVAL = "arrival";
-    
-    const ALGORITHM_FASTEST = "fastest";
-    const ALGORITHM_SHORTEST = "shortest";
-    const ALGORITHM_MINCHANGES = "minchanges";
-    
+
+    public const DATETIME_FORMAT = \DateTime::RFC3339;
+
+    public const DATETYPE_DEPARTURE = 'departure';
+    public const DATETYPE_ARRIVAL = 'arrival';
+
+    public const ALGORITHM_FASTEST = 'fastest';
+    public const ALGORITHM_SHORTEST = 'shortest';
+    public const ALGORITHM_MINCHANGES = 'minchanges';
+
     private $geoTools;
     private $PTProviders;
     private $territoryRepository;
@@ -69,19 +69,20 @@ class PTDataProvider
         $this->territoryRepository = $territoryRepository;
         $this->PTProviders = $params['ptProviders'];
     }
-    
+
     /**
      * Get journeys from an external Public Transport data provider.
      *
-     * @param string $provider                  The name of the provider (obsolete : not used anymore)
-     * @param string $origin_latitude           The latitude of the origin point
-     * @param string $origin_longitude          The longitude of the origin point
-     * @param string $destination_latitude      The latitude of the destination point
-     * @param string $destination_longitude     The longitude of the destination point
-     * @param \Datetime $date                   The datetime of the trip
-     * @param string    $dateCriteria           (optional) Date criteria like "arrival" or "departure"
-     * @param string    $mode                   (optional) Mode criteria
-     * @return NULL|array                       The journeys found or null if no journey is found
+     * @param string    $provider              The name of the provider (obsolete : not used anymore)
+     * @param string    $origin_latitude       The latitude of the origin point
+     * @param string    $origin_longitude      The longitude of the origin point
+     * @param string    $destination_latitude  The latitude of the destination point
+     * @param string    $destination_longitude The longitude of the destination point
+     * @param \Datetime $date                  The datetime of the trip
+     * @param string    $dateCriteria          (optional) Date criteria like "arrival" or "departure"
+     * @param string    $mode                  (optional) Mode criteria
+     *
+     * @return null|array The journeys found or null if no journey is found
      */
     public function getJourneys(
         ?string $provider,
@@ -89,14 +90,14 @@ class PTDataProvider
         string $origin_longitude,
         string $destination_latitude,
         string $destination_longitude,
-        \Datetime $date,
+        \DateTime $date,
         string $dateType = null,
         string $modes = null
     ): ?array {
         $providerUri = null;
 
-        $territoryId = "default";
-        if (count($this->PTProviders)>1) {
+        $territoryId = 'default';
+        if (count($this->PTProviders) > 1) {
             // If there is a territory, we look for the right provider. If there is no, we take the default.
             // Get the territory of the request
             $territories = $this->territoryRepository->findPointTerritories($origin_latitude, $origin_longitude);
@@ -104,6 +105,7 @@ class PTDataProvider
                 // If the territoryId is in the providers.json for PT, we use this one
                 if (isset($this->PTProviders[$territory['id']])) {
                     $territoryId = $territory['id'];
+
                     break;
                 }
             }
@@ -111,6 +113,7 @@ class PTDataProvider
 
         // Values
         $provider = $this->PTProviders[$territoryId]['dataprovider'];
+
         // Authorized Providers
         if (!array_key_exists($provider, self::PROVIDERS)) {
             // echo "Unauthorized Providers";die;
@@ -121,19 +124,16 @@ class PTDataProvider
         $username = $this->PTProviders[$territoryId]['username'];
         $customParams = $this->PTProviders[$territoryId]['params'];
 
-
-
         $providerClass = self::PROVIDERS[$provider];
         $providerInstance = new $providerClass($providerUri);
 
-
         $params = [
-            "origin_latitude" => $origin_latitude,
-            "origin_longitude" => $origin_longitude,
-            "destination_latitude" => $destination_latitude,
-            "destination_longitude" => $destination_longitude,
-            "date" => $date,
-            "username" => $username
+            'origin_latitude' => $origin_latitude,
+            'origin_longitude' => $origin_longitude,
+            'destination_latitude' => $destination_latitude,
+            'destination_longitude' => $destination_longitude,
+            'date' => $date,
+            'username' => $username,
         ];
 
         // $mode and $dateCriteria are forced if they're send in parameters
@@ -151,7 +151,7 @@ class PTDataProvider
             }
         }
 
-        $journeys = call_user_func_array([$providerInstance,"getCollection"], [PTJourney::class,$apikey,$params]);
+        $journeys = call_user_func_array([$providerInstance, 'getCollection'], [PTJourney::class, $apikey, $params]);
 
         // Set the display label of the departure and arrival
         foreach ($journeys as $journey) {
@@ -170,6 +170,8 @@ class PTDataProvider
                 $arrivalAddress->setDisplayLabel($this->geoTools->getDisplayLabel($arrivalAddress));
             }
 
+            $journey->setPtProviderName(isset($this->PTProviders[$territoryId]['ptProviderName']) ? $this->PTProviders[$territoryId]['ptProviderName'] : null);
+            $journey->setPtProviderUrl(isset($this->PTProviders[$territoryId]['ptProviderUrl']) ? $this->PTProviders[$territoryId]['ptProviderUrl'] : null);
             $journey->setProvider($provider);
         }
 
@@ -179,13 +181,14 @@ class PTDataProvider
     /**
      * Get trip points from an external Public Transport data provider.
      *
-     * @param string $provider                  The name of the provider
-     * @param float $latitude                   The latitude of the origin point
-     * @param float $longitude                  The longitude of the origin point
-     * @param int $perimeter                    Radius of the perimeter (in meters)
-     * @param string $transportModes            The trip modes accepted (PT, BIKE, CAR, PT+BIKE, PT+CAR)
-     * @param string $keywords                  Keywords to search in trip point name
-     * @return NULL|array                       The trip points or null if no trip points is found
+     * @param string $provider       The name of the provider
+     * @param float  $latitude       The latitude of the origin point
+     * @param float  $longitude      The longitude of the origin point
+     * @param int    $perimeter      Radius of the perimeter (in meters)
+     * @param string $transportModes The trip modes accepted (PT, BIKE, CAR, PT+BIKE, PT+CAR)
+     * @param string $keywords       Keywords to search in trip point name
+     *
+     * @return null|array The trip points or null if no trip points is found
      */
     public function getTripPoints(
         string $provider,
@@ -200,37 +203,40 @@ class PTDataProvider
         }
         $providerClass = self::PROVIDERS[$provider];
         $providerInstance = new $providerClass();
-        return call_user_func_array([$providerInstance,"getCollection"], [PTTripPoint::class,"",[
-            "latitude" => $latitude,
-            "longitude" => $longitude,
-            "perimeter" => $perimeter,
-            "transportModes" => $transportModes,
-            "keywords" => $keywords
+
+        return call_user_func_array([$providerInstance, 'getCollection'], [PTTripPoint::class, '', [
+            'latitude' => $latitude,
+            'longitude' => $longitude,
+            'perimeter' => $perimeter,
+            'transportModes' => $transportModes,
+            'keywords' => $keywords,
         ]]);
     }
 
     /**
      * Get line stop from an external Public Transport data provider.
      *
-     * @param string $provider                  The name of the provider
-     * @param int $logicalId                 The logicalId of the line stop
-     * @param string $transportModes|null         The transport modes to search
-     * @return NULL|array                       The line stop found or null if no line stop is found
+     * @param string $provider            The name of the provider
+     * @param int    $logicalId           The logicalId of the line stop
+     * @param string $transportModes|null The transport modes to search
+     *
+     * @return null|array The line stop found or null if no line stop is found
      */
     public function getLineStop(
         string $provider,
         int $logicalId,
-        string $transportModes = ""
+        string $transportModes = ''
     ): ?array {
         if (!array_key_exists($provider, self::PROVIDERS)) {
             return null;
         }
         $providerClass = self::PROVIDERS[$provider];
         $providerInstance = new $providerClass();
-        return call_user_func_array([$providerInstance,"getCollection"], [PTLineStop::class,"",[
-            "provider" => $provider,
-            "logicalId" => $logicalId,
-            "transportModes" => $transportModes
+
+        return call_user_func_array([$providerInstance, 'getCollection'], [PTLineStop::class, '', [
+            'provider' => $provider,
+            'logicalId' => $logicalId,
+            'transportModes' => $transportModes,
         ]]);
     }
 }
