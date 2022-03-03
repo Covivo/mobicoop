@@ -114,6 +114,7 @@
                   :user="user"
                   :geo-search-url="geoSearchUrl"
                   :validation-docs-authorized-extensions="validationDocsAuthorizedExtensions"
+                  :prioritize-relaypoints="prioritizeRelaypoints"
                 />
               </v-tab-item>
               <v-tab
@@ -254,6 +255,10 @@ export default {
     ageDisplay: {
       type: Boolean,
       default: true
+    },
+    prioritizeRelaypoints: {
+      type: Boolean,
+      default: false
     }
   },
   data(){
