@@ -296,7 +296,7 @@ export default {
       menu: false,
       regular: this.initRegular,
       role: this.initRole ? this.initRole : (this.solidaryExclusiveAd ? 1 : 3),
-      passenger: this.initRole == 2 ? true : (this.initRole == 3 || this.initRole == null ? true : false),
+      passenger: this.initRole == 2 ? true : (this.initRole == 3 || (this.initRole == null && !this.solidaryExclusiveAd) ? true : false),
       driver: this.initRole == 1 ? true : (this.initRole == 3 || this.initRole == null ? true : false),
       labelOrigin: this.$t("origin.label"),
       labelDestination: this.$t("destination.label"),

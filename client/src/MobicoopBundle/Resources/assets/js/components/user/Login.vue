@@ -78,7 +78,7 @@
           </v-form>
 
           <SsoLogins
-            v-if="consent"
+            v-if="consent && ssoButtonDisplay "
             class="mt-5"
           />
 
@@ -187,6 +187,10 @@ export default {
     appName: {
       type: String,
       default: null
+    },
+    ssoButtonDisplay:{
+      type: Boolean,
+      default:false
     }
   },
   data() {

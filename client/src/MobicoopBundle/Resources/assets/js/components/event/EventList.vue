@@ -391,7 +391,7 @@ export default {
     },
     buildPopup : function(evt){
       let popup = {
-        titre : evt.name,
+        title : evt.name,
         images : evt.images,
         description  : evt.fullDescription,
         date_begin   : this.$t('startEvent') +' : '+  this.computedDateFormat(evt.fromDate.date),

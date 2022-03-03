@@ -690,9 +690,6 @@ class Event
 
     public function getCreatorId(): ?int
     {
-        if (!$this->getUser()) {
-            return null;
-        }
         if (is_null($this->creatorId)) {
             return $this->getUser()->getId();
         }

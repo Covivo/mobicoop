@@ -19,33 +19,32 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Community\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-use Doctrine\Common\Collections\ArrayCollection;
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
-use ApiPlatform\Core\Annotation\ApiProperty;
-use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\NumericFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Action\Entity\Log;
-use App\Image\Entity\Image;
-use App\User\Entity\User;
+use App\Carpool\Entity\Proposal;
+use App\Community\Filter\CommunityAddressTerritoryFilter;
+use App\Community\Filter\TerritoryFilter;
 use App\Geography\Entity\Address;
+use App\Image\Entity\Image;
+use App\Match\Entity\Mass;
+use App\RelayPoint\Entity\RelayPoint;
+use App\User\Entity\User;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use App\Carpool\Entity\Proposal;
-use App\Community\Controller\JoinAction;
-use App\RelayPoint\Entity\RelayPoint;
-use App\Community\Filter\TerritoryFilter;
-use App\Match\Entity\Mass;
-use App\Community\Filter\CommunityAddressTerritoryFilter;
 
 /**
  * A community : a group of users sharing common interests.
@@ -289,12 +288,12 @@ use App\Community\Filter\CommunityAddressTerritoryFilter;
  */
 class Community
 {
-    const AUTO_VALIDATION = 0;
-    const MANUAL_VALIDATION = 1;
-    const DOMAIN_VALIDATION = 2;
+    public const AUTO_VALIDATION = 0;
+    public const MANUAL_VALIDATION = 1;
+    public const DOMAIN_VALIDATION = 2;
 
     /**
-     * @var int The id of this community.
+     * @var int the id of this community
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -305,7 +304,7 @@ class Community
     private $id;
 
     /**
-     * @var string The name of the community.
+     * @var string the name of the community
      *
      * @Assert\NotBlank(groups={"write"})
      * @ORM\Column(type="string", length=255)
@@ -314,14 +313,14 @@ class Community
     private $name;
 
     /**
-     * @var string UrlKey of the community.
+     * @var string urlKey of the community
      *
      * @Groups({"readCommunity","readCommunityUser","write","results","existsCommunity","readCommunityPublic","readUserAdmin","readUser","listCommunities"})
      */
     private $urlKey;
 
     /**
-     * @var int Community status.
+     * @var int community status
      *
      * @ORM\Column(type="smallint", nullable=true)
      * @Groups({"aRead","aWrite","readCommunity","write","readUserAdmin"})
@@ -329,7 +328,7 @@ class Community
     private $status;
 
     /**
-     * @var boolean|null Members are only visible by the members of the community.
+     * @var null|bool members are only visible by the members of the community
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"aRead","aWrite","readCommunity","write"})
@@ -337,7 +336,7 @@ class Community
     private $membersHidden;
 
     /**
-     * @var boolean|null Proposals are only visible by the members of the community.
+     * @var null|bool proposals are only visible by the members of the community
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"aRead","aWrite","readCommunity","write"})
@@ -345,7 +344,7 @@ class Community
     private $proposalsHidden;
 
     /**
-     * @var int|null The type of validation (automatic/manual/domain).
+     * @var null|int the type of validation (automatic/manual/domain)
      *
      * @ORM\Column(type="smallint")
      * @Groups({"aRead","aWrite","readCommunity","write", "communities"})
@@ -353,7 +352,7 @@ class Community
     private $validationType;
 
     /**
-     * @var string|null The domain of the community.
+     * @var null|string the domain of the community
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"aRead","aWrite","readCommunity","write"})
@@ -361,7 +360,7 @@ class Community
     private $domain;
 
     /**
-     * @var string The short description of the community.
+     * @var string the short description of the community
      *
      * @Assert\NotBlank(groups={"write"})
      * @ORM\Column(type="string", length=255)
@@ -370,7 +369,7 @@ class Community
     private $description;
 
     /**
-     * @var string The full description of the community.
+     * @var string the full description of the community
      *
      * @Assert\NotBlank(groups={"write"})
      * @ORM\Column(type="text")
@@ -379,15 +378,15 @@ class Community
     private $fullDescription;
 
     /**
-    * @var \DateTimeInterface Creation date of the community.
-    *
-    * @ORM\Column(type="datetime")
-    * @Groups({"aRead","readCommunity"})
-    */
+     * @var \DateTimeInterface creation date of the community
+     *
+     * @ORM\Column(type="datetime")
+     * @Groups({"aRead","readCommunity"})
+     */
     private $createdDate;
 
     /**
-     * @var \DateTimeInterface Updated date of the community.
+     * @var \DateTimeInterface updated date of the community
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"aRead", "readCommunity"})
@@ -395,7 +394,7 @@ class Community
     private $updatedDate;
 
     /**
-     * @var User The creator of the community.
+     * @var User the creator of the community
      *
      * @ApiProperty(push=true)
      * @ORM\ManyToOne(targetEntity="App\User\Entity\User")
@@ -405,7 +404,7 @@ class Community
     private $user;
 
     /**
-     * @var Address The address of the community.
+     * @var Address the address of the community
      *
      * @ApiProperty(push=true)
      * @Assert\NotBlank(groups={"write"})
@@ -417,7 +416,7 @@ class Community
     private $address;
 
     /**
-     * @var ArrayCollection|null The images of the community.
+     * @var null|ArrayCollection the images of the community
      *
      * @ApiProperty(push=true)
      * @ORM\OneToMany(targetEntity="\App\Image\Entity\Image", mappedBy="community", cascade={"persist"})
@@ -429,13 +428,13 @@ class Community
     private $images;
 
     /**
-     * @var string $defaultAvatar Url of the default Avatar for a community
+     * @var string Url of the default Avatar for a community
      * @Groups({"readCommunity","readCommunityUser","write","listCommunities"})
      */
     private $defaultAvatar;
 
     /**
-     * @var ArrayCollection|null The proposals in this community.
+     * @var null|ArrayCollection the proposals in this community
      *
      * @ORM\ManyToMany(targetEntity="\App\Carpool\Entity\Proposal", mappedBy="communities")
      * @MaxDepth(1)
@@ -444,7 +443,7 @@ class Community
     private $proposals;
 
     /**
-     * @var ArrayCollection|null The members of the community.
+     * @var null|ArrayCollection the members of the community
      *
      * @ApiProperty(push=true)
      * @ORM\OneToMany(targetEntity="\App\Community\Entity\CommunityUser", mappedBy="community", cascade={"persist"})
@@ -455,7 +454,7 @@ class Community
     private $communityUsers;
 
     /**
-     * @var ArrayCollection|null The security files of the community.
+     * @var null|ArrayCollection the security files of the community
      *
      * @ORM\OneToMany(targetEntity="\App\Community\Entity\CommunitySecurity", mappedBy="community", cascade={"persist"})
      * @Groups({"readCommunity","write","listCommunities"})
@@ -465,7 +464,7 @@ class Community
     private $communitySecurities;
 
     /**
-     * @var ArrayCollection|null The relay points related to the community.
+     * @var null|ArrayCollection the relay points related to the community
      *
      * @ORM\OneToMany(targetEntity="\App\RelayPoint\Entity\RelayPoint", mappedBy="community", cascade={"persist"})
      * @Groups({"write"})
@@ -474,25 +473,25 @@ class Community
     private $relayPoints;
 
     /**
-     * @var boolean|null If the current user asking is member of the community
+     * @var null|bool If the current user asking is member of the community
      * @Groups({"readCommunity","listCommunities"})
      */
     private $member;
 
     /**
-     * @var int|null If the current user asking is member of the community this is his membership status (cf. CommunityUser status)
+     * @var null|int If the current user asking is member of the community this is his membership status (cf. CommunityUser status)
      * @Groups({"readCommunity","listCommunities"})
      */
     private $memberStatus;
 
     /**
-     * @var int|null Number of members of this community
+     * @var null|int Number of members of this community
      * @Groups({"aRead","readCommunity","listCommunities"})
      */
     private $nbMembers;
-    
+
     /**
-     * @var array|null Store the MapAds of the community
+     * @var null|array Store the MapAds of the community
      * @Groups({"readCommunityUser","write","results","existsCommunity"})
      */
     private $mapsAds;
@@ -517,44 +516,43 @@ class Community
     private $referrerId;
 
     /**
-     * @var string|null The referrer avatar
+     * @var null|string The referrer avatar
      * @Groups({"aRead"})
      */
     private $referrerAvatar;
 
     /**
-     * @var string|null The community main image
+     * @var null|string The community main image
      * @Groups({"aRead","aWrite"})
      */
     private $image;
 
     /**
-     * @var string|null The community avatar
+     * @var null|string The community avatar
      * @Groups({"aRead","aWrite"})
      */
     private $avatar;
 
     /**
-     * @var ArrayCollection The logs linked with the Community.
+     * @var ArrayCollection the logs linked with the Community
      *
      * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="community")
      */
     private $logs;
 
     /**
-     * @var string The login to join the community if the community is secured.
+     * @var string the login to join the community if the community is secured
      * @Groups("writeJoinCommunity")
      */
     private $login;
 
     /**
-     * @var string The password to join the community if the community is secured.
+     * @var string the password to join the community if the community is secured
      * @Groups("writeJoinCommunity")
      */
     private $password;
 
-
-    public function __construct($id=null)
+    public function __construct($id = null)
     {
         $this->id = $id;
         $this->images = new ArrayCollection();
@@ -758,7 +756,7 @@ class Community
     {
         return $this->defaultAvatar;
     }
-    
+
     public function getProposals()
     {
         return $this->proposals->getValues();
@@ -871,6 +869,7 @@ class Community
         if (!isset($this->member)) {
             return false;
         }
+
         return $this->member;
     }
 
@@ -886,6 +885,7 @@ class Community
         if (!isset($this->memberStatus)) {
             return 0;
         }
+
         return $this->memberStatus;
     }
 
@@ -934,7 +934,7 @@ class Community
 
     public function getReferrer(): string
     {
-        return ucfirst(strtolower($this->getUser()->getGivenName())) . " " . $this->getUser()->getShortFamilyName();
+        return ucfirst(strtolower($this->getUser()->getGivenName())).' '.$this->getUser()->getShortFamilyName();
     }
 
     public function getReferrerId(): int
@@ -942,6 +942,7 @@ class Community
         if (is_null($this->referrerId)) {
             return $this->getUser()->getId();
         }
+
         return $this->referrerId;
     }
 
@@ -952,25 +953,28 @@ class Community
 
     public function getReferrerAvatar(): ?string
     {
-        if (count($this->getUser()->getAvatars())>0) {
+        if (count($this->getUser()->getAvatars()) > 0) {
             return $this->getUser()->getAvatars()[0];
         }
+
         return null;
     }
 
     public function getImage(): ?string
     {
-        if (count($this->getImages())>0 && isset($this->getImages()[0]->getVersions()['square_800'])) {
+        if (count($this->getImages()) > 0 && isset($this->getImages()[0]->getVersions()['square_800'])) {
             return $this->getImages()[0]->getVersions()['square_800'];
         }
+
         return null;
     }
 
     public function getAvatar(): ?string
     {
-        if (count($this->getImages())>0 && isset($this->getImages()[0]->getVersions()['square_250'])) {
+        if (count($this->getImages()) > 0 && isset($this->getImages()[0]->getVersions()['square_250'])) {
             return $this->getImages()[0]->getVersions()['square_250'];
         }
+
         return null;
     }
 
@@ -978,17 +982,17 @@ class Community
     {
         return $this->logs->getValues();
     }
-    
+
     public function addLog(Log $log): self
     {
         if (!$this->logs->contains($log)) {
             $this->logs[] = $log;
             $log->setCommunity($this);
         }
-        
+
         return $this;
     }
-    
+
     public function removeLog(Log $log): self
     {
         if ($this->logs->contains($log)) {
@@ -998,7 +1002,7 @@ class Community
                 $log->setCommunity(null);
             }
         }
-        
+
         return $this;
     }
 
@@ -1025,7 +1029,7 @@ class Community
 
         return $this;
     }
-    
+
     // DOCTRINE EVENTS
 
     /**
@@ -1035,22 +1039,7 @@ class Community
      */
     public function setAutoCreatedDate()
     {
-        $this->setCreatedDate(new \Datetime());
-    }
-
-
-    /**
-     * Validation type.
-     *
-     * @ORM\PrePersist
-     */
-    public function setAutoValidationType()
-    {
-        if ($this->getDomain()) {
-            $this->setValidationType(SELF::DOMAIN_VALIDATION);
-        } else {
-            $this->setValidationType(SELF::AUTO_VALIDATION);
-        }
+        $this->setCreatedDate(new \DateTime());
     }
 
     /**
@@ -1060,6 +1049,6 @@ class Community
      */
     public function setAutoUpdatedDate()
     {
-        $this->setUpdatedDate(new \Datetime());
+        $this->setUpdatedDate(new \DateTime());
     }
 }

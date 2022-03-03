@@ -17,5 +17,6 @@
       :sign-up-link-in-connection = "{{ signUpLinkInConnection ? "true" : "false" }}"
       service="{{ service is defined ? service : 'null' }}"
       app-name="{{ app_name }}"
-  />
+      :sso-button-display = "{{ ssoButtonDisplay ? "true" : "false" }}"
+      />
 {% endblock %}
