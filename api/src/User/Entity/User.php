@@ -983,7 +983,7 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var int The status of the current identity proof
      * @ORM\Column(type="smallint", nullable=true)
-     * @Groups({"aRead"})
+     * @Groups({"aRead","readUser","results","write"})
      */
     private $identityStatus;
 
