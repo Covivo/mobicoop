@@ -1,6 +1,19 @@
 {# CAREFUL : Some client might need to replicate this template #}
 {% extends '/email/notification/base.html.twig' %}
 {% block body %}
-    <p>Votre document d’identité transmis a été rejeté.</p>
-    <p>Veuillez transmettre un autre document d’identité à jour.</p>
+    <p>Bonjour {{ context.user.givenName }},<p>
+    <p>Vous souhaitez vous inscrire à Rezo Pouce, réseau d'auto-stop au quotidien, et nous vous en remercions.</p>
+    <p>En validant votre inscription pour vous adresser votre carte membre, j'ai constaté que la pièce d'identité que vous nous avez transmise n'est pas valide (manquante, illisible ou floue).</p>
+    <p>Afin de finaliser votre inscription, je vous prie de bien vouloir me retourner par mail ou voie postale (Mobicoop - 9 boulevard Louis Sicre - 82100 CASTELSARRASIN) :</p>
+    <ul>
+        <li><strong>La photocopie (ou photo) de votre pièce d'identité</strong></li>
+    </ul>
+    <p>Rezo Pouce vous assure un réseau serein et convivial, pour cela, merci de bien vouloir me retourner ces éléments dans les meilleurs délais.</p>
+    <p>A réception, je vous ferai parvenir :</p>
+    <ul>
+        <li>Par mail : votre Rezo Kit</li>
+        <li>Par courrier postal : votre carte de membre</li>
+    </ul>
+    <p>Sans retour de votre part, je ne pourrais valider votre inscription à notre Rezo et serais dans l'obligation de supprimer votre profil de notre communauté.</p>
+    <p>Assurée de votre compréhension, Cordialement.</p>
 {% endblock %}
