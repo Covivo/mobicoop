@@ -316,6 +316,13 @@ class CommunityManager
 
             $this->entityManager->persist($user);
         }
+
+        if (!is_null($community->getDomain())) {
+            $community->setValidationType(Community::DOMAIN_VALIDATION);
+        } else {
+            $community->setValidationType(Community::AUTO_VALIDATION);
+        }
+
         $this->entityManager->persist($community);
         $this->entityManager->flush();
 

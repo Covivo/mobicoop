@@ -613,7 +613,8 @@ class ProofManager
                     !is_null($carpoolProof->getPickUpDriverAddress())
                     && !is_null($carpoolProof->getDropOffDriverAddress())
                     && !is_null($carpoolProof->getPickUpDriverDate())
-                    && !is_null($carpoolProof->getDropOffDriverDate())) {
+                    && !is_null($carpoolProof->getDropOffDriverDate())
+                    && !is_null($carpoolProof->getAsk())) {
                     // all the possible data is set for the driver => middle type
                     $carpoolProof->setType(CarpoolProof::TYPE_MID);
                     // we need to fill/replace the passenger time details with theoretical data and driver data

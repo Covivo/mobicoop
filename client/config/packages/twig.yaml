@@ -50,3 +50,4 @@ twig:
         displayLogoNoResult: '%env(bool:DISPLAY_LOGO_NO_RESULT)%'
         imageMinPxSize : '%env(int:IMAGE_MIN_PX_SIZE)%'
         imageMaxMbSize : '%env(int:IMAGE_MAX_MB_SIZE)%'
+        ssoButtonDisplay: '%env(bool:SSO_DISPLAY)%'
