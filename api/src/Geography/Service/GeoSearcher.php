@@ -148,6 +148,9 @@ class GeoSearcher
         // - sig addresses
         // - other objects ? to be defined
         $this->_geocodeResults = [];
+        $this->_geocodeTemporaryResults = [];
+        $this->_geocodeRelaypointsResults = [];
+        $this->_geocodeEventpointsResults = [];
 
         // First we handle the quote
         $this->_geocodeInput = str_replace("'", "''", $input);
