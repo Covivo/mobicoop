@@ -48,6 +48,7 @@
             >
               <v-btn
                 v-if="!hidePublish"
+                :class="colorButton+' '+textColorButton"
                 outlined
                 rounded
                 :loading="loadingPublish"
@@ -202,6 +203,14 @@ export default {
     horizontalElevation:{
       type:Number,
       default: 2
+    },
+    colorButton: {
+      type:String,
+      default: null
+    },
+    textColorButton: {
+      type:String,
+      default: null
     }
   },
   data() {
