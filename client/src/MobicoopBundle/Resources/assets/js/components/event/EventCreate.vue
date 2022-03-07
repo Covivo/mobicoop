@@ -531,7 +531,7 @@ export default {
               this.snackbar = true;
               this.loading = false;
             }
-            // else window.location.href = this.$t('redirect.route');
+            else window.location.href = this.$t('redirect.route');
           });
       } else {
         this.snackError = this.$t('error.event.required')
