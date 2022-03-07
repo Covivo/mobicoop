@@ -28,6 +28,10 @@ namespace App\Stats\Admin\Service;
 class DataManager
 {
     public const DATA_NAME_VALIDATED_USERS = 'ValidatedUsers';
+    public const DATA_NAME_NOT_VALIDATED_USERS = 'NotValidatedUsers';
+
+    public const DATA_NAME_VALIDATED_USERS_DETAILED = 'ValidatedUsersDetailed';
+    public const DATA_NAME_NOT_VALIDATED_USERS_DETAILED = 'NotValidatedUsersDetailed';
     public const DATA_NAME_REGISTRATIONS_DETAILED = 'RegistrationsDetailed';
 
     public const PREFIX_AUTO_CALL_METHOD = 'build';
@@ -35,8 +39,13 @@ class DataManager
 
     public const DATA_NAMES = [
         self::DATA_NAME_VALIDATED_USERS,
+        self::DATA_NAME_NOT_VALIDATED_USERS,
         self::DATA_NAME_REGISTRATIONS_DETAILED,
+        self::DATA_NAME_VALIDATED_USERS_DETAILED,
+        self::DATA_NAME_NOT_VALIDATED_USERS_DETAILED,
     ];
+    public const AUTHORIZED_AGGREG_INTERVAL = ['daily', 'monthly', 'yearly'];
+    public const DEFAULT_DETAILED_AGGREG_INTERVAL = '1M';
 
     private const REQUEST_TIMOUT = 30000;
     private const DATE_FORMAT = 'c';
@@ -61,6 +70,7 @@ class DataManager
 
     private $response;
     private $keyType;
+    private $aggregationInterval;
 
     public function __construct(string $baseUri, string $instance, string $username, string $password)
     {
@@ -116,6 +126,34 @@ class DataManager
         }
 
         return $this->endDate;
+    }
+
+    public function setAggregationInterval(?string $aggregationInterval)
+    {
+        switch ($aggregationInterval) {
+                case 'daily': $this->aggregationInterval = '1d';
+
+break;
+
+                case 'monthly': $this->aggregationInterval = '1M';
+
+break;
+
+                case 'yearly': $this->aggregationInterval = '1y';
+
+break;
+
+                default: $this->aggregationInterval = self::DEFAULT_DETAILED_AGGREG_INTERVAL;
+        }
+    }
+
+    public function getAggregationInterval(): ?string
+    {
+        if (is_null($this->aggregationInterval)) {
+            return self::DEFAULT_DETAILED_AGGREG_INTERVAL;
+        }
+
+        return $this->aggregationInterval;
     }
 
     public function getData(): array
@@ -174,6 +212,23 @@ class DataManager
         ];
     }
 
+    private function buildNotValidatedUsersRequest()
+    {
+        $this->request['query'] = [
+            'bool' => [
+                'filter' => [
+                    [
+                        'match_phrase' => [
+                            'user_status_label' => [
+                                'query' => 'Non validé',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
+    }
+
     private function buildRegistrationsDetailedRequest()
     {
         $this->keyType = 'utc-datetime';
@@ -182,7 +237,7 @@ class DataManager
             1 => [
                 'date_histogram' => [
                     'field' => 'user_created_date',
-                    'calendar_interval' => '1M',
+                    'calendar_interval' => $this->getAggregationInterval(),
                     'time_zone' => 'Europe/Paris',
                     'min_doc_count' => 1,
                 ],
@@ -197,9 +252,60 @@ class DataManager
                             'user_status_label' => 'Désinscrit',
                         ],
                     ],
+                ],
+            ],
+        ];
+    }
+
+    private function buildValidatedUsersDetailedRequest()
+    {
+        $this->keyType = 'utc-datetime';
+
+        $this->request['aggs'] = [
+            1 => [
+                'date_histogram' => [
+                    'field' => 'user_validated_date',
+                    'calendar_interval' => $this->getAggregationInterval(),
+                    'time_zone' => 'Europe/Paris',
+                    'min_doc_count' => 1,
+                ],
+            ],
+        ];
+
+        $this->request['query'] = [
+            'bool' => [
+                'must' => [
                     [
                         'match_phrase' => [
-                            'user_status_label' => 'Désinscrit',
+                            'user_status_label' => 'Validé',
+                        ],
+                    ],
+                ],
+            ],
+        ];
+    }
+
+    private function buildNotValidatedUsersDetailedRequest()
+    {
+        $this->keyType = 'utc-datetime';
+
+        $this->request['aggs'] = [
+            1 => [
+                'date_histogram' => [
+                    'field' => 'user_created_date',
+                    'calendar_interval' => $this->getAggregationInterval(),
+                    'time_zone' => 'Europe/Paris',
+                    'min_doc_count' => 1,
+                ],
+            ],
+        ];
+
+        $this->request['query'] = [
+            'bool' => [
+                'must' => [
+                    [
+                        'match_phrase' => [
+                            'user_status_label' => 'Non validé',
                         ],
                     ],
                 ],
@@ -246,7 +352,8 @@ class DataManager
                     foreach ($collection['buckets'] as $value) {
                         $dataCollection[] = [
                             'key' => $value['key_as_string'],
-                            'keyType' => $this->keyType = 'utc-datetime',
+                            'keyType' => $this->keyType,
+                            'interval' => $this->getAggregationInterval(),
                             'value' => $value['doc_count'],
                         ];
                     }
