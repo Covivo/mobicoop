@@ -82,17 +82,23 @@ class CarpoolProofGouvProvider implements ProviderInterface
 
         $journey = $this->serializeProof($carpoolProof);
 
-        $this->logger->info('Send Proof #'.$carpoolProof->getId());
-        $this->logger->info(json_encode($journey));
+        if (!is_null($journey)) {
+            $this->logger->info('Send Proof #'.$carpoolProof->getId());
+            $this->logger->info(json_encode($journey));
 
-        if ($this->testMode) {
-            return new Response(200, '');
+            if ($this->testMode) {
+                return new Response(200, '');
+            }
+
+            return $dataProvider->postCollection($journey, $headers);
         }
 
-        return $dataProvider->postCollection($journey, $headers);
+        $this->logger->info('Proof #'.$carpoolProof->getId().' ignored');
+
+        return new Response(200, '');
     }
 
-    public function serializeProof(CarpoolProof $carpoolProof)
+    public function serializeProof(CarpoolProof $carpoolProof): ?string
     {
         // creation of the journey
         $over18 = null;
@@ -177,31 +183,59 @@ class CarpoolProofGouvProvider implements ProviderInterface
                 } else {
                     // Need to find the right time
                     switch ($fromDate->format('w')) {
-                        case 0: $fromTime = $carpoolProof->getAsk()->getCriteria()->getSunTime();
+                        case 0:
+                            if (!$carpoolProof->getAsk()->getCriteria()->isSunCheck()) {
+                                return null;
+                            }
+                            $fromTime = $carpoolProof->getAsk()->getCriteria()->getSunTime();
 
 break;
 
-                        case 1: $fromTime = $carpoolProof->getAsk()->getCriteria()->getMonTime();
+                        case 1:
+                            if (!$carpoolProof->getAsk()->getCriteria()->isMonCheck()) {
+                                return null;
+                            }
+                            $fromTime = $carpoolProof->getAsk()->getCriteria()->getMonTime();
 
 break;
 
-                        case 2: $fromTime = $carpoolProof->getAsk()->getCriteria()->getTueTime();
+                        case 2:
+                            if (!$carpoolProof->getAsk()->getCriteria()->isTueCheck()) {
+                                return null;
+                            }
+                            $fromTime = $carpoolProof->getAsk()->getCriteria()->getTueTime();
 
 break;
 
-                        case 3: $fromTime = $carpoolProof->getAsk()->getCriteria()->getWedTime();
+                        case 3:
+                            if (!$carpoolProof->getAsk()->getCriteria()->isWedCheck()) {
+                                return null;
+                            }
+                            $fromTime = $carpoolProof->getAsk()->getCriteria()->getWedTime();
 
 break;
 
-                        case 4: $fromTime = $carpoolProof->getAsk()->getCriteria()->getThuTime();
+                        case 4:
+                            if (!$carpoolProof->getAsk()->getCriteria()->isThuCheck()) {
+                                return null;
+                            }
+                            $fromTime = $carpoolProof->getAsk()->getCriteria()->getThuTime();
 
 break;
 
-                        case 5: $fromTime = $carpoolProof->getAsk()->getCriteria()->getFriTime();
+                        case 5:
+                            if (!$carpoolProof->getAsk()->getCriteria()->isFriCheck()) {
+                                return null;
+                            }
+                            $fromTime = $carpoolProof->getAsk()->getCriteria()->getFriTime();
 
 break;
 
-                        case 6: $fromTime = $carpoolProof->getAsk()->getCriteria()->getSatTime();
+                        case 6:
+                            if (!$carpoolProof->getAsk()->getCriteria()->isSatCheck()) {
+                                return null;
+                            }
+                            $fromTime = $carpoolProof->getAsk()->getCriteria()->getSatTime();
 
 break;
                     }
