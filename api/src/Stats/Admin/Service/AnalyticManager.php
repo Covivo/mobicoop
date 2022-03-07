@@ -28,11 +28,12 @@ use Exception;
 class AnalyticManager
 {
     public const IDS = [
-        1 => DataManager::DATA_NAME_REGISTRATIONS_DETAILED,
-        2 => DataManager::DATA_NAME_VALIDATED_USERS,
+        1 => 'getUsersAnalytics',
+        2 => 'getSolidaryUsersAnalytics',
     ];
 
     private $dataManager;
+    private $analytic;
 
     public function __construct(DataManager $dataManager)
     {
@@ -51,20 +52,45 @@ class AnalyticManager
 
     public function getAnalytic(int $id, ?array $filter = []): Analytic
     {
+        $this->analytic = new Analytic();
+        $this->analytic->setId($id);
+
         if (!in_array($id, array_keys(self::IDS))) {
             throw new Exception('Unknown Id');
         }
 
-        $analytic = new Analytic();
-        $analytic->setId($id);
+        if (is_callable([$this, self::IDS[$id]])) {
+            $this->{self::IDS[$id]}($id);
+        } else {
+            $this->getGenericAnalytics($id);
+        }
 
+        return $this->analytic;
+    }
+
+    public function getGenericAnalytics(int $id, ?array $filter = [])
+    {
         $this->dataManager->setDataName(self::IDS[$id]);
         $data = $this->dataManager->getData();
-        $analytic->setValue([
+        $this->analytic->setValue([
             'total' => $data['total'],
             'data' => $data['data'],
         ]);
+    }
 
-        return $analytic;
+    public function getUsersAnalytics(int $id, ?array $filter = [])
+    {
+        $analyticValue = ['data' => []];
+
+        $this->dataManager->setDataName(DataManager::DATA_NAME_VALIDATED_USERS_DETAILED);
+        $validatedUsers = $this->dataManager->getData();
+        $analyticValue['total'] = $validatedUsers['total'];
+        $analyticValue['data'][] = $validatedUsers['data'];
+
+        $this->dataManager->setDataName(DataManager::DATA_NAME_NOT_VALIDATED_USERS_DETAILED);
+        $notValidatedUsers = $this->dataManager->getData();
+        $analyticValue['data'][] = $notValidatedUsers['data'];
+
+        $this->analytic->setValue($analyticValue);
     }
 }

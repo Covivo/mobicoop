@@ -355,9 +355,10 @@ break;
                             'keyType' => $this->keyType,
                             'interval' => $this->getAggregationInterval(),
                             'value' => $value['doc_count'],
+                            'dataName' => $this->getDataName(),
                         ];
                     }
-                    $this->response['data'][] = $dataCollection;
+                    $this->response['data'] = $dataCollection;
                 }
             }
         }
