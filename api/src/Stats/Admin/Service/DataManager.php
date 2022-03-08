@@ -44,8 +44,12 @@ class DataManager
         self::DATA_NAME_VALIDATED_USERS_DETAILED,
         self::DATA_NAME_NOT_VALIDATED_USERS_DETAILED,
     ];
-    public const AUTHORIZED_AGGREG_INTERVAL = ['daily', 'monthly', 'yearly'];
-    public const DEFAULT_DETAILED_AGGREG_INTERVAL = '1M';
+    public const REQUEST_AGGREG_INTERVALS = [
+        'daily' => '1d',
+        'monthly' => '1M',
+        'yearly' => '1y',
+    ];
+    public const DEFAULT_DETAILED_AGGREG_INTERVAL = self::REQUEST_AGGREG_INTERVALS['monthly'];
 
     private const REQUEST_TIMOUT = 30000;
     private const DATE_FORMAT = 'c';
@@ -130,20 +134,9 @@ class DataManager
 
     public function setAggregationInterval(?string $aggregationInterval)
     {
-        switch ($aggregationInterval) {
-                case 'daily': $this->aggregationInterval = '1d';
-
-break;
-
-                case 'monthly': $this->aggregationInterval = '1M';
-
-break;
-
-                case 'yearly': $this->aggregationInterval = '1y';
-
-break;
-
-                default: $this->aggregationInterval = self::DEFAULT_DETAILED_AGGREG_INTERVAL;
+        $this->aggregationInterval = self::DEFAULT_DETAILED_AGGREG_INTERVAL;
+        if (isset(self::REQUEST_AGGREG_INTERVALS[$aggregationInterval])) {
+            $this->aggregationInterval = self::REQUEST_AGGREG_INTERVALS[$aggregationInterval];
         }
     }
 
@@ -353,7 +346,7 @@ break;
                         $dataCollection[] = [
                             'key' => $value['key_as_string'],
                             'keyType' => $this->keyType,
-                            'interval' => $this->getAggregationInterval(),
+                            'interval' => array_search($this->getAggregationInterval(), self::REQUEST_AGGREG_INTERVALS),
                             'value' => $value['doc_count'],
                             'dataName' => $this->getDataName(),
                         ];
