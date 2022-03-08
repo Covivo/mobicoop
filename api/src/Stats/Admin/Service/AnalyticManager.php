@@ -24,6 +24,7 @@ namespace App\Stats\Admin\Service;
 
 use App\Stats\Admin\Resource\Analytic;
 use Exception;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class AnalyticManager
 {
@@ -34,10 +35,13 @@ class AnalyticManager
 
     private $dataManager;
     private $analytic;
+    private $request;
 
-    public function __construct(DataManager $dataManager)
+    public function __construct(DataManager $dataManager, RequestStack $requestStack)
     {
         $this->dataManager = $dataManager;
+        $this->request = $requestStack->getCurrentRequest();
+        $this->setParameters();
     }
 
     public function getAnalytics(): array
@@ -92,6 +96,25 @@ class AnalyticManager
         $analyticValue['data'][] = $notValidatedUsers['data'];
 
         $this->analytic->setValue($this->normalizeResults($analyticValue));
+    }
+
+    private function setParameters()
+    {
+        if ($this->request->query->get('startDate') && '' !== trim($this->request->query->get('startDate'))) {
+            $startDate = \DateTime::createFromFormat('Ymd', $this->request->query->get('startDate'), new \DateTimeZone('Europe/Paris'));
+            if ($startDate) {
+                $this->dataManager->setStartDate($startDate);
+            }
+        }
+        if ($this->request->query->get('endDate') && '' !== trim($this->request->query->get('endDate'))) {
+            $endDate = \DateTime::createFromFormat('Ymd', $this->request->query->get('endDate'), new \DateTimeZone('Europe/Paris'));
+            if ($endDate) {
+                $this->dataManager->setEndDate($endDate);
+            }
+        }
+        if ($this->request->query->get('aggregInterval') && '' !== trim($this->request->query->get('aggregInterval'))) {
+            $this->dataManager->setAggregationInterval($this->request->query->get('aggregInterval'));
+        }
     }
 
     private function normalizeResults($analyticValue)

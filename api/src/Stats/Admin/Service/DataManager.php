@@ -259,7 +259,7 @@ break;
 
     private function buildValidatedUsersDetailedRequest()
     {
-        $this->keyType = 'utc-datetime';
+        $this->keyType = 'datetime';
 
         $this->request['aggs'] = [
             1 => [
@@ -287,7 +287,7 @@ break;
 
     private function buildNotValidatedUsersDetailedRequest()
     {
-        $this->keyType = 'utc-datetime';
+        $this->keyType = 'datetime';
 
         $this->request['aggs'] = [
             1 => [
