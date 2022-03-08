@@ -117,7 +117,7 @@ class AnalyticManager
         }
     }
 
-    private function normalizeResults($analyticValue)
+    private function normalizeResults($analyticValue): array
     {
         foreach ($analyticValue['data'] as $key => $currentData) {
             if (!isset($analyticValue['data'][$key + 1])) {
