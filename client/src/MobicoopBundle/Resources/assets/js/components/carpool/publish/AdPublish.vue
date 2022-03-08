@@ -573,6 +573,7 @@
                       :destination="destination"
                       :solidary-exclusive="solidaryExclusive"
                       :age-display="ageDisplay"
+                      :event-id="eventId"
                     />
                   </v-col>
                 </v-row>

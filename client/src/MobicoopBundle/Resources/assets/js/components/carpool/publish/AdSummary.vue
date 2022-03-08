@@ -26,10 +26,12 @@
                 class="secondary--text"
               >
                 {{ $t('outward') }}
-                <v-icon color="secondary">mdi-arrow-right</v-icon>
+                <v-icon color="secondary">
+                  mdi-arrow-right
+                </v-icon>
               </span>
 
-              {{ computedOutwardDateFormat }}
+              <span>{{ computedOutwardDateFormat }}</span>
             </h2>
             <h2 v-else>
               <v-chip
@@ -132,10 +134,9 @@
                       <strong>{{ computedOutwardTimeFormat }}</strong>
                     </v-col>
                     <v-col :cols="displayInfo ? 12 : 12">
-                      <v-row>
+                      <span>
                         {{ (route && route.origin) ? displayAddress(route.origin) : '' }}
-                      </v-row>
-                      <v-row />                      
+                      </span>
                     </v-col>
                   </v-row>
                 </v-timeline-item>
@@ -177,7 +178,12 @@
                       <strong>{{ computedDestinationTime }}</strong>
                     </v-col>
                     <v-col :cols="displayInfo ? 12 : 12">
-                      {{ (route && route.destination) ? displayAddress(route.destination) : '' }}
+                      <span v-if="eventId">
+                        {{ route.destination.displayedLabel }}
+                      </span>
+                      <span v-else>
+                        {{ (route && route.destination) ? displayAddress(route.destination) : '' }}
+                      </span>
                     </v-col>
                   </v-row>
                 </v-timeline-item>
@@ -202,13 +208,15 @@
                     <h2
                       v-if="!regular"
                     >
-                      <span
+                      <v-row
                         v-if="hasReturn"
                         class="secondary--text"
                       >
                         {{ $t('return') }}
-                        <v-icon color="secondary">mdi-arrow-left</v-icon>
-                      </span>
+                        <v-icon color="secondary">
+                          mdi-arrow-left
+                        </v-icon>
+                      </v-row>
 
                       {{ computedReturnDateFormat }}
                     </h2>
@@ -260,7 +268,7 @@
                           </v-col>
                           <v-col :cols="displayInfo ? 6 : 12">
                             <!-- return so we invert destination and origin-->
-                            {{ (route && route.destination) ? route.destination.addressLocality : null }}
+                            <span>{{ (route && route.destination) ? route.destination.addressLocality : null }}</span>
                           </v-col>
                         </v-row>
                       </v-timeline-item>
@@ -304,7 +312,7 @@
                           </v-col>
                           <v-col :cols="displayInfo ? 6 : 12">
                             <!-- return so we invert destination and origin-->
-                            {{ (route && route.origin) ? route.origin.addressLocality : null }}
+                            <span>{{ (route && route.origin) ? route.origin.addressLocality : null }}</span>
                           </v-col>
                         </v-row>
                       </v-timeline-item>
@@ -675,6 +683,10 @@ export default {
     ageDisplay: {
       type: Boolean,
       default: false
+    },
+    eventId: {
+      type: Number,
+      default: null
     }
   },
   data() {
