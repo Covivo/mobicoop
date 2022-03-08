@@ -91,6 +91,35 @@ class AnalyticManager
         $notValidatedUsers = $this->dataManager->getData();
         $analyticValue['data'][] = $notValidatedUsers['data'];
 
-        $this->analytic->setValue($analyticValue);
+        $this->analytic->setValue($this->normalizeResults($analyticValue));
+    }
+
+    private function normalizeResults($analyticValue)
+    {
+        foreach ($analyticValue['data'] as $key => $currentData) {
+            if (!isset($analyticValue['data'][$key + 1])) {
+                break;
+            }
+
+            $firstDateCurrent = new \DateTime($currentData[0]['key']);
+            $lastDateCurrent = new \DateTime($currentData[count($currentData) - 1]['key']);
+            $firstDateNextData = new \DateTime($analyticValue['data'][$key + 1][0]['key']);
+            $lastDateNextData = new \DateTime($analyticValue['data'][$key + 1][count($analyticValue['data']) - 1]['key']);
+
+            if ($firstDateCurrent > $firstDateNextData) {
+                $dataToAdd = $analyticValue['data'][$key + 1][0];
+                $dataToAdd['dataName'] = $currentData[0]['dataName'];
+                $dataToAdd['value'] = '-';
+                array_unshift($analyticValue['data'][$key], $dataToAdd);
+            }
+            if ($lastDateCurrent < $lastDateNextData) {
+                $dataToAdd = $analyticValue['data'][$key + 1][count($analyticValue['data']) - 1];
+                $dataToAdd['dataName'] = $currentData[0]['dataName'];
+                $dataToAdd['value'] = '-';
+                array_push($analyticValue['data'][$key], $dataToAdd);
+            }
+        }
+
+        return $analyticValue;
     }
 }
