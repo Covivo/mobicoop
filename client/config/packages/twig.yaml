@@ -51,3 +51,4 @@ twig:
         imageMinPxSize : '%env(int:IMAGE_MIN_PX_SIZE)%'
         imageMaxMbSize : '%env(int:IMAGE_MAX_MB_SIZE)%'
         $ssoButtonDisplay: '%env(bool:SSO_DISPLAY)%'
+        geosearcherPrioritizeRelaypoints: '%env(bool:GEOSEARCHER_PRIORITIZE_RELAYPOINTS)%'

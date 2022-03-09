@@ -8,7 +8,7 @@
         "textDetails": {
             "title": "Include the widget",
             "p1": "To include the widget, you must copy the text below and paste it on your website. <br /> You can change the elements in bold to personalize your widget.",
-            "p2": "&lt;iframe src=\"{url}\" width=\"<span class=\"font-weight-bold\">100%</span>\" height=\"<span class=\"font-weight-bold\">440px</span>\" frameborder=\"0\" scrolling=\"no\"&gt;&lt;/iframe&gt;",
+            "p2": "&lt;iframe src=\"{url}\" width=\"<span class=\"font-weight-bold\">100%</span>\" height=\"<span class=\"font-weight-bold\">640px</span>\" frameborder=\"0\" scrolling=\"no\"&gt;&lt;/iframe&gt;",
             "p3": "<span class=\"font-weight-bold\">Note</span>: Some publishing tools like Wordpress require the addition of specific plugins to be able to use an iFrame."
         }
     }

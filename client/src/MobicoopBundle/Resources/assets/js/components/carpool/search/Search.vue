@@ -27,6 +27,7 @@
             :iswidget="isWidget"
             :init-outward-date="defaultOutwardDate"
             :image-swap="imageSwap"
+            :prioritize-relaypoints="prioritizeRelaypoints"
             @change="searchChanged"
           />
         </v-col>
@@ -88,6 +89,7 @@
           :init-regular="dataRegular"
           :punctual-date-optional="punctualDateOptional"
           :elevation="horizontalElevation"
+          :prioritize-relaypoints="prioritizeRelaypoints"
           @change="searchChanged"
           @search="search"
         />

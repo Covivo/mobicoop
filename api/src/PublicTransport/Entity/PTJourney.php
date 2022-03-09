@@ -19,16 +19,14 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\PublicTransport\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
-use App\Match\Entity\MassPerson;
+use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
@@ -129,10 +127,10 @@ use Symfony\Component\Serializer\Annotation\Groups;
  */
 class PTJourney
 {
-    const DEFAULT_ID = 999999999999;
+    public const DEFAULT_ID = 999999999999;
 
     /**
-     * @var int The id of this journey.
+     * @var int the id of this journey
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -140,17 +138,17 @@ class PTJourney
      * @ApiProperty(identifier=true)
      */
     private $id;
-    
+
     /**
-     * @var int The total distance of this journey.
+     * @var int the total distance of this journey
      *
      * @ORM\Column(type="integer", nullable=true)
      * @Groups("pt")
      */
     private $distance;
-    
+
     /**
-     * @var string The total duration of this journey (in seconds).
+     * @var string the total duration of this journey (in seconds)
      *
      * @ORM\Column(type="integer", nullable=true)
      * @Groups("pt")
@@ -158,48 +156,48 @@ class PTJourney
     private $duration;
 
     /**
-     * @var int The number of changes of this journey.
+     * @var int the number of changes of this journey
      *
      * @Groups("pt")
      */
     private $changeNumber;
-    
+
     /**
-     * @var float The estimated price of this journey.
+     * @var float the estimated price of this journey
      *
      * @ORM\Column(type="decimal", precision=4, scale=2, nullable=true)
      * @Groups("pt")
      */
     private $price;
-   
+
     /**
-     * @var int The estimated CO2 emission of this journey.
+     * @var int the estimated CO2 emission of this journey
      *
      * @ORM\Column(type="integer")
      * @Groups("pt")
      */
     private $co2;
-        
+
     /**
-     * @var PTDeparture The departure of this journey.
+     * @var PTDeparture the departure of this journey
      *
      * @ORM\ManyToOne(targetEntity="App\PublicTransport\Entity\PTDeparture")
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Groups("pt")
      */
     private $ptdeparture;
-    
+
     /**
-     * @var PTArrival The arrival of this journey.
+     * @var PTArrival the arrival of this journey
      *
      * @ORM\ManyToOne(targetEntity="App\PublicTransport\Entity\PTArrival")
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Groups("pt")
      */
     private $ptarrival;
-    
+
     /**
-     * @var ArrayCollection The legs of this journey.
+     * @var ArrayCollection the legs of this journey
      *
      * @ORM\OneToMany(targetEntity="\App\PublicTransport\Entity\PTLeg", mappedBy="ptjourney", cascade={"persist"})
      * @Groups("pt")
@@ -207,12 +205,26 @@ class PTJourney
     private $ptlegs;
 
     /**
-     * @var string PT provider used to compute this journey.
+     * @var string PT provider used to compute this journey
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups("pt")
      */
     private $provider;
+
+    /**
+     * @var string PT provider name to display on results
+     *
+     * @Groups("pt")
+     */
+    private $ptProviderName;
+
+    /**
+     * @var string PT provider url where to find the result
+     *
+     * @Groups("pt")
+     */
+    private $ptProviderUrl;
 
     public function __construct($id = null)
     {
@@ -222,28 +234,28 @@ class PTJourney
         }
         $this->ptlegs = new ArrayCollection();
     }
-    
+
     public function getId(): int
     {
         return $this->id;
     }
-    
+
     public function setId(int $id): self
     {
         $this->id = $id;
-        
+
         return $this;
     }
-    
+
     public function getDistance(): ?int
     {
         return $this->distance;
     }
-    
+
     public function setDistance(?int $distance): self
     {
         $this->distance = $distance;
-        
+
         return $this;
     }
 
@@ -251,11 +263,11 @@ class PTJourney
     {
         return $this->duration;
     }
-    
+
     public function setDuration(?int $duration): self
     {
         $this->duration = $duration;
-        
+
         return $this;
     }
 
@@ -263,11 +275,11 @@ class PTJourney
     {
         return $this->changeNumber;
     }
-    
+
     public function setChangeNumber(?int $changeNumber): self
     {
         $this->changeNumber = $changeNumber;
-        
+
         return $this;
     }
 
@@ -275,11 +287,11 @@ class PTJourney
     {
         return $this->price;
     }
-    
+
     public function setPrice(?float $price): self
     {
         $this->price = $price;
-        
+
         return $this;
     }
 
@@ -287,11 +299,11 @@ class PTJourney
     {
         return $this->co2;
     }
-    
+
     public function setCo2(?int $co2): self
     {
         $this->co2 = $co2;
-        
+
         return $this;
     }
 
@@ -299,26 +311,26 @@ class PTJourney
     {
         return $this->ptdeparture;
     }
-    
+
     public function setPTDeparture(?PTDeparture $ptdeparture): self
     {
         $this->ptdeparture = $ptdeparture;
-        
+
         return $this;
     }
-    
+
     public function getPTArrival(): ?PTArrival
     {
         return $this->ptarrival;
     }
-    
+
     public function setPTArrival(?PTArrival $ptarrival): self
     {
         $this->ptarrival = $ptarrival;
-        
+
         return $this;
     }
-    
+
     public function getPTLegs()
     {
         return $this->ptlegs->getValues();
@@ -327,20 +339,20 @@ class PTJourney
     public function setPTLegs(?ArrayCollection $ptlegs): self
     {
         $this->ptlegs = $ptlegs;
-        
+
         return $this;
     }
-    
+
     public function addPTLeg(PTLeg $ptleg): self
     {
         if (!$this->ptlegs->contains($ptleg)) {
             $this->ptlegs->add($ptleg);
             $ptleg->setPTJourney($this);
         }
-        
+
         return $this;
     }
-    
+
     public function removePTLeg(PTLeg $ptleg): self
     {
         if ($this->ptlegs->contains($ptleg)) {
@@ -350,7 +362,7 @@ class PTJourney
                 $ptleg->setPTJourney(null);
             }
         }
-        
+
         return $this;
     }
 
@@ -358,11 +370,35 @@ class PTJourney
     {
         return $this->provider;
     }
-    
+
     public function setProvider(?string $provider): self
     {
         $this->provider = $provider;
-        
+
+        return $this;
+    }
+
+    public function getPtProviderName(): ?string
+    {
+        return $this->ptProviderName;
+    }
+
+    public function setPtProviderName(?string $ptProviderName): self
+    {
+        $this->ptProviderName = $ptProviderName;
+
+        return $this;
+    }
+
+    public function getPtProviderUrl(): ?string
+    {
+        return $this->ptProviderUrl;
+    }
+
+    public function setPtProviderUrl(?string $ptProviderUrl): self
+    {
+        $this->ptProviderUrl = $ptProviderUrl;
+
         return $this;
     }
 }

@@ -75,6 +75,7 @@
                 :url="geoSearchUrl"
                 :token="user ? user.token : ''"
                 :label="$t('form.address.label')"
+                :prioritize-relaypoints="prioritizeRelaypoints"
                 @address-selected="addressSelected"
               />
             </v-col>

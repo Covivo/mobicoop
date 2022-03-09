@@ -19,14 +19,14 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Payment\Entity;
 
 use App\Action\Entity\Log;
-use Doctrine\ORM\Mapping as ORM;
 use App\User\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -37,16 +37,16 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class CarpoolPayment
 {
-    const STATUS_INITIATED = 0;
-    const STATUS_SUCCESS = 1;
-    const STATUS_FAILURE = 2;
+    public const STATUS_INITIATED = 0;
+    public const STATUS_SUCCESS = 1;
+    public const STATUS_FAILURE = 2;
 
-    const ORIGIN_DESKTOP = 0;
-    const ORIGIN_MOBILE = 1;
-    const ORIGIN_MOBILE_SITE = 2;
+    public const ORIGIN_DESKTOP = 0;
+    public const ORIGIN_MOBILE = 1;
+    public const ORIGIN_MOBILE_SITE = 2;
 
     /**
-     * @var int The id of this payment.
+     * @var int the id of this payment
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -55,18 +55,18 @@ class CarpoolPayment
     private $id;
 
     /**
-    * @var float The amount to be paid.
-    *
-    * @Assert\NotBlank
-    * @ORM\Column(type="decimal", precision=6, scale=2)
-    */
+     * @var float the amount to be paid
+     *
+     * @Assert\NotBlank
+     * @ORM\Column(type="decimal", precision=6, scale=2)
+     */
     private $amount;
 
     /**
      * @var int The status of the payment :
-     * 0 : initiated
-     * 1 : success
-     * 2 : failure
+     *          0 : initiated
+     *          1 : success
+     *          2 : failure
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
@@ -82,42 +82,42 @@ class CarpoolPayment
     private $user;
 
     /**
-     * @var \DateTimeInterface Creation date.
+     * @var \DateTimeInterface creation date
      *
      * @ORM\Column(type="datetime")
      */
     private $createdDate;
 
     /**
-     * @var \DateTimeInterface Updated date.
+     * @var \DateTimeInterface updated date
      *
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $updatedDate;
 
     /**
-     * @var ArrayCollection|null Carpool items for this payment : many tries can be necessary for a successful payment. A payment may concern many items.
+     * @var null|ArrayCollection Carpool items for this payment : many tries can be necessary for a successful payment. A payment may concern many items.
      *
      * @ORM\ManyToMany(targetEntity="\App\Payment\Entity\CarpoolItem", inversedBy="carpoolPayments")
      */
     private $carpoolItems;
 
     /**
-     * @var int The transaction id of this payment if there is an online part.
+     * @var int the transaction id of this payment if there is an online part
      *
-     * @ORM\Column(type="integer", nullable=true)
+     * @ORM\Column(type="bigint", nullable=true)
      */
     private $transactionId;
 
     /**
-     * @var \DateTimeInterface The transaction date of this payment if there is an online part.
+     * @var \DateTimeInterface the transaction date of this payment if there is an online part
      *
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $transactionDate;
 
     /**
-     * @var string The transaction post data of this payment if there is an online part.
+     * @var string the transaction post data of this payment if there is an online part
      *
      * @ORM\Column(type="text", nullable=true)
      */
@@ -129,7 +129,7 @@ class CarpoolPayment
     private $redirectUrl;
 
     /**
-     * @var string|null Filled if we need to create the payment profile
+     * @var null|string Filled if we need to create the payment profile
      */
     private $createCarpoolProfileIdentifier;
 
@@ -148,9 +148,8 @@ class CarpoolPayment
     private $logs;
 
     /**
-    * @var float The amountOnline to be paid. Not persisted.
-    *
-    */
+     * @var float The amountOnline to be paid. Not persisted.
+     */
     private $amountOnline;
 
     public function __construct()
@@ -158,7 +157,7 @@ class CarpoolPayment
         $this->carpoolItems = new ArrayCollection();
         $this->origin = self::ORIGIN_DESKTOP;
     }
-    
+
     public function getId(): ?int
     {
         return $this->id;
@@ -168,7 +167,7 @@ class CarpoolPayment
     {
         return $this->amount;
     }
-    
+
     public function setAmount(?string $amount)
     {
         $this->amount = $amount;
@@ -178,7 +177,7 @@ class CarpoolPayment
     {
         return $this->amountOnline;
     }
-    
+
     public function setAmountOnline(?string $amountOnline)
     {
         $this->amountOnline = $amountOnline;
@@ -242,15 +241,16 @@ class CarpoolPayment
         if (!$this->carpoolItems->contains($carpoolItem)) {
             $this->carpoolItems[] = $carpoolItem;
         }
-        
+
         return $this;
     }
-    
+
     public function removeCarpoolItem(CarpoolItem $carpoolItem): self
     {
         if ($this->carpoolItems->contains($carpoolItem)) {
             $this->carpoolItems->removeElement($carpoolItem);
         }
+
         return $this;
     }
 
@@ -330,17 +330,17 @@ class CarpoolPayment
     {
         return $this->logs->getValues();
     }
-    
+
     public function addLog(Log $log): self
     {
         if (!$this->logs->contains($log)) {
             $this->logs[] = $log;
             $log->setCarpoolPayment($this);
         }
-        
+
         return $this;
     }
-    
+
     public function removeLog(Log $log): self
     {
         if ($this->logs->contains($log)) {
@@ -350,7 +350,7 @@ class CarpoolPayment
                 $log->setCarpoolPayment(null);
             }
         }
-        
+
         return $this;
     }
 
@@ -373,7 +373,7 @@ class CarpoolPayment
      */
     public function setAutoCreatedDate()
     {
-        $this->setCreatedDate(new \Datetime());
+        $this->setCreatedDate(new \DateTime());
     }
 
     /**
@@ -383,6 +383,6 @@ class CarpoolPayment
      */
     public function setAutoUpdatedDate()
     {
-        $this->setUpdatedDate(new \Datetime());
+        $this->setUpdatedDate(new \DateTime());
     }
 }

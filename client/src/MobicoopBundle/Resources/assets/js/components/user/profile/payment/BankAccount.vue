@@ -98,6 +98,7 @@
                 :token="user ? user.token : ''"
                 :label="$t('form.label.address.check')"
                 :display-name-in-selected="false"
+                :prioritize-relaypoints="prioritizeRelaypoints"
                 @address-selected="addressSelected"
               />
             </v-col>
@@ -309,6 +310,10 @@ export default {
     validationDocsAuthorizedExtensions: {
       type: String,
       default: null
+    },
+    prioritizeRelaypoints: {
+      type: Boolean,
+      default: false
     }
   },
   data () {

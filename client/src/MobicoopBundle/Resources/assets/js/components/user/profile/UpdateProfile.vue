@@ -449,6 +449,7 @@
               :token="user ? user.token : ''"
               :init-address="homeAddress"
               :display-name-in-selected="false"
+              :prioritize-relaypoints="prioritizeRelaypoints"
               @address-selected="homeAddressSelected"
             />
           </v-col>
@@ -684,6 +685,10 @@ export default {
     imageMaxMbSize: {
       type: Number,
       default: null
+    },
+    prioritizeRelaypoints: {
+      type: Boolean,
+      default: false
     }
   },
   data() {

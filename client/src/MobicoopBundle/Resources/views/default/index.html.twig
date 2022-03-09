@@ -28,6 +28,7 @@
         :map-provider="{{ mapProvider|json_encode }}"
         :url-tiles="{{ urlTiles|json_encode }}"
         :attribution-copyright="{{ attributionCopyright|json_encode }}"
+        :prioritize-relaypoints="{{ geosearcherPrioritizeRelaypoints is defined ? geosearcherPrioritizeRelaypoints ? 'true' : 'false' : 'false' }}"
     />
 {% endblock %}
 
