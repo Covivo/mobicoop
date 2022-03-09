@@ -49,6 +49,7 @@
             >
               <v-btn
                 v-if="!hidePublish"
+                :class="colorButton+' '+textColorButton"
                 outlined
                 rounded
                 :loading="loadingPublish"
@@ -208,6 +209,14 @@ export default {
     prioritizeRelaypoints: {
       type: Boolean,
       default: false
+    },
+    colorButton: {
+      type:String,
+      default: null
+    },
+    textColorButton: {
+      type:String,
+      default: null
     }
   },
   data() {
