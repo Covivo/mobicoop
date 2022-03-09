@@ -101,13 +101,13 @@ class AnalyticManager
     private function setParameters()
     {
         if ($this->request->query->get('startDate') && '' !== trim($this->request->query->get('startDate'))) {
-            $startDate = \DateTime::createFromFormat('Ymd', $this->request->query->get('startDate'), new \DateTimeZone('Europe/Paris'));
+            $startDate = \DateTime::createFromFormat('Y-m-d', $this->request->query->get('startDate'), new \DateTimeZone('Europe/Paris'));
             if ($startDate) {
                 $this->dataManager->setStartDate($startDate);
             }
         }
         if ($this->request->query->get('endDate') && '' !== trim($this->request->query->get('endDate'))) {
-            $endDate = \DateTime::createFromFormat('Ymd', $this->request->query->get('endDate'), new \DateTimeZone('Europe/Paris'));
+            $endDate = \DateTime::createFromFormat('Y-m-d', $this->request->query->get('endDate'), new \DateTimeZone('Europe/Paris'));
             if ($endDate) {
                 $this->dataManager->setEndDate($endDate);
             }

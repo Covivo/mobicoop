@@ -74,6 +74,7 @@ class DataManager
 
     private $response;
     private $keyType;
+    private $dateFieldFilter;
     private $aggregationInterval;
 
     public function __construct(string $baseUri, string $instance, string $username, string $password)
@@ -180,7 +181,7 @@ class DataManager
     {
         $this->request['query']['bool']['filter'][] = [
             'range' => [
-                'user_created_date' => [
+                $this->dateFieldFilter => [
                     'gte' => $this->getStartDate()->format(self::DATE_FORMAT),
                     'lte' => $this->getEndDate()->format(self::DATE_FORMAT),
                 ],
@@ -253,11 +254,12 @@ class DataManager
     private function buildValidatedUsersDetailedRequest()
     {
         $this->keyType = 'datetime';
+        $this->dateFieldFilter = 'user_validated_date';
 
         $this->request['aggs'] = [
             1 => [
                 'date_histogram' => [
-                    'field' => 'user_validated_date',
+                    'field' => $this->dateFieldFilter,
                     'calendar_interval' => $this->getAggregationInterval(),
                     'time_zone' => 'Europe/Paris',
                     'min_doc_count' => 1,
@@ -281,11 +283,12 @@ class DataManager
     private function buildNotValidatedUsersDetailedRequest()
     {
         $this->keyType = 'datetime';
+        $this->dateFieldFilter = 'user_created_date';
 
         $this->request['aggs'] = [
             1 => [
                 'date_histogram' => [
-                    'field' => 'user_created_date',
+                    'field' => $this->dateFieldFilter,
                     'calendar_interval' => $this->getAggregationInterval(),
                     'time_zone' => 'Europe/Paris',
                     'min_doc_count' => 1,
