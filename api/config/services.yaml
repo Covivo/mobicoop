@@ -390,6 +390,11 @@ services:
     'App\Community\Admin\DataProvider\CommunityUserCampaignAssociateCollectionDataProvider':
         arguments:
             $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
+
+    'App\Community\Admin\DataProvider\CommunityUserCampaignSendCollectionDataProvider':
+        arguments:
+            $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
+        
     
     
     # Consumption feedback
