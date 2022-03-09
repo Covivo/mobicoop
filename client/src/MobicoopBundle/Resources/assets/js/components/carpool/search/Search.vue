@@ -204,6 +204,10 @@ export default {
       type:Number,
       default: 2
     },
+    prioritizeRelaypoints: {
+      type: Boolean,
+      default: false
+    },
     colorButton: {
       type:String,
       default: null
