@@ -178,12 +178,7 @@
                       <strong>{{ computedDestinationTime }}</strong>
                     </v-col>
                     <v-col :cols="displayInfo ? 12 : 12">
-                      <span v-if="eventId">
-                        {{ route.destination.displayedLabel }}
-                      </span>
-                      <span v-else>
-                        {{ (route && route.destination) ? displayAddress(route.destination) : '' }}
-                      </span>
+                      {{ (route && route.destination) ? displayAddress(route.destination) : '' }}
                     </v-col>
                   </v-row>
                 </v-timeline-item>
@@ -796,6 +791,9 @@ export default {
     displayAddress(address){
       if(address.relayPoint && address.relayPoint.name){
         return address.relayPoint.name;
+      }
+      if(address.displayedLabel){
+        return address.displayedLabel;
       }
       else{
         let display = address.addressLocality;
