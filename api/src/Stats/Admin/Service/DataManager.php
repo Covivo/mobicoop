@@ -33,6 +33,7 @@ class DataManager
     public const DATA_NAME_VALIDATED_USERS_DETAILED = 'ValidatedUsersDetailed';
     public const DATA_NAME_NOT_VALIDATED_USERS_DETAILED = 'NotValidatedUsersDetailed';
     public const DATA_NAME_REGISTRATIONS_DETAILED = 'RegistrationsDetailed';
+    public const DATA_NAME_PROPOSALS_STILL_VALID_DETAILED = 'ProposalsStillValidDetailed';
 
     public const PREFIX_AUTO_CALL_METHOD = 'build';
     public const SUFFIX_AUTO_CALL_METHOD = 'Request';
@@ -43,12 +44,22 @@ class DataManager
         self::DATA_NAME_REGISTRATIONS_DETAILED,
         self::DATA_NAME_VALIDATED_USERS_DETAILED,
         self::DATA_NAME_NOT_VALIDATED_USERS_DETAILED,
+        self::DATA_NAME_PROPOSALS_STILL_VALID_DETAILED,
     ];
+
     public const REQUEST_AGGREG_INTERVALS = [
         'daily' => '1d',
         'monthly' => '1M',
         'yearly' => '1y',
+        '12h' => '12h',
     ];
+    public const REQUEST_AGGREG_TYPE_INTERVALS = [
+        '1d' => 'calendar_interval',
+        '1M' => 'calendar_interval',
+        '1y' => 'calendar_interval',
+        '12h' => 'fixed_interval',
+    ];
+
     public const DEFAULT_DETAILED_AGGREG_INTERVAL = self::REQUEST_AGGREG_INTERVALS['monthly'];
 
     private const REQUEST_TIMOUT = 30000;
@@ -184,6 +195,7 @@ class DataManager
                 $this->dateFieldFilter => [
                     'gte' => $this->getStartDate()->format(self::DATE_FORMAT),
                     'lte' => $this->getEndDate()->format(self::DATE_FORMAT),
+                    'format' => 'strict_date_optional_time',
                 ],
             ],
         ];
@@ -231,7 +243,7 @@ class DataManager
             1 => [
                 'date_histogram' => [
                     'field' => 'user_created_date',
-                    'calendar_interval' => $this->getAggregationInterval(),
+                    self::REQUEST_AGGREG_TYPE_INTERVALS[$this->getAggregationInterval()] => $this->getAggregationInterval(),
                     'time_zone' => 'Europe/Paris',
                     'min_doc_count' => 1,
                 ],
@@ -260,7 +272,7 @@ class DataManager
             1 => [
                 'date_histogram' => [
                     'field' => $this->dateFieldFilter,
-                    'calendar_interval' => $this->getAggregationInterval(),
+                    self::REQUEST_AGGREG_TYPE_INTERVALS[$this->getAggregationInterval()] => $this->getAggregationInterval(),
                     'time_zone' => 'Europe/Paris',
                     'min_doc_count' => 1,
                 ],
@@ -289,7 +301,7 @@ class DataManager
             1 => [
                 'date_histogram' => [
                     'field' => $this->dateFieldFilter,
-                    'calendar_interval' => $this->getAggregationInterval(),
+                    self::REQUEST_AGGREG_TYPE_INTERVALS[$this->getAggregationInterval()] => $this->getAggregationInterval(),
                     'time_zone' => 'Europe/Paris',
                     'min_doc_count' => 1,
                 ],
@@ -304,6 +316,35 @@ class DataManager
                             'user_status_label' => 'Non validé',
                         ],
                     ],
+                ],
+            ],
+        ];
+    }
+
+    private function buildProposalsStillValidDetailedRequest()
+    {
+        $this->keyType = 'datetime';
+        $this->dateFieldFilter = '@timestamp';
+
+        $this->request['aggs'] = [
+            '1' => [
+                'date_histogram' => [
+                    'field' => $this->dateFieldFilter,
+                    self::REQUEST_AGGREG_TYPE_INTERVALS[$this->getAggregationInterval()] => $this->getAggregationInterval(),
+                    'time_zone' => 'Europe/Paris',
+                    'min_doc_count' => 1,
+                ],
+            ],
+        ];
+
+        $this->request['size'] = 0;
+        $this->request['stored_fields'] = ['*'];
+
+        $this->request['query'] = [
+            'bool' => [
+                'filter' => [
+                    ['match_phrase' => ['search' => 'Annonce']],
+                    ['match_phrase' => ['status' => 'Active']],
                 ],
             ],
         ];
@@ -325,6 +366,9 @@ class DataManager
         ]);
 
         $this->requestResponse = curl_exec($curl);
+        // var_dump($this->requestResponse);
+
+        // exit;
 
         curl_close($curl);
     }
@@ -332,7 +376,6 @@ class DataManager
     private function deserializeDataResponse()
     {
         $dataResponse = json_decode($this->requestResponse, true);
-
         $this->response = [];
 
         $this->response['total'] = 0;
