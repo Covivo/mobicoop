@@ -27,6 +27,7 @@ namespace App\Stats\Admin\Service;
  */
 class DataManager
 {
+    public const TIMEZONE = 'Europe/Paris';
     public const DATA_NAME_VALIDATED_USERS = 'ValidatedUsers';
     public const DATA_NAME_NOT_VALIDATED_USERS = 'NotValidatedUsers';
 
@@ -114,15 +115,16 @@ class DataManager
     public function getStartDate(): ?\DateTime
     {
         if (is_null($this->startDate)) {
-            $startDate = new \DateTime('now');
+            $startDate = new \DateTime('first day of this month');
+
             if (self::DEFAULT_START_DATE_MODIFICATOR !== '') {
                 $startDate->modify(self::DEFAULT_START_DATE_MODIFICATOR);
             }
 
-            return $startDate;
+            $this->startDate = $startDate;
         }
 
-        return $this->startDate;
+        return $this->startDate->setTime(0, 0, 1);
     }
 
     public function setEndDate(?\DateTime $endDate)
@@ -133,15 +135,15 @@ class DataManager
     public function getEndDate(): ?\DateTime
     {
         if (is_null($this->endDate)) {
-            $endDate = new \DateTime('now');
+            $endDate = new \DateTime('first day of this month');
             if (self::DEFAULT_END_DATE_MODIFICATOR !== '') {
                 $endDate->modify(self::DEFAULT_END_DATE_MODIFICATOR);
             }
 
-            return $endDate;
+            $this->endDate = $endDate;
         }
 
-        return $this->endDate;
+        return $this->endDate->setTime(23, 59, 59);
     }
 
     public function setAggregationInterval(?string $aggregationInterval)
@@ -244,7 +246,7 @@ class DataManager
                 'date_histogram' => [
                     'field' => 'user_created_date',
                     self::REQUEST_AGGREG_TYPE_INTERVALS[$this->getAggregationInterval()] => $this->getAggregationInterval(),
-                    'time_zone' => 'Europe/Paris',
+                    'time_zone' => self::TIMEZONE,
                     'min_doc_count' => 1,
                 ],
             ],
@@ -273,7 +275,7 @@ class DataManager
                 'date_histogram' => [
                     'field' => $this->dateFieldFilter,
                     self::REQUEST_AGGREG_TYPE_INTERVALS[$this->getAggregationInterval()] => $this->getAggregationInterval(),
-                    'time_zone' => 'Europe/Paris',
+                    'time_zone' => self::TIMEZONE,
                     'min_doc_count' => 1,
                 ],
             ],
@@ -302,7 +304,7 @@ class DataManager
                 'date_histogram' => [
                     'field' => $this->dateFieldFilter,
                     self::REQUEST_AGGREG_TYPE_INTERVALS[$this->getAggregationInterval()] => $this->getAggregationInterval(),
-                    'time_zone' => 'Europe/Paris',
+                    'time_zone' => self::TIMEZONE,
                     'min_doc_count' => 1,
                 ],
             ],
@@ -331,7 +333,7 @@ class DataManager
                 'date_histogram' => [
                     'field' => $this->dateFieldFilter,
                     self::REQUEST_AGGREG_TYPE_INTERVALS[$this->getAggregationInterval()] => $this->getAggregationInterval(),
-                    'time_zone' => 'Europe/Paris',
+                    'time_zone' => self::TIMEZONE,
                     'min_doc_count' => 1,
                 ],
             ],
@@ -389,8 +391,11 @@ class DataManager
                 $dataCollection = [];
                 if (isset($collection['buckets'])) {
                     foreach ($collection['buckets'] as $value) {
+                        $key = new \DateTime($value['key_as_string']);
+                        $key->setTimezone(new \DateTimeZone(self::TIMEZONE));
+
                         $dataCollection[] = [
-                            'key' => $value['key_as_string'],
+                            'key' => $key->format('c'),
                             'keyType' => $this->keyType,
                             'interval' => array_search($this->getAggregationInterval(), self::REQUEST_AGGREG_INTERVALS),
                             'value' => $value['doc_count'],
