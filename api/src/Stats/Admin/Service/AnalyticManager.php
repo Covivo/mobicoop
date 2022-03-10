@@ -24,19 +24,24 @@ namespace App\Stats\Admin\Service;
 
 use App\Stats\Admin\Resource\Analytic;
 use Exception;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class AnalyticManager
 {
     public const IDS = [
-        1 => DataManager::DATA_NAME_REGISTRATIONS,
-        2 => DataManager::DATA_NAME_VALIDATED_USERS,
+        1 => 'getUsersAnalytics',
+        2 => 'getSolidaryUsersAnalytics',
     ];
 
     private $dataManager;
+    private $analytic;
+    private $request;
 
-    public function __construct(DataManager $dataManager)
+    public function __construct(DataManager $dataManager, RequestStack $requestStack)
     {
         $this->dataManager = $dataManager;
+        $this->request = $requestStack->getCurrentRequest();
+        $this->setParameters();
     }
 
     public function getAnalytics(): array
@@ -51,20 +56,93 @@ class AnalyticManager
 
     public function getAnalytic(int $id, ?array $filter = []): Analytic
     {
+        $this->analytic = new Analytic();
+        $this->analytic->setId($id);
+
         if (!in_array($id, array_keys(self::IDS))) {
             throw new Exception('Unknown Id');
         }
 
-        $analytic = new Analytic();
-        $analytic->setId($id);
+        if (is_callable([$this, self::IDS[$id]])) {
+            $this->{self::IDS[$id]}($id);
+        } else {
+            $this->getGenericAnalytics($id);
+        }
 
+        return $this->analytic;
+    }
+
+    public function getGenericAnalytics(int $id, ?array $filter = [])
+    {
         $this->dataManager->setDataName(self::IDS[$id]);
         $data = $this->dataManager->getData();
-        $analytic->setValue([
+        $this->analytic->setValue([
             'total' => $data['total'],
             'data' => $data['data'],
         ]);
+    }
 
-        return $analytic;
+    public function getUsersAnalytics(int $id, ?array $filter = [])
+    {
+        $analyticValue = ['data' => []];
+
+        $this->dataManager->setDataName(DataManager::DATA_NAME_VALIDATED_USERS_DETAILED);
+        $validatedUsers = $this->dataManager->getData();
+        $analyticValue['total'] = $validatedUsers['total'];
+        $analyticValue['data'][] = $validatedUsers['data'];
+
+        $this->dataManager->setDataName(DataManager::DATA_NAME_NOT_VALIDATED_USERS_DETAILED);
+        $notValidatedUsers = $this->dataManager->getData();
+        $analyticValue['data'][] = $notValidatedUsers['data'];
+
+        $this->analytic->setValue($this->normalizeResults($analyticValue));
+    }
+
+    private function setParameters()
+    {
+        if ($this->request->query->get('startDate') && '' !== trim($this->request->query->get('startDate'))) {
+            $startDate = \DateTime::createFromFormat('Y-m-d', $this->request->query->get('startDate'), new \DateTimeZone('Europe/Paris'));
+            if ($startDate) {
+                $this->dataManager->setStartDate($startDate);
+            }
+        }
+        if ($this->request->query->get('endDate') && '' !== trim($this->request->query->get('endDate'))) {
+            $endDate = \DateTime::createFromFormat('Y-m-d', $this->request->query->get('endDate'), new \DateTimeZone('Europe/Paris'));
+            if ($endDate) {
+                $this->dataManager->setEndDate($endDate);
+            }
+        }
+        if ($this->request->query->get('aggregInterval') && '' !== trim($this->request->query->get('aggregInterval'))) {
+            $this->dataManager->setAggregationInterval($this->request->query->get('aggregInterval'));
+        }
+    }
+
+    private function normalizeResults($analyticValue): array
+    {
+        foreach ($analyticValue['data'] as $key => $currentData) {
+            if (!isset($analyticValue['data'][$key + 1])) {
+                break;
+            }
+
+            $firstDateCurrent = new \DateTime($currentData[0]['key']);
+            $lastDateCurrent = new \DateTime($currentData[count($currentData) - 1]['key']);
+            $firstDateNextData = new \DateTime($analyticValue['data'][$key + 1][0]['key']);
+            $lastDateNextData = new \DateTime($analyticValue['data'][$key + 1][count($analyticValue['data']) - 1]['key']);
+
+            if ($firstDateCurrent > $firstDateNextData) {
+                $dataToAdd = $analyticValue['data'][$key + 1][0];
+                $dataToAdd['dataName'] = $currentData[0]['dataName'];
+                $dataToAdd['value'] = '-';
+                array_unshift($analyticValue['data'][$key], $dataToAdd);
+            }
+            if ($lastDateCurrent < $lastDateNextData) {
+                $dataToAdd = $analyticValue['data'][$key + 1][count($analyticValue['data']) - 1];
+                $dataToAdd['dataName'] = $currentData[0]['dataName'];
+                $dataToAdd['value'] = '-';
+                array_push($analyticValue['data'][$key], $dataToAdd);
+            }
+        }
+
+        return $analyticValue;
     }
 }
