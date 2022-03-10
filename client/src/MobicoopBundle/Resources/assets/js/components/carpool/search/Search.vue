@@ -27,6 +27,7 @@
             :iswidget="isWidget"
             :init-outward-date="defaultOutwardDate"
             :image-swap="imageSwap"
+            :prioritize-relaypoints="prioritizeRelaypoints"
             @change="searchChanged"
           />
         </v-col>
@@ -48,6 +49,7 @@
             >
               <v-btn
                 v-if="!hidePublish"
+                :class="colorButton+' '+textColorButton"
                 outlined
                 rounded
                 :loading="loadingPublish"
@@ -87,6 +89,7 @@
           :init-regular="dataRegular"
           :punctual-date-optional="punctualDateOptional"
           :elevation="horizontalElevation"
+          :prioritize-relaypoints="prioritizeRelaypoints"
           @change="searchChanged"
           @search="search"
         />
@@ -202,6 +205,18 @@ export default {
     horizontalElevation:{
       type:Number,
       default: 2
+    },
+    prioritizeRelaypoints: {
+      type: Boolean,
+      default: false
+    },
+    colorButton: {
+      type:String,
+      default: null
+    },
+    textColorButton: {
+      type:String,
+      default: null
     }
   },
   data() {

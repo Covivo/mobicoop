@@ -51,6 +51,7 @@
                 v-model="description"
                 :rules="descriptionRules"
                 :label="$t('form.description.label')"
+                counter="255"
               />
             </v-col>
           </v-row>
@@ -64,6 +65,7 @@
                 auto-grow
                 clearable
                 outlined
+                counter="2500"
                 row-height="24"
               />
             </v-col>
@@ -74,6 +76,7 @@
                 :token="user ? user.token : ''"
                 :url="geoSearchUrl"
                 :label="$t('form.address.label')"
+                :prioritize-relaypoints="prioritizeRelaypoints"
                 @address-selected="addressSelected"
               />
             </v-col>

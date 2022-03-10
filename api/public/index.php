@@ -25,7 +25,14 @@ $kernel = new Kernel($_SERVER['APP_ENV'], (bool) $_SERVER['APP_DEBUG']);
 $request = Request::createFromGlobals();
 
 if (file_exists('maintenance.enable')) {
-    $response = new JsonResponse('API under maintenance', 503);
+    if ('OPTIONS' == $_SERVER['REQUEST_METHOD']) {
+        header('Access-Control-Allow-Origin: *');
+        header('HTTP/1.1 200 OK');
+        header('Access-Control-Allow-Headers: Content-Type,Access-Control-Allow-Headers,Authorization');
+
+        exit();
+    }
+    $response = new JsonResponse('API under maintenance', 503, ['Access-Control-Allow-Origin' => '*']);
 } else {
     $response = $kernel->handle($request);
 }

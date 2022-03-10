@@ -6,5 +6,7 @@
         :geodata="{{ {'geocompleteuri':geoCompleteUri, 'searchroute':searchRoute}|json_encode }}"
         :user="{{ app.user|json_encode }}"
         token="{{token.getToken}}"
+        {{ searchRegular ? 'regular' : '' }}
+        {{ searchPunctualDate ? 'punctual-date-optional' : '' }}
     ></platform-widget>
 {% endblock %}

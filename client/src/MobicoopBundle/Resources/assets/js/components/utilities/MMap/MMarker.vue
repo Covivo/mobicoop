@@ -22,12 +22,6 @@
         v-html="point.title"
       />
   
-      <p
-        v-if="point.popup"
-        id="description-tooltip"
-        class="tooltip"
-        v-html="point.popup.description"
-      />
       <MMapRelayPointDescription
         v-if="relayPoints && point.misc"
         :data="point.misc"

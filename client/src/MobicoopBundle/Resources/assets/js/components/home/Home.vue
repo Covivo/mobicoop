@@ -154,6 +154,7 @@
           :publish-button-always-active="publishButtonAlwaysActive"
           :image-swap="$t('urlImageSwap')"
           :horizontal="searchComponentHorizontal"
+          :prioritize-relaypoints="prioritizeRelaypoints"
         />
       </v-col>
     </v-row>
@@ -269,6 +270,10 @@ export default {
       default: null
     },
     searchComponentHorizontal: {
+      type: Boolean,
+      default: false
+    },
+    prioritizeRelaypoints: {
       type: Boolean,
       default: false
     }

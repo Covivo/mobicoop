@@ -19,17 +19,17 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Carpool\Service;
 
 use App\Carpool\Entity\CarpoolExport;
 use App\Payment\Entity\CarpoolItem;
-use Symfony\Component\Security\Core\Security;
 use App\Payment\Repository\CarpoolItemRepository;
 use App\User\Entity\User;
 use App\Utility\Service\PdfManager;
 use DateTime;
+use Symfony\Component\Security\Core\Security;
 
 /**
  * CarpoolExport manager service.
@@ -56,9 +56,9 @@ class CarpoolExportManager
         Security $security,
         PdfManager $pdfManager,
         CarpoolItemRepository $carpoolItemRepository,
-        String $carpoolExportUri,
-        String $carpoolExportPath,
-        String $carpoolExportPlatformName,
+        string $carpoolExportUri,
+        string $carpoolExportPath,
+        string $carpoolExportPlatformName,
         string $paymentActive
     ) {
         $this->security = $security;
@@ -68,16 +68,16 @@ class CarpoolExportManager
         $this->carpoolExportPath = $carpoolExportPath;
         $this->carpoolExportPlatformName = $carpoolExportPlatformName;
         $this->paymentActive = false;
-        if ($this->paymentActiveDate = DateTime::createFromFormat("Y-m-d", $paymentActive)) {
+        if ($this->paymentActiveDate = DateTime::createFromFormat('Y-m-d', $paymentActive)) {
             $this->paymentActiveDate->setTime(0, 0);
             $this->paymentActive = true;
         }
     }
 
     /**
-     * Method to get all carpoolExports for a user
+     * Method to get all carpoolExports for a user.
      *
-     * @return String
+     * @return string
      */
     public function getCarpoolExports()
     {
@@ -104,16 +104,19 @@ class CarpoolExportManager
             $carpoolExport->setDate($carpoolItem->getItemDate());
             $carpoolExport->setAmount($carpoolItem->getAmount());
             //    we set the payment mode
-            if ($carpoolItem->getItemStatus() !== 0) {
+            if (0 !== $carpoolItem->getItemStatus()) {
                 // We check the status of the right role
                 if ($isCreditor) {
                     switch ($carpoolItem->getCreditorStatus()) {
                         case CarpoolItem::CREDITOR_STATUS_DIRECT:
                             $carpoolExport->setMode(CarpoolExport::MODE_DIRECT);
+
                         break;
+
                         case CarpoolItem::CREDITOR_STATUS_ONLINE:
                         case CarpoolItem::CREDITOR_STATUS_PENDING_ONLINE:
                             $carpoolExport->setMode(CarpoolExport::MODE_ONLINE);
+
                         break;
                     }
                 } else {
@@ -121,10 +124,13 @@ class CarpoolExportManager
                         case CarpoolItem::DEBTOR_STATUS_DIRECT:
                         case CarpoolItem::DEBTOR_STATUS_PENDING_DIRECT:
                             $carpoolExport->setMode(CarpoolExport::MODE_DIRECT);
+
                         break;
+
                         case CarpoolItem::DEBTOR_STATUS_ONLINE:
                         case CarpoolItem::DEBTOR_STATUS_PENDING_ONLINE:
                             $carpoolExport->setMode(CarpoolExport::MODE_ONLINE);
+
                         break;
                     }
                 }
@@ -133,15 +139,20 @@ class CarpoolExportManager
             if ($isCreditor) {
                 $carpoolExport->setRole(CarpoolExport::ROLE_DRIVER);
                 $carpoolExport->setCarpooler($carpoolItem->getDebtorUser());
-                if ($carpoolItem->getItemStatus() !== 0) {
+                if (0 !== $carpoolItem->getItemStatus()) {
                     $sumReceived = $sumReceived + $carpoolItem->getAmount();
                 }
             } else {
                 $carpoolExport->setRole(CarpoolExport::ROLE_PASSENGER);
                 $carpoolExport->setCarpooler($carpoolItem->getCreditorUser());
-                if ($carpoolItem->getItemStatus() !== 0) {
+                if (0 !== $carpoolItem->getItemStatus()) {
                     $sumPaid = $sumPaid + $carpoolItem->getAmount();
                 }
+            }
+            if (is_null($carpoolItem->getAsk())) {
+                $carpoolExports[] = $carpoolExport;
+
+                continue;
             }
             //    we set the pickUp and dropOff
             $waypoints = $carpoolItem->getAsk()->getMatching()->getProposalRequest()->getWaypoints();
@@ -159,23 +170,24 @@ class CarpoolExportManager
                     // }
                 }
             }
-       
+
             $carpoolExports[] = $carpoolExport;
         }
-               
+
         // we put all infos needed in an array to build pdf
         $infoForPdf = [];
         $now = new DateTime();
-        $infoForPdf['date'] = $now->format("l d F Y");
+        $infoForPdf['date'] = $now->format('l d F Y');
         $infoForPdf['year'] = new DateTime();
         $infoForPdf['twigPath'] = 'carpool/export/carpool_export.html.twig';
         // we sanitize username to use it in the fileName
-        $sanitizeUserName=\Transliterator::create('NFD; [:Nonspacing Mark:] Remove; NFC')
-            ->transliterate($user->getGivenName().$user->getFamilyName());
-        $infoForPdf['fileName'] = $now->format("YmdHis").$sanitizeUserName.'ListeDesCovoiturages.pdf' ;
+        $sanitizeUserName = \Transliterator::create('NFD; [:Nonspacing Mark:] Remove; NFC')
+            ->transliterate($user->getGivenName().$user->getFamilyName())
+        ;
+        $infoForPdf['fileName'] = $now->format('YmdHis').$sanitizeUserName.'ListeDesCovoiturages.pdf';
         $infoForPdf['filePath'] = $this->carpoolExportPath;
-        $infoForPdf['returnUrl'] = $this->carpoolExportUri . $infoForPdf['fileName'];
-        $infoForPdf['userName'] = $user->getGivenName() . ' ' . $user->getFamilyName();
+        $infoForPdf['returnUrl'] = $this->carpoolExportUri.$infoForPdf['fileName'];
+        $infoForPdf['userName'] = $user->getGivenName().' '.$user->getFamilyName();
         $infoForPdf['appName'] = $this->carpoolExportPlatformName;
         $infoForPdf['paid'] = $sumPaid;
         $infoForPdf['received'] = $sumReceived;

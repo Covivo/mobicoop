@@ -24,7 +24,7 @@
         "widget": {
             "textDetails": {
                 "p3": "<span class=\"font-weight-bold\">Attention</span> : argitaratzeko tresna batzuk, Wordpress bezalako pluging berezi batzuk gehitu behar dituzte iFrame erabili ahal izateko.",
-                "p2": "&lt;iframe src=\"{url}\" width=\"<span class=\"font-weight-bold\">100%</span>\" height=\"<span class=\"font-weight-bold\">440px</span>\" frameborder=\"0\" scrolling=\"no\"&gt;&lt;/iframe&gt;",
+                "p2": "&lt;iframe src=\"{url}\" width=\"<span class=\"font-weight-bold\">100%</span>\" height=\"<span class=\"font-weight-bold\">640px</span>\" frameborder=\"0\" scrolling=\"no\"&gt;&lt;/iframe&gt;",
                 "p1": "widget-a sartzeko, azpiko testua kopiatu behar da eta webgunean kolatu.<br /> Lodiz diren elementuak alda ditzakezu zure widget-a pertsonalizatzeko.",
                 "title": "Widget-a sartu"
             },

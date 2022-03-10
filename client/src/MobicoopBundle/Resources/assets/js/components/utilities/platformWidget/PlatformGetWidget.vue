@@ -13,7 +13,7 @@
           <iframe
             :src="$t('widget.externalRoute')"
             width="100%"
-            height="540px"
+            height="640px"
             frameborder="0"
             scrolling="no"
           />

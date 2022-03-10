@@ -99,11 +99,24 @@
 								<td>{{ "passenger"|trans }}</td>
 							{% endif %}
 							{# carpooler name #}
-							<td>{{ carpoolExport.carpooler.givenName }} {{ carpoolExport.carpooler.shortFamilyName }}</td>
+							{% if (carpoolExport.carpooler) %}
+								<td>{{ carpoolExport.carpooler.givenName }} {{ carpoolExport.carpooler.shortFamilyName }}</td>
+							{% else %}
+								<td>{{ "deleted"|trans }}</td>
+							{% endif %}   
 							{# pickup locality #}
-							<td>{{ carpoolExport.pickUp.addressLocality }}</td>
+							{% if (carpoolExport.pickUp) %}
+								<td>{{ carpoolExport.pickUp.addressLocality }}</td>
+							{% else %}
+								<td>{{ "deleted"|trans }}</td>
+							{% endif %}  
+							
 							{# dropOff locality #}
-							<td>{{ carpoolExport.dropOff.addressLocality }}</td>
+							{% if (carpoolExport.dropOff) %}
+								<td>{{ carpoolExport.dropOff.addressLocality }}</td>
+							{% else %}
+								<td>{{ "deleted"|trans }}</td>
+							{% endif %}
 							{# amount paid/received #}
 							{% if carpoolExport.Amount %}
 								<td>{{ carpoolExport.Amount }}€</td>

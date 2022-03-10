@@ -65,6 +65,7 @@
             :show-required="showRequired"
             :required-error="requiredErrorOrigin"
             :init-address="customInitOrigin"
+            :prioritize-relaypoints="prioritizeRelaypoints"
             @address-selected="originSelected"
           />
         </v-col>
@@ -112,6 +113,7 @@
             :show-required="showRequired"
             :required-error="requiredErrorDestination"
             :init-address="customInitDestination"
+            :prioritize-relaypoints="prioritizeRelaypoints"
             @address-selected="destinationSelected"
           />
         </v-col>
@@ -286,6 +288,10 @@ export default {
     initRole: {
       type: Number,
       default: null
+    },
+    prioritizeRelaypoints: {
+      type: Boolean,
+      default: false
     }
   },
   data() {

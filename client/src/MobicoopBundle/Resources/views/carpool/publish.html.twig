@@ -27,6 +27,7 @@
     :participation-text = "{{ participationText ? "true" : "false" }}"
     :age-display  = "{{ ageDisplay ? "true" : "false" }}"
     :event-id = "{{ eventId is defined ? (eventId ? eventId : 'null') : 'null' }}"
+    :prioritize-relaypoints="{{ geosearcherPrioritizeRelaypoints is defined ? geosearcherPrioritizeRelaypoints ? 'true' : 'false' : 'false' }}"
   />
 
 {% endblock %}
