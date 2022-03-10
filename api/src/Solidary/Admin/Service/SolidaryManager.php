@@ -323,7 +323,7 @@ class SolidaryManager
                     $carpool['detourDuration'] = $solidaryMatching->getMatching()->getDetourDuration();
                     $carpool['detourDistance'] = $solidaryMatching->getMatching()->getDetourDistance();
                 }
-                if (Proposal::TYPE_RETURN !== $solidaryMatching->getMatching()->getProposalOffer()->getType()) {
+                if (Proposal::TYPE_RETURN !== $solidaryMatching->getMatching()->getProposalRequest()->getType()) {
                     $carpools['outward'][] = $carpool;
                 } else {
                     $carpools['return'][] = $carpool;
