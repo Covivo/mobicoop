@@ -372,7 +372,7 @@ class Community
      * @var string the full description of the community
      *
      * @Assert\NotBlank(groups={"write"})
-     * @ORM\Column(type="text")
+     * @ORM\Column(type="string", length=2550)
      * @Groups({"aRead","aWrite","readCommunity","write"})
      */
     private $fullDescription;

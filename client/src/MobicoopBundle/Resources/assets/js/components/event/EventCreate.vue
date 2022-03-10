@@ -64,7 +64,7 @@
                 auto-grow
                 clearable
                 outlined
-                counter
+                counter="2500"
                 row-height="24"
               />
             </v-col>
