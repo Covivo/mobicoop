@@ -119,29 +119,46 @@ final class CommunityUserCampaignSendCollectionDataProvider implements Collectio
                 break;
 
             case Campaign::FILTER_TYPE_FILTER:
-                $class = User::class;
-                $manager = $this->managerRegistry->getManagerForClass($class);
+                $manager = $this->managerRegistry->getManagerForClass($resourceClass);
+                $repository = $manager->getRepository($resourceClass);
+                $community = $repository->find($campaign->getSourceId());
 
                 /**
                  * @var EntityRepository $repository
                  */
-                $repository = $manager->getRepository($class);
-                $queryBuilder = $repository->createQueryBuilder('u');
+                $queryBuilder = $repository->createQueryBuilder('cu');
                 $queryNameGenerator = new QueryNameGenerator();
 
-                // we force the selection to the users that have accepted the news subscription
+                // we force the selection to the accepted members that have accepted the news subscription
                 $rootAlias = $queryBuilder->getRootAliases()[0];
-                $queryBuilder->andWhere("{$rootAlias}.newsSubscription = 1");
+                $queryBuilder->join("{$rootAlias}.user", 'u');
+                $queryBuilder->andWhere("{$rootAlias}.community = :community and u.newsSubscription = 1 and {$rootAlias}.status IN (:statuses)")
+                    ->setParameter('statuses', [CommunityUser::STATUS_ACCEPTED_AS_MEMBER, CommunityUser::STATUS_ACCEPTED_AS_MODERATOR])
+                    ->setParameter('community', $community)
+                ;
+
                 foreach ($this->collectionExtensions as $extension) {
-                    $extension->applyToCollection($queryBuilder, $queryNameGenerator, $class, $operationName, $context);
+                    $extension->applyToCollection($queryBuilder, $queryNameGenerator, $resourceClass, $operationName, $context);
                     // remove pagination
                     if ($extension instanceof PaginationExtension) {
                         $queryBuilder->setMaxResults(self::MAX_RESULTS);
                     }
-                    if ($extension instanceof QueryResultCollectionExtensionInterface && $extension->supportsResult($class, $operationName)) {
-                        $users = $extension->getResult($queryBuilder, $class, $operationName);
+                    if ($extension instanceof QueryResultCollectionExtensionInterface && $extension->supportsResult($resourceClass, $operationName)) {
+                        $members = $extension->getResult($queryBuilder, $resourceClass, $operationName);
                     }
                 }
+                $exclude = ['source', 'filterType', 'campaignId', 'communityId'];
+                foreach ($this->request->query->all() as $param => $value) {
+                    if (!in_array($param, $exclude)) {
+                        $filters[$param] = $value;
+                    }
+                }
+                foreach ($members as $member) {
+                    $users[] = $member->getUser();
+                }
+                $users = new \ArrayIterator($users);
+
+                break;
         }
 
         // send the campaign (or the test)
