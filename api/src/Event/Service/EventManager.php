@@ -114,7 +114,7 @@ class EventManager
 
         // We set the displayLabel of the event's address
         $event->getAddress()->setDisplayLabel($this->geoTools->getDisplayLabel($event->getAddress()));
-        // $event->getAddress()->setName($event->getName());
+        $event->getAddress()->setName($event->getName());
 
         // we set the urlKey
         $event->setUrlKey($this->generateUrlKey($event));

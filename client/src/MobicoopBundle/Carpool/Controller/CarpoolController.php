@@ -266,7 +266,10 @@ class CarpoolController extends AbstractController
 
         // ad for an event ?
         if (!is_null($eventId) && $event = $this->eventManager->getEvent($eventId)) {
-            $destination = json_encode($event->getAddress());
+            // $destination = json_encode($event->getAddress());
+
+            $address = $event->getAddress()->setEvent($this->eventManager->getEvent($eventId));
+            $destination = json_encode($address);
         } else {
             // force eventId to null if event doesn't exist !
             $eventId = null;
@@ -677,7 +680,7 @@ class CarpoolController extends AbstractController
         // If there is no date in params, we use 'now'
         $date = new \DateTime('now', new \DateTimeZone('Europe/Paris'));
         if (!empty($params['date'])) {
-            $date = new \DateTime($params['date'].' 08:00:00', new \DateTimeZone('Europe/Paris'));
+            $date = new \DateTime($params['date'] . ' 08:00:00', new \DateTimeZone('Europe/Paris'));
         }
         $journeys = $this->publicTransportManager->getJourneys(
             $params['from_latitude'],
