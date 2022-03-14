@@ -248,7 +248,7 @@ class Event
     /**
      * @var string the full description of the event
      *
-     * @ORM\Column(type="string", length=2550, nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      * @Groups({"aRead","aWrite","readEvent","write"})
      */
     private $fullDescription;
