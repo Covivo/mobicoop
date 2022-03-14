@@ -536,7 +536,7 @@ export default {
             else window.location.href = this.$t('redirect.route');
           });
       } else {
-        this.snackError = this.validFields == "required" ? this.$t('error.event.required') : "error.event.length";
+        this.snackError = this.validFields == "required" ? this.$t('error.event.required') : this.$t('error.event.length');
         this.snackbar = true;
         this.loading = false;
       }    
