@@ -248,7 +248,7 @@ class Event
     /**
      * @var string the full description of the event
      *
-     * @ORM\Column(type="string", length=2550, nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      * @Groups({"aRead","aWrite","readEvent","write"})
      */
     private $fullDescription;
@@ -741,7 +741,7 @@ class Event
      */
     public function setAutoCreatedDate()
     {
-        $this->setCreatedDate(new \Datetime());
+        $this->setCreatedDate(new \DateTime());
     }
 
     /**
@@ -751,7 +751,7 @@ class Event
      */
     public function setAutoUpdatedDate()
     {
-        $this->setUpdatedDate(new \Datetime());
+        $this->setUpdatedDate(new \DateTime());
     }
 
     /**
