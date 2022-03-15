@@ -19,12 +19,12 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Geography\Ressource;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
@@ -60,30 +60,29 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *          }
  *      }
  * )
- *
  */
 class Point
 {
     /**
-     * @var string|null The country.
+     * @var null|string the country
      * @Groups("readGeography")
      */
     private $country;
 
     /**
-     * @var string|null The country code.
+     * @var null|string the country code
      * @Groups("readGeography")
      */
     private $countryCode;
 
     /**
-     * @var float|null The distance from the centroid, if relevant.
+     * @var null|float the distance from the centroid, if relevant
      * @Groups("readGeography")
      */
     private $distance;
 
     /**
-     * @var string|null The house number.
+     * @var null|string the house number
      * @Groups("readGeography")
      */
     private $houseNumber;
@@ -97,84 +96,84 @@ class Point
     private $id;
 
     /**
-     * @var float The latitude.
+     * @var float the latitude
      * @Groups("readGeography")
      */
     private $lat;
 
     /**
-     * @var string|null The locality.
+     * @var null|string the locality
      * @Groups("readGeography")
      */
     private $locality;
 
     /**
-     * @var string|null The locality code.
+     * @var null|string the locality code
      * @Groups("readGeography")
      */
     private $localityCode;
 
     /**
-     * @var float The longitude.
+     * @var float the longitude
      * @Groups("readGeography")
      */
     private $lon;
 
     /**
-     * @var string|null The macro region.
+     * @var null|string the macro region
      * @Groups("readGeography")
      */
     private $macroRegion;
 
     /**
-     * @var string|null The name of the point.
+     * @var null|string the name of the point
      * @Groups("readGeography")
      */
     private $name;
 
     /**
-     * @var int|null The population.
+     * @var null|int the population
      * @Groups("readGeography")
      */
     private $population;
 
     /**
-     * @var string|null The postal code.
+     * @var null|string the postal code
      * @Groups("readGeography")
      */
     private $postalCode;
 
     /**
-     * @var string The name of the point provider.
+     * @var string the name of the point provider
      * @Groups("readGeography")
      */
     private $provider;
 
     /**
-     * @var string|null The region.
+     * @var null|string the region
      * @Groups("readGeography")
      */
     private $region;
 
     /**
-     * @var string|null The region code.
+     * @var null|string the region code
      * @Groups("readGeography")
      */
     private $regionCode;
 
     /**
-     * @var string|null The street name.
+     * @var null|string the street name
      * @Groups("readGeography")
      */
     private $streetName;
 
     /**
      * @var string The type of the point:
-     * - housenumber : a full address (house number + street + locality + country)
-     * - street : a street of a locality, without the house number
-     * - locality
-     * - venue
-     * - other : unknown type of point
+     *             - housenumber : a full address (house number + street + locality + country)
+     *             - street : a street of a locality, without the house number
+     *             - locality
+     *             - venue
+     *             - other : unknown type of point
      * @Groups("readGeography")
      */
     private $type;

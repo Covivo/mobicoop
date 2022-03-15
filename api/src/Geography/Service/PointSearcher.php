@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Geography\Service;
 
@@ -34,11 +34,11 @@ use App\User\Entity\User;
 use Symfony\Component\Security\Core\Security;
 
 /**
- * Point searcher
+ * Point searcher.
  */
 class PointSearcher
 {
-    private const PROVIDER = "MOBICOOP_API";
+    private const PROVIDER = 'MOBICOOP_API';
 
     private $geocoder;
     private $relayPointRepository;
@@ -46,14 +46,14 @@ class PointSearcher
     private $results;
     private $search;
     /**
-     * @var User|null $user
+     * @var null|User
      */
     private $user;
     private $maxRelayPointResults;
     private $maxEventResults;
-    
+
     public function __construct(
-        MobicoopGeocoder $mobicoopGeocoder, 
+        MobicoopGeocoder $mobicoopGeocoder,
         RelayPointRepository $relayPointRepository,
         EventRepository $eventRepository,
         Security $security,
@@ -62,8 +62,7 @@ class PointSearcher
         array $prioritizeCentroid = null,
         array $prioritizeBox = null,
         string $prioritizeRegion = null
-        )
-    {
+    ) {
         $this->results = [];
         $this->geocoder = $mobicoopGeocoder;
         $this->relayPointRepository = $relayPointRepository;
@@ -89,16 +88,17 @@ class PointSearcher
         }
         $this->user = null;
         if ($security->getUser() instanceof User) {
-            $this->user = $user = $security->getUser();   
+            $this->user = $user = $security->getUser();
             /**
-             * @var User|null $user
-             */ 
+             * @var null|User $user
+             */
             foreach ($user->getAddresses() as $address) {
                 if ($address->isHome()) {
                     $this->geocoder->setPrioritizeCentroid(
                         $address->getLongitude(),
                         $address->getLatitude()
                     );
+
                     break;
                 }
             }
@@ -107,30 +107,31 @@ class PointSearcher
 
     public function geocode(string $search): array
     {
-        $this->search = $search;   
+        $this->search = $search;
         $this->addGeocoderResults();
         $this->addRelayPointResults();
         $this->addEventResults();
+
         return $this->results;
     }
 
     private function addGeocoderResults()
     {
-        $this->results = array_merge($this->results,$this->geocoder->geocode($this->search));
+        $this->results = array_merge($this->results, $this->geocoder->geocode($this->search));
     }
-    
+
     private function addRelayPointResults()
     {
         $relayPoints = $this->relayPointRepository->findByNameAndStatus($this->search, RelayPoint::STATUS_ACTIVE);
         $relayPointResults = $this->relayPointsToPoints($relayPoints);
-        $this->results = array_merge($this->results,$relayPointResults);
+        $this->results = array_merge($this->results, $relayPointResults);
     }
 
     private function addEventResults()
     {
         $events = $this->eventRepository->findByNameAndStatus($this->search, Event::STATUS_ACTIVE);
         $eventResults = $this->eventsToPoints($events);
-        $this->results = array_merge($this->results,$eventResults);
+        $this->results = array_merge($this->results, $eventResults);
     }
 
     private function relayPointsToPoints(array $relayPoints): array
@@ -143,10 +144,10 @@ class PointSearcher
                 if ($this->user) {
                     foreach ($relayPoint->getCommunity()->getCommunityUsers() as $communityUser) {
                         if (
-                            $communityUser->getUser()->getId() == $this->user->getId() && 
-                            (
-                                $communityUser->getStatus() == CommunityUser::STATUS_ACCEPTED_AS_MEMBER || 
-                                $communityUser->getStatus() == CommunityUser::STATUS_ACCEPTED_AS_MODERATOR
+                            $communityUser->getUser()->getId() == $this->user->getId()
+                            && (
+                                CommunityUser::STATUS_ACCEPTED_AS_MEMBER == $communityUser->getStatus()
+                                || CommunityUser::STATUS_ACCEPTED_AS_MODERATOR == $communityUser->getStatus()
                             )
                         ) {
                             $userExcluded = false;
@@ -158,9 +159,12 @@ class PointSearcher
             }
             if (!$userExcluded) {
                 $results[] = $this->relayPointToPoint($relayPoint);
-                if (count($results) == $this->maxRelayPointResults) break;
+                if (count($results) == $this->maxRelayPointResults) {
+                    break;
+                }
             }
         }
+
         return $results;
     }
 
@@ -169,8 +173,11 @@ class PointSearcher
         $results = [];
         foreach ($events as $event) {
             $results[] = $this->eventToPoint($event);
-            if (count($results) == $this->maxEventResults) break;
+            if (count($results) == $this->maxEventResults) {
+                break;
+            }
         }
+
         return $results;
     }
 
@@ -179,8 +186,9 @@ class PointSearcher
         $point = $this->addressToPoint($relayPoint->getAddress());
         $point->setId($relayPoint->getId());
         $point->setName($relayPoint->getName());
-        $point->setType("relaypoint");
-        return $point;   
+        $point->setType('relaypoint');
+
+        return $point;
     }
 
     private function eventToPoint(Event $event): Point
@@ -188,8 +196,9 @@ class PointSearcher
         $point = $this->addressToPoint($event->getAddress());
         $point->setId($event->getId());
         $point->setName($event->getName());
-        $point->setType("event");
-        return $point;   
+        $point->setType('event');
+
+        return $point;
     }
 
     private function addressToPoint(Address $address): Point
@@ -206,6 +215,7 @@ class PointSearcher
         $point->setRegion($address->getRegion());
         $point->setStreetName($address->getStreet() ? $address->getStreet() : $address->getStreetAddress());
         $point->setProvider(self::PROVIDER);
-        return $point;  
+
+        return $point;
     }
 }

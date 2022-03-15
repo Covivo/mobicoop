@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Geography\DataProvider;
 
@@ -36,23 +36,24 @@ final class PointCollectionDataProvider implements CollectionDataProviderInterfa
 {
     private $request;
     private $pointSearcher;
-    
+
     public function __construct(RequestStack $requestStack, PointSearcher $pointSearcher)
     {
         $this->request = $requestStack->getCurrentRequest();
         $this->pointSearcher = $pointSearcher;
     }
-    
+
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Point::class === $resourceClass && $operationName === "get";
+        return Point::class === $resourceClass && 'get' === $operationName;
     }
-    
+
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
-        if ($this->request->get("search") !== null) {
-            return $this->pointSearcher->geocode($this->request->get("search"));
+        if (null !== $this->request->get('search')) {
+            return $this->pointSearcher->geocode($this->request->get('search'));
         }
+
         return [];
     }
 }

@@ -19,16 +19,15 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Geography\Service;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\TransferException;
-use Symfony\Component\Security\Core\User\User;
 
 /**
- * Mobicoop Geocoder Provider
+ * Mobicoop Geocoder Provider.
  */
 class MobicoopGeocoder
 {
@@ -41,7 +40,7 @@ class MobicoopGeocoder
 
     private $client;
     private $params;
-    
+
     public function __construct(string $uri)
     {
         $this->client = new Client([
@@ -53,43 +52,44 @@ class MobicoopGeocoder
             'sanitize' => self::SANITIZE,
             'consolidate' => self::CONSOLIDATE,
             'proximity' => self::PROXIMITY,
-            'min_confidence' => self::MIN_CONFIDENCE
+            'min_confidence' => self::MIN_CONFIDENCE,
         ];
     }
 
     public function setPrioritizeCentroid(float $lon, float $lat)
     {
-        $this->params["lon"] = $lon;
-        $this->params["lat"] = $lat;
+        $this->params['lon'] = $lon;
+        $this->params['lat'] = $lat;
     }
 
     public function setPrioritizeBox(float $minLon, float $minLat, float $maxLon, float $maxLat)
     {
-        $this->params["min_lon"] = $minLon;
-        $this->params["min_lat"] = $minLat;
-        $this->params["max_lon"] = $maxLon;
-        $this->params["max_lat"] = $maxLat;        
+        $this->params['min_lon'] = $minLon;
+        $this->params['min_lat'] = $minLat;
+        $this->params['max_lon'] = $maxLon;
+        $this->params['max_lat'] = $maxLat;
     }
 
     public function setPrioritizeRegion(string $region)
     {
-        $this->params["prioritization_region"]  = $region;
+        $this->params['prioritization_region'] = $region;
     }
 
     public function setLang(string $lang)
     {
-        $this->params["lang"]  = $lang;
+        $this->params['lang'] = $lang;
     }
 
     public function geocode(string $search)
     {
-        $this->params["search"] = $search;
+        $this->params['search'] = $search;
+
         try {
             $clientResponse = $this->client->get('?'.http_build_query($this->params));
-            return json_decode($clientResponse->getBody(),true);
+
+            return json_decode($clientResponse->getBody(), true);
         } catch (TransferException $e) {
             return $e->getCode();
         }
     }
-    
 }
