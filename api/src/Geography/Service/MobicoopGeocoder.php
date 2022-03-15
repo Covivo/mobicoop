@@ -88,8 +88,8 @@ class MobicoopGeocoder
             $clientResponse = $this->client->get('?'.http_build_query($this->params));
 
             return json_decode($clientResponse->getBody(), true);
-        } catch (TransferException $e) {
-            return $e->getCode();
+        } catch (TransferException $exception) {
+            return $exception;
         }
     }
 }
