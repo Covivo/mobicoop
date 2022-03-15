@@ -122,6 +122,7 @@ api_platform:
         - '%kernel.project_dir%/src/Gamification/Entity'
         - '%kernel.project_dir%/src/Gamification/Resource'
         - '%kernel.project_dir%/src/Geography/Entity'
+        - '%kernel.project_dir%/src/Geography/Ressource'
         - '%kernel.project_dir%/src/I18n/Entity'
         - '%kernel.project_dir%/src/Image/Entity'
         - '%kernel.project_dir%/src/Import/Entity'
