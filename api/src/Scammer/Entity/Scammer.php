@@ -31,7 +31,7 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * A paragraph of a section (a section can be divided in on or many paragraphs).
+ * A Scammer.
  *
  * @ORM\Entity()
  * @ORM\HasLifecycleCallbacks
@@ -41,12 +41,16 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "denormalization_context"={"groups"={"write"}}
  *      },
  *      collectionOperations={
- *          "post"={
+ *          "ADMIN_post"={
+ *              "path"="/admin/scammers",
+ *              "method"="POST",
+ *              "normalization_context"={"groups"={"aRead"}},
+ *              "denormalization_context"={"groups"={"aWrite"}},
  *              "security"="is_granted('admin_scammer_manage',object)",
  *              "swagger_context" = {
- *                  "tags"={"Scammers"}
+ *                  "tags"={"Administration"}
  *              }
- *          }
+ *          },
  *      }
  * )
  */
@@ -93,7 +97,7 @@ class Scammer
      * @var \DateTimeInterface creation date
      *
      * @ORM\Column(type="datetime", nullable=true)
-     * @Groups({"read"})
+     * @Groups({"aRead","aWrite"})
      */
     private $createdDate;
 

@@ -49,7 +49,7 @@ class ScammerVoter extends Voter
             return false;
         }
 
-        // only vote on User objects inside this voter
+        // only vote on Scammer objects inside this voter
         if (!in_array($attribute, [
             self::ADMIN_SCAMMER_MANAGE,
         ]) && !($subject instanceof Scammer)) {

@@ -97,6 +97,7 @@ api_platform:
             '%kernel.project_dir%/src/Rdex/Entity',
             '%kernel.project_dir%/src/RdexPlus/Entity',
             '%kernel.project_dir%/src/RelayPoint/Entity',
+            '%kernel.project_dir%/src/Scammer/Entity',
             '%kernel.project_dir%/src/Solidary/Entity',
             '%kernel.project_dir%/src/Stats/Entity',
             '%kernel.project_dir%/src/Travel/Entity',
@@ -147,6 +148,8 @@ api_platform:
         - '%kernel.project_dir%/src/Communication/Ressource'
         - '%kernel.project_dir%/src/RelayPoint/Resource'
         - '%kernel.project_dir%/src/Stats/Admin/Resource'
+        - '%kernel.project_dir%/src/Scammer/Entity'
+
         
     formats:
         jsonld:   ['application/ld+json']
