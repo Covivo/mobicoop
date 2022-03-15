@@ -24,6 +24,7 @@
 namespace App\Geography\Service;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\TransferException;
 
 /**
@@ -37,6 +38,8 @@ class MobicoopGeocoder
     private const CONSOLIDATE = 1;
     private const PROXIMITY = 5;
     private const MIN_CONFIDENCE = 50;
+
+    private const TIME_OUT = 5;
 
     private $client;
     private $params;
@@ -85,11 +88,13 @@ class MobicoopGeocoder
         $this->params['search'] = $search;
 
         try {
-            $clientResponse = $this->client->get('?'.http_build_query($this->params));
+            $clientResponse = $this->client->get('?'.http_build_query($this->params), ['connect_timeout' => self::TIME_OUT]);
 
             return json_decode($clientResponse->getBody(), true);
         } catch (TransferException $exception) {
-            return $exception;
+            return [];
+        } catch (ConnectException $exception) {
+            return [];
         }
     }
 }

@@ -31,7 +31,6 @@ use App\Geography\Ressource\Point;
 use App\RelayPoint\Entity\RelayPoint;
 use App\RelayPoint\Repository\RelayPointRepository;
 use App\User\Entity\User;
-use Exception;
 use Symfony\Component\Security\Core\Security;
 
 /**
@@ -118,14 +117,7 @@ class PointSearcher
 
     private function addGeocoderResults()
     {
-        $results = [];
-
-        try {
-            $results = $this->geocoder->geocode($this->search);
-        } catch (Exception $exception) {
-        }
-
-        $this->results = array_merge($this->results, $results);
+        $this->results = array_merge($this->results, $this->geocoder->geocode($this->search));
     }
 
     private function addRelayPointResults()
