@@ -150,6 +150,10 @@ class NotificationManager
      */
     public function notifies(string $action, User $recipient, ?object $object = null)
     {
+        var_dump('yep');
+        $this->logger->info(ClassUtils::getRealClass(get_class($object)));
+
+        exit;
         // check if notification system is enabled
         if (!$this->enabled) {
             return;

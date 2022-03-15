@@ -17,10 +17,11 @@ final class Version20220315111849 extends AbstractMigration
         // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
-        $this->addSql('CREATE TABLE scammer (id INT AUTO_INCREMENT NOT NULL, admin_id INT DEFAULT NULL, email VARCHAR(255) NOT NULL, telephone VARCHAR(255) DEFAULT NULL, created_date DATETIME DEFAULT NULL, INDEX IDX_451CCE9E642B8210 (admin_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
-        $this->addSql('ALTER TABLE scammer ADD CONSTRAINT FK_451CCE9E642B8210 FOREIGN KEY (admin_id) REFERENCES user (id) ON DELETE SET NULL');
+        $this->addSql("INSERT INTO `action` (`id`, `name`, `in_log`, `in_diary`, `progression`, `created_date`, `updated_date`, `position`, `type`) VALUES (111, 'scammer_reported', NULL, NULL, NULL, '2022-03-15 17:10:26', NULL, 0, NULL);");
         $this->addSql("INSERT INTO `auth_item` (`id`, `auth_rule_id`, `type`, `name`, `description`) VALUES (303, NULL, '1', 'scammer_manage', 'Manage scammers');");
         $this->addSql("INSERT INTO `auth_item_child` (`parent_id`, `child_id`) VALUES ('2', '303');");
+        $this->addSql('CREATE TABLE scammer (id INT AUTO_INCREMENT NOT NULL, admin_id INT DEFAULT NULL, email VARCHAR(255) NOT NULL, telephone VARCHAR(255) DEFAULT NULL, created_date DATETIME DEFAULT NULL, INDEX IDX_451CCE9E642B8210 (admin_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
+        $this->addSql('ALTER TABLE scammer ADD CONSTRAINT FK_451CCE9E642B8210 FOREIGN KEY (admin_id) REFERENCES user (id) ON DELETE SET NULL');
     }
 
     public function down(Schema $schema): void

@@ -23,17 +23,12 @@
 
 namespace App\Scammer\Admin\Service;
 
-use App\Auth\Repository\AuthItemRepository;
-use App\Geography\Repository\TerritoryRepository;
 use App\Scammer\Entity\Scammer;
-use App\Service\FormatDataManager;
+use App\Scammer\Event\ScammerAddedEvent;
+use App\User\Admin\Service\UserManager;
 use App\User\Repository\UserRepository;
-use App\User\Service\IdentityProofManager;
-use App\User\Service\UserManager as ServiceUserManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use Symfony\Component\Security\Core\Security;
 
 /**
  * Scammer manager service for administration.
@@ -43,15 +38,9 @@ use Symfony\Component\Security\Core\Security;
 class ScammerManager
 {
     private $entityManager;
-    private $authItemRepository;
-    private $territoryRepository;
-    private $encoder;
     private $eventDispatcher;
-    private $security;
     private $userManager;
     private $userRepository;
-    private $formatDataManager;
-    private $identityProofManager;
 
     /**
      * Constructor.
@@ -63,26 +52,14 @@ class ScammerManager
      */
     public function __construct(
         EntityManagerInterface $entityManager,
-        AuthItemRepository $authItemRepository,
-        TerritoryRepository $territoryRepository,
-        UserPasswordEncoderInterface $encoder,
         EventDispatcherInterface $dispatcher,
-        Security $security,
-        ServiceUserManager $userManager,
         UserRepository $userRepository,
-        FormatDataManager $formatDataManager,
-        IdentityProofManager $identityProofManager
+        UserManager $userManager
     ) {
         $this->entityManager = $entityManager;
-        $this->authItemRepository = $authItemRepository;
-        $this->territoryRepository = $territoryRepository;
-        $this->encoder = $encoder;
         $this->eventDispatcher = $dispatcher;
-        $this->security = $security;
-        $this->userManager = $userManager;
         $this->userRepository = $userRepository;
-        $this->formatDataManager = $formatDataManager;
-        $this->identityProofManager = $identityProofManager;
+        $this->userManager = $userManager;
     }
 
     /**
@@ -96,6 +73,16 @@ class ScammerManager
     {
         $this->entityManager->persist($scammer);
         $this->entityManager->flush();
+
+        $userReported = $this->userRepository->findOneBy(['email' => $scammer->getEmail()]);
+
+        //  we dispatch the event associated
+        $event = new ScammerAddedEvent($scammer, $userReported);
+        $this->eventDispatcher->dispatch($event, ScammerAddedEvent::NAME);
+
+        exit;
+        // we delete the user reported
+        $this->userManager->deleteUser($userReported);
 
         return $scammer;
     }
