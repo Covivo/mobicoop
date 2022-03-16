@@ -572,6 +572,7 @@ services:
         arguments:
             $maxRelayPointResults: '%env(int:POINT_SEARCHER_RELAY_POINT_MAX_RESULTS)%'
             $maxEventResults: '%env(int:POINT_SEARCHER_EVENT_MAX_RESULTS)%'
+            $maxUserResults: '%env(int:POINT_SEARCHER_USER_MAX_RESULTS)%'
             $prioritizeCentroid: '%env(json:POINT_SEARCHER_PRIORITIZE_CENTROID)%'
             $prioritizeBox: '%env(json:POINT_SEARCHER_PRIORITIZE_BOX)%'
             $prioritizeRegion: '%env(string:POINT_SEARCHER_PRIORITIZE_REGION)%'

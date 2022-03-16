@@ -27,11 +27,13 @@ use App\Community\Entity\CommunityUser;
 use App\Event\Entity\Event;
 use App\Event\Repository\EventRepository;
 use App\Geography\Entity\Address;
+use App\Geography\Repository\AddressRepository;
 use App\Geography\Ressource\Point;
 use App\RelayPoint\Entity\RelayPoint;
 use App\RelayPoint\Repository\RelayPointRepository;
 use App\User\Entity\User;
 use Symfony\Component\Security\Core\Security;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Point searcher.
@@ -43,6 +45,8 @@ class PointSearcher
     private $geocoder;
     private $relayPointRepository;
     private $eventRepository;
+    private $addressRepository;
+    private $translator;
     private $points;
     private $search;
     /**
@@ -51,14 +55,18 @@ class PointSearcher
     private $user;
     private $maxRelayPointResults;
     private $maxEventResults;
+    private $maxUserResults;
 
     public function __construct(
         MobicoopGeocoder $mobicoopGeocoder,
         RelayPointRepository $relayPointRepository,
         EventRepository $eventRepository,
+        AddressRepository $addressRepository,
+        TranslatorInterface $translator,
         Security $security,
         int $maxRelayPointResults,
         int $maxEventResults,
+        int $maxUserResults,
         array $prioritizeCentroid = null,
         array $prioritizeBox = null,
         string $prioritizeRegion = null
@@ -67,8 +75,11 @@ class PointSearcher
         $this->geocoder = $mobicoopGeocoder;
         $this->relayPointRepository = $relayPointRepository;
         $this->eventRepository = $eventRepository;
+        $this->addressRepository = $addressRepository;
+        $this->translator = $translator;
         $this->maxRelayPointResults = $maxRelayPointResults;
         $this->maxEventResults = $maxEventResults;
+        $this->maxUserResults = $maxUserResults;
         if ($prioritizeCentroid) {
             $this->geocoder->setPrioritizeCentroid(
                 $prioritizeCentroid['lon'],
@@ -111,6 +122,7 @@ class PointSearcher
         $this->addGeocoderResults();
         $this->addRelayPointResults();
         $this->addEventResults();
+        $this->addUserResults();
 
         return $this->points;
     }
@@ -132,6 +144,15 @@ class PointSearcher
         $events = $this->eventRepository->findByNameAndStatus($this->search, Event::STATUS_ACTIVE);
         $eventResults = $this->eventsToPoints($events);
         $this->points = array_merge($this->points, $eventResults);
+    }
+
+    private function addUserResults()
+    {
+        if ($this->user instanceof User) {
+            $addresses = $this->addressRepository->findByName($this->translator->trans($this->search), $this->user->getId());
+            $userResults = $this->addressesToPoints($addresses);
+            $this->points = array_merge($this->points, $userResults);
+        }
     }
 
     private function relayPointsToPoints(array $relayPoints): array
@@ -174,6 +195,23 @@ class PointSearcher
         foreach ($events as $event) {
             $points[] = $this->eventToPoint($event);
             if (count($points) == $this->maxEventResults) {
+                break;
+            }
+        }
+
+        return $points;
+    }
+
+    private function addressesToPoints(array $addresses): array
+    {
+        $points = [];
+        foreach ($addresses as $address) {
+            $point = $this->addressToPoint($address);
+            $point->setId($address->getId());
+            $point->setName($this->translator->trans($address->getName()));
+            $point->setType('user');
+            $points[] = $point;
+            if (count($points) == $this->maxUserResults) {
                 break;
             }
         }
