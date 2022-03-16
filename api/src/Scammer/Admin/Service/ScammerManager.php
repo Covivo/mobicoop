@@ -26,6 +26,7 @@ namespace App\Scammer\Admin\Service;
 use App\Scammer\Entity\Scammer;
 use App\Scammer\Event\ScammerAddedEvent;
 use App\User\Admin\Service\UserManager;
+use App\User\Entity\User;
 use App\User\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -69,20 +70,18 @@ class ScammerManager
      *
      * @return Scammer The scammer added
      */
-    public function addScammer(Scammer $scammer)
+    public function addScammer(Scammer $scammer, User $user)
     {
+        $scammer->setUser($user);
         $this->entityManager->persist($scammer);
         $this->entityManager->flush();
 
-        $userReported = $this->userRepository->findOneBy(['email' => $scammer->getEmail()]);
-
         //  we dispatch the event associated
-        $event = new ScammerAddedEvent($scammer, $userReported);
+        $event = new ScammerAddedEvent($scammer);
         $this->eventDispatcher->dispatch($event, ScammerAddedEvent::NAME);
 
-        exit;
         // we delete the user reported
-        $this->userManager->deleteUser($userReported);
+        $this->userManager->deleteUser($this->userRepository->findOneBy(['email' => $scammer->getEmail()]));
 
         return $scammer;
     }

@@ -25,20 +25,20 @@ namespace App\Scammer\Admin\DataPersister;
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
 use App\Scammer\Admin\Service\ScammerManager;
 use App\Scammer\Entity\Scammer;
-use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Core\Security;
 
 /**
  * Data persister for Scammer in administration context.
  */
 final class ScammerDataPersister implements ContextAwareDataPersisterInterface
 {
-    private $request;
     private $scammerManager;
+    private $security;
 
-    public function __construct(RequestStack $requestStack, ScammerManager $scammerManager)
+    public function __construct(ScammerManager $scammerManager, Security $security)
     {
-        $this->request = $requestStack->getCurrentRequest();
         $this->scammerManager = $scammerManager;
+        $this->security = $security;
     }
 
     public function supports($data, array $context = []): bool
@@ -63,7 +63,7 @@ final class ScammerDataPersister implements ContextAwareDataPersisterInterface
     public function persist($data, array $context = [])
     {
         if (isset($context['collection_operation_name']) && 'ADMIN_post' == $context['collection_operation_name']) {
-            $data = $this->scammerManager->addScammer($data);
+            $data = $this->scammerManager->addScammer($data, $this->security->getUser());
         }
 
         return $data;

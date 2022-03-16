@@ -22,25 +22,19 @@
 
 namespace App\Communication\EventSubscriber;
 
-use App\Action\Repository\ActionRepository;
 use App\Communication\Service\NotificationManager;
 use App\Scammer\Event\ScammerAddedEvent;
 use App\User\Repository\UserRepository;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class ScammerSubscriber implements EventSubscriberInterface
 {
     private $notificationManager;
-    private $eventDispatcher;
-    private $actionRepository;
     private $userRepository;
 
-    public function __construct(NotificationManager $notificationManager, EventDispatcherInterface $eventDispatcher, ActionRepository $actionRepository, UserRepository $userRepository)
+    public function __construct(NotificationManager $notificationManager, UserRepository $userRepository)
     {
         $this->notificationManager = $notificationManager;
-        $this->eventDispatcher = $eventDispatcher;
-        $this->actionRepository = $actionRepository;
         $this->userRepository = $userRepository;
     }
 

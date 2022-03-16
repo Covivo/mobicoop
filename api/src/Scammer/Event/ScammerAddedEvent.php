@@ -24,7 +24,6 @@
 namespace App\Scammer\Event;
 
 use App\Scammer\Entity\Scammer;
-use App\User\Entity\User;
 use Symfony\Contracts\EventDispatcher\Event;
 
 /**
@@ -37,21 +36,14 @@ class ScammerAddedEvent extends Event
     public const NAME = 'scammer_reported';
 
     protected $scammer;
-    protected $userReported;
 
-    public function __construct(Scammer $scammer, User $userReported)
+    public function __construct(Scammer $scammer)
     {
         $this->scammer = $scammer;
-        $this->userReported = $userReported;
     }
 
     public function getScammer()
     {
         return $this->scammer;
-    }
-
-    public function getUserReported()
-    {
-        return $this->userReported;
     }
 }

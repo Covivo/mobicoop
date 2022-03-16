@@ -50,6 +50,7 @@ use App\Match\Entity\MassPerson;
 use App\Payment\Entity\CarpoolItem;
 use App\Payment\Entity\PaymentProfile;
 use App\Rdex\Entity\RdexConnection;
+use App\Scammer\Entity\Scammer;
 use App\Solidary\Entity\SolidaryContact;
 use App\User\Entity\PushToken;
 use App\User\Entity\Review;
@@ -150,10 +151,6 @@ class NotificationManager
      */
     public function notifies(string $action, User $recipient, ?object $object = null)
     {
-        var_dump('yep');
-        $this->logger->info(ClassUtils::getRealClass(get_class($object)));
-
-        exit;
         // check if notification system is enabled
         if (!$this->enabled) {
             return;
@@ -508,6 +505,12 @@ class NotificationManager
                         'givenName' => $object->getReviewer()->getGivenName(),
                         'shortFamilyName' => $object->getReviewer()->getShortFamilyName(),
                     ];
+
+                    break;
+
+                case Scammer::class:
+                    $titleContext = [];
+                    $bodyContext = ['scammer' => $object];
 
                     break;
 

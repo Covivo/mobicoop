@@ -84,14 +84,30 @@ class Scammer
     private $telephone;
 
     /**
-     * @var null|User admin that add the scammer
+     * @var null|string the first name used by the scammer
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"aRead","aWrite"})
+     */
+    private $givenName;
+
+    /**
+     * @var null|string the family name used by the scammer
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"aRead","aWrite"})
+     */
+    private $familyName;
+
+    /**
+     * @var null|User user that add the scammer
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User")
      * @ORM\JoinColumn(onDelete="SET NULL")
      * @Groups({"aRead","aWrite"})
      * @MaxDepth(1)
      */
-    private $admin;
+    private $user;
 
     /**
      * @var \DateTimeInterface creation date
@@ -130,14 +146,38 @@ class Scammer
         return $this;
     }
 
-    public function getAdmin(): ?User
+    public function getGivenName(): ?string
     {
-        return $this->admin;
+        return $this->givenName;
     }
 
-    public function setAdmin(?User $admin): self
+    public function setGivenName(?string $givenName): self
     {
-        $this->admin = $admin;
+        $this->givenName = $givenName;
+
+        return $this;
+    }
+
+    public function getFamilyName(): ?string
+    {
+        return $this->familyName;
+    }
+
+    public function setFamilyName(?string $familyName): self
+    {
+        $this->familyName = $familyName;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
 
         return $this;
     }
@@ -163,6 +203,6 @@ class Scammer
      */
     public function setAutoCreatedDate()
     {
-        $this->setCreatedDate(new \Datetime());
+        $this->setCreatedDate(new \DateTime());
     }
 }
