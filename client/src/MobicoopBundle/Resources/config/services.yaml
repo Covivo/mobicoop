@@ -83,6 +83,7 @@ services:
         arguments:
             $createFromFront: '%env(bool:COMMUNITIES_CREATE_FROM_FRONT)%'
             $communityUserDirectMessage: '%env(bool:COMMUNITY_USER_DIRECT_MESSAGE)%'
+            $defaultNbCommunitiesPerPage: '%env(int:COMMUNITY_DEFAULT_NB_COMMUNITIES_PER_PAGE)%'
     Mobicoop\Bundle\MobicoopBundle\Community\Service\:
         resource: '@MobicoopBundle/Community/Service/*'
     Mobicoop\Bundle\MobicoopBundle\Community\Security\:
@@ -126,6 +127,7 @@ services:
             $mandatoryDescription: '%env(bool:EVENT_MANDATORY_DESCRIPTION)%'
             $mandatoryFullDescription: '%env(bool:EVENT_MANDATORY_FULL_DESCRIPTION)%'
             $mandatoryImage: '%env(bool:EVENT_MANDATORY_IMAGE)%'
+            $defaultNbEventsPerPage: '%env(int:EVENT_DEFAULT_NB_EVENTS_PER_PAGE)%'
 
     Mobicoop\Bundle\MobicoopBundle\Event\Service\:
         resource: '@MobicoopBundle/Event/Service/*'
