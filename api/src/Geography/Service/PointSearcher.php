@@ -43,7 +43,7 @@ class PointSearcher
     private $geocoder;
     private $relayPointRepository;
     private $eventRepository;
-    private $results;
+    private $points;
     private $search;
     /**
      * @var null|User
@@ -63,7 +63,7 @@ class PointSearcher
         array $prioritizeBox = null,
         string $prioritizeRegion = null
     ) {
-        $this->results = [];
+        $this->points = [];
         $this->geocoder = $mobicoopGeocoder;
         $this->relayPointRepository = $relayPointRepository;
         $this->eventRepository = $eventRepository;
@@ -112,31 +112,31 @@ class PointSearcher
         $this->addRelayPointResults();
         $this->addEventResults();
 
-        return $this->results;
+        return $this->points;
     }
 
     private function addGeocoderResults()
     {
-        $this->results = array_merge($this->results, $this->geocoder->geocode($this->search));
+        $this->points = array_merge($this->points, $this->geocoder->geocode($this->search));
     }
 
     private function addRelayPointResults()
     {
         $relayPoints = $this->relayPointRepository->findByNameAndStatus($this->search, RelayPoint::STATUS_ACTIVE);
         $relayPointResults = $this->relayPointsToPoints($relayPoints);
-        $this->results = array_merge($this->results, $relayPointResults);
+        $this->points = array_merge($this->points, $relayPointResults);
     }
 
     private function addEventResults()
     {
         $events = $this->eventRepository->findByNameAndStatus($this->search, Event::STATUS_ACTIVE);
         $eventResults = $this->eventsToPoints($events);
-        $this->results = array_merge($this->results, $eventResults);
+        $this->points = array_merge($this->points, $eventResults);
     }
 
     private function relayPointsToPoints(array $relayPoints): array
     {
-        $results = [];
+        $points = [];
         foreach ($relayPoints as $relayPoint) {
             $userExcluded = false;
             if ($relayPoint->getCommunity() && $relayPoint->isPrivate()) {
@@ -158,27 +158,27 @@ class PointSearcher
                 }
             }
             if (!$userExcluded) {
-                $results[] = $this->relayPointToPoint($relayPoint);
-                if (count($results) == $this->maxRelayPointResults) {
+                $points[] = $this->relayPointToPoint($relayPoint);
+                if (count($points) == $this->maxRelayPointResults) {
                     break;
                 }
             }
         }
 
-        return $results;
+        return $points;
     }
 
     private function eventsToPoints(array $events): array
     {
-        $results = [];
+        $points = [];
         foreach ($events as $event) {
-            $results[] = $this->eventToPoint($event);
-            if (count($results) == $this->maxEventResults) {
+            $points[] = $this->eventToPoint($event);
+            if (count($points) == $this->maxEventResults) {
                 break;
             }
         }
 
-        return $results;
+        return $points;
     }
 
     private function relayPointToPoint(RelayPoint $relayPoint): Point
