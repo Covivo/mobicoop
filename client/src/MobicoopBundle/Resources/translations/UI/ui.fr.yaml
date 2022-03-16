@@ -59,6 +59,8 @@ widget:
     title: "Widget"
 toolbox:
     title: "Boîte à outils"
+unknown:
+  title: Unknown
 relaypoints:
     title: "Points relais"
 payment:

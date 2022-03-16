@@ -1,0 +1,50 @@
+{
+    "logo":"/images/unknown/logo_picholines.svg",
+    "intro":{
+        "title":"Et si vous osiez le covoiturage au quotidien en Cœur d’Hérault ?",
+        "text":"C’est gratuit et sans réservation !",
+        "image":{
+            "1":"/images/unknown/PCHCG_Illu site internet_122021.png",
+            "2":"/images/unknown/PCHCG_Thermometre de ligne_122021.svg"
+        }
+    },
+
+    "title": {
+        "1": "Et si vous osiez le covoiturage au quotidien en Cœur d'Hérault ?",
+        "2":"Partagez bien plus qu’un simple trajet !"
+    },
+    "paragraph":{
+        "1": "Avec la ligne quotidienne de covoiturage Picholines, découvrez une manière simple et pratique de covoiturer au quotidien. Le principe est le même qu’une ligne de transport en commun : des arrêts sont aménagés en bord de route sur des lignes, mais les bus sont ici remplacés… par les voitures des particuliers qui circulent, et qui sont remplies de sièges libres !",
+        "2": "Avec la ligne de covoiturage Picholines, covoiturer n’a jamais été aussi simple ! </br> </br>Les conducteurs <strong>roulent comme ils le font d’habitude</strong> sur leurs trajets quotidiens et partagent leurs trajets avec les passagers qui se trouvent sur leur route. Les passagers trouvent une place dans les voitures qui passent en <strong>signalant simplement leur présence</strong>, en temps réel, à l’arrêt Picholines le plus proche. Et tout ça, <strong>gratuitement et sans réservation !</strong></br></br>1 - Je me rends à l'arrêt. J'appuie sur le bouton qui correspond à ma destination pour me signaler</br>2 - La destination s'affiche pendant 5 minutes sur le panneau lumineux</br>3 - Un conducteur voit ma demande sur le panneau lumineux et s'arrête pour me proposer une place. C'est parti pour un bout de chemin ensemble !",
+        "3":"Les arrêts de covoiturage Picholines sont présents à<strong> Clermont l’Hérault, Ceyras, Saint André de Sangonis et Gignac.</strong> Il est aussi possible de faire des trajets vers Saint Félix de Lodez, même si aucun arrêt n’y est aménagé. Depuis les arrêts Picholines, vous pouvez poursuivre votre trajet à l’aide des transports en commun.",
+        "4":"Avec la ligne Picholines, les trajets sont 100% gratuits pour les passagers : pas d’abonnement, pas de commission, pas de frais cachés. Pourquoi des trajets gratuits ? Pour promouvoir une mobilité plus solidaire et moins polluante, et récompenser ceux qui font l’effort de laisser leur auto au garage. Économisez sur votre budget transports avec Picholines frais automobiles !",
+        "5":"Pas de réservation, pas de mise en relation en amont : les passagers peuvent profiter d’un mode de déplacement efficace, sans contraintes ni horaires à respecter.",
+        "6":"En covoiturant le temps d’un trajet, vous faites <strong>une action solidaire et un geste pour l’environnement.</strong> </br>Partager vos sièges c’est donner un vrai coup de pouce : vous permettez aux personnes non véhiculées de se déplacer en toute liberté. Faire preuve de solidarité au quotidien, c’est facile et ça ne coûte rien ! </br>Covoiturer, c’est aussi réduire son empreinte carbone : un conducteur qui laisse sa voiture au garage pour devenir passager avec Picholines, c’est une voiture en moins sur la route, donc moins de pollution, moins de CO2. </br>Enfin, c’est aussi un bon moyen de rencontrer des gens sympas avec qui papoter ou refaire le monde le temps d’un trajet."
+    },
+    "section":{
+        "1":"Comment ça marche ?",
+        "2":"Où sont situés les arrêts ?",
+        "3":"C’est gratuit et sans commission",
+        "4":"Zéro stress au compteur : 0 réservation, 100% liberté",
+        "5":"C’est écolo et solidaire"
+
+    },
+    "subtitle": {
+        "1":"C’est gratuit et sans réservation !",
+        "2":"3 bonnes raisons de se lancer avec Picholines "
+    },
+    "image": {
+        "1":"/images/unknown/PCHCG_Illu_2_site_internet_122021.png",
+        "2":"/images/unknown/[PCHCG]-Carte-du-réseau_Picholines_19112021.jpg",
+        "3":"/images/unknown/Bandeau-logos-des-MO.png"
+    },
+    "picto": {
+        "1":"/images/unknown/picto1.png",
+        "2":"/images/unknown/picto2.png",
+        "3":"/images/unknown/picto3.png"
+    },
+    "legend": {
+        "1":"*Source : Ministère de l’écologie"
+    }
+
+}

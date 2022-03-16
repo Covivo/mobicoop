@@ -177,6 +177,15 @@ class ArticleController extends AbstractController
     }
 
     /**
+     * Display of the UNKNOWN page.
+     */
+    public function showUnknown()
+    {
+        // Not an 'article' page.
+        return $this->render('@Mobicoop/article/unknown.html.twig', []);
+    }
+
+    /**
      * Display of the COMMUNITYINFOS page.
      */
     public function showCommunityInfos(ArticleManager $articleManager)

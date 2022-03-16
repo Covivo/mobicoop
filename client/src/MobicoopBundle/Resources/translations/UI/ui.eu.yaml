@@ -6,6 +6,8 @@ relaypoints:
   title: Geldialdi guneak
 toolbox:
   title: Tresna ontzia
+unknown:
+  title: Unknown
 widget:
   title: Widget
 events:

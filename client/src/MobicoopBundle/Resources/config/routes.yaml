@@ -1271,6 +1271,14 @@ ToolBox:
         nl: /toolBox
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showToolbox
 
+# display noName page
+unknown:
+    path:
+        fr: /unknown
+        en: /unknown
+        nl: /unknown
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showUnknown
+
 # display CommunityInfos page
 CommunityInfos:
     path:

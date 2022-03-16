@@ -6,6 +6,8 @@ relaypoints:
   title: Knooppunten
 toolbox:
   title: Toolbox
+unknown:
+  title: Unknown
 widget:
   title: Widget
 events:
