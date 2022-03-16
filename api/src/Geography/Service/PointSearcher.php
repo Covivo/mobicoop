@@ -149,8 +149,8 @@ class PointSearcher
     private function addUserResults()
     {
         if ($this->user instanceof User) {
-            $addresses = $this->addressRepository->findByName($this->translator->trans($this->search), $this->user->getId());
-            $userResults = $this->addressesToPoints($addresses);
+            $userAddresses = $this->addressRepository->findByName($this->translator->trans($this->search), $this->user->getId());
+            $userResults = $this->addressesToPoints($userAddresses);
             $this->points = array_merge($this->points, $userResults);
         }
     }
