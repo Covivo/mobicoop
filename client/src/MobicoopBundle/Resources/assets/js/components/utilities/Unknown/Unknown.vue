@@ -42,9 +42,7 @@
         <v-img
           :src="$t('intro.image.2')"
           max-height="120px"
-
           contain
-          alt="thermometre"
         />
       </v-col>
     </v-row>
@@ -59,7 +57,7 @@
           {{ $t('title.1') }}
         </h2>
         <h3 class="text-center">
-          {{ $t('subtitle.2') }}
+          {{ $t('subtitle.1') }}
         </h3>
         <p class="mt-5">
           {{ $t('paragraph.1') }}/p>
@@ -119,7 +117,6 @@
         <v-img
           :src="$t('picto.1')"
           max-width="8%"
-          alt="car"
         />
         <h4>
           {{ $t('section.3') }}
@@ -143,7 +140,6 @@
         <v-img
           :src="$t('picto.2')"
           max-width="8%"
-          alt="car"
         />
         <h4>
           {{ $t('section.4') }}
@@ -162,7 +158,6 @@
         <v-img
           :src="$t('picto.3')"
           max-width="8%"
-          alt="car"
         />
         <h4>
           {{ $t('section.5') }}
@@ -180,9 +175,8 @@
         <v-img
           :src="$t('image.3')"
           max-height="120px"
-
           contain
-          alt="thermometre"
+          alt="logos"
         />
       </v-col>
     </v-row>
