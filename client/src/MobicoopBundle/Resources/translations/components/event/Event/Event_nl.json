@@ -28,6 +28,7 @@
     "urlCommunityUser": "/community-user",
     "map": {
         "origin": "Vertrek",
+        "regular": "Trajet régulier",
         "search": {
             "label": "Chercher les covoiturages correspondants"
         }
