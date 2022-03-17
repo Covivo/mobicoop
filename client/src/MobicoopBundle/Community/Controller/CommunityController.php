@@ -18,53 +18,49 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace Mobicoop\Bundle\MobicoopBundle\Community\Controller;
 
-use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
-use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
-use Mobicoop\Bundle\MobicoopBundle\Traits\HydraControllerTrait;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
-use Mobicoop\Bundle\MobicoopBundle\User\Service\UserManager;
-use Mobicoop\Bundle\MobicoopBundle\Community\Service\CommunityManager;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\CommunityUser;
+use Mobicoop\Bundle\MobicoopBundle\Community\Service\CommunityManager;
 use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
 use Mobicoop\Bundle\MobicoopBundle\Image\Entity\Image;
 use Mobicoop\Bundle\MobicoopBundle\Image\Service\ImageManager;
-use Symfony\Component\HttpFoundation\Response;
+use Mobicoop\Bundle\MobicoopBundle\Traits\HydraControllerTrait;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
+use Mobicoop\Bundle\MobicoopBundle\User\Service\UserManager;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Controller class for community related actions.
- *
  */
 class CommunityController extends AbstractController
 {
     use HydraControllerTrait;
 
-    const DEFAULT_NB_COMMUNITIES_PER_PAGE = 10; // Nb items per page by default
-
     private $createFromFront;
     private $communityUserDirectMessage;
+    private $defaultNbCommunitiesPerPage;
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param string $createFromFront
      */
-    public function __construct(bool $createFromFront, bool $communityUserDirectMessage)
+    public function __construct(bool $createFromFront, bool $communityUserDirectMessage, int $defaultNbCommunitiesPerPage)
     {
         $this->createFromFront = $createFromFront;
         $this->communityUserDirectMessage = $communityUserDirectMessage;
+        $this->defaultNbCommunitiesPerPage = $defaultNbCommunitiesPerPage;
     }
 
     /**
-     * Create a community
+     * Create a community.
      */
     public function communityCreate(CommunityManager $communityManager, UserManager $userManager, Request $request, ImageManager $imageManager)
     {
@@ -83,7 +79,6 @@ class CommunityController extends AbstractController
             $data = $request->request;
             // Check if the community name is available (if yes continue)
             if (is_null($checkName = $communityManager->checkExists($data->get('name'))->getDescription())) {
-
                 // set the user as a user of the community
                 $communityUser->setUser($user);
 
@@ -118,7 +113,6 @@ class CommunityController extends AbstractController
 
                 // create community
                 if ($community = $communityManager->createCommunity($community)) {
-
                     // Post avatar of the community
                     $image = new Image();
                     $image->setCommunityFile($request->files->get('avatar'));
@@ -127,7 +121,7 @@ class CommunityController extends AbstractController
                     if ($image = $imageManager->createImage($image)) {
                         return new Response();
                     }
-                    //If an error occur on upload image, the community is already create, so we delete her
+                    // If an error occur on upload image, the community is already create, so we delete her
                     // $communityManager->deleteCommunity($community->getId());
                     // return error if image post didnt't work
                     return new Response(json_encode('error.image'));
@@ -144,19 +138,19 @@ class CommunityController extends AbstractController
     }
 
     /**
-     * Communities list controller
+     * Communities list controller.
      */
     public function communityList()
     {
         $this->denyAccessUnlessGranted('list', new Community());
 
         return $this->render('@Mobicoop/community/communities.html.twig', [
-            'defaultItemsPerPage' => self::DEFAULT_NB_COMMUNITIES_PER_PAGE
+            'defaultItemsPerPage' => $this->defaultNbCommunitiesPerPage,
         ]);
     }
 
     /**
-     * Get all communities (AJAX)
+     * Get all communities (AJAX).
      */
     public function getCommunityList(CommunityManager $communityManager, UserManager $userManager, Request $request)
     {
@@ -170,25 +164,26 @@ class CommunityController extends AbstractController
                 'communities' => $communities['communitiesMember'],
                 'totalItems' => $communities['communitiesTotalItems'],
                 'communitiesUser' => $communities['communitiesUser'],
-                'canCreate' => $this->createFromFront
+                'canCreate' => $this->createFromFront,
             ]);
-        } else {
-            return new JsonResponse("bad method");
         }
+
+        return new JsonResponse('bad method');
     }
 
-
     /**
-     * Show a community
+     * Show a community.
+     *
+     * @param mixed $id
      */
     public function communityShow($id, CommunityManager $communityManager, UserManager $userManager, Request $request)
     {
         // retreive community;
         $community = $communityManager->getCommunity($id);
         if (is_numeric($community)) {
-            if ($community==400) {
+            if (400 == $community) {
                 // secured community
-                return $this->redirectToRoute('community_secured_register', ['id'=>$id]);
+                return $this->redirectToRoute('community_secured_register', ['id' => $id]);
             }
         }
 
@@ -200,16 +195,18 @@ class CommunityController extends AbstractController
         return $this->render('@Mobicoop/community/community.html.twig', [
             'community' => $community,
             'user' => $user,
-            'searchRoute' => "covoiturage/recherche",
+            'searchRoute' => 'covoiturage/recherche',
             'error' => (isset($error)) ? $error : false,
             'communityUserStatus' => $community->getMemberStatus(),
             'isMember' => $community->isMember(),
-            'communityUserDirectMessage' => $this->communityUserDirectMessage
+            'communityUserDirectMessage' => $this->communityUserDirectMessage,
         ]);
     }
 
     /**
-     * Show the register form for a secured community
+     * Show the register form for a secured community.
+     *
+     * @param mixed $id
      */
     public function communitySecuredRegister($id, CommunityManager $communityManager, UserManager $userManager, Request $request)
     {
@@ -228,12 +225,14 @@ class CommunityController extends AbstractController
             'communityName' => $community->getName(),
             'communityUrlKey' => $community->getUrlKey(),
             'userId' => (!is_null($user)) ? $user->getId() : null,
-            'error' => (isset($error)) ? $error : false
+            'error' => (isset($error)) ? $error : false,
         ]);
     }
 
     /**
-     * Join a community
+     * Join a community.
+     *
+     * @param mixed $id
      */
     public function communityJoin($id, CommunityManager $communityManager, UserManager $userManager)
     {
@@ -249,7 +248,9 @@ class CommunityController extends AbstractController
     }
 
     /**
-     * Join a secured community
+     * Join a secured community.
+     *
+     * @param mixed $id
      */
     public function communitySecuredRegisterJoin($id, CommunityManager $communityManager, UserManager $userManager, Request $request)
     {
@@ -257,8 +258,8 @@ class CommunityController extends AbstractController
             $data = json_decode($request->getContent(), true);
 
             if (
-                !isset($data['credential1']) || trim($data['credential1']) == "" ||
-                !isset($data['credential2']) || trim($data['credential2']) == ""
+                !isset($data['credential1']) || '' == trim($data['credential1'])
+                || !isset($data['credential2']) || '' == trim($data['credential2'])
             ) {
                 return new JsonResponse();
             }
@@ -272,13 +273,17 @@ class CommunityController extends AbstractController
             if ($userManager->getLoggedUser()) {
                 return new JsonResponse($communityManager->joinCommunity($community));
             }
+
             return new JsonResponse();
         }
+
         return new JsonResponse();
     }
 
     /**
      * Leave a community.
+     *
+     * @param mixed $id
      */
     public function communityLeave($id, CommunityManager $communityManager, UserManager $userManager)
     {
@@ -294,10 +299,8 @@ class CommunityController extends AbstractController
     }
 
     /**
-     * Get the communityUser of a User
+     * Get the communityUser of a User.
      *
-     * @param CommunityManager $communityManager
-     * @param UserManager $userManager
      * @return Response
      */
     public function communityUser(CommunityManager $communityManager, UserManager $userManager, Request $request)
@@ -312,17 +315,14 @@ class CommunityController extends AbstractController
             return new Response(json_encode($communityManager->getCommunityUser($data['communityId'], $data['userId'], 1)));
         }
 
-        return new Response;
+        return new Response();
     }
-
 
     /**
      * Get all users of a community
-     * Ajax
+     * Ajax.
      *
-     * @param integer $id
-     * @param CommunityManager $communityManager
-     * @return void
+     * @param int $id
      */
     public function communityMemberList(Request $request, CommunityManager $communityManager)
     {
@@ -330,19 +330,19 @@ class CommunityController extends AbstractController
             $data = json_decode($request->getContent(), true);
 
             $params = [
-                "page" => $data['page'],
-                "perPage" => $data['perPage']
+                'page' => $data['page'],
+                'perPage' => $data['perPage'],
             ];
 
             $communityMembersList = $communityManager->communityMembers($data['id'], $params);
 
             return new JsonResponse([
-                "users"=>json_decode($communityMembersList)->members,
-                "totalItems"=>(int)json_decode($communityMembersList)->totalMembers
+                'users' => json_decode($communityMembersList)->members,
+                'totalItems' => (int) json_decode($communityMembersList)->totalMembers,
             ]);
-        } else {
-            return new JsonResponse();
         }
+
+        return new JsonResponse();
     }
 
     public function communityMapsAds(int $id, CommunityManager $communityManager)
@@ -352,13 +352,15 @@ class CommunityController extends AbstractController
 
     /**
      * Show a community widget.
+     *
+     * @param mixed $id
      */
     public function communityWidget($id, CommunityManager $communityManager, UserManager $userManager, Request $request)
     {
         // retreive event;
         $community = $communityManager->getCommunity($id);
 
-        //$this->denyAccessUnlessGranted('show', $community);
+        // $this->denyAccessUnlessGranted('show', $community);
 
         // retreive logged user
         $user = $userManager->getLoggedUser();
@@ -366,21 +368,23 @@ class CommunityController extends AbstractController
         return $this->render('@Mobicoop/community/community-widget.html.twig', [
             'community' => $community,
             'user' => $user,
-            'searchRoute' => 'covoiturage/recherche'
+            'searchRoute' => 'covoiturage/recherche',
         ]);
     }
 
     /**
      * Show a community widget page to get the widget code.
+     *
+     * @param mixed $id
      */
     public function communityGetWidget($id, CommunityManager $communityManager, UserManager $userManager, Request $request)
     {
         // retreive event;
         $community = $communityManager->getCommunity($id);
-        
-        //$this->denyAccessUnlessGranted('show', $community);
+
+        // $this->denyAccessUnlessGranted('show', $community);
         return $this->render('@Mobicoop/community/community-get-widget.html.twig', [
-            'community' => $community
+            'community' => $community,
         ]);
     }
 
@@ -389,28 +393,25 @@ class CommunityController extends AbstractController
         return new Response($communityManager->getLastUsers($id));
     }
 
-    /******************
-     *                *
-     * Refactor start *
-     *                *
-     ******************/
+    // Refactor start
 
     /**
-     * Get all communities for registration (AJAX)
+     * Get all communities for registration (AJAX).
      */
     public function getCommunityListForRegistration(CommunityManager $communityManager, Request $request)
     {
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
+
             return new JsonResponse($communityManager->getCommunityListForRegistration($data['email']));
-        } else {
-            return new JsonResponse("bad method");
         }
+
+        return new JsonResponse('bad method');
     }
 
     /**
-    *  Get all relay points map (AJAX).
-    */
+     *  Get all relay points map (AJAX).
+     */
     public function getRelayPointsMap(CommunityManager $communityManager, Request $request)
     {
         // We get the current community
@@ -420,7 +421,8 @@ class CommunityController extends AbstractController
             if (isset($data['communityId'])) {
                 return new JsonResponse($communityManager->getRelayPointsMap($data['communityId']));
             }
-            return [] ;
+
+            return [];
         }
     }
 }
