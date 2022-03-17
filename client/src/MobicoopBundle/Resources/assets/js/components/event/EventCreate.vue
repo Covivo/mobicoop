@@ -64,7 +64,7 @@
                 auto-grow
                 clearable
                 outlined
-                counter
+                counter="2500"
                 row-height="24"
               />
             </v-col>
@@ -75,6 +75,7 @@
                 :url="geoSearchUrl"
                 :token="user ? user.token : ''"
                 :label="$t('form.address.label')"
+                :prioritize-relaypoints="prioritizeRelaypoints"
                 @address-selected="addressSelected"
               />
             </v-col>
@@ -437,11 +438,13 @@ export default {
       description: null,
       descriptionRules: [
         v => !!v || this.$t("form.description.required"),
-        v => (v||'').length <= 512 || this.$t("error.event.length"),
+        v => (v||'').length <= 512 || this.$t("error.event.descriptionLength"),
       ],
       fullDescription: null,
       fullDescriptionRules: [
         v => !!v || this.$t("form.fullDescription.required"),
+        v => (v||'').length <= 2500 || this.$t("error.event.fullDescriptionLength"),
+
       ],
       startDateRules: [
         v => !!v || this.$t("startDate.error"),
@@ -479,19 +482,19 @@ export default {
     },
     validFields(){
       if (!this.name  || !this.eventAddress || !this.startDate || !this.endDate) {
-        return false;
+        return "required";
       }
-      if(this.mandatoryDescription && !this.description){
-        return false;
+      if(this.mandatoryDescription && (!this.description || this.description.length > 512)){
+        return !this.description ? "required" : "tooLong";
       }
-      if(this.mandatoryFullDescription && !this.fullDescription){
-        return false;
+      if(this.mandatoryFullDescription && (!this.fullDescription || this.fullDescription.length > 2500)){
+        return !this.fullDescription ? "required" : "tooLong";
       }
       if(this.mandatoryImage && !this.avatar){
-        return false;
+        return "required";
       }
 
-      return true;
+      return "validated";
     }
   },
   created() {
@@ -504,7 +507,7 @@ export default {
     createEvent() {
       this.dialog = false;
       this.loading = true;
-      if (this.validFields) {
+      if (this.validFields == "validated") {
         let newEvent = new FormData();
         newEvent.append("name", this.name);
         newEvent.append("fullDescription", this.fullDescription);
@@ -533,7 +536,7 @@ export default {
             else window.location.href = this.$t('redirect.route');
           });
       } else {
-        this.snackError = this.$t('error.event.required')
+        this.snackError = this.validFields == "required" ? this.$t('error.event.required') : this.$t('error.event.length');
         this.snackbar = true;
         this.loading = false;
       }    

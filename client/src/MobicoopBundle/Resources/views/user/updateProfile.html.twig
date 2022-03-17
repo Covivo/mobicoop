@@ -8,21 +8,22 @@
 
 {% block main %}
 
-    		<Profile 
-			:user="{{app.user|json_encode}}"
-			geo-search-url="{{ geoCompleteUri }}"
- 			age-min="{{ ageMin }}"
-            age-max="{{ ageMax }}"
-			:image-min-px-size="{{ imageMinPxSize }}"
-        	:image-max-mb-size="{{ imageMaxMbSize }}"
-        	:alerts="{{ alerts|json_encode }}"
-			:platform="{{ app_name|json_encode }}"
-            tab-default="{{ tabDefault }}"
-			selected-tab="{{ selectedTab }}"
-			:payment-electronic-active = "{{ paymentElectronicActive|json_encode }}"
-			validation-docs-authorized-extensions="{{ validationDocsAuthorizedExtensions }}"
-			:show-reviews="{{ showReviews ? "true" : "false" }}"
-			:age-display="{{ ageDisplay ? "true" : "false" }}"
-            ></Profile>
+	<Profile 
+	  geo-search-url="{{ geoCompleteUri }}"
+	  age-min="{{ ageMin }}"
+	  age-max="{{ ageMax }}"
+	  selected-tab="{{ selectedTab }}"
+	  tab-default="{{ tabDefault }}"
+	  validation-docs-authorized-extensions="{{ validationDocsAuthorizedExtensions }}"
+	  :age-display="{{ ageDisplay ? "true" : "false" }}"
+	  :alerts="{{ alerts|json_encode }}"
+	  :image-min-px-size="{{ imageMinPxSize }}"
+	  :image-max-mb-size="{{ imageMaxMbSize }}"
+	  :payment-electronic-active = "{{ paymentElectronicActive|json_encode }}"
+	  :platform="{{ app_name|json_encode }}"
+	  :show-reviews="{{ showReviews ? "true" : "false" }}"
+	  :user="{{app.user|json_encode}}"
+	  :prioritize-relaypoints="{{ geosearcherPrioritizeRelaypoints is defined ? geosearcherPrioritizeRelaypoints ? 'true' : 'false' : 'false' }}"
+	></Profile>
 
 {% endblock %}

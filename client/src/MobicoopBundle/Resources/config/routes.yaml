@@ -1464,7 +1464,7 @@ iAmASociety:
         nl: /i-am-society
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showIAmSociety
 
-# display "I'm a private person"
+# display Garanteed return
 guaranteedReturn:
     path:
         fr: /retour-garanti
@@ -1472,7 +1472,7 @@ guaranteedReturn:
         nl: /guaranteed-return
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showGuaranteedReturn
 
-# display "I'm a private person"
+# display alternative version of good practices
 GoodPracticesAlt:
     path:
         fr: /les-bonnes-pratiques
@@ -1480,7 +1480,7 @@ GoodPracticesAlt:
         nl: /good-practices-alt
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showGoodPracticesAlt
 
-# display "I'm a private person"
+# display alternative version of FAQ
 faqAlt:
     path:
         fr: /foire-aux-questions
@@ -1488,7 +1488,7 @@ faqAlt:
         nl: /faq-alt
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showFAQAlt
 
-# display "I'm a private person"
+# display alternative version of CGU
 cguAlt:
     path:
         fr: /conditions-generales
@@ -1496,7 +1496,7 @@ cguAlt:
         nl: /CGU-alt
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showCguAlt
 
-# display "I'm a private person"
+# display alternative version of Data policy
 dataPolicyAlt:
     path:
         fr: /politique-confidentialite
@@ -1504,7 +1504,7 @@ dataPolicyAlt:
         nl: /privacy-policy-alt
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showDataPolicyAlt
 
-# display "I'm a private person"
+# display alternative version of Data protection
 dataProtectionAlt:
     path:
         fr: /protection-des-donnees

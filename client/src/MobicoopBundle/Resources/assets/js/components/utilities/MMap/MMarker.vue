@@ -21,7 +21,7 @@
         class="font-weight-bold"
         v-html="point.title"
       />
-
+  
       <MMapRelayPointDescription
         v-if="relayPoints && point.misc"
         :data="point.misc"

@@ -482,22 +482,22 @@ class Event
         return $this;
     }
 
-    public function getDescription(): string
+    public function getDescription(): ?string
     {
         return $this->description;
     }
 
-    public function setDescription(string $description)
+    public function setDescription(?string $description)
     {
         $this->description = $description;
     }
 
-    public function getFullDescription(): string
+    public function getFullDescription(): ?string
     {
         return $this->fullDescription;
     }
 
-    public function setFullDescription(string $fullDescription)
+    public function setFullDescription(?string $fullDescription)
     {
         $this->fullDescription = $fullDescription;
     }
@@ -741,7 +741,7 @@ class Event
      */
     public function setAutoCreatedDate()
     {
-        $this->setCreatedDate(new \Datetime());
+        $this->setCreatedDate(new \DateTime());
     }
 
     /**
@@ -751,7 +751,7 @@ class Event
      */
     public function setAutoUpdatedDate()
     {
-        $this->setUpdatedDate(new \Datetime());
+        $this->setUpdatedDate(new \DateTime());
     }
 
     /**

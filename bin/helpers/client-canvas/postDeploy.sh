@@ -102,6 +102,10 @@ then
     cd /var/www/$VERSION/$INSTANCE/public/externalCgu;
     wget https://www.mangopay.com/terms/PSP/PSP_MANGOPAY_FR.pdf
     
+    # Remove maintenance page
+    rm /var/www/$VERSION/$INSTANCE/mobicoop/api/public/maintenance.enable
+    rm /var/www/$VERSION/$INSTANCE/public/maintenance.enable
+
     # Fixtures for test
     if [ $VERSION == "test" ]
     then
@@ -194,6 +198,7 @@ else
     wget https://www.mangopay.com/terms/PSP/PSP_MANGOPAY_FR.pdf
     
     # Remove maintenance page
+    rm /var/www/$INSTANCE/$VERSION/mobicoop/api/public/maintenance.enable
     rm /var/www/$INSTANCE/$VERSION/public/maintenance.enable
 
     # Admin build

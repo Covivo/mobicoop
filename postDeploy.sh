@@ -102,6 +102,10 @@ then
     cd /var/www/$VERSION/$INSTANCE/client;
     php bin/console cache:clear --env=$VERSION_MIGRATE;
 
+    # Remove maintenance page
+    rm /var/www/$VERSION/$INSTANCE/api/public/maintenance.enable
+    rm /var/www/$VERSION/$INSTANCE/client/public/maintenance.enable
+
     # Fixtures for test
     if [ $VERSION == "test" ]
     then
@@ -183,6 +187,7 @@ else
     php bin/console cache:clear --env=$VERSION_MIGRATE;
 
     # Remove maintenance page
+    rm /var/www/$INSTANCE/$VERSION/api/public/maintenance.enable
     rm /var/www/$INSTANCE/$VERSION/client/public/maintenance.enable
 
     #Admin build

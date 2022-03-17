@@ -423,7 +423,6 @@ deleted : "Supprimé"
 
 
 
-
 # GEOGRAPHY SERVICE
 domicile: 'homeAddress'
 homeAddress: 'Domicile'

@@ -23,8 +23,20 @@
       align="center"
       dense
     >
-      <v-col cols="12">
+      <v-col cols="8">
         <MatchingPTResultSummary :pt-legs="ptResult.pTLegs" />
+      </v-col>
+      <v-col
+        v-if="ptResult.ptProviderName && ptResult.ptProviderUrl"
+        cols="4"
+        class="text-right"
+      >
+        <a
+          :href="ptResult.ptProviderUrl"
+          target="_blank"
+        >
+          {{ $t('ptProvider', {'name':ptResult.ptProviderName}) }}
+        </a>
       </v-col>
     </v-row>
     <v-row
