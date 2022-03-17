@@ -189,7 +189,7 @@ class Address implements \JsonSerializable
      * @var string The full street address.
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"aRead", "aReadCol", "aReadItem", "aWrite", "read","readUser","results","write","writeRelayPoint","pt","mass","massCompute","threads","thread","externalJourney","readRelayPoint", "writeSolidary", "readPayment", "writePayment","readCommunityAds"})
+     * @Groups({"aRead", "aReadCol", "aReadItem", "aWrite", "read","readUser","results","write","writeRelayPoint","pt","mass","massCompute","threads","thread","externalJourney","readRelayPoint", "writeSolidary", "readPayment", "writePayment","readCommunityAds","readEvent"})
      */
     private $streetAddress;
 
@@ -214,7 +214,7 @@ class Address implements \JsonSerializable
      * @var string|null The locality of the address.
      *
      * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups({"aRead", "aReadCol", "aReadItem", "aWrite", "read","readUser","readEvent","results","write","writeRelayPoint","pt","mass","massCompute","threads","thread","externalJourney","readCommunity","readRelayPoint", "writeSolidary", "readPayment", "writePayment", "readExport","readCommunityAds"})
+     * @Groups({"aRead", "aReadCol", "aReadItem", "aWrite", "read","readUser","readEvent","results","write","writeRelayPoint","pt","mass","massCompute","threads","thread","externalJourney","readCommunity","readRelayPoint", "writeSolidary", "readPayment", "writePayment", "readExport","readCommunityAds","readEvent"})
      * @Assert\NotBlank(groups={"massCompute","threads","thread"})
      */
     private $addressLocality;
@@ -310,7 +310,7 @@ class Address implements \JsonSerializable
      * @var string|null The name of this address.
      *
      * @ORM\Column(type="string", length=45, nullable=true)
-     * @Groups({"aRead", "aReadCol", "aReadItem", "aWrite", "read","readUser","results","write","writeRelayPoint"})
+     * @Groups({"aRead", "aReadCol", "aReadItem", "aWrite", "read","readUser","results","write","writeRelayPoint","readEvent"})
      */
     private $name;
 
@@ -817,10 +817,10 @@ class Address implements \JsonSerializable
         if (!$this->territories->contains($territory)) {
             $this->territories[] = $territory;
         }
-        
+
         return $this;
     }
-    
+
     public function removeTerritory(Territory $territory): self
     {
         if ($this->territories->contains($territory)) {
@@ -994,7 +994,7 @@ class Address implements \JsonSerializable
 
         return $updated;
     }
-    
+
     public function jsonSerialize()
     {
         return
