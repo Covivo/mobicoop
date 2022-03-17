@@ -366,6 +366,7 @@ $RECYCLE.BIN/
 /public/import/Community/*
 /public/import/Event/*
 /public/export/carpool/*
+/public/maintenance.enable
 
 # Public Transport
 /config/publicTransport/providers.json

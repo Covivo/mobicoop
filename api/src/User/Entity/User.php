@@ -128,7 +128,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "method"="GET",
  *              "path"="/users/communities",
  *              "normalization_context"={"groups"={"listCommunities"}},
- *              "security"="is_granted('user_list',object)",
+ *              "security"="is_granted('community_list',object)",
  *              "swagger_context" = {
  *                  "tags"={"Users"}
  *              }
@@ -983,7 +983,7 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var int The status of the current identity proof
      * @ORM\Column(type="smallint", nullable=true)
-     * @Groups({"aRead"})
+     * @Groups({"aRead","readUser","results","write"})
      */
     private $identityStatus;
 
@@ -3658,7 +3658,7 @@ class User implements UserInterface, EquatableInterface
      */
     public function setAutoCreatedDate()
     {
-        $this->setCreatedDate(new \Datetime());
+        $this->setCreatedDate(new \DateTime());
     }
 
     /**
@@ -3668,6 +3668,6 @@ class User implements UserInterface, EquatableInterface
      */
     public function setAutoUpdatedDate()
     {
-        $this->setUpdatedDate(new \Datetime());
+        $this->setUpdatedDate(new \DateTime());
     }
 }

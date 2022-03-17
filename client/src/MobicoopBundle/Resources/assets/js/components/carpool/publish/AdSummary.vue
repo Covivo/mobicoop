@@ -512,6 +512,7 @@
               class="pt-0"
             >
               <h2
+                v-if="!passenger"
                 class="text-right mr-6"
                 align="right"
               >

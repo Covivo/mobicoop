@@ -32,6 +32,7 @@
                   :show-required="showRequired"
                   :required-error="requiredErrorOrigin"
                   :prepend-icon="prependIconOrigin"
+                  :prioritize-relaypoints="prioritizeRelaypoints"
                   @address-selected="originSelected"
                 />
               </v-col>
@@ -50,6 +51,7 @@
                   :show-required="showRequired"
                   :required-error="requiredErrorDestination"
                   :prepend-icon="prependIconDestination"
+                  :prioritize-relaypoints="prioritizeRelaypoints"
                   @address-selected="destinationSelected"
                 />
               </v-col>

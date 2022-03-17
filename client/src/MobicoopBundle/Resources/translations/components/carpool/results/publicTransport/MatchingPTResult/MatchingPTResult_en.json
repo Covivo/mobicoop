@@ -1,4 +1,5 @@
 {
     "at": "on",
-    "details": "Details"
+    "details": "Details",
+    "ptProvider": "Voir plus sur {name}"
 }

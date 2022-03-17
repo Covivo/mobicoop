@@ -258,6 +258,7 @@
                     :init-destination="destination"
                     :init-waypoints="initWaypoints"
                     :community-ids="communityIds"
+                    :prioritize-relaypoints="prioritizeRelaypoints"
                     @change="routeChanged"
                   />
                 </v-col>
@@ -860,6 +861,10 @@ export default {
     eventId: {
       type: Number,
       default: null
+    },
+    prioritizeRelaypoints: {
+      type: Boolean,
+      default: false
     }
   },
   data() {

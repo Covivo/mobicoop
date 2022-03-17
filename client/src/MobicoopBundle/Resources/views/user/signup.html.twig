@@ -7,29 +7,29 @@
   {#{{ encore_entry_link_tags("#{assets_prefix ?? ''}user/signup") }}#}
 {% endblock %}
 {% block main %}
-        {% if error %}
-            <span class="tag is-danger">An error occured.</span>
-        {% endif %}
 
-            <Signupform
-                    age-min="{{ ageMin }}"
-                    age-max="{{ ageMax }}"
-                    geo-search-url="{{ geoCompleteUri }}"
-                    sent-token="{{ csrf_token('user-signup') }}"
-                    :show-facebook-sign-up = "{{ facebook_show ? "true" : "false" }}"
-                    facebook-login-app-id = "{{ facebook_appid }}"
-                    :required-home-address = "{{ required_home_address ? "true" : "false" }}"
-                    :required-community = "{{ required_community  ? "true" : "false" }}"
-                    :community-show = "{{ community_show ? "true" : "false"  }}"
-                    :id = "{{ id is defined ? (id ? id : 'null') : 'null' }}"
-                    type="{{ type }}"
-                    :login-link-in-connection = "{{ loginLinkInConnection ? "true" : "false" }}"
-                    :signup-rgpd-infos = "{{ signup_rgpd_infos|json_encode }}"
-                    :news-subscription-default = "{{ newsSubscription ? "true" : "false" }}"
-                    :birth-date-display = "{{ birthDateDisplay ? "true" : "false" }}"
-                    :sso-button-display = "{{ ssoButtonDisplay ? "true" : "false" }}"
-                    />
+  {% if error %}
+      <span class="tag is-danger">An error occured.</span>
+  {% endif %}
 
-        
+  <Signupform
+    age-min="{{ ageMin }}"
+    age-max="{{ ageMax }}"
+    geo-search-url="{{ geoCompleteUri }}"
+    facebook-login-app-id = "{{ facebook_appid }}"
+    sent-token="{{ csrf_token('user-signup') }}"
+    type="{{ type }}"
+    :show-facebook-sign-up = "{{ facebook_show ? "true" : "false" }}"
+    :required-home-address = "{{ required_home_address ? "true" : "false" }}"
+    :required-community = "{{ required_community  ? "true" : "false" }}"
+    :community-show = "{{ community_show ? "true" : "false"  }}"
+    :id = "{{ id is defined ? (id ? id : 'null') : 'null' }}"
+    :login-link-in-connection = "{{ loginLinkInConnection ? "true" : "false" }}"
+    :signup-rgpd-infos = "{{ signup_rgpd_infos|json_encode }}"
+    :news-subscription-default = "{{ newsSubscription ? "true" : "false" }}"
+    :birth-date-display = "{{ birthDateDisplay ? "true" : "false" }}"
+    :sso-button-display = "{{ ssoButtonDisplay ? "true" : "false" }}"
+    :prioritize-relaypoints="{{ geosearcherPrioritizeRelaypoints is defined ? geosearcherPrioritizeRelaypoints ? 'true' : 'false' : 'false' }}"
+  />
 
 {% endblock %}

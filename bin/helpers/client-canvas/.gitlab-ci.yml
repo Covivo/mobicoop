@@ -67,6 +67,7 @@ test_deploy:
     - chmod 700 id_rsa
     - mv id_rsa ${HOME}/.ssh
     - echo "${SSH_TEST_HOST_KEY}" > "${HOME}/.ssh/known_hosts"
+    - ssh -o StrictHostKeyChecking=no -p ${SSH_PORT} ${SSH_TEST_USER}@${SSH_TEST_IP} "cd /var/www/test/$$INSTANCE$$/; touch ./public/maintenance.enable; cd /var/www/test/$$INSTANCE$$/mobicoop/api/ touch ./public/maintenance.enable;"    # put the site on maintenance
     - rsync --stats --quiet --group=www-data -rvzlt --exclude-from=.gitlab-exclude --delete --compress-level=9 -e "ssh -o StrictHostKeyChecking=no -p $SSH_PORT" ./ ${SSH_TEST_USER}@${SSH_TEST_IP}:/var/www/test/$$INSTANCE$$
     - ssh -o StrictHostKeyChecking=no -p ${SSH_PORT} ${SSH_TEST_USER}@${SSH_TEST_IP} "cd /var/www/test/$$INSTANCE$$/; chmod +x postDeploy.sh; ./postDeploy.sh --version=test --version-migrate=test --instance=$$INSTANCE$$"    # database migration and other after deploy works
   when: manual      # /!\ important : job executed manually /!\  
@@ -98,12 +99,12 @@ prod_deploy:
     - chmod 700 id_rsa
     - mv id_rsa ${HOME}/.ssh
     - echo "${SSH_PROD_HOST_KEY}" > "${HOME}/.ssh/known_hosts"
-    - ssh -o StrictHostKeyChecking=no -p ${SSH_PORT} ${SSH_PROD_USER}@${SSH_PROD_IP} "cd /var/www/$$INSTANCE$$/prod/; touch ./public/maintenance.enable;"    # put the site on maintenance
+    - ssh -o StrictHostKeyChecking=no -p ${SSH_PORT} ${SSH_PROD_USER}@${SSH_PROD_IP} "cd /var/www/$$INSTANCE$$/prod/; touch ./public/maintenance.enable; cd /var/www/$$INSTANCE$$/prod/mobicoop/api/ touch ./public/maintenance.enable;"    # put the site on maintenance
     - rsync --stats --quiet --group=www-data -rvzlt --exclude-from=.gitlab-exclude --delete --compress-level=9 -e "ssh -o StrictHostKeyChecking=no -p $SSH_PORT" ./ ${SSH_PROD_USER}@${SSH_PROD_IP}:/var/www/$$INSTANCE$$/prod
     - ssh -o StrictHostKeyChecking=no -p ${SSH_PORT} ${SSH_PROD_USER}@${SSH_PROD_IP} "cd /var/www/$$INSTANCE$$/prod/; chmod +x postDeploy.sh; ./postDeploy.sh --version=prod --version-migrate=prod --instance=$$INSTANCE$$"    # database migration and other after deploy works
   when: manual      # /!\ important : job executed manually /!\  
 
-  ###############################################################################################
+###############################################################################################
 ########## Admin                                                            ###################
 ###############################################################################################
 

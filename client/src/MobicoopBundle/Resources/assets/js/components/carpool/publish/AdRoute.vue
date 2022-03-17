@@ -18,6 +18,7 @@
           :url="geoSearchUrl"
           :init-address="initOrigin"
           :required-error="$t('origin.error')"
+          :prioritize-relaypoints="prioritizeRelaypoints"
           required
           @address-selected="originSelected"
         />
@@ -66,6 +67,7 @@
           :label="$t('waypoint' + (index + 1) +'.label')"
           :url="geoSearchUrl"
           :init-address="waypoint.address"
+          :prioritize-relaypoints="prioritizeRelaypoints"
           @address-selected="waypointSelected(index, ...arguments)"
         />
       </v-col>
@@ -103,6 +105,7 @@
           required
           :url="geoSearchUrl"
           :init-address="initDestination"
+          :prioritize-relaypoints="prioritizeRelaypoints"
           @address-selected="destinationSelected"
         />
       </v-col>
@@ -244,6 +247,10 @@ export default {
     initWaypoints: {
       type: Array,
       default: null
+    },
+    prioritizeRelaypoints: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
