@@ -175,9 +175,9 @@ export default {
         return [
           "user",
           "relaypoint",
+          "locality",
           "housenumber",
           "street",
-          "locality",
           "venue",
         ];
       }
