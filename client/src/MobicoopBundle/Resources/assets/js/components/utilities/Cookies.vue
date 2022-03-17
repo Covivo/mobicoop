@@ -123,7 +123,7 @@
     </v-card>
   </v-dialog>
 </template>
- 
+
 <script>
 import { merge } from "lodash";
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/utilities/Cookies/";
@@ -143,8 +143,8 @@ export default {
       'eu':MessagesMergedEu
     }
   },
-  components: { 
-    
+  components: {
+
   },
   props:{
     appName:{
@@ -220,15 +220,15 @@ export default {
           this.checkboxes.social = false
         }
       }
-    }    
+    }
   },
   mounted(){
     this.getDefault();
-    console.log(this.checkboxes.social);
+    // console.log(this.checkboxes.social);
     if(this.socialCookies && this.socialCookies.length > 0){
       this.disableProgressBar();
     }
-    console.log(this.checkboxes.social);
+    // console.log(this.checkboxes.social);
   },
   methods:{
     updatePrefs(){
@@ -261,9 +261,9 @@ export default {
         if(!this.autoShow) this.checkboxes.connectionActiveDisabled = true;
         this.checkboxes.stats = this.defaultSettings.stats;
         this.checkboxes.socialCookies = this.defaultSettings.socialCookies ? this.defaultSettings.socialCookies : [];
-        console.log(this.defaultSettings.social);
+        // console.log(this.defaultSettings.social);
         this.checkboxes.social = (this.checkboxes.socialCookies && this.checkboxes.socialCookies.length > 0) || this.defaultSettings.social;
-        console.log(this.checkboxes.social);
+        // console.log(this.checkboxes.social);
         this.store();
         this.disableProgressBar();
       }

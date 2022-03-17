@@ -129,7 +129,9 @@ class PointSearcher
 
     private function addGeocoderResults()
     {
-        $this->points = array_merge($this->points, $this->geocoder->geocode($this->search));
+        $geocoderPoints = $this->geocoder->geocode($this->search);
+        $geocoderResults = $this->geocoderPointsToPoints($geocoderPoints);
+        $this->points = array_merge($this->points, $geocoderResults);
     }
 
     private function addRelayPointResults()
@@ -153,6 +155,16 @@ class PointSearcher
             $userResults = $this->addressesToPoints($userAddresses);
             $this->points = array_merge($this->points, $userResults);
         }
+    }
+
+    private function geocoderPointsToPoints(array $geocoderPoints): array
+    {
+        $points = [];
+        foreach ($geocoderPoints as $geocoderPoint) {
+            $points[] = $this->geocoderPointToPoint($geocoderPoint);
+        }
+
+        return $points;
     }
 
     private function relayPointsToPoints(array $relayPoints): array
@@ -217,6 +229,31 @@ class PointSearcher
         }
 
         return $points;
+    }
+
+    private function geocoderPointToPoint(array $item): Point
+    {
+        $point = new Point();
+        $point->setCountry($item['country']);
+        $point->setCountryCode($item['country_code']);
+        $point->setDistance($item['distance']);
+        $point->setHouseNumber($item['house_number']);
+        $point->setId($item['id']);
+        $point->setLat($item['lat']);
+        $point->setLocality($item['locality']);
+        $point->setLocalityCode($item['locality_code']);
+        $point->setLon($item['lon']);
+        $point->setMacroRegion($item['macro_region']);
+        $point->setName($item['name']);
+        $point->setPopulation($item['population']);
+        $point->setPostalCode($item['postal_code']);
+        $point->setRegion($item['region']);
+        $point->setRegionCode($item['region_code']);
+        $point->setStreetName($item['street_name']);
+        $point->setType($item['type']);
+        $point->setProvider($item['provider']);
+
+        return $point;
     }
 
     private function relayPointToPoint(RelayPoint $relayPoint): Point

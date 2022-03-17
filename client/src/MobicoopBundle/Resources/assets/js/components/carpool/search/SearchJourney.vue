@@ -54,7 +54,7 @@
           cols="12"
           md="5"
         >
-          <GeoComplete
+          <!-- <GeoComplete
             v-show="showOrigin"
             id="from"
             alternative-label="origin"
@@ -66,6 +66,15 @@
             :required-error="requiredErrorOrigin"
             :init-address="customInitOrigin"
             :prioritize-relaypoints="prioritizeRelaypoints"
+            @address-selected="originSelected"
+          /> -->
+          <geocomplete
+            uri="http://localhost:8080/points"
+            :chip="false"
+            :label="labelOrigin"
+            required
+            :required-error="requiredErrorOrigin"
+            :address="customInitOrigin"
             @address-selected="originSelected"
           />
         </v-col>
@@ -102,7 +111,7 @@
           cols="12"
           md="5"
         >
-          <GeoComplete
+          <!-- <GeoComplete
             v-show="showDestination"
             id="to"
             alternative-label="destination"
@@ -114,6 +123,15 @@
             :required-error="requiredErrorDestination"
             :init-address="customInitDestination"
             :prioritize-relaypoints="prioritizeRelaypoints"
+            @address-selected="destinationSelected"
+          /> -->
+          <geocomplete
+            uri="http://localhost:8080/points"
+            :chip="false"
+            :label="labelDestination"
+            required
+            :required-error="requiredErrorOrigin"
+            :address="customInitDestination"
             @address-selected="destinationSelected"
           />
         </v-col>
@@ -217,7 +235,8 @@
 
 <script>
 import moment from "moment";
-import GeoComplete from "@components/utilities/GeoComplete";
+// import GeoComplete from "@components/utilities/GeoComplete";
+import Geocomplete from "@components/utilities/geography/Geocomplete";
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/carpool/search/SearchJourney/";
 
 export default {
@@ -230,7 +249,8 @@ export default {
     },
   },
   components: {
-    GeoComplete
+    // GeoComplete,
+    Geocomplete
   },
   props: {
     geoSearchUrl: {
@@ -260,7 +280,7 @@ export default {
     initRegular: {
       type: Boolean,
       default: true
-    }, 
+    },
     punctualDateOptional: {
       type: Boolean,
       default: false
