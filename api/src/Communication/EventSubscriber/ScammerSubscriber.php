@@ -51,7 +51,7 @@ class ScammerSubscriber implements EventSubscriberInterface
     public function onScammerAdded(ScammerAddedEvent $event)
     {
         $scammer = $event->getScammer();
-        $scammerVictims = $event->getScammersVictims();
+        $scammerVictims = $event->getScammerVictims();
 
         // get all users with an ask in common with the scammer
         foreach ($scammerVictims as $scammerVictim) {
