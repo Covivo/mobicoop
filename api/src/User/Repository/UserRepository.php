@@ -199,20 +199,20 @@ class UserRepository
         return $query->getQuery()->getSingleScalarResult();
     }
 
-    public function getUsersInContactWithCurrentUser(User $user)
+    public function getUsersIdsInContactWithCurrentUser(User $user)
     {
         $stmt = $this->entityManager->getConnection()->prepare('
-        select * from user u join ask a on a.user_id = u.id where a.user_id != 19 and a.user_related_id ='.$user->getId().';
+        select u.id from user u join ask a on a.user_id = u.id where a.user_id != '.$user->getId().' and a.user_related_id ='.$user->getId().';
         ;');
         $stmt->execute();
-        $scammerVictims = $stmt->fetchAll();
+        $scammerVictimsIds = $stmt->fetchAll();
 
         $stmt = $this->entityManager->getConnection()->prepare('
-        select * from user u join ask a on a.user_related_id = u.id where a.user_id = 19 and a.user_related_id !='.$user->getId().'
+        select u.id from user u join ask a on a.user_related_id = u.id where a.user_id = '.$user->getId().' and a.user_related_id !='.$user->getId().'
         ;');
         $stmt->execute();
-        $scammerVictimsRelated = $stmt->fetchAll();
+        $scammerVictimsRelatedIds = $stmt->fetchAll();
 
-        return array_merge($scammerVictims, $scammerVictimsRelated);
+        return array_merge($scammerVictimsIds, $scammerVictimsRelatedIds);
     }
 }
