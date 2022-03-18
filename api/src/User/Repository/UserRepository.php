@@ -46,6 +46,7 @@ class UserRepository
     {
         $this->repository = $entityManager->getRepository(User::class);
         $this->logger = $logger;
+        $this->entityManager = $entityManager;
     }
 
     public function find(int $id): ?User
@@ -200,12 +201,18 @@ class UserRepository
 
     public function getUsersInContactWithCurrentUser(User $user)
     {
-        $query = $this->repository->createQueryBuilder('u')
-            ->join('u.ask', 'a')
-            ->where('(a.user = :user or a.userRelated = :user)')
-            ->setParameter('user', $user)
-        ;
+        $stmt = $this->entityManager->getConnection()->prepare('
+        select * from user u join ask a on a.user_id = u.id where a.user_id != 19 and a.user_related_id ='.$user->getId().';
+        ;');
+        $stmt->execute();
+        $scammerVictims = $stmt->fetchAll();
 
-        return $query->getQuery()->getResult();
+        $stmt = $this->entityManager->getConnection()->prepare('
+        select * from user u join ask a on a.user_related_id = u.id where a.user_id = 19 and a.user_related_id !='.$user->getId().'
+        ;');
+        $stmt->execute();
+        $scammerVictimsRelated = $stmt->fetchAll();
+
+        return array_merge($scammerVictims, $scammerVictimsRelated);
     }
 }

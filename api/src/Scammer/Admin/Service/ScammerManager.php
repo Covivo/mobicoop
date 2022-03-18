@@ -78,10 +78,10 @@ class ScammerManager
 
         $scammerReported = $this->userRepository->findOneBy(['email' => $scammer->getEmail()]);
 
-        $scammersVictims = $this->getScammersVictims($scammerReported);
+        $scammerVictims = $this->getScammerVictims($scammerReported);
 
         //  we dispatch the event associated
-        $event = new ScammerAddedEvent($scammer, $scammersVictims);
+        $event = new ScammerAddedEvent($scammer, $scammerVictims);
         $this->eventDispatcher->dispatch($event, ScammerAddedEvent::NAME);
 
         // we delete the user reported
@@ -105,10 +105,8 @@ class ScammerManager
     /**
      * Get all potential victims of the scammer.
      */
-    public function getScammersVictims(User $scammerReported)
+    public function getScammerVictims(User $scammerReported)
     {
-        var_dump($this->userRepository->getUsersInContactWithCurrentUser($scammerReported));
-
         return $this->userRepository->getUsersInContactWithCurrentUser($scammerReported);
     }
 }

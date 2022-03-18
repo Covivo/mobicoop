@@ -51,13 +51,11 @@ class ScammerSubscriber implements EventSubscriberInterface
     public function onScammerAdded(ScammerAddedEvent $event)
     {
         $scammer = $event->getScammer();
+        $scammerVictims = $event->getScammersVictims();
 
         // get all users with an ask in common with the scammer
-        $recipients = [];
-        $recipient = $this->userRepository->find(12);
-        // foreach ($recipients as $recipient) {
-        // we must notify the creator of the community
-        $this->notificationManager->notifies(ScammerAddedEvent::NAME, $recipient, $scammer);
-        // }
+        foreach ($scammerVictims as $scammerVictim) {
+            $this->notificationManager->notifies(ScammerAddedEvent::NAME, $this->userRepository->find($scammerVictim['id']), $scammer);
+        }
     }
 }

@@ -36,14 +36,21 @@ class ScammerAddedEvent extends Event
     public const NAME = 'scammer_reported';
 
     protected $scammer;
+    protected $scammerVictims;
 
-    public function __construct(Scammer $scammer)
+    public function __construct(Scammer $scammer, $scammerVictims)
     {
         $this->scammer = $scammer;
+        $this->scammerVictims = $scammerVictims;
     }
 
     public function getScammer()
     {
         return $this->scammer;
+    }
+
+    public function getScammerVictims()
+    {
+        return $this->scammerVictims;
     }
 }
