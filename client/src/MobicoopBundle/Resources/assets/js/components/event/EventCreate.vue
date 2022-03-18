@@ -16,7 +16,7 @@
       </v-btn>
     </v-snackbar>
     <v-container>
-      <v-row 
+      <v-row
         justify="center"
       >
         <v-col
@@ -71,11 +71,10 @@
           </v-row>
           <v-row justify="center">
             <v-col cols="6">
-              <GeoComplete 
-                :url="geoSearchUrl"
-                :token="user ? user.token : ''"
+              <geocomplete
+                :uri="geoSearchUrl"
+                chip
                 :label="$t('form.address.label')"
-                :prioritize-relaypoints="prioritizeRelaypoints"
                 @address-selected="addressSelected"
               />
             </v-col>
@@ -269,7 +268,7 @@
                 inset
               >
                 <template v-slot:label>
-                  {{ $t('form.private.label') }} 
+                  {{ $t('form.private.label') }}
                   <v-tooltip
                     color="info"
                     right
@@ -363,7 +362,7 @@
 <script>
 
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/event/EventCreate/";
-import GeoComplete from "@components/utilities/GeoComplete";
+import Geocomplete from "@components/utilities/geography/Geocomplete";
 import moment from "moment";
 import maxios from "@utils/maxios";
 
@@ -377,7 +376,7 @@ export default {
     },
   },
   components: {
-    GeoComplete
+    Geocomplete
   },
   props:{
     user: {
@@ -519,7 +518,7 @@ export default {
         if (this.endTime) newEvent.append("endTime", this.endTime);
         if (this.urlEvent) newEvent.append("urlEvent", this.urlEvent);
 
-        maxios 
+        maxios
           .post(this.$t('buttons.create.route'), newEvent, {
             headers:{
               'content-type': 'multipart/form-data'
@@ -537,7 +536,7 @@ export default {
         this.snackError = this.$t('error.event.required')
         this.snackbar = true;
         this.loading = false;
-      }    
+      }
     },
     updateEndDatePickerMinDate () {
       // add one day because otherwise we get one day before the actual date
@@ -553,7 +552,7 @@ export default {
 
       if (!this.avatar) return;
       let reader = new FileReader();
-      
+
       reader.readAsDataURL(this.avatar);
       reader.onload = evt => {
         let self = this;
@@ -565,7 +564,7 @@ export default {
         }
         img.src = evt.target.result;
       }
-      
+
     }
   }
 }

@@ -19,48 +19,42 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace Mobicoop\Bundle\MobicoopBundle\User\Controller;
 
-use App\Carpool\Service\AskManager;
-use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\Message;
-use Mobicoop\Bundle\MobicoopBundle\Traits\HydraControllerTrait;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
-use Mobicoop\Bundle\MobicoopBundle\User\Service\UserManager;
-use Mobicoop\Bundle\MobicoopBundle\User\Service\UserProvider;
-use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
-use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\ProposalManager;
-use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
-use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
-use Mobicoop\Bundle\MobicoopBundle\Geography\Service\AddressManager;
-use Mobicoop\Bundle\MobicoopBundle\Image\Entity\Image;
-use Mobicoop\Bundle\MobicoopBundle\Image\Service\ImageManager;
-use Symfony\Component\HttpFoundation\Response;
 use DateTime;
-use Mobicoop\Bundle\MobicoopBundle\Communication\Service\InternalMessageManager;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AdManager;
+use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\Message;
 use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\Report;
+use Mobicoop\Bundle\MobicoopBundle\Communication\Service\InternalMessageManager;
 use Mobicoop\Bundle\MobicoopBundle\Community\Entity\Community;
-use Mobicoop\Bundle\MobicoopBundle\Community\Entity\CommunityUser;
 use Mobicoop\Bundle\MobicoopBundle\Community\Service\CommunityManager;
 use Mobicoop\Bundle\MobicoopBundle\Event\Service\EventManager;
+use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
+use Mobicoop\Bundle\MobicoopBundle\Geography\Service\AddressManager;
 use Mobicoop\Bundle\MobicoopBundle\I18n\Entity\Language;
 use Mobicoop\Bundle\MobicoopBundle\I18n\Service\LanguageManager;
+use Mobicoop\Bundle\MobicoopBundle\Image\Entity\Image;
+use Mobicoop\Bundle\MobicoopBundle\Image\Service\ImageManager;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\ValidationDocument;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Service\PaymentManager;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Contracts\Translation\TranslatorInterface;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use Symfony\Component\Security\Guard\GuardAuthenticatorHandler;
-use Mobicoop\Bundle\MobicoopBundle\User\Security\TokenAuthenticator;
+use Mobicoop\Bundle\MobicoopBundle\Traits\HydraControllerTrait;
+use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 use Mobicoop\Bundle\MobicoopBundle\User\Service\ReviewManager;
 use Mobicoop\Bundle\MobicoopBundle\User\Service\SsoManager;
+use Mobicoop\Bundle\MobicoopBundle\User\Service\UserManager;
+use Mobicoop\Bundle\MobicoopBundle\User\Service\UserProvider;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Controller class for user related actions.
@@ -96,10 +90,18 @@ class UserController extends AbstractController
     private $birthDateDisplay;
     private $eventManager;
 
-
     /**
-     * Constructor
-     * @param UserPasswordEncoderInterface $encoder
+     * Constructor.
+     *
+     * @param mixed $facebook_show
+     * @param mixed $facebook_appid
+     * @param mixed $required_home_address
+     * @param mixed $community_show
+     * @param mixed $signUpLinkInConnection
+     * @param mixed $signupRgpdInfos
+     * @param mixed $loginLinkInConnection
+     * @param mixed $solidaryDisplay
+     * @param mixed $required_community
      */
     public function __construct(
         UserPasswordEncoderInterface $encoder,
@@ -144,25 +146,23 @@ class UserController extends AbstractController
         $this->validationDocsAuthorizedExtensions = $validationDocsAuthorizedExtensions;
         $this->required_community = $required_community;
         $this->loginDelegate = $loginDelegate;
-        $this->fraudWarningDisplay= $fraudWarningDisplay;
+        $this->fraudWarningDisplay = $fraudWarningDisplay;
         $this->ageDisplay = $ageDisplay;
         $this->birthDateDisplay = $birthDateDisplay;
         $this->eventManager = $eventManager;
         $this->ssoManager = $ssoManager;
     }
 
-    /***********
-     * PROFILE *
-     ***********/
+    // PROFILE
 
     /**
      * User login.
      */
     public function login(Request $request, ?int $id = null, ?int $eventId = null, ?int $communityId = null, ?string $redirect = null)
     {
-        $errorMessage =   '';
-        if (in_array("bad-credentials-api", $request->getSession()->getFlashBag()->peek('notice'))) {
-            $errorMessage =  'Bad credentials.';
+        $errorMessage = '';
+        if (in_array('bad-credentials-api', $request->getSession()->getFlashBag()->peek('notice'))) {
+            $errorMessage = 'Bad credentials.';
             $request->getSession()->getFlashBag()->clear();
         }
         // if ($eventId !== null && $destination == null && $event==null) {
@@ -189,25 +189,25 @@ class UserController extends AbstractController
         }
 
         return $this->render('@Mobicoop/user/login.html.twig', [
-            "id" => $id,
-            "type" => $type,
-            "errorMessage"=>$errorMessage,
-            "facebook_show"=>($this->facebook_show==="true") ? true : false,
-            "facebook_appid"=>$this->facebook_appid,
-            "signUpLinkInConnection"=>$this->signUpLinkInConnection
+            'id' => $id,
+            'type' => $type,
+            'errorMessage' => $errorMessage,
+            'facebook_show' => ('true' === $this->facebook_show) ? true : false,
+            'facebook_appid' => $this->facebook_appid,
+            'signUpLinkInConnection' => $this->signUpLinkInConnection,
         ]);
     }
 
     public function loginSsoError(Request $request)
     {
         return $this->render('@Mobicoop/user/login.html.twig', [
-            "id" => null,
-            "type" => 'default',
-            "errorMessage"=>"errorSso",
-            "service"=>$request->get('service'),
-            "facebook_show"=>($this->facebook_show==="true") ? true : false,
-            "facebook_appid"=>$this->facebook_appid,
-            "signUpLinkInConnection"=>$this->signUpLinkInConnection
+            'id' => null,
+            'type' => 'default',
+            'errorMessage' => 'errorSso',
+            'service' => $request->get('service'),
+            'facebook_show' => ('true' === $this->facebook_show) ? true : false,
+            'facebook_appid' => $this->facebook_appid,
+            'signUpLinkInConnection' => $this->signUpLinkInConnection,
         ]);
     }
 
@@ -279,7 +279,7 @@ class UserController extends AbstractController
 
             // create user in database
             $data = $userManager->createUser($user);
-            $reponseofmanager= $this->handleManagerReturnValue($data);
+            $reponseofmanager = $this->handleManagerReturnValue($data);
             if (!empty($reponseofmanager)) {
                 return $reponseofmanager;
             }
@@ -303,18 +303,18 @@ class UserController extends AbstractController
         }
 
         return $this->render('@Mobicoop/user/signup.html.twig', [
-            "id" => $id,
-            "type" => $type,
+            'id' => $id,
+            'type' => $type,
             'error' => $error,
-            "facebook_show"=>($this->facebook_show==="true") ? true : false,
-            "facebook_appid"=>$this->facebook_appid,
-            "required_home_address"=>($this->required_home_address==="true") ? true : false,
-            "community_show"=>($this->community_show==="true") ? true : false,
-            "loginLinkInConnection"=>$this->loginLinkInConnection,
-            "signup_rgpd_infos"=>$this->signupRgpdInfos,
-            "required_community"=>($this->required_community==="true") ? true : false,
-            "newsSubscription" => $newsSubscription,
-            "birthDateDisplay" => $this->birthDateDisplay,
+            'facebook_show' => ('true' === $this->facebook_show) ? true : false,
+            'facebook_appid' => $this->facebook_appid,
+            'required_home_address' => ('true' === $this->required_home_address) ? true : false,
+            'community_show' => ('true' === $this->community_show) ? true : false,
+            'loginLinkInConnection' => $this->loginLinkInConnection,
+            'signup_rgpd_infos' => $this->signupRgpdInfos,
+            'required_community' => ('true' === $this->required_community) ? true : false,
+            'newsSubscription' => $newsSubscription,
+            'birthDateDisplay' => $this->birthDateDisplay,
         ]);
     }
 
@@ -323,15 +323,16 @@ class UserController extends AbstractController
     //  */
     public function userSignUpValidation($token, $email, Request $request)
     {
-        $errorMessage =   '';
-        if (in_array("bad-credentials-api", $request->getSession()->getFlashBag()->peek('notice'))) {
-            $errorMessage =  'Bad credentials.';
+        $errorMessage = '';
+        if (in_array('bad-credentials-api', $request->getSession()->getFlashBag()->peek('notice'))) {
+            $errorMessage = 'Bad credentials.';
             $request->getSession()->getFlashBag()->clear();
         }
+
         return $this->render('@Mobicoop/user/signupValidation.html.twig', [
-          'urlToken'=>$token,
-          'urlEmail'=>$email,
-          'error'=>$errorMessage
+            'urlToken' => $token,
+            'urlEmail' => $email,
+            'error' => $errorMessage,
         ]);
     }
 
@@ -340,50 +341,46 @@ class UserController extends AbstractController
     //  */
     public function userEmailValidation($token, $email, Request $request)
     {
-        $errorMessage =   '';
-        if (in_array("bad-credentials-api", $request->getSession()->getFlashBag()->peek('notice'))) {
-            $errorMessage =  'Bad credentials.';
+        $errorMessage = '';
+        if (in_array('bad-credentials-api', $request->getSession()->getFlashBag()->peek('notice'))) {
+            $errorMessage = 'Bad credentials.';
             $request->getSession()->getFlashBag()->clear();
         }
+
         return $this->render('@Mobicoop/user/signupValidation.html.twig', [
-          'emailValidation'=> true,
-          'urlToken'=>$token,
-          'urlEmail'=>$email,
-          'error'=>$errorMessage
+            'emailValidation' => true,
+            'urlToken' => $token,
+            'urlEmail' => $email,
+            'error' => $errorMessage,
         ]);
     }
 
     /**
-    * User registration email validation check -> we get here if there is an error with $credentials
-    * We redirect on  user_sign_up_validation, in message flash there is error
-    */
+     * User registration email validation check -> we get here if there is an error with $credentials
+     * We redirect on  user_sign_up_validation, in message flash there is error.
+     */
     public function userSignUpValidationCheck(Request $request)
     {
-        return $this->redirectToRoute('user_email_form_validation', array(
-        'token'=>$request->get('emailToken'),
-        'email'=>$request->get('email'),
-      ));
+        return $this->redirectToRoute('user_email_form_validation', [
+            'token' => $request->get('emailToken'),
+            'email' => $request->get('email'),
+        ]);
     }
 
     /**
-    * User registration email validation check -> we get here if there is an error with $credentials
-    * We redirect on  user_sign_up_validation, in message flash there is error
-    */
+     * User registration email validation check -> we get here if there is an error with $credentials
+     * We redirect on  user_sign_up_validation, in message flash there is error.
+     */
     public function userEmailValidationCheck(Request $request)
     {
-        return $this->redirectToRoute('user_sign_up_validation', array(
-        'token'=>$request->get('emailToken'),
-        'email'=>$request->get('email'),
-      ));
+        return $this->redirectToRoute('user_sign_up_validation', [
+            'token' => $request->get('emailToken'),
+            'email' => $request->get('email'),
+        ]);
     }
 
-
-
     /**
-     * Generate a phone token
-     *
-     * @param UserManager $userManager
-     * @return void
+     * Generate a phone token.
      */
     public function generatePhoneToken(UserManager $userManager)
     {
@@ -392,18 +389,15 @@ class UserController extends AbstractController
         ];
         $user = clone $userManager->getLoggedUser();
         $this->denyAccessUnlessGranted('update', $user);
-        $user = $userManager->generatePhoneToken($user) ?  $tokenError['state'] = false : $tokenError['state'] = true ;
+        $user = $userManager->generatePhoneToken($user) ? $tokenError['state'] = false : $tokenError['state'] = true;
 
         return new Response(json_encode($tokenError));
     }
 
     /**
-     * Phone validation
+     * Phone validation.
      *
      * @param $token
-     * @param UserManager $userManager
-     * @param Request $request
-     * @return void
      */
     public function userPhoneValidation(UserManager $userManager, Request $request)
     {
@@ -412,7 +406,7 @@ class UserController extends AbstractController
 
         $phoneError = [
             'state' => false,
-            'message' => "",
+            'message' => '',
         ];
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
@@ -434,15 +428,16 @@ class UserController extends AbstractController
             //     $phoneError["message"] = "snackBar.unknown";
             // }
 
-
             $response = $userManager->validPhoneByToken($data['token'], $data['telephone']);
+
             return new Response(json_encode($response));
         }
+
         return new Response(json_encode($phoneError));
     }
 
     /**
-     * Send a validation email
+     * Send a validation email.
      *
      * @return User
      */
@@ -450,31 +445,35 @@ class UserController extends AbstractController
     {
         $user = $this->userManager->getLoggedUser();
 
-        # Redirect to user_login
+        // Redirect to user_login
         if (!$user instanceof User) {
             return null;
         }
 
         $this->userManager->sendValidationEmail($user);
+
         return new response(json_encode('emailSend'));
     }
 
     /**
      * User profile update.
+     *
+     * @param mixed $tabDefault
+     * @param mixed $selectedTab
      */
     public function userProfileUpdate(UserManager $userManager, Request $request, ImageManager $imageManager, AddressManager $addressManager, TranslatorInterface $translator, $tabDefault, $selectedTab)
     {
         $user = $userManager->getLoggedUser();
-        
+
         // # Redirect to user_login
         if (!$user instanceof User) {
-            return $this->redirectToRoute("user_login");
+            return $this->redirectToRoute('user_login');
         }
 
         $this->denyAccessUnlessGranted('update', $userManager->getLoggedUser());
         // we clone the logged user to avoid getting logged out in case of error in the form
         $user = clone $userManager->getLoggedUser();
-        $reponseofmanager= $this->handleManagerReturnValue($user);
+        $reponseofmanager = $this->handleManagerReturnValue($user);
         if (!empty($reponseofmanager)) {
             return $reponseofmanager;
         }
@@ -499,16 +498,16 @@ class UserController extends AbstractController
             $user->setPhoneDisplay($data->get('phoneDisplay'));
             $user->setGivenName($data->get('givenName'));
             $user->setFamilyName($data->get('familyName'));
-            $user->setGender((int)($data->get('gender')));
+            $user->setGender((int) ($data->get('gender')));
             $user->setBirthDate(new \DateTime($data->get('birthDay')));
             // cause we use FormData to post data
-            $user->setNewsSubscription($data->get('newsSubscription') === "true" ? true : false);
+            $user->setNewsSubscription('true' === $data->get('newsSubscription') ? true : false);
 
             if ($user = $userManager->updateUser($user)) {
                 $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
                 $this->get('security.token_storage')->setToken($token);
                 $this->get('session')->set('_security_main', serialize($token));
-                
+
                 if ($file) {
                     // Post avatar of the user
                     $image = new Image();
@@ -525,21 +524,21 @@ class UserController extends AbstractController
         }
 
         //TODO - fix : Change this when use router vue
-        if ($tabDefault == 'mes-annonces') {
+        if ('mes-annonces' == $tabDefault) {
             $tabDefault = 'myAds';
         }
-        if ($tabDefault == 'mes-covoiturages-acceptes') {
+        if ('mes-covoiturages-acceptes' == $tabDefault) {
             $tabDefault = 'carpoolsAccepted';
         }
-        if ($tabDefault == 'mon-profil') {
+        if ('mon-profil' == $tabDefault) {
             $tabDefault = 'myProfile';
         }
-        if ($tabDefault == 'avis') {
+        if ('avis' == $tabDefault) {
             $tabDefault = 'reviews';
         }
 
         $tab = 'myAccount';
-        if ($selectedTab == 'mes-badges') {
+        if ('mes-badges' == $selectedTab) {
             $tab = 'myBadges';
         }
 
@@ -550,47 +549,49 @@ class UserController extends AbstractController
             'paymentElectronicActive' => $this->paymentElectronicActive,
             'validationDocsAuthorizedExtensions' => $this->validationDocsAuthorizedExtensions,
             'showReviews' => $user->isUserReviewsActive(),
-            "ageDisplay"=>$this->ageDisplay,
-            'selectedTab' => $tab
+            'ageDisplay' => $this->ageDisplay,
+            'selectedTab' => $tab,
         ]);
     }
 
     /**
      * Get user ads
-     * AJAX get
+     * AJAX get.
      */
     public function userAds(Request $request)
     {
         $user = $this->userManager->getLoggedUser();
 
-        # Redirect to user_login
+        // Redirect to user_login
         if (!$user instanceof User) {
             return null;
         }
+
         return new JsonResponse($this->userManager->getMyAds());
     }
 
     /**
      * Export list carpools for a user
-     * AJAX post
+     * AJAX post.
      */
     public function getExport(Request $request)
     {
         $user = $this->userManager->getLoggedUser();
 
-        # Redirect to user_login
+        // Redirect to user_login
         if (!$user instanceof User) {
-            return $this->redirectToRoute("user_login");
+            return $this->redirectToRoute('user_login');
         }
         if ($request->isMethod('POST')) {
             return new JsonResponse($this->userManager->getCarpoolExport($user)->getCarpoolExport());
         }
+
         return null;
     }
 
     /**
      * User avatar delete.
-     * Ajax
+     * Ajax.
      */
     public function userProfileAvatarDelete(ImageManager $imageManager, UserManager $userManager)
     {
@@ -605,13 +606,13 @@ class UserController extends AbstractController
 
     /**
      * User password update.
-     * Ajax
+     * Ajax.
      */
     public function userPasswordUpdate(UserManager $userManager, Request $request)
     {
         // we clone the logged user to avoid getting logged out in case of error in the form
         $user = clone $userManager->getLoggedUser();
-        $reponseofmanager= $this->handleManagerReturnValue($user);
+        $reponseofmanager = $this->handleManagerReturnValue($user);
         if (!empty($reponseofmanager)) {
             return $reponseofmanager;
         }
@@ -619,22 +620,23 @@ class UserController extends AbstractController
 
         $error = [
             'state' => false,
-            'message' => "",
+            'message' => '',
         ];
 
         if ($request->isMethod('POST')) {
-            $error["message"] = "Ok";
+            $error['message'] = 'Ok';
 
-            if ($request->request->get('password')!==null) {
+            if (null !== $request->request->get('password')) {
                 $user->setPassword($request->request->get('password'));
             } else {
-                $error["state"] = "true";
-                $error["message"] = "Empty password";
+                $error['state'] = 'true';
+                $error['message'] = 'Empty password';
+
                 return new Response(json_encode($error));
             }
 
             if ($user = $userManager->updateUserPassword($user)) {
-                $reponseofmanager= $this->handleManagerReturnValue($user);
+                $reponseofmanager = $this->handleManagerReturnValue($user);
                 if (!empty($reponseofmanager)) {
                     return $reponseofmanager;
                 }
@@ -642,16 +644,19 @@ class UserController extends AbstractController
                 $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
                 $this->get('security.token_storage')->setToken($token);
                 $this->get('session')->set('_security_main', serialize($token));
-                $error["message"] = "Ok";
+                $error['message'] = 'Ok';
+
                 return new Response(json_encode($error));
             }
-            $error["state"] = "true";
-            $error["message"] = "Update password failed";
+            $error['state'] = 'true';
+            $error['message'] = 'Update password failed';
+
             return new Response(json_encode($error));
         }
 
-        $error["state"] = "true";
-        $error["message"] = "Request failed";
+        $error['state'] = 'true';
+        $error['message'] = 'Request failed';
+
         return new Response(json_encode($error));
     }
 
@@ -661,26 +666,29 @@ class UserController extends AbstractController
     public function userPasswordRecovery()
     {
         $this->denyAccessUnlessGranted('login');
+
         return $this->render('@Mobicoop/user/passwordRecovery.html.twig', []);
     }
 
     /**
-     * Get the password of a user if it exists
-     * @param UserManager $userManager The class managing the user.
-     * @param Request $request The symfony request object.
+     * Get the password of a user if it exists.
+     *
+     * @param UserManager $userManager the class managing the user
+     * @param Request     $request     the symfony request object
      */
     public function userPasswordForRecovery(UserManager $userManager, Request $request)
     {
         $this->denyAccessUnlessGranted('login');
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
-            $response = $userManager->sendEmailRecoveryPassword($data["email"]);
+            $response = $userManager->sendEmailRecoveryPassword($data['email']);
+
             return new Response(json_encode($response));
         }
     }
 
     /**
-     * Reset password
+     * Reset password.
      */
     public function userPasswordReset(UserManager $userManager, string $token)
     {
@@ -688,18 +696,18 @@ class UserController extends AbstractController
 
         if (empty($pwdToken)) {
             return $this->redirectToRoute('user_password_forgot');
-        } else {
-            return $this->render(
-                '@Mobicoop/user/passwordRecoveryUpdate.html.twig',
-                [
-                        "pwdToken" => $token,
-                    ]
-            );
         }
+
+        return $this->render(
+            '@Mobicoop/user/passwordRecoveryUpdate.html.twig',
+            [
+                'pwdToken' => $token,
+            ]
+        );
     }
 
     /**
-     * Update the new Password after recovery
+     * Update the new Password after recovery.
      */
     public function userUpdatePasswordReset(UserManager $userManager, Request $request, string $token)
     {
@@ -712,6 +720,7 @@ class UserController extends AbstractController
                 $this->get('security.token_storage')->setToken($token);
                 $this->get('session')->set('_security_main', serialize($token));
                 $userManager->flushUserToken($user);
+
                 return new Response(json_encode($user));
             }
         }
@@ -721,12 +730,12 @@ class UserController extends AbstractController
 
     /**
      * Update Address of a user
-     * Ajax
+     * Ajax.
      */
     public function UserAddressUpdate(AddressManager $addressManager, Request $request, UserManager $userManager, TranslatorInterface $translator)
     {
         $user = clone $userManager->getLoggedUser();
-        $reponseofmanager= $this->handleManagerReturnValue($user);
+        $reponseofmanager = $this->handleManagerReturnValue($user);
         if (!empty($reponseofmanager)) {
             return $reponseofmanager;
         }
@@ -739,20 +748,20 @@ class UserController extends AbstractController
 
             $homeAddress = new Address();
 
-            $homeAddress->setAddressCountry($data['addressCountry']);
-            $homeAddress->setAddressLocality($data['addressLocality']);
-            $homeAddress->setCountryCode($data['countryCode']);
-            $homeAddress->setCounty($data['county']);
-            $homeAddress->setLatitude($data['latitude']);
-            $homeAddress->setLocalAdmin($data['localAdmin']);
-            $homeAddress->setLongitude($data['longitude']);
-            $homeAddress->setMacroCounty($data['macroCounty']);
-            $homeAddress->setMacroRegion($data['macroRegion']);
-            $homeAddress->setPostalCode($data['postalCode']);
-            $homeAddress->setRegion($data['region']);
-            $homeAddress->setStreet($data['street']);
-            $homeAddress->setStreetAddress($data['streetAddress']);
-            $homeAddress->setSubLocality($data['subLocality']);
+            $homeAddress->setAddressCountry(isset($data['addressCountry']) ? $data['addressCountry'] : null);
+            $homeAddress->setAddressLocality(isset($data['addressLocality']) ? $data['addressLocality'] : null);
+            $homeAddress->setCountryCode(isset($data['countryCode']) ? $data['countryCode'] : null);
+            $homeAddress->setCounty(isset($data['county']) ? $data['county'] : null);
+            $homeAddress->setLatitude(isset($data['latitude']) ? $data['latitude'] : null);
+            $homeAddress->setLocalAdmin(isset($data['localAdmin']) ? $data['localAdmin'] : null);
+            $homeAddress->setLongitude(isset($data['longitude']) ? $data['longitude'] : null);
+            $homeAddress->setMacroCounty(isset($data['macroCounty']) ? $data['macroCounty'] : null);
+            $homeAddress->setMacroRegion(isset($data['macroRegion']) ? $data['macroRegion'] : null);
+            $homeAddress->setPostalCode(isset($data['postalCode']) ? $data['postalCode'] : null);
+            $homeAddress->setRegion(isset($data['region']) ? $data['region'] : null);
+            $homeAddress->setStreet(isset($data['street']) ? $data['street'] : null);
+            $homeAddress->setStreetAddress(isset($data['streetAddress']) ? $data['streetAddress'] : null);
+            $homeAddress->setSubLocality(isset($data['subLocality']) ? $data['subLocality'] : null);
             $homeAddress->setName($translator->trans('homeAddress', [], 'signup'));
             $homeAddress->setHome(true);
 
@@ -764,19 +773,17 @@ class UserController extends AbstractController
                 $homeAddress->setId($data['id']);
                 $addressData = $addressManager->updateAddress($homeAddress);
             }
-            $reponseofmanager= $this->handleManagerReturnValue($addressData);
+            $reponseofmanager = $this->handleManagerReturnValue($addressData);
             if (!empty($reponseofmanager)) {
                 return $reponseofmanager;
             }
+
             return new Response(json_encode($addressData));
         }
     }
 
     /**
-     * Delete the user by anonymise
-     *
-     * @param UserManager $userManager
-     * @return void
+     * Delete the user by anonymise.
      */
     public function deleteUser(UserManager $userManager)
     {
@@ -786,13 +793,12 @@ class UserController extends AbstractController
         return $this->redirectToRoute('user_logout');
     }
 
-
-    /*************
-     * MESSAGES  *
-     *************/
+    // MESSAGES
 
     /**
-     * User mailbox
+     * User mailbox.
+     *
+     * @param null|mixed $askId
      */
     public function mailBox($askId = null, UserManager $userManager, Request $request, InternalMessageManager $messageManager)
     {
@@ -800,7 +806,7 @@ class UserController extends AbstractController
 
         // # Redirect to user_login
         if (!$user instanceof User) {
-            return $this->redirectToRoute("user_login");
+            return $this->redirectToRoute('user_login');
         }
 
         $this->denyAccessUnlessGranted('messages', $user);
@@ -809,15 +815,15 @@ class UserController extends AbstractController
         $idThreadDefault = null;
         $idMessage = null;
         $idRecipient = null;
-        $idAsk= $askId ? $askId : null;
-       
+        $idAsk = $askId ? $askId : null;
+
         if ($request->isMethod('POST')) {
             // if we ask for a specific thread then we return it
-            if ($data->has("idAsk")) {
-                $idAsk = $data->get("idAsk");
-            } elseif ($data->has("idMessage")) {
+            if ($data->has('idAsk')) {
+                $idAsk = $data->get('idAsk');
+            } elseif ($data->has('idMessage')) {
                 /** @var Message $message */
-                $message = $messageManager->getMessage($data->get("idMessage"));
+                $message = $messageManager->getMessage($data->get('idMessage'));
                 $reponseofmanager = $this->handleManagerReturnValue($message);
                 if (!empty($reponseofmanager)) {
                     return $reponseofmanager;
@@ -827,101 +833,107 @@ class UserController extends AbstractController
                 $idAsk = $message->getIdAsk();
             } else {
                 $newThread = [
-                    "carpool" => (int)$request->request->get('carpool'),
-                    "idRecipient" => (int)$request->request->get('idRecipient'),
-                    "shortFamilyName" => $request->request->get('shortFamilyName'),
-                    "givenName" => $request->request->get('givenName'),
-                    "avatar" => $request->request->get('avatar'),
-                    "origin" => $request->request->get('origin'),
-                    "destination" => $request->request->get('destination'),
-                    "askHistoryId" => $request->request->get('askHistoryId'),
-                    "frequency" => (int)$request->request->get('frequency'),
-                    "fromDate" => $request->request->get('fromDate'),
-                    "fromTime" => $request->request->get('fromTime'),
-                    "monCheck" => (bool)$request->request->get('monCheck'),
-                    "tueCheck" => (bool)$request->request->get('tueCheck'),
-                    "wedCheck" => (bool)$request->request->get('wedCheck'),
-                    "thuCheck" => (bool)$request->request->get('thuCheck'),
-                    "friCheck" => (bool)$request->request->get('friCheck'),
-                    "satCheck" => (bool)$request->request->get('satCheck'),
-                    "sunCheck" => (bool)$request->request->get('sunCheck'),
-                    "adId" => (int)$request->request->get('adIdResult'),
-                    "matchingId" => (int)$request->request->get('matchingId'),
-                    "proposalId" => (int)$request->request->get('proposalId'),
-                    "date" => $request->request->get('date'),
-                    "time" => $request->request->get('time'),
-                    "driver" => (bool)$request->request->get('driver'),
-                    "passenger" => (bool)$request->request->get('passenger'),
-                    "regular" => (bool)$request->request->get('regular')
+                    'carpool' => (int) $request->request->get('carpool'),
+                    'idRecipient' => (int) $request->request->get('idRecipient'),
+                    'shortFamilyName' => $request->request->get('shortFamilyName'),
+                    'givenName' => $request->request->get('givenName'),
+                    'avatar' => $request->request->get('avatar'),
+                    'origin' => $request->request->get('origin'),
+                    'destination' => $request->request->get('destination'),
+                    'askHistoryId' => $request->request->get('askHistoryId'),
+                    'frequency' => (int) $request->request->get('frequency'),
+                    'fromDate' => $request->request->get('fromDate'),
+                    'fromTime' => $request->request->get('fromTime'),
+                    'monCheck' => (bool) $request->request->get('monCheck'),
+                    'tueCheck' => (bool) $request->request->get('tueCheck'),
+                    'wedCheck' => (bool) $request->request->get('wedCheck'),
+                    'thuCheck' => (bool) $request->request->get('thuCheck'),
+                    'friCheck' => (bool) $request->request->get('friCheck'),
+                    'satCheck' => (bool) $request->request->get('satCheck'),
+                    'sunCheck' => (bool) $request->request->get('sunCheck'),
+                    'adId' => (int) $request->request->get('adIdResult'),
+                    'matchingId' => (int) $request->request->get('matchingId'),
+                    'proposalId' => (int) $request->request->get('proposalId'),
+                    'date' => $request->request->get('date'),
+                    'time' => $request->request->get('time'),
+                    'driver' => (bool) $request->request->get('driver'),
+                    'passenger' => (bool) $request->request->get('passenger'),
+                    'regular' => (bool) $request->request->get('regular'),
                 ];
                 $idThreadDefault = -1; // To preselect the new thread. Id is always -1 because it doesn't really exist yet
             }
         }
+
         return $this->render('@Mobicoop/user/messages.html.twig', [
-            "idUser"=>$user->getId(),
-            "emailUser"=>$user->getEmail(),
-            "unreadCarpoolMessages"=>$user->getUnreadCarpoolMessageNumber(),
-            "unreadDirectMessages"=>$user->getUnreadDirectMessageNumber(),
-            "unreadSolidaryMessages"=>$user->getUnreadSolidaryMessageNumber(),
-            "idThreadDefault"=>$idThreadDefault,
-            "idMessage" => $idMessage,
-            "idRecipient" => $idRecipient,
-            "idAsk" => $idAsk,
-            "newThread" => $newThread,
-            "solidaryDisplay" => $this->solidaryDisplay,
-            "fraudWarningDisplay" => $this->fraudWarningDisplay
+            'idUser' => $user->getId(),
+            'emailUser' => $user->getEmail(),
+            'unreadCarpoolMessages' => $user->getUnreadCarpoolMessageNumber(),
+            'unreadDirectMessages' => $user->getUnreadDirectMessageNumber(),
+            'unreadSolidaryMessages' => $user->getUnreadSolidaryMessageNumber(),
+            'idThreadDefault' => $idThreadDefault,
+            'idMessage' => $idMessage,
+            'idRecipient' => $idRecipient,
+            'idAsk' => $idAsk,
+            'newThread' => $newThread,
+            'solidaryDisplay' => $this->solidaryDisplay,
+            'fraudWarningDisplay' => $this->fraudWarningDisplay,
         ]);
     }
 
     /**
-     * Get direct messages threads
+     * Get direct messages threads.
      */
     public function userMessageDirectThreadsList(UserManager $userManager)
     {
         $user = $userManager->getLoggedUser();
         $this->denyAccessUnlessGranted('messages', $user);
         $threads = $userManager->getThreadsDirectMessages($user);
+
         return new Response(json_encode($threads));
     }
 
     /**
-     * Get carpool messages threads
+     * Get carpool messages threads.
      */
     public function userMessageCarpoolThreadsList(UserManager $userManager)
     {
         $user = $userManager->getLoggedUser();
         $this->denyAccessUnlessGranted('messages', $user);
         $threads = $userManager->getThreadsCarpoolMessages($user);
+
         return new Response(json_encode($threads));
     }
 
     /**
-     * Get solidary related messages threads
+     * Get solidary related messages threads.
      */
     public function userMessageSolidaryThreadsList(UserManager $userManager)
     {
         $user = $userManager->getLoggedUser();
         $this->denyAccessUnlessGranted('messages', $user);
         $threads = $userManager->getThreadsSolidaryMessages($user);
+
         return new Response(json_encode($threads));
     }
 
     /**
-     * Get direct messages threads
+     * Get direct messages threads.
+     *
+     * @param mixed $idMessage
      */
     public function userMessageThread($idMessage, InternalMessageManager $internalMessageManager, UserManager $userManager)
     {
         $user = $userManager->getLoggedUser();
         $this->denyAccessUnlessGranted('messages', $user);
         $completeThread = $internalMessageManager->getThread($idMessage, DataProvider::RETURN_JSON);
-        $response = str_replace("\\n", "<br />", json_encode($completeThread));
+        $response = str_replace('\\n', '<br />', json_encode($completeThread));
+
         return new Response($response);
     }
 
-
     /**
      * Get informations for Action Panel of the mailbox
-     * AJAX
+     * AJAX.
      */
     public function userMessagesActionsInfos(Request $request, AdManager $adManager, UserManager $userManager)
     {
@@ -935,20 +947,20 @@ class UserController extends AbstractController
                 $response = $adManager->getAdAsk($data['idAsk'], $user->getId());
 
                 $results = $response->getResults()[0];
-                $results["canUpdateAsk"] = $response->getCanUpdateAsk(); // Because it's not in result
-                $results["askStatus"] = $response->getAskStatus(); // Because it's not in result
+                $results['canUpdateAsk'] = $response->getCanUpdateAsk(); // Because it's not in result
+                $results['askStatus'] = $response->getAskStatus(); // Because it's not in result
 
                 return new JsonResponse($results);
             }
         }
+
         return new JsonResponse();
     }
-
 
     public function userMessageSend(UserManager $userManager, InternalMessageManager $internalMessageManager, Request $request)
     {
         $user = $userManager->getLoggedUser();
-        $reponseofmanager= $this->handleManagerReturnValue($user);
+        $reponseofmanager = $this->handleManagerReturnValue($user);
         if (!empty($reponseofmanager)) {
             return $reponseofmanager;
         }
@@ -958,7 +970,7 @@ class UserController extends AbstractController
             $data = json_decode($request->getContent(), true);
             // -1 : It's a false id for no direct message
             // -99 : It's a false id for no carpool message
-            $idThreadMessage = ($data['idThreadMessage']==-1 || $data['idThreadMessage']==-99) ? null : $data['idThreadMessage'];
+            $idThreadMessage = (-1 == $data['idThreadMessage'] || -99 == $data['idThreadMessage']) ? null : $data['idThreadMessage'];
             $idAsk = (isset($data['idAsk']) && !is_null($data['idAsk'])) ? $data['idAsk'] : null;
             $idAdToRespond = (isset($data['adIdToRespond']) && !is_null($data['adIdToRespond'])) ? $data['adIdToRespond'] : null;
             $idMatching = (isset($data['matchingId']) && !is_null($data['matchingId'])) ? $data['matchingId'] : null;
@@ -969,30 +981,30 @@ class UserController extends AbstractController
             $messageToSend = $internalMessageManager->createInternalMessage(
                 $user,
                 $idRecipient,
-                "",
+                '',
                 $text,
                 $idThreadMessage
             );
 
-            if ($idAsk!==null) {
+            if (null !== $idAsk) {
                 $messageToSend->setIdAsk($idAsk);
             }
 
-            if ($idAdToRespond !==null && $idMatching!==null && $idProposal !== null) {
+            if (null !== $idAdToRespond && null !== $idMatching && null !== $idProposal) {
                 $messageToSend->setIdAdToRespond($idAdToRespond);
                 $messageToSend->setIdProposal($idProposal);
                 $messageToSend->setIdMatching($idMatching);
             }
-            
+
             return new Response($internalMessageManager->sendInternalMessage($messageToSend, DataProvider::RETURN_JSON));
         }
-        return new Response(json_encode("Not a post"));
-    }
 
+        return new Response(json_encode('Not a post'));
+    }
 
     /**
      * Update and ask
-     * Ajax Request
+     * Ajax Request.
      */
     public function userMessageUpdateAsk(Request $request, AdManager $adManager, UserManager $userManager)
     {
@@ -1009,22 +1021,21 @@ class UserController extends AbstractController
 
             $schedule = [];
             if (!is_null($outwardSchedule) || !is_null($returnSchedule)) {
-
                 // It's a regular journey I need to build the schedule of this journey (structure of an Ad)
 
-                $days = ["mon","tue","wed","thu","fri","sat","sun"];
+                $days = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
                 foreach ($days as $day) {
-                    $currentOutwardTime = (!is_null($outwardSchedule)) ? $outwardSchedule[$day."Time"] : null;
-                    $currentReturnTime = (!is_null($returnSchedule)) ? $returnSchedule[$day."Time"] : null;
+                    $currentOutwardTime = (!is_null($outwardSchedule)) ? $outwardSchedule[$day.'Time'] : null;
+                    $currentReturnTime = (!is_null($returnSchedule)) ? $returnSchedule[$day.'Time'] : null;
 
                     // I need to know if there is already a section of the schedule with these times
                     $alreadyExists = false;
-                    if (count($schedule)>0) {
+                    if (count($schedule) > 0) {
                         foreach ($schedule as $key => $section) {
                             (isset($section['outwardTime']) && !is_null($section['outwardTime'])) ? $sectionOutwardTime = $section['outwardTime'] : $sectionOutwardTime = null;
                             (isset($section['returnTime']) && !is_null($section['returnTime'])) ? $sectionReturnTime = $section['returnTime'] : $sectionReturnTime = null;
 
-                            if ($sectionOutwardTime===$currentOutwardTime && $sectionReturnTime===$currentReturnTime) {
+                            if ($sectionOutwardTime === $currentOutwardTime && $sectionReturnTime === $currentReturnTime) {
                                 $alreadyExists = true;
                                 // It's exists so i update the current day on this section
                                 $schedule[$key][$day] = 1;
@@ -1035,15 +1046,15 @@ class UserController extends AbstractController
                     // It's a new section i need tu push it with the good day at 1
                     if (!$alreadyExists && (!is_null($currentOutwardTime) || !is_null($currentReturnTime))) {
                         $schedule[] = [
-                            "outwardTime" => $currentOutwardTime,
-                            "returnTime" => $currentReturnTime,
-                            "mon" => ($day=="mon") ? 1 : 0,
-                            "tue" => ($day=="tue") ? 1 : 0,
-                            "wed" => ($day=="wed") ? 1 : 0,
-                            "thu" => ($day=="thu") ? 1 : 0,
-                            "fri" => ($day=="fri") ? 1 : 0,
-                            "sat" => ($day=="sat") ? 1 : 0,
-                            "sun" => ($day=="sun") ? 1 : 0
+                            'outwardTime' => $currentOutwardTime,
+                            'returnTime' => $currentReturnTime,
+                            'mon' => ('mon' == $day) ? 1 : 0,
+                            'tue' => ('tue' == $day) ? 1 : 0,
+                            'wed' => ('wed' == $day) ? 1 : 0,
+                            'thu' => ('thu' == $day) ? 1 : 0,
+                            'fri' => ('fri' == $day) ? 1 : 0,
+                            'sat' => ('sat' == $day) ? 1 : 0,
+                            'sun' => ('sun' == $day) ? 1 : 0,
                         ];
                     }
                 }
@@ -1058,7 +1069,7 @@ class UserController extends AbstractController
             if (!is_null($outwardLimitDate)) {
                 $adToPost->setOutwardLimitDate(new \DateTime($outwardLimitDate));
             }
-            if (count($schedule)>0) {
+            if (count($schedule) > 0) {
                 $adToPost->setSchedule($schedule);
             } // Only regular
 
@@ -1067,12 +1078,12 @@ class UserController extends AbstractController
             return new JsonResponse($return);
         }
 
-        return new JsonResponse("Not a post");
+        return new JsonResponse('Not a post');
     }
 
     /**
      * Connect a user by his facebook credentials
-     * AJAX
+     * AJAX.
      */
     public function userFacebookConnect(UserManager $userManager, Request $request)
     {
@@ -1080,29 +1091,29 @@ class UserController extends AbstractController
             $data = json_decode($request->getContent(), true);
 
             // We get the user by his email
-            if (!empty($data["email"])) {
-                $user = $userManager->findByEmail($data["email"]);
-                if ($user && $user->getFacebookId()===$data["personalID"]) {
+            if (!empty($data['email'])) {
+                $user = $userManager->findByEmail($data['email']);
+                if ($user && $user->getFacebookId() === $data['personalID']) {
                     // Same Facebook ID in BDD that the one from the front component. We log the user.
                     $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
                     $this->get('security.token_storage')->setToken($token);
                     $this->get('session')->set('_security_main', serialize($token));
 
                     return new JsonResponse($user->getFacebookId());
-                } else {
-                    return new JsonResponse(['error'=>'userFBNotFound']);
                 }
-            } else {
-                return new JsonResponse(['error'=>'userFBNotFound']);
+
+                return new JsonResponse(['error' => 'userFBNotFound']);
             }
+
+            return new JsonResponse(['error' => 'userFBNotFound']);
         }
 
-        return new JsonResponse(['error'=>'errorCredentialsFacebook']);
+        return new JsonResponse(['error' => 'errorCredentialsFacebook']);
     }
 
     /**
      * Update a user alert
-     * AJAX
+     * AJAX.
      */
     public function updateAlert(UserManager $userManager, Request $request)
     {
@@ -1110,25 +1121,25 @@ class UserController extends AbstractController
             $user = $userManager->getLoggedUser();
             $data = json_decode($request->getContent(), true);
 
-            $responseUpdate = $userManager->updateAlert($user, $data["id"], $data["active"]);
+            $responseUpdate = $userManager->updateAlert($user, $data['id'], $data['active']);
+
             return new JsonResponse($responseUpdate);
         }
-        return new JsonResponse(['error'=>'errorUpdateAlert']);
+
+        return new JsonResponse(['error' => 'errorUpdateAlert']);
     }
 
     /**
      * User carpool settings update.
-     * Ajax
+     * Ajax.
      *
-     * @param UserManager $userManager
-     * @param Request $request
      * @return JsonResponse
      */
     public function userCarpoolSettingsUpdate(UserManager $userManager, Request $request)
     {
         // we clone the logged user to avoid getting logged out in case of error in the form
         $user = clone $userManager->getLoggedUser();
-        $reponseofmanager= $this->handleManagerReturnValue($user);
+        $reponseofmanager = $this->handleManagerReturnValue($user);
         if (!empty($reponseofmanager)) {
             return $reponseofmanager;
         }
@@ -1137,96 +1148,105 @@ class UserController extends AbstractController
         if ($request->isMethod('PUT')) {
             $data = json_decode($request->getContent(), true);
 
-            $user->setSmoke($data["smoke"]);
-            $user->setMusic($data["music"]);
-            $user->setMusicFavorites($data["musicFavorites"]);
-            $user->setChat($data["chat"]);
-            $user->setChatFavorites($data["chatFavorites"]);
+            $user->setSmoke($data['smoke']);
+            $user->setMusic($data['music']);
+            $user->setMusicFavorites($data['musicFavorites']);
+            $user->setChat($data['chat']);
+            $user->setChatFavorites($data['chatFavorites']);
 
             if ($response = $userManager->updateUser($user)) {
-                $reponseofmanager= $this->handleManagerReturnValue($response);
+                $reponseofmanager = $this->handleManagerReturnValue($response);
                 if (!empty($reponseofmanager)) {
                     return $reponseofmanager;
                 }
+
                 return new JsonResponse(
-                    ['message'=>'success'],
+                    ['message' => 'success'],
                     Response::HTTP_ACCEPTED
                 );
             }
+
             return new JsonResponse(
-                ["message" => "error"],
+                ['message' => 'error'],
                 Response::HTTP_BAD_REQUEST
             );
         }
+
         return new JsonResponse(
-            ['message'=>'error'],
+            ['message' => 'error'],
             Response::HTTP_METHOD_NOT_ALLOWED
         );
     }
 
     /**
      * Get all communities of a user
-     * AJAX
+     * AJAX.
      */
     public function userCommunities(Request $request, CommunityManager $communityManager)
     {
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
             $communities = $communityManager->getAllCommunityUser($data['userId']);
+
             return new JsonResponse($communities);
         }
-        return new JsonResponse(['error'=>'errorUpdateAlert']);
+
+        return new JsonResponse(['error' => 'errorUpdateAlert']);
     }
 
     /**
      * Check if an email is already registered by a user
-     * AJAX
+     * AJAX.
      */
     public function userCheckEmailExists(Request $request, UserManager $userManager)
     {
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
-            if (isset($data['email']) && $data['email']!=="") {
+            if (isset($data['email']) && '' !== $data['email']) {
                 return new JsonResponse($userManager->checkEmail($data['email']));
-            } else {
-                return new JsonResponse(['error'=>true, 'message'=>'empty email']);
             }
+
+            return new JsonResponse(['error' => true, 'message' => 'empty email']);
         }
-        return new JsonResponse(['error'=>true, 'message'=>'Only POST is allowed']);
+
+        return new JsonResponse(['error' => true, 'message' => 'Only POST is allowed']);
     }
 
     /**
      * Check if an email is already registered by a user
-     * AJAX
+     * AJAX.
      */
     public function userPhoneNumberValidity(Request $request, UserManager $userManager)
     {
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
-            if (isset($data['telephone']) && $data['telephone']!=="") {
+            if (isset($data['telephone']) && '' !== $data['telephone']) {
                 return new JsonResponse($userManager->checkPhoneNumberValidity($data['telephone']));
             }
-            return new JsonResponse(['error'=>true, 'message'=>'Empty phone']);
+
+            return new JsonResponse(['error' => true, 'message' => 'Empty phone']);
         }
-        return new JsonResponse(['error'=>true, 'message'=>'Only POST is allowed']);
+
+        return new JsonResponse(['error' => true, 'message' => 'Only POST is allowed']);
     }
 
     /**
-    * Unsubscribe email for a user
-    */
+     * Unsubscribe email for a user.
+     */
     public function userUnsubscribeFromEmail(UserManager $userManager, string $token)
     {
         $user = $userManager->unsubscribeUserFromEmail($token);
-        if ($user != null) {
+        if (null != $user) {
             return $this->render(
                 '@Mobicoop/default/index.html.twig',
                 [
                     'baseUri' => $_ENV['API_URI'],
                     'metaDescription' => 'Mobicoop',
-                    'unsubscribe' => json_encode($user->getUnsubscribeMessage())
+                    'unsubscribe' => json_encode($user->getUnsubscribeMessage()),
                 ]
             );
         }
+
         return $this->render(
             '@Mobicoop/default/index.html.twig',
             [
@@ -1238,7 +1258,7 @@ class UserController extends AbstractController
 
     /**
      * Get all communities owned by a user
-     * AJAX
+     * AJAX.
      */
     public function userOwnedCommunities(Request $request, CommunityManager $communityManager)
     {
@@ -1249,12 +1269,13 @@ class UserController extends AbstractController
                 return new JsonResponse($userOwnedCommunities);
             }
         }
+
         return new JsonResponse($userOwnedCommunities);
     }
 
     /**
      * Get all communities owned by a user
-     * AJAX
+     * AJAX.
      */
     public function userCreatedEvents(Request $request, EventManager $eventManager)
     {
@@ -1265,50 +1286,56 @@ class UserController extends AbstractController
                 return new JsonResponse($userCreatedEvents);
             }
         }
+
         return new JsonResponse($userCreatedEvents);
     }
 
     /**
      * Get the bank coordinates of a user
-     * AJAX
+     * AJAX.
      */
     public function getBankCoordinates(Request $request)
     {
         if ($request->isMethod('POST')) {
             return new JsonResponse($this->userManager->getBankCoordinates());
         }
+
         return new JsonResponse();
     }
 
     /**
      * Get the bank coordinates of a user
-     * AJAX
+     * AJAX.
      */
     public function addBankCoordinates(Request $request)
     {
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
+
             return new JsonResponse($this->paymentManager->addBankCoordinates($data['iban'], $data['bic'], $data['address']));
         }
+
         return new JsonResponse();
     }
-    
+
     /**
      * Get the bank coordinates of a user
-     * AJAX
+     * AJAX.
      */
     public function deleteBankCoordinates(Request $request)
     {
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
+
             return new JsonResponse($this->paymentManager->deleteBankCoordinates($data['bankAccountId']));
         }
+
         return new JsonResponse();
     }
 
     /**
      * Block or Unblock a User
-     * AJAX
+     * AJAX.
      */
     public function sendIdentityValidationDocument(Request $request)
     {
@@ -1316,54 +1343,56 @@ class UserController extends AbstractController
             if (!is_null($request->files->get('document'))) {
                 $document = new ValidationDocument();
                 $document->setFile($request->files->get('document'));
-                
+
                 return new JsonResponse($this->userManager->sendIdentityValidationDocument($document));
             }
         }
+
         return new JsonResponse();
     }
 
-
     /**
      * Block or Unblock a User
-     * AJAX
+     * AJAX.
      */
     public function blockUser(Request $request)
     {
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
+
             return new JsonResponse($this->userManager->blockUser($data['blockedUserId']));
         }
+
         return new JsonResponse();
     }
 
     /**
      * Return page after a SSO Login
-     * Url is something like /user/sso/login?state=PassMobilite&code=1
+     * Url is something like /user/sso/login?state=PassMobilite&code=1.
      */
     public function userReturnConnectSSO(Request $request)
     {
         $params = $this->ssoManager->guessSsoParameters($request->query->all());
 
         // We add the front url to the parameters
-        (isset($_SERVER['HTTPS'])) ? $params['baseSiteUri'] = 'https://'.$_SERVER['HTTP_HOST']  : $params['baseSiteUri'] = 'http://'.$_SERVER['HTTP_HOST'];
+        (isset($_SERVER['HTTPS'])) ? $params['baseSiteUri'] = 'https://'.$_SERVER['HTTP_HOST'] : $params['baseSiteUri'] = 'http://'.$_SERVER['HTTP_HOST'];
 
         // We add the service name
         $services = $this->userManager->getSsoServices();
         if (!is_null($services) && is_array($services)) {
             foreach ($services as $service) {
-                if ($service->getSsoProvider()==$params['ssoProvider']) {
+                if ($service->getSsoProvider() == $params['ssoProvider']) {
                     $params['ssoProviderName'] = $service->getService();
                 }
             }
         }
-        
+
         return $this->redirectToRoute('user_login_sso', $params);
     }
 
     /**
      * Login route with sso credentials
-     * Something like /user/sso/login/autolog?ssoId=1&ssoProvider=PassMobilite&baseSiteUri=http://localhost:8081
+     * Something like /user/sso/login/autolog?ssoId=1&ssoProvider=PassMobilite&baseSiteUri=http://localhost:8081.
      */
     public function userLoginSso(Request $request)
     {
@@ -1371,15 +1400,15 @@ class UserController extends AbstractController
     }
 
     /**
-     * Return page after a SSO Login
+     * Return page after a SSO Login.
      */
     public function userReturnLogoutSSO(Request $request)
     {
-        return new JsonResponse(["error"=>false,"message"=>"SSO Logout"]);
+        return new JsonResponse(['error' => false, 'message' => 'SSO Logout']);
     }
 
     /**
-     * Return the Sso connection services of the platform
+     * Return the Sso connection services of the platform.
      *
      * AJAX
      */
@@ -1388,41 +1417,46 @@ class UserController extends AbstractController
         if ($request->isMethod('POST')) {
             return new JsonResponse($this->userManager->getSsoServices());
         }
+
         return new JsonResponse();
     }
 
     /**
-     * Return the user profile summary
+     * Return the user profile summary.
      *
-     * @param Request $request
      * @return JsonResponse
      */
     public function userProfileSummary(Request $request)
     {
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
+
             return new JsonResponse($this->userManager->getProfileSummary($data['userId']));
         }
+
         return new JsonResponse();
     }
 
     /**
-     * Return the user public profile
+     * Return the user public profile.
      *
-     * @param Request $request
      * @return JsonResponse
      */
     public function userProfilePublic(Request $request)
     {
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
+
             return new JsonResponse($this->userManager->getProfilePublic($data['userId']));
         }
+
         return new JsonResponse();
     }
 
     /**
-     * Report a User
+     * Report a User.
+     *
+     * @param mixed $id
      */
     public function userReport($id, DataProvider $dataProvider, Request $request)
     {
@@ -1433,8 +1467,8 @@ class UserController extends AbstractController
 
             // Post the Report
             if (
-                isset($data['email']) && isset($data['text']) &&
-                $data['email'] !== '' && $data['text'] !== ''
+                isset($data['email'], $data['text'])
+                && '' !== $data['email'] && '' !== $data['text']
             ) {
                 $dataProvider->setClass(Report::class);
 
@@ -1450,14 +1484,12 @@ class UserController extends AbstractController
                 }
             }
         }
+
         return new JsonResponse(['success' => $success]);
     }
 
     /**
-     * Write a review about a User
-     *
-     * @param Request $request
-     * @return void
+     * Write a review about a User.
      */
     public function userReviewWrite(Request $request, ReviewManager $reviewManager)
     {
@@ -1465,89 +1497,83 @@ class UserController extends AbstractController
             $data = json_decode($request->getContent(), true);
 
             if (
-                isset($data['reviewerId']) && isset($data['reviewedId']) && isset($data['content']) &&
-                $data['reviewerId']!=="" && $data['reviewedId']!=="" && $data['content']!==""
+                isset($data['reviewerId'], $data['reviewedId'], $data['content'])
+                && '' !== $data['reviewerId'] && '' !== $data['reviewedId'] && '' !== $data['content']
             ) {
-                return new JsonResponse(["success"=>$reviewManager->createReview($data['reviewerId'], $data['reviewedId'], $data['content'])]);
+                return new JsonResponse(['success' => $reviewManager->createReview($data['reviewerId'], $data['reviewedId'], $data['content'])]);
             }
         }
-        return new JsonResponse(["success"=>false]);
+
+        return new JsonResponse(['success' => false]);
     }
 
     /**
-     * Get the Review Dashboard of a User
-     *
-     * @param Request $request
-     * @return void
+     * Get the Review Dashboard of a User.
      */
     public function userReviewDashboard(Request $request, ReviewManager $reviewManager)
     {
         if ($request->isMethod('POST')) {
             return new JsonResponse($reviewManager->reviewDashboard());
         }
+
         return new JsonResponse();
     }
 
     /**
-     * Update the User's Language
-     *
-     * @param Request $request
-     * @return void
+     * Update the User's Language.
      */
     public function userUpdateLanguage(Request $request)
     {
         if ($request->isMethod('POST') && $this->userManager->getLoggedUser()) {
             $user = $this->userManager->getLoggedUser();
             $data = json_decode($request->getContent(), true);
-           
-            $language = new Language;
+
+            $language = new Language();
             $language->setCode($data['language']);
 
             $user->setLanguage($language);
-            
+
             $this->userManager->updateUserLanguage($user);
-            return new JsonResponse(["success"=>true]);
+
+            return new JsonResponse(['success' => true]);
         }
+
         return new JsonResponse();
     }
 
     /**
-     * Update the User's Gamification prefs
-     *
-     * @param Request $request
-     * @return void
+     * Update the User's Gamification prefs.
      */
     public function userUpdateGamification(Request $request)
     {
         if ($request->isMethod('PUT') && $this->userManager->getLoggedUser()) {
             $user = $this->userManager->getLoggedUser();
             $data = json_decode($request->getContent(), true);
-            if (isset($data['gamification']) && $data['gamification'] !== '') {
+            if (isset($data['gamification']) && '' !== $data['gamification']) {
                 $user->setGamification($data['gamification']);
-                
+
                 $this->userManager->updateUser($user);
-            
-                return new JsonResponse(["success"=>true]);
+
+                return new JsonResponse(['success' => true]);
             }
         }
+
         return new JsonResponse();
     }
 
-    /**********
-     * ADMIN *
-     *********/
+    // ADMIN
     /**
-    * Login Admin.
-    */
+     * Login Admin.
+     */
     public function loginAdmin(Request $request)
     {
         if ($this->loginDelegate) {
             return $this->render('@Mobicoop/user/loginAdmin.html.twig', [
-                "email"=>$request->get('email'),
-                "delegate_email"=>$request->get('delegateEmail'),
+                'email' => $request->get('email'),
+                'delegate_email' => $request->get('delegateEmail'),
             ]);
-        } else {
-            throw new AccessDeniedException('Access Denied.');
         }
+
+        throw new AccessDeniedException('Access Denied.');
     }
 }

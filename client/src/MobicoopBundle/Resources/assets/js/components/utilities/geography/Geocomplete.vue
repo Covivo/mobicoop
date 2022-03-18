@@ -13,6 +13,7 @@
       :loading="loading"
       return-object
       :clearable="!chip"
+      :prepend-inner-icon="prependIcon"
       @change="change"
     >
       <template
@@ -165,9 +166,17 @@ export default {
       type: Boolean,
       default: false
     },
+    prependIcon:{
+      type: String,
+      default: null
+    },
     country: {
       type: String,
       default: 'FR'
+    },
+    showName: {
+      type: Boolean,
+      default: true
     },
     sort: {
       type: Array,
@@ -179,75 +188,50 @@ export default {
           "housenumber",
           "street",
           "venue",
+          "event"
         ];
       }
     },
-    colors: {
+    restrict: {
+      type: Array,
+      default: () => []
+    },
+    palette: {
       type: Object,
       default() {
         return {
+          nochip: "black",
           locality: {
-            "no-chip": "black",
-            chip: "indigo",
-            "chip-text": "indigo lighten-5",
-            icon: "indigo accent-2",
-            "icon-text": "white--text",
-            title: "indigo--text text--darken-3",
-            subtitle: "indigo--text text--lighten-1",
+            main: "indigo",
+            text: "white",
           },
           street: {
-            "no-chip": "black",
-            chip: "deep-purple",
-            "chip-text": "deep-purple lighten-5",
-            icon: "deep-purple accent-2",
-            "icon-text": "white--text",
-            title: "deep-purple--text text--darken-3",
-            subtitle: "deep-purple--text text--lighten-1",
+            main: "deep-purple",
+            text: "white",
           },
           housenumber: {
-            "no-chip": "black",
-            chip: "purple",
-            "chip-text": "purple lighten-5",
-            icon: "purple accent-2",
-            "icon-text": "white--text",
-            title: "purple--text text--darken-3",
-            subtitle: "purple--text text--lighten-1",
+            main: "purple",
+            text: "white",
           },
           venue: {
-            "no-chip": "black",
-            chip: "pink",
-            "chip-text": "pink lighten-5",
-            icon: "pink accent-2",
-            "icon-text": "white--text",
-            title: "pink--text text--darken-3",
-            subtitle: "pink--text text--lighten-1",
+            main: "pink",
+            text: "white",
           },
           other: {
-            "no-chip": "black",
-            chip: "teal",
-            "chip-text": "teal lighten-5",
-            icon: "teal accent-2",
-            "icon-text": "white--text",
-            title: "teal--text text--darken-3",
-            subtitle: "teal--text text--lighten-1",
+            main: "teal",
+            text: "white",
           },
           relaypoint: {
-            "no-chip": "black",
-            chip: "teal",
-            "chip-text": "teal lighten-5",
-            icon: "teal accent-2",
-            "icon-text": "white--text",
-            title: "teal--text text--darken-3",
-            subtitle: "teal--text text--lighten-1",
+            main: "teal",
+            text: "white",
           },
           user: {
-            "no-chip": "black",
-            chip: "teal",
-            "chip-text": "teal lighten-5",
-            icon: "teal accent-2",
-            "icon-text": "white--text",
-            title: "teal--text text--darken-3",
-            subtitle: "teal--text text--lighten-1",
+            main: "teal",
+            text: "white",
+          },
+          event: {
+            main: "teal",
+            text: "white",
           },
         };
       },
@@ -258,11 +242,86 @@ export default {
     search: null,
     items: [],
     selection: null,
-    loading: null,
-    restrict: []
+    loading: null
   }),
 
   computed: {
+    colors() {
+      return {
+        locality: {
+          "no-chip": this.palette.nochip,
+          chip: this.palette.locality.main,
+          "chip-text": this.palette.locality.main+" lighten-5",
+          icon: this.palette.locality.main+" accent-2",
+          "icon-text": this.palette.locality.text+"--text",
+          title: this.palette.locality.main+"--text text--darken-3",
+          subtitle: this.palette.locality.main+"--text text--lighten-1",
+        },
+        street: {
+          "no-chip": this.palette.nochip,
+          chip: this.palette.street.main,
+          "chip-text": this.palette.street.main+" lighten-5",
+          icon: this.palette.street.main+" accent-2",
+          "icon-text": this.palette.street.text+"--text",
+          title: this.palette.street.main+"--text text--darken-3",
+          subtitle: this.palette.street.main+"--text text--lighten-1",
+        },
+        housenumber: {
+          "no-chip": this.palette.nochip,
+          chip: this.palette.housenumber.main,
+          "chip-text": this.palette.housenumber.main+" lighten-5",
+          icon: this.palette.housenumber.main+" accent-2",
+          "icon-text": this.palette.housenumber.text+"--text",
+          title: this.palette.housenumber.main+"--text text--darken-3",
+          subtitle: this.palette.housenumber.main+"--text text--lighten-1",
+        },
+        venue: {
+          "no-chip": this.palette.nochip,
+          chip: this.palette.venue.main,
+          "chip-text": this.palette.venue.main+" lighten-5",
+          icon: this.palette.venue.main+" accent-2",
+          "icon-text": this.palette.venue.text+"--text",
+          title: this.palette.venue.main+"--text text--darken-3",
+          subtitle: this.palette.venue.main+"--text text--lighten-1",
+        },
+        other: {
+          "no-chip": this.palette.nochip,
+          chip: this.palette.other.main,
+          "chip-text": this.palette.other.main+" lighten-5",
+          icon: this.palette.other.main+" accent-2",
+          "icon-text": this.palette.other.text+"--text",
+          title: this.palette.other.main+"--text text--darken-3",
+          subtitle: this.palette.other.main+"--text text--lighten-1",
+        },
+        relaypoint: {
+          "no-chip": this.palette.nochip,
+          chip: this.palette.relaypoint.main,
+          "chip-text": this.palette.relaypoint.main+" lighten-5",
+          icon: this.palette.relaypoint.main+" accent-2",
+          "icon-text": this.palette.relaypoint.text+"--text",
+          title: this.palette.relaypoint.main+"--text text--darken-3",
+          subtitle: this.palette.relaypoint.main+"--text text--lighten-1",
+        },
+        user: {
+          "no-chip": this.palette.nochip,
+          chip: this.palette.user.main,
+          "chip-text": this.palette.user.main+" lighten-5",
+          icon: this.palette.user.main+" accent-2",
+          "icon-text": this.palette.user.text+"--text",
+          title: this.palette.user.main+"--text text--darken-3",
+          subtitle: this.palette.user.main+"--text text--lighten-1",
+        },
+        event: {
+          "no-chip": this.palette.nochip,
+          chip: this.palette.event.main,
+          "chip-text": this.palette.event.main+" lighten-5",
+          icon: this.palette.event.main+" accent-2",
+          "icon-text": this.palette.event.text+"--text",
+          title: this.palette.event.main+"--text text--darken-3",
+          subtitle: this.palette.event.main+"--text text--lighten-1",
+        },
+      };
+    },
     rules() {
       if (this.required) {
         return [
@@ -312,7 +371,7 @@ export default {
           "countryCode":this.address.countryCode,
           "lat":this.address.latitude,
           "lon":this.address.longitude,
-          "name":this.address.name,
+          "name":this.address.event ? this.address.event.name : this.address.name,
           "provider":this.address.providedBy,
           "distance":this.address.distance,
           "type":this.address.type,
@@ -378,9 +437,17 @@ export default {
         text += item.houseNumber + ", " + item.streetName + ", ";
         if (item.postalCode) text += item.postalCode + ", ";
       }
-      if (item.type == "venue" || item.type == "relaypoint" || item.type == "user") {
+      if (item.type == "venue" || item.type == "relaypoint" || item.type == "event") {
         text += item.name + ", ";
+        if (item.houseNumber) text += item.housenumber + ", ";
+        if (item.streetName) text += item.streetName + ", ";
         if (item.postalCode) text += item.postalCode + ", ";
+      }
+      if (item.type == "user") {
+        if (this.showName) text += item.name + ", ";
+        if (item.houseNumber) text += item.housenumber + ", ";
+        if (item.streetName) text += item.streetName + ", ";
+        if (this.showName && item.postalCode) text += item.postalCode + ", ";
       }
       text += item.locality;
       if (item.type == "locality" && item.regionCode !== null)
@@ -399,9 +466,17 @@ export default {
         text += item.houseNumber + ", " + item.streetName + ", ";
         if (item.postalCode) text += item.postalCode + ", ";
       }
-      if (item.type == "venue" || item.type == "relaypoint" || item.type == "user") {
+      if (item.type == "venue" || item.type == "relaypoint" || item.type == "event") {
         text += item.name + ", ";
+        if (item.houseNumber) text += item.housenumber + ", ";
+        if (item.streetName) text += item.streetName + ", ";
         if (item.postalCode) text += item.postalCode + ", ";
+      }
+      if (item.type == "user") {
+        if (this.showName) text += item.name + ", ";
+        if (item.houseNumber) text += item.housenumber + ", ";
+        if (item.streetName) text += item.streetName + ", ";
+        if (this.showName && item.postalCode) text += item.postalCode + ", ";
       }
       text += item.locality;
       return text;
@@ -423,6 +498,7 @@ export default {
       case "venue" : return "mdi-map-marker";
       case "relaypoint" : return "mdi-parking";
       case "user" : return "mdi-home-heart";
+      case "event" : return "mdi-stadium-variant";
       }
       return "mdi-earth";
     },
@@ -482,7 +558,7 @@ export default {
     },
     clearSelection() {
       this.selection = null;
-      this.clearPropositions();
+      this.change();
     },
     setItems(items) {
       if (this.restrict.length == 0) {

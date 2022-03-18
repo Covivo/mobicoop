@@ -22,7 +22,7 @@
                 lg="3"
                 class="ma-0"
               >
-                <GeoComplete
+                <!-- <GeoComplete
                   id="from"
                   :url="geoSearchUrl"
                   :label="labelOrigin"
@@ -34,6 +34,14 @@
                   :prepend-icon="prependIconOrigin"
                   :prioritize-relaypoints="prioritizeRelaypoints"
                   @address-selected="originSelected"
+                /> -->
+                <geocomplete
+                  :uri="geoSearchUrl"
+                  :chip="false"
+                  :label="labelOrigin"
+                  required
+                  :prepend-icon="prependIconOrigin"
+                  @address-selected="originSelected"
                 />
               </v-col>
               <v-col
@@ -41,7 +49,7 @@
                 lg="3"
                 class="ma-0"
               >
-                <GeoComplete
+                <!-- <GeoComplete
                   id="to"
                   :url="geoSearchUrl"
                   :label="labelDestination"
@@ -52,6 +60,14 @@
                   :required-error="requiredErrorDestination"
                   :prepend-icon="prependIconDestination"
                   :prioritize-relaypoints="prioritizeRelaypoints"
+                  @address-selected="destinationSelected"
+                /> -->
+                <geocomplete
+                  :uri="geoSearchUrl"
+                  :chip="false"
+                  :label="labelDestination"
+                  required
+                  :prepend-icon="prependIconDestination"
                   @address-selected="destinationSelected"
                 />
               </v-col>
@@ -125,7 +141,7 @@
                   @click="search"
                 >
                   <v-icon>mdi-magnify</v-icon>
-                </v-btn>                
+                </v-btn>
               </v-col>
             </v-row>
           </v-form>
@@ -137,7 +153,8 @@
 
 <script>
 import moment from "moment";
-import GeoComplete from "@components/utilities/GeoComplete";
+// import GeoComplete from "@components/utilities/GeoComplete";
+import Geocomplete from "@components/utilities/geography/Geocomplete";
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/carpool/search/SearchJourney/";
 
 export default {
@@ -150,7 +167,7 @@ export default {
     },
   },
   components: {
-    GeoComplete
+    Geocomplete
   },
   props: {
     geoSearchUrl: {
@@ -164,7 +181,7 @@ export default {
     initRegular: {
       type: Boolean,
       default: true
-    }, 
+    },
     punctualDateOptional: {
       type: Boolean,
       default: false

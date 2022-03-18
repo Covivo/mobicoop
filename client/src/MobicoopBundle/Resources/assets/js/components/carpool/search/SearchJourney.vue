@@ -54,26 +54,12 @@
           cols="12"
           md="5"
         >
-          <!-- <GeoComplete
-            v-show="showOrigin"
-            id="from"
-            alternative-label="origin"
-            :url="geoSearchUrl"
-            :label="labelOrigin"
-            :token="user ? user.token : ''"
-            required
-            :show-required="showRequired"
-            :required-error="requiredErrorOrigin"
-            :init-address="customInitOrigin"
-            :prioritize-relaypoints="prioritizeRelaypoints"
-            @address-selected="originSelected"
-          /> -->
           <geocomplete
-            uri="http://localhost:8080/points"
-            :chip="false"
+            v-show="showOrigin"
+            :uri="geoSearchUrl"
+            chip
             :label="labelOrigin"
             required
-            :required-error="requiredErrorOrigin"
             :address="customInitOrigin"
             @address-selected="originSelected"
           />
@@ -111,26 +97,12 @@
           cols="12"
           md="5"
         >
-          <!-- <GeoComplete
-            v-show="showDestination"
-            id="to"
-            alternative-label="destination"
-            :url="geoSearchUrl"
-            :label="labelDestination"
-            :token="user ? user.token : ''"
-            required
-            :show-required="showRequired"
-            :required-error="requiredErrorDestination"
-            :init-address="customInitDestination"
-            :prioritize-relaypoints="prioritizeRelaypoints"
-            @address-selected="destinationSelected"
-          /> -->
           <geocomplete
-            uri="http://localhost:8080/points"
-            :chip="false"
+            v-show="showDestination"
+            :uri="geoSearchUrl"
+            chip
             :label="labelDestination"
             required
-            :required-error="requiredErrorOrigin"
             :address="customInitDestination"
             @address-selected="destinationSelected"
           />
@@ -235,7 +207,6 @@
 
 <script>
 import moment from "moment";
-// import GeoComplete from "@components/utilities/GeoComplete";
 import Geocomplete from "@components/utilities/geography/Geocomplete";
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/carpool/search/SearchJourney/";
 
@@ -249,7 +220,6 @@ export default {
     },
   },
   components: {
-    // GeoComplete,
     Geocomplete
   },
   props: {

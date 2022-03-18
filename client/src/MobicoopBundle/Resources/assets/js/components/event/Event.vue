@@ -32,7 +32,6 @@
           <event-infos
             :event="event"
             :url-alt-avatar="urlAltAvatar"
-            :title="title"
           />
           <!-- event buttons and map -->
           <v-row
@@ -152,9 +151,9 @@ import moment from "moment";
 
 export default {
   components: {
-    Report, 
-    EventInfos, 
-    Search, 
+    Report,
+    EventInfos,
+    Search,
     MMap,
     LoginOrRegisterFirst
   },
@@ -247,7 +246,7 @@ export default {
     }
   },
   computed: {
-    
+
   // Link the event in the adresse
   },
   created: function () {
@@ -297,7 +296,7 @@ export default {
         }
       }
     },
-    
+
     publish() {
       if (this.isLogged){
         let lParams = {
@@ -320,7 +319,7 @@ export default {
       if (this.event.address) {
         this.pointsToMap.push(this.buildPoint(this.event.address.latitude,this.event.address.longitude,this.event.name,"/images/cartography/pictos/destination.png",[36, 42]));
       }
-          
+
       // add all the waypoints of the event to display on the map
       // We draw straight lines between those points
       // if the user is already accepted or if the doesn't hide members or proposals to non members.
@@ -365,7 +364,7 @@ export default {
             proposal.searchLink +
             "'>" +
             this.$t("map.search.label") +
-            "</a></p>";        
+            "</a></p>";
 
         // And now the content of a tooltip (same as popup but without the button)
         currentProposal.title = currentProposal.desc;
@@ -414,7 +413,7 @@ export default {
       let now = moment();
       if (now > moment(this.event.toDate.date)) {
         this.eventPassed = true;
-      }  
+      }
     },
     loginOrRegister() {
       this.loginOrRegisterDialog = true;
