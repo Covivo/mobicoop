@@ -72,7 +72,7 @@ import ToolBox from "@components/utilities/ToolBox/ToolBox";
 
 
 // DYNAMICS LINES
-import DynamicsLines from "@components/utilities/DynamicsLines/DynamicsLines";
+import DynamicsLines from "@components/utilities/dynamicsLines/DynamicsLines";
 
 // UTILITIES
 import DayListChips from "@components/utilities/DayListChips";
