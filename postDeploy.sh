@@ -52,7 +52,7 @@ then
     if [ ! -f "$SSO_FILE" ]; then
         echo "{}" >> /var/www/$VERSION/$INSTANCE/api/config/user/sso.json
     fi
-    
+
     # check Modules files
     MODULES_FILE=/var/www/$VERSION/$INSTANCE/api/config/params/modules.json
     if [ ! -f "$MODULES_FILE" ]; then

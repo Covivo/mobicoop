@@ -20,18 +20,19 @@
             "bic": "BIC zenbakia bali izan behar da",
             "ibanRequired": "IBAN zenbakia baitezpadakoa da",
             "iban": "IBAN zenbakia bali izan behar da",
-            "cityRequired": "Hiria baitezpadakoa da",
-            "cpRequired": "Posta kodea baitezpadakoa da",
-            "wayRequired": "Zenbakia eta karrika baitezpadakoak dira"
+            "addressLocalityRequired": "Hiria baitezpadakoa da",
+            "postalCodeRequired": "Posta kodea baitezpadakoa da",
+            "streetRequired": "Zenbakia eta karrika baitezpadakoak dira"
         },
         "tooltip": {
             "iban": "Zure IBAN-a idatz ezazu, artekarik gabe"
         },
         "label": {
             "address": {
-                "city": "Hiria",
-                "cp": "Posta kodea",
-                "way": "Karrika eta zenbakia",
+                "addressLocality": "Hiria",
+                "houseNumber": "Zenbakia",
+                "postalCode": "Posta kodea",
+                "street": "Karrika",
                 "check": "Zure helbide osoa bila ezazu"
             },
             "bic": "BIC",

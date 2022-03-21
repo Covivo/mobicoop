@@ -101,7 +101,7 @@ then
     fi
     cd /var/www/$VERSION/$INSTANCE/public/externalCgu;
     wget https://www.mangopay.com/terms/PSP/PSP_MANGOPAY_FR.pdf
-    
+
     # Remove maintenance page
     rm /var/www/$VERSION/$INSTANCE/mobicoop/api/public/maintenance.enable
     rm /var/www/$VERSION/$INSTANCE/public/maintenance.enable
@@ -187,7 +187,7 @@ else
 
     # Crontab update
     python3 /var/www/$INSTANCE/$VERSION/scripts/updateCrontab.py -env $VERSION_MIGRATE
-    
+
     # External Cgu Mango
     EXTERNAL_CGU_DIRECTORY=/var/www/$INSTANCE/$VERSION/public/externalCgu
     if [ ! -d "$EXTERNAL_CGU_DIRECTORY" ]; then
@@ -196,7 +196,7 @@ else
     fi
     cd /var/www/$INSTANCE/$VERSION/public/externalCgu;
     wget https://www.mangopay.com/terms/PSP/PSP_MANGOPAY_FR.pdf
-    
+
     # Remove maintenance page
     rm /var/www/$INSTANCE/$VERSION/mobicoop/api/public/maintenance.enable
     rm /var/www/$INSTANCE/$VERSION/public/maintenance.enable

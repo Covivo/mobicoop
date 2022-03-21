@@ -231,20 +231,20 @@ class UserController extends AbstractController
 
             // add home address to user if it exists
             if (isset($data['address'])) {
-                $address->setAddressCountry($data['address']['addressCountry']);
-                $address->setAddressLocality($data['address']['addressLocality']);
-                $address->setCountryCode($data['address']['countryCode']);
-                $address->setCounty($data['address']['county']);
-                $address->setLatitude($data['address']['latitude']);
-                $address->setLocalAdmin($data['address']['localAdmin']);
-                $address->setLongitude($data['address']['longitude']);
-                $address->setMacroCounty($data['address']['macroCounty']);
-                $address->setMacroRegion($data['address']['macroRegion']);
-                $address->setPostalCode($data['address']['postalCode']);
-                $address->setRegion($data['address']['region']);
-                $address->setStreet($data['address']['street']);
-                $address->setStreetAddress($data['address']['streetAddress']);
-                $address->setSubLocality($data['address']['subLocality']);
+                $address->setAddressCountry(isset($data['address']['addressCountry']) ? $data['address']['addressCountry'] : null);
+                $address->setAddressLocality(isset($data['address']['addressLocality']) ? $data['address']['addressLocality'] : null);
+                $address->setCountryCode(isset($data['address']['countryCode']) ? $data['address']['countryCode'] : null);
+                $address->setCounty(isset($data['address']['county']) ? $data['address']['county'] : null);
+                $address->setLatitude(isset($data['address']['latitude']) ? $data['address']['latitude'] : null);
+                $address->setLocalAdmin(isset($data['address']['localAdmin']) ? $data['address']['localAdmin'] : null);
+                $address->setLongitude(isset($data['address']['longitude']) ? $data['address']['longitude'] : null);
+                $address->setMacroCounty(isset($data['address']['macroCounty']) ? $data['address']['macroCounty'] : null);
+                $address->setMacroRegion(isset($data['address']['macroRegion']) ? $data['address']['macroRegion'] : null);
+                $address->setPostalCode(isset($data['address']['postalCode']) ? $data['address']['postalCode'] : null);
+                $address->setRegion(isset($data['address']['region']) ? $data['address']['region'] : null);
+                $address->setStreet(isset($data['address']['street']) ? $data['address']['street'] : null);
+                $address->setStreetAddress(isset($data['address']['streetAddress']) ? $data['address']['streetAddress'] : null);
+                $address->setSubLocality(isset($data['address']['subLocality']) ? $data['address']['subLocality'] : null);
                 $address->setName($translator->trans('homeAddress', [], 'signup'));
                 $address->setHome(true);
                 $user->addAddress($address);

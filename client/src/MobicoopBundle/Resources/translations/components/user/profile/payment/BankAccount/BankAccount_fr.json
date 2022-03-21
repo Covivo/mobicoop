@@ -11,9 +11,10 @@
             "bic": "BIC",
             "address": {
                 "check":"Recherchez votre adresse complète",
-                "way":"Rue et numéro",
-                "cp":"Code postal",
-                "city":"Ville"
+                "houseNumber":"N°",
+                "street":"Rue",
+                "postalCode":"Code postal",
+                "addressLocality":"Ville"
             }
         },
         "tooltip": {
@@ -24,9 +25,9 @@
             "ibanRequired": "Le numéro IBAN est obligatoire",
             "bic": "Le numéro BIC doit être valide",
             "bicRequired": "Le numéro BIC est obligatoire",
-            "wayRequired": "Le numéro et la rue sont obligatoires",
-            "cpRequired": "Le code postale est obligatoire",
-            "cityRequired": "La ville est obligatoire"
+            "streetRequired": "Le numéro et la rue sont obligatoires",
+            "postalCodeRequired": "Le code postale est obligatoire",
+            "addressLocalityRequired": "La ville est obligatoire"
         }
     },
     "register": "Enregistrer",

@@ -337,8 +337,8 @@ export default {
         .flat();
     },
     selectionToAddress() {
-      if (this.selection)
-        return {
+      if (this.selection) {
+        const address = {
           "houseNumber":this.selection.value.houseNumber,
           "street":this.selection.value.streetName,
           "postalCode":this.selection.value.postalCode,
@@ -355,7 +355,13 @@ export default {
           "distance":this.selection.value.distance,
           "type":this.selection.type,
           "id":this.selection.value.id
+        };
+        if (this.selection.type == "event") {
+          // so nice...
+          address.event = {"id": this.selection.value.id, "name": this.selection.value.name}
         }
+        return address;
+      }
       return null;
     },
     addressToSelection() {
@@ -439,13 +445,13 @@ export default {
       }
       if (item.type == "venue" || item.type == "relaypoint" || item.type == "event") {
         text += item.name + ", ";
-        if (item.houseNumber) text += item.housenumber + ", ";
+        if (item.houseNumber) text += item.houseNumber + ", ";
         if (item.streetName) text += item.streetName + ", ";
         if (item.postalCode) text += item.postalCode + ", ";
       }
       if (item.type == "user") {
         if (this.showName) text += item.name + ", ";
-        if (item.houseNumber) text += item.housenumber + ", ";
+        if (item.houseNumber) text += item.houseNumber + ", ";
         if (item.streetName) text += item.streetName + ", ";
         if (this.showName && item.postalCode) text += item.postalCode + ", ";
       }
@@ -468,13 +474,13 @@ export default {
       }
       if (item.type == "venue" || item.type == "relaypoint" || item.type == "event") {
         text += item.name + ", ";
-        if (item.houseNumber) text += item.housenumber + ", ";
+        if (item.houseNumber) text += item.houseNumber + ", ";
         if (item.streetName) text += item.streetName + ", ";
         if (item.postalCode) text += item.postalCode + ", ";
       }
       if (item.type == "user") {
         if (this.showName) text += item.name + ", ";
-        if (item.houseNumber) text += item.housenumber + ", ";
+        if (item.houseNumber) text += item.houseNumber + ", ";
         if (item.streetName) text += item.streetName + ", ";
         if (this.showName && item.postalCode) text += item.postalCode + ", ";
       }
