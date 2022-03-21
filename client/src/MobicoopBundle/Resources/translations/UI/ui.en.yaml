@@ -69,5 +69,5 @@ rssfeeds:
   title: "RSS feeds"
 toolbox:
   title: Toolbox
-unknown:
-  title: Unknown
+dynamicslines:
+  title: "Dynamics lines"

@@ -177,12 +177,12 @@ class ArticleController extends AbstractController
     }
 
     /**
-     * Display of the UNKNOWN page.
+     * Display of the DYNAMICSLINES page.
      */
-    public function showUnknown()
+    public function showDynamicsLines()
     {
         // Not an 'article' page.
-        return $this->render('@Mobicoop/article/unknown.html.twig', []);
+        return $this->render('@Mobicoop/article/dynamicsLines.html.twig', []);
     }
 
     /**

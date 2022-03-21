@@ -71,8 +71,8 @@ import RelayPoints from "@components/relaypoints/RelayPoints";
 import ToolBox from "@components/utilities/ToolBox/ToolBox";
 
 
-// UNKNOWN
-import Unknown from "@components/utilities/Unknown/Unknown";
+// DYNAMICS LINES
+import DynamicsLines from "@components/utilities/DynamicsLines/DynamicsLines";
 
 // UTILITIES
 import DayListChips from "@components/utilities/DayListChips";
@@ -124,7 +124,7 @@ export default {
   PlatformGetWidget,
   RelayPoints,
   ToolBox,
-  Unknown,
+  DynamicsLines,
   DayListChips,
   Payment,
   PaymentPaid,

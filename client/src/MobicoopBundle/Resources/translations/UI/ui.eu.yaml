@@ -6,8 +6,8 @@ relaypoints:
   title: Geldialdi guneak
 toolbox:
   title: Tresna ontzia
-unknown:
-  title: Unknown
+dynamicslines:
+  title: "Dynamics lines"
 widget:
   title: Widget
 events:

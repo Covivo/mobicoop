@@ -6,8 +6,8 @@ relaypoints:
   title: Knooppunten
 toolbox:
   title: Toolbox
-unknown:
-  title: Unknown
+dynamicslines:
+  title: "Dynamics lines":
 widget:
   title: Widget
 events:

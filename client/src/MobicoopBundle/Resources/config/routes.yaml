@@ -1272,12 +1272,12 @@ ToolBox:
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showToolbox
 
 # display noName page
-unknown:
+dynamicsLines:
     path:
-        fr: /unknown
-        en: /unknown
-        nl: /unknown
-    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showUnknown
+        fr: /lignes-dynamiques
+        en: /dynamics-lines
+        nl: /dynamics-lines
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showDynamicsLines
 
 # display CommunityInfos page
 CommunityInfos:
