@@ -493,6 +493,12 @@ export default {
       if(this.mandatoryImage && !this.avatar){
         return "required";
       }
+      if(this.avatarWidth <= this.imageMinPxSize || this.avatarHeight <= this.imageMinPxSize){
+        return "imagePxSizeError";
+      }
+      if(this.avatar.size > this.imageMaxMbSize*1024*1024){
+        return "imageSizeError";
+      }
 
       return "validated";
     }
@@ -536,7 +542,15 @@ export default {
             else window.location.href = this.$t('redirect.route');
           });
       } else {
-        this.snackError = this.validFields == "required" ? this.$t('error.event.required') : this.$t('error.event.length');
+        if (this.validFields == "required"){
+          this.snackError = this.$t('error.event.required');
+        } else if (this.validFields == "tooLong") {
+          this.snackError = this.$t('error.event.length');
+        } else if(this.validFields == "imagePxSizeError") {
+          this.snackError = this.$t("form.avatar.pxSize", { size: this.imageMinPxSize, height: this.avatarHeight, width: this.avatarWidth });
+        } else if(this.validFields == "imageSizeError") {
+          this.snackError = this.$t("form.avatar.mbSize", { size: this.imageMaxMbSize });
+        }
         this.snackbar = true;
         this.loading = false;
       }    
