@@ -80,12 +80,13 @@ class ScammerManager
 
         $scammerVictims = $this->getScammerVictims($scammerReported);
 
-        //  we dispatch the event associated
-        $event = new ScammerAddedEvent($scammer, $scammerVictims);
-        $this->eventDispatcher->dispatch($event, ScammerAddedEvent::NAME);
-
+        if (count($scammerVictims)) {
+            //  we dispatch the event associated
+            $event = new ScammerAddedEvent($scammer, $scammerVictims);
+            $this->eventDispatcher->dispatch($event, ScammerAddedEvent::NAME);
+        }
         // we delete the user reported
-        // $this->userManager->deleteUser($scammerReported);
+        $this->userManager->deleteUser($scammerReported);
 
         return $scammer;
     }

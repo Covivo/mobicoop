@@ -49,6 +49,7 @@ use App\Image\Service\ImageManager;
 use App\Payment\Repository\PaymentProfileRepository;
 use App\Payment\Ressource\BankAccount;
 use App\Payment\Service\PaymentDataProvider;
+use App\Scammer\Repository\ScammerRepository;
 use App\Solidary\Entity\Operate;
 use App\Solidary\Entity\SolidaryAsk;
 use App\Solidary\Entity\SolidaryUser;
@@ -79,6 +80,7 @@ use App\User\Ressource\PhoneValidation;
 use App\User\Ressource\ProfileSummary;
 use App\User\Ressource\PublicProfile;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -123,6 +125,7 @@ class UserManager
     private $languageRepository;
     private $actionRepository;
     private $gamificationManager;
+    private $scammerRepository;
 
     // Default carpool settings
     private $chat;
@@ -187,6 +190,7 @@ class UserManager
         LanguageRepository $languageRepository,
         ActionRepository $actionRepository,
         GamificationManager $gamificationManager,
+        ScammerRepository $scammerRepository,
         string $phoneValidationRegex
     ) {
         $this->entityManager = $entityManager;
@@ -228,6 +232,7 @@ class UserManager
         $this->languageRepository = $languageRepository;
         $this->actionRepository = $actionRepository;
         $this->gamificationManager = $gamificationManager;
+        $this->scammerRepository = $scammerRepository;
         $this->phoneValidationRegex = $phoneValidationRegex;
     }
 
@@ -323,6 +328,9 @@ class UserManager
      */
     public function registerUser(User $user, bool $encodePassword = true)
     {
+        // we check if the user is on the scammer list
+        $this->checkIfScammer($user);
+
         $user = $this->prepareUser($user, $encodePassword);
 
         // persist the user
@@ -1984,6 +1992,13 @@ break;
         }
 
         return $phoneValidation;
+    }
+
+    public function checkIfScammer(User $user)
+    {
+        if ($this->scammerRepository->findOneBy(['email' => $user->getEmail()]) || $this->scammerRepository->findOneBy(['telephone' => $user->getTelephone()])) {
+            throw new Exception('', 1);
+        }
     }
 
     /**
