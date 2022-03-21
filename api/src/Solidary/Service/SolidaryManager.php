@@ -868,9 +868,9 @@ break;
         $ad->setUserId($userId ? $userId : $solidary->getSolidaryUser()->getUser()->getId());
 
         // The subject
-        $ad->setSubjectId($solidary->getSubject()->getId());
+        $ad->setSubjectId(!is_null($solidary->getSubject()) ? $solidary->getSubject()->getId() : null);
 
-        return $this->adManager->createAd($ad);
+        return $this->adManager->createAd($ad, true, true, false);
     }
 
     /**
@@ -1052,7 +1052,7 @@ break;
             }
         }
         // Proofs
-        //we check if the structure need proofs before validation if not we validate automaticaly the candidate
+        // we check if the structure need proofs before validation if not we validate automaticaly the candidate
         if (0 == count($solidaryUserStructure->getStructure()->getStructureProofs())) {
             $solidaryUserStructure->setStatus(true);
             $solidaryUserStructure->setAcceptedDate(new \DateTime('now'));
