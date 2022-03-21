@@ -45,7 +45,7 @@
       >
         <v-icon>mdi-close-circle-outline</v-icon>
       </v-btn>
-    </v-snackbar>    
+    </v-snackbar>
 
     <!-- Title and subtitle -->
     <v-row
@@ -258,7 +258,6 @@
                     :init-destination="destination"
                     :init-waypoints="initWaypoints"
                     :community-ids="communityIds"
-                    :prioritize-relaypoints="prioritizeRelaypoints"
                     @change="routeChanged"
                   />
                 </v-col>
@@ -506,7 +505,7 @@
                 </v-col>
               </v-row>
               <v-row justify="center">
-                <v-col 
+                <v-col
                   v-if="participationText"
                   cols="10"
                   align="center"
@@ -861,16 +860,12 @@ export default {
     eventId: {
       type: Number,
       default: null
-    },
-    prioritizeRelaypoints: {
-      type: Boolean,
-      default: false
     }
   },
   data() {
     return {
       locale: localStorage.getItem("X-LOCALE"),
-      distance: 0, 
+      distance: 0,
       duration: 0,
       outwardDate: this.dateFormated,
       outwardTime: this.initTime,
@@ -990,7 +985,7 @@ export default {
         this.schedules.forEach((s, index) => {
           if(s.returnTime !== null && s.outwardTime == null){
             outwardSchedulesValid = false;
-          }        
+          }
         });
         return outwardSchedulesValid;
       }
@@ -1024,7 +1019,7 @@ export default {
         this.schedules.forEach((s, index) => {
           if(s.returnTime !== null && s.outwardTime == null){
             outwardSchedulesValid = false;
-          }        
+          }
         });
         return outwardSchedulesValid;
       }
@@ -1200,8 +1195,8 @@ export default {
           anchor:anchor
         }
       }
-        
-      return point;      
+
+      return point;
     },
     buildUrl(route) {
       return `${this.baseUrl}/${route}`;
@@ -1297,7 +1292,7 @@ export default {
               maxios.post(this.$t("route.cleanOrphans"), {})
                 .then(res => {
                   window.location.href = this.$t('route.myAds');
-                });            
+                });
             }
           }
         })
@@ -1342,13 +1337,13 @@ export default {
       if (this.bike != null) postObject.bike = this.bike;
       if (this.backSeats != null) postObject.backSeats = this.backSeats;
       // price chosen by the driver (not handled yet for passengers)
-      
+
       postObject.outwardDriverPrice = 0;
       if (this.driver && this.price) {
         // for now we just handle the outward price
         postObject.outwardDriverPrice = this.solidaryExclusive ? 0 : this.price;
       }
-      
+
       postObject.priceKm = 0;
       if (this.pricePerKm){
         postObject.priceKm = this.solidaryExclusive ? 0 : this.pricePerKm;

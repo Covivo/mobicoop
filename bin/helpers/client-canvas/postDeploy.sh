@@ -200,11 +200,4 @@ else
     # Remove maintenance page
     rm /var/www/$INSTANCE/$VERSION/mobicoop/api/public/maintenance.enable
     rm /var/www/$INSTANCE/$VERSION/public/maintenance.enable
-
-    # Admin build
-    cd /var/www/$INSTANCE/$VERSION/mobicoop-platform/admin;
-    rm -Rf node_modules;
-    rm package-lock.json;
-    npm install;
-    npm run build;
 fi

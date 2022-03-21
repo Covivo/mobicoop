@@ -44,7 +44,7 @@
               :payment-electronic-active="paymentElectronicActive"
             />
           </v-tab-item>
-          
+
           <!-- PROFILE -->
           <v-tab
             class="text-left justify-start ml-2 mr-5 text-h6"
@@ -58,11 +58,11 @@
             lighten-5
           >
             <!-- HORIZONTAL SUB TABS -->
-            <v-tabs 
-              v-model="modelTabsH" 
+            <v-tabs
+              v-model="modelTabsH"
               grow
             >
-              <v-tab 
+              <v-tab
                 class="text-subtitle-1"
                 :href="`#myAccount`"
               >
@@ -114,7 +114,6 @@
                   :user="user"
                   :geo-search-url="geoSearchUrl"
                   :validation-docs-authorized-extensions="validationDocsAuthorizedExtensions"
-                  :prioritize-relaypoints="prioritizeRelaypoints"
                 />
               </v-tab-item>
               <v-tab
@@ -130,7 +129,7 @@
                 value="myBadges"
               >
                 <Badges />
-              </v-tab-item>                            
+              </v-tab-item>
             </v-tabs>
           </v-tab-item>
 
@@ -255,10 +254,6 @@ export default {
     ageDisplay: {
       type: Boolean,
       default: true
-    },
-    prioritizeRelaypoints: {
-      type: Boolean,
-      default: false
     }
   },
   data(){
@@ -285,7 +280,7 @@ export default {
           this.acceptedAds = res.data.accepted;
         })
         .catch(function (error) {
-        
+
         });
     },
     deleteAd() {

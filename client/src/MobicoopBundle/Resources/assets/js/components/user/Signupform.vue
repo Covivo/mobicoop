@@ -612,10 +612,6 @@ export default {
     ssoButtonDisplay:{
       type: Boolean,
       default:false
-    },
-    prioritizeRelaypoints: {
-      type: Boolean,
-      default: false
     }
   },
   data() {

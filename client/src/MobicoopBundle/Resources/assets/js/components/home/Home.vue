@@ -8,7 +8,7 @@
     <MSnackInfos
       :active="informativeMessageActive"
       :text="informativeMessageText"
-    />   
+    />
     <v-row v-if="displayVerifiedMessagePhone">
       <v-col class="pa-0">
         <v-snackbar
@@ -123,7 +123,7 @@
     </v-row>
 
     <!-- Title and subtitle -->
-   
+
     <v-row
       align="center"
       justify="center"
@@ -154,7 +154,7 @@
           :publish-button-always-active="publishButtonAlwaysActive"
           :image-swap="$t('urlImageSwap')"
           :horizontal="searchComponentHorizontal"
-          :prioritize-relaypoints="prioritizeRelaypoints"
+          :geo-complete-results-order="geoCompleteResultsOrder"
         />
       </v-col>
     </v-row>
@@ -273,9 +273,9 @@ export default {
       type: Boolean,
       default: false
     },
-    prioritizeRelaypoints: {
-      type: Boolean,
-      default: false
+    geoCompleteResultsOrder: {
+      type: Array,
+      default: null
     }
   },
   data () {

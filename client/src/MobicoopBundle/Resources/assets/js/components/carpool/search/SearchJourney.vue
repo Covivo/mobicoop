@@ -57,6 +57,7 @@
           <geocomplete
             v-show="showOrigin"
             :uri="geoSearchUrl"
+            :results-order="geoCompleteResultsOrder"
             chip
             :label="labelOrigin"
             required
@@ -100,6 +101,7 @@
           <geocomplete
             v-show="showDestination"
             :uri="geoSearchUrl"
+            :results-order="geoCompleteResultsOrder"
             chip
             :label="labelDestination"
             required
@@ -279,9 +281,9 @@ export default {
       type: Number,
       default: null
     },
-    prioritizeRelaypoints: {
-      type: Boolean,
-      default: false
+    geoCompleteResultsOrder: {
+      type: Array,
+      default: null
     }
   },
   data() {

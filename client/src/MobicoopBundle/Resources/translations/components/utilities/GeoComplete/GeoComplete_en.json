@@ -1,8 +1,0 @@
-{
-    "geoSearchUrl": "",
-    "required": "An address is required",
-    "relayPoints": "Relay points",
-    "events": "Events",
-    "origin": "Departure location",
-    "destination": "Destination"
-}

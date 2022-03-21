@@ -122,7 +122,6 @@ dev_deploy:
     paths:    # excluded : not cached
     - api/vendor/
     - client/vendor/
-    - admin/node_modules/
 
 
 
@@ -183,7 +182,6 @@ test_deploy:
     - client/vendor/
     - api/vendor/
     - node_modules/
-    - admin/node_modules/
     expire_in: 1 week
 
 
@@ -234,7 +232,6 @@ prod_test_deploy:
     - client/vendor/
     - api/vendor/
     - node_modules/
-    - admin/node_modules/
     expire_in: 1 week
 
 #
@@ -279,7 +276,6 @@ staging_deploy:
     - client/vendor/
     - api/vendor/
     - node_modules/
-    - admin/node_modules/
     expire_in: 1 week
 
 #
@@ -325,7 +321,6 @@ prod_deploy:
     - client/vendor/
     - api/vendor/
     - node_modules/
-    - admin/node_modules/
     expire_in: 1 week
 
 

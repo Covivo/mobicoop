@@ -178,19 +178,9 @@ export default {
       type: Boolean,
       default: true
     },
-    sort: {
+    resultsOrder: {
       type: Array,
-      default() {
-        return [
-          "user",
-          "relaypoint",
-          "locality",
-          "housenumber",
-          "street",
-          "venue",
-          "event"
-        ];
-      }
+      default: () => []
     },
     restrict: {
       type: Array,
@@ -246,6 +236,18 @@ export default {
   }),
 
   computed: {
+    sort() {
+      if (this.resultsOrder.length > 0) return this.resultsOrder;
+      return [
+        "user",
+        "relaypoint",
+        "locality",
+        "housenumber",
+        "street",
+        "venue",
+        "event"
+      ];
+    },
     colors() {
       return {
         locality: {

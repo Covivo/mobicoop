@@ -22,19 +22,6 @@
                 lg="3"
                 class="ma-0"
               >
-                <!-- <GeoComplete
-                  id="from"
-                  :url="geoSearchUrl"
-                  :label="labelOrigin"
-                  alternative-label="origin"
-                  :token="user ? user.token : ''"
-                  required
-                  :show-required="showRequired"
-                  :required-error="requiredErrorOrigin"
-                  :prepend-icon="prependIconOrigin"
-                  :prioritize-relaypoints="prioritizeRelaypoints"
-                  @address-selected="originSelected"
-                /> -->
                 <geocomplete
                   :uri="geoSearchUrl"
                   :chip="false"
@@ -49,19 +36,6 @@
                 lg="3"
                 class="ma-0"
               >
-                <!-- <GeoComplete
-                  id="to"
-                  :url="geoSearchUrl"
-                  :label="labelDestination"
-                  alternative-label="destination"
-                  :token="user ? user.token : ''"
-                  required
-                  :show-required="showRequired"
-                  :required-error="requiredErrorDestination"
-                  :prepend-icon="prependIconDestination"
-                  :prioritize-relaypoints="prioritizeRelaypoints"
-                  @address-selected="destinationSelected"
-                /> -->
                 <geocomplete
                   :uri="geoSearchUrl"
                   :chip="false"
@@ -153,7 +127,6 @@
 
 <script>
 import moment from "moment";
-// import GeoComplete from "@components/utilities/GeoComplete";
 import Geocomplete from "@components/utilities/geography/Geocomplete";
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/carpool/search/SearchJourney/";
 

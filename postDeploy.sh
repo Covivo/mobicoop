@@ -85,13 +85,6 @@ then
     cd /var/www/$VERSION/$INSTANCE/client/public/externalCgu;
     wget https://www.mangopay.com/terms/PSP/PSP_MANGOPAY_FR.pdf;
 
-    # Admin build
-    # cd /var/www/$VERSION/$INSTANCE/admin;
-    # rm -Rf node_modules;
-    # rm package-lock.json;
-    # npm install;
-    # npm run build;
-
     # clear cache
     cd /var/www/$VERSION/$INSTANCE/api;
     php bin/console cache:clear --env=$VERSION_MIGRATE;
@@ -185,12 +178,5 @@ else
     # Remove maintenance page
     rm /var/www/$INSTANCE/$VERSION/api/public/maintenance.enable
     rm /var/www/$INSTANCE/$VERSION/client/public/maintenance.enable
-
-    #Admin build
-    # cd /var/www/$INSTANCE/$VERSION/admin;
-    # rm -Rf node_modules;
-    # rm package-lock.json;
-    # npm install;
-    # npm run build;
 
 fi

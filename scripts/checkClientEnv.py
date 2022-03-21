@@ -26,10 +26,10 @@ Dotenv instance checker
 
 This script allows to check the (many) dotenv files of an instance of Mobicoop-platform.
 It must be launched from the root directory of the instance.
-It does the following : 
+It does the following :
 
     1. check that all bundle client .env keys are present in instance .env, if not it copies the missing keys with default values
-    2. identify the duplicate keys in local .env (instance, bundle api, bundle admin)
+    2. identify the duplicate keys in local .env (instance, bundle api)
     3. identify unnecessary local .env keys
 
 Parameters
@@ -40,7 +40,7 @@ Parameters
         The absolute path to the mobicoop platform (default : absolute path of *current_script_path*/../mobicoop-platform)
     -env <env> : str, optional
         The env to check : dev, test or prod (default : dev)
-    -dry : 
+    -dry :
         Show information only (no append file)
 """
 
@@ -73,7 +73,6 @@ if len(sys.argv)>1:
 
 client_path = platform_path+"/client/"
 api_path = platform_path+"/api/"
-admin_path = platform_path+"/admin/"
 
 
 def env_file_to_dict(file, check_duplicates = False):
@@ -90,7 +89,7 @@ def env_file_to_dict(file, check_duplicates = False):
 
     # read file line by line
     file_lines = dotenv.readlines()
-    
+
     for line in file_lines:
         #skip lines starting with '#'
         if line[0] == '#':
@@ -99,13 +98,13 @@ def env_file_to_dict(file, check_duplicates = False):
         index = line.find('=')
         if index > 0:
             key = line[:index]
-            if check_duplicates and key in my_dict.keys(): 
+            if check_duplicates and key in my_dict.keys():
                 print("Duplicate key \033[1;37;40m"+key+"\033[0;37;40m")
                 duplicates = duplicates + 1
             # find value, we strip if there's a comment on the same line
             value = line[index+1:]
             my_dict[key] = value.strip()
-    
+
     dotenv.close()
 
     if check_duplicates:
@@ -134,11 +133,6 @@ if not os.path.isfile(client_path+".env"):
     print ("Client .env not found in "+client_path+" !")
     exit()
 
-# find admin .env
-if not os.path.isfile(admin_path+".env.dist"):
-    print ("Admin .env.dist not found in "+admin_path+" !")
-    exit()
-
 # find instance .env file and append or create it
 if not os.path.isfile(".env"):
     print ("Instance .env not found !")
@@ -150,12 +144,9 @@ dict_api = env_file_to_dict(api_path+".env")
 # create client dictionary
 dict_client = env_file_to_dict(client_path+".env")
 
-# create admin dictionary
-dict_admin = env_file_to_dict(admin_path+".env.dist")
-
 # create instance dictionary
 dict_instance = env_file_to_dict(".env")
-    
+
 # open instance .env file for append
 dotenv_instance = open(".env", "a+")
 
@@ -191,11 +182,6 @@ print ("\033[1;34;40m")
 print ("Checking API .env."+env+".local")
 print ("\033[0;37;40m")
 dict_api_local = env_file_to_dict(api_path+".env."+env+".local",True)
-
-print ("\033[1;34;40m")
-print ("Checking admin .env")
-print ("\033[0;37;40m")
-dict_admin_local = env_file_to_dict(admin_path+".env",True)
 
 ################################
 # 3. identify unnecessary keys #
@@ -233,20 +219,5 @@ if len(dict_api_local)>0:
             unnecessary_keys = unnecessary_keys + 1
     if unnecessary_keys == 0:
         print ("API .env."+env+".local OK")
-else:
-    print ("Nothing to check")
-
-# admin
-print ("\033[1;34;40m")
-print ("Checking admin .env")
-print ("\033[0;37;40m")
-if len(dict_admin_local)>0:
-    unnecessary_keys = 0
-    for key in dict_admin_local:
-        if key not in dict_admin.keys():
-            print ("Key \033[1;37;40m"+key+"\033[0;37;40m not found in admin .env.dist !")
-            unnecessary_keys = unnecessary_keys + 1
-    if unnecessary_keys == 0:
-        print ("Admin .env OK")
 else:
     print ("Nothing to check")
