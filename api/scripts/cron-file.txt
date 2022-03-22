@@ -43,5 +43,5 @@
 # each day at 3am : import events from provider
 0 3 * * * $1 $2 app:events:import --env=$3
 
-# each day at 12am : send carpool ad renewal
+# each day at 12pm : send carpool ad renewal
 0 12 * * * $1 $2 app:carpool-ad-renewal --env=$3
