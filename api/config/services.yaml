@@ -576,6 +576,7 @@ services:
             $prioritizeCentroid: '%env(json:POINT_SEARCHER_PRIORITIZE_CENTROID)%'
             $prioritizeBox: '%env(json:POINT_SEARCHER_PRIORITIZE_BOX)%'
             $prioritizeRegion: '%env(string:POINT_SEARCHER_PRIORITIZE_REGION)%'
+            $exclusionTypes: '%env(json:POINT_SEARCHER_EXCLUSION_TYPES)%'
 
     App\Geography\Service\TerritoryManager:
         arguments:
