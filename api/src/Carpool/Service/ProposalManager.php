@@ -48,6 +48,7 @@ use App\Import\Entity\UserImport;
 use App\User\Entity\User;
 use App\Action\Event\ActionEvent;
 use App\Action\Repository\ActionRepository;
+use App\Carpool\Event\AdRenewalEvent;
 
 /**
  * Proposal manager service.
@@ -140,7 +141,7 @@ class ProposalManager
      */
     public function getFromExternalId(string $id)
     {
-        return $this->proposalRepository->findOneBy(['externalId'=>$id]);
+        return $this->proposalRepository->findOneBy(['externalId' => $id]);
     }
 
     /**
@@ -151,7 +152,7 @@ class ProposalManager
      */
     public function getLastDynamicUnfinished(User $user)
     {
-        if ($lastUnfinishedProposal = $this->proposalRepository->findBy(['user'=>$user,'dynamic'=>true,'finished'=>false], ['createdDate'=>'DESC'], 1)) {
+        if ($lastUnfinishedProposal = $this->proposalRepository->findBy(['user' => $user, 'dynamic' => true, 'finished' => false], ['createdDate' => 'DESC'], 1)) {
             return $lastUnfinishedProposal[0];
         }
         return null;
@@ -264,7 +265,7 @@ class ProposalManager
 
             //  we dispatch gamification event associated
             if (!$proposal->isPrivate() && $proposal->getType() != Proposal::TYPE_RETURN) {
-                $action = $this->actionRepository->findOneBy(['name'=>'carpool_ad_posted']);
+                $action = $this->actionRepository->findOneBy(['name' => 'carpool_ad_posted']);
                 $actionEvent = new ActionEvent($action, $proposal->getUser());
                 $actionEvent->setProposal($proposal);
                 $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);
@@ -379,14 +380,14 @@ class ProposalManager
                 $direction = $routes[0];
                 $direction->setAutoGeoJsonDetail();
                 $proposal->getCriteria()->setDirectionDriver($direction);
-                $proposal->getCriteria()->setMaxDetourDistance($direction->getDistance()*$this->proposalMatcher::getMaxDetourDistancePercent()/100);
-                $proposal->getCriteria()->setMaxDetourDuration($direction->getDuration()*$this->proposalMatcher::getMaxDetourDurationPercent()/100);
+                $proposal->getCriteria()->setMaxDetourDistance($direction->getDistance() * $this->proposalMatcher::getMaxDetourDistancePercent() / 100);
+                $proposal->getCriteria()->setMaxDetourDuration($direction->getDuration() * $this->proposalMatcher::getMaxDetourDurationPercent() / 100);
             }
         }
         if ($proposal->getCriteria()->isPassenger()) {
-            if ($routes && count($addresses)>2) {
+            if ($routes && count($addresses) > 2) {
                 // if the user is passenger we keep only the first and last points
-                if ($routes = $this->geoRouter->getRoutes([$addresses[0],$addresses[count($addresses)-1]], false, false, GeorouterInterface::RETURN_TYPE_OBJECT)) {
+                if ($routes = $this->geoRouter->getRoutes([$addresses[0], $addresses[count($addresses) - 1]], false, false, GeorouterInterface::RETURN_TYPE_OBJECT)) {
                     $direction = $routes[0];
                 }
             } elseif (!$routes) {
@@ -419,11 +420,11 @@ class ProposalManager
     private function setPrices(Proposal $proposal)
     {
         if ($proposal->getCriteria()->getDirectionDriver()) {
-            $proposal->getCriteria()->setDriverComputedPrice((string)((int)$proposal->getCriteria()->getDirectionDriver()->getDistance()*(float)$proposal->getCriteria()->getPriceKm()/1000));
+            $proposal->getCriteria()->setDriverComputedPrice((string)((int)$proposal->getCriteria()->getDirectionDriver()->getDistance() * (float)$proposal->getCriteria()->getPriceKm() / 1000));
             $proposal->getCriteria()->setDriverComputedRoundedPrice((string)$this->formatDataManager->roundPrice((float)$proposal->getCriteria()->getDriverComputedPrice(), $proposal->getCriteria()->getFrequency()));
         }
         if ($proposal->getCriteria()->getDirectionPassenger()) {
-            $proposal->getCriteria()->setPassengerComputedPrice((string)((int)$proposal->getCriteria()->getDirectionPassenger()->getDistance()*(float)$proposal->getCriteria()->getPriceKm()/1000));
+            $proposal->getCriteria()->setPassengerComputedPrice((string)((int)$proposal->getCriteria()->getDirectionPassenger()->getDistance() * (float)$proposal->getCriteria()->getPriceKm() / 1000));
             $proposal->getCriteria()->setPassengerComputedRoundedPrice((string)$this->formatDataManager->roundPrice((float)$proposal->getCriteria()->getPassengerComputedPrice(), $proposal->getCriteria()->getFrequency()));
         }
         return $proposal;
@@ -466,7 +467,7 @@ class ProposalManager
 
                     // Accepted
                     if ($ask->getStatus() == Ask::STATUS_ACCEPTED_AS_DRIVER or $ask->getStatus() == Ask::STATUS_ACCEPTED_AS_PASSENGER) {
-                        if ($askDateTime->getTimestamp() - $now->getTimestamp() > 24*60*60) {
+                        if ($askDateTime->getTimestamp() - $now->getTimestamp() > 24 * 60 * 60) {
                             $event = new DriverAskAdDeletedEvent($ask, $deleter->getId());
                             $this->eventDispatcher->dispatch(DriverAskAdDeletedEvent::NAME, $event);
                         } else {
@@ -490,7 +491,7 @@ class ProposalManager
                     // Accepted
                     if ($ask->getStatus() == Ask::STATUS_ACCEPTED_AS_DRIVER or $ask->getStatus() == Ask::STATUS_ACCEPTED_AS_PASSENGER) {
                         // If ad is in more than 24h
-                        if ($askDateTime->getTimestamp() - $now->getTimestamp() > 24*60*60) {
+                        if ($askDateTime->getTimestamp() - $now->getTimestamp() > 24 * 60 * 60) {
                             $event = new PassengerAskAdDeletedEvent($ask, $deleter->getId());
                             $this->eventDispatcher->dispatch(PassengerAskAdDeletedEvent::NAME, $event);
                         } else {
@@ -515,8 +516,8 @@ class ProposalManager
 
 
     /************
-    *   DYNAMIC *
-    *************/
+     *   DYNAMIC *
+     *************/
 
     /**
      * Check if a user has a pending dynamic ad.
@@ -526,7 +527,7 @@ class ProposalManager
      */
     public function hasPendingDynamic(User $user)
     {
-        return count($this->proposalRepository->findBy(['user'=>$user,'dynamic'=>true,'active'=>true]))>0;
+        return count($this->proposalRepository->findBy(['user' => $user, 'dynamic' => true, 'active' => true])) > 0;
     }
 
     /**
@@ -564,7 +565,7 @@ class ProposalManager
         $addresses = [$address];
         foreach ($proposal->getWaypoints() as $waypoint) {
             // we take all the waypoints but the first and the reached
-            if (!$waypoint->isReached() && $waypoint->getPosition()>0) {
+            if (!$waypoint->isReached() && $waypoint->getPosition() > 0) {
                 $addresses[] = $waypoint->getAddress();
             }
         }
@@ -590,9 +591,9 @@ class ProposalManager
             }
         }
         if ($proposal->getCriteria()->isPassenger()) {
-            if ($routes && count($addresses)>2) {
+            if ($routes && count($addresses) > 2) {
                 // if the user is passenger we keep only the first and last points
-                if ($routes = $this->geoRouter->getRoutes([$addresses[0],$addresses[count($addresses)-1]], false, false, GeorouterInterface::RETURN_TYPE_OBJECT)) {
+                if ($routes = $this->geoRouter->getRoutes([$addresses[0], $addresses[count($addresses) - 1]], false, false, GeorouterInterface::RETURN_TYPE_OBJECT)) {
                     $direction = $routes[0];
                 }
             } elseif (!$routes) {
@@ -622,8 +623,8 @@ class ProposalManager
 
 
     /************
-    *   MASS    *
-    *************/
+     *   MASS    *
+     *************/
 
     /**
      * Set the directions and default values for imported users proposals and criterias
@@ -666,36 +667,36 @@ class ProposalManager
     private function setDirectionsAndDefaultsForCriterias(array $criterias, int $batch)
     {
         gc_enable();
-        
+
         $addressesForRoutes = [];
         $owner = [];
         $ids = [];
 
-        $i=0;
+        $i = 0;
 
         $this->logger->info('setDirectionsAndDefaultsForCriterias | Start iterate at ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         $criteriasTreated = [];
-        foreach ($criterias as $key=>$criteria) {
+        foreach ($criterias as $key => $criteria) {
             if (!array_key_exists($criteria['cid'], $criteriasTreated)) {
                 $criteriasTreated[$criteria['cid']] = [
-                    'cid'=>$criteria['cid'],
-                    'driver'=>$criteria['driver'],
-                    'passenger'=>$criteria['passenger'],
-                    'addresses'=>[
+                    'cid' => $criteria['cid'],
+                    'driver' => $criteria['driver'],
+                    'passenger' => $criteria['passenger'],
+                    'addresses' => [
                         [
-                            'position'=>$criteria['position'],
-                            'destination'=>$criteria['destination'],
-                            'latitude'=>$criteria['latitude'],
-                            'longitude'=>$criteria['longitude']
+                            'position' => $criteria['position'],
+                            'destination' => $criteria['destination'],
+                            'latitude' => $criteria['latitude'],
+                            'longitude' => $criteria['longitude']
                         ]
                     ]
                 ];
             } else {
                 $element = [
-                    'position'=>$criteria['position'],
-                    'destination'=>$criteria['destination'],
-                    'latitude'=>$criteria['latitude'],
-                    'longitude'=>$criteria['longitude']
+                    'position' => $criteria['position'],
+                    'destination' => $criteria['destination'],
+                    'latitude' => $criteria['latitude'],
+                    'longitude' => $criteria['longitude']
                 ];
                 if (!in_array($element, $criteriasTreated[$criteria['cid']]['addresses'])) {
                     $criteriasTreated[$criteria['cid']]['addresses'][] = $element;
@@ -721,12 +722,12 @@ class ProposalManager
                     $addressesPassenger[] = $address;
                 }
             }
-            if (count($addressesDriver)>0) {
+            if (count($addressesDriver) > 0) {
                 $addressesForRoutes[$i] = [$addressesDriver];
                 $owner[$criteria['cid']]['driver'] = $i;
                 $i++;
             }
-            if (count($addressesPassenger)>0) {
+            if (count($addressesPassenger) > 0) {
                 $addressesForRoutes[$i] = [$addressesPassenger];
                 $owner[$criteria['cid']]['passenger'] = $i;
                 $i++;
@@ -741,7 +742,7 @@ class ProposalManager
         $criteriasTreated = null;
         unset($criteriasTreated);
 
-        if (count($ids)>0) {
+        if (count($ids) > 0) {
             $qCriteria = $this->entityManager->createQuery('SELECT c from App\Carpool\Entity\Criteria c WHERE c.id IN (' . implode(',', $ids) . ')');
 
             $iterableResult = $qCriteria->iterate();
@@ -754,8 +755,8 @@ class ProposalManager
                     $direction = $this->geoRouter->getRouter()->deserializeDirection($ownerRoutes[$owner[$criteria->getId()]['driver']][0]);
                     $direction->setSaveGeoJson(true);
                     $criteria->setDirectionDriver($direction);
-                    $criteria->setMaxDetourDistance($direction->getDistance()*$this->proposalMatcher::getMaxDetourDistancePercent()/100);
-                    $criteria->setMaxDetourDuration($direction->getDuration()*$this->proposalMatcher::getMaxDetourDurationPercent()/100);
+                    $criteria->setMaxDetourDistance($direction->getDistance() * $this->proposalMatcher::getMaxDetourDistancePercent() / 100);
+                    $criteria->setMaxDetourDuration($direction->getDuration() * $this->proposalMatcher::getMaxDetourDurationPercent() / 100);
                 }
                 if (isset($owner[$criteria->getId()]['passenger']) && isset($ownerRoutes[$owner[$criteria->getId()]['passenger']])) {
                     $direction = $this->geoRouter->getRouter()->deserializeDirection($ownerRoutes[$owner[$criteria->getId()]['passenger']][0]);
@@ -854,18 +855,18 @@ class ProposalManager
                         $criteria->setSunMaxTime($maxTime);
                     }
                     if ($criteria->getDirectionDriver()) {
-                        $criteria->setDriverComputedPrice((string)((int)$criteria->getDirectionDriver()->getDistance()*(float)$criteria->getPriceKm()/1000));
+                        $criteria->setDriverComputedPrice((string)((int)$criteria->getDirectionDriver()->getDistance() * (float)$criteria->getPriceKm() / 1000));
                         $criteria->setDriverComputedRoundedPrice((string)$this->formatDataManager->roundPrice((float)$criteria->getDriverComputedPrice(), $criteria->getFrequency()));
                     }
                     if ($criteria->getDirectionPassenger()) {
-                        $criteria->setPassengerComputedPrice((string)((int)$criteria->getDirectionPassenger()->getDistance()*(float)$criteria->getPriceKm()/1000));
+                        $criteria->setPassengerComputedPrice((string)((int)$criteria->getDirectionPassenger()->getDistance() * (float)$criteria->getPriceKm() / 1000));
                         $criteria->setPassengerComputedRoundedPrice((string)$this->formatDataManager->roundPrice((float)$criteria->getPassengerComputedPrice(), $criteria->getFrequency()));
                     }
                 }
-                    
+
                 // batch
                 $pool++;
-                if ($pool>=$batch) {
+                if ($pool >= $batch) {
                     $this->logger->info('Batch ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
                     $this->entityManager->flush();
                     $this->entityManager->clear();
@@ -876,7 +877,7 @@ class ProposalManager
 
             $this->logger->info('Stop treat rows ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
             // final flush for pending persists
-            if ($pool>0) {
+            if ($pool > 0) {
                 $this->logger->info('Start final flush ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
                 $this->entityManager->flush();
                 $this->logger->info('Start clear ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
@@ -1001,7 +1002,7 @@ class ProposalManager
 
         $fp = fopen($this->params['batchTemp'] . self::CHECK_OUTDATED_SEARCHES_RUNNING_FILE, 'w');
         fwrite($fp, '+');
-        
+
         if (is_null($numberOfDays)) {
             $numberOfDays = self::OUTDATED_SEARCHES_AFTER_DAYS;
         }
@@ -1017,8 +1018,8 @@ class ProposalManager
             PRIMARY KEY(id));
         "
         )->execute() &&
-        $this->entityManager->getConnection()->prepare(
-            "INSERT INTO outdated_proposals (id)
+            $this->entityManager->getConnection()->prepare(
+                "INSERT INTO outdated_proposals (id)
             (SELECT DISTINCT proposal.id FROM proposal
             LEFT JOIN matching m1 ON m1.proposal_offer_id = proposal.id
             LEFT JOIN matching m2 ON m2.proposal_request_id = proposal.id
@@ -1031,9 +1032,9 @@ class ProposalManager
             (m1.id IS NULL OR a1.id IS NULL) AND
             (m2.id IS NULL OR a2.id IS NULL));
             "
-        )->execute() &&
-        $this->entityManager->getConnection()->prepare("DELETE FROM proposal WHERE id in (select id from outdated_proposals);")->execute() &&
-        $this->entityManager->getConnection()->prepare("DROP TABLE outdated_proposals;")->execute();
+            )->execute() &&
+            $this->entityManager->getConnection()->prepare("DELETE FROM proposal WHERE id in (select id from outdated_proposals);")->execute() &&
+            $this->entityManager->getConnection()->prepare("DROP TABLE outdated_proposals;")->execute();
 
         fclose($fp);
         unlink($this->params['batchTemp'] . self::CHECK_OUTDATED_SEARCHES_RUNNING_FILE);
@@ -1049,7 +1050,7 @@ class ProposalManager
             $this->logger->info("Remove orphans already running | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
             return false;
         }
-        
+
         $this->logger->info("Start removing carpool orphans | " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         set_time_limit(self::REMOVE_ORPHANS_EXECUTION_LIMIT_IN_SECONDS);
         ini_set('memory_limit', self::REMOVE_ORPHANS_MEMORY_LIMIT_IN_MO . 'M');
@@ -1076,8 +1077,8 @@ class ProposalManager
                 PRIMARY KEY(id));
             "
             )->execute() &&
-        $this->entityManager->getConnection()->prepare(
-            "INSERT INTO outdated_criteria (id)
+            $this->entityManager->getConnection()->prepare(
+                "INSERT INTO outdated_criteria (id)
             (SELECT criteria.id FROM criteria 
             LEFT JOIN ask ON ask.criteria_id = criteria.id
             LEFT JOIN matching ON matching.criteria_id = criteria.id
@@ -1091,9 +1092,9 @@ class ProposalManager
             solidary_ask.criteria_id IS NULL AND
             solidary_matching.criteria_id IS NULL);
             "
-        )->execute() &&
-        $this->entityManager->getConnection()->prepare("DELETE FROM criteria WHERE id in (select id from outdated_criteria);")->execute() &&
-        $this->entityManager->getConnection()->prepare("DROP TABLE outdated_criteria;")->execute();
+            )->execute() &&
+            $this->entityManager->getConnection()->prepare("DELETE FROM criteria WHERE id in (select id from outdated_criteria);")->execute() &&
+            $this->entityManager->getConnection()->prepare("DROP TABLE outdated_criteria;")->execute();
     }
 
     private function removeOrphanAddresses()
@@ -1185,5 +1186,18 @@ class ProposalManager
             $this->entityManager->remove($orphanProposal);
         }
         $this->entityManager->flush();
+    }
+
+    public function sendCarpoolAdRenewal()
+    {
+        $proposals = $this->proposalRepository->findProposalsOutdated();
+
+        foreach ($proposals as $proposal) {
+
+            if ((Proposal::TYPE_ONE_WAY == $proposal->getType() || Proposal::TYPE_OUTWARD == $proposal->getType()) && $proposal->getCriteria()->getFrequency() == Criteria::FREQUENCY_REGULAR) {
+                $event = new AdRenewalEvent($proposal);
+                $this->eventDispatcher->dispatch(AdRenewalEvent::NAME, $event);
+            }
+        }
     }
 }
