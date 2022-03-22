@@ -74,7 +74,9 @@
             <v-col cols="6">
               <geocomplete
                 :uri="geoSearchUrl"
-                chip
+                :results-order="geoCompleteResultsOrder"
+                :palette="geoCompletePalette"
+                :chip="geoCompleteChip"
                 :label="$t('form.address.label')"
                 @address-selected="addressSelected"
               />
@@ -170,7 +172,19 @@ export default {
     imageMaxMbSize: {
       type: Number,
       default: null
-    }
+    },
+    geoCompleteResultsOrder: {
+      type: Array,
+      default: null
+    },
+    geoCompletePalette: {
+      type: Object,
+      default: () => ({})
+    },
+    geoCompleteChip: {
+      type: Boolean,
+      default: false
+    },
   },
   data () {
     return {

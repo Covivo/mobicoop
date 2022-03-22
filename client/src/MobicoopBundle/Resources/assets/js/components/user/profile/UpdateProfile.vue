@@ -444,7 +444,9 @@
           <v-col>
             <geocomplete
               :uri="geoSearchUrl"
-              chip
+              :results-order="geoCompleteResultsOrder"
+              :palette="geoCompletePalette"
+              :chip="geoCompleteChip"
               :show-name="false"
               :restrict="['locality']"
               :label="$t('homeTown.label')"
@@ -685,10 +687,18 @@ export default {
       type: Number,
       default: null
     },
-    prioritizeRelaypoints: {
+    geoCompleteResultsOrder: {
+      type: Array,
+      default: null
+    },
+    geoCompletePalette: {
+      type: Object,
+      default: () => ({})
+    },
+    geoCompleteChip: {
       type: Boolean,
       default: false
-    }
+    },
   },
   data() {
     return {

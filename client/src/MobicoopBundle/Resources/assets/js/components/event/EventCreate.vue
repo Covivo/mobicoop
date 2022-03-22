@@ -73,7 +73,9 @@
             <v-col cols="6">
               <geocomplete
                 :uri="geoSearchUrl"
-                chip
+                :results-order="geoCompleteResultsOrder"
+                :palette="geoCompletePalette"
+                :chip="geoCompleteChip"
                 :label="$t('form.address.label')"
                 @address-selected="addressSelected"
               />
@@ -410,6 +412,18 @@ export default {
     mandatoryImage: {
       type: Boolean,
       default: true
+    },
+    geoCompleteResultsOrder: {
+      type: Array,
+      default: null
+    },
+    geoCompletePalette: {
+      type: Object,
+      default: () => ({})
+    },
+    geoCompleteChip: {
+      type: Boolean,
+      default: false
     },
   },
   data () {

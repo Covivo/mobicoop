@@ -28,6 +28,8 @@
             :init-outward-date="defaultOutwardDate"
             :image-swap="imageSwap"
             :geo-complete-results-order="geoCompleteResultsOrder"
+            :geo-complete-palette="geoCompletePalette"
+            :geo-complete-chip="geoCompleteChip"
             @change="searchChanged"
           />
         </v-col>
@@ -90,6 +92,8 @@
           :punctual-date-optional="punctualDateOptional"
           :elevation="horizontalElevation"
           :geo-complete-results-order="geoCompleteResultsOrder"
+          :geo-complete-palette="geoCompletePalette"
+          :geo-complete-chip="geoCompleteChip"
           @change="searchChanged"
           @search="search"
         />
@@ -209,6 +213,14 @@ export default {
     geoCompleteResultsOrder: {
       type: Array,
       default: null
+    },
+    geoCompletePalette: {
+      type: Object,
+      default: () => ({})
+    },
+    geoCompleteChip: {
+      type: Boolean,
+      default: false
     },
     colorButton: {
       type:String,

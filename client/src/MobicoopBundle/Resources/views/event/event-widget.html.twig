@@ -6,6 +6,9 @@
     <event-widget
         :event="{{ event|json_encode }}"
         :geodata="{{ {'geocompleteuri':geoCompleteUri, 'searchroute':searchRoute}|json_encode }}"
+        :geo-complete-results-order="{{geoCompleteResultsOrder|json_encode}}"
+        :geo-complete-palette="{{geoCompletePalette|json_encode}}"
+        {{ geoCompleteChip ? 'geo-complete-chip' : '' }}
         :user="{{ app.user|json_encode }}"
         token="{{token.getToken}}"
     ></event-widget>

@@ -144,7 +144,7 @@ export default {
   props: {
     chip: {
       type: Boolean,
-      default: true
+      default: false
     },
     uri: {
       type: String,
@@ -188,43 +188,7 @@ export default {
     },
     palette: {
       type: Object,
-      default() {
-        return {
-          nochip: "black",
-          locality: {
-            main: "indigo",
-            text: "white",
-          },
-          street: {
-            main: "deep-purple",
-            text: "white",
-          },
-          housenumber: {
-            main: "purple",
-            text: "white",
-          },
-          venue: {
-            main: "pink",
-            text: "white",
-          },
-          other: {
-            main: "teal",
-            text: "white",
-          },
-          relaypoint: {
-            main: "teal",
-            text: "white",
-          },
-          user: {
-            main: "teal",
-            text: "white",
-          },
-          event: {
-            main: "teal",
-            text: "white",
-          },
-        };
-      },
+      default: () => ({})
     },
   },
 
@@ -248,79 +212,117 @@ export default {
         "event"
       ];
     },
+    defaultPalette() {
+      if (Object.keys(this.palette).length > 0) return this.palette;
+      return {
+        nochip: "black",
+        locality: {
+          main: "indigo",
+          text: "white",
+        },
+        street: {
+          main: "deep-purple",
+          text: "white",
+        },
+        housenumber: {
+          main: "purple",
+          text: "white",
+        },
+        venue: {
+          main: "pink",
+          text: "white",
+        },
+        other: {
+          main: "teal",
+          text: "white",
+        },
+        relaypoint: {
+          main: "teal",
+          text: "white",
+        },
+        user: {
+          main: "teal",
+          text: "white",
+        },
+        event: {
+          main: "teal",
+          text: "white",
+        },
+      };
+    },
     colors() {
       return {
         locality: {
-          "no-chip": this.palette.nochip,
-          chip: this.palette.locality.main,
-          "chip-text": this.palette.locality.main+" lighten-5",
-          icon: this.palette.locality.main+" accent-2",
-          "icon-text": this.palette.locality.text+"--text",
-          title: this.palette.locality.main+"--text text--darken-3",
-          subtitle: this.palette.locality.main+"--text text--lighten-1",
+          "no-chip": this.defaultPalette.nochip,
+          chip: this.defaultPalette.locality.main,
+          "chip-text": this.defaultPalette.locality.text,
+          icon: this.defaultPalette.locality.main+" accent-2",
+          "icon-text": this.defaultPalette.locality.text+"--text",
+          title: this.defaultPalette.locality.main+"--text text--darken-3",
+          subtitle: this.defaultPalette.locality.main+"--text text--lighten-1",
         },
         street: {
-          "no-chip": this.palette.nochip,
-          chip: this.palette.street.main,
-          "chip-text": this.palette.street.main+" lighten-5",
-          icon: this.palette.street.main+" accent-2",
-          "icon-text": this.palette.street.text+"--text",
-          title: this.palette.street.main+"--text text--darken-3",
-          subtitle: this.palette.street.main+"--text text--lighten-1",
+          "no-chip": this.defaultPalette.nochip,
+          chip: this.defaultPalette.street.main,
+          "chip-text": this.defaultPalette.street.text,
+          icon: this.defaultPalette.street.main+" accent-2",
+          "icon-text": this.defaultPalette.street.text+"--text",
+          title: this.defaultPalette.street.main+"--text text--darken-3",
+          subtitle: this.defaultPalette.street.main+"--text text--lighten-1",
         },
         housenumber: {
-          "no-chip": this.palette.nochip,
-          chip: this.palette.housenumber.main,
-          "chip-text": this.palette.housenumber.main+" lighten-5",
-          icon: this.palette.housenumber.main+" accent-2",
-          "icon-text": this.palette.housenumber.text+"--text",
-          title: this.palette.housenumber.main+"--text text--darken-3",
-          subtitle: this.palette.housenumber.main+"--text text--lighten-1",
+          "no-chip": this.defaultPalette.nochip,
+          chip: this.defaultPalette.housenumber.main,
+          "chip-text": this.defaultPalette.housenumber.text,
+          icon: this.defaultPalette.housenumber.main+" accent-2",
+          "icon-text": this.defaultPalette.housenumber.text+"--text",
+          title: this.defaultPalette.housenumber.main+"--text text--darken-3",
+          subtitle: this.defaultPalette.housenumber.main+"--text text--lighten-1",
         },
         venue: {
-          "no-chip": this.palette.nochip,
-          chip: this.palette.venue.main,
-          "chip-text": this.palette.venue.main+" lighten-5",
-          icon: this.palette.venue.main+" accent-2",
-          "icon-text": this.palette.venue.text+"--text",
-          title: this.palette.venue.main+"--text text--darken-3",
-          subtitle: this.palette.venue.main+"--text text--lighten-1",
+          "no-chip": this.defaultPalette.nochip,
+          chip: this.defaultPalette.venue.main,
+          "chip-text": this.defaultPalette.venue.text,
+          icon: this.defaultPalette.venue.main+" accent-2",
+          "icon-text": this.defaultPalette.venue.text+"--text",
+          title: this.defaultPalette.venue.main+"--text text--darken-3",
+          subtitle: this.defaultPalette.venue.main+"--text text--lighten-1",
         },
         other: {
-          "no-chip": this.palette.nochip,
-          chip: this.palette.other.main,
-          "chip-text": this.palette.other.main+" lighten-5",
-          icon: this.palette.other.main+" accent-2",
-          "icon-text": this.palette.other.text+"--text",
-          title: this.palette.other.main+"--text text--darken-3",
-          subtitle: this.palette.other.main+"--text text--lighten-1",
+          "no-chip": this.defaultPalette.nochip,
+          chip: this.defaultPalette.other.main,
+          "chip-text": this.defaultPalette.other.text,
+          icon: this.defaultPalette.other.main+" accent-2",
+          "icon-text": this.defaultPalette.other.text+"--text",
+          title: this.defaultPalette.other.main+"--text text--darken-3",
+          subtitle: this.defaultPalette.other.main+"--text text--lighten-1",
         },
         relaypoint: {
-          "no-chip": this.palette.nochip,
-          chip: this.palette.relaypoint.main,
-          "chip-text": this.palette.relaypoint.main+" lighten-5",
-          icon: this.palette.relaypoint.main+" accent-2",
-          "icon-text": this.palette.relaypoint.text+"--text",
-          title: this.palette.relaypoint.main+"--text text--darken-3",
-          subtitle: this.palette.relaypoint.main+"--text text--lighten-1",
+          "no-chip": this.defaultPalette.nochip,
+          chip: this.defaultPalette.relaypoint.main,
+          "chip-text": this.defaultPalette.relaypoint.text,
+          icon: this.defaultPalette.relaypoint.main+" accent-2",
+          "icon-text": this.defaultPalette.relaypoint.text+"--text",
+          title: this.defaultPalette.relaypoint.main+"--text text--darken-3",
+          subtitle: this.defaultPalette.relaypoint.main+"--text text--lighten-1",
         },
         user: {
-          "no-chip": this.palette.nochip,
-          chip: this.palette.user.main,
-          "chip-text": this.palette.user.main+" lighten-5",
-          icon: this.palette.user.main+" accent-2",
-          "icon-text": this.palette.user.text+"--text",
-          title: this.palette.user.main+"--text text--darken-3",
-          subtitle: this.palette.user.main+"--text text--lighten-1",
+          "no-chip": this.defaultPalette.nochip,
+          chip: this.defaultPalette.user.main,
+          "chip-text": this.defaultPalette.user.text,
+          icon: this.defaultPalette.user.main+" accent-2",
+          "icon-text": this.defaultPalette.user.text+"--text",
+          title: this.defaultPalette.user.main+"--text text--darken-3",
+          subtitle: this.defaultPalette.user.main+"--text text--lighten-1",
         },
         event: {
-          "no-chip": this.palette.nochip,
-          chip: this.palette.event.main,
-          "chip-text": this.palette.event.main+" lighten-5",
-          icon: this.palette.event.main+" accent-2",
-          "icon-text": this.palette.event.text+"--text",
-          title: this.palette.event.main+"--text text--darken-3",
-          subtitle: this.palette.event.main+"--text text--lighten-1",
+          "no-chip": this.defaultPalette.nochip,
+          chip: this.defaultPalette.event.main,
+          "chip-text": this.defaultPalette.event.text,
+          icon: this.defaultPalette.event.main+" accent-2",
+          "icon-text": this.defaultPalette.event.text+"--text",
+          title: this.defaultPalette.event.main+"--text text--darken-3",
+          subtitle: this.defaultPalette.event.main+"--text text--lighten-1",
         },
       };
     },

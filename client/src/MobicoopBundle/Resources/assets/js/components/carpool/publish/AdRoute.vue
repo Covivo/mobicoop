@@ -13,7 +13,9 @@
       >
         <geocomplete
           :uri="geoSearchUrl"
-          chip
+          :results-order="geoCompleteResultsOrder"
+          :palette="geoCompletePalette"
+          :chip="geoCompleteChip"
           :label="$t('origin.label')"
           required
           :address="initOrigin"
@@ -60,7 +62,9 @@
       >
         <geocomplete
           :uri="geoSearchUrl"
-          chip
+          :results-order="geoCompleteResultsOrder"
+          :palette="geoCompletePalette"
+          :chip="geoCompleteChip"
           :label="$t('waypoint' + (index + 1) +'.label')"
           :address="waypoint.address"
           @address-selected="waypointSelected(index, ...arguments)"
@@ -94,7 +98,9 @@
       >
         <geocomplete
           :uri="geoSearchUrl"
-          chip
+          :results-order="geoCompleteResultsOrder"
+          :palette="geoCompletePalette"
+          :chip="geoCompleteChip"
           :label="$t('destination.label')"
           required
           :address="initDestination"
@@ -240,10 +246,18 @@ export default {
       type: Array,
       default: null
     },
-    prioritizeRelaypoints: {
+    geoCompleteResultsOrder: {
+      type: Array,
+      default: null
+    },
+    geoCompletePalette: {
+      type: Object,
+      default: () => ({})
+    },
+    geoCompleteChip: {
       type: Boolean,
       default: false
-    }
+    },
   },
   data() {
     return {

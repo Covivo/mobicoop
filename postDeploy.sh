@@ -65,6 +65,12 @@ then
         cp /var/www/$VERSION/$INSTANCE/api/config/params/contacts.json.dist /var/www/$VERSION/$INSTANCE/api/config/params/contacts.json
     fi
 
+	# check geocomplete palette file
+    GEOCOMPLETE_PALETTE_FILE=/var/www/$VERSION/$INSTANCE/client/config/geocomplete/palette.json
+    if [ ! -f "$GEOCOMPLETE_PALETTE_FILE" ]; then
+        cp /var/www/$VERSION/$INSTANCE/client/config/geocomplete/palette.json.dist /var/www/$VERSION/$INSTANCE/client/config/geocomplete/palette.json
+    fi
+
     # Migrations
     cd /var/www/$VERSION/$INSTANCE/api;
     php bin/console doctrine:migrations:migrate --env=$VERSION_MIGRATE -n;
@@ -147,6 +153,12 @@ else
     CONTACTS_FILE=/var/www/$INSTANCE/$VERSION/api/config/params/contacts.json
     if [ ! -f "$CONTACTS_FILE" ]; then
         cp /var/www/$INSTANCE/$VERSION/api/config/params/contacts.json.dist /var/www/$INSTANCE/$VERSION/api/config/params/contacts.json
+    fi
+
+	# check geocomplete palette file
+    GEOCOMPLETE_PALETTE_FILE=/var/www/$INSTANCE/$VERSION/client/config/geocomplete/palette.json
+    if [ ! -f "$GEOCOMPLETE_PALETTE_FILE" ]; then
+        cp /var/www/$INSTANCE/$VERSION/client/config/geocomplete/palette.json.dist /var/www/$INSTANCE/$VERSION/client/config/geocomplete/palette.json
     fi
 
     # Migrations

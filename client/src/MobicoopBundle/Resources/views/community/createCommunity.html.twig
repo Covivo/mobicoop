@@ -14,6 +14,9 @@
       :image-min-px-size="{{ imageMinPxSize }}"
       :image-max-mb-size="{{ imageMaxMbSize }}"
       geo-search-url="{{ geoCompleteUri }}"
+      :geo-complete-results-order="{{geoCompleteResultsOrder|json_encode}}"
+      :geo-complete-palette="{{geoCompletePalette|json_encode}}"
+      {{ geoCompleteChip ? 'geo-complete-chip' : '' }}
     >
     </community-create>
 

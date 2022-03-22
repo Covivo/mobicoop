@@ -155,6 +155,8 @@
           :image-swap="$t('urlImageSwap')"
           :horizontal="searchComponentHorizontal"
           :geo-complete-results-order="geoCompleteResultsOrder"
+          :geo-complete-palette="geoCompletePalette"
+          :geo-complete-chip="geoCompleteChip"
         />
       </v-col>
     </v-row>
@@ -276,7 +278,15 @@ export default {
     geoCompleteResultsOrder: {
       type: Array,
       default: null
-    }
+    },
+    geoCompletePalette: {
+      type: Object,
+      default: () => ({})
+    },
+    geoCompleteChip: {
+      type: Boolean,
+      default: false
+    },
   },
   data () {
     return {

@@ -27,7 +27,7 @@
           class="mx-auto"
           max-width="100%"
           type="card"
-        />        
+        />
         <m-map
           v-show="!loading"
           ref="mmap"
@@ -64,10 +64,13 @@
         :default-origin="selectedOrigin"
         :default-destination="selectedDestination"
         :geo-search-url="geoSearchUrl"
+        :geo-complete-results-order="geoCompleteResultsOrder"
+        :geo-complete-palette="geoCompletePalette"
+        :geo-complete-chip="geoCompleteChip"
         :user="user"
       />
     </v-row>
-      
+
     <!--solidary-form-->
   </v-container>
 </template>
@@ -84,7 +87,7 @@ import L from "leaflet";
 let MessagesMergedEn = merge(messages_en, messages_client_en);
 let MessagesMergedNl = merge(messages_nl, messages_client_nl);
 let MessagesMergedFr = merge(messages_fr, messages_client_fr);
-let MessagesMergedEu = merge(messages_eu, messages_client_eu);  
+let MessagesMergedEu = merge(messages_eu, messages_client_eu);
 
 export default {
   i18n: {
@@ -126,7 +129,19 @@ export default {
     urlAdmin: {
       type: String,
       default: null
-    }
+    },
+    geoCompleteResultsOrder: {
+      type: Array,
+      default: null
+    },
+    geoCompletePalette: {
+      type: Object,
+      default: () => ({})
+    },
+    geoCompleteChip: {
+      type: Boolean,
+      default: false
+    },
   },
   data () {
     return {
@@ -151,7 +166,7 @@ export default {
           this.relayPointsToMap = res.data;
           this.showRelayPoints();
         });
-        
+
     },
     showRelayPoints () {
       this.pointsToMap.length = 0;

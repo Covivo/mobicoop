@@ -95,7 +95,9 @@
             >
               <geocomplete
                 :uri="geoSearchUrl"
-                chip
+                :results-order="geoCompleteResultsOrder"
+                :palette="geoCompletePalette"
+                :chip="geoCompleteChip"
                 :restrict="['housenumber','street']"
                 :label="$t('form.label.address.check')"
                 @address-selected="addressSelected"
@@ -317,10 +319,18 @@ export default {
       type: String,
       default: null
     },
-    prioritizeRelaypoints: {
+    geoCompleteResultsOrder: {
+      type: Array,
+      default: null
+    },
+    geoCompletePalette: {
+      type: Object,
+      default: () => ({})
+    },
+    geoCompleteChip: {
       type: Boolean,
       default: false
-    }
+    },
   },
   data () {
     return {

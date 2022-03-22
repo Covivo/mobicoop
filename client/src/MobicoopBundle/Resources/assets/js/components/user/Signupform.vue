@@ -333,7 +333,9 @@
                 <!-- hometown -->
                 <geocomplete
                   :uri="geoSearchUrl"
-                  chip
+                  :results-order="geoCompleteResultsOrder"
+                  :palette="geoCompletePalette"
+                  :chip="geoCompleteChip"
                   :restrict="['locality']"
                   :label="$t('homeTown.placeholder')"
                   :required="requiredHomeAddress"
@@ -612,7 +614,19 @@ export default {
     ssoButtonDisplay:{
       type: Boolean,
       default:false
-    }
+    },
+    geoCompleteResultsOrder: {
+      type: Array,
+      default: null
+    },
+    geoCompletePalette: {
+      type: Object,
+      default: () => ({})
+    },
+    geoCompleteChip: {
+      type: Boolean,
+      default: false
+    },
   },
   data() {
     return {

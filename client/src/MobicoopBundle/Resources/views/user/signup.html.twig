@@ -16,6 +16,9 @@
     age-min="{{ ageMin }}"
     age-max="{{ ageMax }}"
     geo-search-url="{{ geoCompleteUri }}"
+    :geo-complete-results-order="{{geoCompleteResultsOrder|json_encode}}"
+    :geo-complete-palette="{{geoCompletePalette|json_encode}}"
+    {{ geoCompleteChip ? 'geo-complete-chip' : '' }}
     facebook-login-app-id = "{{ facebook_appid }}"
     sent-token="{{ csrf_token('user-signup') }}"
     type="{{ type }}"

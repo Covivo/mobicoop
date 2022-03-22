@@ -27,6 +27,9 @@
     :participation-text = "{{ participationText ? "true" : "false" }}"
     :age-display  = "{{ ageDisplay ? "true" : "false" }}"
     :event-id = "{{ eventId is defined ? (eventId ? eventId : 'null') : 'null' }}"
+    :geo-complete-results-order="{{geoCompleteResultsOrder|json_encode}}"
+    :geo-complete-palette="{{geoCompletePalette|json_encode}}"
+    {{ geoCompleteChip ? 'geo-complete-chip' : '' }}
   />
 
 {% endblock %}

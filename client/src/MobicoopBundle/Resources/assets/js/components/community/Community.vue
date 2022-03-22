@@ -149,7 +149,7 @@
                   <template v-slot:activator="{ on, attrs }">
                     <div
                       v-bind="attrs"
-                      v-on="on"                    
+                      v-on="on"
                     >
                       <v-btn
                         color="secondary"
@@ -205,7 +205,7 @@
               />
             </v-col>
           </v-row>
-          
+
           <!-- community members list + last 3 users -->
           <v-row
             v-if="isLogged && isAccepted && !loading"
@@ -248,7 +248,7 @@
         </v-col>
       </v-row>
       <!-- search journey -->
-      <v-row 
+      <v-row
         v-if="isAccepted"
         justify="center"
       >
@@ -272,6 +272,9 @@
           :default-origin="selectedOrigin"
           :default-destination="selectedDestination"
           :geo-search-url="geodata.geocompleteuri"
+          :geo-complete-results-order="geoCompleteResultsOrder"
+          :geo-complete-palette="geoCompletePalette"
+          :geo-complete-chip="geoCompleteChip"
           :user="user"
           :params="params"
           :punctual-date-optional="punctualDateOptional"
@@ -455,6 +458,18 @@ export default {
       type: Boolean,
       default: false
     },
+    geoCompleteResultsOrder: {
+      type: Array,
+      default: null
+    },
+    geoCompletePalette: {
+      type: Object,
+      default: () => ({})
+    },
+    geoCompleteChip: {
+      type: Boolean,
+      default: false
+    },
   },
   data() {
     return {
@@ -522,7 +537,7 @@ export default {
     this.checkIfUserLogged();
     this.checkDomain();
     this.getMapsAds();
-    this.getRelayPointsMap(); 
+    this.getRelayPointsMap();
   },
   methods: {
     getMapsAds(){
@@ -552,7 +567,7 @@ export default {
       }
       document.body.appendChild(form);
       form.submit();
-    },    
+    },
     getRelayPointsMap() {
       let params = {
         'communityId': this.community.id

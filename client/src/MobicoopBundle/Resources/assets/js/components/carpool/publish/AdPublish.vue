@@ -220,6 +220,9 @@
                 :solidary-exclusive-ad="solidaryExclusive"
                 display-roles
                 :geo-search-url="geoSearchUrl"
+                :geo-complete-results-order="geoCompleteResultsOrder"
+                :geo-complete-palette="geoCompletePalette"
+                :geo-complete-chip="geoCompleteChip"
                 :user="user"
                 :init-outward-date="outwardDate"
                 :init-origin="origin"
@@ -253,6 +256,9 @@
                   <ad-route
                     :geo-search-url="geoSearchUrl"
                     :geo-route-url="geoRouteUrl"
+                    :geo-complete-results-order="geoCompleteResultsOrder"
+                    :geo-complete-palette="geoCompletePalette"
+                    :geo-complete-chip="geoCompleteChip"
                     :user="user"
                     :init-origin="origin"
                     :init-destination="destination"
@@ -860,7 +866,19 @@ export default {
     eventId: {
       type: Number,
       default: null
-    }
+    },
+    geoCompleteResultsOrder: {
+      type: Array,
+      default: null
+    },
+    geoCompletePalette: {
+      type: Object,
+      default: () => ({})
+    },
+    geoCompleteChip: {
+      type: Boolean,
+      default: false
+    },
   },
   data() {
     return {

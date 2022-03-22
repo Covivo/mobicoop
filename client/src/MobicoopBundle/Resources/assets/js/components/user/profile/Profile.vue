@@ -75,6 +75,9 @@
                 <UpdateProfile
                   :user="user"
                   :geo-search-url="geoSearchUrl"
+                  :geo-complete-results-order="geoCompleteResultsOrder"
+                  :geo-complete-palette="geoCompletePalette"
+                  :geo-complete-chip="geoCompleteChip"
                   :age-min="ageMin"
                   :age-max="ageMax"
                   :age-display="ageDisplay"
@@ -113,6 +116,9 @@
                 <BankAccount
                   :user="user"
                   :geo-search-url="geoSearchUrl"
+                  :geo-complete-results-order="geoCompleteResultsOrder"
+                  :geo-complete-palette="geoCompletePalette"
+                  :geo-complete-chip="geoCompleteChip"
                   :validation-docs-authorized-extensions="validationDocsAuthorizedExtensions"
                 />
               </v-tab-item>
@@ -254,7 +260,19 @@ export default {
     ageDisplay: {
       type: Boolean,
       default: true
-    }
+    },
+    geoCompleteResultsOrder: {
+      type: Array,
+      default: null
+    },
+    geoCompletePalette: {
+      type: Object,
+      default: () => ({})
+    },
+    geoCompleteChip: {
+      type: Boolean,
+      default: false
+    },
   },
   data(){
     return{

@@ -24,7 +24,9 @@
               >
                 <geocomplete
                   :uri="geoSearchUrl"
-                  :chip="false"
+                  :results-order="geoCompleteResultsOrder"
+                  :palette="geoCompletePalette"
+                  :chip="geoCompleteChip"
                   :label="labelOrigin"
                   required
                   :prepend-icon="prependIconOrigin"
@@ -38,7 +40,9 @@
               >
                 <geocomplete
                   :uri="geoSearchUrl"
-                  :chip="false"
+                  :results-order="geoCompleteResultsOrder"
+                  :palette="geoCompletePalette"
+                  :chip="geoCompleteChip"
                   :label="labelDestination"
                   required
                   :prepend-icon="prependIconDestination"
@@ -186,6 +190,18 @@ export default {
     elevation:{
       type:Number,
       default: 2
+    },
+    geoCompleteResultsOrder: {
+      type: Array,
+      default: null
+    },
+    geoCompletePalette: {
+      type: Object,
+      default: () => ({})
+    },
+    geoCompleteChip: {
+      type: Boolean,
+      default: false
     }
   },
   data() {

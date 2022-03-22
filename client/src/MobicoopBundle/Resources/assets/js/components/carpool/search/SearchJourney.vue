@@ -58,7 +58,8 @@
             v-show="showOrigin"
             :uri="geoSearchUrl"
             :results-order="geoCompleteResultsOrder"
-            chip
+            :palette="geoCompletePalette"
+            :chip="geoCompleteChip"
             :label="labelOrigin"
             required
             :address="customInitOrigin"
@@ -102,7 +103,8 @@
             v-show="showDestination"
             :uri="geoSearchUrl"
             :results-order="geoCompleteResultsOrder"
-            chip
+            :palette="geoCompletePalette"
+            :chip="geoCompleteChip"
             :label="labelDestination"
             required
             :address="customInitDestination"
@@ -284,6 +286,14 @@ export default {
     geoCompleteResultsOrder: {
       type: Array,
       default: null
+    },
+    geoCompletePalette: {
+      type: Object,
+      default: () => ({})
+    },
+    geoCompleteChip: {
+      type: Boolean,
+      default: false
     }
   },
   data() {

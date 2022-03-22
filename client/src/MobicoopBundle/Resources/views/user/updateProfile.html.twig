@@ -10,6 +10,9 @@
 
 	<Profile
 	  geo-search-url="{{ geoCompleteUri }}"
+      :geo-complete-results-order="{{geoCompleteResultsOrder|json_encode}}"
+      :geo-complete-palette="{{geoCompletePalette|json_encode}}"
+      {{ geoCompleteChip ? 'geo-complete-chip' : '' }}
 	  age-min="{{ ageMin }}"
 	  age-max="{{ ageMax }}"
 	  selected-tab="{{ selectedTab }}"

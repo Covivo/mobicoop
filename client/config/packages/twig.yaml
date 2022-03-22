@@ -12,6 +12,8 @@ twig:
         assets_prefix: '%env(ASSETS_PREFIX)%'
         geoCompleteUri: '%env(GEOCOMPLETE_URI)%'
         geoCompleteResultsOrder: '%env(json:GEOCOMPLETE_RESULTS_ORDER)%'
+        geoCompleteChip: '%env(bool:GEOCOMPLETE_CHIP)%'
+        geoCompletePalette: '%env(json:file:resolve:GEOCOMPLETE_PALETTE)%'
         ageMin: '%env(USER_MIN_AGE)%'
         ageMax: '%env(USER_MAX_AGE)%'
         priceKm: '%env(CARPOOL_PRICE)%'
