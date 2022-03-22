@@ -19,28 +19,26 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Carpool\Service;
 
-use App\Carpool\Ressource\Ad;
+use App\Action\Event\ActionEvent;
+use App\Action\Repository\ActionRepository;
 use App\Carpool\Entity\Ask;
-use Doctrine\ORM\EntityManagerInterface;
-use Psr\Log\LoggerInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use App\Carpool\Event\AskPostedEvent;
-use App\Carpool\Event\AskUpdatedEvent;
 use App\Carpool\Entity\AskHistory;
 use App\Carpool\Entity\Criteria;
-use App\Carpool\Entity\Proposal;
 use App\Carpool\Entity\Matching;
+use App\Carpool\Entity\Proposal;
 use App\Carpool\Event\AskAcceptedEvent;
+use App\Carpool\Event\AskPostedEvent;
 use App\Carpool\Event\AskRefusedEvent;
+use App\Carpool\Event\AskUpdatedEvent;
+use App\Carpool\Exception\AdException;
 use App\Carpool\Repository\AskRepository;
 use App\Carpool\Repository\CarpoolProofRepository;
 use App\Carpool\Repository\MatchingRepository;
-use App\Communication\Entity\Message;
-use App\Communication\Entity\Recipient;
+use App\Carpool\Ressource\Ad;
 use App\Payment\Entity\CarpoolItem;
 use App\Payment\Entity\WeekItem;
 use App\Payment\Exception\PaymentException;
@@ -51,10 +49,10 @@ use App\User\Entity\User;
 use App\User\Exception\BlockException;
 use App\User\Service\BlockManager;
 use DateTime;
+use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Security\Core\Security;
-use App\Action\Event\ActionEvent;
-use App\Action\Repository\ActionRepository;
-use App\Carpool\Exception\AdException;
 
 /**
  * Ask manager service.
@@ -79,8 +77,6 @@ class AskManager
 
     /**
      * Constructor.
-     *
-     * @param EntityManagerInterface $entityManager
      */
     public function __construct(
         EventDispatcherInterface $eventDispatcher,
@@ -106,7 +102,7 @@ class AskManager
         $this->carpoolItemRepository = $carpoolItemRepository;
         $this->carpoolProofRepository = $carpoolProofRepository;
         $this->paymentActive = false;
-        if ($this->paymentActiveDate = DateTime::createFromFormat("Y-m-d", $paymentActive)) {
+        if ($this->paymentActiveDate = DateTime::createFromFormat('Y-m-d', $paymentActive)) {
             $this->paymentActiveDate->setTime(0, 0);
             $this->paymentActive = true;
         }
@@ -115,24 +111,24 @@ class AskManager
     }
 
     /**
-     * Get an ask by its id
+     * Get an ask by its id.
      *
-     * @param integer $id   The id of the ask to find
-     * @return Ask          The ask found or null if not found
+     * @param int $id The id of the ask to find
+     *
+     * @return Ask The ask found or null if not found
      */
     public function getAsk(int $id)
     {
         return $this->askRepository->find($id);
     }
-    
+
     /**
      * Create an ask.
-     *
      */
     public function createAsk(Ask $ask)
     {
         // todo : check if an ask already exists for the match and the proposals
-        
+
         $this->entityManager->persist($ask);
         // dispatch en event
         // $event = new AskPostedEvent($ask);
@@ -142,12 +138,11 @@ class AskManager
 
     /**
      * Update an ask.
-     *
      */
     public function updateAsk(Ask $ask)
     {
         // todo : check if an ask already exists for the match and the proposals
-        
+
         $this->entityManager->persist($ask);
 
         $this->createAssociatedAskHistory($ask);
@@ -155,39 +150,25 @@ class AskManager
         // dispatch en event
         $event = new AskUpdatedEvent($ask);
         $this->eventDispatcher->dispatch(AskUpdatedEvent::NAME, $event);
+
         return $ask;
-    }
-
-    /**
-     * Create the associated AskHistory of an Ask
-     */
-    private function createAssociatedAskHistory(Ask $ask)
-    {
-        $askHistory = new AskHistory();
-        
-        $askHistory->setStatus($ask->getStatus());
-        $askHistory->setType($ask->getType());
-        $askHistory->setAsk($ask);
-
-        $this->entityManager->persist($askHistory);
-
-        return $askHistory;
     }
 
     /**
      * Create an ask from an ad.
      *
-     * @param Ad $ad        The ad used to create the ask
-     * @param bool $formal  The ask is a formal ask
+     * @param Ad   $ad     The ad used to create the ask
+     * @param bool $formal The ask is a formal ask
+     *
      * @return Ad
      */
     public function createAskFromAd(Ad $ad, bool $formal)
     {
         $ask = new Ask();
         $matching = $this->matchingRepository->find($ad->getMatchingId());
-        
+
         // We check that the user isn't matching with himself
-        if ($matching->getProposalRequest()->getUser()->getId()==$matching->getProposalOffer()->getUser()->getId()) {
+        if ($matching->getProposalRequest()->getUser()->getId() == $matching->getProposalOffer()->getUser()->getId()) {
             throw new AdException(AdException::SELF_MATCHING);
         }
 
@@ -200,10 +181,10 @@ class AskManager
             $ask->setType($matching->getProposalOffer()->getType());
             $ask->setUser($matching->getProposalOffer()->getUser());
         }
-        
+
         if ($formal) {
             // if it's a formal ask, the status is pending, depending on the role
-            $ask->setStatus($ad->getRole() == Ad::ROLE_DRIVER ? Ask::STATUS_PENDING_AS_DRIVER : Ask::STATUS_PENDING_AS_PASSENGER);
+            $ask->setStatus(Ad::ROLE_DRIVER == $ad->getRole() ? Ask::STATUS_PENDING_AS_DRIVER : Ask::STATUS_PENDING_AS_PASSENGER);
         } else {
             // if it's not a formal ask, the status is initiated
             $ask->setStatus(Ask::STATUS_INITIATED);
@@ -217,7 +198,7 @@ class AskManager
         // we treat the outward
 
         // for regular trips we need to check the dates and days
-        if ($matching->getCriteria()->getFrequency() == Criteria::FREQUENCY_REGULAR) {
+        if (Criteria::FREQUENCY_REGULAR == $matching->getCriteria()->getFrequency()) {
             if ($ad->getOutwardDate()) {
                 $criteria->setFromDate($ad->getOutwardDate());
             }
@@ -240,10 +221,11 @@ class AskManager
             $criteria->setFriTime($matching->getProposalOffer()->getCriteria()->getFriTime());
             $criteria->setSatTime($matching->getProposalOffer()->getCriteria()->getSatTime());
             $criteria->setSunTime($matching->getProposalOffer()->getCriteria()->getSunTime());
-            if ($ad->getRole() != Ad::ROLE_DRIVER_OR_PASSENGER) {
+            if (Ad::ROLE_DRIVER_OR_PASSENGER != $ad->getRole()) {
                 // we fill the selected days if a role has been set
-                foreach ($ad->getSchedule() as $schedule) {
-                    if ($schedule['outwardTime'] != '') {
+                foreach ($ad->getSchedule() as $key => $schedule) {
+                    if (isset($schedule['outwardTime']) && '' != $schedule['outwardTime']) {
+                        echo 'entre dans le if'.PHP_EOL;
                         if (isset($schedule['mon']) && $schedule['mon']) {
                             $criteria->setMonCheck(true);
                         }
@@ -271,7 +253,7 @@ class AskManager
         }
 
         $ask->setCriteria($criteria);
-        
+
         // we use the matching waypoints
         $waypoints = $matching->getWaypoints();
         foreach ($waypoints as $waypoint) {
@@ -286,11 +268,11 @@ class AskManager
         $ask->addAskHistory($askHistory);
 
         // opposite ask ?
-        if ($ad->getRole() == Ad::ROLE_DRIVER_OR_PASSENGER && $matching->getMatchingOpposite()) {
+        if (Ad::ROLE_DRIVER_OR_PASSENGER == $ad->getRole() && $matching->getMatchingOpposite()) {
             // no role has been defined, we create the opposite ask
             $askOpposite = new Ask();
             $criteriaOpposite = clone $matching->getMatchingOpposite()->getCriteria();
-    
+
             if ($ad->getAdId() == $matching->getMatchingOpposite()->getProposalOffer()->getId()) {
                 // the carpooler is the driver, the requester is the passenger
                 $askOpposite->setType($matching->getMatchingOpposite()->getProposalRequest()->getType());
@@ -303,9 +285,9 @@ class AskManager
 
             $askOpposite->setStatus($ask->getStatus());
             $askOpposite->setMatching($matching->getMatchingOpposite());
-            
+
             // for regular trips we need to check the dates and days
-            if ($matching->getCriteria()->getFrequency() == Criteria::FREQUENCY_REGULAR) {
+            if (Criteria::FREQUENCY_REGULAR == $matching->getCriteria()->getFrequency()) {
                 if ($ad->getOutwardDate()) {
                     $criteriaOpposite->setFromDate($ad->getOutwardDate());
                 }
@@ -343,7 +325,7 @@ class AskManager
         }
 
         // we treat the return (only for regular trips for now)
-        if ($matching->getCriteria()->getFrequency() == Criteria::FREQUENCY_REGULAR && $matching->getMatchingLinked()) {
+        if (Criteria::FREQUENCY_REGULAR == $matching->getCriteria()->getFrequency() && $matching->getMatchingLinked()) {
             $askReturn = new Ask();
             $criteriaReturn = clone $matching->getMatchingLinked()->getCriteria();
 
@@ -358,7 +340,7 @@ class AskManager
             if ($ad->getOutwardLimitDate()) {
                 $criteriaReturn->setToDate($ad->getOutwardLimitDate());
             }
-            
+
             // we init the original schedule
             $criteriaReturn->setMonCheck(false);
             $criteriaReturn->setTueCheck(false);
@@ -375,11 +357,11 @@ class AskManager
             $criteriaReturn->setFriTime($matching->getMatchingLinked()->getProposalOffer()->getCriteria()->getFriTime());
             $criteriaReturn->setSatTime($matching->getMatchingLinked()->getProposalOffer()->getCriteria()->getSatTime());
             $criteriaReturn->setSunTime($matching->getMatchingLinked()->getProposalOffer()->getCriteria()->getSunTime());
-        
+
             // we fill the selected days
-            if ($ad->getRole() != Ad::ROLE_DRIVER_OR_PASSENGER) {
+            if (Ad::ROLE_DRIVER_OR_PASSENGER != $ad->getRole()) {
                 foreach ($ad->getSchedule() as $schedule) {
-                    if ($schedule['returnTime'] != '') {
+                    if (isset($schedule['returnTime']) && '' != $schedule['returnTime']) {
                         if (isset($schedule['mon']) && $schedule['mon']) {
                             $criteriaReturn->setMonCheck(true);
                         }
@@ -415,11 +397,11 @@ class AskManager
             }
 
             // opposite return ask ?
-            if ($ad->getRole() == Ad::ROLE_DRIVER_OR_PASSENGER && $matching->getMatchingLinked()->getMatchingOpposite()) {
+            if (Ad::ROLE_DRIVER_OR_PASSENGER == $ad->getRole() && $matching->getMatchingLinked()->getMatchingOpposite()) {
                 // no role has been defined, we create the opposite ask
                 $askReturnOpposite = new Ask();
                 $criteriaReturnOpposite = clone $matching->getMatchingLinked()->getMatchingOpposite()->getCriteria();
-        
+
                 if ($ad->getAdId() == $matching->getMatchingLinked()->getMatchingOpposite()->getProposalOffer()->getId()) {
                     // the carpooler is the driver, the requester is the passenger
                     $askReturnOpposite->setType($matching->getMatchingLinked()->getMatchingOpposite()->getProposalRequest()->getType());
@@ -432,7 +414,7 @@ class AskManager
 
                 $askReturnOpposite->setStatus($ask->getStatus());
                 $askReturnOpposite->setMatching($matching->getMatchingLinked()->getMatchingOpposite());
-                
+
                 // for regular trips we need to check the dates and days
                 if ($ad->getOutwardDate()) {
                     $criteriaReturnOpposite->setFromDate($ad->getOutwardDate());
@@ -474,28 +456,30 @@ class AskManager
             }
             $ask->setAskLinked($askReturn);
         }
-            
+
         $this->entityManager->persist($ask);
         $this->entityManager->flush($ask);
-        
-        if ($ask->getStatus() == Ask::STATUS_PENDING_AS_DRIVER || $ask->getStatus() == Ask::STATUS_PENDING_AS_PASSENGER) {
+
+        if (Ask::STATUS_PENDING_AS_DRIVER == $ask->getStatus() || Ask::STATUS_PENDING_AS_PASSENGER == $ask->getStatus()) {
             // dispatch en event
             // get the complete ad to have data for the email
             $ad = $this->getAskFromAd($ask->getId(), $ask->getUser()->getId());
             $event = new AskPostedEvent($ad);
             $this->eventDispatcher->dispatch(AskPostedEvent::NAME, $event);
         }
-        
+
         $ad->setAskId($ask->getId());
+
         return $ad;
     }
 
     /**
-     * Get an ask from an ad
-
-     * @param int $askId    The ask id
-     * @param int $userId   The user id of the user making the request
-     * @return Ad       The ad for the ask with the computed results
+     * Get an ask from an ad.
+     *
+     * @param int $askId  The ask id
+     * @param int $userId The user id of the user making the request
+     *
+     * @return Ad The ad for the ask with the computed results
      */
     public function getAskFromAd(int $askId, int $userId)
     {
@@ -515,16 +499,21 @@ class AskManager
                 } else {
                     $ad->setRole(Ad::ROLE_PASSENGER);
                 }
+
                 break;
+
             case Ask::STATUS_PENDING_AS_DRIVER:
             case Ask::STATUS_ACCEPTED_AS_DRIVER:
             case Ask::STATUS_DECLINED_AS_DRIVER:
                 $ad->setRole($ask->getUser()->getId() == $userId ? Ad::ROLE_DRIVER : Ad::ROLE_PASSENGER);
+
                 break;
+
             case Ask::STATUS_PENDING_AS_PASSENGER:
             case Ask::STATUS_ACCEPTED_AS_PASSENGER:
             case Ask::STATUS_DECLINED_AS_PASSENGER:
                 $ad->setRole($ask->getUser()->getId() == $userId ? Ad::ROLE_PASSENGER : Ad::ROLE_DRIVER);
+
                 break;
         }
 
@@ -536,7 +525,9 @@ class AskManager
                 } else {
                     $ad->setCanUpdateAsk(false);
                 }
+
                 break;
+
             case Ask::STATUS_PENDING_AS_DRIVER:
             case Ask::STATUS_PENDING_AS_PASSENGER:
                 if ($ask->getUser()->getId() == $userId) {
@@ -544,12 +535,15 @@ class AskManager
                 } else {
                     $ad->setCanUpdateAsk(true);
                 }
+
                 break;
+
             default:
                 $ad->setCanUpdateAsk(false);
+
                 break;
         }
-        
+
         // we compute the results
         $ad->setResults([$this->resultManager->createAskResults($ask, $userId)]);
 
@@ -557,22 +551,22 @@ class AskManager
     }
 
     /**
-     * Update an ask from an ad
+     * Update an ask from an ad.
      *
-     * @param Ad $ad        The body of the ad to use
-     * @param int $adId     The id of the ad to use (not initialized in the body)
-     * @param int $userId   The user id of the user making the update
-     * @return Ad       The ad updated from the updated ask
+     * @param Ad  $ad     The body of the ad to use
+     * @param int $adId   The id of the ad to use (not initialized in the body)
+     * @param int $userId The user id of the user making the update
+     *
+     * @return Ad The ad updated from the updated ask
      */
     public function updateAskFromAd(Ad $ad, int $adId, int $userId)
     {
         $ask = $this->askRepository->find($adId);
-        
+
         // We check if the two Users in the Ask are involved in a block
         if ($this->blockManager->getInvolvedInABlock($ask->getUser(), $ask->getUserRelated())) {
             throw new BlockException(BlockException::MESSAGE_INVOLVED_IN_BLOCK);
         }
-
 
         // the ask posted is the master ask, we have to update all the asks linked :
         // - the related ask for return trip
@@ -582,7 +576,7 @@ class AskManager
         if ($ask->getAskLinked()) {
             $ask->getAskLinked()->setStatus($ad->getAskStatus());
         }
-        
+
         // UNCOMMENT TO UPDATE ALSO THE ASK OPPOSITE
         // if ($ask->getAskOpposite()) {
         //     $ask->getAskOpposite()->setStatus($ad->getAskStatus());
@@ -590,8 +584,8 @@ class AskManager
         //         $ask->getAskOpposite()->getAskLinked()->setStatus($ad->getAskStatus());
         //     }
         // }
-        
-        if ($ad->getOutwardDate() && $ad->getOutwardLimitDate() && count($ad->getSchedule())>0) {
+
+        if ($ad->getOutwardDate() && $ad->getOutwardLimitDate() && count($ad->getSchedule()) > 0) {
             // regular
             // we update the criteria of the master ask
             $ask->getCriteria()->setFromDate($ad->getOutwardDate());
@@ -616,7 +610,7 @@ class AskManager
                 $ask->getAskLinked()->getCriteria()->setToDate($ad->getOutwardLimitDate());
             }
             foreach ($ad->getSchedule() as $schedule) {
-                if ($schedule['outwardTime'] != '') {
+                if (isset($schedule['outwardTime']) && '' != $schedule['outwardTime']) {
                     if (isset($schedule['mon']) && $schedule['mon']) {
                         $ask->getCriteria()->setMonCheck(true);
                     }
@@ -639,7 +633,7 @@ class AskManager
                         $ask->getCriteria()->setSunCheck(true);
                     }
                 }
-                if ($ask->getAskLinked() && $schedule['returnTime'] != '') {
+                if ($ask->getAskLinked() && isset($schedule['returnTime']) && '' != $schedule['returnTime']) {
                     if (isset($schedule['mon']) && $schedule['mon']) {
                         $ask->getAskLinked()->getCriteria()->setMonCheck(true);
                     }
@@ -673,13 +667,12 @@ class AskManager
 
         $this->entityManager->persist($ask);
 
-       
         // If there is a SolidaryAsk we update it
         if (!is_null($ask->getSolidaryAsk())) {
             $solidaryAsk = $ask->getSolidaryAsk();
-            if ($ad->getAskStatus()==Ask::STATUS_ACCEPTED_AS_DRIVER || $ad->getAskStatus()==Ask::STATUS_ACCEPTED_AS_PASSENGER) {
+            if (Ask::STATUS_ACCEPTED_AS_DRIVER == $ad->getAskStatus() || Ask::STATUS_ACCEPTED_AS_PASSENGER == $ad->getAskStatus()) {
                 $solidaryAsk->setStatus(SolidaryAsk::STATUS_ACCEPTED);
-            } elseif ($ad->getAskStatus()==Ask::STATUS_DECLINED_AS_DRIVER || $ad->getAskStatus()==Ask::STATUS_DECLINED_AS_PASSENGER) {
+            } elseif (Ask::STATUS_DECLINED_AS_DRIVER == $ad->getAskStatus() || Ask::STATUS_DECLINED_AS_PASSENGER == $ad->getAskStatus()) {
                 $solidaryAsk->setStatus(SolidaryAsk::STATUS_REFUSED);
             }
 
@@ -699,22 +692,23 @@ class AskManager
         // get the complete ad to have data for the email
         $ad = $this->getAskFromAd($ask->getId(), $userId);
         // dispatch en event
-        if (($ask->getStatus() == Ask::STATUS_PENDING_AS_DRIVER) || ($ask->getStatus() == Ask::STATUS_PENDING_AS_PASSENGER)) {
+        if ((Ask::STATUS_PENDING_AS_DRIVER == $ask->getStatus()) || (Ask::STATUS_PENDING_AS_PASSENGER == $ask->getStatus())) {
             $event = new AskPostedEvent($ad);
             $this->eventDispatcher->dispatch(AskPostedEvent::NAME, $event);
-        } elseif (($ask->getStatus() == Ask::STATUS_ACCEPTED_AS_DRIVER) || ($ask->getStatus() == Ask::STATUS_ACCEPTED_AS_PASSENGER)) {
+        } elseif ((Ask::STATUS_ACCEPTED_AS_DRIVER == $ask->getStatus()) || (Ask::STATUS_ACCEPTED_AS_PASSENGER == $ask->getStatus())) {
             $event = new AskAcceptedEvent($ad);
             $this->eventDispatcher->dispatch(AskAcceptedEvent::NAME, $event);
-            
+
             //  we dispatch gamification event associated
-            $action = $this->actionRepository->findOneBy(['name'=>'carpool_ask_accepted']);
+            $action = $this->actionRepository->findOneBy(['name' => 'carpool_ask_accepted']);
             $actionEvent = new ActionEvent($action, $ask->getUserRelated());
             $actionEvent->setAsk($ask);
             $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);
-        } elseif (($ask->getStatus() == Ask::STATUS_DECLINED_AS_DRIVER) || ($ask->getStatus() == Ask::STATUS_DECLINED_AS_PASSENGER)) {
+        } elseif ((Ask::STATUS_DECLINED_AS_DRIVER == $ask->getStatus()) || (Ask::STATUS_DECLINED_AS_PASSENGER == $ask->getStatus())) {
             $event = new AskRefusedEvent($ad);
             $this->eventDispatcher->dispatch(AskRefusedEvent::NAME, $event);
         }
+
         return $ad;
     }
 
@@ -724,6 +718,7 @@ class AskManager
 
         if (!empty($proposal->getMatchingOffers())) {
             $offers = $proposal->getMatchingOffers();
+
             /** @var Matching $offer */
             foreach ($offers as $offer) {
                 if (!empty($offer->getAsks())) {
@@ -734,6 +729,7 @@ class AskManager
 
         if (!empty($proposal->getMatchingRequests())) {
             $requests = $proposal->getMatchingRequests();
+
             /** @var Matching $request */
             foreach ($requests as $request) {
                 if (!empty($request->getAsks())) {
@@ -741,15 +737,13 @@ class AskManager
                 }
             }
         }
-        
+
         return $asks;
     }
-        
 
     /**
-     * Ask user is considered driver if he has made a proposal offer
+     * Ask user is considered driver if he has made a proposal offer.
      *
-     * @param Ask $ask
      * @return bool
      */
     public function isAskUserDriver(Ask $ask)
@@ -758,9 +752,8 @@ class AskManager
     }
 
     /**
-     * Ask user is considered passenger if he has made a proposal request
+     * Ask user is considered passenger if he has made a proposal request.
      *
-     * @param Ask $ask
      * @return bool
      */
     public function isAskUserPassenger(Ask $ask)
@@ -769,12 +762,14 @@ class AskManager
     }
 
     /**
-     * Get a simplified ask from an ad
-     * @param int $askId The ask id
-     * @param int $userId The user id of the user making the request
-     * @param Proposal|null $proposal - We can give a Proposal if we need these data in results,
-     * for example if my Ad is based on an ask and I need the proposal data in results
-     * @return Ad       The ad for the ask with the computed results
+     * Get a simplified ask from an ad.
+     *
+     * @param int           $askId    The ask id
+     * @param int           $userId   The user id of the user making the request
+     * @param null|Proposal $proposal - We can give a Proposal if we need these data in results,
+     *                                for example if my Ad is based on an ask and I need the proposal data in results
+     *
+     * @return Ad The ad for the ask with the computed results
      */
     public function getSimpleAskFromAd(int $askId, int $userId, ?Proposal $proposal = null)
     {
@@ -804,9 +799,12 @@ class AskManager
         switch ($ask->getStatus()) {
             case Ask::STATUS_ACCEPTED_AS_DRIVER:
                 $ad->setRole($ask->getUser()->getId() == $userId ? Ad::ROLE_DRIVER : Ad::ROLE_PASSENGER);
+
                 break;
+
             case Ask::STATUS_ACCEPTED_AS_PASSENGER:
                 $ad->setRole($ask->getUser()->getId() == $userId ? Ad::ROLE_PASSENGER : Ad::ROLE_DRIVER);
+
                 break;
         }
         // we compute the results
@@ -821,11 +819,10 @@ class AskManager
     }
 
     /**
-     * Get the payment status of an Ask
+     * Get the payment status of an Ask.
      *
-     * @param integer $id       Id of the Ask to check
-     * @param User    $user     The User we ask for (if null, it's the security token User)
-     * @return Ask
+     * @param int  $id   Id of the Ask to check
+     * @param User $user The User we ask for (if null, it's the security token User)
      */
     public function getPaymentStatus(int $id, User $user = null): Ask
     {
@@ -837,7 +834,7 @@ class AskManager
         $driver = $ask->getMatching()->getProposalOffer()->getUser();
         $passenger = $ask->getMatching()->getProposalRequest()->getUser();
 
-        if ($user==null) {
+        if (null == $user) {
             $user = $this->security->getUser();
         }
 
@@ -849,16 +846,14 @@ class AskManager
         // NB : We ignore the returns. For now, it's not possible to pay (or at least validate) only the outwards without the returns.
         // So we only treating the outwards to evaluate the payment status.
         $carpoolItemId = null;
-        if ($ask->getCriteria()->getFrequency()==Criteria::FREQUENCY_PUNCTUAL) {
-
+        if (Criteria::FREQUENCY_PUNCTUAL == $ask->getCriteria()->getFrequency()) {
             // Punctual journey, we just check if it's paid on this particular day
             $carpoolItem = $this->carpoolItemRepository->findByAskAndDate($ask, $ask->getCriteria()->getFromDate());
             if (is_null($carpoolItem)) {
                 return $ask;
-                //throw new PaymentException(PaymentException::NO_CARPOOL_ITEM);
+                // throw new PaymentException(PaymentException::NO_CARPOOL_ITEM);
             }
 
-            
             // Init the payment status at pending
             $ask->setPaymentStatus(Ask::PAYMENT_STATUS_PENDING);
 
@@ -869,18 +864,18 @@ class AskManager
             } else {
                 if ($driver->getId() == $user->getId()) {
                     // Driver (creditor) point of vue
-                    if ($carpoolItem->getCreditorStatus()==CarpoolItem::CREDITOR_STATUS_DIRECT) {
+                    if (CarpoolItem::CREDITOR_STATUS_DIRECT == $carpoolItem->getCreditorStatus()) {
                         $ask->setPaymentStatus(Ask::PAYMENT_STATUS_DIRECT);
                     }
-                    if ($carpoolItem->getCreditorStatus()==CarpoolItem::CREDITOR_STATUS_ONLINE) {
+                    if (CarpoolItem::CREDITOR_STATUS_ONLINE == $carpoolItem->getCreditorStatus()) {
                         $ask->setPaymentStatus(Ask::PAYMENT_STATUS_ONLINE);
                     }
                 } else {
                     // Passenger (debtor) point of vue
-                    if ($carpoolItem->getDebtorStatus()==CarpoolItem::DEBTOR_STATUS_DIRECT || $carpoolItem->getDebtorStatus()==CarpoolItem::DEBTOR_STATUS_PENDING_DIRECT) {
+                    if (CarpoolItem::DEBTOR_STATUS_DIRECT == $carpoolItem->getDebtorStatus() || CarpoolItem::DEBTOR_STATUS_PENDING_DIRECT == $carpoolItem->getDebtorStatus()) {
                         $ask->setPaymentStatus(Ask::PAYMENT_STATUS_DIRECT);
                     }
-                    if ($carpoolItem->getDebtorStatus()==CarpoolItem::DEBTOR_STATUS_ONLINE) {
+                    if (CarpoolItem::DEBTOR_STATUS_ONLINE == $carpoolItem->getDebtorStatus()) {
                         $ask->setPaymentStatus(Ask::PAYMENT_STATUS_ONLINE);
                     }
                 }
@@ -898,13 +893,15 @@ class AskManager
                     $ask->setPaymentStatus(Ask::PAYMENT_STATUS_UNPAID);
                     $ask->setUnpaidDate($nonValidatedWeek->getUnpaidDate());
                     $carpoolItemId = $nonValidatedWeek->getPaymentItemId();
-                    $ask->setPaymentItemWeek($nonValidatedWeeks[0]->getNumWeek()."".$nonValidatedWeeks[0]->getYear());
+                    $ask->setPaymentItemWeek($nonValidatedWeeks[0]->getNumWeek().''.$nonValidatedWeeks[0]->getYear());
+
                     break;
-                } elseif ($nonValidatedWeek->getStatus() == WeekItem::STATUS_PENDING) {
+                }
+                if (WeekItem::STATUS_PENDING == $nonValidatedWeek->getStatus()) {
                     $ask->setPaymentStatus(Ask::PAYMENT_STATUS_PENDING);
                 }
                 $carpoolItemId = $nonValidatedWeek->getPaymentItemId();
-                $ask->setPaymentItemWeek($nonValidatedWeeks[0]->getNumWeek()."".$nonValidatedWeeks[0]->getYear());
+                $ask->setPaymentItemWeek($nonValidatedWeeks[0]->getNumWeek().''.$nonValidatedWeeks[0]->getYear());
             }
         }
 
@@ -915,11 +912,10 @@ class AskManager
     }
 
     /**
-     * Get the non validated weeks of an Ask
+     * Get the non validated weeks of an Ask.
      *
      * @param Ask $ask  Ask
      * @param Ask $user User that want to get the non validated weeks
-     * @return Ask
      */
     public function getNonValidatedWeeks(Ask $ask, User $user): Ask
     {
@@ -938,9 +934,9 @@ class AskManager
         $arrayWeeks = [];
         while ($currentDate <= $limitDate) {
             $currentWeek = [];
-            for ($i = 0 ; $i < 7 ; $i++) {
+            for ($i = 0; $i < 7; ++$i) {
                 $currentWeek[] = clone $currentDate;
-                $currentDate->modify("+1 day");
+                $currentDate->modify('+1 day');
             }
             $arrayWeeks[] = $currentWeek;
         }
@@ -963,22 +959,26 @@ class AskManager
                     if (!is_null($carpoolItem->getUnpaidDate())) {
                         $unpaidDetected = true;
                         $unpaidDate = $carpoolItem->getUnpaidDate();
+
                         break;
                     }
 
                     // The validated status depends on the point of vue of the current user
-                    if ($carpoolItem->getItemStatus() !== CarpoolItem::STATUS_INITIALIZED) {
-                        if ($carpoolItem->getDebtorUser()->getId() == $user->getId() &&
-                            $carpoolItem->getDebtorStatus() !== CarpoolItem::DEBTOR_STATUS_PENDING
+                    if (CarpoolItem::STATUS_INITIALIZED !== $carpoolItem->getItemStatus()) {
+                        if ($carpoolItem->getDebtorUser()->getId() == $user->getId()
+                            && CarpoolItem::DEBTOR_STATUS_PENDING !== $carpoolItem->getDebtorStatus()
                         ) {
                             // The day has been confirmed by the debtor, the week is validated for him
                             $validatedWeek = true;
+
                             break;
-                        } elseif ($carpoolItem->getCreditorUser()->getId() == $user->getId() &&
-                            $carpoolItem->getCreditorStatus() !== CarpoolItem::CREDITOR_STATUS_PENDING
+                        }
+                        if ($carpoolItem->getCreditorUser()->getId() == $user->getId()
+                            && CarpoolItem::CREDITOR_STATUS_PENDING !== $carpoolItem->getCreditorStatus()
                         ) {
                             // The day has been confirmed by the creditor, the week is validated for him
                             $validatedWeek = true;
+
                             break;
                         }
                     }
@@ -988,7 +988,7 @@ class AskManager
             if ((!$validatedWeek || $unpaidDetected) && !is_null($firstCarpoolItem)) {
                 $weekItem = new WeekItem();
                 $weekItem->setFromDate($currentWeek[0]);
-                $weekItem->setToDate($currentWeek[count($currentWeek)-1]);
+                $weekItem->setToDate($currentWeek[count($currentWeek) - 1]);
                 $weekItem->setNumWeek($currentWeek[0]->format('W'));
                 $weekItem->setYear($currentWeek[0]->format('Y'));
                 $weekItem->setStatus(WeekItem::STATUS_PENDING);
@@ -1006,23 +1006,19 @@ class AskManager
         return $ask;
     }
 
-
-
-    
-    /************
-    *   DYNAMIC *
-    *************/
+    // DYNAMIC
 
     /**
      * Check if a user has a pending dynamic ad ask.
      *
      * @param User $user The user
-     * @return boolean
+     *
+     * @return bool
      */
     public function hasPendingDynamicAsk(User $user)
     {
         // first we get all the asks initiated by the user
-        $asks = $this->askRepository->findBy(['user'=>$user,'status'=>[Ask::STATUS_PENDING_AS_PASSENGER,Ask::STATUS_ACCEPTED_AS_DRIVER]]);
+        $asks = $this->askRepository->findBy(['user' => $user, 'status' => [Ask::STATUS_PENDING_AS_PASSENGER, Ask::STATUS_ACCEPTED_AS_DRIVER]]);
         // now we check if one of these asks is related to a dynamic ad, not finished
         foreach ($asks as $ask) {
             // if the user is passenger
@@ -1034,6 +1030,7 @@ class AskManager
                 return true;
             }
         }
+
         return false;
     }
 
@@ -1041,18 +1038,36 @@ class AskManager
      * Check if a user has a refused dynamic ad ask related to a given matching.
      *
      * @param User $user The user
-     * @return boolean
+     *
+     * @return bool
      */
     public function hasRefusedDynamicAsk(User $user, Matching $matching)
     {
         // first we get all the asks initiated by the user and refused by the carpooler
-        $asks = $this->askRepository->findBy(['user'=>$user,'status'=>[Ask::STATUS_DECLINED_AS_DRIVER]]);
+        $asks = $this->askRepository->findBy(['user' => $user, 'status' => [Ask::STATUS_DECLINED_AS_DRIVER]]);
         // now we check if one of these asks is related to the given matching
         foreach ($asks as $ask) {
             if ($ask->getMatching()->getId() == $matching->getId()) {
                 return true;
             }
         }
+
         return false;
+    }
+
+    /**
+     * Create the associated AskHistory of an Ask.
+     */
+    private function createAssociatedAskHistory(Ask $ask)
+    {
+        $askHistory = new AskHistory();
+
+        $askHistory->setStatus($ask->getStatus());
+        $askHistory->setType($ask->getType());
+        $askHistory->setAsk($ask);
+
+        $this->entityManager->persist($askHistory);
+
+        return $askHistory;
     }
 }
