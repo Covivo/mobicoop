@@ -1188,16 +1188,14 @@ class ProposalManager
         $this->entityManager->flush();
     }
 
-    public function sendCarpoolAdRenewal()
+    public function sendCarpoolAdRenewal($numberOfDays)
     {
-        $proposals = $this->proposalRepository->findProposalsOutdated();
+
+        $proposals = $this->proposalRepository->findProposalsOutdated($numberOfDays);
 
         foreach ($proposals as $proposal) {
-
-            if ((Proposal::TYPE_ONE_WAY == $proposal->getType() || Proposal::TYPE_OUTWARD == $proposal->getType()) && $proposal->getCriteria()->getFrequency() == Criteria::FREQUENCY_REGULAR) {
-                $event = new AdRenewalEvent($proposal);
-                $this->eventDispatcher->dispatch(AdRenewalEvent::NAME, $event);
-            }
+            $event = new AdRenewalEvent($proposal);
+            $this->eventDispatcher->dispatch(AdRenewalEvent::NAME, $event);
         }
     }
 }

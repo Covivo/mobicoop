@@ -241,6 +241,7 @@ services:
                 defaultAnyRouteAsPassenger: '%env(bool:CARPOOL_ANY_ROUTE_PASSENGER)%'
                 defaultPriceKm: '%env(float:CARPOOL_PRICE)%'
                 batchTemp: '%env(resolve:SIG_GEOROUTER_BATCH_TEMP)%'
+                daysReminderProposalOutdated: '%env(int:DAYS_REMINDER_PROPOSAL_OUTDATED)%'
         tags:
             - { name: monolog.logger, channel: carpool }
     

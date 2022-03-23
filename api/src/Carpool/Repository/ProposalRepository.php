@@ -1417,14 +1417,21 @@ class ProposalRepository
     /**
      * @return null|Proposal[]
      */
-    public function findProposalsOutdated(): ?array
+    public function findProposalsOutdated($numberOfDays): ?array
     {
         $now = new DateTime();
 
         $query = $this->repository->createQueryBuilder('p')
             ->join('p.criteria', 'c')
-            ->where("DATE_ADD(c.toDate, 7, 'DAY') = :now")
-            ->setParameter('now', $now->format('Y-m-d'));
+            ->where('p.private = 0 OR p.private IS NULL')
+            ->andWhere('c.frequency = :regularFrequency  AND c.toDate is not null')
+            ->andWhere("DATE_ADD(c.toDate, :numberOfDays, 'DAY') = :now")
+            ->andWhere('p.type = :typeOneWay or p.type = :typeOutward')
+            ->setParameter('typeOneWay', Proposal::TYPE_ONE_WAY)
+            ->setParameter('typeOutward', Proposal::TYPE_OUTWARD)
+            ->setParameter('regularFrequency', Criteria::FREQUENCY_REGULAR)
+            ->setParameter('now', $now->format('Y-m-d'))
+            ->setParameter('numberOfDays', $numberOfDays);
         return $query->getQuery()->getResult();
     }
 }

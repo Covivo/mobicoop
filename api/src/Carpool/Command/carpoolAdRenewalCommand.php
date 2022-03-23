@@ -37,10 +37,13 @@ use Symfony\Component\Console\Output\OutputInterface;
 class carpoolAdRenewalCommand extends Command
 {
     private $proposalManager;
+    private $daysReminderProposalOutdated;
 
-    public function __construct(ProposalManager $proposalManager)
+
+    public function __construct(ProposalManager $proposalManager, int $daysReminderProposalOutdated)
     {
         $this->proposalManager = $proposalManager;
+        $this->daysReminderProposalOutdated = $daysReminderProposalOutdated;
 
         parent::__construct();
     }
@@ -54,6 +57,7 @@ class carpoolAdRenewalCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        return $this->proposalManager->sendCarpoolAdRenewal();
+        $numberOfDays = $this->daysReminderProposalOutdated;
+        return $this->proposalManager->sendCarpoolAdRenewal($numberOfDays);
     }
 }
