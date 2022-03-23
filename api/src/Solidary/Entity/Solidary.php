@@ -755,6 +755,12 @@ class Solidary
      */
     private $adminproofs;
 
+    /**
+     * @var float Distance of the solidary in km
+     * @Groups("aReadItem")
+     */
+    private $distance;
+
     public function __construct()
     {
         $this->id = self::DEFAULT_ID;
@@ -1463,7 +1469,7 @@ class Solidary
      */
     public function getAdminsubject(): ?string
     {
-        return $this->getSubject() ? $this->getSubject()->getLabel() : null;
+        return $this->getSubject()->getLabel();
     }
 
     /**
@@ -1472,7 +1478,7 @@ class Solidary
      */
     public function getAdminsubjectId(): ?int
     {
-        return $this->getSubject() ? $this->getSubject()->getId() : null;
+        return $this->getSubject()->getId();
     }
 
     /**
@@ -1878,6 +1884,18 @@ class Solidary
     public function setAdminproofs(array $adminproofs): self
     {
         $this->adminproofs = $adminproofs;
+
+        return $this;
+    }
+
+    public function getDistance(): ?float
+    {
+        return $this->distance;
+    }
+
+    public function setDistance(float $distance): self
+    {
+        $this->distance = $distance;
 
         return $this;
     }
