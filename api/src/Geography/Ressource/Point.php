@@ -198,12 +198,12 @@ class Point
         $this->countryCode = $countryCode;
     }
 
-    public function getDistance(): ?int
+    public function getDistance(): ?float
     {
         return $this->distance;
     }
 
-    public function setDistance(?int $distance)
+    public function setDistance(?float $distance)
     {
         $this->distance = $distance;
     }
