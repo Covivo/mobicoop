@@ -28,336 +28,340 @@
           <h1>{{ $t('title') }}</h1>
         </v-col>
       </v-row>
-      <v-row
-        justify="center"
-        align="center"
+      <v-form
+        ref="form"
+        v-model="valid"
       >
-        <v-col
-          cols="12"
+        <v-row
+          justify="center"
           align="center"
         >
-          <v-row justify="center">
-            <v-col cols="6">
-              <v-text-field
-                v-model="name"
-                :rules="nameRules"
-                :label="$t('form.name.label')"
-              />
-            </v-col>
-          </v-row>
-          <v-row justify="center">
-            <v-col cols="6">
-              <v-text-field
-                v-model="description"
-                :rules="(mandatoryDescription) ? descriptionRules : null"
-                :label="(mandatoryDescription) ? $t('form.description.label')+''+$t('form.mandatoryCharacter') : $t('form.description.label')"
-                counter="512"
-              />
-            </v-col>
-          </v-row>
-          <v-row justify="center">
-            <v-col cols="6">
-              <v-textarea
-                v-model="fullDescription"
-                :rules="(mandatoryFullDescription) ? fullDescriptionRules : null"
-                :label="(mandatoryFullDescription) ? $t('form.fullDescription.label')+''+$t('form.mandatoryCharacter') : $t('form.fullDescription.label')"
-                auto-grow
-                clearable
-                outlined
-                counter="2500"
-                row-height="24"
-              />
-            </v-col>
-          </v-row>
-          <v-row justify="center">
-            <v-col cols="6">
-              <GeoComplete 
-                :url="geoSearchUrl"
-                :token="user ? user.token : ''"
-                :label="$t('form.address.label')"
-                :prioritize-relaypoints="prioritizeRelaypoints"
-                @address-selected="addressSelected"
-              />
-            </v-col>
-          </v-row>
-
-          <!-- START picker -->
-          <v-row
+          <v-col
+            cols="12"
             align="center"
-            justify="center"
-            dense
           >
-            <!-- Outward date -->
-            <v-col
-              cols="3"
-            >
-              <v-menu
-                v-model="menuOutwardDate"
-                :close-on-content-click="false"
-                transition="scale-transition"
-                offset-y
-                min-width="290px"
-              >
-                <template v-slot:activator="{ on }">
-                  <v-text-field
-                    :value="computedOutwardDateFormat"
-                    :rules="startDateRules"
-                    :label="$t('startDate.label')"
-                    readonly
-                    clearable
-                    v-on="on"
-                  >
-                    <v-icon
-                      slot="prepend"
-                    >
-                      mdi-arrow-right-circle-outline
-                    </v-icon>
-                  </v-text-field>
-                </template>
-                <v-date-picker
-                  v-model="startDate"
-                  :locale="locale"
-                  no-title
-                  first-day-of-week="1"
-                  :min="nowDate"
-                  :max="startDatePickerMaxDate"
-                  @input="menuOutwardDate = false"
-                  @change="updateEndDatePickerMinDate()"
+            <v-row justify="center">
+              <v-col cols="6">
+                <v-text-field
+                  v-model="name"
+                  :rules="nameRules"
+                  :label="$t('form.name.label')"
                 />
-              </v-menu>
-            </v-col>
-
-            <v-col
-              cols="3"
-            >
-              <v-menu
-                v-model="menuReturnDate"
-                :close-on-content-click="false"
-                transition="scale-transition"
-                offset-y
-                min-width="290px"
-              >
-                <template v-slot:activator="{ on }">
-                  <v-text-field
-                    :value="computedReturnDateFormat"
-                    :rules="endDateRules"
-                    :label="$t('endDate.label')"
-                    prepend-icon=""
-                    readonly
-                    v-on="on"
-                  >
-                    <v-icon
-                      slot="prepend"
-                    >
-                      mdi-arrow-left-circle-outline
-                    </v-icon>
-                  </v-text-field>
-                </template>
-                <v-date-picker
-                  v-model="endDate"
-                  :locale="locale"
-                  no-title
-                  first-day-of-week="1"
-                  :min="endDatePickerMinDate"
-                  @input="menuReturnDate = false"
-                  @change="updateStartDatePickerMaxDate()"
+              </v-col>
+            </v-row>
+            <v-row justify="center">
+              <v-col cols="6">
+                <v-text-field
+                  v-model="description"
+                  :rules="(mandatoryDescription) ? descriptionRules : null"
+                  :label="(mandatoryDescription) ? $t('form.description.label')+''+$t('form.mandatoryCharacter') : $t('form.description.label')"
+                  counter="512"
                 />
-              </v-menu>
-            </v-col>
-          </v-row>
-
-          <!-- END date picker -->
-
-          <!-- START times -->
-          <v-row
-            align="center"
-            justify="center"
-            dense
-          >
-            <v-col
-              cols="3"
-            >
-              <v-menu
-                ref="menuStartTime"
-                v-model="menuStartTime"
-                :close-on-content-click="false"
-                :return-value.sync="startTime"
-                transition="scale-transition"
-                offset-y
-                max-width="290px"
-                min-width="290px"
-              >
-                <template v-slot:activator="{ on }">
-                  <v-text-field
-                    v-model="startTime"
-                    :label="$t('startTime.label')"
-                    prepend-icon=""
-                    readonly
-                    v-on="on"
-                  />
-                </template>
-                <v-time-picker
-                  v-if="menuStartTime"
-                  v-model="startTime"
-                  format="24hr"
-                  header-color="secondary"
-                  @click:minute="$refs.menuStartTime.save(startTime)"
+              </v-col>
+            </v-row>
+            <v-row justify="center">
+              <v-col cols="6">
+                <v-textarea
+                  v-model="fullDescription"
+                  :rules="(mandatoryFullDescription) ? fullDescriptionRules : null"
+                  :label="(mandatoryFullDescription) ? $t('form.fullDescription.label')+''+$t('form.mandatoryCharacter') : $t('form.fullDescription.label')"
+                  auto-grow
+                  clearable
+                  outlined
+                  counter="2500"
+                  row-height="24"
                 />
-              </v-menu>
-            </v-col>
-
-            <v-col
-              cols="3"
-            >
-              <v-menu
-                ref="menuEndTime"
-                v-model="menuEndTime"
-                :close-on-content-click="false"
-                :return-value.sync="endTime"
-                transition="scale-transition"
-                offset-y
-                max-width="290px"
-                min-width="290px"
-              >
-                <template v-slot:activator="{ on }">
-                  <v-text-field
-                    v-model="endTime"
-                    :label="$t('endTime.label')"
-                    prepend-icon=""
-                    readonly
-                    v-on="on"
-                  />
-                </template>
-                <v-time-picker
-                  v-if="menuEndTime"
-                  v-model="endTime"
-                  format="24hr"
-                  header-color="secondary"
-                  @click:minute="$refs.menuEndTime.save(endTime)"
+              </v-col>
+            </v-row>
+            <v-row justify="center">
+              <v-col cols="6">
+                <GeoComplete 
+                  :url="geoSearchUrl"
+                  :token="user ? user.token : ''"
+                  :label="$t('form.address.label')"
+                  :prioritize-relaypoints="prioritizeRelaypoints"
+                  @address-selected="addressSelected"
                 />
-              </v-menu>
-            </v-col>
-          </v-row>
-          <!-- END times -->
+              </v-col>
+            </v-row>
 
-          <!-- URL -->
-          <v-row justify="center">
-            <v-col cols="6">
-              <v-tooltip
-                left
-                color="info"
+            <!-- START picker -->
+            <v-row
+              align="center"
+              justify="center"
+              dense
+            >
+              <!-- Outward date -->
+              <v-col
+                cols="3"
               >
-                <template v-slot:activator="{ on }">
-                  <v-text-field
-                    v-model="urlEvent"
-                    :rules="urlEventRules"
-                    :label="$t('form.urlEvent.label')"
-                    v-on="on"
-                  />
-                </template>
-                <span>{{ $t('form.urlEvent.tooltips') }}</span>
-              </v-tooltip>
-            </v-col>
-          </v-row>
-
-          <!-- Private ? -->
-          <v-row justify="center">
-            <v-col cols="6">
-              <v-switch
-                v-model="isPrivate"
-                color="success"
-                inset
-              >
-                <template v-slot:label>
-                  {{ $t('form.private.label') }} 
-                  <v-tooltip
-                    color="info"
-                    right
-                  >
-                    <template v-slot:activator="{ on }">
-                      <v-icon v-on="on">
-                        mdi-help-circle-outline
-                      </v-icon>
-                    </template>
-                    <span>{{ $t('form.private.tooltip') }}</span>
-                  </v-tooltip>
-                </template>
-              </v-switch>
-            </v-col>
-          </v-row>
-
-          <v-row justify="center">
-            <v-col cols="6">
-              <v-file-input
-                ref="avatar"
-                v-model="avatar"
-                :rules="(mandatoryFullDescription) ? avatarRules : null"
-                accept="image/png, image/jpeg, image/jpg"
-                :label="(mandatoryFullDescription) ? $t('form.avatar.label')+' '+$t('form.mandatoryCharacter') : $t('form.avatar.label')"
-                prepend-icon="mdi-image"
-                :hint="$t('form.avatar.minPxSize', {size: imageMinPxSize})+', '+$t('form.avatar.maxMbSize', {size: imageMaxMbSize})"
-                persistent-hint
-                show-size
-                @change="selectedAvatar"
-              />
-            </v-col>
-          </v-row>
-          <v-row justify="center">
-            <v-col cols="6">
-              <div class="text-center">
-                <v-dialog
-                  v-model="dialog"
-                  width="550"
+                <v-menu
+                  v-model="menuOutwardDate"
+                  :close-on-content-click="false"
+                  transition="scale-transition"
+                  offset-y
+                  min-width="290px"
                 >
                   <template v-slot:activator="{ on }">
-                    <v-btn
-                      rounded
-                      color="secondary"
-                      :loading="loading"
+                    <v-text-field
+                      :value="computedOutwardDateFormat"
+                      :rules="startDateRules"
+                      :label="$t('startDate.label')"
+                      readonly
+                      clearable
                       v-on="on"
                     >
-                      {{ $t('buttons.create.label') }}
-                    </v-btn>
+                      <v-icon
+                        slot="prepend"
+                      >
+                        mdi-arrow-right-circle-outline
+                      </v-icon>
+                    </v-text-field>
                   </template>
-                  <v-card>
-                    <v-card-title
-                      class="text-h5 grey lighten-2"
-                      primary-title
+                  <v-date-picker
+                    v-model="startDate"
+                    :locale="locale"
+                    no-title
+                    first-day-of-week="1"
+                    :min="nowDate"
+                    :max="startDatePickerMaxDate"
+                    @input="menuOutwardDate = false"
+                    @change="updateEndDatePickerMinDate()"
+                  />
+                </v-menu>
+              </v-col>
+
+              <v-col
+                cols="3"
+              >
+                <v-menu
+                  v-model="menuReturnDate"
+                  :close-on-content-click="false"
+                  transition="scale-transition"
+                  offset-y
+                  min-width="290px"
+                >
+                  <template v-slot:activator="{ on }">
+                    <v-text-field
+                      :value="computedReturnDateFormat"
+                      :rules="endDateRules"
+                      :label="$t('endDate.label')"
+                      prepend-icon=""
+                      readonly
+                      v-on="on"
                     >
-                      {{ $t('popUp.title') }}
-                    </v-card-title>
-
-                    <v-card-text>
-                      {{ $t('popUp.label') }}
-                    </v-card-text>
-
-                    <v-divider />
-
-                    <v-card-actions>
-                      <v-spacer />
-                      <v-btn
-                        color="secondary"
-                        text
-                        @click="createEvent"
+                      <v-icon
+                        slot="prepend"
                       >
-                        {{ $t('popUp.validation') }}
-                      </v-btn>
-                      <v-btn
-                        color="secondary"
-                        text
-                        @click="dialog = false"
-                      >
-                        {{ $t('popUp.cancel') }}
-                      </v-btn>
-                    </v-card-actions>
-                  </v-card>
-                </v-dialog>
-              </div>
-            </v-col>
-          </v-row>
-        </v-col>
-      </v-row>
+                        mdi-arrow-left-circle-outline
+                      </v-icon>
+                    </v-text-field>
+                  </template>
+                  <v-date-picker
+                    v-model="endDate"
+                    :locale="locale"
+                    no-title
+                    first-day-of-week="1"
+                    :min="endDatePickerMinDate"
+                    @input="menuReturnDate = false"
+                    @change="updateStartDatePickerMaxDate()"
+                  />
+                </v-menu>
+              </v-col>
+            </v-row>
+
+            <!-- END date picker -->
+
+            <!-- START times -->
+            <v-row
+              align="center"
+              justify="center"
+              dense
+            >
+              <v-col
+                cols="3"
+              >
+                <v-menu
+                  ref="menuStartTime"
+                  v-model="menuStartTime"
+                  :close-on-content-click="false"
+                  :return-value.sync="startTime"
+                  transition="scale-transition"
+                  offset-y
+                  max-width="290px"
+                  min-width="290px"
+                >
+                  <template v-slot:activator="{ on }">
+                    <v-text-field
+                      v-model="startTime"
+                      :label="$t('startTime.label')"
+                      prepend-icon=""
+                      readonly
+                      v-on="on"
+                    />
+                  </template>
+                  <v-time-picker
+                    v-if="menuStartTime"
+                    v-model="startTime"
+                    format="24hr"
+                    header-color="secondary"
+                    @click:minute="$refs.menuStartTime.save(startTime)"
+                  />
+                </v-menu>
+              </v-col>
+
+              <v-col
+                cols="3"
+              >
+                <v-menu
+                  ref="menuEndTime"
+                  v-model="menuEndTime"
+                  :close-on-content-click="false"
+                  :return-value.sync="endTime"
+                  transition="scale-transition"
+                  offset-y
+                  max-width="290px"
+                  min-width="290px"
+                >
+                  <template v-slot:activator="{ on }">
+                    <v-text-field
+                      v-model="endTime"
+                      :label="$t('endTime.label')"
+                      prepend-icon=""
+                      readonly
+                      v-on="on"
+                    />
+                  </template>
+                  <v-time-picker
+                    v-if="menuEndTime"
+                    v-model="endTime"
+                    format="24hr"
+                    header-color="secondary"
+                    @click:minute="$refs.menuEndTime.save(endTime)"
+                  />
+                </v-menu>
+              </v-col>
+            </v-row>
+            <!-- END times -->
+
+            <!-- URL -->
+            <v-row justify="center">
+              <v-col cols="6">
+                <v-tooltip
+                  left
+                  color="info"
+                >
+                  <template v-slot:activator="{ on }">
+                    <v-text-field
+                      v-model="urlEvent"
+                      :rules="urlEventRules"
+                      :label="$t('form.urlEvent.label')"
+                      v-on="on"
+                    />
+                  </template>
+                  <span>{{ $t('form.urlEvent.tooltips') }}</span>
+                </v-tooltip>
+              </v-col>
+            </v-row>
+
+            <!-- Private ? -->
+            <v-row justify="center">
+              <v-col cols="6">
+                <v-switch
+                  v-model="isPrivate"
+                  color="success"
+                  inset
+                >
+                  <template v-slot:label>
+                    {{ $t('form.private.label') }} 
+                    <v-tooltip
+                      color="info"
+                      right
+                    >
+                      <template v-slot:activator="{ on }">
+                        <v-icon v-on="on">
+                          mdi-help-circle-outline
+                        </v-icon>
+                      </template>
+                      <span>{{ $t('form.private.tooltip') }}</span>
+                    </v-tooltip>
+                  </template>
+                </v-switch>
+              </v-col>
+            </v-row>
+
+            <v-row justify="center">
+              <v-col cols="6">
+                <v-file-input
+                  ref="avatar"
+                  v-model="avatar"
+                  :rules="(mandatoryFullDescription) ? avatarRules : null"
+                  accept="image/png, image/jpeg, image/jpg"
+                  :label="(mandatoryFullDescription) ? $t('form.avatar.label')+' '+$t('form.mandatoryCharacter') : $t('form.avatar.label')"
+                  prepend-icon="mdi-image"
+                  :hint="$t('form.avatar.minPxSize', {size: imageMinPxSize})+', '+$t('form.avatar.maxMbSize', {size: imageMaxMbSize})"
+                  persistent-hint
+                  show-size
+                  @change="selectedAvatar"
+                />
+              </v-col>
+            </v-row>
+            <v-row justify="center">
+              <v-col cols="6">
+                <div class="text-center">
+                  <v-btn
+                    rounded
+                    color="secondary"
+                    :loading="loading"
+                    :disabled="!valid"
+                    @click="dialog=true"
+                  >
+                    {{ $t('buttons.create.label') }}
+                  </v-btn>
+                </div>
+              </v-col>
+            </v-row>
+          </v-col>
+        </v-row>
+      </v-form>
     </v-container>
+    <v-dialog
+      v-model="dialog"
+      width="550"
+    >
+      <v-card>
+        <v-card-title
+          class="text-h5 grey lighten-2"
+          primary-title
+        >
+          {{ $t('popUp.title') }}
+        </v-card-title>
+
+        <v-card-text>
+          {{ $t('popUp.label') }}
+        </v-card-text>
+
+        <v-divider />
+
+        <v-card-actions>
+          <v-spacer />
+          <v-btn
+            color="secondary"
+            text
+            @click="createEvent"
+          >
+            {{ $t('popUp.validation') }}
+          </v-btn>
+          <v-btn
+            color="secondary"
+            text
+            @click="dialog = false"
+          >
+            {{ $t('popUp.cancel') }}
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-main>
 </template>
 <script>
@@ -466,7 +470,8 @@ export default {
       dialog: false,
       endDatePickerMinDate: null,
       startDatePickerMaxDate: null,
-      nowDate : new Date().toISOString().slice(0,10)
+      nowDate : new Date().toISOString().slice(0,10),
+      valid: false
     }
   },
   computed :{
@@ -479,28 +484,6 @@ export default {
       return this.endDate
         ? moment(this.endDate).format(this.$t("fullDate"))
         : "";
-    },
-    validFields(){
-      if (!this.name  || !this.eventAddress || !this.startDate || !this.endDate) {
-        return "required";
-      }
-      if(this.mandatoryDescription && (!this.description || this.description.length > 512)){
-        return !this.description ? "required" : "tooLong";
-      }
-      if(this.mandatoryFullDescription && (!this.fullDescription || this.fullDescription.length > 2500)){
-        return !this.fullDescription ? "required" : "tooLong";
-      }
-      if(this.mandatoryImage && !this.avatar){
-        return "required";
-      }
-      if(this.avatarWidth <= this.imageMinPxSize || this.avatarHeight <= this.imageMinPxSize){
-        return "imagePxSizeError";
-      }
-      if(this.avatar.size > this.imageMaxMbSize*1024*1024){
-        return "imageSizeError";
-      }
-
-      return "validated";
     }
   },
   created() {
@@ -511,49 +494,33 @@ export default {
       this.eventAddress = address;
     },
     createEvent() {
-      this.dialog = false;
-      this.loading = true;
-      if (this.validFields == "validated") {
-        let newEvent = new FormData();
-        newEvent.append("name", this.name);
-        newEvent.append("fullDescription", this.fullDescription);
-        newEvent.append("description", this.description);
-        newEvent.append("private", this.isPrivate);
-        newEvent.append("avatar", this.avatar);
-        newEvent.append("address", JSON.stringify(this.eventAddress));
-        newEvent.append("startDate", this.startDate);
-        newEvent.append("endDate", this.endDate);
-        if (this.startTime) newEvent.append("startTime", this.startTime);
-        if (this.endTime) newEvent.append("endTime", this.endTime);
-        if (this.urlEvent) newEvent.append("urlEvent", this.urlEvent);
+      let newEvent = new FormData();
+      newEvent.append("name", this.name);
+      newEvent.append("fullDescription", this.fullDescription);
+      newEvent.append("description", this.description);
+      newEvent.append("private", this.isPrivate);
+      newEvent.append("avatar", this.avatar);
+      newEvent.append("address", JSON.stringify(this.eventAddress));
+      newEvent.append("startDate", this.startDate);
+      newEvent.append("endDate", this.endDate);
+      if (this.startTime) newEvent.append("startTime", this.startTime);
+      if (this.endTime) newEvent.append("endTime", this.endTime);
+      if (this.urlEvent) newEvent.append("urlEvent", this.urlEvent);
 
-        maxios 
-          .post(this.$t('buttons.create.route'), newEvent, {
-            headers:{
-              'content-type': 'multipart/form-data'
-            }
-          })
-          .then(res => {
-            if (res.data.includes('error')) {
-              this.snackError = this.$t(res.data)
-              this.snackbar = true;
-              this.loading = false;
-            }
-            else window.location.href = this.$t('redirect.route');
-          });
-      } else {
-        if (this.validFields == "required"){
-          this.snackError = this.$t('error.event.required');
-        } else if (this.validFields == "tooLong") {
-          this.snackError = this.$t('error.event.length');
-        } else if(this.validFields == "imagePxSizeError") {
-          this.snackError = this.$t("form.avatar.pxSize", { size: this.imageMinPxSize, height: this.avatarHeight, width: this.avatarWidth });
-        } else if(this.validFields == "imageSizeError") {
-          this.snackError = this.$t("form.avatar.mbSize", { size: this.imageMaxMbSize });
-        }
-        this.snackbar = true;
-        this.loading = false;
-      }    
+      maxios 
+        .post(this.$t('buttons.create.route'), newEvent, {
+          headers:{
+            'content-type': 'multipart/form-data'
+          }
+        })
+        .then(res => {
+          if (res.data.includes('error')) {
+            this.snackError = this.$t(res.data)
+            this.snackbar = true;
+            this.loading = false;
+          }
+          else window.location.href = this.$t('redirect.route');
+        });
     },
     updateEndDatePickerMinDate () {
       // add one day because otherwise we get one day before the actual date
