@@ -23,6 +23,7 @@
 
 namespace App\Scammer\Admin\Service;
 
+use App\Carpool\Repository\AskRepository;
 use App\Scammer\Entity\Scammer;
 use App\Scammer\Event\ScammerAddedEvent;
 use App\User\Admin\Service\UserManager;
@@ -42,25 +43,20 @@ class ScammerManager
     private $eventDispatcher;
     private $userManager;
     private $userRepository;
+    private $askRepository;
 
-    /**
-     * Constructor.
-     *
-     * @param EntityManagerInterface $entityManager The entity manager
-     * @param mixed                  $chat
-     * @param mixed                  $smoke
-     * @param mixed                  $music
-     */
     public function __construct(
         EntityManagerInterface $entityManager,
         EventDispatcherInterface $dispatcher,
         UserRepository $userRepository,
-        UserManager $userManager
+        UserManager $userManager,
+        AskRepository $askRepository
     ) {
         $this->entityManager = $entityManager;
         $this->eventDispatcher = $dispatcher;
         $this->userRepository = $userRepository;
         $this->userManager = $userManager;
+        $this->askRepository = $askRepository;
     }
 
     /**
@@ -80,7 +76,7 @@ class ScammerManager
 
         $scammerVictims = $this->getScammerVictims($scammerReported);
 
-        if (count($scammerVictims)) {
+        if (count($scammerVictims) > 0) {
             //  we dispatch the event associated
             $event = new ScammerAddedEvent($scammer, $scammerVictims);
             $this->eventDispatcher->dispatch($event, ScammerAddedEvent::NAME);
@@ -92,22 +88,10 @@ class ScammerManager
     }
 
     /**
-     * Delete a scammer.
-     *
-     * @param Scammer $scammer The scammer to delete
-     */
-    public function deleteScammer(Scammer $scammer)
-    {
-        $this->scammerManager->deleteScammer($scammer);
-
-        return $scammer;
-    }
-
-    /**
      * Get all potential victims of the scammer.
      */
     public function getScammerVictims(User $scammerReported)
     {
-        return $this->userRepository->getUsersIdsInContactWithCurrentUser($scammerReported);
+        return $this->askRepository->getUsersIdsInContactWithCurrentUser($scammerReported);
     }
 }

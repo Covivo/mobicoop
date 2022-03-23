@@ -198,21 +198,4 @@ class UserRepository
 
         return $query->getQuery()->getSingleScalarResult();
     }
-
-    public function getUsersIdsInContactWithCurrentUser(User $user)
-    {
-        $stmt = $this->entityManager->getConnection()->prepare('
-        select u.id from user u join ask a on a.user_id = u.id where a.user_id != '.$user->getId().' and a.user_related_id ='.$user->getId().';
-        ;');
-        $stmt->execute();
-        $scammerVictimsIds = $stmt->fetchAll();
-
-        $stmt = $this->entityManager->getConnection()->prepare('
-        select u.id from user u join ask a on a.user_related_id = u.id where a.user_id = '.$user->getId().' and a.user_related_id !='.$user->getId().'
-        ;');
-        $stmt->execute();
-        $scammerVictimsRelatedIds = $stmt->fetchAll();
-
-        return array_merge($scammerVictimsIds, $scammerVictimsRelatedIds);
-    }
 }

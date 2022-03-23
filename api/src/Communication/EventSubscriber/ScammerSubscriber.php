@@ -55,7 +55,7 @@ class ScammerSubscriber implements EventSubscriberInterface
 
         // get all users with an ask in common with the scammer
         foreach ($scammerVictims as $scammerVictim) {
-            $this->notificationManager->notifies(ScammerAddedEvent::NAME, $this->userRepository->find($scammerVictim['id']), $scammer);
+            $this->notificationManager->notifies(ScammerAddedEvent::NAME, $this->userRepository->find($scammerVictim), $scammer);
         }
     }
 }
