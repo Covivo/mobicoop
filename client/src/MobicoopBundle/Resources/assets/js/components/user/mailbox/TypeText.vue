@@ -24,7 +24,7 @@
               fab
               rounded
               color="secondary"
-              :disabled="textToSend==='' || blocked"
+              :disabled="textToSend===''"
               :loading="loading"
               @click="emit()"
             >
@@ -39,7 +39,6 @@
   </v-main>
 </template>
 <script>
-import is from "@utils/is";
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/mailbox/TypeText/";
 
 export default {
@@ -72,15 +71,6 @@ export default {
   data(){
     return{
       textToSend:"",
-      blocked: false,
-    }
-  },
-  watch: {
-    textToSend: {
-      immediate: true,
-      handler(newVal) {
-        // this.blocked = is.phone(newVal) || is.email(newVal) ? true : false;
-      }
     }
   },
   methods:{
