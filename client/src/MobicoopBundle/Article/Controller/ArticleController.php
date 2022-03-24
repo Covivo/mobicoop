@@ -177,6 +177,15 @@ class ArticleController extends AbstractController
     }
 
     /**
+     * Display of the DYNAMICSLINES page.
+     */
+    public function showDynamicsLines()
+    {
+        // Not an 'article' page.
+        return $this->render('@Mobicoop/article/dynamicsLines.html.twig', []);
+    }
+
+    /**
      * Display of the COMMUNITYINFOS page.
      */
     public function showCommunityInfos(ArticleManager $articleManager)
