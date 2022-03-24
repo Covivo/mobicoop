@@ -45,19 +45,19 @@ class EventController extends AbstractController
 {
     use HydraControllerTrait;
 
-    public const DEFAULT_NB_EVENTS_PER_PAGE = 10; // Nb items per page by default
-
     private $router;
     private $mandatoryDescription;
     private $mandatoryFullDescription;
     private $mandatoryImage;
+    private $defaultNbEventsPerPage;
 
-    public function __construct(UrlGeneratorInterface $router, bool $mandatoryDescription, bool $mandatoryFullDescription, bool $mandatoryImage)
+    public function __construct(UrlGeneratorInterface $router, bool $mandatoryDescription, bool $mandatoryFullDescription, bool $mandatoryImage, int $defaultNbEventsPerPage)
     {
         $this->router = $router;
         $this->mandatoryDescription = $mandatoryDescription;
         $this->mandatoryFullDescription = $mandatoryFullDescription;
         $this->mandatoryImage = $mandatoryImage;
+        $this->defaultNbEventsPerPage = $defaultNbEventsPerPage;
     }
 
     /**
@@ -73,7 +73,7 @@ class EventController extends AbstractController
         }
 
         return $this->render('@Mobicoop/event/events.html.twig', [
-            'defaultItemsPerPage' => self::DEFAULT_NB_EVENTS_PER_PAGE,
+            'defaultItemsPerPage' => $this->defaultNbEventsPerPage,
             'tabDefault' => $tab,
         ]);
     }
@@ -164,7 +164,7 @@ class EventController extends AbstractController
                     if ($image = $imageManager->createImage($image)) {
                         return new Response();
                     }
-                    //If an error occur on upload image, the event is already create, so we delete him
+                    // If an error occur on upload image, the event is already create, so we delete him
                     $eventManager->deleteEvent($event->getId());
                     // return error if image post didnt't work
                     return new Response(json_encode('error.image'));
@@ -261,7 +261,7 @@ class EventController extends AbstractController
         // retreive event;
         $event = $eventManager->getEvent($id);
 
-        //$this->denyAccessUnlessGranted('show', $community);
+        // $this->denyAccessUnlessGranted('show', $community);
         // retreive logged user
         $user = $userManager->getLoggedUser();
 
@@ -281,7 +281,7 @@ class EventController extends AbstractController
     {
         // retreive event;
         $event = $eventManager->getEvent($id);
-        //$this->denyAccessUnlessGranted('show', $community);
+        // $this->denyAccessUnlessGranted('show', $community);
         return $this->render('@Mobicoop/event/event-get-widget.html.twig', [
             'event' => $event,
         ]);

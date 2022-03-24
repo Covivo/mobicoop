@@ -1271,6 +1271,14 @@ ToolBox:
         nl: /toolBox
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showToolbox
 
+# display noName page
+dynamicsLines:
+    path:
+        fr: /lignes-dynamiques
+        en: /dynamics-lines
+        nl: /dynamics-lines
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showDynamicsLines
+
 # display CommunityInfos page
 CommunityInfos:
     path:

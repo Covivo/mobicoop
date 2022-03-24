@@ -119,7 +119,6 @@ class CarpoolController extends AbstractController
 
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
-            //avec les data envoyé par le client on créer l'annonce
             $result = $adManager->createAd($data);
             if ($result instanceof Ad) {
                 return $this->json(['result' => $result]);
@@ -160,12 +159,7 @@ class CarpoolController extends AbstractController
             $data = json_decode($request->getContent(), true);
             $data['mailSearchLink'] = $this->generateUrl('carpool_search_result_get', [], UrlGeneratorInterface::ABSOLUTE_URL);
 
-            $result = $adManager->updateAd($data, $ad);
-            if ($result instanceof Ad) {
-                return $this->json(['result' => $result]);
-            }
-
-            return new JsonResponse(['message' => 'error']);
+            return $this->json(['result' => $adManager->updateAd($data, $ad)]);
         }
 
         return $this->render('@Mobicoop/carpool/update.html.twig', [
@@ -677,7 +671,7 @@ class CarpoolController extends AbstractController
         // If there is no date in params, we use 'now'
         $date = new \DateTime('now', new \DateTimeZone('Europe/Paris'));
         if (!empty($params['date'])) {
-            $date = new \DateTime($params['date'].' 08:00:00', new \DateTimeZone('Europe/Paris'));
+            $date = new \DateTime($params['date'] . ' 08:00:00', new \DateTimeZone('Europe/Paris'));
         }
         $journeys = $this->publicTransportManager->getJourneys(
             $params['from_latitude'],

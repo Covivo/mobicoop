@@ -36,6 +36,7 @@
     },
     "map": {
         "origin": "Start",
+        "regular": "Trajet régulier",
         "search": {
             "label": "Chercher les covoiturages correspondants"
         }

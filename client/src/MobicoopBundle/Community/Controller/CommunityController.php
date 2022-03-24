@@ -43,20 +43,20 @@ class CommunityController extends AbstractController
 {
     use HydraControllerTrait;
 
-    public const DEFAULT_NB_COMMUNITIES_PER_PAGE = 10; // Nb items per page by default
-
     private $createFromFront;
     private $communityUserDirectMessage;
+    private $defaultNbCommunitiesPerPage;
 
     /**
      * Constructor.
      *
      * @param string $createFromFront
      */
-    public function __construct(bool $createFromFront, bool $communityUserDirectMessage)
+    public function __construct(bool $createFromFront, bool $communityUserDirectMessage, int $defaultNbCommunitiesPerPage)
     {
         $this->createFromFront = $createFromFront;
         $this->communityUserDirectMessage = $communityUserDirectMessage;
+        $this->defaultNbCommunitiesPerPage = $defaultNbCommunitiesPerPage;
     }
 
     /**
@@ -121,7 +121,7 @@ class CommunityController extends AbstractController
                     if ($image = $imageManager->createImage($image)) {
                         return new Response();
                     }
-                    //If an error occur on upload image, the community is already create, so we delete her
+                    // If an error occur on upload image, the community is already create, so we delete her
                     // $communityManager->deleteCommunity($community->getId());
                     // return error if image post didnt't work
                     return new Response(json_encode('error.image'));
@@ -145,7 +145,7 @@ class CommunityController extends AbstractController
         $this->denyAccessUnlessGranted('list', new Community());
 
         return $this->render('@Mobicoop/community/communities.html.twig', [
-            'defaultItemsPerPage' => self::DEFAULT_NB_COMMUNITIES_PER_PAGE,
+            'defaultItemsPerPage' => $this->defaultNbCommunitiesPerPage,
         ]);
     }
 
@@ -360,7 +360,7 @@ class CommunityController extends AbstractController
         // retreive event;
         $community = $communityManager->getCommunity($id);
 
-        //$this->denyAccessUnlessGranted('show', $community);
+        // $this->denyAccessUnlessGranted('show', $community);
 
         // retreive logged user
         $user = $userManager->getLoggedUser();
@@ -382,7 +382,7 @@ class CommunityController extends AbstractController
         // retreive event;
         $community = $communityManager->getCommunity($id);
 
-        //$this->denyAccessUnlessGranted('show', $community);
+        // $this->denyAccessUnlessGranted('show', $community);
         return $this->render('@Mobicoop/community/community-get-widget.html.twig', [
             'community' => $community,
         ]);

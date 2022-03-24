@@ -1,8 +1,13 @@
 4;1;true;;
 5;1;Par un ami;;
-12;2;id.png;id.png;id.png
-13;2;driving_licence.jpg;driving_licence.jpg;driving_licence.jpg
 14;2;insurance_policy.png;insurance_policy.png;insurance_policy.png
-12;3;id.png;id.png;id.png
-13;3;driving_licence.jpg;driving_licence.jpg;driving_licence.jpg
+13;2;driving_licence.jpg;driving_licence.jpg;driving_licence.jpg
+12;2;id.png;id.png;id.png
 14;3;insurance_policy.png;insurance_policy.png;insurance_policy.png
+13;3;driving_licence.jpg;driving_licence.jpg;driving_licence.jpg
+12;3;id.png;id.png;id.png
+14;4;insurance_policy.png;insurance_policy.png;insurance_policy.png
+13;4;driving_licence.jpg;driving_licence.jpg;driving_licence.jpg
+12;4;id.png;id.png;id.png
+12;5;id.png;id.png;id.png
+12;6;id.png;id.png;id.png

@@ -23,8 +23,6 @@
     "error": {
         "image": "De afbeelding werd niet opgeslagen",
         "event": {
-            "length": "Korte beschrijving te lang (maximaal 512 tekens).",
-            "required": "Alle velden met een sterretje zijn verplicht",
             "create": "Het evenement kon niet worden aangemaakt",
             "name": "Dit evenement bestaat al. Gebruik een andere naam"
         }
