@@ -309,7 +309,7 @@ class Address implements \JsonSerializable
     /**
      * @var string|null The name of this address.
      *
-     * @ORM\Column(type="string", length=45, nullable=true)
+     * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"aRead", "aReadCol", "aReadItem", "aWrite", "read","readUser","results","write","writeRelayPoint","readEvent"})
      */
     private $name;
