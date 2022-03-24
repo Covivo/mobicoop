@@ -1188,7 +1188,7 @@ class ProposalManager
         $this->entityManager->flush();
     }
 
-    public function sendCarpoolAdRenewal($numberOfDays)
+    public function sendCarpoolAdRenewal(int $numberOfDays)
     {
 
         $proposals = $this->proposalRepository->findProposalsOutdated($numberOfDays);

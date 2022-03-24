@@ -1417,7 +1417,7 @@ class ProposalRepository
     /**
      * @return null|Proposal[]
      */
-    public function findProposalsOutdated($numberOfDays): ?array
+    public function findProposalsOutdated(int $numberOfDays): ?array
     {
         $now = new DateTime();
 
@@ -1432,6 +1432,7 @@ class ProposalRepository
             ->setParameter('regularFrequency', Criteria::FREQUENCY_REGULAR)
             ->setParameter('now', $now->format('Y-m-d'))
             ->setParameter('numberOfDays', $numberOfDays);
+
         return $query->getQuery()->getResult();
     }
 }
