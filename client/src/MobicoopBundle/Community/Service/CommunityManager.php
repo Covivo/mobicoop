@@ -453,6 +453,8 @@ class CommunityManager
 
         $params = [
             'userEmail' => $email,
+            'page' => 1,
+            'perPage' => 1000,
         ];
 
         if (count($this->territoryFilter) > 0) {
