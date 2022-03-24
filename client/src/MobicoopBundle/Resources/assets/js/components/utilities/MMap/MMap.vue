@@ -42,7 +42,7 @@
           max-width="400"
         >
           <v-card>
-            <v-card-title class="text-h5 justify-center">
+            <v-card-title class="text-h6 justify-center">
               {{ $t('dialog.title') }}
             </v-card-title>
             <v-card-actions class="justify-center">

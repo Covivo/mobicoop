@@ -39,7 +39,6 @@
   </v-main>
 </template>
 <script>
-
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/mailbox/TypeText/";
 
 export default {

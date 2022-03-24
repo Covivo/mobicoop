@@ -19,27 +19,27 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Communication\DataPersister;
 
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
-use App\Communication\Entity\Message;
-use App\Communication\Service\InternalMessageManager;
-use App\User\Exception\BlockException;
-use App\User\Service\BlockManager;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Security\Core\Security;
 use App\Carpool\Service\AdManager;
 use App\Carpool\Service\AskManager;
 use App\Carpool\Service\ProposalManager;
+use App\Communication\Entity\Message;
 use App\Communication\Exception\MessageException;
+use App\Communication\Service\InternalMessageManager;
+use App\User\Exception\BlockException;
+use App\User\Service\BlockManager;
+use Symfony\Component\Security\Core\Security;
 
 /**
- * Post a Message
+ * Post a Message.
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-final class MessageItemDataPersister implements ContextAwareDataPersisterInterface
+final class MessageCollectionDataPersister implements ContextAwareDataPersisterInterface
 {
     private $internalMessageManager;
     private $blockManager;
@@ -63,37 +63,35 @@ final class MessageItemDataPersister implements ContextAwareDataPersisterInterfa
         $this->askManager = $askManager;
         $this->proposalManager = $proposalManager;
     }
-  
+
     public function supports($data, array $context = []): bool
     {
-        return $data instanceof Message && isset($context['collection_operation_name']) && $context['collection_operation_name'] == 'post';
+        return $data instanceof Message && isset($context['collection_operation_name']) && 'post' == $context['collection_operation_name'];
     }
 
     public function persist($data, array $context = [])
     {
         if (is_null($data)) {
-            throw new \InvalidArgumentException($this->translator->trans("No message provided"));
+            throw new \InvalidArgumentException($this->translator->trans('No message provided'));
         }
 
         // We check if one of the recipient has black listed the recipient or the other way around
         // TO DO : Don't block the whole send if only one User is involved in a block
         $recipients = $data->getRecipients();
         foreach ($recipients as $recipient) {
-
             // Check that the sender and the recipient are not the same person
             if ($data->getUser()->getId() == $recipient->getUser()->getId()) {
                 throw new MessageException(MessageException::SAME_SENDER_RECIPIENT);
             }
 
             $blocks = $this->blockManager->getInvolvedInABlock($this->security->getUser(), $recipient->getUser());
-            if (is_array($blocks) && count($blocks)>0) {
+            if (is_array($blocks) && count($blocks) > 0) {
                 throw new BlockException(BlockException::MESSAGE_INVOLVED_IN_BLOCK);
             }
         }
 
         // We check if there is an Ad id. If so, we create the ask.
-        if ($data->getIdProposal()!==null && $data->getIdMatching()!==null) {
-
+        if (null !== $data->getIdProposal() && null !== $data->getIdMatching()) {
             // Create an Ad from the proposal
             $ad = $this->adManager->makeAd($this->proposalManager->get($data->getIdProposal()), $data->getUser()->getId());
             $ad->setMatchingId($data->getIdMatching());
@@ -101,6 +99,7 @@ final class MessageItemDataPersister implements ContextAwareDataPersisterInterfa
             $ad = $this->askManager->createAskFromAd($ad, false);
             $data->setIdAsk($ad->getAskId());
         }
+
         return $this->internalMessageManager->postMessage($data);
     }
 

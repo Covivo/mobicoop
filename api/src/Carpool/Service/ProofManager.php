@@ -729,7 +729,11 @@ class ProofManager
         // then we create the corresponding proofs
         foreach ($asks as $ask) {
             // we first check if both carpooler have a phone number, as it's mandatory !
-            if (is_null($ask->getUser()->getTelephone()) || is_null($ask->getUserRelated()->getTelephone())) {
+            if (is_null($ask->getUser()->getTelephone())
+                || '' == trim($ask->getUser()->getTelephone())
+                || is_null($ask->getUserRelated()->getTelephone())
+                || '' == trim($ask->getUserRelated()->getTelephone())
+            ) {
                 continue;
             }
             if (Criteria::FREQUENCY_PUNCTUAL == $ask->getCriteria()->getFrequency()) {

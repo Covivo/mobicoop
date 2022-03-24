@@ -169,10 +169,17 @@ class CarpoolProofGouvProvider implements ProviderInterface
                 $journey['passenger']['end']['lat'] = (float) $passengerWaypoints[count($passengerWaypoints) - 1]->getAddress()->getLatitude();
             }
             if (is_null($journey['driver']['start']['lon']) && is_null($journey['driver']['start']['lat'])) {
-                $journey['driver']['start']['lon'] = (float) $passengerWaypoints[0]->getAddress()->getLongitude();
-                $journey['driver']['start']['lat'] = (float) $passengerWaypoints[0]->getAddress()->getLatitude();
-                $journey['driver']['end']['lon'] = (float) $passengerWaypoints[count($passengerWaypoints) - 1]->getAddress()->getLongitude();
-                $journey['driver']['end']['lat'] = (float) $passengerWaypoints[count($passengerWaypoints) - 1]->getAddress()->getLatitude();
+                if (!is_null($journey['passenger']['start']['lon']) && !is_null($journey['passenger']['start']['lat'])) {
+                    $journey['driver']['start']['lon'] = $journey['passenger']['start']['lon'];
+                    $journey['driver']['start']['lat'] = $journey['passenger']['start']['lat'];
+                    $journey['driver']['end']['lon'] = $journey['passenger']['end']['lon'];
+                    $journey['driver']['end']['lat'] = $journey['passenger']['end']['lat'];
+                } else {
+                    $journey['driver']['start']['lon'] = (float) $passengerWaypoints[0]->getAddress()->getLongitude();
+                    $journey['driver']['start']['lat'] = (float) $passengerWaypoints[0]->getAddress()->getLatitude();
+                    $journey['driver']['end']['lon'] = (float) $passengerWaypoints[count($passengerWaypoints) - 1]->getAddress()->getLongitude();
+                    $journey['driver']['end']['lat'] = (float) $passengerWaypoints[count($passengerWaypoints) - 1]->getAddress()->getLatitude();
+                }
             }
 
             // In organized, we need to use the driver's date and we search for the ask's criteria time for the passenger

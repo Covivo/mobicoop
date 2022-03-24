@@ -49,6 +49,7 @@
             class="secondary--text font-weight-bold"
           >{{ item.createdDate }}</span>
         </v-timeline-item>
+        <thread-warning :threaded-posts="threadedPosts" />
       </v-timeline>
       <v-card v-else-if="(!loading && !hideNoThreadSelected) || clearClickIcon">
         <v-card-text
@@ -69,6 +70,7 @@
   </v-main>
 </template>
 <script>
+import ThreadWarning from '@components/user/mailbox/ThreadWarning';
 
 import maxios from "@utils/maxios";
 import moment from "moment";
@@ -82,6 +84,9 @@ export default {
       'fr': messages_fr,
       'eu':messages_eu
     }
+  },
+  components: {
+    ThreadWarning
   },
   props: {
     idMessage: {
@@ -112,7 +117,8 @@ export default {
       type: 'article',
       types: [],
       loading: false,
-      clearClickIcon : false
+      clearClickIcon : false,
+      threadedPosts: []
     }
   },
   watch:{
@@ -142,6 +148,8 @@ export default {
           .then(response => {
 
             response = this.checkIfMessageIsDelete(response);
+
+            this.threadedPosts = response.data.map(element => element.text);
 
             this.loading = false;
             this.items.length = 0;

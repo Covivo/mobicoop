@@ -421,7 +421,7 @@ class AdManager
 
         // $this->logger->info("AdManager : end creating outward " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
-        //$this->entityManager->persist($outwardProposal);
+        // $this->entityManager->persist($outwardProposal);
 
         // $this->logger->info("AdManager : end persisting outward " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
@@ -1047,7 +1047,7 @@ class AdManager
                 $schedule = $this->updateScheduleTimesWithPickUpDurations($schedule, $matching->getPickUpDuration(), $matching->getMatchingLinked() ? $matching->getMatchingLinked()->getPickUpDuration() : null);
             }
         }
-        $ad->setSchedule($schedule);
+        $ad->setSchedule([$schedule]);
         $results = $this->resultManager->createAdResults($proposal);
         $ad->setPotentialCarpoolers(count($results));
 
@@ -1214,7 +1214,7 @@ class AdManager
         if (Criteria::FREQUENCY_REGULAR == $ad->getFrequency()) {
             $schedule = $this->getScheduleFromCriteria($proposal->getCriteria(), $proposal->getProposalLinked() ? $proposal->getProposalLinked()->getCriteria() : null);
         }
-        $ad->setSchedule($schedule);
+        $ad->setSchedule([$schedule]);
 
         return $ad;
     }
@@ -1530,6 +1530,7 @@ class AdManager
     {
         set_time_limit(7200);
         $criteria = $this->criteriaRepository->findDrivers();
+
         /**
          * @var Criteria $criterion
          */
@@ -1717,6 +1718,7 @@ class AdManager
         foreach ($proposals as $proposal) {
             $askAdLinked = null;
             $matchingLinked = null;
+
             /** @var Matching $matching */
             foreach ($proposal->getMatchingRequests() as $matching) {
                 // We check if the matching have an ask

@@ -18,7 +18,7 @@
         v-html="$t('text')"
       />
     </v-row>
-    <v-row v-if="validationAskedDate!=null || validationStatus > 0">
+    <v-row v-if="validationAskedDate!=null || currentValidationStatus > 0">
       <v-col cols="12">
         <v-card
           flat
@@ -26,7 +26,7 @@
         >
           <!-- Pending -->
           <v-card-text
-            v-if="validationStatus==0"
+            v-if="currentValidationStatus==0"
             class="warning--text"
           >
             <v-icon class="warning--text">
@@ -36,7 +36,7 @@
           </v-card-text>
           <!-- Validated -->
           <v-card-text
-            v-else-if="validationStatus==1"
+            v-else-if="currentValidationStatus==1"
             class="success--text"
           >
             <v-icon class="success--text">
@@ -46,7 +46,7 @@
           </v-card-text>
           <!-- Refused -->
           <v-card-text
-            v-else-if="validationStatus==2"
+            v-else-if="currentValidationStatus==2"
             class="error--text"
           >
             <v-icon class="error--text">
@@ -56,7 +56,7 @@
           </v-card-text>          
           <!-- Outdated -->
           <v-card-text
-            v-else-if="validationStatus==3"
+            v-else-if="currentValidationStatus==3"
             class="warning--text"
           >
             <v-icon class="warning--text">
@@ -68,7 +68,7 @@
       </v-col>
     </v-row>    
     <v-row
-      v-if="(validationAskedDate==null || validationStatus >= 2)"
+      v-if="(validationAskedDate==null || currentValidationStatus >= 2)"
       justify="center"
     >
       <v-col
@@ -153,7 +153,8 @@ export default {
       identityProofRules: [
         value => !value ||  (value.size < 6291456 && value.size > 32768) || this.$t("fileInput.error")
       ],
-      disabledSendFile:false
+      disabledSendFile:false,
+      currentValidationStatus: this.validationStatus
     }
   },
   computed:{
@@ -162,11 +163,11 @@ export default {
         // No active payment profile
         return false;
       }
-      else if(this.validationStatus==0 && this.validationAskedDate==null){
+      else if(this.currentValidationStatus==0 && this.validationAskedDate==null){
         // Active payment profile but identity validation hasn't been asked
         return true;
       }
-      else if(this.validationStatus >= 2){
+      else if(this.currentValidationStatus >= 2){
         // Identity doccument rejected or outdated
         return true;
       }
@@ -195,6 +196,7 @@ export default {
         .then(res => {
           this.document = null;
           this.loading = false;
+          this.currentValidationStatus = 0;
           this.$emit("identityDocumentSent",res.data);
         });
 

@@ -212,7 +212,7 @@ class Address implements \JsonSerializable
      * @var null|string the locality of the address
      *
      * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups({"aRead", "aReadCol", "aReadItem", "aWrite", "read","readUser","readEvent","results","write","writeRelayPoint","pt","mass","massCompute","threads","thread","externalJourney","readCommunity","readRelayPoint", "writeSolidary", "readPayment", "writePayment", "readExport","readCommunityAds"})
+     * @Groups({"aRead", "aReadCol", "aReadItem", "aWrite", "read","readUser","readEvent","results","write","writeRelayPoint","pt","mass","massCompute","threads","thread","externalJourney","readCommunity","readRelayPoint", "writeSolidary", "readPayment", "writePayment", "readExport","readCommunityAds","readEvent"})
      * @Assert\NotBlank(groups={"massCompute","threads","thread"})
      */
     private $addressLocality;
@@ -307,8 +307,13 @@ class Address implements \JsonSerializable
     /**
      * @var null|string the name of this address
      *
+     * <<<<<<< HEAD
      * @ORM\Column(type="string", length=45, nullable=true)
      * @Groups({"aRead", "aReadCol", "aReadItem", "aWrite", "read","readUser","readEvent","results","write","writeRelayPoint"})
+     * =======
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"aRead", "aReadCol", "aReadItem", "aWrite", "read","readUser","results","write","writeRelayPoint","readEvent"})
+     * >>>>>>> 1.47.0-next
      */
     private $name;
 
@@ -915,7 +920,7 @@ class Address implements \JsonSerializable
      */
     public function setAutoCreatedDate()
     {
-        $this->setCreatedDate(new \Datetime());
+        $this->setCreatedDate(new \DateTime());
     }
 
     /**
@@ -925,7 +930,7 @@ class Address implements \JsonSerializable
      */
     public function setAutoUpdatedDate()
     {
-        $this->setUpdatedDate(new \Datetime());
+        $this->setUpdatedDate(new \DateTime());
     }
 
     /**

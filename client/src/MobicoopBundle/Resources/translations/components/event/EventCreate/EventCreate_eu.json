@@ -23,10 +23,8 @@
     "error": {
         "image": "Irudia ez da erregistratua izan",
         "event": {
-            "required": "Izarrez markatutako eremu guziak beharrezkoak dira",
             "create": "Ekitaldiaren sorrerak huts egin du",
-            "name": "Ekitaldi hori jadanik existitzen da, beste izen bat emaiozu",
-            "length": "Aurkezpen motza luzeegia da (512 karaktere gehienez)."
+            "name": "Ekitaldi hori jadanik existitzen da, beste izen bat emaiozu"
         }
     },
     "redirect": {

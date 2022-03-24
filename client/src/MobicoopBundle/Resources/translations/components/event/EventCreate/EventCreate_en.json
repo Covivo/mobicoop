@@ -48,9 +48,7 @@
     "error": {
         "event": {
             "name": "This event already exists, please use another name",
-            "create": "Event creation failed",
-            "required": "All fields marked with an asterisk are required",
-            "length": "Short description too long (512 characters maximum)."
+            "create": "Event creation failed"
         },
         "image": "The image has not been saved"
     },
