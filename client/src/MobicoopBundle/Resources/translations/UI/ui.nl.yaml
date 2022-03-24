@@ -7,7 +7,7 @@ relaypoints:
 toolbox:
   title: Toolbox
 dynamicslines:
-  title: "Dynamics lines":
+  title: "Dynamics lines"
 widget:
   title: Widget
 events:
