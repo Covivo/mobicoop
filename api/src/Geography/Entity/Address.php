@@ -309,7 +309,7 @@ class Address implements \JsonSerializable
     /**
      * @var string|null The name of this address.
      *
-     * @ORM\Column(type="string", length=45, nullable=true)
+     * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"aRead", "aReadCol", "aReadItem", "aWrite", "read","readUser","results","write","writeRelayPoint"})
      */
     private $name;
@@ -817,10 +817,10 @@ class Address implements \JsonSerializable
         if (!$this->territories->contains($territory)) {
             $this->territories[] = $territory;
         }
-        
+
         return $this;
     }
-    
+
     public function removeTerritory(Territory $territory): self
     {
         if ($this->territories->contains($territory)) {
@@ -994,7 +994,7 @@ class Address implements \JsonSerializable
 
         return $updated;
     }
-    
+
     public function jsonSerialize()
     {
         return
