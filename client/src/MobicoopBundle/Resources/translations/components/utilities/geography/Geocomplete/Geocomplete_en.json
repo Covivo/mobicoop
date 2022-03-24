@@ -7,5 +7,6 @@
   "user": "Adresses personnelles",
   "event": "Evénements",
   "other": "Autre",
+  "gps": "GPS point",
   "required": "Une adresse est requise"
 }

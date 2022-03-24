@@ -430,14 +430,14 @@ class Address implements \JsonSerializable
     /**
      * @var null|string the type of the address
      *
-     * @Groups({"read","readUser","readEvent"})
+     * @Groups({"read","readUser","readEvent","aRead"})
      */
     private $type;
 
     /**
      * @var null|string the region code of the address
      *
-     * @Groups({"read","readUser","readEvent"})
+     * @Groups({"read","readUser","readEvent","aRead"})
      */
     private $regionCode;
 
@@ -851,11 +851,17 @@ class Address implements \JsonSerializable
 
     public function getRegionCode()
     {
-        if ($this->postalCode && strlen($this->postalCode >= 5)) {
-            return substr($this->postalCode, 0, 2);
-        }
+        switch (strtolower($this->countryCode)) {
+            case 'fr':
+                if ($this->postalCode && strlen($this->postalCode >= 5)) {
+                    return substr($this->postalCode, 0, 2);
+                }
 
-        return null;
+                return null;
+
+            default:
+                return null;
+        }
     }
 
     public function getType(): string
@@ -869,9 +875,12 @@ class Address implements \JsonSerializable
         if (
         $this->event
         && $this->addressLocality) {
-            $this->setName('toto');
-
             return 'event';
+        }
+        if (
+            $this->relayPoint
+            ) {
+            return 'relaypoint';
         }
         if (
             $this->houseNumber && (

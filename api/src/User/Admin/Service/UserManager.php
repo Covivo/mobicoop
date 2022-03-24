@@ -272,6 +272,7 @@ class UserManager
                 // we have to update each field...
                 // @var Address $homeAddress
                 $homeAddress->setStreetAddress($user->getHomeAddress()->getStreetAddress());
+                $homeAddress->setStreet($user->getHomeAddress()->getStreet());
                 $homeAddress->setPostalCode($user->getHomeAddress()->getPostalCode());
                 $homeAddress->setAddressLocality($user->getHomeAddress()->getAddressLocality());
                 $homeAddress->setAddressCountry($user->getHomeAddress()->getAddressCountry());

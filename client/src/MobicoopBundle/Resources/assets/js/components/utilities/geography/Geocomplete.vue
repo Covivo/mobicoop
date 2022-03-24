@@ -49,7 +49,7 @@
             >{{ data.item.text }}
             </span>
             <country-flag
-              v-if="data.item.value.countryCode != country"
+              v-if="data.item.value.countryCode && data.item.value.countryCode != country"
               :country="data.item.value.countryCode"
               size="small"
             />
@@ -63,7 +63,7 @@
       >
         {{ data.item.text }}
         <country-flag
-          v-if="data.item.value.countryCode != country"
+          v-if="data.item.value.countryCode && data.item.value.countryCode != country"
           :country="data.item.value.countryCode"
           size="small"
         />
@@ -438,66 +438,90 @@ export default {
       }
     },
     selectionText(item) {
-      let text = "";
-      if (item.type == "street") {
-        text += item.streetName + ", ";
-        if (item.postalCode) text += item.postalCode + ", ";
+      let text = '';
+      if (item.type == 'street') {
+        text += item.streetName + ', ';
+        if (item.postalCode) text += item.postalCode + ', ';
       }
-      if (item.type == "housenumber") {
-        text += item.houseNumber + ", " + item.streetName + ", ";
-        if (item.postalCode) text += item.postalCode + ", ";
+      if (item.type == 'housenumber') {
+        text += item.houseNumber + ', ' + item.streetName + ', ';
+        if (item.postalCode) text += item.postalCode + ', ';
       }
-      if (item.type == "venue" || item.type == "relaypoint" || item.type == "event") {
-        text += item.name + ", ";
-        if (item.houseNumber) text += item.houseNumber + ", ";
-        if (item.streetName) text += item.streetName + ", ";
-        if (item.postalCode) text += item.postalCode + ", ";
+      if (item.type == 'venue' || item.type == 'event') {
+        text += item.name + ', ';
+        if (item.houseNumber) text += item.houseNumber + ', ';
+        if (item.streetName) text += item.streetName + ', ';
+        if (item.postalCode) text += item.postalCode + ', ';
       }
-      if (item.type == "user") {
-        if (this.showName) text += item.name + ", ";
-        if (item.houseNumber) text += item.houseNumber + ", ";
-        if (item.streetName) text += item.streetName + ", ";
-        if (this.showName && item.postalCode) text += item.postalCode + ", ";
+      if (item.type == 'user') {
+        if (this.showName) text += item.name + ', ';
+        if (item.houseNumber) text += item.houseNumber + ', ';
+        if (item.streetName) text += item.streetName + ', ';
+        if (this.showName && item.postalCode) text += item.postalCode + ', ';
       }
-      text += item.locality;
-      if (item.type == "locality" && item.regionCode !== null)
-        text += ", " + item.regionCode;
-      if (item.type == "locality" && item.countryCode !== this.country)
-        text += ", " + item.country;
+      if (item.type == 'relaypoint') {
+        if (item.name) text += item.name + ', ';
+        if (item.houseNumber) text += item.houseNumber + ', ';
+        if (item.streetName) text += item.streetName + ', ';
+        if (item.postalCode && item.streetName) text += item.postalCode + ', ';
+      }
+      if (item.locality) text += item.locality;
+      if (item.type == 'locality' && item.regionCode !== null)
+        text += ', ' + item.regionCode;
+      if (item.type == 'locality' && item.countryCode !== this.country)
+        text += ', ' + item.country;
+      if (item.type == 'relaypoint' && text == '') {
+        text = this.$t('gps') + ' [' + item.lat + ', ' + item.lon + ']';
+      }
+      if (text.slice(text.length - 2) == ', ') {
+        text = text.slice(0, -2);
+      }
       return text;
     },
     propositionTitle(item) {
-      let text = "";
-      if (item.type == "street") {
-        text += item.streetName + ", ";
-        if (item.postalCode) text += item.postalCode + ", ";
+      let text = '';
+      if (item.type == 'street') {
+        text += item.streetName + ', ';
+        if (item.postalCode) text += item.postalCode + ', ';
       }
-      if (item.type == "housenumber") {
-        text += item.houseNumber + ", " + item.streetName + ", ";
-        if (item.postalCode) text += item.postalCode + ", ";
+      if (item.type == 'housenumber') {
+        text += item.houseNumber + ', ' + item.streetName + ', ';
+        if (item.postalCode) text += item.postalCode + ', ';
       }
-      if (item.type == "venue" || item.type == "relaypoint" || item.type == "event") {
-        text += item.name + ", ";
-        if (item.houseNumber) text += item.houseNumber + ", ";
-        if (item.streetName) text += item.streetName + ", ";
-        if (item.postalCode) text += item.postalCode + ", ";
+      if (item.type == 'venue' || item.type == 'event') {
+        text += item.name + ', ';
+        if (item.houseNumber) text += item.houseNumber + ', ';
+        if (item.streetName) text += item.streetName + ', ';
+        if (item.postalCode) text += item.postalCode + ', ';
       }
-      if (item.type == "user") {
-        if (this.showName) text += item.name + ", ";
-        if (item.houseNumber) text += item.houseNumber + ", ";
-        if (item.streetName) text += item.streetName + ", ";
-        if (this.showName && item.postalCode) text += item.postalCode + ", ";
+      if (item.type == 'user') {
+        if (this.showName) text += item.name + ', ';
+        if (item.houseNumber) text += item.houseNumber + ', ';
+        if (item.streetName) text += item.streetName + ', ';
+        if (this.showName && item.postalCode) text += item.postalCode + ', ';
       }
-      text += item.locality;
+      if (item.type == 'relaypoint') {
+        if (item.name) text += item.name + ', ';
+        if (item.houseNumber) text += item.houseNumber + ', ';
+        if (item.streetName) text += item.streetName + ', ';
+        if (item.postalCode && item.streetName) text += item.postalCode + ', ';
+      }
+      if (item.locality) text += item.locality;
+      if (item.type == 'relaypoint' && text == '') {
+        text = this.$t('gps') + ' [' + item.lat + ', ' + item.lon + ']';
+      }
+      if (text.slice(text.length - 2) == ', ') {
+        text = text.slice(0, -2);
+      }
       return text;
     },
     propositionText(item) {
-      let text = "";
-      if (item.regionCode !== null) text += item.regionCode;
-      if (item.region !== null) text += (text != "" ? ", " : "") + item.region;
-      if (item.macroRegion !== null)
-        text += (text != "" ? ", " : "") + item.macroRegion;
-      if (item.country !== null) text += (text != "" ? ", " : "") + item.country;
+      let text = '';
+      if (item.regionCode) text += item.regionCode;
+      if (item.region) text += (text != '' ? ', ' : '') + item.region;
+      if (item.macroRegion)
+        text += (text != '' ? ', ' : '') + item.macroRegion;
+      if (item.country) text += (text != '' ? ', ' : '') + item.country;
       return text;
     },
     getIcon(type) {
