@@ -366,7 +366,11 @@ services:
         arguments:
             $emailTemplatePath: '%env(string:NOTIFICATION_TEMPLATE_EMAIL_PATH)%'
             $emailTitleTemplatePath: '%env(string:COMMUNICATION_TEMPLATE_EMAIL_PATH)%%env(string:NOTIFICATION_TITLE_TEMPLATE_EMAIL_PATH)%'
-        
+
+    App\Carpool\Command\carpoolAdRenewalCommand:
+        arguments:
+            $daysReminderProposalOutdated: '%env(int:DAYS_REMINDER_PROPOSAL_OUTDATED)%'
+ 
     # Community
     App\Community\Controller\:
         resource: '../src/Community/Controller'
