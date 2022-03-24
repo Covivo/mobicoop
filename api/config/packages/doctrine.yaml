@@ -175,6 +175,12 @@ doctrine:
                 dir: '%kernel.project_dir%/src/RelayPoint/Entity'
                 prefix: 'App\RelayPoint\Entity'
                 alias: RelayPoint
+            Scammer:
+                is_bundle: false
+                type: annotation
+                dir: '%kernel.project_dir%/src/Scammer/Entity'
+                prefix: 'App\Scammer\Entity'
+                alias: Scammer    
             Solidary:
                 is_bundle: false
                 type: annotation
