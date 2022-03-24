@@ -22,17 +22,14 @@
                 lg="3"
                 class="ma-0"
               >
-                <GeoComplete
-                  id="from"
-                  :url="geoSearchUrl"
+                <geocomplete
+                  :uri="geoSearchUrl"
+                  :results-order="geoCompleteResultsOrder"
+                  :palette="geoCompletePalette"
+                  :chip="geoCompleteChip"
                   :label="labelOrigin"
-                  alternative-label="origin"
-                  :token="user ? user.token : ''"
                   required
-                  :show-required="showRequired"
-                  :required-error="requiredErrorOrigin"
                   :prepend-icon="prependIconOrigin"
-                  :prioritize-relaypoints="prioritizeRelaypoints"
                   @address-selected="originSelected"
                 />
               </v-col>
@@ -41,17 +38,14 @@
                 lg="3"
                 class="ma-0"
               >
-                <GeoComplete
-                  id="to"
-                  :url="geoSearchUrl"
+                <geocomplete
+                  :uri="geoSearchUrl"
+                  :results-order="geoCompleteResultsOrder"
+                  :palette="geoCompletePalette"
+                  :chip="geoCompleteChip"
                   :label="labelDestination"
-                  alternative-label="destination"
-                  :token="user ? user.token : ''"
                   required
-                  :show-required="showRequired"
-                  :required-error="requiredErrorDestination"
                   :prepend-icon="prependIconDestination"
-                  :prioritize-relaypoints="prioritizeRelaypoints"
                   @address-selected="destinationSelected"
                 />
               </v-col>
@@ -125,7 +119,7 @@
                   @click="search"
                 >
                   <v-icon>mdi-magnify</v-icon>
-                </v-btn>                
+                </v-btn>
               </v-col>
             </v-row>
           </v-form>
@@ -137,7 +131,7 @@
 
 <script>
 import moment from "moment";
-import GeoComplete from "@components/utilities/GeoComplete";
+import Geocomplete from "@components/utilities/geography/Geocomplete";
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/carpool/search/SearchJourney/";
 
 export default {
@@ -150,7 +144,7 @@ export default {
     },
   },
   components: {
-    GeoComplete
+    Geocomplete
   },
   props: {
     geoSearchUrl: {
@@ -164,7 +158,7 @@ export default {
     initRegular: {
       type: Boolean,
       default: true
-    }, 
+    },
     punctualDateOptional: {
       type: Boolean,
       default: false
@@ -196,6 +190,18 @@ export default {
     elevation:{
       type:Number,
       default: 2
+    },
+    geoCompleteResultsOrder: {
+      type: Array,
+      default: null
+    },
+    geoCompletePalette: {
+      type: Object,
+      default: () => ({})
+    },
+    geoCompleteChip: {
+      type: Boolean,
+      default: false
     }
   },
   data() {

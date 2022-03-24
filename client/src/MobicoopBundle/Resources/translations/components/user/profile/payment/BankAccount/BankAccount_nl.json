@@ -16,9 +16,9 @@
     "register": "Opslaan",
     "form": {
         "errors": {
-            "cityRequired": "De gemeente is verplicht",
-            "cpRequired": "De postcode is verplicht",
-            "wayRequired": "Het huisnummer en de straat zijn verplicht",
+            "addressLocalityRequired": "De gemeente is verplicht",
+            "postalCodeRequired": "De postcode is verplicht",
+            "streetRequired": "Het huisnummer en de straat zijn verplicht",
             "bicRequired": "De BIC-code is verplicht",
             "bic": "De BIC-code moet geldig zijn",
             "ibanRequired": "Het IBAN-nummer is verplicht",
@@ -29,9 +29,10 @@
         },
         "label": {
             "address": {
-                "city": "Stad",
-                "cp": "Postcode",
-                "way": "Straat en nummer",
+                "addressLocality": "Stad",
+                "postalCode": "Postcode",
+                "street": "Straat",
+                "houseNumber": "Nummer",
                 "check": "Zoek uw volledige adres"
             },
             "bic": "BIC",

@@ -18,11 +18,6 @@ services:
     extends:
       service: base
     command: npm run install-all
-  build-admin:
-    extends:
-      service: base
-    working_dir: /var/www/admin
-    command: npm run build
   fixtures:
     extends:
       service: base

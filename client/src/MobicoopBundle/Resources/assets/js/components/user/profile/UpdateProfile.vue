@@ -52,7 +52,7 @@
           <v-row
             no-gutters
           >
-            <v-col 
+            <v-col
               :cols="email && emailVerified ? '12' : '6'"
             >
               <v-text-field
@@ -62,21 +62,21 @@
                 class="email"
               >
                 <template v-slot:append>
-                  <v-tooltip 
-                    color="info" 
+                  <v-tooltip
+                    color="info"
                     top
                   >
                     <template v-slot:activator="{ on }">
-                      <v-icon 
-                        v-if="email && emailVerified" 
-                        color="success"  
+                      <v-icon
+                        v-if="email && emailVerified"
+                        color="success"
                         v-on="on"
                       >
                         mdi-check-circle-outline
                       </v-icon>
-                      <v-icon 
-                        v-else-if="email && !emailVerified" 
-                        color="warning"  
+                      <v-icon
+                        v-else-if="email && !emailVerified"
+                        color="warning"
                         v-on="on"
                       >
                         mdi-alert-circle-outline
@@ -88,15 +88,15 @@
                 </template>
               </v-text-field>
             </v-col>
-            <v-col 
+            <v-col
               v-if="email && !emailVerified"
               class="d-flex justify-center"
               cols="6"
             >
-              <v-btn 
+              <v-btn
                 rounded
-                color="secondary" 
-                :loading="loadingEmail" 
+                color="secondary"
+                :loading="loadingEmail"
                 @click="sendValidationEmail"
               >
                 {{ !emailSended ? $t('email.buttons.label.generateEmail') : $t('email.buttons.label.generateEmailAgain') }}
@@ -107,7 +107,7 @@
             no-gutters
           >
             <!-- Telephone -->
-            <v-col 
+            <v-col
               :cols="telephone && phoneVerified ? '12' : '6'"
             >
               <v-text-field
@@ -117,21 +117,21 @@
                 :rules="telephoneRules"
               >
                 <template v-slot:append>
-                  <v-tooltip 
-                    color="info" 
+                  <v-tooltip
+                    color="info"
                     top
                   >
                     <template v-slot:activator="{ on }">
-                      <v-icon 
-                        v-if="telephone && phoneVerified" 
-                        color="success"  
+                      <v-icon
+                        v-if="telephone && phoneVerified"
+                        color="success"
                         v-on="on"
                       >
                         mdi-check-circle-outline
                       </v-icon>
-                      <v-icon 
-                        v-else-if="telephone && !phoneVerified" 
-                        color="warning"  
+                      <v-icon
+                        v-else-if="telephone && !phoneVerified"
+                        color="warning"
                         v-on="on"
                       >
                         mdi-alert-circle-outline
@@ -143,22 +143,22 @@
                 </template>
               </v-text-field>
             </v-col>
-            <v-col 
+            <v-col
               v-if="telephone && displayPhoneVerification && !phoneVerified"
               class="d-flex justify-center"
               cols="6"
             >
-              <v-btn 
-                rounded 
-                color="secondary" 
-                :loading="loadingToken" 
+              <v-btn
+                rounded
+                color="secondary"
+                :loading="loadingToken"
                 @click="generateToken"
               >
                 {{ phoneToken == null ? $t('phone.buttons.label.generateToken') : $t('phone.buttons.label.generateNewToken') }}
               </v-btn>
             </v-col>
           </v-row>
-          <v-row 
+          <v-row
             v-if="phoneToken != null && telephone && !phoneVerified"
             no-gutters
           >
@@ -169,14 +169,14 @@
                 :label="$t('phone.validation.label')"
               />
             </v-col>
-            <v-col 
+            <v-col
               cols="6"
               class="d-flex justify-center"
             >
-              <v-btn 
-                rounded 
-                color="secondary" 
-                :loading="loadingValidatePhone" 
+              <v-btn
+                rounded
+                color="secondary"
+                :loading="loadingValidatePhone"
                 @click="validateToken"
               >
                 {{ $t('phone.buttons.label.validate') }}
@@ -188,7 +188,7 @@
             <!-- Phone display preferences -->
             <v-radio-group
               v-model="phoneDisplay['value']"
-              :label="$t('phoneDisplay.label.general')" 
+              :label="$t('phoneDisplay.label.general')"
             >
               <v-radio
                 v-for="(phDisplay, index) in phoneDisplays"
@@ -331,7 +331,7 @@
                   </v-avatar>
                 </v-col>
               </v-row>
-              <v-row 
+              <v-row
                 justify="center"
               >
                 <v-col
@@ -442,29 +442,30 @@
       <v-card-text>
         <v-row no-gutters>
           <v-col>
-            <!--GeoComplete-->
-            <GeoComplete
-              :url="geoSearchUrl"
+            <geocomplete
+              :uri="geoSearchUrl"
+              :results-order="geoCompleteResultsOrder"
+              :palette="geoCompletePalette"
+              :chip="geoCompleteChip"
+              :show-name="false"
+              :restrict="['locality']"
               :label="$t('homeTown.label')"
-              :token="user ? user.token : ''"
-              :init-address="homeAddress"
-              :display-name-in-selected="false"
-              :prioritize-relaypoints="prioritizeRelaypoints"
+              :address="homeAddress"
               @address-selected="homeAddressSelected"
             />
           </v-col>
         </v-row>
-        <v-row 
+        <v-row
           no-gutters
           justify="center"
         >
           <v-col class="d-flex justify-center">
-            <v-btn 
-              rounded 
-              color="secondary" 
-              class="mt-4" 
-              :disabled="disabledAddress" 
-              :loading="loadingAddress" 
+            <v-btn
+              rounded
+              color="secondary"
+              class="mt-4"
+              :disabled="disabledAddress"
+              :loading="loadingAddress"
               type="button"
               @click="updateAddress"
             >
@@ -619,15 +620,15 @@
             {{ $t('publicProfile.close') }}
           </v-btn>
         </v-card-actions>
-      </v-card>      
-    </v-dialog>    
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
 <script>
 import maxios from "@utils/maxios";
 import moment from "moment";
-import GeoComplete from "@js/components/utilities/GeoComplete";
+import Geocomplete from "@components/utilities/geography/Geocomplete";
 import ChangePassword from "@components/user/profile/ChangePassword";
 import PublicProfile from "@components/user/profile/PublicProfile";
 import { merge } from "lodash";
@@ -650,7 +651,7 @@ export default {
   },
   components: {
     PublicProfile,
-    GeoComplete,
+    Geocomplete,
     ChangePassword
   },
   props: {
@@ -686,10 +687,18 @@ export default {
       type: Number,
       default: null
     },
-    prioritizeRelaypoints: {
+    geoCompleteResultsOrder: {
+      type: Array,
+      default: null
+    },
+    geoCompletePalette: {
+      type: Object,
+      default: () => ({})
+    },
+    geoCompleteChip: {
       type: Boolean,
       default: false
-    }
+    },
   },
   data() {
     return {
@@ -802,7 +811,7 @@ export default {
     telephone (val) {
       this.phoneToken = null;
       this.displayPhoneVerification = false;
-    }, 
+    },
     email (val) {
       this.emailChanged = true;
     }
@@ -823,7 +832,7 @@ export default {
     save (date) {
       this.$refs.menu.save(date)
     },
-   
+
     validate () {
       if (this.$refs.form.validate()) {
         this.checkForm();
@@ -872,7 +881,7 @@ export default {
             this.checkVerifiedEmail();
           }
           //this.urlAvatar = res.data.versions.square_800;
-          // this.displayFileUpload = false; 
+          // this.displayFileUpload = false;
         })
         .catch(error => {
           window.location.reload();
@@ -914,7 +923,7 @@ export default {
           this.urlAvatar = reader.result; // UPDATE PREVIEW
         }.bind(this), false);
         reader.readAsDataURL(this.avatar); // FIRE LOAD EVENT
-      } 
+      }
       // else {
       //   this.urlAvatar = this.user.avatars[this.user.avatars.length-1]; // RESET AVATAR
       // }
@@ -925,7 +934,7 @@ export default {
 
       if (!this.avatar) return;
       let reader = new FileReader();
-      
+
       reader.readAsDataURL(this.avatar);
       reader.onload = evt => {
         let self = this;
@@ -937,7 +946,7 @@ export default {
         }
         img.src = evt.target.result;
       }
-      
+
     },
     checkVerifiedPhone() {
       if (this.telephone !== null) {
@@ -950,8 +959,8 @@ export default {
       }
     },
     generateToken() {
-      this.loadingToken = true;   
-      maxios 
+      this.loadingToken = true;
+      maxios
         .get(this.$t('phone.token.route'))
         .then(res => {
           if (res.data.state) {
@@ -967,8 +976,8 @@ export default {
         })
     },
     sendValidationEmail() {
-      this.loadingEmail = true;   
-      maxios 
+      this.loadingEmail = true;
+      maxios
         .get(this.$t('email.verificationRoute'))
         .then(res => {
           if (res.data.state) {
@@ -979,11 +988,11 @@ export default {
           this.textSnackOk = this.$t('snackBar.emailOk');
           this.snackbar = true;
           this.emailSended = true;
-          this.loadingEmail = false;   
+          this.loadingEmail = false;
         })
     },
     validateToken() {
-      this.loadingValidatePhone = true; 
+      this.loadingValidatePhone = true;
       maxios
         .post(this.$t('phone.validation.route'),
           {

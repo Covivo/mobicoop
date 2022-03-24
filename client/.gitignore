@@ -345,3 +345,6 @@ yarn-error.log
 ## Cypress/Percy
 cypress/videos/
 cypress/screenshots
+
+# Geocomplete
+/config/geocomplete/palette.json

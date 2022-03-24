@@ -6,9 +6,9 @@
   {#{{ encore_entry_link_tags("#{assets_prefix ?? ''}carpool/publish") }}#}
 {% endblock %}
 {% block main %}
-  <ad-publish 
-    geo-search-url="{{ geoCompleteUri }}" 
-    :user="{{app.user|json_encode}}" 
+  <ad-publish
+    geo-search-url="{{ geoCompleteUri }}"
+    :user="{{app.user|json_encode}}"
     :default-price-km="{{ priceKm }}"
     :default-margin-duration="{{ marginDuration }}"
     :map-provider="{{ mapProvider|json_encode }}"
@@ -22,12 +22,14 @@
     :init-regular = "{{ regular is defined ? (regular ? 'true' : 'false') : 'false' }}"
     :first-ad = "{{ firstAd is defined ? (firstAd ? 'true' : 'false') : 'false' }}"
     :solidary-exclusive-ad = "{{ solidaryExclusiveAd is defined ? (solidaryExclusiveAd ? 'true' : 'false') : 'false' }}"
-    :default-prices-ranges = "{{ pricesRange|json_encode }}"  
+    :default-prices-ranges = "{{ pricesRange|json_encode }}"
     :default-time-precision="{{ timePrecision }}"
     :participation-text = "{{ participationText ? "true" : "false" }}"
     :age-display  = "{{ ageDisplay ? "true" : "false" }}"
     :event-id = "{{ eventId is defined ? (eventId ? eventId : 'null') : 'null' }}"
-    :prioritize-relaypoints="{{ geosearcherPrioritizeRelaypoints is defined ? geosearcherPrioritizeRelaypoints ? 'true' : 'false' : 'false' }}"
+    :geo-complete-results-order="{{geoCompleteResultsOrder|json_encode}}"
+    :geo-complete-palette="{{geoCompletePalette|json_encode}}"
+    {{ geoCompleteChip ? 'geo-complete-chip' : '' }}
   />
 
 {% endblock %}

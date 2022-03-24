@@ -34,6 +34,9 @@
         >
           <search
             :geo-search-url="geodata.geocompleteuri"
+            :geo-complete-results-order="geoCompleteResultsOrder"
+            :geo-complete-palette="geoCompletePalette"
+            :geo-complete-chip="geoCompleteChip"
             :user="user"
             :params="params"
             :punctual-date-optional="punctualDateOptional"
@@ -101,7 +104,19 @@ export default {
     justifyTitle: {
       type: String,
       default: "text-h5 text-center font-weight-bold",
-    }
+    },
+    geoCompleteResultsOrder: {
+      type: Array,
+      default: null
+    },
+    geoCompletePalette: {
+      type: Object,
+      default: () => ({})
+    },
+    geoCompleteChip: {
+      type: Boolean,
+      default: false
+    },
   },
   data () {
     return {

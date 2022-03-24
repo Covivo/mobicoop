@@ -81,7 +81,7 @@ class RelayPointRepository
             where ".$searchString." and rp.status = ".$status;
 
         $query = $this->entityManager->createQuery($queryString);
-        
+
         return $query->getResult()
         ;
     }

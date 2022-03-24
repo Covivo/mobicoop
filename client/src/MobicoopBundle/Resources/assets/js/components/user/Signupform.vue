@@ -67,7 +67,7 @@
           align="left"
         >
           <v-alert
-              
+
             class="warning white--text"
           >
             <v-icon class="white--text">
@@ -245,7 +245,7 @@
                   class="givenName"
                   required
                 />
-                <v-text-field       
+                <v-text-field
                   id="familyName"
                   v-model="form.familyName"
                   :rules="form.familyNameRules"
@@ -331,13 +331,14 @@
                 @submit.prevent
               >
                 <!-- hometown -->
-                <GeoComplete
-                  name="homeAddress"
+                <geocomplete
+                  :uri="geoSearchUrl"
+                  :results-order="geoCompleteResultsOrder"
+                  :palette="geoCompletePalette"
+                  :chip="geoCompleteChip"
+                  :restrict="['locality']"
                   :label="$t('homeTown.placeholder')"
-                  :url="geoSearchUrl"
-                  persistent-hint
                   :required="requiredHomeAddress"
-                  :prioritize-relaypoints="prioritizeRelaypoints"
                   @address-selected="selectedGeo"
                 />
                 <!-- community -->
@@ -521,7 +522,7 @@
 
 <script>
 import maxios from "@utils/maxios";
-import GeoComplete from "@js/components/utilities/GeoComplete";
+import Geocomplete from "@components/utilities/geography/Geocomplete";
 import CommunityHelp from "@components/community/CommunityHelp";
 
 import { merge } from "lodash";
@@ -544,7 +545,7 @@ export default {
     },
   },
   components: {
-    GeoComplete,
+    Geocomplete,
     MFacebookAuth,
     CommunityHelp,
     SsoLogins
@@ -614,10 +615,18 @@ export default {
       type: Boolean,
       default:false
     },
-    prioritizeRelaypoints: {
+    geoCompleteResultsOrder: {
+      type: Array,
+      default: null
+    },
+    geoCompletePalette: {
+      type: Object,
+      default: () => ({})
+    },
+    geoCompleteChip: {
       type: Boolean,
       default: false
-    }
+    },
   },
   data() {
     return {
@@ -740,7 +749,7 @@ export default {
           (v) => !!v || this.$t("chart.required"),
         ],
         checkboxLegalAgeRules: [
-          (v) => !!v || this.$t("legalAge.required"),  
+          (v) => !!v || this.$t("legalAge.required"),
         ],
         idFacebook: null,
         newsSubscription: this.newsSubscriptionDefault
@@ -809,7 +818,7 @@ export default {
             return false;
           }
         }
-        
+
         return true;
       }
 
@@ -997,16 +1006,16 @@ export default {
         .catch(function(error) {
           console.error(error);
           this.phoneNumberValid = false;
-        });      
+        });
     },
     nextStep(n) {
-      this.step += 1;   
+      this.step += 1;
     },
     previousStep(n) {
       this.step -= 1;
     },
     step1Valid() {
-      return this.form.email && this.form.password && this.form.telephone != null 
+      return this.form.email && this.form.password && this.form.telephone != null
     },
     step2Valid() {
       if (this.birthDateDisplay){

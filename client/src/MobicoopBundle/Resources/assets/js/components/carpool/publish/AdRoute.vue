@@ -11,15 +11,14 @@
         cols="10"
         offset="1"
       >
-        <GeoComplete
-          name="origin"
-          :token="user ? user.token : ''"
+        <geocomplete
+          :uri="geoSearchUrl"
+          :results-order="geoCompleteResultsOrder"
+          :palette="geoCompletePalette"
+          :chip="geoCompleteChip"
           :label="$t('origin.label')"
-          :url="geoSearchUrl"
-          :init-address="initOrigin"
-          :required-error="$t('origin.error')"
-          :prioritize-relaypoints="prioritizeRelaypoints"
           required
+          :address="initOrigin"
           @address-selected="originSelected"
         />
       </v-col>
@@ -61,13 +60,13 @@
         cols="10"
         offset="1"
       >
-        <GeoComplete
-          :name="'etape' + (index + 1)"
-          :token="user ? user.token : ''"
+        <geocomplete
+          :uri="geoSearchUrl"
+          :results-order="geoCompleteResultsOrder"
+          :palette="geoCompletePalette"
+          :chip="geoCompleteChip"
           :label="$t('waypoint' + (index + 1) +'.label')"
-          :url="geoSearchUrl"
-          :init-address="waypoint.address"
-          :prioritize-relaypoints="prioritizeRelaypoints"
+          :address="waypoint.address"
           @address-selected="waypointSelected(index, ...arguments)"
         />
       </v-col>
@@ -97,15 +96,14 @@
         cols="10"
         offset="1"
       >
-        <GeoComplete
-          name="destination"
-          :token="user ? user.token : ''"
+        <geocomplete
+          :uri="geoSearchUrl"
+          :results-order="geoCompleteResultsOrder"
+          :palette="geoCompletePalette"
+          :chip="geoCompleteChip"
           :label="$t('destination.label')"
-          :required-error="$t('destination.error')"
           required
-          :url="geoSearchUrl"
-          :init-address="initDestination"
-          :prioritize-relaypoints="prioritizeRelaypoints"
+          :address="initDestination"
           @address-selected="destinationSelected"
         />
       </v-col>
@@ -205,7 +203,7 @@
 <script>
 import maxios from "@utils/maxios";
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/carpool/publish/AdRoute/";
-import GeoComplete from "@components/utilities/GeoComplete";
+import Geocomplete from "@components/utilities/geography/Geocomplete";
 
 export default {
   i18n: {
@@ -217,7 +215,7 @@ export default {
     },
   },
   components: {
-    GeoComplete
+    Geocomplete
   },
   props: {
     geoSearchUrl: {
@@ -248,10 +246,18 @@ export default {
       type: Array,
       default: null
     },
-    prioritizeRelaypoints: {
+    geoCompleteResultsOrder: {
+      type: Array,
+      default: null
+    },
+    geoCompletePalette: {
+      type: Object,
+      default: () => ({})
+    },
+    geoCompleteChip: {
       type: Boolean,
       default: false
-    }
+    },
   },
   data() {
     return {

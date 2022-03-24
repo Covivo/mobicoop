@@ -1,0 +1,35 @@
+{
+  "nochip": "black",
+  "locality": {
+      "main": "indigo",
+      "text": "white"
+  },
+  "street": {
+      "main": "deep-purple",
+      "text": "white"
+  },
+  "housenumber": {
+      "main": "purple",
+      "text": "white"
+  },
+  "venue": {
+      "main": "pink",
+      "text": "white"
+  },
+  "other": {
+      "main": "teal",
+      "text": "white"
+  },
+  "relaypoint": {
+      "main": "teal",
+      "text": "white"
+  },
+  "user": {
+      "main": "teal",
+      "text": "white"
+  },
+  "event": {
+      "main": "teal",
+      "text": "white"
+  }
+}

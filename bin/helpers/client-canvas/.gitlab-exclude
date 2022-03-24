@@ -124,10 +124,6 @@ mobicoop-platform/client/var/log/
 mobicoop-platform/client/public/google*.html
 mobicoop-platform/client/public/robots.txt
 mobicoop-platform/client/public/mobile_app_repository.json
-mobicoop-platform/admin/.env
-mobicoop-platform/admin/public/logo.png
-mobicoop-platform/admin/public/logo.svg
-mobicoop-platform/admin/public/robots.txt
 public/maintenance.enable
 public/externalCgu/*.*
 mobicoop-platform/api/public/maintenance.enable

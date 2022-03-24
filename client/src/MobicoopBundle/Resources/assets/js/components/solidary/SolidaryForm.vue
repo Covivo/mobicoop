@@ -45,7 +45,7 @@
         align="center"
       >
         <!--SearchJourney-->
-        
+
         <search-journey
           :geo-search-url="geoSearchUrl"
           :user="user"
@@ -56,7 +56,7 @@
         />
       </v-col>
     </v-row>
-    
+
     <!--Structure and subject-->
     <v-row
       justify="center"
@@ -114,9 +114,9 @@
         />
       </v-col>
     </v-row>
-    
+
     <!--user data-->
-    
+
     <v-row
       justify="center"
     >
@@ -165,7 +165,7 @@
                 name="firstName"
               />
             </v-col>
-              
+
             <v-col
               cols="12"
             >
@@ -244,7 +244,7 @@
               />
             </v-col>
           </v-row>
-            
+
           <!--submission-->
           <v-btn
             :disabled="!isValid"
@@ -304,7 +304,19 @@ export default {
     subjects: {
       type: Array,
       default: null
-    }
+    },
+    geoCompleteResultsOrder: {
+      type: Array,
+      default: null
+    },
+    geoCompletePalette: {
+      type: Object,
+      default: () => ({})
+    },
+    geoCompleteChip: {
+      type: Boolean,
+      default: false
+    },
   },
   data () {
     return {
@@ -365,12 +377,12 @@ export default {
     }
   },
   computed: {
-    // we can't get only year from v-datepicker so we have to create custom getter and setter 
+    // we can't get only year from v-datepicker so we have to create custom getter and setter
     // to handle what we want in case user wants to type for the year
     // no autocompletion from typing
     yearOfBirth: {
       get () {
-        return this.form.yearOfBirth && moment(this.form.yearOfBirth, "YYYY-MM-DD", true).isValid() ? 
+        return this.form.yearOfBirth && moment(this.form.yearOfBirth, "YYYY-MM-DD", true).isValid() ?
           moment(this.form.yearOfBirth).format('YYYY') : null
       },
       set (value) {

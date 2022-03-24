@@ -564,6 +564,20 @@ services:
             $sigPrioritizeRegion: '%env(string:SIG_GEOCODER_PRIORITIZE_REGION)%'
             $sigShowVenues: '%env(bool:SIG_GEOCODER_SHOW_VENUES)%'
 
+    App\Geography\Service\MobicoopGeocoder:
+        arguments:
+            $uri: '%env(string:MOBICOOP_GEOCODER_URI)%'
+
+    App\Geography\Service\PointSearcher:
+        arguments:
+            $maxRelayPointResults: '%env(int:POINT_SEARCHER_RELAY_POINT_MAX_RESULTS)%'
+            $maxEventResults: '%env(int:POINT_SEARCHER_EVENT_MAX_RESULTS)%'
+            $maxUserResults: '%env(int:POINT_SEARCHER_USER_MAX_RESULTS)%'
+            $prioritizeCentroid: '%env(json:POINT_SEARCHER_PRIORITIZE_CENTROID)%'
+            $prioritizeBox: '%env(json:POINT_SEARCHER_PRIORITIZE_BOX)%'
+            $prioritizeRegion: '%env(string:POINT_SEARCHER_PRIORITIZE_REGION)%'
+            $exclusionTypes: '%env(json:POINT_SEARCHER_EXCLUSION_TYPES)%'
+
     App\Geography\Service\TerritoryManager:
         arguments:
             $batchTemp: '%env(resolve:SIG_GEOROUTER_BATCH_TEMP)%'

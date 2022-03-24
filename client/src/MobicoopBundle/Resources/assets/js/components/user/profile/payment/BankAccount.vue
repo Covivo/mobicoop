@@ -5,7 +5,7 @@
         ref="skeleton"
         type="list-item-avatar-three-line"
         class="mx-auto mt-2"
-      />        
+      />
     </div>
     <div v-else>
       <v-alert
@@ -51,10 +51,10 @@
                     :rules="form.rules.ibanRules"
                     required
                     v-on="on"
-                  />  
+                  />
                 </template>
                 <span>{{ $t('form.tooltip.iban') }}</span>
-              </v-tooltip>      
+              </v-tooltip>
             </v-col>
           </v-row>
           <v-row justify="center">
@@ -67,7 +67,7 @@
                 :label="$t('form.label.bic')"
                 :rules="form.rules.bicRules"
                 required
-              />        
+              />
             </v-col>
           </v-row>
           <v-row justify="center">
@@ -93,12 +93,13 @@
               cols="12"
               md="10"
             >
-              <GeoComplete
-                :url="geoSearchUrl"
-                :token="user ? user.token : ''"
+              <geocomplete
+                :uri="geoSearchUrl"
+                :results-order="geoCompleteResultsOrder"
+                :palette="geoCompletePalette"
+                :chip="geoCompleteChip"
+                :restrict="['housenumber','street']"
                 :label="$t('form.label.address.check')"
-                :display-name-in-selected="false"
-                :prioritize-relaypoints="prioritizeRelaypoints"
                 @address-selected="addressSelected"
               />
             </v-col>
@@ -122,44 +123,51 @@
                 </v-col>
               </v-row>
               <v-row>
-                <v-col cols="12">
+                <v-col cols="3">
                   <v-text-field
-                    v-model="form.addressDetail.way"
-                    :label="$t('form.label.address.way')"
-                    :rules="form.rules.wayRules"
+                    v-model="form.addressDetail.houseNumber"
+                    :label="$t('form.label.address.houseNumber')"
                     required
-                  />                   
+                  />
+                </v-col>
+                <v-col cols="9">
+                  <v-text-field
+                    v-model="form.addressDetail.street"
+                    :label="$t('form.label.address.street')"
+                    :rules="form.rules.streetRules"
+                    required
+                  />
                 </v-col>
               </v-row>
               <v-row>
-                <v-col cols="4">
+                <v-col cols="3">
                   <v-text-field
-                    v-model="form.addressDetail.cp"
-                    :label="$t('form.label.address.cp')"
-                    :rules="form.rules.cpRules"
+                    v-model="form.addressDetail.postalCode"
+                    :label="$t('form.label.address.postalCode')"
+                    :rules="form.rules.postalCodeRules"
                     required
-                  />                   
+                  />
                 </v-col>
-                <v-col cols="8">
+                <v-col cols="9">
                   <v-text-field
-                    v-model="form.addressDetail.city"
-                    :label="$t('form.label.address.city')"
-                    :rules="form.rules.cityRules"
+                    v-model="form.addressDetail.addressLocality"
+                    :label="$t('form.label.address.addressLocality')"
+                    :rules="form.rules.addressLocalityRules"
                     required
-                  />                   
+                  />
                 </v-col>
               </v-row>
             </v-col>
-          </v-row>          
+          </v-row>
           <v-row justify="center">
             <v-col
               cols="12"
               md="10"
               class="text-center"
             >
-              <v-btn 
+              <v-btn
                 rounded
-                color="secondary" 
+                color="secondary"
                 class="mt-4 justify-self-center"
                 :disabled="!addressValidation || !valid"
                 @click="addBankCoordinates"
@@ -217,7 +225,7 @@
             </v-row>
             <v-row>
               <v-col cols="12">
-                <p>{{ bankCoordinates.address.streetAddress }}</p>
+                <p>{{ bankCoordinates.address.houseNumber }} {{ bankCoordinates.address.street }}</p>
                 <p>{{ bankCoordinates.address.postalCode }} {{ bankCoordinates.address.addressLocality }}</p>
               </v-col>
             </v-row>
@@ -280,7 +288,7 @@
 import maxios from "@utils/maxios";
 import moment from "moment";
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/profile/payment/BankAccount/";
-import GeoComplete from "@js/components/utilities/GeoComplete";
+import Geocomplete from "@components/utilities/geography/Geocomplete";
 import PaymentStatus from "@js/components/user/profile/payment/PaymentStatus";
 import IdentityValidation from "@js/components/user/profile/payment/IdentityValidation";
 
@@ -294,10 +302,10 @@ export default {
     }
   },
   components: {
-    GeoComplete,
+    Geocomplete,
     PaymentStatus,
     IdentityValidation
-  },  
+  },
   props: {
     user: {
       type: Object,
@@ -311,10 +319,18 @@ export default {
       type: String,
       default: null
     },
-    prioritizeRelaypoints: {
+    geoCompleteResultsOrder: {
+      type: Array,
+      default: null
+    },
+    geoCompletePalette: {
+      type: Object,
+      default: () => ({})
+    },
+    geoCompleteChip: {
       type: Boolean,
       default: false
-    }
+    },
   },
   data () {
     return {
@@ -324,27 +340,28 @@ export default {
         bic:"",
         formAddress:null,
         addressDetail:{
-          way:null,
-          cp:null,
-          city:null
+          houseNumber:null,
+          street:null,
+          postalCode:null,
+          addressLocality:null
         },
         rules:{
           ibanRules: [
             v => !!v || this.$t('form.errors.ibanRequired'),
             v => (/[a-zA-Z]{2}[0-9]{2}[a-zA-Z0-9]{4}[0-9]{7}([a-zA-Z0-9]?){0,16}/).test(v) || this.$t('form.errors.iban'),
-          ],      
+          ],
           bicRules: [
             v => !!v || this.$t('form.errors.bicRequired'),
             v => (/[a-zA-Z]{4}[a-zA-Z]{2}[a-zA-Z0-9]{2}([a-zA-Z0-9]{3})?/).test(v) || this.$t('form.errors.bic'),
           ],
-          wayRules: [
-            v => !!v || this.$t('form.errors.wayRequired'),
+          streetRules: [
+            v => !!v || this.$t('form.errors.streetRequired'),
           ],
-          cpRules: [
-            v => !!v || this.$t('form.errors.cpRequired'),
+          postalCodeRules: [
+            v => !!v || this.$t('form.errors.postalCodeRequired'),
           ],
-          cityRules: [
-            v => !!v || this.$t('form.errors.cityRequired'),
+          addressLocalityRules: [
+            v => !!v || this.$t('form.errors.addressLocalityRequired'),
           ],
         }
       },
@@ -410,9 +427,10 @@ export default {
 
       // We override several parameters retrieive by the SIG and validated directly by the user
       // We keep the ones given in the form
-      this.form.formAddress.streetAddress = this.form.addressDetail.way;
-      this.form.formAddress.postalCode = this.form.addressDetail.cp;
-      this.form.formAddress.city = this.form.addressDetail.city;
+      this.form.formAddress.houseNumber = this.form.addressDetail.houseNumber;
+      this.form.formAddress.street = this.form.addressDetail.street;
+      this.form.formAddress.postalCode = this.form.addressDetail.postalCode;
+      this.form.formAddress.addressLocality = this.form.addressDetail.addressLocality;
 
       let params = {
         "iban":this.form.iban,
@@ -436,9 +454,10 @@ export default {
     addressSelected(address){
       this.form.formAddress = address;
       if(address){
-        this.form.addressDetail.way = address.streetAddress;
-        this.form.addressDetail.cp = address.postalCode;
-        this.form.addressDetail.city = address.addressLocality;
+        this.form.addressDetail.houseNumber = address.houseNumber;
+        this.form.addressDetail.street = address.street;
+        this.form.addressDetail.postalCode = address.postalCode;
+        this.form.addressDetail.addressLocality = address.addressLocality;
       }
       this.addressValidation = true;
     },

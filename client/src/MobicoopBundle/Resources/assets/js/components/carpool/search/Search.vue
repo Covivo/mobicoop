@@ -9,7 +9,7 @@
         justify="center"
       >
         <v-col
-          
+
           cols="12"
           :xl="fullSize ? 12 : results ? 12 : 6"
           :lg="fullSize ? 12 : results ? 12 : 6"
@@ -27,7 +27,9 @@
             :iswidget="isWidget"
             :init-outward-date="defaultOutwardDate"
             :image-swap="imageSwap"
-            :prioritize-relaypoints="prioritizeRelaypoints"
+            :geo-complete-results-order="geoCompleteResultsOrder"
+            :geo-complete-palette="geoCompletePalette"
+            :geo-complete-chip="geoCompleteChip"
             @change="searchChanged"
           />
         </v-col>
@@ -80,7 +82,7 @@
     </v-container>
     <v-row v-else-if="horizontal">
       <v-col
-          
+
         cols="12"
       >
         <search-journey-horizontal
@@ -89,7 +91,9 @@
           :init-regular="dataRegular"
           :punctual-date-optional="punctualDateOptional"
           :elevation="horizontalElevation"
-          :prioritize-relaypoints="prioritizeRelaypoints"
+          :geo-complete-results-order="geoCompleteResultsOrder"
+          :geo-complete-palette="geoCompletePalette"
+          :geo-complete-chip="geoCompleteChip"
           @change="searchChanged"
           @search="search"
         />
@@ -132,11 +136,11 @@ export default {
     user: {
       type: Object,
       default: null
-    }, 
+    },
     regular: {
       type: Boolean,
       default: false
-    }, 
+    },
     punctualDateOptional: {
       type: Boolean,
       default: false
@@ -206,7 +210,15 @@ export default {
       type:Number,
       default: 2
     },
-    prioritizeRelaypoints: {
+    geoCompleteResultsOrder: {
+      type: Array,
+      default: null
+    },
+    geoCompletePalette: {
+      type: Object,
+      default: () => ({})
+    },
+    geoCompleteChip: {
       type: Boolean,
       default: false
     },

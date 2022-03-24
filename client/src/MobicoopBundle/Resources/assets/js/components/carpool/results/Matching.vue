@@ -22,7 +22,7 @@
             :regular="regular"
           />
           <!-- Matching filter -->
-          <matching-filter 
+          <matching-filter
             :communities="communities"
             :disabled-filters="loading"
             :disable-role="!includePassenger"
@@ -32,7 +32,7 @@
           />
 
           <!-- Number of matchings -->
-          <v-row 
+          <v-row
             justify="center"
             align="center"
           >
@@ -109,6 +109,9 @@
             <v-col cols="12">
               <search
                 :geo-search-url="geoSearchUrl"
+                :geo-complete-results-order="geoCompleteResultsOrder"
+                :geo-complete-palette="geoCompletePalette"
+                :geo-complete-chip="geoCompleteChip"
                 :user="user"
                 :regular="regular"
                 :hide-publish="true"
@@ -132,7 +135,7 @@
                 color="primary"
                 :content="nbCarpoolPlatform"
                 icon="mdi-timer-sand"
-              >              
+              >
                 {{ $t('tabs.carpools', {'platform':platformName}) }}
               </v-badge>
             </v-tab>
@@ -145,7 +148,7 @@
                 color="primary"
                 :content="nbCarpoolOther"
                 icon="mdi-timer-sand"
-              >              
+              >
                 {{ $t('tabs.otherCarpools') }}
               </v-badge>
             </v-tab>
@@ -158,10 +161,10 @@
                 color="primary"
                 :content="nbPtResults"
                 icon="mdi-timer-sand"
-              >              
+              >
                 {{ $t('tabs.ptresults') }}
               </v-badge>
-            </v-tab>            
+            </v-tab>
           </v-tabs>
           <!-- Tabs items  -->
           <v-tabs-items v-model="modelTabs">
@@ -203,7 +206,7 @@
                 :pt-results="ptResults"
                 :loading-pt-results="loadingPtResults"
               />
-            </v-tab-item>            
+            </v-tab-item>
           </v-tabs-items>
         </v-col>
       </v-row>
@@ -222,14 +225,14 @@
             flat
           >
             <v-card-text class="pb-0">
-              <v-img 
+              <v-img
                 v-if="nbCarpoolPlatform == '-' && displayLogoNoResult"
                 max-height="90px"
-                contain 
+                contain
                 :src="$t('logoNoResult')"
                 alt="no result logo"
               />
-              <p 
+              <p
                 v-if="nbCarpoolPlatform == '-'"
                 class="text-h6"
                 v-html="$t('saveSearch.noAd', {'cityA':displayOrigin, 'cityB':displayDestination})"
@@ -281,7 +284,7 @@
         @mapRefreshed="mapRefreshed"
       />
     </v-dialog>
-    
+
     <!-- login or register dialog -->
     <LoginOrRegisterFirst
       :id="lProposalId"
@@ -410,7 +413,19 @@ export default {
     displayLogoNoResult: {
       type: Boolean,
       default: false
-    }
+    },
+    geoCompleteResultsOrder: {
+      type: Array,
+      default: null
+    },
+    geoCompletePalette: {
+      type: Object,
+      default: () => ({})
+    },
+    geoCompleteChip: {
+      type: Boolean,
+      default: false
+    },
   },
   data : function() {
     return {
@@ -463,11 +478,11 @@ export default {
       let communities = [];
       this.results.forEach((result,key) => {
         if (result.communities) {
-          for (let key in result.communities) {  
+          for (let key in result.communities) {
             if (communities.indexOf(result.communities[key].name) == -1) {
-              communities.push({text:result.communities[key].name,value:key});    
+              communities.push({text:result.communities[key].name,value:key});
             }
-          }            
+          }
         }
       });
       return communities;
@@ -606,7 +621,7 @@ export default {
             }
             if (this.results.length>0 && this.results[0].id) {
               this.lProposalId = this.results[0].id;
-            }            
+            }
           })
           .catch((error) => {
             console.log(error);
@@ -761,7 +776,7 @@ export default {
         }
       }
       document.body.appendChild(form);
-      form.submit();      
+      form.submit();
     },
     launchCarpool(params) {
       maxios.post(this.$t("carpoolUrl"), params,

@@ -16,7 +16,7 @@
       </v-btn>
     </v-snackbar>
     <v-container>
-      <v-row 
+      <v-row
         justify="center"
       >
         <v-col
@@ -72,11 +72,12 @@
           </v-row>
           <v-row justify="center">
             <v-col cols="6">
-              <GeoComplete 
-                :token="user ? user.token : ''"
-                :url="geoSearchUrl"
+              <geocomplete
+                :uri="geoSearchUrl"
+                :results-order="geoCompleteResultsOrder"
+                :palette="geoCompletePalette"
+                :chip="geoCompleteChip"
                 :label="$t('form.address.label')"
-                :prioritize-relaypoints="prioritizeRelaypoints"
                 @address-selected="addressSelected"
               />
             </v-col>
@@ -136,7 +137,7 @@
 <script>
 
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/community/CommunityCreate/";
-import GeoComplete from "@components/utilities/GeoComplete";
+import Geocomplete from "@components/utilities/geography/Geocomplete";
 import maxios from "@utils/maxios";
 
 export default {
@@ -149,7 +150,7 @@ export default {
     },
   },
   components: {
-    GeoComplete
+    Geocomplete
   },
   props:{
     user: {
@@ -171,7 +172,19 @@ export default {
     imageMaxMbSize: {
       type: Number,
       default: null
-    }
+    },
+    geoCompleteResultsOrder: {
+      type: Array,
+      default: null
+    },
+    geoCompletePalette: {
+      type: Object,
+      default: () => ({})
+    },
+    geoCompleteChip: {
+      type: Boolean,
+      default: false
+    },
   },
   data () {
     return {
@@ -220,8 +233,8 @@ export default {
         newCommunity.append("avatar", this.avatar);
         newCommunity.append("address", JSON.stringify(this.communityAddress));
         if (this.domain) newCommunity.append("domain", this.domain);
-        
-        maxios 
+
+        maxios
           .post(this.$t('buttons.create.route'), newCommunity, {
             headers:{
               'content-type': 'multipart/form-data'
@@ -239,7 +252,7 @@ export default {
         this.snackError = this.$t('error.community.required')
         this.snackbar = true;
         this.loading = false;
-      }    
+      }
     },
     selectedAvatar() {
       this.avatarWidth = null;
@@ -247,7 +260,7 @@ export default {
 
       if (!this.avatar) return;
       let reader = new FileReader();
-      
+
       reader.readAsDataURL(this.avatar);
       reader.onload = evt => {
         let self = this;
@@ -259,7 +272,7 @@ export default {
         }
         img.src = evt.target.result;
       }
-      
+
     }
   }
 }

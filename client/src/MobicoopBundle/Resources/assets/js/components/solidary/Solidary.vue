@@ -20,11 +20,14 @@
         <p>{{ $t('introduction2') }}</p>
       </v-col>
     </v-row>
-      
+
     <!--solidary-form-->
-      
+
     <solidary-form
       :geo-search-url="geoSearchUrl"
+      :geo-complete-results-order="geoCompleteResultsOrder"
+      :geo-complete-palette="geoCompletePalette"
+      :geo-complete-chip="geoCompleteChip"
       :user="user"
       :regular="regular"
       :punctual-date-optional="punctualDateOptional"
@@ -74,7 +77,19 @@ export default {
     subjects: {
       type: Array,
       default: null
-    }
+    },
+    geoCompleteResultsOrder: {
+      type: Array,
+      default: null
+    },
+    geoCompletePalette: {
+      type: Object,
+      default: () => ({})
+    },
+    geoCompleteChip: {
+      type: Boolean,
+      default: false
+    },
   },
 }
 </script>
