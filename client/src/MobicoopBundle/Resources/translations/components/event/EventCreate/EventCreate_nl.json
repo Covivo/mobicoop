@@ -24,7 +24,9 @@
         "image": "De afbeelding werd niet opgeslagen",
         "event": {
             "create": "Het evenement kon niet worden aangemaakt",
-            "name": "Dit evenement bestaat al. Gebruik een andere naam"
+            "name": "Dit evenement bestaat al. Gebruik een andere naam",
+            "fullDescriptionLength": "Description trop longue",
+            "descriptionLength": "Description courte trop longue"
         }
     },
     "redirect": {
