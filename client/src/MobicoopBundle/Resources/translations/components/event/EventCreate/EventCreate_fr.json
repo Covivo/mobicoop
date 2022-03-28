@@ -48,7 +48,9 @@
     "error": {
         "event": {
             "name": "Cet événement existe déjà veuillez utiliser un autre nom",
-            "create": "La création de l'événement a échoué"
+            "create": "La création de l'événement a échoué",
+            "fullDescriptionLength": "Description trop longue",
+            "descriptionLength": "Description courte trop longue"
         },
         "image": "L'image n'a pas été enregistrée"
     },
