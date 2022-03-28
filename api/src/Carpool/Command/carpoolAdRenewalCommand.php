@@ -59,8 +59,8 @@ class carpoolAdRenewalCommand extends Command
     {
 
         if ($input->getArgument('numberOfDays')) {
-            $numberOfDays = $input->getArgument('numberOfDays');
-            return $this->proposalManager->sendCarpoolAdRenewal($numberOfDays);
+            $this->proposalManager->sendCarpoolAdRenewal($input->getArgument('numberOfDays'));
+            return 0;
         }
     }
 }
