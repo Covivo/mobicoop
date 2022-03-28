@@ -1,1 +1,28 @@
-{}
+{
+    "title": "3. Kontrola totožnosti",
+    "fileInput": {
+        "label": "Aktuální doklad totožnosti",
+        "error": "Nesprávná platnost dokumentu",
+        "tooltip": "Dokument musí být ve formátu jpg, jpeg, png nebo pdf. Velikost dokumentu musí být větší než 32 Kb a menší než 6 Mb"
+    },
+    "send": "Odeslat",
+    "status": {
+        "pending": "Dokument v procesu schvalování",
+        "validated": "Ověřená identita",
+        "outdated": "Dokument s prošlou platností",
+        "refused": {
+            "0": "Odmítnutí dokumentu",
+            "1": "Vaše osobní údaje se změnily, ověřte prosím svou totožnost znovu",
+            "2": "Odmítnutí dokladu, protože musíte být plnoletí",
+            "3": "Zamítnutí dokladu pro podezření z padělání",
+            "4": "Dokument odmítnut, protože soubor je prázdný",
+            "5": "Odmítnutí dokladu z důvodu uplynutí doby platnosti",
+            "7": "Dokument odmítnut, protože údaje neodpovídají údajům uživatele",
+            "8": "Dokument odmítnut jako nečitelný",
+            "9": "Dokument odmítnut jako neúplný",
+            "6": "Dokument odmítnut, protože typ dokumentu není akceptován"
+        }
+    },
+    "text": "<p>Ověření totožnosti na základě aktuálního dokladu totožnosti (oboustranný občanský průkaz, cestovní pas, řidičský průkaz) je zákonnou povinností pro příjem plateb. Tato povinnost je motivována bojem proti praní špinavých peněz.</p><p>Ověření identity požadované pro platbu se provádí porovnáním jména a příjmení zadaných ve vašem profilu a těch na vašem dokladu totožnosti. Ujistěte se tedy, že máte ve svém profilu správné informace.</p><p>Podmínky ověření dokladu totožnosti si můžete přečíst u našeho partnera <a target='_blank' href='https://support.mangopay.com/s/article/What-are-the-reasons-for-a-document-rejection?language=fr'>zde</a>.</p>",
+    "sendUrl": "/utilisateur/document-validation-identite/envoyer"
+}
