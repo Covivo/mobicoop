@@ -75,11 +75,12 @@
             </v-row>
             <v-row justify="center">
               <v-col cols="6">
-                <GeoComplete
-                  :url="geoSearchUrl"
-                  :token="user ? user.token : ''"
+                <geocomplete
+                  :uri="geoSearchUrl"
+                  :results-order="geoCompleteResultsOrder"
+                  :palette="geoCompletePalette"
+                  :chip="geoCompleteChip"
                   :label="$t('form.address.label')"
-                  :prioritize-relaypoints="prioritizeRelaypoints"
                   @address-selected="addressSelected"
                 />
               </v-col>
