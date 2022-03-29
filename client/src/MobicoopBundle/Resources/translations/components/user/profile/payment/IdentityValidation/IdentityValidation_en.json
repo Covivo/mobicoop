@@ -21,7 +21,8 @@
             "6": "Document rejected because document type not accepted",
             "7": "Document rejected because the data does not match the user data",
             "8": "Document rejected because illegible",
-            "9": "Document rejected because incomplete"
+            "9": "Document rejected because incomplete",
+            "10": "Document refusé (raison non donnée)"
         }
     },
     "sendUrl": "/user/document-validation-identification/send"

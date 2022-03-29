@@ -19,45 +19,45 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Payment\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-use Doctrine\ORM\PersistentCollection;
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use App\User\Entity\User;
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * A payment profile
+ * A payment profile.
  *
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class PaymentProfile
 {
-    const STATUS_INACTIVE = 0;
-    const STATUS_ACTIVE = 1;
+    public const STATUS_INACTIVE = 0;
+    public const STATUS_ACTIVE = 1;
 
-    const VALIDATION_PENDING = 0;
-    const VALIDATION_VALIDATED = 1;
-    const VALIDATION_REJECTED = 2;
-    const VALIDATION_OUTDATED = 3;
+    public const VALIDATION_PENDING = 0;
+    public const VALIDATION_VALIDATED = 1;
+    public const VALIDATION_REJECTED = 2;
+    public const VALIDATION_OUTDATED = 3;
 
-    const OUT_OF_DATE = 1;
-    const UNDERAGE_PERSON = 2;
-    const DOCUMENT_FALSIFIED = 3;
-    const DOCUMENT_MISSING = 4;
-    const DOCUMENT_HAS_EXPIRED = 5;
-    const DOCUMENT_NOT_ACCEPTED = 6;
-    const DOCUMENT_DO_NOT_MATCH_USER_DATA = 7;
-    const DOCUMENT_UNREADABLE = 8;
-    const DOCUMENT_INCOMPLETE = 9;
+    public const OUT_OF_DATE = 1;
+    public const UNDERAGE_PERSON = 2;
+    public const DOCUMENT_FALSIFIED = 3;
+    public const DOCUMENT_MISSING = 4;
+    public const DOCUMENT_HAS_EXPIRED = 5;
+    public const DOCUMENT_NOT_ACCEPTED = 6;
+    public const DOCUMENT_DO_NOT_MATCH_USER_DATA = 7;
+    public const DOCUMENT_UNREADABLE = 8;
+    public const DOCUMENT_INCOMPLETE = 9;
+    public const SPECIFIC_CASE = 10;
 
     /**
      * @var int The id of this payment profile
@@ -130,7 +130,7 @@ class PaymentProfile
     private $validationStatus;
 
     /**
-     * @var \DateTimeInterface Creation date.
+     * @var \DateTimeInterface creation date
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"readPayment"})
@@ -138,7 +138,7 @@ class PaymentProfile
     private $createdDate;
 
     /**
-     * @var \DateTimeInterface Updated date.
+     * @var \DateTimeInterface updated date
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"readPayment"})
@@ -170,19 +170,19 @@ class PaymentProfile
     private $validationOutdatedDate;
 
     /**
-     * @var array|null A user Bank accounts
+     * @var null|array A user Bank accounts
      * @Groups({"readPayment","writePayment"})
      */
     private $bankAccounts;
 
     /**
-     * @var array|null A user wallets
+     * @var null|array A user wallets
      * @Groups({"readPayment"})
      */
     private $wallets;
 
     /**
-     * @var int|null The reason why the document is refused
+     * @var null|int The reason why the document is refused
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"readPayment","writePayment"})
      */
@@ -205,36 +205,36 @@ class PaymentProfile
         return $this;
     }
 
-    public function getProvider(): String
+    public function getProvider(): string
     {
         return $this->provider;
     }
 
-    public function setProvider(String $provider): self
+    public function setProvider(string $provider): self
     {
         $this->provider = $provider;
 
         return $this;
     }
 
-    public function getIdentifier(): String
+    public function getIdentifier(): string
     {
         return $this->identifier;
     }
 
-    public function setIdentifier(String $identifier): self
+    public function setIdentifier(string $identifier): self
     {
         $this->identifier = $identifier;
 
         return $this;
     }
 
-    public function getValidationId(): String
+    public function getValidationId(): string
     {
         return $this->validationId;
     }
 
-    public function setValidationId(String $validationId): self
+    public function setValidationId(string $validationId): self
     {
         $this->validationId = $validationId;
 
@@ -300,7 +300,7 @@ class PaymentProfile
 
         return $this;
     }
-    
+
     public function getValidatedDate(): ?\DateTimeInterface
     {
         return $this->validatedDate;

@@ -19,41 +19,42 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace Mobicoop\Bundle\MobicoopBundle\Payment\Entity;
 
-use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
+use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
+use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
-use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
-use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
 
 /**
- * A Bank account
+ * A Bank account.
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class BankAccount implements ResourceInterface, \JsonSerializable
 {
-    const STATUS_INACTIVE = 0;
-    const STATUS_ACTIVE = 1;
+    public const STATUS_INACTIVE = 0;
+    public const STATUS_ACTIVE = 1;
 
-    const VALIDATION_PENDING = 0;
-    const VALIDATION_VALIDATED = 1;
-    const VALIDATION_REJECTED = 2;
-    const VALIDATION_OUTDATED = 3;
+    public const VALIDATION_PENDING = 0;
+    public const VALIDATION_VALIDATED = 1;
+    public const VALIDATION_REJECTED = 2;
+    public const VALIDATION_OUTDATED = 3;
 
-    const OUT_OF_DATE = 1;
-    const UNDERAGE_PERSON = 2;
-    const DOCUMENT_FALSIFIED = 3;
-    const DOCUMENT_MISSING = 4;
-    const DOCUMENT_HAS_EXPIRED = 5;
-    const DOCUMENT_NOT_ACCEPTED = 6;
-    const DOCUMENT_DO_NOT_MATCH_USER_DATA = 7;
-    const DOCUMENT_UNREADABLE = 8;
-    const DOCUMENT_INCOMPLETE = 9;
+    public const OUT_OF_DATE = 1;
+    public const UNDERAGE_PERSON = 2;
+    public const DOCUMENT_FALSIFIED = 3;
+    public const DOCUMENT_MISSING = 4;
+    public const DOCUMENT_HAS_EXPIRED = 5;
+    public const DOCUMENT_NOT_ACCEPTED = 6;
+    public const DOCUMENT_DO_NOT_MATCH_USER_DATA = 7;
+    public const DOCUMENT_UNREADABLE = 8;
+    public const DOCUMENT_INCOMPLETE = 9;
+    public const SPECIFIC_CASE = 10;
 
     /**
      * @var int The id of this bank account
@@ -61,23 +62,22 @@ class BankAccount implements ResourceInterface, \JsonSerializable
     private $id;
 
     /**
-     * @var string|null The iri of this bank account.
-     *
+     * @var null|string the iri of this bank account
      */
     private $iri;
 
     /**
-     * @var string|null The litteral name of the user owning this bank account
+     * @var null|string The litteral name of the user owning this bank account
      */
     private $userLitteral;
 
     /**
-     * @var Address|null The address linked to this bank account
+     * @var null|Address The address linked to this bank account
      *
      * @Groups({"post"})
      */
     private $address;
-    
+
     /**
      * @var string The iban number of this bank account
      *
@@ -97,7 +97,7 @@ class BankAccount implements ResourceInterface, \JsonSerializable
     private $bic;
 
     /**
-     * @var string|null A comment for this bank account
+     * @var null|string A comment for this bank account
      *
      * @Groups({"post"})
      */
@@ -117,7 +117,6 @@ class BankAccount implements ResourceInterface, \JsonSerializable
 
     /**
      * @var int The reason why the identity document associated to the bankaccount is not validated
-     *
      */
     private $refusalReason;
 
@@ -137,20 +136,19 @@ class BankAccount implements ResourceInterface, \JsonSerializable
     private $validationOutdatedDate;
 
     /**
-     * @var \DateTimeInterface Creation date.
+     * @var \DateTimeInterface creation date
      */
     private $createdDate;
 
-    
-    public function __construct($id=null)
+    public function __construct($id = null)
     {
         if ($id) {
             $this->setId($id);
-            $this->setIri("/bank_accounts/".$id);
+            $this->setIri('/bank_accounts/'.$id);
         }
         $this->images = new ArrayCollection();
     }
-    
+
     public function getId(): ?int
     {
         return $this->id;
@@ -165,18 +163,18 @@ class BankAccount implements ResourceInterface, \JsonSerializable
     {
         return $this->iri;
     }
-    
+
     public function setIri($iri)
     {
         $this->iri = $iri;
     }
 
-    public function getUserLitteral(): ?String
+    public function getUserLitteral(): ?string
     {
         return $this->userLitteral;
     }
 
-    public function setUserLitteral(?String $userLitteral)
+    public function setUserLitteral(?string $userLitteral)
     {
         $this->userLitteral = $userLitteral;
     }
@@ -191,32 +189,32 @@ class BankAccount implements ResourceInterface, \JsonSerializable
         $this->address = $address;
     }
 
-    public function getIban(): ?String
+    public function getIban(): ?string
     {
         return $this->iban;
     }
 
-    public function setIban(?String $iban)
+    public function setIban(?string $iban)
     {
         $this->iban = $iban;
     }
 
-    public function getBic(): ?String
+    public function getBic(): ?string
     {
         return $this->bic;
     }
 
-    public function setBic(?String $bic)
+    public function setBic(?string $bic)
     {
         $this->bic = $bic;
     }
 
-    public function getComment(): ?String
+    public function getComment(): ?string
     {
         return $this->comment;
     }
 
-    public function setComment(?String $comment)
+    public function setComment(?string $comment)
     {
         $this->comment = $comment;
     }
@@ -257,7 +255,7 @@ class BankAccount implements ResourceInterface, \JsonSerializable
 
         return $this;
     }
-    
+
     public function getValidatedDate(): ?\DateTimeInterface
     {
         return $this->validatedDate;
@@ -301,20 +299,20 @@ class BankAccount implements ResourceInterface, \JsonSerializable
     {
         return
             [
-                'id'                            => $this->getId(),
-                'iri'                           => $this->getIri(),
-                'userLitteral'                  => $this->getUserLitteral(),
-                'address'                       => $this->getAddress(),
-                'iban'                          => $this->getIban(),
-                'bic'                           => $this->getBic(),
-                'comment'                       => $this->getComment(),
-                'status'                        => $this->getStatus(),
-                'validationStatus'              => $this->getValidationStatus(),
-                'refusalReason'                 => $this->getRefusalReason(),
-                'validationAskedDate'           => $this->getValidationAskedDate(),
-                'validatedDate'                 => $this->getValidatedDate(),
-                'validationOutdatedDate'        => $this->getValidationOutdatedDate(),
-                'createdDate'                   => $this->getCreatedDate()
+                'id' => $this->getId(),
+                'iri' => $this->getIri(),
+                'userLitteral' => $this->getUserLitteral(),
+                'address' => $this->getAddress(),
+                'iban' => $this->getIban(),
+                'bic' => $this->getBic(),
+                'comment' => $this->getComment(),
+                'status' => $this->getStatus(),
+                'validationStatus' => $this->getValidationStatus(),
+                'refusalReason' => $this->getRefusalReason(),
+                'validationAskedDate' => $this->getValidationAskedDate(),
+                'validatedDate' => $this->getValidatedDate(),
+                'validationOutdatedDate' => $this->getValidationOutdatedDate(),
+                'createdDate' => $this->getCreatedDate(),
             ];
     }
 }

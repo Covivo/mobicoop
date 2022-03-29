@@ -21,7 +21,8 @@
             "6" : "Document refusé car type de document non accepté",
             "7" : "Document refusé car les données ne correspondent pas à celles de l'utilisateur",
             "8" : "Document refusé car illisible",
-            "9" : "Document refusé car incomplet"
+            "9" : "Document refusé car incomplet",
+            "10": "Document refusé (raison non donnée)"
         }
     },
     "sendUrl": "/utilisateur/document-validation-identite/envoyer"

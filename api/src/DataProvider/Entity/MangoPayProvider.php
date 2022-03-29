@@ -80,6 +80,7 @@ class MangoPayProvider implements PaymentProviderInterface
     public const DOCUMENT_DO_NOT_MATCH_USER_DATA = 'DOCUMENT_DO_NOT_MATCH_USER_DATA';
     public const DOCUMENT_UNREADABLE = 'DOCUMENT_UNREADABLE';
     public const DOCUMENT_INCOMPLETE = 'DOCUMENT_INCOMPLETE';
+    public const SPECIFIC_CASE = 'SPECIFIC_CASE';
 
     private $user;
     private $serverUrl;
@@ -810,6 +811,11 @@ class MangoPayProvider implements PaymentProviderInterface
 
                 case self::DOCUMENT_INCOMPLETE:
                     $validationDocument->setStatus(ValidationDocument::DOCUMENT_INCOMPLETE);
+
+                    break;
+
+                case self::SPECIFIC_CASE:
+                    $validationDocument->setStatus(ValidationDocument::SPECIFIC_CASE);
 
                     break;
             }
