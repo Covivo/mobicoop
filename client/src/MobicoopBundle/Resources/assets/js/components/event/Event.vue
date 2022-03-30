@@ -257,11 +257,15 @@ export default {
       eventPassed: false,
       loginOrRegisterDialog: false,
       lEventId: this.event.id ? this.event.id : null,
-      date: this.event.fromDate.date
+      date:this.event.fromDate.date
     }
   },
   computed: {
-
+    dateFormated() { 
+      return this.date
+        ? moment.utc(this.date).format("YYYY-MM-DD")
+        : "";
+    },
   // Link the event in the adresse
   },
   created: function () {
@@ -318,7 +322,7 @@ export default {
           origin: null,
           destination: JSON.stringify(this.destination),
           regular: null,
-          date: null,
+          date: this.dateFormated,
           time: null,
           ...this.params
         };
