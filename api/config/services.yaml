@@ -140,6 +140,12 @@ services:
         tags:
             - { name: doctrine.event_listener, event: onSchemaAlterTableRemoveColumn }
             - { name: doctrine.event_listener, event: onSchemaAlterTableAddColumn }
+
+    # Kernel response
+    mobicoop.kernel.response:
+        class: App\EventListener\KernelResponseListener
+        tags:
+            - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse }
             
     # CONTROLLERS AND SERVICES
 

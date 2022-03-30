@@ -272,7 +272,7 @@ class UserManager
      */
     public function checkEmail(string $email)
     {
-        //Email already exist in db
+        // Email already exist in db
         if ($this->userRepository->findOneBy(['email' => $email])) {
             return 'email-exist';
         }
@@ -592,7 +592,7 @@ class UserManager
             $emailUpdate = true;
         }
 
-        //we add/remove structures associated to user
+        // we add/remove structures associated to user
         if (!is_null($user->getSolidaryStructures())) {
             // We initialize an arry with the ids of the user's structures
             $structuresIds = [];
@@ -1373,7 +1373,7 @@ class UserManager
                 // todo throw execption
                 throw new UserDeleteException('The user is a community owner');
             }
-            //delete all community subscriptions
+            // delete all community subscriptions
             $this->deleteCommunityUsers($user);
         }
         // check if the user have pending proofs, and remove the links
@@ -1418,7 +1418,7 @@ class UserManager
         $this->entityManager->flush();
     }
 
-    //Get asks for an user -> use for check if a ask is already done on a proposal
+    // Get asks for an user -> use for check if a ask is already done on a proposal
     public function getAsks(User $user): array
     {
         if ($asks = $this->askRepository->findAskByAsker($user)) {
@@ -1597,14 +1597,14 @@ class UserManager
     public function randomString(int $length = 10)
     {
         $alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
-        $string = []; //remember to declare $string as an array
-        $alphaLength = strlen($alphabet) - 1; //put the length -1 in cache
+        $string = []; // remember to declare $string as an array
+        $alphaLength = strlen($alphabet) - 1; // put the length -1 in cache
         for ($i = 0; $i < $length; ++$i) {
             $n = rand(0, $alphaLength);
             $string[] = $alphabet[$n];
         }
 
-        return implode($string); //turn the array into a string
+        return implode($string); // turn the array into a string
     }
 
     /**
@@ -1680,14 +1680,14 @@ class UserManager
     public function randomPassword()
     {
         $alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
-        $pass = []; //remember to declare $pass as an array
-        $alphaLength = strlen($alphabet) - 1; //put the length -1 in cache
+        $pass = []; // remember to declare $pass as an array
+        $alphaLength = strlen($alphabet) - 1; // put the length -1 in cache
         for ($i = 0; $i < 10; ++$i) {
             $n = rand(0, $alphaLength);
             $pass[] = $alphabet[$n];
         }
 
-        return implode($pass); //turn the array into a string
+        return implode($pass); // turn the array into a string
     }
 
     /**
@@ -1824,7 +1824,7 @@ break;
             // We keep only the messages where the user was recipient
             if ($firstMessage->getRecipients()[0]->getUser()->getId() == $user->getId()) {
                 ++$nbMessagesTotal;
-                //We check if the User sent an anwser to this message
+                // We check if the User sent an anwser to this message
                 $completeThread = $this->internalMessageManager->getCompleteThread($firstMessage->getId());
                 foreach ($completeThread as $message) {
                     if ($message->getUser()->getid() == $user->getId()) {
@@ -2001,6 +2001,11 @@ break;
         }
     }
 
+    public function getUnreadMessageNumberForResponseInsertion(User $user): User
+    {
+        return $this->getUnreadMessageNumber($user);
+    }
+
     /**
      * Sort function.
      *
@@ -2016,7 +2021,7 @@ break;
         return ($a['date'] < $b['date']) ? 1 : -1;
     }
 
-    //Delete images associated to the user
+    // Delete images associated to the user
     // deleteBase -> delete the base image and remove the entry
     private function deleteUserImages(User $user)
     {
@@ -2026,7 +2031,7 @@ break;
         }
     }
 
-    //Delete link between the delete account and his communities
+    // Delete link between the delete account and his communities
     private function deleteCommunityUsers(User $user)
     {
         $myCommunityUsers = $this->communityUserRepository->findBy(['user' => $user]);
