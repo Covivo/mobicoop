@@ -127,7 +127,7 @@
           :regular="regular"
           :default-destination="defaultDestination"
           :publish-button-always-active="publishButtonAlwaysActive"
-          :default-outward-date="date"
+          :default-outward-date="dateFormated"
         />
       </v-row>
     </v-container>
@@ -243,12 +243,17 @@ export default {
       eventPassed: false,
       loginOrRegisterDialog: false,
       lEventId: this.event.id ? this.event.id : null,
-      date: this.event.fromDate.date
+      date:this.event.fromDate.date
     }
   },
   computed: {
-    
-  // Link the event in the adresse
+    dateFormated() { 
+      return this.date
+        ? moment.utc(this.date).format("YYYY-MM-DD")
+        : "";
+    },
+
+    // Link the event in the adresse
   },
   created: function () {
     moment.locale(this.locale); // DEFINE DATE LANGUAGE
@@ -304,7 +309,7 @@ export default {
           origin: null,
           destination: JSON.stringify(this.destination),
           regular: null,
-          date: null,
+          date: this.dateFormated,
           time: null,
           ...this.params
         };
