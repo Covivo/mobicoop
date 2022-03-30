@@ -25,6 +25,7 @@ namespace App\Carpool\Command;
 
 use App\Carpool\Service\ProposalManager;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -37,13 +38,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 class carpoolAdRenewalCommand extends Command
 {
     private $proposalManager;
-    private $daysReminderProposalOutdated;
 
 
-    public function __construct(ProposalManager $proposalManager, int $daysReminderProposalOutdated)
+    public function __construct(ProposalManager $proposalManager)
     {
         $this->proposalManager = $proposalManager;
-        $this->daysReminderProposalOutdated = $daysReminderProposalOutdated;
 
         parent::__construct();
     }
@@ -52,12 +51,16 @@ class carpoolAdRenewalCommand extends Command
     {
         $this
             ->setName('app:carpool-ad-renewal')
-            ->setDescription('Send carpool ad renewal');
+            ->setDescription('Send carpool ad renewal')
+            ->addArgument('numberOfDays', InputArgument::REQUIRED, 'Number of days to send a reminder before proposal outdated');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $numberOfDays = $this->daysReminderProposalOutdated;
-        return $this->proposalManager->sendCarpoolAdRenewal($numberOfDays);
+
+        if ($input->getArgument('numberOfDays')) {
+            $this->proposalManager->sendCarpoolAdRenewal($input->getArgument('numberOfDays'));
+            return 0;
+        }
     }
 }
