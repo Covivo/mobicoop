@@ -2,6 +2,7 @@
     "sendUrl": "/utilisateur/document-validation-identite/envoyer",
     "status": {
         "refused": {
+            "10": "Document refusé (raison non donnée)",
             "9": "Document geweigerd omdat het onvolledig is",
             "8": "Document geweigerd omdat het onleesbaar is",
             "7": "Document geweigerd omdat de gegevens niet overeenstemmen met die van de gebruiker",
