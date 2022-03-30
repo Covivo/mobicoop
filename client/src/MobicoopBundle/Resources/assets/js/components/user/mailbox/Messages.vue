@@ -5,6 +5,43 @@
       grid-list-md
       fluid
     >
+      <v-row
+        justify="center"
+      >
+        <v-col class="mr-n12 ml-n12">
+          <v-card
+            v-if="fraudWarningDisplay"
+            color="info"
+            flat
+            dark
+            max-height="50px"
+            rounded="0"
+          >
+            <v-card-text>
+              <v-icon
+                left
+              >
+                mdi-alert
+              </v-icon>
+              <span class="white--text ">
+                {{ $t('fraudWarningText.title') }}
+              </span>
+            </v-card-text>
+          </v-card>
+          <v-card
+            v-if="fraudWarningDisplay"
+            flat
+            rounded="0"
+          >
+            <v-card-text>
+              {{ $t('fraudWarningText.part1') }} <a
+                :href="$t('fraudWarningText.link')"
+                target="_blank"
+              >{{ $t('fraudWarningText.textLink') }}</a>
+            </v-card-text>
+          </v-card>
+        </v-col>
+      </v-row>
       <v-row id="headGridMessages">
         <v-col class="col-3 pt-5 pb-4 pl-2 secondary white--text font-weight-bold text-h5">
           <mail-box-header>{{ $t("headers.messages") }}</mail-box-header>
@@ -22,11 +59,6 @@
           <mail-box-header>{{ $t("headers.context") }}</mail-box-header>
         </v-col>
       </v-row>
-      <v-row v-if="fraudWarningDisplay">
-        <v-col cols="12">
-          <p>{{ $t('fraudWarningText.part1') }} <a :href="$t('fraudWarningText.link')">{{ $t('fraudWarningText.textLink') }}</a>{{ $t('fraudWarningText.part2') }}</p>
-        </v-col>
-      </v-row>
       <v-row>
         <v-col
           class="col-3"
@@ -38,7 +70,7 @@
             center-active
             centered
             next-icon="mdi-arrow-right-thick"
-            prev-icon="mdi-arrow-left-thick"      
+            prev-icon="mdi-arrow-left-thick"
             show-arrows
           >
             <v-tab
@@ -53,7 +85,7 @@
                   mdi-car
                 </v-icon>
                 <br>
-                <div 
+                <div
                   class="mb-2"
                   style="letter-spacing: -0.15px;"
                 >
@@ -111,7 +143,7 @@
                   mdi-hand-heart
                 </v-icon>
                 <br>
-                <div 
+                <div
                   class="mb-2"
                   style="letter-spacing: -0.15px;"
                 >
@@ -125,7 +157,7 @@
                   </v-badge>
                 </div>
               </div>
-            </v-tab>            
+            </v-tab>
           </v-tabs>
           <v-tabs-items v-model="modelTabs">
             <v-container class="window-scroll">
@@ -348,7 +380,7 @@ export default {
     updateDetails(data){
       // console.error(data);
       this.hideClickIcon = false;
-      
+
       // Update the current Ask
       (data.type=="Carpool" || data.type=="Solidary") ? this.currentIdAsk = data.idAsk : this.currentIdAsk = null;
 
@@ -430,7 +462,7 @@ export default {
           "returnSchedule" : data.returnSchedule,
           "status" : statusUpdate
         }
-      }      
+      }
       // console.error(data);
       // console.error(params);
       maxios.post(this.$t("urlUpdateAsk"),params)
@@ -443,10 +475,10 @@ export default {
         .catch(function (error) {
           console.error(error);
         });
-      
+
     },
     refreshSelected(data){
-     
+
       this.loadingDetails = true;
       (data.idAsk) ? this.currentIdAsk  = data.idAsk : this.idMessage = data.idMessage;
       this.refreshActions = true;
