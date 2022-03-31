@@ -694,7 +694,7 @@ class RdexManager
         // Mintime : 08:00
         // Maxtime : 12:00
         // 4 hours of margin so we keep mintime = 08:00 and mintime + margin = 12:00 and not 04:00->12:00
-        //$mintime->sub(new \DateInterval("PT" . $margin. "S"));
+        // $mintime->sub(new \DateInterval("PT" . $margin. "S"));
 
         $maxtime = clone $time;
         $maxtime->add(new \DateInterval('PT'.$margin.'S'));
@@ -842,7 +842,7 @@ class RdexManager
                 $minMaxTime = $this->computeMinMaxTime($journey->getTueTime(), $journey->getTueMarginDuration());
                 $rdexDayTime->setMintime($minMaxTime[0]->format('H:i:s'));
                 $rdexDayTime->setMaxtime($minMaxTime[1]->format('H:i:s'));
-                $infos->setMonday($rdexDayTime);
+                $infos->setTuesday($rdexDayTime);
             }
             if ($result->isWedCheck() && !is_null($journey->getWedTime())) {
                 $days->setWednesday(1);
