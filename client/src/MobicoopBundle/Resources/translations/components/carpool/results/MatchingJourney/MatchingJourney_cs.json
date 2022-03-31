@@ -1,1 +1,61 @@
-{}
+{
+    "priceTooltip": "Orientační sazebník",
+    "places": "{seats} místo | {seats} místa",
+    "carpool": "Podání žádosti",
+    "carpoolAsDriver": "Přihlásit se jako řidič",
+    "carpoolAsPassenger": "Podejte žádost jako cestující",
+    "confirmCarpoolTitle": "Potvrzení žádosti",
+    "confirmCarpool": "Podáte formální žádost o spolujízdu {spolujezdci}, který ji může přijmout nebo odmítnout",
+    "confirm": "Potvrdit",
+    "cancel": "Zrušit",
+    "alreadyAskCarpool": "Na tento inzerát jste se již přihlásili.",
+    "alreadyInitiatedCarpool": "S tímto inzerátem jste již navázali kontakt.",
+    "seeMessages": {
+        "label": "Viz zprávy",
+        "route": "/utilisateur/messages"
+    },
+    "birthYears": "let",
+    "contact": "Kontakt",
+    "contactTips": {
+        "acceptedAsk": "S tímto spolujezdcem jste již naplánovali spolujízdu",
+        "pendingAsk": "Požadavek na tento bazar čeká na vyřízení",
+        "initiatedAsk": "Požadavek na tuto spolujízdu čeká na vyřízení"
+    },
+    "outward": "Výběr tras",
+    "return": "Vyberte si výnosy",
+    "previous": "Předchozí",
+    "detail": "Podrobnosti",
+    "fromDate": "Od",
+    "maxDate": "Do",
+    "ranges": [
+        "1 týden",
+        "1 měsíc",
+        "3 měsíce",
+        "Až do"
+    ],
+    "i18n": {
+        "date": {
+            "format": {
+                "fullDate": "ddd Do MMMM YYYY",
+                "shortDate": "DD/MM/YYYY",
+                "computeDate": "YYYY-MM-DD"
+            }
+        },
+        "time": {
+            "format": {
+                "hourMinute": "HH[h]mm"
+            }
+        }
+    },
+    "fraudWarningText": {
+        "part1": "Na Mobicoopu se platby za vaše spolujízdy provádějí v podstatě takto ",
+        "link": "/utilisateur/profil/modifier/mes-covoiturages-acceptes",
+        "textLink": "osobně nebo online ",
+        "part2": "nebo v místní a volné měně. Doporučujeme našim uživatelům, aby nepřijímali jiné platební metody, jako jsou kupony PCS nebo Transcash, které jsou obecně spojovány s podvodnými praktikami. Uživatele můžete nahlásit z jeho profilu."
+    },
+    "detour": {
+        "default": "Tato vypočtená trasa obsahuje odbočku.",
+        "onlyDriver": "Tato vypočtená trasa má odbočku. Kontaktujte řidiče."
+    },
+    "detailTitle": "Podrobnosti o spolujízdě"
+}
