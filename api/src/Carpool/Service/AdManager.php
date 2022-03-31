@@ -2213,7 +2213,7 @@ class AdManager
         }
 
         $mapsAd->setCarpoolerFirstName($proposal->getUser()->getGivenName());
-        $mapsAd->setCarpoolerLastName($proposal->getUser()->getFamilyName());
+        $mapsAd->setCarpoolerLastName($proposal->getUser()->getShortFamilyName());
 
         return $mapsAd;
     }
