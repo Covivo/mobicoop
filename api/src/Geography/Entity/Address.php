@@ -19,27 +19,26 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Geography\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use App\Carpool\Entity\Waypoint;
 use App\Community\Entity\Community;
 use App\Event\Entity\Event;
+use App\Image\Entity\Icon;
+use App\RelayPoint\Entity\RelayPoint;
+use App\User\Entity\User;
+use CrEOF\Spatial\PHP\Types\Geometry\Point;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
-use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
-use ApiPlatform\Core\Annotation\ApiFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
-use App\Carpool\Entity\Waypoint;
-use App\User\Entity\User;
-use App\Image\Entity\Icon;
-use CrEOF\Spatial\PHP\Types\Geometry\Point;
-use App\Geography\Controller\AddressSearch;
-use App\RelayPoint\Entity\RelayPoint;
-use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * A postal address (including textual informations and / or geometric coordinates).
@@ -139,18 +138,17 @@ use Doctrine\Common\Collections\ArrayCollection;
  * )
  * @ApiFilter(OrderFilter::class, properties={"id", "streetAddress", "postalCode", "addressLocality", "addressCountry"}, arguments={"orderParameterName"="order"})
  */
-
 class Address implements \JsonSerializable
 {
-    const DEFAULT_ID = 999999999999;
-    const HOME_ADDRESS = "homeAddress";
+    public const DEFAULT_ID = 999999999999;
+    public const HOME_ADDRESS = 'homeAddress';
 
-    const LAYER_LOCALITY = 1;
-    const LAYER_ADDRESS = 2;
-    const LAYER_LOCALADMIN = 3;
+    public const LAYER_LOCALITY = 1;
+    public const LAYER_ADDRESS = 2;
+    public const LAYER_LOCALADMIN = 3;
 
     /**
-     * @var int The id of this address.
+     * @var int the id of this address
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -161,7 +159,7 @@ class Address implements \JsonSerializable
     private $id;
 
     /**
-     * @var int|null The layer identified for the address.
+     * @var null|int the layer identified for the address
      *
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"read","readUser","results","write","writeRelayPoint","pt","mass","massCompute","readCommunity"})
@@ -169,7 +167,7 @@ class Address implements \JsonSerializable
     private $layer;
 
     /**
-     * @var string The house number.
+     * @var string the house number
      *
      * @ORM\Column(type="string", length=45, nullable=true)
      * @Groups({"aRead", "aReadCol", "aReadItem", "aWrite", "read","readUser","results","write","writeRelayPoint","pt","mass","massCompute","threads","thread","readRelayPoint", "writeSolidary","readPayment","readCommunityAds"})
@@ -177,7 +175,7 @@ class Address implements \JsonSerializable
     private $houseNumber;
 
     /**
-     * @var string The street.
+     * @var string the street
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"aRead", "aReadCol", "aReadItem", "aWrite", "read","readUser","results","write","writeRelayPoint","pt","mass","massCompute","readRelayPoint", "writeSolidary","readPayment","readCommunityAds"})
@@ -186,15 +184,15 @@ class Address implements \JsonSerializable
     private $street;
 
     /**
-     * @var string The full street address.
+     * @var string the full street address
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"aRead", "aReadCol", "aReadItem", "aWrite", "read","readUser","results","write","writeRelayPoint","pt","mass","massCompute","threads","thread","externalJourney","readRelayPoint", "writeSolidary", "readPayment", "writePayment","readCommunityAds"})
+     * @Groups({"aRead", "aReadCol", "aReadItem", "aWrite", "read","readUser","results","write","writeRelayPoint","pt","mass","massCompute","threads","thread","externalJourney","readRelayPoint", "writeSolidary", "readPayment", "writePayment","readCommunityAds","readEvent"})
      */
     private $streetAddress;
 
     /**
-     * @var string|null The postal code of the address.
+     * @var null|string the postal code of the address
      *
      * @ORM\Column(type="string", length=15, nullable=true)
      * @Groups({"aRead", "aReadCol", "aReadItem", "aWrite", "read","readUser","results","write","writeRelayPoint","pt","mass","massCompute","externalJourney","readRelayPoint", "writeSolidary", "readPayment", "writePayment","readCommunityAds"})
@@ -203,7 +201,7 @@ class Address implements \JsonSerializable
     private $postalCode;
 
     /**
-     * @var string|null The sublocality of the address.
+     * @var null|string the sublocality of the address
      *
      * @ORM\Column(type="string", length=100, nullable=true)
      * @Groups({"aRead", "aReadCol", "aReadItem", "aWrite", "read","readUser","results","write","writeRelayPoint","pt","mass","massCompute","threads","thread","readRelayPoint", "writeSolidary"})
@@ -211,16 +209,16 @@ class Address implements \JsonSerializable
     private $subLocality;
 
     /**
-     * @var string|null The locality of the address.
+     * @var null|string the locality of the address
      *
      * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups({"aRead", "aReadCol", "aReadItem", "aWrite", "read","readUser","readEvent","results","write","writeRelayPoint","pt","mass","massCompute","threads","thread","externalJourney","readCommunity","readRelayPoint", "writeSolidary", "readPayment", "writePayment", "readExport","readCommunityAds"})
+     * @Groups({"aRead", "aReadCol", "aReadItem", "aWrite", "read","readUser","readEvent","results","write","writeRelayPoint","pt","mass","massCompute","threads","thread","externalJourney","readCommunity","readRelayPoint", "writeSolidary", "readPayment", "writePayment", "readExport","readCommunityAds","readEvent"})
      * @Assert\NotBlank(groups={"massCompute","threads","thread"})
      */
     private $addressLocality;
 
     /**
-     * @var string|null The locality admin of the address.
+     * @var null|string the locality admin of the address
      *
      * @ORM\Column(type="string", length=100, nullable=true)
      * @Groups({"aRead", "aReadCol", "aReadItem", "aWrite", "read","readUser","results","write","writeRelayPoint","pt","mass","massCompute","threads","thread","readRelayPoint", "writeSolidary"})
@@ -228,7 +226,7 @@ class Address implements \JsonSerializable
     private $localAdmin;
 
     /**
-     * @var string|null The county of the address.
+     * @var null|string the county of the address
      *
      * @ORM\Column(type="string", length=100, nullable=true)
      * @Groups({"aRead", "aReadCol", "aReadItem", "aWrite", "read","readUser","results","write","writeRelayPoint","pt","mass","massCompute","threads","thread","readRelayPoint", "writeSolidary"})
@@ -236,7 +234,7 @@ class Address implements \JsonSerializable
     private $county;
 
     /**
-     * @var string|null The macro county of the address.
+     * @var null|string the macro county of the address
      *
      * @ORM\Column(type="string", length=100, nullable=true)
      * @Groups({"aRead", "aReadCol", "aReadItem", "aWrite", "read","readUser","results","write","writeRelayPoint","pt","mass","massCompute","threads","thread","readRelayPoint", "writeSolidary", "writePayment"})
@@ -244,7 +242,7 @@ class Address implements \JsonSerializable
     private $macroCounty;
 
     /**
-     * @var string|null The region of the address.
+     * @var null|string the region of the address
      *
      * @ORM\Column(type="string", length=100, nullable=true)
      * @Groups({"aRead", "aReadCol", "aReadItem", "aWrite", "read","readUser","results","write","writeRelayPoint","pt","mass","massCompute","threads","thread","readRelayPoint", "writeSolidary", "readPayment", "writePayment"})
@@ -252,7 +250,7 @@ class Address implements \JsonSerializable
     private $region;
 
     /**
-     * @var string|null The macro region of the address.
+     * @var null|string the macro region of the address
      *
      * @ORM\Column(type="string", length=100, nullable=true)
      * @Groups({"aRead", "aReadCol", "aReadItem", "aWrite", "read","readUser","results","write","writeRelayPoint","pt","mass","massCompute","threads","thread","readRelayPoint", "writeSolidary", "writePayment"})
@@ -260,7 +258,7 @@ class Address implements \JsonSerializable
     private $macroRegion;
 
     /**
-     * @var string|null The country of the address.
+     * @var null|string the country of the address
      *
      * @ORM\Column(type="string", length=100, nullable=true)
      * @Groups({"aRead", "aReadCol", "aReadItem", "aWrite", "read","readUser","results","write","writeRelayPoint","pt","mass","massCompute","threads","thread","externalJourney","readRelayPoint", "writeSolidary", "writePayment","readCommunityAds"})
@@ -268,7 +266,7 @@ class Address implements \JsonSerializable
     private $addressCountry;
 
     /**
-     * @var string|null The country code of the address.
+     * @var null|string the country code of the address
      *
      * @ORM\Column(type="string", length=10, nullable=true)
      * @Groups({"aRead", "aReadCol", "aReadItem", "aWrite", "read","readUser","results","write","writeRelayPoint","pt","mass","massCompute","threads","thread","readRelayPoint", "writeSolidary", "readPayment", "writePayment","readCommunityAds"})
@@ -276,7 +274,7 @@ class Address implements \JsonSerializable
     private $countryCode;
 
     /**
-     * @var float|null The latitude of the address.
+     * @var null|float the latitude of the address
      *
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
      * @Groups({"aRead", "aReadCol", "aReadItem", "aWrite", "read","readUser","readCommunity","readEvent","results","write","writeRelayPoint","pt","mass","massCompute","threads","thread","externalJourney","readRelayPoint", "writeSolidary","readCommunityAds"})
@@ -284,7 +282,7 @@ class Address implements \JsonSerializable
     private $latitude;
 
     /**
-     * @var float|null The longitude of the address.
+     * @var null|float the longitude of the address
      *
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
      * @Groups({"aRead", "aReadCol", "aReadItem", "aWrite", "read","readUser","readCommunity","readEvent","results","write","writeRelayPoint","pt","mass","massCompute","threads","thread","externalJourney","readRelayPoint", "writeSolidary","readCommunityAds"})
@@ -292,7 +290,7 @@ class Address implements \JsonSerializable
     private $longitude;
 
     /**
-     * @var int|null The elevation of the address in metres.
+     * @var null|int the elevation of the address in metres
      *
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"read","results","write","writeRelayPoint","pt","mass","massCompute","readRelayPoint"})
@@ -300,22 +298,22 @@ class Address implements \JsonSerializable
     private $elevation;
 
     /**
-     * @var string|null The geoJson point of the address.
+     * @var null|string the geoJson point of the address
      * @ORM\Column(type="point", nullable=true)
      * @Groups({"read","write","writeRelayPoint","readEvent"})
      */
     private $geoJson;
 
     /**
-     * @var string|null The name of this address.
+     * @var null|string the name of this address
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"aRead", "aReadCol", "aReadItem", "aWrite", "read","readUser","results","write","writeRelayPoint"})
+     * @Groups({"aRead", "aReadCol", "aReadItem", "aWrite", "read","readUser","results","write","writeRelayPoint","readEvent"})
      */
     private $name;
 
     /**
-     * @var string|null The venue name of this address.
+     * @var null|string the venue name of this address
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"read","readUser","results","write","writeRelayPoint","readRelayPoint"})
@@ -323,7 +321,7 @@ class Address implements \JsonSerializable
     private $venue;
 
     /**
-     * @var User|null The owner of the address.
+     * @var null|User the owner of the address
      *
      * @ORM\ManyToOne(targetEntity="App\User\Entity\User", inversedBy="addresses")
      * @ORM\JoinColumn(onDelete="CASCADE")
@@ -331,7 +329,7 @@ class Address implements \JsonSerializable
     private $user;
 
     /**
-     * @var boolean The address is a home address.
+     * @var bool the address is a home address
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"aRead", "aReadCol", "aReadItem", "aWrite", "read","readUser","results","write","writeRelayPoint"})
@@ -339,14 +337,14 @@ class Address implements \JsonSerializable
     private $home;
 
     /**
-     * @var array|null Label for display
+     * @var null|array Label for display
      *
      * @Groups({"aRead", "aReadCol", "aReadItem", "aWrite", "read","readUser","readCommunity","readEvent","results","pt","readRelayPoint", "readExport", "readCommunityAds"})
      */
     private $displayLabel;
 
     /**
-     * @var RelayPoint|null The relaypoint related to the address.
+     * @var null|RelayPoint the relaypoint related to the address
      *
      * @ORM\OneToOne(targetEntity="App\RelayPoint\Entity\RelayPoint", mappedBy="address")
      * @Groups({"read","pt"})
@@ -355,7 +353,7 @@ class Address implements \JsonSerializable
     private $relayPoint;
 
     /**
-     * @var Event|null The event of the address.
+     * @var null|Event the event of the address
      *
      * @ORM\OneToOne(targetEntity="App\Event\Entity\Event", mappedBy="address")
      * @Groups({"read","pt","readEvent","write","writeRelayPoint"})
@@ -363,7 +361,7 @@ class Address implements \JsonSerializable
     private $event;
 
     /**
-     * @var Community|null The community of the address.
+     * @var null|Community the community of the address
      *
      * @ORM\OneToOne(targetEntity="App\Community\Entity\Community", mappedBy="address")
      * @Groups({"read"})
@@ -371,14 +369,14 @@ class Address implements \JsonSerializable
     private $community;
 
     /**
-     * @var Waypoint|null The waypoint of the address.
+     * @var null|Waypoint the waypoint of the address
      *
      * @ORM\OneToOne(targetEntity="App\Carpool\Entity\Waypoint", mappedBy="address")
      */
     private $waypoint;
 
     /**
-     * @var \DateTimeInterface Creation date.
+     * @var \DateTimeInterface creation date
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read"})
@@ -386,7 +384,7 @@ class Address implements \JsonSerializable
     private $createdDate;
 
     /**
-     * @var \DateTimeInterface Updated date.
+     * @var \DateTimeInterface updated date
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read"})
@@ -394,36 +392,36 @@ class Address implements \JsonSerializable
     private $updatedDate;
 
     /**
-     * @var ArrayCollection|null The territories of this address.
+     * @var null|ArrayCollection the territories of this address
      *
      * @ORM\ManyToMany(targetEntity="\App\Geography\Entity\Territory")
      */
     private $territories;
 
     /**
-     * @var string|null Icon fileName.
+     * @var null|string icon fileName
      *
      * @Groups({"aRead", "aReadCol", "aReadItem", "read","readRelayPoint"})
      */
     private $icon;
 
     /**
-     * @var array|null The provider of the address.
+     * @var null|array the provider of the address
      *
      * @Groups({"read"})
      */
     private $providedBy;
 
     /**
-     * @var int|null The similarity of the address with a search
-     * In autocomplete context using Levenstein algorithm between the search termes and the addressLocality
+     * @var null|int The similarity of the address with a search
+     *               In autocomplete context using Levenstein algorithm between the search termes and the addressLocality
      *
      * @Groups({"read"})
      */
     private $similarityWithSearch;
 
     /**
-     * @var array|null The distance to the focus point if relevant.
+     * @var null|array the distance to the focus point if relevant
      *
      * @Groups({"read"})
      */
@@ -826,15 +824,16 @@ class Address implements \JsonSerializable
         if ($this->territories->contains($territory)) {
             $this->territories->removeElement($territory);
         }
+
         return $this;
     }
 
     public function removeTerritories(): self
     {
         $this->territories->clear();
+
         return $this;
     }
-
 
     // DOCTRINE EVENTS
 
@@ -845,7 +844,7 @@ class Address implements \JsonSerializable
      */
     public function setAutoCreatedDate()
     {
-        $this->setCreatedDate(new \Datetime());
+        $this->setCreatedDate(new \DateTime());
     }
 
     /**
@@ -855,7 +854,7 @@ class Address implements \JsonSerializable
      */
     public function setAutoUpdatedDate()
     {
-        $this->setUpdatedDate(new \Datetime());
+        $this->setUpdatedDate(new \DateTime());
     }
 
     /**
@@ -871,13 +870,13 @@ class Address implements \JsonSerializable
         }
     }
 
-
     /**
      * Check if the current address is the same than the one given as an array.
      * Note : the method checks only geographical data.
      *
-     * @param array $compare    The array thant contains the address to compare
-     * @return boolean
+     * @param array $compare The array thant contains the address to compare
+     *
+     * @return bool
      */
     public function isSame(array $compare, bool $replace = false)
     {
@@ -923,6 +922,7 @@ class Address implements \JsonSerializable
         if (isset($compare['countryCode']) && $this->getCountryCode() != $compare['countryCode']) {
             return false;
         }
+
         return true;
     }
 
@@ -930,7 +930,8 @@ class Address implements \JsonSerializable
      * Replace elements of an address with the given array.
      *
      * @param array $fields The array thant contains the new address elements
-     * @return bool     True if the address was updated
+     *
+     * @return bool True if the address was updated
      */
     public function replaceBy(array $fields): bool
     {
@@ -999,30 +1000,30 @@ class Address implements \JsonSerializable
     {
         return
             [
-                'id'                   => $this->getId(),
-                'houseNumber'          => $this->getHouseNumber(),
-                'street'               => $this->getStreet(),
-                'streetAddress'        => $this->getStreetAddress(),
-                'postalCode'           => $this->getPostalCode(),
-                'addressLocality'      => $this->getAddressLocality(),
-                'name'                 => $this->getName(),
-                'addressCountry'       => $this->getAddressCountry(),
-                'countryCode'          => $this->getCountryCode(),
-                'county'               => $this->getCounty(),
-                'latitude'             => $this->getLatitude(),
-                'localAdmin'           => $this->getLocalAdmin(),
-                'longitude'            => $this->getLongitude(),
-                'macroCounty'          => $this->getMacroCounty(),
-                'macroRegion'          => $this->getMacroRegion(),
-                'region'               => $this->getRegion(),
-                'subLocality'          => $this->getSubLocality(),
-                'displayLabel'         => $this->getDisplayLabel(),
-                'home'                 => $this->isHome(),
-                'icon'                 => $this->getIcon(),
-                'venue'                => $this->getVenue(),
-                'event'                => $this->getEvent(),
-                'layer'                => $this->getLayer(),
-                'similarityWithSearch' => $this->getSimilarityWithSearch()
+                'id' => $this->getId(),
+                'houseNumber' => $this->getHouseNumber(),
+                'street' => $this->getStreet(),
+                'streetAddress' => $this->getStreetAddress(),
+                'postalCode' => $this->getPostalCode(),
+                'addressLocality' => $this->getAddressLocality(),
+                'name' => $this->getName(),
+                'addressCountry' => $this->getAddressCountry(),
+                'countryCode' => $this->getCountryCode(),
+                'county' => $this->getCounty(),
+                'latitude' => $this->getLatitude(),
+                'localAdmin' => $this->getLocalAdmin(),
+                'longitude' => $this->getLongitude(),
+                'macroCounty' => $this->getMacroCounty(),
+                'macroRegion' => $this->getMacroRegion(),
+                'region' => $this->getRegion(),
+                'subLocality' => $this->getSubLocality(),
+                'displayLabel' => $this->getDisplayLabel(),
+                'home' => $this->isHome(),
+                'icon' => $this->getIcon(),
+                'venue' => $this->getVenue(),
+                'event' => $this->getEvent(),
+                'layer' => $this->getLayer(),
+                'similarityWithSearch' => $this->getSimilarityWithSearch(),
             ];
     }
 }

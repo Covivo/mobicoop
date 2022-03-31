@@ -223,9 +223,8 @@ class AskManager
             $criteria->setSunTime($matching->getProposalOffer()->getCriteria()->getSunTime());
             if (Ad::ROLE_DRIVER_OR_PASSENGER != $ad->getRole()) {
                 // we fill the selected days if a role has been set
-                foreach ($ad->getSchedule() as $key => $schedule) {
+                foreach ($ad->getSchedule() as $schedule) {
                     if (isset($schedule['outwardTime']) && '' != $schedule['outwardTime']) {
-                        echo 'entre dans le if'.PHP_EOL;
                         if (isset($schedule['mon']) && $schedule['mon']) {
                             $criteria->setMonCheck(true);
                         }

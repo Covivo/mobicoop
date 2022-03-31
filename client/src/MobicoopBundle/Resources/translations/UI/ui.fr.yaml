@@ -59,6 +59,8 @@ widget:
     title: "Widget"
 toolbox:
     title: "Boîte à outils"
+dynamicslines:
+  title: "Lignes dynamiques"
 relaypoints:
     title: "Points relais"
 payment:
