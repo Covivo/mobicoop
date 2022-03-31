@@ -27,16 +27,41 @@ namespace App\Stats\Admin\Service;
  */
 class DataManager
 {
+    public const TIMEZONE = 'Europe/Paris';
     public const DATA_NAME_VALIDATED_USERS = 'ValidatedUsers';
-    public const DATA_NAME_REGISTRATIONS = 'Registrations';
+    public const DATA_NAME_NOT_VALIDATED_USERS = 'NotValidatedUsers';
+
+    public const DATA_NAME_VALIDATED_USERS_DETAILED = 'ValidatedUsersDetailed';
+    public const DATA_NAME_NOT_VALIDATED_USERS_DETAILED = 'NotValidatedUsersDetailed';
+    public const DATA_NAME_REGISTRATIONS_DETAILED = 'RegistrationsDetailed';
+    public const DATA_NAME_PROPOSALS_STILL_VALID_DETAILED = 'ProposalsStillValidDetailed';
 
     public const PREFIX_AUTO_CALL_METHOD = 'build';
     public const SUFFIX_AUTO_CALL_METHOD = 'Request';
 
     public const DATA_NAMES = [
         self::DATA_NAME_VALIDATED_USERS,
-        self::DATA_NAME_REGISTRATIONS,
+        self::DATA_NAME_NOT_VALIDATED_USERS,
+        self::DATA_NAME_REGISTRATIONS_DETAILED,
+        self::DATA_NAME_VALIDATED_USERS_DETAILED,
+        self::DATA_NAME_NOT_VALIDATED_USERS_DETAILED,
+        self::DATA_NAME_PROPOSALS_STILL_VALID_DETAILED,
     ];
+
+    public const REQUEST_AGGREG_INTERVALS = [
+        'daily' => '1d',
+        'monthly' => '1M',
+        'yearly' => '1y',
+        '12h' => '12h',
+    ];
+    public const REQUEST_AGGREG_TYPE_INTERVALS = [
+        '1d' => 'calendar_interval',
+        '1M' => 'calendar_interval',
+        '1y' => 'calendar_interval',
+        '12h' => 'fixed_interval',
+    ];
+
+    public const DEFAULT_DETAILED_AGGREG_INTERVAL = self::REQUEST_AGGREG_INTERVALS['monthly'];
 
     private const REQUEST_TIMOUT = 30000;
     private const DATE_FORMAT = 'c';
@@ -61,6 +86,8 @@ class DataManager
 
     private $response;
     private $keyType;
+    private $dateFieldFilter;
+    private $aggregationInterval;
 
     public function __construct(string $baseUri, string $instance, string $username, string $password)
     {
@@ -88,15 +115,16 @@ class DataManager
     public function getStartDate(): ?\DateTime
     {
         if (is_null($this->startDate)) {
-            $startDate = new \DateTime('now');
+            $startDate = new \DateTime('first day of this month');
+
             if (self::DEFAULT_START_DATE_MODIFICATOR !== '') {
                 $startDate->modify(self::DEFAULT_START_DATE_MODIFICATOR);
             }
 
-            return $startDate;
+            $this->startDate = $startDate;
         }
 
-        return $this->startDate;
+        return $this->startDate->setTime(0, 0, 1);
     }
 
     public function setEndDate(?\DateTime $endDate)
@@ -107,15 +135,32 @@ class DataManager
     public function getEndDate(): ?\DateTime
     {
         if (is_null($this->endDate)) {
-            $endDate = new \DateTime('now');
+            $endDate = new \DateTime('first day of this month');
             if (self::DEFAULT_END_DATE_MODIFICATOR !== '') {
                 $endDate->modify(self::DEFAULT_END_DATE_MODIFICATOR);
             }
 
-            return $endDate;
+            $this->endDate = $endDate;
         }
 
-        return $this->endDate;
+        return $this->endDate->setTime(23, 59, 59);
+    }
+
+    public function setAggregationInterval(?string $aggregationInterval)
+    {
+        $this->aggregationInterval = self::DEFAULT_DETAILED_AGGREG_INTERVAL;
+        if (isset(self::REQUEST_AGGREG_INTERVALS[$aggregationInterval])) {
+            $this->aggregationInterval = self::REQUEST_AGGREG_INTERVALS[$aggregationInterval];
+        }
+    }
+
+    public function getAggregationInterval(): ?string
+    {
+        if (is_null($this->aggregationInterval)) {
+            return self::DEFAULT_DETAILED_AGGREG_INTERVAL;
+        }
+
+        return $this->aggregationInterval;
     }
 
     public function getData(): array
@@ -149,9 +194,10 @@ class DataManager
     {
         $this->request['query']['bool']['filter'][] = [
             'range' => [
-                'user_created_date' => [
+                $this->dateFieldFilter => [
                     'gte' => $this->getStartDate()->format(self::DATE_FORMAT),
                     'lte' => $this->getEndDate()->format(self::DATE_FORMAT),
+                    'format' => 'strict_date_optional_time',
                 ],
             ],
         ];
@@ -174,7 +220,24 @@ class DataManager
         ];
     }
 
-    private function buildRegistrationsRequest()
+    private function buildNotValidatedUsersRequest()
+    {
+        $this->request['query'] = [
+            'bool' => [
+                'filter' => [
+                    [
+                        'match_phrase' => [
+                            'user_status_label' => [
+                                'query' => 'Non validé',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
+    }
+
+    private function buildRegistrationsDetailedRequest()
     {
         $this->keyType = 'utc-datetime';
 
@@ -182,8 +245,8 @@ class DataManager
             1 => [
                 'date_histogram' => [
                     'field' => 'user_created_date',
-                    'calendar_interval' => '1M',
-                    'time_zone' => 'Europe/Paris',
+                    self::REQUEST_AGGREG_TYPE_INTERVALS[$this->getAggregationInterval()] => $this->getAggregationInterval(),
+                    'time_zone' => self::TIMEZONE,
                     'min_doc_count' => 1,
                 ],
             ],
@@ -197,11 +260,93 @@ class DataManager
                             'user_status_label' => 'Désinscrit',
                         ],
                     ],
+                ],
+            ],
+        ];
+    }
+
+    private function buildValidatedUsersDetailedRequest()
+    {
+        $this->keyType = 'datetime';
+        $this->dateFieldFilter = 'user_validated_date';
+
+        $this->request['aggs'] = [
+            1 => [
+                'date_histogram' => [
+                    'field' => $this->dateFieldFilter,
+                    self::REQUEST_AGGREG_TYPE_INTERVALS[$this->getAggregationInterval()] => $this->getAggregationInterval(),
+                    'time_zone' => self::TIMEZONE,
+                    'min_doc_count' => 1,
+                ],
+            ],
+        ];
+
+        $this->request['query'] = [
+            'bool' => [
+                'must' => [
                     [
                         'match_phrase' => [
-                            'user_status_label' => 'Désinscrit',
+                            'user_status_label' => 'Validé',
                         ],
                     ],
+                ],
+            ],
+        ];
+    }
+
+    private function buildNotValidatedUsersDetailedRequest()
+    {
+        $this->keyType = 'datetime';
+        $this->dateFieldFilter = 'user_created_date';
+
+        $this->request['aggs'] = [
+            1 => [
+                'date_histogram' => [
+                    'field' => $this->dateFieldFilter,
+                    self::REQUEST_AGGREG_TYPE_INTERVALS[$this->getAggregationInterval()] => $this->getAggregationInterval(),
+                    'time_zone' => self::TIMEZONE,
+                    'min_doc_count' => 1,
+                ],
+            ],
+        ];
+
+        $this->request['query'] = [
+            'bool' => [
+                'must' => [
+                    [
+                        'match_phrase' => [
+                            'user_status_label' => 'Non validé',
+                        ],
+                    ],
+                ],
+            ],
+        ];
+    }
+
+    private function buildProposalsStillValidDetailedRequest()
+    {
+        $this->keyType = 'datetime';
+        $this->dateFieldFilter = '@timestamp';
+
+        $this->request['aggs'] = [
+            '1' => [
+                'date_histogram' => [
+                    'field' => $this->dateFieldFilter,
+                    self::REQUEST_AGGREG_TYPE_INTERVALS[$this->getAggregationInterval()] => $this->getAggregationInterval(),
+                    'time_zone' => self::TIMEZONE,
+                    'min_doc_count' => 1,
+                ],
+            ],
+        ];
+
+        $this->request['size'] = 0;
+        $this->request['stored_fields'] = ['*'];
+
+        $this->request['query'] = [
+            'bool' => [
+                'filter' => [
+                    ['match_phrase' => ['search' => 'Annonce']],
+                    ['match_phrase' => ['status' => 'Active']],
                 ],
             ],
         ];
@@ -223,6 +368,9 @@ class DataManager
         ]);
 
         $this->requestResponse = curl_exec($curl);
+        // var_dump($this->requestResponse);
+
+        // exit;
 
         curl_close($curl);
     }
@@ -230,7 +378,6 @@ class DataManager
     private function deserializeDataResponse()
     {
         $dataResponse = json_decode($this->requestResponse, true);
-
         $this->response = [];
 
         $this->response['total'] = 0;
@@ -244,13 +391,18 @@ class DataManager
                 $dataCollection = [];
                 if (isset($collection['buckets'])) {
                     foreach ($collection['buckets'] as $value) {
+                        $key = new \DateTime($value['key_as_string']);
+                        $key->setTimezone(new \DateTimeZone(self::TIMEZONE));
+
                         $dataCollection[] = [
-                            'key' => $value['key_as_string'],
-                            'keyType' => $this->keyType = 'utc-datetime',
+                            'key' => $key->format('c'),
+                            'keyType' => $this->keyType,
+                            'interval' => array_search($this->getAggregationInterval(), self::REQUEST_AGGREG_INTERVALS),
                             'value' => $value['doc_count'],
+                            'dataName' => $this->getDataName(),
                         ];
                     }
-                    $this->response['data'][] = $dataCollection;
+                    $this->response['data'] = $dataCollection;
                 }
             }
         }

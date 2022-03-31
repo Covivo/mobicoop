@@ -831,6 +831,9 @@ break;
         }
         $solidary->setAdmindiary($diaries);
 
+        // get distance
+        $solidary->setDistance(($solidary->getProposal()->getCriteria()->getDirectionPassenger()->getDistance() / 1000));
+
         return $solidary;
     }
 

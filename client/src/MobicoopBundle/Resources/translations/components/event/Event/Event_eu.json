@@ -2,6 +2,7 @@
     "urlCommunityUser": "/community-user",
     "map": {
         "origin": "Abiatzea",
+        "regular": "Trajet régulier",
         "search": {
             "label": "Chercher les covoiturages correspondants"
         }

@@ -28,6 +28,7 @@ use App\Action\Repository\ActionRepository;
 use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\Criteria;
 use App\Carpool\Entity\Proposal;
+use App\Carpool\Event\AdRenewalEvent;
 use App\Carpool\Event\AskAdDeletedEvent;
 use App\Carpool\Event\DriverAskAdDeletedEvent;
 use App\Carpool\Event\DriverAskAdDeletedUrgentEvent;
@@ -493,8 +494,8 @@ class ProposalManager
             PRIMARY KEY(id));
         '
         )->execute()
-        && $this->entityManager->getConnection()->prepare(
-            "INSERT INTO outdated_proposals (id)
+            && $this->entityManager->getConnection()->prepare(
+                "INSERT INTO outdated_proposals (id)
             (SELECT DISTINCT proposal.id FROM proposal
             LEFT JOIN matching m1 ON m1.proposal_offer_id = proposal.id
             LEFT JOIN matching m2 ON m2.proposal_request_id = proposal.id
@@ -507,7 +508,7 @@ class ProposalManager
             (m1.id IS NULL OR a1.id IS NULL) AND
             (m2.id IS NULL OR a2.id IS NULL));
             "
-        )->execute()
+            )->execute()
         && $this->entityManager->getConnection()->prepare('start transaction;')->execute()
         && $this->entityManager->getConnection()->prepare('DELETE FROM proposal WHERE id in (select id from outdated_proposals);')->execute()
         && $this->entityManager->getConnection()->prepare('commit;')->execute()
@@ -564,6 +565,16 @@ class ProposalManager
             $this->entityManager->remove($orphanProposal);
         }
         $this->entityManager->flush();
+    }
+
+    public function sendCarpoolAdRenewal(?int $numberOfDays = null)
+    {
+        $proposals = $this->proposalRepository->findProposalsOutdated($numberOfDays);
+
+        foreach ($proposals as $proposal) {
+            $event = new AdRenewalEvent($proposal);
+            $this->eventDispatcher->dispatch(AdRenewalEvent::NAME, $event);
+        }
     }
 
     /**
@@ -1098,8 +1109,8 @@ class ProposalManager
                 PRIMARY KEY(id));
             '
             )->execute()
-        && $this->entityManager->getConnection()->prepare(
-            'INSERT INTO outdated_criteria (id)
+            && $this->entityManager->getConnection()->prepare(
+                'INSERT INTO outdated_criteria (id)
             (SELECT criteria.id FROM criteria 
             LEFT JOIN ask ON ask.criteria_id = criteria.id
             LEFT JOIN matching ON matching.criteria_id = criteria.id
@@ -1113,7 +1124,7 @@ class ProposalManager
             solidary_ask.criteria_id IS NULL AND
             solidary_matching.criteria_id IS NULL);
             '
-        )->execute()
+            )->execute()
         && $this->entityManager->getConnection()->prepare('start transaction;')->execute()
         && $this->entityManager->getConnection()->prepare('DELETE FROM criteria WHERE id in (select id from outdated_criteria);')->execute()
         && $this->entityManager->getConnection()->prepare('commit;')->execute()

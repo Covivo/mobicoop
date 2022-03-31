@@ -52,6 +52,7 @@ class GetDataCommand extends Command
             ->addArgument('dataName', InputArgument::REQUIRED, 'Name of the data to retreive')
             ->addArgument('startDate', InputArgument::OPTIONAL, 'The start day of the period YYYYMMDD')
             ->addArgument('endDate', InputArgument::OPTIONAL, 'The end day of the period YYYYMMDD')
+            ->addArgument('aggregInterval', InputArgument::OPTIONAL, 'Interval for aggregated statistics (1D, 1M, 1Y)')
             ->setDescription('Get the data')
         ;
     }
@@ -70,6 +71,11 @@ class GetDataCommand extends Command
 
         $this->dataManager->setStartDate($startDate);
         $this->dataManager->setEndDate($endDate);
+
+        if (!is_null($input->getArgument('aggregInterval')) && '' !== $input->getArgument('aggregInterval')) {
+            $this->dataManager->setAggregationInterval($input->getArgument('aggregInterval'));
+        }
+
         var_dump($this->dataManager->getData());
     }
 }

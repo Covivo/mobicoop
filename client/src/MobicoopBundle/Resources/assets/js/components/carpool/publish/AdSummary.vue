@@ -29,7 +29,7 @@
                 <v-icon color="secondary">mdi-arrow-right</v-icon>
               </span>
 
-              {{ computedOutwardDateFormat }}
+              <span>{{ computedOutwardDateFormat }}</span>
             </h2>
             <h2 v-else>
               <v-chip
@@ -132,9 +132,9 @@
                       <strong>{{ computedOutwardTimeFormat }}</strong>
                     </v-col>
                     <v-col :cols="displayInfo ? 12 : 12">
-                      <v-row>
+                      <span>
                         {{ (route && route.origin) ? displayAddress(route.origin) : '' }}
-                      </v-row>
+                      </span>
                       <v-row />                      
                     </v-col>
                   </v-row>
@@ -202,13 +202,15 @@
                     <h2
                       v-if="!regular"
                     >
-                      <span
+                      <v-row
                         v-if="hasReturn"
                         class="secondary--text"
                       >
                         {{ $t('return') }}
-                        <v-icon color="secondary">mdi-arrow-left</v-icon>
-                      </span>
+                        <v-icon color="secondary">
+                          mdi-arrow-left
+                        </v-icon>
+                      </v-row>
 
                       {{ computedReturnDateFormat }}
                     </h2>
@@ -260,7 +262,7 @@
                           </v-col>
                           <v-col :cols="displayInfo ? 6 : 12">
                             <!-- return so we invert destination and origin-->
-                            {{ (route && route.destination) ? route.destination.addressLocality : null }}
+                            <span>{{ (route && route.destination) ? route.destination.addressLocality : null }}</span>
                           </v-col>
                         </v-row>
                       </v-timeline-item>
@@ -675,6 +677,10 @@ export default {
     ageDisplay: {
       type: Boolean,
       default: false
+    },
+    eventId: {
+      type: Number,
+      default: null
     }
   },
   data() {
@@ -785,7 +791,9 @@ export default {
       if(address.relayPoint && address.relayPoint.name){
         return address.relayPoint.name;
       }
-      else{
+      if(address.displayedLabel){
+        return address.displayedLabel;
+      }else{
         let display = address.addressLocality;
         if(address.streetAddress) display += '\n' + address.streetAddress;
         if(address.venue) display += '\n' + address.venue;
