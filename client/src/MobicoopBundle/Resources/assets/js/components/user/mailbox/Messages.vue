@@ -38,7 +38,7 @@
             center-active
             centered
             next-icon="mdi-arrow-right-thick"
-            prev-icon="mdi-arrow-left-thick"      
+            prev-icon="mdi-arrow-left-thick"
             show-arrows
           >
             <v-tab
@@ -53,7 +53,7 @@
                   mdi-car
                 </v-icon>
                 <br>
-                <div 
+                <div
                   class="mb-2"
                   style="letter-spacing: -0.15px;"
                 >
@@ -111,7 +111,7 @@
                   mdi-hand-heart
                 </v-icon>
                 <br>
-                <div 
+                <div
                   class="mb-2"
                   style="letter-spacing: -0.15px;"
                 >
@@ -125,7 +125,7 @@
                   </v-badge>
                 </div>
               </div>
-            </v-tab>            
+            </v-tab>
           </v-tabs>
           <v-tabs-items v-model="modelTabs">
             <v-container class="window-scroll">
@@ -285,18 +285,6 @@ export default {
     fraudWarningDisplay: {
       type: Boolean,
       default: false
-    },
-    unreadCarpoolMessages: {
-      type: Number,
-      default: null
-    },
-    unreadDirectMessages: {
-      type: Number,
-      default: null
-    },
-    unreadSolidaryMessages: {
-      type: Number,
-      default: null
     }
   },
   data() {
@@ -320,9 +308,9 @@ export default {
       hideClickIcon : false,
       blockerId: null,
       unreadMessages:{
-        currentUnreadCarpoolMessages: this.unreadCarpoolMessages,
-        currentUnreadDirectMessages: this.unreadDirectMessages,
-        currentUnreadSolidaryMessages: this.unreadSolidaryMessages
+        currentUnreadCarpoolMessages: 0,
+        currentUnreadDirectMessages: 0,
+        currentUnreadSolidaryMessages: 0
       }
     };
   },
@@ -343,24 +331,30 @@ export default {
     if(this.givenIdAsk) {
       this.refreshActions = true;
     }
+    this.unreadMessages.currentUnreadCarpoolMessages = this.$store.getters['m/unreadCarpoolMessageNumber'];
+    this.unreadMessages.currentUnreadDirectMessages = this.$store.getters['m/unreadDirectMessageNumber'];
+    this.unreadMessages.currentUnreadSolidaryMessages = this.$store.getters['m/unreadSolidaryMessageNumber'];
   },
   methods: {
     updateDetails(data){
       // console.error(data);
       this.hideClickIcon = false;
-      
+
       // Update the current Ask
       (data.type=="Carpool" || data.type=="Solidary") ? this.currentIdAsk = data.idAsk : this.currentIdAsk = null;
 
       // Update the number of unread messages in the right tab
       if(data.type=="Carpool"){
-        this.unreadMessages.currentUnreadCarpoolMessages -= data.formerUnreadMessages
+        this.$store.commit('m/setUnreadCarpoolMessageNumber', this.unreadMessages.currentUnreadCarpoolMessages - 1);
+        this.unreadMessages.currentUnreadCarpoolMessages = this.$store.getters['m/unreadCarpoolMessageNumber'];
       }
       else if(data.type=="Solidary"){
-        this.unreadMessages.currentUnreadSolidaryMessages -= data.formerUnreadMessages
+        this.$store.commit('m/setUnreadSolidaryMessageNumber', this.unreadMessages.currentUnreadSolidaryMessages -1);
+        this.unreadMessages.currentUnreadSolidaryMessages = this.$store.getters['m/unreadSolidaryMessageNumber'];
       }
       else if(data.type=="Direct"){
-        this.unreadMessages.currentUnreadDirectMessages -= data.formerUnreadMessages
+        this.$store.commit('m/setUnreadDirectMessageNumber', this.unreadMessages.currentUnreadDirectMessages - 1);
+        this.unreadMessages.currentUnreadDirectMessages = this.$store.getters['m/unreadDirectMessageNumber'];
       }
 
       this.idMessage = data.idMessage;
@@ -430,7 +424,7 @@ export default {
           "returnSchedule" : data.returnSchedule,
           "status" : statusUpdate
         }
-      }      
+      }
       // console.error(data);
       // console.error(params);
       maxios.post(this.$t("urlUpdateAsk"),params)
@@ -443,10 +437,10 @@ export default {
         .catch(function (error) {
           console.error(error);
         });
-      
+
     },
     refreshSelected(data){
-     
+
       this.loadingDetails = true;
       (data.idAsk) ? this.currentIdAsk  = data.idAsk : this.idMessage = data.idMessage;
       this.refreshActions = true;
