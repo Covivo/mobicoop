@@ -36,7 +36,7 @@
     "i18n": {
         "date": {
             "format": {
-                "fullDate": "ddd Do MMMM YYYY",
+                "fullDate": "ddd Do MMMM RRRR",
                 "shortDate": "DD/MM/YYYY",
                 "computeDate": "YYYY-MM-DD"
             }
@@ -48,10 +48,11 @@
         }
     },
     "fraudWarningText": {
-        "part1": "Na Mobicoopu se platby za vaše spolujízdy provádějí v podstatě takto ",
-        "link": "/utilisateur/profil/modifier/mes-covoiturages-acceptes",
-        "textLink": "osobně nebo online ",
-        "part2": "nebo v místní a volné měně. Doporučujeme našim uživatelům, aby nepřijímali jiné platební metody, jako jsou kupony PCS nebo Transcash, které jsou obecně spojovány s podvodnými praktikami. Uživatele můžete nahlásit z jeho profilu."
+        "part1": "Pro klidné používání služby vám doporučujeme, abyste při výměně zpráv zůstali v systému Mobicoop. Platby se provádějí ručně nebo kreditní kartou na naší platformě. Odmítněte platit předplacenou kartou, například Transcash, nebo převodem peněz, protože se jedná o podvodné praktiky. Uživatele, který nerespektuje naši chartu, můžete nahlásit.",
+        "link": "https://pro.mobicoop.fr/comment-regler-ses-covoiturages-sur-mobicoop/",
+        "textLink": "Přečtěte si více.",
+        "part2": "nebo v místní a volné měně. Doporučujeme našim uživatelům, aby nepřijímali jiné platební metody, jako jsou kupony PCS nebo Transcash, které jsou obecně spojovány s podvodnými praktikami. Uživatele můžete nahlásit z jeho profilu.",
+        "title": "Pozor na podvodníky!"
     },
     "detour": {
         "default": "Tato vypočtená trasa obsahuje odbočku.",
