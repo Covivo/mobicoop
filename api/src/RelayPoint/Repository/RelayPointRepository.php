@@ -100,6 +100,26 @@ class RelayPointRepository
         return $query->getQuery()->getResult();
     }
 
+    public function findByParams(string $name, int $status, array $params)
+    {
+        var_dump($params);
+
+        exit;
+        $words = explode(' ', $name);
+        $searchString = "(rp.name like '%".implode("%' and rp.name like '%", $words)."%')";
+        $searchLocality = "(a.addressLocality like '%".implode("%' and a.addressLocality like '%", $words)."%')";
+
+        $query = $this->repository->createQueryBuilder('rp')
+            ->leftJoin('rp.address', 'a')
+            ->where($searchString)
+            ->orwhere($searchLocality)
+            ->andWhere('rp.status = :status')
+            ->setParameter('status', $status)
+        ;
+
+        return $query->getQuery()->getResult();
+    }
+
     /**
      * Return all relay points in the given territory.
      *

@@ -57,7 +57,7 @@ class PointSearcher
     private $maxEventResults;
     private $maxUserResults;
     private $exclusionTypes;
-    private $searchOnLocalityAddress;
+    private $searchByParams;
 
     public function __construct(
         MobicoopGeocoder $mobicoopGeocoder,
@@ -73,7 +73,7 @@ class PointSearcher
         array $prioritizeBox = null,
         string $prioritizeRegion = null,
         array $exclusionTypes = null,
-        bool $searchOnLocalityAddress
+        array $searchByParams
     ) {
         $this->points = [];
         $this->geocoder = $mobicoopGeocoder;
@@ -85,7 +85,7 @@ class PointSearcher
         $this->maxEventResults = $maxEventResults;
         $this->maxUserResults = $maxUserResults;
         $this->exclusionTypes = $exclusionTypes;
-        $this->searchOnLocalityAddress = $searchOnLocalityAddress;
+        $this->searchByParams = $searchByParams;
         if ($prioritizeCentroid) {
             $this->geocoder->setPrioritizeCentroid(
                 $prioritizeCentroid['lon'],
@@ -142,11 +142,12 @@ class PointSearcher
 
     private function addRelayPointResults()
     {
-        if ($this->searchOnLocalityAddress) {
-            $relayPoints = $this->relayPointRepository->findByNameLocalityAndStatus($this->search, RelayPoint::STATUS_ACTIVE);
-        } else {
-            $relayPoints = $this->relayPointRepository->findByNameAndStatus($this->search, RelayPoint::STATUS_ACTIVE);
-        }
+        // if ($this->searchByParams) {
+        //     $relayPoints = $this->relayPointRepository->findByNameLocalityAndStatus($this->search, RelayPoint::STATUS_ACTIVE);
+        // } else {
+        //     $relayPoints = $this->relayPointRepository->findByNameAndStatus($this->search, RelayPoint::STATUS_ACTIVE);
+        // }
+        $relayPoints = $this->relayPointRepository->findByParams($this->search, RelayPoint::STATUS_ACTIVE, $this->searchByParams);
         $relayPointResults = $this->relayPointsToPoints($relayPoints);
 
         $this->points = array_merge($this->points, $relayPointResults);
