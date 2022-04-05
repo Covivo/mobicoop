@@ -19,24 +19,22 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Communication\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-use ApiPlatform\Core\Annotation\ApiResource;
-use Symfony\Component\Serializer\Annotation\Groups;
-use Doctrine\Common\Collections\ArrayCollection;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
 use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Action\Entity\Log;
-use App\User\Entity\User;
 use App\Carpool\Entity\AskHistory;
-use App\Carpool\DataProvider\ThreadCollectionDataProvider;
-use App\Communication\Controller\SendAction;
 use App\Solidary\Entity\SolidaryAskHistory;
+use App\User\Entity\User;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 /**
  * A message sent from a user to other users.
@@ -52,6 +50,7 @@ use App\Solidary\Entity\SolidaryAskHistory;
  *      collectionOperations={
  *          "post"={
  *              "security_post_denormalize"="is_granted('user_message_create',object)",
+ *              "normalization_context"={"groups"={"sendMessage"}},
  *              "swagger_context" = {
  *                  "tags"={"Communication"}
  *              }
@@ -80,12 +79,12 @@ use App\Solidary\Entity\SolidaryAskHistory;
  */
 class Message
 {
-    const TYPE_DIRECT = 'Direct';
-    const TYPE_CARPOOL = 'Carpool';
-    const TYPE_SOLIDARY = 'Solidary';
+    public const TYPE_DIRECT = 'Direct';
+    public const TYPE_CARPOOL = 'Carpool';
+    public const TYPE_SOLIDARY = 'Solidary';
 
     /**
-     * @var int The id of this message.
+     * @var int the id of this message
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -95,7 +94,7 @@ class Message
     private $id;
 
     /**
-     * @var string The title of the message.
+     * @var string the title of the message
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"read","write","threads","thread"})
@@ -103,7 +102,7 @@ class Message
     private $title;
 
     /**
-     * @var string The text of the message.
+     * @var string the text of the message
      *
      * @ORM\Column(type="text")
      * @Groups({"read","write","threads","thread"})
@@ -111,7 +110,7 @@ class Message
     private $text;
 
     /**
-     * @var User The creator of the message.
+     * @var User the creator of the message
      *
      * @ORM\ManyToOne(targetEntity="App\User\Entity\User", inversedBy="messages")
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
@@ -120,16 +119,16 @@ class Message
     private $user;
 
     /**
-    * @var User|null The user who send the message in the name of the creator.
-    *
-    * @ORM\ManyToOne(targetEntity="App\User\Entity\User")
-    * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
-    * @Groups({"read","write","threads","thread"})
-    */
+     * @var null|User the user who send the message in the name of the creator
+     *
+     * @ORM\ManyToOne(targetEntity="App\User\Entity\User")
+     * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
+     * @Groups({"read","write","threads","thread"})
+     */
     private $userDelegate;
 
     /**
-     * @var AskHistory|null The ask history item if the message is related to an ask.
+     * @var null|AskHistory the ask history item if the message is related to an ask
      *
      * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\AskHistory", mappedBy="message")
      * @Groups({"read","write","threads","thread"})
@@ -138,7 +137,7 @@ class Message
     private $askHistory;
 
     /**
-     * @var SolidaryAskHistory|null The solidary ask history item if the message is related to an ask.
+     * @var null|SolidaryAskHistory the solidary ask history item if the message is related to an ask
      *
      * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\SolidaryAskHistory", mappedBy="message")
      * @Groups({"read","write","threads","thread"})
@@ -147,52 +146,52 @@ class Message
     private $solidaryAskHistory;
 
     /**
-     * @var int|null Id of an Ask if this message is related to an Ask
+     * @var null|int Id of an Ask if this message is related to an Ask
      *
-     * @Groups({"read","write"})
+     * @Groups({"read","write","sendMessage"})
      */
     private $idAsk;
 
     /**
-     * @var int|null Id of an ad if this message is a first contact in a carpool context (id of the ad we want to respond)
+     * @var null|int Id of an ad if this message is a first contact in a carpool context (id of the ad we want to respond)
      *
      * @Groups({"read","write"})
      */
     private $idAdToRespond;
-    
+
     /**
-     * @var int|null Id of a proposal if this message is a first contact in a carpool context (id of the search)
+     * @var null|int Id of a proposal if this message is a first contact in a carpool context (id of the search)
      *
      * @Groups({"read","write"})
      */
     private $idProposal;
 
     /**
-     * @var int|null Id of a matching if this message is a first contact in a carpool context
+     * @var null|int Id of a matching if this message is a first contact in a carpool context
      *
      * @Groups({"read","write"})
      */
     private $idMatching;
 
     /**
-     * @var int|null Id of a Solidary Ask if this message is related to a Solidary Ask
+     * @var null|int Id of a Solidary Ask if this message is related to a Solidary Ask
      *
      * @Groups({"read","write"})
      */
     private $idSolidaryAsk;
 
     /**
-     * @var Message|null The original message if the message is a reply to another message.
+     * @var null|Message the original message if the message is a reply to another message
      *
      * @ORM\ManyToOne(targetEntity="\App\Communication\Entity\Message", inversedBy="messages")
      * @ORM\JoinColumn(onDelete="CASCADE")
-     * @Groups({"read","write"})
+     * @Groups({"read","write","sendMessage"})
      * @MaxDepth(1)
      */
     private $message;
 
     /**
-     * @var ArrayCollection The recipients linked with the message.
+     * @var ArrayCollection the recipients linked with the message
      *
      * @ORM\OneToMany(targetEntity="\App\Communication\Entity\Recipient", mappedBy="message", cascade={"persist"})
      * @ORM\OrderBy({"id" = "ASC"})
@@ -202,7 +201,7 @@ class Message
     private $recipients;
 
     /**
-     * @var ArrayCollection The messages linked with the message.
+     * @var ArrayCollection the messages linked with the message
      *
      * @ORM\OneToMany(targetEntity="\App\Communication\Entity\Message", mappedBy="message", cascade={"persist"})
      * @ORM\OrderBy({"createdDate" = "ASC"})
@@ -212,22 +211,22 @@ class Message
     private $messages;
 
     /**
-     * @var ArrayCollection The logs linked with the message.
+     * @var ArrayCollection the logs linked with the message
      *
      * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="message")
      */
     private $logs;
 
     /**
-    * @var Message|null The last message of a thread
-    *
-    * @Groups({"read","threads"})
-    * @MaxDepth(1)
-    */
+     * @var null|Message The last message of a thread
+     *
+     * @Groups({"read","threads","sendMessage"})
+     * @MaxDepth(1)
+     */
     private $lastMessage;
 
     /**
-     * @var \DateTimeInterface Creation date of the message.
+     * @var \DateTimeInterface creation date of the message
      *
      * @ORM\Column(type="datetime")
      * @Groups({"read","threads","thread"})
@@ -235,7 +234,7 @@ class Message
     private $createdDate;
 
     /**
-     * @var \DateTimeInterface Updated date of the message.
+     * @var \DateTimeInterface updated date of the message
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read","threads","thread"})
@@ -257,11 +256,11 @@ class Message
     {
         return $this->title;
     }
-    
+
     public function setTitle(?string $title): self
     {
         $this->title = $title;
-        
+
         return $this;
     }
 
@@ -269,11 +268,11 @@ class Message
     {
         return $this->text;
     }
-    
+
     public function setText(?string $text): self
     {
         $this->text = $text;
-        
+
         return $this;
     }
 
@@ -281,11 +280,11 @@ class Message
     {
         return $this->user;
     }
-    
+
     public function setUser(?User $user): self
     {
         $this->user = $user;
-        
+
         return $this;
     }
 
@@ -293,11 +292,11 @@ class Message
     {
         return $this->userDelegate;
     }
-    
+
     public function setUserDelegate(?User $userDelegate): self
     {
         $this->userDelegate = $userDelegate;
-        
+
         return $this;
     }
 
@@ -330,6 +329,7 @@ class Message
         if (!is_null($this->getAskHistory())) {
             return $this->getAskHistory()->getAsk()->getId();
         }
+
         return $this->idAsk;
     }
 
@@ -351,7 +351,7 @@ class Message
 
         return $this;
     }
-    
+
     public function getIdProposal(): ?int
     {
         return $this->idProposal;
@@ -375,12 +375,13 @@ class Message
 
         return $this;
     }
-    
+
     public function getIdSolidaryAsk(): ?int
     {
         if (!is_null($this->getSolidaryAskHistory())) {
             return $this->getSolidaryAskHistory()->getSolidaryAsk()->getId();
         }
+
         return $this->idSolidaryAsk;
     }
 
@@ -413,17 +414,17 @@ class Message
     {
         return $this->recipients->getValues();
     }
-    
+
     public function addRecipient(Recipient $recipient): self
     {
         if (!$this->recipients->contains($recipient)) {
             $this->recipients[] = $recipient;
             $recipient->setMessage($this);
         }
-        
+
         return $this;
     }
-    
+
     public function removeRecipient(Recipient $recipient): self
     {
         if ($this->recipients->contains($recipient)) {
@@ -433,25 +434,25 @@ class Message
                 $recipient->setMessage(null);
             }
         }
-        
+
         return $this;
     }
-    
+
     public function getMessages()
     {
         return $this->messages->getValues();
     }
-    
+
     public function addMessage(Message $message): self
     {
         if (!$this->messages->contains($message)) {
             $this->messages[] = $message;
             $message->setMessage($this);
         }
-        
+
         return $this;
     }
-    
+
     public function removeMessage(Message $message): self
     {
         if ($this->messages->contains($message)) {
@@ -461,7 +462,7 @@ class Message
                 $message->setMessage(null);
             }
         }
-        
+
         return $this;
     }
 
@@ -469,17 +470,17 @@ class Message
     {
         return $this->logs->getValues();
     }
-    
+
     public function addLog(Log $log): self
     {
         if (!$this->logs->contains($log)) {
             $this->logs[] = $log;
             $log->setMessage($this);
         }
-        
+
         return $this;
     }
-    
+
     public function removeLog(Log $log): self
     {
         if ($this->logs->contains($log)) {
@@ -489,13 +490,13 @@ class Message
                 $log->setMessage(null);
             }
         }
-        
+
         return $this;
     }
 
     public function getLastMessage(): ?self
     {
-        return (count($this->messages)>0) ? $this->messages[count($this->messages)-1] : null;
+        return (count($this->messages) > 0) ? $this->messages[count($this->messages) - 1] : null;
     }
 
     public function setLastMessage(?self $lastMessage): self
@@ -538,7 +539,7 @@ class Message
      */
     public function setAutoCreatedDate()
     {
-        $this->setCreatedDate(new \Datetime());
+        $this->setCreatedDate(new \DateTime());
     }
 
     /**
@@ -548,6 +549,6 @@ class Message
      */
     public function setAutoUpdatedDate()
     {
-        $this->setUpdatedDate(new \Datetime());
+        $this->setUpdatedDate(new \DateTime());
     }
 }
