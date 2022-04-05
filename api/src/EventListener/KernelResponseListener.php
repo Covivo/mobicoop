@@ -29,7 +29,6 @@ class KernelResponseListener
      */
     public function onKernelResponse(ResponseEvent $event)
     {
-        return;
         $user = $this->_security->getUser();
 
         if (is_null($user) || !$user instanceof User) {

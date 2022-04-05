@@ -198,13 +198,6 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
             }
             $this->entityManager->flush();
         }
-        // add the number of unread messages
-        if ($object instanceof User && $object->getId() === $this->security->getUser()->getId()) {
-            $user = $this->userManager->getUnreadMessageNumberForResponseInsertion($this->security->getUser());
-            $data['unreadCarpoolMessageNumber'] = $user->getUnreadCarpoolMessageNumber();
-            $data['unreadDirectMessageNumber'] = $user->getUnreadDirectMessageNumber();
-            $data['unreadSolidaryMessageNumber'] = $user->getUnreadSolidaryMessageNumber();
-        }
 
         return $data;
     }
