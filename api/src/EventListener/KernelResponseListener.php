@@ -37,7 +37,7 @@ class KernelResponseListener
 
         $responseContent = json_decode($event->getResponse()->getContent());
 
-        if ('api_login_check_user' !== $this->_request->get('_route')) {
+        if (is_object($responseContent) && 'api_login_check_user' !== $this->_request->get('_route')) {
             $user = $this->_userManager->getUnreadMessageNumberForResponseInsertion($user);
 
             if (!property_exists($responseContent, 'unreadCarpoolMessageNumber')) {
