@@ -583,6 +583,7 @@ services:
             $prioritizeBox: '%env(json:POINT_SEARCHER_PRIORITIZE_BOX)%'
             $prioritizeRegion: '%env(string:POINT_SEARCHER_PRIORITIZE_REGION)%'
             $exclusionTypes: '%env(json:POINT_SEARCHER_EXCLUSION_TYPES)%'
+            $relayPointParams: '%env(json:POINT_SEARCHER_RELAY_POINT_PARAMETERS)%'
 
     App\Geography\Service\TerritoryManager:
         arguments:
