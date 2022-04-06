@@ -58,7 +58,7 @@ class PointSearcher
     private $maxEventResults;
     private $maxUserResults;
     private $exclusionTypes;
-    private $searchByParams;
+    private $relayPointParams;
 
     public function __construct(
         MobicoopGeocoder $mobicoopGeocoder,
@@ -74,7 +74,7 @@ class PointSearcher
         array $prioritizeBox = null,
         string $prioritizeRegion = null,
         array $exclusionTypes = null,
-        array $searchByParams
+        array $relayPointParams
     ) {
         $this->points = [];
         $this->geocoder = $mobicoopGeocoder;
@@ -86,7 +86,7 @@ class PointSearcher
         $this->maxEventResults = $maxEventResults;
         $this->maxUserResults = $maxUserResults;
         $this->exclusionTypes = $exclusionTypes;
-        $this->searchByParams = $searchByParams;
+        $this->relayPointParams = $relayPointParams;
         if ($prioritizeCentroid) {
             $this->geocoder->setPrioritizeCentroid(
                 $prioritizeCentroid['lon'],
@@ -144,7 +144,7 @@ class PointSearcher
 
     private function addRelayPointResults()
     {
-        $relayPoints = $this->relayPointRepository->findByParams($this->search, $this->searchByParams);
+        $relayPoints = $this->relayPointRepository->findByParams($this->search, $this->relayPointParams);
         $relayPointResults = $this->relayPointsToPoints($relayPoints);
 
         $this->points = array_merge($this->points, $relayPointResults);
