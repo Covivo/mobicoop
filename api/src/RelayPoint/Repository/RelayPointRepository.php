@@ -83,39 +83,43 @@ class RelayPointRepository
         return $query->getResult();
     }
 
-    public function findByNameLocalityAndStatus(string $name, int $status)
+    public function findByParams(string $search, array $params)
     {
-        $words = explode(' ', $name);
-        $searchString = "(rp.name like '%".implode("%' and rp.name like '%", $words)."%')";
-        $searchLocality = "(a.addressLocality like '%".implode("%' and a.addressLocality like '%", $words)."%')";
+        $words = explode(' ', $search);
+        $query = $this->repository->createQueryBuilder('rp');
 
-        $query = $this->repository->createQueryBuilder('rp')
-            ->leftJoin('rp.address', 'a')
-            ->where($searchString)
-            ->orwhere($searchLocality)
-            ->andWhere('rp.status = :status')
-            ->setParameter('status', $status)
-        ;
+        foreach ($params as $key => $value) {
+            switch ($key) {
+                case 'name':
+                    if (true === $value) {
+                        $searchString = "(rp.name like '%".implode("%' or rp.name like '%", $words)."%')";
+                        $query
+                            ->orwhere($searchString)
+                        ;
+                    }
 
-        return $query->getQuery()->getResult();
-    }
+                    break;
 
-    public function findByParams(string $name, int $status, array $params)
-    {
-        var_dump($params);
+                case 'addressLocality':
+                    if (true === $value) {
+                        $searchLocality = "(a.addressLocality like '%".implode("%' or a.addressLocality like '%", $words)."%')";
+                        $query
+                            ->leftJoin('rp.address', 'a')
+                            ->orwhere($searchLocality)
+                        ;
+                    }
 
-        exit;
-        $words = explode(' ', $name);
-        $searchString = "(rp.name like '%".implode("%' and rp.name like '%", $words)."%')";
-        $searchLocality = "(a.addressLocality like '%".implode("%' and a.addressLocality like '%", $words)."%')";
+                    break;
 
-        $query = $this->repository->createQueryBuilder('rp')
-            ->leftJoin('rp.address', 'a')
-            ->where($searchString)
-            ->orwhere($searchLocality)
-            ->andWhere('rp.status = :status')
-            ->setParameter('status', $status)
-        ;
+                case 'status':
+                    $query
+                        ->andWhere('rp.status = :status')
+                        ->setParameter('status', $value)
+                    ;
+
+                    break;
+            }
+        }
 
         return $query->getQuery()->getResult();
     }

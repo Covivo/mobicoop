@@ -49,6 +49,7 @@ class PointSearcher
     private $translator;
     private $points;
     private $search;
+
     /**
      * @var null|User
      */
@@ -106,6 +107,7 @@ class PointSearcher
         $this->user = null;
         if ($security->getUser() instanceof User) {
             $this->user = $user = $security->getUser();
+
             /**
              * @var null|User $user
              */
@@ -142,12 +144,7 @@ class PointSearcher
 
     private function addRelayPointResults()
     {
-        // if ($this->searchByParams) {
-        //     $relayPoints = $this->relayPointRepository->findByNameLocalityAndStatus($this->search, RelayPoint::STATUS_ACTIVE);
-        // } else {
-        //     $relayPoints = $this->relayPointRepository->findByNameAndStatus($this->search, RelayPoint::STATUS_ACTIVE);
-        // }
-        $relayPoints = $this->relayPointRepository->findByParams($this->search, RelayPoint::STATUS_ACTIVE, $this->searchByParams);
+        $relayPoints = $this->relayPointRepository->findByParams($this->search, $this->searchByParams);
         $relayPointResults = $this->relayPointsToPoints($relayPoints);
 
         $this->points = array_merge($this->points, $relayPointResults);
