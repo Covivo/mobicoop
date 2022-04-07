@@ -3,6 +3,7 @@
     "send": "Bidali",
     "status": {
         "refused": {
+            "10": "Document refusé (raison non donnée)",
             "9": "Dokumentua ez da onartua ez baita osatua",
             "8": "Dokumentua ez da onartua ezin irakurria baita",
             "7": "Dokumentua ez da onartua, datuak ez baitira erabiltzailearen araberakoak",

@@ -567,7 +567,7 @@ class ProposalManager
         $this->entityManager->flush();
     }
 
-    public function sendCarpoolAdRenewal(int $numberOfDays)
+    public function sendCarpoolAdRenewal(?int $numberOfDays = null)
     {
         $proposals = $this->proposalRepository->findProposalsOutdated($numberOfDays);
 
@@ -809,7 +809,7 @@ class ProposalManager
                 $proposal->getCriteria()->getDirectionDriver()->setDuration($direction->getDuration());
                 $proposal->getCriteria()->getDirectionDriver()->setAscend($direction->getAscend());
                 $proposal->getCriteria()->getDirectionDriver()->setDescend($direction->getDescend());
-                //$proposal->getCriteria()->getDirectionDriver()->setDetail($direction->getDetail());
+                // $proposal->getCriteria()->getDirectionDriver()->setDetail($direction->getDetail());
                 $proposal->getCriteria()->getDirectionDriver()->setFormat($direction->getFormat());
                 $proposal->getCriteria()->getDirectionDriver()->setSnapped($direction->getSnapped());
                 $proposal->getCriteria()->getDirectionDriver()->setGeoJsonDetail($direction->getGeoJsonDetail());
@@ -835,7 +835,7 @@ class ProposalManager
                 $proposal->getCriteria()->getDirectionPassenger()->setDuration($direction->getDuration());
                 $proposal->getCriteria()->getDirectionPassenger()->setAscend($direction->getAscend());
                 $proposal->getCriteria()->getDirectionPassenger()->setDescend($direction->getDescend());
-                //$proposal->getCriteria()->getDirectionPassenger()->setDetail($direction->getDetail());
+                // $proposal->getCriteria()->getDirectionPassenger()->setDetail($direction->getDetail());
                 $proposal->getCriteria()->getDirectionPassenger()->setFormat($direction->getFormat());
                 $proposal->getCriteria()->getDirectionPassenger()->setSnapped($direction->getSnapped());
                 $proposal->getCriteria()->getDirectionPassenger()->setGeoJsonDetail($direction->getGeoJsonDetail());
@@ -1086,12 +1086,12 @@ class ProposalManager
         $minTime->sub(new \DateInterval('PT'.$margin.'S'));
         if ($minTime->format('j') != $time->format('j')) {
             // the day has changed => we keep '00:00' as min time
-            $minTime = new \Datetime('00:00:00');
+            $minTime = new \DateTime('00:00:00');
         }
         $maxTime->add(new \DateInterval('PT'.$margin.'S'));
         if ($maxTime->format('j') != $time->format('j')) {
             // the day has changed => we keep '23:59:00' as max time
-            $maxTime = new \Datetime('23:59:00');
+            $maxTime = new \DateTime('23:59:00');
         }
 
         return [

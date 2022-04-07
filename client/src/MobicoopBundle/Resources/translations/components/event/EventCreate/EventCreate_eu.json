@@ -24,7 +24,9 @@
         "image": "Irudia ez da erregistratua izan",
         "event": {
             "create": "Ekitaldiaren sorrerak huts egin du",
-            "name": "Ekitaldi hori jadanik existitzen da, beste izen bat emaiozu"
+            "name": "Ekitaldi hori jadanik existitzen da, beste izen bat emaiozu",
+            "fullDescriptionLength": "Description trop longue",
+            "descriptionLength": "Description courte trop longue"
         }
     },
     "redirect": {
