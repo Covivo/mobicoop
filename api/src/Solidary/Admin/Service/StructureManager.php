@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\Admin\Service;
 
@@ -29,8 +29,8 @@ use App\Geography\Repository\TerritoryRepository;
 use App\Solidary\Entity\Need;
 use App\Solidary\Entity\Operate;
 use App\Solidary\Entity\Structure;
-use App\Solidary\Entity\Subject;
 use App\Solidary\Entity\StructureProof;
+use App\Solidary\Entity\Subject;
 use App\Solidary\Exception\SolidaryException;
 use App\User\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -46,36 +46,38 @@ class StructureManager
     private $territoryRepository;
     private $userRepository;
     private $authManager;
+    private $operateManager;
 
     /**
-     * Constructor
-     *
-     * @param EntityManagerInterface $entityManager
+     * Constructor.
      */
     public function __construct(
         EntityManagerInterface $entityManager,
         TerritoryRepository $territoryRepository,
         UserRepository $userRepository,
-        AuthManager $authManager
+        AuthManager $authManager,
+        OperateManager $operateManager
     ) {
         $this->entityManager = $entityManager;
         $this->territoryRepository = $territoryRepository;
         $this->userRepository = $userRepository;
         $this->authManager = $authManager;
+        $this->operateManager = $operateManager;
     }
 
     /**
      * Add a structure.
      *
-     * @param Structure     $structure              The structure to add
-     * @param array         $fields                 The fields
-     * @return Structure    The structure created
+     * @param Structure $structure The structure to add
+     * @param array     $fields    The fields
+     *
+     * @return Structure The structure created
      */
     public function addStructure(Structure $structure, array $fields)
     {
         // treat territories
         if (in_array('territories', array_keys($fields))) {
-            foreach ($fields["territories"] as $id) {
+            foreach ($fields['territories'] as $id) {
                 if ($territory = $this->territoryRepository->find($id)) {
                     $structure->addTerritory($territory);
                 } else {
@@ -86,8 +88,8 @@ class StructureManager
 
         // treat subjects
         if (in_array('subjects', array_keys($fields))) {
-            foreach ($fields["subjects"] as $asubject) {
-                if (array_key_exists('label', $asubject) && $asubject['label'] !== null) {
+            foreach ($fields['subjects'] as $asubject) {
+                if (array_key_exists('label', $asubject) && null !== $asubject['label']) {
                     $subject = new Subject();
                     $subject->setLabel($asubject['label']);
                     $subject->setStructure($structure);
@@ -99,8 +101,8 @@ class StructureManager
 
         // treat needs
         if (in_array('needs', array_keys($fields))) {
-            foreach ($fields["needs"] as $aneed) {
-                if (array_key_exists('label', $aneed) && $aneed['label'] !== null) {
+            foreach ($fields['needs'] as $aneed) {
+                if (array_key_exists('label', $aneed) && null !== $aneed['label']) {
                     $need = new Need();
                     $need->setLabel($aneed['label']);
                     $need->setLabelVolunteer(isset($aneed['labelVolunteer']) ? $aneed['labelVolunteer'] : null);
@@ -113,8 +115,8 @@ class StructureManager
 
         // treat proofs
         if (in_array('structureProofs', array_keys($fields))) {
-            foreach ($fields["structureProofs"] as $aproof) {
-                if (array_key_exists('label', $aproof) && $aproof['label'] !== null) {
+            foreach ($fields['structureProofs'] as $aproof) {
+                if (array_key_exists('label', $aproof) && null !== $aproof['label']) {
                     $proof = new StructureProof();
                     $proof->setLabel($aproof['label']);
                     $proof->setType($aproof['type']);
@@ -151,7 +153,7 @@ class StructureManager
 
         // treat operators
         if (in_array('operators', array_keys($fields))) {
-            foreach ($fields["operators"] as $operator) {
+            foreach ($fields['operators'] as $operator) {
                 if ($user = $this->userRepository->find($operator['id'])) {
                     $operate = new Operate();
                     $operate->setUser($user);
@@ -168,7 +170,7 @@ class StructureManager
         // reorder proofs (order may have changed during the persists)
         $proofs = $structure->getStructureProofs();
         $structure->removeStructureProofs();
-        usort($proofs, [$this,"comparePosition"]);
+        usort($proofs, [$this, 'comparePosition']);
         foreach ($proofs as $proof) {
             $structure->addStructureProof($proof);
         }
@@ -183,15 +185,15 @@ class StructureManager
     /**
      * Patch a structure.
      *
-     * @param Structure $structure    The structure to update
-     * @param array     $fields       The updated fields
-     * @return Structure   The structure updated
+     * @param Structure $structure The structure to update
+     * @param array     $fields    The updated fields
+     *
+     * @return Structure The structure updated
      */
     public function patchStructure(Structure $structure, array $fields)
     {
         // check if territories have changed
         if (in_array('territories', array_keys($fields))) {
-            
             // check if a territory has been removed
             foreach ($structure->getTerritories() as $territory) {
                 if (!in_array($territory->getId(), $fields['territories'])) {
@@ -201,11 +203,11 @@ class StructureManager
             }
 
             // check if a territory has been added
-            $ids=[];
+            $ids = [];
             foreach ($structure->getTerritories() as $territory) {
                 $ids[] = $territory->getId();
             }
-            foreach ($fields["territories"] as $id) {
+            foreach ($fields['territories'] as $id) {
                 if (!in_array($id, $ids)) {
                     // territory added, check if the territory exists
                     if ($territory = $this->territoryRepository->find($id)) {
@@ -219,7 +221,6 @@ class StructureManager
 
         // check if subjects have changed
         if (in_array('subjects', array_keys($fields))) {
-            
             // check if a subject has been removed
             $ids = [];
             foreach ($fields['subjects'] as $value) {
@@ -234,24 +235,25 @@ class StructureManager
                 }
             }
 
-            foreach ($fields["subjects"] as $asubject) {
+            foreach ($fields['subjects'] as $asubject) {
                 if (
-                    array_key_exists('id', $asubject) &&
-                    $asubject['id'] !== null &&
-                    array_key_exists('label', $asubject) &&
-                    $asubject['label'] !== null
+                    array_key_exists('id', $asubject)
+                    && null !== $asubject['id']
+                    && array_key_exists('label', $asubject)
+                    && null !== $asubject['label']
                     ) {
                     // existing subject => update
                     foreach ($structure->getSubjects() as $subject) {
                         if ($subject->getId() === $asubject['id']) {
                             $subject->setLabel($asubject['label']);
+
                             break;
                         }
                     }
                 } elseif (
-                    !array_key_exists('id', $asubject) &&
-                    array_key_exists('label', $asubject) &&
-                    $asubject['label'] !== null
+                    !array_key_exists('id', $asubject)
+                    && array_key_exists('label', $asubject)
+                    && null !== $asubject['label']
                     ) {
                     // new subject
                     $subject = new Subject();
@@ -265,7 +267,6 @@ class StructureManager
 
         // check if needs have changed
         if (in_array('needs', array_keys($fields))) {
-            
             // check if a need has been removed
             $ids = [];
             foreach ($fields['needs'] as $value) {
@@ -280,25 +281,26 @@ class StructureManager
                 }
             }
 
-            foreach ($fields["needs"] as $aneed) {
+            foreach ($fields['needs'] as $aneed) {
                 if (
-                    array_key_exists('id', $aneed) &&
-                    $aneed['id'] !== null &&
-                    array_key_exists('label', $aneed) &&
-                    $aneed['label'] !== null
+                    array_key_exists('id', $aneed)
+                    && null !== $aneed['id']
+                    && array_key_exists('label', $aneed)
+                    && null !== $aneed['label']
                     ) {
                     // existing need => update
                     foreach ($structure->getNeeds() as $need) {
                         if ($need->getId() === $aneed['id']) {
                             $need->setLabel($aneed['label']);
                             $need->setLabelVolunteer(isset($aneed['labelVolunteer']) ? $aneed['labelVolunteer'] : null);
+
                             break;
                         }
                     }
                 } elseif (
-                    !array_key_exists('id', $aneed) &&
-                    array_key_exists('label', $aneed) &&
-                    $aneed['label'] !== null
+                    !array_key_exists('id', $aneed)
+                    && array_key_exists('label', $aneed)
+                    && null !== $aneed['label']
                     ) {
                     // new need
                     $need = new Need();
@@ -321,18 +323,18 @@ class StructureManager
             }
             // check if a proof have been removed
             foreach ($structure->getStructureProofs() as $proof) {
-                if ($proof->getType() == StructureProof::TYPE_REQUESTER && !in_array($proof->getId(), $ids)) {
+                if (StructureProof::TYPE_REQUESTER == $proof->getType() && !in_array($proof->getId(), $ids)) {
                     // proof removed
                     $structure->removeStructureProof($proof);
                 }
             }
 
-            foreach ($fields["structureProofsRequester"] as $aproof) {
+            foreach ($fields['structureProofsRequester'] as $aproof) {
                 if (
-                    array_key_exists('id', $aproof) &&
-                    $aproof['id'] !== null &&
-                    array_key_exists('label', $aproof) &&
-                    $aproof['label'] !== null
+                    array_key_exists('id', $aproof)
+                    && null !== $aproof['id']
+                    && array_key_exists('label', $aproof)
+                    && null !== $aproof['label']
                     ) {
                     // existing proof => update
                     foreach ($structure->getStructureProofs() as $proof) {
@@ -366,13 +368,14 @@ class StructureManager
                                 $proof->setOptions(isset($aproof['options']) ? $aproof['options'] : null);
                                 $proof->setAcceptedValues(isset($aproof['acceptedValues']) ? $aproof['acceptedValues'] : null);
                             }
+
                             break;
                         }
                     }
                 } elseif (
-                    !array_key_exists('id', $aproof) &&
-                    array_key_exists('label', $aproof) &&
-                 $aproof['label'] !== null
+                    !array_key_exists('id', $aproof)
+                    && array_key_exists('label', $aproof)
+                 && null !== $aproof['label']
                     ) {
                     // new proof
                     $proof = new StructureProof();
@@ -419,18 +422,18 @@ class StructureManager
             }
             // check if a proof have been removed
             foreach ($structure->getStructureProofs() as $proof) {
-                if ($proof->getType() == StructureProof::TYPE_VOLUNTEER && !in_array($proof->getId(), $ids)) {
+                if (StructureProof::TYPE_VOLUNTEER == $proof->getType() && !in_array($proof->getId(), $ids)) {
                     // proof removed
                     $structure->removeStructureProof($proof);
                 }
             }
 
-            foreach ($fields["structureProofsVolunteer"] as $aproof) {
+            foreach ($fields['structureProofsVolunteer'] as $aproof) {
                 if (
-                    array_key_exists('id', $aproof) &&
-                    $aproof['id'] !== null &&
-                    array_key_exists('label', $aproof) &&
-                    $aproof['label'] !== null
+                    array_key_exists('id', $aproof)
+                    && null !== $aproof['id']
+                    && array_key_exists('label', $aproof)
+                    && null !== $aproof['label']
                     ) {
                     // existing proof => update
                     foreach ($structure->getStructureProofs() as $proof) {
@@ -464,13 +467,14 @@ class StructureManager
                                 $proof->setOptions(isset($aproof['options']) ? $aproof['options'] : null);
                                 $proof->setAcceptedValues(isset($aproof['acceptedValues']) ? $aproof['acceptedValues'] : null);
                             }
+
                             break;
                         }
                     }
                 } elseif (
-                    !array_key_exists('id', $aproof) &&
-                    array_key_exists('label', $aproof) &&
-                 $aproof['label'] !== null
+                    !array_key_exists('id', $aproof)
+                    && array_key_exists('label', $aproof)
+                 && null !== $aproof['label']
                     ) {
                     // new proof
                     $proof = new StructureProof();
@@ -523,15 +527,16 @@ class StructureManager
                     $this->checkIsOperator($operate);
                     // remove operator for current structure
                     $structure->removeOperate($operate);
+                    $this->operateManager->deleteOperate($operate);
                 }
             }
 
             // check if an operator has been added
-            $ids=[];
+            $ids = [];
             foreach ($structure->getOperates() as $operate) {
                 $ids[] = $operate->getUser()->getId();
             }
-            foreach ($fields["operators"] as $operator) {
+            foreach ($fields['operators'] as $operator) {
                 if (!in_array($operator['id'], $ids)) {
                     // operator added, check if the operator exists
                     if ($user = $this->userRepository->find($operator['id'])) {
@@ -551,7 +556,7 @@ class StructureManager
         // reorder proofs (order may have changed during the persists)
         $proofs = $structure->getStructureProofs();
         $structure->removeStructureProofs();
-        usort($proofs, [$this,"comparePosition"]);
+        usort($proofs, [$this, 'comparePosition']);
         foreach ($proofs as $proof) {
             $structure->addStructureProof($proof);
         }
@@ -559,16 +564,15 @@ class StructureManager
         // persist the structure
         $this->entityManager->persist($structure);
         $this->entityManager->flush();
-        
+
         // return the structure
         return $structure;
     }
 
     /**
-     * Delete a structure
+     * Delete a structure.
      *
-     * @param Structure $structure  The structure to delete
-     * @return void
+     * @param Structure $structure The structure to delete
      */
     public function deleteStructure(Structure $structure)
     {
@@ -577,9 +581,10 @@ class StructureManager
     }
 
     /**
-     * Check if the given operate user is operator elsewhere the given structure, and eventually remove the operate role
+     * Check if the given operate user is operator elsewhere the given structure, and eventually remove the operate role.
      *
-     * @param Operate $operate      The operate that containes the user and structure
+     * @param Operate $operate The operate that containes the user and structure
+     *
      * @return bool
      */
     private function checkIsOperator(Operate $operate)
@@ -591,11 +596,12 @@ class StructureManager
              */
             if ($operated->getStructure()->getId() !== $operate->getStructure()->getId()) {
                 // the user is at least operator for another structure
-                $nbStructures++;
+                ++$nbStructures;
+
                 break;
             }
         }
-        if ($nbStructures == 0) {
+        if (0 == $nbStructures) {
             // the user is not operator anymore
             if ($authItem = $this->authManager->getAuthItem(AuthItem::ROLE_SOLIDARY_MANAGER)) {
                 $this->authManager->revoke($operate->getUser(), $authItem, null, false);
