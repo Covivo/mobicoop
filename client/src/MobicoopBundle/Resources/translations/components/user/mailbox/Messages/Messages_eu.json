@@ -1,9 +1,9 @@
 {
-    "fraudWarningText": {
-        "part2": "edo tokiko monetan eta librean. Gomendatzen diegu gure erabiltzaileei PCS edo Transcash txartelak bezalako beste ordainketa motak ez onartzea, ardura iruzurrezko pratikei lotuak baitira. Erabiltzaile bat seinala diezagukezu bere profilaren bidez.",
-        "textLink": "Eskuz esku edo linearen bidez ",
-        "link": "/utilisateur/profil/modifier/mes-covoiturages-acceptes",
-        "part1": "Mobicoop-en, zure autokidetzen ordainketak, gehienetan horrela egiten dira "
+    "fraudWarningText":{
+      "part1":"Pour une utilisation sereine du service, nous vous conseillons de rester sur la messagerie de Mobicoop pour vos échanges. Les paiements se réalisent de la main à la main ou par carte bancaire sur notre plateforme. Refusez de payer par carte prépayée type Transcash, ou les liens de transfert d'argent, ce sont des pratiques frauduleuses. Vous pouvez nous signaler un·e utilisateur·rice qui ne respecterait pas notre charte.",
+      "link":"https://pro.mobicoop.fr/comment-regler-ses-covoiturages-sur-mobicoop/",
+      "textLink":"En savoir plus.",
+      "title":"Prenez garde aux fraudeurs!"
     },
     "tooltip": {
         "message": "Iragarki bati lotuak ez diren mezuak"

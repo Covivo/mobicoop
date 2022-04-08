@@ -5,6 +5,43 @@
       grid-list-md
       fluid
     >
+      <v-row
+        justify="center"
+      >
+        <v-col class="mr-n12 ml-n12">
+          <v-card
+            v-if="fraudWarningDisplay"
+            color="info"
+            flat
+            dark
+            max-height="50px"
+            rounded="0"
+          >
+            <v-card-text>
+              <v-icon
+                left
+              >
+                mdi-alert
+              </v-icon>
+              <span class="white--text ">
+                {{ $t('fraudWarningText.title') }}
+              </span>
+            </v-card-text>
+          </v-card>
+          <v-card
+            v-if="fraudWarningDisplay"
+            flat
+            rounded="0"
+          >
+            <v-card-text>
+              {{ $t('fraudWarningText.part1') }} <a
+                :href="$t('fraudWarningText.link')"
+                target="_blank"
+              >{{ $t('fraudWarningText.textLink') }}</a>
+            </v-card-text>
+          </v-card>
+        </v-col>
+      </v-row>
       <v-row id="headGridMessages">
         <v-col class="col-3 pt-5 pb-4 pl-2 secondary white--text font-weight-bold text-h5">
           <mail-box-header>{{ $t("headers.messages") }}</mail-box-header>
@@ -20,11 +57,6 @@
           class="col-4 pt-5 pb-4 pl-2 mr-0 secondary white--text font-weight-bold text-h5"
         >
           <mail-box-header>{{ $t("headers.context") }}</mail-box-header>
-        </v-col>
-      </v-row>
-      <v-row v-if="fraudWarningDisplay">
-        <v-col cols="12">
-          <p>{{ $t('fraudWarningText.part1') }} <a :href="$t('fraudWarningText.link')">{{ $t('fraudWarningText.textLink') }}</a>{{ $t('fraudWarningText.part2') }}</p>
         </v-col>
       </v-row>
       <v-row>
