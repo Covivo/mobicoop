@@ -12,7 +12,7 @@
       </v-card-title>
 
       <v-card-text class="black--text">
-        {{ text }}
+        <p>{{ text }}</p>
       </v-card-text>
     </v-card>
   </v-col>

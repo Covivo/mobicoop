@@ -81,6 +81,7 @@
             <img
               class="mt-6"
               :src="imageLink + 'van_evenement.svg'"
+              :alt="$t('events.image.van')"
             >
           </v-col>
           <v-col

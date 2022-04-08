@@ -7,7 +7,7 @@
           class="white--text text-left ml-md-14"
         >
           <h3 class="font-weight-bold">
-            {{ $t('title.part1') }} <br> {{ $t('title.part2') }}<h2 />
+            {{ $t('title.part1') }} <br> {{ $t('title.part2') }}
           </h3>
         </v-col>
       </v-row>
@@ -16,13 +16,13 @@
           cols="12"
           class="text-left white--text ml-md-14"
         >
-          &gt;
+          <span aria-hidden="true">&gt;</span>
           <a
             :href="$t('links.byCity.uri')"
             :title="$t('links.byCity.title')"
             class="white--text"
           >{{ $t('links.byCity.title') }}</a><br>
-          &gt;
+          <span aria-hidden="true">&gt;</span>
           <a
             :href="$t('links.popular.uri')"
             :title="$t('links.popular.title')"

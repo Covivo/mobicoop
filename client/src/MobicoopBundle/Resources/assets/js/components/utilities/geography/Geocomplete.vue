@@ -2,6 +2,7 @@
   <div>
     <v-autocomplete
       v-model="selection"
+      group="autocomplete"
       :label="label + (required ? ' *' : '')"
       :search-input.sync="search"
       :items="propositions"
@@ -10,6 +11,8 @@
       :required="required"
       :hint="hint"
       :rules="rules"
+      :aria-label="ariaLabel"
+      :aria-labelledby="ariaLabelledBy"
       :loading="loading"
       return-object
       :clearable="!chip"
@@ -190,6 +193,14 @@ export default {
       type: Object,
       default: () => ({})
     },
+    ariaLabel: {
+      type: String,
+      default: null
+    },
+    ariaLabelledBy: {
+      type: String,
+      default: null
+    }
   },
 
   data: () => ({

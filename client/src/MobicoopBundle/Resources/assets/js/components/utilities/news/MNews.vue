@@ -10,9 +10,9 @@
         cols="7"
         class="text-right align-self-center"
       >
-        <h3 class="primary--text font-italic">
+        <h2 class="primary--text font-italic">
           {{ $t('news.title') }}
-        </h3>
+        </h2>
         <h3 class="primary--text font-weight-bold">
           {{ $t('news.subtitle') }}
         </h3>
@@ -39,6 +39,7 @@
         <v-img
           :src="imageLink + '210112_MBP_VisuelSite.png'"
           cover
+          :alt="$t('news.imageAlt')"
         />
       </v-col>
     </v-row>

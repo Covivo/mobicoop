@@ -8,5 +8,8 @@
         "the": "Le"
     },
     "shortCompleteDate": "DD/MM/YYYY",
-    "hourMinute": "HH[h]mm"
+    "hourMinute": "HH[h]mm",
+    "imageEvent": "Image de l'événement {name}",
+    "imageEventDefault": "Image par défaut de l'événement, si l'image n'est pas renseignée",
+    "linkToEvent" : "Aller vers la page de l'événement"
 }
