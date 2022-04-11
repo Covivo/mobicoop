@@ -453,9 +453,9 @@ export default {
       this.dlocale = this.defaultLocale;
     }
     this.$store.commit('g/setActive',this.gamificationActive);
-    this.$store.commit('m/setUnreadCarpoolMessageNumber', this.user.unreadCarpoolMessageNumber);
-    this.$store.commit('m/setUnreadDirectMessageNumber', this.user.unreadDirectMessageNumber);
-    this.$store.commit('m/setUnreadSolidaryMessageNumber', this.user.unreadSolidaryMessageNumber);
+    this.$store.commit('m/setUnreadCarpoolMessageNumber', this.user?.unreadCarpoolMessageNumber);
+    this.$store.commit('m/setUnreadDirectMessageNumber', this.user?.unreadDirectMessageNumber);
+    this.$store.commit('m/setUnreadSolidaryMessageNumber', this.user?.unreadSolidaryMessageNumber);
 
   },
   created() {
