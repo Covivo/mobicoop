@@ -215,11 +215,9 @@ export default {
       return point;
     },
     selectedAsDestination(destination) {
-      console.error(destination);
       this.selectedDestination = destination;
     },
     selectedAsOrigin(origin) {
-      console.error(origin);
       this.selectedOrigin = origin;
     }
   }

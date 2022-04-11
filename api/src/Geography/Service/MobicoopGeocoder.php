@@ -55,7 +55,7 @@ class MobicoopGeocoder
             'sanitize' => self::SANITIZE,
             'consolidate' => self::CONSOLIDATE,
             'proximity' => self::PROXIMITY,
-            'min_confidence' => self::MIN_CONFIDENCE,
+            'min_confidence' => self::MIN_CONFIDENCE / 100,
         ];
     }
 

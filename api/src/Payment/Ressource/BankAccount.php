@@ -19,20 +19,19 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Payment\Ressource;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Geography\Entity\Address;
 use App\User\Entity\User;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * A Bank Account
+ * A Bank Account.
  *
  * @ApiResource(
  *      attributes={
@@ -81,29 +80,31 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          }
  *      }
  * )
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class BankAccount
 {
-    const STATUS_INACTIVE = 0;
-    const STATUS_ACTIVE = 1;
+    public const STATUS_INACTIVE = 0;
+    public const STATUS_ACTIVE = 1;
 
-    const VALIDATION_PENDING = 0;
-    const VALIDATION_VALIDATED = 1;
-    const VALIDATION_REJECTED = 2;
-    const VALIDATION_OUTDATED = 3;
+    public const VALIDATION_PENDING = 0;
+    public const VALIDATION_VALIDATED = 1;
+    public const VALIDATION_REJECTED = 2;
+    public const VALIDATION_OUTDATED = 3;
 
-    const OUT_OF_DATE = 1;
-    const UNDERAGE_PERSON = 2;
-    const DOCUMENT_FALSIFIED = 3;
-    const DOCUMENT_MISSING = 4;
-    const DOCUMENT_HAS_EXPIRED = 5;
-    const DOCUMENT_NOT_ACCEPTED = 6;
-    const DOCUMENT_DO_NOT_MATCH_USER_DATA = 7;
-    const DOCUMENT_UNREADABLE = 8;
-    const DOCUMENT_INCOMPLETE = 9;
+    public const OUT_OF_DATE = 1;
+    public const UNDERAGE_PERSON = 2;
+    public const DOCUMENT_FALSIFIED = 3;
+    public const DOCUMENT_MISSING = 4;
+    public const DOCUMENT_HAS_EXPIRED = 5;
+    public const DOCUMENT_NOT_ACCEPTED = 6;
+    public const DOCUMENT_DO_NOT_MATCH_USER_DATA = 7;
+    public const DOCUMENT_UNREADABLE = 8;
+    public const DOCUMENT_INCOMPLETE = 9;
+    public const SPECIFIC_CASE = 10;
 
-    const DEFAULT_ID = "999999999999";
+    public const DEFAULT_ID = '999999999999';
 
     /**
      * @var int The id of this bank account
@@ -114,19 +115,19 @@ class BankAccount
     private $id;
 
     /**
-     * @var string|null The litteral name of the user owning this bank account
+     * @var null|string The litteral name of the user owning this bank account
      *
      * @Groups({"readPayment","writePayment"})
      */
     private $userLitteral;
 
     /**
-     * @var Address|null The litteral name of the user owning this bank account
+     * @var null|Address The litteral name of the user owning this bank account
      *
      * @Groups({"readPayment","writePayment"})
      */
     private $address;
-    
+
     /**
      * @var string The iban number of this bank account
      *
@@ -146,7 +147,7 @@ class BankAccount
     private $bic;
 
     /**
-     * @var string|null A comment for this bank account
+     * @var null|string A comment for this bank account
      *
      * @Groups({"readPayment","writePayment"})
      */
@@ -195,7 +196,7 @@ class BankAccount
     private $validationOutdatedDate;
 
     /**
-     * @var \DateTimeInterface Creation date.
+     * @var \DateTimeInterface creation date
      *
      * @Groups({"readPayment"})
      */
@@ -211,19 +212,19 @@ class BankAccount
         return $this->id;
     }
 
-    public function setId(String $id): self
+    public function setId(string $id): self
     {
         $this->id = $id;
-        
+
         return $this;
     }
 
-    public function getUserLitteral(): ?String
+    public function getUserLitteral(): ?string
     {
         return $this->userLitteral;
     }
 
-    public function setUserLitteral(?String $userLitteral): self
+    public function setUserLitteral(?string $userLitteral): self
     {
         $this->userLitteral = $userLitteral;
 
@@ -242,36 +243,36 @@ class BankAccount
         return $this;
     }
 
-    public function getIban(): ?String
+    public function getIban(): ?string
     {
         return $this->iban;
     }
 
-    public function setIban(?String $iban): self
+    public function setIban(?string $iban): self
     {
         $this->iban = $iban;
 
         return $this;
     }
 
-    public function getBic(): ?String
+    public function getBic(): ?string
     {
         return $this->bic;
     }
 
-    public function setBic(?String $bic): self
+    public function setBic(?string $bic): self
     {
         $this->bic = $bic;
 
         return $this;
     }
 
-    public function getComment(): ?String
+    public function getComment(): ?string
     {
         return $this->comment;
     }
 
-    public function setComment(?String $comment): self
+    public function setComment(?string $comment): self
     {
         $this->comment = $comment;
 
@@ -321,7 +322,7 @@ class BankAccount
 
         return $this;
     }
-    
+
     public function getValidatedDate(): ?\DateTimeInterface
     {
         return $this->validatedDate;

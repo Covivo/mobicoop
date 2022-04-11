@@ -19,22 +19,20 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Payment\Ressource;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
-use App\User\Entity\User;
-use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
-use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\HttpFoundation\File\File;
-use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Payment\Controller\UploadValidationDocumentAction;
+use App\User\Entity\User;
+use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
- * A Validation Document
+ * A Validation Document.
  *
  * @ApiResource(
  *      attributes={
@@ -70,20 +68,22 @@ use App\Payment\Controller\UploadValidationDocumentAction;
  *      }
  * )
  * @Vich\Uploadable
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class ValidationDocument
 {
-    const DEFAULT_ID = "999999999999";
-    const OUT_OF_DATE = 1;
-    const UNDERAGE_PERSON = 2;
-    const DOCUMENT_FALSIFIED = 3;
-    const DOCUMENT_MISSING = 4;
-    const DOCUMENT_HAS_EXPIRED = 5;
-    const DOCUMENT_NOT_ACCEPTED = 6;
-    const DOCUMENT_DO_NOT_MATCH_USER_DATA = 7;
-    const DOCUMENT_UNREADABLE = 8;
-    const DOCUMENT_INCOMPLETE = 9;
+    public const DEFAULT_ID = '999999999999';
+    public const OUT_OF_DATE = 1;
+    public const UNDERAGE_PERSON = 2;
+    public const DOCUMENT_FALSIFIED = 3;
+    public const DOCUMENT_MISSING = 4;
+    public const DOCUMENT_HAS_EXPIRED = 5;
+    public const DOCUMENT_NOT_ACCEPTED = 6;
+    public const DOCUMENT_DO_NOT_MATCH_USER_DATA = 7;
+    public const DOCUMENT_UNREADABLE = 8;
+    public const DOCUMENT_INCOMPLETE = 9;
+    public const SPECIFIC_CASE = 10;
 
     /**
      * @var int The id of this document
@@ -101,7 +101,7 @@ class ValidationDocument
     private $user;
 
     /**
-     * @var File|null The document's file
+     * @var null|File The document's file
      *
      * @Vich\UploadableField(mapping="validationDocument", fileNameProperty="fileName", originalName="originalName", size="size", mimeType="mimeType")
      */
@@ -122,21 +122,21 @@ class ValidationDocument
     private $extension;
 
     /**
-     * @var string The original file name of the import.
+     * @var string the original file name of the import
      *
      * @Groups({"readPayment","writePayment"})
      */
     private $originalName;
 
     /**
-     * @var int The document's size in bytes.
+     * @var int the document's size in bytes
      *
      * @Groups({"readPayment","writePayment"})
      */
     private $size;
 
     /**
-     * @var string The document's mime type.
+     * @var string the document's mime type
      *
      * @Groups({"readPayment","writePayment"})
      */
@@ -164,10 +164,10 @@ class ValidationDocument
         return $this->id;
     }
 
-    public function setId(String $id): self
+    public function setId(string $id): self
     {
         $this->id = $id;
-        
+
         return $this;
     }
 
@@ -260,10 +260,10 @@ class ValidationDocument
         return $this->status;
     }
 
-    public function setStatus(String $status): self
+    public function setStatus(string $status): self
     {
         $this->status = $status;
-        
+
         return $this;
     }
 }

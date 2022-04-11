@@ -4,7 +4,7 @@
       id="pad"
     >
       <v-col
-        cols="2"        
+        cols="2"
         class="d-flex section justify-center align-center text-center text-uppercase text-body-2 pa-1"
       >
         <a
@@ -14,7 +14,7 @@
         >{{ $t('pad.carpool.title') }}</a>
       </v-col>
       <v-col
-        cols="2"        
+        cols="2"
         class="section justify-center align-center text-center text-uppercase text-body-2 pa-1"
       >
         <a
@@ -30,7 +30,7 @@
         >{{ $t('pad.mobility.subtitle') }}</a>
       </v-col>
       <v-col
-        cols="2"        
+        cols="2"
         class="d-flex section justify-center align-center text-center text-uppercase text-body-2 pa-1"
       >
         <a
@@ -50,7 +50,7 @@
         >{{ $t('pad.subscribe.title') }}</a>
       </v-col>
       <v-col
-        cols="2"        
+        cols="2"
         class="d-flex section justify-center align-center text-center text-uppercase text-body-2 pa-1"
       >
         <a
@@ -60,7 +60,7 @@
         >{{ $t('pad.blog.title') }}</a>
       </v-col>
       <v-col
-        cols="2"        
+        cols="2"
         class="d-lg-flex social justify-center align-center text-center text-center text-uppercase text-body-2 pa-1 justify-spacebetween"
       >
         <a
@@ -89,7 +89,7 @@
             mdi-linkedin
           </v-icon>
         </a>
-      </v-col>      
+      </v-col>
     </v-row>
     <v-toolbar
       flat
@@ -122,7 +122,7 @@
       >
         <MMessageBtn :unread-message-number="unreadMessageNumber" />
         <MHeaderCommunities
-          :user-id="user.id" 
+          :user-id="user.id"
           :text-color-class="textColorClass"
         />
         <MHeaderProfile
@@ -182,7 +182,7 @@
       >
         {{ $t('buttons.solidary.label') }}
       </v-btn>
- 
+
       <MHeaderLanguage
         :languages="languages"
         :language="dlocale"
@@ -442,8 +442,8 @@ export default {
     }
   },
   computed:{
-    unreadMessageNumber(){
-      return this.user.unreadCarpoolMessageNumber + this.user.unreadDirectMessageNumber + this.user.unreadSolidaryMessageNumber; 
+    unreadMessageNumber() {
+      return this.$store.getters['m/unreadCarpoolMessageNumber'] + this.$store.getters['m/unreadDirectMessageNumber'] + this.$store.getters['m/unreadSolidaryMessageNumber'];
     }
   },
   mounted() {
@@ -453,6 +453,10 @@ export default {
       this.dlocale = this.defaultLocale;
     }
     this.$store.commit('g/setActive',this.gamificationActive);
+    this.$store.commit('m/setUnreadCarpoolMessageNumber', this.user?.unreadCarpoolMessageNumber);
+    this.$store.commit('m/setUnreadDirectMessageNumber', this.user?.unreadDirectMessageNumber);
+    this.$store.commit('m/setUnreadSolidaryMessageNumber', this.user?.unreadSolidaryMessageNumber);
+
   },
   created() {
     this.$store.commit('a/setToken',this.user?.token ? this.user.token : this.token);
@@ -464,7 +468,7 @@ export default {
   methods:{
     updateLanguage(language) {
       this.$root.$i18n.locale = language
-    },
+    }
   }
 };
 </script>

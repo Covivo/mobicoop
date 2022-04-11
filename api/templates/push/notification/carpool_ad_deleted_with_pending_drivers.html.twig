@@ -6,5 +6,5 @@
     {% set deleter = ask.user %}
 {% endif %}
 Bonjour {{recipient.givenName|capitalize}} {{recipient.shortFamilyName|capitalize}}
-{{recipient.givenName|capitalize}} {{recipient.shortFamilyName|capitalize}} a annulé son trajet et ne pourra pas covoiturer avec vous de {{ context.origin.address.displayLabel[0] }} à {{ context.destination.address.displayLabel[0] }}. Trouvez de nouveaux covoiturages ou déposez une annonce sur {{api_env('PUSH_PLATFORM_NAME')}}.
+{{deleter.givenName|capitalize}} {{deleter.shortFamilyName|capitalize}} a annulé son trajet et ne pourra pas covoiturer avec vous de {{ context.origin.address.displayLabel[0] }} à {{ context.destination.address.displayLabel[0] }}. Trouvez de nouveaux covoiturages ou déposez une annonce sur {{api_env('PUSH_PLATFORM_NAME')}}.
 À bientôt sur {{api_env('PUSH_PLATFORM_NAME')}}
