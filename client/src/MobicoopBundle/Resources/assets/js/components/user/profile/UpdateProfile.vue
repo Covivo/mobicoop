@@ -634,6 +634,7 @@ import PublicProfile from "@components/user/profile/PublicProfile";
 import { merge } from "lodash";
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/profile/UpdateProfile/";
 import {messages_client_en, messages_client_fr, messages_client_eu, messages_client_nl} from "@clientTranslations/components/user/profile/UpdateProfile/";
+import Is from "@utils/is";
 
 let MessagesMergedEn = merge(messages_en, messages_client_en);
 let MessagesMergedNl = merge(messages_nl, messages_client_nl);
@@ -748,9 +749,6 @@ export default {
       tokenRules: [
         v => (/^\d{4}$/).test(v) || this.$t("phone.token.inputError")
       ],
-      telephoneRules: [
-        v => (/^((\+)33|0)[1-9](\d{2}){4}$/).test(v) || this.$t("phone.errors.valid")
-      ],
       birthdayRules : {
         required:  v => !!v || this.$t("birthDay.errors.required"),
         checkIfAdult : value =>{
@@ -802,6 +800,11 @@ export default {
     },
     savedCo2(){
       return Number.parseFloat(this.user.savedCo2  / 1000000 ).toPrecision(1);
+    },
+    telephoneRules: function () {
+      return [
+        v => Is.phone(v, true) || this.$t("phone.errors.valid")
+      ]
     }
   },
   watch: {

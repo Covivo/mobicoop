@@ -1,16 +1,38 @@
-const EMAIL_REGEXP = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
+const email_regexp = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
+const full_email_regexp = /^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/;
 
-const PHONE_REGEXP = /(?:(?:\+|00)[0-9]{2}[\s.-]{0,3}(?:\(0\)[\s.-]{0,3})?|0)[1-9](?:(?:[\s.-]?\d{2}){4}|\d{2}(?:[\s.-]?\d{3}){2})/;
+const phone_regexp = /(?:(?:\+|00)[0-9]{2,3}[\s.-]{0,3}(?:\(0\)[\s.-]{0,3})?|0)[1-9](?:(?:[\s.-]?\d{2}){4}|\d{2}(?:[\s.-]?\d{3}){2})/;
+const full_phone_regexp = /^(?:(?:\+|00)[0-9]{2,3}[\s.-]{0,3}(?:\(0\)[\s.-]{0,3})?|0)[1-9](?:(?:[\s.-]?\d{2}){4}|\d{2}(?:[\s.-]?\d{3}){2})$/;
 
-class Is 
+/**
+ * @author Olivier Fillol <olivier.fillol@mobicoop.org>
+ */
+class Is
 {
-  email(text) {
-    return text.match(EMAIL_REGEXP) ? true : false;
+  /**
+   * Returns if the text is or contains an email address
+   * @param {string} text
+   * @param {boolean} fullChain
+   * @returns {boolean}
+   */
+  email(text, fullChain = false) {
+    const regexp = fullChain ? full_email_regexp : email_regexp;
+
+    return regexp.test(text);
   }
 
-  phone(text) {
-    return text.match(PHONE_REGEXP) ? true : false;
+  /**
+   * Returns if the text is or contains a phone number
+   * @param {string} text
+   * @param {boolean} fullChain
+   * @returns {boolean}
+   */
+  phone(text, fullChain = false) {
+    const regexp = fullChain ? full_phone_regexp : phone_regexp;
+
+    return regexp.test(text);
   }
 }
 
+export { email_regexp, phone_regexp };
 export default new Is();
