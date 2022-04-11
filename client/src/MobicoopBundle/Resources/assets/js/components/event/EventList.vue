@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- Title and subtitle -->
-    <v-row 
+    <v-row
       justify="center"
     >
       <v-col
@@ -69,14 +69,14 @@
                     :url-tiles="urlTiles"
                     :attribution-copyright="attributionCopyright"
                     :zoom="2"
-                  />                 
+                  />
                   <v-skeleton-loader
                     v-else
                     ref="skeleton"
                     type="card"
                     class="mx-auto"
                     width="100%"
-                  /> 
+                  />
                 </v-col>
               </v-row>
               <v-card-title>
@@ -138,7 +138,7 @@
                       type="list-item-avatar-three-line"
                       class="mx-auto"
                       width="100%"
-                    />                      
+                    />
                   </v-row>
                   <v-row v-else>
                     <v-col
@@ -222,7 +222,7 @@
                       type="list-item-avatar-three-line"
                       class="mx-auto"
                       width="100%"
-                    />                      
+                    />
                   </v-row>
                   <v-row v-else>
                     <v-col
@@ -394,8 +394,8 @@ export default {
         title : evt.name,
         images : evt.images,
         description  : evt.fullDescription,
-        date_begin   : this.$t('startEvent') +' : '+  this.computedDateFormat(evt.fromDate.date),
-        date_end   : this.$t('endEvent') +' : '+ this.computedDateFormat(evt.toDate.date),
+        date_begin   : this.$t('startEvent') +' : '+  this.computedDateFormat(evt.fromDate.date,evt.useTime),
+        date_end   : this.$t('endEvent') +' : '+ this.computedDateFormat(evt.toDate.date,evt.useTime),
         linktoevent  : this.$t('routes.event', {id:evt.id, urlKey:evt.urlKey})
       };
       return popup;
@@ -413,8 +413,12 @@ export default {
         this.loadingMap = false;
         this.redrawMap();
       }
-    },computedDateFormat(date) {
-      return moment(date).format("DD/MM/YYYY hh:mm");
+    },
+    computedDateFormat(date, withTime = false) {
+      if (withTime) {
+        return moment(date).format("DD/MM/YYYY HH:mm");
+      }
+      return moment(date).format("DD/MM/YYYY");
     },
     getEvents(coming){
       this.loading = true;
@@ -448,7 +452,7 @@ export default {
         })
         .catch(function (error) {
           console.error(error);
-        });        
+        });
     },
     updateOptions(data){
       this.itemsPerPage = data.itemsPerPage;
@@ -467,10 +471,10 @@ export default {
     },
     updateSearch: debounce(function(value) {
       this.getEvents(true);
-    }, 1000),    
+    }, 1000),
     updateSearchPassed: debounce(function(value) {
       this.getEvents(false);
-    }, 1000)    
+    }, 1000)
   }
 }
 </script>
