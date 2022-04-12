@@ -577,6 +577,59 @@ class ProposalManager
         }
     }
 
+    public function geocodeActiveRegularProposals()
+    {
+        $stmt_origin = $this->entityManager->getConnection()->prepare(
+            'SELECT
+                a.id
+            FROM proposal p
+            LEFT JOIN criteria c ON c.id = p.criteria_id
+            LEFT JOIN waypoint w ON w.proposal_id = p.id
+            LEFT JOIN address a ON a.id = w.address_id
+            WHERE
+                (p.private IS NULL OR p.private = 0) AND
+                c.frequency > 1 AND
+                c.to_date IS NOT NULL AND c.to_date>=NOW() AND
+                w.position = 0 AND
+                a.address_locality IS NOT NULL AND a.address_locality != "" AND
+                a.street_address IS NULL OR a.street_address = "" AND
+                a.postal_code IS NULL OR a.postal_code = "" AND
+                a.house_number IS NULL OR a.house_number = "" AND
+                a.street IS NULL OR a.street = ""
+            '
+        );
+        $stmt_origin->execute();
+        $addresses_origin = $stmt_origin->fetchAll();
+
+        $stmt_destination = $this->entityManager->getConnection()->prepare(
+            'SELECT
+                a.id
+            FROM proposal p
+            LEFT JOIN criteria c ON c.id = p.criteria_id
+            LEFT JOIN waypoint w ON w.proposal_id = p.id
+            LEFT JOIN address a ON a.id = w.address_id
+            WHERE
+                (p.private IS NULL OR p.private = 0) AND
+                c.frequency > 1 AND
+                c.to_date IS NOT NULL AND c.to_date>=NOW() AND
+                w.position = 0 AND
+                a.address_locality IS NOT NULL AND a.address_locality != "" AND
+                a.street_address IS NULL OR a.street_address = "" AND
+                a.postal_code IS NULL OR a.postal_code = "" AND
+                a.house_number IS NULL OR a.house_number = "" AND
+                a.street IS NULL OR a.street = ""
+            '
+        );
+        $stmt_destination->execute();
+        $addresses_destination = $stmt_destination->fetchAll();
+
+        $addresses = array_merge($addresses_origin, $addresses_destination);
+
+        foreach ($addresses as $address);
+
+        return true;
+    }
+
     /**
      * Set default parameters for a proposal.
      *
