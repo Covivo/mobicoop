@@ -114,7 +114,7 @@
                 v-model="telephone"
                 :label="$t('phone.label')"
                 class="telephone"
-                :rules="telephoneRules"
+                :error-messages="phoneErrors"
               >
                 <template v-slot:append>
                   <v-tooltip
@@ -634,7 +634,6 @@ import PublicProfile from "@components/user/profile/PublicProfile";
 import { merge } from "lodash";
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/profile/UpdateProfile/";
 import {messages_client_en, messages_client_fr, messages_client_eu, messages_client_nl} from "@clientTranslations/components/user/profile/UpdateProfile/";
-import Is from "@utils/is";
 
 let MessagesMergedEn = merge(messages_en, messages_client_en);
 let MessagesMergedNl = merge(messages_nl, messages_client_nl);
@@ -721,6 +720,7 @@ export default {
       familyName: this.user.familyName,
       birthDay: this.user.birthDate ? this.user.birthDate.date : null,
       homeAddress: this.user.homeAddress ? this.user.homeAddress : null,
+      phoneErrors: [],
       phoneToken: this.user.phoneToken,
       phoneValidatedDate: this.user.phoneValidatedDate,
       emailValidatedDate: this.user.validatedDate,
@@ -800,11 +800,6 @@ export default {
     },
     savedCo2(){
       return Number.parseFloat(this.user.savedCo2  / 1000000 ).toPrecision(1);
-    },
-    telephoneRules: function () {
-      return [
-        v => Is.phone(v, true) || this.$t("phone.errors.valid")
-      ]
     }
   },
   watch: {
@@ -814,6 +809,31 @@ export default {
     telephone (val) {
       this.phoneToken = null;
       this.displayPhoneVerification = false;
+
+      maxios
+        .post(
+          this.$t("phone.checkValidity.url"),
+          {
+            telephone: val,
+          },
+          {
+            headers: {
+              "content-type": "application/json",
+            },
+          }
+        )
+        .then((response) => {
+          if(response.data.valid){
+            this.phoneErrors = [];
+          }
+          else{
+            this.phoneErrors = [this.$t("phone.errors.valid")];
+          }
+        })
+        .catch(function(error) {
+          console.error(error);
+          this.phoneErrors = [this.$t("phone.errors.valid")];
+        });
     },
     email (val) {
       this.emailChanged = true;

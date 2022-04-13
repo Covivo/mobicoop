@@ -48,6 +48,10 @@
         }
     },
     "phone": {
+        "checkValidity": {
+          "url": "/utilisateur/verif/telephone",
+          "error": "Ce numéro de téléphone n'est pas valide"
+        },
         "label": "Téléphone portable",
         "errors": {
             "valid": "Le numéro de téléphone doit être valide"
@@ -138,8 +142,8 @@
                 "generateEmail": "Envoyer un email de vérification",
                 "generateEmailAgain": "Renvoyer un email de vérification"
             }
-        },    
-        "verificationRoute":"/utilisateur/email/validation"    
+        },
+        "verificationRoute":"/utilisateur/email/validation"
     },
     "givenName": {
         "label": "Prénom"
@@ -178,5 +182,5 @@
         "title":"Badges",
         "see":"Voir les badges",
         "close":"Fermer"
-    }    
+    }
 }
