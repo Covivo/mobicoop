@@ -140,6 +140,12 @@ services:
         tags:
             - { name: doctrine.event_listener, event: onSchemaAlterTableRemoveColumn }
             - { name: doctrine.event_listener, event: onSchemaAlterTableAddColumn }
+
+    # Kernel response
+    # mobicoop.kernel.response:
+        # class: App\EventListener\KernelResponseListener
+        # tags:
+            # - { name: kernel.event_listener, event: kernel.response, method: onKernelResponse }
             
     # CONTROLLERS AND SERVICES
 
@@ -366,10 +372,6 @@ services:
         arguments:
             $emailTemplatePath: '%env(string:NOTIFICATION_TEMPLATE_EMAIL_PATH)%'
             $emailTitleTemplatePath: '%env(string:COMMUNICATION_TEMPLATE_EMAIL_PATH)%%env(string:NOTIFICATION_TITLE_TEMPLATE_EMAIL_PATH)%'
-
-    App\Carpool\Command\carpoolAdRenewalCommand:
-        arguments:
-            $daysReminderProposalOutdated: '%env(int:DAYS_REMINDER_PROPOSAL_OUTDATED)%'
  
     # Community
     App\Community\Controller\:
@@ -581,6 +583,7 @@ services:
             $prioritizeBox: '%env(json:POINT_SEARCHER_PRIORITIZE_BOX)%'
             $prioritizeRegion: '%env(string:POINT_SEARCHER_PRIORITIZE_REGION)%'
             $exclusionTypes: '%env(json:POINT_SEARCHER_EXCLUSION_TYPES)%'
+            $relayPointParams: '%env(json:POINT_SEARCHER_RELAY_POINT_PARAMETERS)%'
 
     App\Geography\Service\TerritoryManager:
         arguments:

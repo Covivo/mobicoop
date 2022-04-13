@@ -306,14 +306,8 @@ class Address implements \JsonSerializable
 
     /**
      * @var null|string the name of this address
-     *
-     * <<<<<<< HEAD
-     * @ORM\Column(type="string", length=45, nullable=true)
-     * @Groups({"aRead", "aReadCol", "aReadItem", "aWrite", "read","readUser","readEvent","results","write","writeRelayPoint"})
-     * =======
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"aRead", "aReadCol", "aReadItem", "aWrite", "read","readUser","results","write","writeRelayPoint","readEvent"})
-     * >>>>>>> 1.47.0-next
+     * @Groups({"aRead", "aReadCol", "aReadItem", "aWrite", "read","readUser","results","write","readRelayPoint","writeRelayPoint","readEvent"})
      */
     private $name;
 
@@ -435,14 +429,14 @@ class Address implements \JsonSerializable
     /**
      * @var null|string the type of the address
      *
-     * @Groups({"read","readUser","readEvent","aRead"})
+     * @Groups({"read","readUser","readEvent","aRead","readRelayPoint"})
      */
     private $type;
 
     /**
      * @var null|string the region code of the address
      *
-     * @Groups({"read","readUser","readEvent","aRead"})
+     * @Groups({"read","readUser","readEvent","readRelayPoint","aRead"})
      */
     private $regionCode;
 

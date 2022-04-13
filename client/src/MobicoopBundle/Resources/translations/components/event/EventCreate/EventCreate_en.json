@@ -48,7 +48,9 @@
     "error": {
         "event": {
             "name": "This event already exists, please use another name",
-            "create": "Event creation failed"
+            "create": "Event creation failed",
+            "fullDescriptionLength": "Description too long",
+            "descriptionLength": "Short description too long"
         },
         "image": "The image has not been saved"
     },
