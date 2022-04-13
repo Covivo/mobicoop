@@ -1425,7 +1425,7 @@ class ProposalRepository
             ->join('p.criteria', 'c')
             ->where('p.private = 0 OR p.private IS NULL')
             ->andWhere('c.frequency = :regularFrequency  AND c.toDate is not null')
-            ->andWhere("DATE_ADD(c.toDate, :numberOfDays, 'DAY') = :now")
+            ->andWhere("DATE_SUB(c.toDate, :numberOfDays, 'DAY') = :now")
             ->andWhere('p.type = :typeOneWay or p.type = :typeOutward')
             ->setParameter('typeOneWay', Proposal::TYPE_ONE_WAY)
             ->setParameter('typeOutward', Proposal::TYPE_OUTWARD)
