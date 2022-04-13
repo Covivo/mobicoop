@@ -23,13 +23,13 @@
 
 namespace App\Geography\Service;
 
-use App\Community\Entity\CommunityUser;
-use App\Event\Entity\Event;
 use App\Event\Repository\EventRepository;
-use App\Geography\Entity\Address;
 use App\Geography\Repository\AddressRepository;
-use App\Geography\Ressource\Point;
-use App\RelayPoint\Entity\RelayPoint;
+use App\Geography\Service\Geocoder\MobicoopGeocoder;
+use App\Geography\Service\Point\EventPointProvider;
+use App\Geography\Service\Point\MobicoopGeocoderPointProvider;
+use App\Geography\Service\Point\RelayPointPointProvider;
+use App\Geography\Service\Point\UserPointProvider;
 use App\RelayPoint\Repository\RelayPointRepository;
 use App\User\Entity\User;
 use Symfony\Component\Security\Core\Security;
@@ -40,25 +40,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class PointSearcher
 {
-    private const PROVIDER = 'MOBICOOP_API';
-
-    private $geocoder;
-    private $relayPointRepository;
-    private $eventRepository;
-    private $addressRepository;
-    private $translator;
-    private $points;
-    private $search;
-
-    /**
-     * @var null|User
-     */
-    private $user;
-    private $maxRelayPointResults;
-    private $maxEventResults;
-    private $maxUserResults;
-    private $exclusionTypes;
-    private $relayPointParams;
+    private $providers;
 
     public function __construct(
         MobicoopGeocoder $mobicoopGeocoder,
@@ -73,28 +55,20 @@ class PointSearcher
         array $prioritizeCentroid = null,
         array $prioritizeBox = null,
         string $prioritizeRegion = null,
-        array $exclusionTypes = null,
+        array $exclusionTypes = [],
         array $relayPointParams
     ) {
         $this->points = [];
-        $this->geocoder = $mobicoopGeocoder;
-        $this->relayPointRepository = $relayPointRepository;
-        $this->eventRepository = $eventRepository;
-        $this->addressRepository = $addressRepository;
-        $this->translator = $translator;
-        $this->maxRelayPointResults = $maxRelayPointResults;
-        $this->maxEventResults = $maxEventResults;
-        $this->maxUserResults = $maxUserResults;
-        $this->exclusionTypes = $exclusionTypes;
-        $this->relayPointParams = $relayPointParams;
+        $searchUser = false;
+        $userPointProvider = new UserPointProvider($addressRepository, $translator);
         if ($prioritizeCentroid) {
-            $this->geocoder->setPrioritizeCentroid(
+            $mobicoopGeocoder->setPrioritizeCentroid(
                 $prioritizeCentroid['lon'],
                 $prioritizeCentroid['lat']
             );
         }
         if ($prioritizeBox) {
-            $this->geocoder->setPrioritizeBox(
+            $mobicoopGeocoder->setPrioritizeBox(
                 $prioritizeBox['minLon'],
                 $prioritizeBox['minLat'],
                 $prioritizeBox['maxLon'],
@@ -102,18 +76,20 @@ class PointSearcher
             );
         }
         if ($prioritizeRegion) {
-            $this->geocoder->setPrioritizeRegion($prioritizeRegion);
+            $mobicoopGeocoder->setPrioritizeRegion($prioritizeRegion);
         }
-        $this->user = null;
         if ($security->getUser() instanceof User) {
-            $this->user = $user = $security->getUser();
+            $searchUser = true;
+            $user = $security->getUser();
+            $userPointProvider->setUser($user);
+            $userPointProvider->setMaxResults($maxUserResults);
 
             /**
              * @var null|User $user
              */
             foreach ($user->getAddresses() as $address) {
                 if ($address->isHome()) {
-                    $this->geocoder->setPrioritizeCentroid(
+                    $mobicoopGeocoder->setPrioritizeCentroid(
                         $address->getLongitude(),
                         $address->getLatitude()
                     );
@@ -122,186 +98,34 @@ class PointSearcher
                 }
             }
         }
+        $mobicoopGeocoderPointProvider = new MobicoopGeocoderPointProvider($mobicoopGeocoder);
+        $mobicoopGeocoderPointProvider->setExclusionTypes($exclusionTypes);
+
+        $relayPointPointProvider = new RelayPointPointProvider($relayPointRepository);
+        $relayPointPointProvider->setMaxResults($maxRelayPointResults);
+        $relayPointPointProvider->setParams($relayPointParams);
+
+        $eventPointProvider = new EventPointProvider($eventRepository);
+        $eventPointProvider->setMaxResults($maxEventResults);
+
+        $this->providers = [
+            $mobicoopGeocoderPointProvider,
+            $relayPointPointProvider,
+            $eventPointProvider,
+        ];
+
+        if ($searchUser) {
+            $this->providers[] = $userPointProvider;
+        }
     }
 
     public function geocode(string $search): array
     {
-        $this->search = $search;
-        $this->addGeocoderResults();
-        $this->addRelayPointResults();
-        $this->addEventResults();
-        $this->addUserResults();
-
-        return $this->points;
-    }
-
-    private function addGeocoderResults()
-    {
-        $geocoderPoints = $this->geocoder->geocode($this->search);
-        $geocoderResults = $this->geocoderPointsToPoints($geocoderPoints);
-        $this->points = array_merge($this->points, $geocoderResults);
-    }
-
-    private function addRelayPointResults()
-    {
-        $relayPoints = $this->relayPointRepository->findByParams($this->search, $this->relayPointParams);
-        $relayPointResults = $this->relayPointsToPoints($relayPoints);
-
-        $this->points = array_merge($this->points, $relayPointResults);
-    }
-
-    private function addEventResults()
-    {
-        $events = $this->eventRepository->findByNameAndStatus($this->search, Event::STATUS_ACTIVE);
-        $eventResults = $this->eventsToPoints($events);
-        $this->points = array_merge($this->points, $eventResults);
-    }
-
-    private function addUserResults()
-    {
-        if ($this->user instanceof User) {
-            $userAddresses = $this->addressRepository->findByName($this->translator->trans($this->search), $this->user->getId());
-            $userResults = $this->addressesToPoints($userAddresses);
-            $this->points = array_merge($this->points, $userResults);
-        }
-    }
-
-    private function geocoderPointsToPoints(array $geocoderPoints): array
-    {
         $points = [];
-        foreach ($geocoderPoints as $geocoderPoint) {
-            if (isset($geocoderPoint['type']) && !in_array($geocoderPoint['type'], $this->exclusionTypes)) {
-                $points[] = $this->geocoderPointToPoint($geocoderPoint);
-            }
+        foreach ($this->providers as $provider) {
+            $points = array_merge($points, $provider->search($search));
         }
 
         return $points;
-    }
-
-    private function relayPointsToPoints(array $relayPoints): array
-    {
-        $points = [];
-        foreach ($relayPoints as $relayPoint) {
-            $userExcluded = false;
-            if ($relayPoint->getCommunity() && $relayPoint->isPrivate()) {
-                $userExcluded = true;
-                if ($this->user) {
-                    foreach ($relayPoint->getCommunity()->getCommunityUsers() as $communityUser) {
-                        if (
-                            $communityUser->getUser()->getId() == $this->user->getId()
-                            && (
-                                CommunityUser::STATUS_ACCEPTED_AS_MEMBER == $communityUser->getStatus()
-                                || CommunityUser::STATUS_ACCEPTED_AS_MODERATOR == $communityUser->getStatus()
-                            )
-                        ) {
-                            $userExcluded = false;
-
-                            break;
-                        }
-                    }
-                }
-            }
-            if (!$userExcluded) {
-                $points[] = $this->relayPointToPoint($relayPoint);
-                if (count($points) == $this->maxRelayPointResults) {
-                    break;
-                }
-            }
-        }
-
-        return $points;
-    }
-
-    private function eventsToPoints(array $events): array
-    {
-        $points = [];
-        foreach ($events as $event) {
-            $points[] = $this->eventToPoint($event);
-            if (count($points) == $this->maxEventResults) {
-                break;
-            }
-        }
-
-        return $points;
-    }
-
-    private function addressesToPoints(array $addresses): array
-    {
-        $points = [];
-        foreach ($addresses as $address) {
-            $point = $this->addressToPoint($address);
-            $point->setId($address->getId());
-            $point->setName($this->translator->trans($address->getName()));
-            $point->setType('user');
-            $points[] = $point;
-            if (count($points) == $this->maxUserResults) {
-                break;
-            }
-        }
-
-        return $points;
-    }
-
-    private function geocoderPointToPoint(array $item): Point
-    {
-        $point = new Point();
-        $point->setCountry($item['country']);
-        $point->setCountryCode($item['country_code']);
-        $point->setDistance($item['distance']);
-        $point->setHouseNumber($item['house_number']);
-        $point->setId($item['id']);
-        $point->setLat($item['lat']);
-        $point->setLocality($item['locality']);
-        $point->setLocalityCode($item['locality_code']);
-        $point->setLon($item['lon']);
-        $point->setMacroRegion($item['macro_region']);
-        $point->setName($item['name']);
-        $point->setPopulation($item['population']);
-        $point->setPostalCode($item['postal_code']);
-        $point->setRegion($item['region']);
-        $point->setRegionCode($item['region_code']);
-        $point->setStreetName($item['street_name']);
-        $point->setType($item['type']);
-        $point->setProvider($item['provider']);
-
-        return $point;
-    }
-
-    private function relayPointToPoint(RelayPoint $relayPoint): Point
-    {
-        $point = $this->addressToPoint($relayPoint->getAddress());
-        $point->setId($relayPoint->getId());
-        $point->setName($relayPoint->getName());
-        $point->setType('relaypoint');
-
-        return $point;
-    }
-
-    private function eventToPoint(Event $event): Point
-    {
-        $point = $this->addressToPoint($event->getAddress());
-        $point->setId($event->getId());
-        $point->setName($event->getName());
-        $point->setType('event');
-
-        return $point;
-    }
-
-    private function addressToPoint(Address $address): Point
-    {
-        $point = new Point();
-        $point->setCountry($address->getAddressCountry());
-        $point->setCountryCode($address->getCountryCode());
-        $point->setHouseNumber($address->getHouseNumber());
-        $point->setLat($address->getLatitude());
-        $point->setLocality($address->getAddressLocality());
-        $point->setLon($address->getLongitude());
-        $point->setMacroRegion($address->getMacroRegion());
-        $point->setPostalCode($address->getPostalCode());
-        $point->setRegion($address->getRegion());
-        $point->setStreetName($address->getStreet() ? $address->getStreet() : $address->getStreetAddress());
-        $point->setProvider(self::PROVIDER);
-
-        return $point;
     }
 }

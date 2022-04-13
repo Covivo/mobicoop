@@ -53,6 +53,8 @@ class FixRegularProposalAddressesCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        return (int) !$this->proposalManager->geocodeActiveRegularProposals();
+        $addresses = $this->proposalManager->getActiveRegularProposalsWithLocalityOnly();
+
+        // return (int) !$this->proposalManager->geocodeActiveRegularProposals();
     }
 }

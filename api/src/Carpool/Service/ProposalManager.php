@@ -577,44 +577,8 @@ class ProposalManager
         }
     }
 
-    public function geocodeActiveRegularProposals()
+    public function getActiveRegularProposalsWithLocalityOnly(): array
     {
-//     p.id,
-//     p.paused,
-//     c.frequency,
-//     c.from_date,
-//     c.to_date,
-//     ao.address_locality,
-//     ao.layer,
-//     ad.address_locality,
-//     ad.layer,
-        // FROM proposal p
-        // LEFT JOIN criteria c ON c.id = p.criteria_id
-        // LEFT JOIN waypoint wo ON wo.proposal_id = p.id
-        // LEFT JOIN waypoint wd ON wd.proposal_id = p.id
-        // LEFT JOIN address ao ON ao.id = wo.address_id
-        // LEFT JOIN address ad ON ad.id = wd.address_id
-        // WHERE
-//     (p.private IS NULL OR p.private = 0) AND
-//     c.frequency > 1 AND
-//     c.to_date IS NOT NULL AND c.to_date>=NOW() AND
-//     wo.position = 0 AND wd.destination = 1 AND
-//     (
-//         (
-//             (ao.address_locality IS NOT NULL AND ao.address_locality != "") AND
-//             (ao.street_address IS NULL OR ao.street_address = "") AND
-//             (ao.postal_code IS NULL OR ao.postal_code = "") AND
-//             (ao.house_number IS NULL OR ao.house_number = "") AND
-//             (ao.street IS NULL OR ao.street = "")
-//         ) OR
-//         (
-//             (ad.address_locality IS NOT NULL AND ad.address_locality != "") AND
-//             (ad.street_address IS NULL OR ad.street_address = "") AND
-//             (ad.postal_code IS NULL OR ad.postal_code = "") AND
-//             (ad.house_number IS NULL OR ad.house_number = "") AND
-//             (ad.street IS NULL OR ad.street = "")
-//         )
-//     )
         $stmt_origin = $this->entityManager->getConnection()->prepare(
             'SELECT
                 a.id
@@ -659,11 +623,7 @@ class ProposalManager
         $stmt_destination->execute();
         $addresses_destination = $stmt_destination->fetchAll();
 
-        $addresses = array_merge($addresses_origin, $addresses_destination);
-
-        foreach ($addresses as $address);
-
-        return true;
+        return array_merge($addresses_origin, $addresses_destination);
     }
 
     /**
