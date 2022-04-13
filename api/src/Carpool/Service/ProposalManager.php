@@ -42,7 +42,10 @@ use App\Communication\Service\InternalMessageManager;
 use App\DataProvider\Entity\Response;
 use App\Geography\Entity\Address;
 use App\Geography\Interfaces\GeorouterInterface;
+use App\Geography\Service\Geocoder\MobicoopGeocoder;
 use App\Geography\Service\GeoRouter;
+use App\Geography\Service\GeoTools;
+use App\Geography\Service\Point\MobicoopGeocoderPointProvider;
 use App\Import\Entity\UserImport;
 use App\Service\FormatDataManager;
 use App\User\Entity\User;
@@ -70,6 +73,7 @@ class ProposalManager
     public const OPTIMIZE_MEMORY_LIMIT_IN_MO = 8192;
     public const CHECK_OUTDATED_SEARCHES_RUNNING_FILE = 'outdatedSearches.txt';
     public const CHECK_REMOVE_ORPHANS_RUNNING_FILE = 'removeOrphans.txt';
+    public const HOMOGENIZE_REGULAR_PROPOSAL_ADDRESS_DISTANCE = 5000;
 
     private $entityManager;
     private $proposalMatcher;
@@ -85,6 +89,8 @@ class ProposalManager
     private $internalMessageManager;
     private $criteriaRepository;
     private $actionRepository;
+    private $mobicoopGeocoderPointProvider;
+    private $geoTools;
 
     /**
      * Constructor.
@@ -103,6 +109,8 @@ class ProposalManager
         InternalMessageManager $internalMessageManager,
         CriteriaRepository $criteriaRepository,
         ActionRepository $actionRepository,
+        MobicoopGeocoder $mobicoopGeocoder,
+        GeoTools $geoTools,
         array $params
     ) {
         $this->entityManager = $entityManager;
@@ -120,6 +128,8 @@ class ProposalManager
         $this->internalMessageManager = $internalMessageManager;
         $this->criteriaRepository = $criteriaRepository;
         $this->actionRepository = $actionRepository;
+        $this->mobicoopGeocoderPointProvider = new MobicoopGeocoderPointProvider($mobicoopGeocoder);
+        $this->geoTools = $geoTools;
     }
 
     /**
@@ -577,11 +587,79 @@ class ProposalManager
         }
     }
 
-    public function getActiveRegularProposalsWithLocalityOnly(): array
+    public function homogenizeRegularProposalsWithLocalityOnly(): int
+    {
+        $this->mobicoopGeocoderPointProvider->setExclusionTypes(['venue', 'street', 'housenumber']);
+        $this->mobicoopGeocoderPointProvider->setMaxResults(1);
+        $recoded = [];
+        $addresses = $this->getActiveRegularProposalsWithLocalityOnly();
+        echo 'Number of addresses to recode : '.count($addresses).PHP_EOL;
+        $i = 0;
+        foreach ($addresses as $address) {
+            ++$i;
+            if (($i % 100) == 0) {
+                echo "{$i} addresses recoded".PHP_EOL;
+            }
+            $points = $this->mobicoopGeocoderPointProvider->search($address['address_locality']);
+            if (
+                count($points) > 0
+                && (
+                    (((float) $address['latitude']) != $points[0]->getLat())
+                    || (((float) $address['longitude']) != $points[0]->getLon())
+                )
+                && $this->geoTools->haversineGreatCircleDistance(
+                    $points[0]->getLat(),
+                    $points[0]->getLon(),
+                    $address['latitude'],
+                    $address['longitude']
+                ) <= self::HOMOGENIZE_REGULAR_PROPOSAL_ADDRESS_DISTANCE
+            ) {
+                $recoded[] = [
+                    'id' => $address['id'],
+                    'locality' => $points[0]->getLocality(),
+                    'lat' => $points[0]->getLat(),
+                    'lon' => $points[0]->getLon(),
+                ];
+            }
+        }
+
+        if (count($recoded) > 0) {
+            $this->entityManager->getConnection()->prepare('start transaction;')->execute();
+            $i = 0;
+            foreach ($recoded as $recode) {
+                ++$i;
+                if (($i % 100) == 0) {
+                    echo "{$i} addresses updated".PHP_EOL;
+                }
+                if (!$this->entityManager->getConnection()->prepare(
+                    '
+                    UPDATE
+                        address
+                    SET
+                        longitude='.$recode['lon'].',
+                        latitude='.$recode['lat'].',
+                        address_locality="'.$recode['locality'].'",
+                        geo_json=PointFromText(\'POINT('.$recode['lon'].' '.$recode['lat'].')\')
+                    WHERE
+                        id='.$recode['id']
+                )->execute()) {
+                    return false;
+                }
+            }
+            $this->entityManager->getConnection()->prepare('commit;')->execute();
+        }
+
+        return true;
+    }
+
+    private function getActiveRegularProposalsWithLocalityOnly(): array
     {
         $stmt_origin = $this->entityManager->getConnection()->prepare(
             'SELECT
-                a.id
+                a.id,
+                a.address_locality,
+                a.longitude,
+                a.latitude
             FROM proposal p
             LEFT JOIN criteria c ON c.id = p.criteria_id
             LEFT JOIN waypoint w ON w.proposal_id = p.id
@@ -603,7 +681,10 @@ class ProposalManager
 
         $stmt_destination = $this->entityManager->getConnection()->prepare(
             'SELECT
-                a.id
+                a.id,
+                a.address_locality,
+                a.longitude,
+                a.latitude
             FROM proposal p
             LEFT JOIN criteria c ON c.id = p.criteria_id
             LEFT JOIN waypoint w ON w.proposal_id = p.id
@@ -612,7 +693,7 @@ class ProposalManager
                 (p.private IS NULL OR p.private = 0) AND
                 c.frequency > 1 AND
                 c.to_date IS NOT NULL AND c.to_date>=NOW() AND
-                w.position = 0 AND
+                w.destination = 1 AND
                 a.address_locality IS NOT NULL AND a.address_locality != "" AND
                 a.street_address IS NULL OR a.street_address = "" AND
                 a.postal_code IS NULL OR a.postal_code = "" AND

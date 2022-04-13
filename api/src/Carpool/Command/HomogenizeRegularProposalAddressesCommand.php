@@ -29,9 +29,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * This command fixes bad geocoded addresses for regular proposals.
+ * This command homogenizes regular proposals addresses.
  */
-class FixRegularProposalAddressesCommand extends Command
+class HomogenizeRegularProposalAddressesCommand extends Command
 {
     private $proposalManager;
 
@@ -45,16 +45,14 @@ class FixRegularProposalAddressesCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('app:carpool:fix-regular-proposal-addresses')
-            ->setDescription('Fixes bad geocoded addresses for regular proposals.')
-            ->setHelp('Fixes bad geocoded addresses for regular proposals.')
+            ->setName('app:carpool:homogenize-regular-proposal-addresses')
+            ->setDescription('Homogenizes addresses for regular proposals.')
+            ->setHelp('Homogenizes addresses for regular proposals.')
         ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $addresses = $this->proposalManager->getActiveRegularProposalsWithLocalityOnly();
-
-        // return (int) !$this->proposalManager->geocodeActiveRegularProposals();
+        return (int) !$this->proposalManager->homogenizeRegularProposalsWithLocalityOnly();
     }
 }
