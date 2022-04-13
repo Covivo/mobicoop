@@ -114,7 +114,7 @@
                 v-model="telephone"
                 :label="$t('phone.label')"
                 class="telephone"
-                :rules="telephoneRules"
+                :error-messages="phoneErrors"
               >
                 <template v-slot:append>
                   <v-tooltip
@@ -720,6 +720,7 @@ export default {
       familyName: this.user.familyName,
       birthDay: this.user.birthDate ? this.user.birthDate.date : null,
       homeAddress: this.user.homeAddress ? this.user.homeAddress : null,
+      phoneErrors: [],
       phoneToken: this.user.phoneToken,
       phoneValidatedDate: this.user.phoneValidatedDate,
       emailValidatedDate: this.user.validatedDate,
@@ -747,9 +748,6 @@ export default {
       ],
       tokenRules: [
         v => (/^\d{4}$/).test(v) || this.$t("phone.token.inputError")
-      ],
-      telephoneRules: [
-        v => (/^((\+)33|0)[1-9](\d{2}){4}$/).test(v) || this.$t("phone.errors.valid")
       ],
       birthdayRules : {
         required:  v => !!v || this.$t("birthDay.errors.required"),
@@ -811,6 +809,31 @@ export default {
     telephone (val) {
       this.phoneToken = null;
       this.displayPhoneVerification = false;
+
+      maxios
+        .post(
+          this.$t("phone.checkValidity.url"),
+          {
+            telephone: val,
+          },
+          {
+            headers: {
+              "content-type": "application/json",
+            },
+          }
+        )
+        .then((response) => {
+          if(response.data.valid){
+            this.phoneErrors = [];
+          }
+          else{
+            this.phoneErrors = [this.$t("phone.errors.valid")];
+          }
+        })
+        .catch(function(error) {
+          console.error(error);
+          this.phoneErrors = [this.$t("phone.errors.valid")];
+        });
     },
     email (val) {
       this.emailChanged = true;

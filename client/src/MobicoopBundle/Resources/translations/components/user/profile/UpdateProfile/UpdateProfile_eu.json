@@ -124,6 +124,10 @@
         }
     },
     "phone": {
+        "checkValidity": {
+          "url": "/utilisateur/verif/telephone",
+          "error": "Telefono-zenbaki honek ez du balio"
+        },
         "i18n": {
             "time": {
                 "format": {
