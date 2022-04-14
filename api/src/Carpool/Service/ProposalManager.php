@@ -590,7 +590,7 @@ class ProposalManager
     public function homogenizeRegularProposalsWithLocalityOnly(): int
     {
         $addresses = $this->getActiveRegularProposalsWithLocalityOnly();
-        echo 'Number of addresses to check : '.count($addresses).PHP_EOL;
+        $this->logger->info('Number of addresses to check : '.count($addresses));
         $addressesToRecode = $this->getActiveRegularProposalAddressesToRecode($addresses);
 
         return $this->recodeActiveRegularProposalAddresses($addressesToRecode);
@@ -666,7 +666,7 @@ class ProposalManager
         foreach ($addresses as $address) {
             ++$i;
             if (($i % 100) == 0) {
-                echo "{$i} addresses checked".PHP_EOL;
+                $this->logger->info($i.' addresses checked');
             }
             $points = $this->mobicoopGeocoderPointProvider->search($address['address_locality']);
             if (
@@ -704,7 +704,7 @@ class ProposalManager
             foreach ($addressesToRecode as $recode) {
                 ++$i;
                 if (($i % 100) == 0) {
-                    echo "{$i} addresses updated".PHP_EOL;
+                    $this->logger->info($i.' addresses updated');
                 }
                 if (!$this->entityManager->getConnection()->prepare(
                     '
