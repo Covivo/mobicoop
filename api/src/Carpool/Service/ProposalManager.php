@@ -589,71 +589,11 @@ class ProposalManager
 
     public function homogenizeRegularProposalsWithLocalityOnly(): int
     {
-        $this->mobicoopGeocoderPointProvider->setExclusionTypes(['venue', 'street', 'housenumber']);
-        $this->mobicoopGeocoderPointProvider->setMaxResults(1);
-        $recoded = [];
         $addresses = $this->getActiveRegularProposalsWithLocalityOnly();
-        echo 'Number of addresses to recode : '.count($addresses).PHP_EOL;
-        $i = 0;
-        foreach ($addresses as $address) {
-            ++$i;
-            if (($i % 100) == 0) {
-                echo "{$i} addresses recoded".PHP_EOL;
-            }
-            $points = $this->mobicoopGeocoderPointProvider->search($address['address_locality']);
-            if (
-                count($points) > 0
-                && (
-                    (((float) $address['latitude']) != $points[0]->getLat())
-                    || (((float) $address['longitude']) != $points[0]->getLon())
-                )
-                && $this->geoTools->haversineGreatCircleDistance(
-                    $points[0]->getLat(),
-                    $points[0]->getLon(),
-                    $address['latitude'],
-                    $address['longitude']
-                ) <= self::HOMOGENIZE_REGULAR_PROPOSAL_ADDRESS_DISTANCE
-            ) {
-                $recoded[] = [
-                    'locality' => $points[0]->getLocality(),
-                    'lat' => $points[0]->getLat(),
-                    'lon' => $points[0]->getLon(),
-                    'olocality' => $address['address_locality'],
-                    'olat' => $address['latitude'],
-                    'olon' => $address['longitude'],
-                ];
-            }
-        }
+        echo 'Number of addresses to check : '.count($addresses).PHP_EOL;
+        $addressesToRecode = $this->getActiveRegularProposalAddressesToRecode($addresses);
 
-        if (count($recoded) > 0) {
-            $this->entityManager->getConnection()->prepare('start transaction;')->execute();
-            $i = 0;
-            foreach ($recoded as $recode) {
-                ++$i;
-                if (($i % 100) == 0) {
-                    echo "{$i} addresses updated".PHP_EOL;
-                }
-                if (!$this->entityManager->getConnection()->prepare(
-                    '
-                    UPDATE
-                        address
-                    SET
-                        longitude='.$recode['lon'].',
-                        latitude='.$recode['lat'].',
-                        address_locality="'.$recode['locality'].'",
-                        geo_json=PointFromText(\'POINT('.$recode['lon'].' '.$recode['lat'].')\')
-                    WHERE
-                        address_locality="'.$recode['olocality'].'" AND
-                        latitude='.$recode['olat'].' AND
-                        longitude='.$recode['olon']
-                )->execute()) {
-                    return false;
-                }
-            }
-            $this->entityManager->getConnection()->prepare('commit;')->execute();
-        }
-
-        return true;
+        return $this->recodeActiveRegularProposalAddresses($addressesToRecode);
     }
 
     private function getActiveRegularProposalsWithLocalityOnly(): array
@@ -715,6 +655,78 @@ class ProposalManager
         $addresses_destination = $stmt_destination->fetchAll();
 
         return array_merge($addresses_origin, $addresses_destination);
+    }
+
+    private function getActiveRegularProposalAddressesToRecode(array $addresses): array
+    {
+        $this->mobicoopGeocoderPointProvider->setExclusionTypes(['venue', 'street', 'housenumber']);
+        $this->mobicoopGeocoderPointProvider->setMaxResults(1);
+        $recoded = [];
+        $i = 0;
+        foreach ($addresses as $address) {
+            ++$i;
+            if (($i % 100) == 0) {
+                echo "{$i} addresses checked".PHP_EOL;
+            }
+            $points = $this->mobicoopGeocoderPointProvider->search($address['address_locality']);
+            if (
+                count($points) > 0
+                && (
+                    (((float) $address['latitude']) != $points[0]->getLat())
+                    || (((float) $address['longitude']) != $points[0]->getLon())
+                )
+                && $this->geoTools->haversineGreatCircleDistance(
+                    $points[0]->getLat(),
+                    $points[0]->getLon(),
+                    $address['latitude'],
+                    $address['longitude']
+                ) <= self::HOMOGENIZE_REGULAR_PROPOSAL_ADDRESS_DISTANCE
+            ) {
+                $recoded[] = [
+                    'locality' => $points[0]->getLocality(),
+                    'lat' => $points[0]->getLat(),
+                    'lon' => $points[0]->getLon(),
+                    'olocality' => $address['address_locality'],
+                    'olat' => $address['latitude'],
+                    'olon' => $address['longitude'],
+                ];
+            }
+        }
+
+        return $recoded;
+    }
+
+    private function recodeActiveRegularProposalAddresses(array $addressesToRecode): bool
+    {
+        if (count($addressesToRecode) > 0) {
+            $this->entityManager->getConnection()->prepare('start transaction;')->execute();
+            $i = 0;
+            foreach ($addressesToRecode as $recode) {
+                ++$i;
+                if (($i % 100) == 0) {
+                    echo "{$i} addresses updated".PHP_EOL;
+                }
+                if (!$this->entityManager->getConnection()->prepare(
+                    '
+                    UPDATE
+                        address
+                    SET
+                        longitude='.$recode['lon'].',
+                        latitude='.$recode['lat'].',
+                        address_locality="'.$recode['locality'].'",
+                        geo_json=PointFromText(\'POINT('.$recode['lon'].' '.$recode['lat'].')\')
+                    WHERE
+                        address_locality="'.$recode['olocality'].'" AND
+                        latitude='.$recode['olat'].' AND
+                        longitude='.$recode['olon']
+                )->execute()) {
+                    return false;
+                }
+            }
+            $this->entityManager->getConnection()->prepare('commit;')->execute();
+        }
+
+        return true;
     }
 
     /**
