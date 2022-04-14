@@ -58,8 +58,6 @@ class PointSearcher
         array $exclusionTypes = [],
         array $relayPointParams
     ) {
-        $this->points = [];
-        $searchUser = false;
         $userPointProvider = new UserPointProvider($addressRepository, $translator);
         if ($prioritizeCentroid) {
             $mobicoopGeocoder->setPrioritizeCentroid(
@@ -78,6 +76,7 @@ class PointSearcher
         if ($prioritizeRegion) {
             $mobicoopGeocoder->setPrioritizeRegion($prioritizeRegion);
         }
+        $searchUser = false;
         if ($security->getUser() instanceof User) {
             $searchUser = true;
             $user = $security->getUser();

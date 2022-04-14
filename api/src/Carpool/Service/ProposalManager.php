@@ -615,10 +615,12 @@ class ProposalManager
                 ) <= self::HOMOGENIZE_REGULAR_PROPOSAL_ADDRESS_DISTANCE
             ) {
                 $recoded[] = [
-                    'id' => $address['id'],
                     'locality' => $points[0]->getLocality(),
                     'lat' => $points[0]->getLat(),
                     'lon' => $points[0]->getLon(),
+                    'olocality' => $address['address_locality'],
+                    'olat' => $address['latitude'],
+                    'olon' => $address['longitude'],
                 ];
             }
         }
@@ -641,7 +643,9 @@ class ProposalManager
                         address_locality="'.$recode['locality'].'",
                         geo_json=PointFromText(\'POINT('.$recode['lon'].' '.$recode['lat'].')\')
                     WHERE
-                        id='.$recode['id']
+                        address_locality="'.$recode['olocality'].'" AND
+                        latitude='.$recode['olat'].' AND
+                        longitude='.$recode['olon']
                 )->execute()) {
                     return false;
                 }
@@ -656,7 +660,6 @@ class ProposalManager
     {
         $stmt_origin = $this->entityManager->getConnection()->prepare(
             'SELECT
-                a.id,
                 a.address_locality,
                 a.longitude,
                 a.latitude
@@ -670,10 +673,14 @@ class ProposalManager
                 c.to_date IS NOT NULL AND c.to_date>=NOW() AND
                 w.position = 0 AND
                 a.address_locality IS NOT NULL AND a.address_locality != "" AND
-                a.street_address IS NULL OR a.street_address = "" AND
-                a.postal_code IS NULL OR a.postal_code = "" AND
-                a.house_number IS NULL OR a.house_number = "" AND
-                a.street IS NULL OR a.street = ""
+                (a.street_address IS NULL OR a.street_address = "") AND
+                (a.postal_code IS NULL OR a.postal_code = "") AND
+                (a.house_number IS NULL OR a.house_number = "") AND
+                (a.street IS NULL OR a.street = "")
+            GROUP BY
+                address_locality,
+                longitude,
+                latitude
             '
         );
         $stmt_origin->execute();
@@ -681,7 +688,6 @@ class ProposalManager
 
         $stmt_destination = $this->entityManager->getConnection()->prepare(
             'SELECT
-                a.id,
                 a.address_locality,
                 a.longitude,
                 a.latitude
@@ -695,10 +701,14 @@ class ProposalManager
                 c.to_date IS NOT NULL AND c.to_date>=NOW() AND
                 w.destination = 1 AND
                 a.address_locality IS NOT NULL AND a.address_locality != "" AND
-                a.street_address IS NULL OR a.street_address = "" AND
-                a.postal_code IS NULL OR a.postal_code = "" AND
-                a.house_number IS NULL OR a.house_number = "" AND
-                a.street IS NULL OR a.street = ""
+                (a.street_address IS NULL OR a.street_address = "") AND
+                (a.postal_code IS NULL OR a.postal_code = "") AND
+                (a.house_number IS NULL OR a.house_number = "") AND
+                (a.street IS NULL OR a.street = "")
+            GROUP BY
+                address_locality,
+                longitude,
+                latitude
             '
         );
         $stmt_destination->execute();
