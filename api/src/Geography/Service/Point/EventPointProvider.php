@@ -37,6 +37,7 @@ class EventPointProvider implements PointProvider
     public function __construct(EventRepository $eventRepository)
     {
         $this->eventRepository = $eventRepository;
+        $this->setMaxResults(0);
     }
 
     public function setMaxResults(int $maxResults): void

@@ -40,6 +40,7 @@ class UserPointProvider implements PointProvider
     {
         $this->addressRepository = $addressRepository;
         $this->translator = $translator;
+        $this->setMaxResults(0);
     }
 
     public function setMaxResults(int $maxResults): void

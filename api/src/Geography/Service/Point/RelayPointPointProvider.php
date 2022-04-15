@@ -39,6 +39,7 @@ class RelayPointPointProvider implements PointProvider
     public function __construct(RelayPointRepository $relayPointRepository)
     {
         $this->relayPointRepository = $relayPointRepository;
+        $this->setMaxResults(0);
     }
 
     public function setMaxResults(int $maxResults): void
