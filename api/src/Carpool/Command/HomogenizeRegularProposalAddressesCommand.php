@@ -53,6 +53,9 @@ class HomogenizeRegularProposalAddressesCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        // comment to activate the command
+        return 0;
+
         return (int) !$this->proposalManager->homogenizeRegularProposalsWithLocalityOnly();
     }
 }
