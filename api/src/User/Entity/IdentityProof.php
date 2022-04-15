@@ -130,7 +130,7 @@ class IdentityProof
     /**
      * @var User the user that validates/invalidates the proof
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", cascade={"persist"})
-     * @ORM\JoinColumn(onDelete="CASCADE")
+     * @ORM\JoinColumn(onDelete="SET NULL")
      */
     private $admin;
 
