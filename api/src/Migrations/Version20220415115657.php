@@ -8,7 +8,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20220415114632 extends AbstractMigration
+final class Version20220415115657 extends AbstractMigration
 {
     public function up(Schema $schema) : void
     {
@@ -17,7 +17,6 @@ final class Version20220415114632 extends AbstractMigration
 
         $this->addSql('ALTER TABLE identity_proof DROP FOREIGN KEY FK_11A20A2D642B8210');
         $this->addSql('ALTER TABLE identity_proof DROP FOREIGN KEY FK_11A20A2DA76ED395');
-        $this->addSql('ALTER TABLE identity_proof CHANGE user_id user_id INT NOT NULL, CHANGE admin_id admin_id INT NOT NULL');
         $this->addSql('ALTER TABLE identity_proof ADD CONSTRAINT FK_11A20A2D642B8210 FOREIGN KEY (admin_id) REFERENCES user (id) ON DELETE CASCADE');
         $this->addSql('ALTER TABLE identity_proof ADD CONSTRAINT FK_11A20A2DA76ED395 FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE');
     }
@@ -29,7 +28,6 @@ final class Version20220415114632 extends AbstractMigration
 
         $this->addSql('ALTER TABLE identity_proof DROP FOREIGN KEY FK_11A20A2DA76ED395');
         $this->addSql('ALTER TABLE identity_proof DROP FOREIGN KEY FK_11A20A2D642B8210');
-        $this->addSql('ALTER TABLE identity_proof CHANGE user_id user_id INT DEFAULT NULL, CHANGE admin_id admin_id INT DEFAULT NULL');
         $this->addSql('ALTER TABLE identity_proof ADD CONSTRAINT FK_11A20A2DA76ED395 FOREIGN KEY (user_id) REFERENCES user (id)');
         $this->addSql('ALTER TABLE identity_proof ADD CONSTRAINT FK_11A20A2D642B8210 FOREIGN KEY (admin_id) REFERENCES user (id)');
     }
