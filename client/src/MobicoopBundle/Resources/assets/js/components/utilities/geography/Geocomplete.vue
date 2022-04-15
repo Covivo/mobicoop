@@ -103,7 +103,7 @@
             <v-list-item-title :class="titleColor(data.item.type)">
               {{ data.item.propositionTitle }}
               <country-flag
-                v-if="data.item.value.countryCode != country"
+                v-if="data.item.value.countryCode && data.item.value.countryCode != country"
                 :country="data.item.value.countryCode"
                 size="small"
               />
