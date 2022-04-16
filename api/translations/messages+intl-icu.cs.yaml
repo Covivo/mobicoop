@@ -1,1 +1,316 @@
-{}
+hello: Dobrý den
+AQuestion: Nějaké dotazy?
+FAQ: Časté dotazy
+EmailsAlerts: Správa e-mailových upozornění
+URLEmailsAlerts: utilisateur/profil/modifier/mon-profil
+Download: Stáhněte si aplikaci pro <b>Android</b> nebo <b>IOS</b>
+FollowUs: Sledujte nás
+signature: Brzy se uvidíme na
+shortdayMonday: Po
+shortdayTuesday: Út
+shortdayWednesday: St
+shortdayThursday: Čt
+shortdayFriday: Pá
+shortdaySaturday: So
+shortdaySunday: Ne
+contactInfos: Nová žádost o informace
+contactTechnicalIssues: Nová žádost o podporu
+contactPartnership: Nová žádost o partnerství
+contactCommunity: Žádost o vytvoření komunity
+beCarefulFewDaysAnnouncementNotValid: Vezměte prosím na vědomí, že za několik dní
+  přestanou být vaše registrované jízdy ve vašem profilu platné, a proto nebudou viditelné
+  pro ostatní spolujezdce
+nowYouAreMore: Nyní jste více než
+toUseTheService: využívat tuto službu! Podělte se o své cesty a najděte své štěstí
+acceptedCarpool: VAŠE SPOLUJÍZDA JE POTVRZENA!
+yourCarpoolWith: Vaše spolujízda s
+isConfirmed: je potvrzena!
+occasionalCarpool: Shrnutí vaší příležitostné cesty z
+regularCarpool: Shrnutí vaší pravidelné trasy z
+to: na
+outward: PŘEJÍT NA
+return: VRÁTIT
+multipleShedules: Více rozvrhů
+pickUp: 'Podpora v '
+dropOff: 'Odstranění v '
+seatsSelected: 'Vyhrazené(á) místo(a) : '
+indicativePrice: 'Orientační cena : '
+newCarpoolAsk: MÁTE POŽADAVEK NA SPOLUJÍZDU!
+askForCarpool: vás žádá o spolujízdu.
+occasionalCarpoolAsk: 'Shrnutí poptávky po příležitostném sdílení automobilů na '
+regularCarpoolAsk: 'Shrnutí poptávky po pravidelném sdílení automobilů od '
+refusedCarpool: VAŠE SPOLUJÍZDA NENÍ POTVRZENA.
+refusedOccasionalCarpool: ' nepotvrdil spolujízdu pro '
+noPanic: Nepropadejte panice, můžete si vyhledat novou trasu nebo zveřejnit inzerát.
+canceledCarpool: VAŠE SPOLUJÍZDA JE ZRUŠENA.
+canceledOccasionalCarpool: ' zrušil svou cestu a nebude s vámi moci jet. '
+refusedRegularCarpool: ' nepotvrdil spolujízdu pro pravidelné '
+canceledRegularCarpool: '  zrušil svou pravidelnou trasu a nebude s vámi moci jezdit
+  z letiště '
+deletedAccountOccasionalCarpool: ' smazal svůj účet a nebude s vámi moci spolujízdu
+  na '
+deletedAccountRegularCarpool: ' smazal svůj účet a nebude s vámi moci spolujízdu od '
+urlPublish: /covoiturage/publierannonce
+newCarpoolAdMatchingYourCommute: Nová reklama na spolujízdu odpovídající vaší cestě
+  mezi
+seeYouIn: Na shledanou v
+header1Name: X-JEMH-přiděleno
+massPublicTransportPotentialOver: Výpočet potenciálu veřejné dopravy pro dovoz č.
+  {massId} je dokončen
+myAds: Moje inzeráty
+linkMyAds: /utilisateur/profil/modifier/mes-annonces
+toConsultCorrespondingAdsAndMakeContact: nahlédnout do příslušných inzerátů a navázat
+  kontakt
+justPublished: byl právě zveřejněn
+carpoolProposalUpdated: Inzerát související s vaší žádostí byl upraven
+updatedCarpool: Upravená spolujízda
+hasBeenUpdated: byla upravena
+updateFieldsListTitle: 'Zde jsou podrobnosti o upravených informacích:'
+bike: Jízdní kolo
+field: Oblast
+backSeats: 2 vzadu
+luggage: Objemná zavazadla
+seatsDriver: Volná sedadla
+comment: Komentář
+old: Starší
+new: Nový
+yes: Ano
+no: Ne
+hasBeenCancelledBecause: byl zrušen, protože
+hasUpdatedHisAd: upravil své oznámení.
+cancelledCarpool: Zrušení spolujízdy
+ownerMessage: 'Zde je zpráva od majitele inzerátu:'
+clickNewSearch: Kliknutím na tento odkaz můžete znovu spustit vyhledávání
+updatedCarpoolDetails: Podrobnosti o vašem spolujízdě z {origin} do {destination}
+  byly změněny o
+youHaveAMessage: Obdrželi jste novou zprávu
+canAnswerViaEmailFrom: Na tuto zprávu můžete odpovědět prostřednictvím
+clickHere: kliknutím zde
+doNotReply: Na tento e-mail prosím neodpovídejte přímo.
+getProblem: Pokud tento e-mail obsahuje zprávu, která nerespektuje chartu, kontaktujte
+  nás, prosím
+mailBox: vaše poštovní schránka
+newContactAsk: Dobrý den, máte novou žádost o kontakt
+name: Název
+firstname: Jméno
+email: E-mail
+ask: Žádost
+message: Zpráva
+thankYou: Děkujeme
+notMentioned: Není známo
+infos: Informace
+technicalIssues: Technické problémy
+partnership: Žádost o partnerství
+askNewPasswordTitle: Nové heslo
+askNewPassword: Požádali jste o nové heslo
+clickHereToChangePassword: Pro změnu hesla klikněte na tento odkaz
+linkChangePassword: Odkaz na změnu hesla
+urlUpdatePassword: /utilisateur/mot-de-passe/reset/
+mobileUrlUpdatePassword: /#/carpools/reset-password?token=
+yourPassword: Vaše heslo
+successfullyChanged: byl změněn
+thanksForUse: Děkujeme, že používáte
+changeYourPassword: Změna hesla
+inscriptionAt: VAŠE REGISTRACE JE POTVRZENA!
+yourInscriptionAt: Vaše registrace do služby
+yourInscriptionAtByTiers: Vaše registrace do služby {instanceName} třetí stranou
+wellTakenIntoAccount: je dobře zohledněna
+clickHereToConfirm: Klikněte na tento odkaz a potvrďte svůj e-mail
+orUseTheValidationCode: Nebo použijte ověřovací kód přímo na webových stránkách
+urlEmailValidation: /utilisateur/inscription/validation/
+urlMobileEmailValidation: /#/confirm-registration/
+yourPasswordIs: Vaše heslo je
+yourPasswordHasBeenSendBySms: Vaše heslo vám bylo zasláno prostřednictvím SMS.
+emailValidation: Ověření vaší e-mailové adresy
+emailValidationUrl: /utilisateur/email/validation/
+theModificationIsConfirmed: Změna vašeho profilu je potvrzena
+profilUpdate: AKTUALIZACE VAŠEHO PROFILU POTVRZENA!
+urlMailBox: /utilisateur/messages
+CheckoutForAnyURLMisspellingOr: zprávy
+yourCarpoolBetween: Vaše spolujízda mezi
+yourAskCarpoolBetween: Vaše žádost o spolujízdu mezi
+withThePassenger: s cestujícím
+withTheDriver: s řidičem
+with: s
+isCanceledBecause: byl zrušen, protože
+hasDeletedTheAssociateAd: smazal související inzerát.
+clickOnLinkToSearchAgain: Kliknutím na tento odkaz znovu spustíte vyhledávání
+noPenaltyApplied: Za zrušení této spolujízdy nehrozí žádný postih. Abychom však zaručili
+  spolehlivost inzerátů a ochránili spolujezdce před opakovaným rušením, vyhrazujeme
+  si právo pozastavit možnost zveřejňování inzerátů, pokud spolujezdec ruší příliš
+  často.
+eventCreated: Vaše akce byla zaregistrována!
+event: VAŠE AKCE JE ZAREGISTROVÁNA!
+eventDetail: 'Zde jsou podrobnosti o vaší akci:'
+eventName: 'Jméno: '
+eventLocation: 'Adresa: '
+eventDescription: 'Popis: '
+eventUrl: /covoiturages-evenements/
+eventReportTitle: Nahlášení události
+eventReport: Byla hlášena jedna událost
+theUser: Uživatel
+reportThatEvent: nahlásil událost
+detailsTextEventReport: 'Podrobnosti o upozornění :'
+userReportTitle: Nahlášení uživatele
+userReport: Byl nahlášen uživatel
+theReportedUser: Tady je {givenName} {familyName} ({email})
+theReporterUser: E-mail uživatele podávajícího hlášení je {emailReporter}
+detailsTextUserReport: 'Podrobnosti o upozornění :'
+reviewReceivedTitle: Obdrželi jste oznámení
+reviewReceived: Obdrželi jste oznámení od {givenName} {shortFamilyName}
+seeReview: Toto oznámení si můžete zobrazit ve svém profilu
+inFewDays: Za několik dní přestanou být vaše reklamy na spolujízdu platné
+renewYourAdsOn: Obnovte svou reklamu na
+carpoolAskAcceptedRegular: 'Potvrzená pravidelná spolujízda s '
+between: 'mezi '
+and: 'a '
+the: ' '
+from: 'z '
+at: 'à '
+seeTheAd: 'Podívejte se na inzerát na '
+carpoolAskAccepted: 'Potvrzení spolujízdy s '
+askYouCarpoolRegular: 'nabízí pravidelnou spolujízdu z '
+findTheProposalIn: 'Přijmout nebo odmítnout žádost v sekci "Moje zprávy" na stránce '
+askYouCarpool: vám nabízí spolujízdu z
+clickHereToValidate: Kliknutím sem odpovíte na tuto žádost o spolujízdu prostřednictvím
+  e-mailu
+refusedAsk: 'n nepotvrdil sdílení automobilů '
+refusedAskReguar: 'n nepotvrdil pravidelné sdílení automobilů '
+goTotheSite: 'Najděte nové spolujízdy nebo zadejte inzerát na '
+newAdPublished: Nová reklama odpovídá vaší cestě
+appointmentIn: Přejděte do sekce "Moje reklamy" na
+newMatching: Byl zveřejněn nový inzerát pro vaši cestu
+newMessage: Obdrželi jste novou zprávu od
+lookYourMessaging: 'Přejděte do sekce "Moje zprávy" na '
+renewYourAd: Nezapomeňte si obnovit inzerát na spolujízdu
+carpoolRecap: Shrnutí spolujízdy
+carpoolAsk: Žádost o spolujízdu
+askRefused: Zamítnutí návrhu na spolujízdu
+carpoolWaitingForValidation: Spolujízda čeká na ověření
+newCarpoolAd: Nový(é) inzerát(y) na spolujízdu
+newAd: 'Nový(é) inzerát(y) na '
+carpoolDeleted: zrušil svou cestu a nebude s vámi moct jet z letiště
+accountDeleted: smazal svůj účet a nebude s vámi moci spolujízdu od
+askLinkedAdDeleted: Inzerát, o který jste žádali, byl odstraněn
+driverAskLinkedAdDeleted: Inzerát, pro který jste byli řidičem, byl smazán
+driverAskLinkedAdDeletedUrgent: Naléhavé - inzerát, pro který jste byli řidičem, byl
+  smazán
+passengerAskLinkedAdDeleted: Inzerát, v němž jste byli cestujícím, byl smazán
+passengerAskLinkedAdDeletedUrgent: Naléhavé - inzerát, u kterého jste byli cestujícím,
+  byl smazán
+findNewCarpool: 'Najděte nové spolujízdy nebo zadejte inzerát na '
+contactYou: '{givenName} vás kontaktuje'
+askPassword: Žádost o obnovení hesla
+renewPassword: ŽÁDOST O OBNOVENÍ HESLA.
+newPassword: VAŠE NOVÉ HESLO BYLO ZAREGISTROVÁNO!
+passwordChanged: Potvrzení obnovení hesla
+yourInscription: Vaše registrace
+errors:
+  wrongDomains: 'Vaše e-mailová adresa musí být v jedné z těchto domén: {domains}'
+  alreadyUsed: Tato e-mailová adresa je již používána
+  phoneNumberInvalid: Toto telefonní číslo není platné
+updatedSefl: Úprava profilu
+yourValidationToken: Váš ověřovací kód
+header1Data: jira-ouestgo
+header2Name: X-JEMH-Kontaktní e-mailová adresa
+header2Data: senderEmail
+header3Name: X-JEMH-Jméno a příjmení kontaktní osoby
+header3Data: senderName
+urlUnsubscribeEmail: /utilisateur/unsubscribe
+unsubscribeEmail: Klikněte zde pro odhlášení odběru novinek služby {instanceName}
+unsubscribeEmailAlertFront: Nyní jste odhlášeni ze služby {instanceName}. Chcete-li
+  se později znovu zaregistrovat, přejděte do sekce Profil > Můj účet.
+externalContact: Kontakt pro spolujízdu
+rdexMessage: Jeho sdělení
+youReceivedExternalContact: Obdrželi jste zprávu od spolujezdce registrovaného na
+  adrese
+youReceivedExternalContactOrigin: '{origin}'
+noDirectResponse: Protože je tento uživatel registrován na jiné platformě pro spolujízdu,
+  nemůžete mu odpovědět prostřednictvím {instanceName}.
+useDirectContact: Kontaktní údaje, které vám dotyčná osoba v zásadě poskytla ve zprávě,
+  můžete použít k přímému kontaktu s ní.
+journeyDetail: Tato zpráva se týká vaší cesty z
+journeyDetailOrigin: '{journeyOrigin}'
+journeyDetailTo: à
+journeyDetailDestination: '{journeyDestination}'
+journeyDetailTime: naplánováno na {journeyDate} v {journeyTime}.
+massMigrated: Váš účet pro spolujízdu
+temporaryPasswordAttributed: Bylo vám přiděleno dočasné heslo
+temporaryPassword: '{password}'
+changePassword: Doporučujeme vám, abyste si ji při příštím přihlášení změnili
+massAnalyzeErrors: Analýza importu n°{massId} obsahuje chyby
+massMatched: Výpočet potenciálu spolujízdy č. {massId}
+massMatchedOverTitle: Výpočet potenciálu spolujízdy
+massMatchedOver: Výpočet potenciálu sdílení vozidel pro dovoz č. {massId} je dokončen
+massPublicTransportPotentialTitle: Výpočet potenciálu veřejné dopravy
+solidaryContact: Kontaktuje vás správce solidarity
+newMembershipSubscriber: ' požádal o vstup do komunity '
+seeYouInAdmin: 'Přejděte do modulu správy a ověřte své členství: '
+communityNewMembershipRequest: NOVÝ - Nový uživatel se chce připojit k vaší komunitě
+thankYouTeam: Děkujeme, týme {instanceName}.
+hasPayed: Zaplatil vám na ruku?
+hasIndicatedThatCarpool: označil svou spolujízdu
+hasIndicatedThatTheWeek: v týdnu, kdy se
+carpoolRegular: spolujízda mezi
+asPayed: jak se platí na ruku.
+clickOnlinkToConfirmOrNot: 'Chcete-li tuto platbu potvrdit ručně nebo nahlásit neuhrazenou
+  platbu, klikněte na následující odkaz: '
+goToAcceptedCarpoolsTovalidate: Přejděte do sekce "Přijetí spolujízdy" a potvrďte
+  tuto platbu ručně nebo nahlaste neuhrazenou platbu.
+linkValidatePaymentLabel: Ověřit platbu.
+linkValidatePaymentRoute: /utilisateur/profil/modifier/mes-covoiturages-acceptes
+identityProofAccepted: Přijatý doklad totožnosti
+yourProofIsAccepted: Váš předložený doklad totožnosti byl zkontrolován a přijat.
+identityProofRejected: Zamítnutí dokladu totožnosti
+yourProofIsRejected: Váš předložený doklad totožnosti byl zamítnut. Abyste mohli přijímat
+  platby, předložte další aktualizovaný doklad totožnosti.
+reason2: Odmítnutí dokladu, protože musíte být plnoletí
+reason3: Zamítnutí dokladu pro podezření z padělání
+reason1: Vaše osobní údaje se změnily, ověřte prosím svou totožnost znovu
+reason4: Dokument odmítnut, protože soubor je prázdný
+reason5: Odmítnutí dokladu z důvodu uplynutí doby platnosti
+reason6: Dokument odmítnut, protože typ dokumentu není akceptován
+reason7: Dokument odmítnut, protože údaje neodpovídají údajům uživatele
+reason8: Dokument odmítnut jako nečitelný
+reason9: Zamítnutí dokumentu jako neúplného
+identityProofOutdated: Prošlý doklad totožnosti
+yourProofIsOutdated: Platnost vašeho předloženého dokladu totožnosti vypršela. Pro
+  získání plateb předložte další aktualizovaný doklad totožnosti
+haveYouPayedYourDriver: Vyplatili jste společnosti spolujízdy kompenzaci?
+isDone: je u konce.
+clickOnLinkToPay: 'Klikněte na následující odkaz a označte ji jako zaplacenou osobně,
+  pokud jste již řidiči zaplatili, nebo ji zaplaťte online, pokud jste mu ještě nezaplatili:'
+goToAcceptedCarpools: Přejděte do sekce "Přijaté spolujízdy" a označte ji jako zaplacenou
+  ručně nebo zaplaťte online.
+haveYouPayedYourDriverForTheWeek: Zaplatili jste za spolujízdu v minulém týdnu?
+yourWeekOfCarpool: 'Váš pravidelný týden spolujízdy s '
+click: Klikněte zde.
+haveYouForgotToPayTheDriver: Nezapomněli jste kompenzovat svou spolujízdu?
+iContactYouAgainAboutPayment: Chtěl bych se vás znovu zeptat na platbu vozů, kterou
+  jsme společně provedli za částku ve výši
+signalThatYouhaveToPay: hlásí, že jste mu dosud nevyplatili náhradu za
+forTheCarpoolsYouHadTogether: že mu dlužíte za společné jízdy autem.
+byJourney: (za cestu)
+carpoolRealizedBy: Jízdy autem prováděné
+listCrapoolPayments: Seznam plateb a spolujízdy
+onTheSite: na webových stránkách
+totalPaid: Vyplaceno celkem
+totalReceived: Celkem přijato
+taxInfo: Pokud jste v roce 2020 obdrželi více než 300,00 EUR, musíte je ze zákona
+  přiznat finančnímu úřadu.
+date: Datum
+role: Role
+carpooler: Spolujízda
+pickUpLocality: Podpora
+dropOffLocality: Odstranění
+amount: Příspěvek
+typeOfpayment: Platba
+certified: Certifikovaný rejstřík
+seeProofsClasses: viz třídy
+driver: Řidič
+passenger: Cestující
+paymentNotDone: Nenahlášená platba
+onLinePayment: Online platba
+directPayment: Platba na ruku
+domicile: homeAddress
+homeAddress: Úvodní stránka
