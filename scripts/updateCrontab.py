@@ -44,8 +44,9 @@ import sys
 from crontab import CronTab
 
 script_absolute_path = os.path.dirname(os.path.realpath(__file__))
-console_path = os.path.abspath(script_absolute_path+"/../api/bin/console")
-crontab_file_path = os.path.abspath(script_absolute_path+"/../api/scripts/cron-file.txt")
+console_path = os.path.abspath(script_absolute_path + "/../api/bin/console")
+crontab_file_path = os.path.abspath(script_absolute_path
+                    + "/../api/scripts/cron-file.txt")
 php_path = "php"
 env_mode = "dev"
 
