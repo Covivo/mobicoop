@@ -86,13 +86,9 @@ with open(file=crontab_file_path, mode="r", encoding="utf-8") as crontab_file:
         command = line.split(schedule,1)[1].strip()
 
         # search if job already exists
-        iter = my_cron.find_command(command)
-        found = False
-        for item in iter:
-            found = True
+        for _ in my_cron.find_command(command):
             break
-
-        if not found:
+        else:
             job  = my_cron.new(command=command)
             job.setall(schedule)
             my_cron.write()
