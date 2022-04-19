@@ -92,5 +92,5 @@ with open(file=crontab_file_path, mode="r", encoding="utf-8") as crontab_file:
             job  = my_cron.new(command=command)
             job.setall(schedule)
             my_cron.write()
-            print(line+ " was added to crontab")
+            print(f"{line} was added to crontab")
 # the file is closed after the with statement
