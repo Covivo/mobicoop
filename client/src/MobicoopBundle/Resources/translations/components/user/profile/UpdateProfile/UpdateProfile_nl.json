@@ -83,6 +83,10 @@
         }
     },
     "phone": {
+        "checkValidity": {
+          "url": "/utilisateur/verif/telephone",
+          "error": "Dit telefoonnummer is niet geldig"
+        },
         "i18n": {
             "time": {
                 "format": {
