@@ -71,7 +71,7 @@ if len(sys.argv)>1:
 my_cron = CronTab(user=True)
 
 # open the crontab file
-with open(crontab_file_path, "r") as crontab_file:
+with open(file=crontab_file_path, mode="r", encoding="utf-8") as crontab_file:
     # read file line by line
     file_lines = crontab_file.readlines()
 # the file is closed after the with statement
