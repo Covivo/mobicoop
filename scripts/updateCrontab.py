@@ -66,7 +66,7 @@ if len(sys.argv)>1:
             php_path = sys.argv[pos+1]
         elif sys.argv[pos] == "-console":
             console_path = sys.argv[pos+1]
-        pos = pos + 1
+        pos += 1
 
 my_cron = CronTab(user=True)
 
