@@ -73,32 +73,30 @@ my_cron = CronTab(user=True)
 # open the crontab file
 with open(file=crontab_file_path, mode="r", encoding="utf-8") as crontab_file:
     # read file line by line
-    file_lines = crontab_file.readlines()
+    for line in crontab_file:
+        # skip blank lines or starting with '#'
+        if not line.strip():
+            continue
+        if line[0] == '#':
+            continue
+
+        line = line.replace("$1", php_path)
+        line = line.replace("$2", console_path)
+        line = line.replace("$3", env_mode)
+
+        schedule = line.split(php_path,1)[0].strip()
+        command = line.split(schedule,1)[1].strip()
+
+        # search if job already exists
+        iter = my_cron.find_command(command)
+        found = False
+        for item in iter:
+            found = True
+            break
+
+        if not found:
+            job  = my_cron.new(command=command)
+            job.setall(schedule)
+            my_cron.write()
+            print(line+ " was added to crontab")
 # the file is closed after the with statement
-
-for line in file_lines:
-    # skip blank lines or starting with '#'
-    if not line.strip():
-        continue
-    if line[0] == '#':
-        continue
-
-    line = line.replace("$1", php_path)
-    line = line.replace("$2", console_path)
-    line = line.replace("$3", env_mode)
-
-    schedule = line.split(php_path,1)[0].strip()
-    command = line.split(schedule,1)[1].strip()
-
-    # search if job already exists
-    iter = my_cron.find_command(command)
-    found = False
-    for item in iter:
-        found = True
-        break
-
-    if not found:
-        job  = my_cron.new(command=command)
-        job.setall(schedule)
-        my_cron.write()
-        print(line+ " was added to crontab")
