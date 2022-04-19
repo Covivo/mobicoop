@@ -71,10 +71,10 @@ if len(sys.argv)>1:
 my_cron = CronTab(user=True)
 
 # open the crontab file
-crontab_file = open(crontab_file_path, "r")
-
-# read file line by line
-file_lines = crontab_file.readlines()
+with open(crontab_file_path, "r") as crontab_file:
+    # read file line by line
+    file_lines = crontab_file.readlines()
+# the file is closed after the with statement
 
 for line in file_lines:
     # skip blank lines or starting with '#'
