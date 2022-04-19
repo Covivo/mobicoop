@@ -75,9 +75,7 @@ with open(file=crontab_file_path, mode="r", encoding="utf-8") as crontab_file:
     # read file line by line
     for line in crontab_file:
         # skip blank lines or starting with '#'
-        if not line.strip():
-            continue
-        if line[0] == '#':
+        if not line.strip() or line[0] == '#':
             continue
 
         line = line.replace("$1", php_path)
