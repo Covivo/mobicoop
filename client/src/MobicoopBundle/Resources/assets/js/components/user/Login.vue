@@ -1,7 +1,6 @@
 <template>
   <v-container
     fluid
-    style="height: 100%"
   >
     <v-row
       justify="center"
@@ -10,15 +9,16 @@
         cols="12"
         md="8"
         xl="6"
-        align="center"
+        class="text-center justify-center"
       >
         <h1>{{ $t('title') }}</h1>
       </v-col>
     </v-row>
-    <div class="pt-12">
+    <div
+      class="pt-12"
+    >
       <v-row
         justify="center"
-        align="center"
         class="text-center"
       >
         <v-col class="col-5">
@@ -44,6 +44,7 @@
               :label="$t('email')"
               name="email"
               required
+              aria-required="true"
             />
 
             <v-text-field
@@ -54,6 +55,7 @@
               :type="showPwd ? 'text' : 'password'"
               name="password"
               :label="$t('password')"
+              aria-required="true"
               @click:append="showPwd = !showPwd"
             />
 
@@ -85,6 +87,8 @@
           <v-card-text>
             <a
               :href="$t('urlRecovery')"
+              :title="$t('textRecovery')"
+              :aria-label="$t('textRecoveryAria')"
             >
               {{ $t('textRecovery') }}
             </a>
@@ -94,6 +98,8 @@
           >
             <a
               :href="$t('urlSignUp')"
+              :title="$t('signUp')"
+              :aria-label="$t('signUpAria')"
               class="font-italic"
             >
               {{ $t('signUp') }}
@@ -104,7 +110,7 @@
       <v-row
         v-if="showFacebookLogin && consentSocial"
         justify="center"
-        class="text-center align-start"
+        class="text-center"
       >
         <v-col class="col-4">
           <m-facebook-auth

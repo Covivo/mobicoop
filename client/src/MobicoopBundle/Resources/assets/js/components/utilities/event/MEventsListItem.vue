@@ -37,6 +37,7 @@
           <a
             :href="linkToEventShow(item)"
             :aria-label="$t('linkToEvent')"
+            :title="$t('linkToEvent')"
             style="text-decoration:none;"
             class="black--text"
           > 

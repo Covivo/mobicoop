@@ -2,6 +2,7 @@
   <div>
     <v-row
       id="pad"
+      role="navigation"
     >
       <v-col
         cols="2"
@@ -96,12 +97,12 @@
       color="primary"
       height="80px"
     >
-      <v-toolbar-title align="midle">
+      <v-toolbar-title>
         <a
           href="/"
-          class="d-flex align-center"
+          class="d-flex"
         >
-          <img
+          <v-img
             class="logo"
             :src="imageLink + 'MOBICOOP_LOGO-V1 Blanc.svg'"
             :alt="$t('logo')"
@@ -109,7 +110,7 @@
             width="210"
             contain
             eager
-          >
+          />
         </a>
       </v-toolbar-title>
 

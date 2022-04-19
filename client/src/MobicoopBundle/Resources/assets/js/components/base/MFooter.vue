@@ -16,7 +16,7 @@
           href="/"
           class="d-flex align-center my-14"
         >
-          <img
+          <v-img
             class="logo"
             :src="imageLink + 'MOBICOOP_LOGO-V1 Blanc.svg'"
             :alt="$t('logo')"
@@ -24,7 +24,7 @@
             width="280"
             contain
             eager
-          >
+          />
         </a>
       </v-row>
       <v-row
