@@ -41,7 +41,7 @@ Parameters
 
 import os.path
 import sys
-from crontab import CronTab 
+from crontab import CronTab
 
 script_absolute_path = os.path.dirname(os.path.realpath(__file__))
 console_path = os.path.abspath(script_absolute_path+"/../api/bin/console")
@@ -75,20 +75,20 @@ crontab_file = open(crontab_file_path, "r")
 
 # read file line by line
 file_lines = crontab_file.readlines()
-    
+
 for line in file_lines:
     # skip blank lines or starting with '#'
     if not line.strip():
         continue
     if line[0] == '#':
         continue
-    
+
     line = line.replace("$1", php_path)
     line = line.replace("$2", console_path)
     line = line.replace("$3", env_mode)
-    
-    schedule = line.split(php_path,1)[0].strip() 
-    command = line.split(schedule,1)[1].strip() 
+
+    schedule = line.split(php_path,1)[0].strip()
+    command = line.split(schedule,1)[1].strip()
 
     # search if job already exists
     iter = my_cron.find_command(command)
@@ -102,4 +102,3 @@ for line in file_lines:
         job.setall(schedule)
         my_cron.write()
         print(line+ " was added to crontab")
-
