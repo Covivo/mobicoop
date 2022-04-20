@@ -3,13 +3,13 @@ export default {
   //dark: true,
   themes: {
     light: {
-      primary: '#008659',
-      accent: '#3e7f90',
-      secondary: '#d91185',
-      success: '#008659',
+      primary: '#00D28C',
+      accent: '#00BEF0',
+      secondary: '#F045AB',
+      success: '#00D28C',
       info: '#000000',
-      warning: '#c05727',
-      error: '#c74929'
+      warning: '#FF641E',
+      error: '#F03C0E'
     },
     dark: {
       primary: "#81F19A",

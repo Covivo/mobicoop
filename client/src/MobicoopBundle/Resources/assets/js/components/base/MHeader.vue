@@ -96,6 +96,7 @@
       flat
       color="primary"
       height="80px"
+      role="banner"
     >
       <v-toolbar-title>
         <a
@@ -218,6 +219,7 @@
         v-if="user"
         bottom
         left
+        role="menu"
         z-index="9"
       >
         <template v-slot:activator="{ on }">

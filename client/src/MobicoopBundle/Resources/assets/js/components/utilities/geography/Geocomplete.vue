@@ -2,7 +2,6 @@
   <div>
     <v-autocomplete
       v-model="selection"
-      group="autocomplete"
       :label="label + (required ? ' *' : '')"
       :search-input.sync="search"
       :items="propositions"

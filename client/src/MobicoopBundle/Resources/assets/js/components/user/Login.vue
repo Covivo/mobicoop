@@ -44,7 +44,9 @@
               :label="$t('email')"
               name="email"
               required
+              aria-invalid="true"
               aria-required="true"
+              :aria-label="$t('email')"
             />
 
             <v-text-field
@@ -55,6 +57,7 @@
               :type="showPwd ? 'text' : 'password'"
               name="password"
               :label="$t('password')"
+              :aria-label="$t('password')"
               aria-required="true"
               @click:append="showPwd = !showPwd"
             />
@@ -72,6 +75,7 @@
               :loading="loading"
               color="secondary"
               type="submit"
+              :aria-label="$t('connection')"
               rounded
               @click="validate"
             >
