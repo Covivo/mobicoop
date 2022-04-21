@@ -1008,7 +1008,6 @@ class Proposal
         return $this;
     }
 
-
     // DOCTRINE EVENTS
     
     /**

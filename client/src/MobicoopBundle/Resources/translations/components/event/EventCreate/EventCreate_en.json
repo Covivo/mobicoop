@@ -49,8 +49,10 @@
         "event": {
             "name": "This event already exists, please use another name",
             "create": "Event creation failed",
-            "fullDescriptionLength": "Description too long",
-            "descriptionLength": "Short description too long"
+            "required": "All fields marked with an asterisk are required",
+            "length": "Descriptions too long",
+            "descriptionLength": "Short description too long (512 characters maximum).",
+            "fullDescriptionLength": "Full description too long (2500 characters maximum)."
         },
         "image": "The image has not been saved"
     },

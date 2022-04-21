@@ -49,12 +49,6 @@ class UserNotificationRepository
         return $this->repository->findOneBy($criteria);
     }
 
-    /**
-     * Find active notifications for a given action
-     *
-     * @param string $action    Name of the action
-     * @param int $userId       Id of the recipient
-     */
     public function findActiveByAction(string $action, int $userId)
     {
         $userNotifications = [];

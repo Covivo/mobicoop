@@ -1,5 +1,4 @@
 #!/bin/bash
-
 for i in "$@"
 do
 case $i in
@@ -20,6 +19,11 @@ done
 
 if [ $VERSION == "dev" ] || [ $VERSION == "test" ] || [ $VERSION == "prod_test" ]
 then
+
+    if [ $VERSION == "prod_test" ]
+    then
+        $VERSION="prod"
+    fi
 
     # check RDEX files
     RDEX_CLIENTS_FILE=/var/www/$VERSION/$INSTANCE/api/config/rdex/clients.json

@@ -700,7 +700,7 @@ carpool_solidary_exclusive_ad_post_v1:
         en: /carpool/ad/post/solidary
         nl: /carpool/ad/post/solidary
     controller: Mobicoop\Bundle\MobicoopBundle\Carpool\Controller\CarpoolController::carpoolSolidaryExclusiveAdPost
-    
+
 # post a solidary exclusive ad
 carpool_solidary_exclusive_ad_post:
     path:

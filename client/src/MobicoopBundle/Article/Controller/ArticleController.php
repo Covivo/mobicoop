@@ -370,6 +370,7 @@ class ArticleController extends AbstractController
         return $this->showArticle($articleManager->getArticle(self::I_AM_SOCIETY));
     }
 
+
     /**
      * Display of the GUARANTEED_RETURN page.
      */

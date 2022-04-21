@@ -1014,7 +1014,6 @@ break;
         }
 
         // We create the solidaryUserStructure associated to the demand
-        $solidaryUserStructure = new SolidaryUserStructure();
         $structure = null;
 
         if ($solidary->getStructure()) {
