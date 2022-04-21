@@ -375,6 +375,7 @@ reason6: "Document refusé car type de document non accepté"
 reason7: "Document refusé car les données ne correspondent pas à celles de l'utilisateur"
 reason8: "Document refusé car illisible"
 reason9: "Document refusé car incomplet"
+reason10: "Document refusé (raison non donnée)"
 
 #IDENTITY_PROOF_OUTDATED
 identityProofOutdated: "Document d’identité expiré"

@@ -16,8 +16,10 @@
      :mandatory-description = "{{ mandatoryDescription  ? "true" : "false" }}"
      :mandatory-full-description = "{{ mandatoryFullDescription  ? "true" : "false" }}"
      :mandatory-image = "{{ mandatoryImage  ? "true" : "false" }}"
-     :prioritize-relaypoints="{{ geosearcherPrioritizeRelaypoints is defined ? geosearcherPrioritizeRelaypoints ? 'true' : 'false' : 'false' }}"
-     geo-search-url="{{ geoCompleteUri }}" 
+     geo-search-url="{{ geoCompleteUri }}"
+     :geo-complete-results-order="{{geoCompleteResultsOrder|json_encode}}"
+     :geo-complete-palette="{{geoCompletePalette|json_encode}}"
+     {{ geoCompleteChip ? 'geo-complete-chip' : '' }}
     />
-   
+
 {% endblock %}

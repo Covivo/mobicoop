@@ -1,10 +1,10 @@
-## This makefile is simply shortcurts for mobicoop docker 
+## This makefile is simply shortcurts for mobicoop docker
 
 pink:=$(shell tput setaf 200)
 blue:=$(shell tput setaf 27)
 green:=$(shell tput setaf 118)
 violet:=$(shell tput setaf 057)
-reset:=$(shell tput sgr0) 
+reset:=$(shell tput sgr0)
 
 ifeq ($(shell uname),Darwin)
   os=darwin
@@ -25,19 +25,12 @@ install:
 
 	@docker-compose -f docker-compose-builder-$(os).yml run --rm install
 	@make -s install-deps
-	@make -s build-admin
 
 install-deps:
 	$(info $(green)------------------------------------------------------)
-	$(info $(green)Make ($(os)): Installing api-client-admin deps...)
+	$(info $(green)Make ($(os)): Installing api-client deps...)
 	$(info $(green)------------------------------------------------------$(reset))
 	@docker-compose -f docker-compose-builder-$(os).yml run --rm install-all
-
-build-admin:
-	$(info $(blue)------------------------------------------------------)
-	$(info $(blue)Make ($(os)): Building admin...)
-	$(info $(blue)------------------------------------------------------$(reset))
-	@docker-compose -f docker-compose-builder-$(os).yml run --rm build-admin
 
 fixtures:
 	$(info $(pink)------------------------------------------------------)
@@ -48,15 +41,15 @@ fixtures:
 start:
 	$(info Make ($(os)): Starting Mobicoop-platform environment containers.)
 	@docker-compose -f docker-compose-$(os).yml up -d
- 
+
 stop:
 	$(info Make ($(os)): Stopping Mobicoop-platform environment containers.)
-	@docker-compose -f docker-compose-$(os).yml stop 
+	@docker-compose -f docker-compose-$(os).yml stop
 
 status:
 	@docker ps -a | grep mobicoop_platform
 	@docker ps -a | grep mobicoop_db
- 
+
 restart:
 	$(info Make ($(os)): Restarting Mobicoop-platform environment containers.)
 	@make -s stop
@@ -71,14 +64,14 @@ reload:
 remove:
 	$(info Make ($(os)): Stopping Mobicoop-platform environment containers.)
 	@docker-compose -f docker-compose-$(os).yml rm -f
- 
+
 clean:
 	@make -s stop
 	@docker-compose -f docker-compose-$(os).yml down -v --rmi all
 	$(info $(pink)------------------------------------------------------)
 	$(info $(pink)Drop all deps + containers + volumes)
 	$(info $(pink)------------------------------------------------------$(reset))
-	sudo rm -rf node_modules api/vendor client/vendor client/node_modules admin/node_modules
+	sudo rm -rf node_modules api/vendor client/vendor client/node_modules
 
 clean-db:
 	sudo rm -rf .mariadb-data
@@ -138,9 +131,9 @@ app-carpool-proof-batch:
 	$(info $(builder)------------------------------------------------)
 	$(info $(builder)Make ($(os)): Command app:carpool:proof-batch...)
 	$(info $(builder)------------------------------------------------$(reset))
-	@docker-compose -f docker-compose-builder-$(os).yml run --rm app-carpool-proof-batch 
+	@docker-compose -f docker-compose-builder-$(os).yml run --rm app-carpool-proof-batch
 
-logs: 
+logs:
 	$(info $(green)------------------------------------------------------)
 	$(info $(green)Mobicoop Logs)
 	$(info $(green)------------------------------------------------------$(reset))

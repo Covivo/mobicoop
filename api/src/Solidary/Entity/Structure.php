@@ -19,24 +19,24 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiProperty;
-use ApiPlatform\Core\Annotation\ApiSubresource;
-use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
-use Symfony\Component\Validator\Constraints as Assert;
 use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Geography\Entity\Territory;
 use App\RelayPoint\Entity\RelayPoint;
 use App\User\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * A solidary structure.
@@ -131,13 +131,13 @@ use Doctrine\Common\Collections\ArrayCollection;
  * )
  * @ApiFilter(OrderFilter::class, properties={"id", "name"}, arguments={"orderParameterName"="order"})
  * @ApiFilter(SearchFilter::class, properties={"name":"partial"})
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class Structure
 {
-    
     /**
-     * @var int The id of this structure.
+     * @var int the id of this structure
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -148,7 +148,7 @@ class Structure
     private $id;
 
     /**
-     * @var string Name of the structure.
+     * @var string name of the structure
      *
      * @Assert\NotBlank
      * @ORM\Column(type="string", length=255)
@@ -157,7 +157,7 @@ class Structure
     private $name;
 
     /**
-     * @var string The email of the structure.
+     * @var string the email of the structure
      *
      * @Assert\Email()
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -166,7 +166,7 @@ class Structure
     private $email;
 
     /**
-     * @var string|null The telephone number of the structure.
+     * @var null|string the telephone number of the structure
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"aRead","aReadCol","aWrite","readSolidary","writeSolidary","readUser"})
@@ -174,7 +174,7 @@ class Structure
     private $telephone;
 
     /**
-     * @var bool Auto approval of beneficiaries.
+     * @var bool auto approval of beneficiaries
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"aRead","aWrite","readSolidary","writeSolidary"})
@@ -182,9 +182,9 @@ class Structure
     private $beneficiaryAutoApproval;
 
     /**
-     * @var int|null Solidary record create mode :
-     * - 0 or null : full mode
-     * - 1 : light mode
+     * @var null|int Solidary record create mode :
+     *               - 0 or null : full mode
+     *               - 1 : light mode
      *
      * @ORM\Column(type="smallint", nullable=true)
      * @Groups({"aRead","aReadCol","aWrite"})
@@ -192,7 +192,7 @@ class Structure
     private $mode;
 
     /**
-     * @var \DateTimeInterface Creation date.
+     * @var \DateTimeInterface creation date
      *
      * @ORM\Column(type="datetime")
      * @Groups({"readStructure"})
@@ -200,7 +200,7 @@ class Structure
     private $createdDate;
 
     /**
-     * @var \DateTimeInterface Updated date.
+     * @var \DateTimeInterface updated date
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"readStructure"})
@@ -208,7 +208,7 @@ class Structure
     private $updatedDate;
 
     /**
-     * @var \DateTimeInterface Morning min range time.
+     * @var \DateTimeInterface morning min range time
      *
      * @ORM\Column(type="time", nullable=true)
      * @Groups({"aRead","aWrite","readSolidary","writeSolidary"})
@@ -216,7 +216,7 @@ class Structure
     private $mMinRangeTime;
 
     /**
-     * @var \DateTimeInterface Morning max range time.
+     * @var \DateTimeInterface morning max range time
      *
      * @ORM\Column(type="time", nullable=true)
      * @Groups({"aRead","aWrite","readSolidary","writeSolidary"})
@@ -224,7 +224,7 @@ class Structure
     private $mMaxRangeTime;
 
     /**
-     * @var \DateTimeInterface Afternoon min range time.
+     * @var \DateTimeInterface afternoon min range time
      *
      * @ORM\Column(type="time", nullable=true)
      * @Groups({"aRead","aWrite","readSolidary","writeSolidary"})
@@ -232,7 +232,7 @@ class Structure
     private $aMinRangeTime;
 
     /**
-     * @var \DateTimeInterface Afternoon max range time.
+     * @var \DateTimeInterface afternoon max range time
      *
      * @ORM\Column(type="time", nullable=true)
      * @Groups({"aRead","aWrite","readSolidary","writeSolidary"})
@@ -240,7 +240,7 @@ class Structure
     private $aMaxRangeTime;
 
     /**
-     * @var \DateTimeInterface Evening min range time.
+     * @var \DateTimeInterface evening min range time
      *
      * @ORM\Column(type="time", nullable=true)
      * @Groups({"aRead","aWrite","readSolidary","writeSolidary"})
@@ -248,7 +248,7 @@ class Structure
     private $eMinRangeTime;
 
     /**
-     * @var \DateTimeInterface Evening max range time.
+     * @var \DateTimeInterface evening max range time
      *
      * @ORM\Column(type="time", nullable=true)
      * @Groups({"aRead","aWrite","readSolidary","writeSolidary"})
@@ -256,215 +256,215 @@ class Structure
     private $eMaxRangeTime;
 
     /**
-     * @var \DateTimeInterface Morning min time.
+     * @var \DateTimeInterface morning min time
      *
      * @ORM\Column(type="time")
      * @Groups({"aRead","aWrite","readSolidary","writeSolidary"})
      */
     private $mMinTime;
-    
+
     /**
-     * @var \DateTimeInterface Morning max time.
+     * @var \DateTimeInterface morning max time
      *
      * @ORM\Column(type="time")
      * @Groups({"aRead","aWrite","readSolidary","writeSolidary"})
      */
     private $mMaxTime;
-    
+
     /**
-     * @var \DateTimeInterface Afternoon min time.
+     * @var \DateTimeInterface afternoon min time
      *
      * @ORM\Column(type="time")
      * @Groups({"aRead","aWrite","readSolidary","writeSolidary"})
      */
     private $aMinTime;
-    
+
     /**
-     * @var \DateTimeInterface Afternoon max time.
+     * @var \DateTimeInterface afternoon max time
      *
      * @ORM\Column(type="time")
      * @Groups({"aRead","aWrite","readSolidary","writeSolidary"})
      */
     private $aMaxTime;
-    
+
     /**
-     * @var \DateTimeInterface Evening min time.
+     * @var \DateTimeInterface evening min time
      *
      * @ORM\Column(type="time")
      * @Groups({"aRead","aWrite","readSolidary","writeSolidary"})
      */
     private $eMinTime;
-    
+
     /**
-     * @var \DateTimeInterface Evening max time.
+     * @var \DateTimeInterface evening max time
      *
      * @ORM\Column(type="time")
      * @Groups({"aRead","aWrite","readSolidary","writeSolidary"})
      */
     private $eMaxTime;
-    
+
     /**
-     * @var bool Available on monday morning.
+     * @var bool available on monday morning
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"aRead","aWrite","readSolidary","writeSolidary"})
      */
     private $mMon;
-    
+
     /**
-     * @var bool Available on monday afternoon.
+     * @var bool available on monday afternoon
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"aRead","aWrite","readSolidary","writeSolidary"})
      */
     private $aMon;
-    
+
     /**
-     * @var bool Available on monday evening.
+     * @var bool available on monday evening
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"aRead","aWrite","readSolidary","writeSolidary"})
      */
     private $eMon;
-    
+
     /**
-     * @var bool Available on tuesday morning.
+     * @var bool available on tuesday morning
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"aRead","aWrite","readSolidary","writeSolidary"})
      */
     private $mTue;
-    
+
     /**
-     * @var bool Available on tuesday afternoon.
+     * @var bool available on tuesday afternoon
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"aRead","aWrite","readSolidary","writeSolidary"})
      */
     private $aTue;
-    
+
     /**
-     * @var bool Available on tuesday evening.
+     * @var bool available on tuesday evening
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"aRead","aWrite","readSolidary","writeSolidary"})
      */
     private $eTue;
-    
+
     /**
-     * @var bool Available on wednesday morning.
+     * @var bool available on wednesday morning
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"aRead","aWrite","readSolidary","writeSolidary"})
      */
     private $mWed;
-    
+
     /**
-     * @var bool Available on wednesday afternoon.
+     * @var bool available on wednesday afternoon
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"aRead","aWrite","readSolidary","writeSolidary"})
      */
     private $aWed;
-    
+
     /**
-     * @var bool Available on wednesday evening.
+     * @var bool available on wednesday evening
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"aRead","aWrite","readSolidary","writeSolidary"})
      */
     private $eWed;
-    
+
     /**
-     * @var bool Available on thursday morning.
+     * @var bool available on thursday morning
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"aRead","aWrite","readSolidary","writeSolidary"})
      */
     private $mThu;
-    
+
     /**
-     * @var bool Available on thursday afternoon.
+     * @var bool available on thursday afternoon
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"aRead","aWrite","readSolidary","writeSolidary"})
      */
     private $aThu;
-    
+
     /**
-     * @var bool Available on thursday evening.
+     * @var bool available on thursday evening
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"aRead","aWrite","readSolidary","writeSolidary"})
      */
     private $eThu;
-    
+
     /**
-     * @var bool Available on friday morning.
+     * @var bool available on friday morning
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"aRead","aWrite","readSolidary","writeSolidary"})
      */
     private $mFri;
-    
+
     /**
-     * @var bool Available on friday afternoon.
+     * @var bool available on friday afternoon
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"aRead","aWrite","readSolidary","writeSolidary"})
      */
     private $aFri;
-    
+
     /**
-     * @var bool Available on friday evening.
+     * @var bool available on friday evening
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"aRead","aWrite","readSolidary","writeSolidary"})
      */
     private $eFri;
-    
+
     /**
-     * @var bool Available on saturday morning.
+     * @var bool available on saturday morning
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"aRead","aWrite","readSolidary","writeSolidary"})
      */
     private $mSat;
-    
+
     /**
-     * @var bool Available on saturday afternoon.
+     * @var bool available on saturday afternoon
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"aRead","aWrite","readSolidary","writeSolidary"})
      */
     private $aSat;
-    
+
     /**
-     * @var bool Available on saturday evening.
+     * @var bool available on saturday evening
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"aRead","aWrite","readSolidary","writeSolidary"})
      */
     private $eSat;
-    
+
     /**
-     * @var bool Available on sunday morning.
+     * @var bool available on sunday morning
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"aRead","aWrite","readSolidary","writeSolidary"})
      */
     private $mSun;
-    
+
     /**
-     * @var bool Available on sunday afternoon.
+     * @var bool available on sunday afternoon
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"aRead","aWrite","readSolidary","writeSolidary"})
      */
     private $aSun;
-    
+
     /**
-     * @var bool Available on sunday evening.
+     * @var bool available on sunday evening
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"aRead","aWrite","readSolidary","writeSolidary"})
@@ -472,7 +472,7 @@ class Structure
     private $eSun;
 
     /**
-     * @var Structure Parent structure.
+     * @var Structure parent structure
      *
      * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Structure", inversedBy="structures")
      * @ORM\JoinColumn(onDelete="CASCADE")
@@ -481,7 +481,7 @@ class Structure
     private $structure;
 
     /**
-     * @var ArrayCollection|null Child structures.
+     * @var null|ArrayCollection child structures
      *
      * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Structure", mappedBy="structure")
      * @Groups({"readSolidary","writeSolidary"})
@@ -490,7 +490,7 @@ class Structure
     private $structures;
 
     /**
-     * @var ArrayCollection|null The solidary user for this structure.
+     * @var null|ArrayCollection the solidary user for this structure
      *
      * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\SolidaryUserStructure", mappedBy="structure")
      * @MaxDepth(1)
@@ -498,7 +498,7 @@ class Structure
     private $solidaryUserStructures;
 
     /**
-     * @var ArrayCollection|null The subjects for this structure.
+     * @var null|ArrayCollection the subjects for this structure
      *
      * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Subject", mappedBy="structure", cascade={"persist"})
      * @Groups({"aRead","readSolidary", "writeSolidary"})
@@ -507,7 +507,7 @@ class Structure
     private $subjects;
 
     /**
-     * @var ArrayCollection|null The special needs for this structure.
+     * @var null|ArrayCollection the special needs for this structure
      *
      * @ORM\ManyToMany(targetEntity="\App\Solidary\Entity\Need", inversedBy="structures", cascade={"persist"})
      * @Groups({"aRead","readSolidary", "writeSolidary"})
@@ -516,7 +516,7 @@ class Structure
     private $needs;
 
     /**
-     * @var ArrayCollection|null The relay points related to the structure.
+     * @var null|ArrayCollection the relay points related to the structure
      *
      * @ORM\OneToMany(targetEntity="\App\RelayPoint\Entity\RelayPoint", mappedBy="structure", cascade={"persist"})
      * @MaxDepth(1)
@@ -524,7 +524,7 @@ class Structure
     private $relayPoints;
 
     /**
-     * @var ArrayCollection|null The proofs for this structure.
+     * @var null|ArrayCollection the proofs for this structure
      *
      * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\StructureProof", mappedBy="structure", cascade={"persist"})
      * @ORM\OrderBy({"position" = "ASC"})
@@ -535,7 +535,7 @@ class Structure
     private $structureProofs;
 
     /**
-     * @var ArrayCollection|null A Structure can have multiple entry in Operate
+     * @var null|ArrayCollection A Structure can have multiple entry in Operate
      *
      * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Operate", mappedBy="structure", cascade={"persist"})
      * @MaxDepth(1)
@@ -543,7 +543,7 @@ class Structure
     private $operates;
 
     /**
-     * @var ArrayCollection|null The Territories linked to this Structure
+     * @var null|ArrayCollection The Territories linked to this Structure
      *
      * @ORM\ManyToMany(targetEntity="\App\Geography\Entity\Territory", inversedBy="structures")
      * @Groups({"aRead","readSolidary","writeSolidary"})
@@ -552,13 +552,13 @@ class Structure
     private $territories;
 
     /**
-     * @var array   Operators for this structure (more direct than operates for admin context)
+     * @var array Operators for this structure (more direct than operates for admin context)
      * @Groups("aRead")
      */
     private $operators;
 
     /**
-     * @var bool The structure is removable (not removable if it is used for a solidary record).
+     * @var bool the structure is removable (not removable if it is used for a solidary record)
      *
      * @Groups("aRead")
      */
@@ -578,19 +578,19 @@ class Structure
         $this->territories = new ArrayCollection();
         $this->operators = [];
     }
-    
+
     public function getId(): ?int
     {
         return $this->id;
     }
-    
+
     public function setId(int $id): self
     {
         $this->id = $id;
-        
+
         return $this;
     }
-    
+
     public function getName(): ?string
     {
         return $this->name;
@@ -631,7 +631,7 @@ class Structure
     {
         return $this->beneficiaryAutoApproval ? true : false;
     }
-    
+
     public function setBeneficiaryAutoApproval(bool $beneficiaryAutoApproval): self
     {
         $this->beneficiaryAutoApproval = $beneficiaryAutoApproval;
@@ -647,7 +647,7 @@ class Structure
     public function setMode(int $mode): self
     {
         $this->mode = $mode;
-        
+
         return $this;
     }
 
@@ -671,7 +671,7 @@ class Structure
     public function setUpdatedDate(\DateTimeInterface $updatedDate): self
     {
         $this->updatedDate = $updatedDate;
-        
+
         return $this;
     }
 
@@ -758,7 +758,7 @@ class Structure
 
         return $this;
     }
-    
+
     public function getMMaxTime(): \DateTimeInterface
     {
         return $this->mMaxTime;
@@ -770,7 +770,7 @@ class Structure
 
         return $this;
     }
-    
+
     public function getAMinTime(): \DateTimeInterface
     {
         return $this->aMinTime;
@@ -782,7 +782,7 @@ class Structure
 
         return $this;
     }
-    
+
     public function getAMaxTime(): \DateTimeInterface
     {
         return $this->aMaxTime;
@@ -794,7 +794,7 @@ class Structure
 
         return $this;
     }
-    
+
     public function getEMinTime(): \DateTimeInterface
     {
         return $this->eMinTime;
@@ -806,7 +806,7 @@ class Structure
 
         return $this;
     }
-    
+
     public function getEMaxTime(): \DateTimeInterface
     {
         return $this->eMaxTime;
@@ -818,12 +818,12 @@ class Structure
 
         return $this;
     }
-    
+
     public function hasMMon(): ?bool
     {
         return $this->mMon;
     }
-    
+
     public function setMMon(bool $mMon): self
     {
         $this->mMon = $mMon;
@@ -842,223 +842,223 @@ class Structure
 
         return $this;
     }
-    
+
     public function hasEMon(): ?bool
     {
         return $this->eMon;
     }
-    
+
     public function setEMon(bool $eMon): self
     {
         $this->eMon = $eMon;
 
         return $this;
     }
-    
+
     public function hasMTue(): ?bool
     {
         return $this->mTue;
     }
-    
+
     public function setMTue(bool $mTue): self
     {
         $this->mTue = $mTue;
 
         return $this;
     }
-    
+
     public function hasATue(): ?bool
     {
         return $this->aTue;
     }
-   
+
     public function setATue(bool $aTue): self
     {
         $this->aTue = $aTue;
 
         return $this;
     }
-    
+
     public function hasETue(): ?bool
     {
         return $this->eTue;
     }
-   
+
     public function setETue(bool $eTue): self
     {
         $this->eTue = $eTue;
 
         return $this;
     }
-    
+
     public function hasMWed(): ?bool
     {
         return $this->mWed;
     }
-   
+
     public function setMWed(bool $mWed): self
     {
         $this->mWed = $mWed;
 
         return $this;
     }
-    
+
     public function hasAWed(): ?bool
     {
         return $this->aWed;
     }
-   
+
     public function setAWed(bool $aWed): self
     {
         $this->aWed = $aWed;
 
         return $this;
     }
-    
+
     public function hasEWed(): ?bool
     {
         return $this->eWed;
     }
-   
+
     public function setEWed(bool $eWed): self
     {
         $this->eWed = $eWed;
 
         return $this;
     }
-    
+
     public function hasMThu(): ?bool
     {
         return $this->mThu;
     }
-   
+
     public function setMThu(bool $mThu): self
     {
         $this->mThu = $mThu;
 
         return $this;
     }
-    
+
     public function hasAThu(): ?bool
     {
         return $this->aThu;
     }
-   
+
     public function setAThu(bool $aThu): self
     {
         $this->aThu = $aThu;
 
         return $this;
     }
-    
+
     public function hasEThu(): ?bool
     {
         return $this->eThu;
     }
-   
+
     public function setEThu(bool $eThu): self
     {
         $this->eThu = $eThu;
 
         return $this;
     }
-    
+
     public function hasMFri(): ?bool
     {
         return $this->mFri;
     }
-   
+
     public function setMFri(bool $mFri): self
     {
         $this->mFri = $mFri;
 
         return $this;
     }
-    
+
     public function hasAFri(): ?bool
     {
         return $this->aFri;
     }
-   
+
     public function setAFri(bool $aFri): self
     {
         $this->aFri = $aFri;
 
         return $this;
     }
-    
+
     public function hasEFri(): ?bool
     {
         return $this->eFri;
     }
-   
+
     public function setEFri(bool $eFri): self
     {
         $this->eFri = $eFri;
 
         return $this;
     }
-    
+
     public function hasMSat(): ?bool
     {
         return $this->mSat;
     }
-   
+
     public function setMSat(bool $mSat): self
     {
         $this->mSat = $mSat;
 
         return $this;
     }
-    
+
     public function hasASat(): ?bool
     {
         return $this->aSat;
     }
-   
+
     public function setASat(bool $aSat): self
     {
         $this->aSat = $aSat;
 
         return $this;
     }
-    
+
     public function hasESat(): ?bool
     {
         return $this->eSat;
     }
-   
+
     public function setESat(bool $eSat): self
     {
         $this->eSat = $eSat;
 
         return $this;
     }
-    
+
     public function hasMSun(): ?bool
     {
         return $this->mSun;
     }
-   
+
     public function setMSun(bool $mSun): self
     {
         $this->mSun = $mSun;
 
         return $this;
     }
-    
+
     public function hasASun(): ?bool
     {
         return $this->aSun;
     }
-   
+
     public function setASun(bool $aSun): self
     {
         $this->aSun = $aSun;
 
         return $this;
     }
-    
+
     public function hasESun(): ?bool
     {
         return $this->eSun;
@@ -1200,17 +1200,17 @@ class Structure
     {
         return $this->relayPoints->getValues();
     }
-    
+
     public function addRelayPoint(RelayPoint $relayPoint): self
     {
         if (!$this->relayPoints->contains($relayPoint)) {
             $this->relayPoint[] = $relayPoint;
             $relayPoint->setStructure($this);
         }
-        
+
         return $this;
     }
-    
+
     public function removeRelayPoint(RelayPoint $relayPoint): self
     {
         if ($this->relayPoint->contains($relayPoint)) {
@@ -1220,7 +1220,7 @@ class Structure
                 $relayPoint->setStructure(null);
             }
         }
-        
+
         return $this;
     }
 
@@ -1254,12 +1254,13 @@ class Structure
     public function removeStructureProofs(): self
     {
         $this->structureProofs->clear();
+
         return $this;
     }
 
     /**
-    * @return ArrayCollection|Operate[]
-    */
+     * @return ArrayCollection|Operate[]
+     */
     public function getOperates()
     {
         return $this->operates->getValues();
@@ -1319,9 +1320,10 @@ class Structure
                 'givenName' => $operate->getUser()->getGivenName(),
                 'familyName' => $operate->getUser()->getFamilyName(),
                 'email' => $operate->getUser()->getEmail(),
-                'operatorDate' => $operate->getCreatedDate()
+                'operatorDate' => $operate->getCreatedDate(),
             ];
         }
+
         return $this->operators;
     }
 
@@ -1334,11 +1336,11 @@ class Structure
 
     public function isRemovable(): ?bool
     {
-        return count($this->getSolidaryUserStructures())==0;
+        return 0 == count($this->getSolidaryUserStructures());
     }
 
     // DOCTRINE EVENTS
-    
+
     /**
      * Creation date.
      *
@@ -1346,7 +1348,7 @@ class Structure
      */
     public function setAutoCreatedDate()
     {
-        $this->setCreatedDate(new \Datetime());
+        $this->setCreatedDate(new \DateTime());
     }
 
     /**
@@ -1356,6 +1358,6 @@ class Structure
      */
     public function setAutoUpdatedDate()
     {
-        $this->setUpdatedDate(new \Datetime());
+        $this->setUpdatedDate(new \DateTime());
     }
 }

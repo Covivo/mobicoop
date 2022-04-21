@@ -116,6 +116,7 @@ class IdentityProof
      *
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", cascade={"persist"}, inversedBy="identityProofs")
+     * @ORM\JoinColumn(onDelete="CASCADE")
      * @MaxDepth(1)
      */
     private $user;
@@ -129,6 +130,7 @@ class IdentityProof
     /**
      * @var User the user that validates/invalidates the proof
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", cascade={"persist"})
+     * @ORM\JoinColumn(onDelete="SET NULL")
      */
     private $admin;
 

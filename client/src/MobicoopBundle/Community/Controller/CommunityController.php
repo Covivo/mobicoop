@@ -84,23 +84,23 @@ class CommunityController extends AbstractController
 
                 // set community address
                 $communityAddress = json_decode($data->get('address'), true);
-                $address->setLayer($communityAddress['layer']);
-                $address->setAddressCountry($communityAddress['addressCountry']);
-                $address->setAddressLocality($communityAddress['addressLocality']);
-                $address->setCountryCode($communityAddress['countryCode']);
-                $address->setCounty($communityAddress['county']);
-                $address->setLatitude($communityAddress['latitude']);
-                $address->setLocalAdmin($communityAddress['localAdmin']);
-                $address->setLongitude($communityAddress['longitude']);
-                $address->setMacroCounty($communityAddress['macroCounty']);
-                $address->setMacroRegion($communityAddress['macroRegion']);
-                $address->setPostalCode($communityAddress['postalCode']);
-                $address->setRegion($communityAddress['region']);
-                $address->setStreet($communityAddress['street']);
-                $address->setHouseNumber($communityAddress['houseNumber']);
-                $address->setStreetAddress($communityAddress['streetAddress']);
-                $address->setSubLocality($communityAddress['subLocality']);
-                $address->setDisplayLabel($communityAddress['displayLabel']);
+                $address->setLayer(isset($communityAddress['layer']) ? $communityAddress['layer'] : null);
+                $address->setAddressCountry(isset($communityAddress['addressCountry']) ? $communityAddress['addressCountry'] : null);
+                $address->setAddressLocality(isset($communityAddress['addressLocality']) ? $communityAddress['addressLocality'] : null);
+                $address->setCountryCode(isset($communityAddress['countryCode']) ? $communityAddress['countryCode'] : null);
+                $address->setCounty(isset($communityAddress['county']) ? $communityAddress['county'] : null);
+                $address->setLatitude(isset($communityAddress['latitude']) ? $communityAddress['latitude'] : null);
+                $address->setLocalAdmin(isset($communityAddress['localAdmin']) ? $communityAddress['localAdmin'] : null);
+                $address->setLongitude(isset($communityAddress['longitude']) ? $communityAddress['longitude'] : null);
+                $address->setMacroCounty(isset($communityAddress['macroCounty']) ? $communityAddress['macroCounty'] : null);
+                $address->setMacroRegion(isset($communityAddress['macroRegion']) ? $communityAddress['macroRegion'] : null);
+                $address->setPostalCode(isset($communityAddress['postalCode']) ? $communityAddress['postalCode'] : null);
+                $address->setRegion(isset($communityAddress['region']) ? $communityAddress['region'] : null);
+                $address->setStreet(isset($communityAddress['street']) ? $communityAddress['street'] : null);
+                $address->setHouseNumber(isset($communityAddress['houseNumber']) ? $communityAddress['houseNumber'] : null);
+                $address->setStreetAddress(isset($communityAddress['streetAddress']) ? $communityAddress['streetAddress'] : null);
+                $address->setSubLocality(isset($communityAddress['subLocality']) ? $communityAddress['subLocality'] : null);
+                $address->setDisplayLabel(isset($communityAddress['displayLabel']) ? $communityAddress['displayLabel'] : null);
 
                 // set community infos
                 $community->setUser($user);

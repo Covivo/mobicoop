@@ -56,7 +56,7 @@ then
     if [ ! -f "$SSO_FILE" ]; then
         echo "{}" >> /var/www/$VERSION/$INSTANCE/api/config/user/sso.json
     fi
-    
+
     # check Modules files
     MODULES_FILE=/var/www/$VERSION/$INSTANCE/api/config/params/modules.json
     if [ ! -f "$MODULES_FILE" ]; then
@@ -67,6 +67,12 @@ then
     CONTACTS_FILE=/var/www/$VERSION/$INSTANCE/api/config/params/contacts.json
     if [ ! -f "$CONTACTS_FILE" ]; then
         cp /var/www/$VERSION/$INSTANCE/api/config/params/contacts.json.dist /var/www/$VERSION/$INSTANCE/api/config/params/contacts.json
+    fi
+
+	# check geocomplete palette file
+    GEOCOMPLETE_PALETTE_FILE=/var/www/$VERSION/$INSTANCE/client/config/geocomplete/palette.json
+    if [ ! -f "$GEOCOMPLETE_PALETTE_FILE" ]; then
+        cp /var/www/$VERSION/$INSTANCE/client/config/geocomplete/palette.json.dist /var/www/$VERSION/$INSTANCE/client/config/geocomplete/palette.json
     fi
 
     # Migrations
@@ -88,13 +94,6 @@ then
     fi
     cd /var/www/$VERSION/$INSTANCE/client/public/externalCgu;
     wget https://www.mangopay.com/terms/PSP/PSP_MANGOPAY_FR.pdf;
-
-    # Admin build
-    # cd /var/www/$VERSION/$INSTANCE/admin;
-    # rm -Rf node_modules;
-    # rm package-lock.json;
-    # npm install;
-    # npm run build;
 
     # clear cache
     cd /var/www/$VERSION/$INSTANCE/api;
@@ -160,6 +159,12 @@ else
         cp /var/www/$INSTANCE/$VERSION/api/config/params/contacts.json.dist /var/www/$INSTANCE/$VERSION/api/config/params/contacts.json
     fi
 
+	# check geocomplete palette file
+    GEOCOMPLETE_PALETTE_FILE=/var/www/$INSTANCE/$VERSION/client/config/geocomplete/palette.json
+    if [ ! -f "$GEOCOMPLETE_PALETTE_FILE" ]; then
+        cp /var/www/$INSTANCE/$VERSION/client/config/geocomplete/palette.json.dist /var/www/$INSTANCE/$VERSION/client/config/geocomplete/palette.json
+    fi
+
     # Migrations
     cd /var/www/$INSTANCE/$VERSION/api;
     php bin/console doctrine:migrations:migrate --env=$VERSION_MIGRATE -n;
@@ -189,12 +194,5 @@ else
     # Remove maintenance page
     rm /var/www/$INSTANCE/$VERSION/api/public/maintenance.enable
     rm /var/www/$INSTANCE/$VERSION/client/public/maintenance.enable
-
-    #Admin build
-    # cd /var/www/$INSTANCE/$VERSION/admin;
-    # rm -Rf node_modules;
-    # rm package-lock.json;
-    # npm install;
-    # npm run build;
 
 fi

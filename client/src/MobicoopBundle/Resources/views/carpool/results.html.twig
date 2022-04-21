@@ -22,6 +22,9 @@
         {{ regular is defined ? (regular == 'true' ? 'regular' : '') : '' }}
         {{ distinguishRegular ? 'distinguish-regular' : '' }}
         geo-search-url="{{ geoCompleteUri }}"
+        :geo-complete-results-order="{{geoCompleteResultsOrder|json_encode}}"
+        :geo-complete-palette="{{geoCompletePalette|json_encode}}"
+        {{ geoCompleteChip ? 'geo-complete-chip' : '' }}
         platform-name="{{ platformName }}"
         :external-rdex-journeys="{{ (externalRDEXJourneys) ? 'true' : 'false' }}"
         :pt-search="{{ (ptSearch) ? 'true' : 'false' }}"

@@ -44,7 +44,7 @@
               :payment-electronic-active="paymentElectronicActive"
             />
           </v-tab-item>
-          
+
           <!-- PROFILE -->
           <v-tab
             class="text-left justify-start ml-2 mr-5 text-h6"
@@ -58,11 +58,11 @@
             lighten-5
           >
             <!-- HORIZONTAL SUB TABS -->
-            <v-tabs 
-              v-model="modelTabsH" 
+            <v-tabs
+              v-model="modelTabsH"
               grow
             >
-              <v-tab 
+              <v-tab
                 class="text-subtitle-1"
                 :href="`#myAccount`"
               >
@@ -75,6 +75,9 @@
                 <UpdateProfile
                   :user="user"
                   :geo-search-url="geoSearchUrl"
+                  :geo-complete-results-order="geoCompleteResultsOrder"
+                  :geo-complete-palette="geoCompletePalette"
+                  :geo-complete-chip="geoCompleteChip"
                   :age-min="ageMin"
                   :age-max="ageMax"
                   :age-display="ageDisplay"
@@ -113,8 +116,10 @@
                 <BankAccount
                   :user="user"
                   :geo-search-url="geoSearchUrl"
+                  :geo-complete-results-order="geoCompleteResultsOrder"
+                  :geo-complete-palette="geoCompletePalette"
+                  :geo-complete-chip="geoCompleteChip"
                   :validation-docs-authorized-extensions="validationDocsAuthorizedExtensions"
-                  :prioritize-relaypoints="prioritizeRelaypoints"
                 />
               </v-tab-item>
               <v-tab
@@ -130,7 +135,7 @@
                 value="myBadges"
               >
                 <Badges />
-              </v-tab-item>                            
+              </v-tab-item>
             </v-tabs>
           </v-tab-item>
 
@@ -256,10 +261,18 @@ export default {
       type: Boolean,
       default: true
     },
-    prioritizeRelaypoints: {
+    geoCompleteResultsOrder: {
+      type: Array,
+      default: null
+    },
+    geoCompletePalette: {
+      type: Object,
+      default: () => ({})
+    },
+    geoCompleteChip: {
       type: Boolean,
       default: false
-    }
+    },
   },
   data(){
     return{
@@ -285,7 +298,7 @@ export default {
           this.acceptedAds = res.data.accepted;
         })
         .catch(function (error) {
-        
+
         });
     },
     deleteAd() {

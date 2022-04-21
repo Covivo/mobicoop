@@ -19,12 +19,12 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace Mobicoop\Bundle\MobicoopBundle\Carpool\Service;
 
-use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
 use Symfony\Component\Security\Core\Security;
 
 /**
@@ -39,8 +39,6 @@ class AdManager
     /**
      * Constructor.
      *
-     * @param DataProvider $dataProvider
-     * @param Security $security
      * @throws \ReflectionException
      */
     public function __construct(DataProvider $dataProvider, Security $security)
@@ -52,68 +50,75 @@ class AdManager
     }
 
     /**
-     * Get an ad and its results
+     * Get an ad and its results.
      *
-     * @param int $id       The ad id
-     * @param array|null    The filters to apply to the results
-     * @return Ad|null
+     * @param int $id The ad id
+     * @param null|array    The filters to apply to the results
+     *
+     * @return null|Ad
      */
     public function getAd(int $id, ?array $filters = null)
     {
         if ($data = $this->dataProvider->getItem($id, $filters)) {
             return $data->getValue();
         }
+
         return null;
     }
 
     /**
-     * Get an ad and its results from its external id
+     * Get an ad and its results from its external id.
      *
-     * @param string $id    The ad external id
-     * @param array|null    The filters to apply to the results
-     * @return Ad|null
+     * @param string $id The ad external id
+     * @param null|array    The filters to apply to the results
+     *
+     * @return null|Ad
      */
     public function getAdFromExternalId(string $id, ?array $filters = null)
     {
         if ($data = $this->dataProvider->getSpecialItem($id, 'external', $filters)) {
             return $data->getValue();
         }
+
         return null;
     }
 
     /**
-     * Get full ad data
+     * Get full ad data.
      *
-     * @param int $id
-     * @return Ad|null
+     * @return null|Ad
      */
     public function getFullAd(int $id)
     {
         if ($data = $this->dataProvider->getSpecialItem($id, 'full')) {
             return $data->getValue();
         }
+
         return null;
     }
 
     /**
-     * Claim an Ad (useful for login or register after an anonymous search)
+     * Claim an Ad (useful for login or register after an anonymous search).
      *
-     * @param int $id   The Ad id to claim
-     * @return bool     Result of the claim
+     * @param int $id The Ad id to claim
+     *
+     * @return bool Result of the claim
      */
     public function claimAd(int $id)
     {
         $ad = new Ad($id);
         if ($response = $this->dataProvider->putSpecial($ad, null, 'claim')) {
-            return $response->getCode() == 200;
+            return 200 == $response->getCode();
         }
+
         return false;
     }
 
     /**
      * Create an ad. The ad can be a search.
      *
-     * @param array $data   The data used to create the ad
+     * @param array $data The data used to create the ad
+     *
      * @return Ad
      */
     public function createAd(array $data)
@@ -121,7 +126,7 @@ class AdManager
         $ad = $this->mapAd($data);
         // creation of the ad
         $response = $this->dataProvider->post($ad);
-        if ($response->getCode() != 201) {
+        if (201 != $response->getCode()) {
             return $response->getValue();
         }
 
@@ -131,19 +136,20 @@ class AdManager
     /**
      * Get all results for a search.
      *
-     * @param array $origin               The origin address
-     * @param array $destination          The destination address
-     * @param \Datetime $date               The date in a Datetime object
-     * @param \Datetime $time               The time in a Datetime object
-     * @param boolean $regular              The trip is regular
-     * @param boolean|null $strictDate      Strict date
-     * @param boolean $strictPunctual       Strictly punctual
-     * @param boolean $strictRegular        Strictly regular
-     * @param integer|null $role            Role (driver and/or passenger)
-     * @param integer|null $userId          User id of the requester (to exclude its own results)
-     * @param integer $communityId          Community id of the requester (to get only results from that community)
-     * @param array|null $filters           Filters and order choices
-     * @return Ad|null The matchings found or null if not found.
+     * @param array      $origin         The origin address
+     * @param array      $destination    The destination address
+     * @param \Datetime  $date           The date in a Datetime object
+     * @param \Datetime  $time           The time in a Datetime object
+     * @param bool       $regular        The trip is regular
+     * @param null|bool  $strictDate     Strict date
+     * @param bool       $strictPunctual Strictly punctual
+     * @param bool       $strictRegular  Strictly regular
+     * @param null|int   $role           Role (driver and/or passenger)
+     * @param null|int   $userId         User id of the requester (to exclude its own results)
+     * @param int        $communityId    Community id of the requester (to get only results from that community)
+     * @param null|array $filters        Filters and order choices
+     *
+     * @return null|Ad the matchings found or null if not found
      */
     public function getResultsForSearch(
         array $origin,
@@ -161,50 +167,52 @@ class AdManager
     ) {
         // we set the params
         $params = [
-            "origin" => $origin,
-            "destination" => $destination,
-            "waypoints" => [],
-            "outwardDate" => $date,
-            "regular" => $regular,
-            "search" => true,
-            "communities" => []
+            'origin' => $origin,
+            'destination' => $destination,
+            'waypoints' => [],
+            'outwardDate' => $date,
+            'regular' => $regular,
+            'search' => true,
+            'communities' => [],
         ];
         if (!is_null($strictDate)) {
-            $params["strictDate"] = $strictDate;
+            $params['strictDate'] = $strictDate;
         }
         if (!is_null($time)) {
-            $params["outwardTime"] = $time;
+            $params['outwardTime'] = $time;
         }
         if (!is_null($strictPunctual)) {
-            $params["strictPunctual"] = $strictPunctual;
+            $params['strictPunctual'] = $strictPunctual;
         }
         if (!is_null($strictRegular)) {
-            $params["strictRegular"] = $strictRegular;
+            $params['strictRegular'] = $strictRegular;
         }
         if (!is_null($role)) {
-            $params["driver"] = $role == 1 || $role == 3;
-            $params["passenger"] = $role == 2 || $role == 3;
+            $params['driver'] = 1 == $role || 3 == $role;
+            $params['passenger'] = 2 == $role || 3 == $role;
         }
         if (!is_null($userId)) {
-            $params["userId"] = $userId;
+            $params['userId'] = $userId;
         }
         if (!is_null($communityId)) {
-            $params["communities"] = [$communityId];
+            $params['communities'] = [$communityId];
         }
         if (!is_null($filters)) {
-            $params["filters"] = $filters;
+            $params['filters'] = $filters;
         }
+
         return $this->createAd($params);
     }
 
     /**
-     * Create an ask from an ad result
+     * Create an ask from an ad result.
      *
-     * @param array $data           The data used to create the ask
-     * @param boolean|null $formal  If the ask is formal
+     * @param array     $data   The data used to create the ask
+     * @param null|bool $formal If the ask is formal
+     *
      * @return ad
      */
-    public function createAsk(array $params, ?bool $formal=false)
+    public function createAsk(array $params, ?bool $formal = false)
     {
         if (!isset($params['regular']) || !isset($params['adId']) || !isset($params['matchingId'])) {
             return null;
@@ -226,28 +234,28 @@ class AdManager
             if (!isset($params['outwardSchedule']) && !isset($params['returnSchedule'])) {
                 return null;
             }
-            $schedule  = [];
-            $days = ["mon","tue","wed","thu","fri","sat","sun"];
+            $schedule = [];
+            $days = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
             foreach ($days as $day) {
                 if (isset($params['outwardSchedule'][$day.'Time']) && !is_null($params['outwardSchedule'][$day.'Time'])) {
                     if (isset($params['returnSchedule'][$day.'Time']) && !is_null($params['returnSchedule'][$day.'Time'])) {
                         $schedule[] = [
                             'outwardTime' => $params['outwardSchedule'][$day.'Time'],
                             'returnTime' => $params['returnSchedule'][$day.'Time'],
-                            $day => true
+                            $day => true,
                         ];
                     } else {
                         $schedule[] = [
                             'outwardTime' => $params['outwardSchedule'][$day.'Time'],
                             'returnTime' => '',
-                            $day => true
+                            $day => true,
                         ];
                     }
                 } elseif (isset($params['returnSchedule'][$day.'Time']) && !is_null($params['returnSchedule'][$day.'Time'])) {
                     $schedule[] = [
                         'outwardTime' => '',
                         'returnTime' => $params['returnSchedule'][$day.'Time'],
-                        $day => true
+                        $day => true,
                     ];
                 }
             }
@@ -255,85 +263,92 @@ class AdManager
             $ad->setOutwardDate(\DateTime::createFromFormat('Y-m-d', $params['fromDate']));
             $ad->setOutwardLimitdate(\DateTime::createFromFormat('Y-m-d', $params['toDate']));
         }
-        
+
         // creation of the ad ask
         if ($formal) {
             $response = $this->dataProvider->post($ad, 'ask');
         } else {
             $response = $this->dataProvider->post($ad, 'contact');
         }
+
         return $response->getValue();
     }
 
     /**
-     * Get an ad and its results by its related Ask
+     * Get an ad and its results by its related Ask.
      *
-     * @param int $askId   Id of the related Ask
-     * @param int $userId  The user that make the request
-     * @return Ad|null
+     * @param int $askId  Id of the related Ask
+     * @param int $userId The user that make the request
+     *
+     * @return null|Ad
      */
     public function getAdAsk(int $askId, int $userId)
     {
-        if ($data = $this->dataProvider->getSpecialItem($askId, "ask", ["userId"=>$userId], true)) {
+        if ($data = $this->dataProvider->getSpecialItem($askId, 'ask', ['userId' => $userId], true)) {
             return $data->getValue();
         }
+
         return null;
     }
 
     /**
-     * Update an Ask via the Ad
+     * Update an Ask via the Ad.
      *
-     * @param int $ad   The ad to update
-     * @param int $userId  The user that make the request
-     * @return Ad|null
+     * @param int $ad     The ad to update
+     * @param int $userId The user that make the request
+     *
+     * @return null|Ad
      */
     public function updateAdAsk(Ad $ad, int $userId)
     {
-        if ($data = $this->dataProvider->putSpecial($ad, null, "ask", ["userId"=>$userId], true)) {
+        if ($data = $this->dataProvider->putSpecial($ad, null, 'ask', ['userId' => $userId], true)) {
             return $data->getValue();
         }
+
         return null;
     }
 
     /**
-     * Update an Ad
+     * Update an Ad.
      *
-     * @param array $data
-     * @param Ad|null $ad - the current ad before update
-     * @return array|object
+     * @param null|Ad $ad - the current ad before update
+     *
      * @throws \Exception
+     *
+     * @return array|object
      */
     public function updateAd(array $data, Ad $ad = null)
     {
         $ad = $this->mapAd($data, $ad);
-        if ($data = $this->dataProvider->put($ad, null, ["mail_search_link" => $data["mailSearchLink"]])) {
+        if ($data = $this->dataProvider->put($ad, null, ['mail_search_link' => $data['mailSearchLink']])) {
             return $data->getValue();
         }
+
         return null;
     }
 
     /**
-     * Delete an Ad
+     * Delete an Ad.
      *
-     * @param int $id The id of the ad to delete
-     *
+     * @param int   $id   The id of the ad to delete
      * @param array $data
-     * @return boolean The result of the deletion.
+     *
+     * @return bool the result of the deletion
      */
     public function deleteAd(int $id, ?array $data)
     {
         if ($this->dataProvider->delete($id, $data)) {
             return 'success';
         }
+
         return null;
     }
 
     /**
-     * Map data json array to and Ad
+     * Map data json array to and Ad.
      *
-     * @param array $data
      * @param Ad $ad - the current Ad before update
-     * @return Ad
+     *
      * @throws \Exception
      */
     public function mapAd(array $data, Ad $ad = null): Ad
@@ -353,12 +368,12 @@ class AdManager
         } elseif (!is_null($poster)) {
             $data['userId'] = $poster->getId();
         }
-        if (!isset($data['outwardDate']) || $data['outwardDate'] == '') {
+        if (!isset($data['outwardDate']) || '' == $data['outwardDate']) {
             //$data['outwardDate'] = new \DateTime();
         } elseif (is_string($data['outwardDate'])) {
             $data['outwardDate'] = \DateTime::createFromFormat('Y-m-d', $data['outwardDate']);
         }
-        if (isset($data['returnDate']) && is_string($data['returnDate']) && $data['returnDate'] != '') {
+        if (isset($data['returnDate']) && is_string($data['returnDate']) && '' != $data['returnDate']) {
             $data['returnDate'] = \DateTime::createFromFormat('Y-m-d', $data['returnDate']);
             $ad->setOneWay(false); // only for punctual journey
         } else {
@@ -376,14 +391,14 @@ class AdManager
                 }
             }
         }
-        if (isset($data["id"])) {
-            $ad->setId($data["id"]);
-            $ad->setAdId($data["id"]);
-            $ad->setProposalId($data["id"]);
+        if (isset($data['id'])) {
+            $ad->setId($data['id']);
+            $ad->setAdId($data['id']);
+            $ad->setProposalId($data['id']);
         }
 
-        if (isset($data["paused"])) {
-            $ad->setPaused($data["paused"]);
+        if (isset($data['paused'])) {
+            $ad->setPaused($data['paused']);
         }
 
         // the ad is a search ?
@@ -406,7 +421,7 @@ class AdManager
         }
 
         // outward waypoints
-        if (isset($data['origin']) && isset($data['waypoints'])) {
+        if (isset($data['origin'], $data['waypoints'])) {
             $outwardWaypoints[] = $data['origin'];
             $returnWaypoints = null;
             foreach ($data['waypoints'] as $waypoint) {
@@ -415,7 +430,7 @@ class AdManager
                 }
             }
             $outwardWaypoints[] = $data['destination'];
-            
+
             if (!$ad->isOneWay()) {
                 $returnWaypoints = array_reverse($outwardWaypoints, false);
             }
@@ -424,7 +439,7 @@ class AdManager
         }
 
         // date and time
-        if ($ad->getFrequency() == Ad::FREQUENCY_REGULAR) {
+        if (Ad::FREQUENCY_REGULAR == $ad->getFrequency()) {
             if (isset($data['fromDate'])) {
                 $ad->setOutwardDate(\DateTime::createFromFormat('Y-m-d', $data['fromDate']));
             } else {
@@ -439,21 +454,21 @@ class AdManager
         } elseif (isset($data['outwardDate'])) {
             $ad->setOutwardDate($data['outwardDate']);
             $ad->setOutwardTime(isset($data['outwardTime']) ? $data['outwardTime'] : null);
-            if (isset($data['returnDate']) && isset($data['returnTime'])) {
+            if (isset($data['returnDate'], $data['returnTime'])) {
                 $ad->setOneWay(false);
                 $ad->setReturnDate($data['returnDate']);
                 $ad->setReturnTime($data['returnTime']);
             }
         }
 
-        if (isset($data["strictDate"])) {
-            $ad->setStrictDate($data["strictDate"]);
+        if (isset($data['strictDate'])) {
+            $ad->setStrictDate($data['strictDate']);
         }
-        if (isset($data["strictPunctual"])) {
-            $ad->setStrictPunctual($data["strictPunctual"]);
+        if (isset($data['strictPunctual'])) {
+            $ad->setStrictPunctual($data['strictPunctual']);
         }
-        if (isset($data["strictRegular"])) {
-            $ad->setStrictRegular($data["strictRegular"]);
+        if (isset($data['strictRegular'])) {
+            $ad->setStrictRegular($data['strictRegular']);
         }
 
         // prices
@@ -534,20 +549,22 @@ class AdManager
             $ad->setCommunities($data['communities']);
         }
 
-        //Gestion events : If an event is set as destination or arrival, we set the event in proposal
-        if ((isset($data['origin']['event']) && $data['origin']['event'] != null) || (isset($data['destination']['event']) && $data['destination']['event'] != null)) {
-            $event = $data['origin']['event']  != null ? $data['origin']['event'] : $data['destination']['event'];
-            if (isset($event['id'])) {
-                $ad->setEventId($event["id"]);
-            } else {
-                // this is an HOTFIX ==> TODO fix correctly the issue
-                $ad->setEventId(str_replace("/events/", "", $event));
+        // event
+        if (
+            (isset($data['origin']['event']['id']) && null != $data['origin']['event']['id'])
+            || (isset($data['destination']['event']['id']) && null != $data['destination']['event']['id'])
+            ) {
+            if (isset($data['origin']['event']['id']) && null != $data['origin']['event']['id']) {
+                $eventId = $data['origin']['event']['id'];
+            } elseif (isset($data['destination']['event']['id']) && null != $data['destination']['event']['id']) {
+                $eventId = $data['destination']['event']['id'];
             }
+            $ad->setEventId($eventId);
         }
         if (isset($data['eventId'])) {
             $ad->setEventId($data['eventId']);
         }
-        
+
         // filters
         if (isset($data['filters'])) {
             $ad->setFilters($data['filters']);
@@ -571,9 +588,10 @@ class AdManager
     public function cleanOrphanUserProposals()
     {
         $ad = new Ad();
-        if ($response = $this->dataProvider->post($ad, "cleanOrphans")) {
+        if ($response = $this->dataProvider->post($ad, 'cleanOrphans')) {
             return $response->getValue();
         }
+
         return null;
     }
 }

@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\DataProvider\Entity;
 
@@ -28,61 +28,59 @@ use App\DataProvider\Ressource\MangoPayHook;
 use App\DataProvider\Service\DataProvider;
 use App\Geography\Entity\Address;
 use App\Payment\Entity\CarpoolPayment;
-use App\Payment\Ressource\BankAccount;
 use App\Payment\Entity\PaymentProfile;
-use App\Payment\Exception\PaymentException;
 use App\Payment\Entity\Wallet;
 use App\Payment\Entity\WalletBalance;
+use App\Payment\Exception\PaymentException;
 use App\Payment\Interfaces\PaymentProviderInterface;
 use App\Payment\Repository\PaymentProfileRepository;
+use App\Payment\Ressource\BankAccount;
 use App\Payment\Ressource\ValidationDocument;
 use App\User\Entity\User;
-use LogicException;
-use Mobicoop\Bundle\MobicoopBundle\Api\Service\Deserializer;
 
 /**
- * Payment Provider for MangoPay
+ * Payment Provider for MangoPay.
  *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  * @author Remi Wortemann <remi.wortemann@mobicoop.org>
  */
 class MangoPayProvider implements PaymentProviderInterface
 {
-    const SERVER_URL_SANDBOX = "https://api.sandbox.mangopay.com/";
-    const SERVER_URL = "https://api.mangopay.com/";
-    const LANDING_AFTER_PAYMENT = "paiements/paye";
-    const LANDING_AFTER_PAYMENT_MOBILE = "#/carpools/payment/paye";
-    const LANDING_AFTER_PAYMENT_MOBILE_SITE = "#/carpools/payment/paye";
-    const VERSION = "V2.01";
+    public const SERVER_URL_SANDBOX = 'https://api.sandbox.mangopay.com/';
+    public const SERVER_URL = 'https://api.mangopay.com/';
+    public const LANDING_AFTER_PAYMENT = 'paiements/paye';
+    public const LANDING_AFTER_PAYMENT_MOBILE = '#/carpools/payment/paye';
+    public const LANDING_AFTER_PAYMENT_MOBILE_SITE = '#/carpools/payment/paye';
+    public const VERSION = 'V2.01';
 
-    const COLLECTION_BANK_ACCOUNTS = "bankaccounts";
-    const COLLECTION_WALLETS = "wallets";
+    public const COLLECTION_BANK_ACCOUNTS = 'bankaccounts';
+    public const COLLECTION_WALLETS = 'wallets';
 
-    const ITEM_USER_NATURAL = "natural";
-    const ITEM_WALLET = "wallets";
-    const ITEM_PAYIN = "payins/card/web";
-    const ITEM_TRANSFERS = "transfers";
-    const ITEM_PAYOUT = "payouts/bankwire";
-    
-    const ITEM_KYC_CREATE_DOC = "users/{userId}/KYC/documents/";
-    const ITEM_KYC_CREATE_PAGE = "users/{userId}/KYC/documents/{KYCDocId}/pages";
-    const ITEM_KYC_PUT_DOC = "users/{userId}/KYC/documents/{KYCDocId}";
+    public const ITEM_USER_NATURAL = 'natural';
+    public const ITEM_WALLET = 'wallets';
+    public const ITEM_PAYIN = 'payins/card/web';
+    public const ITEM_TRANSFERS = 'transfers';
+    public const ITEM_PAYOUT = 'payouts/bankwire';
 
-    const CARD_TYPE = "CB_VISA_MASTERCARD";
-    const LANGUAGE = "FR";
-    const VALIDATION_DOC_TYPE = "IDENTITY_PROOF";
-    const VALIDATION_ASKED = "VALIDATION_ASKED";
+    public const ITEM_KYC_CREATE_DOC = 'users/{userId}/KYC/documents/';
+    public const ITEM_KYC_CREATE_PAGE = 'users/{userId}/KYC/documents/{KYCDocId}/pages';
+    public const ITEM_KYC_PUT_DOC = 'users/{userId}/KYC/documents/{KYCDocId}';
 
-    const OUT_OF_DATE = "OUT_OF_DATE";
-    const UNDERAGE_PERSON = "UNDERAGE_PERSON";
-    const DOCUMENT_FALSIFIED = "DOCUMENT_FALSIFIED";
-    const DOCUMENT_MISSING = "DOCUMENT_MISSING";
-    const DOCUMENT_HAS_EXPIRED = "DOCUMENT_HAS_EXPIRED";
-    const DOCUMENT_NOT_ACCEPTED = "DOCUMENT_NOT_ACCEPTED";
-    const DOCUMENT_DO_NOT_MATCH_USER_DATA = "DOCUMENT_DO_NOT_MATCH_USER_DATA";
-    const DOCUMENT_UNREADABLE = "DOCUMENT_UNREADABLE";
-    const DOCUMENT_INCOMPLETE = "DOCUMENT_INCOMPLETE";
+    public const CARD_TYPE = 'CB_VISA_MASTERCARD';
+    public const LANGUAGE = 'FR';
+    public const VALIDATION_DOC_TYPE = 'IDENTITY_PROOF';
+    public const VALIDATION_ASKED = 'VALIDATION_ASKED';
 
+    public const OUT_OF_DATE = 'OUT_OF_DATE';
+    public const UNDERAGE_PERSON = 'UNDERAGE_PERSON';
+    public const DOCUMENT_FALSIFIED = 'DOCUMENT_FALSIFIED';
+    public const DOCUMENT_MISSING = 'DOCUMENT_MISSING';
+    public const DOCUMENT_HAS_EXPIRED = 'DOCUMENT_HAS_EXPIRED';
+    public const DOCUMENT_NOT_ACCEPTED = 'DOCUMENT_NOT_ACCEPTED';
+    public const DOCUMENT_DO_NOT_MATCH_USER_DATA = 'DOCUMENT_DO_NOT_MATCH_USER_DATA';
+    public const DOCUMENT_UNREADABLE = 'DOCUMENT_UNREADABLE';
+    public const DOCUMENT_INCOMPLETE = 'DOCUMENT_INCOMPLETE';
+    public const SPECIFIC_CASE = 'SPECIFIC_CASE';
 
     private $user;
     private $serverUrl;
@@ -106,148 +104,162 @@ class MangoPayProvider implements PaymentProviderInterface
     ) {
         ($sandBoxMode) ? $this->serverUrl = self::SERVER_URL_SANDBOX : $this->serverUrl = self::SERVER_URL;
         $this->user = $user;
-        $this->authChain = "Basic ".base64_encode($clientId.":".$apikey);
-        $this->serverUrl .= self::VERSION."/".$clientId."/";
+        $this->authChain = 'Basic '.base64_encode($clientId.':'.$apikey);
+        $this->serverUrl .= self::VERSION.'/'.$clientId.'/';
         $this->currency = $currency;
         $this->paymentProfileRepository = $paymentProfileRepository;
         $this->validationDocsPath = $validationDocsPath;
         $this->baseUri = $baseUri;
         $this->baseMobileUri = $baseMobileUri;
     }
-    
+
     /**
      * Returns a collection of Bank accounts.
      *
-     * @param PaymentProfile $paymentProfile     The User's payment profile related to the Bank accounts
-     * @param bool $onlyActive     By default, only the active bank accounts are returned
+     * @param PaymentProfile $paymentProfile The User's payment profile related to the Bank accounts
+     * @param bool           $onlyActive     By default, only the active bank accounts are returned
+     *
      * @return BankAccount[]
      */
     public function getBankAccounts(PaymentProfile $paymentProfile, bool $onlyActive = true)
     {
-        $dataProvider = new DataProvider($this->serverUrl."users/".$paymentProfile->getIdentifier()."/", self::COLLECTION_BANK_ACCOUNTS);
+        $dataProvider = new DataProvider($this->serverUrl.'users/'.$paymentProfile->getIdentifier().'/', self::COLLECTION_BANK_ACCOUNTS);
         $getParams = [
-            "per_page" => 100,
-            "sort" => "creationdate:desc"
+            'per_page' => 100,
+            'sort' => 'creationdate:desc',
         ];
 
         if ($onlyActive) {
-            $getParams['Active'] = "true";
+            $getParams['Active'] = 'true';
         }
 
         $headers = [
-            "Authorization" => $this->authChain
+            'Authorization' => $this->authChain,
         ];
         $response = $dataProvider->getCollection($getParams, $headers);
-        
+
         $bankAccounts = [];
-        if ($response->getCode() == 200) {
+        if (200 == $response->getCode()) {
             $data = json_decode($response->getValue(), true);
             foreach ($data as $account) {
                 $bankAccount = $this->deserializeBankAccount($account);
                 $bankAccount->setValidationAskedDate($paymentProfile->getValidationAskedDate());
                 $bankAccount->setValidatedDate($paymentProfile->getValidatedDate());
                 $bankAccount->setValidationOutdatedDate($paymentProfile->getValidationOutdatedDate());
-                $bankAccounts[]  = $bankAccount;
+                $bankAccounts[] = $bankAccount;
             }
         }
+
         return $bankAccounts;
     }
-       
+
     /**
-     * Add a BankAccount
+     * Add a BankAccount.
      *
-     * @param BankAccount $bankAccount    The BankAccount to create
-     * @return BankAccount|null
+     * @param BankAccount $bankAccount The BankAccount to create
+     *
+     * @return null|BankAccount
      */
     public function addBankAccount(BankAccount $bankAccount)
     {
         // Build the body
-        $body['OwnerName'] = $this->user->getGivenName()." ".$this->user->getFamilyName();
+        $body['OwnerName'] = $this->user->getGivenName().' '.$this->user->getFamilyName();
         $body['IBAN'] = $bankAccount->getIban();
         $body['BIC'] = $bankAccount->getBic();
 
+        $street = '';
+        if ('' != $bankAccount->getAddress()->getStreetAddress()) {
+            $street = $bankAccount->getAddress()->getStreetAddress();
+        } else {
+            $street = trim($bankAccount->getAddress()->getHouseNumber().' '.$bankAccount->getAddress()->getStreet());
+        }
+
         $body['OwnerAddress'] = [
-            "AddressLine1" => $bankAccount->getAddress()->getStreetAddress(),
-            "City" => $bankAccount->getAddress()->getAddressLocality(),
-            "Region" => $bankAccount->getAddress()->getRegion(),
-            "PostalCode" => $bankAccount->getAddress()->getPostalCode(),
-            "Country" => substr($bankAccount->getAddress()->getCountryCode(), 0, 2)
+            'AddressLine1' => $street,
+            'City' => $bankAccount->getAddress()->getAddressLocality(),
+            'Region' => $bankAccount->getAddress()->getRegion(),
+            'PostalCode' => $bankAccount->getAddress()->getPostalCode(),
+            'Country' => substr($bankAccount->getAddress()->getCountryCode(), 0, 2),
         ];
 
         // Get the identifier
-        $paymentProfiles = $this->paymentProfileRepository->findBy(['user'=>$this->user]);
+        $paymentProfiles = $this->paymentProfileRepository->findBy(['user' => $this->user]);
         $identifier = $paymentProfiles[0]->getIdentifier();
-        
+
         if (is_null($identifier)) {
             throw new PaymentException(PaymentException::NO_IDENTIFIER);
         }
 
-        $dataProvider = new DataProvider($this->serverUrl."users/".$identifier."/", self::COLLECTION_BANK_ACCOUNTS."/iban");
+        $dataProvider = new DataProvider($this->serverUrl.'users/'.$identifier.'/', self::COLLECTION_BANK_ACCOUNTS.'/iban');
         $headers = [
-            "Authorization" => $this->authChain
+            'Authorization' => $this->authChain,
         ];
         $response = $dataProvider->postCollection($body, $headers);
-        
-        if ($response->getCode() == 200) {
+
+        if (200 == $response->getCode()) {
             $data = json_decode($response->getValue(), true);
             $bankAccount = $this->deserializeBankAccount($data);
         } else {
             throw new PaymentException(PaymentException::ERROR_CREATING);
         }
+
         return $bankAccount;
     }
 
     /**
-     * Disable a BankAccount (Only IBAN/BIC and active/inactive)
+     * Disable a BankAccount (Only IBAN/BIC and active/inactive).
      *
-     * @param BankAccount $bankAccount  The BankAccount to disable
-     * @return BankAccount|null
+     * @param BankAccount $bankAccount The BankAccount to disable
+     *
+     * @return null|BankAccount
      */
     public function disableBankAccount(BankAccount $bankAccount)
     {
         // Build the body
-        $body['Active'] = "false";
+        $body['Active'] = 'false';
 
         // Get the identifier
-        $paymentProfiles = $this->paymentProfileRepository->findBy(['user'=>$this->user]);
+        $paymentProfiles = $this->paymentProfileRepository->findBy(['user' => $this->user]);
         $identifier = $paymentProfiles[0]->getIdentifier();
-        
+
         if (is_null($identifier)) {
             throw new PaymentException(PaymentException::NO_IDENTIFIER);
         }
 
-        $dataProvider = new DataProvider($this->serverUrl."users/".$identifier."/", self::COLLECTION_BANK_ACCOUNTS."/".$bankAccount->getId());
+        $dataProvider = new DataProvider($this->serverUrl.'users/'.$identifier.'/', self::COLLECTION_BANK_ACCOUNTS.'/'.$bankAccount->getId());
         $headers = [
-            "Authorization" => $this->authChain
+            'Authorization' => $this->authChain,
         ];
         $response = $dataProvider->putItem($body, $headers);
-        
-        if ($response->getCode() == 200) {
+
+        if (200 == $response->getCode()) {
             $data = json_decode($response->getValue(), true);
             $bankAccount = $this->deserializeBankAccount($data);
         }
+
         return $bankAccount;
     }
 
     /**
      * Returns a collection of Wallet.
      *
-     * @param PaymentProfile $paymentProfile     The User's payment profile related to the wallets
+     * @param PaymentProfile $paymentProfile The User's payment profile related to the wallets
+     *
      * @return Wallet[]
      */
     public function getWallets(PaymentProfile $paymentProfile)
     {
         $wallets = [new Wallet()];
 
-        $dataProvider = new DataProvider($this->serverUrl."users/".$paymentProfile->getIdentifier()."/", self::COLLECTION_WALLETS);
+        $dataProvider = new DataProvider($this->serverUrl.'users/'.$paymentProfile->getIdentifier().'/', self::COLLECTION_WALLETS);
         $getParams = null;
         $headers = [
-            "Authorization" => $this->authChain
+            'Authorization' => $this->authChain,
         ];
         $response = $dataProvider->getCollection($getParams, $headers);
-        
+
         $wallets = [];
-        if ($response->getCode() == 200) {
+        if (200 == $response->getCode()) {
             $data = json_decode($response->getValue(), true);
             foreach ($data as $wallet) {
                 $wallet = $this->deserializeWallet($wallet);
@@ -260,10 +272,11 @@ class MangoPayProvider implements PaymentProviderInterface
     }
 
     /**
-     * Add a Wallet
+     * Add a Wallet.
      *
-     * @param Wallet $user  The Wallet to create
-     * @return Wallet|null
+     * @param Wallet $user The Wallet to create
+     *
+     * @return null|Wallet
      */
     public function addWallet(Wallet $wallet): Wallet
     {
@@ -273,18 +286,17 @@ class MangoPayProvider implements PaymentProviderInterface
         $body['Tag'] = $wallet->getComment();
         $body['Owners'] = [$wallet->getOwnerIdentifier()];
 
-
         $dataProvider = new DataProvider($this->serverUrl, self::ITEM_WALLET);
         $headers = [
-            "Authorization" => $this->authChain
+            'Authorization' => $this->authChain,
         ];
         $response = $dataProvider->postCollection($body, $headers);
-        
+
         $wallet = new Wallet();
-        if ($response->getCode() == 200) {
+        if (200 == $response->getCode()) {
             $data = json_decode($response->getValue(), true);
-            $wallet->setId($data["Id"]);
-            $wallet->setDescription($data["Description"]);
+            $wallet->setId($data['Id']);
+            $wallet->setDescription($data['Description']);
             $wallet->setOwnerIdentifier($data['Owners'][0]);
         } else {
             throw new PaymentException(PaymentException::ADD_WALLET_USER_FAILED);
@@ -293,17 +305,15 @@ class MangoPayProvider implements PaymentProviderInterface
         return $wallet;
     }
 
-
     /**
-     * Register a User to the provider and create a PaymentProfile
+     * Register a User to the provider and create a PaymentProfile.
      *
-     * @param User $user
-     * @param Address|null $address The address to use to the registration
+     * @param null|Address $address The address to use to the registration
+     *
      * @return string The identifier
      */
-    public function registerUser(User $user, Address $address=null)
+    public function registerUser(User $user, Address $address = null)
     {
-
         // Build the body
         $body['FirstName'] = $user->getGivenName();
         $body['LastName'] = $user->getFamilyName();
@@ -312,56 +322,60 @@ class MangoPayProvider implements PaymentProviderInterface
         if (is_null($user->getBirthDate())) {
             throw new PaymentException(PaymentException::NO_BIRTHDATE);
         }
-        $body['Birthday'] = (int)$user->getBirthDate()->format('U');
+        $body['Birthday'] = (int) $user->getBirthDate()->format('U');
 
-        
-
-        
         if (is_null($address)) {
-            // Addresse of the user
+            // Address of the user
             foreach ($user->getAddresses() as $homeAddress) {
                 if ($homeAddress->isHome()) {
                     $address = $homeAddress;
+
                     break;
                 }
             }
         }
-        
+
         if (!is_null($address)) {
+            $street = '';
+            if ('' != $address->getStreetAddress()) {
+                $street = $address->getStreetAddress();
+            } else {
+                $street = trim($address->getHouseNumber().' '.$address->getStreet());
+            }
+
             $body['Address'] = [
-                "AddressLine1" => $address->getStreetAddress(),
-                "City" => $address->getAddressLocality(),
-                "Region" => $address->getRegion(),
-                "PostalCode" => $address->getPostalCode(),
-                "Country" => substr($address->getCountryCode(), 0, 2)
+                'AddressLine1' => $street,
+                'City' => $address->getAddressLocality(),
+                'Region' => $address->getRegion(),
+                'PostalCode' => $address->getPostalCode(),
+                'Country' => substr($address->getCountryCode(), 0, 2),
             ];
 
             if (
-                $address->getStreetAddress()=="" ||
-                $address->getAddressLocality()=="" ||
-                $address->getRegion()=="" ||
-                $address->getPostalCode()=="" ||
-                $address->getCountryCode()==""
+                ('' == $address->getStreetAddress() && '' == $address->getStreet())
+                || '' == $address->getAddressLocality()
+                || '' == $address->getRegion()
+                || '' == $address->getPostalCode()
+                || '' == $address->getCountryCode()
             ) {
                 throw new PaymentException(PaymentException::ADDRESS_INVALID);
             }
 
-                
             $body['Nationality'] = substr($address->getCountryCode(), 0, 2);
             $body['CountryOfResidence'] = substr($address->getCountryCode(), 0, 2);
         } else {
             throw new PaymentException(PaymentException::NO_ADDRESS);
         }
 
-        $body['KYCLevel'] = "LIGHT";
+        $body['KYCLevel'] = 'LIGHT';
 
-        $dataProvider = new DataProvider($this->serverUrl."users/", self::ITEM_USER_NATURAL);
+        $dataProvider = new DataProvider($this->serverUrl.'users/', self::ITEM_USER_NATURAL);
         $headers = [
-            "Authorization" => $this->authChain
+            'Authorization' => $this->authChain,
         ];
         $response = $dataProvider->postCollection($body, $headers);
-        
-        if ($response->getCode() == 200) {
+
+        if (200 == $response->getCode()) {
             $data = json_decode($response->getValue(), true);
         } else {
             throw new PaymentException(PaymentException::REGISTER_USER_FAILED);
@@ -371,17 +385,16 @@ class MangoPayProvider implements PaymentProviderInterface
     }
 
     /**
-     * Update a User to the provider and create a PaymentProfile
+     * Update a User to the provider and create a PaymentProfile.
      *
-     * @param User $user
      * @return string The identifier
      */
     public function updateUser(User $user)
     {
         // We check first if the user have an identifier
-        $paymentProfiles = $this->paymentProfileRepository->findBy(['user'=>$this->user]);
+        $paymentProfiles = $this->paymentProfileRepository->findBy(['user' => $this->user]);
         $identifier = $paymentProfiles[0]->getIdentifier();
-        
+
         if (is_null($identifier)) {
             throw new PaymentException(PaymentException::NO_IDENTIFIER);
         }
@@ -394,43 +407,42 @@ class MangoPayProvider implements PaymentProviderInterface
         if (is_null($user->getBirthDate())) {
             throw new PaymentException(PaymentException::NO_BIRTHDATE);
         }
-        $body['Birthday'] = (int)$user->getBirthDate()->format('U');
-        
-        $body['KYCLevel'] = "LIGHT";
+        $body['Birthday'] = (int) $user->getBirthDate()->format('U');
 
-        $dataProvider = new DataProvider($this->serverUrl."users/", self::ITEM_USER_NATURAL."/".$identifier);
+        $body['KYCLevel'] = 'LIGHT';
+
+        $dataProvider = new DataProvider($this->serverUrl.'users/', self::ITEM_USER_NATURAL.'/'.$identifier);
         $headers = [
-            "Authorization" => $this->authChain
+            'Authorization' => $this->authChain,
         ];
         $response = $dataProvider->putItem($body, $headers);
-        
-        if ($response->getCode() == 200) {
+
+        if (200 == $response->getCode()) {
             $data = json_decode($response->getValue(), true);
         } else {
             throw new PaymentException(PaymentException::UPDATE_USER_FAILED);
         }
+
         return $data['Id'];
     }
 
-
     /**
-     * Get the secured form's url for electronic payment
+     * Get the secured form's url for electronic payment.
      *
-     * @param CarpoolPayment $carpoolPayment
      * @return CarpoolPayment With redirectUrl filled
      */
     public function generateElectronicPaymentUrl(CarpoolPayment $carpoolPayment): CarpoolPayment
     {
         $user = $carpoolPayment->getUser();
-        $paymentProfiles = $this->paymentProfileRepository->findBy(['user'=>$user]);
-        
-        if (is_null($paymentProfiles) || count($paymentProfiles)==0) {
+        $paymentProfiles = $this->paymentProfileRepository->findBy(['user' => $user]);
+
+        if (is_null($paymentProfiles) || 0 == count($paymentProfiles)) {
             // No active payment profile. The User need at least a Wallet to pay so we register him and create a Wallet
             $identifier = $this->registerUser($user);
             $wallet = new Wallet();
-            $wallet->setComment("");
+            $wallet->setComment('');
             $wallet->setCurrency($this->currency);
-            $wallet->setDescription("From Mobicoop");
+            $wallet->setDescription('From Mobicoop');
             $wallet->setOwnerIdentifier($identifier);
             $wallet = $this->addWallet($wallet);
             $carpoolPayment->setCreateCarpoolProfileIdentifier($identifier); // To persist the paymentProfile in PaymentManager
@@ -438,39 +450,37 @@ class MangoPayProvider implements PaymentProviderInterface
             $identifier = $paymentProfiles[0]->getIdentifier();
             $wallet = $this->getWallets($paymentProfiles[0])[0];
         }
-        
-        
-        
-        $returnUrl = $this->baseUri."".self::LANDING_AFTER_PAYMENT;
-        if ($carpoolPayment->getOrigin()==CarpoolPayment::ORIGIN_MOBILE) {
+
+        $returnUrl = $this->baseUri.''.self::LANDING_AFTER_PAYMENT;
+        if (CarpoolPayment::ORIGIN_MOBILE == $carpoolPayment->getOrigin()) {
             $returnUrl = $this->baseMobileUri.self::LANDING_AFTER_PAYMENT_MOBILE;
-        } elseif ($carpoolPayment->getOrigin()==CarpoolPayment::ORIGIN_MOBILE_SITE) {
+        } elseif (CarpoolPayment::ORIGIN_MOBILE_SITE == $carpoolPayment->getOrigin()) {
             $returnUrl = $this->baseMobileUri.self::LANDING_AFTER_PAYMENT_MOBILE;
         }
 
         $body = [
-            "AuthorId" => $identifier,
-            "DebitedFunds" => [
-                "Currency" => $this->currency,
-                "Amount" => (int)($carpoolPayment->getAmountOnline()*100)
+            'AuthorId' => $identifier,
+            'DebitedFunds' => [
+                'Currency' => $this->currency,
+                'Amount' => (int) ($carpoolPayment->getAmountOnline() * 100),
             ],
-            "Fees" => [
-                "Currency" => $this->currency,
-                "Amount" => 0
+            'Fees' => [
+                'Currency' => $this->currency,
+                'Amount' => 0,
             ],
-            "CreditedWalletId" => $wallet->getId(),
-            "ReturnURL" => $returnUrl."?paymentPaymentId=".$carpoolPayment->getId(),
-            "CardType" => self::CARD_TYPE,
-            "Culture" => self::LANGUAGE
+            'CreditedWalletId' => $wallet->getId(),
+            'ReturnURL' => $returnUrl.'?paymentPaymentId='.$carpoolPayment->getId(),
+            'CardType' => self::CARD_TYPE,
+            'Culture' => self::LANGUAGE,
         ];
 
         $dataProvider = new DataProvider($this->serverUrl, self::ITEM_PAYIN);
         $headers = [
-            "Authorization" => $this->authChain
+            'Authorization' => $this->authChain,
         ];
         $response = $dataProvider->postCollection($body, $headers);
-        
-        if ($response->getCode() == 200) {
+
+        if (200 == $response->getCode()) {
             $data = json_decode($response->getValue(), true);
         } else {
             throw new PaymentException(PaymentException::GET_URL_PAYIN_FAILED);
@@ -478,13 +488,13 @@ class MangoPayProvider implements PaymentProviderInterface
 
         $carpoolPayment->setTransactionid($data['Id']);
         $carpoolPayment->setRedirectUrl($data['RedirectURL']);
-        $carpoolPayment->setTransactionPostData($carpoolPayment->getTransactionPostData().((!is_null($carpoolPayment->getTransactionPostData())) ? "|" : "").json_encode($body));
-        
+        $carpoolPayment->setTransactionPostData($carpoolPayment->getTransactionPostData().((!is_null($carpoolPayment->getTransactionPostData())) ? '|' : '').json_encode($body));
+
         return $carpoolPayment;
     }
 
     /**
-     * Process an electronic payment between the $debtor and the $creditors
+     * Process an electronic payment between the $debtor and the $creditors.
      *
      * array of creditors are like this :
      * $creditors = [
@@ -493,16 +503,12 @@ class MangoPayProvider implements PaymentProviderInterface
      *      "amount" => float
      *  ]
      * ]
-     *
-     * @param User $debtor
-     * @param array $creditors
-     * @return void
      */
     public function processElectronicPayment(User $debtor, array $creditors)
     {
         // Get the wallet of the debtor and his identifier
         $debtorPaymentProfile = $this->paymentProfileRepository->find($debtor->getPaymentProfileId());
-        
+
         // Transfer to the creditors wallets and payout
         foreach ($creditors as $creditor) {
             $creditorWallet = $creditor['user']->getWallets()[0];
@@ -516,87 +522,83 @@ class MangoPayProvider implements PaymentProviderInterface
     }
 
     /**
-     * Transfer founds bewteen two wallets
+     * Transfer founds bewteen two wallets.
      *
-     * @param integer $debtorIdentifier MangoPay's identifier of the debtor
-     * @param Wallet $walletFrom    Wallet of the debtor
-     * @param Wallet $walletTo      Wallet of the creditor
-     * @param float $amount         Amount of the transaction
-     * @param string $tag
-     * @return boolean
+     * @param int    $debtorIdentifier MangoPay's identifier of the debtor
+     * @param Wallet $walletFrom       Wallet of the debtor
+     * @param Wallet $walletTo         Wallet of the creditor
+     * @param float  $amount           Amount of the transaction
      */
-    public function transferWalletToWallet(int $debtorIdentifier, Wallet $walletFrom, Wallet $walletTo, float $amount, string $tag=""): bool
+    public function transferWalletToWallet(int $debtorIdentifier, Wallet $walletFrom, Wallet $walletTo, float $amount, string $tag = ''): bool
     {
         $body = [
-            "AuthorId" => $debtorIdentifier,
-            "DebitedFunds" => [
-                "Currency" => $this->currency,
-                "Amount" => (int)($amount*100)
+            'AuthorId' => $debtorIdentifier,
+            'DebitedFunds' => [
+                'Currency' => $this->currency,
+                'Amount' => (int) ($amount * 100),
             ],
-            "Fees" => [
-                "Currency" => $this->currency,
-                "Amount" => 0
+            'Fees' => [
+                'Currency' => $this->currency,
+                'Amount' => 0,
             ],
-            "DebitedWalletId" => $walletFrom->getId(),
-            "CreditedWalletId" => $walletTo->getId(),
-            "Tag" => $tag
+            'DebitedWalletId' => $walletFrom->getId(),
+            'CreditedWalletId' => $walletTo->getId(),
+            'Tag' => $tag,
         ];
 
         $dataProvider = new DataProvider($this->serverUrl, self::ITEM_TRANSFERS);
         $headers = [
-            "Authorization" => $this->authChain
+            'Authorization' => $this->authChain,
         ];
         $response = $dataProvider->postCollection($body, $headers);
-        
-        if ($response->getCode() == 200) {
+
+        if (200 == $response->getCode()) {
             //$data = json_decode($response->getValue(), true);
             return true;
-        } else {
-            return false;
         }
+
+        return false;
     }
 
     /**
-     * Trigger a payout from a Wallet to a Bank Account
-     *
-     * @param Wallet $wallet
-     * @param BankAccount $bankAccount
-     * @return boolean
+     * Trigger a payout from a Wallet to a Bank Account.
      */
-    public function triggerPayout(int $authorIdentifier, Wallet $wallet, BankAccount $bankAccount, float $amount, string $reference=""): bool
+    public function triggerPayout(int $authorIdentifier, Wallet $wallet, BankAccount $bankAccount, float $amount, string $reference = ''): bool
     {
         $body = [
-            "AuthorId" => $authorIdentifier,
-            "DebitedFunds" => [
-                "Currency" => $this->currency,
-                "Amount" => (int)($amount*100)
+            'AuthorId' => $authorIdentifier,
+            'DebitedFunds' => [
+                'Currency' => $this->currency,
+                'Amount' => (int) ($amount * 100),
             ],
-            "Fees" => [
-                "Currency" => $this->currency,
-                "Amount" => 0
+            'Fees' => [
+                'Currency' => $this->currency,
+                'Amount' => 0,
             ],
-            "DebitedWalletId" => $wallet->getId(),
-            "BankAccountId" => $bankAccount->getId(),
-            "BankWireRef" => $reference
+            'DebitedWalletId' => $wallet->getId(),
+            'BankAccountId' => $bankAccount->getId(),
+            'BankWireRef' => $reference,
         ];
 
         $dataProvider = new DataProvider($this->serverUrl, self::ITEM_PAYOUT);
         $headers = [
-            "Authorization" => $this->authChain
+            'Authorization' => $this->authChain,
         ];
         $response = $dataProvider->postCollection($body, $headers);
-        
-        if ($response->getCode() == 200) {
+
+        if (200 == $response->getCode()) {
             //$data = json_decode($response->getValue(), true);
             return true;
-        } else {
-            return false;
         }
+
+        return false;
     }
 
     /**
-     * Handle a payment web hook
-     * @var Hook $hook The mangopay hook
+     * Handle a payment web hook.
+     *
+     * @var Hook The mangopay hook
+     *
      * @return Hook with status and transaction id
      */
     public function handleHook(Hook $hook): Hook
@@ -605,10 +607,14 @@ class MangoPayProvider implements PaymentProviderInterface
             case MangoPayHook::PAYIN_SUCCEEDED:
             case MangoPayHook::VALIDATION_SUCCEEDED:
                 $hook->setStatus(Hook::STATUS_SUCCESS);
+
                 break;
+
             case MangoPayHook::VALIDATION_OUTDATED:
                 $hook->setStatus(Hook::STATUS_OUTDATED_RESSOURCE);
+
                 break;
+
             default:
                 $hook->setStatus(Hook::STATUS_FAILED);
         }
@@ -619,68 +625,62 @@ class MangoPayProvider implements PaymentProviderInterface
     /**
      * Upload an identity validation document
      * The document is not stored on the platform. It has to be deleted.
-     *
-     * @param ValidationDocument $validationDocument
-     * @return ValidationDocument
      */
     public function uploadValidationDocument(ValidationDocument $validationDocument): ValidationDocument
     {
         $user = $validationDocument->getUser();
-        $paymentProfiles = $this->paymentProfileRepository->findBy(['user'=>$user]);
-        if (is_null($paymentProfiles) || count($paymentProfiles)==0) {
+        $paymentProfiles = $this->paymentProfileRepository->findBy(['user' => $user]);
+        if (is_null($paymentProfiles) || 0 == count($paymentProfiles)) {
             throw new PaymentException(PaymentException::CARPOOL_PAYMENT_NOT_FOUND);
         }
         $identifier = $paymentProfiles[0]->getIdentifier();
 
         //$fileContent = base64_encode(file_get_contents(self::VALIDATION_DOCUMENTS_PATH."".$validationDocument->getFileName()));
-        
 
         // General header for all 3 requests
         $headers = [
-            "Authorization" => $this->authChain
+            'Authorization' => $this->authChain,
         ];
 
-
         // Creation of the doc
-        $urlPost = str_replace("{userId}", $identifier, self::ITEM_KYC_CREATE_DOC);
+        $urlPost = str_replace('{userId}', $identifier, self::ITEM_KYC_CREATE_DOC);
         $body = [
-            "Type" => self::VALIDATION_DOC_TYPE,
-            "Tag" => "Automatic"
+            'Type' => self::VALIDATION_DOC_TYPE,
+            'Tag' => 'Automatic',
         ];
         $dataProvider = new DataProvider($this->serverUrl, $urlPost);
         $response = $dataProvider->postCollection($body, $headers);
-        if ($response->getCode() == 200) {
+        if (200 == $response->getCode()) {
             $data = json_decode($response->getValue(), true);
             $docId = $data['Id'];
         } else {
             throw new PaymentException(PaymentException::ERROR_CREATING_DOC_TO_PROVIDER);
         }
-        
+
         // Creation of pages
-        $urlPost = str_replace("{KYCDocId}", $docId, str_replace("{userId}", $identifier, self::ITEM_KYC_CREATE_PAGE));
+        $urlPost = str_replace('{KYCDocId}', $docId, str_replace('{userId}', $identifier, self::ITEM_KYC_CREATE_PAGE));
 
         $body = [
-            "File" => base64_encode(file_get_contents($this->validationDocsPath."".$validationDocument->getFileName()))
+            'File' => base64_encode(file_get_contents($this->validationDocsPath.''.$validationDocument->getFileName())),
         ];
         $dataProvider = new DataProvider($this->serverUrl, $urlPost);
         $response = $dataProvider->postCollection($body, $headers);
-        if ($response->getCode() !== 204) {
+        if (204 !== $response->getCode()) {
             throw new PaymentException(PaymentException::ERROR_CREATING_DOC_PAGE_TO_PROVIDER);
         }
 
         // Asking validation
-        $urlPost = str_replace("{KYCDocId}", $docId, str_replace("{userId}", $identifier, self::ITEM_KYC_PUT_DOC));
-        
+        $urlPost = str_replace('{KYCDocId}', $docId, str_replace('{userId}', $identifier, self::ITEM_KYC_PUT_DOC));
+
         $body = [
-            "Status" => self::VALIDATION_ASKED
+            'Status' => self::VALIDATION_ASKED,
         ];
-        
 
         $dataProvider = new DataProvider($this->serverUrl, $urlPost);
         $response = $dataProvider->putItem($body, $headers);
-        if ($response->getCode() == 200) {
+        if (200 == $response->getCode()) {
             $data = json_decode($response->getValue(), true);
-            if ($data['Status']!== self::VALIDATION_ASKED) {
+            if (self::VALIDATION_ASKED !== $data['Status']) {
                 throw new PaymentException(PaymentException::ERROR_VALIDATION_ASK_DOC_BAD_STATUS);
             }
             $validationDocument->setIdentifier($docId);
@@ -692,9 +692,9 @@ class MangoPayProvider implements PaymentProviderInterface
     }
 
     /**
-     * Deserialize a BankAccount
-     * @param array $account                    The account to deserialize
-     * @return BankAccount
+     * Deserialize a BankAccount.
+     *
+     * @param array $account The account to deserialize
      */
     public function deserializeBankAccount(array $account): BankAccount
     {
@@ -710,10 +710,10 @@ class MangoPayProvider implements PaymentProviderInterface
         if (!empty($account['OwnerAddress'])) {
             $address = new Address();
             $streetAddress = $account['OwnerAddress']['AddressLine1'];
-            if (trim($account['OwnerAddress']['AddressLine2'])!=="") {
-                $streetAddress .= " ".$account['OwnerAddress']['AddressLine2'];
+            if ('' !== trim($account['OwnerAddress']['AddressLine2'])) {
+                $streetAddress .= ' '.$account['OwnerAddress']['AddressLine2'];
             }
-            
+
             $address->setStreetAddress($streetAddress);
             $address->setAddressLocality($account['OwnerAddress']['City']);
             $address->setRegion($account['OwnerAddress']['Region']);
@@ -727,9 +727,9 @@ class MangoPayProvider implements PaymentProviderInterface
     }
 
     /**
-     * Deserialize a Wallet
-     * @param array $data  The wallet to deserialize
-     * @return Wallet
+     * Deserialize a Wallet.
+     *
+     * @param array $data The wallet to deserialize
      */
     public function deserializeWallet(array $data): Wallet
     {
@@ -748,7 +748,7 @@ class MangoPayProvider implements PaymentProviderInterface
         // Get the Users matching the Owners of this wallet
         $paymentProfiles = [];
         foreach ($data['Owners'] as $owner) {
-            $paymentProfile = $this->paymentProfileRepository->findOneBy(['identifier'=>$owner]);
+            $paymentProfile = $this->paymentProfileRepository->findOneBy(['identifier' => $owner]);
             if (!is_null($paymentProfile)) {
                 $paymentProfiles[] = $paymentProfile;
             }
@@ -759,46 +759,70 @@ class MangoPayProvider implements PaymentProviderInterface
 
     public function getDocument($validationDocumentId)
     {
-        $dataProvider = new DataProvider($this->serverUrl."kyc/documents/".$validationDocumentId."/");
+        $dataProvider = new DataProvider($this->serverUrl.'kyc/documents/'.$validationDocumentId.'/');
         $headers = [
-            "Authorization" => $this->authChain
+            'Authorization' => $this->authChain,
         ];
-        $validationDocument = new ValidationDocument;
+        $validationDocument = new ValidationDocument();
         $response = $dataProvider->getCollection(null, $headers);
-        if ($response->getCode() == 200) {
+        if (200 == $response->getCode()) {
             $data = json_decode($response->getValue(), true);
+
             switch ($data['RefusedReasonType']) {
                 case self::OUT_OF_DATE:
                     $validationDocument->setStatus(ValidationDocument::OUT_OF_DATE);
+
                     break;
+
                 case self::UNDERAGE_PERSON:
                     $validationDocument->setStatus(ValidationDocument::UNDERAGE_PERSON);
+
                     break;
+
                 case self::DOCUMENT_FALSIFIED:
                     $validationDocument->setStatus(ValidationDocument::DOCUMENT_FALSIFIED);
+
                     break;
+
                 case self::DOCUMENT_MISSING:
                     $validationDocument->setStatus(ValidationDocument::DOCUMENT_MISSING);
+
                     break;
+
                 case self::DOCUMENT_HAS_EXPIRED:
                     $validationDocument->setStatus(ValidationDocument::DOCUMENT_HAS_EXPIRED);
+
                     break;
+
                 case self::DOCUMENT_NOT_ACCEPTED:
                     $validationDocument->setStatus(ValidationDocument::DOCUMENT_NOT_ACCEPTED);
+
                     break;
+
                 case self::DOCUMENT_DO_NOT_MATCH_USER_DATA:
                     $validationDocument->setStatus(ValidationDocument::DOCUMENT_DO_NOT_MATCH_USER_DATA);
+
                     break;
+
                 case self::DOCUMENT_UNREADABLE:
                     $validationDocument->setStatus(ValidationDocument::DOCUMENT_UNREADABLE);
+
                     break;
+
                 case self::DOCUMENT_INCOMPLETE:
                     $validationDocument->setStatus(ValidationDocument::DOCUMENT_INCOMPLETE);
+
+                    break;
+
+                case self::SPECIFIC_CASE:
+                    $validationDocument->setStatus(ValidationDocument::SPECIFIC_CASE);
+
                     break;
             }
         } else {
             throw new PaymentException(PaymentException::ERROR_DOC);
         }
+
         return $validationDocument;
     }
 }

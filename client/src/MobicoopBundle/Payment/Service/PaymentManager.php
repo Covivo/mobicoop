@@ -19,15 +19,15 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace Mobicoop\Bundle\MobicoopBundle\Payment\Service;
 
-use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\PaymentItem;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ask;
 use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\BankAccount;
+use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\PaymentItem;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\PaymentPayment;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\PaymentPeriod;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\PaymentWeek;
@@ -42,11 +42,8 @@ class PaymentManager
 {
     private $dataProvider;
 
-
     /**
      * Constructor.
-     *
-     * @param DataProvider $dataProvider
      */
     public function __construct(DataProvider $dataProvider)
     {
@@ -55,10 +52,11 @@ class PaymentManager
     }
 
     /**
-     * Get the bank coordinates of a User
-     * @param string $iban      IBAN of the bank account
-     * @param string $bic       BIC of the bank account
-     * @param array $address    Address linked to the back account
+     * Get the bank coordinates of a User.
+     *
+     * @param string $iban    IBAN of the bank account
+     * @param string $bic     BIC of the bank account
+     * @param array  $address Address linked to the back account
      */
     public function addBankCoordinates(string $iban, string $bic, array $address)
     {
@@ -69,71 +67,77 @@ class PaymentManager
         $bankAccount->setBic($bic);
 
         $bankAccountAddress = new Address();
-        $bankAccountAddress->setStreetAddress($address['streetAddress']);
-        $bankAccountAddress->setAddressLocality($address['addressLocality']);
-        $bankAccountAddress->setRegion($address['macroRegion']);
-        $bankAccountAddress->setPostalCode($address['postalCode']);
-        $bankAccountAddress->setAddressCountry($address['addressCountry']);
-        $bankAccountAddress->setCountryCode($address['countryCode']);
-        
+        $bankAccountAddress->setStreet(isset($address['street']) ? $address['street'] : null);
+        $bankAccountAddress->setHouseNumber(isset($address['houseNumber']) ? $address['houseNumber'] : null);
+        $bankAccountAddress->setStreetAddress(isset($address['streetAddress']) ? $address['streetAddress'] : null);
+        $bankAccountAddress->setAddressLocality(isset($address['addressLocality']) ? $address['addressLocality'] : null);
+        $bankAccountAddress->setRegion(isset($address['macroRegion']) ? $address['macroRegion'] : null);
+        $bankAccountAddress->setPostalCode(isset($address['postalCode']) ? $address['postalCode'] : null);
+        $bankAccountAddress->setAddressCountry(isset($address['addressCountry']) ? $address['addressCountry'] : null);
+        $bankAccountAddress->setCountryCode(isset($address['countryCode']) ? $address['countryCode'] : null);
+
         $bankAccount->setAddress($bankAccountAddress);
 
         $response = $this->dataProvider->post($bankAccount);
-        if ($response->getCode() == 201) {
+        if (201 == $response->getCode()) {
             return $response->getValue();
-        } else {
-            return ['error'=>$response->getValue()];
         }
+
+        return ['error' => $response->getValue()];
+
         return null;
     }
-    
+
     /**
-     * Delete a bank account
-     * @param int $bankAccountid  Id (provider's one) of the Bank account to delete
+     * Delete a bank account.
+     *
+     * @param int $bankAccountid Id (provider's one) of the Bank account to delete
      */
     public function deleteBankCoordinates(int $bankAccountid)
     {
         $this->dataProvider->setClass(BankAccount::class);
 
-        $response = $this->dataProvider->getSpecialCollection('disable', ['idBankAccount'=>$bankAccountid]);
-        if ($response->getCode() == 200) {
+        $response = $this->dataProvider->getSpecialCollection('disable', ['idBankAccount' => $bankAccountid]);
+        if (200 == $response->getCode()) {
             return $response->getValue()->getMember();
-        } else {
-            return ['error'=>1];
         }
+
+        return ['error' => 1];
+
         return null;
     }
 
     /**
-     * Get payments
+     * Get payments.
      *
-     * @param integer $frequency    The frequency of the carpools to get (1 = punctual, 2 = regular)
-     * @param integer $type         The type of carpools to get (1 = to pay as a passenger, 2 = to collect as a driver)
-     * @param string  $week         The week number and year
+     * @param int    $frequency The frequency of the carpools to get (1 = punctual, 2 = regular)
+     * @param int    $type      The type of carpools to get (1 = to pay as a passenger, 2 = to collect as a driver)
+     * @param string $week      The week number and year
      */
-    public function getPaymentItems(int $frequency, int $type, string $week=null)
+    public function getPaymentItems(int $frequency, int $type, string $week = null)
     {
         $params = [
-            "frequency" => $frequency,
-            "type" => $type
+            'frequency' => $frequency,
+            'type' => $type,
         ];
         if ($week) {
             $params['week'] = $week;
         }
 
         $response = $this->dataProvider->getCollection($params);
+
         return $response->getValue()->getMember();
     }
 
     /**
-     * Post payments
+     * Post payments.
      *
-     * @param integer $type The payment type (1 = a payment to be made, 2 = a payment validation).
+     * @param int   $type  the payment type (1 = a payment to be made, 2 = a payment validation)
      * @param array $items The items concerned by the payment.
-     * Each item of the array contains the :
-     * - the id of the payment item
-     * - the status (1 = realized, 2 = not realized)
-     * - the mode for the payment if type = 1 (1 = online, 2 = direct)
+     *                     Each item of the array contains the :
+     *                     - the id of the payment item
+     *                     - the status (1 = realized, 2 = not realized)
+     *                     - the mode for the payment if type = 1 (1 = online, 2 = direct)
      */
     public function postPaymentPayment(int $type, array $items)
     {
@@ -143,9 +147,9 @@ class PaymentManager
 
         $paymentPayment->setType($type);
         $paymentPayment->setItems($items);
-        
+
         $response = $this->dataProvider->post($paymentPayment);
-        if ($response->getCode() != 201) {
+        if (201 != $response->getCode()) {
             return $response->getValue();
         }
 
@@ -153,63 +157,66 @@ class PaymentManager
     }
 
     /**
-     * Get a PaymentPayment by its id
+     * Get a PaymentPayment by its id.
      *
-     * @param integer $id Id of the PaymentPayment
-     * @return PaymentPayment|null
+     * @param int $id Id of the PaymentPayment
      */
     public function getPaymentPayment(int $id): ?PaymentPayment
     {
         $this->dataProvider->setClass(PaymentPayment::class);
 
         $response = $this->dataProvider->getItem($id);
-        if ($response->getCode() != 201) {
+        if (201 != $response->getCode()) {
             return $response->getValue();
         }
     }
 
     /**
-     * Get weeks with a pending payment
+     * Get weeks with a pending payment.
      *
      * @param int $askId
-     * @return void
      */
     public function getWeeks($askId)
     {
         $this->dataProvider->setClass(Ask::class);
 
         $response = $this->dataProvider->getSpecialItem($askId, 'pendingPayment');
-        if ($response->getCode() != 201) {
+        if (201 != $response->getCode()) {
             return $response->getValue()->getWeekItems();
         }
+
         return $response->getValue();
     }
 
     /**
-     * Get the calendar of payments for a regular Ad
+     * Get the calendar of payments for a regular Ad.
      *
      * @param int $type The type of payment (collect/pay)
-     * @return object|array The calendar
+     *
+     * @return array|object The calendar
      */
     public function getCalendar(int $type)
     {
         $this->dataProvider->setClass(PaymentPeriod::class);
 
-        $response = $this->dataProvider->getCollection(['type'=>$type]);
+        $response = $this->dataProvider->getCollection(['type' => $type]);
+
         return $response->getValue()->getMember();
     }
 
     /**
-     * Get the first non validated week for a regular Ask
+     * Get the first non validated week for a regular Ask.
      *
      * @param int $id The id of the ask
-     * @return object|array The week
+     *
+     * @return array|object The week
      */
     public function getFirstWeek(int $id)
     {
         $this->dataProvider->setClass(PaymentWeek::class);
 
         $response = $this->dataProvider->getItem($id);
+
         return $response->getValue();
     }
 }

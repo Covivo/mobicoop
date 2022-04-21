@@ -1,0 +1,15 @@
+{# CAREFUL : Some client might need to replicate this template #}
+{% extends '/email/notification/base.html.twig' %}
+{% block body %}
+<p>Bonjour,
+<br />
+<br />Notre système a détecté que l'utilisateur <b>{{ context.scammer.givenName }} {{ context.scammer.familyName }}</b> ne respecte pas notre charte d'utilisation et propose à notre communauté des paiements par carte prépayée (exemple : Transcash). Nous interdisons ce type de paiement considéré comme frauduleux. Cet utilisateur a été supprimé de la plateforme et nous vous recommandons de ne pas répondre à ses messages si vous communiquez par d'autres canaux.
+<br />
+<br />Pour rappel, sur mobicoop.fr il existe 2 types de paiements principaux :</p>
+<ul>
+<li>Directement de la main à la main le jour du covoiturage. Nous vous invitons à déclarer par la suite le trajet comme “payé à la main” depuis la page “ Mes covoiturages acceptés ”;</li>
+<li>Par carte bancaire depuis la page “ Mes covoiturages acceptés ”. Pour cela vous devez compléter vos informations bancaires dans votre Profil.</li>
+</ul>
+<p>Il est possible de nous signaler un utilisateur douteux en cliquant sur le bouton Signaler accessible sur la messagerie en ligne de mobicoop.fr et sur le profil d'un utilisateur.</p>
+<p>Nous sommes désolés pour le désagrément et nous vous invitons à <a href="{{api_env('EMAILS_PLATFORM_URL')}}~/covoiturage/publierannonce">publier une annonce</a></p
+{% endblock %}

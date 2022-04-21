@@ -152,7 +152,7 @@ class DataProvider
         $this->request = $requestStack->getCurrentRequest();
 
         // use the following for debugging token related problems !
-        // $this->cache->deleteItem($this->tokenId . '.jwt.token');
+        // $this->cache->deleteItem($this->tokenId.'.jwt.token');
         // $this->session->remove('apiToken');
         // $this->session->remove('apiRefreshToken');
 

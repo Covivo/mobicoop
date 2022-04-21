@@ -140,7 +140,7 @@ class Message
      * @var null|SolidaryAskHistory the solidary ask history item if the message is related to an ask
      *
      * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\SolidaryAskHistory", mappedBy="message")
-     * @Groups({"read","threads","thread"})
+     * @Groups({"read","write","threads","thread"})
      * @MaxDepth(1)
      */
     private $solidaryAskHistory;

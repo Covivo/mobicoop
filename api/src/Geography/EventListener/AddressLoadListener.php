@@ -19,18 +19,17 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Geography\EventListener;
 
 use App\Geography\Entity\Address;
 use App\Geography\Service\GeoTools;
-use App\User\Entity\User;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Symfony\Component\Security\Core\Security;
 
 /**
- * Address Load Event listener
+ * Address Load Event listener.
  */
 class AddressLoadListener
 {
@@ -48,6 +47,9 @@ class AddressLoadListener
         $address = $args->getEntity();
         if ($address instanceof Address) {
             $address->setDisplayLabel($this->geoTools->getDisplayLabel($address, $this->security->getUser()));
+            if ($address->getEvent()) {
+                $address->setName($address->getEvent()->getName());
+            }
         }
     }
 }

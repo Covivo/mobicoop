@@ -19,17 +19,17 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\Repository;
 
-use App\User\Entity\User;
-use Doctrine\ORM\EntityManagerInterface;
 use App\Community\Entity\Community;
-use App\Solidary\Entity\Structure;
 use App\Solidary\Entity\SolidaryBeneficiary;
 use App\Solidary\Entity\SolidaryVolunteer;
+use App\Solidary\Entity\Structure;
 use App\Solidary\Exception\SolidaryException;
+use App\User\Entity\User;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Psr\Log\LoggerInterface;
 
@@ -46,6 +46,7 @@ class UserRepository
     {
         $this->repository = $entityManager->getRepository(User::class);
         $this->logger = $logger;
+        $this->entityManager = $entityManager;
     }
 
     public function find(int $id): ?User
@@ -54,9 +55,9 @@ class UserRepository
     }
 
     /**
-     * Find All the users
+     * Find All the users.
      *
-     * @return User|null
+     * @return null|User
      */
     public function findAll(): ?array
     {
@@ -64,9 +65,12 @@ class UserRepository
     }
 
     /**
-     * Find All the users by criteria
+     * Find All the users by criteria.
      *
-     * @return User|null
+     * @param null|mixed $limit
+     * @param null|mixed $offset
+     *
+     * @return null|User
      */
     public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null): ?array
     {
@@ -75,44 +79,46 @@ class UserRepository
 
     public function findOneBy(array $criteria): ?User
     {
-        $user = $this->repository->findOneBy($criteria);
-        return $user;
+        return $this->repository->findOneBy($criteria);
     }
 
     /**
-     * Get all the users in the communities given
+     * Get all the users in the communities given.
      *
-     * @param Community $community
-     * @return User|null
+     * @param null|mixed $acceptEmail
+     *
+     * @return null|User
      */
     public function getUserInCommunity(Community $community, $acceptEmail = null)
     {
         $qb = $this->repository->createQueryBuilder('u')
             ->leftJoin('u.communityUsers', 'c')
-            ->andWhere("c.community = :community")
-            ->setParameter('community', $community) ;
+            ->andWhere('c.community = :community')
+            ->setParameter('community', $community)
+        ;
 
-        if ($acceptEmail != null) {
+        if (null != $acceptEmail) {
             $qb->andWhere(('u.newsSubscription = 1'));
         }
-            
+
         return $qb
             ->getQuery()
-            ->getResult();
+            ->getResult()
+        ;
     }
 
     /**
-     * Get Users with a specific type of SolidaryUser
+     * Get Users with a specific type of SolidaryUser.
      *
-     * @param string $type      Type of SolidaryUser (Beneficiary or Volunteer)
-     * @param array $filters    Optionnal filters
-     * @return array|null
+     * @param string $type    Type of SolidaryUser (Beneficiary or Volunteer)
+     * @param array  $filters Optionnal filters
      */
-    public function findUsersBySolidaryUserType(string $type=null, array $filters = null, Structure $structureAdmin=null): ?array
+    public function findUsersBySolidaryUserType(string $type = null, array $filters = null, Structure $structureAdmin = null): ?array
     {
-        $this->logger->info("Start findUsersBySolidaryUserType");
+        $this->logger->info('Start findUsersBySolidaryUserType');
         $query = $this->repository->createQueryBuilder('u')
-        ->join('u.solidaryUser', 'su');
+            ->join('u.solidaryUser', 'su')
+        ;
 
         // filter by structure
         if (!is_null($structureAdmin)) {
@@ -120,9 +126,9 @@ class UserRepository
         }
 
         // Type
-        if ($type==SolidaryBeneficiary::TYPE) {
+        if (SolidaryBeneficiary::TYPE == $type) {
             $query->where('su.beneficiary = true');
-        } elseif ($type==SolidaryVolunteer::TYPE) {
+        } elseif (SolidaryVolunteer::TYPE == $type) {
             $query->where('su.volunteer = true');
         } else {
             throw new SolidaryException(SolidaryException::TYPE_SOLIDARY_USER_UNKNOWN);
@@ -131,13 +137,13 @@ class UserRepository
         // Filters
         if (!is_null($filters)) {
             foreach ($filters as $filter => $value) {
-                $query->andWhere("u.".$filter." like '%".$value."%'");
+                $query->andWhere('u.'.$filter." like '%".$value."%'");
             }
         }
 
         // Structure filter
         if (!is_null($structureAdmin)) {
-            $query->andWhere("sus.structure = :structure");
+            $query->andWhere('sus.structure = :structure');
             $query->setParameter('structure', $structureAdmin);
         }
 
@@ -146,45 +152,50 @@ class UserRepository
     }
 
     /**
-     * Get users by their id if they accept emailing
+     * Get users by their id if they accept emailing.
      *
-     * @param array $ids    The ids of the users
-     * @return array|null   The users
+     * @param array $ids The ids of the users
+     *
+     * @return null|array The users
      */
     public function findDeliveriesByIds(array $ids)
     {
         return $this->repository->createQueryBuilder('u')
-        ->where("u.id IN(:ids) and u.newsSubscription=1")
-        ->setParameter('ids', $ids)
-        ->getQuery()->getResult();
+            ->where('u.id IN(:ids) and u.newsSubscription=1')
+            ->setParameter('ids', $ids)
+            ->getQuery()->getResult();
     }
 
     /**
-     * Count the active users (with a connection in the last 6 months)
+     * Count the active users (with a connection in the last 6 months).
      *
-     * @return integer
+     * @return int
      */
     public function countActiveUsers(): ?int
     {
         $now = new \DateTime();
         $last6Months = $now->modify('-6 months');
-        
+
         $query = $this->repository->createQueryBuilder('u')
-        ->select('count(u.id)')
-        ->where("u.lastActivityDate >= :last6months")
-        ->setParameter('last6months', $last6Months);
+            ->select('count(u.id)')
+            ->where('u.lastActivityDate >= :last6months')
+            ->setParameter('last6months', $last6Months)
+        ;
+
         return $query->getQuery()->getSingleScalarResult();
     }
 
     /**
-     * Count users
+     * Count users.
      *
-     * @return integer
+     * @return int
      */
     public function countUsers(): ?int
     {
         $query = $this->repository->createQueryBuilder('u')
-        ->select('count(u.id)');
+            ->select('count(u.id)')
+        ;
+
         return $query->getQuery()->getSingleScalarResult();
     }
 }

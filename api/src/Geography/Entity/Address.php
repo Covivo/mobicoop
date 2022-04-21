@@ -170,7 +170,7 @@ class Address implements \JsonSerializable
      * @var string the house number
      *
      * @ORM\Column(type="string", length=45, nullable=true)
-     * @Groups({"aRead", "aReadCol", "aReadItem", "aWrite", "read","readUser","results","write","writeRelayPoint","pt","mass","massCompute","threads","thread","readRelayPoint", "writeSolidary","readPayment","readCommunityAds"})
+     * @Groups({"aRead", "aReadCol", "aReadItem", "aWrite", "read","readUser","readEvent","results","write","writeRelayPoint","pt","mass","massCompute","threads","thread","readRelayPoint", "writeSolidary","readPayment","readCommunityAds"})
      */
     private $houseNumber;
 
@@ -178,7 +178,7 @@ class Address implements \JsonSerializable
      * @var string the street
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"aRead", "aReadCol", "aReadItem", "aWrite", "read","readUser","results","write","writeRelayPoint","pt","mass","massCompute","readRelayPoint", "writeSolidary","readPayment","readCommunityAds"})
+     * @Groups({"aRead", "aReadCol", "aReadItem", "aWrite", "read","readUser","readEvent","results","write","writeRelayPoint","pt","mass","massCompute","readRelayPoint", "writeSolidary","readPayment","readCommunityAds"})
      * @Assert\NotBlank(groups={"massCompute","threads","thread"})
      */
     private $street;
@@ -187,7 +187,7 @@ class Address implements \JsonSerializable
      * @var string the full street address
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"aRead", "aReadCol", "aReadItem", "aWrite", "read","readUser","results","write","writeRelayPoint","pt","mass","massCompute","threads","thread","externalJourney","readRelayPoint", "writeSolidary", "readPayment", "writePayment","readCommunityAds","readEvent"})
+     * @Groups({"aRead", "aReadCol", "aReadItem", "aWrite", "read","readUser","readEvent","results","write","writeRelayPoint","pt","mass","massCompute","threads","thread","externalJourney","readRelayPoint", "writeSolidary", "readPayment", "writePayment","readCommunityAds"})
      */
     private $streetAddress;
 
@@ -195,7 +195,7 @@ class Address implements \JsonSerializable
      * @var null|string the postal code of the address
      *
      * @ORM\Column(type="string", length=15, nullable=true)
-     * @Groups({"aRead", "aReadCol", "aReadItem", "aWrite", "read","readUser","results","write","writeRelayPoint","pt","mass","massCompute","externalJourney","readRelayPoint", "writeSolidary", "readPayment", "writePayment","readCommunityAds"})
+     * @Groups({"aRead", "aReadCol", "aReadItem", "aWrite", "read","readUser","readEvent","results","write","writeRelayPoint","pt","mass","massCompute","externalJourney","readRelayPoint", "writeSolidary", "readPayment", "writePayment","readCommunityAds"})
      * @Assert\NotBlank(groups={"massCompute","threads","thread"})
      */
     private $postalCode;
@@ -245,7 +245,7 @@ class Address implements \JsonSerializable
      * @var null|string the region of the address
      *
      * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups({"aRead", "aReadCol", "aReadItem", "aWrite", "read","readUser","results","write","writeRelayPoint","pt","mass","massCompute","threads","thread","readRelayPoint", "writeSolidary", "readPayment", "writePayment"})
+     * @Groups({"aRead", "aReadCol", "aReadItem", "aWrite", "read","readUser","readEvent","results","write","writeRelayPoint","pt","mass","massCompute","threads","thread","readRelayPoint", "writeSolidary", "readPayment", "writePayment"})
      */
     private $region;
 
@@ -253,7 +253,7 @@ class Address implements \JsonSerializable
      * @var null|string the macro region of the address
      *
      * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups({"aRead", "aReadCol", "aReadItem", "aWrite", "read","readUser","results","write","writeRelayPoint","pt","mass","massCompute","threads","thread","readRelayPoint", "writeSolidary", "writePayment"})
+     * @Groups({"aRead", "aReadCol", "aReadItem", "aWrite", "read","readUser","readEvent","results","write","writeRelayPoint","pt","mass","massCompute","threads","thread","readRelayPoint", "writeSolidary", "writePayment"})
      */
     private $macroRegion;
 
@@ -261,7 +261,7 @@ class Address implements \JsonSerializable
      * @var null|string the country of the address
      *
      * @ORM\Column(type="string", length=100, nullable=true)
-     * @Groups({"aRead", "aReadCol", "aReadItem", "aWrite", "read","readUser","results","write","writeRelayPoint","pt","mass","massCompute","threads","thread","externalJourney","readRelayPoint", "writeSolidary", "writePayment","readCommunityAds"})
+     * @Groups({"aRead", "aReadCol", "aReadItem", "aWrite", "read","readUser","readEvent","results","write","writeRelayPoint","pt","mass","massCompute","threads","thread","externalJourney","readRelayPoint", "writeSolidary", "writePayment","readCommunityAds"})
      */
     private $addressCountry;
 
@@ -269,7 +269,7 @@ class Address implements \JsonSerializable
      * @var null|string the country code of the address
      *
      * @ORM\Column(type="string", length=10, nullable=true)
-     * @Groups({"aRead", "aReadCol", "aReadItem", "aWrite", "read","readUser","results","write","writeRelayPoint","pt","mass","massCompute","threads","thread","readRelayPoint", "writeSolidary", "readPayment", "writePayment","readCommunityAds"})
+     * @Groups({"aRead", "aReadCol", "aReadItem", "aWrite", "read","readUser","readEvent","results","write","writeRelayPoint","pt","mass","massCompute","threads","thread","readRelayPoint", "writeSolidary", "readPayment", "writePayment","readCommunityAds"})
      */
     private $countryCode;
 
@@ -306,9 +306,8 @@ class Address implements \JsonSerializable
 
     /**
      * @var null|string the name of this address
-     *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"aRead", "aReadCol", "aReadItem", "aWrite", "read","readUser","results","write","writeRelayPoint","readEvent"})
+     * @Groups({"aRead", "aReadCol", "aReadItem", "aWrite", "read","readUser","results","write","readRelayPoint","writeRelayPoint","readEvent"})
      */
     private $name;
 
@@ -316,7 +315,7 @@ class Address implements \JsonSerializable
      * @var null|string the venue name of this address
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"read","readUser","results","write","writeRelayPoint","readRelayPoint"})
+     * @Groups({"read","readUser","readEvent","results","write","writeRelayPoint","readRelayPoint"})
      */
     private $venue;
 
@@ -426,6 +425,20 @@ class Address implements \JsonSerializable
      * @Groups({"read"})
      */
     private $distance;
+
+    /**
+     * @var null|string the type of the address
+     *
+     * @Groups({"read","readUser","readEvent","aRead","readRelayPoint"})
+     */
+    private $type;
+
+    /**
+     * @var null|string the region code of the address
+     *
+     * @Groups({"read","readUser","readEvent","readRelayPoint","aRead"})
+     */
+    private $regionCode;
 
     public function __construct($id = null)
     {
@@ -835,6 +848,63 @@ class Address implements \JsonSerializable
         return $this;
     }
 
+    public function getRegionCode()
+    {
+        switch (strtolower($this->countryCode)) {
+            case 'fr':
+                if ($this->postalCode && strlen($this->postalCode >= 5)) {
+                    return substr($this->postalCode, 0, 2);
+                }
+
+                return null;
+
+            default:
+                return null;
+        }
+    }
+
+    public function getType(): string
+    {
+        if (
+            $this->venue
+            && $this->name
+            && $this->addressLocality) {
+            return 'venue';
+        }
+        if (
+        $this->event
+        && $this->addressLocality) {
+            return 'event';
+        }
+        if (
+            $this->relayPoint
+            ) {
+            return 'relaypoint';
+        }
+        if (
+            $this->houseNumber && (
+                $this->street || $this->streetAddress
+            )
+            && $this->addressLocality) {
+            return 'housenumber';
+        }
+        if (
+                (
+                    $this->street || $this->streetAddress
+                )
+                && $this->addressLocality) {
+            return 'street';
+        }
+
+        if (
+            $this->user
+            && $this->isHome()) {
+            return 'user';
+        }
+
+        return 'locality';
+    }
+
     // DOCTRINE EVENTS
 
     /**
@@ -1024,6 +1094,8 @@ class Address implements \JsonSerializable
                 'event' => $this->getEvent(),
                 'layer' => $this->getLayer(),
                 'similarityWithSearch' => $this->getSimilarityWithSearch(),
+                'type' => $this->getType(),
+                'regionCode' => $this->getRegionCode(),
             ];
     }
 }

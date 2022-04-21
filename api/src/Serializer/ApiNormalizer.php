@@ -30,6 +30,7 @@ use App\Gamification\Entity\RewardStep;
 use App\Gamification\Repository\RewardRepository;
 use App\Gamification\Repository\RewardStepRepository;
 use App\User\Entity\User;
+use App\User\Service\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -52,6 +53,7 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
     private $gamificationActive;
     private $logger;
     private $request;
+    private $userManager;
 
     private $log = false;
 
@@ -68,7 +70,8 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
         string $badgeImageUri,
         string $gamificationActive,
         LoggerInterface $logger,
-        RequestStack $request
+        RequestStack $request,
+        UserManager $userManager
     ) {
         if (!$decorated instanceof DenormalizerInterface) {
             throw new \InvalidArgumentException(sprintf('The decorated normalizer must implement the %s.', DenormalizerInterface::class));
@@ -85,6 +88,7 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
         $this->gamificationActive = $gamificationActive;
         $this->logger = $logger;
         $this->request = $request->getCurrentRequest();
+        $this->userManager = $userManager;
     }
 
     public function getCurrentRewardStep(): RewardStep

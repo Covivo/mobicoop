@@ -15,37 +15,6 @@ stages:
   - admin_prod_deploy 
       
 #
-# Deployment for dev branch
-#
-dev_deploy:
-  stage: deploy
-  environment:
-    name: dev
-    url: https://dev.$$INSTANCE$$.mobicoop.io
-  only:
-    - dev
-  variables:
-    APP_ENV: dev   # /!\ important : symfony env variable /!\
-  before_script:
-    - git clone https://gitlab.com/mobicoop/instances/mobicoop-platform
-    - cd mobicoop-platform && npm install --unsafe-perm && npm run install-all-instance-ci && cd ../src && ln -s ../mobicoop-platform/client/src/MobicoopBundle && cd ../
-    - npm install --unsafe-perm
-    - npm run install-ci
-  script:
-    - echo "${SSH_DEV_PRIVATE_KEY}" > id_rsa
-    - chmod 700 id_rsa
-    - mv id_rsa ${HOME}/.ssh
-    - echo "${SSH_DEV_HOST_KEY}" > "${HOME}/.ssh/known_hosts"
-    - rsync --stats --quiet --group=www-data -rvzlt --exclude-from=.gitlab-exclude --delete --compress-level=9 -e "ssh -o StrictHostKeyChecking=no -p $SSH_PORT" ./ ${SSH_DEV_USER}@${SSH_DEV_IP}:/var/www/dev/$$INSTANCE$$
-    - ssh -o StrictHostKeyChecking=no -p ${SSH_PORT} ${SSH_DEV_USER}@${SSH_DEV_IP} "cd /var/www/dev/$$INSTANCE$$/; chmod +x postDeploy.sh; ./postDeploy.sh --version=dev --version-migrate=dev --instance=$$INSTANCE$$"    # database migration and other after deploy works
-  when: manual      # /!\ important : job executed manually /!\  
-  except:
-    refs:
-      - tags    # job not executed on tags
-    variables:
-      - $CI_COMMIT_MESSAGE =~ /skipci/    # job not executed when commit message contains this expression
-
-#
 # Deployment for test branch
 #
 test_deploy:
@@ -67,7 +36,7 @@ test_deploy:
     - chmod 700 id_rsa
     - mv id_rsa ${HOME}/.ssh
     - echo "${SSH_TEST_HOST_KEY}" > "${HOME}/.ssh/known_hosts"
-    - ssh -o StrictHostKeyChecking=no -p ${SSH_PORT} ${SSH_TEST_USER}@${SSH_TEST_IP} "cd /var/www/test/$$INSTANCE$$/; touch ./public/maintenance.enable; cd /var/www/test/$$INSTANCE$$/mobicoop/api/ touch ./public/maintenance.enable;"    # put the site on maintenance
+    - ssh -o StrictHostKeyChecking=no -p ${SSH_PORT} ${SSH_TEST_USER}@${SSH_TEST_IP} "cd /var/www/test/$$INSTANCE$$/; touch ./public/maintenance.enable; cd /var/www/test/$$INSTANCE$$/mobicoop-platform/api/; touch ./public/maintenance.enable;"    # put the site on maintenance
     - rsync --stats --quiet --group=www-data -rvzlt --exclude-from=.gitlab-exclude --delete --compress-level=9 -e "ssh -o StrictHostKeyChecking=no -p $SSH_PORT" ./ ${SSH_TEST_USER}@${SSH_TEST_IP}:/var/www/test/$$INSTANCE$$
     - ssh -o StrictHostKeyChecking=no -p ${SSH_PORT} ${SSH_TEST_USER}@${SSH_TEST_IP} "cd /var/www/test/$$INSTANCE$$/; chmod +x postDeploy.sh; ./postDeploy.sh --version=test --version-migrate=test --instance=$$INSTANCE$$"    # database migration and other after deploy works
   when: manual      # /!\ important : job executed manually /!\  
@@ -99,7 +68,7 @@ prod_deploy:
     - chmod 700 id_rsa
     - mv id_rsa ${HOME}/.ssh
     - echo "${SSH_PROD_HOST_KEY}" > "${HOME}/.ssh/known_hosts"
-    - ssh -o StrictHostKeyChecking=no -p ${SSH_PORT} ${SSH_PROD_USER}@${SSH_PROD_IP} "cd /var/www/$$INSTANCE$$/prod/; touch ./public/maintenance.enable; cd /var/www/$$INSTANCE$$/prod/mobicoop/api/ touch ./public/maintenance.enable;"    # put the site on maintenance
+    - ssh -o StrictHostKeyChecking=no -p ${SSH_PORT} ${SSH_PROD_USER}@${SSH_PROD_IP} "cd /var/www/$$INSTANCE$$/prod/; touch ./public/maintenance.enable; cd /var/www/$$INSTANCE$$/prod/mobicoop-platform/api/; touch ./public/maintenance.enable;"    # put the site on maintenance
     - rsync --stats --quiet --group=www-data -rvzlt --exclude-from=.gitlab-exclude --delete --compress-level=9 -e "ssh -o StrictHostKeyChecking=no -p $SSH_PORT" ./ ${SSH_PROD_USER}@${SSH_PROD_IP}:/var/www/$$INSTANCE$$/prod
     - ssh -o StrictHostKeyChecking=no -p ${SSH_PORT} ${SSH_PROD_USER}@${SSH_PROD_IP} "cd /var/www/$$INSTANCE$$/prod/; chmod +x postDeploy.sh; ./postDeploy.sh --version=prod --version-migrate=prod --instance=$$INSTANCE$$"    # database migration and other after deploy works
   when: manual      # /!\ important : job executed manually /!\  

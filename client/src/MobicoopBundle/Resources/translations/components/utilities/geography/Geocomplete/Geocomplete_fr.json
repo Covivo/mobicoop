@@ -1,0 +1,12 @@
+{
+  "locality": "Villes",
+  "street": "Rues, Avenues, Voies, Lieux-dits",
+  "housenumber": "Adresses",
+  "venue": "Points d'intérêt",
+  "relaypoint": "Points relais",
+  "user": "Adresses personnelles",
+  "event": "Evénements",
+  "other": "Autre",
+  "gps": "Point GPS",
+  "required": "Une adresse est requise"
+}

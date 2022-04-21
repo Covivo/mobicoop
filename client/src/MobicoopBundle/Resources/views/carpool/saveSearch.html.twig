@@ -18,6 +18,8 @@
         :has-potential-ads="{% if (hasPotentialAds == true) %}true{% else %}false{% endif %}" {# renvoie des entiers sinon #}
     	:default-time-precision="{{ timePrecision }}"
         :solidary-exclusive-ad="{% if (solidaryExclusive == true) %}true{% else %}false{% endif %}"
-        :prioritize-relaypoints="{{ geosearcherPrioritizeRelaypoints is defined ? geosearcherPrioritizeRelaypoints ? 'true' : 'false' : 'false' }}"
+        :geo-complete-results-order="{{geoCompleteResultsOrder|json_encode}}"
+        :geo-complete-palette="{{geoCompletePalette|json_encode}}"
+        {{ geoCompleteChip ? 'geo-complete-chip' : '' }}
     />
 {% endblock %}

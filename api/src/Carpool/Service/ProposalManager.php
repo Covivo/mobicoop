@@ -1196,7 +1196,7 @@ class ProposalManager
                 LEFT JOIN criteria c2 ON c2.direction_passenger_id = direction.id
                 LEFT JOIN position ON position.direction_id = direction.id
                 LEFT JOIN carpool_proof ON carpool_proof.direction_id = direction.id
-                WHERE 
+                WHERE
                 c1.direction_driver_id IS NULL AND
                 c2.direction_passenger_id IS NULL AND
                 position.direction_id IS NULL AND

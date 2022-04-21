@@ -436,9 +436,6 @@ class SolidaryManager
         // we set the start progression
         $solidary->setProgression(0);
 
-        // we set the start progression
-        $solidary->setProgression(0);
-
         if ($solidary->isPassenger()) {
             $this->entityManager->persist($solidary);
             $this->entityManager->flush();

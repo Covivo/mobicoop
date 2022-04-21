@@ -412,7 +412,7 @@ class PaymentManager
         }
 
         if (
-            '' == $homeAddress->getStreetAddress()
+            ('' == $homeAddress->getStreet() && '' == $homeAddress->getStreetAddress())
             || '' == $homeAddress->getAddressLocality()
             || '' == $homeAddress->getRegion()
             || '' == $homeAddress->getPostalCode()
