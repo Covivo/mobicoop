@@ -477,6 +477,7 @@ export default {
   background-color:#007B85;
   margin:0px;
   color:white;
+  font-family: Poppins, sans-serif !important;
   a{
     text-decoration: none;
     color:white;

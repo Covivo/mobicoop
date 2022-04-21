@@ -23,10 +23,12 @@
     "error": {
         "image": "Irudia ez da erregistratua izan",
         "event": {
+            "required": "Izarrez markatutako eremu guziak beharrezkoak dira",
+            "length": "Descriptions trop longues",
             "create": "Ekitaldiaren sorrerak huts egin du",
             "name": "Ekitaldi hori jadanik existitzen da, beste izen bat emaiozu",
-            "fullDescriptionLength": "Description trop longue",
-            "descriptionLength": "Description courte trop longue"
+            "descriptionLength": "Aurkezpen motza luzeegia da (512 karaktere gehienez).",
+            "fullDescriptionLength": "Description courte trop longue (2500 caractères maximum)."
         }
     },
     "redirect": {

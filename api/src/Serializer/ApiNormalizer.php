@@ -156,7 +156,6 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
                 if (!isset($data['gamificationNotifications'])) {
                     $data['gamificationNotifications'] = [];
                 }
-
                 foreach ($this->gamificationNotifier->getNotifications() as $gamificationNotification) {
                     if ($gamificationNotification instanceof Reward) {
                         $rewardIds = [];

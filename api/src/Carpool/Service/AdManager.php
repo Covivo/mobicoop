@@ -1040,8 +1040,8 @@ class AdManager
         if (Criteria::FREQUENCY_REGULAR == $ad->getFrequency()) {
             // schedule needs data in asks results when the user that display the Ad is not the owner
             $schedule = (!is_null($askLinked))
-               ? $this->getScheduleFromResults($askLinked->getResults()[0], $proposal, $matching, $userId)
-               : $this->getScheduleFromCriteria($proposal->getCriteria(), $proposal->getProposalLinked() ? $proposal->getProposalLinked()->getCriteria() : null);
+                ? $this->getScheduleFromResults($askLinked->getResults()[0], $proposal, $matching, $userId)
+                : $this->getScheduleFromCriteria($proposal->getCriteria(), $proposal->getProposalLinked() ? $proposal->getProposalLinked()->getCriteria() : null);
             // if schedule is based on results, we do not need to update pickup times because it's already done in results
             if (Ad::ROLE_PASSENGER === $ad->getRole() && !is_null($matching) && $matching->getPickUpDuration() && !$askLinked) {
                 $schedule = $this->updateScheduleTimesWithPickUpDurations($schedule, $matching->getPickUpDuration(), $matching->getMatchingLinked() ? $matching->getMatchingLinked()->getPickUpDuration() : null);
@@ -1256,7 +1256,8 @@ class AdManager
             $ad = $this->createAd($ad, true, $withSolidaries);
             $this->proposalManager->deleteProposal($proposal);
         // minor update
-        } elseif ($oldAd->hasBike() !== $ad->hasBike()
+        } elseif (
+            $oldAd->hasBike() !== $ad->hasBike()
             || $oldAd->hasBackSeats() !== $ad->hasBackSeats()
             || $oldAd->hasLuggage() !== $ad->hasLuggage()
             || $oldAd->getSeatsDriver() !== $ad->getSeatsDriver()
@@ -1325,10 +1326,12 @@ class AdManager
     public function checkForMajorUpdate(Ad $oldAd, Ad $newAd)
     {
         // checks for regular and punctual
-        if ($oldAd->getPriceKm() !== $newAd->getPriceKm()
+        if (
+            $oldAd->getPriceKm() !== $newAd->getPriceKm()
             || $oldAd->getFrequency() !== $newAd->getFrequency()
             || $oldAd->getRole() !== $newAd->getRole()
-            || !$this->compareWaypoints($oldAd->getOutwardWaypoints(), $newAd->getOutwardWaypoints())) {
+            || !$this->compareWaypoints($oldAd->getOutwardWaypoints(), $newAd->getOutwardWaypoints())
+        ) {
             return true;
         }
 
@@ -1499,8 +1502,10 @@ class AdManager
             return false;
         }
 
-        if (!is_null($old->getReturnTime()) && is_null($new->getReturnTime())
-            || !is_null($new->getReturnTime()) && is_null($old->getReturnTime())) {
+        if (
+            !is_null($old->getReturnTime()) && is_null($new->getReturnTime())
+            || !is_null($new->getReturnTime()) && is_null($old->getReturnTime())
+        ) {
             return false;
         }
         if ($old->getReturnTime()) {
@@ -1510,8 +1515,10 @@ class AdManager
             }
         }
 
-        if (!is_null($old->getReturnDate()) && is_null($new->getReturnDate())
-            || !is_null($new->getReturnDate()) && is_null($old->getReturnDate())) {
+        if (
+            !is_null($old->getReturnDate()) && is_null($new->getReturnDate())
+            || !is_null($new->getReturnDate()) && is_null($old->getReturnDate())
+        ) {
             return false;
         }
         if ($old->getReturnDate()) {

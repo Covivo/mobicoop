@@ -2643,7 +2643,7 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
-    public function getLogsAsRelated()
+    public function getLogsAsRelated(): ?array
     {
         return !is_null($this->logsAsRelated) ? $this->logsAsRelated->getValues() : null;
     }
