@@ -196,7 +196,7 @@ class MassMigrateManager
                     $user->setSmoke($this->params['smoke']);
                     $user->setMusic($this->params['music']);
                     $user->setChat($this->params['chat']);
-                    // To do : Dynamic Language
+
                     // To do : Dynamic Language
                     $language = $this->languageRepository->findOneBy(['code'=>'fr']);
                     $user->setLanguage($language);
@@ -268,7 +268,7 @@ class MassMigrateManager
                 $this->entityManager->persist($massPerson);
             }
 
-            // Finally we send an event to inform the user of its migration
+            // Finally we send an event to inform the user of its migration if it's a new User
             if (!$user->isAlreadyRegistered()) {
                 $event = new MassMigrateUserMigratedEvent($massPerson);
                 $this->eventDispatcher->dispatch(MassMigrateUserMigratedEvent::NAME, $event);

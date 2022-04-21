@@ -129,7 +129,7 @@
           :regular="regular"
           :default-destination="defaultDestination"
           :publish-button-always-active="publishButtonAlwaysActive"
-          :default-outward-date="date"
+          :default-outward-date="dateFormated"
         />
       </v-row>
     </v-container>
@@ -266,7 +266,8 @@ export default {
         ? moment.utc(this.date).format("YYYY-MM-DD")
         : "";
     },
-  // Link the event in the adresse
+
+    // Link the event in the adresse
   },
   created: function () {
     moment.locale(this.locale); // DEFINE DATE LANGUAGE
