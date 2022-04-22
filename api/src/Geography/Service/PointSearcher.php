@@ -126,7 +126,7 @@ class PointSearcher
 
     public function geocode(string $search): array
     {
-        $this->search = $search;
+        $this->search = str_replace(['"', "'"], ' ', $search);
         $this->addGeocoderResults();
         $this->addRelayPointResults();
         $this->addEventResults();
