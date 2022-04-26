@@ -156,6 +156,8 @@
                   :label="$t('email.placeholder') + ` *`"
                   name="email"
                   required
+                  aria-required="true"
+                  :aria-label="$t('email.placeholder')"
                   :loading="loadingCheckEmailAldreadyTaken"
                   @focusout="checkEmail"
                   @focusin="emailAlreadyTaken = false"
@@ -173,6 +175,7 @@
                   :label="$t('phone.placeholder') + ` *`"
                   required
                   :rules="form.telephoneRules"
+                  aria-required="true"
                   name="telephone"
                   @keypress="isNumber(event)"
                   @focusin="phoneNumberValid = true"
@@ -419,6 +422,7 @@
                         class="primary--text"
                         target="_blank"
                         :href="$t('chart.route')"
+                        :aria-label="$t('chart.aria')"
                         @click.stop
                       >{{ $t("chart.link") }}
                       </a>

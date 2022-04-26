@@ -218,6 +218,7 @@
       <v-menu
         v-if="user"
         bottom
+        attach
         left
         role="menu"
         z-index="9"
