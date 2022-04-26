@@ -24,7 +24,7 @@
           :punctual-date-optional="punctualDateOptional"
           :show-destination="showDestination"
           :iswidget="isWidget"
-          :init-outward-date="defaultOutwardDate"
+          :init-outward-date="dateFormated"
           :image-swap="imageSwap"
           :geo-complete-results-order="geoCompleteResultsOrder"
           :geo-complete-palette="geoCompletePalette"
