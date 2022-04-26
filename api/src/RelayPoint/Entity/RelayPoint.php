@@ -19,37 +19,37 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\RelayPoint\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
-use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\RangeFilter;
-use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
-use Doctrine\Common\Collections\ArrayCollection;
-use App\User\Entity\User;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Community\Entity\Community;
 use App\Geography\Entity\Address;
-use App\RelayPoint\Entity\RelayPointType;
 use App\Image\Entity\Image;
 use App\Import\Entity\RelayPointImport;
-use App\Solidary\Entity\Structure;
-use App\RelayPoint\Filter\TerritoryFilter;
 use App\RelayPoint\Filter\RelayPointAddressTerritoryFilter;
+use App\RelayPoint\Filter\TerritoryFilter;
+use App\Solidary\Entity\Structure;
+use App\User\Entity\User;
 use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * A relay point.
  *
  * @ORM\Entity
+ * @ORM\Table(indexes={@ORM\Index(name="FULL_TEXT_NAME", columns={"name"}, flags={"fulltext"})})
  * @ORM\HasLifecycleCallbacks
  * @ApiResource(
  *      attributes={
@@ -161,12 +161,12 @@ use DateTime;
  */
 class RelayPoint
 {
-    const STATUS_PENDING = 0;
-    const STATUS_ACTIVE = 1;
-    const STATUS_INACTIVE = 2;
+    public const STATUS_PENDING = 0;
+    public const STATUS_ACTIVE = 1;
+    public const STATUS_INACTIVE = 2;
 
     /**
-     * @var int The id of this relay point.
+     * @var int the id of this relay point
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -174,9 +174,9 @@ class RelayPoint
      * @Groups({"aRead","readRelayPoint"})
      */
     private $id;
-            
+
     /**
-     * @var string The name of the relay point.
+     * @var string the name of the relay point
      *
      * @ORM\Column(type="string", length=255)
      * @Groups({"aRead","aWrite","readRelayPoint","writeRelayPoint"})
@@ -184,23 +184,23 @@ class RelayPoint
     private $name;
 
     /**
-     * @var boolean|null The relay point is private to a community or a solidary structure.
+     * @var null|bool the relay point is private to a community or a solidary structure
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"aRead","aWrite","readRelayPoint","writeRelayPoint"})
      */
     private $private;
-    
+
     /**
-     * @var string|null The short description of the relay point.
+     * @var null|string the short description of the relay point
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"aRead","aWrite","readRelayPoint","writeRelayPoint"})
      */
     private $description;
-    
+
     /**
-     * @var string|null The full description of the relay point.
+     * @var null|string the full description of the relay point
      *
      * @ORM\Column(type="text", nullable=true)
      * @Groups({"aRead","aWrite","readRelayPoint","writeRelayPoint"})
@@ -208,7 +208,7 @@ class RelayPoint
     private $fullDescription;
 
     /**
-     * @var int The status of the relay point (active/inactive/pending).
+     * @var int the status of the relay point (active/inactive/pending)
      *
      * @ORM\Column(type="smallint")
      * @Groups({"aRead","aWrite","readRelayPoint","writeRelayPoint"})
@@ -216,7 +216,7 @@ class RelayPoint
     private $status;
 
     /**
-     * @var int|null The number of places.
+     * @var null|int the number of places
      *
      * @ORM\Column(type="smallint", nullable=true)
      * @Groups({"aRead","aWrite","readRelayPoint","writeRelayPoint"})
@@ -224,7 +224,7 @@ class RelayPoint
     private $places;
 
     /**
-     * @var int|null The number of places for disabled people.
+     * @var null|int the number of places for disabled people
      *
      * @ORM\Column(type="smallint", nullable=true)
      * @Groups({"aRead","aWrite","readRelayPoint","writeRelayPoint"})
@@ -232,39 +232,39 @@ class RelayPoint
     private $placesDisabled;
 
     /**
-    * @var boolean|null The relay point is free.
-    *
-    * @ORM\Column(type="boolean", nullable=true)
-    * @Groups({"aRead","aWrite","readRelayPoint","writeRelayPoint"})
-    */
+     * @var null|bool the relay point is free
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"aRead","aWrite","readRelayPoint","writeRelayPoint"})
+     */
     private $free;
 
     /**
-    * @var boolean|null The relay point is secured.
-    *
-    * @ORM\Column(type="boolean", nullable=true)
-    * @Groups({"aRead","aWrite","readRelayPoint","writeRelayPoint"})
-    */
+     * @var null|bool the relay point is secured
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"aRead","aWrite","readRelayPoint","writeRelayPoint"})
+     */
     private $secured;
 
     /**
-    * @var boolean|null The relay point is official.
-    *
-    * @ORM\Column(type="boolean", nullable=true)
-    * @Groups({"aRead","aWrite","readRelayPoint","writeRelayPoint"})
-    */
+     * @var null|bool the relay point is official
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"aRead","aWrite","readRelayPoint","writeRelayPoint"})
+     */
     private $official;
 
     /**
-    * @var boolean|null The relay point appears in the autocompletion.
-    *
-    * @ORM\Column(type="boolean", nullable=true)
-    * @Groups({"aRead","aWrite","readRelayPoint","writeRelayPoint"})
-    */
+     * @var null|bool the relay point appears in the autocompletion
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"aRead","aWrite","readRelayPoint","writeRelayPoint"})
+     */
     private $suggested;
 
     /**
-     * @var string|null The permalink of the relay point.
+     * @var null|string the permalink of the relay point
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"aRead","aWrite","readRelayPoint","writeRelayPoint"})
@@ -272,36 +272,36 @@ class RelayPoint
     private $permalink;
 
     /**
-     * @var string|null The external id of the relay point, if the relay point is imported.
+     * @var null|string the external id of the relay point, if the relay point is imported
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $externalId;
 
     /**
-     * @var string|null The external author of the relay point, if the relay point is imported.
+     * @var null|string the external author of the relay point, if the relay point is imported
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $externalAuthor;
 
     /**
-     * @var \DateTimeInterface The external updated date of the relay point, if the relay point is imported.
+     * @var \DateTimeInterface the external updated date of the relay point, if the relay point is imported
      *
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $externalUpdatedDate;
 
     /**
-    * @var \DateTimeInterface Creation date of the relay point.
-    *
-    * @ORM\Column(type="datetime")
-    * @Groups("readRelayPoint")
-    */
+     * @var \DateTimeInterface creation date of the relay point
+     *
+     * @ORM\Column(type="datetime")
+     * @Groups("readRelayPoint")
+     */
     private $createdDate;
 
     /**
-     * @var \DateTimeInterface Updated date of the relay point.
+     * @var \DateTimeInterface updated date of the relay point
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups("readRelayPoint")
@@ -309,7 +309,7 @@ class RelayPoint
     private $updatedDate;
 
     /**
-     * @var Address The address of the relay point.
+     * @var Address the address of the relay point
      *
      * @Assert\NotBlank
      * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", inversedBy="relayPoint", cascade={"persist"}, orphanRemoval=true)
@@ -320,7 +320,7 @@ class RelayPoint
     private $address;
 
     /**
-     * @var User The creator of the relay point.
+     * @var User the creator of the relay point
      *
      * @Assert\NotBlank(groups={"writeRelayPoint"})
      * @ORM\ManyToOne(targetEntity="App\User\Entity\User")
@@ -330,7 +330,7 @@ class RelayPoint
     private $user;
 
     /**
-     * @var Community|null The community of the relay point.
+     * @var null|Community the community of the relay point
      *
      * @ORM\ManyToOne(targetEntity="App\Community\Entity\Community")
      * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
@@ -339,7 +339,7 @@ class RelayPoint
     private $community;
 
     /**
-     * @var Structure|null The solidary structure of the relay point.
+     * @var null|Structure the solidary structure of the relay point
      *
      * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Structure")
      * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
@@ -355,14 +355,14 @@ class RelayPoint
     private $relayPointType;
 
     /**
-     * @var RelayPointImport|null Relay point imported in the platform.
+     * @var null|RelayPointImport relay point imported in the platform
      *
      * @ORM\OneToMany(targetEntity="\App\Import\Entity\RelayPointImport", mappedBy="relay")
      */
     private $relayPointImport;
 
     /**
-     * @var ArrayCollection|null The images of the relay point.
+     * @var null|ArrayCollection the images of the relay point
      *
      * @ORM\OneToMany(targetEntity="\App\Image\Entity\Image", mappedBy="relayPoint", cascade={"persist"})
      * @ORM\OrderBy({"position" = "ASC"})
@@ -373,7 +373,7 @@ class RelayPoint
     private $images;
 
     /**
-     * @var int|null The relay point type id
+     * @var null|int The relay point type id
      * @Groups({"aRead","aWrite"})
      */
     private $relayPointTypeId;
@@ -385,13 +385,13 @@ class RelayPoint
     private $relayPointTypeName;
 
     /**
-     * @var string|null The relay point type avatar
+     * @var null|string The relay point type avatar
      * @Groups({"aRead"})
      */
     private $relayPointTypeAvatar;
 
     /**
-     * @var int|null The community id
+     * @var null|int The community id
      * @Groups({"aRead","aWrite"})
      */
     private $communityId;
@@ -403,7 +403,7 @@ class RelayPoint
     private $communityName;
 
     /**
-     * @var int|null The structure id
+     * @var null|int The structure id
      * @Groups({"aRead","aWrite"})
      */
     private $structureId;
@@ -427,19 +427,19 @@ class RelayPoint
     private $creatorId;
 
     /**
-     * @var string|null The creator avatar
+     * @var null|string The creator avatar
      * @Groups({"aRead"})
      */
     private $creatorAvatar;
 
     /**
-     * @var string|null The relay point main image
+     * @var null|string The relay point main image
      * @Groups("aRead")
      */
     private $image;
 
     /**
-     * @var string|null The relay point avatar
+     * @var null|string The relay point avatar
      * @Groups("aRead")
      */
     private $avatar;
@@ -448,17 +448,17 @@ class RelayPoint
     {
         $this->images = new ArrayCollection();
     }
-    
+
     public function getId(): ?int
     {
         return $this->id;
     }
-        
+
     public function getName(): string
     {
         return $this->name;
     }
-    
+
     public function setName(string $name)
     {
         $this->name = $name;
@@ -468,29 +468,29 @@ class RelayPoint
     {
         return $this->private;
     }
-    
+
     public function setPrivate(?bool $isPrivate): self
     {
         $this->private = $isPrivate;
-        
+
         return $this;
     }
-    
+
     public function getDescription(): ?string
     {
         return $this->description;
     }
-    
+
     public function setDescription(?string $description)
     {
         $this->description = $description;
     }
-    
+
     public function getFullDescription(): ?string
     {
         return $this->fullDescription;
     }
-    
+
     public function setFullDescription(?string $fullDescription)
     {
         $this->fullDescription = $fullDescription;
@@ -500,7 +500,7 @@ class RelayPoint
     {
         return $this->status;
     }
-    
+
     public function setStatus(?int $status)
     {
         $this->status = $status;
@@ -510,7 +510,7 @@ class RelayPoint
     {
         return $this->places;
     }
-    
+
     public function setPlaces(?int $places)
     {
         $this->places = $places;
@@ -520,7 +520,7 @@ class RelayPoint
     {
         return $this->placesDisabled;
     }
-    
+
     public function setPlacesDisabled(?int $placesDisabled)
     {
         $this->placesDisabled = $placesDisabled;
@@ -530,11 +530,11 @@ class RelayPoint
     {
         return $this->free;
     }
-    
+
     public function setFree(?bool $isFree): self
     {
         $this->free = $isFree;
-        
+
         return $this;
     }
 
@@ -542,11 +542,11 @@ class RelayPoint
     {
         return $this->secured;
     }
-    
+
     public function setSecured(?bool $isSecured): self
     {
         $this->secured = $isSecured;
-        
+
         return $this;
     }
 
@@ -554,11 +554,11 @@ class RelayPoint
     {
         return $this->official ? true : false;
     }
-    
+
     public function setOfficial(?bool $isOfficial): self
     {
         $this->official = $isOfficial ? true : false;
-        
+
         return $this;
     }
 
@@ -566,11 +566,11 @@ class RelayPoint
     {
         return $this->suggested;
     }
-    
+
     public function setSuggested(?bool $isSuggested): self
     {
         $this->suggested = $isSuggested;
-        
+
         return $this;
     }
 
@@ -578,7 +578,7 @@ class RelayPoint
     {
         return $this->permalink;
     }
-    
+
     public function setPermalink(?string $permalink)
     {
         $this->permalink = $permalink;
@@ -588,7 +588,7 @@ class RelayPoint
     {
         return $this->externalId;
     }
-    
+
     public function setExternalId(?string $externalId): self
     {
         $this->externalId = $externalId;
@@ -600,7 +600,7 @@ class RelayPoint
     {
         return $this->externalAuthor;
     }
-    
+
     public function setExternalAuthor(?string $externalAuthor): self
     {
         $this->externalAuthor = $externalAuthor;
@@ -612,7 +612,7 @@ class RelayPoint
     {
         return $this->externalUpdatedDate;
     }
-    
+
     public function setExternalUpdatedDate(\DateTimeInterface $externalUpdatedDate): self
     {
         $this->externalUpdatedDate = $externalUpdatedDate;
@@ -637,11 +637,11 @@ class RelayPoint
     {
         return $this->user;
     }
-    
+
     public function setUser(User $user): self
     {
         $this->user = $user;
-        
+
         return $this;
     }
 
@@ -649,11 +649,11 @@ class RelayPoint
     {
         return $this->community;
     }
-    
+
     public function setCommunity(?Community $community): self
     {
         $this->community = $community;
-        
+
         return $this;
     }
 
@@ -661,11 +661,11 @@ class RelayPoint
     {
         return $this->structure;
     }
-    
+
     public function setStructure(?Structure $structure): self
     {
         $this->structure = $structure;
-        
+
         return $this;
     }
 
@@ -673,17 +673,17 @@ class RelayPoint
     {
         return $this->images->getValues();
     }
-    
+
     public function addImage(Image $image): self
     {
         if (!$this->images->contains($image)) {
             $this->images[] = $image;
             $image->setRelayPoint($this);
         }
-        
+
         return $this;
     }
-    
+
     public function removeImage(Image $image): self
     {
         if ($this->images->contains($image)) {
@@ -693,19 +693,19 @@ class RelayPoint
                 $image->setRelayPoint(null);
             }
         }
-        
+
         return $this;
     }
-    
+
     public function getCreatedDate(): ?\DateTimeInterface
     {
         return $this->createdDate;
     }
-    
+
     public function setCreatedDate(\DateTimeInterface $createdDate): self
     {
         $this->createdDate = $createdDate;
-        
+
         return $this;
     }
 
@@ -750,6 +750,7 @@ class RelayPoint
         if (is_null($this->relayPointTypeId)) {
             return $this->getRelayPointType() ? $this->getRelayPointType()->getId() : null;
         }
+
         return $this->relayPointTypeId;
     }
 
@@ -763,6 +764,7 @@ class RelayPoint
         if ($this->getRelayPointType()) {
             return $this->getRelayPointType()->getName();
         }
+
         return '';
     }
 
@@ -771,6 +773,7 @@ class RelayPoint
         if ($this->getRelayPointType() && $this->getRelayPointType()->getIcon()) {
             return $this->getRelayPointType()->getIcon()->getUrl();
         }
+
         return null;
     }
 
@@ -779,6 +782,7 @@ class RelayPoint
         if (is_null($this->communityId)) {
             return $this->getCommunity() ? $this->getCommunity()->getId() : null;
         }
+
         return $this->communityId;
     }
 
@@ -792,6 +796,7 @@ class RelayPoint
         if ($this->getCommunity()) {
             return $this->getCommunity()->getName();
         }
+
         return '';
     }
 
@@ -800,6 +805,7 @@ class RelayPoint
         if (is_null($this->structureId)) {
             return $this->getStructure() ? $this->getStructure()->getId() : null;
         }
+
         return $this->structureId;
     }
 
@@ -813,12 +819,13 @@ class RelayPoint
         if ($this->getStructure()) {
             return $this->getStructure()->getName();
         }
+
         return '';
     }
 
     public function getCreator(): string
     {
-        return ucfirst(strtolower($this->getUser()->getGivenName())) . " " . $this->getUser()->getShortFamilyName();
+        return ucfirst(strtolower($this->getUser()->getGivenName())).' '.$this->getUser()->getShortFamilyName();
     }
 
     public function getCreatorId(): int
@@ -826,6 +833,7 @@ class RelayPoint
         if (is_null($this->creatorId)) {
             return $this->getUser()->getId();
         }
+
         return $this->creatorId;
     }
 
@@ -836,30 +844,33 @@ class RelayPoint
 
     public function getCreatorAvatar(): ?string
     {
-        if (count($this->getUser()->getAvatars())>0) {
+        if (count($this->getUser()->getAvatars()) > 0) {
             return $this->getUser()->getAvatars()[0];
         }
+
         return null;
     }
 
     public function getImage(): ?string
     {
-        if (count($this->getImages())>0 && isset($this->getImages()[0]->getVersions()['square_800'])) {
+        if (count($this->getImages()) > 0 && isset($this->getImages()[0]->getVersions()['square_800'])) {
             return $this->getImages()[0]->getVersions()['square_800'];
         }
+
         return null;
     }
 
     public function getAvatar(): ?string
     {
-        if (count($this->getImages())>0 && isset($this->getImages()[0]->getVersions()['square_250'])) {
+        if (count($this->getImages()) > 0 && isset($this->getImages()[0]->getVersions()['square_250'])) {
             return $this->getImages()[0]->getVersions()['square_250'];
         }
+
         return null;
     }
 
     // DOCTRINE EVENTS
-    
+
     /**
      * Creation date.
      *

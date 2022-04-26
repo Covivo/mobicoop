@@ -51,6 +51,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * An event : a social occasion or activity.
  *
  * @ORM\Entity()
+ * @ORM\Table(indexes={@ORM\Index(name="FULL_TEXT_NAME", columns={"name"}, flags={"fulltext"})})
  * @ORM\HasLifecycleCallbacks
  * @ApiResource(
  *      attributes={
