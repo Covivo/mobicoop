@@ -23,10 +23,12 @@
     "error": {
         "image": "De afbeelding werd niet opgeslagen",
         "event": {
+            "descriptionLength": "Korte beschrijving te lang (maximaal 512 tekens).",
+            "required": "Alle velden met een sterretje zijn verplicht",
+            "length": "Descriptions trop longues",
             "create": "Het evenement kon niet worden aangemaakt",
             "name": "Dit evenement bestaat al. Gebruik een andere naam",
-            "fullDescriptionLength": "Description trop longue",
-            "descriptionLength": "Description courte trop longue"
+            "fullDescriptionLength": "Description courte trop longue (2500 caractères maximum)."
         }
     },
     "redirect": {

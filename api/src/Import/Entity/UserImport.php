@@ -19,17 +19,17 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Import\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiResource;
+use App\Import\Controller\ImportImageUserController;
+use App\User\Entity\User;
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
-use App\User\Entity\User;
-use App\Import\Controller\ImportImageUserController;
 
 /**
  * A user imported from an external system.
@@ -72,28 +72,27 @@ use App\Import\Controller\ImportImageUserController;
  *          },
  *      }
  * )
- *
  */
 class UserImport
 {
-    const DEFAULT_ID = 999999999999;
+    public const DEFAULT_ID = 999999999999;
 
-    const STATUS_IMPORTED = 0;          // the external user has been imported, no treatment has been made yet
-    const STATUS_USER_PENDING = 1;      // the user treatment is pending
-    const STATUS_USER_TREATED = 2;      // the user treatment has been made successfully
-    const STATUS_USER_ERROR = 3;        // the user treatment has failed
-    const STATUS_DIRECTION_PENDING = 5; // the direction treatment is pending
-    const STATUS_DIRECTION_TREATED = 6; // the direction treatment has been made successfully
-    const STATUS_DIRECTION_ERROR = 7;   // the direction treatment failed
-    const STATUS_DEFAULTS_PENDING = 8;  // the defaults treatment is pending
-    const STATUS_DEFAULTS_TREATED = 9;  // the defaults treatment has been made successfully
-    const STATUS_DEFAULTS_ERROR = 10;   // the defaults treatment has failed
-    const STATUS_MATCHING_PENDING = 11; // the matching treatment is pending
-    const STATUS_MATCHING_TREATED = 12; // the matching treatment has been made successfully
-    const STATUS_MATCHING_ERROR = 13;   // the matching treatment has failed
+    public const STATUS_IMPORTED = 0;          // the external user has been imported, no treatment has been made yet
+    public const STATUS_USER_PENDING = 1;      // the user treatment is pending
+    public const STATUS_USER_TREATED = 2;      // the user treatment has been made successfully
+    public const STATUS_USER_ERROR = 3;        // the user treatment has failed
+    public const STATUS_DIRECTION_PENDING = 5; // the direction treatment is pending
+    public const STATUS_DIRECTION_TREATED = 6; // the direction treatment has been made successfully
+    public const STATUS_DIRECTION_ERROR = 7;   // the direction treatment failed
+    public const STATUS_DEFAULTS_PENDING = 8;  // the defaults treatment is pending
+    public const STATUS_DEFAULTS_TREATED = 9;  // the defaults treatment has been made successfully
+    public const STATUS_DEFAULTS_ERROR = 10;   // the defaults treatment has failed
+    public const STATUS_MATCHING_PENDING = 11; // the matching treatment is pending
+    public const STATUS_MATCHING_TREATED = 12; // the matching treatment has been made successfully
+    public const STATUS_MATCHING_ERROR = 13;   // the matching treatment has failed
 
     /**
-     * @var int The id of this imported user.
+     * @var int the id of this imported user
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -102,18 +101,19 @@ class UserImport
      * @ApiProperty(identifier=true)
      */
     private $id;
-    
+
     /**
-     * @var User|null User imported in the platform.
+     * @var null|User user imported in the platform
      *
      * @ORM\OneToOne(targetEntity="\App\User\Entity\User", cascade={"persist"})
+     * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"read","write"})
      * @MaxDepth(1)
      */
     private $user;
 
     /**
-     * @var string|null The identifier of the external system.
+     * @var null|string the identifier of the external system
      *
      * @ORM\Column(type="string", length=255, nullable=false)
      * @Groups({"read","write"})
@@ -121,7 +121,7 @@ class UserImport
     private $origin;
 
     /**
-     * @var int Import status.
+     * @var int import status
      *
      * @ORM\Column(type="smallint")
      * @Groups({"read","write"})
@@ -129,7 +129,7 @@ class UserImport
     private $status;
 
     /**
-     * @var \DateTimeInterface Creation date of the user import.
+     * @var \DateTimeInterface creation date of the user import
      *
      * @ORM\Column(type="datetime")
      * @Groups({"read","write"})
@@ -137,7 +137,7 @@ class UserImport
     private $createdDate;
 
     /**
-     * @var \DateTimeInterface Update date of the user import.
+     * @var \DateTimeInterface update date of the user import
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read","write"})
@@ -145,7 +145,7 @@ class UserImport
     private $updatedDate;
 
     /**
-     * @var \DateTimeInterface Start date of the user treatment.
+     * @var \DateTimeInterface start date of the user treatment
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read","write"})
@@ -153,7 +153,7 @@ class UserImport
     private $treatmentUserStartDate;
 
     /**
-     * @var \DateTimeInterface End date of the user treatment.
+     * @var \DateTimeInterface end date of the user treatment
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read","write"})
@@ -161,7 +161,7 @@ class UserImport
     private $treatmentUserEndDate;
 
     /**
-     * @var \DateTimeInterface Start date of the journey treatment.
+     * @var \DateTimeInterface start date of the journey treatment
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read","write"})
@@ -169,7 +169,7 @@ class UserImport
     private $treatmentJourneyStartDate;
 
     /**
-     * @var \DateTimeInterface End date of the journey treatment.
+     * @var \DateTimeInterface end date of the journey treatment
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read","write"})
@@ -177,7 +177,7 @@ class UserImport
     private $treatmentJourneyEndDate;
 
     /**
-     * @var string|null The user id in the external system.
+     * @var null|string the user id in the external system
      *
      * @ORM\Column(type="string", length=255, nullable=false)
      * @Groups({"read","write"})
@@ -320,7 +320,7 @@ class UserImport
 
         return $this;
     }
-    
+
     // DOCTRINE EVENTS
 
     /**

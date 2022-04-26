@@ -1,5 +1,5 @@
 {
-    "urlDate": "YMMDD",
+    "urlDate": "YYYY-MM-DD",
     "tooltips": {
         "needConnection": "Iragarkia argitaratzeko konekta zaitez edo izena emazu"
     },

@@ -29,7 +29,7 @@
             "route": "carpool/postad"
         }
     },
-    "urlDate": "YMMDD",
+    "urlDate": "YYYY-MM-DD",
     "tooltips": {
         "needConnection": "Please login or register to post a proposal"
     }

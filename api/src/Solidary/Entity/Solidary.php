@@ -1469,7 +1469,7 @@ class Solidary
      */
     public function getAdminsubject(): ?string
     {
-        return $this->getSubject()->getLabel();
+        return $this->getSubject() ? $this->getSubject()->getLabel() : null;
     }
 
     /**
@@ -1478,7 +1478,7 @@ class Solidary
      */
     public function getAdminsubjectId(): ?int
     {
-        return $this->getSubject()->getId();
+        return $this->getSubject() ? $this->getSubject()->getId() : null;
     }
 
     /**

@@ -1659,7 +1659,6 @@ class ResultManager
         if ($nbLoop > 8) {
             return null;
         } // safeguard to avoid infinite loop
-
         if ($role=="request") {
             $result = $this->getValidCarpoolAsRequest($day, $matchingProposal, $searchProposal->getUseTime(), $isToday ? max($searchProposal->getCriteria()->getFromTime(), $rdate) : ($searchProposal->getUseTime() ? $searchProposal->getCriteria()->getFromTime() : null));
         } else {
@@ -1670,7 +1669,6 @@ class ResultManager
         } else {
             $result['date'] = $rdate;
         }
-        
         return $result;
     }
 

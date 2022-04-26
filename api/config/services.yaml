@@ -372,7 +372,6 @@ services:
         arguments:
             $emailTemplatePath: '%env(string:NOTIFICATION_TEMPLATE_EMAIL_PATH)%'
             $emailTitleTemplatePath: '%env(string:COMMUNICATION_TEMPLATE_EMAIL_PATH)%%env(string:NOTIFICATION_TITLE_TEMPLATE_EMAIL_PATH)%'
- 
     # Community
     App\Community\Controller\:
         resource: '../src/Community/Controller'
@@ -570,7 +569,7 @@ services:
             $sigPrioritizeRegion: '%env(string:SIG_GEOCODER_PRIORITIZE_REGION)%'
             $sigShowVenues: '%env(bool:SIG_GEOCODER_SHOW_VENUES)%'
 
-    App\Geography\Service\MobicoopGeocoder:
+    App\Geography\Service\Geocoder\MobicoopGeocoder:
         arguments:
             $uri: '%env(string:MOBICOOP_GEOCODER_URI)%'
 
@@ -868,13 +867,13 @@ services:
             $chat: '%env(int:CARPOOL_DEFAULT_CHAT)%'
             $music: '%env(int:CARPOOL_DEFAULT_MUSIC)%'
             $smoke: '%env(bool:CARPOOL_DEFAULT_SMOKE)%'
-            
+
     App\User\Admin\Service\KibanaLoginManager:
         arguments:
             $loginsAdmin: '%env(json:KIBANA_LOGINS_ADMIN)%'
             $loginsCommunityManager: '%env(json:KIBANA_LOGINS_COMMUNITY_MANAGER)%'
             $loginsSolidaryOperator: '%env(json:KIBANA_LOGINS_SOLIDARY_OPERATOR)%'
-
+            
     App\User\Controller\:
         resource: '../src/User/Controller'
         tags: ['controller.service_arguments']

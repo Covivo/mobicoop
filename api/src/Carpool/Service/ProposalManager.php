@@ -42,7 +42,10 @@ use App\Communication\Service\InternalMessageManager;
 use App\DataProvider\Entity\Response;
 use App\Geography\Entity\Address;
 use App\Geography\Interfaces\GeorouterInterface;
+use App\Geography\Service\Geocoder\MobicoopGeocoder;
 use App\Geography\Service\GeoRouter;
+use App\Geography\Service\GeoTools;
+use App\Geography\Service\Point\MobicoopGeocoderPointProvider;
 use App\Import\Entity\UserImport;
 use App\Service\FormatDataManager;
 use App\User\Entity\User;
@@ -70,6 +73,7 @@ class ProposalManager
     public const OPTIMIZE_MEMORY_LIMIT_IN_MO = 8192;
     public const CHECK_OUTDATED_SEARCHES_RUNNING_FILE = 'outdatedSearches.txt';
     public const CHECK_REMOVE_ORPHANS_RUNNING_FILE = 'removeOrphans.txt';
+    public const HOMOGENIZE_REGULAR_PROPOSAL_ADDRESS_DISTANCE = 5000;
 
     private $entityManager;
     private $proposalMatcher;
@@ -85,6 +89,8 @@ class ProposalManager
     private $internalMessageManager;
     private $criteriaRepository;
     private $actionRepository;
+    private $mobicoopGeocoderPointProvider;
+    private $geoTools;
 
     /**
      * Constructor.
@@ -103,6 +109,8 @@ class ProposalManager
         InternalMessageManager $internalMessageManager,
         CriteriaRepository $criteriaRepository,
         ActionRepository $actionRepository,
+        MobicoopGeocoder $mobicoopGeocoder,
+        GeoTools $geoTools,
         array $params
     ) {
         $this->entityManager = $entityManager;
@@ -120,6 +128,8 @@ class ProposalManager
         $this->internalMessageManager = $internalMessageManager;
         $this->criteriaRepository = $criteriaRepository;
         $this->actionRepository = $actionRepository;
+        $this->mobicoopGeocoderPointProvider = new MobicoopGeocoderPointProvider($mobicoopGeocoder);
+        $this->geoTools = $geoTools;
     }
 
     /**
@@ -502,17 +512,17 @@ class ProposalManager
             LEFT JOIN ask a1 ON a1.matching_id = m1.id
             LEFT JOIN ask a2 ON a2.matching_id = m2.id
             WHERE
-            proposal.private = 1 AND
-            proposal.external_id IS NOT NULL AND
+            proposal.private = 1 AND 
+            proposal.external_id IS NOT NULL AND 
             proposal.created_date <= '".$date->format('Y-m-d')."' AND
             (m1.id IS NULL OR a1.id IS NULL) AND
             (m2.id IS NULL OR a2.id IS NULL));
             "
             )->execute()
-            && $this->entityManager->getConnection()->prepare('start transaction;')->execute()
-            && $this->entityManager->getConnection()->prepare('DELETE FROM proposal WHERE id in (select id from outdated_proposals);')->execute()
-            && $this->entityManager->getConnection()->prepare('commit;')->execute()
-            && $this->entityManager->getConnection()->prepare('DROP TABLE outdated_proposals;')->execute();
+        && $this->entityManager->getConnection()->prepare('start transaction;')->execute()
+        && $this->entityManager->getConnection()->prepare('DELETE FROM proposal WHERE id in (select id from outdated_proposals);')->execute()
+        && $this->entityManager->getConnection()->prepare('commit;')->execute()
+        && $this->entityManager->getConnection()->prepare('DROP TABLE outdated_proposals;')->execute();
 
         fclose($fp);
         unlink($this->params['batchTemp'].self::CHECK_OUTDATED_SEARCHES_RUNNING_FILE);
@@ -575,6 +585,148 @@ class ProposalManager
             $event = new AdRenewalEvent($proposal);
             $this->eventDispatcher->dispatch(AdRenewalEvent::NAME, $event);
         }
+    }
+
+    public function homogenizeRegularProposalsWithLocalityOnly(): int
+    {
+        $addresses = $this->getActiveRegularProposalsWithLocalityOnly();
+        $this->logger->info('Number of addresses to check : '.count($addresses));
+        $addressesToRecode = $this->getActiveRegularProposalAddressesToRecode($addresses);
+
+        return $this->recodeActiveRegularProposalAddresses($addressesToRecode);
+    }
+
+    private function getActiveRegularProposalsWithLocalityOnly(): array
+    {
+        $stmt_origin = $this->entityManager->getConnection()->prepare(
+            'SELECT
+                a.address_locality,
+                a.longitude,
+                a.latitude
+            FROM proposal p
+            LEFT JOIN criteria c ON c.id = p.criteria_id
+            LEFT JOIN waypoint w ON w.proposal_id = p.id
+            LEFT JOIN address a ON a.id = w.address_id
+            WHERE
+                (p.private IS NULL OR p.private = 0) AND
+                c.frequency > 1 AND
+                c.to_date IS NOT NULL AND c.to_date>=NOW() AND
+                w.position = 0 AND
+                a.address_locality IS NOT NULL AND a.address_locality != "" AND
+                (a.street_address IS NULL OR a.street_address = "") AND
+                (a.postal_code IS NULL OR a.postal_code = "") AND
+                (a.house_number IS NULL OR a.house_number = "") AND
+                (a.street IS NULL OR a.street = "")
+            GROUP BY
+                address_locality,
+                longitude,
+                latitude
+            '
+        );
+        $stmt_origin->execute();
+        $addresses_origin = $stmt_origin->fetchAll();
+
+        $stmt_destination = $this->entityManager->getConnection()->prepare(
+            'SELECT
+                a.address_locality,
+                a.longitude,
+                a.latitude
+            FROM proposal p
+            LEFT JOIN criteria c ON c.id = p.criteria_id
+            LEFT JOIN waypoint w ON w.proposal_id = p.id
+            LEFT JOIN address a ON a.id = w.address_id
+            WHERE
+                (p.private IS NULL OR p.private = 0) AND
+                c.frequency > 1 AND
+                c.to_date IS NOT NULL AND c.to_date>=NOW() AND
+                w.destination = 1 AND
+                a.address_locality IS NOT NULL AND a.address_locality != "" AND
+                (a.street_address IS NULL OR a.street_address = "") AND
+                (a.postal_code IS NULL OR a.postal_code = "") AND
+                (a.house_number IS NULL OR a.house_number = "") AND
+                (a.street IS NULL OR a.street = "")
+            GROUP BY
+                address_locality,
+                longitude,
+                latitude
+            '
+        );
+        $stmt_destination->execute();
+        $addresses_destination = $stmt_destination->fetchAll();
+
+        return array_merge($addresses_origin, $addresses_destination);
+    }
+
+    private function getActiveRegularProposalAddressesToRecode(array $addresses): array
+    {
+        $this->mobicoopGeocoderPointProvider->setExclusionTypes(['venue', 'street', 'housenumber']);
+        $this->mobicoopGeocoderPointProvider->setMaxResults(1);
+        $recoded = [];
+        $i = 0;
+        foreach ($addresses as $address) {
+            ++$i;
+            if (($i % 100) == 0) {
+                $this->logger->info($i.' addresses checked');
+            }
+            $points = $this->mobicoopGeocoderPointProvider->search($address['address_locality']);
+            if (
+                count($points) > 0
+                && (
+                    (((float) $address['latitude']) != $points[0]->getLat())
+                    || (((float) $address['longitude']) != $points[0]->getLon())
+                )
+                && $this->geoTools->haversineGreatCircleDistance(
+                    $points[0]->getLat(),
+                    $points[0]->getLon(),
+                    $address['latitude'],
+                    $address['longitude']
+                ) <= self::HOMOGENIZE_REGULAR_PROPOSAL_ADDRESS_DISTANCE
+            ) {
+                $recoded[] = [
+                    'locality' => $points[0]->getLocality(),
+                    'lat' => $points[0]->getLat(),
+                    'lon' => $points[0]->getLon(),
+                    'olocality' => $address['address_locality'],
+                    'olat' => $address['latitude'],
+                    'olon' => $address['longitude'],
+                ];
+            }
+        }
+
+        return $recoded;
+    }
+
+    private function recodeActiveRegularProposalAddresses(array $addressesToRecode): bool
+    {
+        if (count($addressesToRecode) > 0) {
+            $this->entityManager->getConnection()->prepare('start transaction;')->execute();
+            $i = 0;
+            foreach ($addressesToRecode as $recode) {
+                ++$i;
+                if (($i % 100) == 0) {
+                    $this->logger->info($i.' addresses updated');
+                }
+                if (!$this->entityManager->getConnection()->prepare(
+                    '
+                    UPDATE
+                        address
+                    SET
+                        longitude='.$recode['lon'].',
+                        latitude='.$recode['lat'].',
+                        address_locality="'.$recode['locality'].'",
+                        geo_json=PointFromText(\'POINT('.$recode['lon'].' '.$recode['lat'].')\')
+                    WHERE
+                        address_locality="'.$recode['olocality'].'" AND
+                        latitude='.$recode['olat'].' AND
+                        longitude='.$recode['olon']
+                )->execute()) {
+                    return false;
+                }
+            }
+            $this->entityManager->getConnection()->prepare('commit;')->execute();
+        }
+
+        return true;
     }
 
     /**
@@ -1111,7 +1263,7 @@ class ProposalManager
             )->execute()
             && $this->entityManager->getConnection()->prepare(
                 'INSERT INTO outdated_criteria (id)
-            (SELECT criteria.id FROM criteria
+            (SELECT criteria.id FROM criteria 
             LEFT JOIN ask ON ask.criteria_id = criteria.id
             LEFT JOIN matching ON matching.criteria_id = criteria.id
             LEFT JOIN proposal ON proposal.criteria_id = criteria.id
@@ -1125,10 +1277,10 @@ class ProposalManager
             solidary_matching.criteria_id IS NULL);
             '
             )->execute()
-            && $this->entityManager->getConnection()->prepare('start transaction;')->execute()
-            && $this->entityManager->getConnection()->prepare('DELETE FROM criteria WHERE id in (select id from outdated_criteria);')->execute()
-            && $this->entityManager->getConnection()->prepare('commit;')->execute()
-            && $this->entityManager->getConnection()->prepare('DROP TABLE outdated_criteria;')->execute();
+        && $this->entityManager->getConnection()->prepare('start transaction;')->execute()
+        && $this->entityManager->getConnection()->prepare('DELETE FROM criteria WHERE id in (select id from outdated_criteria);')->execute()
+        && $this->entityManager->getConnection()->prepare('commit;')->execute()
+        && $this->entityManager->getConnection()->prepare('DROP TABLE outdated_criteria;')->execute();
     }
 
     private function removeOrphanAddresses()
@@ -1142,8 +1294,8 @@ class ProposalManager
             )->execute()
             && $this->entityManager->getConnection()->prepare(
                 'INSERT INTO outdated_address (id)
-                (SELECT address.id FROM address
-                LEFT JOIN user ON address.user_id = user.id
+                (SELECT address.id FROM address 
+                LEFT JOIN user ON address.user_id = user.id 
                 LEFT JOIN solidary_user ON solidary_user.address_id = address.id
                 LEFT JOIN waypoint ON waypoint.address_id = address.id
                 LEFT JOIN community ON community.address_id = address.id
@@ -1157,8 +1309,8 @@ class ProposalManager
                 LEFT JOIN carpool_proof cp4 ON cp4.drop_off_driver_address_id = address.id
                 LEFT JOIN carpool_proof cp5 ON cp5.origin_driver_address_id = address.id
                 LEFT JOIN carpool_proof cp6 ON cp6.destination_driver_address_id = address.id
-                WHERE
-                    user.id IS NULL AND
+                WHERE 
+                    user.id IS NULL AND 
                     solidary_user.id IS NULL AND
                     waypoint.id IS NULL AND
                     community.id IS NULL AND
@@ -1191,7 +1343,7 @@ class ProposalManager
             )->execute()
             && $this->entityManager->getConnection()->prepare(
                 'INSERT INTO outdated_direction (id)
-                (SELECT direction.id FROM direction
+                (SELECT direction.id FROM direction 
                 LEFT JOIN criteria c1 ON c1.direction_driver_id = direction.id
                 LEFT JOIN criteria c2 ON c2.direction_passenger_id = direction.id
                 LEFT JOIN position ON position.direction_id = direction.id

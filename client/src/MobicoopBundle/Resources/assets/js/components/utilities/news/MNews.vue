@@ -31,7 +31,6 @@
       </v-col>
       <v-spacer />
 
-
       <v-col 
         cols="4"           
         class="align-self-center"

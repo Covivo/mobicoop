@@ -98,6 +98,7 @@ class ImportManager
      * @param string $origin        The origin of the data
      * @param int|null $massId      The mass id if the import concerns a mass matching
      * @param int|null $lowestId    The lowest user id to import if the import concerns new users to import in an existing db
+     * @return array    An empty array (for consistency, as the method can be called from an API get collection route)
      */
     public function treatUserImport(string $origin, ?int $massId=null, ?int $lowestId=null)
     {

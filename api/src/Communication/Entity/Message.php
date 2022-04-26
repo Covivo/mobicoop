@@ -89,7 +89,7 @@ class Message
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"read","threads","thread"})
+     * @Groups({"read","threads","thread","sendMessage"})
      */
     private $id;
 
