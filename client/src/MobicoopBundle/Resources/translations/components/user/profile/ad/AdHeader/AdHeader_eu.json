@@ -37,11 +37,14 @@
     },
     "ads": {
         "tooltips": {
-            "diverOrPassenger": "Berdin zait: gidari edo bidaiari izanen naiz",
+            "driverOrPassenger": "Berdin zait: gidari edo bidaiari izanen naiz",
             "passenger": "Bidaiari izanen naiz",
             "driver": "Gidaria izanen naiz"
         },
         "archived": "Iragarki artxibatuak",
         "ongoing": "Iragarkiak indarrean dira"
+    },
+    "solidary": {
+      "exclusive": "Elkarbanatze solidario esklusiboaren iragarkia"
     }
 }

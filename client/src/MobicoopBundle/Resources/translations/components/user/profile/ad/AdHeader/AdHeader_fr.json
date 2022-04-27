@@ -5,7 +5,7 @@
 		"tooltips": {
 			"driver": "Je serai conducteur",
 			"passenger": "Je serai passager",
-			"diverOrPassenger": "Peu importe: je serai conducteur ou passager"
+			"driverOrPassenger": "Peu importe: je serai conducteur ou passager"
 		}
 	},
 	"pause": {
@@ -43,5 +43,8 @@
 	},
 	"update": {
 		"route": "/covoiturage/annonce/{id}/modifier"
-	}
+	},
+  "solidary": {
+    "exclusive": "Annonce de covoiturage solidaire exclusif"
+  }
 }

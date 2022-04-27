@@ -19,12 +19,12 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Carpool\Ressource;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiResource;
 
 /**
  * Carpooling : an ad for the current api user.
@@ -48,143 +48,147 @@ use ApiPlatform\Core\Annotation\ApiProperty;
  *          }
  *      }
  * )
- *
  */
 class MyAd
 {
-    const DEFAULT_ID = 999999999999;
+    public const DEFAULT_ID = 999999999999;
 
-    const PAYMENT_STATUS_NULL = -1;     // no payment for this ad
-    const PAYMENT_STATUS_TODO = 1;      // there's a payment to validate (as a driver) or to pay (as a passenger)
-    const PAYMENT_STATUS_PAID = 2;      // all payments are received (as a driver) or paid (as a passenger)
+    public const PAYMENT_STATUS_NULL = -1;     // no payment for this ad
+    public const PAYMENT_STATUS_TODO = 1;      // there's a payment to validate (as a driver) or to pay (as a passenger)
+    public const PAYMENT_STATUS_PAID = 2;      // all payments are received (as a driver) or paid (as a passenger)
 
-    const ROLE_DRIVER = 1;
-    const ROLE_PASSENGER = 2;
+    public const ROLE_DRIVER = 1;
+    public const ROLE_PASSENGER = 2;
 
     /**
-     * @var int The id of this ad.
+     * @var int the id of this ad
      *
      * @ApiProperty(identifier=true)
      */
     private $id;
 
     /**
-     * @var boolean The ad is published.
+     * @var bool the ad is published
      */
     private $published;
 
     /**
-     * @var boolean The ad is paused.
+     * @var bool the ad is paused
      */
     private $paused;
 
     /**
-     * @var boolean The user can be a driver.
+     * @var bool the user can be a driver
      */
     private $roleDriver;
 
     /**
-     * @var boolean The user can be a passenger.
+     * @var bool the user can be a passenger
      */
     private $rolePassenger;
 
     /**
-     * @var int The ad frequency (1 = punctual; 2 = regular).
+     * @var int the ad frequency (1 = punctual; 2 = regular)
      */
     private $frequency;
 
     /**
-     * @var string|null The original date of the outward (for punctual ads).
+     * @var null|string the original date of the outward (for punctual ads)
      */
     private $outwardDate;
 
     /**
-     * @var string|null The original time of the outward (for punctual ads).
+     * @var null|string the original time of the outward (for punctual ads)
      */
     private $outwardTime;
 
     /**
-     * @var string|null The original date of the return (for punctual ads).
+     * @var null|string the original date of the return (for punctual ads)
      */
     private $returnDate;
 
     /**
-     * @var string|null The original time of the return (for punctual ads).
+     * @var null|string the original time of the return (for punctual ads)
      */
     private $returnTime;
 
     /**
-     * @var string|null The date of the start of the ad (for regular ads).
+     * @var null|string the date of the start of the ad (for regular ads)
      */
     private $fromDate;
 
     /**
-     * @var string|null The date of the end of the ad (for regular ads).
+     * @var null|string the date of the end of the ad (for regular ads)
      */
     private $toDate;
 
     /**
-     * @var string|null The date of the start of the return ad (for regular ads).
+     * @var null|string the date of the start of the return ad (for regular ads)
      */
     private $returnFromDate;
 
     /**
-     * @var string|null The date of the end of the return ad (for regular ads).
+     * @var null|string the date of the end of the return ad (for regular ads)
      */
     private $returnToDate;
 
     /**
-     * @var array The schedule for regular ads.
+     * @var array the schedule for regular ads
      */
     private $schedule;
 
     /**
-     * @var array The waypoints.
+     * @var array the waypoints
      */
     private $waypoints;
 
     /**
-    * @var string|null The price per km.
-    */
+     * @var null|string the price per km
+     */
     private $priceKm;
 
     /**
-    * @var string|null The total price selected by the user.
-    */
+     * @var null|string the total price selected by the user
+     */
     private $price;
 
     /**
-     * @var int|null The number of seats available/required.
+     * @var null|int the number of seats available/required
      */
     private $seats;
 
     /**
-     * @var string|null A comment about the ad.
+     * @var null|string a comment about the ad
      */
     private $comment;
 
     /**
-     * @var boolean The ad has asks.
+     * @var bool the ad has asks
      */
     private $asks;
 
     /**
-     * @var array|null The details of the driver if the user is passenger and the ad has an accepted ask as passenger.
+     * @var null|array the details of the driver if the user is passenger and the ad has an accepted ask as passenger
      */
     private $driver;
 
     /**
-     * @var array|null The details of the passengers if the user is driver and the ad has accepted asks as driver.
+     * @var null|array the details of the passengers if the user is driver and the ad has accepted asks as driver
      */
     private $passengers;
 
     /**
-     * @var int The number of potential carpoolers of this ad.
+     * @var int the number of potential carpoolers of this ad
      */
     private $carpoolers;
 
     /**
-     * @var int The overall payment status of this ad.
+     * @var bool the ad is solidary exclusive
+     */
+    private $solidaryExclusive = false;
+
+    /**
+     * @var int the overall payment status of this ad
      */
     private $paymentStatus;
 
@@ -214,11 +218,11 @@ class MyAd
     {
         return $this->published;
     }
-    
+
     public function setPublished(bool $isPublished): self
     {
         $this->published = $isPublished;
-        
+
         return $this;
     }
 
@@ -226,11 +230,11 @@ class MyAd
     {
         return $this->paused;
     }
-    
+
     public function setPaused(bool $ispaused): self
     {
         $this->paused = $ispaused;
-        
+
         return $this;
     }
 
@@ -238,23 +242,23 @@ class MyAd
     {
         return $this->roleDriver;
     }
-    
+
     public function setRoleDriver(bool $hasRoleDriver): self
     {
         $this->roleDriver = $hasRoleDriver;
-        
+
         return $this;
     }
-    
+
     public function hasRolePassenger(): ?bool
     {
         return $this->rolePassenger;
     }
-    
+
     public function setRolePassenger(bool $hasRolePassenger): self
     {
         $this->rolePassenger = $hasRolePassenger;
-        
+
         return $this;
     }
 
@@ -370,11 +374,11 @@ class MyAd
     {
         return $this->schedule;
     }
-    
+
     public function setSchedule(?array $schedule): self
     {
         $this->schedule = $schedule;
-        
+
         return $this;
     }
 
@@ -438,11 +442,11 @@ class MyAd
     {
         return $this->asks;
     }
-    
+
     public function setAsks(bool $hasAsks): self
     {
         $this->asks = $hasAsks;
-        
+
         return $this;
     }
 
@@ -490,6 +494,18 @@ class MyAd
     public function setPaymentStatus(int $paymentStatus): self
     {
         $this->paymentStatus = $paymentStatus;
+
+        return $this;
+    }
+
+    public function isSolidaryExclusive(): bool
+    {
+        return $this->solidaryExclusive;
+    }
+
+    public function setSolidaryExclusive(bool $solidaryExclusive): self
+    {
+        $this->solidaryExclusive = $solidaryExclusive;
 
         return $this;
     }

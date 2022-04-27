@@ -115,6 +115,7 @@ class MyAdManager
         $myAd->setFrequency($proposal->getCriteria()->getFrequency());
         $myAd->setRoleDriver((true === $proposal->getCriteria()->isDriver()) ? true : false);
         $myAd->setRolePassenger((true === $proposal->getCriteria()->isPassenger()) ? true : false);
+        $myAd->setSolidaryExclusive($proposal->getCriteria()->isSolidaryExclusive() ? true : false);
 
         switch ($proposal->getCriteria()->getFrequency()) {
             case Criteria::FREQUENCY_PUNCTUAL:
