@@ -29,6 +29,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\NumericFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Action\Entity\Log;
@@ -186,6 +187,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ApiFilter(OrderFilter::class, properties={"id", "fromDate", "name", "toDate","createdDate"}, arguments={"orderParameterName"="order"})
  * @ApiFilter(DateFilter::class, properties={"toDate","fromDate"})
  * @ApiFilter(SearchFilter::class, properties={"name":"partial"})
+ * @ApiFilter(NumericFilter::class, properties={"community.id"})
  * @ApiFilter(TerritoryFilter::class, properties={"territory"})
  * @ApiFilter(BooleanFilter::class, properties={"private"})
  * @ApiFilter(EventAddressTerritoryFilter::class, properties={"eventAddressTerritoryFilter"})

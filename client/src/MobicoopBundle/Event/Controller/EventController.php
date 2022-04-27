@@ -92,7 +92,7 @@ class EventController extends AbstractController
                 $search = (isset($data['searchPassed']) && !is_null($data['searchPassed'])) ? $data['searchPassed'] : [];
             }
 
-            $apiEvents = $eventManager->getEvents($data['coming'], null, 'fromDate', 'asc', $data['perPage'], $data['page'], $search);
+            $apiEvents = $eventManager->getEvents($data['coming'], null, 'fromDate', 'asc', $data['perPage'], $data['page'], $search, $data['communityId']);
             $events = $apiEvents->getMember();
             $eventsTotalItems = $apiEvents->getTotalItems();
             $pointsComing = [];
