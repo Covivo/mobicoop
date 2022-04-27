@@ -563,7 +563,7 @@ class PaymentManager
         }
 
         // we assume the payment is failed until it's a success !
-        //$payment->setStatus(PaymentPayment::STATUS_FAILURE);
+        // $payment->setStatus(PaymentPayment::STATUS_FAILURE);
 
         if (PaymentPayment::TYPE_PAY == $payment->getType()) {
             // PAY
@@ -694,7 +694,7 @@ class PaymentManager
                     $carpoolItem->setUnpaidDate(new \DateTime('now'));
 
                 // Unpaid doesn't change the status
-                    //$carpoolItem->setItemStatus(CarpoolItem::CREDITOR_STATUS_UNPAID);
+                    // $carpoolItem->setItemStatus(CarpoolItem::CREDITOR_STATUS_UNPAID);
                 } elseif (PaymentItem::DAY_CARPOOLED == $item['status']) {
                     $carpoolItem->setItemStatus(CarpoolItem::STATUS_REALIZED);
                     $carpoolItem->setUnpaidDate(null);
@@ -1280,6 +1280,9 @@ class PaymentManager
         $paymentProfiles = $this->paymentProfileRepository->findBy(['user' => $validationDocument->getUser()]);
         if (is_null($paymentProfiles) || 0 == count($paymentProfiles)) {
             throw new PaymentException(PaymentException::CARPOOL_PAYMENT_NOT_FOUND);
+        }
+        if (null !== $paymentProfiles[0]->getValidationId() && (PaymentProfile::VALIDATION_PENDING === $paymentProfiles[0]->getValidationStatus() || PaymentProfile::VALIDATION_VALIDATED === $paymentProfiles[0]->getValidationStatus())) {
+            throw new PaymentException(PaymentException::ERROR_VALIDATION_DOC_ALREADY_UNDER_REVIEW);
         }
 
         $validationDocument = $this->paymentProvider->uploadValidationDocument($validationDocument);
