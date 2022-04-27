@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2020, MOBICOOP. All rights reserved.
+ * Copyright (c) 2022, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -34,6 +34,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Action\Entity\Log;
 use App\App\Entity\App;
 use App\Carpool\Entity\Proposal;
+use App\Community\Entity\Community;
 use App\Event\Controller\ValidateCreateEventController;
 use App\Event\Filter\EventAddressTerritoryFilter;
 use App\Event\Filter\TerritoryFilter;
@@ -423,6 +424,17 @@ class Event
      */
     private $logs;
 
+    /**
+     * @var Community Community linked to the event
+     *
+     * @ApiProperty(push=true)
+     * @ORM\ManyToOne(targetEntity="App\Community\Entity\Community")
+     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
+     * @Groups({"readEvent","write"})
+     * @MaxDepth(1)
+     */
+    private $community;
+
     public function __construct($id = null)
     {
         $this->id = $id;
@@ -730,6 +742,18 @@ class Event
         }
 
         return null;
+    }
+
+    public function getCommunity(): ?Community
+    {
+        return $this->community;
+    }
+
+    public function setCommunity(?Community $community): self
+    {
+        $this->community = $community;
+
+        return $this;
     }
 
     // DOCTRINE EVENTS
