@@ -50,6 +50,9 @@ final class EventCommunityFilterExtension implements QueryCollectionExtensionInt
 
     public function applyToCollection(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
     {
+        if ($this->authManager->isAuthorized('event_manage')) {
+            return;
+        }
         // concerns only admin get collection
         if (Event::class == $resourceClass && 'ADMIN_get' == $operationName) {
             $this->addWhere($queryBuilder, $resourceClass, false, $operationName);
@@ -62,13 +65,8 @@ final class EventCommunityFilterExtension implements QueryCollectionExtensionInt
 
     private function addWhere(QueryBuilder $queryBuilder, string $resourceClass, bool $isItem, string $operationName = null, array $identifiers = [], array $context = []): void
     {
-        $communities = [];
-        if ('' == $this->request->get('showAllEvents')) {
-            switch ($operationName) {
-                case 'ADMIN_get':
-                    $communities = $this->communityManager->getModerated($this->security->getUser());
-            }
-        }
+        $communities = $this->communityManager->getModerated($this->security->getUser());
+
         if (count($communities) > 0) {
             $rootAlias = $queryBuilder->getRootAliases()[0];
             $queryBuilder
