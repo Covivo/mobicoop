@@ -24,15 +24,14 @@
 namespace App\Auth\Rule;
 
 use App\Auth\Interfaces\AuthRuleInterface;
-use App\Auth\Service\AuthManager;
 
 class CommunityManagerCanManageEvents implements AuthRuleInterface
 {
-    private $authManager;
+    private $communityManagerCanManageEvents;
 
-    public function __construct(AuthManager $authManager)
+    public function __construct(bool $communityManagerCanManageEvents)
     {
-        $this->authManager = $authManager;
+        $this->communityManagerCanManageEvents = $communityManagerCanManageEvents;
     }
 
     /**
@@ -40,7 +39,7 @@ class CommunityManagerCanManageEvents implements AuthRuleInterface
      */
     public function execute($requester, $item, $params)
     {
-        if ($this->authManager->isAuthorized('community_list') && $CommunityManagerCanManageEvent) {
+        if ($this->communityManagerCanManageEvents) {
             return true;
         }
     }
