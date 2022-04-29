@@ -159,9 +159,9 @@ class EventManager
                 $params[$key] = $value;
             }
         }
-        if ($communityId) {
-            $params['community.id'] = $communityId;
-        }
+        // if ($communityId) {
+        //     $params['community.id'] = $communityId;
+        // }
 
         $response = $this->dataProvider->getCollection($params);
         if ($response->getCode() >= 200 && $response->getCode() <= 300) {

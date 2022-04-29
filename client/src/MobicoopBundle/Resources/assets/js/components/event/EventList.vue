@@ -98,6 +98,7 @@
                     cols="6"
                   >
                     <div class="flex-grow-1" />
+                    
                     <v-card
                       class="ma-3 pa-6"
                       outlined
@@ -112,6 +113,23 @@
                         @input="updateSearch"
                       />
                     </v-card>
+                   
+                    <!-- Community -->
+                    <v-row justify="center">
+                      <v-col
+                        cols="11"
+                      >
+                        <v-select
+                          v-model="selectedCommunity"
+                          :items="communities"
+                          item-text="name"
+                          return-object
+                          label="Choississez une communauté"
+                          single-line
+                          :clearable="true"
+                        />
+                      </v-col>
+                    </v-row>
                   </v-col>
                 </v-row>
               </v-card-title>
@@ -333,18 +351,35 @@ export default {
       pointsComing:[],
       totalItems:0,
       totalItemsPassed:0,
-      modelTabs:(this.tabDefault !== "") ? this.tabDefault : "tab-current"
+      modelTabs:(this.tabDefault !== "") ? this.tabDefault : "tab-current",
+      selectedCommunity: null,
+      communities: [],
+
 
     }
   },
   watch:{
     pointsComing(){
       this.createMapComing();
-    }
+    },
+    // selectedCommunity() {
+    //   this.getEvents(true);
+    // },
   },
-  mounted() {
-    //this.createMapComing();
-  },
+  // mounted(){
+  //   maxios
+  //     .post(this.$t('getCommunities'))
+  //     .then(response => {
+  //       if(response.data.communities){
+  //         this.communities = response.data.communities;
+  //       }
+  //       this.loading = false;
+
+  //     })
+  //     .catch(function (error) {
+  //       console.error(error);
+  //     });
+  // },
   created() {
     moment.locale(this.locale); // DEFINE DATE LANGUAGE
   },
@@ -432,7 +467,8 @@ export default {
         },
         'searchPassed':{
           'name':this.searchPassed
-        }
+        },
+        'communityId':this.selectedCommunity.id ? this.selectedCommunity.id : null
       }
       maxios
         .post(this.$t('routes.getList'),params)
