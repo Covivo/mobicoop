@@ -392,7 +392,7 @@ class Event extends GamificationEntity implements ResourceInterface, \JsonSerial
         return $this->community;
     }
 
-    public function setommunity(Community $community): self
+    public function setCommunity(Community $community): self
     {
         $this->community = $community;
 
