@@ -15,20 +15,8 @@ final class Version20220427174956 extends AbstractMigration
     public function up(Schema $schema): void
     {
         $this->addSql('
-        INSERT INTO `auth_rule` (`id`, `name`) VALUES
-        (33, \'CommunityManagerCanManageEvents\')
-        ');
-
-        $this->addSql("
-        INSERT INTO `auth_item` (`id`, `auth_rule_id`, `type`, `name`, `description`) VALUES
-        (306, 33, 1, 'event_manage_community_manager', 'A community manager can manage events')
-        ");
-
-        $this->addSql('
         INSERT INTO `auth_item_child` (`parent_id`, `child_id`) VALUES
-        (7, 306),
-        (306, 79),
-        (306, 80)
+        (7, 82)
         ');
     }
 

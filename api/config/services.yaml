@@ -450,9 +450,6 @@ services:
     App\Event\Admin\DataProvider\EventCollectionDataProvider:
         arguments:
             $collectionFilters: !tagged api_platform.doctrine.orm.query_extension.collection
-    App\Auth\Rule\CommunityManagerCanManageEvents:
-        arguments:
-            $communityManagerCanManageEvents: '%env(bool:COMMUNITY_MANAGER_CAN_MANAGE_EVENTS)%'
 
     # External Connection
     App\ExternalJourney\Service\ExternalConnectionManager:
