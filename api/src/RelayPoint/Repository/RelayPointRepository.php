@@ -85,16 +85,15 @@ class RelayPointRepository
 
     public function findByParams(string $search, array $params)
     {
-        $words = explode(' ', $search);
         $query = $this->repository->createQueryBuilder('rp');
 
         foreach ($params as $key => $value) {
             switch ($key) {
                 case 'name':
                     if (true === $value) {
-                        $searchString = "(rp.name like '%".implode("%' or rp.name like '%", $words)."%')";
+                        $searchString = "(MATCH(rp.name) AGAINST('".$search."') > 0)";
                         $query
-                            ->orwhere($searchString)
+                            ->orWhere($searchString)
                         ;
                     }
 
@@ -102,7 +101,7 @@ class RelayPointRepository
 
                 case 'addressLocality':
                     if (true === $value) {
-                        $searchLocality = "(a.addressLocality like '%".implode("%' or a.addressLocality like '%", $words)."%')";
+                        $searchLocality = "(MATCH(a.addressLocality) AGAINST('".$search."') > 0)";
                         $query
                             ->leftJoin('rp.address', 'a')
                             ->orwhere($searchLocality)

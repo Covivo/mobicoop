@@ -47,7 +47,9 @@ doctrine:
                 acos:               DoctrineExtensions\Query\Mysql\Acos
                 cos:                DoctrineExtensions\Query\Mysql\Cos
                 radians:            DoctrineExtensions\Query\Mysql\Radians
-                sin:                DoctrineExtensions\Query\Mysql\Sin                
+                sin:                DoctrineExtensions\Query\Mysql\Sin   
+            string_functions:
+                match: DoctrineExtensions\Query\Mysql\MatchAgainst
         mappings:
             Action:
                 is_bundle: false

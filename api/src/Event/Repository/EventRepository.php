@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Event\Repository;
 
@@ -34,79 +34,63 @@ class EventRepository
      * @var EntityRepository
      */
     private $repository;
-    
+
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->repository = $entityManager->getRepository(Event::class);
         $this->entityManager = $entityManager;
     }
-    
+
     public function find(int $id): ?Event
     {
         return $this->repository->find($id);
     }
 
     /**
-     * Find event by criteria
-     *
-     * @param array $criteria
-     * @return void
+     * Find event by criteria.
      */
     public function findBy(array $criteria)
     {
         return $this->repository->findBy($criteria);
     }
 
-
     /**
      * Return all events with the given name and status.
      *
-     * @param string $name
-     * @return mixed|NULL|\Doctrine\DBAL\Driver\Statement|array     The event found
+     * @return null|array|\Doctrine\DBAL\Driver\Statement|mixed The event found
      */
     public function findByNameAndStatus(string $name, int $status)
     {
-        $words = explode(" ", $name);
-        $searchString = "e.name like '%".implode("%' and e.name like '%", $words)."%'";
-
         $queryString = "
-            SELECT e from App\Event\Entity\Event e
-            where ".$searchString." and e.status = ".$status;
+            SELECT e from App\\Event\\Entity\\Event e
+            where (MATCH(e.name) AGAINST('".$name."') > 0) and e.status = ".$status;
 
         $query = $this->entityManager->createQuery($queryString);
 
-        return $query->getResult()
-            ;
+        return $query->getResult();
     }
 
     /**
-    *Get events created by the user
-    *
-    * @param Int $userId
-    * @return void
-    */
-    public function getCreatedEvents(Int $userId)
+     *Get events created by the user.
+     */
+    public function getCreatedEvents(int $userId)
     {
-        $query = $this->repository->createQueryBuilder('e')
-        ->where('e.user = :userId')
-        ->setParameter('userId', $userId)
-        ->getQuery()->getResult();
-        return $query;
+        return $this->repository->createQueryBuilder('e')
+            ->where('e.user = :userId')
+            ->setParameter('userId', $userId)
+            ->getQuery()->getResult();
     }
 
     public function getEvents(): QueryBuilder
     {
         return $this->repository->createQueryBuilder('e')
-        ->where('e.status = 1')
-        ->andWhere('e.private = false');
+            ->where('e.status = 1')
+            ->andWhere('e.private = false')
+        ;
     }
 
-
     /**
-     * Find One event by criteria
-     *
-     * @param array $criteria
-     * @return Event|null
+     * Find One event by criteria.
      */
     public function findOneBy(array $criteria): ?Event
     {
@@ -114,29 +98,25 @@ class EventRepository
     }
 
     /**
-     * Get all internal events (exclude external events)
-     *
-     * @return void
+     * Get all internal events (exclude external events).
      */
     public function getInternalEvents()
     {
-        $query = $this->repository->createQueryBuilder('e')
-        ->where('e.externalSource is NULL')
-        ->andWhere('e.externalId is NULL')
-        ->getQuery()->getResult();
-        return $query;
+        return $this->repository->createQueryBuilder('e')
+            ->where('e.externalSource is NULL')
+            ->andWhere('e.externalId is NULL')
+            ->getQuery()->getResult();
     }
 
     /**
      * Get all internal events QueryBuilder (exclude external events)
-     * It's used to get only the querybuilder to apply filters on it on custom DataProvider
-     * @return QueryBuilder
+     * It's used to get only the querybuilder to apply filters on it on custom DataProvider.
      */
     public function getInternalEventsQueryBuilder(): QueryBuilder
     {
-        $query = $this->repository->createQueryBuilder('e')
-        ->where('e.externalSource is NULL')
-        ->andWhere('e.externalId is NULL');
-        return $query;
+        return $this->repository->createQueryBuilder('e')
+            ->where('e.externalSource is NULL')
+            ->andWhere('e.externalId is NULL')
+        ;
     }
 }
