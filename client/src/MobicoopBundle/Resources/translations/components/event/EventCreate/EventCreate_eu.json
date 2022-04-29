@@ -77,5 +77,6 @@
             "label": "Ekitaldia sortu"
         }
     },
-    "title": "Zure ekitaldia sor ezazu"
+    "title": "Zure ekitaldia sor ezazu",
+    "getCommunities": "/utilisateur/communautes"
 }

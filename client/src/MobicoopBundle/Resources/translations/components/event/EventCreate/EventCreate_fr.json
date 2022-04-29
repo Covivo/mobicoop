@@ -76,5 +76,6 @@
         "validation": "Publier l'événement",
         "cancel": "Annuler"
     },
-    "fullDate": "ddd Do MMMM YYYY"
+    "fullDate": "ddd Do MMMM YYYY",
+    "getCommunities": "/community/getCommunityList"
 }

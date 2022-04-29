@@ -24,6 +24,7 @@
 namespace Mobicoop\Bundle\MobicoopBundle\Event\Service;
 
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
+use Mobicoop\Bundle\MobicoopBundle\Community\Service\CommunityManager;
 use Mobicoop\Bundle\MobicoopBundle\Event\Entity\Event;
 use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
@@ -35,15 +36,17 @@ class EventManager
 {
     private $dataProvider;
     private $territoryFilter;
+    private $communityManager;
 
     /**
      * Constructor.
      */
-    public function __construct(DataProvider $dataProvider, array $territoryFilter)
+    public function __construct(DataProvider $dataProvider, array $territoryFilter, CommunityManager $communityManager)
     {
         $this->dataProvider = $dataProvider;
         $this->dataProvider->setClass(Event::class);
         $this->territoryFilter = $territoryFilter;
+        $this->communityManager = $communityManager;
     }
 
     /**
@@ -97,6 +100,7 @@ class EventManager
         $event->setUrl($data->get('urlEvent'));
         $event->setFromDate($from);
         $event->setToDate($to);
+        $event->setCommunity($this->communityManager->getCommunity(intval($data->get('community'))));
 
         $response = $this->dataProvider->post($event);
 

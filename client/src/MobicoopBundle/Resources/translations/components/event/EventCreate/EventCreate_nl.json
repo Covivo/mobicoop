@@ -73,5 +73,6 @@
             "label": "Het evenement aanmaken"
         }
     },
-    "title": "Maak uw evenement aan"
+    "title": "Maak uw evenement aan",
+    "getCommunities": "/utilisateur/communautes"
 }

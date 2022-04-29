@@ -290,15 +290,29 @@
                 </v-switch>
               </v-col>
             </v-row>
-
+            <!-- Community -->
+            <v-row justify="center">
+              <v-col cols="6">
+                <v-select
+                  v-model="selectedCommunity"
+                  :items="communities"
+                  item-text="name"
+                  return-object
+                  label="Choississez une communauté"
+                  single-line
+                  :clearable="true"
+                />
+              </v-col>
+            </v-row>
+            <!-- Image -->
             <v-row justify="center">
               <v-col cols="6">
                 <v-file-input
                   ref="avatar"
                   v-model="avatar"
-                  :rules="(mandatoryFullDescription) ? avatarRules : null"
+                  :rules="(imageIsMandatory) ? avatarRules : avatarNotRequiredRules"
                   accept="image/png, image/jpeg, image/jpg"
-                  :label="(mandatoryFullDescription) ? $t('form.avatar.label')+' '+$t('form.mandatoryCharacter') : $t('form.avatar.label')"
+                  :label="(imageIsMandatory) ? $t('form.avatar.label')+' '+$t('form.mandatoryCharacter') : $t('form.avatar.label')"
                   prepend-icon="mdi-image"
                   :hint="$t('form.avatar.minPxSize', {size: imageMinPxSize})+', '+$t('form.avatar.maxMbSize', {size: imageMaxMbSize})"
                   persistent-hint
@@ -447,6 +461,11 @@ export default {
         v => !v || this.avatarHeight >= this.imageMinPxSize || this.$t("form.avatar.pxSize", { size: this.imageMinPxSize, height: this.avatarHeight, width: this.avatarWidth }),
         v => !v || this.avatarWidth >= this.imageMinPxSize || this.$t("form.avatar.pxSize", { size: this.imageMinPxSize, height: this.avatarHeight, width: this.avatarWidth }),
       ],
+      avatarNotRequiredRules: [
+        v => !v || v.size < this.imageMaxMbSize*1024*1024 || this.$t("form.avatar.mbSize", { size: this.imageMaxMbSize }),
+        v => !v || this.avatarHeight >= this.imageMinPxSize || this.$t("form.avatar.pxSize", { size: this.imageMinPxSize, height: this.avatarHeight, width: this.avatarWidth }),
+        v => !v || this.avatarWidth >= this.imageMinPxSize || this.$t("form.avatar.pxSize", { size: this.imageMinPxSize, height: this.avatarHeight, width: this.avatarWidth }),
+      ],
       eventAddress: null,
       name: null,
       nameRules: [
@@ -484,7 +503,10 @@ export default {
       endDatePickerMinDate: null,
       startDatePickerMaxDate: null,
       nowDate : new Date().toISOString().slice(0,10),
-      valid: false
+      valid: false,
+      selectedCommunity: null,
+      communities: [],
+      imageIsMandatory: this.mandatoryImage
     }
   },
   computed :{
@@ -498,6 +520,25 @@ export default {
         ? moment(this.endDate).format(this.$t("fullDate"))
         : "";
     }
+  },
+  watch: {
+    selectedCommunity() {
+      this.imageIsMandatory = false;
+    },
+  },
+  mounted(){
+    maxios
+      .post(this.$t('getCommunities'))
+      .then(response => {
+        if(response.data.communities){
+          this.communities = response.data.communities;
+        }
+        this.loading = false;
+
+      })
+      .catch(function (error) {
+        console.error(error);
+      });
   },
   created() {
     moment.locale(this.locale); // DEFINE DATE LANGUAGE
@@ -516,6 +557,7 @@ export default {
       newEvent.append("address", JSON.stringify(this.eventAddress));
       newEvent.append("startDate", this.startDate);
       newEvent.append("endDate", this.endDate);
+      newEvent.append("community", this.selectedCommunity.id);
       if (this.startTime) newEvent.append("startTime", this.startTime);
       if (this.endTime) newEvent.append("endTime", this.endTime);
       if (this.urlEvent) newEvent.append("urlEvent", this.urlEvent);
@@ -532,7 +574,7 @@ export default {
             this.snackbar = true;
             this.loading = false;
           }
-          else window.location.href = this.$t('redirect.route');
+          // else window.location.href = this.$t('redirect.route');
         });
     },
     updateEndDatePickerMinDate () {
