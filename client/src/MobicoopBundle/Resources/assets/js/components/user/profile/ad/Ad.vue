@@ -9,23 +9,24 @@
       :is-pausable="ad.frequency === 2"
       :is-paused="ad.paused"
       :is-archived="isArchived"
+      :is-solidary-exclusive="ad.isSolidaryExclusive"
       :has-accepted-ask="!Array.isArray(ad.driver) || ad.passengers.length>0"
       :has-ask="ad.asks"
       :ad-id="ad.id"
       @ad-deleted="adDeleted"
       @pause-ad="ad.paused"
     />
-    
+
     <v-card-text v-if="ad.frequency === 2">
       <ad-content-regular :ad="ad" />
     </v-card-text>
-      
+
     <v-card-text v-else>
       <ad-content-punctual :ad="ad" />
     </v-card-text>
 
     <v-divider class="primary lighten-5" />
-      
+
     <v-card-actions>
       <ad-footer
         v-if="!ad.paused"
@@ -45,7 +46,7 @@ import AdHeader from '@components/user/profile/ad/AdHeader.vue';
 import AdFooter from '@components/user/profile/ad/AdFooter.vue';
 import AdContentRegular from '@components/user/profile/ad/AdContentRegular.vue';
 import AdContentPunctual from '@components/user/profile/ad/AdContentPunctual.vue';
-  
+
 export default {
   components: {
     AdHeader,

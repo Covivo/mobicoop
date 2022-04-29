@@ -3,7 +3,7 @@
         "ongoing": "Proposals in progress",
         "archived": "Archived proposals",
         "tooltips": {
-            "diverOrPassenger": "Not important: I will be the driver or a passenger",
+            "driverOrPassenger": "Not important: I will be the driver or a passenger",
             "passenger": "I will be a passenger",
             "driver": "I will be the driver"
         }
@@ -43,5 +43,8 @@
             "pause": "An error occurred and your proposal has not been paused.",
 			"antifraud": "Trajet incompatible avec vos annonces déjà publiées. Si votre annonce déjà publiée à cette date n'est plus valable, vous devez la mettre en pause, la modifier ou la supprimer."
         }
+    },
+    "solidary": {
+      "exclusive": "Announcement of exclusive solidarity carpooling"
     }
 }

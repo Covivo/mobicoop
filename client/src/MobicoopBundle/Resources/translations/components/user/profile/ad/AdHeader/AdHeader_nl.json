@@ -37,11 +37,14 @@
     },
     "ads": {
         "tooltips": {
-            "diverOrPassenger": "Maakt niet uit: ik zal bestuurder of passagier zijn",
+            "driverOrPassenger": "Maakt niet uit: ik zal bestuurder of passagier zijn",
             "passenger": "Ik zal passagier zijn",
             "driver": "Ik zal bestuurder zijn"
         },
         "archived": "Gearchiveerde advertenties",
         "ongoing": "Lopende advertenties"
+    },
+    "solidary": {
+      "exclusive": "Aankondiging van exclusief solidair carpoolen"
     }
 }
