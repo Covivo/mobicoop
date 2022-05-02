@@ -69,6 +69,10 @@
         "name": {
             "required": "Ekitaldiaren izena beharrezkoa da",
             "label": "Ekitaldiaren izena*"
+        },
+        "community": {
+          "label": "Communauté a associer à l'événement",
+          "required": "Une communauté est requise"
         }
     },
     "buttons": {

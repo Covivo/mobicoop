@@ -65,6 +65,10 @@
         "name": {
             "required": "De naam van het evenement is vereist",
             "label": "Naam van het evenement*"
+        },
+        "community": {
+          "label": "Communauté a associer à l'événement",
+          "required": "Une communauté est requise"
         }
     },
     "buttons": {

@@ -50,14 +50,16 @@ class EventController extends AbstractController
     private $mandatoryFullDescription;
     private $mandatoryImage;
     private $defaultNbEventsPerPage;
+    private $eventAssociatedToCommunity;
 
-    public function __construct(UrlGeneratorInterface $router, bool $mandatoryDescription, bool $mandatoryFullDescription, bool $mandatoryImage, int $defaultNbEventsPerPage)
+    public function __construct(UrlGeneratorInterface $router, bool $mandatoryDescription, bool $mandatoryFullDescription, bool $mandatoryImage, int $defaultNbEventsPerPage, array $eventAssociatedToCommunity)
     {
         $this->router = $router;
         $this->mandatoryDescription = $mandatoryDescription;
         $this->mandatoryFullDescription = $mandatoryFullDescription;
         $this->mandatoryImage = $mandatoryImage;
         $this->defaultNbEventsPerPage = $defaultNbEventsPerPage;
+        $this->eventAssociatedToCommunity = $eventAssociatedToCommunity;
     }
 
     /**
@@ -180,6 +182,8 @@ class EventController extends AbstractController
             'mandatoryDescription' => $this->mandatoryDescription,
             'mandatoryFullDescription' => $this->mandatoryFullDescription,
             'mandatoryImage' => $this->mandatoryImage,
+            'canSelectCommunity' => $this->eventAssociatedToCommunity['activated'],
+            'mandatoryCommunity' => $this->eventAssociatedToCommunity['mandatory'],
         ]);
     }
 

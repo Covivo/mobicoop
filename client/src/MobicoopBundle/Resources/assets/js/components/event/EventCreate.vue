@@ -291,16 +291,21 @@
               </v-col>
             </v-row>
             <!-- Community -->
-            <v-row justify="center">
+            <v-row
+              v-if="canSelectCommunity"
+              justify="center"
+            >
               <v-col cols="6">
                 <v-select
                   v-model="selectedCommunity"
                   :items="communities"
                   item-text="name"
                   return-object
-                  label="Choississez une communauté"
+                  :requiered="mandatoryCommunity"
+                  :label="(mandatoryCommunity) ? $t('form.community.label')+' '+$t('form.mandatoryCharacter') : $t('form.community.label')"
                   single-line
-                  :clearable="true"
+                  clearable
+                  :rules="mandatoryCommunity ? selectedCommunityRules : []"
                 />
               </v-col>
             </v-row>
@@ -443,6 +448,14 @@ export default {
       type: Boolean,
       default: false
     },
+    canSelectCommunity: {
+      type: Boolean,
+      default: false
+    },
+    mandatoryCommunity: {
+      type: Boolean,
+      default: false
+    }
   },
   data () {
     return {
@@ -505,6 +518,9 @@ export default {
       nowDate : new Date().toISOString().slice(0,10),
       valid: false,
       selectedCommunity: null,
+      selectedCommunityRules: [
+        v => !!v || this.$t("form.community.required")
+      ],
       communities: [],
       imageIsMandatory: this.mandatoryImage
     }
@@ -523,7 +539,12 @@ export default {
   },
   watch: {
     selectedCommunity() {
-      this.imageIsMandatory = false;
+      if (this.selectedCommunity){
+        this.imageIsMandatory = false;
+      } else {
+        this.imageIsMandatory = true;
+      }
+
     },
   },
   mounted(){
@@ -574,7 +595,7 @@ export default {
             this.snackbar = true;
             this.loading = false;
           }
-          // else window.location.href = this.$t('redirect.route');
+          else window.location.href = this.$t('redirect.route');
         });
     },
     updateEndDatePickerMinDate () {
@@ -603,9 +624,9 @@ export default {
         }
         img.src = evt.target.result;
       }
-
     }
   }
+
 }
 </script>
 
