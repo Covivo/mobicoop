@@ -158,7 +158,7 @@ class EventController extends AbstractController
             // Create event and return response code
             if ($event = $eventManager->createEvent($request->request, $event, $user)) {
                 // Post avatar of the event
-                if ($this->mandatoryImage && null != $event->getCommunity()) {
+                if ($this->mandatoryImage || null != $request->files->get('avatar')) {
                     $image = new Image();
                     $image->setEventFile($request->files->get('avatar'));
                     $image->setEventId($event->getId());

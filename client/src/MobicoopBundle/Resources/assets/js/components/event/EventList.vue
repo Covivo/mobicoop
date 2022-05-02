@@ -98,7 +98,7 @@
                     cols="6"
                   >
                     <div class="flex-grow-1" />
-                    
+
                     <v-card
                       class="ma-3 pa-6"
                       outlined
@@ -113,7 +113,7 @@
                         @input="updateSearch"
                       />
                     </v-card>
-                   
+
                     <!-- Community -->
                     <v-row justify="center">
                       <v-col
@@ -362,24 +362,24 @@ export default {
     pointsComing(){
       this.createMapComing();
     },
-    // selectedCommunity() {
-    //   this.getEvents(true);
-    // },
+    selectedCommunity() {
+      this.getEvents(true);
+    },
   },
-  // mounted(){
-  //   maxios
-  //     .post(this.$t('getCommunities'))
-  //     .then(response => {
-  //       if(response.data.communities){
-  //         this.communities = response.data.communities;
-  //       }
-  //       this.loading = false;
+  mounted(){
+    maxios
+      .post(this.$t('getCommunities'))
+      .then(response => {
+        if(response.data.communities){
+          this.communities = response.data.communities;
+        }
+        this.loading = false;
 
-  //     })
-  //     .catch(function (error) {
-  //       console.error(error);
-  //     });
-  // },
+      })
+      .catch(function (error) {
+        console.error(error);
+      });
+  },
   created() {
     moment.locale(this.locale); // DEFINE DATE LANGUAGE
   },
@@ -468,7 +468,7 @@ export default {
         'searchPassed':{
           'name':this.searchPassed
         },
-        'communityId':this.selectedCommunity.id ? this.selectedCommunity.id : null
+        'communityId':this.selectedCommunity ? this.selectedCommunity.id : null
       }
       maxios
         .post(this.$t('routes.getList'),params)

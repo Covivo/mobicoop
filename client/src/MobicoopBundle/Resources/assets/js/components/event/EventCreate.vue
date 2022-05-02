@@ -315,9 +315,9 @@
                 <v-file-input
                   ref="avatar"
                   v-model="avatar"
-                  :rules="(imageIsMandatory) ? avatarRules : avatarNotRequiredRules"
+                  :rules="(mandatoryImage) ? avatarRules : avatarNotRequiredRules"
                   accept="image/png, image/jpeg, image/jpg"
-                  :label="(imageIsMandatory) ? $t('form.avatar.label')+' '+$t('form.mandatoryCharacter') : $t('form.avatar.label')"
+                  :label="(mandatoryImage) ? $t('form.avatar.label')+' '+$t('form.mandatoryCharacter') : $t('form.avatar.label')"
                   prepend-icon="mdi-image"
                   :hint="$t('form.avatar.minPxSize', {size: imageMinPxSize})+', '+$t('form.avatar.maxMbSize', {size: imageMaxMbSize})"
                   persistent-hint
@@ -521,8 +521,7 @@ export default {
       selectedCommunityRules: [
         v => !!v || this.$t("form.community.required")
       ],
-      communities: [],
-      imageIsMandatory: this.mandatoryImage
+      communities: []
     }
   },
   computed :{
@@ -537,16 +536,7 @@ export default {
         : "";
     }
   },
-  watch: {
-    selectedCommunity() {
-      if (this.selectedCommunity){
-        this.imageIsMandatory = false;
-      } else {
-        this.imageIsMandatory = true;
-      }
 
-    },
-  },
   mounted(){
     maxios
       .post(this.$t('getCommunities'))
