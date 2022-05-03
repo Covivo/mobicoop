@@ -14,5 +14,8 @@
     "createEvent": "Een evenement aanmaken",
     "eventsPassed": "Afgelopen evenementen",
     "eventsAvailable": "Beschikbare evenementen",
-    "events": "Carpoolevenementen"
+    "events": "Carpoolevenementen",
+    "getCommunities": "/community/getCommunityList",
+    "filterByCommunity":"Filtrez par communauté"
+
 }
