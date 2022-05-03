@@ -98,7 +98,7 @@ class CarpoolProofGouvProvider implements ProviderInterface
         return new Response(200, '');
     }
 
-    public function serializeProof(CarpoolProof $carpoolProof): ?string
+    public function serializeProof(CarpoolProof $carpoolProof): ?array
     {
         // creation of the journey
         $over18 = null;
@@ -154,33 +154,24 @@ class CarpoolProofGouvProvider implements ProviderInterface
         // Passenger or driver start and end need to be filled with lat/lon to be valid
         // In organized journey, we don't have pickup or dropoff for passengers. We use it's origin/destination
         if ((CarpoolProof::TYPE_LOW == $carpoolProof->getType() || CarpoolProof::TYPE_MID == $carpoolProof->getType())) {
-            if ($carpoolProof->getAsk()->getMatching()->getProposalRequest()->getUser()->getId() == $carpoolProof->getPassenger()->getId()) {
-                $passengerProposal = $carpoolProof->getAsk()->getMatching()->getProposalRequest();
-                $passengerWaypoints = $passengerProposal->getWaypoints();
-            } elseif ($carpoolProof->getAsk()->getMatching()->getProposalOffer()->getUser()->getId() == $carpoolProof->getPassenger()->getId()) {
-                $passengerProposal = $carpoolProof->getAsk()->getMatching()->getProposalOffer();
-                $passengerWaypoints = $passengerProposal->getWaypoints();
-            }
-
             if (is_null($journey['passenger']['start']['lon']) && is_null($journey['passenger']['start']['lat'])) {
+                $matchingWaypoints = $carpoolProof->getAsk()->getMatching()->getWaypoints();
+                $passengerWaypoints = [];
+                foreach ($matchingWaypoints as $waypoint) {
+                    if (2 == $waypoint->getRole()) {
+                        $passengerWaypoints[] = $waypoint;
+                    }
+                }
                 $journey['passenger']['start']['lon'] = (float) $passengerWaypoints[0]->getAddress()->getLongitude();
                 $journey['passenger']['start']['lat'] = (float) $passengerWaypoints[0]->getAddress()->getLatitude();
                 $journey['passenger']['end']['lon'] = (float) $passengerWaypoints[count($passengerWaypoints) - 1]->getAddress()->getLongitude();
                 $journey['passenger']['end']['lat'] = (float) $passengerWaypoints[count($passengerWaypoints) - 1]->getAddress()->getLatitude();
             }
-            if (is_null($journey['driver']['start']['lon']) && is_null($journey['driver']['start']['lat'])) {
-                if (!is_null($journey['passenger']['start']['lon']) && !is_null($journey['passenger']['start']['lat'])) {
-                    $journey['driver']['start']['lon'] = $journey['passenger']['start']['lon'];
-                    $journey['driver']['start']['lat'] = $journey['passenger']['start']['lat'];
-                    $journey['driver']['end']['lon'] = $journey['passenger']['end']['lon'];
-                    $journey['driver']['end']['lat'] = $journey['passenger']['end']['lat'];
-                } else {
-                    $journey['driver']['start']['lon'] = (float) $passengerWaypoints[0]->getAddress()->getLongitude();
-                    $journey['driver']['start']['lat'] = (float) $passengerWaypoints[0]->getAddress()->getLatitude();
-                    $journey['driver']['end']['lon'] = (float) $passengerWaypoints[count($passengerWaypoints) - 1]->getAddress()->getLongitude();
-                    $journey['driver']['end']['lat'] = (float) $passengerWaypoints[count($passengerWaypoints) - 1]->getAddress()->getLatitude();
-                }
-            }
+
+            $journey['driver']['start']['lon'] = $journey['passenger']['start']['lon'];
+            $journey['driver']['start']['lat'] = $journey['passenger']['start']['lat'];
+            $journey['driver']['end']['lon'] = $journey['passenger']['end']['lon'];
+            $journey['driver']['end']['lat'] = $journey['passenger']['end']['lat'];
 
             // In organized, we need to use the driver's date and we search for the ask's criteria time for the passenger
             if (is_null($journey['passenger']['start']['datetime'])) {
