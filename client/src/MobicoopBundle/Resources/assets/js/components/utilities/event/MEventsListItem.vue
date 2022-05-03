@@ -14,17 +14,11 @@
         tile
       >
         <v-img
-          v-if="item['images'][0]"
-          :src="item['images'][0]['versions']['square_250']"
-          class="grey lighten-2"
-        />
-        <v-img
-          v-else
-          src="/images/avatarsDefault/avatar.svg"
+          :src="(item['images'][0]) ? item['images'][0]['versions']['square_250'] : item.community ? item.community.image : '/images/avatarsDefault/avatar.svg'"
           class="grey lighten-2"
         />
       </v-avatar>
-    
+
       <div
         style="min-width:225px;max-width:300px"
         class="d-flex flex-column align-self-center"
@@ -37,7 +31,7 @@
               :href="linkToEventShow(item)"
               style="text-decoration:none;"
               class="black--text"
-            > 
+            >
               {{ item.name }}
             </a>
           </h6>
@@ -111,7 +105,7 @@ export default {
     computeEventDate(){
       let fromDate = moment(this.item.fromDate.date).format(this.$t("shortCompleteDate"));
       let toDate = moment(this.item.toDate.date).format(this.$t("shortCompleteDate"));
-      
+
       if(fromDate === toDate){
         this.dateLine1 = this.$t("date.the")+" "+fromDate+" ";
       }

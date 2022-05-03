@@ -77,6 +77,7 @@ class EventController extends AbstractController
         return $this->render('@Mobicoop/event/events.html.twig', [
             'defaultItemsPerPage' => $this->defaultNbEventsPerPage,
             'tabDefault' => $tab,
+            'canSelectCommunity' => $this->eventAssociatedToCommunity['activated'],
         ]);
     }
 

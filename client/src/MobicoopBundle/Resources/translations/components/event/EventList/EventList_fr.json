@@ -15,5 +15,6 @@
         "getList": "/evenements/getEventList",
         "login": "/utilisateur/connexion"
     },
-    "getCommunities": "/community/getCommunityList"
+    "getCommunities": "/community/getCommunityList",
+    "filterByCommunity":"Filtrez par communauté"
 }

@@ -115,7 +115,10 @@
                     </v-card>
 
                     <!-- Community -->
-                    <v-row justify="center">
+                    <v-row
+                      v-if="canSelectCommunity"
+                      justify="center"
+                    >
                       <v-col
                         cols="11"
                       >
@@ -124,9 +127,9 @@
                           :items="communities"
                           item-text="name"
                           return-object
-                          label="Choississez une communauté"
+                          :label="$t('filterByCommunity')"
                           single-line
-                          :clearable="true"
+                          clearable
                         />
                       </v-col>
                     </v-row>
@@ -319,6 +322,10 @@ export default {
     eventButtonDisplay:{
       type: Boolean,
       default:false
+    },
+    canSelectCommunity: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
