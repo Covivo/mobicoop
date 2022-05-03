@@ -7,6 +7,7 @@
     >
       <v-col
         v-if="article"
+        class="article"
         cols="10"
       >
         <h1 class="text-h4 primary--text text-center font-weight-bold">
@@ -32,12 +33,12 @@
               <v-col>
                 <div
                   class="ma-n3"
-                  v-html="paragraph.text" 
+                  v-html="paragraph.text"
                 />
               </v-col>
-            </v-row>       
+            </v-row>
           </v-col>
-        </v-row>    
+        </v-row>
       </v-col>
     </v-row>
   </v-container>
@@ -76,7 +77,7 @@ export default {
       .then(res => {
         this.article = res.data;
       });
-      
+
   },
 }
 </script>
