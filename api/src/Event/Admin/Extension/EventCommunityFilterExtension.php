@@ -50,7 +50,7 @@ final class EventCommunityFilterExtension implements QueryCollectionExtensionInt
 
     public function applyToCollection(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
     {
-        if ($this->authManager->isAuthorized('event_manage')) {
+        if (!$this->authManager->isAuthorized('event_manage')) {
             return;
         }
         // concerns only admin get collection
