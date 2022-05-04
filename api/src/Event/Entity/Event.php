@@ -432,10 +432,22 @@ class Event
      * @ApiProperty(push=true)
      * @ORM\ManyToOne(targetEntity="App\Community\Entity\Community")
      * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
-     * @Groups({"readEvent","write"})
+     * @Groups({"readEvent","write", "aRead", "aWrite"})
      * @MaxDepth(1)
      */
     private $community;
+
+    /**
+     * @var null|int The community id
+     * @Groups({"aRead","aWrite"})
+     */
+    private $communityId;
+
+    /**
+     * @var string The community name
+     * @Groups({"aRead","aWrite"})
+     */
+    private $communityName;
 
     public function __construct($id = null)
     {
@@ -756,6 +768,29 @@ class Event
         $this->community = $community;
 
         return $this;
+    }
+
+    public function getCommunityId(): ?int
+    {
+        if (is_null($this->communityId)) {
+            return $this->getCommunity() ? $this->getCommunity()->getId() : null;
+        }
+
+        return $this->communityId;
+    }
+
+    public function setCommunityId(?int $communityId)
+    {
+        $this->communityId = $communityId;
+    }
+
+    public function getCommunityName(): string
+    {
+        if ($this->getCommunity()) {
+            return $this->getCommunity()->getName();
+        }
+
+        return '';
     }
 
     // DOCTRINE EVENTS
