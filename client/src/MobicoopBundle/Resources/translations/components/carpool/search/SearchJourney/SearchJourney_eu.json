@@ -14,6 +14,8 @@
     "subtitle": "Hurbileko autokidetza zerbitzu bat, lagun artekoa eta elkartasunezkoa.<br />Zure autokideza gaurdanik atzeman ezazu edo zure bidaia proposa ezazu.",
     "title": "Mobicoop",
     "fullDate": "ddd Do MMMM YYYY",
+    "ariaLabelOrgin":"Une adresse de départ est requise",
+    "ariaLabelDestination":"Une adresse de destination est requise",
     "outwardDate": {
         "error": "Baitezpadakoa",
         "label": "Abiatze eguna"

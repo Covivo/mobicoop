@@ -29,6 +29,9 @@
     },
     "events": {
         "title": "Organisez du covoiturage pour vos événements",
+        "image": {
+            "van":"Dessin d'un van rempli de personnes écoutant de la musique"
+        },
         "button1": {
             "label": "Voir les événements",
             "route": "/evenements"

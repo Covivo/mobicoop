@@ -6,6 +6,7 @@
         "button": {
             "label":"En savoir plus sur Rezo Pouce",
             "route":"https://rezopouce.fr/page/Qui_sommes_nous"
-        }
+        },
+        "imageAlt": "Mobicoop fusionne avec Rezopouce. Elle forme ensemble la grande SCIC de la mobilité partagée"
     }
 }

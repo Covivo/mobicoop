@@ -6,6 +6,7 @@
         "button": {
             "label":"Faites un don pour nous soutenir",
             "route":"https://www.zeste.coop/fr/mobicoop"
-        }
+        },
+        "imageAlt": "Mobicoop fusionne avec Rezopouce. Elle forme ensemble la grande SCIC de la mobilité partagée"
     }
 }

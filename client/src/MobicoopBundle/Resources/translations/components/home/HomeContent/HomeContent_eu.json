@@ -31,7 +31,10 @@
             "route": "/evenements",
             "label": "Ekitaldiak ikusi"
         },
-        "title": "Autokidetza antola ezazu zure ekitaldientzat"
+        "title": "Autokidetza antola ezazu zure ekitaldientzat",
+        "image": {
+            "van":"Dessin d'un van rempli de personnes écoutant de la musique"
+        }
     },
     "solidary": {
         "button2": {

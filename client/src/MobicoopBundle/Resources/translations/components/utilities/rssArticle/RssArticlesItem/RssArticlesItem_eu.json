@@ -1,5 +1,7 @@
 {
     "title": "BLOG MOBICOOP",
     "feedUrl": "https://pro.mobicoop.fr/covoiturage-transports-alternatifs-et-nouvelles-mobilites/",
-    "readMore": "Lire la suite"
+    "readMore": "Lire la suite",
+    "imageArticle": "Image de l'article nommé {name}",
+    "imageArticleDefault":"Image par défaut de l'événement, si l'image n'est pas renseignée"
 }

@@ -31,7 +31,10 @@
             "route": "/evenementen",
             "label": "De evenementen weergeven"
         },
-        "title": "Organiseer carpooling voor uw evenementen"
+        "title": "Organiseer carpooling voor uw evenementen",
+        "image": {
+            "van":"Dessin d'un van rempli de personnes écoutant de la musique"
+        }
     },
     "solidary": {
         "button2": {

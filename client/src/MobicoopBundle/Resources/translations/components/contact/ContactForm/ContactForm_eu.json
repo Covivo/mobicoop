@@ -5,7 +5,8 @@
     "dataPolicy": {
         "route": "/protection-donnees",
         "link": "datuen babesteko dugun politika",
-        "text": "Zure eskubideak ezagutzeko eta baliatzeko, batez ere formulario honetan bilduak diren datuen erabiltzeko zure baimenaren kentzeaz ari direnak, kontsulta ezazu"
+        "text": "Zure eskubideak ezagutzeko eta baliatzeko, batez ere formulario honetan bilduak diren datuen erabiltzeko zure baimenaren kentzeaz ari direnak, kontsulta ezazu",
+        "linkAria":"Redirection vers la page politique de protection des données."
     },
     "buttons": {
         "send": {

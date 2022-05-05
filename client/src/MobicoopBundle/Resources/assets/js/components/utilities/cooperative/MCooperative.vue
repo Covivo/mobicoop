@@ -22,6 +22,7 @@
         <v-img
           :src="imageLink + 'cooperative.png'"
           class="align-self-center"
+          :alt="$t('cooperative.image')"
           contain
         />
       </v-col>

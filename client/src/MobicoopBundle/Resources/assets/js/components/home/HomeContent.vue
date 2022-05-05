@@ -19,7 +19,7 @@
       </v-col>
     </v-row>
     <!-- features -->
-    <div :style="'background-image:url(\''+$t('urlBackground2')+'\');background-position-y:bottom;background-size:100% 100%;background-repeat:no-repeat;'">
+    <div :style="'background-image:url(\''+$t('urlBackground2')+'\');background-position-y:bottom;background-size:100% 100%;background-repeat:no-repeat;alt=\'\';'">
       <v-row
         align="center"
         class="mt-2"
@@ -78,10 +78,11 @@
             >
               {{ $t('events.button2.label') }}
             </v-btn>
-            <img
+            <v-img
               class="mt-6"
               :src="imageLink + 'van_evenement.svg'"
-            >
+              :alt="$t('events.image.van')"
+            />
           </v-col>
           <v-col
             cols="6"

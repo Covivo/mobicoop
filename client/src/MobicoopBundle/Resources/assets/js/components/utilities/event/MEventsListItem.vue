@@ -17,11 +17,13 @@
           v-if="item['images'][0]"
           :src="item['images'][0]['versions']['square_250']"
           class="grey lighten-2"
+          :alt="$t('imageEvent',{name:name})"
         />
         <v-img
           v-else
           src="/images/avatarsDefault/avatar.svg"
           class="grey lighten-2"
+          :alt="$t('imageEventDefault')"
         />
       </v-avatar>
     
@@ -30,17 +32,17 @@
         class="d-flex flex-column align-self-center"
       >
         <v-card-title
-          class="text-left"
+          class="text-left text-uppercase text-truncate font-weight-bold"
         >
-          <h6 class="text-uppercase text-truncate">
-            <a
-              :href="linkToEventShow(item)"
-              style="text-decoration:none;"
-              class="black--text"
-            > 
-              {{ item.name }}
-            </a>
-          </h6>
+          <a
+            :href="linkToEventShow(item)"
+            :aria-label="$t('linkToEvent')"
+            :title="$t('linkToEvent')"
+            style="text-decoration:none;"
+            class="black--text"
+          > 
+            {{ item.name }}
+          </a>
         </v-card-title>
         <v-card-subtitle class="text-left">
           <span class="black--text font-italic">
@@ -64,6 +66,7 @@
           x-large
           color="black"
           :href="linkToEventShow(item)"
+          :aria-label="$t('linkToEvent')"
         >
           <v-icon>
             mdi-chevron-right
@@ -97,7 +100,8 @@ export default {
     return {
       locale: localStorage.getItem("X-LOCALE"),
       dateLine1:null,
-      dateLine2:null
+      dateLine2:null,
+      name: this.item.name
     };
   },
   created() {

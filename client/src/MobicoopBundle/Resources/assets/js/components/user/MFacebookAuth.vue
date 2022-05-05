@@ -60,6 +60,10 @@ export default {
   computed: {
     labelBtn(){
       return (this.signUp) ? this.$t("signup") : this.$t("connection");
+    },
+    altImg(){
+      return document.getElementsByClassName('data-v-0af1f3c3').alt = "Anything";
+
     }
   },
   mounted() {

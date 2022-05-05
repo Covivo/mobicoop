@@ -29,6 +29,9 @@
     },
     "events": {
         "title": "Organize carpooling for your events",
+        "image": {
+            "van":"Dessin d'un van rempli de personnes écoutant de la musique"
+        },
         "button1": {
             "label": "View the events",
             "route": "/events"
