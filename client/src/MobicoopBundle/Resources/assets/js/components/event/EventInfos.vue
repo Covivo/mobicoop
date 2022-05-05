@@ -19,7 +19,7 @@
           />
           <v-img
             v-else
-            :src="(event.images[0]) ? event['images'][0]['versions']['square_250'] : urlAltAvatar"
+            :src="(event.images[0]) ? event['images'][0]['versions']['square_250'] : event.community ? event.community.image : urlAltAvatar"
             width="225"
             height="200"
             :aspect-ratio="1"
@@ -38,16 +38,37 @@
             justify="center"
           >
             <v-card-text>
-              <h3 :class="justifyTitle">
-                {{ event.name }}
-                <v-chip 
-                  v-if="event.private" 
-                  small
-                  color="warning"
+              <v-row
+                v-if="event.community"
+                justify="start"
+              >
+                <v-col
+                  cols="2"
                 >
-                  {{ $t('private') }}
-                </v-chip>
-              </h3>
+                  <v-avatar>
+                    <v-img :src="event.community.image" />
+                  </v-avatar>
+                </v-col>
+                <v-col
+                  cols="8"
+                  class="mt-3 ml-n4"
+                >
+                  <h4>{{ event.community.name }}</h4>
+                </v-col>
+              </v-row>
+              <v-row class="mb-6 mt-6">
+                <h3 :class="justifyTitle">
+                  {{ event.name }}
+                  <v-chip
+                    v-if="event.private"
+                    small
+                    color="warning"
+                  >
+                    {{ $t('private') }}
+                  </v-chip>
+                </h3>
+              </v-row>
+
               <p :class="justifyAddressLocality">
                 {{ event.address.addressLocality }}
               </p>

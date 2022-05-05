@@ -69,6 +69,10 @@
         "name": {
             "required": "Ekitaldiaren izena beharrezkoa da",
             "label": "Ekitaldiaren izena*"
+        },
+        "community": {
+          "label": "Communauté à associer à l'événement",
+          "required": "Une communauté est requise"
         }
     },
     "buttons": {
@@ -77,5 +81,6 @@
             "label": "Ekitaldia sortu"
         }
     },
-    "title": "Zure ekitaldia sor ezazu"
+    "title": "Zure ekitaldia sor ezazu",
+    "getCommunities": "/utilisateur/communautes"
 }

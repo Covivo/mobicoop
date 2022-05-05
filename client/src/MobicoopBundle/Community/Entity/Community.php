@@ -19,114 +19,113 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
-
+ */
 
 namespace Mobicoop\Bundle\MobicoopBundle\Community\Entity;
 
-use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
+use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
 use Mobicoop\Bundle\MobicoopBundle\Image\Entity\Image;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
-use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
-use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
-use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
 
 /**
  *  A community.
  */
 class Community implements ResourceInterface, \JsonSerializable
 {
-    const AUTO_VALIDATION = 0;
-    const MANUAL_VALIDATION = 1;
-    const DOMAIN_VALIDATION = 2;
+    public const AUTO_VALIDATION = 0;
+    public const MANUAL_VALIDATION = 1;
+    public const DOMAIN_VALIDATION = 2;
 
-    const SESSION_VAR_NAME = 'userCommunities';
+    public const SESSION_VAR_NAME = 'userCommunities';
 
     /**
-     * @var int The id of this community.
+     * @var int the id of this community
      */
     private $id;
 
     /**
-     * @var string|null The iri of this community.
+     * @var null|string the iri of this community
      *
      * @Groups({"post","put"})
      */
     private $iri;
 
     /**
-     * @var string The name of the community.
+     * @var string the name of the community
      *
      * @Groups({"post","put"})
      */
     private $name;
 
     /**
-     * @var string UrlKey of the community.
+     * @var string urlKey of the community
      */
     private $urlKey;
 
     /**
-     * @var boolean|null Members are only visible by the members of the community.
+     * @var null|bool members are only visible by the members of the community
      *
      * @Groups({"post","put"})
      */
     private $membersHidden;
 
     /**
-     * @var boolean|null Proposals are only visible by the members of the community.
+     * @var null|bool proposals are only visible by the members of the community
      *
      * @Groups({"post","put"})
      */
     private $proposalsHidden;
 
     /**
-       * @var int The type of validation (automatic/manual/domain).
-       *
-       * @Groups({"post","put"})
-       */
+     * @var int the type of validation (automatic/manual/domain)
+     *
+     * @Groups({"post","put"})
+     */
     private $validationType;
 
     /**
-     * @var string|null The domain of the community.
+     * @var null|string the domain of the community
      *
      * @Groups({"post","put"})
      */
     private $domain;
 
     /**
-     * @var string The short description of the community.
+     * @var string the short description of the community
      *
      * @Groups({"post","put"})
      */
     private $description;
 
     /**
-     * @var string The full description of the community.
+     * @var string the full description of the community
      *
      * @Groups({"post","put"})
      */
     private $fullDescription;
 
     /**
-    * @var \DateTimeInterface Creation date of the community.
-    *
-    * @Groups("post")
-    */
+     * @var \DateTimeInterface creation date of the community
+     *
+     * @Groups("post")
+     */
     private $createdDate;
 
     /**
-     * @var \DateTimeInterface Updated date of the community.
+     * @var \DateTimeInterface updated date of the community
      *
      * @Groups("post")
      */
     private $updatedDate;
 
     /**
-     * @var User The creator of the community.
+     * @var User the creator of the community
      *
      * @Assert\NotBlank
      * @Groups({"post","put"})
@@ -134,7 +133,7 @@ class Community implements ResourceInterface, \JsonSerializable
     private $user;
 
     /**
-     * @var Address The address of the community.
+     * @var Address the address of the community
      *
      * @Groups({"post","put"})
      * @Assert\NotBlank(groups={"create","update"})
@@ -142,82 +141,88 @@ class Community implements ResourceInterface, \JsonSerializable
     private $address;
 
     /**
-     * @var Image[]|null The images of the community.
+     * @var null|Image[] the images of the community
      *
      * @Groups({"post","put"})
      */
     private $images;
 
     /**
-     * @var string $defaultAvatar Url of the default Avatar for a community
+     * @var string Url of the default Avatar for a community
      */
     private $defaultAvatar;
 
     /**
-     * @var Proposal[]|null The proposals in this community.
+     * @var null|Proposal[] the proposals in this community
      *
      * @Groups({"post","put"})
      */
     private $proposals;
 
     /**
-     * @var CommunityUser[]|null The members of the community.
+     * @var null|CommunityUser[] the members of the community
      *
      * @Groups({"post","put"})
      */
     private $communityUsers;
 
     /**
-     * @var bool|null The community is secured.
+     * @var null|bool the community is secured
      *
      * @Groups({"post","put"})
      */
     private $secured;
 
     /**
-     * @var bool|null The community is private.
+     * @var null|bool the community is private
      *
      * @Groups({"post","put"})
      */
     private $private;
 
     /**
-     * @var boolean|null If the current user asking is member of the community
+     * @var null|bool If the current user asking is member of the community
      */
     private $member;
 
     /**
-     * @var int|null If the current user asking is member of the community this is his membership status (cf. CommunityUser status)
+     * @var null|int If the current user asking is member of the community this is his membership status (cf. CommunityUser status)
      */
     private $memberStatus;
 
     /**
-     * @var boolean|null Number of members of this community
+     * @var null|bool Number of members of this community
      */
     private $nbMembers;
 
     /**
-     * @var array|null Store the ads of the community
+     * @var null|array Store the ads of the community
      */
     private $ads;
 
     /**
-     * @var string The login to join the community if the community is secured.
+     * @var string the login to join the community if the community is secured
      * @Groups({"put"})
      */
     private $login;
 
     /**
-     * @var string The password to join the community if the community is secured.
+     * @var string the password to join the community if the community is secured
      * @Groups({"put"})
      */
     private $password;
 
-    public function __construct($id=null)
+    /**
+     * @var string the community main image
+     * @Groups({"post","put","get"})
+     */
+    private $image;
+
+    public function __construct($id = null)
     {
         if ($id) {
             $this->setId($id);
-            $this->setIri("/communities/".$id);
+            $this->setIri('/communities/'.$id);
         }
         $this->images = new ArrayCollection();
         $this->proposals = new ArrayCollection();
@@ -390,7 +395,6 @@ class Community implements ResourceInterface, \JsonSerializable
     }
 
     /**
-     *
      * @return Collection|Image[]
      */
     public function getImages()
@@ -448,7 +452,6 @@ class Community implements ResourceInterface, \JsonSerializable
     }
 
     /**
-     *
      * @return Collection|CommunityUser[]
      */
     public function getCommunityUsers(): Collection
@@ -491,17 +494,11 @@ class Community implements ResourceInterface, \JsonSerializable
         return $this;
     }
 
-    /**
-     * @return bool|null
-     */
     public function isPrivate(): ?bool
     {
         return $this->private;
     }
 
-    /**
-     * @param bool|null $private
-     */
     public function setPrivate(?bool $private): self
     {
         $this->private = $private;
@@ -568,7 +565,7 @@ class Community implements ResourceInterface, \JsonSerializable
 
         return $this;
     }
-    
+
     public function getPassword(): ?string
     {
         return $this->password;
@@ -581,30 +578,40 @@ class Community implements ResourceInterface, \JsonSerializable
         return $this;
     }
 
+    public function getImage()
+    {
+        return $this->image;
+    }
+
+    public function setImage($image)
+    {
+        $this->image = $image;
+    }
 
     public function jsonSerialize()
     {
         return
         [
-            'id'                => $this->getId(),
-            'iri'               => $this->getIri(),
-            'name'              => $this->getName(),
-            'urlKey'            => $this->getUrlKey(),
-            'description'       => $this->getDescription(),
-            'defaultAvatar'     => $this->getDefaultAvatar(),
-            'images'            => $this->getImages(),
-            'fullDescription'   => $this->getFullDescription(),
-            'proposalsHidden'   => $this->isProposalsHidden(),
-            'membersHidden'     => $this->isMembersHidden(),
-            'address'           => $this->getAddress(),
-            'user'              => $this->getUser(),
-            'isSecured'         => $this->isSecured(),
-            'validationType'    => $this->getValidationType(),
-            'domain'            => $this->getDomain(),
-            'isMember'          => $this->isMember(),
-            'memberStatus'          => $this->getMemberStatus(),
-            'ads'               => $this->getAds(),
-            'nbMembers'         => $this->getNbMembers()
+            'id' => $this->getId(),
+            'iri' => $this->getIri(),
+            'name' => $this->getName(),
+            'urlKey' => $this->getUrlKey(),
+            'description' => $this->getDescription(),
+            'defaultAvatar' => $this->getDefaultAvatar(),
+            'images' => $this->getImages(),
+            'fullDescription' => $this->getFullDescription(),
+            'proposalsHidden' => $this->isProposalsHidden(),
+            'membersHidden' => $this->isMembersHidden(),
+            'address' => $this->getAddress(),
+            'user' => $this->getUser(),
+            'isSecured' => $this->isSecured(),
+            'validationType' => $this->getValidationType(),
+            'domain' => $this->getDomain(),
+            'isMember' => $this->isMember(),
+            'memberStatus' => $this->getMemberStatus(),
+            'ads' => $this->getAds(),
+            'nbMembers' => $this->getNbMembers(),
+            'image' => $this->getImage(),
         ];
     }
 }

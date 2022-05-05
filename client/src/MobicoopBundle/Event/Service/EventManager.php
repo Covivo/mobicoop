@@ -24,6 +24,7 @@
 namespace Mobicoop\Bundle\MobicoopBundle\Event\Service;
 
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
+use Mobicoop\Bundle\MobicoopBundle\Community\Service\CommunityManager;
 use Mobicoop\Bundle\MobicoopBundle\Event\Entity\Event;
 use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
@@ -35,15 +36,17 @@ class EventManager
 {
     private $dataProvider;
     private $territoryFilter;
+    private $communityManager;
 
     /**
      * Constructor.
      */
-    public function __construct(DataProvider $dataProvider, array $territoryFilter)
+    public function __construct(DataProvider $dataProvider, array $territoryFilter, CommunityManager $communityManager)
     {
         $this->dataProvider = $dataProvider;
         $this->dataProvider->setClass(Event::class);
         $this->territoryFilter = $territoryFilter;
+        $this->communityManager = $communityManager;
     }
 
     /**
@@ -83,7 +86,7 @@ class EventManager
         // Set Datetime from data
         $from = null != $data->get('startTime') ? new \DateTime($data->get('startDate').'.'.$data->get('startTime')) : new \DateTime($data->get('startDate'));
         $to = null != $data->get('endTime') ? new \DateTime($data->get('endDate').'.'.$data->get('endTime')) : new \DateTime($data->get('endDate'));
-        //Set use time = 1, if user set time
+        // Set use time = 1, if user set time
         $flagTime = (null == $data->get('endTime') && null == $data->get('startTime')) ? 0 : 1;
         $event->setUseTime($flagTime);
         $event->setStatus(1);
@@ -97,10 +100,11 @@ class EventManager
         $event->setUrl($data->get('urlEvent'));
         $event->setFromDate($from);
         $event->setToDate($to);
+        $event->setCommunity($this->communityManager->getCommunity(intval($data->get('community'))));
 
         $response = $this->dataProvider->post($event);
 
-        //Event is created : we send the email to the owner
+        // Event is created : we send the email to the owner
         if (201 == $response->getCode()) {
             $this->dataProvider->simplePost('events/'.$response->getValue()->getId().'/valide_create_event');
 
@@ -123,7 +127,7 @@ class EventManager
      *
      * @return null|array the events found or null if not found
      */
-    public function getEvents($flag = 1, ?\DateTimeInterface $endDateIsAfter = null, string $orderBy = 'fromDate', string $order = 'asc', int $limit = null, int $page = 1, $search = [])
+    public function getEvents($flag = 1, ?\DateTimeInterface $endDateIsAfter = null, string $orderBy = 'fromDate', string $order = 'asc', int $limit = null, int $page = 1, $search = [], int $communityId = null)
     {
         // we only retrieve the public events, private events are still available directly with the correct url
         $params = ['private' => false];
@@ -154,6 +158,9 @@ class EventManager
             foreach ($search as $key => $value) {
                 $params[$key] = $value;
             }
+        }
+        if ($communityId) {
+            $params['community.id'] = $communityId;
         }
 
         $response = $this->dataProvider->getCollection($params);

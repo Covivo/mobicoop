@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2020, MOBICOOP. All rights reserved.
+ * Copyright (c) 2022, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -29,11 +29,13 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\BooleanFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\NumericFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Action\Entity\Log;
 use App\App\Entity\App;
 use App\Carpool\Entity\Proposal;
+use App\Community\Entity\Community;
 use App\Event\Controller\ValidateCreateEventController;
 use App\Event\Filter\EventAddressTerritoryFilter;
 use App\Event\Filter\TerritoryFilter;
@@ -186,6 +188,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ApiFilter(OrderFilter::class, properties={"id", "fromDate", "name", "toDate","createdDate"}, arguments={"orderParameterName"="order"})
  * @ApiFilter(DateFilter::class, properties={"toDate","fromDate"})
  * @ApiFilter(SearchFilter::class, properties={"name":"partial"})
+ * @ApiFilter(NumericFilter::class, properties={"community.id"})
  * @ApiFilter(TerritoryFilter::class, properties={"territory"})
  * @ApiFilter(BooleanFilter::class, properties={"private"})
  * @ApiFilter(EventAddressTerritoryFilter::class, properties={"eventAddressTerritoryFilter"})
@@ -423,6 +426,29 @@ class Event
      * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="event")
      */
     private $logs;
+
+    /**
+     * @var Community Community linked to the event
+     *
+     * @ApiProperty(push=true)
+     * @ORM\ManyToOne(targetEntity="App\Community\Entity\Community")
+     * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
+     * @Groups({"readEvent","write", "aRead", "aWrite"})
+     * @MaxDepth(1)
+     */
+    private $community;
+
+    /**
+     * @var null|int The community id
+     * @Groups({"aRead","aWrite"})
+     */
+    private $communityId;
+
+    /**
+     * @var string The community name
+     * @Groups({"aRead","aWrite"})
+     */
+    private $communityName;
 
     public function __construct($id = null)
     {
@@ -731,6 +757,41 @@ class Event
         }
 
         return null;
+    }
+
+    public function getCommunity(): ?Community
+    {
+        return $this->community;
+    }
+
+    public function setCommunity(?Community $community): self
+    {
+        $this->community = $community;
+
+        return $this;
+    }
+
+    public function getCommunityId(): ?int
+    {
+        if (is_null($this->communityId)) {
+            return $this->getCommunity() ? $this->getCommunity()->getId() : null;
+        }
+
+        return $this->communityId;
+    }
+
+    public function setCommunityId(?int $communityId)
+    {
+        $this->communityId = $communityId;
+    }
+
+    public function getCommunityName(): string
+    {
+        if ($this->getCommunity()) {
+            return $this->getCommunity()->getName();
+        }
+
+        return '';
     }
 
     // DOCTRINE EVENTS

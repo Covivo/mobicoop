@@ -14,5 +14,7 @@
         "event": "/covoiturages-evenements/{id}/{urlKey}",
         "getList": "/evenements/getEventList",
         "login": "/utilisateur/connexion"
-    }
+    },
+    "getCommunities": "/community/getCommunityList",
+    "filterByCommunity":"Filtrer par communauté"
 }

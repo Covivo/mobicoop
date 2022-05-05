@@ -98,6 +98,7 @@
                     cols="6"
                   >
                     <div class="flex-grow-1" />
+
                     <v-card
                       class="ma-3 pa-6"
                       outlined
@@ -112,6 +113,26 @@
                         @input="updateSearch"
                       />
                     </v-card>
+
+                    <!-- Community -->
+                    <v-row
+                      v-if="canSelectCommunity"
+                      justify="center"
+                    >
+                      <v-col
+                        cols="11"
+                      >
+                        <v-select
+                          v-model="selectedCommunity"
+                          :items="communities"
+                          item-text="name"
+                          return-object
+                          :label="$t('filterByCommunity')"
+                          single-line
+                          clearable
+                        />
+                      </v-col>
+                    </v-row>
                   </v-col>
                 </v-row>
               </v-card-title>
@@ -252,10 +273,17 @@
 import maxios from "@utils/maxios";
 import debounce from "lodash/debounce";
 import moment from "moment";
+import { merge } from "lodash";
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/event/EventList/";
+import {messages_client_en, messages_client_fr, messages_client_eu, messages_client_nl} from "@clientTranslations/components/event/EventList/";
 import MMap from "@components/utilities/MMap/MMap"
 import L from "leaflet";
 import EventListItem from "@components/event/EventListItem";
+
+let MessagesMergedEn = merge(messages_en, messages_client_en);
+let MessagesMergedNl = merge(messages_nl, messages_client_nl);
+let MessagesMergedFr = merge(messages_fr, messages_client_fr);
+let MessagesMergedEu = merge(messages_eu, messages_client_eu);
 
 export default {
   components:{
@@ -263,11 +291,11 @@ export default {
   },
   i18n: {
     messages: {
-      'en': messages_en,
-      'nl': messages_nl,
-      'fr': messages_fr,
-      'eu':messages_eu
-    },
+      'en': MessagesMergedEn,
+      'nl': MessagesMergedNl,
+      'fr': MessagesMergedFr,
+      'eu': MessagesMergedEu
+    }
   },
   props:{
     paths: {
@@ -301,6 +329,10 @@ export default {
     eventButtonDisplay:{
       type: Boolean,
       default:false
+    },
+    canSelectCommunity: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -333,17 +365,33 @@ export default {
       pointsComing:[],
       totalItems:0,
       totalItemsPassed:0,
-      modelTabs:(this.tabDefault !== "") ? this.tabDefault : "tab-current"
+      modelTabs:(this.tabDefault !== "") ? this.tabDefault : "tab-current",
+      selectedCommunity: null,
+      communities: [],
+
 
     }
   },
   watch:{
     pointsComing(){
       this.createMapComing();
-    }
+    },
+    selectedCommunity() {
+      this.getEvents(true);
+    },
   },
-  mounted() {
-    //this.createMapComing();
+  mounted(){
+    maxios
+      .post(this.$t('getCommunities'))
+      .then(response => {
+        if(response.data.communities){
+          this.communities = response.data.communities;
+        }
+        this.loading = false;
+
+      })
+      .catch(function (error) {
+      });
   },
   created() {
     moment.locale(this.locale); // DEFINE DATE LANGUAGE
@@ -432,7 +480,8 @@ export default {
         },
         'searchPassed':{
           'name':this.searchPassed
-        }
+        },
+        'communityId':this.selectedCommunity ? this.selectedCommunity.id : null
       }
       maxios
         .post(this.$t('routes.getList'),params)
