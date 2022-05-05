@@ -16,6 +16,6 @@
     "eventsAvailable": "Libre diren ekitaldiak",
     "events": "Ekitaldiak autokidetzan",
     "getCommunities": "/community/getCommunityList",
-    "filterByCommunity":"Filtrez par communauté"
+    "filterByCommunity":"filtrer par communauté"
 
 }

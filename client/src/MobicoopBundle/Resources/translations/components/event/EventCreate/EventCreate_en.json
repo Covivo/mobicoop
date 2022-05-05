@@ -42,7 +42,7 @@
             "tooltip": "You will be able to send the direct link received in the confirmation email"
         },
         "community": {
-          "label": "Communauté a associer à l'événement",
+          "label": "Communauté à associer à l'événement",
           "required": "Une communauté est requise"
         }
     },

@@ -301,7 +301,7 @@
                   :items="communities"
                   item-text="name"
                   return-object
-                  :requiered="mandatoryCommunity"
+                  :required="mandatoryCommunity"
                   :label="(mandatoryCommunity) ? $t('form.community.label')+' '+$t('form.mandatoryCharacter') : $t('form.community.label')"
                   single-line
                   clearable
@@ -555,7 +555,6 @@ export default {
 
       })
       .catch(function (error) {
-        console.error(error);
       });
   },
   created() {

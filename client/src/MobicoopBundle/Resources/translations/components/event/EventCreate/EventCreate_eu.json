@@ -71,7 +71,7 @@
             "label": "Ekitaldiaren izena*"
         },
         "community": {
-          "label": "Communauté a associer à l'événement",
+          "label": "Communauté à associer à l'événement",
           "required": "Une communauté est requise"
         }
     },
