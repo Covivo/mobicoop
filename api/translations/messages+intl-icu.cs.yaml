@@ -314,3 +314,5 @@ onLinePayment: Online platba
 directPayment: Platba na ruku
 domicile: homeAddress
 homeAddress: Úvodní stránka
+reason10: Odmítnutí dokladu (důvod neuveden)
+deleted: Odstraněno
