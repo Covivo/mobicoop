@@ -14,5 +14,8 @@
     },
     "endEvent": "End",
     "startEvent": "Start",
-    "events": "The carpool events"
+    "events": "The carpool events",
+    "getCommunities": "/community/getCommunityList",
+    "filterByCommunity":"filtrer par communauté"
+
 }

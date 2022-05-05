@@ -290,15 +290,34 @@
                 </v-switch>
               </v-col>
             </v-row>
-
+            <!-- Community -->
+            <v-row
+              v-if="canSelectCommunity"
+              justify="center"
+            >
+              <v-col cols="6">
+                <v-select
+                  v-model="selectedCommunity"
+                  :items="communities"
+                  item-text="name"
+                  return-object
+                  :required="mandatoryCommunity"
+                  :label="(mandatoryCommunity) ? $t('form.community.label')+' '+$t('form.mandatoryCharacter') : $t('form.community.label')"
+                  single-line
+                  clearable
+                  :rules="mandatoryCommunity ? selectedCommunityRules : []"
+                />
+              </v-col>
+            </v-row>
+            <!-- Image -->
             <v-row justify="center">
               <v-col cols="6">
                 <v-file-input
                   ref="avatar"
                   v-model="avatar"
-                  :rules="(mandatoryFullDescription) ? avatarRules : null"
+                  :rules="(mandatoryImage) ? avatarRules : avatarNotRequiredRules"
                   accept="image/png, image/jpeg, image/jpg"
-                  :label="(mandatoryFullDescription) ? $t('form.avatar.label')+' '+$t('form.mandatoryCharacter') : $t('form.avatar.label')"
+                  :label="(mandatoryImage) ? $t('form.avatar.label')+' '+$t('form.mandatoryCharacter') : $t('form.avatar.label')"
                   prepend-icon="mdi-image"
                   :hint="$t('form.avatar.minPxSize', {size: imageMinPxSize})+', '+$t('form.avatar.maxMbSize', {size: imageMaxMbSize})"
                   persistent-hint
@@ -368,17 +387,24 @@
 <script>
 
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/event/EventCreate/";
+import {messages_client_en, messages_client_fr, messages_client_eu, messages_client_nl} from "@clientTranslations/components/event/EventCreate/";
 import Geocomplete from "@components/utilities/geography/Geocomplete";
 import moment from "moment";
+import { merge } from "lodash";
 import maxios from "@utils/maxios";
+
+let MessagesMergedEn = merge(messages_en, messages_client_en);
+let MessagesMergedNl = merge(messages_nl, messages_client_nl);
+let MessagesMergedFr = merge(messages_fr, messages_client_fr);
+let MessagesMergedEu = merge(messages_eu, messages_client_eu);
 
 export default {
   i18n: {
     messages: {
-      'en': messages_en,
-      'nl': messages_nl,
-      'fr': messages_fr,
-      'eu':messages_eu
+      'en': MessagesMergedEn,
+      'nl': MessagesMergedNl,
+      'fr': MessagesMergedFr,
+      'eu': MessagesMergedEu
     },
   },
   components: {
@@ -429,6 +455,14 @@ export default {
       type: Boolean,
       default: false
     },
+    canSelectCommunity: {
+      type: Boolean,
+      default: false
+    },
+    mandatoryCommunity: {
+      type: Boolean,
+      default: false
+    }
   },
   data () {
     return {
@@ -443,6 +477,11 @@ export default {
       locale: localStorage.getItem("X-LOCALE"),
       avatarRules: [
         v => !!v || this.$t("form.avatar.required"),
+        v => !v || v.size < this.imageMaxMbSize*1024*1024 || this.$t("form.avatar.mbSize", { size: this.imageMaxMbSize }),
+        v => !v || this.avatarHeight >= this.imageMinPxSize || this.$t("form.avatar.pxSize", { size: this.imageMinPxSize, height: this.avatarHeight, width: this.avatarWidth }),
+        v => !v || this.avatarWidth >= this.imageMinPxSize || this.$t("form.avatar.pxSize", { size: this.imageMinPxSize, height: this.avatarHeight, width: this.avatarWidth }),
+      ],
+      avatarNotRequiredRules: [
         v => !v || v.size < this.imageMaxMbSize*1024*1024 || this.$t("form.avatar.mbSize", { size: this.imageMaxMbSize }),
         v => !v || this.avatarHeight >= this.imageMinPxSize || this.$t("form.avatar.pxSize", { size: this.imageMinPxSize, height: this.avatarHeight, width: this.avatarWidth }),
         v => !v || this.avatarWidth >= this.imageMinPxSize || this.$t("form.avatar.pxSize", { size: this.imageMinPxSize, height: this.avatarHeight, width: this.avatarWidth }),
@@ -484,7 +523,12 @@ export default {
       endDatePickerMinDate: null,
       startDatePickerMaxDate: null,
       nowDate : new Date().toISOString().slice(0,10),
-      valid: false
+      valid: false,
+      selectedCommunity: null,
+      selectedCommunityRules: [
+        v => !!v || this.$t("form.community.required")
+      ],
+      communities: []
     }
   },
   computed :{
@@ -498,6 +542,20 @@ export default {
         ? moment(this.endDate).format(this.$t("fullDate"))
         : "";
     }
+  },
+
+  mounted(){
+    maxios
+      .post(this.$t('getCommunities'))
+      .then(response => {
+        if(response.data.communities){
+          this.communities = response.data.communities;
+        }
+        this.loading = false;
+
+      })
+      .catch(function (error) {
+      });
   },
   created() {
     moment.locale(this.locale); // DEFINE DATE LANGUAGE
@@ -516,6 +574,7 @@ export default {
       newEvent.append("address", JSON.stringify(this.eventAddress));
       newEvent.append("startDate", this.startDate);
       newEvent.append("endDate", this.endDate);
+      newEvent.append("community", this.selectedCommunity.id);
       if (this.startTime) newEvent.append("startTime", this.startTime);
       if (this.endTime) newEvent.append("endTime", this.endTime);
       if (this.urlEvent) newEvent.append("urlEvent", this.urlEvent);
@@ -561,9 +620,9 @@ export default {
         }
         img.src = evt.target.result;
       }
-
     }
   }
+
 }
 </script>
 

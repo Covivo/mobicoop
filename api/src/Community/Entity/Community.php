@@ -308,7 +308,7 @@ class Community
      *
      * @Assert\NotBlank(groups={"write"})
      * @ORM\Column(type="string", length=255)
-     * @Groups({"aRead","aWrite","readCommunity","readCommunityUser","write","results","existsCommunity","readCommunityPublic","readUserAdmin","readUser","listCommunities"})
+     * @Groups({"aRead","aWrite","readCommunity","readCommunityUser","write","results","existsCommunity","readCommunityPublic","readUserAdmin","readUser","listCommunities", "readEvent"})
      */
     private $name;
 
@@ -523,7 +523,7 @@ class Community
 
     /**
      * @var null|string The community main image
-     * @Groups({"aRead","aWrite"})
+     * @Groups({"aRead","aWrite","readEvent"})
      */
     private $image;
 

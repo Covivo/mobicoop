@@ -20,6 +20,7 @@
                     :is-logged="{{ (app.user ? true : false)|json_encode }}"
                     tab-default="{{ tabDefault }}"
                     :event-button-display= "{{ eventButtonDisplay }}"
+                    :can-select-community = "{{ canSelectCommunity  ? "true" : "false" }}"
             ></event-list>
             <br/><br/>
         </div>

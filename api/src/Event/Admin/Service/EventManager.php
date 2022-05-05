@@ -19,16 +19,17 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Event\Admin\Service;
 
+use App\Community\Repository\CommunityRepository;
 use App\Event\Entity\Event;
 use App\Event\Exception\EventException;
 use App\Event\Repository\EventRepository;
-use Doctrine\ORM\EntityManagerInterface;
 use App\Geography\Entity\Address;
 use App\User\Repository\UserRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 
 /**
@@ -42,36 +43,44 @@ class EventManager
     private $entityManager;
     private $userRepository;
     private $eventRepository;
+    private $communityRepository;
 
     /**
-     * Constructor
-     *
-     * @param EntityManagerInterface $entityManager
+     * Constructor.
      */
     public function __construct(
         EntityManagerInterface $entityManager,
         UserRepository $userRepository,
-        EventRepository $eventRepository
+        EventRepository $eventRepository,
+        CommunityRepository $communityRepository
     ) {
         $this->entityManager = $entityManager;
         $this->userRepository = $userRepository;
         $this->eventRepository = $eventRepository;
+        $this->communityRepository = $communityRepository;
     }
 
     /**
      * Add an event.
      *
-     * @param Event     $event              The event to add
-     * @return Event    The event created
+     * @param Event $event The event to add
+     *
+     * @return Event The event created
      */
     public function addEvent(Event $event)
     {
         if ($creator = $this->userRepository->find($event->getCreatorId())) {
             $event->setUser($creator);
         } else {
-            throw new EventException("creator not found");
+            throw new EventException('creator not found');
         }
-
+        if ($event->getCommunityId()) {
+            if ($community = $this->communityRepository->find($event->getCommunityId())) {
+                $event->setCommunity($community);
+            } else {
+                throw new EventException('Community not found');
+            }
+        }
         // persist the event
         $this->entityManager->persist($event);
         $this->entityManager->flush();
@@ -107,7 +116,8 @@ class EventManager
      *
      * @param Event $event  The event to update
      * @param array $fields The updated fields
-     * @return Event        The event updated
+     *
+     * @return Event The event updated
      */
     public function patchEvent(Event $event, array $fields)
     {
@@ -117,23 +127,34 @@ class EventManager
                 // set the new creator
                 $event->setUser($creator);
             } else {
-                throw new EventException("Creator not found");
+                throw new EventException('Creator not found');
+            }
+        }
+
+        // check if community has changed
+        if (in_array('communityId', array_keys($fields))) {
+            if (null === $fields['communityId']) {
+                $event->setCommunity(null);
+            } elseif ($community = $this->communityRepository->find($fields['communityId'])) {
+                // set the new community
+                $event->setCommunity($community);
+            } else {
+                throw new EventException('Community not found');
             }
         }
 
         // persist the event
         $this->entityManager->persist($event);
         $this->entityManager->flush();
-        
+
         // return the event
         return $event;
     }
 
     /**
-     * Delete an event
+     * Delete an event.
      *
-     * @param Event $event  The event to delete
-     * @return void
+     * @param Event $event The event to delete
      */
     public function deleteEvent(Event $event)
     {
@@ -142,9 +163,7 @@ class EventManager
     }
 
     /**
-     * Get internal events (exclude external events)
-     *
-     * @return void
+     * Get internal events (exclude external events).
      */
     public function getInternalEvents()
     {
@@ -153,9 +172,7 @@ class EventManager
 
     /**
      * Get internal events QueryBuilder (exclude external events)
-     * It's used to get only the querybuilder to apply filters on it on custom DataProvider
-     *
-     * @return QueryBuilder
+     * It's used to get only the querybuilder to apply filters on it on custom DataProvider.
      */
     public function getInternalEventsQueryBuilder(): QueryBuilder
     {

@@ -12,13 +12,30 @@
         />
         <v-img
           v-else
-          :src="(item['images'][0]) ? item['images'][0]['versions']['square_250'] : item['defaultAvatar']"
+          :src="(item['images'][0]) ? item['images'][0]['versions']['square_250'] : item.community ? item.community.image : item['defaultAvatar']"
           :aspect-ratio="1"
           contain
           max-width="250"
           max-height="150"
         />
+        <v-row
+          v-if="item.community"
+          class="mt-8"
+        >
+          <v-col
+            cols="2"
+            class="ml-8 mr-4"
+          >
+            <v-avatar>
+              <v-img :src="item.community.image" />
+            </v-avatar>
+          </v-col>
+          <v-col cols="5">
+            {{ item.community.name }}
+          </v-col>
+        </v-row>
       </v-col>
+
       <v-col
         cols="6"
         md="4"
@@ -123,12 +140,12 @@ export default {
     computeEventDate(){
       let fromDate = moment(this.item.fromDate.date).format(this.$t("shortCompleteDate"));
       let toDate = moment(this.item.toDate.date).format(this.$t("shortCompleteDate"));
-      
+
       if(fromDate === toDate){
         if (this.item.useTime) {
           this.dateLine1 = this.$t("date.the")+" "+fromDate+" "+this.$t("date.at")+" "+moment(this.item.fromDate.date).format(this.$t("hourMinute"));
-        } 
-        else { 
+        }
+        else {
           this.dateLine1 = this.$t("date.the")+" "+fromDate;
         }
       }
@@ -136,13 +153,13 @@ export default {
         if (this.item.useTime) {
           this.dateLine1 = this.$t("date.from")+" "+fromDate+" "+this.$t("date.at")+" "+moment(this.item.fromDate.date).format(this.$t("hourMinute"));
           this.dateLine2 = this.$t("date.to")+" "+toDate+" "+this.$t("date.at")+" "+moment(this.item.toDate.date).format(this.$t("hourMinute"));
-        } 
+        }
         else {
           this.dateLine1 = this.$t("date.from")+" "+fromDate;
           this.dateLine2 = this.$t("date.to")+" "+toDate;
         }
       }
-      
+
     }
   }
 }
