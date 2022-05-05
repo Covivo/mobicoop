@@ -2,12 +2,12 @@
 
 namespace App\Import\Entity;
 
-use App\Event\Entity\Event;
-use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Event\Entity\Event;
+use App\Import\Controller\ImportImageEventController;
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
-use App\Import\Controller\ImportImageEventController;
 
 /**
  * An event imported from an external system.
@@ -41,7 +41,6 @@ use App\Import\Controller\ImportImageEventController;
  *          },
  *      }
  * )
- *
  */
 class EventImport
 {
@@ -53,16 +52,17 @@ class EventImport
     private $id;
 
     /**
-     * @var event|null Event imported in the platform.
+     * @var null|event event imported in the platform
      *
      * @ORM\OneToOne(targetEntity="\App\Event\Entity\Event", cascade={"persist"})
+     * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"read","write"})
      * @MaxDepth(1)
      */
     private $event;
 
     /**
-     * @var string|null The event id in the external system.
+     * @var null|string the event id in the external system
      *
      * @ORM\Column(type="string", length=255, nullable=false)
      * @Groups({"read","write"})
@@ -70,7 +70,7 @@ class EventImport
     private $eventExternalId;
 
     /**
-     * @var int Import status.
+     * @var int import status
      *
      * @ORM\Column(type="smallint")
      * @Groups({"read","write"})

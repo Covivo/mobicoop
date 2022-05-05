@@ -1520,6 +1520,14 @@ dataProtectionAlt:
         nl: /data-policy-alt
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showDataProtectionAlt
 
+# display defi
+defi:
+    path:
+        fr: /defi
+        en: /defi
+        nl: /defi
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showDefi
+
 # Get the last external articles (AJAX)
 editorial:
     methods: [POST]

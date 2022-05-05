@@ -2,12 +2,12 @@
 
 namespace App\Import\Entity;
 
-use App\Community\Entity\Community;
-use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Community\Entity\Community;
+use App\Import\Controller\ImportImageCommunityController;
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
-use App\Import\Controller\ImportImageCommunityController;
 
 /**
  * A community imported from an external system.
@@ -41,7 +41,6 @@ use App\Import\Controller\ImportImageCommunityController;
  *          },
  *      }
  * )
- *
  */
 class CommunityImport
 {
@@ -53,16 +52,17 @@ class CommunityImport
     private $id;
 
     /**
-     * @var Community|null Community imported in the platform.
+     * @var null|Community community imported in the platform
      *
      * @ORM\OneToOne(targetEntity="\App\Community\Entity\Community", cascade={"persist"})
+     * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"read","write"})
      * @MaxDepth(1)
      */
     private $community;
 
     /**
-     * @var string|null The community id in the external system.
+     * @var null|string the community id in the external system
      *
      * @ORM\Column(type="string", length=255, nullable=false)
      * @Groups({"read","write"})
@@ -70,7 +70,7 @@ class CommunityImport
     private $communityExternalId;
 
     /**
-     * @var int Import status.
+     * @var int import status
      *
      * @ORM\Column(type="smallint")
      * @Groups({"read","write"})

@@ -569,7 +569,7 @@ services:
             $sigPrioritizeRegion: '%env(string:SIG_GEOCODER_PRIORITIZE_REGION)%'
             $sigShowVenues: '%env(bool:SIG_GEOCODER_SHOW_VENUES)%'
 
-    App\Geography\Service\MobicoopGeocoder:
+    App\Geography\Service\Geocoder\MobicoopGeocoder:
         arguments:
             $uri: '%env(string:MOBICOOP_GEOCODER_URI)%'
 

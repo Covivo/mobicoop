@@ -21,16 +21,13 @@
  *    LICENSE
  */
 
-namespace App\Geography\Service;
+namespace App\Geography\Service\Geocoder;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\TransferException;
 
-/**
- * Mobicoop Geocoder Provider.
- */
-class MobicoopGeocoder
+class MobicoopGeocoder implements Geocoder
 {
     private const MAX_RESULTS_BY_TYPE = 5;
     private const MAX_RESULTS_BY_GEOCODER = 5;
@@ -59,13 +56,13 @@ class MobicoopGeocoder
         ];
     }
 
-    public function setPrioritizeCentroid(float $lon, float $lat)
+    public function setPrioritizeCentroid(float $lon, float $lat): void
     {
         $this->params['lon'] = $lon;
         $this->params['lat'] = $lat;
     }
 
-    public function setPrioritizeBox(float $minLon, float $minLat, float $maxLon, float $maxLat)
+    public function setPrioritizeBox(float $minLon, float $minLat, float $maxLon, float $maxLat): void
     {
         $this->params['min_lon'] = $minLon;
         $this->params['min_lat'] = $minLat;
@@ -73,17 +70,17 @@ class MobicoopGeocoder
         $this->params['max_lat'] = $maxLat;
     }
 
-    public function setPrioritizeRegion(string $region)
+    public function setPrioritizeRegion(string $region): void
     {
         $this->params['prioritization_region'] = $region;
     }
 
-    public function setLang(string $lang)
+    public function setLang(string $lang): void
     {
         $this->params['lang'] = $lang;
     }
 
-    public function geocode(string $search)
+    public function geocode(string $search): array
     {
         $this->params['search'] = $search;
 

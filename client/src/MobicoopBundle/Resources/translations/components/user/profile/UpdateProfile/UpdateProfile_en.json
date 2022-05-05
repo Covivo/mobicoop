@@ -128,6 +128,10 @@
         }
     },
     "phone": {
+        "checkValidity": {
+          "url": "/utilisateur/verif/telephone",
+          "error": "This phone number is not valid"
+        },
         "i18n": {
             "time": {
                 "format": {
