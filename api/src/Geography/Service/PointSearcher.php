@@ -120,7 +120,7 @@ class PointSearcher
     {
         $points = [];
         foreach ($this->providers as $provider) {
-            $points = array_merge($points, $provider->search($search));
+            $points = array_merge($points, $provider->search(str_replace(['"', "'"], ' ', $search)));
         }
 
         return $points;
