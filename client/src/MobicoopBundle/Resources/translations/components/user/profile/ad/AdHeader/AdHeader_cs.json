@@ -1,1 +1,46 @@
-{}
+{
+    "ads": {
+        "ongoing": "Průběžná oznámení",
+        "archived": "Archivované inzeráty",
+        "tooltips": {
+            "driver": "Budu řidičem",
+            "passenger": "Budu cestující",
+            "diverOrPassenger": "Nezáleží na tom, jestli budu řidič nebo spolujezdec"
+        }
+    },
+    "pause": {
+        "error": {
+            "pause": "Došlo k chybě, vaše reklama nebyla pozastavena.",
+            "unpause": "Došlo k chybě, vaše reklama nebyla aktivována"
+        },
+        "success": {
+            "unpause": "Váš inzerát je nyní aktivní.",
+            "pause": "Vaše reklama je nyní pozastavena."
+        },
+        "info": "Pozor pozastavené oznámení!"
+    },
+    "delete": {
+        "route": "/covoiturage/annonce/supprimer",
+        "success": "Váš inzerát byl úspěšně smazán.",
+        "error": "Při mazání inzerátu došlo k chybě.",
+        "dialog": {
+            "base": {
+                "title": "Opravdu chcete tento inzerát odstranit?",
+                "text": "Všechna odstranění inzerátů jsou konečná, jste si jisti, že chcete tento inzerát odstranit?"
+            },
+            "accepted": {
+                "title": "Na toto oznámení je naplánována alespoň jedna spolujízda",
+                "text": "V souvislosti s tímto inzerátem již byla naplánována jedna nebo více jízd. Vaše vymazání proto zruší tyto přijaté spolujízdy. Jakou zprávu chcete poslat spolujezdcům, se kterými rušíte spolujízdu, pokud potvrdíte zrušení?"
+            },
+            "pending": {
+                "title": "Pro tuto reklamu existuje přinejmenším jedna aplikace",
+                "text": "V souvislosti s tímto inzerátem již byla podána jedna nebo více žádostí. Vaše smazání proto odmítne všechny aktuální žádosti. Pokud potvrdíte vymazání, jakou zprávu chcete poslat spolujezdcům, jejichž žádosti odmítáte?"
+            },
+            "cancel": "Zrušit",
+            "validate": "Potvrďte"
+        }
+    },
+    "update": {
+        "route": "/covoiturage/annonce/{id}/modifier"
+    }
+}
