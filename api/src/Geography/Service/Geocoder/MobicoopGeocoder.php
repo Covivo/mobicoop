@@ -75,6 +75,11 @@ class MobicoopGeocoder implements Geocoder
         $this->params['prioritization_region'] = $region;
     }
 
+    public function setRestrictCountry(string $country): void
+    {
+        $this->params['country'] = $country;
+    }
+
     public function setLang(string $lang): void
     {
         $this->params['lang'] = $lang;
