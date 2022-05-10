@@ -1559,6 +1559,20 @@ class User implements UserInterface, EquatableInterface
      */
     private $verifiedIdentity;
 
+    /**
+     * @var null|bool If the User has received the Rezo Kit
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"aRead", "aWrite"})
+     */
+    private $receivedKit;
+
+    /**
+     * @var null|bool If the User has received the letter card
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"aRead", "aWrite"})
+     */
+    private $receivedLetterCard;
+
     public function __construct($status = null)
     {
         $this->id = self::DEFAULT_ID;
@@ -3647,6 +3661,30 @@ class User implements UserInterface, EquatableInterface
     public function hasVerifiedIdentity(): ?bool
     {
         return IdentityProof::STATUS_ACCEPTED == $this->identityStatus;
+    }
+
+    public function hasReceivedKit(): ?bool
+    {
+        return $this->receivedKit;
+    }
+
+    public function setReceivedKit(?bool $receivedKit): self
+    {
+        $this->receivedKit = $receivedKit;
+
+        return $this;
+    }
+
+    public function hasReceivedLetterCard(): ?bool
+    {
+        return $this->receivedLetterCard;
+    }
+
+    public function setReceivedLetterCard(?bool $receivedLetterCard): self
+    {
+        $this->receivedLetterCard = $receivedLetterCard;
+
+        return $this;
     }
 
     // DOCTRINE EVENTS
