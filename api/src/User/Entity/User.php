@@ -1560,18 +1560,18 @@ class User implements UserInterface, EquatableInterface
     private $verifiedIdentity;
 
     /**
-     * @var null|bool If the User has received the Rezo Kit
+     * @var null|bool If the User has the Rezo Kit
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"aRead", "aWrite"})
      */
-    private $receivedKit;
+    private $rezoKit;
 
     /**
-     * @var null|bool If the User has received the letter card
+     * @var null|bool If the User has the card letter
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"aRead", "aWrite"})
      */
-    private $receivedLetterCard;
+    private $cardLetter;
 
     public function __construct($status = null)
     {
@@ -2949,7 +2949,7 @@ class User implements UserInterface, EquatableInterface
                 $this->roles[] = $userAuthAssignment->getAuthItem()->getName();
             }
         }
-        //Security : if an user has no roles but it shouldn't be possible
+        // Security : if an user has no roles but it shouldn't be possible
         return $this->roles ? array_unique($this->roles) : [AuthItem::ROLE_USER_REGISTERED_FULL];
     }
 
@@ -3663,26 +3663,26 @@ class User implements UserInterface, EquatableInterface
         return IdentityProof::STATUS_ACCEPTED == $this->identityStatus;
     }
 
-    public function hasReceivedKit(): ?bool
+    public function hasRezoKit(): ?bool
     {
-        return $this->receivedKit;
+        return $this->rezoKit;
     }
 
-    public function setReceivedKit(?bool $receivedKit): self
+    public function setRezoKit(?bool $rezoKit): self
     {
-        $this->receivedKit = $receivedKit;
+        $this->rezoKit = $rezoKit;
 
         return $this;
     }
 
-    public function hasReceivedLetterCard(): ?bool
+    public function hasCardLetter(): ?bool
     {
-        return $this->receivedLetterCard;
+        return $this->cardLetter;
     }
 
-    public function setReceivedLetterCard(?bool $receivedLetterCard): self
+    public function setCardLetter(?bool $cardLetter): self
     {
-        $this->receivedLetterCard = $receivedLetterCard;
+        $this->cardLetter = $cardLetter;
 
         return $this;
     }
