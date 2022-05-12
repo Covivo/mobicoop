@@ -250,7 +250,7 @@ class CarpoolController extends AbstractController
                 'regular' => $this->defaultRegular,
                 'participationText' => $this->participationText,
                 'ageDisplay' => $this->ageDisplay,
-                'numberSeats' => $this->numberSeats,
+                'seatNumber' => $this->seatNumber,
             ]
         );
     }
@@ -289,7 +289,7 @@ class CarpoolController extends AbstractController
                 ],
                 'participationText' => $this->participationText,
                 'ageDisplay' => $this->ageDisplay,
-                'numberSeats' => $this->numberSeats,
+                'seatNumber' => $this->seatNumber,
             ]
         );
     }

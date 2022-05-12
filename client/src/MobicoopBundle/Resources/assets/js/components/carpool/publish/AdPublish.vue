@@ -1111,7 +1111,7 @@ export default {
       return '';
     },
     itemsSeatNumber() {
-      return [...Array(this.seatNumber+1).keys()].slice(1);;
+      return [...Array(this.seatNumber+1).keys()].slice(1);
     }
   },
   watch: {
