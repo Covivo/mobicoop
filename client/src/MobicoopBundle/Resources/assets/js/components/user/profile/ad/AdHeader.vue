@@ -19,7 +19,7 @@
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
           <v-icon
-            v-if="isDriver && !(isDriver && isPassenger)"
+            v-if="isDriver && !isPassenger"
             class="accent pa-1 px-3 white--text"
             v-on="on"
           >
@@ -57,7 +57,7 @@
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
           <v-icon
-            v-if="isPassenger && !(isDriver && isPassenger)"
+            v-if="isPassenger && !isDriver"
             class="secondary pa-1 px-3 white--text"
             v-on="on"
           >
