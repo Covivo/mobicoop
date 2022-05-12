@@ -562,11 +562,11 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ApiFilter(EmailTokenFilter::class, properties={"emailToken"})
  * @ApiFilter(IdentityStatusFilter::class, properties={"identityStatus"})
  * @ApiFilter(SolidaryFilter::class, properties={"solidary"})
- * @ApiFilter(BooleanFilter::class, properties={"solidaryUser.volunteer","solidaryUser.beneficiary"})
+ * @ApiFilter(BooleanFilter::class, properties={"solidaryUser.volunteer","solidaryUser.beneficiary","rezoKit","cardLetter"})
  * @ApiFilter(SolidaryCandidateFilter::class, properties={"solidaryCandidate"})
  * @ApiFilter(SolidaryExclusiveFilter::class)
  * @ApiFilter(DateFilter::class, properties={"createdDate": DateFilter::EXCLUDE_NULL,"lastActivityDate": DateFilter::EXCLUDE_NULL})
- * @ApiFilter(OrderFilter::class, properties={"id", "givenName", "status","familyName", "email", "gender", "identityStatus", "nationality", "birthDate", "createdDate", "validatedDate", "lastActivityDate", "telephone"}, arguments={"orderParameterName"="order"})
+ * @ApiFilter(OrderFilter::class, properties={"id", "givenName", "status","familyName", "email", "gender", "identityStatus", "nationality", "birthDate", "createdDate", "validatedDate", "lastActivityDate", "telephone", "rezoKit", "cardLetter"}, arguments={"orderParameterName"="order"})
  */
 class User implements UserInterface, EquatableInterface
 {
