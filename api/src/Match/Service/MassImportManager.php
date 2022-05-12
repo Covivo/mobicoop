@@ -202,7 +202,7 @@ class MassImportManager
         $this->logger->info('Mass analyze | Start '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
 
         $mass->setStatus(Mass::STATUS_ANALYZING);
-        $mass->setAnalyzingDate(new \Datetime());
+        $mass->setAnalyzingDate(new \DateTime());
         $this->entityManager->persist($mass);
         $this->entityManager->flush();
 
@@ -420,7 +420,7 @@ class MassImportManager
         }
 
         $mass->setStatus(Mass::STATUS_ANALYZED);
-        $mass->setAnalyzedDate(new \Datetime());
+        $mass->setAnalyzedDate(new \DateTime());
         $this->entityManager->persist($mass);
         $this->entityManager->flush();
         $this->logger->info('Mass analyze | End '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
@@ -450,13 +450,13 @@ class MassImportManager
         ini_set('memory_limit', self::MEMORY_LIMIT.'M');
         $this->entityManager->getConnection()->getConfiguration()->setSQLLogger(null);
 
-        //gc_enable();
+        // gc_enable();
         $this->print_mem(1);
 
         $this->logger->info('Mass match | Start '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
 
         $mass->setStatus(Mass::STATUS_MATCHING);
-        $mass->setCalculationDate(new \Datetime());
+        $mass->setCalculationDate(new \DateTime());
         $this->entityManager->persist($mass);
         $this->entityManager->flush();
 
@@ -637,7 +637,7 @@ class MassImportManager
         }
 
         $mass->setStatus(Mass::STATUS_MATCHED);
-        $mass->setCalculatedDate(new \Datetime());
+        $mass->setCalculatedDate(new \DateTime());
         $this->entityManager->persist($mass);
         $this->entityManager->flush();
 
@@ -742,7 +742,7 @@ class MassImportManager
      */
     private function generateFilename(Mass $mass)
     {
-        $date = new \Datetime();
+        $date = new \DateTime();
         if ($mass->getOriginalName()) {
             return $this->fileManager->sanitize($date->format('YmdHis').'-'.substr($mass->getOriginalName(), 0, strrpos($mass->getOriginalName(), '.')));
         }
@@ -959,6 +959,11 @@ class MassImportManager
             $massPerson->setGivenId($person->givenId);
             $massPerson->setGivenName($person->givenName);
             $massPerson->setFamilyName($person->familyName);
+            $massPerson->setGender($person->gender);
+            if (null != $person->birthDate) {
+                $massPerson->setBirthDate(\DateTime::createFromFormat('DD-MM-YYYY', $person->birthDate) ? \DateTime::createFromFormat('DD-MM-YYYY', $person->birthDate) : null);
+            }
+            $massPerson->setTelephone($person->telephone);
             $personalAddress = new Address();
             $personalAddress->setHouseNumber($person->personalAddress->houseNumber);
             $personalAddress->setStreet(strtoupper($person->personalAddress->street));
@@ -1082,6 +1087,10 @@ class MassImportManager
                         }
                     } elseif ('returnTime' == $fields[$i] && '' == $tab[$i]) {
                         $massPerson->setReturnTime(self::DEFAULT_RETURN_TIME);
+                    } elseif ('birthDate' == $fields[$i] && '' != $tab[$i]) {
+                        $massPerson->setBirthDate(\DateTime::createFromFormat('DD-MM-YYYY', $tab[$i]) ? \DateTime::createFromFormat('DD-MM-YYYY', $tab[$i]) : null);
+                    } elseif ('gender' == $fields[$i] && '' != $tab[$i]) {
+                        $massPerson->setGender(intval($tab[$i]));
                     } elseif (method_exists($massPerson, $setter)) {
                         $massPerson->{$setter}($tab[$i]);
                     }
@@ -1192,7 +1201,7 @@ class MassImportManager
      */
     private function hasCollisions(array $bbox1, array $bbox2)
     {
-        //return true;
+        // return true;
         // todo : refactor the values to be strictly positive, to avoid problems with negative coordinates
         $x1 = $bbox1[0];
         $y1 = $bbox1[1];
