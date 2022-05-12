@@ -305,7 +305,7 @@
                 >
                   <v-select
                     v-model="seats"
-                    :items="numberSeats"
+                    :items="itemsSeatNumber"
                     item-text="text"
                     item-value="value"
                   />
@@ -879,8 +879,8 @@ export default {
       type: Boolean,
       default: false
     },
-    numberSeats : {
-      type: Array,
+    seatNumber : {
+      type: Number,
       default:null
     }
   },
@@ -1109,6 +1109,9 @@ export default {
       else if (this.isMajorUpdate && this.hasPotentialAds) return this.$t('update.popup.major_update_ads.content');
       else if (!this.isMajorUpdate && this.hasAsks) return this.$t('update.popup.minor_update_asks.content');
       return '';
+    },
+    itemsSeatNumber() {
+      return [...Array(this.seatNumber+1).keys()].slice(1);;
     }
   },
   watch: {

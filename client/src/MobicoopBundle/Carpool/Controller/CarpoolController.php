@@ -69,7 +69,7 @@ class CarpoolController extends AbstractController
     private $fraudWarningDisplay;
     private $ageDisplay;
     private $eventManager;
-    private $numberSeats;
+    private $seatNumber;
 
     public function __construct(
         PublicTransportManager $publicTransportManager,
@@ -79,7 +79,7 @@ class CarpoolController extends AbstractController
         $forbiddenPrice,
         $defaultRole,
         $participationText,
-        $numberSeats,
+        $seatNumber,
         bool $defaultRegular,
         string $platformName,
         bool $carpoolRDEXJourneys,
@@ -100,7 +100,7 @@ class CarpoolController extends AbstractController
         $this->fraudWarningDisplay = $fraudWarningDisplay;
         $this->ageDisplay = $ageDisplay;
         $this->eventManager = $eventManager;
-        $this->numberSeats = $numberSeats;
+        $this->seatNumber = $seatNumber;
     }
 
     /**
@@ -138,7 +138,7 @@ class CarpoolController extends AbstractController
             ],
             'participationText' => $this->participationText,
             'ageDisplay' => $this->ageDisplay,
-            'numberSeats' => $this->numberSeats,
+            'seatNumber' => $this->seatNumber,
         ]);
     }
 
@@ -226,7 +226,7 @@ class CarpoolController extends AbstractController
             'regular' => $this->defaultRegular,
             'participationText' => $this->participationText,
             'ageDisplay' => $this->ageDisplay,
-            'numberSeats' => $this->numberSeats,
+            'seatNumber' => $this->seatNumber,
         ]);
     }
 
@@ -678,7 +678,7 @@ class CarpoolController extends AbstractController
         // If there is no date in params, we use 'now'
         $date = new \DateTime('now', new \DateTimeZone('Europe/Paris'));
         if (!empty($params['date'])) {
-            $date = new \DateTime($params['date'].' 08:00:00', new \DateTimeZone('Europe/Paris'));
+            $date = new \DateTime($params['date'] . ' 08:00:00', new \DateTimeZone('Europe/Paris'));
         }
         $journeys = $this->publicTransportManager->getJourneys(
             $params['from_latitude'],
