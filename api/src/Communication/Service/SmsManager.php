@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Communication\Service;
 
@@ -30,62 +30,65 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 
 /**
- * Sms sending service
+ * Sms sending service.
  *
  * @author Remi Wortemann <remi.wortemann@mobicoop.org>
  */
 class SmsManager
 {
+    public const LANG = 'fr';
     private $templating;
-    private $templatePath;
     private $logger;
     private $smsProvider;
     private $translator;
-    const LANG = 'fr_FR';
-  
+
     /**
      * SmsManager constructor.
      *
-     * @param Environment $templating
-     * @param LoggerInterface $logger
      * @param SmsProvider $smsProvider
-     * @param string $templatePath
      */
-    public function __construct(Environment $templating, LoggerInterface $logger, TranslatorInterface $translator, string $templatePath, string $smsProvider, string $username, string $password, string $sender)
+    public function __construct(Environment $templating, LoggerInterface $logger, TranslatorInterface $translator, string $smsProvider, string $username, string $password, string $sender)
     {
         $this->templating = $templating;
-        $this->templatePath = $templatePath;
         $this->logger = $logger;
         $this->translator = $translator;
 
         switch ($smsProvider) {
-            case 'smsEnvoi':  $this->smsProvider = new SmsEnvoiProvider($username, $password, $sender);break;
-            default:  $this->smsProvider = new SmsEnvoiProvider($username, $password, $sender);break;
+            case 'smsEnvoi':  $this->smsProvider = new SmsEnvoiProvider($username, $password, $sender);
+
+        break;
+
+            default:  $this->smsProvider = new SmsEnvoiProvider($username, $password, $sender);
+
+        break;
         }
     }
 
     /**
-     * Send a sms
-     * @param Sms $sms the sms to send
+     * Send a sms.
+     *
+     * @param Sms    $sms      the sms to send
      * @param string $template the sms's template
-     * @param array $context optional array of parameters that can be included in the template
+     * @param array  $context  optional array of parameters that can be included in the template
+     * @param mixed  $lang
+     *
      * @return string
      */
-    public function send(Sms $sms, $template, $context=[], $lang="fr_FR")
+    public function send(Sms $sms, $template, $context = [], $lang = 'fr')
     {
-        $sessionLocale= $this->translator->getLocale();
-        if ($lang == self::LANG) {
+        $sessionLocale = $this->translator->getLocale();
+        if (self::LANG == $lang) {
             $this->translator->setLocale($lang);
         } else {
             $this->translator->setLocale($lang->getCode());
         }
         $sms->setMessage(
             $this->templating->render(
-                $this->templatePath.$template.'.html.twig',
-                array(
+                $template.'.html.twig',
+                [
                     'context' => $context,
-                    'message' => str_replace(array("\r\n", "\r", "\n"), "<br />", $sms->getMessage()),
-                )
+                    'message' => str_replace(["\r\n", "\r", "\n"], '<br />', $sms->getMessage()),
+                ]
             ),
             'text/html'
         );
@@ -93,7 +96,5 @@ class SmsManager
 
         // to do send sms via smsEnvoi
         $this->smsProvider->postCollection($sms);
-
-        return;
     }
 }

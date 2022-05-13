@@ -1,0 +1,34 @@
+{# CAREFUL : Some client might need to replicate this template #}
+{% extends 'communication/fr/email/notification/base.html.twig' %}
+{% block body %}
+
+    <table align="center" style="border-spacing:0;text-align:left;vertical-align:top;width:100%;margin-top:20px;font-family:Roboto, sans-serif;">
+    <tr>
+        <td>
+            <p>Bonjour<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{context.user.givenName|capitalize}} {{context.user.shortFamilyName|capitalize}}</b>.</p>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <p>Vous avez reçu un nouveau message</p>
+        </td>
+    </tr> 
+    <tr>
+        <td>  
+            <p>{{ context.text | nl2br }}</p>
+        </td>
+    </tr> 
+    <tr>
+        <td>
+            <p>Vous pouvez répondre à ce message via la messagerie de {{ api_env('EMAILS_PLATFORM_NAME') }} en cliquant ici : <a href="{{ api_env('EMAILS_PLATFORM_URL') }}/utilisateur/messages">votre messagerie</a>.</p>
+            <p><b>Merci de ne pas répondre à ce mail directement.</b></p>
+            <p>Si ce mail comporte un message ne respectant pas la charte, n'hésitez pas à nous contacter.</p>
+        </td>    
+    </tr>
+    <tr>
+        <td>
+            <p>A bientôt sur <a style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}" href="{{api_env('EMAILS_PLATFORM_URL')}}">{{api_env('EMAILS_PLATFORM_NAME')}}</a>
+        </td>
+    </tr>
+    </table>    
+{% endblock %}

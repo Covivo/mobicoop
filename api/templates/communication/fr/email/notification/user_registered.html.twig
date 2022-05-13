@@ -1,0 +1,52 @@
+{# CAREFUL : Some client might need to replicate this template #}
+{% extends 'communication/fr/email/notification/base.html.twig' %}
+{% block body %}
+<table style="width:100%;font-family:{{api_env('EMAILS_FONT')}}, sans-serif;">
+    <tr>
+        <td>
+            <table>
+                <tr>
+                    <td>
+                        <p style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};font-size:30" ><b>VOTRE INSCRIPTION EST VALIDÉE!</b></p>
+                        <hr>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <table style="width:100%;">
+                <tr>
+                    <td style="width:70%">
+                        <p>Bonjour<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{context.user.givenName|capitalize}} {{context.user.shortFamilyName|capitalize}}</b></p>
+                        <p>Votre inscription au service <b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}" > {{api_env('EMAILS_PLATFORM_NAME')}}</b>  est bien prise en compte.</p>
+                        {% if context.user.backLink and context.user.backLink is not null %}
+                            <p>Veuillez cliquer sur ce lien pour confirmer votre email : <a style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}" href="{{ context.user.backLink }}{{ context.user.emailToken }}" title="">{{ context.user.backLink }}{{ context.user.emailToken }}</a></p>
+                            <p>Ou utilisez le code de validation directement sur le site : <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}" >{{ context.user.emailToken }}</b></p>
+                        {% elseif context.user.mobileRegistration is not null %}
+                            <p>Veuillez cliquer sur ce lien pour confirmer votre email : <a style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}" href="{{ api_env('EMAILS_MOBILE_PLATFORM_URL') }}/#/confirm-registration/{{ context.user.email }}?token={{ context.user.emailToken }}" title="">{{ api_env('EMAILS_MOBILE_PLATFORM_URL') }}/#/confirm-registration/{{ context.user.email }}?token={{ context.user.emailToken }}</a></p>
+                            <p>Ou utilisez le code de validation directement sur le site : <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}" >{{ context.user.emailToken }}</b></p>
+                        {% else %}
+                            <p>Veuillez cliquer sur ce lien pour confirmer votre email : <a style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}" href="{{ api_env('EMAILS_PLATFORM_URL') }}/utilisateur/inscription/validation/{{ context.user.email }}/{{ context.user.emailToken }}" title="">{{ api_env('EMAILS_PLATFORM_URL') }}/utilisateur/inscription/validation/{{ context.user.email }}/{{ context.user.emailToken }}</a>.</p>
+                            <p>Ou utilisez le code de validation directement sur le site : <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}" >{{ context.user.emailToken }}</b></p>
+                        {% endif %}
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+     <tr>
+        <td>
+            <table  style="width:100%;">
+                <tr style="text-align:left">
+                    <td>
+                        <p>A bientôt sur <a style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}" href="{{api_env('EMAILS_PLATFORM_URL')}}">{{api_env('EMAILS_PLATFORM_NAME')}}</a>
+                    </td>
+                </tr>
+                <hr>
+            </table>
+        </td>
+    </tr>
+</table>
+{% endblock %}

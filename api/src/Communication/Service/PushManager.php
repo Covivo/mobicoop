@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Communication\Service;
 
@@ -30,34 +30,32 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 
 /**
- * Push notification sending service
+ * Push notification sending service.
  *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
  */
 class PushManager
 {
+    public const LANG = 'fr';
     private $templating;
-    private $templatePath;
     private $logger;
     private $pushProvider;
     private $translator;
-    const LANG = 'fr_FR';
-  
+
     /**
      * PushManager constructor.
      *
-     * @param Environment $templating           The templating system
-     * @param LoggerInterface $logger           The logger
+     * @param Environment         $templating   The templating system
+     * @param LoggerInterface     $logger       The logger
      * @param TranslatorInterface $translator   The translation system
-     * @param string $templatePath              The templates path
-     * @param string $pushProvider              The name of the push provider
-     * @param string $apiToken                  The api token
-     * @param string $senderId                  The sender id
+     * @param string              $templatePath The templates path
+     * @param string              $pushProvider The name of the push provider
+     * @param string              $apiToken     The api token
+     * @param string              $senderId     The sender id
      */
-    public function __construct(Environment $templating, LoggerInterface $logger, TranslatorInterface $translator, string $templatePath, string $pushProvider, string $apiToken, string $senderId)
+    public function __construct(Environment $templating, LoggerInterface $logger, TranslatorInterface $translator, string $pushProvider, string $apiToken, string $senderId)
     {
         $this->templating = $templating;
-        $this->templatePath = $templatePath;
         $this->logger = $logger;
         $this->translator = $translator;
 
@@ -65,32 +63,34 @@ class PushManager
             case 'Firebase':
             default:
                 $this->pushProvider = new FirebaseProvider($apiToken, $senderId);
+
                 break;
         }
     }
 
     /**
-     * Send a push notification
-     * @param Push $push        The push notification to send
-     * @param string $template  The push notification template to use
-     * @param array $context    The optional array of parameters that can be included in the template
-     * @return void
+     * Send a push notification.
+     *
+     * @param Push   $push     The push notification to send
+     * @param string $template The push notification template to use
+     * @param array  $context  The optional array of parameters that can be included in the template
+     * @param mixed  $lang
      */
-    public function send(Push $push, $template, $context=[], $lang="fr_FR")
+    public function send(Push $push, $template, $context = [], $lang = 'fr')
     {
-        $sessionLocale= $this->translator->getLocale();
-        if ($lang == self::LANG) {
+        $sessionLocale = $this->translator->getLocale();
+        if (self::LANG == $lang) {
             $this->translator->setLocale($lang);
         } else {
             $this->translator->setLocale($lang->getCode());
         }
         $push->setMessage(
             $this->templating->render(
-                $this->templatePath.$template.'.html.twig',
-                array(
+                $template.'.html.twig',
+                [
                     'context' => $context,
-                    'message' => str_replace(array("\r\n", "\r", "\n"), "<br />", $push->getMessage()),
-                )
+                    'message' => str_replace(["\r\n", "\r", "\n"], '<br />', $push->getMessage()),
+                ]
             ),
             'text/html'
         );
@@ -98,7 +98,5 @@ class PushManager
 
         // send the push notification
         $this->pushProvider->postCollection($push);
-
-        return;
     }
 }

@@ -1,6 +1,0 @@
-{# CAREFUL : Some client might need to replicate this template #}
-{% extends '/email/notification/base.html.twig' %}
-{% block body %}
-    <p>{{ context.deptor.givenName|capitalize }} {{ context.deptor.shortFamilyName|capitalize }} {{ "hasIndicatedThatCarpool" |trans|raw }} {{"from"|trans}} {{context.origin}} {{"at"|trans}} {{context.destination}} {{"asPayedByhand"|trans}} </p>
-    <p>{{"clickOnlinkToConfirmOrNot"|trans}} <a href="{{api_env('EMAILS_PLATFORM_URL') ~ 'linkValidatePaymentRoute'|trans }}">{{ "linkValidatePaymentLabel"|trans }}</a></p>
-{% endblock %}

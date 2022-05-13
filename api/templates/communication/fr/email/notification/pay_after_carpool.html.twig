@@ -1,0 +1,6 @@
+{# CAREFUL : Some client might need to replicate this template #}
+{% extends 'communication/fr/email/notification/base.html.twig' %}
+{% block body %}
+    <p>Votre covoiturage avec {{ context.creditor.givenName|capitalize }} {{ context.creditor.shortFamilyName|capitalize }} de  {{context.origin}} à  {{context.destination}} est terminé.</p>
+    <p>Cliquez sur le lien suivant pour le marquer comme payé à la main si vous avez déjà réglé le conducteur ou le payer en ligne si vous ne l’avez pas encore indemnisé : <a href="{{ api_env('EMAILS_PLATFORM_URL') }}/utilisateur/profil/modifier/mes-covoiturages-acceptes">Cliquez ici.</a></p>
+{% endblock %}

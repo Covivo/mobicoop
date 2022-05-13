@@ -1,0 +1,62 @@
+{# CAREFUL : Some client might need to replicate this template #}
+{% extends 'communication/fr/email/notification/base.html.twig' %}
+{% block body %}
+<table style="width:100%;font-family:{{api_env('EMAILS_FONT')}}, sans-serif;">
+    <tr>
+        <td>
+            <table>
+                <tr>
+                    <td>
+                        <p style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};font-size:30" ><b>VOTRE ÉVÉNEMENT EST ENREGISTRÉ!</b></p>
+                        <hr>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <table style="width:100%;">
+                <tr>
+                    <td style="width:70%">
+                        <p>Bonjour<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{context.user.givenName|capitalize}} {{context.user.shortFamilyName|capitalize}}</b></p>
+                        <p>Votre événement a bien été enregistré!</p>
+                    </td>
+
+                </tr>
+                <tr>
+                    <td>
+                        <p>Voici les détails de votre événement :</p>
+                        <ul>
+                            <li>Nom: <a style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}" href="{{api_env('EMAILS_PLATFORM_URL')}}/covoiturages-evenements/{{context.event.id}}/{{context.event.urlKey}}">{{ context.event.name }} </a></li>
+                            <li>Adresse: {{ context.event.address.displayLabel[0] }} </li>
+                            <li>Description: {{ context.event.description }} </li>  
+                            {% if context.event.private == true %} 
+<li>
+	Lien à partager de l'événement privé :
+	<a style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}" href="{{api_env('EMAILS_PLATFORM_URL')}}/covoiturages-evenements/{{context.event.id}}/{{context.event.urlKey}}">{{api_env('EMAILS_PLATFORM_URL')}}/covoiturages-evenements/{{context.event.id}}/{{context.event.urlKey}}</a>
+</li>
+
+                            {% endif %}
+
+
+                        </ul>
+                    </td>
+                </tr>    
+            </table>
+        </td>
+    </tr>
+     <tr>
+        <td>
+            <table  style="width:100%;">
+                <tr style="text-align:left">
+                    <td>
+                        <p>A bientôt sur <a style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}" href="{{api_env('EMAILS_PLATFORM_URL')}}">{{api_env('EMAILS_PLATFORM_NAME')}}</a>
+                    </td>
+                </tr>
+                <hr>
+            </table>
+        </td>
+    </tr>
+</table>
+{% endblock %}    

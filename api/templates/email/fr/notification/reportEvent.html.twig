@@ -1,8 +1,0 @@
-{# CAREFUL : Some client might need to replicate this template #}
-{% extends '/email/notification/base.html.twig' %}
-{% block body %}
-    <p style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};font-size:30px" >Un événement a été signalé</p>
-    <p>L'utilisateur <b>{{ context.reporterEmail }}</b> a signalé l'événement : "<b>{{ context.eventName }}</b>"</p>
-    <p>Les détails sur le signalement :</p>
-    <p>{{ context.text }}</p>
-{% endblock %}
