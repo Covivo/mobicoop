@@ -106,7 +106,8 @@
         "roundPrice": "/prix/arrondir",
         "cleanOrphans": "/covoiturage/cleanOrphanProposals"
     },
-    "snackBarErrorPublish":"Trajet incompatible avec vos annonces déjà publiées. Si votre annonce déjà publiée à cette date n'est plus valable, vous devez la mettre en pause, la modifier ou la supprimer.",
+    "snackErrorAntiFraud":"Trajet incompatible avec vos annonces déjà publiées. Si votre annonce déjà publiée à cette date n'est plus valable, vous devez la mettre en pause, la modifier ou la supprimer.",
+    "snackErrorPublish":"Une erreur est survenue, veuillez réessayer plus tard",
     "yes": "oui",
     "no": "non",
     "searchToSave": {
