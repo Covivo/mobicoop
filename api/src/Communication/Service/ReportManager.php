@@ -48,6 +48,7 @@ class ReportManager
     private $emailTitleTemplatePath;
     private $translator;
     private $lang;
+    private $communicationFolder;
 
     public function __construct(
         TranslatorInterface $translator,
@@ -57,7 +58,8 @@ class ReportManager
         EventManager $eventManager,
         Environment $templating,
         string $emailTemplatePath,
-        string $emailTitleTemplatePath
+        string $emailTitleTemplatePath,
+        string $communicationFolder
     ) {
         $this->translator = $translator;
         $this->emailManager = $emailManager;
@@ -67,6 +69,7 @@ class ReportManager
         $this->templating = $templating;
         $this->emailTemplatePath = $emailTemplatePath;
         $this->emailTitleTemplatePath = $emailTitleTemplatePath;
+        $this->communicationFolder = $communicationFolder;
 
         $this->lang = self::LANG;
         $this->translator->setLocale($this->lang);
