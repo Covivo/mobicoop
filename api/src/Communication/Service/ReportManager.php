@@ -19,8 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
-
+ */
 
 namespace App\Communication\Service;
 
@@ -37,8 +36,8 @@ use Twig\Environment;
  */
 class ReportManager
 {
-    const LANG = "fr_FR";
-    
+    public const LANG = 'fr';
+
     private $emailManager;
     private $contactManager;
     private $userManager;
@@ -72,12 +71,11 @@ class ReportManager
         $this->lang = self::LANG;
         $this->translator->setLocale($this->lang);
     }
-    
+
     /**
-     * Create a Report
+     * Create a Report.
      *
-     * @param Report $report    The report to create
-     * @return Report
+     * @param Report $report The report to create
      */
     public function createReport(Report $report): Report
     {
@@ -87,60 +85,57 @@ class ReportManager
         if (!is_null($report->getEventId())) {
             $this->reportEvent($report);
         }
-        
+
         return $report;
     }
 
     /**
-     * Report a User
+     * Report a User.
      *
-     * @param Report $report    The report to create
-     * @return Report
+     * @param Report $report The report to create
      */
     private function reportUser(Report $report): Report
     {
         $user = $this->userManager->getUser($report->getUserId());
         if (is_null($user)) {
-            throw new \LogicException("User unknown");
+            throw new \LogicException('User unknown');
         }
 
-        $bodyContext = ['text'=>$report->getText(), 'reporterEmail'=> $report->getReporterEmail(), 'user' => $user];
+        $bodyContext = ['text' => $report->getText(), 'reporterEmail' => $report->getReporterEmail(), 'user' => $user];
 
-        $this->sendEmailReport("reportUser", "reportUser", [], $bodyContext);
+        $this->sendEmailReport('reportUser', 'reportUser', [], $bodyContext);
 
         return $report;
     }
 
     /**
-     * Report an Event
+     * Report an Event.
      *
-     * @param Report $report    The report to create
-     * @return Report
+     * @param Report $report The report to create
      */
     private function reportEvent(Report $report): Report
     {
         $event = $this->eventManager->getEvent($report->getEventId());
         if (is_null($event)) {
-            throw new \LogicException("Event unknown");
+            throw new \LogicException('Event unknown');
         }
 
-        $bodyContext = ['text'=>$report->getText(), 'reporterEmail'=> $report->getReporterEmail(), 'eventName' => $event->getName()];
+        $bodyContext = ['text' => $report->getText(), 'reporterEmail' => $report->getReporterEmail(), 'eventName' => $event->getName()];
 
-        $this->sendEmailReport("reportEvent", "reportEvent", [], $bodyContext);
+        $this->sendEmailReport('reportEvent', 'reportEvent', [], $bodyContext);
 
         return $report;
     }
 
     /**
-     * Send an Email report
+     * Send an Email report.
      *
      * @param string $templateTitle Name of the twig template of the body
      * @param string $templateBody  Name of the twig template of the titla
-     * @param array $titleContext Title context
-     * @param array $bodyContext  Body context
-     * @return void
+     * @param array  $titleContext  Title context
+     * @param array  $bodyContext   Body context
      */
-    private function sendEmailReport(string $templateTitle, string $templateBody, array $titleContext=[], array $bodyContext=[])
+    private function sendEmailReport(string $templateTitle, string $templateBody, array $titleContext = [], array $bodyContext = [])
     {
         $email = new Email();
 
@@ -148,24 +143,26 @@ class ReportManager
         $contactType = $this->contactManager->getEmailsByType(ContactType::TYPE_SUPPORT);
 
         // Recipients
-        if (is_array($contactType->getTo()) && count($contactType->getTo())>0) {
+        if (is_array($contactType->getTo()) && count($contactType->getTo()) > 0) {
             $email->setRecipientEmail($contactType->getTo());
         }
-        if (is_array($contactType->getCc()) && count($contactType->getCc())>0) {
+        if (is_array($contactType->getCc()) && count($contactType->getCc()) > 0) {
             $email->setRecipientEmailCc($contactType->getCc());
         }
-        if (is_array($contactType->getBcc()) && count($contactType->getBcc())>0) {
+        if (is_array($contactType->getBcc()) && count($contactType->getBcc()) > 0) {
             $email->setRecipientEmailBcc($contactType->getBcc());
         }
-        
+
+        $titleTemplate =
+
         $email->setObject($this->templating->render(
-            $this->emailTitleTemplatePath . $templateTitle.'.html.twig',
+            $this->communicationFolder.$this->lang.$this->emailTitleTemplatePath.$templateTitle.'.html.twig',
             [
-                'context' => $titleContext
+                'context' => $titleContext,
             ]
         ));
 
         // if a template is associated with the action in the notification, we us it; otherwise we try the name of the action as template name
-        $this->emailManager->send($email, $this->emailTemplatePath . $templateBody, $bodyContext, $this->lang);
+        $this->emailManager->send($email, $this->communicationFolder.$this->lang.$this->emailTemplatePath.$templateBody, $bodyContext, $this->lang);
     }
 }
