@@ -70,6 +70,7 @@ class CarpoolController extends AbstractController
     private $ageDisplay;
     private $eventManager;
     private $seatNumber;
+    private $defaultSeatNumber;
 
     public function __construct(
         PublicTransportManager $publicTransportManager,
@@ -79,7 +80,8 @@ class CarpoolController extends AbstractController
         $forbiddenPrice,
         $defaultRole,
         $participationText,
-        $seatNumber,
+        int $seatNumber,
+        int $defaultSeatNumber,
         bool $defaultRegular,
         string $platformName,
         bool $carpoolRDEXJourneys,
@@ -101,6 +103,7 @@ class CarpoolController extends AbstractController
         $this->ageDisplay = $ageDisplay;
         $this->eventManager = $eventManager;
         $this->seatNumber = $seatNumber;
+        $this->defaultSeatNumber = $defaultSeatNumber;
     }
 
     /**
@@ -139,6 +142,7 @@ class CarpoolController extends AbstractController
             'participationText' => $this->participationText,
             'ageDisplay' => $this->ageDisplay,
             'seatNumber' => $this->seatNumber,
+            'defaultSeatNumber' => $this->defaultSeatNumber
         ]);
     }
 
@@ -227,6 +231,7 @@ class CarpoolController extends AbstractController
             'participationText' => $this->participationText,
             'ageDisplay' => $this->ageDisplay,
             'seatNumber' => $this->seatNumber,
+            'defaultSeatNumber' => $this->defaultSeatNumber
         ]);
     }
 
@@ -251,6 +256,7 @@ class CarpoolController extends AbstractController
                 'participationText' => $this->participationText,
                 'ageDisplay' => $this->ageDisplay,
                 'seatNumber' => $this->seatNumber,
+                'defaultSeatNumber' => $this->defaultSeatNumber
             ]
         );
     }
@@ -290,6 +296,7 @@ class CarpoolController extends AbstractController
                 'participationText' => $this->participationText,
                 'ageDisplay' => $this->ageDisplay,
                 'seatNumber' => $this->seatNumber,
+                'defaultSeatNumber' => $this->defaultSeatNumber
             ]
         );
     }

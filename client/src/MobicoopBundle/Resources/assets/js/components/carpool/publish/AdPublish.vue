@@ -882,6 +882,10 @@ export default {
     seatNumber : {
       type: Number,
       default:null
+    },
+    defaultSeatNumber : {
+      type: Number,
+      default:null
     }
   },
   data() {
@@ -924,7 +928,7 @@ export default {
       useTime: null,            // not used yet
       anyRouteAsPassenger: null, // not used yet
       solidaryExclusive: this.solidaryExclusiveAd,
-      seats : 3,
+      seats : this.defaultSeatNumber,
       snackbar: {
         show: false,
         message: "",
