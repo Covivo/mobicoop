@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace Mobicoop\Bundle\MobicoopBundle\RelayPoint\Service;
 
@@ -32,63 +32,62 @@ use Mobicoop\Bundle\MobicoopBundle\RelayPoint\Entity\RelayPointMap;
  */
 class RelayPointManager
 {
+    public const DEFAULT_MIN_LON = -180;
+    public const DEFAULT_MIN_LAT = -90;
+    public const DEFAULT_MAX_LON = 180;
+    public const DEFAULT_MAX_LAT = 90;
     private $dataProvider;
     private $bbox_min_lon;
     private $bbox_min_lat;
     private $bbox_max_lon;
     private $bbox_max_lat;
 
-    const DEFAULT_MIN_LON = -180;
-    const DEFAULT_MIN_LAT = -90;
-    const DEFAULT_MAX_LON = 180;
-    const DEFAULT_MAX_LAT = 90;
-    
     /**
      * Constructor.
-     *
-     * @param DataProvider $dataProvider
      */
     public function __construct(DataProvider $dataProvider, array $bbox)
     {
         $this->dataProvider = $dataProvider;
         $this->dataProvider->setClass(RelayPoint::class);
-        if (count($bbox)<4) {
+        if (count($bbox) < 4) {
             $this->bbox_min_lon = self::DEFAULT_MIN_LON;
             $this->bbox_min_lat = self::DEFAULT_MIN_LAT;
             $this->bbox_max_lon = self::DEFAULT_MAX_LON;
             $this->bbox_max_lat = self::DEFAULT_MAX_LAT;
         } else {
-            $this->bbox_min_lon = $bbox["min_lon"];
-            $this->bbox_min_lat = $bbox["min_lat"];
-            $this->bbox_max_lon = $bbox["max_lon"];
-            $this->bbox_max_lat = $bbox["max_lat"];
+            $this->bbox_min_lon = $bbox['min_lon'];
+            $this->bbox_min_lat = $bbox['min_lat'];
+            $this->bbox_max_lon = $bbox['max_lon'];
+            $this->bbox_max_lat = $bbox['max_lat'];
         }
     }
-    
+
     /**
-     * Get relay points
+     * Get relay points.
      *
-     * @param boolean $official     Get official relay points only
-     * @param array|null $bbox      The bbox in which we want the relay points
-     * @return array The relay points found.
+     * @param bool       $official Get official relay points only
+     * @param null|array $bbox     The bbox in which we want the relay points
+     *
+     * @return array the relay points found
      */
-    public function getRelayPoints(bool $official = true, ?array $bbox=null)
+    public function getRelayPoints(bool $official = true, ?array $bbox = null)
     {
         if (is_array($bbox)) {
             list($this->bbox_min_lon, $this->bbox_min_lat, $this->bbox_max_lon, $this->bbox_max_lat) = $bbox;
         }
-        
+
         $params = [
             'official' => $official,
-            'address.latitude[between]' => $this->bbox_min_lat . ".." . $this->bbox_max_lat,
-            'address.longitude[between]' => $this->bbox_min_lon . ".." . $this->bbox_max_lon,
-            'perPage' => 999999
+            'address.latitude[between]' => $this->bbox_min_lat.'..'.$this->bbox_max_lat,
+            'address.longitude[between]' => $this->bbox_min_lon.'..'.$this->bbox_max_lon,
+            'perPage' => 999999,
         ];
         $this->dataProvider->setClass(RelayPointMap::class);
         $response = $this->dataProvider->getCollection($params);
-        if ($response->getCode() >=200 && $response->getCode() <= 300) {
+        if ($response->getCode() >= 200 && $response->getCode() <= 300) {
             return $response->getValue()->getMember();
         }
+
         return [];
     }
 }
