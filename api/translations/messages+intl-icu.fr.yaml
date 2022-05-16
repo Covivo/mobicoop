@@ -270,8 +270,8 @@ accountDeleted: "a supprimé son compte et ne pourra pas covoiturer avec vous de
 askLinkedAdDeleted: "Une annonce à laquelle vous aviez postulé a été supprimée"
 driverAskLinkedAdDeleted: "Une annonce pour laquelle vous êtiez conducteur a été supprimée"
 driverAskLinkedAdDeletedUrgent: "Urgent - Une annonce pour laquelle vous êtiez conducteur a été supprimée"
-passengerAskLinkedAdDeleted: "Une annonce pour laquelle vous êtiez passagé a été supprimée"
-passengerAskLinkedAdDeletedUrgent: "Urgent - Une annonce pour laquelle vous êtiez passagé a été supprimée"
+passengerAskLinkedAdDeleted: "Une annonce pour laquelle vous êtiez passager a été supprimée"
+passengerAskLinkedAdDeletedUrgent: "Urgent - Une annonce pour laquelle vous êtiez passager a été supprimée"
 findNewCarpool: "Trouvez de nouveaux covoiturages ou déposez une annonce sur "
 
 # COMMUNICATION_INTERNAL_MESSAGE_RECEIVED
