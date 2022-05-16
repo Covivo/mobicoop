@@ -605,6 +605,7 @@
             :user="user"
             :show-report-button="false"
             :age-display="ageDisplay"
+            :carpool-settings-display="carpoolSettingsDisplay"
           />
         </v-card-text>
 
@@ -699,6 +700,10 @@ export default {
       type: Boolean,
       default: false
     },
+    carpoolSettingsDisplay: { 
+      type: Boolean,
+      default: true
+    }
   },
   data() {
     return {

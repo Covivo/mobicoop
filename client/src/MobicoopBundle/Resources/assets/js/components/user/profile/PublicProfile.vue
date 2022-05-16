@@ -66,6 +66,7 @@
             <p>{{ $t('subscribedOn') }}<br>{{ subscribedOn }}</p>
           </v-col>
           <v-col
+            v-if="carpoolSettingsDisplay"
             cols="2"
             class="text-center"
           >
@@ -188,6 +189,10 @@ export default {
       default: false
     },
     ageDisplay: {
+      type: Boolean,
+      default: true
+    },
+    carpoolSettingsDisplay: { 
       type: Boolean,
       default: true
     }
