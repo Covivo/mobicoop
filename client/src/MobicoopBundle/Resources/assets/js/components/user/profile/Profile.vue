@@ -86,6 +86,7 @@
                   :url-alt-avatar="urlAltAvatar"
                   :platform="platform"
                   :gamification-active="gamificationActive"
+                  :carpool-settings-display="carpoolSettingsDisplay"
                 />
               </v-tab-item>
 
@@ -98,7 +99,10 @@
               </v-tab-item>
 
               <!-- SETTINGS -->
-              <v-tab class="text-subtitle-1">
+              <v-tab
+                v-if="carpoolSettingsDisplay"
+                class="text-subtitle-1"
+              >
                 {{ $t("tabs.carpoolSettings") }}
               </v-tab>
               <v-tab-item>
@@ -273,6 +277,10 @@ export default {
       type: Boolean,
       default: false
     },
+    carpoolSettingsDisplay: { 
+      type: Boolean,
+      default: true
+    }
   },
   data(){
     return{

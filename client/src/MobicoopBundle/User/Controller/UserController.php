@@ -89,6 +89,7 @@ class UserController extends AbstractController
     private $ageDisplay;
     private $birthDateDisplay;
     private $eventManager;
+    private $carpoolSettingsDisplay;
 
     /**
      * Constructor.
@@ -126,7 +127,8 @@ class UserController extends AbstractController
         bool $loginDelegate,
         bool $fraudWarningDisplay,
         bool $ageDisplay,
-        bool $birthDateDisplay
+        bool $birthDateDisplay,
+        bool $carpoolSettingsDisplay
     ) {
         $this->encoder = $encoder;
         $this->facebook_show = $facebook_show;
@@ -148,6 +150,7 @@ class UserController extends AbstractController
         $this->loginDelegate = $loginDelegate;
         $this->fraudWarningDisplay = $fraudWarningDisplay;
         $this->ageDisplay = $ageDisplay;
+        $this->carpoolSettingsDisplay = $carpoolSettingsDisplay;
         $this->birthDateDisplay = $birthDateDisplay;
         $this->eventManager = $eventManager;
         $this->ssoManager = $ssoManager;
@@ -550,7 +553,8 @@ class UserController extends AbstractController
             'validationDocsAuthorizedExtensions' => $this->validationDocsAuthorizedExtensions,
             'showReviews' => $user->isUserReviewsActive(),
             'ageDisplay' => $this->ageDisplay,
-            'selectedTab' => $tab,
+            'carpoolSettingsDisplay' => $this->carpoolSettingsDisplay,
+            'selectedTab' => $tab
         ]);
     }
 
@@ -1025,8 +1029,8 @@ class UserController extends AbstractController
 
                 $days = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
                 foreach ($days as $day) {
-                    $currentOutwardTime = (!is_null($outwardSchedule)) ? $outwardSchedule[$day.'Time'] : null;
-                    $currentReturnTime = (!is_null($returnSchedule)) ? $returnSchedule[$day.'Time'] : null;
+                    $currentOutwardTime = (!is_null($outwardSchedule)) ? $outwardSchedule[$day . 'Time'] : null;
+                    $currentReturnTime = (!is_null($returnSchedule)) ? $returnSchedule[$day . 'Time'] : null;
 
                     // I need to know if there is already a section of the schedule with these times
                     $alreadyExists = false;
@@ -1375,7 +1379,7 @@ class UserController extends AbstractController
         $params = $this->ssoManager->guessSsoParameters($request->query->all());
 
         // We add the front url to the parameters
-        (isset($_SERVER['HTTPS'])) ? $params['baseSiteUri'] = 'https://'.$_SERVER['HTTP_HOST'] : $params['baseSiteUri'] = 'http://'.$_SERVER['HTTP_HOST'];
+        (isset($_SERVER['HTTPS'])) ? $params['baseSiteUri'] = 'https://' . $_SERVER['HTTP_HOST'] : $params['baseSiteUri'] = 'http://' . $_SERVER['HTTP_HOST'];
 
         // We add the service name
         $services = $this->userManager->getSsoServices();
