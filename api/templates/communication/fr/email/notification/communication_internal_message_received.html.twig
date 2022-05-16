@@ -12,23 +12,23 @@
         <td>
             <p>Vous avez reçu un nouveau message</p>
         </td>
-    </tr> 
+    </tr>
     <tr>
-        <td>  
+        <td>
             <p>{{ context.text | nl2br }}</p>
         </td>
-    </tr> 
+    </tr>
     <tr>
         <td>
             <p>Vous pouvez répondre à ce message via la messagerie de {{ api_env('EMAILS_PLATFORM_NAME') }} en cliquant ici : <a href="{{ api_env('EMAILS_PLATFORM_URL') }}/utilisateur/messages">votre messagerie</a>.</p>
             <p><b>Merci de ne pas répondre à ce mail directement.</b></p>
             <p>Si ce mail comporte un message ne respectant pas la charte, n'hésitez pas à nous contacter.</p>
-        </td>    
+        </td>
     </tr>
     <tr>
         <td>
             <p>A bientôt sur <a style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}" href="{{api_env('EMAILS_PLATFORM_URL')}}">{{api_env('EMAILS_PLATFORM_NAME')}}</a>
         </td>
     </tr>
-    </table>    
+    </table>
 {% endblock %}
