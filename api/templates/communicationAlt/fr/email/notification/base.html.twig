@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"> 
+    <meta name="viewport" content="width=device-width"> 
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"> 
+    <meta name="x-apple-disable-message-reformatting"> 
+</head>
+<body>
+<center style="width: 100%; background-color: {{api_env('EMAILS_EXTERIOR_BACKGROUND_COLOR')}};">
+<table style="width:700px;font-family:{{api_env('EMAILS_FONT')}}, sans-serif;background-color: {{api_env('EMAILS_INTERIOR_BACKGROUND_COLOR')}};">
+    <tr>
+        <td>
+            <!-- Header -->
+            <table cellpadding="0" cellspacing="0" summary="" border="0" style="width:100%;">
+                <tr>
+                    <td align="center">
+                        <a href="{{api_env('EMAILS_PLATFORM_URL')}}" title="">
+                            <img src="{{api_env('EMAILS_BANNER_URL')}}" alt="" style="width:40%;max-width:1000px;height:auto;max-height:250px;border-style:none;" />
+                        </a>
+                    </td>
+                </tr>    
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="padding:10px;">
+            <center>
+                <table cellpadding="0" cellspacing="0" summary="" border="0" style="width:100%;">
+                    <tr>
+                        <td>
+                        {% block body %}
+                        {% endblock %}
+                        </td>
+                    </tr>
+                </table>
+            </center>
+        </td>
+    </tr>
+    <tr>
+        <td style="border-spacing:0;text-align:center">
+            <!-- Footer-->
+            <hr>
+            <table align="center" style="border-spacing:0;text-align:center;vertical-align:top;width:100%;margin-top:20px;font-family:{{api_env('EMAILS_FONT')}}, sans-serif;color:{{api_env('EMAILS_COLOR_SECONDARY')}}">
+                
+                <tr>
+                    <td style="width:10%"> 
+                        &nbsp;
+                    </td>
+                    <td style="text-align:center">
+                        <p>
+                            <a href="{{api_env('EMAILS_PLATFORM_URL')}}/FAQ" >
+                                FAQ | 
+                            </a>
+                            <a href="{{api_env('EMAILS_PLATFORM_URL')}}/contact" >
+                                Une question? |
+                            </a>
+                            <a href="{{api_env('EMAILS_PLATFORM_URL') ~ '/utilisateur/profil/modifier/mon-profil'}}" >
+                                Gérer vos alertes email
+                            </a>
+                        </p>    
+                    </td>
+                    <td style="width:10%">
+                        &nbsp; 
+                    </td>
+                </tr>
+                {# <tr>
+                    <td>
+                        &nbsp;
+                    </td>
+                    <td style="text-align:center">
+                        <p> Téléchargez l'application <b>Android</b> ou <b>IOS</b> </p>
+                    </td>
+                    <td>
+                        &nbsp;
+                    </td>
+                </tr> #}
+                {# <tr>
+                    <td>
+                        &nbsp;
+                    </td>
+                     <td style="text-align:center">
+                        <a href="{{api_env('EMAILS_ANDROID_URL')}}" >
+                            <img src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_ANDROID_LOGO')}}" alt="Android"/>
+                        </a>
+                        <a href="{{api_env('EMAILS_IOS_URL')}}" >
+                            <img src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_IOS_LOGO')}}" alt="AppleStore"/>
+                        </a>
+                    </td>
+                    <td>
+                        &nbsp;
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        &nbsp;
+                    </td>
+                    <td style="text-align:center">
+                        <p> Suivez-nous </p>
+                    </td>
+                    <td>
+                        &nbsp;
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        &nbsp;
+                    </td>
+                    <td style="text-align:center">
+                        <a href="{{api_env('EMAILS_FACEBOOK_URL')}}" >
+                            <img src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_FACEBOOK_LOGO')}}" alt="facebook"/>
+                        </a>
+                        <a href="{{api_env('EMAILS_TWITTER_URL')}}" >
+                            <img src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_TWITTER_LOGO')}}" alt="twitter"/>
+                        </a>
+                    </td>
+                    <td>
+                        &nbsp;
+                    </td>
+                </tr>     #}
+        </table> 
+        </td>
+    </tr>
+</table>    
+</center>
+</body>
+</html>

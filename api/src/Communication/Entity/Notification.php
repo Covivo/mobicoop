@@ -19,20 +19,18 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Communication\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-use ApiPlatform\Core\Annotation\ApiResource;
-use Symfony\Component\Serializer\Annotation\Groups;
-use Doctrine\Common\Collections\ArrayCollection;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
 use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Action\Entity\Action;
-use App\Communication\Entity\Medium;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 /**
  * A message sent by the system for an action and a medium.
@@ -80,13 +78,13 @@ use App\Communication\Entity\Medium;
  */
 class Notification
 {
-    const USER_REGISTERED_DELEGATE_PASSWORD_SEND_SMS = 65;
-    const PERMISSIVES = [
-        self::USER_REGISTERED_DELEGATE_PASSWORD_SEND_SMS
+    public const USER_REGISTERED_DELEGATE_PASSWORD_SEND_SMS = 65;
+    public const PERMISSIVES = [
+        self::USER_REGISTERED_DELEGATE_PASSWORD_SEND_SMS,
     ];
 
     /**
-     * @var int The id of this notification.
+     * @var int the id of this notification
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -96,7 +94,7 @@ class Notification
     private $id;
 
     /**
-     * @var string The template file for the title of the notification.
+     * @var string the template file for the title of the notification
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"read","write"})
@@ -104,7 +102,7 @@ class Notification
     private $templateTitle;
 
     /**
-     * @var string The template file for the body of the notification.
+     * @var string the template file for the body of the notification
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"read","write"})
@@ -112,7 +110,7 @@ class Notification
     private $templateBody;
 
     /**
-     * @var bool The status of the notification (active/inactive).
+     * @var bool the status of the notification (active/inactive)
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"read","write"})
@@ -120,7 +118,15 @@ class Notification
     private $active;
 
     /**
-     * @var bool The default status of the notification (active/inactive) for each user.
+     * @var bool the alternative template of the notification (active/inactive)
+     *
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"read","write"})
+     */
+    private $alt;
+
+    /**
+     * @var bool the default status of the notification (active/inactive) for each user
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"read","write"})
@@ -128,7 +134,7 @@ class Notification
     private $userActiveDefault;
 
     /**
-     * @var bool The notification is editable by the user.
+     * @var bool the notification is editable by the user
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"read","write"})
@@ -136,7 +142,7 @@ class Notification
     private $userEditable;
 
     /**
-     * @var int Position number in user preferences.
+     * @var int position number in user preferences
      *
      * @ORM\Column(type="smallint")
      * @Groups({"read","write"})
@@ -144,7 +150,7 @@ class Notification
     private $position;
 
     /**
-     * @var Action The action.
+     * @var Action the action
      *
      * @ORM\ManyToOne(targetEntity="\App\Action\Entity\Action")
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
@@ -154,7 +160,7 @@ class Notification
     private $action;
 
     /**
-     * @var Medium The medium.
+     * @var Medium the medium
      *
      * @ORM\ManyToOne(targetEntity="\App\Communication\Entity\Medium")
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
@@ -164,7 +170,7 @@ class Notification
     private $medium;
 
     /**
-     * @var \DateTimeInterface Creation date.
+     * @var \DateTimeInterface creation date
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read"})
@@ -172,7 +178,7 @@ class Notification
     private $createdDate;
 
     /**
-     * @var \DateTimeInterface Updated date.
+     * @var \DateTimeInterface updated date
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read"})
@@ -188,11 +194,11 @@ class Notification
     {
         return $this->templateTitle;
     }
-    
+
     public function setTemplateTitle(?string $templateTitle): self
     {
         $this->templateTitle = $templateTitle;
-        
+
         return $this;
     }
 
@@ -200,11 +206,11 @@ class Notification
     {
         return $this->templateBody;
     }
-    
+
     public function setTemplateBody(?string $templateBody): self
     {
         $this->templateBody = $templateBody;
-        
+
         return $this;
     }
 
@@ -212,11 +218,23 @@ class Notification
     {
         return $this->active;
     }
-    
+
     public function setActive(?bool $isActive): self
     {
         $this->active = $isActive;
-        
+
+        return $this;
+    }
+
+    public function hasAlt(): ?bool
+    {
+        return $this->alt;
+    }
+
+    public function setAlt(?bool $isAlt): self
+    {
+        $this->alt = $isAlt;
+
         return $this;
     }
 
@@ -224,11 +242,11 @@ class Notification
     {
         return $this->userActiveDefault;
     }
-    
+
     public function setUserActiveDefault(?bool $isUserActiveDefault): self
     {
         $this->userActiveDefault = $isUserActiveDefault;
-        
+
         return $this;
     }
 
@@ -236,11 +254,11 @@ class Notification
     {
         return $this->userEditable;
     }
-    
+
     public function setUserEditable(?bool $isUserEditable): self
     {
         $this->userEditable = $isUserEditable;
-        
+
         return $this;
     }
 
@@ -260,11 +278,11 @@ class Notification
     {
         return $this->action;
     }
-    
+
     public function setAction(?Action $action): self
     {
         $this->action = $action;
-        
+
         return $this;
     }
 
@@ -272,11 +290,11 @@ class Notification
     {
         return $this->medium;
     }
-    
+
     public function setMedium(?Medium $medium): self
     {
         $this->medium = $medium;
-        
+
         return $this;
     }
 
@@ -310,7 +328,7 @@ class Notification
     }
 
     // DOCTRINE EVENTS
-    
+
     /**
      * Creation date.
      *
@@ -318,7 +336,7 @@ class Notification
      */
     public function setAutoCreatedDate()
     {
-        $this->setCreatedDate(new \Datetime());
+        $this->setCreatedDate(new \DateTime());
     }
 
     /**
@@ -328,6 +346,6 @@ class Notification
      */
     public function setAutoUpdatedDate()
     {
-        $this->setUpdatedDate(new \Datetime());
+        $this->setUpdatedDate(new \DateTime());
     }
 }
