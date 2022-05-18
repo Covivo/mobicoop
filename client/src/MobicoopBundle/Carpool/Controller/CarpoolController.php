@@ -126,8 +126,7 @@ class CarpoolController extends AbstractController
             if ($result instanceof Ad) {
                 return $this->json(['result' => $result]);
             }
-
-            return new JsonResponse(['message' => 'error']);
+            return $this->json($result);
         }
 
         return $this->render('@Mobicoop/carpool/publish.html.twig', [

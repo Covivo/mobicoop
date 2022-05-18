@@ -106,7 +106,8 @@
         "roundPrice": "/price/round",
         "cleanOrphans": "/covoiturage/cleanOrphanProposals"
     },
-    "snackBarErrorPublish": "Journey incompatible with your already published proposals. If your proposal already published on this date is no longer valid, you must pause, change or delete it.",
+    "snackErrorAntiFraud": "Journey incompatible with your already published proposals. If your proposal already published on this date is no longer valid, you must pause, change or delete it.",
+    "snackErrorPublish":"Une erreur est survenue, veuillez réessayer plus tard",
     "yes": "Yes",
     "no": "No",
     "searchToSave": {

@@ -37,7 +37,7 @@
       top
       timeout="-1"
     >
-      {{ snackErrorPublish.message }}
+      {{ snackErrorPublishMessage }}
       <v-btn
         color="white"
         text
@@ -904,7 +904,7 @@ export default {
       bike: false,
       backSeats: false,
       schedules: null,
-      returnTrip:null,
+      returnTrip: null,
       route: null,
       price: null,
       pricePerKm: this.isUpdate && this.ad ? this.ad.priceKm : this.defaultPriceKm,
@@ -932,10 +932,10 @@ export default {
         message: "",
         color: "success"
       },
+      isValidAd: true,
       snackErrorPublish: {
         show: false,
-        message: this.$t('snackBarErrorPublish'),
-        color:"error"
+        color: "error"
       },
       priceForbidden: false,
       returnTimeIsValid: true,
@@ -961,6 +961,9 @@ export default {
           "forbidden":0.5
         }
       }
+    },
+    snackErrorPublishMessage() {
+      return this.isValidAd ? this.$t("snackErrorPublish"): this.$t("snackErrorAntiFraud");
     },
     hintPricePerKm() {
       let pricePerKm = this.pricePerKm;
@@ -1263,15 +1266,21 @@ export default {
       })
         .then(response => {
           if (response.data) {
-            if(response.data.message == 'error'){
+            if (response.data.result) {
+              window.location.href = this.$t("route.myAds");
+            } else if (
+              response.data.includes("the new Ad") ||
+              response.data.includes("Too many") ||
+              response.data.includes("Not enough")
+            ) {
+              this.snackErrorPublish.show = true;
+              this.isValidAd = false;
+              this.loading = false;
+            } else if (response.data.includes("error")) {
               this.snackErrorPublish.show = true;
               this.loading = false;
             }
-            else{
-              window.location.href = this.$t('route.myAds');
-            }
           }
-          //console.log(response);
         })
         .catch(function (error) {
           console.log(error);
