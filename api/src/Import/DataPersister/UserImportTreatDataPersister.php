@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Import\DataPersister;
 
@@ -33,14 +33,13 @@ use Symfony\Component\Security\Core\Security;
  * Collection data persister for User import treatment.
  *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
- *
  */
 final class UserImportTreatDataPersister implements ContextAwareDataPersisterInterface
 {
     private $security;
     private $request;
-    protected $importManager;
-    
+    private $importManager;
+
     public function __construct(Security $security, ImportManager $importManager, RequestStack $requestStack)
     {
         $this->security = $security;
@@ -50,15 +49,15 @@ final class UserImportTreatDataPersister implements ContextAwareDataPersisterInt
 
     public function supports($data, array $context = []): bool
     {
-        return $data instanceof UserImport && isset($context['collection_operation_name']) && $context['collection_operation_name'] == 'treat';
+        return $data instanceof UserImport && isset($context['collection_operation_name']) && 'treat' == $context['collection_operation_name'];
     }
 
     public function persist($data, array $context = [])
     {
-        /**
-         * @var UserImport $data
-         */
-        return $this->importManager->treatUserImport($this->request->get("origin"), null, $this->request->get("lowestId"));
+        $passwordToBeUpdated = 'true' === $this->request->get('passwordToBeUpdated') ? true : false;
+
+        // @var UserImport $data
+        return $this->importManager->treatUserImport($this->request->get('origin'), null, $this->request->get('lowestId'), $this->request->get('highestId'), $passwordToBeUpdated);
     }
 
     public function remove($data, array $context = [])

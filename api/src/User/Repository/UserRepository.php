@@ -198,4 +198,21 @@ class UserRepository
 
         return $query->getQuery()->getSingleScalarResult();
     }
+
+    public function findUsersWhoseIdIsGreaterThan(?int $lowestId = 1, ?int $highestId = null)
+    {
+        $qb = $this->repository->createQueryBuilder('u')
+            ->where('u.id >=:lowestId')
+            ->setParameter('lowestId', $lowestId)
+        ;
+
+        if (!is_null($highestId)) {
+            $qb
+                ->andWhere('u.id <=:highestId')
+                ->setParameter('highestId', $highestId)
+            ;
+        }
+
+        return $qb->getQuery()->getResult();
+    }
 }
