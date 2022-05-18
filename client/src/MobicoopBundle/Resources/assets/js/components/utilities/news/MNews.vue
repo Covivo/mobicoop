@@ -7,7 +7,7 @@
       class="mt-10"
     >
       <v-col
-        cols="7"
+        cols="6"
         class="text-right align-self-center"
       >
         <h2 class="primary--text font-italic">
@@ -19,24 +19,74 @@
         <p>
           {{ $t('news.text') }}
         </p>
-        <v-btn
-          rounded
-          color="secondary"
-          :href="this.$t('news.button.route')"
-          class="white--text"
-          target="_blank"
+
+        <v-dialog
+          v-model="dialog"
+          cover
+          width="450"
         >
-          {{ $t('news.button.label') }}
-        </v-btn>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              color="primary"
+              class="white--text"
+              v-bind="attrs"
+              v-on="on"
+            >
+              {{ $t('news.button.label') }}
+            </v-btn>
+          </template>
+
+          <v-card
+            style="overflow:hidden"
+          >
+            <v-row dense>
+              <v-col class="text-right">
+                <v-btn
+                  class="text"
+                  icon
+                  @click="dialog = false"
+                >
+                  <v-icon>mdi-close</v-icon>
+                </v-btn>
+              </v-col>
+            </v-row>
+            <v-row class="pa-1">
+              <v-col class="pa-0">
+                <v-card-title class="font-weight-bold justify-center pa-0">
+                  {{ $t('news.popIn.ios') }}
+                </v-card-title>
+                <v-img
+                  :src="imageLink + 'Ios_Unitag_QRCode_1652860756352.png'"
+                  cover
+                  :alt="$t('news.imageAlt')"
+                />
+              </v-col>
+
+              <v-divider
+                vertical
+              />
+              <v-col class="pa-0">
+                <v-card-title class="font-weight-bold justify-center pa-0">
+                  {{ $t('news.popIn.android') }}
+                </v-card-title>
+                <v-img
+                  :src="imageLink + 'Android_Unitag_QRCode_1652860710477.png'"
+                  cover
+                  :alt="$t('news.imageAlt')"
+                />
+              </v-col>
+            </v-row>
+          </v-card>
+        </v-dialog>
       </v-col>
       <v-spacer />
 
       <v-col 
-        cols="4"           
+        cols="5"           
         class="align-self-center"
       >
         <v-img
-          :src="imageLink + '210112_MBP_VisuelSite.png'"
+          :src="imageLink + 'RezoMobicoop_Visuel Actu.png'"
           cover
           :alt="$t('news.imageAlt')"
         />
@@ -70,7 +120,8 @@ export default {
   data () {
     return {
       imageLink: "/images/pages/home/",
-      mobileUrl: this.urlMobile
+      mobileUrl: this.urlMobile,
+      dialog: false
     }
   }
 }
