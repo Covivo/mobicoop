@@ -1,12 +1,16 @@
 {
     "news": {
         "title": "Actualités",
-        "subtitle": "Soutenez la 1ère plateforme nationale de covoiturage libre !",
-        "text": "Mobicoop est fière de vous présenter son nouveau site web entièrement conçu en logiciel libre. Nous avons planché de longs mois pour vous proposer de nombreuses améliorations sur l’interface ! Maintenir une plateforme de grande envergure et y ajouter de nouvelles fonctionnalités représentent des coûts. Pour continuer à faire grandir Mobicoop comme solution alternative de mobilité, nous avons besoin de vous !",
+        "subtitle": "Votre application évolue : découvrez Rezo Mobicoop",
+        "text": "L'application mobile Mobicoop fusionne avec celle de Rezo Pouce pour devenir Rezo Mobicoop. Vous pouvez à présent utiliser les services de covoiturage de mobicoop.fr et d'autostop de Rezo Pouce sur une même interface mobile et avec un compte unique. Si ce n'est pas encore fait téléchargez l'appli ou mettez-la à jour.",
         "button": {
-            "label":"Faites un don pour nous soutenir",
-            "route":"https://www.zeste.coop/fr/mobicoop"
+            "label":"Mettre à jour l'application"
         },
-        "imageAlt": "Mobicoop fusionne avec Rezopouce. Elle forme ensemble la grande SCIC de la mobilité partagée"
+        "popIn": {
+            "ios": "IOS",
+            "android": "Android"
+
+        },
+        "imageAlt": "Votre application Mobicoop devient Rezo Mobicoop. Téléchargez-la gratuitement"
     }
 }
