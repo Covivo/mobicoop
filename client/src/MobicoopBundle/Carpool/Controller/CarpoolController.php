@@ -87,8 +87,7 @@ class CarpoolController extends AbstractController
         bool $carpoolRDEXJourneys,
         int $ptResults,
         bool $fraudWarningDisplay,
-        bool $ageDisplay,
-        bool $contentPassenger
+        bool $ageDisplay
     ) {
         $this->midPrice = $midPrice;
         $this->highPrice = $highPrice;
@@ -130,6 +129,7 @@ class CarpoolController extends AbstractController
             if ($result instanceof Ad) {
                 return $this->json(['result' => $result]);
             }
+
             return $this->json($result);
         }
 
@@ -142,7 +142,7 @@ class CarpoolController extends AbstractController
             'participationText' => $this->participationText,
             'ageDisplay' => $this->ageDisplay,
             'seatNumber' => $this->seatNumber,
-            'defaultSeatNumber' => $this->defaultSeatNumber
+            'defaultSeatNumber' => $this->defaultSeatNumber,
         ]);
     }
 
@@ -231,7 +231,7 @@ class CarpoolController extends AbstractController
             'participationText' => $this->participationText,
             'ageDisplay' => $this->ageDisplay,
             'seatNumber' => $this->seatNumber,
-            'defaultSeatNumber' => $this->defaultSeatNumber
+            'defaultSeatNumber' => $this->defaultSeatNumber,
         ]);
     }
 
@@ -256,7 +256,7 @@ class CarpoolController extends AbstractController
                 'participationText' => $this->participationText,
                 'ageDisplay' => $this->ageDisplay,
                 'seatNumber' => $this->seatNumber,
-                'defaultSeatNumber' => $this->defaultSeatNumber
+                'defaultSeatNumber' => $this->defaultSeatNumber,
             ]
         );
     }
@@ -296,7 +296,7 @@ class CarpoolController extends AbstractController
                 'participationText' => $this->participationText,
                 'ageDisplay' => $this->ageDisplay,
                 'seatNumber' => $this->seatNumber,
-                'defaultSeatNumber' => $this->defaultSeatNumber
+                'defaultSeatNumber' => $this->defaultSeatNumber,
             ]
         );
     }
@@ -397,7 +397,7 @@ class CarpoolController extends AbstractController
             $origin = $ad->getOutwardWaypoints()[0];
             $destination = $ad->getOutwardWaypoints()[count($ad->getOutwardWaypoints()) - 1];
 
-            //$this->denyAccessUnlessGranted('results_ad', $ad);
+            // $this->denyAccessUnlessGranted('results_ad', $ad);
             return $this->json([
                 'origin' => $origin,
                 'destination' => $destination,
@@ -425,7 +425,7 @@ class CarpoolController extends AbstractController
             }
         }
         if ($ad = $adManager->getAdFromExternalId($id, $filters)) {
-            //$this->denyAccessUnlessGranted('results_ad', $ad);
+            // $this->denyAccessUnlessGranted('results_ad', $ad);
             return $this->json($ad->getResults());
         }
 
