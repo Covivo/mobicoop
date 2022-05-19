@@ -305,7 +305,7 @@
                 >
                   <v-select
                     v-model="seats"
-                    :items="numberSeats"
+                    :items="itemsSeatNumber"
                     item-text="text"
                     item-value="value"
                   />
@@ -880,9 +880,13 @@ export default {
       type: Boolean,
       default: false
     },
-    contentPassenger: { 
-      type: Boolean,
-      default: true
+    seatNumber : {
+      type: Number,
+      default:null
+    },
+    defaultSeatNumber : {
+      type: Number,
+      default:null
     }
   },
   data() {
@@ -925,8 +929,7 @@ export default {
       useTime: null,            // not used yet
       anyRouteAsPassenger: null, // not used yet
       solidaryExclusive: this.solidaryExclusiveAd,
-      numberSeats : [ 1,2,3,4],
-      seats : 3,
+      seats : this.defaultSeatNumber,
       snackbar: {
         show: false,
         message: "",
@@ -1114,6 +1117,9 @@ export default {
       else if (this.isMajorUpdate && this.hasPotentialAds) return this.$t('update.popup.major_update_ads.content');
       else if (!this.isMajorUpdate && this.hasAsks) return this.$t('update.popup.minor_update_asks.content');
       return '';
+    },
+    itemsSeatNumber() {
+      return [...Array(this.seatNumber+1).keys()].slice(1);
     }
   },
   watch: {
