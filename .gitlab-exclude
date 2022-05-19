@@ -123,3 +123,4 @@
 /client/public/mobile_app_repository.json
 public/maintenance.enable
 /api/public/maintenance.enable
+client/config/geocomplete/palette.json
