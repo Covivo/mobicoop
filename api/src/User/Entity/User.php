@@ -562,11 +562,11 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ApiFilter(EmailTokenFilter::class, properties={"emailToken"})
  * @ApiFilter(IdentityStatusFilter::class, properties={"identityStatus"})
  * @ApiFilter(SolidaryFilter::class, properties={"solidary"})
- * @ApiFilter(BooleanFilter::class, properties={"solidaryUser.volunteer","solidaryUser.beneficiary"})
+ * @ApiFilter(BooleanFilter::class, properties={"solidaryUser.volunteer","solidaryUser.beneficiary","rezoKit","cardLetter"})
  * @ApiFilter(SolidaryCandidateFilter::class, properties={"solidaryCandidate"})
  * @ApiFilter(SolidaryExclusiveFilter::class)
  * @ApiFilter(DateFilter::class, properties={"createdDate": DateFilter::EXCLUDE_NULL,"lastActivityDate": DateFilter::EXCLUDE_NULL})
- * @ApiFilter(OrderFilter::class, properties={"id", "givenName", "status","familyName", "email", "gender", "identityStatus", "nationality", "birthDate", "createdDate", "validatedDate", "lastActivityDate", "telephone"}, arguments={"orderParameterName"="order"})
+ * @ApiFilter(OrderFilter::class, properties={"id", "givenName", "status","familyName", "email", "gender", "identityStatus", "nationality", "birthDate", "createdDate", "validatedDate", "lastActivityDate", "telephone", "rezoKit", "cardLetter"}, arguments={"orderParameterName"="order"})
  */
 class User implements UserInterface, EquatableInterface
 {
@@ -1558,6 +1558,20 @@ class User implements UserInterface, EquatableInterface
      * @Groups({"readUser","results","write", "threads", "thread", "readCommunity", "readCommunityUser", "readEvent", "readPublicProfile","readReview","aRead"})
      */
     private $verifiedIdentity;
+
+    /**
+     * @var null|bool If the User has the Rezo Kit
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"aRead", "aWrite"})
+     */
+    private $rezoKit;
+
+    /**
+     * @var null|bool If the User has the card letter
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"aRead", "aWrite"})
+     */
+    private $cardLetter;
 
     public function __construct($status = null)
     {
@@ -2935,7 +2949,7 @@ class User implements UserInterface, EquatableInterface
                 $this->roles[] = $userAuthAssignment->getAuthItem()->getName();
             }
         }
-        //Security : if an user has no roles but it shouldn't be possible
+        // Security : if an user has no roles but it shouldn't be possible
         return $this->roles ? array_unique($this->roles) : [AuthItem::ROLE_USER_REGISTERED_FULL];
     }
 
@@ -3647,6 +3661,30 @@ class User implements UserInterface, EquatableInterface
     public function hasVerifiedIdentity(): ?bool
     {
         return IdentityProof::STATUS_ACCEPTED == $this->identityStatus;
+    }
+
+    public function hasRezoKit(): ?bool
+    {
+        return $this->rezoKit;
+    }
+
+    public function setRezoKit(?bool $rezoKit): self
+    {
+        $this->rezoKit = $rezoKit;
+
+        return $this;
+    }
+
+    public function hasCardLetter(): ?bool
+    {
+        return $this->cardLetter;
+    }
+
+    public function setCardLetter(?bool $cardLetter): self
+    {
+        $this->cardLetter = $cardLetter;
+
+        return $this;
     }
 
     // DOCTRINE EVENTS
