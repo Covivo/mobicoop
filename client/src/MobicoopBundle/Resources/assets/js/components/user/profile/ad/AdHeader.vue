@@ -19,7 +19,7 @@
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
           <v-icon
-            v-if="isDriver || isSolidaryExclusive && !(isDriver && isPassenger)"
+            v-if="isDriver && !isPassenger"
             class="accent pa-1 px-3 white--text"
             v-on="on"
           >
@@ -29,7 +29,7 @@
         <span> {{ $t('ads.tooltips.driver') }} </span>
       </v-tooltip>
       <v-tooltip
-        v-if="isPassenger && isDriver && !isSolidaryExclusive"
+        v-if="isPassenger && isDriver"
         bottom
       >
         <template v-slot:activator="{ on }">
@@ -57,7 +57,7 @@
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
           <v-icon
-            v-if="isPassenger && !isSolidaryExclusive && !(isDriver && isPassenger)"
+            v-if="isPassenger && !isDriver"
             class="secondary pa-1 px-3 white--text"
             v-on="on"
           >
