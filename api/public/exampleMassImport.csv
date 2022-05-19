@@ -1,2 +1,8 @@
-givenId;givenName;familyName;email;personalAddress.houseNumber;personalAddress.street;personalAddress.postalCode;personalAddress.addressLocality;personalAddress.addressCountry;workAddress.houseNumber;workAddress.street;workAddress.postalCode;workAddress.addressLocality;workAddress.addressCountry;outwardTime;returnTime;driver;passenger
-ABC1;NC;NC;test.migrate@yopmail.com;13;rue des jardiniers     ;88000;EPINAL;France;27;Rue Philippe Séguin;88000;EPINAL;France;09:00;19:00;1;1
+givenId;givenName;familyName;birthDate;gender;email;phoneNumber;personalAddress.houseNumber;personalAddress.street;personalAddress.postalCode;personalAddress.addressLocality;personalAddress.addressCountry;workAddress.houseNumber;workAddress.street;workAddress.postalCode;workAddress.addressLocality;workAddress.addressCountry;outwardTime;returnTime;driver;passenger
+ABC1;NC;NC;05-10-1955;1;test.migrate@yopmail.com;0123654789;13;rue des jardiniers     ;88000;EPINAL;France;27;Rue Philippe Séguin;88000;EPINAL;France;09:00;19:00;1;1
+
+indications about data formating:
+gender: 1=female, 2=male, 3=nc
+birthDate: DD-MM-YYYY
+driver: 0 or 1, false=0 true=1
+passenger:  0 or 1, false=0 true=1
