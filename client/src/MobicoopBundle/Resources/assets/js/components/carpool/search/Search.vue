@@ -1,105 +1,106 @@
 <template>
-  <v-main>
-    <v-container
-      v-if="!horizontal"
-      grid-list-md
-      text-xs-center
+  <v-container
+    v-if="!horizontal"
+    grid-list-md
+    text-xs-center
+  >
+    <v-row
+      justify="center"
     >
-      <v-row
-        justify="center"
-      >
-        <v-col
-
-          cols="12"
-          :xl="fullSize ? 12 : results ? 12 : 6"
-          :lg="fullSize ? 12 : results ? 12 : 6"
-          :md="fullSize ? 12 : results ? 12 : 6"
-        >
-          <!--SearchJourney-->
-          <search-journey
-            :geo-search-url="geoSearchUrl"
-            :user="user"
-            :init-regular="dataRegular"
-            :init-destination="defaultDestination"
-            :init-origin="defaultOrigin"
-            :punctual-date-optional="punctualDateOptional"
-            :show-destination="showDestination"
-            :iswidget="isWidget"
-            :init-outward-date="dateFormated"
-            :image-swap="imageSwap"
-            :geo-complete-results-order="geoCompleteResultsOrder"
-            :geo-complete-palette="geoCompletePalette"
-            :geo-complete-chip="geoCompleteChip"
-            @change="searchChanged"
-          />
-        </v-col>
-      </v-row>
-
-      <!-- Buttons -->
-      <v-row
-        v-if="!horizontal"
-        justify="center"
-      >
-        <v-col
-          :cols="fullSize ? 12 : 6"
-        >
-          <v-row>
-            <v-col
-              cols="12"
-              md="6"
-              :class="classAlignSearchButton"
-            >
-              <v-btn
-                v-if="!hidePublish"
-                :class="colorButton+' '+textColorButton"
-                outlined
-                rounded
-                :loading="loadingPublish"
-                @click="publish"
-              >
-                {{ $t('buttons.publish.label') }}
-              </v-btn>
-            </v-col>
-            <v-col
-              :class="classAlignSearchButton"
-              cols="12"
-              md="6"
-            >
-              <v-btn
-                :disabled="searchUnavailable || disableSearch"
-                :loading="loadingSearch"
-                color="secondary"
-                rounded
-                min-width="150px"
-                @click="search"
-              >
-                {{ $t('buttons.search.label') }}
-              </v-btn>
-            </v-col>
-          </v-row>
-        </v-col>
-      </v-row>
-    </v-container>
-    <v-row v-else-if="horizontal">
       <v-col
 
         cols="12"
+        :xl="fullSize ? 12 : results ? 12 : 6"
+        :lg="fullSize ? 12 : results ? 12 : 6"
+        :md="fullSize ? 12 : results ? 12 : 6"
       >
-        <search-journey-horizontal
+        <!--SearchJourney-->
+        <search-journey
           :geo-search-url="geoSearchUrl"
           :user="user"
           :init-regular="dataRegular"
+          :init-destination="defaultDestination"
+          :init-origin="defaultOrigin"
           :punctual-date-optional="punctualDateOptional"
-          :elevation="horizontalElevation"
+          :show-destination="showDestination"
+          :iswidget="isWidget"
+          :init-outward-date="dateFormated"
+          :image-swap="imageSwap"
           :geo-complete-results-order="geoCompleteResultsOrder"
           :geo-complete-palette="geoCompletePalette"
           :geo-complete-chip="geoCompleteChip"
           @change="searchChanged"
-          @search="search"
         />
       </v-col>
     </v-row>
-  </v-main>
+
+    <!-- Buttons -->
+    <v-row
+      v-if="!horizontal"
+      justify="center"
+    >
+      <v-col
+        :cols="fullSize ? 12 : 6"
+      >
+        <v-row>
+          <v-col
+            cols="12"
+            md="6"
+            :class="classAlignSearchButton"
+          >
+            <v-btn
+              v-if="!hidePublish"
+              :class="colorButton+' '+textColorButton"
+              outlined
+              rounded
+              :loading="loadingPublish"
+              :aria-label="$t('buttons.publish.label')"
+              @click="publish"
+            >
+              {{ $t('buttons.publish.label') }}
+            </v-btn>
+          </v-col>
+          <v-col
+            :class="classAlignSearchButton"
+            cols="12"
+            md="6"
+          >
+            <v-btn
+              :disabled="searchUnavailable || disableSearch"
+              :loading="loadingSearch"
+              color="secondary"
+              rounded
+              min-width="150px"
+              tabindex="0"
+              :aria-label="$t('buttons.search.label')"
+              @click="search"
+            >
+              {{ $t('buttons.search.label') }}
+            </v-btn>
+          </v-col>
+        </v-row>
+      </v-col>
+    </v-row>
+  </v-container>
+  <v-row v-else-if="horizontal">
+    <v-col
+
+      cols="12"
+    >
+      <search-journey-horizontal
+        :geo-search-url="geoSearchUrl"
+        :user="user"
+        :init-regular="dataRegular"
+        :punctual-date-optional="punctualDateOptional"
+        :elevation="horizontalElevation"
+        :geo-complete-results-order="geoCompleteResultsOrder"
+        :geo-complete-palette="geoCompletePalette"
+        :geo-complete-chip="geoCompleteChip"
+        @change="searchChanged"
+        @search="search"
+      />
+    </v-col>
+  </v-row>
 </template>
 
 <script>

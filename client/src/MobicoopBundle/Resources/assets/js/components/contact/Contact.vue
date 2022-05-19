@@ -1,24 +1,22 @@
 <template>
-  <v-main>
-    <v-container>
-      <v-row
-        justify="center"
+  <v-container>
+    <v-row
+      justify="center"
+    >
+      <v-col
+        cols="12"
+        md="8"
+        xl="6"
+        align="center"
       >
-        <v-col
-          cols="12"
-          md="8"
-          xl="6"
-          align="center"
-        >
-          <h1>{{ $t('title') }}</h1>
-        </v-col>
-      </v-row>
-      <contact-form
-        :user="user"
-        :contact-types="contactTypes"
-      />
-    </v-container>
-  </v-main>
+        <h1>{{ $t('title') }}</h1>
+      </v-col>
+    </v-row>
+    <contact-form
+      :user="user"
+      :contact-types="contactTypes"
+    />
+  </v-container>
 </template>
 
 <script>

@@ -19,7 +19,7 @@
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
           <v-icon
-            v-if="isDriver && !(isDriver && isPassenger)"
+            v-if="isDriver && !isPassenger"
             class="accent pa-1 px-3 white--text"
             v-on="on"
           >
@@ -48,7 +48,7 @@
             mdi-car
           </v-icon>
         </template>
-        <span>{{ $t('ads.tooltips.diverOrPassenger') }}</span>
+        <span>{{ $t('ads.tooltips.driverOrPassenger') }}</span>
       </v-tooltip>
       <v-divider
         v-if="isDriver && isPassenger"
@@ -57,7 +57,7 @@
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
           <v-icon
-            v-if="isPassenger && !(isDriver && isPassenger)"
+            v-if="isPassenger && !isDriver"
             class="secondary pa-1 px-3 white--text"
             v-on="on"
           >
@@ -77,6 +77,12 @@
           class="white--text font-weight-bold my-3"
         >
           {{ $t('pause.info') }}
+        </p>
+        <p
+          v-if="isSolidaryExclusive"
+          class="text-left font-weight-bold my-3"
+        >
+          {{ $t('solidary.exclusive') }}
         </p>
       </v-col>
       <v-col
@@ -149,7 +155,7 @@
         />
       </v-col>
     </v-row>
-    
+
     <!--DIALOG-->
     <v-row justify="center">
       <v-dialog
@@ -232,6 +238,10 @@ export default {
       type: Boolean,
       default: false
     },
+    isSolidaryExclusive: {
+      type: Boolean,
+      default: false
+    },
     adId: {
       type: Number,
       default: null
@@ -271,7 +281,7 @@ export default {
     paymentElectronicActive: {
       type: Boolean,
       default: false
-    },    
+    },
   },
   data () {
     return {
@@ -398,7 +408,7 @@ export default {
     activePanel() {
       this.$emit('activePanel');
     }
-  }
+  },
 }
 </script>
 

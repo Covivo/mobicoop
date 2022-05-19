@@ -65,6 +65,10 @@
         "name": {
             "required": "De naam van het evenement is vereist",
             "label": "Naam van het evenement*"
+        },
+        "community": {
+          "label": "Communauté à associer à l'événement",
+          "required": "Une communauté est requise"
         }
     },
     "buttons": {
@@ -73,5 +77,6 @@
             "label": "Het evenement aanmaken"
         }
     },
-    "title": "Maak uw evenement aan"
+    "title": "Maak uw evenement aan",
+    "getCommunities": "/utilisateur/communautes"
 }

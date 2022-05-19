@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Community\Admin\Service;
 
@@ -28,18 +28,18 @@ use App\Auth\Entity\UserAuthAssignment;
 use App\Auth\Repository\AuthItemRepository;
 use App\Community\Entity\Community;
 use App\Community\Entity\CommunityUser;
+use App\Community\Event\CommunityCreatedEvent;
+use App\Community\Event\CommunityMembershipAcceptedEvent;
+use App\Community\Event\CommunityMembershipRefusedEvent;
 use App\Community\Exception\CommunityException;
-use Doctrine\ORM\EntityManagerInterface;
 use App\Community\Repository\CommunityRepository;
 use App\Community\Repository\CommunityUserRepository;
 use App\Geography\Entity\Address;
 use App\User\Admin\Service\UserManager;
 use App\User\Entity\User;
 use App\User\Repository\UserRepository;
-use App\Community\Event\CommunityMembershipRefusedEvent;
-use App\Community\Event\CommunityMembershipAcceptedEvent;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use App\Community\Event\CommunityCreatedEvent;
 
 /**
  * Community manager for admin context.
@@ -57,9 +57,7 @@ class CommunityManager
     private $eventDispatcher;
 
     /**
-     * Constructor
-     *
-     * @param EntityManagerInterface $entityManager
+     * Constructor.
      */
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -80,24 +78,27 @@ class CommunityManager
     }
 
     /**
-     * Get the community members
+     * Get the community members.
      *
-     * @param integer $communityId  The community id
-     * @return array    The members
+     * @param int $communityId The community id
+     *
+     * @return array The members
      */
     public function getMembers(int $communityId, array $context = [], string $operationName)
     {
         if ($community = $this->communityRepository->find($communityId)) {
             return $this->communityUserRepository->findForCommunity($community, $context, $operationName);
         }
-        throw new CommunityException("Community not found");
+
+        throw new CommunityException('Community not found');
     }
 
     /**
      * Add a community.
      *
-     * @param Community      $community               The community to add
-     * @return Community     The community created
+     * @param Community $community The community to add
+     *
+     * @return Community The community created
      */
     public function addCommunity(Community $community)
     {
@@ -112,7 +113,7 @@ class CommunityManager
             $communityUser->setStatus(CommunityUser::STATUS_ACCEPTED_AS_MODERATOR);
             $this->entityManager->persist($communityUser);
         } else {
-            throw new CommunityException("Referrer not found");
+            throw new CommunityException('Referrer not found');
         }
 
         // persist the community
@@ -153,9 +154,10 @@ class CommunityManager
     /**
      * Patch a community.
      *
-     * @param Community $community  The community to update
-     * @param array $fields         The updated fields
-     * @return Community            The community updated
+     * @param Community $community The community to update
+     * @param array     $fields    The updated fields
+     *
+     * @return Community The community updated
      */
     public function patchCommunity(Community $community, array $fields)
     {
@@ -171,14 +173,14 @@ class CommunityManager
                 // check if the previous referrer is still community manager
                 $this->checkUserIsReferrer($previousReferrer, $community);
             } else {
-                throw new CommunityException("Referrer not found");
+                throw new CommunityException('Referrer not found');
             }
         }
 
         // persist the community
         $this->entityManager->persist($community);
         $this->entityManager->flush();
-        
+
         // return the community
         return $community;
     }
@@ -186,8 +188,9 @@ class CommunityManager
     /**
      * Add a community user.
      *
-     * @param CommunityUser $communityUser  The community user to update
-     * @return CommunityUser                The community user updated
+     * @param CommunityUser $communityUser The community user to update
+     *
+     * @return CommunityUser The community user updated
      */
     public function addCommunityUser(CommunityUser $communityUser)
     {
@@ -196,7 +199,7 @@ class CommunityManager
         // persist the community user
         $this->entityManager->persist($communityUser);
         $this->entityManager->flush();
-        
+
         // we update the status as it can be automatically erased by doctrine events
         $communityUser->setStatus($status);
         $this->entityManager->persist($communityUser);
@@ -209,24 +212,28 @@ class CommunityManager
     /**
      * Patch a community user.
      *
-     * @param CommunityUser $communityUser  The community user to update
-     * @param array $fields                 The updated fields
-     * @return CommunityUser                The community user updated
+     * @param CommunityUser $communityUser The community user to update
+     * @param array         $fields        The updated fields
+     *
+     * @return CommunityUser The community user updated
      */
     public function patchCommunityUser(CommunityUser $communityUser, array $fields)
     {
         // persist the community user
         $this->entityManager->persist($communityUser);
         $this->entityManager->flush();
-        
+
         switch ($communityUser->getStatus()) {
             case CommunityUser::STATUS_REFUSED:
                 $event = new CommunityMembershipRefusedEvent($communityUser->getCommunity(), $communityUser->getUser());
                 $this->eventDispatcher->dispatch(CommunityMembershipRefusedEvent::NAME, $event);
+
                 break;
+
             case CommunityUser::STATUS_ACCEPTED_AS_MEMBER:
                 $event = new CommunityMembershipAcceptedEvent($communityUser->getCommunity(), $communityUser->getUser());
                 $this->eventDispatcher->dispatch(CommunityMembershipAcceptedEvent::NAME, $event);
+
                 break;
         }
 
@@ -235,10 +242,9 @@ class CommunityManager
     }
 
     /**
-     * Delete a community
+     * Delete a community.
      *
-     * @param Community $community  The community to delete
-     * @return void
+     * @param Community $community The community to delete
      */
     public function deleteCommunity(Community $community)
     {
@@ -247,10 +253,21 @@ class CommunityManager
     }
 
     /**
-     * Add community manager role to the given user if needed
+     * Get the moderated communities for a given user.
      *
-     * @param User $user    The user
-     * @return void
+     * @param User $user The user
+     *
+     * @return null|array The communities found
+     */
+    public function getModerated(User $user)
+    {
+        return $this->communityRepository->getCommunitiesForUserAndStatuses($user, [CommunityUser::STATUS_ACCEPTED_AS_MODERATOR]);
+    }
+
+    /**
+     * Add community manager role to the given user if needed.
+     *
+     * @param User $user The user
      */
     private function addCommunityManagerRole(User $user)
     {
@@ -267,11 +284,10 @@ class CommunityManager
     /**
      * Check if a user is a community referrer, for communities other than the one provided
      * If not, remove the community manager role
-     * Used to remove the community manager role to a user that is not effectively community manager anymore
+     * Used to remove the community manager role to a user that is not effectively community manager anymore.
      *
-     * @param User      $user       The user to check
-     * @param Community $community  The current community that leads to the check
-     * @return void
+     * @param User      $user      The user to check
+     * @param Community $community The current community that leads to the check
      */
     private function checkUserIsReferrer(User $user, Community $community)
     {
@@ -285,20 +301,10 @@ class CommunityManager
                 if ($userAuthAssignment->getAuthItem() == $authItem) {
                     $user->removeUserAuthAssignment($userAuthAssignment);
                     $this->entityManager->persist($user);
+
                     break;
                 }
             }
         }
-    }
-
-    /**
-     * Get the moderated communities for a given user
-     *
-     * @param User $user    The user
-     * @return arry|null    The communities found
-     */
-    public function getModerated(User $user)
-    {
-        return $this->communityRepository->getCommunitiesForUserAndStatuses($user, [CommunityUser::STATUS_ACCEPTED_AS_MODERATOR]);
     }
 }

@@ -51,7 +51,8 @@
     "dataPolicy": {
         "text": "Pour connaitre et exercer vos droits, notamment de retrait de votre consentement à l'utilisation de données collectées par ce formulaire, veuillez consulter",
         "link": "notre politique de protection des données",
-        "route": "/protection-donnees"
+        "route": "/protection-donnees",
+        "linkAria":"Redirection vers la page politique de protection des données."
     },
     "success": "Votre message a été envoyé avec succès.",
     "error": "Une erreur est survenue.",

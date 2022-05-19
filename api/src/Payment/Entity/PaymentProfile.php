@@ -229,12 +229,12 @@ class PaymentProfile
         return $this;
     }
 
-    public function getValidationId(): string
+    public function getValidationId(): ?string
     {
         return $this->validationId;
     }
 
-    public function setValidationId(string $validationId): self
+    public function setValidationId(?string $validationId): self
     {
         $this->validationId = $validationId;
 
@@ -382,7 +382,7 @@ class PaymentProfile
      */
     public function setAutoCreatedDate()
     {
-        $this->setCreatedDate(new \Datetime());
+        $this->setCreatedDate(new \DateTime());
     }
 
     /**
@@ -392,6 +392,6 @@ class PaymentProfile
      */
     public function setAutoUpdatedDate()
     {
-        $this->setUpdatedDate(new \Datetime());
+        $this->setUpdatedDate(new \DateTime());
     }
 }

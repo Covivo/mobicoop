@@ -34,6 +34,8 @@
         }
     },
     "fullDate": "ddd Do MMMM YYYY",
+    "ariaLabelOrgin":"Une adresse de départ est requise",
+    "ariaLabelDestination":"Une adresse de destination est requise",
     "outwardDate": {
         "error": "Required",
         "label": "Departure date"

@@ -80,7 +80,8 @@
         "text": "J'accepte ",
         "link": "la charte de la plateforme et sa politique de protection des données",
         "route": "/cgu",
-        "required": "La validation de la charte est requise"
+        "required": "La validation de la charte est requise",
+        "aria":  "la charte de la plateforme et sa politique de protection des données lien"
     },
     "newsSubscription":{
         "text":"J'accepte de recevoir les actualités du service (informations utiles pour covoiturer, et nouveaux services ou nouvelles fonctionnalités)"

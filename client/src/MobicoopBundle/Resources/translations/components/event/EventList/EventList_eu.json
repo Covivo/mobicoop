@@ -14,5 +14,8 @@
     "createEvent": "Ekitaldi bat sortu",
     "eventsPassed": "Iragan diren ekitaldiak",
     "eventsAvailable": "Libre diren ekitaldiak",
-    "events": "Ekitaldiak autokidetzan"
+    "events": "Ekitaldiak autokidetzan",
+    "getCommunities": "/community/getCommunityList",
+    "filterByCommunity":"filtrer par communauté"
+
 }

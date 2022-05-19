@@ -20,6 +20,7 @@
         min-height="150"
         max-height="150"
         :src="article.image"
+        :alt="$t('imageArticle',{name:name})"
       />
       <div
         v-else-if="article.iframe"
@@ -30,6 +31,7 @@
         v-else
         src="/images/avatarsDefault/avatar.svg"
         class="grey lighten-2"
+        :alt="$t('imageArticleDefault')"
       />
       <v-card-text>
         <p class="mt-4 text-left">
@@ -74,7 +76,12 @@ export default {
       type: Object,
       default: null
     }
-  }
+  },
+  data() {
+    return {
+      name: this.article.title
+    };
+  },
 }
 </script>
 

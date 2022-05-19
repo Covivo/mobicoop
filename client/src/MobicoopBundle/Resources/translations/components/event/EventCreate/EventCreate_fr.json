@@ -40,6 +40,10 @@
         "private": {
             "label": "Evénement privé (n'apparait pas dans la liste des événements)",
             "tooltip": "Vous pourrez transmettre le lien direct reçu dans l'email de confirmation"
+        },
+        "community": {
+          "label": "Communauté à associer à l'événement",
+          "required": "Une communauté est requise"
         }
     },
     "redirect": {
@@ -76,5 +80,6 @@
         "validation": "Publier l'événement",
         "cancel": "Annuler"
     },
-    "fullDate": "ddd Do MMMM YYYY"
+    "fullDate": "ddd Do MMMM YYYY",
+    "getCommunities": "/community/getCommunityList"
 }

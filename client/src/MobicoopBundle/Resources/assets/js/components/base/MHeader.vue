@@ -2,6 +2,7 @@
   <div>
     <v-row
       id="pad"
+      role="navigation"
     >
       <v-col
         cols="2"
@@ -65,7 +66,7 @@
       >
         <a
           :href="$t('pad.social.facebook.link')"
-          :alt="$t('pad.social.facebook.title')"
+          :aria-label="$t('pad.social.facebook.title')"
           target="_blank"
         >
           <v-icon class="white--text mx-2">
@@ -73,7 +74,7 @@
           </v-icon></a>
         <a
           :href="$t('pad.social.twitter.link')"
-          :alt="$t('pad.social.twitter.title')"
+          :aria-label="$t('pad.social.twitter.title')"
           target="_blank"
         >
           <v-icon class="white--text mx-2">
@@ -82,7 +83,7 @@
         </a>
         <a
           :href="$t('pad.social.linkedin.link')"
-          :alt="$t('pad.social.linkedin.title')"
+          :aria-label="$t('pad.social.linkedin.title')"
           target="_blank"
         >
           <v-icon class="white--text mx-2">
@@ -95,21 +96,22 @@
       flat
       color="primary"
       height="80px"
+      role="banner"
     >
-      <v-toolbar-title align="midle">
+      <v-toolbar-title>
         <a
           href="/"
-          class="d-flex align-center"
+          class="d-flex"
         >
-          <img
+          <v-img
             class="logo"
             :src="imageLink + 'MOBICOOP_LOGO-V1 Blanc.svg'"
-            alt="Mobicoop"
+            :alt="$t('logo')"
             height="50"
             width="210"
             contain
             eager
-          >
+          />
         </a>
       </v-toolbar-title>
 
@@ -160,6 +162,7 @@
         :href="$t('buttons.shareAnAd.route')"
         class="hidden-md-and-down white--text mr-4"
         small
+        :aria-label="$t('buttons.shareAnAd.label')"
       >
         {{ $t('buttons.shareAnAd.label') }}
       </v-btn>
@@ -216,12 +219,14 @@
         v-if="user"
         bottom
         left
+        role="menu"
         z-index="9"
       >
         <template v-slot:activator="{ on }">
           <v-btn
             icon
             class="hidden-lg-and-up"
+            aria-label="menu"
             v-on="on"
           >
             <v-icon>mdi-menu</v-icon>
@@ -262,6 +267,7 @@
                 rounded
                 :disabled="!user"
                 :href="$t('buttons.shareAnAd.route')"
+                :aria-label="$t('buttons.shareAnAd.label')"
               >
                 {{ $t('buttons.shareAnAd.label') }}
               </v-btn>
@@ -305,6 +311,7 @@
           <v-btn
             icon
             class="hidden-lg-and-up"
+            aria-label="menu"
             v-on="on"
           >
             <v-icon>mdi-menu</v-icon>
@@ -352,6 +359,7 @@
                 rounded
                 :disabled="!user && publishButtonAlwaysActive==false"
                 :href="$t('buttons.shareAnAd.route')"
+                :aria-label="$t('buttons.shareAnAd.label')"
               >
                 {{ $t('buttons.shareAnAd.label') }}
               </v-btn>

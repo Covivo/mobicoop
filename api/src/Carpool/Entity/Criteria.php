@@ -19,20 +19,20 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Carpool\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
-use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Validator\Constraints as Assert;
-use App\User\Entity\Car;
 use App\Geography\Entity\Direction;
 use App\PublicTransport\Entity\PTJourney;
 use App\Solidary\Entity\SolidaryAsk;
 use App\Solidary\Entity\SolidaryMatching;
+use App\User\Entity\Car;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Carpooling : criteria (restriction for an offer / selection for a request).
@@ -73,14 +73,14 @@ use App\Solidary\Entity\SolidaryMatching;
  */
 class Criteria
 {
-    const DEFAULT_ID = 999999999999;
-    
-    const FREQUENCY_PUNCTUAL = 1;
-    const FREQUENCY_REGULAR = 2;
-    const FREQUENCY_FLEXIBLE = 3; // only for solidary records, not stored
+    public const DEFAULT_ID = 999999999999;
+
+    public const FREQUENCY_PUNCTUAL = 1;
+    public const FREQUENCY_REGULAR = 2;
+    public const FREQUENCY_FLEXIBLE = 3; // only for solidary records, not stored
 
     /**
-     * @var int The id of this criteria.
+     * @var int the id of this criteria
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -90,7 +90,7 @@ class Criteria
     private $id;
 
     /**
-     * @var boolean The user can be a driver.
+     * @var bool the user can be a driver
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"read","results","write","thread"})
@@ -98,15 +98,15 @@ class Criteria
     private $driver;
 
     /**
-     * @var boolean The user can be a passenger.
+     * @var bool the user can be a passenger
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"read","results","write","thread"})
      */
     private $passenger;
-    
+
     /**
-     * @var int The proposal frequency (1 = punctual; 2 = regular).
+     * @var int the proposal frequency (1 = punctual; 2 = regular)
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
@@ -115,7 +115,7 @@ class Criteria
     private $frequency;
 
     /**
-     * @var int The number of available seats for a driver.
+     * @var int the number of available seats for a driver
      *
      * @Assert\NotBlank
      * @ORM\Column(type="integer")
@@ -124,7 +124,7 @@ class Criteria
     private $seatsDriver;
 
     /**
-     * @var int The number of requested seats for a passenger.
+     * @var int the number of requested seats for a passenger
      *
      * @Assert\NotBlank
      * @ORM\Column(type="integer")
@@ -133,7 +133,7 @@ class Criteria
     private $seatsPassenger;
 
     /**
-     * @var \DateTimeInterface The starting date (= proposal date if punctual).
+     * @var \DateTimeInterface the starting date (= proposal date if punctual)
      *
      * @Assert\NotBlank
      * @ORM\Column(type="date")
@@ -148,7 +148,7 @@ class Criteria
     private $arrivalDateTime;
 
     /**
-     * @var \DateTimeInterface|null The starting time.
+     * @var null|\DateTimeInterface the starting time
      *
      * @Assert\Time()
      * @ORM\Column(type="time", nullable=true)
@@ -157,7 +157,7 @@ class Criteria
     private $fromTime;
 
     /**
-     * @var \DateTimeInterface|null The min starting time if punctual.
+     * @var null|\DateTimeInterface the min starting time if punctual
      *
      * @Assert\Time()
      * @ORM\Column(type="time", nullable=true)
@@ -166,7 +166,7 @@ class Criteria
     private $minTime;
 
     /**
-     * @var \DateTimeInterface|null The max starting time if punctual.
+     * @var null|\DateTimeInterface the max starting time if punctual
      *
      * @Assert\Time()
      * @ORM\Column(type="time", nullable=true)
@@ -175,7 +175,7 @@ class Criteria
     private $maxTime;
 
     /**
-     * @var int Accepted margin duration for punctual proposal in seconds.
+     * @var int accepted margin duration for punctual proposal in seconds
      *
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"read","write","thread"})
@@ -183,7 +183,7 @@ class Criteria
     private $marginDuration;
 
     /**
-     * @var boolean For punctual proposals, the user accepts only matchings for the defined date (no ranges).
+     * @var bool for punctual proposals, the user accepts only matchings for the defined date (no ranges)
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"read","results","write","thread"})
@@ -191,7 +191,7 @@ class Criteria
     private $strictDate;
 
     /**
-     * @var boolean For punctual proposals, the user accepts only matchings with punctual trips (no regular trips).
+     * @var bool for punctual proposals, the user accepts only matchings with punctual trips (no regular trips)
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"read","results","write","thread"})
@@ -199,7 +199,7 @@ class Criteria
     private $strictPunctual;
 
     /**
-     * @var boolean For regular proposals, the user accepts only matchings with regular trips (no punctual trips).
+     * @var bool for regular proposals, the user accepts only matchings with regular trips (no punctual trips)
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"read","results","write","thread"})
@@ -207,7 +207,7 @@ class Criteria
     private $strictRegular;
 
     /**
-     * @var \DateTimeInterface|null The end date if regular proposal, the last accepted date if punctual.
+     * @var null|\DateTimeInterface the end date if regular proposal, the last accepted date if punctual
      *
      * @ORM\Column(type="date", nullable=true)
      * @Groups({"read","results","write","thread","threads"})
@@ -215,7 +215,7 @@ class Criteria
     private $toDate;
 
     /**
-     * @var boolean|null The proposal is available on mondays (if regular).
+     * @var null|bool the proposal is available on mondays (if regular)
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"read","results","write","thread","threads"})
@@ -223,7 +223,7 @@ class Criteria
     private $monCheck;
 
     /**
-     * @var boolean|null The proposal is available on tuesdays (if regular).
+     * @var null|bool the proposal is available on tuesdays (if regular)
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"read","results","write","thread","threads"})
@@ -231,7 +231,7 @@ class Criteria
     private $tueCheck;
 
     /**
-     * @var boolean|null The proposal is available on wednesdays (if regular).
+     * @var null|bool the proposal is available on wednesdays (if regular)
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"read","results","write","thread","threads"})
@@ -239,7 +239,7 @@ class Criteria
     private $wedCheck;
 
     /**
-     * @var boolean|null The proposal is available on thursdays (if regular).
+     * @var null|bool the proposal is available on thursdays (if regular)
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"read","results","write","thread","threads"})
@@ -247,7 +247,7 @@ class Criteria
     private $thuCheck;
 
     /**
-     * @var boolean|null The proposal is available on fridays (if regular).
+     * @var null|bool the proposal is available on fridays (if regular)
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"read","results","write","thread","threads"})
@@ -255,7 +255,7 @@ class Criteria
     private $friCheck;
 
     /**
-     * @var boolean|null The proposal is available on saturdays (if regular).
+     * @var null|bool the proposal is available on saturdays (if regular)
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"read","results","write","thread","threads"})
@@ -263,7 +263,7 @@ class Criteria
     private $satCheck;
 
     /**
-     * @var boolean|null The proposal is available on sundays (if regular).
+     * @var null|bool the proposal is available on sundays (if regular)
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"read","results","write","thread","threads"})
@@ -271,7 +271,7 @@ class Criteria
     private $sunCheck;
 
     /**
-     * @var \DateTimeInterface|null Mondays starting time (if regular).
+     * @var null|\DateTimeInterface mondays starting time (if regular)
      *
      * @Assert\Time()
      * @ORM\Column(type="time", nullable=true)
@@ -286,7 +286,7 @@ class Criteria
     private $arrivalMonTime;
 
     /**
-     * @var \DateTimeInterface|null Mondays min starting time (if regular).
+     * @var null|\DateTimeInterface mondays min starting time (if regular)
      *
      * @Assert\Time()
      * @ORM\Column(type="time", nullable=true)
@@ -295,7 +295,7 @@ class Criteria
     private $monMinTime;
 
     /**
-     * @var \DateTimeInterface|null Mondays max starting time (if regular).
+     * @var null|\DateTimeInterface mondays max starting time (if regular)
      *
      * @Assert\Time()
      * @ORM\Column(type="time", nullable=true)
@@ -304,7 +304,7 @@ class Criteria
     private $monMaxTime;
 
     /**
-     * @var \DateTimeInterface|null Tuesdays starting time (if regular).
+     * @var null|\DateTimeInterface tuesdays starting time (if regular)
      *
      * @Assert\Time()
      * @ORM\Column(type="time", nullable=true)
@@ -319,7 +319,7 @@ class Criteria
     private $arrivalTueTime;
 
     /**
-     * @var \DateTimeInterface|null Tuesdays min starting time (if regular).
+     * @var null|\DateTimeInterface tuesdays min starting time (if regular)
      *
      * @Assert\Time()
      * @ORM\Column(type="time", nullable=true)
@@ -328,7 +328,7 @@ class Criteria
     private $tueMinTime;
 
     /**
-     * @var \DateTimeInterface|null Tuesdays max starting time (if regular).
+     * @var null|\DateTimeInterface tuesdays max starting time (if regular)
      *
      * @Assert\Time()
      * @ORM\Column(type="time", nullable=true)
@@ -337,7 +337,7 @@ class Criteria
     private $tueMaxTime;
 
     /**
-     * @var \DateTimeInterface|null Wednesdays starting time (if regular).
+     * @var null|\DateTimeInterface wednesdays starting time (if regular)
      *
      * @Assert\Time()
      * @ORM\Column(type="time", nullable=true)
@@ -352,7 +352,7 @@ class Criteria
     private $arrivalWedTime;
 
     /**
-     * @var \DateTimeInterface|null Wednesdays min starting time (if regular).
+     * @var null|\DateTimeInterface wednesdays min starting time (if regular)
      *
      * @Assert\Time()
      * @ORM\Column(type="time", nullable=true)
@@ -361,7 +361,7 @@ class Criteria
     private $wedMinTime;
 
     /**
-     * @var \DateTimeInterface|null Wednesdays max starting time (if regular).
+     * @var null|\DateTimeInterface wednesdays max starting time (if regular)
      *
      * @Assert\Time()
      * @ORM\Column(type="time", nullable=true)
@@ -370,7 +370,7 @@ class Criteria
     private $wedMaxTime;
 
     /**
-     * @var \DateTimeInterface|null Thursdays starting time (if regular).
+     * @var null|\DateTimeInterface thursdays starting time (if regular)
      *
      * @Assert\Time()
      * @ORM\Column(type="time", nullable=true)
@@ -385,7 +385,7 @@ class Criteria
     private $arrivalThuTime;
 
     /**
-     * @var \DateTimeInterface|null Thursdays min starting time (if regular).
+     * @var null|\DateTimeInterface thursdays min starting time (if regular)
      *
      * @Assert\Time()
      * @ORM\Column(type="time", nullable=true)
@@ -394,7 +394,7 @@ class Criteria
     private $thuMinTime;
 
     /**
-     * @var \DateTimeInterface|null Thursdays max starting time (if regular).
+     * @var null|\DateTimeInterface thursdays max starting time (if regular)
      *
      * @Assert\Time()
      * @ORM\Column(type="time", nullable=true)
@@ -403,7 +403,7 @@ class Criteria
     private $thuMaxTime;
 
     /**
-     * @var \DateTimeInterface|null Fridays starting time (if regular).
+     * @var null|\DateTimeInterface fridays starting time (if regular)
      *
      * @Assert\Time()
      * @ORM\Column(type="time", nullable=true)
@@ -418,7 +418,7 @@ class Criteria
     private $arrivalFriTime;
 
     /**
-     * @var \DateTimeInterface|null Fridays min starting time (if regular).
+     * @var null|\DateTimeInterface fridays min starting time (if regular)
      *
      * @Assert\Time()
      * @ORM\Column(type="time", nullable=true)
@@ -427,7 +427,7 @@ class Criteria
     private $friMinTime;
 
     /**
-     * @var \DateTimeInterface|null Fridays max starting time (if regular).
+     * @var null|\DateTimeInterface fridays max starting time (if regular)
      *
      * @Assert\Time()
      * @ORM\Column(type="time", nullable=true)
@@ -436,7 +436,7 @@ class Criteria
     private $friMaxTime;
 
     /**
-     * @var \DateTimeInterface|null Saturdays starting time (if regular).
+     * @var null|\DateTimeInterface saturdays starting time (if regular)
      *
      * @Assert\Time()
      * @ORM\Column(type="time", nullable=true)
@@ -451,7 +451,7 @@ class Criteria
     private $arrivalSatTime;
 
     /**
-     * @var \DateTimeInterface|null Saturdays min starting time (if regular).
+     * @var null|\DateTimeInterface saturdays min starting time (if regular)
      *
      * @Assert\Time()
      * @ORM\Column(type="time", nullable=true)
@@ -460,7 +460,7 @@ class Criteria
     private $satMinTime;
 
     /**
-     * @var \DateTimeInterface|null Saturdays max starting time (if regular).
+     * @var null|\DateTimeInterface saturdays max starting time (if regular)
      *
      * @Assert\Time()
      * @ORM\Column(type="time", nullable=true)
@@ -469,7 +469,7 @@ class Criteria
     private $satMaxTime;
 
     /**
-     * @var \DateTimeInterface|null Sundays starting time (if regular).
+     * @var null|\DateTimeInterface sundays starting time (if regular)
      *
      * @Assert\Time()
      * @ORM\Column(type="time", nullable=true)
@@ -484,7 +484,7 @@ class Criteria
     private $arrivalSunTime;
 
     /**
-     * @var \DateTimeInterface|null Sundays min starting time (if regular).
+     * @var null|\DateTimeInterface sundays min starting time (if regular)
      *
      * @Assert\Time()
      * @ORM\Column(type="time", nullable=true)
@@ -493,7 +493,7 @@ class Criteria
     private $sunMinTime;
 
     /**
-     * @var \DateTimeInterface|null Sundays max starting time (if regular).
+     * @var null|\DateTimeInterface sundays max starting time (if regular)
      *
      * @Assert\Time()
      * @ORM\Column(type="time", nullable=true)
@@ -502,7 +502,7 @@ class Criteria
     private $sunMaxTime;
 
     /**
-     * @var int Accepted margin for monday starting time in seconds.
+     * @var int accepted margin for monday starting time in seconds
      *
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"read","write","thread"})
@@ -510,155 +510,155 @@ class Criteria
     private $monMarginDuration;
 
     /**
-     * @var int Accepted margin for tuesday starting time in seconds.
+     * @var int accepted margin for tuesday starting time in seconds
      *
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"read","write","thread"})
      */
     private $tueMarginDuration;
-    
+
     /**
-     * @var int Accepted margin for wednesday starting time in seconds.
+     * @var int accepted margin for wednesday starting time in seconds
      *
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"read","write","thread"})
      */
     private $wedMarginDuration;
-    
+
     /**
-     * @var int Accepted margin for thursday starting time in seconds.
+     * @var int accepted margin for thursday starting time in seconds
      *
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"read","write","thread"})
      */
     private $thuMarginDuration;
-    
+
     /**
-     * @var int Accepted margin for friday starting time in seconds.
+     * @var int accepted margin for friday starting time in seconds
      *
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"read","write","thread"})
      */
     private $friMarginDuration;
-    
+
     /**
-     * @var int Accepted margin for saturday starting time in seconds.
+     * @var int accepted margin for saturday starting time in seconds
      *
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"read","write","thread"})
      */
     private $satMarginDuration;
-    
+
     /**
-     * @var int Accepted margin for sunday starting time in seconds.
+     * @var int accepted margin for sunday starting time in seconds
      *
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"read","write","thread"})
      */
     private $sunMarginDuration;
-    
+
     /**
-     * @var int|null The maximum detour duration (in milliseconds) as a driver to accept a request proposal.
+     * @var null|int the maximum detour duration (in milliseconds) as a driver to accept a request proposal
      *
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"read","write","thread"})
      */
     private $maxDetourDuration;
-    
+
     /**
-     * @var int|null The maximum detour distance (in metres) as a driver to accept a request proposal.
+     * @var null|int the maximum detour distance (in metres) as a driver to accept a request proposal
      *
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"read","write","thread"})
      */
     private $maxDetourDistance;
-    
+
     /**
-     * @var boolean The user accepts any route as a passenger from its origin to the destination.
+     * @var bool the user accepts any route as a passenger from its origin to the destination
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"read","write","thread"})
      */
     private $anyRouteAsPassenger;
-    
+
     /**
-     * @var boolean|null The user accepts any transportation mode.
+     * @var null|bool the user accepts any transportation mode
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"read","write","thread"})
      */
     private $multiTransportMode;
-    
+
     /**
-    * @var float|null The price per km.
-    *
-    * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
-    * @Groups({"read","results","write","thread"})
-    */
+     * @var null|float the price per km
+     *
+     * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
+     * @Groups({"read","results","write","thread"})
+     */
     private $priceKm;
 
     /**
-    * @var float|null The total price selected by the user as a driver.
-    *
-    * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
-    * @Groups({"read","results","write","thread"})
-    */
+     * @var null|float the total price selected by the user as a driver
+     *
+     * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
+     * @Groups({"read","results","write","thread"})
+     */
     private $driverPrice;
 
     /**
-    * @var float|null The total price computed by the system, using the user price per km, not rounded, as a driver.
-    *
-    * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
-    * @Groups({"read","results","write","thread"})
-    */
+     * @var null|float the total price computed by the system, using the user price per km, not rounded, as a driver
+     *
+     * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
+     * @Groups({"read","results","write","thread"})
+     */
     private $driverComputedPrice;
 
     /**
-    * @var float|null The driver computed price rounded using the rounding rules.
-    *
-    * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
-    * @Groups({"read","results","write","thread"})
-    */
+     * @var null|float the driver computed price rounded using the rounding rules
+     *
+     * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
+     * @Groups({"read","results","write","thread"})
+     */
     private $driverComputedRoundedPrice;
 
     /**
-    * @var float|null The driver master price to use. It's the price if it's not null, otherwise the computedPrice.
-    * @Groups({"read","results","thread"})
-    */
+     * @var null|float The driver master price to use. It's the price if it's not null, otherwise the computedPrice.
+     * @Groups({"read","results","thread"})
+     */
     private $driverMasterPrice;
 
     /**
-    * @var float|null The total price selected by the user as a passenger.
-    *
-    * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
-    * @Groups({"read","results","write","thread"})
-    */
+     * @var null|float the total price selected by the user as a passenger
+     *
+     * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
+     * @Groups({"read","results","write","thread"})
+     */
     private $passengerPrice;
 
     /**
-    * @var float|null The total price computed by the system, using the user price per km, not rounded, as a passenger.
-    *
-    * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
-    * @Groups({"read","results","write","thread"})
-    */
+     * @var null|float the total price computed by the system, using the user price per km, not rounded, as a passenger
+     *
+     * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
+     * @Groups({"read","results","write","thread"})
+     */
     private $passengerComputedPrice;
 
     /**
-    * @var float|null The passenger computed price rounded using the rounding rules.
-    *
-    * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
-    * @Groups({"read","results","write","thread"})
-    */
+     * @var null|float the passenger computed price rounded using the rounding rules
+     *
+     * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
+     * @Groups({"read","results","write","thread"})
+     */
     private $passengerComputedRoundedPrice;
 
     /**
-    * @var float|null The passenger master price to use. It's the price if it's not null, otherwise the computedPrice.
-    * @Groups({"read","results","thread"})
-    */
+     * @var null|float The passenger master price to use. It's the price if it's not null, otherwise the computedPrice.
+     * @Groups({"read","results","thread"})
+     */
     private $passengerMasterPrice;
 
     /**
-     * @var boolean Big luggage accepted / asked.
+     * @var bool big luggage accepted / asked
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"read","write","thread"})
@@ -666,7 +666,7 @@ class Criteria
     private $luggage;
 
     /**
-     * @var boolean Bike accepted / asked.
+     * @var bool bike accepted / asked
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"read","write","thread"})
@@ -674,7 +674,7 @@ class Criteria
     private $bike;
 
     /**
-     * @var boolean 2 passengers max on the back seats.
+     * @var bool 2 passengers max on the back seats
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"read","write","thread"})
@@ -682,7 +682,7 @@ class Criteria
     private $backSeats;
 
     /**
-     * @var boolean Solidary request.
+     * @var bool solidary request
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"read","write","thread"})
@@ -690,7 +690,7 @@ class Criteria
     private $solidary;
 
     /**
-     * @var boolean Solidary exclusive.
+     * @var bool solidary exclusive
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"read","write","thread"})
@@ -698,7 +698,7 @@ class Criteria
     private $solidaryExclusive;
 
     /**
-     * @var SolidaryAsk The SolidaryAsk that uses this criteria.
+     * @var SolidaryAsk the SolidaryAsk that uses this criteria
      *
      * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\SolidaryAsk", mappedBy="criteria")
      * @Groups({"read","write"})
@@ -706,7 +706,7 @@ class Criteria
     private $solidaryAsk;
 
     /**
-     * @var SolidaryMatching The SolidaryMatching that uses this criteria.
+     * @var SolidaryMatching the SolidaryMatching that uses this criteria
      *
      * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\SolidaryMatching", mappedBy="criteria")
      * @Groups({"read","write"})
@@ -714,7 +714,7 @@ class Criteria
     private $solidaryMatching;
 
     /**
-     * @var boolean Avoid motorway.
+     * @var bool avoid motorway
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"read","write","thread"})
@@ -722,7 +722,7 @@ class Criteria
     private $avoidMotorway;
 
     /**
-     * @var boolean Avoid toll.
+     * @var bool avoid toll
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"read","write","thread"})
@@ -730,7 +730,7 @@ class Criteria
     private $avoidToll;
 
     /**
-     * @var Car|null The car used in the journey.
+     * @var null|Car the car used in the journey
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\Car")
      * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
@@ -738,33 +738,33 @@ class Criteria
      * @MaxDepth(1)
      */
     private $car;
-    
+
     /**
-     * @var Direction|null The direction used in the journey as a driver.
+     * @var null|Direction the direction used in the journey as a driver
      *
      * @ORM\ManyToOne(targetEntity="\App\Geography\Entity\Direction", inversedBy="criteriaDrivers", cascade={"persist"})
      * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
      * @Groups({"read","results"})
      */
     private $directionDriver;
-    
+
     /**
-     * @var Direction|null The direction used in the journey as a passenger.
+     * @var null|Direction the direction used in the journey as a passenger
      *
      * @ORM\ManyToOne(targetEntity="\App\Geography\Entity\Direction", inversedBy="criteriaPassengers", cascade={"persist"})
      * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
      * @Groups({"read","results","thread"})
      */
     private $directionPassenger;
-    
+
     /**
      * @var int Journey's Duration in secondes based on DirectionDriver if it exists or else on DirectionPassenger
      * @Groups({"read","results"})
      */
     private $duration;
-    
+
     /**
-     * @var PTJourney|null The public transport journey used.
+     * @var null|PTJourney the public transport journey used
      *
      * @ORM\ManyToOne(targetEntity="\App\PublicTransport\Entity\PTJourney")
      * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
@@ -773,7 +773,7 @@ class Criteria
     private $ptjourney;
 
     /**
-     * @var Proposal The proposal that uses this criteria.
+     * @var Proposal the proposal that uses this criteria
      *
      * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Proposal", mappedBy="criteria")
      * @Groups({"read","write"})
@@ -781,7 +781,7 @@ class Criteria
     private $proposal;
 
     /**
-     * @var \DateTimeInterface Creation date.
+     * @var \DateTimeInterface creation date
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read"})
@@ -789,7 +789,7 @@ class Criteria
     private $createdDate;
 
     /**
-     * @var \DateTimeInterface Updated date.
+     * @var \DateTimeInterface updated date
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read"})
@@ -800,33 +800,33 @@ class Criteria
     {
         $this->id = self::DEFAULT_ID;
     }
-    
+
     public function getId(): ?int
     {
         return $this->id;
     }
-    
+
     public function isDriver(): ?bool
     {
         return $this->driver;
     }
-    
+
     public function setDriver(bool $isDriver): self
     {
         $this->driver = $isDriver;
-        
+
         return $this;
     }
-    
+
     public function isPassenger(): ?bool
     {
         return $this->passenger;
     }
-    
+
     public function setPassenger(bool $isPassenger): self
     {
         $this->passenger = $isPassenger;
-        
+
         return $this;
     }
 
@@ -880,26 +880,28 @@ class Criteria
 
     public function getArrivalDateTime(): ?\DateTimeInterface
     {
-        if ($this->getFrequency()=== Criteria::FREQUENCY_PUNCTUAL) {
+        if (Criteria::FREQUENCY_PUNCTUAL === $this->getFrequency()) {
             $fromDate = clone $this->getFromDate();
             $fromTime = $this->getFromTime();
-            $fromDate->setTime($fromTime->format("H"), $fromTime->format("i"), $fromTime->format("s"));
+            $fromDate->setTime($fromTime->format('H'), $fromTime->format('i'), $fromTime->format('s'));
 
             $duration = $this->getDuration();
             if (!is_null($duration)) {
-                return $fromDate->modify($duration." seconds");
+                return $fromDate->modify($duration.' seconds');
             }
+
             return null;
         }
+
         return null;
     }
-
 
     public function getFromTime(): ?\DateTimeInterface
     {
         if ($this->fromTime) {
             return \DateTime::createFromFormat('His', $this->fromTime->format('His'));
         }
+
         return null;
     }
 
@@ -909,7 +911,6 @@ class Criteria
 
         return $this;
     }
-
 
     public function getMarginDuration(): ?int
     {
@@ -928,6 +929,7 @@ class Criteria
         if ($this->minTime) {
             return \DateTime::createFromFormat('His', $this->minTime->format('His'));
         }
+
         return null;
     }
 
@@ -943,6 +945,7 @@ class Criteria
         if ($this->maxTime) {
             return \DateTime::createFromFormat('His', $this->maxTime->format('His'));
         }
+
         return null;
     }
 
@@ -957,11 +960,11 @@ class Criteria
     {
         return $this->strictDate;
     }
-    
+
     public function setStrictDate(?bool $isStrictDate): self
     {
         $this->strictDate = $isStrictDate;
-        
+
         return $this;
     }
 
@@ -969,11 +972,11 @@ class Criteria
     {
         return $this->strictPunctual;
     }
-    
+
     public function setStrictPunctual(?bool $isStrictPunctual): self
     {
         $this->strictPunctual = $isStrictPunctual;
-        
+
         return $this;
     }
 
@@ -981,11 +984,11 @@ class Criteria
     {
         return $this->strictRegular;
     }
-    
+
     public function setStrictRegular(?bool $isStrictRegular): self
     {
         $this->strictRegular = $isStrictRegular;
-        
+
         return $this;
     }
 
@@ -1090,6 +1093,7 @@ class Criteria
         if ($this->monTime) {
             return \DateTime::createFromFormat('His', $this->monTime->format('His'));
         }
+
         return null;
     }
 
@@ -1099,9 +1103,10 @@ class Criteria
             $monTime = clone $this->getMonTime();
             $duration = $this->getDuration();
             if (!is_null($duration)) {
-                return $monTime->modify($duration." seconds");
+                return $monTime->modify($duration.' seconds');
             }
         }
+
         return null;
     }
 
@@ -1117,6 +1122,7 @@ class Criteria
         if ($this->monMinTime) {
             return \DateTime::createFromFormat('His', $this->monMinTime->format('His'));
         }
+
         return null;
     }
 
@@ -1132,6 +1138,7 @@ class Criteria
         if ($this->monMaxTime) {
             return \DateTime::createFromFormat('His', $this->monMaxTime->format('His'));
         }
+
         return null;
     }
 
@@ -1147,6 +1154,7 @@ class Criteria
         if ($this->tueTime) {
             return \DateTime::createFromFormat('His', $this->tueTime->format('His'));
         }
+
         return null;
     }
 
@@ -1163,9 +1171,10 @@ class Criteria
             $tueTime = clone $this->getTueTime();
             $duration = $this->getDuration();
             if (!is_null($duration)) {
-                return $tueTime->modify($duration." seconds");
+                return $tueTime->modify($duration.' seconds');
             }
         }
+
         return null;
     }
 
@@ -1174,6 +1183,7 @@ class Criteria
         if ($this->tueMinTime) {
             return \DateTime::createFromFormat('His', $this->tueMinTime->format('His'));
         }
+
         return null;
     }
 
@@ -1189,6 +1199,7 @@ class Criteria
         if ($this->tueMaxTime) {
             return \DateTime::createFromFormat('His', $this->tueMaxTime->format('His'));
         }
+
         return null;
     }
 
@@ -1204,6 +1215,7 @@ class Criteria
         if ($this->wedTime) {
             return \DateTime::createFromFormat('His', $this->wedTime->format('His'));
         }
+
         return null;
     }
 
@@ -1220,9 +1232,10 @@ class Criteria
             $wedTime = clone $this->getWedTime();
             $duration = $this->getDuration();
             if (!is_null($duration)) {
-                return $wedTime->modify($duration." seconds");
+                return $wedTime->modify($duration.' seconds');
             }
         }
+
         return null;
     }
 
@@ -1231,6 +1244,7 @@ class Criteria
         if ($this->wedMinTime) {
             return \DateTime::createFromFormat('His', $this->wedMinTime->format('His'));
         }
+
         return null;
     }
 
@@ -1246,6 +1260,7 @@ class Criteria
         if ($this->wedMaxTime) {
             return \DateTime::createFromFormat('His', $this->wedMaxTime->format('His'));
         }
+
         return null;
     }
 
@@ -1261,6 +1276,7 @@ class Criteria
         if ($this->thuTime) {
             return \DateTime::createFromFormat('His', $this->thuTime->format('His'));
         }
+
         return null;
     }
 
@@ -1277,9 +1293,10 @@ class Criteria
             $thuTime = clone $this->getThuTime();
             $duration = $this->getDuration();
             if (!is_null($duration)) {
-                return $thuTime->modify($duration." seconds");
+                return $thuTime->modify($duration.' seconds');
             }
         }
+
         return null;
     }
 
@@ -1288,6 +1305,7 @@ class Criteria
         if ($this->thuMinTime) {
             return \DateTime::createFromFormat('His', $this->thuMinTime->format('His'));
         }
+
         return null;
     }
 
@@ -1303,6 +1321,7 @@ class Criteria
         if ($this->thuMaxTime) {
             return \DateTime::createFromFormat('His', $this->thuMaxTime->format('His'));
         }
+
         return null;
     }
 
@@ -1318,6 +1337,7 @@ class Criteria
         if ($this->friTime) {
             return \DateTime::createFromFormat('His', $this->friTime->format('His'));
         }
+
         return null;
     }
 
@@ -1327,9 +1347,10 @@ class Criteria
             $friTime = clone $this->getFriTime();
             $duration = $this->getDuration();
             if (!is_null($duration)) {
-                return $friTime->modify($duration." seconds");
+                return $friTime->modify($duration.' seconds');
             }
         }
+
         return null;
     }
 
@@ -1345,6 +1366,7 @@ class Criteria
         if ($this->friMinTime) {
             return \DateTime::createFromFormat('His', $this->friMinTime->format('His'));
         }
+
         return null;
     }
 
@@ -1360,6 +1382,7 @@ class Criteria
         if ($this->friMaxTime) {
             return \DateTime::createFromFormat('His', $this->friMaxTime->format('His'));
         }
+
         return null;
     }
 
@@ -1375,6 +1398,7 @@ class Criteria
         if ($this->satTime) {
             return \DateTime::createFromFormat('His', $this->satTime->format('His'));
         }
+
         return null;
     }
 
@@ -1391,17 +1415,19 @@ class Criteria
             $satTime = clone $this->getSatTime();
             $duration = $this->getDuration();
             if (!is_null($duration)) {
-                return $satTime->modify($duration." seconds");
+                return $satTime->modify($duration.' seconds');
             }
         }
+
         return null;
     }
-    
+
     public function getSatMinTime(): ?\DateTimeInterface
     {
         if ($this->satMinTime) {
             return \DateTime::createFromFormat('His', $this->satMinTime->format('His'));
         }
+
         return null;
     }
 
@@ -1417,6 +1443,7 @@ class Criteria
         if ($this->satMaxTime) {
             return \DateTime::createFromFormat('His', $this->satMaxTime->format('His'));
         }
+
         return null;
     }
 
@@ -1432,13 +1459,14 @@ class Criteria
         if ($this->sunTime) {
             return \DateTime::createFromFormat('His', $this->sunTime->format('His'));
         }
+
         return null;
     }
-    
+
     public function setSunTime(?\DateTimeInterface $sunTime): self
     {
         $this->sunTime = $sunTime;
-        
+
         return $this;
     }
 
@@ -1448,9 +1476,10 @@ class Criteria
             $sunTime = clone $this->getSunTime();
             $duration = $this->getDuration();
             if (!is_null($duration)) {
-                return $sunTime->modify($duration." seconds");
+                return $sunTime->modify($duration.' seconds');
             }
         }
+
         return null;
     }
 
@@ -1459,6 +1488,7 @@ class Criteria
         if ($this->sunMinTime) {
             return \DateTime::createFromFormat('His', $this->sunMinTime->format('His'));
         }
+
         return null;
     }
 
@@ -1474,6 +1504,7 @@ class Criteria
         if ($this->sunMaxTime) {
             return \DateTime::createFromFormat('His', $this->sunMaxTime->format('His'));
         }
+
         return null;
     }
 
@@ -1495,88 +1526,88 @@ class Criteria
 
         return $this;
     }
-    
+
     public function getTueMarginDuration(): ?int
     {
         return $this->tueMarginDuration;
     }
-    
+
     public function setTueMarginDuration(?int $tueMarginDuration): self
     {
         $this->tueMarginDuration = $tueMarginDuration;
-        
+
         return $this;
     }
-    
+
     public function getWedMarginDuration(): ?int
     {
         return $this->wedMarginDuration;
     }
-    
+
     public function setWedMarginDuration(?int $wedMarginDuration): self
     {
         $this->wedMarginDuration = $wedMarginDuration;
-        
+
         return $this;
     }
-    
+
     public function getThuMarginDuration(): ?int
     {
         return $this->thuMarginDuration;
     }
-    
+
     public function setThuMarginDuration(?int $thuMarginDuration): self
     {
         $this->thuMarginDuration = $thuMarginDuration;
-        
+
         return $this;
     }
-    
+
     public function getFriMarginDuration(): ?int
     {
         return $this->friMarginDuration;
     }
-    
+
     public function setFriMarginDuration(?int $friMarginDuration): self
     {
         $this->friMarginDuration = $friMarginDuration;
-        
+
         return $this;
     }
-    
+
     public function getSatMarginDuration(): ?int
     {
         return $this->satMarginDuration;
     }
-    
+
     public function setSatMarginDuration(?int $satMarginDuration): self
     {
         $this->satMarginDuration = $satMarginDuration;
-        
+
         return $this;
     }
-    
+
     public function getSunMarginDuration(): ?int
     {
         return $this->sunMarginDuration;
     }
-    
+
     public function setSunMarginDuration(?int $sunMarginDuration): self
     {
         $this->sunMarginDuration = $sunMarginDuration;
-        
+
         return $this;
     }
-    
+
     public function getMaxDetourDistance(): ?int
     {
         return $this->maxDetourDistance;
     }
-    
+
     public function setMaxDetourDistance(?int $maxDetourDistance): self
     {
         $this->maxDetourDistance = $maxDetourDistance;
-        
+
         return $this;
     }
 
@@ -1588,39 +1619,39 @@ class Criteria
     public function setMaxDetourDuration(?int $maxDetourDuration): self
     {
         $this->maxDetourDuration = $maxDetourDuration;
-        
+
         return $this;
     }
-    
+
     public function getAnyRouteAsPassenger(): ?bool
     {
         return $this->anyRouteAsPassenger;
     }
-    
+
     public function setAnyRouteAsPassenger(?bool $anyRouteAsPassenger): self
     {
         $this->anyRouteAsPassenger = $anyRouteAsPassenger;
-        
+
         return $this;
     }
-    
+
     public function getMultiTransportMode(): ?bool
     {
-        return (!is_null($this->multiTransportMode) ? $this->multiTransportMode : true);
+        return !is_null($this->multiTransportMode) ? $this->multiTransportMode : true;
     }
-    
+
     public function setMultiTransportMode(?bool $multiTransportMode): self
     {
         $this->multiTransportMode = $multiTransportMode;
-        
+
         return $this;
     }
-    
+
     public function getPriceKm(): ?string
     {
         return $this->priceKm;
     }
-    
+
     public function setPriceKm(?string $priceKm)
     {
         $this->priceKm = $priceKm;
@@ -1630,7 +1661,7 @@ class Criteria
     {
         return $this->driverPrice;
     }
-    
+
     public function setDriverPrice(?string $driverPrice)
     {
         $this->driverPrice = $driverPrice;
@@ -1640,7 +1671,7 @@ class Criteria
     {
         return $this->driverComputedPrice;
     }
-    
+
     public function setDriverComputedPrice(?string $driverComputedPrice)
     {
         $this->driverComputedPrice = $driverComputedPrice;
@@ -1650,7 +1681,7 @@ class Criteria
     {
         return round($this->driverComputedRoundedPrice, 2);
     }
-    
+
     public function setDriverComputedRoundedPrice(?string $driverComputedRoundedPrice)
     {
         $this->driverComputedRoundedPrice = $driverComputedRoundedPrice;
@@ -1663,6 +1694,7 @@ class Criteria
         } elseif (!is_null($this->getDriverComputedRoundedPrice())) {
             $this->driverMasterPrice = $this->getDriverComputedRoundedPrice();
         }
+
         return $this->driverMasterPrice;
     }
 
@@ -1670,7 +1702,7 @@ class Criteria
     {
         return $this->passengerPrice;
     }
-    
+
     public function setPassengerPrice(?string $passengerPrice)
     {
         $this->passengerPrice = $passengerPrice;
@@ -1680,7 +1712,7 @@ class Criteria
     {
         return $this->passengerComputedPrice;
     }
-    
+
     public function setPassengerComputedPrice(?string $passengerComputedPrice)
     {
         $this->passengerComputedPrice = $passengerComputedPrice;
@@ -1690,7 +1722,7 @@ class Criteria
     {
         return round($this->passengerComputedRoundedPrice, 2);
     }
-    
+
     public function setPassengerComputedRoundedPrice(?string $passengerComputedRoundedPrice)
     {
         $this->passengerComputedRoundedPrice = $passengerComputedRoundedPrice;
@@ -1703,6 +1735,7 @@ class Criteria
         } elseif (!is_null($this->getPassengerComputedRoundedPrice())) {
             $this->passengerMasterPrice = $this->getPassengerComputedRoundedPrice();
         }
+
         return $this->passengerMasterPrice;
     }
 
@@ -1710,11 +1743,11 @@ class Criteria
     {
         return $this->luggage;
     }
-    
+
     public function setLuggage(?bool $hasLuggage): self
     {
         $this->luggage = $hasLuggage;
-        
+
         return $this;
     }
 
@@ -1722,11 +1755,11 @@ class Criteria
     {
         return $this->bike;
     }
-    
+
     public function setBike(?bool $hasBike): self
     {
         $this->bike = $hasBike;
-        
+
         return $this;
     }
 
@@ -1734,11 +1767,11 @@ class Criteria
     {
         return $this->backSeats;
     }
-    
+
     public function setBackSeats(?bool $hasBackSeats): self
     {
         $this->backSeats = $hasBackSeats;
-        
+
         return $this;
     }
 
@@ -1746,11 +1779,11 @@ class Criteria
     {
         return $this->solidary;
     }
-    
+
     public function setSolidary(?bool $isSolidary): self
     {
         $this->solidary = $isSolidary;
-        
+
         return $this;
     }
 
@@ -1758,11 +1791,16 @@ class Criteria
     {
         return $this->solidaryExclusive;
     }
-    
+
     public function setSolidaryExclusive(?bool $isSolidaryExclusive): self
     {
         $this->solidaryExclusive = $isSolidaryExclusive;
-        
+
+        if (true === $this->solidaryExclusive) {
+            $this->driver = true;
+            $this->passenger = false;
+        }
+
         return $this;
     }
 
@@ -1770,11 +1808,11 @@ class Criteria
     {
         return $this->solidaryAsk;
     }
-    
+
     public function setSolidaryAsk(?SolidaryAsk $solidaryAsk): self
     {
         $this->solidaryAsk = $solidaryAsk;
-        
+
         return $this;
     }
 
@@ -1782,11 +1820,11 @@ class Criteria
     {
         return $this->solidaryMatching;
     }
-    
+
     public function setSolidaryMatching(?SolidaryMatching $solidaryMatching): self
     {
         $this->solidaryMatching = $solidaryMatching;
-        
+
         return $this;
     }
 
@@ -1794,11 +1832,11 @@ class Criteria
     {
         return $this->avoidMotorway;
     }
-    
+
     public function setAvoidMotorway(?bool $avoidMotorway): self
     {
         $this->avoidMotorway = $avoidMotorway;
-        
+
         return $this;
     }
 
@@ -1806,31 +1844,31 @@ class Criteria
     {
         return $this->avoidToll;
     }
-    
+
     public function setAvoidToll(?bool $avoidToll): self
     {
         $this->avoidToll = $avoidToll;
-        
+
         return $this;
     }
-    
+
     public function getCar(): ?Car
     {
         return $this->car;
     }
-    
+
     public function setCar(?Car $car): self
     {
         $this->car = $car;
-        
+
         return $this;
     }
-    
+
     public function getDirectionDriver(): ?Direction
     {
         return $this->directionDriver;
     }
-    
+
     public function setDirectionDriver(?Direction $directionDriver): self
     {
         $this->directionDriver = $directionDriver;
@@ -1838,15 +1876,15 @@ class Criteria
         if (!$directionDriver->getCriteriaDrivers(false)->contains($this)) {
             $directionDriver->addCriteriaDriver($this);
         }
-        
+
         return $this;
     }
-    
+
     public function getDirectionPassenger(): ?Direction
     {
         return $this->directionPassenger;
     }
-    
+
     public function setDirectionPassenger(?Direction $directionPassenger): self
     {
         $this->directionPassenger = $directionPassenger;
@@ -1854,15 +1892,16 @@ class Criteria
         if (!$directionPassenger->getCriteriaPassengers(false)->contains($this)) {
             $directionPassenger->addCriteriaPassenger($this);
         }
-        
+
         return $this;
     }
-    
+
     public function getDuration(): ?int
     {
         if (!is_null($this->getDirectionDriver())) {
             return $this->getDirectionDriver()->getDuration();
-        } elseif (!is_null($this->getDirectionPassenger())) {
+        }
+        if (!is_null($this->getDirectionPassenger())) {
             return $this->getDirectionPassenger()->getDuration();
         }
 
@@ -1873,11 +1912,11 @@ class Criteria
     {
         return $this->ptjourney;
     }
-    
+
     public function setPTJourney(?PTJourney $ptjourney): self
     {
         $this->ptjourney = $ptjourney;
-        
+
         return $this;
     }
 
@@ -1892,7 +1931,7 @@ class Criteria
 
         return $this;
     }
-    
+
     public function clone(Criteria $criteria)
     {
         // for now we just clone frequency, seats, fromDate, fromTime and toDate
@@ -1929,15 +1968,15 @@ class Criteria
         return $this;
     }
 
-    public function getCriteriaString(?int $directionDriverId, ?int $directionPassengerId, string $delimiter=";")
+    public function getCriteriaString(?int $directionDriverId, ?int $directionPassengerId, string $delimiter = ';')
     {
         return
-        $this->id . $delimiter .
-        ($this->driver ? '1' : '0') . $delimiter .
-        ($this->passenger ? '1' : '0') . $delimiter .
-        $this->frequency . $delimiter .
-        '99' . $delimiter .
-        $this->seatsPassenger . $delimiter;
+        $this->id.$delimiter.
+        ($this->driver ? '1' : '0').$delimiter.
+        ($this->passenger ? '1' : '0').$delimiter.
+        $this->frequency.$delimiter.
+        '99'.$delimiter.
+        $this->seatsPassenger.$delimiter;
         // ($this->fromDate ? $this->fromDate->format('Y-m-d') : '') . $delimiter .
         // ($this->fromTime ? $this->fromTime->format('H:i:s') : '') . $delimiter .
         // ($this->minTime ? $this->minTime->format('H:i:s') : '') . $delimiter .
@@ -2006,7 +2045,7 @@ class Criteria
     }
 
     // DOCTRINE EVENTS
-    
+
     /**
      * Creation date.
      *
@@ -2014,7 +2053,7 @@ class Criteria
      */
     public function setAutoCreatedDate()
     {
-        $this->setCreatedDate(new \Datetime());
+        $this->setCreatedDate(new \DateTime());
     }
 
     /**
@@ -2024,6 +2063,6 @@ class Criteria
      */
     public function setAutoUpdatedDate()
     {
-        $this->setUpdatedDate(new \Datetime());
+        $this->setUpdatedDate(new \DateTime());
     }
 }

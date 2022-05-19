@@ -14,30 +14,27 @@
         tile
       >
         <v-img
-          v-if="item['images'][0]"
-          :src="item['images'][0]['versions']['square_250']"
+          :src="(item['images'][0]) ? item['images'][0]['versions']['square_250'] : item.community ? item.community.image : '/images/avatarsDefault/avatar.svg'"
           class="grey lighten-2"
-        />
-        <v-img
-          v-else
-          src="/images/avatarsDefault/avatar.svg"
-          class="grey lighten-2"
+          :alt="$t('imageEvent',{name:name})"
         />
       </v-avatar>
-    
+
       <div
         style="min-width:225px;max-width:300px"
         class="d-flex flex-column align-self-center"
       >
         <v-card-title
-          class="text-left"
+          class="text-left text-uppercase text-truncate font-weight-bold"
         >
           <h6 class="text-uppercase text-truncate">
             <a
               :href="linkToEventShow(item)"
+              :aria-label="$t('linkToEvent')"
+              :title="$t('linkToEvent')"
               style="text-decoration:none;"
               class="black--text"
-            > 
+            >
               {{ item.name }}
             </a>
           </h6>
@@ -64,6 +61,7 @@
           x-large
           color="black"
           :href="linkToEventShow(item)"
+          :aria-label="$t('linkToEvent')"
         >
           <v-icon>
             mdi-chevron-right
@@ -97,7 +95,8 @@ export default {
     return {
       locale: localStorage.getItem("X-LOCALE"),
       dateLine1:null,
-      dateLine2:null
+      dateLine2:null,
+      name: this.item.name
     };
   },
   created() {
@@ -111,7 +110,7 @@ export default {
     computeEventDate(){
       let fromDate = moment(this.item.fromDate.date).format(this.$t("shortCompleteDate"));
       let toDate = moment(this.item.toDate.date).format(this.$t("shortCompleteDate"));
-      
+
       if(fromDate === toDate){
         this.dateLine1 = this.$t("date.the")+" "+fromDate+" ";
       }

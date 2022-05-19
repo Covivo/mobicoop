@@ -16,15 +16,15 @@
           href="/"
           class="d-flex align-center my-14"
         >
-          <img
+          <v-img
             class="logo"
             :src="imageLink + 'MOBICOOP_LOGO-V1 Blanc.svg'"
-            alt="Mobicoop"
+            :alt="$t('logo')"
             height="50"
             width="280"
             contain
             eager
-          >
+          />
         </a>
       </v-row>
       <v-row
@@ -181,6 +181,7 @@
                   :src="$t('urlIosLogo')"
                   max-width="200px"
                   class="ml-2"
+                  :alt="$t('logoIosAlt')"
                 />
               </a>
               <a
@@ -192,6 +193,7 @@
                   :src="$t('urlAndroidLogo')"
                   max-width="200px"
                   class="ml-2"
+                  :alt="$t('logoAndroidAlt')"
                 />
               </a>
             </v-row>
@@ -215,6 +217,7 @@
                   contain
                   :src="$t('urlInstagramLogo')"
                   max-width="75px"
+                  :alt="$t('logoInstragramAlt')"
                 />
               </a>
               <a
@@ -225,6 +228,7 @@
                   contain
                   :src="$t('urlFacebookLogo')"
                   max-width="75px"
+                  :alt="$t('logoFacebookAlt')"
                 />
               </a>
               <a
@@ -235,6 +239,7 @@
                   contain
                   :src="$t('urlTwitterLogo')"
                   max-width="75px"
+                  :alt="$t('logoTwitterAlt')"
                 />
               </a>
               <a
@@ -245,6 +250,7 @@
                   contain
                   :src="$t('urlFramasphereLogo')"
                   max-width="75px"
+                  :alt="$t('logoFramasphereAlt')"
                 />
               </a>
             </v-row>

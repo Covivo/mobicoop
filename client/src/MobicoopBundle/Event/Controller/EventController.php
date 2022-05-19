@@ -50,14 +50,16 @@ class EventController extends AbstractController
     private $mandatoryFullDescription;
     private $mandatoryImage;
     private $defaultNbEventsPerPage;
+    private $eventAssociatedToCommunity;
 
-    public function __construct(UrlGeneratorInterface $router, bool $mandatoryDescription, bool $mandatoryFullDescription, bool $mandatoryImage, int $defaultNbEventsPerPage)
+    public function __construct(UrlGeneratorInterface $router, bool $mandatoryDescription, bool $mandatoryFullDescription, bool $mandatoryImage, int $defaultNbEventsPerPage, array $eventAssociatedToCommunity)
     {
         $this->router = $router;
         $this->mandatoryDescription = $mandatoryDescription;
         $this->mandatoryFullDescription = $mandatoryFullDescription;
         $this->mandatoryImage = $mandatoryImage;
         $this->defaultNbEventsPerPage = $defaultNbEventsPerPage;
+        $this->eventAssociatedToCommunity = $eventAssociatedToCommunity;
     }
 
     /**
@@ -75,6 +77,7 @@ class EventController extends AbstractController
         return $this->render('@Mobicoop/event/events.html.twig', [
             'defaultItemsPerPage' => $this->defaultNbEventsPerPage,
             'tabDefault' => $tab,
+            'canSelectCommunity' => $this->eventAssociatedToCommunity['activated'],
         ]);
     }
 
@@ -92,7 +95,7 @@ class EventController extends AbstractController
                 $search = (isset($data['searchPassed']) && !is_null($data['searchPassed'])) ? $data['searchPassed'] : [];
             }
 
-            $apiEvents = $eventManager->getEvents($data['coming'], null, 'fromDate', 'asc', $data['perPage'], $data['page'], $search);
+            $apiEvents = $eventManager->getEvents($data['coming'], null, 'fromDate', 'asc', $data['perPage'], $data['page'], $search, $data['communityId']);
             $events = $apiEvents->getMember();
             $eventsTotalItems = $apiEvents->getTotalItems();
             $pointsComing = [];
@@ -156,7 +159,7 @@ class EventController extends AbstractController
             // Create event and return response code
             if ($event = $eventManager->createEvent($request->request, $event, $user)) {
                 // Post avatar of the event
-                if ($this->mandatoryImage) {
+                if ($this->mandatoryImage || null != $request->files->get('avatar')) {
                     $image = new Image();
                     $image->setEventFile($request->files->get('avatar'));
                     $image->setEventId($event->getId());
@@ -180,6 +183,8 @@ class EventController extends AbstractController
             'mandatoryDescription' => $this->mandatoryDescription,
             'mandatoryFullDescription' => $this->mandatoryFullDescription,
             'mandatoryImage' => $this->mandatoryImage,
+            'canSelectCommunity' => $this->eventAssociatedToCommunity['activated'],
+            'mandatoryCommunity' => $this->eventAssociatedToCommunity['mandatory'],
         ]);
     }
 

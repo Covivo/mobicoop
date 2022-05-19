@@ -1,148 +1,165 @@
 <template>
-  <v-main>
-    <v-container fluid>
-      <v-row
-        justify="center"
+  <v-container fluid>
+    <v-row
+      justify="center"
+    >
+      <v-col
+        cols="12"
+        sm="8"
+        md="6"
       >
-        <v-col
-          cols="12"
-          sm="8"
-          md="6"
-          align="center"
+        <v-snackbar
+          v-model="snackbar"
+          :color="(alert.type === 'error')?'error':'success'"
+          top
         >
-          <v-snackbar
-            v-model="snackbar"
-            :color="(alert.type === 'error')?'error':'success'"
-            top
+          <!--Use of span and v-html to handle multiple lines errors if needed-->
+          <span v-html="alert.message" />
+          <v-btn
+            color="white"
+            text
+            @click="snackbar = false"
           >
-            <!--Use of span and v-html to handle multiple lines errors if needed-->
-            <span v-html="alert.message" />
+            <v-icon>mdi-close-circle-outline</v-icon>
+          </v-btn>
+        </v-snackbar>
+        <v-form
+          id="formContact"
+          ref="form"
+          v-model="valid"
+          lazy-validation
+        >
+          <v-container>
+            <v-row>
+              <v-col
+                cols="12"
+              >
+                <v-text-field
+                  id="familyName"
+                  v-model="form.familyName"
+                  :label="$t('lastName.placeholder')+` *`"
+                  :aria-label="$t('lastName.placeholder')"
+                  :aria-labelledby="$t('email.placeholder')"
+                  name="familyName"
+                  aria-invalid="true"
+                  a
+                  required
+                  :rules="form.familyNameRules"
+                  aria-required="true"
+                />
+              </v-col>
+
+              <v-col
+                cols="12"
+              >
+                <v-text-field
+                  id="givenName"
+                  v-model="form.givenName"
+                  :label="$t('firstName.placeholder')+` *`"
+                  :aria-label="$t('firstName.placeholder')"
+                  name="givenName"
+                  required
+                  :rules="form.givenNameRules"
+                  aria-required="true"
+                />
+              </v-col>
+
+              <v-col
+                cols="12"
+              >
+                <v-text-field
+                  id="email"
+                  v-model="form.email"
+                  :rules="form.emailRules"
+                  :aria-label="$t('email.placeholder')"
+                  :label="$t('email.placeholder') + ` *`"
+                  name="email"
+                  aria-required="true"
+                />
+              </v-col>
+
+              <v-col
+                cols="12"
+              >
+                <v-select
+                  id="demand"
+                  v-model="form.demand"
+                  :items="demandItems"
+                  :rules="form.demandRules"
+                  :aria-label="$t('demand.placeholder')"
+                  :label="$t('demand.placeholder') + ` *`"
+                  name="demand"
+                  required
+                  aria-required="true"
+                />
+              </v-col>
+              <v-col
+                cols="12"
+              >
+                <v-textarea
+                  id="message"
+                  v-model="form.message"
+                  :rules="form.messageRules"
+                  :aria-label="$t('message.label')"
+                  :label="$t('message.label') + ` *`"
+                  name="message"
+                  :hint="this.$t('message.hint')"
+                  required
+                  aria-required="true"
+                />
+              </v-col>
+              <!-- Honey pot -->
+              <!-- use of HTML input to have access to required attribute -->
+              <!-- use of website name is arbitrary and can be changed -->
+              <v-col
+                cols="12"
+                class="noney"
+              >
+                <label for="website">{{ $t('website.label') }}</label>
+                <input
+                  id="website"
+                  v-model="form.website"
+                  type="text"
+                  name="website"
+                  :aria-label="$t('website.label')"
+                  :placeholder="$t('website.placeholder')"
+                  tabindex="-1"
+                  aria-required="true"
+                  required
+                >
+              </v-col>
+              <!-- /Honey pot -->
+            </v-row>
+
             <v-btn
-              color="white"
-              text
-              @click="snackbar = false"
+              :disabled="!valid"
+              :loading="loading"
+              color="primary"
+              rounded
+              @click="validate"
             >
-              <v-icon>mdi-close-circle-outline</v-icon>
+              {{ $t('buttons.send.label') }}
             </v-btn>
-          </v-snackbar>
-          <v-form
-            id="formContact"
-            ref="form"
-            v-model="valid"
-            lazy-validation
-          >
-            <v-container>
-              <v-row>
-                <v-col
-                  cols="12"
-                >
-                  <v-text-field
-                    v-model="form.familyName"
-                    :label="$t('lastName.placeholder')+` *`"
-                    name="familyName"
-                    required
-                    :rules="form.familyNameRules"
-                  />
-                </v-col>
-
-                <v-col
-                  cols="12"
-                >
-                  <v-text-field
-                    v-model="form.givenName"
-                    :label="$t('firstName.placeholder')+` *`"
-                    name="givenName"
-                    required
-                    :rules="form.givenNameRules"
-                  />
-                </v-col>
-
-                <v-col
-                  cols="12"
-                >
-                  <v-text-field
-                    v-model="form.email"
-                    :rules="form.emailRules"
-                    :label="$t('email.placeholder') + ` *`"
-                    name="email"
-                  />
-                </v-col>
-
-                <v-col
-                  cols="12"
-                >
-                  <v-select
-                    v-model="form.demand"
-                    :items="demandItems"
-                    :rules="form.demandRules"
-                    :label="$t('demand.placeholder') + ` *`"
-                    name="demand"
-                    required
-                  />
-                </v-col>
-
-                <v-col
-                  cols="12"
-                >
-                  <v-textarea
-                    v-model="form.message"
-                    :rules="form.messageRules"
-                    :label="$t('message.label') + ` *`"
-                    name="message"
-                    :hint="this.$t('message.hint')"
-                    required
-                  />
-                </v-col>
-                <!-- Honey pot -->
-                <!-- use of HTML input to have access to required attribute -->
-                <!-- use of website name is arbitrary and can be changed -->
-                <v-col
-                  cols="12"
-                  class="noney"
-                >
-                  <label for="website">{{ $t('website.label') }}</label>
-                  <input
-                    id="website"
-                    v-model="form.website"
-                    type="text"
-                    name="website"
-                    :placeholder="$t('website.placeholder')"
-                    tabindex="-1"
-                    required
-                  >
-                </v-col>
-                <!-- /Honey pot -->
-              </v-row>
-
-              <v-btn
-                :disabled="!valid"
-                :loading="loading"
-                color="primary"
-                rounded
-                @click="validate"
-              >
-                {{ $t('buttons.send.label') }}
-              </v-btn>
               
-              <v-row
-                class="mt-5"
-              >
-                <v-col cols="12">
-                  <p class="text-left">
-                    {{ $t('dataPolicy.text') }}
-                    <a
-                      :href="$t('dataPolicy.route')"
-                      target="_blank"
-                    >{{ $t('dataPolicy.link') }}</a>.
-                  </p>
-                </v-col>
-              </v-row>
-            </v-container>
-          </v-form>
-        </v-col>
-      </v-row>
-    </v-container>
-  </v-main>
+            <v-row
+              class="mt-5"
+            >
+              <v-col cols="12">
+                <p class="text-left">
+                  {{ $t('dataPolicy.text') }}
+                  <a
+                    :href="$t('dataPolicy.route')"
+                    target="_blank"
+                    :aria-label="$t('dataPolicy.linkAria')"
+                  >{{ $t('dataPolicy.link') }}</a>.
+                </p>
+              </v-col>
+            </v-row>
+          </v-container>
+        </v-form>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>

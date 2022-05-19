@@ -56,12 +56,16 @@
         >
           <geocomplete
             v-show="showOrigin"
+            id="labelOrgin"
             :uri="geoSearchUrl"
             :results-order="geoCompleteResultsOrder"
             :palette="geoCompletePalette"
             :chip="geoCompleteChip"
             :label="labelOrigin"
+            :aria-label="ariaLabelOrgin"
+            :aria-labelledby="labelOrigin"
             required
+            aria-invalid="true"
             :address="customInitOrigin"
             @address-selected="originSelected"
           />
@@ -74,10 +78,11 @@
           <v-tooltip
             v-if="showOrigin && showDestination"
             color="info"
-            right
+            top
           >
             <template v-slot:activator="{ on }">
               <v-btn
+                :aria-label="$t('swap.alt')"
                 text
                 icon
                 @click="swap"
@@ -88,6 +93,7 @@
                 </v-icon>
                 <v-img
                   v-else
+                  :alt="$t('swap.alt')"
                   :src="imageSwap"
                 />
               </v-btn>
@@ -101,12 +107,16 @@
         >
           <geocomplete
             v-show="showDestination"
+            id="labelDestination"
             :uri="geoSearchUrl"
             :results-order="geoCompleteResultsOrder"
             :palette="geoCompletePalette"
             :chip="geoCompleteChip"
             :label="labelDestination"
+            :aria-label="ariaLabelDestination"
+            :aria-labelledby="labelDestination"
             required
+            aria-invalid="true"
             :address="customInitDestination"
             @address-selected="destinationSelected"
           />
@@ -116,6 +126,7 @@
       <!-- Frequency switch -->
       <v-row
         v-if="showOrigin && showDestination"
+        id="frenquencySwitch"
         align="center"
         no-gutters
       >
@@ -130,10 +141,14 @@
           class="ma-2"
         >
           <v-switch
+            id="switch"
             v-model="regular"
+            role="switch"
             inset
             hide-details
             class="mt-0"
+            aria-label="switch"
+            aria-labelledby="switch"
             color="secondary"
             @change="switched"
           />
@@ -145,9 +160,14 @@
           <v-tooltip
             color="info"
             right
+            role="tooltip"
           >
             <template v-slot:activator="{ on }">
-              <v-icon v-on="on">
+              <v-icon
+                aria-hidden="false"
+                aria-describedby="switch"
+                v-on="on"
+              >
                 mdi-help-circle-outline
               </v-icon>
             </template>
@@ -316,7 +336,9 @@ export default {
       customInitOrigin: (this.initOrigin)?this.initOrigin:null,
       customInitDestination: (this.initDestination)?this.initDestination:null,
       valid: false,
-      nowDate : new Date().toISOString().slice(0,10)
+      nowDate : new Date().toISOString().slice(0,10),
+      ariaLabelDestination : this.$t('ariaLabelDestination'),
+      ariaLabelOrgin : this.$t('ariaLabelOrgin')
     };
   },
   computed: {

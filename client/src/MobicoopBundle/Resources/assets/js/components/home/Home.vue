@@ -1,5 +1,6 @@
 <template>
   <v-container
+    aria-label="main"
     text-center
     fluid
     :style="'background-image:url(\''+$t('urlBackground')+'\');background-size:contain;width:100%;'"
@@ -21,7 +22,10 @@
         >
           <div>
             {{ $t('snackbar1') }}
-            <a :href="$t('profileLink')">
+            <a
+              :href="$t('profileLink')"
+              :title="$t('myProfile')"
+            >
               " {{ $t('myProfile') }} "
             </a>
             {{ $t('snackbar2') }}
@@ -125,7 +129,6 @@
     <!-- Title and subtitle -->
 
     <v-row
-      align="center"
       justify="center"
     >
       <v-col
@@ -141,7 +144,6 @@
 
     <!-- search -->
     <v-row
-      align="center"
       class="mt-5 mt-md-n16 pt-md-16 mt-lg-16 pt-lg-16"
       justify="center"
     >

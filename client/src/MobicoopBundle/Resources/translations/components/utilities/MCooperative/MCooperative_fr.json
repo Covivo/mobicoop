@@ -9,6 +9,7 @@
         "button2": {
             "label": "Contribuez au projet",
             "route": "/devenir-partenaire"
-        }
+        },
+        "image":"Photo de groupe repésentant toute l'équipe mobicoop"
     }
 }

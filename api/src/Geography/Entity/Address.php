@@ -44,7 +44,10 @@ use Symfony\Component\Validator\Constraints as Assert;
  * A postal address (including textual informations and / or geometric coordinates).
  *
  * @ORM\Entity
- * @ORM\Table(indexes={@ORM\Index(name="IDX_LATITUDE_LONGITUDE", columns={"latitude", "longitude"})})
+ * @ORM\Table(indexes={
+ *  @ORM\Index(name="IDX_LATITUDE_LONGITUDE", columns={"latitude", "longitude"}),
+ *  @ORM\Index(name="FULL_TEXT_LOCALITY", columns={"address_locality"}, flags={"fulltext"})
+ * })
  * @ORM\HasLifecycleCallbacks
  * @ApiResource(
  *      attributes={
