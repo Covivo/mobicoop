@@ -70,7 +70,7 @@ use Twig\Environment;
  */
 class NotificationManager
 {
-    public const LANG = 'fr_FR';
+    public const LANG = 'fr';
     private $entityManager;
     private $internalMessageManager;
     private $emailManager;
@@ -93,6 +93,8 @@ class NotificationManager
     private $userManager;
     private $adManager;
     private $proposalManager;
+    private $communicationFolder;
+    private $altCommunicationFolder;
 
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -116,7 +118,9 @@ class NotificationManager
         TranslatorInterface $translator,
         UserManager $userManager,
         AdManager $adManager,
-        ProposalManager $proposalManager
+        ProposalManager $proposalManager,
+        string $communicationFolder,
+        string $altCommunicationFolder
     ) {
         $this->entityManager = $entityManager;
         $this->internalMessageManager = $internalMessageManager;
@@ -140,6 +144,8 @@ class NotificationManager
         $this->userManager = $userManager;
         $this->adManager = $adManager;
         $this->proposalManager = $proposalManager;
+        $this->communicationFolder = $communicationFolder;
+        $this->altCommunicationFolder = $altCommunicationFolder;
     }
 
     /**
@@ -276,7 +282,7 @@ class NotificationManager
      *
      * @param mixed $lang
      */
-    private function notifyByEmail(Notification $notification, User $recipient, ?object $object = null, $lang = 'fr_FR')
+    private function notifyByEmail(Notification $notification, User $recipient, ?object $object = null)
     {
         $email = new Email();
         $email->setRecipientEmail($recipient->getEmail());
@@ -544,24 +550,37 @@ class NotificationManager
         if (!is_null($recipient->getLanguage())) {
             $lang = $recipient->getLanguage();
             $this->translator->setLocale($lang->getCode());
+            $templateLanguage = $lang->getCode();
         } else {
             $this->translator->setLocale($lang);
+            $templateLanguage = $lang;
         }
 
+        if ($notification->hasAlt()) {
+            $titleTemplate = $this->altCommunicationFolder.$templateLanguage.$this->emailTitleTemplatePath.$notification->getAction()->getName().'.html.twig';
+        } else {
+            $titleTemplate = $this->communicationFolder.$templateLanguage.$this->emailTitleTemplatePath.$notification->getAction()->getName().'.html.twig';
+        }
         $email->setObject($this->templating->render(
-            $notification->getTemplateTitle() ? $this->emailTitleTemplatePath.$notification->getTemplateTitle() : $this->emailTitleTemplatePath.$notification->getAction()->getName().'.html.twig',
+            $titleTemplate,
             [
                 'context' => $titleContext,
             ]
         ));
 
         // if a template is associated with the action in the notification, we us it; otherwise we try the name of the action as template name
-        $this->emailManager->send($email, $notification->getTemplateBody() ? $this->emailTemplatePath.$notification->getTemplateBody() : $this->emailTemplatePath.$notification->getAction()->getName(), $bodyContext, $lang);
+        if ($notification->hasAlt()) {
+            $this->emailManager->send($email, $this->altCommunicationFolder.$templateLanguage.$this->emailTemplatePath.$notification->getAction()->getName(), $bodyContext, $lang);
+        } else {
+            $this->emailManager->send($email, $this->communicationFolder.$templateLanguage.$this->emailTemplatePath.$notification->getAction()->getName(), $bodyContext, $lang);
+        }
     }
 
     /**
      * Notify a user by sms.
      * Different variables can be passed to the notification body and title depending on the object linked to the notification.
+     *
+     * @param mixed $lang
      */
     private function notifyBySms(Notification $notification, User $recipient, ?object $object = null)
     {
@@ -739,9 +758,21 @@ class NotificationManager
             $bodyContext = ['user' => $recipient, 'notification' => $notification];
         }
 
+        $lang = self::LANG;
+        if (!is_null($recipient->getLanguage())) {
+            $lang = $recipient->getLanguage();
+            $this->translator->setLocale($lang->getCode());
+            $templateLanguage = $lang->getCode();
+        } else {
+            $this->translator->setLocale($lang);
+            $templateLanguage = $lang;
+        }
         // if a template is associated with the action in the notification, we us it; otherwise we try the name of the action as template name
-        $this->smsManager->send($sms, $notification->getTemplateBody() ? $this->smsTemplatePath.$notification->getTemplateBody() : $this->smsTemplatePath.$notification->getAction()->getName(), $bodyContext);
-
+        if ($notification->hasAlt()) {
+            $this->smsManager->send($sms, $this->altCommunicationFolder.$templateLanguage.$this->smsTemplatePath.$notification->getAction()->getName(), $bodyContext, $lang);
+        } else {
+            $this->smsManager->send($sms, $this->communicationFolder.$templateLanguage.$this->smsTemplatePath.$notification->getAction()->getName(), $bodyContext, $lang);
+        }
         $this->createNotified($notification, $recipient, $object);
         $this->logger->info('Sms notification for '.$notification->getAction()->getName().' / '.$recipient->getEmail());
     }
@@ -753,6 +784,7 @@ class NotificationManager
      * @param Notification $notification The notification
      * @param User         $recipient    The recipient user
      * @param null|object  $object       The object to use
+     * @param mixed        $lang
      */
     private function notifyByPush(Notification $notification, User $recipient, ?object $object = null)
     {
@@ -935,17 +967,29 @@ class NotificationManager
         if (!is_null($recipient->getLanguage())) {
             $lang = $recipient->getLanguage();
             $this->translator->setLocale($lang->getCode());
+            $templateLanguage = $lang->getCode();
         } else {
             $this->translator->setLocale($lang);
+            $templateLanguage = $lang;
+        }
+
+        if ($notification->hasAlt()) {
+            $titleTemplate = $this->altCommunicationFolder.$templateLanguage.$this->pushTitleTemplatePath.$notification->getAction()->getName().'.html.twig';
+        } else {
+            $titleTemplate = $this->communicationFolder.$templateLanguage.$this->pushTitleTemplatePath.$notification->getAction()->getName().'.html.twig';
         }
         $push->setTitle($this->templating->render(
-            $notification->getTemplateTitle() ? $this->pushTitleTemplatePath.$notification->getTemplateTitle() : $this->pushTitleTemplatePath.$notification->getAction()->getName().'.html.twig',
+            $titleTemplate,
             [
                 'context' => $titleContext,
             ]
         ));
 
         // if a template is associated with the action in the notification, we us it; otherwise we try the name of the action as template name
-        $this->pushManager->send($push, $notification->getTemplateBody() ? $this->pushTemplatePath.$notification->getTemplateBody() : $this->pushTemplatePath.$notification->getAction()->getName(), $bodyContext);
+        if ($notification->hasAlt()) {
+            $this->pushManager->send($push, $this->altCommunicationFolder.$templateLanguage.$this->pushTemplatePath.$notification->getAction()->getName(), $bodyContext, $lang);
+        } else {
+            $this->pushManager->send($push, $this->communicationFolder.$templateLanguage.$this->pushTemplatePath.$notification->getAction()->getName(), $bodyContext, $lang);
+        }
     }
 }

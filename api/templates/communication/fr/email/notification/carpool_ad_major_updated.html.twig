@@ -1,0 +1,101 @@
+{# CAREFUL : Some client might need to replicate this template #}
+{% extends 'communication/fr/email/notification/base.html.twig' %}
+{% block body %}
+    {% set new = context.object.new %}
+    {% set old = context.object.old %}
+    {% set ask = context.object.ask %}
+    {% set sender = context.object.sender %}
+    {% set recipient = context.user %}
+    {% set outwardOrigin = context.origin %}
+    {% set outwardDestination = context.destination %}
+
+    <table style="width:100%;font-family:{{ api_env('EMAILS_FONT') }}, sans-serif;">
+        <tr>
+            <td>
+                <table>
+                    <tr>
+                        <td>
+                            <p style="color:{{ api_env('EMAILS_COLOR_SECONDARY') }};font-size:30px">
+                                <b>Covoiturage annulé</b></p>
+                            <hr>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <table style="width:100%;">
+                    <tr>
+                        <td style="width:70%">
+                            <p>Bonjour<b
+                                        style="color:{{ api_env('EMAILS_COLOR_PRIMARY') }}"> {{ recipient.givenName|capitalize }} {{ recipient.shortFamilyName|capitalize }}</b>
+                            </p>
+                            <p>Votre covoiturage avec<b
+                                        style="color:{{ api_env('EMAILS_COLOR_PRIMARY') }}"> {{ sender.givenName|capitalize }} {{ sender.shortFamilyName|capitalize }}</b> a été annulé car
+                                <b>{{ sender.givenName|capitalize }} {{ sender.shortFamilyName|capitalize }}</b> a modifié son annonce.
+                            </p>
+                        </td>
+                        <td style="width:30%">
+                            <img style="border-radius:50px" src="{{ sender.avatars[0] }}" alt="Avatar"/>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <table style="width:70%;background-color:{{ api_env('EMAILS_COLOR_PRIMARY_LIGHT') }};margin-top:5px;margin-bottom:5px;margin-left:5px">
+                    <tr>
+                        <td style="width:10%;text-align:left">
+                            <img src="{{ api_env('EMAILS_PLATFORM_URL') }}{{ api_env('EMAILS_IMAGES_BASE_URL') }}{{ api_env('EMAILS_WAY_LOGO') }}"
+                                 alt="trajet"/>
+                        </td>
+                        <td style="width:90%;text-align:left">
+                            <p>
+                                <b style="color:{{ api_env('EMAILS_COLOR_PRIMARY') }}">{{ outwardOrigin.address.displayLabel[0] }}</b>
+                            </p>
+                            <p>
+                                <b style="color:{{ api_env('EMAILS_COLOR_PRIMARY') }}"> {{ outwardDestination.address.displayLabel[0] }}</b>
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        {% if new.cancellationMessage %}
+            <tr>
+                <td>
+                    <table style="width:100%;">
+                        <tr>
+                            <td style="width:70%">
+                                <p style="color:{{ api_env('EMAILS_COLOR_SECONDARY') }}">
+                                    Téléchargez l'application <b>Android</b> ou <b>IOS</b>
+                                </p>
+                                <p>
+                                    {{ new.cancellationMessage }}
+                                </p>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        {% endif %}
+        {% if context.object.searchLink %}
+            <tr>
+                <td>
+                    <a href="{{ context.object.searchLink}}">
+                        Vous pouvez cliquer sur ce lien afin de relancer votre recherche {{ outwardOrigin.address.displayLabel[0] }} => {{ outwardDestination.address.displayLabel[0] }}
+                    </a>
+                </td>
+            </tr>
+        {% endif %}
+        <tr>
+            <td>
+                <p>Il n'y a pas de pénalité pour l'annulation de ce covoiturage. Cependant afin de garantir la fiabilité des annonces et protéger les covoitureurs d'annulations trop répétées, nous nous réservons le droit de suspendre les possibilités de publier des annonces si un covoitureur annule trop souvent.</p>
+            </td>
+        </tr>
+
+        </hr>
+    </table>
+{% endblock %}

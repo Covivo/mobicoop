@@ -1,9 +1,0 @@
-{# CAREFUL : Some client might need to replicate this template #}
-{% extends '/email/notification/base.html.twig' %}
-{% block body %}
-    {% set reasonId = context.paymentProfile.refusalReason %}
-    <p>Votre document d’identité transmis a été rejeté pour la raison suivante :</p>
-    <p><strong>{{ "reason#{reasonId}" |trans }}</strong></p>
-    <p>Veuillez transmettre un autre document d’identité à jour pour pouvoir recevoir des paiements.</p>
-    <p>Pour en savoir plus sur les conditions de validation de la pièce d'identité, vous pouvez vous <a href="https://support.mangopay.com/s/article/What-are-the-reasons-for-a-document-rejection?language=fr" title="">référer ici</a>.</p>
-{% endblock %}

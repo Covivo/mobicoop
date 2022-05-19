@@ -1,0 +1,9 @@
+{# CAREFUL : Some client might need to replicate this template #}
+{% extends 'communication/fr/email/notification/base.html.twig' %}
+{% set ask = context.ask %}
+{% set recipient = context.user %}
+{% if recipient.id == ask.user.id %}
+    {% set deleter = ask.userRelated %}
+{% else %}
+    {% set deleter = ask.user %}
+{% endif %}
