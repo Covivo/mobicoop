@@ -100,8 +100,9 @@ class EventManager
         $event->setUrl($data->get('urlEvent'));
         $event->setFromDate($from);
         $event->setToDate($to);
-        $event->setCommunity($this->communityManager->getCommunity(intval($data->get('community'))));
-
+        if (null != json_decode($data->get('community'))) {
+            $event->setCommunity($this->communityManager->getCommunity(intval($data->get('community'))));
+        }
         $response = $this->dataProvider->post($event);
 
         // Event is created : we send the email to the owner
