@@ -574,7 +574,7 @@ export default {
       newEvent.append("address", JSON.stringify(this.eventAddress));
       newEvent.append("startDate", this.startDate);
       newEvent.append("endDate", this.endDate);
-      newEvent.append("community", this.selectedCommunity.id);
+      newEvent.append("community", this.selectedCommunity ? this.selectedCommunity.id : null);
       if (this.startTime) newEvent.append("startTime", this.startTime);
       if (this.endTime) newEvent.append("endTime", this.endTime);
       if (this.urlEvent) newEvent.append("urlEvent", this.urlEvent);
