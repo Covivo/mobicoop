@@ -596,6 +596,9 @@ export default {
           }
           else this.loading = false;
           window.location.href = this.$t('redirect.route');
+        })
+        .finally(() => {
+          this.loading = false;
         });
     },
     updateEndDatePickerMinDate () {
