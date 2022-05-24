@@ -66,6 +66,7 @@ services:
             $seatNumber: '%env(int:SEAT_NUMBER)%'
             $defaultSeatNumber: '%env(int:DEFAULT_SEAT_NUMBER)%'
             $contentPassenger: '%env(bool:CONTENT_PASSENGER)%'
+            $carpoolSettingsDisplay: '%env(bool:CARPOOL_SETTINGS_DISPLAY)%'
     Mobicoop\Bundle\MobicoopBundle\Carpool\Service\:
         resource: '@MobicoopBundle/Carpool/Service/*'
     Mobicoop\Bundle\MobicoopBundle\Carpool\Security\:
