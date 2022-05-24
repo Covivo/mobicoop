@@ -592,10 +592,9 @@ export default {
           if (res.data.includes('error')) {
             this.snackError = this.$t(res.data)
             this.snackbar = true;
-            this.loading = false;
+          } else {
+            window.location.href = this.$t('redirect.route');
           }
-          else this.loading = false;
-          window.location.href = this.$t('redirect.route');
         })
         .finally(() => {
           this.loading = false;
