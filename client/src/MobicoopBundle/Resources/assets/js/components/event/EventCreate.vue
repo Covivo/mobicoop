@@ -368,6 +368,7 @@
           <v-btn
             color="secondary"
             text
+            :loading="loading"
             @click="createEvent"
           >
             {{ $t('popUp.validation') }}
@@ -579,6 +580,7 @@ export default {
       if (this.startTime) newEvent.append("startTime", this.startTime);
       if (this.endTime) newEvent.append("endTime", this.endTime);
       if (this.urlEvent) newEvent.append("urlEvent", this.urlEvent);
+      this.loading = true;
 
       maxios
         .post(this.$t('buttons.create.route'), newEvent, {
@@ -590,9 +592,12 @@ export default {
           if (res.data.includes('error')) {
             this.snackError = this.$t(res.data)
             this.snackbar = true;
-            this.loading = false;
+          } else {
+            window.location.href = this.$t('redirect.route');
           }
-          else window.location.href = this.$t('redirect.route');
+        })
+        .finally(() => {
+          this.loading = false;
         });
     },
     updateEndDatePickerMinDate () {
