@@ -369,6 +369,7 @@
             color="secondary"
             text
             :loading="loading"
+            :disabled="loading"
             @click="createEvent"
           >
             {{ $t('popUp.validation') }}
