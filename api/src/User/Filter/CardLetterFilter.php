@@ -39,12 +39,12 @@ final class CardLetterFilter extends AbstractContextAwareFilter
         foreach ($this->properties as $property => $strategy) {
             $description["{$property}"] = [
                 'property' => $property,
-                'type' => 'string',
+                'type' => 'boolean',
                 'required' => false,
                 'swagger' => [
-                    'description' => 'Filter for sign up validation purpose',
-                    'name' => 'emailToken',
-                    'type' => 'string',
+                    'description' => 'Filter on users with sending status of cardLetter',
+                    'name' => 'cardLetter',
+                    'type' => 'boolean',
                 ],
             ];
         }
