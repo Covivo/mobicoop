@@ -18,19 +18,19 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\Service;
 
 use App\App\Service\AppManager;
 use App\User\Entity\User;
-use Symfony\Component\Security\Core\User\UserProviderInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
+use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\UserProviderInterface;
 
 /**
- * User provider for token refresh
+ * User provider for token refresh.
  */
 class UserProvider implements UserProviderInterface
 {
@@ -39,9 +39,6 @@ class UserProvider implements UserProviderInterface
 
     /**
      * Constructor.
-     *
-     * @param UserManager $userManager
-     * @param AppManager $appManager
      */
     public function __construct(UserManager $userManager, AppManager $appManager)
     {
@@ -52,11 +49,12 @@ class UserProvider implements UserProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function loadUserByUsername($username)
+    public function loadUserByUsername($username): UserInterface
     {
         if ($user = $this->userManager->getUserByEmail($username)) {
             return $user;
-        } elseif ($app = $this->appManager->getAppByUsername($username)) {
+        }
+        if ($app = $this->appManager->getAppByUsername($username)) {
             return $app;
         }
 
@@ -68,7 +66,24 @@ class UserProvider implements UserProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function refreshUser(UserInterface $user)
+    public function loadUserByIdentifier($username): UserInterface
+    {
+        if ($user = $this->userManager->getUserByEmail($username)) {
+            return $user;
+        }
+        if ($app = $this->appManager->getAppByUsername($username)) {
+            return $app;
+        }
+
+        throw new UsernameNotFoundException(
+            sprintf('Username "%s" does not exist.', $username)
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function refreshUser(UserInterface $user): UserInterface
     {
         throw new UnsupportedUserException();
     }
@@ -76,7 +91,7 @@ class UserProvider implements UserProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function supportsClass($class)
+    public function supportsClass($class): bool
     {
         return User::class === $class;
     }

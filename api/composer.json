@@ -32,26 +32,26 @@
         "mandrill/mandrill": "^1.0",
         "nelmio/cors-bundle": "^2.2",
         "ocramius/package-versions": "^1.4",
-        "php-http/guzzle6-adapter": "1.1.1",
+        "php-http/guzzle7-adapter": "^1.0",
         "php-http/message": "^1.7",
         "phpdocumentor/reflection-docblock": "^5.3",
         "sendinblue/api-v3-sdk": "7.x.x",
         "sensio/framework-extra-bundle": "^5.2",
-        "symfony/asset": "4.4.*",
+        "symfony/asset": "5.4.*",
         "symfony/console": "*",
         "symfony/dotenv": "*",
-        "symfony/expression-language": "4.4.*",
+        "symfony/expression-language": "5.4.*",
         "symfony/flex": "^1.13",
         "symfony/framework-bundle": "*",
         "symfony/monolog-bundle": "^3.3",
-        "symfony/property-access": "4.4.*",
-        "symfony/property-info": "4.4.*",
-        "symfony/security-bundle": "4.4.*",
-        "symfony/serializer": "4.4.*",
-        "symfony/mailer": "4.4.*",
-        "symfony/translation": "4.4.*",
-        "symfony/twig-bundle": "4.4.*",
-        "symfony/validator": "4.4.*",
+        "symfony/property-access": "5.4.*",
+        "symfony/property-info": "5.4.*",
+        "symfony/security-bundle": "5.4.*",
+        "symfony/serializer": "5.4.*",
+        "symfony/mailer": "5.4.*",
+        "symfony/translation": "5.4.*",
+        "symfony/twig-bundle": "5.4.*",
+        "symfony/validator": "5.4.*",
         "symfony/yaml": "*",
         "twig/intl-extra": "^3.1",
         "vich/uploader-bundle": "^1.8",
@@ -107,7 +107,7 @@
     "extra": {
         "symfony": {
             "allow-contrib": false,
-            "require": "4.4.*"
+            "require": "5.4.*"
         }
     }
 }

@@ -1069,7 +1069,7 @@ class Address implements \JsonSerializable
         return $updated;
     }
 
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return
             [

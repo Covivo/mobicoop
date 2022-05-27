@@ -39,7 +39,7 @@ use App\User\Service\IdentityProofManager;
 use App\User\Service\UserManager as ServiceUserManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\Security;
 
 /**
@@ -75,7 +75,7 @@ class UserManager
         EntityManagerInterface $entityManager,
         AuthItemRepository $authItemRepository,
         TerritoryRepository $territoryRepository,
-        UserPasswordEncoderInterface $encoder,
+        UserPasswordHasherInterface $encoder,
         EventDispatcherInterface $dispatcher,
         Security $security,
         ServiceUserManager $userManager,
@@ -181,7 +181,7 @@ class UserManager
             $user->setPassword($this->userManager->randomPassword());
         }
         $user->setClearPassword($user->getPassword());
-        $user->setPassword($this->encoder->encodePassword($user, $user->getPassword()));
+        $user->setPassword($this->encoder->hashPassword($user, $user->getPassword()));
 
         if (is_null($user->getPhoneDisplay())) {
             $user->setPhoneDisplay(User::PHONE_DISPLAY_RESTRICTED);
@@ -379,7 +379,7 @@ class UserManager
             $user->setPassword($this->userManager->randomPassword());
         }
         $user->setClearPassword($user->getPassword());
-        $user->setPassword($this->encoder->encodePassword($user, $user->getPassword()));
+        $user->setPassword($this->encoder->hashPassword($user, $user->getPassword()));
 
         if (!isset($auser['phoneDisplay'])) {
             $user->setPhoneDisplay(User::PHONE_DISPLAY_RESTRICTED);

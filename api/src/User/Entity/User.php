@@ -2953,12 +2953,17 @@ class User implements UserInterface, EquatableInterface
         return $this->roles ? array_unique($this->roles) : [AuthItem::ROLE_USER_REGISTERED_FULL];
     }
 
-    public function getSalt()
+    public function getSalt(): ?string
     {
         return null;
     }
 
-    public function getUsername()
+    public function getUsername(): ?string
+    {
+        return $this->email;
+    }
+
+    public function getUserIdentifier(): ?string
     {
         return $this->email;
     }
@@ -2967,7 +2972,7 @@ class User implements UserInterface, EquatableInterface
     {
     }
 
-    public function isEqualTo(UserInterface $user)
+    public function isEqualTo(UserInterface $user): ?bool
     {
         if (!$user instanceof User) {
             return false;

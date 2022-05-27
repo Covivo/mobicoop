@@ -46,7 +46,7 @@ use App\User\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\Security;
 
 /**
@@ -75,7 +75,7 @@ class MassMigrateManager
     private $logger;
     private $languageRepository;
 
-    public function __construct(MassPersonRepository $massPersonRepository, EntityManagerInterface $entityManager, UserPasswordEncoderInterface $encoder, AuthItemRepository $authItemRepository, UserRepository $userRepository, AdManager $adManager, EventDispatcherInterface $eventDispatcher, CommunityManager $communityManager, Security $security, ImportManager $importManager, ProposalManager $proposalManager, LoggerInterface $logger, LanguageRepository $languageRepository, array $params)
+    public function __construct(MassPersonRepository $massPersonRepository, EntityManagerInterface $entityManager, UserPasswordHasherInterface $encoder, AuthItemRepository $authItemRepository, UserRepository $userRepository, AdManager $adManager, EventDispatcherInterface $eventDispatcher, CommunityManager $communityManager, Security $security, ImportManager $importManager, ProposalManager $proposalManager, LoggerInterface $logger, LanguageRepository $languageRepository, array $params)
     {
         $this->massPersonRepository = $massPersonRepository;
         $this->entityManager = $entityManager;
@@ -199,7 +199,7 @@ class MassMigrateManager
 
                     // Set an encrypted password
                     $password = $this->randomPassword();
-                    $user->setPassword($this->encoder->encodePassword($user, $password));
+                    $user->setPassword($this->encoder->hashPassword($user, $password));
                     $massPerson->setClearPassword($password); // Used to be send by email (not persisted)
                     $user->setNewsSubscription(true); // We need to send emails to this person
 

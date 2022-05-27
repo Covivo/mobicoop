@@ -19,32 +19,32 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Image\EventSubscriber;
 
 use ApiPlatform\Core\EventListener\EventPriorities;
+use App\Community\Entity\Community;
 use App\Event\Entity\Event;
 use App\Image\Entity\Image;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
-use Symfony\Component\HttpKernel\KernelEvents;
 use App\Image\Service\ImageManager;
-use App\User\Entity\User;
 use App\RelayPoint\Entity\RelayPoint;
 use App\RelayPoint\Entity\RelayPointType;
-use App\Community\Entity\Community;
+use App\User\Entity\User;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Event\ViewEvent;
+use Symfony\Component\HttpKernel\KernelEvents;
 
 final class DeleteSubscriber implements EventSubscriberInterface
 {
     private $imageManager;
-    
+
     public function __construct(ImageManager $imageManager)
     {
         $this->imageManager = $imageManager;
     }
-    
+
     public static function getSubscribedEvents()
     {
         return [
@@ -52,7 +52,7 @@ final class DeleteSubscriber implements EventSubscriberInterface
         ];
     }
 
-    public function deleteVersions(GetResponseForControllerResultEvent $event)
+    public function deleteVersions(ViewEvent $event)
     {
         $object = $event->getControllerResult();
         $method = $event->getRequest()->getMethod();
@@ -70,6 +70,5 @@ final class DeleteSubscriber implements EventSubscriberInterface
                 $this->imageManager->deleteVersions($image);
             }
         }
-        return;
     }
 }

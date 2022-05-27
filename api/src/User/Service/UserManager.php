@@ -84,7 +84,7 @@ use Exception;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -158,7 +158,7 @@ class UserManager
         AuthItemRepository $authItemRepository,
         CommunityRepository $communityRepository,
         MessageRepository $messageRepository,
-        UserPasswordEncoderInterface $encoder,
+        UserPasswordHasherInterface $encoder,
         NotificationRepository $notificationRepository,
         UserNotificationRepository $userNotificationRepository,
         AskHistoryRepository $askHistoryRepository,
@@ -520,7 +520,7 @@ class UserManager
 
         if ($encodePassword) {
             $user->setClearPassword($user->getPassword());
-            $user->setPassword($this->encoder->encodePassword($user, $user->getPassword()));
+            $user->setPassword($this->encoder->hashPassword($user, $user->getPassword()));
         }
 
         // default phone display : restricted
@@ -704,7 +704,7 @@ class UserManager
      */
     public function encodePassword(User $user, string $password)
     {
-        return $this->encoder->encodePassword($user, $password);
+        return $this->encoder->hashPassword($user, $password);
     }
 
     /**

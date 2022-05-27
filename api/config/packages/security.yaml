@@ -1,12 +1,14 @@
 security:
 
-    encoders:
+    password_hashers:
         Symfony\Component\Security\Core\User\User:
             algorithm: auto
         App\App\Entity\App:
             algorithm: auto
         App\User\Entity\User:
             algorithm: auto
+
+    enable_authenticator_manager: true
 
     # providers for authentication
     providers:
@@ -44,7 +46,7 @@ security:
         login_server:
             pattern:  ^/auth
             stateless: true
-            anonymous: true
+            # anonymous: true
             provider: servers
             json_login:
                 check_path: /auth
@@ -71,7 +73,7 @@ security:
         login_user_delegate:
             pattern:  ^/login-delegate
             stateless: true
-            anonymous: true
+            # anonymous: true
             provider: users
             guard:
                 authenticators:
@@ -81,7 +83,7 @@ security:
         login_user:
             pattern:  ^/login
             stateless: true
-            anonymous: true
+            # anonymous: true
             provider: users
             json_login:
                 check_path: /login
@@ -92,58 +94,59 @@ security:
         refresh:
             pattern:  ^/token/refresh
             stateless: true
-            anonymous: true
+            # anonymous: true
 
         # firewall for documentation
         doc:
             pattern:  ^/doc
             stateless: true
-            anonymous: true
+            # anonymous: true
 
         # firewall for R&D
         rd:
             pattern:  ^/rd/
             provider: chain_provider
             stateless: true
-            guard:
-                authenticators:
-                    - lexik_jwt_authentication.jwt_token_authenticator
+            jwt: ~
+            # guard:
+            #     authenticators:
+            #         - lexik_jwt_authentication.jwt_token_authenticator
 
         # firewall for reverse geocoding
         reverse:
             pattern:  ^/addresses/reverse
             stateless: true
-            anonymous: true
+            # anonymous: true
 
         # firewall for RDEX external requests
         rdexExternalRequests:
             pattern:  ^/rdex/journeys
             stateless: true
-            anonymous: true
+            # anonymous: true
 
         # firewall for RDEX external requests of connections
         rdexExternalRequestsConnections:
             pattern:  ^/rdex/connections
             stateless: true
-            anonymous: true
+            # anonymous: true
 
         # firewall for MangoPay external requests of payins
         mangoPayInsHook:
             pattern:  ^/mango-payins
             stateless: true
-            anonymous: true
+            # anonymous: true
 
         # firewall for MangoPay external requests of KYC
         mangoPayKycHook:
             pattern:  ^/mango-kyc
             stateless: true
-            anonymous: true
+            # anonymous: true
 
         # firewall for Campaign unsubscribe hook
         campaignUnsubscribeHook:
             pattern:  ^/campaigns/unsubscribe
             stateless: true
-            anonymous: true
+            # anonymous: true
 
         # firewall for dev (profiler)
         dev:
@@ -155,9 +158,10 @@ security:
             pattern:   ^/
             provider: chain_provider
             stateless: true
-            guard:
-                authenticators:
-                    - lexik_jwt_authentication.jwt_token_authenticator
+            jwt: ~
+            # guard:
+            #     authenticators:
+            #         - lexik_jwt_authentication.jwt_token_authenticator
 
 
     # Easy way to control access for large sections of your site

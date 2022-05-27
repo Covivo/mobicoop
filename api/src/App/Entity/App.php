@@ -19,17 +19,17 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\App\Entity;
 
 use App\Auth\Entity\AuthItem;
-use Doctrine\ORM\Mapping as ORM;
-// use ApiPlatform\Core\Annotation\ApiResource;
-use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\Common\Collections\ArrayCollection;
-use Symfony\Component\Security\Core\User\UserInterface;
+// use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\EquatableInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * An app which can have access to the api : front (web), mobile or any other app.
@@ -47,10 +47,10 @@ use Symfony\Component\Security\Core\User\EquatableInterface;
 class App implements UserInterface, EquatableInterface
 {
     // default role
-    const DEFAULT_ROLE = 1;
-    
+    public const DEFAULT_ROLE = 1;
+
     /**
-     * @var int The id of this app.
+     * @var int the id of this app
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -58,9 +58,9 @@ class App implements UserInterface, EquatableInterface
      * @Groups("read")
      */
     private $id;
-            
+
     /**
-     * @var string|null The name of the app.
+     * @var null|string the name of the app
      *
      * @ORM\Column(type="string", length=45)
      * @Groups("read")
@@ -68,7 +68,7 @@ class App implements UserInterface, EquatableInterface
     private $name;
 
     /**
-     * @var string|null The username of the app (for authentication).
+     * @var null|string the username of the app (for authentication)
      *
      * @ORM\Column(type="string", length=45)
      * @Groups("read")
@@ -76,7 +76,7 @@ class App implements UserInterface, EquatableInterface
     private $username;
 
     /**
-     * @var string The encoded password of the app.
+     * @var string the encoded password of the app
      *
      * @ORM\Column(type="string", length=100, nullable=true)
      * @Groups({"read","write"})
@@ -84,7 +84,7 @@ class App implements UserInterface, EquatableInterface
     private $password;
 
     /**
-     * @var ArrayCollection|null The auth assignments for the app.
+     * @var null|ArrayCollection the auth assignments for the app
      *
      * @ORM\ManyToMany(targetEntity="\App\Auth\Entity\AuthItem")
      * @Groups({"read","write"})
@@ -92,7 +92,7 @@ class App implements UserInterface, EquatableInterface
     private $authItems;
 
     /**
-     * @var \DateTimeInterface Creation date.
+     * @var \DateTimeInterface creation date
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read"})
@@ -100,32 +100,32 @@ class App implements UserInterface, EquatableInterface
     private $createdDate;
 
     /**
-     * @var \DateTimeInterface Updated date.
+     * @var \DateTimeInterface updated date
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read"})
      */
     private $updatedDate;
-    
+
     public function __construct()
     {
         $this->authItems = new ArrayCollection();
     }
-    
+
     public function getId(): ?int
     {
         return $this->id;
     }
-        
+
     public function getName(): ?string
     {
         return $this->name;
     }
-    
+
     public function setName(?string $name): self
     {
         $this->name = $name;
-        
+
         return $this;
     }
 
@@ -133,12 +133,17 @@ class App implements UserInterface, EquatableInterface
     {
         return $this->username;
     }
-    
+
     public function setUsername(?string $username): self
     {
         $this->username = $username;
-        
+
         return $this;
+    }
+
+    public function getUserIdentifier(): ?string
+    {
+        return $this->username;
     }
 
     public function getPassword(): ?string
@@ -149,22 +154,23 @@ class App implements UserInterface, EquatableInterface
     public function setPassword(?string $password): self
     {
         $this->password = $password;
-        
+
         return $this;
     }
 
-    public function getRoles()
+    public function getRoles(): array
     {
         // we return an array of ROLE_***
         $roles = [];
         foreach ($this->authItems as $authItem) {
-            if ($authItem->getType() == AuthItem::TYPE_ROLE) {
+            if (AuthItem::TYPE_ROLE == $authItem->getType()) {
                 $roles[] = $authItem->getName();
             }
         }
+
         return $roles;
     }
-    
+
     public function getAuthItems()
     {
         return $this->authItems->getValues();
@@ -175,29 +181,29 @@ class App implements UserInterface, EquatableInterface
         if (!$this->authItems->contains($authItem)) {
             $this->authItems[] = $authItem;
         }
-        
+
         return $this;
     }
-    
+
     public function removeAuthItem(AuthItem $authItem): self
     {
         if ($this->authItems->contains($authItem)) {
             $this->authItems->removeElement($authItem);
         }
+
         return $this;
     }
 
-
-    public function getSalt()
+    public function getSalt(): ?string
     {
-        return  null;
+        return null;
     }
 
     public function eraseCredentials()
     {
     }
 
-    public function isEqualTo(UserInterface $app)
+    public function isEqualTo(UserInterface $app): ?bool
     {
         if (!$app instanceof App) {
             return false;
@@ -244,7 +250,7 @@ class App implements UserInterface, EquatableInterface
     }
 
     // DOCTRINE EVENTS
-    
+
     /**
      * Creation date.
      *

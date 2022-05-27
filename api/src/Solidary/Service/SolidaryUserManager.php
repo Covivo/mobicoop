@@ -48,7 +48,7 @@ use App\User\Repository\UserRepository;
 use App\User\Service\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\Security;
 
 /**
@@ -82,7 +82,7 @@ class SolidaryUserManager
         DiaryRepository $diaryRepository,
         SolidaryRepository $solidaryRepository,
         AuthItemRepository $authItemRepository,
-        UserPasswordEncoderInterface $encoder,
+        UserPasswordHasherInterface $encoder,
         StructureProofRepository $structureProofRepository,
         UserManager $userManager,
         NeedRepository $needRepository,
@@ -546,7 +546,7 @@ class SolidaryUserManager
 
                 // Set an encrypted password
                 $password = $this->userManager->randomString();
-                $user->setPassword($this->encoder->encodePassword($user, $password));
+                $user->setPassword($this->encoder->hashPassword($user, $password));
                 $user->setClearPassword($password); // Used to be send by email (not persisted)
 
                 // auto valid the registration
