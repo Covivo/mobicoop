@@ -23,15 +23,17 @@
 
 namespace App\Communication\Service;
 
-use App\Communication\Entity\Email;
+use App\Communication\Entity\Email as EntityEmail;
 use App\Communication\Ressource\ContactType;
 use function GuzzleHttp\json_decode;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 
 /**
- * Email sending service via Swift_Mailer.
+ * Email sending service.
  *
  * @author Maxime Bardot <maxime.bardot@covivo.eu>
  */
@@ -52,7 +54,7 @@ class EmailManager
     /**
      * EmailManager constructor.
      */
-    public function __construct(\Swift_Mailer $mailer, Environment $templating, LoggerInterface $logger, TranslatorInterface $translator, string $emailSender, string $emailSenderName, string $emailReplyTo, string $emailReplyToName, string $emailAdditionalHeaders)
+    public function __construct(MailerInterface $mailer, Environment $templating, LoggerInterface $logger, TranslatorInterface $translator, string $emailSender, string $emailSenderName, string $emailReplyTo, string $emailReplyToName, string $emailAdditionalHeaders)
     {
         $this->mailer = $mailer;
         $this->templating = $templating;
@@ -75,21 +77,20 @@ class EmailManager
      *
      * @return string
      */
-    public function send(Email $mail, $template, $context = [], $lang = 'fr')
+    public function send(EntityEmail $email, $template, $context = [], $lang = 'fr')
     {
-        $failures = '';
         // sender
-        if (is_null($mail->getSenderEmail()) || '' === trim($mail->getSenderEmail())) {
+        if (is_null($email->getSenderEmail()) || '' === trim($email->getSenderEmail())) {
             $senderEmail = $this->emailSenderDefault;
         } else {
-            $senderEmail = $mail->getSenderEmail();
+            $senderEmail = $email->getSenderEmail();
         }
 
         // reply
-        if (is_null($mail->getReturnEmail()) || '' === trim($mail->getReturnEmail())) {
+        if (is_null($email->getReturnEmail()) || '' === trim($email->getReturnEmail())) {
             $replyToEmail = $this->emailReplyToDefault;
         } else {
-            $replyToEmail = $mail->getReturnEmail();
+            $replyToEmail = $email->getReturnEmail();
         }
 
         $sessionLocale = $this->translator->getLocale();
@@ -102,16 +103,17 @@ class EmailManager
 
         $senderName = ('' !== $this->emailSenderNameDefault) ? $this->emailSenderNameDefault : $senderEmail;
         $senderReplyToName = ('' !== $this->emailReplyToNameDefault) ? $this->emailReplyToNameDefault : $replyToEmail;
-        $message = (new \Swift_Message($mail->getObject()))
-            ->setFrom($senderEmail, $senderName)
-            ->setTo($mail->getRecipientEmail())
-            ->setReplyTo($replyToEmail, $senderReplyToName)
-            ->setBody(
+        $message = (new Email())
+            ->subject($email->getObject())
+            ->from($senderEmail, $senderName)
+            ->to($email->getRecipientEmail())
+            ->replyTo($replyToEmail, $senderReplyToName)
+            ->html(
                 $this->templating->render(
                     $template.'.html.twig',
                     [
                         'context' => $context,
-                        'message' => str_replace(["\r\n", "\r", "\n"], '<br />', $mail->getMessage()),
+                        'message' => str_replace(["\r\n", "\r", "\n"], '<br />', $email->getMessage()),
                     ]
                 ),
                 'text/html'
@@ -119,11 +121,11 @@ class EmailManager
         ;
 
         // We check if we have to send the email to Bcc or Cc recipients
-        if ($mail->getRecipientEmailBcc()) {
-            $message->setBcc($mail->getRecipientEmailBcc());
+        if ($email->getRecipientEmailBcc()) {
+            $message->bcc($email->getRecipientEmailBcc());
         }
-        if ($mail->getRecipientEmailCc()) {
-            $message->setCc($mail->getRecipientEmailCc());
+        if ($email->getRecipientEmailCc()) {
+            $message->cc($email->getRecipientEmailCc());
         }
 
         // we send the email with a specific textheader if the reciepient is the support's email and if specific header is present
@@ -131,9 +133,9 @@ class EmailManager
             $headers = json_decode($this->emailAdditionalHeaders, true);
             foreach ($headers as $key => $value) {
                 if ('senderEmail' == $this->translator->trans($value)) {
-                    $data = $mail->getSenderEmail();
+                    $data = $email->getSenderEmail();
                 } elseif ('senderName' == $this->translator->trans($value)) {
-                    $data = $mail->getSenderName().' '.$mail->getSenderFirstName();
+                    $data = $email->getSenderName().' '.$email->getSenderFirstName();
                 } else {
                     $data = $this->translator->trans($value);
                 }
@@ -143,6 +145,6 @@ class EmailManager
 
         $this->translator->setLocale($sessionLocale);
 
-        return $this->mailer->send($message, $failures);
+        return $this->mailer->send($message);
     }
 }
