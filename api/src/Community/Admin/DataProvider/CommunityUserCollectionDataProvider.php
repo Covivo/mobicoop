@@ -19,14 +19,14 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Community\Admin\DataProvider;
 
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use App\Community\Entity\CommunityUser;
 use App\Community\Admin\Service\CommunityManager;
+use App\Community\Entity\CommunityUser;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Security;
 
@@ -34,11 +34,10 @@ use Symfony\Component\Security\Core\Security;
  * Collection member data provider in admin context.
  *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
- *
  */
 final class CommunityUserCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
-    protected $request;
+    private $request;
     private $communityManager;
     private $security;
 
@@ -51,11 +50,11 @@ final class CommunityUserCollectionDataProvider implements CollectionDataProvide
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return CommunityUser::class === $resourceClass && $operationName === "ADMIN_get";
+        return CommunityUser::class === $resourceClass && 'ADMIN_get' === $operationName;
     }
 
     public function getCollection(string $resourceClass, string $operationName = null, array $context = [])
     {
-        return $this->communityManager->getMembers($this->request->get("id"), $context, $operationName);
+        return $this->communityManager->getMembers($this->request->get('id'), $operationName, $context);
     }
 }

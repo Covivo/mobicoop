@@ -125,9 +125,6 @@
     "geo6/geocoder-php-addok-provider": {
         "version": "v1.2.0"
     },
-    "geocoder-php/bing-maps-provider": {
-        "version": "4.0.0"
-    },
     "geocoder-php/chain-provider": {
         "version": "4.0.1"
     },
@@ -136,12 +133,6 @@
     },
     "geocoder-php/google-maps-provider": {
         "version": "4.3.0"
-    },
-    "geocoder-php/here-provider": {
-        "version": "0.1.0"
-    },
-    "geocoder-php/open-cage-provider": {
-        "version": "4.2.0"
     },
     "geocoder-php/plugin": {
         "version": "1.1.0"
@@ -305,6 +296,9 @@
             "ref": "fb7e19da7f013d0d422fa9bce16f5c510e27609b"
         }
     },
+    "stella-maris/clock": {
+        "version": "0.1.4"
+    },
     "symfony/asset": {
         "version": "v4.2.3"
     },
@@ -366,13 +360,23 @@
         }
     },
     "symfony/framework-bundle": {
-        "version": "4.2",
+        "version": "5.4",
         "recipe": {
             "repo": "github.com/symfony/recipes",
-            "branch": "master",
-            "version": "4.2",
-            "ref": "5bb3a8c27df824d195fa68bb635d074854f8498f"
-        }
+            "branch": "main",
+            "version": "5.4",
+            "ref": "3cd216a4d007b78d8554d44a5b1c0a446dab24fb"
+        },
+        "files": [
+            "config/packages/cache.yaml",
+            "config/packages/framework.yaml",
+            "config/preload.php",
+            "config/routes/framework.yaml",
+            "config/services.yaml",
+            "public/index.php",
+            "src/Controller/.gitignore",
+            "src/Kernel.php"
+        ]
     },
     "symfony/http-foundation": {
         "version": "v4.2.3"

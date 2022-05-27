@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Community\DataProvider;
 
@@ -32,14 +32,13 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Security;
 
 /**
- * Get the members of a community
+ * Get the members of a community.
  *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
- *
  */
 final class CommunityMembersGetItemDataProvider implements ItemDataProviderInterface, RestrictedDataProviderInterface
 {
-    protected $request;
+    private $request;
     private $communityManager;
     private $security;
 
@@ -53,11 +52,11 @@ final class CommunityMembersGetItemDataProvider implements ItemDataProviderInter
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Community::class === $resourceClass && $operationName === "members";
+        return Community::class === $resourceClass && 'members' === $operationName;
     }
 
     public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): CommunityMembersList
     {
-        return $this->communityManager->getMembers($id, $context, $operationName);
+        return $this->communityManager->getMembers($id, $operationName, $context);
     }
 }

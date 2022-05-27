@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\RelayPoint\Service;
 
@@ -39,7 +39,6 @@ class RelayPointMapManager
     private $relayPointManager;
     private $dataPath;
 
-
     /**
      * Constructor.
      *
@@ -56,48 +55,46 @@ class RelayPointMapManager
     }
 
     /**
-     * Method to get all RelayPointsMap
-     *
-     * @param User|null $user
-     * @param array $context
-     * @return array
+     * Method to get all RelayPointsMap.
      */
     public function getRelayPointsMap(?User $user, array $context): array
     {
         $relayPointsMap = [];
-        $relayPoints = $this->relayPointManager->getRelayPoints($user, $context, "");
+        $relayPoints = $this->relayPointManager->getRelayPoints($user, '', $context);
         foreach ($relayPoints as $relayPoint) {
             if (!is_null($this->buildRelayPointMap($relayPoint))) {
                 $relayPointsMap[] = $this->buildRelayPointMap($relayPoint);
             }
         }
-        
+
         return $relayPointsMap;
     }
 
     /**
-     * Method to get all RelayPointsMap for a community
-     * @var int $id Id of the community
-     * @return array
+     * Method to get all RelayPointsMap for a community.
+     *
+     * @var int Id of the community
      */
     public function getRelayPointsMapCommunity(int $id): array
     {
         $relayPointsMap = [];
-        
+
         // we get all RelayPoints of a community
         $community = $this->communityManager->getCommunity($id);
 
         foreach ($community->getRelayPoints() as $relayPoint) {
             $relayPointsMap[] = $this->buildRelayPointMap($relayPoint);
         }
+
         return $relayPointsMap;
     }
 
     /**
-     * Build a RelayPointMap from a RelayPoint
+     * Build a RelayPointMap from a RelayPoint.
      *
      * @param RelayPoint $relayPoint The base RelayPoint
-     * @return RelayPointMap    The builded RelayPointMap
+     *
+     * @return RelayPointMap The builded RelayPointMap
      */
     private function buildRelayPointMap(RelayPoint $relayPoint): ?RelayPointMap
     {
@@ -113,10 +110,11 @@ class RelayPointMapManager
         $relayPointMap->setSecured($relayPoint->isSecured());
         $relayPointMap->setOfficial($relayPoint->isOfficial());
 
-        if (!is_null($relayPoint->getImages()) && count($relayPoint->getImages())>0 &&
-            file_exists("upload/".RelayPointMap::IMAGE_PATH."/".RelayPointMap::IMAGE_VERSION."-".$relayPoint->getImages()[0]->getFileName())) {
-            $relayPointMap->setImage($this->dataPath.RelayPointMap::IMAGE_PATH."/".RelayPointMap::IMAGE_VERSION."-".$relayPoint->getImages()[0]->getFileName());
+        if (!is_null($relayPoint->getImages()) && count($relayPoint->getImages()) > 0
+            && file_exists('upload/'.RelayPointMap::IMAGE_PATH.'/'.RelayPointMap::IMAGE_VERSION.'-'.$relayPoint->getImages()[0]->getFileName())) {
+            $relayPointMap->setImage($this->dataPath.RelayPointMap::IMAGE_PATH.'/'.RelayPointMap::IMAGE_VERSION.'-'.$relayPoint->getImages()[0]->getFileName());
         }
+
         return $relayPointMap;
     }
 }

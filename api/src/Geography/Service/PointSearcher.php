@@ -52,12 +52,12 @@ class PointSearcher
         int $maxRelayPointResults,
         int $maxEventResults,
         int $maxUserResults,
+        array $relayPointParams,
         array $prioritizeCentroid = null,
         array $prioritizeBox = null,
         string $prioritizeRegion = null,
         string $restrictCountry = null,
-        array $exclusionTypes = [],
-        array $relayPointParams
+        array $exclusionTypes = []
     ) {
         $user = $security->getUser();
         $userPointProvider = new UserPointProvider($addressRepository, $translator);

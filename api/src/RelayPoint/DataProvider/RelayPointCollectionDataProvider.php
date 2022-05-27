@@ -18,13 +18,12 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\RelayPoint\DataProvider;
 
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
 use App\RelayPoint\Entity\RelayPoint;
 use App\RelayPoint\Service\RelayPointManager;
 use App\User\Entity\User;
@@ -49,14 +48,14 @@ final class RelayPointCollectionDataProvider implements CollectionDataProviderIn
         return RelayPoint::class === $resourceClass;
     }
 
-    public function getCollection(string $resourceClass, string $operationName = null, array $context = [])
+    public function getCollection(string $resourceClass, string $operationName = null, array $context = []): iterable
     {
         $user = null;
-        
+
         if ($this->security->getUser() instanceof User) {
             $user = $this->security->getUser();
         }
-        
-        return $this->relayPointManager->getRelayPoints($user, $context, $operationName);
+
+        return $this->relayPointManager->getRelayPoints($user, $operationName, $context);
     }
 }

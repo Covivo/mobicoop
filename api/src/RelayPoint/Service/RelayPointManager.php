@@ -19,16 +19,16 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\RelayPoint\Service;
 
-use Psr\Log\LoggerInterface;
-use Doctrine\ORM\EntityManagerInterface;
 use App\RelayPoint\Entity\RelayPoint;
 use App\RelayPoint\Repository\RelayPointRepository;
 use App\RelayPoint\Repository\RelayPointTypeRepository;
 use App\User\Entity\User;
+use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * Relay point manager.
@@ -45,10 +45,7 @@ class RelayPointManager
     private $logger;
 
     /**
-     * Constructor
-     *
-     * @param EntityManagerInterface $entityManager
-     * @param LoggerInterface $logger
+     * Constructor.
      */
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -65,8 +62,7 @@ class RelayPointManager
     /**
      * Get a relayPoint by its id.
      *
-     * @param integer $id
-     * @return RelayPoint|null
+     * @return null|RelayPoint
      */
     public function getRelayPoint(int $id)
     {
@@ -76,8 +72,7 @@ class RelayPointManager
     /**
      * Get a relayPointType by its id.
      *
-     * @param integer $id
-     * @return RelayPointType|null
+     * @return null|RelayPointType
      */
     public function getRelayPointType(int $id)
     {
@@ -85,13 +80,14 @@ class RelayPointManager
     }
 
     /**
-     * Get the public relaypoints and some private if the current user is entitled to (i.e community...)
+     * Get the public relaypoints and some private if the current user is entitled to (i.e community...).
      *
      * @param User $user The User who make the request
+     *
      * @return RelayPoint[]
      */
-    public function getRelayPoints(User $user=null, array $context = [], string $operationName)
+    public function getRelayPoints(User $user = null, string $operationName, array $context = [])
     {
-        return $this->relayPointRepository->findRelayPoints($user, $context, $operationName);
+        return $this->relayPointRepository->findRelayPoints($user, $operationName, $context);
     }
 }

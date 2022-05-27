@@ -430,14 +430,14 @@ class CommunityManager
         return [];
     }
 
-    public function getMembers(int $communityId, array $context = [], string $operationName): CommunityMembersList
+    public function getMembers(int $communityId, string $operationName, array $context = []): CommunityMembersList
     {
         $communityMembers = [];
 
         $community = $this->communityRepository->find($communityId);
 
         if ($community) {
-            $communityUsers = $this->communityUserRepository->findForCommunity($community, $context, $operationName);
+            $communityUsers = $this->communityUserRepository->findForCommunity($community, $operationName, $context);
 
             foreach ($communityUsers as $communityUser) {
                 $communityMember = new CommunityMember();

@@ -149,7 +149,7 @@ class RelayPointRepository
      *
      * @return null|array The relay points found
      */
-    public function findRelayPoints(User $user = null, array $context = [], string $operationName): PaginatorInterface
+    public function findRelayPoints(User $user = null, string $operationName, array $context = []): PaginatorInterface
     {
         $query = $this->repository->createQueryBuilder('rp');
 
