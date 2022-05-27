@@ -29,9 +29,9 @@ use ApiPlatform\Core\DataProvider\PaginatorInterface;
 use App\Community\Entity\Community;
 use App\RelayPoint\Entity\RelayPoint;
 use App\User\Entity\User;
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @method null|RelayPoint find($id, $lockMode = null, $lockVersion = null)

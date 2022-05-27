@@ -28,7 +28,7 @@ use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\Solidary\Admin\Service\SolidaryManager;
 use App\Solidary\Entity\Solidary;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * Get the solidary records in admin context.
@@ -117,7 +117,7 @@ final class SolidaryCollectionDataProvider implements CollectionDataProviderInte
         $queryBuilder
             ->andWhere("$rootAlias.status != :status")
             ->setParameter('status', Solidary::STATUS_CLOSED_FOR_EDITION);
-        
+
         foreach ($this->collectionExtensions as $extension) {
             $extension->applyToCollection($queryBuilder, $queryNameGenerator, $resourceClass, $operationName, $newContext);
             if ($extension instanceof QueryResultCollectionExtensionInterface && $extension->supportsResult($resourceClass, $operationName)) {

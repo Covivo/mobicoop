@@ -27,7 +27,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\PaginationExtension;
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\User\Entity\User;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGenerator;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryResultCollectionExtensionInterface;
 use App\Auth\Service\AuthManager;
@@ -55,7 +55,7 @@ final class UserCampaignSendCollectionDataProvider implements CollectionDataProv
     private $campaignManager;
 
     const MAX_RESULTS = 999999;
-    
+
     public function __construct(RequestStack $requestStack, CampaignRepository $campaignRepository, AuthManager $authManager, CampaignManager $campaignManager, ManagerRegistry $managerRegistry, iterable $collectionExtensions)
     {
         $this->collectionExtensions = $collectionExtensions;
@@ -65,12 +65,12 @@ final class UserCampaignSendCollectionDataProvider implements CollectionDataProv
         $this->authManager = $authManager;
         $this->campaignManager = $campaignManager;
     }
-    
+
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
         return User::class === $resourceClass && $operationName === "ADMIN_send_campaign";
     }
-    
+
     public function getCollection(string $resourceClass, string $operationName = null, array $context = []): iterable
     {
         // check if campaignId is sent

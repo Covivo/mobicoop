@@ -29,7 +29,7 @@ use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\Solidary\Admin\Service\SolidaryBeneficiaryManager;
 use App\Solidary\Entity\SolidaryBeneficiary;
 use App\Solidary\Entity\SolidaryUser;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * Get the solidary beneficiaries in admin context.
@@ -121,14 +121,14 @@ final class SolidaryBeneficiaryCollectionDataProvider implements CollectionDataP
         // we add the beneficiary flag to keep only beneficiaries (and not volunteers)
         $rootAlias = $queryBuilder->getRootAliases()[0];
         $queryBuilder->andWhere("$rootAlias.beneficiary = 1");
-        
+
         foreach ($this->collectionExtensions as $extension) {
             $extension->applyToCollection($queryBuilder, $queryNameGenerator, SolidaryUser::class, $operationName, $newContext);
             if ($extension instanceof QueryResultCollectionExtensionInterface && $extension->supportsResult(SolidaryUser::class, $operationName)) {
                 $solidaryUsers = $extension->getResult($queryBuilder, SolidaryUser::class, $operationName);
             }
         }
-        
+
         // we now have the SolidayUser array, transform to a SolidaryBeneficiary array and return it
         return $this->solidaryBeneficiaryManager->getSolidaryBeneficiaries($solidaryUsers);
     }

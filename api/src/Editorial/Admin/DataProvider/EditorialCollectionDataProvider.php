@@ -29,7 +29,7 @@ use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\Editorial\Entity\Editorial;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * Collection editorial data provider in admin context.

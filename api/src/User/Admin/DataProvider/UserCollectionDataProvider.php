@@ -26,7 +26,7 @@ namespace App\User\Admin\DataProvider;
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\User\Entity\User;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGenerator;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryResultCollectionExtensionInterface;
 
@@ -40,18 +40,18 @@ final class UserCollectionDataProvider implements CollectionDataProviderInterfac
 {
     private $collectionExtensions;
     private $managerRegistry;
-    
+
     public function __construct(ManagerRegistry $managerRegistry, iterable $collectionExtensions)
     {
         $this->collectionExtensions = $collectionExtensions;
         $this->managerRegistry = $managerRegistry;
     }
-    
+
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
         return User::class === $resourceClass && $operationName === "ADMIN_get";
     }
-    
+
     public function getCollection(string $resourceClass, string $operationName = null, array $context = []): iterable
     {
         $manager = $this->managerRegistry->getManagerForClass($resourceClass);

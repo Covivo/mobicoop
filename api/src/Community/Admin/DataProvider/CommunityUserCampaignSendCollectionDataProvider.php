@@ -36,7 +36,7 @@ use App\MassCommunication\Entity\Delivery;
 use App\MassCommunication\Exception\CampaignException;
 use App\MassCommunication\Repository\CampaignRepository;
 use App\User\Entity\User;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 

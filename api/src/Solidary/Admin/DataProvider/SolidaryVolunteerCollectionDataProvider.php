@@ -29,7 +29,7 @@ use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\Solidary\Admin\Service\SolidaryVolunteerManager;
 use App\Solidary\Entity\SolidaryVolunteer;
 use App\Solidary\Entity\SolidaryUser;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * Get the solidary volunteers in admin context.
@@ -105,14 +105,14 @@ final class SolidaryVolunteerCollectionDataProvider implements CollectionDataPro
         // we add the volunteer flag to keep only volunteers (and not beneficiaries)
         $rootAlias = $queryBuilder->getRootAliases()[0];
         $queryBuilder->andWhere("$rootAlias.volunteer = 1");
-        
+
         foreach ($this->collectionExtensions as $extension) {
             $extension->applyToCollection($queryBuilder, $queryNameGenerator, SolidaryUser::class, $operationName, $newContext);
             if ($extension instanceof QueryResultCollectionExtensionInterface && $extension->supportsResult(SolidaryUser::class, $operationName)) {
                 $solidaryUsers = $extension->getResult($queryBuilder, SolidaryUser::class, $operationName);
             }
         }
-        
+
         // we now have the SolidayUser array, transform to a SolidaryVolunteer array and return it
         return $this->solidaryVolunteerManager->getSolidaryVolunteers($solidaryUsers);
     }

@@ -27,7 +27,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\PaginationExtension;
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\User\Entity\User;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGenerator;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryResultCollectionExtensionInterface;
 use App\Auth\Service\AuthManager;
@@ -56,7 +56,7 @@ final class UserCampaignAssociateCollectionDataProvider implements CollectionDat
     private $campaignManager;
 
     const MAX_RESULTS = 999999;
-    
+
     public function __construct(RequestStack $requestStack, UserRepository $userRepository, CampaignRepository $campaignRepository, AuthManager $authManager, CampaignManager $campaignManager, ManagerRegistry $managerRegistry, iterable $collectionExtensions)
     {
         $this->collectionExtensions = $collectionExtensions;
@@ -67,12 +67,12 @@ final class UserCampaignAssociateCollectionDataProvider implements CollectionDat
         $this->authManager = $authManager;
         $this->campaignManager = $campaignManager;
     }
-    
+
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
         return User::class === $resourceClass && $operationName === "ADMIN_associate_campaign";
     }
-    
+
     public function getCollection(string $resourceClass, string $operationName = null, array $context = []): iterable
     {
         // check if campaignId is sent
@@ -89,7 +89,7 @@ final class UserCampaignAssociateCollectionDataProvider implements CollectionDat
         if (!$this->authManager->isAuthorized('campaign_update', ['campaign'=>$campaign])) {
             return new Response('Unauthorized', Response::HTTP_UNAUTHORIZED);
         }
-        
+
         // check if filterType is sent
         if (!$this->request->get('filterType')) {
             throw new CampaignException('Filter type is mandatory');
@@ -102,7 +102,7 @@ final class UserCampaignAssociateCollectionDataProvider implements CollectionDat
 
         // source is always 1 here
         $campaign->setSource(Campaign::SOURCE_USER);
-        
+
         // filter type
         $campaign->setFilterType($this->request->get('filterType'));
 
@@ -129,7 +129,7 @@ final class UserCampaignAssociateCollectionDataProvider implements CollectionDat
                 // we force the selection to the users that have accepted the news subscription
                 $rootAlias = $queryBuilder->getRootAliases()[0];
                 $queryBuilder->andWhere("$rootAlias.newsSubscription = 1");
-                
+
                 foreach ($this->collectionExtensions as $extension) {
                     $extension->applyToCollection($queryBuilder, $queryNameGenerator, $resourceClass, $operationName, $context);
                     // remove pagination

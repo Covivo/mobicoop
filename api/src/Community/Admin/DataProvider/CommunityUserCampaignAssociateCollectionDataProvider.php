@@ -28,7 +28,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\PaginationExtension;
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\Community\Entity\CommunityUser;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGenerator;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryResultCollectionExtensionInterface;
 use App\Auth\Service\AuthManager;
@@ -59,7 +59,7 @@ final class CommunityUserCampaignAssociateCollectionDataProvider implements Coll
     private $campaignManager;
 
     const MAX_RESULTS = 999999;
-    
+
     public function __construct(RequestStack $requestStack, CommunityUserRepository $communityUserRepository, CampaignRepository $campaignRepository, CommunityRepository $communityRepository, AuthManager $authManager, CampaignManager $campaignManager, ManagerRegistry $managerRegistry, iterable $collectionExtensions)
     {
         $this->collectionExtensions = $collectionExtensions;
@@ -71,12 +71,12 @@ final class CommunityUserCampaignAssociateCollectionDataProvider implements Coll
         $this->authManager = $authManager;
         $this->campaignManager = $campaignManager;
     }
-    
+
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
         return CommunityUser::class === $resourceClass && $operationName === "ADMIN_associate_campaign";
     }
-    
+
     public function getCollection(string $resourceClass, string $operationName = null, array $context = []): iterable
     {
         // check if campaignId is sent
@@ -118,7 +118,7 @@ final class CommunityUserCampaignAssociateCollectionDataProvider implements Coll
         $campaign->setSource(Campaign::SOURCE_COMMUNITY);
         $campaign->setSourceId($community->getId());
         $campaign->setSourceName($community->getName());
-        
+
         // filter type
         $campaign->setFilterType($this->request->get('filterType'));
 
@@ -148,7 +148,7 @@ final class CommunityUserCampaignAssociateCollectionDataProvider implements Coll
                 $queryBuilder->andWhere("$rootAlias.community = :community and u.newsSubscription = 1 and $rootAlias.status IN (:statuses)")
                 ->setParameter('statuses', [CommunityUser::STATUS_ACCEPTED_AS_MEMBER,CommunityUser::STATUS_ACCEPTED_AS_MODERATOR])
                 ->setParameter('community', $community);
-                
+
                 foreach ($this->collectionExtensions as $extension) {
                     $extension->applyToCollection($queryBuilder, $queryNameGenerator, $resourceClass, $operationName, $context);
                     // remove pagination
