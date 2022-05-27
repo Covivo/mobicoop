@@ -46,10 +46,10 @@
         "symfony/monolog-bundle": "^3.3",
         "symfony/property-access": "4.4.*",
         "symfony/property-info": "4.4.*",
-        "symfony/security-bundle": "^4.0",
+        "symfony/security-bundle": "^4.4",
         "symfony/serializer": "4.4.*",
         "symfony/swiftmailer-bundle": "^3.2",
-        "symfony/translation": "^4.0",
+        "symfony/translation": "^4.4",
         "symfony/twig-bundle": "4.4.*",
         "symfony/validator": "4.4.*",
         "symfony/yaml": "*",
@@ -66,7 +66,10 @@
             "*": "dist"
         },
         "sort-packages": true,
-        "process-timeout": 0
+        "process-timeout": 0,
+        "allow-plugins": {
+            "symfony/flex": true
+        }
     },
     "autoload": {
         "psr-4": {
