@@ -92,6 +92,12 @@
 /api/public/upload/editorials/images/versions/*.jpg
 /api/public/upload/editorials/images/versions/*.jpeg
 /api/public/upload/editorials/images/versions/*.png
+/api/public/upload/structures/images/*.jpg
+/api/public/upload/structures/images/*.jpeg
+/api/public/upload/structures/images/*.png
+/api/public/upload/structures/images/versions/*.jpg
+/api/public/upload/structures/images/versions/*.jpeg
+/api/public/upload/structures/images/versions/*.png
 /api/public/upload/mass/files/*.csv
 /api/public/upload/mass/files/*.xml
 /api/public/upload/mass/files/*.zip
