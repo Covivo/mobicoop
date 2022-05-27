@@ -7,13 +7,9 @@ services:
     ports:
       - '9000:9000'
       - '8079:8079'
-      - '8080:8080'
       - '8081:8081'
-      - '8082:8082'
     working_dir: /var/www
     command: npm start
-    # entrypoint: ["bash", "/var/www/docker/api_bdd_import.sh"]
-    # entrypoint: bash /docker/api_entrypoint.sh
     depends_on:
       - db
     tty: true
@@ -24,6 +20,52 @@ services:
       - ./build/cache:/root/.cache/:cached
     networks:
       - mobicoop_platform
+
+  api_php:
+    build:
+      context: api
+      target: mobicoop_platform_api_php
+    container_name: ${API_PHP_CONTAINER_NAME}
+    environment:
+      APP_ENV: dev
+    ports:
+      - target: ${API_PHP_PORT_TARGET:-9001}
+        published: ${API_PHP_PORT_PUBLISHED:-9100}
+        protocol: tcp
+    volumes:
+      - php_socket_api:/var/run/php
+      - ./api:/srv/api:rw
+      - ./api/var:/srv/api/var:rw
+      - ./api/docker/api/conf.d/mobicoop-platform-api.dev.ini:/usr/local/etc/php/conf.d/mobicoop-platform.ini
+    networks:
+      - mobicoop_platform
+    healthcheck:
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 30s
+    restart: unless-stopped
+    depends_on:
+      - db
+
+  api_nginx:
+    build:
+      context: api
+      target: mobicoop_platform_api_nginx
+    container_name: ${API_NGINX_CONTAINER_NAME}
+    ports:
+      - target: ${API_NGINX_PORT_TARGET:-80}
+        published: ${API_NGINX_PORT_PUBLISHED:-8080}
+        protocol: tcp
+    volumes:
+      - php_socket_api:/var/run/php
+      - ./api/public:/srv/api/public:ro
+      - ./api/nginx/logs:/var/log/nginx:rw
+    networks:
+      - mobicoop_platform
+    restart: unless-stopped
+    depends_on:
+      - api_php
 
   db:
     image: mariadb:10.4
@@ -52,6 +94,9 @@ services:
         - "8083:80"
     networks:
       - mobicoop_platform
+
+volumes:
+  php_socket_api:
 
 networks:
   mobicoop_platform:

@@ -20,7 +20,7 @@
     "test-functional-ci": "cd client && npm run test-functional-ci",
     "test-functional-ci-cypress": "cd client && npm run test-functional-ci-cypress",
     "test-and-coverage-mobicoop": "cd client && npm run test-and-coverage",
-    "start": "npm-run-all --parallel start-api start-mobicoop",
+    "start": "npm-run-all --parallel start-mobicoop",
     "start-ci": "npm-run-all --silent --parallel start-api-ci start-mobicoop-ci",
     "start-api": "cd api && npm start",
     "start-api-ci": "cd api && npm run start-ci",

@@ -380,3 +380,5 @@ $RECYCLE.BIN/
 
 # SSO Services
 /config/user/sso.json
+
+/nginx/

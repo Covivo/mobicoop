@@ -19,12 +19,12 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\ExternalJourney\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiResource;
 
 /**
  * An external carpool journey provided by a partner provider.
@@ -89,7 +89,7 @@ use ApiPlatform\Core\Annotation\ApiProperty;
  *           }
  *      }
  *    },
-*          "ADMIN_get"={
+ *          "ADMIN_get"={
  *              "path"="/admin/external_journeys",
  *              "method"="GET",
  *              "normalization_context"={
@@ -101,7 +101,7 @@ use ApiPlatform\Core\Annotation\ApiProperty;
  *                  "tags"={"Administration"}
  *              }
  *          },
-
+ *
  *      },
  *      itemOperations={
  *          "get" = {
@@ -121,4 +121,16 @@ class ExternalJourney
     // No field because this ressource is only used to make api call.
     // Every parameters are passed in GET params in the url. The body is empty.
     // The answer is a collection of App\Carpool\Entity\Results or a raw Json depending of the rawJson parameter.
+
+    /**
+     * @var int the id of this external journey
+     *
+     * @ApiProperty(identifier=true)
+     */
+    private $id;
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
 }

@@ -144,6 +144,9 @@
     "phpdocumentor/type-resolver": {
         "version": "0.4.0"
     },
+    "phpunit/php-token-stream": {
+        "version": "3.1.3"
+    },
     "psr/cache": {
         "version": "1.0.1"
     },
@@ -482,9 +485,6 @@
             "config/routes/dev/twig.yaml",
             "templates/base.html.twig"
         ]
-    },
-    "symfony/twig-pack": {
-        "version": "v1.0.1"
     },
     "symfony/validator": {
         "version": "4.1",
