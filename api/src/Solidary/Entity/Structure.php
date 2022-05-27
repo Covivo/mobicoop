@@ -584,6 +584,13 @@ class Structure
      */
     private $removable;
 
+    /**
+     * @var string the structure logo file path
+     *
+     * @Groups("aRead")
+     */
+    private $logoPath;
+
     public function __construct()
     {
         $this->solidaries = new ArrayCollection();
@@ -1398,6 +1405,13 @@ class Structure
     public function isRemovable(): ?bool
     {
         return 0 == count($this->getSolidaryUserStructures());
+    }
+
+    public function setLogoPath(?string $logoPath): self
+    {
+        $this->logoPath = $logoPath;
+
+        return $this;
     }
 
     // DOCTRINE EVENTS

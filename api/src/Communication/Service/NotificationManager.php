@@ -95,6 +95,7 @@ class NotificationManager
     private $proposalManager;
     private $communicationFolder;
     private $altCommunicationFolder;
+    private $structureLogoUri;
 
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -120,7 +121,8 @@ class NotificationManager
         AdManager $adManager,
         ProposalManager $proposalManager,
         string $communicationFolder,
-        string $altCommunicationFolder
+        string $altCommunicationFolder,
+        string $structureLogoUri
     ) {
         $this->entityManager = $entityManager;
         $this->internalMessageManager = $internalMessageManager;
@@ -146,6 +148,7 @@ class NotificationManager
         $this->proposalManager = $proposalManager;
         $this->communicationFolder = $communicationFolder;
         $this->altCommunicationFolder = $altCommunicationFolder;
+        $this->structureLogoUri = $structureLogoUri;
     }
 
     /**
@@ -286,6 +289,11 @@ class NotificationManager
     {
         $email = new Email();
         $email->setRecipientEmail($recipient->getEmail());
+        $structure = null;
+        if (!is_null($recipient->getSolidaryUser())) {
+            $structure = $recipient->getSolidaryUser()->getSolidaryUserStructures()[0]->getStructure();
+            $structure->setLogoPath($this->structureLogoUri.$structure->getImages()[0]->getFileName());
+        }
         $titleContext = [];
         $bodyContext = [];
         if ($object) {
@@ -385,7 +393,7 @@ class NotificationManager
 
                 case User::class:
                     $titleContext = [];
-                    $bodyContext = ['user' => $recipient];
+                    $bodyContext = ['user' => $recipient, 'structure' => $structure];
 
                     break;
 
@@ -456,7 +464,7 @@ class NotificationManager
 
                 case SolidaryContact::class:
                     $titleContext = ['user' => $object->getSolidarySolution()->getSolidary()->getSolidaryUserStructure()->getSolidaryUser()->getUser()];
-                    $bodyContext = ['text' => $object->getContent(), 'recipient' => $recipient];
+                    $bodyContext = ['text' => $object->getContent(), 'recipient' => $recipient, 'structure' => $structure];
 
                 break;
 

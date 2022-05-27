@@ -3,4 +3,6 @@
 {% block body %}
     <p>Un administrateur solidaire vous contacte.</p>
     <p>{{ context.text }}</p>
+    <p>{{ context.structure.sgnature }}</p>
+    <img src="{{ context.structure.logoPath }}" alt="" style="width:40%;max-width:1000px;height:auto;max-height:250px;border-style:none;" />
 {% endblock %}

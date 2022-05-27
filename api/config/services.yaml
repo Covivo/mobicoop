@@ -318,6 +318,7 @@ services:
             $mailsEnabled: '%env(bool:resolve:NOTIFICATION_MAIL_ENABLED)%'
             $smsEnabled: '%env(bool:resolve:NOTIFICATION_SMS_ENABLED)%'
             $pushEnabled: '%env(bool:resolve:NOTIFICATION_PUSH_ENABLED)%'
+            $structureLogoUri:  '%env(string:STRUCTURE_LOGO_URI)%'
         tags:
             - { name: monolog.logger, channel: notification }
 
