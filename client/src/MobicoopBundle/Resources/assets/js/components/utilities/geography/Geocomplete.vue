@@ -8,6 +8,7 @@
       hide-no-data
       no-filter
       :required="required"
+      aria-required="true"
       :hint="hint"
       :rules="rules"
       :aria-label="ariaLabel"
