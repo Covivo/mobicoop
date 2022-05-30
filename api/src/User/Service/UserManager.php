@@ -344,15 +344,15 @@ class UserManager
         if (is_null($user->getUserDelegate())) {
             // registration by the user itself
             $event = new UserRegisteredEvent($user);
-            $this->eventDispatcher->dispatch(UserRegisteredEvent::NAME, $event);
+            $this->eventDispatcher->dispatch($event, UserRegisteredEvent::NAME);
         } else {
             // delegate registration
             $event = new UserDelegateRegisteredEvent($user);
-            $this->eventDispatcher->dispatch(UserDelegateRegisteredEvent::NAME, $event);
+            $this->eventDispatcher->dispatch($event, UserDelegateRegisteredEvent::NAME);
             // send password ?
             if (User::PWD_SEND_TYPE_SMS == $user->getPasswordSendType()) {
                 $event = new UserDelegateRegisteredPasswordSendEvent($user);
-                $this->eventDispatcher->dispatch(UserDelegateRegisteredPasswordSendEvent::NAME, $event);
+                $this->eventDispatcher->dispatch($event, UserDelegateRegisteredPasswordSendEvent::NAME);
             }
         }
 
@@ -649,12 +649,12 @@ class UserManager
 
         // dispatch an event
         $event = new UserUpdatedSelfEvent($user);
-        $this->eventDispatcher->dispatch(UserUpdatedSelfEvent::NAME, $event);
+        $this->eventDispatcher->dispatch($event, UserUpdatedSelfEvent::NAME);
 
         // if the email has changed we send a validation email
         if ($emailUpdate) {
             $event = new UserSendValidationEmailEvent($user);
-            $this->eventDispatcher->dispatch(UserSendValidationEmailEvent::NAME, $event);
+            $this->eventDispatcher->dispatch($event, UserSendValidationEmailEvent::NAME);
         }
 
         if ($phoneUpdate) {
@@ -1347,7 +1347,7 @@ class UserManager
         $user->setPhoneToken($phoneToken);
         // dispatch the event
         $event = new UserGeneratePhoneTokenAskedEvent($user);
-        $this->eventDispatcher->dispatch(UserGeneratePhoneTokenAskedEvent::NAME, $event);
+        $this->eventDispatcher->dispatch($event, UserGeneratePhoneTokenAskedEvent::NAME);
         // Persist user
         $this->entityManager->persist($user);
         $this->entityManager->flush();
@@ -1392,7 +1392,7 @@ class UserManager
                         continue;
                     }
                     $event = new UserDeleteAccountWasDriverEvent($ask, $user->getId());
-                    $this->eventDispatcher->dispatch(UserDeleteAccountWasDriverEvent::NAME, $event);
+                    $this->eventDispatcher->dispatch($event, UserDeleteAccountWasDriverEvent::NAME);
                 }
             }
             foreach ($proposal->getMatchingOffers() as $matching) {
@@ -1402,7 +1402,7 @@ class UserManager
                         continue;
                     }
                     $event = new UserDeleteAccountWasPassengerEvent($ask, $user->getId());
-                    $this->eventDispatcher->dispatch(UserDeleteAccountWasPassengerEvent::NAME, $event);
+                    $this->eventDispatcher->dispatch($event, UserDeleteAccountWasPassengerEvent::NAME);
                 }
             }
             $this->entityManager->remove($proposal);
@@ -1897,7 +1897,7 @@ break;
     {
         if ($user = $this->userRepository->findOneBy(['email' => $email])) {
             $event = new UserSendValidationEmailEvent($user);
-            $this->eventDispatcher->dispatch(UserSendValidationEmailEvent::NAME, $event);
+            $this->eventDispatcher->dispatch($event, UserSendValidationEmailEvent::NAME);
 
             return $user;
         }

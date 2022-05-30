@@ -448,7 +448,7 @@ class SolidaryManager
 
             // We trigger the event
             $event = new SolidaryCreatedEvent($user ? $user : $solidary->getSolidaryUserStructure()->getSolidaryUser()->getUser(), $this->security->getUser(), $solidary);
-            $this->eventDispatcher->dispatch(SolidaryCreatedEvent::NAME, $event);
+            $this->eventDispatcher->dispatch($event, SolidaryCreatedEvent::NAME);
         }
 
         return $solidary;
@@ -458,7 +458,7 @@ class SolidaryManager
     {
         // We trigger the event
         $event = new SolidaryUpdatedEvent($solidary);
-        $this->eventDispatcher->dispatch(SolidaryUpdatedEvent::NAME, $event);
+        $this->eventDispatcher->dispatch($event, SolidaryUpdatedEvent::NAME);
 
         $this->entityManager->persist($solidary);
         $this->entityManager->flush();

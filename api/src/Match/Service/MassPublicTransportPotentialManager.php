@@ -150,7 +150,7 @@ class MassPublicTransportPotentialManager
 
         // Send an email to the operator
         $event = new MassPublicTransportSolutionsGatheredEvent($mass);
-        $this->eventDispatcher->dispatch(MassPublicTransportSolutionsGatheredEvent::NAME, $event);
+        $this->eventDispatcher->dispatch($event, MassPublicTransportSolutionsGatheredEvent::NAME);
 
         $this->logger->info('Mass PT Potential | End '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
 

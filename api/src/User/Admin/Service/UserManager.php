@@ -237,11 +237,11 @@ class UserManager
 
         // dispatch the delegate registration event
         $event = new UserDelegateRegisteredEvent($user);
-        $this->eventDispatcher->dispatch(UserDelegateRegisteredEvent::NAME, $event);
+        $this->eventDispatcher->dispatch($event, UserDelegateRegisteredEvent::NAME);
         // send password ?
         if (!is_null($user->getTelephone())) {
             $event = new UserDelegateRegisteredPasswordSendEvent($user);
-            $this->eventDispatcher->dispatch(UserDelegateRegisteredPasswordSendEvent::NAME, $event);
+            $this->eventDispatcher->dispatch($event, UserDelegateRegisteredPasswordSendEvent::NAME);
         }
 
         return $user;

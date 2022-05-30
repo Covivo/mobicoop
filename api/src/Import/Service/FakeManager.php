@@ -117,7 +117,7 @@ class FakeManager
             $conn = $this->entityManager->getConnection();
             $sql = "SET FOREIGN_KEY_CHECKS = 0;";
             $stmt = $conn->prepare($sql);
-            $stmt->execute();
+            $stmt->executeQuery();
             $sql = "
             TRUNCATE `address`;
             TRUNCATE `criteria`;
@@ -129,11 +129,11 @@ class FakeManager
             TRUNCATE `user_notification`;
             TRUNCATE `waypoint`;";
             $stmt = $conn->prepare($sql);
-            $stmt->execute();
+            $stmt->executeQuery();
             $sql = "
             SET FOREIGN_KEY_CHECKS = 1;";
             $stmt = $conn->prepare($sql);
-            $stmt->execute();
+            $stmt->executeQuery();
         }
 
         $generated = 0;
@@ -188,7 +188,7 @@ class FakeManager
 
                 $ad->setPriceKm(0.06);
                 $ad->setOutwardDriverPrice(0);
-                
+
                 if ($ad->getFrequency() == Criteria::FREQUENCY_PUNCTUAL) {
                     $ad->setOutwardDate($this->getRandomDate(self::MIN_DATE, self::MAX_DATE));
                     $ad->setOutwardTime($this->getRandomTime(self::MIN_TIME, self::MAX_TIME)->format("H:i"));
@@ -357,7 +357,7 @@ class FakeManager
         return 2;
     }
 
-    
+
 
     private function randomFloat($min = 0, $max = 1)
     {

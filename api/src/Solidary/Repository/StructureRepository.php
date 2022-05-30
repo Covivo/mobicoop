@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\Repository;
 
@@ -30,22 +30,21 @@ use Doctrine\ORM\EntityRepository;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
-*/
+ */
 class StructureRepository
 {
     /**
      * @var EntityRepository
      */
     private $repository;
-    
+
     private $entityManager;
-    
+
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
         $this->repository = $entityManager->getRepository(Structure::class);
     }
-
 
     public function find(int $id): ?Structure
     {
@@ -58,19 +57,19 @@ class StructureRepository
     }
 
     /**
-     * Find the structures where a User is beneficiary
+     * Find the structures where a User is beneficiary.
      *
-     * @param User $user    The user
-     * @return array|null
+     * @param User $user The user
      */
     public function findByUser(User $user): ?array
     {
         $query = $this->repository->createQueryBuilder('s')
-        ->join('s.solidaryUserStructures', 'sus')
-        ->join('sus.solidaryUser', 'su')
-        ->join('su.user', 'u')
-        ->where('u.id = :user')
-        ->setParameter('user', $user->getId());
+            ->join('s.solidaryUserStructures', 'sus')
+            ->join('sus.solidaryUser', 'su')
+            ->join('su.user', 'u')
+            ->where('u.id = :user')
+            ->setParameter('user', $user->getId())
+        ;
 
         return $query->getQuery()->getResult();
     }
@@ -81,10 +80,8 @@ class StructureRepository
     }
 
     /**
-     * Find structures by GPS points
+     * Find structures by GPS points.
      *
-     * @param float $longitude
-     * @param float $latitude
      * @return Structure[]
      */
     public function findByPoint(float $longitude, float $latitude)
@@ -95,17 +92,17 @@ class StructureRepository
         $sql = "SELECT s.id FROM structure s
         INNER JOIN structure_territory st ON st.structure_id = s.id
         INNER JOIN territory t ON t.id = st.territory_id
-        WHERE ST_INTERSECTS(t.geo_json_detail,ST_GEOMFROMTEXT('POINT($longitude $latitude)'))=1
+        WHERE ST_INTERSECTS(t.geo_json_detail,ST_GEOMFROMTEXT('POINT({$longitude} {$latitude})'))=1
         ";
         $stmt = $conn->prepare($sql);
-        $stmt->execute();
-        $structureIds = $stmt->fetchAll();
-        
+        $structureIds = $stmt->executeQuery()->fetchAllAssociative();
+
         $structures = [];
         // we retrieve structures with ids. We do that in two step because with the sql call we do not get linked entities infos like subjects
         foreach ($structureIds as $structureId) {
             $structures[] = $this->find($structureId['id']);
         }
+
         return $structures;
     }
 }

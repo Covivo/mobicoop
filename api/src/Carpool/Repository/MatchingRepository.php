@@ -69,13 +69,13 @@ class MatchingRepository
                 SELECT MRR.id FROM matching AS MRR
                 INNER JOIN proposal AS PRR ON PRR.id = MRR.proposal_request_id
                 INNER JOIN proposal AS POR ON POR.id = MRR.proposal_offer_id
-                WHERE 
+                WHERE
                     POR.id = POA.proposal_linked_id AND
                     PRR.id = PRA.proposal_linked_id
-            ) 
+            )
             WHERE MRA.matching_linked_id IS NULL AND (MRA.proposal_offer_id = '.$proposalId.' OR MRA.proposal_request_id = '.$proposalId.')';
         $stmt = $conn->prepare($sql);
-        $stmt->execute();
+        $stmt->executeQuery();
     }
 
     /**
@@ -97,7 +97,7 @@ class MatchingRepository
             )
             WHERE MR.matching_opposite_id IS NULL AND (MR.proposal_offer_id = '.$proposalId.')';
         $stmt = $conn->prepare($sql);
-        $stmt->execute();
+        $stmt->executeQuery();
     }
 
     public function getProposalMatchingAsOffersWithBothUsers(Proposal $proposal): ?array

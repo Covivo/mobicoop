@@ -153,3 +153,6 @@ go-db:
 
 connect:
 	@docker exec -it mobicoop_platform /bin/bash
+
+go-api:
+	@docker exec -it mobicoop_platform_api_php zsh

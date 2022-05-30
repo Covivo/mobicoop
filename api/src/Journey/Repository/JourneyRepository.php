@@ -18,16 +18,16 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Journey\Repository;
 
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryResultCollectionExtensionInterface;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGenerator;
+use ApiPlatform\Core\DataProvider\PaginatorInterface;
 use App\Journey\Entity\Journey;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGenerator;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryResultCollectionExtensionInterface;
-use ApiPlatform\Core\DataProvider\PaginatorInterface;
 
 class JourneyRepository
 {
@@ -37,7 +37,7 @@ class JourneyRepository
     private $repository;
     private $entityManager;
     private $collectionExtensions;
-    
+
     public function __construct(
         EntityManagerInterface $entityManager,
         iterable $collectionExtensions
@@ -70,15 +70,15 @@ class JourneyRepository
     public function getAllFrom(array $origin, string $operationName, array $context = []): PaginatorInterface
     {
         $query = $this->repository->createQueryBuilder('j')
-        ->where("j.origin in (:origins')")
-        ->setParameter('origins', $origin);
+            ->where("j.origin in (:origins')")
+            ->setParameter('origins', $origin)
+        ;
         $queryNameGenerator = new QueryNameGenerator();
 
         foreach ($this->collectionExtensions as $extension) {
             $extension->applyToCollection($query, $queryNameGenerator, Journey::class, $operationName, $context);
             if ($extension instanceof QueryResultCollectionExtensionInterface && $extension->supportsResult(Journey::class, $operationName)) {
-                $result = $extension->getResult($query, Journey::class, $operationName);
-                return $result;
+                return $extension->getResult($query, Journey::class, $operationName);
             }
         }
 
@@ -88,24 +88,25 @@ class JourneyRepository
     public function getDestinationsForOrigin(array $origin)
     {
         $query = $this->repository->createQueryBuilder('j')
-        ->select('j.origin,j.destination')
-        ->distinct()
-        ->where("j.origin in (:origins)")
-        ->setParameter('origins', $origin)
-        ->orderBy('j.destination');
+            ->select('j.origin,j.destination')
+            ->distinct()
+            ->where('j.origin in (:origins)')
+            ->setParameter('origins', $origin)
+            ->orderBy('j.destination')
+        ;
+
         return $query->getQuery()->getResult();
     }
 
     public function getAllTo(array $destination, string $operationName, array $context = []): PaginatorInterface
     {
-        $query = $this->repository->createQueryBuilder('j')->where("j.destination in ('" . implode("','", $destination) . "')");
+        $query = $this->repository->createQueryBuilder('j')->where("j.destination in ('".implode("','", $destination)."')");
         $queryNameGenerator = new QueryNameGenerator();
 
         foreach ($this->collectionExtensions as $extension) {
             $extension->applyToCollection($query, $queryNameGenerator, Journey::class, $operationName, $context);
             if ($extension instanceof QueryResultCollectionExtensionInterface && $extension->supportsResult(Journey::class, $operationName)) {
-                $result = $extension->getResult($query, Journey::class, $operationName);
-                return $result;
+                return $extension->getResult($query, Journey::class, $operationName);
             }
         }
 
@@ -115,29 +116,30 @@ class JourneyRepository
     public function getOriginsForDestination(array $destination)
     {
         $query = $this->repository->createQueryBuilder('j')
-        ->select('j.origin,j.destination')
-        ->distinct()
-        ->where('j.destination IN (:destinations)')
-        ->setParameter('destinations', $destination)
-        ->orderBy('j.origin');
-        
+            ->select('j.origin,j.destination')
+            ->distinct()
+            ->where('j.destination IN (:destinations)')
+            ->setParameter('destinations', $destination)
+            ->orderBy('j.origin')
+        ;
+
         return $query->getQuery()->getResult();
     }
 
     public function getAllFromTo(array $origin, array $destination, string $operationName, array $context = []): PaginatorInterface
     {
         $query = $this->repository->createQueryBuilder('j')
-        ->where("j.origin in (:origins) AND j.destination in (:destinations)")
-        ->orderBy('j.fromDate', 'asc')
-        ->setParameter('origins', $origin)
-        ->setParameter('destinations', $destination);
+            ->where('j.origin in (:origins) AND j.destination in (:destinations)')
+            ->orderBy('j.fromDate', 'asc')
+            ->setParameter('origins', $origin)
+            ->setParameter('destinations', $destination)
+        ;
         $queryNameGenerator = new QueryNameGenerator();
 
         foreach ($this->collectionExtensions as $extension) {
             $extension->applyToCollection($query, $queryNameGenerator, Journey::class, $operationName, $context);
             if ($extension instanceof QueryResultCollectionExtensionInterface && $extension->supportsResult(Journey::class, $operationName)) {
-                $result = $extension->getResult($query, Journey::class, $operationName);
-                return $result;
+                return $extension->getResult($query, Journey::class, $operationName);
             }
         }
 
@@ -146,25 +148,25 @@ class JourneyRepository
 
     /**
      * Get the popular journeys
-     * (see .env for the max number and criteria)
+     * (see .env for the max number and criteria).
+     *
      * @param int $popularJourneyMinOccurences Minimum occurences of the journey to be considered popular
      * @param int $popularJourneyHomeMaxNumber Maximum number of returned journeys
+     *
      * @return Journey[]
      */
     public function getPopularJourneys(int $popularJourneyMinOccurences, int $popularJourneyHomeMaxNumber): array
     {
         $conn = $this->entityManager->getConnection();
-        $sql = "SELECT origin, destination, latitude_origin, longitude_origin, latitude_destination, longitude_destination, count(id) as occurences
+        $sql = 'SELECT origin, destination, latitude_origin, longitude_origin, latitude_destination, longitude_destination, count(id) as occurences
                 FROM `journey`
                 GROUP BY origin, destination
-                HAVING occurences >= ".$popularJourneyMinOccurences."
+                HAVING occurences >= '.$popularJourneyMinOccurences.'
                 ORDER BY occurences desc
-                LIMIT 0,".$popularJourneyHomeMaxNumber;
-                
-        $stmt = $conn->prepare($sql);
-        $stmt->execute();
-        $journeys = $stmt->fetchAll();
+                LIMIT 0,'.$popularJourneyHomeMaxNumber;
 
-        return $journeys;
+        $result = $conn->prepare($sql)->executeQuery();
+
+        return $result->fetchAllAssociative();
     }
 }

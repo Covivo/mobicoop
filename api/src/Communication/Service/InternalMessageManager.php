@@ -19,28 +19,27 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Communication\Service;
 
 use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\AskHistory;
-use Psr\Log\LoggerInterface;
-use Doctrine\ORM\EntityManagerInterface;
 use App\Communication\Entity\Message;
 use App\Communication\Entity\Recipient;
-use App\Communication\Entity\Medium;
-use App\Communication\Repository\MediumRepository;
-use App\User\Entity\User;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use App\Communication\Event\InternalMessageReceivedEvent;
 use App\Communication\Exception\MessageException;
 use App\Communication\Interfaces\MessagerInterface;
+use App\Communication\Repository\MediumRepository;
 use App\Communication\Repository\MessageRepository;
 use App\Solidary\Entity\SolidaryAskHistory;
+use App\User\Entity\User;
+use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
- * Internal message manager
+ * Internal message manager.
  *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
  */
@@ -70,11 +69,10 @@ class InternalMessageManager
     }
 
     /**
-     * Sends an internal message to recipients, related to an object (the message itself already exists and is linked to the object)
+     * Sends an internal message to recipients, related to an object (the message itself already exists and is linked to the object).
      *
-     * @param array $recipients             The recipients
+     * @param array             $recipients The recipients
      * @param MessagerInterface $object     The object linked
-     * @return void
      */
     public function sendForObject(array $recipients, MessagerInterface $object)
     {
@@ -86,21 +84,20 @@ class InternalMessageManager
             $this->entityManager->persist($recipient);
             // dispatch en event
             $event = new InternalMessageReceivedEvent($recipient);
-            $this->eventDispatcher->dispatch(InternalMessageReceivedEvent::NAME, $event);
+            $this->eventDispatcher->dispatch($event, InternalMessageReceivedEvent::NAME);
         }
     }
 
     /**
-     * Sends an new internal message from a sender to recipients
+     * Sends an new internal message from a sender to recipients.
      *
-     * @param User          $sender         The sender
-     * @param array         $recipients     The recipients
-     * @param string        $text           The text of the message
-     * @param string|null   $title          The title of the message
-     * @param Message|null  $reply          The original message if the current message is a reply
-     * @return void
+     * @param User         $sender     The sender
+     * @param array        $recipients The recipients
+     * @param string       $text       The text of the message
+     * @param null|string  $title      The title of the message
+     * @param null|Message $reply      The original message if the current message is a reply
      */
-    public function send(User $sender, array $recipients, string $text, ?string $title=null, ?Message $reply)
+    public function send(User $sender, array $recipients, string $text, ?string $title = null, ?Message $reply)
     {
         $message = $this->createMessage($sender, $recipients, $text, $title, $reply);
         $this->entityManager->persist($message);
@@ -110,20 +107,16 @@ class InternalMessageManager
         foreach ($message->getRecipients() as $recipient) {
             // dispatch en event
             $event = new InternalMessageReceivedEvent($recipient);
-            $this->eventDispatcher->dispatch(InternalMessageReceivedEvent::NAME, $event);
+            $this->eventDispatcher->dispatch($event, InternalMessageReceivedEvent::NAME);
         }
     }
 
     /**
-     * @param User $sender
-     * @param array $recipients
-     * @param string $text
-     * @param string|null $title
-     * @param Message|null $reply
-     * @return Message
      * @throws \Exception
+     *
+     * @return Message
      */
-    public function createMessage(User $sender, array $recipients, string $text, ?string $title=null, ?Message $reply)
+    public function createMessage(User $sender, array $recipients, string $text, ?string $title = null, ?Message $reply)
     {
         $message = new Message();
         $message->setUser($sender);
@@ -146,31 +139,32 @@ class InternalMessageManager
     }
 
     /**
-     * Get a complete message thread
-     * @param int $idMessage    The message we want the thread
-     * @param bool $checkRead   If true, we check the current message as read (can be override in .env)
-     * @param int $userId       Id of the requester. Usefull if checkRead is true
+     * Get a complete message thread.
+     *
+     * @param int  $idMessage The message we want the thread
+     * @param bool $checkRead If true, we check the current message as read (can be override in .env)
+     * @param int  $userId    Id of the requester. Usefull if checkRead is true
      */
-    public function getCompleteThread(int $idMessage, bool $checkRead=false, int $userId=null)
+    public function getCompleteThread(int $idMessage, bool $checkRead = false, int $userId = null)
     {
         $message = $this->messageRepository->find($idMessage);
         if (empty($message)) {
             throw new MessageException(MessageException::NOT_FOUND);
         }
         $messages = array_merge([$message], $message->getMessages());
-        
+
         // getCompleteThread is called in various ways that does'nt require that the read status be updated.
         // For example in, UserManager -> getProfileSummary
         if ($this->storeReadDate && $checkRead) {
             foreach ($messages as $currentMessage) {
                 foreach ($currentMessage->getRecipients() as $recipient) {
                     if (is_null($userId)) {
-                        throw new \LogicException("No user specified");
+                        throw new \LogicException('No user specified');
                     }
                     $userRecipientId = $recipient->getUser()->getId();
                     // We set a read date only if the recipient userid is the requester id
                     if ($userId == $userRecipientId) {
-                        $recipient->setReadDate(new \DateTime("now"));
+                        $recipient->setReadDate(new \DateTime('now'));
                     }
                     $this->entityManager->persist($currentMessage);
                 }
@@ -187,20 +181,17 @@ class InternalMessageManager
     }
 
     /**
-     * Post a Message, taking care of Ask and SolidaryAsk if needed
+     * Post a Message, taking care of Ask and SolidaryAsk if needed.
      *
-     * @param Message $message
      * @return Message
      */
     public function postMessage(Message $message)
     {
-
         // This message is related to an Ask
-        if ($message->getIdAsk()!==null) {
-            
+        if (null !== $message->getIdAsk()) {
             // We get the infos of the Ask
             $ask = $this->entityManager->getRepository(Ask::class)->find($message->getIdAsk());
-            
+
             // Create the new AskHistory
             $askHistory = new AskHistory();
 
@@ -222,9 +213,9 @@ class InternalMessageManager
             // No Ask, just persist the message
             $this->entityManager->persist($message);
         }
-        
+
         $this->entityManager->flush();
-        
+
         return $message;
     }
 }

@@ -226,13 +226,13 @@ class CommunityManager
         switch ($communityUser->getStatus()) {
             case CommunityUser::STATUS_REFUSED:
                 $event = new CommunityMembershipRefusedEvent($communityUser->getCommunity(), $communityUser->getUser());
-                $this->eventDispatcher->dispatch(CommunityMembershipRefusedEvent::NAME, $event);
+                $this->eventDispatcher->dispatch($event, CommunityMembershipRefusedEvent::NAME);
 
                 break;
 
             case CommunityUser::STATUS_ACCEPTED_AS_MEMBER:
                 $event = new CommunityMembershipAcceptedEvent($communityUser->getCommunity(), $communityUser->getUser());
-                $this->eventDispatcher->dispatch(CommunityMembershipAcceptedEvent::NAME, $event);
+                $this->eventDispatcher->dispatch($event, CommunityMembershipAcceptedEvent::NAME);
 
                 break;
         }

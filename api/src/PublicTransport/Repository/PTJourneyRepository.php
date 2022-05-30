@@ -56,6 +56,6 @@ class PTJourneyRepository
         $sql = "DELETE ptjourney FROM `ptjourney` INNER JOIN mass_person on mass_person.id = ptjourney.mass_person_id WHERE mass_person.mass_id = ".$massId;
 
         $stmt = $conn->prepare($sql);
-        $stmt->execute();
+        $stmt->executeQuery();
     }
 }

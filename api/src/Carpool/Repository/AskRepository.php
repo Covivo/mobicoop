@@ -189,8 +189,8 @@ class AskRepository
             ->andWhere('(
             (
                 c.frequency = :punctual and c.fromDate between :fromDate and :toDate
-            ) 
-            or 
+            )
+            or
             (
                 c.frequency = :regular and c.fromDate <= :toDate and c.toDate >= :fromDate and
                 ('.$regularWhere.')
@@ -288,8 +288,8 @@ class AskRepository
             ->andWhere('(
             (
                 c.frequency = :punctual and c.fromDate between :fromDate and :toDate
-            ) 
-            or 
+            )
+            or
             (
                 c.frequency = :regular and c.fromDate <= :toDate and c.toDate >= :fromDate and
                 ('.$regularWhere.')
@@ -411,8 +411,7 @@ class AskRepository
         $stmt = $this->entityManager->getConnection()->prepare('
         select a.user_id, a.user_related_id from ask a where a.user_id = '.$user->getId().' or  a.user_related_id ='.$user->getId().'
         ;');
-        $stmt->execute();
-        $results = $stmt->fetchAll();
+        $results = $stmt->executeQuery()->fetchAllAssociative();
 
         $scammerVictimsIds = [];
         foreach ($results as $result) {

@@ -124,7 +124,7 @@ class BasicFixturesManager
         $conn = $this->entityManager->getConnection();
         $sql = 'SET FOREIGN_KEY_CHECKS = 0;';
         $stmt = $conn->prepare($sql);
-        $stmt->execute();
+        $stmt->executeQuery();
 
         if ($this->fixturesBasic) {
             echo 'Clearing basic database... '.PHP_EOL;
@@ -160,7 +160,7 @@ class BasicFixturesManager
             TRUNCATE `position`;
             TRUNCATE `proposal`;
             TRUNCATE `proposal_community`;
-            TRUNCATE `push_token`;    
+            TRUNCATE `push_token`;
             TRUNCATE `recipient`;
             TRUNCATE `refresh_tokens`;
             TRUNCATE `relay_point_type`;
@@ -174,13 +174,13 @@ class BasicFixturesManager
             TRUNCATE `user_notification`;
             TRUNCATE `waypoint`;';
             $stmt = $conn->prepare($sql);
-            $stmt->execute();
+            $stmt->executeQuery();
         }
 
         $sql = '
         SET FOREIGN_KEY_CHECKS = 1;';
         $stmt = $conn->prepare($sql);
-        $stmt->execute();
+        $stmt->executeQuery();
     }
 
     /**
@@ -460,7 +460,7 @@ class BasicFixturesManager
         echo 'Import a territory'.PHP_EOL;
         $conn = $this->entityManager->getConnection();
         $stmt = $conn->prepare($sqlRequest);
-        $stmt->execute();
+        $stmt->executeQuery();
     }
 
     /**

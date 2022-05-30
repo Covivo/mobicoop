@@ -78,149 +78,148 @@ class RetroactivelyRewardService
         $this->entityManager->getConnection()->prepare('
         CREATE TEMPORARY TABLE tuser (
             id int not null,
-            validated_date datetime, 
-            phone_validated_date datetime, 
-            telephone varchar(255), 
-            nb_images int not null default 0, 
-            nb_events int not null default 0, 
-            nb_community_users int not null default 0, 
-            nb_communities int not null default 0, 
-            nb_asks int not null default 0, 
-            nb_asks_related int not null default 0, 
-            nb_asks_community int not null default 0, 
-            nb_asks_related_community int not null default 0, 
-            nb_asks_event int not null default 0, 
-            nb_asks_related_event int not null default 0, 
+            validated_date datetime,
+            phone_validated_date datetime,
+            telephone varchar(255),
+            nb_images int not null default 0,
+            nb_events int not null default 0,
+            nb_community_users int not null default 0,
+            nb_communities int not null default 0,
+            nb_asks int not null default 0,
+            nb_asks_related int not null default 0,
+            nb_asks_community int not null default 0,
+            nb_asks_related_community int not null default 0,
+            nb_asks_event int not null default 0,
+            nb_asks_related_event int not null default 0,
             nb_proposals int not null default 0,
             nb_proposals_community int not null default 0,
             nb_proposals_event int not null default 0,
             nb_proposals_solidary_exclusive int not null default 0,
-            nb_carpool_items int not null default 0, 
-            nb_addresses int not null default 0, 
-            nb_payment_profiles int not null default 0, 
+            nb_carpool_items int not null default 0,
+            nb_addresses int not null default 0,
+            nb_payment_profiles int not null default 0,
             nb_messages int not null default 0,
             nb_km_carpooled int default 0,
             nb_km_carpooled_related int default 0
-        );')->execute();
+        );')->executeQuery();
         $stmt = $this->entityManager->getConnection()->prepare('
             INSERT INTO tuser (id, validated_date, phone_validated_date, telephone)
             (SELECT u.id, u.validated_date, u.phone_validated_date, u.telephone FROM user u);
-        );')->execute();
+        );')->executeQuery();
         $stmt = $this->entityManager->getConnection()->prepare('
             UPDATE tuser t
-            SET t.nb_images = (SELECT COUNT(distinct i.id) FROM image i 
+            SET t.nb_images = (SELECT COUNT(distinct i.id) FROM image i
             WHERE i.user_id = t.id);
-        );')->execute();
+        );')->executeQuery();
         $stmt = $this->entityManager->getConnection()->prepare('
             UPDATE tuser t
-            SET t.nb_events = (SELECT COUNT(distinct e.id) FROM event e 
+            SET t.nb_events = (SELECT COUNT(distinct e.id) FROM event e
             WHERE e.user_id = t.id);
-        );')->execute();
+        );')->executeQuery();
         $stmt = $this->entityManager->getConnection()->prepare('
             UPDATE tuser t
             SET t.nb_communities = (SELECT COUNT(distinct c.id) FROM community c WHERE c.user_id = t.id);
-        );')->execute();
+        );')->executeQuery();
         $stmt = $this->entityManager->getConnection()->prepare('
             UPDATE tuser t
-            SET t.nb_community_users = (SELECT COUNT(distinct cu.id) FROM community_user cu 
+            SET t.nb_community_users = (SELECT COUNT(distinct cu.id) FROM community_user cu
             WHERE cu.user_id = t.id);
-        );')->execute();
+        );')->executeQuery();
         $stmt = $this->entityManager->getConnection()->prepare('
             UPDATE tuser t
-            SET t.nb_proposals = (SELECT COUNT(distinct p.id) FROM proposal p 
+            SET t.nb_proposals = (SELECT COUNT(distinct p.id) FROM proposal p
             WHERE p.user_id = t.id AND p.private = 0);
-        );')->execute();
+        );')->executeQuery();
         $stmt = $this->entityManager->getConnection()->prepare('
             UPDATE tuser t
-            SET t.nb_proposals_community = (SELECT COUNT(distinct p.id) FROM proposal p 
-            INNER JOIN proposal_community pc on p.id = pc.proposal_id 
+            SET t.nb_proposals_community = (SELECT COUNT(distinct p.id) FROM proposal p
+            INNER JOIN proposal_community pc on p.id = pc.proposal_id
             WHERE p.private = 0 AND p.user_id = t.id);
-        );')->execute();
+        );')->executeQuery();
         $stmt = $this->entityManager->getConnection()->prepare('
             UPDATE tuser t
-            SET t.nb_proposals_event = (SELECT COUNT(distinct p.id) FROM proposal p 
+            SET t.nb_proposals_event = (SELECT COUNT(distinct p.id) FROM proposal p
             WHERE p.user_id = t.id AND p.private = 0 AND p.event_id is not null);
-        );')->execute();
+        );')->executeQuery();
         $stmt = $this->entityManager->getConnection()->prepare('
             UPDATE tuser t
-            SET t.nb_proposals_solidary_exclusive = (SELECT COUNT(distinct p.id) FROM proposal p 
-            INNER JOIN criteria c on p.criteria_id = c.id 
+            SET t.nb_proposals_solidary_exclusive = (SELECT COUNT(distinct p.id) FROM proposal p
+            INNER JOIN criteria c on p.criteria_id = c.id
             WHERE p.user_id = t.id AND p.private = 0 AND c.solidary_exclusive = 1);
-        );')->execute();
+        );')->executeQuery();
         $stmt = $this->entityManager->getConnection()->prepare('
             UPDATE tuser t
-            SET t.nb_asks = (SELECT COUNT(distinct a.id) FROM ask a 
+            SET t.nb_asks = (SELECT COUNT(distinct a.id) FROM ask a
             WHERE a.user_id = t.id AND a.status IN (4,5));
-        );')->execute();
+        );')->executeQuery();
         $stmt = $this->entityManager->getConnection()->prepare('
             UPDATE tuser t
-            SET t.nb_asks_related = (SELECT COUNT(distinct a.id) FROM ask a 
+            SET t.nb_asks_related = (SELECT COUNT(distinct a.id) FROM ask a
             WHERE a.user_related_id = t.id AND a.status IN (4,5));
-        );')->execute();
+        );')->executeQuery();
         $stmt = $this->entityManager->getConnection()->prepare('
             UPDATE tuser t
-            SET t.nb_asks_community = (SELECT COUNT(distinct a.id) FROM ask a 
-            INNER JOIN matching m on a.matching_id = m.id JOIN proposal p on m.proposal_offer_id = p.id or m.proposal_request_id = p.id 
+            SET t.nb_asks_community = (SELECT COUNT(distinct a.id) FROM ask a
+            INNER JOIN matching m on a.matching_id = m.id JOIN proposal p on m.proposal_offer_id = p.id or m.proposal_request_id = p.id
             WHERE a.user_id = t.id AND p.event_id is not null AND a.status IN (4,5));
-        );')->execute();
+        );')->executeQuery();
         $stmt = $this->entityManager->getConnection()->prepare('
             UPDATE tuser t
-            SET t.nb_asks_related_community = (SELECT COUNT(distinct a.id) FROM ask a 
-            INNER JOIN matching m on a.matching_id = m.id JOIN proposal p on m.proposal_offer_id = p.id or m.proposal_request_id = p.id 
+            SET t.nb_asks_related_community = (SELECT COUNT(distinct a.id) FROM ask a
+            INNER JOIN matching m on a.matching_id = m.id JOIN proposal p on m.proposal_offer_id = p.id or m.proposal_request_id = p.id
             WHERE a.user_related_id = t.id AND p.event_id is not null AND a.status IN (4,5));
-        );')->execute();
+        );')->executeQuery();
         $stmt = $this->entityManager->getConnection()->prepare('
             UPDATE tuser t
-            SET t.nb_asks_event = (SELECT COUNT(distinct a.id) FROM ask a 
-            INNER JOIN matching m on a.matching_id = m.id 
-            INNER JOIN proposal p on m.proposal_offer_id = p.id or m.proposal_request_id = p.id 
+            SET t.nb_asks_event = (SELECT COUNT(distinct a.id) FROM ask a
+            INNER JOIN matching m on a.matching_id = m.id
+            INNER JOIN proposal p on m.proposal_offer_id = p.id or m.proposal_request_id = p.id
             WHERE a.user_id = t.id AND p.event_id is not null AND a.status IN (4,5));
-        );')->execute();
+        );')->executeQuery();
         $stmt = $this->entityManager->getConnection()->prepare('
             UPDATE tuser t
-            SET t.nb_asks_related_event = (SELECT COUNT(distinct a.id) FROM ask a 
-            INNER JOIN matching m on a.matching_id = m.id JOIN proposal p on m.proposal_offer_id = p.id or m.proposal_request_id = p.id 
+            SET t.nb_asks_related_event = (SELECT COUNT(distinct a.id) FROM ask a
+            INNER JOIN matching m on a.matching_id = m.id JOIN proposal p on m.proposal_offer_id = p.id or m.proposal_request_id = p.id
             WHERE a.user_related_id = t.id AND p.event_id is not null AND a.status IN (4,5));
-        );')->execute();
+        );')->executeQuery();
         $stmt = $this->entityManager->getConnection()->prepare('
             UPDATE tuser t
-            SET t.nb_carpool_items = (SELECT COUNT(distinct ci.id) FROM carpool_item ci 
+            SET t.nb_carpool_items = (SELECT COUNT(distinct ci.id) FROM carpool_item ci
             WHERE ci.debtor_user_id = t.id AND ci.debtor_status = 3);
-        );')->execute();
+        );')->executeQuery();
         $stmt = $this->entityManager->getConnection()->prepare('
             UPDATE tuser t
-            SET t.nb_addresses = (SELECT COUNT(distinct a.id) FROM address a 
+            SET t.nb_addresses = (SELECT COUNT(distinct a.id) FROM address a
             WHERE a.user_id = t.id AND a.home = 1);
-        );')->execute();
+        );')->executeQuery();
         $stmt = $this->entityManager->getConnection()->prepare('
             UPDATE tuser t
-            SET t.nb_payment_profiles = (SELECT COUNT(distinct pp.id) FROM payment_profile pp 
+            SET t.nb_payment_profiles = (SELECT COUNT(distinct pp.id) FROM payment_profile pp
             WHERE pp.user_id = t.id AND pp.validation_status = 1);
-        );')->execute();
+        );')->executeQuery();
         $stmt = $this->entityManager->getConnection()->prepare('
             UPDATE tuser t
-            SET t.nb_messages = (SELECT COUNT(distinct m.id) FROM message m 
+            SET t.nb_messages = (SELECT COUNT(distinct m.id) FROM message m
             WHERE m.user_id = t.id);
-        );')->execute();
+        );')->executeQuery();
         $stmt = $this->entityManager->getConnection()->prepare('
             UPDATE tuser t
             SET t.nb_km_carpooled = (SELECT SUM(m.common_distance)/1000 FROM carpool_item ci
             INNER JOIN ask a on a.id = ci.ask_id
             INNER JOIN matching m on m.id = a.matching_id
             WHERE ci.item_status = 1 AND a.user_id = t.id);
-        );')->execute();
+        );')->executeQuery();
         $stmt = $this->entityManager->getConnection()->prepare('
             UPDATE tuser t
             SET t.nb_km_carpooled_related = (SELECT SUM(m.common_distance)/1000 FROM carpool_item ci
             INNER JOIN ask a on a.id = ci.ask_id
             INNER JOIN matching m on m.id = a.matching_id
             WHERE ci.item_status = 1 AND a.user_related_id = t.id);
-        );')->execute();
+        );')->executeQuery();
         $stmt = $this->entityManager->getConnection()->prepare(
             'SELECT * FROM tuser;'
         );
-        $stmt->execute();
-        $resultsUsers = $stmt->fetchAll();
+        $resultsUsers = $stmt->executeQuery()->fetchAllAssociative();
 
         // format users
         $users = [];
@@ -294,11 +293,10 @@ class RetroactivelyRewardService
         // get all sequences_items already earned of each user
         $stmt = $this->entityManager->getConnection()->prepare(
             'SELECT reward_step.user_id, reward_step.sequence_item_id
-            FROM reward_step  
+            FROM reward_step
             ORDER BY `reward_step`.`user_id` ASC;'
         );
-        $stmt->execute();
-        $sequenceItems = $stmt->fetchAll();
+        $sequenceItems = $stmt->executeQuery()->fetchAllAssociative();
         foreach ($sequenceItems as $sequenceItem) {
             if (array_key_exists($sequenceItem['user_id'], $users)) {
                 array_push($users[$sequenceItem['user_id']][0]['sequence_item_ids'], $sequenceItem['sequence_item_id']);
@@ -308,11 +306,10 @@ class RetroactivelyRewardService
         // get all badges  already earned of each user
         $stmt = $this->entityManager->getConnection()->prepare(
             'SELECT reward.user_id, reward.badge_id
-            FROM reward  
+            FROM reward
             ORDER BY `reward`.`user_id` ASC;'
         );
-        $stmt->execute();
-        $badges = $stmt->fetchAll();
+        $badges = $stmt->executeQuery()->fetchAllAssociative();
         foreach ($badges as $badge) {
             if (array_key_exists($badge['user_id'], $users)) {
                 array_push($users[$badge['user_id']][0]['badge_ids'], $badge['badge_id']);
@@ -321,13 +318,12 @@ class RetroactivelyRewardService
 
         $stmt = $this->entityManager->getConnection()->prepare(
             'SELECT b.id as badge_id, si.id as sequence_item_id, ga.id as gamification_action_id, gar.name as rule_name, si.min_count, si.min_unique_count, si.in_date_range, si.value
-            FROM badge b 
+            FROM badge b
             LEFT JOIN sequence_item si on b.id = si.badge_id
             LEFT JOIN gamification_action ga on ga.id = si.gamification_action_id
             LEFT JOIN gamification_action_rule gar on gar.id = ga.gamification_action_rule_id;'
         );
-        $stmt->execute();
-        $resultBadges = $stmt->fetchAll();
+        $resultBadges = $stmt->executeQuery()->fetchAllAssociative();
 
         // get badges and sequence_items infos
         $badges = [];

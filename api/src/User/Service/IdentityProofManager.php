@@ -117,7 +117,7 @@ class IdentityProofManager
                 $modifiedDate->modify($interval);
                 if ($modifiedDate->format('d/m/Y') === $now->format('d/m/Y')) {
                     $event = new IdentityProofValidationReminderEvent($identityProof);
-                    $this->eventDispatcher->dispatch(IdentityProofValidationReminderEvent::NAME, $event);
+                    $this->eventDispatcher->dispatch($event, IdentityProofValidationReminderEvent::NAME);
 
                     break;
                 }
@@ -134,7 +134,7 @@ class IdentityProofManager
         $this->removeProofFile($identityProof);
 
         $event = new IdentityProofModeratedEvent($identityProof);
-        $this->eventDispatcher->dispatch(IdentityProofModeratedEvent::NAME, $event);
+        $this->eventDispatcher->dispatch($event, IdentityProofModeratedEvent::NAME);
 
         return $identityProof;
     }

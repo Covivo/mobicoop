@@ -19,20 +19,20 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Communication\EntityListener;
 
-use Doctrine\ORM\Mapping as ORM;
-use Doctrine\ORM\Event\LifecycleEventArgs;
 use App\Communication\Entity\Recipient;
 use App\Communication\Event\InternalMessageReceivedEvent;
+use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class RecipientListener
 {
     private $eventDispatcher;
-    
+
     public function __construct(EventDispatcherInterface $eventDispatcher)
     {
         $this->eventDispatcher = $eventDispatcher;
@@ -42,6 +42,6 @@ class RecipientListener
     public function postPersistHandler(Recipient $recipient, LifecycleEventArgs $args)
     {
         $event = new InternalMessageReceivedEvent($recipient);
-        $this->eventDispatcher->dispatch(InternalMessageReceivedEvent::NAME, $event);
+        $this->eventDispatcher->dispatch($event, InternalMessageReceivedEvent::NAME);
     }
 }

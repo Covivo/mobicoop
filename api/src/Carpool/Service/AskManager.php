@@ -132,7 +132,7 @@ class AskManager
         $this->entityManager->persist($ask);
         // dispatch en event
         // $event = new AskPostedEvent($ask);
-        // $this->eventDispatcher->dispatch(AskPostedEvent::NAME, $event);
+        // $this->eventDispatcher->dispatch($event, AskPostedEvent::NAME);
         return $ask;
     }
 
@@ -149,7 +149,7 @@ class AskManager
 
         // dispatch en event
         $event = new AskUpdatedEvent($ask);
-        $this->eventDispatcher->dispatch(AskUpdatedEvent::NAME, $event);
+        $this->eventDispatcher->dispatch($event, AskUpdatedEvent::NAME);
 
         return $ask;
     }
@@ -464,7 +464,7 @@ class AskManager
             // get the complete ad to have data for the email
             $ad = $this->getAskFromAd($ask->getId(), $ask->getUser()->getId());
             $event = new AskPostedEvent($ad);
-            $this->eventDispatcher->dispatch(AskPostedEvent::NAME, $event);
+            $this->eventDispatcher->dispatch($event, AskPostedEvent::NAME);
         }
 
         $ad->setAskId($ask->getId());
@@ -693,10 +693,10 @@ class AskManager
         // dispatch en event
         if ((Ask::STATUS_PENDING_AS_DRIVER == $ask->getStatus()) || (Ask::STATUS_PENDING_AS_PASSENGER == $ask->getStatus())) {
             $event = new AskPostedEvent($ad);
-            $this->eventDispatcher->dispatch(AskPostedEvent::NAME, $event);
+            $this->eventDispatcher->dispatch($event, AskPostedEvent::NAME);
         } elseif ((Ask::STATUS_ACCEPTED_AS_DRIVER == $ask->getStatus()) || (Ask::STATUS_ACCEPTED_AS_PASSENGER == $ask->getStatus())) {
             $event = new AskAcceptedEvent($ad);
-            $this->eventDispatcher->dispatch(AskAcceptedEvent::NAME, $event);
+            $this->eventDispatcher->dispatch($event, AskAcceptedEvent::NAME);
 
             //  we dispatch gamification event associated
             $action = $this->actionRepository->findOneBy(['name' => 'carpool_ask_accepted']);
@@ -705,7 +705,7 @@ class AskManager
             $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);
         } elseif ((Ask::STATUS_DECLINED_AS_DRIVER == $ask->getStatus()) || (Ask::STATUS_DECLINED_AS_PASSENGER == $ask->getStatus())) {
             $event = new AskRefusedEvent($ad);
-            $this->eventDispatcher->dispatch(AskRefusedEvent::NAME, $event);
+            $this->eventDispatcher->dispatch($event, AskRefusedEvent::NAME);
         }
 
         return $ad;

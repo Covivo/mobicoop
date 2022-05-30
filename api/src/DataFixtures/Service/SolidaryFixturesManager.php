@@ -102,7 +102,7 @@ class SolidaryFixturesManager
         $conn = $this->entityManager->getConnection();
         $sql = 'SET FOREIGN_KEY_CHECKS = 0;';
         $stmt = $conn->prepare($sql);
-        $stmt->execute();
+        $stmt->executeQuery();
 
         if ($this->fixturesSolidary) {
             echo 'Clearing Solidary database... '.PHP_EOL;
@@ -127,13 +127,13 @@ class SolidaryFixturesManager
             ';
 
             $stmt = $conn->prepare($sql);
-            $stmt->execute();
+            $stmt->executeQuery();
         }
 
         $sql = '
         SET FOREIGN_KEY_CHECKS = 1;';
         $stmt = $conn->prepare($sql);
-        $stmt->execute();
+        $stmt->executeQuery();
     }
 
     /**

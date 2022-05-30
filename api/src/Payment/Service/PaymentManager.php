@@ -640,13 +640,13 @@ class PaymentManager
             // case punctual
             if (Criteria::FREQUENCY_PUNCTUAL == $carpoolItem->getAsk()->getCriteria()->getFrequency() && CarpoolItem::DEBTOR_STATUS_PENDING_DIRECT == $carpoolItem->getDebtorStatus()) {
                 $event = new ConfirmDirectPaymentEvent($carpoolItem, $user);
-                $this->eventDispatcher->dispatch(ConfirmDirectPaymentEvent::NAME, $event);
+                $this->eventDispatcher->dispatch($event, ConfirmDirectPaymentEvent::NAME);
             // case regular
             } elseif (Criteria::FREQUENCY_REGULAR == $carpoolItem->getAsk()->getCriteria()->getFrequency() && CarpoolItem::DEBTOR_STATUS_PENDING_DIRECT == $carpoolItem->getDebtorStatus()) {
                 // We send only one email for the all week
                 if (!in_array($carpoolItem->getAsk()->getId(), $askIds)) {
                     $event = new ConfirmDirectPaymentRegularEvent($carpoolItem, $user);
-                    $this->eventDispatcher->dispatch(ConfirmDirectPaymentRegularEvent::NAME, $event);
+                    $this->eventDispatcher->dispatch($event, ConfirmDirectPaymentRegularEvent::NAME);
                     // we put in array the ask and the ask linked
                     $askIds[] = $carpoolItem->getAsk()->getId();
                     if ($carpoolItem->getAsk()->getAskLinked()) {
@@ -764,13 +764,13 @@ class PaymentManager
                 // case punctual
                 if (Criteria::FREQUENCY_PUNCTUAL == $carpoolItem->getAsk()->getCriteria()->getFrequency() && $carpoolItem->getUnpaidDate()) {
                     $event = new SignalDeptEvent($carpoolItem, $user);
-                    $this->eventDispatcher->dispatch(SignalDeptEvent::NAME, $event);
+                    $this->eventDispatcher->dispatch($event, SignalDeptEvent::NAME);
                 // case regular
                 } elseif (Criteria::FREQUENCY_REGULAR == $carpoolItem->getAsk()->getCriteria()->getFrequency() && $carpoolItem->getUnpaidDate()) {
                     // We send only one email for the all week
                     if (!in_array($carpoolItem->getAsk()->getId(), $askIds)) {
                         $event = new SignalDeptEvent($carpoolItem, $user);
-                        $this->eventDispatcher->dispatch(SignalDeptEvent::NAME, $event);
+                        $this->eventDispatcher->dispatch($event, SignalDeptEvent::NAME);
 
                         // we put in array the ask and the ask linked
                         $askIds[] = $carpoolItem->getAsk()->getId();
@@ -882,7 +882,7 @@ class PaymentManager
                     if (CarpoolItem::DEBTOR_STATUS_NULL !== $carpoolItem->getDebtorStatus()) {
                         // we execute event to inform passenger to pay for the carpool only if the deptor status is not null
                         $event = new PayAfterCarpoolEvent($carpoolItem, $carpoolItem->getDebtorUser());
-                        $this->eventDispatcher->dispatch(PayAfterCarpoolEvent::NAME, $event);
+                        $this->eventDispatcher->dispatch($event, PayAfterCarpoolEvent::NAME);
                     }
                 }
             } else {
@@ -975,7 +975,7 @@ class PaymentManager
                         if (!in_array($carpoolItem->getAsk()->getId(), $askIds)) {
                             if (CarpoolItem::DEBTOR_STATUS_NULL !== $carpoolItem->getDebtorStatus()) {
                                 $event = new PayAfterCarpoolRegularEvent($carpoolItem, $carpoolItem->getDebtorUser());
-                                $this->eventDispatcher->dispatch(PayAfterCarpoolRegularEvent::NAME, $event);
+                                $this->eventDispatcher->dispatch($event, PayAfterCarpoolRegularEvent::NAME);
                             }
                             // we put in array the askId and the askid linked
                             $askIds[] = $carpoolItem->getAsk()->getId();
@@ -1228,7 +1228,7 @@ class PaymentManager
                 $paymentProfile->setValidationOutdatedDate(null);
                 // we dispatch the event
                 $event = new IdentityProofAcceptedEvent($paymentProfile);
-                $this->eventDispatcher->dispatch(IdentityProofAcceptedEvent::NAME, $event);
+                $this->eventDispatcher->dispatch($event, IdentityProofAcceptedEvent::NAME);
                 //  we dispatch the gamification event associated
                 $action = $this->actionRepository->findOneBy(['name' => 'identity_proof_accepted']);
                 $actionEvent = new ActionEvent($action, $event->getPaymentProfile()->getUser());
@@ -1242,7 +1242,7 @@ class PaymentManager
                 $paymentProfile = $this->getRefusalReason($paymentProfile);
                 // we dispatch the event
                 $event = new IdentityProofRejectedEvent($paymentProfile);
-                $this->eventDispatcher->dispatch(IdentityProofRejectedEvent::NAME, $event);
+                $this->eventDispatcher->dispatch($event, IdentityProofRejectedEvent::NAME);
 
             break;
 
@@ -1255,7 +1255,7 @@ class PaymentManager
                 $paymentProfile->setValidatedDate(null);
                 // we dispatch the event
                 $event = new IdentityProofOutdatedEvent($paymentProfile);
-                $this->eventDispatcher->dispatch(IdentityProofOutdatedEvent::NAME, $event);
+                $this->eventDispatcher->dispatch($event, IdentityProofOutdatedEvent::NAME);
 
             break;
         }

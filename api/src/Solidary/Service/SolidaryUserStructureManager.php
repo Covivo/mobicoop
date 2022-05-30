@@ -18,7 +18,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\Service;
 
@@ -28,8 +28,8 @@ use App\Auth\Repository\AuthItemRepository;
 use App\Solidary\Entity\SolidaryUserStructure;
 use App\Solidary\Event\SolidaryUserStructureAcceptedEvent;
 use App\Solidary\Event\SolidaryUserStructureRefusedEvent;
-use Doctrine\ORM\EntityManagerInterface;
 use App\Solidary\Exception\SolidaryException;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -49,18 +49,16 @@ class SolidaryUserStructureManager
     }
 
     /**
-     * Handle an update of a SolidaryUserStructure
+     * Handle an update of a SolidaryUserStructure.
      *
-     * @param SolidaryUserStructure $solidaryUserStructure
      * @return SolidaryUserStructure
      */
     public function updateSolidaryUserStructure(SolidaryUserStructure $solidaryUserStructure)
     {
-
         // If we accept or refuse a candidate for this SolidaryUserStructure we need to se the rights correctly
         $user = $solidaryUserStructure->getSolidaryUser()->getUser();
 
-        if ($solidaryUserStructure->getStatus() == SolidaryUserStructure::STATUS_ACCEPTED) {
+        if (SolidaryUserStructure::STATUS_ACCEPTED == $solidaryUserStructure->getStatus()) {
             if ($solidaryUserStructure->getSolidaryUser()->isVolunteer()) {
                 $authItem = $this->authItemRepository->find(AuthItem::ROLE_SOLIDARY_VOLUNTEER);
             } elseif ($solidaryUserStructure->getSolidaryUser()->isBeneficiary()) {
@@ -76,18 +74,17 @@ class SolidaryUserStructureManager
 
             // dispatch the event
             $event = new SolidaryUserStructureAcceptedEvent($solidaryUserStructure);
-            $this->eventDispatcher->dispatch(SolidaryUserStructureAcceptedEvent::NAME, $event);
-        } elseif ($solidaryUserStructure->getStatus() == SolidaryUserStructure::STATUS_REFUSED) {
+            $this->eventDispatcher->dispatch($event, SolidaryUserStructureAcceptedEvent::NAME);
+        } elseif (SolidaryUserStructure::STATUS_REFUSED == $solidaryUserStructure->getStatus()) {
             // just dispatch the event
             $event = new SolidaryUserStructureRefusedEvent($solidaryUserStructure);
-            $this->eventDispatcher->dispatch(SolidaryUserStructureRefusedEvent::NAME, $event);
-        } elseif ($solidaryUserStructure->getStatus() == SolidaryUserStructure::STATUS_PENDING) {
+            $this->eventDispatcher->dispatch($event, SolidaryUserStructureRefusedEvent::NAME);
+        } elseif (SolidaryUserStructure::STATUS_PENDING == $solidaryUserStructure->getStatus()) {
             // TO DO
             // What do we do ?
         } else {
             throw new SolidaryException(SolidaryException::BAD_SOLIDARYUSERSTRUCTURE_STATUS);
         }
-
 
         return $solidaryUserStructure;
     }

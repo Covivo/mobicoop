@@ -19,46 +19,40 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Gamification\Service;
 
 use App\Action\Entity\Action;
 use App\Action\Entity\Log;
 use App\Action\Repository\LogRepository;
-use App\Carpool\Entity\Ask;
+use App\Communication\Repository\MessageRepository;
 use App\Gamification\Entity\Badge;
 use App\Gamification\Entity\GamificationAction;
-use App\Gamification\Repository\SequenceItemRepository;
-use App\User\Entity\User;
-use App\Gamification\Entity\SequenceItem;
-use App\Gamification\Entity\ValidationStep;
-use App\Gamification\Repository\BadgeRepository;
-use App\Gamification\Entity\BadgeProgression;
-use App\Gamification\Entity\BadgeSummary;
 use App\Gamification\Entity\GamificationNotifier;
 use App\Gamification\Entity\Reward;
 use App\Gamification\Entity\RewardStep;
+use App\Gamification\Entity\SequenceItem;
 use App\Gamification\Entity\SequenceStatus;
+use App\Gamification\Entity\ValidationStep;
 use App\Gamification\Event\BadgeEarnedEvent;
 use App\Gamification\Event\RewardStepEarnedEvent;
 use App\Gamification\Event\ValidationStepEvent;
 use App\Gamification\Interfaces\GamificationNotificationInterface;
-use App\Gamification\Resource\BadgesBoard;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use App\Gamification\Interfaces\GamificationRuleInterface;
-use App\Communication\Repository\MessageRepository;
-use App\Gamification\Repository\RewardStepRepository;
+use App\Gamification\Repository\BadgeRepository;
 use App\Gamification\Repository\RewardRepository;
-use App\Payment\Entity\CarpoolItem;
-use Psr\Log\LoggerInterface;
+use App\Gamification\Repository\RewardStepRepository;
+use App\Gamification\Repository\SequenceItemRepository;
+use App\Gamification\Resource\BadgesBoard;
+use App\User\Entity\User;
 use App\User\Repository\UserRepository;
-use App\Gamification\Service\RetroactivelyRewardService;
-use App\Gamification\Service\BadgesBoardManager;
+use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
- * Gamification Manager
+ * Gamification Manager.
  *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
@@ -110,18 +104,17 @@ class GamificationManager
         $this->retroactivelyRewardService = $retroactivelyRewardService;
         $this->badgesBoardManager = $badgesBoardManager;
     }
-    
+
     /**
-     * When a new log entry is detected, we treat it to determine if there is something to do (i.e Gamification)
+     * When a new log entry is detected, we treat it to determine if there is something to do (i.e Gamification).
      *
-     * @param Log $log          Event of the action
-     * @return void
+     * @param Log $log Event of the action
      */
     public function handleLog(Log $log)
     {
         // A new log has been recorded. We need to check if there is a gamification action to take
         $gamificationActions = $log->getAction()->getGamificationActions();
-        if (is_array($gamificationActions) && count($gamificationActions)>0) {
+        if (is_array($gamificationActions) && count($gamificationActions) > 0) {
             // This action has gamification action, we need to treat it
             foreach ($gamificationActions as $gamificationAction) {
                 $this->treatGamificationAction($gamificationAction, $log);
@@ -130,104 +123,7 @@ class GamificationManager
     }
 
     /**
-     * Treatment and evaluation of a GamificationAction
-     *
-     * @param GamificationAction $gamificationAction
-     * @param Log $log
-     * @return void
-     */
-    private function treatGamificationAction(GamificationAction $gamificationAction, Log $log)
-    {
-        // We check if this action is in a sequenceItem
-        $validationSteps = [];
-        $sequenceItems = $this->sequenceItemRepository->findBy(['gamificationAction'=>$gamificationAction]);
-        if (is_array($sequenceItems) && count($sequenceItems)>0) {
-            // This action has gamification action, we need to treat it
-            /**
-             * @var SequenceItem $sequenceItem
-             */
-            foreach ($sequenceItems as $sequenceItem) {
-                $validationStep = new ValidationStep();
-                $validationStep->setUser($log->getUser());
-                $validationStep->setSequenceItem($sequenceItem);
-                $validationStep->setValidated(true); // By default, the sequenceItem is valid
-
-                if (!is_null($gamificationAction->getGamificationActionRule())) {
-                    // at this point a rule is associated, we need to execute it
-                    $gamificationActionRuleName = "\\App\\Gamification\Rule\\" . $gamificationAction->getGamificationActionRule()->getName();
-                    /**
-                     * @var GamificationRuleInterface $gamificationActionRule
-                     */
-                    $gamificationActionRule = new $gamificationActionRuleName;
-                    $validationStep->setValidated($validationStep->isValidated() && $gamificationActionRule->execute($log, $sequenceItem));
-                }
-                // This related action needs to be made a minimum amount of time
-                if (!is_null($sequenceItem->getMinCount()) && $sequenceItem->getMinCount()>0) {
-                    $validationStep->setValidated($validationStep->isValidated() && $this->checkMinCount($gamificationAction->getAction(), $log->getUser(), $sequenceItem->getMinCount()));
-                }
-                // this related action needs to be made in a range that range date
-                if (($sequenceItem->isInDateRange())) {
-                    $validationStep->setValidated($validationStep->isValidated() && $this->checkInDateRange($gamificationAction->getAction(), $log->getUser(), $sequenceItem->getBadge()->getStartDate(), $sequenceItem->getBadge()->getEndDate(), $sequenceItem->getMinCount(), $sequenceItem->getMinUniqueCount()));
-                }
-
-                // Dispatch an event who says that a ValidationStep has been evaluated
-                $validationStepEvent = new ValidationStepEvent($validationStep);
-                $this->eventDispatcher->dispatch(ValidationStepEvent::NAME, $validationStepEvent);
-            }
-        }
-    }
-
-    /**
-     * Check if the MinCount criteria is verified
-     *
-     * @param Action $action    The action to count
-     * @param User $user        The User we count for
-     * @param int $minCount     The min count to be valid
-     * @return boolean  True for valid
-     */
-    private function checkMinCount(Action $action, User $user, int $minCount): bool
-    {
-        // We get in the log table all the Action $action made by this User $user
-        $logs = $this->logRepository->findBy(['action'=>$action, 'user'=>$user]);
-        if (is_array($logs) && count($logs)>=$minCount) {
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * Check if the inDateRange criteria is verified
-     *
-     * @param Action $action            The action to check
-     * @param User $user                The User who made the action
-     * @param DateTime $startDate       The start date to be valid
-     * @param DateTime $endDate         The end date to be valid
-     * @param integer $minCount         The min count to be valid
-     * @param integer $minUniqueCount   not implemented The unique min count to be vali_d
-     * @return boolean  True for valid
-     */
-    private function checkInDateRange(Action $action, User $user, $startDate, $endDate, $minCount=0, $minUniqueCount = 0): bool
-    {
-        // We get in the log table all the Action $action made by this User $user
-        $logs = $this->logRepository->findBy(['action'=>$action, 'user'=>$user]);
-        $logIds = [];
-        foreach ($logs as $log) {
-            if ($startDate <= $log->getDate() && $log->getDate() <= $endDate) {
-                $logIds[] = $log->getId();
-            }
-        }
-        if (count($logIds)>$minCount) {
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Get the Badges earned by a User
-     *
-     * @param User $user
-     * @return array|null
+     * Get the Badges earned by a User.
      */
     public function getBadgesEarned(User $user): ?array
     {
@@ -235,14 +131,14 @@ class GamificationManager
         foreach ($user->getRewards() as $reward) {
             $badges[] = $reward->getBadge();
         }
+
         return $badges;
     }
 
     /**
-     * Take a ValidationStep and take the necessary actions about it (RewardStep, Badge...)
+     * Take a ValidationStep and take the necessary actions about it (RewardStep, Badge...).
      *
-     * @param ValidationStep $validationStep   The ValidationStep to treat
-     * @return void
+     * @param ValidationStep $validationStep The ValidationStep to treat
      */
     public function handleValidationStep(ValidationStep $validationStep)
     {
@@ -256,7 +152,6 @@ class GamificationManager
                 $currentSequenceValidation = []; // We will store the status of every SequenceItem
                 $newValidation = false;
                 foreach ($badgeSummary->getSequences() as $sequenceStatus) {
-
                     // We found the right sequence
                     if ($sequenceStatus->getSequenceItemId() == $validationStep->getSequenceItem()->getId()) {
                         // If it's a new validation, We store it be inserting a line in RewardStep for the User
@@ -273,7 +168,7 @@ class GamificationManager
 
                             // Dispatch the event
                             $rewardStepEarnedEvent = new RewardStepEarnedEvent($rewardStep);
-                            $this->eventDispatcher->dispatch(RewardStepEarnedEvent::NAME, $rewardStepEarnedEvent);
+                            $this->eventDispatcher->dispatch($rewardStepEarnedEvent, RewardStepEarnedEvent::NAME);
                         }
                     }
                     // We store the status of the current SequenceItem. If all validated, maybe the user earned a Badge
@@ -292,7 +187,7 @@ class GamificationManager
 
                         // Dispatch the event
                         $badgeEarnedEvent = new BadgeEarnedEvent($reward);
-                        $this->eventDispatcher->dispatch(BadgeEarnedEvent::NAME, $badgeEarnedEvent);
+                        $this->eventDispatcher->dispatch($badgeEarnedEvent, BadgeEarnedEvent::NAME);
                     }
                 }
             }
@@ -301,10 +196,7 @@ class GamificationManager
     }
 
     /**
-     * Add a Gamification notification to the current pool that will be return at the end of the request
-     *
-     * @param GamificationNotificationInterface $gamificationNotification
-     * @return void
+     * Add a Gamification notification to the current pool that will be return at the end of the request.
      */
     public function handleGamificationNotification(GamificationNotificationInterface $gamificationNotification)
     {
@@ -312,10 +204,9 @@ class GamificationManager
     }
 
     /**
-     * Tag a RewardStep as notified
+     * Tag a RewardStep as notified.
      *
-     * @param int $id    Id of the RewardStep to tag
-     * @return RewardStep
+     * @param int $id Id of the RewardStep to tag
      */
     public function tagRewardStepAsNotified(int $id): RewardStep
     {
@@ -323,16 +214,17 @@ class GamificationManager
             $rewardStep->setNotifiedDate(new \DateTime('now'));
             $this->entityManager->persist($rewardStep);
             $this->entityManager->flush();
+
             return $rewardStep;
         }
-        throw new \LogicException("No RewardStep found");
+
+        throw new \LogicException('No RewardStep found');
     }
 
     /**
-     * Tag a Reward as notified
+     * Tag a Reward as notified.
      *
-     * @param int $id    Id of the RewardStep to tag
-     * @return Reward
+     * @param int $id Id of the RewardStep to tag
      */
     public function tagRewardAsNotified(int $id): Reward
     {
@@ -340,14 +232,108 @@ class GamificationManager
             $reward->setNotifiedDate(new \DateTime('now'));
             $this->entityManager->persist($reward);
             $this->entityManager->flush();
+
             return $reward;
         }
-        throw new \LogicException("No Reward found");
+
+        throw new \LogicException('No Reward found');
     }
 
-    
     public function retroactivelyGenerateRewards()
     {
         return $this->retroactivelyRewardService->retroactivelyRewardUsers();
+    }
+
+    /**
+     * Treatment and evaluation of a GamificationAction.
+     */
+    private function treatGamificationAction(GamificationAction $gamificationAction, Log $log)
+    {
+        // We check if this action is in a sequenceItem
+        $validationSteps = [];
+        $sequenceItems = $this->sequenceItemRepository->findBy(['gamificationAction' => $gamificationAction]);
+        if (is_array($sequenceItems) && count($sequenceItems) > 0) {
+            // This action has gamification action, we need to treat it
+            /**
+             * @var SequenceItem $sequenceItem
+             */
+            foreach ($sequenceItems as $sequenceItem) {
+                $validationStep = new ValidationStep();
+                $validationStep->setUser($log->getUser());
+                $validationStep->setSequenceItem($sequenceItem);
+                $validationStep->setValidated(true); // By default, the sequenceItem is valid
+
+                if (!is_null($gamificationAction->getGamificationActionRule())) {
+                    // at this point a rule is associated, we need to execute it
+                    $gamificationActionRuleName = '\\App\\Gamification\\Rule\\'.$gamificationAction->getGamificationActionRule()->getName();
+                    /**
+                     * @var GamificationRuleInterface $gamificationActionRule
+                     */
+                    $gamificationActionRule = new $gamificationActionRuleName();
+                    $validationStep->setValidated($validationStep->isValidated() && $gamificationActionRule->execute($log, $sequenceItem));
+                }
+                // This related action needs to be made a minimum amount of time
+                if (!is_null($sequenceItem->getMinCount()) && $sequenceItem->getMinCount() > 0) {
+                    $validationStep->setValidated($validationStep->isValidated() && $this->checkMinCount($gamificationAction->getAction(), $log->getUser(), $sequenceItem->getMinCount()));
+                }
+                // this related action needs to be made in a range that range date
+                if (($sequenceItem->isInDateRange())) {
+                    $validationStep->setValidated($validationStep->isValidated() && $this->checkInDateRange($gamificationAction->getAction(), $log->getUser(), $sequenceItem->getBadge()->getStartDate(), $sequenceItem->getBadge()->getEndDate(), $sequenceItem->getMinCount(), $sequenceItem->getMinUniqueCount()));
+                }
+
+                // Dispatch an event who says that a ValidationStep has been evaluated
+                $validationStepEvent = new ValidationStepEvent($validationStep);
+                $this->eventDispatcher->dispatch($validationStepEvent, ValidationStepEvent::NAME);
+            }
+        }
+    }
+
+    /**
+     * Check if the MinCount criteria is verified.
+     *
+     * @param Action $action   The action to count
+     * @param User   $user     The User we count for
+     * @param int    $minCount The min count to be valid
+     *
+     * @return bool True for valid
+     */
+    private function checkMinCount(Action $action, User $user, int $minCount): bool
+    {
+        // We get in the log table all the Action $action made by this User $user
+        $logs = $this->logRepository->findBy(['action' => $action, 'user' => $user]);
+        if (is_array($logs) && count($logs) >= $minCount) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if the inDateRange criteria is verified.
+     *
+     * @param Action   $action         The action to check
+     * @param User     $user           The User who made the action
+     * @param DateTime $startDate      The start date to be valid
+     * @param DateTime $endDate        The end date to be valid
+     * @param int      $minCount       The min count to be valid
+     * @param int      $minUniqueCount not implemented The unique min count to be vali_d
+     *
+     * @return bool True for valid
+     */
+    private function checkInDateRange(Action $action, User $user, $startDate, $endDate, $minCount = 0, $minUniqueCount = 0): bool
+    {
+        // We get in the log table all the Action $action made by this User $user
+        $logs = $this->logRepository->findBy(['action' => $action, 'user' => $user]);
+        $logIds = [];
+        foreach ($logs as $log) {
+            if ($startDate <= $log->getDate() && $log->getDate() <= $endDate) {
+                $logIds[] = $log->getId();
+            }
+        }
+        if (count($logIds) > $minCount) {
+            return true;
+        }
+
+        return false;
     }
 }

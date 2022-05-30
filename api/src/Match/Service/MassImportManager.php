@@ -416,7 +416,7 @@ class MassImportManager
         if (count($analyseErrors) > 0) {
             // Some errors have been found. We send an email to the operator
             $event = new MassAnalyzeErrorsEvent($mass);
-            $this->eventDispatcher->dispatch(MassAnalyzeErrorsEvent::NAME, $event);
+            $this->eventDispatcher->dispatch($event, MassAnalyzeErrorsEvent::NAME);
         }
 
         $mass->setStatus(Mass::STATUS_ANALYZED);
@@ -643,7 +643,7 @@ class MassImportManager
 
         // Send an email to notify the operator that the matching is over
         // $event = new MassMatchedEvent($mass);
-        // $this->eventDispatcher->dispatch(MassMatchedEvent::NAME, $event);
+        // $this->eventDispatcher->dispatch($event, MassMatchedEvent::NAME);
 
         $this->logger->info('Mass match | Creating matches records end '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
     }

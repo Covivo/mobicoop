@@ -1136,7 +1136,7 @@ break;
 
         // send an event to warn that a SolidaryRecord has been created
         $event = new SolidaryCreatedEvent($this->poster, $solidary);
-        $this->eventDispatcher->dispatch(SolidaryCreatedEvent::NAME, $event);
+        $this->eventDispatcher->dispatch($event, SolidaryCreatedEvent::NAME);
 
         // read the solidary record again to get the last data (events should have updated it !)
         return $this->solidaryRepository->find($solidary->getId());
@@ -1399,7 +1399,7 @@ break;
      * @param string   $day       The shorten name of the day (3 letters)
      * @param array    $schedules The resulting schedules (passed by reference)
      */
-    private function treatDay(Proposal $proposal, int $num, string $day, array &$schedules)
+    private function treatDay(Proposal $proposal, int $num, string $day, array & $schedules)
     {
         $checkMethod = 'is'.$day.'Check';
         $timeMethod = 'get'.$day.'Time';
@@ -1720,11 +1720,11 @@ break;
 
         // send an event to warn that a SolidaryRecord has been created
         $event = new SolidaryCreatedEvent($this->poster, $newSolidary);
-        $this->eventDispatcher->dispatch(SolidaryCreatedEvent::NAME, $event);
+        $this->eventDispatcher->dispatch($event, SolidaryCreatedEvent::NAME);
 
         // send an event to warn that the old SolidaryRecord has been deeply updated
         $event = new SolidaryDeeplyUpdated($this->poster, $solidary);
-        $this->eventDispatcher->dispatch(SolidaryDeeplyUpdated::NAME, $event);
+        $this->eventDispatcher->dispatch($event, SolidaryDeeplyUpdated::NAME);
 
         return $this->getSolidary($newSolidary->getId());
         // $newProposal = clone $solidary->getProposal();
@@ -1913,7 +1913,7 @@ break;
         }
         // send event to warn that an animation has been made
         $event = new AnimationMadeEvent($newAnimation);
-        $this->eventDispatcher->dispatch(AnimationMadeEvent::NAME, $event);
+        $this->eventDispatcher->dispatch($event, AnimationMadeEvent::NAME);
 
         $persist = false;
         // check again for progression to set the solidary progression

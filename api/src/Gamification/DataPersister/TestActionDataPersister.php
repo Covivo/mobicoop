@@ -18,15 +18,15 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Gamification\DataPersister;
 
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
 use App\Action\Event\ActionEvent;
 use App\Gamification\Resource\TestAction;
-use Symfony\Component\Security\Core\Security;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Security\Core\Security;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
@@ -44,13 +44,14 @@ final class TestActionDataPersister implements ContextAwareDataPersisterInterfac
 
     public function supports($data, array $context = []): bool
     {
-        return $data instanceof TestAction && isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'post';
+        return $data instanceof TestAction && isset($context['collection_operation_name']) && 'post' == $context['collection_operation_name'];
     }
 
     public function persist($data, array $context = [])
     {
         $event = new ActionEvent($data->getAction(), $this->security->getUser());
-        $this->eventDispatcher->dispatch(ActionEvent::NAME, $event);
+        $this->eventDispatcher->dispatch($event, ActionEvent::NAME);
+
         return $data;
     }
 

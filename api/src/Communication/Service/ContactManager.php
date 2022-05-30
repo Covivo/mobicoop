@@ -19,13 +19,12 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
-
+ */
 
 namespace App\Communication\Service;
 
-use App\Communication\Event\ContactEmailEvent;
 use App\Communication\Entity\Contact;
+use App\Communication\Event\ContactEmailEvent;
 use App\Communication\Ressource\ContactType;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -45,8 +44,6 @@ class ContactManager
 
     /**
      * ContactManager constructor.
-     * @param EventDispatcherInterface $eventDispatcher
-     * @param LoggerInterface $logger
      */
     public function __construct(EventDispatcherInterface $eventDispatcher, LoggerInterface $logger, array $contactItems)
     {
@@ -56,9 +53,8 @@ class ContactManager
     }
 
     /**
-     * Send email event for contact message
+     * Send email event for contact message.
      *
-     * @param Contact $contact
      * @return Contact
      */
     public function sendContactMail(Contact $contact)
@@ -66,22 +62,23 @@ class ContactManager
         // Get the contact type of this contact
         $contactTypes = $this->getContactTypes();
         foreach ($contactTypes as $contactType) {
-            if ($contactType->getDemand()==$contact->getDemand()) {
+            if ($contactType->getDemand() == $contact->getDemand()) {
                 $contact->setContactType($contactType);
             }
         }
 
         if (is_null($contact->getContactType())) {
-            throw new \LogicException("Unknown contact demand");
+            throw new \LogicException('Unknown contact demand');
         }
 
         $event = new ContactEmailEvent($contact);
-        $this->eventDispatcher->dispatch(ContactEmailEvent::NAME, $event);
+        $this->eventDispatcher->dispatch($event, ContactEmailEvent::NAME);
+
         return $contact;
     }
 
     /**
-     * Get the ContactTypes
+     * Get the ContactTypes.
      *
      * @return ContactType[]
      */
@@ -91,20 +88,19 @@ class ContactManager
         foreach ($this->contactItems['contacts'] as $contactItem) {
             $contactTypes[] = $this->buildContactType($contactItem);
         }
+
         return $contactTypes;
     }
 
     /**
-     * Return the specific email list of a type
-     *
-     * @return ContactType|null
+     * Return the specific email list of a type.
      */
     public function getEmailsByType(string $type): ?ContactType
     {
         // Get the contact types and find the support
         $contactTypes = $this->getContactTypes();
         foreach ($contactTypes as $contactType) {
-            if ($contactType->getDemand()==$type) {
+            if ($contactType->getDemand() == $type) {
                 return $contactType;
             }
         }
@@ -113,10 +109,7 @@ class ContactManager
     }
 
     /**
-     * Build a ContactType from a contact item in config contacts.json
-     *
-     * @param array $item
-     * @return void
+     * Build a ContactType from a contact item in config contacts.json.
      */
     private function buildContactType(array $item)
     {
@@ -126,6 +119,7 @@ class ContactManager
         $contactType->setTo($item['To']);
         $contactType->setCc($item['Cc']);
         $contactType->setBcc($item['Bcc']);
+
         return $contactType;
     }
 }

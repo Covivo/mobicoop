@@ -18,16 +18,14 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\Service;
 
 use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\AskHistory;
-use App\Carpool\Entity\Criteria;
 use App\Communication\Entity\Medium;
 use App\Communication\Entity\Message;
-use App\Communication\Entity\Recipient;
 use App\Solidary\Entity\SolidaryAsk;
 use App\Solidary\Entity\SolidaryAskHistory;
 use App\Solidary\Entity\SolidaryContact;
@@ -63,16 +61,15 @@ class SolidaryContactManager
     }
 
     /**
-     * Handle a SolidaryContact
+     * Handle a SolidaryContact.
      *
-     * @param SolidaryContact $solidaryContact
      * @return SolidaryContact
      */
     public function handleSolidaryContact(SolidaryContact $solidaryContact)
     {
         // We check if there is already an Ask for the solidarySolution in the SolidaryContact
         $solidaryAsk = $this->solidaryAskRepository->findBySolidarySolution($solidaryContact->getSolidarySolution());
-        
+
         if (empty($solidaryAsk)) {
             // There is no SolidaryAsk we need to create it before trigger the event
             $solidaryAsk = new SolidaryAsk();
@@ -85,7 +82,7 @@ class SolidaryContactManager
             // We found the solidaryAsk
             $solidaryAsk = $solidaryAsk[0];
         }
-        
+
         // we trigger the solidaryContact events
         $media = $solidaryContact->getMedia();
         if ($this->notificationsEnabled) {
@@ -96,17 +93,22 @@ class SolidaryContactManager
                         $message = $this->buildInternalMessage($solidaryContact);
                         $solidaryContact->setMessage($message);
                         $event = new SolidaryContactMessageEvent($solidaryContact);
-                        $this->eventDispatcher->dispatch(SolidaryContactMessageEvent::NAME, $event);
+                        $this->eventDispatcher->dispatch($event, SolidaryContactMessageEvent::NAME);
                         // We create the SolidaryAskHistory and AskHistory if needed
                         $this->createHistories($solidaryAsk, $solidaryContact->getMessage());
+
                         break;
+
                     case Medium::MEDIUM_SMS:
                         $event = new SolidaryContactSmsEvent($solidaryContact);
-                        $this->eventDispatcher->dispatch(SolidaryContactSmsEvent::NAME, $event);
+                        $this->eventDispatcher->dispatch($event, SolidaryContactSmsEvent::NAME);
+
                         break;
+
                     case Medium::MEDIUM_EMAIL:
                         $event = new SolidaryContactEmailEvent($solidaryContact);
-                        $this->eventDispatcher->dispatch(SolidaryContactEmailEvent::NAME, $event);
+                        $this->eventDispatcher->dispatch($event, SolidaryContactEmailEvent::NAME);
+
                         break;
                 }
             }
@@ -118,10 +120,7 @@ class SolidaryContactManager
     }
 
     /**
-     * Build a simple message to send
-     *
-     * @param SolidaryContact $object
-     * @return Message
+     * Build a simple message to send.
      */
     private function buildInternalMessage(SolidaryContact $object): Message
     {
@@ -140,6 +139,7 @@ class SolidaryContactManager
                 foreach ($solidaryAskHistories as $solidaryAskHistory) {
                     if (!is_null($solidaryAskHistory->getMessage())) {
                         $message->setMessage($solidaryAskHistory->getMessage());
+
                         break;
                     }
                 }
@@ -150,11 +150,7 @@ class SolidaryContactManager
     }
 
     /**
-     * We create the SolidaryAskHistory and AskHistory if needed linked to a Message
-     *
-     * @param SolidaryAsk $solidaryAsk
-     * @param Message $message
-     * @return void
+     * We create the SolidaryAskHistory and AskHistory if needed linked to a Message.
      */
     private function createHistories(SolidaryAsk $solidaryAsk, Message $message)
     {

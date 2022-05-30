@@ -118,7 +118,7 @@ class ImportManager
     private function prepareUserImport(string $origin, ?int $massId=null, ?int $lowestId=null)
     {
         set_time_limit($this->timeLimit);
-        
+
         if (!$this->sqlLog) {
             $this->entityManager->getConnection()->getConfiguration()->setSQLLogger(null);
         }
@@ -128,8 +128,8 @@ class ImportManager
         if (!is_null($massId)) {
             // we select the users that have a related mass_person, and that haven't been imported yet (using the null left join trick)
             $sql = "
-            INSERT INTO user_import (user_id,origin,status,created_date,user_external_id) 
-            SELECT u.id, '" . $origin . $massId . "'," . UserImport::STATUS_IMPORTED . ", '" . (new \DateTime())->format('Y-m-d') . "',u.id FROM user u 
+            INSERT INTO user_import (user_id,origin,status,created_date,user_external_id)
+            SELECT u.id, '" . $origin . $massId . "'," . UserImport::STATUS_IMPORTED . ", '" . (new \DateTime())->format('Y-m-d') . "',u.id FROM user u
             INNER JOIN mass_person mp ON mp.user_id = u.id LEFT JOIN user_import ui ON ui.user_id = u.id WHERE ui.user_id is NULL AND mp.mass_id = " . $massId;
         } elseif (!is_null($lowestId)) {
             $sql = "INSERT INTO user_import (user_id,origin,status,created_date,user_external_id) SELECT id, '" . $origin . "'," . UserImport::STATUS_IMPORTED . ", '" . (new \DateTime())->format('Y-m-d') . "',id FROM user WHERE id>=" . $lowestId;
@@ -137,7 +137,7 @@ class ImportManager
             $sql = "INSERT INTO user_import (user_id,origin,status,created_date,user_external_id) SELECT id, '" . $origin . "'," . UserImport::STATUS_IMPORTED . ", '" . (new \DateTime())->format('Y-m-d') . "',id FROM user";
         }
         $stmt = $conn->prepare($sql);
-        $stmt->execute();
+        $stmt->executeQuery();
 
 
         // REPAIR
@@ -145,30 +145,30 @@ class ImportManager
         // update proposal : set private to 0 if initialized to null
         $sql = "UPDATE proposal SET private = 0 WHERE private is null";
         $stmt = $conn->prepare($sql);
-        $stmt->execute();
+        $stmt->executeQuery();
 
         // update criteria : set checks to null where time is not filled
         $sql = "UPDATE criteria SET mon_check = null WHERE mon_check IS NOT NULL and mon_time is null";
         $stmt = $conn->prepare($sql);
-        $stmt->execute();
+        $stmt->executeQuery();
         $sql = "UPDATE criteria SET tue_check = null WHERE tue_check IS NOT NULL and tue_time is null";
         $stmt = $conn->prepare($sql);
-        $stmt->execute();
+        $stmt->executeQuery();
         $sql = "UPDATE criteria SET wed_check = null WHERE wed_check IS NOT NULL and wed_time is null";
         $stmt = $conn->prepare($sql);
-        $stmt->execute();
+        $stmt->executeQuery();
         $sql = "UPDATE criteria SET thu_check = null WHERE thu_check IS NOT NULL and thu_time is null";
         $stmt = $conn->prepare($sql);
-        $stmt->execute();
+        $stmt->executeQuery();
         $sql = "UPDATE criteria SET fri_check = null WHERE fri_check IS NOT NULL and fri_time is null";
         $stmt = $conn->prepare($sql);
-        $stmt->execute();
+        $stmt->executeQuery();
         $sql = "UPDATE criteria SET sat_check = null WHERE sat_check IS NOT NULL and sat_time is null";
         $stmt = $conn->prepare($sql);
-        $stmt->execute();
+        $stmt->executeQuery();
         $sql = "UPDATE criteria SET sun_check = null WHERE sun_check IS NOT NULL and sun_time is null";
         $stmt = $conn->prepare($sql);
-        $stmt->execute();
+        $stmt->executeQuery();
 
         // we have to treat all the users that have just been imported
         // first pass : update status before treatment
@@ -185,11 +185,11 @@ class ImportManager
         if (!is_null($massId)) {
             $sql = "INSERT INTO user_notification (notification_id,user_id,active,created_date)
             SELECT n.id,u.id,IF (u.phone_validated_date IS NULL AND n.medium_id = " . Medium::MEDIUM_SMS . ",0,IF ((u.mobile IS NULL OR u.mobile = 0) AND n.medium_id = " . Medium::MEDIUM_PUSH . ",0,n.user_active_default)),'" . (new \DateTime())->format('Y-m-d') . "'
-            FROM user_import i LEFT JOIN user u ON u.id = i.user_id INNER JOIN mass_person mp ON mp.user_id = u.id 
+            FROM user_import i LEFT JOIN user u ON u.id = i.user_id INNER JOIN mass_person mp ON mp.user_id = u.id
             JOIN notification n
             WHERE n.user_editable=1 AND mp.mass_id = " . $massId;
             $stmt = $conn->prepare($sql);
-            $stmt->execute();
+            $stmt->executeQuery();
         } elseif (!is_null($lowestId)) {
             $sql = "INSERT INTO user_notification (notification_id,user_id,active,created_date)
             SELECT n.id,u.id,IF (u.phone_validated_date IS NULL AND n.medium_id = " . Medium::MEDIUM_SMS . ",0,IF ((u.mobile IS NULL OR u.mobile = 0) AND n.medium_id = " . Medium::MEDIUM_PUSH . ",0,n.user_active_default)),'" . (new \DateTime())->format('Y-m-d') . "'
@@ -197,7 +197,7 @@ class ImportManager
             JOIN notification n
             WHERE n.user_editable=1 and i.user_id>=" . $lowestId;
             $stmt = $conn->prepare($sql);
-            $stmt->execute();
+            $stmt->executeQuery();
         } else {
             $sql = "INSERT INTO user_notification (notification_id,user_id,active,created_date)
             SELECT n.id,u.id,IF (u.phone_validated_date IS NULL AND n.medium_id = " . Medium::MEDIUM_SMS . ",0,IF ((u.mobile IS NULL OR u.mobile = 0) AND n.medium_id = " . Medium::MEDIUM_PUSH . ",0,n.user_active_default)),'" . (new \DateTime())->format('Y-m-d') . "'
@@ -205,7 +205,7 @@ class ImportManager
             JOIN notification n
             WHERE n.user_editable=1";
             $stmt = $conn->prepare($sql);
-            $stmt->execute();
+            $stmt->executeQuery();
         }
 
         $q = $this->entityManager
@@ -223,7 +223,7 @@ class ImportManager
         $conn = $this->entityManager->getConnection();
         $sql = "UPDATE address SET geo_json = PointFromText(CONCAT('POINT(',longitude,' ',latitude,')'),1) WHERE geo_json IS NULL";
         $stmt = $conn->prepare($sql);
-        $stmt->execute();
+        $stmt->executeQuery();
 
         $q = $this->entityManager
         ->createQuery('UPDATE App\Import\Entity\UserImport u set u.status = :status, u.treatmentUserEndDate=:treatmentDate WHERE u.status=:oldStatus')
@@ -246,11 +246,11 @@ class ImportManager
 
         // user import is a huge memory consumer !
         ini_set('memory_limit', $this->memoryLimit . 'M');
-        
+
         if (!$this->sqlLog) {
             $this->entityManager->getConnection()->getConfiguration()->setSQLLogger(null);
         }
-                
+
         // creation of the matchings
         // we create an array of all proposals to treat
         $proposalIds = $this->proposalRepository->findImportedProposals(UserImport::STATUS_DIRECTION_TREATED);
@@ -548,7 +548,7 @@ class ImportManager
                 $cpt++;
                 if ($cpt==50) {
                     $stmt = $conn->prepare($query);
-                    $stmt->execute();
+                    $stmt->executeQuery();
                     $cpt = 0;
                     $query = "";
                 }
@@ -556,7 +556,7 @@ class ImportManager
 
             if ($query!=="") {
                 $stmt = $conn->prepare($query);
-                $stmt->execute();
+                $stmt->executeQuery();
                 $cpt = 0;
                 $query = "";
             }

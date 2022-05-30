@@ -19,18 +19,18 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\Service;
 
-use App\Carpool\Repository\AskRepository;
-use App\User\Ressource\Review;
-use App\User\Entity\Review as ReviewEntity;
-use App\User\Entity\User;
 use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\Criteria;
+use App\Carpool\Repository\AskRepository;
+use App\User\Entity\Review as ReviewEntity;
+use App\User\Entity\User;
 use App\User\Event\ReviewReceivedEvent;
 use App\User\Repository\ReviewRepository;
+use App\User\Ressource\Review;
 use App\User\Ressource\ReviewDashboard;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -63,66 +63,7 @@ class ReviewManager
     }
 
     /**
-     * Build a Review (Ressource) from en Review (Entity)
-     *
-     * @param ReviewEntity $reviewEntity    The review Entity
-     * @param boolean $isLeft               true : the review has already been left
-     * @return Review
-     */
-    private function buildReviewFromEntity(ReviewEntity $reviewEntity, bool $isLeft = true): Review
-    {
-        $review = new Review($reviewEntity->getId());
-        
-        $review->setReviewer($reviewEntity->getReviewer());
-        $review->setReviewed($reviewEntity->getReviewed());
-
-        $review->setContent(nl2br($reviewEntity->getContent()));
-
-        $review->setDate((!is_null($reviewEntity->getUpdatedDate())) ? $reviewEntity->getUpdatedDate() : $reviewEntity->getCreatedDate());
-        $review->setLeft($isLeft);
-
-        return $review;
-    }
-
-    
-    /**
-     * Build an array of Review (Ressources) from an array of Review (Entities)
-     *
-     * @param ReviewEntity[] $reviewEntities    The array of Review entities
-     * @param boolean $isLeft                   true : the review has already been left
-     * @return Review[]
-     */
-    private function buildReviewsFromEntities(array $reviewEntities, bool $isLeft = true): array
-    {
-        $reviews = [];
-        foreach ($reviewEntities as $reviewEntity) {
-            $reviews[] = $this->buildReviewFromEntity($reviewEntity, $isLeft);
-        }
-        return $reviews;
-    }
-
-    /**
-     * Build a Review (Entity) from en Review (Ressource)
-     *
-     * @param Review $review    The review Entity
-     * @return ReviewEntity
-     */
-    private function buildReviewFromRessource(Review $review): ReviewEntity
-    {
-        $reviewEntity = new ReviewEntity();
-
-        $reviewEntity->setReviewer($review->getReviewer());
-        $reviewEntity->setReviewed($review->getReviewed());
-        $reviewEntity->setContent($review->getContent());
-
-        return $reviewEntity;
-    }
-
-    /**
-     * Create a Review
-     *
-     * @param Review $review
-     * @return Review
+     * Create a Review.
      */
     public function createReview(Review $review): Review
     {
@@ -136,16 +77,13 @@ class ReviewManager
 
         // Event
         $event = new ReviewReceivedEvent($reviewEntity);
-        $this->eventDispatcher->dispatch(ReviewReceivedEvent::NAME, $event);
+        $this->eventDispatcher->dispatch($event, ReviewReceivedEvent::NAME);
 
         return $this->buildReviewFromEntity($reviewEntity);
     }
 
     /**
-     * Get a Review
-     *
-     * @param integer $id
-     * @return Review|null
+     * Get a Review.
      */
     public function getReview(int $id): ?Review
     {
@@ -158,18 +96,19 @@ class ReviewManager
         if (!is_null($reviewEntity)) {
             return $this->buildReviewFromEntity($reviewEntity);
         }
+
         return null;
     }
 
-    
     /**
-     * Get reviews with specific reviewer and/or specific reviewed
+     * Get reviews with specific reviewer and/or specific reviewed.
      *
      * @param User $reviewer The reviewer
      * @param User $reviewed The reviewed
+     *
      * @return Review[]
      */
-    public function getSpecificReviews(User $reviewer=null, User $reviewed=null)
+    public function getSpecificReviews(User $reviewer = null, User $reviewed = null)
     {
         $reviews = [];
         if (!$this->userReview) {
@@ -181,19 +120,20 @@ class ReviewManager
         if (!is_null($reviewEntities)) {
             return $this->buildReviewsFromEntities($reviewEntities);
         }
+
         return [];
     }
-    
-    
+
     /**
      * Return all reviews concerning a User
      * Those who he's the reviewer, the reviewed or those he can still leave on someone.
      *
      * @param User $reviewer The reviewer
      * @param User $reviewed A specifiec reviewed
+     *
      * @return Review[]
      */
-    public function getReviews(User $reviewer, User $reviewed=null): array
+    public function getReviews(User $reviewer, User $reviewed = null): array
     {
         $reviews = [];
         if (!$this->userReview) {
@@ -215,51 +155,47 @@ class ReviewManager
                 $userIdAlreadyReviewed[] = $userLeftReview->getReviewed()->getId();
             }
         }
-        
+
         // We get the accepted Ask involving the User
         $asks = $this->askRepository->findAcceptedAsksForUser($reviewer, $reviewed);
         foreach ($asks as $ask) {
             // We keep only oneway or outward
-            if ($ask->getType() == Ask::TYPE_ONE_WAY || $ask->getType() == Ask::TYPE_OUTWARD_ROUNDTRIP) {
-
+            if (Ask::TYPE_ONE_WAY == $ask->getType() || Ask::TYPE_OUTWARD_ROUNDTRIP == $ask->getType()) {
                 // We will check if the review is already available to be left
                 $reviewAvailable = false;
-                
+
                 // Determine the reviewed
-                if ($ask->getUser()->getId()==$reviewer->getId()) {
+                if ($ask->getUser()->getId() == $reviewer->getId()) {
                     $reviewed = $ask->getUserRelated();
                 } else {
                     $reviewed = $ask->getUser();
                 }
-                
 
                 // We check if the User has already reviewed the other user
                 if (in_array($reviewed->getId(), $userIdAlreadyReviewed)) {
                     // Already reviewed this user. We break the loop
                     continue;
-                } else {
-                    // We need only one review to give by reviewed. We use this array also to store this information
-                    $userIdAlreadyReviewed[] = $reviewed->getId();
                 }
-
+                // We need only one review to give by reviewed. We use this array also to store this information
+                $userIdAlreadyReviewed[] = $reviewed->getId();
 
                 $now = new \DateTime();
-                $nowDate = \DateTime::createFromFormat("d/m/Y H:i:s", $now->format("d/m/Y")." 00:00:00");
+                $nowDate = \DateTime::createFromFormat('d/m/Y H:i:s', $now->format('d/m/Y').' 00:00:00');
                 // $nowDate = \DateTime::createFromFormat("d/m/Y H:i:s", "03/11/2020 00:00:00");
                 $fromDate = clone $ask->getCriteria()->getFromDate();
 
-                if ($ask->getCriteria()->getFrequency()==Criteria::FREQUENCY_PUNCTUAL) {
+                if (Criteria::FREQUENCY_PUNCTUAL == $ask->getCriteria()->getFrequency()) {
                     // If the ask is punctual, the carpool must be passed
-                    if ($nowDate>$fromDate) {
+                    if ($nowDate > $fromDate) {
                         $reviewAvailable = true;
                     }
                 } else {
                     // The Ask is regular, the first week has to be passed
                     $day = $fromDate->format('w');
-                    $diffToTheEndOfFirstWeek = ($day==0) ? 0 : 7 - $day;
-                    
+                    $diffToTheEndOfFirstWeek = (0 == $day) ? 0 : 7 - $day;
+
                     $endOfFirstWeekDate = $fromDate->modify('+'.$diffToTheEndOfFirstWeek.'day');
-                    if ($nowDate>$endOfFirstWeekDate) {
+                    if ($nowDate > $endOfFirstWeekDate) {
                         $reviewAvailable = true;
                     }
                 }
@@ -274,16 +210,16 @@ class ReviewManager
                 }
             }
         }
+
         return $reviews;
     }
 
     /**
-     * Return the reviews Dashboard of a User
+     * Return the reviews Dashboard of a User.
      *
      * @param User $user
-     * @return ReviewDashboard
      */
-    public function getReviewDashboard(User $reviewer, User $reviewed=null): ReviewDashboard
+    public function getReviewDashboard(User $reviewer, User $reviewed = null): ReviewDashboard
     {
         $reviewDashboard = new ReviewDashboard();
         $reviewDashboard->setReviewActive($this->userReview);
@@ -306,11 +242,12 @@ class ReviewManager
     }
 
     /**
-     * Determine if a user can get a review from another user
+     * Determine if a user can get a review from another user.
      *
-     * @param User $reviewer    The reviewer
-     * @param User $reviewed    The reviewed
-     * @return bool             The result
+     * @param User $reviewer The reviewer
+     * @param User $reviewed The reviewed
+     *
+     * @return bool The result
      */
     public function canReceiveReview(User $reviewer, User $reviewed): bool
     {
@@ -320,9 +257,66 @@ class ReviewManager
         if (!$this->userReview) {
             // Review system disable.
             return false;
-        } elseif (is_array($reviews->getReviewsToGive()) && count($reviews->getReviewsToGive())>0) {
+        }
+        if (is_array($reviews->getReviewsToGive()) && count($reviews->getReviewsToGive()) > 0) {
             return true;
         }
+
         return false;
+    }
+
+    /**
+     * Build a Review (Ressource) from en Review (Entity).
+     *
+     * @param ReviewEntity $reviewEntity The review Entity
+     * @param bool         $isLeft       true : the review has already been left
+     */
+    private function buildReviewFromEntity(ReviewEntity $reviewEntity, bool $isLeft = true): Review
+    {
+        $review = new Review($reviewEntity->getId());
+
+        $review->setReviewer($reviewEntity->getReviewer());
+        $review->setReviewed($reviewEntity->getReviewed());
+
+        $review->setContent(nl2br($reviewEntity->getContent()));
+
+        $review->setDate((!is_null($reviewEntity->getUpdatedDate())) ? $reviewEntity->getUpdatedDate() : $reviewEntity->getCreatedDate());
+        $review->setLeft($isLeft);
+
+        return $review;
+    }
+
+    /**
+     * Build an array of Review (Ressources) from an array of Review (Entities).
+     *
+     * @param ReviewEntity[] $reviewEntities The array of Review entities
+     * @param bool           $isLeft         true : the review has already been left
+     *
+     * @return Review[]
+     */
+    private function buildReviewsFromEntities(array $reviewEntities, bool $isLeft = true): array
+    {
+        $reviews = [];
+        foreach ($reviewEntities as $reviewEntity) {
+            $reviews[] = $this->buildReviewFromEntity($reviewEntity, $isLeft);
+        }
+
+        return $reviews;
+    }
+
+    /**
+     * Build a Review (Entity) from en Review (Ressource).
+     *
+     * @param Review $review The review Entity
+     */
+    private function buildReviewFromRessource(Review $review): ReviewEntity
+    {
+        $reviewEntity = new ReviewEntity();
+
+        $reviewEntity->setReviewer($review->getReviewer());
+        $reviewEntity->setReviewed($review->getReviewed());
+        $reviewEntity->setContent($review->getContent());
+
+        return $reviewEntity;
     }
 }

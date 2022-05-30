@@ -191,10 +191,10 @@ class CampaignManager
             // We ad to the campaign the campaign provider id associated
             $campaign->setProviderCampaignId($providerCampaign['id']);
         }
-        
+
         // We send the test email with as reciepient the email of the creator of the campaign
         $this->massEmailProvider->sendCampaignTest($campaign->getName(), $campaign->getProviderCampaignId(), [$campaign->getUser()->getEmail()]);
-        
+
         $campaign->setStatus(Campaign::STATUS_CREATED);
         $this->entityManager->persist($campaign);
         $this->entityManager->flush();
@@ -318,7 +318,7 @@ class CampaignManager
         // clear previously selected users (todo : check if it's really necessary !!!)
         $sql = "DELETE FROM delivery where campaign_id = " . $campaign->getId();
         $stmt = $conn->prepare($sql);
-        $stmt->execute();
+        $stmt->executeQuery();
 
         if ($campaign->getSendAll() === 0) {
             // Associate the campaign to all users who accepted email
@@ -326,7 +326,7 @@ class CampaignManager
             $sql = "INSERT INTO delivery (campaign_id, user_id, status, created_date)
             (SELECT " . $campaign->getId() . ",id,0,\"" . $now->format('Y-m-d H:i:s') . "\" FROM user WHERE news_subscription = 1)";
             $stmt = $conn->prepare($sql);
-            $stmt->execute();
+            $stmt->executeQuery();
             $now = new \DateTime();
         } else {
             $community = $this->communityRepository->find($campaign->getSendAll());

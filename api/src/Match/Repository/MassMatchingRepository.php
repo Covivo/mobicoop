@@ -57,6 +57,6 @@ class MassMatchingRepository
         $sql = "DELETE mass_matching FROM `mass_matching` INNER JOIN mass_person on mass_person.id = mass_matching.mass_person1_id WHERE mass_person.mass_id = ".$massId;
 
         $stmt = $conn->prepare($sql);
-        $stmt->execute();
+        $stmt->executeQuery();
     }
 }

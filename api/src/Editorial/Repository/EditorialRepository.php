@@ -33,13 +33,13 @@ class EditorialRepository
      * @var EntityRepository
      */
     private $repository;
-    
+
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->repository = $entityManager->getRepository(Editorial::class);
         $this->entityManager = $entityManager;
     }
-    
+
     /**
      * Find an editorial with an id
      *
@@ -86,6 +86,6 @@ class EditorialRepository
         // set editorial's status to 0 except the one updated
         $sql = "UPDATE `editorial` SET `status`= 0 WHERE `id`!=" . $editorial->getId();
         $stmt = $conn->prepare($sql);
-        $stmt->execute();
+        $stmt->executeQuery();
     }
 }

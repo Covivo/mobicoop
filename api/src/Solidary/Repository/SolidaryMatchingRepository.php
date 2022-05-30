@@ -38,9 +38,9 @@ class SolidaryMatchingRepository
      * @var EntityRepository
      */
     private $repository;
-    
+
     private $entityManager;
-    
+
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
@@ -86,10 +86,10 @@ class SolidaryMatchingRepository
                 SELECT SM2.id FROM solidary_matching AS SM2
                 INNER JOIN matching as M2 ON M2.id = SM2.matching_id
                 WHERE SM2.matching_id = M1.matching_linked_id
-            ) 
+            )
             WHERE SM1.solidary_matching_linked_id IS NULL AND SM1.solidary_id = " . $solidaryId;
         $stmt = $conn->prepare($sql);
-        $stmt->execute();
+        $stmt->executeQuery();
     }
 
     /**

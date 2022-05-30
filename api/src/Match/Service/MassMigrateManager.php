@@ -266,7 +266,7 @@ class MassMigrateManager
             // Finally we send an event to inform the user of its migration if it's a new User
             if (!$user->isAlreadyRegistered()) {
                 $event = new MassMigrateUserMigratedEvent($massPerson);
-                $this->eventDispatcher->dispatch(MassMigrateUserMigratedEvent::NAME, $event);
+                $this->eventDispatcher->dispatch($event, MassMigrateUserMigratedEvent::NAME);
             }
         }
 
