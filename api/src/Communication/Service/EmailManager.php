@@ -77,7 +77,7 @@ class EmailManager
      *
      * @return string
      */
-    public function send(EntityEmail $email, $template, $context = [], $lang = 'fr')
+    public function send(EntityEmail $email, $template, $context = [], $lang = 'fr'): string
     {
         // sender
         if (is_null($email->getSenderEmail()) || '' === trim($email->getSenderEmail())) {

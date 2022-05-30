@@ -52,7 +52,7 @@ class ZoneManager
      * @param Direction $direction The direction.
      * @return Direction The direction with the associated zones.
      */
-    public function createZonesForDirection(Direction $direction)
+    public function createZonesForDirection(Direction $direction): Direction
     {
         $zones = [];
         foreach (self::THINNESSES as $thinness) {
@@ -84,7 +84,7 @@ class ZoneManager
      * @return array                The zones concerned by the addresses
      * @return array|NULL
      */
-    public function getZonesForAddresses(array $addresses, float $precision, int $deep=0): ?array
+    public function getZonesForAddresses(array $addresses, float $precision, int $deep=0): array
     {
         $zones = [];
         foreach ($addresses as $address) {

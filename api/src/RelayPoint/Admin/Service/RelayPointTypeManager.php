@@ -58,7 +58,7 @@ class RelayPointTypeManager
      * @param RelayPointType     $relayPointType    The relay point type to add
      * @return RelayPointType    The relay point type created
      */
-    public function addRelayPointType(RelayPointType $relayPointType)
+    public function addRelayPointType(RelayPointType $relayPointType): RelayPointType
     {
         if ($relayPointType->getIconId()) {
             if ($icon = $this->iconRepository->find($relayPointType->getIconId())) {
@@ -82,7 +82,7 @@ class RelayPointTypeManager
      * @param array $fields                     The updated fields
      * @return RelayPointType   The relay point type updated
      */
-    public function patchRelayPointType(RelayPointType $relayPointType, array $fields)
+    public function patchRelayPointType(RelayPointType $relayPointType, array $fields): RelayPointType
     {
         // check if icon has changed
         if (in_array('iconId', array_keys($fields))) {
@@ -110,7 +110,7 @@ class RelayPointTypeManager
      * @param RelayPoint $relayPointType  The relay point type to delete
      * @return void
      */
-    public function deleteRelayPointType(RelayPointType $relayPointType)
+    public function deleteRelayPointType(RelayPointType $relayPointType): void
     {
         $this->entityManager->remove($relayPointType);
         $this->entityManager->flush();

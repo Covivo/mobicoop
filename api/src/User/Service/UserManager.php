@@ -241,7 +241,7 @@ class UserManager
      *
      * @return null|User
      */
-    public function getUser(int $id)
+    public function getUser(int $id): ?User
     {
         $user = $this->userRepository->find($id);
         if ($user) {
@@ -258,7 +258,7 @@ class UserManager
      *
      * @return null|User The user found
      */
-    public function getUserByEmail(string $email)
+    public function getUserByEmail(string $email): ?User
     {
         return $this->userRepository->findOneBy(['email' => $email]);
     }
@@ -270,7 +270,7 @@ class UserManager
      *
      * @return string The code
      */
-    public function checkEmail(string $email)
+    public function checkEmail(string $email): string
     {
         // Email already exist in db
         if ($this->userRepository->findOneBy(['email' => $email])) {
@@ -293,7 +293,7 @@ class UserManager
      *
      * @return null|string The checked token or null if token invalid
      */
-    public function checkPasswordToken(string $pwdToken)
+    public function checkPasswordToken(string $pwdToken): ?string
     {
         if ($user = $this->userRepository->findOneBy(['pwdToken' => $pwdToken])) {
             if ((time() - (int) $user->getPwdTokenDate()->getTimestamp()) > $this->passwordTokenValidity) {
@@ -311,7 +311,7 @@ class UserManager
      *
      * @return null|User
      */
-    public function getMe()
+    public function getMe(): ?User
     {
         $user = $this->userRepository->findOneBy(['email' => $this->security->getUser()->getUsername()]);
 
@@ -326,7 +326,7 @@ class UserManager
      *
      * @return User The user created
      */
-    public function registerUser(User $user, bool $encodePassword = true)
+    public function registerUser(User $user, bool $encodePassword = true): User
     {
         // we check if the user is on the scammer list
         $this->checkIfScammer($user);
@@ -505,7 +505,7 @@ class UserManager
      *
      * @return User The prepared user
      */
-    public function prepareUser(User $user, bool $encodePassword = false)
+    public function prepareUser(User $user, bool $encodePassword = false): User
     {
         // We add the default roles we set in User Entity
         $authItem = $this->authItemRepository->find(User::ROLE_DEFAULT);
@@ -549,7 +549,7 @@ class UserManager
      *
      * @return User The user with the new auth item added
      */
-    public function addAuthItem(User $user, int $authItemId)
+    public function addAuthItem(User $user, int $authItemId): User
     {
         if ($authItem = $this->authItemRepository->find($authItemId)) {
             $userAuthAssignment = new UserAuthAssignment();
@@ -567,7 +567,7 @@ class UserManager
      *
      * @return User The user updated
      */
-    public function updateUser(User $user)
+    public function updateUser(User $user): User
     {
         // activate sms notification if phone validated
         if ($user->getPhoneValidatedDate()) {
@@ -680,7 +680,7 @@ class UserManager
      *
      * @return User
      */
-    public function updatePaymentProviderUser(User $user)
+    public function updatePaymentProviderUser(User $user): User
     {
         // We check if the user have a payment profile
         if ($this->paymentActive) {
@@ -702,7 +702,7 @@ class UserManager
      *
      * @return string The encoded password
      */
-    public function encodePassword(User $user, string $password)
+    public function encodePassword(User $user, string $password): string
     {
         return $this->encoder->hashPassword($user, $password);
     }
@@ -715,7 +715,7 @@ class UserManager
      *
      * @return bool The password matches or not
      */
-    public function isValidPassword(User $user, string $password)
+    public function isValidPassword(User $user, string $password): bool
     {
         return $this->encoder->isPasswordValid($user, $password);
     }
@@ -728,7 +728,7 @@ class UserManager
      *
      * @return User The user treated
      */
-    public function treatUser(User $user)
+    public function treatUser(User $user): User
     {
         // we treat the role
         if (0 == count($user->getUserAuthAssignments())) {
@@ -827,7 +827,7 @@ class UserManager
      *
      * @return array The parsed messages
      */
-    public function parseThreadsDirectMessages(User $user, array $threads)
+    public function parseThreadsDirectMessages(User $user, array $threads): array
     {
         // $threads is a Message[]
 
@@ -886,7 +886,7 @@ class UserManager
      *
      * @return array The parsed messages
      */
-    public function parseThreadsSolidaryMessages(User $user, array $threads)
+    public function parseThreadsSolidaryMessages(User $user, array $threads): array
     {
         $messages = [];
 
@@ -1010,7 +1010,7 @@ class UserManager
      *
      * @return array The parsed messages
      */
-    public function parseThreadsCarpoolMessages(User $user, array $threads)
+    public function parseThreadsCarpoolMessages(User $user, array $threads): array
     {
         $messages = [];
 
@@ -1131,7 +1131,7 @@ class UserManager
      *
      * @return Response
      */
-    public function updateUserPasswordRequest(User $data)
+    public function updateUserPasswordRequest(User $data): Response
     {
         // We get the way the password update was asked (app, android, ios)
         $mobileRegistration = $data->getMobileRegistration();
@@ -1162,7 +1162,7 @@ class UserManager
      *
      * @return Response
      */
-    public function updateUserPassword(User $data)
+    public function updateUserPassword(User $data): Response
     {
         $user = $this->userRepository->findOneBy(['pwdToken' => $data->getPwdToken()]);
         if (!is_null($user)) {
@@ -1188,7 +1188,7 @@ class UserManager
      *
      * @return User
      */
-    public function getAlerts(User $user)
+    public function getAlerts(User $user): User
     {
         // if no alerts are detected we create them
         if (0 == count($user->getUserNotifications())) {
@@ -1258,7 +1258,7 @@ class UserManager
      *
      * @return User
      */
-    public function createAlerts(User $user, $persist = true)
+    public function createAlerts(User $user, $persist = true): User
     {
         $notifications = $this->notificationRepository->findUserEditable();
         foreach ($notifications as $notification) {
@@ -1503,7 +1503,7 @@ class UserManager
      *
      * @return null|User
      */
-    public function getSolidaries(int $userId)
+    public function getSolidaries(int $userId): ?User
     {
         $user = $this->userRepository->find($userId);
         if (empty($user)) {
@@ -1525,7 +1525,7 @@ class UserManager
      *
      * @return null|User
      */
-    public function getStructures(int $userId)
+    public function getStructures(int $userId): ?User
     {
         $user = $this->userRepository->find($userId);
         if (empty($user)) {
@@ -1547,7 +1547,7 @@ class UserManager
      *
      * @return string The token generated
      */
-    public function createToken(User $user)
+    public function createToken(User $user): string
     {
         $datetime = new \DateTime();
         $time = $datetime->getTimestamp();
@@ -1576,7 +1576,7 @@ class UserManager
      *
      * @return bool True if user have item
      */
-    public function checkUserHaveAuthItem(User $user, AuthItem $authItem)
+    public function checkUserHaveAuthItem(User $user, AuthItem $authItem): bool
     {
         foreach ($user->getUserAuthAssignments() as $oneItem) {
             if ($oneItem->getAuthItem() == $authItem) {
@@ -1594,7 +1594,7 @@ class UserManager
      *
      * @return string The generated string
      */
-    public function randomString(int $length = 10)
+    public function randomString(int $length = 10): string
     {
         $alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
         $string = []; // remember to declare $string as an array
@@ -1616,7 +1616,7 @@ class UserManager
      *
      * @return string The generated sub email address
      */
-    public function generateSubEmail(string $email, int $length = 10, string $glue = '+')
+    public function generateSubEmail(string $email, int $length = 10, string $glue = '+'): string
     {
         $exploded = explode('@', $email);
 
@@ -1628,7 +1628,7 @@ class UserManager
      *
      * @return null|User
      */
-    public function getPaymentProfile(User $user = null)
+    public function getPaymentProfile(User $user = null): ?User
     {
         if (is_null($user)) {
             $user = $this->userRepository->findOneBy(['email' => $this->security->getUser()->getUsername()]);
@@ -1677,7 +1677,7 @@ class UserManager
      *
      * @return string
      */
-    public function randomPassword()
+    public function randomPassword(): string
     {
         $alphabet = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
         $pass = []; // remember to declare $pass as an array
@@ -1893,7 +1893,7 @@ break;
      *
      * @return null|User The user found
      */
-    public function sendValidationEmail(string $email)
+    public function sendValidationEmail(string $email): ?User
     {
         if ($user = $this->userRepository->findOneBy(['email' => $email])) {
             $event = new UserSendValidationEmailEvent($user);
@@ -1955,7 +1955,7 @@ break;
      *
      * @return User
      */
-    public function updateLanguage(User $user)
+    public function updateLanguage(User $user): User
     {
         $language = $this->languageRepository->findOneBy(['code' => $user->getLanguage()->getCode()]);
         $user->setLanguage($language);
@@ -1971,7 +1971,7 @@ break;
      *
      * @return Community[]
      */
-    public function getUserCommunities(User $user)
+    public function getUserCommunities(User $user): array
     {
         $communityUsers = $this->communityUserRepository->findBy(['user' => $user]);
         $communities = [];
@@ -2049,7 +2049,7 @@ break;
      *
      * @return string The sanitized string
      */
-    private function sanitizeString(string $string)
+    private function sanitizeString(string $string): string
     {
         return preg_replace('/[^\w]/', $this->getRandomChar(), $string);
     }
@@ -2059,7 +2059,7 @@ break;
      *
      * @return string A letter or digit
      */
-    private function getRandomChar()
+    private function getRandomChar(): string
     {
         $seed = str_split('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789');
 

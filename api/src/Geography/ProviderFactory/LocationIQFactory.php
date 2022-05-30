@@ -58,7 +58,7 @@ final class LocationIQFactory extends AbstractFactory
     /**
      * @param OptionsResolver $resolver
      */
-    protected static function configureOptionResolver(OptionsResolver $resolver)
+    protected static function configureOptionResolver(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'httplug_client' => null,

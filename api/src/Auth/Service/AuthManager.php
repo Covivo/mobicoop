@@ -89,7 +89,7 @@ class AuthManager
      *
      * @return bool
      */
-    public function isAuthorized(string $itemName, array $params = [])
+    public function isAuthorized(string $itemName, array $params = []): bool
     {
         if (is_null($this->tokenStorage->getToken())) {
             // anonymous connection => any right should be denied, as allowed resources won't be checked for permissions
@@ -127,7 +127,7 @@ class AuthManager
      *
      * @return bool
      */
-    public function isInnerAuthorized(User $requester, string $itemName, array $params = [])
+    public function isInnerAuthorized(User $requester, string $itemName, array $params = []): bool
     {
         if (!$item = $this->authItemRepository->findByName($itemName)) {
             throw new AuthItemNotFoundException('Auth item '.$itemName.' not found');
@@ -144,7 +144,7 @@ class AuthManager
      *
      * @return array The array of territories where the requester is authorized (empty array if the requester is authorized on any territory)
      */
-    public function getTerritoriesForItem(string $itemName)
+    public function getTerritoriesForItem(string $itemName): array
     {
         if (!$item = $this->authItemRepository->findByName($itemName)) {
             throw new AuthItemNotFoundException('Auth item '.$itemName.' not found');
@@ -180,7 +180,7 @@ class AuthManager
      *
      * @return Permission The permission
      */
-    public function getPermissionForAuthItem(string $itemName, array $params = [])
+    public function getPermissionForAuthItem(string $itemName, array $params = []): Permission
     {
         $permission = new Permission(1);
         $permission->setGranted($this->isAuthorized($itemName, $params));
@@ -196,7 +196,7 @@ class AuthManager
      *
      * @return array The auth items
      */
-    public function getAuthItems(?int $type = null, bool $withId = false)
+    public function getAuthItems(?int $type = null, bool $withId = false): array
     {
         if (is_null($type)) {
             $type = AuthItem::TYPE_ITEM;
@@ -246,7 +246,7 @@ class AuthManager
      *
      * @return null|AuthItem
      */
-    public function getAuthItemsGrantedForCreation(User $user)
+    public function getAuthItemsGrantedForCreation(User $user): ?AuthItem
     {
         //All the roles of the current user, set true for get the AuthItem, not just the name
         $rolesUser = $this->getAuthItems(AuthItem::TYPE_ROLE, true);
@@ -269,7 +269,7 @@ class AuthManager
      *
      * @return bool True if the requester is assigned the item, false either
      */
-    private function isAssigned(UserInterface $requester, AuthItem $authItem, array $params)
+    private function isAssigned(UserInterface $requester, AuthItem $authItem, array $params): bool
     {
         // we check if there's a rule
         if ($this->checkRule($requester, $authItem, $params)) {
@@ -312,7 +312,7 @@ class AuthManager
      *
      * @return bool True if there's no rule or if the rule is validated, false either
      */
-    private function checkRule(UserInterface $requester, AuthItem $authItem, array $params)
+    private function checkRule(UserInterface $requester, AuthItem $authItem, array $params): bool
     {
         if (is_null($authItem->getAuthRule())) {
             // no rule associated, we're good !
@@ -371,7 +371,7 @@ class AuthManager
      *
      * @return bool Special or not
      */
-    private function checkSpecialItem(AuthItem $authItem)
+    private function checkSpecialItem(AuthItem $authItem): bool
     {
         // we check if it's special by checking the name
         foreach (AuthItem::SPECIAL_ITEMS as $item) {
@@ -431,7 +431,7 @@ class AuthManager
      *
      * @return array $rolesGranted       Return the array of roles for recursive goal
      */
-    private function checkRolesGrantedForRole(array $authItem, array $rolesGranted)
+    private function checkRolesGrantedForRole(array $authItem, array $rolesGranted): array
     {
         //Array where we associate the granted roles for the roles who can cretae user
         $rolesGrantedForCreation = [

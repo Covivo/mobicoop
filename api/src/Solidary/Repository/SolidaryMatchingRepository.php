@@ -76,7 +76,7 @@ class SolidaryMatchingRepository
      * @param integer $solidaryId   The solidary id
      * @return void
      */
-    public function linkRelatedSolidaryMatchings(int $solidaryId)
+    public function linkRelatedSolidaryMatchings(int $solidaryId): void
     {
         $conn = $this->entityManager->getConnection();
         $sql = "

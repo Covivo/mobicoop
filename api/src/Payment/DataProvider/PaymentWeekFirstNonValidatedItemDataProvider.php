@@ -51,7 +51,7 @@ final class PaymentWeekFirstNonValidatedItemDataProvider implements RestrictedDa
         return PaymentWeek::class === $resourceClass && $operationName === "get";
     }
 
-    public function getItem(string $resourceClass, $id, string $operationName = null, array $context = [])
+    public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?object
     {
         return $this->paymentManager->getFirstNonValidatedWeek($this->security->getUser(), $this->request->get("id"));
     }

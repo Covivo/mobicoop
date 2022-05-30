@@ -169,7 +169,7 @@ class MassMatrix
      * @param int $idPerson
      * @return MassJourney|null
      */
-    public function getJourneyOfAPerson(int $idPerson): MassJourney
+    public function getJourneyOfAPerson(int $idPerson): ?MassJourney
     {
         foreach ($this->originalsJourneys as $journey) {
             if ($journey->getidPerson()==$idPerson) {

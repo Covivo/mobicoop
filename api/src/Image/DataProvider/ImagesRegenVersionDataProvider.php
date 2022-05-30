@@ -46,7 +46,7 @@ final class ImagesRegenVersionDataProvider implements ContextAwareCollectionData
         return Image::class === $resourceClass && $operationName == "regenVersions";
     }
 
-    public function getCollection(string $resourceClass, string $operationName = null, array $context = [])
+    public function getCollection(string $resourceClass, string $operationName = null, array $context = []): iterable
     {
         $this->imageManager->regenerateVersions();
     }

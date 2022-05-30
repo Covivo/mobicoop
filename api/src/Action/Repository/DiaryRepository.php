@@ -71,7 +71,7 @@ class DiaryRepository
      * @param Solidary $solidary    The solidary record
      * @return Diary|null           The progression
      */
-    public function findLastEntryForSolidary(Solidary $solidary)
+    public function findLastEntryForSolidary(Solidary $solidary): ?Diary
     {
         return $this->repository->createQueryBuilder('d')
         ->where('d.solidary = :solidary')

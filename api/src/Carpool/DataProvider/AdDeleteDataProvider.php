@@ -45,7 +45,7 @@ final class AdDeleteDataProvider implements RestrictedDataProviderInterface, Ite
         return Ad::class === $resourceClass && $operationName === "delete";
     }
 
-    public function getItem(string $resourceClass, $id, string $operationName = null, array $context = [])
+    public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?object
     {
         return $this->proposalManager->get($id);
     }

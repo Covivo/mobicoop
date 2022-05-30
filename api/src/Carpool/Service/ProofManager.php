@@ -119,7 +119,7 @@ class ProofManager
      *
      * @return CarpoolProof The carpool proof if found or null if not found
      */
-    public function getProof(int $id)
+    public function getProof(int $id): CarpoolProof
     {
         return $this->carpoolProofRepository->find($id);
     }
@@ -131,7 +131,7 @@ class ProofManager
      *
      * @return ClassicProof
      */
-    public function getClassicProof(int $id)
+    public function getClassicProof(int $id): ClassicProof
     {
         $carpoolProof = $this->carpoolProofRepository->find($id);
         $classicProof = new ClassicProof();
@@ -155,7 +155,7 @@ class ProofManager
      *
      * @return null|CarpoolProof The carpool proof if it exists
      */
-    public function getProofForDate(Ask $ask, DateTime $date)
+    public function getProofForDate(Ask $ask, DateTime $date): ?CarpoolProof
     {
         return $this->carpoolProofRepository->findByAskAndDate($ask, $date);
     }
@@ -173,7 +173,7 @@ class ProofManager
      *
      * @return CarpoolProof The created proof
      */
-    public function createProof(Ask $ask, float $longitude, float $latitude, string $type, User $author, User $driver, User $passenger)
+    public function createProof(Ask $ask, float $longitude, float $latitude, string $type, User $author, User $driver, User $passenger): CarpoolProof
     {
         $carpoolProof = new CarpoolProof();
         $carpoolProof->setType($type);
@@ -302,7 +302,7 @@ class ProofManager
      *
      * @return CarpoolProof The updated proof
      */
-    public function updateProof(int $id, float $longitude, float $latitude, User $author, User $passenger, int $distance)
+    public function updateProof(int $id, float $longitude, float $latitude, User $author, User $passenger, int $distance): CarpoolProof
     {
         // search the proof
         if (!$carpoolProof = $this->carpoolProofRepository->find($id)) {
@@ -528,7 +528,7 @@ class ProofManager
      *
      * @return int The number of proofs sent
      */
-    public function sendProofs(?DateTime $fromDate = null, ?DateTime $toDate = null)
+    public function sendProofs(?DateTime $fromDate = null, ?DateTime $toDate = null): int
     {
         // if no dates are sent, we use the last {duration} days
         if (is_null($fromDate)) {
@@ -715,7 +715,7 @@ class ProofManager
      *
      * @return array The proofs
      */
-    private function getProofs(DateTime $fromDate, DateTime $toDate)
+    private function getProofs(DateTime $fromDate, DateTime $toDate): array
     {
         // first we search the pending asks for the given period
         $pendingAsks = $this->askRepository->findPendingAsksForPeriod($fromDate, $toDate);

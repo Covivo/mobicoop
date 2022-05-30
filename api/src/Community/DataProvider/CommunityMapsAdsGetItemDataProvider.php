@@ -55,7 +55,7 @@ final class CommunityMapsAdsGetItemDataProvider implements ItemDataProviderInter
         return Community::class === $resourceClass && $operationName === "mapsAds";
     }
 
-    public function getItem(string $resourceClass, $id, string $operationName = null, array $context = [])
+    public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?object
     {
         return $this->communityManager->getAdsOfCommunity($id);
     }

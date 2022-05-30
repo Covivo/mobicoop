@@ -34,7 +34,7 @@ final class AddressPutDataPersister implements ContextAwareDataPersisterInterfac
     private $security;
     private $request;
     private $addressManager;
-    
+
     public function __construct(Security $security, AddressManager $addressManager, RequestStack $requestStack)
     {
         $this->security = $security;

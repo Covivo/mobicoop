@@ -34,7 +34,7 @@ final class TerritoryPutDataPersister implements ContextAwareDataPersisterInterf
     private $security;
     private $request;
     private $territoryManager;
-    
+
     public function __construct(Security $security, TerritoryManager $territoryManager, RequestStack $requestStack)
     {
         $this->security = $security;

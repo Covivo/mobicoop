@@ -48,7 +48,7 @@ final class SolidaryVolunteerPlanningCollectionDataProvider implements Collectio
         return SolidaryVolunteerPlanning::class === $resourceClass;
     }
 
-    public function getCollection(string $resourceClass, string $operationName = null)
+    public function getCollection(string $resourceClass, string $operationName = null): iterable
     {
         if (!isset($this->context['filters']['startDate'])) {
             $startDate = new \DateTime();

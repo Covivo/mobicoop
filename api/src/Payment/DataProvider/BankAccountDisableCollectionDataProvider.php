@@ -53,7 +53,7 @@ final class BankAccountDisableCollectionDataProvider implements CollectionDataPr
         return BankAccount::class === $resourceClass && isset($context['collection_operation_name']) && $context['collection_operation_name'] == 'disable';
     }
 
-    public function getCollection(string $resourceClass, string $operationName = null)
+    public function getCollection(string $resourceClass, string $operationName = null): iterable
     {
         if ($this->request->get("idBankAccount") == "") {
             throw new PaymentException(PaymentException::NO_BANKACCOUNT_ID_IN_UPDATE_REQUEST);

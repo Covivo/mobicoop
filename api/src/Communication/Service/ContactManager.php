@@ -57,7 +57,7 @@ class ContactManager
      *
      * @return Contact
      */
-    public function sendContactMail(Contact $contact)
+    public function sendContactMail(Contact $contact): Contact
     {
         // Get the contact type of this contact
         $contactTypes = $this->getContactTypes();
@@ -82,7 +82,7 @@ class ContactManager
      *
      * @return ContactType[]
      */
-    public function getContactTypes(): ?array
+    public function getContactTypes(): array
     {
         $contactTypes = [];
         foreach ($this->contactItems['contacts'] as $contactItem) {

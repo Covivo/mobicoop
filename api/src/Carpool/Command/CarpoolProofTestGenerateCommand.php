@@ -63,7 +63,7 @@ class CarpoolProofTestGenerateCommand extends Command
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $proof = $this->carpoolProofRepository->find($input->getArgument('proofId'));
         $provider = new CarpoolProofGouvProvider('', '', 'test', $this->logger, true);

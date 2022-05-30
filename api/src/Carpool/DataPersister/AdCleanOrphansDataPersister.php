@@ -39,7 +39,7 @@ final class AdCleanOrphansDataPersister implements ContextAwareDataPersisterInte
         $this->proposalManager = $proposalManager;
         $this->security = $security;
     }
-  
+
     public function supports($data, array $context = []): bool
     {
         return $data instanceof Ad && isset($context['collection_operation_name']) && $context['collection_operation_name'] === 'cleanOrphans';
@@ -50,7 +50,7 @@ final class AdCleanOrphansDataPersister implements ContextAwareDataPersisterInte
         if (!($this->security->getUser() instanceof User)) {
             throw new \LogicException("Only a User can perform this action");
         }
-        
+
         return $this->proposalManager->cleanUserOrphanProposals($this->security->getUser());
     }
 

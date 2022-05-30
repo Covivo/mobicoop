@@ -37,7 +37,7 @@ class AdInEvent implements GamificationRuleInterface
      * @param  $sequenceItem
      * @return bool
      */
-    public function execute($log, $sequenceItem)
+    public function execute($log, $sequenceItem): bool
     {
         $user = $log->getUser();
         // we check if the user has at least one proposal published for an event

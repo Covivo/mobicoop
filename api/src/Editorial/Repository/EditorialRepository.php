@@ -56,7 +56,7 @@ class EditorialRepository
      *
      * @return Editorials|null
      */
-    public function findAll(): ?array
+    public function findAll(): ?Editorials
     {
         return $this->repository->findAll();
     }
@@ -78,7 +78,7 @@ class EditorialRepository
      * @param Editorial $editorial
      * @return void
      */
-    public function setInactive(Editorial $editorial)
+    public function setInactive(Editorial $editorial): void
     {
         // we use raw sql as the request
         $conn = $this->entityManager->getConnection();

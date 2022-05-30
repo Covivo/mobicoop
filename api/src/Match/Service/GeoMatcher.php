@@ -63,7 +63,7 @@ class GeoMatcher
      *
      * @return array The array of results
      */
-    public function singleMatch(array $candidates): ?array
+    public function singleMatch(array $candidates): array
     {
         $matchesReturned = [];
         // we create the points for the routes alternatives for each candidate

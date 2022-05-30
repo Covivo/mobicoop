@@ -58,7 +58,7 @@ class PaymentExportBatchCommand extends Command
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $fromDate = null;
         $toDate = null;

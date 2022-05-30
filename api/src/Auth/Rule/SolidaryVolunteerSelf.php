@@ -33,7 +33,7 @@ class SolidaryVolunteerSelf implements AuthRuleInterface
     /**
      * {@inheritdoc}
      */
-    public function execute($requester, $item, $params)
+    public function execute($requester, $item, $params): bool
     {
         if (!isset($params['solidaryVolunteer'])) {
             return false;

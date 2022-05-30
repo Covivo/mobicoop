@@ -41,7 +41,7 @@ class FileManager
      * @param string $replace The replacement char for forbidden chars
      * @return string
      */
-    public function sanitize(string $string, bool $force_lowercase = true, bool $anal = false, string $replace = "")
+    public function sanitize(string $string, bool $force_lowercase = true, bool $anal = false, string $replace = ""): string
     {
         $strip = array("~", "`", "!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "_", "=", "+", "[", "{", "]",
             "}", "\\", "|", ";", ":", "\"", "'", "&#8216;", "&#8217;", "&#8220;", "&#8221;", "&#8211;", "&#8212;",
@@ -82,7 +82,7 @@ class FileManager
      * @param mixed $file
      * @return string
      */
-    public function getExtension($file)
+    public function getExtension($file): string
     {
         if (is_string($file)) {
             return substr(strrchr($file, '.'), 1);

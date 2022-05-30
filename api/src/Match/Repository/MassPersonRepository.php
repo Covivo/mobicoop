@@ -58,7 +58,7 @@ class MassPersonRepository
      *
      * @return null|User
      */
-    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null): ?array
+    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null): ?User
     {
         return $this->repository->findBy($criteria, $orderBy, $limit, $offset);
     }
@@ -68,7 +68,7 @@ class MassPersonRepository
      *
      * @return null|array|\Doctrine\DBAL\Driver\Statement|mixed The destinations (Address) found
      */
-    public function findAllDestinationsForMass(Mass $mass)
+    public function findAllDestinationsForMass(Mass $mass): mixed
     {
         $query = $this->repository->createQueryBuilder('mp')
             ->select('DISTINCT wa.houseNumber, wa.street, wa.postalCode, wa.addressLocality, wa.addressCountry, wa.latitude, wa.longitude')
@@ -86,7 +86,7 @@ class MassPersonRepository
      *
      * @return null|array|\Doctrine\DBAL\Driver\Statement|mixed The origins (Address) found
      */
-    public function findAllOriginsForMass(Mass $mass)
+    public function findAllOriginsForMass(Mass $mass): mixed
     {
         $query = $this->repository->createQueryBuilder('mp')
             ->select('DISTINCT pa.houseNumber, pa.street, pa.postalCode, pa.addressLocality, pa.addressCountry, pa.latitude, pa.longitude')
@@ -107,7 +107,7 @@ class MassPersonRepository
      *
      * @return array
      */
-    public function findAllByMass(Mass $mass, int $idMassPersonMin = null)
+    public function findAllByMass(Mass $mass, int $idMassPersonMin = null): array
     {
         $query = $this->repository->createQueryBuilder('mp')
             ->where('mp.mass = :mass')

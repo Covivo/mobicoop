@@ -70,7 +70,7 @@ class RelayPointManager
      * @param RelayPoint     $relayPoint              The relay point to add
      * @return RelayPoint    The relay point created
      */
-    public function addRelayPoint(RelayPoint $relayPoint)
+    public function addRelayPoint(RelayPoint $relayPoint): RelayPoint
     {
         if ($creator = $this->userRepository->find($relayPoint->getCreatorId())) {
             $relayPoint->setUser($creator);
@@ -131,7 +131,7 @@ class RelayPointManager
      * @param array $fields             The updated fields
      * @return RelayPoint   The relay point updated
      */
-    public function patchRelayPoint(RelayPoint $relayPoint, array $fields)
+    public function patchRelayPoint(RelayPoint $relayPoint, array $fields): RelayPoint
     {
         // check if creator has changed
         if (in_array('creatorId', array_keys($fields))) {
@@ -193,7 +193,7 @@ class RelayPointManager
      * @param RelayPoint $relayPoint  The relay point to delete
      * @return void
      */
-    public function deleteRelayPoint(RelayPoint $relayPoint)
+    public function deleteRelayPoint(RelayPoint $relayPoint): void
     {
         $this->entityManager->remove($relayPoint);
         $this->entityManager->flush();

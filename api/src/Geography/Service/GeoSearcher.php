@@ -140,7 +140,7 @@ class GeoSearcher
      *
      * @return array The results
      */
-    public function geoCode(string $input)
+    public function geoCode(string $input): array
     {
         // the result array will contain different addresses :
         // - named addresses (if the user is logged)
@@ -194,7 +194,7 @@ class GeoSearcher
      *
      * @return array The array of addresses found
      */
-    public function reverseGeoCode(float $lat, float $lon)
+    public function reverseGeoCode(float $lat, float $lon): array
     {
         $addresses = [];
         if ($geoResults = $this->geocoder->reverseQuery(ReverseQuery::fromCoordinates($lat, $lon))) {
@@ -290,7 +290,7 @@ class GeoSearcher
      *
      * @return Address
      */
-    public function getAddressByPartialAddressArray(array $point)
+    public function getAddressByPartialAddressArray(array $point): Address
     {
         $address = new Address();
 
@@ -675,7 +675,7 @@ class GeoSearcher
      *
      * @return Address The address fixed
      */
-    private function fixAddress(string $id, Address $address)
+    private function fixAddress(string $id, Address $address): Address
     {
         // we search in the fixes if there's one corresponding to the id
         if (array_key_exists($id, $this->geoDataFixes)) {

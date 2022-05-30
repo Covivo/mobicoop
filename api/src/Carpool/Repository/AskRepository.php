@@ -59,7 +59,7 @@ class AskRepository
      *
      * @return null|Ask[]
      */
-    public function findAskByUser(User $user, $filter = Ask::ALL_ASKS)
+    public function findAskByUser(User $user, $filter = Ask::ALL_ASKS): ?array
     {
         $query = $this->repository->createQueryBuilder('a');
 
@@ -123,7 +123,7 @@ class AskRepository
      *
      * @return null|Ask[] The asks if found
      */
-    public function findAcceptedAsksForPeriod(DateTime $fromDate, DateTime $toDate, ?User $user = null)
+    public function findAcceptedAsksForPeriod(DateTime $fromDate, DateTime $toDate, ?User $user = null): ?array
     {
         // we will need the different week number days between fromDate and toDate
         $days = [];
@@ -222,7 +222,7 @@ class AskRepository
      *
      * @return null|Ask[] The asks if found
      */
-    public function findPendingAsksForPeriod(DateTime $fromDate, DateTime $toDate, ?User $user = null)
+    public function findPendingAsksForPeriod(DateTime $fromDate, DateTime $toDate, ?User $user = null): ?array
     {
         // we will need the different week number days between fromDate and toDate
         $days = [];
@@ -320,7 +320,7 @@ class AskRepository
      *
      * @return null|Ask[] The asks if found
      */
-    public function findAcceptedAsksForUser(User $user, User $user2 = null)
+    public function findAcceptedAsksForUser(User $user, User $user2 = null): ?array
     {
         $query = $this->repository->createQueryBuilder('a')
             ->join('a.criteria', 'c')
@@ -355,7 +355,7 @@ class AskRepository
      *
      * @return null|Ask[] The asks if found
      */
-    public function findAcceptedRegularAsksForUserAsDriver(User $user)
+    public function findAcceptedRegularAsksForUserAsDriver(User $user): ?array
     {
         $query = $this->repository->createQueryBuilder('a')
             ->join('a.criteria', 'c')
@@ -377,7 +377,7 @@ class AskRepository
      *
      * @return null|Ask[] The asks if found
      */
-    public function findAcceptedRegularAsksForUserAsPassenger(User $user)
+    public function findAcceptedRegularAsksForUserAsPassenger(User $user): ?array
     {
         $query = $this->repository->createQueryBuilder('a')
             ->join('a.criteria', 'c')
@@ -397,7 +397,7 @@ class AskRepository
      *
      * @return int
      */
-    public function countAsks(): ?int
+    public function countAsks(): int
     {
         $query = $this->repository->createQueryBuilder('a')
             ->select('count(a.id)')

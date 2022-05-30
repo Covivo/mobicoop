@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\MassCommunication\Interfaces;
 
@@ -31,36 +31,32 @@ use App\MassCommunication\Entity\Sender;
  * A campaign provider entity class must implement all these methods in order to be used by campaign services.
  *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
- *
  */
 interface CampaignProviderInterface
 {
     /**
-     * Create an email campaign
+     * Create an email campaign.
      *
-     * @param string $name              The name of the campaign
-     * @param Sender $sender            The sender of the campaign
-     * @param string $subject           The subject of the email
-     * @param string $body              The body of the email
-     * @param Recipient[] $recipients   The recipients to send the email to
-     * @return void
+     * @param string      $name       The name of the campaign
+     * @param Sender      $sender     The sender of the campaign
+     * @param string      $subject    The subject of the email
+     * @param string      $body       The body of the email
+     * @param Recipient[] $recipients The recipients to send the email to
      */
     public function createCampaign(string $name, Sender $sender, string $subject, string $body, array $recipients);
 
     /**
-     * Send an email campaign
+     * Send an email campaign.
      *
-     * @param string $name  The name of the campaign
-     * @return void
+     * @param string $name The name of the campaign
      */
     public function sendCampaign(string $name, int $id);
 
     /**
-     * Send an email test for an email campaign
+     * Send an email test for an email campaign.
      *
-     * @param string $name  The name of the campaign
-     * @param array $emails The emails to send the test to
-     * @return void
+     * @param string $name   The name of the campaign
+     * @param array  $emails The emails to send the test to
      */
     public function sendCampaignTest(string $name, int $id, array $emails);
 }

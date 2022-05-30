@@ -430,7 +430,7 @@ class RetroactivelyRewardService
      *
      * @return array new sequence_items earned
      */
-    private function checkSequenceItemsEarned(array $user, ?array $sequenceItemsIds, ?array $badgeIds, array $badges)
+    private function checkSequenceItemsEarned(array $user, ?array $sequenceItemsIds, ?array $badgeIds, array $badges): array
     {
         $newSequenceItemsIds = [];
         foreach ($badges as $id => $badge) {

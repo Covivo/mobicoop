@@ -70,7 +70,7 @@ class AddressManager
      *
      * @return Address The address with its territories
      */
-    public function createAddressTerritories(Address $address)
+    public function createAddressTerritories(Address $address): Address
     {
         //$this->logger->info('Address Manager | Create address territories for Address #' . $address->getId() . ' | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         // first we check that the address is not linked yet to territories
@@ -93,7 +93,7 @@ class AddressManager
      *
      * @return Address The address with its territories
      */
-    public function updateAddressTerritories(Address $address)
+    public function updateAddressTerritories(Address $address): Address
     {
         //$this->logger->info('Address Manager | Update address territories for Address #' . $address->getId() . ' | ' . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         // first we remove all territories
@@ -121,7 +121,7 @@ class AddressManager
      *
      * @return Address The address (with its territories if needed)
      */
-    public function createAddressTerritoriesForUsefulEntity(Address $address)
+    public function createAddressTerritoriesForUsefulEntity(Address $address): Address
     {
         $createLink = false;
         if ($address->isHome()) {
@@ -207,7 +207,7 @@ class AddressManager
      *
      * @return Address The address
      */
-    public function createAddress(Address $address)
+    public function createAddress(Address $address): Address
     {
         $this->entityManager->persist($address);
         $this->entityManager->flush();
@@ -229,7 +229,7 @@ class AddressManager
      *
      * @return Address The address updated
      */
-    public function updateAddress(Address $address)
+    public function updateAddress(Address $address): Address
     {
         $this->entityManager->persist($address);
         $this->entityManager->flush();

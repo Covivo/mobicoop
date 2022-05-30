@@ -139,7 +139,7 @@ class ProposalManager
      *
      * @return null|Proposal The proposal found or null
      */
-    public function get(int $id)
+    public function get(int $id): ?Proposal
     {
         return $this->proposalRepository->find($id);
     }
@@ -151,7 +151,7 @@ class ProposalManager
      *
      * @return null|Proposal The proposal found or null
      */
-    public function getFromExternalId(string $id)
+    public function getFromExternalId(string $id): ?Proposal
     {
         return $this->proposalRepository->findOneBy(['externalId' => $id]);
     }
@@ -163,7 +163,7 @@ class ProposalManager
      *
      * @return null|Proposal The proposal found or null if not found
      */
-    public function getLastDynamicUnfinished(User $user)
+    public function getLastDynamicUnfinished(User $user): ?Proposal
     {
         if ($lastUnfinishedProposal = $this->proposalRepository->findBy(['user' => $user, 'dynamic' => true, 'finished' => false], ['createdDate' => 'DESC'], 1)) {
             return $lastUnfinishedProposal[0];
@@ -190,7 +190,7 @@ class ProposalManager
      *
      * @return Proposal The treated proposal
      */
-    public function treatProposal(Proposal $proposal, $persist = true, bool $excludeProposalUser = true)
+    public function treatProposal(Proposal $proposal, $persist = true, bool $excludeProposalUser = true): Proposal
     {
         $this->logger->info('ProposalManager : treatProposal '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
 
@@ -257,7 +257,7 @@ class ProposalManager
      *
      * @return Response
      */
-    public function deleteProposal(Proposal $proposal, ?array $body = null)
+    public function deleteProposal(Proposal $proposal, ?array $body = null): Response
     {
         $asks = $this->askManager->getAsksFromProposal($proposal);
         if (count($asks) > 0) {
@@ -340,7 +340,7 @@ class ProposalManager
      *
      * @return bool
      */
-    public function hasPendingDynamic(User $user)
+    public function hasPendingDynamic(User $user): bool
     {
         return count($this->proposalRepository->findBy(['user' => $user, 'dynamic' => true, 'active' => true])) > 0;
     }
@@ -353,7 +353,7 @@ class ProposalManager
      *
      * @return Proposal The treated proposal
      */
-    public function updateMatchingsForProposal(Proposal $proposal, Address $address)
+    public function updateMatchingsForProposal(Proposal $proposal, Address $address): Proposal
     {
         // set the directions
         $proposal = $this->updateDirection($proposal, $address);
@@ -418,7 +418,7 @@ class ProposalManager
      *
      * @return array The proposals treated
      */
-    public function createMatchingsForProposals(array $proposalIds)
+    public function createMatchingsForProposals(array $proposalIds): array
     {
         // 1 - make an array of all potential matching proposals for each proposal
         // findPotentialMatchingsForProposals :
@@ -454,7 +454,7 @@ class ProposalManager
      *
      * @return array The proposals treated
      */
-    public function createLinkedAndOppositesForProposals(array $proposals)
+    public function createLinkedAndOppositesForProposals(array $proposals): array
     {
         foreach ($proposals as $proposalId) {
             $proposal = $this->proposalRepository->find($proposalId['id']);
@@ -734,7 +734,7 @@ class ProposalManager
      *
      * @return Proposal The proposal treated
      */
-    private function setDefaults(Proposal $proposal)
+    private function setDefaults(Proposal $proposal): Proposal
     {
         $this->logger->info('ProposalManager : setDefaults '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
 
@@ -799,7 +799,7 @@ class ProposalManager
      *
      * @return Proposal The proposal treated
      */
-    private function setMinMax(Proposal $proposal)
+    private function setMinMax(Proposal $proposal): Proposal
     {
         if (Criteria::FREQUENCY_PUNCTUAL == $proposal->getCriteria()->getFrequency() && $proposal->getCriteria()->getFromTime()) {
             list($minTime, $maxTime) = self::getMinMaxTime($proposal->getCriteria()->getFromTime(), $proposal->getCriteria()->getMarginDuration());
@@ -853,7 +853,7 @@ class ProposalManager
      *
      * @return Proposal The proposal treated
      */
-    private function setDirections(Proposal $proposal)
+    private function setDirections(Proposal $proposal): Proposal
     {
         $addresses = [];
         foreach ($proposal->getWaypoints() as $waypoint) {
@@ -911,7 +911,7 @@ class ProposalManager
      *
      * @return Proposal The proposal treated
      */
-    private function setPrices(Proposal $proposal)
+    private function setPrices(Proposal $proposal): Proposal
     {
         if ($proposal->getCriteria()->getDirectionDriver()) {
             $proposal->getCriteria()->setDriverComputedPrice((string) ((int) $proposal->getCriteria()->getDirectionDriver()->getDistance() * (float) $proposal->getCriteria()->getPriceKm() / 1000));
@@ -935,7 +935,7 @@ class ProposalManager
      *
      * @return Proposal The proposal with its updated direction
      */
-    private function updateDirection(Proposal $proposal, Address $address)
+    private function updateDirection(Proposal $proposal, Address $address): Proposal
     {
         // the first point is the current address
         $addresses = [$address];

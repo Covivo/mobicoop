@@ -79,7 +79,7 @@ class CarpoolExportManager
      *
      * @return string
      */
-    public function getCarpoolExports()
+    public function getCarpoolExports(): string
     {
         /**
          * @var User $user

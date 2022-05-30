@@ -422,7 +422,7 @@ class ConduentPTProvider implements ProviderInterface
      *
      * @return int
      */
-    private function convertToSeconds(string $duration)
+    private function convertToSeconds(string $duration): int
     {
         $durationTab = explode(':', $duration);
         $durationInSeconds = 0;

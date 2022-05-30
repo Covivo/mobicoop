@@ -48,7 +48,7 @@ class RdexVehicle implements \JsonSerializable
     /**
      * @return string
      */
-    public function getVehicle_image()
+    public function getVehicle_image(): string
     {
         return $this->vehicle_image;
     }
@@ -56,7 +56,7 @@ class RdexVehicle implements \JsonSerializable
     /**
      * @return string
      */
-    public function getModel()
+    public function getModel(): string
     {
         return $this->model;
     }
@@ -64,7 +64,7 @@ class RdexVehicle implements \JsonSerializable
     /**
      * @return string
      */
-    public function getColor()
+    public function getColor(): string
     {
         return $this->color;
     }
@@ -93,7 +93,7 @@ class RdexVehicle implements \JsonSerializable
         $this->color = $color;
     }
     
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return
         [

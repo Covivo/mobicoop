@@ -40,7 +40,7 @@ class SolidarySubscriber implements EventSubscriberInterface
         $this->solidaryTransportMatcher = $solidaryTransportMatcher;
     }
     
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             VolunteerStatusChangedEvent::NAME => 'onVolunteerStatusChanged',
@@ -53,7 +53,7 @@ class SolidarySubscriber implements EventSubscriberInterface
      * @param VolunteerStatusChangedEvent $event   The event
      * @return void
      */
-    public function onVolunteerStatusChanged(VolunteerStatusChangedEvent $event)
+    public function onVolunteerStatusChanged(VolunteerStatusChangedEvent $event): void
     {
         if ($event->getSolidaryUserStructure()->getStatus() == SolidaryUserStructure::STATUS_ACCEPTED) {
             $this->solidaryTransportMatcher->matchForStructure($event->getSolidaryUserStructure()->getStructure());

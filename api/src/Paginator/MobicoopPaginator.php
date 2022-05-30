@@ -63,7 +63,7 @@ class MobicoopPaginator implements \IteratorAggregate, PaginatorInterface
         return $this->itemsPerPage;
     }
 
-    public function getIterator()
+    public function getIterator(): \Traversable
     {
         if ($this->itemIterator === null) {
             $this->itemIterator = new \ArrayIterator($this->items);
@@ -71,7 +71,7 @@ class MobicoopPaginator implements \IteratorAggregate, PaginatorInterface
         return $this->itemIterator;
     }
 
-    public function count()
+    public function count(): int
     {
         return iterator_count($this->getIterator());
     }

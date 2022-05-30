@@ -34,7 +34,7 @@ final class DynamicProofPostDataPersister implements ContextAwareDataPersisterIn
 {
     private $security;
     private $dynamicManager;
-    
+
     public function __construct(Security $security, DynamicManager $dynamicManager)
     {
         $this->security = $security;

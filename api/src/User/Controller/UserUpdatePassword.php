@@ -51,7 +51,7 @@ class UserUpdatePassword
      * @throws InvalidArgumentException
      * @return Response
      */
-    public function __invoke(User $data, string $name)
+    public function __invoke(User $data, string $name): Response
     {
         if (is_null($data)) {
             throw new \InvalidArgumentException($this->translator->trans("bad User id is provided"));

@@ -119,7 +119,7 @@ class RdexError
     /**
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -127,7 +127,7 @@ class RdexError
     /**
      * @return number
      */
-    public function getCode()
+    public function getCode(): number
     {
         return $this->code;
     }
@@ -135,7 +135,7 @@ class RdexError
     /**
      * @return string
      */
-    public function getMessageDebug()
+    public function getMessageDebug(): string
     {
         return $this->message_debug;
     }
@@ -143,7 +143,7 @@ class RdexError
     /**
      * @return string
      */
-    public function getMessageUser()
+    public function getMessageUser(): string
     {
         return $this->message_user;
     }
@@ -151,7 +151,7 @@ class RdexError
     /**
      * @return string
      */
-    public function getField()
+    public function getField(): string
     {
         return $this->field;
     }

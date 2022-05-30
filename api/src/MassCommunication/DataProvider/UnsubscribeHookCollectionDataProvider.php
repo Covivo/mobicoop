@@ -51,7 +51,7 @@ final class UnsubscribeHookCollectionDataProvider implements CollectionDataProvi
         return Campaign::class === $resourceClass && isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'unsubscribeHook';
     }
 
-    public function getCollection(string $resourceClass, string $operationName = null)
+    public function getCollection(string $resourceClass, string $operationName = null): iterable
     {
         return $this->campaignManager->handleUnsubscribeHook($this->request);
     }

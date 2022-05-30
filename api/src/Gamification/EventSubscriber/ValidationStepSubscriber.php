@@ -39,7 +39,7 @@ class ValidationStepSubscriber implements EventSubscriberInterface
         $this->gamificationManager = $gamificationManager;
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             ValidationStepEvent::NAME => 'onValidationStepEvent'

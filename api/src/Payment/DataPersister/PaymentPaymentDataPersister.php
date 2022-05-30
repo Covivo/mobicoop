@@ -35,7 +35,7 @@ final class PaymentPaymentDataPersister implements ContextAwareDataPersisterInte
 {
     private $paymentManager;
     private $security;
-    
+
     public function __construct(PaymentManager $paymentManager, Security $security)
     {
         $this->paymentManager = $paymentManager;
@@ -51,7 +51,7 @@ final class PaymentPaymentDataPersister implements ContextAwareDataPersisterInte
     {
         // call your persistence layer to save $data
         if (isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'post') {
-            
+
             /**
              * @var PaymentPayment $data
              */

@@ -53,7 +53,7 @@ class SolidaryUserStructureManager
      *
      * @return SolidaryUserStructure
      */
-    public function updateSolidaryUserStructure(SolidaryUserStructure $solidaryUserStructure)
+    public function updateSolidaryUserStructure(SolidaryUserStructure $solidaryUserStructure): SolidaryUserStructure
     {
         // If we accept or refuse a candidate for this SolidaryUserStructure we need to se the rights correctly
         $user = $solidaryUserStructure->getSolidaryUser()->getUser();

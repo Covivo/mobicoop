@@ -50,7 +50,7 @@ class UserAlertsUpdate
      * @param User $data
      * @return Response
      */
-    public function __invoke(User $data): ?User
+    public function __invoke(User $data): Response
     {
         if (is_null($data)) {
             throw new \InvalidArgumentException($this->translator->trans("bad User id is provided"));

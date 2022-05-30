@@ -115,7 +115,7 @@ class CommunityManager
      *
      * @return bool
      */
-    public function canJoin(User $user, Community $community)
+    public function canJoin(User $user, Community $community): bool
     {
         $authorized = true;
 
@@ -169,7 +169,7 @@ class CommunityManager
      *
      * @return null|array
      */
-    public function getAvailableCommunitiesForUser(?int $userId)
+    public function getAvailableCommunitiesForUser(?int $userId): ?array
     {
         $user = null;
         if ($userId && !$user = $this->userRepository->find($userId)) {
@@ -186,7 +186,7 @@ class CommunityManager
      *
      * @return null|array The communities
      */
-    public function getCommunitiesForUser(?int $userId)
+    public function getCommunitiesForUser(?int $userId): ?array
     {
         $user = null;
         if ($userId && !$user = $this->userRepository->find($userId)) {
@@ -203,7 +203,7 @@ class CommunityManager
      *
      * @return null|Community
      */
-    public function exists(?string $name)
+    public function exists(?string $name): ?Community
     {
         if (is_null($name)) {
             return null;
@@ -217,7 +217,7 @@ class CommunityManager
      *
      * @return bool
      */
-    public function isRegistered(int $communityId, int $userId)
+    public function isRegistered(int $communityId, int $userId): bool
     {
         return $this->communityRepository->isRegisteredById($communityId, $userId);
     }
@@ -229,7 +229,7 @@ class CommunityManager
      *
      * @return null|Community
      */
-    public function getCommunity(int $communityId, User $user = null)
+    public function getCommunity(int $communityId, User $user = null): ?Community
     {
         if ($community = $this->communityRepository->find($communityId)) {
             $community->setUrlKey($this->generateUrlKey($community));
@@ -248,7 +248,7 @@ class CommunityManager
      *
      * @return Community
      */
-    public function getAdsOfCommunity(int $communityId)
+    public function getAdsOfCommunity(int $communityId): Community
     {
         $mapsAds = [];
 
@@ -287,7 +287,7 @@ class CommunityManager
      *
      * @return array
      */
-    public function getOwnedCommunities(int $userId): ?array
+    public function getOwnedCommunities(int $userId): array
     {
         $ownedCommunities = $this->communityRepository->getOwnedCommunities($userId);
         foreach ($ownedCommunities as $community) {
@@ -483,7 +483,7 @@ class CommunityManager
      *
      * @return array The communities
      */
-    public function getMCommunities(?string $userEmail, $communities)
+    public function getMCommunities(?string $userEmail, $communities): array
     {
         $mCommunities = [];
         $temporaryCommunities = [];
@@ -525,7 +525,7 @@ class CommunityManager
     /**
      * @return Community
      */
-    public function leaveCommunity(Community $community, User $user): ?Community
+    public function leaveCommunity(Community $community, User $user): Community
     {
         $communityUser = $this->communityUserRepository->findBy(['community' => $community, 'user' => $user]);
         if (is_array($communityUser) && count($communityUser) > 0) {
@@ -572,7 +572,7 @@ class CommunityManager
      *
      * @return bool
      */
-    private function checkSecurity(CommunitySecurity $security, string $login, string $password)
+    private function checkSecurity(CommunitySecurity $security, string $login, string $password): bool
     {
         if ($file = fopen($this->securityPath.$security->getFilename(), 'r')) {
             while ($tab = fgetcsv($file, 4096, ';')) {

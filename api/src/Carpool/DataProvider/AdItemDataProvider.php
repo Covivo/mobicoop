@@ -48,7 +48,7 @@ final class AdItemDataProvider implements RestrictedDataProviderInterface, ItemD
         return Ad::class === $resourceClass && $operationName === "get";
     }
 
-    public function getItem(string $resourceClass, $id, string $operationName = null, array $context = [])
+    public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?object
     {
         return $this->adManager->getAd($this->request->get("id"), $this->request->query->get('filters'), $this->request->query->get('order'), $this->request->get("page"));
     }

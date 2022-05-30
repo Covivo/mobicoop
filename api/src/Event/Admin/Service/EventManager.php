@@ -67,7 +67,7 @@ class EventManager
      *
      * @return Event The event created
      */
-    public function addEvent(Event $event)
+    public function addEvent(Event $event): Event
     {
         if ($creator = $this->userRepository->find($event->getCreatorId())) {
             $event->setUser($creator);
@@ -119,7 +119,7 @@ class EventManager
      *
      * @return Event The event updated
      */
-    public function patchEvent(Event $event, array $fields)
+    public function patchEvent(Event $event, array $fields): Event
     {
         // check if creator has changed
         if (in_array('creatorId', array_keys($fields))) {

@@ -84,7 +84,7 @@ class StructureRepository
      *
      * @return Structure[]
      */
-    public function findByPoint(float $longitude, float $latitude)
+    public function findByPoint(float $longitude, float $latitude): array
     {
         $conn = $this->entityManager->getConnection();
 

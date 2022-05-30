@@ -19,18 +19,18 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Geography\Repository;
 
 use App\Geography\Entity\Address;
+use App\Geography\Entity\Territory;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use App\Geography\Entity\Territory;
 
 /**
- * @method Address|null find($id, $lockMode = null, $lockVersion = null)
- * @method Address|null findOneBy(array $criteria, array $orderBy = null)
+ * @method null|Address find($id, $lockMode = null, $lockVersion = null)
+ * @method null|Address findOneBy(array $criteria, array $orderBy = null)
  * @method Address[]    findAll()
  * @method Address[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
@@ -40,9 +40,9 @@ class AddressRepository
      * @var EntityRepository
      */
     private $repository;
-    
+
     private $entityManager;
-    
+
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
@@ -62,60 +62,61 @@ class AddressRepository
     /**
      * Return all addresses with the given name for the given user id.
      *
-     * @param string $name
-     * @param integer $userId
-     * @return mixed|NULL|\Doctrine\DBAL\Driver\Statement|array     The addresses found
+     * @return null|array|\Doctrine\DBAL\Driver\Statement|mixed The addresses found
      */
-    public function findByName(string $name, int $userId)
+    public function findByName(string $name, int $userId): mixed
     {
         $query = $this->entityManager->createQuery("
-            SELECT a from App\Geography\Entity\Address a
-            where a.name like '%" . $name . "%' and a.user = $userId
+            SELECT a from App\\Geography\\Entity\\Address a
+            where a.name like '%".$name."%' and a.user = {$userId}
         ");
-        
-        return $query->getResult()
-        ;
-    }
-    
-    /**
-     * Return all addresses in the given territory.
-     *
-     * @return mixed|NULL|\Doctrine\DBAL\Driver\Statement|array     The addresses found
-     */
-    public function findAllInTerritory(Territory $territory)
-    {
-        $query = $this->entityManager->createQuery("
-            SELECT a from App\Geography\Entity\Address a, App\Geography\Entity\Territory t
-            where t.id = " . $territory->getId() . "
-            and ST_CONTAINS(t.geoJsonDetail,a.geoJson)=1
-        ");
-        
+
         return $query->getResult()
         ;
     }
 
     /**
-     * Find territories for an Address
+     * Return all addresses in the given territory.
      *
-     * @param Address $address  The address
-     * @return Territory[]|null       The territories
+     * @return null|array|\Doctrine\DBAL\Driver\Statement|mixed The addresses found
      */
-    public function findAddressTerritories(Address $address)
+    public function findAllInTerritory(Territory $territory): mixed
+    {
+        $query = $this->entityManager->createQuery('
+            SELECT a from App\\Geography\\Entity\\Address a, App\\Geography\\Entity\\Territory t
+            where t.id = '.$territory->getId().'
+            and ST_CONTAINS(t.geoJsonDetail,a.geoJson)=1
+        ');
+
+        return $query->getResult()
+        ;
+    }
+
+    /**
+     * Find territories for an Address.
+     *
+     * @param Address $address The address
+     *
+     * @return null|Territory[] The territories
+     */
+    public function findAddressTerritories(Address $address): ?array
     {
         $query = $this->repository->createQueryBuilder('a')
             ->join('\App\Geography\Entity\Territory', 'territory')
             ->where('a.id = :id')
             ->setParameter('id', $address->getId())
-            ->andWhere('ST_INTERSECTS(territory.geoJsonDetail,a.geoJson)=1');
+            ->andWhere('ST_INTERSECTS(territory.geoJsonDetail,a.geoJson)=1')
+        ;
+
         return $query->getQuery()->getResult();
     }
 
     /**
-     * Find all minimal addresses (only latitude and logitude filled)
+     * Find all minimal addresses (only latitude and logitude filled).
      *
-     * @return mixed|NULL|\Doctrine\DBAL\Driver\Statement|array     The addresses found
+     * @return null|array|\Doctrine\DBAL\Driver\Statement|mixed The addresses found
      */
-    public function findMinimalAddresses()
+    public function findMinimalAddresses(): mixed
     {
         $query = $this->repository->createQueryBuilder('a')
             ->andWhere('a.houseNumber IS NULL')
@@ -135,6 +136,7 @@ class AddressRepository
             ->andWhere('a.latitude IS NOT NULL')
             ->andWhere('a.longitude IS NOT NULL')
             ;
+
         return $query->getQuery()->getResult();
     }
 }

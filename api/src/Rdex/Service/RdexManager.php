@@ -107,7 +107,7 @@ class RdexManager
      *
      * @return bool|RdexError True if validation is ok, error if not
      */
-    public function checkSignature(Request $request, string $privateApiKey, string $urlToCheck = null)
+    public function checkSignature(Request $request, string $privateApiKey, string $urlToCheck = null): bool|RdexError
     {
         // we check the signature
         if (self::CHECK_SIGNATURE) {
@@ -167,7 +167,7 @@ class RdexManager
      *
      * @return bool|RdexError True if validation is ok, error if not
      */
-    public function validate(Request $request)
+    public function validate(Request $request): bool|RdexError
     {
         // we check the mandatory parameters
         if (is_null($request->get('timestamp'))) {
@@ -263,7 +263,7 @@ class RdexManager
      *
      * @return bool|RdexError True if request is empty, false if not
      */
-    public function isEmptyRequest(object $request)
+    public function isEmptyRequest(object $request): bool|RdexError
     {
         // we check the mandatory parameters
         if (is_null($request->get('timestamp')) && is_null($request->get('apikey')) && is_null($request->get('p')) && is_null($request->get('signature'))) {
@@ -295,7 +295,7 @@ class RdexManager
      *
      * @return array|RdexError
      */
-    public function getJourneys(array $parameters)
+    public function getJourneys(array $parameters): array|RdexError
     {
         $returnArray = [];
         $journeys = [];
@@ -501,7 +501,7 @@ class RdexManager
      *
      * @return bool|RdexError True if validation is ok, error if not
      */
-    public function validateConnection(Request $request)
+    public function validateConnection(Request $request): bool|RdexError
     {
         // var_dump($request->get('driver'));die;
 
@@ -600,7 +600,7 @@ class RdexManager
      *
      * @return bool|RdexError True if validation is ok, error if not
      */
-    public function sendConnection(Request $request)
+    public function sendConnection(Request $request): bool|RdexError
     {
         // check the mandatory parameters
         if (is_null($request->get('driver'))) {
@@ -685,7 +685,7 @@ class RdexManager
      *
      * @return array
      */
-    private function computeMinMaxTime(\DateTime $time, int $margin)
+    private function computeMinMaxTime(\DateTime $time, int $margin): array
     {
         $mintime = clone $time;
 
@@ -711,7 +711,7 @@ class RdexManager
      *
      * @return array
      */
-    private function buildJourneyDetails(Result $result, string $role, string $way)
+    private function buildJourneyDetails(Result $result, string $role, string $way): array
     {
         if ('passenger' == $role) {
             ('outward' == $way) ? $journey = $result->getResultPassenger()->getOutward() : $journey = $result->getResultPassenger()->getReturn();
@@ -899,7 +899,7 @@ class RdexManager
      *
      * @return null|RdexClient The client found or null if not found
      */
-    private function getClient(string $apikey)
+    private function getClient(string $apikey): ?RdexClient
     {
         foreach ($this->clients as $key => $client) {
             if ($client['public_key'] == $apikey) {

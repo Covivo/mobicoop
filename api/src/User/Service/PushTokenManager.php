@@ -19,13 +19,13 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\Service;
 
-use Doctrine\ORM\EntityManagerInterface;
 use App\User\Entity\PushToken;
 use App\User\Repository\PushTokenRepository;
+use Doctrine\ORM\EntityManagerInterface;
 
 /**
  * Push token manager service.
@@ -38,11 +38,10 @@ class PushTokenManager
     private $pushTokenRepository;
 
     /**
-        * Constructor.
-        *
-        * @param EntityManagerInterface $entityManager
-        * @param LoggerInterface $logger
-        */
+     * Constructor.
+     *
+     * @param LoggerInterface $logger
+     */
     public function __construct(EntityManagerInterface $entityManager, PushTokenRepository $pushTokenRepository)
     {
         $this->entityManager = $entityManager;
@@ -52,29 +51,31 @@ class PushTokenManager
     /**
      * Create a new token if it doesn't exist yet.
      *
-     * @param PushToken $pushToken  The push token
-     * @return PushToken    The push token created or retrieved
+     * @param PushToken $pushToken The push token
+     *
+     * @return PushToken The push token created or retrieved
      */
-    public function createPushToken(PushToken $pushToken)
+    public function createPushToken(PushToken $pushToken): PushToken
     {
-        if ($existingPushToken = $this->pushTokenRepository->findOneBy(['token'=>$pushToken->getToken(),'user'=>$pushToken->getUser()])) {
+        if ($existingPushToken = $this->pushTokenRepository->findOneBy(['token' => $pushToken->getToken(), 'user' => $pushToken->getUser()])) {
             return $existingPushToken;
         }
         $this->entityManager->persist($pushToken);
         $this->entityManager->flush();
+
         return $pushToken;
     }
-   
+
     /**
      * Delete a token if it exists.
      *
-     * @param PushToken $pushToken  The push token to delete
-     * @return void
+     * @param PushToken $pushToken The push token to delete
      */
     public function deletePushToken(PushToken $pushToken)
     {
         $this->entityManager->remove($pushToken);
         $this->entityManager->flush();
+
         return $pushToken;
     }
 }

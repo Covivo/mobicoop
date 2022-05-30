@@ -54,7 +54,7 @@ class EditorialManager
      *
      * @return Editorial
      */
-    public function getActivatedEditorial(): ?Editorial
+    public function getActivatedEditorial(): Editorial
     {
         if (!$editorial = $this->editorialRepository->findOneBy(['status' => Editorial::STATUS_ACTIVE])) {
             throw new EditorialException('No activated editorial content');

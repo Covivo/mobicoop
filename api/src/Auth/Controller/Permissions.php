@@ -50,7 +50,7 @@ class Permissions
      * @param array $data
      * @return Response
      */
-    public function __invoke(array $data): ?array
+    public function __invoke(array $data): Response
     {
         return $this->authManager->getAuthItems();
     }

@@ -43,7 +43,7 @@ class RdexDayTime implements \JsonSerializable
     /**
      * @return string
      */
-    public function getMintime()
+    public function getMintime(): string
     {
         return $this->mintime;
     }
@@ -51,7 +51,7 @@ class RdexDayTime implements \JsonSerializable
     /**
      * @return string
      */
-    public function getMaxtime()
+    public function getMaxtime(): string
     {
         return $this->maxtime;
     }
@@ -72,7 +72,7 @@ class RdexDayTime implements \JsonSerializable
         $this->maxtime = $maxtime;
     }
     
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return
         [

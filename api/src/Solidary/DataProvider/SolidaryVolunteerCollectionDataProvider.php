@@ -52,7 +52,7 @@ final class SolidaryVolunteerCollectionDataProvider implements CollectionDataPro
         return SolidaryVolunteer::class === $resourceClass;
     }
 
-    public function getCollection(string $resourceClass, string $operationName = null)
+    public function getCollection(string $resourceClass, string $operationName = null): iterable
     {
         // We check and sanitize the filters
         $filters = null;

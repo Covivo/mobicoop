@@ -35,7 +35,7 @@ final class AdPostDataPersister implements ContextAwareDataPersisterInterface
     {
         $this->adManager = $adManager;
     }
-  
+
     public function supports($data, array $context = []): bool
     {
         return $data instanceof Ad && isset($context['collection_operation_name']) && $context['collection_operation_name'] === 'post';

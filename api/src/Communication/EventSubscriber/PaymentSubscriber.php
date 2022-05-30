@@ -43,7 +43,7 @@ class PaymentSubscriber implements EventSubscriberInterface
         $this->notificationManager = $notificationManager;
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             ConfirmDirectPaymentEvent::NAME => 'onConfirmDirectPayment',

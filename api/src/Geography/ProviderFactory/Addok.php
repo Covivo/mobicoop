@@ -77,7 +77,7 @@ final class Addok extends AbstractHttpProvider implements Provider
      *
      * @return Addok
      */
-    public static function withBANServer(HttpClient $client)
+    public static function withBANServer(HttpClient $client): Addok
     {
         return new self($client, 'https://api-adresse.data.gouv.fr');
     }
@@ -143,7 +143,7 @@ final class Addok extends AbstractHttpProvider implements Provider
      *
      * @return Collection
      */
-    private function executeQuery(string $url): AddressCollection
+    private function executeQuery(string $url): Collection
     {
         $content = $this->getUrlContents($url);
         $json = json_decode($content);

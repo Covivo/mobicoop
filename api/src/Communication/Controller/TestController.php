@@ -59,7 +59,7 @@ class TestController extends AbstractController
      * @var string $mobile  The recipient mobile number
      * @return Response
      */
-    public function testSMS(string $mobile)
+    public function testSMS(string $mobile): Response
     {
         $this->translator->setLocale("fr_FR");
 

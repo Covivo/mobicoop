@@ -50,7 +50,7 @@ final class BlockedByCollectionDataProvider implements CollectionDataProviderInt
         return Block::class === $resourceClass && $operationName === "blockedBy";
     }
 
-    public function getCollection(string $resourceClass, string $operationName = null)
+    public function getCollection(string $resourceClass, string $operationName = null): iterable
     {
         $user = null;
         // If it's a user who make the call, we use it

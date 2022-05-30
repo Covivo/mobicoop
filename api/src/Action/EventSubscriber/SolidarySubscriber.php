@@ -48,7 +48,7 @@ class SolidarySubscriber implements EventSubscriberInterface
         $this->actionManager = $actionManager;
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             SolidaryUserStructureAcceptedEvent::NAME => 'onSolidaryUserStructureAccepted',

@@ -84,7 +84,7 @@ class CommunityManager
      *
      * @return array The members
      */
-    public function getMembers(int $communityId, string $operationName, array $context = [])
+    public function getMembers(int $communityId, string $operationName, array $context = []): array
     {
         if ($community = $this->communityRepository->find($communityId)) {
             return $this->communityUserRepository->findForCommunity($community, $operationName, $context);
@@ -100,7 +100,7 @@ class CommunityManager
      *
      * @return Community The community created
      */
-    public function addCommunity(Community $community)
+    public function addCommunity(Community $community): Community
     {
         if ($referrer = $this->userRepository->find($community->getReferrerId())) {
             $community->setUser($referrer);
@@ -159,7 +159,7 @@ class CommunityManager
      *
      * @return Community The community updated
      */
-    public function patchCommunity(Community $community, array $fields)
+    public function patchCommunity(Community $community, array $fields): Community
     {
         // check if referrer has changed
         if (in_array('referrerId', array_keys($fields))) {
@@ -192,7 +192,7 @@ class CommunityManager
      *
      * @return CommunityUser The community user updated
      */
-    public function addCommunityUser(CommunityUser $communityUser)
+    public function addCommunityUser(CommunityUser $communityUser): CommunityUser
     {
         $status = $communityUser->getStatus();
 
@@ -217,7 +217,7 @@ class CommunityManager
      *
      * @return CommunityUser The community user updated
      */
-    public function patchCommunityUser(CommunityUser $communityUser, array $fields)
+    public function patchCommunityUser(CommunityUser $communityUser, array $fields): CommunityUser
     {
         // persist the community user
         $this->entityManager->persist($communityUser);
@@ -259,7 +259,7 @@ class CommunityManager
      *
      * @return null|array The communities found
      */
-    public function getModerated(User $user)
+    public function getModerated(User $user): ?array
     {
         return $this->communityRepository->getCommunitiesForUserAndStatuses($user, [CommunityUser::STATUS_ACCEPTED_AS_MODERATOR]);
     }

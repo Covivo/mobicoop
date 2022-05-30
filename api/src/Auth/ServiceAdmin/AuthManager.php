@@ -76,7 +76,7 @@ class AuthManager
      * @param integer $id       The id
      * @return AuthItem|null    The authItem or null if not found
      */
-    public function getAuthItem(int $id)
+    public function getAuthItem(int $id): ?AuthItem
     {
         return $this->authItemRepository->find($id);
     }
@@ -86,7 +86,7 @@ class AuthManager
      *
      * @return AuthItem|null
      */
-    public function getGrantable()
+    public function getGrantable(): ?AuthItem
     {
         $authItems = $this->authManager->getAuthItems(AuthItem::TYPE_ROLE, true);
         $rolesGranted = [];
@@ -107,7 +107,7 @@ class AuthManager
      * @param bool $flush           Flush immediately
      * @return void
      */
-    public function grant(User $user, AuthItem $authItem, ?Territory $territory=null, bool $flush = true)
+    public function grant(User $user, AuthItem $authItem, ?Territory $territory=null, bool $flush = true): void
     {
         // check if the auth item already exists
         $granted = false;
@@ -145,7 +145,7 @@ class AuthManager
      * @param bool $flush           Flush immediately
      * @return void
      */
-    public function revoke(User $user, AuthItem $authItem, ?Territory $territory, bool $flush = true)
+    public function revoke(User $user, AuthItem $authItem, ?Territory $territory, bool $flush = true): void
     {
         foreach ($user->getUserAuthAssignments() as $userAuthAssignment) {
             /**

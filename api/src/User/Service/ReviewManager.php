@@ -108,7 +108,7 @@ class ReviewManager
      *
      * @return Review[]
      */
-    public function getSpecificReviews(User $reviewer = null, User $reviewed = null)
+    public function getSpecificReviews(User $reviewer = null, User $reviewed = null): array
     {
         $reviews = [];
         if (!$this->userReview) {

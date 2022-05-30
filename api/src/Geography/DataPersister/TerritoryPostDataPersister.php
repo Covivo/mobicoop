@@ -32,7 +32,7 @@ use Symfony\Component\Security\Core\Security;
 final class TerritoryPostDataPersister implements ContextAwareDataPersisterInterface
 {
     private $territoryManager;
-    
+
     public function __construct(TerritoryManager $territoryManager)
     {
         $this->territoryManager = $territoryManager;

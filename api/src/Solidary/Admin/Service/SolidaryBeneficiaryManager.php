@@ -77,7 +77,7 @@ class SolidaryBeneficiaryManager
      * @param PaginatorInterface $solidaryUsers  The solidary user objects
      * @return array|null The solidary beneficiary records
      */
-    public function getSolidaryBeneficiaries(PaginatorInterface $solidaryUsers)
+    public function getSolidaryBeneficiaries(PaginatorInterface $solidaryUsers): ?array
     {
         $solidaryBeneficiaries = [];
         foreach ($solidaryUsers as $solidaryUser) {
@@ -156,7 +156,7 @@ class SolidaryBeneficiaryManager
      * @param SolidaryUserStructure         $solidaryUserStructure  The solidaryUserStructure
      * @return array    The proofs
      */
-    private function getDiaryForSolidaryUserStructure(SolidaryUserStructure $solidaryUserStructure)
+    private function getDiaryForSolidaryUserStructure(SolidaryUserStructure $solidaryUserStructure): array
     {
         $diaries = [];
         foreach ($solidaryUserStructure->getSolidaries() as $solidary) {
@@ -195,7 +195,7 @@ class SolidaryBeneficiaryManager
      * @param Structure|null        $structure              The structure if we want the proofs for a given structure only
      * @return array    The proofs
      */
-    public function getProofsForSolidaryUserStructure(SolidaryUserStructure $solidaryUserStructure, ?Structure $structure = null)
+    public function getProofsForSolidaryUserStructure(SolidaryUserStructure $solidaryUserStructure, ?Structure $structure = null): array
     {
         $proofs = [];
         foreach ($solidaryUserStructure->getProofs() as $proof) {
@@ -243,7 +243,7 @@ class SolidaryBeneficiaryManager
      * @param integer $id                   The Solidary Beneficiary id
      * @return SolidaryBeneficiary|null     The Solidary Beneficiary or null if not found
      */
-    public function getSolidaryBeneficiary(int $id)
+    public function getSolidaryBeneficiary(int $id): ?SolidaryBeneficiary
     {
         if (!$solidaryUser = $this->solidaryUserRepository->find($id)) {
             throw new SolidaryException(sprintf(SolidaryException::BENEFICIARY_NOT_FOUND, $id));
@@ -261,7 +261,7 @@ class SolidaryBeneficiaryManager
      * @param array $fields     The updated fields
      * @return SolidaryBeneficiary     The solidaryBeneficiary updated
      */
-    public function patchSolidaryBeneficiary(int $id, array $fields)
+    public function patchSolidaryBeneficiary(int $id, array $fields): SolidaryBeneficiary
     {
         if (!$solidaryUser = $this->solidaryUserRepository->find($id)) {
             throw new SolidaryException(sprintf(SolidaryException::BENEFICIARY_NOT_FOUND, $id));
@@ -386,7 +386,7 @@ class SolidaryBeneficiaryManager
      * @param array                 $validation             The validation fields
      * @return SolidaryBeneficiary  The solidaryBeneficiary updated
      */
-    private function treatValidation(SolidaryUser $solidaryUser, array $validation)
+    private function treatValidation(SolidaryUser $solidaryUser, array $validation): SolidaryBeneficiary
     {
         if (!array_key_exists('validate', $validation)) {
             throw new SolidaryException(SolidaryException::BENEFICIARY_VALIDATION_VALUE_REQUIRED);

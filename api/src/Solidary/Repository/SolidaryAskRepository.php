@@ -78,7 +78,7 @@ class SolidaryAskRepository
      * @param SolidarySolution $solidarySolution
      * @return array
      */
-    public function findBySolidarySolution(SolidarySolution $solidarySolution)
+    public function findBySolidarySolution(SolidarySolution $solidarySolution): array
     {
         $query = $this->repository->createQueryBuilder('sa')
         ->join('sa.solidarySolution', 'ss')
@@ -96,7 +96,7 @@ class SolidaryAskRepository
      * @param bool $onlySolidaryTransport   True if we search only for Solidary transport
      * @return array
      */
-    public function findBetweenTwoDates(\DateTimeInterface $startDate, \DateTimeInterface $endDate, SolidaryUser $solidaryVolunteer = null, $onlySolidaryTransport = true)
+    public function findBetweenTwoDates(\DateTimeInterface $startDate, \DateTimeInterface $endDate, SolidaryUser $solidaryVolunteer = null, $onlySolidaryTransport = true): array
     {
         $query = $this->repository->createQueryBuilder('sa')
         ->join('sa.criteria', 'c')
@@ -146,7 +146,7 @@ class SolidaryAskRepository
      * @param User $user        The User
      * @return array|null
      */
-    public function findSolidaryAsksForDriver(User $user)
+    public function findSolidaryAsksForDriver(User $user): ?array
     {
         $query = $this->repository->createQueryBuilder('sa')
         ->join('sa.solidarySolution', 'ss')

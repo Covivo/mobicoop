@@ -50,7 +50,7 @@ class AppManager
      * @param int $appId  The appId
      * @return App|null The app found
      */
-    public function getApp(int $appId)
+    public function getApp(int $appId): ?App
     {
         return $this->appRepository->find($appId);
     }
@@ -61,7 +61,7 @@ class AppManager
      * @param string $username  The username
      * @return App|null The app found
      */
-    public function getAppByUsername(string $username)
+    public function getAppByUsername(string $username): ?App
     {
         return $this->appRepository->findOneBy(['username'=>$username]);
     }

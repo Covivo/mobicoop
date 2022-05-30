@@ -50,7 +50,7 @@ class UserSendValidationEmail
      * @param User $user the user
      * @return User
      */
-    public function __invoke(User $user)
+    public function __invoke(User $user): User
     {
         if (is_null($user)) {
             throw new \InvalidArgumentException($this->translator->trans("bad User id is provided"));

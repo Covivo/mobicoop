@@ -33,7 +33,7 @@ class HasARelayPointAsWaypoint implements GamificationRuleInterface
     /**
      * {@inheritdoc}
      */
-    public function execute($log, $sequenceItem)
+    public function execute($log, $sequenceItem): bool
     {
         /** To do : implement the rule*/
         return true;

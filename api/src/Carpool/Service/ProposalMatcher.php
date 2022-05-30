@@ -104,7 +104,7 @@ class ProposalMatcher
      * @param bool $excludeProposalUser Exclude the matching proposals made by the proposal user
      * @return Proposal The proposal with the matchings
      */
-    public function createMatchingsForProposal(Proposal $proposal, bool $excludeProposalUser=true)
+    public function createMatchingsForProposal(Proposal $proposal, bool $excludeProposalUser=true): Proposal
     {
         $this->logger->info("ProposalMatcher : createMatchingsForProposal " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
@@ -130,7 +130,7 @@ class ProposalMatcher
      * @param Matching  $matching   The matching
      * @return array The matching return filters
      */
-    public function getMatchingFilters(Matching $matching)
+    public function getMatchingFilters(Matching $matching): array
     {
         $filters = [];
         $candidateDriver = new Candidate();
@@ -186,7 +186,7 @@ class ProposalMatcher
      * @param Ask  $ask   The ask
      * @return array The ask return filters
      */
-    public function getAskFilters(Ask $ask)
+    public function getAskFilters(Ask $ask): array
     {
         $filters = [];
         $candidateDriver = new Candidate();
@@ -251,7 +251,7 @@ class ProposalMatcher
      * @param bool $excludeProposalUser Exclude the matching proposals made by the proposal user
      * @return array|NULL
      */
-    public function findMatchingProposals(Proposal $proposal, bool $excludeProposalUser=true)
+    public function findMatchingProposals(Proposal $proposal, bool $excludeProposalUser=true): ?array
     {
         $this->logger->info("ProposalMatcher : findMatchingProposals " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
@@ -865,7 +865,7 @@ class ProposalMatcher
      * @param array $matchings  The candidates
      * @return array
      */
-    private function checkPickUp(array $matchings)
+    private function checkPickUp(array $matchings): array
     {
         $validMatchings = [];
         foreach ($matchings as $matching) {
@@ -1352,7 +1352,7 @@ class ProposalMatcher
      * @param array $route
      * @return array The pick up and drop off
      */
-    private function getPickUpDropOffDurations(array $route)
+    private function getPickUpDropOffDurations(array $route): array
     {
         $pickUp = 0;
         $dropOff = 0;
@@ -1387,7 +1387,7 @@ class ProposalMatcher
      * @param bool $excludeProposalUser Exclude the matching proposals made by the proposal user
      * @return Proposal The proposal with the matchings
      */
-    public function updateMatchingsForProposal(Proposal $proposal, bool $excludeProposalUser=true)
+    public function updateMatchingsForProposal(Proposal $proposal, bool $excludeProposalUser=true): Proposal
     {
         $this->logger->info("ProposalMatcher : updateMatchingsForProposal #" . $proposal->getId() . " " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
 
@@ -1475,7 +1475,7 @@ class ProposalMatcher
      * @param Matching $matching The matching
      * @return bool The result
      */
-    private function checkRelatedAskForMatching(Matching $matching)
+    private function checkRelatedAskForMatching(Matching $matching): bool
     {
         foreach ($matching->getAsks() as $ask) {
             /**
@@ -1505,7 +1505,7 @@ class ProposalMatcher
      * @param Matching $destinationMatching The destination matching
      * @return Matching The updated matching
      */
-    private function updateMatchingWithMatching(Matching $sourceMatching, Matching $destinationMatching)
+    private function updateMatchingWithMatching(Matching $sourceMatching, Matching $destinationMatching): Matching
     {
         // matching properties
         $destinationMatching->setOriginalDistance($sourceMatching->getOriginalDistance());

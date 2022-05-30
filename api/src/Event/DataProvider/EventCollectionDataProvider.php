@@ -56,7 +56,7 @@ final class EventCollectionDataProvider implements CollectionDataProviderInterfa
         return Event::class === $resourceClass && $operationName === "get";
     }
     
-    public function getCollection(string $resourceClass, string $operationName = null)
+    public function getCollection(string $resourceClass, string $operationName = null): iterable
     {
         $queryBuilder = $this->eventManager->getEvents();
 

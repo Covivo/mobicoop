@@ -79,7 +79,7 @@ class RdexDay implements \JsonSerializable
     /**
      * @return number
      */
-    public function getMonday()
+    public function getMonday(): number
     {
         return $this->monday;
     }
@@ -87,7 +87,7 @@ class RdexDay implements \JsonSerializable
     /**
      * @return number
      */
-    public function getTuesday()
+    public function getTuesday(): number
     {
         return $this->tuesday;
     }
@@ -95,7 +95,7 @@ class RdexDay implements \JsonSerializable
     /**
      * @return number
      */
-    public function getWednesday()
+    public function getWednesday(): number
     {
         return $this->wednesday;
     }
@@ -103,7 +103,7 @@ class RdexDay implements \JsonSerializable
     /**
      * @return number
      */
-    public function getThursday()
+    public function getThursday(): number
     {
         return $this->thursday;
     }
@@ -111,7 +111,7 @@ class RdexDay implements \JsonSerializable
     /**
      * @return number
      */
-    public function getFriday()
+    public function getFriday(): number
     {
         return $this->friday;
     }
@@ -119,7 +119,7 @@ class RdexDay implements \JsonSerializable
     /**
      * @return number
      */
-    public function getSaturday()
+    public function getSaturday(): number
     {
         return $this->saturday;
     }
@@ -127,7 +127,7 @@ class RdexDay implements \JsonSerializable
     /**
      * @return number
      */
-    public function getSunday()
+    public function getSunday(): number
     {
         return $this->sunday;
     }
@@ -188,7 +188,7 @@ class RdexDay implements \JsonSerializable
         $this->sunday = $sunday;
     }
     
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return
         [

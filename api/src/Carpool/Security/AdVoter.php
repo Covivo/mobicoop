@@ -65,7 +65,7 @@ class AdVoter extends Voter
         $this->askRepository = $askRepository;
     }
 
-    protected function supports($attribute, $subject)
+    protected function supports($attribute, $subject): bool
     {
         // if the attribute isn't one we support, return false
         if (!in_array($attribute, [
@@ -105,7 +105,7 @@ class AdVoter extends Voter
         return true;
     }
 
-    protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
+    protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool
     {
         // echo $attribute;die;
         // var_dump($subject);die;

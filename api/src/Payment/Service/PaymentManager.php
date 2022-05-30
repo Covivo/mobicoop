@@ -166,7 +166,7 @@ class PaymentManager
      *
      * @return array The payment items found
      */
-    public function getPaymentItems(User $user, int $frequency = 1, int $type = 1, ?string $day = null, ?string $week = null)
+    public function getPaymentItems(User $user, int $frequency = 1, int $type = 1, ?string $day = null, ?string $week = null): array
     {
         $items = [];
 
@@ -432,7 +432,7 @@ class PaymentManager
      *
      * @return array The periods found
      */
-    public function getPaymentPeriods(User $user, int $type)
+    public function getPaymentPeriods(User $user, int $type): array
     {
         $periods = [];
 
@@ -496,7 +496,7 @@ class PaymentManager
      *
      * @return int The week number found
      */
-    public function getFirstNonValidatedWeek(User $user, int $id)
+    public function getFirstNonValidatedWeek(User $user, int $id): int
     {
         $week = null;
         $validated = false;
@@ -556,7 +556,7 @@ class PaymentManager
      *
      * @return PaymentPayment The resulting payment (with updated statuses)
      */
-    public function createPaymentPayment(PaymentPayment $payment, User $user)
+    public function createPaymentPayment(PaymentPayment $payment, User $user): PaymentPayment
     {
         if (PaymentPayment::TYPE_PAY != $payment->getType() && PaymentPayment::TYPE_VALIDATE != $payment->getType()) {
             throw new PaymentException('Wrong payment type');
@@ -1009,7 +1009,7 @@ class PaymentManager
      *
      * @return array The items found
      */
-    public function getCarpoolItems(int $frequency, int $type, User $user, ?DateTime $fromDate = null, ?DateTime $toDate = null)
+    public function getCarpoolItems(int $frequency, int $type, User $user, ?DateTime $fromDate = null, ?DateTime $toDate = null): array
     {
         // if no dates are sent, we use the origin of times till the previous day
         if (is_null($fromDate)) {
@@ -1033,7 +1033,7 @@ class PaymentManager
      *
      * @return null|BankAccount The bank account created
      */
-    public function createBankAccount(User $user, BankAccount $bankAccount)
+    public function createBankAccount(User $user, BankAccount $bankAccount): ?BankAccount
     {
         // Check if there is a paymentProfile
         $paymentProfiles = $this->paymentProfileRepository->findBy(['user' => $user]);
@@ -1080,7 +1080,7 @@ class PaymentManager
      *
      * @return BankAccount
      */
-    public function disableBankAccount(User $user, BankAccount $bankAccount)
+    public function disableBankAccount(User $user, BankAccount $bankAccount): BankAccount
     {
         // Check if there is a paymentProfile
         $paymentProfiles = $this->paymentProfileRepository->findBy(['user' => $user]);
@@ -1127,7 +1127,7 @@ class PaymentManager
      *
      * @return PaymentProfile
      */
-    public function createPaymentProfile(User $user, string $identifier, bool $electronicallyPayable = false)
+    public function createPaymentProfile(User $user, string $identifier, bool $electronicallyPayable = false): PaymentProfile
     {
         $paymentProfile = new PaymentProfile();
         $paymentProfile->setUser($user);
@@ -1308,7 +1308,7 @@ class PaymentManager
      *
      * @return PaymentPayment
      */
-    public function buildPaymentPaymentFromCarpoolPayment(int $carpoolPaymentId): ?PaymentPayment
+    public function buildPaymentPaymentFromCarpoolPayment(int $carpoolPaymentId): PaymentPayment
     {
         $carpoolPayment = $this->carpoolPaymentRepository->find($carpoolPaymentId);
         if (is_null($carpoolPayment)) {
@@ -1393,7 +1393,7 @@ class PaymentManager
      *
      * @return PaymentProfile
      */
-    public function getRefusalReason(PaymentProfile $paymentProfile)
+    public function getRefusalReason(PaymentProfile $paymentProfile): PaymentProfile
     {
         $validationDocument = $this->paymentProvider->getDocument($paymentProfile->getValidationId());
         $paymentProfile->setRefusalReason($validationDocument->getStatus());

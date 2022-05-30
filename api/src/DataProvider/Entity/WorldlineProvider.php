@@ -153,7 +153,7 @@ class WorldlineProvider implements ConsumptionFeedbackInterface
         return $this->consumptionUser;
     }
 
-    public function setConsumptionUser(?User $consumptionUser)
+    public function setConsumptionUser(?User $consumptionUser): void
     {
         $this->consumptionUser = $consumptionUser;
     }

@@ -66,7 +66,7 @@ class TerritoryManager
      *
      * @return null|Territory The territory or null if not found
      */
-    public function getTerritory(int $id)
+    public function getTerritory(int $id): ?Territory
     {
         return $this->territoryRepository->find($id);
     }
@@ -78,7 +78,7 @@ class TerritoryManager
      *
      * @return Territory The territory created
      */
-    public function createTerritory(Territory $territory)
+    public function createTerritory(Territory $territory): Territory
     {
         // we create the Multipolygon object based on the data sent in the detail property
         // the data is a json string, we first decode it to make an array, then we pass the resulted array to the object constructor
@@ -126,7 +126,7 @@ class TerritoryManager
      *
      * @return Territory The territory updated
      */
-    public function updateTerritory(Territory $territoryData)
+    public function updateTerritory(Territory $territoryData): Territory
     {
         // territories are special objects, they mainly rely on geojson data, so we need to know if the update concerns only the name or even the geo data
         $geoUpdated = false;

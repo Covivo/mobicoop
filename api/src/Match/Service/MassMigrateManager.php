@@ -100,7 +100,7 @@ class MassMigrateManager
      *
      * @return Mass
      */
-    public function migrate(Mass $mass)
+    public function migrate(Mass $mass): Mass
     {
         set_time_limit(50000);
 

@@ -86,7 +86,7 @@ class RdexWaypoint implements \JsonSerializable
     /**
      * @return string
      */
-    public function getAddress()
+    public function getAddress(): string
     {
         return $this->address;
     }
@@ -94,7 +94,7 @@ class RdexWaypoint implements \JsonSerializable
     /**
      * @return string
      */
-    public function getCity()
+    public function getCity(): string
     {
         return $this->city;
     }
@@ -102,7 +102,7 @@ class RdexWaypoint implements \JsonSerializable
     /**
      * @return string
      */
-    public function getPostalcode()
+    public function getPostalcode(): string
     {
         return $this->postalcode;
     }
@@ -110,7 +110,7 @@ class RdexWaypoint implements \JsonSerializable
     /**
      * @return string
      */
-    public function getCountry()
+    public function getCountry(): string
     {
         return $this->country;
     }
@@ -118,7 +118,7 @@ class RdexWaypoint implements \JsonSerializable
     /**
      * @return number
      */
-    public function getLatitude()
+    public function getLatitude(): number
     {
         return $this->latitude;
     }
@@ -126,7 +126,7 @@ class RdexWaypoint implements \JsonSerializable
     /**
      * @return number
      */
-    public function getLongitude()
+    public function getLongitude(): number
     {
         return $this->longitude;
     }
@@ -134,7 +134,7 @@ class RdexWaypoint implements \JsonSerializable
     /**
      * @return number
      */
-    public function getStep_distance()
+    public function getStep_distance(): number
     {
         return $this->step_distance;
     }
@@ -142,7 +142,7 @@ class RdexWaypoint implements \JsonSerializable
     /**
      * @return number
      */
-    public function getStep_duration()
+    public function getStep_duration(): number
     {
         return $this->step_duration;
     }
@@ -150,7 +150,7 @@ class RdexWaypoint implements \JsonSerializable
     /**
      * @return string
      */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
@@ -158,7 +158,7 @@ class RdexWaypoint implements \JsonSerializable
     /**
      * @return boolean
      */
-    public function isMandatory()
+    public function isMandatory(): bool
     {
         return $this->mandatory;
     }
@@ -243,7 +243,7 @@ class RdexWaypoint implements \JsonSerializable
         $this->mandatory = $mandatory;
     }
     
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return
         [

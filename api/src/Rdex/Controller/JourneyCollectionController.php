@@ -55,7 +55,7 @@ class JourneyCollectionController
      * @param RdexJourney $data
      * @return Response
      */
-    public function __invoke(array $data): JsonResponse
+    public function __invoke(array $data): Response
     {
         if (is_null($data)) {
             throw new \InvalidArgumentException($this->translator->trans("bad RdexJourney id is provided"));

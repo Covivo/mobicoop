@@ -106,7 +106,7 @@ class MyAdManager
      *
      * @return MyAd The resulting MyAd
      */
-    private function createMyAdFromProposal(Proposal $proposal)
+    private function createMyAdFromProposal(Proposal $proposal): MyAd
     {
         $myAd = new MyAd();
         $myAd->setId($proposal->getId());
@@ -342,7 +342,7 @@ class MyAdManager
      *
      * @return array The schedule
      */
-    private function getScheduleFromCriteria(Criteria $criteria, ?Criteria $returnCriteria = null)
+    private function getScheduleFromCriteria(Criteria $criteria, ?Criteria $returnCriteria = null): array
     {
         // /!\ a day can be checked with no associated time, when private regular search
         $schedule['mon']['check'] = $criteria->isMonCheck() || ($returnCriteria ? $returnCriteria->isMonCheck() : false);
@@ -474,7 +474,7 @@ class MyAdManager
      *
      * @return array The driver details
      */
-    private function getDriverDetailsForUserAndAsk(User $user, Ask $ask)
+    private function getDriverDetailsForUserAndAsk(User $user, Ask $ask): array
     {
         $waypoints = [];
         $endDuration = 0;
@@ -1010,7 +1010,7 @@ class MyAdManager
      *
      * @return array The passenger details
      */
-    private function getPassengerDetailsForUserAndAsk(User $user, Ask $ask)
+    private function getPassengerDetailsForUserAndAsk(User $user, Ask $ask): array
     {
         $waypoints = [];
         $endDuration = 0;
@@ -1571,7 +1571,7 @@ class MyAdManager
      *
      * @return array The details of the first pending week
      */
-    private function getPaymentDetailsForRegularAsk(Ask $ask, int $role)
+    private function getPaymentDetailsForRegularAsk(Ask $ask, int $role): array
     {
         // we limit to the last day of the previous week
         $maxDate = new \DateTime();

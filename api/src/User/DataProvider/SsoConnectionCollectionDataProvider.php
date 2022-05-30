@@ -52,7 +52,7 @@ final class SsoConnectionCollectionDataProvider implements CollectionDataProvide
         return SsoConnection::class === $resourceClass && $operationName === "get";
     }
 
-    public function getCollection(string $resourceClass, string $operationName = null)
+    public function getCollection(string $resourceClass, string $operationName = null): iterable
     {
         if ($this->request->get('baseSiteUri')=="") {
             throw new \LogicException("Parameter missing : baseSiteUri");

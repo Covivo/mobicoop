@@ -394,7 +394,7 @@ class SolidaryManager
      *
      * @return Solidary
      */
-    public function createSolidary(Solidary $solidary)
+    public function createSolidary(Solidary $solidary): Solidary
     {
         // set default role
         if (is_null($solidary->isPassenger()) && is_null($solidary->isDriver())) {
@@ -529,7 +529,7 @@ class SolidaryManager
      *
      * @return null|array
      */
-    public function getSolidarySolutions(int $solidaryId): array
+    public function getSolidarySolutions(int $solidaryId): ?array
     {
         return $this->solidaryRepository->findSolidarySolutions($solidaryId);
     }
@@ -539,7 +539,7 @@ class SolidaryManager
      *
      * @return Solidary
      */
-    public function getAsksList(int $solidaryId): array
+    public function getAsksList(int $solidaryId): Solidary
     {
         $asksList = [];
 

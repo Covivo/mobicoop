@@ -19,34 +19,11 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Image\Admin\Service;
 
-use App\Image\Entity\Image;
-use App\Event\Entity\Event;
-use App\MassCommunication\Entity\Campaign;
-use App\MassCommunication\Repository\CampaignRepository;
-use App\RelayPoint\Entity\RelayPoint;
-use App\RelayPoint\Repository\RelayPointRepository;
-use App\User\Entity\User;
-use App\Community\Entity\Community;
-use Doctrine\Common\Util\ClassUtils;
-use Doctrine\ORM\EntityManagerInterface;
-use App\Service\FileManager;
-use Psr\Log\LoggerInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\Filesystem\Filesystem;
-use App\Event\Repository\EventRepository;
-use App\Community\Repository\CommunityRepository;
-use App\User\Repository\UserRepository;
-use App\Image\Repository\ImageRepository;
-use App\Image\Exception\OwnerNotFoundException;
-use App\Image\Exception\ImageException;
 use App\Image\Repository\IconRepository;
-use Symfony\Component\Filesystem\Exception\FileNotFoundException;
-use ProxyManager\Exception\FileNotWritableException;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * Icon manager in administration context.
@@ -59,7 +36,6 @@ class IconManager
 
     /**
      * Constructor.
-     *
      */
     public function __construct(
         IconRepository $iconRepository
@@ -68,19 +44,10 @@ class IconManager
     }
 
     /**
-     * Get all icons
-     *
-     * @return void
+     * Get all icons.
      */
-    public function getIcons(): array
+    public function getIcons()
     {
         return $this->iconRepository->findAll();
-        // $return = [];
-
-        // foreach ($icons as $icon) {
-            
-        // }
-
-        // return $return;
     }
 }

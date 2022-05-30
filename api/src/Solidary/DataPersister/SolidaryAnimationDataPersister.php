@@ -36,7 +36,7 @@ final class SolidaryAnimationDataPersister implements ContextAwareDataPersisterI
 {
     private $solidaryAnimationManager;
     private $security;
-    
+
     public function __construct(SolidaryAnimationManager $solidaryAnimationManager, Security $security)
     {
         $this->solidaryAnimationManager = $solidaryAnimationManager;

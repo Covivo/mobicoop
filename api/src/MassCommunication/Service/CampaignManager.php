@@ -19,29 +19,30 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\MassCommunication\Service;
 
 use App\Communication\Entity\Medium;
-use App\User\Entity\User;
-use App\MassCommunication\Entity\Delivery;
+use App\Community\Repository\CommunityRepository;
+use App\MassCommunication\CampaignProvider\SendinBlueProvider;
 use App\MassCommunication\Entity\Campaign;
+use App\MassCommunication\Entity\Delivery;
+use App\MassCommunication\Entity\Sender;
 use App\MassCommunication\Exception\CampaignNotFoundException;
 use App\MassCommunication\Repository\CampaignRepository;
-use App\Community\Repository\CommunityRepository;
-use App\MassCommunication\Entity\Sender;
-use App\MassCommunication\CampaignProvider\SendinBlueProvider;
+use App\User\Entity\User;
 use App\User\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Twig\Environment;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Twig\Environment;
 
 /**
  * Campaign manager service.
  */
 class CampaignManager
 {
+    public const MAIL_PROVIDER_SENDINBLUE = 'SendinBlue';
     private $templating;
     private $userRepository;
     private $communityRepository;
@@ -51,8 +52,6 @@ class CampaignManager
     private $mailTemplate;
     private $campaignRepository;
     private $translator;
-
-    const MAIL_PROVIDER_SENDINBLUE = 'SendinBlue';
 
     /**
      * Constructor.
@@ -96,69 +95,141 @@ class CampaignManager
         $this->mailerSenderName = $mailerSenderName;
         $this->mailerIp = $mailerIp;
         $this->mailerDomain = $mailerDomain;
+
         switch ($mailerProvider) {
             case self::MAIL_PROVIDER_SENDINBLUE:
                 $this->massEmailProvider = new SendinBlueProvider($mailerApiKey, $mailerClientId, $mailerSenderName, $mailerSenderEmail, $mailerReplyTo, $mailerClientTemplateId);
+
                 break;
         }
     }
+
     /**
      * Send messages for a campaign.
      *
-     * @param Campaign $campaign    The campaign to send the messages for
-     * @return Campaign The campaign modified with the result of the send.
+     * @param Campaign $campaign The campaign to send the messages for
+     *
+     * @return Campaign the campaign modified with the result of the send
      */
-    public function send(Campaign $campaign)
+    public function send(Campaign $campaign): Campaign
     {
-        if ($campaign->getStatus() == Campaign::STATUS_CREATED) {
+        if (Campaign::STATUS_CREATED == $campaign->getStatus()) {
             switch ($campaign->getMedium()->getId()) {
                 case Medium::MEDIUM_EMAIL:
                     return $this->sendMassEmail($campaign);
+
                     break;
+
                 case Medium::MEDIUM_SMS:
                     return $this->sendMassSms($campaign);
+
                     break;
+
                 default:
                     break;
             }
         }
+
         return $campaign;
     }
 
     /**
-     * Send  the test messages for a campaign, to the sender
+     * Send  the test messages for a campaign, to the sender.
      *
-     * @param Campaign $campaign    The campaign to send the messages for
-     * @return Campaign The campaign modified with the result of the send.
+     * @param Campaign $campaign The campaign to send the messages for
+     *
+     * @return Campaign the campaign modified with the result of the send
      */
-    public function sendTest(Campaign $campaign)
+    public function sendTest(Campaign $campaign): Campaign
     {
-        if (in_array($campaign->getStatus(), array( Campaign::STATUS_PENDING, Campaign::STATUS_CREATED))) {
+        if (in_array($campaign->getStatus(), [Campaign::STATUS_PENDING, Campaign::STATUS_CREATED])) {
             switch ($campaign->getMedium()->getId()) {
                 case Medium::MEDIUM_EMAIL:
                     return $this->sendMassEmailTest($campaign);
+
                     break;
+
                 case Medium::MEDIUM_SMS:
                     return $this->sendMassSms($campaign);
+
                     break;
+
                 default:
                     break;
             }
         }
+
+        return $campaign;
+    }
+
+    /**
+     * Get the id of the owner of a campaign.
+     *
+     * @param int $campaignId The campaign id
+     *
+     * @return CampaignNotFoundException|int The user id
+     */
+    public function getCampaignOwner(int $campaignId): int|CampaignNotFoundException
+    {
+        if ($campaign = $this->campaignRepository->find($campaignId)) {
+            return $campaign->getUser()->getId();
+        }
+
+        return new CampaignNotFoundException('Campaign not found');
+    }
+
+    /**
+     * Set all user who accepted email to delieveries
+     * Maybye TODO : set a value in db to check if we already set the deliveries like isSetAll.
+     */
+    public function setDeliveriesCampaignToAll(Campaign $campaign): Campaign
+    {
+        // we use raw sql as the request can deal with a huge amount of data
+        $conn = $this->entityManager->getConnection();
+
+        // clear previously selected users (todo : check if it's really necessary !!!)
+        $sql = 'DELETE FROM delivery where campaign_id = '.$campaign->getId();
+        $stmt = $conn->prepare($sql);
+        $stmt->executeQuery();
+
+        if (0 === $campaign->getSendAll()) {
+            // Associate the campaign to all users who accepted email
+            $now = new \DateTime();
+            $sql = 'INSERT INTO delivery (campaign_id, user_id, status, created_date)
+            (SELECT '.$campaign->getId().',id,0,"'.$now->format('Y-m-d H:i:s').'" FROM user WHERE news_subscription = 1)';
+            $stmt = $conn->prepare($sql);
+            $stmt->executeQuery();
+            $now = new \DateTime();
+        } else {
+            $community = $this->communityRepository->find($campaign->getSendAll());
+            $allUsers = $this->userRepository->getUserInCommunity($community, true);
+            foreach ($allUsers as $user) {
+                $delivery = new Delivery();
+                $delivery->setUser($user);
+                $delivery->setCampaign($campaign);
+                $delivery->setStatus(0);
+                $this->entityManager->persist($delivery);
+            }
+        }
+
+        // we always flush to keep the possible update on the campaign properties
+        $this->entityManager->flush();
+
         return $campaign;
     }
 
     /**
      * Send messages for a campaign by email.
      *
-     * @param Campaign $campaign    The campaign to send the messages for
-     * @return Campaign The campaign modified with the result of the send.
+     * @param Campaign $campaign The campaign to send the messages for
+     *
+     * @return Campaign the campaign modified with the result of the send
      */
-    private function sendMassEmail(Campaign $campaign)
+    private function sendMassEmail(Campaign $campaign): Campaign
     {
-        if ($sendAll = $campaign->getSendAll() != null) {
+        if ($sendAll = null != $campaign->getSendAll()) {
             //We try to send an email to all user, no matter the community
-            if ($campaign->getSendAll() == 0) {
+            if (0 == $campaign->getSendAll()) {
             }
         }
         // call the service
@@ -175,13 +246,15 @@ class CampaignManager
     /**
      * Send messages test for a campaign by email.
      *
-     * @param Campaign $campaign    The campaign to test
-     * @return Campaign The campaign modified with the result of the test.
+     * @param Campaign $campaign The campaign to test
+     * @param mixed    $lang
+     *
+     * @return Campaign the campaign modified with the result of the test
      */
-    private function sendMassEmailTest(Campaign $campaign, $lang='fr_FR')
+    private function sendMassEmailTest(Campaign $campaign, $lang = 'fr_FR'): Campaign
     {
         // we set the sender
-        $sender = new Sender;
+        $sender = new Sender();
         $sender->setUser($campaign->getUser());
 
         // we check if we have already create a provider campaign before
@@ -205,10 +278,11 @@ class CampaignManager
     /**
      * Send messages for a campaign by sms.
      *
-     * @param Campaign $campaign    The campaign to send the messages for
-     * @return Campaign The campaign modified with the result of the send.
+     * @param Campaign $campaign The campaign to send the messages for
+     *
+     * @return Campaign the campaign modified with the result of the send
      */
-    private function sendMassSms(Campaign $campaign)
+    private function sendMassSms(Campaign $campaign): Campaign
     {
         // call the service
 
@@ -229,120 +303,56 @@ class CampaignManager
      * Note : the context variables should be present in the template.
      *
      * @param string $body
-     * @return void
      */
-    private function getFormedEmailBody(?string $body):string
+    private function getFormedEmailBody(?string $body)
     {
         $encodedBody = json_decode($body);
-        $arrayForTemplate = array();
+        $arrayForTemplate = [];
 
         foreach ($encodedBody as $parts) {
             foreach ($parts as $type => $content) {
-                $arrayForTemplate[] = array('type' => $type , 'content' => $content);
+                $arrayForTemplate[] = ['type' => $type, 'content' => $content];
             }
         }
 
         return $this->templating->render(
             $this->mailTemplate,
-            array('arrayForTemplate' => $arrayForTemplate)
+            ['arrayForTemplate' => $arrayForTemplate]
         );
     }
 
     /**
      * Get an array of recipients with its context variables from an array of Delivery objects.
-     *
-     * @param array $deliveries
-     * @return array
      */
-    private function getRecipientsFromDeliveries(array $deliveries)
+    private function getRecipientsFromDeliveries(array $deliveries): array
     {
         $recipients = [];
         foreach ($deliveries as $delivery) {
             $recipients[$delivery->getUser()->getEmail()] = [
                 // put here the list of needed variables !
-                "givenName" => $delivery->getUser()->getGivenName(),
-                "familyName" => $delivery->getUser()->getFamilyName(),
-                "email" => $delivery->getUser()->getEmail(),
-                "unsubscribeToken" => $delivery->getUser()->getUnsubscribeToken(),
+                'givenName' => $delivery->getUser()->getGivenName(),
+                'familyName' => $delivery->getUser()->getFamilyName(),
+                'email' => $delivery->getUser()->getEmail(),
+                'unsubscribeToken' => $delivery->getUser()->getUnsubscribeToken(),
             ];
         }
+
         return $recipients;
     }
 
     /**
-     * Build an array for send email to the sender
-     *
-     * @param User $user
-     * @return array
+     * Build an array for send email to the sender.
      */
-    private function setRecipientsIsOwner(User $user)
+    private function setRecipientsIsOwner(User $user): array
     {
         $recipients[$user->getEmail()] = [
             // put here the list of needed variables !
-            "givenName" => $user->getGivenName(),
-            "familyName" => $user->getFamilyName(),
-            "email" => $user->getEmail(),
-            "unsubscribeToken" => $user->getUnsubscribeToken(),
+            'givenName' => $user->getGivenName(),
+            'familyName' => $user->getFamilyName(),
+            'email' => $user->getEmail(),
+            'unsubscribeToken' => $user->getUnsubscribeToken(),
         ];
 
         return $recipients;
-    }
-
-    /**
-     * Get the id of the owner of a campaign.
-     *
-     * @param integer $campaignId               The campaign id
-     * @return int|CampaignNotFoundException    The user id
-     */
-    public function getCampaignOwner(int $campaignId)
-    {
-        if ($campaign = $this->campaignRepository->find($campaignId)) {
-            return $campaign->getUser()->getId();
-        }
-        return new CampaignNotFoundException('Campaign not found');
-    }
-
-
-    /**
-     * Set all user who accepted email to delieveries
-     * Maybye TODO : set a value in db to check if we already set the deliveries like isSetAll
-     *
-     * @param Campaign $campaign
-     * @return Campaign
-     */
-    public function setDeliveriesCampaignToAll(Campaign $campaign)
-    {
-        // we use raw sql as the request can deal with a huge amount of data
-        $conn = $this->entityManager->getConnection();
-
-        // clear previously selected users (todo : check if it's really necessary !!!)
-        $sql = "DELETE FROM delivery where campaign_id = " . $campaign->getId();
-        $stmt = $conn->prepare($sql);
-        $stmt->executeQuery();
-
-        if ($campaign->getSendAll() === 0) {
-            // Associate the campaign to all users who accepted email
-            $now = new \DateTime();
-            $sql = "INSERT INTO delivery (campaign_id, user_id, status, created_date)
-            (SELECT " . $campaign->getId() . ",id,0,\"" . $now->format('Y-m-d H:i:s') . "\" FROM user WHERE news_subscription = 1)";
-            $stmt = $conn->prepare($sql);
-            $stmt->executeQuery();
-            $now = new \DateTime();
-        } else {
-            $community = $this->communityRepository->find($campaign->getSendAll());
-            $allUsers = $this->userRepository->getUserInCommunity($community, true);
-            foreach ($allUsers as $user) {
-                $delivery = new Delivery();
-                $delivery->setUser($user);
-                $delivery->setCampaign($campaign);
-                $delivery->setStatus(0);
-                $this->entityManager->persist($delivery);
-            };
-        }
-
-        // we always flush to keep the possible update on the campaign properties
-        $this->entityManager->flush();
-
-        return $campaign;
     }
 }

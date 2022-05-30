@@ -100,7 +100,7 @@ class ImportManager
      * @param int|null $lowestId    The lowest user id to import if the import concerns new users to import in an existing db
      * @return array    An empty array (for consistency, as the method can be called from an API get collection route)
      */
-    public function treatUserImport(string $origin, ?int $massId=null, ?int $lowestId=null)
+    public function treatUserImport(string $origin, ?int $massId=null, ?int $lowestId=null): array
     {
         $this->prepareUserImport($origin, $massId, $lowestId);
         $this->matchUserImport();
@@ -115,7 +115,7 @@ class ImportManager
      * @param int|null $lowestId    The lowest user id to import if the import concerns new users to import in an existing db
      * @return void
      */
-    private function prepareUserImport(string $origin, ?int $massId=null, ?int $lowestId=null)
+    private function prepareUserImport(string $origin, ?int $massId=null, ?int $lowestId=null): void
     {
         set_time_limit($this->timeLimit);
 
@@ -240,7 +240,7 @@ class ImportManager
      *
      * @return array    The users imported
      */
-    private function matchUserImport()
+    private function matchUserImport(): array
     {
         set_time_limit($this->timeLimit);
 

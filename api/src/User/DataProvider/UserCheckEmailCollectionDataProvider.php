@@ -56,7 +56,7 @@ final class UserCheckEmailCollectionDataProvider implements CollectionDataProvid
         return User::class === $resourceClass && $operationName === "checkEmail";
     }
     
-    public function getCollection(string $resourceClass, string $operationName = null, array $context = [])
+    public function getCollection(string $resourceClass, string $operationName = null, array $context = []): iterable
     {
         $locale = $this->request->getLocale();
         $this->translator->setLocale($locale);

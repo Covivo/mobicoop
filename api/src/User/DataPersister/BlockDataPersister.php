@@ -34,7 +34,7 @@ final class BlockDataPersister implements ContextAwareDataPersisterInterface
 {
     private $security;
     private $blockManager;
-    
+
     public function __construct(Security $security, BlockManager $blockManager)
     {
         $this->security = $security;
@@ -51,7 +51,7 @@ final class BlockDataPersister implements ContextAwareDataPersisterInterface
         if (!($this->security->getUser() instanceof User)) {
             throw new \LogicException("Only a User can perform this action");
         }
-        
+
         return $this->blockManager->handleBlock($this->security->getUser(), $data->getUser());
     }
 

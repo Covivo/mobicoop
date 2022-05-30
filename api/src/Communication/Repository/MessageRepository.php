@@ -111,7 +111,7 @@ class MessageRepository
      * @param SolidaryAsk $solidaryAsk  The solidaryAsk
      * @return Message|null             The message found, or null if not found
      */
-    public function findFirstForSolidaryAsk(SolidaryAsk $solidaryAsk)
+    public function findFirstForSolidaryAsk(SolidaryAsk $solidaryAsk): ?Message
     {
         $query = $this->repository->createQueryBuilder('m')
         ->innerJoin('m.solidaryAskHistory', 'sah')
@@ -129,7 +129,7 @@ class MessageRepository
      * @param User $user
      * @return Message[]|null
      */
-    public function findAnswers(User $user)
+    public function findAnswers(User $user): ?array
     {
         $this->repository = $this->entityManager->getRepository(Message::class);
         $query = $this->repository->createQueryBuilder('m')

@@ -58,7 +58,7 @@ class ContactSubscriber implements EventSubscriberInterface
         $this->communicationFolder = $communicationFolder;
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             ContactEmailEvent::NAME => 'onContactSent',

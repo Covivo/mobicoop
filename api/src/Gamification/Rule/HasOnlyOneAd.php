@@ -33,7 +33,7 @@ class HasOnlyOneAd implements GamificationRuleInterface
     /**
      * {@inheritdoc}
      */
-    public function execute($log, $sequenceItem)
+    public function execute($log, $sequenceItem): bool
     {
         // we check if the user has only one proposal published
         $user = $log->getUser();

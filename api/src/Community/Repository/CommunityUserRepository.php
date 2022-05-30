@@ -52,7 +52,7 @@ class CommunityUserRepository
      *
      * @return array
      */
-    public function findBy(array $criteria)
+    public function findBy(array $criteria): array
     {
         return $this->repository->findBy($criteria);
     }
@@ -64,7 +64,7 @@ class CommunityUserRepository
      *
      * @return array The members
      */
-    public function findForCommunity(Community $community, string $operationName, array $context = []): PaginatorInterface
+    public function findForCommunity(Community $community, string $operationName, array $context = []): array
     {
         $query = $this->repository->createQueryBuilder('cu');
         $query->where('cu.community = :community')
@@ -123,7 +123,7 @@ class CommunityUserRepository
      *
      * @return null|array The users
      */
-    public function findAcceptedDeliveriesByIds(array $ids)
+    public function findAcceptedDeliveriesByIds(array $ids): ?array
     {
         return $this->repository->createQueryBuilder('cu')
             ->join('cu.user', 'u')

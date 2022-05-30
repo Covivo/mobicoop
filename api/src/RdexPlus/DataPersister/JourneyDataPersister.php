@@ -39,7 +39,7 @@ final class JourneyDataPersister implements ContextAwareDataPersisterInterface
     {
         $this->journeyManager = $journeyManager;
     }
-  
+
     public function supports($data, array $context = []): bool
     {
         return $data instanceof Journey && isset($context['collection_operation_name']) && $context['collection_operation_name'] === 'rdex_plus_journey_post';

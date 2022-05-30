@@ -40,7 +40,7 @@ class ActionSubscriber implements EventSubscriberInterface
         $this->actionManager = $actionManager;
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             LoginDelegateEvent::NAME => 'onLoginDelegate',
@@ -59,7 +59,7 @@ class ActionSubscriber implements EventSubscriberInterface
      * @param ActionEvent $event
      * @return void
      */
-    public function onAction(ActionEvent $event)
+    public function onAction(ActionEvent $event): void
     {
         $this->actionManager->onAction($event);
     }

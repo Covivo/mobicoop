@@ -34,7 +34,7 @@ final class SolidaryDataPersister implements ContextAwareDataPersisterInterface
 {
     private $solidaryManager;
     private $security;
-    
+
     public function __construct(SolidaryManager $solidaryManager, Security $security)
     {
         $this->solidaryManager = $solidaryManager;

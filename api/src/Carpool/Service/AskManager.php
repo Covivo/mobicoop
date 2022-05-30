@@ -117,7 +117,7 @@ class AskManager
      *
      * @return Ask The ask found or null if not found
      */
-    public function getAsk(int $id)
+    public function getAsk(int $id): Ask
     {
         return $this->askRepository->find($id);
     }
@@ -162,7 +162,7 @@ class AskManager
      *
      * @return Ad
      */
-    public function createAskFromAd(Ad $ad, bool $formal)
+    public function createAskFromAd(Ad $ad, bool $formal): Ad
     {
         $ask = new Ask();
         $matching = $this->matchingRepository->find($ad->getMatchingId());
@@ -480,7 +480,7 @@ class AskManager
      *
      * @return Ad The ad for the ask with the computed results
      */
-    public function getAskFromAd(int $askId, int $userId)
+    public function getAskFromAd(int $askId, int $userId): Ad
     {
         $ask = $this->askRepository->find($askId);
         $ad = new Ad();
@@ -558,7 +558,7 @@ class AskManager
      *
      * @return Ad The ad updated from the updated ask
      */
-    public function updateAskFromAd(Ad $ad, int $adId, int $userId)
+    public function updateAskFromAd(Ad $ad, int $adId, int $userId): Ad
     {
         $ask = $this->askRepository->find($adId);
 
@@ -745,7 +745,7 @@ class AskManager
      *
      * @return bool
      */
-    public function isAskUserDriver(Ask $ask)
+    public function isAskUserDriver(Ask $ask): bool
     {
         return $ask->getUser()->getId() === $ask->getMatching()->getProposalOffer()->getUser()->getId();
     }
@@ -755,7 +755,7 @@ class AskManager
      *
      * @return bool
      */
-    public function isAskUserPassenger(Ask $ask)
+    public function isAskUserPassenger(Ask $ask): bool
     {
         return $ask->getUser()->getId() === $ask->getMatching()->getProposalRequest()->getUser()->getId();
     }
@@ -770,7 +770,7 @@ class AskManager
      *
      * @return Ad The ad for the ask with the computed results
      */
-    public function getSimpleAskFromAd(int $askId, int $userId, ?Proposal $proposal = null)
+    public function getSimpleAskFromAd(int $askId, int $userId, ?Proposal $proposal = null): Ad
     {
         $ask = $this->askRepository->find($askId);
         $ad = new Ad();
@@ -1014,7 +1014,7 @@ class AskManager
      *
      * @return bool
      */
-    public function hasPendingDynamicAsk(User $user)
+    public function hasPendingDynamicAsk(User $user): bool
     {
         // first we get all the asks initiated by the user
         $asks = $this->askRepository->findBy(['user' => $user, 'status' => [Ask::STATUS_PENDING_AS_PASSENGER, Ask::STATUS_ACCEPTED_AS_DRIVER]]);
@@ -1040,7 +1040,7 @@ class AskManager
      *
      * @return bool
      */
-    public function hasRefusedDynamicAsk(User $user, Matching $matching)
+    public function hasRefusedDynamicAsk(User $user, Matching $matching): bool
     {
         // first we get all the asks initiated by the user and refused by the carpooler
         $asks = $this->askRepository->findBy(['user' => $user, 'status' => [Ask::STATUS_DECLINED_AS_DRIVER]]);

@@ -32,7 +32,7 @@ use App\Solidary\Service\SolidaryUserStructureManager;
 final class SolidaryUserStructureDataPersister implements ContextAwareDataPersisterInterface
 {
     private $solidaryUserStructureManager;
-    
+
     public function __construct(SolidaryUserStructureManager $solidaryUserStructureManager)
     {
         $this->solidaryUserStructureManager = $solidaryUserStructureManager;

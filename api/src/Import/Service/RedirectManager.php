@@ -59,7 +59,7 @@ class RedirectManager
      * @param string $originUri    The original uri to search
      * @return array    The redirections found
      */
-    public function getRedirect(string $originUri)
+    public function getRedirect(string $originUri): array
     {
         if ($redirects = $this->redirectRepository->findBy(['originUri'=>$originUri])) {
             $redirect = $redirects[0];

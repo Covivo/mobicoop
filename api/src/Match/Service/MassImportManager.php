@@ -131,7 +131,7 @@ class MassImportManager
      *
      * @return null|Mass The mass found or null if not found
      */
-    public function getMass(int $id)
+    public function getMass(int $id): ?Mass
     {
         return $this->massRepository->find($id);
     }
@@ -143,7 +143,7 @@ class MassImportManager
      *
      * @return Mass The mass created
      */
-    public function createMass(Mass $mass)
+    public function createMass(Mass $mass): Mass
     {
         set_time_limit(self::TIME_LIMIT);
 
@@ -740,7 +740,7 @@ class MassImportManager
      *
      * @return string The filename
      */
-    private function generateFilename(Mass $mass)
+    private function generateFilename(Mass $mass): string
     {
         $date = new \DateTime();
         if ($mass->getOriginalName()) {
@@ -757,7 +757,7 @@ class MassImportManager
      *
      * @return Mass The mass treated
      */
-    private function treatMass(Mass $mass)
+    private function treatMass(Mass $mass): Mass
     {
         $this->logger->info('Mass match | Treating import file '.$mass->getFileName().' start'.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
 
@@ -833,7 +833,7 @@ class MassImportManager
      *
      * @return null|string
      */
-    private function guessMimeType(string $filename)
+    private function guessMimeType(string $filename): ?string
     {
         switch (strtolower($this->fileManager->getExtension($filename))) {
             case 'txt':
@@ -866,7 +866,7 @@ class MassImportManager
      *
      * @return MassData
      */
-    private function getDataFromZip(string $zip)
+    private function getDataFromZip(string $zip): MassData
     {
         $zipArchive = new \ZipArchive();
         if (true === $zipArchive->open($zip)) {
@@ -915,7 +915,7 @@ class MassImportManager
      *
      * @return MassData
      */
-    private function getDataFromXml(string $xml, $temp = false)
+    private function getDataFromXml(string $xml, $temp = false): MassData
     {
         $error = false;
         $errors = false;
@@ -1000,7 +1000,7 @@ class MassImportManager
      *
      * @return MassData
      */
-    private function getDataFromCsv(string $csv, $temp = false)
+    private function getDataFromCsv(string $csv, $temp = false): MassData
     {
         $error = false;
         $errors = [];
@@ -1165,7 +1165,7 @@ class MassImportManager
      *
      * @return MassData
      */
-    private function getDataFromJson(string $json, $temp = false)
+    private function getDataFromJson(string $json, $temp = false): MassData
     {
         $errors = false;
         // the file was temporary we remove it
@@ -1199,7 +1199,7 @@ class MassImportManager
      *
      * @return bool
      */
-    private function hasCollisions(array $bbox1, array $bbox2)
+    private function hasCollisions(array $bbox1, array $bbox2): bool
     {
         // return true;
         // todo : refactor the values to be strictly positive, to avoid problems with negative coordinates
@@ -1270,7 +1270,7 @@ class DOMValidator
      *
      * @return bool
      */
-    public function validate()
+    public function validate(): bool
     {
         if (!class_exists('DOMDocument')) {
             throw new MassException("'DOMDocument' class not found!");
@@ -1303,7 +1303,7 @@ class DOMValidator
      *
      * @return array
      */
-    public function getErrors()
+    public function getErrors(): array
     {
         return $this->errors;
     }
@@ -1313,7 +1313,7 @@ class DOMValidator
      *
      * @return array
      */
-    private function libxmlGetError($error)
+    private function libxmlGetError($error): array
     {
         return [
             'code' => $error->code,
@@ -1326,7 +1326,7 @@ class DOMValidator
     /**
      * @return array
      */
-    private function libxmlGetErrors()
+    private function libxmlGetErrors(): array
     {
         $errors = libxml_get_errors();
         $result = [];

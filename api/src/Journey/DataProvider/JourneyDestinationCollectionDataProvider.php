@@ -52,7 +52,7 @@ final class JourneyDestinationCollectionDataProvider implements CollectionDataPr
         return Journey::class === $resourceClass && $operationName === "destination";
     }
     
-    public function getCollection(string $resourceClass, string $operationName = null, array $context = [])
+    public function getCollection(string $resourceClass, string $operationName = null, array $context = []): iterable
     {
         return $this->journeyManager->getTo($this->request->get('destination'), $operationName, $context);
     }

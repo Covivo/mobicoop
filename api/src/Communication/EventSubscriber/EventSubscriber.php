@@ -43,7 +43,7 @@ class EventSubscriber implements EventSubscriberInterface
         $this->actionRepository = $actionRepository;
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             EventCreatedEvent::NAME => 'onEventCreated'

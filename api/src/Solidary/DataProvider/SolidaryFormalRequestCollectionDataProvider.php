@@ -55,7 +55,7 @@ final class SolidaryFormalRequestCollectionDataProvider implements CollectionDat
         return SolidaryFormalRequest::class === $resourceClass && $operationName = "get";
     }
 
-    public function getCollection(string $resourceClass, string $operationName = null)
+    public function getCollection(string $resourceClass, string $operationName = null): iterable
     {
         if (empty($this->filters['solidary_solutions'])) {
             throw new SolidaryException(SolidaryException::SOLIDARY_SOLUTION_MISSING);

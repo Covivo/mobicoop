@@ -50,7 +50,7 @@ class UserAuthAssignmentRepository
      * @param User $user            The user
      * @return array
      */
-    public function findByAuthItemAndUser(AuthItem $authItem, User $user)
+    public function findByAuthItemAndUser(AuthItem $authItem, User $user): array
     {
         return $this->repository->findBy(['authItem'=>$authItem,'user'=>$user]);
     }
@@ -61,7 +61,7 @@ class UserAuthAssignmentRepository
      * @param User $user            The user
      * @return array
      */
-    public function findByUser(User $user)
+    public function findByUser(User $user): array
     {
         return $this->repository->findBy(['user'=>$user]);
     }

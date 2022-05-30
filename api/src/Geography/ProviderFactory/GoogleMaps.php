@@ -97,7 +97,7 @@ final class GoogleMaps extends AbstractHttpProvider implements Provider
      *
      * @return GoogleMaps
      */
-    public static function business(HttpClient $client, string $clientId, string $privateKey = null, string $region = null, string $apiKey = null, string $channel = null)
+    public static function business(HttpClient $client, string $clientId, string $privateKey = null, string $region = null, string $apiKey = null, string $channel = null): GoogleMaps
     {
         $provider = new self($client, $region, $apiKey);
         $provider->clientId = $clientId;
@@ -422,7 +422,7 @@ final class GoogleMaps extends AbstractHttpProvider implements Provider
      * @throws InvalidServerResponse
      * @throws QuotaExceeded
      */
-    private function validateResponse(string $url, $content)
+    private function validateResponse(string $url, $content): mixed
     {
         // Throw exception if invalid clientID and/or privateKey used with GoogleMapsBusinessProvider
         if (false !== strpos($content, "Provided 'signature' is not valid for the provided client ID")) {

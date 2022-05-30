@@ -36,7 +36,7 @@ class SolidaryOperator implements AuthRuleInterface
     /**
      * {@inheritdoc}
      */
-    public function execute($requester, $item, $params)
+    public function execute($requester, $item, $params): bool
     {
         if (!isset($params['solidary']) || !($params['solidary'] instanceof Solidary)) {
             return false;

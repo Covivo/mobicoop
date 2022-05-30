@@ -54,7 +54,7 @@ final class SubjectCollectionDataProvider implements CollectionDataProviderInter
         return Subject::class === $resourceClass;
     }
 
-    public function getCollection(string $resourceClass, string $operationName = null)
+    public function getCollection(string $resourceClass, string $operationName = null): iterable
     {
         $structureId = null;
 

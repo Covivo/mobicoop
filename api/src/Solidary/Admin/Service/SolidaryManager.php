@@ -844,7 +844,7 @@ break;
      *
      * @return null|array The solidary records
      */
-    public function getSolidaries(PaginatorInterface $solidaries)
+    public function getSolidaries(PaginatorInterface $solidaries): ?array
     {
         return $solidaries;
     }
@@ -854,7 +854,7 @@ break;
      *
      * @return array
      */
-    public function getActions()
+    public function getActions(): array
     {
         return $this->actionRepository->getSolidaryActions();
     }
@@ -867,7 +867,7 @@ break;
      *
      * @return Solidary The solidary created
      */
-    public function addSolidary(Solidary $solidary, array $fields)
+    public function addSolidary(Solidary $solidary, array $fields): Solidary
     {
         // To create a new Solidary record, we need the following steps :
         // 1. create a SolidaryUser if the beneficiary is not already a solidary user
@@ -1152,7 +1152,7 @@ break;
      *
      * @return Proof
      */
-    public function createProof(?File $file = null, ?string $filename = null, ?int $solidaryId = null, ?int $structureProofId = null)
+    public function createProof(?File $file = null, ?string $filename = null, ?int $solidaryId = null, ?int $structureProofId = null): Proof
     {
         if (!$solidaryId) {
             throw new SolidaryException(SolidaryException::SOLIDARY_ID_REQUIRED);
@@ -1226,7 +1226,7 @@ break;
      *
      * @return Solidary The solidary updated
      */
-    public function patchSolidary(Solidary $solidary, array $fields)
+    public function patchSolidary(Solidary $solidary, array $fields): Solidary
     {
         // 1 - check for non destructive updates (no need to create a new solidary record)
 
@@ -1454,7 +1454,7 @@ break;
      *
      * @return array The schedule
      */
-    private function createSchedule(int $num, ?DateTime $outwardTime = null, ?DateTime $returnTime = null)
+    private function createSchedule(int $num, ?DateTime $outwardTime = null, ?DateTime $returnTime = null): array
     {
         return [
             'mon' => 0 == $num,
@@ -1476,7 +1476,7 @@ break;
      *
      * @return array The thread, as a list of messages ordered by date desc
      */
-    private function getThreadForSolution(SolidarySolution $solution)
+    private function getThreadForSolution(SolidarySolution $solution): array
     {
         $thread = [];
         // if the solution has no associated ask, there are no messages !
@@ -1757,7 +1757,7 @@ break;
      *
      * @return User The updated beneficiary
      */
-    private function updateBeneficiary(User $beneficiary, array $abeneficiary)
+    private function updateBeneficiary(User $beneficiary, array $abeneficiary): User
     {
         // check if beneficiary informations have been updated
         if (isset($abeneficiary['givenName']) && $abeneficiary['givenName'] != $beneficiary->getGivenName()) {
@@ -1871,7 +1871,7 @@ break;
      *
      * @return Solidary The solidary updated
      */
-    private function addAnimation(Solidary $solidary, array $animation)
+    private function addAnimation(Solidary $solidary, array $animation): Solidary
     {
         if (!array_key_exists('action', $animation)) {
             throw new SolidaryException(SolidaryException::SOLIDARY_ACTION_REQUIRED);
@@ -1951,7 +1951,7 @@ break;
      *
      * @return Solidary The solidary updated
      */
-    private function addSolution(Solidary $solidary, array $solution)
+    private function addSolution(Solidary $solidary, array $solution): Solidary
     {
         if (!array_key_exists('matching', $solution)) {
             throw new SolidaryException(SolidaryException::SOLIDARY_SOLUTION_MATCHING_REQUIRED);
@@ -2009,7 +2009,7 @@ break;
      *
      * @return Solidary The solidary updated
      */
-    private function addMessage(Solidary $solidary, array $message)
+    private function addMessage(Solidary $solidary, array $message): Solidary
     {
         if (!array_key_exists('solution', $message)) {
             throw new SolidaryException(SolidaryException::SOLIDARY_MESSAGE_SOLUTION_REQUIRED);

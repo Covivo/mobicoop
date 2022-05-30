@@ -48,7 +48,7 @@ final class ClassicProofItemDataProvider implements RestrictedDataProviderInterf
         return ClassicProof::class === $resourceClass && $operationName === "get";
     }
 
-    public function getItem(string $resourceClass, $id, string $operationName = null, array $context = [])
+    public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?object
     {
         return $this->proofManager->getClassicProof($this->request->get("id"));
     }

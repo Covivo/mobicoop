@@ -55,7 +55,7 @@ final class EditorialCollectionDataProvider implements CollectionDataProviderInt
         return Editorial::class === $resourceClass && $operationName === "ADMIN_get";
     }
 
-    public function getCollection(string $resourceClass, string $operationName = null, array $context = [])
+    public function getCollection(string $resourceClass, string $operationName = null, array $context = []): iterable
     {
         $manager = $this->managerRegistry->getManagerForClass($resourceClass);
         $repository = $manager->getRepository($resourceClass);

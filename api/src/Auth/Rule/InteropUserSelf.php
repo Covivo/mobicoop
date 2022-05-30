@@ -33,7 +33,7 @@ class InteropUserSelf implements AuthRuleInterface
     /**
      * {@inheritdoc}
      */
-    public function execute($requester, $item, $params)
+    public function execute($requester, $item, $params): bool
     {
         return true;
         if (!isset($params['user'])) {

@@ -105,7 +105,7 @@ class SolidaryVolunteerManager
      * @param PaginatorInterface $solidaryUsers  The solidary user objects
      * @return array|null The solidary volunteer records
      */
-    public function getSolidaryVolunteers(PaginatorInterface $solidaryUsers)
+    public function getSolidaryVolunteers(PaginatorInterface $solidaryUsers): ?array
     {
         $solidaryVolunteers = [];
         foreach ($solidaryUsers as $solidaryUser) {
@@ -230,7 +230,7 @@ class SolidaryVolunteerManager
      * @param integer $id                   The Solidary Volunteer id
      * @return SolidaryVolunteer|null       The Solidary Volunteer or null if not found
      */
-    public function getSolidaryVolunteer(int $id)
+    public function getSolidaryVolunteer(int $id): ?SolidaryVolunteer
     {
         if (!$solidaryUser = $this->solidaryUserRepository->find($id)) {
             throw new SolidaryException(sprintf(SolidaryException::VOLUNTEER_NOT_FOUND, $id));
@@ -248,7 +248,7 @@ class SolidaryVolunteerManager
      * @param array $fields     The updated fields
      * @return SolidaryVolunteer     The solidaryVolunteer updated
      */
-    public function patchSolidaryVolunteer(int $id, array $fields)
+    public function patchSolidaryVolunteer(int $id, array $fields): SolidaryVolunteer
     {
         if (!$solidaryUser = $this->solidaryUserRepository->find($id)) {
             throw new SolidaryException(sprintf(SolidaryException::VOLUNTEER_NOT_FOUND, $id));

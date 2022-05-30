@@ -257,7 +257,7 @@ class Contact
     /**
      * @return int|null
      */
-    public function getContactType(): ?ContactType
+    public function getContactType(): ?int
     {
         return $this->contactType;
     }
@@ -266,7 +266,7 @@ class Contact
      * @param int|null $contactType
      * @return Contact
      */
-    public function setContactType(?ContactType $contactType): self
+    public function setContactType(?ContactType $contactType): Contact
     {
         $this->contactType = $contactType;
         return $this;

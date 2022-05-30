@@ -56,7 +56,7 @@ class CarpoolProofRepository
      *
      * @return null|CarpoolProof The carpool proof found or null if not found
      */
-    public function findByAskAndDate(Ask $ask, DateTime $date)
+    public function findByAskAndDate(Ask $ask, DateTime $date): ?CarpoolProof
     {
         $startDate = clone $date;
         $startDate->setTime(0, 0);
@@ -82,7 +82,7 @@ class CarpoolProofRepository
      *
      * @return null|CarpoolProof[] The carpool proofs found or null if not found
      */
-    public function findRemainingByUser(User $user)
+    public function findRemainingByUser(User $user): ?array
     {
         $query = $this->repository->createQueryBuilder('cp')
             ->where('cp.ask is null')
@@ -103,7 +103,7 @@ class CarpoolProofRepository
      *
      * @return CarpoolProof[] The carpool proofs found
      */
-    public function findByTypesAndPeriod(array $types, DateTime $startDate, DateTime $endDate, array $status = null)
+    public function findByTypesAndPeriod(array $types, DateTime $startDate, DateTime $endDate, array $status = null): array
     {
         $startDate->setTime(0, 0);
         $endDate->setTime(23, 59, 59, 999);

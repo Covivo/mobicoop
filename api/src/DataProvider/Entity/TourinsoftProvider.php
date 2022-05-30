@@ -54,7 +54,7 @@ class TourinsoftProvider implements EventProviderInterface
      *
      * @return void
      */
-    public function getEvent()
+    public function getEvent(): void
     {
     }
 
@@ -63,7 +63,7 @@ class TourinsoftProvider implements EventProviderInterface
      *
      * @return Array array of events
      */
-    public function getEvents()
+    public function getEvents(): array
     {
         $dataProvider = new DataProvider($this->eventProviderServerUrl);
 
@@ -91,7 +91,7 @@ class TourinsoftProvider implements EventProviderInterface
      * @param Array $tourinsoftEvents array of Tourinsoft Events
      * @return Array array of events
      */
-    public function createEvents($tourinsoftEvents)
+    public function createEvents($tourinsoftEvents): array
     {
         //https://wcf.tourinsoft.com/Syndication/3.0/cdt11/8132036e-2b56-4710-a160-4737c6493c98/doc/syndication
         //http://api-doc.tourinsoft.com/#/syndication-3x#api-format

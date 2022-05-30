@@ -49,7 +49,7 @@ final class SolidaryUserCollectionDataProvider implements CollectionDataProvider
         return SolidaryUser::class === $resourceClass;
     }
 
-    public function getCollection(string $resourceClass, string $operationName = null)
+    public function getCollection(string $resourceClass, string $operationName = null): iterable
     {
         // We check and sanitize the filters
         $filters = null;

@@ -129,7 +129,7 @@ class DynamicManager
      * @param integer $id   The dynamic ad id.
      * @return Dynamic      The dynamic ad.
      */
-    public function getDynamic(int $id)
+    public function getDynamic(int $id): Dynamic
     {
         if (!$proposal = $this->proposalManager->get($id)) {
             throw new DynamicException("Dynamic ad not found");
@@ -148,7 +148,7 @@ class DynamicManager
      * @param Dynamic $dynamic  The dynamic ad to create
      * @return Dynamic      The created Dynamic ad.
      */
-    public function createDynamic(Dynamic $dynamic)
+    public function createDynamic(Dynamic $dynamic): Dynamic
     {
         // first we check if the user has already a dynamic ad pending
         if ($this->proposalManager->hasPendingDynamic($dynamic->getUser())) {
@@ -289,7 +289,7 @@ class DynamicManager
      * @param Dynamic $dynamicData  The dynamic ad data to make the update
      * @return Dynamic      The updated Dynamic ad.
      */
-    public function updateDynamic(int $id, Dynamic $dynamicData)
+    public function updateDynamic(int $id, Dynamic $dynamicData): Dynamic
     {
         // we get the original dynamic ad
         $dynamic = $this->getDynamic($id);
@@ -628,7 +628,7 @@ class DynamicManager
      * @param array $results        The array of results
      * @return Result|null          The result found
      */
-    private function getResult(Matching $matching, array $results)
+    private function getResult(Matching $matching, array $results): ?Result
     {
         foreach ($results as $result) {
             /**
@@ -654,7 +654,7 @@ class DynamicManager
      * @param User $user    The user for which we want the ad
      * @return Dynamic|null The dynamic ad found or null if not found.
      */
-    public function getLastDynamicUnfinished(User $user)
+    public function getLastDynamicUnfinished(User $user): ?Dynamic
     {
         if ($proposal = $this->proposalManager->getLastDynamicUnfinished($user)) {
             $dynamic = new Dynamic();
@@ -681,7 +681,7 @@ class DynamicManager
      * @param integer $id   The dynamic ask id.
      * @return DynamicAsk   The dynamic ask.
      */
-    public function getDynamicAsk(int $id)
+    public function getDynamicAsk(int $id): DynamicAsk
     {
         if (!$ask = $this->askRespository->find($id)) {
             throw new DynamicException("Dynamic ask not found");
@@ -701,7 +701,7 @@ class DynamicManager
      * @param DynamicAsk    $dynamicAsk The ask to create
      * @return DynamicAsk               The created ask.
      */
-    public function createDynamicAsk(DynamicAsk $dynamicAsk)
+    public function createDynamicAsk(DynamicAsk $dynamicAsk): DynamicAsk
     {
         // only the passenger can create an ask
         $matching = $this->matchingRepository->find($dynamicAsk->getMatchingId());
@@ -781,7 +781,7 @@ class DynamicManager
      * @param DynamicAsk    $dynamicAskData The ask data to make the update
      * @return DynamicAsk   The updated ask.
      */
-    public function updateDynamicAsk(int $id, DynamicAsk $dynamicAskData)
+    public function updateDynamicAsk(int $id, DynamicAsk $dynamicAskData): DynamicAsk
     {
         // get the ask
         $ask = $this->askRespository->find($id);
@@ -919,7 +919,7 @@ class DynamicManager
      * @param Ask $ask  The ask
      * @return array The messages
      */
-    private function getThread(Ask $ask)
+    private function getThread(Ask $ask): array
     {
         $thread = [];
         if (!is_null($ask->getAskHistories()[0]->getMessage())) {
@@ -955,7 +955,7 @@ class DynamicManager
      * @param DynamicProof    $dynamicProof The proof to create (or update if it already exists)
      * @return DynamicProof                 The created or updated proof.
      */
-    public function createDynamicProof(DynamicProof $dynamicProof)
+    public function createDynamicProof(DynamicProof $dynamicProof): DynamicProof
     {
         // search the ask
         if (!$ask = $this->askRespository->find($dynamicProof->getDynamicAskId())) {
@@ -993,7 +993,7 @@ class DynamicManager
      * @param DynamicProof $dynamicProofData    The data to update the dynamic proof
      * @return DynamicProof The dynamic proof updated
      */
-    public function updateDynamicProof(int $id, DynamicProof $dynamicProofData)
+    public function updateDynamicProof(int $id, DynamicProof $dynamicProofData): DynamicProof
     {
         // search the proof
         if (!$carpoolProof = $this->proofManager->getProof($id)) {
@@ -1028,7 +1028,7 @@ class DynamicManager
      * @param Dynamic $dynamic  The dynamic ad
      * @return void
      */
-    private function updateProofsDirectionForDynamic(Dynamic $dynamic)
+    private function updateProofsDirectionForDynamic(Dynamic $dynamic): void
     {
         // first we search if there are asks related to the dynamic ad
         if ($dynamic->getRole() == Dynamic::ROLE_DRIVER) {
@@ -1075,7 +1075,7 @@ class DynamicManager
      * @param float $latitude               The latitude of the new point
      * @return void
      */
-    private function updateProofDirection(CarpoolProof $carpoolProof, float $longitude, float $latitude)
+    private function updateProofDirection(CarpoolProof $carpoolProof, float $longitude, float $latitude): void
     {
         // first we get all the past points that are stored as a linestring in the geoJsonPoints property
         $points = $carpoolProof->getGeoJsonPoints()->getPoints();

@@ -47,7 +47,7 @@ class UserDelete
      * @param string $data
      * @return User
      */
-    public function __invoke(User $data)
+    public function __invoke(User $data): User
     {
         if (is_null($data)) {
             throw new \InvalidArgumentException($this->translator->trans("bad User id is provided"));

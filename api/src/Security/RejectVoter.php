@@ -33,7 +33,7 @@ class RejectVoter extends Voter
 {
     const REJECT = 'reject';
 
-    protected function supports($attribute, $subject)
+    protected function supports($attribute, $subject): bool
     {
         // if the attribute isn't one we support, return false
         if (!in_array($attribute, [self::REJECT
@@ -44,7 +44,7 @@ class RejectVoter extends Voter
         return true;
     }
 
-    protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
+    protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool
     {
         return false;
     }

@@ -58,7 +58,7 @@ class ArticleManager
      * @param integer $id   The article id
      * @return Article
      */
-    public function getArticle(int $id): ?Article
+    public function getArticle(int $id): Article
     {
         if (!$article = $this->articleRepository->find($id)) {
             return new ArticleException('Article not found');
@@ -72,7 +72,7 @@ class ArticleManager
      * @param Article   $article    The article to add
      * @return Article  The article updated
      */
-    public function addArticle(Article $article)
+    public function addArticle(Article $article): Article
     {
         // treat sections
         if (!is_null($article->getAsections())) {
@@ -144,7 +144,7 @@ class ArticleManager
      * @param array     $fields     The updated fields
      * @return Article  The article updated
      */
-    public function patchArticle(Article $article, array $fields)
+    public function patchArticle(Article $article, array $fields): Article
     {
         // keep original sections to track deleted ones
         $originalSections = [];
@@ -253,7 +253,7 @@ class ArticleManager
      * @param Article   $article    The article to delete
      * @return void
      */
-    public function deleteArticle(Article $article)
+    public function deleteArticle(Article $article): void
     {
         $this->entityManager->remove($article);
         $this->entityManager->flush();

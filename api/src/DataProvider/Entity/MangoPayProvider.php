@@ -121,7 +121,7 @@ class MangoPayProvider implements PaymentProviderInterface
      *
      * @return BankAccount[]
      */
-    public function getBankAccounts(PaymentProfile $paymentProfile, bool $onlyActive = true)
+    public function getBankAccounts(PaymentProfile $paymentProfile, bool $onlyActive = true): array
     {
         $dataProvider = new DataProvider($this->serverUrl.'users/'.$paymentProfile->getIdentifier().'/', self::COLLECTION_BANK_ACCOUNTS);
         $getParams = [
@@ -157,10 +157,8 @@ class MangoPayProvider implements PaymentProviderInterface
      * Add a BankAccount.
      *
      * @param BankAccount $bankAccount The BankAccount to create
-     *
-     * @return null|BankAccount
      */
-    public function addBankAccount(BankAccount $bankAccount)
+    public function addBankAccount(BankAccount $bankAccount): ?BankAccount
     {
         // Build the body
         $body['OwnerName'] = $this->user->getGivenName().' '.$this->user->getFamilyName();
@@ -210,10 +208,8 @@ class MangoPayProvider implements PaymentProviderInterface
      * Disable a BankAccount (Only IBAN/BIC and active/inactive).
      *
      * @param BankAccount $bankAccount The BankAccount to disable
-     *
-     * @return null|BankAccount
      */
-    public function disableBankAccount(BankAccount $bankAccount)
+    public function disableBankAccount(BankAccount $bankAccount): ?BankAccount
     {
         // Build the body
         $body['Active'] = 'false';
@@ -247,7 +243,7 @@ class MangoPayProvider implements PaymentProviderInterface
      *
      * @return Wallet[]
      */
-    public function getWallets(PaymentProfile $paymentProfile)
+    public function getWallets(PaymentProfile $paymentProfile): array
     {
         $wallets = [new Wallet()];
 
@@ -275,10 +271,8 @@ class MangoPayProvider implements PaymentProviderInterface
      * Add a Wallet.
      *
      * @param Wallet $user The Wallet to create
-     *
-     * @return null|Wallet
      */
-    public function addWallet(Wallet $wallet): Wallet
+    public function addWallet(Wallet $wallet): ?Wallet
     {
         // Build the body
         $body['Description'] = $wallet->getDescription();
@@ -312,7 +306,7 @@ class MangoPayProvider implements PaymentProviderInterface
      *
      * @return string The identifier
      */
-    public function registerUser(User $user, Address $address = null)
+    public function registerUser(User $user, Address $address = null): string
     {
         // Build the body
         $body['FirstName'] = $user->getGivenName();
@@ -389,7 +383,7 @@ class MangoPayProvider implements PaymentProviderInterface
      *
      * @return string The identifier
      */
-    public function updateUser(User $user)
+    public function updateUser(User $user): string
     {
         // We check first if the user have an identifier
         $paymentProfiles = $this->paymentProfileRepository->findBy(['user' => $this->user]);
@@ -504,7 +498,7 @@ class MangoPayProvider implements PaymentProviderInterface
      *  ]
      * ]
      */
-    public function processElectronicPayment(User $debtor, array $creditors)
+    public function processElectronicPayment(User $debtor, array $creditors): void
     {
         // Get the wallet of the debtor and his identifier
         $debtorPaymentProfile = $this->paymentProfileRepository->find($debtor->getPaymentProfileId());

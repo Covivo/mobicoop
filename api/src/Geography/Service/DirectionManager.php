@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Geography\Service;
 
@@ -37,11 +37,9 @@ class DirectionManager
     private $entityManager;
     private $geoRouter;
     private $territoryRepository;
-   
+
     /**
      * Constructor.
-     *
-     * @param EntityManagerInterface $entityManager
      */
     public function __construct(EntityManagerInterface $entityManager, GeoRouter $geoRouter, TerritoryRepository $territoryRepository)
     {
@@ -52,10 +50,8 @@ class DirectionManager
 
     /**
      * Update directions with geoJson data.
-     *
-     * @return void
      */
-    public function updateDirectionsWithGeoJson()
+    public function updateDirectionsWithGeoJson(): void
     {
         $batch = 50;
         $pool = 0;
@@ -67,8 +63,8 @@ class DirectionManager
             $direction->setSaveGeoJsonDetail(true);
             $this->entityManager->persist($direction);
             // batch
-            $pool++;
-            if ($pool>=$batch) {
+            ++$pool;
+            if ($pool >= $batch) {
                 $this->entityManager->flush();
                 $this->entityManager->clear();
                 $pool = 0;
@@ -82,11 +78,12 @@ class DirectionManager
     /**
      * Create or update territories for a direction.
      *
-     * @param Direction $direction    The direction
-     * @param boolean $persist      Persit the address immediately
-     * @return void The direction with its territories
+     * @param Direction $direction The direction
+     * @param bool      $persist   Persit the address immediately
+     *
+     * @return Direction The direction with its territories
      */
-    public function createDirectionTerritories(Direction $direction, bool $persist = false)
+    public function createDirectionTerritories(Direction $direction, bool $persist = false): Direction
     {
         // first we remove all territories
         $direction->removeTerritories();
@@ -100,31 +97,33 @@ class DirectionManager
             $this->entityManager->persist($direction);
             $this->entityManager->flush();
         }
+
         return $direction;
     }
 
     /**
      * Create or update territories for a Direction, only if the direction is directly related to 'useful' entities :
-     * - proposal
+     * - proposal.
      *
-     * @param Direction $direction    The direction
-     * @param boolean $persist      Persit the address immediately
-     * @return void The direction with its territories
+     * @param Direction $direction The direction
+     * @param bool      $persist   Persit the address immediately
      */
     public function createDirectionTerritoriesForUsefulEntity(Direction $direction, bool $persist = false)
     {
         $createLink = false;
-        if (count($direction->getCriteriaDrivers())>0) {
+        if (count($direction->getCriteriaDrivers()) > 0) {
             foreach ($direction->getCriteriaDrivers() as $criteriaDriver) {
                 if (!is_null($criteriaDriver->getProposal())) {
                     $createLink = true;
+
                     break;
                 }
             }
-        } elseif (count($direction->getCriteriaPassengers())>0) {
+        } elseif (count($direction->getCriteriaPassengers()) > 0) {
             foreach ($direction->getCriteriaPassengers() as $criteriaPassenger) {
                 if (!is_null($criteriaPassenger->getProposal())) {
                     $createLink = true;
+
                     break;
                 }
             }
@@ -132,6 +131,7 @@ class DirectionManager
         if ($createLink) {
             return $this->createDirectionTerritories($direction, $persist);
         }
+
         return $direction;
     }
 }

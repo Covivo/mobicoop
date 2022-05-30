@@ -56,7 +56,7 @@ class RemoveExternalOutdatedSearchesCommand extends Command
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         return (int)!$this->proposalManager->removeOutdatedExternalSearches((int)$input->getArgument('delay'));
     }

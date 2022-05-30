@@ -64,7 +64,7 @@ class RelayPointManager
      *
      * @return null|RelayPoint
      */
-    public function getRelayPoint(int $id)
+    public function getRelayPoint(int $id): ?RelayPoint
     {
         return $this->relayPointRepository->find($id);
     }
@@ -74,7 +74,7 @@ class RelayPointManager
      *
      * @return null|RelayPointType
      */
-    public function getRelayPointType(int $id)
+    public function getRelayPointType(int $id): ?RelayPointType
     {
         return $this->relayPointTypeRepository->find($id);
     }
@@ -86,7 +86,7 @@ class RelayPointManager
      *
      * @return RelayPoint[]
      */
-    public function getRelayPoints(User $user = null, string $operationName, array $context = [])
+    public function getRelayPoints(User $user = null, string $operationName, array $context = []): array
     {
         return $this->relayPointRepository->findRelayPoints($user, $operationName, $context);
     }

@@ -63,7 +63,7 @@ class UserManager
      *
      * @return User The interoperabily User
      */
-    public function getUser(int $id): ?User
+    public function getUser(int $id): User
     {
         $userEntity = $this->userEntityManager->getUser($id);
         $user = null;

@@ -54,7 +54,7 @@ final class CommunityModeratedCollectionDataProvider implements CollectionDataPr
         return Community::class === $resourceClass && $operationName === "ADMIN_moderated";
     }
 
-    public function getCollection(string $resourceClass, string $operationName = null, array $context = [])
+    public function getCollection(string $resourceClass, string $operationName = null, array $context = []): iterable
     {
         return $this->communityManager->getModerated($this->security->getUser());
     }

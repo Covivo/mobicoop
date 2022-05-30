@@ -112,7 +112,7 @@ class ProposalRepository
      *
      * @return null|array|\Doctrine\DBAL\Driver\Statement|mixed
      */
-    public function findMatchingProposals(Proposal $proposal, bool $excludeProposalUser = true, bool $driversOnly = false)
+    public function findMatchingProposals(Proposal $proposal, bool $excludeProposalUser = true, bool $driversOnly = false): mixed
     {
         // the "master" proposal is simply called the "proposal"
         // the potential matching proposals are called the "candidates"
@@ -916,7 +916,7 @@ class ProposalRepository
      *
      * @return array
      */
-    public function findImportedProposals(int $status)
+    public function findImportedProposals(int $status): array
     {
         $query = $this->repository->createQueryBuilder('p')
             ->select('p.id')
@@ -940,7 +940,7 @@ class ProposalRepository
      *
      * @return array
      */
-    public function findAllValidWithoutMatchingsProposalIds()
+    public function findAllValidWithoutMatchingsProposalIds(): array
     {
         $query = $this->repository->createQueryBuilder('p')
             ->select('p.id')
@@ -964,7 +964,7 @@ class ProposalRepository
      *
      * @return null|array The proposals found
      */
-    public function findAllForUser(User $user)
+    public function findAllForUser(User $user): ?array
     {
         // first we search the published outward proposals (returns will be included later)
         $query = $this->repository->createQueryBuilder('p')
@@ -1004,7 +1004,7 @@ class ProposalRepository
      *
      * @return null|array The proposals found
      */
-    public function findAcceptedProposals(User $user)
+    public function findAcceptedProposals(User $user): ?array
     {
         // first we search the accepted proposals as driver
         $query = $this->repository->createQueryBuilder('p')
@@ -1176,7 +1176,7 @@ class ProposalRepository
      *
      * @return null|Proposal[]
      */
-    public function findUserCommunityProposals(User $user)
+    public function findUserCommunityProposals(User $user): ?array
     {
         $query = $this->repository->createQueryBuilder('p')
             ->join('p.communities', 'co')
@@ -1191,7 +1191,7 @@ class ProposalRepository
      *
      * @return null|Proposal[]
      */
-    public function findUserEventProposals(User $user)
+    public function findUserEventProposals(User $user): ?array
     {
         $query = $this->repository->createQueryBuilder('p')
             ->where('p.event IS NOT NULL')
@@ -1247,7 +1247,7 @@ class ProposalRepository
      *
      * @return int
      */
-    public function countProposalsBetweenCreateDate(DateTime $startDate, DateTime $endDate): ?int
+    public function countProposalsBetweenCreateDate(DateTime $startDate, DateTime $endDate): int
     {
         $query = $this->repository->createQueryBuilder('p')
             ->select('count(p.id)')
@@ -1289,7 +1289,7 @@ class ProposalRepository
      *
      * @return int
      */
-    public function countAvailableAds(): ?int
+    public function countAvailableAds(): int
     {
         $now = new \DateTime('now');
 
@@ -1396,7 +1396,7 @@ class ProposalRepository
      *
      * @return int The extension in metres
      */
-    private function getBBoxExtension(int $distance)
+    private function getBBoxExtension(int $distance): int
     {
         if ($distance < 20000) {
             return 3000;

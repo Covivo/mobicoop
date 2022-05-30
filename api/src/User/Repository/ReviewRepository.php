@@ -60,7 +60,7 @@ class ReviewRepository
      *
      * @return Review[]
      */
-    public function findAll(): ?array
+    public function findAll(): array
     {
         return $this->repository->findAll();
     }
@@ -70,7 +70,7 @@ class ReviewRepository
      *
      * @return Review[]
      */
-    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null): ?array
+    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null): array
     {
         return $this->repository->findBy($criteria, $orderBy, $limit, $offset);
     }

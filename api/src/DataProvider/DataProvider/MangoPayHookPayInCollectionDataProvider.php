@@ -49,7 +49,7 @@ final class MangoPayHookPayInCollectionDataProvider implements CollectionDataPro
         return MangoPayHook::class === $resourceClass && $operationName == "mangoPayins";
     }
 
-    public function getCollection(string $resourceClass, string $operationName = null)
+    public function getCollection(string $resourceClass, string $operationName = null): iterable
     {
         $mangoPayHook = new MangoPayHook();
         if (is_null($this->request->get('EventType')) ||

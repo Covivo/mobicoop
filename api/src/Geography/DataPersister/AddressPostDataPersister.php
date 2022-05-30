@@ -32,7 +32,7 @@ use Symfony\Component\Security\Core\Security;
 final class AddressPostDataPersister implements ContextAwareDataPersisterInterface
 {
     private $AddressManager;
-    
+
     public function __construct(AddressManager $addressManager)
     {
         $this->addressManager = $addressManager;

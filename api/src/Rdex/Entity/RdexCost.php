@@ -43,7 +43,7 @@ class RdexCost implements \JsonSerializable
     /**
      * @return number
      */
-    public function getFixed()
+    public function getFixed(): number
     {
         return $this->fixed;
     }
@@ -51,7 +51,7 @@ class RdexCost implements \JsonSerializable
     /**
      * @return number
      */
-    public function getVariable()
+    public function getVariable(): number
     {
         return $this->variable;
     }
@@ -72,7 +72,7 @@ class RdexCost implements \JsonSerializable
         $this->variable = $variable;
     }
     
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return
         [

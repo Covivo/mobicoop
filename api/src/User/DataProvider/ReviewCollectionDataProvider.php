@@ -49,7 +49,7 @@ final class ReviewCollectionDataProvider implements CollectionDataProviderInterf
         return Review::class === $resourceClass && $operationName === "get";
     }
 
-    public function getCollection(string $resourceClass, string $operationName = null)
+    public function getCollection(string $resourceClass, string $operationName = null): iterable
     {
         if (!($this->security->getUser() instanceof User)) {
             throw new \LogicException("Only a User can get Reviews");

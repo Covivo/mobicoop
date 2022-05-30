@@ -975,7 +975,7 @@ class Proposal
      * @param integer $int  The length of the id
      * @return string The generated id
      */
-    public function generateRandomId(int $int=15)
+    public function generateRandomId(int $int=15): string
     {
         return bin2hex(random_bytes($int));
     }

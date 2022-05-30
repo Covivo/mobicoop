@@ -58,7 +58,7 @@ class CarpoolItemRepository
      * @param DateTime $date    The date
      * @return CarpoolItem|null    The carpool item found or null if not found
      */
-    public function findByAskAndDate(Ask $ask, DateTime $date)
+    public function findByAskAndDate(Ask $ask, DateTime $date): ?CarpoolItem
     {
         $query = $this->repository->createQueryBuilder('ci')
         ->where('ci.ask = :ask')
@@ -78,7 +78,7 @@ class CarpoolItemRepository
      * @param DateTime $toDate      The end of the period
      * @return CarpoolItem[]        The carpool items found
      */
-    public function findByAskAndPeriod(Ask $ask, DateTime $fromDate, DateTime $toDate)
+    public function findByAskAndPeriod(Ask $ask, DateTime $fromDate, DateTime $toDate): array
     {
         $query = $this->repository->createQueryBuilder('ci')
         ->where('ci.ask = :ask')
@@ -101,7 +101,7 @@ class CarpoolItemRepository
      * @param DateTime $toDate      The end of the period  for which we want to get the items
      * @return array                The carpool items found
      */
-    public function findForPayments(int $frequency, int $type, User $user, DateTime $fromDate, DateTime $toDate)
+    public function findForPayments(int $frequency, int $type, User $user, DateTime $fromDate, DateTime $toDate): array
     {
         $query = $this->repository->createQueryBuilder('ci')
         ->join('ci.ask', 'a')
@@ -136,7 +136,7 @@ class CarpoolItemRepository
      * @param User $user
      * @return array
      */
-    public function findByUser(User $user)
+    public function findByUser(User $user): array
     {
         $query = $this->repository->createQueryBuilder('ci')
         ->where('ci.creditorUser = :user OR ci.debtorUser = :user')
@@ -150,7 +150,7 @@ class CarpoolItemRepository
      *
      * @return array
      */
-    public function findConsumptionFeedbackInError()
+    public function findConsumptionFeedbackInError(): array
     {
         $query = $this->repository->createQueryBuilder('ci')
         ->where('ci.debtorConsumptionFeedbackDate is not null OR ci.creditorConsumptionFeedbackDate is not null')

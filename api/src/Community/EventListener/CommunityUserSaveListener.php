@@ -78,7 +78,7 @@ class CommunityUserSaveListener
      * @param CommunityUser $communityUser  The community user
      * @return void
      */
-    private function checkRole(CommunityUser $communityUser)
+    private function checkRole(CommunityUser $communityUser): void
     {
         if (CommunityUser::STATUS_ACCEPTED_AS_MODERATOR === $communityUser->getStatus()) {
             // check if user has the appropriate role

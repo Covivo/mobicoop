@@ -40,7 +40,7 @@ final class FakeUserDataPersister implements ContextAwareDataPersisterInterface
     private $security;
     private $request;
     private $fakeManager;
-    
+
     public function __construct(Security $security, FakeManager $fakeManager, RequestStack $requestStack)
     {
         $this->security = $security;

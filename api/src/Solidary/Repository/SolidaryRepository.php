@@ -76,7 +76,7 @@ class SolidaryRepository
      * @param Solidary $solidary   The Solidary
      * @return array|null
      */
-    public function getDiaries(Solidary $solidary)
+    public function getDiaries(Solidary $solidary): ?array
     {
         $diaryRepository = $this->entityManager->getRepository(Diary::class);
 

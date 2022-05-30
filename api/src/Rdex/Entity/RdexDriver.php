@@ -68,7 +68,7 @@ class RdexDriver implements \JsonSerializable
     /**
      * @return mixed
      */
-    public function getUuid()
+    public function getUuid(): mixed
     {
         return $this->uuid;
     }
@@ -76,7 +76,7 @@ class RdexDriver implements \JsonSerializable
     /**
      * @return string
      */
-    public function getAlias()
+    public function getAlias(): string
     {
         return $this->alias;
     }
@@ -84,7 +84,7 @@ class RdexDriver implements \JsonSerializable
     /**
      * @return string
      */
-    public function getImage()
+    public function getImage(): string
     {
         return $this->image;
     }
@@ -92,7 +92,7 @@ class RdexDriver implements \JsonSerializable
     /**
      * @return string
      */
-    public function getGender()
+    public function getGender(): string
     {
         return $this->gender;
     }
@@ -100,7 +100,7 @@ class RdexDriver implements \JsonSerializable
     /**
      * @return number
      */
-    public function getSeats()
+    public function getSeats(): number
     {
         return $this->seats;
     }
@@ -108,7 +108,7 @@ class RdexDriver implements \JsonSerializable
     /**
      * @return number
      */
-    public function getState()
+    public function getState(): number
     {
         return $this->state;
     }
@@ -161,7 +161,7 @@ class RdexDriver implements \JsonSerializable
         $this->state = $state;
     }
     
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return
         [

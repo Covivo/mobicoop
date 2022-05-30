@@ -65,7 +65,7 @@ class SolidaryContactManager
      *
      * @return SolidaryContact
      */
-    public function handleSolidaryContact(SolidaryContact $solidaryContact)
+    public function handleSolidaryContact(SolidaryContact $solidaryContact): SolidaryContact
     {
         // We check if there is already an Ask for the solidarySolution in the SolidaryContact
         $solidaryAsk = $this->solidaryAskRepository->findBySolidarySolution($solidaryContact->getSolidarySolution());

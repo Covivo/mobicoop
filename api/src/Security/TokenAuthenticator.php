@@ -41,7 +41,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
      * used for the request. Returning `false` will cause this authenticator
      * to be skipped.
      */
-    public function supports(Request $request)
+    public function supports(Request $request): bool
     {
         return true;
     }
@@ -50,7 +50,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
      * Called on every request. Return whatever credentials you want to
      * be passed to getUser() as $credentials.
      */
-    public function getCredentials(Request $request)
+    public function getCredentials(Request $request): mixed
     {
         $decodeRequest = json_decode($request->getContent());
         if (isset($decodeRequest->emailToken) && !empty($decodeRequest->emailToken)) {
@@ -69,7 +69,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
     * Case 1 : the pair email + emailToken
     * Case 2 : the pws reset token
     */
-    public function getUser($credentials, UserProviderInterface $userProvider)
+    public function getUser($credentials, UserProviderInterface $userProvider): ?UserInterface
     {
         if (null === $credentials) {
             // The token header was empty, authentication fails with HTTP Status
@@ -84,7 +84,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
         return $user;
     }
 
-    public function checkCredentials($credentials, UserInterface $user)
+    public function checkCredentials($credentials, UserInterface $user): bool
     {
         // Check credentials - e.g. make sure the password is valid.
         // In case of an API token, no credential check is needed.
@@ -93,7 +93,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
         return true;
     }
 
-    public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
+    public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey): ?Response
     {
         /**
          * @var User $user
@@ -139,7 +139,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
     }
 
 
-    public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
+    public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
     {
         $data = [
             'message' => strtr($exception->getMessageKey(), $exception->getMessageData())
@@ -151,7 +151,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
     /**
      * Called when authentication is needed, but it's not sent
      */
-    public function start(Request $request, AuthenticationException $authException = null)
+    public function start(Request $request, AuthenticationException $authException = null): Response
     {
         $data = [
             'message' => 'Authentication Required'
@@ -160,7 +160,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
         return new JsonResponse($data, Response::HTTP_UNAUTHORIZED);
     }
 
-    public function supportsRememberMe()
+    public function supportsRememberMe(): bool
     {
         return false;
     }

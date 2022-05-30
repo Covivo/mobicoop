@@ -65,7 +65,7 @@ class CarpoolProofGouvProvider implements ProviderInterface
      *
      * @return Response The result of the send
      */
-    public function postCollection(CarpoolProof $carpoolProof)
+    public function postCollection(CarpoolProof $carpoolProof): Response
     {
         if (is_null($carpoolProof->getAsk())) {
             return new Response(418);

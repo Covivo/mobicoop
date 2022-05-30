@@ -39,7 +39,7 @@ class SsoAuthenticator extends AbstractGuardAuthenticator
      * used for the request. Returning `false` will cause this authenticator
      * to be skipped.
      */
-    public function supports(Request $request)
+    public function supports(Request $request): bool
     {
         return true;
     }
@@ -48,7 +48,7 @@ class SsoAuthenticator extends AbstractGuardAuthenticator
      * Called on every request. Return whatever credentials you want to
      * be passed to getUser() as $credentials.
      */
-    public function getCredentials(Request $request)
+    public function getCredentials(Request $request): mixed
     {
         $decodeRequest = json_decode($request->getContent());
         if (
@@ -73,7 +73,7 @@ class SsoAuthenticator extends AbstractGuardAuthenticator
      *
      * @return null|User
      */
-    public function getUser($credentials, UserProviderInterface $userProvider)
+    public function getUser($credentials, UserProviderInterface $userProvider): ?User
     {
         if (null === $credentials) {
             // The token header was empty, authentication fails with HTTP Status
@@ -84,7 +84,7 @@ class SsoAuthenticator extends AbstractGuardAuthenticator
         return $this->ssoManager->getUser($credentials['ssoProvider'], $credentials['ssoId'], $credentials['baseSiteUri']);
     }
 
-    public function checkCredentials($credentials, UserInterface $user)
+    public function checkCredentials($credentials, UserInterface $user): bool
     {
         // Check credentials - e.g. make sure the password is valid.
         // In case of an API token, no credential check is needed.
@@ -93,7 +93,7 @@ class SsoAuthenticator extends AbstractGuardAuthenticator
         return true;
     }
 
-    public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
+    public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey): ?Response
     {
         $user = $token->getUser();
 
@@ -118,7 +118,7 @@ class SsoAuthenticator extends AbstractGuardAuthenticator
         ]);
     }
 
-    public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
+    public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
     {
         $data = [
             'message' => strtr($exception->getMessageKey(), $exception->getMessageData()),
@@ -130,7 +130,7 @@ class SsoAuthenticator extends AbstractGuardAuthenticator
     /**
      * Called when authentication is needed, but it's not sent.
      */
-    public function start(Request $request, AuthenticationException $authException = null)
+    public function start(Request $request, AuthenticationException $authException = null): Response
     {
         $data = [
             'message' => 'Authentication Required',
@@ -139,7 +139,7 @@ class SsoAuthenticator extends AbstractGuardAuthenticator
         return new JsonResponse($data, Response::HTTP_UNAUTHORIZED);
     }
 
-    public function supportsRememberMe()
+    public function supportsRememberMe(): bool
     {
         return false;
     }

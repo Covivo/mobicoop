@@ -73,7 +73,7 @@ interface GeorouterInterface
      * @param integer $mode         The sync mode to use
      * @return array    The found directions indexed by owner
      */
-    public function getMultipleDirections(array $multiPoints, int $mode);
+    public function getMultipleDirections(array $multiPoints, int $mode): array;
 
     /**
      * Get directions.
@@ -90,7 +90,7 @@ interface GeorouterInterface
      * @param integer $mode     The sync mode to use
      * @return array    The found directions
      */
-    public function getDirections(array $points, int $mode);
+    public function getDirections(array $points, int $mode): array;
 
     /**
      * Avoid motorway
@@ -98,7 +98,7 @@ interface GeorouterInterface
      * @param boolean $avoidMotorway    Avoid motorway
      * @return void
      */
-    public function setAvoidMotorway(bool $avoidMotorway);
+    public function setAvoidMotorway(bool $avoidMotorway): void;
 
     /**
      * Avoid toll
@@ -106,7 +106,7 @@ interface GeorouterInterface
      * @param boolean $avoidToll    Avoid toll
      * @return void
      */
-    public function setAvoidToll(bool $avoidToll);
+    public function setAvoidToll(bool $avoidToll): void;
 
     /**
      * Set if the georouter returns detailed durations.
@@ -114,7 +114,7 @@ interface GeorouterInterface
      * @param boolean $detailDuration   Detailed duration
      * @return void
      */
-    public function setDetailDuration(bool $detailDuration);
+    public function setDetailDuration(bool $detailDuration): void;
 
     /**
      * Get the points only
@@ -122,7 +122,7 @@ interface GeorouterInterface
      * @param boolean $pointsOnly   Get the points only
      * @return void
      */
-    public function setPointsOnly(bool $pointsOnly);
+    public function setPointsOnly(bool $pointsOnly): void;
 
     /**
      * Set the return type
@@ -130,7 +130,7 @@ interface GeorouterInterface
      * @param integer $returnType   The return type
      * @return void
      */
-    public function setReturnType(int $returnType);
+    public function setReturnType(int $returnType): void;
 
     /**
      * Deserializes the data returned by the provider to a Direction object.
@@ -138,7 +138,7 @@ interface GeorouterInterface
      * @param array $data       The data to deserialize.
      * @return Direction        The resulting direction.
      */
-    public function deserializeDirection(array $data);
+    public function deserializeDirection(array $data): Direction;
 
     /**
      * Deserializes geographical points to Addresses.

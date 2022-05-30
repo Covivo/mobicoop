@@ -51,7 +51,7 @@ class LanguageRepository
      * @param array $criteria
      * @return Language|null
      */
-    public function findOneBy(array $criteria): Language
+    public function findOneBy(array $criteria): ?Language
     {
         return $this->repository->findOneBy($criteria);
     }

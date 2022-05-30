@@ -78,7 +78,7 @@ class RdexTripDate implements \JsonSerializable
     /**
      * @return \DateTime
      */
-    public function getMindate()
+    public function getMindate(): \DateTime
     {
         return $this->mindate;
     }
@@ -86,7 +86,7 @@ class RdexTripDate implements \JsonSerializable
     /**
      * @return \DateTime
      */
-    public function getMaxdate()
+    public function getMaxdate(): \DateTime
     {
         return $this->maxdate;
     }
@@ -94,7 +94,7 @@ class RdexTripDate implements \JsonSerializable
     /**
      * @return \App\Rdex\Entity\RdexDayTime
      */
-    public function getMonday()
+    public function getMonday(): \App\Rdex\Entity\RdexDayTime
     {
         return $this->monday;
     }
@@ -102,7 +102,7 @@ class RdexTripDate implements \JsonSerializable
     /**
      * @return \App\Rdex\Entity\RdexDayTime
      */
-    public function getTuesday()
+    public function getTuesday(): \App\Rdex\Entity\RdexDayTime
     {
         return $this->tuesday;
     }
@@ -110,7 +110,7 @@ class RdexTripDate implements \JsonSerializable
     /**
      * @return \App\Rdex\Entity\RdexDayTime
      */
-    public function getWednesday()
+    public function getWednesday(): \App\Rdex\Entity\RdexDayTime
     {
         return $this->wednesday;
     }
@@ -118,7 +118,7 @@ class RdexTripDate implements \JsonSerializable
     /**
      * @return \App\Rdex\Entity\RdexDayTime
      */
-    public function getThursday()
+    public function getThursday(): \App\Rdex\Entity\RdexDayTime
     {
         return $this->thursday;
     }
@@ -126,7 +126,7 @@ class RdexTripDate implements \JsonSerializable
     /**
      * @return \App\Rdex\Entity\RdexDayTime
      */
-    public function getFriday()
+    public function getFriday(): \App\Rdex\Entity\RdexDayTime
     {
         return $this->friday;
     }
@@ -134,7 +134,7 @@ class RdexTripDate implements \JsonSerializable
     /**
      * @return \App\Rdex\Entity\RdexDayTime
      */
-    public function getSaturday()
+    public function getSaturday(): \App\Rdex\Entity\RdexDayTime
     {
         return $this->saturday;
     }
@@ -142,7 +142,7 @@ class RdexTripDate implements \JsonSerializable
     /**
      * @return \App\Rdex\Entity\RdexDayTime
      */
-    public function getSunday()
+    public function getSunday(): \App\Rdex\Entity\RdexDayTime
     {
         return $this->sunday;
     }
@@ -219,7 +219,7 @@ class RdexTripDate implements \JsonSerializable
         $this->sunday = $sunday;
     }
     
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return
         [

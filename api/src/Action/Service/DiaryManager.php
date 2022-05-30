@@ -54,7 +54,7 @@ class DiaryManager
      * @param float $progression                    Custom progression If it's null, we take the default progression of the action
      * @return void
      */
-    public function addDiaryEntry(Action $action, User $user, User $author, string $comment=null, Solidary $solidary=null, SolidarySolution $solidarySolution=null, float $progression=null)
+    public function addDiaryEntry(Action $action, User $user, User $author, string $comment=null, Solidary $solidary=null, SolidarySolution $solidarySolution=null, float $progression=null): void
     {
         $diary = new Diary();
         $diary->setAction($action);
@@ -96,7 +96,7 @@ class DiaryManager
      * @param Animation $animation    The animation that has been made
      * @return void
      */
-    public function handleAnimation(Animation $animation)
+    public function handleAnimation(Animation $animation): void
     {
         // if the action linked with the animation is not meant to be logged in the diary, we exit immediately
         if (!$animation->getAction()->isInDiary()) {

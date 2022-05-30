@@ -108,7 +108,7 @@ class FakeManager
      * @param bool $truncate            Truncate dedicated entities before generating users and proposals
      * @return void
      */
-    public function fakeUsers(int $number_users, float $min_lat, float $min_lon, float $max_lat, float $max_lon, int $split = 1, bool $truncate = false)
+    public function fakeUsers(int $number_users, float $min_lat, float $min_lon, float $max_lat, float $max_lon, int $split = 1, bool $truncate = false): void
     {
         set_time_limit(3600);
 
@@ -292,7 +292,7 @@ class FakeManager
      * @param float  $max_lon   The max lon
      * @return array    The sub bbox
      */
-    private function getSubBbox(int $splitNb, int $partNb, float $min_lat, float $min_lon, float $max_lat, float $max_lon)
+    private function getSubBbox(int $splitNb, int $partNb, float $min_lat, float $min_lon, float $max_lat, float $max_lon): array
     {
         // first we get the orientation
         $orientation = $this->getBboxOrientation($min_lat, $min_lon, $max_lat, $max_lon);
@@ -345,7 +345,7 @@ class FakeManager
      * @param float  $max_lon   The max lon
      * @return int
      */
-    private function getBboxOrientation(float $min_lat, float $min_lon, float $max_lat, float $max_lon)
+    private function getBboxOrientation(float $min_lat, float $min_lon, float $max_lat, float $max_lon): int
     {
         $xLength = $this->geoTools->haversineGreatCircleDistance($min_lat, $min_lon, $min_lat, $max_lon);
         $yLength = $this->geoTools->haversineGreatCircleDistance($min_lat, $min_lon, $max_lat, $min_lon);

@@ -40,7 +40,7 @@ final class UserImportTreatDataPersister implements ContextAwareDataPersisterInt
     private $security;
     private $request;
     protected $importManager;
-    
+
     public function __construct(Security $security, ImportManager $importManager, RequestStack $requestStack)
     {
         $this->security = $security;

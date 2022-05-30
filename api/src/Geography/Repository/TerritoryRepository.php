@@ -74,7 +74,7 @@ class TerritoryRepository
      *
      * @return null|Territory[] The territories
      */
-    public function findDirectionTerritories(Direction $direction)
+    public function findDirectionTerritories(Direction $direction): ?array
     {
         $query = $this->repository->createQueryBuilder('t')
             ->join('\App\Geography\Entity\Direction', 'd')
@@ -93,7 +93,7 @@ class TerritoryRepository
      *
      * @return null|Territory[] The territories
      */
-    public function findAddressTerritories(Address $address)
+    public function findAddressTerritories(Address $address): ?array
     {
         $query = $this->repository->createQueryBuilder('t')
             ->join('\App\Geography\Entity\Address', 'a')
@@ -113,7 +113,7 @@ class TerritoryRepository
      *
      * @return null|array The territories
      */
-    public function findPointTerritories(float $latitude, float $longitude)
+    public function findPointTerritories(float $latitude, float $longitude): ?array
     {
         $conn = $this->entityManager->getConnection();
 

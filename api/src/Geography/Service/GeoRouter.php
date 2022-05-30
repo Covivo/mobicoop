@@ -74,7 +74,7 @@ class GeoRouter
      * @param boolean|null $avoidToll   Set to true to avoid toll
      * @return array                    The routes found
      */
-    public function getRoutes(array $addresses, bool $detailDuration=false, bool $pointsOnly = false, ?int $returnType = null, ?bool $avoidToll = null): ?array
+    public function getRoutes(array $addresses, bool $detailDuration=false, bool $pointsOnly = false, ?int $returnType = null, ?bool $avoidToll = null): array
     {
         $this->router->setDetailDuration($detailDuration);
         $this->router->setPointsOnly($pointsOnly);
@@ -97,7 +97,7 @@ class GeoRouter
      * @param boolean|null $avoidToll   Set to true to avoid toll
      * @return array                    The routes found
      */
-    public function getAsyncRoutes(array $addresses, bool $detailDuration=false, bool $pointsOnly = false, ?int $returnType = null, ?bool $avoidToll = null): ?array
+    public function getAsyncRoutes(array $addresses, bool $detailDuration=false, bool $pointsOnly = false, ?int $returnType = null, ?bool $avoidToll = null): array
     {
         $this->router->setDetailDuration($detailDuration);
         $this->router->setPointsOnly($pointsOnly);
@@ -122,7 +122,7 @@ class GeoRouter
      * @param boolean|null $avoidToll   Set to true to avoid toll
      * @return array                    The routes found
      */
-    public function getMultipleAsyncRoutes(array $addresses, bool $detailDuration=false, bool $pointsOnly = false, ?int $returnType = null, ?bool $avoidToll = null): ?array
+    public function getMultipleAsyncRoutes(array $addresses, bool $detailDuration=false, bool $pointsOnly = false, ?int $returnType = null, ?bool $avoidToll = null): array
     {
         $this->router->setDetailDuration($detailDuration);
         $this->router->setPointsOnly($pointsOnly);

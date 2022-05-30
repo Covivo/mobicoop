@@ -59,7 +59,7 @@ class UserRepository
      *
      * @return null|User
      */
-    public function findAll(): ?array
+    public function findAll(): ?User
     {
         return $this->repository->findAll();
     }
@@ -72,7 +72,7 @@ class UserRepository
      *
      * @return null|User
      */
-    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null): ?array
+    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null): ?User
     {
         return $this->repository->findBy($criteria, $orderBy, $limit, $offset);
     }
@@ -89,7 +89,7 @@ class UserRepository
      *
      * @return null|User
      */
-    public function getUserInCommunity(Community $community, $acceptEmail = null)
+    public function getUserInCommunity(Community $community, $acceptEmail = null): ?User
     {
         $qb = $this->repository->createQueryBuilder('u')
             ->leftJoin('u.communityUsers', 'c')
@@ -158,7 +158,7 @@ class UserRepository
      *
      * @return null|array The users
      */
-    public function findDeliveriesByIds(array $ids)
+    public function findDeliveriesByIds(array $ids): ?array
     {
         return $this->repository->createQueryBuilder('u')
             ->where('u.id IN(:ids) and u.newsSubscription=1')
@@ -171,7 +171,7 @@ class UserRepository
      *
      * @return int
      */
-    public function countActiveUsers(): ?int
+    public function countActiveUsers(): int
     {
         $now = new \DateTime();
         $last6Months = $now->modify('-6 months');
@@ -190,7 +190,7 @@ class UserRepository
      *
      * @return int
      */
-    public function countUsers(): ?int
+    public function countUsers(): int
     {
         $query = $this->repository->createQueryBuilder('u')
             ->select('count(u.id)')

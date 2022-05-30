@@ -67,7 +67,7 @@ class AuthItemRepository
      * @param string $name
      * @return AuthItem
      */
-    public function findByName(string $name): ?AuthItem
+    public function findByName(string $name): AuthItem
     {
         return $this->repository->findOneBy(['name'=>$name]);
     }
@@ -78,7 +78,7 @@ class AuthItemRepository
      * @param Array $criteria
      * @return AuthItem
      */
-    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null): ?array
+    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null): AuthItem
     {
         return $this->repository->findBy($criteria, $orderBy, $limit, $offset);
     }
@@ -89,7 +89,7 @@ class AuthItemRepository
      * @param Array $ids Array of ids roles
      * @return AuthItem
      */
-    public function findByIds(array $ids): ?array
+    public function findByIds(array $ids): AuthItem
     {
         $query = $this->repository->createQueryBuilder('a')
             ->where("a.id IN (:arrayIds)")

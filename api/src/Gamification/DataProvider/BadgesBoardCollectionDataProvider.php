@@ -49,7 +49,7 @@ final class BadgesBoardCollectionDataProvider implements CollectionDataProviderI
         return BadgesBoard::class === $resourceClass && $operationName === "get";
     }
 
-    public function getCollection(string $resourceClass, string $operationName = null)
+    public function getCollection(string $resourceClass, string $operationName = null): iterable
     {
         if (!($this->security->getUser() instanceof User)) {
             throw new \LogicException("Only a User can get its board");

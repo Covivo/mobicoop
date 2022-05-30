@@ -58,7 +58,7 @@ class EditorialManager
      * @param int $id   The editorial's id
      * @return Editorial
      */
-    public function getEditorial(int $id): ?Editorial
+    public function getEditorial(int $id): Editorial
     {
         if (!$editorial = $this->editorialRepository->find($id)) {
             throw new EditorialException('Editorial not found');
@@ -85,7 +85,7 @@ class EditorialManager
      * @param Editorial     $editorial              The editorial to add
      * @return Editorial    The editorial created
      */
-    public function addEditorial(Editorial $editorial)
+    public function addEditorial(Editorial $editorial): Editorial
     {
         // persist the editorial
         $this->entityManager->persist($editorial);
@@ -102,7 +102,7 @@ class EditorialManager
      * @param array $fields The updated fields
      * @return Editorial        The editorial updated
      */
-    public function patchEditorial(Editorial $editorial, array $fields)
+    public function patchEditorial(Editorial $editorial, array $fields): Editorial
     {
         // persist the editorial
         $this->entityManager->persist($editorial);
@@ -118,7 +118,7 @@ class EditorialManager
      * @param Editorial $editorial  The editorial to delete
      * @return void
      */
-    public function deleteEditorial(Editorial $editorial)
+    public function deleteEditorial(Editorial $editorial): void
     {
         $this->entityManager->remove($editorial);
         $this->entityManager->flush();

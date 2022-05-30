@@ -52,7 +52,7 @@ final class SolidaryAnimationCollectionDataProvider implements CollectionDataPro
         return SolidaryAnimation::class === $resourceClass && $operationName == "get";
     }
 
-    public function getCollection(string $resourceClass, string $operationName = null)
+    public function getCollection(string $resourceClass, string $operationName = null): iterable
     {
         if (empty($this->filters['solidary'])) {
             throw new SolidaryException(SolidaryException::SOLIDARY_MISSING);

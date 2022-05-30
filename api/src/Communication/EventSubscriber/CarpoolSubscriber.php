@@ -75,7 +75,7 @@ class CarpoolSubscriber implements EventSubscriberInterface
         $this->blockManager = $blockManager;
     }
     
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             AskPostedEvent::NAME => 'onAskPosted',
@@ -103,7 +103,7 @@ class CarpoolSubscriber implements EventSubscriberInterface
      * @return void
      * @throws ClassNotFoundException
      */
-    public function onAskPosted(AskPostedEvent $event)
+    public function onAskPosted(AskPostedEvent $event): void
     {
         // the recipient is the carpooler
         $adRecipient = ($event->getAd()->getResults()[0]->getCarpooler());
@@ -117,7 +117,7 @@ class CarpoolSubscriber implements EventSubscriberInterface
      * @return void
      * @throws ClassNotFoundException
      */
-    public function onAskAccepted(AskAcceptedEvent $event)
+    public function onAskAccepted(AskAcceptedEvent $event): void
     {
         // the recipient is the carpooler
         $adRecipient = ($event->getAd()->getResults()[0]->getCarpooler());
@@ -131,7 +131,7 @@ class CarpoolSubscriber implements EventSubscriberInterface
      * @return void
      * @throws ClassNotFoundException
      */
-    public function onAskRefused(AskRefusedEvent $event)
+    public function onAskRefused(AskRefusedEvent $event): void
     {
         // the recipient is the carpooler
         $adRecipient = ($event->getAd()->getResults()[0]->getCarpooler());
@@ -166,7 +166,7 @@ class CarpoolSubscriber implements EventSubscriberInterface
      * @return void
      * @throws ClassNotFoundException
      */
-    public function onNewMatching(MatchingNewEvent $event)
+    public function onNewMatching(MatchingNewEvent $event): void
     {
         // the recipient is the user that is not the "sender" of the matching
         // we check if it's not an anonymous proposal, and that it's only on an outward (as we notifiy only once for a return trip)
@@ -214,7 +214,7 @@ class CarpoolSubscriber implements EventSubscriberInterface
      * @param AdRenewalEvent $event
      * @return void
      */
-    public function onAdRenewal(AdRenewalEvent $event)
+    public function onAdRenewal(AdRenewalEvent $event): void
     {
         // we must notify the creator of the proposal
         $this->notificationManager->notifies(AdRenewalEvent::NAME, $event->getProposal()->getUser());
@@ -226,7 +226,7 @@ class CarpoolSubscriber implements EventSubscriberInterface
      * @param AskAdDeletedEvent $event
      * @return void
      */
-    public function onAskAdDeleted(AskAdDeletedEvent $event)
+    public function onAskAdDeleted(AskAdDeletedEvent $event): void
     {
         // todo: passer directement la ask pour pouvoir mieux vérifier qui est à l'origine de l'annonce
         // pas réussi, array vide depuis le template en passant la ask
@@ -245,7 +245,7 @@ class CarpoolSubscriber implements EventSubscriberInterface
      * @param PassengerAskAdDeletedEvent $event
      * @return void
      */
-    public function onPassengerAskAdDeleted(PassengerAskAdDeletedEvent $event)
+    public function onPassengerAskAdDeleted(PassengerAskAdDeletedEvent $event): void
     {
         // todo : idem
         if ($this->canNotify($event->getAsk()->getUser(), $event->getAsk()->getUserRelated())) {
@@ -262,7 +262,7 @@ class CarpoolSubscriber implements EventSubscriberInterface
      * @param PassengerAskAdDeletedUrgentEvent $event
      * @return void
      */
-    public function onPassengerAskAdDeletedUrgent(PassengerAskAdDeletedUrgentEvent $event)
+    public function onPassengerAskAdDeletedUrgent(PassengerAskAdDeletedUrgentEvent $event): void
     {
         // todo : idem
         if ($this->canNotify($event->getAsk()->getUser(), $event->getAsk()->getUserRelated())) {
@@ -280,7 +280,7 @@ class CarpoolSubscriber implements EventSubscriberInterface
      * @param DriverAskAdDeletedEvent $event
      * @return void
      */
-    public function onDriverAskAdDeleted(DriverAskAdDeletedEvent $event)
+    public function onDriverAskAdDeleted(DriverAskAdDeletedEvent $event): void
     {
         // todo : idem
         if ($this->canNotify($event->getAsk()->getUser(), $event->getAsk()->getUserRelated())) {
@@ -298,7 +298,7 @@ class CarpoolSubscriber implements EventSubscriberInterface
      * @param DriverAskAdDeletedUrgentEvent $event
      * @return void
      */
-    public function onDriverAskAdDeletedUrgent(DriverAskAdDeletedUrgentEvent $event)
+    public function onDriverAskAdDeletedUrgent(DriverAskAdDeletedUrgentEvent $event): void
     {
         // todo : idem
         if ($this->canNotify($event->getAsk()->getUser(), $event->getAsk()->getUserRelated())) {

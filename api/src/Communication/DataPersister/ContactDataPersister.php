@@ -42,7 +42,7 @@ final class ContactDataPersister implements ContextAwareDataPersisterInterface
         $this->contactManager = $contactManager;
         $this->security = $security;
     }
-  
+
     public function supports($data, array $context = []): bool
     {
         return $data instanceof Contact && isset($context['collection_operation_name']) && $context['collection_operation_name'] == 'post';

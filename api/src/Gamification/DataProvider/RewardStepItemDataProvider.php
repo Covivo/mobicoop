@@ -48,7 +48,7 @@ final class RewardStepItemDataProvider implements RestrictedDataProviderInterfac
         return RewardStep::class === $resourceClass && $operationName === "tagAsNotified";
     }
 
-    public function getItem(string $resourceClass, $id, string $operationName = null, array $context = [])
+    public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?object
     {
         return $this->gamificationManager->tagRewardStepAsNotified($id);
     }

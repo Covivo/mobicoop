@@ -82,7 +82,7 @@ class MassComputeManager
      *
      * @return Mass
      */
-    public function computeResults(Mass $mass)
+    public function computeResults(Mass $mass): Mass
     {
         set_time_limit(self::TIME_LIMIT);
 
@@ -293,7 +293,7 @@ class MassComputeManager
      *
      * @return array
      */
-    public function getAllWorkingPlaces()
+    public function getAllWorkingPlaces(): array
     {
         $this->logger->info('Mass Compute | Begin getAllWorkingPlaces | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
         return $this->massPersonRepository->findAllDestinationsForMass($this->mass);
@@ -305,7 +305,7 @@ class MassComputeManager
      *
      * @return MassMatrix
      */
-    private function buildCarpoolersMatrix()
+    private function buildCarpoolersMatrix(): MassMatrix
     {
         foreach ($this->persons as $person) {
             $this->logger->info('Mass Compute | Start Building Matrix for person '.$person->getId().' | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
@@ -321,7 +321,7 @@ class MassComputeManager
      *
      * @return MassMatrix
      */
-    private function linkCarpoolers(array $matchings)
+    private function linkCarpoolers(array $matchings): MassMatrix
     {
         if (count($matchings) > 0) {
             $fastestMassPerson1Id = null;

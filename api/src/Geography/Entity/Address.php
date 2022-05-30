@@ -951,7 +951,7 @@ class Address implements \JsonSerializable
      *
      * @return bool
      */
-    public function isSame(array $compare, bool $replace = false)
+    public function isSame(array $compare, bool $replace = false): bool
     {
         if (isset($compare['streetAddress']) && $this->getStreetAddress() != $compare['streetAddress']) {
             return false;

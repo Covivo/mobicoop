@@ -48,7 +48,7 @@ class CommunitySubscriber implements EventSubscriberInterface
         $this->actionRepository = $actionRepository;
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             CommunityNewMembershipRequestEvent::NAME => 'onCommunityNewMembershipRequest',
@@ -67,7 +67,7 @@ class CommunitySubscriber implements EventSubscriberInterface
      * @param CommunityNewMembershipRequestEvent $event
      * @return void
      */
-    public function onCommunityNewMembershipRequest(CommunityNewMembershipRequestEvent $event)
+    public function onCommunityNewMembershipRequest(CommunityNewMembershipRequestEvent $event): void
     {
         // the recipient is the creator of community
         $communityRecipient = ($event->getCommunityUser()->getCommunity()->getUser());
@@ -91,7 +91,7 @@ class CommunitySubscriber implements EventSubscriberInterface
      * @param CommunityNewMemberEvent $event
      * @return void
      */
-    public function onCommunityMember(CommunityNewMemberEvent $event)
+    public function onCommunityMember(CommunityNewMemberEvent $event): void
     {
         // the recipient is the new community member
         $communityRecipient = ($event->getCommunityUser()->getCommunity()->getUser());
@@ -115,7 +115,7 @@ class CommunitySubscriber implements EventSubscriberInterface
      * @param CommunityCreatedEvent $event
      * @return void
      */
-    public function onCommunityCreated(CommunityCreatedEvent $event)
+    public function onCommunityCreated(CommunityCreatedEvent $event): void
     {
         // the recipient is the new community member
         $communityRecipient = ($event->getCommunity()->getUser());
@@ -135,7 +135,7 @@ class CommunitySubscriber implements EventSubscriberInterface
      * @param CommunityMembershipAcceptedEvent $event
      * @return void
      */
-    public function onCommunityMembershipAccepted(CommunityMembershipAcceptedEvent $event)
+    public function onCommunityMembershipAccepted(CommunityMembershipAcceptedEvent $event): void
     {
         // the recipient is the creator of community
         $communityRecipient = ($event->getUser());
@@ -150,7 +150,7 @@ class CommunitySubscriber implements EventSubscriberInterface
      * @param CommunityMembershipPendingEvent $event
      * @return void
      */
-    public function onCommunityMembershipPending(CommunityMembershipPendingEvent $event)
+    public function onCommunityMembershipPending(CommunityMembershipPendingEvent $event): void
     {
         // the recipient is the creator of community
         $communityRecipient = ($event->getUser());
@@ -165,7 +165,7 @@ class CommunitySubscriber implements EventSubscriberInterface
      * @param CommunityMembershipRefusedEvent $event
      * @return void
      */
-    public function onCommunityMembershipRefused(CommunityMembershipRefusedEvent $event)
+    public function onCommunityMembershipRefused(CommunityMembershipRefusedEvent $event): void
     {
         // the recipient is the creator of community
         $communityRecipient = ($event->getUser());

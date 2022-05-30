@@ -56,7 +56,7 @@ final class UserCheckPasswordTokenCollectionDataProvider implements CollectionDa
         return User::class === $resourceClass && $operationName === "checkPasswordToken";
     }
     
-    public function getCollection(string $resourceClass, string $operationName = null, array $context = [])
+    public function getCollection(string $resourceClass, string $operationName = null, array $context = []): iterable
     {
         if (
             is_null($this->request->get("pwdToken"))

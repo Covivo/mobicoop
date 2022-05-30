@@ -112,7 +112,7 @@ final class PeliasSearch extends AbstractHttpProvider implements Provider
      *
      * @return Collection
      */
-    private function executeQuery(string $url): AddressCollection
+    private function executeQuery(string $url): Collection
     {
         $content = $this->getUrlContents($url);
         $json = json_decode($content, true);
@@ -212,7 +212,7 @@ final class PeliasSearch extends AbstractHttpProvider implements Provider
      *
      * @return null|string
      */
-    protected function guessLocality(array $components)
+    protected function guessLocality(array $components): ?string
     {
         $localityKeys = ['city', 'town', 'village', 'hamlet'];
         return $this->guessBestComponent($components, $localityKeys);
@@ -222,7 +222,7 @@ final class PeliasSearch extends AbstractHttpProvider implements Provider
      *
      * @return null|string
      */
-    protected function guessStreetName(array $components)
+    protected function guessStreetName(array $components): ?string
     {
         $streetNameKeys = ['road', 'street', 'street_name', 'residential'];
         return $this->guessBestComponent($components, $streetNameKeys);
@@ -232,7 +232,7 @@ final class PeliasSearch extends AbstractHttpProvider implements Provider
      *
      * @return null|string
      */
-    protected function guessSubLocality(array $components)
+    protected function guessSubLocality(array $components): ?string
     {
         $subLocalityKeys = ['neighbourhood', 'city_district'];
         return $this->guessBestComponent($components, $subLocalityKeys);
@@ -243,7 +243,7 @@ final class PeliasSearch extends AbstractHttpProvider implements Provider
      *
      * @return null|string
      */
-    protected function guessBestComponent(array $components, array $keys)
+    protected function guessBestComponent(array $components, array $keys): ?string
     {
         foreach ($keys as $key) {
             if (isset($components[$key]) && !empty($components[$key])) {

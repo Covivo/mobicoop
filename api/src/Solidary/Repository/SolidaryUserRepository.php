@@ -83,7 +83,7 @@ class SolidaryUserRepository
      * @param int $id               The user id
      * @return SolidaryUser|null    The SolidaryUser if found, null if not found
      */
-    public function findByUserId(int $id)
+    public function findByUserId(int $id): ?SolidaryUser
     {
         $query = $this->repository->createQueryBuilder('su')
         ->join('su.user', 'u')
@@ -99,7 +99,7 @@ class SolidaryUserRepository
      * @param string $email
      * @return SolidaryUser|null
      */
-    public function findByEmail(string $email)
+    public function findByEmail(string $email): ?SolidaryUser
     {
         $query = $this->repository->createQueryBuilder('v')
         ->join('v.user', 'u')
@@ -115,7 +115,7 @@ class SolidaryUserRepository
      * @param SolidarySearch $solidaryTransportSearch
      * @return array|null
      */
-    public function findForASolidaryTransportSearch(SolidarySearch $solidaryTransportSearch): array
+    public function findForASolidaryTransportSearch(SolidarySearch $solidaryTransportSearch): ?array
     {
 
         // Get the criteria of the beneficiary's proposal
@@ -274,7 +274,7 @@ class SolidaryUserRepository
      * @param array $filters Optionnal Filters on SolidaryUser
      * @return SolidaryUser[]
      */
-    public function findSolidaryUsers(array $filters)
+    public function findSolidaryUsers(array $filters): array
     {
         $query = $this->repository->createQueryBuilder('su')
         ->join('su.user', 'u');

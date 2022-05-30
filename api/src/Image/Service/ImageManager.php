@@ -19,37 +19,34 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Image\Service;
 
-use App\Image\Entity\Image;
+use App\Community\Entity\Community;
+use App\Community\Repository\CommunityRepository;
+use App\Editorial\Entity\Editorial;
+use App\Editorial\Repository\EditorialRepository;
 use App\Event\Entity\Event;
+use App\Event\Repository\EventRepository;
+use App\Gamification\Entity\Badge;
+use App\Gamification\Repository\BadgeRepository;
+use App\Image\Entity\Image;
+use App\Image\Exception\ImageException;
+use App\Image\Exception\OwnerNotFoundException;
+use App\Image\Repository\ImageRepository;
 use App\MassCommunication\Entity\Campaign;
 use App\MassCommunication\Repository\CampaignRepository;
 use App\RelayPoint\Entity\RelayPoint;
 use App\RelayPoint\Repository\RelayPointRepository;
+use App\Service\FileManager;
 use App\User\Entity\User;
-use App\Gamification\Entity\Badge;
-use App\Community\Entity\Community;
+use App\User\Repository\UserRepository;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Service\FileManager;
+use ProxyManager\Exception\FileNotWritableException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\Filesystem\Filesystem;
-use App\Event\Repository\EventRepository;
-use App\Community\Repository\CommunityRepository;
-use App\Editorial\Entity\Editorial;
-use App\User\Repository\UserRepository;
-use App\Image\Repository\ImageRepository;
-use App\Image\Exception\OwnerNotFoundException;
-use App\Image\Exception\ImageException;
-use Symfony\Component\Filesystem\Exception\FileNotFoundException;
-use ProxyManager\Exception\FileNotWritableException;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
-use App\Gamification\Repository\BadgeRepository;
-use App\Editorial\Repository\EditorialRepository;
 
 /**
  * Image manager.
@@ -78,21 +75,13 @@ class ImageManager
     private $badgeRepository;
     private $editorialRepository;
 
-
     /**
      * Constructor.
      *
-     * @param EventRepository $eventRepository
-     * @param CommunityRepository $communityRepository
-     * @param UserRepository $userRepository
-     * @param ImageRepository $imageRepository
-     * @param FileManager $fileManager
-     * @param ContainerInterface $container
-     * @param LoggerInterface $loggerMaintenance
-     * @param CampaignRepository $campaign
-     * @param BadgeRepository $badge
+     * @param LoggerInterface     $loggerMaintenance
+     * @param CampaignRepository  $campaign
+     * @param BadgeRepository     $badge
      * @param EditorialRepository $editorial
-     * @param array $types
      */
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -127,10 +116,10 @@ class ImageManager
         $this->badgeRepository = $badgeRepository;
         $this->editorialRepository = $editorialRepository;
     }
-    
+
     /**
      * Get the owner of the image.
-     * @param Image $image
+     *
      * @throws OwnerNotFoundException
      */
     public function getOwner(Image $image)
@@ -138,127 +127,152 @@ class ImageManager
         if (!is_null($image->getEventId())) {
             // the image is an image for an event
             return $this->eventRepository->find($image->getEventId());
-        } elseif (!is_null($image->getEvent())) {
+        }
+        if (!is_null($image->getEvent())) {
             // the image is an image for an event
             return $this->eventRepository->find($image->getEvent()->getId());
-        } elseif (!is_null($image->getCommunityId())) {
+        }
+        if (!is_null($image->getCommunityId())) {
             // the image is an image for a community
             return $this->communityRepository->find($image->getCommunityId());
-        } elseif (!is_null($image->getCommunity())) {
+        }
+        if (!is_null($image->getCommunity())) {
             // the image is an image for a community
             return $this->communityRepository->find($image->getCommunity()->getId());
-        } elseif (!is_null($image->getUserId())) {
+        }
+        if (!is_null($image->getUserId())) {
             // the image is an image for a user
             return $this->userRepository->find($image->getUserId());
-        } elseif (!is_null($image->getUser())) {
+        }
+        if (!is_null($image->getUser())) {
             // the image is an image for a user
             return $this->userRepository->find($image->getUser()->getId());
-        } elseif (!is_null($image->getRelayPoint())) {
+        }
+        if (!is_null($image->getRelayPoint())) {
             // the image is an image for a relay point
             return $this->relayPointRepository->find($image->getRelayPoint()->getId());
-        } elseif (!is_null($image->getRelayPointId())) {
+        }
+        if (!is_null($image->getRelayPointId())) {
             // the image is an image for a relay point
             return $this->relayPointRepository->find($image->getRelayPointId());
-        } elseif (!is_null($image->getCampaign())) {
+        }
+        if (!is_null($image->getCampaign())) {
             // the image is an image for a campaign
             return $this->campaignRepository->find($image->getCampaign()->getId());
-        } elseif (!is_null($image->getCampaignId())) {
+        }
+        if (!is_null($image->getCampaignId())) {
             // the image is an image for a campaign
             return $this->campaignRepository->find($image->getCampaignId());
-        } elseif (!is_null($image->getBadgeIcon())) {
+        }
+        if (!is_null($image->getBadgeIcon())) {
             // the icon is an image for a badge
             return $this->badgeRepository->find($image->getBadgeIcon()->getId());
-        } elseif (!is_null($image->getBadgeIconId())) {
+        }
+        if (!is_null($image->getBadgeIconId())) {
             // the icon is an image for a badge
             return $this->badgeRepository->find($image->getBadgeIconId());
-        } elseif (!is_null($image->getBadgeDecoratedIcon())) {
+        }
+        if (!is_null($image->getBadgeDecoratedIcon())) {
             // the icon is an image for a badge
             return $this->badgeRepository->find($image->getBadgeDecoratedIcon()->getId());
-        } elseif (!is_null($image->getBadgeDecoratedIconId())) {
+        }
+        if (!is_null($image->getBadgeDecoratedIconId())) {
             // the icon is an image for a badge
             return $this->badgeRepository->find($image->getBadgeDecoratedIconId());
-        } elseif (!is_null($image->getBadgeImage())) {
+        }
+        if (!is_null($image->getBadgeImage())) {
             // the image is an image for a badge
             return $this->badgeRepository->find($image->getBadgeImage()->getId());
-        } elseif (!is_null($image->getBadgeImageId())) {
+        }
+        if (!is_null($image->getBadgeImageId())) {
             // the image is an image for a badge
             return $this->badgeRepository->find($image->getBadgeImageId());
-        } elseif (!is_null($image->getBadgeImageLight())) {
+        }
+        if (!is_null($image->getBadgeImageLight())) {
             // the imageLight is an image for a badge
             return $this->badgeRepository->find($image->getBadgeImageLight()->getId());
-        } elseif (!is_null($image->getBadgeImageLightId())) {
+        }
+        if (!is_null($image->getBadgeImageLightId())) {
             // the imageLight is an image for a badge
             return $this->badgeRepository->find($image->getBadgeImageLightId());
-        } elseif (!is_null($image->getEditorialId())) {
+        }
+        if (!is_null($image->getEditorialId())) {
             // the image is an image for an editorial
             return $this->editorialRepository->find($image->getEditorialId());
-        } elseif (!is_null($image->getEditorial())) {
+        }
+        if (!is_null($image->getEditorial())) {
             // the image is an image for an editorial
             return $this->editorialRepository->find($image->getEditorial()->getId());
         }
+
         throw new OwnerNotFoundException('The owner of this image cannot be found');
     }
-    
+
     /**
      * Returns the future position of a new image for an object.
-     * @param Image $image
-     * @return int
      */
-    public function getNextPosition(Image $image)
+    public function getNextPosition(Image $image): int
     {
         return $this->imageRepository->findNextPosition($this->getOwner($image));
     }
-    
+
     /**
      * Generates a filename depending on the class of the image owner.
-     * @param Image $image
+     *
      * @throws ImageException
-     * @return string
      */
-    public function generateFilename(Image $image)
+    public function generateFilename(Image $image): string
     {
         // note : the file extension will be added later (usually automatically) so we don't need to treat it now
         $owner = $this->getOwner($image);
-        $getRealClass =  ClassUtils::getClass($owner);
+        $getRealClass = ClassUtils::getClass($owner);
+
         switch ($getRealClass) {
             case Event::class:
                 // TODO : define a standard for the naming of the images (name of the owner + position ? uuid ?)
                 // for now, for an event, the filename will be the sanitized name of the event and the position of the image in the set
-                if ($fileName = $this->fileManager->sanitize($owner->getName() . " " . $image->getPosition()).".jpg") {
+                if ($fileName = $this->fileManager->sanitize($owner->getName().' '.$image->getPosition()).'.jpg') {
                     return $fileName;
                 }
+
                 break;
-            
+
             case Community::class:
                 // TODO : define a standard for the naming of the images (name of the owner + position ? uuid ?)
                 // for now, for a community, the filename will be the sanitized name of the community and the position of the image in the set
-                if ($fileName = $this->fileManager->sanitize($owner->getName() . " " . $image->getPosition()).".jpg") {
+                if ($fileName = $this->fileManager->sanitize($owner->getName().' '.$image->getPosition()).'.jpg') {
                     return $fileName;
                 }
+
                 break;
+
             case RelayPoint::class:
                 // TODO : define a standard for the naming of the images (name of the owner + position ? uuid ?)
                 // for now, for a community, the filename will be the sanitized name of the community and the position of the image in the set
-                if ($fileName = $this->fileManager->sanitize($owner->getName() . " " . $image->getPosition()).".jpg") {
+                if ($fileName = $this->fileManager->sanitize($owner->getName().' '.$image->getPosition()).'.jpg') {
                     return $fileName;
                 }
+
                 break;
 
             case User::class:
                 // TODO : define a standard for the naming of the images (name of the owner + position ? uuid ?)
                 // for now, for an user, the filename will be the sanitized name of the user and the position of the image in the set
-                if ($fileName = $this->fileManager->sanitize($this->generateRandomName() . " " . $image->getPosition()).".jpg") {
-                    return $fileName;
-                }
-                break;
-            case Campaign::class:
-                // TODO : define a standard for the naming of the images (name of the owner + position ? uuid ?)
-                // for now, for an event, the filename will be the sanitized name of the event and the position of the image in the set
-                if ($fileName = $this->fileManager->sanitize($owner->getName() . " " . $image->getPosition()).".jpg") {
+                if ($fileName = $this->fileManager->sanitize($this->generateRandomName().' '.$image->getPosition()).'.jpg') {
                     return $fileName;
                 }
 
                 break;
+
+            case Campaign::class:
+                // TODO : define a standard for the naming of the images (name of the owner + position ? uuid ?)
+                // for now, for an event, the filename will be the sanitized name of the event and the position of the image in the set
+                if ($fileName = $this->fileManager->sanitize($owner->getName().' '.$image->getPosition()).'.jpg') {
+                    return $fileName;
+                }
+
+                break;
+
             case Badge::class:
                 // TODO : define a standard for the naming of the images (name of the owner + position ? uuid ?)
                 // for now, for a badge, the original filename will be used
@@ -267,29 +281,30 @@ class ImageManager
                 }
 
                 break;
+
             case Editorial::class:
                 // TODO : define a standard for the naming of the images (name of the owner + position ? uuid ?)
                 // for now, for a badge, the filename will be the sanitized name of the event and the position of the image in the set
-                if ($fileName = $this->fileManager->sanitize($owner->getTitle() . " " . $image->getPosition()).".jpg") {
+                if ($fileName = $this->fileManager->sanitize($owner->getTitle().' '.$image->getPosition()).'.jpg') {
                     return $fileName;
                 }
 
                 break;
-                
+
             default:
                 break;
         }
-        throw new ImageException('Cannot generate image filename for the owner of class ' . get_class($owner));
+
+        throw new ImageException('Cannot generate image filename for the owner of class '.get_class($owner));
     }
-    
+
     /**
      * Generates the different versions of the image (thumbnails).
-     * Returns the names of the generated versions
-     * @param Image $image
-     * @return array
+     * Returns the names of the generated versions.
+     *
      * @throws \ReflectionException
      */
-    public function generateVersions(Image $image)
+    public function generateVersions(Image $image): array
     {
         $owner = $this->getOwner($image);
         $versions = [];
@@ -298,7 +313,7 @@ class ImageManager
             $fileName = $image->getFileName();
             $extension = null;
             if ($extension = $this->fileManager->getExtension($fileName)) {
-                $fileName = substr($fileName, 0, -(strlen($extension)+1));
+                $fileName = substr($fileName, 0, -(strlen($extension) + 1));
             }
             $generatedVersion = $this->generateVersion(
                 $image,
@@ -310,17 +325,16 @@ class ImageManager
                 $extension ? $extension : 'nc',
                 $version['prefix']
             );
-            $versions[$version['filterSet']] = $this->dataUri . $generatedVersion;
+            $versions[$version['filterSet']] = $this->dataUri.$generatedVersion;
         }
+
         return $versions;
     }
 
     /**
-     * Regen all images versions
-     *
-     * @return void
+     * Regen all images versions.
      */
-    public function regenerateVersions()
+    public function regenerateVersions(): void
     {
         set_time_limit(3600);
         $images = $this->imageRepository->findAll();
@@ -329,41 +343,39 @@ class ImageManager
         }
     }
 
-
     /**
      * Get the different versions of the image (thumbnails).
-     * Returns the names of the generated versions
-     * @param Image $image
-     * @return array
+     * Returns the names of the generated versions.
+     *
      * @throws \ReflectionException
      */
-    public function getVersions(Image $image)
+    public function getVersions(Image $image): array
     {
         $versions = [];
         $owner = $this->getOwner($image);
         $types = $this->types[strtolower((new \ReflectionClass($owner))->getShortName())];
-        
+
         foreach ($types['versions'] as $version) {
             $fileName = $image->getFileName();
             $extension = null;
             if ($extension = $this->fileManager->getExtension($fileName)) {
-                $fileName = substr($fileName, 0, -(strlen($extension)+1));
+                $fileName = substr($fileName, 0, -(strlen($extension) + 1));
             }
-            $versionName = $types['folder']['versions'] . $version['prefix'] . $fileName . "." . $extension;
+            $versionName = $types['folder']['versions'].$version['prefix'].$fileName.'.'.$extension;
             if (file_exists($types['folder']['base'].$versionName)) {
-                $versions[$version['filterSet']] = $this->dataUri . $versionName;
+                $versions[$version['filterSet']] = $this->dataUri.$versionName;
             }
         }
 
         // Add the original version
-        $versions['original'] = $this->dataUri."".$types['folder']['plain']."".$image->getFileName();
+        $versions['original'] = $this->dataUri.''.$types['folder']['plain'].''.$image->getFileName();
 
         return $versions;
     }
-    
+
     /**
-     * Delete the different versions
-     * @param Image $image
+     * Delete the different versions.
+     *
      * @throws \ReflectionException
      */
     public function deleteVersions(Image $image): void
@@ -374,9 +386,9 @@ class ImageManager
             $fileName = $image->getFileName();
             $extension = null;
             if ($extension = $this->fileManager->getExtension($fileName)) {
-                $fileName = substr($fileName, 0, -(strlen($extension)+1));
+                $fileName = substr($fileName, 0, -(strlen($extension) + 1));
             }
-            $versionName = $types['folder']['base'].$types['folder']['versions'] . $version['prefix'] . $fileName . "." . $extension;
+            $versionName = $types['folder']['base'].$types['folder']['versions'].$version['prefix'].$fileName.'.'.$extension;
             if (file_exists($versionName)) {
                 unlink($versionName);
             }
@@ -384,9 +396,11 @@ class ImageManager
     }
 
     /**
-     * Delete the image base and delete the Entry in DB
-     * @param Image $image  The image to delete
-     * @param bool $flush   Flush immediately
+     * Delete the image base and delete the Entry in DB.
+     *
+     * @param Image $image The image to delete
+     * @param bool  $flush Flush immediately
+     *
      * @throws \ReflectionException
      */
     public function deleteBase(Image $image, bool $flush = true): void
@@ -394,7 +408,7 @@ class ImageManager
         $owner = $this->getOwner($image);
         $types = $this->types[strtolower((new \ReflectionClass($owner))->getShortName())];
 
-        $baseImage = $types['folder']['base'].$types['folder']['plain']. $image->getFileName();
+        $baseImage = $types['folder']['base'].$types['folder']['plain'].$image->getFileName();
         if (file_exists($baseImage)) {
             unlink($baseImage);
         }
@@ -404,17 +418,118 @@ class ImageManager
         }
     }
 
-    
+    /**
+     * Generate random file name.
+     */
+    public function generateRandomName(int $int = 15)
+    {
+        return bin2hex(random_bytes($int));
+    }
+
+    /**
+     * Remove the image at the given position, for the owner of the image.
+     *
+     * @param object $image    The owner
+     * @param int    $position The position of the image
+     */
+    public function removeImageAtPosition(object $owner, int $position): void
+    {
+        if (method_exists($owner, 'getImages')) {
+            foreach ($owner->getImages() as $image) {
+                if ($image->getPosition() == $position) {
+                    $this->deleteVersions($image);
+                    $this->deleteBase($image, true);
+
+                    break;
+                }
+            }
+        }
+    }
+
+    /**
+     * Remove all images without associated file.
+     */
+    public function removeFileless(): void
+    {
+        $images = $this->imageRepository->findAll();
+        foreach ($images as $image) {
+            $owner = $this->getOwner($image);
+            $getRealClass = ClassUtils::getClass($owner);
+
+            switch ($getRealClass) {
+                case Event::class:
+                    if (!file_exists(dirname(__FILE__).'/../../../public/upload/events/images/'.$image->getFileName())) {
+                        $this->loggerMaintenance->info('ImageManager : remove image '.$image->getFileName().' without associated file of the Event n°'.$owner->getId().' .'.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
+                        $this->deleteVersions($image);
+                        $this->deleteBase($image, false);
+                    }
+
+                    break;
+
+                case Community::class:
+                    if (!file_exists(dirname(__FILE__).'/../../../public/upload/communities/images/'.$image->getFileName())) {
+                        $this->loggerMaintenance->info('ImageManager : remove image '.$image->getFileName().' without associated file of the Community n°'.$owner->getId().' .'.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
+                        $this->deleteVersions($image);
+                        $this->deleteBase($image, false);
+                    }
+
+                    break;
+
+                case RelayPoint::class:
+                    if (!file_exists(dirname(__FILE__).'/../../../public/upload/relaypoints/images/'.$image->getFileName())) {
+                        $this->loggerMaintenance->info('ImageManager : remove image '.$image->getFileName().' without associated file of the RelayPoint n°'.$owner->getId().' .'.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
+                        $this->deleteVersions($image);
+                        $this->deleteBase($image, false);
+                    }
+
+                    break;
+
+                case User::class:
+                    if (!file_exists(dirname(__FILE__).'/../../../public/upload/users/images/'.$image->getFileName())) {
+                        $this->loggerMaintenance->info('ImageManager : remove image '.$image->getFileName().' without associated file of the User n°'.$owner->getId().' .'.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
+                        $this->deleteVersions($image);
+                        $this->deleteBase($image, false);
+                    }
+
+                    break;
+
+                case Campaign::class:
+                    if (!file_exists(dirname(__FILE__).'/../../../public/upload/masscommunication/images/'.$image->getFileName())) {
+                        $this->loggerMaintenance->info('ImageManager : remove image '.$image->getFileName().' without associated file of the Campaign n°'.$owner->getId().' .'.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
+                        $this->deleteVersions($image);
+                        $this->deleteBase($image, false);
+                    }
+
+                    break;
+
+                case Badge::class:
+                    if (!file_exists(dirname(__FILE__).'/../../../public/upload/badges/images/'.$image->getFileName())) {
+                        $this->loggerMaintenance->info('ImageManager : remove image '.$image->getFileName().' without associated file of the Badge n°'.$owner->getId().' .'.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
+                        $this->deleteVersions($image);
+                        $this->deleteBase($image, false);
+                    }
+
+                    break;
+
+                case Editorial::class:
+                    if (!file_exists(dirname(__FILE__).'/../../../public/upload/editorials/images/'.$image->getFileName())) {
+                        $this->loggerMaintenance->info('ImageManager : remove image '.$image->getFileName().' without associated file of the Editorial n°'.$owner->getId().' .'.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
+                        $this->deleteVersions($image);
+                        $this->deleteBase($image, false);
+                    }
+
+                    break;
+
+                default:
+                    break;
+            }
+        }
+        $this->entityManager->flush();
+    }
+
     /**
      * Generates a version of an image.
-     * @param Image $image
-     * @param string $baseFolder
-     * @param string $folderOrigin
-     * @param string $folderDestination
-     * @param string $fileName
-     * @param string $filter
-     * @param string $extension
-     * @param string $prefix
+     *
      * @return string
      */
     private function generateVersion(
@@ -427,140 +542,41 @@ class ImageManager
         string $extension,
         string $prefix
     ) {
-        $versionName = $prefix . $fileName . "." . $extension;
-        if (file_exists(dirname(__FILE__)."/../../../public/".$baseFolder.$folderOrigin.$image->getFileName())) {
+        $versionName = $prefix.$fileName.'.'.$extension;
+        if (file_exists(dirname(__FILE__).'/../../../public/'.$baseFolder.$folderOrigin.$image->getFileName())) {
             $liipImage = $this->dataManager->find($filter, $baseFolder.$folderOrigin.$image->getFileName());
             $resized = $this->filterManager->applyFilter($liipImage, $filter)->getContent();
-            $this->saveImage($resized, $versionName, dirname(__FILE__)."/../../../public/".$baseFolder.$folderDestination);
+            $this->saveImage($resized, $versionName, dirname(__FILE__).'/../../../public/'.$baseFolder.$folderDestination);
         }
+
         return $versionName;
     }
-    
+
     /**
      * Save a binay to a file.
      *
-     * @param String $blob      The binary string
-     * @param String $fileName  The file
-     * @param String $directory The folder
+     * @param string $blob      The binary string
+     * @param string $fileName  The file
+     * @param string $directory The folder
+     *
      * @throws \DomainException
      * @throws FileNotWritableException
      */
     private function saveImage($blob, $fileName, $directory)
     {
-        if ($blob == '') {
+        if ('' == $blob) {
             throw new \DomainException('Empty blob string');
         }
         if (!$file = fopen($directory.$fileName, 'w')) {
-            throw new FileNotWritableException('File ' . $directory . $fileName . ' is not writable');
+            throw new FileNotWritableException('File '.$directory.$fileName.' is not writable');
         }
         if (!fwrite($file, $blob)) {
-            throw new FileNotWritableException('Cannot write to ' . $directory . $fileName);
+            throw new FileNotWritableException('Cannot write to '.$directory.$fileName);
         }
         fclose($file);
     }
 
-    /**
-     * Generate random file name
-     *
-     * @param integer $int
-     * @return void
-     */
-    public function generateRandomName(int $int=15)
-    {
-        $randomName =  bin2hex(random_bytes($int));
-    
-        return $randomName;
-    }
-
-    /**
-     * Remove the image at the given position, for the owner of the image
-     *
-     * @param object $image     The owner
-     * @param integer $position The position of the image
-     * @return void
-     */
-    public function removeImageAtPosition(object $owner, int $position)
-    {
-        if (method_exists($owner, 'getImages')) {
-            foreach ($owner->getImages() as $image) {
-                if ($image->getPosition() == $position) {
-                    $this->deleteVersions($image);
-                    $this->deleteBase($image, true);
-                    break;
-                }
-            }
-        }
-    }
-
-    /**
-     * Remove all images without associated file
-     *
-     * @return void
-     */
-    public function removeFileless()
-    {
-        $images = $this->imageRepository->findAll();
-        foreach ($images as $image) {
-            $owner = $this->getOwner($image);
-            $getRealClass =  ClassUtils::getClass($owner);
-            switch ($getRealClass) {
-                case Event::class:
-                    if (!file_exists(dirname(__FILE__)."/../../../public/upload/events/images/".$image->getFileName())) {
-                        $this->loggerMaintenance->info("ImageManager : remove image ". $image->getFileName() ." without associated file of the Event n°". $owner->getId() . " ." . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-                        $this->deleteVersions($image);
-                        $this->deleteBase($image, false);
-                    }
-                    break;
-                case Community::class:
-                    if (!file_exists(dirname(__FILE__)."/../../../public/upload/communities/images/".$image->getFileName())) {
-                        $this->loggerMaintenance->info("ImageManager : remove image ". $image->getFileName() ." without associated file of the Community n°". $owner->getId() . " ." . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-                        $this->deleteVersions($image);
-                        $this->deleteBase($image, false);
-                    }
-                    break;
-                case RelayPoint::class:
-                    if (!file_exists(dirname(__FILE__)."/../../../public/upload/relaypoints/images/".$image->getFileName())) {
-                        $this->loggerMaintenance->info("ImageManager : remove image ". $image->getFileName() ." without associated file of the RelayPoint n°". $owner->getId() . " ." . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-                        $this->deleteVersions($image);
-                        $this->deleteBase($image, false);
-                    }
-                    break;
-                case User::class:
-                    if (!file_exists(dirname(__FILE__)."/../../../public/upload/users/images/".$image->getFileName())) {
-                        $this->loggerMaintenance->info("ImageManager : remove image ". $image->getFileName() ." without associated file of the User n°". $owner->getId() . " ." . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-                        $this->deleteVersions($image);
-                        $this->deleteBase($image, false);
-                    }
-                    break;
-                case Campaign::class:
-                    if (!file_exists(dirname(__FILE__)."/../../../public/upload/masscommunication/images/".$image->getFileName())) {
-                        $this->loggerMaintenance->info("ImageManager : remove image ". $image->getFileName() ." without associated file of the Campaign n°". $owner->getId() . " ." . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-                        $this->deleteVersions($image);
-                        $this->deleteBase($image, false);
-                    }
-                    break;
-                case Badge::class:
-                    if (!file_exists(dirname(__FILE__)."/../../../public/upload/badges/images/".$image->getFileName())) {
-                        $this->loggerMaintenance->info("ImageManager : remove image ". $image->getFileName() ." without associated file of the Badge n°". $owner->getId() . " ." . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-                        $this->deleteVersions($image);
-                        $this->deleteBase($image, false);
-                    }
-                    break;
-                case Editorial::class:
-                    if (!file_exists(dirname(__FILE__)."/../../../public/upload/editorials/images/".$image->getFileName())) {
-                        $this->loggerMaintenance->info("ImageManager : remove image ". $image->getFileName() ." without associated file of the Editorial n°". $owner->getId() . " ." . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-                        $this->deleteVersions($image);
-                        $this->deleteBase($image, false);
-                    }
-                    break;
-                default:
-                    break;
-            }
-        }
-        $this->entityManager->flush();
-    }
-
-    /** TODO : create methods to :
+    /* TODO : create methods to :
      * - modify the position and filename of images of a set if positions change (switch between images)
      * - modify the position and filename of images of a set if an image of the set is deleted
      * - recreate all images of a set (if an error occurs, or if an image is accidentally deleted, or if the name of the owner changes)

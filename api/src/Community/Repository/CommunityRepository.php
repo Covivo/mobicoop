@@ -55,7 +55,7 @@ class CommunityRepository
      *
      * @return null|Community
      */
-    public function findAll(): ?array
+    public function findAll(): ?Community
     {
         return $this->repository->findAll();
     }
@@ -65,7 +65,7 @@ class CommunityRepository
      *
      * @return null|Community
      */
-    public function findBy(array $criteria)
+    public function findBy(array $criteria): ?Community
     {
         return $this->repository->findBy($criteria);
     }
@@ -87,7 +87,7 @@ class CommunityRepository
      *
      * @return QueryBuilder
      */
-    public function findAvailableCommunitiesForUser(?User $user, ?array $orderBy = null)
+    public function findAvailableCommunitiesForUser(?User $user, ?array $orderBy = null): QueryBuilder
     {
         if ($user) {
             $query = $this->repository->createQueryBuilder('c')
@@ -154,7 +154,7 @@ class CommunityRepository
      *
      * @return array
      */
-    public function getOwnedCommunities(int $userId): ?array
+    public function getOwnedCommunities(int $userId): array
     {
         return $this->repository->createQueryBuilder('c')
             ->where('c.user = :userId')
@@ -167,7 +167,7 @@ class CommunityRepository
      *
      * @return bool
      */
-    public function isRegistered(Community $community, User $user)
+    public function isRegistered(Community $community, User $user): bool
     {
         $result = $this->repository->createQueryBuilder('c')
             ->join('c.communityUsers', 'cu')
@@ -244,7 +244,7 @@ class CommunityRepository
      *
      * @return int
      */
-    public function countCommunities(): ?int
+    public function countCommunities(): int
     {
         $query = $this->repository->createQueryBuilder('c')
             ->select('count(c.id)')

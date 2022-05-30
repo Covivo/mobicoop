@@ -32,7 +32,7 @@ final class ReviewDataPersister implements ContextAwareDataPersisterInterface
 {
     private $security;
     private $reviewManager;
-    
+
     public function __construct(Security $security, ReviewManager $reviewManager)
     {
         $this->security = $security;

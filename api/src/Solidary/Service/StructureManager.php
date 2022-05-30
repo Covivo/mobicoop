@@ -62,7 +62,7 @@ class StructureManager
      * @param integer $structureId
      * @return Structure
      */
-    public function getStructure(int $structureId): ?Structure
+    public function getStructure(int $structureId): Structure
     {
         return $this->structureRepository->find($structureId);
     }
@@ -74,7 +74,7 @@ class StructureManager
      * @param integer $structureId
      * @return array
      */
-    public function getStructureProofs(int $structureId): ?array
+    public function getStructureProofs(int $structureId): array
     {
 
         // We get the structure
@@ -90,7 +90,7 @@ class StructureManager
      * @param integer $structureId
      * @return array
      */
-    public function getStructureSubjects(int $structureId): ?array
+    public function getStructureSubjects(int $structureId): array
     {
 
         // We get the structure

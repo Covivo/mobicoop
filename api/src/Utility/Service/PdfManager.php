@@ -59,7 +59,7 @@ class PdfManager
      * @param array $dataToPdf
      * @return String link to the pdf file.
      */
-    public function generatePDF(array $dataToPdf)
+    public function generatePDF(array $dataToPdf): string
     {
         $sessionLocale= $this->translator->getLocale();
         // add locale date translation on twig template

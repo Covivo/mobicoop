@@ -56,7 +56,7 @@ class ParagraphRepository
      * @param Paragraph $paragraph
      * @return Paragraph
      */
-    public function findNext(Paragraph $paragraph)
+    public function findNext(Paragraph $paragraph): Paragraph
     {
         $query = $this->repository->createQueryBuilder('p')
         ->andWhere('p.position = :position')
@@ -75,7 +75,7 @@ class ParagraphRepository
      * @param Paragraph $paragraph
      * @return Paragraph
      */
-    public function findPrevious(Paragraph $paragraph)
+    public function findPrevious(Paragraph $paragraph): Paragraph
     {
         $query = $this->repository->createQueryBuilder('p')
         ->andWhere('p.position = :position')

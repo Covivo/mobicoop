@@ -55,7 +55,7 @@ final class PaymentItemCollectionDataProvider implements CollectionDataProviderI
         return PaymentItem::class === $resourceClass;
     }
 
-    public function getCollection(string $resourceClass, string $operationName = null)
+    public function getCollection(string $resourceClass, string $operationName = null): iterable
     {
 
         // we initialize the frequency

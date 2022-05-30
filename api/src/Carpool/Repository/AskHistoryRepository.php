@@ -43,7 +43,7 @@ class AskHistoryRepository
      * @param string $action
      * @return AskHistory
      */
-    public function findLastByAskAndStatus(Ask $ask, int $status)
+    public function findLastByAskAndStatus(Ask $ask, int $status): AskHistory
     {
         $query = $this->repository->createQueryBuilder('ah')
         ->where('ah.ask = :ask and ah.status=:status')
@@ -72,7 +72,7 @@ class AskHistoryRepository
      * @param Ask $ask  The ask
      * @return AskHistory|null  The ask history found
      */
-    public function findLastAskHistoryWithMessage(Ask $ask)
+    public function findLastAskHistoryWithMessage(Ask $ask): ?AskHistory
     {
         $query = $this->repository->createQueryBuilder('ah')
         ->join('ah.ask', 'a')

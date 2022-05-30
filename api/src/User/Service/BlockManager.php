@@ -54,7 +54,7 @@ class BlockManager
      * @param User|null $user    The User who made the block
      * @return User[]
      */
-    public function getBlockedUsers(?User $user = null): ?array
+    public function getBlockedUsers(?User $user = null): array
     {
         $users = [];
         if (!is_null($user)) {
@@ -77,7 +77,7 @@ class BlockManager
      * @param User|null $user    The User blocked
      * @return User[]
      */
-    public function getBlockedByUsers(?User $user = null): ?array
+    public function getBlockedByUsers(?User $user = null): array
     {
         $users = [];
         if (!is_null($user)) {
@@ -101,7 +101,7 @@ class BlockManager
      * @param BlockEntity $blockEntity
      * @return Block
      */
-    public function makeBlockRessource(BlockEntity $blockEntity)
+    public function makeBlockRessource(BlockEntity $blockEntity): Block
     {
         $block = new Block();
         $block->setUser($blockEntity->getBlockedUser());
@@ -168,7 +168,7 @@ class BlockManager
      * @param User $user2
      * @return bool
      */
-    public function getInvolvedInABlock(User $user1, User $user2): array
+    public function getInvolvedInABlock(User $user1, User $user2): bool
     {
         return $this->blockRepository->findAllByUsersInvolved($user1, $user2);
     }

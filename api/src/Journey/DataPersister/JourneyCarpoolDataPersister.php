@@ -55,8 +55,8 @@ final class JourneyCarpoolDataPersister implements ContextAwareDataPersisterInte
         if (!$this->security->getUser() instanceof User) {
             throw new LogicException("Only User can do this action");
         }
-        
-        
+
+
         return $this->journeyManager->findCarpools($data->getProposalId(), $this->security->getUser());
     }
 

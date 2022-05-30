@@ -145,7 +145,7 @@ class PaymentDataProvider
      * @param PaymentProfile $paymentProfile
      * @return BankAccount|null
      */
-    public function getPaymentProfileBankAccounts(PaymentProfile $paymentProfile)
+    public function getPaymentProfileBankAccounts(PaymentProfile $paymentProfile): ?BankAccount
     {
         $this->checkPaymentConfiguration();
         return $this->providerInstance->getBankAccounts($paymentProfile);
@@ -157,7 +157,7 @@ class PaymentDataProvider
      * @param BankAccount $user     The BankAccount to create
      * @return BankAccount|null
      */
-    public function addBankAccount(BankAccount $bankAccount)
+    public function addBankAccount(BankAccount $bankAccount): ?BankAccount
     {
         $this->checkPaymentConfiguration();
         return $this->providerInstance->addBankAccount($bankAccount);
@@ -169,7 +169,7 @@ class PaymentDataProvider
      * @param BankAccount $user     The BankAccount to create
      * @return BankAccount|null
      */
-    public function disableBankAccount(BankAccount $bankAccount)
+    public function disableBankAccount(BankAccount $bankAccount): ?BankAccount
     {
         $this->checkPaymentConfiguration();
         return $this->providerInstance->disableBankAccount($bankAccount);
@@ -183,7 +183,7 @@ class PaymentDataProvider
      * @param bool $callExternalProvider    true : make the call to the external provider to get bank accounts and wallets
      * @return PaymentProfile[]|null
      */
-    public function getPaymentProfiles(User $user, $callExternalProvider=true)
+    public function getPaymentProfiles(User $user, $callExternalProvider=true): ?array
     {
         $this->checkPaymentConfiguration();
 
@@ -217,7 +217,7 @@ class PaymentDataProvider
      * @param Address|null $address The address to use to the registration
      * @return string The identifier
      */
-    public function registerUser(User $user, Address $address=null)
+    public function registerUser(User $user, Address $address=null): string
     {
         $this->checkPaymentConfiguration();
         return $this->providerInstance->registerUser($user, $address);
@@ -230,7 +230,7 @@ class PaymentDataProvider
      * @param User $user
      * @return string The identifier
      */
-    public function updateUser(User $user)
+    public function updateUser(User $user): string
     {
         $this->checkPaymentConfiguration();
         return $this->providerInstance->updateUser($user);
@@ -242,7 +242,7 @@ class PaymentDataProvider
      * @param $identifier Identifier of the User (the one used on the provider's platform)
      * @return Wallet The created wallet
      */
-    public function createWallet(string $identifier)
+    public function createWallet(string $identifier): Wallet
     {
         $this->checkPaymentConfiguration();
         $wallet = new Wallet();
@@ -291,7 +291,7 @@ class PaymentDataProvider
      * @param array $creditors
      * @return void
      */
-    public function processElectronicPayment(User $debtor, array $creditors)
+    public function processElectronicPayment(User $debtor, array $creditors): void
     {
         $this->checkPaymentConfiguration();
         $this->providerInstance->processElectronicPayment($debtor, $creditors);

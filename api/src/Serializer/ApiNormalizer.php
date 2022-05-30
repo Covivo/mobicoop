@@ -101,12 +101,12 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
         $this->currentRewardStep = $rewardStep;
     }
 
-    public function supportsNormalization($data, $format = null)
+    public function supportsNormalization($data, $format = null): bool
     {
         return $this->decorated->supportsNormalization($data, $format) && $this->security->getUser() instanceof User;
     }
 
-    public function normalize($object, $format = null, array $context = [])
+    public function normalize($object, $format = null, array $context = []): array|string|int|float|bool|\ArrayObject|null
     {
         if ($this->log) {
             $this->logger->info('Api Normalize on '.get_class($object));
@@ -201,12 +201,12 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
         return $data;
     }
 
-    public function supportsDenormalization($data, $type, $format = null)
+    public function supportsDenormalization($data, $type, $format = null): bool
     {
         return $this->decorated->supportsDenormalization($data, $type, $format);
     }
 
-    public function denormalize($data, $class, $format = null, array $context = [])
+    public function denormalize($data, $class, $format = null, array $context = []): mixed
     {
         if ($this->log) {
             $this->logger->info('Api Denormalize on '.$class);

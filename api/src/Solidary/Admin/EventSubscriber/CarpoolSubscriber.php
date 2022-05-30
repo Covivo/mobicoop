@@ -39,7 +39,7 @@ class CarpoolSubscriber implements EventSubscriberInterface
         $this->solidaryManager = $solidaryManager;
     }
     
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             MatchingNewEvent::NAME => 'onNewMatching',
@@ -53,7 +53,7 @@ class CarpoolSubscriber implements EventSubscriberInterface
      * @param MatchingNewEvent $event   The event
      * @return void
      */
-    public function onNewMatching(MatchingNewEvent $event)
+    public function onNewMatching(MatchingNewEvent $event): void
     {
         // check if the request proposal is related to a SolidaryRecord
         // we also check the potential linked proposal because only the outward proposal is related to the SolidaryRecord

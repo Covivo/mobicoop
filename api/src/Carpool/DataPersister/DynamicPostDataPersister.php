@@ -36,7 +36,7 @@ final class DynamicPostDataPersister implements ContextAwareDataPersisterInterfa
     private $security;
     private $request;
     private $dynamicManager;
-    
+
     public function __construct(Security $security, DynamicManager $dynamicManager, RequestStack $requestStack)
     {
         $this->security = $security;

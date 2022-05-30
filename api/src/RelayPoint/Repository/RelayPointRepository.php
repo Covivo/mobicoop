@@ -70,7 +70,7 @@ class RelayPointRepository
      *
      * @return null|array|\Doctrine\DBAL\Driver\Statement|mixed The relay points found
      */
-    public function findByNameAndStatus(string $name, int $status)
+    public function findByNameAndStatus(string $name, int $status): mixed
     {
         $words = explode(' ', $name);
         $searchString = "rp.name like '%".implode("%' and rp.name like '%", $words)."%'";
@@ -128,7 +128,7 @@ class RelayPointRepository
      *
      * @return null|array|\Doctrine\DBAL\Driver\Statement|mixed The relay points found
      */
-    public function findAllInTerritory(Territory $territory)
+    public function findAllInTerritory(Territory $territory): mixed
     {
         $query = $this->entityManager->createQuery('
             SELECT rp from App\\RelayPoint\\Entity\\RelayPoint rp, a from App\\Geography\\Entity\\Address a, App\\Geography\\Entity\\Territory t
@@ -149,7 +149,7 @@ class RelayPointRepository
      *
      * @return null|array The relay points found
      */
-    public function findRelayPoints(User $user = null, string $operationName, array $context = []): PaginatorInterface
+    public function findRelayPoints(User $user = null, string $operationName, array $context = []): ?array
     {
         $query = $this->repository->createQueryBuilder('rp');
 

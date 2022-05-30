@@ -54,7 +54,7 @@ final class SolidaryBeneficiaryCollectionDataProvider implements CollectionDataP
         ;
     }
 
-    public function getCollection(string $resourceClass, string $operationName = null)
+    public function getCollection(string $resourceClass, string $operationName = null): iterable
     {
         // We check and sanitize the filters
         $filters = null;

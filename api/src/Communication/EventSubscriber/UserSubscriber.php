@@ -54,7 +54,7 @@ class UserSubscriber implements EventSubscriberInterface
         $this->notificationSsoRegistration = $notificationSsoRegistration;
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             UserRegisteredEvent::NAME => 'onUserRegistered',

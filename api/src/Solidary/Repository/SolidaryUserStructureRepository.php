@@ -68,7 +68,7 @@ class SolidaryUserStructureRepository
      * @param integer $solidaryUserId   The id of the SolidaryUser
      * @return SolidaryUserStructure|null     The SolidaryUserStructure found, or null if not found
      */
-    public function findByStructureAndSolidaryUser(int $structureId, int $solidaryUserId)
+    public function findByStructureAndSolidaryUser(int $structureId, int $solidaryUserId): ?SolidaryUserStructure
     {
         $query = $this->repository->createQueryBuilder('sus')
         ->join('sus.solidaryUser', 'su')

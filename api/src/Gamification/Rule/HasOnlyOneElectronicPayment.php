@@ -38,7 +38,7 @@ class HasOnlyOneElectronicPayment implements GamificationRuleInterface
      * @param  $sequenceItem
      * @return bool
      */
-    public function execute($log, $sequenceItem)
+    public function execute($log, $sequenceItem): bool
     {
         // we check if the user has only one electronic payement
         $carpoolItems = $log->getCarpoolPayment()->getCarpoolItems();

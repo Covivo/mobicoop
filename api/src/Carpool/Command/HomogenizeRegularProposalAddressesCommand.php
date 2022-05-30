@@ -51,7 +51,7 @@ class HomogenizeRegularProposalAddressesCommand extends Command
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         // comment to activate the command
         return 0;

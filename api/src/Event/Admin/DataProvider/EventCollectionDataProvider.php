@@ -56,7 +56,7 @@ final class EventCollectionDataProvider implements CollectionDataProviderInterfa
         return Event::class === $resourceClass && $operationName === "ADMIN_get";
     }
 
-    public function getCollection(string $resourceClass, string $operationName = null, array $context = [])
+    public function getCollection(string $resourceClass, string $operationName = null, array $context = []): iterable
     {
         // We get only the QueryBuilder object. That way, we can apply filter on it
         $queryBuilder = $this->eventManager->getInternalEventsQueryBuilder();

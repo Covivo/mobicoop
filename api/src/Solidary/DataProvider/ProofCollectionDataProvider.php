@@ -55,7 +55,7 @@ final class ProofCollectionDataProvider implements CollectionDataProviderInterfa
         return Proof::class === $resourceClass;
     }
 
-    public function getCollection(string $resourceClass, string $operationName = null)
+    public function getCollection(string $resourceClass, string $operationName = null): iterable
     {
         $structureId = null;
 

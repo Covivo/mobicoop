@@ -68,7 +68,7 @@ class ApidaeProvider implements EventProviderInterface
      *
      * @return Array array of events
      */
-    public function getEvents()
+    public function getEvents(): array
     {
         $dataProvider = new DataProvider($this->serverUrl);
 
@@ -109,7 +109,7 @@ class ApidaeProvider implements EventProviderInterface
      *
      * @return void
      */
-    public function getEvent()
+    public function getEvent(): void
     {
     }
 
@@ -119,7 +119,7 @@ class ApidaeProvider implements EventProviderInterface
      * @param Array $apidaeEvents array of Apidea Events
      * @return Array array of events
      */
-    public function createEvents($apidaeEvents)
+    public function createEvents($apidaeEvents): array
     {
         // apidae data structuration : http://dev.apidae-tourisme.com/fr/documentation-technique/v2/formats-des-objets
         // http://dev.apidae-tourisme.com/fr/documentation-technique/v2/formats-des-objets/types-dobjet-touristique

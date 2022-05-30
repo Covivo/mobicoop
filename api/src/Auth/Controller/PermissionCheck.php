@@ -50,7 +50,7 @@ class PermissionCheck
      * @param array $data
      * @return Response
      */
-    public function __invoke(array $data): ?Permission
+    public function __invoke(array $data): Response
     {
         return $this->authManager->getPermissionForAuthItem($this->request->get('item'), ['id'=>$this->request->get("id")]);
     }

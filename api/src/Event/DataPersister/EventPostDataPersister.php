@@ -35,7 +35,7 @@ final class EventPostDataPersister implements ContextAwareDataPersisterInterface
     {
         $this->eventManager = $eventManager;
     }
-  
+
     public function supports($data, array $context = []): bool
     {
         return $data instanceof Event && isset($context['collection_operation_name']) && $context['collection_operation_name'] === 'post';

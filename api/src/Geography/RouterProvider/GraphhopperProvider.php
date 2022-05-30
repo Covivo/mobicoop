@@ -126,7 +126,7 @@ class GraphhopperProvider implements GeorouterInterface
      * @param integer|null $bearing
      * @return void
      */
-    private function setBearing(?int $bearing)
+    private function setBearing(?int $bearing): void
     {
         $this->bearing = $bearing;
     }
@@ -134,7 +134,7 @@ class GraphhopperProvider implements GeorouterInterface
     /**
      * {@inheritdoc}
      */
-    public function setAvoidMotorway(bool $avoidMotorway)
+    public function setAvoidMotorway(bool $avoidMotorway): void
     {
         $this->avoidMotorway = $avoidMotorway;
     }
@@ -142,7 +142,7 @@ class GraphhopperProvider implements GeorouterInterface
     /**
      * {@inheritdoc}
      */
-    public function setAvoidToll(bool $avoidToll)
+    public function setAvoidToll(bool $avoidToll): void
     {
         $this->avoidToll = $avoidToll;
     }
@@ -150,7 +150,7 @@ class GraphhopperProvider implements GeorouterInterface
     /**
      * {@inheritdoc}
      */
-    public function setDetailDuration(bool $detailDuration)
+    public function setDetailDuration(bool $detailDuration): void
     {
         $this->detailDuration = $detailDuration;
     }
@@ -158,7 +158,7 @@ class GraphhopperProvider implements GeorouterInterface
     /**
      * {@inheritdoc}
      */
-    public function setPointsOnly(bool $pointsOnly)
+    public function setPointsOnly(bool $pointsOnly): void
     {
         $this->pointsOnly = $pointsOnly;
     }
@@ -166,7 +166,7 @@ class GraphhopperProvider implements GeorouterInterface
     /**
      * {@inheritdoc}
      */
-    public function setReturnType(int $returnType)
+    public function setReturnType(int $returnType): void
     {
         $this->returnType = $returnType;
     }
@@ -174,7 +174,7 @@ class GraphhopperProvider implements GeorouterInterface
     /**
      * {@inheritdoc}
      */
-    public function getMultipleDirections(array $multiPoints, int $mode)
+    public function getMultipleDirections(array $multiPoints, int $mode): array
     {
         $routes = [];
         $this->dataProvider->setResource(self::DIRECTION_RESOURCE);
@@ -404,7 +404,7 @@ class GraphhopperProvider implements GeorouterInterface
     /**
      * {@inheritdoc}
      */
-    public function getDirections(array $points, int $mode)
+    public function getDirections(array $points, int $mode): array
     {
         $routes = [];
         $this->dataProvider->setResource(self::DIRECTION_RESOURCE);
@@ -463,7 +463,7 @@ class GraphhopperProvider implements GeorouterInterface
     /**
      * {@inheritdoc}
      */
-    public function deserializeDirection(array $data)
+    public function deserializeDirection(array $data): Direction
     {
         $direction = new Direction();
         if (isset($data["distance"])) {
@@ -657,7 +657,7 @@ class GraphhopperProvider implements GeorouterInterface
      * @param bool $is3D        Data has elevation information
      * @return Address[]        The deserialized Addresses
      */
-    private function deserializeGHPoints($data, bool $encoded, bool $is3D)
+    private function deserializeGHPoints($data, bool $encoded, bool $is3D): array
     {
         $addresses = [];
         if ($encoded) {

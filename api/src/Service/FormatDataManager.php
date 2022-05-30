@@ -46,7 +46,7 @@ class FormatDataManager
      * @param int $time : time in seconds
      * @return string
      */
-    public function convertSecondsToHuman($time)
+    public function convertSecondsToHuman($time): string
     {
         $hours = floor($time / 3600);
         $minutes = floor(($time / 60) % 60);
@@ -75,7 +75,7 @@ class FormatDataManager
      * @param integer $frequency    The frequency
      * @return float
      */
-    public function roundPrice(float $price, int $frequency)
+    public function roundPrice(float $price, int $frequency): float
     {
         switch ($frequency) {
             case Criteria::FREQUENCY_REGULAR:

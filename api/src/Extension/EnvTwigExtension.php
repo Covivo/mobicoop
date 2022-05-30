@@ -53,7 +53,7 @@ class EnvTwigExtension extends AbstractExtension
      *
      * @return array An array of global variables
      */
-    public function getGlobals()
+    public function getGlobals(): array
     {
         // TODO: Implement getGlobals() method.
     }
@@ -63,7 +63,7 @@ class EnvTwigExtension extends AbstractExtension
      *
      * @return string The extension name
      */
-    public function getName()
+    public function getName(): string
     {
         // TODO: Implement getName() method.
         return 'env_twig_extension';

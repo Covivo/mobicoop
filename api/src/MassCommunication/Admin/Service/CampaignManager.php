@@ -127,7 +127,7 @@ class CampaignManager
      * @param User $user            The user that adds the campaign
      * @return Campaign             The created campaign
      */
-    public function addCampaign(Campaign $campaign, User $user)
+    public function addCampaign(Campaign $campaign, User $user): Campaign
     {
         $campaign->setMedium($this->mediumRepository->find(Medium::MEDIUM_EMAIL));
         $campaign->setUser($user);
@@ -147,7 +147,7 @@ class CampaignManager
      * @param array $fields         The updated fields
      * @return Campaign             The campaign updated
      */
-    public function patchCampaign(Campaign $campaign, array $fields)
+    public function patchCampaign(Campaign $campaign, array $fields): Campaign
     {
         // persist the campaign
         $this->entityManager->persist($campaign);
@@ -163,7 +163,7 @@ class CampaignManager
      * @param Campaign $campaign  The campaign to delete
      * @return void
      */
-    public function deleteCampaign(Campaign $campaign)
+    public function deleteCampaign(Campaign $campaign): void
     {
         $this->entityManager->remove($campaign);
         $this->entityManager->flush();
@@ -177,7 +177,7 @@ class CampaignManager
      * @param array $filters        The filters if the filter type is 'filter'
      * @return void
      */
-    public function associateUsers(Campaign $campaign, iterable $users, array $filters = [])
+    public function associateUsers(Campaign $campaign, iterable $users, array $filters = []): void
     {
         switch ($campaign->getFilterType()) {
             case Campaign::FILTER_TYPE_SELECTION:
@@ -213,7 +213,7 @@ class CampaignManager
      * @param array $filters        The filters if the filter type is 'filter'
      * @return void
      */
-    public function associateCommunityUsers(Campaign $campaign, iterable $members, array $filters = [])
+    public function associateCommunityUsers(Campaign $campaign, iterable $members, array $filters = []): void
     {
         switch ($campaign->getFilterType()) {
             case Campaign::FILTER_TYPE_SELECTION:
@@ -249,7 +249,7 @@ class CampaignManager
      * @param int $mode             The sending mode (test or prod)
      * @return Campaign             The campaign
      */
-    public function send(Campaign $campaign, iterable $users, int $mode)
+    public function send(Campaign $campaign, iterable $users, int $mode): Campaign
     {
         // the delivery count may have changed
         $campaign->setDeliveryCount(iterator_count($users));
@@ -274,7 +274,7 @@ class CampaignManager
      * @param Request $request  The request that contains the data
      * @return array            An empty array
      */
-    public function handleUnsubscribeHook(Request $request)
+    public function handleUnsubscribeHook(Request $request): array
     {
         switch ($this->mailerProvider) {
             case self::MAIL_PROVIDER_SENDINBLUE:
@@ -309,7 +309,7 @@ class CampaignManager
      * @param int $mode             The sending mode (test or prod)
      * @return Campaign The campaign modified with the result of the send.
      */
-    private function sendMassEmail(Campaign $campaign, iterable $users, int $mode)
+    private function sendMassEmail(Campaign $campaign, iterable $users, int $mode): Campaign
     {
         // first we construct the recipients array
         $recipients = [];
@@ -379,7 +379,7 @@ class CampaignManager
      * @param int $mode             The sending mode (test or prod)
      * @return Campaign The campaign modified with the result of the send.
      */
-    private function sendMassSms(Campaign $campaign, iterable $users, int $mode)
+    private function sendMassSms(Campaign $campaign, iterable $users, int $mode): Campaign
     {
         // first we construct the recipients array
         $recipients = [];
@@ -418,7 +418,7 @@ class CampaignManager
      * @param array $filters    The array of filters as key=>value
      * @return string           The filters as a string
      */
-    private function stringFilters(array $filters)
+    private function stringFilters(array $filters): string
     {
         $stringFilters = "";
         foreach ($filters as $filter=>$value) {
@@ -441,7 +441,7 @@ class CampaignManager
      * @param string $body  The initial body
      * @return string   The templated body
      */
-    private function getFormedEmailBody(?string $body):string
+    private function getFormedEmailBody(?string $body): string
     {
         $encodedBody = json_decode($body, true);
         $arrayForTemplate = [];

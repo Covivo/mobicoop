@@ -74,7 +74,7 @@ class SmsManager
      *
      * @return string
      */
-    public function send(Sms $sms, $template, $context = [], $lang = 'fr')
+    public function send(Sms $sms, $template, $context = [], $lang = 'fr'): string
     {
         $sessionLocale = $this->translator->getLocale();
         if (self::LANG == $lang) {

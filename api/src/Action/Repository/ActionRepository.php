@@ -68,7 +68,7 @@ class ActionRepository
      *
      * @return array|null
      */
-    public function getSolidaryActions()
+    public function getSolidaryActions(): ?array
     {
         return $this->repository->createQueryBuilder('a')
         ->where('a.type IN (:types)')

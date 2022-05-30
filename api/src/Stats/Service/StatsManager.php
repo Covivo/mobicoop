@@ -86,7 +86,7 @@ class StatsManager
      * @param float $value      Indicator's value
      * @return array Updated current array of Indicators
      */
-    private function addIndicator(string $label, float $value)
+    private function addIndicator(string $label, float $value): array
     {
         $indicator = new Indicator();
         $indicator->setLabel($label);

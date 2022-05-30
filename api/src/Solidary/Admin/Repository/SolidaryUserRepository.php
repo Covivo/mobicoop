@@ -50,7 +50,7 @@ class SolidaryUserRepository
      * @param int       $type       The type
      * @return array|null           The volunteers as SolidaryUsers
      */
-    public function getMatchingVolunteers(Solidary $solidary, int $type)
+    public function getMatchingVolunteers(Solidary $solidary, int $type): ?array
     {
         $structure = $solidary->getSolidaryUserStructure()->getStructure();
         $centerPointOrigin = $centerPointDestination = null;

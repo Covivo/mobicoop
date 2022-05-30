@@ -38,7 +38,7 @@ class FirstMessageAnswer implements GamificationRuleInterface
      * @param  $sequenceItem
      * @return bool
      */
-    public function execute($log, $sequenceItem)
+    public function execute($log, $sequenceItem): bool
     {
         $messages = $log->getUser()->getMessages();
 

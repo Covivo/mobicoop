@@ -34,7 +34,7 @@ final class CarpoolProofPostDataPersister implements ContextAwareDataPersisterIn
 {
     private $security;
     private $adManager;
-    
+
     public function __construct(Security $security, AdManager $adManager)
     {
         $this->security = $security;

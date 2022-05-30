@@ -58,7 +58,7 @@ class WaypointRepository
      *
      * @return null|Waypoint The waypoint found or null
      */
-    public function findMinPositionForAskAndRole(Ask $ask, int $role)
+    public function findMinPositionForAskAndRole(Ask $ask, int $role): ?Waypoint
     {
         $query = $this->repository->createQueryBuilder('w')
             ->select('MIN(w.position) AS min_position')
@@ -87,7 +87,7 @@ class WaypointRepository
      *
      * @return null|Waypoint The waypoint found or null
      */
-    public function findMaxPositionForAskAndRole(Ask $ask, int $role)
+    public function findMaxPositionForAskAndRole(Ask $ask, int $role): ?Waypoint
     {
         $query = $this->repository->createQueryBuilder('w')
             ->select('MAX(w.position) AS max_position')

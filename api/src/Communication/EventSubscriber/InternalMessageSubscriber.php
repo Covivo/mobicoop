@@ -43,7 +43,7 @@ class InternalMessageSubscriber implements EventSubscriberInterface
         $this->actionRepository = $actionRepository;
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             InternalMessageReceivedEvent::NAME => 'onInternalMessageReceived'

@@ -43,5 +43,5 @@ interface AuthRuleInterface
      * @param array         $params     The params needed for the validation
      * @return bool True if the rule is validated, false either
      */
-    public function execute(object $requester, AuthItem $authItem, array $params);
+    public function execute(object $requester, AuthItem $authItem, array $params): bool;
 }

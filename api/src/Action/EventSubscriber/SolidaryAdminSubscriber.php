@@ -46,7 +46,7 @@ class SolidaryAdminSubscriber implements EventSubscriberInterface
         $this->actionRepository = $actionRepository;
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             SolidaryCreatedEvent::NAME => 'onSolidaryCreated',

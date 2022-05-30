@@ -53,7 +53,7 @@ final class SolidaryCollectionDataProvider implements CollectionDataProviderInte
         return Solidary::class === $resourceClass;
     }
 
-    public function getCollection(string $resourceClass, string $operationName = null)
+    public function getCollection(string $resourceClass, string $operationName = null): iterable
     {
         if ($operationName=="getMySolidaries") {
             return $this->solidaryManager->getMySolidaries($this->security->getUser());

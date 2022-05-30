@@ -41,7 +41,7 @@ class CarpoolSubscriber implements EventSubscriberInterface
         $this->directory = $directory;
     }
     
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             MatchingNewEvent::NAME => 'onNewMatching',
@@ -55,7 +55,7 @@ class CarpoolSubscriber implements EventSubscriberInterface
      * @return void
      * @throws ClassNotFoundException
      */
-    public function onNewMatching(MatchingNewEvent $event)
+    public function onNewMatching(MatchingNewEvent $event): void
     {
         // When a new matching is created, we need to be sure that directions are completely filled with the good data.
         // To speed up the process during the creation of the proposal, we avoid sending all the data to the database.

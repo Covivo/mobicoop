@@ -54,7 +54,7 @@ final class PaymentPeriodCollectionDataProvider implements CollectionDataProvide
         return PaymentPeriod::class === $resourceClass;
     }
 
-    public function getCollection(string $resourceClass, string $operationName = null)
+    public function getCollection(string $resourceClass, string $operationName = null): iterable
     {
         // we initialize the type
         $type = PaymentItem::TYPE_PAY;

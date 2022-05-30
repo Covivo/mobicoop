@@ -1109,7 +1109,7 @@ class SolidaryUserManager
      *
      * @return SolidaryUser[]
      */
-    public function getSolidaryUsers(array $filters = null)
+    public function getSolidaryUsers(array $filters = null): array
     {
         return $this->solidaryUserRepository->findSolidaryUsers($filters);
     }

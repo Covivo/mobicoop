@@ -71,7 +71,7 @@ class SolidaryAskHistoryRepository
      * @param SolidaryAsk $solidaryAsk  The solidary ask
      * @return SolidaryAskHistory       The last solidary ask history
      */
-    public function findLastSolidaryAskHistory(SolidaryAsk $solidaryAsk)
+    public function findLastSolidaryAskHistory(SolidaryAsk $solidaryAsk): SolidaryAskHistory
     {
         $query = $this->repository->createQueryBuilder('sah')
         ->join('sah.solidaryAsk', 'sa')
@@ -89,7 +89,7 @@ class SolidaryAskHistoryRepository
      * @param SolidaryAsk $solidaryAsk  The solidary ask
      * @return SolidaryAskHistory|null  The solidary ask history found
      */
-    public function findLastSolidaryAskHistoryWithMessage(SolidaryAsk $solidaryAsk)
+    public function findLastSolidaryAskHistoryWithMessage(SolidaryAsk $solidaryAsk): ?SolidaryAskHistory
     {
         $query = $this->repository->createQueryBuilder('sah')
         ->join('sah.solidaryAsk', 'sa')

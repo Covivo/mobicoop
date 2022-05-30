@@ -55,7 +55,7 @@ final class AskPendingPaymentItemDataProvider implements RestrictedDataProviderI
         return Ask::class === $resourceClass && $operationName === "pending_payment";
     }
 
-    public function getItem(string $resourceClass, $id, string $operationName = null, array $context = [])
+    public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?object
     {
         $ask = $this->askRepository->find($id);
         if (is_null($ask)) {

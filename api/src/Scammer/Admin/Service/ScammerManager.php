@@ -66,7 +66,7 @@ class ScammerManager
      *
      * @return Scammer The scammer added
      */
-    public function addScammer(Scammer $scammer, User $user)
+    public function addScammer(Scammer $scammer, User $user): Scammer
     {
         $scammer->setUser($user);
         $this->entityManager->persist($scammer);

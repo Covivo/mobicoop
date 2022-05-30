@@ -19,18 +19,17 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\I18n\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiResource;
+use App\User\Entity\User;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
-use Doctrine\Common\Collections\ArrayCollection;
-use App\User\Entity\User;
-use App\I18n\Entity\Translate;
 
 /**
  * A Language.
@@ -76,18 +75,18 @@ use App\I18n\Entity\Translate;
  */
 class Language
 {
-    const LANGUAGES = [
-        ["id"=>1,"code"=>"fr"],
-        ["id"=>2,"code"=>"en"],
-        ["id"=>3,"code"=>"eu"],
-        ["id"=>4,"code"=>"it"],
-        ["id"=>5,"code"=>"de"],
-        ["id"=>6,"code"=>"es"],
-        ["id"=>7,"code"=>"nl"]
+    public const LANGUAGES = [
+        ['id' => 1, 'code' => 'fr'],
+        ['id' => 2, 'code' => 'en'],
+        ['id' => 3, 'code' => 'eu'],
+        ['id' => 4, 'code' => 'it'],
+        ['id' => 5, 'code' => 'de'],
+        ['id' => 6, 'code' => 'es'],
+        ['id' => 7, 'code' => 'nl'],
     ];
 
     /**
-     * @var int The id of this language.
+     * @var int the id of this language
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -96,9 +95,9 @@ class Language
      * @Groups({"aRead","read", "readUser"})
      */
     private $id;
-            
+
     /**
-     * @var string The code of the language.
+     * @var string the code of the language
      *
      * @ORM\Column(type="string", length=255)
      * @Groups({"aRead","read","write", "readUser"})
@@ -106,16 +105,16 @@ class Language
     private $code;
 
     /**
-    * @var ArrayCollection|null The users of the section.
-    *
-    * @ORM\OneToMany(targetEntity="\App\User\Entity\User", mappedBy="language", cascade={"persist"})
-    * @Groups({"write"})
-    * @MaxDepth(1)
-    */
+     * @var null|ArrayCollection the users of the section
+     *
+     * @ORM\OneToMany(targetEntity="\App\User\Entity\User", mappedBy="language", cascade={"persist"})
+     * @Groups({"write"})
+     * @MaxDepth(1)
+     */
     private $users;
 
     /**
-     * @var ArrayCollection|null A Language can have multiple entry in Translate
+     * @var null|ArrayCollection A Language can have multiple entry in Translate
      *
      * @ORM\OneToMany(targetEntity="\App\I18n\Entity\Translate", mappedBy="language", cascade={"persist"})
      * @MaxDepth(1)
@@ -132,7 +131,7 @@ class Language
     {
         return $this->id;
     }
-            
+
     public function getCode(): string
     {
         return $this->code;
@@ -141,13 +140,13 @@ class Language
     public function setCode(string $code): self
     {
         $this->code = $code;
-        
+
         return $this;
     }
 
     /**
-    * @return ArrayCollection|User[]
-    */
+     * @return ArrayCollection|User[]
+     */
     public function getUsers(): ArrayCollection
     {
         return $this->users;
@@ -177,8 +176,8 @@ class Language
     }
 
     /**
-    * @return ArrayCollection|Translate[]
-    */
+     * @return ArrayCollection|Translate[]
+     */
     public function getTranslates(): ArrayCollection
     {
         return $this->translates;

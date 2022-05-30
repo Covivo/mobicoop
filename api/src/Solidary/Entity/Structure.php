@@ -1261,7 +1261,7 @@ class Structure
     /**
      * @return ArrayCollection|Operate[]
      */
-    public function getOperates()
+    public function getOperates(): ArrayCollection|array
     {
         return $this->operates->getValues();
     }

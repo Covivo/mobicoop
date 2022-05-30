@@ -46,7 +46,7 @@ final class GrantableRolesDataProvider implements CollectionDataProviderInterfac
         return Permission::class === $resourceClass && $operationName === "ADMIN_grantable";
     }
     
-    public function getCollection(string $resourceClass, string $operationName = null)
+    public function getCollection(string $resourceClass, string $operationName = null): iterable
     {
         return $this->authManager->getGrantable();
     }

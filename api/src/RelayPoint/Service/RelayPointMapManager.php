@@ -96,7 +96,7 @@ class RelayPointMapManager
      *
      * @return RelayPointMap The builded RelayPointMap
      */
-    private function buildRelayPointMap(RelayPoint $relayPoint): ?RelayPointMap
+    private function buildRelayPointMap(RelayPoint $relayPoint): RelayPointMap
     {
         $relayPointMap = new RelayPointMap();
         $relayPointMap->setId($relayPoint->getId());

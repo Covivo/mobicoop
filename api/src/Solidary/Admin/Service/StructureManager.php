@@ -73,7 +73,7 @@ class StructureManager
      *
      * @return Structure The structure created
      */
-    public function addStructure(Structure $structure, array $fields)
+    public function addStructure(Structure $structure, array $fields): Structure
     {
         // treat territories
         if (in_array('territories', array_keys($fields))) {
@@ -190,7 +190,7 @@ class StructureManager
      *
      * @return Structure The structure updated
      */
-    public function patchStructure(Structure $structure, array $fields)
+    public function patchStructure(Structure $structure, array $fields): Structure
     {
         // check if territories have changed
         if (in_array('territories', array_keys($fields))) {
@@ -587,7 +587,7 @@ class StructureManager
      *
      * @return bool
      */
-    private function checkIsOperator(Operate $operate)
+    private function checkIsOperator(Operate $operate): bool
     {
         $nbStructures = 0;
         foreach ($operate->getUser()->getOperates() as $operated) {

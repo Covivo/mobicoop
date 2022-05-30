@@ -38,7 +38,7 @@ final class AdDeleteDataPersister implements ContextAwareDataPersisterInterface
         $this->request = $requestStack->getCurrentRequest();
         $this->proposalManager = $proposalManager;
     }
-  
+
     public function supports($data, array $context = []): bool
     {
         return $data instanceof Proposal && isset($context['item_operation_name']) && $context['item_operation_name'] === 'delete';

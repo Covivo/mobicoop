@@ -19,18 +19,18 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Geography\Repository;
 
 use App\Geography\Entity\Direction;
+use App\Geography\Entity\Territory;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use App\Geography\Entity\Territory;
 
 /**
- * @method Direction|null find($id, $lockMode = null, $lockVersion = null)
- * @method Direction|null findOneBy(array $criteria, array $orderBy = null)
+ * @method null|Direction find($id, $lockMode = null, $lockVersion = null)
+ * @method null|Direction findOneBy(array $criteria, array $orderBy = null)
  * @method Direction[]    findAll()
  * @method Direction[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
@@ -42,25 +42,26 @@ class DirectionRepository
     private $repository;
 
     private $entityManager;
-    
+
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
         $this->repository = $entityManager->getRepository(Direction::class);
     }
-    
+
     /**
      * Return all directions without zones.
      *
-     * @return mixed|NULL|\Doctrine\DBAL\Driver\Statement|array     The directions found
+     * @return null|array|\Doctrine\DBAL\Driver\Statement|mixed The directions found
      */
-    public function findAllWithoutZones()
+    public function findAllWithoutZones(): mixed
     {
         $query = $this->repository->createQueryBuilder('d')
-        ->leftJoin('d.zones', 'z')
-        ->andWhere('z.direction IS NULL')
-        ->getQuery();
-        
+            ->leftJoin('d.zones', 'z')
+            ->andWhere('z.direction IS NULL')
+            ->getQuery()
+        ;
+
         return $query->getResult()
         ;
     }
@@ -68,34 +69,30 @@ class DirectionRepository
     /**
      * Return all directions that have their bounding box in the given territory.
      *
-     * @param Territory $territory
-     * @return mixed|NULL|\Doctrine\DBAL\Driver\Statement|array     The directions found
+     * @return null|array|\Doctrine\DBAL\Driver\Statement|mixed The directions found
      */
-    public function findAllWithBoundingBoxInTerritory(Territory $territory)
+    public function findAllWithBoundingBoxInTerritory(Territory $territory): mixed
     {
-        $query = $this->entityManager->createQuery("
-            SELECT d from App\Geography\Entity\Direction d, App\Geography\Entity\Territory t
-            where t.id = " . $territory->getId() . "
+        $query = $this->entityManager->createQuery('
+            SELECT d from App\\Geography\\Entity\\Direction d, App\\Geography\\Entity\\Territory t
+            where t.id = '.$territory->getId().'
             and ST_INTERSECTS(t.geoJsonDetail,d.geoJsonBbox)=1
-        ");
-        
+        ');
+
         return $query->getResult()
         ;
     }
 
     /**
      * Search if a direction intersects a given territory.
-     *
-     * @param Direction $direction
-     * @param Territory $territory
-     * @return void
      */
     public function directionIsInTerritory(Direction $direction, Territory $territory)
     {
-        $sql = "SELECT ST_INTERSECTS(t.geoJsonDetail,d.geoJsonDetail) as inTerritory 
-            from App\Geography\Entity\Territory t, App\Geography\Entity\Direction d 
-            where t.id = " . $territory->getId() . " and d.id = " . $direction->getId();
+        $sql = 'SELECT ST_INTERSECTS(t.geoJsonDetail,d.geoJsonDetail) as inTerritory
+            from App\\Geography\\Entity\\Territory t, App\\Geography\\Entity\\Direction d
+            where t.id = '.$territory->getId().' and d.id = '.$direction->getId();
         $query = $this->entityManager->createQuery($sql);
-        return ($query->getResult()[0]['inTerritory'] == 1);
+
+        return 1 == $query->getResult()[0]['inTerritory'];
     }
 }

@@ -108,7 +108,7 @@ class UserManager
      *
      * @return null|User The user if found
      */
-    public function getUser(int $id)
+    public function getUser(int $id): ?User
     {
         $user = $this->userRepository->find($id);
         $user->initOwnership(); // construct of User not called
@@ -151,7 +151,7 @@ class UserManager
      *
      * @return User The user created
      */
-    public function addUser(User $user)
+    public function addUser(User $user): User
     {
         // add delegation
         $user->setUserDelegate($this->security->getUser());
@@ -255,7 +255,7 @@ class UserManager
      *
      * @return User The user updated
      */
-    public function patchUser(User $user, array $fields)
+    public function patchUser(User $user, array $fields): User
     {
         // check if the home address was updated
         if (in_array('homeAddress', array_keys($fields))) {
@@ -334,7 +334,7 @@ class UserManager
      *
      * @return bool True if the user have the authItem, false otherwise
      */
-    public function userHaveAuthItem(User $user, AuthItem $authItem)
+    public function userHaveAuthItem(User $user, AuthItem $authItem): bool
     {
         foreach ($user->getUserAuthAssignments() as $userAuthAssignment) {
             if ($userAuthAssignment->getAuthItem() == $authItem) {
@@ -352,7 +352,7 @@ class UserManager
      *
      * @return User The User object
      */
-    public function createUserFromArray(array $auser)
+    public function createUserFromArray(array $auser): User
     {
         $user = new User();
         if (isset($auser['givenName'])) {

@@ -52,7 +52,7 @@ class ConnectionController
      * @param RdexConnection $data
      * @return Response
      */
-    public function __invoke(RdexConnection $data)
+    public function __invoke(RdexConnection $data): Response
     {
         if (is_null($data)) {
             throw new \InvalidArgumentException($this->translator->trans("bad RdexJourney id is provided"));

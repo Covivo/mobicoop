@@ -50,7 +50,7 @@ class UserCheckPhoneToken
      * @param $data
      * @return Response
      */
-    public function __invoke(User $data)
+    public function __invoke(User $data): Response
     {
         return $this->userManager->checkPhoneToken($data);
     }

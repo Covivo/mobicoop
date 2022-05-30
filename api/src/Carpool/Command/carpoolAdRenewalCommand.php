@@ -55,7 +55,7 @@ class carpoolAdRenewalCommand extends Command
             ->addArgument('numberOfDays', InputArgument::REQUIRED, 'Number of days to send a reminder before proposal outdated');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
 
         if ($input->getArgument('numberOfDays')) {

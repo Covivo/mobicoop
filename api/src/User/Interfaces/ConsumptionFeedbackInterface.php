@@ -55,7 +55,7 @@ interface ConsumptionFeedbackInterface
      * @param User|null $consumptionUser The User related to this consumption feedback
      * @return void
      */
-    public function setConsumptionUser(?User $consumptionUser);
+    public function setConsumptionUser(?User $consumptionUser): void;
 
     /**
      * Get the CarpoolItem related to this consumption feedback

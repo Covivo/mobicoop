@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\Admin\Service;
 
@@ -43,8 +43,8 @@ class SolidaryTransportMatcher
     private $solidaryUserRepository;
 
     /**
-    * Constructor
-    */
+     * Constructor.
+     */
     public function __construct(EntityManagerInterface $entityManager, SolidaryUserRepository $solidaryUserRepository)
     {
         $this->entityManager = $entityManager;
@@ -52,12 +52,11 @@ class SolidaryTransportMatcher
     }
 
     /**
-     * Match a solidary record with transport volunteers
+     * Match a solidary record with transport volunteers.
      *
-     * @param Solidary $solidary    The solidary record
-     * @return void
+     * @param Solidary $solidary The solidary record
      */
-    public function match(Solidary $solidary)
+    public function match(Solidary $solidary): void
     {
         // first we get the volunteers for the outward
         $outwardVolunteers = $this->solidaryUserRepository->getMatchingVolunteers($solidary, $solidary->getProposal()->getType());
@@ -103,6 +102,7 @@ class SolidaryTransportMatcher
                  */
                 if ($volunteer->getId() === $outwardMatching->getSolidaryUser()->getId()) {
                     $solidaryMatching->setSolidaryMatchingLinked($outwardMatching);
+
                     break;
                 }
             }
@@ -114,12 +114,11 @@ class SolidaryTransportMatcher
     }
 
     /**
-     * Match all the solidary records of a given structure
+     * Match all the solidary records of a given structure.
      *
-     * @param Structure $structure  The structure
-     * @return void
+     * @param Structure $structure The structure
      */
-    public function matchForStructure(Structure $structure)
+    public function matchForStructure(Structure $structure): void
     {
         foreach ($structure->getSolidaryUserStructures() as $solidaryUserStructure) {
             /**
@@ -132,42 +131,43 @@ class SolidaryTransportMatcher
     }
 
     /**
-     * Create a Criteria for a SolidaryMatching
+     * Create a Criteria for a SolidaryMatching.
      *
-     * @param SolidaryMatching $solidaryMatching    The SolidaryMatching
-     * @return Criteria                             The resulting criteria
+     * @param SolidaryMatching $solidaryMatching The SolidaryMatching
+     *
+     * @return Criteria The resulting criteria
      */
-    private function createMatchingCriteria(SolidaryMatching $solidaryMatching)
+    private function createMatchingCriteria(SolidaryMatching $solidaryMatching): Criteria
     {
         switch ($solidaryMatching->getType()) {
             case Proposal::TYPE_ONE_WAY:
             case Proposal::TYPE_OUTWARD:
-                if ($solidaryMatching->getSolidary()->getAdminfrequency() == Criteria::FREQUENCY_PUNCTUAL) {
+                if (Criteria::FREQUENCY_PUNCTUAL == $solidaryMatching->getSolidary()->getAdminfrequency()) {
                     // punctual oneway / outward => criteria is the same than the solidary proposal criteria
                     return clone $solidaryMatching->getSolidary()->getProposal()->getCriteria();
-                } else {
+                }
                     // regular => build criteria from matching days
                     return $this->createCriteriaForRegular($solidaryMatching->getSolidary()->getProposal()->getCriteria(), $solidaryMatching->getSolidaryUser());
-                }
+
                 break;
+
             case Proposal::TYPE_RETURN:
-                if ($solidaryMatching->getSolidary()->getAdminfrequency() == Criteria::FREQUENCY_PUNCTUAL) {
+                if (Criteria::FREQUENCY_PUNCTUAL == $solidaryMatching->getSolidary()->getAdminfrequency()) {
                     // punctual return => criteria is the same than the solidary proposalLinked criteria
                     return clone $solidaryMatching->getSolidary()->getProposal()->getProposalLinked()->getCriteria();
-                } else {
+                }
                     // regular => build criteria from matching days
                     return $this->createCriteriaForRegular($solidaryMatching->getSolidary()->getProposal()->getProposalLinked()->getCriteria(), $solidaryMatching->getSolidaryUser());
-                }
+
                 break;
         }
     }
 
     /**
-     * Create a Criteria from a base criteria and a volunteer (find regular matching days and times)
+     * Create a Criteria from a base criteria and a volunteer (find regular matching days and times).
      *
-     * @param Criteria $baseCriteria    The base criteria
-     * @param SolidaryUser $volunteer   The volunteer
-     * @return void
+     * @param Criteria     $baseCriteria The base criteria
+     * @param SolidaryUser $volunteer    The volunteer
      */
     private function createCriteriaForRegular(Criteria $baseCriteria, SolidaryUser $volunteer)
     {
@@ -202,11 +202,11 @@ class SolidaryTransportMatcher
         $criteria->setSunMaxTime(null);
         $criteria->setSunTime(null);
         if (
-            $baseCriteria->isMonCheck() &&
-            (
-                ($volunteer->hasMMon() && strtotime($baseCriteria->getMonMinTime()->format('H:i:s')) < strtotime($volunteer->getMMaxTime()->format('H:i:s')) && strtotime($baseCriteria->getMonMaxTime()->format('H:i:s')) >= strtotime($volunteer->getMMinTime()->format('H:i:s'))) ||
-                ($volunteer->hasAMon() && strtotime($baseCriteria->getMonMinTime()->format('H:i:s')) < strtotime($volunteer->getAMaxTime()->format('H:i:s')) && strtotime($baseCriteria->getMonMaxTime()->format('H:i:s')) >= strtotime($volunteer->getAMinTime()->format('H:i:s'))) ||
-                ($volunteer->hasEMon() && strtotime($baseCriteria->getMonMinTime()->format('H:i:s')) < strtotime($volunteer->getEMaxTime()->format('H:i:s')) && strtotime($baseCriteria->getMonMaxTime()->format('H:i:s')) >= strtotime($volunteer->getEMinTime()->format('H:i:s')))
+            $baseCriteria->isMonCheck()
+            && (
+                ($volunteer->hasMMon() && strtotime($baseCriteria->getMonMinTime()->format('H:i:s')) < strtotime($volunteer->getMMaxTime()->format('H:i:s')) && strtotime($baseCriteria->getMonMaxTime()->format('H:i:s')) >= strtotime($volunteer->getMMinTime()->format('H:i:s')))
+                || ($volunteer->hasAMon() && strtotime($baseCriteria->getMonMinTime()->format('H:i:s')) < strtotime($volunteer->getAMaxTime()->format('H:i:s')) && strtotime($baseCriteria->getMonMaxTime()->format('H:i:s')) >= strtotime($volunteer->getAMinTime()->format('H:i:s')))
+                || ($volunteer->hasEMon() && strtotime($baseCriteria->getMonMinTime()->format('H:i:s')) < strtotime($volunteer->getEMaxTime()->format('H:i:s')) && strtotime($baseCriteria->getMonMaxTime()->format('H:i:s')) >= strtotime($volunteer->getEMinTime()->format('H:i:s')))
             )
         ) {
             $criteria->setMonCheck(true);
@@ -215,11 +215,11 @@ class SolidaryTransportMatcher
             $criteria->setMonTime($baseCriteria->getMonTime());
         }
         if (
-            $baseCriteria->isTueCheck() &&
-            (
-                ($volunteer->hasMTue() && strtotime($baseCriteria->getTueMinTime()->format('H:i:s')) < strtotime($volunteer->getMMaxTime()->format('H:i:s')) && strtotime($baseCriteria->getTueMaxTime()->format('H:i:s')) >= strtotime($volunteer->getMMinTime()->format('H:i:s'))) ||
-                ($volunteer->hasATue() && strtotime($baseCriteria->getTueMinTime()->format('H:i:s')) < strtotime($volunteer->getAMaxTime()->format('H:i:s')) && strtotime($baseCriteria->getTueMaxTime()->format('H:i:s')) >= strtotime($volunteer->getAMinTime()->format('H:i:s'))) ||
-                ($volunteer->hasETue() && strtotime($baseCriteria->getTueMinTime()->format('H:i:s')) < strtotime($volunteer->getEMaxTime()->format('H:i:s')) && strtotime($baseCriteria->getTueMaxTime()->format('H:i:s')) >= strtotime($volunteer->getEMinTime()->format('H:i:s')))
+            $baseCriteria->isTueCheck()
+            && (
+                ($volunteer->hasMTue() && strtotime($baseCriteria->getTueMinTime()->format('H:i:s')) < strtotime($volunteer->getMMaxTime()->format('H:i:s')) && strtotime($baseCriteria->getTueMaxTime()->format('H:i:s')) >= strtotime($volunteer->getMMinTime()->format('H:i:s')))
+                || ($volunteer->hasATue() && strtotime($baseCriteria->getTueMinTime()->format('H:i:s')) < strtotime($volunteer->getAMaxTime()->format('H:i:s')) && strtotime($baseCriteria->getTueMaxTime()->format('H:i:s')) >= strtotime($volunteer->getAMinTime()->format('H:i:s')))
+                || ($volunteer->hasETue() && strtotime($baseCriteria->getTueMinTime()->format('H:i:s')) < strtotime($volunteer->getEMaxTime()->format('H:i:s')) && strtotime($baseCriteria->getTueMaxTime()->format('H:i:s')) >= strtotime($volunteer->getEMinTime()->format('H:i:s')))
             )
         ) {
             $criteria->setTueCheck(true);
@@ -228,11 +228,11 @@ class SolidaryTransportMatcher
             $criteria->setTueTime($baseCriteria->getTueTime());
         }
         if (
-            $baseCriteria->isWedCheck() &&
-            (
-                ($volunteer->hasMWed() && strtotime($baseCriteria->getWedMinTime()->format('H:i:s')) < strtotime($volunteer->getMMaxTime()->format('H:i:s')) && strtotime($baseCriteria->getWedMaxTime()->format('H:i:s')) >= strtotime($volunteer->getMMinTime()->format('H:i:s'))) ||
-                ($volunteer->hasAWed() && strtotime($baseCriteria->getWedMinTime()->format('H:i:s')) < strtotime($volunteer->getAMaxTime()->format('H:i:s')) && strtotime($baseCriteria->getWedMaxTime()->format('H:i:s')) >= strtotime($volunteer->getAMinTime()->format('H:i:s'))) ||
-                ($volunteer->hasEWed() && strtotime($baseCriteria->getWedMinTime()->format('H:i:s')) < strtotime($volunteer->getEMaxTime()->format('H:i:s')) && strtotime($baseCriteria->getWedMaxTime()->format('H:i:s')) >= strtotime($volunteer->getEMinTime()->format('H:i:s')))
+            $baseCriteria->isWedCheck()
+            && (
+                ($volunteer->hasMWed() && strtotime($baseCriteria->getWedMinTime()->format('H:i:s')) < strtotime($volunteer->getMMaxTime()->format('H:i:s')) && strtotime($baseCriteria->getWedMaxTime()->format('H:i:s')) >= strtotime($volunteer->getMMinTime()->format('H:i:s')))
+                || ($volunteer->hasAWed() && strtotime($baseCriteria->getWedMinTime()->format('H:i:s')) < strtotime($volunteer->getAMaxTime()->format('H:i:s')) && strtotime($baseCriteria->getWedMaxTime()->format('H:i:s')) >= strtotime($volunteer->getAMinTime()->format('H:i:s')))
+                || ($volunteer->hasEWed() && strtotime($baseCriteria->getWedMinTime()->format('H:i:s')) < strtotime($volunteer->getEMaxTime()->format('H:i:s')) && strtotime($baseCriteria->getWedMaxTime()->format('H:i:s')) >= strtotime($volunteer->getEMinTime()->format('H:i:s')))
             )
         ) {
             $criteria->setWedCheck(true);
@@ -241,11 +241,11 @@ class SolidaryTransportMatcher
             $criteria->setWedTime($baseCriteria->getWedTime());
         }
         if (
-            $baseCriteria->isThuCheck() &&
-            (
-                ($volunteer->hasMThu() && strtotime($baseCriteria->getThuMinTime()->format('H:i:s')) < strtotime($volunteer->getMMaxTime()->format('H:i:s')) && strtotime($baseCriteria->getThuMaxTime()->format('H:i:s')) >= strtotime($volunteer->getMMinTime()->format('H:i:s'))) ||
-                ($volunteer->hasAThu() && strtotime($baseCriteria->getThuMinTime()->format('H:i:s')) < strtotime($volunteer->getAMaxTime()->format('H:i:s')) && strtotime($baseCriteria->getThuMaxTime()->format('H:i:s')) >= strtotime($volunteer->getAMinTime()->format('H:i:s'))) ||
-                ($volunteer->hasEThu() && strtotime($baseCriteria->getThuMinTime()->format('H:i:s')) < strtotime($volunteer->getEMaxTime()->format('H:i:s')) && strtotime($baseCriteria->getThuMaxTime()->format('H:i:s')) >= strtotime($volunteer->getEMinTime()->format('H:i:s')))
+            $baseCriteria->isThuCheck()
+            && (
+                ($volunteer->hasMThu() && strtotime($baseCriteria->getThuMinTime()->format('H:i:s')) < strtotime($volunteer->getMMaxTime()->format('H:i:s')) && strtotime($baseCriteria->getThuMaxTime()->format('H:i:s')) >= strtotime($volunteer->getMMinTime()->format('H:i:s')))
+                || ($volunteer->hasAThu() && strtotime($baseCriteria->getThuMinTime()->format('H:i:s')) < strtotime($volunteer->getAMaxTime()->format('H:i:s')) && strtotime($baseCriteria->getThuMaxTime()->format('H:i:s')) >= strtotime($volunteer->getAMinTime()->format('H:i:s')))
+                || ($volunteer->hasEThu() && strtotime($baseCriteria->getThuMinTime()->format('H:i:s')) < strtotime($volunteer->getEMaxTime()->format('H:i:s')) && strtotime($baseCriteria->getThuMaxTime()->format('H:i:s')) >= strtotime($volunteer->getEMinTime()->format('H:i:s')))
             )
         ) {
             $criteria->setThuCheck(true);
@@ -254,11 +254,11 @@ class SolidaryTransportMatcher
             $criteria->setThuTime($baseCriteria->getThuTime());
         }
         if (
-            $baseCriteria->isFriCheck() &&
-            (
-                ($volunteer->hasMFri() && strtotime($baseCriteria->getFriMinTime()->format('H:i:s')) < strtotime($volunteer->getMMaxTime()->format('H:i:s')) && strtotime($baseCriteria->getFriMaxTime()->format('H:i:s')) >= strtotime($volunteer->getMMinTime()->format('H:i:s'))) ||
-                ($volunteer->hasAFri() && strtotime($baseCriteria->getFriMinTime()->format('H:i:s')) < strtotime($volunteer->getAMaxTime()->format('H:i:s')) && strtotime($baseCriteria->getFriMaxTime()->format('H:i:s')) >= strtotime($volunteer->getAMinTime()->format('H:i:s'))) ||
-                ($volunteer->hasEFri() && strtotime($baseCriteria->getFriMinTime()->format('H:i:s')) < strtotime($volunteer->getEMaxTime()->format('H:i:s')) && strtotime($baseCriteria->getFriMaxTime()->format('H:i:s')) >= strtotime($volunteer->getEMinTime()->format('H:i:s')))
+            $baseCriteria->isFriCheck()
+            && (
+                ($volunteer->hasMFri() && strtotime($baseCriteria->getFriMinTime()->format('H:i:s')) < strtotime($volunteer->getMMaxTime()->format('H:i:s')) && strtotime($baseCriteria->getFriMaxTime()->format('H:i:s')) >= strtotime($volunteer->getMMinTime()->format('H:i:s')))
+                || ($volunteer->hasAFri() && strtotime($baseCriteria->getFriMinTime()->format('H:i:s')) < strtotime($volunteer->getAMaxTime()->format('H:i:s')) && strtotime($baseCriteria->getFriMaxTime()->format('H:i:s')) >= strtotime($volunteer->getAMinTime()->format('H:i:s')))
+                || ($volunteer->hasEFri() && strtotime($baseCriteria->getFriMinTime()->format('H:i:s')) < strtotime($volunteer->getEMaxTime()->format('H:i:s')) && strtotime($baseCriteria->getFriMaxTime()->format('H:i:s')) >= strtotime($volunteer->getEMinTime()->format('H:i:s')))
             )
         ) {
             $criteria->setFriCheck(true);
@@ -267,11 +267,11 @@ class SolidaryTransportMatcher
             $criteria->setFriTime($baseCriteria->getFriTime());
         }
         if (
-            $baseCriteria->isSatCheck() &&
-            (
-                ($volunteer->hasMSat() && strtotime($baseCriteria->getSatMinTime()->format('H:i:s')) < strtotime($volunteer->getMMaxTime()->format('H:i:s')) && strtotime($baseCriteria->getSatMaxTime()->format('H:i:s')) >= strtotime($volunteer->getMMinTime()->format('H:i:s'))) ||
-                ($volunteer->hasASat() && strtotime($baseCriteria->getSatMinTime()->format('H:i:s')) < strtotime($volunteer->getAMaxTime()->format('H:i:s')) && strtotime($baseCriteria->getSatMaxTime()->format('H:i:s')) >= strtotime($volunteer->getAMinTime()->format('H:i:s'))) ||
-                ($volunteer->hasESat() && strtotime($baseCriteria->getSatMinTime()->format('H:i:s')) < strtotime($volunteer->getEMaxTime()->format('H:i:s')) && strtotime($baseCriteria->getSatMaxTime()->format('H:i:s')) >= strtotime($volunteer->getEMinTime()->format('H:i:s')))
+            $baseCriteria->isSatCheck()
+            && (
+                ($volunteer->hasMSat() && strtotime($baseCriteria->getSatMinTime()->format('H:i:s')) < strtotime($volunteer->getMMaxTime()->format('H:i:s')) && strtotime($baseCriteria->getSatMaxTime()->format('H:i:s')) >= strtotime($volunteer->getMMinTime()->format('H:i:s')))
+                || ($volunteer->hasASat() && strtotime($baseCriteria->getSatMinTime()->format('H:i:s')) < strtotime($volunteer->getAMaxTime()->format('H:i:s')) && strtotime($baseCriteria->getSatMaxTime()->format('H:i:s')) >= strtotime($volunteer->getAMinTime()->format('H:i:s')))
+                || ($volunteer->hasESat() && strtotime($baseCriteria->getSatMinTime()->format('H:i:s')) < strtotime($volunteer->getEMaxTime()->format('H:i:s')) && strtotime($baseCriteria->getSatMaxTime()->format('H:i:s')) >= strtotime($volunteer->getEMinTime()->format('H:i:s')))
             )
         ) {
             $criteria->setSatCheck(true);
@@ -280,11 +280,11 @@ class SolidaryTransportMatcher
             $criteria->setSatTime($baseCriteria->getSatTime());
         }
         if (
-            $baseCriteria->isSunCheck() &&
-            (
-                ($volunteer->hasMSun() && strtotime($baseCriteria->getSunMinTime()->format('H:i:s')) < strtotime($volunteer->getMMaxTime()->format('H:i:s')) && strtotime($baseCriteria->getSunMaxTime()->format('H:i:s')) >= strtotime($volunteer->getMMinTime()->format('H:i:s'))) ||
-                ($volunteer->hasASun() && strtotime($baseCriteria->getSunMinTime()->format('H:i:s')) < strtotime($volunteer->getAMaxTime()->format('H:i:s')) && strtotime($baseCriteria->getSunMaxTime()->format('H:i:s')) >= strtotime($volunteer->getAMinTime()->format('H:i:s'))) ||
-                ($volunteer->hasESun() && strtotime($baseCriteria->getSunMinTime()->format('H:i:s')) < strtotime($volunteer->getEMaxTime()->format('H:i:s')) && strtotime($baseCriteria->getSunMaxTime()->format('H:i:s')) >= strtotime($volunteer->getEMinTime()->format('H:i:s')))
+            $baseCriteria->isSunCheck()
+            && (
+                ($volunteer->hasMSun() && strtotime($baseCriteria->getSunMinTime()->format('H:i:s')) < strtotime($volunteer->getMMaxTime()->format('H:i:s')) && strtotime($baseCriteria->getSunMaxTime()->format('H:i:s')) >= strtotime($volunteer->getMMinTime()->format('H:i:s')))
+                || ($volunteer->hasASun() && strtotime($baseCriteria->getSunMinTime()->format('H:i:s')) < strtotime($volunteer->getAMaxTime()->format('H:i:s')) && strtotime($baseCriteria->getSunMaxTime()->format('H:i:s')) >= strtotime($volunteer->getAMinTime()->format('H:i:s')))
+                || ($volunteer->hasESun() && strtotime($baseCriteria->getSunMinTime()->format('H:i:s')) < strtotime($volunteer->getEMaxTime()->format('H:i:s')) && strtotime($baseCriteria->getSunMaxTime()->format('H:i:s')) >= strtotime($volunteer->getEMinTime()->format('H:i:s')))
             )
         ) {
             $criteria->setSunCheck(true);
@@ -292,6 +292,7 @@ class SolidaryTransportMatcher
             $criteria->setSunMaxTime($baseCriteria->getSunMaxTime());
             $criteria->setSunTime($baseCriteria->getSunTime());
         }
+
         return $criteria;
     }
 }

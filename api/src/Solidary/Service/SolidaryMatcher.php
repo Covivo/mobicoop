@@ -338,7 +338,7 @@ class SolidaryMatcher
      * @param Criteria $criteria
      * @return array
      */
-    public function getBuildedScheduleRegularCarpool(Criteria $criteria): ?array
+    public function getBuildedScheduleRegularCarpool(Criteria $criteria): array
     {
         $schedule = [];
 

@@ -190,7 +190,7 @@ class JourneyManager
      *
      * @return array The cities found
      */
-    public function getCities(?string $letter)
+    public function getCities(?string $letter): array
     {
         $conn = $this->entityManager->getConnection();
         $sql = 'SELECT distinct origin as city FROM journey';
@@ -227,7 +227,7 @@ class JourneyManager
      *
      * @return Journey[] The journeys found
      */
-    public function getFrom(string $origin, string $operationName, array $context = [])
+    public function getFrom(string $origin, string $operationName, array $context = []): array
     {
         // first we search the city in the journeys as origin
         $conn = $this->entityManager->getConnection();
@@ -255,7 +255,7 @@ class JourneyManager
      *
      * @return Journey[] The journeys found
      */
-    public function getDestinationsForOrigin(string $origin)
+    public function getDestinationsForOrigin(string $origin): array
     {
         // first we search the city in the journeys as origin
         $conn = $this->entityManager->getConnection();
@@ -283,7 +283,7 @@ class JourneyManager
      *
      * @return Journey[] The journeys found
      */
-    public function getTo(string $destination, string $operationName, array $context = [])
+    public function getTo(string $destination, string $operationName, array $context = []): array
     {
         // first we search the city in the journeys as destination
         $conn = $this->entityManager->getConnection();
@@ -311,7 +311,7 @@ class JourneyManager
      *
      * @return Journey[] The journeys found
      */
-    public function getOriginsForDestination(string $destination)
+    public function getOriginsForDestination(string $destination): array
     {
         // first we search the city in the journeys as destination
         $conn = $this->entityManager->getConnection();
@@ -340,7 +340,7 @@ class JourneyManager
      *
      * @return Journey[] The journeys found
      */
-    public function getFromTo(string $origin, string $destination, string $operationName, array $context = [])
+    public function getFromTo(string $origin, string $destination, string $operationName, array $context = []): array
     {
         // first we search the city in the journeys as origin and destination
         $conn = $this->entityManager->getConnection();

@@ -55,7 +55,7 @@ final class StructureProofCollectionDataProvider implements CollectionDataProvid
         return StructureProof::class === $resourceClass;
     }
 
-    public function getCollection(string $resourceClass, string $operationName = null)
+    public function getCollection(string $resourceClass, string $operationName = null): iterable
     {
         $structureId = null;
 

@@ -54,7 +54,7 @@ class LinkAddressTerritoryCommand extends Command
         ;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         return (int) !$this->territoryManager->linkAddressesWithTerritories();
     }

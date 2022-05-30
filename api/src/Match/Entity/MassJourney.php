@@ -75,7 +75,7 @@ class MassJourney
     /**
      * @return int
      */
-    public function getIdPerson(): ?int
+    public function getIdPerson(): int
     {
         return $this->idPerson;
     }
@@ -84,7 +84,7 @@ class MassJourney
      * @param int $idPerson
      * @return int
      */
-    public function setIdPerson(int $idPerson): self
+    public function setIdPerson(int $idPerson): int
     {
         $this->idPerson = $idPerson;
     }
@@ -101,7 +101,7 @@ class MassJourney
      * @param int $distance
      * @return int
      */
-    public function setDistance(int $distance): self
+    public function setDistance(int $distance): int
     {
         $this->distance = $distance;
     }
@@ -118,7 +118,7 @@ class MassJourney
      * @param int $duration
      * @return int
      */
-    public function setDuration(int $duration): self
+    public function setDuration(int $duration): int
     {
         $this->duration = $duration;
     }
@@ -135,7 +135,7 @@ class MassJourney
      * @param float $co2
      * @return float
      */
-    public function setCo2(float $co2): self
+    public function setCo2(float $co2): float
     {
         $this->co2 = $co2;
     }

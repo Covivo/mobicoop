@@ -59,7 +59,7 @@ class EventRepository
      *
      * @return null|array|\Doctrine\DBAL\Driver\Statement|mixed The event found
      */
-    public function findByNameAndStatus(string $name, int $status)
+    public function findByNameAndStatus(string $name, int $status): mixed
     {
         $queryString = "
             SELECT e from App\\Event\\Entity\\Event e

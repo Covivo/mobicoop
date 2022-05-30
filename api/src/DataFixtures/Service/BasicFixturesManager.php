@@ -231,7 +231,7 @@ class BasicFixturesManager
      *
      * @return null|Ad
      */
-    public function createAd(array $tab)
+    public function createAd(array $tab): ?Ad
     {
         echo 'Import ad for user '.$tab[0].PHP_EOL;
         if ($user = $this->userManager->getUserByEmail($tab[0])) {
@@ -245,7 +245,7 @@ class BasicFixturesManager
             } else {
                 echo 'Wrong origin !'.PHP_EOL;
 
-                return;
+                return null;
             }
             $addressesDestination = $this->geoSearcher->geoCode($tab[6]);
             if (count($addressesDestination) > 0) {
@@ -256,7 +256,7 @@ class BasicFixturesManager
             } else {
                 echo 'Wrong destination !'.PHP_EOL;
 
-                return;
+                return null;
             }
             $ad = new Ad();
             $ad->setUser($user);
@@ -660,7 +660,7 @@ class BasicFixturesManager
      *
      * @return DateTime
      */
-    private function getDateFromModifier(string $modifier)
+    private function getDateFromModifier(string $modifier): DateTime
     {
         $date = new DateTime();
 

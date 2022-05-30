@@ -41,7 +41,7 @@ class LogSubscriber implements EventSubscriberInterface
         $this->gamificationActive = $gamificationActive;
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             LogEvent::NAME => 'onLogEvent'

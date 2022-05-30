@@ -59,7 +59,7 @@ final class CommunityDataPersister implements ContextAwareDataPersisterInterface
         if (is_null($data)) {
             throw new \InvalidArgumentException($this->translator->trans("bad community is provided"));
         }
-       
+
         if (isset($context['item_operation_name']) &&  $context['item_operation_name'] == 'put') {
             $data = $this->communityManager->updateCommunity($data);
         } elseif (isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'post') {

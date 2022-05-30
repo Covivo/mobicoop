@@ -163,7 +163,7 @@ class AdManager
      *
      * @return Ad
      */
-    public function createAd(Ad $ad, bool $doPrepare = true, bool $withSolidaries = true, bool $withResults = true, $forceNotUseTime = false)
+    public function createAd(Ad $ad, bool $doPrepare = true, bool $withSolidaries = true, bool $withResults = true, $forceNotUseTime = false): Ad
     {
         /** Anti-Fraud check */
         $antiFraudResponse = $this->antiFraudManager->validAd($ad);
@@ -623,7 +623,7 @@ class AdManager
      *
      * @return Address
      */
-    public function createAddressFromPoint($point)
+    public function createAddressFromPoint($point): Address
     {
         $address = new Address();
 
@@ -704,7 +704,7 @@ class AdManager
      *
      * @return Ad
      */
-    public function getAd(int $id, ?array $filters = null, ?array $order = null, ?int $page = 1, ?bool $createResults = true)
+    public function getAd(int $id, ?array $filters = null, ?array $order = null, ?int $page = 1, ?bool $createResults = true): Ad
     {
         if (is_null($page)) {
             $page = 1;
@@ -790,7 +790,7 @@ class AdManager
      *
      * @return Ad
      */
-    public function getAdFromExternalId(string $id, ?array $filters = null, ?array $order = null)
+    public function getAdFromExternalId(string $id, ?array $filters = null, ?array $order = null): Ad
     {
         $ad = new Ad();
         $proposal = $this->proposalManager->getFromExternalId($id);
@@ -849,7 +849,7 @@ class AdManager
      *
      * @return Ad
      */
-    public function getFullAd(int $id)
+    public function getFullAd(int $id): Ad
     {
         $proposal = $this->proposalManager->get($id);
 
@@ -894,7 +894,7 @@ class AdManager
      *
      * @return null|Ad
      */
-    public function getAdForPermission(int $id)
+    public function getAdForPermission(int $id): ?Ad
     {
         $ad = new Ad();
         if ($proposal = $this->proposalManager->get($id)) {
@@ -919,7 +919,7 @@ class AdManager
      *
      * @return array
      */
-    public function getAds(int $userId)
+    public function getAds(int $userId): array
     {
         $ads = [];
         $user = $this->userManager->getUser($userId);
@@ -976,7 +976,7 @@ class AdManager
      *
      * @return Ad
      */
-    public function makeAd($proposal, $userId, $hasAsks = false, ?Ad $askLinked = null, ?Matching $matching = null)
+    public function makeAd($proposal, $userId, $hasAsks = false, ?Ad $askLinked = null, ?Matching $matching = null): Ad
     {
         $ad = new Ad();
         $ad->setId($proposal->getId());
@@ -1152,7 +1152,7 @@ class AdManager
      *
      * @return array
      */
-    public function updateScheduleTimesWithPickUpDurations(array $schedule, string $outwardPickUpDuration, ?string $returnPickUpDuration = null)
+    public function updateScheduleTimesWithPickUpDurations(array $schedule, string $outwardPickUpDuration, ?string $returnPickUpDuration = null): array
     {
         $days = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
 
@@ -1175,7 +1175,7 @@ class AdManager
      *
      * @return Ad
      */
-    public function makeAdForCommunityOrEvent(Proposal $proposal)
+    public function makeAdForCommunityOrEvent(Proposal $proposal): Ad
     {
         $ad = new Ad();
         $ad->setId($proposal->getId());
@@ -1231,7 +1231,7 @@ class AdManager
      *
      * @return Ad
      */
-    public function updateAd(Ad $ad, bool $withSolidaries = true)
+    public function updateAd(Ad $ad, bool $withSolidaries = true): Ad
     {
         $proposal = $this->proposalRepository->find($ad->getProposalId());
         $oldAd = $this->makeAd($proposal, $ad->getUserId());
@@ -1326,7 +1326,7 @@ class AdManager
      *
      * @return bool
      */
-    public function checkForMajorUpdate(Ad $oldAd, Ad $newAd)
+    public function checkForMajorUpdate(Ad $oldAd, Ad $newAd): bool
     {
         // checks for regular and punctual
         if (
@@ -1368,7 +1368,7 @@ class AdManager
      *
      * @return bool
      */
-    public function compareSchedules($old, $new)
+    public function compareSchedules($old, $new): bool
     {
         $adSchedule = [];
         // we create temporary schedule cause we need to keep new Ad clean to be able to create a new proposal easily if needed
@@ -1473,7 +1473,7 @@ class AdManager
      *
      * @return bool
      */
-    public function compareWaypoints($old, $new)
+    public function compareWaypoints($old, $new): bool
     {
         if (!is_array($old) || !is_array($new) || count($old) !== count($new)) {
             return false;
@@ -1498,7 +1498,7 @@ class AdManager
      *
      * @return bool
      */
-    public function compareDateTimes(Ad $old, Ad $new)
+    public function compareDateTimes(Ad $old, Ad $new): bool
     {
         $oldOutwardTime = new \DateTime($old->getOutwardTime());
 
@@ -1825,7 +1825,7 @@ class AdManager
      *
      * @return ClassicProof the created proof
      */
-    public function createCarpoolProof(ClassicProof $classicProof)
+    public function createCarpoolProof(ClassicProof $classicProof): ClassicProof
     {
         // search the ask
         if (!$ask = $this->askManager->getAsk($classicProof->getAskId())) {
@@ -1856,7 +1856,7 @@ class AdManager
      *
      * @return ClassicProof The classic proof updated
      */
-    public function updateCarpoolProof(int $id, ClassicProof $classicProofData)
+    public function updateCarpoolProof(int $id, ClassicProof $classicProofData): ClassicProof
     {
         // search the proof
         if (!$carpoolProof = $this->proofManager->getProof($id)) {
@@ -1911,7 +1911,7 @@ class AdManager
      *
      * @return Ad The ad created
      */
-    public function createProposalFromAd(Ad $ad, bool $persist = true)
+    public function createProposalFromAd(Ad $ad, bool $persist = true): Ad
     {
         $this->logger->info('AdManager : start createProposalFromAd '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
 
@@ -2242,7 +2242,7 @@ class AdManager
      *
      * @return Criteria
      */
-    private function createTimesFromSchedule($schedules, Criteria $criteria, string $key, $marginDuration)
+    private function createTimesFromSchedule($schedules, Criteria $criteria, string $key, $marginDuration): Criteria
     {
         foreach ($schedules as $schedule) {
             if (isset($schedule[$key]) && '' != $schedule[$key]) {
@@ -2335,7 +2335,7 @@ class AdManager
      *
      * @return \Datetime
      */
-    private function middleHour(string $heureMin, string $heureMax, string $dateMin, ?string $dateMax = null)
+    private function middleHour(string $heureMin, string $heureMax, string $dateMin, ?string $dateMax = null): \Datetime
     {
         (is_null($dateMax)) ? $dateMax = $dateMin : '';
 
@@ -2356,7 +2356,7 @@ class AdManager
      *
      * @return int
      */
-    private function dateDiff(string $heureMin, string $heureMax, string $dateMin, ?string $dateMax = null)
+    private function dateDiff(string $heureMin, string $heureMax, string $dateMin, ?string $dateMax = null): int
     {
         $min = \DateTime::createFromFormat('Y-m-d H:i:s', $dateMin.' '.$heureMin, new \DateTimeZone('UTC'));
         $mintime = $min->getTimestamp();
@@ -2374,7 +2374,7 @@ class AdManager
      *
      * @return array
      */
-    private function buildSchedule(?array $days, ?array $outward)
+    private function buildSchedule(?array $days, ?array $outward): array
     {
         $schedules = []; // We set a sub schedule because a real Ad can have multiple schedule. Only one in RDEX though.
         $refTimes = [];

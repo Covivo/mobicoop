@@ -56,7 +56,7 @@ final class RolesGrantedForCreationDataProvider implements CollectionDataProvide
         return Permission::class === $resourceClass && $operationName === "roles_granted_for_creation";
     }
     
-    public function getCollection(string $resourceClass, string $operationName = null)
+    public function getCollection(string $resourceClass, string $operationName = null): iterable
     {
         return $this->authmanager->getAuthItemsGrantedForCreation($this->security->getUser());
     }

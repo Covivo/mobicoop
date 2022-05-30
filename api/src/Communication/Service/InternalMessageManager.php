@@ -116,7 +116,7 @@ class InternalMessageManager
      *
      * @return Message
      */
-    public function createMessage(User $sender, array $recipients, string $text, ?string $title = null, ?Message $reply)
+    public function createMessage(User $sender, array $recipients, string $text, ?string $title = null, ?Message $reply): Message
     {
         $message = new Message();
         $message->setUser($sender);
@@ -185,7 +185,7 @@ class InternalMessageManager
      *
      * @return Message
      */
-    public function postMessage(Message $message)
+    public function postMessage(Message $message): Message
     {
         // This message is related to an Ask
         if (null !== $message->getIdAsk()) {

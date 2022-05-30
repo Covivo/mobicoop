@@ -19,7 +19,7 @@ final class AdAskItemDataPersister implements ContextAwareDataPersisterInterface
         $this->request = $requestStack->getCurrentRequest();
         $this->security = $security;
     }
-  
+
     public function supports($data, array $context = []): bool
     {
         return $data instanceof Ad && isset($context['item_operation_name']) &&  $context['item_operation_name'] == 'put_ask';

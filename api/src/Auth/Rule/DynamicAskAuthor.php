@@ -34,7 +34,7 @@ class DynamicAskAuthor implements AuthRuleInterface
     /**
      * {@inheritdoc}
      */
-    public function execute($requester, $item, $params)
+    public function execute($requester, $item, $params): bool
     {
         return true;
     }
