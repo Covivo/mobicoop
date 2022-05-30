@@ -41,6 +41,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class PointSearcher
 {
     private $providers;
+    private $reverseProviders;
 
     public function __construct(
         MobicoopGeocoder $mobicoopGeocoder,
@@ -118,6 +119,8 @@ class PointSearcher
         if ($user instanceof User) {
             $this->providers[] = $userPointProvider;
         }
+
+        $this->reverseProviders = [$mobicoopGeocoderPointProvider];
     }
 
     public function geocode(string $search): array
@@ -125,6 +128,16 @@ class PointSearcher
         $points = [];
         foreach ($this->providers as $provider) {
             $points = array_merge($points, $provider->search(str_replace(['"', "'"], ' ', $search)));
+        }
+
+        return $points;
+    }
+
+    public function reverse(float $lon, float $lat): array
+    {
+        $points = [];
+        foreach ($this->reverseProviders as $provider) {
+            $points = array_merge($points, $provider->reverse($lon, $lat));
         }
 
         return $points;
