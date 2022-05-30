@@ -292,7 +292,9 @@ class NotificationManager
         $structure = null;
         if (!is_null($recipient->getSolidaryUser())) {
             $structure = $recipient->getSolidaryUser()->getSolidaryUserStructures()[0]->getStructure();
-            $structure->setLogoPath($this->structureLogoUri.$structure->getImages()[0]->getFileName());
+            if (count($structure->getImages()) > 0) {
+                $structure->setLogoPath($this->structureLogoUri.$structure->getImages()[0]->getFileName());
+            }
         }
         $titleContext = [];
         $bodyContext = [];
