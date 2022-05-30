@@ -1,27 +1,31 @@
-<?php namespace App\Security;
+<?php
+
+namespace App\Security;
 
 use App\Auth\Service\AuthManager;
 use App\User\Entity\User;
 use App\User\Event\LoginDelegateEvent;
 use App\User\Service\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Gesdinet\JWTRefreshTokenBundle\Model\RefreshTokenManagerInterface;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
-use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Security\Core\User\UserProviderInterface;
-use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
-use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
-use Gesdinet\JWTRefreshTokenBundle\Model\RefreshTokenManagerInterface;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
+use Symfony\Component\Security\Http\Authenticator\AbstractAuthenticator;
+use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
+use Symfony\Component\Security\Http\Authenticator\Passport\Credentials\PasswordCredentials;
+use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 
 /**
- * Authenticator for login delegation
+ * Authenticator for login delegation.
  */
-class DelegateAuthenticator extends AbstractGuardAuthenticator
+class DelegateAuthenticator extends AbstractAuthenticator
 {
     private $em;
     private $jwtTokenManagerInterface;
@@ -49,53 +53,27 @@ class DelegateAuthenticator extends AbstractGuardAuthenticator
      */
     public function supports(Request $request): bool
     {
-        return true;
+        return count($this->getCredentials($request)) > 0;
     }
 
-    /**
-     * Called on every request. Return whatever credentials you want to
-     * be passed to getUser() as $credentials.
-     */
-    public function getCredentials(Request $request): mixed
+    public function authenticate(Request $request): Passport
     {
-        $decodeRequest = json_decode($request->getContent());
-        if (!isset($decodeRequest->username) || !isset($decodeRequest->username_delegate) || !isset($decodeRequest->password)) {
-            return false;
-        }
-        $credentials['username'] =  $decodeRequest->username;
-        $credentials['username_delegate'] =  $decodeRequest->username_delegate;
-        $credentials['password'] =  $decodeRequest->password;
+        $credentials = $this->getCredentials($request);
 
-        return $credentials;
-    }
+        if ($user = $this->em->getRepository(User::class)->findOneBy(['email' => $credentials['username']])) {
+            // check if user has the right authorization
+            if (!$this->authManager->isInnerAuthorized($user, 'login_delegate')) {
+                throw new CustomUserMessageAuthenticationException('No login delegation');
+            }
+            $userDelegate = $this->em->getRepository(User::class)->findOneBy(['email' => $credentials['username_delegate']]);
+            if (!$userDelegate) {
+                throw new CustomUserMessageAuthenticationException('Unknown user');
+            }
 
-    public function getUser($credentials, UserProviderInterface $userProvider): ?UserInterface
-    {
-        if (null === $credentials) {
-            // Code 401 "Unauthorized"
-            return null;
+            return new Passport(new UserBadge($user->getEmail()), new PasswordCredentials($credentials['password']));
         }
 
-        $user = $this->em->getRepository(User::class)->findOneBy(['email' => $credentials['username']]);
-        if (!$user) {
-            return null;
-        }
-        // check if user has the right authorization
-        if (!$this->authManager->isInnerAuthorized($user, 'login_delegate')) {
-            return null;
-        }
-        $userDelegate = $this->em->getRepository(User::class)->findOneBy(['email' => $credentials['username_delegate']]);
-        if (!$userDelegate) {
-            return null;
-        }
-
-        // if a User is returned, checkCredentials() is called
-        return $user;
-    }
-
-    public function checkCredentials($credentials, UserInterface $user): bool
-    {
-        return $this->userManager->isValidPassword($user, $credentials['password']);
+        throw new CustomUserMessageAuthenticationException('Unknown user');
     }
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey): ?Response
@@ -105,7 +83,7 @@ class DelegateAuthenticator extends AbstractGuardAuthenticator
         $userDelegate = $this->em->getRepository(User::class)->findOneBy(['email' => $decodeRequest->username_delegate]);
 
         // time for valid refresh token, define in gesdinet_jwt_refresh_token, careful to let this value in seconds
-        $addTime = "PT".$this->params->get('gesdinet_jwt_refresh_token.ttl')."S";
+        $addTime = 'PT'.$this->params->get('gesdinet_jwt_refresh_token.ttl').'S';
 
         $now = new \DateTime('now');
         $now->add(new \DateInterval($addTime));
@@ -122,35 +100,31 @@ class DelegateAuthenticator extends AbstractGuardAuthenticator
         $this->eventDispatcher->dispatch($event, LoginDelegateEvent::NAME);
 
         return new JsonResponse([
-          'token'=>$this->jwtTokenManagerInterface->create($userDelegate),
-          'refreshToken' => $refreshToken->getRefreshToken()
+            'token' => $this->jwtTokenManagerInterface->create($userDelegate),
+            'refreshToken' => $refreshToken->getRefreshToken(),
         ]);
     }
-
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
     {
         $data = [
-            'message' => strtr($exception->getMessageKey(), $exception->getMessageData())
+            'message' => strtr($exception->getMessageKey(), $exception->getMessageData()),
         ];
 
         return new JsonResponse($data, Response::HTTP_UNAUTHORIZED);
     }
 
-    /**
-     * Called when authentication is needed, but it's not sent
-     */
-    public function start(Request $request, AuthenticationException $authException = null): Response
+    private function getCredentials(Request $request): array
     {
-        $data = [
-            'message' => 'Authentication Required'
-        ];
+        $decodeRequest = json_decode($request->getContent());
+        if (isset($decodeRequest->username, $decodeRequest->username_delegate, $decodeRequest->password)) {
+            return [
+                'username' => $decodeRequest->username,
+                'username_delegate' => $decodeRequest->username_delegate,
+                'password' => $decodeRequest->password,
+            ];
+        }
 
-        return new JsonResponse($data, Response::HTTP_UNAUTHORIZED);
-    }
-
-    public function supportsRememberMe(): bool
-    {
-        return false;
+        return [];
     }
 }

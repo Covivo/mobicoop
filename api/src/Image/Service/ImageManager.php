@@ -44,9 +44,10 @@ use App\User\Entity\User;
 use App\User\Repository\UserRepository;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManagerInterface;
+use Liip\ImagineBundle\Imagine\Data\DataManager;
+use Liip\ImagineBundle\Imagine\Filter\FilterManager;
 use ProxyManager\Exception\FileNotWritableException;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Image manager.
@@ -91,7 +92,8 @@ class ImageManager
         CommunityRepository $communityRepository,
         ImageRepository $imageRepository,
         FileManager $fileManager,
-        ContainerInterface $container,
+        FilterManager $filterManager,
+        DataManager $dataManager,
         LoggerInterface $maintenanceLogger,
         array $types,
         CampaignRepository $campaignRepository,
@@ -109,8 +111,8 @@ class ImageManager
 
         $this->fileManager = $fileManager;
         $this->types = $types;
-        $this->filterManager = $container->get('liip_imagine.filter.manager');
-        $this->dataManager = $container->get('liip_imagine.data.manager');
+        $this->filterManager = $filterManager;
+        $this->dataManager = $dataManager;
         $this->loggerMaintenance = $maintenanceLogger;
         $this->dataUri = $dataUri;
         $this->badgeRepository = $badgeRepository;

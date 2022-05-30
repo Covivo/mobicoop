@@ -179,9 +179,6 @@
     "laminas/laminas-eventmanager": {
         "version": "3.2.1"
     },
-    "laminas/laminas-zendframework-bridge": {
-        "version": "1.0.4"
-    },
     "lcobucci/clock": {
         "version": "2.0.0"
     },
@@ -459,9 +456,6 @@
     "symfony/polyfill-php72": {
         "version": "v1.11.0"
     },
-    "symfony/polyfill-php73": {
-        "version": "v1.11.0"
-    },
     "symfony/polyfill-php80": {
         "version": "v1.17.1"
     },
@@ -499,9 +493,6 @@
         "version": "v4.2.3"
     },
     "symfony/security-csrf": {
-        "version": "v4.2.3"
-    },
-    "symfony/security-guard": {
         "version": "v4.2.3"
     },
     "symfony/security-http": {

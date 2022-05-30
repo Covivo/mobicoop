@@ -2,9 +2,7 @@
 
 namespace App\Security;
 
-use App\User\Entity\User;
 use App\User\Service\SsoManager;
-use Doctrine\ORM\EntityManagerInterface;
 use Gesdinet\JWTRefreshTokenBundle\Model\RefreshTokenManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -13,21 +11,21 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
-use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Security\Core\User\UserProviderInterface;
-use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
+use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
+use Symfony\Component\Security\Http\Authenticator\AbstractAuthenticator;
+use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
+use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
+use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
 
-class SsoAuthenticator extends AbstractGuardAuthenticator
+class SsoAuthenticator extends AbstractAuthenticator
 {
-    private $em;
     private $jwtTokenManagerInterface;
     private $refreshTokenManager;
     private $params;
     private $ssoManager;
 
-    public function __construct(EntityManagerInterface $em, JWTTokenManagerInterface $jwtTokenManagerInterface, RefreshTokenManagerInterface $refreshTokenManager, ParameterBagInterface $params, SsoManager $ssoManager)
+    public function __construct(JWTTokenManagerInterface $jwtTokenManagerInterface, RefreshTokenManagerInterface $refreshTokenManager, ParameterBagInterface $params, SsoManager $ssoManager)
     {
-        $this->em = $em;
         $this->jwtTokenManagerInterface = $jwtTokenManagerInterface;
         $this->refreshTokenManager = $refreshTokenManager;
         $this->params = $params;
@@ -41,56 +39,18 @@ class SsoAuthenticator extends AbstractGuardAuthenticator
      */
     public function supports(Request $request): bool
     {
-        return true;
+        return count($this->getCredentials($request)) > 0;
     }
 
-    /**
-     * Called on every request. Return whatever credentials you want to
-     * be passed to getUser() as $credentials.
-     */
-    public function getCredentials(Request $request): mixed
+    public function authenticate(Request $request): Passport
     {
-        $decodeRequest = json_decode($request->getContent());
-        if (
-            isset($decodeRequest->ssoId) && !empty($decodeRequest->ssoId)
-            && isset($decodeRequest->ssoProvider) && !empty($decodeRequest->ssoProvider)
-            && isset($decodeRequest->baseSiteUri) && !empty($decodeRequest->baseSiteUri)
-        ) {
-            $credentials['ssoId'] = $decodeRequest->ssoId;
-            $credentials['ssoProvider'] = $decodeRequest->ssoProvider;
-            $credentials['baseSiteUri'] = $decodeRequest->baseSiteUri;
-        } else {
-            return false;
+        $credentials = $this->getCredentials($request);
+
+        if ($user = $this->ssoManager->getUser($credentials['ssoProvider'], $credentials['ssoId'], $credentials['baseSiteUri'])) {
+            return new SelfValidatingPassport(new UserBadge($user->getUsername()), []);
         }
 
-        return $credentials;
-    }
-
-    /**
-     * Searching User by ssoId and ssoProvider.
-     *
-     * @param array $credentials
-     *
-     * @return null|User
-     */
-    public function getUser($credentials, UserProviderInterface $userProvider): ?User
-    {
-        if (null === $credentials) {
-            // The token header was empty, authentication fails with HTTP Status
-            // Code 401 "Unauthorized"
-            return null;
-        }
-
-        return $this->ssoManager->getUser($credentials['ssoProvider'], $credentials['ssoId'], $credentials['baseSiteUri']);
-    }
-
-    public function checkCredentials($credentials, UserInterface $user): bool
-    {
-        // Check credentials - e.g. make sure the password is valid.
-        // In case of an API token, no credential check is needed.
-
-        // Return `true` to cause authentication success
-        return true;
+        throw new CustomUserMessageAuthenticationException('Wrong email or password token');
     }
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey): ?Response
@@ -127,20 +87,21 @@ class SsoAuthenticator extends AbstractGuardAuthenticator
         return new JsonResponse($data, Response::HTTP_UNAUTHORIZED);
     }
 
-    /**
-     * Called when authentication is needed, but it's not sent.
-     */
-    public function start(Request $request, AuthenticationException $authException = null): Response
+    private function getCredentials(Request $request): array
     {
-        $data = [
-            'message' => 'Authentication Required',
-        ];
+        $decodeRequest = json_decode($request->getContent());
+        if (
+            isset($decodeRequest->ssoId) && !empty($decodeRequest->ssoId)
+            && isset($decodeRequest->ssoProvider) && !empty($decodeRequest->ssoProvider)
+            && isset($decodeRequest->baseSiteUri) && !empty($decodeRequest->baseSiteUri)
+        ) {
+            return [
+                'ssoId' => $decodeRequest->ssoId,
+                'ssoProvider' => $decodeRequest->ssoProvider,
+                'baseSiteUri' => $decodeRequest->baseSiteUri,
+            ];
+        }
 
-        return new JsonResponse($data, Response::HTTP_UNAUTHORIZED);
-    }
-
-    public function supportsRememberMe(): bool
-    {
-        return false;
+        return [];
     }
 }

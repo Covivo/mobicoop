@@ -238,8 +238,6 @@ class UserManager
 
     /**
      * Get a user by its id.
-     *
-     * @return null|User
      */
     public function getUser(int $id): ?User
     {
@@ -308,8 +306,6 @@ class UserManager
 
     /**
      * Get a user by security token.
-     *
-     * @return null|User
      */
     public function getMe(): ?User
     {
@@ -677,8 +673,6 @@ class UserManager
 
     /**
      * Update the user infos on the payment provider platform.
-     *
-     * @return User
      */
     public function updatePaymentProviderUser(User $user): User
     {
@@ -1128,8 +1122,6 @@ class UserManager
      * User password change request.
      *
      * @param User $user
-     *
-     * @return Response
      */
     public function updateUserPasswordRequest(User $data): Response
     {
@@ -1159,8 +1151,6 @@ class UserManager
      * User password change confirmation.
      *
      * @param User $user
-     *
-     * @return Response
      */
     public function updateUserPassword(User $data): Response
     {
@@ -1185,10 +1175,8 @@ class UserManager
 
     /**
      * Get user alert preferences.
-     *
-     * @return User
      */
-    public function getAlerts(User $user): User
+    public function getAlerts(User $user): array
     {
         // if no alerts are detected we create them
         if (0 == count($user->getUserNotifications())) {
@@ -1244,9 +1232,8 @@ class UserManager
         foreach ($mediaOrdered as $actionID => $orderedMedia) {
             $alerts[$actions[$actionID]]['alert'] = $orderedMedia;
         }
-        $user->setAlerts($alerts);
 
-        return $user;
+        return $alerts;
     }
 
     /**
@@ -1255,8 +1242,6 @@ class UserManager
      * @param User  $user    The user to treat
      * @param bool  $perist  Persist immediately (false for mass import)
      * @param mixed $persist
-     *
-     * @return User
      */
     public function createAlerts(User $user, $persist = true): User
     {
@@ -1457,8 +1442,6 @@ class UserManager
         }
         // No user found. We return nothing.
         return new JsonResponse();
-
-        return new JsonResponse();
     }
 
     public function unsubscribeFromEmail(User $user, $lang = 'fr_FR')
@@ -1500,8 +1483,6 @@ class UserManager
      * Get the solidaries of a user.
      *
      * @param int $userId The user id we want to get the solidaries
-     *
-     * @return null|User
      */
     public function getSolidaries(int $userId): ?User
     {
@@ -1522,8 +1503,6 @@ class UserManager
      * Get the structures of a user.
      *
      * @param int $userId The user id we want to get the structures
-     *
-     * @return null|User
      */
     public function getStructures(int $userId): ?User
     {
@@ -1625,8 +1604,6 @@ class UserManager
 
     /**
      * Get the payment profile (bankaccounts, wallets...) of the User.
-     *
-     * @return null|User
      */
     public function getPaymentProfile(User $user = null): ?User
     {
@@ -1674,8 +1651,6 @@ class UserManager
 
     /**
      * Generate a randomPassword.
-     *
-     * @return string
      */
     public function randomPassword(): string
     {
@@ -1952,8 +1927,6 @@ break;
 
     /**
      * Update user's language.
-     *
-     * @return User
      */
     public function updateLanguage(User $user): User
     {

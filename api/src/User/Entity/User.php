@@ -2964,7 +2964,7 @@ class User implements UserInterface, EquatableInterface, PasswordAuthenticatedUs
         return $this->email;
     }
 
-    public function getUserIdentifier(): ?string
+    public function getUserIdentifier(): string
     {
         return $this->email;
     }
@@ -2973,7 +2973,7 @@ class User implements UserInterface, EquatableInterface, PasswordAuthenticatedUs
     {
     }
 
-    public function isEqualTo(UserInterface $user): ?bool
+    public function isEqualTo(UserInterface $user): bool
     {
         if (!$user instanceof User) {
             return false;

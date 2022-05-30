@@ -547,14 +547,14 @@ class UserController extends AbstractController
 
         return $this->render('@Mobicoop/user/updateProfile.html.twig', [
             'error' => $error,
-            'alerts' => $userManager->getAlerts($user)['alerts'],
+            'alerts' => $userManager->getAlerts($user),
             'tabDefault' => $tabDefault,
             'paymentElectronicActive' => $this->paymentElectronicActive,
             'validationDocsAuthorizedExtensions' => $this->validationDocsAuthorizedExtensions,
             'showReviews' => $user->isUserReviewsActive(),
             'ageDisplay' => $this->ageDisplay,
             'carpoolSettingsDisplay' => $this->carpoolSettingsDisplay,
-            'selectedTab' => $tab
+            'selectedTab' => $tab,
         ]);
     }
 
@@ -1029,8 +1029,8 @@ class UserController extends AbstractController
 
                 $days = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
                 foreach ($days as $day) {
-                    $currentOutwardTime = (!is_null($outwardSchedule)) ? $outwardSchedule[$day . 'Time'] : null;
-                    $currentReturnTime = (!is_null($returnSchedule)) ? $returnSchedule[$day . 'Time'] : null;
+                    $currentOutwardTime = (!is_null($outwardSchedule)) ? $outwardSchedule[$day.'Time'] : null;
+                    $currentReturnTime = (!is_null($returnSchedule)) ? $returnSchedule[$day.'Time'] : null;
 
                     // I need to know if there is already a section of the schedule with these times
                     $alreadyExists = false;
@@ -1379,7 +1379,7 @@ class UserController extends AbstractController
         $params = $this->ssoManager->guessSsoParameters($request->query->all());
 
         // We add the front url to the parameters
-        (isset($_SERVER['HTTPS'])) ? $params['baseSiteUri'] = 'https://' . $_SERVER['HTTP_HOST'] : $params['baseSiteUri'] = 'http://' . $_SERVER['HTTP_HOST'];
+        (isset($_SERVER['HTTPS'])) ? $params['baseSiteUri'] = 'https://'.$_SERVER['HTTP_HOST'] : $params['baseSiteUri'] = 'http://'.$_SERVER['HTTP_HOST'];
 
         // We add the service name
         $services = $this->userManager->getSsoServices();

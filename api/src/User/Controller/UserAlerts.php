@@ -19,14 +19,15 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\Controller;
 
 use App\TranslatorTrait;
-use App\User\Service\UserManager;
-use Symfony\Component\HttpFoundation\Response;
 use App\User\Entity\User;
+use App\User\Service\UserManager;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Controller class for user alert preferences.
@@ -45,17 +46,15 @@ class UserAlerts
 
     /**
      * This method is invoked when the alert preferences for a user is asked.
-     *
-     * @param User $data
-     * @return Response
      */
     public function __invoke(User $data): Response
     {
         if (is_null($data)) {
-            throw new \InvalidArgumentException($this->translator->trans("bad User id is provided"));
+            throw new \InvalidArgumentException($this->translator->trans('bad User id is provided'));
         }
         // we search the alerts
         $data = $this->userManager->getAlerts($data);
-        return $data;
+
+        return new JsonResponse($data);
     }
 }

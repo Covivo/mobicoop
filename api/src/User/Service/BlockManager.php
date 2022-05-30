@@ -19,17 +19,15 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\Service;
 
+use App\User\Entity\Block as BlockEntity;
 use App\User\Entity\User;
 use App\User\Repository\BlockRepository;
 use App\User\Ressource\Block;
-use App\User\Entity\Block as BlockEntity;
-use App\User\Exception\BlockException;
 use Doctrine\ORM\EntityManagerInterface;
-use LogicException;
 
 /**
  * Block manager service.
@@ -49,16 +47,17 @@ class BlockManager
 
     /**
      * Get the blocked users
-     * optional : get by a given user
+     * optional : get by a given user.
      *
-     * @param User|null $user    The User who made the block
+     * @param null|User $user The User who made the block
+     *
      * @return User[]
      */
     public function getBlockedUsers(?User $user = null): array
     {
         $users = [];
         if (!is_null($user)) {
-            $blocks = $this->blockRepository->findBy(['user'=>$user]);
+            $blocks = $this->blockRepository->findBy(['user' => $user]);
         } else {
             $blocks = $this->blockRepository->findAll();
         }
@@ -72,16 +71,17 @@ class BlockManager
 
     /**
      * Get the users that block the User given in parameter
-     * optional : get by a given user
+     * optional : get by a given user.
      *
-     * @param User|null $user    The User blocked
+     * @param null|User $user The User blocked
+     *
      * @return User[]
      */
     public function getBlockedByUsers(?User $user = null): array
     {
         $users = [];
         if (!is_null($user)) {
-            $blocks = $this->blockRepository->findBy(['blockedUser'=>$user]);
+            $blocks = $this->blockRepository->findBy(['blockedUser' => $user]);
         } else {
             $blocks = $this->blockRepository->findAll();
         }
@@ -96,50 +96,48 @@ class BlockManager
     }
 
     /**
-     * Make a Block Ressource from a Block Entity
-     *
-     * @param BlockEntity $blockEntity
-     * @return Block
+     * Make a Block Ressource from a Block Entity.
      */
     public function makeBlockRessource(BlockEntity $blockEntity): Block
     {
         $block = new Block();
         $block->setUser($blockEntity->getBlockedUser());
         $block->setCreatedDate($blockEntity->getCreatedDate());
+
         return $block;
     }
 
     /**
      * Handle the block status between two Users. It blocks or unblocks according the current state.
+     *
      * @param User $blocker     The user who make the block
      * @param User $blockedUser The blocked user
-     * @return Block|null
      */
     public function handleBlock(User $blocker, User $blockedUser): ?Block
     {
         // Determines if the blockedUser is already blocked by the blocker
         $blocks = $this->blockRepository->findBy([
-            'user'=>$blocker,
-            'blockedUser'=>$blockedUser
+            'user' => $blocker,
+            'blockedUser' => $blockedUser,
         ]);
-        if (count($blocks)>0) {
+        if (count($blocks) > 0) {
             // Already block, we want to unblock it
             // I do a foreach by security in case of multiple records. But it should only be one record at the time.
             foreach ($blocks as $block) {
                 $this->unblock($block);
             }
+
             return null;
-        } else {
-            // Not already block, blocker wants to block blockedUser
-            return $this->makeBlockRessource($this->block($blocker, $blockedUser));
         }
+        // Not already block, blocker wants to block blockedUser
+        return $this->makeBlockRessource($this->block($blocker, $blockedUser));
     }
 
     /**
-     * Block the blockedUser by the blocker
+     * Block the blockedUser by the blocker.
+     *
      * @param User $blocker     The user who make the block
      * @param User $blockedUser The blocked user
-     * @return BlockEntity|null
      */
     public function block(User $blocker, User $blockedUser): ?BlockEntity
     {
@@ -153,7 +151,8 @@ class BlockManager
     }
 
     /**
-     * Delete the Block
+     * Delete the Block.
+     *
      * @param BlockEntity $block The Block to delete
      */
     public function unblock(BlockEntity $block)
@@ -163,12 +162,9 @@ class BlockManager
     }
 
     /**
-     * Get all the blocks involving $user1 and $user2
-     * @param User $user1
-     * @param User $user2
-     * @return bool
+     * Get all the blocks involving $user1 and $user2.
      */
-    public function getInvolvedInABlock(User $user1, User $user2): bool
+    public function getInvolvedInABlock(User $user1, User $user2): array
     {
         return $this->blockRepository->findAllByUsersInvolved($user1, $user2);
     }

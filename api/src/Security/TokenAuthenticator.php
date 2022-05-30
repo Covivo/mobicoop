@@ -1,23 +1,27 @@
-<?php namespace App\Security;
+<?php
 
+namespace App\Security;
+
+use App\Action\Event\ActionEvent;
+use App\Action\Repository\ActionRepository;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Gesdinet\JWTRefreshTokenBundle\Model\RefreshTokenManagerInterface;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
-use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Security\Core\User\UserProviderInterface;
-use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
-use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
-use Gesdinet\JWTRefreshTokenBundle\Model\RefreshTokenManagerInterface;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use App\Action\Event\ActionEvent;
-use App\Action\Repository\ActionRepository;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
+use Symfony\Component\Security\Http\Authenticator\AbstractAuthenticator;
+use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
+use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
+use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
 
-class TokenAuthenticator extends AbstractGuardAuthenticator
+class TokenAuthenticator extends AbstractAuthenticator
 {
     private $em;
     private $jwtTokenManagerInterface;
@@ -43,57 +47,23 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
      */
     public function supports(Request $request): bool
     {
-        return true;
+        return count($this->getCredentials($request)) > 0;
     }
 
-    /**
-     * Called on every request. Return whatever credentials you want to
-     * be passed to getUser() as $credentials.
-     */
-    public function getCredentials(Request $request): mixed
+    public function authenticate(Request $request): Passport
     {
-        $decodeRequest = json_decode($request->getContent());
-        if (isset($decodeRequest->emailToken) && !empty($decodeRequest->emailToken)) {
-            $credentials['email'] =  $decodeRequest->email;
-            $credentials['emailToken'] =  $decodeRequest->emailToken;
-        } elseif (isset($decodeRequest->passwordToken) && !empty($decodeRequest->passwordToken)) {
-            $credentials['passwordToken'] =  $decodeRequest->passwordToken;
-        } else {
-            return false;
+        $credentials = $this->getCredentials($request);
+
+        if ($user = isset($credentials['emailToken'])
+            ? $this->em->getRepository(User::class)->findOneBy(['email' => $credentials['email'], 'emailToken' => $credentials['emailToken']])
+            : $this->em->getRepository(User::class)->findOneBy(['pwdToken' => $credentials['passwordToken']])) {
+            return new SelfValidatingPassport(new UserBadge($user->getUsername()), []);
         }
 
-        return $credentials;
+        throw new CustomUserMessageAuthenticationException('Wrong email or password token');
     }
 
-    /** We search an user by :
-    * Case 1 : the pair email + emailToken
-    * Case 2 : the pws reset token
-    */
-    public function getUser($credentials, UserProviderInterface $userProvider): ?UserInterface
-    {
-        if (null === $credentials) {
-            // The token header was empty, authentication fails with HTTP Status
-            // Code 401 "Unauthorized"
-            return null;
-        }
-        $user = isset($credentials['emailToken'])
-              ? $this->em->getRepository(User::class)->findOneBy([ 'email' => $credentials['email'], 'emailToken' => $credentials['emailToken']   ])
-              : $this->em->getRepository(User::class)->findOneBy([ 'pwdToken' => $credentials['passwordToken']  ]);
-
-        // if a User is returned, checkCredentials() is called
-        return $user;
-    }
-
-    public function checkCredentials($credentials, UserInterface $user): bool
-    {
-        // Check credentials - e.g. make sure the password is valid.
-        // In case of an API token, no credential check is needed.
-
-        // Return `true` to cause authentication success
-        return true;
-    }
-
-    public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey): ?Response
+    public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
         /**
          * @var User $user
@@ -101,7 +71,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
         $user = $token->getUser();
 
         //Time for valid refresh token, define in gesdinet_jwt_refresh_token, careful to let this value in secondes
-        $addTime = "PT".$this->params->get('gesdinet_jwt_refresh_token.ttl')."S";
+        $addTime = 'PT'.$this->params->get('gesdinet_jwt_refresh_token.ttl').'S';
 
         $now = new \DateTime('now');
         $now->add(new \DateInterval($addTime));
@@ -114,54 +84,52 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
         $this->refreshTokenManager->save($refreshToken);
 
         //Email token is not null = we activate account from email -> we set token at null and the validated date at today
-        if ($user->getEmailToken() != null) {
+        if (null != $user->getEmailToken()) {
             $user->setValidatedDate(new \DateTime('now'));
             $user->setEmailToken(null);
 
             //  we dispatch the gamification event associated
-            $action = $this->actionRepository->findOneBy(['name'=>'user_mail_validation']);
+            $action = $this->actionRepository->findOneBy(['name' => 'user_mail_validation']);
             $actionEvent = new ActionEvent($action, $user);
             $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);
-            
+
         //Password token is not null = we reset password -> we set password token and the asking reset date at null
-        } elseif ($user->getPwdToken() != null) {
+        } elseif (null != $user->getPwdToken()) {
             $user->setPwdToken(null);
             $user->setPwdTokenDate(null);
         }
         $this->em->persist($user);
         $this->em->flush();
-        
+
         // on success, let the request continue
         return new JsonResponse([
-          'token'=>$this->jwtTokenManagerInterface->create($token->getUser()),
-          'refreshToken' => $refreshToken->getRefreshToken()
+            'token' => $this->jwtTokenManagerInterface->create($token->getUser()),
+            'refreshToken' => $refreshToken->getRefreshToken(),
         ]);
     }
-
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
     {
         $data = [
-            'message' => strtr($exception->getMessageKey(), $exception->getMessageData())
+            'message' => strtr($exception->getMessageKey(), $exception->getMessageData()),
         ];
 
         return new JsonResponse($data, Response::HTTP_UNAUTHORIZED);
     }
 
-    /**
-     * Called when authentication is needed, but it's not sent
-     */
-    public function start(Request $request, AuthenticationException $authException = null): Response
+    private function getCredentials(Request $request): array
     {
-        $data = [
-            'message' => 'Authentication Required'
-        ];
+        $decodeRequest = json_decode($request->getContent());
+        if (isset($decodeRequest->emailToken) && !empty($decodeRequest->emailToken)) {
+            return [
+                'email' => $decodeRequest->email,
+                'emailToken' => $decodeRequest->emailToken,
+            ];
+        }
+        if (isset($decodeRequest->passwordToken) && !empty($decodeRequest->passwordToken)) {
+            return ['passwordToken' => $decodeRequest->passwordToken];
+        }
 
-        return new JsonResponse($data, Response::HTTP_UNAUTHORIZED);
-    }
-
-    public function supportsRememberMe(): bool
-    {
-        return false;
+        return [];
     }
 }

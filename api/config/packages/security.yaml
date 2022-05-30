@@ -57,17 +57,15 @@ security:
         login_user_token:
             pattern:  ^/login-token
             provider: users
-            guard:
-                authenticators:
-                    - App\Security\TokenAuthenticator
+            custom_authenticators:
+              - App\Security\TokenAuthenticator
 
         # firewall for users authentication with sso validated token
         login_user_sso:
             pattern:  ^/login-sso
             provider: users
-            guard:
-                authenticators:
-                    - App\Security\SsoAuthenticator
+            custom_authenticators:
+              - App\Security\SsoAuthenticator
 
         # firewall for user to server delegated authentication
         login_user_delegate:
@@ -75,9 +73,8 @@ security:
             stateless: true
             # anonymous: true
             provider: users
-            guard:
-                authenticators:
-                    - App\Security\DelegateAuthenticator
+            custom_authenticators:
+              - App\Security\DelegateAuthenticator
 
         # firewall for user to server authentication
         login_user:

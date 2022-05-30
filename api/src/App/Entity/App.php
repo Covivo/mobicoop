@@ -28,6 +28,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 // use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\EquatableInterface;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -44,7 +45,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *      itemOperations={"get"}
  * )
  */
-class App implements UserInterface, EquatableInterface
+class App implements UserInterface, EquatableInterface, PasswordAuthenticatedUserInterface
 {
     // default role
     public const DEFAULT_ROLE = 1;
@@ -141,7 +142,7 @@ class App implements UserInterface, EquatableInterface
         return $this;
     }
 
-    public function getUserIdentifier(): ?string
+    public function getUserIdentifier(): string
     {
         return $this->username;
     }
@@ -203,7 +204,7 @@ class App implements UserInterface, EquatableInterface
     {
     }
 
-    public function isEqualTo(UserInterface $app): ?bool
+    public function isEqualTo(UserInterface $app): bool
     {
         if (!$app instanceof App) {
             return false;
