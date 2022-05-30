@@ -44,6 +44,17 @@
                         <p>A bientôt sur <a style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}" href="{{api_env('EMAILS_PLATFORM_URL')}}">{{api_env('EMAILS_PLATFORM_NAME')}}</a>
                     </td>
                 </tr>
+                <tr style="text-align:left">
+                    <td>
+                        {% if context.structure.sgnature != null %}
+                            <p>{{ context.structure.sgnature }}</p>
+                        {% endif %}
+                        {% if context.structure.logoPath  != null %}
+                            <img src="{{ context.structure.logoPath }}" alt="" style="width:40%;max-width:1000px;height:auto;max-height:250px;border-style:none;" />
+                        {% endif %}
+                    </td>
+                </tr>
+
                 <hr>
             </table>
         </td>
