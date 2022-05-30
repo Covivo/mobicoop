@@ -99,4 +99,20 @@ class MobicoopGeocoder implements Geocoder
             return [];
         }
     }
+
+    public function reverse(float $lon, float $lat): array
+    {
+        $this->params['lon'] = $lon;
+        $this->params['lat'] = $lon;
+
+        try {
+            $clientResponse = $this->client->get('/reverse?'.http_build_query($this->params), ['connect_timeout' => self::TIME_OUT]);
+
+            return json_decode($clientResponse->getBody(), true);
+        } catch (TransferException $exception) {
+            return [];
+        } catch (ConnectException $exception) {
+            return [];
+        }
+    }
 }
