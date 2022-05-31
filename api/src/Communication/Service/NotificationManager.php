@@ -389,14 +389,8 @@ class NotificationManager
                     break;
 
                 case User::class:
-                    if (!is_null($recipient->getSolidaryUser())) {
-                        $structure = $recipient->getSolidaryUser()->getSolidaryUserStructures()[0]->getStructure();
-                        if (isset($structure->getImages()[0])) {
-                            $structure->setLogoPath($this->structureLogoUri.$structure->getImages()[0]->getFileName());
-                        }
-                    }
                     $titleContext = [];
-                    $bodyContext = ['user' => $recipient, 'structure' => $structure];
+                    $bodyContext = ['user' => $recipient];
 
                     break;
 
@@ -556,9 +550,9 @@ class NotificationManager
         } else {
             if (!is_null($recipient->getSolidaryUser())) {
                 $structure = $recipient->getSolidaryUser()->getSolidaryUserStructures()[0]->getStructure();
-                if (isset($structure->getImages()[0])) {
-                    $structure->setLogoPath($this->structureLogoUri.$structure->getImages()[0]->getFileName());
-                }
+                // if (isset($structure->getImages()[0])) {
+                //     $structure->setLogoPath($this->structureLogoUri.$structure->getImages()[0]->getFileName());
+                // }
             }
             $bodyContext = ['user' => $recipient, 'notification' => $notification, 'structure' => $structure];
         }

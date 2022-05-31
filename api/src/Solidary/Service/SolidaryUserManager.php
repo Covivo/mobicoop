@@ -726,7 +726,7 @@ class SolidaryUserManager
                 $user->setPassword($solidaryVolunteer->getPassword());
 
                 // we treat the user to add right authItem and notifiactions
-                $this->userManager->registerUser($user, true, false);
+                $this->userManager->registerUser($user, true, true);
             }
         }
         if (!is_null($user->getSolidaryUser())) {
