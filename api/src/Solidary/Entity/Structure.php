@@ -566,7 +566,7 @@ class Structure
      * @var null|string the signature of the structure
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"aRead"})
+     * @Groups({"aRead","aReadCol","aWrite","readSolidary","writeSolidary","readUser"})
      */
     private $signature;
 
