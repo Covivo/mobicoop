@@ -339,9 +339,7 @@ class UserManager
 
         // creation of the alert preferences
         $user = $this->createAlerts($user);
-        var_dump(!$isSolidary);
 
-        exit;
         if (!$isSolidary) {
             // dispatch en event
             if (is_null($user->getUserDelegate())) {

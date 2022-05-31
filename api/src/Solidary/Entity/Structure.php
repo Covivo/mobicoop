@@ -586,7 +586,7 @@ class Structure
     /**
      * @var string the structure logo file path
      *
-     * @Groups("aRead")
+     * @Groups({"aRead","readSolidary","writeSolidary"})
      */
     private $logoPath;
 
