@@ -21,6 +21,8 @@
  *    LICENSE
  */
 
+declare(strict_types=1);
+
 namespace App\Geography\Service;
 
 use App\Event\Repository\EventRepository;
@@ -92,8 +94,8 @@ class PointSearcher
             foreach ($user->getAddresses() as $address) {
                 if ($address->isHome()) {
                     $mobicoopGeocoder->setPrioritizeCentroid(
-                        $address->getLongitude(),
-                        $address->getLatitude()
+                        (float) $address->getLongitude(),
+                        (float) $address->getLatitude()
                     );
 
                     break;
