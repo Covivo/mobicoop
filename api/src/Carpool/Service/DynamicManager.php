@@ -48,7 +48,6 @@ use App\Geography\Entity\Direction;
 use App\Geography\Service\AddressCompleter;
 use App\Geography\Service\Geocoder\MobicoopGeocoder;
 use App\Geography\Service\GeoRouter;
-use App\Geography\Service\GeoSearcher;
 use App\Geography\Service\GeoTools;
 use App\Geography\Service\Point\AddressAdapter;
 use App\Geography\Service\Point\MobicoopGeocoderPointProvider;
@@ -70,7 +69,6 @@ class DynamicManager
     private $resultManager;
     private $geoTools;
     private $geoRouter;
-    private $geoSearcher;
     private $reversePointProvider;
     private $addressCompleter;
     private $params;
@@ -92,7 +90,6 @@ class DynamicManager
         ResultManager $resultManager,
         GeoTools $geoTools,
         GeoRouter $geoRouter,
-        GeoSearcher $geoSearcher,
         MobicoopGeocoder $mobicoopGeocoder,
         array $params,
         LoggerInterface $logger,
@@ -109,7 +106,6 @@ class DynamicManager
         $this->resultManager = $resultManager;
         $this->geoTools = $geoTools;
         $this->geoRouter = $geoRouter;
-        $this->geoSearcher = $geoSearcher;
         $this->params = $params;
         $this->logger = $logger;
         $this->matchingRepository = $matchingRepository;
@@ -365,7 +361,6 @@ class DynamicManager
             if ($waypoint->isFloating()) {
                 // update the floating waypoint address
                 // we reverse geocode, to get a full address
-                // if ($addresses = $this->geoSearcher->reverseGeoCode($dynamic->getLatitude(), $dynamic->getLongitude())) {
                 if ($points = $this->reversePointProvider->reverse((float) $dynamic->getLongitude(), (float) $dynamic->getLatitude())) {
                     if (count($points) > 0) {
                         $reversedGeocodeAddress = AddressAdapter::pointToAddress($points[0]);
