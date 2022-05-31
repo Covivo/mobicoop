@@ -11,7 +11,6 @@ variables:
   MYSQL_DATABASE: mobicoop_db
   MYSQL_ROOT_PASSWORD: mobicoop
   npm_config_cache: "$CI_PROJECT_DIR/.npm"
-  CYPRESS_CACHE_FOLDER: "$CI_PROJECT_DIR/cache/Cypress"
 
 
 # Cache modules in between jobs
@@ -19,63 +18,13 @@ cache:
   key: "$CI_JOB_STAGE-$CI_COMMIT_REF_SLUG"
   paths:    # excluded : not cached
   - .npm
-  - cache/Cypress
-  - /root/.cache/Cypress
 
 # Name of the stages that can be executed on a pipeline by the runner
 stages:
-  - tests
   - deploy
   - prod_deploy
   - admin_test_deploy
   - admin_prod_deploy
-  - doc
-  - reports
-
-
-###############################################################################################
-############# Everything under this is execute for all push (branch) ##########################
-###############################################################################################
-
-# #
-# # Tests for all branches except dev, master & tagged branches
-# #
-# branch_features:   # name of the job
-#   stage: tests
-# #  variables:
-# #    APP_ENV: dev    # /!\ important : symfony env variable /!\
-#   before_script:
-#     - npm install --unsafe-perm # Install the dependencies in the local node_modules folder
-#     - npm run install-all-ci # Install the dependencies in the local node_modules folder
-
-#   script:
-#     - npm test
-#     # - npm test --prefix=admin
-
-#   only:
-#     - pushes # job executed only on test
-#   except:       
-#     refs:   # job not executed for these branches & tags
-#       - tags    
-#       - dev
-#       - test
-#       - master
-#       - /^*.-next$/
-#     variables:
-#       - $CI_COMMIT_MESSAGE =~ /skip/    # job not executed when commit message contains this expression
-#   cache:
-#     key: "$CI_JOB_STAGE-$CI_COMMIT_REF_SLUG"
-#     paths:    # excluded : not cached
-#     - node_modules/
-#     - api/vendor/
-#     - client/vendor/
-#     - client/node_modules/
-#     - admin/node_modules/
-
-
-###############################################################################################
-############# Everything under this is execute only for Dev env (dev) ############################
-###############################################################################################
 
 #
 # Deployment for dev branch
@@ -176,7 +125,6 @@ test_deploy:
       - tags    # job not executed on tags
   artifacts:
     paths:
-    - client/cypress/screenshots
     - client/public/build
     - client/node_modules/
     - client/vendor/
@@ -226,7 +174,6 @@ prod_test_deploy:
   when: manual      # /!\ important : job executed manually /!\
   artifacts:
     paths:
-    - client/cypress/screenshots
     - client/public/build
     - client/node_modules/
     - client/vendor/
@@ -270,7 +217,6 @@ staging_deploy:
   when: manual      # /!\ important : job executed manually /!\
   artifacts:
     paths:
-    - client/cypress/screenshots
     - client/public/build
     - client/node_modules/
     - client/vendor/
@@ -315,7 +261,6 @@ prod_deploy:
   when: manual      # /!\ important : job executed manually /!\
   artifacts:
     paths:
-    - client/cypress/screenshots
     - client/public/build
     - client/node_modules/
     - client/vendor/
@@ -392,59 +337,3 @@ admin_prod_deploy:
       - tags    # job not executed on tags
     variables:
       - $CI_COMMIT_MESSAGE =~ /skipci/    # job not executed when commit message contains this expression
-
-###############################################################################################
-########## Deploy the produciton documentation based on  master branch ###################
-###############################################################################################
-
-pages:
- stage: doc
- script:
-  - echo 'Deploying all the doc...'
-  - npm run download-tools
-  - npm run generateDocs
-  - mkdir .public
-  - cp -r docs/* .public
-  - mv .public public
- dependencies:
-   - prod_deploy
- artifacts:
-   paths:
-   - public
- only:
-   - master
- when: manual      # /!\ important : job executed manually /!\  
-
-
-
-
-###############################################################################################
-########## Everything under this is execute only for Reports security on default branch (Dev) #
-###############################################################################################
-
-    
-#
-# Static Application Security Testing (SAST)
-# (gitlab preconfigured job) 
-#
-sast:
-  stage : reports
-  image: docker:stable
-  cache: {}
-  variables:
-    DOCKER_DRIVER: overlay2
-  allow_failure: true
-  services:
-    - docker:stable-dind
-  script:
-    - export SP_VERSION=$(echo "$CI_SERVER_VERSION" | sed 's/^\([0-9]*\)\.\([0-9]*\).*/\1-\2-stable/')
-    - docker run
-      --env SAST_CONFIDENCE_LEVEL="${SAST_CONFIDENCE_LEVEL:-3}"
-      --volume "$PWD:/code"
-      --volume /var/run/docker.sock:/var/run/docker.sock
-      "registry.gitlab.com/gitlab-org/security-products/sast:$SP_VERSION" /app/bin/run /code
-  artifacts:
-    reports:
-      sast: gl-sast-report.json
-  only:     # job executed only on dev & master branches
-    - dev

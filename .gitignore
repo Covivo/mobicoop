@@ -2,9 +2,6 @@
 
 #Ignore docker mariadb data
 .mariadb-data
-docker-compose-linux-doric.yml
-docker/apache/Dockerfile
-makefile-doric
 ### Composer ###
 composer.phar
 /vendor/

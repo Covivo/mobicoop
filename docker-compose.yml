@@ -1,7 +1,7 @@
 version: "2.4"
 services:
-  mobicoop_platform:
-    container_name: mobicoop_platform
+  client:
+    container_name: mobicoop_platform_client
     image: mobicoop/php-node-chromium:2.0.0
     # build: ./
     ports:
@@ -17,7 +17,6 @@ services:
       - COMPOSER_PROCESS_TIMEOUT=1200
     volumes:
       - ./:/var/www/:cached
-      - ./build/cache:/root/.cache/:cached
     networks:
       - mobicoop_platform
 
