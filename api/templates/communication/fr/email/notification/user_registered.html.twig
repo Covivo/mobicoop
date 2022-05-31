@@ -46,11 +46,13 @@
                 </tr>
                 <tr style="text-align:left">
                     <td>
-                        {% if context.structure.sgnature != null %}
-                            <p>{{ context.structure.sgnature }}</p>
-                        {% endif %}
-                        {% if context.structure.logoPath  != null %}
-                            <img src="{{ context.structure.logoPath }}" alt="" style="width:40%;max-width:1000px;height:auto;max-height:250px;border-style:none;" />
+                        {% if context.structure != null %}
+                            {% if context.structure.signature != null %}
+                                <p>{{ context.structure.signature }}</p>
+                            {% endif %}
+                            {% if context.structure.logoPath != null %}
+                                <img src="{{ context.structure.logoPath }}" alt="" style="width:40%;max-width:1000px;height:auto;max-height:250px;border-style:none;" />
+                            {% endif %}
                         {% endif %}
                     </td>
                 </tr>

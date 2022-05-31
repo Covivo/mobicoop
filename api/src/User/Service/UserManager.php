@@ -326,7 +326,7 @@ class UserManager
      *
      * @return User The user created
      */
-    public function registerUser(User $user, bool $encodePassword = true)
+    public function registerUser(User $user, bool $encodePassword = true, bool $isSolidary = false)
     {
         // we check if the user is on the scammer list
         $this->checkIfScammer($user);
@@ -340,19 +340,21 @@ class UserManager
         // creation of the alert preferences
         $user = $this->createAlerts($user);
 
-        // dispatch en event
-        if (is_null($user->getUserDelegate())) {
-            // registration by the user itself
-            $event = new UserRegisteredEvent($user);
-            $this->eventDispatcher->dispatch(UserRegisteredEvent::NAME, $event);
-        } else {
-            // delegate registration
-            $event = new UserDelegateRegisteredEvent($user);
-            $this->eventDispatcher->dispatch(UserDelegateRegisteredEvent::NAME, $event);
-            // send password ?
-            if (User::PWD_SEND_TYPE_SMS == $user->getPasswordSendType()) {
-                $event = new UserDelegateRegisteredPasswordSendEvent($user);
-                $this->eventDispatcher->dispatch(UserDelegateRegisteredPasswordSendEvent::NAME, $event);
+        if (!$isSolidary) {
+            // dispatch en event
+            if (is_null($user->getUserDelegate())) {
+                // registration by the user itself
+                $event = new UserRegisteredEvent($user);
+                $this->eventDispatcher->dispatch(UserRegisteredEvent::NAME, $event);
+            } else {
+                // delegate registration
+                $event = new UserDelegateRegisteredEvent($user);
+                $this->eventDispatcher->dispatch(UserDelegateRegisteredEvent::NAME, $event);
+                // send password ?
+                if (User::PWD_SEND_TYPE_SMS == $user->getPasswordSendType()) {
+                    $event = new UserDelegateRegisteredPasswordSendEvent($user);
+                    $this->eventDispatcher->dispatch(UserDelegateRegisteredPasswordSendEvent::NAME, $event);
+                }
             }
         }
 

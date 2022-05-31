@@ -391,7 +391,7 @@ class NotificationManager
                 case User::class:
                     if (!is_null($recipient->getSolidaryUser())) {
                         $structure = $recipient->getSolidaryUser()->getSolidaryUserStructures()[0]->getStructure();
-                        if (count($structure->getImages()) > 0) {
+                        if (isset($structure->getImages()[0])) {
                             $structure->setLogoPath($this->structureLogoUri.$structure->getImages()[0]->getFileName());
                         }
                     }
@@ -554,7 +554,13 @@ class NotificationManager
                     }
             }
         } else {
-            $bodyContext = ['user' => $recipient, 'notification' => $notification];
+            if (!is_null($recipient->getSolidaryUser())) {
+                $structure = $recipient->getSolidaryUser()->getSolidaryUserStructures()[0]->getStructure();
+                if (isset($structure->getImages()[0])) {
+                    $structure->setLogoPath($this->structureLogoUri.$structure->getImages()[0]->getFileName());
+                }
+            }
+            $bodyContext = ['user' => $recipient, 'notification' => $notification, 'structure' => $structure];
         }
 
         $lang = self::LANG;

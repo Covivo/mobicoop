@@ -553,13 +553,12 @@ class Structure
     private $territories;
 
     /**
-     * @var ArrayCollection the images of the editorial
+     * @var null|ArrayCollection the images of the structure
      *
      * @ORM\OneToMany(targetEntity="\App\Image\Entity\Image", mappedBy="structure", cascade={"persist"})
      * @ORM\OrderBy({"position" = "ASC"})
-     * @Groups("aRead")
+     * @Groups({"aRead","readSolidary","writeSolidary"})
      * @MaxDepth(1)
-     * @ApiSubresource(maxDepth=1)
      */
     private $images;
 
@@ -1412,6 +1411,11 @@ class Structure
         $this->logoPath = $logoPath;
 
         return $this;
+    }
+
+    public function getLogoPath(): ?string
+    {
+        return $this->logoPath;
     }
 
     // DOCTRINE EVENTS
