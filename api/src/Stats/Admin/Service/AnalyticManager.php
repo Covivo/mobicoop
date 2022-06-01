@@ -22,6 +22,7 @@
 
 namespace App\Stats\Admin\Service;
 
+use App\Auth\Service\AuthManager;
 use App\Stats\Admin\Resource\Analytic;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
@@ -36,13 +37,15 @@ class AnalyticManager
     private $organization;
     private $secret;
     private $dashboards;
+    private $authManager;
 
-    public function __construct(RequestStack $requestStack, array $params)
+    public function __construct(RequestStack $requestStack, AuthManager $authManager, array $params)
     {
         $this->uri = $params['url'];
         $this->organization = $params['organization'];
         $this->secret = $params['secret'];
         $this->dashboards = $params['dashboards'];
+        $this->authManager = $authManager;
 
         $request = $this->request = $requestStack->getCurrentRequest();
         $this->paramId = $request->get('id');
@@ -85,7 +88,7 @@ class AnalyticManager
 
     private function getTerritories(string $auth_item): array
     {
-        return [226];
+        return $this->authManager->getTerritoriesForItem($auth_item);
     }
 
     private function build_jwt_token($payload): string
