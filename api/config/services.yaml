@@ -604,6 +604,10 @@ services:
     tags:
       - { name: monolog.logger, channel: geography }
 
+  App\Stats\Admin\Service\AnalyticManager:
+    arguments:
+      $params: "%env(json:file:resolve:ANALYTICS_PARAMETERS)%"
+
   # Image
   App\Image\Controller\:
     resource: "../src/Image/Controller"

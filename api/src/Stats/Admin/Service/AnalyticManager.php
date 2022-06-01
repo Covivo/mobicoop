@@ -29,6 +29,16 @@ use App\Stats\Admin\Resource\Analytic;
  */
 class AnalyticManager
 {
+    private $uri;
+    private $organization;
+
+    public function __construct(array $params)
+    {
+        $this->uri = $params['url'];
+        $this->organization = $params['organization'];
+        $this->secret = $params['secret'];
+    }
+
     public function getAnalytics(): array
     {
         return [];
@@ -39,8 +49,6 @@ class AnalyticManager
         $analytic = new Analytic();
         $analytic->setId($id);
 
-        $url_analytic = 'http://localhost:3000';
-
         $payload = [
             'resource' => ['dashboard' => 35],
             'params' => [
@@ -48,15 +56,13 @@ class AnalyticManager
             ],
         ];
 
-        $analytic->setUrl($url_analytic.'/embed/dashboard/'.self::build_jwt_token($payload).'#bordered=false&titled=false');
+        $analytic->setUrl($this->uri.'embed/dashboard/'.self::build_jwt_token($payload).'#bordered=false&titled=false');
 
         return $analytic;
     }
 
     private function build_jwt_token($payload): string
     {
-        $secret = '4c228ad22521a64982b9da7d560fafeda2e5c0f26f04f84d957bd10e0eddcc09';
-
         // build the headers
         $headers = ['alg' => 'HS256', 'typ' => 'JWT'];
         $headers_encoded = self::base64url_encode(json_encode($headers));
@@ -65,7 +71,7 @@ class AnalyticManager
         $payload_encoded = self::base64url_encode(json_encode($payload));
 
         // build the signature
-        $signature = hash_hmac('sha256', "{$headers_encoded}.{$payload_encoded}", $secret, true);
+        $signature = hash_hmac('sha256', "{$headers_encoded}.{$payload_encoded}", $this->secret, true);
         $signature_encoded = self::base64url_encode($signature);
 
         // build and return the token
