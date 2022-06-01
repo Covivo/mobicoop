@@ -23,126 +23,57 @@
 namespace App\Stats\Admin\Service;
 
 use App\Stats\Admin\Resource\Analytic;
-use Exception;
-use Symfony\Component\HttpFoundation\RequestStack;
 
+/**
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ */
 class AnalyticManager
 {
-    public const IDS = [
-        1 => 'getUsersAnalytics',
-        2 => 'getSolidaryUsersAnalytics',
-    ];
-
-    private $dataManager;
-    private $analytic;
-    private $request;
-
-    public function __construct(DataManager $dataManager, RequestStack $requestStack)
-    {
-        $this->dataManager = $dataManager;
-        $this->request = $requestStack->getCurrentRequest();
-        $this->setParameters();
-    }
-
     public function getAnalytics(): array
     {
-        $analytics = [];
-        foreach (self::IDS as $id) {
-            $analytics[] = $this->getAnalytic($id);
-        }
-
-        return $analytics;
+        return [];
     }
 
-    public function getAnalytic(int $id, ?array $filter = []): Analytic
+    public function getAnalytic(int $id): Analytic
     {
-        $this->analytic = new Analytic();
-        $this->analytic->setId($id);
+        $analytic = new Analytic();
+        $analytic->setId($id);
 
-        if (!in_array($id, array_keys(self::IDS))) {
-            throw new Exception('Unknown Id');
-        }
+        $url_analytic = 'http://localhost:3000';
 
-        if (is_callable([$this, self::IDS[$id]])) {
-            $this->{self::IDS[$id]}($id);
-        } else {
-            $this->getGenericAnalytics($id);
-        }
+        $payload = [
+            'resource' => ['dashboard' => 35],
+            'params' => [
+                'idterritoryoperational' => [226],
+            ],
+        ];
 
-        return $this->analytic;
+        $analytic->setUrl($url_analytic.'/embed/dashboard/'.self::build_jwt_token($payload).'#bordered=false&titled=false');
+
+        return $analytic;
     }
 
-    public function getGenericAnalytics(int $id, ?array $filter = [])
+    private function build_jwt_token($payload): string
     {
-        $this->dataManager->setDataName(self::IDS[$id]);
-        $data = $this->dataManager->getData();
-        $this->analytic->setValue([
-            'total' => $data['total'],
-            'data' => $data['data'],
-        ]);
+        $secret = '4c228ad22521a64982b9da7d560fafeda2e5c0f26f04f84d957bd10e0eddcc09';
+
+        // build the headers
+        $headers = ['alg' => 'HS256', 'typ' => 'JWT'];
+        $headers_encoded = self::base64url_encode(json_encode($headers));
+
+        // build the payload
+        $payload_encoded = self::base64url_encode(json_encode($payload));
+
+        // build the signature
+        $signature = hash_hmac('sha256', "{$headers_encoded}.{$payload_encoded}", $secret, true);
+        $signature_encoded = self::base64url_encode($signature);
+
+        // build and return the token
+        return "{$headers_encoded}.{$payload_encoded}.{$signature_encoded}";
     }
 
-    public function getUsersAnalytics(int $id, ?array $filter = [])
+    private function base64url_encode($data)
     {
-        $analyticValue = ['data' => []];
-
-        $this->dataManager->setDataName(DataManager::DATA_NAME_VALIDATED_USERS_DETAILED);
-        $validatedUsers = $this->dataManager->getData();
-        $analyticValue['total'] = $validatedUsers['total'];
-        $analyticValue['data'][] = $validatedUsers['data'];
-
-        $this->dataManager->setDataName(DataManager::DATA_NAME_NOT_VALIDATED_USERS_DETAILED);
-        $notValidatedUsers = $this->dataManager->getData();
-        $analyticValue['data'][] = $notValidatedUsers['data'];
-
-        $this->analytic->setValue($this->normalizeResults($analyticValue));
-    }
-
-    private function setParameters()
-    {
-        if ($this->request->query->get('startDate') && '' !== trim($this->request->query->get('startDate'))) {
-            $startDate = \DateTime::createFromFormat('Y-m-d', $this->request->query->get('startDate'), new \DateTimeZone('Europe/Paris'));
-            if ($startDate) {
-                $this->dataManager->setStartDate($startDate);
-            }
-        }
-        if ($this->request->query->get('endDate') && '' !== trim($this->request->query->get('endDate'))) {
-            $endDate = \DateTime::createFromFormat('Y-m-d', $this->request->query->get('endDate'), new \DateTimeZone('Europe/Paris'));
-            if ($endDate) {
-                $this->dataManager->setEndDate($endDate);
-            }
-        }
-        if ($this->request->query->get('aggregInterval') && '' !== trim($this->request->query->get('aggregInterval'))) {
-            $this->dataManager->setAggregationInterval($this->request->query->get('aggregInterval'));
-        }
-    }
-
-    private function normalizeResults($analyticValue): array
-    {
-        foreach ($analyticValue['data'] as $key => $currentData) {
-            if (!isset($analyticValue['data'][$key + 1])) {
-                break;
-            }
-
-            $firstDateCurrent = new \DateTime($currentData[0]['key']);
-            $lastDateCurrent = new \DateTime($currentData[count($currentData) - 1]['key']);
-            $firstDateNextData = new \DateTime($analyticValue['data'][$key + 1][0]['key']);
-            $lastDateNextData = new \DateTime($analyticValue['data'][$key + 1][count($analyticValue['data']) - 1]['key']);
-
-            if ($firstDateCurrent > $firstDateNextData) {
-                $dataToAdd = $analyticValue['data'][$key + 1][0];
-                $dataToAdd['dataName'] = $currentData[0]['dataName'];
-                $dataToAdd['value'] = '-';
-                array_unshift($analyticValue['data'][$key], $dataToAdd);
-            }
-            if ($lastDateCurrent < $lastDateNextData) {
-                $dataToAdd = $analyticValue['data'][$key + 1][count($analyticValue['data']) - 1];
-                $dataToAdd['dataName'] = $currentData[0]['dataName'];
-                $dataToAdd['value'] = '-';
-                array_push($analyticValue['data'][$key], $dataToAdd);
-            }
-        }
-
-        return $analyticValue;
+        return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
     }
 }
