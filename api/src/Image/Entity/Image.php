@@ -486,7 +486,7 @@ class Image
     /**
      * @var null|Structure The structure for which this image is used as logo
      *
-     * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\Structure", inversedBy="images", cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity="\App\Solidary\Entity\Structure", inversedBy="images", cascade={"persist"})
      * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private $structure;

@@ -3,8 +3,8 @@
 {% block body %}
     <p>Un administrateur solidaire vous contacte.</p>
     <p>{{ context.text }}</p>
-    {% if context.structure.sgnature != null %}
-        <p>{{ context.structure.sgnature }}</p>
+    {% if context.structure.signature != null %}
+        <p>{{ context.structure.signature }}</p>
     {% endif %}
     {% if context.structure.logoPath  != null %}
         <img src="{{ context.structure.logoPath }}" alt="" style="width:40%;max-width:1000px;height:auto;max-height:250px;border-style:none;" />

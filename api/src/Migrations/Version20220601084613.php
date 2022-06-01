@@ -8,7 +8,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20220527093800 extends AbstractMigration
+final class Version20220601084613 extends AbstractMigration
 {
     public function up(Schema $schema) : void
     {
@@ -17,7 +17,7 @@ final class Version20220527093800 extends AbstractMigration
 
         $this->addSql('ALTER TABLE image ADD structure_id INT DEFAULT NULL');
         $this->addSql('ALTER TABLE image ADD CONSTRAINT FK_C53D045F2534008B FOREIGN KEY (structure_id) REFERENCES structure (id) ON DELETE CASCADE');
-        $this->addSql('CREATE UNIQUE INDEX UNIQ_C53D045F2534008B ON image (structure_id)');
+        $this->addSql('CREATE INDEX IDX_C53D045F2534008B ON image (structure_id)');
         $this->addSql('ALTER TABLE structure ADD signature VARCHAR(255) DEFAULT NULL');
     }
 
@@ -27,7 +27,7 @@ final class Version20220527093800 extends AbstractMigration
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE image DROP FOREIGN KEY FK_C53D045F2534008B');
-        $this->addSql('DROP INDEX UNIQ_C53D045F2534008B ON image');
+        $this->addSql('DROP INDEX IDX_C53D045F2534008B ON image');
         $this->addSql('ALTER TABLE image DROP structure_id');
         $this->addSql('ALTER TABLE structure DROP signature');
     }

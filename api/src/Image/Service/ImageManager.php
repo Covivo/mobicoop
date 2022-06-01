@@ -552,7 +552,7 @@ class ImageManager
 
                 case Structure::class:
                     if (!file_exists(dirname(__FILE__).'/../../../public/upload/structures/images/'.$image->getFileName())) {
-                        $this->loggerMaintenance->info('ImageManager : remove image '.$image->getFileName().' without associated file of the Editorial n°'.$owner->getId().' .'.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
+                        $this->loggerMaintenance->info('ImageManager : remove image '.$image->getFileName().' without associated file of the Structure n°'.$owner->getId().' .'.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
                         $this->deleteVersions($image);
                         $this->deleteBase($image, false);
                     }

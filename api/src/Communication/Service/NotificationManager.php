@@ -550,7 +550,7 @@ class NotificationManager
         } else {
             if (!is_null($recipient->getSolidaryUser())) {
                 $structure = $recipient->getSolidaryUser()->getSolidaryUserStructures()[0]->getStructure();
-                if (isset($structure->getImages()[0])) {
+                if (count($structure->getImages()) > 0) {
                     $structure->setLogoPath($this->structureLogoUri.$structure->getImages()[0]->getFileName());
                 }
             }
