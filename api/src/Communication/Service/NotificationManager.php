@@ -459,8 +459,13 @@ class NotificationManager
                 break;
 
                 case SolidaryContact::class:
+                    $structure = $recipient->getSolidaryUser()->getSolidaryUserStructures()[0]->getStructure();
+                    $signature = [
+                        'text' => $structure->getSignature(),
+                        'logo' => count($structure->getImages()) > 0 ? $this->structureLogoUri.$structure->getImages()[0]->getFileName() : null,
+                    ];
                     $titleContext = ['user' => $object->getSolidarySolution()->getSolidary()->getSolidaryUserStructure()->getSolidaryUser()->getUser()];
-                    $bodyContext = ['text' => $object->getContent(), 'recipient' => $recipient, 'structure' => $structure];
+                    $bodyContext = ['text' => $object->getContent(), 'recipient' => $recipient, 'signature' => $signature];
 
                 break;
 
