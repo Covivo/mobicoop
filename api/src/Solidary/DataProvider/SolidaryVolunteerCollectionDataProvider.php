@@ -18,17 +18,15 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\DataProvider;
 
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
 use App\Solidary\Entity\SolidaryVolunteer;
 use App\Solidary\Service\SolidaryUserManager;
 use Symfony\Component\Security\Core\Security;
-use App\User\Entity\User;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
@@ -49,6 +47,7 @@ final class SolidaryVolunteerCollectionDataProvider implements CollectionDataPro
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
         $this->context = $context;
+
         return SolidaryVolunteer::class === $resourceClass;
     }
 
@@ -62,11 +61,12 @@ final class SolidaryVolunteerCollectionDataProvider implements CollectionDataPro
             foreach ($this->context['filters'] as $key => $value) {
                 if (in_array($key, SolidaryVolunteer::AUTHORIZED_GENERIC_FILTERS)) {
                     $filters[$key] = $value;
-                } elseif ($key == SolidaryVolunteer::VALIDATED_CANDIDATE_FILTER) {
-                    $validatedCandidate = ($value=="true") ? $validatedCandidate = true : $validatedCandidate = false;
+                } elseif (SolidaryVolunteer::VALIDATED_CANDIDATE_FILTER == $key) {
+                    $validatedCandidate = ('true' == $value) ? $validatedCandidate = true : $validatedCandidate = false;
                 }
             }
         }
+
         return $this->solidaryUserManager->getSolidaryVolunteers($filters, $validatedCandidate);
     }
 }

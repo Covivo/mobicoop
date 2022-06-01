@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Price\Entity;
 
@@ -66,14 +66,14 @@ class Price
     public const DEFAULT_ID = 999999999999;
 
     /**
-     * @var int The id of this contact.
+     * @var int the id of this contact
      * @ApiProperty(identifier=true)
      * @Groups({"read", "write"})
      */
     private $id;
 
     /**
-     * The value of the price
+     * The value of the price.
      *
      * @var float
      * @Groups({"read", "write"})
@@ -81,7 +81,7 @@ class Price
     private $value;
 
     /**
-     * The frequency of the ad
+     * The frequency of the ad.
      *
      * @var int
      * @Groups({"read", "write"})
@@ -96,57 +96,39 @@ class Price
         }
     }
 
-    /**
-     * @return int
-     */
     public function getId(): int
     {
         return $this->id;
     }
 
-    /**
-     * @param int $id
-     * @return Price
-     */
     public function setId(int $id): Price
     {
         $this->id = $id;
+
         return $this;
     }
 
-    /**
-     * @return float
-     */
     public function getValue(): float
     {
         return $this->value;
     }
 
-    /**
-     * @param float $value
-     * @return Price
-     */
     public function setValue(float $value): Price
     {
         $this->value = $value;
+
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getFrequency(): int
     {
         return $this->frequency;
     }
 
-    /**
-     * @param int $frequency
-     * @return Price
-     */
     public function setFrequency(int $frequency): Price
     {
         $this->frequency = $frequency;
+
         return $this;
     }
 }

@@ -19,26 +19,21 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Payment\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
-use App\Geography\Entity\Address;
-use App\User\Entity\User;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * A Wallet
+ * A Wallet.
  *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class Wallet
 {
-    public const DEFAULT_ID = "999999999999";
+    public const DEFAULT_ID = '999999999999';
 
     /**
      * @var string The id of this wallet
@@ -49,7 +44,7 @@ class Wallet
     private $id;
 
     /**
-     * @var string|null The description of this wallet
+     * @var null|string The description of this wallet
      *
      * @Groups({"readPayment","writePayment"})
      */
@@ -70,21 +65,21 @@ class Wallet
     private $currency;
 
     /**
-     * @var string|null A comment for this wallet
+     * @var null|string A comment for this wallet
      *
      * @Groups({"readPayment","writePayment"})
      */
     private $comment;
 
     /**
-     * @var string|null Identifier (on the payment provider's platform) of the owner of this wallet
+     * @var null|string Identifier (on the payment provider's platform) of the owner of this wallet
      *
      * @Groups({"readPayment","writePayment"})
      */
     private $ownerIdentifier;
 
     /**
-     * @var \DateTimeInterface Creation date.
+     * @var \DateTimeInterface creation date
      *
      * @Groups({"readPayment"})
      */
@@ -95,24 +90,24 @@ class Wallet
         $this->id = self::DEFAULT_ID;
     }
 
-    public function getId(): ?String
+    public function getId(): ?string
     {
         return $this->id;
     }
 
-    public function setId(String $id): self
+    public function setId(string $id): self
     {
         $this->id = $id;
 
         return $this;
     }
 
-    public function getDescription(): ?String
+    public function getDescription(): ?string
     {
         return $this->description;
     }
 
-    public function setDescription(?String $description): self
+    public function setDescription(?string $description): self
     {
         $this->description = $description;
 
@@ -131,36 +126,36 @@ class Wallet
         return $this;
     }
 
-    public function getCurrency(): ?String
+    public function getCurrency(): ?string
     {
         return $this->currency;
     }
 
-    public function setCurrency(?String $currency): self
+    public function setCurrency(?string $currency): self
     {
         $this->currency = $currency;
 
         return $this;
     }
 
-    public function getComment(): ?String
+    public function getComment(): ?string
     {
         return $this->comment;
     }
 
-    public function setComment(?String $comment): self
+    public function setComment(?string $comment): self
     {
         $this->comment = $comment;
 
         return $this;
     }
 
-    public function getOwnerIdentifier(): ?String
+    public function getOwnerIdentifier(): ?string
     {
         return $this->ownerIdentifier;
     }
 
-    public function setOwnerIdentifier(?String $ownerIdentifier): self
+    public function setOwnerIdentifier(?string $ownerIdentifier): self
     {
         $this->ownerIdentifier = $ownerIdentifier;
 

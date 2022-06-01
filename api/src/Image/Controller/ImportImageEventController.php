@@ -19,13 +19,13 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Image\Controller;
 
+use App\Image\Service\ImageManager;
 use App\TranslatorTrait;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use App\Image\Service\ImageManager;
 
 class ImportImageEventController extends AbstractController
 {

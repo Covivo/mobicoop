@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Payment\Event;
 
@@ -30,15 +30,11 @@ class IdentityProofRejectedEvent extends Event
 {
     public const NAME = 'identity_proof_rejected';
 
-
     public function __construct(PaymentProfile $paymentProfile)
     {
         $this->paymentProfile = $paymentProfile;
     }
 
-    /**
-     * @return PaymentProfile
-     */
     public function getPaymentProfile(): PaymentProfile
     {
         return $this->paymentProfile;

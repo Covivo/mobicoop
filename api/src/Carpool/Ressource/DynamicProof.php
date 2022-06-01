@@ -19,15 +19,15 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Carpool\Ressource;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiResource;
+use App\User\Entity\User;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
-use App\User\Entity\User;
 
 /**
  * Carpooling : a proof for a dynamic ad.
@@ -56,10 +56,10 @@ use App\User\Entity\User;
  *      itemOperations={
  *          "get"={
  *              "security"="is_granted('dynamic_proof_read',object)",
-  *              "swagger_context" = {
+ *              "swagger_context" = {
  *                  "tags"={"Carpool Proofs"}
  *              }
-*          },
+ *          },
  *          "put"={
  *              "method"="PUT",
  *              "read"=false,
@@ -67,20 +67,19 @@ use App\User\Entity\User;
  *              "denormalization_context"={"groups"={"updateDynamic"}},
  *              "validation_groups"={"updateDynamic"},
  *              "security"="is_granted('dynamic_proof_update',object)",
-  *              "swagger_context" = {
+ *              "swagger_context" = {
  *                  "tags"={"Carpool Proofs"}
  *              }
-*          }
+ *          }
  *      }
  * )
- *
  */
 class DynamicProof
 {
     public const DEFAULT_ID = 999999999999;
 
     /**
-     * @var int The id of this dynamic ad proof.
+     * @var int the id of this dynamic ad proof
      *
      * @ApiProperty(identifier=true)
      * @Groups({"readDynamic","writeDynamic","updateDynamic"})
@@ -88,14 +87,14 @@ class DynamicProof
     private $id;
 
     /**
-     * @var User|null The current user.
+     * @var null|User the current user
      *
      * @Groups("readDynamic")
      */
     private $user;
 
     /**
-     * @var string The latitude.
+     * @var string the latitude
      *
      * @Groups({"writeDynamic","updateDynamic"})
      * @Assert\NotBlank(groups={"writeDynamic","updateDynamic"})
@@ -103,7 +102,7 @@ class DynamicProof
     private $latitude;
 
     /**
-     * @var string The longitude.
+     * @var string the longitude
      *
      * @Groups({"writeDynamic","updateDynamic"})
      * @Assert\NotBlank(groups={"writeDynamic","updateDynamic"})
@@ -111,7 +110,7 @@ class DynamicProof
     private $longitude;
 
     /**
-     * @var int|null The ask id related to the proof.
+     * @var null|int the ask id related to the proof
      *
      * @Assert\NotBlank(groups={"writeDynamic"})
      * @Groups("writeDynamic")
@@ -120,10 +119,10 @@ class DynamicProof
 
     /**
      * @var string Proof live status, as a 4 digits binary ABCD number (eg : 1101) :
-     * - A => passenger pickup proof (0/1)
-     * - B => driver pickup proof (0/1)
-     * - C => passenger dropoff proof (0/1)
-     * - D => driver dropoff proof (0/1)
+     *             - A => passenger pickup proof (0/1)
+     *             - B => driver pickup proof (0/1)
+     *             - C => passenger dropoff proof (0/1)
+     *             - D => driver dropoff proof (0/1)
      *
      * @Groups({"readDynamic","writeDynamic","updateDynamic"})
      */

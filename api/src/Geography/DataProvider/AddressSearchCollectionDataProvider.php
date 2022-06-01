@@ -19,25 +19,24 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Geography\DataProvider;
 
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
-use App\Geography\Service\GeoSearcher;
 use App\Geography\Entity\Address;
+use App\Geography\Service\GeoSearcher;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Collection data provider for anonymous address search.
  *
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
- *
  */
 final class AddressSearchCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
-    protected $request;
+    private $request;
 
     public function __construct(RequestStack $requestStack, GeoSearcher $geoSearcher)
     {
@@ -47,14 +46,15 @@ final class AddressSearchCollectionDataProvider implements CollectionDataProvide
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Address::class === $resourceClass && $operationName === "search";
+        return Address::class === $resourceClass && 'search' === $operationName;
     }
 
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
-        if ($this->request->get("q") !== null) {
-            return $this->geoSearcher->geoCode($this->request->get("q"));
+        if (null !== $this->request->get('q')) {
+            return $this->geoSearcher->geoCode($this->request->get('q'));
         }
+
         return [];
     }
 }

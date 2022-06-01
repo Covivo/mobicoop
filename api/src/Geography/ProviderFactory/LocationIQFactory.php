@@ -19,35 +19,29 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Geography\ProviderFactory;
 
 use Bazinga\GeocoderBundle\ProviderFactory\AbstractFactory;
-use App\Geography\ProviderFactory\LocationIQ;
 use Geocoder\Provider\Provider;
 use Http\Discovery\HttpClientDiscovery;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * LocationIQFactory.php
- * Custom Provider class for LocationIQ
+ * Custom Provider class for LocationIQ.
+ *
  * @author Sofiane Belaribi <sofiane.belaribi@mobicoop.org>
  * Date: 21/11/2018
  * Time: 15:25
- *
  */
-
 final class LocationIQFactory extends AbstractFactory
 {
     protected static $dependencies = [
         ['requiredClass' => LocationIQ::class, 'packageName' => 'geocoder-php/locationiq-provider'],
     ];
 
-    /**
-     * @param array $config
-     * @return Provider
-     */
     protected function getProvider(array $config): Provider
     {
         $httplug = $config['httplug_client'] ?: HttpClientDiscovery::find();
@@ -55,9 +49,6 @@ final class LocationIQFactory extends AbstractFactory
         return new LocationIQ($httplug, $config['api_key']);
     }
 
-    /**
-     * @param OptionsResolver $resolver
-     */
     protected static function configureOptionResolver(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([

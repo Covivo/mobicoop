@@ -238,9 +238,9 @@ class IdentityProof
         $this->status = $status;
         $this->getUser()->setIdentityStatus($status);
         if (self::STATUS_ACCEPTED == $this->status) {
-            $this->setAcceptedDate(new \Datetime());
+            $this->setAcceptedDate(new \DateTime());
         } elseif (self::STATUS_REFUSED == $this->status) {
-            $this->setRefusedDate(new \Datetime());
+            $this->setRefusedDate(new \DateTime());
         }
     }
 
@@ -423,7 +423,7 @@ class IdentityProof
      */
     public function setAutoCreatedDate()
     {
-        $this->setCreatedDate(new \Datetime());
+        $this->setCreatedDate(new \DateTime());
     }
 
     /**
@@ -433,6 +433,6 @@ class IdentityProof
      */
     public function setAutoUpdatedDate()
     {
-        $this->setUpdatedDate(new \Datetime());
+        $this->setUpdatedDate(new \DateTime());
     }
 }

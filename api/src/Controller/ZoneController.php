@@ -19,22 +19,21 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Controller;
 
+use App\Geography\Entity\Address;
+use App\Geography\Service\ZoneManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
-use App\Geography\Service\ZoneManager;
-use App\Geography\Entity\Address as Address;
 
 /**
- * FOR R&D PURPOSE ONLY
+ * FOR R&D PURPOSE ONLY.
  *
  * Creation of geographic zones.
  *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
- *
  */
 class ZoneController extends AbstractController
 {
@@ -46,14 +45,15 @@ class ZoneController extends AbstractController
         $address = new Address();
         // $address->setLongitude("6.181201");
         // $address->setLatitude("48.691836");
-        $address->setLongitude("6.5");
-        $address->setLatitude("7.8");
+        $address->setLongitude('6.5');
+        $address->setLatitude('7.8');
 
         $start = microtime(true);
         $zones = $zoneManager->getZonesForAddress($address, 0.01, 1);
         $time_elapsed_secs = microtime(true) - $start;
         var_dump($time_elapsed_secs);
         var_dump($zones);
+
         exit;
     }
 }

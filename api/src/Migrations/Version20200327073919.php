@@ -15,7 +15,7 @@ final class Version20200327073919 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE carpool_proof DROP FOREIGN KEY FK_59B969CE78E28472');
         $this->addSql('ALTER TABLE carpool_proof DROP FOREIGN KEY FK_59B969CE83850A9D');
@@ -54,7 +54,7 @@ final class Version20200327073919 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE ask DROP FOREIGN KEY FK_6826EAE0FBF2A5E5');
         $this->addSql('DROP INDEX UNIQ_6826EAE0FBF2A5E5 ON ask');

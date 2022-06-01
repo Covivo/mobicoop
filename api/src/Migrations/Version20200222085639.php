@@ -15,7 +15,7 @@ final class Version20200222085639 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE volunteer_service DROP FOREIGN KEY FK_3F7585EAED5CA9E6');
         $this->addSql('CREATE TABLE volunteer_need (volunteer_id INT NOT NULL, need_id INT NOT NULL, INDEX IDX_50457D688EFAB6B1 (volunteer_id), INDEX IDX_50457D68624AF264 (need_id), PRIMARY KEY(volunteer_id, need_id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
@@ -46,7 +46,7 @@ final class Version20200222085639 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE need DROP FOREIGN KEY FK_E6F46C44E92CE751');
         $this->addSql('ALTER TABLE proof DROP FOREIGN KEY FK_FBF940DD860DC45F');

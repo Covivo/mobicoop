@@ -8,14 +8,14 @@ use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
 /**
- * Initial Gamification Model Migration
+ * Initial Gamification Model Migration.
  */
 final class Version20210623110600 extends AbstractMigration
 {
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         // Update old actions name
         $this->addSql("UPDATE `action` SET `name` = 'user_phone_validation_asked' WHERE `action`.`id` = 13;");
@@ -28,7 +28,6 @@ final class Version20210623110600 extends AbstractMigration
         $this->addSql("UPDATE `action` SET `name` = 'carpool_ad_deleted_with_pending_drivers' WHERE `action`.`id` = 17;");
         $this->addSql("UPDATE `action` SET `name` = 'carpool_ad_deleted_with_pending_drivers_urgent' WHERE `action`.`id` = 18;");
         $this->addSql("UPDATE `action` SET `name` = 'event_created' WHERE `action`.`id` = 21;");
-
 
         // New actions
         $this->addSql("INSERT INTO `action` (`id`, `name`, `in_log`, `in_diary`, `progression`, `created_date`, `updated_date`, `position`, `type`) VALUES (91, 'user_mail_validation', '1', NULL, NULL, '2021-06-23 10:59:26', NULL, '0', NULL);");
@@ -92,6 +91,6 @@ final class Version20210623110600 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
     }
 }

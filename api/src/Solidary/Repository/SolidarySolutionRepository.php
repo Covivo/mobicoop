@@ -18,7 +18,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\Repository;
 
@@ -27,7 +27,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 
 /**
- * SolidarySolution Repository
+ * SolidarySolution Repository.
  *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
@@ -46,7 +46,6 @@ class SolidarySolutionRepository
         $this->repository = $entityManager->getRepository(SolidarySolution::class);
     }
 
-
     public function find(int $id): ?SolidarySolution
     {
         return $this->repository->find($id);
@@ -56,7 +55,6 @@ class SolidarySolutionRepository
     {
         return $this->repository->findAll();
     }
-
 
     public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null): ?array
     {

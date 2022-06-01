@@ -18,15 +18,13 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Payment\DataProvider;
 
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
 use App\Carpool\Entity\Criteria;
-use App\Payment\Entity\CarpoolItem;
 use App\Payment\Ressource\PaymentItem;
 use App\Payment\Service\PaymentManager;
 use Symfony\Component\Security\Core\Security;
@@ -57,7 +55,6 @@ final class PaymentItemCollectionDataProvider implements CollectionDataProviderI
 
     public function getCollection(string $resourceClass, string $operationName = null): iterable
     {
-
         // we initialize the frequency
         $frequency = Criteria::FREQUENCY_PUNCTUAL;
         if (!empty($this->filters['frequency'])) {

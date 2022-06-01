@@ -19,14 +19,15 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Gamification\Entity;
 
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * Gamification : The current progression of a Badge
+ * Gamification : The current progression of a Badge.
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class BadgeProgression
@@ -44,7 +45,7 @@ class BadgeProgression
     private $earned;
 
     /**
-     * @var int Badge's earning percentage based on the necessary reward steps to obtain it.
+     * @var int badge's earning percentage based on the necessary reward steps to obtain it
      * @Groups({"readGamification"})
      */
     private $earningPercentage;

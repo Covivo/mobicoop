@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Carpool\DataProvider;
 
@@ -31,12 +31,11 @@ use Symfony\Component\Security\Core\Security;
 
 /**
  * Collection data provider for user's ads.
- *
  */
 final class AdCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
-    protected $adManager;
-    protected $security;
+    private $adManager;
+    private $security;
 
     public function __construct(AdManager $adManager, Security $security)
     {
@@ -46,7 +45,7 @@ final class AdCollectionDataProvider implements CollectionDataProviderInterface,
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Ad::class === $resourceClass && $operationName === "get";
+        return Ad::class === $resourceClass && 'get' === $operationName;
     }
 
     public function getCollection(string $resourceClass, string $operationName = null): ?array

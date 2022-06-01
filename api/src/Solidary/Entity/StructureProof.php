@@ -19,20 +19,20 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiProperty;
-use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
-use Symfony\Component\Validator\Constraints as Assert;
 use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Proof documents for a solidary structure.
@@ -83,6 +83,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  * )
  * @ApiFilter(OrderFilter::class, properties={"id", "label"}, arguments={"orderParameterName"="order"})
  * @ApiFilter(SearchFilter::class, properties={"label":"partial"})
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class StructureProof
@@ -91,7 +92,7 @@ class StructureProof
     public const TYPE_VOLUNTEER = 2;
 
     /**
-     * @var int The id of this structure proof.
+     * @var int the id of this structure proof
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -129,7 +130,7 @@ class StructureProof
     private $position;
 
     /**
-     * @var bool The proof is a checkbox.
+     * @var bool the proof is a checkbox
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"aRead","readUser","readSolidary","writeSolidary","userStructure","readStructureProofs","readProof"})
@@ -137,7 +138,7 @@ class StructureProof
     private $checkbox;
 
     /**
-     * @var bool The proof is a input.
+     * @var bool the proof is a input
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"aRead","readUser","readSolidary","writeSolidary","userStructure","readStructureProofs","readProof"})
@@ -145,7 +146,7 @@ class StructureProof
     private $input;
 
     /**
-     * @var bool The proof is a select.
+     * @var bool the proof is a select
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"aRead","readUser","readSolidary","writeSolidary","userStructure","readStructureProofs","readProof"})
@@ -153,7 +154,7 @@ class StructureProof
     private $selectbox;
 
     /**
-     * @var bool The proof is a radio button.
+     * @var bool the proof is a radio button
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"aRead","readUser","readSolidary","writeSolidary","userStructure","readStructureProofs","readProof"})
@@ -161,7 +162,7 @@ class StructureProof
     private $radio;
 
     /**
-     * @var string Text options for radio or select (separated by semicolon, in the same order than values).
+     * @var string text options for radio or select (separated by semicolon, in the same order than values)
      *
      * @ORM\Column(type="text", nullable=true)
      * @Groups({"aRead","readUser","readSolidary","writeSolidary","userStructure","readStructureProofs","readProof"})
@@ -169,7 +170,7 @@ class StructureProof
     private $options;
 
     /**
-     * @var string Values for radio or select (separated by semicolon, in the same order than options).
+     * @var string values for radio or select (separated by semicolon, in the same order than options)
      *
      * @ORM\Column(type="text", nullable=true)
      * @Groups({"aRead","readUser","readSolidary","writeSolidary","userStructure","readStructureProofs","readProof"})
@@ -177,7 +178,7 @@ class StructureProof
     private $acceptedValues;
 
     /**
-     * @var bool The proof is a file.
+     * @var bool the proof is a file
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"aRead","readUser","readSolidary","writeSolidary","userStructure","readStructureProofs","readProof"})
@@ -193,7 +194,7 @@ class StructureProof
     private $mandatory;
 
     /**
-     * @var Structure Structure of the proof.
+     * @var Structure structure of the proof
      *
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Structure", inversedBy="structureProofs")
@@ -204,7 +205,7 @@ class StructureProof
     private $structure;
 
     /**
-     * @var \DateTimeInterface Creation date.
+     * @var \DateTimeInterface creation date
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"readSolidary","readStructureProofs"})
@@ -212,7 +213,7 @@ class StructureProof
     private $createdDate;
 
     /**
-     * @var \DateTimeInterface Updated date.
+     * @var \DateTimeInterface updated date
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"readSolidary","readStructureProofs"})
@@ -220,7 +221,7 @@ class StructureProof
     private $updatedDate;
 
     /**
-     * @var ArrayCollection|null The proofs using this structure proof.
+     * @var null|ArrayCollection the proofs using this structure proof
      *
      * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Proof", mappedBy="structureProof")
      * @Groups({"writeSolidary"})
@@ -229,7 +230,7 @@ class StructureProof
     private $proofs;
 
     /**
-     * @var bool The structure proof is removable (not removable if it is used for a solidary record).
+     * @var bool the structure proof is removable (not removable if it is used for a solidary record)
      *
      * @Groups("aRead")
      */
@@ -446,7 +447,7 @@ class StructureProof
 
     public function isRemovable(): ?bool
     {
-        return count($this->getProofs())==0;
+        return 0 == count($this->getProofs());
     }
 
     // DOCTRINE EVENTS
@@ -458,7 +459,7 @@ class StructureProof
      */
     public function setAutoCreatedDate()
     {
-        $this->setCreatedDate(new \Datetime());
+        $this->setCreatedDate(new \DateTime());
     }
 
     /**
@@ -468,6 +469,6 @@ class StructureProof
      */
     public function setAutoUpdatedDate()
     {
-        $this->setUpdatedDate(new \Datetime());
+        $this->setUpdatedDate(new \DateTime());
     }
 }

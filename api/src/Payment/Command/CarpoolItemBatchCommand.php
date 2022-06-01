@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Payment\Command;
 
@@ -35,7 +35,6 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
  */
-
 class CarpoolItemBatchCommand extends Command
 {
     private $paymentManager;
@@ -50,11 +49,11 @@ class CarpoolItemBatchCommand extends Command
     protected function configure()
     {
         $this
-        ->setName('app:carpool:item-batch')
-        ->addArgument('fromDate', InputArgument::OPTIONAL, 'The start day of the period')
-        ->addArgument('toDate', InputArgument::OPTIONAL, 'The end day of the period (fromDate will be used if only fromDate is given)')
-        ->setDescription('Create the carpool items for the given period.')
-        ->setHelp('Create the carpool items from the accepted asks; the items concerns the given period (default : Westeros invasion date by the Andals).')
+            ->setName('app:carpool:item-batch')
+            ->addArgument('fromDate', InputArgument::OPTIONAL, 'The start day of the period')
+            ->addArgument('toDate', InputArgument::OPTIONAL, 'The end day of the period (fromDate will be used if only fromDate is given)')
+            ->setDescription('Create the carpool items for the given period.')
+            ->setHelp('Create the carpool items from the accepted asks; the items concerns the given period (default : Westeros invasion date by the Andals).')
         ;
     }
 
@@ -63,16 +62,17 @@ class CarpoolItemBatchCommand extends Command
         $fromDate = null;
         $toDate = null;
         if ($input->getArgument('fromDate')) {
-            $fromDate = DateTime::createFromFormat("Ymd", $input->getArgument('fromDate'));
+            $fromDate = DateTime::createFromFormat('Ymd', $input->getArgument('fromDate'));
             $fromDate->setTime(0, 0);
             if ($input->getArgument('toDate')) {
-                $toDate = DateTime::createFromFormat("Ymd", $input->getArgument('toDate'));
+                $toDate = DateTime::createFromFormat('Ymd', $input->getArgument('toDate'));
             } else {
                 $toDate = clone $fromDate;
             }
             $toDate->setTime(23, 59, 59, 999);
         }
         $this->paymentManager->createCarpoolItems($fromDate, $toDate);
+
         return 0;
     }
 }

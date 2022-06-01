@@ -19,15 +19,15 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Carpool\Ressource;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiResource;
+use App\User\Entity\User;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
-use App\User\Entity\User;
 
 /**
  * Carpooling : a proof for a classic ad.
@@ -86,14 +86,13 @@ use App\User\Entity\User;
  *          }
  *      }
  * )
- *
  */
 class ClassicProof
 {
     public const DEFAULT_ID = 999999999999;
 
     /**
-     * @var int The id of this classic ad proof.
+     * @var int the id of this classic ad proof
      *
      * @ApiProperty(identifier=true)
      * @Groups({"readClassicProof","writeClassicProof","updateClassicProof","cancelClassicProof"})
@@ -101,14 +100,14 @@ class ClassicProof
     private $id;
 
     /**
-     * @var User|null The current user.
+     * @var null|User the current user
      *
      * @Groups({"readClassicProof","writeClassicProof","updateClassicProof"})
      */
     private $user;
 
     /**
-     * @var string The latitude.
+     * @var string the latitude
      *
      * @Groups({"writeClassicProof","updateClassicProof"})
      * @Assert\NotBlank(groups={"writeClassicProof","updateClassicProof"})
@@ -116,7 +115,7 @@ class ClassicProof
     private $latitude;
 
     /**
-     * @var string The longitude.
+     * @var string the longitude
      *
      * @Groups({"writeClassicProof","updateClassicProof"})
      * @Assert\NotBlank(groups={"writeClassicProof","updateClassicProof"})
@@ -124,7 +123,7 @@ class ClassicProof
     private $longitude;
 
     /**
-     * @var int|null The ask id related to the proof.
+     * @var null|int the ask id related to the proof
      *
      * @Assert\NotBlank(groups={"writeClassicProof"})
      * @Groups("writeClassicProof")
@@ -132,31 +131,30 @@ class ClassicProof
     private $askId;
 
     /**
-     * @var int Proof status (0 = pending, 1 = sent to the register; 2 = error while sending to the register).
+     * @var int proof status (0 = pending, 1 = sent to the register; 2 = error while sending to the register)
      * @Groups("cancelClassicProof")
      */
     private $registeredStatus;
 
     /**
      * @var string Proof live status, as a 4 digits binary ABCD number (eg : 1101) :
-     * - A => passenger pickup proof (0/1)
-     * - B => driver pickup proof (0/1)
-     * - C => passenger dropoff proof (0/1)
-     * - D => driver dropoff proof (0/1)
+     *             - A => passenger pickup proof (0/1)
+     *             - B => driver pickup proof (0/1)
+     *             - C => passenger dropoff proof (0/1)
+     *             - D => driver dropoff proof (0/1)
      *
      * @Groups({"readClassicProof","writeClassicProof","updateClassicProof"})
      */
     private $status;
 
     /**
-     * @var \DateTimeInterface|null The date of the proof
+     * @var null|\DateTimeInterface The date of the proof
      *
      * @Groups({"readClassicProof","writeClassicProof","updateClassicProof"})
-     *
      */
     private $proofDate;
 
-    public function __construct(int $id=null)
+    public function __construct(int $id = null)
     {
         $this->id = self::DEFAULT_ID;
         if (!is_null($id)) {

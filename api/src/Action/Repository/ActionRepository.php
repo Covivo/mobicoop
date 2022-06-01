@@ -18,7 +18,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Action\Repository;
 
@@ -41,7 +41,6 @@ class ActionRepository
         $this->repository = $entityManager->getRepository(Action::class);
     }
 
-
     public function find(int $id): ?Action
     {
         return $this->repository->find($id);
@@ -51,7 +50,6 @@ class ActionRepository
     {
         return $this->repository->findAll();
     }
-
 
     public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null): ?array
     {
@@ -64,17 +62,16 @@ class ActionRepository
     }
 
     /**
-     * Get manually triggerd solidary action
-     *
-     * @return array|null
+     * Get manually triggerd solidary action.
      */
     public function getSolidaryActions(): ?array
     {
         return $this->repository->createQueryBuilder('a')
-        ->where('a.type IN (:types)')
-        ->orderBy('a.type', 'ASC')
-        ->setParameter('types', Action::TYPE_FILTER[Action::DOMAIN_TYPE_SOLIDARY])
-        ->getQuery()
-        ->getResult();
+            ->where('a.type IN (:types)')
+            ->orderBy('a.type', 'ASC')
+            ->setParameter('types', Action::TYPE_FILTER[Action::DOMAIN_TYPE_SOLIDARY])
+            ->getQuery()
+            ->getResult()
+        ;
     }
 }

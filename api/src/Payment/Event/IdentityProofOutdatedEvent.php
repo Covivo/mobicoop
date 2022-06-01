@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Payment\Event;
 
@@ -30,15 +30,11 @@ class IdentityProofOutdatedEvent extends Event
 {
     public const NAME = 'identity_proof_outdated';
 
-
     public function __construct(PaymentProfile $paymentProfile)
     {
         $this->paymentProfile = $paymentProfile;
     }
 
-    /**
-     * @return PaymentProfile
-     */
     public function getPaymentProfile(): PaymentProfile
     {
         return $this->paymentProfile;

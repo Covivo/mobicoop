@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Auth\Rule;
 
@@ -27,7 +27,7 @@ use App\Auth\Interfaces\AuthRuleInterface;
 use App\Carpool\Entity\Ask;
 
 /**
- *  Check that the requester is the author of the related dynamic Ask
+ *  Check that the requester is the author of the related dynamic Ask.
  */
 class DynamicAskAuthor implements AuthRuleInterface
 {

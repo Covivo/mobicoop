@@ -19,12 +19,12 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\Entity;
 
 /**
- * A SSO User
+ * A SSO User.
  *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */

@@ -19,16 +19,16 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\Admin\Security;
 
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
 use App\Auth\Service\AuthManager;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use App\Solidary\Entity\Structure;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class StructureVoter extends Voter
 {
@@ -60,8 +60,8 @@ class StructureVoter extends Voter
             self::ADMIN_STRUCTURE_READ,
             self::ADMIN_STRUCTURE_UPDATE,
             self::ADMIN_STRUCTURE_DELETE,
-            self::ADMIN_STRUCTURE_LIST
-            ])) {
+            self::ADMIN_STRUCTURE_LIST,
+        ])) {
             return false;
         }
 
@@ -71,10 +71,11 @@ class StructureVoter extends Voter
             self::ADMIN_STRUCTURE_READ,
             self::ADMIN_STRUCTURE_UPDATE,
             self::ADMIN_STRUCTURE_DELETE,
-            self::ADMIN_STRUCTURE_LIST
-            ]) && !($subject instanceof Paginator) && !($subject instanceof Structure)) {
+            self::ADMIN_STRUCTURE_LIST,
+        ]) && !($subject instanceof Paginator) && !($subject instanceof Structure)) {
             return false;
         }
+
         return true;
     }
 
@@ -83,15 +84,20 @@ class StructureVoter extends Voter
         switch ($attribute) {
             case self::ADMIN_STRUCTURE_CREATE:
                 return $this->canCreateStructure();
+
             case self::ADMIN_STRUCTURE_READ:
                 return $this->canReadStructure($subject);
+
             case self::ADMIN_STRUCTURE_UPDATE:
                 return $this->canUpdateStructure($subject);
+
             case self::ADMIN_STRUCTURE_DELETE:
                 return $this->canDeleteStructure($subject);
+
             case self::ADMIN_STRUCTURE_LIST:
                 return $this->canListStructure();
         }
+
         throw new \LogicException('This code should not be reached!');
     }
 
@@ -102,17 +108,17 @@ class StructureVoter extends Voter
 
     private function canReadStructure(Structure $structure)
     {
-        return $this->authManager->isAuthorized(self::STRUCTURE_READ, ['structure'=>$structure]);
+        return $this->authManager->isAuthorized(self::STRUCTURE_READ, ['structure' => $structure]);
     }
 
     private function canUpdateStructure(Structure $structure)
     {
-        return $this->authManager->isAuthorized(self::STRUCTURE_UPDATE, ['structure'=>$structure]);
+        return $this->authManager->isAuthorized(self::STRUCTURE_UPDATE, ['structure' => $structure]);
     }
 
     private function canDeleteStructure(Structure $structure)
     {
-        return $this->authManager->isAuthorized(self::STRUCTURE_DELETE, ['structure'=>$structure]);
+        return $this->authManager->isAuthorized(self::STRUCTURE_DELETE, ['structure' => $structure]);
     }
 
     private function canListStructure()

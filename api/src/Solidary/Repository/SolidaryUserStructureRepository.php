@@ -18,7 +18,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\Repository;
 
@@ -28,7 +28,7 @@ use Doctrine\ORM\EntityRepository;
 
 /**
  * @author Remi Wortemann <remi.wortemann@mobicoop.org>
-*/
+ */
 class SolidaryUserStructureRepository
 {
     /**
@@ -44,7 +44,6 @@ class SolidaryUserStructureRepository
         $this->repository = $entityManager->getRepository(SolidaryUserStructure::class);
     }
 
-
     public function find(int $id): ?SolidaryUserStructure
     {
         return $this->repository->find($id);
@@ -55,28 +54,29 @@ class SolidaryUserStructureRepository
         return $this->repository->findAll();
     }
 
-
     public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null): ?array
     {
         return $this->repository->findBy($criteria, $orderBy, $limit, $offset);
     }
 
     /**
-     * Get a SolidaryUserStructure by its StructureId and its SolidaryUserId
+     * Get a SolidaryUserStructure by its StructureId and its SolidaryUserId.
      *
-     * @param integer $structureId      The id of the Structure
-     * @param integer $solidaryUserId   The id of the SolidaryUser
-     * @return SolidaryUserStructure|null     The SolidaryUserStructure found, or null if not found
+     * @param int $structureId    The id of the Structure
+     * @param int $solidaryUserId The id of the SolidaryUser
+     *
+     * @return null|SolidaryUserStructure The SolidaryUserStructure found, or null if not found
      */
     public function findByStructureAndSolidaryUser(int $structureId, int $solidaryUserId): ?SolidaryUserStructure
     {
         $query = $this->repository->createQueryBuilder('sus')
-        ->join('sus.solidaryUser', 'su')
-        ->join('sus.structure', 's')
-        ->where('su.id = :solidaryUserId')
-        ->andWhere('s.id = :structureId')
-        ->setParameter('solidaryUserId', $solidaryUserId)
-        ->setParameter('structureId', $structureId);
+            ->join('sus.solidaryUser', 'su')
+            ->join('sus.structure', 's')
+            ->where('su.id = :solidaryUserId')
+            ->andWhere('s.id = :structureId')
+            ->setParameter('solidaryUserId', $solidaryUserId)
+            ->setParameter('structureId', $structureId)
+        ;
 
         return $query->getQuery()->getOneOrNullResult();
     }

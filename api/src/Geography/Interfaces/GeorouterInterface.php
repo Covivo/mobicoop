@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Geography\Interfaces;
 
@@ -31,7 +31,6 @@ use App\Geography\Entity\Direction;
  * A geographic router entity class must implement all these methods in order to retrieve data and populate entities for geographic services.
  *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
- *
  */
 interface GeorouterInterface
 {
@@ -69,9 +68,10 @@ interface GeorouterInterface
      * ]
      * Each array of addresses represents a variant of a direction, it is useful to check the best direction between a set of points.
      *
-     * @param array $multiPoints    The array of array of addresses
-     * @param integer $mode         The sync mode to use
-     * @return array    The found directions indexed by owner
+     * @param array $multiPoints The array of array of addresses
+     * @param int   $mode        The sync mode to use
+     *
+     * @return array The found directions indexed by owner
      */
     public function getMultipleDirections(array $multiPoints, int $mode): array;
 
@@ -84,66 +84,63 @@ interface GeorouterInterface
      *      address3,
      *      ...
      *      addressN
-     * ]
+     * ].
      *
-     * @param array $points     The array of addresses
-     * @param integer $mode     The sync mode to use
-     * @return array    The found directions
+     * @param array $points The array of addresses
+     * @param int   $mode   The sync mode to use
+     *
+     * @return array The found directions
      */
     public function getDirections(array $points, int $mode): array;
 
     /**
-     * Avoid motorway
+     * Avoid motorway.
      *
-     * @param boolean $avoidMotorway    Avoid motorway
-     * @return void
+     * @param bool $avoidMotorway Avoid motorway
      */
     public function setAvoidMotorway(bool $avoidMotorway): void;
 
     /**
-     * Avoid toll
+     * Avoid toll.
      *
-     * @param boolean $avoidToll    Avoid toll
-     * @return void
+     * @param bool $avoidToll Avoid toll
      */
     public function setAvoidToll(bool $avoidToll): void;
 
     /**
      * Set if the georouter returns detailed durations.
      *
-     * @param boolean $detailDuration   Detailed duration
-     * @return void
+     * @param bool $detailDuration Detailed duration
      */
     public function setDetailDuration(bool $detailDuration): void;
 
     /**
-     * Get the points only
+     * Get the points only.
      *
-     * @param boolean $pointsOnly   Get the points only
-     * @return void
+     * @param bool $pointsOnly Get the points only
      */
     public function setPointsOnly(bool $pointsOnly): void;
 
     /**
-     * Set the return type
+     * Set the return type.
      *
-     * @param integer $returnType   The return type
-     * @return void
+     * @param int $returnType The return type
      */
     public function setReturnType(int $returnType): void;
 
     /**
      * Deserializes the data returned by the provider to a Direction object.
      *
-     * @param array $data       The data to deserialize.
-     * @return Direction        The resulting direction.
+     * @param array $data the data to deserialize
+     *
+     * @return Direction the resulting direction
      */
     public function deserializeDirection(array $data): Direction;
 
     /**
      * Deserializes geographical points to Addresses.
      *
-     * @param string $data      The data to deserialize
+     * @param string $data The data to deserialize
      */
     public function deserializePoints(string $data);
 }

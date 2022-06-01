@@ -21,7 +21,7 @@ declare(strict_types=1);
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace DoctrineMigrations;
 
@@ -36,7 +36,7 @@ final class Version20190324100234 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE ask CHANGE ask_linked_id ask_linked_id INT DEFAULT NULL');
         $this->addSql('ALTER TABLE criteria CHANGE car_id car_id INT DEFAULT NULL, CHANGE direction_driver_id direction_driver_id INT DEFAULT NULL, CHANGE direction_passenger_id direction_passenger_id INT DEFAULT NULL, CHANGE ptjourney_id ptjourney_id INT DEFAULT NULL, CHANGE from_time from_time TIME DEFAULT NULL, CHANGE to_date to_date DATE DEFAULT NULL, CHANGE mon_check mon_check TINYINT(1) DEFAULT NULL, CHANGE tue_check tue_check TINYINT(1) DEFAULT NULL, CHANGE wed_check wed_check TINYINT(1) DEFAULT NULL, CHANGE thu_check thu_check TINYINT(1) DEFAULT NULL, CHANGE fri_check fri_check TINYINT(1) DEFAULT NULL, CHANGE sat_check sat_check TINYINT(1) DEFAULT NULL, CHANGE sun_check sun_check TINYINT(1) DEFAULT NULL, CHANGE mon_time mon_time TIME DEFAULT NULL, CHANGE tue_time tue_time TIME DEFAULT NULL, CHANGE wed_time wed_time TIME DEFAULT NULL, CHANGE thu_time thu_time TIME DEFAULT NULL, CHANGE fri_time fri_time TIME DEFAULT NULL, CHANGE sat_time sat_time TIME DEFAULT NULL, CHANGE sun_time sun_time TIME DEFAULT NULL, CHANGE mon_margin_time mon_margin_time INT DEFAULT NULL, CHANGE is_driver is_driver TINYINT(1) DEFAULT NULL, CHANGE is_passenger is_passenger TINYINT(1) DEFAULT NULL, CHANGE multi_transport_mode multi_transport_mode TINYINT(1) DEFAULT NULL, CHANGE tue_margin_time tue_margin_time INT DEFAULT NULL, CHANGE wed_margin_time wed_margin_time INT DEFAULT NULL, CHANGE thu_margin_time thu_margin_time INT DEFAULT NULL, CHANGE fri_margin_time fri_margin_time INT DEFAULT NULL, CHANGE sat_margin_time sat_margin_time INT DEFAULT NULL, CHANGE sun_margin_time sun_margin_time INT DEFAULT NULL, CHANGE price_km price_km NUMERIC(4, 2) DEFAULT NULL, CHANGE max_detour_duration max_detour_duration INT DEFAULT NULL, CHANGE max_detour_distance max_detour_distance INT DEFAULT NULL, CHANGE margin_time margin_time INT DEFAULT NULL, CHANGE min_time min_time TIME DEFAULT NULL, CHANGE max_time max_time TIME DEFAULT NULL, CHANGE mon_min_time mon_min_time TIME DEFAULT NULL, CHANGE mon_max_time mon_max_time TIME DEFAULT NULL, CHANGE tue_min_time tue_min_time TIME DEFAULT NULL, CHANGE tue_max_time tue_max_time TIME DEFAULT NULL, CHANGE wed_min_time wed_min_time TIME DEFAULT NULL, CHANGE wed_max_time wed_max_time TIME DEFAULT NULL, CHANGE thu_min_time thu_min_time TIME DEFAULT NULL, CHANGE thu_max_time thu_max_time TIME DEFAULT NULL, CHANGE fri_min_time fri_min_time TIME DEFAULT NULL, CHANGE fri_max_time fri_max_time TIME DEFAULT NULL, CHANGE sat_min_time sat_min_time TIME DEFAULT NULL, CHANGE sat_max_time sat_max_time TIME DEFAULT NULL, CHANGE sun_min_time sun_min_time TIME DEFAULT NULL, CHANGE sun_max_time sun_max_time TIME DEFAULT NULL');
@@ -62,7 +62,7 @@ final class Version20190324100234 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE address CHANGE user_id user_id INT DEFAULT NULL, CHANGE street_address street_address VARCHAR(255) DEFAULT \'NULL\' COLLATE utf8mb4_unicode_ci, CHANGE postal_code postal_code VARCHAR(15) DEFAULT \'NULL\' COLLATE utf8mb4_unicode_ci, CHANGE address_locality address_locality VARCHAR(100) DEFAULT \'NULL\' COLLATE utf8mb4_unicode_ci, CHANGE address_country address_country VARCHAR(100) DEFAULT \'NULL\' COLLATE utf8mb4_unicode_ci, CHANGE latitude latitude NUMERIC(10, 6) DEFAULT \'NULL\', CHANGE longitude longitude NUMERIC(10, 6) DEFAULT \'NULL\', CHANGE elevation elevation INT DEFAULT NULL, CHANGE name name VARCHAR(45) DEFAULT \'NULL\' COLLATE utf8mb4_unicode_ci');
         $this->addSql('ALTER TABLE ask CHANGE ask_linked_id ask_linked_id INT DEFAULT NULL');

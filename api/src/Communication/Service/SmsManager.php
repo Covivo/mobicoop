@@ -71,8 +71,6 @@ class SmsManager
      * @param string $template the sms's template
      * @param array  $context  optional array of parameters that can be included in the template
      * @param mixed  $lang
-     *
-     * @return string
      */
     public function send(Sms $sms, $template, $context = [], $lang = 'fr'): string
     {

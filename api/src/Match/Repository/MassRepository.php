@@ -19,16 +19,16 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Match\Repository;
 
+use App\Match\Entity\Mass;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use App\Match\Entity\Mass;
 
 /**
- * @method Mass|null find($id)
+ * @method null|Mass find($id)
  */
 class MassRepository
 {

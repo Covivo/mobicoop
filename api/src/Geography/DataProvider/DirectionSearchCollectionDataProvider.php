@@ -19,27 +19,26 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Geography\DataProvider;
 
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\Geography\Entity\Address;
-use Symfony\Component\HttpFoundation\RequestStack;
-use App\Geography\Service\GeoRouter;
 use App\Geography\Entity\Direction;
+use App\Geography\Service\GeoRouter;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Collection data provider for Direction search (route calculation).
  *
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
- *
  */
 final class DirectionSearchCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
-    protected $request;
-    protected $geoRouter;
+    private $request;
+    private $geoRouter;
 
     public function __construct(RequestStack $requestStack, GeoRouter $geoRouter)
     {
@@ -49,7 +48,7 @@ final class DirectionSearchCollectionDataProvider implements CollectionDataProvi
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Direction::class === $resourceClass && $operationName === "search";
+        return Direction::class === $resourceClass && 'search' === $operationName;
     }
 
     public function getCollection(string $resourceClass, string $operationName = null): ?array
@@ -61,6 +60,7 @@ final class DirectionSearchCollectionDataProvider implements CollectionDataProvi
             $waypoint->setLongitude($point['longitude']);
             $addresses[] = $waypoint;
         }
+
         return $this->geoRouter->getRoutes($addresses, false, true, $this->request->get('toll'));
     }
 }

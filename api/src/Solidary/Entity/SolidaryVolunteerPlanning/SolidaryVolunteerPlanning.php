@@ -19,17 +19,16 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\Entity\SolidaryVolunteerPlanning;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * A solidary volunteer planning
+ * A solidary volunteer planning.
  *
  * @ApiResource(
  *      attributes={
@@ -60,6 +59,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          }
  *      }
  * )
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class SolidaryVolunteerPlanning
@@ -67,7 +67,7 @@ class SolidaryVolunteerPlanning
     public const DEFAULT_ID = 999999999999;
 
     /**
-     * @var int The id of this subject.
+     * @var int the id of this subject
      *
      * @ApiProperty(identifier=true)
      * @Groups({"readSolidaryVolunteerPlanning"})

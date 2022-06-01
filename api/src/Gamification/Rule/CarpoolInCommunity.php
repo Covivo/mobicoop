@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Gamification\Rule;
 
@@ -27,16 +27,15 @@ use App\Carpool\Entity\Ask;
 use App\Gamification\Interfaces\GamificationRuleInterface;
 
 /**
- * Check if the user carpooled in a community
+ * Check if the user carpooled in a community.
  */
 class CarpoolInCommunity implements GamificationRuleInterface
 {
     /**
-     * Carpool In Community rule
+     * Carpool In Community rule.
      *
-     * @param  $log
-     * @param  $sequenceItem
-     * @return bool
+     * @param $log
+     * @param $sequenceItem
      */
     public function execute($log, $sequenceItem): bool
     {
@@ -48,24 +47,25 @@ class CarpoolInCommunity implements GamificationRuleInterface
             $communities = $proposal->getCommunities();
             // at the first proposal associated to a community we return true since we need at least one proposal associated to a community
             if (count($communities) > 0) {
-                $matchingsOffers=$proposal->getMatchingOffers();
-                $matchingsRequests=$proposal->getMatchingRequests();
+                $matchingsOffers = $proposal->getMatchingOffers();
+                $matchingsRequests = $proposal->getMatchingRequests();
                 foreach ($matchingsOffers as $matching) {
                     foreach ($matching->getAsks() as $ask) {
-                        if ($ask->getStatus() === Ask::STATUS_ACCEPTED_AS_DRIVER || $ask->getStatus() === Ask::STATUS_ACCEPTED_AS_PASSENGER) {
+                        if (Ask::STATUS_ACCEPTED_AS_DRIVER === $ask->getStatus() || Ask::STATUS_ACCEPTED_AS_PASSENGER === $ask->getStatus()) {
                             return true;
                         }
                     }
                 }
                 foreach ($matchingsRequests as $matching) {
                     foreach ($matching->getAsks() as $ask) {
-                        if ($ask->getStatus() === Ask::STATUS_ACCEPTED_AS_DRIVER || $ask->getStatus() === Ask::STATUS_ACCEPTED_AS_PASSENGER) {
+                        if (Ask::STATUS_ACCEPTED_AS_DRIVER === $ask->getStatus() || Ask::STATUS_ACCEPTED_AS_PASSENGER === $ask->getStatus()) {
                             return true;
                         }
                     }
                 }
             }
         }
+
         return false;
     }
 }

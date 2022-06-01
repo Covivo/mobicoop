@@ -19,24 +19,24 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Editorial\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-use App\Image\Entity\Image;
-use Doctrine\Common\Collections\ArrayCollection;
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
-use ApiPlatform\Core\Annotation\ApiProperty;
-use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
-use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use App\Image\Entity\Image;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 /**
- * An editorial
+ * An editorial.
  *
  * @ORM\Entity()
  * @ORM\HasLifecycleCallbacks
@@ -118,8 +118,9 @@ class Editorial
 {
     public const STATUS_ACTIVE = 1;
     public const STATUS_INACTIVE = 0;
+
     /**
-     * @var int The id of this EDITORIAL.
+     * @var int the id of this EDITORIAL
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -130,7 +131,7 @@ class Editorial
     private $id;
 
     /**
-     * @var string The title of the editorial.
+     * @var string the title of the editorial
      *
      * @ORM\Column(type="string", length=255)
      * @Groups({"aRead","aWrite","readEditorial"})
@@ -138,7 +139,7 @@ class Editorial
     private $title;
 
     /**
-     * @var string The text of the editorial.
+     * @var string the text of the editorial
      *
      * @ORM\Column(type="string", length=512)
      * @Groups({"aRead","aWrite","readEditorial"})
@@ -162,7 +163,7 @@ class Editorial
     private $link;
 
     /**
-     * @var int The status of the editorial (active/inactive).
+     * @var int the status of the editorial (active/inactive)
      *
      * @ORM\Column(type="smallint")
      * @Groups({"aRead","aWrite"})
@@ -170,7 +171,7 @@ class Editorial
     private $status;
 
     /**
-     * @var ArrayCollection The images of the editorial.
+     * @var ArrayCollection the images of the editorial
      *
      * @ORM\OneToMany(targetEntity="\App\Image\Entity\Image", mappedBy="editorial", cascade={"persist"})
      * @ORM\OrderBy({"position" = "ASC"})
@@ -181,15 +182,15 @@ class Editorial
     private $images;
 
     /**
-    * @var \DateTimeInterface Creation date of the editorial.
-    *
-    * @ORM\Column(type="datetime")
-    * @Groups({"aRead"})
-    */
+     * @var \DateTimeInterface creation date of the editorial
+     *
+     * @ORM\Column(type="datetime")
+     * @Groups({"aRead"})
+     */
     private $createdDate;
 
     /**
-     * @var \DateTimeInterface Updated date of the editorial.
+     * @var \DateTimeInterface updated date of the editorial
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"aRead"})
@@ -197,19 +198,18 @@ class Editorial
     private $updatedDate;
 
     /**
-     * @var string|null The editorial image
+     * @var null|string The editorial image
      * @Groups("aRead")
      */
     private $image;
 
     /**
-     * @var string|null The editorial avatar
+     * @var null|string The editorial avatar
      * @Groups("aRead")
      */
     private $avatar;
 
-
-    public function __construct($id=null)
+    public function __construct($id = null)
     {
         $this->id = $id;
         $this->images = new ArrayCollection();
@@ -329,17 +329,19 @@ class Editorial
 
     public function getImage(): ?string
     {
-        if (count($this->getImages())>0 && isset($this->getImages()[0]->getVersions()['square_800'])) {
+        if (count($this->getImages()) > 0 && isset($this->getImages()[0]->getVersions()['square_800'])) {
             return $this->getImages()[0]->getVersions()['square_800'];
         }
+
         return null;
     }
 
     public function getAvatar(): ?string
     {
-        if (count($this->getImages())>0 && isset($this->getImages()[0]->getVersions()['square_250'])) {
+        if (count($this->getImages()) > 0 && isset($this->getImages()[0]->getVersions()['square_250'])) {
             return $this->getImages()[0]->getVersions()['square_250'];
         }
+
         return null;
     }
 
@@ -352,7 +354,7 @@ class Editorial
      */
     public function setAutoCreatedDate()
     {
-        $this->setCreatedDate(new \Datetime());
+        $this->setCreatedDate(new \DateTime());
     }
 
     /**
@@ -362,6 +364,6 @@ class Editorial
      */
     public function setAutoUpdatedDate()
     {
-        $this->setUpdatedDate(new \Datetime());
+        $this->setUpdatedDate(new \DateTime());
     }
 }

@@ -19,32 +19,31 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Match\Entity;
 
-use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * An Journey after a Matching diagnostic
+ * An Journey after a Matching diagnostic.
  */
 class MassJourney
 {
     /**
-     * @var int $idPerson
+     * @var int
      * @Groups({"mass","massCompute"})
      */
     private $idPerson;
 
     /**
-     * @var int $distance
+     * @var int
      * @Groups({"mass","massCompute"})
      */
     private $distance;
 
     /**
-     * @var int $duration
+     * @var int
      * @Groups({"mass","massCompute"})
      */
     private $duration;
@@ -57,12 +56,10 @@ class MassJourney
 
     /**
      * MassJourney constructor.
+     *
      * @param int $idPerson
-     * @param int $distance
-     * @param int $duration
-     * @param float $co2
      */
-    public function __construct(int $distance, int $duration, float $co2, int $idPerson=null)
+    public function __construct(int $distance, int $duration, float $co2, int $idPerson = null)
     {
         $this->idPerson = $idPerson;
         $this->distance = $distance;
@@ -70,70 +67,41 @@ class MassJourney
         $this->co2 = $co2;
     }
 
-
-    /**
-     * @return int
-     */
     public function getIdPerson(): int
     {
         return $this->idPerson;
     }
 
-    /**
-     * @param int $idPerson
-     * @return int
-     */
     public function setIdPerson(int $idPerson): int
     {
         $this->idPerson = $idPerson;
     }
 
-    /**
-     * @return int
-     */
     public function getDistance(): int
     {
         return $this->distance;
     }
 
-    /**
-     * @param int $distance
-     * @return int
-     */
     public function setDistance(int $distance): int
     {
         $this->distance = $distance;
     }
 
-    /**
-     * @return int
-     */
     public function getDuration(): int
     {
         return $this->duration;
     }
 
-    /**
-     * @param int $duration
-     * @return int
-     */
     public function setDuration(int $duration): int
     {
         $this->duration = $duration;
     }
 
-    /**
-     * @return float
-     */
     public function getCo2(): float
     {
         return $this->co2;
     }
 
-    /**
-     * @param float $co2
-     * @return float
-     */
     public function setCo2(float $co2): float
     {
         $this->co2 = $co2;

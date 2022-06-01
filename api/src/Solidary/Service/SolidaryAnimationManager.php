@@ -18,16 +18,16 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\Service;
 
+use App\Action\Entity\Diary;
 use App\Action\Repository\DiaryRepository;
 use App\Solidary\Entity\SolidaryAnimation;
 use App\Solidary\Event\SolidaryAnimationPostedEvent;
 use App\Solidary\Repository\SolidaryRepository;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use App\Action\Entity\Diary;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
@@ -52,16 +52,15 @@ class SolidaryAnimationManager
     }
 
     /**
-     * Get the SolidaryAnimations for a Solidary
+     * Get the SolidaryAnimations for a Solidary.
      *
-     * @param integer $solidaryId   The id of the Solidary
-     * @return array
+     * @param int $solidaryId The id of the Solidary
      */
     public function getSolidaryAnimations(int $solidaryId): array
     {
         $solidary = $this->solidaryRepository->find($solidaryId);
 
-        $diaries = $this->diaryRepository->findBy(['solidary'=>$solidary]);
+        $diaries = $this->diaryRepository->findBy(['solidary' => $solidary]);
 
         $return = [];
         foreach ($diaries as $diary) {

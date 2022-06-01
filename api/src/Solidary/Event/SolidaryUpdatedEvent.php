@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\Event;
 
@@ -27,7 +27,8 @@ use App\Solidary\Entity\Solidary;
 use Symfony\Contracts\EventDispatcher\Event;
 
 /**
- * Event sent when a solidary is updated
+ * Event sent when a solidary is updated.
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class SolidaryUpdatedEvent extends Event

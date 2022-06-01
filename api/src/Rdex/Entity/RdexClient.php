@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Rdex\Entity;
 
@@ -31,17 +31,17 @@ namespace App\Rdex\Entity;
 class RdexClient
 {
     /**
-     * @var string The name of the client.
+     * @var string the name of the client
      */
     private $name;
 
     /**
-     * @var string The public key of the client.
+     * @var string the public key of the client
      */
     private $publicKey;
 
     /**
-     * @var string The private key of the client.
+     * @var string the private key of the client
      */
     private $privateKey;
 

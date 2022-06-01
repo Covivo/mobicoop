@@ -19,15 +19,15 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Communication\Security;
 
-use App\Auth\Service\AuthManager;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
+use App\Auth\Service\AuthManager;
 use App\Communication\Ressource\Report;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class ReportVoter extends Voter
 {
@@ -50,8 +50,8 @@ class ReportVoter extends Voter
             self::REPORT_CREATE,
             self::REPORT_UPDATE,
             self::REPORT_READ,
-            self::REPORT_DELETE
-            ])) {
+            self::REPORT_DELETE,
+        ])) {
             return false;
         }
 
@@ -61,10 +61,11 @@ class ReportVoter extends Voter
             self::REPORT_CREATE,
             self::REPORT_UPDATE,
             self::REPORT_READ,
-            self::REPORT_DELETE
-            ]) && !($subject instanceof Paginator) && !($subject instanceof Report)) {
+            self::REPORT_DELETE,
+        ]) && !($subject instanceof Paginator) && !($subject instanceof Report)) {
             return false;
         }
+
         return true;
     }
 
@@ -73,33 +74,37 @@ class ReportVoter extends Voter
         switch ($attribute) {
             case self::REPORT_CREATE:
                 return $this->canCreateReport($subject);
+
             case self::REPORT_UPDATE:
                 return $this->canUpdateReport($subject);
+
             case self::REPORT_READ:
                 return $this->canReadReport($subject);
+
             case self::REPORT_DELETE:
                 return $this->canDeleteReport($subject);
         }
+
         throw new \LogicException('This code should not be reached!');
     }
 
     private function canCreateReport(Report $report)
     {
-        return $this->authManager->isAuthorized(self::REPORT_CREATE, ['report'=>$report]);
+        return $this->authManager->isAuthorized(self::REPORT_CREATE, ['report' => $report]);
     }
 
     private function canReadReport(Report $report)
     {
-        return $this->authManager->isAuthorized(self::REPORT_READ, ['report'=>$report]);
+        return $this->authManager->isAuthorized(self::REPORT_READ, ['report' => $report]);
     }
 
     private function canUpdateReport(Report $report)
     {
-        return $this->authManager->isAuthorized(self::REPORT_UPDATE, ['report'=>$report]);
+        return $this->authManager->isAuthorized(self::REPORT_UPDATE, ['report' => $report]);
     }
 
     private function canDeleteReport(Report $report)
     {
-        return $this->authManager->isAuthorized(self::REPORT_DELETE, ['report'=>$report]);
+        return $this->authManager->isAuthorized(self::REPORT_DELETE, ['report' => $report]);
     }
 }

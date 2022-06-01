@@ -15,7 +15,7 @@ final class Version20200514142759 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE carpool_proof ADD ask_id INT DEFAULT NULL, ADD type VARCHAR(5) DEFAULT NULL');
         $this->addSql('ALTER TABLE carpool_proof ADD CONSTRAINT FK_59B969CEB93F8B63 FOREIGN KEY (ask_id) REFERENCES ask (id)');
@@ -28,7 +28,7 @@ final class Version20200514142759 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE ask ADD carpool_proof_id INT DEFAULT NULL');
         $this->addSql('ALTER TABLE ask ADD CONSTRAINT FK_6826EAE0FBF2A5E5 FOREIGN KEY (carpool_proof_id) REFERENCES carpool_proof (id) ON DELETE CASCADE');

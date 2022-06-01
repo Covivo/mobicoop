@@ -19,16 +19,15 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Communication\Security;
 
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
 use App\Auth\Service\AuthManager;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
 use App\Communication\Entity\Contact;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class ContactVoter extends Voter
 {
@@ -45,16 +44,16 @@ class ContactVoter extends Voter
     {
         // if the attribute isn't one we support, return false
         if (!in_array($attribute, [
-            self::COMMUNICATION_CONTACT
-            ])) {
+            self::COMMUNICATION_CONTACT,
+        ])) {
             return false;
         }
 
         // only vote on Contact objects inside this voter
         // only for items actions
         if (!in_array($attribute, [
-            self::COMMUNICATION_CONTACT
-            ]) && !($subject instanceof Paginator) && !($subject instanceof Contact)) {
+            self::COMMUNICATION_CONTACT,
+        ]) && !($subject instanceof Paginator) && !($subject instanceof Contact)) {
             return false;
         }
 

@@ -19,25 +19,24 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Community\Admin\DataProvider;
 
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\OrderExtension;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\PaginationExtension;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryResultCollectionExtensionInterface;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGenerator;
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use App\Community\Entity\CommunityUser;
-use Doctrine\Persistence\ManagerRegistry;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGenerator;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryResultCollectionExtensionInterface;
 use App\Auth\Service\AuthManager;
+use App\Community\Entity\CommunityUser;
 use App\Community\Repository\CommunityRepository;
 use App\Community\Repository\CommunityUserRepository;
 use App\MassCommunication\Admin\Service\CampaignManager;
 use App\MassCommunication\Entity\Campaign;
 use App\MassCommunication\Exception\CampaignException;
 use App\MassCommunication\Repository\CampaignRepository;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -45,10 +44,10 @@ use Symfony\Component\HttpFoundation\Response;
  * Collection data provider used to associate Community Users as deliveries for a campaign (depending on the filter type).
  *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
- *
  */
 final class CommunityUserCampaignAssociateCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
+    public const MAX_RESULTS = 999999;
     private $collectionExtensions;
     private $managerRegistry;
     private $request;
@@ -57,8 +56,6 @@ final class CommunityUserCampaignAssociateCollectionDataProvider implements Coll
     private $communityRepository;
     private $authManager;
     private $campaignManager;
-
-    public const MAX_RESULTS = 999999;
 
     public function __construct(RequestStack $requestStack, CommunityUserRepository $communityUserRepository, CampaignRepository $campaignRepository, CommunityRepository $communityRepository, AuthManager $authManager, CampaignManager $campaignManager, ManagerRegistry $managerRegistry, iterable $collectionExtensions)
     {
@@ -74,7 +71,7 @@ final class CommunityUserCampaignAssociateCollectionDataProvider implements Coll
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return CommunityUser::class === $resourceClass && $operationName === "ADMIN_associate_campaign";
+        return CommunityUser::class === $resourceClass && 'ADMIN_associate_campaign' === $operationName;
     }
 
     public function getCollection(string $resourceClass, string $operationName = null, array $context = []): iterable
@@ -90,7 +87,7 @@ final class CommunityUserCampaignAssociateCollectionDataProvider implements Coll
         }
 
         // check if user is allowed to manage the campaign
-        if (!$this->authManager->isAuthorized('campaign_update', ['campaign'=>$campaign])) {
+        if (!$this->authManager->isAuthorized('campaign_update', ['campaign' => $campaign])) {
             return new Response('Unauthorized', Response::HTTP_UNAUTHORIZED);
         }
 
@@ -123,7 +120,7 @@ final class CommunityUserCampaignAssociateCollectionDataProvider implements Coll
         $campaign->setFilterType($this->request->get('filterType'));
 
         $members = [];
-        $filters= [];
+        $filters = [];
 
         switch ($campaign->getFilterType()) {
             case Campaign::FILTER_TYPE_SELECTION:
@@ -132,10 +129,13 @@ final class CommunityUserCampaignAssociateCollectionDataProvider implements Coll
                     throw new CampaignException('At least one member id is mandatory');
                 }
                 $members = $this->communityUserRepository->findAcceptedDeliveriesByIds($this->request->get('member'));
+
                 break;
+
             case Campaign::FILTER_TYPE_FILTER:
                 $manager = $this->managerRegistry->getManagerForClass($resourceClass);
                 $repository = $manager->getRepository($resourceClass);
+
                 /**
                  * @var EntityRepository $repository
                  */
@@ -144,10 +144,11 @@ final class CommunityUserCampaignAssociateCollectionDataProvider implements Coll
 
                 // we force the selection to the accepted members that have accepted the news subscription
                 $rootAlias = $queryBuilder->getRootAliases()[0];
-                $queryBuilder->join("$rootAlias.user", 'u');
-                $queryBuilder->andWhere("$rootAlias.community = :community and u.newsSubscription = 1 and $rootAlias.status IN (:statuses)")
-                ->setParameter('statuses', [CommunityUser::STATUS_ACCEPTED_AS_MEMBER,CommunityUser::STATUS_ACCEPTED_AS_MODERATOR])
-                ->setParameter('community', $community);
+                $queryBuilder->join("{$rootAlias}.user", 'u');
+                $queryBuilder->andWhere("{$rootAlias}.community = :community and u.newsSubscription = 1 and {$rootAlias}.status IN (:statuses)")
+                    ->setParameter('statuses', [CommunityUser::STATUS_ACCEPTED_AS_MEMBER, CommunityUser::STATUS_ACCEPTED_AS_MODERATOR])
+                    ->setParameter('community', $community)
+                ;
 
                 foreach ($this->collectionExtensions as $extension) {
                     $extension->applyToCollection($queryBuilder, $queryNameGenerator, $resourceClass, $operationName, $context);
@@ -159,12 +160,13 @@ final class CommunityUserCampaignAssociateCollectionDataProvider implements Coll
                         $members = $extension->getResult($queryBuilder, $resourceClass, $operationName);
                     }
                 }
-                $exclude = ['source','filterType','campaignId','communityId'];
-                foreach ($this->request->query->all() as $param=>$value) {
+                $exclude = ['source', 'filterType', 'campaignId', 'communityId'];
+                foreach ($this->request->query->all() as $param => $value) {
                     if (!in_array($param, $exclude)) {
                         $filters[$param] = $value;
                     }
                 }
+
                 break;
         }
 

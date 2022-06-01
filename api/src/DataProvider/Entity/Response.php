@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\DataProvider\Entity;
 
@@ -31,16 +31,16 @@ class Response
     public const DEFAULT_CODE = 404;
 
     /**
-     * @var int $code The response code.
+     * @var int the response code
      */
     private $code;
 
     /**
-     * @var object|array $value The value of the response.
+     * @var array|object the value of the response
      */
     private $value;
 
-    public function __construct(int $code=self::DEFAULT_CODE, $value=null)
+    public function __construct(int $code = self::DEFAULT_CODE, $value = null)
     {
         $this->setCode($code);
         $this->setValue($value);

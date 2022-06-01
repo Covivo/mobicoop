@@ -19,20 +19,20 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Image\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiResource;
+use App\RelayPoint\Entity\RelayPointType;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
-use App\RelayPoint\Entity\RelayPointType;
 
 /**
- * An icon
+ * An icon.
  *
  * @ORM\Entity()
  * @ORM\EntityListeners({"App\Image\EntityListener\IconListener"})
@@ -75,7 +75,7 @@ class Icon
     public const DEFAULT_ICON_ID = 1; // Default Icon
 
     /**
-     * @var int The id of this icon.
+     * @var int the id of this icon
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -86,7 +86,7 @@ class Icon
     private $id;
 
     /**
-     * @var string The name of the icon.
+     * @var string the name of the icon
      *
      * @ORM\Column(type="string", length=255)
      * @Groups({"aRead","read","readRelayPoint"})
@@ -94,7 +94,7 @@ class Icon
     private $name;
 
     /**
-     * @var string The filename of the icon.
+     * @var string the filename of the icon
      *
      * @ORM\Column(type="string", length=255)
      * @Groups({"read","readRelayPoint"})
@@ -102,14 +102,14 @@ class Icon
     private $fileName;
 
     /**
-     * @var string The url of the icon.
+     * @var string the url of the icon
      *
      * @Groups({"aRead","read","readRelayPoint"})
      */
     private $url;
 
     /**
-     * @var ArrayCollection|null The relayPointTypes associate to the icon.
+     * @var null|ArrayCollection the relayPointTypes associate to the icon
      *
      * @ORM\OneToMany(targetEntity="\App\RelayPoint\Entity\RelayPointType", mappedBy="icon")
      * @Groups({"read"})
@@ -118,7 +118,7 @@ class Icon
     private $relayPointTypes;
 
     /**
-     * @var Icon|null Linked icon for the private related item.
+     * @var null|Icon linked icon for the private related item
      *
      * @ORM\OneToOne(targetEntity="\App\Image\Entity\Icon", cascade={"persist"})
      * @ORM\JoinColumn(onDelete="CASCADE")
@@ -128,13 +128,13 @@ class Icon
     private $privateIconLinked;
 
     /**
-    * @var string|null The private icon name
-    * @Groups("aRead")
-    */
+     * @var null|string The private icon name
+     * @Groups("aRead")
+     */
     private $privateName;
 
     /**
-     * @var string|null The private icon url
+     * @var null|string The private icon url
      * @Groups("aRead")
      */
     private $privateUrl;
@@ -222,7 +222,7 @@ class Icon
         $this->privateIconLinked = $privateIconLinked;
 
         // set (or unset) the owning side of the relation if necessary
-        $newPrivateIconLinked = $privateIconLinked === null ? null : $this;
+        $newPrivateIconLinked = null === $privateIconLinked ? null : $this;
         if ($newPrivateIconLinked !== $privateIconLinked->getPrivateIconLinked()) {
             $privateIconLinked->setPrivateIconLinked($newPrivateIconLinked);
         }
@@ -235,6 +235,7 @@ class Icon
         if ($this->getPrivateIconLinked()) {
             return $this->getPrivateIconLinked()->getName();
         }
+
         return null;
     }
 
@@ -243,6 +244,7 @@ class Icon
         if ($this->getPrivateIconLinked()) {
             return $this->getPrivateIconLinked()->getUrl();
         }
+
         return null;
     }
 }

@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Rdex\Entity;
 
@@ -31,17 +31,17 @@ namespace App\Rdex\Entity;
 class RdexOperator
 {
     /**
-     * @var string The name of the operator.
+     * @var string the name of the operator
      */
     private $name;
 
     /**
-     * @var string The origin of the operator.
+     * @var string the origin of the operator
      */
     private $origin;
 
     /**
-     * @var string The base url of the operator.
+     * @var string the base url of the operator
      */
     private $url;
 

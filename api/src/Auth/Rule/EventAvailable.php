@@ -19,14 +19,14 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Auth\Rule;
 
 use App\Auth\Interfaces\AuthRuleInterface;
 
 /**
- *  Check that the event module is available
+ *  Check that the event module is available.
  */
 class EventAvailable implements AuthRuleInterface
 {
@@ -38,6 +38,7 @@ class EventAvailable implements AuthRuleInterface
         if (isset($params['event'])) {
             return $params['event'];
         }
+
         return true;
     }
 }

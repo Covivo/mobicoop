@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Utility\DataProvider;
 
@@ -31,7 +31,6 @@ use Symfony\Component\Security\Core\Security;
 
 /**
  * Collection data provider used to get utility version.
- *
  */
 final class VersionCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
@@ -46,7 +45,7 @@ final class VersionCollectionDataProvider implements CollectionDataProviderInter
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Version::class === $resourceClass && $operationName =="get";
+        return Version::class === $resourceClass && 'get' == $operationName;
     }
 
     public function getCollection(string $resourceClass, string $operationName = null): ?array

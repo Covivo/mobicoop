@@ -19,19 +19,18 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Article\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
-use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Article\Controller\ParagraphDown;
 use App\Article\Controller\ParagraphUp;
-use ApiPlatform\Core\Annotation\ApiFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 /**
  * A paragraph of a section (a section can be divided in on or many paragraphs).
@@ -105,11 +104,11 @@ class Paragraph
 
     // List of the translatable items of this entity
     public const TRANSLATABLE_ITEMS = [
-        "text"
+        'text',
     ];
 
     /**
-     * @var int The id of this paragraph.
+     * @var int the id of this paragraph
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -119,7 +118,7 @@ class Paragraph
     private $id;
 
     /**
-     * @var string The text of the paragraph.
+     * @var string the text of the paragraph
      *
      * @ORM\Column(type="text")
      * @Groups({"aRead","read","write"})
@@ -127,7 +126,7 @@ class Paragraph
     private $text;
 
     /**
-     * @var int The position of the paragraph in the section.
+     * @var int the position of the paragraph in the section
      *
      * @ORM\Column(type="smallint")
      * @Groups({"aRead","read","write"})
@@ -135,7 +134,7 @@ class Paragraph
     private $position;
 
     /**
-     * @var int The status of publication of the paragraph.
+     * @var int the status of publication of the paragraph
      *
      * @ORM\Column(type="smallint")
      * @Groups({"aRead","read","write"})
@@ -143,7 +142,7 @@ class Paragraph
     private $status;
 
     /**
-     * @var Section|null The section related to the paragraph.
+     * @var null|Section the section related to the paragraph
      *
      * @ORM\ManyToOne(targetEntity="\App\Article\Entity\Section", inversedBy="paragraphs")
      * @Groups({"read","write"})
@@ -152,7 +151,7 @@ class Paragraph
     private $section;
 
     /**
-     * @var \DateTimeInterface Creation date.
+     * @var \DateTimeInterface creation date
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read"})
@@ -160,7 +159,7 @@ class Paragraph
     private $createdDate;
 
     /**
-     * @var \DateTimeInterface Updated date.
+     * @var \DateTimeInterface updated date
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read"})
@@ -251,7 +250,7 @@ class Paragraph
      */
     public function setAutoCreatedDate()
     {
-        $this->setCreatedDate(new \Datetime());
+        $this->setCreatedDate(new \DateTime());
     }
 
     /**
@@ -261,6 +260,6 @@ class Paragraph
      */
     public function setAutoUpdatedDate()
     {
-        $this->setUpdatedDate(new \Datetime());
+        $this->setUpdatedDate(new \DateTime());
     }
 }

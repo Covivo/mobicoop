@@ -19,15 +19,14 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\Security;
 
 use App\Auth\Service\PermissionManager;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use App\User\Entity\User;
 use App\User\Entity\Car;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -56,8 +55,8 @@ class CarVoter extends Voter
             self::READ,
             self::UPDATE,
             self::DELETE,
-            self::ADMIN_READ
-            ])) {
+            self::ADMIN_READ,
+        ])) {
             return false;
         }
 
@@ -73,17 +72,21 @@ class CarVoter extends Voter
     {
         // To DO : Code the real voter
         return true;
-
         $requester = $token->getUser();
+
         switch ($attribute) {
             case self::CREATE:
                 return $this->canPostSelf($requester, $subject);
+
             case self::READ:
                 return $this->canReadSelf($requester, $subject);
+
             case self::UPDATE:
                 return $this->canUpdateSelf($requester, $subject);
+
             case self::DELETE:
                 return $this->canDeleteSelf($requester, $subject);
+
             case self::DELETE:
                 return $this->canAdminRead($requester, $subject);
         }
@@ -95,36 +98,36 @@ class CarVoter extends Voter
     {
         if (($subject->getUser()->getEmail() == $requester->getUsername()) || ($this->permissionManager->checkPermission('user_car_create', $requester))) {
             return $this->permissionManager->checkPermission('user_car_create_self', $requester);
-        } else {
-            return false;
         }
+
+        return false;
     }
 
     private function canReadSelf(UserInterface $requester, Car $subject)
     {
         if (($subject->getUser()->getEmail() == $requester->getUsername()) || ($this->permissionManager->checkPermission('user_car_update', $requester))) {
             return $this->permissionManager->checkPermission('user_car_update_self', $requester);
-        } else {
-            return false;
         }
+
+        return false;
     }
 
     private function canUpdateSelf(UserInterface $requester, Car $subject)
     {
         if (($subject->getUser()->getEmail() == $requester->getUsername()) || ($this->permissionManager->checkPermission('user_car_update', $requester))) {
             return $this->permissionManager->checkPermission('user_car_update_self', $requester);
-        } else {
-            return false;
         }
+
+        return false;
     }
 
     private function canDeleteSelf(UserInterface $requester, Car $subject)
     {
         if (($subject->getUser()->getEmail() == $requester->getUsername()) || ($this->permissionManager->checkPermission('user_car_delete', $requester))) {
             return $this->permissionManager->checkPermission('user_car_delete_self', $requester);
-        } else {
-            return false;
         }
+
+        return false;
     }
 
     private function canAdminRead(UserInterface $requester, Car $subject)

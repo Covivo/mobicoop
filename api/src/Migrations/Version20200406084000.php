@@ -15,7 +15,7 @@ final class Version20200406084000 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('CREATE TABLE solidary_matching (id INT AUTO_INCREMENT NOT NULL, matching_id INT DEFAULT NULL, solidary_user_id INT DEFAULT NULL, solidary_id INT DEFAULT NULL, criteria_id INT DEFAULT NULL, created_date DATETIME NOT NULL, updated_date DATETIME DEFAULT NULL, UNIQUE INDEX UNIQ_A95C6411B39876B8 (matching_id), INDEX IDX_A95C6411815BD757 (solidary_user_id), INDEX IDX_A95C6411E92CE751 (solidary_id), UNIQUE INDEX UNIQ_A95C6411990BEA15 (criteria_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('ALTER TABLE solidary_matching ADD CONSTRAINT FK_A95C6411B39876B8 FOREIGN KEY (matching_id) REFERENCES matching (id)');
@@ -41,7 +41,7 @@ final class Version20200406084000 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('DROP TABLE solidary_matching');
         $this->addSql('ALTER TABLE solidary_ask DROP INDEX UNIQ_1F77CFF6B77A2899, ADD INDEX IDX_1F77CFF6B77A2899 (solidary_solution_id)');

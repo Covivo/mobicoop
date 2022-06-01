@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Import\Service;
 
@@ -56,42 +56,55 @@ class RedirectManager
     /**
      * Search redirections.
      *
-     * @param string $originUri    The original uri to search
-     * @return array    The redirections found
+     * @param string $originUri The original uri to search
+     *
+     * @return array The redirections found
      */
     public function getRedirect(string $originUri): array
     {
-        if ($redirects = $this->redirectRepository->findBy(['originUri'=>$originUri])) {
+        if ($redirects = $this->redirectRepository->findBy(['originUri' => $originUri])) {
             $redirect = $redirects[0];
+
             switch ($redirect->getType()) {
                 case Redirect::TYPE_COMMUNITY:
                     if ($community = $this->communityRepository->find($redirect->getDestinationId())) {
                         $redirect->setDestinationComplement($community->getName());
                     }
+
                     break;
+
                 case Redirect::TYPE_EVENT:
                     if ($event = $this->eventRepository->find($redirect->getDestinationId())) {
                         $redirect->setDestinationComplement($event->getName());
                     }
+
                     break;
+
                 case Redirect::TYPE_ARTICLE:
                     if ($article = $this->articleRepository->find($redirect->getDestinationId())) {
                         $redirect->setDestinationComplement($article->getTitle());
                     }
+
                     break;
+
                 case Redirect::TYPE_COMMUNITY_WIDGET:
                     if ($community = $this->communityRepository->find($redirect->getDestinationId())) {
                         $redirect->setDestinationComplement($community->getName());
                     }
+
                     break;
+
                 case Redirect::TYPE_EVENT_WIDGET:
                     if ($event = $this->eventRepository->find($redirect->getDestinationId())) {
                         $redirect->setDestinationComplement($event->getName());
                     }
+
                     break;
             }
+
             return [$redirect];
-        } elseif ($redirects = $this->redirectRepository->findByUriWithWildCard($originUri)) {
+        }
+        if ($redirects = $this->redirectRepository->findByUriWithWildCard($originUri)) {
             return [$redirects[0]];
         }
 

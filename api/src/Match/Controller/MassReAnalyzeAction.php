@@ -19,12 +19,12 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Match\Controller;
 
-use App\Match\Service\MassImportManager;
 use App\Match\Entity\Mass;
+use App\Match\Service\MassImportManager;
 use App\TranslatorTrait;
 
 final class MassReAnalyzeAction
@@ -40,22 +40,22 @@ final class MassReAnalyzeAction
     public function __invoke(Mass $data): Mass
     {
         if (is_null($data)) {
-            throw new \InvalidArgumentException($this->translator->trans("bad Mass id is provided"));
+            throw new \InvalidArgumentException($this->translator->trans('bad Mass id is provided'));
         }
         $statusAuthorized = [
             Mass::STATUS_VALID,
             Mass::STATUS_ANALYZING,
             Mass::STATUS_ANALYZED,
-            Mass::STATUS_MATCHED
+            Mass::STATUS_MATCHED,
         ];
         if (in_array($data->getStatus(), $statusAuthorized)) {
-
             // Rollback the Mass status to only valid
             $this->massImportManager->updateStatusMass($data, Mass::STATUS_VALID);
 
             // Reexecute the analyze
             $this->massImportManager->analyzeMass($data);
         }
+
         return $data;
     }
 }

@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\DataProvider\Interfaces;
 
@@ -29,33 +29,32 @@ namespace App\DataProvider\Interfaces;
  * A provider entity class must implement all these methods in order to retrieve data and populate entities.
  *
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
- *
  */
 interface ProviderInterface
 {
     /**
      * Returns a collection of items.
      *
-     * @param string $class     The name of the class associated with the collection.
-     * @param string $apikey    The apikey used for the provider.
-     * @param array $params     The params to send to the request.
+     * @param string $class  the name of the class associated with the collection
+     * @param string $apikey the apikey used for the provider
+     * @param array  $params the params to send to the request
      */
     public function getCollection(string $class, string $apikey, array $params);
 
     /**
      * Returns a single item.
      *
-     * @param string $class     The name of the class associated with the item.
-     * @param string $apikey    The apikey used for the provider.
-     * @param array $params     The params to send to the request.
+     * @param string $class  the name of the class associated with the item
+     * @param string $apikey the apikey used for the provider
+     * @param array  $params the params to send to the request
      */
     public function getItem(string $class, string $apikey, array $params);
 
     /**
      * Deserializes the data returned by the provider.
      *
-     * @param string $class     The name of the class to deserialize.
-     * @param array $data       The data to deserialize.
+     * @param string $class the name of the class to deserialize
+     * @param array  $data  the data to deserialize
      */
     public function deserialize(string $class, array $data);
 }

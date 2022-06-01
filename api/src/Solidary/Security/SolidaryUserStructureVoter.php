@@ -19,15 +19,15 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\Security;
 
-use App\Auth\Service\AuthManager;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
+use App\Auth\Service\AuthManager;
 use App\Solidary\Entity\SolidaryUserStructure;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
@@ -56,7 +56,7 @@ class SolidaryUserStructureVoter extends Voter
             self::SOLIDARY_USER_STRUCTURE_UPDATE,
             self::SOLIDARY_USER_STRUCTURE_DELETE,
             self::SOLIDARY_USER_STRUCTURE_LIST,
-            ])) {
+        ])) {
             return false;
         }
 
@@ -67,9 +67,10 @@ class SolidaryUserStructureVoter extends Voter
             self::SOLIDARY_USER_STRUCTURE_UPDATE,
             self::SOLIDARY_USER_STRUCTURE_DELETE,
             self::SOLIDARY_USER_STRUCTURE_LIST,
-            ]) && !($subject instanceof Paginator) && !($subject instanceof SolidaryUserStructure)) {
+        ]) && !($subject instanceof Paginator) && !($subject instanceof SolidaryUserStructure)) {
             return false;
         }
+
         return true;
     }
 
@@ -78,12 +79,16 @@ class SolidaryUserStructureVoter extends Voter
         switch ($attribute) {
             case self::SOLIDARY_USER_STRUCTURE_CREATE:
                 return $this->canCreateSolidaryUserStructure();
+
             case self::SOLIDARY_USER_STRUCTURE_READ:
                 return $this->canReadSolidaryUserStructure($subject);
+
             case self::SOLIDARY_USER_STRUCTURE_UPDATE:
                 return $this->canUpdateSolidaryUserStructure($subject);
+
             case self::SOLIDARY_USER_STRUCTURE_DELETE:
                 return $this->canDeleteSolidaryUserStructure($subject);
+
             case self::SOLIDARY_USER_STRUCTURE_LIST:
                 return $this->canListSolidaryUserStructure();
         }
@@ -98,17 +103,17 @@ class SolidaryUserStructureVoter extends Voter
 
     private function canReadSolidaryUserStructure(SolidaryUserStructure $solidaryUserStructure)
     {
-        return $this->authManager->isAuthorized(self::SOLIDARY_USER_STRUCTURE_READ, ['solidaryUserStructure'=>$solidaryUserStructure]);
+        return $this->authManager->isAuthorized(self::SOLIDARY_USER_STRUCTURE_READ, ['solidaryUserStructure' => $solidaryUserStructure]);
     }
 
     private function canUpdateSolidaryUserStructure(SolidaryUserStructure $solidaryUserStructure)
     {
-        return $this->authManager->isAuthorized(self::SOLIDARY_USER_STRUCTURE_UPDATE, ['solidaryUserStructure'=>$solidaryUserStructure]);
+        return $this->authManager->isAuthorized(self::SOLIDARY_USER_STRUCTURE_UPDATE, ['solidaryUserStructure' => $solidaryUserStructure]);
     }
 
     private function canDeleteSolidaryUserStructure(SolidaryUserStructure $solidaryUserStructure)
     {
-        return $this->authManager->isAuthorized(self::SOLIDARY_USER_STRUCTURE_DELETE, ['solidaryUserStructure'=>$solidaryUserStructure]);
+        return $this->authManager->isAuthorized(self::SOLIDARY_USER_STRUCTURE_DELETE, ['solidaryUserStructure' => $solidaryUserStructure]);
     }
 
     private function canListSolidaryUserStructure()

@@ -19,16 +19,15 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\Security;
 
-use App\Auth\Service\AuthManager;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use App\User\Ressource\Block;
-use App\Solidary\Entity\SolidaryUser;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
+use App\Auth\Service\AuthManager;
+use App\User\Ressource\Block;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class BlockVoter extends Voter
 {
@@ -49,8 +48,8 @@ class BlockVoter extends Voter
         if (!in_array($attribute, [
             self::BLOCK_CREATE,
             self::BLOCK_BLOCKED,
-            self::BLOCK_BLOCKEDBY
-            ])) {
+            self::BLOCK_BLOCKEDBY,
+        ])) {
             return false;
         }
 
@@ -58,10 +57,11 @@ class BlockVoter extends Voter
         if (!in_array($attribute, [
             self::BLOCK_CREATE,
             self::BLOCK_BLOCKED,
-            self::BLOCK_BLOCKEDBY
-            ]) && !($subject instanceof Paginator) && !($subject instanceof Block)) {
+            self::BLOCK_BLOCKEDBY,
+        ]) && !($subject instanceof Paginator) && !($subject instanceof Block)) {
             return false;
         }
+
         return true;
     }
 
@@ -70,8 +70,10 @@ class BlockVoter extends Voter
         switch ($attribute) {
             case self::BLOCK_CREATE:
                 return $this->canCreateBlock();
+
             case self::BLOCK_BLOCKED:
                 return $this->canBlockBlocked();
+
             case self::BLOCK_BLOCKEDBY:
                 return $this->canBlockBlockedBy();
         }

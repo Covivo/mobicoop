@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Rdex\Entity;
 
@@ -31,26 +31,20 @@ namespace App\Rdex\Entity;
 class RdexDayTime implements \JsonSerializable
 {
     /**
-     * @var string The min time.
+     * @var string the min time
      */
     private $mintime;
 
     /**
-     * @var string The max time.
+     * @var string the max time
      */
     private $maxtime;
 
-    /**
-     * @return string
-     */
     public function getMintime(): string
     {
         return $this->mintime;
     }
 
-    /**
-     * @return string
-     */
     public function getMaxtime(): string
     {
         return $this->maxtime;
@@ -76,8 +70,8 @@ class RdexDayTime implements \JsonSerializable
     {
         return
         [
-            'mintime'   => $this->getMintime(),
-            'maxtime'   => $this->getMaxtime()
+            'mintime' => $this->getMintime(),
+            'maxtime' => $this->getMaxtime(),
         ];
     }
 }

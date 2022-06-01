@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\MassCommunication\Entity;
 
@@ -29,27 +29,27 @@ namespace App\MassCommunication\Entity;
 class Recipient
 {
     /**
-     * @var string|null The first name of the recipient.
+     * @var null|string the first name of the recipient
      */
     private $givenName;
 
     /**
-     * @var string|null The family name of the recipient.
+     * @var null|string the family name of the recipient
      */
     private $familyName;
 
     /**
-     * @var string|null The email of the recipient.
+     * @var null|string the email of the recipient
      */
     private $email;
 
     /**
-     * @var string|null The telephone of the recipient.
+     * @var null|string the telephone of the recipient
      */
     private $telephone;
 
     /**
-     * @var string|null The unsubscribe token of the recipient.
+     * @var null|string the unsubscribe token of the recipient
      */
     private $unsubscribeToken;
 

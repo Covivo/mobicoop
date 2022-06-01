@@ -21,34 +21,34 @@ declare(strict_types=1);
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Geography\ProviderFactory;
 
 use Geocoder\Model\Address;
 
 /**
- * Address used by Pelias search to handle venues
+ * Address used by Pelias search to handle venues.
  */
 class PeliasAddress extends Address
 {
     /**
-     * @var string|null
+     * @var null|string
      */
     private $id;
 
     /**
-     * @var string|null
+     * @var null|string
      */
     private $venue;
 
     /**
-     * @var float|null
+     * @var null|float
      */
     private $distance;
 
     /**
-     * @var string|null
+     * @var null|string
      */
     private $layer;
 

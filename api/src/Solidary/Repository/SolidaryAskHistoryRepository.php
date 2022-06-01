@@ -18,7 +18,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\Repository;
 
@@ -28,7 +28,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 
 /**
- * SolidaryAskHistory Repository
+ * SolidaryAskHistory Repository.
  *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
  */
@@ -54,7 +54,6 @@ class SolidaryAskHistoryRepository
         return $this->repository->findAll();
     }
 
-
     public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null): ?array
     {
         return $this->repository->findBy($criteria, $orderBy, $limit, $offset);
@@ -66,38 +65,42 @@ class SolidaryAskHistoryRepository
     }
 
     /**
-     * Find the last solidary ask history for a given solidary ask
+     * Find the last solidary ask history for a given solidary ask.
      *
-     * @param SolidaryAsk $solidaryAsk  The solidary ask
-     * @return SolidaryAskHistory       The last solidary ask history
+     * @param SolidaryAsk $solidaryAsk The solidary ask
+     *
+     * @return SolidaryAskHistory The last solidary ask history
      */
     public function findLastSolidaryAskHistory(SolidaryAsk $solidaryAsk): SolidaryAskHistory
     {
         $query = $this->repository->createQueryBuilder('sah')
-        ->join('sah.solidaryAsk', 'sa')
-        ->where('sa = :solidaryAsk')
-        ->setParameter('solidaryAsk', $solidaryAsk)
-        ->orderBy('sah.createdDate', 'DESC')
-        ->setMaxResults(1);
+            ->join('sah.solidaryAsk', 'sa')
+            ->where('sa = :solidaryAsk')
+            ->setParameter('solidaryAsk', $solidaryAsk)
+            ->orderBy('sah.createdDate', 'DESC')
+            ->setMaxResults(1)
+        ;
 
         return $query->getQuery()->getOneOrNullResult();
     }
 
     /**
-     * Find the last SolidaryAskHistory having a linked message
+     * Find the last SolidaryAskHistory having a linked message.
      *
-     * @param SolidaryAsk $solidaryAsk  The solidary ask
-     * @return SolidaryAskHistory|null  The solidary ask history found
+     * @param SolidaryAsk $solidaryAsk The solidary ask
+     *
+     * @return null|SolidaryAskHistory The solidary ask history found
      */
     public function findLastSolidaryAskHistoryWithMessage(SolidaryAsk $solidaryAsk): ?SolidaryAskHistory
     {
         $query = $this->repository->createQueryBuilder('sah')
-        ->join('sah.solidaryAsk', 'sa')
-        ->join('sah.message', 'm')
-        ->where('sa = :solidaryAsk')
-        ->setParameter('solidaryAsk', $solidaryAsk)
-        ->orderBy('sah.createdDate', 'DESC')
-        ->setMaxResults(1);
+            ->join('sah.solidaryAsk', 'sa')
+            ->join('sah.message', 'm')
+            ->where('sa = :solidaryAsk')
+            ->setParameter('solidaryAsk', $solidaryAsk)
+            ->orderBy('sah.createdDate', 'DESC')
+            ->setMaxResults(1)
+        ;
 
         return $query->getQuery()->getOneOrNullResult();
     }

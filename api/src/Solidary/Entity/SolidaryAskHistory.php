@@ -19,26 +19,21 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping as ORM;
-use Doctrine\ORM\Events;
 use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiSubresource;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
-use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Validator\Constraints as Assert;
 use App\Communication\Entity\Message;
 use App\Communication\Interfaces\MessagerInterface;
-use App\Solidary\Entity\SolidaryAsk;
-use App\Communication\Entity\Notified;
+use Doctrine\ORM\Events;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * Carpooling : a history item for an solidaryAsk
+ * Carpooling : a history item for an solidaryAsk.
  *
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
@@ -51,6 +46,7 @@ use App\Communication\Entity\Notified;
  *      collectionOperations={"get","post"},
  *      itemOperations={"get","put","delete"}
  * )
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class SolidaryAskHistory implements MessagerInterface
@@ -63,7 +59,7 @@ class SolidaryAskHistory implements MessagerInterface
     public const STATUS_CLOSED = 5;
 
     /**
-     * @var int The id of this ask history item.
+     * @var int the id of this ask history item
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -73,7 +69,7 @@ class SolidaryAskHistory implements MessagerInterface
     private $id;
 
     /**
-     * @var int Ask status at the date of creation of the item (1 = initiated; 2 = pending, 3 = accepted; 4 = declined).
+     * @var int ask status at the date of creation of the item (1 = initiated; 2 = pending, 3 = accepted; 4 = declined)
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
@@ -82,7 +78,7 @@ class SolidaryAskHistory implements MessagerInterface
     private $status;
 
     /**
-     * @var \DateTimeInterface Creation date of the history item.
+     * @var \DateTimeInterface creation date of the history item
      *
      * @ORM\Column(type="datetime")
      * @Groups({"readSolidary"})
@@ -90,7 +86,7 @@ class SolidaryAskHistory implements MessagerInterface
     private $createdDate;
 
     /**
-     * @var \DateTimeInterface Updated date of the history item.
+     * @var \DateTimeInterface updated date of the history item
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"readSolidary"})
@@ -98,7 +94,7 @@ class SolidaryAskHistory implements MessagerInterface
     private $updatedDate;
 
     /**
-     * @var SolidaryAsk|null The linked solidary ask.
+     * @var null|SolidaryAsk the linked solidary ask
      *
      * @ORM\ManyToOne(targetEntity="\App\Solidary\Entity\SolidaryAsk", inversedBy="solidaryAskHistories", cascade={"persist"})
      * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
@@ -108,7 +104,7 @@ class SolidaryAskHistory implements MessagerInterface
     private $solidaryAsk;
 
     /**
-     * @var Message|null The message linked the solidary ask history item.
+     * @var null|Message the message linked the solidary ask history item
      *
      * @ORM\OneToOne(targetEntity="\App\Communication\Entity\Message", inversedBy="solidaryAskHistory", cascade={"persist"})
      * @ORM\JoinColumn(onDelete="SET NULL")
@@ -191,7 +187,7 @@ class SolidaryAskHistory implements MessagerInterface
      */
     public function setAutoCreatedDate()
     {
-        $this->setCreatedDate(new \Datetime());
+        $this->setCreatedDate(new \DateTime());
     }
 
     /**
@@ -201,6 +197,6 @@ class SolidaryAskHistory implements MessagerInterface
      */
     public function setAutoUpdatedDate()
     {
-        $this->setUpdatedDate(new \Datetime());
+        $this->setUpdatedDate(new \DateTime());
     }
 }

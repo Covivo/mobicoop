@@ -19,24 +19,20 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
-use ApiPlatform\Core\Annotation\ApiSubresource;
+use ApiPlatform\Core\Annotation\ApiResource;
+use App\User\Entity\User;
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
-use Symfony\Component\Validator\Constraints as Assert;
-use App\User\Entity\User;
-use App\Solidary\Entity\Structure;
-use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Table relation between a solidary structure and an solidary operator (User).
- * Add to have control over the creation for this relationship that manyToMany can't handle
+ * Add to have control over the creation for this relationship that manyToMany can't handle.
  *
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
@@ -81,6 +77,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  *          }
  *      }
  * )
+ *
  * @author Julien Deschampt <julien.deschampt@mobicoop.org>
  */
 class Operate
@@ -124,7 +121,7 @@ class Operate
     private $createdDate;
 
     /**
-     * @var \DateTimeInterface|null Updated date
+     * @var null|\DateTimeInterface Updated date
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"readSolidary","writeSolidary","userStructure"})
@@ -142,7 +139,6 @@ class Operate
 
         return $this;
     }
-
 
     public function getCreatedDate(): ?\DateTimeInterface
     {
@@ -192,7 +188,6 @@ class Operate
         return $this;
     }
 
-
     // DOCTRINE EVENTS
     /**
      * Creation date.
@@ -201,7 +196,7 @@ class Operate
      */
     public function setAutoCreatedDate()
     {
-        $this->setCreatedDate(new \Datetime());
+        $this->setCreatedDate(new \DateTime());
     }
 
     /**
@@ -211,6 +206,6 @@ class Operate
      */
     public function setAutoUpdatedDate()
     {
-        $this->setUpdatedDate(new \Datetime());
+        $this->setUpdatedDate(new \DateTime());
     }
 }

@@ -19,19 +19,16 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\Ressource;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
-use Symfony\Component\Validator\Constraints as Assert;
-use App\User\Entity\User;
 
 /**
- * A SSO Connection
+ * A SSO Connection.
  *
  * @ApiResource(
  *      attributes={
@@ -55,15 +52,16 @@ use App\User\Entity\User;
  *          }
  *      }
  * )
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class SsoConnection
 {
     public const DEFAULT_ID = 999999999999;
 
-    public const RETURN_URL = "user/sso/login";
-    public const LOGIN_BUTTON_ICON = "/images/sso/{serviceId}-sso-login.png";
-    public const LOGIN_BUTTON_PICTO = "/images/sso/{serviceId}-sso-login-picto.svg";
+    public const RETURN_URL = 'user/sso/login';
+    public const LOGIN_BUTTON_ICON = '/images/sso/{serviceId}-sso-login.png';
+    public const LOGIN_BUTTON_PICTO = '/images/sso/{serviceId}-sso-login-picto.svg';
 
     /**
      * @var int The id of this Block
@@ -91,12 +89,12 @@ class SsoConnection
     private $clientId;
 
     /**
-     * @var string|null The client secret
+     * @var null|string The client secret
      */
     private $clientSecret;
 
     /**
-     * @var string|null The return url after the connection
+     * @var null|string The return url after the connection
      */
     private $returnUrl;
 
@@ -113,24 +111,24 @@ class SsoConnection
     private $ssoProvider;
 
     /**
-     * @var string|null The SSO service icon for the button
+     * @var null|string The SSO service icon for the button
      * @Groups({"readSSOConnection"})
      */
     private $buttonIcon;
 
     /**
-     * @var string|null The SSO service picto for the text button
+     * @var null|string The SSO service picto for the text button
      * @Groups({"readSSOConnection"})
      */
     private $picto;
 
     /**
-     * @var bool|null true : use the Button icon, false use the picto
+     * @var null|bool true : use the Button icon, false use the picto
      * @Groups({"readSSOConnection"})
      */
     private $useButtonIcon;
 
-    public function __construct(string $id=null)
+    public function __construct(string $id = null)
     {
         (is_null($id)) ? $this->id = self::DEFAULT_ID : $this->id = $id;
     }

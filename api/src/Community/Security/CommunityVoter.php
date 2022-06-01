@@ -19,19 +19,19 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Community\Security;
 
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
 use App\Auth\Service\AuthManager;
 use App\Carpool\Entity\MapsAd\MapsAds;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use App\Community\Entity\Community;
 use App\Community\Entity\CommunityUser;
 use App\Community\Service\CommunityManager;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class CommunityVoter extends Voter
 {
@@ -63,8 +63,8 @@ class CommunityVoter extends Voter
             self::COMMUNITY_DELETE,
             self::COMMUNITY_LIST,
             self::COMMUNITY_ADS,
-            self::COMMUNITY_LAST_MEMBERS
-            ])) {
+            self::COMMUNITY_LAST_MEMBERS,
+        ])) {
             return false;
         }
 
@@ -76,10 +76,11 @@ class CommunityVoter extends Voter
             self::COMMUNITY_DELETE,
             self::COMMUNITY_LIST,
             self::COMMUNITY_ADS,
-            self::COMMUNITY_LAST_MEMBERS
-            ]) && !($subject instanceof Paginator) && !($subject instanceof Community) && !($subject instanceof MapsAds) && !is_array($subject)) {
+            self::COMMUNITY_LAST_MEMBERS,
+        ]) && !($subject instanceof Paginator) && !($subject instanceof Community) && !($subject instanceof MapsAds) && !is_array($subject)) {
             return false;
         }
+
         return true;
     }
 
@@ -88,25 +89,33 @@ class CommunityVoter extends Voter
         switch ($attribute) {
             case self::COMMUNITY_CREATE:
                 return $this->canCreateCommunity();
+
             case self::COMMUNITY_READ:
                 return $this->canReadCommunity($subject);
+
             case self::COMMUNITY_UPDATE:
                 return $this->canUpdateCommunity($subject);
+
             case self::COMMUNITY_DELETE:
                 return $this->canDeleteCommunity($subject);
+
             case self::COMMUNITY_LIST:
                 return $this->canListCommunity();
+
             case self::COMMUNITY_ADS:
-                if (count($subject->getMapsAds())==0) {
+                if (0 == count($subject->getMapsAds())) {
                     // No Ads
                     return true;
                 }
+
                 return $this->canReadCommunity($this->communityManager->getCommunity($subject->getMapsAds()[0]->getEntityId()));
+
             case self::COMMUNITY_LAST_MEMBERS:
-                if (count($subject)==0) {
+                if (0 == count($subject)) {
                     // No members
                     return true;
                 }
+
                 return $this->canReadCommunity($subject[0]->getCommunity());
         }
 
@@ -120,21 +129,22 @@ class CommunityVoter extends Voter
 
     private function canReadCommunity(Community $community)
     {
-        return $this->authManager->isAuthorized(self::COMMUNITY_READ, ['community'=>$community]);
+        return $this->authManager->isAuthorized(self::COMMUNITY_READ, ['community' => $community]);
     }
 
     private function canUpdateCommunity($subject)
     {
         if ($subject instanceof Community) {
-            return $this->authManager->isAuthorized(self::COMMUNITY_UPDATE, ['community'=>$subject]);
-        } elseif ($subject instanceof CommunityUser) {
-            return $this->authManager->isAuthorized(self::COMMUNITY_UPDATE, ['community'=>$subject->getCommunity()]);
+            return $this->authManager->isAuthorized(self::COMMUNITY_UPDATE, ['community' => $subject]);
+        }
+        if ($subject instanceof CommunityUser) {
+            return $this->authManager->isAuthorized(self::COMMUNITY_UPDATE, ['community' => $subject->getCommunity()]);
         }
     }
 
     private function canDeleteCommunity(Community $community)
     {
-        return $this->authManager->isAuthorized(self::COMMUNITY_DELETE, ['community'=>$community]);
+        return $this->authManager->isAuthorized(self::COMMUNITY_DELETE, ['community' => $community]);
     }
 
     private function canListCommunity()

@@ -19,27 +19,27 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\MassCommunication\Entity;
 
-use App\Image\Entity\Image;
-use Doctrine\ORM\Mapping as ORM;
-use Doctrine\Common\Collections\ArrayCollection;
-use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiProperty;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
-use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use App\Action\Entity\Log;
 use App\Communication\Entity\Medium;
-use App\User\Entity\User;
+use App\Image\Entity\Image;
 use App\MassCommunication\Controller\CampaignSend;
 use App\MassCommunication\Controller\CampaignSendTest;
-use ApiPlatform\Core\Annotation\ApiFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
-use App\Action\Entity\Log;
+use App\User\Entity\User;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * A mass communication campaign.
@@ -182,7 +182,7 @@ class Campaign
 
     public const SOURCES = [
         self::SOURCE_USER,
-        self::SOURCE_COMMUNITY
+        self::SOURCE_COMMUNITY,
     ];
 
     public const FILTER_TYPE_SELECTION = 1;    // filter using a selection of users
@@ -190,11 +190,11 @@ class Campaign
 
     public const FILTER_TYPES = [
         self::FILTER_TYPE_SELECTION,
-        self::FILTER_TYPE_FILTER
+        self::FILTER_TYPE_FILTER,
     ];
 
     /**
-     * @var int The id of this campaign.
+     * @var int the id of this campaign
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -205,7 +205,7 @@ class Campaign
     private $id;
 
     /**
-     * @var string Name of the campaign.
+     * @var string name of the campaign
      *
      * @Assert\NotBlank
      * @ORM\Column(type="string", length=255)
@@ -214,7 +214,7 @@ class Campaign
     private $name;
 
     /**
-     * @var string Subject of the campaign.
+     * @var string subject of the campaign
      *
      * @Assert\NotBlank
      * @ORM\Column(type="string", length=255)
@@ -223,7 +223,7 @@ class Campaign
     private $subject;
 
     /**
-     * @var string Email used to send the campaign.
+     * @var string email used to send the campaign
      *
      * @ORM\Column(type="string", length=255)
      * @Groups({"aRead","aWrite","read_campaign","write_campaign","update_campaign"})
@@ -231,7 +231,7 @@ class Campaign
     private $email;
 
     /**
-     * @var string Name used to send the campaign.
+     * @var string name used to send the campaign
      *
      * @ORM\Column(type="string", length=255)
      * @Groups({"read_campaign","write_campaign","update_campaign"})
@@ -239,7 +239,7 @@ class Campaign
     private $fromName;
 
     /**
-     * @var string Reply to email.
+     * @var string reply to email
      *
      * @ORM\Column(type="string", length=255)
      * @Groups({"read_campaign","write_campaign","update_campaign"})
@@ -247,7 +247,7 @@ class Campaign
     private $replyTo;
 
     /**
-     * @var string Body of the campaign.
+     * @var string body of the campaign
      *
      * @Assert\NotBlank
      * @ORM\Column(type="text")
@@ -256,7 +256,7 @@ class Campaign
     private $body;
 
     /**
-     * @var int Campaign status.
+     * @var int campaign status
      *
      * @ORM\Column(type="smallint")
      * @Groups({"aRead","read_campaign"})
@@ -264,7 +264,7 @@ class Campaign
     private $status;
 
     /**
-     * @var int provider campaign id associated to the campaign.
+     * @var int provider campaign id associated to the campaign
      *
      * @ORM\Column(type="smallint", nullable=true)
      * @Groups({"read_campaign","write_campaign","update_campaign"})
@@ -272,7 +272,7 @@ class Campaign
     private $providerCampaignId;
 
     /**
-     * @var Medium The medium used for the campaign.
+     * @var Medium the medium used for the campaign
      *
      * @ORM\ManyToOne(targetEntity="\App\Communication\Entity\Medium")
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
@@ -281,7 +281,7 @@ class Campaign
     private $medium;
 
     /**
-     * @var CampaignTemplate The template used for the campaign.
+     * @var CampaignTemplate the template used for the campaign
      *
      * @ORM\ManyToOne(targetEntity="\App\MassCommunication\Entity\CampaignTemplate")
      * @ORM\JoinColumn(onDelete="SET NULL")
@@ -291,7 +291,7 @@ class Campaign
     private $campaignTemplate;
 
     /**
-     * @var User The user that creates the campaign.
+     * @var User the user that creates the campaign
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="campaigns")
      * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
@@ -301,7 +301,7 @@ class Campaign
     private $user;
 
     /**
-     * @var \DateTimeInterface Creation date.
+     * @var \DateTimeInterface creation date
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"aRead","read_campaign"})
@@ -309,7 +309,7 @@ class Campaign
     private $createdDate;
 
     /**
-     * @var \DateTimeInterface Updated date.
+     * @var \DateTimeInterface updated date
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"aRead","read_campaign"})
@@ -317,7 +317,7 @@ class Campaign
     private $updatedDate;
 
     /**
-     * @var ArrayCollection|null The deliveries related to this campaign, if the filter type is selection.
+     * @var null|ArrayCollection the deliveries related to this campaign, if the filter type is selection
      *
      * @ORM\OneToMany(targetEntity="\App\MassCommunication\Entity\Delivery", mappedBy="campaign", cascade={"persist"})
      * @Groups({"read_campaign","write_campaign","update_campaign"})
@@ -325,7 +325,7 @@ class Campaign
     private $deliveries;
 
     /**
-     * @var ArrayCollection The images of the campaign.
+     * @var ArrayCollection the images of the campaign
      *
      * @ORM\OneToMany(targetEntity="\App\Image\Entity\Image", mappedBy="campaign", cascade={"persist"})
      * @Groups({"read_campaign","write_campaign","update_campaign"})
@@ -345,19 +345,19 @@ class Campaign
     private $creatorId;
 
     /**
-     * @var string|null The creator avatar
+     * @var null|string The creator avatar
      * @Groups({"aRead"})
      */
     private $creatorAvatar;
 
     /**
-     * @var string|null The creator email
+     * @var null|string The creator email
      * @Groups({"aRead"})
      */
     private $creatorEmail;
 
     /**
-     * @var int|null The source for the deliveries.
+     * @var null|int the source for the deliveries
      *
      * @ORM\Column(type="smallint", nullable=true)
      * @Groups({"aRead","aWrite"})
@@ -365,7 +365,7 @@ class Campaign
     private $source;
 
     /**
-     * @var int|null The source id for the deliveries.
+     * @var null|int the source id for the deliveries
      *
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"aRead","aWrite"})
@@ -373,14 +373,14 @@ class Campaign
     private $sourceId;
 
     /**
-     * @var string|null The source name for the deliveries.
+     * @var null|string the source name for the deliveries
      *
      * @Groups({"aRead"})
      */
     private $sourceName;
 
     /**
-     * @var int|null The filter type for the deliveries selection.
+     * @var null|int the filter type for the deliveries selection
      *
      * @ORM\Column(type="smallint", nullable=true)
      * @Groups({"aRead","aWrite"})
@@ -388,7 +388,7 @@ class Campaign
     private $filterType;
 
     /**
-     * @var string|null The filter string for the deliveries selection.
+     * @var null|string the filter string for the deliveries selection
      *
      * @ORM\Column(type="string", length=512, nullable=true)
      * @Groups({"aRead","aWrite"})
@@ -396,7 +396,7 @@ class Campaign
     private $filters;
 
     /**
-     * @var int|null The number of deliveries.
+     * @var null|int the number of deliveries
      *
      * @ORM\Column(type="integer", nullable=true)
      * @Groups("aRead")
@@ -404,7 +404,7 @@ class Campaign
     private $deliveryCount;
 
     /**
-     * @var ArrayCollection The logs linked with the Campaign.
+     * @var ArrayCollection the logs linked with the Campaign
      *
      * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="campaign")
      */
@@ -594,9 +594,9 @@ class Campaign
     public function removeDeliveries(): self
     {
         $this->deliveries->clear();
+
         return $this;
     }
-
 
     public function getCreatedDate(): ?\DateTimeInterface
     {
@@ -652,7 +652,7 @@ class Campaign
 
     public function getCreator(): string
     {
-        return ucfirst(strtolower($this->getUser()->getGivenName())) . " " . $this->getUser()->getShortFamilyName();
+        return ucfirst(strtolower($this->getUser()->getGivenName())).' '.$this->getUser()->getShortFamilyName();
     }
 
     public function getCreatorId(): int
@@ -660,6 +660,7 @@ class Campaign
         if (is_null($this->creatorId)) {
             return $this->getUser()->getId();
         }
+
         return $this->creatorId;
     }
 
@@ -670,9 +671,10 @@ class Campaign
 
     public function getCreatorAvatar(): ?string
     {
-        if (count($this->getUser()->getAvatars())>0) {
+        if (count($this->getUser()->getAvatars()) > 0) {
             return $this->getUser()->getAvatars()[0];
         }
+
         return null;
     }
 
@@ -743,11 +745,11 @@ class Campaign
 
     public function getDeliveryCount(): ?int
     {
-        if ($this->filterType == self::FILTER_TYPE_SELECTION) {
+        if (self::FILTER_TYPE_SELECTION == $this->filterType) {
             return count($this->deliveries);
-        } else {
-            return $this->deliveryCount;
         }
+
+        return $this->deliveryCount;
     }
 
     public function setDeliveryCount(int $deliveryCount): self
@@ -794,7 +796,7 @@ class Campaign
      */
     public function setAutoCreatedDate()
     {
-        $this->setCreatedDate(new \Datetime());
+        $this->setCreatedDate(new \DateTime());
     }
 
     /**
@@ -804,6 +806,6 @@ class Campaign
      */
     public function setAutoUpdatedDate()
     {
-        $this->setUpdatedDate(new \Datetime());
+        $this->setUpdatedDate(new \DateTime());
     }
 }

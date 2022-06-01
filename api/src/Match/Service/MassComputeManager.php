@@ -79,8 +79,6 @@ class MassComputeManager
 
     /**
      * Compute all necessary calculations for a mass.
-     *
-     * @return Mass
      */
     public function computeResults(Mass $mass): Mass
     {
@@ -224,6 +222,17 @@ class MassComputeManager
         return $this->mass;
     }
 
+    /**
+     * Return all different working places of a Mass.
+     */
+    public function getAllWorkingPlaces(): array
+    {
+        $this->logger->info('Mass Compute | Begin getAllWorkingPlaces | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
+
+        return $this->massPersonRepository->findAllDestinationsForMass($this->mass);
+        $this->logger->info('Mass Compute | End getAllWorkingPlaces | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
+    }
+
     private function buildPersonsCoords()
     {
         $this->logger->info('Mass Compute | Begin buildPersonsCoords | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
@@ -289,21 +298,7 @@ class MassComputeManager
     }
 
     /**
-     * Return all different working places of a Mass.
-     *
-     * @return array
-     */
-    public function getAllWorkingPlaces(): array
-    {
-        $this->logger->info('Mass Compute | Begin getAllWorkingPlaces | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
-        return $this->massPersonRepository->findAllDestinationsForMass($this->mass);
-        $this->logger->info('Mass Compute | End getAllWorkingPlaces | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
-    }
-
-    /**
      * Build the carpoolers matrix.
-     *
-     * @return MassMatrix
      */
     private function buildCarpoolersMatrix(): MassMatrix
     {
@@ -318,8 +313,6 @@ class MassComputeManager
 
     /**
      * Link carpoolers by keeping the fastest match for the current MassMatching.
-     *
-     * @return MassMatrix
      */
     private function linkCarpoolers(array $matchings): MassMatrix
     {

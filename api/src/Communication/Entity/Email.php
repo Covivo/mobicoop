@@ -19,14 +19,14 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Communication\Entity;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * An Email
+ * An Email.
  */
 class Email
 {

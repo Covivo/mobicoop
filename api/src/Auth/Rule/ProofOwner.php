@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Auth\Rule;
 
@@ -27,7 +27,7 @@ use App\Auth\Interfaces\AuthRuleInterface;
 use App\Solidary\Entity\Proof;
 
 /**
- *  Check that the requester is the author of the related Ad
+ *  Check that the requester is the author of the related Ad.
  */
 class ProofOwner implements AuthRuleInterface
 {
@@ -44,6 +44,7 @@ class ProofOwner implements AuthRuleInterface
          * @var Proof $proof
          */
         $proof = $params['proof'];
+
         return $proof->getSolidaryUserStructure()->getSolidaryUser()->getUser()->getId() == $requester->getId();
     }
 }

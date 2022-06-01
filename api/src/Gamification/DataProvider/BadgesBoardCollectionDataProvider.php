@@ -18,17 +18,16 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Gamification\DataProvider;
 
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
 use App\Gamification\Resource\BadgesBoard;
+use App\Gamification\Service\BadgesBoardManager;
 use App\User\Entity\User;
 use Symfony\Component\Security\Core\Security;
-use App\Gamification\Service\BadgesBoardManager;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
@@ -46,14 +45,15 @@ final class BadgesBoardCollectionDataProvider implements CollectionDataProviderI
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return BadgesBoard::class === $resourceClass && $operationName === "get";
+        return BadgesBoard::class === $resourceClass && 'get' === $operationName;
     }
 
     public function getCollection(string $resourceClass, string $operationName = null): iterable
     {
         if (!($this->security->getUser() instanceof User)) {
-            throw new \LogicException("Only a User can get its board");
+            throw new \LogicException('Only a User can get its board');
         }
+
         return $this->badgesBoardManager->getBadgesBoard($this->security->getUser());
     }
 }

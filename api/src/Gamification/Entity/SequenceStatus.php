@@ -19,15 +19,15 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Gamification\Entity;
 
-use App\Gamification\Entity\Badge;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * Gamification : A SequenceStatus
+ * Gamification : A SequenceStatus.
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class SequenceStatus
@@ -49,7 +49,6 @@ class SequenceStatus
      * @Groups({"readGamification"})
      */
     private $title;
-
 
     public function getSequenceItemId(): ?int
     {

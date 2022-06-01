@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Auth\Rule;
 
@@ -27,7 +27,7 @@ use App\Auth\Interfaces\AuthRuleInterface;
 use App\Communication\Entity\Message;
 
 /**
- *  Check that the requester is involved in the related Message (=author or recipient)
+ *  Check that the requester is involved in the related Message (=author or recipient).
  */
 class MessageSender implements AuthRuleInterface
 {
@@ -39,12 +39,13 @@ class MessageSender implements AuthRuleInterface
         if (!isset($params['message'])) {
             return false;
         }
+
         /**
          * @var Message $message
          */
         $message = $params['message'];
         // If the requester is the sender
-        if ($message->getUser()->getId()==$requester->getId()) {
+        if ($message->getUser()->getId() == $requester->getId()) {
             return true;
         }
 

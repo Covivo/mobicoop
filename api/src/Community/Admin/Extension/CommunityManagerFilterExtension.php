@@ -19,21 +19,21 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Community\Admin\Extension;
 
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryCollectionExtensionInterface;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryItemExtensionInterface;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
+use App\Auth\Service\AuthManager;
 use App\Community\Entity\Community;
+use App\Community\Entity\CommunityUser;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\Security\Core\Security;
-use App\Auth\Service\AuthManager;
-use App\Community\Entity\CommunityUser;
 
 /**
- * Extension used to limit the list of communities to the ones managed by the requester (community manager)
+ * Extension used to limit the list of communities to the ones managed by the requester (community manager).
  */
 final class CommunityManagerFilterExtension implements QueryCollectionExtensionInterface, QueryItemExtensionInterface
 {
@@ -49,14 +49,13 @@ final class CommunityManagerFilterExtension implements QueryCollectionExtensionI
     public function applyToCollection(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
     {
         // concerns only admin get collection
-        if ($resourceClass == Community::class && $operationName == "ADMIN_get") {
+        if (Community::class == $resourceClass && 'ADMIN_get' == $operationName) {
             $this->addWhere($queryBuilder, $resourceClass, false, $operationName);
         }
     }
 
     public function applyToItem(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, array $identifiers, string $operationName = null, array $context = [])
     {
-        return;
     }
 
     private function addWhere(QueryBuilder $queryBuilder, string $resourceClass, bool $isItem, string $operationName = null, array $identifiers = [], array $context = []): void
@@ -69,8 +68,9 @@ final class CommunityManagerFilterExtension implements QueryCollectionExtensionI
         $user = $this->security->getUser();
         $rootAlias = $queryBuilder->getRootAliases()[0];
         $queryBuilder->orWhere(sprintf('%s.user = :user', $rootAlias))
-                    ->leftJoin(sprintf("%s.communityUsers", $rootAlias), 'c')
-                    ->orWhere('c.user = :user AND c.status = :status');
+            ->leftJoin(sprintf('%s.communityUsers', $rootAlias), 'c')
+            ->orWhere('c.user = :user AND c.status = :status')
+        ;
         $queryBuilder->setParameter('user', $user);
         $queryBuilder->setParameter('status', CommunityUser::STATUS_ACCEPTED_AS_MODERATOR);
     }

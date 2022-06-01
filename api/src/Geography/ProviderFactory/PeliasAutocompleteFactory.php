@@ -19,32 +19,27 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Geography\ProviderFactory;
 
 use Bazinga\GeocoderBundle\ProviderFactory\AbstractFactory;
-use App\Geography\ProviderFactory\PeliasAutocomplete;
 use Geocoder\Provider\Provider;
 use Http\Discovery\HttpClientDiscovery;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * PeliasAutocompleteFactory.php
- * Custom Provider class for Pelias autocomplete
+ * Custom Provider class for Pelias autocomplete.
+ *
  * @author Sylvain Briat
  */
-
 final class PeliasAutocompleteFactory extends AbstractFactory
 {
     protected static $dependencies = [
         ['requiredClass' => PeliasAutocomplete::class, 'packageName' => 'geocoder-php/pelias-autocomplete-provider'],
     ];
 
-    /**
-     * @param array $config
-     * @return Provider
-     */
     protected function getProvider(array $config): Provider
     {
         $httplug = $config['httplug_client'] ?: HttpClientDiscovery::find();
@@ -52,9 +47,6 @@ final class PeliasAutocompleteFactory extends AbstractFactory
         return new PeliasAutocomplete($httplug, $config['uri']);
     }
 
-    /**
-     * @param OptionsResolver $resolver
-     */
     protected static function configureOptionResolver(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([

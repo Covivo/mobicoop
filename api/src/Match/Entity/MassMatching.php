@@ -19,13 +19,13 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Match\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Geography\Entity\Direction;
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 
@@ -59,7 +59,7 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 class MassMatching
 {
     /**
-     * @var int The id of this matching.
+     * @var int the id of this matching
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
@@ -67,7 +67,7 @@ class MassMatching
     private $id;
 
     /**
-     * @var MassPerson The first person.
+     * @var MassPerson the first person
      * @ORM\ManyToOne(targetEntity="\App\Match\Entity\MassPerson", cascade={"persist"}, inversedBy="matchingsAsDriver")
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @MaxDepth(1)
@@ -75,7 +75,7 @@ class MassMatching
     private $massPerson1;
 
     /**
-     * @var MassPerson The second person.
+     * @var MassPerson the second person
      * @ORM\ManyToOne(targetEntity="\App\Match\Entity\MassPerson", cascade={"persist"}, inversedBy="matchingsAsPassenger")
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @MaxDepth(1)
@@ -84,7 +84,7 @@ class MassMatching
 
     /**
      * @var int The total distance of the direction in meter.
-     * corresponding to newDistance in classic carpool matching
+     *          corresponding to newDistance in classic carpool matching
      * @ORM\Column(type="integer")
      * @Groups({"mass","massCompute"})
      */
@@ -92,14 +92,14 @@ class MassMatching
 
     /**
      * @var int The total duration of the direction in milliseconds.
-     * corresponding to newDuration in classic carpool matching
+     *          corresponding to newDuration in classic carpool matching
      * @ORM\Column(type="integer")
      * @Groups({"mass","massCompute"})
      */
     private $duration;
 
     /**
-     * @var \DateTimeInterface Creation date.
+     * @var \DateTimeInterface creation date
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read"})
@@ -107,7 +107,7 @@ class MassMatching
     private $createdDate;
 
     /**
-     * @var \DateTimeInterface Updated date.
+     * @var \DateTimeInterface updated date
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read"})
@@ -177,7 +177,6 @@ class MassMatching
         return $this;
     }
 
-
     public function getCreatedDate(): ?\DateTimeInterface
     {
         return $this->createdDate;
@@ -211,7 +210,7 @@ class MassMatching
      */
     public function setAutoCreatedDate()
     {
-        $this->setCreatedDate(new \Datetime());
+        $this->setCreatedDate(new \DateTime());
     }
 
     /**
@@ -221,6 +220,6 @@ class MassMatching
      */
     public function setAutoUpdatedDate()
     {
-        $this->setUpdatedDate(new \Datetime());
+        $this->setUpdatedDate(new \DateTime());
     }
 }

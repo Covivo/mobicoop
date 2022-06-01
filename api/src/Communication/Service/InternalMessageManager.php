@@ -113,8 +113,6 @@ class InternalMessageManager
 
     /**
      * @throws \Exception
-     *
-     * @return Message
      */
     public function createMessage(User $sender, array $recipients, string $text, ?string $title = null, ?Message $reply): Message
     {
@@ -182,8 +180,6 @@ class InternalMessageManager
 
     /**
      * Post a Message, taking care of Ask and SolidaryAsk if needed.
-     *
-     * @return Message
      */
     public function postMessage(Message $message): Message
     {

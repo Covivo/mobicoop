@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Rdex\Entity;
 
@@ -31,39 +31,30 @@ namespace App\Rdex\Entity;
 class RdexVehicle implements \JsonSerializable
 {
     /**
-     * @var string The image of the vehicle.
+     * @var string the image of the vehicle
      */
     private $vehicle_image;
 
     /**
-     * @var string The model of the vehicle.
+     * @var string the model of the vehicle
      */
     private $model;
 
     /**
-     * @var string The color of the vehicle.
+     * @var string the color of the vehicle
      */
     private $color;
 
-    /**
-     * @return string
-     */
     public function getVehicle_image(): string
     {
         return $this->vehicle_image;
     }
 
-    /**
-     * @return string
-     */
     public function getModel(): string
     {
         return $this->model;
     }
 
-    /**
-     * @return string
-     */
     public function getColor(): string
     {
         return $this->color;
@@ -98,8 +89,8 @@ class RdexVehicle implements \JsonSerializable
         return
         [
             'vehicle_image' => $this->getVehicle_image(),
-            'model'         => $this->getModel(),
-            'color'         => $this->getColor()
+            'model' => $this->getModel(),
+            'color' => $this->getColor(),
         ];
     }
 }

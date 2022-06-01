@@ -19,15 +19,15 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\RelayPoint\Admin\Service;
 
 use App\Image\Repository\IconRepository;
 use App\RelayPoint\Entity\RelayPoint;
-use Doctrine\ORM\EntityManagerInterface;
 use App\RelayPoint\Entity\RelayPointType;
 use App\RelayPoint\Exception\RelayPointTypeException;
+use Doctrine\ORM\EntityManagerInterface;
 
 /**
  * Relay point type manager for admin context.
@@ -40,9 +40,7 @@ class RelayPointTypeManager
     private $iconRepository;
 
     /**
-     * Constructor
-     *
-     * @param EntityManagerInterface $entityManager
+     * Constructor.
      */
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -55,8 +53,9 @@ class RelayPointTypeManager
     /**
      * Add a relay point type.
      *
-     * @param RelayPointType     $relayPointType    The relay point type to add
-     * @return RelayPointType    The relay point type created
+     * @param RelayPointType $relayPointType The relay point type to add
+     *
+     * @return RelayPointType The relay point type created
      */
     public function addRelayPointType(RelayPointType $relayPointType): RelayPointType
     {
@@ -64,7 +63,7 @@ class RelayPointTypeManager
             if ($icon = $this->iconRepository->find($relayPointType->getIconId())) {
                 $relayPointType->setIcon($icon);
             } else {
-                throw new RelayPointTypeException("Relay point type icon not found");
+                throw new RelayPointTypeException('Relay point type icon not found');
             }
         }
 
@@ -78,21 +77,22 @@ class RelayPointTypeManager
     /**
      * Patch a relay point type.
      *
-     * @param RelayPointType $relayPointType    The relay point type to update
-     * @param array $fields                     The updated fields
-     * @return RelayPointType   The relay point type updated
+     * @param RelayPointType $relayPointType The relay point type to update
+     * @param array          $fields         The updated fields
+     *
+     * @return RelayPointType The relay point type updated
      */
     public function patchRelayPointType(RelayPointType $relayPointType, array $fields): RelayPointType
     {
         // check if icon has changed
         if (in_array('iconId', array_keys($fields))) {
-            if ($fields['iconId'] === null) {
+            if (null === $fields['iconId']) {
                 $relayPointType->setIcon(null);
             } elseif ($icon = $this->iconRepository->find($fields['iconId'])) {
                 // set the new icon
                 $relayPointType->setIcon($icon);
             } else {
-                throw new RelayPointTypeException("Relay point type icon not found");
+                throw new RelayPointTypeException('Relay point type icon not found');
             }
         }
 
@@ -105,10 +105,9 @@ class RelayPointTypeManager
     }
 
     /**
-     * Delete a relay point type
+     * Delete a relay point type.
      *
-     * @param RelayPoint $relayPointType  The relay point type to delete
-     * @return void
+     * @param RelayPoint $relayPointType The relay point type to delete
      */
     public function deleteRelayPointType(RelayPointType $relayPointType): void
     {

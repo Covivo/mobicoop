@@ -18,7 +18,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\Admin\Exception;
 
@@ -28,66 +28,66 @@ namespace App\Solidary\Admin\Exception;
 class SolidaryException extends \LogicException
 {
     // beneficiary
-    public const BENEFICIARY_REQUIRED = "Beneficiary is required";
-    public const BENEFICIARY_NOT_FOUND = "Beneficiary #%s not found";
-    public const BENEFICIARY_VALIDATION_VALUE_REQUIRED = "Validation value is required";
-    public const BENEFICIARY_VALIDATION_ID_REQUIRED = "Validation user structure id is required";
+    public const BENEFICIARY_REQUIRED = 'Beneficiary is required';
+    public const BENEFICIARY_NOT_FOUND = 'Beneficiary #%s not found';
+    public const BENEFICIARY_VALIDATION_VALUE_REQUIRED = 'Validation value is required';
+    public const BENEFICIARY_VALIDATION_ID_REQUIRED = 'Validation user structure id is required';
 
     // volunteer
-    public const VOLUNTEER_NOT_FOUND = "Volunteer #%s not found";
-    public const VOLUNTEER_VALIDATION_VALUE_REQUIRED = "Validation value is required";
-    public const VOLUNTEER_VALIDATION_ID_REQUIRED = "Validation user structure id is required";
+    public const VOLUNTEER_NOT_FOUND = 'Volunteer #%s not found';
+    public const VOLUNTEER_VALIDATION_VALUE_REQUIRED = 'Validation value is required';
+    public const VOLUNTEER_VALIDATION_ID_REQUIRED = 'Validation user structure id is required';
 
     // structure
-    public const STRUCTURE_REQUIRED = "Structure is required";
-    public const STRUCTURE_NOT_FOUND = "Structure #%s not found";
+    public const STRUCTURE_REQUIRED = 'Structure is required';
+    public const STRUCTURE_NOT_FOUND = 'Structure #%s not found';
 
     // solidary user structure
-    public const SOLIDARY_USER_STRUCTURE_NOT_FOUND = "Solidary user stucture #%s not found";
+    public const SOLIDARY_USER_STRUCTURE_NOT_FOUND = 'Solidary user stucture #%s not found';
 
     // journey
-    public const ORIGIN_REQUIRED = "Origin is required";
-    public const DESTINATION_REQUIRED = "Destination is required";
-    public const REGULAR_MIN_DATE_REQUIRED = "Regular min date is required";
-    public const REGULAR_MAX_DATE_REQUIRED = "Regular max date is required";
+    public const ORIGIN_REQUIRED = 'Origin is required';
+    public const DESTINATION_REQUIRED = 'Destination is required';
+    public const REGULAR_MIN_DATE_REQUIRED = 'Regular min date is required';
+    public const REGULAR_MAX_DATE_REQUIRED = 'Regular max date is required';
     public const FREQUENCY_REQUIRED = "Frequency (as 'regular' boolean) is required";
-    public const REGULAR_SCHEDULES_REQUIRED = "Regular schedules are required";
-    public const REGULAR_DATE_CHOICE_REQUIRED = "Regular date choice is required";
-    public const PUNCTUAL_OUTWARD_DATE_CHOICE_REQUIRED = "Punctual date choice is required";
-    public const PUNCTUAL_OUTWARD_DATE_CHOICE_INVALID = "Punctual date choice is invalid";
-    public const PUNCTUAL_OUTWARD_TIME_CHOICE_REQUIRED = "Punctual time choice is required";
-    public const PUNCTUAL_OUTWARD_TIME_CHOICE_INVALID = "Punctual time choice is invalid";
+    public const REGULAR_SCHEDULES_REQUIRED = 'Regular schedules are required';
+    public const REGULAR_DATE_CHOICE_REQUIRED = 'Regular date choice is required';
+    public const PUNCTUAL_OUTWARD_DATE_CHOICE_REQUIRED = 'Punctual date choice is required';
+    public const PUNCTUAL_OUTWARD_DATE_CHOICE_INVALID = 'Punctual date choice is invalid';
+    public const PUNCTUAL_OUTWARD_TIME_CHOICE_REQUIRED = 'Punctual time choice is required';
+    public const PUNCTUAL_OUTWARD_TIME_CHOICE_INVALID = 'Punctual time choice is invalid';
 
     // structure proof
-    public const STRUCTURE_PROOF_ID_REQUIRED = "Structure proof id is required";
-    public const STRUCTURE_PROOF_VALUE_REQUIRED = "Structure proof value is required for proof #%s";
-    public const STRUCTURE_PROOF_FILE_REQUIRED = "Structure proof file is required for proof #%s";
-    public const STRUCTURE_PROOF_NOT_FOUND = "Structure proof #%s not found";
+    public const STRUCTURE_PROOF_ID_REQUIRED = 'Structure proof id is required';
+    public const STRUCTURE_PROOF_VALUE_REQUIRED = 'Structure proof value is required for proof #%s';
+    public const STRUCTURE_PROOF_FILE_REQUIRED = 'Structure proof file is required for proof #%s';
+    public const STRUCTURE_PROOF_NOT_FOUND = 'Structure proof #%s not found';
 
     // subject
-    public const SUBJECT_NOT_FOUND = "Subject #%s not found";
+    public const SUBJECT_NOT_FOUND = 'Subject #%s not found';
 
     // need
-    public const NEED_NOT_FOUND = "Need #%s not found";
+    public const NEED_NOT_FOUND = 'Need #%s not found';
 
     // solidary
-    public const SOLIDARY_ID_REQUIRED = "Solidary id is required";
-    public const SOLIDARY_NOT_FOUND = "Solidary record #%s not found";
+    public const SOLIDARY_ID_REQUIRED = 'Solidary id is required';
+    public const SOLIDARY_NOT_FOUND = 'Solidary record #%s not found';
 
     // solidary action
-    public const SOLIDARY_ACTION_REQUIRED = "Solidary action is required";
-    public const SOLIDARY_ACTION_USER_REQUIRED = "User is required";
-    public const SOLIDARY_ACTION_NOT_FOUND = "Solidary action #%s not found";
-    public const SOLIDARY_ACTION_USER_NOT_FOUND = "User #%s not found";
+    public const SOLIDARY_ACTION_REQUIRED = 'Solidary action is required';
+    public const SOLIDARY_ACTION_USER_REQUIRED = 'User is required';
+    public const SOLIDARY_ACTION_NOT_FOUND = 'Solidary action #%s not found';
+    public const SOLIDARY_ACTION_USER_NOT_FOUND = 'User #%s not found';
 
     // solidary solution
-    public const SOLIDARY_SOLUTION_MATCHING_REQUIRED= "A matching id is required";
-    public const SOLIDARY_SOLUTION_MATCHING_NOT_FOUND = "Solidary matching #%s not found";
-    public const SOLIDARY_SOLUTION_ROLE_REQUIRED = "A carpooler or transporter is required";
-    public const SOLIDARY_SOLUTION_USER_NOT_FOUND = "User #%s not found";
+    public const SOLIDARY_SOLUTION_MATCHING_REQUIRED = 'A matching id is required';
+    public const SOLIDARY_SOLUTION_MATCHING_NOT_FOUND = 'Solidary matching #%s not found';
+    public const SOLIDARY_SOLUTION_ROLE_REQUIRED = 'A carpooler or transporter is required';
+    public const SOLIDARY_SOLUTION_USER_NOT_FOUND = 'User #%s not found';
 
     // solidary message
-    public const SOLIDARY_MESSAGE_SOLUTION_REQUIRED= "A solution id is required";
-    public const SOLIDARY_MESSAGE_SOLUTION_NOT_FOUND = "Solidary solution #%s not found";
-    public const SOLIDARY_MESSAGE_TEXT_REQUIRED = "A text message is required";
+    public const SOLIDARY_MESSAGE_SOLUTION_REQUIRED = 'A solution id is required';
+    public const SOLIDARY_MESSAGE_SOLUTION_NOT_FOUND = 'Solidary solution #%s not found';
+    public const SOLIDARY_MESSAGE_TEXT_REQUIRED = 'A text message is required';
 }

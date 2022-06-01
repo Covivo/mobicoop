@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Carpool\Command;
 
@@ -36,7 +36,6 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
  */
-
 class CarpoolProofBatchCommand extends Command
 {
     private $proofManager;
@@ -51,11 +50,11 @@ class CarpoolProofBatchCommand extends Command
     protected function configure()
     {
         $this
-        ->setName('app:carpool:proof-batch')
-        ->addArgument('fromDate', InputArgument::OPTIONAL, 'The start day of the period')
-        ->addArgument('toDate', InputArgument::OPTIONAL, 'The end day of the period (fromDate will be used if only fromDate is given)')
-        ->setDescription('Send the carpool proofs for the given period.')
-        ->setHelp('Send the carpool proofs to the carpool register; the proofs concerns the given period (default : last [xx] days, with [xx] as env parameter).')
+            ->setName('app:carpool:proof-batch')
+            ->addArgument('fromDate', InputArgument::OPTIONAL, 'The start day of the period')
+            ->addArgument('toDate', InputArgument::OPTIONAL, 'The end day of the period (fromDate will be used if only fromDate is given)')
+            ->setDescription('Send the carpool proofs for the given period.')
+            ->setHelp('Send the carpool proofs to the carpool register; the proofs concerns the given period (default : last [xx] days, with [xx] as env parameter).')
         ;
     }
 
@@ -64,15 +63,16 @@ class CarpoolProofBatchCommand extends Command
         $fromDate = null;
         $toDate = null;
         if ($input->getArgument('fromDate')) {
-            $fromDate = DateTime::createFromFormat("Ymd", $input->getArgument('fromDate'));
+            $fromDate = DateTime::createFromFormat('Ymd', $input->getArgument('fromDate'));
             $fromDate->setTime(0, 0);
             if ($input->getArgument('toDate')) {
-                $toDate = DateTime::createFromFormat("Ymd", $input->getArgument('toDate'));
+                $toDate = DateTime::createFromFormat('Ymd', $input->getArgument('toDate'));
             } else {
                 $toDate = clone $fromDate;
             }
             $toDate->setTime(23, 59, 59, 999);
         }
+
         return $this->proofManager->sendProofs($fromDate, $toDate);
     }
 }

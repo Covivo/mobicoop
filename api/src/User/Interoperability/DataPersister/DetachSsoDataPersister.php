@@ -18,7 +18,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\Interoperability\DataPersister;
 
@@ -42,7 +42,7 @@ final class DetachSsoDataPersister implements ContextAwareDataPersisterInterface
 
     public function supports($data, array $context = []): bool
     {
-        return $data instanceof DetachSso && isset($context['collection_operation_name']) && $context['collection_operation_name'] == 'interop_detach_sso';
+        return $data instanceof DetachSso && isset($context['collection_operation_name']) && 'interop_detach_sso' == $context['collection_operation_name'];
     }
 
     public function persist($data, array $context = [])
@@ -50,6 +50,7 @@ final class DetachSsoDataPersister implements ContextAwareDataPersisterInterface
         if (!($this->security->getUser() instanceof App)) {
             throw new BadRequestInteroperabilityUserException(BadRequestInteroperabilityUserException::UNAUTHORIZED);
         }
+
         return $this->userManager->detachUser($data);
     }
 

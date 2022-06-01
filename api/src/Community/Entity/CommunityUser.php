@@ -19,28 +19,27 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Community\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiProperty;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\NumericFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
-use Symfony\Component\Serializer\Annotation\Groups;
-use App\User\Entity\User;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Symfony\Component\Validator\Constraints as Assert;
-use App\Community\Controller\JoinAction;
 use App\Community\Controller\LeaveCommunityAction;
+use App\User\Entity\User;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * A member of a community.
- * Additional properties could be added so we need this entity (could be useless without extra properties => if so it would be a 'classic' manytomany relation)
+ * Additional properties could be added so we need this entity (could be useless without extra properties => if so it would be a 'classic' manytomany relation).
  *
  * @ORM\Entity
  * @UniqueEntity(
@@ -166,7 +165,7 @@ class CommunityUser
     public const STATUS_REFUSED = 3;
 
     /**
-     * @var int The id of this community user.
+     * @var int the id of this community user
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -176,7 +175,7 @@ class CommunityUser
     private $id;
 
     /**
-     * @var Community The community.
+     * @var Community the community
      *
      * @ApiProperty(push=true)
      * @ORM\ManyToOne(targetEntity="\App\Community\Entity\Community", inversedBy="communityUsers")
@@ -188,7 +187,7 @@ class CommunityUser
     private $community;
 
     /**
-     * @var User The user.
+     * @var User the user
      *
      * @ApiProperty(push=true)
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User")
@@ -200,7 +199,7 @@ class CommunityUser
     private $user;
 
     /**
-     * @var int The status of the membership.
+     * @var int the status of the membership
      *
      * @ORM\Column(type="smallint")
      * @Groups({"aRead","aWrite","readCommunity","readCommunityUser","write","readUserAdmin"})
@@ -208,7 +207,7 @@ class CommunityUser
     private $status;
 
     /**
-     * @var User The user that validates/invalidates the registration.
+     * @var User the user that validates/invalidates the registration
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User")
      * @Groups({"readCommunityUser","write"})
@@ -217,50 +216,50 @@ class CommunityUser
     private $admin;
 
     /**
-    * @var \DateTimeInterface Creation date of the community user.
-    *
-    * @ORM\Column(type="datetime")
-    * @Groups({"aRead","readCommunityUser","write"})
-    */
+     * @var \DateTimeInterface creation date of the community user
+     *
+     * @ORM\Column(type="datetime")
+     * @Groups({"aRead","readCommunityUser","write"})
+     */
     private $createdDate;
 
     /**
-     * @var \DateTimeInterface Updated date of the community user.
+     * @var \DateTimeInterface updated date of the community user
      *
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $updatedDate;
 
     /**
-    * @var \DateTimeInterface Accepted date.
-    *
-    * @ORM\Column(type="datetime", nullable=true)
-    * @Groups({"aRead","readCommunity","readCommunityUser","write"})
-    */
+     * @var \DateTimeInterface accepted date
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"aRead","readCommunity","readCommunityUser","write"})
+     */
     private $acceptedDate;
 
     /**
-    * @var \DateTimeInterface Refusal date.
-    *
-    * @ORM\Column(type="datetime", nullable=true)
-    * @Groups({"aRead","readCommunityUser","write"})
-    */
+     * @var \DateTimeInterface refusal date
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups({"aRead","readCommunityUser","write"})
+     */
     private $refusedDate;
 
     /**
-     * @var string The login to join the community if the community is secured.
+     * @var string the login to join the community if the community is secured
      * @Groups("write")
      */
     private $login;
 
     /**
-     * @var string The password to join the community if the community is secured.
+     * @var string the password to join the community if the community is secured
      * @Groups("write")
      */
     private $password;
 
     /**
-     * @var boolean If the user is also the creator of the community.
+     * @var bool if the user is also the creator of the community
      * @Groups("readCommunityUser")
      */
     private $creator;
@@ -284,7 +283,7 @@ class CommunityUser
     private $familyName;
 
     /**
-     * @var string|null The member avatar
+     * @var null|string The member avatar
      * @Groups({"aRead"})
      */
     private $avatar;
@@ -294,7 +293,6 @@ class CommunityUser
      * @Groups("aRead")
      */
     private $newsSubscription;
-
 
     public function getId(): ?int
     {
@@ -433,7 +431,7 @@ class CommunityUser
 
     public function getUsername(): ?string
     {
-        return ucfirst(strtolower($this->getUser()->getGivenName())) . " " . $this->getUser()->getShortFamilyName();
+        return ucfirst(strtolower($this->getUser()->getGivenName())).' '.$this->getUser()->getShortFamilyName();
     }
 
     public function getGivenName(): ?string
@@ -453,9 +451,10 @@ class CommunityUser
 
     public function getAvatar(): ?string
     {
-        if (count($this->getUser()->getAvatars())>0) {
+        if (count($this->getUser()->getAvatars()) > 0) {
             return $this->getUser()->getAvatars()[0];
         }
+
         return null;
     }
 
@@ -468,7 +467,7 @@ class CommunityUser
      */
     public function setAutoCreatedDate()
     {
-        $this->setCreatedDate(new \Datetime());
+        $this->setCreatedDate(new \DateTime());
         $this->setAutoAcceptedOrRefusedDate();
     }
 
@@ -479,7 +478,7 @@ class CommunityUser
      */
     public function setAutoUpdatedDate()
     {
-        $this->setUpdatedDate(new \Datetime());
+        $this->setUpdatedDate(new \DateTime());
     }
 
     /**
@@ -491,9 +490,9 @@ class CommunityUser
     {
         if ($this->getUser()->getId() == $this->getCommunity()->getUser()->getId()) {
             $this->setStatus(self::STATUS_ACCEPTED_AS_MODERATOR);
-        } elseif ($this->getStatus() != self::STATUS_ACCEPTED_AS_MODERATOR && $this->getCommunity()->getValidationType() != Community::MANUAL_VALIDATION) {
+        } elseif (self::STATUS_ACCEPTED_AS_MODERATOR != $this->getStatus() && Community::MANUAL_VALIDATION != $this->getCommunity()->getValidationType()) {
             $this->setStatus(self::STATUS_ACCEPTED_AS_MEMBER);
-        } elseif ($this->getStatus() != self::STATUS_ACCEPTED_AS_MODERATOR) {
+        } elseif (self::STATUS_ACCEPTED_AS_MODERATOR != $this->getStatus()) {
             $this->setStatus(self::STATUS_PENDING);
         }
         $this->setAutoAcceptedOrRefusedDate();
@@ -506,16 +505,16 @@ class CommunityUser
      */
     public function setAutoAcceptedOrRefusedDate()
     {
-        if ($this->status == self::STATUS_ACCEPTED_AS_MEMBER && is_null($this->acceptedDate)) {
-            $this->setAcceptedDate(new \Datetime());
+        if (self::STATUS_ACCEPTED_AS_MEMBER == $this->status && is_null($this->acceptedDate)) {
+            $this->setAcceptedDate(new \DateTime());
             $this->setRefusedDate(null);
-        } elseif ($this->status == self::STATUS_ACCEPTED_AS_MODERATOR && is_null($this->acceptedDate)) {
-            $this->setAcceptedDate(new \Datetime());
+        } elseif (self::STATUS_ACCEPTED_AS_MODERATOR == $this->status && is_null($this->acceptedDate)) {
+            $this->setAcceptedDate(new \DateTime());
             $this->setRefusedDate(null);
-        } elseif ($this->status == self::STATUS_REFUSED && is_null($this->refusedDate)) {
-            $this->setRefusedDate(new \Datetime());
+        } elseif (self::STATUS_REFUSED == $this->status && is_null($this->refusedDate)) {
+            $this->setRefusedDate(new \DateTime());
             $this->setAcceptedDate(null);
-        } elseif ($this->status == self::STATUS_PENDING) {
+        } elseif (self::STATUS_PENDING == $this->status) {
             $this->setAcceptedDate(null);
             $this->setRefusedDate(null);
         }

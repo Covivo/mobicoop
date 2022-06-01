@@ -19,17 +19,17 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\Interoperability\Security;
 
-use App\Auth\Service\AuthManager;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
-use App\User\Interoperability\Ressource\User;
+use App\Auth\Service\AuthManager;
 use App\User\Entity\User as UserEntity;
+use App\User\Interoperability\Ressource\User;
 use App\User\Service\UserManager;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class UserVoter extends Voter
 {
@@ -53,7 +53,7 @@ class UserVoter extends Voter
             self::USER_CREATE,
             self::USER_READ,
             self::USER_UPDATE,
-            ])) {
+        ])) {
             return false;
         }
 
@@ -62,9 +62,10 @@ class UserVoter extends Voter
             self::USER_CREATE,
             self::USER_READ,
             self::USER_UPDATE,
-            ]) && !($subject instanceof Paginator) && !$subject instanceof User) {
+        ]) && !($subject instanceof Paginator) && !$subject instanceof User) {
             return false;
         }
+
         return true;
     }
 
@@ -73,8 +74,10 @@ class UserVoter extends Voter
         switch ($attribute) {
             case self::USER_CREATE:
                 return $this->canCreateUser();
+
             case self::USER_READ:
                 return $this->canReadUser($this->userManager->getUser($subject->getId()));
+
             case self::USER_UPDATE:
                 return $this->canUpdateUser($this->userManager->getUser($subject->getId()));
         }
@@ -89,11 +92,11 @@ class UserVoter extends Voter
 
     private function canReadUser(UserEntity $user)
     {
-        return $this->authManager->isAuthorized(self::USER_READ, ['user'=>$user]);
+        return $this->authManager->isAuthorized(self::USER_READ, ['user' => $user]);
     }
 
     private function canUpdateUser(UserEntity $user)
     {
-        return $this->authManager->isAuthorized(self::USER_UPDATE, ['user'=>$user]);
+        return $this->authManager->isAuthorized(self::USER_UPDATE, ['user' => $user]);
     }
 }

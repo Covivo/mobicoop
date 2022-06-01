@@ -19,13 +19,11 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Match\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use ApiPlatform\Core\Annotation\ApiResource;
-use App\Geography\Entity\Direction;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 
@@ -40,7 +38,7 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 class MassPTJourney
 {
     /**
-     * @var int The id of this journey.
+     * @var int the id of this journey
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
@@ -56,7 +54,7 @@ class MassPTJourney
     private $massPerson;
 
     /**
-     * @var int The total distance of this journey.
+     * @var int the total distance of this journey
      *
      * @ORM\Column(type="integer", nullable=true)
      * @Groups("pt")
@@ -64,7 +62,7 @@ class MassPTJourney
     private $distance;
 
     /**
-     * @var int The total duration of this journey (in seconds).
+     * @var int the total duration of this journey (in seconds)
      *
      * @ORM\Column(type="integer", nullable=true)
      * @Groups("pt")
@@ -72,7 +70,7 @@ class MassPTJourney
     private $duration;
 
     /**
-     * @var int The number of changes of this journey.
+     * @var int the number of changes of this journey
      *
      * @ORM\Column(type="integer", nullable=true)
      * @Groups("pt")
@@ -112,7 +110,7 @@ class MassPTJourney
     private $durationWalkFromWork;
 
     /**
-     * @var \DateTimeInterface Creation date.
+     * @var \DateTimeInterface creation date
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read"})
@@ -120,7 +118,7 @@ class MassPTJourney
     private $createdDate;
 
     /**
-     * @var \DateTimeInterface Updated date.
+     * @var \DateTimeInterface updated date
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read"})
@@ -128,7 +126,7 @@ class MassPTJourney
     private $updatedDate;
 
     /**
-     * @var string PT provider used to compute this journey.
+     * @var string PT provider used to compute this journey
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups("pt")
@@ -236,7 +234,6 @@ class MassPTJourney
         return $this;
     }
 
-
     public function getCreatedDate(): ?\DateTimeInterface
     {
         return $this->createdDate;
@@ -282,7 +279,7 @@ class MassPTJourney
      */
     public function setAutoCreatedDate()
     {
-        $this->setCreatedDate(new \Datetime());
+        $this->setCreatedDate(new \DateTime());
     }
 
     /**
@@ -292,6 +289,6 @@ class MassPTJourney
      */
     public function setAutoUpdatedDate()
     {
-        $this->setUpdatedDate(new \Datetime());
+        $this->setUpdatedDate(new \DateTime());
     }
 }

@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Gamification\Entity;
 
@@ -29,12 +29,13 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 /**
-* Gamification : A GamificationActionRule
-* @author Maxime Bardot <maxime.bardot@mobicoop.org>
-*
-* @ORM\Entity
-* @ORM\HasLifecycleCallbacks
-*/
+ * Gamification : A GamificationActionRule.
+ *
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ *
+ * @ORM\Entity
+ * @ORM\HasLifecycleCallbacks
+ */
 class GamificationActionRule
 {
     /**
@@ -58,7 +59,7 @@ class GamificationActionRule
     private $name;
 
     /**
-     * @var ArrayCollection|null A GamificationActionRule can be included in multiple GamificationActions
+     * @var null|ArrayCollection A GamificationActionRule can be included in multiple GamificationActions
      *
      * @ORM\OneToMany(targetEntity="\App\Gamification\Entity\GamificationAction", mappedBy="gamificationActionRule", cascade={"persist"})
      * @Groups({"readGamification","writeGamification"})
@@ -70,7 +71,6 @@ class GamificationActionRule
     {
         $this->gamificationActions = new ArrayCollection();
     }
-
 
     public function getId(): ?int
     {

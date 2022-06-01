@@ -19,14 +19,14 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Auth\Rule;
 
 use App\Auth\Interfaces\AuthRuleInterface;
 
 /**
- *  Check that the requester is the Solidary Beneficiary himself
+ *  Check that the requester is the Solidary Beneficiary himself.
  */
 class SolidaryBeneficiarySelf implements AuthRuleInterface
 {

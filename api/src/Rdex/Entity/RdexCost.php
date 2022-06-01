@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Rdex\Entity;
 
@@ -31,26 +31,20 @@ namespace App\Rdex\Entity;
 class RdexCost implements \JsonSerializable
 {
     /**
-     * @var float The fixed cost.
+     * @var float the fixed cost
      */
     private $fixed;
 
     /**
-     * @var float The variable cost.
+     * @var float the variable cost
      */
     private $variable;
 
-    /**
-     * @return number
-     */
     public function getFixed(): number
     {
         return $this->fixed;
     }
 
-    /**
-     * @return number
-     */
     public function getVariable(): number
     {
         return $this->variable;
@@ -76,8 +70,8 @@ class RdexCost implements \JsonSerializable
     {
         return
         [
-            'fixed'     => $this->getFixed(),
-            'variable'  => $this->getVariable()
+            'fixed' => $this->getFixed(),
+            'variable' => $this->getVariable(),
         ];
     }
 }

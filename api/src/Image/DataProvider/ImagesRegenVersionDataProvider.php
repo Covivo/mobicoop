@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Image\DataProvider;
 
@@ -29,7 +29,8 @@ use App\Image\Entity\Image;
 use App\Image\Service\ImageManager;
 
 /**
- * DataProvider : Regen all images versions
+ * DataProvider : Regen all images versions.
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 final class ImagesRegenVersionDataProvider implements ContextAwareCollectionDataProviderInterface, RestrictedDataProviderInterface
@@ -43,7 +44,7 @@ final class ImagesRegenVersionDataProvider implements ContextAwareCollectionData
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Image::class === $resourceClass && $operationName == "regenVersions";
+        return Image::class === $resourceClass && 'regenVersions' == $operationName;
     }
 
     public function getCollection(string $resourceClass, string $operationName = null, array $context = []): iterable

@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Payment\Ressource;
 
@@ -52,6 +52,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *          }
  *      }
  * )
+ *
  *  @author Sylvain Briat <sylvain.briat@mobicoop.org>
  */
 class PaymentWeek
@@ -59,7 +60,7 @@ class PaymentWeek
     public const DEFAULT_ID = 999999999999;
 
     /**
-     * @var int The id of this payment week.
+     * @var int the id of this payment week
      * @Groups({"readPayment"})
      *
      * @ApiProperty(identifier=true)
@@ -67,7 +68,7 @@ class PaymentWeek
     private $id;
 
     /**
-     * @var string|null The week and year fo this payment week.
+     * @var null|string the week and year fo this payment week
      * @Groups({"readPayment"})
      */
     private $week;

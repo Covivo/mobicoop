@@ -15,7 +15,7 @@ final class Version20200307180232 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE app_role DROP FOREIGN KEY FK_5247AFCAD60322AC');
         $this->addSql('ALTER TABLE role DROP FOREIGN KEY FK_57698A6A727ACA70');
@@ -462,7 +462,7 @@ final class Version20200307180232 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE app_auth_item DROP FOREIGN KEY FK_99529A9F5C4B72AD');
         $this->addSql('ALTER TABLE auth_item_child DROP FOREIGN KEY FK_1611424D727ACA70');

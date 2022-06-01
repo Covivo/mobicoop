@@ -18,7 +18,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\RelayPoint\Admin\DataPersister;
 
@@ -28,7 +28,7 @@ use App\RelayPoint\Entity\RelayPointType;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- * Data persister for Relay point type in administration context
+ * Data persister for Relay point type in administration context.
  */
 final class RelayPointTypeDataPersister implements ContextAwareDataPersisterInterface
 {
@@ -43,23 +43,24 @@ final class RelayPointTypeDataPersister implements ContextAwareDataPersisterInte
 
     public function supports($data, array $context = []): bool
     {
-        return $data instanceof RelayPointType && ((isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'ADMIN_post') || ((isset($context['item_operation_name']) && $context['item_operation_name'] == 'ADMIN_patch') || ((isset($context['item_operation_name']) && $context['item_operation_name'] == 'ADMIN_delete'))));
+        return $data instanceof RelayPointType && ((isset($context['collection_operation_name']) && 'ADMIN_post' == $context['collection_operation_name']) || ((isset($context['item_operation_name']) && 'ADMIN_patch' == $context['item_operation_name']) || ((isset($context['item_operation_name']) && 'ADMIN_delete' == $context['item_operation_name']))));
     }
 
     public function persist($data, array $context = [])
     {
-        if (isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'ADMIN_post') {
+        if (isset($context['collection_operation_name']) && 'ADMIN_post' == $context['collection_operation_name']) {
             $data = $this->relayPointTypeManager->addRelayPointType($data);
-        } elseif (isset($context['item_operation_name']) &&  $context['item_operation_name'] == 'ADMIN_patch') {
+        } elseif (isset($context['item_operation_name']) && 'ADMIN_patch' == $context['item_operation_name']) {
             // for a patch operation, we update only some fields, we pass them to the method for further checkings
             $data = $this->relayPointTypeManager->patchRelayPointType($data, json_decode($this->request->getContent(), true));
         }
+
         return $data;
     }
 
     public function remove($data, array $context = [])
     {
-        if (isset($context['item_operation_name']) &&  $context['item_operation_name'] == 'ADMIN_delete') {
+        if (isset($context['item_operation_name']) && 'ADMIN_delete' == $context['item_operation_name']) {
             return $this->relayPointTypeManager->deleteRelayPointType($data);
         }
     }

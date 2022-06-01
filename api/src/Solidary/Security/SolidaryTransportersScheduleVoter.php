@@ -19,15 +19,15 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\Security;
 
-use App\Auth\Service\AuthManager;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
+use App\Auth\Service\AuthManager;
 use App\Solidary\Entity\SolidaryTransportersSchedule\SolidaryTransportersSchedule;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
@@ -47,19 +47,20 @@ class SolidaryTransportersScheduleVoter extends Voter
     {
         // if the attribute isn't one we support, return false
         if (!in_array($attribute, [
-            self::SOLIDARY_TRANSPORTERS_SCHEDULE
-            ])) {
+            self::SOLIDARY_TRANSPORTERS_SCHEDULE,
+        ])) {
             return false;
         }
 
         // only vote on User objects inside this voter
         if (!in_array($attribute, [
-            self::SOLIDARY_TRANSPORTERS_SCHEDULE
-            ]) && !($subject instanceof Paginator) &&
-                !($subject instanceof SolidaryTransportersSchedule)
+            self::SOLIDARY_TRANSPORTERS_SCHEDULE,
+        ]) && !($subject instanceof Paginator)
+                && !($subject instanceof SolidaryTransportersSchedule)
             ) {
             return false;
         }
+
         return true;
     }
 

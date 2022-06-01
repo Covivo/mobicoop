@@ -15,7 +15,7 @@ final class Version20200320074704 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE solidary DROP FOREIGN KEY FK_1896BCA4815BD757');
         $this->addSql('DROP INDEX IDX_1896BCA4815BD757 ON solidary');
@@ -27,7 +27,7 @@ final class Version20200320074704 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE solidary DROP FOREIGN KEY FK_1896BCA4E51EA2A6');
         $this->addSql('DROP INDEX IDX_1896BCA4E51EA2A6 ON solidary');

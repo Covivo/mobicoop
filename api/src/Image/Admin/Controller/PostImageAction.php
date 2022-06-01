@@ -19,13 +19,13 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Image\Admin\Controller;
 
-use Symfony\Component\HttpFoundation\Request;
-use App\Image\Service\ImageManager;
 use App\Image\Entity\Image;
+use App\Image\Service\ImageManager;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 final class PostImageAction

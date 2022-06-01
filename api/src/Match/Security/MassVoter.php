@@ -19,18 +19,18 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Match\Security;
 
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
 use App\Auth\Service\AuthManager;
 use App\Match\Entity\Mass;
 use App\Match\Service\MassImportManager;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Security;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
 
 class MassVoter extends Voter
 {
@@ -59,8 +59,8 @@ class MassVoter extends Voter
             self::MASS_CREATE,
             self::MASS_READ,
             self::MASS_DELETE,
-            self::MASS_LIST
-            ])) {
+            self::MASS_LIST,
+        ])) {
             return false;
         }
 
@@ -69,10 +69,11 @@ class MassVoter extends Voter
             self::MASS_CREATE,
             self::MASS_READ,
             self::MASS_DELETE,
-            self::MASS_LIST
-            ]) && !($subject instanceof Paginator) && !($subject instanceof Mass)) {
+            self::MASS_LIST,
+        ]) && !($subject instanceof Paginator) && !($subject instanceof Mass)) {
             return false;
         }
+
         return true;
     }
 
@@ -81,16 +82,21 @@ class MassVoter extends Voter
         switch ($attribute) {
             case self::MASS_CREATE:
                 return $this->canCreateMass();
+
             case self::MASS_READ:
                 if ($mass = $this->massImportManager->getMass($this->request->get('id'))) {
                     return $this->canReadMass($mass);
                 }
+
                 return false;
+
             case self::MASS_DELETE:
                 if ($mass = $this->massImportManager->getMass($this->request->get('id'))) {
                     return $this->canDeleteMass($mass);
                 }
+
                 return false;
+
             case self::MASS_LIST:
                 return $this->canListMass();
         }

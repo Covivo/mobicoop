@@ -21,7 +21,7 @@ declare(strict_types=1);
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace DoctrineMigrations;
 
@@ -36,7 +36,7 @@ final class Version20181009125036 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE point DROP INDEX IDX_B7A5F324F5B7AF75, ADD UNIQUE INDEX UNIQ_B7A5F324F5B7AF75 (address_id)');
         $this->addSql('ALTER TABLE point DROP FOREIGN KEY FK_B7A5F324F5B7AF75');
@@ -53,7 +53,7 @@ final class Version20181009125036 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE point DROP INDEX UNIQ_B7A5F324F5B7AF75, ADD INDEX IDX_B7A5F324F5B7AF75 (address_id)');
         $this->addSql('ALTER TABLE point DROP FOREIGN KEY FK_B7A5F324F5B7AF75');

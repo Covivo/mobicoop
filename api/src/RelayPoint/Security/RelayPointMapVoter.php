@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\RelayPoint\Security;
 
@@ -27,10 +27,9 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
 use App\Auth\Service\AuthManager;
 use App\RelayPoint\Resource\RelayPointMap;
 use App\RelayPoint\Service\RelayPointMapManager;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class RelayPointMapVoter extends Voter
 {
@@ -50,17 +49,18 @@ class RelayPointMapVoter extends Voter
     {
         // if the attribute isn't one we support, return false
         if (!in_array($attribute, [
-            self::RELAYPOINTMAP_LIST
-            ])) {
+            self::RELAYPOINTMAP_LIST,
+        ])) {
             return false;
         }
 
         // only vote on RelayPointMap objects inside this voter
         if (!in_array($attribute, [
-            self::RELAYPOINTMAP_LIST
-            ]) && !($subject instanceof Paginator) && !($subject instanceof RelayPointmAP)) {
+            self::RELAYPOINTMAP_LIST,
+        ]) && !($subject instanceof Paginator) && !($subject instanceof RelayPointmAP)) {
             return false;
         }
+
         return true;
     }
 

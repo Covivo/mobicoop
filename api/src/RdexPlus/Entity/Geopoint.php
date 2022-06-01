@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\RdexPlus\Entity;
 
@@ -28,7 +28,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * RDEX+ : A Geopoint
- * Documentation : https://rdex.fabmob.io/
+ * Documentation : https://rdex.fabmob.io/.
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class Geopoint

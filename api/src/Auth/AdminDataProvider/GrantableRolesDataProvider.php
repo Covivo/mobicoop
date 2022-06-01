@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Auth\AdminDataProvider;
 
@@ -29,10 +29,9 @@ use App\Auth\Entity\Permission;
 use App\Auth\ServiceAdmin\AuthManager;
 
 /**
- * Get the grantable roles from an admin user to another user
+ * Get the grantable roles from an admin user to another user.
  *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
- *
  */
 final class GrantableRolesDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
@@ -43,7 +42,7 @@ final class GrantableRolesDataProvider implements CollectionDataProviderInterfac
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Permission::class === $resourceClass && $operationName === "ADMIN_grantable";
+        return Permission::class === $resourceClass && 'ADMIN_grantable' === $operationName;
     }
 
     public function getCollection(string $resourceClass, string $operationName = null): iterable

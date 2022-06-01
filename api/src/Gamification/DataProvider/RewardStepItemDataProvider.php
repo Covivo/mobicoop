@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Gamification\DataProvider;
 
@@ -34,8 +34,8 @@ use Symfony\Component\HttpFoundation\RequestStack;
  */
 final class RewardStepItemDataProvider implements RestrictedDataProviderInterface, ItemDataProviderInterface
 {
-    protected $gamificationManager;
-    protected $request;
+    private $gamificationManager;
+    private $request;
 
     public function __construct(GamificationManager $gamificationManager, RequestStack $requestStack)
     {
@@ -45,7 +45,7 @@ final class RewardStepItemDataProvider implements RestrictedDataProviderInterfac
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return RewardStep::class === $resourceClass && $operationName === "tagAsNotified";
+        return RewardStep::class === $resourceClass && 'tagAsNotified' === $operationName;
     }
 
     public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?object

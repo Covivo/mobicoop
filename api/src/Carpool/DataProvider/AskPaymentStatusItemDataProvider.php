@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Carpool\DataProvider;
 
@@ -30,12 +30,12 @@ use App\Carpool\Service\AskManager;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- * Item DataProvider to check the status of an Ask
+ * Item DataProvider to check the status of an Ask.
  */
 final class AskPaymentStatusItemDataProvider implements RestrictedDataProviderInterface, ItemDataProviderInterface
 {
-    protected $askManager;
-    protected $request;
+    private $askManager;
+    private $request;
 
     public function __construct(AskManager $askManager, RequestStack $requestStack)
     {
@@ -45,7 +45,7 @@ final class AskPaymentStatusItemDataProvider implements RestrictedDataProviderIn
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Ask::class === $resourceClass && $operationName === "payment_status";
+        return Ask::class === $resourceClass && 'payment_status' === $operationName;
     }
 
     public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?object

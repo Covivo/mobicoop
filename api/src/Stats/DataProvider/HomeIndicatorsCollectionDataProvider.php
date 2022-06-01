@@ -18,7 +18,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Stats\DataProvider;
 
@@ -38,7 +38,7 @@ final class HomeIndicatorsCollectionDataProvider implements ContextAwareCollecti
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Indicator::class === $resourceClass && $operationName == "home";
+        return Indicator::class === $resourceClass && 'home' == $operationName;
     }
 
     public function getCollection(string $resourceClass, string $operationName = null, array $context = []): iterable

@@ -141,7 +141,7 @@ class NavitiaProvider implements ProviderInterface
             }
         } elseif (510 == $response->getCode() || 404 == $response->getCode() || 500 == $response->getCode()) {
             // Out of bound
-            //throw new DataProviderException(DataProviderException::OUT_OF_BOUND);
+            // throw new DataProviderException(DataProviderException::OUT_OF_BOUND);
             // For out of bound we do nothing. We just treat it as a no found solution
         } else {
             throw new DataProviderException(DataProviderException::ERROR_COLLECTION_RESSOURCE_JOURNEYS);

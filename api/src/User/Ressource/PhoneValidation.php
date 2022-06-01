@@ -19,19 +19,17 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\Ressource;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
-use App\User\Entity\User;
 
 /**
- * A Phone validation
+ * A Phone validation.
  *
  * @ApiResource(
  *      attributes={
@@ -65,6 +63,7 @@ use App\User\Entity\User;
  *          }
  *      }
  * )
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class PhoneValidation
@@ -84,8 +83,7 @@ class PhoneValidation
      *
      * @Assert\NotBlank
      * @Groups({"readPhoneValidation","writePhoneValidation"})
-     *
-    */
+     */
     private $phoneNumber;
 
     /**

@@ -97,8 +97,6 @@ class MassMigrateManager
      * Migrate the mass's Users (MassPerson to User).
      *
      * @param Mass $mass The Mass owning the MassPersons to migrate
-     *
-     * @return Mass
      */
     public function migrate(Mass $mass): Mass
     {

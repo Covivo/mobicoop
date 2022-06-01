@@ -19,18 +19,14 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Gamification\Interfaces;
-
-use App\Action\Entity\Log;
-use App\Gamification\Entity\SequenceItem;
 
 /**
  * Gamification Notification interface.
  *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
- *
  */
 interface GamificationNotificationInterface
 {

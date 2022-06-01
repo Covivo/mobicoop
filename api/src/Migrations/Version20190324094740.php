@@ -21,7 +21,7 @@ declare(strict_types=1);
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace DoctrineMigrations;
 
@@ -36,7 +36,7 @@ final class Version20190324094740 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('CREATE TABLE zone (zone INT NOT NULL, `precision` NUMERIC(10, 6) NOT NULL, direction_id INT NOT NULL, INDEX IDX_A0EBC007AF73D997 (direction_id), PRIMARY KEY(direction_id, zone, `precision`)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB');
         $this->addSql('ALTER TABLE zone ADD CONSTRAINT FK_A0EBC007AF73D997 FOREIGN KEY (direction_id) REFERENCES direction (id)');
@@ -62,7 +62,7 @@ final class Version20190324094740 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('CREATE TABLE `cross` (`precision` NUMERIC(10, 6) NOT NULL, direction_id INT NOT NULL, zone INT NOT NULL, INDEX IDX_57131439AF73D997 (direction_id), PRIMARY KEY(direction_id, zone, `precision`)) DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE = InnoDB COMMENT = \'\' ');
         $this->addSql('ALTER TABLE `cross` ADD CONSTRAINT FK_57131439AF73D997 FOREIGN KEY (direction_id) REFERENCES direction (id)');

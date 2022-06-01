@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\Entity;
 
@@ -27,7 +27,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 /**
- * A Review made by a User on another User
+ * A Review made by a User on another User.
  *
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
@@ -37,7 +37,7 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 class Review
 {
     /**
-     * @var int $id The id of this Review.
+     * @var int the id of this Review
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -71,14 +71,14 @@ class Review
     private $content;
 
     /**
-     * @var \DateTimeInterface Creation date.
+     * @var \DateTimeInterface creation date
      *
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $createdDate;
 
     /**
-     * @var \DateTimeInterface Updated date.
+     * @var \DateTimeInterface updated date
      *
      * @ORM\Column(type="datetime", nullable=true)
      */
@@ -165,7 +165,7 @@ class Review
      */
     public function setAutoCreatedDate()
     {
-        $this->setCreatedDate(new \Datetime());
+        $this->setCreatedDate(new \DateTime());
     }
 
     /**
@@ -175,6 +175,6 @@ class Review
      */
     public function setAutoUpdatedDate()
     {
-        $this->setUpdatedDate(new \Datetime());
+        $this->setUpdatedDate(new \DateTime());
     }
 }

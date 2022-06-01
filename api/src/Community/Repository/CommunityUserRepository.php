@@ -25,7 +25,6 @@ namespace App\Community\Repository;
 
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryResultCollectionExtensionInterface;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGenerator;
-use ApiPlatform\Core\DataProvider\PaginatorInterface;
 use App\Community\Entity\Community;
 use App\Community\Entity\CommunityUser;
 use Doctrine\ORM\EntityManagerInterface;
@@ -49,8 +48,6 @@ class CommunityUserRepository
 
     /**
      * Find communities by criteria.
-     *
-     * @return array
      */
     public function findBy(array $criteria): array
     {

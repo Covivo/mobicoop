@@ -19,15 +19,15 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Stats\Security;
 
-use App\Auth\Service\AuthManager;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
+use App\Auth\Service\AuthManager;
 use App\Stats\Entity\Indicator;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
@@ -49,20 +49,21 @@ class IndicatorVoter extends Voter
         // if the attribute isn't one we support, return false
         if (!in_array($attribute, [
             self::STATS_READ,
-            self::STATS_LIST
-            ])) {
+            self::STATS_LIST,
+        ])) {
             return false;
         }
 
         // only vote on User objects inside this voter
         if (!in_array($attribute, [
             self::STATS_READ,
-            self::STATS_LIST
-            ]) && !($subject instanceof Paginator) &&
-                !($subject instanceof Indicator)
+            self::STATS_LIST,
+        ]) && !($subject instanceof Paginator)
+                && !($subject instanceof Indicator)
             ) {
             return false;
         }
+
         return true;
     }
 
@@ -71,6 +72,7 @@ class IndicatorVoter extends Voter
         switch ($attribute) {
             case self::STATS_READ:
                 return $this->canReadStats($subject);
+
             case self::STATS_LIST:
                 return $this->canListStats();
         }
@@ -80,7 +82,7 @@ class IndicatorVoter extends Voter
 
     private function canReadStats(Indicator $indicator)
     {
-        return $this->authManager->isAuthorized(self::STATS_READ, ['indicator'=>$indicator]);
+        return $this->authManager->isAuthorized(self::STATS_READ, ['indicator' => $indicator]);
     }
 
     private function canListStats()

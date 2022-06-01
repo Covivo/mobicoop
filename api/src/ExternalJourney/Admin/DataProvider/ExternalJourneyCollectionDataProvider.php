@@ -19,16 +19,15 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\ExternalJourney\Admin\DataProvider;
 
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
-
-use App\ExternalJourney\Entity\ExternalJourney;
 use App\ExternalJourney\Admin\Service\ExternalJourneyManager;
+use App\ExternalJourney\Entity\ExternalJourney;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Collection data provider for External Journey in administration context.
@@ -40,7 +39,7 @@ final class ExternalJourneyCollectionDataProvider implements CollectionDataProvi
     private $externalJourneyManager;
     private $params;
 
-    protected $request;
+    private $request;
 
     public function __construct(RequestStack $requestStack, ExternalJourneyManager $externalJourneyManager, $params)
     {
@@ -51,7 +50,7 @@ final class ExternalJourneyCollectionDataProvider implements CollectionDataProvi
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return ExternalJourney::class === $resourceClass && $operationName == "ADMIN_get";
+        return ExternalJourney::class === $resourceClass && 'ADMIN_get' == $operationName;
     }
 
     public function getCollection(string $resourceClass, string $operationName = null): array

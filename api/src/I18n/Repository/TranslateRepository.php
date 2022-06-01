@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\I18n\Repository;
 
@@ -34,7 +34,6 @@ class TranslateRepository
      */
     private $repository;
 
-
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->repository = $entityManager->getRepository(Translate::class);
@@ -46,10 +45,7 @@ class TranslateRepository
     }
 
     /**
-     * Find one language by criteria
-     *
-     * @param array $criteria
-     * @return Translate|null
+     * Find one language by criteria.
      */
     public function findOneBy(array $criteria): ?Translate
     {

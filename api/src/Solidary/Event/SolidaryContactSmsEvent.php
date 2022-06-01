@@ -19,17 +19,16 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\Event;
 
-use App\App\Entity\App;
 use App\Solidary\Entity\SolidaryContact;
 use Symfony\Contracts\EventDispatcher\Event;
-use App\User\Entity\User;
 
 /**
- * Event sent when a solidary contact is made using an email
+ * Event sent when a solidary contact is made using an email.
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class SolidaryContactSmsEvent extends Event

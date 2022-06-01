@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Rdex\Entity;
 
@@ -31,32 +31,32 @@ namespace App\Rdex\Entity;
 class RdexPassenger implements \JsonSerializable
 {
     /**
-     * @var string The uuid of the passenger.
+     * @var string the uuid of the passenger
      */
     private $uuid;
 
     /**
-     * @var string The pseudonym of the passenger.
+     * @var string the pseudonym of the passenger
      */
     private $alias;
 
     /**
-     * @var string The image of the passenger.
+     * @var string the image of the passenger
      */
     private $image;
 
     /**
-     * @var string The gender of the driver.
+     * @var string the gender of the driver
      */
     private $gender;
 
     /**
-     * @var int The number of persons.
+     * @var int the number of persons
      */
     private $persons;
 
     /**
-     * @var int The state of the passenger.
+     * @var int the state of the passenger
      */
     private $state;
 
@@ -65,49 +65,31 @@ class RdexPassenger implements \JsonSerializable
         $this->uuid = $uuid;
     }
 
-    /**
-     * @return mixed
-     */
     public function getUuid(): mixed
     {
         return $this->uuid;
     }
 
-    /**
-     * @return string
-     */
     public function getAlias(): string
     {
         return $this->alias;
     }
 
-    /**
-     * @return string
-     */
     public function getImage(): string
     {
         return $this->image;
     }
 
-    /**
-     * @return string
-     */
     public function getGender(): string
     {
         return $this->gender;
     }
 
-    /**
-     * @return number
-     */
     public function getPersons(): number
     {
         return $this->persons;
     }
 
-    /**
-     * @return number
-     */
     public function getState(): number
     {
         return $this->state;
@@ -165,12 +147,12 @@ class RdexPassenger implements \JsonSerializable
     {
         return
         [
-            'uuid'      => $this->getUuid(),
-            'alias'     => $this->getAlias(),
-            'image'     => $this->getImage(),
-            'gender'    => $this->getGender(),
-            'persons'   => $this->getPersons(),
-            'state'     => $this->getState()
+            'uuid' => $this->getUuid(),
+            'alias' => $this->getAlias(),
+            'image' => $this->getImage(),
+            'gender' => $this->getGender(),
+            'persons' => $this->getPersons(),
+            'state' => $this->getState(),
         ];
     }
 }

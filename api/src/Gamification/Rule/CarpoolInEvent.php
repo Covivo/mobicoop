@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Gamification\Rule;
 
@@ -27,16 +27,15 @@ use App\Carpool\Entity\Ask;
 use App\Gamification\Interfaces\GamificationRuleInterface;
 
 /**
- * Check if the user carpooled for an event
+ * Check if the user carpooled for an event.
  */
 class CarpoolInEvent implements GamificationRuleInterface
 {
     /**
-     * Carpool In Event rule
+     * Carpool In Event rule.
      *
-     * @param  $log
-     * @param  $sequenceItem
-     * @return bool
+     * @param $log
+     * @param $sequenceItem
      */
     public function execute($log, $sequenceItem): bool
     {
@@ -45,11 +44,11 @@ class CarpoolInEvent implements GamificationRuleInterface
         // we get all user's proposals and for each proposal we check if he's associated with an event
         $proposals = $user->getProposals();
         foreach ($proposals as $proposal) {
-            $matchings=[];
-            $matchings[]=$proposal->getMatchingOffers();
-            $matchings[]=$proposal->getMatchingRequests();
+            $matchings = [];
+            $matchings[] = $proposal->getMatchingOffers();
+            $matchings[] = $proposal->getMatchingRequests();
             foreach ($matchings as $matching) {
-                if ($matching->getAsk()->getStatus() === Ask::STATUS_ACCEPTED_AS_DRIVER || $matching->getAsk()->getStatus() === Ask::STATUS_ACCEPTED_AS_PASSENGER) {
+                if (Ask::STATUS_ACCEPTED_AS_DRIVER === $matching->getAsk()->getStatus() || Ask::STATUS_ACCEPTED_AS_PASSENGER === $matching->getAsk()->getStatus()) {
                     return true;
                 }
             }

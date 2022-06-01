@@ -19,24 +19,23 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping as ORM;
-use Doctrine\ORM\Events;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
 use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\Criteria;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Events;
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * A Solidary Ask
+ * A Solidary Ask.
  *
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
@@ -63,6 +62,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          }
  *      }
  * )
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class SolidaryAsk
@@ -78,7 +78,7 @@ class SolidaryAsk
     public const DEFAULT_ID = 999999999999;
 
     /**
-     * @var int The id of this solidary ask.
+     * @var int the id of this solidary ask
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -88,7 +88,7 @@ class SolidaryAsk
     private $id;
 
     /**
-     * @var int Solidary Ask status (1 = initiated; 2 = pending as driver, 3 = pending as passenger, 4 = accepted as driver; 5 = accepted as passenger, 6 = declined as driver, 7 = declined as passenger).
+     * @var int solidary Ask status (1 = initiated; 2 = pending as driver, 3 = pending as passenger, 4 = accepted as driver; 5 = accepted as passenger, 6 = declined as driver, 7 = declined as passenger)
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
@@ -97,7 +97,7 @@ class SolidaryAsk
     private $status;
 
     /**
-     * @var \DateTimeInterface Creation date of the solidary ask.
+     * @var \DateTimeInterface creation date of the solidary ask
      *
      * @ORM\Column(type="datetime")
      * @Groups({"readSolidary","writeSolidary"})
@@ -105,7 +105,7 @@ class SolidaryAsk
     private $createdDate;
 
     /**
-     * @var \DateTimeInterface Updated date of the solidary ask.
+     * @var \DateTimeInterface updated date of the solidary ask
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"readSolidary","writeSolidary"})
@@ -113,7 +113,7 @@ class SolidaryAsk
     private $updatedDate;
 
     /**
-     * @var SolidarySolution The solidary solution this Ask is for.
+     * @var SolidarySolution the solidary solution this Ask is for
      *
      * @Assert\NotBlank
      * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\SolidarySolution", inversedBy="solidaryAsk")
@@ -124,7 +124,7 @@ class SolidaryAsk
     private $solidarySolution;
 
     /**
-     * @var ArrayCollection The ask history items linked with the ask.
+     * @var ArrayCollection the ask history items linked with the ask
      *
      * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\SolidaryAskHistory", mappedBy="solidaryAsk", cascade={"persist"})
      * @ORM\OrderBy({"id" = "ASC"})
@@ -147,7 +147,7 @@ class SolidaryAsk
     private $sms;
 
     /**
-     * @var Ask|null The Ask possibly linked to this SolidaryAsk
+     * @var null|Ask The Ask possibly linked to this SolidaryAsk
      *
      * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Ask", inversedBy="solidaryAsk", cascade={"persist"})
      * @ORM\JoinColumn(onDelete="CASCADE")
@@ -156,7 +156,7 @@ class SolidaryAsk
     private $ask;
 
     /**
-     * @var Criteria|null Criteria of this SolidaryAsk if the solution is a transport
+     * @var null|Criteria Criteria of this SolidaryAsk if the solution is a transport
      *
      * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Criteria", inversedBy="solidaryAsk", cascade={"persist"})
      * @ORM\JoinColumn(onDelete="CASCADE")
@@ -165,7 +165,7 @@ class SolidaryAsk
     private $criteria;
 
     /**
-     * @var SolidaryAsk|null The linked solidary ask for return trips.
+     * @var null|SolidaryAsk the linked solidary ask for return trips
      *
      * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\SolidaryAsk", cascade={"persist"})
      * @ORM\JoinColumn(onDelete="CASCADE")
@@ -318,7 +318,7 @@ class SolidaryAsk
         $this->solidaryAskLinked = $solidaryAskLinked;
 
         // set (or unset) the owning side of the relation if necessary
-        $newSolidaryAskLinked = $solidaryAskLinked === null ? null : $this;
+        $newSolidaryAskLinked = null === $solidaryAskLinked ? null : $this;
         if (!is_null($solidaryAskLinked) && $newSolidaryAskLinked !== $solidaryAskLinked->getSolidaryAskLinked()) {
             $solidaryAskLinked->setSolidaryAskLinked($newSolidaryAskLinked);
         }
@@ -335,7 +335,7 @@ class SolidaryAsk
      */
     public function setAutoCreatedDate()
     {
-        $this->setCreatedDate(new \Datetime());
+        $this->setCreatedDate(new \DateTime());
     }
 
     /**
@@ -345,6 +345,6 @@ class SolidaryAsk
      */
     public function setAutoUpdatedDate()
     {
-        $this->setUpdatedDate(new \Datetime());
+        $this->setUpdatedDate(new \DateTime());
     }
 }

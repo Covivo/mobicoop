@@ -19,17 +19,17 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Auth\Rule;
 
 use App\Auth\Interfaces\AuthRuleInterface;
+use App\Solidary\Entity\Operate;
 use App\Solidary\Entity\Solidary;
 use App\User\Entity\User;
-use App\Solidary\Entity\Operate;
 
 /**
- *  Check that the requester is an operator of the structure for the given solidary record
+ *  Check that the requester is an operator of the structure for the given solidary record.
  */
 class SolidaryOperator implements AuthRuleInterface
 {
@@ -42,15 +42,15 @@ class SolidaryOperator implements AuthRuleInterface
             return false;
         }
         $structures = [];
+
         /**
          * @var User $requester
          */
         foreach ($requester->getOperates() as $operate) {
-            /**
-             * @var Operate $operate
-             */
+            // @var Operate $operate
             $structures[] = $operate->getStructure()->getId();
         }
+
         return in_array($params['solidary']->getSolidaryUserStructure()->getStructure()->getId(), $structures);
     }
 }

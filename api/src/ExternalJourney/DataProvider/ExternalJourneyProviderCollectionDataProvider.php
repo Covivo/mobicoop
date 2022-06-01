@@ -19,15 +19,12 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\ExternalJourney\DataProvider;
 
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
-
-
 use App\ExternalJourney\Entity\ExternalJourneyProvider;
 use App\ExternalJourney\Service\ExternalJourneyManager;
 
@@ -37,7 +34,6 @@ use App\ExternalJourney\Service\ExternalJourneyManager;
  * Automatically associated to External Journey Provider entity thanks to autowiring (see 'supports' method).
  *
  * @author Sofiane Belaribi <sofiane.belaribi@covivo.eu>
- *
  */
 final class ExternalJourneyProviderCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {

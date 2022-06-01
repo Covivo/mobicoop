@@ -19,17 +19,15 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\ExternalJourney\DataProvider;
 
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
-use Symfony\Component\HttpFoundation\RequestStack;
-
 use App\ExternalJourney\Entity\ExternalJourney;
 use App\ExternalJourney\Service\ExternalJourneyManager;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Collection data provider for External Journey entity.
@@ -37,14 +35,13 @@ use App\ExternalJourney\Service\ExternalJourneyManager;
  * Automatically associated to External Journey entity thanks to autowiring (see 'supports' method).
  *
  * @author Sofiane Belaribi <sofiane.belaribi@covivo.eu>
- *
  */
 final class ExternalJourneyCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
     private $externalJourneyManager;
     private $params;
 
-    protected $request;
+    private $request;
 
     public function __construct(RequestStack $requestStack, ExternalJourneyManager $externalJourneyManager, $params)
     {
@@ -55,7 +52,7 @@ final class ExternalJourneyCollectionDataProvider implements CollectionDataProvi
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return ExternalJourney::class === $resourceClass && $operationName == "get";
+        return ExternalJourney::class === $resourceClass && 'get' == $operationName;
     }
 
     public function getCollection(string $resourceClass, string $operationName = null): array

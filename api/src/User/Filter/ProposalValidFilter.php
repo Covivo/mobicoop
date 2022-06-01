@@ -18,7 +18,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\Filter;
 
@@ -27,16 +27,39 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use Doctrine\ORM\QueryBuilder;
 
 /**
-  *  Filter for get members who dont have valid proposal
-  *
-  * @author Julien Deschampt <julien.deschampt@mobicoop.org>
-*/
-
+ *  Filter for get members who dont have valid proposal.
+ *
+ * @author Julien Deschampt <julien.deschampt@mobicoop.org>
+ */
 final class ProposalValidFilter extends AbstractContextAwareFilter
 {
+    // This function is only used to hook in documentation generators (supported by Swagger and Hydra)
+    public function getDescription(string $resourceClass): array
+    {
+        if (!$this->properties) {
+            return [];
+        }
+
+        $description = [];
+        foreach ($this->properties as $property => $strategy) {
+            $description["{$property}"] = [
+                'property' => $property,
+                'type' => 'string',
+                'required' => false,
+                'swagger' => [
+                    'description' => 'Filter on users who dont have proposals or inactive users',
+                    'name' => 'ProposalValid',
+                    'type' => 'string',
+                ],
+            ];
+        }
+
+        return $description;
+    }
+
     protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
     {
-        if ($property != "proposalValidUntil") {
+        if ('proposalValidUntil' != $property) {
             return;
         }
         // we sanitize the value to be sure it's an int and not an iri
@@ -47,32 +70,9 @@ final class ProposalValidFilter extends AbstractContextAwareFilter
         $queryBuilder
             ->leftJoin('u.proposals', 'p2')
             ->leftJoin('p2.criteria', 'c')
-            ->orWhere('c.frequency = 2 AND c.toDate <= \'' .$value . '\'')
-            ->orWhere('c.frequency = 1 AND c.fromDate <= \'' .$value . '\'')
-            ->orWHere('p2.id IS null');
-    }
-
-    // This function is only used to hook in documentation generators (supported by Swagger and Hydra)
-    public function getDescription(string $resourceClass): array
-    {
-        if (!$this->properties) {
-            return [];
-        }
-
-        $description = [];
-        foreach ($this->properties as $property => $strategy) {
-            $description["$property"] = [
-                  'property' => $property,
-                  'type' => 'string',
-                  'required' => false,
-                  'swagger' => [
-                      'description' => 'Filter on users who dont have proposals or inactive users',
-                      'name' => 'ProposalValid',
-                      'type' => 'string',
-                  ],
-              ];
-        }
-
-        return $description;
+            ->orWhere('c.frequency = 2 AND c.toDate <= \''.$value.'\'')
+            ->orWhere('c.frequency = 1 AND c.fromDate <= \''.$value.'\'')
+            ->orWHere('p2.id IS null')
+        ;
     }
 }

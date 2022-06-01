@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\Entity;
 
@@ -75,7 +75,7 @@ class PushToken
     public const TYPE_ANDROID = 2;
 
     /**
-     * @var int $id The id of this push token.
+     * @var int the id of this push token
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -85,7 +85,7 @@ class PushToken
     private $id;
 
     /**
-     * @var string The token.
+     * @var string the token
      *
      * @ORM\Column(type="string", length=255)
      * @Groups({"readPushToken","writePushToken"})
@@ -93,7 +93,7 @@ class PushToken
     private $token;
 
     /**
-     * @var int The type of token (1=iOS; 2=Android).
+     * @var int the type of token (1=iOS; 2=Android)
      *
      * @ORM\Column(type="integer")
      * @Groups({"readPushToken","writePushToken"})
@@ -101,7 +101,7 @@ class PushToken
     private $type;
 
     /**
-     * @var User The owner of the token.
+     * @var User the owner of the token
      *
      * @ORM\ManyToOne(targetEntity="App\User\Entity\User", inversedBy="pushTokens")
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
@@ -110,7 +110,7 @@ class PushToken
     private $user;
 
     /**
-     * @var \DateTimeInterface Creation date.
+     * @var \DateTimeInterface creation date
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"readPushToken"})
@@ -118,7 +118,7 @@ class PushToken
     private $createdDate;
 
     /**
-     * @var \DateTimeInterface Updated date.
+     * @var \DateTimeInterface updated date
      *
      * @ORM\Column(type="datetime", nullable=true)
      */
@@ -198,7 +198,7 @@ class PushToken
      */
     public function setAutoCreatedDate()
     {
-        $this->setCreatedDate(new \Datetime());
+        $this->setCreatedDate(new \DateTime());
     }
 
     /**
@@ -208,6 +208,6 @@ class PushToken
      */
     public function setAutoUpdatedDate()
     {
-        $this->setUpdatedDate(new \Datetime());
+        $this->setUpdatedDate(new \DateTime());
     }
 }

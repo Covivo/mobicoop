@@ -419,8 +419,6 @@ class ConduentPTProvider implements ProviderInterface
 
     /**
      * Convert a Duration type hh:ii:ss in seconds.
-     *
-     * @return int
      */
     private function convertToSeconds(string $duration): int
     {

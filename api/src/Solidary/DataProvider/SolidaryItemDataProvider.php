@@ -18,13 +18,12 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\DataProvider;
 
 use ApiPlatform\Core\DataProvider\ItemDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
 use App\Solidary\Entity\Solidary;
 use App\Solidary\Service\SolidaryManager;
 
@@ -42,14 +41,15 @@ final class SolidaryItemDataProvider implements ItemDataProviderInterface, Restr
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Solidary::class === $resourceClass && $operationName == 'get';
+        return Solidary::class === $resourceClass && 'get' == $operationName;
     }
 
     public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?Solidary
     {
-        if ($operationName=="contactsList") {
+        if ('contactsList' == $operationName) {
             return $this->solidaryManager->getAsksList($id);
         }
+
         return $this->solidaryManager->getSolidary($id);
     }
 }

@@ -15,7 +15,7 @@ final class Version20210624153231 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE image DROP FOREIGN KEY FK_C53D045F1381F816');
         $this->addSql('ALTER TABLE image DROP FOREIGN KEY FK_C53D045FF7A2C2FC');
@@ -28,7 +28,7 @@ final class Version20210624153231 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE image DROP FOREIGN KEY FK_C53D045FF7A2C2FC');
         $this->addSql('ALTER TABLE image DROP FOREIGN KEY FK_C53D045FFF745EC3');

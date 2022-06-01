@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Gamification\Rule;
 
@@ -27,16 +27,15 @@ use App\Gamification\Entity\SequenceItem;
 use App\Gamification\Interfaces\GamificationRuleInterface;
 
 /**
- * Check if the user has at least saved N CO²
+ * Check if the user has at least saved N CO².
  */
 class HasAtLeastNCarpooledCo2Saved implements GamificationRuleInterface
 {
     /**
-     * Has at least N saved CO²
+     * Has at least N saved CO².
      *
-     * @param  $log
-     * @param  $sequenceItem
-     * @return bool
+     * @param $log
+     * @param $sequenceItem
      */
     public function execute($log, $sequenceItem): bool
     {
@@ -47,11 +46,13 @@ class HasAtLeastNCarpooledCo2Saved implements GamificationRuleInterface
             if ($savedCo2 >= $sequenceItem->getValue()) {
                 return true;
             }
+
             return false;
         }
         if ($savedCo2 >= $sequenceItem['si_value']) {
             return true;
         }
+
         return false;
     }
 }

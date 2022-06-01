@@ -19,22 +19,22 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Gamification\Entity;
 
 use App\Gamification\Interfaces\GamificationNotificationInterface;
 
 /**
- * Gamification Notifier
+ * Gamification Notifier.
  *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class GamificationNotifier
 {
     /**
-     * @var rewardStep[]|Badge[]
-     * Implements GamificationNotificationInterface
+     * @var Badge[]|rewardStep[]
+     *                           Implements GamificationNotificationInterface
      */
     private $notifications;
 

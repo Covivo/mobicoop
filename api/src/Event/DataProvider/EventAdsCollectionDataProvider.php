@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Event\DataProvider;
 
@@ -33,11 +33,10 @@ use Symfony\Component\HttpFoundation\RequestStack;
  * Collection data provider for Community search (by name).
  *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
- *
  */
 final class EventAdsCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
-    protected $request;
+    private $request;
     private $adManager;
 
     public function __construct(RequestStack $requestStack, AdManager $adManager)
@@ -48,11 +47,11 @@ final class EventAdsCollectionDataProvider implements CollectionDataProviderInte
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Event::class === $resourceClass && $operationName === "ads";
+        return Event::class === $resourceClass && 'ads' === $operationName;
     }
 
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
-        return $this->adManager->getAdsOfEvent($this->request->get("id"));
+        return $this->adManager->getAdsOfEvent($this->request->get('id'));
     }
 }

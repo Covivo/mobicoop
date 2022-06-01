@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\PublicTransport\DataProvider;
 
@@ -35,19 +35,17 @@ use Symfony\Component\HttpFoundation\RequestStack;
  * Automatically associated to Public Transport Journey entity thanks to autowiring (see 'supports' method).
  *
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
- *
  */
 final class JourneyCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
     private $dataProvider;
-    protected $request;
+    private $request;
 
     public function __construct(RequestStack $requestStack, PTDataProvider $dataProvider)
     {
         $this->dataProvider = $dataProvider;
         $this->request = $requestStack->getCurrentRequest();
     }
-
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
@@ -57,25 +55,25 @@ final class JourneyCollectionDataProvider implements CollectionDataProviderInter
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
         if (
-            is_null($this->request->get("provider")) &&
-            is_null($this->request->get("origin_latitude")) &&
-            is_null($this->request->get("origin_longitude")) &&
-            is_null($this->request->get("destination_latitude")) &&
-            is_null($this->request->get("destination_longitude")) &&
-            is_null($this->request->get("date"))
+            is_null($this->request->get('provider'))
+            && is_null($this->request->get('origin_latitude'))
+            && is_null($this->request->get('origin_longitude'))
+            && is_null($this->request->get('destination_latitude'))
+            && is_null($this->request->get('destination_longitude'))
+            && is_null($this->request->get('date'))
         ) {
             return null;
         }
 
         return $this->dataProvider->getJourneys(
-            $this->request->get("provider"),
-            $this->request->get("origin_latitude"),
-            $this->request->get("origin_longitude"),
-            $this->request->get("destination_latitude"),
-            $this->request->get("destination_longitude"),
-            \DateTime::createFromFormat(PTDataProvider::DATETIME_FORMAT, $this->request->get("date")),
-            !is_null($this->request->get("dateType")) ? $this->request->get("dateType") : null,
-            !is_null($this->request->get("modes")) ? $this->request->get("modes") : null
+            $this->request->get('provider'),
+            $this->request->get('origin_latitude'),
+            $this->request->get('origin_longitude'),
+            $this->request->get('destination_latitude'),
+            $this->request->get('destination_longitude'),
+            \DateTime::createFromFormat(PTDataProvider::DATETIME_FORMAT, $this->request->get('date')),
+            !is_null($this->request->get('dateType')) ? $this->request->get('dateType') : null,
+            !is_null($this->request->get('modes')) ? $this->request->get('modes') : null
         );
     }
 }

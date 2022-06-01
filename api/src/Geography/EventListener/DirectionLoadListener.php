@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Geography\EventListener;
 
@@ -27,7 +27,7 @@ use App\Geography\Service\GeoTools;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 
 /**
- * Direction Event listener
+ * Direction Event listener.
  */
 class DirectionLoadListener
 {

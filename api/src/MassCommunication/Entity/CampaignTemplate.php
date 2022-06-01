@@ -19,17 +19,17 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\MassCommunication\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiResource;
+use App\Communication\Entity\Medium;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Serializer\Annotation\Groups;
-use App\Communication\Entity\Medium;
 
 /**
  * A mass communication campaign template.
@@ -75,7 +75,7 @@ use App\Communication\Entity\Medium;
 class CampaignTemplate
 {
     /**
-     * @var int The id of this campaign template.
+     * @var int the id of this campaign template
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -86,7 +86,7 @@ class CampaignTemplate
     private $id;
 
     /**
-     * @var string Name of the campaign template.
+     * @var string name of the campaign template
      *
      * @Assert\NotBlank
      * @ORM\Column(type="string", length=255)
@@ -95,7 +95,7 @@ class CampaignTemplate
     private $name;
 
     /**
-     * @var string Header of the campaign template.
+     * @var string header of the campaign template
      *
      * @ORM\Column(type="text", nullable=true)
      * @Groups({"read_campaign","write_campaign"})
@@ -103,7 +103,7 @@ class CampaignTemplate
     private $header;
 
     /**
-     * @var string Body of the campaign template.
+     * @var string body of the campaign template
      *
      * @Assert\NotBlank
      * @ORM\Column(type="text")
@@ -112,7 +112,7 @@ class CampaignTemplate
     private $body;
 
     /**
-     * @var string Footer of the campaign template.
+     * @var string footer of the campaign template
      *
      * @ORM\Column(type="text", nullable=true)
      * @Groups({"read_campaign","write_campaign"})
@@ -120,7 +120,7 @@ class CampaignTemplate
     private $footer;
 
     /**
-     * @var Medium The medium used for the campaign template.
+     * @var Medium the medium used for the campaign template
      *
      * @ORM\ManyToOne(targetEntity="\App\Communication\Entity\Medium")
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
@@ -130,7 +130,7 @@ class CampaignTemplate
     private $medium;
 
     /**
-     * @var \DateTimeInterface Creation date.
+     * @var \DateTimeInterface creation date
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read_campaign"})
@@ -138,7 +138,7 @@ class CampaignTemplate
     private $createdDate;
 
     /**
-     * @var \DateTimeInterface Updated date.
+     * @var \DateTimeInterface updated date
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read_campaign"})
@@ -250,7 +250,7 @@ class CampaignTemplate
      */
     public function setAutoCreatedDate()
     {
-        $this->setCreatedDate(new \Datetime());
+        $this->setCreatedDate(new \DateTime());
     }
 
     /**
@@ -260,6 +260,6 @@ class CampaignTemplate
      */
     public function setAutoUpdatedDate()
     {
-        $this->setUpdatedDate(new \Datetime());
+        $this->setUpdatedDate(new \DateTime());
     }
 }

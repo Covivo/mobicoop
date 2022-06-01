@@ -18,7 +18,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\DataPersister;
 
@@ -46,9 +46,10 @@ final class SolidarySolutionDataPersister implements ContextAwareDataPersisterIn
     public function persist($data, array $context = [])
     {
         // call your persistence layer to save $data
-        if (isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'post') {
+        if (isset($context['collection_operation_name']) && 'post' == $context['collection_operation_name']) {
             $data = $this->solidarySolutionManager->createSolidarySolution($data);
         }
+
         return $data;
     }
 

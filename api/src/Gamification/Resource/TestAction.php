@@ -19,20 +19,19 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Gamification\Resource;
 
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
-use Symfony\Component\Validator\Constraints as Assert;
 use App\Action\Entity\Action;
 use Symfony\Component\Serializer\Annotation\Groups;
-use App\Geography\Entity\Address;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Gamification : FOR DEVELOPPMENT PURPOSE ONLY
- * This Resource is usefull to trigger a log registration for a specific User and therefore check the gamification process
+ * This Resource is usefull to trigger a log registration for a specific User and therefore check the gamification process.
  *
  * @ApiResource(
  *     attributes={
@@ -66,6 +65,7 @@ use App\Geography\Entity\Address;
  *          }
  *      }
  * )
+ *
  *  @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class TestAction
@@ -73,7 +73,7 @@ class TestAction
     public const DEFAULT_ID = 999999999999;
 
     /**
-     * @var int The id of this TestAction.
+     * @var int the id of this TestAction
      * @Assert\NotBlank
      * @Groups({"readGamification"})
      * @ApiProperty(identifier=true)

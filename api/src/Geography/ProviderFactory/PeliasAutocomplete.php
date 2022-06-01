@@ -21,17 +21,16 @@ declare(strict_types=1);
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Geography\ProviderFactory;
 
 use Geocoder\Collection;
-use App\Geography\ProviderFactory\PeliasAddress;
+use Geocoder\Http\Provider\AbstractHttpProvider;
 use Geocoder\Model\AddressCollection;
+use Geocoder\Provider\Provider;
 use Geocoder\Query\GeocodeQuery;
 use Geocoder\Query\ReverseQuery;
-use Geocoder\Http\Provider\AbstractHttpProvider;
-use Geocoder\Provider\Provider;
 use Http\Client\HttpClient;
 
 /**
@@ -54,17 +53,17 @@ final class PeliasAutocomplete extends AbstractHttpProvider implements Provider
      */
     public const REVERSE_ENDPOINT_URL = '/reverse?point.lat=%f&point.lon=%f&size=%d&lang=%s';
 
+    // minimum confidence to consider a result as pertinent
+    public const MIN_CONFIDENCE = 0.85;
+
     /**
      * @var string
      */
     private $uri;
 
-    // minimum confidence to consider a result as pertinent
-    public const MIN_CONFIDENCE = 0.85;
-
     /**
      * @param HttpClient $client an HTTP adapter
-     * @param string     $uri the api uri
+     * @param string     $uri    the api uri
      */
     public function __construct(HttpClient $client, string $uri = null)
     {
@@ -79,15 +78,17 @@ final class PeliasAutocomplete extends AbstractHttpProvider implements Provider
     public function geocodeQuery(GeocodeQuery $query): Collection
     {
         $address = $query->getText();
-        $url = sprintf($this->uri . self::GEOCODE_ENDPOINT_URL, urlencode($address), $query->getLimit(), $query->getLocale());
+        $url = sprintf($this->uri.self::GEOCODE_ENDPOINT_URL, urlencode($address), $query->getLimit(), $query->getLocale());
         if (!is_null($query->getData('userPrioritize'))) {
             $userPrioritize = $query->getData('userPrioritize');
             $url .= sprintf(self::GEOCODE_ENDPOINT_PRIORITIZATION, $userPrioritize['latitude'], $userPrioritize['longitude']);
         } elseif (!is_null($query->getData('latitude')) && !is_null($query->getData('longitude'))) {
             $url .= sprintf(self::GEOCODE_ENDPOINT_PRIORITIZATION, $query->getData('latitude'), $query->getData('longitude'));
         }
+
         return $this->executeQuery($url);
     }
+
     /**
      * {@inheritdoc}
      */
@@ -96,9 +97,11 @@ final class PeliasAutocomplete extends AbstractHttpProvider implements Provider
         $coordinates = $query->getCoordinates();
         $longitude = $coordinates->getLongitude();
         $latitude = $coordinates->getLatitude();
-        $url = sprintf($this->uri . self::REVERSE_ENDPOINT_URL, $latitude, $longitude, $query->getLimit(), $query->getLocale());
+        $url = sprintf($this->uri.self::REVERSE_ENDPOINT_URL, $latitude, $longitude, $query->getLimit(), $query->getLocale());
+
         return $this->executeQuery($url);
     }
+
     /**
      * {@inheritdoc}
      */
@@ -106,10 +109,41 @@ final class PeliasAutocomplete extends AbstractHttpProvider implements Provider
     {
         return 'pelias_autocomplete';
     }
+
+    protected function guessLocality(array $components): ?string
+    {
+        $localityKeys = ['city', 'town', 'village', 'hamlet'];
+
+        return $this->guessBestComponent($components, $localityKeys);
+    }
+
+    protected function guessStreetName(array $components): ?string
+    {
+        $streetNameKeys = ['road', 'street', 'street_name', 'residential'];
+
+        return $this->guessBestComponent($components, $streetNameKeys);
+    }
+
+    protected function guessSubLocality(array $components): ?string
+    {
+        $subLocalityKeys = ['neighbourhood', 'city_district'];
+
+        return $this->guessBestComponent($components, $subLocalityKeys);
+    }
+
+    protected function guessBestComponent(array $components, array $keys): ?string
+    {
+        foreach ($keys as $key) {
+            if (isset($components[$key]) && !empty($components[$key])) {
+                return $components[$key];
+            }
+        }
+
+        return null;
+    }
+
     /**
      * @param $url
-     *
-     * @return Collection
      */
     private function executeQuery(string $url): Collection
     {
@@ -148,7 +182,7 @@ final class PeliasAutocomplete extends AbstractHttpProvider implements Provider
 
             // we check if the search is a venue
             $venue = null;
-            if ($layer == "venue") {
+            if ('venue' == $layer) {
                 $venue = $props['name'];
             }
 
@@ -195,7 +229,7 @@ final class PeliasAutocomplete extends AbstractHttpProvider implements Provider
                 'postalCode' => isset($props['postalcode']) ? $props['postalcode'] : null,
                 'adminLevels' => $adminLevels,
                 'country' => isset($props['country']) ? $props['country'] : null,
-                'countryCode' => isset($props['country_a']) ? strtoupper($props['country_a']) : null
+                'countryCode' => isset($props['country_a']) ? strtoupper($props['country_a']) : null,
             ]);
 
             $result->setId($id);
@@ -204,51 +238,7 @@ final class PeliasAutocomplete extends AbstractHttpProvider implements Provider
             $result->setLayer($layer);
             $results[] = $result;
         }
+
         return new AddressCollection($results);
-    }
-    /**
-     * @param array $components
-     *
-     * @return null|string
-     */
-    protected function guessLocality(array $components): ?string
-    {
-        $localityKeys = ['city', 'town', 'village', 'hamlet'];
-        return $this->guessBestComponent($components, $localityKeys);
-    }
-    /**
-     * @param array $components
-     *
-     * @return null|string
-     */
-    protected function guessStreetName(array $components): ?string
-    {
-        $streetNameKeys = ['road', 'street', 'street_name', 'residential'];
-        return $this->guessBestComponent($components, $streetNameKeys);
-    }
-    /**
-     * @param array $components
-     *
-     * @return null|string
-     */
-    protected function guessSubLocality(array $components): ?string
-    {
-        $subLocalityKeys = ['neighbourhood', 'city_district'];
-        return $this->guessBestComponent($components, $subLocalityKeys);
-    }
-    /**
-     * @param array $components
-     * @param array $keys
-     *
-     * @return null|string
-     */
-    protected function guessBestComponent(array $components, array $keys): ?string
-    {
-        foreach ($keys as $key) {
-            if (isset($components[$key]) && !empty($components[$key])) {
-                return $components[$key];
-            }
-        }
-        return null;
     }
 }

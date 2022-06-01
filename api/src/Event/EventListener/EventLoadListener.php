@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Event\EventListener;
 
@@ -28,7 +28,8 @@ use App\Event\Service\EventManager;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 
 /**
- * Event Event listener
+ * Event Event listener.
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class EventLoadListener
@@ -52,8 +53,8 @@ class EventLoadListener
             // Check if http or https is given in url
             // If not, we use https by default
             $parsedUrl = parse_url($event->getUrl());
-            if (!isset($parsedUrl['scheme']) && $event->getUrl() != "") {
-                $event->setUrl("https://".$event->getUrl());
+            if (!isset($parsedUrl['scheme']) && '' != $event->getUrl()) {
+                $event->setUrl('https://'.$event->getUrl());
             }
 
             // default avatar

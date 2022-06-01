@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Article\DataProvider;
 
@@ -30,14 +30,13 @@ use App\Article\Service\ArticleManager;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- * Collection data provider for Articles
+ * Collection data provider for Articles.
  *
  * @author Céline Jacquet <celine.jacquet@mobicoop.org>
- *
  */
 final class ArticlesCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
-    protected $request;
+    private $request;
     private $articleManager;
 
     public function __construct(RequestStack $requestStack, ArticleManager $articleManager)
@@ -48,15 +47,15 @@ final class ArticlesCollectionDataProvider implements CollectionDataProviderInte
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Article::class === $resourceClass && $operationName === "get";
+        return Article::class === $resourceClass && 'get' === $operationName;
     }
 
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
         $context = null;
 
-        if ($this->request->get("context")!== null) {
-            $context = $this->request->get("context");
+        if (null !== $this->request->get('context')) {
+            $context = $this->request->get('context');
         }
 
         return $this->articleManager->getArticles($context);

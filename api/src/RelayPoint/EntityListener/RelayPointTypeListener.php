@@ -19,15 +19,15 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\RelayPoint\EntityListener;
 
 use App\Image\Entity\Icon;
 use App\Image\Repository\IconRepository;
 use App\RelayPoint\Entity\RelayPointType;
-use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\ORM\Mapping as ORM;
 
 class RelayPointTypeListener
 {

@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\MassCommunication\Entity;
 
@@ -31,12 +31,12 @@ use App\User\Entity\User;
 class Sender
 {
     /**
-     * @var User The user as a sender.
+     * @var User the user as a sender
      */
     private $user;
 
     /**
-     * @var string The domain of the sender.
+     * @var string the domain of the sender
      */
     private $domain;
 

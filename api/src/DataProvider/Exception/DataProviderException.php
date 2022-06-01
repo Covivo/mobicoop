@@ -18,12 +18,9 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\DataProvider\Exception;
-
-use App\Solidary\Entity\SolidaryBeneficiary;
-use App\Solidary\Entity\SolidaryVolunteer;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
@@ -31,10 +28,10 @@ use App\Solidary\Entity\SolidaryVolunteer;
 class DataProviderException extends \LogicException
 {
     // Conduent
-    public const ERROR_RETREIVING_TOKEN = "Error retreiving the security token";
-    public const NO_SECURITY_TOKEN = "No security token found";
-    public const ERROR_RETREIVING_PROFILE_ID = "Error retreiving the profile id";
-    public const NO_PROFILE_ID = "No profile id found";
-    public const ERROR_COLLECTION_RESSOURCE_JOURNEYS="Error retreiving journeys";
-    public const OUT_OF_BOUND="No trip planning computing possible from this place: The asked origin is out of bound and must be a registered mobility point to recover travel results";
+    public const ERROR_RETREIVING_TOKEN = 'Error retreiving the security token';
+    public const NO_SECURITY_TOKEN = 'No security token found';
+    public const ERROR_RETREIVING_PROFILE_ID = 'Error retreiving the profile id';
+    public const NO_PROFILE_ID = 'No profile id found';
+    public const ERROR_COLLECTION_RESSOURCE_JOURNEYS = 'Error retreiving journeys';
+    public const OUT_OF_BOUND = 'No trip planning computing possible from this place: The asked origin is out of bound and must be a registered mobility point to recover travel results';
 }

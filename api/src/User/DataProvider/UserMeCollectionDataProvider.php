@@ -19,21 +19,19 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\DataProvider;
 
-use App\User\Entity\User;
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
+use App\User\Entity\User;
 use App\User\Service\UserManager;
 
 /**
  * Item data provider for User me.
  *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
- *
  */
 final class UserMeCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
@@ -46,15 +44,17 @@ final class UserMeCollectionDataProvider implements CollectionDataProviderInterf
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return User::class === $resourceClass && $operationName === "me";
+        return User::class === $resourceClass && 'me' === $operationName;
     }
 
     public function getCollection(string $resourceClass, string $operationName = null, array $context = []): array
     {
         if ($user = $this->userManager->getMe()) {
             $this->userManager->updateActivity($user);
+
             return [$user];
         }
+
         return [];
     }
 }

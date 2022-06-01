@@ -18,13 +18,12 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Gamification\DataProvider;
 
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
 use App\Gamification\Entity\Badge;
 use App\Gamification\Service\GamificationManager;
 use App\User\Entity\User;
@@ -45,14 +44,15 @@ final class BadgeEarnedCollectionDataProvider implements CollectionDataProviderI
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Badge::class === $resourceClass && $operationName === "earned";
+        return Badge::class === $resourceClass && 'earned' === $operationName;
     }
 
     public function getCollection(string $resourceClass, string $operationName = null): iterable
     {
         if (!($this->security->getUser() instanceof User)) {
-            throw new \LogicException("Only a User can get its board");
+            throw new \LogicException('Only a User can get its board');
         }
+
         return $this->gamificationManager->getBadgesEarned($this->security->getUser());
     }
 }

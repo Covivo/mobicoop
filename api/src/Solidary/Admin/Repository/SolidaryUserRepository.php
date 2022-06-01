@@ -18,22 +18,22 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\Admin\Repository;
 
 use App\Carpool\Entity\Criteria;
 use App\Carpool\Entity\Proposal;
+use App\Carpool\Entity\Waypoint;
 use App\Solidary\Entity\Solidary;
 use App\Solidary\Entity\SolidaryMatching;
 use App\Solidary\Entity\SolidaryUser;
 use App\Solidary\Entity\SolidaryUserStructure;
-use App\Carpool\Entity\Waypoint;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
-*/
+ */
 class SolidaryUserRepository
 {
     private $repository;
@@ -44,17 +44,18 @@ class SolidaryUserRepository
     }
 
     /**
-     * Get the matching volunteers for a given solidary record, and a given type (oneway/outward/return)
+     * Get the matching volunteers for a given solidary record, and a given type (oneway/outward/return).
      *
-     * @param Solidary  $structure  The structure
-     * @param int       $type       The type
-     * @return array|null           The volunteers as SolidaryUsers
+     * @param Solidary $structure The structure
+     * @param int      $type      The type
+     *
+     * @return null|array The volunteers as SolidaryUsers
      */
     public function getMatchingVolunteers(Solidary $solidary, int $type): ?array
     {
         $structure = $solidary->getSolidaryUserStructure()->getStructure();
         $centerPointOrigin = $centerPointDestination = null;
-        if ($type !== Proposal::TYPE_RETURN) {
+        if (Proposal::TYPE_RETURN !== $type) {
             $criteria = $solidary->getProposal()->getCriteria();
             $centerPointOrigin = $solidary->getProposal()->getWaypoints()[0]->getAddress();
             if (!$solidary->getProposal()->hasNoDestination()) {
@@ -64,6 +65,7 @@ class SolidaryUserRepository
                      */
                     if ($waypoint->isDestination()) {
                         $centerPointDestination = $waypoint->getAddress();
+
                         break;
                     }
                 }
@@ -78,6 +80,7 @@ class SolidaryUserRepository
                      */
                     if ($waypoint->isDestination()) {
                         $centerPointDestination = $waypoint->getAddress();
+
                         break;
                     }
                 }
@@ -87,110 +90,111 @@ class SolidaryUserRepository
         // we want to get accepted volunteers only for the given structure, and that are not already in the matchings
         // first we get the accepted volunteers
         $query = $this->repository->createQueryBuilder('su')
-        ->join('su.address', 'a')
-        ->join('su.solidaryUserStructures', 'sus')
-        ->where('su.volunteer = 1 and sus.structure = :structure and sus.status = :status')
-        ->setParameter('structure', $structure)
-        ->setParameter('status', SolidaryUserStructure::STATUS_ACCEPTED)
+            ->join('su.address', 'a')
+            ->join('su.solidaryUserStructures', 'sus')
+            ->where('su.volunteer = 1 and sus.structure = :structure and sus.status = :status')
+            ->setParameter('structure', $structure)
+            ->setParameter('status', SolidaryUserStructure::STATUS_ACCEPTED)
         ;
 
-        if ($criteria->getFrequency()==Criteria::FREQUENCY_PUNCTUAL) {
+        if (Criteria::FREQUENCY_PUNCTUAL == $criteria->getFrequency()) {
             $shortDay = $this->getShortDay($criteria->getFromDate()->format('w'));
             $query->andWhere(
-                '((su.mMinTime <= :maxTime and su.mMaxTime > :minTime and su.m'.$shortDay.' = 1) or ' .
-                '(su.aMinTime <= :maxTime and su.aMaxTime > :minTime and su.a'.$shortDay.' = 1) or ' .
+                '((su.mMinTime <= :maxTime and su.mMaxTime > :minTime and su.m'.$shortDay.' = 1) or '.
+                '(su.aMinTime <= :maxTime and su.aMaxTime > :minTime and su.a'.$shortDay.' = 1) or '.
                 '(su.eMinTime <= :maxTime and su.eMaxTime > :minTime and su.e'.$shortDay.' = 1))'
             )
-            ->setParameter(':minTime', $criteria->getMinTime()->format("H:i:s"))
-            ->setParameter(':maxTime', $criteria->getMaxTime()->format("H:i:s"));
+                ->setParameter(':minTime', $criteria->getMinTime()->format('H:i:s'))
+                ->setParameter(':maxTime', $criteria->getMaxTime()->format('H:i:s'))
+            ;
         } else {
             $andWhere = '';
             if ($criteria->isMonCheck()) {
                 $andWhere .=
-                    '((su.mMinTime <= :monMaxTime and su.mMaxTime > :monMinTime and su.mMon = 1) or ' .
-                    '(su.aMinTime <= :monMaxTime and su.aMaxTime > :monMinTime and su.aMon = 1) or ' .
+                    '((su.mMinTime <= :monMaxTime and su.mMaxTime > :monMinTime and su.mMon = 1) or '.
+                    '(su.aMinTime <= :monMaxTime and su.aMaxTime > :monMinTime and su.aMon = 1) or '.
                     '(su.eMinTime <= :monMaxTime and su.eMaxTime > :monMinTime and su.eMon = 1))';
-                $query->setParameter(':monMinTime', $criteria->getMonMinTime()->format("H:i:s"));
-                $query->setParameter(':monMaxTime', $criteria->getMonMaxTime()->format("H:i:s"));
+                $query->setParameter(':monMinTime', $criteria->getMonMinTime()->format('H:i:s'));
+                $query->setParameter(':monMaxTime', $criteria->getMonMaxTime()->format('H:i:s'));
             }
             if ($criteria->isTueCheck()) {
-                if ($andWhere != '') {
+                if ('' != $andWhere) {
                     $andWhere .= ' OR ';
                 }
                 $andWhere .=
-                    '((su.mMinTime <= :tueMaxTime and su.mMaxTime > :tueMinTime and su.mTue = 1) or ' .
-                    '(su.aMinTime <= :tueMaxTime and su.aMaxTime > :tueMinTime and su.aTue = 1) or ' .
+                    '((su.mMinTime <= :tueMaxTime and su.mMaxTime > :tueMinTime and su.mTue = 1) or '.
+                    '(su.aMinTime <= :tueMaxTime and su.aMaxTime > :tueMinTime and su.aTue = 1) or '.
                     '(su.eMinTime <= :tueMaxTime and su.eMaxTime > :tueMinTime and su.eTue = 1))';
-                $query->setParameter(':tueMinTime', $criteria->getTueMinTime()->format("H:i:s"));
-                $query->setParameter(':tueMaxTime', $criteria->getTueMaxTime()->format("H:i:s"));
+                $query->setParameter(':tueMinTime', $criteria->getTueMinTime()->format('H:i:s'));
+                $query->setParameter(':tueMaxTime', $criteria->getTueMaxTime()->format('H:i:s'));
             }
             if ($criteria->isWedCheck()) {
-                if ($andWhere != '') {
+                if ('' != $andWhere) {
                     $andWhere .= ' OR ';
                 }
                 $andWhere .=
-                    '((su.mMinTime <= :wedMaxTime and su.mMaxTime > :wedMinTime and su.mWed = 1) or ' .
-                    '(su.aMinTime <= :wedMaxTime and su.aMaxTime > :wedMinTime and su.aWed = 1) or ' .
+                    '((su.mMinTime <= :wedMaxTime and su.mMaxTime > :wedMinTime and su.mWed = 1) or '.
+                    '(su.aMinTime <= :wedMaxTime and su.aMaxTime > :wedMinTime and su.aWed = 1) or '.
                     '(su.eMinTime <= :wedMaxTime and su.eMaxTime > :wedMinTime and su.eWed = 1))';
-                $query->setParameter(':wedMinTime', $criteria->getWedMinTime()->format("H:i:s"));
-                $query->setParameter(':wedMaxTime', $criteria->getWedMaxTime()->format("H:i:s"));
+                $query->setParameter(':wedMinTime', $criteria->getWedMinTime()->format('H:i:s'));
+                $query->setParameter(':wedMaxTime', $criteria->getWedMaxTime()->format('H:i:s'));
             }
             if ($criteria->isThuCheck()) {
-                if ($andWhere != '') {
+                if ('' != $andWhere) {
                     $andWhere .= ' OR ';
                 }
                 $andWhere .=
-                    '((su.mMinTime <= :thuMaxTime and su.mMaxTime > :thuMinTime and su.mThu = 1) or ' .
-                    '(su.aMinTime <= :thuMaxTime and su.aMaxTime > :thuMinTime and su.aThu = 1) or ' .
+                    '((su.mMinTime <= :thuMaxTime and su.mMaxTime > :thuMinTime and su.mThu = 1) or '.
+                    '(su.aMinTime <= :thuMaxTime and su.aMaxTime > :thuMinTime and su.aThu = 1) or '.
                     '(su.eMinTime <= :thuMaxTime and su.eMaxTime > :thuMinTime and su.eThu = 1))';
-                $query->setParameter(':thuMinTime', $criteria->getThuMinTime()->format("H:i:s"));
-                $query->setParameter(':thuMaxTime', $criteria->getThuMaxTime()->format("H:i:s"));
+                $query->setParameter(':thuMinTime', $criteria->getThuMinTime()->format('H:i:s'));
+                $query->setParameter(':thuMaxTime', $criteria->getThuMaxTime()->format('H:i:s'));
             }
             if ($criteria->isFriCheck()) {
-                if ($andWhere != '') {
+                if ('' != $andWhere) {
                     $andWhere .= ' OR ';
                 }
                 $andWhere .=
-                    '((su.mMinTime <= :friMaxTime and su.mMaxTime > :friMinTime and su.mFri = 1) or ' .
-                    '(su.aMinTime <= :friMaxTime and su.aMaxTime > :friMinTime and su.aFri = 1) or ' .
+                    '((su.mMinTime <= :friMaxTime and su.mMaxTime > :friMinTime and su.mFri = 1) or '.
+                    '(su.aMinTime <= :friMaxTime and su.aMaxTime > :friMinTime and su.aFri = 1) or '.
                     '(su.eMinTime <= :friMaxTime and su.eMaxTime > :friMinTime and su.eFri = 1))';
-                $query->setParameter(':friMinTime', $criteria->getFriMinTime()->format("H:i:s"));
-                $query->setParameter(':friMaxTime', $criteria->getFriMaxTime()->format("H:i:s"));
+                $query->setParameter(':friMinTime', $criteria->getFriMinTime()->format('H:i:s'));
+                $query->setParameter(':friMaxTime', $criteria->getFriMaxTime()->format('H:i:s'));
             }
             if ($criteria->isSatCheck()) {
-                if ($andWhere != '') {
+                if ('' != $andWhere) {
                     $andWhere .= ' OR ';
                 }
                 $andWhere .=
-                    '((su.mMinTime <= :satMaxTime and su.mMaxTime > :satMinTime and su.mSat = 1) or ' .
-                    '(su.aMinTime <= :satMaxTime and su.aMaxTime > :satMinTime and su.aSat = 1) or ' .
+                    '((su.mMinTime <= :satMaxTime and su.mMaxTime > :satMinTime and su.mSat = 1) or '.
+                    '(su.aMinTime <= :satMaxTime and su.aMaxTime > :satMinTime and su.aSat = 1) or '.
                     '(su.eMinTime <= :satMaxTime and su.eMaxTime > :satMinTime and su.eSat = 1))';
-                $query->setParameter(':satMinTime', $criteria->getSatMinTime()->format("H:i:s"));
-                $query->setParameter(':satMaxTime', $criteria->getSatMaxTime()->format("H:i:s"));
+                $query->setParameter(':satMinTime', $criteria->getSatMinTime()->format('H:i:s'));
+                $query->setParameter(':satMaxTime', $criteria->getSatMaxTime()->format('H:i:s'));
             }
             if ($criteria->isSunCheck()) {
-                if ($andWhere != '') {
+                if ('' != $andWhere) {
                     $andWhere .= ' OR ';
                 }
                 $andWhere .=
-                    '((su.mMinTime <= :sunMaxTime and su.mMaxTime > :sunMinTime and su.mSun = 1) or ' .
-                    '(su.aMinTime <= :sunMaxTime and su.aMaxTime > :sunMinTime and su.aSun = 1) or ' .
+                    '((su.mMinTime <= :sunMaxTime and su.mMaxTime > :sunMinTime and su.mSun = 1) or '.
+                    '(su.aMinTime <= :sunMaxTime and su.aMaxTime > :sunMinTime and su.aSun = 1) or '.
                     '(su.eMinTime <= :sunMaxTime and su.eMaxTime > :sunMinTime and su.eSun = 1))';
-                $query->setParameter(':sunMinTime', $criteria->getSunMinTime()->format("H:i:s"));
-                $query->setParameter(':sunMaxTime', $criteria->getSunMaxTime()->format("H:i:s"));
+                $query->setParameter(':sunMinTime', $criteria->getSunMinTime()->format('H:i:s'));
+                $query->setParameter(':sunMaxTime', $criteria->getSunMaxTime()->format('H:i:s'));
             }
-            if ($andWhere != '') {
+            if ('' != $andWhere) {
                 $query->andWhere($andWhere);
             }
         }
 
         if ($centerPointOrigin) {
-            $sqlDistanceOrigin = '(6378000 * acos(cos(radians(' . $centerPointOrigin->getLatitude() . ')) * cos(radians(a.latitude)) * cos(radians(a.longitude) - radians(' . $centerPointOrigin->getLongitude() . ')) + sin(radians(' . $centerPointOrigin->getLatitude() . ')) * sin(radians(a.latitude))))';
-            $query->andWhere($sqlDistanceOrigin . " <= su.maxDistance");
+            $sqlDistanceOrigin = '(6378000 * acos(cos(radians('.$centerPointOrigin->getLatitude().')) * cos(radians(a.latitude)) * cos(radians(a.longitude) - radians('.$centerPointOrigin->getLongitude().')) + sin(radians('.$centerPointOrigin->getLatitude().')) * sin(radians(a.latitude))))';
+            $query->andWhere($sqlDistanceOrigin.' <= su.maxDistance');
         }
         if ($centerPointDestination) {
-            $sqlDistanceDestination = '(6378000 * acos(cos(radians(' . $centerPointDestination->getLatitude() . ')) * cos(radians(a.latitude)) * cos(radians(a.longitude) - radians(' . $centerPointDestination->getLongitude() . ')) + sin(radians(' . $centerPointDestination->getLatitude() . ')) * sin(radians(a.latitude))))';
-            $query->andWhere($sqlDistanceDestination . " <= su.maxDistance");
+            $sqlDistanceDestination = '(6378000 * acos(cos(radians('.$centerPointDestination->getLatitude().')) * cos(radians(a.latitude)) * cos(radians(a.longitude) - radians('.$centerPointDestination->getLongitude().')) + sin(radians('.$centerPointDestination->getLatitude().')) * sin(radians(a.latitude))))';
+            $query->andWhere($sqlDistanceDestination.' <= su.maxDistance');
         }
 
         $acceptedVolunteers = $query->getQuery()->getResult();
@@ -213,24 +217,32 @@ class SolidaryUserRepository
             }
             $volunteers[] = $acceptedVolunteer;
         }
+
         return $volunteers;
     }
 
     /**
-     * Return the short day name from the day number
+     * Return the short day name from the day number.
      *
-     * @param integer $day  The 0-based number of the day, starting with sunday
-     * @return string       The 3 letters short name of the day
+     * @param int $day The 0-based number of the day, starting with sunday
+     *
+     * @return string The 3 letters short name of the day
      */
     private function getShortDay(int $day): string
     {
         switch ($day) {
             case 0: return 'Sun';
+
             case 1: return 'Mon';
+
             case 2: return 'Tue';
+
             case 3: return 'Wed';
+
             case 4: return 'Thu';
+
             case 5: return 'Fri';
+
             case 6: return 'Sat';
         }
     }

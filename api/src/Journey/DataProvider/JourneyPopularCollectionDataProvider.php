@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Journey\DataProvider;
 
@@ -27,18 +27,17 @@ use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\Journey\Entity\Journey;
 use App\Journey\Service\JourneyManager;
-use Symfony\Component\Security\Core\Security;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Core\Security;
 
 /**
  * Collection data provider for Journey popular.
- *
  */
 final class JourneyPopularCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
-    protected $journeyManager;
-    protected $security;
-    protected $request;
+    private $journeyManager;
+    private $security;
+    private $request;
 
     public function __construct(JourneyManager $journeyManager, RequestStack $requestStack, Security $security)
     {
@@ -49,11 +48,11 @@ final class JourneyPopularCollectionDataProvider implements CollectionDataProvid
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Journey::class === $resourceClass && ($operationName === "popular" || $operationName === "popularHome");
+        return Journey::class === $resourceClass && ('popular' === $operationName || 'popularHome' === $operationName);
     }
 
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
-        return $this->journeyManager->getPopularJourneys($operationName === "popularHome");
+        return $this->journeyManager->getPopularJourneys('popularHome' === $operationName);
     }
 }

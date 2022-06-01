@@ -19,12 +19,12 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Match\Controller;
 
-use App\Match\Service\MassImportManager;
 use App\Match\Entity\Mass;
+use App\Match\Service\MassImportManager;
 use App\TranslatorTrait;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -43,35 +43,36 @@ final class MassMatchAction
     public function __invoke(Mass $data): Mass
     {
         if (is_null($data)) {
-            throw new \InvalidArgumentException($this->translator->trans("bad Mass id is provided"));
+            throw new \InvalidArgumentException($this->translator->trans('bad Mass id is provided'));
         }
-        if ($data->getStatus() == Mass::STATUS_ANALYZED) {
+        if (Mass::STATUS_ANALYZED == $data->getStatus()) {
             $maxDetourDurationPercent = 20;
             $maxDetourDistancePercent = 20;
             $minOverlapRatio = 0;
             $maxSuperiorDistanceRatio = 1000;
             $bearingCheck = true;
             $bearingRange = 10;
-            if ($this->request->get("maxDetourDurationPercent")) {
-                $maxDetourDurationPercent = $this->request->get("maxDetourDurationPercent");
+            if ($this->request->get('maxDetourDurationPercent')) {
+                $maxDetourDurationPercent = $this->request->get('maxDetourDurationPercent');
             }
-            if ($this->request->get("maxDetourDistancePercent")) {
-                $maxDetourDistancePercent = $this->request->get("maxDetourDistancePercent");
+            if ($this->request->get('maxDetourDistancePercent')) {
+                $maxDetourDistancePercent = $this->request->get('maxDetourDistancePercent');
             }
-            if ($this->request->get("minOverlapRatio")) {
-                $minOverlapRatio = $this->request->get("minOverlapRatio");
+            if ($this->request->get('minOverlapRatio')) {
+                $minOverlapRatio = $this->request->get('minOverlapRatio');
             }
-            if ($this->request->get("maxSuperiorDistanceRatio")) {
-                $maxSuperiorDistanceRatio = $this->request->get("maxSuperiorDistanceRatio");
+            if ($this->request->get('maxSuperiorDistanceRatio')) {
+                $maxSuperiorDistanceRatio = $this->request->get('maxSuperiorDistanceRatio');
             }
-            if ($this->request->get("bearingCheck")) {
-                $bearingCheck = $this->request->get("bearingCheck");
+            if ($this->request->get('bearingCheck')) {
+                $bearingCheck = $this->request->get('bearingCheck');
             }
-            if ($this->request->get("bearingRange")) {
-                $bearingRange = $this->request->get("bearingRange");
+            if ($this->request->get('bearingRange')) {
+                $bearingRange = $this->request->get('bearingRange');
             }
             $this->massImportManager->matchMass($data, $maxDetourDurationPercent, $maxDetourDistancePercent, $minOverlapRatio, $maxSuperiorDistanceRatio, $bearingCheck, $bearingRange);
         }
+
         return $data;
     }
 }

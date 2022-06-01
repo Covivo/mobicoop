@@ -15,7 +15,7 @@ final class Version20200215143800 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('
             UPDATE `role` SET `title`=\'Super admin\', `name`=\'ROLE_SUPER_ADMIN\', `parent_id`=NULL WHERE `id`=1;
@@ -140,7 +140,6 @@ final class Version20200215143800 extends AbstractMigration
         (104, \'mass_communication_manage\', \'Manage communication campaigns\', NULL);
         ');
 
-
         $this->addSql('
         INSERT INTO `role_right` (`role_id`, `right_id`) VALUES
         (1, 89),
@@ -256,6 +255,6 @@ final class Version20200215143800 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
     }
 }

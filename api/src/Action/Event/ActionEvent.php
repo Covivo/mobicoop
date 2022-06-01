@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Action\Event;
 
@@ -33,15 +33,16 @@ use App\Community\Entity\Community;
 use App\Event\Entity\Event as EntityEvent;
 use App\Geography\Entity\Territory;
 use App\MassCommunication\Entity\Campaign;
+use App\Payment\Entity\CarpoolItem;
+use App\Payment\Entity\CarpoolPayment;
 use App\Solidary\Entity\Solidary;
 use App\User\Entity\Car;
 use App\User\Entity\User;
 use Symfony\Contracts\EventDispatcher\Event;
-use App\Payment\Entity\CarpoolPayment;
-use App\Payment\Entity\CarpoolItem;
 
 /**
- * Event sent when an Action is made
+ * Event sent when an Action is made.
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class ActionEvent extends Event
@@ -80,6 +81,7 @@ class ActionEvent extends Event
     public function setAction(Action $action): self
     {
         $this->action = $action;
+
         return $this;
     }
 
@@ -91,6 +93,7 @@ class ActionEvent extends Event
     public function setUser(User $user): self
     {
         $this->user = $user;
+
         return $this;
     }
 
@@ -102,6 +105,7 @@ class ActionEvent extends Event
     public function setUserDelegate(User $userDelegate): self
     {
         $this->userDelegate = $userDelegate;
+
         return $this;
     }
 
@@ -113,6 +117,7 @@ class ActionEvent extends Event
     public function setUserRelated(User $userRelated): self
     {
         $this->userRelated = $userRelated;
+
         return $this;
     }
 
@@ -124,6 +129,7 @@ class ActionEvent extends Event
     public function setProposal(Proposal $proposal): self
     {
         $this->proposal = $proposal;
+
         return $this;
     }
 
@@ -135,8 +141,10 @@ class ActionEvent extends Event
     public function setMatching(Matching $matching): self
     {
         $this->matching = $matching;
+
         return $this;
     }
+
     public function getAsk(): ?Ask
     {
         return $this->ask;
@@ -145,8 +153,10 @@ class ActionEvent extends Event
     public function setAsk(Ask $ask): self
     {
         $this->ask = $ask;
+
         return $this;
     }
+
     public function getArticle(): ?Article
     {
         return $this->article;
@@ -155,8 +165,10 @@ class ActionEvent extends Event
     public function setArticle(Article $article): self
     {
         $this->article = $article;
+
         return $this;
     }
+
     public function getEvent(): ?EntityEvent
     {
         return $this->event;
@@ -165,8 +177,10 @@ class ActionEvent extends Event
     public function setEvent(EntityEvent $event): self
     {
         $this->event = $event;
+
         return $this;
     }
+
     public function getCommunity(): ?Community
     {
         return $this->community;
@@ -175,8 +189,10 @@ class ActionEvent extends Event
     public function setCommunity(Community $community): self
     {
         $this->community = $community;
+
         return $this;
     }
+
     public function getSolidary(): ?Solidary
     {
         return $this->solidary;
@@ -185,8 +201,10 @@ class ActionEvent extends Event
     public function setSolidary(Solidary $solidary): self
     {
         $this->solidary = $solidary;
+
         return $this;
     }
+
     public function getTerritory(): ?Territory
     {
         return $this->territory;
@@ -195,8 +213,10 @@ class ActionEvent extends Event
     public function setTerritory(Territory $territory): self
     {
         $this->territory = $territory;
+
         return $this;
     }
+
     public function getCar(): ?Car
     {
         return $this->car;
@@ -205,8 +225,10 @@ class ActionEvent extends Event
     public function setCar(Car $car): self
     {
         $this->car = $car;
+
         return $this;
     }
+
     public function getMessage(): ?Message
     {
         return $this->message;
@@ -215,8 +237,10 @@ class ActionEvent extends Event
     public function setMessage(Message $message): self
     {
         $this->message = $message;
+
         return $this;
     }
+
     public function getCampaign(): ?Campaign
     {
         return $this->campaign;
@@ -225,6 +249,7 @@ class ActionEvent extends Event
     public function setCampaign(Campaign $campaign): self
     {
         $this->campaign = $campaign;
+
         return $this;
     }
 
@@ -236,6 +261,7 @@ class ActionEvent extends Event
     public function setCarpoolPayment(CarpoolPayment $carpoolPayment): self
     {
         $this->carpoolPayment = $carpoolPayment;
+
         return $this;
     }
 
@@ -247,6 +273,7 @@ class ActionEvent extends Event
     public function setCarpoolItem(CarpoolItem $carpoolItem): self
     {
         $this->carpoolItem = $carpoolItem;
+
         return $this;
     }
 }

@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Carpool\DataPersister;
 
@@ -42,13 +42,13 @@ final class AdCleanOrphansDataPersister implements ContextAwareDataPersisterInte
 
     public function supports($data, array $context = []): bool
     {
-        return $data instanceof Ad && isset($context['collection_operation_name']) && $context['collection_operation_name'] === 'cleanOrphans';
+        return $data instanceof Ad && isset($context['collection_operation_name']) && 'cleanOrphans' === $context['collection_operation_name'];
     }
 
     public function persist($data, array $context = [])
     {
         if (!($this->security->getUser() instanceof User)) {
-            throw new \LogicException("Only a User can perform this action");
+            throw new \LogicException('Only a User can perform this action');
         }
 
         return $this->proposalManager->cleanUserOrphanProposals($this->security->getUser());

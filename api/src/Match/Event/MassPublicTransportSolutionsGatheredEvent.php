@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Match\Event;
 
@@ -27,7 +27,8 @@ use App\Match\Entity\Mass;
 use Symfony\Contracts\EventDispatcher\Event;
 
 /**
- * Event sent when all the solution of public transport for a Mass had been gathered
+ * Event sent when all the solution of public transport for a Mass had been gathered.
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class MassPublicTransportSolutionsGatheredEvent extends Event

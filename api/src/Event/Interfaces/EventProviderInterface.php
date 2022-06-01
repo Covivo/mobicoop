@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Event\Interfaces;
 
@@ -29,25 +29,21 @@ namespace App\Event\Interfaces;
  * An event provider entity class
  *
  * @author Rémi Wortemann <remi.wortemann@mobicoop.org>
- *
  */
 interface EventProviderInterface
 {
     /**
-     * Get events from external sources
-     *
+     * Get events from external sources.
      */
     public function getEvents();
 
     /**
-    * Get details of an event from external sources
-    *
-    */
+     * Get details of an event from external sources.
+     */
     public function getEvent();
 
     /**
-    * Get details of an event from external sources
-    *
-    */
+     * Get details of an event from external sources.
+     */
     public function createEvents(array $events);
 }

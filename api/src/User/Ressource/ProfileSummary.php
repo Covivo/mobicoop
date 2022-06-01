@@ -19,19 +19,17 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\Ressource;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
-use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
-use Symfony\Component\Validator\Constraints as Assert;
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\User\Entity\User;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * A ProfileSummary of a User
+ * A ProfileSummary of a User.
  *
  * @ApiResource(
  *      attributes={
@@ -54,6 +52,7 @@ use App\User\Entity\User;
  *          }
  *      }
  * )
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class ProfileSummary
@@ -91,35 +90,35 @@ class ProfileSummary
     private $age;
 
     /**
-     * @var int phone display configuration (1 = restricted (default); 2 = all).
+     * @var int phone display configuration (1 = restricted (default); 2 = all)
      *
      * @Groups({"readProfileSummary","readPublicProfile"})
      */
     private $phoneDisplay;
 
     /**
-     * @var string|null The telephone number of the user.
+     * @var null|string the telephone number of the user
      *
      * @Groups({"readProfileSummary","readPublicProfile"})
      */
     private $telephone;
 
     /**
-     * @var string|null Avatar of the user.
+     * @var null|string avatar of the user
      *
      * @Groups({"readProfileSummary","readPublicProfile"})
      */
     private $avatar;
 
     /**
-     * @var int|null Nomber of carpool already done
+     * @var null|int Nomber of carpool already done
      *
      * @Groups({"readProfileSummary","readPublicProfile"})
      */
     private $carpoolRealized;
 
     /**
-     * @var int|null Answer rate in percent
+     * @var null|int Answer rate in percent
      *
      * @Groups({"readProfileSummary","readPublicProfile"})
      */
@@ -140,26 +139,26 @@ class ProfileSummary
     private $lastActivityDate;
 
     /**
-     * @var boolean|null If the User is experienced
+     * @var null|bool If the User is experienced
      *
      * @Groups({"readProfileSummary","readPublicProfile"})
      */
     private $experienced;
 
     /**
-     * @var int|null The savedCo2 of this user in grams
+     * @var null|int The savedCo2 of this user in grams
      * @Groups({"readProfileSummary","readPublicProfile"})
      */
     private $savedCo2;
 
     /**
-     * @var int|null The number of earned badges by the User
+     * @var null|int The number of earned badges by the User
      *
      * @Groups({"readProfileSummary","readPublicProfile"})
      */
     private $numberOfBadges;
 
-    public function __construct($id=null)
+    public function __construct($id = null)
     {
         if (!is_null($id)) {
             $this->id = $id;

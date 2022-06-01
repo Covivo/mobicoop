@@ -19,12 +19,12 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Utility\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
@@ -58,7 +58,7 @@ class Version
     public const DEFAULT_ID = 1;
 
     /**
-     * @var int $id The id of this version.
+     * @var int the id of this version
      *
      * @ApiProperty(identifier=true)
      * @Groups("readVersion")

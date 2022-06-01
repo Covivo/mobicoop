@@ -62,8 +62,6 @@ class SolidaryContactManager
 
     /**
      * Handle a SolidaryContact.
-     *
-     * @return SolidaryContact
      */
     public function handleSolidaryContact(SolidaryContact $solidaryContact): SolidaryContact
     {

@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\RdexPlus\DataPersister;
 
@@ -28,7 +28,8 @@ use App\RdexPlus\Resource\Journey;
 use App\RdexPlus\Service\JourneyManager;
 
 /**
- * RDEX+ : Journey data persister
+ * RDEX+ : Journey data persister.
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 final class JourneyDataPersister implements ContextAwareDataPersisterInterface
@@ -42,7 +43,7 @@ final class JourneyDataPersister implements ContextAwareDataPersisterInterface
 
     public function supports($data, array $context = []): bool
     {
-        return $data instanceof Journey && isset($context['collection_operation_name']) && $context['collection_operation_name'] === 'rdex_plus_journey_post';
+        return $data instanceof Journey && isset($context['collection_operation_name']) && 'rdex_plus_journey_post' === $context['collection_operation_name'];
     }
 
     public function persist($data, array $context = [])

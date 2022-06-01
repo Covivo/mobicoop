@@ -15,7 +15,7 @@ final class Version20200204152254 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('CREATE TABLE admin (id INT AUTO_INCREMENT NOT NULL, status SMALLINT NOT NULL, given_name VARCHAR(255) DEFAULT NULL, family_name VARCHAR(255) DEFAULT NULL, pro_name VARCHAR(255) DEFAULT NULL, email VARCHAR(255) NOT NULL, pro_email VARCHAR(255) DEFAULT NULL, password VARCHAR(255) DEFAULT NULL, gender SMALLINT NOT NULL, nationality VARCHAR(255) DEFAULT NULL, birth_date DATE DEFAULT NULL, telephone VARCHAR(255) DEFAULT NULL, phone_display SMALLINT NOT NULL, max_detour_duration INT DEFAULT NULL, max_detour_distance INT DEFAULT NULL, any_route_as_passenger TINYINT(1) DEFAULT NULL, multi_transport_mode TINYINT(1) DEFAULT NULL, smoke INT DEFAULT NULL, music TINYINT(1) DEFAULT NULL, music_favorites VARCHAR(255) DEFAULT NULL, chat TINYINT(1) DEFAULT NULL, chat_favorites VARCHAR(255) DEFAULT NULL, news_subscription TINYINT(1) DEFAULT NULL, created_date DATETIME NOT NULL, validated_date DATETIME DEFAULT NULL, validated_date_token VARCHAR(255) DEFAULT NULL, updated_date DATETIME DEFAULT NULL, pwd_token_date DATETIME DEFAULT NULL, pwd_token VARCHAR(255) DEFAULT NULL, geo_token VARCHAR(255) DEFAULT NULL, phone_token VARCHAR(255) DEFAULT NULL, phone_validated_date DATETIME DEFAULT NULL, ios_app_id VARCHAR(255) DEFAULT NULL, android_app_id VARCHAR(255) DEFAULT NULL, language VARCHAR(10) DEFAULT NULL, facebook_id VARCHAR(255) DEFAULT NULL, UNIQUE INDEX UNIQ_880E0D76E7927C74 (email), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('ALTER TABLE log CHANGE admin_id admin_id INT DEFAULT NULL, CHANGE proposal_id proposal_id INT DEFAULT NULL, CHANGE matching_id matching_id INT DEFAULT NULL, CHANGE ask_id ask_id INT DEFAULT NULL, CHANGE article_id article_id INT DEFAULT NULL, CHANGE event_id event_id INT DEFAULT NULL, CHANGE community_id community_id INT DEFAULT NULL, CHANGE solidary_id solidary_id INT DEFAULT NULL, CHANGE territory_id territory_id INT DEFAULT NULL, CHANGE car_id car_id INT DEFAULT NULL, CHANGE user_related_id user_related_id INT DEFAULT NULL, CHANGE message_id message_id INT DEFAULT NULL');
@@ -83,7 +83,7 @@ final class Version20200204152254 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('DROP TABLE admin');
         $this->addSql('ALTER TABLE action CHANGE in_log in_log TINYINT(1) DEFAULT \'NULL\', CHANGE in_diary in_diary TINYINT(1) DEFAULT \'NULL\', CHANGE progression progression INT DEFAULT NULL, CHANGE created_date created_date DATETIME DEFAULT \'NULL\', CHANGE updated_date updated_date DATETIME DEFAULT \'NULL\'');

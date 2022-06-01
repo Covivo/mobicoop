@@ -18,12 +18,12 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Action\Exception;
 
 class ActionException extends \LogicException
 {
-    public const INVALID_DATA_PROVIDED = "Invalid data provided";
-    public const BAD_ACTION = "Unknown action";
+    public const INVALID_DATA_PROVIDED = 'Invalid data provided';
+    public const BAD_ACTION = 'Unknown action';
 }

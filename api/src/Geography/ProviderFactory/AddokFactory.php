@@ -19,32 +19,27 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Geography\ProviderFactory;
 
 use Bazinga\GeocoderBundle\ProviderFactory\AbstractFactory;
-use App\Geography\ProviderFactory\Addok;
 use Geocoder\Provider\Provider;
 use Http\Discovery\HttpClientDiscovery;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * AddokFactory.php
- * Custom Provider class for Addok
+ * Custom Provider class for Addok.
+ *
  * @author Sylvain Briat
  */
-
 final class AddokFactory extends AbstractFactory
 {
     protected static $dependencies = [
         ['requiredClass' => Addok::class, 'packageName' => 'geo6/geocoder-php-addok-provider'],
     ];
 
-    /**
-     * @param array $config
-     * @return Provider
-     */
     protected function getProvider(array $config): Provider
     {
         $httplug = $config['httplug_client'] ?: HttpClientDiscovery::find();
@@ -52,9 +47,6 @@ final class AddokFactory extends AbstractFactory
         return new Addok($httplug, $config['uri']);
     }
 
-    /**
-     * @param OptionsResolver $resolver
-     */
     protected static function configureOptionResolver(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([

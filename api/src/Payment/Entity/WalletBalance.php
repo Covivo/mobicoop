@@ -19,14 +19,14 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Payment\Entity;
 
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * A Wallet Balance
+ * A Wallet Balance.
  *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
@@ -46,13 +46,12 @@ class WalletBalance
      */
     private $amount;
 
-
-    public function getCurrency(): ?String
+    public function getCurrency(): ?string
     {
         return $this->currency;
     }
 
-    public function setCurrency(?String $currency): self
+    public function setCurrency(?string $currency): self
     {
         $this->currency = $currency;
 

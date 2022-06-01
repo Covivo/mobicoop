@@ -19,13 +19,13 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Carpool\Event;
 
-use Symfony\Contracts\EventDispatcher\Event;
 use App\Carpool\Entity\Matching;
 use App\User\Entity\User;
+use Symfony\Contracts\EventDispatcher\Event;
 
 /**
  * Event sent when a new matching is created.

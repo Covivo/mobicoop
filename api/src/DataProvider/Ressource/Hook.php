@@ -19,23 +19,21 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\DataProvider\Ressource;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * A payment hook
+ * A payment hook.
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class Hook
 {
-    public const DEFAULT_ID = "999999999999";
+    public const DEFAULT_ID = '999999999999';
 
     public const STATUS_FAILED = 0;
     public const STATUS_SUCCESS = 1;

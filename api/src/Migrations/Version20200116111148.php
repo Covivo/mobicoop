@@ -15,7 +15,7 @@ final class Version20200116111148 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('CREATE TABLE campaign (id INT AUTO_INCREMENT NOT NULL, medium_id INT NOT NULL, campaign_template_id INT DEFAULT NULL, user_id INT NOT NULL, name VARCHAR(255) NOT NULL, subject VARCHAR(255) NOT NULL, email VARCHAR(255) NOT NULL, body LONGTEXT NOT NULL, status SMALLINT NOT NULL, created_date DATETIME DEFAULT NULL, updated_date DATETIME DEFAULT NULL, from_name VARCHAR(255) NOT NULL, reply_to VARCHAR(255) NOT NULL, INDEX IDX_1F1512DDE252B6A5 (medium_id), INDEX IDX_1F1512DDDD103342 (campaign_template_id), INDEX IDX_1F1512DDA76ED395 (user_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE campaign_template (id INT AUTO_INCREMENT NOT NULL, medium_id INT NOT NULL, name VARCHAR(255) NOT NULL, header LONGTEXT DEFAULT NULL, body LONGTEXT NOT NULL, footer LONGTEXT DEFAULT NULL, created_date DATETIME DEFAULT NULL, updated_date DATETIME DEFAULT NULL, INDEX IDX_A510C9FCE252B6A5 (medium_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
@@ -86,7 +86,7 @@ final class Version20200116111148 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE delivery DROP FOREIGN KEY FK_3781EC10F639F774');
         $this->addSql('ALTER TABLE campaign DROP FOREIGN KEY FK_1F1512DDDD103342');

@@ -19,14 +19,14 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Event\DataProvider;
 
-use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
-use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryResultCollectionExtensionInterface;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGenerator;
+use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
+use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\Event\Entity\Event;
 use App\Event\Service\EventManager;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -35,11 +35,10 @@ use Symfony\Component\HttpFoundation\RequestStack;
  * Collection data provider for Event.
  *
  * @author Remi Wortemann <remi.wortemann@mobicoop.org>
- *
  */
 final class EventCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
-    protected $request;
+    private $request;
     private $eventManager;
     private $context;
 
@@ -53,7 +52,8 @@ final class EventCollectionDataProvider implements CollectionDataProviderInterfa
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
         $this->context = $context;
-        return Event::class === $resourceClass && $operationName === "get";
+
+        return Event::class === $resourceClass && 'get' === $operationName;
     }
 
     public function getCollection(string $resourceClass, string $operationName = null): iterable

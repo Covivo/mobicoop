@@ -15,7 +15,7 @@ final class Version20210819133003 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql("UPDATE `gamification_action` SET `title` = 'Adresse email validée' WHERE `gamification_action`.`id` = 1");
         $this->addSql("UPDATE `gamification_action` SET `title` = 'Numéro de téléphone validé' WHERE `gamification_action`.`id` = 2;");
@@ -45,7 +45,7 @@ final class Version20210819133003 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE relay_point DROP external_id, DROP external_author, DROP external_updated_date');
     }

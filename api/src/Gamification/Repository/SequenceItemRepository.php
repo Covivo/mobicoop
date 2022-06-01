@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Gamification\Repository;
 
@@ -28,7 +28,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 
 /**
- * Gamification : SequenceItem Repository
+ * Gamification : SequenceItem Repository.
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class SequenceItemRepository

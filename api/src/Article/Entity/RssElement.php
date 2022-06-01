@@ -18,14 +18,15 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Article\Entity;
 
 /**
-* A RSS element
-* @author Céline Jacquet <celine.jacquet@mobicoop.org>
-*/
+ * A RSS element.
+ *
+ * @author Céline Jacquet <celine.jacquet@mobicoop.org>
+ */
 class RssElement
 {
     /**

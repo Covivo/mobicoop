@@ -19,14 +19,14 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Gamification\Rule;
 
 use App\Gamification\Interfaces\GamificationRuleInterface;
 
 /**
- * check if the user post a solidary exclusive ad
+ * check if the user post a solidary exclusive ad.
  */
 class IsSolidaryExclusive implements GamificationRuleInterface
 {
@@ -39,6 +39,7 @@ class IsSolidaryExclusive implements GamificationRuleInterface
         if ($log->getProposal()->getCriteria()->isSolidaryExclusive()) {
             return true;
         }
+
         return false;
     }
 }

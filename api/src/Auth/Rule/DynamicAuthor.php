@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Auth\Rule;
 
@@ -27,7 +27,7 @@ use App\Auth\Interfaces\AuthRuleInterface;
 use App\Carpool\Ressource\Dynamic;
 
 /**
- *  Check that the requester is the author of the related dynamic ad
+ *  Check that the requester is the author of the related dynamic ad.
  */
 class DynamicAuthor implements AuthRuleInterface
 {
@@ -39,10 +39,12 @@ class DynamicAuthor implements AuthRuleInterface
         if (!isset($params['dynamic'])) {
             return false;
         }
+
         /**
          * @var Dynamic $dynamic
          */
         $dynamic = $params['dynamic'];
+
         return $dynamic->getUser()->getId() == $requester->getId();
     }
 }

@@ -229,6 +229,7 @@ class PermissionManager
             // we also keep the territory, even if we don't really use it yet !
             // note : if a role is associated with a territory, its children are also associated with it
             $roles = [];
+
             /**
              * @var Role $role
              */
@@ -540,7 +541,7 @@ class PermissionManager
     }
 
     // get the right of a given role (and the rights of its children)
-    private function getRoleRights(Role $role, Territory $territory = null, array & $permissions)
+    private function getRoleRights(Role $role, Territory $territory = null, array &$permissions)
     {
         foreach ($role->getRights() as $right) {
             if ($territory) {

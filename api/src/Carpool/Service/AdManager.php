@@ -160,8 +160,6 @@ class AdManager
      * @param bool $forceNotUseTime For to set useTime at false
      *
      * @throws \Exception
-     *
-     * @return Ad
      */
     public function createAd(Ad $ad, bool $doPrepare = true, bool $withSolidaries = true, bool $withResults = true, $forceNotUseTime = false): Ad
     {
@@ -620,8 +618,6 @@ class AdManager
      * Map address.
      *
      * @param array $point
-     *
-     * @return Address
      */
     public function createAddressFromPoint($point): Address
     {
@@ -701,8 +697,6 @@ class AdManager
      * @param null|array $order         The order to apply to the results
      * @param null|int   $page          The result page
      * @param bool       $createResults Create the formatted results
-     *
-     * @return Ad
      */
     public function getAd(int $id, ?array $filters = null, ?array $order = null, ?int $page = 1, ?bool $createResults = true): Ad
     {
@@ -787,8 +781,6 @@ class AdManager
      * @param int $id The external ad id to get
      * @param null|array    The filters to apply to the results
      * @param null|array    The order to apply to the results
-     *
-     * @return Ad
      */
     public function getAdFromExternalId(string $id, ?array $filters = null, ?array $order = null): Ad
     {
@@ -846,8 +838,6 @@ class AdManager
      * Returns the ad, with its outward and return results.
      *
      * @param int $id The ad id to get
-     *
-     * @return Ad
      */
     public function getFullAd(int $id): Ad
     {
@@ -891,8 +881,6 @@ class AdManager
      * Returns the ad based on the proposal without results.
      *
      * @param int $id The ad id to get
-     *
-     * @return null|Ad
      */
     public function getAdForPermission(int $id): ?Ad
     {
@@ -916,8 +904,6 @@ class AdManager
 
     /**
      * Get all ads of a user.
-     *
-     * @return array
      */
     public function getAds(int $userId): array
     {
@@ -973,8 +959,6 @@ class AdManager
      * @param bool     $hasAsks   - if the ad has ask we do not return results since we return the ask with the ad
      * @param Ad       $askLinked - the linked ask if proposal is private and get the correct data for Ad (like time and day checks)
      * @param Matching $matching  - the corresponding Matching
-     *
-     * @return Ad
      */
     public function makeAd($proposal, $userId, $hasAsks = false, ?Ad $askLinked = null, ?Matching $matching = null): Ad
     {
@@ -1149,8 +1133,6 @@ class AdManager
      * Used when the Ad role is passenger.
      *
      * @throws \Exception
-     *
-     * @return array
      */
     public function updateScheduleTimesWithPickUpDurations(array $schedule, string $outwardPickUpDuration, ?string $returnPickUpDuration = null): array
     {
@@ -1172,8 +1154,6 @@ class AdManager
      * make an ad from a proposal.
      *
      * @param Proposal $proposal Base Proposal of the Ad
-     *
-     * @return Ad
      */
     public function makeAdForCommunityOrEvent(Proposal $proposal): Ad
     {
@@ -1228,8 +1208,6 @@ class AdManager
      * @param bool $withSolidaries Return also the solidary asks
      *
      * @throws \Exception
-     *
-     * @return Ad
      */
     public function updateAd(Ad $ad, bool $withSolidaries = true): Ad
     {
@@ -1323,8 +1301,6 @@ class AdManager
      * Check if Ad update needs a major update and so, deleting then creating a new one.
      *
      * @throws \Exception
-     *
-     * @return bool
      */
     public function checkForMajorUpdate(Ad $oldAd, Ad $newAd): bool
     {
@@ -1365,8 +1341,6 @@ class AdManager
      * @param $new
      *
      * @throws \Exception
-     *
-     * @return bool
      */
     public function compareSchedules($old, $new): bool
     {
@@ -1470,8 +1444,6 @@ class AdManager
      *
      * @param $old - Waypoints object from a Proposal
      * @param $new - waypoint|address object from front
-     *
-     * @return bool
      */
     public function compareWaypoints($old, $new): bool
     {
@@ -1495,8 +1467,6 @@ class AdManager
      * Compare Date and time for Outward and Returns.
      *
      * @throws \Exception
-     *
-     * @return bool
      */
     public function compareDateTimes(Ad $old, Ad $new): bool
     {
@@ -2239,8 +2209,6 @@ class AdManager
      *
      * @param array $schedules
      * @param int   $marginDuration
-     *
-     * @return Criteria
      */
     private function createTimesFromSchedule($schedules, Criteria $criteria, string $key, $marginDuration): Criteria
     {
@@ -2332,10 +2300,8 @@ class AdManager
      * @param string      $heureMax Maximum hour
      * @param string      $dateMin  Minimum date
      * @param null|string $dateMax  Maximum date
-     *
-     * @return \Datetime
      */
-    private function middleHour(string $heureMin, string $heureMax, string $dateMin, ?string $dateMax = null): \Datetime
+    private function middleHour(string $heureMin, string $heureMax, string $dateMin, ?string $dateMax = null): DateTime
     {
         (is_null($dateMax)) ? $dateMax = $dateMin : '';
 
@@ -2353,8 +2319,6 @@ class AdManager
 
     /**
      * Get the difference in seconds between two times and dates.
-     *
-     * @return int
      */
     private function dateDiff(string $heureMin, string $heureMax, string $dateMin, ?string $dateMax = null): int
     {
@@ -2371,8 +2335,6 @@ class AdManager
      *
      * @var array Array of the selected days
      * @var array Array of the time for each days
-     *
-     * @return array
      */
     private function buildSchedule(?array $days, ?array $outward): array
     {

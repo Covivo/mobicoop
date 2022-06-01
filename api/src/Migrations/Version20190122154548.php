@@ -21,7 +21,7 @@ declare(strict_types=1);
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace DoctrineMigrations;
 
@@ -36,7 +36,7 @@ final class Version20190122154548 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('CREATE TABLE event (id INT AUTO_INCREMENT NOT NULL, user_id INT NOT NULL, address_id INT NOT NULL, name VARCHAR(255) NOT NULL, status SMALLINT NOT NULL, description VARCHAR(255) NOT NULL, full_description LONGTEXT NOT NULL, from_date DATETIME NOT NULL, to_date DATETIME NOT NULL, use_time TINYINT(1) NOT NULL, url VARCHAR(255) DEFAULT NULL, INDEX IDX_3BAE0AA7A76ED395 (user_id), UNIQUE INDEX UNIQ_3BAE0AA7F5B7AF75 (address_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB');
         $this->addSql('CREATE TABLE image (id INT AUTO_INCREMENT NOT NULL, event_id INT DEFAULT NULL, image_type_id INT NOT NULL, name VARCHAR(255) NOT NULL, title VARCHAR(255) DEFAULT NULL, alt VARCHAR(255) DEFAULT NULL, file_name VARCHAR(255) NOT NULL, encoding_format VARCHAR(255) NOT NULL, position SMALLINT NOT NULL, INDEX IDX_C53D045F71F7E88B (event_id), INDEX IDX_C53D045F505CDB4F (image_type_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB');
@@ -54,7 +54,7 @@ final class Version20190122154548 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE image DROP FOREIGN KEY FK_C53D045F71F7E88B');
         $this->addSql('ALTER TABLE image DROP FOREIGN KEY FK_C53D045F505CDB4F');

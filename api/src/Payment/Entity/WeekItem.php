@@ -19,16 +19,14 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Payment\Entity;
 
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * A week item
+ * A week item.
  *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
@@ -61,28 +59,28 @@ class WeekItem
     private $numWeek;
 
     /**
-     * @var int|null The year of the item
+     * @var null|int The year of the item
      *
      * @Groups({"readPayment"})
      */
     private $year;
 
     /** @var int payement status of the week
-    * 0 : waiting for payment
-    * 1 : payment received electronically
-    * 2 : payment received manually
-    * 3 : notified as unpaid
-    */
+     * 0 : waiting for payment
+     * 1 : payment received electronically
+     * 2 : payment received manually
+     * 3 : notified as unpaid
+     */
     private $status;
 
     /**
-     * @var int|null The paymentItem id of this Week
+     * @var null|int The paymentItem id of this Week
      * @Groups({"readPayment"})
      */
     private $paymentItemId;
 
     /**
-     * @var int|null The paymentItem id of this Week
+     * @var null|int The paymentItem id of this Week
      * @Groups({"readPayment"})
      */
     private $unpaidDate;

@@ -19,17 +19,15 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Article\Admin\Security;
 
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
 use App\Article\Entity\Article;
-use App\Article\Entity\Paragraph;
-use App\Article\Entity\Section;
 use App\Auth\Service\AuthManager;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class ArticleVoter extends Voter
 {
@@ -59,8 +57,8 @@ class ArticleVoter extends Voter
             self::ADMIN_ARTICLE_READ,
             self::ADMIN_ARTICLE_UPDATE,
             self::ADMIN_ARTICLE_DELETE,
-            self::ADMIN_ARTICLE_LIST
-            ])) {
+            self::ADMIN_ARTICLE_LIST,
+        ])) {
             return false;
         }
         // only vote on Article objects inside this voter
@@ -69,8 +67,8 @@ class ArticleVoter extends Voter
             self::ADMIN_ARTICLE_READ,
             self::ADMIN_ARTICLE_UPDATE,
             self::ADMIN_ARTICLE_DELETE,
-            self::ADMIN_ARTICLE_LIST
-            ]) && !($subject instanceof Paginator) && !($subject instanceof Article)) {
+            self::ADMIN_ARTICLE_LIST,
+        ]) && !($subject instanceof Paginator) && !($subject instanceof Article)) {
             return false;
         }
 
@@ -82,12 +80,16 @@ class ArticleVoter extends Voter
         switch ($attribute) {
             case self::ADMIN_ARTICLE_CREATE:
                 return $this->canCreateArticle();
+
             case self::ADMIN_ARTICLE_READ:
                 return $this->canReadArticle($subject);
+
             case self::ADMIN_ARTICLE_UPDATE:
                 return $this->canUpdateArticle($subject);
+
             case self::ADMIN_ARTICLE_DELETE:
                 return $this->canDeleteArticle($subject);
+
             case self::ADMIN_ARTICLE_LIST:
                 return $this->canListArticle();
             }
@@ -102,17 +104,17 @@ class ArticleVoter extends Voter
 
     private function canReadArticle(Article $article)
     {
-        return $this->authManager->isAuthorized(self::ARTICLE_READ, ['article'=>$article]);
+        return $this->authManager->isAuthorized(self::ARTICLE_READ, ['article' => $article]);
     }
 
     private function canUpdateArticle(Article $article)
     {
-        return $this->authManager->isAuthorized(self::ARTICLE_UPDATE, ['article'=>$article]);
+        return $this->authManager->isAuthorized(self::ARTICLE_UPDATE, ['article' => $article]);
     }
 
     private function canDeleteArticle(Article $article)
     {
-        return $this->authManager->isAuthorized(self::ARTICLE_DELETE, ['article'=>$article]);
+        return $this->authManager->isAuthorized(self::ARTICLE_DELETE, ['article' => $article]);
     }
 
     private function canListArticle()

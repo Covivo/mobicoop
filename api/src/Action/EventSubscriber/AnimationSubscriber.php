@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Action\EventSubscriber;
 
@@ -28,7 +28,7 @@ use App\Action\Service\DiaryManager;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
- * Subscriber for Animation events
+ * Subscriber for Animation events.
  *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
  */
@@ -44,7 +44,7 @@ class AnimationSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            AnimationMadeEvent::NAME => 'onAnimationMade'
+            AnimationMadeEvent::NAME => 'onAnimationMade',
         ];
     }
 

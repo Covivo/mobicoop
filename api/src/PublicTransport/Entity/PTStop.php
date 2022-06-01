@@ -19,16 +19,13 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\PublicTransport\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Doctrine\Common\Collections\ArrayCollection;
-use App\Geography\Entity\Address;
-use Doctrine\ORM\Mapping as ORM;
 
 /**
  * A public transport Stop.
@@ -79,6 +76,7 @@ class PTStop
 {
     /**
      * @ApiProperty(identifier=true)
+     *
      * @var int id of this stop
      * @Groups("pt")
      */
@@ -91,32 +89,31 @@ class PTStop
     private $name;
 
     /**
-     * @var float|null The latitude of the stop.
+     * @var null|float the latitude of the stop
      * @Groups("pt")
      */
     private $latitude;
 
     /**
-     * @var float|null The longitude of the stop.
+     * @var null|float the longitude of the stop
      * @Groups("pt")
      */
     private $longitude;
 
     /**
-     * @var PTAccessibilityStatus|null The accessibility status of the stop.
+     * @var null|PTAccessibilityStatus the accessibility status of the stop
      * @Groups("pt")
      */
     private $accessibilityStatus;
 
     /**
-     * @var string|null is this stop disrupted ?
+     * @var null|string is this stop disrupted ?
      * @Groups("pt")
      */
     private $isDisrupted;
 
-
     /**
-     * @var int|null The type of the stop.
+     * @var null|int the type of the stop
      * @Groups("pt")
      */
     private $pointType;

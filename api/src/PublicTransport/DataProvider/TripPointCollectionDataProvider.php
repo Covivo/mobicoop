@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\PublicTransport\DataProvider;
 
@@ -35,19 +35,17 @@ use Symfony\Component\HttpFoundation\RequestStack;
  * Automatically associated to Public Transport TripPoint entity thanks to autowiring (see 'supports' method).
  *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
- *
  */
 final class TripPointCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
     private $dataProvider;
-    protected $request;
+    private $request;
 
     public function __construct(RequestStack $requestStack, PTDataProvider $dataProvider)
     {
         $this->dataProvider = $dataProvider;
         $this->request = $requestStack->getCurrentRequest();
     }
-
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
@@ -56,48 +54,46 @@ final class TripPointCollectionDataProvider implements CollectionDataProviderInt
 
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
-
         // First, I check the Lat/Lon. If they are given, we ignore keywords
-        if (!is_null($this->request->get("latitude")) &&
-            !is_null($this->request->get("longitude")) &&
-            $this->request->get("latitude") != 0 &&
-            $this->request->get("longitude") != 0
+        if (!is_null($this->request->get('latitude'))
+            && !is_null($this->request->get('longitude'))
+            && 0 != $this->request->get('latitude')
+            && 0 != $this->request->get('longitude')
         ) {
             if (
-                is_null($this->request->get("provider")) &&
-                is_null($this->request->get("perimeter")) &&
-                is_null($this->request->get("transportModes"))
+                is_null($this->request->get('provider'))
+                && is_null($this->request->get('perimeter'))
+                && is_null($this->request->get('transportModes'))
             ) {
                 return null;
             }
 
             return $this->dataProvider->getTripPoints(
-                $this->request->get("provider"),
-                $this->request->get("latitude"),
-                $this->request->get("longitude"),
-                $this->request->get("perimeter"),
+                $this->request->get('provider'),
+                $this->request->get('latitude'),
+                $this->request->get('longitude'),
+                $this->request->get('perimeter'),
                 $this->request->get('transportModes'),
-                ""
-            );
-        } else {
-            // We assume that we have to use keywords for the search
-            if (
-                is_null($this->request->get("provider")) &&
-                is_null($this->request->get("perimeter")) &&
-                is_null($this->request->get("keywords")) &&
-                is_null($this->request->get("transportModes"))
-            ) {
-                return null;
-            }
-
-            return $this->dataProvider->getTripPoints(
-                $this->request->get("provider"),
-                0,
-                0,
-                $this->request->get("perimeter"),
-                $this->request->get('transportModes'),
-                $this->request->get("keywords")
+                ''
             );
         }
+        // We assume that we have to use keywords for the search
+        if (
+                is_null($this->request->get('provider'))
+                && is_null($this->request->get('perimeter'))
+                && is_null($this->request->get('keywords'))
+                && is_null($this->request->get('transportModes'))
+            ) {
+            return null;
+        }
+
+        return $this->dataProvider->getTripPoints(
+            $this->request->get('provider'),
+            0,
+            0,
+            $this->request->get('perimeter'),
+            $this->request->get('transportModes'),
+            $this->request->get('keywords')
+        );
     }
 }

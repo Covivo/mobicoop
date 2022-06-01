@@ -19,14 +19,15 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\Entity;
 
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * A solidary asks list item
+ * A solidary asks list item.
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class SolidaryAsksListItem
@@ -35,7 +36,7 @@ class SolidaryAsksListItem
     public const DRIVER_TYPE_CARPOOLER = 1;
 
     /**
-     * @var int The frequency (1 = punctual; 2 = regular).
+     * @var int the frequency (1 = punctual; 2 = regular)
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $frequency;
@@ -47,15 +48,15 @@ class SolidaryAsksListItem
     private $status;
 
     /**
-    * @var \DateTimeInterface The start date for regular, the date for punctual
+     * @var \DateTimeInterface The start date for regular, the date for punctual
      * @Groups({"readSolidary","writeSolidary"})
-    */
+     */
     private $fromDate;
 
     /**
-    * @var \DateTimeInterface The end date for regular, null for punctual
+     * @var \DateTimeInterface The end date for regular, null for punctual
      * @Groups({"readSolidary","writeSolidary"})
-    */
+     */
     private $toDate;
 
     /**
@@ -65,9 +66,9 @@ class SolidaryAsksListItem
     private $schedule;
 
     /**
-    * @var string The firstname + familyname of the volunteer/carpooler driver
-    * @Groups({"readSolidary","writeSolidary"})
-    */
+     * @var string The firstname + familyname of the volunteer/carpooler driver
+     * @Groups({"readSolidary","writeSolidary"})
+     */
     private $driver;
 
     /**
@@ -98,7 +99,6 @@ class SolidaryAsksListItem
     {
         $this->messages = [];
     }
-
 
     public function getFrequency(): ?int
     {

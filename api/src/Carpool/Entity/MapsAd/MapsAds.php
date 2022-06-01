@@ -19,15 +19,15 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Carpool\Entity\MapsAd;
 
 use Symfony\Component\Serializer\Annotation\Groups;
-use App\Carpool\Entity\MapsAd\MapsAd;
 
 /**
- * Map's Ads. Contains a collection of Map's Ad
+ * Map's Ads. Contains a collection of Map's Ad.
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class MapsAds
@@ -35,7 +35,7 @@ class MapsAds
     /**
      * @var MapsAd[]
      * @Groups({"readCommunityAds"})
-    */
+     */
     private $mapsAds;
 
     public function __construct(array $mapsAds = null)

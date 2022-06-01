@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Article\Admin\DataProvider;
 
@@ -31,14 +31,13 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Security;
 
 /**
- * Item data provider for Article in administration context
+ * Item data provider for Article in administration context.
  *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
- *
  */
 final class ArticleItemDataProvider implements ItemDataProviderInterface, RestrictedDataProviderInterface
 {
-    protected $request;
+    private $request;
     private $articleManager;
     private $security;
 
@@ -52,7 +51,7 @@ final class ArticleItemDataProvider implements ItemDataProviderInterface, Restri
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Article::class === $resourceClass && $operationName === "ADMIN_get";
+        return Article::class === $resourceClass && 'ADMIN_get' === $operationName;
     }
 
     public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?Article

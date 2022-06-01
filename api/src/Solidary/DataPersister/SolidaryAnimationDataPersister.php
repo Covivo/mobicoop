@@ -18,15 +18,15 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\DataPersister;
 
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
-use App\Solidary\Entity\SolidaryAnimation;
 use App\Action\Exception\ActionException;
-use App\Solidary\Service\SolidaryAnimationManager;
 use App\App\Entity\App;
+use App\Solidary\Entity\SolidaryAnimation;
+use App\Solidary\Service\SolidaryAnimationManager;
 use Symfony\Component\Security\Core\Security;
 
 /**
@@ -54,9 +54,7 @@ final class SolidaryAnimationDataPersister implements ContextAwareDataPersisterI
             throw new ActionException(ActionException::INVALID_DATA_PROVIDED);
         }
 
-        /**
-         * @var SolidaryAnimation $data
-         */
+        // @var SolidaryAnimation $data
 
         // We set the correct author
         if ($this->security->getUser() instanceof App) {
@@ -65,9 +63,10 @@ final class SolidaryAnimationDataPersister implements ContextAwareDataPersisterI
             $data->setAuthor($this->security->getUser());
         }
 
-        if (isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'post') {
+        if (isset($context['collection_operation_name']) && 'post' == $context['collection_operation_name']) {
             $data = $this->solidaryAnimationManager->treatSolidaryAnimation($data);
         }
+
         return $data;
     }
 

@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Payment\Event;
 
@@ -40,9 +40,6 @@ class SignalDeptEvent extends Event
         $this->carpoolItem = $carpoolItem;
     }
 
-    /**
-     * @return CarpoolItem
-     */
     public function getCarpoolItem(): CarpoolItem
     {
         return $this->carpoolItem;

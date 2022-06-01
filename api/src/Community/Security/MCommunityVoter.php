@@ -19,17 +19,17 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Community\Security;
 
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
 use App\Auth\Service\AuthManager;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use App\Community\Resource\MCommunity;
 use App\Community\Service\CommunityManager;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class MCommunityVoter extends Voter
 {
@@ -49,17 +49,18 @@ class MCommunityVoter extends Voter
     {
         // if the attribute isn't one we support, return false
         if (!in_array($attribute, [
-            self::COMMUNITY_LIST
-            ])) {
+            self::COMMUNITY_LIST,
+        ])) {
             return false;
         }
 
         // only vote on Community objects inside this voter
         if (!in_array($attribute, [
-            self::COMMUNITY_LIST
-            ]) && !($subject instanceof Paginator) && !($subject instanceof MCommunity)) {
+            self::COMMUNITY_LIST,
+        ]) && !($subject instanceof Paginator) && !($subject instanceof MCommunity)) {
             return false;
         }
+
         return true;
     }
 

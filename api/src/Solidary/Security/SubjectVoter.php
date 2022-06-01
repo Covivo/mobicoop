@@ -19,15 +19,15 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\Security;
 
-use App\Auth\Service\AuthManager;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
+use App\Auth\Service\AuthManager;
 use App\Solidary\Entity\Subject;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
@@ -56,7 +56,7 @@ class SubjectVoter extends Voter
             self::SUBJECT_UPDATE,
             self::SUBJECT_DELETE,
             self::SUBJECT_LIST,
-            ])) {
+        ])) {
             return false;
         }
 
@@ -67,9 +67,10 @@ class SubjectVoter extends Voter
             self::SUBJECT_UPDATE,
             self::SUBJECT_DELETE,
             self::SUBJECT_LIST,
-            ]) && !($subject instanceof Paginator) && !($subject instanceof Subject)) {
+        ]) && !($subject instanceof Paginator) && !($subject instanceof Subject)) {
             return false;
         }
+
         return true;
     }
 
@@ -78,12 +79,16 @@ class SubjectVoter extends Voter
         switch ($attribute) {
             case self::SUBJECT_CREATE:
                 return $this->canCreateSubject();
+
             case self::SUBJECT_READ:
                 return $this->canReadSubject($subject);
+
             case self::SUBJECT_UPDATE:
                 return $this->canUpdateSubject($subject);
+
             case self::SUBJECT_DELETE:
                 return $this->canDeleteSubject($subject);
+
             case self::SUBJECT_LIST:
                 return $this->canListSubject();
         }
@@ -98,17 +103,17 @@ class SubjectVoter extends Voter
 
     private function canReadSubject(Subject $subject)
     {
-        return $this->authManager->isAuthorized(self::SUBJECT_READ, ['subject'=>$subject]);
+        return $this->authManager->isAuthorized(self::SUBJECT_READ, ['subject' => $subject]);
     }
 
     private function canUpdateSubject(Subject $subject)
     {
-        return $this->authManager->isAuthorized(self::SUBJECT_UPDATE, ['subject'=>$subject]);
+        return $this->authManager->isAuthorized(self::SUBJECT_UPDATE, ['subject' => $subject]);
     }
 
     private function canDeleteSubject(Subject $subject)
     {
-        return $this->authManager->isAuthorized(self::SUBJECT_DELETE, ['subject'=>$subject]);
+        return $this->authManager->isAuthorized(self::SUBJECT_DELETE, ['subject' => $subject]);
     }
 
     private function canListSubject()

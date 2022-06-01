@@ -19,26 +19,27 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Rdex\Controller;
 
+use App\Rdex\Entity\RdexConnection;
+use App\Rdex\Entity\RdexError;
+use App\Rdex\Service\RdexManager;
 use App\TranslatorTrait;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
-use App\Rdex\Service\RdexManager;
-use App\Rdex\Entity\RdexError;
-use App\Rdex\Entity\RdexConnection;
 
 /**
- * Controller class for Rdex Connections
+ * Controller class for Rdex Connections.
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class ConnectionController
 {
     use TranslatorTrait;
-    private $rdexManager;
     protected $request;
+    private $rdexManager;
 
     public function __construct(RequestStack $requestStack, RdexManager $rdexManager)
     {
@@ -48,14 +49,11 @@ class ConnectionController
 
     /**
      * This method is invoked when a Journey collection is requested.
-     *
-     * @param RdexConnection $data
-     * @return Response
      */
     public function __invoke(RdexConnection $data): Response
     {
         if (is_null($data)) {
-            throw new \InvalidArgumentException($this->translator->trans("bad RdexJourney id is provided"));
+            throw new \InvalidArgumentException($this->translator->trans('bad RdexJourney id is provided'));
         }
         $response = new Response();
         // if there are no parameters we stop without errors, in could be an api check, it shouldn't throw an error
@@ -79,7 +77,6 @@ class ConnectionController
             }
             $response->setStatusCode(201);
         }
-
 
         return $response;
     }

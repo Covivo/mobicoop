@@ -19,18 +19,15 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\DataProvider\Ressource;
 
 use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * A MangoPay hook when there is a PayIn detected
+ * A MangoPay hook when there is a PayIn detected.
  *
  * @ApiResource(
  *      attributes={
@@ -75,14 +72,15 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          }
  *      }
  * )
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class MangoPayHook extends Hook
 {
-    public const PAYIN_SUCCEEDED = "PAYIN_NORMAL_SUCCEEDED";
-    public const PAYIN_FAILED = "PAYIN_NORMAL_FAILED";
+    public const PAYIN_SUCCEEDED = 'PAYIN_NORMAL_SUCCEEDED';
+    public const PAYIN_FAILED = 'PAYIN_NORMAL_FAILED';
 
-    public const VALIDATION_SUCCEEDED = "KYC_SUCCEEDED";
-    public const VALIDATION_FAILED = "KYC_FAILED";
-    public const VALIDATION_OUTDATED = "KYC_OUTDATED";
+    public const VALIDATION_SUCCEEDED = 'KYC_SUCCEEDED';
+    public const VALIDATION_FAILED = 'KYC_FAILED';
+    public const VALIDATION_OUTDATED = 'KYC_OUTDATED';
 }

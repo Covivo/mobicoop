@@ -19,16 +19,17 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Community\Event;
 
-use Symfony\Contracts\EventDispatcher\Event;
 use App\Community\Entity\Community;
 use App\User\Entity\User;
+use Symfony\Contracts\EventDispatcher\Event;
 
 /**
- * Event sent when a user ask to join a community with a validation
+ * Event sent when a user ask to join a community with a validation.
+ *
  * @author Remi Wortemann <remi.wortemann@mobicoop.org>
  */
 class CommunityMembershipPendingEvent extends Event

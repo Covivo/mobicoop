@@ -19,22 +19,21 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Carpool\Security;
 
-use App\Auth\Service\AuthManager;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use App\Carpool\Ressource\Ad;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
+use App\Auth\Service\AuthManager;
 use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\Matching;
 use App\Carpool\Repository\AskRepository;
 use App\Carpool\Repository\MatchingRepository;
+use App\Carpool\Ressource\Ad;
 use App\Carpool\Service\AdManager;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class AdVoter extends Voter
 {
@@ -79,8 +78,8 @@ class AdVoter extends Voter
             self::AD_ASK_READ,
             self::AD_ASK_UPDATE,
             self::AD_SEARCH_CREATE,
-            self::AD_CLAIM
-            ])) {
+            self::AD_CLAIM,
+        ])) {
             return false;
         }
 
@@ -96,8 +95,8 @@ class AdVoter extends Voter
             self::AD_ASK_READ,
             self::AD_ASK_UPDATE,
             self::AD_SEARCH_CREATE,
-            self::AD_CLAIM
-            ]) && !($subject instanceof Paginator) && !($subject instanceof Ad)) {
+            self::AD_CLAIM,
+        ]) && !($subject instanceof Paginator) && !($subject instanceof Ad)) {
             return false;
         }
 
@@ -113,39 +112,56 @@ class AdVoter extends Voter
         switch ($attribute) {
             case self::AD_CREATE:
                 return $this->canCreateAd();
+
             case self::AD_READ:
                 $ad = $this->adManager->getAd($this->request->get('id'), null, null, null, false);
+
                 return $this->canReadAd($ad);
+
             case self::AD_READ_EXTERNAL:
                 $ad = $this->adManager->getAdFromExternalId($this->request->get('id'));
+
                 return $this->canReadAd($ad);
+
             case self::AD_UPDATE:
                 $ad = $this->adManager->getAd($this->request->get('id'));
+
                 return $this->canUpdateAd($ad);
+
             case self::AD_DELETE:
                 $ad = $this->adManager->getAd($this->request->get('id'));
+
                 return $this->canDeleteAd($ad);
+
             case self::AD_LIST:
                 return $this->canListAd();
+
             case self::AD_ASK_CREATE:
                 $matching = $this->matchingRepository->find($subject->getMatchingId());
+
                 return $this->canCreateAskFromAd($matching);
+
             case self::AD_ASK_READ:
                 $ask = $this->askRepository->find($this->request->get('id'));
+
                 return $this->canReadAskFromAd($ask);
+
             case self::AD_ASK_UPDATE:
                 $ask = $this->askRepository->find($this->request->get('id'));
+
                 return $this->canUpdateAskFromAd($ask);
+
             case self::AD_SEARCH_CREATE:
                 return $this->canCreateSearchAd();
+
             case self::AD_CLAIM:
                 $ad = $this->adManager->getAd($this->request->get('id'), null, null, null, false);
+
                 return $this->canClaimAd($ad);
         }
 
         throw new \LogicException('This code should not be reached!');
     }
-
 
     private function canCreateAd()
     {
@@ -154,17 +170,17 @@ class AdVoter extends Voter
 
     private function canReadAd(Ad $ad)
     {
-        return $this->authManager->isAuthorized(self::AD_READ, ['ad'=>$ad]);
+        return $this->authManager->isAuthorized(self::AD_READ, ['ad' => $ad]);
     }
 
     private function canUpdateAd(Ad $ad)
     {
-        return $this->authManager->isAuthorized(self::AD_UPDATE, ['ad'=>$ad]);
+        return $this->authManager->isAuthorized(self::AD_UPDATE, ['ad' => $ad]);
     }
 
     private function canDeleteAd(Ad $ad)
     {
-        return $this->authManager->isAuthorized(self::AD_DELETE, ['ad'=>$ad]);
+        return $this->authManager->isAuthorized(self::AD_DELETE, ['ad' => $ad]);
     }
 
     private function canListAd()
@@ -174,17 +190,17 @@ class AdVoter extends Voter
 
     private function canCreateAskFromAd(Matching $matching)
     {
-        return $this->authManager->isAuthorized(self::AD_ASK_CREATE, ['matching'=>$matching]);
+        return $this->authManager->isAuthorized(self::AD_ASK_CREATE, ['matching' => $matching]);
     }
 
     private function canReadAskFromAd(Ask $ask)
     {
-        return $this->authManager->isAuthorized(self::AD_ASK_READ, ['ask'=>$ask]);
+        return $this->authManager->isAuthorized(self::AD_ASK_READ, ['ask' => $ask]);
     }
 
     private function canUpdateAskFromAd(Ask $ask)
     {
-        return $this->authManager->isAuthorized(self::AD_ASK_UPDATE, ['ask'=>$ask]);
+        return $this->authManager->isAuthorized(self::AD_ASK_UPDATE, ['ask' => $ask]);
     }
 
     private function canCreateSearchAd()
@@ -194,6 +210,6 @@ class AdVoter extends Voter
 
     private function canClaimAd(Ad $ad)
     {
-        return $this->authManager->isAuthorized(self::AD_CLAIM, ['ad'=>$ad]);
+        return $this->authManager->isAuthorized(self::AD_CLAIM, ['ad' => $ad]);
     }
 }

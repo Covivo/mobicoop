@@ -19,19 +19,19 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Article\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-use ApiPlatform\Core\Annotation\ApiResource;
-use Symfony\Component\Serializer\Annotation\Groups;
-use Doctrine\Common\Collections\ArrayCollection;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
 use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Action\Entity\Log;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 /**
  * An article : informations that should be displayed in a page of a site or in a screen of a mobile app.
@@ -106,10 +106,10 @@ use App\Action\Entity\Log;
  *              "method"="GET",
  *              "path"="/articles/{id}",
  *              "security"="is_granted('article_read',object)",
-  *              "swagger_context" = {
+ *              "swagger_context" = {
  *                  "tags"={"Articles"}
  *              }
-*          },
+ *          },
  *          "put"={
  *              "method"="PUT",
  *              "path"="/pages/{id}",
@@ -169,11 +169,11 @@ class Article
 
     // List of the translatable items of this entity
     public const TRANSLATABLE_ITEMS = [
-        "title"
+        'title',
     ];
 
     /**
-     * @var int The id of this article.
+     * @var int the id of this article
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -183,7 +183,7 @@ class Article
     private $id;
 
     /**
-     * @var string The title of the article.
+     * @var string the title of the article
      *
      * @ORM\Column(type="string", length=255)
      * @Groups({"aRead","aWrite","read","write"})
@@ -191,7 +191,7 @@ class Article
     private $title;
 
     /**
-     * @var int The status of publication of the article.
+     * @var int the status of publication of the article
      *
      * @ORM\Column(type="smallint")
      * @Groups({"aRead","aWrite","read","write"})
@@ -199,7 +199,7 @@ class Article
     private $status;
 
     /**
-     * @var ArrayCollection The sections of the article.
+     * @var ArrayCollection the sections of the article
      *
      * @ORM\OneToMany(targetEntity="\App\Article\Entity\Section", mappedBy="article", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\OrderBy({"position" = "ASC"})
@@ -217,14 +217,14 @@ class Article
     private $iFrame;
 
     /**
-     * @var ArrayCollection The logs linked with the Article.
+     * @var ArrayCollection the logs linked with the Article
      *
      * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="article", cascade={"remove"})
      */
     private $logs;
 
     /**
-     * @var \DateTimeInterface Creation date.
+     * @var \DateTimeInterface creation date
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read"})
@@ -232,7 +232,7 @@ class Article
     private $createdDate;
 
     /**
-     * @var \DateTimeInterface Updated date.
+     * @var \DateTimeInterface updated date
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read"})
@@ -240,7 +240,7 @@ class Article
     private $updatedDate;
 
     /**
-     * @var array|null The sections in administration write context
+     * @var null|array The sections in administration write context
      * @Groups({"aWrite"})
      */
     private $asections;
@@ -308,6 +308,7 @@ class Article
     public function removeSections(): self
     {
         $this->sections->clear();
+
         return $this;
     }
 
@@ -396,7 +397,7 @@ class Article
      */
     public function setAutoCreatedDate()
     {
-        $this->setCreatedDate(new \Datetime());
+        $this->setCreatedDate(new \DateTime());
     }
 
     /**
@@ -406,6 +407,6 @@ class Article
      */
     public function setAutoUpdatedDate()
     {
-        $this->setUpdatedDate(new \Datetime());
+        $this->setUpdatedDate(new \DateTime());
     }
 }

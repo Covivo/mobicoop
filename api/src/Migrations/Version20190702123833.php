@@ -15,7 +15,7 @@ final class Version20190702123833 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('CREATE TABLE notified (id INT AUTO_INCREMENT NOT NULL, notification_id INT NOT NULL, medium_id INT NOT NULL, user_id INT NOT NULL, status SMALLINT NOT NULL, sent_date DATETIME NOT NULL, received_date DATETIME NOT NULL, read_date DATETIME NOT NULL, INDEX IDX_D23269D4EF1A9D84 (notification_id), INDEX IDX_D23269D4E252B6A5 (medium_id), INDEX IDX_D23269D4A76ED395 (user_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB');
         $this->addSql('CREATE TABLE action (id INT AUTO_INCREMENT NOT NULL, name VARCHAR(255) NOT NULL, uname VARCHAR(255) NOT NULL, domain VARCHAR(255) NOT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB');
@@ -30,7 +30,7 @@ final class Version20190702123833 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE notification DROP FOREIGN KEY FK_BF5476CA9D32F035');
         $this->addSql('ALTER TABLE notified DROP FOREIGN KEY FK_D23269D4EF1A9D84');

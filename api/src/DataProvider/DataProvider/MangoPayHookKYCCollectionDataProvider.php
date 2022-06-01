@@ -18,13 +18,12 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\DataProvider\DataProvider;
 
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
 use App\DataProvider\Ressource\MangoPayHook;
 use App\Payment\Exception\PaymentException;
 use App\Payment\Service\PaymentManager;
@@ -46,33 +45,34 @@ final class MangoPayHookKYCCollectionDataProvider implements CollectionDataProvi
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return MangoPayHook::class === $resourceClass && $operationName == "mangoPayKYC";
+        return MangoPayHook::class === $resourceClass && 'mangoPayKYC' == $operationName;
     }
 
     public function getCollection(string $resourceClass, string $operationName = null): iterable
     {
         $mangoPayHook = new MangoPayHook();
-        if (is_null($this->request->get('EventType')) ||
-            is_null($this->request->get('RessourceId')) ||
-            is_null($this->request->get('Date'))
+        if (is_null($this->request->get('EventType'))
+            || is_null($this->request->get('RessourceId'))
+            || is_null($this->request->get('Date'))
         ) {
             throw new PaymentException(PaymentException::MISSING_PARAMETER);
         }
 
         if (
-            $this->request->get('EventType')!==MangoPayHook::VALIDATION_SUCCEEDED &&
-            $this->request->get('EventType')!==MangoPayHook::VALIDATION_FAILED &&
-            $this->request->get('EventType')!==MangoPayHook::VALIDATION_OUTDATED
+            MangoPayHook::VALIDATION_SUCCEEDED !== $this->request->get('EventType')
+            && MangoPayHook::VALIDATION_FAILED !== $this->request->get('EventType')
+            && MangoPayHook::VALIDATION_OUTDATED !== $this->request->get('EventType')
         ) {
-            throw new \LogicException("Unknown MangoPay KYC EventType");
+            throw new \LogicException('Unknown MangoPay KYC EventType');
         }
 
         $mangoPayHook->setEventType($this->request->get('EventType'));
         $mangoPayHook->setRessourceId($this->request->get('RessourceId'));
         $mangoPayHook->setDate($this->request->get('Date'));
-        if (null !== $this->request->get('token') && $this->request->get('token')!=="") {
+        if (null !== $this->request->get('token') && '' !== $this->request->get('token')) {
             $mangoPayHook->setSecurityToken($this->request->get('token'));
         }
+
         return $this->paymentManager->handleHookValidation($mangoPayHook);
     }
 }

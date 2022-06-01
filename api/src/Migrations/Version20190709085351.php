@@ -15,7 +15,7 @@ final class Version20190709085351 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE notified DROP FOREIGN KEY FK_D23269D4E252B6A5');
         $this->addSql('DROP INDEX IDX_D23269D4E252B6A5 ON notified');
@@ -25,7 +25,7 @@ final class Version20190709085351 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE notified ADD medium_id INT NOT NULL');
         $this->addSql('ALTER TABLE notified ADD CONSTRAINT FK_D23269D4E252B6A5 FOREIGN KEY (medium_id) REFERENCES medium (id)');

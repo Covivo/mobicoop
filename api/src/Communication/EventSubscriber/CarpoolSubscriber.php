@@ -19,36 +19,36 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Communication\EventSubscriber;
 
 use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\Proposal;
 use App\Carpool\Entity\Waypoint;
+use App\Carpool\Event\AdMajorUpdatedEvent;
+use App\Carpool\Event\AdMinorUpdatedEvent;
 use App\Carpool\Event\AdRenewalEvent;
 use App\Carpool\Event\AskAcceptedEvent;
 use App\Carpool\Event\AskAdDeletedEvent;
+// use App\Carpool\Event\AskUpdatedEvent;
 use App\Carpool\Event\AskPostedEvent;
 use App\Carpool\Event\AskRefusedEvent;
-// use App\Carpool\Event\AskUpdatedEvent;
 use App\Carpool\Event\DriverAskAdDeletedEvent;
 use App\Carpool\Event\DriverAskAdDeletedUrgentEvent;
 use App\Carpool\Event\MatchingNewEvent;
 use App\Carpool\Event\PassengerAskAdDeletedEvent;
 use App\Carpool\Event\PassengerAskAdDeletedUrgentEvent;
 use App\Carpool\Event\ProposalCanceledEvent;
-use App\Carpool\Event\AdMajorUpdatedEvent;
-use App\Carpool\Event\AdMinorUpdatedEvent;
 use App\Carpool\Event\ProposalPostedEvent;
 use App\Carpool\Repository\AskHistoryRepository;
 use App\Communication\Service\NotificationManager;
 use App\TranslatorTrait;
 use App\User\Entity\User;
 use App\User\Service\BlockManager;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Debug\Exception\ClassNotFoundException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class CarpoolSubscriber implements EventSubscriberInterface
@@ -85,22 +85,20 @@ class CarpoolSubscriber implements EventSubscriberInterface
             AdRenewalEvent::NAME => 'onAdRenewal',
             ProposalPostedEvent::NAME => 'onProposalPosted',
             ProposalCanceledEvent::NAME => 'onProposalCanceled',
-            //AskUpdatedEvent::NAME => 'onAskUpdated',  // Is this really usefull ?
+            // AskUpdatedEvent::NAME => 'onAskUpdated',  // Is this really usefull ?
             AskAdDeletedEvent::NAME => 'onAskAdDeleted',
             PassengerAskAdDeletedEvent::NAME => 'onPassengerAskAdDeleted',
             PassengerAskAdDeletedUrgentEvent::NAME => 'onPassengerAskAdDeletedUrgent',
             DriverAskAdDeletedEvent::NAME => 'onDriverAskAdDeleted',
             DriverAskAdDeletedUrgentEvent::NAME => 'onDriverAskAdDeletedUrgent',
             AdMinorUpdatedEvent::NAME => 'onAdMinorUpdated',
-            AdMajorUpdatedEvent::NAME => 'onAdMajorUpdated'
+            AdMajorUpdatedEvent::NAME => 'onAdMajorUpdated',
         ];
     }
 
     /**
-     * Executed when a new ask is posted
+     * Executed when a new ask is posted.
      *
-     * @param AskPostedEvent $event
-     * @return void
      * @throws ClassNotFoundException
      */
     public function onAskPosted(AskPostedEvent $event): void
@@ -111,10 +109,8 @@ class CarpoolSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * Executed when an ask is accepted
+     * Executed when an ask is accepted.
      *
-     * @param AskAcceptedEvent $event
-     * @return void
      * @throws ClassNotFoundException
      */
     public function onAskAccepted(AskAcceptedEvent $event): void
@@ -125,10 +121,8 @@ class CarpoolSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * Executed when an ask is declined
+     * Executed when an ask is declined.
      *
-     * @param AskRefusedEvent $event
-     * @return void
      * @throws ClassNotFoundException
      */
     public function onAskRefused(AskRefusedEvent $event): void
@@ -152,18 +146,14 @@ class CarpoolSubscriber implements EventSubscriberInterface
     //     // ATTENTION : Doesn't work because of ->getMessage(). There's not always a message with a askhistory
     //     $askRecipient = ($event->getAsk()->getMatching()->getProposalOffer()->getUser()->getId() != $lastAskHistory->getMessage()->getUser()->getId()) ? $event->getAsk()->getMatching()->getProposalOffer()->getUser() : $event->getAsk()->getMatching()->getProposalRequest()->getUser();
 
-
-
     //     if ($this->canNotify($event->getAsk()->getUser(), $askRecipient)) {
     //         $this->notificationManager->notifies(AskUpdatedEvent::NAME, $askRecipient, $lastAskHistory);
     //     }
     // }
 
     /**
-     * Executed when a new matching is discovered
+     * Executed when a new matching is discovered.
      *
-     * @param MatchingNewEvent $event
-     * @return void
      * @throws ClassNotFoundException
      */
     public function onNewMatching(MatchingNewEvent $event): void
@@ -171,9 +161,9 @@ class CarpoolSubscriber implements EventSubscriberInterface
         // the recipient is the user that is not the "sender" of the matching
         // we check if it's not an anonymous proposal, and that it's only on an outward (as we notifiy only once for a return trip)
         if (
-            $event->getMatching()->getProposalOffer()->getUser() &&
-            $event->getMatching()->getProposalRequest()->getUser() &&
-            $event->getWay() != Proposal::TYPE_RETURN
+            $event->getMatching()->getProposalOffer()->getUser()
+            && $event->getMatching()->getProposalRequest()->getUser()
+            && Proposal::TYPE_RETURN != $event->getWay()
             ) {
             $askRecipient =
             ($event->getMatching()->getProposalOffer()->getUser()->getId() != $event->getSender()->getId()) ?
@@ -187,8 +177,6 @@ class CarpoolSubscriber implements EventSubscriberInterface
 
     /**
      * Execute when a proposal is posted.
-     *
-     * @param ProposalPostedEvent $event
      */
     public function onProposalPosted(ProposalPostedEvent $event)
     {
@@ -209,10 +197,7 @@ class CarpoolSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * Executed when an ad needs to be renewed
-     *
-     * @param AdRenewalEvent $event
-     * @return void
+     * Executed when an ad needs to be renewed.
      */
     public function onAdRenewal(AdRenewalEvent $event): void
     {
@@ -221,10 +206,7 @@ class CarpoolSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * Executed when an ad is deleted with ask
-     *
-     * @param AskAdDeletedEvent $event
-     * @return void
+     * Executed when an ad is deleted with ask.
      */
     public function onAskAdDeleted(AskAdDeletedEvent $event): void
     {
@@ -240,10 +222,7 @@ class CarpoolSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * Executed when an ad is deleted with driver accepted
-     *
-     * @param PassengerAskAdDeletedEvent $event
-     * @return void
+     * Executed when an ad is deleted with driver accepted.
      */
     public function onPassengerAskAdDeleted(PassengerAskAdDeletedEvent $event): void
     {
@@ -258,9 +237,7 @@ class CarpoolSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * Executed when an ad is deleted with driver accepted and in less than 24h
-     * @param PassengerAskAdDeletedUrgentEvent $event
-     * @return void
+     * Executed when an ad is deleted with driver accepted and in less than 24h.
      */
     public function onPassengerAskAdDeletedUrgent(PassengerAskAdDeletedUrgentEvent $event): void
     {
@@ -275,10 +252,7 @@ class CarpoolSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * Executed when an ad is deleted with passenger accepted
-     *
-     * @param DriverAskAdDeletedEvent $event
-     * @return void
+     * Executed when an ad is deleted with passenger accepted.
      */
     public function onDriverAskAdDeleted(DriverAskAdDeletedEvent $event): void
     {
@@ -293,10 +267,7 @@ class CarpoolSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * Executed when an ad is deleted with passenger accepted and in less than 24h
-     *
-     * @param DriverAskAdDeletedUrgentEvent $event
-     * @return void
+     * Executed when an ad is deleted with passenger accepted and in less than 24h.
      */
     public function onDriverAskAdDeletedUrgent(DriverAskAdDeletedUrgentEvent $event): void
     {
@@ -313,9 +284,9 @@ class CarpoolSubscriber implements EventSubscriberInterface
     public function onAdMinorUpdated(AdMinorUpdatedEvent $event)
     {
         $object = (object) [
-            "old" => $event->getOldAd(),
-            "new" => $event->getNewAd(),
-            "sender" => $event->getSender()
+            'old' => $event->getOldAd(),
+            'new' => $event->getNewAd(),
+            'sender' => $event->getSender(),
         ];
 
         foreach ($event->getAsks() as $ask) {
@@ -329,9 +300,9 @@ class CarpoolSubscriber implements EventSubscriberInterface
     public function onAdMajorUpdated(AdMajorUpdatedEvent $event)
     {
         $object = (object) [
-            "old" => $event->getOldAd(),
-            "new" => $event->getNewAd(),
-            "sender" => $event->getSender()
+            'old' => $event->getOldAd(),
+            'new' => $event->getNewAd(),
+            'sender' => $event->getSender(),
         ];
 
         foreach ($event->getAsks() as $ask) {
@@ -341,15 +312,16 @@ class CarpoolSubscriber implements EventSubscriberInterface
             $regular = false;
             $date = null;
 
-            if ($ask->getCriteria()->getFrequency() === 2) {
+            if (2 === $ask->getCriteria()->getFrequency()) {
                 $regular = true;
             } else {
                 $date = $ask->getCriteria()->getFromDate();
                 !is_null($date) ? $date = $date->format('Y-m-d') : null;
             }
+
             /** @var Waypoint $waypoint */
             foreach ($ask->getWaypoints() as $waypoint) {
-                if ($waypoint->getPosition() === 0) {
+                if (0 === $waypoint->getPosition()) {
                     $origin = clone $waypoint->getAddress();
                 } elseif ($waypoint->isDestination()) {
                     $destination = clone $waypoint->getAddress();
@@ -357,10 +329,10 @@ class CarpoolSubscriber implements EventSubscriberInterface
             }
 
             $routeParams = [
-                "origin" => json_encode($origin),
-                "destination" => json_encode($destination),
-                "regular" => $regular,
-                "date" => $date
+                'origin' => json_encode($origin),
+                'destination' => json_encode($destination),
+                'regular' => $regular,
+                'date' => $date,
             ];
             // todo: use if we can keep the proposal (request or offer) if we delete the matched one
 //            if ($ask->getCriteria()->isDriver()) {
@@ -369,7 +341,7 @@ class CarpoolSubscriber implements EventSubscriberInterface
 //                $proposalId = $ask->getMatching()->getProposalRequest()->getId();
 //            }
 //            $routeParams = ["pid" => $proposalId];
-            $object->searchLink = $event->getMailSearchLink() . "?" . http_build_query($routeParams);
+            $object->searchLink = $event->getMailSearchLink().'?'.http_build_query($routeParams);
             if ($this->canNotify($ask->getUser(), $ask->getUserRelated())) {
                 $this->notificationManager->notifies(AdMajorUpdatedEvent::NAME, $ask->getUser(), $object);
             }
@@ -377,18 +349,15 @@ class CarpoolSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * Determine if the User1 can notify the User2 (i.e. Not involved in a block)
-     *
-     * @param User $user1
-     * @param User $user2
-     * @return boolean
+     * Determine if the User1 can notify the User2 (i.e. Not involved in a block).
      */
     public function canNotify(User $user1, User $user2): bool
     {
         $blocks = $this->blockManager->getInvolvedInABlock($user1, $user2);
-        if (is_array($blocks) && count($blocks)>0) {
+        if (is_array($blocks) && count($blocks) > 0) {
             return false;
         }
+
         return true;
     }
 }

@@ -19,23 +19,23 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\RelayPoint\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
-use ApiPlatform\Core\Annotation\ApiProperty;
-use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
-use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Validator\Constraints as Assert;
-use Doctrine\Common\Collections\ArrayCollection;
-use App\Image\Entity\Image;
 use App\Image\Entity\Icon;
+use App\Image\Entity\Image;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * A relay point type.
@@ -142,7 +142,7 @@ use App\Image\Entity\Icon;
 class RelayPointType
 {
     /**
-     * @var int The id of this relay point type.
+     * @var int the id of this relay point type
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -153,7 +153,7 @@ class RelayPointType
     private $id;
 
     /**
-     * @var string Name of the type.
+     * @var string name of the type
      *
      * @Assert\NotBlank
      * @ORM\Column(type="string", length=255)
@@ -162,18 +162,18 @@ class RelayPointType
     private $name;
 
     /**
-    * @var ArrayCollection|null The images of the relay point type.
-    *
-    * @ORM\OneToMany(targetEntity="\App\Image\Entity\Image", mappedBy="relayPointType", cascade={"persist"})
-    * @ORM\OrderBy({"position" = "ASC"})
-    * @Groups({"readRelayPoint","writeRelayPoint"})
-    * @MaxDepth(1)
-    * @ApiSubresource(maxDepth=1)
-    */
+     * @var null|ArrayCollection the images of the relay point type
+     *
+     * @ORM\OneToMany(targetEntity="\App\Image\Entity\Image", mappedBy="relayPointType", cascade={"persist"})
+     * @ORM\OrderBy({"position" = "ASC"})
+     * @Groups({"readRelayPoint","writeRelayPoint"})
+     * @MaxDepth(1)
+     * @ApiSubresource(maxDepth=1)
+     */
     private $images;
 
     /**
-     * @var Icon|null The icon related to the relayPointType.
+     * @var null|Icon the icon related to the relayPointType
      *
      * @ORM\ManyToOne(targetEntity="\App\Image\Entity\Icon", inversedBy="relayPointTypes")
      * @ORM\JoinColumn(onDelete="SET NULL")
@@ -183,7 +183,7 @@ class RelayPointType
     private $icon;
 
     /**
-     * @var \DateTimeInterface Creation date.
+     * @var \DateTimeInterface creation date
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"readRelayPoint"})
@@ -191,7 +191,7 @@ class RelayPointType
     private $createdDate;
 
     /**
-     * @var \DateTimeInterface Updated date.
+     * @var \DateTimeInterface updated date
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"readRelayPoint"})
@@ -199,35 +199,34 @@ class RelayPointType
     private $updatedDate;
 
     /**
-     * @var int|null The relay point type icon id
+     * @var null|int The relay point type icon id
      * @Groups({"aRead","aWrite"})
      */
     private $iconId;
 
     /**
-     * @var string|null The relay point type icon name
+     * @var null|string The relay point type icon name
      * @Groups("aRead")
      */
     private $iconName;
 
     /**
-     * @var string|null The relay point type private icon name
+     * @var null|string The relay point type private icon name
      * @Groups("aRead")
      */
     private $iconPrivateName;
 
     /**
-     * @var string|null The relay point type icon url
+     * @var null|string The relay point type icon url
      * @Groups("aRead")
      */
     private $iconUrl;
 
     /**
-     * @var string|null The relay point type private icon url
+     * @var null|string The relay point type private icon url
      * @Groups("aRead")
      */
     private $iconPrivateUrl;
-
 
     public function __construct()
     {
@@ -327,6 +326,7 @@ class RelayPointType
         if (is_null($this->iconId)) {
             return $this->getIcon()->getId();
         }
+
         return $this->iconId;
     }
 
@@ -340,6 +340,7 @@ class RelayPointType
         if ($this->getIcon()) {
             return $this->getIcon()->getName();
         }
+
         return null;
     }
 
@@ -348,6 +349,7 @@ class RelayPointType
         if ($this->getIcon() && $this->getIcon()->getPrivateIconLinked()) {
             return $this->getIcon()->getPrivateIconLinked()->getName();
         }
+
         return null;
     }
 
@@ -356,6 +358,7 @@ class RelayPointType
         if ($this->getIcon()) {
             return $this->getIcon()->getUrl();
         }
+
         return null;
     }
 
@@ -364,9 +367,9 @@ class RelayPointType
         if ($this->getIcon() && $this->getIcon()->getPrivateIconLinked()) {
             return $this->getIcon()->getPrivateIconLinked()->getUrl();
         }
+
         return null;
     }
-
 
     // DOCTRINE EVENTS
 
@@ -377,7 +380,7 @@ class RelayPointType
      */
     public function setAutoCreatedDate()
     {
-        $this->setCreatedDate(new \Datetime());
+        $this->setCreatedDate(new \DateTime());
     }
 
     /**
@@ -387,6 +390,6 @@ class RelayPointType
      */
     public function setAutoUpdatedDate()
     {
-        $this->setUpdatedDate(new \Datetime());
+        $this->setUpdatedDate(new \DateTime());
     }
 }

@@ -19,17 +19,17 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Event\Security;
 
-use App\Auth\Service\AuthManager;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use App\Event\Entity\Event;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
+use App\Auth\Service\AuthManager;
+use App\Event\Entity\Event;
 use App\Event\Service\EventManager;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class EventVoter extends Voter
 {
@@ -62,8 +62,8 @@ class EventVoter extends Voter
             self::EVENT_DELETE,
             self::EVENT_REPORT,
             self::EVENT_LIST,
-            self::EVENT_LIST_ADS
-            ])) {
+            self::EVENT_LIST_ADS,
+        ])) {
             return false;
         }
 
@@ -75,8 +75,8 @@ class EventVoter extends Voter
             self::EVENT_DELETE,
             self::EVENT_REPORT,
             self::EVENT_LIST,
-            self::EVENT_LIST_ADS
-            ]) && !($subject instanceof Paginator) && !($subject instanceof Event)) {
+            self::EVENT_LIST_ADS,
+        ]) && !($subject instanceof Paginator) && !($subject instanceof Event)) {
             return false;
         }
 
@@ -88,27 +88,34 @@ class EventVoter extends Voter
         switch ($attribute) {
             case self::EVENT_CREATE:
                 return $this->canCreateEvent();
+
             case self::EVENT_READ:
                 return $this->canReadEvent($subject);
+
             case self::EVENT_UPDATE:
                 return $this->canUpdateEvent($subject);
+
             case self::EVENT_DELETE:
                 return $this->canDeleteEvent($subject);
+
             case self::EVENT_REPORT:
                 // here we don't have the denormalized event, we need to get it from the request
                 if ($event = $this->eventManager->getEvent($this->request->get('id'))) {
                     return $this->canReadEvent($event);
                 }
+
                 return false;
+
             case self::EVENT_LIST_ADS:
                 // here we don't have the denormalized event, we need to get it from the request
                 if ($event = $this->eventManager->getEvent($this->request->get('id'))) {
                     return $this->canReadEvent($event);
                 }
+
                 return false;
+
             case self::EVENT_LIST:
                 return $this->canListEvent();
-
         }
 
         throw new \LogicException('This code should not be reached!');
@@ -121,17 +128,17 @@ class EventVoter extends Voter
 
     private function canReadEvent(Event $event)
     {
-        return $this->authManager->isAuthorized(self::EVENT_READ, ['event'=>$event]);
+        return $this->authManager->isAuthorized(self::EVENT_READ, ['event' => $event]);
     }
 
     private function canUpdateEvent(Event $event)
     {
-        return $this->authManager->isAuthorized(self::EVENT_UPDATE, ['event'=>$event]);
+        return $this->authManager->isAuthorized(self::EVENT_UPDATE, ['event' => $event]);
     }
 
     private function canDeleteEvent(Event $event)
     {
-        return $this->authManager->isAuthorized(self::EVENT_DELETE, ['event'=>$event]);
+        return $this->authManager->isAuthorized(self::EVENT_DELETE, ['event' => $event]);
     }
 
     private function canListEvent()

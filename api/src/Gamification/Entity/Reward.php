@@ -19,61 +19,59 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Gamification\Entity;
 
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Gamification\Interfaces\GamificationNotificationInterface;
-use App\Geography\Entity\Territory;
-use App\Image\Entity\Image;
 use App\User\Entity\User;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 /**
-* Gamification : A Reward of a Badge to a User
-* @author Maxime Bardot <maxime.bardot@mobicoop.org>
-*
-* @ORM\Entity
-* @ORM\HasLifecycleCallbacks
-* @ApiResource(
-*     attributes={
-*          "force_eager"=false,
-*          "normalization_context"={"groups"={"readGamification"}, "enable_max_depth"="true"}
-*     },
-*     collectionOperations={
-*          "get"={
-*              "security"="is_granted('reject',object)",
-*              "swagger_context" = {
-*                  "summary"="Not implemented",
-*                  "tags"={"Gamification"}
-*               }
-*           }
-*      },
-*      itemOperations={
-*          "get"={
-*              "security"="is_granted('reject',object)",
-*              "swagger_context" = {
-*                  "summary"="Not implemented",
-*                  "tags"={"Gamification"}
-*              }
-*          },
-*          "tagAsNotified"={
-*              "method"="GET",
-*              "path"="/rewards/{id}/tagAsNotified",
-*              "normalization_context"={"groups"={"tagAsNotified"}},
-*              "swagger_context" = {
-*                  "summary"="Tag a Reward as notified to the User",
-*                  "tags"={"Gamification"}
-*              }
-*          },
-*      }
-* )
-*/
+ * Gamification : A Reward of a Badge to a User.
+ *
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ *
+ * @ORM\Entity
+ * @ORM\HasLifecycleCallbacks
+ * @ApiResource(
+ *     attributes={
+ *          "force_eager"=false,
+ *          "normalization_context"={"groups"={"readGamification"}, "enable_max_depth"="true"}
+ *     },
+ *     collectionOperations={
+ *          "get"={
+ *              "security"="is_granted('reject',object)",
+ *              "swagger_context" = {
+ *                  "summary"="Not implemented",
+ *                  "tags"={"Gamification"}
+ *               }
+ *           }
+ *      },
+ *      itemOperations={
+ *          "get"={
+ *              "security"="is_granted('reject',object)",
+ *              "swagger_context" = {
+ *                  "summary"="Not implemented",
+ *                  "tags"={"Gamification"}
+ *              }
+ *          },
+ *          "tagAsNotified"={
+ *              "method"="GET",
+ *              "path"="/rewards/{id}/tagAsNotified",
+ *              "normalization_context"={"groups"={"tagAsNotified"}},
+ *              "swagger_context" = {
+ *                  "summary"="Tag a Reward as notified to the User",
+ *                  "tags"={"Gamification"}
+ *              }
+ *          },
+ *      }
+ * )
+ */
 class Reward implements GamificationNotificationInterface
 {
     /**
@@ -215,7 +213,7 @@ class Reward implements GamificationNotificationInterface
      */
     public function setAutoCreatedDate()
     {
-        $this->setCreatedDate(new \Datetime());
+        $this->setCreatedDate(new \DateTime());
     }
 
     /**
@@ -225,6 +223,6 @@ class Reward implements GamificationNotificationInterface
      */
     public function setAutoUpdatedDate()
     {
-        $this->setUpdatedDate(new \Datetime());
+        $this->setUpdatedDate(new \DateTime());
     }
 }

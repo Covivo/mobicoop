@@ -15,7 +15,7 @@ final class Version20200129091826 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('INSERT INTO `action` (`id`, `name`, `in_log`, `position`) VALUES (22, \'user_registered_delegate\', 0, 0);');
         $this->addSql('INSERT INTO `action` (`id`, `name`, `in_log`, `position`) VALUES (23, \'user_registered_delegate_password_send\', 0, 0);');
@@ -26,7 +26,7 @@ final class Version20200129091826 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('DELETE FROM `notification` WHERE `action_id` = 22;');
         $this->addSql('DELETE FROM `notification` WHERE `action_id` = 23;');

@@ -18,25 +18,24 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Communication\EventSubscriber;
 
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use App\Communication\Service\NotificationManager;
 use App\Payment\Event\ConfirmDirectPaymentEvent;
 use App\Payment\Event\ConfirmDirectPaymentRegularEvent;
 use App\Payment\Event\IdentityProofAcceptedEvent;
-use App\Payment\Event\IdentityProofRejectedEvent;
 use App\Payment\Event\IdentityProofOutdatedEvent;
+use App\Payment\Event\IdentityProofRejectedEvent;
 use App\Payment\Event\PayAfterCarpoolEvent;
 use App\Payment\Event\PayAfterCarpoolRegularEvent;
 use App\Payment\Event\SignalDeptEvent;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class PaymentSubscriber implements EventSubscriberInterface
 {
     private $notificationManager;
-
 
     public function __construct(NotificationManager $notificationManager)
     {
@@ -53,7 +52,7 @@ class PaymentSubscriber implements EventSubscriberInterface
             SignalDeptEvent::NAME => 'onSignalDept',
             IdentityProofAcceptedEvent::NAME => 'onIdentityProofAccepted',
             IdentityProofRejectedEvent::NAME => 'onIdentityProofRejected',
-            IdentityProofOutdatedEvent::NAME => 'onIdentityProofOutdated'
+            IdentityProofOutdatedEvent::NAME => 'onIdentityProofOutdated',
         ];
     }
 

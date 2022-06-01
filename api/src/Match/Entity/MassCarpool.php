@@ -19,41 +19,37 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Match\Entity;
 
-use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * An Carpool between two peoples after a Matching diagnostic
+ * An Carpool between two peoples after a Matching diagnostic.
  */
 class MassCarpool
 {
     /**
-     * @var MassPerson $person1
+     * @var MassPerson
      * @Groups({"mass","massCompute"})
      */
     private $person1;
 
     /**
-     * @var MassPerson $person2
+     * @var MassPerson
      * @Groups({"mass","massCompute"})
      */
     private $person2;
 
     /**
-     * @var MassJourney $journey
+     * @var MassJourney
      * @Groups({"mass","massCompute"})
      */
     private $journey;
 
     /**
      * MassCarpool constructor.
-     * @param MassPerson $person1
-     * @param MassPerson $person2
-     * @param MassJourney $journey
      */
     public function __construct(MassPerson $person1, MassPerson $person2, MassJourney $journey)
     {

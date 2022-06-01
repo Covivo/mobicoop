@@ -19,14 +19,14 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Auth\Controller;
 
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpFoundation\Response;
 use App\Auth\Entity\Permission;
 use App\Auth\Service\AuthManager;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Controller class for permission list.
@@ -46,9 +46,6 @@ class Permissions
 
     /**
      * This method is invoked when a permission list is asked.
-     *
-     * @param array $data
-     * @return Response
      */
     public function __invoke(array $data): Response
     {

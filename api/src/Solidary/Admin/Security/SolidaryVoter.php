@@ -19,16 +19,16 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\Admin\Security;
 
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
 use App\Auth\Service\AuthManager;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use App\Solidary\Entity\Solidary;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class SolidaryVoter extends Voter
 {
@@ -60,8 +60,8 @@ class SolidaryVoter extends Voter
             self::ADMIN_SOLIDARY_READ,
             self::ADMIN_SOLIDARY_UPDATE,
             self::ADMIN_SOLIDARY_DELETE,
-            self::ADMIN_SOLIDARY_LIST
-            ])) {
+            self::ADMIN_SOLIDARY_LIST,
+        ])) {
             return false;
         }
 
@@ -71,10 +71,11 @@ class SolidaryVoter extends Voter
             self::ADMIN_SOLIDARY_READ,
             self::ADMIN_SOLIDARY_UPDATE,
             self::ADMIN_SOLIDARY_DELETE,
-            self::ADMIN_SOLIDARY_LIST
-            ]) && !($subject instanceof Paginator) && !($subject instanceof Solidary)) {
+            self::ADMIN_SOLIDARY_LIST,
+        ]) && !($subject instanceof Paginator) && !($subject instanceof Solidary)) {
             return false;
         }
+
         return true;
     }
 
@@ -83,15 +84,20 @@ class SolidaryVoter extends Voter
         switch ($attribute) {
             case self::ADMIN_SOLIDARY_CREATE:
                 return $this->canCreateSolidary();
+
             case self::ADMIN_SOLIDARY_READ:
                 return $this->canReadSolidary($subject);
+
             case self::ADMIN_SOLIDARY_UPDATE:
                 return $this->canUpdateSolidary($subject);
+
             case self::ADMIN_SOLIDARY_DELETE:
                 return $this->canDeleteSolidary($subject);
+
             case self::ADMIN_SOLIDARY_LIST:
                 return $this->canListSolidary();
         }
+
         throw new \LogicException('This code should not be reached!');
     }
 
@@ -102,17 +108,17 @@ class SolidaryVoter extends Voter
 
     private function canReadSolidary(Solidary $solidary)
     {
-        return $this->authManager->isAuthorized(self::SOLIDARY_READ, ['solidary'=>$solidary]);
+        return $this->authManager->isAuthorized(self::SOLIDARY_READ, ['solidary' => $solidary]);
     }
 
     private function canUpdateSolidary(Solidary $solidary)
     {
-        return $this->authManager->isAuthorized(self::SOLIDARY_UPDATE, ['solidary'=>$solidary]);
+        return $this->authManager->isAuthorized(self::SOLIDARY_UPDATE, ['solidary' => $solidary]);
     }
 
     private function canDeleteSolidary(Solidary $solidary)
     {
-        return $this->authManager->isAuthorized(self::SOLIDARY_DELETE, ['solidary'=>$solidary]);
+        return $this->authManager->isAuthorized(self::SOLIDARY_DELETE, ['solidary' => $solidary]);
     }
 
     private function canListSolidary()

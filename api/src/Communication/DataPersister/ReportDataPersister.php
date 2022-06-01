@@ -18,7 +18,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Communication\DataPersister;
 
@@ -27,7 +27,8 @@ use App\Communication\Ressource\Report;
 use App\Communication\Service\ReportManager;
 
 /**
- * Post a report
+ * Post a report.
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 final class ReportDataPersister implements ContextAwareDataPersisterInterface
@@ -41,7 +42,7 @@ final class ReportDataPersister implements ContextAwareDataPersisterInterface
 
     public function supports($data, array $context = []): bool
     {
-        return $data instanceof Report && isset($context['collection_operation_name']) && $context['collection_operation_name'] == 'post';
+        return $data instanceof Report && isset($context['collection_operation_name']) && 'post' == $context['collection_operation_name'];
     }
 
     public function persist($data, array $context = [])

@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\Admin\Extension;
 
@@ -27,18 +27,16 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryCollectionExtensionInter
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryItemExtensionInterface;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use App\App\Entity\App;
-use App\User\Entity\User;
-use App\Geography\Entity\Territory;
 use App\Auth\Service\AuthManager;
+use App\User\Entity\User;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\Security\Core\Security;
 
 /**
-  *  Extension used to add an automatic filter to the admin get collection request
-  *  In admin, one can only manage and see the users that belong to its territories
-  *  We check the user's home address, and the origin / destination of its proposals
-*/
-
+ *  Extension used to add an automatic filter to the admin get collection request
+ *  In admin, one can only manage and see the users that belong to its territories
+ *  We check the user's home address, and the origin / destination of its proposals.
+ */
 final class UserTerritoryFilterExtension implements QueryCollectionExtensionInterface, QueryItemExtensionInterface
 {
     private $security;
@@ -52,14 +50,14 @@ final class UserTerritoryFilterExtension implements QueryCollectionExtensionInte
 
     public function applyToCollection(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
     {
-        if ($resourceClass == User::class && $operationName == 'ADMIN_get') {
+        if (User::class == $resourceClass && 'ADMIN_get' == $operationName) {
             $this->addWhere($queryBuilder, $resourceClass, false, $operationName);
         }
     }
 
     public function applyToItem(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, array $identifiers, string $operationName = null, array $context = [])
     {
-        if ($resourceClass == User::class && $operationName == 'ADMIN_get') {
+        if (User::class == $resourceClass && 'ADMIN_get' == $operationName) {
             $this->addWhere($queryBuilder, $resourceClass, true, $operationName, $identifiers, $context);
         }
     }
@@ -77,22 +75,23 @@ final class UserTerritoryFilterExtension implements QueryCollectionExtensionInte
         if ($isItem) {
         } else {
             switch ($operationName) {
-                case "ADMIN_get":
-                    $territories = $this->authManager->getTerritoriesForItem("user_list");
+                case 'ADMIN_get':
+                    $territories = $this->authManager->getTerritoriesForItem('user_list');
             }
         }
 
-        if (count($territories)>0) {
+        if (count($territories) > 0) {
             $rootAlias = $queryBuilder->getRootAliases()[0];
             $queryBuilder
-            ->leftJoin($rootAlias.".addresses", 'autfe')
-            ->leftJoin("autfe.territories", 'atutfe')
-            ->leftJoin($rootAlias.".proposals", 'putfe')
-            ->leftJoin("putfe.waypoints", 'wutfe')
-            ->leftJoin("wutfe.address", 'a2utfe')
-            ->leftJoin("a2utfe.territories", 'awptutfe')
-            ->andWhere("(autfe.home = 1 AND atutfe.id in (:territories)) OR (putfe.private <> 1 AND (wutfe.position = 0 OR wutfe.destination = 1) AND awptutfe.id in (:territories))")
-            ->setParameter('territories', $territories);
+                ->leftJoin($rootAlias.'.addresses', 'autfe')
+                ->leftJoin('autfe.territories', 'atutfe')
+                ->leftJoin($rootAlias.'.proposals', 'putfe')
+                ->leftJoin('putfe.waypoints', 'wutfe')
+                ->leftJoin('wutfe.address', 'a2utfe')
+                ->leftJoin('a2utfe.territories', 'awptutfe')
+                ->andWhere('(autfe.home = 1 AND atutfe.id in (:territories)) OR (putfe.private <> 1 AND (wutfe.position = 0 OR wutfe.destination = 1) AND awptutfe.id in (:territories))')
+                ->setParameter('territories', $territories)
+            ;
         }
     }
 }

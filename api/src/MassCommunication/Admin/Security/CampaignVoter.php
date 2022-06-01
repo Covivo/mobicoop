@@ -19,15 +19,15 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\MassCommunication\Admin\Security;
 
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
 use App\Auth\Service\AuthManager;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use App\MassCommunication\Entity\Campaign;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class CampaignVoter extends Voter
 {
@@ -59,8 +59,8 @@ class CampaignVoter extends Voter
             self::ADMIN_CAMPAIGN_DELETE,
             self::ADMIN_CAMPAIGN_LIST,
             self::ADMIN_CAMPAIGN_SEND,
-            self::ADMIN_CAMPAIGN_TEST
-            ])) {
+            self::ADMIN_CAMPAIGN_TEST,
+        ])) {
             return false;
         }
 
@@ -72,10 +72,11 @@ class CampaignVoter extends Voter
             self::ADMIN_CAMPAIGN_DELETE,
             self::ADMIN_CAMPAIGN_LIST,
             self::ADMIN_CAMPAIGN_SEND,
-            self::ADMIN_CAMPAIGN_TEST
-            ]) && !($subject instanceof Paginator) && !($subject instanceof Campaign)) {
+            self::ADMIN_CAMPAIGN_TEST,
+        ]) && !($subject instanceof Paginator) && !($subject instanceof Campaign)) {
             return false;
         }
+
         return true;
     }
 
@@ -84,16 +85,22 @@ class CampaignVoter extends Voter
         switch ($attribute) {
             case self::ADMIN_CAMPAIGN_CREATE:
                 return $this->canCreateCampaign();
+
             case self::ADMIN_CAMPAIGN_READ:
                 return $this->canReadCampaign($subject);
+
             case self::ADMIN_CAMPAIGN_UPDATE:
                 return $this->canUpdateCampaign($subject);
+
             case self::ADMIN_CAMPAIGN_DELETE:
                 return $this->canDeleteCampaign($subject);
+
             case self::ADMIN_CAMPAIGN_LIST:
                 return $this->canListCampaign();
+
             case self::ADMIN_CAMPAIGN_SEND:
                 return $this->canSendCampaign($subject);
+
             case self::ADMIN_CAMPAIGN_TEST:
                 return $this->canTestCampaign($subject);
         }
@@ -108,17 +115,17 @@ class CampaignVoter extends Voter
 
     private function canReadCampaign(Campaign $campaign)
     {
-        return $this->authManager->isAuthorized(self::CAMPAIGN_READ, ['campaign'=>$campaign]);
+        return $this->authManager->isAuthorized(self::CAMPAIGN_READ, ['campaign' => $campaign]);
     }
 
     private function canUpdateCampaign(Campaign $campaign)
     {
-        return $this->authManager->isAuthorized(self::CAMPAIGN_UPDATE, ['campaign'=>$campaign]);
+        return $this->authManager->isAuthorized(self::CAMPAIGN_UPDATE, ['campaign' => $campaign]);
     }
 
     private function canDeleteCampaign(Campaign $campaign)
     {
-        return $this->authManager->isAuthorized(self::CAMPAIGN_DELETE, ['campaign'=>$campaign]);
+        return $this->authManager->isAuthorized(self::CAMPAIGN_DELETE, ['campaign' => $campaign]);
     }
 
     private function canListCampaign()
@@ -128,11 +135,11 @@ class CampaignVoter extends Voter
 
     private function canSendCampaign(Campaign $campaign)
     {
-        return $this->authManager->isAuthorized(self::CAMPAIGN_READ, ['campaign'=>$campaign]);
+        return $this->authManager->isAuthorized(self::CAMPAIGN_READ, ['campaign' => $campaign]);
     }
 
     private function canTestCampaign(Campaign $campaign)
     {
-        return $this->authManager->isAuthorized(self::CAMPAIGN_READ, ['campaign'=>$campaign]);
+        return $this->authManager->isAuthorized(self::CAMPAIGN_READ, ['campaign' => $campaign]);
     }
 }

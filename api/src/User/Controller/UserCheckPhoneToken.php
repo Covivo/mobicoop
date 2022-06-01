@@ -19,17 +19,17 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\Controller;
 
 use App\TranslatorTrait;
-use Symfony\Component\HttpFoundation\Response;
 use App\User\Entity\User;
 use App\User\Service\UserManager;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Controller class for UserCheckPhoneToken
+ * Controller class for UserCheckPhoneToken.
  *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
@@ -45,10 +45,9 @@ class UserCheckPhoneToken
     }
 
     /**
-     * This method is invoked when
+     * This method is invoked when.
      *
      * @param $data
-     * @return Response
      */
     public function __invoke(User $data): Response
     {

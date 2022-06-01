@@ -19,14 +19,14 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Editorial\EntityListener;
 
-use Doctrine\ORM\Mapping as ORM;
-use Doctrine\ORM\Event\LifecycleEventArgs;
 use App\Editorial\Entity\Editorial;
 use App\Editorial\Repository\EditorialRepository;
+use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\ORM\Mapping as ORM;
 
 class EditorialListener
 {
@@ -42,7 +42,7 @@ class EditorialListener
     /** @ORM\PostPersist */
     public function postPersistHandler(Editorial $editorial, LifecycleEventArgs $args)
     {
-        if ($editorial->getStatus() === Editorial::STATUS_ACTIVE) {
+        if (Editorial::STATUS_ACTIVE === $editorial->getStatus()) {
             $this->editorialRepository->setInactive($editorial);
         }
     }
@@ -50,7 +50,7 @@ class EditorialListener
     /** @ORM\PostUpdate */
     public function postUpdateHandler(Editorial $editorial, LifecycleEventArgs $args)
     {
-        if ($editorial->getStatus() === Editorial::STATUS_ACTIVE) {
+        if (Editorial::STATUS_ACTIVE === $editorial->getStatus()) {
             $this->editorialRepository->setInactive($editorial);
         }
     }
@@ -58,9 +58,9 @@ class EditorialListener
     /** @ORM\PostLoad */
     public function postLoad(Editorial $editorial, LifecycleEventArgs $args)
     {
-        if (is_array($editorial->getImages()) && count($editorial->getImages())>0) {
+        if (is_array($editorial->getImages()) && count($editorial->getImages()) > 0) {
             foreach ($editorial->getImages() as $image) {
-                $image->setUrl($this->dataUri."editorials/images/".$image->getFilename());
+                $image->setUrl($this->dataUri.'editorials/images/'.$image->getFilename());
             }
         }
     }

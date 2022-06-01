@@ -851,8 +851,6 @@ break;
 
     /**
      * Get manually available triggered actions.
-     *
-     * @return array
      */
     public function getActions(): array
     {
@@ -1149,8 +1147,6 @@ break;
      * @param string $filename         The filename of the file
      * @param int    $solidaryId       The solidary record id
      * @param int    $structureProofId The structure proof id
-     *
-     * @return Proof
      */
     public function createProof(?File $file = null, ?string $filename = null, ?int $solidaryId = null, ?int $structureProofId = null): Proof
     {
@@ -1399,7 +1395,7 @@ break;
      * @param string   $day       The shorten name of the day (3 letters)
      * @param array    $schedules The resulting schedules (passed by reference)
      */
-    private function treatDay(Proposal $proposal, int $num, string $day, array & $schedules)
+    private function treatDay(Proposal $proposal, int $num, string $day, array &$schedules)
     {
         $checkMethod = 'is'.$day.'Check';
         $timeMethod = 'get'.$day.'Time';

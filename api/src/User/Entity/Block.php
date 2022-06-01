@@ -19,16 +19,16 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * A Block between two Users
+ * A Block between two Users.
  *
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
@@ -38,7 +38,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 class Block
 {
     /**
-     * @var int The id of this Block.
+     * @var int the id of this Block
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -53,11 +53,11 @@ class Block
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="blocks")
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
-    */
+     */
     private $user;
 
     /**
-     * @var User The User blocked by $user
+     * @var User The User blocked by
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="blockBys")
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
@@ -65,7 +65,7 @@ class Block
     private $blockedUser;
 
     /**
-     * @var \DateTimeInterface Creation date of this Block.
+     * @var \DateTimeInterface creation date of this Block
      *
      * @ORM\Column(type="datetime")
      * @Groups({"readBlock"})
@@ -113,7 +113,6 @@ class Block
         return $this;
     }
 
-
     // DOCTRINE EVENTS
 
     /**
@@ -123,6 +122,6 @@ class Block
      */
     public function setAutoCreatedDate()
     {
-        $this->setCreatedDate(new \Datetime());
+        $this->setCreatedDate(new \DateTime());
     }
 }

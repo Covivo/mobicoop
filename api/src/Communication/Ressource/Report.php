@@ -19,19 +19,19 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Communication\Ressource;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Event\Entity\Event;
+use App\User\Entity\User;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
-use App\User\Entity\User;
 
 /**
- * A Report
+ * A Report.
  *
  * @ApiResource(
  *      attributes={
@@ -62,6 +62,7 @@ use App\User\Entity\User;
  *          }
  *      }
  * )
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class Report
@@ -77,7 +78,7 @@ class Report
     private $id;
 
     /**
-     * @var string|null Email of the reporter
+     * @var null|string Email of the reporter
      * @Assert\NotBlank
      * @Assert\Email()
      * @Groups({"readReport","writeReport"})
@@ -85,20 +86,20 @@ class Report
     private $reporterEmail;
 
     /**
-     * @var string|null Text of the Report
+     * @var null|string Text of the Report
      * @Assert\NotBlank
      * @Groups({"readReport","writeReport"})
      */
     private $text;
 
     /**
-     * @var int|null If the report is about a User
+     * @var null|int If the report is about a User
      * @Groups({"readReport","writeReport"})
      */
     private $userId;
 
     /**
-     * @var int|null If the report is about an Event
+     * @var null|int If the report is about an Event
      * @Groups({"readReport","writeReport"})
      */
     private $eventId;

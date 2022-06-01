@@ -25,7 +25,6 @@ namespace App\RelayPoint\Repository;
 
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryResultCollectionExtensionInterface;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGenerator;
-use ApiPlatform\Core\DataProvider\PaginatorInterface;
 use App\Community\Entity\Community;
 use App\RelayPoint\Entity\RelayPoint;
 use App\User\Entity\User;

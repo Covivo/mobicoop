@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Geography\EventListener;
 
@@ -27,7 +27,7 @@ use Doctrine\DBAL\Event\SchemaAlterTableAddColumnEventArgs;
 use Doctrine\DBAL\Event\SchemaAlterTableRemoveColumnEventArgs;
 
 /**
- * Territory Event listener
+ * Territory Event listener.
  */
 class TerritoryEventListener
 {
@@ -35,7 +35,7 @@ class TerritoryEventListener
     {
         $tableColumn = $args->getColumn();
         $table = $args->getTableDiff();
-        if ($table->name == 'territory' && $tableColumn->getName() == 'geo_json_detail') {
+        if ('territory' == $table->name && 'geo_json_detail' == $tableColumn->getName()) {
             $args->preventDefault();
         }
     }
@@ -44,7 +44,7 @@ class TerritoryEventListener
     {
         $tableColumn = $args->getColumn();
         $table = $args->getTableDiff();
-        if ($table->name == 'territory' && $tableColumn->getName() == 'geo_json_detail') {
+        if ('territory' == $table->name && 'geo_json_detail' == $tableColumn->getName()) {
             $args->preventDefault();
         }
     }

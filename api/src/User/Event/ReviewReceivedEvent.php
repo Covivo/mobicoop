@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\Event;
 
@@ -27,7 +27,7 @@ use App\User\Entity\Review;
 use Symfony\Contracts\EventDispatcher\Event;
 
 /**
- * Event sent when a user receive a review
+ * Event sent when a user receive a review.
  */
 class ReviewReceivedEvent extends Event
 {

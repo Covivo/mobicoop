@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Import\Ressource;
 
@@ -55,6 +55,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *          }
  *      }
  * )
+ *
  *  @author Sylvain Briat <sylvain.briat@mobicoop.org>
  */
 class FakeUser
@@ -62,7 +63,7 @@ class FakeUser
     public const DEFAULT_ID = 999999999999;
 
     /**
-     * @var int The id of this fake user.
+     * @var int the id of this fake user
      * @Groups({"readFake"})
      *
      * @ApiProperty(identifier=true)

@@ -19,22 +19,20 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Carpool\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping as ORM;
-use Doctrine\ORM\Events;
 use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiSubresource;
 use App\Action\Entity\Log;
+use App\Communication\Entity\Notified;
+use App\Solidary\Entity\SolidaryMatching;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Events;
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
-use App\Communication\Entity\Notified;
-use App\Solidary\Entity\SolidaryMatching;
 
 /**
  * Carpooling : matching between an offer and a request.
@@ -68,7 +66,7 @@ class Matching
     public const DEFAULT_ID = 999999999999;
 
     /**
-     * @var int The id of this matching.
+     * @var int the id of this matching
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -78,7 +76,7 @@ class Matching
     private $id;
 
     /**
-     * @var \DateTimeInterface Creation date of the matching.
+     * @var \DateTimeInterface creation date of the matching
      *
      * @ORM\Column(type="datetime")
      * @Groups({"read","threads","thread"})
@@ -86,7 +84,7 @@ class Matching
     private $createdDate;
 
     /**
-     * @var \DateTimeInterface Updated date of the matching.
+     * @var \DateTimeInterface updated date of the matching
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read","threads","thread"})
@@ -94,7 +92,7 @@ class Matching
     private $updatedDate;
 
     /**
-     * @var Proposal The offer proposal.
+     * @var Proposal the offer proposal
      *
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal", inversedBy="matchingRequests", cascade={"persist"})
@@ -105,7 +103,7 @@ class Matching
     private $proposalOffer;
 
     /**
-     * @var Proposal The request proposal.
+     * @var Proposal the request proposal
      *
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal", inversedBy="matchingOffers", cascade={"persist"})
@@ -116,7 +114,7 @@ class Matching
     private $proposalRequest;
 
     /**
-     * @var Criteria The criteria applied to this matching.
+     * @var Criteria the criteria applied to this matching
      *
      * @Assert\NotBlank
      * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Criteria", cascade={"persist"})
@@ -127,13 +125,13 @@ class Matching
     private $criteria;
 
     /**
-     * @var Matching|null Related matching for a round trip (return or outward journey).
-     * Not persisted : used only to get the return trip information.
+     * @var null|Matching Related matching for a round trip (return or outward journey).
+     *                    Not persisted : used only to get the return trip information.
      */
     private $matchingRelated;
 
     /**
-     * @var Matching|null Linked matching for return trip.
+     * @var null|Matching linked matching for return trip
      *
      * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Matching", cascade={"persist"})
      * @ORM\JoinColumn(onDelete="CASCADE")
@@ -143,7 +141,7 @@ class Matching
     private $matchingLinked;
 
     /**
-     * @var Matching|null Opposite matching (if proposal and request can be switched, so if driver and passenger can switch roles).
+     * @var null|Matching opposite matching (if proposal and request can be switched, so if driver and passenger can switch roles)
      *
      * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Matching", cascade={"persist"})
      * @ORM\JoinColumn(onDelete="CASCADE")
@@ -153,7 +151,7 @@ class Matching
     private $matchingOpposite;
 
     /**
-     * @var ArrayCollection The asks made for this matching.
+     * @var ArrayCollection the asks made for this matching
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Ask", mappedBy="matching")
      * @Groups({"read"})
@@ -162,7 +160,7 @@ class Matching
     private $asks;
 
     /**
-     * @var ArrayCollection The waypoints of the matching.
+     * @var ArrayCollection the waypoints of the matching
      *
      * @Assert\NotBlank
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Waypoint", mappedBy="matching", cascade={"persist"})
@@ -173,7 +171,7 @@ class Matching
     private $waypoints;
 
     /**
-     * @var ArrayCollection|null The notifications sent for the matching.
+     * @var null|ArrayCollection the notifications sent for the matching
      *
      * @ORM\OneToMany(targetEntity="\App\Communication\Entity\Notified", mappedBy="matching", cascade={"persist"})
      * @Groups({"read","write"})
@@ -188,98 +186,98 @@ class Matching
     private $filters;
 
     /**
-     * @var int|null The original distance of the driver in metres.
+     * @var null|int the original distance of the driver in metres
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"read","write","results"})
      */
     private $originalDistance;
 
     /**
-     * @var int|null The accepted detour distance of the driver in metres.
+     * @var null|int the accepted detour distance of the driver in metres
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"read","write","results"})
      */
     private $acceptedDetourDistance;
 
     /**
-     * @var int|null The new distance of the driver including the detour in metres.
+     * @var null|int the new distance of the driver including the detour in metres
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"read","write","results"})
      */
     private $newDistance;
 
     /**
-     * @var int|null The detour distance of the driver in metres.
+     * @var null|int the detour distance of the driver in metres
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"read","write","results"})
      */
     private $detourDistance;
 
     /**
-     * @var float|null The detour distance of the driver in percentage of the original distance.
+     * @var null|float the detour distance of the driver in percentage of the original distance
      * @ORM\Column(type="decimal", precision=5, scale=2, nullable=true)
      * @Groups({"read","write","results"})
      */
     private $detourDistancePercent;
 
     /**
-     * @var int|null The original duration of the driver in seconds.
+     * @var null|int the original duration of the driver in seconds
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"read","write","results"})
      */
     private $originalDuration;
 
     /**
-     * @var int|null The accepted detour duration of the driver in seconds.
+     * @var null|int the accepted detour duration of the driver in seconds
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"read","write","results"})
      */
     private $acceptedDetourDuration;
 
     /**
-     * @var int|null The new duration of the driver including the detour in seconds.
+     * @var null|int the new duration of the driver including the detour in seconds
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"read","write","results"})
      */
     private $newDuration;
 
     /**
-     * @var int|null The detour duration of the driver in seconds.
+     * @var null|int the detour duration of the driver in seconds
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"read","write","results"})
      */
     private $detourDuration;
 
     /**
-     * @var int|null The detour duration of the driver in percentage of the original duration.
+     * @var null|int the detour duration of the driver in percentage of the original duration
      * @ORM\Column(type="decimal", precision=5, scale=2, nullable=true)
      * @Groups({"read","write","results"})
      */
     private $detourDurationPercent;
 
     /**
-     * @var int|null The common distance in metres.
+     * @var null|int the common distance in metres
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"read","write","results"})
      */
     private $commonDistance;
 
     /**
-     * @var int|null The duration till the pick up of the passenger in seconds.
+     * @var null|int the duration till the pick up of the passenger in seconds
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"read","write","results"})
      */
     private $pickUpDuration;
 
     /**
-     * @var int|null The duration till the dropoff of the passenger in seconds.
+     * @var null|int the duration till the dropoff of the passenger in seconds
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"read","write","results"})
      */
     private $dropOffDuration;
 
     /**
-     * @var SolidaryMatching|null The solidary matching if there is any
+     * @var null|SolidaryMatching The solidary matching if there is any
      *
      * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\SolidaryMatching", mappedBy="matching", cascade={"persist"})
      * @Groups({"read","results","readSolidary"})
@@ -288,7 +286,7 @@ class Matching
     private $solidaryMatching;
 
     /**
-     * @var ArrayCollection The logs linked with the Matching.
+     * @var ArrayCollection the logs linked with the Matching
      *
      * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="matching")
      */
@@ -381,7 +379,7 @@ class Matching
         }
 
         // set (or unset) the owning side of the relation if necessary
-        $newMatchingRelated = $matchingRelated === null ? null : $this;
+        $newMatchingRelated = null === $matchingRelated ? null : $this;
         if ($newMatchingRelated !== $matchingRelated->getMatchingRelated()) {
             $matchingRelated->setMatchingRelated($newMatchingRelated);
         }
@@ -403,7 +401,7 @@ class Matching
         }
 
         // set (or unset) the owning side of the relation if necessary
-        $newMatchingLinked = $matchingLinked === null ? null : $this;
+        $newMatchingLinked = null === $matchingLinked ? null : $this;
         if ($newMatchingLinked !== $matchingLinked->getMatchingLinked()) {
             $matchingLinked->setMatchingLinked($newMatchingLinked);
         }
@@ -425,7 +423,7 @@ class Matching
         }
 
         // set (or unset) the owning side of the relation if necessary
-        $newMatchingOpposite = $matchingOpposite === null ? null : $this;
+        $newMatchingOpposite = null === $matchingOpposite ? null : $this;
         if ($newMatchingOpposite !== $matchingOpposite->getMatchingOpposite()) {
             $matchingOpposite->setMatchingOpposite($newMatchingOpposite);
         }
@@ -734,7 +732,7 @@ class Matching
      */
     public function setAutoCreatedDate()
     {
-        $this->setCreatedDate(new \Datetime());
+        $this->setCreatedDate(new \DateTime());
     }
 
     /**
@@ -744,6 +742,6 @@ class Matching
      */
     public function setAutoUpdatedDate()
     {
-        $this->setUpdatedDate(new \Datetime());
+        $this->setUpdatedDate(new \DateTime());
     }
 }

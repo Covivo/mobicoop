@@ -15,7 +15,7 @@ final class Version20200710161047 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('
         INSERT INTO `auth_rule` (`id`, `name`) VALUES
@@ -33,15 +33,15 @@ final class Version20200710161047 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
-        $this->addSql("UPDATE `auth_item` SET `auth_rule_id` = NULL WHERE `auth_item`.`id` = 68;");
-        $this->addSql("UPDATE `auth_item` SET `auth_rule_id` = NULL WHERE `auth_item`.`id` = 82;");
-        $this->addSql("UPDATE `auth_item` SET `auth_rule_id` = NULL WHERE `auth_item`.`id` = 139;");
-        $this->addSql("UPDATE `auth_item` SET `auth_rule_id` = NULL WHERE `auth_item`.`id` = 133;");
-        $this->addSql("DELETE FROM `auth_rule` WHERE `auth_rule`.`id` = 25;");
-        $this->addSql("DELETE FROM `auth_rule` WHERE `auth_rule`.`id` = 26;");
-        $this->addSql("DELETE FROM `auth_rule` WHERE `auth_rule`.`id` = 27;");
-        $this->addSql("DELETE FROM `auth_rule` WHERE `auth_rule`.`id` = 28;");
+        $this->addSql('UPDATE `auth_item` SET `auth_rule_id` = NULL WHERE `auth_item`.`id` = 68;');
+        $this->addSql('UPDATE `auth_item` SET `auth_rule_id` = NULL WHERE `auth_item`.`id` = 82;');
+        $this->addSql('UPDATE `auth_item` SET `auth_rule_id` = NULL WHERE `auth_item`.`id` = 139;');
+        $this->addSql('UPDATE `auth_item` SET `auth_rule_id` = NULL WHERE `auth_item`.`id` = 133;');
+        $this->addSql('DELETE FROM `auth_rule` WHERE `auth_rule`.`id` = 25;');
+        $this->addSql('DELETE FROM `auth_rule` WHERE `auth_rule`.`id` = 26;');
+        $this->addSql('DELETE FROM `auth_rule` WHERE `auth_rule`.`id` = 27;');
+        $this->addSql('DELETE FROM `auth_rule` WHERE `auth_rule`.`id` = 28;');
     }
 }

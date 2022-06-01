@@ -19,14 +19,14 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Action\EventSubscriber;
 
 use App\Action\Event\ActionEvent;
 use App\Action\Service\ActionManager;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use App\User\Event\LoginDelegateEvent;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
@@ -44,7 +44,7 @@ class ActionSubscriber implements EventSubscriberInterface
     {
         return [
             LoginDelegateEvent::NAME => 'onLoginDelegate',
-            ActionEvent::NAME => 'onAction'
+            ActionEvent::NAME => 'onAction',
         ];
     }
 
@@ -54,10 +54,7 @@ class ActionSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * Generic action handler
-     *
-     * @param ActionEvent $event
-     * @return void
+     * Generic action handler.
      */
     public function onAction(ActionEvent $event): void
     {

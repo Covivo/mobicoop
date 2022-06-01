@@ -18,16 +18,14 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\DataProvider;
 
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
 use App\User\Entity\User;
 use App\User\Service\UserManager;
-use LogicException;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Security;
 
@@ -49,14 +47,15 @@ final class UserCommunitiesCollectionDataProvider implements CollectionDataProvi
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return User::class === $resourceClass && $operationName === "communities";
+        return User::class === $resourceClass && 'communities' === $operationName;
     }
 
     public function getCollection(string $resourceClass, string $operationName = null): array
     {
         if (!($this->security->getUser() instanceof User)) {
-            throw new \LogicException("Only a User can use this route");
+            throw new \LogicException('Only a User can use this route');
         }
+
         return $this->userManager->getUserCommunities($this->security->getUser());
     }
 }

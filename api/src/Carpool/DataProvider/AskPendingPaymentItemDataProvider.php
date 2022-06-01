@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Carpool\DataProvider;
 
@@ -33,14 +33,14 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Security;
 
 /**
- * Item DataProvider to check the status of an Ask
+ * Item DataProvider to check the status of an Ask.
  */
 final class AskPendingPaymentItemDataProvider implements RestrictedDataProviderInterface, ItemDataProviderInterface
 {
-    protected $askManager;
-    protected $askRepository;
-    protected $request;
-    protected $security;
+    private $askManager;
+    private $askRepository;
+    private $request;
+    private $security;
 
     public function __construct(AskManager $askManager, AskRepository $askRepository, RequestStack $requestStack, Security $security)
     {
@@ -52,7 +52,7 @@ final class AskPendingPaymentItemDataProvider implements RestrictedDataProviderI
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Ask::class === $resourceClass && $operationName === "pending_payment";
+        return Ask::class === $resourceClass && 'pending_payment' === $operationName;
     }
 
     public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?object
@@ -61,6 +61,7 @@ final class AskPendingPaymentItemDataProvider implements RestrictedDataProviderI
         if (is_null($ask)) {
             throw new PaymentException(PaymentException::NO_ASK_FOUND);
         }
+
         return $this->askManager->getNonValidatedWeeks($ask, $this->security->getUser());
     }
 }

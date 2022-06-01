@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Community\DataProvider;
 
@@ -28,7 +28,6 @@ use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\Community\Entity\Community;
 use App\Community\Service\CommunityManager;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Security;
 
 /**
@@ -36,11 +35,10 @@ use Symfony\Component\Security\Core\Security;
  *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
  * @author Remi Wortemann <remi.wortemann@mobicoop.org>
- *
  */
 final class CommunityIsOwnedByUserCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
-    protected $request;
+    private $request;
     private $communityManager;
     private $security;
 
@@ -53,12 +51,13 @@ final class CommunityIsOwnedByUserCollectionDataProvider implements CollectionDa
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Community::class === $resourceClass && $operationName === "owned";
+        return Community::class === $resourceClass && 'owned' === $operationName;
     }
 
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
-        (!is_null($this->request->get("userId"))) ? $userId = $this->request->get("userId") : $userId = $this->security->getUser()->getId();
+        (!is_null($this->request->get('userId'))) ? $userId = $this->request->get('userId') : $userId = $this->security->getUser()->getId();
+
         return $this->communityManager->getOwnedCommunities($userId);
     }
 }

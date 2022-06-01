@@ -84,6 +84,7 @@ final class CommunityTerritoryFilterExtension implements QueryCollectionExtensio
             $rootAlias = $queryBuilder->getRootAliases()[0];
             $queryBuilder->leftJoin(sprintf('%s.address', $rootAlias), 'a');
             $where = '(';
+
             /**
              * @var Territory $territory
              */

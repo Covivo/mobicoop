@@ -19,14 +19,14 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Auth\Rule;
 
 use App\Auth\Interfaces\AuthRuleInterface;
 
 /**
- *  Check that the requester is the author of the related RelayPoint
+ *  Check that the requester is the author of the related RelayPoint.
  */
 class RelayPointAuthor implements AuthRuleInterface
 {

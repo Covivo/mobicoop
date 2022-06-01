@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Import\DataPersister;
 
@@ -33,7 +33,6 @@ use Symfony\Component\Security\Core\Security;
  * Collection data persister for Fake User creation.
  *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
- *
  */
 final class FakeUserDataPersister implements ContextAwareDataPersisterInterface
 {
@@ -50,20 +49,21 @@ final class FakeUserDataPersister implements ContextAwareDataPersisterInterface
 
     public function supports($data, array $context = []): bool
     {
-        return $data instanceof FakeUser && isset($context['collection_operation_name']) && $context['collection_operation_name'] == 'create';
+        return $data instanceof FakeUser && isset($context['collection_operation_name']) && 'create' == $context['collection_operation_name'];
     }
 
     public function persist($data, array $context = [])
     {
         $this->fakeManager->fakeUsers(
-            $this->request->get("number_users"),
-            $this->request->get("min_lat"),
-            $this->request->get("min_lon"),
-            $this->request->get("max_lat"),
-            $this->request->get("max_lon"),
-            $this->request->get("split", 1),
-            $this->request->get("truncate", false)
+            $this->request->get('number_users'),
+            $this->request->get('min_lat'),
+            $this->request->get('min_lon'),
+            $this->request->get('max_lat'),
+            $this->request->get('max_lon'),
+            $this->request->get('split', 1),
+            $this->request->get('truncate', false)
         );
+
         return $data;
     }
 

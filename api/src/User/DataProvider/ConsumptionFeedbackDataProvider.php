@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\DataProvider;
 
@@ -29,7 +29,7 @@ use App\User\Entity\User;
 use Psr\Log\LoggerInterface;
 
 /**
- * Consumption Feedback DataProvider
+ * Consumption Feedback DataProvider.
  *
  * This service contains methods related to the consumption feedback.
  *
@@ -38,7 +38,7 @@ use Psr\Log\LoggerInterface;
 class ConsumptionFeedbackDataProvider
 {
     private const SUPPORTED_PROVIDERS = [
-        "PassMobilite" => WorldlineProvider::class
+        'PassMobilite' => WorldlineProvider::class,
     ];
 
     private $providerInstance;
@@ -47,7 +47,7 @@ class ConsumptionFeedbackDataProvider
     public function __construct(bool $active, string $provider, int $appId, string $baseUrlAuth, string $baseUrl, string $clientId, string $clientSecret, string $apiKey, LoggerInterface $logger)
     {
         $this->active = $active;
-        if ($active && $provider!=="") {
+        if ($active && '' !== $provider) {
             if (isset(self::SUPPORTED_PROVIDERS[$provider])) {
                 $providerClass = self::SUPPORTED_PROVIDERS[$provider];
                 $this->providerInstance = new $providerClass($clientId, $clientSecret, $baseUrlAuth, $baseUrl, $apiKey, $appId, $logger);
@@ -58,7 +58,7 @@ class ConsumptionFeedbackDataProvider
     }
 
     /**
-     * Get the auth token
+     * Get the auth token.
      */
     public function auth()
     {
@@ -66,7 +66,7 @@ class ConsumptionFeedbackDataProvider
     }
 
     /**
-     * Send a consumption feedback
+     * Send a consumption feedback.
      */
     public function sendConsumptionFeedback()
     {
@@ -74,7 +74,7 @@ class ConsumptionFeedbackDataProvider
     }
 
     /**
-     * Return if the consumption feedback provider is defined and active
+     * Return if the consumption feedback provider is defined and active.
      */
     public function isActive(): bool
     {
@@ -82,9 +82,7 @@ class ConsumptionFeedbackDataProvider
     }
 
     /**
-     * Return the access token
-     *
-     * @return string|null
+     * Return the access token.
      */
     public function getAccessToken(): ?string
     {

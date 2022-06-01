@@ -19,18 +19,18 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\Admin\Security;
 
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
 use App\Auth\Service\AuthManager;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use App\Solidary\Entity\SolidaryBeneficiary;
 use App\Solidary\Entity\SolidaryUser;
 use App\Solidary\Repository\SolidaryUserRepository;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class SolidaryBeneficiaryVoter extends Voter
 {
@@ -64,8 +64,8 @@ class SolidaryBeneficiaryVoter extends Voter
             self::ADMIN_SOLIDARY_BENEFICIARY_READ,
             self::ADMIN_SOLIDARY_BENEFICIARY_UPDATE,
             self::ADMIN_SOLIDARY_BENEFICIARY_DELETE,
-            self::ADMIN_SOLIDARY_BENEFICIARY_LIST
-            ])) {
+            self::ADMIN_SOLIDARY_BENEFICIARY_LIST,
+        ])) {
             return false;
         }
 
@@ -75,10 +75,11 @@ class SolidaryBeneficiaryVoter extends Voter
             self::ADMIN_SOLIDARY_BENEFICIARY_READ,
             self::ADMIN_SOLIDARY_BENEFICIARY_UPDATE,
             self::ADMIN_SOLIDARY_BENEFICIARY_DELETE,
-            self::ADMIN_SOLIDARY_BENEFICIARY_LIST
-            ]) && !($subject instanceof Paginator) && !($subject instanceof SolidaryBeneficiary)) {
+            self::ADMIN_SOLIDARY_BENEFICIARY_LIST,
+        ]) && !($subject instanceof Paginator) && !($subject instanceof SolidaryBeneficiary)) {
             return false;
         }
+
         return true;
     }
 
@@ -87,18 +88,24 @@ class SolidaryBeneficiaryVoter extends Voter
         if (is_null($subject)) {
             $subject = $this->solidaryUserRepository->find($this->request->get('id'));
         }
+
         switch ($attribute) {
             case self::ADMIN_SOLIDARY_BENEFICIARY_CREATE:
                 return $this->canCreateSolidaryBeneficiary();
+
             case self::ADMIN_SOLIDARY_BENEFICIARY_READ:
                 return $this->canReadSolidaryBeneficiary($subject);
+
             case self::ADMIN_SOLIDARY_BENEFICIARY_UPDATE:
                 return $this->canUpdateSolidaryBeneficiary($subject);
+
             case self::ADMIN_SOLIDARY_BENEFICIARY_DELETE:
                 return $this->canDeleteSolidaryBeneficiary($subject);
+
             case self::ADMIN_SOLIDARY_BENEFICIARY_LIST:
                 return $this->canListSolidaryBeneficiary();
         }
+
         throw new \LogicException('This code should not be reached!');
     }
 
@@ -109,17 +116,17 @@ class SolidaryBeneficiaryVoter extends Voter
 
     private function canReadSolidaryBeneficiary(SolidaryUser $solidaryBeneficiary)
     {
-        return $this->authManager->isAuthorized(self::SOLIDARY_BENEFICIARY_READ, ['solidaryBeneficiary'=>$solidaryBeneficiary]);
+        return $this->authManager->isAuthorized(self::SOLIDARY_BENEFICIARY_READ, ['solidaryBeneficiary' => $solidaryBeneficiary]);
     }
 
     private function canUpdateSolidaryBeneficiary(SolidaryUser $solidaryBeneficiary)
     {
-        return $this->authManager->isAuthorized(self::SOLIDARY_BENEFICIARY_UPDATE, ['solidaryBeneficiary'=>$solidaryBeneficiary]);
+        return $this->authManager->isAuthorized(self::SOLIDARY_BENEFICIARY_UPDATE, ['solidaryBeneficiary' => $solidaryBeneficiary]);
     }
 
     private function canDeleteSolidaryBeneficiary(SolidaryUser $solidaryBeneficiary)
     {
-        return $this->authManager->isAuthorized(self::SOLIDARY_BENEFICIARY_DELETE, ['solidaryBeneficiary'=>$solidaryBeneficiary]);
+        return $this->authManager->isAuthorized(self::SOLIDARY_BENEFICIARY_DELETE, ['solidaryBeneficiary' => $solidaryBeneficiary]);
     }
 
     private function canListSolidaryBeneficiary()

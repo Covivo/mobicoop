@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Gamification\Rule;
 
@@ -27,7 +27,7 @@ use App\Carpool\Entity\Ask;
 use App\Gamification\Interfaces\GamificationRuleInterface;
 
 /**
- * Check that the user has accepted a carpool
+ * Check that the user has accepted a carpool.
  */
 class IsCarpoolAccepter implements GamificationRuleInterface
 {
@@ -42,13 +42,14 @@ class IsCarpoolAccepter implements GamificationRuleInterface
         $asks = array_merge($user->getAsks(), $user->getAsksRelated());
         $isCarpooled = false;
         foreach ($asks as $ask) {
-            if ($ask->getStatus() == Ask::STATUS_ACCEPTED_AS_DRIVER || $ask->getStatus() == Ask::STATUS_ACCEPTED_AS_PASSENGER) {
+            if (Ask::STATUS_ACCEPTED_AS_DRIVER == $ask->getStatus() || Ask::STATUS_ACCEPTED_AS_PASSENGER == $ask->getStatus()) {
                 $isCarpooled = true;
             }
         }
         if ($isCarpooled) {
             return true;
         }
+
         return false;
     }
 }

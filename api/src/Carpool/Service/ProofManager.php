@@ -128,8 +128,6 @@ class ProofManager
      * Get a carpool proof by its id.
      *
      * @param int $id The id of the proof
-     *
-     * @return ClassicProof
      */
     public function getClassicProof(int $id): ClassicProof
     {

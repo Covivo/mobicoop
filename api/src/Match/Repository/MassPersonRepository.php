@@ -55,8 +55,6 @@ class MassPersonRepository
      *
      * @param null|mixed $limit
      * @param null|mixed $offset
-     *
-     * @return null|User
      */
     public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null): ?User
     {
@@ -104,8 +102,6 @@ class MassPersonRepository
      *
      * @param Mass $mass The Mass
      * @param int  $mass The mininum id of the mass persons returned
-     *
-     * @return array
      */
     public function findAllByMass(Mass $mass, int $idMassPersonMin = null): array
     {

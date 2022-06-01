@@ -259,7 +259,7 @@ class App implements UserInterface, EquatableInterface, PasswordAuthenticatedUse
      */
     public function setAutoCreatedDate()
     {
-        $this->setCreatedDate(new \Datetime());
+        $this->setCreatedDate(new \DateTime());
     }
 
     /**
@@ -269,6 +269,6 @@ class App implements UserInterface, EquatableInterface, PasswordAuthenticatedUse
      */
     public function setAutoUpdatedDate()
     {
-        $this->setUpdatedDate(new \Datetime());
+        $this->setUpdatedDate(new \DateTime());
     }
 }

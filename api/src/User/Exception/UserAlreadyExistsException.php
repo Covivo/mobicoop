@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\Exception;
 
@@ -27,5 +27,5 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class UserAlreadyExistsException extends BadRequestHttpException
 {
-    public const USER_ALREADY_EXISTS = "A user with this email address already exists in our database";
+    public const USER_ALREADY_EXISTS = 'A user with this email address already exists in our database';
 }

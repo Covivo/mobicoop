@@ -19,17 +19,16 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Communication\Repository;
 
-use App\Carpool\Entity\AskHistory;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 use App\Communication\Entity\Message;
 use App\Communication\Entity\Recipient;
 use App\Solidary\Entity\SolidaryAsk;
 use App\User\Entity\User;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 
 class MessageRepository
 {
@@ -54,9 +53,10 @@ class MessageRepository
     {
         $this->repository = $this->entityManager->getRepository(Message::class);
         $query = $this->repository->createQueryBuilder('m')
-        ->join('m.recipients', 'r')
-        ->where('m.message is null and (m.user = :user or r.user = :user)')
-        ->setParameter('user', $user);
+            ->join('m.recipients', 'r')
+            ->where('m.message is null and (m.user = :user or r.user = :user)')
+            ->setParameter('user', $user)
+        ;
 
         return $query->getQuery()->getResult();
     }
@@ -65,12 +65,13 @@ class MessageRepository
     {
         $this->repository = $this->entityManager->getRepository(Message::class);
         $query = $this->repository->createQueryBuilder('m')
-        ->join('m.recipients', 'r')
-        ->leftJoin('m.askHistory', 'ah')
-        ->leftJoin('m.solidaryAskHistory', 'sah')
-        ->leftJoin('m.messages', 'ms')
-        ->where('m.message is null and ah.id is null and sah is null and (m.user = :user or r.user = :user)')
-        ->setParameter('user', $user);
+            ->join('m.recipients', 'r')
+            ->leftJoin('m.askHistory', 'ah')
+            ->leftJoin('m.solidaryAskHistory', 'sah')
+            ->leftJoin('m.messages', 'ms')
+            ->where('m.message is null and ah.id is null and sah is null and (m.user = :user or r.user = :user)')
+            ->setParameter('user', $user)
+        ;
 
         return $query->getQuery()->getResult();
     }
@@ -79,62 +80,66 @@ class MessageRepository
     {
         $this->repository = $this->entityManager->getRepository(Message::class);
         $query = $this->repository->createQueryBuilder('m')
-        ->leftJoin('m.askHistory', 'ah')
-        ->leftJoin('m.messages', 'ms')
-        ->leftJoin('m.recipients', 'r')
-        ->where('m.message is null and ah.id is not null and (m.user = :user or r.user = :user)')
-        ->setParameter('user', $user);
+            ->leftJoin('m.askHistory', 'ah')
+            ->leftJoin('m.messages', 'ms')
+            ->leftJoin('m.recipients', 'r')
+            ->where('m.message is null and ah.id is not null and (m.user = :user or r.user = :user)')
+            ->setParameter('user', $user)
+        ;
 
         return $query->getQuery()->getResult();
     }
 
     /**
-     * Find the unread messages of a User
+     * Find the unread messages of a User.
      *
-     * @param User $user
-     * @return Recipient[]|null
+     * @return null|Recipient[]
      */
     public function findUnreadMessages(User $user): ?array
     {
         $this->repository = $this->entityManager->getRepository(Recipient::class);
         $query = $this->repository->createQueryBuilder('r')
-        ->join('r.message', 'm')
-        ->where('r.user = :user')
-        ->andWhere('r.readDate is null')
-        ->setParameter('user', $user);
+            ->join('r.message', 'm')
+            ->where('r.user = :user')
+            ->andWhere('r.readDate is null')
+            ->setParameter('user', $user)
+        ;
+
         return $query->getQuery()->getResult();
     }
 
     /**
-     * Return the first message related with a SolidaryAsk, or null if not found
+     * Return the first message related with a SolidaryAsk, or null if not found.
      *
-     * @param SolidaryAsk $solidaryAsk  The solidaryAsk
-     * @return Message|null             The message found, or null if not found
+     * @param SolidaryAsk $solidaryAsk The solidaryAsk
+     *
+     * @return null|Message The message found, or null if not found
      */
     public function findFirstForSolidaryAsk(SolidaryAsk $solidaryAsk): ?Message
     {
         $query = $this->repository->createQueryBuilder('m')
-        ->innerJoin('m.solidaryAskHistory', 'sah')
-        ->where('sah.solidaryAsk = :solidaryAsk')
-        ->orderBy('sah.createdDate', 'asc')
-        ->setMaxResults(1)
-        ->setParameter('solidaryAsk', $solidaryAsk);
+            ->innerJoin('m.solidaryAskHistory', 'sah')
+            ->where('sah.solidaryAsk = :solidaryAsk')
+            ->orderBy('sah.createdDate', 'asc')
+            ->setMaxResults(1)
+            ->setParameter('solidaryAsk', $solidaryAsk)
+        ;
 
         return $query->getQuery()->getOneOrNullResult();
     }
 
     /**
-     * Find all answered messages of a user
+     * Find all answered messages of a user.
      *
-     * @param User $user
-     * @return Message[]|null
+     * @return null|Message[]
      */
     public function findAnswers(User $user): ?array
     {
         $this->repository = $this->entityManager->getRepository(Message::class);
         $query = $this->repository->createQueryBuilder('m')
-        ->where('m.message is not null and (m.user = :user)')
-        ->setParameter('user', $user);
+            ->where('m.message is not null and (m.user = :user)')
+            ->setParameter('user', $user)
+        ;
 
         return $query->getQuery()->getResult();
     }

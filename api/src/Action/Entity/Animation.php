@@ -19,11 +19,10 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Action\Entity;
 
-use App\Action\Entity\Action;
 use App\Communication\Entity\Message;
 use App\Communication\Interfaces\MessagerInterface;
 use App\Solidary\Entity\Solidary;
@@ -31,65 +30,65 @@ use App\Solidary\Entity\SolidarySolution;
 use App\User\Entity\User;
 
 /**
- * An animation action
+ * An animation action.
  *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
  */
 class Animation implements MessagerInterface
 {
     /**
-     * @var int The id of this animation.
+     * @var int the id of this animation
      */
     private $id;
 
     /**
-     * @var Message A message related to the animation.
+     * @var Message a message related to the animation
      */
     private $message;
 
     /**
-     * @var string A comment related to the animation.
+     * @var string a comment related to the animation
      */
     private $comment;
 
     /**
-     * @var Action The action related with the animation.
+     * @var Action the action related with the animation
      */
     private $action;
 
     /**
-     * @var User The user related with the animation.
+     * @var User the user related with the animation
      */
     private $user;
 
     /**
-     * @var User The author of the animation.
+     * @var User the author of the animation
      */
     private $author;
 
     /**
-     * @var int|null The progression related with the animation, if needed and relevant.
+     * @var null|int the progression related with the animation, if needed and relevant
      */
     private $progression;
 
     /**
-     * @var Solidary|null The solidary record if the animation concerns a solidary record.
+     * @var null|Solidary the solidary record if the animation concerns a solidary record
      */
     private $solidary;
 
     /**
-     * @var SolidarySolution|null The solidary solution if the animation concerns a solidary record solution.
+     * @var null|SolidarySolution the solidary solution if the animation concerns a solidary record solution
      */
     private $solidarySolution;
 
     /**
-    * @var User|null The volunteer associated with the animation, if needed and relevant.
-    */
+     * @var null|User the volunteer associated with the animation, if needed and relevant
+     */
     private $volunteer;
 
     /**
-    * @var User|null The carpooler associated with the animation, if needed and relevant.
-    */
+     * @var null|User the carpooler associated with the animation, if needed and relevant
+     */
     private $carpooler;
 
     public function getId(): ?int

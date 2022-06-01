@@ -18,18 +18,16 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\DataProvider;
 
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
 use App\Solidary\Entity\SolidaryFormalRequest;
 use App\Solidary\Exception\SolidaryException;
 use App\Solidary\Service\SolidarySolutionManager;
 use Symfony\Component\Security\Core\Security;
-use App\User\Entity\User;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
@@ -52,7 +50,7 @@ final class SolidaryFormalRequestCollectionDataProvider implements CollectionDat
             $this->filters = $context['filters'];
         }
 
-        return SolidaryFormalRequest::class === $resourceClass && $operationName = "get";
+        return SolidaryFormalRequest::class === $resourceClass && $operationName = 'get';
     }
 
     public function getCollection(string $resourceClass, string $operationName = null): iterable

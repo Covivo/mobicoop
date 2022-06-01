@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Carpool\Entity;
 
@@ -41,23 +41,22 @@ class CarpoolExport
     public const MODE_ONLINE = 1;
     public const MODE_DIRECT = 2;
 
-    public const CERTIFICATION_A = "A";
-    public const CERTIFICATION_B = "B";
-    public const CERTIFICATION_C = "C";
+    public const CERTIFICATION_A = 'A';
+    public const CERTIFICATION_B = 'B';
+    public const CERTIFICATION_C = 'C';
 
     /**
-     * @var int The id of this carpoolExport item.
+     * @var int the id of this carpoolExport item
      */
     private $id;
 
     /**
-     * @var \DateTimeInterface|null The date of the carpool.
-     *
+     * @var null|\DateTimeInterface the date of the carpool
      */
     private $date;
 
     /**
-     * @var int The frequency (1 = driver; 2 = passenger).
+     * @var int the frequency (1 = driver; 2 = passenger)
      */
     private $role;
 
@@ -77,21 +76,19 @@ class CarpoolExport
     private $dropOff;
 
     /**
-     * @var string|null The amount for the carpool.
+     * @var null|string the amount for the carpool
      */
     private $amount;
 
     /**
-     * @var int|null The mode of payment for the carpool.
+     * @var null|int the mode of payment for the carpool
      */
     private $mode;
 
     /**
-     * @var string|null The Certification of the payment for the carpool.
+     * @var null|string the Certification of the payment for the carpool
      */
     private $certification;
-
-
 
     public function __construct($id = null)
     {

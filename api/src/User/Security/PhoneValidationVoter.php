@@ -19,15 +19,15 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\Security;
 
-use App\Auth\Service\AuthManager;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
+use App\Auth\Service\AuthManager;
 use App\User\Ressource\PhoneValidation;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class PhoneValidationVoter extends Voter
 {
@@ -44,17 +44,18 @@ class PhoneValidationVoter extends Voter
     {
         // if the attribute isn't one we support, return false
         if (!in_array($attribute, [
-            self::PHONE_VALIDATION_VALIDATION
-            ])) {
+            self::PHONE_VALIDATION_VALIDATION,
+        ])) {
             return false;
         }
 
         // only vote on User objects inside this voter
         if (!in_array($attribute, [
-            self::PHONE_VALIDATION_VALIDATION
-            ]) && !($subject instanceof Paginator) && !($subject instanceof PhoneValidation)) {
+            self::PHONE_VALIDATION_VALIDATION,
+        ]) && !($subject instanceof Paginator) && !($subject instanceof PhoneValidation)) {
             return false;
         }
+
         return true;
     }
 

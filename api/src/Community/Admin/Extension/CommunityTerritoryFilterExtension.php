@@ -19,22 +19,21 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Community\Admin\Extension;
 
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryCollectionExtensionInterface;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryItemExtensionInterface;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
-use App\Community\Entity\Community;
-use App\Geography\Entity\Territory;
 use App\Auth\Service\AuthManager;
+use App\Community\Entity\Community;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Security;
 
 /**
- * Extension used to limit the list of communities to the territories allowed for the requester (admin)
+ * Extension used to limit the list of communities to the territories allowed for the requester (admin).
  */
 final class CommunityTerritoryFilterExtension implements QueryCollectionExtensionInterface, QueryItemExtensionInterface
 {
@@ -48,14 +47,13 @@ final class CommunityTerritoryFilterExtension implements QueryCollectionExtensio
     public function applyToCollection(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
     {
         // concerns only admin get collection
-        if ($resourceClass == Community::class && $operationName == "ADMIN_get") {
+        if (Community::class == $resourceClass && 'ADMIN_get' == $operationName) {
             $this->addWhere($queryBuilder, $resourceClass, false, $operationName);
         }
     }
 
     public function applyToItem(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, array $identifiers, string $operationName = null, array $context = [])
     {
-        return;
     }
 
     private function addWhere(QueryBuilder $queryBuilder, string $resourceClass, bool $isItem, string $operationName = null, array $identifiers = [], array $context = []): void
@@ -63,15 +61,15 @@ final class CommunityTerritoryFilterExtension implements QueryCollectionExtensio
         $territories = [];
 
         // we check if the user has limited territories
-        $territories = $this->authManager->getTerritoriesForItem("community_list");
+        $territories = $this->authManager->getTerritoriesForItem('community_list');
 
-        if (count($territories)>0) {
+        if (count($territories) > 0) {
             $rootAlias = $queryBuilder->getRootAliases()[0];
             $queryBuilder
-            ->leftJoin($rootAlias.".address", 'actfe')
-            ->leftJoin("actfe.territories", 'tctfe')
-            ->andWhere('tctfe.id in (:territories)')
-            ->setParameter('territories', $territories)
+                ->leftJoin($rootAlias.'.address', 'actfe')
+                ->leftJoin('actfe.territories', 'tctfe')
+                ->andWhere('tctfe.id in (:territories)')
+                ->setParameter('territories', $territories)
             ;
         }
     }

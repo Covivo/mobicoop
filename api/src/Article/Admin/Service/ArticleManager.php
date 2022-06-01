@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Article\Admin\Service;
 
@@ -27,10 +27,10 @@ use App\Article\Entity\Article;
 use App\Article\Entity\Paragraph;
 use App\Article\Entity\Section;
 use App\Article\Exception\ArticleException;
-use Doctrine\ORM\EntityManagerInterface;
-use App\Article\Repository\SectionRepository;
-use App\Article\Repository\ParagraphRepository;
 use App\Article\Repository\ArticleRepository;
+use App\Article\Repository\ParagraphRepository;
+use App\Article\Repository\SectionRepository;
+use Doctrine\ORM\EntityManagerInterface;
 
 /**
  * Article manager service in administration context.
@@ -53,24 +53,25 @@ class ArticleManager
     }
 
     /**
-     * Get an article with its sections and paragraphes
+     * Get an article with its sections and paragraphes.
      *
-     * @param integer $id   The article id
-     * @return Article
+     * @param int $id The article id
      */
     public function getArticle(int $id): Article
     {
         if (!$article = $this->articleRepository->find($id)) {
             return new ArticleException('Article not found');
         }
+
         return $article;
     }
 
     /**
      * Add an article.
      *
-     * @param Article   $article    The article to add
-     * @return Article  The article updated
+     * @param Article $article The article to add
+     *
+     * @return Article The article updated
      */
     public function addArticle(Article $article): Article
     {
@@ -78,30 +79,30 @@ class ArticleManager
         if (!is_null($article->getAsections())) {
             foreach ($article->getAsections() as $asection) {
                 $section = new Section();
-                if (isset($asection["position"])) {
-                    $section->setPosition($asection["position"]);
+                if (isset($asection['position'])) {
+                    $section->setPosition($asection['position']);
                 }
-                if (isset($asection["status"])) {
-                    $section->setStatus($asection["status"]);
+                if (isset($asection['status'])) {
+                    $section->setStatus($asection['status']);
                 }
-                if (isset($asection["title"])) {
-                    $section->setTitle($asection["title"]);
+                if (isset($asection['title'])) {
+                    $section->setTitle($asection['title']);
                 }
-                if (isset($asection["subTitle"])) {
-                    $section->setSubTitle($asection["subTitle"]);
+                if (isset($asection['subTitle'])) {
+                    $section->setSubTitle($asection['subTitle']);
                 }
                 // treat paragraphs
-                if (isset($asection["paragraphs"])) {
-                    foreach ($asection["paragraphs"] as $aparagraph) {
+                if (isset($asection['paragraphs'])) {
+                    foreach ($asection['paragraphs'] as $aparagraph) {
                         $paragraph = new Paragraph();
-                        if (isset($aparagraph["position"])) {
-                            $paragraph->setPosition($aparagraph["position"]);
+                        if (isset($aparagraph['position'])) {
+                            $paragraph->setPosition($aparagraph['position']);
                         }
-                        if (isset($aparagraph["status"])) {
-                            $paragraph->setStatus($aparagraph["status"]);
+                        if (isset($aparagraph['status'])) {
+                            $paragraph->setStatus($aparagraph['status']);
                         }
-                        if (isset($aparagraph["text"])) {
-                            $paragraph->setText($aparagraph["text"]);
+                        if (isset($aparagraph['text'])) {
+                            $paragraph->setText($aparagraph['text']);
                         }
                         if (!is_null($paragraph->getText())) {
                             // save only non null paragraphs
@@ -123,12 +124,12 @@ class ArticleManager
         foreach ($sections as $section) {
             $paragraphs = $section->getParagraphs();
             $section->removeParagraphs();
-            usort($paragraphs, [$this,"comparePosition"]);
+            usort($paragraphs, [$this, 'comparePosition']);
             foreach ($paragraphs as $paragraph) {
                 $section->addParagraph($paragraph);
             }
         }
-        usort($sections, [$this,"comparePosition"]);
+        usort($sections, [$this, 'comparePosition']);
         foreach ($sections as $section) {
             $article->addSection($section);
         }
@@ -140,9 +141,10 @@ class ArticleManager
     /**
      * Patch an article.
      *
-     * @param Article   $article    The article to update
-     * @param array     $fields     The updated fields
-     * @return Article  The article updated
+     * @param Article $article The article to update
+     * @param array   $fields  The updated fields
+     *
+     * @return Article The article updated
      */
     public function patchArticle(Article $article, array $fields): Article
     {
@@ -158,8 +160,8 @@ class ArticleManager
                 $section = null;
                 // keep original paragraphs to track deleted ones
                 $originalParagraphs = [];
-                if (isset($asection["id"])) {
-                    $treatedSections[] = $asection["id"];
+                if (isset($asection['id'])) {
+                    $treatedSections[] = $asection['id'];
                     $section = $this->sectionRepository->find($asection['id']);
                     foreach ($section->getParagraphs() as $paragraph) {
                         $originalParagraphs[] = $paragraph;
@@ -168,38 +170,38 @@ class ArticleManager
                 if (is_null($section)) {
                     $section = new Section();
                 }
-                if (isset($asection["position"])) {
-                    $section->setPosition($asection["position"]);
+                if (isset($asection['position'])) {
+                    $section->setPosition($asection['position']);
                 }
-                if (isset($asection["status"])) {
-                    $section->setStatus($asection["status"]);
+                if (isset($asection['status'])) {
+                    $section->setStatus($asection['status']);
                 }
-                if (isset($asection["title"])) {
-                    $section->setTitle($asection["title"]);
+                if (isset($asection['title'])) {
+                    $section->setTitle($asection['title']);
                 }
-                if (isset($asection["subTitle"])) {
-                    $section->setSubTitle($asection["subTitle"]);
+                if (isset($asection['subTitle'])) {
+                    $section->setSubTitle($asection['subTitle']);
                 }
                 // treat paragraphs
-                if (isset($asection["paragraphs"])) {
+                if (isset($asection['paragraphs'])) {
                     $treatedParagraphs = []; // keep ids of patched paragraphs
-                    foreach ($asection["paragraphs"] as $aparagraph) {
+                    foreach ($asection['paragraphs'] as $aparagraph) {
                         $paragraph = null;
-                        if (isset($aparagraph["id"])) {
-                            $treatedParagraphs[] = $aparagraph["id"];
+                        if (isset($aparagraph['id'])) {
+                            $treatedParagraphs[] = $aparagraph['id'];
                             $paragraph = $this->paragraphRepository->find($aparagraph['id']);
                         }
                         if (is_null($paragraph)) {
                             $paragraph = new Paragraph();
                         }
-                        if (isset($aparagraph["position"])) {
-                            $paragraph->setPosition($aparagraph["position"]);
+                        if (isset($aparagraph['position'])) {
+                            $paragraph->setPosition($aparagraph['position']);
                         }
-                        if (isset($aparagraph["status"])) {
-                            $paragraph->setStatus($aparagraph["status"]);
+                        if (isset($aparagraph['status'])) {
+                            $paragraph->setStatus($aparagraph['status']);
                         }
-                        if (isset($aparagraph["text"])) {
-                            $paragraph->setText($aparagraph["text"]);
+                        if (isset($aparagraph['text'])) {
+                            $paragraph->setText($aparagraph['text']);
                         }
                         if (!is_null($paragraph->getText())) {
                             // save only non null paragraphs
@@ -233,12 +235,12 @@ class ArticleManager
         foreach ($sections as $section) {
             $paragraphs = $section->getParagraphs();
             $section->removeParagraphs();
-            usort($paragraphs, [$this,"comparePosition"]);
+            usort($paragraphs, [$this, 'comparePosition']);
             foreach ($paragraphs as $paragraph) {
                 $section->addParagraph($paragraph);
             }
         }
-        usort($sections, [$this,"comparePosition"]);
+        usort($sections, [$this, 'comparePosition']);
         foreach ($sections as $section) {
             $article->addSection($section);
         }
@@ -248,10 +250,9 @@ class ArticleManager
     }
 
     /**
-     * Delete an article
+     * Delete an article.
      *
-     * @param Article   $article    The article to delete
-     * @return void
+     * @param Article $article The article to delete
      */
     public function deleteArticle(Article $article): void
     {

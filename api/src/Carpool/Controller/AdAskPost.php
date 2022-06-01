@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Carpool\Controller;
 
@@ -36,10 +36,10 @@ class AdAskPost
 {
     use TranslatorTrait;
 
-    private $askManager;
+    public const TYPE_ASK = 'ask';
+    public const TYPE_CONTACT = 'contact';
 
-    public const TYPE_ASK = "ask";
-    public const TYPE_CONTACT = "contact";
+    private $askManager;
 
     public function __construct(AskManager $askManager)
     {
@@ -49,16 +49,15 @@ class AdAskPost
     /**
      * This method is invoked when a new ad ask is posted.
      *
-     * @param Ad $data      The ad used to create the ask
-     * @param string $type  The type of ask (formal ask or contact)
-     * @return Ad
+     * @param Ad     $data The ad used to create the ask
+     * @param string $type The type of ask (formal ask or contact)
      */
     public function __invoke(Ad $data, string $type): Ad
     {
         if (is_null($data)) {
-            throw new \InvalidArgumentException($this->translator->trans("bad Ad id is provided"));
+            throw new \InvalidArgumentException($this->translator->trans('bad Ad id is provided'));
         }
-        $data = $this->askManager->createAskFromAd($data, $type == self::TYPE_ASK);
-        return $data;
+
+        return $this->askManager->createAskFromAd($data, self::TYPE_ASK == $type);
     }
 }

@@ -19,15 +19,15 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Community\Admin\Security;
 
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
 use App\Auth\Service\AuthManager;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use App\Community\Entity\CommunityUser;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class CommunityUserVoter extends Voter
 {
@@ -46,16 +46,16 @@ class CommunityUserVoter extends Voter
     {
         // if the attribute isn't one we support, return false
         if (!in_array($attribute, [
-            self::ADMIN_COMMUNITY_MEMBER_UPDATE
-            ])) {
+            self::ADMIN_COMMUNITY_MEMBER_UPDATE,
+        ])) {
             return false;
         }
 
         // only vote on CommunityUser objects inside this voter
         // only for items actions
         if (!in_array($attribute, [
-            self::ADMIN_COMMUNITY_MEMBER_UPDATE
-            ]) && !($subject instanceof Paginator) && !($subject instanceof CommunityUser)) {
+            self::ADMIN_COMMUNITY_MEMBER_UPDATE,
+        ]) && !($subject instanceof Paginator) && !($subject instanceof CommunityUser)) {
             return false;
         }
 
@@ -66,9 +66,7 @@ class CommunityUserVoter extends Voter
     {
         switch ($attribute) {
             case self::ADMIN_COMMUNITY_MEMBER_UPDATE:
-                /**
-                 * @var CommunityUser $subject
-                 */
+                // @var CommunityUser $subject
                 return $this->canUpdateMember($subject->getCommunity());
         }
 
@@ -77,6 +75,6 @@ class CommunityUserVoter extends Voter
 
     private function canUpdateMember($community)
     {
-        return $this->authManager->isAuthorized(self::COMMUNITY_UPDATE, ['community'=>$community]);
+        return $this->authManager->isAuthorized(self::COMMUNITY_UPDATE, ['community' => $community]);
     }
 }

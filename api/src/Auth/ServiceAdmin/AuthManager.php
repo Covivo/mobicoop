@@ -19,16 +19,16 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Auth\ServiceAdmin;
 
 use App\Auth\Entity\AuthItem;
+use App\Auth\Entity\UserAuthAssignment;
+use App\Auth\Repository\AuthItemRepository;
 use App\Auth\Service\AuthManager as ServiceAuthManager;
 use App\Geography\Entity\Territory;
 use App\User\Entity\User;
-use App\Auth\Entity\UserAuthAssignment;
-use App\Auth\Repository\AuthItemRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
@@ -38,27 +38,26 @@ use Doctrine\ORM\EntityManagerInterface;
  */
 class AuthManager
 {
-    private $entityManager;
-    private $authManager;
-    private $authItemRepository;
-
-    public const GRANTABLE_ROLES =  [
+    public const GRANTABLE_ROLES = [
         AuthItem::ROLE_SUPER_ADMIN => [
             AuthItem::ROLE_SUPER_ADMIN,
             AuthItem::ROLE_ADMIN,
             AuthItem::ROLE_USER_REGISTERED_FULL,
-            AuthItem::ROLE_MASS_MATCH
+            AuthItem::ROLE_MASS_MATCH,
         ],
         AuthItem::ROLE_ADMIN => [
             AuthItem::ROLE_ADMIN,
-            AuthItem::ROLE_USER_REGISTERED_FULL
+            AuthItem::ROLE_USER_REGISTERED_FULL,
         ],
         AuthItem::ROLE_SOLIDARY_MANAGER => [
             AuthItem::ROLE_USER_REGISTERED_FULL,
             AuthItem::ROLE_SOLIDARY_VOLUNTEER,
-            AuthItem::ROLE_SOLIDARY_BENEFICIARY
+            AuthItem::ROLE_SOLIDARY_BENEFICIARY,
         ],
     ];
+    private $entityManager;
+    private $authManager;
+    private $authItemRepository;
 
     /**
      * Constructor.
@@ -71,10 +70,11 @@ class AuthManager
     }
 
     /**
-     * Get an authItem from its id
+     * Get an authItem from its id.
      *
-     * @param integer $id       The id
-     * @return AuthItem|null    The authItem or null if not found
+     * @param int $id The id
+     *
+     * @return null|AuthItem The authItem or null if not found
      */
     public function getAuthItem(int $id): ?AuthItem
     {
@@ -82,9 +82,7 @@ class AuthManager
     }
 
     /**
-     * Get grantable roles for the current user
-     *
-     * @return AuthItem|null
+     * Get grantable roles for the current user.
      */
     public function getGrantable(): ?AuthItem
     {
@@ -95,19 +93,19 @@ class AuthManager
                 $rolesGranted = array_unique(array_merge($rolesGranted, self::GRANTABLE_ROLES[$authItem['id']->getId()]));
             }
         }
+
         return $rolesGranted;
     }
 
     /**
-     * Grant an auth item to a user, eventually on a given territory (if not already granted)
+     * Grant an auth item to a user, eventually on a given territory (if not already granted).
      *
-     * @param User $user            The user
-     * @param AuthItem $authItem    The auth item
-     * @param Territory $territory  The territory
-     * @param bool $flush           Flush immediately
-     * @return void
+     * @param User      $user      The user
+     * @param AuthItem  $authItem  The auth item
+     * @param Territory $territory The territory
+     * @param bool      $flush     Flush immediately
      */
-    public function grant(User $user, AuthItem $authItem, ?Territory $territory=null, bool $flush = true): void
+    public function grant(User $user, AuthItem $authItem, ?Territory $territory = null, bool $flush = true): void
     {
         // check if the auth item already exists
         $granted = false;
@@ -119,6 +117,7 @@ class AuthManager
                 // item already granted, check territory
                 if (is_null($territory) || (!is_null($userAuthAssignment->getTerritory()) && $userAuthAssignment->getTerritory()->getId() === $territory->getId())) {
                     $granted = true;
+
                     break;
                 }
             }
@@ -137,13 +136,12 @@ class AuthManager
     }
 
     /**
-     * Revoke an auth item for a user, eventually on a given territory
+     * Revoke an auth item for a user, eventually on a given territory.
      *
-     * @param User $user            The user
-     * @param AuthItem $authItem    The auth item
-     * @param Territory $territory  The territory
-     * @param bool $flush           Flush immediately
-     * @return void
+     * @param User      $user      The user
+     * @param AuthItem  $authItem  The auth item
+     * @param Territory $territory The territory
+     * @param bool      $flush     Flush immediately
      */
     public function revoke(User $user, AuthItem $authItem, ?Territory $territory, bool $flush = true): void
     {

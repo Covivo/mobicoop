@@ -19,17 +19,17 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\Exception;
 
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use App\User\Interoperability\Ressource\User;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class BadRequestInteroperabilityUserException extends BadRequestHttpException
 {
-    public const UNAUTHORIZED = "You are not authorized to perform this operation";
-    public const NO_USER_PROVIDED = "No user provided";
-    public const INVALID_GENDER = "Gender must be a valid value : ".User::GENDER_FEMALE." (female), ".User::GENDER_MALE." (male), ".User::GENDER_OTHER." (other)";
-    public const USER_ALREADY_EXISTS = "A user with this email address already exists in our database";
+    public const UNAUTHORIZED = 'You are not authorized to perform this operation';
+    public const NO_USER_PROVIDED = 'No user provided';
+    public const INVALID_GENDER = 'Gender must be a valid value : '.User::GENDER_FEMALE.' (female), '.User::GENDER_MALE.' (male), '.User::GENDER_OTHER.' (other)';
+    public const USER_ALREADY_EXISTS = 'A user with this email address already exists in our database';
 }

@@ -35,6 +35,7 @@ class ContactManager
      * @var EventDispatcherInterface
      */
     private $eventDispatcher;
+
     /**
      * @var LoggerInterface
      */
@@ -54,8 +55,6 @@ class ContactManager
 
     /**
      * Send email event for contact message.
-     *
-     * @return Contact
      */
     public function sendContactMail(Contact $contact): Contact
     {

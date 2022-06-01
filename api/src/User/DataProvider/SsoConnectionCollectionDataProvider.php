@@ -18,16 +18,14 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\DataProvider;
 
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
 use App\User\Ressource\SsoConnection;
 use App\User\Service\SsoManager;
-use LogicException;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Security;
 
@@ -49,13 +47,13 @@ final class SsoConnectionCollectionDataProvider implements CollectionDataProvide
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return SsoConnection::class === $resourceClass && $operationName === "get";
+        return SsoConnection::class === $resourceClass && 'get' === $operationName;
     }
 
     public function getCollection(string $resourceClass, string $operationName = null): iterable
     {
-        if ($this->request->get('baseSiteUri')=="") {
-            throw new \LogicException("Parameter missing : baseSiteUri");
+        if ('' == $this->request->get('baseSiteUri')) {
+            throw new \LogicException('Parameter missing : baseSiteUri');
         }
 
         return $this->ssoManager->getSsoConnectionServices($this->request->get('baseSiteUri'));

@@ -19,15 +19,15 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Action\Security;
 
-use App\Auth\Service\AuthManager;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use App\Action\Entity\Action;
+use App\Auth\Service\AuthManager;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
@@ -55,8 +55,8 @@ class ActionVoter extends Voter
             self::ACTION_READ,
             self::ACTION_UPDATE,
             self::ACTION_DELETE,
-            self::ACTION_LIST
-            ])) {
+            self::ACTION_LIST,
+        ])) {
             return false;
         }
 
@@ -67,8 +67,8 @@ class ActionVoter extends Voter
             self::ACTION_READ,
             self::ACTION_UPDATE,
             self::ACTION_DELETE,
-            self::ACTION_LIST
-            ]) && !($subject instanceof Paginator) && !($subject instanceof Action)) {
+            self::ACTION_LIST,
+        ]) && !($subject instanceof Paginator) && !($subject instanceof Action)) {
             return false;
         }
 
@@ -80,12 +80,16 @@ class ActionVoter extends Voter
         switch ($attribute) {
             case self::ACTION_CREATE:
                 return $this->canCreateAction();
+
             case self::ACTION_READ:
                 return $this->canReadAction($subject);
+
             case self::ACTION_UPDATE:
                 return $this->canUpdateAction($subject);
+
             case self::ACTION_DELETE:
                 return $this->canDeleteAction($subject);
+
             case self::ACTION_LIST:
                 return $this->canListAction();
         }
@@ -100,17 +104,17 @@ class ActionVoter extends Voter
 
     private function canReadAction(Action $action)
     {
-        return $this->authManager->isAuthorized(self::ACTION_READ, ['action'=>$action]);
+        return $this->authManager->isAuthorized(self::ACTION_READ, ['action' => $action]);
     }
 
     private function canUpdateAction(Action $action)
     {
-        return $this->authManager->isAuthorized(self::ACTION_UPDATE, ['action'=>$action]);
+        return $this->authManager->isAuthorized(self::ACTION_UPDATE, ['action' => $action]);
     }
 
     private function canDeleteAction(Action $action)
     {
-        return $this->authManager->isAuthorized(self::ACTION_DELETE, ['action'=>$action]);
+        return $this->authManager->isAuthorized(self::ACTION_DELETE, ['action' => $action]);
     }
 
     private function canListAction()

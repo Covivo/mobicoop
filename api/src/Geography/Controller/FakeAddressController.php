@@ -19,28 +19,32 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Geography\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Routing\Annotation\Route;
 use App\Geography\Service\GeoSearcher;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * Controller class for API testing purpose.
  *
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
- *
  */
 class FakeAddressController extends AbstractController
 {
     /**
-     * Fake address generator
+     * Fake address generator.
      *
      * @Route("/rd/faker/{number}/{min_lat}/{min_lon}/{max_lat}/{max_lon}", name="faker")
      *
+     * @param mixed $number
+     * @param mixed $min_lat
+     * @param mixed $min_lon
+     * @param mixed $max_lat
+     * @param mixed $max_lon
      */
     public function faker($number, $min_lat, $min_lon, $max_lat, $max_lon, GeoSearcher $geoSearcher)
     {
@@ -51,13 +55,13 @@ class FakeAddressController extends AbstractController
             $lon = $this->randomFloat($min_lon, $max_lon);
             if ($address = $geoSearcher->reverseGeoCode($lat, $lon)) {
                 $fakes[] = $address;
-                $generated++;
+                ++$generated;
             }
         }
         foreach ($fakes as $fake) {
-            echo $fake . "<br />";
+            echo $fake.'<br />';
         }
-        //return $geoSearcher->geoCode($this->request->get("input"));
+        // return $geoSearcher->geoCode($this->request->get("input"));
         return new Response();
     }
 

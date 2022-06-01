@@ -18,14 +18,14 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Paginator;
 
 use ApiPlatform\Core\DataProvider\PaginatorInterface;
 
 /**
- * Custom paginator class, used to wrap paginator objects that need to be overloaded
+ * Custom paginator class, used to wrap paginator objects that need to be overloaded.
  */
 class MobicoopPaginator implements \IteratorAggregate, PaginatorInterface
 {
@@ -65,9 +65,10 @@ class MobicoopPaginator implements \IteratorAggregate, PaginatorInterface
 
     public function getIterator(): \Traversable
     {
-        if ($this->itemIterator === null) {
+        if (null === $this->itemIterator) {
             $this->itemIterator = new \ArrayIterator($this->items);
         }
+
         return $this->itemIterator;
     }
 

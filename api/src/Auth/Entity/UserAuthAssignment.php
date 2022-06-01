@@ -19,20 +19,19 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Auth\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
-use App\Auth\Entity\AuthItem;
-use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
 use App\Geography\Entity\Territory;
 use App\User\Entity\User;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 /**
- * User auth assignment
+ * User auth assignment.
  *
  * @ORM\Entity
  * @ApiResource(
@@ -75,7 +74,7 @@ use App\User\Entity\User;
 class UserAuthAssignment
 {
     /**
-     * @var int The id of this assignment.
+     * @var int the id of this assignment
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -85,7 +84,7 @@ class UserAuthAssignment
     private $id;
 
     /**
-     * @var User The user.
+     * @var User the user
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="userAuthAssignments")
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
@@ -95,7 +94,7 @@ class UserAuthAssignment
     private $user;
 
     /**
-     * @var AuthItem The auth item.
+     * @var AuthItem the auth item
      *
      * @ORM\ManyToOne(targetEntity="\App\Auth\Entity\AuthItem")
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
@@ -104,7 +103,7 @@ class UserAuthAssignment
     private $authItem;
 
     /**
-     * @var Territory|null The territory associated with the assignment.
+     * @var null|Territory the territory associated with the assignment
      *
      * @ORM\ManyToOne(targetEntity="\App\Geography\Entity\Territory")
      * @ORM\JoinColumn(onDelete="CASCADE")

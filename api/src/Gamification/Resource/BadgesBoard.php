@@ -19,18 +19,18 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Gamification\Resource;
 
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
-use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Serializer\Annotation\Groups;
 use App\Gamification\Entity\BadgeProgression;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * Gamification : The badges board of a User
+ * Gamification : The badges board of a User.
  *
  * @ApiResource(
  *     attributes={
@@ -56,6 +56,7 @@ use App\Gamification\Entity\BadgeProgression;
  *          }
  *      }
  * )
+ *
  *  @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class BadgesBoard
@@ -63,7 +64,7 @@ class BadgesBoard
     public const DEFAULT_ID = 999999999999;
 
     /**
-     * @var int The id of this BadgesBoard.
+     * @var int the id of this BadgesBoard
      * @Assert\NotBlank
      * @Groups({"readGamification"})
      * @ApiProperty(identifier=true)

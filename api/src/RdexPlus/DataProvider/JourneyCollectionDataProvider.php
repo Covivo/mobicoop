@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\RdexPlus\DataProvider;
 
@@ -30,11 +30,10 @@ use Symfony\Component\Security\Core\Security;
 
 /**
  * RDEX+ : Collection data provider of Journey.
- *
  */
 final class JourneyCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
-    protected $security;
+    private $security;
 
     public function __construct(Security $security)
     {
@@ -43,12 +42,12 @@ final class JourneyCollectionDataProvider implements CollectionDataProviderInter
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Journey::class === $resourceClass && $operationName === "rdex_plus_journey_get";
+        return Journey::class === $resourceClass && 'rdex_plus_journey_get' === $operationName;
     }
 
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
-        /* TO DO */
-        return [new Journey("1")];
+        // TO DO
+        return [new Journey('1')];
     }
 }

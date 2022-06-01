@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Rdex\Entity;
 
@@ -30,134 +30,104 @@ namespace App\Rdex\Entity;
  */
 class RdexWaypoint implements \JsonSerializable
 {
-    public const TYPE_PICK_UP = "pick-up";
-    public const TYPE_DROP_OFF = "drop-off";
+    public const TYPE_PICK_UP = 'pick-up';
+    public const TYPE_DROP_OFF = 'drop-off';
 
     /**
-     * @var string The address.
+     * @var string the address
      */
     private $address;
 
     /**
-     * @var string The city.
+     * @var string the city
      */
     private $city;
 
     /**
-     * @var string The postal code.
+     * @var string the postal code
      */
     private $postalcode;
 
     /**
-     * @var string The country.
+     * @var string the country
      */
     private $country;
 
     /**
-     * @var float The latitude.
+     * @var float the latitude
      */
     private $latitude;
 
     /**
-     * @var float The longitude.
+     * @var float the longitude
      */
     private $longitude;
 
     /**
-     * @var int The distance of the step.
+     * @var int the distance of the step
      */
     private $step_distance;
 
     /**
-     * @var int The duration of the step.
+     * @var int the duration of the step
      */
     private $step_duration;
 
     /**
-     * @var string The type of the step.
+     * @var string the type of the step
      */
     private $type;
 
     /**
-     * @var bool The step is mandatory.
+     * @var bool the step is mandatory
      */
     private $mandatory;
 
-    /**
-     * @return string
-     */
     public function getAddress(): string
     {
         return $this->address;
     }
 
-    /**
-     * @return string
-     */
     public function getCity(): string
     {
         return $this->city;
     }
 
-    /**
-     * @return string
-     */
     public function getPostalcode(): string
     {
         return $this->postalcode;
     }
 
-    /**
-     * @return string
-     */
     public function getCountry(): string
     {
         return $this->country;
     }
 
-    /**
-     * @return number
-     */
     public function getLatitude(): number
     {
         return $this->latitude;
     }
 
-    /**
-     * @return number
-     */
     public function getLongitude(): number
     {
         return $this->longitude;
     }
 
-    /**
-     * @return number
-     */
     public function getStep_distance(): number
     {
         return $this->step_distance;
     }
 
-    /**
-     * @return number
-     */
     public function getStep_duration(): number
     {
         return $this->step_duration;
     }
 
-    /**
-     * @return string
-     */
     public function getType(): string
     {
         return $this->type;
     }
 
-    /**
-     * @return boolean
-     */
     public function isMandatory(): bool
     {
         return $this->mandatory;
@@ -236,7 +206,7 @@ class RdexWaypoint implements \JsonSerializable
     }
 
     /**
-     * @param boolean $mandatory
+     * @param bool $mandatory
      */
     public function setMandatory($mandatory)
     {
@@ -247,16 +217,16 @@ class RdexWaypoint implements \JsonSerializable
     {
         return
         [
-            'address'       => $this->getAddress(),
-            'city'          => $this->getCity(),
-            'postalcode'    => $this->getPostalcode(),
-            'country'       => $this->getCountry(),
-            'latitude'      => $this->getLatitude(),
-            'longitude'     => $this->getLongitude(),
+            'address' => $this->getAddress(),
+            'city' => $this->getCity(),
+            'postalcode' => $this->getPostalcode(),
+            'country' => $this->getCountry(),
+            'latitude' => $this->getLatitude(),
+            'longitude' => $this->getLongitude(),
             'step_distance' => $this->getStep_distance(),
             'step_duration' => $this->getStep_duration(),
-            'type'          => $this->getType(),
-            'mandatory'     => $this->getMandatory()
+            'type' => $this->getType(),
+            'mandatory' => $this->getMandatory(),
         ];
     }
 }

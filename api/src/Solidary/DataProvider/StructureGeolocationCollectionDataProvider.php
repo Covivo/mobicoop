@@ -18,19 +18,15 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\DataProvider;
 
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
 use App\Solidary\Entity\Structure;
 use App\Solidary\Exception\SolidaryException;
 use App\Solidary\Service\StructureManager;
-use Symfony\Component\Security\Core\Security;
-use App\User\Entity\User;
-use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
@@ -48,7 +44,8 @@ final class StructureGeolocationCollectionDataProvider implements CollectionData
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
         $this->context = $context;
-        return Structure::class === $resourceClass && $operationName == "structure_geolocation";
+
+        return Structure::class === $resourceClass && 'structure_geolocation' == $operationName;
     }
 
     public function getCollection(string $resourceClass, string $operationName = null): ?array

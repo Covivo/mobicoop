@@ -19,11 +19,10 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Payment\Controller;
 
-use App\Payment\Exception\PaymentException;
 use App\Payment\Ressource\ValidationDocument;
 use App\Payment\Service\PaymentManager;
 use Symfony\Component\HttpFoundation\Request;
@@ -59,12 +58,12 @@ final class UploadValidationDocumentAction
         $validationDocument->setUser($this->security->getUser());
 
         // We need to delete the extension added by vich uploader
-        $validationDocument->setFileName(substr($validationDocument->getFile()->getClientOriginalName(), 0, strrpos($validationDocument->getFile()->getClientOriginalName(), ".")));
+        $validationDocument->setFileName(substr($validationDocument->getFile()->getClientOriginalName(), 0, strrpos($validationDocument->getFile()->getClientOriginalName(), '.')));
         $validationDocument->setExtension(
-            substr($validationDocument->getFile()->getClientOriginalName(), strrpos($validationDocument->getFile()->getClientOriginalName(), ".")+1, strlen($validationDocument->getFile()->getClientOriginalName())-1)
+            substr($validationDocument->getFile()->getClientOriginalName(), strrpos($validationDocument->getFile()->getClientOriginalName(), '.') + 1, strlen($validationDocument->getFile()->getClientOriginalName()) - 1)
         );
 
-        $this->uploadHandler->upload($validationDocument, "file");
+        $this->uploadHandler->upload($validationDocument, 'file');
 
         return $this->paymentManager->uploadValidationDocument($validationDocument);
     }

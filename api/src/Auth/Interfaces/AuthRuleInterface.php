@@ -19,28 +19,28 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Auth\Interfaces;
 
+use App\App\Entity\App;
 use App\Auth\Entity\AuthItem;
 use App\User\Entity\User;
-use App\App\Entity\App;
 
 /**
  * Auth Rule interface.
  *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
- *
  */
 interface AuthRuleInterface
 {
     /**
      * Code to execute to validate the rule.
      *
-     * @param User|App      $requester  The requester
-     * @param AuthItem      $authItem   The auth item
-     * @param array         $params     The params needed for the validation
+     * @param App|User $requester The requester
+     * @param AuthItem $authItem  The auth item
+     * @param array    $params    The params needed for the validation
+     *
      * @return bool True if the rule is validated, false either
      */
     public function execute(object $requester, AuthItem $authItem, array $params): bool;

@@ -18,7 +18,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\Filter;
 
@@ -28,18 +28,6 @@ use Doctrine\ORM\QueryBuilder;
 
 final class FamilyAndGivenNameFilter extends AbstractContextAwareFilter
 {
-    protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
-    {
-        if ($property != "q") {
-            return;
-        }
-
-        $rootAlias = $queryBuilder->getRootAliases()[0];
-
-        $queryBuilder
-            ->andWhere("$rootAlias.givenName LIKE '%".$value."%' OR $rootAlias.familyName LIKE '%".$value."%' OR CONCAT($rootAlias.givenName,' ',$rootAlias.familyName) LIKE '%".$value."%' OR CONCAT($rootAlias.familyName,' ',$rootAlias.givenName) LIKE '%".$value."%'");
-    }
-
     // This function is only used to hook in documentation generators (supported by Swagger and Hydra)
     public function getDescription(string $resourceClass): array
     {
@@ -49,7 +37,7 @@ final class FamilyAndGivenNameFilter extends AbstractContextAwareFilter
 
         $description = [];
         foreach ($this->properties as $property => $strategy) {
-            $description["$property"] = [
+            $description["{$property}"] = [
                 'property' => $property,
                 'type' => 'string',
                 'required' => false,
@@ -62,5 +50,18 @@ final class FamilyAndGivenNameFilter extends AbstractContextAwareFilter
         }
 
         return $description;
+    }
+
+    protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
+    {
+        if ('q' != $property) {
+            return;
+        }
+
+        $rootAlias = $queryBuilder->getRootAliases()[0];
+
+        $queryBuilder
+            ->andWhere("{$rootAlias}.givenName LIKE '%".$value."%' OR {$rootAlias}.familyName LIKE '%".$value."%' OR CONCAT({$rootAlias}.givenName,' ',{$rootAlias}.familyName) LIKE '%".$value."%' OR CONCAT({$rootAlias}.familyName,' ',{$rootAlias}.givenName) LIKE '%".$value."%'")
+        ;
     }
 }

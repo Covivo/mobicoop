@@ -19,14 +19,14 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Service;
 
 use App\Carpool\Entity\Criteria;
 
 /**
- * Format Data Manager
+ * Format Data Manager.
  *
  * Its a utility service. Contains some format data functions.
  *
@@ -42,9 +42,9 @@ class FormatDataManager
 
     /**
      * Convert time given in seconds to a human readable format
-     * hours minutes seconds
+     * hours minutes seconds.
+     *
      * @param int $time : time in seconds
-     * @return string
      */
     public function convertSecondsToHuman($time): string
     {
@@ -52,56 +52,58 @@ class FormatDataManager
         $minutes = floor(($time / 60) % 60);
         $seconds = $time % 60;
 
-        $humanReturn = "";
-        if ($hours != 0) {
-            $humanReturn .= $hours." h ";
+        $humanReturn = '';
+        if (0 != $hours) {
+            $humanReturn .= $hours.' h ';
         }
 
-        $humanReturn .= $minutes." m";
+        $humanReturn .= $minutes.' m';
 
-        if ($seconds != 0) {
-            $humanReturn .= " ".$seconds." s";
+        if (0 != $seconds) {
+            $humanReturn .= ' '.$seconds.' s';
         }
-
 
         return $humanReturn;
     }
 
-    //
     /**
      * Round a price depending on a trip frequency.
      *
-     * @param float $price          The price to be rounded
-     * @param integer $frequency    The frequency
-     * @return float
+     * @param float $price     The price to be rounded
+     * @param int   $frequency The frequency
      */
     public function roundPrice(float $price, int $frequency): float
     {
         switch ($frequency) {
             case Criteria::FREQUENCY_REGULAR:
                 return self::roundNearest($price, self::PRICE_ROUND_TYPE_1);
+
                 break;
+
             case Criteria::FREQUENCY_PUNCTUAL:
-                if ($price<=self::PRICE_LIMIT) {
+                if ($price <= self::PRICE_LIMIT) {
                     return self::roundNearest($price, self::PRICE_ROUND_TYPE_2);
                 }
+
                 return self::roundNearest($price, self::PRICE_ROUND_TYPE_3);
+
                 break;
         }
-    }
-
-    // rounds to the nearest subdivision
-    private static function roundNearest($num, $nearest = .5)
-    {
-        //return round($num / $nearest) * $nearest;
-        return round((round($num / $nearest) * $nearest), 1);
     }
 
     // convert a file size to a human readable format
     public function convertFilesize($bytes, $decimals = 2)
     {
-        $size = array('B','kB','MB','GB','TB','PB','EB','ZB','YB');
+        $size = ['B', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
         $factor = floor((strlen($bytes) - 1) / 3);
-        return sprintf("%.{$decimals}f", $bytes / pow(1024, $factor)) . @$size[$factor];
+
+        return sprintf("%.{$decimals}f", $bytes / pow(1024, $factor)).@$size[$factor];
+    }
+
+    // rounds to the nearest subdivision
+    private static function roundNearest($num, $nearest = .5)
+    {
+        // return round($num / $nearest) * $nearest;
+        return round((round($num / $nearest) * $nearest), 1);
     }
 }

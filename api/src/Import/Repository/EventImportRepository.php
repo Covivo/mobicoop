@@ -4,14 +4,13 @@ namespace App\Import\Repository;
 
 use App\Import\Entity\EventImport;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 
 /**
- * @method EventImport|null find($id, $lockMode = null, $lockVersion = null)
+ * @method null|EventImport find($id, $lockMode = null, $lockVersion = null)
  * @method EventImport[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
- * @method EventImport|null findOneBy(array $criteria, array $orderBy = null)
+ * @method null|EventImport findOneBy(array $criteria, array $orderBy = null)
  */
 class EventImportRepository extends ServiceEntityRepository
 {

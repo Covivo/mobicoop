@@ -19,17 +19,17 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Article\EventListener;
 
 use App\Article\Entity\Article;
-use App\Event\Service\EventManager;
 use App\I18n\Service\LanguageManager;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 
 /**
- * Article Event listener
+ * Article Event listener.
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class ArticleLoadListener

@@ -18,14 +18,14 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Action\Filter;
 
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\AbstractContextAwareFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
-use Doctrine\ORM\QueryBuilder;
 use App\Action\Entity\Action;
+use Doctrine\ORM\QueryBuilder;
 use LogicException;
 
 /**
@@ -33,26 +33,6 @@ use LogicException;
  */
 final class TypeFilter extends AbstractContextAwareFilter
 {
-    protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
-    {
-        if ($property != "type") {
-            return;
-        }
-
-        if (!array_key_exists($value, Action::TYPE_FILTER)) {
-            throw new LogicException("Unknown type. Should be in ['".implode("','", array_keys(Action::TYPE_FILTER))."']");
-        }
-
-        // we will create a new querybuilder for retrieving the solidary users, to avoid modifying the one used for the original query
-        $em = $queryBuilder->getEntityManager();
-
-        $alias = $queryBuilder->getRootAliases()[0];
-
-        $queryBuilder
-        ->where($alias.'.type in ('."'".implode("','", Action::TYPE_FILTER[$value])."'".')');
-        return;
-    }
-
     // This function is only used to hook in documentation generators (supported by Swagger and Hydra)
     public function getDescription(string $resourceClass): array
     {
@@ -62,7 +42,7 @@ final class TypeFilter extends AbstractContextAwareFilter
 
         $description = [];
         foreach ($this->properties as $property => $strategy) {
-            $description["$property"] = [
+            $description["{$property}"] = [
                 'property' => $property,
                 'type' => 'string',
                 'required' => false,
@@ -76,5 +56,25 @@ final class TypeFilter extends AbstractContextAwareFilter
         }
 
         return $description;
+    }
+
+    protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
+    {
+        if ('type' != $property) {
+            return;
+        }
+
+        if (!array_key_exists($value, Action::TYPE_FILTER)) {
+            throw new LogicException("Unknown type. Should be in ['".implode("','", array_keys(Action::TYPE_FILTER))."']");
+        }
+
+        // we will create a new querybuilder for retrieving the solidary users, to avoid modifying the one used for the original query
+        $em = $queryBuilder->getEntityManager();
+
+        $alias = $queryBuilder->getRootAliases()[0];
+
+        $queryBuilder
+            ->where($alias.'.type in ('."'".implode("','", Action::TYPE_FILTER[$value])."'".')')
+        ;
     }
 }

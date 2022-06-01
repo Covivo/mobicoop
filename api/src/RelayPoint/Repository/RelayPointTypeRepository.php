@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\RelayPoint\Repository;
 
@@ -28,8 +28,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 
 /**
- * @method RelayPointType|null find($id, $lockMode = null, $lockVersion = null)
- * @method RelayPointType|null findOneBy(array $criteria, array $orderBy = null)
+ * @method null|RelayPointType find($id, $lockMode = null, $lockVersion = null)
+ * @method null|RelayPointType findOneBy(array $criteria, array $orderBy = null)
  * @method RelayPointType[]    findAll()
  */
 class RelayPointTypeRepository

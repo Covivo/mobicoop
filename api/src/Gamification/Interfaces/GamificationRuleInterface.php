@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Gamification\Interfaces;
 
@@ -30,15 +30,15 @@ use App\Gamification\Entity\SequenceItem;
  * Gamification Rule interface.
  *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
- *
  */
 interface GamificationRuleInterface
 {
     /**
      * Code to execute to validate the rule.
      *
-     * @param User|App              $requester  The requester
-     * @param Log                   $log associated to the rule
+     * @param App|User $requester The requester
+     * @param Log      $log       associated to the rule
+     *
      * @return bool True if the rule is validated, false either
      */
     public function execute(Log $log, SequenceItem $sequenceItem): bool;

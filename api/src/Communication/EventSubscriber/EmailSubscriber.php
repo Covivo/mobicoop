@@ -19,14 +19,13 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Communication\EventSubscriber;
 
-use App\Event\Event\ValidateCreateEventEvent;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use App\Communication\Service\NotificationManager;
 use App\Communication\Event\EmailNotificationSentEvent;
+use App\Communication\Service\NotificationManager;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class EmailSubscriber implements EventSubscriberInterface
 {
@@ -40,7 +39,7 @@ class EmailSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            EmailNotificationSentEvent::NAME => 'onEmailNotificationSent'
+            EmailNotificationSentEvent::NAME => 'onEmailNotificationSent',
         ];
     }
 

@@ -41,7 +41,6 @@ final class Version20190806091803 extends AbstractMigration
         $this->addSql('INSERT INTO `action` (`id`, `name`, `uname`) VALUES (30, \'passenger_carpool_matching_new\', \'New carpool matchings\');');
         $this->addSql('INSERT INTO `action` (`id`, `name`, `uname`) VALUES (31, \'passenger_carpool_matching_new_regular\', \'New carpool matchings\');');
 
-
         $this->addSql('INSERT INTO `notification` (`id`, `action_id`, `medium_id`, `template_body`, `active`, `active_default`) VALUES (22, 11, 2, null, 1, 1);');
         $this->addSql('INSERT INTO `notification` (`id`, `action_id`, `medium_id`, `template_body`, `active`, `active_default`) VALUES (23, 12, 2, null, 1, 1);');
         $this->addSql('INSERT INTO `notification` (`id`, `action_id`, `medium_id`, `template_body`, `active`, `active_default`) VALUES (24, 13, 2, null, 1, 1);');
@@ -110,7 +109,7 @@ final class Version20190806091803 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('DELETE FROM `action` WHERE `id` >= 11 and `id` <= 31');
         $this->addSql('DELETE FROM `notification` WHERE `id` >= 22 and `id` <= 82');

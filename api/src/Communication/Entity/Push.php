@@ -19,14 +19,14 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Communication\Entity;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * A push notification
+ * A push notification.
  */
 class Push
 {

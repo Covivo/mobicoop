@@ -19,12 +19,12 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Communication\Event;
 
-use Symfony\Contracts\EventDispatcher\Event;
 use App\Communication\Entity\Recipient;
+use Symfony\Contracts\EventDispatcher\Event;
 
 /**
  * Event sent when an internal message is received.

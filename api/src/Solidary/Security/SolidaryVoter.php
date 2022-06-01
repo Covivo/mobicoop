@@ -19,19 +19,19 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\Security;
 
-use App\Auth\Service\AuthManager;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
+use App\Auth\Service\AuthManager;
 use App\Solidary\Entity\Solidary;
 use App\Solidary\Entity\SolidaryContact;
 use App\Solidary\Entity\SolidaryFormalRequest;
 use App\Solidary\Entity\SolidarySearch;
 use App\Solidary\Entity\SolidarySolution;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
@@ -63,8 +63,8 @@ class SolidaryVoter extends Voter
             self::SOLIDARY_DELETE,
             self::SOLIDARY_LIST,
             self::SOLIDARY_LIST_SELF,
-            self::SOLIDARY_CONTACT
-            ])) {
+            self::SOLIDARY_CONTACT,
+        ])) {
             return false;
         }
 
@@ -76,16 +76,17 @@ class SolidaryVoter extends Voter
             self::SOLIDARY_DELETE,
             self::SOLIDARY_LIST,
             self::SOLIDARY_LIST_SELF,
-            self::SOLIDARY_CONTACT
-            ]) && !($subject instanceof Paginator) &&
-                !($subject instanceof Solidary) &&
-                !($subject instanceof SolidarySolution) &&
-                !($subject instanceof SolidarySearch) &&
-                !($subject instanceof SolidaryContact) &&
-                !($subject instanceof SolidaryFormalRequest)
+            self::SOLIDARY_CONTACT,
+        ]) && !($subject instanceof Paginator)
+                && !($subject instanceof Solidary)
+                && !($subject instanceof SolidarySolution)
+                && !($subject instanceof SolidarySearch)
+                && !($subject instanceof SolidaryContact)
+                && !($subject instanceof SolidaryFormalRequest)
             ) {
             return false;
         }
+
         return true;
     }
 
@@ -94,18 +95,26 @@ class SolidaryVoter extends Voter
         switch ($attribute) {
             case self::SOLIDARY_CREATE:
                 return $this->canCreateSolidary();
+
             case self::SOLIDARY_READ:
                 ($subject instanceof Solidary) ? $solidary = $subject : $solidary = $subject->getSolidary();
+
                 return $this->canReadSolidary($solidary);
+
             case self::SOLIDARY_UPDATE:
                 ($subject instanceof Solidary) ? $solidary = $subject : $solidary = $subject->getSolidaryMatching()->getSolidary();
+
                 return $this->canUpdateSolidary($solidary);
+
             case self::SOLIDARY_DELETE:
                 return $this->canDeleteSolidary($subject);
+
             case self::SOLIDARY_LIST:
                 return $this->canListSolidary();
+
             case self::SOLIDARY_LIST_SELF:
                 return $this->canListSolidarySelf();
+
             case self::SOLIDARY_CONTACT:
                 return $this->canUpdateSolidary($subject->getSolidarySolution()->getSolidary());
         }
@@ -120,17 +129,17 @@ class SolidaryVoter extends Voter
 
     private function canReadSolidary(Solidary $solidary)
     {
-        return $this->authManager->isAuthorized(self::SOLIDARY_READ, ['solidary'=>$solidary]);
+        return $this->authManager->isAuthorized(self::SOLIDARY_READ, ['solidary' => $solidary]);
     }
 
     private function canUpdateSolidary(Solidary $solidary)
     {
-        return $this->authManager->isAuthorized(self::SOLIDARY_UPDATE, ['solidary'=>$solidary]);
+        return $this->authManager->isAuthorized(self::SOLIDARY_UPDATE, ['solidary' => $solidary]);
     }
 
     private function canDeleteSolidary(Solidary $solidary)
     {
-        return $this->authManager->isAuthorized(self::SOLIDARY_DELETE, ['solidary'=>$solidary]);
+        return $this->authManager->isAuthorized(self::SOLIDARY_DELETE, ['solidary' => $solidary]);
     }
 
     private function canListSolidary()

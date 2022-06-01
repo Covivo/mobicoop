@@ -35,13 +35,13 @@ use Geocoder\Exception\InvalidCredentials;
 use Geocoder\Exception\InvalidServerResponse;
 use Geocoder\Exception\QuotaExceeded;
 use Geocoder\Exception\UnsupportedOperation;
-use Geocoder\Model\AddressCollection;
-use Geocoder\Model\AddressBuilder;
-use Geocoder\Query\GeocodeQuery;
-use Geocoder\Query\ReverseQuery;
 use Geocoder\Http\Provider\AbstractHttpProvider;
+use Geocoder\Model\AddressBuilder;
+use Geocoder\Model\AddressCollection;
 use Geocoder\Provider\GoogleMaps\Model\GoogleAddress;
 use Geocoder\Provider\Provider;
+use Geocoder\Query\GeocodeQuery;
+use Geocoder\Query\ReverseQuery;
 use Http\Client\HttpClient;
 
 /**
@@ -60,12 +60,12 @@ final class GoogleMaps extends AbstractHttpProvider implements Provider
     public const REVERSE_ENDPOINT_URL_SSL = 'https://maps.googleapis.com/maps/api/geocode/json?latlng=%F,%F';
 
     /**
-     * @var string|null
+     * @var null|string
      */
     private $region;
 
     /**
-     * @var string|null
+     * @var null|string
      */
     private $apiKey;
 
@@ -75,37 +75,14 @@ final class GoogleMaps extends AbstractHttpProvider implements Provider
     private $clientId;
 
     /**
-     * @var string|null
+     * @var null|string
      */
     private $privateKey;
 
     /**
-     * @var string|null
+     * @var null|string
      */
     private $channel;
-
-    /**
-     * Google Maps for Business
-     * https://developers.google.com/maps/documentation/business/.
-     *
-     * @param HttpClient $client     An HTTP adapter
-     * @param string     $clientId   Your Client ID
-     * @param string     $privateKey Your Private Key (optional)
-     * @param string     $region     Region biasing (optional)
-     * @param string     $apiKey     Google Geocoding API key (optional)
-     * @param string     $channel    Google Channel parameter (optional)
-     *
-     * @return GoogleMaps
-     */
-    public static function business(HttpClient $client, string $clientId, string $privateKey = null, string $region = null, string $apiKey = null, string $channel = null): GoogleMaps
-    {
-        $provider = new self($client, $region, $apiKey);
-        $provider->clientId = $clientId;
-        $provider->privateKey = $privateKey;
-        $provider->channel = $channel;
-
-        return $provider;
-    }
 
     /**
      * @param HttpClient $client An HTTP adapter
@@ -118,6 +95,27 @@ final class GoogleMaps extends AbstractHttpProvider implements Provider
 
         $this->region = $region;
         $this->apiKey = $apiKey;
+    }
+
+    /**
+     * Google Maps for Business
+     * https://developers.google.com/maps/documentation/business/.
+     *
+     * @param HttpClient $client     An HTTP adapter
+     * @param string     $clientId   Your Client ID
+     * @param string     $privateKey Your Private Key (optional)
+     * @param string     $region     Region biasing (optional)
+     * @param string     $apiKey     Google Geocoding API key (optional)
+     * @param string     $channel    Google Channel parameter (optional)
+     */
+    public static function business(HttpClient $client, string $clientId, string $privateKey = null, string $region = null, string $apiKey = null, string $channel = null): GoogleMaps
+    {
+        $provider = new self($client, $region, $apiKey);
+        $provider->clientId = $clientId;
+        $provider->privateKey = $privateKey;
+        $provider->channel = $channel;
+
+        return $provider;
     }
 
     public function geocodeQuery(GeocodeQuery $query): Collection
@@ -166,7 +164,6 @@ final class GoogleMaps extends AbstractHttpProvider implements Provider
     }
 
     /**
-     * @param string $url
      * @param string $locale
      *
      * @return string query with extra params
@@ -201,12 +198,8 @@ final class GoogleMaps extends AbstractHttpProvider implements Provider
     }
 
     /**
-     * @param string $url
      * @param string $locale
-     * @param int    $limit
      * @param string $region
-     *
-     * @return AddressCollection
      *
      * @throws InvalidServerResponse
      * @throws InvalidCredentials
@@ -278,9 +271,8 @@ final class GoogleMaps extends AbstractHttpProvider implements Provider
     /**
      * Update current resultSet with given key/value.
      *
-     * @param AddressBuilder $builder
-     * @param string         $type    Component type
-     * @param object         $values  The component values
+     * @param string $type   Component type
+     * @param object $values The component values
      */
     private function updateAddressComponent(AddressBuilder $builder, string $type, $values)
     {
@@ -300,6 +292,7 @@ final class GoogleMaps extends AbstractHttpProvider implements Provider
                 $builder->addAdminLevel(4, $values->long_name, $values->short_name);
 
                 break;
+
             case 'administrative_area_level_2':
                 $builder->addAdminLevel(5, $values->long_name, $values->short_name);
 
@@ -398,10 +391,6 @@ final class GoogleMaps extends AbstractHttpProvider implements Provider
 
     /**
      * Serialize the component query parameter.
-     *
-     * @param array $components
-     *
-     * @return string
      */
     private function serializeComponents(array $components): string
     {
@@ -413,14 +402,13 @@ final class GoogleMaps extends AbstractHttpProvider implements Provider
     /**
      * Decode the response content and validate it to make sure it does not have any errors.
      *
-     * @param string $url
      * @param string $content
-     *
-     * @return mixed result form json_decode()
      *
      * @throws InvalidCredentials
      * @throws InvalidServerResponse
      * @throws QuotaExceeded
+     *
+     * @return mixed result form json_decode()
      */
     private function validateResponse(string $url, $content): mixed
     {
@@ -457,7 +445,6 @@ final class GoogleMaps extends AbstractHttpProvider implements Provider
     /**
      * Parse coordinats and bounds.
      *
-     * @param AddressBuilder $builder
      * @param $result
      */
     private function parseCoordinates(AddressBuilder $builder, $result)

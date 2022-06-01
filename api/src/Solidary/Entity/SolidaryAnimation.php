@@ -19,20 +19,18 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
-use App\Solidary\Entity\Solidary;
-use App\Solidary\Entity\SolidarySolution;
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\User\Entity\User;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * An animation action
+ * An animation action.
  *
  * @ApiResource(
  *      attributes={
@@ -62,6 +60,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          },
  *      }
  * )
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class SolidaryAnimation
@@ -69,7 +68,7 @@ class SolidaryAnimation
     public const DEFAULT_ID = 999999999999;
 
     /**
-     * @var int The id of this SolidaryAnimation action.
+     * @var int the id of this SolidaryAnimation action
      * @ApiProperty(identifier=true)
      * @Groups("readAnimation")
      */
@@ -89,58 +88,58 @@ class SolidaryAnimation
     private $comment;
 
     /**
-     * @var User The user related with the SolidaryAnimation action.
+     * @var User the user related with the SolidaryAnimation action
      * @Assert\NotBlank
      * @Groups({"readAnimation","writeAnimation"})
      */
     private $user;
 
     /**
-     * @var User The author of the SolidaryAnimation action.
+     * @var User the author of the SolidaryAnimation action
      * @Groups({"readAnimation","writeAnimation"})
      */
     private $author;
 
     /**
-     * @var int|null The progression if the SolidaryAnimation can be related to a process (like for solidary records). It's a numeric value, so it can be a percent, a step...
+     * @var null|int The progression if the SolidaryAnimation can be related to a process (like for solidary records). It's a numeric value, so it can be a percent, a step...
      * @Groups({"readAnimation","writeAnimation"})
      */
     private $progression;
 
     /**
-     * @var Solidary|null The solidary record if the SolidaryAnimation concerns a solidary record.
+     * @var null|Solidary the solidary record if the SolidaryAnimation concerns a solidary record
      * @Groups({"readAnimation","writeAnimation"})
      */
     private $solidary;
 
     /**
-     * @var SolidarySolution|null The solidary solution if the SolidaryAnimation concerns a solidary record solution.
+     * @var null|SolidarySolution the solidary solution if the SolidaryAnimation concerns a solidary record solution
      * @Groups({"readAnimation","writeAnimation"})
      */
     private $solidarySolution;
 
     /**
-     * @var \DateTimeInterface Creation date of the diary action.
+     * @var \DateTimeInterface creation date of the diary action
      * @Groups({"readAnimation"})
      */
     private $createdDate;
 
     /**
-     * @var \DateTimeInterface Updated date of the diary action.
+     * @var \DateTimeInterface updated date of the diary action
      * @Groups({"readAnimation"})
      */
     private $updatedDate;
 
     /**
-    * @var User|null The transporter associated to the SolidaryAnimation action.
-    * @Groups({"readAnimation","writeAnimation"})
-    */
+     * @var null|User the transporter associated to the SolidaryAnimation action
+     * @Groups({"readAnimation","writeAnimation"})
+     */
     private $transporter;
 
     /**
-    * @var User|null The carpooler associated to the SolidaryAnimation action.
-    * @Groups({"readAnimation","writeAnimation"})
-    */
+     * @var null|User the carpooler associated to the SolidaryAnimation action
+     * @Groups({"readAnimation","writeAnimation"})
+     */
     private $carpooler;
 
     public function __construct()

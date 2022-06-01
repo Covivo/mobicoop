@@ -15,7 +15,7 @@ final class Version20200717074912 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('DROP TABLE relay_point_relay_point_type');
         $this->addSql('ALTER TABLE relay_point ADD relay_point_type_id INT DEFAULT NULL');
@@ -26,7 +26,7 @@ final class Version20200717074912 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('CREATE TABLE relay_point_relay_point_type (relay_point_id INT NOT NULL, relay_point_type_id INT NOT NULL, INDEX IDX_848D417877D93E2D (relay_point_id), INDEX IDX_848D4178D8CA6523 (relay_point_type_id), PRIMARY KEY(relay_point_id, relay_point_type_id)) DEFAULT CHARACTER SET utf8 COLLATE `utf8_unicode_ci` ENGINE = InnoDB COMMENT = \'\' ');
         $this->addSql('ALTER TABLE relay_point_relay_point_type ADD CONSTRAINT FK_848D417877D93E2D FOREIGN KEY (relay_point_id) REFERENCES relay_point (id) ON DELETE CASCADE');

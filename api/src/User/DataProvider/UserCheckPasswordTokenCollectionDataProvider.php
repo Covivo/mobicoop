@@ -19,16 +19,14 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\DataProvider;
 
-use App\User\Entity\User;
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
+use App\User\Entity\User;
 use App\User\Service\UserManager;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -36,7 +34,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  * Item data provider for User me.
  *
  * @author Celine Jacquet <celine.jacquet@mobicoop.org>
- *
  */
 final class UserCheckPasswordTokenCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
@@ -53,18 +50,19 @@ final class UserCheckPasswordTokenCollectionDataProvider implements CollectionDa
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return User::class === $resourceClass && $operationName === "checkPasswordToken";
+        return User::class === $resourceClass && 'checkPasswordToken' === $operationName;
     }
 
     public function getCollection(string $resourceClass, string $operationName = null, array $context = []): iterable
     {
         if (
-            is_null($this->request->get("pwdToken"))
+            is_null($this->request->get('pwdToken'))
         ) {
             return null;
         }
+
         return $this->userManager->checkPasswordToken(
-            $this->request->get("pwdToken")
+            $this->request->get('pwdToken')
         );
     }
 }

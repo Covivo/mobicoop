@@ -19,29 +19,29 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\EventListener;
 
+use ApiPlatform\Core\EventListener\DeserializeListener as DecoratedListener;
+use ApiPlatform\Core\Serializer\SerializerContextBuilderInterface;
 use ApiPlatform\Core\Util\RequestAttributesExtractor;
 use Symfony\Component\HttpFoundation\Request;
-use ApiPlatform\Core\EventListener\DeserializeListener as DecoratedListener;
-use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
-use ApiPlatform\Core\Serializer\SerializerContextBuilderInterface;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
+use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 
 /**
  * To deserialize form-data request
- * i.e. /rdex/connections POST
+ * i.e. /rdex/connections POST.
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 final class DeserializeListener
 {
+    public const AUTHORIZED_FORM_URL = ['/rdex/connections'];
     private $decorated;
     private $denormalizer;
     private $serializerContextBuilder;
-
-    public const AUTHORIZED_FORM_URL = ['/rdex/connections'];
 
     public function __construct(DenormalizerInterface $denormalizer, SerializerContextBuilderInterface $serializerContextBuilder, DecoratedListener $decorated)
     {

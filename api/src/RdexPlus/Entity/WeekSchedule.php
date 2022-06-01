@@ -19,122 +19,119 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\RdexPlus\Entity;
 
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * RDEX+ : A WeekSchedule (for regular Journeys)
- * Documentation : https://rdex.fabmob.io/
+ * Documentation : https://rdex.fabmob.io/.
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class WeekSchedule
 {
-    /*
-    * WARNING : For now, Mobicoop only use the outward timeDelta and ignore the time delta of specific days
-    */
+    // WARNING : For now, Mobicoop only use the outward timeDelta and ignore the time delta of specific days
 
     /**
-     * @var string Time using a UTC partial time string (example "08:30:00") of departure for the journey (outward or return) on Mondays, if any.
+     * @var string time using a UTC partial time string (example "08:30:00") of departure for the journey (outward or return) on Mondays, if any
      *
      * @Groups({"rdexPlusRead","rdexPlusWrite"})
      */
     private $mondayTime;
 
     /**
-     * @var int Optional time margin in seconds.
+     * @var int optional time margin in seconds
      *
      * @Groups({"rdexPlusRead","rdexPlusWrite"})
      */
     private $mondayTimeDelta;
 
     /**
-     * @var string Time using a UTC partial time string (example "08:30:00") of departure for the journey (outward or return) on Tuesdays, if any.
+     * @var string time using a UTC partial time string (example "08:30:00") of departure for the journey (outward or return) on Tuesdays, if any
      *
      * @Groups({"rdexPlusRead","rdexPlusWrite"})
      */
     private $tuesdayTime;
 
     /**
-     * @var int Optional time margin in seconds.
+     * @var int optional time margin in seconds
      *
      * @Groups({"rdexPlusRead","rdexPlusWrite"})
      */
     private $tuesdayTimeDelta;
 
     /**
-     * @var string Time using a UTC partial time string (example "08:30:00") of departure for the journey (outward or return) on Wednesdays, if any.
+     * @var string time using a UTC partial time string (example "08:30:00") of departure for the journey (outward or return) on Wednesdays, if any
      *
      * @Groups({"rdexPlusRead","rdexPlusWrite"})
      */
     private $wednesdayTime;
 
     /**
-     * @var int Optional time margin in seconds.
+     * @var int optional time margin in seconds
      *
      * @Groups({"rdexPlusRead","rdexPlusWrite"})
      */
     private $wednesdayTimeDelta;
 
     /**
-     * @var string Time using a UTC partial time string (example "08:30:00") of departure for the journey (outward or return) on Thursdays, if any.
+     * @var string time using a UTC partial time string (example "08:30:00") of departure for the journey (outward or return) on Thursdays, if any
      *
      * @Groups({"rdexPlusRead","rdexPlusWrite"})
      */
     private $thursdayTime;
 
     /**
-     * @var int Optional time margin in seconds.
+     * @var int optional time margin in seconds
      *
      * @Groups({"rdexPlusRead","rdexPlusWrite"})
      */
     private $thursdayTimeDelta;
 
     /**
-     * @var string Time using a UTC partial time string (example "08:30:00") of departure for the journey (outward or return) on Fridays, if any.
+     * @var string time using a UTC partial time string (example "08:30:00") of departure for the journey (outward or return) on Fridays, if any
      *
      * @Groups({"rdexPlusRead","rdexPlusWrite"})
      */
     private $fridayTime;
 
     /**
-     * @var int Optional time margin in seconds.
+     * @var int optional time margin in seconds
      *
      * @Groups({"rdexPlusRead","rdexPlusWrite"})
      */
     private $fridayTimeDelta;
 
     /**
-     * @var string Time using a UTC partial time string (example "08:30:00") of departure for the journey (outward or return) on Saturdays, if any.
+     * @var string time using a UTC partial time string (example "08:30:00") of departure for the journey (outward or return) on Saturdays, if any
      *
      * @Groups({"rdexPlusRead","rdexPlusWrite"})
      */
     private $saturdayTime;
 
     /**
-     * @var int Optional time margin in seconds.
+     * @var int optional time margin in seconds
      *
      * @Groups({"rdexPlusRead","rdexPlusWrite"})
      */
     private $saturdayTimeDelta;
 
     /**
-     * @var string Time using a UTC partial time string (example "08:30:00") of departure for the journey (outward or return) on Sundays, if any.
+     * @var string time using a UTC partial time string (example "08:30:00") of departure for the journey (outward or return) on Sundays, if any
      *
      * @Groups({"rdexPlusRead","rdexPlusWrite"})
      */
     private $sundayTime;
 
     /**
-     * @var int Optional time margin in seconds.
+     * @var int optional time margin in seconds
      *
      * @Groups({"rdexPlusRead","rdexPlusWrite"})
      */
     private $sundayTimeDelta;
-
 
     public function getMondayTime(): ?string
     {

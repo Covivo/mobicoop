@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Geography\Command;
 
@@ -33,7 +33,6 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
  */
-
 class DirectionGeoJsonCommand extends Command
 {
     private $directionManager;
@@ -48,15 +47,16 @@ class DirectionGeoJsonCommand extends Command
     protected function configure()
     {
         $this
-        ->setName('app:geography:direction-geo-json')
-        ->setDescription('Update directions where the geoJson detail has not been computed.')
-        ->setHelp('Find directions where the geoJson detail is null, then decode the path detail and transform it to geoJson; finally put the result into geoJsonDetail.')
+            ->setName('app:geography:direction-geo-json')
+            ->setDescription('Update directions where the geoJson detail has not been computed.')
+            ->setHelp('Find directions where the geoJson detail is null, then decode the path detail and transform it to geoJson; finally put the result into geoJsonDetail.')
         ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->directionManager->updateDirectionsWithGeoJson();
+
         return 0;
     }
 }

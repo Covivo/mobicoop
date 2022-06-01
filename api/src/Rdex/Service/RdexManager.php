@@ -292,8 +292,6 @@ class RdexManager
 
     /**
      * Get the journeys from the proposals.
-     *
-     * @return array|RdexError
      */
     public function getJourneys(array $parameters): array|RdexError
     {
@@ -682,8 +680,6 @@ class RdexManager
      *
      * @param \DateTime $time   Base time
      * @param int       $margin Margin in seconds  to compute min and max time
-     *
-     * @return array
      */
     private function computeMinMaxTime(\DateTime $time, int $margin): array
     {
@@ -708,8 +704,6 @@ class RdexManager
      * @param Result $result The result from which we build the infos
      * @param string $role   The role of the requester
      * @param string $way    "outward" or "return" journey
-     *
-     * @return array
      */
     private function buildJourneyDetails(Result $result, string $role, string $way): array
     {

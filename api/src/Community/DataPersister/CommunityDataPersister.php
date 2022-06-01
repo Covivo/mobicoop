@@ -18,25 +18,23 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Community\DataPersister;
 
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
 use App\Community\Entity\Community;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Security\Core\Security;
 use App\Community\Service\CommunityManager;
 use App\User\Entity\User;
+use Symfony\Component\Security\Core\Security;
 
 /**
  * Data persister for Community
- * Use for add the role community_manager to the author before save
+ * Use for add the role community_manager to the author before save.
  *
  * @author Julien Deschampt <julien.deschampt@mobicoop.org>
  * @author Rémi Wortemann <remi.wortemann@mobicoop.org>
  */
-
 final class CommunityDataPersister implements ContextAwareDataPersisterInterface
 {
     private $communityManager;
@@ -57,24 +55,25 @@ final class CommunityDataPersister implements ContextAwareDataPersisterInterface
     public function persist($data, array $context = [])
     {
         if (is_null($data)) {
-            throw new \InvalidArgumentException($this->translator->trans("bad community is provided"));
+            throw new \InvalidArgumentException($this->translator->trans('bad community is provided'));
         }
 
-        if (isset($context['item_operation_name']) &&  $context['item_operation_name'] == 'put') {
+        if (isset($context['item_operation_name']) && 'put' == $context['item_operation_name']) {
             $data = $this->communityManager->updateCommunity($data);
-        } elseif (isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'post') {
+        } elseif (isset($context['collection_operation_name']) && 'post' == $context['collection_operation_name']) {
             $data = $this->communityManager->save($data);
-        } elseif (isset($context['item_operation_name']) &&  $context['item_operation_name'] == 'join') {
+        } elseif (isset($context['item_operation_name']) && 'join' == $context['item_operation_name']) {
             if (!($this->security->getUser() instanceof User)) {
-                throw new \LogicException("Only a User can join a Community");
+                throw new \LogicException('Only a User can join a Community');
             }
             $data = $this->communityManager->joinCommunity($data, $this->security->getUser());
-        } elseif (isset($context['item_operation_name']) &&  $context['item_operation_name'] == 'leave') {
+        } elseif (isset($context['item_operation_name']) && 'leave' == $context['item_operation_name']) {
             if (!($this->security->getUser() instanceof User)) {
-                throw new \LogicException("Only a User can leave a Community");
+                throw new \LogicException('Only a User can leave a Community');
             }
             $data = $this->communityManager->leaveCommunity($data, $this->security->getUser());
         }
+
         return $data;
     }
 

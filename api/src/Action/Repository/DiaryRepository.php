@@ -18,7 +18,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Action\Repository;
 
@@ -66,19 +66,21 @@ class DiaryRepository
     }
 
     /**
-     * Find the last entry for a given Solidary
+     * Find the last entry for a given Solidary.
      *
-     * @param Solidary $solidary    The solidary record
-     * @return Diary|null           The progression
+     * @param Solidary $solidary The solidary record
+     *
+     * @return null|Diary The progression
      */
     public function findLastEntryForSolidary(Solidary $solidary): ?Diary
     {
         return $this->repository->createQueryBuilder('d')
-        ->where('d.solidary = :solidary')
-        ->orderBy('d.updatedDate', 'DESC')
-        ->setParameter('solidary', $solidary)
-        ->setMaxResults(1)
-        ->getQuery()
-        ->getOneOrNullResult();
+            ->where('d.solidary = :solidary')
+            ->orderBy('d.updatedDate', 'DESC')
+            ->setParameter('solidary', $solidary)
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
     }
 }

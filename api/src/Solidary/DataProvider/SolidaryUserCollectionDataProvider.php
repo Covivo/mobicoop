@@ -18,16 +18,14 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\DataProvider;
 
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
 use App\Solidary\Entity\SolidaryUser;
 use App\Solidary\Service\SolidaryUserManager;
-use Symfony\Component\Security\Core\Security;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
@@ -37,7 +35,6 @@ final class SolidaryUserCollectionDataProvider implements CollectionDataProvider
     private $solidaryUserManager;
     private $context;
 
-
     public function __construct(SolidaryUserManager $solidaryUserManager)
     {
         $this->solidaryUserManager = $solidaryUserManager;
@@ -46,6 +43,7 @@ final class SolidaryUserCollectionDataProvider implements CollectionDataProvider
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
         $this->context = $context;
+
         return SolidaryUser::class === $resourceClass;
     }
 
@@ -61,6 +59,7 @@ final class SolidaryUserCollectionDataProvider implements CollectionDataProvider
                 }
             }
         }
+
         return $this->solidaryUserManager->getSolidaryUsers($filters);
     }
 }

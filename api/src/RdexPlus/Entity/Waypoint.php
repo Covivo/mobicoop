@@ -19,16 +19,16 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\RdexPlus\Entity;
 
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * RDEX+ : A Waypoint
- * Documentation : https://rdex.fabmob.io/
+ * Documentation : https://rdex.fabmob.io/.
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class Waypoint

@@ -19,22 +19,22 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Geography\Security;
 
-use App\Geography\Entity\Territory;
-use App\Geography\Service\TerritoryManager;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
 use App\Auth\Service\AuthManager;
+use App\Geography\Entity\Territory;
+use App\Geography\Service\TerritoryManager;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Security;
 
 class TerritoryVoter extends Voter
 {
-    public const TERRITORY_CREATE ='territory_create';
+    public const TERRITORY_CREATE = 'territory_create';
     public const TERRITORY_READ = 'territory_read';
     public const TERRITORY_UPDATE = 'territory_update';
     public const TERRITORY_DELETE = 'territory_delete';
@@ -62,8 +62,8 @@ class TerritoryVoter extends Voter
             self::TERRITORY_UPDATE,
             self::TERRITORY_DELETE,
             self::TERRITORY_LIST,
-            self::TERRITORY_LINK
-            ])) {
+            self::TERRITORY_LINK,
+        ])) {
             return false;
         }
 
@@ -72,10 +72,11 @@ class TerritoryVoter extends Voter
             self::TERRITORY_READ,
             self::TERRITORY_UPDATE,
             self::TERRITORY_DELETE,
-            self::TERRITORY_LIST
-            ]) && !$subject instanceof Territory && !$subject instanceof Paginator && !is_array($subject)) {
+            self::TERRITORY_LIST,
+        ]) && !$subject instanceof Territory && !$subject instanceof Paginator && !is_array($subject)) {
             return false;
         }
+
         return true;
     }
 
@@ -85,21 +86,28 @@ class TerritoryVoter extends Voter
             case self::TERRITORY_CREATE:
             case self::TERRITORY_LINK:
                 return $this->canCreateTerritory();
+
             case self::TERRITORY_READ:
                 if ($territory = $this->territoryManager->getTerritory($this->request->get('id'))) {
                     return $this->canReadTerritory($territory);
                 }
+
                 return false;
+
             case self::TERRITORY_UPDATE:
                 if ($territory = $this->territoryManager->getTerritory($this->request->get('id'))) {
                     return $this->canUpdateTerritory($territory);
                 }
+
                 return false;
+
             case self::TERRITORY_DELETE:
                 if ($territory = $this->territoryManager->getTerritory($this->request->get('id'))) {
                     return $this->canDeleteTerritory($territory);
                 }
+
                 return false;
+
             case self::TERRITORY_LIST:
                 return $this->canListTerritories();
         }

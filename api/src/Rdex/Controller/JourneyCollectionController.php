@@ -19,17 +19,17 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Rdex\Controller;
 
-use App\TranslatorTrait;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpFoundation\Response;
-use App\Rdex\Service\RdexManager;
 use App\Rdex\Entity\RdexError;
 use App\Rdex\Entity\RdexJourney;
+use App\Rdex\Service\RdexManager;
+use App\TranslatorTrait;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Controller class for Rdex Journey collection.
@@ -40,8 +40,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 class JourneyCollectionController
 {
     use TranslatorTrait;
-    private $rdexManager;
     protected $request;
+    private $rdexManager;
 
     public function __construct(RequestStack $requestStack, RdexManager $rdexManager)
     {
@@ -53,12 +53,11 @@ class JourneyCollectionController
      * This method is invoked when a Journey collection is requested.
      *
      * @param RdexJourney $data
-     * @return Response
      */
     public function __invoke(array $data): Response
     {
         if (is_null($data)) {
-            throw new \InvalidArgumentException($this->translator->trans("bad RdexJourney id is provided"));
+            throw new \InvalidArgumentException($this->translator->trans('bad RdexJourney id is provided'));
         }
         $response = new JsonResponse();
         // if there are no parameters we stop without errors, in could be an api check, it shouldn't throw an error
@@ -72,8 +71,9 @@ class JourneyCollectionController
             $response->setContent($error['error']);
             $response->setStatusCode($error['code']);
         } else {
-            $response->setContent(json_encode($this->rdexManager->getJourneys($this->request->get("p"))));
+            $response->setContent(json_encode($this->rdexManager->getJourneys($this->request->get('p'))));
         }
+
         return $response;
     }
 }

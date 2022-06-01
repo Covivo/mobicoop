@@ -19,19 +19,19 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Article\DataProvider;
 
 use ApiPlatform\Core\DataProvider\ContextAwareCollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
 use App\Article\Entity\Article;
-use Symfony\Component\HttpFoundation\RequestStack;
 use App\Article\Service\ArticleManager;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- * Get the External Articles
+ * Get the External Articles.
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 final class ExternalPagesCollectionDataProvider implements ContextAwareCollectionDataProviderInterface, RestrictedDataProviderInterface
@@ -44,14 +44,14 @@ final class ExternalPagesCollectionDataProvider implements ContextAwareCollectio
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Article::class === $resourceClass && $operationName == "externalArticles";
+        return Article::class === $resourceClass && 'externalArticles' == $operationName;
     }
 
     public function getCollection(string $resourceClass, string $operationName = null, array $context = []): iterable
     {
         $nbArticles = Article::NB_EXTERNAL_ARTICLES_DEFAULT;
-        if ($this->request->get("nbArticles")!=="" && is_numeric($this->request->get("nbArticles"))) {
-            $nbArticles = $this->request->get("nbArticles");
+        if ('' !== $this->request->get('nbArticles') && is_numeric($this->request->get('nbArticles'))) {
+            $nbArticles = $this->request->get('nbArticles');
         } else {
             $nbArticles = Article::NB_EXTERNAL_ARTICLES_DEFAULT;
         }

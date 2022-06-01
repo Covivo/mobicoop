@@ -19,19 +19,18 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
-use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * A solidary search (transport or carpool)
+ * A solidary search (transport or carpool).
  *
  * @ApiResource(
  *      attributes={
@@ -57,6 +56,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  *          }
  *      }
  * )
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class SolidarySearch
@@ -64,7 +64,7 @@ class SolidarySearch
     public const DEFAULT_ID = 999999999999;
 
     /**
-     * @var int The id of this subject.
+     * @var int the id of this subject
      *
      * @ApiProperty(identifier=true)
      * @Groups({"readSolidary","writeSolidary"})
@@ -72,29 +72,28 @@ class SolidarySearch
     private $id;
 
     /**
-    * @var Solidary The solidary this search is for.
-    * @Assert\NotBlank
-    * @Groups({"readSolidary","writeSolidary","readSolidarySearch"})
-    * @MaxDepth(1)
-    */
+     * @var Solidary the solidary this search is for
+     * @Assert\NotBlank
+     * @Groups({"readSolidary","writeSolidary","readSolidarySearch"})
+     * @MaxDepth(1)
+     */
     private $solidary;
 
     /**
-    * @var string If it's a search on outward or return
-    * @Assert\NotBlank
-    * @Assert\Choice({"outward", "return"})
-    * @Groups({"readSolidary","writeSolidary","readSolidarySearch"})
-    * @MaxDepth(1)
-    */
+     * @var string If it's a search on outward or return
+     * @Assert\NotBlank
+     * @Assert\Choice({"outward", "return"})
+     * @Groups({"readSolidary","writeSolidary","readSolidarySearch"})
+     * @MaxDepth(1)
+     */
     private $way;
 
     /**
-    * @var array The results for this search (array of SolidaryUser)
-    * Array of SolidaryResult
-    * @Groups({"readSolidary","readSolidarySearch"})
-    */
+     * @var array The results for this search (array of SolidaryUser)
+     *            Array of SolidaryResult
+     * @Groups({"readSolidary","readSolidarySearch"})
+     */
     private $results;
-
 
     public function __construct()
     {

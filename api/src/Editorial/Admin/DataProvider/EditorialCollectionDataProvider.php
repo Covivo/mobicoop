@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Editorial\Admin\DataProvider;
 
@@ -28,18 +28,17 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGenerator;
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\Editorial\Entity\Editorial;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Collection editorial data provider in admin context.
  *
  * @author Remi Wortemann <remi.wortemann@mobicoop.org>
- *
  */
 final class EditorialCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
-    protected $request;
+    private $request;
     private $managerRegistry;
     private $collectionExtensions;
 
@@ -52,13 +51,14 @@ final class EditorialCollectionDataProvider implements CollectionDataProviderInt
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Editorial::class === $resourceClass && $operationName === "ADMIN_get";
+        return Editorial::class === $resourceClass && 'ADMIN_get' === $operationName;
     }
 
     public function getCollection(string $resourceClass, string $operationName = null, array $context = []): iterable
     {
         $manager = $this->managerRegistry->getManagerForClass($resourceClass);
         $repository = $manager->getRepository($resourceClass);
+
         /**
          * @var EntityRepository $repository
          */
@@ -71,6 +71,7 @@ final class EditorialCollectionDataProvider implements CollectionDataProviderInt
                 $editorials = $extension->getResult($queryBuilder, $resourceClass, $operationName);
             }
         }
+
         return $editorials;
     }
 }

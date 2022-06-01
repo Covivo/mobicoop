@@ -19,14 +19,14 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Utility\Security;
 
 use App\Auth\Service\AuthManager;
 use App\Utility\Entity\Version;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 /**
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
@@ -46,8 +46,8 @@ class VersionVoter extends Voter
     {
         // if the attribute isn't one we support, return false
         if (!in_array($attribute, [
-            self::VERSION_READ
-            ])) {
+            self::VERSION_READ,
+        ])) {
             return false;
         }
 

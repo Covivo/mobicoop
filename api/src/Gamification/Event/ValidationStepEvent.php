@@ -19,15 +19,16 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Gamification\Event;
 
-use Symfony\Contracts\EventDispatcher\Event;
 use App\Gamification\Entity\ValidationStep;
+use Symfony\Contracts\EventDispatcher\Event;
 
 /**
- * Gamification : Event sent when a ValidationStep has been evaluated
+ * Gamification : Event sent when a ValidationStep has been evaluated.
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class ValidationStepEvent extends Event

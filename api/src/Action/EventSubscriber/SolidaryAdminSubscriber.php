@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Action\EventSubscriber;
 
@@ -31,7 +31,7 @@ use App\Solidary\Admin\Event\SolidaryDeeplyUpdated;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
- * Subscriber for Solidary events in admin context
+ * Subscriber for Solidary events in admin context.
  *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
  */
@@ -50,13 +50,13 @@ class SolidaryAdminSubscriber implements EventSubscriberInterface
     {
         return [
             SolidaryCreatedEvent::NAME => 'onSolidaryCreated',
-            SolidaryDeeplyUpdated::NAME => 'onSolidaryDeeplyUpdated'
+            SolidaryDeeplyUpdated::NAME => 'onSolidaryDeeplyUpdated',
         ];
     }
 
     public function onSolidaryCreated(SolidaryCreatedEvent $event)
     {
-        if (!$action = $this->actionRepository->findOneBy(['name'=>SolidaryCreatedEvent::ACTION])) {
+        if (!$action = $this->actionRepository->findOneBy(['name' => SolidaryCreatedEvent::ACTION])) {
             throw new ActionException(ActionException::BAD_ACTION);
         }
         $this->diaryManager->addDiaryEntry(
@@ -72,7 +72,7 @@ class SolidaryAdminSubscriber implements EventSubscriberInterface
 
     public function onSolidaryDeeplyUpdated(SolidaryDeeplyUpdated $event)
     {
-        if (!$action = $this->actionRepository->findOneBy(['name'=>SolidaryDeeplyUpdated::NAME])) {
+        if (!$action = $this->actionRepository->findOneBy(['name' => SolidaryDeeplyUpdated::NAME])) {
             throw new ActionException(ActionException::BAD_ACTION);
         }
         $this->diaryManager->addDiaryEntry(

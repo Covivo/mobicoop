@@ -19,17 +19,18 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Match\Repository;
 
+use App\Match\Entity\MassMatching;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use App\Match\Entity\MassMatching;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
- * @method MassMatching|null find($id)
+ *
+ * @method null|MassMatching find($id)
  */
 class MassMatchingRepository
 {
@@ -54,7 +55,7 @@ class MassMatchingRepository
     {
         $conn = $this->entityManager->getConnection();
 
-        $sql = "DELETE mass_matching FROM `mass_matching` INNER JOIN mass_person on mass_person.id = mass_matching.mass_person1_id WHERE mass_person.mass_id = ".$massId;
+        $sql = 'DELETE mass_matching FROM `mass_matching` INNER JOIN mass_person on mass_person.id = mass_matching.mass_person1_id WHERE mass_person.mass_id = '.$massId;
 
         $stmt = $conn->prepare($sql);
         $stmt->executeQuery();

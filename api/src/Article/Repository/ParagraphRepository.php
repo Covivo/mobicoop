@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Article\Repository;
 
@@ -28,8 +28,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 
 /**
- * @method Paragraph|null find($id, $lockMode = null, $lockVersion = null)
- * @method Paragraph|null findOneBy(array $criteria, array $orderBy = null)
+ * @method null|Paragraph find($id, $lockMode = null, $lockVersion = null)
+ * @method null|Paragraph findOneBy(array $criteria, array $orderBy = null)
  * @method Paragraph[]    findAll()
  * @method Paragraph[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
@@ -52,18 +52,16 @@ class ParagraphRepository
 
     /**
      * Find the following paragraph of a given paragraph.
-     *
-     * @param Paragraph $paragraph
-     * @return Paragraph
      */
     public function findNext(Paragraph $paragraph): Paragraph
     {
         $query = $this->repository->createQueryBuilder('p')
-        ->andWhere('p.position = :position')
-        ->andWhere('p.section = :section')
-        ->setParameter('position', $paragraph->getPosition()+1)
-        ->setParameter('section', $paragraph->getSection())
-        ->getQuery();
+            ->andWhere('p.position = :position')
+            ->andWhere('p.section = :section')
+            ->setParameter('position', $paragraph->getPosition() + 1)
+            ->setParameter('section', $paragraph->getSection())
+            ->getQuery()
+        ;
 
         return $query->getOneOrNullResult()
         ;
@@ -71,18 +69,16 @@ class ParagraphRepository
 
     /**
      * Find the previous paragraph of a given paragraph.
-     *
-     * @param Paragraph $paragraph
-     * @return Paragraph
      */
     public function findPrevious(Paragraph $paragraph): Paragraph
     {
         $query = $this->repository->createQueryBuilder('p')
-        ->andWhere('p.position = :position')
-        ->andWhere('p.section = :section')
-        ->setParameter('position', $paragraph->getPosition()-1)
-        ->setParameter('section', $paragraph->getSection())
-        ->getQuery();
+            ->andWhere('p.position = :position')
+            ->andWhere('p.section = :section')
+            ->setParameter('position', $paragraph->getPosition() - 1)
+            ->setParameter('section', $paragraph->getSection())
+            ->getQuery()
+        ;
 
         return $query->getOneOrNullResult()
         ;

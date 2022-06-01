@@ -18,14 +18,15 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Article\Entity;
 
 /**
-* An iframe
-* @author Maxime Bardot <maxime.bardot@mobicoop.org>
-*/
+ * An iframe.
+ *
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ */
 class Iframe
 {
     /**

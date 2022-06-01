@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Rdex\Entity;
 
@@ -31,78 +31,60 @@ namespace App\Rdex\Entity;
 class RdexAddress implements \JsonSerializable
 {
     /**
-     * @var string The address.
+     * @var string the address
      */
     private $address;
 
     /**
-     * @var string The city.
+     * @var string the city
      */
     private $city;
 
     /**
-     * @var string The postal code.
+     * @var string the postal code
      */
     private $postalcode;
 
     /**
-     * @var string The country.
+     * @var string the country
      */
     private $country;
 
     /**
-     * @var float The latitude.
+     * @var float the latitude
      */
     private $latitude;
 
     /**
-     * @var float The longitude.
+     * @var float the longitude
      */
     private $longitude;
 
-    /**
-     * @return string
-     */
     public function getAddress(): string
     {
         return $this->address;
     }
 
-    /**
-     * @return string
-     */
     public function getCity(): string
     {
         return $this->city;
     }
 
-    /**
-     * @return string
-     */
     public function getPostalcode(): string
     {
         return $this->postalcode;
     }
 
-    /**
-     * @return string
-     */
     public function getCountry(): string
     {
         return $this->country;
     }
 
-    /**
-     * @return number
-     */
     public function getLatitude(): number
     {
         return $this->latitude;
     }
 
-    /**
-     * @return number
-     */
     public function getLongitude(): number
     {
         return $this->longitude;
@@ -160,12 +142,12 @@ class RdexAddress implements \JsonSerializable
     {
         return
         [
-            'address'       => $this->getAddress(),
-            'city'          => $this->getCity(),
-            'postalcode'    => $this->getPostalcode(),
-            'country'       => $this->getCountry(),
-            'latitude'      => $this->getLatitude(),
-            'longitude'     => $this->getLongitude()
+            'address' => $this->getAddress(),
+            'city' => $this->getCity(),
+            'postalcode' => $this->getPostalcode(),
+            'country' => $this->getCountry(),
+            'latitude' => $this->getLatitude(),
+            'longitude' => $this->getLongitude(),
         ];
     }
 }

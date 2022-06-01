@@ -18,7 +18,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\RelayPoint\Filter;
 
@@ -28,9 +28,33 @@ use Doctrine\ORM\QueryBuilder;
 
 final class TerritoryFilter extends AbstractContextAwareFilter
 {
+    // This function is only used to hook in documentation generators (supported by Swagger and Hydra)
+    public function getDescription(string $resourceClass): array
+    {
+        if (!$this->properties) {
+            return [];
+        }
+
+        $description = [];
+        foreach ($this->properties as $property => $strategy) {
+            $description["{$property}"] = [
+                'property' => $property,
+                'type' => 'array',
+                'required' => false,
+                'swagger' => [
+                    'description' => 'Filter on relay points that have its address in the given territory',
+                    'name' => 'territory',
+                    'type' => 'array',
+                ],
+            ];
+        }
+
+        return $description;
+    }
+
     protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
     {
-        if ($property != "territory") {
+        if ('territory' != $property) {
             return;
         }
         $territories = [];
@@ -54,48 +78,26 @@ final class TerritoryFilter extends AbstractContextAwareFilter
             }
         }
 
-        if (count($territories)>0) {
+        if (count($territories) > 0) {
             $rootAlias = $queryBuilder->getRootAliases()[0];
-            $queryBuilder->leftJoin(sprintf("%s.address", $rootAlias), 'a');
-            $where = "(";
+            $queryBuilder->leftJoin(sprintf('%s.address', $rootAlias), 'a');
+            $where = '(';
+
             /**
              * @var Territory $territory
              */
             foreach ($territories as $territory) {
-                if ($where != '(') {
-                    $where .= " OR ";
+                if ('(' != $where) {
+                    $where .= ' OR ';
                 }
                 $territoryFrom = 'territory'.$territory;
                 $queryBuilder->leftJoin('a.territories', $territoryFrom);
-                $where .= sprintf("%s.id = %s", $territoryFrom, $territory);
+                $where .= sprintf('%s.id = %s', $territoryFrom, $territory);
             }
-            $where .= ")";
+            $where .= ')';
             $queryBuilder
-            ->andWhere($where);
+                ->andWhere($where)
+            ;
         }
-    }
-
-    // This function is only used to hook in documentation generators (supported by Swagger and Hydra)
-    public function getDescription(string $resourceClass): array
-    {
-        if (!$this->properties) {
-            return [];
-        }
-
-        $description = [];
-        foreach ($this->properties as $property => $strategy) {
-            $description["$property"] = [
-                'property' => $property,
-                'type' => 'array',
-                'required' => false,
-                'swagger' => [
-                    'description' => 'Filter on relay points that have its address in the given territory',
-                    'name' => 'territory',
-                    'type' => 'array',
-                ],
-            ];
-        }
-
-        return $description;
     }
 }

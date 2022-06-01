@@ -19,19 +19,18 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Community\EventListener;
 
 use App\Community\Entity\Community;
 use App\Community\Entity\CommunityUser;
 use App\Community\Service\CommunityManager;
-use App\Image\Entity\Image;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- * CommunityUser Event listener
+ * CommunityUser Event listener.
  */
 class CommunityLoadListener
 {
@@ -53,14 +52,15 @@ class CommunityLoadListener
 
             $community = $args->getEntity();
             if ($community instanceof Community) {
-                if ($request->get("userId")) {
+                if ($request->get('userId')) {
                     /** @var CommunityUser[] $communityUsers */
                     $communityUsers = $community->getCommunityUsers();
                     foreach ($communityUsers as $communityUser) {
-                        if ($request->get("userId") == $communityUser->getUser()->getId() &&
-                            ($communityUser->getStatus() == CommunityUser::STATUS_ACCEPTED_AS_MEMBER || CommunityUser::STATUS_ACCEPTED_AS_MODERATOR)
+                        if ($request->get('userId') == $communityUser->getUser()->getId()
+                            && (CommunityUser::STATUS_ACCEPTED_AS_MEMBER == $communityUser->getStatus() || CommunityUser::STATUS_ACCEPTED_AS_MODERATOR)
                         ) {
                             $community->setMember(true);
+
                             break;
                         }
                     }

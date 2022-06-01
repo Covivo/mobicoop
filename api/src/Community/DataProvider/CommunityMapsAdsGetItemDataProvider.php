@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Community\DataProvider;
 
@@ -31,14 +31,13 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Security;
 
 /**
- * Get the Ads related to a Community
+ * Get the Ads related to a Community.
  *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
- *
  */
 final class CommunityMapsAdsGetItemDataProvider implements ItemDataProviderInterface, RestrictedDataProviderInterface
 {
-    protected $request;
+    private $request;
     private $communityManager;
     private $security;
 
@@ -52,7 +51,7 @@ final class CommunityMapsAdsGetItemDataProvider implements ItemDataProviderInter
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Community::class === $resourceClass && $operationName === "mapsAds";
+        return Community::class === $resourceClass && 'mapsAds' === $operationName;
     }
 
     public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?object

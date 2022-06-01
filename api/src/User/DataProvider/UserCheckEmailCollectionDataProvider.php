@@ -19,14 +19,13 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\DataProvider;
 
-use App\User\Entity\User;
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
+use App\User\Entity\User;
 use App\User\Service\UserManager;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -36,7 +35,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  * Item data provider for User me.
  *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
- *
  */
 final class UserCheckEmailCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
@@ -53,7 +51,7 @@ final class UserCheckEmailCollectionDataProvider implements CollectionDataProvid
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return User::class === $resourceClass && $operationName === "checkEmail";
+        return User::class === $resourceClass && 'checkEmail' === $operationName;
     }
 
     public function getCollection(string $resourceClass, string $operationName = null, array $context = []): iterable
@@ -61,12 +59,14 @@ final class UserCheckEmailCollectionDataProvider implements CollectionDataProvid
         $locale = $this->request->getLocale();
         $this->translator->setLocale($locale);
         if ($state = $this->userManager->checkEmail($this->request->get('email'))) {
-            if ($state == "email-exist") {
-                return new JsonResponse(["error"=>true,"message"=>$this->translator->trans('errors.alreadyUsed')]);
-            } elseif ($state != "authorized") {
-                return new JsonResponse(["error"=>true,"message"=>$this->translator->trans('errors.wrongDomains', ['domains' => $state ])]);
+            if ('email-exist' == $state) {
+                return new JsonResponse(['error' => true, 'message' => $this->translator->trans('errors.alreadyUsed')]);
+            }
+            if ('authorized' != $state) {
+                return new JsonResponse(['error' => true, 'message' => $this->translator->trans('errors.wrongDomains', ['domains' => $state])]);
             }
         }
+
         return [];
     }
 }

@@ -21,7 +21,7 @@ declare(strict_types=1);
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace DoctrineMigrations;
 
@@ -36,7 +36,7 @@ final class Version20181001122051 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('CREATE TABLE criteria (id INT AUTO_INCREMENT NOT NULL, frequency SMALLINT NOT NULL, seats INT NOT NULL, from_date DATE NOT NULL, from_time TIME DEFAULT NULL, to_date DATE DEFAULT NULL, mon_check TINYINT(1) DEFAULT NULL, tue_check TINYINT(1) DEFAULT NULL, wed_check TINYINT(1) DEFAULT NULL, thu_check TINYINT(1) DEFAULT NULL, fri_check TINYINT(1) DEFAULT NULL, sat_check TINYINT(1) DEFAULT NULL, sun_check TINYINT(1) DEFAULT NULL, mon_time TIME DEFAULT NULL, tue_time TIME DEFAULT NULL, wed_time TIME DEFAULT NULL, thu_time TIME DEFAULT NULL, fri_time TIME DEFAULT NULL, sat_time TIME DEFAULT NULL, sun_time TIME DEFAULT NULL, margin_time INT DEFAULT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB');
         $this->addSql('CREATE TABLE matching (id INT AUTO_INCREMENT NOT NULL, proposal_offer_id INT NOT NULL, proposal_request_id INT NOT NULL, point_offer_from_id INT DEFAULT NULL, point_offer_to_id INT DEFAULT NULL, point_request_from_id INT DEFAULT NULL, criteria_id INT NOT NULL, created_date DATETIME NOT NULL, distance_real INT DEFAULT NULL, distance_fly INT DEFAULT NULL, duration INT DEFAULT NULL, INDEX IDX_DC10F289B29D48C6 (proposal_offer_id), INDEX IDX_DC10F289304C8BD3 (proposal_request_id), INDEX IDX_DC10F28993EF35BA (point_offer_from_id), INDEX IDX_DC10F28985C70859 (point_offer_to_id), INDEX IDX_DC10F289A54D0C13 (point_request_from_id), UNIQUE INDEX UNIQ_DC10F289990BEA15 (criteria_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB');
@@ -74,7 +74,7 @@ final class Version20181001122051 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE matching DROP FOREIGN KEY FK_DC10F289990BEA15');
         $this->addSql('ALTER TABLE proposal DROP FOREIGN KEY FK_BFE59472990BEA15');

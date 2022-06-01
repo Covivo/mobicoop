@@ -19,13 +19,13 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Travel\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -45,22 +45,22 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class TravelMode
 {
-    public const TRAVEL_MODE_CAR = "CAR";
-    public const TRAVEL_MODE_BUS = "BUS";
-    public const TRAVEL_MODE_TRAMWAY = "TRAMWAY";
-    public const TRAVEL_MODE_COACH = "COACH";
-    public const TRAVEL_MODE_TRAIN = "TRAIN";
-    public const TRAVEL_MODE_TRAIN_LOCAL = "TRAIN_LOCAL";
-    public const TRAVEL_MODE_TRAIN_HIGH_SPEED = "TRAIN_HIGH_SPEED";
-    public const TRAVEL_MODE_BIKE = "BIKE";
-    public const TRAVEL_MODE_WALK = "WALK";
-    public const TRAVEL_MODE_SUBWAY = "SUBWAY";
-    public const TRAVEL_MODE_WAITING = "WAITING";
-    public const TRAVEL_UNKNOWN = "UNKNOWN";
-    public const TRAVEL_MODE_ON_DEMAND = "TOD";
-    public const TRAVEL_MODE_METRO = "METRO";
-    public const TRAVEL_MODE_TROLLEY_BUS = "TROLLEY_BUS";
-    public const TRAVEL_MODE_UNKNOWN = "UNKNOWN";
+    public const TRAVEL_MODE_CAR = 'CAR';
+    public const TRAVEL_MODE_BUS = 'BUS';
+    public const TRAVEL_MODE_TRAMWAY = 'TRAMWAY';
+    public const TRAVEL_MODE_COACH = 'COACH';
+    public const TRAVEL_MODE_TRAIN = 'TRAIN';
+    public const TRAVEL_MODE_TRAIN_LOCAL = 'TRAIN_LOCAL';
+    public const TRAVEL_MODE_TRAIN_HIGH_SPEED = 'TRAIN_HIGH_SPEED';
+    public const TRAVEL_MODE_BIKE = 'BIKE';
+    public const TRAVEL_MODE_WALK = 'WALK';
+    public const TRAVEL_MODE_SUBWAY = 'SUBWAY';
+    public const TRAVEL_MODE_WAITING = 'WAITING';
+    public const TRAVEL_UNKNOWN = 'UNKNOWN';
+    public const TRAVEL_MODE_ON_DEMAND = 'TOD';
+    public const TRAVEL_MODE_METRO = 'METRO';
+    public const TRAVEL_MODE_TROLLEY_BUS = 'TROLLEY_BUS';
+    public const TRAVEL_MODE_UNKNOWN = 'UNKNOWN';
 
     private const TRAVEL_MODES = [
         self::TRAVEL_MODE_CAR => 1,
@@ -77,31 +77,30 @@ class TravelMode
         self::TRAVEL_MODE_ON_DEMAND => 12,
         self::TRAVEL_MODE_METRO => 13,
         self::TRAVEL_MODE_TROLLEY_BUS => 14,
-        self::TRAVEL_MODE_UNKNOWN => 99
-
+        self::TRAVEL_MODE_UNKNOWN => 99,
     ];
 
     private const TRAVEL_MODES_MDI_ICONS = [
-        self::TRAVEL_MODE_CAR => "mdi-car",
-        self::TRAVEL_MODE_BUS => "mdi-bus",
-        self::TRAVEL_MODE_TRAMWAY => "mdi-tram",
-        self::TRAVEL_MODE_COACH => "mdi-bus-side",
-        self::TRAVEL_MODE_TRAIN => "mdi-train",
-        self::TRAVEL_MODE_TRAIN_LOCAL => "mdi-train",
-        self::TRAVEL_MODE_TRAIN_HIGH_SPEED => "mdi-train-variant",
-        self::TRAVEL_MODE_BIKE => "mdi-bike",
-        self::TRAVEL_MODE_WALK => "mdi-walk",
-        self::TRAVEL_MODE_SUBWAY => "mdi-subway-variant",
-        self::TRAVEL_MODE_WAITING => "mdi-account-clock",
-        self::TRAVEL_MODE_ON_DEMAND => "mdi-bus-clock",
-        self::TRAVEL_UNKNOWN => "mdi-help-circle",
-        self::TRAVEL_MODE_METRO => "mdi-subway-variant",
-        self::TRAVEL_MODE_TROLLEY_BUS => "mdi-bus",
-        self::TRAVEL_MODE_UNKNOWN => "mdi-help-circle-outline"
+        self::TRAVEL_MODE_CAR => 'mdi-car',
+        self::TRAVEL_MODE_BUS => 'mdi-bus',
+        self::TRAVEL_MODE_TRAMWAY => 'mdi-tram',
+        self::TRAVEL_MODE_COACH => 'mdi-bus-side',
+        self::TRAVEL_MODE_TRAIN => 'mdi-train',
+        self::TRAVEL_MODE_TRAIN_LOCAL => 'mdi-train',
+        self::TRAVEL_MODE_TRAIN_HIGH_SPEED => 'mdi-train-variant',
+        self::TRAVEL_MODE_BIKE => 'mdi-bike',
+        self::TRAVEL_MODE_WALK => 'mdi-walk',
+        self::TRAVEL_MODE_SUBWAY => 'mdi-subway-variant',
+        self::TRAVEL_MODE_WAITING => 'mdi-account-clock',
+        self::TRAVEL_MODE_ON_DEMAND => 'mdi-bus-clock',
+        self::TRAVEL_UNKNOWN => 'mdi-help-circle',
+        self::TRAVEL_MODE_METRO => 'mdi-subway-variant',
+        self::TRAVEL_MODE_TROLLEY_BUS => 'mdi-bus',
+        self::TRAVEL_MODE_UNKNOWN => 'mdi-help-circle-outline',
     ];
 
     /**
-     * @var int The id of this travel mode.
+     * @var int the id of this travel mode
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -112,7 +111,7 @@ class TravelMode
     private $id;
 
     /**
-     * @var string Name of the travel mode.
+     * @var string name of the travel mode
      *
      * @Assert\NotBlank
      * @ORM\Column(type="string", length=255)
@@ -127,7 +126,7 @@ class TravelMode
     private $mdiIcon;
 
     /**
-     * @var \DateTimeInterface Creation date.
+     * @var \DateTimeInterface creation date
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read"})
@@ -135,7 +134,7 @@ class TravelMode
     private $createdDate;
 
     /**
-     * @var \DateTimeInterface Updated date.
+     * @var \DateTimeInterface updated date
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read"})
@@ -217,7 +216,7 @@ class TravelMode
      */
     public function setAutoCreatedDate()
     {
-        $this->setCreatedDate(new \Datetime());
+        $this->setCreatedDate(new \DateTime());
     }
 
     /**
@@ -227,6 +226,6 @@ class TravelMode
      */
     public function setAutoUpdatedDate()
     {
-        $this->setUpdatedDate(new \Datetime());
+        $this->setUpdatedDate(new \DateTime());
     }
 }

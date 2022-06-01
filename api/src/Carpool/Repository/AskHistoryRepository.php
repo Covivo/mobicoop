@@ -19,14 +19,13 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Carpool\Repository;
 
-use Doctrine\ORM\EntityManagerInterface;
-use App\Carpool\Entity\AskHistory;
 use App\Carpool\Entity\Ask;
-use App\User\Entity\User;
+use App\Carpool\Entity\AskHistory;
+use Doctrine\ORM\EntityManagerInterface;
 
 class AskHistoryRepository
 {
@@ -38,49 +37,52 @@ class AskHistoryRepository
     }
 
     /**
-     * Find last ask history by ask and status
+     * Find last ask history by ask and status.
      *
      * @param string $action
-     * @return AskHistory
      */
     public function findLastByAskAndStatus(Ask $ask, int $status): AskHistory
     {
         $query = $this->repository->createQueryBuilder('ah')
-        ->where('ah.ask = :ask and ah.status=:status')
-        ->setParameter('ask', $ask)
-        ->setParameter('status', $status)
-        ->orderBy('ah.createdDate', 'DESC')
-        ->setMaxResults(1);
+            ->where('ah.ask = :ask and ah.status=:status')
+            ->setParameter('ask', $ask)
+            ->setParameter('status', $status)
+            ->orderBy('ah.createdDate', 'DESC')
+            ->setMaxResults(1)
         ;
+
         return $query->getQuery()->getOneOrNullResult();
     }
 
     public function findLastAskHistory(Ask $ask)
     {
         $query = $this->repository->createQueryBuilder('ah')
-        ->join('ah.ask', 'a')
-        ->where('a = :ask')
-        ->setParameter('ask', $ask)
-        ->orderBy('ah.createdDate', 'DESC');
+            ->join('ah.ask', 'a')
+            ->where('a = :ask')
+            ->setParameter('ask', $ask)
+            ->orderBy('ah.createdDate', 'DESC')
+        ;
 
         return $query->getQuery()->getResult();
     }
 
     /**
-     * Find the last AskHistory having a linked message
+     * Find the last AskHistory having a linked message.
      *
-     * @param Ask $ask  The ask
-     * @return AskHistory|null  The ask history found
+     * @param Ask $ask The ask
+     *
+     * @return null|AskHistory The ask history found
      */
     public function findLastAskHistoryWithMessage(Ask $ask): ?AskHistory
     {
         $query = $this->repository->createQueryBuilder('ah')
-        ->join('ah.ask', 'a')
-        ->join('ah.message', 'm')
-        ->where('a = :ask')
-        ->setParameter('ask', $ask)
-        ->orderBy('ah.createdDate', 'DESC')
-        ->setMaxResults(1);
+            ->join('ah.ask', 'a')
+            ->join('ah.message', 'm')
+            ->where('a = :ask')
+            ->setParameter('ask', $ask)
+            ->orderBy('ah.createdDate', 'DESC')
+            ->setMaxResults(1)
+        ;
 
         return $query->getQuery()->getOneOrNullResult();
     }

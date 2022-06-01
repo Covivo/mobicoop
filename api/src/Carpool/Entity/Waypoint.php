@@ -19,13 +19,13 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Carpool\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Geography\Entity\Address;
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -52,7 +52,7 @@ class Waypoint
     public const ROLE_PASSENGER = 2;
 
     /**
-     * @var int The id of this point.
+     * @var int the id of this point
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -62,7 +62,7 @@ class Waypoint
     private $id;
 
     /**
-     * @var int Position number of the point in the whole route.
+     * @var int position number of the point in the whole route
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
@@ -71,7 +71,7 @@ class Waypoint
     private $position;
 
     /**
-     * @var boolean The point is the last point of the whole route.
+     * @var bool the point is the last point of the whole route
      *
      * @Assert\NotBlank
      * @ORM\Column(type="boolean")
@@ -80,7 +80,7 @@ class Waypoint
     private $destination;
 
     /**
-     * @var boolean The waypoint is a floating waypoint (for dynamic carpooling).
+     * @var bool the waypoint is a floating waypoint (for dynamic carpooling)
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"read","write"})
@@ -88,7 +88,7 @@ class Waypoint
     private $floating;
 
     /**
-     * @var boolean The waypoint has been reached during a dynamic carpooling.
+     * @var bool the waypoint has been reached during a dynamic carpooling
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"read","write","thread"})
@@ -96,7 +96,7 @@ class Waypoint
     private $reached;
 
     /**
-     * @var Proposal|null The proposal that created the point.
+     * @var null|Proposal the proposal that created the point
      *
      * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal", inversedBy="waypoints", cascade={"persist"})
      * @ORM\JoinColumn(onDelete="CASCADE")
@@ -104,7 +104,7 @@ class Waypoint
     private $proposal;
 
     /**
-     * @var Matching The matching that created the point.
+     * @var Matching the matching that created the point
      *
      * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Matching", inversedBy="waypoints")
      * @ORM\JoinColumn(onDelete="CASCADE")
@@ -112,7 +112,7 @@ class Waypoint
     private $matching;
 
     /**
-     * @var Ask The ask that created the point.
+     * @var Ask the ask that created the point
      *
      * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Ask", inversedBy="waypoints")
      * @ORM\JoinColumn(onDelete="CASCADE")
@@ -120,7 +120,7 @@ class Waypoint
     private $ask;
 
     /**
-     * @var Address The address of the point.
+     * @var Address the address of the point
      *
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="\App\Geography\Entity\Address", inversedBy="waypoint", cascade={"persist"})
@@ -131,7 +131,7 @@ class Waypoint
     private $address;
 
     /**
-     * @var \DateTimeInterface Creation date.
+     * @var \DateTimeInterface creation date
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read"})
@@ -139,7 +139,7 @@ class Waypoint
     private $createdDate;
 
     /**
-     * @var \DateTimeInterface Updated date.
+     * @var \DateTimeInterface updated date
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read"})
@@ -147,14 +147,14 @@ class Waypoint
     private $updatedDate;
 
     /**
-     * @var int|null The duration to the waypoint.
+     * @var null|int the duration to the waypoint
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"read"})
      */
     private $duration;
 
     /**
-     * @var int|null The role associated with the waypoint.
+     * @var null|int the role associated with the waypoint
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"read"})
      */
@@ -339,7 +339,7 @@ class Waypoint
      */
     public function setAutoCreatedDate()
     {
-        $this->setCreatedDate(new \Datetime());
+        $this->setCreatedDate(new \DateTime());
     }
 
     /**
@@ -349,6 +349,6 @@ class Waypoint
      */
     public function setAutoUpdatedDate()
     {
-        $this->setUpdatedDate(new \Datetime());
+        $this->setUpdatedDate(new \DateTime());
     }
 }

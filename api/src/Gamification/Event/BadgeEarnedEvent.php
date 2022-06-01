@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Gamification\Event;
 
@@ -27,7 +27,8 @@ use App\Gamification\Entity\Reward;
 use Symfony\Contracts\EventDispatcher\Event;
 
 /**
- * Gamification : Event sent when a Badge is earned
+ * Gamification : Event sent when a Badge is earned.
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class BadgeEarnedEvent extends Event

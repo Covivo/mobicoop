@@ -19,22 +19,21 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\RelayPoint\Admin\DataProvider;
 
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryResultCollectionExtensionInterface;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGenerator;
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use Doctrine\Persistence\ManagerRegistry;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGenerator;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryResultCollectionExtensionInterface;
 use App\RelayPoint\Entity\RelayPoint;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * Collection data provider for relay points in admin context.
  *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
- *
  */
 final class RelayPointCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
@@ -49,12 +48,13 @@ final class RelayPointCollectionDataProvider implements CollectionDataProviderIn
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return RelayPoint::class === $resourceClass && $operationName === "ADMIN_get";
+        return RelayPoint::class === $resourceClass && 'ADMIN_get' === $operationName;
     }
 
     public function getCollection(string $resourceClass, string $operationName = null, array $context = []): iterable
     {
         $manager = $this->managerRegistry->getManagerForClass($resourceClass);
+
         /**
          * @var EntityRepository $repository
          */

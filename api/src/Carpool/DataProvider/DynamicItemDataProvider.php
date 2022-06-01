@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Carpool\DataProvider;
 
@@ -31,11 +31,10 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Item data provider for dynamic ad.
- *
  */
 final class DynamicItemDataProvider implements ItemDataProviderInterface, RestrictedDataProviderInterface
 {
-    protected $request;
+    private $request;
 
     public function __construct(RequestStack $requestStack, DynamicManager $dynamicManager)
     {
@@ -45,7 +44,7 @@ final class DynamicItemDataProvider implements ItemDataProviderInterface, Restri
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Dynamic::class === $resourceClass && $operationName =="get";
+        return Dynamic::class === $resourceClass && 'get' == $operationName;
     }
 
     public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?Dynamic

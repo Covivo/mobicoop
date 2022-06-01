@@ -18,23 +18,21 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\MassCommunication\DataPersister;
 
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
 use App\MassCommunication\Entity\Campaign;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Security\Core\Security;
 use App\MassCommunication\Service\CampaignManager;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Data persister for Campaign
- * Use for check if we want to send the campaign to all the user
+ * Use for check if we want to send the campaign to all the user.
  *
  * @author Julien Deschampt <julien.deschampt@mobicoop.org>
  */
-
 final class CampaignPutDataPersister implements ContextAwareDataPersisterInterface
 {
     private $request;
@@ -48,18 +46,17 @@ final class CampaignPutDataPersister implements ContextAwareDataPersisterInterfa
 
     public function supports($data, array $context = []): bool
     {
-        return $data instanceof Campaign && isset($context['item_operation_name']) &&  $context['item_operation_name'] == 'put' && $data->getSendAll() !== null;
+        return $data instanceof Campaign && isset($context['item_operation_name']) && 'put' == $context['item_operation_name'] && null !== $data->getSendAll();
     }
 
     public function persist($data, array $context = [])
     {
         // call your persistence layer to save $data
         if (is_null($data)) {
-            throw new \InvalidArgumentException($this->translator->trans("bad campaign id is provided"));
+            throw new \InvalidArgumentException($this->translator->trans('bad campaign id is provided'));
         }
-        //We send the campaign to all user who accept email
-        $data = $this->campaignManager->setDeliveriesCampaignToAll($data);
-        return $data;
+        // We send the campaign to all user who accept email
+        return $this->campaignManager->setDeliveriesCampaignToAll($data);
     }
 
     public function remove($data, array $context = [])

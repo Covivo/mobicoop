@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\MassCommunication\Controller;
 
@@ -29,7 +29,6 @@ use App\TranslatorTrait;
 
 /**
  * Controller class for campaign send.
- *
  */
 class CampaignSend
 {
@@ -45,8 +44,9 @@ class CampaignSend
     public function __invoke(Campaign $data)
     {
         if (is_null($data)) {
-            throw new \InvalidArgumentException($this->translator->trans("bad campaign id is provided"));
+            throw new \InvalidArgumentException($this->translator->trans('bad campaign id is provided'));
         }
+
         return $this->campaignManager->send($data);
     }
 }

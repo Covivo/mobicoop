@@ -159,8 +159,6 @@ class AskManager
      *
      * @param Ad   $ad     The ad used to create the ask
      * @param bool $formal The ask is a formal ask
-     *
-     * @return Ad
      */
     public function createAskFromAd(Ad $ad, bool $formal): Ad
     {
@@ -742,8 +740,6 @@ class AskManager
 
     /**
      * Ask user is considered driver if he has made a proposal offer.
-     *
-     * @return bool
      */
     public function isAskUserDriver(Ask $ask): bool
     {
@@ -752,8 +748,6 @@ class AskManager
 
     /**
      * Ask user is considered passenger if he has made a proposal request.
-     *
-     * @return bool
      */
     public function isAskUserPassenger(Ask $ask): bool
     {
@@ -1011,8 +1005,6 @@ class AskManager
      * Check if a user has a pending dynamic ad ask.
      *
      * @param User $user The user
-     *
-     * @return bool
      */
     public function hasPendingDynamicAsk(User $user): bool
     {
@@ -1037,8 +1029,6 @@ class AskManager
      * Check if a user has a refused dynamic ad ask related to a given matching.
      *
      * @param User $user The user
-     *
-     * @return bool
      */
     public function hasRefusedDynamicAsk(User $user, Matching $matching): bool
     {

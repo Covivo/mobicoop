@@ -19,14 +19,14 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Communication\Event;
 
-use Symfony\Contracts\EventDispatcher\Event;
 use App\Communication\Entity\Email;
 use App\Communication\Entity\Medium;
 use App\Communication\Entity\Notification;
+use Symfony\Contracts\EventDispatcher\Event;
 
 /**
  * Event sent when an email notification is sent.

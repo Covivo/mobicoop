@@ -19,18 +19,18 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Community\Controller;
 
+use App\Community\Entity\CommunityUser;
 use App\Community\Service\CommunityManager;
 use App\TranslatorTrait;
 use Psr\Log\LoggerInterface;
-use App\Community\Entity\CommunityUser;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Controller for leaving a community
+ * Controller for leaving a community.
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 final class LeaveCommunityAction
@@ -48,9 +48,9 @@ final class LeaveCommunityAction
     public function __invoke(CommunityUser $data)
     {
         if (is_null($data)) {
-            throw new \InvalidArgumentException($this->translator->trans("bad community user is provided"));
+            throw new \InvalidArgumentException($this->translator->trans('bad community user is provided'));
         }
+
         return $this->communityManager->unlinkCommunityJourneys($data);
-        ;
     }
 }

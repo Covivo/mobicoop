@@ -19,26 +19,25 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Communication\DataProvider;
 
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\Communication\Entity\Message;
-use Symfony\Component\HttpFoundation\RequestStack;
 use App\Communication\Service\InternalMessageManager;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Security;
 
 /**
- * Complet message thread collection DataProvider
+ * Complet message thread collection DataProvider.
  *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
- *
  */
 final class ThreadCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
-    protected $request;
+    private $request;
     private $security;
     private $internalMessageManager;
 
@@ -51,11 +50,11 @@ final class ThreadCollectionDataProvider implements CollectionDataProviderInterf
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Message::class === $resourceClass && $operationName === "completeThread";
+        return Message::class === $resourceClass && 'completeThread' === $operationName;
     }
 
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
-        return $this->internalMessageManager->getCompleteThread($this->request->get("idMessage"), true, $this->security->getUser()->getId());
+        return $this->internalMessageManager->getCompleteThread($this->request->get('idMessage'), true, $this->security->getUser()->getId());
     }
 }

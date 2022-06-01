@@ -15,7 +15,7 @@ final class Version20191113131905 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
         // insert actions
         $this->addSql('INSERT INTO `action` (`id`, `name`, `position` ) VALUES (13, \'user_generate_phone_token_asked\', 0);');
         // insert notifications
@@ -25,7 +25,7 @@ final class Version20191113131905 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
         $this->addSql('DELETE FROM `action` WHERE `id` = 13;');
         $this->addSql('DELETE FROM `notification` WHERE `id` = 33;');
     }

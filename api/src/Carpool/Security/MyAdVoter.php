@@ -19,17 +19,17 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Carpool\Security;
 
-use App\Auth\Service\AuthManager;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
+use App\Auth\Service\AuthManager;
 use App\Carpool\Ressource\MyAd;
 use App\Carpool\Service\MyAdManager;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class MyAdVoter extends Voter
 {
@@ -50,15 +50,15 @@ class MyAdVoter extends Voter
     {
         // if the attribute isn't one we support, return false
         if (!in_array($attribute, [
-            self::MY_AD_LIST_SELF
-            ])) {
+            self::MY_AD_LIST_SELF,
+        ])) {
             return false;
         }
 
         // only vote on Ad objects inside this voter
         if (!in_array($attribute, [
-            self::MY_AD_LIST_SELF
-            ]) && !($subject instanceof Paginator) && !($subject instanceof MyAd)) {
+            self::MY_AD_LIST_SELF,
+        ]) && !($subject instanceof Paginator) && !($subject instanceof MyAd)) {
             return false;
         }
 

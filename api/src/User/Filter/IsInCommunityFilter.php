@@ -18,7 +18,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\Filter;
 
@@ -27,29 +27,12 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use Doctrine\ORM\QueryBuilder;
 
 /**
-  *  Filter for get members who are NOT in the given community
-  *
-  * @author Julien Deschampt <julien.deschampt@mobicoop.org>
-*/
-
+ *  Filter for get members who are NOT in the given community.
+ *
+ * @author Julien Deschampt <julien.deschampt@mobicoop.org>
+ */
 final class IsInCommunityFilter extends AbstractContextAwareFilter
 {
-    protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
-    {
-        if ($property != "communitiesExclude") {
-            return;
-        }
-        // we sanitize the value to be sure it's an int and not an iri
-        if (strrpos($value, '/')) {
-            $value = substr($value, strrpos($value, '/') + 1);
-        }
-
-        $rootAlias = $queryBuilder->getRootAliases()[0];
-        $queryBuilder
-            ->leftJoin(sprintf("%s.communityUsers", $rootAlias), 'c')
-            ->andWhere(sprintf('(c.id != %s)', $value));
-    }
-
     // This function is only used to hook in documentation generators (supported by Swagger and Hydra)
     public function getDescription(string $resourceClass): array
     {
@@ -59,18 +42,35 @@ final class IsInCommunityFilter extends AbstractContextAwareFilter
 
         $description = [];
         foreach ($this->properties as $property => $strategy) {
-            $description["$property"] = [
-                  'property' => $property,
-                  'type' => 'string',
-                  'required' => false,
-                  'swagger' => [
-                      'description' => 'Filter on users who are not in the given community',
-                      'name' => 'IsInCommunity',
-                      'type' => 'string',
-                  ],
-              ];
+            $description["{$property}"] = [
+                'property' => $property,
+                'type' => 'string',
+                'required' => false,
+                'swagger' => [
+                    'description' => 'Filter on users who are not in the given community',
+                    'name' => 'IsInCommunity',
+                    'type' => 'string',
+                ],
+            ];
         }
 
         return $description;
+    }
+
+    protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
+    {
+        if ('communitiesExclude' != $property) {
+            return;
+        }
+        // we sanitize the value to be sure it's an int and not an iri
+        if (strrpos($value, '/')) {
+            $value = substr($value, strrpos($value, '/') + 1);
+        }
+
+        $rootAlias = $queryBuilder->getRootAliases()[0];
+        $queryBuilder
+            ->leftJoin(sprintf('%s.communityUsers', $rootAlias), 'c')
+            ->andWhere(sprintf('(c.id != %s)', $value))
+        ;
     }
 }

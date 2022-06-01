@@ -19,17 +19,17 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\RdexPlus\Entity;
 
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
-use App\RdexPlus\Entity\WeekSchedule;
 
 /**
  * RDEX+ : A WaySchedule
- * Documentation : https://rdex.fabmob.io/
+ * Documentation : https://rdex.fabmob.io/.
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class WaySchedule
@@ -38,8 +38,8 @@ class WaySchedule
 
     /**
      * @var int if frequency=punctual or both, departureDate specifies departure datetime using a UNIX UTC timestamp in seconds.
-     * If not specified, the timestamp of the request is considered the expected departure datetime.
-     * If frequency=regular, departureDate specifies the beginning of the validity period for the regular journey
+     *          If not specified, the timestamp of the request is considered the expected departure datetime.
+     *          If frequency=regular, departureDate specifies the beginning of the validity period for the regular journey
      * @Assert\NotBlank
      *
      * @Groups({"rdexPlusRead","rdexPlusWrite"})
@@ -47,7 +47,7 @@ class WaySchedule
     private $departureDate;
 
     /**
-     * @var int If frequency=regular or both, maxDate specifies the end of the validity period for the regular journey, as a datetime using a UNIX UTC timestamp in seconds.
+     * @var int if frequency=regular or both, maxDate specifies the end of the validity period for the regular journey, as a datetime using a UNIX UTC timestamp in seconds
      *
      * @Groups({"rdexPlusRead","rdexPlusWrite"})
      */
@@ -55,8 +55,8 @@ class WaySchedule
 
     /**
      * @var WeekSchedule[] If frequency=regular, this parameter specifies the schedule of expected regular journey.
-     * If several WeekSchedule objects are passed in the array, the journey is expected to happened on all given time slots (two departures the same day is considered a possible case).
-     * <span style='color:red;'>WARNING</span> : If two schedules contain the same day for the same way (outward or return), we are keeping the last time given
+     *                     If several WeekSchedule objects are passed in the array, the journey is expected to happened on all given time slots (two departures the same day is considered a possible case).
+     *                     <span style='color:red;'>WARNING</span> : If two schedules contain the same day for the same way (outward or return), we are keeping the last time given
      *
      * @Groups({"rdexPlusRead","rdexPlusWrite"})
      */
@@ -64,12 +64,11 @@ class WaySchedule
 
     /**
      * @var int Time margin in seconds
-     * RDEX+: If frequency=regular, this timeDelta is taken into account only if no other value is specified for the specific day
-     * <span style='color:red;'>WARNING</span> : For now, Mobicoop only use the outward timeDelta and ignore the rest
+     *          RDEX+: If frequency=regular, this timeDelta is taken into account only if no other value is specified for the specific day
+     *          <span style='color:red;'>WARNING</span> : For now, Mobicoop only use the outward timeDelta and ignore the rest
      * @Groups({"rdexPlusRead","rdexPlusWrite"})
      */
     private $timeDelta;
-
 
     public function __construct()
     {

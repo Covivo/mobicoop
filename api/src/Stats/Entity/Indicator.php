@@ -19,18 +19,16 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Stats\Entity;
 
-use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
-use Symfony\Component\Validator\Constraints as Assert;
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * A short statistic indicator
+ * A short statistic indicator.
  *
  * @ApiResource(
  *      attributes={
@@ -72,7 +70,7 @@ use ApiPlatform\Core\Annotation\ApiProperty;
  */
 class Indicator
 {
-    public const DEFAULT_ID = "999999999999";
+    public const DEFAULT_ID = '999999999999';
 
     /**
      * @var int The id of this Indicator
@@ -97,7 +95,7 @@ class Indicator
     private $value;
 
     /**
-     * @var boolean True if this Indicator is used on Home Page
+     * @var bool True if this Indicator is used on Home Page
      */
     private $home;
 
@@ -118,12 +116,12 @@ class Indicator
         return $this;
     }
 
-    public function getLabel(): ?String
+    public function getLabel(): ?string
     {
         return $this->label;
     }
 
-    public function setLabel(?String $label): self
+    public function setLabel(?string $label): self
     {
         $this->label = $label;
 

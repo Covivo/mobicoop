@@ -19,42 +19,40 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\Admin\DataProvider;
 
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\PaginationExtension;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryResultCollectionExtensionInterface;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGenerator;
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use App\User\Entity\User;
-use Doctrine\Persistence\ManagerRegistry;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGenerator;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryResultCollectionExtensionInterface;
 use App\Auth\Service\AuthManager;
 use App\MassCommunication\Admin\Service\CampaignManager;
 use App\MassCommunication\Entity\Campaign;
+use App\MassCommunication\Entity\Delivery;
 use App\MassCommunication\Exception\CampaignException;
 use App\MassCommunication\Repository\CampaignRepository;
+use App\User\Entity\User;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
-use App\MassCommunication\Entity\Delivery;
 
 /**
  * Collection data provider used to send a campaign to users.
  *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
- *
  */
 final class UserCampaignSendCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
+    public const MAX_RESULTS = 999999;
     private $collectionExtensions;
     private $managerRegistry;
     private $request;
     private $campaignRepository;
     private $authManager;
     private $campaignManager;
-
-    public const MAX_RESULTS = 999999;
 
     public function __construct(RequestStack $requestStack, CampaignRepository $campaignRepository, AuthManager $authManager, CampaignManager $campaignManager, ManagerRegistry $managerRegistry, iterable $collectionExtensions)
     {
@@ -68,7 +66,7 @@ final class UserCampaignSendCollectionDataProvider implements CollectionDataProv
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return User::class === $resourceClass && $operationName === "ADMIN_send_campaign";
+        return User::class === $resourceClass && 'ADMIN_send_campaign' === $operationName;
     }
 
     public function getCollection(string $resourceClass, string $operationName = null, array $context = []): iterable
@@ -84,7 +82,7 @@ final class UserCampaignSendCollectionDataProvider implements CollectionDataProv
         }
 
         // check if user is allowed to manage the campaign
-        if (!$this->authManager->isAuthorized('campaign_update', ['campaign'=>$campaign])) {
+        if (!$this->authManager->isAuthorized('campaign_update', ['campaign' => $campaign])) {
             return new Response('Unauthorized', Response::HTTP_UNAUTHORIZED);
         }
 
@@ -97,7 +95,7 @@ final class UserCampaignSendCollectionDataProvider implements CollectionDataProv
         if (!in_array($this->request->get('mode'), CampaignManager::MODES)) {
             throw new CampaignException('Mode is invalid');
         }
-        if ($this->request->get('mode') == CampaignManager::MODE_PROD && $campaign->getStatus() != Campaign::STATUS_CREATED) {
+        if (CampaignManager::MODE_PROD == $this->request->get('mode') && Campaign::STATUS_CREATED != $campaign->getStatus()) {
             throw new CampaignException('Campaign can\'t be sent before it has been tested');
         }
 
@@ -115,9 +113,12 @@ final class UserCampaignSendCollectionDataProvider implements CollectionDataProv
                     }
                     $users = new \ArrayIterator($users);
                 }
+
                 break;
+
             case Campaign::FILTER_TYPE_FILTER:
                 $manager = $this->managerRegistry->getManagerForClass($resourceClass);
+
                 /**
                  * @var EntityRepository $repository
                  */
@@ -127,7 +128,7 @@ final class UserCampaignSendCollectionDataProvider implements CollectionDataProv
 
                 // we force the selection to the users that have accepted the news subscription
                 $rootAlias = $queryBuilder->getRootAliases()[0];
-                $queryBuilder->andWhere("$rootAlias.newsSubscription = 1");
+                $queryBuilder->andWhere("{$rootAlias}.newsSubscription = 1");
                 foreach ($this->collectionExtensions as $extension) {
                     $extension->applyToCollection($queryBuilder, $queryNameGenerator, $resourceClass, $operationName, $context);
                     // remove pagination

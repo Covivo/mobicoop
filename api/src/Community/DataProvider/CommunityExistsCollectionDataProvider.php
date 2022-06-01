@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Community\DataProvider;
 
@@ -33,11 +33,10 @@ use Symfony\Component\HttpFoundation\RequestStack;
  * Collection data provider for Community search (by name).
  *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
- *
  */
 final class CommunityExistsCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
-    protected $request;
+    private $request;
     private $communityRepository;
 
     public function __construct(RequestStack $requestStack, CommunityRepository $communityRepository)
@@ -48,14 +47,15 @@ final class CommunityExistsCollectionDataProvider implements CollectionDataProvi
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Community::class === $resourceClass && $operationName === "exists";
+        return Community::class === $resourceClass && 'exists' === $operationName;
     }
 
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
-        if ($this->communityRepository->findBy(['name'=>$this->request->get('name')])) {
-            throw new \InvalidArgumentException("Community name already used");
+        if ($this->communityRepository->findBy(['name' => $this->request->get('name')])) {
+            throw new \InvalidArgumentException('Community name already used');
         }
+
         return null;
     }
 }

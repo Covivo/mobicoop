@@ -19,16 +19,14 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\PublicTransport\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
-use Symfony\Component\Serializer\Annotation\Groups;
-use Doctrine\Common\Collections\ArrayCollection;
-use App\Geography\Entity\Address;
+use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * A public transport step (by walk or public transport).
@@ -55,7 +53,7 @@ use Doctrine\ORM\Mapping as ORM;
 class PTStep
 {
     /**
-     * @var int The id of this step.
+     * @var int the id of this step
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -65,7 +63,7 @@ class PTStep
     private $id;
 
     /**
-     * @var int The distance of this step.
+     * @var int the distance of this step
      *
      * @ORM\Column(type="integer", nullable=true)
      * @Groups("pt")
@@ -73,7 +71,7 @@ class PTStep
     private $distance;
 
     /**
-     * @var string The duration of this step (in seconds).
+     * @var string the duration of this step (in seconds)
      *
      * @ORM\Column(type="integer", nullable=true)
      * @Groups("pt")
@@ -81,7 +79,7 @@ class PTStep
     private $duration;
 
     /**
-     * @var int The position of this step.
+     * @var int the position of this step
      *
      * @ORM\Column(type="integer")
      * @Groups("pt")
@@ -89,7 +87,7 @@ class PTStep
     private $position;
 
     /**
-     * @var bool The step is the last step of the leg.
+     * @var bool the step is the last step of the leg
      *
      * @ORM\Column(type="boolean")
      * @Groups("pt")
@@ -97,7 +95,7 @@ class PTStep
     private $isLast;
 
     /**
-     * @var string The magnetic direction of this step.
+     * @var string the magnetic direction of this step
      *
      * @ORM\Column(type="string", length=10, nullable=true)
      * @Groups("pt")
@@ -105,7 +103,7 @@ class PTStep
     private $magneticDirection;
 
     /**
-     * @var string The relative direction of this step.
+     * @var string the relative direction of this step
      *
      * @ORM\Column(type="string", length=10, nullable=true)
      * @Groups("pt")
@@ -113,7 +111,7 @@ class PTStep
     private $relativeDirection;
 
     /**
-     * @var PTLeg The parent leg of this step.
+     * @var PTLeg the parent leg of this step
      *
      * @ORM\ManyToOne(targetEntity="App\PublicTransport\Entity\PTLeg", inversedBy="ptsteps")
      * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
@@ -122,7 +120,7 @@ class PTStep
     private $ptleg;
 
     /**
-     * @var PTDeparture The departure of this step.
+     * @var PTDeparture the departure of this step
      *
      * @ORM\ManyToOne(targetEntity="App\PublicTransport\Entity\PTDeparture")
      * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
@@ -131,7 +129,7 @@ class PTStep
     private $ptdeparture;
 
     /**
-     * @var PTArrival The arrival of this step.
+     * @var PTArrival the arrival of this step
      *
      * @ORM\ManyToOne(targetEntity="App\PublicTransport\Entity\PTArrival")
      * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
@@ -140,11 +138,10 @@ class PTStep
     private $ptarrival;
 
     /**
-     * @var String Geometric path of this step
+     * @var string Geometric path of this step
      * @Groups("pt")
      */
     private $geometry;
-
 
     public function __construct($id)
     {
@@ -272,12 +269,12 @@ class PTStep
         return $this;
     }
 
-    public function getGeometry(): ?String
+    public function getGeometry(): ?string
     {
         return $this->geometry;
     }
 
-    public function setGeometry(String $geometry): self
+    public function setGeometry(string $geometry): self
     {
         $this->geometry = $geometry;
 

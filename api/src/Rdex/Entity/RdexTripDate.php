@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Rdex\Entity;
 
@@ -31,61 +31,55 @@ namespace App\Rdex\Entity;
 class RdexTripDate implements \JsonSerializable
 {
     /**
-     * @var \DateTime The min date.
+     * @var \DateTime the min date
      */
     private $mindate;
 
     /**
-     * @var \DateTime The max date.
+     * @var \DateTime the max date
      */
     private $maxdate;
 
     /**
-     * @var RdexDayTime The day time for monday.
+     * @var RdexDayTime the day time for monday
      */
     private $monday;
 
     /**
-     * @var RdexDayTime The day time for tuesday.
+     * @var RdexDayTime the day time for tuesday
      */
     private $tuesday;
 
     /**
-     * @var RdexDayTime The day time for wednesday.
+     * @var RdexDayTime the day time for wednesday
      */
     private $wednesday;
 
     /**
-     * @var RdexDayTime The day time for thursday.
+     * @var RdexDayTime the day time for thursday
      */
     private $thursday;
 
     /**
-     * @var RdexDayTime The day time for friday.
+     * @var RdexDayTime the day time for friday
      */
     private $friday;
 
     /**
-     * @var RdexDayTime The day time for saturday.
+     * @var RdexDayTime the day time for saturday
      */
     private $saturday;
 
     /**
-     * @var RdexDayTime The day time for sunday.
+     * @var RdexDayTime the day time for sunday
      */
     private $sunday;
 
-    /**
-     * @return \DateTime
-     */
     public function getMindate(): \DateTime
     {
         return $this->mindate;
     }
 
-    /**
-     * @return \DateTime
-     */
     public function getMaxdate(): \DateTime
     {
         return $this->maxdate;
@@ -94,7 +88,7 @@ class RdexTripDate implements \JsonSerializable
     /**
      * @return \App\Rdex\Entity\RdexDayTime
      */
-    public function getMonday(): \App\Rdex\Entity\RdexDayTime
+    public function getMonday(): RdexDayTime
     {
         return $this->monday;
     }
@@ -102,7 +96,7 @@ class RdexTripDate implements \JsonSerializable
     /**
      * @return \App\Rdex\Entity\RdexDayTime
      */
-    public function getTuesday(): \App\Rdex\Entity\RdexDayTime
+    public function getTuesday(): RdexDayTime
     {
         return $this->tuesday;
     }
@@ -110,7 +104,7 @@ class RdexTripDate implements \JsonSerializable
     /**
      * @return \App\Rdex\Entity\RdexDayTime
      */
-    public function getWednesday(): \App\Rdex\Entity\RdexDayTime
+    public function getWednesday(): RdexDayTime
     {
         return $this->wednesday;
     }
@@ -118,7 +112,7 @@ class RdexTripDate implements \JsonSerializable
     /**
      * @return \App\Rdex\Entity\RdexDayTime
      */
-    public function getThursday(): \App\Rdex\Entity\RdexDayTime
+    public function getThursday(): RdexDayTime
     {
         return $this->thursday;
     }
@@ -126,7 +120,7 @@ class RdexTripDate implements \JsonSerializable
     /**
      * @return \App\Rdex\Entity\RdexDayTime
      */
-    public function getFriday(): \App\Rdex\Entity\RdexDayTime
+    public function getFriday(): RdexDayTime
     {
         return $this->friday;
     }
@@ -134,7 +128,7 @@ class RdexTripDate implements \JsonSerializable
     /**
      * @return \App\Rdex\Entity\RdexDayTime
      */
-    public function getSaturday(): \App\Rdex\Entity\RdexDayTime
+    public function getSaturday(): RdexDayTime
     {
         return $this->saturday;
     }
@@ -142,7 +136,7 @@ class RdexTripDate implements \JsonSerializable
     /**
      * @return \App\Rdex\Entity\RdexDayTime
      */
-    public function getSunday(): \App\Rdex\Entity\RdexDayTime
+    public function getSunday(): RdexDayTime
     {
         return $this->sunday;
     }
@@ -223,15 +217,15 @@ class RdexTripDate implements \JsonSerializable
     {
         return
         [
-            'mindate'   => $this->getMindate(),
-            'maxdate'   => $this->getMaxdate(),
-            'monday'    => $this->getMonday(),
-            'tuesday'   => $this->getTuesday(),
+            'mindate' => $this->getMindate(),
+            'maxdate' => $this->getMaxdate(),
+            'monday' => $this->getMonday(),
+            'tuesday' => $this->getTuesday(),
             'wednesday' => $this->getWednesday(),
-            'thursday'  => $this->getThursday(),
-            'friday'    => $this->getFriday(),
-            'saturday'  => $this->getSaturday(),
-            'sunday'    => $this->getSunday()
+            'thursday' => $this->getThursday(),
+            'friday' => $this->getFriday(),
+            'saturday' => $this->getSaturday(),
+            'sunday' => $this->getSunday(),
         ];
     }
 }

@@ -15,7 +15,7 @@ final class Version20190605152730 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('INSERT INTO article (`id`, `title`, `status`) VALUES (1, "CGU", 1), (2, "NEWS", 1), (3, "PROJECT", 1)');
     }
@@ -23,7 +23,7 @@ final class Version20190605152730 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('DELETE FROM `article` WHERE `article`.`id` = 1;');
         $this->addSql('DELETE FROM `article` WHERE `article`.`id` = 2;');

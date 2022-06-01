@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\Controller;
 
@@ -27,9 +27,9 @@ use App\Service\FileManager;
 use App\Solidary\Entity\Proof;
 use App\Solidary\Exception\SolidaryException;
 use App\Solidary\Repository\SolidaryRepository;
+use App\Solidary\Repository\SolidaryUserRepository;
 use App\Solidary\Repository\SolidaryUserStructureRepository;
 use App\Solidary\Repository\StructureProofRepository;
-use App\Solidary\Repository\SolidaryUserRepository;
 use App\TranslatorTrait;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -59,7 +59,7 @@ final class CreateProofAction
     public function __invoke(Request $request): Proof
     {
         if (is_null($request)) {
-            throw new \InvalidArgumentException($this->translator->trans("Bad request"));
+            throw new \InvalidArgumentException($this->translator->trans('Bad request'));
         }
 
         $proof = new Proof();
@@ -108,7 +108,6 @@ final class CreateProofAction
         // If there is a file, we need to do a special treatment
         $file = $request->files->get('file');
 
-
         if (!empty($request->files->get('file'))) {
             if (!$structureProof->isFile()) {
                 throw new SolidaryException(SolidaryException::STRUCTURE_PROOF_NOT_FILE);
@@ -120,13 +119,13 @@ final class CreateProofAction
             } else {
                 $fileName = time();
             }
-            $proof->setFileName($structureProof->getId()."-".$fileName);
+            $proof->setFileName($structureProof->getId().'-'.$fileName);
         }
 
         if (isset($solidary)) {
-            $solidaryUserStructure=$solidary->getSolidaryUserStructure();
+            $solidaryUserStructure = $solidary->getSolidaryUserStructure();
         } elseif (isset($solidaryVolunteer)) {
-            $solidaryUserStructure=$this->solidaryUserStructureRepository->findByStructureAndSolidaryUser($structureProof->getStructure()->getId(), $solidaryVolunteer->getId());
+            $solidaryUserStructure = $this->solidaryUserStructureRepository->findByStructureAndSolidaryUser($structureProof->getStructure()->getId(), $solidaryVolunteer->getId());
         }
 
         $proof->setValue($request->request->get('value'));

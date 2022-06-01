@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Rdex\Entity;
 
@@ -31,37 +31,37 @@ namespace App\Rdex\Entity;
 class RdexDay implements \JsonSerializable
 {
     /**
-     * @var int The state for monday.
+     * @var int the state for monday
      */
     private $monday;
 
     /**
-     * @var int The state for tuesday.
+     * @var int the state for tuesday
      */
     private $tuesday;
 
     /**
-     * @var int The state for wednesday.
+     * @var int the state for wednesday
      */
     private $wednesday;
 
     /**
-     * @var int The state for thursday.
+     * @var int the state for thursday
      */
     private $thursday;
 
     /**
-     * @var int The state for friday.
+     * @var int the state for friday
      */
     private $friday;
 
     /**
-     * @var int The state for saturday.
+     * @var int the state for saturday
      */
     private $saturday;
 
     /**
-     * @var int The state for sunday.
+     * @var int the state for sunday
      */
     private $sunday;
 
@@ -76,57 +76,36 @@ class RdexDay implements \JsonSerializable
         $this->sunday = 0;
     }
 
-    /**
-     * @return number
-     */
     public function getMonday(): number
     {
         return $this->monday;
     }
 
-    /**
-     * @return number
-     */
     public function getTuesday(): number
     {
         return $this->tuesday;
     }
 
-    /**
-     * @return number
-     */
     public function getWednesday(): number
     {
         return $this->wednesday;
     }
 
-    /**
-     * @return number
-     */
     public function getThursday(): number
     {
         return $this->thursday;
     }
 
-    /**
-     * @return number
-     */
     public function getFriday(): number
     {
         return $this->friday;
     }
 
-    /**
-     * @return number
-     */
     public function getSaturday(): number
     {
         return $this->saturday;
     }
 
-    /**
-     * @return number
-     */
     public function getSunday(): number
     {
         return $this->sunday;
@@ -192,13 +171,13 @@ class RdexDay implements \JsonSerializable
     {
         return
         [
-            'monday'    => $this->getMonday(),
-            'tuesday'   => $this->getTuesday(),
+            'monday' => $this->getMonday(),
+            'tuesday' => $this->getTuesday(),
             'wednesday' => $this->getWednesday(),
-            'thursday'  => $this->getThursday(),
-            'friday'    => $this->getFriday(),
-            'saturday'  => $this->getSaturday(),
-            'sunday'    => $this->getSunday()
+            'thursday' => $this->getThursday(),
+            'friday' => $this->getFriday(),
+            'saturday' => $this->getSaturday(),
+            'sunday' => $this->getSunday(),
         ];
     }
 }

@@ -19,13 +19,11 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Import\Security;
 
 use App\Auth\Service\AuthManager;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use App\Event\Service\EventManager;
 use App\Geography\Entity\Address;
 use App\Import\Entity\CommunityImport;
@@ -33,6 +31,8 @@ use App\Import\Entity\EventImport;
 use App\Import\Entity\RelayPointImport;
 use App\Import\Entity\UserImport;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class ImportVoter extends Voter
 {
@@ -53,20 +53,20 @@ class ImportVoter extends Voter
     {
         // if the attribute isn't one we support, return false
         if (!in_array($attribute, [
-            self::IMPORT_CREATE
-            ])) {
+            self::IMPORT_CREATE,
+        ])) {
             return false;
         }
 
         // only vote on related objects inside this voter
         if (!in_array($attribute, [
-            self::IMPORT_CREATE
-            ]) &&
-            !($subject instanceof CommunityImport) &&
-            !($subject instanceof EventImport) &&
-            !($subject instanceof RelayPointImport) &&
-            !($subject instanceof UserImport) &&
-            !($subject instanceof Address)
+            self::IMPORT_CREATE,
+        ])
+            && !($subject instanceof CommunityImport)
+            && !($subject instanceof EventImport)
+            && !($subject instanceof RelayPointImport)
+            && !($subject instanceof UserImport)
+            && !($subject instanceof Address)
             ) {
             return false;
         }
@@ -79,6 +79,7 @@ class ImportVoter extends Voter
         switch ($attribute) {
             case self::IMPORT_CREATE:
                 return $this->canCreateImport();
+
                 break;
         }
 

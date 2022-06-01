@@ -19,15 +19,15 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Gamification\Entity;
 
-use App\Gamification\Entity\Badge;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * Gamification : The Badge progress summary
+ * Gamification : The Badge progress summary.
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class BadgeSummary

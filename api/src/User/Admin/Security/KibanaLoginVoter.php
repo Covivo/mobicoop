@@ -19,15 +19,15 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\Admin\Security;
 
-use App\Auth\Service\AuthManager;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
+use App\Auth\Service\AuthManager;
 use App\User\Admin\Resource\KibanaLogin;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class KibanaLoginVoter extends Voter
 {
@@ -47,16 +47,17 @@ class KibanaLoginVoter extends Voter
     {
         // if the attribute isn't one we support, return false
         if (!in_array($attribute, [
-            self::ACCESS_ADMIN
-            ])) {
+            self::ACCESS_ADMIN,
+        ])) {
             return false;
         }
 
         if (!in_array($attribute, [
-            self::ACCESS_ADMIN
-            ]) && !($subject instanceof Paginator) && !($subject instanceof KibanaLogin)) {
+            self::ACCESS_ADMIN,
+        ]) && !($subject instanceof Paginator) && !($subject instanceof KibanaLogin)) {
             return false;
         }
+
         return true;
     }
 

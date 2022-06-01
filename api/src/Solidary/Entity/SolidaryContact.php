@@ -19,22 +19,22 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Communication\Entity\Medium;
+use App\Communication\Entity\Message;
+use App\Communication\Interfaces\MessagerInterface;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
-use Doctrine\Common\Collections\ArrayCollection;
-use App\Communication\Entity\Message;
-use App\Communication\Interfaces\MessagerInterface;
 
 /**
- * A solidary contact
+ * A solidary contact.
  *
  * @ApiResource(
  *      attributes={
@@ -65,6 +65,7 @@ use App\Communication\Interfaces\MessagerInterface;
  *          }
  *      }
  * )
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  * @author Remi Wortemann <remi.wortemann@mobicoop.org>
  */
@@ -73,7 +74,7 @@ class SolidaryContact implements MessagerInterface
     public const DEFAULT_ID = 999999999999;
 
     /**
-     * @var int The id of this subject.
+     * @var int the id of this subject
      *
      * @ApiProperty(identifier=true)
      * @Groups({"readSolidaryContact","writeSolidaryContact"})
@@ -81,25 +82,25 @@ class SolidaryContact implements MessagerInterface
     private $id;
 
     /**
-    * @var SolidarySolution The solidary solution this contact is for
-    * @Assert\NotBlank
-    * @Groups({"readSolidaryContact","writeSolidaryContact"})
-    * @MaxDepth(1)
-    */
+     * @var SolidarySolution The solidary solution this contact is for
+     * @Assert\NotBlank
+     * @Groups({"readSolidaryContact","writeSolidaryContact"})
+     * @MaxDepth(1)
+     */
     private $solidarySolution;
 
     /**
-    * @var string The content (usually text) message of this contact
-    * @Assert\NotBlank
-    * @Groups({"readSolidaryContact","writeSolidaryContact"})
-    * @MaxDepth(1)
-    */
+     * @var string The content (usually text) message of this contact
+     * @Assert\NotBlank
+     * @Groups({"readSolidaryContact","writeSolidaryContact"})
+     * @MaxDepth(1)
+     */
     private $content;
 
     /**
-    * @var Medium[] List of the Medium of this contact
-    * @Groups({"readSolidaryContact","writeSolidaryContact"})
-    */
+     * @var Medium[] List of the Medium of this contact
+     * @Groups({"readSolidaryContact","writeSolidaryContact"})
+     */
     private $media;
 
     /**
@@ -108,7 +109,7 @@ class SolidaryContact implements MessagerInterface
     private $solidaryAsk;
 
     /**
-     * @var Message If this contact uses the internal message medium, $message contains this message
+     * @var Message If this contact uses the internal message medium, contains this message
      */
     private $message;
 

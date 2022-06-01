@@ -19,15 +19,15 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\ExternalJourney\Security;
 
-use App\Auth\Service\AuthManager;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
+use App\Auth\Service\AuthManager;
 use App\ExternalJourney\Ressource\ExternalConnection;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
@@ -48,17 +48,18 @@ class ExternalConnectionVoter extends Voter
     {
         // if the attribute isn't one we support, return false
         if (!in_array($attribute, [
-            self::EXTERNAL_CONNECTION_CREATE
-            ])) {
+            self::EXTERNAL_CONNECTION_CREATE,
+        ])) {
             return false;
         }
 
         // only vote on User objects inside this voter
         if (!in_array($attribute, [
             self::EXTERNAL_CONNECTION_CREATE,
-            ]) && !($subject instanceof Paginator) && !$subject instanceof ExternalConnection) {
+        ]) && !($subject instanceof Paginator) && !$subject instanceof ExternalConnection) {
             return false;
         }
+
         return true;
     }
 

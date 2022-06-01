@@ -15,7 +15,7 @@ final class Version20200917135854 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE payment_profile ADD validation_id VARCHAR(255) DEFAULT NULL, ADD validation_status INT DEFAULT NULL, ADD validation_asked_date DATETIME DEFAULT NULL, ADD validated_date DATETIME DEFAULT NULL, ADD validation_outdated_date DATETIME DEFAULT NULL');
     }
@@ -23,7 +23,7 @@ final class Version20200917135854 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE payment_profile DROP validation_id, DROP validation_status, DROP validation_asked_date, DROP validated_date, DROP validation_outdated_date');
     }

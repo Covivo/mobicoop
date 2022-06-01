@@ -19,19 +19,17 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\Ressource;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
-use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
-use Symfony\Component\Validator\Constraints as Assert;
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\User\Entity\User;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * A public profile of a User
+ * A public profile of a User.
  *
  * @ApiResource(
  *      attributes={
@@ -54,6 +52,7 @@ use App\User\Entity\User;
  *          }
  *      }
  * )
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class PublicProfile
@@ -77,68 +76,68 @@ class PublicProfile
     private $profileSummary;
 
     /**
-     * @var int|null Smoking preferences.
-     * 0 = i don't smoke
-     * 1 = i don't smoke in car
-     * 2 = i smoke
+     * @var null|int Smoking preferences.
+     *               0 = i don't smoke
+     *               1 = i don't smoke in car
+     *               2 = i smoke
      *
      * @Groups({"readPublicProfile"})
      */
     private $smoke;
 
     /**
-     * @var boolean|null Music preferences.
-     * 0 = no music
-     * 1 = i listen to music or radio
+     * @var null|bool Music preferences.
+     *                0 = no music
+     *                1 = i listen to music or radio
      *
      * @Groups({"readPublicProfile"})
      */
     private $music;
 
     /**
-     * @var string|null Music favorites.
+     * @var null|string music favorites
      *
      * @Groups({"readPublicProfile"})
      */
     private $musicFavorites;
 
     /**
-     * @var boolean|null Chat preferences.
-     * 0 = no chat
-     * 1 = chat
+     * @var null|bool Chat preferences.
+     *                0 = no chat
+     *                1 = chat
      *
      * @Groups({"readPublicProfile"})
      */
     private $chat;
 
     /**
-     * @var string|null Chat favorite subjects.
+     * @var null|string chat favorite subjects
      *
      * @Groups({"readPublicProfile"})
      */
     private $chatFavorites;
 
     /**
-     * @var bool|null True if the review system is enabled
+     * @var null|bool True if the review system is enabled
      * @Groups({"readPublicProfile"})
      */
     private $reviewActive;
 
     /**
-     * @var array|null Reviews about this user
+     * @var null|array Reviews about this user
      *
      * @Groups({"readPublicProfile"})
      */
     private $reviews;
 
     /**
-     * @var array|null Badges won by this user
+     * @var null|array Badges won by this user
      *
      * @Groups({"readPublicProfile"})
      */
     private $badges;
 
-    public function __construct($id=null)
+    public function __construct($id = null)
     {
         if (!is_null($id)) {
             $this->id = $id;

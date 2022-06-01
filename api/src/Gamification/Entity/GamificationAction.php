@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Gamification\Entity;
 
@@ -30,17 +30,18 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 /**
-* Gamification : A GamificationAction
-* @author Maxime Bardot <maxime.bardot@mobicoop.org>
-*
-* @ORM\Entity
-* @ORM\HasLifecycleCallbacks
-*/
+ * Gamification : A GamificationAction.
+ *
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ *
+ * @ORM\Entity
+ * @ORM\HasLifecycleCallbacks
+ */
 class GamificationAction
 {
     // List of the translatable items of this entity
     public const TRANSLATABLE_ITEMS = [
-        "title"
+        'title',
     ];
 
     /**
@@ -64,7 +65,7 @@ class GamificationAction
     private $title;
 
     /**
-     * @var ArrayCollection|null A GamificationAction can be included in multiple SequenceItems
+     * @var null|ArrayCollection A GamificationAction can be included in multiple SequenceItems
      *
      * @ORM\OneToMany(targetEntity="\App\Gamification\Entity\SequenceItem", mappedBy="gamificationAction", cascade={"persist"})
      * @Groups({"writeGamification"})
@@ -94,7 +95,6 @@ class GamificationAction
     {
         $this->sequenceItems = new ArrayCollection();
     }
-
 
     public function getId(): ?int
     {

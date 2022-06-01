@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Gamification\Entity;
 
@@ -32,45 +32,46 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 /**
-* Gamification : A RewarStep. A previously validated sequenceItem on the way to earn a Badge.
-* @author Maxime Bardot <maxime.bardot@mobicoop.org>
-*
-* @ORM\Entity
-* @ORM\HasLifecycleCallbacks
-* @ApiResource(
-*     attributes={
-*          "force_eager"=false,
-*          "normalization_context"={"groups"={"readGamification"}, "enable_max_depth"="true"}
-*     },
-*     collectionOperations={
-*          "get"={
-*              "security"="is_granted('reject',object)",
-*              "swagger_context" = {
-*                  "summary"="Not implemented",
-*                  "tags"={"Gamification"}
-*               }
-*           }
-*      },
-*      itemOperations={
-*          "get"={
-*              "security"="is_granted('reject',object)",
-*              "swagger_context" = {
-*                  "summary"="Not implemented",
-*                  "tags"={"Gamification"}
-*              }
-*          },
-*          "tagAsNotified"={
-*              "method"="GET",
-*              "path"="/reward_steps/{id}/tagAsNotified",
-*              "normalization_context"={"groups"={"tagAsNotified"}},
-*              "swagger_context" = {
-*                  "summary"="Tag a RewardStep as notified to the User",
-*                  "tags"={"Gamification"}
-*              }
-*          },
-*      }
-* )
-*/
+ * Gamification : A RewarStep. A previously validated sequenceItem on the way to earn a Badge.
+ *
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ *
+ * @ORM\Entity
+ * @ORM\HasLifecycleCallbacks
+ * @ApiResource(
+ *     attributes={
+ *          "force_eager"=false,
+ *          "normalization_context"={"groups"={"readGamification"}, "enable_max_depth"="true"}
+ *     },
+ *     collectionOperations={
+ *          "get"={
+ *              "security"="is_granted('reject',object)",
+ *              "swagger_context" = {
+ *                  "summary"="Not implemented",
+ *                  "tags"={"Gamification"}
+ *               }
+ *           }
+ *      },
+ *      itemOperations={
+ *          "get"={
+ *              "security"="is_granted('reject',object)",
+ *              "swagger_context" = {
+ *                  "summary"="Not implemented",
+ *                  "tags"={"Gamification"}
+ *              }
+ *          },
+ *          "tagAsNotified"={
+ *              "method"="GET",
+ *              "path"="/reward_steps/{id}/tagAsNotified",
+ *              "normalization_context"={"groups"={"tagAsNotified"}},
+ *              "swagger_context" = {
+ *                  "summary"="Tag a RewardStep as notified to the User",
+ *                  "tags"={"Gamification"}
+ *              }
+ *          },
+ *      }
+ * )
+ */
 class RewardStep implements GamificationNotificationInterface
 {
     /**
@@ -210,7 +211,7 @@ class RewardStep implements GamificationNotificationInterface
      */
     public function setAutoCreatedDate()
     {
-        $this->setCreatedDate(new \Datetime());
+        $this->setCreatedDate(new \DateTime());
     }
 
     /**
@@ -220,6 +221,6 @@ class RewardStep implements GamificationNotificationInterface
      */
     public function setAutoUpdatedDate()
     {
-        $this->setUpdatedDate(new \Datetime());
+        $this->setUpdatedDate(new \DateTime());
     }
 }

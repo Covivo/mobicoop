@@ -18,7 +18,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\Interoperability\DataPersister;
 
@@ -42,7 +42,7 @@ final class UserItemDataPersister implements ContextAwareDataPersisterInterface
 
     public function supports($data, array $context = []): bool
     {
-        return $data instanceof User && isset($context['item_operation_name']) && $context['item_operation_name'] == 'interop_put';
+        return $data instanceof User && isset($context['item_operation_name']) && 'interop_put' == $context['item_operation_name'];
     }
 
     public function persist($data, array $context = [])

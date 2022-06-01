@@ -19,16 +19,16 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\MassCommunication\EventListener;
 
 use App\Community\Repository\CommunityRepository;
-use Doctrine\ORM\Event\LifecycleEventArgs;
 use App\MassCommunication\Entity\Campaign;
+use Doctrine\ORM\Event\LifecycleEventArgs;
 
 /**
- * Campaign Event listener
+ * Campaign Event listener.
  */
 class CampaignLoadListener
 {
@@ -46,7 +46,7 @@ class CampaignLoadListener
          */
         $campaign = $args->getEntity();
         if ($campaign instanceof Campaign) {
-            if ($campaign->getSource() == Campaign::SOURCE_COMMUNITY && $campaign->getSourceId()) {
+            if (Campaign::SOURCE_COMMUNITY == $campaign->getSource() && $campaign->getSourceId()) {
                 if ($community = $this->communityRepository->find($campaign->getSourceId())) {
                     $campaign->setSourceName($community->getName());
                 }

@@ -20,8 +20,8 @@ final class Version20200831120900 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
-        $this->addSql("UPDATE `auth_item` SET `auth_rule_id` = NULL WHERE `auth_item`.`id` = 55;");
+        $this->addSql('UPDATE `auth_item` SET `auth_rule_id` = NULL WHERE `auth_item`.`id` = 55;');
     }
 }

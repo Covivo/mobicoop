@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Image\Repository;
 
@@ -28,7 +28,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 
 /**
- * @method Icon|null find($id, $lockMode = null, $lockVersion = null)
+ * @method null|Icon find($id, $lockMode = null, $lockVersion = null)
  */
 class IconRepository
 {

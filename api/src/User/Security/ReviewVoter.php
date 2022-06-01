@@ -19,17 +19,15 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\Security;
 
-use App\Auth\Service\AuthManager;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use App\Solidary\Entity\SolidaryUser;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
+use App\Auth\Service\AuthManager;
 use App\User\Ressource\Review;
-use App\User\Ressource\ReviewDashboard;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class ReviewVoter extends Voter
 {
@@ -55,7 +53,7 @@ class ReviewVoter extends Voter
             self::REVIEW_UPDATE,
             self::REVIEW_DELETE,
             self::REVIEW_LIST,
-            ])) {
+        ])) {
             return false;
         }
 
@@ -66,9 +64,10 @@ class ReviewVoter extends Voter
             self::REVIEW_UPDATE,
             self::REVIEW_DELETE,
             self::REVIEW_LIST,
-            ]) && !($subject instanceof Paginator) && !$subject instanceof Review) {
+        ]) && !($subject instanceof Paginator) && !$subject instanceof Review) {
             return false;
         }
+
         return true;
     }
 
@@ -77,12 +76,16 @@ class ReviewVoter extends Voter
         switch ($attribute) {
             case self::REVIEW_CREATE:
                 return $this->canCreateReview($subject);
+
             case self::REVIEW_READ:
                 return $this->canReadReview();
+
             case self::REVIEW_UPDATE:
                 return $this->canUpdateReview($subject);
+
             case self::REVIEW_DELETE:
                 return $this->canDeleteReview($subject);
+
             case self::REVIEW_LIST:
                 return $this->canListReview();
         }
@@ -92,7 +95,7 @@ class ReviewVoter extends Voter
 
     private function canCreateReview(Review $review)
     {
-        return $this->authManager->isAuthorized(self::REVIEW_CREATE, ['review'=>$review]);
+        return $this->authManager->isAuthorized(self::REVIEW_CREATE, ['review' => $review]);
     }
 
     private function canReadReview()
@@ -102,12 +105,12 @@ class ReviewVoter extends Voter
 
     private function canUpdateReview(Review $review)
     {
-        return $this->authManager->isAuthorized(self::REVIEW_UPDATE, ['review'=>$review]);
+        return $this->authManager->isAuthorized(self::REVIEW_UPDATE, ['review' => $review]);
     }
 
     private function canDeleteReview(Review $review)
     {
-        return $this->authManager->isAuthorized(self::REVIEW_DELETE, ['review'=>$review]);
+        return $this->authManager->isAuthorized(self::REVIEW_DELETE, ['review' => $review]);
     }
 
     private function canListReview()

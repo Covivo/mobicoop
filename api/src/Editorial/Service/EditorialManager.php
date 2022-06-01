@@ -19,15 +19,14 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Editorial\Service;
 
 use App\Editorial\Entity\Editorial;
 use App\Editorial\Exception\EditorialException;
-use Doctrine\ORM\EntityManagerInterface;
 use App\Editorial\Repository\EditorialRepository;
-use Doctrine\ORM\QueryBuilder;
+use Doctrine\ORM\EntityManagerInterface;
 
 /**
  * Editorial manager.
@@ -39,7 +38,7 @@ class EditorialManager
     private $editorialRepository;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param EntityManagerInterface $entityManager
      */
@@ -50,15 +49,14 @@ class EditorialManager
     }
 
     /**
-     * Get the activated editorial
-     *
-     * @return Editorial
+     * Get the activated editorial.
      */
     public function getActivatedEditorial(): Editorial
     {
         if (!$editorial = $this->editorialRepository->findOneBy(['status' => Editorial::STATUS_ACTIVE])) {
             throw new EditorialException('No activated editorial content');
         }
+
         return $editorial;
     }
 }

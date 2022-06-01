@@ -19,14 +19,14 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Auth\Rule;
 
 use App\Auth\Interfaces\AuthRuleInterface;
 
 /**
- *  Check that the requester is the Solidary Volunteer himself
+ *  Check that the requester is the Solidary Volunteer himself.
  */
 class SolidaryVolunteerSelf implements AuthRuleInterface
 {
@@ -38,6 +38,7 @@ class SolidaryVolunteerSelf implements AuthRuleInterface
         if (!isset($params['solidaryVolunteer'])) {
             return false;
         }
+
         return $params['solidaryVolunteer']->getUser()->getId() == $requester->getId();
     }
 }

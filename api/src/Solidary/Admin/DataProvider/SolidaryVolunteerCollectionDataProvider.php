@@ -18,7 +18,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\Admin\DataProvider;
 
@@ -27,8 +27,8 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGenerator;
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\Solidary\Admin\Service\SolidaryVolunteerManager;
-use App\Solidary\Entity\SolidaryVolunteer;
 use App\Solidary\Entity\SolidaryUser;
+use App\Solidary\Entity\SolidaryVolunteer;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -51,7 +51,7 @@ final class SolidaryVolunteerCollectionDataProvider implements CollectionDataPro
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return SolidaryVolunteer::class === $resourceClass && $operationName === 'ADMIN_get';
+        return SolidaryVolunteer::class === $resourceClass && 'ADMIN_get' === $operationName;
     }
 
     public function getCollection(string $resourceClass, string $operationName = null, array $context = []): iterable
@@ -59,30 +59,39 @@ final class SolidaryVolunteerCollectionDataProvider implements CollectionDataPro
         // overload filters to avoid using complicated linked relations !
         $newContext = $context;
         if (isset($context['filters'])) {
-            foreach ($context['filters'] as $fkey=>$filter) {
+            foreach ($context['filters'] as $fkey => $filter) {
                 switch ($fkey) {
                     case 'order':
-                        foreach ($filter as $key=>$value) {
+                        foreach ($filter as $key => $value) {
                             switch ($key) {
                                 case 'givenName':
                                     $newContext['filters']['order']['user.givenName'] = $value;
                                     unset($newContext['filters']['order']['givenName']);
+
                                     break;
+
                                 case 'familyName':
                                     $newContext['filters']['order']['user.familyName'] = $value;
                                     unset($newContext['filters']['order']['familyName']);
+
                                     break;
                             }
                         }
+
                         break;
+
                     case 'givenName':
                         $newContext['filters']['user.givenName'] = $filter;
                         unset($newContext['filters']['givenName']);
+
                         break;
+
                     case 'familyName':
                         $newContext['filters']['user.familyName'] = $filter;
                         unset($newContext['filters']['familyName']);
+
                         break;
+
                     default:
                         break;
                 }
@@ -95,6 +104,7 @@ final class SolidaryVolunteerCollectionDataProvider implements CollectionDataPro
         // we use the doctrine built-in filtering and pagination system
         // (on the parent SolidaryUser class, as we need to perform queries on an ORM table and not a resource only like SolidayVolunteer)
         $manager = $this->managerRegistry->getManagerForClass(SolidaryUser::class);
+
         /**
          * @var EntityRepository $repository
          */
@@ -104,7 +114,7 @@ final class SolidaryVolunteerCollectionDataProvider implements CollectionDataPro
 
         // we add the volunteer flag to keep only volunteers (and not beneficiaries)
         $rootAlias = $queryBuilder->getRootAliases()[0];
-        $queryBuilder->andWhere("$rootAlias.volunteer = 1");
+        $queryBuilder->andWhere("{$rootAlias}.volunteer = 1");
 
         foreach ($this->collectionExtensions as $extension) {
             $extension->applyToCollection($queryBuilder, $queryNameGenerator, SolidaryUser::class, $operationName, $newContext);

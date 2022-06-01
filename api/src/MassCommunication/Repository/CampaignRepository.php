@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\MassCommunication\Repository;
 
@@ -28,8 +28,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 
 /**
- * @method Campaign|null find($id, $lockMode = null, $lockVersion = null)
- * @method Campaign|null findOneBy(array $criteria, array $orderBy = null)
+ * @method null|Campaign find($id, $lockMode = null, $lockVersion = null)
+ * @method null|Campaign findOneBy(array $criteria, array $orderBy = null)
  * @method Campaign[]    findAll()
  * @method Campaign[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */

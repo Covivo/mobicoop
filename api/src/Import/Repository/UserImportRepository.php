@@ -19,16 +19,16 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Import\Repository;
 
+use App\Import\Entity\UserImport;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use App\Import\Entity\UserImport;
 
 /**
- * @method UserImport|null find($id, $lockMode = null, $lockVersion = null)
+ * @method null|UserImport find($id, $lockMode = null, $lockVersion = null)
  * @method UserImport[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 class UserImportRepository

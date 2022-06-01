@@ -19,12 +19,12 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Article\Controller;
 
-use App\Article\Service\ArticleManager;
 use App\Article\Entity\Paragraph;
+use App\Article\Service\ArticleManager;
 use App\TranslatorTrait;
 
 /**
@@ -46,15 +46,13 @@ class ParagraphUp
     /**
      * This method is invoked when a paragraph up position change is asked.
      * It returns the edited paragraph.
-     *
-     * @param Paragraph $data
-     * @return Paragraph
      */
     public function __invoke(Paragraph $data): Paragraph
     {
         if (is_null($data)) {
-            throw new \InvalidArgumentException($this->translator->trans("bad Paragraph id is provided"));
+            throw new \InvalidArgumentException($this->translator->trans('bad Paragraph id is provided'));
         }
+
         return $this->articleManager->changeParagraphPosition($data, $this->articleManager::DIRECTION_UP);
     }
 }

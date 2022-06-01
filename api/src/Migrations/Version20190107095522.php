@@ -21,7 +21,7 @@ declare(strict_types=1);
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace DoctrineMigrations;
 
@@ -36,7 +36,7 @@ final class Version20190107095522 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE ptline ADD direction VARCHAR(255) DEFAULT NULL, CHANGE origin origin VARCHAR(100) DEFAULT NULL, CHANGE destination destination VARCHAR(100) DEFAULT NULL');
         $this->addSql('ALTER TABLE ptleg CHANGE ptline_id ptline_id INT DEFAULT NULL, CHANGE distance distance INT DEFAULT NULL, CHANGE duration duration INT DEFAULT NULL');
@@ -47,7 +47,7 @@ final class Version20190107095522 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE ptjourney CHANGE distance distance INT NOT NULL, CHANGE duration duration INT NOT NULL');
         $this->addSql('ALTER TABLE ptleg CHANGE ptline_id ptline_id INT NOT NULL, CHANGE distance distance INT NOT NULL, CHANGE duration duration INT NOT NULL');

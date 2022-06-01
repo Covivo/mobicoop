@@ -19,13 +19,13 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Match\Controller;
 
-use Symfony\Component\HttpFoundation\Request;
-use App\Match\Service\MassImportManager;
 use App\Match\Entity\Mass;
+use App\Match\Service\MassImportManager;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Security\Core\Security;
 
@@ -56,8 +56,8 @@ final class CreateMassImportAction
 
         $mass->setMassType($request->request->get('massType'));
 
-        if ($request->request->get('checkLegit')==1) {
-            $mass->setDateCheckLegit(new \Datetime());
+        if (1 == $request->request->get('checkLegit')) {
+            $mass->setDateCheckLegit(new \DateTime());
         }
 
         $mass->setUser($this->security->getUser());

@@ -19,16 +19,16 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Image\Admin\Security;
 
 use App\Auth\ServiceAdmin\AuthManager;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use App\Image\Entity\Image;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class ImageVoter extends Voter
@@ -51,7 +51,7 @@ class ImageVoter extends Voter
         // if the attribute isn't one we support, return false
         if (!in_array($attribute, [
             self::ADMIN_IMAGE_POST,
-            ])) {
+        ])) {
             return false;
         }
         // only vote on Image objects inside this voter
@@ -72,7 +72,6 @@ class ImageVoter extends Voter
         switch ($attribute) {
             case self::ADMIN_IMAGE_POST:
                 return $this->canPost($requester, $this->request);
-
         }
 
         throw new \LogicException('This code should not be reached!');

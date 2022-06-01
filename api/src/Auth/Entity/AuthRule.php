@@ -19,14 +19,14 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Auth\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
-use Symfony\Component\Serializer\Annotation\Groups;
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * An authorization rule.
@@ -72,7 +72,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 class AuthRule
 {
     /**
-     * @var int The id of this rule.
+     * @var int the id of this rule
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -82,7 +82,7 @@ class AuthRule
     private $id;
 
     /**
-     * @var string The name of the rule.
+     * @var string the name of the rule
      *
      * @ORM\Column(type="string", length=100)
      * @Groups({"read","write"})

@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Payment\DataProvider;
 
@@ -35,9 +35,9 @@ use Symfony\Component\Security\Core\Security;
  */
 final class PaymentWeekFirstNonValidatedItemDataProvider implements RestrictedDataProviderInterface, ItemDataProviderInterface
 {
-    protected $paymentManager;
-    protected $request;
-    protected $security;
+    private $paymentManager;
+    private $request;
+    private $security;
 
     public function __construct(PaymentManager $paymentManager, RequestStack $requestStack, Security $security)
     {
@@ -48,11 +48,11 @@ final class PaymentWeekFirstNonValidatedItemDataProvider implements RestrictedDa
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return PaymentWeek::class === $resourceClass && $operationName === "get";
+        return PaymentWeek::class === $resourceClass && 'get' === $operationName;
     }
 
     public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?object
     {
-        return $this->paymentManager->getFirstNonValidatedWeek($this->security->getUser(), $this->request->get("id"));
+        return $this->paymentManager->getFirstNonValidatedWeek($this->security->getUser(), $this->request->get('id'));
     }
 }

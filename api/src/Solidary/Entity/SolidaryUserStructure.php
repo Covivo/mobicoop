@@ -19,20 +19,20 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * Relation between a Solidary User, a Structure and a Proof
+ * Relation between a Solidary User, a Structure and a Proof.
  *
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
@@ -77,6 +77,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          }
  *      }
  * )
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class SolidaryUserStructure
@@ -86,7 +87,7 @@ class SolidaryUserStructure
     public const STATUS_REFUSED = 2;
 
     /**
-     * @var int The id of this SolidaryStructureProof.
+     * @var int the id of this SolidaryStructureProof
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -107,7 +108,7 @@ class SolidaryUserStructure
     private $solidaryUser;
 
     /**
-     * @var Structure Structure.
+     * @var Structure structure
      *
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Structure", inversedBy="solidaryUserStructures", cascade={"persist"})
@@ -118,7 +119,7 @@ class SolidaryUserStructure
     private $structure;
 
     /**
-     * @var ArrayCollection The proofs for this SolidaryUserStructure.
+     * @var ArrayCollection the proofs for this SolidaryUserStructure
      *
      * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Proof", mappedBy="solidaryUserStructure", cascade={"persist"})
      * @Groups({"readUser","readSolidaryUserStructure"})
@@ -127,7 +128,7 @@ class SolidaryUserStructure
     private $proofs;
 
     /**
-     * @var ArrayCollection|null The solidary records for this solidary user.
+     * @var null|ArrayCollection the solidary records for this solidary user
      *
      * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Solidary", mappedBy="solidaryUserStructure", cascade={"persist"})
      * @MaxDepth(1)
@@ -135,7 +136,7 @@ class SolidaryUserStructure
     private $solidaries;
 
     /**
-     * @var \DateTimeInterface Creation date.
+     * @var \DateTimeInterface creation date
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"readSolidary"})
@@ -143,7 +144,7 @@ class SolidaryUserStructure
     private $createdDate;
 
     /**
-     * @var \DateTimeInterface Creation date.
+     * @var \DateTimeInterface creation date
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"readSolidary"})
@@ -167,14 +168,14 @@ class SolidaryUserStructure
     private $acceptedDate;
 
     /**
-     * @var \DateTimeInterface Refusal date of this Solidary User for this structure.
+     * @var \DateTimeInterface refusal date of this Solidary User for this structure
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"readSolidary"})
      */
     private $refusedDate;
 
-    public function __construct($id=null)
+    public function __construct($id = null)
     {
         $this->id = $id;
         $this->proofs = new ArrayCollection();
@@ -343,7 +344,7 @@ class SolidaryUserStructure
      */
     public function setAutoCreatedDate()
     {
-        $this->setCreatedDate(new \Datetime());
+        $this->setCreatedDate(new \DateTime());
     }
 
     /**
@@ -353,7 +354,7 @@ class SolidaryUserStructure
      */
     public function setAutoUpdatedDate()
     {
-        $this->setUpdatedDate(new \Datetime());
+        $this->setUpdatedDate(new \DateTime());
     }
 
     /**
@@ -364,10 +365,10 @@ class SolidaryUserStructure
      */
     public function setAutoAcceptedRefusedDate()
     {
-        if ($this->getStatus()==self::STATUS_ACCEPTED) {
-            $this->setAcceptedDate(new \Datetime());
-        } elseif ($this->getStatus()==self::STATUS_REFUSED) {
-            $this->setRefusedDate(new \Datetime());
+        if (self::STATUS_ACCEPTED == $this->getStatus()) {
+            $this->setAcceptedDate(new \DateTime());
+        } elseif (self::STATUS_REFUSED == $this->getStatus()) {
+            $this->setRefusedDate(new \DateTime());
         }
     }
 }

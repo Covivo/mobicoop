@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Carpool\DataPersister;
 
@@ -44,12 +44,12 @@ final class AdItemClaimDataPersister implements ContextAwareDataPersisterInterfa
 
     public function supports($data, array $context = []): bool
     {
-        return $data instanceof Ad && isset($context['item_operation_name']) && $context['item_operation_name'] === 'claim';
+        return $data instanceof Ad && isset($context['item_operation_name']) && 'claim' === $context['item_operation_name'];
     }
 
     public function persist($data, array $context = [])
     {
-        return $this->adManager->claimAd($this->request->get("id"));
+        return $this->adManager->claimAd($this->request->get('id'));
     }
 
     public function remove($data, array $context = [])

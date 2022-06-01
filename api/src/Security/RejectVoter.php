@@ -19,15 +19,15 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Security;
 
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 /**
- * Reject voter => used to deny access to a mandatory route (= a route needed to be set for consistency, but denied for everyone)
+ * Reject voter => used to deny access to a mandatory route (= a route needed to be set for consistency, but denied for everyone).
  */
 class RejectVoter extends Voter
 {
@@ -36,8 +36,8 @@ class RejectVoter extends Voter
     protected function supports($attribute, $subject): bool
     {
         // if the attribute isn't one we support, return false
-        if (!in_array($attribute, [self::REJECT
-            ])) {
+        if (!in_array($attribute, [self::REJECT,
+        ])) {
             return false;
         }
 

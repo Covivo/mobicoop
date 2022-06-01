@@ -15,7 +15,7 @@ final class Version20191220162430 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('CREATE TABLE relay_point_import (id INT AUTO_INCREMENT NOT NULL, relay_id INT DEFAULT NULL, relay_external_id VARCHAR(255) NOT NULL, status SMALLINT NOT NULL, UNIQUE INDEX UNIQ_ACB71A0D68A482E (relay_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB');
         $this->addSql('ALTER TABLE relay_point_import ADD CONSTRAINT FK_ACB71A0D68A482E FOREIGN KEY (relay_id) REFERENCES relay_point (id)');
@@ -76,7 +76,7 @@ final class Version20191220162430 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('DROP TABLE relay_point_import');
         $this->addSql('ALTER TABLE action CHANGE in_log in_log TINYINT(1) DEFAULT \'NULL\', CHANGE in_diary in_diary TINYINT(1) DEFAULT \'NULL\', CHANGE progression progression INT DEFAULT NULL, CHANGE created_date created_date DATETIME DEFAULT \'NULL\', CHANGE updated_date updated_date DATETIME DEFAULT \'NULL\'');

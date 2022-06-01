@@ -105,13 +105,13 @@ class GeoTools
         $latitudeTo,
         $longitudeTo
     ) {
-        //difference in longitudinal coordinates
+        // difference in longitudinal coordinates
         $dLon = deg2rad($longitudeTo) - deg2rad($longitudeFrom);
 
-        //difference in the phi of latitudinal coordinates
+        // difference in the phi of latitudinal coordinates
         $dPhi = log(tan(deg2rad($latitudeTo) / 2 + pi() / 4) / tan(deg2rad($latitudeFrom) / 2 + pi() / 4));
 
-        //we need to recalculate $dLon if it is greater than pi
+        // we need to recalculate $dLon if it is greater than pi
         if (abs($dLon) > pi()) {
             if ($dLon > 0) {
                 $dLon = (2 * pi() - $dLon) * -1;
@@ -119,7 +119,7 @@ class GeoTools
                 $dLon = 2 * pi() + $dLon;
             }
         }
-        //return the angle, normalized
+        // return the angle, normalized
         return (rad2deg(atan2($dLon, $dPhi)) + 360) % 360;
     }
 
@@ -156,7 +156,7 @@ class GeoTools
      */
     public function getCO2(int $distance, int $round = 2): int
     {
-        //return round(((($distance)/1000) * 7 * 0.0232), $round);
+        // return round(((($distance)/1000) * 7 * 0.0232), $round);
         return round($distance / 1000 * 213, $round);
     }
 
@@ -461,8 +461,8 @@ class GeoTools
     ) {
         $result = 0;
         if ($l2x == $l1x) {
-            //vertical lines - treat this case specially to avoid dividing
-            //by zero
+            // vertical lines - treat this case specially to avoid dividing
+            // by zero
             $result = abs($ptX - $l2x);
         } else {
             $slope = (($l2y - $l1y) / ($l2x - $l1x));

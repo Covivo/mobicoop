@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Carpool\DataProvider;
 
@@ -31,7 +31,6 @@ use Symfony\Component\Security\Core\Security;
 
 /**
  * Collection data provider used to get a current unfinished dynamic ad.
- *
  */
 final class DynamicUnfinishedCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
@@ -46,7 +45,7 @@ final class DynamicUnfinishedCollectionDataProvider implements CollectionDataPro
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Dynamic::class === $resourceClass && ($operationName =="active" || $operationName =="unfinished");
+        return Dynamic::class === $resourceClass && ('active' == $operationName || 'unfinished' == $operationName);
     }
 
     public function getCollection(string $resourceClass, string $operationName = null): ?array
@@ -54,6 +53,7 @@ final class DynamicUnfinishedCollectionDataProvider implements CollectionDataPro
         if ($last = $this->dynamicManager->getLastDynamicUnfinished($this->security->getUser())) {
             return [$last];
         }
+
         return [];
     }
 }

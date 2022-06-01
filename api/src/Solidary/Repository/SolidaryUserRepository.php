@@ -18,7 +18,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\Repository;
 
@@ -32,13 +32,12 @@ use Doctrine\ORM\EntityRepository;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
-*/
+ */
 class SolidaryUserRepository
 {
     public const USE_DAY_RESTRICTION = true; // Restriction by the time range slot by slot (m,a,e) of a SolidaryVolunteer in matching
     public const USE_TIME_RESTRICTION = true; // Restriction by the time range slot by slot (m,a,e) of a SolidaryVolunteer in matching
     public const USE_GEOGRAPHIC_RESTRICTION = true; // Restriction by the maxDistance of a SolidaryVolunteer in matching
-
 
     /**
      * @var EntityRepository
@@ -55,7 +54,6 @@ class SolidaryUserRepository
         $this->solidaryMatcher = $solidaryMatcher;
     }
 
-
     public function find(int $id): ?SolidaryUser
     {
         return $this->repository->find($id);
@@ -65,7 +63,6 @@ class SolidaryUserRepository
     {
         return $this->repository->findAll();
     }
-
 
     public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null): ?array
     {
@@ -78,58 +75,55 @@ class SolidaryUserRepository
     }
 
     /**
-     * Get a SolidaryUser by its User id
+     * Get a SolidaryUser by its User id.
      *
-     * @param int $id               The user id
-     * @return SolidaryUser|null    The SolidaryUser if found, null if not found
+     * @param int $id The user id
+     *
+     * @return null|SolidaryUser The SolidaryUser if found, null if not found
      */
     public function findByUserId(int $id): ?SolidaryUser
     {
         $query = $this->repository->createQueryBuilder('su')
-        ->join('su.user', 'u')
-        ->where('u.id = :id')
-        ->setParameter('id', $id);
+            ->join('su.user', 'u')
+            ->where('u.id = :id')
+            ->setParameter('id', $id)
+        ;
 
         return $query->getQuery()->getOneOrNullResult();
     }
 
     /**
-     * Get a SolidaryUser by its email
-     *
-     * @param string $email
-     * @return SolidaryUser|null
+     * Get a SolidaryUser by its email.
      */
     public function findByEmail(string $email): ?SolidaryUser
     {
         $query = $this->repository->createQueryBuilder('v')
-        ->join('v.user', 'u')
-        ->where('u.email = :email')
-        ->setParameter('email', $email);
+            ->join('v.user', 'u')
+            ->where('u.email = :email')
+            ->setParameter('email', $email)
+        ;
 
         return $query->getQuery()->getResult();
     }
 
     /**
-     * Find the matching SolidaryUser for a Solidary Transport Search
-     *
-     * @param SolidarySearch $solidaryTransportSearch
-     * @return array|null
+     * Find the matching SolidaryUser for a Solidary Transport Search.
      */
     public function findForASolidaryTransportSearch(SolidarySearch $solidaryTransportSearch): ?array
     {
-
         // Get the criteria of the beneficiary's proposal
         $criteria = $solidaryTransportSearch->getSolidary()->getProposal()->getCriteria();
 
         // Only the volunteer
         $query = $this->repository->createQueryBuilder('su')
-                ->join('su.address', 'a')
-                ->where('su.volunteer = 1');
+            ->join('su.address', 'a')
+            ->where('su.volunteer = 1')
+        ;
 
         // Get the Structure
         $structure = $solidaryTransportSearch->getSolidary()->getSolidaryUserStructure()->getStructure();
 
-        if ($criteria->getFrequency()==Criteria::FREQUENCY_PUNCTUAL) {
+        if (Criteria::FREQUENCY_PUNCTUAL == $criteria->getFrequency()) {
             // Punctual journey
 
             // Date
@@ -140,22 +134,42 @@ class SolidaryUserRepository
             // We need to determine the weekday of the fromDate and take only the volunteer available that day on the slot
             if (self::USE_DAY_RESTRICTION) {
                 $weekDay = $criteria->getFromDate()->format('w');
+
                 switch ($weekDay) {
-                    case 0:$query->andWhere('su.'.$slot.'Sun = 1');break;
-                    case 1: $query->andWhere('su.'.$slot.'Mon = 1');break;
-                    case 2: $query->andWhere('su.'.$slot.'Tue = 1');break;
-                    case 3: $query->andWhere('su.'.$slot.'Wed = 1');break;
-                    case 4: $query->andWhere('su.'.$slot.'Thu = 1');break;
-                    case 5: $query->andWhere('su.'.$slot.'Fri = 1');break;
-                    case 6: $query->andWhere('su.'.$slot.'Sat = 1');break;
+                    case 0:$query->andWhere('su.'.$slot.'Sun = 1');
+
+break;
+
+                    case 1: $query->andWhere('su.'.$slot.'Mon = 1');
+
+break;
+
+                    case 2: $query->andWhere('su.'.$slot.'Tue = 1');
+
+break;
+
+                    case 3: $query->andWhere('su.'.$slot.'Wed = 1');
+
+break;
+
+                    case 4: $query->andWhere('su.'.$slot.'Thu = 1');
+
+break;
+
+                    case 5: $query->andWhere('su.'.$slot.'Fri = 1');
+
+break;
+
+                    case 6: $query->andWhere('su.'.$slot.'Sat = 1');
+
+break;
                 }
             }
             if (self::USE_TIME_RESTRICTION) {
-                $query->andWhere('su.'.$slot.'MinTime <= \''.$criteria->getMinTime()->format("H:i:s").'\'');
-                $query->andWhere('su.'.$slot.'MaxTime >= \''.$criteria->getMaxTime()->format("H:i:s").'\'');
+                $query->andWhere('su.'.$slot.'MinTime <= \''.$criteria->getMinTime()->format('H:i:s').'\'');
+                $query->andWhere('su.'.$slot.'MaxTime >= \''.$criteria->getMaxTime()->format('H:i:s').'\'');
             }
         } else {
-
             // Regular journey
 
             // If the SolidaryUser can drive on the particular days of the critera
@@ -166,8 +180,8 @@ class SolidaryUserRepository
                     $query->andWhere('su.'.$slot.'Mon = 1');
                 }
                 if (self::USE_TIME_RESTRICTION) {
-                    $query->andWhere('su.'.$slot.'MinTime <= \''.$criteria->getMonMinTime()->format("H:i:s").'\'');
-                    $query->andWhere('su.'.$slot.'MaxTime >= \''.$criteria->getMonMaxTime()->format("H:i:s").'\'');
+                    $query->andWhere('su.'.$slot.'MinTime <= \''.$criteria->getMonMinTime()->format('H:i:s').'\'');
+                    $query->andWhere('su.'.$slot.'MaxTime >= \''.$criteria->getMonMaxTime()->format('H:i:s').'\'');
                 }
             }
             if ($criteria->isTueCheck()) {
@@ -176,8 +190,8 @@ class SolidaryUserRepository
                     $query->andWhere('su.'.$slot.'Tue = 1');
                 }
                 if (self::USE_TIME_RESTRICTION) {
-                    $query->andWhere('su.'.$slot.'MinTime <= \''.$criteria->getTueMinTime()->format("H:i:s").'\'');
-                    $query->andWhere('su.'.$slot.'MaxTime >= \''.$criteria->getTueMaxTime()->format("H:i:s").'\'');
+                    $query->andWhere('su.'.$slot.'MinTime <= \''.$criteria->getTueMinTime()->format('H:i:s').'\'');
+                    $query->andWhere('su.'.$slot.'MaxTime >= \''.$criteria->getTueMaxTime()->format('H:i:s').'\'');
                 }
             }
             if ($criteria->isWedCheck()) {
@@ -186,8 +200,8 @@ class SolidaryUserRepository
                     $query->andWhere('su.'.$slot.'Wed = 1');
                 }
                 if (self::USE_TIME_RESTRICTION) {
-                    $query->andWhere('su.'.$slot.'MinTime <= \''.$criteria->getWedMinTime()->format("H:i:s").'\'');
-                    $query->andWhere('su.'.$slot.'MaxTime >= \''.$criteria->getWedMaxTime()->format("H:i:s").'\'');
+                    $query->andWhere('su.'.$slot.'MinTime <= \''.$criteria->getWedMinTime()->format('H:i:s').'\'');
+                    $query->andWhere('su.'.$slot.'MaxTime >= \''.$criteria->getWedMaxTime()->format('H:i:s').'\'');
                 }
             }
             if ($criteria->isThuCheck()) {
@@ -196,8 +210,8 @@ class SolidaryUserRepository
                     $query->andWhere('su.'.$slot.'Thu = 1');
                 }
                 if (self::USE_TIME_RESTRICTION) {
-                    $query->andWhere('su.'.$slot.'MinTime <= \''.$criteria->getThuMinTime()->format("H:i:s").'\'');
-                    $query->andWhere('su.'.$slot.'MaxTime >= \''.$criteria->getThuMaxTime()->format("H:i:s").'\'');
+                    $query->andWhere('su.'.$slot.'MinTime <= \''.$criteria->getThuMinTime()->format('H:i:s').'\'');
+                    $query->andWhere('su.'.$slot.'MaxTime >= \''.$criteria->getThuMaxTime()->format('H:i:s').'\'');
                 }
             }
             if ($criteria->isFriCheck()) {
@@ -206,8 +220,8 @@ class SolidaryUserRepository
                     $query->andWhere('su.'.$slot.'Fri = 1');
                 }
                 if (self::USE_TIME_RESTRICTION) {
-                    $query->andWhere('su.'.$slot.'MinTime <= \''.$criteria->getFriMinTime()->format("H:i:s").'\'');
-                    $query->andWhere('su.'.$slot.'MaxTime >= \''.$criteria->getFriMaxTime()->format("H:i:s").'\'');
+                    $query->andWhere('su.'.$slot.'MinTime <= \''.$criteria->getFriMinTime()->format('H:i:s').'\'');
+                    $query->andWhere('su.'.$slot.'MaxTime >= \''.$criteria->getFriMaxTime()->format('H:i:s').'\'');
                 }
             }
             if ($criteria->isSatCheck()) {
@@ -216,8 +230,8 @@ class SolidaryUserRepository
                     $query->andWhere('su.'.$slot.'Sat = 1');
                 }
                 if (self::USE_TIME_RESTRICTION) {
-                    $query->andWhere('su.'.$slot.'MinTime <= \''.$criteria->getSatMinTime()->format("H:i:s").'\'');
-                    $query->andWhere('su.'.$slot.'MaxTime >= \''.$criteria->getSatMaxTime()->format("H:i:s").'\'');
+                    $query->andWhere('su.'.$slot.'MinTime <= \''.$criteria->getSatMinTime()->format('H:i:s').'\'');
+                    $query->andWhere('su.'.$slot.'MaxTime >= \''.$criteria->getSatMaxTime()->format('H:i:s').'\'');
                 }
             }
             if ($criteria->isSunCheck()) {
@@ -226,8 +240,8 @@ class SolidaryUserRepository
                     $query->andWhere('su.'.$slot.'Sun = 1');
                 }
                 if (self::USE_TIME_RESTRICTION) {
-                    $query->andWhere('su.'.$slot.'MinTime <= \''.$criteria->getSunMinTime()->format("H:i:s").'\'');
-                    $query->andWhere('su.'.$slot.'MaxTime >= \''.$criteria->getSunMaxTime()->format("H:i:s").'\'');
+                    $query->andWhere('su.'.$slot.'MinTime <= \''.$criteria->getSunMinTime()->format('H:i:s').'\'');
+                    $query->andWhere('su.'.$slot.'MaxTime >= \''.$criteria->getSunMaxTime()->format('H:i:s').'\'');
                 }
             }
         }// end if punctual/regular
@@ -238,7 +252,7 @@ class SolidaryUserRepository
             // If the search is on the return, we use the destination instead
             $waypoints = $solidaryTransportSearch->getSolidary()->getProposal()->getWaypoints();
             $address = null;
-            if ($solidaryTransportSearch->getWay()=="outward") {
+            if ('outward' == $solidaryTransportSearch->getWay()) {
                 $address = $waypoints[0]->getAddress();
             } else {
                 foreach ($waypoints as $waypoint) {
@@ -250,12 +264,11 @@ class SolidaryUserRepository
             if (is_null($address)) {
                 throw new SolidaryException(SolidaryException::NO_VALID_ADDRESS);
             }
-            $sqlDistance = '(6378000 * acos(cos(radians(' . $address->getLatitude() . ')) * cos(radians(a.latitude)) * cos(radians(a.longitude) - radians(' . $address->getLongitude() . ')) + sin(radians(' . $address->getLatitude() . ')) * sin(radians(a.latitude))))';
-            $query->andWhere($sqlDistance . " <= su.maxDistance");
+            $sqlDistance = '(6378000 * acos(cos(radians('.$address->getLatitude().')) * cos(radians(a.latitude)) * cos(radians(a.longitude) - radians('.$address->getLongitude().')) + sin(radians('.$address->getLatitude().')) * sin(radians(a.latitude))))';
+            $query->andWhere($sqlDistance.' <= su.maxDistance');
         }
 
         $queryResults = $query->getQuery()->getResult();
-
 
         // We need to build and persist all the new results as SolidaryMatching.
         $solidaryMatchings = $this->solidaryMatcher->buildSolidaryMatchingsForTransport($solidaryTransportSearch->getSolidary(), $queryResults);
@@ -270,20 +283,23 @@ class SolidaryUserRepository
     }
 
     /**
-     * Find all solidary users
+     * Find all solidary users.
+     *
      * @param array $filters Optionnal Filters on SolidaryUser
+     *
      * @return SolidaryUser[]
      */
     public function findSolidaryUsers(array $filters): array
     {
         $query = $this->repository->createQueryBuilder('su')
-        ->join('su.user', 'u');
+            ->join('su.user', 'u')
+        ;
 
         // Filters
         if (!is_null($filters)) {
             foreach ($filters as $filter => $value) {
-                if ($filter !== 'q') {
-                    $query->andWhere("u.".$filter." like '%".$value."%'");
+                if ('q' !== $filter) {
+                    $query->andWhere('u.'.$filter." like '%".$value."%'");
                 } else {
                     $query->andWhere("u.givenName like '%".$value."%' or u.familyName like '%".$value."%' or CONCAT(u.givenName,' ',u.familyName) like '%".$value."%'");
                 }

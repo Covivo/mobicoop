@@ -19,20 +19,17 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\Entity\SolidaryResult;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Solidary\Entity\SolidaryMatching;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
-use Symfony\Component\Validator\Constraints as Assert;
-use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * A solidary Result after a Solidary Search (transport or carpool)
+ * A solidary Result after a Solidary Search (transport or carpool).
  *
  * ApiResource(
  *      attributes={
@@ -47,6 +44,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  *          "get"
  *      }
  * )
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class SolidaryResult
@@ -54,7 +52,7 @@ class SolidaryResult
     public const DEFAULT_ID = 999999999999;
 
     /**
-     * @var int The id of this subject.
+     * @var int the id of this subject
      *
      * @ApiProperty(identifier=true)
      * @Groups({"readSolidarySearch"})

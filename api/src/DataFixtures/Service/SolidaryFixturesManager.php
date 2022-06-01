@@ -147,12 +147,12 @@ class SolidaryFixturesManager
         $structure = new Structure();
         $structure->setId($tab[0]);
         $structure->setName($tab[1]);
-        $structure->setMMinTime(\Datetime::createFromFormat('H:i:s', $tab[2]));
-        $structure->setMMaxTime(\Datetime::createFromFormat('H:i:s', $tab[3]));
-        $structure->setAMinTime(\Datetime::createFromFormat('H:i:s', $tab[4]));
-        $structure->setAMaxTime(\Datetime::createFromFormat('H:i:s', $tab[5]));
-        $structure->setEMinTime(\Datetime::createFromFormat('H:i:s', $tab[6]));
-        $structure->setEMaxTime(\Datetime::createFromFormat('H:i:s', $tab[7]));
+        $structure->setMMinTime(\DateTime::createFromFormat('H:i:s', $tab[2]));
+        $structure->setMMaxTime(\DateTime::createFromFormat('H:i:s', $tab[3]));
+        $structure->setAMinTime(\DateTime::createFromFormat('H:i:s', $tab[4]));
+        $structure->setAMaxTime(\DateTime::createFromFormat('H:i:s', $tab[5]));
+        $structure->setEMinTime(\DateTime::createFromFormat('H:i:s', $tab[6]));
+        $structure->setEMaxTime(\DateTime::createFromFormat('H:i:s', $tab[7]));
         $structure->setMMon($tab[8]);
         $structure->setAMon($tab[9]);
         $structure->setEMon($tab[10]);
@@ -174,12 +174,12 @@ class SolidaryFixturesManager
         $structure->setMSun($tab[26]);
         $structure->setASun($tab[27]);
         $structure->setESun($tab[28]);
-        $structure->setMMinRangeTime(\Datetime::createFromFormat('H:i:s', $tab[29]));
-        $structure->setMMaxRangeTime(\Datetime::createFromFormat('H:i:s', $tab[30]));
-        $structure->setAMinRangeTime(\Datetime::createFromFormat('H:i:s', $tab[31]));
-        $structure->setAMaxRangeTime(\Datetime::createFromFormat('H:i:s', $tab[32]));
-        $structure->setEMinRangeTime(\Datetime::createFromFormat('H:i:s', $tab[33]));
-        $structure->setEMaxRangeTime(\Datetime::createFromFormat('H:i:s', $tab[34]));
+        $structure->setMMinRangeTime(\DateTime::createFromFormat('H:i:s', $tab[29]));
+        $structure->setMMaxRangeTime(\DateTime::createFromFormat('H:i:s', $tab[30]));
+        $structure->setAMinRangeTime(\DateTime::createFromFormat('H:i:s', $tab[31]));
+        $structure->setAMaxRangeTime(\DateTime::createFromFormat('H:i:s', $tab[32]));
+        $structure->setEMinRangeTime(\DateTime::createFromFormat('H:i:s', $tab[33]));
+        $structure->setEMaxRangeTime(\DateTime::createFromFormat('H:i:s', $tab[34]));
         $structure->setEmail($tab[35]);
         $structure->setTelephone($tab[36]);
         $structure->setBeneficiaryAutoApproval($tab[37]);
@@ -353,22 +353,22 @@ class SolidaryFixturesManager
             $solidaryUser->setBeneficiary($tab[7]);
             $solidaryUser->setVolunteer($tab[8]);
             if ('' !== $tab[9]) {
-                $solidaryUser->setMMinTime(\Datetime::createFromFormat('H:i:s', $tab[9]));
+                $solidaryUser->setMMinTime(\DateTime::createFromFormat('H:i:s', $tab[9]));
             }
             if ('' !== $tab[10]) {
-                $solidaryUser->setMMaxTime(\Datetime::createFromFormat('H:i:s', $tab[10]));
+                $solidaryUser->setMMaxTime(\DateTime::createFromFormat('H:i:s', $tab[10]));
             }
             if ('' !== $tab[11]) {
-                $solidaryUser->setAMinTime(\Datetime::createFromFormat('H:i:s', $tab[11]));
+                $solidaryUser->setAMinTime(\DateTime::createFromFormat('H:i:s', $tab[11]));
             }
             if ('' !== $tab[12]) {
-                $solidaryUser->setAMaxTime(\Datetime::createFromFormat('H:i:s', $tab[12]));
+                $solidaryUser->setAMaxTime(\DateTime::createFromFormat('H:i:s', $tab[12]));
             }
             if ('' !== $tab[13]) {
-                $solidaryUser->setEMinTime(\Datetime::createFromFormat('H:i:s', $tab[13]));
+                $solidaryUser->setEMinTime(\DateTime::createFromFormat('H:i:s', $tab[13]));
             }
             if ('' !== $tab[14]) {
-                $solidaryUser->setEMaxTime(\Datetime::createFromFormat('H:i:s', $tab[14]));
+                $solidaryUser->setEMaxTime(\DateTime::createFromFormat('H:i:s', $tab[14]));
             }
 
             if ('' !== $tab[15]) {
@@ -468,10 +468,10 @@ class SolidaryFixturesManager
                 $solidaryUserStructure->setStructure($structure);
                 $solidaryUserStructure->setStatus($tab[3]);
                 if ('' !== $tab[4]) {
-                    $solidaryUserStructure->setAcceptedDate(\Datetime::createFromFormat('Y-m-d H:i:s', $tab[4]));
+                    $solidaryUserStructure->setAcceptedDate(\DateTime::createFromFormat('Y-m-d H:i:s', $tab[4]));
                 }
                 if ('' !== $tab[5]) {
-                    $solidaryUserStructure->setRefusedDate(\Datetime::createFromFormat('Y-m-d H:i:s', $tab[5]));
+                    $solidaryUserStructure->setRefusedDate(\DateTime::createFromFormat('Y-m-d H:i:s', $tab[5]));
                 }
                 $this->entityManager->persist($solidaryUserStructure);
                 $this->entityManager->flush();
@@ -507,6 +507,7 @@ class SolidaryFixturesManager
             return;
         }
         $proof->setValue($tab[2]);
+
         /**
          * @var StructureProof $structureProof
          */

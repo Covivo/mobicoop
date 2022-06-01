@@ -19,19 +19,19 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Image\Controller;
 
-use App\Image\Entity\Image;
-use Symfony\Component\HttpFoundation\Request;
 use App\Image\Service\ImageManager;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
- * MAINTENANCE
+ * MAINTENANCE.
  *
  * Remove all images without associated file
+ *
  * @author Remi Wortemann <remi.wortemann@mobicoop.org>
  */
 final class ImageRemoveFileless
@@ -46,6 +46,7 @@ final class ImageRemoveFileless
     public function __invoke(Request $request)
     {
         $this->imageManager->removeFileless();
+
         return new JsonResponse();
     }
 }

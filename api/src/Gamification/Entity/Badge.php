@@ -19,13 +19,12 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Gamification\Entity;
 
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
-use App\Gamification\Interfaces\GamificationNotificationInterface;
 use App\Geography\Entity\Territory;
 use App\Image\Entity\Image;
 use App\User\Entity\User;
@@ -35,11 +34,12 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 /**
-* Gamification : A Badge that can be won/achieved by a User
-* @author Maxime Bardot <maxime.bardot@mobicoop.org>
-*
-* @ORM\Entity
-* @ORM\HasLifecycleCallbacks
+ * Gamification : A Badge that can be won/achieved by a User.
+ *
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ *
+ * @ORM\Entity
+ * @ORM\HasLifecycleCallbacks
  * @ApiResource(
  *     attributes={
  *          "force_eager"=false,
@@ -80,18 +80,17 @@ class Badge
     public const STATUS_ACTIVE = 1;
     public const STATUS_INACTIVE = 2;
 
-    public const BADGE_id_1 = "remove_the_mask";
-    public const BADGE_id_2 = "launch";
-    public const BADGE_id_3 = "first_time";
-    public const BADGE_id_4 = "welcome";
-    public const BADGE_id_5 = "rally";
-    public const BADGE_id_6 = "km_carpooled";
-    public const BADGE_id_7 = "carbon_saved";
-
+    public const BADGE_id_1 = 'remove_the_mask';
+    public const BADGE_id_2 = 'launch';
+    public const BADGE_id_3 = 'first_time';
+    public const BADGE_id_4 = 'welcome';
+    public const BADGE_id_5 = 'rally';
+    public const BADGE_id_6 = 'km_carpooled';
+    public const BADGE_id_7 = 'carbon_saved';
 
     public const TRANSLATABLE_ITEMS = [
-        "title",
-        "text"
+        'title',
+        'text',
     ];
 
     /**
@@ -123,7 +122,7 @@ class Badge
     private $title;
 
     /**
-     * @var string Badge's text, description.
+     * @var string badge's text, description
      *
      * @ORM\Column(type="string", length=512)
      * @Groups({"readGamification","writeGamification"})
@@ -139,7 +138,7 @@ class Badge
     private $status;
 
     /**
-     * @var boolean If it's a public badge or not. If it can be seen by anybody.
+     * @var bool If it's a public badge or not. If it can be seen by anybody.
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"readGamification","writeGamification"})
@@ -147,7 +146,7 @@ class Badge
     private $public;
 
     /**
-     * @var Image|null The Badge's icon
+     * @var null|Image The Badge's icon
      *
      * @ORM\OneToOne(targetEntity="\App\Image\Entity\Image", mappedBy="badgeIcon", cascade={"persist"})
      * @Groups({"readGamification","writeGamification","readPublicProfile"})
@@ -156,7 +155,7 @@ class Badge
     private $icon;
 
     /**
-     * @var Image|null The Badge's decorated icon
+     * @var null|Image The Badge's decorated icon
      *
      * @ORM\OneToOne(targetEntity="\App\Image\Entity\Image", mappedBy="badgeDecoratedIcon", cascade={"persist"})
      * @Groups({"readGamification","writeGamification","readPublicProfile"})
@@ -165,7 +164,7 @@ class Badge
     private $decoratedIcon;
 
     /**
-     * @var Image|null The Badge's reward image
+     * @var null|Image The Badge's reward image
      *
      * @ORM\OneToOne(targetEntity="\App\Image\Entity\Image", mappedBy="badgeImage", cascade={"persist"})
      * @Groups({"readGamification","writeGamification"})
@@ -174,7 +173,7 @@ class Badge
     private $image;
 
     /**
-     * @var Image|null The Badge's reward image light
+     * @var null|Image The Badge's reward image light
      *
      * @ORM\OneToOne(targetEntity="\App\Image\Entity\Image", mappedBy="badgeImageLight", cascade={"persist"})
      * @Groups({"readGamification","writeGamification"})
@@ -199,7 +198,7 @@ class Badge
     private $endDate;
 
     /**
-     * @var ArrayCollection|null A Badge needs multiple SequenceItems to be earned
+     * @var null|ArrayCollection A Badge needs multiple SequenceItems to be earned
      *
      * @ORM\OneToMany(targetEntity="\App\Gamification\Entity\SequenceItem", mappedBy="badge", cascade={"persist"})
      * @Groups({"readGamification","writeGamification"})
@@ -208,7 +207,7 @@ class Badge
     private $sequenceItems;
 
     /**
-     * @var ArrayCollection|null The territories of this Badge.
+     * @var null|ArrayCollection the territories of this Badge
      *
      * @ORM\ManyToMany(targetEntity="\App\Geography\Entity\Territory")
      * @Groups({"readGamification"})
@@ -216,7 +215,7 @@ class Badge
     private $territories;
 
     /**
-     * @var ArrayCollection|null The Users owning this Badge
+     * @var null|ArrayCollection The Users owning this Badge
      *
      * @ORM\OneToMany(targetEntity="\App\Gamification\Entity\Reward", mappedBy="badge", cascade={"persist"})
      * @ORM\JoinTable(name="reward")
@@ -434,6 +433,7 @@ class Badge
         if ($this->territories->contains($territory)) {
             $this->territories->removeElement($territory);
         }
+
         return $this;
     }
 
@@ -457,6 +457,7 @@ class Badge
         if ($this->rewards->contains($reward)) {
             $this->rewards->removeElement($reward);
         }
+
         return $this;
     }
 
@@ -493,7 +494,7 @@ class Badge
      */
     public function setAutoCreatedDate()
     {
-        $this->setCreatedDate(new \Datetime());
+        $this->setCreatedDate(new \DateTime());
     }
 
     /**
@@ -503,6 +504,6 @@ class Badge
      */
     public function setAutoUpdatedDate()
     {
-        $this->setUpdatedDate(new \Datetime());
+        $this->setUpdatedDate(new \DateTime());
     }
 }

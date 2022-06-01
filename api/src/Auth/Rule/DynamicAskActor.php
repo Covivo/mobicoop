@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Auth\Rule;
 
@@ -27,7 +27,7 @@ use App\Auth\Interfaces\AuthRuleInterface;
 use App\Carpool\Ressource\DynamicAsk;
 
 /**
- *  Check that the requester is an actor of the related dynamic Ask
+ *  Check that the requester is an actor of the related dynamic Ask.
  */
 class DynamicAskActor implements AuthRuleInterface
 {
@@ -39,10 +39,12 @@ class DynamicAskActor implements AuthRuleInterface
         if (!isset($params['dynamicAsk'])) {
             return false;
         }
+
         /**
          * @var DynamicAsk $dynamicAsk
          */
         $dynamicAsk = $params['dynamicAsk'];
-        return ($dynamicAsk->getUser()->getId() == $requester->getId() || $dynamicAsk->getCarpooler()->getId() == $requester->getId());
+
+        return $dynamicAsk->getUser()->getId() == $requester->getId() || $dynamicAsk->getCarpooler()->getId() == $requester->getId();
     }
 }

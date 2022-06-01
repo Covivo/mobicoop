@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\DataProvider\Entity;
 
@@ -30,30 +30,28 @@ use App\Geography\Entity\Address;
 use Exception;
 
 /**
- * Event Provider for Apidae
+ * Event Provider for Apidae.
  *
  * @author Remi Wortemann <remi.wortemann@mobicoop.org>
  */
 class ApidaeProvider implements EventProviderInterface
 {
-    public const SERVER_URL = "https://api.apidae-tourisme.com/api/v002/recherche/list-objets-touristiques";
+    public const SERVER_URL = 'https://api.apidae-tourisme.com/api/v002/recherche/list-objets-touristiques';
 
-    public const ID = "id";
-    public const NAME = "nom";
-    public const INFORMATIONS = "informations.moyensCommunication";
-    public const PICTURE = "illustrations";
-    public const SHORT_DESCRIPTION = "presentation.descriptifCourt";
-    public const FULL_DESCRIPTION = "presentation.descriptifDetaille";
-    public const START_DATE = "ouverture.periodesOuvertures.dateDebut";
-    public const END_DATE = "ouverture.periodesOuvertures.dateFin";
-    public const ADDRESS = "localisation.adresse";
-    public const GEOLOCATION = "localisation.geolocalisation";
-    public const PROVIDER = "Apidae";
-    public const OBJECT_TYPE = "objetsTouristiques";
+    public const ID = 'id';
+    public const NAME = 'nom';
+    public const INFORMATIONS = 'informations.moyensCommunication';
+    public const PICTURE = 'illustrations';
+    public const SHORT_DESCRIPTION = 'presentation.descriptifCourt';
+    public const FULL_DESCRIPTION = 'presentation.descriptifDetaille';
+    public const START_DATE = 'ouverture.periodesOuvertures.dateDebut';
+    public const END_DATE = 'ouverture.periodesOuvertures.dateFin';
+    public const ADDRESS = 'localisation.adresse';
+    public const GEOLOCATION = 'localisation.geolocalisation';
+    public const PROVIDER = 'Apidae';
+    public const OBJECT_TYPE = 'objetsTouristiques';
     public const NUMBER_OF_EVENTS = 20;
-    public const WEB_URL = "Site web (URL)";
-
-
+    public const WEB_URL = 'Site web (URL)';
 
     public function __construct(string $apiKey, string $projectId, string $selectionIds)
     {
@@ -64,9 +62,9 @@ class ApidaeProvider implements EventProviderInterface
     }
 
     /**
-     * Get apidae events
+     * Get apidae events.
      *
-     * @return Array array of events
+     * @return array array of events
      */
     public function getEvents(): array
     {
@@ -77,47 +75,47 @@ class ApidaeProvider implements EventProviderInterface
         // we set an empty array of apidae events
         $apidaeEvents = [];
         // We call apidae api to get all events
-        for ($i = 0 ; $i <= $j ; $i++) {
+        for ($i = 0; $i <= $j; ++$i) {
             $query = [];
-            $query["apiKey"] = $this->apiKey;
-            $query["projetId" ] = $this->projectId;
-            $query["selectionIds" ] = [$this->selectionIds];
-            $query["count" ] = self::NUMBER_OF_EVENTS;
+            $query['apiKey'] = $this->apiKey;
+            $query['projetId'] = $this->projectId;
+            $query['selectionIds'] = [$this->selectionIds];
+            $query['count'] = self::NUMBER_OF_EVENTS;
             // first indicate the index of the first event to get
-            $query["first" ] = self::NUMBER_OF_EVENTS * $i;
-            $query["asc" ] = true;
-            $query["dateDebut"] = (new \DateTime('now'))->format("Y-m-d");
-            $query["responseFields" ] = [self::ID, self::NAME, self::INFORMATIONS, self::PICTURE, self::SHORT_DESCRIPTION, self::FULL_DESCRIPTION, self::START_DATE, self::END_DATE, self::ADDRESS, self::GEOLOCATION];
+            $query['first'] = self::NUMBER_OF_EVENTS * $i;
+            $query['asc'] = true;
+            $query['dateDebut'] = (new \DateTime('now'))->format('Y-m-d');
+            $query['responseFields'] = [self::ID, self::NAME, self::INFORMATIONS, self::PICTURE, self::SHORT_DESCRIPTION, self::FULL_DESCRIPTION, self::START_DATE, self::END_DATE, self::ADDRESS, self::GEOLOCATION];
 
             $params = [
-                "query" => json_encode($query)
+                'query' => json_encode($query),
             ];
             $response = $dataProvider->getItem($params);
             $events = json_decode($response->getValue(), false);
             // we calculate the number of iterations
-            $j = ($events->numFound / self::NUMBER_OF_EVENTS)-1;
+            $j = ($events->numFound / self::NUMBER_OF_EVENTS) - 1;
             // we pass each event in the array
             foreach ($events->objetsTouristiques as $event) {
                 $apidaeEvents[] = $event;
             }
         }
+
         return $this->createEvents($apidaeEvents);
     }
 
     /**
-     * Get apiae event
-     *
-     * @return void
+     * Get apiae event.
      */
     public function getEvent(): void
     {
     }
 
     /**
-     * Create Event Object from Apidae Event
+     * Create Event Object from Apidae Event.
      *
-     * @param Array $apidaeEvents array of Apidea Events
-     * @return Array array of events
+     * @param array $apidaeEvents array of Apidea Events
+     *
+     * @return array array of events
      */
     public function createEvents($apidaeEvents): array
     {
@@ -132,7 +130,7 @@ class ApidaeProvider implements EventProviderInterface
             if (isset($event->nom->libelleFr)) {
                 $newEvent->setName($event->nom->libelleFr);
             } else {
-                throw new Exception("Event name is mandatory", 1);
+                throw new Exception('Event name is mandatory', 1);
             }
 
             if (isset($event->ouverture->periodesOuvertures[0])) {
@@ -149,19 +147,19 @@ class ApidaeProvider implements EventProviderInterface
                     $newEvent->setToDate($endDate);
                 }
             } else {
-                throw new Exception("Start and end dates are mandatory", 1);
+                throw new Exception('Start and end dates are mandatory', 1);
             }
 
             if (isset($event->presentation->descriptifCourt->libelleFr)) {
                 $newEvent->setDescription($event->presentation->descriptifCourt->libelleFr);
                 $newEvent->setFullDescription(isset($event->presentation->descriptifDetaille->libelleFr) ? $event->presentation->descriptifDetaille->libelleFr : $event->presentation->descriptifCourt->libelleFr);
             } else {
-                throw new Exception("Description is mandatory", 1);
+                throw new Exception('Description is mandatory', 1);
             }
             $newEvent->setExternalImageUrl(isset($event->illustrations[0]) ? $event->illustrations[0]->traductionFichiers[0]->url : null);
 
             foreach ($event->informations->moyensCommunication as $communication) {
-                if ($communication->type->libelleFr == self::WEB_URL) {
+                if (self::WEB_URL == $communication->type->libelleFr) {
                     $newEvent->setUrl($communication->coordonnees->fr);
                 }
             }
@@ -172,10 +170,10 @@ class ApidaeProvider implements EventProviderInterface
                 $address->setLatitude($event->localisation->geolocalisation->geoJson->coordinates[1]);
                 $address->setLongitude($event->localisation->geolocalisation->geoJson->coordinates[0]);
             } else {
-                throw new Exception("Latitude and longiture are mandatory", 1);
+                throw new Exception('Latitude and longiture are mandatory', 1);
             }
             if (isset($event->localisation->adresse)) {
-                $address->setStreetAddress(isset($event->localisation->adresse->adresse1) ? $event->localisation->adresse->adresse1 : (isset($event->localisation->adresse->nomDuLieu) ? $event->localisation->adresse->nomDuLieu : ""));
+                $address->setStreetAddress(isset($event->localisation->adresse->adresse1) ? $event->localisation->adresse->adresse1 : (isset($event->localisation->adresse->nomDuLieu) ? $event->localisation->adresse->nomDuLieu : ''));
                 $address->setAddressLocality(isset($event->localisation->adresse->commune->nom) ? $event->localisation->adresse->commune->nom : null);
                 $address->setPostalCode(isset($event->localisation->adresse->codePostal) ? $event->localisation->adresse->codePostal : null);
                 $address->setAddressCountry(isset($event->localisation->adresse->commune->pays->libelleFr) ? $event->localisation->adresse->commune->pays->libelleFr : null);
@@ -186,6 +184,7 @@ class ApidaeProvider implements EventProviderInterface
             // We pass the newEvent in array
             $newEvents[] = $newEvent;
         }
+
         return $newEvents;
     }
 }

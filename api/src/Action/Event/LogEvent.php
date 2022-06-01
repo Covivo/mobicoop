@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Action\Event;
 
@@ -27,7 +27,8 @@ use App\Action\Entity\Log;
 use Symfony\Contracts\EventDispatcher\Event;
 
 /**
- * Event sent when there is a log entry added
+ * Event sent when there is a log entry added.
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class LogEvent extends Event
@@ -41,9 +42,6 @@ class LogEvent extends Event
         $this->log = $log;
     }
 
-    /**
-     * @return Log
-     */
     public function getLog(): Log
     {
         return $this->log;

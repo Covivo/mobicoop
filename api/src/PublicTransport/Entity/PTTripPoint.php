@@ -19,16 +19,13 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\PublicTransport\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Doctrine\Common\Collections\ArrayCollection;
-use App\Geography\Entity\Address;
-use Doctrine\ORM\Mapping as ORM;
 
 /**
  * A public transport Trip Point.
@@ -107,56 +104,56 @@ class PTTripPoint
 {
     /**
      * @ApiProperty(identifier=true)
-     * @var int The id of this Trip Point.
+     *
+     * @var int the id of this Trip Point
      * @Groups("pt")
      */
     private $id;
 
     /**
-     * @var float Latitude of this Trip Point.
+     * @var float latitude of this Trip Point
      * @Groups("pt")
      */
     private $latitude;
 
     /**
-     * @var float Longitude of this Trip Point.
+     * @var float longitude of this Trip Point
      * @Groups("pt")
      */
     private $longitude;
 
-
     /**
-     * @var int LocalityId of this Trip Point.
+     * @var int localityId of this Trip Point
      * @Groups("pt")
      */
     private $localityId;
 
     /**
-     * @var string Name of this Trip Point.
+     * @var string name of this Trip Point
      * @Groups("pt")
      */
     private $name;
 
     /**
-     * @var int Type of this Trip Point.
+     * @var int type of this Trip Point
      * @Groups("pt")
      */
     private $pointType;
 
     /**
-     * @var string Postal Code of this Trip Point.
+     * @var string postal Code of this Trip Point
      * @Groups("pt")
      */
     private $postalCode;
 
     /**
-     * @var string Transport mode of this Trip Point.
+     * @var string transport mode of this Trip Point
      * @Groups("pt")
      */
     private $transportMode;
 
     /**
-     * @var PTLocality Locality this Trip Point.
+     * @var PTLocality locality this Trip Point
      * @Groups("pt")
      */
     private $locality;

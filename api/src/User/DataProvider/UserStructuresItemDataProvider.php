@@ -18,21 +18,19 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\DataProvider;
 
 use ApiPlatform\Core\DataProvider\ItemDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
 use App\User\Entity\User;
 use App\User\Service\UserManager;
 
 /**
- * Item data provider for getting User's structures
+ * Item data provider for getting User's structures.
  *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
- *
  */
 final class UserStructuresItemDataProvider implements ItemDataProviderInterface, RestrictedDataProviderInterface
 {
@@ -45,7 +43,7 @@ final class UserStructuresItemDataProvider implements ItemDataProviderInterface,
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return User::class === $resourceClass && $operationName=="structures";
+        return User::class === $resourceClass && 'structures' == $operationName;
     }
 
     public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?User

@@ -19,26 +19,25 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Editorial\DataProvider;
 
 use ApiPlatform\Core\DataProvider\ItemDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use App\Editorial\Service\EditorialManager;
 use App\Editorial\Entity\Editorial;
+use App\Editorial\Service\EditorialManager;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Security;
 
 /**
- * Item data provider for Editorial
+ * Item data provider for Editorial.
  *
  * @author Remi Wortemann <remi.wortemann@mobicoop.org>
- *
  */
 final class EditorialActivatedItemDataProvider implements ItemDataProviderInterface, RestrictedDataProviderInterface
 {
-    protected $request;
+    private $request;
     private $editorialManager;
     private $security;
 
@@ -52,7 +51,7 @@ final class EditorialActivatedItemDataProvider implements ItemDataProviderInterf
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Editorial::class === $resourceClass && $operationName === "get";
+        return Editorial::class === $resourceClass && 'get' === $operationName;
     }
 
     public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?Editorial

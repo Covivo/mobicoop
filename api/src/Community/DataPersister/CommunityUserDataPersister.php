@@ -18,23 +18,21 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Community\DataPersister;
 
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
 use App\Community\Entity\CommunityUser;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Security\Core\Security;
 use App\Community\Service\CommunityManager;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Data persister for Community User
- * Use for check if user can join a community before save
+ * Use for check if user can join a community before save.
  *
  * @author Julien Deschampt <julien.deschampt@mobicoop.org>
  */
-
 final class CommunityUserDataPersister implements ContextAwareDataPersisterInterface
 {
     private $request;
@@ -56,24 +54,23 @@ final class CommunityUserDataPersister implements ContextAwareDataPersisterInter
     {
         // call your persistence layer to save $data
         if (is_null($data)) {
-            throw new \InvalidArgumentException($this->translator->trans("bad community user id is provided"));
+            throw new \InvalidArgumentException($this->translator->trans('bad community user id is provided'));
         }
-        if (isset($context['item_operation_name']) &&  $context['item_operation_name'] == 'put') {
+        if (isset($context['item_operation_name']) && 'put' == $context['item_operation_name']) {
             // only for validation or update availabilities
             $data = $this->communityManager->updateCommunityUser($data);
-        } elseif (isset($context['collection_operation_name']) && $context['collection_operation_name'] == 'post') {
+        } elseif (isset($context['collection_operation_name']) && 'post' == $context['collection_operation_name']) {
             if (!$this->communityManager->canJoin($data, true)) {
                 throw new \InvalidArgumentException("the user don't have a valid domain to join this community");
-            } else {
-                $data = $this->communityManager->saveCommunityUser($data);
             }
-        } elseif (isset($context['collection_operation_name']) && $context['collection_operation_name'] == 'add') {
+            $data = $this->communityManager->saveCommunityUser($data);
+        } elseif (isset($context['collection_operation_name']) && 'add' == $context['collection_operation_name']) {
             if (!$this->communityManager->canJoin($data, false)) {
                 throw new \InvalidArgumentException("You don't have rights on that secured community");
-            } else {
-                $data = $this->communityManager->saveCommunityUser($data);
             }
+            $data = $this->communityManager->saveCommunityUser($data);
         }
+
         return $data;
     }
 

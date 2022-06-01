@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Gamification\EventSubscriber;
 
@@ -29,7 +29,8 @@ use App\Gamification\Service\GamificationManager;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
- * Gamification : Listen to all event that need to be return at the end of the request (earn a Badge, validate a step...)
+ * Gamification : Listen to all event that need to be return at the end of the request (earn a Badge, validate a step...).
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class GamificationNotificationSubscriber implements EventSubscriberInterface

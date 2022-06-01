@@ -18,14 +18,14 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\DataPersister;
 
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
 use App\User\Entity\PushToken;
-use Symfony\Component\Security\Core\Security;
 use App\User\Service\PushTokenManager;
+use Symfony\Component\Security\Core\Security;
 
 final class PushTokenDataPersister implements ContextAwareDataPersisterInterface
 {
@@ -47,16 +47,16 @@ final class PushTokenDataPersister implements ContextAwareDataPersisterInterface
     {
         // call your persistence layer to save $data
         if (is_null($data)) {
-            throw new \InvalidArgumentException($this->translator->trans("Bad push token id is provided"));
+            throw new \InvalidArgumentException($this->translator->trans('Bad push token id is provided'));
         }
 
-        if (isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'post') {
-            /**
-             * @var PushToken $data
-             */
+        if (isset($context['collection_operation_name']) && 'post' == $context['collection_operation_name']) {
+            // @var PushToken $data
             $data->setUser($this->security->getUser());
+
             return $this->pushTokenManager->createPushToken($data);
         }
+
         return $data;
     }
 

@@ -17,13 +17,13 @@ final class Version20220111102600 extends AbstractMigration
         // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
-        //private icon
+        // private icon
         $this->addSql("INSERT IGNORE INTO `icon` (`id`, `private_icon_linked_id`, `name`, `file_name`) VALUES (24, NULL, 'private-relaypoint-rezopouce', 'private-relaypoint-rezopouce.svg');");
 
         // icon
         $this->addSql("INSERT IGNORE INTO `icon` (`id`, `private_icon_linked_id`, `name`, `file_name`) VALUES (25, 24, 'relaypoint-rezopouce', 'relaypoint-rezopouce.svg');");
 
-        //relay_point_type
+        // relay_point_type
         $this->addSql("INSERT IGNORE INTO `relay_point_type` (`id`, `name`, `created_date`, `updated_date`, `icon_id`) VALUES
         (1, 'Aire-covoiturage', NOW(), NULL, 15),
         (2, 'P+R', NOW(), NULL, 19),

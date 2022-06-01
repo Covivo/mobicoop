@@ -70,7 +70,7 @@ class TokenAuthenticator extends AbstractAuthenticator
          */
         $user = $token->getUser();
 
-        //Time for valid refresh token, define in gesdinet_jwt_refresh_token, careful to let this value in secondes
+        // Time for valid refresh token, define in gesdinet_jwt_refresh_token, careful to let this value in secondes
         $addTime = 'PT'.$this->params->get('gesdinet_jwt_refresh_token.ttl').'S';
 
         $now = new \DateTime('now');
@@ -83,7 +83,7 @@ class TokenAuthenticator extends AbstractAuthenticator
 
         $this->refreshTokenManager->save($refreshToken);
 
-        //Email token is not null = we activate account from email -> we set token at null and the validated date at today
+        // Email token is not null = we activate account from email -> we set token at null and the validated date at today
         if (null != $user->getEmailToken()) {
             $user->setValidatedDate(new \DateTime('now'));
             $user->setEmailToken(null);
@@ -93,7 +93,7 @@ class TokenAuthenticator extends AbstractAuthenticator
             $actionEvent = new ActionEvent($action, $user);
             $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);
 
-        //Password token is not null = we reset password -> we set password token and the asking reset date at null
+        // Password token is not null = we reset password -> we set password token and the asking reset date at null
         } elseif (null != $user->getPwdToken()) {
             $user->setPwdToken(null);
             $user->setPwdTokenDate(null);

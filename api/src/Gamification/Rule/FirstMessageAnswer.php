@@ -19,23 +19,22 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Gamification\Rule;
 
 use App\Gamification\Interfaces\GamificationRuleInterface;
 
 /**
- * Check if its the first answer to an internal message
+ * Check if its the first answer to an internal message.
  */
 class FirstMessageAnswer implements GamificationRuleInterface
 {
     /**
-     * First Message Answer rule
+     * First Message Answer rule.
      *
-     * @param  $log
-     * @param  $sequenceItem
-     * @return bool
+     * @param $log
+     * @param $sequenceItem
      */
     public function execute($log, $sequenceItem): bool
     {
@@ -44,12 +43,13 @@ class FirstMessageAnswer implements GamificationRuleInterface
         $count = 0;
         foreach ($messages as $message) {
             if (!is_null($message->getMessage())) {
-                $count++;
+                ++$count;
             }
         }
-        if ($count>=1) {
+        if ($count >= 1) {
             return true;
         }
+
         return false;
     }
 }

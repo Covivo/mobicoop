@@ -61,8 +61,6 @@ class RelayPointManager
 
     /**
      * Get a relayPoint by its id.
-     *
-     * @return null|RelayPoint
      */
     public function getRelayPoint(int $id): ?RelayPoint
     {
@@ -71,8 +69,6 @@ class RelayPointManager
 
     /**
      * Get a relayPointType by its id.
-     *
-     * @return null|RelayPointType
      */
     public function getRelayPointType(int $id): ?RelayPointType
     {

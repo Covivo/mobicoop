@@ -19,16 +19,17 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\Entity;
 
-use Symfony\Component\Serializer\Annotation\Groups;
 use App\Action\Entity\Diary;
 use App\User\Entity\User;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * A solidary diary entry.
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class SolidaryDiaryEntry
@@ -40,7 +41,7 @@ class SolidaryDiaryEntry
     private $diary;
 
     /**
-     * @var String The action name of this entry
+     * @var string The action name of this entry
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $action;

@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Image\Admin\DataProvider;
 
@@ -30,11 +30,10 @@ use App\Image\Entity\Icon;
 
 /**
  * Collection data provider for icons in administration context.
- *
  */
 final class IconCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
-    protected $iconManager;
+    private $iconManager;
 
     public function __construct(IconManager $iconManager)
     {
@@ -43,7 +42,7 @@ final class IconCollectionDataProvider implements CollectionDataProviderInterfac
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Icon::class === $resourceClass && $operationName === "ADMIN_get";
+        return Icon::class === $resourceClass && 'ADMIN_get' === $operationName;
     }
 
     public function getCollection(string $resourceClass, string $operationName = null): ?array

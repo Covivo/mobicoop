@@ -19,18 +19,17 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * Solutions for a Solidary
+ * Solutions for a Solidary.
  *
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
@@ -63,6 +62,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          }
  *      }
  * )
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class SolidarySolution
@@ -72,7 +72,7 @@ class SolidarySolution
     public const CARPOOLER = 'carpooler';
 
     /**
-     * @var int $id The id of this solidary matching.
+     * @var int the id of this solidary matching
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -82,7 +82,7 @@ class SolidarySolution
     private $id;
 
     /**
-     * @var Solidary The solidary record.
+     * @var Solidary the solidary record
      *
      * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Solidary", inversedBy="solidarySolutions")
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
@@ -92,7 +92,7 @@ class SolidarySolution
     private $solidary;
 
     /**
-     * @var SolidaryMatching|null SolidaryMatching of this SolidarySolution
+     * @var null|SolidaryMatching SolidaryMatching of this SolidarySolution
      *
      * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\SolidaryMatching", inversedBy="solidarySolution", cascade={"persist"})
      * @ORM\JoinColumn(onDelete="CASCADE")
@@ -111,7 +111,7 @@ class SolidarySolution
     private $solidaryAsk;
 
     /**
-     * @var string A comment about the solidary matching.
+     * @var string a comment about the solidary matching
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"readSolidary","writeSolidary"})
@@ -119,7 +119,7 @@ class SolidarySolution
     private $comment;
 
     /**
-     * @var SolidarySolution|null The linked solidary solution for return trips.
+     * @var null|SolidarySolution the linked solidary solution for return trips
      *
      * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\SolidarySolution", cascade={"persist"})
      * @ORM\JoinColumn(onDelete="CASCADE")
@@ -128,7 +128,7 @@ class SolidarySolution
     private $solidarySolutionLinked;
 
     /**
-     * @var \DateTimeInterface Creation date of the solidary record.
+     * @var \DateTimeInterface creation date of the solidary record
      *
      * @ORM\Column(type="datetime")
      * @Groups("readSolidary")
@@ -136,7 +136,7 @@ class SolidarySolution
     private $createdDate;
 
     /**
-     * @var \DateTimeInterface Updated date of the solidary record.
+     * @var \DateTimeInterface updated date of the solidary record
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups("readSolidary")
@@ -211,7 +211,7 @@ class SolidarySolution
         $this->solidarySolutionLinked = $solidarySolutionLinked;
 
         // set (or unset) the owning side of the relation if necessary
-        $newSolidarySolutionLinked = $solidarySolutionLinked === null ? null : $this;
+        $newSolidarySolutionLinked = null === $solidarySolutionLinked ? null : $this;
         if (!is_null($solidarySolutionLinked) && $newSolidarySolutionLinked !== $solidarySolutionLinked->getSolidarySolutionLinked()) {
             $solidarySolutionLinked->setSolidarySolutionLinked($newSolidarySolutionLinked);
         }
@@ -243,7 +243,6 @@ class SolidarySolution
         return $this;
     }
 
-
     // DOCTRINE EVENTS
 
     /**
@@ -253,7 +252,7 @@ class SolidarySolution
      */
     public function setAutoCreatedDate()
     {
-        $this->setCreatedDate(new \Datetime());
+        $this->setCreatedDate(new \DateTime());
     }
 
     /**
@@ -263,6 +262,6 @@ class SolidarySolution
      */
     public function setAutoUpdatedDate()
     {
-        $this->setUpdatedDate(new \Datetime());
+        $this->setUpdatedDate(new \DateTime());
     }
 }

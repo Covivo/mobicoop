@@ -19,17 +19,17 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Communication\EventSubscriber;
 
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use App\Communication\Service\NotificationManager;
 use App\Match\Event\MassAnalyzeErrorsEvent;
 use App\Match\Event\MassMatchedEvent;
-use App\User\Service\UserManager;
 use App\Match\Event\MassMigrateUserMigratedEvent;
 use App\Match\Event\MassPublicTransportSolutionsGatheredEvent;
+use App\User\Service\UserManager;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class MassSubscriber implements EventSubscriberInterface
 {
@@ -48,7 +48,7 @@ class MassSubscriber implements EventSubscriberInterface
             MassMigrateUserMigratedEvent::NAME => 'onMassMigrateUserMigrated',
             MassAnalyzeErrorsEvent::NAME => 'onMassAnalyzeErrors',
             MassMatchedEvent::NAME => 'onMassMatched',
-            MassPublicTransportSolutionsGatheredEvent::NAME => 'onMassPublicTransportSolutionsGathered'
+            MassPublicTransportSolutionsGatheredEvent::NAME => 'onMassPublicTransportSolutionsGathered',
         ];
     }
 

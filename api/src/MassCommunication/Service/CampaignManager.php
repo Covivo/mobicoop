@@ -228,7 +228,7 @@ class CampaignManager
     private function sendMassEmail(Campaign $campaign): Campaign
     {
         if ($sendAll = null != $campaign->getSendAll()) {
-            //We try to send an email to all user, no matter the community
+            // We try to send an email to all user, no matter the community
             if (0 == $campaign->getSendAll()) {
             }
         }

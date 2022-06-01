@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Geography\DataProvider;
 
@@ -33,11 +33,10 @@ use Symfony\Component\HttpFoundation\RequestStack;
  * Collection data provider for Address completion : complete addresses that have only minimum information.
  *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
- *
  */
 final class AddressCompletionCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
-    protected $request;
+    private $request;
     private $addressManager;
 
     public function __construct(RequestStack $requestStack, AddressManager $addressManager)
@@ -48,12 +47,13 @@ final class AddressCompletionCollectionDataProvider implements CollectionDataPro
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Address::class === $resourceClass && $operationName === "completion";
+        return Address::class === $resourceClass && 'completion' === $operationName;
     }
 
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
         $this->addressManager->completeMinimalAddresses();
+
         return [];
     }
 }

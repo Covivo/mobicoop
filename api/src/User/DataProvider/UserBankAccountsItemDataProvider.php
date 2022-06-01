@@ -18,21 +18,19 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\DataProvider;
 
 use ApiPlatform\Core\DataProvider\ItemDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
 use App\User\Entity\User;
 use App\User\Service\UserManager;
 
 /**
- * Item data provider for getting User's bank accounts
+ * Item data provider for getting User's bank accounts.
  *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
- *
  */
 final class UserBankAccountsItemDataProvider implements ItemDataProviderInterface, RestrictedDataProviderInterface
 {
@@ -45,7 +43,7 @@ final class UserBankAccountsItemDataProvider implements ItemDataProviderInterfac
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return User::class === $resourceClass && $operationName=="paymentProfile";
+        return User::class === $resourceClass && 'paymentProfile' == $operationName;
     }
 
     public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?User

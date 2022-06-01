@@ -18,7 +18,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App;
 
@@ -27,14 +27,12 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 trait TranslatorTrait
 {
     /**
-     * @var TranslatorInterface $translator
+     * @var TranslatorInterface
      */
     protected $translator;
 
-
     /**
      * @required
-     * @param TranslatorInterface $translator
      */
     public function setTranslator(TranslatorInterface $translator)
     {

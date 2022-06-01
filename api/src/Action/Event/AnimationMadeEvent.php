@@ -19,12 +19,12 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Action\Event;
 
-use Symfony\Contracts\EventDispatcher\Event;
 use App\Action\Entity\Animation;
+use Symfony\Contracts\EventDispatcher\Event;
 
 /**
  * Event sent when an animation is made.

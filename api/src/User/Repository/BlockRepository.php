@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\Repository;
 
@@ -46,9 +46,7 @@ class BlockRepository
     }
 
     /**
-     * Find one Blocks by its id
-     *
-     * @return Block|null
+     * Find one Blocks by its id.
      */
     public function find(int $id): ?Block
     {
@@ -56,7 +54,7 @@ class BlockRepository
     }
 
     /**
-     * Find All the Blocks
+     * Find All the Blocks.
      *
      * @return Block[]
      */
@@ -66,7 +64,10 @@ class BlockRepository
     }
 
     /**
-     * Find All the Blocks by criteria
+     * Find All the Blocks by criteria.
+     *
+     * @param null|mixed $limit
+     * @param null|mixed $offset
      *
      * @return Block[]
      */
@@ -76,9 +77,7 @@ class BlockRepository
     }
 
     /**
-     * Find one Blocks by criteria
-     *
-     * @return Block|null
+     * Find one Blocks by criteria.
      */
     public function findOneBy(array $criteria): ?Block
     {
@@ -86,19 +85,16 @@ class BlockRepository
     }
 
     /**
-     * Find all the blocks involving $user1 and $user2
-     *
-     * @param User $user1
-     * @param User $user2
-     * @return array
+     * Find all the blocks involving $user1 and $user2.
      */
     public function findAllByUsersInvolved(User $user1, User $user2): array
     {
         $query = $this->repository->createQueryBuilder('b')
-        ->where('(b.user = :user1 and b.blockedUser = :user2) or (b.user = :user2 and b.blockedUser = :user1)')
-        ->setParameter('user1', $user1)
-        ->setParameter('user2', $user2)
+            ->where('(b.user = :user1 and b.blockedUser = :user2) or (b.user = :user2 and b.blockedUser = :user1)')
+            ->setParameter('user1', $user1)
+            ->setParameter('user2', $user2)
         ;
+
         return $query->getQuery()->getResult();
     }
 }

@@ -19,18 +19,18 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\RelayPoint\Admin\Service;
 
 use App\Community\Repository\CommunityRepository;
+use App\Geography\Entity\Address;
 use App\RelayPoint\Entity\RelayPoint;
 use App\RelayPoint\Exception\RelayPointException;
-use Doctrine\ORM\EntityManagerInterface;
-use App\Geography\Entity\Address;
 use App\RelayPoint\Repository\RelayPointTypeRepository;
 use App\Solidary\Repository\StructureRepository;
 use App\User\Repository\UserRepository;
+use Doctrine\ORM\EntityManagerInterface;
 
 /**
  * Relay point manager for admin context.
@@ -46,9 +46,7 @@ class RelayPointManager
     private $structureRepository;
 
     /**
-     * Constructor
-     *
-     * @param EntityManagerInterface $entityManager
+     * Constructor.
      */
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -67,22 +65,23 @@ class RelayPointManager
     /**
      * Add an relay point.
      *
-     * @param RelayPoint     $relayPoint              The relay point to add
-     * @return RelayPoint    The relay point created
+     * @param RelayPoint $relayPoint The relay point to add
+     *
+     * @return RelayPoint The relay point created
      */
     public function addRelayPoint(RelayPoint $relayPoint): RelayPoint
     {
         if ($creator = $this->userRepository->find($relayPoint->getCreatorId())) {
             $relayPoint->setUser($creator);
         } else {
-            throw new RelayPointException("creator not found");
+            throw new RelayPointException('creator not found');
         }
 
         if ($relayPoint->getRelayPointTypeId()) {
             if ($type = $this->relayPointTypeRepository->find($relayPoint->getRelayPointTypeId())) {
                 $relayPoint->setRelayPointType($type);
             } else {
-                throw new RelayPointException("Relay point type not found");
+                throw new RelayPointException('Relay point type not found');
             }
         }
 
@@ -90,7 +89,7 @@ class RelayPointManager
             if ($community = $this->communityRepository->find($relayPoint->getCommunityId())) {
                 $relayPoint->setCommunity($community);
             } else {
-                throw new RelayPointException("Community not found");
+                throw new RelayPointException('Community not found');
             }
         }
 
@@ -127,9 +126,10 @@ class RelayPointManager
     /**
      * Patch a relay point.
      *
-     * @param RelayPoint $relayPoint    The relay point to update
-     * @param array $fields             The updated fields
-     * @return RelayPoint   The relay point updated
+     * @param RelayPoint $relayPoint The relay point to update
+     * @param array      $fields     The updated fields
+     *
+     * @return RelayPoint The relay point updated
      */
     public function patchRelayPoint(RelayPoint $relayPoint, array $fields): RelayPoint
     {
@@ -139,43 +139,43 @@ class RelayPointManager
                 // set the new creator
                 $relayPoint->setUser($creator);
             } else {
-                throw new RelayPointException("Creator not found");
+                throw new RelayPointException('Creator not found');
             }
         }
 
         // check if type has changed
         if (in_array('relayPointTypeId', array_keys($fields))) {
-            if ($fields['relayPointTypeId'] === null) {
+            if (null === $fields['relayPointTypeId']) {
                 $relayPoint->setRelayPointType(null);
             } elseif ($type = $this->relayPointTypeRepository->find($fields['relayPointTypeId'])) {
                 // set the new type
                 $relayPoint->setRelayPointType($type);
             } else {
-                throw new RelayPointException("Relay point type not found");
+                throw new RelayPointException('Relay point type not found');
             }
         }
 
         // check if community has changed
         if (in_array('communityId', array_keys($fields))) {
-            if ($fields['communityId'] === null) {
+            if (null === $fields['communityId']) {
                 $relayPoint->setCommunity(null);
             } elseif ($community = $this->communityRepository->find($fields['communityId'])) {
                 // set the new community
                 $relayPoint->setCommunity($community);
             } else {
-                throw new RelayPointException("Community not found");
+                throw new RelayPointException('Community not found');
             }
         }
 
         // check if structure has changed
         if (in_array('structureId', array_keys($fields))) {
-            if ($fields['structureId'] === null) {
+            if (null === $fields['structureId']) {
                 $relayPoint->setStructure(null);
             } elseif ($structure = $this->structureRepository->find($fields['structureId'])) {
                 // set the new structure
                 $relayPoint->setStructure($structure);
             } else {
-                throw new RelayPointException("Structure not found");
+                throw new RelayPointException('Structure not found');
             }
         }
 
@@ -188,10 +188,9 @@ class RelayPointManager
     }
 
     /**
-     * Delete a relay point
+     * Delete a relay point.
      *
-     * @param RelayPoint $relayPoint  The relay point to delete
-     * @return void
+     * @param RelayPoint $relayPoint The relay point to delete
      */
     public function deleteRelayPoint(RelayPoint $relayPoint): void
     {

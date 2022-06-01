@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Carpool\DataPersister;
 
@@ -38,7 +38,7 @@ final class AdPutDataPersister implements ContextAwareDataPersisterInterface
 
     public function supports($data, array $context = []): bool
     {
-        return $data instanceof Ad && isset($context['item_operation_name']) && $context['item_operation_name'] === 'put';
+        return $data instanceof Ad && isset($context['item_operation_name']) && 'put' === $context['item_operation_name'];
     }
 
     public function persist($data, array $context = [])

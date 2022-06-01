@@ -19,15 +19,15 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\RelayPoint\Security;
 
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
 use App\Auth\Service\AuthManager;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use App\RelayPoint\Entity\RelayPointType;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class RelayPointTypeVoter extends Voter
 {
@@ -50,8 +50,8 @@ class RelayPointTypeVoter extends Voter
             self::RELAY_POINT_TYPE_READ,
             self::RELAY_POINT_TYPE_UPDATE,
             self::RELAY_POINT_TYPE_DELETE,
-            self::RELAY_POINT_TYPE_LIST
-            ])) {
+            self::RELAY_POINT_TYPE_LIST,
+        ])) {
             return false;
         }
 
@@ -61,10 +61,11 @@ class RelayPointTypeVoter extends Voter
             self::RELAY_POINT_TYPE_READ,
             self::RELAY_POINT_TYPE_UPDATE,
             self::RELAY_POINT_TYPE_DELETE,
-            self::RELAY_POINT_TYPE_LIST
-            ]) && !($subject instanceof Paginator) && !($subject instanceof RelayPointType)) {
+            self::RELAY_POINT_TYPE_LIST,
+        ]) && !($subject instanceof Paginator) && !($subject instanceof RelayPointType)) {
             return false;
         }
+
         return true;
     }
 
@@ -73,12 +74,16 @@ class RelayPointTypeVoter extends Voter
         switch ($attribute) {
             case self::RELAY_POINT_TYPE_CREATE:
                 return $this->canCreateRelayPointType();
+
             case self::RELAY_POINT_TYPE_READ:
                 return $this->canReadRelayPointType($subject);
+
             case self::RELAY_POINT_TYPE_UPDATE:
                 return $this->canUpdateRelayPointType($subject);
+
             case self::RELAY_POINT_TYPE_DELETE:
                 return $this->canDeleteRelayPointType($subject);
+
             case self::RELAY_POINT_TYPE_LIST:
                 return $this->canListRelayPointType();
         }
@@ -93,17 +98,17 @@ class RelayPointTypeVoter extends Voter
 
     private function canReadRelayPointType(RelayPointType $relayPointType)
     {
-        return $this->authManager->isAuthorized(self::RELAY_POINT_TYPE_READ, ['relayPointType'=>$relayPointType]);
+        return $this->authManager->isAuthorized(self::RELAY_POINT_TYPE_READ, ['relayPointType' => $relayPointType]);
     }
 
     private function canUpdateRelayPointType(RelayPointType $relayPointType)
     {
-        return $this->authManager->isAuthorized(self::RELAY_POINT_TYPE_UPDATE, ['relayPointType'=>$relayPointType]);
+        return $this->authManager->isAuthorized(self::RELAY_POINT_TYPE_UPDATE, ['relayPointType' => $relayPointType]);
     }
 
     private function canDeleteRelayPointType(RelayPointType $relayPointType)
     {
-        return $this->authManager->isAuthorized(self::RELAY_POINT_TYPE_DELETE, ['relayPointType'=>$relayPointType]);
+        return $this->authManager->isAuthorized(self::RELAY_POINT_TYPE_DELETE, ['relayPointType' => $relayPointType]);
     }
 
     private function canListRelayPointType()

@@ -18,7 +18,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\Filter;
 
@@ -29,26 +29,6 @@ use Doctrine\ORM\QueryBuilder;
 
 final class SolidaryExclusiveFilter extends AbstractContextAwareFilter
 {
-    protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
-    {
-        if ($property != "solidaryExclusive") {
-            return;
-        }
-
-        if ($value === 1 || $value === 'true') {
-            $now = new DateTime();
-            $rootAlias = $queryBuilder->getRootAliases()[0];
-            $queryBuilder
-                ->leftJoin(sprintf("%s.proposals", $rootAlias), 'pSolidaryExclusive')
-                ->leftJoin('pSolidaryExclusive.criteria', 'c')
-                ->andWhere('c.solidaryExclusive=1 and (
-                    (c.frequency = 1 and c.fromDate >= :now) or
-                    (c.frequency > 1 and c.fromDate <= :now and c.toDate >= :now)
-                )')
-                ->setParameter('now', $now->format('Y-m-d'));
-        }
-    }
-
     // This function is only used to hook in documentation generators (supported by Swagger and Hydra)
     public function getDescription(string $resourceClass): array
     {
@@ -58,7 +38,7 @@ final class SolidaryExclusiveFilter extends AbstractContextAwareFilter
 
         $description = [];
         foreach ($this->properties as $property => $strategy) {
-            $description["$property"] = [
+            $description["{$property}"] = [
                 'property' => $property,
                 'type' => 'boolean',
                 'required' => false,
@@ -71,5 +51,26 @@ final class SolidaryExclusiveFilter extends AbstractContextAwareFilter
         }
 
         return $description;
+    }
+
+    protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
+    {
+        if ('solidaryExclusive' != $property) {
+            return;
+        }
+
+        if (1 === $value || 'true' === $value) {
+            $now = new DateTime();
+            $rootAlias = $queryBuilder->getRootAliases()[0];
+            $queryBuilder
+                ->leftJoin(sprintf('%s.proposals', $rootAlias), 'pSolidaryExclusive')
+                ->leftJoin('pSolidaryExclusive.criteria', 'c')
+                ->andWhere('c.solidaryExclusive=1 and (
+                    (c.frequency = 1 and c.fromDate >= :now) or
+                    (c.frequency > 1 and c.fromDate <= :now and c.toDate >= :now)
+                )')
+                ->setParameter('now', $now->format('Y-m-d'))
+            ;
+        }
     }
 }

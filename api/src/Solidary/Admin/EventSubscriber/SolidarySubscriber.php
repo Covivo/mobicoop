@@ -19,17 +19,17 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\Admin\EventSubscriber;
 
+use App\Solidary\Admin\Event\VolunteerStatusChangedEvent;
 use App\Solidary\Admin\Service\SolidaryTransportMatcher;
 use App\Solidary\Entity\SolidaryUserStructure;
-use App\Solidary\Admin\Event\VolunteerStatusChangedEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
- * Subscriber for solidary related events
+ * Subscriber for solidary related events.
  */
 class SolidarySubscriber implements EventSubscriberInterface
 {
@@ -50,12 +50,11 @@ class SolidarySubscriber implements EventSubscriberInterface
     /**
      * Executed when a volunteer status is changed within a Structure.
      *
-     * @param VolunteerStatusChangedEvent $event   The event
-     * @return void
+     * @param VolunteerStatusChangedEvent $event The event
      */
     public function onVolunteerStatusChanged(VolunteerStatusChangedEvent $event): void
     {
-        if ($event->getSolidaryUserStructure()->getStatus() == SolidaryUserStructure::STATUS_ACCEPTED) {
+        if (SolidaryUserStructure::STATUS_ACCEPTED == $event->getSolidaryUserStructure()->getStatus()) {
             $this->solidaryTransportMatcher->matchForStructure($event->getSolidaryUserStructure()->getStructure());
         }
     }

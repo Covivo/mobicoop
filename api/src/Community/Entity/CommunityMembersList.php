@@ -19,14 +19,15 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Community\Entity;
 
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * Community Members List
+ * Community Members List.
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class CommunityMembersList
@@ -34,13 +35,13 @@ class CommunityMembersList
     /**
      * @var CommunityMember[]
      * @Groups({"readCommunityMember"})
-    */
+     */
     private $members;
 
     /**
      * @var int
      * @Groups({"readCommunityMember"})
-    */
+     */
     private $totalMembers;
 
     public function __construct(array $members = null, int $totalMembers = null)

@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Event\DataProvider;
 
@@ -33,11 +33,10 @@ use Symfony\Component\HttpFoundation\RequestStack;
  * Collection data provider for Event search by userId.
  *
  * @author Remi Wortemann <remi.wortemann@mobicoop.org>
- *
  */
 final class EventIsCreatedByUserCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
-    protected $request;
+    private $request;
     private $eventManager;
 
     public function __construct(RequestStack $requestStack, eventManager $eventManager)
@@ -48,11 +47,11 @@ final class EventIsCreatedByUserCollectionDataProvider implements CollectionData
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return event::class === $resourceClass && $operationName === "created";
+        return event::class === $resourceClass && 'created' === $operationName;
     }
 
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
-        return $this->eventManager->getCreatedEvents($this->request->get("userId"));
+        return $this->eventManager->getCreatedEvents($this->request->get('userId'));
     }
 }

@@ -19,17 +19,16 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\PublicTransport\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
-use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Core\Annotation\ApiResource;
+use App\Carpool\Entity\IndividualStop;
 use App\Geography\Entity\Address;
 use Doctrine\ORM\Mapping as ORM;
-use App\Carpool\Entity\IndividualStop;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * A public transport arrival.
@@ -56,7 +55,7 @@ use App\Carpool\Entity\IndividualStop;
 class PTArrival
 {
     /**
-     * @var int The id of this arrival.
+     * @var int the id of this arrival
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -66,7 +65,7 @@ class PTArrival
     private $id;
 
     /**
-     * @var string The name of this arrival.
+     * @var string the name of this arrival
      *
      * @ORM\Column(type="string", length=100, nullable=true)
      * @Groups("pt")
@@ -74,7 +73,7 @@ class PTArrival
     private $name;
 
     /**
-     * @var \DateTimeInterface The date and time of this arrival.
+     * @var \DateTimeInterface the date and time of this arrival
      *
      * @ORM\Column(type="datetime")
      * @Groups("pt")
@@ -82,7 +81,7 @@ class PTArrival
     private $date;
 
     /**
-     * @var Address The address of this arrival.
+     * @var Address the address of this arrival
      *
      * @ORM\ManyToOne(targetEntity="App\Geography\Entity\Address")
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
@@ -91,7 +90,7 @@ class PTArrival
     private $address;
 
     /**
-     * @var IndividualStop|null Individual stop if multimodal using carpool.
+     * @var null|IndividualStop individual stop if multimodal using carpool
      *
      * @ORM\ManyToOne(targetEntity="App\Carpool\Entity\IndividualStop")
      */

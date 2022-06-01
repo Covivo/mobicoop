@@ -19,14 +19,14 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Auth\Rule;
 
 use App\Auth\Interfaces\AuthRuleInterface;
 
 /**
- *  Check that the requester is the user himself
+ *  Check that the requester is the user himself.
  */
 class InteropUserSelf implements AuthRuleInterface
 {
@@ -39,6 +39,7 @@ class InteropUserSelf implements AuthRuleInterface
         if (!isset($params['user'])) {
             return false;
         }
+
         return $params['user']->getId() == $requester->getId();
     }
 }

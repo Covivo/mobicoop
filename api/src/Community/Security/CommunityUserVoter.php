@@ -19,20 +19,20 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Community\Security;
 
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
 use App\Auth\Service\AuthManager;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use App\Community\Entity\CommunityUser;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class CommunityUserVoter extends Voter
 {
     public const COMMUNITY_JOIN = 'community_join';
-    public const COMMUNITY_MEMBERSHIP= 'community_membership';
+    public const COMMUNITY_MEMBERSHIP = 'community_membership';
 
     private $authManager;
 
@@ -46,8 +46,8 @@ class CommunityUserVoter extends Voter
         // if the attribute isn't one we support, return false
         if (!in_array($attribute, [
             self::COMMUNITY_JOIN,
-            self::COMMUNITY_MEMBERSHIP
-            ])) {
+            self::COMMUNITY_MEMBERSHIP,
+        ])) {
             return false;
         }
 
@@ -55,8 +55,8 @@ class CommunityUserVoter extends Voter
         // only for items actions
         if (!in_array($attribute, [
             self::COMMUNITY_JOIN,
-            self::COMMUNITY_MEMBERSHIP
-            ]) && !($subject instanceof Paginator) && !($subject instanceof CommunityUser)) {
+            self::COMMUNITY_MEMBERSHIP,
+        ]) && !($subject instanceof Paginator) && !($subject instanceof CommunityUser)) {
             return false;
         }
 
@@ -68,6 +68,7 @@ class CommunityUserVoter extends Voter
         switch ($attribute) {
             case self::COMMUNITY_JOIN:
                 return $this->canJoin($subject);
+
             case self::COMMUNITY_MEMBERSHIP:
                 return $this->canAddCommunityUser();
         }

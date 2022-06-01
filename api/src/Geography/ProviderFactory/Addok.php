@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 declare(strict_types=1);
 
@@ -72,17 +72,6 @@ final class Addok extends AbstractHttpProvider implements Provider
     private $uri;
 
     /**
-     * @param HttpClient  $client
-     * @param string|null $locale
-     *
-     * @return Addok
-     */
-    public static function withBANServer(HttpClient $client): Addok
-    {
-        return new self($client, 'https://api-adresse.data.gouv.fr');
-    }
-
-    /**
      * @param HttpClient $client  an HTTP adapter
      * @param string     $rootUrl Root URL of the addok server
      */
@@ -91,6 +80,14 @@ final class Addok extends AbstractHttpProvider implements Provider
         parent::__construct($client);
 
         $this->uri = rtrim($rootUrl, '/');
+    }
+
+    /**
+     * @param null|string $locale
+     */
+    public static function withBANServer(HttpClient $client): Addok
+    {
+        return new self($client, 'https://api-adresse.data.gouv.fr');
     }
 
     /**
@@ -108,13 +105,14 @@ final class Addok extends AbstractHttpProvider implements Provider
         if (empty($address)) {
             throw new InvalidArgument('Address cannot be empty.');
         }
-        $url = sprintf($this->uri . self::GEOCODE_ENDPOINT_URL, urlencode($address), $query->getLimit());
+        $url = sprintf($this->uri.self::GEOCODE_ENDPOINT_URL, urlencode($address), $query->getLimit());
         if (!is_null($query->getData('userPrioritize'))) {
             $userPrioritize = $query->getData('userPrioritize');
             $url .= sprintf(self::GEOCODE_ENDPOINT_PRIORITIZATION, $userPrioritize['latitude'], $userPrioritize['longitude']);
         } elseif (!is_null($query->getData('latitude')) && !is_null($query->getData('longitude'))) {
             $url .= sprintf(self::GEOCODE_ENDPOINT_PRIORITIZATION, $query->getData('latitude'), $query->getData('longitude'));
         }
+
         return $this->executeQuery($url);
     }
 
@@ -126,7 +124,8 @@ final class Addok extends AbstractHttpProvider implements Provider
         $coordinates = $query->getCoordinates();
         $longitude = $coordinates->getLongitude();
         $latitude = $coordinates->getLatitude();
-        $url = sprintf($this->uri . self::REVERSE_ENDPOINT_URL, $latitude, $longitude, $query->getLimit());
+        $url = sprintf($this->uri.self::REVERSE_ENDPOINT_URL, $latitude, $longitude, $query->getLimit());
+
         return $this->executeQuery($url);
     }
 
@@ -138,11 +137,6 @@ final class Addok extends AbstractHttpProvider implements Provider
         return 'addok';
     }
 
-    /**
-     * @param string $url
-     *
-     * @return Collection
-     */
     private function executeQuery(string $url): Collection
     {
         $content = $this->getUrlContents($url);
@@ -158,7 +152,7 @@ final class Addok extends AbstractHttpProvider implements Provider
         }
         $results = [];
         foreach ($json->features as $feature) {
-            if ((float)$feature->properties->score < self::MIN_SCORE) {
+            if ((float) $feature->properties->score < self::MIN_SCORE) {
                 continue;
             }
             $coordinates = $feature->geometry->coordinates;
@@ -167,11 +161,15 @@ final class Addok extends AbstractHttpProvider implements Provider
                 case self::TYPE_HOUSENUMBER:
                     $streetName = !empty($feature->properties->street) ? $feature->properties->street : null;
                     $number = !empty($feature->properties->housenumber) ? $feature->properties->housenumber : null;
+
                     break;
+
                 case self::TYPE_STREET:
                     $streetName = !empty($feature->properties->name) ? $feature->properties->name : null;
                     $number = null;
+
                     break;
+
                 default:
                     $streetName = null;
                     $number = null;
@@ -185,22 +183,22 @@ final class Addok extends AbstractHttpProvider implements Provider
             // 3 : region name (optional)
             if (is_array($context = explode(',', $feature->properties->context))) {
                 $adminLevels[] = ['name' => trim($context[1]), 'level' => 4];
-                if (count($context) == 3) {
+                if (3 == count($context)) {
                     $adminLevels[] = ['name' => trim($context[2]), 'level' => 5];
                 }
             }
 
             $results[] = Address::createFromArray([
-                'providedBy'   => $this->getName(),
-                'latitude'     => $coordinates[1],
-                'longitude'    => $coordinates[0],
+                'providedBy' => $this->getName(),
+                'latitude' => $coordinates[1],
+                'longitude' => $coordinates[0],
                 'streetNumber' => $number,
-                'streetName'   => $streetName,
-                'locality'     => $locality,
-                'postalCode'   => $postalCode,
-                'country'      => self::COUNTRY,
-                'countryCode'  => self::COUNTRY_CODE,
-                'adminLevels'  => $adminLevels
+                'streetName' => $streetName,
+                'locality' => $locality,
+                'postalCode' => $postalCode,
+                'country' => self::COUNTRY,
+                'countryCode' => self::COUNTRY_CODE,
+                'adminLevels' => $adminLevels,
             ]);
         }
 

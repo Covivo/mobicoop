@@ -19,23 +19,22 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Gamification\Rule;
 
 use App\Gamification\Interfaces\GamificationRuleInterface;
 
 /**
- * Check if the user post the ad in a community
+ * Check if the user post the ad in a community.
  */
 class AdInCommunity implements GamificationRuleInterface
 {
     /**
-     * Ad in Community rule
+     * Ad in Community rule.
      *
      * @param $log
      * @param $sequenceItem
-     * @return bool
      */
     public function execute($log, $sequenceItem): bool
     {
@@ -50,6 +49,7 @@ class AdInCommunity implements GamificationRuleInterface
                 return true;
             }
         }
+
         return false;
     }
 }

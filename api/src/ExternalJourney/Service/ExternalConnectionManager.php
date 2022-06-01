@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\ExternalJourney\Service;
 
@@ -35,7 +35,7 @@ use GuzzleHttp\Client;
  */
 class ExternalConnectionManager
 {
-    private const EXTERNAL_CONNECTION_HASH = "sha256";         // hash algorithm
+    private const EXTERNAL_CONNECTION_HASH = 'sha256';         // hash algorithm
 
     private $providers;
     private $operator;
@@ -47,17 +47,13 @@ class ExternalConnectionManager
     }
 
     /**
-     * Send an external connection
-     *
-     * @param ExternalConnection $externalConnection
-     * @return ExternalConnection
+     * Send an external connection.
      */
     public function sendConnection(ExternalConnection $externalConnection): ExternalConnection
     {
-
         // Check if the provider is valid
         if (!isset($this->providers[$externalConnection->getProvider()])) {
-            throw new \LogicException("Not a valid provider in providers.json");
+            throw new \LogicException('Not a valid provider in providers.json');
         }
 
         $provider = new ExternalJourneyProvider();
@@ -75,40 +71,40 @@ class ExternalConnectionManager
             $role = $externalConnection->getRole();
         }
 
-        if (!is_numeric($role) ||
-            ($role !== Ad::ROLE_DRIVER && $role !== Ad::ROLE_PASSENGER  && $role !== Ad::ROLE_DRIVER_OR_PASSENGER)
+        if (!is_numeric($role)
+            || (Ad::ROLE_DRIVER !== $role && Ad::ROLE_PASSENGER !== $role && Ad::ROLE_DRIVER_OR_PASSENGER !== $role)
         ) {
-            throw new \LogicException("Invalid role");
-        } elseif ($role == Ad::ROLE_DRIVER_OR_PASSENGER) {
+            throw new \LogicException('Invalid role');
+        }
+        if (Ad::ROLE_DRIVER_OR_PASSENGER == $role) {
             // Force "driver_or_passenger" to passenger
             $role = Ad::ROLE_PASSENGER;
         }
-
 
         // initialize client API for any request
         $client = new Client();
 
         $params = [
-            "origin" => $this->operator['origin'],
-            "operator" => $this->operator['name'],
-            "details" => $externalConnection->getContent(),
-            "journeys" => [
-                "uuid" => $externalConnection->getJourneysUuid()
+            'origin' => $this->operator['origin'],
+            'operator' => $this->operator['name'],
+            'details' => $externalConnection->getContent(),
+            'journeys' => [
+                'uuid' => $externalConnection->getJourneysUuid(),
             ],
-            "driver" => [
-                "uuid" => ($role == Ad::ROLE_PASSENGER) ? $externalConnection->getCarpoolerUuid() : null,
-                "state" => ($role == Ad::ROLE_PASSENGER) ? ExternalConnection::STATUS_RECIPIENT : ExternalConnection::STATUS_SENDER
+            'driver' => [
+                'uuid' => (Ad::ROLE_PASSENGER == $role) ? $externalConnection->getCarpoolerUuid() : null,
+                'state' => (Ad::ROLE_PASSENGER == $role) ? ExternalConnection::STATUS_RECIPIENT : ExternalConnection::STATUS_SENDER,
             ],
-            "passenger" => [
-                "uuid" => ($role == Ad::ROLE_PASSENGER) ? null : $externalConnection->getCarpoolerUuid(),
-                "state" => ($role == Ad::ROLE_PASSENGER) ? ExternalConnection::STATUS_SENDER : ExternalConnection::STATUS_RECIPIENT
-            ]
+            'passenger' => [
+                'uuid' => (Ad::ROLE_PASSENGER == $role) ? null : $externalConnection->getCarpoolerUuid(),
+                'state' => (Ad::ROLE_PASSENGER == $role) ? ExternalConnection::STATUS_SENDER : ExternalConnection::STATUS_RECIPIENT,
+            ],
         ];
 
-        $query = array(
+        $query = [
             'timestamp' => time(),
-            'apikey'    => $provider->getApiKey(),
-        );
+            'apikey' => $provider->getApiKey(),
+        ];
 
         // construct the requested url
         $url = $provider->getUrl().'/'.$provider->getResource().'?'.http_build_query($query);
@@ -116,7 +112,7 @@ class ExternalConnectionManager
         $signedUrl = $url.'&signature='.$signature;
 
         // Type of the body
-        $options['form_params']=$params;
+        $options['form_params'] = $params;
 
         $data = $client->post($signedUrl, $options);
         $data = $data->getBody()->getContents();

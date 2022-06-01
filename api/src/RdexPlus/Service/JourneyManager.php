@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\RdexPlus\Service;
 
@@ -59,10 +59,7 @@ class JourneyManager
     }
 
     /**
-     * Post an Ad from a RDEX+ Journey
-     *
-     * @param Journey $journey
-     * @return Journey
+     * Post an Ad from a RDEX+ Journey.
      */
     public function createJourney(Journey $journey): Journey
     {
@@ -71,34 +68,30 @@ class JourneyManager
 
         $ad = $this->buildAdFromJourney($journey);
 
-        //create ad
+        // create ad
         $ad = $this->adManager->createAd($ad, true, false, false);
 
         // We set the id of the createdAd
         $journey->setId($ad->getId());
+
         return $journey;
     }
 
-
     /**
-     * Check if a RDEX+ Journey is valid
-     *
-     * @param Journey $journey
-     * @return boolean
+     * Check if a RDEX+ Journey is valid.
      */
     public function checkJourney(Journey $journey): bool
     {
         // The User
         if (is_null($journey->getUser()) || is_null($journey->getUser()->getId())) {
             throw new RdexPlusException(RdexPlusException::USER_ID_REQUIRED);
-        } else {
-            if (is_null($this->user = $this->userManager->getUser((int)$journey->getUser()->getId()))) {
-                throw new RdexPlusException(RdexPlusException::USER_UNKNOWN);
-            }
+        }
+        if (is_null($this->user = $this->userManager->getUser((int) $journey->getUser()->getId()))) {
+            throw new RdexPlusException(RdexPlusException::USER_UNKNOWN);
         }
 
         // The frequency
-        if (is_null($journey->getFrequency()) || !in_array($journey->getFrequency(), Journey::VALID_FREQUENCIES) || $journey->getFrequency()==Journey::FREQUENCY_BOTH) {
+        if (is_null($journey->getFrequency()) || !in_array($journey->getFrequency(), Journey::VALID_FREQUENCIES) || Journey::FREQUENCY_BOTH == $journey->getFrequency()) {
             throw new RdexPlusException(RdexPlusException::INVALID_FREQUENCY);
         }
 
@@ -123,7 +116,7 @@ class JourneyManager
         }
 
         // Specific regular
-        if ($journey->getFrequency() == Journey::FREQUENCY_REGULAR || $journey->getFrequency() == Journey::FREQUENCY_BOTH) {
+        if (Journey::FREQUENCY_REGULAR == $journey->getFrequency() || Journey::FREQUENCY_BOTH == $journey->getFrequency()) {
             if (is_null($journey->getOutward()->getRegularSchedule())) {
                 throw new RdexPlusException(RdexPlusException::NO_REGULAR_SCHEDULE);
             }
@@ -139,14 +132,13 @@ class JourneyManager
                 throw new RdexPlusException(RdexPlusException::NO_RETURN);
             }
         }
+
         return true;
     }
 
     /**
      * Build an Ad from a RDEX+ Journey
-     * WARNING : For now, we only use the OutWard delta time and ignore the rest
-     * @param Journey $journey
-     * @return Ad
+     * WARNING : For now, we only use the OutWard delta time and ignore the rest.
      */
     public function buildAdFromJourney(Journey $journey): Ad
     {
@@ -162,11 +154,11 @@ class JourneyManager
 
         // Driver by default
         $ad->setRole(Ad::ROLE_DRIVER);
-        if ($journey->getCarpoolerType() == Journey::CARPOOLER_TYPE_DRIVER) {
+        if (Journey::CARPOOLER_TYPE_DRIVER == $journey->getCarpoolerType()) {
             $ad->setRole(Ad::ROLE_DRIVER);
-        } elseif ($journey->getCarpoolerType() == Journey::CARPOOLER_TYPE_PASSENGER) {
+        } elseif (Journey::CARPOOLER_TYPE_PASSENGER == $journey->getCarpoolerType()) {
             $ad->setRole(Ad::ROLE_PASSENGER);
-        } elseif ($journey->getCarpoolerType() == Journey::CARPOOLER_TYPE_BOTH) {
+        } elseif (Journey::CARPOOLER_TYPE_BOTH == $journey->getCarpoolerType()) {
             $ad->setRole(Ad::ROLE_DRIVER_OR_PASSENGER);
         }
 
@@ -174,20 +166,20 @@ class JourneyManager
 
         // Punctual by default
         $ad->setFrequency(Criteria::FREQUENCY_PUNCTUAL);
-        if ($journey->getFrequency() == Journey::FREQUENCY_PUNCTUAL) {
+        if (Journey::FREQUENCY_PUNCTUAL == $journey->getFrequency()) {
             $ad->setFrequency(Criteria::FREQUENCY_PUNCTUAL);
-        } elseif ($journey->getFrequency() == Journey::FREQUENCY_REGULAR) {
+        } elseif (Journey::FREQUENCY_REGULAR == $journey->getFrequency()) {
             $ad->setFrequency(Criteria::FREQUENCY_REGULAR);
         }
 
         // Price : We always use the price per kilometers. If the journey contains a fixed price, we need to compute it.
-        if ($journey->getPrice()->getType() == Price::TYPE_VARIABLE) {
+        if (Price::TYPE_VARIABLE == $journey->getPrice()->getType()) {
             $ad->setPriceKm($journey->getPrice()->getAmount());
-        } elseif ($journey->getPrice()->getType() == Price::TYPE_FIXED) {
+        } elseif (Price::TYPE_FIXED == $journey->getPrice()->getType()) {
             // We compute the price per kilometers
             $distance = round(($this->geoTools->haversineGreatCircleDistance($journey->getFrom()->getLatitude(), $journey->getFrom()->getLongitude(), $journey->getTo()->getLatitude(), $journey->getTo()->getLongitude()) / 1000), 2);
-            $ad->setPriceKm(round((((float)$journey->getPrice()->getAmount()) / $distance), 2));
-        } elseif ($journey->getPrice()->getType() == Price::TYPE_FREE) {
+            $ad->setPriceKm(round((((float) $journey->getPrice()->getAmount()) / $distance), 2));
+        } elseif (Price::TYPE_FREE == $journey->getPrice()->getType()) {
             $ad->setPriceKm(0);
         }
 
@@ -196,8 +188,8 @@ class JourneyManager
 
         $outwardWaypoints[] = $this->buildAddressFromGeopoint($journey->getFrom());
 
-        //echo $journey->getNumberOfWaypoints();die;
-        if ($journey->getNumberOfWaypoints()>0) {
+        // echo $journey->getNumberOfWaypoints();die;
+        if ($journey->getNumberOfWaypoints() > 0) {
             foreach ($journey->getWaypoints() as $waypoint) {
                 $outwardWaypoints[] = $this->buildAddressFromWaypoint($waypoint);
             }
@@ -208,7 +200,7 @@ class JourneyManager
         $ad->setOutwardWaypoints($outwardWaypoints);
 
         // Outward date
-        $ourwardDate = new \DateTime("now");
+        $ourwardDate = new \DateTime('now');
         $ourwardDate->setTimestamp($journey->getOutward()->getDepartureDate());
         $ad->setOutwardDate($ourwardDate);
 
@@ -217,9 +209,9 @@ class JourneyManager
             $returnWaypoints[] = $this->buildAddressFromGeopoint($journey->getTo());
 
             // TO DO : treat waypoints
-            if ($journey->getNumberOfWaypoints()>0) {
-                for ($i = (count($journey->getWaypoints())) ; $i>0 ; $i--) {
-                    $returnWaypoints[] = $this->buildAddressFromWaypoint($journey->getWaypoints()[$i-1]);
+            if ($journey->getNumberOfWaypoints() > 0) {
+                for ($i = (count($journey->getWaypoints())); $i > 0; --$i) {
+                    $returnWaypoints[] = $this->buildAddressFromWaypoint($journey->getWaypoints()[$i - 1]);
                 }
             }
 
@@ -228,32 +220,30 @@ class JourneyManager
             $ad->setReturnWaypoints($returnWaypoints);
 
             // Outward date
-            $returnDate = new \DateTime("now");
+            $returnDate = new \DateTime('now');
             $returnDate->setTimestamp($journey->getReturn()->getDepartureDate());
             $ad->setReturnDate($returnDate);
         }
 
-
         // If punctual we set the outward time
-        if ($ad->getFrequency()==Criteria::FREQUENCY_PUNCTUAL) {
-            $ad->setOutwardTime($ourwardDate->format("H:i"));
+        if (Criteria::FREQUENCY_PUNCTUAL == $ad->getFrequency()) {
+            $ad->setOutwardTime($ourwardDate->format('H:i'));
 
             // If there is a return, we set the time
             if (!$ad->isOneWay()) {
-                $ad->setReturnTime($returnDate->format("H:i"));
+                $ad->setReturnTime($returnDate->format('H:i'));
             }
         } else {
-
             // We set a max date if it's given
             if (!is_null($journey->getOutward()->getMaxDate())) {
-                $outwardLimitDate = new \DateTime("now");
+                $outwardLimitDate = new \DateTime('now');
                 $outwardLimitDate->setTimestamp($journey->getOutward()->getMaxDate());
                 $ad->setOutwardLimitDate($outwardLimitDate);
             }
 
             // If there is a return, we set the max date for the return if it's given
             if (!$ad->isOneWay() && !is_null($journey->getReturn()->getMaxDate())) {
-                $returnLimitDate = new \DateTime("now");
+                $returnLimitDate = new \DateTime('now');
                 $returnLimitDate->setTimestamp($journey->getReturn()->getMaxDate());
                 $ad->setReturnLimitDate($returnLimitDate);
             }
@@ -271,10 +261,7 @@ class JourneyManager
     }
 
     /**
-     * Build an Address from a Geopoint
-     *
-     * @param Geopoint $geopoint
-     * @return Address
+     * Build an Address from a Geopoint.
      */
     private function buildAddressFromGeopoint(Geopoint $geopoint): Address
     {
@@ -291,10 +278,7 @@ class JourneyManager
     }
 
     /**
-     * Build an Address from a RDEX+ Waypoint
-     *
-     * @param Waypoint $waypoint
-     * @return Address
+     * Build an Address from a RDEX+ Waypoint.
      */
     private function buildAddressFromWaypoint(Waypoint $waypoint): Address
     {
@@ -312,19 +296,16 @@ class JourneyManager
 
     /**
      * Build schedules array rom outward et return WaySchedule object.
-     * It's easier to make 7 différent schedule : one for each week day
-     * @param WaySchedule $outwardWaySchedule
-     * @param WaySchedule|null $returnWaySchedule
-     * @return array
+     * It's easier to make 7 différent schedule : one for each week day.
      */
     private function buildSchedulesFromWaySchedule(WaySchedule $outwardWaySchedule, ?WaySchedule $returnWaySchedule): array
     {
         $schedules = [];
 
-        $schedules = $this->setRegularTimeAndDays($schedules, $outwardWaySchedule, "outward");
+        $schedules = $this->setRegularTimeAndDays($schedules, $outwardWaySchedule, 'outward');
 
         if (!is_null($returnWaySchedule)) {
-            $schedules = $this->setRegularTimeAndDays($schedules, $returnWaySchedule, "return");
+            $schedules = $this->setRegularTimeAndDays($schedules, $returnWaySchedule, 'return');
         }
 
         return $schedules;
@@ -333,89 +314,101 @@ class JourneyManager
     /**
      * Set the right day status (check or not) and the right time (outward or return)
      * According to RDEX+ specs we can have several regularSchedule
-     * WARNING : If two schedules contain the same day for the same way (outward or return), we are keeping the last time given
+     * WARNING : If two schedules contain the same day for the same way (outward or return), we are keeping the last time given.
      *
-     * @param array $schedules          The current Ad schedule
-     * @param WaySchedule $waySchedule  The WaySchedule (outward or return)
-     * @param string $way               The way (outward or return)
-     * @return array
+     * @param array       $schedules   The current Ad schedule
+     * @param WaySchedule $waySchedule The WaySchedule (outward or return)
+     * @param string      $way         The way (outward or return)
      */
     private function setRegularTimeAndDays(array $schedules, WaySchedule $waySchedule, string $way): array
     {
         $templateDays = [
-            "mon"=>false,
-            "tue"=>false,
-            "wed"=>false,
-            "thu"=>false,
-            "fri"=>false,
-            "sat"=>false,
-            "sun"=>false
+            'mon' => false,
+            'tue' => false,
+            'wed' => false,
+            'thu' => false,
+            'fri' => false,
+            'sat' => false,
+            'sun' => false,
         ];
 
         // According to RDEX+ specs we can have several regularSchedule
         // WARNING : If two schedules contains the same day, we are keeping the last time given
         foreach ($waySchedule->getRegularSchedule() as $regularSchedule) {
-            /**
-             * @var WeekSchedule $regularSchedule
-             */
+            // @var WeekSchedule $regularSchedule
             foreach ($templateDays as $day => $value) {
                 switch ($day) {
-                    case "mon":
+                    case 'mon':
                         $time = $regularSchedule->getMondayTime();
+
                         break;
-                    case "tue":
+
+                    case 'tue':
                         $time = $regularSchedule->getTuesdayTime();
+
                         break;
-                    case "wed":
+
+                    case 'wed':
                         $time = $regularSchedule->getWednesdayTime();
+
                         break;
-                    case "thu":
+
+                    case 'thu':
                         $time = $regularSchedule->getThursdayTime();
+
                         break;
-                    case "fri":
+
+                    case 'fri':
                         $time = $regularSchedule->getFridayTime();
+
                         break;
-                    case "sat":
+
+                    case 'sat':
                         $time = $regularSchedule->getSaturdayTime();
+
                         break;
-                    case "sun":
+
+                    case 'sun':
                         $time = $regularSchedule->getSundayTime();
+
                         break;
                 }
 
-                if (!is_null($time) && !empty($time) && $time !== "") {
+                if (!is_null($time) && !empty($time) && '' !== $time) {
                     $key = $this->checkSubScheduleDayExists($schedules, $day);
-                    if ($key == -1) {
+                    if (-1 == $key) {
                         // Not set already, we create a new sub schedule
                         $newSchedule = [
                             $day => true,
-                            $way."Time" => $time
+                            $way.'Time' => $time,
                         ];
                         $schedules[] = $newSchedule;
                     } else {
                         $schedules[$key][$day] = true; // We force the true to override the first value set by the first WeekSchedule
-                        $schedules[$key][$way."Time"] = $time;
+                        $schedules[$key][$way.'Time'] = $time;
                     }
                 } else {
                     $key = $this->checkSubScheduleDayExists($schedules, $day);
-                    if ($key == -1) {
+                    if (-1 == $key) {
                         $newSchedule = [
-                            $day => false
+                            $day => false,
                         ];
                         $schedules[] = $newSchedule;
                     }
                 }
             }
         }
+
         return $schedules;
     }
 
     /**
-     * Check if a subschedule is already defined for a given day
+     * Check if a subschedule is already defined for a given day.
      *
-     * @param array $schedules  The current Ad schedule
+     * @param array  $schedules The current Ad schedule
      * @param string $day       The given day to check
-     * @return integer          Return the array index or -1 if the day is not defined
+     *
+     * @return int Return the array index or -1 if the day is not defined
      */
     private function checkSubScheduleDayExists(array $schedules, string $day): int
     {

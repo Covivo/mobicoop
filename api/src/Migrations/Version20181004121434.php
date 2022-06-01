@@ -21,7 +21,7 @@ declare(strict_types=1);
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace DoctrineMigrations;
 
@@ -36,7 +36,7 @@ final class Version20181004121434 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE proposal DROP INDEX IDX_BFE5947263826222, ADD UNIQUE INDEX UNIQ_BFE5947263826222 (proposal_linked_id)');
         $this->addSql('ALTER TABLE proposal DROP INDEX IDX_BFE59472558C41CB, ADD UNIQUE INDEX UNIQ_BFE59472558C41CB (proposal_linked_journey_id)');
@@ -52,7 +52,7 @@ final class Version20181004121434 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE matching DROP FOREIGN KEY FK_DC10F289990BEA15');
         $this->addSql('ALTER TABLE matching ADD CONSTRAINT FK_DC10F289990BEA15 FOREIGN KEY (criteria_id) REFERENCES criteria (id)');

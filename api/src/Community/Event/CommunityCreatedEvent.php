@@ -19,15 +19,16 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Community\Event;
 
-use Symfony\Contracts\EventDispatcher\Event;
 use App\Community\Entity\Community;
+use Symfony\Contracts\EventDispatcher\Event;
 
 /**
  * Event sent when an community is created.
+ *
  * @author Remi Wortemann <remi.wortemann@mobicoop.org>
  */
 class CommunityCreatedEvent extends Event

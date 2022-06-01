@@ -19,15 +19,15 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\PublicTransport\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Travel\Entity\TravelMode;
-use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * A public transport line.
@@ -54,7 +54,7 @@ use Doctrine\ORM\Mapping as ORM;
 class PTLine
 {
     /**
-     * @var int The id of this line.
+     * @var int the id of this line
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -64,7 +64,7 @@ class PTLine
     private $id;
 
     /**
-     * @var string The name of this line.
+     * @var string the name of this line
      *
      * @ORM\Column(type="string", length=45)
      * @Groups("pt")
@@ -72,7 +72,7 @@ class PTLine
     private $name;
 
     /**
-     * @var string The number of this line.
+     * @var string the number of this line
      *
      * @ORM\Column(type="string", length=10, nullable=true)
      * @Groups("pt")
@@ -80,7 +80,7 @@ class PTLine
     private $number;
 
     /**
-     * @var string The origin of this line.
+     * @var string the origin of this line
      *
      * @ORM\Column(type="string", length=100, nullable=true)
      * @Groups("pt")
@@ -88,7 +88,7 @@ class PTLine
     private $origin;
 
     /**
-     * @var string The destination of this line.
+     * @var string the destination of this line
      *
      * @ORM\Column(type="string", length=100, nullable=true)
      * @Groups("pt")
@@ -96,7 +96,7 @@ class PTLine
     private $destination;
 
     /**
-     * @var string The direction of this line if no origin / destination specified.
+     * @var string the direction of this line if no origin / destination specified
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups("pt")
@@ -104,7 +104,7 @@ class PTLine
     private $direction;
 
     /**
-     * @var PTCompany The company that manage this line.
+     * @var PTCompany the company that manage this line
      *
      * @ORM\ManyToOne(targetEntity="App\PublicTransport\Entity\PTCompany")
      * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
@@ -113,7 +113,7 @@ class PTLine
     private $ptcompany;
 
     /**
-     * @var TravelMode|null The transport mode of this line.
+     * @var null|TravelMode the transport mode of this line
      *
      * @ORM\ManyToOne(targetEntity="App\Travel\Entity\TravelMode")
      * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
@@ -122,7 +122,7 @@ class PTLine
     private $travelMode;
 
     /**
-     * @var int The transport mode of this line.
+     * @var int the transport mode of this line
      *
      * @ORM\Column(type="integer", nullable=true)
      * @Groups("pt")
@@ -130,7 +130,7 @@ class PTLine
     private $transportMode;
 
     /**
-     * @var string The color of this line.
+     * @var string the color of this line
      *
      * @ORM\Column(type="string", length=10, nullable=true)
      * @Groups("pt")

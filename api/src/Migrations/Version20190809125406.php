@@ -15,7 +15,7 @@ final class Version20190809125406 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('CREATE TABLE log (id INT AUTO_INCREMENT NOT NULL, user_id INT NOT NULL, action_id INT NOT NULL, admin_id INT DEFAULT NULL, proposal_id INT DEFAULT NULL, matching_id INT DEFAULT NULL, ask_id INT DEFAULT NULL, article_id INT DEFAULT NULL, event_id INT DEFAULT NULL, community_id INT DEFAULT NULL, solidary_id INT DEFAULT NULL, territory_id INT DEFAULT NULL, car_id INT DEFAULT NULL, user_related_id INT DEFAULT NULL, message_id INT DEFAULT NULL, date DATETIME NOT NULL, INDEX IDX_8F3F68C5A76ED395 (user_id), INDEX IDX_8F3F68C59D32F035 (action_id), INDEX IDX_8F3F68C5642B8210 (admin_id), INDEX IDX_8F3F68C5F4792058 (proposal_id), INDEX IDX_8F3F68C5B39876B8 (matching_id), INDEX IDX_8F3F68C5B93F8B63 (ask_id), INDEX IDX_8F3F68C57294869C (article_id), INDEX IDX_8F3F68C571F7E88B (event_id), INDEX IDX_8F3F68C5FDA7B0BF (community_id), INDEX IDX_8F3F68C5E92CE751 (solidary_id), INDEX IDX_8F3F68C573F74AD4 (territory_id), INDEX IDX_8F3F68C5C3C6F69F (car_id), INDEX IDX_8F3F68C5E60506ED (user_related_id), INDEX IDX_8F3F68C5537A1329 (message_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB');
         $this->addSql('CREATE TABLE solidary_matching (id INT AUTO_INCREMENT NOT NULL, matching_id INT NOT NULL, solidary_id INT NOT NULL, created_date DATETIME NOT NULL, INDEX IDX_A95C6411B39876B8 (matching_id), INDEX IDX_A95C6411E92CE751 (solidary_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB');
@@ -96,7 +96,7 @@ final class Version20190809125406 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE diary DROP FOREIGN KEY FK_917BEDE218E9BFA2');
         $this->addSql('ALTER TABLE log DROP FOREIGN KEY FK_8F3F68C5E92CE751');

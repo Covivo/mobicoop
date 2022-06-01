@@ -19,18 +19,18 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Communication\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-use ApiPlatform\Core\Annotation\ApiResource;
-use Symfony\Component\Serializer\Annotation\Groups;
-use Doctrine\Common\Collections\ArrayCollection;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
 use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use App\User\Entity\User;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 /**
  * A recipient of a message.
@@ -82,7 +82,7 @@ class Recipient
     public const STATUS_READ = 2;
 
     /**
-     * @var int The id of this recipient.
+     * @var int the id of this recipient
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -92,7 +92,7 @@ class Recipient
     private $id;
 
     /**
-     * @var int The status of the recipient.
+     * @var int the status of the recipient
      *
      * @ORM\Column(type="smallint")
      * @Groups({"read","write","threads"})
@@ -100,7 +100,7 @@ class Recipient
     private $status;
 
     /**
-     * @var User The recipient user of the message.
+     * @var User the recipient user of the message
      *
      * @ORM\ManyToOne(targetEntity="App\User\Entity\User", inversedBy="recipients", cascade={"persist"})
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
@@ -110,7 +110,7 @@ class Recipient
     private $user;
 
     /**
-     * @var Message The message.
+     * @var Message the message
      *
      * @ORM\ManyToOne(targetEntity="\App\Communication\Entity\Message", inversedBy="recipients", cascade={"persist"})
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
@@ -120,7 +120,7 @@ class Recipient
     private $message;
 
     /**
-     * @var \DateTimeInterface Sent date of the message.
+     * @var \DateTimeInterface sent date of the message
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read","write","threads","thread"})
@@ -128,7 +128,7 @@ class Recipient
     private $sentDate;
 
     /**
-     * @var \DateTimeInterface Read date of the message.
+     * @var \DateTimeInterface read date of the message
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read","write","threads","thread"})
@@ -136,7 +136,7 @@ class Recipient
     private $readDate;
 
     /**
-     * @var ArrayCollection|null The notifications sent for the recipient.
+     * @var null|ArrayCollection the notifications sent for the recipient
      *
      * @ORM\OneToMany(targetEntity="\App\Communication\Entity\Notified", mappedBy="recipient", cascade={"persist"})
      * @Groups({"read","write","thread"})
@@ -145,7 +145,7 @@ class Recipient
     private $notifieds;
 
     /**
-     * @var \DateTimeInterface Creation date.
+     * @var \DateTimeInterface creation date
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read"})
@@ -153,7 +153,7 @@ class Recipient
     private $createdDate;
 
     /**
-     * @var \DateTimeInterface Updated date.
+     * @var \DateTimeInterface updated date
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read"})
@@ -289,7 +289,7 @@ class Recipient
      */
     public function setAutoCreatedDate()
     {
-        $this->setCreatedDate(new \Datetime());
+        $this->setCreatedDate(new \DateTime());
     }
 
     /**
@@ -299,6 +299,6 @@ class Recipient
      */
     public function setAutoUpdatedDate()
     {
-        $this->setUpdatedDate(new \Datetime());
+        $this->setUpdatedDate(new \DateTime());
     }
 }

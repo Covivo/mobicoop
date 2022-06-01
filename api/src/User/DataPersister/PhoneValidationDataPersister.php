@@ -18,7 +18,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\DataPersister;
 
@@ -40,7 +40,7 @@ final class PhoneValidationDataPersister implements ContextAwareDataPersisterInt
 
     public function supports($data, array $context = []): bool
     {
-        return $data instanceof PhoneValidation && isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'post';
+        return $data instanceof PhoneValidation && isset($context['collection_operation_name']) && 'post' == $context['collection_operation_name'];
     }
 
     public function persist($data, array $context = [])

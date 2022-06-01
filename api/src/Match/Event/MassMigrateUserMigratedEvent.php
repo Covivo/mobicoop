@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Match\Event;
 
@@ -27,7 +27,7 @@ use App\Match\Entity\MassPerson;
 use Symfony\Contracts\EventDispatcher\Event;
 
 /**
- * Event sent when a massUser is migrated to a regular User
+ * Event sent when a massUser is migrated to a regular User.
  */
 class MassMigrateUserMigratedEvent extends Event
 {

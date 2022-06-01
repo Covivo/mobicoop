@@ -1077,8 +1077,6 @@ class PaymentManager
 
     /**
      * Disable a bank account.
-     *
-     * @return BankAccount
      */
     public function disableBankAccount(User $user, BankAccount $bankAccount): BankAccount
     {
@@ -1124,8 +1122,6 @@ class PaymentManager
      * @param User   $user                  The User we want to create a profile
      * @param string $identifier            The User identifier on the payment provider service
      * @param bool   $electronicallyPayable If the User can be payed electronically
-     *
-     * @return PaymentProfile
      */
     public function createPaymentProfile(User $user, string $identifier, bool $electronicallyPayable = false): PaymentProfile
     {
@@ -1305,8 +1301,6 @@ class PaymentManager
      * Build a PaymentPayment from a CarpoolPayment.
      *
      * @param int $carpoolPaymentId The carpoolPayment
-     *
-     * @return PaymentPayment
      */
     public function buildPaymentPaymentFromCarpoolPayment(int $carpoolPaymentId): PaymentPayment
     {
@@ -1390,8 +1384,6 @@ class PaymentManager
 
     /**
      * Get the reason why the document is refused.
-     *
-     * @return PaymentProfile
      */
     public function getRefusalReason(PaymentProfile $paymentProfile): PaymentProfile
     {

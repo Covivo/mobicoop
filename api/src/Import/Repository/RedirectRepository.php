@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Import\Repository;
 
@@ -28,7 +28,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 
 /**
- * @method Redirect|null find($id, $lockMode = null, $lockVersion = null)
+ * @method null|Redirect find($id, $lockMode = null, $lockVersion = null)
  * @method Redirect[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 class RedirectRepository
@@ -63,8 +63,9 @@ class RedirectRepository
 
     public function findByUriWithWildCard(string $uri)
     {
-        $query = "SELECT r FROM App\Import\Entity\Redirect r WHERE LOCATE(r.originUri,'".$uri."') = 1";
+        $query = "SELECT r FROM App\\Import\\Entity\\Redirect r WHERE LOCATE(r.originUri,'".$uri."') = 1";
         $query = $this->entityManager->createQuery($query);
+
         return $query->getResult();
     }
 }

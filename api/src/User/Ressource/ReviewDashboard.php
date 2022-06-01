@@ -19,18 +19,16 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\Ressource;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Validator\Constraints as Assert;
-use App\User\Ressource\Review;
 
 /**
- * A Review Dashboard with Given reviews, Received reviews and reviews to give
+ * A Review Dashboard with Given reviews, Received reviews and reviews to give.
  *
  * @ApiResource(
  *      attributes={
@@ -55,6 +53,7 @@ use App\User\Ressource\Review;
  *          }
  *      }
  * )
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class ReviewDashboard
@@ -62,7 +61,7 @@ class ReviewDashboard
     public const DEFAULT_ID = 999999999999;
 
     /**
-     * @var int The id of this Review.
+     * @var int the id of this Review
      *
      * @ApiProperty(identifier=true)
      * @Groups({"read","readReview"})

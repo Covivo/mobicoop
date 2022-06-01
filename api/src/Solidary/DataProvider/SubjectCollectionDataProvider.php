@@ -18,18 +18,17 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\DataProvider;
 
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
 use App\Solidary\Entity\Subject;
 use App\Solidary\Exception\SolidaryException;
 use App\Solidary\Service\StructureManager;
-use Symfony\Component\Security\Core\Security;
 use App\User\Entity\User;
+use Symfony\Component\Security\Core\Security;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
@@ -51,6 +50,7 @@ final class SubjectCollectionDataProvider implements CollectionDataProviderInter
         if (isset($context['filters'])) {
             $this->filters = $context['filters'];
         }
+
         return Subject::class === $resourceClass;
     }
 

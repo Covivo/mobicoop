@@ -19,15 +19,15 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Gamification\Security;
 
-use App\Auth\Service\AuthManager;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
+use App\Auth\Service\AuthManager;
 use App\Gamification\Resource\TestAction;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class TestActionVoter extends Voter
 {
@@ -44,15 +44,15 @@ class TestActionVoter extends Voter
     {
         // if the attribute isn't one we support, return false
         if (!in_array($attribute, [
-            self::GAMIFICATION_TEST_ACTION
-            ])) {
+            self::GAMIFICATION_TEST_ACTION,
+        ])) {
             return false;
         }
 
         // only vote on Event objects inside this voter
         if (!in_array($attribute, [
-            self::GAMIFICATION_TEST_ACTION
-            ]) && !($subject instanceof Paginator) && !($subject instanceof TestAction)) {
+            self::GAMIFICATION_TEST_ACTION,
+        ]) && !($subject instanceof Paginator) && !($subject instanceof TestAction)) {
             return false;
         }
 

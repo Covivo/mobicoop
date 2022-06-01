@@ -15,7 +15,7 @@ final class Version20191128133808 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('CREATE TABLE user_import (id INT AUTO_INCREMENT NOT NULL, user_id INT DEFAULT NULL, user_external_id VARCHAR(255) NOT NULL, origin VARCHAR(255) NOT NULL, status SMALLINT NOT NULL, created_date DATETIME NOT NULL, updated_date DATETIME NOT NULL, treatment_start_date DATETIME NOT NULL, treatment_end_date DATETIME NOT NULL, UNIQUE INDEX UNIQ_F81CD520A76ED395 (user_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB');
         $this->addSql('ALTER TABLE user_import ADD CONSTRAINT FK_F81CD520A76ED395 FOREIGN KEY (user_id) REFERENCES user (id)');
@@ -76,7 +76,7 @@ final class Version20191128133808 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('DROP TABLE user_import');
         $this->addSql('ALTER TABLE action CHANGE in_log in_log TINYINT(1) DEFAULT \'NULL\', CHANGE in_diary in_diary TINYINT(1) DEFAULT \'NULL\', CHANGE progression progression INT DEFAULT NULL, CHANGE created_date created_date DATETIME DEFAULT \'NULL\', CHANGE updated_date updated_date DATETIME DEFAULT \'NULL\'');

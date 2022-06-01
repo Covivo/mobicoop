@@ -19,14 +19,14 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Gamification\Rule;
 
 use App\Gamification\Interfaces\GamificationRuleInterface;
 
 /**
- * check if the user used a relay point
+ * check if the user used a relay point.
  */
 class HasARelayPointAsWaypoint implements GamificationRuleInterface
 {
@@ -35,9 +35,8 @@ class HasARelayPointAsWaypoint implements GamificationRuleInterface
      */
     public function execute($log, $sequenceItem): bool
     {
-        /** To do : implement the rule*/
+        // To do : implement the rule
         return true;
-
         // We check if there is the right object
         // if (!isset($params['ad'])) {
         //     return false;

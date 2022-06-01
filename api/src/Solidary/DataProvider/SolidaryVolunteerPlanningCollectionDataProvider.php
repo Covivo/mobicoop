@@ -18,13 +18,12 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\DataProvider;
 
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
 use App\Solidary\Entity\SolidaryVolunteerPlanning\SolidaryVolunteerPlanning;
 use App\Solidary\Exception\SolidaryException;
 use App\Solidary\Service\SolidaryManager;
@@ -45,6 +44,7 @@ final class SolidaryVolunteerPlanningCollectionDataProvider implements Collectio
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
         $this->context = $context;
+
         return SolidaryVolunteerPlanning::class === $resourceClass;
     }
 
@@ -72,7 +72,7 @@ final class SolidaryVolunteerPlanningCollectionDataProvider implements Collectio
         } elseif (is_numeric($this->context['filters']['solidaryVolunteerId'])) {
             $solidaryVolunteerId = $this->context['filters']['solidaryVolunteerId'];
         }
-        if ($solidaryVolunteerId==-1 || !is_numeric($solidaryVolunteerId)) {
+        if (-1 == $solidaryVolunteerId || !is_numeric($solidaryVolunteerId)) {
             throw new SolidaryException(SolidaryException::SOLIDARY_VOLUNTEER_ID_INVALID);
         }
 

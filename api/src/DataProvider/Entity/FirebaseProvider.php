@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\DataProvider\Entity;
 
@@ -32,7 +32,6 @@ use Fcm\Push\Notification;
  * Firebase management service.
  *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
- *
  */
 class FirebaseProvider implements ProviderInterface
 {
@@ -52,7 +51,8 @@ class FirebaseProvider implements ProviderInterface
         $notification
             ->addRecipient($push->getRecipientDeviceIds())
             ->setTitle($push->getTitle())
-            ->setBody($push->getMessage());
+            ->setBody($push->getMessage())
+        ;
 
         // send the notification
         $this->client->send($notification);
@@ -70,17 +70,17 @@ class FirebaseProvider implements ProviderInterface
     }
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function getItem(string $class, string $apikey, array $params)
     {
     }
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function deserialize(string $class, array $data)
     {
-        $this->logger->info("Firebase API return");
+        $this->logger->info('Firebase API return');
     }
 }

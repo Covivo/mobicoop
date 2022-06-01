@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Gamification\EventSubscriber;
 
@@ -42,7 +42,7 @@ class ValidationStepSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            ValidationStepEvent::NAME => 'onValidationStepEvent'
+            ValidationStepEvent::NAME => 'onValidationStepEvent',
         ];
     }
 

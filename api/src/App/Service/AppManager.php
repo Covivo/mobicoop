@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\App\Service;
 
@@ -45,10 +45,11 @@ class AppManager
     }
 
     /**
-     * Get an app by its id
+     * Get an app by its id.
      *
-     * @param int $appId  The appId
-     * @return App|null The app found
+     * @param int $appId The appId
+     *
+     * @return null|App The app found
      */
     public function getApp(int $appId): ?App
     {
@@ -56,13 +57,14 @@ class AppManager
     }
 
     /**
-     * Get an app by its username
+     * Get an app by its username.
      *
-     * @param string $username  The username
-     * @return App|null The app found
+     * @param string $username The username
+     *
+     * @return null|App The app found
      */
     public function getAppByUsername(string $username): ?App
     {
-        return $this->appRepository->findOneBy(['username'=>$username]);
+        return $this->appRepository->findOneBy(['username' => $username]);
     }
 }

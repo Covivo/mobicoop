@@ -19,20 +19,18 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
-use App\Communication\Entity\Medium;
+use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
-use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * A solidary formal request about a SolidarySolution
+ * A solidary formal request about a SolidarySolution.
  *
  * Exemple of formal request data :
  *
@@ -52,7 +50,6 @@ use Doctrine\Common\Collections\ArrayCollection;
  *    }
  *  ]
  * }
- *
  *
  * @ApiResource(
  *      attributes={
@@ -83,6 +80,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  *          }
  *      }
  * )
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class SolidaryFormalRequest
@@ -90,7 +88,7 @@ class SolidaryFormalRequest
     public const DEFAULT_ID = 999999999999;
 
     /**
-     * @var int The id of this subject.
+     * @var int the id of this subject
      *
      * @ApiProperty(identifier=true)
      * @Groups({"readSolidaryFormalRequest","writeSolidaryFormalRequest"})
@@ -98,51 +96,50 @@ class SolidaryFormalRequest
     private $id;
 
     /**
-    * @var SolidarySolution The solidary solution this contact is for
-    * @Assert\NotBlank
-    * @Groups({"readSolidaryFormalRequest","writeSolidaryFormalRequest"})
-    * @MaxDepth(1)
-    */
+     * @var SolidarySolution The solidary solution this contact is for
+     * @Assert\NotBlank
+     * @Groups({"readSolidaryFormalRequest","writeSolidaryFormalRequest"})
+     * @MaxDepth(1)
+     */
     private $solidarySolution;
 
     /**
-     * @var \DateTimeInterface|null The date for the outward if the frequency is punctual, the start date of the outward if the frequency is regular.
+     * @var null|\DateTimeInterface the date for the outward if the frequency is punctual, the start date of the outward if the frequency is regular
      * @Groups({"readSolidaryFormalRequest","writeSolidaryFormalRequest"})
      */
     private $outwardDate;
 
     /**
-     * @var \DateTimeInterface|null The limit date for the outward if the frequency is regular.
+     * @var null|\DateTimeInterface the limit date for the outward if the frequency is regular
      * @Groups({"readSolidaryFormalRequest","writeSolidaryFormalRequest"})
      */
     private $outwardLimitDate;
 
     /**
-     * @var \DateTimeInterface|null The date for the return if the frequency is punctual, the start date of the return if the frequency is regular.
+     * @var null|\DateTimeInterface the date for the return if the frequency is punctual, the start date of the return if the frequency is regular
      * @Groups({"readSolidaryFormalRequest","writeSolidaryFormalRequest"})
      */
     private $returnDate;
 
     /**
-     * @var \DateTimeInterface|null The limit date for the return if the frequency is regular.
+     * @var null|\DateTimeInterface the limit date for the return if the frequency is regular
      * @Groups({"readSolidaryFormalRequest","writeSolidaryFormalRequest"})
      */
     private $returnLimitDate;
 
     /**
-     * @var array|null The outward schedule
+     * @var null|array The outward schedule
      *
      * @Groups({"readSolidaryFormalRequest","writeSolidaryFormalRequest"})
      */
     private $outwardSchedule;
 
     /**
-     * @var array|null The return schedule
+     * @var null|array The return schedule
      *
      * @Groups({"readSolidaryFormalRequest","writeSolidaryFormalRequest"})
      */
     private $returnSchedule;
-
 
     public function __construct()
     {

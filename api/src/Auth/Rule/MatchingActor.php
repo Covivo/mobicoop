@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Auth\Rule;
 
@@ -27,7 +27,7 @@ use App\Auth\Interfaces\AuthRuleInterface;
 use App\Carpool\Entity\Matching;
 
 /**
- *  Check that the requester is involved in the related Matching
+ *  Check that the requester is involved in the related Matching.
  */
 class MatchingActor implements AuthRuleInterface
 {
@@ -53,6 +53,7 @@ class MatchingActor implements AuthRuleInterface
         if ($requester->getId() == $userIdOffer || $requester->getId() == $userIdRequest) {
             return true;
         }
+
         return false;
     }
 }

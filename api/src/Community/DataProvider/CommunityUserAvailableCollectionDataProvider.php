@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Community\DataProvider;
 
@@ -33,11 +33,10 @@ use Symfony\Component\HttpFoundation\RequestStack;
  * Collection data provider for Community user search.
  *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
- *
  */
 final class CommunityUserAvailableCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
-    protected $request;
+    private $request;
     private $communityManager;
 
     public function __construct(RequestStack $requestStack, CommunityManager $communityManager)
@@ -48,11 +47,11 @@ final class CommunityUserAvailableCollectionDataProvider implements CollectionDa
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Community::class === $resourceClass && $operationName === "available";
+        return Community::class === $resourceClass && 'available' === $operationName;
     }
 
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
-        return $this->communityManager->getAvailableCommunitiesForUser($this->request->get("userId"));
+        return $this->communityManager->getAvailableCommunitiesForUser($this->request->get('userId'));
     }
 }

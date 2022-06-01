@@ -19,15 +19,15 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\MassCommunication\Security;
 
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
 use App\Auth\Service\AuthManager;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use App\MassCommunication\Entity\Campaign;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class CampaignVoter extends Voter
 {
@@ -50,8 +50,8 @@ class CampaignVoter extends Voter
             self::CAMPAIGN_READ,
             self::CAMPAIGN_UPDATE,
             self::CAMPAIGN_DELETE,
-            self::CAMPAIGN_LIST
-            ])) {
+            self::CAMPAIGN_LIST,
+        ])) {
             return false;
         }
 
@@ -61,10 +61,11 @@ class CampaignVoter extends Voter
             self::CAMPAIGN_READ,
             self::CAMPAIGN_UPDATE,
             self::CAMPAIGN_DELETE,
-            self::CAMPAIGN_LIST
-            ]) && !($subject instanceof Paginator) && !($subject instanceof Campaign)) {
+            self::CAMPAIGN_LIST,
+        ]) && !($subject instanceof Paginator) && !($subject instanceof Campaign)) {
             return false;
         }
+
         return true;
     }
 
@@ -73,12 +74,16 @@ class CampaignVoter extends Voter
         switch ($attribute) {
             case self::CAMPAIGN_CREATE:
                 return $this->canCreateCampaign();
+
             case self::CAMPAIGN_READ:
                 return $this->canReadCampaign($subject);
+
             case self::CAMPAIGN_UPDATE:
                 return $this->canUpdateCampaign($subject);
+
             case self::CAMPAIGN_DELETE:
                 return $this->canDeleteCampaign($subject);
+
             case self::CAMPAIGN_LIST:
                 return $this->canListCampaign();
         }
@@ -93,17 +98,17 @@ class CampaignVoter extends Voter
 
     private function canReadCampaign(Campaign $campaign)
     {
-        return $this->authManager->isAuthorized(self::CAMPAIGN_READ, ['campaign'=>$campaign]);
+        return $this->authManager->isAuthorized(self::CAMPAIGN_READ, ['campaign' => $campaign]);
     }
 
     private function canUpdateCampaign(Campaign $campaign)
     {
-        return $this->authManager->isAuthorized(self::CAMPAIGN_UPDATE, ['campaign'=>$campaign]);
+        return $this->authManager->isAuthorized(self::CAMPAIGN_UPDATE, ['campaign' => $campaign]);
     }
 
     private function canDeleteCampaign(Campaign $campaign)
     {
-        return $this->authManager->isAuthorized(self::CAMPAIGN_DELETE, ['campaign'=>$campaign]);
+        return $this->authManager->isAuthorized(self::CAMPAIGN_DELETE, ['campaign' => $campaign]);
     }
 
     private function canListCampaign()

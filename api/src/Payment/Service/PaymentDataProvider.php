@@ -19,21 +19,21 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Payment\Service;
 
-use App\Payment\Ressource\BankAccount;
-use App\Payment\Exception\PaymentException;
-use App\User\Entity\User;
 use App\DataProvider\Entity\MangoPayProvider;
 use App\DataProvider\Ressource\Hook;
 use App\Geography\Entity\Address;
 use App\Payment\Entity\CarpoolPayment;
 use App\Payment\Entity\PaymentProfile;
-use App\Payment\Repository\PaymentProfileRepository;
 use App\Payment\Entity\Wallet;
+use App\Payment\Exception\PaymentException;
+use App\Payment\Repository\PaymentProfileRepository;
+use App\Payment\Ressource\BankAccount;
 use App\Payment\Ressource\ValidationDocument;
+use App\User\Entity\User;
 use DateTime;
 use Symfony\Component\Security\Core\Security;
 
@@ -47,6 +47,9 @@ use Symfony\Component\Security\Core\Security;
  */
 class PaymentDataProvider
 {
+    private const SUPPORTED_PROVIDERS = [
+        'MangoPay' => MangoPayProvider::class,
+    ];
     private $paymentActive;
     private $paymentActiveDate;
     private $paymentProvider;
@@ -62,10 +65,6 @@ class PaymentDataProvider
     private $clientId;
     private $apikey;
     private $sandBoxMode;
-
-    private const SUPPORTED_PROVIDERS = [
-        "MangoPay" => MangoPayProvider::class
-    ];
 
     public function __construct(
         PaymentProfileRepository $paymentProfileRepository,
@@ -89,7 +88,7 @@ class PaymentDataProvider
         $this->baseMobileUri = $baseMobileUri;
         $this->platformName = $platformName;
         $this->paymentActive = false;
-        if ($this->paymentActiveDate = DateTime::createFromFormat("Y-m-d", $paymentActive)) {
+        if ($this->paymentActiveDate = DateTime::createFromFormat('Y-m-d', $paymentActive)) {
             $this->paymentActiveDate->setTime(0, 0);
             $this->paymentActive = true;
         }
@@ -101,11 +100,11 @@ class PaymentDataProvider
     }
 
     /**
-     * Check if the payment is correcty configured
+     * Check if the payment is correcty configured.
      */
     public function checkPaymentConfiguration()
     {
-        if ($this->paymentProvider!=="") {
+        if ('' !== $this->paymentProvider) {
             if (isset(self::SUPPORTED_PROVIDERS[$this->paymentProvider])) {
                 $providerClass = self::SUPPORTED_PROVIDERS[$this->paymentProvider];
                 $this->providerInstance = new $providerClass(
@@ -138,62 +137,57 @@ class PaymentDataProvider
         }
     }
 
-
     /**
-     * Get the BankAccounts of a PaymentProfile
-     *
-     * @param PaymentProfile $paymentProfile
-     * @return BankAccount|null
+     * Get the BankAccounts of a PaymentProfile.
      */
     public function getPaymentProfileBankAccounts(PaymentProfile $paymentProfile): ?BankAccount
     {
         $this->checkPaymentConfiguration();
+
         return $this->providerInstance->getBankAccounts($paymentProfile);
     }
 
     /**
-     * Add a BankAccount
+     * Add a BankAccount.
      *
-     * @param BankAccount $user     The BankAccount to create
-     * @return BankAccount|null
+     * @param BankAccount $user The BankAccount to create
      */
     public function addBankAccount(BankAccount $bankAccount): ?BankAccount
     {
         $this->checkPaymentConfiguration();
+
         return $this->providerInstance->addBankAccount($bankAccount);
     }
 
     /**
-     * Disable a BankAccount
+     * Disable a BankAccount.
      *
-     * @param BankAccount $user     The BankAccount to create
-     * @return BankAccount|null
+     * @param BankAccount $user The BankAccount to create
      */
     public function disableBankAccount(BankAccount $bankAccount): ?BankAccount
     {
         $this->checkPaymentConfiguration();
+
         return $this->providerInstance->disableBankAccount($bankAccount);
     }
 
-
     /**
-     * Get the PaymentProfiles of a User
+     * Get the PaymentProfiles of a User.
      *
-     * @param User $user                    The User
-     * @param bool $callExternalProvider    true : make the call to the external provider to get bank accounts and wallets
-     * @return PaymentProfile[]|null
+     * @param User $user                 The User
+     * @param bool $callExternalProvider true : make the call to the external provider to get bank accounts and wallets
+     *
+     * @return null|PaymentProfile[]
      */
-    public function getPaymentProfiles(User $user, $callExternalProvider=true): ?array
+    public function getPaymentProfiles(User $user, $callExternalProvider = true): ?array
     {
         $this->checkPaymentConfiguration();
 
         // Get more information for each profiles
-        $paymentProfiles = $this->paymentProfileRepository->findBy(["user"=>$user]);
+        $paymentProfiles = $this->paymentProfileRepository->findBy(['user' => $user]);
         if (!is_null($paymentProfiles)) {
             foreach ($paymentProfiles as $paymentProfile) {
-                /**
-                 * @var PaymentProfile $paymentProfile
-                 */
+                // @var PaymentProfile $paymentProfile
 
                 if ($callExternalProvider) {
                     $bankAccounts = $this->providerInstance->getBankAccounts($paymentProfile);
@@ -206,78 +200,83 @@ class PaymentDataProvider
                 $user->setPaymentProfileId($paymentProfile->getId());
             }
         }
+
         return $paymentProfiles;
     }
 
-
     /**
-     * Register a User on the payment provider platform
+     * Register a User on the payment provider platform.
      *
-     * @param User $user
-     * @param Address|null $address The address to use to the registration
+     * @param null|Address $address The address to use to the registration
+     *
      * @return string The identifier
      */
-    public function registerUser(User $user, Address $address=null): string
+    public function registerUser(User $user, Address $address = null): string
     {
         $this->checkPaymentConfiguration();
+
         return $this->providerInstance->registerUser($user, $address);
     }
 
-
     /**
-     * Update a User on the payment provider platform
+     * Update a User on the payment provider platform.
      *
-     * @param User $user
      * @return string The identifier
      */
     public function updateUser(User $user): string
     {
         $this->checkPaymentConfiguration();
+
         return $this->providerInstance->updateUser($user);
     }
 
     /**
-     * Create a wallet for a user
+     * Create a wallet for a user.
      *
      * @param $identifier Identifier of the User (the one used on the provider's platform)
+     *
      * @return Wallet The created wallet
      */
     public function createWallet(string $identifier): Wallet
     {
         $this->checkPaymentConfiguration();
         $wallet = new Wallet();
-        $wallet->setDescription("Wallet from ".$this->platformName); // This field is required
-        $wallet->setComment("");
+        $wallet->setDescription('Wallet from '.$this->platformName); // This field is required
+        $wallet->setComment('');
         $wallet->setCurrency($this->defaultCurrency);
         $wallet->setOwnerIdentifier($identifier);
+
         return $this->providerInstance->addWallet($wallet);
     }
 
     /**
-     * Handle a payment web hook
-     * @var object $hook The web hook from the payment provider
+     * Handle a payment web hook.
+     *
+     * @var object The web hook from the payment provider
+     *
      * @return Hook with status and transaction id
      */
     public function handleHook(Hook $hook): Hook
     {
         $this->checkPaymentConfiguration();
+
         return $this->providerInstance->handleHook($hook);
     }
 
     /**
-     * Get the secured form's url for electronic payment
+     * Get the secured form's url for electronic payment.
      *
-     * @param CarpoolPayment $carpoolPayment
      * @return CarpoolPayment With redirectUrl filled
      */
     public function generateElectronicPaymentUrl(CarpoolPayment $carpoolPayment): CarpoolPayment
     {
         $this->checkPaymentConfiguration();
+
         return $this->providerInstance->generateElectronicPaymentUrl($carpoolPayment);
     }
 
     /**
-     * Process an electronic payment between the $debtor and the $creditors
+     * Process an electronic payment between the $debtor and the $creditors.
      *
      * array of creditors are like this :
      * $creditors = [
@@ -286,10 +285,6 @@ class PaymentDataProvider
      *      "amount" => float
      *  ]
      * ]
-     *
-     * @param User $debtor
-     * @param array $creditors
-     * @return void
      */
     public function processElectronicPayment(User $debtor, array $creditors): void
     {
@@ -300,20 +295,18 @@ class PaymentDataProvider
     /**
      * Upload an identity validation document to the payment provider
      * The document is not stored on the platform. It has to be deleted.
-     *
-     * @param ValidationDocument $validationDocument
-     * @return ValidationDocument
      */
     public function uploadValidationDocument(ValidationDocument $validationDocument): ValidationDocument
     {
         $this->checkPaymentConfiguration();
+
         return $this->providerInstance->uploadValidationDocument($validationDocument);
     }
-
 
     public function getDocument(int $validationDocumentId)
     {
         $this->checkPaymentConfiguration();
+
         return $this->providerInstance->getDocument($validationDocumentId);
     }
 }

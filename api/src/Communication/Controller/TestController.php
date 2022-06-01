@@ -19,32 +19,30 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Communication\Controller;
 
 use App\Communication\Entity\Sms;
-use Symfony\Contracts\Translation\TranslatorInterface;
 use App\DataProvider\Entity\SmsEnvoiProvider;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 
 /**
  * WARNING : Controller class for API communication testing purpose ONLY
  * DO NOT EXPOSE ANY ROUTE
- * WATCH AND AMEND THE CODE CAREFULLY TO BUILD CUSTOM TESTS
+ * WATCH AND AMEND THE CODE CAREFULLY TO BUILD CUSTOM TESTS.
  *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
- *
  */
 class TestController extends AbstractController
 {
     private $templating;
     private $translator;
     private $smsProvider;
-
 
     public function __construct(Environment $templating, TranslatorInterface $translator, array $params)
     {
@@ -54,19 +52,19 @@ class TestController extends AbstractController
     }
 
     /**
-     * Send a sms for testing purpose
+     * Send a sms for testing purpose.
+     *
      * @Route("/rd/communication/sms/{mobile}", name="testSMS")
-     * @var string $mobile  The recipient mobile number
-     * @return Response
+     *
+     * @var string The recipient mobile number
      */
     public function testSMS(string $mobile): Response
     {
-        $this->translator->setLocale("fr_FR");
+        $this->translator->setLocale('fr_FR');
 
-        $templatePath = "sms/notification";
+        $templatePath = 'sms/notification';
 
-        $template = "test_sms";
-
+        $template = 'test_sms';
 
         $context['message'] = "C'est un test";
 
@@ -75,10 +73,10 @@ class TestController extends AbstractController
         $sms->setMessage(
             $this->templating->render(
                 $templatePath.'/'.$template.'.html.twig',
-                array(
+                [
                     'context' => $context,
-                    'message' => str_replace(array("\r\n", "\r", "\n"), "<br />", $sms->getMessage()),
-                )
+                    'message' => str_replace(["\r\n", "\r", "\n"], '<br />', $sms->getMessage()),
+                ]
             ),
             'text/html'
         );

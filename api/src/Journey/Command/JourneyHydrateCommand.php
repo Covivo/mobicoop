@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Journey\Command;
 
@@ -33,7 +33,6 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
  */
-
 class JourneyHydrateCommand extends Command
 {
     private $journeyManager;
@@ -47,9 +46,9 @@ class JourneyHydrateCommand extends Command
     protected function configure()
     {
         $this
-        ->setName('app:journey:hydrate')
-        ->setDescription('Hydrate journey entity.')
-        ->setHelp('Hydrate journey entity with data from proposals).')
+            ->setName('app:journey:hydrate')
+            ->setDescription('Hydrate journey entity.')
+            ->setHelp('Hydrate journey entity with data from proposals).')
         ;
     }
 

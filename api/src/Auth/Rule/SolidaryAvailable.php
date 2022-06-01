@@ -19,14 +19,14 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Auth\Rule;
 
 use App\Auth\Interfaces\AuthRuleInterface;
 
 /**
- *  Check that the solidary module is available
+ *  Check that the solidary module is available.
  */
 class SolidaryAvailable implements AuthRuleInterface
 {
@@ -38,6 +38,7 @@ class SolidaryAvailable implements AuthRuleInterface
         if (isset($params['solidary'])) {
             return $params['solidary'];
         }
+
         return true;
     }
 }

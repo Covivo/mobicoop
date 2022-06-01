@@ -15,7 +15,7 @@ final class Version20190514153722 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE image ADD relay_point_id INT DEFAULT NULL, ADD relay_point_type_id INT DEFAULT NULL');
         $this->addSql('ALTER TABLE image ADD CONSTRAINT FK_C53D045F77D93E2D FOREIGN KEY (relay_point_id) REFERENCES relay_point (id)');
@@ -27,7 +27,7 @@ final class Version20190514153722 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE image DROP FOREIGN KEY FK_C53D045F77D93E2D');
         $this->addSql('ALTER TABLE image DROP FOREIGN KEY FK_C53D045FD8CA6523');

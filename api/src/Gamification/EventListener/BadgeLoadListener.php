@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Gamification\EventListener;
 
@@ -28,7 +28,8 @@ use App\I18n\Service\LanguageManager;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 
 /**
- * Badge Event listener
+ * Badge Event listener.
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class BadgeLoadListener

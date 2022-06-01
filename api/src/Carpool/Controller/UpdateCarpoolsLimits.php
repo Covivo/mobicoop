@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Carpool\Controller;
 
@@ -45,16 +45,13 @@ class UpdateCarpoolsLimits
 
     /**
      * This method is invoked when a new ad is posted.
-     *
-     * @param array $data
-     * @return array
      */
     public function __invoke(array $data): array
     {
         if (is_null($data)) {
-            throw new \InvalidArgumentException($this->translator->trans("bad Ad id is provided"));
+            throw new \InvalidArgumentException($this->translator->trans('bad Ad id is provided'));
         }
-        $data = $this->adManager->updateCarpoolsLimits();
-        return $data;
+
+        return $this->adManager->updateCarpoolsLimits();
     }
 }

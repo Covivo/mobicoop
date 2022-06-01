@@ -19,17 +19,17 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\Controller;
 
 use App\TranslatorTrait;
-use Symfony\Component\HttpFoundation\Response;
 use App\User\Entity\User;
 use App\User\Service\UserManager;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Controller class for user asks
+ * Controller class for user asks.
  *
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
  */
@@ -45,17 +45,13 @@ class UserAsks
 
     /**
      * This method is invoked when the list of asks of user is asked.
-     *
-     * @param User $data
-     * @return Response
      */
     public function __invoke(User $data): Response
     {
         if (is_null($data)) {
-            throw new \InvalidArgumentException($this->translator->trans("bad User id is provided"));
+            throw new \InvalidArgumentException($this->translator->trans('bad User id is provided'));
         }
 
-        $asks = $this->userManager->getAsks($data);
-        return $asks;
+        return $this->userManager->getAsks($data);
     }
 }

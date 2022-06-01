@@ -19,14 +19,14 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Auth\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
-use App\Auth\Controller\Permissions;
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Auth\Controller\PermissionCheck;
+use App\Auth\Controller\Permissions;
 
 /**
  * A permission to execute an action.
@@ -97,14 +97,14 @@ use App\Auth\Controller\PermissionCheck;
 class Permission
 {
     /**
-     * @var int The id of this permission.
+     * @var int the id of this permission
      *
      * @ApiProperty(identifier=true)
      */
     private $id;
 
     /**
-     * @var boolean The action is granted
+     * @var bool The action is granted
      */
     private $granted;
 

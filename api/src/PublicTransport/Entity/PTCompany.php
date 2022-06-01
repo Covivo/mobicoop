@@ -19,14 +19,14 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\PublicTransport\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
-use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * A public transport company.
@@ -53,7 +53,7 @@ use Doctrine\ORM\Mapping as ORM;
 class PTCompany
 {
     /**
-     * @var int The id of this company.
+     * @var int the id of this company
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -64,7 +64,7 @@ class PTCompany
     private $id;
 
     /**
-     * @var string The name of this company.
+     * @var string the name of this company
      *
      * @ORM\Column(type="string", length=100)
      * @Groups("pt")

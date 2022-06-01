@@ -18,17 +18,15 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\DataProvider;
 
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
 use App\Solidary\Entity\SolidaryBeneficiary;
 use App\Solidary\Service\SolidaryUserManager;
 use Symfony\Component\Security\Core\Security;
-use App\User\Entity\User;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
@@ -40,7 +38,6 @@ final class SolidaryBeneficiaryCollectionDataProvider implements CollectionDataP
     private $context;
     private $security;
 
-
     public function __construct(SolidaryUserManager $solidaryUserManager, Security $security)
     {
         $this->solidaryUserManager = $solidaryUserManager;
@@ -50,8 +47,8 @@ final class SolidaryBeneficiaryCollectionDataProvider implements CollectionDataP
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
         $this->context = $context;
-        return SolidaryBeneficiary::class === $resourceClass && $operationName === 'get';
-        ;
+
+        return SolidaryBeneficiary::class === $resourceClass && 'get' === $operationName;
     }
 
     public function getCollection(string $resourceClass, string $operationName = null): iterable
@@ -64,11 +61,12 @@ final class SolidaryBeneficiaryCollectionDataProvider implements CollectionDataP
             foreach ($this->context['filters'] as $key => $value) {
                 if (in_array($key, SolidaryBeneficiary::AUTHORIZED_GENERIC_FILTERS)) {
                     $filters[$key] = $value;
-                } elseif ($key == SolidaryBeneficiary::VALIDATED_CANDIDATE_FILTER) {
-                    $validatedCandidate = ($value=="true") ? $validatedCandidate = true : $validatedCandidate = false;
+                } elseif (SolidaryBeneficiary::VALIDATED_CANDIDATE_FILTER == $key) {
+                    $validatedCandidate = ('true' == $value) ? $validatedCandidate = true : $validatedCandidate = false;
                 }
             }
         }
+
         return $this->solidaryUserManager->getSolidaryBeneficiaries($filters, $validatedCandidate);
     }
 }

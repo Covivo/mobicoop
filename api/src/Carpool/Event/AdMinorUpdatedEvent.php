@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Carpool\Event;
 
@@ -37,10 +37,12 @@ class AdMinorUpdatedEvent extends Event
 
     private $old;
     private $new;
+
     /**
      * @var Ask[]
      */
     private $asks;
+
     /**
      * @var UserInterface
      */
@@ -54,17 +56,11 @@ class AdMinorUpdatedEvent extends Event
         $this->sender = $sender;
     }
 
-    /**
-     * @return Ad
-     */
     public function getOldAd(): Ad
     {
         return $this->old;
     }
 
-    /**
-     * @return Ad
-     */
     public function getNewAd(): Ad
     {
         return $this->new;
@@ -78,9 +74,6 @@ class AdMinorUpdatedEvent extends Event
         return $this->asks;
     }
 
-    /**
-     * @return UserInterface
-     */
     public function getSender(): UserInterface
     {
         return $this->sender;

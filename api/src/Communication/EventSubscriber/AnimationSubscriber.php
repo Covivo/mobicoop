@@ -19,13 +19,13 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Communication\EventSubscriber;
 
 use App\Action\Event\AnimationMadeEvent;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use App\Communication\Service\NotificationManager;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class AnimationSubscriber implements EventSubscriberInterface
 {
@@ -39,7 +39,7 @@ class AnimationSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            AnimationMadeEvent::NAME => 'onAnimationMade'
+            AnimationMadeEvent::NAME => 'onAnimationMade',
         ];
     }
 

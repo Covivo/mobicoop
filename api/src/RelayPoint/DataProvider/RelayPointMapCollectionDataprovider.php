@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\RelayPoint\DataProvider;
 
@@ -35,11 +35,10 @@ use Symfony\Component\Security\Core\Security;
  * Collection data provider for RelayPointMap resource.
  *
  * @author Céline Jacquet <celine.jacquet@mobicoop.org>
- *
  */
 final class RelayPointMapCollectionDataprovider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
-    protected $request;
+    private $request;
     private $relayPointMapManager;
     private $security;
 
@@ -52,16 +51,17 @@ final class RelayPointMapCollectionDataprovider implements CollectionDataProvide
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return RelayPointMap::class === $resourceClass && $operationName === "get";
+        return RelayPointMap::class === $resourceClass && 'get' === $operationName;
     }
 
     public function getCollection(string $resourceClass, string $operationName = null, array $context = []): ?array
     {
-        if ($this->request->get("communityId")!== null) {
-            return $this->relayPointMapManager->getRelayPointsMapCommunity($this->request->get("communityId"));
+        if (null !== $this->request->get('communityId')) {
+            return $this->relayPointMapManager->getRelayPointsMapCommunity($this->request->get('communityId'));
         }
 
         $user = ($this->security->getUser() instanceof User) ? $this->security->getUser() : null;
+
         return $this->relayPointMapManager->getRelayPointsMap($user, $context);
     }
 }

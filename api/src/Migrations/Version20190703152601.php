@@ -15,7 +15,7 @@ final class Version20190703152601 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE ask_history ADD message_id INT DEFAULT NULL');
         $this->addSql('ALTER TABLE ask_history ADD CONSTRAINT FK_F4597A9537A1329 FOREIGN KEY (message_id) REFERENCES message (id)');
@@ -28,7 +28,7 @@ final class Version20190703152601 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE ask_history DROP FOREIGN KEY FK_F4597A9537A1329');
         $this->addSql('DROP INDEX UNIQ_F4597A9537A1329 ON ask_history');

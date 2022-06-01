@@ -18,18 +18,18 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\DataProvider;
 
 use ApiPlatform\Core\DataProvider\ItemDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
 use App\User\Ressource\Review;
 use App\User\Service\ReviewManager;
 
 /**
- * Profile Summary item dataprovider
+ * Profile Summary item dataprovider.
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 final class ReviewItemDataProvider implements ItemDataProviderInterface, RestrictedDataProviderInterface
@@ -43,15 +43,16 @@ final class ReviewItemDataProvider implements ItemDataProviderInterface, Restric
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Review::class === $resourceClass && $operationName == "get";
+        return Review::class === $resourceClass && 'get' == $operationName;
     }
 
     public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?Review
     {
         $review = $this->reviewManager->getReview($id);
         if (is_null($review)) {
-            throw new \LogicException("Review not found found");
+            throw new \LogicException('Review not found found');
         }
+
         return $review;
     }
 }

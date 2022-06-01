@@ -19,23 +19,23 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\Admin\DataProvider;
 
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\PaginationExtension;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryResultCollectionExtensionInterface;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGenerator;
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use App\User\Entity\User;
-use Doctrine\Persistence\ManagerRegistry;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGenerator;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryResultCollectionExtensionInterface;
 use App\Auth\Service\AuthManager;
 use App\MassCommunication\Admin\Service\CampaignManager;
 use App\MassCommunication\Entity\Campaign;
 use App\MassCommunication\Exception\CampaignException;
 use App\MassCommunication\Repository\CampaignRepository;
+use App\User\Entity\User;
 use App\User\Repository\UserRepository;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -43,10 +43,10 @@ use Symfony\Component\HttpFoundation\Response;
  * Collection data provider used to associate Users as deliveries for a campaign (depending on the filter type).
  *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
- *
  */
 final class UserCampaignAssociateCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
+    public const MAX_RESULTS = 999999;
     private $collectionExtensions;
     private $managerRegistry;
     private $request;
@@ -54,8 +54,6 @@ final class UserCampaignAssociateCollectionDataProvider implements CollectionDat
     private $campaignRepository;
     private $authManager;
     private $campaignManager;
-
-    public const MAX_RESULTS = 999999;
 
     public function __construct(RequestStack $requestStack, UserRepository $userRepository, CampaignRepository $campaignRepository, AuthManager $authManager, CampaignManager $campaignManager, ManagerRegistry $managerRegistry, iterable $collectionExtensions)
     {
@@ -70,7 +68,7 @@ final class UserCampaignAssociateCollectionDataProvider implements CollectionDat
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return User::class === $resourceClass && $operationName === "ADMIN_associate_campaign";
+        return User::class === $resourceClass && 'ADMIN_associate_campaign' === $operationName;
     }
 
     public function getCollection(string $resourceClass, string $operationName = null, array $context = []): iterable
@@ -86,7 +84,7 @@ final class UserCampaignAssociateCollectionDataProvider implements CollectionDat
         }
 
         // check if user is allowed to manage the campaign
-        if (!$this->authManager->isAuthorized('campaign_update', ['campaign'=>$campaign])) {
+        if (!$this->authManager->isAuthorized('campaign_update', ['campaign' => $campaign])) {
             return new Response('Unauthorized', Response::HTTP_UNAUTHORIZED);
         }
 
@@ -107,7 +105,7 @@ final class UserCampaignAssociateCollectionDataProvider implements CollectionDat
         $campaign->setFilterType($this->request->get('filterType'));
 
         $users = [];
-        $filters= [];
+        $filters = [];
 
         switch ($campaign->getFilterType()) {
             case Campaign::FILTER_TYPE_SELECTION:
@@ -116,10 +114,13 @@ final class UserCampaignAssociateCollectionDataProvider implements CollectionDat
                     throw new CampaignException('At least one user id is mandatory');
                 }
                 $users = new \ArrayIterator($this->userRepository->findDeliveriesByIds($this->request->get('user')));
+
                 break;
+
             case Campaign::FILTER_TYPE_FILTER:
                 $manager = $this->managerRegistry->getManagerForClass($resourceClass);
                 $repository = $manager->getRepository($resourceClass);
+
                 /**
                  * @var EntityRepository $repository
                  */
@@ -128,7 +129,7 @@ final class UserCampaignAssociateCollectionDataProvider implements CollectionDat
 
                 // we force the selection to the users that have accepted the news subscription
                 $rootAlias = $queryBuilder->getRootAliases()[0];
-                $queryBuilder->andWhere("$rootAlias.newsSubscription = 1");
+                $queryBuilder->andWhere("{$rootAlias}.newsSubscription = 1");
 
                 foreach ($this->collectionExtensions as $extension) {
                     $extension->applyToCollection($queryBuilder, $queryNameGenerator, $resourceClass, $operationName, $context);
@@ -141,12 +142,13 @@ final class UserCampaignAssociateCollectionDataProvider implements CollectionDat
                     }
                 }
 
-                $exclude = ['source','filterType','campaignId'];
-                foreach ($this->request->query->all() as $param=>$value) {
+                $exclude = ['source', 'filterType', 'campaignId'];
+                foreach ($this->request->query->all() as $param => $value) {
                     if (!in_array($param, $exclude)) {
                         $filters[$param] = $value;
                     }
                 }
+
                 break;
         }
 

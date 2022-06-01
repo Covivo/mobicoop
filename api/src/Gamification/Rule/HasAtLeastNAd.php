@@ -19,23 +19,22 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Gamification\Rule;
 
 use App\Gamification\Interfaces\GamificationRuleInterface;
 
 /**
- * Check if the user has at least N ad
+ * Check if the user has at least N ad.
  */
 class HasAtLeastNAd implements GamificationRuleInterface
 {
     /**
-     * Has at least N proposal
+     * Has at least N proposal.
      *
-     * @param  $log
-     * @param  $sequenceItem
-     * @return bool
+     * @param $log
+     * @param $sequenceItem
      */
     public function execute($log, $sequenceItem): bool
     {
@@ -52,6 +51,7 @@ class HasAtLeastNAd implements GamificationRuleInterface
         if (count($publishedProposals) >= $sequenceItem->getMinCount()) {
             return true;
         }
+
         return false;
     }
 }

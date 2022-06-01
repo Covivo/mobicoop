@@ -584,8 +584,6 @@ class StructureManager
      * Check if the given operate user is operator elsewhere the given structure, and eventually remove the operate role.
      *
      * @param Operate $operate The operate that containes the user and structure
-     *
-     * @return bool
      */
     private function checkIsOperator(Operate $operate): bool
     {

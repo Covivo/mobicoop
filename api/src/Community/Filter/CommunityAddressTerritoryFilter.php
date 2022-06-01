@@ -18,7 +18,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Community\Filter;
 
@@ -31,23 +31,6 @@ use Doctrine\ORM\QueryBuilder;
  */
 final class CommunityAddressTerritoryFilter extends AbstractContextAwareFilter
 {
-    protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
-    {
-        if ($property != "communityAddressTerritoryFilter") {
-            return;
-        }
-
-
-        // One territory
-        $rootAlias = $queryBuilder->getRootAliases()[0];
-        $queryBuilder
-            ->leftJoin($rootAlias.".address", 'acatf')
-            ->leftJoin('acatf.territories', 'acat')
-            ->andWhere('acat.id in (:value)')
-            ->setParameter('value', $value)
-        ;
-    }
-
     // This function is only used to hook in documentation generators (supported by Swagger and Hydra)
     public function getDescription(string $resourceClass): array
     {
@@ -57,7 +40,7 @@ final class CommunityAddressTerritoryFilter extends AbstractContextAwareFilter
 
         $description = [];
         foreach ($this->properties as $property => $strategy) {
-            $description["$property"] = [
+            $description["{$property}"] = [
                 'property' => $property,
                 'type' => 'array',
                 'required' => false,
@@ -70,5 +53,21 @@ final class CommunityAddressTerritoryFilter extends AbstractContextAwareFilter
         }
 
         return $description;
+    }
+
+    protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
+    {
+        if ('communityAddressTerritoryFilter' != $property) {
+            return;
+        }
+
+        // One territory
+        $rootAlias = $queryBuilder->getRootAliases()[0];
+        $queryBuilder
+            ->leftJoin($rootAlias.'.address', 'acatf')
+            ->leftJoin('acatf.territories', 'acat')
+            ->andWhere('acat.id in (:value)')
+            ->setParameter('value', $value)
+        ;
     }
 }

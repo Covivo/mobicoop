@@ -19,23 +19,20 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Carpool\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping as ORM;
-use Doctrine\ORM\Events;
 use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiSubresource;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
-use App\User\Entity\User;
-use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Validator\Constraints as Assert;
 use App\Communication\Entity\Message;
 use App\Communication\Entity\Notified;
 use App\Communication\Interfaces\MessagerInterface;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Events;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Carpooling : a history item for an ask (all the items represent a thread for the ask).
@@ -82,7 +79,7 @@ use App\Communication\Interfaces\MessagerInterface;
 class AskHistory implements MessagerInterface
 {
     /**
-     * @var int The id of this ask history item.
+     * @var int the id of this ask history item
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -92,7 +89,7 @@ class AskHistory implements MessagerInterface
     private $id;
 
     /**
-     * @var int Ask status at the date of creation of the item (1 = initiated; 2 = pending as driver, 3 = pending as passenger, 4 = accepted as driver; 5 = accepted as passenger, 6 = declined as driver, 7 = declined as passenger).
+     * @var int ask status at the date of creation of the item (1 = initiated; 2 = pending as driver, 3 = pending as passenger, 4 = accepted as driver; 5 = accepted as passenger, 6 = declined as driver, 7 = declined as passenger)
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
@@ -101,7 +98,7 @@ class AskHistory implements MessagerInterface
     private $status;
 
     /**
-     * @var int The ask type at the date of creation of the item (1 = one way trip; 2 = outward of a round trip; 3 = return of a round trip)).
+     * @var int the ask type at the date of creation of the item (1 = one way trip; 2 = outward of a round trip; 3 = return of a round trip))
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
@@ -110,21 +107,21 @@ class AskHistory implements MessagerInterface
     private $type;
 
     /**
-     * @var \DateTimeInterface Creation date of the history item.
+     * @var \DateTimeInterface creation date of the history item
      *
      * @ORM\Column(type="datetime")
      */
     private $createdDate;
 
     /**
-     * @var \DateTimeInterface Updated date of the history item.
+     * @var \DateTimeInterface updated date of the history item
      *
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $updatedDate;
 
     /**
-     * @var Ask|null The linked ask.
+     * @var null|Ask the linked ask
      *
      * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Ask", inversedBy="askHistories")
      * @ORM\JoinColumn(onDelete="CASCADE")
@@ -134,7 +131,7 @@ class AskHistory implements MessagerInterface
     private $ask;
 
     /**
-     * @var Message|null The message linked the ask history item.
+     * @var null|Message the message linked the ask history item
      *
      * @ORM\OneToOne(targetEntity="\App\Communication\Entity\Message", inversedBy="askHistory", cascade={"persist"})
      * @ORM\JoinColumn(onDelete="SET NULL")
@@ -144,7 +141,7 @@ class AskHistory implements MessagerInterface
     private $message;
 
     /**
-     * @var ArrayCollection|null The notifications sent for the ask history.
+     * @var null|ArrayCollection the notifications sent for the ask history
      *
      * @ORM\OneToMany(targetEntity="\App\Communication\Entity\Notified", mappedBy="askHistory", cascade={"persist"})
      * @Groups({"read","write"})
@@ -271,7 +268,7 @@ class AskHistory implements MessagerInterface
      */
     public function setAutoCreatedDate()
     {
-        $this->setCreatedDate(new \Datetime());
+        $this->setCreatedDate(new \DateTime());
     }
 
     /**
@@ -281,6 +278,6 @@ class AskHistory implements MessagerInterface
      */
     public function setAutoUpdatedDate()
     {
-        $this->setUpdatedDate(new \Datetime());
+        $this->setUpdatedDate(new \DateTime());
     }
 }

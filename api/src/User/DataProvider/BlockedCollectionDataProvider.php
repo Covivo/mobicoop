@@ -18,17 +18,15 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\DataProvider;
 
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
 use App\User\Entity\User;
 use App\User\Ressource\Block;
 use App\User\Service\BlockManager;
-use LogicException;
 use Symfony\Component\Security\Core\Security;
 
 /**
@@ -47,7 +45,7 @@ final class BlockedCollectionDataProvider implements CollectionDataProviderInter
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Block::class === $resourceClass && $operationName === "blocked";
+        return Block::class === $resourceClass && 'blocked' === $operationName;
     }
 
     public function getCollection(string $resourceClass, string $operationName = null): iterable
@@ -57,6 +55,7 @@ final class BlockedCollectionDataProvider implements CollectionDataProviderInter
         if ($this->security->getUser() instanceof User) {
             $user = $this->security->getUser();
         }
+
         return $this->blockManager->getBlockedUsers($user);
     }
 }

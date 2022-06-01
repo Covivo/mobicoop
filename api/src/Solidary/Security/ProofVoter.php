@@ -19,15 +19,15 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\Security;
 
-use App\Auth\Service\AuthManager;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
+use App\Auth\Service\AuthManager;
 use App\Solidary\Entity\Proof;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
@@ -56,7 +56,7 @@ class ProofVoter extends Voter
             self::PROOF_UPDATE,
             self::PROOF_DELETE,
             self::PROOF_LIST,
-            ])) {
+        ])) {
             return false;
         }
 
@@ -67,9 +67,10 @@ class ProofVoter extends Voter
             self::PROOF_UPDATE,
             self::PROOF_DELETE,
             self::PROOF_LIST,
-            ]) && !($subject instanceof Paginator) && !($subject instanceof Proof)) {
+        ]) && !($subject instanceof Paginator) && !($subject instanceof Proof)) {
             return false;
         }
+
         return true;
     }
 
@@ -78,12 +79,16 @@ class ProofVoter extends Voter
         switch ($attribute) {
             case self::PROOF_CREATE:
                 return $this->canCreateProof();
+
             case self::PROOF_READ:
                 return $this->canReadProof($subject);
+
             case self::PROOF_UPDATE:
                 return $this->canUpdateProof($subject);
+
             case self::PROOF_DELETE:
                 return $this->canDeleteProof($subject);
+
             case self::PROOF_LIST:
                 return $this->canListProof();
         }
@@ -98,17 +103,17 @@ class ProofVoter extends Voter
 
     private function canReadProof(Proof $proof)
     {
-        return $this->authManager->isAuthorized(self::PROOF_READ, ['proof'=>$proof]);
+        return $this->authManager->isAuthorized(self::PROOF_READ, ['proof' => $proof]);
     }
 
     private function canUpdateProof(Proof $proof)
     {
-        return $this->authManager->isAuthorized(self::PROOF_UPDATE, ['proof'=>$proof]);
+        return $this->authManager->isAuthorized(self::PROOF_UPDATE, ['proof' => $proof]);
     }
 
     private function canDeleteProof(Proof $proof)
     {
-        return $this->authManager->isAuthorized(self::PROOF_DELETE, ['proof'=>$proof]);
+        return $this->authManager->isAuthorized(self::PROOF_DELETE, ['proof' => $proof]);
     }
 
     private function canListProof()

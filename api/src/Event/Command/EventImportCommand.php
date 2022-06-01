@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Event\Command;
 
@@ -33,13 +33,12 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * @author Remi Wortemann <remi.wortemann@mobicoop.org>
  */
-
 class EventImportCommand extends Command
 {
     private $eventManager;
     private $eventImportEnabled;
 
-    public function __construct(EventManager $eventManager, Bool $eventImportEnabled)
+    public function __construct(EventManager $eventManager, bool $eventImportEnabled)
     {
         $this->eventManager = $eventManager;
         $this->eventImportEnabled = $eventImportEnabled;
@@ -50,19 +49,20 @@ class EventImportCommand extends Command
     protected function configure()
     {
         $this
-        ->setName('app:events:import')
-        ->setDescription('Import events from provider')
-        ->setHelp('Create events from external provider')
+            ->setName('app:events:import')
+            ->setDescription('Import events from provider')
+            ->setHelp('Create events from external provider')
         ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        if ($this->eventImportEnabled == false) {
+        if (false == $this->eventImportEnabled) {
             return 0;
         }
 
         $this->eventManager->importEvents();
+
         return 0;
     }
 }

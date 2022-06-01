@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\Repository;
 
@@ -53,12 +53,12 @@ class UserNotificationRepository
     {
         $userNotifications = [];
         $query = $this->repository->createQueryBuilder('un')
-        ->join('un.notification', 'n')
-        ->join('n.action', 'a')
-        ->join('un.user', 'u')
-        ->where('a.name = :action and n.active=1 and un.active=1 and u.id=:userId')
-        ->setParameter('action', $action)
-        ->setParameter('userId', $userId)
+            ->join('un.notification', 'n')
+            ->join('n.action', 'a')
+            ->join('un.user', 'u')
+            ->where('a.name = :action and n.active=1 and un.active=1 and u.id=:userId')
+            ->setParameter('action', $action)
+            ->setParameter('userId', $userId)
         ;
 
         // Safety : If there is several identical userNotifications (it shouldn't but... you know...), we only keep one.
@@ -74,15 +74,16 @@ class UserNotificationRepository
     }
 
     /**
-     * Find user editable notifications
+     * Find user editable notifications.
      */
     public function findUserNotifications(int $id)
     {
         $query = $this->repository->createQueryBuilder('un')
-        ->join('un.user', 'u')
-        ->where('u.id = :id')
-        ->setParameter('id', $id)
+            ->join('un.user', 'u')
+            ->where('u.id = :id')
+            ->setParameter('id', $id)
         ;
+
         return $query->getQuery()->getResult();
     }
 }

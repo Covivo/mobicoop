@@ -19,16 +19,16 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\Admin\Event;
 
 use App\Solidary\Entity\Solidary;
-use Symfony\Contracts\EventDispatcher\Event;
 use App\User\Entity\User;
+use Symfony\Contracts\EventDispatcher\Event;
 
 /**
- * Event sent when a solidary is deeply updated => replaced by a new solidary
+ * Event sent when a solidary is deeply updated => replaced by a new solidary.
  *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
  */

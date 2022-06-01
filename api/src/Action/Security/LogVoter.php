@@ -19,15 +19,15 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Action\Security;
 
 use App\Action\Entity\Log;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use App\Auth\Service\PermissionManager;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -52,8 +52,8 @@ class LogVoter extends Voter
         // if the attribute isn't one we support, return false
         if (!in_array($attribute, [
             self::READ_LOG,
-            self::READ_LOGS
-            ])) {
+            self::READ_LOGS,
+        ])) {
             return false;
         }
 
@@ -61,7 +61,7 @@ class LogVoter extends Voter
         // only for items actions
         if (!in_array($attribute, [
             self::READ_LOG,
-            ]) && !$subject instanceof Log) {
+        ]) && !$subject instanceof Log) {
             return false;
         }
 
@@ -87,6 +87,7 @@ class LogVoter extends Voter
         if (!$requester instanceof UserInterface) {
             return false;
         }
+
         return $this->permissionManager->checkPermission('log_read', $requester);
     }
 }

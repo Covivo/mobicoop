@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Auth\Rule;
 
@@ -30,7 +30,7 @@ use DateInterval;
 /**
  *  Check that the requester can be the author of the related Ad :
  * - must be deconnected
- * - the Ad should have been made less than an hour ago
+ * - the Ad should have been made less than an hour ago.
  */
 class AdDisconnectedAuthor implements AuthRuleInterface
 {
@@ -50,6 +50,7 @@ class AdDisconnectedAuthor implements AuthRuleInterface
          */
         $ad = $params['ad'];
         $now = new \DateTime(('UTC'));
-        return is_null($ad->getUser()) && $now->sub(new DateInterval('PT' . self::DELAY . 'S')) <= $ad->getCreatedDate();
+
+        return is_null($ad->getUser()) && $now->sub(new DateInterval('PT'.self::DELAY.'S')) <= $ad->getCreatedDate();
     }
 }

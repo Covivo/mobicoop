@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Carpool\Command;
 
@@ -34,7 +34,6 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
  */
-
 class RemoveExternalOutdatedSearchesCommand extends Command
 {
     private $proposalManager;
@@ -49,15 +48,15 @@ class RemoveExternalOutdatedSearchesCommand extends Command
     protected function configure()
     {
         $this
-        ->setName('app:carpool:remove-external-outdated-searches')
-        ->addArgument('delay', InputArgument::OPTIONAL, 'The number of days to consider a search outdated')
-        ->setDescription('Deletes outdated external carpool searches.')
-        ->setHelp('Deletes outdated external carpool searches.')
+            ->setName('app:carpool:remove-external-outdated-searches')
+            ->addArgument('delay', InputArgument::OPTIONAL, 'The number of days to consider a search outdated')
+            ->setDescription('Deletes outdated external carpool searches.')
+            ->setHelp('Deletes outdated external carpool searches.')
         ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        return (int)!$this->proposalManager->removeOutdatedExternalSearches((int)$input->getArgument('delay'));
+        return (int) !$this->proposalManager->removeOutdatedExternalSearches((int) $input->getArgument('delay'));
     }
 }

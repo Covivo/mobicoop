@@ -18,7 +18,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\Filter;
 
@@ -28,9 +28,34 @@ use Doctrine\ORM\QueryBuilder;
 
 final class HomeAddressWaypointTerritoryFilter extends AbstractContextAwareFilter
 {
+    // This function is only used to hook in documentation generators (supported by Swagger and Hydra)
+    public function getDescription(string $resourceClass): array
+    {
+        if (!$this->properties) {
+            return [];
+        }
+
+        $description = [];
+        foreach ($this->properties as $property => $strategy) {
+            $description["{$property}"] = [
+                'property' => $property,
+                'type' => 'number',
+                'format' => 'integer',
+                'required' => false,
+                'swagger' => [
+                    'description' => 'Filter on users that have a proposal or homeAddress in the given territory',
+                    'name' => 'territory',
+                    'type' => 'integer',
+                ],
+            ];
+        }
+
+        return $description;
+    }
+
     protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
     {
-        if ($property != "homeAddressWaypointTerritory") {
+        if ('homeAddressWaypointTerritory' != $property) {
             return;
         }
 
@@ -54,31 +79,7 @@ final class HomeAddressWaypointTerritoryFilter extends AbstractContextAwareFilte
             ->leftJoin('p.waypoints', 'w')
             ->leftJoin('w.address', 'a')
             ->leftJoin('a.territories', 'ta')
-            ->andWhere(sprintf('((ta.id = %s AND p.private <> 1) OR (t.id = %s AND homeAddress.home=1))', $value, $value));
-    }
-
-    // This function is only used to hook in documentation generators (supported by Swagger and Hydra)
-    public function getDescription(string $resourceClass): array
-    {
-        if (!$this->properties) {
-            return [];
-        }
-
-        $description = [];
-        foreach ($this->properties as $property => $strategy) {
-            $description["$property"] = [
-                'property' => $property,
-                'type' => 'number',
-                'format' => 'integer',
-                'required' => false,
-                'swagger' => [
-                    'description' => 'Filter on users that have a proposal or homeAddress in the given territory',
-                    'name' => 'territory',
-                    'type' => 'integer',
-                ],
-            ];
-        }
-
-        return $description;
+            ->andWhere(sprintf('((ta.id = %s AND p.private <> 1) OR (t.id = %s AND homeAddress.home=1))', $value, $value))
+        ;
     }
 }

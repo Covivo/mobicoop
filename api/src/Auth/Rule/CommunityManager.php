@@ -19,14 +19,14 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Auth\Rule;
 
 use App\Auth\Interfaces\AuthRuleInterface;
 
 /**
- *  Check that the requester is a manager of the related Community
+ *  Check that the requester is a manager of the related Community.
  */
 class CommunityManager implements AuthRuleInterface
 {

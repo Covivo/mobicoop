@@ -18,7 +18,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Payment\DataPersister;
 
@@ -29,7 +29,7 @@ use App\Payment\Service\PaymentManager;
 use Symfony\Component\Security\Core\Security;
 
 /**
- * Bank Account Data Persister
+ * Bank Account Data Persister.
  *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
@@ -51,7 +51,7 @@ final class BankAccountDataPersister implements ContextAwareDataPersisterInterfa
 
     public function persist($data, array $context = [])
     {
-        if (isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'post') {
+        if (isset($context['collection_operation_name']) && 'post' == $context['collection_operation_name']) {
             if (!$this->paymentManager->checkValidForRegistrationToTheProvider($this->security->getUser(), $data->getAddress())) {
                 throw new PaymentException(PaymentException::USER_INVALID);
             }

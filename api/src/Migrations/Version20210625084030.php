@@ -15,7 +15,7 @@ final class Version20210625084030 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE reward_step ADD user_id INT DEFAULT NULL, DROP sequence_item, CHANGE user sequence_item_id INT DEFAULT NULL');
         $this->addSql('ALTER TABLE reward_step ADD CONSTRAINT FK_42A86EA726659B86 FOREIGN KEY (sequence_item_id) REFERENCES sequence_item (id)');
@@ -27,7 +27,7 @@ final class Version20210625084030 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE reward_step DROP FOREIGN KEY FK_42A86EA726659B86');
         $this->addSql('ALTER TABLE reward_step DROP FOREIGN KEY FK_42A86EA7A76ED395');

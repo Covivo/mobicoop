@@ -19,12 +19,12 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\RdexPlus\Resource;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\RdexPlus\Entity\Geopoint;
 use App\RdexPlus\Entity\Price;
 use App\RdexPlus\Entity\User;
@@ -137,37 +137,38 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          }
  *      }
  * )
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class Journey
 {
-    public const DEFAULT_ID = "999999999999";
+    public const DEFAULT_ID = '999999999999';
 
-    public const TYPE_PLANNED = "planned";
-    public const TYPE_DYNAMIC = "dynamic";
-    public const TYPE_LINE = "line";
+    public const TYPE_PLANNED = 'planned';
+    public const TYPE_DYNAMIC = 'dynamic';
+    public const TYPE_LINE = 'line';
     public const VALID_TYPES = [
         self::TYPE_PLANNED,
         self::TYPE_DYNAMIC,
-        self::TYPE_LINE
+        self::TYPE_LINE,
     ];
 
-    public const CARPOOLER_TYPE_DRIVER = "driver";
-    public const CARPOOLER_TYPE_PASSENGER = "passenger";
-    public const CARPOOLER_TYPE_BOTH = "both";
+    public const CARPOOLER_TYPE_DRIVER = 'driver';
+    public const CARPOOLER_TYPE_PASSENGER = 'passenger';
+    public const CARPOOLER_TYPE_BOTH = 'both';
     public const VALID_CARPOOLER_TYPES = [
         self::CARPOOLER_TYPE_DRIVER,
         self::CARPOOLER_TYPE_PASSENGER,
-        self::CARPOOLER_TYPE_BOTH
+        self::CARPOOLER_TYPE_BOTH,
     ];
 
-    public const FREQUENCY_PUNCTUAL = "punctual";
-    public const FREQUENCY_REGULAR = "regular";
-    public const FREQUENCY_BOTH = "both";
+    public const FREQUENCY_PUNCTUAL = 'punctual';
+    public const FREQUENCY_REGULAR = 'regular';
+    public const FREQUENCY_BOTH = 'both';
     public const VALID_FREQUENCIES = [
         self::FREQUENCY_PUNCTUAL,
         self::FREQUENCY_REGULAR,
-        self::FREQUENCY_BOTH
+        self::FREQUENCY_BOTH,
     ];
 
     public const TIME_MARGIN_DEFAULT = 900;
@@ -210,8 +211,8 @@ class Journey
 
     /**
      * @var string Journey's carpooler's type (driver, passenger, both)
-     * On GET : it's the role the poster is looking for
-     * On POST : it's the role of the poster
+     *             On GET : it's the role the poster is looking for
+     *             On POST : it's the role of the poster
      * @Assert\NotBlank
      *
      * @Groups({"rdexPlusRead","rdexPlusWrite"})
@@ -300,7 +301,7 @@ class Journey
 
     /**
      * @var string Journey's frequency (punctual, regular, both)
-     * both : only on GET
+     *             both : only on GET
      * @Assert\NotBlank
      * @Groups({"rdexPlusRead","rdexPlusWrite"})
      */

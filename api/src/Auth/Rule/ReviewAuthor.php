@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Auth\Rule;
 
@@ -27,7 +27,7 @@ use App\Auth\Interfaces\AuthRuleInterface;
 use App\User\Ressource\Review;
 
 /**
- *  Check that the requester is the author of the related Ad
+ *  Check that the requester is the author of the related Ad.
  */
 class ReviewAuthor implements AuthRuleInterface
 {
@@ -39,10 +39,12 @@ class ReviewAuthor implements AuthRuleInterface
         if (!isset($params['review'])) {
             return false;
         }
+
         /**
          * @var Review $review
          */
         $review = $params['review'];
+
         return is_null($review->getReviewer()) || $review->getReviewer()->getId() == $requester->getId();
     }
 }

@@ -19,19 +19,19 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Image\Controller;
 
-use App\TranslatorTrait;
-use Symfony\Component\HttpFoundation\Request;
-use App\Image\Service\ImageManager;
-use App\Image\Entity\Image;
-use Psr\Log\LoggerInterface;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use App\Action\Event\ActionEvent;
 use App\Action\Repository\ActionRepository;
+use App\Image\Entity\Image;
+use App\Image\Service\ImageManager;
+use App\TranslatorTrait;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 final class CreateImageAction
 {
@@ -52,7 +52,7 @@ final class CreateImageAction
     public function __invoke(Request $request): Image
     {
         if (is_null($request)) {
-            throw new \InvalidArgumentException($this->translator->trans("Bad request"));
+            throw new \InvalidArgumentException($this->translator->trans('Bad request'));
         }
         $image = new Image();
 
@@ -146,7 +146,7 @@ final class CreateImageAction
 
         //  we dispatch the gamification event associated
         if ($image->getUser()) {
-            $action = $this->actionRepository->findOneBy(['name'=>'user_avatar_uploaded']);
+            $action = $this->actionRepository->findOneBy(['name' => 'user_avatar_uploaded']);
             $actionEvent = new ActionEvent($action, $image->getUser());
             $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);
         }

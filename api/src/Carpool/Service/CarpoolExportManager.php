@@ -76,8 +76,6 @@ class CarpoolExportManager
 
     /**
      * Method to get all carpoolExports for a user.
-     *
-     * @return string
      */
     public function getCarpoolExports(): string
     {

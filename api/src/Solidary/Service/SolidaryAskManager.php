@@ -18,18 +18,15 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\Service;
 
 use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\AskHistory;
 use App\Carpool\Entity\Matching;
-use App\Communication\Entity\Message;
-use App\Communication\Entity\Recipient;
 use App\Solidary\Entity\SolidaryAsk;
 use App\Solidary\Entity\SolidaryAskHistory;
-use App\Solidary\Exception\SolidaryException;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\Security;
@@ -49,14 +46,10 @@ class SolidaryAskManager
     }
 
     /**
-     * Create a solidary Ask
-     *
-     * @param SolidaryAsk $solidaryAsk
-     * @return SolidaryAsk|null
+     * Create a solidary Ask.
      */
     public function createSolidaryAsk(SolidaryAsk $solidaryAsk): ?SolidaryAsk
     {
-
         // We create the associated SolidaryAskHistory
         $solidaryAsk = $this->createAssociatedSolidaryAskHistory($solidaryAsk);
 
@@ -113,10 +106,7 @@ class SolidaryAskManager
     }
 
     /**
-     * Create the associated SolidaryAskHistory of a SolidaryAsk
-     *
-     * @param SolidaryAsk $solidaryAsk
-     * @return SolidaryAsk|null
+     * Create the associated SolidaryAskHistory of a SolidaryAsk.
      */
     private function createAssociatedSolidaryAskHistory(SolidaryAsk $solidaryAsk): ?SolidaryAsk
     {
@@ -132,11 +122,10 @@ class SolidaryAskManager
     }
 
     /**
-     * Create an Ask from a matching informations
+     * Create an Ask from a matching informations.
      *
-     * @param Matching  $matching   Matching using as base for the Ask Matching
-     * @param User      $user       The User who make the Ask
-     * @return Ask
+     * @param Matching $matching Matching using as base for the Ask Matching
+     * @param User     $user     The User who make the Ask
      */
     private function createAskFromMatching(Matching $matching, User $user): Ask
     {

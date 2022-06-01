@@ -19,14 +19,13 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\PublicTransport\DataProvider;
 
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\PublicTransport\Entity\PTLineStop;
-use App\PublicTransport\Entity\PTTripPoint;
 use App\PublicTransport\Service\PTDataProvider;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -36,19 +35,17 @@ use Symfony\Component\HttpFoundation\RequestStack;
  * Automatically associated to Public Transport TripPoint entity thanks to autowiring (see 'supports' method).
  *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
- *
  */
 final class LineStopCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
     private $dataProvider;
-    protected $request;
+    private $request;
 
     public function __construct(RequestStack $requestStack, PTDataProvider $dataProvider)
     {
         $this->dataProvider = $dataProvider;
         $this->request = $requestStack->getCurrentRequest();
     }
-
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
@@ -58,17 +55,17 @@ final class LineStopCollectionDataProvider implements CollectionDataProviderInte
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
         if (
-            is_null($this->request->get("provider")) &&
-            is_null($this->request->get("logicalId")) &&
-            is_null($this->request->get("transportModes"))
+            is_null($this->request->get('provider'))
+            && is_null($this->request->get('logicalId'))
+            && is_null($this->request->get('transportModes'))
         ) {
             return null;
         }
 
         return $this->dataProvider->getLineStop(
-            $this->request->get("provider"),
+            $this->request->get('provider'),
             $this->request->get('logicalId'),
-            $this->request->get("transportModes")
+            $this->request->get('transportModes')
         );
     }
 }

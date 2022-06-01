@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Editorial\Repository;
 
@@ -41,10 +41,7 @@ class EditorialRepository
     }
 
     /**
-     * Find an editorial with an id
-     *
-     * @param integer $id
-     * @return Editorial|null
+     * Find an editorial with an id.
      */
     public function find(int $id): ?Editorial
     {
@@ -52,9 +49,7 @@ class EditorialRepository
     }
 
     /**
-     * Find All editorials
-     *
-     * @return Editorials|null
+     * Find All editorials.
      */
     public function findAll(): ?Editorials
     {
@@ -62,10 +57,7 @@ class EditorialRepository
     }
 
     /**
-     * Find One Editorial by criteria
-     *
-     * @param array $criteria
-     * @return Editorial|null
+     * Find One Editorial by criteria.
      */
     public function findOneBy(array $criteria): ?Editorial
     {
@@ -73,10 +65,7 @@ class EditorialRepository
     }
 
     /**
-     * Inactive all editorials except the one activated
-     *
-     * @param Editorial $editorial
-     * @return void
+     * Inactive all editorials except the one activated.
      */
     public function setInactive(Editorial $editorial): void
     {
@@ -84,7 +73,7 @@ class EditorialRepository
         $conn = $this->entityManager->getConnection();
 
         // set editorial's status to 0 except the one updated
-        $sql = "UPDATE `editorial` SET `status`= 0 WHERE `id`!=" . $editorial->getId();
+        $sql = 'UPDATE `editorial` SET `status`= 0 WHERE `id`!='.$editorial->getId();
         $stmt = $conn->prepare($sql);
         $stmt->executeQuery();
     }

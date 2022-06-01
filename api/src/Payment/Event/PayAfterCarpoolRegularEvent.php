@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Payment\Event;
 
@@ -35,15 +35,11 @@ class PayAfterCarpoolRegularEvent extends Event
      */
     private $carpoolItem;
 
-
     public function __construct(CarpoolItem $carpoolItem)
     {
         $this->carpoolItem = $carpoolItem;
     }
 
-    /**
-     * @return CarpoolItem
-     */
     public function getCarpoolItem(): CarpoolItem
     {
         return $this->carpoolItem;

@@ -394,8 +394,6 @@ class AskRepository
 
     /**
      * Count all aks.
-     *
-     * @return int
      */
     public function countAsks(): int
     {

@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\Repository;
 
@@ -30,7 +30,7 @@ use Doctrine\ORM\EntityRepository;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
-*/
+ */
 class StructureProofRepository
 {
     /**
@@ -42,7 +42,6 @@ class StructureProofRepository
     {
         $this->repository = $entityManager->getRepository(StructureProof::class);
     }
-
 
     public function find(int $id): ?StructureProof
     {
@@ -57,18 +56,22 @@ class StructureProofRepository
     public function findStructureProofs(Structure $structure)
     {
         $query = $this->repository->createQueryBuilder('sp')
-        ->where('sp.structure = :structure')
-        ->setParameter('structure', $structure);
+            ->where('sp.structure = :structure')
+            ->setParameter('structure', $structure)
+        ;
+
         return $query->getQuery()->getResult();
     }
 
     public function findNotMandatoryBeneficiaryStructureProofs(Structure $structure)
     {
         $query = $this->repository->createQueryBuilder('sp')
-        ->where('sp.structure = :structure')
-        ->andwhere('sp.mandatory = 0')
-        ->andwhere('sp.type = 1')
-        ->setParameter('structure', $structure);
+            ->where('sp.structure = :structure')
+            ->andwhere('sp.mandatory = 0')
+            ->andwhere('sp.type = 1')
+            ->setParameter('structure', $structure)
+        ;
+
         return $query->getQuery()->getResult();
     }
 }

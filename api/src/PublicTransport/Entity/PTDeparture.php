@@ -19,17 +19,16 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\PublicTransport\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
-use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
-use App\Geography\Entity\Address;
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Carpool\Entity\IndividualStop;
+use App\Geography\Entity\Address;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * A public transport departure.
@@ -56,7 +55,7 @@ use Doctrine\ORM\Mapping as ORM;
 class PTDeparture
 {
     /**
-     * @var int $id The id of this departure.
+     * @var int the id of this departure
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -66,7 +65,7 @@ class PTDeparture
     private $id;
 
     /**
-     * @var string|null The name of this departure.
+     * @var null|string the name of this departure
      *
      * @ORM\Column(type="string", length=100, nullable=true)
      * @Groups("pt")
@@ -74,7 +73,7 @@ class PTDeparture
     private $name;
 
     /**
-     * @var \DateTimeInterface The date and time of this departure.
+     * @var \DateTimeInterface the date and time of this departure
      *
      * @ORM\Column(type="datetime")
      * @Groups("pt")
@@ -82,7 +81,7 @@ class PTDeparture
     private $date;
 
     /**
-     * @var Address The address of this departure.
+     * @var Address the address of this departure
      *
      * @ORM\ManyToOne(targetEntity="App\Geography\Entity\Address")
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
@@ -91,7 +90,7 @@ class PTDeparture
     private $address;
 
     /**
-     * @var IndividualStop|null Individual stop if multimodal using carpool.
+     * @var null|IndividualStop individual stop if multimodal using carpool
      *
      * @ORM\ManyToOne(targetEntity="App\Carpool\Entity\IndividualStop")
      */

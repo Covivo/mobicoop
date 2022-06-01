@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Auth\DataProvider;
 
@@ -28,19 +28,17 @@ use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\Auth\Entity\Permission;
 use App\Auth\Service\AuthManager;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Security;
 
 /**
  * Get the Roles granted for the current user, for user creation
- * TODO Move the function from AuthManager to PermissionManager, but first, clean PermissionManager
+ * TODO Move the function from AuthManager to PermissionManager, but first, clean PermissionManager.
  *
  * @author Julien Deschampt <julien.deschampt@mobicoop.org>
- *
  */
 final class RolesGrantedForCreationDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
-    protected $request;
+    private $request;
     private $authmanager;
     private $security;
 
@@ -53,7 +51,7 @@ final class RolesGrantedForCreationDataProvider implements CollectionDataProvide
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Permission::class === $resourceClass && $operationName === "roles_granted_for_creation";
+        return Permission::class === $resourceClass && 'roles_granted_for_creation' === $operationName;
     }
 
     public function getCollection(string $resourceClass, string $operationName = null): iterable

@@ -52,8 +52,6 @@ class CommunityRepository
 
     /**
      * Find All communities.
-     *
-     * @return null|Community
      */
     public function findAll(): ?Community
     {
@@ -62,8 +60,6 @@ class CommunityRepository
 
     /**
      * Find communities by criteria.
-     *
-     * @return null|Community
      */
     public function findBy(array $criteria): ?Community
     {
@@ -84,8 +80,6 @@ class CommunityRepository
      *
      * @param null|User  $user    The user
      * @param null|array $orderBy The order of the results
-     *
-     * @return QueryBuilder
      */
     public function findAvailableCommunitiesForUser(?User $user, ?array $orderBy = null): QueryBuilder
     {
@@ -151,8 +145,6 @@ class CommunityRepository
      * Get communities owned by the user.
      *
      * @param int $userId The user id
-     *
-     * @return array
      */
     public function getOwnedCommunities(int $userId): array
     {
@@ -164,8 +156,6 @@ class CommunityRepository
 
     /**
      * Find if a user is registered in a given community.
-     *
-     * @return bool
      */
     public function isRegistered(Community $community, User $user): bool
     {
@@ -241,8 +231,6 @@ class CommunityRepository
 
     /**
      * Count communities.
-     *
-     * @return int
      */
     public function countCommunities(): int
     {

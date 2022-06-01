@@ -19,12 +19,12 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Match\Controller;
 
-use App\Match\Service\MassMigrateManager;
 use App\Match\Entity\Mass;
+use App\Match\Service\MassMigrateManager;
 use App\TranslatorTrait;
 
 final class MassMigrateAction
@@ -41,12 +41,12 @@ final class MassMigrateAction
     public function __invoke(Mass $data): Mass
     {
         if (is_null($data)) {
-            throw new \InvalidArgumentException($this->translator->trans("bad Mass id is provided"));
+            throw new \InvalidArgumentException($this->translator->trans('bad Mass id is provided'));
         }
 
         // Only qualified Masses can be migrated
-        if ($data->getMassType()!==1) {
-            throw new \InvalidArgumentException($this->translator->trans("bad Mass type"));
+        if (1 !== $data->getMassType()) {
+            throw new \InvalidArgumentException($this->translator->trans('bad Mass type'));
         }
 
         return $this->massMigrateManager->migrate($data);

@@ -19,27 +19,26 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use App\Solidary\Admin\Controller\UploadProofAction;
+use App\Solidary\Controller\CreateProofAction;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
-use ApiPlatform\Core\Annotation\ApiFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
-use Doctrine\Common\Collections\ArrayCollection;
-use Symfony\Component\HttpFoundation\File\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
-use App\Solidary\Controller\CreateProofAction;
-use App\Solidary\Admin\Controller\UploadProofAction;
 
 /**
- * A solidary proof related to a solidary record or a solidaryUser
+ * A solidary proof related to a solidary record or a solidaryUser.
  *
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
@@ -101,12 +100,13 @@ use App\Solidary\Admin\Controller\UploadProofAction;
  * @ApiFilter(OrderFilter::class, properties={"id", "label"}, arguments={"orderParameterName"="order"})
  * @ApiFilter(SearchFilter::class, properties={"label":"partial"})
  * @Vich\Uploadable
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class Proof
 {
     /**
-     * @var int The id of this proof.
+     * @var int the id of this proof
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -116,7 +116,7 @@ class Proof
     private $id;
 
     /**
-     * @var string The value entered by the user.
+     * @var string the value entered by the user
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"readProof","writeProof"})
@@ -124,7 +124,7 @@ class Proof
     private $value;
 
     /**
-     * @var StructureProof Structure proof.
+     * @var StructureProof structure proof
      *
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\StructureProof", inversedBy="proofs")
@@ -135,7 +135,7 @@ class Proof
     private $structureProof;
 
     /**
-     * @var string The final file name of the proof.
+     * @var string the final file name of the proof
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"readProof","writeProof"})
@@ -143,7 +143,7 @@ class Proof
     private $fileName;
 
     /**
-     * @var string The original file name of the proof.
+     * @var string the original file name of the proof
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"readProof","writeProof"})
@@ -151,7 +151,7 @@ class Proof
     private $originalName;
 
     /**
-     * @var int The size in bytes of the file.
+     * @var int the size in bytes of the file
      *
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"readProof","writeProof"})
@@ -159,7 +159,7 @@ class Proof
     private $size;
 
     /**
-     * @var string The mime type of the file.
+     * @var string the mime type of the file
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"readProof","writeProof"})
@@ -167,7 +167,7 @@ class Proof
     private $mimeType;
 
     /**
-     * @var File|null
+     * @var null|File
      * @Vich\UploadableField(mapping="proof", fileNameProperty="fileName", originalName="originalName", size="size", mimeType="mimeType")
      * @Groups({"readProof","writeProof"})
      */
@@ -184,7 +184,7 @@ class Proof
     private $solidaryUserStructure;
 
     /**
-     * @var \DateTimeInterface Creation date.
+     * @var \DateTimeInterface creation date
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"readProof"})
@@ -192,14 +192,14 @@ class Proof
     private $createdDate;
 
     /**
-     * @var \DateTimeInterface Updated date.
+     * @var \DateTimeInterface updated date
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"readProof"})
      */
     private $updatedDate;
 
-    public function __construct($id=null)
+    public function __construct($id = null)
     {
         $this->id = $id;
     }
@@ -356,7 +356,7 @@ class Proof
      */
     public function setAutoCreatedDate()
     {
-        $this->setCreatedDate(new \Datetime());
+        $this->setCreatedDate(new \DateTime());
     }
 
     /**
@@ -366,6 +366,6 @@ class Proof
      */
     public function setAutoUpdatedDate()
     {
-        $this->setUpdatedDate(new \Datetime());
+        $this->setUpdatedDate(new \DateTime());
     }
 }

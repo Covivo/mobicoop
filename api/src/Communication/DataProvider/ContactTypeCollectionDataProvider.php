@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Communication\DataProvider;
 
@@ -30,13 +30,13 @@ use App\Communication\Service\ContactManager;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- * Collection data provider for ContactType
+ * Collection data provider for ContactType.
  *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 final class ContactTypeCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
-    protected $request;
+    private $request;
     private $contactManager;
 
     public function __construct(RequestStack $requestStack, ContactManager $contactManager)
@@ -47,7 +47,7 @@ final class ContactTypeCollectionDataProvider implements CollectionDataProviderI
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return ContactType::class === $resourceClass && $operationName === "get";
+        return ContactType::class === $resourceClass && 'get' === $operationName;
     }
 
     public function getCollection(string $resourceClass, string $operationName = null): ?array

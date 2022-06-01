@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\Event;
 
@@ -27,7 +27,7 @@ use App\User\Entity\User;
 use Symfony\Contracts\EventDispatcher\Event;
 
 /**
- * Event sent when a user valid it's email
+ * Event sent when a user valid it's email.
  */
 class UserMailValidationEvent extends Event
 {

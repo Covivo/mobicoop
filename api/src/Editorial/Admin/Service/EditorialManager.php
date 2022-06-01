@@ -19,15 +19,14 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Editorial\Admin\Service;
 
 use App\Editorial\Entity\Editorial;
 use App\Editorial\Exception\EditorialException;
-use Doctrine\ORM\EntityManagerInterface;
 use App\Editorial\Repository\EditorialRepository;
-use Doctrine\ORM\QueryBuilder;
+use Doctrine\ORM\EntityManagerInterface;
 
 /**
  * Editorial manager for admin context.
@@ -40,9 +39,7 @@ class EditorialManager
     private $editorialRepository;
 
     /**
-     * Constructor
-     *
-     * @param EntityManagerInterface $entityManager
+     * Constructor.
      */
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -53,37 +50,39 @@ class EditorialManager
     }
 
     /**
-     * Get an editorial
+     * Get an editorial.
      *
-     * @param int $id   The editorial's id
-     * @return Editorial
+     * @param int $id The editorial's id
      */
     public function getEditorial(int $id): Editorial
     {
         if (!$editorial = $this->editorialRepository->find($id)) {
             throw new EditorialException('Editorial not found');
         }
+
         return $editorial;
     }
 
     /**
-     * Get all editorials
+     * Get all editorials.
      *
-     * @return Editorials[]|null
+     * @return null|Editorials[]
      */
     public function getEditorials(): ?array
     {
         if (!$editorials = $this->editorialRepository->findAll()) {
             throw new EditorialException('Editorials not found');
         }
+
         return $editorials;
     }
 
     /**
      * Add an editorial.
      *
-     * @param Editorial     $editorial              The editorial to add
-     * @return Editorial    The editorial created
+     * @param Editorial $editorial The editorial to add
+     *
+     * @return Editorial The editorial created
      */
     public function addEditorial(Editorial $editorial): Editorial
     {
@@ -98,9 +97,10 @@ class EditorialManager
     /**
      * Patch an editorial.
      *
-     * @param Editorial $editorial  The editorial to update
-     * @param array $fields The updated fields
-     * @return Editorial        The editorial updated
+     * @param Editorial $editorial The editorial to update
+     * @param array     $fields    The updated fields
+     *
+     * @return Editorial The editorial updated
      */
     public function patchEditorial(Editorial $editorial, array $fields): Editorial
     {
@@ -113,10 +113,9 @@ class EditorialManager
     }
 
     /**
-     * Delete an editorial
+     * Delete an editorial.
      *
-     * @param Editorial $editorial  The editorial to delete
-     * @return void
+     * @param Editorial $editorial The editorial to delete
      */
     public function deleteEditorial(Editorial $editorial): void
     {

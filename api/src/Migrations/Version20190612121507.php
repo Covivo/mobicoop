@@ -15,7 +15,7 @@ final class Version20190612121507 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE mass_matching DROP FOREIGN KEY FK_9B3B75EBAF73D997');
         $this->addSql('DROP INDEX IDX_9B3B75EBAF73D997 ON mass_matching');
@@ -28,7 +28,7 @@ final class Version20190612121507 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE mass_matching ADD direction_id INT DEFAULT NULL, DROP distance, DROP duration');
         $this->addSql('ALTER TABLE mass_matching ADD CONSTRAINT FK_9B3B75EBAF73D997 FOREIGN KEY (direction_id) REFERENCES direction (id)');

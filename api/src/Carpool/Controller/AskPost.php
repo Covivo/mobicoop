@@ -19,12 +19,12 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Carpool\Controller;
 
-use App\Carpool\Service\AskManager;
 use App\Carpool\Entity\Ask;
+use App\Carpool\Service\AskManager;
 use App\TranslatorTrait;
 
 /**
@@ -45,16 +45,13 @@ class AskPost
 
     /**
      * This method is invoked when a new ask is posted.
-     *
-     * @param Ask $data
-     * @return Ask
      */
     public function __invoke(Ask $data): Ask
     {
         if (is_null($data)) {
-            throw new \InvalidArgumentException($this->translator->trans("bad Ask id is provided"));
+            throw new \InvalidArgumentException($this->translator->trans('bad Ask id is provided'));
         }
-        $data = $this->askManager->createAsk($data);
-        return $data;
+
+        return $this->askManager->createAsk($data);
     }
 }

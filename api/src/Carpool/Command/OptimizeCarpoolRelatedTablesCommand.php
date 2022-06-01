@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Carpool\Command;
 
@@ -33,7 +33,6 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
  */
-
 class OptimizeCarpoolRelatedTablesCommand extends Command
 {
     private $proposalManager;
@@ -48,14 +47,14 @@ class OptimizeCarpoolRelatedTablesCommand extends Command
     protected function configure()
     {
         $this
-        ->setName('app:carpool:optimize')
-        ->setDescription('Optimizes carpool-related tables.')
-        ->setHelp('Optimizes carpool-related tables.')
+            ->setName('app:carpool:optimize')
+            ->setDescription('Optimizes carpool-related tables.')
+            ->setHelp('Optimizes carpool-related tables.')
         ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        return (int)!$this->proposalManager->optimizeCarpoolRelatedTables();
+        return (int) !$this->proposalManager->optimizeCarpoolRelatedTables();
     }
 }

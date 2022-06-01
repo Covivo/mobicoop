@@ -18,7 +18,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Event\Admin\DataPersister;
 
@@ -28,7 +28,7 @@ use App\Event\Entity\Event;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- * Data persister for Event in administration context
+ * Data persister for Event in administration context.
  */
 final class EventDataPersister implements ContextAwareDataPersisterInterface
 {
@@ -46,13 +46,18 @@ final class EventDataPersister implements ContextAwareDataPersisterInterface
         if ($data instanceof Event) {
             switch ($context) {
                 case isset($context['collection_operation_name']):
-                    return $context['collection_operation_name'] == 'ADMIN_post';
+                    return 'ADMIN_post' == $context['collection_operation_name'];
+
                     break;
+
                 case isset($context['item_operation_name']):
-                    return $context['item_operation_name'] == 'ADMIN_patch' || $context['item_operation_name'] == 'ADMIN_delete';
+                    return 'ADMIN_patch' == $context['item_operation_name'] || 'ADMIN_delete' == $context['item_operation_name'];
+
                     break;
+
                 default:
                     return false;
+
                     break;
             }
         } else {
@@ -62,18 +67,19 @@ final class EventDataPersister implements ContextAwareDataPersisterInterface
 
     public function persist($data, array $context = [])
     {
-        if (isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'ADMIN_post') {
+        if (isset($context['collection_operation_name']) && 'ADMIN_post' == $context['collection_operation_name']) {
             $data = $this->eventManager->addEvent($data);
-        } elseif (isset($context['item_operation_name']) &&  $context['item_operation_name'] == 'ADMIN_patch') {
+        } elseif (isset($context['item_operation_name']) && 'ADMIN_patch' == $context['item_operation_name']) {
             // for a patch operation, we update only some fields, we pass them to the method for further checkings
             $data = $this->eventManager->patchEvent($data, json_decode($this->request->getContent(), true));
         }
+
         return $data;
     }
 
     public function remove($data, array $context = [])
     {
-        if (isset($context['item_operation_name']) &&  $context['item_operation_name'] == 'ADMIN_delete') {
+        if (isset($context['item_operation_name']) && 'ADMIN_delete' == $context['item_operation_name']) {
             return $this->eventManager->deleteEvent($data);
         }
     }

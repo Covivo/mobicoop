@@ -19,21 +19,20 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Gamification\Command;
 
+use App\Gamification\Service\GamificationManager;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use App\Gamification\Service\GamificationManager;
 
 /**
- * This command generate rewards and rewardsteps retroactively after the activation of the gamification
+ * This command generate rewards and rewardsteps retroactively after the activation of the gamification.
  *
  * @author Remi Wortemann <remi.wortemann@mobicoop.org>
  */
-
 class retroactivelyGenerateRewardsCommand extends Command
 {
     private $gamificationManager;
@@ -48,14 +47,14 @@ class retroactivelyGenerateRewardsCommand extends Command
     protected function configure()
     {
         $this
-        ->setName("app:gamification:retroactively-generate")
-        ->setDescription("Generate rewards and rewardSteps retroactively gamification's activation date.")
-        ->setHelp("Generate rewards and rewardSteps retroactively gamification's activation date.")
+            ->setName('app:gamification:retroactively-generate')
+            ->setDescription("Generate rewards and rewardSteps retroactively gamification's activation date.")
+            ->setHelp("Generate rewards and rewardSteps retroactively gamification's activation date.")
         ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        return (int)!$this->gamificationManager->retroactivelyGenerateRewards();
+        return (int) !$this->gamificationManager->retroactivelyGenerateRewards();
     }
 }

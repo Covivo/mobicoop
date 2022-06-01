@@ -18,7 +18,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\Filter;
 
@@ -27,26 +27,12 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use Doctrine\ORM\QueryBuilder;
 
 /**
-  *  Filters for apply the radius to the filters ODRangeOriginFilter and/or ODRangeDestinationFilter
-  *
-  * @author Julien Deschampt <julien.deschampt@mobicoop.org>
-*/
-
+ *  Filters for apply the radius to the filters ODRangeOriginFilter and/or ODRangeDestinationFilter.
+ *
+ * @author Julien Deschampt <julien.deschampt@mobicoop.org>
+ */
 final class ODRangeRadiusFilter extends AbstractContextAwareFilter
 {
-    protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
-    {
-        if ($property != "range") {
-            return;
-        }
-
-        // ?? unfinished ??
-        //We check if we already define the range parameters and if so, we can set the right value from
-        if ($queryBuilder->getParameter('range')) {
-            $queryBuilder->setParameter('range', $value);
-        }
-    }
-
     // This function is only used to hook in documentation generators (supported by Swagger and Hydra)
     public function getDescription(string $resourceClass): array
     {
@@ -56,7 +42,7 @@ final class ODRangeRadiusFilter extends AbstractContextAwareFilter
 
         $description = [];
         foreach ($this->properties as $property => $strategy) {
-            $description["$property"] = [
+            $description["{$property}"] = [
                 'property' => $property,
                 'type' => 'number',
                 'format' => 'integer',
@@ -70,5 +56,18 @@ final class ODRangeRadiusFilter extends AbstractContextAwareFilter
         }
 
         return $description;
+    }
+
+    protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
+    {
+        if ('range' != $property) {
+            return;
+        }
+
+        // ?? unfinished ??
+        // We check if we already define the range parameters and if so, we can set the right value from
+        if ($queryBuilder->getParameter('range')) {
+            $queryBuilder->setParameter('range', $value);
+        }
     }
 }

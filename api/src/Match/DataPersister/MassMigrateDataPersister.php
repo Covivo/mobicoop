@@ -18,7 +18,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Match\DataPersister;
 
@@ -28,10 +28,9 @@ use App\Match\Exception\MassException;
 use App\Match\Service\MassMigrateManager;
 
 /**
- * Item data persister for migrating a Mass
+ * Item data persister for migrating a Mass.
  *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
- *
  */
 final class MassMigrateDataPersister implements ContextAwareDataPersisterInterface
 {
@@ -44,21 +43,20 @@ final class MassMigrateDataPersister implements ContextAwareDataPersisterInterfa
 
     public function supports($data, array $context = []): bool
     {
-        return $data instanceof Mass && isset($context['item_operation_name']) &&  $context['item_operation_name'] == 'migrate';
+        return $data instanceof Mass && isset($context['item_operation_name']) && 'migrate' == $context['item_operation_name'];
     }
 
     public function persist($data, array $context = [])
     {
         // Only qualified Masses can be migrated
-        if ($data->getMassType()<=1) {
+        if ($data->getMassType() <= 1) {
             throw new MassException(MassException::BAD_TYPE);
         }
 
         // Only analyzed Mass can be migrated (or specific migration)
-        if ($data->getMassType() !== Mass::TYPE_MIGRATION && is_null($data->getAnalyzedDate())) {
+        if (Mass::TYPE_MIGRATION !== $data->getMassType() && is_null($data->getAnalyzedDate())) {
             throw new MassException(MassException::MASS_NOT_ANALYZED);
         }
-
 
         return $this->massMigrateManager->migrate($data);
     }

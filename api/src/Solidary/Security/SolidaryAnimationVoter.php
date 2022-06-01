@@ -19,15 +19,15 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\Security;
 
-use App\Auth\Service\AuthManager;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
+use App\Auth\Service\AuthManager;
 use App\Solidary\Entity\SolidaryAnimation;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
@@ -50,7 +50,7 @@ class SolidaryAnimationVoter extends Voter
         if (!in_array($attribute, [
             self::SOLIDARY_ANIMATION_CREATE,
             self::SOLIDARY_ANIMATION_LIST,
-            ])) {
+        ])) {
             return false;
         }
 
@@ -58,11 +58,12 @@ class SolidaryAnimationVoter extends Voter
         if (!in_array($attribute, [
             self::SOLIDARY_ANIMATION_CREATE,
             self::SOLIDARY_ANIMATION_LIST,
-            ]) && !($subject instanceof Paginator) &&
-                !($subject instanceof SolidaryAnimation)
+        ]) && !($subject instanceof Paginator)
+                && !($subject instanceof SolidaryAnimation)
             ) {
             return false;
         }
+
         return true;
     }
 
@@ -71,6 +72,7 @@ class SolidaryAnimationVoter extends Voter
         switch ($attribute) {
             case self::SOLIDARY_ANIMATION_CREATE:
                 return $this->canCreateSolidaryAnimation();
+
             case self::SOLIDARY_ANIMATION_LIST:
                 return $this->canListSolidaryAnimation();
         }

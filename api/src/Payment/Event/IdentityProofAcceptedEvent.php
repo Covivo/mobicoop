@@ -19,26 +19,22 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Payment\Event;
 
-use Symfony\Contracts\EventDispatcher\Event;
 use App\Payment\Entity\PaymentProfile;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class IdentityProofAcceptedEvent extends Event
 {
     public const NAME = 'identity_proof_accepted';
-
 
     public function __construct(PaymentProfile $paymentProfile)
     {
         $this->paymentProfile = $paymentProfile;
     }
 
-    /**
-     * @return PaymentProfile
-     */
     public function getPaymentProfile(): PaymentProfile
     {
         return $this->paymentProfile;

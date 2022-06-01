@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\Interfaces;
 
@@ -30,42 +30,36 @@ use App\User\Entity\User;
  * Consumption Feedback Interface.
  *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
- *
  */
 interface ConsumptionFeedbackInterface
 {
     /**
-     * Get the auth token
+     * Get the auth token.
      */
     public function auth();
 
     /**
-     * Send a consumption feedback
+     * Send a consumption feedback.
      */
     public function sendConsumptionFeedback();
 
     /**
-     * Get the User related to this consumption feedback
-     *
-     * @return User|null
+     * Get the User related to this consumption feedback.
      */
     public function getConsumptionUser(): ?User;
 
     /**
-     * @param User|null $consumptionUser The User related to this consumption feedback
-     * @return void
+     * @param null|User $consumptionUser The User related to this consumption feedback
      */
     public function setConsumptionUser(?User $consumptionUser): void;
 
     /**
-     * Get the CarpoolItem related to this consumption feedback
-     *
-     * @return CarpoolItem|null
+     * Get the CarpoolItem related to this consumption feedback.
      */
     public function getConsumptionCarpoolItem(): ?CarpoolItem;
 
     /**
-     * @param CarpoolItem|null $consumptionCarpoolItem  The CarpoolItem related to this consumption feedback
+     * @param null|CarpoolItem $consumptionCarpoolItem The CarpoolItem related to this consumption feedback
      */
     public function setConsumptionCarpoolItem(?CarpoolItem $consumptionCarpoolItem);
 }

@@ -18,7 +18,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Action\Repository;
 
@@ -41,7 +41,6 @@ class LogRepository
         $this->repository = $entityManager->getRepository(Log::class);
     }
 
-
     public function find(int $id): ?Log
     {
         return $this->repository->find($id);
@@ -51,7 +50,6 @@ class LogRepository
     {
         return $this->repository->findAll();
     }
-
 
     public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null): ?array
     {

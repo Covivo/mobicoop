@@ -19,15 +19,15 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Gamification\Security;
 
-use App\Auth\Service\AuthManager;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
+use App\Auth\Service\AuthManager;
 use App\Gamification\Entity\Badge;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class BadgeVoter extends Voter
 {
@@ -55,7 +55,7 @@ class BadgeVoter extends Voter
             self::BADGE_DELETE,
             self::BADGE_LIST,
             self::BADGES_BOARD,
-            ])) {
+        ])) {
             return false;
         }
 
@@ -67,7 +67,7 @@ class BadgeVoter extends Voter
             self::BADGE_DELETE,
             self::BADGE_LIST,
             self::BADGES_BOARD,
-            ]) && !($subject instanceof Paginator) && !($subject instanceof Badge)) {
+        ]) && !($subject instanceof Paginator) && !($subject instanceof Badge)) {
             return false;
         }
 
@@ -79,14 +79,19 @@ class BadgeVoter extends Voter
         switch ($attribute) {
             case self::BADGE_CREATE:
                 return $this->canCreate();
+
             case self::BADGE_READ:
                 return $this->canRead($subject);
+
             case self::BADGE_UPDATE:
                 return $this->canUpdate($subject);
+
             case self::BADGE_DELETE:
                 return $this->canDelete($subject);
+
             case self::BADGE_LIST:
                 return $this->canList();
+
             case self::BADGES_BOARD:
                 return $this->canGetBoard();
         }
@@ -101,17 +106,17 @@ class BadgeVoter extends Voter
 
     private function canRead(Badge $badge)
     {
-        return $this->authManager->isAuthorized(self::BADGE_READ, ['badge'=>$badge]);
+        return $this->authManager->isAuthorized(self::BADGE_READ, ['badge' => $badge]);
     }
 
     private function canUpdate(Badge $badge)
     {
-        return $this->authManager->isAuthorized(self::BADGE_UPDATE, ['badge'=>$badge]);
+        return $this->authManager->isAuthorized(self::BADGE_UPDATE, ['badge' => $badge]);
     }
 
     private function canDelete(Badge $badge)
     {
-        return $this->authManager->isAuthorized(self::BADGE_DELETE, ['badge'=>$badge]);
+        return $this->authManager->isAuthorized(self::BADGE_DELETE, ['badge' => $badge]);
     }
 
     private function canList()

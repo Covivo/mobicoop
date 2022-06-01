@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Article\Repository;
 
@@ -42,9 +42,9 @@ class ArticleRepository
     }
 
     /**
-     * Find All the articles
+     * Find All the articles.
      *
-     * @return Article[]|null
+     * @return null|Article[]
      */
     public function findAll(): ?array
     {
@@ -57,15 +57,16 @@ class ArticleRepository
     }
 
     /**
-     * Find the external articles
+     * Find the external articles.
      */
-    public function findLastExternal(int $nbArticles=Article::NB_EXTERNAL_ARTICLES_DEFAULT)
+    public function findLastExternal(int $nbArticles = Article::NB_EXTERNAL_ARTICLES_DEFAULT)
     {
         $query = $this->repository->createQueryBuilder('a')
-        ->where('a.iFrame is not null')
-        ->orderBy('a.createdDate', 'DESC')
-        ->setMaxResults($nbArticles)
-        ->getQuery();
+            ->where('a.iFrame is not null')
+            ->orderBy('a.createdDate', 'DESC')
+            ->setMaxResults($nbArticles)
+            ->getQuery()
+        ;
 
         return $query->getResult();
     }

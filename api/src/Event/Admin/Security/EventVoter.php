@@ -19,17 +19,17 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Event\Admin\Security;
 
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
 use App\Auth\Service\AuthManager;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use App\Event\Entity\Event;
 use App\Event\Repository\EventRepository;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class EventVoter extends Voter
 {
@@ -63,8 +63,8 @@ class EventVoter extends Voter
             self::ADMIN_EVENT_READ,
             self::ADMIN_EVENT_UPDATE,
             self::ADMIN_EVENT_DELETE,
-            self::ADMIN_EVENT_LIST
-            ])) {
+            self::ADMIN_EVENT_LIST,
+        ])) {
             return false;
         }
 
@@ -74,10 +74,11 @@ class EventVoter extends Voter
             self::ADMIN_EVENT_READ,
             self::ADMIN_EVENT_UPDATE,
             self::ADMIN_EVENT_DELETE,
-            self::ADMIN_EVENT_LIST
-            ]) && !($subject instanceof Paginator) && !($subject instanceof Event)) {
+            self::ADMIN_EVENT_LIST,
+        ]) && !($subject instanceof Paginator) && !($subject instanceof Event)) {
             return false;
         }
+
         return true;
     }
 
@@ -86,6 +87,7 @@ class EventVoter extends Voter
         switch ($attribute) {
             case self::ADMIN_EVENT_CREATE:
                 return $this->canCreateEvent();
+
             case self::ADMIN_EVENT_READ:
                 // this voter is used for direct event read, we have to check the type of subject
                 if ($subject instanceof Event) {
@@ -94,14 +96,19 @@ class EventVoter extends Voter
                 if ($event = $this->eventRepository->find($this->request->get('id'))) {
                     return $this->canReadEvent($event);
                 }
+
                 return false;
+
             case self::ADMIN_EVENT_UPDATE:
                 return $this->canUpdateEvent($subject);
+
             case self::ADMIN_EVENT_DELETE:
                 return $this->canDeleteEvent($subject);
+
             case self::ADMIN_EVENT_LIST:
                 return $this->canListEvent();
         }
+
         throw new \LogicException('This code should not be reached!');
     }
 
@@ -112,17 +119,17 @@ class EventVoter extends Voter
 
     private function canReadEvent(Event $event)
     {
-        return $this->authManager->isAuthorized(self::EVENT_READ, ['event'=>$event]);
+        return $this->authManager->isAuthorized(self::EVENT_READ, ['event' => $event]);
     }
 
     private function canUpdateEvent(Event $event)
     {
-        return $this->authManager->isAuthorized(self::EVENT_UPDATE, ['event'=>$event]);
+        return $this->authManager->isAuthorized(self::EVENT_UPDATE, ['event' => $event]);
     }
 
     private function canDeleteEvent(Event $event)
     {
-        return $this->authManager->isAuthorized(self::EVENT_DELETE, ['event'=>$event]);
+        return $this->authManager->isAuthorized(self::EVENT_DELETE, ['event' => $event]);
     }
 
     private function canListEvent()

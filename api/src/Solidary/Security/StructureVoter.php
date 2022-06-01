@@ -19,16 +19,16 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\Security;
 
-use App\Auth\Service\AuthManager;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
+use App\Auth\Service\AuthManager;
 use App\Solidary\Entity\Structure;
 use App\Solidary\Entity\StructureProof;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
@@ -57,7 +57,7 @@ class StructureVoter extends Voter
             self::STRUCTURE_UPDATE,
             self::STRUCTURE_DELETE,
             self::STRUCTURE_LIST,
-            ])) {
+        ])) {
             return false;
         }
 
@@ -68,9 +68,10 @@ class StructureVoter extends Voter
             self::STRUCTURE_UPDATE,
             self::STRUCTURE_DELETE,
             self::STRUCTURE_LIST,
-            ]) && !($subject instanceof Paginator) && !($subject instanceof Structure || $subject instanceof StructureProof)) {
+        ]) && !($subject instanceof Paginator) && !($subject instanceof Structure || $subject instanceof StructureProof)) {
             return false;
         }
+
         return true;
     }
 
@@ -79,12 +80,16 @@ class StructureVoter extends Voter
         switch ($attribute) {
             case self::STRUCTURE_CREATE:
                 return $this->canCreateStructure();
+
             case self::STRUCTURE_READ:
                 return $this->canReadStructure();
+
             case self::STRUCTURE_UPDATE:
                 return $this->canUpdateStructure();
+
             case self::STRUCTURE_DELETE:
                 return $this->canDeleteStructure();
+
             case self::STRUCTURE_LIST:
                 return $this->canListStructure();
         }

@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Article\Repository;
 
@@ -28,8 +28,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 
 /**
- * @method Section|null find($id, $lockMode = null, $lockVersion = null)
- * @method Section|null findOneBy(array $criteria, array $orderBy = null)
+ * @method null|Section find($id, $lockMode = null, $lockVersion = null)
+ * @method null|Section findOneBy(array $criteria, array $orderBy = null)
  * @method Section[]    findAll()
  * @method Section[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
@@ -53,17 +53,17 @@ class SectionRepository
     /**
      * Find the following section of a given section.
      *
-     * @param Section $section
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
     public function findNext(Section $section)
     {
         $query = $this->repository->createQueryBuilder('s')
-        ->andWhere('s.position = :position')
-        ->andWhere('s.article = :article')
-        ->setParameter('position', $section->getPosition()+1)
-        ->setParameter('article', $section->getArticle())
-        ->getQuery();
+            ->andWhere('s.position = :position')
+            ->andWhere('s.article = :article')
+            ->setParameter('position', $section->getPosition() + 1)
+            ->setParameter('article', $section->getArticle())
+            ->getQuery()
+        ;
 
         return $query->getOneOrNullResult()
         ;
@@ -72,17 +72,17 @@ class SectionRepository
     /**
      * Find the previous section of a given section.
      *
-     * @param Section $section
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
     public function findPrevious(Section $section)
     {
         $query = $this->repository->createQueryBuilder('s')
-        ->andWhere('s.position = :position')
-        ->andWhere('s.article = :article')
-        ->setParameter('position', $section->getPosition()-1)
-        ->setParameter('article', $section->getArticle())
-        ->getQuery();
+            ->andWhere('s.position = :position')
+            ->andWhere('s.article = :article')
+            ->setParameter('position', $section->getPosition() - 1)
+            ->setParameter('article', $section->getArticle())
+            ->getQuery()
+        ;
 
         return $query->getOneOrNullResult()
         ;

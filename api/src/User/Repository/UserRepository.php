@@ -56,8 +56,6 @@ class UserRepository
 
     /**
      * Find All the users.
-     *
-     * @return null|User
      */
     public function findAll(): ?User
     {
@@ -69,8 +67,6 @@ class UserRepository
      *
      * @param null|mixed $limit
      * @param null|mixed $offset
-     *
-     * @return null|User
      */
     public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null): ?User
     {
@@ -86,8 +82,6 @@ class UserRepository
      * Get all the users in the communities given.
      *
      * @param null|mixed $acceptEmail
-     *
-     * @return null|User
      */
     public function getUserInCommunity(Community $community, $acceptEmail = null): ?User
     {
@@ -168,8 +162,6 @@ class UserRepository
 
     /**
      * Count the active users (with a connection in the last 6 months).
-     *
-     * @return int
      */
     public function countActiveUsers(): int
     {
@@ -187,8 +179,6 @@ class UserRepository
 
     /**
      * Count users.
-     *
-     * @return int
      */
     public function countUsers(): int
     {

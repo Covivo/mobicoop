@@ -18,7 +18,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Stats\Service;
 
@@ -60,7 +60,7 @@ class StatsManager
     }
 
     /**
-     * Get the Home indicators
+     * Get the Home indicators.
      *
      * @return Indicator[]
      */
@@ -80,10 +80,11 @@ class StatsManager
     }
 
     /**
-     * Add an Indicator in the current array $indicators
+     * Add an Indicator in the current array $indicators.
      *
-     * @param string $label     Indicator's label
-     * @param float $value      Indicator's value
+     * @param string $label Indicator's label
+     * @param float  $value Indicator's value
+     *
      * @return array Updated current array of Indicators
      */
     private function addIndicator(string $label, float $value): array
@@ -95,44 +96,39 @@ class StatsManager
     }
 
     /**
-     * Add the number of avalaibles ads in indicator
-     *
+     * Add the number of avalaibles ads in indicator.
      */
     private function addAvalaibleAdsNumberIndicator()
     {
-        $this->addIndicator("available_ads", $this->proposalRepository->countAvailableAds());
+        $this->addIndicator('available_ads', $this->proposalRepository->countAvailableAds());
     }
 
     /**
-     * Add the number of users in indicator
-     *
+     * Add the number of users in indicator.
      */
     private function addUsersNumberIndicator()
     {
-        $this->addIndicator("users", $this->userRepository->countUsers());
+        $this->addIndicator('users', $this->userRepository->countUsers());
     }
 
     /**
-     * Add the number of communities in indicator
-     *
+     * Add the number of communities in indicator.
      */
     private function addCommunitiesNumberIndicator()
     {
-        $this->addIndicator("communities_count", $this->communityRepository->countCommunities());
+        $this->addIndicator('communities_count', $this->communityRepository->countCommunities());
     }
 
     /**
-     * Add the number of the aks in indicator
-     *
+     * Add the number of the aks in indicator.
      */
     private function addAsksNumberIndicator()
     {
-        $this->addIndicator("aks", $this->askRepository->countAsks());
+        $this->addIndicator('aks', $this->askRepository->countAsks());
     }
 
     /**
-     * Add the number of the last ads published in the last month in indicator
-     *
+     * Add the number of the last ads published in the last month in indicator.
      */
     private function addLastMonthAdsNumberIndicator()
     {
@@ -140,24 +136,22 @@ class StatsManager
         $now = new \DateTime();
         $lastMonth = $now->modify('-1 months');
 
-        $startDate = DateTime::createFromFormat("d/n/Y h:i:s", "01/".$lastMonth->format('n')."/".$lastMonth->format('Y')."00:00:00");
-        $endDate = DateTime::createFromFormat("d/n/Y h:i:s", $lastMonth->format('t')."/".$lastMonth->format('n')."/".$lastMonth->format('Y')."00:00:00");
-        $this->addIndicator("ads_last_month", $this->proposalRepository->countProposalsBetweenCreateDate($startDate, $endDate));
+        $startDate = DateTime::createFromFormat('d/n/Y h:i:s', '01/'.$lastMonth->format('n').'/'.$lastMonth->format('Y').'00:00:00');
+        $endDate = DateTime::createFromFormat('d/n/Y h:i:s', $lastMonth->format('t').'/'.$lastMonth->format('n').'/'.$lastMonth->format('Y').'00:00:00');
+        $this->addIndicator('ads_last_month', $this->proposalRepository->countProposalsBetweenCreateDate($startDate, $endDate));
     }
 
     /**
-     * Add the number of active users in indicator
-     *
+     * Add the number of active users in indicator.
      */
     private function addActiveUsersNumberIndicator()
     {
         // Active users (connection in the last 6 months)
-        $this->addIndicator("users_active", $this->userRepository->countActiveUsers());
+        $this->addIndicator('users_active', $this->userRepository->countActiveUsers());
     }
 
     /**
-     * Add the number of carpool proofs published in the last month in indicator
-     *
+     * Add the number of carpool proofs published in the last month in indicator.
      */
     private function addCarpoolProofsLastMonthNumberIndicator()
     {
@@ -165,10 +159,10 @@ class StatsManager
         $now = new \DateTime();
         $lastMonth = $now->modify('-1 months');
 
-        $startDate = DateTime::createFromFormat("d/n/Y h:i:s", "01/".$lastMonth->format('n')."/".$lastMonth->format('Y')."00:00:00");
-        $endDate = DateTime::createFromFormat("d/n/Y h:i:s", $lastMonth->format('t')."/".$lastMonth->format('n')."/".$lastMonth->format('Y')."00:00:00");
+        $startDate = DateTime::createFromFormat('d/n/Y h:i:s', '01/'.$lastMonth->format('n').'/'.$lastMonth->format('Y').'00:00:00');
+        $endDate = DateTime::createFromFormat('d/n/Y h:i:s', $lastMonth->format('t').'/'.$lastMonth->format('n').'/'.$lastMonth->format('Y').'00:00:00');
 
-        $proofs = $this->carpoolProofRepository->findByTypesAndPeriod([CarpoolProof::TYPE_LOW,CarpoolProof::TYPE_MID,CarpoolProof::TYPE_HIGH], $startDate, $endDate, [CarpoolProof::STATUS_SENT]);
-        $this->addIndicator("carpool_proofs_last_month", (is_array($proofs)) ? count($proofs) : 0);
+        $proofs = $this->carpoolProofRepository->findByTypesAndPeriod([CarpoolProof::TYPE_LOW, CarpoolProof::TYPE_MID, CarpoolProof::TYPE_HIGH], $startDate, $endDate, [CarpoolProof::STATUS_SENT]);
+        $this->addIndicator('carpool_proofs_last_month', (is_array($proofs)) ? count($proofs) : 0);
     }
 }

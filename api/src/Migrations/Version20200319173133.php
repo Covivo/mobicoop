@@ -15,7 +15,7 @@ final class Version20200319173133 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE solidary CHANGE solidary_user_id solidary_user_id INT DEFAULT NULL, CHANGE structure_id structure_id INT DEFAULT NULL');
     }
@@ -23,7 +23,7 @@ final class Version20200319173133 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE solidary CHANGE solidary_user_id solidary_user_id INT NOT NULL, CHANGE structure_id structure_id INT NOT NULL');
     }

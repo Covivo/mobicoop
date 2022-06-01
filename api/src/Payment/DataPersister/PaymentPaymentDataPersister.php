@@ -18,9 +18,9 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
- namespace App\Payment\DataPersister;
+namespace App\Payment\DataPersister;
 
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
 use App\Payment\Exception\PaymentException;
@@ -50,8 +50,7 @@ final class PaymentPaymentDataPersister implements ContextAwareDataPersisterInte
     public function persist($data, array $context = [])
     {
         // call your persistence layer to save $data
-        if (isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'post') {
-
+        if (isset($context['collection_operation_name']) && 'post' == $context['collection_operation_name']) {
             /**
              * @var PaymentPayment $data
              */
@@ -59,7 +58,7 @@ final class PaymentPaymentDataPersister implements ContextAwareDataPersisterInte
             // If there is at least one online payment we check if the can pay electronicaly
             $electronicPayment = false;
             foreach ($data->getItems() as $item) {
-                if ($item['mode']==PaymentPayment::MODE_ONLINE) {
+                if (PaymentPayment::MODE_ONLINE == $item['mode']) {
                     $electronicPayment = true;
                 }
             }
@@ -68,6 +67,7 @@ final class PaymentPaymentDataPersister implements ContextAwareDataPersisterInte
             }
             $data = $this->paymentManager->createPaymentPayment($data, $this->security->getUser());
         }
+
         return $data;
     }
 

@@ -19,19 +19,17 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Rdex\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
-use Symfony\Component\Serializer\Annotation\Groups;
-use Doctrine\Common\Collections\ArrayCollection;
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Rdex\Controller\ConnectionController;
-use App\Rdex\Entity\RdexConnectionUser;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * An RDEX Connection (conctact a user on a rdex platform)
+ * An RDEX Connection (conctact a user on a rdex platform).
  *
  * @ApiResource(
  *      routePrefix="/rdex",
@@ -131,42 +129,42 @@ class RdexConnection
 {
     public const MAX_LENGTH_DETAILS = 500;
 
-    public const STATE_RECIPIENT = "recipient";
-    public const STATE_SENDER = "sender";
+    public const STATE_RECIPIENT = 'recipient';
+    public const STATE_SENDER = 'sender';
     public const AUTHORIZED_STATE = [self::STATE_SENDER, self::STATE_RECIPIENT];
 
     /**
      * @ApiProperty(identifier=true)
      *
-     * @var string The uuid of the journey.
+     * @var string the uuid of the journey
      *
      * @Groups("rdex")
      */
     private $uuid;
 
     /**
-     * @var string The name of the operator.
+     * @var string the name of the operator
      *
      * @Groups("rdex")
      */
     private $operator;
 
     /**
-     * @var string The url of the site.
+     * @var string the url of the site
      *
      * @Groups("rdex")
      */
     private $origin;
 
     /**
-     * @var RdexConnectionUser The driver.
+     * @var RdexConnectionUser the driver
      *
      * @Groups("rdex")
      */
     private $driver;
 
     /**
-     * @var RdexConnectionUser The passenger.
+     * @var RdexConnectionUser the passenger
      *
      * @Groups("rdex")
      */
@@ -174,19 +172,19 @@ class RdexConnection
 
     /**
      * @var int The uuids of the journey.
-     * Yes, there a 's' in the spec but we only take one... don't ask
+     *          Yes, there a 's' in the spec but we only take one... don't ask
      * @Groups("rdex")
      */
     private $journeysId;
 
     /**
-     * @var string The message.
+     * @var string the message
      *
      * @Groups("rdex")
      */
     private $details;
 
-    public function __construct($uuid=null)
+    public function __construct($uuid = null)
     {
         (!is_null($uuid)) ? $this->uuid = $uuid : $this->uuid = -999999999;
     }

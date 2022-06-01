@@ -19,15 +19,15 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Carpool\Ressource;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Carpool\Entity\Proposal;
-use Symfony\Component\Serializer\Annotation\Groups;
 use App\User\Entity\User;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -93,7 +93,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          }
  *      }
  * )
- *
  */
 class Dynamic
 {
@@ -103,7 +102,7 @@ class Dynamic
     public const ROLE_PASSENGER = 2;
 
     /**
-     * @var int The id of this dynamic ad.
+     * @var int the id of this dynamic ad
      *
      * @ApiProperty(identifier=true)
      * @Groups({"readDynamic","updateDynamic"})
@@ -111,7 +110,7 @@ class Dynamic
     private $id;
 
     /**
-     * @var int The role for this ad.
+     * @var int the role for this ad
      *
      * @Groups({"readDynamic","writeDynamic"})
      * @Assert\NotBlank(groups={"writeDynamic"})
@@ -119,14 +118,14 @@ class Dynamic
     private $role;
 
     /**
-     * @var \DateTimeInterface The date and time of the start of the dynamic ad (= date and time of the creation of the dynamic ad, automatically filled).
+     * @var \DateTimeInterface the date and time of the start of the dynamic ad (= date and time of the creation of the dynamic ad, automatically filled)
      *
      * @Groups("readDynamic")
      */
     private $date;
 
     /**
-     * @var array The waypoints.
+     * @var array the waypoints
      *
      * @Groups({"readDynamic","writeDynamic"})
      * @Assert\NotBlank(groups={"writeDynamic"})
@@ -134,7 +133,7 @@ class Dynamic
     private $waypoints;
 
     /**
-     * @var string The last latitude given.
+     * @var string the last latitude given
      *
      * @Groups("updateDynamic")
      * @Assert\NotBlank(groups={"updateDynamic"})
@@ -142,7 +141,7 @@ class Dynamic
     private $latitude;
 
     /**
-     * @var string The last longitude given.
+     * @var string the last longitude given
      *
      * @Groups("updateDynamic")
      * @Assert\NotBlank(groups={"updateDynamic"})
@@ -150,76 +149,75 @@ class Dynamic
     private $longitude;
 
     /**
-    * @var string|null The price per km.
-    *
-    * @Groups({"readDynamic","writeDynamic"})
-    */
+     * @var null|string the price per km
+     *
+     * @Groups({"readDynamic","writeDynamic"})
+     */
     private $priceKm;
 
     /**
-    * @var string|null The total price selected by the user.
-    *
-    * @Groups({"readDynamic","writeDynamic"})
-    */
+     * @var null|string the total price selected by the user
+     *
+     * @Groups({"readDynamic","writeDynamic"})
+     */
     private $price;
 
     /**
-     * @var int|null The number of seats available/required.
+     * @var null|int the number of seats available/required
      *
      * @Groups({"readDynamic","writeDynamic"})
      */
     private $seats;
 
     /**
-     * @var string|null A comment about the ad.
+     * @var null|string a comment about the ad
      *
      * @Groups({"readDynamic","writeDynamic"})
      */
     private $comment;
 
     /**
-     * @var User|null The ad owner.
+     * @var null|User the ad owner
      */
     private $user;
 
     /**
-     * @var array|null The carpool results.
+     * @var null|array the carpool results
      *
      * @Groups({"readDynamic","writeDynamic","updateDynamic"})
      */
     private $results;
 
     /**
-     * @var array|null The filters to apply to the results.
+     * @var null|array the filters to apply to the results
      */
     private $filters;
 
     /**
-     * @var array|null The asks related to the ad.
+     * @var null|array the asks related to the ad
      *
      * @Groups({"readDynamic","updateDynamic"})
      */
     private $asks;
 
     /**
-     * @var Proposal The proposal associated with the dynamic ad.
+     * @var Proposal the proposal associated with the dynamic ad
      */
     private $proposal;
 
     /**
-     * @var boolean The destination is reached.
+     * @var bool the destination is reached
      *
      * @Groups({"updateDynamic"})
      */
     private $destination;
 
     /**
-     * @var boolean The ad is finished.
+     * @var bool the ad is finished
      *
      * @Groups({"updateDynamic"})
      */
     private $finished;
-
 
     public function __construct()
     {
@@ -404,7 +402,7 @@ class Dynamic
 
     public function isDestination(): bool
     {
-        return $this->destination === true ? true : false;
+        return true === $this->destination ? true : false;
     }
 
     public function setDestination(bool $destination)
@@ -414,7 +412,7 @@ class Dynamic
 
     public function isFinished(): bool
     {
-        return $this->finished === true ? true : false;
+        return true === $this->finished ? true : false;
     }
 
     public function setFinished(bool $finished)

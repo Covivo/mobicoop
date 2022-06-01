@@ -547,7 +547,7 @@ class MangoPayProvider implements PaymentProviderInterface
         $response = $dataProvider->postCollection($body, $headers);
 
         if (200 == $response->getCode()) {
-            //$data = json_decode($response->getValue(), true);
+            // $data = json_decode($response->getValue(), true);
             return true;
         }
 
@@ -581,7 +581,7 @@ class MangoPayProvider implements PaymentProviderInterface
         $response = $dataProvider->postCollection($body, $headers);
 
         if (200 == $response->getCode()) {
-            //$data = json_decode($response->getValue(), true);
+            // $data = json_decode($response->getValue(), true);
             return true;
         }
 
@@ -629,7 +629,7 @@ class MangoPayProvider implements PaymentProviderInterface
         }
         $identifier = $paymentProfiles[0]->getIdentifier();
 
-        //$fileContent = base64_encode(file_get_contents(self::VALIDATION_DOCUMENTS_PATH."".$validationDocument->getFileName()));
+        // $fileContent = base64_encode(file_get_contents(self::VALIDATION_DOCUMENTS_PATH."".$validationDocument->getFileName()));
 
         // General header for all 3 requests
         $headers = [

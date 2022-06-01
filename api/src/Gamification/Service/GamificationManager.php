@@ -266,6 +266,7 @@ class GamificationManager
                 if (!is_null($gamificationAction->getGamificationActionRule())) {
                     // at this point a rule is associated, we need to execute it
                     $gamificationActionRuleName = '\\App\\Gamification\\Rule\\'.$gamificationAction->getGamificationActionRule()->getName();
+
                     /**
                      * @var GamificationRuleInterface $gamificationActionRule
                      */

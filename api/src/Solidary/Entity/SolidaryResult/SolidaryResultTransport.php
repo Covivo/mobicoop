@@ -19,18 +19,16 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\Entity\SolidaryResult;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * A solidary Result Transport
+ * A solidary Result Transport.
  *
  * ApiResource(
  *      attributes={
@@ -45,15 +43,15 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "get"
  *      }
  * )
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-
 class SolidaryResultTransport
 {
     public const DEFAULT_ID = 999999999999;
 
     /**
-     * @var int The id of this subject.
+     * @var int the id of this subject
      *
      * @ApiProperty(identifier=true)
      * @Groups({"readSolidarySearch"})
@@ -67,9 +65,9 @@ class SolidaryResultTransport
     private $volunteer;
 
     /**
-    * @var string Id of the volunteer
-    * @Groups({"readSolidarySearch"})
-    */
+     * @var string Id of the volunteer
+     * @Groups({"readSolidarySearch"})
+     */
     private $volunteerId;
 
     /**

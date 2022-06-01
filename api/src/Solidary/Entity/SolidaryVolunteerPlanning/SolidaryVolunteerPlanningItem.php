@@ -19,14 +19,14 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\Entity\SolidaryVolunteerPlanning;
 
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * A solidary transporters planning item
+ * A solidary transporters planning item.
  *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */

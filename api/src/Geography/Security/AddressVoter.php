@@ -19,21 +19,20 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Geography\Security;
 
-use App\Geography\Entity\Address;
 use App\Auth\Service\PermissionManager;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
+use App\Geography\Entity\Address;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 class AddressVoter extends Voter
 {
-    public const POST ='address_post';
+    public const POST = 'address_post';
     public const READ = 'address_read';
     public const UPDATE = 'address_update';
     public const DELETE = 'address_delete';
@@ -61,7 +60,7 @@ class AddressVoter extends Voter
             self::ADMIN_MANAGE_EVENT,
             self::ADMIN_MANAGE_COMMUNITY,
             self::ADMIN_MANAGE_USER,
-            ])) {
+        ])) {
             return false;
         }
 
@@ -69,6 +68,7 @@ class AddressVoter extends Voter
         if (!$subject instanceof Address) {
             return false;
         }
+
         return true;
     }
 
@@ -76,21 +76,27 @@ class AddressVoter extends Voter
     {
         // TO DO : Code the real Voter
         return true;
-
         $requester = $token->getUser();
+
         switch ($attribute) {
             case self::POST:
                 return $this->canPost($requester, $subject);
+
             case self::READ:
                 return $this->canRead($requester, $subject);
+
             case self::UPDATE:
                 return $this->canUpdate($requester, $subject);
+
             case self::DELETE:
                 return $this->canDelete($requester, $subject);
+
             case self::ADMIN_MANAGE_EVENT:
                 return $this->canAdminManageEvent($requester, $subject);
+
             case self::ADMIN_MANAGE_COMMUNITY:
                 return $this->canAdminManageCommunity($requester, $subject);
+
             case self::ADMIN_MANAGE_USER:
                 return $this->canAdminManageUser($requester, $subject);
         }
@@ -102,11 +108,14 @@ class AddressVoter extends Voter
     {
         if (($subject->getEvent()->getUser()->getEmail() == $requester->getUsername()) || ($this->permissionManager->checkPermission('event_manage', $requester))) {
             return $this->permissionManager->checkPermission('event_create', $requester);
-        } elseif (($subject->getCommunity()->getUser()->getEmail() == $requester->getUsername()) || ($this->permissionManager->checkPermission('community_manage', $requester))) {
+        }
+        if (($subject->getCommunity()->getUser()->getEmail() == $requester->getUsername()) || ($this->permissionManager->checkPermission('community_manage', $requester))) {
             return $this->permissionManager->checkPermission('community_create', $requester);
-        } elseif (($subject->getUser()->getEmail() == $requester->getUsername()) || ($this->permissionManager->checkPermission('user_manage', $requester))) {
+        }
+        if (($subject->getUser()->getEmail() == $requester->getUsername()) || ($this->permissionManager->checkPermission('user_manage', $requester))) {
             return $this->permissionManager->checkPermission('user_address_create_self', $requester);
         }
+
         return false;
     }
 
@@ -114,11 +123,14 @@ class AddressVoter extends Voter
     {
         if (($subject->getEvent()->getUser()->getEmail() == $requester->getUsername()) || ($this->permissionManager->checkPermission('event_manage', $requester))) {
             return $this->permissionManager->checkPermission('event_read', $requester);
-        } elseif (($subject->getCommunity()->getUser()->getEmail() == $requester->getUsername()) || ($this->permissionManager->checkPermission('community_manage', $requester))) {
+        }
+        if (($subject->getCommunity()->getUser()->getEmail() == $requester->getUsername()) || ($this->permissionManager->checkPermission('community_manage', $requester))) {
             return $this->permissionManager->checkPermission('community_read', $requester);
-        } elseif (($subject->getUser()->getEmail() == $requester->getUsername()) || ($this->permissionManager->checkPermission('user_manage', $requester))) {
+        }
+        if (($subject->getUser()->getEmail() == $requester->getUsername()) || ($this->permissionManager->checkPermission('user_manage', $requester))) {
             return $this->permissionManager->checkPermission('user_read_self', $requester);
         }
+
         return false;
     }
 
@@ -126,11 +138,14 @@ class AddressVoter extends Voter
     {
         if (($subject->getEvent()->getUser()->getEmail() == $requester->getUsername()) || ($this->permissionManager->checkPermission('event_manage', $requester))) {
             return $this->permissionManager->checkPermission('event_update_self', $requester);
-        } elseif (($subject->getCommunity()->getUser()->getEmail() == $requester->getUsername()) || ($this->permissionManager->checkPermission('community_manage', $requester))) {
+        }
+        if (($subject->getCommunity()->getUser()->getEmail() == $requester->getUsername()) || ($this->permissionManager->checkPermission('community_manage', $requester))) {
             return $this->permissionManager->checkPermission('community_update_self', $requester);
-        } elseif (($subject->getUser()->getEmail() == $requester->getUsername()) || ($this->permissionManager->checkPermission('user_manage', $requester))) {
+        }
+        if (($subject->getUser()->getEmail() == $requester->getUsername()) || ($this->permissionManager->checkPermission('user_manage', $requester))) {
             return $this->permissionManager->checkPermission('user_address_update_self', $requester);
         }
+
         return false;
     }
 
@@ -138,11 +153,14 @@ class AddressVoter extends Voter
     {
         if (($subject->getEvent()->getUser()->getEmail() == $requester->getUsername()) || ($this->permissionManager->checkPermission('event_manage', $requester))) {
             return $this->permissionManager->checkPermission('event_delete_self', $requester);
-        } elseif (($subject->getCommunity()->getUser()->getEmail() == $requester->getUsername()) || ($this->permissionManager->checkPermission('community_manage', $requester))) {
+        }
+        if (($subject->getCommunity()->getUser()->getEmail() == $requester->getUsername()) || ($this->permissionManager->checkPermission('community_manage', $requester))) {
             return $this->permissionManager->checkPermission('community_delete_self', $requester);
-        } elseif (($subject->getUser()->getEmail() == $requester->getUsername()) || ($this->permissionManager->checkPermission('user_manage', $requester))) {
+        }
+        if (($subject->getUser()->getEmail() == $requester->getUsername()) || ($this->permissionManager->checkPermission('user_manage', $requester))) {
             return $this->permissionManager->checkPermission('user_address_delete_self', $requester);
         }
+
         return false;
     }
 

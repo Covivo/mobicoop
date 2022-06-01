@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Auth\Rule;
 
@@ -27,7 +27,7 @@ use App\Auth\Interfaces\AuthRuleInterface;
 use App\User\Entity\PushToken;
 
 /**
- *  Check that the requester is the owner of the related Push Token
+ *  Check that the requester is the owner of the related Push Token.
  */
 class PushTokenOwner implements AuthRuleInterface
 {
@@ -44,6 +44,7 @@ class PushTokenOwner implements AuthRuleInterface
          * @var PushToken $pushToken
          */
         $pushToken = $params['pushToken'];
+
         return $pushToken->getUser()->getId() == $requester->getId();
     }
 }

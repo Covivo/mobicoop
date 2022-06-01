@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Carpool\DataProvider;
 
@@ -33,7 +33,7 @@ use App\Carpool\Service\AdManager;
  */
 final class AdItemFullDataProvider implements RestrictedDataProviderInterface, ItemDataProviderInterface
 {
-    protected $adManager;
+    private $adManager;
 
     public function __construct(AdManager $adManager)
     {
@@ -42,7 +42,7 @@ final class AdItemFullDataProvider implements RestrictedDataProviderInterface, I
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Ad::class === $resourceClass && $operationName === "get_full";
+        return Ad::class === $resourceClass && 'get_full' === $operationName;
     }
 
     public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?object

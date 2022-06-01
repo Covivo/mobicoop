@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Match\Event;
 
@@ -27,7 +27,8 @@ use App\Match\Entity\Mass;
 use Symfony\Contracts\EventDispatcher\Event;
 
 /**
- * Event sent when there are errors during the analyze of a Mass
+ * Event sent when there are errors during the analyze of a Mass.
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class MassAnalyzeErrorsEvent extends Event

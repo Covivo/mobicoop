@@ -19,13 +19,13 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Action\Entity\Log;
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -79,7 +79,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 class Car
 {
     /**
-     * @var int $id The id of this car.
+     * @var int the id of this car
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -89,7 +89,7 @@ class Car
     private $id;
 
     /**
-     * @var string The brand of the car.
+     * @var string the brand of the car
      *
      * @ORM\Column(type="string", length=45)
      * @Groups({"read","write"})
@@ -97,7 +97,7 @@ class Car
     private $brand;
 
     /**
-     * @var string The model of the car.
+     * @var string the model of the car
      *
      * @ORM\Column(type="string", length=45)
      * @Groups({"read","write"})
@@ -105,7 +105,7 @@ class Car
     private $model;
 
     /**
-     * @var string|null The color of the car.
+     * @var null|string the color of the car
      *
      * @ORM\Column(type="string", length=45, nullable=true)
      * @Groups({"read","write"})
@@ -113,7 +113,7 @@ class Car
     private $color;
 
     /**
-     * @var string|null The siv of the car.
+     * @var null|string the siv of the car
      *
      * @ORM\Column(type="string", length=45, nullable=true)
      * @Groups({"read","write"})
@@ -121,7 +121,7 @@ class Car
     private $siv;
 
     /**
-     * @var int|null The default number of seats available for carpooling.
+     * @var null|int the default number of seats available for carpooling
      *
      * @ORM\Column(type="integer")
      * @Groups({"read","write"})
@@ -129,7 +129,7 @@ class Car
     private $seats;
 
     /**
-     * @var float|null The price per km.
+     * @var null|float the price per km
      *
      * @ORM\Column(type="decimal", precision=4, scale=2, nullable=true)
      * @Groups({"read","write"})
@@ -137,7 +137,7 @@ class Car
     private $priceKm;
 
     /**
-     * @var User The owner of the car.
+     * @var User the owner of the car
      *
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="App\User\Entity\User", inversedBy="cars")
@@ -148,14 +148,14 @@ class Car
     private $user;
 
     /**
-     * @var ArrayCollection The logs linked with the Car.
+     * @var ArrayCollection the logs linked with the Car
      *
      * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="car")
      */
     private $logs;
 
     /**
-     * @var \DateTimeInterface Creation date.
+     * @var \DateTimeInterface creation date
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read"})
@@ -163,7 +163,7 @@ class Car
     private $createdDate;
 
     /**
-     * @var \DateTimeInterface Updated date.
+     * @var \DateTimeInterface updated date
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read"})
@@ -318,7 +318,7 @@ class Car
      */
     public function setAutoCreatedDate()
     {
-        $this->setCreatedDate(new \Datetime());
+        $this->setCreatedDate(new \DateTime());
     }
 
     /**
@@ -328,6 +328,6 @@ class Car
      */
     public function setAutoUpdatedDate()
     {
-        $this->setUpdatedDate(new \Datetime());
+        $this->setUpdatedDate(new \DateTime());
     }
 }

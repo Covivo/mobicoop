@@ -830,8 +830,6 @@ class MassImportManager
      * Try to guess the real mimetype based on the extension of the file.
      *
      * @param string $filename The file
-     *
-     * @return null|string
      */
     private function guessMimeType(string $filename): ?string
     {
@@ -863,8 +861,6 @@ class MassImportManager
      * Get data from a zip file.
      *
      * @param string $zip The filename
-     *
-     * @return MassData
      */
     private function getDataFromZip(string $zip): MassData
     {
@@ -912,8 +908,6 @@ class MassImportManager
      *
      * @param string $xml  The filename
      * @param bool   $temp If the file is temporary
-     *
-     * @return MassData
      */
     private function getDataFromXml(string $xml, $temp = false): MassData
     {
@@ -997,8 +991,6 @@ class MassImportManager
      *
      * @param string $csv  The filename
      * @param bool   $temp If the file is temporary
-     *
-     * @return MassData
      */
     private function getDataFromCsv(string $csv, $temp = false): MassData
     {
@@ -1162,8 +1154,6 @@ class MassImportManager
      *
      * @param string $json The filename
      * @param bool   $temp If the file is temporary
-     *
-     * @return MassData
      */
     private function getDataFromJson(string $json, $temp = false): MassData
     {
@@ -1196,8 +1186,6 @@ class MassImportManager
 
     /**
      * Check if 2 bounding boxes have collision.
-     *
-     * @return bool
      */
     private function hasCollisions(array $bbox1, array $bbox2): bool
     {
@@ -1267,8 +1255,6 @@ class DOMValidator
      * Validate Incoming Feeds against Listing Schema.
      *
      * @throws \Exception
-     *
-     * @return bool
      */
     public function validate(): bool
     {
@@ -1300,8 +1286,6 @@ class DOMValidator
 
     /**
      * Get errors.
-     *
-     * @return array
      */
     public function getErrors(): array
     {
@@ -1310,8 +1294,6 @@ class DOMValidator
 
     /**
      * @param \libXMLError object $error
-     *
-     * @return array
      */
     private function libxmlGetError($error): array
     {
@@ -1323,9 +1305,6 @@ class DOMValidator
         ];
     }
 
-    /**
-     * @return array
-     */
     private function libxmlGetErrors(): array
     {
         $errors = libxml_get_errors();

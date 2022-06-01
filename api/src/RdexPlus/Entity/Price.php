@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\RdexPlus\Entity;
 
@@ -28,20 +28,21 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * RDEX+ : A Price
- * Documentation : https://rdex.fabmob.io/
+ * Documentation : https://rdex.fabmob.io/.
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class Price
 {
-    public const TYPE_FREE = "free";
-    public const TYPE_FIXED = "fixed";
-    public const TYPE_VARIABLE = "variable";
-    public const TYPE_UNKNOWN = "unknown";
+    public const TYPE_FREE = 'free';
+    public const TYPE_FIXED = 'fixed';
+    public const TYPE_VARIABLE = 'variable';
+    public const TYPE_UNKNOWN = 'unknown';
     public const VALID_TYPES = [
         self::TYPE_FREE,
         self::TYPE_FIXED,
         self::TYPE_VARIABLE,
-        self::TYPE_UNKNOWN
+        self::TYPE_UNKNOWN,
     ];
 
     /**
@@ -54,7 +55,7 @@ class Price
 
     /**
      * @var string Journey's price type. (free, fixed, variable, unknown)
-     * nnknown must be returned when the journey is free, but the amount is unknown (and price.amount must then be left empty).
+     *             nnknown must be returned when the journey is free, but the amount is unknown (and price.amount must then be left empty).
      * @Assert\NotBlank
      *
      * @Groups({"rdexPlusRead","rdexPlusWrite"})
@@ -74,7 +75,6 @@ class Price
      * @Groups({"rdexPlusRead","rdexPlusWrite"})
      */
     private $currency;
-
 
     public function getAmount(): ?float
     {

@@ -19,15 +19,15 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Editorial\Security;
 
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
-use App\Editorial\Entity\Editorial;
 use App\Auth\Service\AuthManager;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
+use App\Editorial\Entity\Editorial;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class EditorialVoter extends Voter
 {
@@ -52,8 +52,8 @@ class EditorialVoter extends Voter
             self::EDITORIAL_READ,
             self::EDITORIAL_UPDATE,
             self::EDITORIAL_DELETE,
-            self::EDITORIAL_LIST
-            ])) {
+            self::EDITORIAL_LIST,
+        ])) {
             return false;
         }
 
@@ -63,8 +63,8 @@ class EditorialVoter extends Voter
             self::EDITORIAL_READ,
             self::EDITORIAL_UPDATE,
             self::EDITORIAL_DELETE,
-            self::EDITORIAL_LIST
-            ]) && !($subject instanceof Paginator) && !($subject instanceof Editorial)) {
+            self::EDITORIAL_LIST,
+        ]) && !($subject instanceof Paginator) && !($subject instanceof Editorial)) {
             return false;
         }
 
@@ -76,12 +76,16 @@ class EditorialVoter extends Voter
         switch ($attribute) {
             case self::EDITORIAL_CREATE:
                 return $this->canCreateEditorial();
+
             case self::EDITORIAL_READ:
                 return $this->canReadEditorial($subject);
+
             case self::EDITORIAL_UPDATE:
                 return $this->canUpdateEditorial($subject);
+
             case self::EDITORIAL_DELETE:
                 return $this->canDeleteEditorial($subject);
+
             case self::EDITORIAL_LIST:
                 return $this->canListEditorial();
             }
@@ -96,17 +100,17 @@ class EditorialVoter extends Voter
 
     private function canReadEditorial(Editorial $editorial)
     {
-        return $this->authManager->isAuthorized(self::EDITORIAL_READ, ['editorial'=>$editorial]);
+        return $this->authManager->isAuthorized(self::EDITORIAL_READ, ['editorial' => $editorial]);
     }
 
     private function canUpdateEditorial(Editorial $editorial)
     {
-        return $this->authManager->isAuthorized(self::EDITORIAL_UPDATE, ['editorial'=>$editorial]);
+        return $this->authManager->isAuthorized(self::EDITORIAL_UPDATE, ['editorial' => $editorial]);
     }
 
     private function canDeleteEditorial(Editorial $editorial)
     {
-        return $this->authManager->isAuthorized(self::EDITORIAL_DELETE, ['editorial'=>$editorial]);
+        return $this->authManager->isAuthorized(self::EDITORIAL_DELETE, ['editorial' => $editorial]);
     }
 
     private function canListEditorial()

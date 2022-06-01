@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Auth\Rule;
 
@@ -27,7 +27,7 @@ use App\Auth\Interfaces\AuthRuleInterface;
 use App\Carpool\Ressource\Ad;
 
 /**
- *  Check that the requester is the author of the related Ad
+ *  Check that the requester is the author of the related Ad.
  */
 class AdAuthor implements AuthRuleInterface
 {
@@ -39,10 +39,12 @@ class AdAuthor implements AuthRuleInterface
         if (!isset($params['ad'])) {
             return false;
         }
+
         /**
          * @var Ad $ad
          */
         $ad = $params['ad'];
+
         return is_null($ad->getUser()) || $ad->getUser()->getId() == $requester->getId();
     }
 }

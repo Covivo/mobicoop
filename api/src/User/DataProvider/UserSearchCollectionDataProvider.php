@@ -19,23 +19,22 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\DataProvider;
 
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryResultCollectionExtensionInterface;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGenerator;
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
+use ApiPlatform\Core\DataProvider\PaginatorInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\User\Entity\User;
 use Doctrine\Persistence\ManagerRegistry;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGenerator;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryResultCollectionExtensionInterface;
-use ApiPlatform\Core\DataProvider\PaginatorInterface;
 
 /**
  * Collection data provider for User search.
  *
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
- *
  */
 final class UserSearchCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
@@ -50,7 +49,7 @@ final class UserSearchCollectionDataProvider implements CollectionDataProviderIn
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return User::class === $resourceClass && $operationName === "get";
+        return User::class === $resourceClass && 'get' === $operationName;
     }
 
     public function getCollection(string $resourceClass, string $operationName = null, array $context = []): PaginatorInterface
@@ -63,11 +62,9 @@ final class UserSearchCollectionDataProvider implements CollectionDataProviderIn
         foreach ($this->collectionExtensions as $extension) {
             $extension->applyToCollection($queryBuilder, $queryNameGenerator, $resourceClass, $operationName, $context);
             if ($extension instanceof QueryResultCollectionExtensionInterface && $extension->supportsResult($resourceClass, $operationName)) {
-                $result = $extension->getResult($queryBuilder, $resourceClass, $operationName);
-                return $result;
+                return $extension->getResult($queryBuilder, $resourceClass, $operationName);
             }
         }
-
 
         return $queryBuilder->getQuery()->getResult();
     }

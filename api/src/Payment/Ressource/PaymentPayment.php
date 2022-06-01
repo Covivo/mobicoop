@@ -19,14 +19,13 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Payment\Ressource;
 
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
-use App\Geography\Entity\Address;
 
 /**
  * A payment or a validation of a payment.
@@ -58,6 +57,7 @@ use App\Geography\Entity\Address;
  *          }
  *      }
  * )
+ *
  *  @author Sylvain Briat <sylvain.briat@mobicoop.org>
  */
 class PaymentPayment
@@ -79,7 +79,7 @@ class PaymentPayment
     public const ORIGIN_MOBILE_SITE = 2;
 
     /**
-     * @var int The id of this payment.
+     * @var int the id of this payment
      * @Groups({"readPayment","writePayment"})
      *
      * @ApiProperty(identifier=true)
@@ -87,23 +87,23 @@ class PaymentPayment
     private $id;
 
     /**
-     * @var int The payment type (1 = a payment to be made, 2 = a payment validation).
+     * @var int the payment type (1 = a payment to be made, 2 = a payment validation)
      * @Groups({"writePayment"})
      */
     private $type;
 
     /**
-     * @var array|null The items concerned by the payment.
-     * Each item of the array contains the :
-     * - the id of the payment item
-     * - the status (1 = realized, 2 = not realized, 3 = unpaid)
-     * - the mode for the payment if type = 1 (1 = online, 2 = direct)
+     * @var null|array The items concerned by the payment.
+     *                 Each item of the array contains the :
+     *                 - the id of the payment item
+     *                 - the status (1 = realized, 2 = not realized, 3 = unpaid)
+     *                 - the mode for the payment if type = 1 (1 = online, 2 = direct)
      * @Groups({"writePayment"})
      */
     private $items;
 
     /**
-     * @var int The payment status (1 = success, 2 = failure).
+     * @var int the payment status (1 = success, 2 = failure)
      * @Groups({"readPayment"})
      */
     private $status;

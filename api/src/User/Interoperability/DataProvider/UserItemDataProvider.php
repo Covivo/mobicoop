@@ -18,13 +18,12 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\Interoperability\DataProvider;
 
 use ApiPlatform\Core\DataProvider\ItemDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
 use App\App\Entity\App;
 use App\User\Exception\BadRequestInteroperabilityUserException;
 use App\User\Interoperability\Ressource\User;
@@ -32,7 +31,8 @@ use App\User\Interoperability\Service\UserManager;
 use Symfony\Component\Security\Core\Security;
 
 /**
- * Interoperability User DataProvider
+ * Interoperability User DataProvider.
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 final class UserItemDataProvider implements ItemDataProviderInterface, RestrictedDataProviderInterface
@@ -48,7 +48,7 @@ final class UserItemDataProvider implements ItemDataProviderInterface, Restricte
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return User::class === $resourceClass && ($operationName == "interop_get" || $operationName == "interop_put"  || $operationName == "interop_detach_sso");
+        return User::class === $resourceClass && ('interop_get' == $operationName || 'interop_put' == $operationName || 'interop_detach_sso' == $operationName);
     }
 
     public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?User
@@ -56,6 +56,7 @@ final class UserItemDataProvider implements ItemDataProviderInterface, Restricte
         if (!($this->security->getUser() instanceof App)) {
             throw new BadRequestInteroperabilityUserException(BadRequestInteroperabilityUserException::UNAUTHORIZED);
         }
+
         return $this->userManager->getUser($id);
     }
 }

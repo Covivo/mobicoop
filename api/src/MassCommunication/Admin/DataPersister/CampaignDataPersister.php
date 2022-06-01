@@ -18,7 +18,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\MassCommunication\Admin\DataPersister;
 
@@ -29,7 +29,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Security;
 
 /**
- * Data persister for Campaign in administration context
+ * Data persister for Campaign in administration context.
  */
 final class CampaignDataPersister implements ContextAwareDataPersisterInterface
 {
@@ -51,18 +51,19 @@ final class CampaignDataPersister implements ContextAwareDataPersisterInterface
 
     public function persist($data, array $context = [])
     {
-        if (isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'ADMIN_post') {
+        if (isset($context['collection_operation_name']) && 'ADMIN_post' == $context['collection_operation_name']) {
             $data = $this->campaignManager->addCampaign($data, $this->security->getUser());
-        } elseif (isset($context['item_operation_name']) &&  $context['item_operation_name'] == 'ADMIN_patch') {
+        } elseif (isset($context['item_operation_name']) && 'ADMIN_patch' == $context['item_operation_name']) {
             // for a patch operation, we update only some fields, we pass them to the method for further checkings
             $data = $this->campaignManager->patchCampaign($data, json_decode($this->request->getContent(), true));
         }
+
         return $data;
     }
 
     public function remove($data, array $context = [])
     {
-        if (isset($context['item_operation_name']) &&  $context['item_operation_name'] == 'ADMIN_delete') {
+        if (isset($context['item_operation_name']) && 'ADMIN_delete' == $context['item_operation_name']) {
             return $this->campaignManager->deleteCampaign($data);
         }
     }

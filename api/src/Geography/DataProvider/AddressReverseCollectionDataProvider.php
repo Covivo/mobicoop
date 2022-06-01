@@ -19,25 +19,24 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Geography\DataProvider;
 
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
-use App\Geography\Service\GeoSearcher;
 use App\Geography\Entity\Address;
+use App\Geography\Service\GeoSearcher;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Collection data provider for anonymous address search.
  *
  * @author Remi Wortemann <remi.wortemann@mobicoop.org>
- *
  */
 final class AddressReverseCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
-    protected $request;
+    private $request;
 
     public function __construct(RequestStack $requestStack, GeoSearcher $geoSearcher)
     {
@@ -47,14 +46,15 @@ final class AddressReverseCollectionDataProvider implements CollectionDataProvid
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Address::class === $resourceClass && $operationName === "reverse";
+        return Address::class === $resourceClass && 'reverse' === $operationName;
     }
 
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
-        if ($this->request->get("latitude") !== null && $this->request->get("longitude") !== null) {
-            return $this->geoSearcher->reverseGeoCode($this->request->get("latitude"), $this->request->get("longitude"));
+        if (null !== $this->request->get('latitude') && null !== $this->request->get('longitude')) {
+            return $this->geoSearcher->reverseGeoCode($this->request->get('latitude'), $this->request->get('longitude'));
         }
+
         return [];
     }
 }

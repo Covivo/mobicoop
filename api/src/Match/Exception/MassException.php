@@ -19,24 +19,24 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Match\Exception;
 
 class MassException extends \LogicException
 {
-    public const NO_MASSPERSON = "This Mass has no MassPerson";
-    public const BAD_TYPE = "Bad Mass Type";
+    public const NO_MASSPERSON = 'This Mass has no MassPerson';
+    public const BAD_TYPE = 'Bad Mass Type';
 
     // Migrate
-    public const NO_WORK_PLACES = "No work places found";
-    public const COMMUNITY_UNKNOWN = "Unknown community";
+    public const NO_WORK_PLACES = 'No work places found';
+    public const COMMUNITY_UNKNOWN = 'Unknown community';
     public const INVALIDE_COMMUNITY_COORDINATES = "Invalides coordinates for this community's address";
-    public const COMMUNITY_MISSING_DESCRIPTION = "Missing the community description";
-    public const COMMUNITY_MISSING_FULL_DESCRIPTION = "Missing community full description";
-    public const COMMUNITY_MISSING_ADDRESS = "Missing community address";
+    public const COMMUNITY_MISSING_DESCRIPTION = 'Missing the community description';
+    public const COMMUNITY_MISSING_FULL_DESCRIPTION = 'Missing community full description';
+    public const COMMUNITY_MISSING_ADDRESS = 'Missing community address';
 
     // Public transport potential
     public const MASS_NOT_ANALYZED = "The mass hasn't been previously analyzed";
-    public const UNKNOWN_TRANSPORT_MODE = "Unknown transport mode :";
+    public const UNKNOWN_TRANSPORT_MODE = 'Unknown transport mode :';
 }

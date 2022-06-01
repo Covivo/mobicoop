@@ -19,21 +19,21 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Payment\Entity;
 
 use App\Action\Entity\Log;
 use App\Carpool\Entity\Ask;
-use Doctrine\ORM\Mapping as ORM;
 use App\User\Entity\User;
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Carpool item : a carpool journey effectively done, or supposed to be done.
- * The item must be kept even if related entities are deleted (eg. a user deletes its account, the carpooler must keep the item)
+ * The item must be kept even if related entities are deleted (eg. a user deletes its account, the carpooler must keep the item).
  *
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
@@ -56,10 +56,10 @@ class CarpoolItem
     public const CREDITOR_STATUS_PENDING_ONLINE = 1;   // credit is waiting for electronic payment
     public const CREDITOR_STATUS_ONLINE = 3;           // creditor was paid electronically
     public const CREDITOR_STATUS_DIRECT = 4;           // creditor has confirmed direct payment
-    //const CREDITOR_STATUS_UNPAID = 3;
+    // const CREDITOR_STATUS_UNPAID = 3;
 
     /**
-     * @var int The id of this item.
+     * @var int the id of this item
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -71,9 +71,9 @@ class CarpoolItem
 
     /**
      * @var int Item type related with the ask :
-     * 1 : one way trip
-     * 2 : outward of a round trip
-     * 3 : return of a round trip
+     *          1 : one way trip
+     *          2 : outward of a round trip
+     *          3 : return of a round trip
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
@@ -82,9 +82,9 @@ class CarpoolItem
 
     /**
      * @var int The status of the carpool :
-     * 0 : the carpool was planned, we don't know yet if it has been realized
-     * 1 : the carpool has been realized (planned or dynamic)
-     * 2 : the carpool was planned but was not realized
+     *          0 : the carpool was planned, we don't know yet if it has been realized
+     *          1 : the carpool has been realized (planned or dynamic)
+     *          2 : the carpool was planned but was not realized
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
@@ -92,7 +92,7 @@ class CarpoolItem
     private $itemStatus;
 
     /**
-     * @var \DateTimeInterface The date of the carpool (=date of the start of the carpool).
+     * @var \DateTimeInterface the date of the carpool (=date of the start of the carpool)
      *
      * @Assert\NotBlank
      * @ORM\Column(type="date")
@@ -101,21 +101,21 @@ class CarpoolItem
     private $itemDate;
 
     /**
-    * @var float The amount to be paid.
-    *
-    * @Assert\NotBlank
-    * @ORM\Column(type="decimal", precision=6, scale=2)
-    * @Groups({"readExport"})
-    */
+     * @var float the amount to be paid
+     *
+     * @Assert\NotBlank
+     * @ORM\Column(type="decimal", precision=6, scale=2)
+     * @Groups({"readExport"})
+     */
     private $amount;
 
     /**
      * @var int Debtor payment status :
-     * 0 : waiting for payment
-     * 1 : payment pending electronically
-     * 2 : payment pending manually
-     * 3 : payment done electronically
-     * 4 : payment done manually
+     *          0 : waiting for payment
+     *          1 : payment pending electronically
+     *          2 : payment pending manually
+     *          3 : payment done electronically
+     *          4 : payment done manually
      *
      * @ORM\Column(type="smallint")
      * @Groups({"readExport"})
@@ -124,10 +124,10 @@ class CarpoolItem
 
     /**
      * @var int Creditor payment status :
-     * 0 : waiting for payment
-     * 1 : payment pending electronically
-     * 3 : payment received electronically
-     * 4 : payment received manually
+     *          0 : waiting for payment
+     *          1 : payment pending electronically
+     *          3 : payment received electronically
+     *          4 : payment received manually
      *
      * @ORM\Column(type="smallint")
      * @Groups({"readExport"})
@@ -135,7 +135,7 @@ class CarpoolItem
     private $creditorStatus;
 
     /**
-     * @var Ask The ask related to the item.
+     * @var Ask the ask related to the item
      *
      * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Ask", inversedBy="carpoolItems")
      * @ORM\JoinColumn(onDelete="SET NULL")
@@ -165,7 +165,7 @@ class CarpoolItem
     private $creditorUser;
 
     /**
-     * @var ArrayCollection|null Payment tries for carpool items : many tries can be necessary for a successful payment. A payment may concern many items.
+     * @var null|ArrayCollection Payment tries for carpool items : many tries can be necessary for a successful payment. A payment may concern many items.
      *
      * @ORM\ManyToMany(targetEntity="\App\Payment\Entity\CarpoolPayment", mappedBy="carpoolItems")
      * @MaxDepth(1)
@@ -173,7 +173,7 @@ class CarpoolItem
     private $carpoolPayments;
 
     /**
-     * @var ArrayCollection The logs linked with the carpoolitem.
+     * @var ArrayCollection the logs linked with the carpoolitem
      *
      * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="carpoolItem")
      */
@@ -181,7 +181,7 @@ class CarpoolItem
 
     /**
      * @var int Debtor Consumption feedback reponse code of the external service
-     * ONLY If this carpool item has been involved in a Consumption feedback
+     *          ONLY If this carpool item has been involved in a Consumption feedback
      *
      * @ORM\Column(type="integer", nullable=true)
      * @MaxDepth(1)
@@ -190,7 +190,7 @@ class CarpoolItem
 
     /**
      * @var string Debtor Consumption feedback external id that has been sent to the service
-     * ONLY If this carpool item has been involved in a Consumption feedback
+     *             ONLY If this carpool item has been involved in a Consumption feedback
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      * @MaxDepth(1)
@@ -199,7 +199,7 @@ class CarpoolItem
 
     /**
      * @var \DateTimeInterface Last try on sending a Debtor consumption feedback
-     * ONLY If this carpool item has been involved in a Consumption feedback
+     *                         ONLY If this carpool item has been involved in a Consumption feedback
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @MaxDepth(1)
@@ -208,7 +208,7 @@ class CarpoolItem
 
     /**
      * @var int Creditor Consumption feedback reponse code of the external service
-     * ONLY If this carpool item has been involved in a Consumption feedback
+     *          ONLY If this carpool item has been involved in a Consumption feedback
      *
      * @ORM\Column(type="integer", nullable=true)
      * @MaxDepth(1)
@@ -217,7 +217,7 @@ class CarpoolItem
 
     /**
      * @var string Creditor Consumption feedback external id that has been sent to the service
-     * ONLY If this carpool item has been involved in a Consumption feedback
+     *             ONLY If this carpool item has been involved in a Consumption feedback
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      * @MaxDepth(1)
@@ -226,7 +226,7 @@ class CarpoolItem
 
     /**
      * @var \DateTimeInterface Last try on sending a Creditor consumption feedback
-     * ONLY If this carpool item has been involved in a Consumption feedback
+     *                         ONLY If this carpool item has been involved in a Consumption feedback
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @MaxDepth(1)
@@ -234,21 +234,21 @@ class CarpoolItem
     private $creditorConsumptionFeedbackDate;
 
     /**
-     * @var \DateTimeInterface Creation date.
+     * @var \DateTimeInterface creation date
      *
      * @ORM\Column(type="datetime")
      */
     private $createdDate;
 
     /**
-     * @var \DateTimeInterface Updated date.
+     * @var \DateTimeInterface updated date
      *
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $updatedDate;
 
     /**
-     * @var \DateTimeInterface Unpaid notify date.
+     * @var \DateTimeInterface unpaid notify date
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"readExport"})
@@ -385,6 +385,7 @@ class CarpoolItem
         if ($this->carpoolPayments->contains($carpoolPayment)) {
             $this->carpoolPayments->removeElement($carpoolPayment);
         }
+
         return $this;
     }
 
@@ -567,7 +568,7 @@ class CarpoolItem
      */
     public function setAutoCreatedDate()
     {
-        $this->setCreatedDate(new \Datetime());
+        $this->setCreatedDate(new \DateTime());
     }
 
     /**
@@ -577,6 +578,6 @@ class CarpoolItem
      */
     public function setAutoUpdatedDate()
     {
-        $this->setUpdatedDate(new \Datetime());
+        $this->setUpdatedDate(new \DateTime());
     }
 }

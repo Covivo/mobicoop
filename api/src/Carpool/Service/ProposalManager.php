@@ -254,8 +254,6 @@ class ProposalManager
 
     /**
      * @throws \Exception
-     *
-     * @return Response
      */
     public function deleteProposal(Proposal $proposal, ?array $body = null): Response
     {
@@ -337,8 +335,6 @@ class ProposalManager
      * Check if a user has a pending dynamic ad.
      *
      * @param User $user The user
-     *
-     * @return bool
      */
     public function hasPendingDynamic(User $user): bool
     {

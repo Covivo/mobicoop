@@ -8,13 +8,12 @@ use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
 /**
- * Import item migration
+ * Import item migration.
  */
 final class Version20200504162500 extends AbstractMigration
 {
     public function up(Schema $schema): void
     {
-
         // Add user_list, user_read items child to community_manager public and private
         $this->addSql("INSERT INTO `auth_item_child` (`parent_id`, `child_id`) VALUES ('7', '17')");
         $this->addSql("INSERT INTO `auth_item_child` (`parent_id`, `child_id`) VALUES ('7', '20')");
@@ -27,6 +26,6 @@ final class Version20200504162500 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
     }
 }

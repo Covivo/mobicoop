@@ -18,7 +18,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\Admin\DataProvider;
 
@@ -41,7 +41,7 @@ final class SolidaryVolunteerItemDataProvider implements ItemDataProviderInterfa
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return SolidaryVolunteer::class === $resourceClass && $operationName == 'ADMIN_get';
+        return SolidaryVolunteer::class === $resourceClass && 'ADMIN_get' == $operationName;
     }
 
     public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?SolidaryVolunteer

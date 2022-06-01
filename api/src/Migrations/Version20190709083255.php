@@ -15,7 +15,7 @@ final class Version20190709083255 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE notified ADD proposal_id INT DEFAULT NULL, ADD matching_id INT DEFAULT NULL, ADD ask_id INT DEFAULT NULL, ADD recipient_id INT DEFAULT NULL, ADD created_date DATETIME NOT NULL');
         $this->addSql('ALTER TABLE notified ADD CONSTRAINT FK_D23269D4F4792058 FOREIGN KEY (proposal_id) REFERENCES proposal (id)');
@@ -35,7 +35,7 @@ final class Version20190709083255 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE notification ADD template VARCHAR(255) DEFAULT NULL COLLATE utf8mb4_unicode_ci, DROP template_title, DROP template_body, CHANGE action_id action_id INT DEFAULT NULL, CHANGE medium_id medium_id INT DEFAULT NULL');
         $this->addSql('ALTER TABLE notified DROP FOREIGN KEY FK_D23269D4F4792058');

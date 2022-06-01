@@ -19,14 +19,13 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Payment\Ressource;
 
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
-use App\Geography\Entity\Address;
 
 /**
  * Period containing payments (for regular carpools).
@@ -52,6 +51,7 @@ use App\Geography\Entity\Address;
  *          }
  *      }
  * )
+ *
  *  @author Sylvain Briat <sylvain.briat@mobicoop.org>
  */
 class PaymentPeriod
@@ -59,7 +59,7 @@ class PaymentPeriod
     public const DEFAULT_ID = 999999999999;
 
     /**
-     * @var int The id of this payment period.
+     * @var int the id of this payment period
      * @Groups({"readPayment"})
      *
      * @ApiProperty(identifier=true)
@@ -67,7 +67,7 @@ class PaymentPeriod
     private $id;
 
     /**
-     * @var \DateTimeInterface|null The start date of the period.
+     * @var null|\DateTimeInterface the start date of the period
      * @Groups({"readPayment"})
      *
      * @ApiProperty(
@@ -79,7 +79,7 @@ class PaymentPeriod
     private $fromDate;
 
     /**
-     * @var \DateTimeInterface|null The end date of the period.
+     * @var null|\DateTimeInterface the end date of the period
      * @Groups({"readPayment"})
      *
      * @ApiProperty(
@@ -91,8 +91,8 @@ class PaymentPeriod
     private $toDate;
 
     /**
-     * @var array|null The week days where there are carpooling planned.
-     * The array contains the representation of the week day, from 0 (sunday) to 6 (saturday).
+     * @var null|array The week days where there are carpooling planned.
+     *                 The array contains the representation of the week day, from 0 (sunday) to 6 (saturday).
      *
      * @Groups({"readPayment"})
      */

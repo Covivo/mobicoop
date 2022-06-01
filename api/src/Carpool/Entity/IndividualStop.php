@@ -19,19 +19,16 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Carpool\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Geography\Entity\Address;
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
-use App\Geography\Entity\Direction;
 
 /**
  * Carpooling : an individual stop.
@@ -52,7 +49,7 @@ use App\Geography\Entity\Direction;
 class IndividualStop
 {
     /**
-     * @var int The id of this stop.
+     * @var int the id of this stop
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -62,7 +59,7 @@ class IndividualStop
     private $id;
 
     /**
-     * @var int Position number of the stop in the whole route (all the individual stops of the route).
+     * @var int position number of the stop in the whole route (all the individual stops of the route)
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
@@ -71,7 +68,7 @@ class IndividualStop
     private $position;
 
     /**
-     * @var int Estimated stop delay in seconds (calculated with 0 as origin).
+     * @var int estimated stop delay in seconds (calculated with 0 as origin)
      *
      * @ORM\Column(type="integer")
      * @Groups({"read","write"})
@@ -79,7 +76,7 @@ class IndividualStop
     private $delay;
 
     /**
-     * @var Proposal The proposal that owns the stop.
+     * @var Proposal the proposal that owns the stop
      *
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal", inversedBy="individualStops")
@@ -88,7 +85,7 @@ class IndividualStop
     private $proposal;
 
     /**
-     * @var Address The address of the stop.
+     * @var Address the address of the stop
      *
      * @Assert\NotBlank
      * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist"}, orphanRemoval=true)
@@ -99,7 +96,7 @@ class IndividualStop
     private $address;
 
     /**
-     * @var \DateTimeInterface Creation date.
+     * @var \DateTimeInterface creation date
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read"})
@@ -107,7 +104,7 @@ class IndividualStop
     private $createdDate;
 
     /**
-     * @var \DateTimeInterface Updated date.
+     * @var \DateTimeInterface updated date
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read"})
@@ -200,7 +197,7 @@ class IndividualStop
      */
     public function setAutoCreatedDate()
     {
-        $this->setCreatedDate(new \Datetime());
+        $this->setCreatedDate(new \DateTime());
     }
 
     /**
@@ -210,6 +207,6 @@ class IndividualStop
      */
     public function setAutoUpdatedDate()
     {
-        $this->setUpdatedDate(new \Datetime());
+        $this->setUpdatedDate(new \DateTime());
     }
 }

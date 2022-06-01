@@ -18,7 +18,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Journey\DataPersister;
 
@@ -30,7 +30,7 @@ use LogicException;
 use Symfony\Component\Security\Core\Security;
 
 /**
- * Search Carpool for a Journey Data Persister
+ * Search Carpool for a Journey Data Persister.
  *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
@@ -47,15 +47,14 @@ final class JourneyCarpoolDataPersister implements ContextAwareDataPersisterInte
 
     public function supports($data, array $context = []): bool
     {
-        return $data instanceof Journey && isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'carpools';
+        return $data instanceof Journey && isset($context['collection_operation_name']) && 'carpools' == $context['collection_operation_name'];
     }
 
     public function persist($data, array $context = [])
     {
         if (!$this->security->getUser() instanceof User) {
-            throw new LogicException("Only User can do this action");
+            throw new LogicException('Only User can do this action');
         }
-
 
         return $this->journeyManager->findCarpools($data->getProposalId(), $this->security->getUser());
     }

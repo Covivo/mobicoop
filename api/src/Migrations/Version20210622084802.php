@@ -8,14 +8,14 @@ use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
 /**
- * Initial Gamification Model Migration
+ * Initial Gamification Model Migration.
  */
 final class Version20210622084802 extends AbstractMigration
 {
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('CREATE TABLE badge (id INT AUTO_INCREMENT NOT NULL, name VARCHAR(255) NOT NULL, title VARCHAR(255) NOT NULL, text VARCHAR(255) NOT NULL, status INT NOT NULL, public TINYINT(1) DEFAULT NULL, start_date DATE DEFAULT NULL, end_date DATE DEFAULT NULL, created_date DATETIME DEFAULT NULL, updated_date DATETIME DEFAULT NULL, PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE badge_territory (badge_id INT NOT NULL, territory_id INT NOT NULL, INDEX IDX_D8D866F2F7A2C2FC (badge_id), INDEX IDX_D8D866F273F74AD4 (territory_id), PRIMARY KEY(badge_id, territory_id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
@@ -44,7 +44,7 @@ final class Version20210622084802 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE badge_territory DROP FOREIGN KEY FK_D8D866F2F7A2C2FC');
         $this->addSql('ALTER TABLE reward DROP FOREIGN KEY FK_4ED17253F7A2C2FC');

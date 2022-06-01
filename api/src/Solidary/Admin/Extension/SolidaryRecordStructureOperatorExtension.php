@@ -19,25 +19,24 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\Admin\Extension;
 
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryCollectionExtensionInterface;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryItemExtensionInterface;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
-use Doctrine\ORM\QueryBuilder;
-use Symfony\Component\Security\Core\Security;
 use App\Auth\Service\AuthManager;
+use App\Solidary\Entity\Operate;
 use App\Solidary\Entity\Solidary;
 use App\User\Entity\User;
-use App\Solidary\Entity\Operate;
+use Doctrine\ORM\QueryBuilder;
+use Symfony\Component\Security\Core\Security;
 
 /**
  * Extension used to limit the list of solidary records to the ones where the requester is operator in the solidary record structure.
  *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
- *
  */
 final class SolidaryRecordStructureOperatorExtension implements QueryCollectionExtensionInterface, QueryItemExtensionInterface
 {
@@ -52,14 +51,14 @@ final class SolidaryRecordStructureOperatorExtension implements QueryCollectionE
 
     public function applyToCollection(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
     {
-        if ($resourceClass == Solidary::class && $operationName === 'ADMIN_get') {
+        if (Solidary::class == $resourceClass && 'ADMIN_get' === $operationName) {
             $this->addWhere($queryBuilder, $resourceClass, false, $operationName);
         }
     }
 
     public function applyToItem(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, array $identifiers, string $operationName = null, array $context = [])
     {
-        if ($resourceClass == Solidary::class && $operationName === 'ADMIN_get') {
+        if (Solidary::class == $resourceClass && 'ADMIN_get' === $operationName) {
             $this->addWhere($queryBuilder, $resourceClass, true, $operationName, $identifiers, $context);
         }
     }
@@ -79,17 +78,16 @@ final class SolidaryRecordStructureOperatorExtension implements QueryCollectionE
         // get the list of structures id where the requester is operator
         $ids = [];
         foreach ($user->getOperates() as $operate) {
-            /**
-             * @var Operate $operate
-             */
+            // @var Operate $operate
             $ids[] = $operate->getStructure()->getId();
         }
 
         $rootAlias = $queryBuilder->getRootAliases()[0];
         $queryBuilder
-        ->join(sprintf("%s.solidaryUserStructure", $rootAlias), 'srso_sus')
-        ->join("srso_sus.structure", 'srso_structure')
-        ->andWhere('srso_structure.id IN (:ids)')
-        ->setParameter('ids', $ids);
+            ->join(sprintf('%s.solidaryUserStructure', $rootAlias), 'srso_sus')
+            ->join('srso_sus.structure', 'srso_structure')
+            ->andWhere('srso_structure.id IN (:ids)')
+            ->setParameter('ids', $ids)
+        ;
     }
 }

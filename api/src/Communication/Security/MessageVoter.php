@@ -19,15 +19,15 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Communication\Security;
 
-use App\Auth\Service\AuthManager;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
+use App\Auth\Service\AuthManager;
 use App\Communication\Entity\Message;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class MessageVoter extends Voter
 {
@@ -48,8 +48,8 @@ class MessageVoter extends Voter
         if (!in_array($attribute, [
             self::USER_MESSAGE_CREATE,
             self::USER_MESSAGE_READ,
-            self::USER_MESSAGE_DELETE
-            ])) {
+            self::USER_MESSAGE_DELETE,
+        ])) {
             return false;
         }
 
@@ -58,10 +58,11 @@ class MessageVoter extends Voter
         if (!in_array($attribute, [
             self::USER_MESSAGE_CREATE,
             self::USER_MESSAGE_READ,
-            self::USER_MESSAGE_DELETE
-            ]) && !($subject instanceof Paginator) && !($subject instanceof Message)) {
+            self::USER_MESSAGE_DELETE,
+        ]) && !($subject instanceof Paginator) && !($subject instanceof Message)) {
             return false;
         }
+
         return true;
     }
 
@@ -70,33 +71,36 @@ class MessageVoter extends Voter
         switch ($attribute) {
             case self::USER_MESSAGE_CREATE:
                 return $this->canCreateMessage($subject);
+
             case self::USER_MESSAGE_READ:
                 if (is_array($subject)) {
                     // If this is a complete thread we are sending the first message to check the permission
                     (is_array($subject)) ? $message = $subject[0] : $message = $subject;
+
                     return $this->canReadMessage($message);
-                } else {
-                    return $this->canReadMessage($subject);
                 }
-                // no break
+
+                    return $this->canReadMessage($subject);
+
             case self::USER_MESSAGE_DELETE:
                 return $this->canDeleteMessage($subject);
         }
+
         throw new \LogicException('This code should not be reached!');
     }
 
     private function canCreateMessage(Message $message)
     {
-        return $this->authManager->isAuthorized(self::USER_MESSAGE_CREATE, ['message'=>$message]);
+        return $this->authManager->isAuthorized(self::USER_MESSAGE_CREATE, ['message' => $message]);
     }
 
     private function canReadMessage(Message $message)
     {
-        return $this->authManager->isAuthorized(self::USER_MESSAGE_READ, ['message'=>$message]);
+        return $this->authManager->isAuthorized(self::USER_MESSAGE_READ, ['message' => $message]);
     }
 
     private function canDeleteMessage(Message $message)
     {
-        return $this->authManager->isAuthorized(self::USER_MESSAGE_DELETE, ['message'=>$message]);
+        return $this->authManager->isAuthorized(self::USER_MESSAGE_DELETE, ['message' => $message]);
     }
 }

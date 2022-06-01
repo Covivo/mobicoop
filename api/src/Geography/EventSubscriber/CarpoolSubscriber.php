@@ -19,18 +19,18 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Geography\EventSubscriber;
 
 use App\Carpool\Event\MatchingNewEvent;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Debug\Exception\ClassNotFoundException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Psr\Log\LoggerInterface;
 
 class CarpoolSubscriber implements EventSubscriberInterface
 {
-    public const FILENAME = "matching_";
+    public const FILENAME = 'matching_';
 
     private $logger;
     private $directory;
@@ -49,10 +49,8 @@ class CarpoolSubscriber implements EventSubscriberInterface
     }
 
     /**
-     * Executed when a new matching is discovered
+     * Executed when a new matching is discovered.
      *
-     * @param MatchingNewEvent $event
-     * @return void
      * @throws ClassNotFoundException
      */
     public function onNewMatching(MatchingNewEvent $event): void

@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\RdexPlus\Entity;
 
@@ -28,14 +28,15 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * RDEX+ : A User (carpooler)
- * Documentation : https://rdex.fabmob.io/
+ * Documentation : https://rdex.fabmob.io/.
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class User
 {
-    public const GENGER_MALE = "M";
-    public const GENGER_FEMALE = "F";
-    public const GENGER_OTHER = "O";
+    public const GENGER_MALE = 'M';
+    public const GENGER_FEMALE = 'F';
+    public const GENGER_OTHER = 'O';
 
     /**
      * @var string User's id

@@ -19,32 +19,32 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Action\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-// use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
-use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Validator\Constraints as Assert;
+// use ApiPlatform\Core\Annotation\ApiResource;
+use App\Article\Entity\Article;
+use App\Carpool\Entity\Ask;
+use App\Carpool\Entity\Matching;
+use App\Carpool\Entity\Proposal;
 // use ApiPlatform\Core\Annotation\ApiFilter;
 // use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
-use App\User\Entity\User;
-use App\Carpool\Entity\Proposal;
-use App\Carpool\Entity\Matching;
-use App\Carpool\Entity\Ask;
-use App\Article\Entity\Article;
-use App\Event\Entity\Event;
-use App\Community\Entity\Community;
-use App\Solidary\Entity\Solidary;
-use App\Geography\Entity\Territory;
-use App\User\Entity\Car;
 use App\Communication\Entity\Message;
+use App\Community\Entity\Community;
+use App\Event\Entity\Event;
+use App\Geography\Entity\Territory;
 use App\MassCommunication\Entity\Campaign;
-use App\Payment\Entity\CarpoolPayment;
 use App\Payment\Entity\CarpoolItem;
+use App\Payment\Entity\CarpoolPayment;
+use App\Solidary\Entity\Solidary;
+use App\User\Entity\Car;
+use App\User\Entity\User;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * User actions log.
@@ -72,7 +72,7 @@ use App\Payment\Entity\CarpoolItem;
 class Log
 {
     /**
-     * @var int The id of this log action.
+     * @var int the id of this log action
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -83,7 +83,7 @@ class Log
     private $id;
 
     /**
-     * @var \DateTimeInterface Creation date of the log action.
+     * @var \DateTimeInterface creation date of the log action
      *
      * @Assert\NotBlank
      * @ORM\Column(type="datetime")
@@ -92,7 +92,7 @@ class Log
     private $date;
 
     /**
-     * @var User The user that make the action (or the user for whom the action is made).
+     * @var User the user that make the action (or the user for whom the action is made)
      *
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="logs")
@@ -103,7 +103,7 @@ class Log
     private $user;
 
     /**
-     * @var Action The action.
+     * @var Action the action
      *
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="\App\Action\Entity\Action")
@@ -114,7 +114,7 @@ class Log
     private $action;
 
     /**
-     * @var User|null The user that makes the action for another user.
+     * @var null|User the user that makes the action for another user
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="logsAsDelegate")
      * @ORM\JoinColumn(onDelete="CASCADE")
@@ -123,7 +123,7 @@ class Log
     private $userDelegate;
 
     /**
-     * @var Proposal|null The proposal if the action concerns a proposal.
+     * @var null|Proposal the proposal if the action concerns a proposal
      *
      * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal", inversedBy="logs")
      * @ORM\JoinColumn(onDelete="CASCADE")
@@ -132,7 +132,7 @@ class Log
     private $proposal;
 
     /**
-     * @var Matching|null The matching if the action concerns a matching.
+     * @var null|Matching the matching if the action concerns a matching
      *
      * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Matching", inversedBy="logs")
      * @ORM\JoinColumn(onDelete="CASCADE")
@@ -141,7 +141,7 @@ class Log
     private $matching;
 
     /**
-     * @var Ask|null The ask if the action concerns an ask.
+     * @var null|Ask the ask if the action concerns an ask
      *
      * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Ask", inversedBy="logs")
      * @ORM\JoinColumn(onDelete="CASCADE")
@@ -150,7 +150,7 @@ class Log
     private $ask;
 
     /**
-     * @var Article|null The article if the action concerns an article.
+     * @var null|Article the article if the action concerns an article
      *
      * @ORM\ManyToOne(targetEntity="\App\Article\Entity\Article", inversedBy="logs")
      * @ORM\JoinColumn(onDelete="CASCADE")
@@ -159,7 +159,7 @@ class Log
     private $article;
 
     /**
-     * @var Event|null The event if the action concerns an event.
+     * @var null|Event the event if the action concerns an event
      *
      * @ORM\ManyToOne(targetEntity="\App\Event\Entity\Event", inversedBy="logs")
      * @ORM\JoinColumn(onDelete="CASCADE")
@@ -168,7 +168,7 @@ class Log
     private $event;
 
     /**
-     * @var Community|null The community if the action concerns a community.
+     * @var null|Community the community if the action concerns a community
      *
      * @ORM\ManyToOne(targetEntity="\App\Community\Entity\Community", inversedBy="logs")
      * @ORM\JoinColumn(onDelete="CASCADE")
@@ -177,7 +177,7 @@ class Log
     private $community;
 
     /**
-     * @var Solidary|null The solidary record if the action concerns a solidary record.
+     * @var null|Solidary the solidary record if the action concerns a solidary record
      *
      * @ORM\ManyToOne(targetEntity="\App\Solidary\Entity\Solidary", inversedBy="logs")
      * @ORM\JoinColumn(onDelete="CASCADE")
@@ -186,7 +186,7 @@ class Log
     private $solidary;
 
     /**
-     * @var Territory|null The territory if the action concerns a territory.
+     * @var null|Territory the territory if the action concerns a territory
      *
      * @ORM\ManyToOne(targetEntity="\App\Geography\Entity\Territory", inversedBy="logs")
      * @ORM\JoinColumn(onDelete="CASCADE")
@@ -195,7 +195,7 @@ class Log
     private $territory;
 
     /**
-     * @var Car|null The car if the action concerns a car.
+     * @var null|Car the car if the action concerns a car
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\Car", inversedBy="logs")
      * @ORM\JoinColumn(onDelete="CASCADE")
@@ -204,7 +204,7 @@ class Log
     private $car;
 
     /**
-     * @var User|null The user if the action concerns a user.
+     * @var null|User the user if the action concerns a user
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="logsAsRelated")
      * @ORM\JoinColumn(onDelete="CASCADE")
@@ -213,7 +213,7 @@ class Log
     private $userRelated;
 
     /**
-     * @var Message|null The message if the action concerns a message.
+     * @var null|Message the message if the action concerns a message
      *
      * @ORM\ManyToOne(targetEntity="\App\Communication\Entity\Message", inversedBy="logs")
      * @ORM\JoinColumn(onDelete="CASCADE")
@@ -222,7 +222,7 @@ class Log
     private $message;
 
     /**
-     * @var Campaign|null The campaign if the action concerns a campaign.
+     * @var null|Campaign the campaign if the action concerns a campaign
      *
      * @ORM\ManyToOne(targetEntity="\App\MassCommunication\Entity\Campaign", inversedBy="logs")
      * @ORM\JoinColumn(onDelete="CASCADE")
@@ -231,7 +231,7 @@ class Log
     private $campaign;
 
     /**
-     * @var CarpoolPayment|null The carpoolPayment if the action concerns a carpoolPayment.
+     * @var null|CarpoolPayment the carpoolPayment if the action concerns a carpoolPayment
      *
      * @ORM\ManyToOne(targetEntity="\App\Payment\Entity\CarpoolPayment", inversedBy="logs")
      * @ORM\JoinColumn(onDelete="CASCADE")
@@ -240,7 +240,7 @@ class Log
     private $carpoolPayment;
 
     /**
-     * @var CarpoolItem|null The carpoolPayment if the action concerns a carpoolItem.
+     * @var null|CarpoolItem the carpoolPayment if the action concerns a carpoolItem
      *
      * @ORM\ManyToOne(targetEntity="\App\Payment\Entity\CarpoolItem", inversedBy="logs")
      * @ORM\JoinColumn(onDelete="CASCADE")
@@ -485,6 +485,6 @@ class Log
      */
     public function setAutoCreatedDate()
     {
-        $this->setDate(new \Datetime());
+        $this->setDate(new \DateTime());
     }
 }

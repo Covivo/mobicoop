@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Carpool\Filter;
 
@@ -29,28 +29,6 @@ use Doctrine\ORM\QueryBuilder;
 
 final class LocalityFilter extends AbstractContextAwareFilter
 {
-    protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
-    {
-        switch ($property) {
-            case 'originLocality':
-                $queryBuilder
-                ->join('o.points', 'startPoint')
-                ->join('startPoint.address', 'startAddress')
-                ->andWhere('startPoint.position = 0')
-                ->andWhere('startAddress.addressLocality = :originLocality')
-                ->setParameter('originLocality', $value);
-                break;
-            case 'destinationLocality':
-                $queryBuilder
-                ->join('o.points', 'destinationPoint')
-                ->join('destinationPoint.address', 'destinationAddress')
-                ->andWhere('destinationPoint.lastPoint = 1')
-                ->andWhere('destinationAddress.addressLocality = :destinationLocality')
-                ->setParameter('destinationLocality', $value);
-                break;
-        }
-    }
-
     // This function is only used to hook in documentation generators (supported by Swagger and Hydra)
     public function getDescription(string $resourceClass): array
     {
@@ -62,32 +40,62 @@ final class LocalityFilter extends AbstractContextAwareFilter
         foreach ($this->properties as $property => $strategy) {
             switch ($property) {
                 case 'originLocality':
-                    $description["originLocality"] = [
-                            'property' => $property,
+                    $description['originLocality'] = [
+                        'property' => $property,
+                        'type' => 'string',
+                        'required' => false,
+                        'swagger' => [
+                            'description' => 'originLocality',
+                            'name' => 'originLocality',
                             'type' => 'string',
-                            'required' => false,
-                            'swagger' => [
-                                    'description' => 'originLocality',
-                                    'name' => 'originLocality',
-                                    'type' => 'string',
-                            ],
+                        ],
                     ];
+
                     break;
+
                 case 'destinationLocality':
-                    $description["destinationLocality"] = [
-                            'property' => $property,
+                    $description['destinationLocality'] = [
+                        'property' => $property,
+                        'type' => 'string',
+                        'required' => false,
+                        'swagger' => [
+                            'description' => 'destinationLocality',
+                            'name' => 'destinationLocality',
                             'type' => 'string',
-                            'required' => false,
-                            'swagger' => [
-                                    'description' => 'destinationLocality',
-                                    'name' => 'destinationLocality',
-                                    'type' => 'string',
-                            ],
+                        ],
                     ];
+
                     break;
             }
         }
 
         return $description;
+    }
+
+    protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
+    {
+        switch ($property) {
+            case 'originLocality':
+                $queryBuilder
+                    ->join('o.points', 'startPoint')
+                    ->join('startPoint.address', 'startAddress')
+                    ->andWhere('startPoint.position = 0')
+                    ->andWhere('startAddress.addressLocality = :originLocality')
+                    ->setParameter('originLocality', $value)
+                ;
+
+                break;
+
+            case 'destinationLocality':
+                $queryBuilder
+                    ->join('o.points', 'destinationPoint')
+                    ->join('destinationPoint.address', 'destinationAddress')
+                    ->andWhere('destinationPoint.lastPoint = 1')
+                    ->andWhere('destinationAddress.addressLocality = :destinationLocality')
+                    ->setParameter('destinationLocality', $value)
+                ;
+
+                break;
+        }
     }
 }

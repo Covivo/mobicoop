@@ -19,14 +19,15 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Community\Entity;
 
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * Community Member : necessary infos about a community member
+ * Community Member : necessary infos about a community member.
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class CommunityMember
@@ -34,31 +35,31 @@ class CommunityMember
     /**
      * @var int
      * @Groups({"readCommunityMember"})
-    */
+     */
     private $id;
 
     /**
      * @var string
      * @Groups({"readCommunityMember"})
-    */
+     */
     private $firstName;
 
     /**
      * @var string
      * @Groups({"readCommunityMember"})
-    */
+     */
     private $shortFamilyName;
 
     /**
      * @var bool
      * @Groups({"readCommunityMember"})
-    */
+     */
     private $referrer;
 
     /**
      * @var bool
      * @Groups({"readCommunityMember"})
-    */
+     */
     private $moderator;
 
     /**
@@ -71,7 +72,7 @@ class CommunityMember
     {
         $this->referrer = false;
         $this->moderator = false;
-        $this->avatar = "";
+        $this->avatar = '';
     }
 
     public function getid(): ?int

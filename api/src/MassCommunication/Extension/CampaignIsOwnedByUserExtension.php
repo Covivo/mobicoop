@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\MassCommunication\Extension;
 
@@ -31,16 +31,13 @@ use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\Security\Core\Security;
 
 /**
- * Extension for get the owned campaigns by the current user
+ * Extension for get the owned campaigns by the current user.
  *
  * @author Julien Deschampt <julien.deschampt@mobicoop.org>
- *
  */
-
 final class CampaignIsOwnedByUserExtension implements QueryCollectionExtensionInterface, QueryItemExtensionInterface
 {
     private $security;
-
 
     public function __construct(Security $security)
     {
@@ -59,8 +56,8 @@ final class CampaignIsOwnedByUserExtension implements QueryCollectionExtensionIn
 
     private function addWhere(QueryBuilder $queryBuilder, string $resourceClass, bool $isItem, string $operationName = null, array $identifiers = [], array $context = []): void
     {
-        if (Campaign::class !== $resourceClass ||
-             $operationName !='owned') {
+        if (Campaign::class !== $resourceClass
+             || 'owned' != $operationName) {
             return;
         }
         $user = $this->security->getUser();

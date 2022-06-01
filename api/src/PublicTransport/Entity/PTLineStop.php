@@ -19,16 +19,13 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\PublicTransport\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Doctrine\Common\Collections\ArrayCollection;
-use App\Geography\Entity\Address;
-use Doctrine\ORM\Mapping as ORM;
 
 /**
  * A public transport Line Stop list.
@@ -85,13 +82,14 @@ class PTLineStop
 {
     /**
      * @ApiProperty(identifier=true)
-     * @var int id of this Line Stop.
+     *
+     * @var int id of this Line Stop
      * @Groups("pt")
      */
     private $id;
 
     /**
-     * @var int a direction of this Line Stop.
+     * @var int a direction of this Line Stop
      * @Groups("pt")
      */
     private $direction;
@@ -102,20 +100,17 @@ class PTLineStop
      */
     private $line;
 
-
     /**
      * @var int id of the line of this line stop
      * @Groups("pt")
      */
     private $lineId;
 
-
     /**
      * @var PTStop the stop of this line stop
      * @Groups("pt")
      */
     private $stop;
-
 
     /**
      * @var int id of the stop of this line stop

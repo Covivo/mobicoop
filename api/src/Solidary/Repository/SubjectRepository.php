@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\Repository;
 
@@ -30,7 +30,7 @@ use Doctrine\ORM\EntityRepository;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
-*/
+ */
 class SubjectRepository
 {
     /**
@@ -56,8 +56,10 @@ class SubjectRepository
     public function findStructureSubjects(Structure $structure)
     {
         $query = $this->repository->createQueryBuilder('s')
-        ->where('s.structure = :structure')
-        ->setParameter('structure', $structure);
+            ->where('s.structure = :structure')
+            ->setParameter('structure', $structure)
+        ;
+
         return $query->getQuery()->getResult();
     }
 }

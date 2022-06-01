@@ -19,11 +19,10 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\Admin\DataProvider;
 
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\PaginationExtension;
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\User\Admin\Resource\KibanaLogin;
@@ -33,7 +32,6 @@ use App\User\Admin\Service\KibanaLoginManager;
  * Collection data provider used to associate Users as deliveries for a campaign (depending on the filter type).
  *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
- *
  */
 final class KibanaLoginCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
@@ -46,7 +44,7 @@ final class KibanaLoginCollectionDataProvider implements CollectionDataProviderI
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return KibanaLogin::class === $resourceClass && $operationName === "ADMIN_kibana_logins";
+        return KibanaLogin::class === $resourceClass && 'ADMIN_kibana_logins' === $operationName;
     }
 
     public function getCollection(string $resourceClass, string $operationName = null, array $context = []): iterable

@@ -15,7 +15,7 @@ final class Version20210722120220 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE solidary ADD solidary_id INT DEFAULT NULL');
         $this->addSql('ALTER TABLE solidary ADD CONSTRAINT FK_1896BCA4E92CE751 FOREIGN KEY (solidary_id) REFERENCES solidary (id) ON DELETE CASCADE');
@@ -25,7 +25,7 @@ final class Version20210722120220 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE solidary DROP FOREIGN KEY FK_1896BCA4E92CE751');
         $this->addSql('DROP INDEX UNIQ_1896BCA4E92CE751 ON solidary');

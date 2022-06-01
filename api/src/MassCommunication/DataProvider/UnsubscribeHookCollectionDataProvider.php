@@ -18,23 +18,22 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\MassCommunication\DataProvider;
 
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
 use App\MassCommunication\Admin\Service\CampaignManager;
 use App\MassCommunication\Entity\Campaign;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Data provider for Campaign unsubscribe hook
- * Used to manage unsubscribe webhook sent by campaign providers
+ * Used to manage unsubscribe webhook sent by campaign providers.
  *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
  */
-
 final class UnsubscribeHookCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
     private $request;
@@ -48,7 +47,7 @@ final class UnsubscribeHookCollectionDataProvider implements CollectionDataProvi
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Campaign::class === $resourceClass && isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'unsubscribeHook';
+        return Campaign::class === $resourceClass && isset($context['collection_operation_name']) && 'unsubscribeHook' == $context['collection_operation_name'];
     }
 
     public function getCollection(string $resourceClass, string $operationName = null): iterable

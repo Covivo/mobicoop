@@ -18,21 +18,19 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\DataProvider;
 
 use ApiPlatform\Core\DataProvider\ItemDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
 use App\User\Entity\User;
 use App\User\Service\UserManager;
 
 /**
- * Item data provider for getting User's solidaries
+ * Item data provider for getting User's solidaries.
  *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
- *
  */
 final class UserMessagesThreadsItemDataProvider implements ItemDataProviderInterface, RestrictedDataProviderInterface
 {
@@ -45,20 +43,20 @@ final class UserMessagesThreadsItemDataProvider implements ItemDataProviderInter
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return User::class === $resourceClass && ($operationName === "threadsDirectMessages" || $operationName === "threadsCarpoolMessages" || $operationName === "threadsSolidaryMessages");
+        return User::class === $resourceClass && ('threadsDirectMessages' === $operationName || 'threadsCarpoolMessages' === $operationName || 'threadsSolidaryMessages' === $operationName);
     }
 
     public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?User
     {
         $user = $this->userManager->getUser($id);
 
-        if ($operationName === "threadsDirectMessages") {
+        if ('threadsDirectMessages' === $operationName) {
             $user->setThreads($this->userManager->getThreadsDirectMessages($user));
         }
-        if ($operationName === "threadsCarpoolMessages") {
+        if ('threadsCarpoolMessages' === $operationName) {
             $user->setThreads($this->userManager->getThreadsCarpoolMessages($user));
         }
-        if ($operationName === "threadsSolidaryMessages") {
+        if ('threadsSolidaryMessages' === $operationName) {
             $user->setThreads($this->userManager->getThreadsSolidaryMessages($user));
         }
 

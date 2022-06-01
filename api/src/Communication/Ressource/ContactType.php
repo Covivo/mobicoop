@@ -19,17 +19,17 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Communication\Ressource;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * A Contact Type
+ * A Contact Type.
  *
  * @ApiResource(
  *      attributes={
@@ -59,13 +59,14 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          }
  *      }
  * )
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class ContactType
 {
     public const DEFAULT_ID = 999999999999;
 
-    public const TYPE_SUPPORT = "technicalIssues";
+    public const TYPE_SUPPORT = 'technicalIssues';
 
     /**
      * @var int The id of the contact type
@@ -76,32 +77,32 @@ class ContactType
     private $id;
 
     /**
-     * @var string|null Demand for this contact type
+     * @var null|string Demand for this contact type
      * @Assert\NotBlank
      * @Groups({"readContactType"})
      */
     private $demand;
 
     /**
-     * @var string|null Object code use to define the object of the email (ref to the yaml translation files)
+     * @var null|string Object code use to define the object of the email (ref to the yaml translation files)
      * @Assert\NotBlank
      * @Groups({"readContactType"})
      */
     private $objectCode;
 
     /**
-     * @var array|null Receiving emails for this contact type
+     * @var null|array Receiving emails for this contact type
      * @Assert\NotBlank
      */
     private $to;
 
     /**
-     * @var array|null Receiving emails (carbon copy) for this contact type
+     * @var null|array Receiving emails (carbon copy) for this contact type
      */
     private $cc;
 
     /**
-     * @var array|null Receiving emails (blind carbon copy) for this contact type
+     * @var null|array Receiving emails (blind carbon copy) for this contact type
      */
     private $bcc;
 

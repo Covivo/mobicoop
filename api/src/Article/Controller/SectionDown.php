@@ -19,12 +19,12 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Article\Controller;
 
-use App\Article\Service\ArticleManager;
 use App\Article\Entity\Section;
+use App\Article\Service\ArticleManager;
 use App\TranslatorTrait;
 
 /**
@@ -46,15 +46,13 @@ class SectionDown
     /**
      * This method is invoked when a section down position change is asked.
      * It returns the edited section.
-     *
-     * @param Section $data
-     * @return Section
      */
     public function __invoke(Section $data): Section
     {
         if (is_null($data)) {
-            throw new \InvalidArgumentException($this->translator->trans("bad Section id is provided"));
+            throw new \InvalidArgumentException($this->translator->trans('bad Section id is provided'));
         }
+
         return $this->articleManager->changeSectionPosition($data, $this->articleManager::DIRECTION_DOWN);
     }
 }

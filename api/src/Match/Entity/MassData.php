@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Match\Entity;
 
@@ -29,12 +29,12 @@ namespace App\Match\Entity;
 class MassData
 {
     /**
-     * @var array The file extracted data.
+     * @var array the file extracted data
      */
     private $data;
 
     /**
-     * @var array The errors.
+     * @var array the errors
      */
     private $errors;
 

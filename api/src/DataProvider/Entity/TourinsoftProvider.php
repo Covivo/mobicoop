@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\DataProvider\Entity;
 
@@ -31,16 +31,16 @@ use DateTime;
 use Exception;
 
 /**
- * Event Provider for Tourinsoft
+ * Event Provider for Tourinsoft.
  *
  * @author Celine Jacquet <celine.jacquet@mobicoop.org>
  */
 class TourinsoftProvider implements EventProviderInterface
 {
-    public const PROVIDER = "Tourinsoft";
-    public const FORMAT = "JSON";
-    public const COMMUNICATION_MEDIA_WEBSITE_KEY = "#Site web";
-    public const REQUESTED_FIELDS = "SyndicObjectID,SyndicObjectName,MoyenDeCom,Description,ObjectTypeName,Adresse1,Adresse2,Adresse3,GmapLatitude,GmapLongitude,PeriodeOuverture,Photos,CodePostal,Commune,LieuManifestation";
+    public const PROVIDER = 'Tourinsoft';
+    public const FORMAT = 'JSON';
+    public const COMMUNICATION_MEDIA_WEBSITE_KEY = '#Site web';
+    public const REQUESTED_FIELDS = 'SyndicObjectID,SyndicObjectName,MoyenDeCom,Description,ObjectTypeName,Adresse1,Adresse2,Adresse3,GmapLatitude,GmapLongitude,PeriodeOuverture,Photos,CodePostal,Commune,LieuManifestation';
 
     private $eventProviderServerUrl;
 
@@ -50,18 +50,16 @@ class TourinsoftProvider implements EventProviderInterface
     }
 
     /**
-     * Get tourinsoft event
-     *
-     * @return void
+     * Get tourinsoft event.
      */
     public function getEvent(): void
     {
     }
 
     /**
-     * Get tourinsoft events
+     * Get tourinsoft events.
      *
-     * @return Array array of events
+     * @return array array of events
      */
     public function getEvents(): array
     {
@@ -72,7 +70,7 @@ class TourinsoftProvider implements EventProviderInterface
         // We call tourinsoft api to get all events
         $queryParams = [
             '$format' => self::FORMAT,
-            '$select' => self::REQUESTED_FIELDS
+            '$select' => self::REQUESTED_FIELDS,
         ];
 
         $response = $dataProvider->getItem($queryParams);
@@ -86,15 +84,16 @@ class TourinsoftProvider implements EventProviderInterface
     }
 
     /**
-     * Create Event Object from Tourinsoft Event
+     * Create Event Object from Tourinsoft Event.
      *
-     * @param Array $tourinsoftEvents array of Tourinsoft Events
-     * @return Array array of events
+     * @param array $tourinsoftEvents array of Tourinsoft Events
+     *
+     * @return array array of events
      */
     public function createEvents($tourinsoftEvents): array
     {
-        //https://wcf.tourinsoft.com/Syndication/3.0/cdt11/8132036e-2b56-4710-a160-4737c6493c98/doc/syndication
-        //http://api-doc.tourinsoft.com/#/syndication-3x#api-format
+        // https://wcf.tourinsoft.com/Syndication/3.0/cdt11/8132036e-2b56-4710-a160-4737c6493c98/doc/syndication
+        // http://api-doc.tourinsoft.com/#/syndication-3x#api-format
 
         $newEvents = [];
 
@@ -106,7 +105,7 @@ class TourinsoftProvider implements EventProviderInterface
             if (isset($event->SyndicObjectName)) {
                 $newEvent->setName($event->SyndicObjectName);
             } else {
-                throw new Exception("Event name is mandatory", 1);
+                throw new Exception('Event name is mandatory', 1);
             }
 
             if (isset($event->PeriodeOuverture)) {
@@ -117,7 +116,7 @@ class TourinsoftProvider implements EventProviderInterface
                 $endDate = DateTime::createFromFormat('d/m/Y', $array[1]);
 
                 $fromDate = $startDate->format('Y-m-d');
-                $toDate =  $endDate->format('Y-m-d');
+                $toDate = $endDate->format('Y-m-d');
 
                 // some events are annual so we check first if the year is up to date if not we set the actual year
                 $year = (new \DateTime($fromDate))->format('Y');
@@ -132,19 +131,19 @@ class TourinsoftProvider implements EventProviderInterface
                     $newEvent->setToDate($endDate);
                 }
             } else {
-                throw new Exception("Start and end dates are mandatory", 1);
+                throw new Exception('Start and end dates are mandatory', 1);
             }
 
             if (isset($event->ObjectTypeName)) {
                 $newEvent->setDescription($event->ObjectTypeName);
             } else {
-                throw new Exception("Description is mandatory", 1);
+                throw new Exception('Description is mandatory', 1);
             }
 
             if (isset($event->Description)) {
                 $newEvent->setFullDescription($event->Description);
             } else {
-                throw new Exception("Description is mandatory", 1);
+                throw new Exception('Description is mandatory', 1);
             }
 
             if (isset($event->Photos)) {
@@ -169,21 +168,21 @@ class TourinsoftProvider implements EventProviderInterface
 
             $fullStreetAddress = [];
 
-            if (isset($event->Adresse1) || trim($event->Adresse1 !== "")) {
+            if (isset($event->Adresse1) || trim('' !== $event->Adresse1)) {
                 array_push($fullStreetAddress, $event->Adresse1);
             }
-            if (isset($event->Adresse2) || trim($event->Adresse2 !== "")) {
+            if (isset($event->Adresse2) || trim('' !== $event->Adresse2)) {
                 array_push($fullStreetAddress, $event->Adresse2);
             }
 
-            if (isset($event->Adresse3) || trim($event->Adresse3 !== "")) {
+            if (isset($event->Adresse3) || trim('' !== $event->Adresse3)) {
                 array_push($fullStreetAddress, $event->Adresse3);
             }
 
-            $fullStreetAddressString = implode(" ", $fullStreetAddress);
+            $fullStreetAddressString = implode(' ', $fullStreetAddress);
 
             if (!is_null($fullStreetAddressString)) {
-                $address->setStreetAddress(isset($fullStreetAddressString) ? $fullStreetAddressString : (isset($event->LieuManifestation) ? $event->LieuManifestation : ""));
+                $address->setStreetAddress(isset($fullStreetAddressString) ? $fullStreetAddressString : (isset($event->LieuManifestation) ? $event->LieuManifestation : ''));
             }
 
             if (isset($event->Commune)) {
@@ -206,6 +205,7 @@ class TourinsoftProvider implements EventProviderInterface
             // We pass the newEvent in array
             $newEvents[] = $newEvent;
         }
-        return  $newEvents;
+
+        return $newEvents;
     }
 }

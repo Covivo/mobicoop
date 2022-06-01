@@ -18,13 +18,12 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\DataProvider;
 
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
 use App\Solidary\Entity\SolidarySearch;
 use App\Solidary\Exception\SolidaryException;
 use App\Solidary\Service\SolidaryManager;
@@ -65,14 +64,12 @@ final class SolidarySearchCollectionDataProvider implements CollectionDataProvid
             throw new SolidaryException(SolidaryException::SOLIDARY_ID_INVALID);
         }
 
-
-        if (empty($this->filters['type']) || !in_array($this->filters['type'], ["carpool","transport"])) {
+        if (empty($this->filters['type']) || !in_array($this->filters['type'], ['carpool', 'transport'])) {
             throw new SolidaryException(SolidaryException::TYPE_MISSING_OR_INVALID);
         }
-        if (empty($this->filters['way']) || !in_array($this->filters['way'], ["outward","return"])) {
+        if (empty($this->filters['way']) || !in_array($this->filters['way'], ['outward', 'return'])) {
             throw new SolidaryException(SolidaryException::WAY_MISSING_OR_INVALID);
         }
-
 
         // Creating the SolidarySearch entity for the service
         $solidarySearch = new SolidarySearch();
@@ -81,9 +78,10 @@ final class SolidarySearchCollectionDataProvider implements CollectionDataProvid
         $solidary = $this->solidaryManager->getSolidary($solidaryId);
 
         $solidarySearch->setSolidary($solidary);
-        if ($this->filters['type'] == 'transport') {
+        if ('transport' == $this->filters['type']) {
             return $this->solidaryManager->getSolidaryTransportSearchResults($solidarySearch);
-        } elseif ($this->filters['type'] == 'carpool') {
+        }
+        if ('carpool' == $this->filters['type']) {
             return $this->solidaryManager->getSolidaryCarpoolSearchSearchResults($solidarySearch);
         }
 

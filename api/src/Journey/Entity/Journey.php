@@ -19,21 +19,22 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Journey\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-use ApiPlatform\Core\Annotation\ApiResource;
-use Symfony\Component\Serializer\Annotation\Groups;
 use ApiPlatform\Core\Annotation\ApiFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\NumericFilter;
+use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\NumericFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * Carpooling : an effective journey.
+ *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
  *
  * @ORM\Entity
@@ -147,7 +148,7 @@ class Journey
     public const POPULAR_RANDOMIZATION_FACTOR = 5; // Used to shuffle the results for popular Journeys
 
     /**
-     * @var int The id of this journey.
+     * @var int the id of this journey
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -171,14 +172,14 @@ class Journey
     private $userId;
 
     /**
-     * @var string|null The name of the user.
+     * @var null|string the name of the user
      * @ORM\Column(type="string", nullable=true)
      * @Groups({"readJourney"})
      */
     private $userName;
 
     /**
-     * @var int|null The age of the user
+     * @var null|int The age of the user
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"readJourney"})
      */
@@ -192,7 +193,7 @@ class Journey
     private $origin;
 
     /**
-     * @var float|null The latitude of the origin.
+     * @var null|float the latitude of the origin
      *
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
      * @Groups({"readJourney", "readPopularJourney"})
@@ -200,7 +201,7 @@ class Journey
     private $latitudeOrigin;
 
     /**
-     * @var float|null The longitude of the origin.
+     * @var null|float the longitude of the origin
      *
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
      * @Groups({"readJourney", "readPopularJourney"})
@@ -215,7 +216,7 @@ class Journey
     private $destination;
 
     /**
-     * @var float|null The latitude of the destination.
+     * @var null|float the latitude of the destination
      *
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
      * @Groups({"readJourney", "readPopularJourney"})
@@ -223,7 +224,7 @@ class Journey
     private $latitudeDestination;
 
     /**
-     * @var float|null The longitude of the destination.
+     * @var null|float the longitude of the destination
      *
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
      * @Groups({"readJourney", "readPopularJourney"})
@@ -231,28 +232,28 @@ class Journey
     private $longitudeDestination;
 
     /**
-     * @var int The proposal frequency (1 = punctual; 2 = regular).
+     * @var int the proposal frequency (1 = punctual; 2 = regular)
      * @ORM\Column(type="smallint")
      * @Groups({"readJourney"})
      */
     private $frequency;
 
     /**
-     * @var int The proposal type (1 = oneway; 2 = return trip).
+     * @var int the proposal type (1 = oneway; 2 = return trip)
      * @ORM\Column(type="smallint")
      * @Groups({"readJourney"})
      */
     private $type;
 
     /**
-     * @var int The role for this journey (1 = driver; 2 = passenger; 3 = driver or passenger).
+     * @var int the role for this journey (1 = driver; 2 = passenger; 3 = driver or passenger)
      * @ORM\Column(type="smallint")
      * @Groups({"readJourney"})
      */
     private $role;
 
     /**
-     * @var \DateTimeInterface The starting date.
+     * @var \DateTimeInterface the starting date
      *
      * @ORM\Column(type="date")
      * @Groups({"readJourney"})
@@ -260,7 +261,7 @@ class Journey
     private $fromDate;
 
     /**
-     * @var \DateTimeInterface The end date.
+     * @var \DateTimeInterface the end date
      *
      * @ORM\Column(type="date", nullable=true)
      * @Groups({"readJourney"})
@@ -268,42 +269,41 @@ class Journey
     private $toDate;
 
     /**
-     * @var \DateTimeInterface|null The starting time for a punctual journey.
+     * @var null|\DateTimeInterface the starting time for a punctual journey
      * @ORM\Column(type="time", nullable=true)
      * @Groups({"readJourney"})
      */
     private $time;
 
     /**
-     * @var string|null The json representation of the possible days for a regular journey.
+     * @var null|string the json representation of the possible days for a regular journey
      * @ORM\Column(type="string", nullable=true)
      * @Groups({"readJourney"})
      */
     private $days;
 
     /**
-     * @var string|null The json representation of the outward times for a regular journey.
+     * @var null|string the json representation of the outward times for a regular journey
      * @ORM\Column(type="string", nullable=true)
      * @Groups({"readJourney"})
      */
     private $outwardTimes;
 
     /**
-     * @var string|null The json representation of the return times for a regular journey.
+     * @var null|string the json representation of the return times for a regular journey
      * @ORM\Column(type="string", nullable=true)
      * @Groups({"readJourney"})
      */
     private $returnTimes;
 
-
     /**
-     * @var int|null The number of occurences of this journey (for Popular Journey only)
-    * @Groups({"readPopularJourney"})
-    */
+     * @var null|int The number of occurences of this journey (for Popular Journey only)
+     * @Groups({"readPopularJourney"})
+     */
     private $occurences;
 
     /**
-     * @var \DateTimeInterface Creation date of the journey.
+     * @var \DateTimeInterface creation date of the journey
      *
      * @ORM\Column(type="datetime")
      * @Groups({"readJourney"})
@@ -311,7 +311,7 @@ class Journey
     private $createdDate;
 
     /**
-     * @var \DateTimeInterface Updated date of the journey.
+     * @var \DateTimeInterface updated date of the journey
      *
      * @ORM\Column(type="datetime", nullable=true)
      */
@@ -506,6 +506,7 @@ class Journey
         if ($this->time) {
             return \DateTime::createFromFormat('His', $this->time->format('His'));
         }
+
         return null;
     }
 

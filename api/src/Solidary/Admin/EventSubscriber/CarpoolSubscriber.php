@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\Admin\EventSubscriber;
 
@@ -28,7 +28,7 @@ use App\Solidary\Admin\Service\SolidaryManager;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
- * Subscriber for carpool related events
+ * Subscriber for carpool related events.
  */
 class CarpoolSubscriber implements EventSubscriberInterface
 {
@@ -50,8 +50,7 @@ class CarpoolSubscriber implements EventSubscriberInterface
      * Executed when a new matching is discovered : check if the proposalRequest is a Solidary proposal.
      * If so, create the related SolidaryMatching.
      *
-     * @param MatchingNewEvent $event   The event
-     * @return void
+     * @param MatchingNewEvent $event The event
      */
     public function onNewMatching(MatchingNewEvent $event): void
     {

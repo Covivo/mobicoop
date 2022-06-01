@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Community\EventListener;
 
@@ -73,10 +73,9 @@ class CommunityUserSaveListener
     }
 
     /**
-     * Check if a community user has the appropriate role
+     * Check if a community user has the appropriate role.
      *
-     * @param CommunityUser $communityUser  The community user
-     * @return void
+     * @param CommunityUser $communityUser The community user
      */
     private function checkRole(CommunityUser $communityUser): void
     {

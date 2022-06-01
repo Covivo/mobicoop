@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Carpool\DataProvider;
 
@@ -34,8 +34,8 @@ use Symfony\Component\HttpFoundation\RequestStack;
  */
 final class AdItemExternalDataProvider implements RestrictedDataProviderInterface, ItemDataProviderInterface
 {
-    protected $adManager;
-    protected $request;
+    private $adManager;
+    private $request;
 
     public function __construct(AdManager $adManager, RequestStack $requestStack)
     {
@@ -45,11 +45,11 @@ final class AdItemExternalDataProvider implements RestrictedDataProviderInterfac
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Ad::class === $resourceClass && $operationName === "get_external";
+        return Ad::class === $resourceClass && 'get_external' === $operationName;
     }
 
     public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?object
     {
-        return $this->adManager->getAdFromExternalId($this->request->get("id"), $this->request->query->get('filters'), $this->request->query->get('order'));
+        return $this->adManager->getAdFromExternalId($this->request->get('id'), $this->request->query->get('filters'), $this->request->query->get('order'));
     }
 }

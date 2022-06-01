@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Action\EventSubscriber;
 
@@ -31,10 +31,10 @@ use App\Solidary\Event\SolidaryContactSmsEvent;
 use App\Solidary\Event\SolidaryCreatedEvent;
 use App\Solidary\Event\SolidaryUpdatedEvent;
 use App\Solidary\Event\SolidaryUserCreatedEvent;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use App\Solidary\Event\SolidaryUserStructureAcceptedEvent;
 use App\Solidary\Event\SolidaryUserStructureRefusedEvent;
 use App\Solidary\Event\SolidaryUserUpdatedEvent;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
@@ -60,7 +60,7 @@ class SolidarySubscriber implements EventSubscriberInterface
             SolidaryContactMessageEvent::NAME => 'onSolidaryContactMessage',
             SolidaryContactEmailEvent::NAME => 'onSolidaryContactEmail',
             SolidaryContactSmsEvent::NAME => 'onSolidaryContactSms',
-            SolidaryAnimationPostedEvent::NAME => 'onSolidaryAnimationPosted'
+            SolidaryAnimationPostedEvent::NAME => 'onSolidaryAnimationPosted',
         ];
     }
 

@@ -19,16 +19,16 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Communication\EventSubscriber;
 
 use App\Action\Event\ActionEvent;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use App\Communication\Service\NotificationManager;
-use App\Communication\Event\InternalMessageReceivedEvent;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use App\Action\Repository\ActionRepository;
+use App\Communication\Event\InternalMessageReceivedEvent;
+use App\Communication\Service\NotificationManager;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class InternalMessageSubscriber implements EventSubscriberInterface
 {
@@ -46,7 +46,7 @@ class InternalMessageSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            InternalMessageReceivedEvent::NAME => 'onInternalMessageReceived'
+            InternalMessageReceivedEvent::NAME => 'onInternalMessageReceived',
         ];
     }
 
@@ -55,7 +55,7 @@ class InternalMessageSubscriber implements EventSubscriberInterface
         $this->notificationManager->notifies(InternalMessageReceivedEvent::NAME, $event->getRecipient()->getUser(), $event->getRecipient()->getMessage());
 
         //  we dispatch the gamification event associated
-        $action = $this->actionRepository->findOneBy(['name'=>'communication_internal_message_received']);
+        $action = $this->actionRepository->findOneBy(['name' => 'communication_internal_message_received']);
         $actionEvent = new ActionEvent($action, $event->getRecipient()->getMessage()->getUser());
         $actionEvent->setMessage($event->getRecipient()->getMessage());
         $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);

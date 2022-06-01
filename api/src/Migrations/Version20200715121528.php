@@ -15,7 +15,7 @@ final class Version20200715121528 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('CREATE TABLE carpool_payment (id INT AUTO_INCREMENT NOT NULL, user_id INT DEFAULT NULL, amount NUMERIC(6, 2) NOT NULL, status SMALLINT NOT NULL, created_date DATETIME NOT NULL, updated_date DATETIME DEFAULT NULL, INDEX IDX_4E75FFB3A76ED395 (user_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('CREATE TABLE carpool_payment_carpool_item (carpool_payment_id INT NOT NULL, carpool_item_id INT NOT NULL, INDEX IDX_41DE3AA51212FDF6 (carpool_payment_id), INDEX IDX_41DE3AA5313229E0 (carpool_item_id), PRIMARY KEY(carpool_payment_id, carpool_item_id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
@@ -31,7 +31,7 @@ final class Version20200715121528 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE carpool_payment_carpool_item DROP FOREIGN KEY FK_41DE3AA51212FDF6');
         $this->addSql('ALTER TABLE carpool_payment_carpool_item DROP FOREIGN KEY FK_41DE3AA5313229E0');

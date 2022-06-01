@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Communication\Interfaces;
 
@@ -30,10 +30,10 @@ use App\Communication\Entity\Message;
  * Used for entities that can have related messages.
  *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
- *
  */
 interface MessagerInterface
 {
     public function getMessage(): ?Message;
+
     public function setMessage(Message $message);
 }

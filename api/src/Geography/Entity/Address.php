@@ -948,8 +948,6 @@ class Address implements \JsonSerializable
      * Note : the method checks only geographical data.
      *
      * @param array $compare The array thant contains the address to compare
-     *
-     * @return bool
      */
     public function isSame(array $compare, bool $replace = false): bool
     {

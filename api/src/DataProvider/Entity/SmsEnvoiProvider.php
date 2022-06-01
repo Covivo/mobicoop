@@ -19,19 +19,19 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\DataProvider\Entity;
 
+use App\Communication\Entity\Sms;
 use App\DataProvider\Interfaces\ProviderInterface;
 use App\DataProvider\Service\DataProvider;
-use App\Communication\Entity\Sms;
 
 class SmsEnvoiProvider implements ProviderInterface
 {
-    private const URI ="https://api.smsenvoi.com/";
-    private const COLLECTION_RESSOURCE_SMS ="API/v1.0/REST/sms";
-    private const COLLECTION_RESSOURCE_AUTH ="API/v1.0/REST/login";
+    private const URI = 'https://api.smsenvoi.com/';
+    private const COLLECTION_RESSOURCE_SMS = 'API/v1.0/REST/sms';
+    private const COLLECTION_RESSOURCE_AUTH = 'API/v1.0/REST/login';
 
     private $collection;
     private $username;
@@ -41,9 +41,9 @@ class SmsEnvoiProvider implements ProviderInterface
     public function __construct(string $username, string $password, string $sender)
     {
         $this->collection = [];
-        $this->username=$username;
-        $this->password=$password;
-        $this->sender=$sender;
+        $this->username = $username;
+        $this->password = $password;
+        $this->sender = $sender;
     }
 
     /**
@@ -53,24 +53,25 @@ class SmsEnvoiProvider implements ProviderInterface
     {
         // call api to authentication
         $dataProvider = new DataProvider(self::URI, self::COLLECTION_RESSOURCE_AUTH);
-        $response = $dataProvider->getItem(['username'=>$this->username, 'password'=>$this->password]);
-        if ($response->getCode()==200) {
+        $response = $dataProvider->getItem(['username' => $this->username, 'password' => $this->password]);
+        if (200 == $response->getCode()) {
             $dataProvider->setResource(self::COLLECTION_RESSOURCE_SMS);
 
-            $headers=[];
-            $headers['user_key'] = explode(";", $response->getValue())[0];
-            $headers['Session_key'] = explode(";", $response->getValue())[1];
-            $body=[
-                "message_type"=> "PRM",
-                "encoding" => "ucs2",
-                "message"=> $sms->getMessage(),
-                "recipient"=> [
-                    $sms->getRecipientTelephone()
+            $headers = [];
+            $headers['user_key'] = explode(';', $response->getValue())[0];
+            $headers['Session_key'] = explode(';', $response->getValue())[1];
+            $body = [
+                'message_type' => 'PRM',
+                'encoding' => 'ucs2',
+                'message' => $sms->getMessage(),
+                'recipient' => [
+                    $sms->getRecipientTelephone(),
                 ],
-                "sender"=> $this->sender
+                'sender' => $this->sender,
             ];
             $dataProvider->postCollection($body, $headers);
         }
+
         return new Response();
     }
 
@@ -82,17 +83,17 @@ class SmsEnvoiProvider implements ProviderInterface
     }
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function getItem(string $class, string $apikey, array $params)
     {
     }
 
     /**
-    * {@inheritdoc}
-    */
+     * {@inheritdoc}
+     */
     public function deserialize(string $class, array $data)
     {
-        $this->logger->info("SMS Envoi API return");
+        $this->logger->info('SMS Envoi API return');
     }
 }

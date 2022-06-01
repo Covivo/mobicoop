@@ -19,20 +19,19 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Article\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-use ApiPlatform\Core\Annotation\ApiResource;
-use Symfony\Component\Serializer\Annotation\Groups;
-use Doctrine\Common\Collections\ArrayCollection;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
-use App\Article\Controller\SectionUp;
-use App\Article\Controller\SectionDown;
 use ApiPlatform\Core\Annotation\ApiFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use App\Article\Controller\SectionDown;
+use App\Article\Controller\SectionUp;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 /**
  * A section of an article (an article can be divided in one or many sections).
@@ -48,10 +47,10 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  *      collectionOperations={
  *          "get"={
  *              "security_post_denormalize"="is_granted('article_list',object)",
-  *              "swagger_context" = {
+ *              "swagger_context" = {
  *                  "tags"={"Articles"}
  *              }
-*          },
+ *          },
  *          "post"={
  *              "security_post_denormalize"="is_granted('article_create',object)",
  *              "swagger_context" = {
@@ -107,12 +106,12 @@ class Section
 
     // List of the translatable items of this entity
     public const TRANSLATABLE_ITEMS = [
-        "title",
-        "subTitle"
+        'title',
+        'subTitle',
     ];
 
     /**
-     * @var int The id of this section.
+     * @var int the id of this section
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -122,7 +121,7 @@ class Section
     private $id;
 
     /**
-     * @var string The title of the section.
+     * @var string the title of the section
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"aRead","read","write"})
@@ -130,7 +129,7 @@ class Section
     private $title;
 
     /**
-     * @var string The subtitle of the section.
+     * @var string the subtitle of the section
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"aRead","read","write"})
@@ -138,7 +137,7 @@ class Section
     private $subTitle;
 
     /**
-     * @var int The position of the section in the article.
+     * @var int the position of the section in the article
      *
      * @ORM\Column(type="smallint")
      * @Groups({"aRead","read","write"})
@@ -146,7 +145,7 @@ class Section
     private $position;
 
     /**
-     * @var int The status of publication of the section.
+     * @var int the status of publication of the section
      *
      * @ORM\Column(type="smallint")
      * @Groups({"aRead","read","write"})
@@ -154,7 +153,7 @@ class Section
     private $status;
 
     /**
-     * @var Article|null The article related to the section.
+     * @var null|Article the article related to the section
      *
      * @ORM\ManyToOne(targetEntity="\App\Article\Entity\Article", inversedBy="sections")
      * @Groups({"read","write"})
@@ -163,7 +162,7 @@ class Section
     private $article;
 
     /**
-     * @var ArrayCollection The paragraphs of the section.
+     * @var ArrayCollection the paragraphs of the section
      *
      * @ORM\OneToMany(targetEntity="\App\Article\Entity\Paragraph", mappedBy="section", cascade={"persist","remove"}, orphanRemoval=true)
      * @ORM\OrderBy({"position" = "ASC"})
@@ -173,7 +172,7 @@ class Section
     private $paragraphs;
 
     /**
-     * @var \DateTimeInterface Creation date.
+     * @var \DateTimeInterface creation date
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read"})
@@ -181,7 +180,7 @@ class Section
     private $createdDate;
 
     /**
-     * @var \DateTimeInterface Updated date.
+     * @var \DateTimeInterface updated date
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read"})
@@ -287,6 +286,7 @@ class Section
     public function removeParagraphs(): self
     {
         $this->paragraphs->clear();
+
         return $this;
     }
 
@@ -323,7 +323,7 @@ class Section
      */
     public function setAutoCreatedDate()
     {
-        $this->setCreatedDate(new \Datetime());
+        $this->setCreatedDate(new \DateTime());
     }
 
     /**
@@ -333,6 +333,6 @@ class Section
      */
     public function setAutoUpdatedDate()
     {
-        $this->setUpdatedDate(new \Datetime());
+        $this->setUpdatedDate(new \DateTime());
     }
 }

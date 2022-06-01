@@ -19,15 +19,16 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\Event;
 
-use Symfony\Contracts\EventDispatcher\Event;
 use App\Solidary\Entity\SolidaryAnimation;
+use Symfony\Contracts\EventDispatcher\Event;
 
 /**
- * Event sent when a solidary animation is posted
+ * Event sent when a solidary animation is posted.
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class SolidaryAnimationPostedEvent extends Event

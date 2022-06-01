@@ -19,12 +19,12 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Carpool\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
@@ -44,31 +44,31 @@ class ResultRole
     public const DEFAULT_ID = 999999999999;
 
     /**
-     * @var int The id of this result role.
+     * @var int the id of this result role
      * @ApiProperty(identifier=true)
      */
     private $id;
 
     /**
-     * @var ResultItem The result item for the outward.
+     * @var ResultItem the result item for the outward
      * @Groups("results")
      */
     private $outward;
 
     /**
-     * @var ResultItem|null The result item for the return trip.
+     * @var null|ResultItem the result item for the return trip
      * @Groups("results")
      */
     private $return;
 
     /**
-     * @var int The number of places offered to display.
+     * @var int the number of places offered to display
      * @Groups("results")
      */
     private $seatsDriver;
 
     /**
-     * @var int The number of places asked to display.
+     * @var int the number of places asked to display
      * @Groups("results")
      */
     private $seatsPassenger;

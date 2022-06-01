@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Communication\DataPersister;
 
@@ -29,7 +29,8 @@ use App\Communication\Service\ContactManager;
 use Symfony\Component\Security\Core\Security;
 
 /**
- * Post a Message
+ * Post a Message.
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 final class ContactDataPersister implements ContextAwareDataPersisterInterface
@@ -45,17 +46,16 @@ final class ContactDataPersister implements ContextAwareDataPersisterInterface
 
     public function supports($data, array $context = []): bool
     {
-        return $data instanceof Contact && isset($context['collection_operation_name']) && $context['collection_operation_name'] == 'post';
+        return $data instanceof Contact && isset($context['collection_operation_name']) && 'post' == $context['collection_operation_name'];
     }
 
     public function persist($data, array $context = [])
     {
         if (is_null($data)) {
-            throw new \InvalidArgumentException($this->translator->trans("No Contact provided"));
+            throw new \InvalidArgumentException($this->translator->trans('No Contact provided'));
         }
 
         return $this->contactManager->sendContactMail($data);
-        ;
     }
 
     public function remove($data, array $context = [])

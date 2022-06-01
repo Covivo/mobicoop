@@ -19,17 +19,16 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Match\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * An Matrix Carpool after a Matching diagnostic
+ * An Matrix Carpool after a Matching diagnostic.
  */
 class MassMatrix
 {
@@ -41,7 +40,7 @@ class MassMatrix
 
     /**
      * @var array of MassCarpools
-     * Groups({"mass","massCompute"})
+     *            Groups({"mass","massCompute"})
      */
     private $carpools;
 
@@ -83,7 +82,6 @@ class MassMatrix
         $this->originalsJourneys = new ArrayCollection();
         $this->carpools = new ArrayCollection();
     }
-
 
     public function getOriginalsJourneys(): Collection
     {
@@ -152,6 +150,7 @@ class MassMatrix
     {
         $this->humanReadableSavedDuration = $humanReadableSavedDuration;
     }
+
     public function getSavedCO2(): float
     {
         return $this->savedCO2;
@@ -162,52 +161,49 @@ class MassMatrix
         $this->savedCO2 = $savedCO2;
     }
 
-
     /**
-     * Return the MassJourney of the person by idPerson
-     * @param int $idPerson
-     * @return MassJourney|null
+     * Return the MassJourney of the person by idPerson.
      */
     public function getJourneyOfAPerson(int $idPerson): ?MassJourney
     {
         foreach ($this->originalsJourneys as $journey) {
-            if ($journey->getidPerson()==$idPerson) {
+            if ($journey->getidPerson() == $idPerson) {
                 return $journey;
             }
         }
+
         return null;
     }
 
     /**
-     * Return the MassCarpool between two Persons
-     * @param int $idPerson1
-     * @param int $idPerson2
-     * @return MassCarpool|null
+     * Return the MassCarpool between two Persons.
+     *
+     * @return null|MassCarpool
      */
     public function getCarpoolBetweenTwoPersons(int $idPerson1, int $idPerson2): MassCarpool
     {
         foreach ($this->carpools as $carpool) {
-            if ($carpool->getPerson1()->getId()==$idPerson1 && $carpool->getPerson2()->getId()==$idPerson2) {
+            if ($carpool->getPerson1()->getId() == $idPerson1 && $carpool->getPerson2()->getId() == $idPerson2) {
                 return $carpool;
             }
         }
+
         return null;
     }
 
     /**
-     * Return the MassCarpools of a Person
-     * @param int $idPerson
-     * @return Collection
+     * Return the MassCarpools of a Person.
      */
     public function getCarpoolsOfAPerson(int $idPerson): Collection
     {
         $carpools = new ArrayCollection();
 
         foreach ($this->carpools as $carpool) {
-            if (($carpool->getPerson1()->getId()==$idPerson || $carpool->getPerson2()->getId()==$idPerson) && !$carpools->contains($carpool)) {
+            if (($carpool->getPerson1()->getId() == $idPerson || $carpool->getPerson2()->getId() == $idPerson) && !$carpools->contains($carpool)) {
                 $carpools->add($carpool);
             }
         }
+
         return $carpools;
     }
 }

@@ -19,19 +19,18 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Security;
 
-use App\Auth\Service\AuthManager;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
+use App\Auth\Service\AuthManager;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class MaintenanceVoter extends Voter
 {
     public const MAINTENANCE = 'maintenance';
-
 
     private $authManager;
 
@@ -44,16 +43,17 @@ class MaintenanceVoter extends Voter
     {
         // if the attribute isn't one we support, return false
         if (!in_array($attribute, [
-            self::MAINTENANCE
-            ])) {
+            self::MAINTENANCE,
+        ])) {
             return false;
         }
 
         if (!in_array($attribute, [
-            self::MAINTENANCE
-            ]) && !($subject instanceof Paginator)) {
+            self::MAINTENANCE,
+        ]) && !($subject instanceof Paginator)) {
             return false;
         }
+
         return true;
     }
 

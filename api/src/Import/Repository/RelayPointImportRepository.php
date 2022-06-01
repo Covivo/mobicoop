@@ -4,14 +4,13 @@ namespace App\Import\Repository;
 
 use App\Import\Entity\RelayPointImport;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 
 /**
- * @method RelayPointImport|null find($id, $lockMode = null, $lockVersion = null)
+ * @method null|RelayPointImport find($id, $lockMode = null, $lockVersion = null)
  * @method RelayPointImport[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
- * @method RelayPointImport|null findOneBy(array $criteria, array $orderBy = null)
+ * @method null|RelayPointImport findOneBy(array $criteria, array $orderBy = null)
  */
 class RelayPointImportRepository extends ServiceEntityRepository
 {

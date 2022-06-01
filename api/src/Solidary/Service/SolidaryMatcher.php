@@ -18,24 +18,24 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\Service;
 
 use App\Carpool\Entity\Criteria;
 use App\Carpool\Entity\Proposal;
+use App\Carpool\Entity\Result;
+use App\Carpool\Repository\MatchingRepository;
 use App\Solidary\Entity\Solidary;
 use App\Solidary\Entity\SolidaryMatching;
 use App\Solidary\Entity\SolidaryResult\SolidaryResult;
 use App\Solidary\Entity\SolidaryResult\SolidaryResultCarpool;
 use App\Solidary\Entity\SolidaryResult\SolidaryResultTransport;
 use App\Solidary\Entity\SolidaryUser;
+use App\Solidary\Entity\Structure;
 use App\Solidary\Exception\SolidaryException;
 use App\Solidary\Repository\SolidaryMatchingRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use App\Carpool\Entity\Result;
-use App\Carpool\Repository\MatchingRepository;
-use App\Solidary\Entity\Structure;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
@@ -56,11 +56,10 @@ class SolidaryMatcher
     }
 
     /**
-     * Build and persist the solidary matchings for a Solidary based on a set of solidary search Transport results
+     * Build and persist the solidary matchings for a Solidary based on a set of solidary search Transport results.
      *
-     * @param Solidary $solidary    The solidary
-     * @param array $results        The results of a solidary search
-     * @return array|null
+     * @param Solidary $solidary The solidary
+     * @param array    $results  The results of a solidary search
      */
     public function buildSolidaryMatchingsForTransport(Solidary $solidary, array $results): ?array
     {
@@ -70,16 +69,16 @@ class SolidaryMatcher
         $previousMatchings = $this->solidaryMatchingRepository->findSolidaryMatchingTransportOfSolidary($solidary);
 
         foreach ($results as $solidaryUser) {
-
             // We check if the matching already exists
             $matchingAlreadyExists = false;
             foreach ($previousMatchings as $previousMatching) {
-                if ($previousMatching->getSolidaryUser()->getId() == $solidaryUser->getId() &&
-                $previousMatching->getSolidary()->getId() == $solidary->getId()
+                if ($previousMatching->getSolidaryUser()->getId() == $solidaryUser->getId()
+                && $previousMatching->getSolidary()->getId() == $solidary->getId()
                 ) {
                     $matchingAlreadyExists = true;
                     // We keep the previous matching
                     $solidaryMatching = $previousMatching;
+
                     break;
                 }
             }
@@ -111,11 +110,10 @@ class SolidaryMatcher
     }
 
     /**
-     * Build and persist the solidary matchings for a Solidary based on a set of solidary search Carpool results
+     * Build and persist the solidary matchings for a Solidary based on a set of solidary search Carpool results.
      *
-     * @param Solidary $solidary    The solidary
-     * @param array $results        The results of an Ad
-     * @return array|null
+     * @param Solidary $solidary The solidary
+     * @param array    $results  The results of an Ad
      */
     public function buildSolidaryMatchingsForCarpool(Solidary $solidary, array $results): ?array
     {
@@ -125,7 +123,6 @@ class SolidaryMatcher
         $previousMatchings = $this->solidaryMatchingRepository->findSolidaryMatchingCarpoolOfSolidary($solidary);
 
         foreach ($results as $result) {
-
             /**
              * @var Result $result
              */
@@ -136,12 +133,13 @@ class SolidaryMatcher
             // We check if the matching already exists
             $matchingAlreadyExists = false;
             foreach ($previousMatchings as $previousMatching) {
-                if ($previousMatching->getMatching()->getId() == $resultItem->getMatchingId() &&
-                $previousMatching->getSolidary()->getId() == $solidary->getId()
+                if ($previousMatching->getMatching()->getId() == $resultItem->getMatchingId()
+                && $previousMatching->getSolidary()->getId() == $solidary->getId()
                 ) {
                     $matchingAlreadyExists = true;
                     // We keep the previous matching
                     $solidaryMatching = $previousMatching;
+
                     break;
                 }
             }
@@ -170,16 +168,13 @@ class SolidaryMatcher
             }
         }
 
-
         return $solidaryMatchings;
     }
 
-
     /**
-     * Build a SolidaryResult with a SolidaryResultTransport from a SolidaryMatching
+     * Build a SolidaryResult with a SolidaryResultTransport from a SolidaryMatching.
      *
-     * @param SolidaryMatching $solidaryUser    The Solidary User
-     * @return SolidaryResult
+     * @param SolidaryMatching $solidaryUser The Solidary User
      */
     public function buildSolidaryResultTransport(SolidaryMatching $solidaryMatching): SolidaryResult
     {
@@ -187,13 +182,14 @@ class SolidaryMatcher
         $solidaryResultTransport = new SolidaryResultTransport();
 
         // The volunteer
-        $solidaryResultTransport->setVolunteer($solidaryMatching->getSolidaryUser()->getUser()->getGivenName()." ".$solidaryMatching->getSolidaryUser()->getUser()->getFamilyName());
+        $solidaryResultTransport->setVolunteer($solidaryMatching->getSolidaryUser()->getUser()->getGivenName().' '.$solidaryMatching->getSolidaryUser()->getUser()->getFamilyName());
         $solidaryResultTransport->setVolunteerId($solidaryMatching->getSolidaryUser()->getUser()->getId());
         // Home address of the volunteer
         $addresses = $solidaryMatching->getSolidaryUser()->getUser()->getAddresses();
         foreach ($addresses as $address) {
             if ($address->isHome()) {
                 $solidaryResultTransport->setHome($address->getAddressLocality());
+
                 break;
             }
         }
@@ -206,15 +202,13 @@ class SolidaryMatcher
         // We set the source solidaryMatching
         $solidaryResult->setSolidaryMatching($solidaryMatching);
 
-
         return $solidaryResult;
     }
 
     /**
-     * Build a SolidaryResult with a SolidaryResultCarpool from a SolidaryMatching
+     * Build a SolidaryResult with a SolidaryResultCarpool from a SolidaryMatching.
      *
-     * @param SolidaryMatching $solidaryUser    The Solidary User
-     * @return SolidaryResult
+     * @param SolidaryMatching $solidaryUser The Solidary User
      */
     public function buildSolidaryResultCarpool(SolidaryMatching $solidaryMatching): SolidaryResult
     {
@@ -224,16 +218,17 @@ class SolidaryMatcher
         // We get the Proposal Offer with all the infos
 
         // The author
-        $solidaryResultCarpool->setAuthor($solidaryMatching->getMatching()->getProposalOffer()->getUser()->getGivenName()." ".$solidaryMatching->getMatching()->getProposalOffer()->getUser()->getShortFamilyName());
+        $solidaryResultCarpool->setAuthor($solidaryMatching->getMatching()->getProposalOffer()->getUser()->getGivenName().' '.$solidaryMatching->getMatching()->getProposalOffer()->getUser()->getShortFamilyName());
         $solidaryResultCarpool->setAuthorId($solidaryMatching->getMatching()->getProposalOffer()->getUser()->getId());
 
         // O/D
         $waypoints = $solidaryMatching->getMatching()->getWaypoints();
         $origin = $waypoints[0]->getAddress()->getAddressLocality();
-        $destination = "";
+        $destination = '';
         foreach ($waypoints as $waypoint) {
             if ($waypoint->isDestination()) {
                 $destination = $waypoint->getAddress()->getAddressLocality();
+
                 break;
             }
         }
@@ -243,10 +238,9 @@ class SolidaryMatcher
         // The frequency
         $solidaryResultCarpool->setFrequency($solidaryMatching->getMatching()->getCriteria()->getFrequency());
 
-
         // Date and schedule
         $solidaryResultCarpool->setDate($solidaryMatching->getMatching()->getCriteria()->getFromDate());
-        if ($solidaryResultCarpool->getFrequency()==2) {
+        if (2 == $solidaryResultCarpool->getFrequency()) {
             // Schedule only for Regular
             $solidaryResultCarpool->setSchedule($this->getBuildedScheduleRegularCarpool($solidaryMatching->getMatching()->getCriteria()));
         }
@@ -265,7 +259,6 @@ class SolidaryMatcher
 
         $solidaryResult->setSolidaryResultCarpool($solidaryResultCarpool);
 
-
         // We set the source solidaryMatching
         $solidaryResult->setSolidaryMatching($solidaryMatching);
 
@@ -274,36 +267,29 @@ class SolidaryMatcher
 
     /**
      * Get the hour slot of this time
-     * m : morning, a : afternoon, e : evening
-     *
-     * @param \DateTimeInterface $mintime
-     * @param \DateTimeInterface $maxtime
-     * @param Structure $structure
-     * @return string
+     * m : morning, a : afternoon, e : evening.
      */
     public function getHourSlot(\DateTimeInterface $mintime, \DateTimeInterface $maxtime, Structure $structure): string
     {
         // get The hours slot of the structure
         $hoursSlots = [
-            "m" => ["min" => (!is_null($structure->getMMinRangeTime())) ? new \DateTime($structure->getMMinRangeTime()->format("H:i:s")) : $this->getDefaultHoursSlotsRanges()["m"]["min"],"max" => (!is_null($structure->getMMaxRangeTime())) ? new \DateTime($structure->getMMaxRangeTime()->format("H:i:s")) : $this->getDefaultHoursSlotsRanges()["m"]["max"]],
-            "a" => ["min" => (!is_null($structure->getAMinRangeTime())) ? new \DateTime($structure->getAMinRangeTime()->format("H:i:s")) : $this->getDefaultHoursSlotsRanges()["a"]["min"],"max" => (!is_null($structure->getAMaxRangeTime())) ? new \DateTime($structure->getAMaxRangeTime()->format("H:i:s")) : $this->getDefaultHoursSlotsRanges()["a"]["max"]],
-            "e" => ["min" => (!is_null($structure->getEMinRangeTime())) ? new \DateTime($structure->getEMinRangeTime()->format("H:i:s")) : $this->getDefaultHoursSlotsRanges()["e"]["min"],"max" => (!is_null($structure->getEMaxRangeTime())) ? new \DateTime($structure->getEMaxRangeTime()->format("H:i:s")) : $this->getDefaultHoursSlotsRanges()["e"]["max"]]
+            'm' => ['min' => (!is_null($structure->getMMinRangeTime())) ? new \DateTime($structure->getMMinRangeTime()->format('H:i:s')) : $this->getDefaultHoursSlotsRanges()['m']['min'], 'max' => (!is_null($structure->getMMaxRangeTime())) ? new \DateTime($structure->getMMaxRangeTime()->format('H:i:s')) : $this->getDefaultHoursSlotsRanges()['m']['max']],
+            'a' => ['min' => (!is_null($structure->getAMinRangeTime())) ? new \DateTime($structure->getAMinRangeTime()->format('H:i:s')) : $this->getDefaultHoursSlotsRanges()['a']['min'], 'max' => (!is_null($structure->getAMaxRangeTime())) ? new \DateTime($structure->getAMaxRangeTime()->format('H:i:s')) : $this->getDefaultHoursSlotsRanges()['a']['max']],
+            'e' => ['min' => (!is_null($structure->getEMinRangeTime())) ? new \DateTime($structure->getEMinRangeTime()->format('H:i:s')) : $this->getDefaultHoursSlotsRanges()['e']['min'], 'max' => (!is_null($structure->getEMaxRangeTime())) ? new \DateTime($structure->getEMaxRangeTime()->format('H:i:s')) : $this->getDefaultHoursSlotsRanges()['e']['max']],
         ];
         foreach ($hoursSlots as $slot => $hoursSlot) {
-            if ($hoursSlot['min']<=$mintime && $mintime<=$hoursSlot['max']) {
+            if ($hoursSlot['min'] <= $mintime && $mintime <= $hoursSlot['max']) {
                 return $slot;
             }
         }
-        //should not append
+        // should not append
         throw new SolidaryException(SolidaryException::INVALID_HOUR_SLOT);
-        return "";
+
+        return '';
     }
 
     /**
-     * Get the builded schedule of a SolidaryUser
-     *
-     * @param SolidaryUser $solidaryUser
-     * @return array
+     * Get the builded schedule of a SolidaryUser.
      */
     public function getBuildedSchedule(SolidaryUser $solidaryUser): array
     {
@@ -333,10 +319,7 @@ class SolidaryMatcher
     }
 
     /**
-     * Get the builded schedule of a Criteria
-     *
-     * @param Criteria $criteria
-     * @return array
+     * Get the builded schedule of a Criteria.
      */
     public function getBuildedScheduleRegularCarpool(Criteria $criteria): array
     {
@@ -374,19 +357,16 @@ class SolidaryMatcher
         return $schedule;
     }
 
-
     /**
      * Get the instance default hours slots ranges
-     * (i.e. to determine if a time is in morning, afternoon or evening when no indication is given otherwise)
-     *
-     * @return array
+     * (i.e. to determine if a time is in morning, afternoon or evening when no indication is given otherwise).
      */
     public function getDefaultHoursSlotsRanges(): array
     {
         return [
-            "m" => ["min" => new \DateTime($this->params['solidaryMMinRangeTime']),"max" => new \DateTime($this->params['solidaryMMaxRangeTime'])],
-            "a" => ["min" => new \DateTime($this->params['solidaryAMinRangeTime']),"max" => new \DateTime($this->params['solidaryAMaxRangeTime'])],
-            "e" => ["min" => new \DateTime($this->params['solidaryEMinRangeTime']),"max" => new \DateTime($this->params['solidaryEMaxRangeTime'])]
+            'm' => ['min' => new \DateTime($this->params['solidaryMMinRangeTime']), 'max' => new \DateTime($this->params['solidaryMMaxRangeTime'])],
+            'a' => ['min' => new \DateTime($this->params['solidaryAMinRangeTime']), 'max' => new \DateTime($this->params['solidaryAMaxRangeTime'])],
+            'e' => ['min' => new \DateTime($this->params['solidaryEMinRangeTime']), 'max' => new \DateTime($this->params['solidaryEMaxRangeTime'])],
         ];
     }
 }

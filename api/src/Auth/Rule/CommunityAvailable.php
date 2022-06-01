@@ -19,14 +19,14 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Auth\Rule;
 
 use App\Auth\Interfaces\AuthRuleInterface;
 
 /**
- *  Check that the community module is available
+ *  Check that the community module is available.
  */
 class CommunityAvailable implements AuthRuleInterface
 {
@@ -38,6 +38,7 @@ class CommunityAvailable implements AuthRuleInterface
         if (isset($params['community'])) {
             return $params['community'];
         }
+
         return true;
     }
 }

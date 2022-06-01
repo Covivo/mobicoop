@@ -19,18 +19,17 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\I18n\Service;
 
 use App\App\Entity\App;
-use App\Article\Entity\Article;
 use App\I18n\Entity\Language;
 use App\I18n\Repository\LanguageRepository;
 use App\I18n\Repository\TranslateRepository;
 use ReflectionClass;
-use Symfony\Component\Security\Core\Security;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Core\Security;
 
 /**
  * Language manager service.
@@ -39,19 +38,18 @@ use Symfony\Component\HttpFoundation\RequestStack;
  */
 class LanguageManager
 {
+    public const SETTER_PREFIX = 'set';
     private $languageRepository;
     private $translateRepository;
     private $security;
     private $defaultLanguage;
     private $request;
 
-    public const SETTER_PREFIX = "set";
-
     /**
-        * Constructor.
-        *
-        * @param EntityManagerInterface $entityManager
-        */
+     * Constructor.
+     *
+     * @param EntityManagerInterface $entityManager
+     */
     public function __construct(LanguageRepository $languageRepository, TranslateRepository $translateRepository, Security $security, int $defaultLanguage, RequestStack $requestStack)
     {
         $this->languageRepository = $languageRepository;
@@ -63,9 +61,6 @@ class LanguageManager
 
     /**
      * Get a language by its id.
-     *
-     * @param integer $id
-     * @return Language|null
      */
     public function getLanguage(int $id): ?Language
     {
@@ -73,10 +68,11 @@ class LanguageManager
     }
 
     /**
-     * Get the translated object if there is any
+     * Get the translated object if there is any.
      *
-     * @param object $object        The object to translate
-     * @return object   The translated object (or the original if there is no translation)
+     * @param object $object The object to translate
+     *
+     * @return object The translated object (or the original if there is no translation)
      */
     public function getTranslation(object $object): object
     {
@@ -88,8 +84,9 @@ class LanguageManager
             if ($this->request->headers->has('X-LOCALE')) {
                 // We try to locate the language id using x-locale value
                 foreach (Language::LANGUAGES as $key => $currentLanguage) {
-                    if ($currentLanguage['code']==$this->request->headers->get('X-LOCALE')) {
+                    if ($currentLanguage['code'] == $this->request->headers->get('X-LOCALE')) {
                         $idLanguage = $currentLanguage['id'];
+
                         break;
                     }
                 }
@@ -112,40 +109,36 @@ class LanguageManager
                 if (is_null($userLanguage)) {
                     // The user has no specific language. We do nothing.
                     return $object;
-                } else {
-                    if ($userLanguage->getId() == $this->defaultLanguage) {
-                        // The user and the platform use the same language. We do nothing.
-                        return $object;
-                    } else {
-                        // The user and the platform use different language. We set the User's language and try to find translation
-                        $idLanguage = $userLanguage->getId();
-                    }
                 }
+                if ($userLanguage->getId() == $this->defaultLanguage) {
+                    // The user and the platform use the same language. We do nothing.
+                    return $object;
+                }
+                // The user and the platform use different language. We set the User's language and try to find translation
+                $idLanguage = $userLanguage->getId();
             }
         }
-
 
         if ($language = $this->getLanguage($idLanguage)) {
             // Check if the Object implements TRANSLATATBLE_ITEMS constant
             $class = get_class($object);
             $reflect = new ReflectionClass($class);
-            if (array_key_exists("TRANSLATABLE_ITEMS", $reflect->getConstants())) {
+            if (array_key_exists('TRANSLATABLE_ITEMS', $reflect->getConstants())) {
                 foreach ($object::TRANSLATABLE_ITEMS as $key => $item) {
                     if ($translate = $this->translateRepository->findOneBy([
-                        "property"=>$item,
-                        "language"=>$language,
-                        "domain"=>$reflect->getShortName(),
-                        "idEntity"=>$object->getId()
+                        'property' => $item,
+                        'language' => $language,
+                        'domain' => $reflect->getShortName(),
+                        'idEntity' => $object->getId(),
                     ])) {
                         $setter = self::SETTER_PREFIX.ucwords($item);
                         if (method_exists($object, $setter)) {
-                            $object->$setter($translate->getText());
+                            $object->{$setter}($translate->getText());
                         }
                     }
                 }
             }
         }
-
 
         return $object;
     }

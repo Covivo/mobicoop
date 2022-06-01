@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Carpool\Command;
 
@@ -33,7 +33,6 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
  */
-
 class RemoveCarpoolOrphansCommand extends Command
 {
     private $proposalManager;
@@ -48,14 +47,14 @@ class RemoveCarpoolOrphansCommand extends Command
     protected function configure()
     {
         $this
-        ->setName('app:carpool:remove-orphans')
-        ->setDescription('Deletes carpool orphans.')
-        ->setHelp('Deletes carpool orphans.')
+            ->setName('app:carpool:remove-orphans')
+            ->setDescription('Deletes carpool orphans.')
+            ->setHelp('Deletes carpool orphans.')
         ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        return (int)!$this->proposalManager->removeOrphans();
+        return (int) !$this->proposalManager->removeOrphans();
     }
 }

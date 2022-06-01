@@ -16,12 +16,12 @@ final class Version20200903101800 extends AbstractMigration
     {
         // add dashboard access
         $this->addSql("INSERT INTO `auth_item` (`id`, `auth_rule_id`, `type`, `name`, `description`) VALUES (238, NULL, 1, 'dashboard_read', 'View BI dashboards')");
-        $this->addSql("INSERT INTO `auth_item_child` (`parent_id`, `child_id`) VALUES (2, 238)");
+        $this->addSql('INSERT INTO `auth_item_child` (`parent_id`, `child_id`) VALUES (2, 238)');
     }
 
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
     }
 }

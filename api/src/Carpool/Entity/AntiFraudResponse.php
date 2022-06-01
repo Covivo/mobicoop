@@ -19,14 +19,14 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Carpool\Entity;
 
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * Anti-Fraud system response
+ * Anti-Fraud system response.
  */
 class AntiFraudResponse
 {
@@ -37,19 +37,17 @@ class AntiFraudResponse
     private $valid;
 
     /**
-     * @var string Details about the validation.
+     * @var string details about the validation
      *
      * @Groups({"read"})
      */
     private $message;
 
-
-    public function __construct($valid=false, $message="")
+    public function __construct($valid = false, $message = '')
     {
         $this->valid = $valid;
         $this->message = $message;
     }
-
 
     public function isValid(): ?bool
     {

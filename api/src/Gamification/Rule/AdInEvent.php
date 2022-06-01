@@ -19,23 +19,22 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Gamification\Rule;
 
 use App\Gamification\Interfaces\GamificationRuleInterface;
 
 /**
- * Check if the user post the ad for an event
+ * Check if the user post the ad for an event.
  */
 class AdInEvent implements GamificationRuleInterface
 {
     /**
-     * Ad In Event rule
+     * Ad In Event rule.
      *
-     * @param  $log
-     * @param  $sequenceItem
-     * @return bool
+     * @param $log
+     * @param $sequenceItem
      */
     public function execute($log, $sequenceItem): bool
     {
@@ -49,6 +48,7 @@ class AdInEvent implements GamificationRuleInterface
                 return true;
             }
         }
+
         return false;
     }
 }

@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Carpool\Command;
 
@@ -34,11 +34,9 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * @author Celine Jacquet <celine.jacquet@mobicoop.org>
  */
-
 class carpoolAdRenewalCommand extends Command
 {
     private $proposalManager;
-
 
     public function __construct(ProposalManager $proposalManager)
     {
@@ -52,13 +50,15 @@ class carpoolAdRenewalCommand extends Command
         $this
             ->setName('app:carpool-ad-renewal')
             ->setDescription('Send carpool ad renewal')
-            ->addArgument('numberOfDays', InputArgument::REQUIRED, 'Number of days to send a reminder before proposal outdated');
+            ->addArgument('numberOfDays', InputArgument::REQUIRED, 'Number of days to send a reminder before proposal outdated')
+        ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         if ($input->getArgument('numberOfDays')) {
             $this->proposalManager->sendCarpoolAdRenewal($input->getArgument('numberOfDays'));
+
             return 0;
         }
     }

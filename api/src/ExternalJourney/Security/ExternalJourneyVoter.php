@@ -19,15 +19,15 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\ExternalJourney\Security;
 
-use App\Auth\Service\AuthManager;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
+use App\Auth\Service\AuthManager;
 use App\ExternalJourney\Entity\ExternalJourney;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
@@ -48,17 +48,18 @@ class ExternalJourneyVoter extends Voter
     {
         // if the attribute isn't one we support, return false
         if (!in_array($attribute, [
-            self::EXTERNAL_JOURNEY_LIST
-            ])) {
+            self::EXTERNAL_JOURNEY_LIST,
+        ])) {
             return false;
         }
 
         // only vote on User objects inside this voter
         if (!in_array($attribute, [
             self::EXTERNAL_JOURNEY_LIST,
-            ]) && !($subject instanceof Paginator) && !$subject instanceof ExternalJourney) {
+        ]) && !($subject instanceof Paginator) && !$subject instanceof ExternalJourney) {
             return false;
         }
+
         return true;
     }
 

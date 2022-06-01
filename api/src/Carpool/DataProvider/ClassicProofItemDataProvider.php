@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Carpool\DataProvider;
 
@@ -34,8 +34,8 @@ use Symfony\Component\HttpFoundation\RequestStack;
  */
 final class ClassicProofItemDataProvider implements RestrictedDataProviderInterface, ItemDataProviderInterface
 {
-    protected $proofManager;
-    protected $request;
+    private $proofManager;
+    private $request;
 
     public function __construct(ProofManager $proofManager, RequestStack $requestStack)
     {
@@ -45,11 +45,11 @@ final class ClassicProofItemDataProvider implements RestrictedDataProviderInterf
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return ClassicProof::class === $resourceClass && $operationName === "get";
+        return ClassicProof::class === $resourceClass && 'get' === $operationName;
     }
 
     public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?object
     {
-        return $this->proofManager->getClassicProof($this->request->get("id"));
+        return $this->proofManager->getClassicProof($this->request->get('id'));
     }
 }

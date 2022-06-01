@@ -19,12 +19,12 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\ExternalJourney\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
@@ -63,34 +63,34 @@ use Symfony\Component\Serializer\Annotation\Groups;
 class ExternalJourneyProvider
 {
     /**
-    * @var int $id  The id of the provider (not useful yet but needed for api)
-    * @ApiProperty(identifier=true)
-    */
+     * @var int The id of the provider (not useful yet but needed for api)
+     * @ApiProperty(identifier=true)
+     */
     private $id;
 
     /**
-     * @var string $name        The name of the provider
+     * @var string The name of the provider
      * @Groups("read")
      */
     private $name;
 
     /**
-     * @var string $url         The url of the provider
+     * @var string The url of the provider
      */
     private $url;
 
     /**
-     * @var string $resource    The name of the resource of the provider
+     * @var string The name of the resource of the provider
      */
     private $resource;
 
     /**
-     * @var string $apiKey      The api key of the provider
+     * @var string The api key of the provider
      */
     private $apiKey;
 
     /**
-     * @var string $privateKey  The private key of the provider
+     * @var string The private key of the provider
      */
     private $privateKey;
 

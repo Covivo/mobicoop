@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Gamification\EventSubscriber;
 
@@ -44,7 +44,7 @@ class LogSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            LogEvent::NAME => 'onLogEvent'
+            LogEvent::NAME => 'onLogEvent',
         ];
     }
 

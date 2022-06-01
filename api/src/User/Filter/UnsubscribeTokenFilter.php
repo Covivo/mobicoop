@@ -18,7 +18,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\Filter;
 
@@ -28,16 +28,6 @@ use Doctrine\ORM\QueryBuilder;
 
 final class UnsubscribeTokenFilter extends AbstractContextAwareFilter
 {
-    protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
-    {
-        if ($property != "unsubscribeToken") {
-            return;
-        }
-
-        $queryBuilder
-            ->andWhere('u.unsubscribeToken = \'' .$value . '\'');
-    }
-
     // This function is only used to hook in documentation generators (supported by Swagger and Hydra)
     public function getDescription(string $resourceClass): array
     {
@@ -47,7 +37,7 @@ final class UnsubscribeTokenFilter extends AbstractContextAwareFilter
 
         $description = [];
         foreach ($this->properties as $property => $strategy) {
-            $description["$property"] = [
+            $description["{$property}"] = [
                 'property' => $property,
                 'type' => 'string',
                 'required' => false,
@@ -60,5 +50,16 @@ final class UnsubscribeTokenFilter extends AbstractContextAwareFilter
         }
 
         return $description;
+    }
+
+    protected function filterProperty(string $property, $value, QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
+    {
+        if ('unsubscribeToken' != $property) {
+            return;
+        }
+
+        $queryBuilder
+            ->andWhere('u.unsubscribeToken = \''.$value.'\'')
+        ;
     }
 }

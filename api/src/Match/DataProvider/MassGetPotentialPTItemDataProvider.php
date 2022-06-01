@@ -18,13 +18,12 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Match\DataProvider;
 
 use ApiPlatform\Core\DataProvider\ItemDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
 use App\Match\Entity\Mass;
 use App\Match\Service\MassPublicTransportPotentialManager;
 
@@ -39,7 +38,7 @@ final class MassGetPotentialPTItemDataProvider implements ItemDataProviderInterf
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Mass::class === $resourceClass && $operationName == "getPTPotential";
+        return Mass::class === $resourceClass && 'getPTPotential' == $operationName;
     }
 
     public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?Mass

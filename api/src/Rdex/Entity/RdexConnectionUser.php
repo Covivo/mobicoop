@@ -19,25 +19,21 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Rdex\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiProperty;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Doctrine\Common\Collections\ArrayCollection;
-use App\Rdex\Controller\ConnectionController;
-use App\EventListener\DeserializeListener;
 
 /**
- * An RDEX Connection User (sender or recipient)
+ * An RDEX Connection User (sender or recipient).
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class RdexConnectionUser
 {
     /**
-     * @var string The uuid of the user.
+     * @var string the uuid of the user
      *
      * @Groups("rdex")
      */

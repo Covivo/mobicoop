@@ -19,12 +19,12 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Carpool\Repository;
 
-use Doctrine\ORM\EntityManagerInterface;
 use App\Carpool\Entity\Criteria;
+use Doctrine\ORM\EntityManagerInterface;
 
 class CriteriaRepository
 {
@@ -47,7 +47,6 @@ class CriteriaRepository
 
     public function findByUserImportStatus(int $status, ?\DateTimeInterface $date = null)
     {
-
         // we search the matchings in the proposal entity
         $query = $this->repository->createQueryBuilder('c');
 
@@ -58,21 +57,23 @@ class CriteriaRepository
             'w.position',
             'w.destination',
             'a.longitude',
-            'a.latitude'
+            'a.latitude',
         ];
 
         $query->select($selection);
 
         $query->join('c.proposal', 'p')
-        ->join('p.waypoints', 'w')
-        ->join('w.address', 'a')
-        ->join('p.user', 'u')
-        ->join('u.import', 'i')
-        ->where('i.status = :status')
-        ->setParameter('status', $status);
+            ->join('p.waypoints', 'w')
+            ->join('w.address', 'a')
+            ->join('p.user', 'u')
+            ->join('u.import', 'i')
+            ->where('i.status = :status')
+            ->setParameter('status', $status)
+        ;
         if (!is_null($date)) {
             $query->andWhere('((c.frequency = 1 and c.fromDate >= :date) or (c.frequency=2 and c.toDate >= :date))')
-            ->setParameter('date', $date->format('Y-m-d'));
+                ->setParameter('date', $date->format('Y-m-d'))
+            ;
         }
 
         return $query->getQuery()->getResult();
@@ -89,24 +90,27 @@ class CriteriaRepository
             'w.position',
             'w.destination',
             'a.longitude',
-            'a.latitude'
+            'a.latitude',
         ];
 
         $query->select($selection);
 
         $query->join('c.proposal', 'p')
-        ->join('p.waypoints', 'w')
-        ->join('w.address', 'a')
-        ->where('c.driver = 1 and c.directionDriver IS NULL')
-        ->orWhere('c.passenger = 1 and c.directionPassenger IS NULL');
+            ->join('p.waypoints', 'w')
+            ->join('w.address', 'a')
+            ->where('c.driver = 1 and c.directionDriver IS NULL')
+            ->orWhere('c.passenger = 1 and c.directionPassenger IS NULL')
+        ;
+
         return $query->getQuery()->getResult();
     }
 
     public function findDrivers(): ?array
     {
         $query = $this->repository->createQueryBuilder('c')
-        ->select('c')
-        ->where('c.directionDriver IS NOT NULL');
+            ->select('c')
+            ->where('c.directionDriver IS NOT NULL')
+        ;
 
         return $query->getQuery()->getResult();
     }

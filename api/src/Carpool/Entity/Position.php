@@ -19,15 +19,15 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Carpool\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 use App\Geography\Entity\Direction;
-use Symfony\Component\Validator\Constraints as Assert;
 use CrEOF\Spatial\PHP\Types\Geometry\LineString;
 use CrEOF\Spatial\PHP\Types\Geometry\Point;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Dynamic carpooling : last position of a dynamic carpooler.
@@ -38,7 +38,7 @@ use CrEOF\Spatial\PHP\Types\Geometry\Point;
 class Position
 {
     /**
-     * @var int The id of this position.
+     * @var int the id of this position
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -47,7 +47,7 @@ class Position
     private $id;
 
     /**
-     * @var Proposal The proposal related to the position.
+     * @var Proposal the proposal related to the position
      *
      * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal", inversedBy="positions")
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
@@ -55,7 +55,7 @@ class Position
     private $proposal;
 
     /**
-     * @var Waypoint The floating waypoint corresponding to the position.
+     * @var Waypoint the floating waypoint corresponding to the position
      *
      * @Assert\NotBlank
      * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Waypoint", cascade={"persist"})
@@ -64,7 +64,7 @@ class Position
     private $waypoint;
 
     /**
-     * @var Direction|null Direction related to the dynamic carpool - updated at each position update.
+     * @var null|Direction direction related to the dynamic carpool - updated at each position update
      *
      * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Direction", cascade={"persist"})
      * @ORM\JoinColumn(onDelete="CASCADE")
@@ -78,21 +78,21 @@ class Position
     private $geoJsonPoints;
 
     /**
-     * @var \DateTimeInterface Creation date.
+     * @var \DateTimeInterface creation date
      *
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $createdDate;
 
     /**
-     * @var \DateTimeInterface Updated date.
+     * @var \DateTimeInterface updated date
      *
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $updatedDate;
 
     /**
-     * @var array|null The array of points as Address objects. Used to create the geoJsonPoints.
+     * @var null|array The array of points as Address objects. Used to create the geoJsonPoints.
      */
     private $points;
 
@@ -194,9 +194,9 @@ class Position
      */
     public function setAutoCreatedDate()
     {
-        $this->setCreatedDate(new \Datetime());
+        $this->setCreatedDate(new \DateTime());
         // we also set the updated date, which may be always needed
-        $this->setUpdatedDate(new \Datetime());
+        $this->setUpdatedDate(new \DateTime());
     }
 
     /**
@@ -206,7 +206,7 @@ class Position
      */
     public function setAutoUpdatedDate()
     {
-        $this->setUpdatedDate(new \Datetime());
+        $this->setUpdatedDate(new \DateTime());
     }
 
     /**

@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Price\Controller;
 
@@ -47,14 +47,11 @@ class RoundPrice
 
     /**
      * This method is invoked when a new contact is posted.
-     *
-     * @param Price $data
-     * @return Price
      */
     public function __invoke(Price $data): Price
     {
         if (is_null($data)) {
-            throw new \InvalidArgumentException($this->translator->trans("bad price"));
+            throw new \InvalidArgumentException($this->translator->trans('bad price'));
         }
 
         $rounded = $this->formatDataManager->roundPrice($data->getValue(), $data->getFrequency());

@@ -19,14 +19,13 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\PublicTransport\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Doctrine\ORM\Mapping as ORM;
 
 /**
  * A public transport locality.
@@ -53,35 +52,35 @@ class PTLocality
 {
     /**
      * @ApiProperty(identifier=true)
-     * @var int The id of this locality.
+     *
+     * @var int the id of this locality
      * @Groups("pt")
      */
     private $id;
 
     /**
-     * @var string The name of this locality.
+     * @var string the name of this locality
      * @Groups("pt")
      */
     private $name;
 
     /**
-     * @var string Insee Code (usually postal code) of this locality.
+     * @var string insee Code (usually postal code) of this locality
      * @Groups("pt")
      */
     private $inseeCode;
 
     /**
-     * @var float Latitude of this locality.
+     * @var float latitude of this locality
      * @Groups("pt")
      */
     private $latitude;
 
     /**
-     * @var float Longitude of this locality.
+     * @var float longitude of this locality
      * @Groups("pt")
      */
     private $longitude;
-
 
     public function getId(): int
     {

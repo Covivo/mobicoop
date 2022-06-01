@@ -18,15 +18,14 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\DataProvider;
 
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
-use App\Solidary\Exception\SolidaryException;
 use App\Solidary\Entity\Solidary;
+use App\Solidary\Exception\SolidaryException;
 use App\Solidary\Service\SolidaryManager;
 use Symfony\Component\Security\Core\Security;
 
@@ -50,12 +49,13 @@ final class SolidaryCollectionDataProvider implements CollectionDataProviderInte
         if (isset($context['filters'])) {
             $this->filters = $context['filters'];
         }
+
         return Solidary::class === $resourceClass;
     }
 
     public function getCollection(string $resourceClass, string $operationName = null): iterable
     {
-        if ($operationName=="getMySolidaries") {
+        if ('getMySolidaries' == $operationName) {
             return $this->solidaryManager->getMySolidaries($this->security->getUser());
         }
         if (empty($this->security->getUser()->getSolidaryStructures())) {
@@ -78,6 +78,7 @@ final class SolidaryCollectionDataProvider implements CollectionDataProviderInte
                 throw new SolidaryException(SolidaryException::INVALID_PROGRESSION);
             }
         }
+
         return $this->solidaryManager->getSolidaries($this->security->getUser()->getSolidaryStructures()[0], $solidaryUserId, $progression);
     }
 }

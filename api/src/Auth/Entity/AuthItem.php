@@ -19,20 +19,20 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Auth\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiFilter;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\NumericFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * An authorization item = a role or an item.
@@ -83,7 +83,7 @@ class AuthItem
     public const TYPE_ROLE = 2;
     public const TYPE_ITEM = 1;
 
-    public const SPECIAL_ITEMS = ["manage"];
+    public const SPECIAL_ITEMS = ['manage'];
 
     public const ROLE_SUPER_ADMIN = 1;
     public const ROLE_ADMIN = 2;
@@ -102,7 +102,7 @@ class AuthItem
     public const ROLE_SOLIDARY_BENEFICIARY_CANDIDATE = 172;
 
     /**
-     * @var int The id of this item.
+     * @var int the id of this item
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -112,7 +112,7 @@ class AuthItem
     private $id;
 
     /**
-     * @var string The type of the item : 1 = role, 2 = item.
+     * @var string the type of the item : 1 = role, 2 = item
      *
      * @ORM\Column(type="integer", length=1)
      * @Groups({"authRead","authWrite"})
@@ -120,7 +120,7 @@ class AuthItem
     private $type;
 
     /**
-     * @var string The name of the item.
+     * @var string the name of the item
      *
      * @ORM\Column(type="string", length=100)
      * @Groups({"authRead","authWrite"})
@@ -128,7 +128,7 @@ class AuthItem
     private $name;
 
     /**
-     * @var string The description of the item.
+     * @var string the description of the item
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"authRead","authWrite"})
@@ -145,7 +145,7 @@ class AuthItem
     private $authRule;
 
     /**
-     * @var ArrayCollection|null The parents of this item.
+     * @var null|ArrayCollection the parents of this item
      *
      * @ORM\ManyToMany(targetEntity="App\Auth\Entity\AuthItem", mappedBy="items")
      * @Groups({"read","write"})
@@ -153,7 +153,7 @@ class AuthItem
     private $parents;
 
     /**
-     * @var ArrayCollection|null The children of this item.
+     * @var null|ArrayCollection the children of this item
      *
      * @ORM\ManyToMany(targetEntity="App\Auth\Entity\AuthItem", inversedBy="parents")
      * @ORM\JoinTable(name="auth_item_child",

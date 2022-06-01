@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Carpool\Controller;
 
@@ -52,15 +52,14 @@ class AdAskGet
     /**
      * This method is invoked when a ad ask is requested.
      *
-     * @param Ad $data      The ad used to create the ask
-     * @return Ad
+     * @param Ad $data The ad used to create the ask
      */
     public function __invoke(Ad $data): Ad
     {
         if (is_null($data)) {
-            throw new \InvalidArgumentException($this->translator->trans("bad Ad id is provided"));
+            throw new \InvalidArgumentException($this->translator->trans('bad Ad id is provided'));
         }
-        $data = $this->askManager->getAskFromAd($this->request->get("id"), $this->security->getUser()->getId());
-        return $data;
+
+        return $this->askManager->getAskFromAd($this->request->get('id'), $this->security->getUser()->getId());
     }
 }

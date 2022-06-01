@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Journey\DataProvider;
 
@@ -27,18 +27,17 @@ use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\Journey\Entity\Journey;
 use App\Journey\Service\JourneyManager;
-use Symfony\Component\Security\Core\Security;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Core\Security;
 
 /**
  * Collection data provider for destinations from a given origin.
- *
  */
 final class JourneyDestinationsCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
-    protected $journeyManager;
-    protected $security;
-    protected $request;
+    private $journeyManager;
+    private $security;
+    private $request;
 
     public function __construct(JourneyManager $journeyManager, RequestStack $requestStack, Security $security)
     {
@@ -49,7 +48,7 @@ final class JourneyDestinationsCollectionDataProvider implements CollectionDataP
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Journey::class === $resourceClass && $operationName === "destinations";
+        return Journey::class === $resourceClass && 'destinations' === $operationName;
     }
 
     public function getCollection(string $resourceClass, string $operationName = null, array $context = []): iterable

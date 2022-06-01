@@ -19,17 +19,16 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\PublicTransport\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
-use Symfony\Component\Serializer\Annotation\Groups;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Travel\Entity\TravelMode;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * A leg of a public transport journey.
@@ -56,7 +55,7 @@ use App\Travel\Entity\TravelMode;
 class PTLeg
 {
     /**
-     * @var int The id of this leg.
+     * @var int the id of this leg
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -66,7 +65,7 @@ class PTLeg
     private $id;
 
     /**
-     * @var string The indication of this leg.
+     * @var string the indication of this leg
      *
      * @ORM\Column(type="text", nullable=true)
      * @Groups("pt")
@@ -74,7 +73,7 @@ class PTLeg
     private $indication;
 
     /**
-     * @var int The distance of this leg.
+     * @var int the distance of this leg
      *
      * @ORM\Column(type="integer", nullable=true)
      * @Groups("pt")
@@ -82,7 +81,7 @@ class PTLeg
     private $distance;
 
     /**
-     * @var string The duration of this leg (in seconds).
+     * @var string the duration of this leg (in seconds)
      *
      * @ORM\Column(type="integer", nullable=true)
      * @Groups("pt")
@@ -90,7 +89,7 @@ class PTLeg
     private $duration;
 
     /**
-     * @var int The position of this leg.
+     * @var int the position of this leg
      *
      * @ORM\Column(type="integer")
      * @Groups("pt")
@@ -98,7 +97,7 @@ class PTLeg
     private $position;
 
     /**
-     * @var bool The leg is the last leg of the journey.
+     * @var bool the leg is the last leg of the journey
      *
      * @ORM\Column(type="boolean")
      * @Groups("pt")
@@ -106,7 +105,7 @@ class PTLeg
     private $isLast;
 
     /**
-     * @var string The magnetic direction of this leg.
+     * @var string the magnetic direction of this leg
      *
      * @ORM\Column(type="string", length=10, nullable=true)
      * @Groups("pt")
@@ -114,7 +113,7 @@ class PTLeg
     private $magneticDirection;
 
     /**
-     * @var string The relative direction of this leg.
+     * @var string the relative direction of this leg
      *
      * @ORM\Column(type="string", length=10, nullable=true)
      * @Groups("pt")
@@ -122,7 +121,7 @@ class PTLeg
     private $relativeDirection;
 
     /**
-     * @var PTJourney The parent journey of this leg.
+     * @var PTJourney the parent journey of this leg
      *
      * @ORM\ManyToOne(targetEntity="App\PublicTransport\Entity\PTJourney", inversedBy="ptlegs")
      * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
@@ -131,7 +130,7 @@ class PTLeg
     private $ptjourney;
 
     /**
-     * @var PTDeparture The departure of this leg.
+     * @var PTDeparture the departure of this leg
      *
      * @ORM\ManyToOne(targetEntity="App\PublicTransport\Entity\PTDeparture")
      * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
@@ -140,7 +139,7 @@ class PTLeg
     private $ptdeparture;
 
     /**
-     * @var PTArrival The arrival of this leg.
+     * @var PTArrival the arrival of this leg
      *
      * @ORM\ManyToOne(targetEntity="App\PublicTransport\Entity\PTArrival")
      * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
@@ -149,7 +148,7 @@ class PTLeg
     private $ptarrival;
 
     /**
-     * @var TravelMode The transport mode of this leg.
+     * @var TravelMode the transport mode of this leg
      *
      * @ORM\ManyToOne(targetEntity="App\Travel\Entity\TravelMode")
      * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
@@ -158,7 +157,7 @@ class PTLeg
     private $travelMode;
 
     /**
-     * @var PTLine The public transport line of this leg.
+     * @var PTLine the public transport line of this leg
      *
      * @ORM\ManyToOne(targetEntity="App\PublicTransport\Entity\PTLine")
      * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
@@ -167,7 +166,7 @@ class PTLeg
     private $ptline;
 
     /**
-     * @var string The direction of the public transport line of this leg.
+     * @var string the direction of the public transport line of this leg
      *
      * @ORM\Column(type="string", length=45, nullable=true)
      * @Groups("pt")
@@ -175,7 +174,7 @@ class PTLeg
     private $direction;
 
     /**
-     * @var PTStep[] The steps of this leg.
+     * @var PTStep[] the steps of this leg
      *
      * @ORM\OneToMany(targetEntity="App\PublicTransport\Entity\PTStep", mappedBy="ptleg", cascade={"persist"})
      * @Groups("pt")

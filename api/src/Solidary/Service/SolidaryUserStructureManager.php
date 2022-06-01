@@ -50,8 +50,6 @@ class SolidaryUserStructureManager
 
     /**
      * Handle an update of a SolidaryUserStructure.
-     *
-     * @return SolidaryUserStructure
      */
     public function updateSolidaryUserStructure(SolidaryUserStructure $solidaryUserStructure): SolidaryUserStructure
     {

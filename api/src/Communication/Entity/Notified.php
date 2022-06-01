@@ -19,24 +19,22 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Communication\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-use ApiPlatform\Core\Annotation\ApiResource;
-use Symfony\Component\Serializer\Annotation\Groups;
-use Doctrine\Common\Collections\ArrayCollection;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
 use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
-use App\Communication\Entity\Notification;
-use App\User\Entity\User;
-use App\Carpool\Entity\Matching;
 use App\Carpool\Entity\AskHistory;
+use App\Carpool\Entity\Matching;
 use App\Carpool\Entity\Proposal;
 use App\Community\Entity\Community;
+use App\User\Entity\User;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 /**
  * A notification to send for a user.
@@ -89,7 +87,7 @@ class Notified
     public const STATUS_READ = 3;
 
     /**
-     * @var int The id of this notified.
+     * @var int the id of this notified
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -99,7 +97,7 @@ class Notified
     private $id;
 
     /**
-     * @var bool The status of the notified (sent/received/read).
+     * @var bool the status of the notified (sent/received/read)
      *
      * @ORM\Column(type="smallint")
      * @Groups({"read","write"})
@@ -107,7 +105,7 @@ class Notified
     private $status;
 
     /**
-     * @var Notification The notification.
+     * @var Notification the notification
      *
      * @ORM\ManyToOne(targetEntity="\App\Communication\Entity\Notification")
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
@@ -117,7 +115,7 @@ class Notified
     private $notification;
 
     /**
-     * @var User The user.
+     * @var User the user
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="notifieds")
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
@@ -127,7 +125,7 @@ class Notified
     private $user;
 
     /**
-     * @var \DateTimeInterface Creation date of the notification.
+     * @var \DateTimeInterface creation date of the notification
      *
      * @ORM\Column(type="datetime")
      * @Groups("read")
@@ -135,7 +133,7 @@ class Notified
     private $createdDate;
 
     /**
-     * @var \DateTimeInterface Updated date of the notification.
+     * @var \DateTimeInterface updated date of the notification
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups("read")
@@ -143,7 +141,7 @@ class Notified
     private $updatedDate;
 
     /**
-     * @var \DateTimeInterface Sent date of the notification.
+     * @var \DateTimeInterface sent date of the notification
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read","write"})
@@ -151,7 +149,7 @@ class Notified
     private $sentDate;
 
     /**
-     * @var \DateTimeInterface Received date of the notification.
+     * @var \DateTimeInterface received date of the notification
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read","write"})
@@ -159,7 +157,7 @@ class Notified
     private $receivedDate;
 
     /**
-     * @var \DateTimeInterface Read date of the notification.
+     * @var \DateTimeInterface read date of the notification
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read","write"})
@@ -167,7 +165,7 @@ class Notified
     private $readDate;
 
     /**
-     * @var Proposal The proposal if the notified is linked to a proposal.
+     * @var Proposal the proposal if the notified is linked to a proposal
      *
      * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Proposal", inversedBy="notifieds")
      * @ORM\JoinColumn(onDelete="CASCADE")
@@ -177,7 +175,7 @@ class Notified
     private $proposal;
 
     /**
-     * @var Community The community if the notified is linked to a community.
+     * @var Community the community if the notified is linked to a community
      *
      * @ORM\ManyToOne(targetEntity="\App\Community\Entity\Community", inversedBy="notifieds")
      * @ORM\JoinColumn(onDelete="CASCADE")
@@ -187,7 +185,7 @@ class Notified
     private $community;
 
     /**
-     * @var Matching The matching if the notified is linked to a matching.
+     * @var Matching the matching if the notified is linked to a matching
      *
      * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Matching", inversedBy="notifieds")
      * @ORM\JoinColumn(onDelete="CASCADE")
@@ -197,7 +195,7 @@ class Notified
     private $matching;
 
     /**
-     * @var AskHistory The askHistory if the notified is linked to an askHistory.
+     * @var AskHistory the askHistory if the notified is linked to an askHistory
      *
      * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\AskHistory", inversedBy="notifieds")
      * @ORM\JoinColumn(onDelete="CASCADE")
@@ -207,7 +205,7 @@ class Notified
     private $askHistory;
 
     /**
-     * @var Recipient The recipient if the notified is linked to a recipient.
+     * @var Recipient the recipient if the notified is linked to a recipient
      *
      * @ORM\ManyToOne(targetEntity="\App\Communication\Entity\Recipient", inversedBy="notifieds")
      * @ORM\JoinColumn(onDelete="CASCADE")
@@ -384,7 +382,7 @@ class Notified
      */
     public function setAutoCreatedDate()
     {
-        $this->setCreatedDate(new \Datetime());
+        $this->setCreatedDate(new \DateTime());
     }
 
     /**
@@ -394,6 +392,6 @@ class Notified
      */
     public function setAutoUpdatedDate()
     {
-        $this->setUpdatedDate(new \Datetime());
+        $this->setUpdatedDate(new \DateTime());
     }
 }

@@ -19,14 +19,14 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
-use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\User\Entity\User;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * A solidary beneficiary.
@@ -113,12 +113,12 @@ use App\User\Entity\User;
 class SolidaryBeneficiary
 {
     public const DEFAULT_ID = 999999999999;
-    public const TYPE = "beneficiary";
-    public const AUTHORIZED_GENERIC_FILTERS = ['familyName','givenName','email'];
+    public const TYPE = 'beneficiary';
+    public const AUTHORIZED_GENERIC_FILTERS = ['familyName', 'givenName', 'email'];
     public const VALIDATED_CANDIDATE_FILTER = 'validatedCandidate';
 
     /**
-     * @var int The id of this solidary user.
+     * @var int the id of this solidary user
      *
      * @ApiProperty(identifier=true)
      * @Groups({"aReadCol","aReadItem","readSolidary","writeSolidary"})
@@ -126,44 +126,44 @@ class SolidaryBeneficiary
     private $id;
 
     /**
-     * @var string The email of the user.
+     * @var string the email of the user
      *
      * @Groups({"aReadCol","aReadItem","readSolidary","writeSolidary"})
      */
     private $email;
 
     /**
-     * @var string The encoded password of the user.
+     * @var string the encoded password of the user
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $password;
 
     /**
-     * @var int|null The gender of the user (1=female, 2=male, 3=nc)
+     * @var null|int The gender of the user (1=female, 2=male, 3=nc)
      * @Groups({"aReadCol","aReadItem","readSolidary","writeSolidary"})
      */
     private $gender;
 
     /**
-     * @var string|null The telephone number of the user.
+     * @var null|string the telephone number of the user
      * @Groups({"aReadCol","aReadItem","readSolidary","writeSolidary"})
      */
     private $telephone;
 
     /**
-     * @var string|null The first name of the user.
+     * @var null|string the first name of the user
      * @Groups({"aReadCol","aReadItem","readSolidary","writeSolidary"})
      */
     private $givenName;
 
     /**
-     * @var string|null The family name of the user.
+     * @var null|string the family name of the user
      * @Groups({"aReadCol","aReadItem","readSolidary","writeSolidary"})
      */
     private $familyName;
 
     /**
-     * @var \DateTimeInterface|null The birth date of the user.
+     * @var null|\DateTimeInterface the birth date of the user
      * @Groups({"aReadItem","readSolidary","writeSolidary"})
      *
      * @ApiProperty(
@@ -175,13 +175,13 @@ class SolidaryBeneficiary
     private $birthDate;
 
     /**
-     * @var boolean|null The user accepts to receive news about the platform.
+     * @var null|bool the user accepts to receive news about the platform
      * @Groups({"aReadItem","readSolidary","writeSolidary"})
      */
     private $newsSubscription;
 
     /**
-     * @var User The user associated with the solidaryUser.
+     * @var User the user associated with the solidaryUser
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $user;
@@ -199,7 +199,7 @@ class SolidaryBeneficiary
     private $vehicule;
 
     /**
-     * @var string|null A comment about the solidaryUser.
+     * @var null|string a comment about the solidaryUser
      *
      * @Groups({"readSolidary","writeSolidary"})
      */
@@ -212,7 +212,7 @@ class SolidaryBeneficiary
     private $proofs;
 
     /**
-     * @var bool|null If the candidate is validated or not
+     * @var null|bool If the candidate is validated or not
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $validatedCandidate;
@@ -236,34 +236,34 @@ class SolidaryBeneficiary
     private $structures;
 
     /**
-     * @var Structure|null The solidary structures of this user only in POST context
+     * @var null|Structure The solidary structures of this user only in POST context
      * @Groups({"writeSolidary"})
      */
     private $structure;
 
     /**
-     * @var \DateTimeInterface Creation date.
+     * @var \DateTimeInterface creation date
      *
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $createdDate;
 
     /**
-     * @var \DateTimeInterface Updated date.
+     * @var \DateTimeInterface updated date
      *
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $updatedDate;
 
     /**
-     * @var string|null The avatar of the solidary beneficiary
+     * @var null|string The avatar of the solidary beneficiary
      *
      * @Groups({"aReadItem"})
      */
     private $avatar;
 
     /**
-     * @var int|null The userId of the solidary user
+     * @var null|int The userId of the solidary user
      * @Groups({"aReadItem"})
      */
     private $userId;

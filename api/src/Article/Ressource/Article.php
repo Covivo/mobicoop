@@ -19,18 +19,16 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Article\Ressource;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * An Article
+ * An Article.
  *
  * @ApiResource(
  *      attributes={
@@ -62,14 +60,15 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          }
  *      }
  * )
+ *
  * @author Céline Jacquet <celine.jacquet@mobicoop.org>
  */
 class Article
 {
-    public const DEFAULT_ID = "999999999999";
+    public const DEFAULT_ID = '999999999999';
 
-    public const CONTEXT_HOME = "home";
-    public const CONTEXT_INTERNAL = "internal";
+    public const CONTEXT_HOME = 'home';
+    public const CONTEXT_INTERNAL = 'internal';
 
     /**
      * @var int The id of the article
@@ -121,7 +120,7 @@ class Article
      */
     private $link;
 
-    public function __construct(int $id=null)
+    public function __construct(int $id = null)
     {
         if (!is_null($id)) {
             $this->id = $id;

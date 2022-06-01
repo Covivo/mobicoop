@@ -19,13 +19,13 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Carpool\Entity;
 
-use Symfony\Component\Serializer\Annotation\Groups;
-use App\User\Entity\User;
 use App\Geography\Entity\Address;
+use App\User\Entity\User;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * Carpooling : result for an ad.
@@ -35,19 +35,19 @@ class Result
     public const DEFAULT_ID = 999999999999;
 
     /**
-     * @var int The id of this result.
+     * @var int the id of this result
      * @Groups("results")
      */
     private $id;
 
     /**
-     * @var ResultRole|null The result with the requester as a driver and the carpooler as a passenger.
+     * @var null|ResultRole the result with the requester as a driver and the carpooler as a passenger
      * @Groups({"results","externalJourney"})
      */
     private $resultDriver;
 
     /**
-     * @var ResultRole|null The result with the requester as a passenger and the carpooler as a driver.
+     * @var null|ResultRole the result with the requester as a passenger and the carpooler as a driver
      * @Groups({"results","externalJourney"})
      */
     private $resultPassenger;
@@ -60,69 +60,68 @@ class Result
     private $role;
 
     /**
-     * @var User The carpooler found.
+     * @var User the carpooler found
      * @Groups({"results","externalJourney"})
      */
     private $carpooler;
 
     /**
-     * @var int The frequency of the ad (1 = punctual / 2 = regular).
+     * @var int the frequency of the ad (1 = punctual / 2 = regular)
      * @Groups({"results","externalJourney"})
      */
     private $frequency;
 
     /**
-     * @var int The frequency of the matching proposal result (1 = punctual / 2 = regular).
+     * @var int the frequency of the matching proposal result (1 = punctual / 2 = regular)
      * @Groups("results")
      */
     private $frequencyResult;
 
-
     /**
-     * @var Address The origin address to display.
+     * @var Address the origin address to display
      * @Groups({"results","externalJourney"})
      */
     private $origin;
 
     /**
-     * @var boolean True if the origin is the first waypoint of the journey.
-     * Groups("results")
+     * @var bool True if the origin is the first waypoint of the journey.
+     *           Groups("results")
      */
     private $originFirst;
 
     /**
-     * @var Address The destination address to display.
+     * @var Address the destination address to display
      * @Groups({"results","externalJourney"})
      */
     private $destination;
 
     /**
-     * @var boolean True if the destination is the last point of the journey.
-     * Groups("results")
+     * @var bool True if the destination is the last point of the journey.
+     *           Groups("results")
      */
     private $destinationLast;
 
     /**
      * @var Address The origin address of the driver.
-     * Groups("results")
+     *              Groups("results")
      */
     private $originDriver;
 
     /**
      * @var Address The destination address of the driver.
-     * Groups("results")
+     *              Groups("results")
      */
     private $destinationDriver;
 
     /**
      * @var Address The origin address of the passenger.
-     * Groups("results")
+     *              Groups("results")
      */
     private $originPassenger;
 
     /**
      * @var Address The destination address of the passenger.
-     * Groups("results")
+     *              Groups("results")
      */
     private $destinationPassenger;
 
@@ -139,73 +138,73 @@ class Result
     private $pickUpReturn;
 
     /**
-     * @var \DateTimeInterface|null The date to display.
+     * @var null|\DateTimeInterface the date to display
      * @Groups({"results","externalJourney"})
      */
     private $date;
 
     /**
-     * @var \DateTimeInterface|null The time to display.
+     * @var null|\DateTimeInterface the time to display
      * @Groups({"results","externalJourney"})
      */
     private $time;
 
     /**
-     * @var \DateTimeInterface|null The possible start date if regular.
+     * @var null|\DateTimeInterface the possible start date if regular
      * @Groups({"results","externalJourney"})
      */
     private $startDate;
 
     /**
-     * @var \DateTimeInterface|null The possible end date if regular.
+     * @var null|\DateTimeInterface the possible end date if regular
      * @Groups({"results","externalJourney"})
      */
     private $toDate;
 
     /**
-     * @var int The global number of places to display.
+     * @var int the global number of places to display
      * @Groups({"results","externalJourney"})
      */
     private $seats;
 
     /**
-     * @var int The number of places offered to display.
+     * @var int the number of places offered to display
      * @Groups("results")
      */
     private $seatsDriver;
 
     /**
-     * @var int The number of places asked to display.
+     * @var int the number of places asked to display
      * @Groups("results")
      */
     private $seatsPassenger;
 
     /**
-     * @var string The computed price to display.
+     * @var string the computed price to display
      * @Groups("results")
      */
     private $price;
 
     /**
-     * @var string The computed rounded price to display.
+     * @var string the computed rounded price to display
      * @Groups({"results","externalJourney"})
      */
     private $roundedPrice;
 
     /**
-     * @var string The comment to display.
+     * @var string the comment to display
      * @Groups("results")
      */
     private $comment;
 
     /**
-     * @var int The detour distance in metres.
+     * @var int the detour distance in metres
      * @Groups("results")
      */
     private $detourDistance;
 
     /**
-     * @var int The detour duration in seconds.
+     * @var int the detour duration in seconds
      * @Groups("results")
      */
     private $detourDuration;
@@ -217,85 +216,85 @@ class Result
     private $noticeableDetour;
 
     /**
-     * @var boolean|null The journey is available on mondays (if regular).
+     * @var null|bool the journey is available on mondays (if regular)
      * @Groups({"results","externalJourney"})
      */
     private $monCheck;
 
     /**
-     * @var boolean|null The journey is available on tuesdays (if regular).
+     * @var null|bool the journey is available on tuesdays (if regular)
      * @Groups({"results","externalJourney"})
      */
     private $tueCheck;
 
     /**
-     * @var boolean|null The journey is available on wednesdays (if regular).
+     * @var null|bool the journey is available on wednesdays (if regular)
      * @Groups({"results","externalJourney"})
      */
     private $wedCheck;
 
     /**
-     * @var boolean|null The journey is available on thursdays (if regular).
+     * @var null|bool the journey is available on thursdays (if regular)
      * @Groups({"results","externalJourney"})
      */
     private $thuCheck;
 
     /**
-     * @var boolean|null The journey is available on fridays (if regular).
+     * @var null|bool the journey is available on fridays (if regular)
      * @Groups({"results","externalJourney"})
      */
     private $friCheck;
 
     /**
-     * @var boolean|null The journey is available on saturdays (if regular).
+     * @var null|bool the journey is available on saturdays (if regular)
      * @Groups({"results","externalJourney"})
      */
     private $satCheck;
 
     /**
-     * @var boolean|null The journey is available on sundays (if regular).
+     * @var null|bool the journey is available on sundays (if regular)
      * @Groups({"results","externalJourney"})
      */
     private $sunCheck;
 
     /**
-     * @var \DateTimeInterface|null The outward time to display (if regular and unique).
+     * @var null|\DateTimeInterface the outward time to display (if regular and unique)
      * @Groups({"results","externalJourney"})
      */
     private $outwardTime;
 
     /**
-     * @var \DateTimeInterface|null The return time to display (if regular and unique).
+     * @var null|\DateTimeInterface the return time to display (if regular and unique)
      * @Groups({"results","externalJourney"})
      */
     private $returnTime;
 
     /**
-     * @var boolean|null The journey has a return trip.
+     * @var null|bool the journey has a return trip
      * @Groups({"results","externalJourney"})
      */
     private $return;
 
     /**
-     * @var array|null The communities for this result
+     * @var null|array The communities for this result
      * @Groups("results")
      */
     private $communities;
 
     /**
-     * @var boolean If the Result has an initiated Ask
+     * @var bool If the Result has an initiated Ask
      * @Groups("results")
      */
     private $initiatedAsk;
 
     /**
-     * @var boolean If the Result has a pending Ask
+     * @var bool If the Result has a pending Ask
      * @Groups("results")
      */
     private $pendingAsk;
 
     /**
-     * @var boolean If the Result has an accepted Ask
+     * @var bool If the Result has an accepted Ask
      * @Groups("results")
      */
     private $acceptedAsk;
@@ -331,33 +330,33 @@ class Result
     private $externalJourneyId;
 
     /**
-     * @var int|null
+     * @var null|int
      * @Groups("results")
      */
     private $askId;
 
     /**
-     * @var boolean|null Solidary.
+     * @var null|bool solidary
      *
      * @Groups("results")
      */
     private $solidary;
 
     /**
-     * @var boolean|null Solidary exclusive.
+     * @var null|bool solidary exclusive
      *
      * @Groups("results")
      */
     private $solidaryExclusive;
 
     /**
-     * @var boolean UserId of the announcer of this ResultItem
+     * @var bool UserId of the announcer of this ResultItem
      * @Groups("results")
      */
     private $userId;
 
     /**
-     * @var boolean If the Result is owned by the caller
+     * @var bool If the Result is owned by the caller
      * @Groups("results")
      */
     private $myOwn;
@@ -959,6 +958,7 @@ class Result
     public function setAskId(?int $askId): Result
     {
         $this->askId = $askId;
+
         return $this;
     }
 

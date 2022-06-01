@@ -18,18 +18,18 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\DataProvider;
 
 use ApiPlatform\Core\DataProvider\ItemDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
 use App\User\Ressource\PublicProfile;
 use App\User\Service\UserManager;
 
 /**
- * Public Profile item dataprovider
+ * Public Profile item dataprovider.
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 final class PublicProfileItemDataProvider implements ItemDataProviderInterface, RestrictedDataProviderInterface
@@ -43,15 +43,16 @@ final class PublicProfileItemDataProvider implements ItemDataProviderInterface, 
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return PublicProfile::class === $resourceClass && $operationName == "get";
+        return PublicProfile::class === $resourceClass && 'get' == $operationName;
     }
 
     public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?PublicProfile
     {
         $user = $this->userManager->getUser($id);
         if (is_null($user)) {
-            throw new \LogicException("No user found");
+            throw new \LogicException('No user found');
         }
+
         return $this->userManager->getPublicProfile($user);
     }
 }

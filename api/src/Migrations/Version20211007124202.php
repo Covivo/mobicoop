@@ -15,7 +15,7 @@ final class Version20211007124202 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('CREATE TABLE territory_parent (child_id INT NOT NULL, parent_id INT NOT NULL, INDEX IDX_A88BE0CBDD62C21B (child_id), INDEX IDX_A88BE0CB727ACA70 (parent_id), PRIMARY KEY(child_id, parent_id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB');
         $this->addSql('ALTER TABLE territory_parent ADD CONSTRAINT FK_A88BE0CBDD62C21B FOREIGN KEY (child_id) REFERENCES territory (id)');
@@ -27,7 +27,7 @@ final class Version20211007124202 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('DROP TABLE territory_parent');
         $this->addSql('DROP INDEX IDX_LONGITUDE ON territory');

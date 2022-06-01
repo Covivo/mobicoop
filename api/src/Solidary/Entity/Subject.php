@@ -19,21 +19,21 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiProperty;
-use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
-use Symfony\Component\Validator\Constraints as Assert;
 use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Carpool\Entity\Proposal;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * A solidary subject.
@@ -83,12 +83,13 @@ use Doctrine\Common\Collections\ArrayCollection;
  * )
  * @ApiFilter(OrderFilter::class, properties={"id", "label"}, arguments={"orderParameterName"="order"})
  * @ApiFilter(SearchFilter::class, properties={"label":"partial"})
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class Subject
 {
     /**
-     * @var int The id of this subject.
+     * @var int the id of this subject
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -99,7 +100,7 @@ class Subject
     private $id;
 
     /**
-     * @var string Label of the subject.
+     * @var string label of the subject
      *
      * @Assert\NotBlank
      * @ORM\Column(type="string", length=255)
@@ -108,7 +109,7 @@ class Subject
     private $label;
 
     /**
-     * @var Structure Structure of the subject.
+     * @var Structure structure of the subject
      *
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Structure", inversedBy="subjects")
@@ -119,7 +120,7 @@ class Subject
     private $structure;
 
     /**
-     * @var bool The subject is not publicly available.
+     * @var bool the subject is not publicly available
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @MaxDepth(1)
@@ -128,7 +129,7 @@ class Subject
     private $private;
 
     /**
-     * @var \DateTimeInterface Creation date.
+     * @var \DateTimeInterface creation date
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"readSolidary","readSubjects"})
@@ -136,7 +137,7 @@ class Subject
     private $createdDate;
 
     /**
-     * @var \DateTimeInterface Updated date.
+     * @var \DateTimeInterface updated date
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"readSolidary","readSubjects"})
@@ -144,7 +145,7 @@ class Subject
     private $updatedDate;
 
     /**
-     * @var ArrayCollection|null The solidary records for this subject.
+     * @var null|ArrayCollection the solidary records for this subject
      *
      * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Solidary", mappedBy="subject")
      * @Groups({"writeSolidary"})
@@ -152,7 +153,7 @@ class Subject
     private $solidaries;
 
     /**
-     * @var ArrayCollection|null The Proposals linked to this subject
+     * @var null|ArrayCollection The Proposals linked to this subject
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Proposal", mappedBy="subject")
      * @Groups({"writeSolidary"})
@@ -160,12 +161,11 @@ class Subject
     private $proposals;
 
     /**
-     * @var bool The subject is removable (not removable if it is used for a solidary).
+     * @var bool the subject is removable (not removable if it is used for a solidary)
      *
      * @Groups("aRead")
      */
     private $removable;
-
 
     public function __construct()
     {
@@ -303,7 +303,7 @@ class Subject
 
     public function isRemovable(): ?bool
     {
-        return count($this->getSolidaries())==0;
+        return 0 == count($this->getSolidaries());
     }
 
     // DOCTRINE EVENTS
@@ -315,7 +315,7 @@ class Subject
      */
     public function setAutoCreatedDate()
     {
-        $this->setCreatedDate(new \Datetime());
+        $this->setCreatedDate(new \DateTime());
     }
 
     /**
@@ -325,6 +325,6 @@ class Subject
      */
     public function setAutoUpdatedDate()
     {
-        $this->setUpdatedDate(new \Datetime());
+        $this->setUpdatedDate(new \DateTime());
     }
 }

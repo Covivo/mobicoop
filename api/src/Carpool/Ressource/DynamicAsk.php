@@ -19,15 +19,14 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Carpool\Ressource;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
-use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\User\Entity\User;
-use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * Carpooling : an ask for a dynamic ad.
@@ -73,7 +72,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          }
  *      }
  * )
- *
  */
 class DynamicAsk
 {
@@ -85,7 +83,7 @@ class DynamicAsk
     public const STATUS_CANCELLED = 4;
 
     /**
-     * @var int The id of this dynamic ad ask.
+     * @var int the id of this dynamic ad ask
      *
      * @ApiProperty(identifier=true)
      * @Groups({"readDynamic","writeDynamic","updateDynamic"})
@@ -93,35 +91,35 @@ class DynamicAsk
     private $id;
 
     /**
-     * @var int Ask status (1 = pending, 2 = accepted; 3 = declined; 4 = cancelled).
+     * @var int ask status (1 = pending, 2 = accepted; 3 = declined; 4 = cancelled)
      *
      * @Groups({"readDynamic","writeDynamic","updateDynamic"})
      */
     private $status;
 
     /**
-     * @var string|null A message to send to the carpooler.
+     * @var null|string a message to send to the carpooler
      *
      * @Groups({"readDynamic","writeDynamic","updateDynamic"})
      */
     private $message;
 
     /**
-     * @var User|null The ask owner.
+     * @var null|User the ask owner
      *
      * @Groups("readDynamic")
      */
     private $user;
 
     /**
-     * @var User|null The carpooler (user related to the ask).
+     * @var null|User the carpooler (user related to the ask)
      *
      * @Groups("readDynamic")
      */
     private $carpooler;
 
     /**
-     * @var int|null The matching id related to the ask.
+     * @var null|int the matching id related to the ask
      *
      * @Groups("writeDynamic")
      */

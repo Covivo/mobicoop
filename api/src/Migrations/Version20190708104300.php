@@ -15,7 +15,7 @@ final class Version20190708104300 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         // insert media
         $this->addSql('INSERT INTO `medium` (`id`, `name`) VALUES (1, \'Internal message\');');
@@ -62,7 +62,7 @@ final class Version20190708104300 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('DELETE FROM `medium` WHERE `id` IN (1,2,3,4);');
         $this->addSql('DELETE FROM `action` WHERE `id` IN (1,2,3,4,,5,6,7,8,9,10);');

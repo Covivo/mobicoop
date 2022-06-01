@@ -19,17 +19,17 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\RelayPoint\Admin\Security;
 
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
 use App\Auth\Service\AuthManager;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use App\RelayPoint\Entity\RelayPoint;
 use App\RelayPoint\Repository\RelayPointRepository;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class RelayPointVoter extends Voter
 {
@@ -63,8 +63,8 @@ class RelayPointVoter extends Voter
             self::ADMIN_RELAY_POINT_READ,
             self::ADMIN_RELAY_POINT_UPDATE,
             self::ADMIN_RELAY_POINT_DELETE,
-            self::ADMIN_RELAY_POINT_LIST
-            ])) {
+            self::ADMIN_RELAY_POINT_LIST,
+        ])) {
             return false;
         }
 
@@ -74,10 +74,11 @@ class RelayPointVoter extends Voter
             self::ADMIN_RELAY_POINT_READ,
             self::ADMIN_RELAY_POINT_UPDATE,
             self::ADMIN_RELAY_POINT_DELETE,
-            self::ADMIN_RELAY_POINT_LIST
-            ]) && !($subject instanceof Paginator) && !($subject instanceof RelayPoint)) {
+            self::ADMIN_RELAY_POINT_LIST,
+        ]) && !($subject instanceof Paginator) && !($subject instanceof RelayPoint)) {
             return false;
         }
+
         return true;
     }
 
@@ -86,6 +87,7 @@ class RelayPointVoter extends Voter
         switch ($attribute) {
             case self::ADMIN_RELAY_POINT_CREATE:
                 return $this->canCreateRelayPoint();
+
             case self::ADMIN_RELAY_POINT_READ:
                 // this voter is used for direct relay point read, we have to check the type of subject
                 if ($subject instanceof RelayPoint) {
@@ -94,14 +96,19 @@ class RelayPointVoter extends Voter
                 if ($relayPoint = $this->relayPointRepository->find($this->request->get('id'))) {
                     return $this->canReadRelayPoint($relayPoint);
                 }
+
                 return false;
+
             case self::ADMIN_RELAY_POINT_UPDATE:
                 return $this->canUpdateRelayPoint($subject);
+
             case self::ADMIN_RELAY_POINT_DELETE:
                 return $this->canDeleteRelayPoint($subject);
+
             case self::ADMIN_RELAY_POINT_LIST:
                 return $this->canListRelayPoint();
         }
+
         throw new \LogicException('This code should not be reached!');
     }
 
@@ -112,17 +119,17 @@ class RelayPointVoter extends Voter
 
     private function canReadRelayPoint(RelayPoint $relayPoint)
     {
-        return $this->authManager->isAuthorized(self::RELAY_POINT_READ, ['relayPoint'=>$relayPoint]);
+        return $this->authManager->isAuthorized(self::RELAY_POINT_READ, ['relayPoint' => $relayPoint]);
     }
 
     private function canUpdateRelayPoint(RelayPoint $relayPoint)
     {
-        return $this->authManager->isAuthorized(self::RELAY_POINT_UPDATE, ['relayPoint'=>$relayPoint]);
+        return $this->authManager->isAuthorized(self::RELAY_POINT_UPDATE, ['relayPoint' => $relayPoint]);
     }
 
     private function canDeleteRelayPoint(RelayPoint $relayPoint)
     {
-        return $this->authManager->isAuthorized(self::RELAY_POINT_DELETE, ['relayPoint'=>$relayPoint]);
+        return $this->authManager->isAuthorized(self::RELAY_POINT_DELETE, ['relayPoint' => $relayPoint]);
     }
 
     private function canListRelayPoint()

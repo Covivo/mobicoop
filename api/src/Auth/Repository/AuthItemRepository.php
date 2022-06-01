@@ -19,19 +19,17 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Auth\Repository;
 
 use App\Auth\Entity\AuthItem;
-use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use App\Geography\Entity\Territory;
 
 /**
- * @method AuthItem|null find($id, $lockMode = null, $lockVersion = null)
- * @method AuthItem|null findOneBy(array $criteria, array $orderBy = null)
+ * @method null|AuthItem find($id, $lockMode = null, $lockVersion = null)
+ * @method null|AuthItem findOneBy(array $criteria, array $orderBy = null)
  * @method AuthItem[]    findAll()
  * @method AuthItem[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
@@ -51,10 +49,7 @@ class AuthItemRepository
     }
 
     /**
-     * Find Auth Item by its id
-     *
-     * @param integer $id
-     * @return AuthItem|null
+     * Find Auth Item by its id.
      */
     public function find(int $id): ?AuthItem
     {
@@ -63,20 +58,17 @@ class AuthItemRepository
 
     /**
      * Find Auth Item by name.
-     *
-     * @param string $name
-     * @return AuthItem
      */
     public function findByName(string $name): AuthItem
     {
-        return $this->repository->findOneBy(['name'=>$name]);
+        return $this->repository->findOneBy(['name' => $name]);
     }
 
     /**
-     * Find Auth Item by criteria
+     * Find Auth Item by criteria.
      *
-     * @param Array $criteria
-     * @return AuthItem
+     * @param null|mixed $limit
+     * @param null|mixed $offset
      */
     public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null): AuthItem
     {
@@ -84,18 +76,18 @@ class AuthItemRepository
     }
 
     /**
-     * Find Auth Item by Many Id (use in Auth manager for find many roles)
+     * Find Auth Item by Many Id (use in Auth manager for find many roles).
      *
-     * @param Array $ids Array of ids roles
-     * @return AuthItem
+     * @param array $ids Array of ids roles
      */
     public function findByIds(array $ids): AuthItem
     {
         $query = $this->repository->createQueryBuilder('a')
-            ->where("a.id IN (:arrayIds)")
+            ->where('a.id IN (:arrayIds)')
             ->setParameter('arrayIds', $ids)
             ->orderBy('a.id', 'ASC')
-            ->getQuery();
+            ->getQuery()
+        ;
 
         return $query->getresult();
     }

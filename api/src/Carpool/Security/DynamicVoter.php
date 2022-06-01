@@ -19,16 +19,16 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Carpool\Security;
 
 use App\Auth\Service\AuthManager;
 use App\Carpool\Ressource\Dynamic;
 use App\Carpool\Service\DynamicManager;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
-use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Security;
 
 class DynamicVoter extends Voter
@@ -60,8 +60,8 @@ class DynamicVoter extends Voter
             self::DYNAMIC_AD_READ,
             self::DYNAMIC_AD_UPDATE,
             self::DYNAMIC_AD_DELETE,
-            self::DYNAMIC_AD_LIST
-            ])) {
+            self::DYNAMIC_AD_LIST,
+        ])) {
             return false;
         }
 
@@ -74,21 +74,28 @@ class DynamicVoter extends Voter
         switch ($attribute) {
             case self::DYNAMIC_AD_CREATE:
                 return $this->canCreateDynamicAd();
+
             case self::DYNAMIC_AD_READ:
                 if ($dynamic = $this->dynamicManager->getDynamic($this->request->get('id'))) {
                     return $this->canReadDynamicAd($dynamic);
                 }
+
                 return false;
+
             case self::DYNAMIC_AD_UPDATE:
                 if ($dynamic = $this->dynamicManager->getDynamic($this->request->get('id'))) {
                     return $this->canUpdateDynamicAd($dynamic);
                 }
+
                 return false;
+
             case self::DYNAMIC_AD_DELETE:
                 if ($dynamic = $this->dynamicManager->getDynamic($this->request->get('id'))) {
                     return $this->canDeleteDynamicAd($dynamic);
                 }
+
                 return false;
+
             case self::DYNAMIC_AD_LIST:
                 return $this->canListDynamicAd();
         }

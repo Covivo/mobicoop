@@ -19,26 +19,25 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Import\DataProvider;
 
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\Import\Entity\Redirect;
-use Symfony\Component\HttpFoundation\RequestStack;
 use App\Import\Service\RedirectManager;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Collection data provider for redirect search.
  *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
- *
  */
 final class RedirectSearchCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
-    protected $request;
-    protected $redirectManager;
+    private $request;
+    private $redirectManager;
 
     public function __construct(RequestStack $requestStack, RedirectManager $redirectManager)
     {
@@ -48,11 +47,11 @@ final class RedirectSearchCollectionDataProvider implements CollectionDataProvid
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Redirect::class === $resourceClass && $operationName === "get";
+        return Redirect::class === $resourceClass && 'get' === $operationName;
     }
 
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
-        return $this->redirectManager->getRedirect($this->request->get("originUri"));
+        return $this->redirectManager->getRedirect($this->request->get('originUri'));
     }
 }

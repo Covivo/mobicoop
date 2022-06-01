@@ -18,12 +18,11 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
- namespace App\User\DataPersister;
+namespace App\User\DataPersister;
 
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
-use App\User\Entity\User;
 use App\User\Ressource\Review;
 use App\User\Service\ReviewManager;
 use Symfony\Component\Security\Core\Security;
@@ -41,7 +40,7 @@ final class ReviewDataPersister implements ContextAwareDataPersisterInterface
 
     public function supports($data, array $context = []): bool
     {
-        return $data instanceof Review && isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'post';
+        return $data instanceof Review && isset($context['collection_operation_name']) && 'post' == $context['collection_operation_name'];
     }
 
     public function persist($data, array $context = [])

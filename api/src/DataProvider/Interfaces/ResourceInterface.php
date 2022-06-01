@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\DataProvider\Interfaces;
 
@@ -27,10 +27,10 @@ namespace App\DataProvider\Interfaces;
  * Resource interface.
  *
  * @author Sylvain Briat <sylvain.briat@covivo.eu>
- *
  */
 interface ResourceInterface
 {
     public function getId(): ?int;
+
     public function setId(int $id);
 }

@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Auth\Rule;
 
@@ -27,7 +27,7 @@ use App\Auth\Interfaces\AuthRuleInterface;
 use App\Carpool\Entity\Ask;
 
 /**
- *  Check that the requester is involved in the related Ask
+ *  Check that the requester is involved in the related Ask.
  */
 class AskActor implements AuthRuleInterface
 {
@@ -48,6 +48,7 @@ class AskActor implements AuthRuleInterface
         if ($requester->getId() == $ask->getUser()->getId() || $requester->getId() == $ask->getUserRelated()->getId()) {
             return true;
         }
+
         return false;
     }
 }

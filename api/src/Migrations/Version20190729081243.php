@@ -15,7 +15,7 @@ final class Version20190729081243 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('DROP TABLE territory_territory');
         $this->addSql('ALTER TABLE app CHANGE password password VARCHAR(100) DEFAULT NULL');
@@ -57,7 +57,7 @@ final class Version20190729081243 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('CREATE TABLE territory_territory (territory_source INT NOT NULL, territory_target INT NOT NULL, INDEX IDX_44A1E66BD36AAF78 (territory_target), INDEX IDX_44A1E66BCA8FFFF7 (territory_source), PRIMARY KEY(territory_source, territory_target)) DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE = InnoDB COMMENT = \'\' ');
         $this->addSql('ALTER TABLE territory_territory ADD CONSTRAINT FK_44A1E66BCA8FFFF7 FOREIGN KEY (territory_source) REFERENCES territory (id) ON DELETE CASCADE');

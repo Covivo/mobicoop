@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Geography\DataProvider;
 
@@ -33,11 +33,10 @@ use Symfony\Component\HttpFoundation\RequestStack;
  * Collection data provider for Territory link calculation (addresses and directions link).
  *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
- *
  */
 final class TerritoryLinkCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
-    protected $request;
+    private $request;
     private $territoryManager;
 
     public function __construct(RequestStack $requestStack, TerritoryManager $territoryManager)
@@ -48,12 +47,13 @@ final class TerritoryLinkCollectionDataProvider implements CollectionDataProvide
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Territory::class === $resourceClass && $operationName === "link";
+        return Territory::class === $resourceClass && 'link' === $operationName;
     }
 
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
         $this->territoryManager->initAddressesAndDirections();
+
         return [];
     }
 }

@@ -4,14 +4,13 @@ namespace App\Import\Repository;
 
 use App\Import\Entity\CommunityImport;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 
 /**
- * @method CommunityImport|null find($id, $lockMode = null, $lockVersion = null)
+ * @method null|CommunityImport find($id, $lockMode = null, $lockVersion = null)
  * @method CommunityImport[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
- * @method CommunityImport|null findOneBy(array $criteria, array $orderBy = null)
+ * @method null|CommunityImport findOneBy(array $criteria, array $orderBy = null)
  */
 class CommunityImportRepository extends ServiceEntityRepository
 {

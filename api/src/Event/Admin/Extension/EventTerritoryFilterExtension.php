@@ -19,20 +19,18 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Event\Admin\Extension;
 
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryCollectionExtensionInterface;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryItemExtensionInterface;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
-use App\App\Entity\App;
-use App\Event\Entity\Event;
-use App\Geography\Entity\Territory;
 use App\Auth\Service\AuthManager;
+use App\Event\Entity\Event;
 use Doctrine\ORM\QueryBuilder;
-use Symfony\Component\Security\Core\Security;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Core\Security;
 
 final class EventTerritoryFilterExtension implements QueryCollectionExtensionInterface, QueryItemExtensionInterface
 {
@@ -50,33 +48,32 @@ final class EventTerritoryFilterExtension implements QueryCollectionExtensionInt
     public function applyToCollection(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
     {
         // concerns only admin get collection
-        if ($resourceClass == Event::class && $operationName == "ADMIN_get") {
+        if (Event::class == $resourceClass && 'ADMIN_get' == $operationName) {
             $this->addWhere($queryBuilder, $resourceClass, false, $operationName);
         }
     }
 
     public function applyToItem(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, array $identifiers, string $operationName = null, array $context = [])
     {
-        return;
     }
 
     private function addWhere(QueryBuilder $queryBuilder, string $resourceClass, bool $isItem, string $operationName = null, array $identifiers = [], array $context = []): void
     {
         $territories = [];
-        if ($this->request->get("showAllEvents")=="") {
+        if ('' == $this->request->get('showAllEvents')) {
             switch ($operationName) {
-                case "ADMIN_get":
-                    $territories = $this->authManager->getTerritoriesForItem("event_list");
+                case 'ADMIN_get':
+                    $territories = $this->authManager->getTerritoriesForItem('event_list');
             }
         }
 
-        if (count($territories)>0) {
+        if (count($territories) > 0) {
             $rootAlias = $queryBuilder->getRootAliases()[0];
             $queryBuilder
-            ->leftJoin($rootAlias.".address", 'aetfe')
-            ->leftJoin("aetfe.territories", 'tetfe')
-            ->andWhere('tetfe.id in (:territories)')
-            ->setParameter('territories', $territories)
+                ->leftJoin($rootAlias.'.address', 'aetfe')
+                ->leftJoin('aetfe.territories', 'tetfe')
+                ->andWhere('tetfe.id in (:territories)')
+                ->setParameter('territories', $territories)
             ;
         }
     }

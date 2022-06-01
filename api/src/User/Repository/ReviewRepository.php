@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\Repository;
 
@@ -46,9 +46,7 @@ class ReviewRepository
     }
 
     /**
-     * Find one Review by its id
-     *
-     * @return Review|null
+     * Find one Review by its id.
      */
     public function find(int $id): ?Review
     {
@@ -56,7 +54,7 @@ class ReviewRepository
     }
 
     /**
-     * Find All the Review
+     * Find All the Review.
      *
      * @return Review[]
      */
@@ -66,7 +64,10 @@ class ReviewRepository
     }
 
     /**
-     * Find All the Review by criteria
+     * Find All the Review by criteria.
+     *
+     * @param null|mixed $limit
+     * @param null|mixed $offset
      *
      * @return Review[]
      */
@@ -76,9 +77,7 @@ class ReviewRepository
     }
 
     /**
-     * Find one Review by criteria
-     *
-     * @return Review|null
+     * Find one Review by criteria.
      */
     public function findOneBy(array $criteria): ?Review
     {
@@ -86,28 +85,25 @@ class ReviewRepository
     }
 
     /**
-     * Find all reviews involving a User (as reviewer or reviewed)
-     *
-     * @param User $user
-     * @return array|null
+     * Find all reviews involving a User (as reviewer or reviewed).
      */
     public function findReviewsInvolvingUser(User $user): ?array
     {
         $query = $this->repository->createQueryBuilder('r')
-        ->where('r.reviewer = :user or r.reviewed = :user')
-        ->setParameter('user', $user)
+            ->where('r.reviewer = :user or r.reviewed = :user')
+            ->setParameter('user', $user)
         ;
+
         return $query->getQuery()->getResult();
     }
 
     /**
-     * Find all reviews with specific reviewer and/or specific reviewed
+     * Find all reviews with specific reviewer and/or specific reviewed.
      *
      * @param User $reviewer The reviewer
      * @param User $reviewed The reviewed
-     * @return array|null
      */
-    public function findSpecificReviews(User $reviewer=null, User $reviewed=null): ?array
+    public function findSpecificReviews(User $reviewer = null, User $reviewed = null): ?array
     {
         $query = $this->repository->createQueryBuilder('r');
 

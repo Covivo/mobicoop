@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Gamification\Rule;
 
@@ -27,16 +27,15 @@ use App\Gamification\Interfaces\GamificationRuleInterface;
 use App\Payment\Entity\CarpoolItem;
 
 /**
- * check that the user has only one electronic payment
+ * check that the user has only one electronic payment.
  */
 class HasOnlyOneElectronicPayment implements GamificationRuleInterface
 {
     /**
-     * Has only one electronic Payment
+     * Has only one electronic Payment.
      *
-     * @param  $log
-     * @param  $sequenceItem
-     * @return bool
+     * @param $log
+     * @param $sequenceItem
      */
     public function execute($log, $sequenceItem): bool
     {
@@ -45,13 +44,14 @@ class HasOnlyOneElectronicPayment implements GamificationRuleInterface
         $payedCarpoolItems = [];
         // we check if the user is the debtor and that he payed
         foreach ($carpoolItems as $carpoolItem) {
-            if ($carpoolItem->getDebtorUser()->getId() == $log->getUser()->getId() && $carpoolItem->getDebtorStatus() == CarpoolItem::DEBTOR_STATUS_ONLINE) {
+            if ($carpoolItem->getDebtorUser()->getId() == $log->getUser()->getId() && CarpoolItem::DEBTOR_STATUS_ONLINE == $carpoolItem->getDebtorStatus()) {
                 $payedCarpoolItems[] = $carpoolItem;
             }
         }
         if (count($payedCarpoolItems) >= 1) {
             return true;
         }
+
         return false;
     }
 }

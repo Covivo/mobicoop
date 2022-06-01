@@ -19,15 +19,15 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\Entity;
 
+use App\Communication\Entity\Notification;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
-use App\Communication\Entity\Notification;
 
 /**
  * User notification preferences.
@@ -38,7 +38,7 @@ use App\Communication\Entity\Notification;
 class UserNotification
 {
     /**
-     * @var int $id The id of this user notification preference.
+     * @var int the id of this user notification preference
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -48,7 +48,7 @@ class UserNotification
     private $id;
 
     /**
-     * @var Notification The notification involved.
+     * @var Notification the notification involved
      *
      * @ORM\ManyToOne(targetEntity="\App\Communication\Entity\Notification")
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
@@ -58,7 +58,7 @@ class UserNotification
     private $notification;
 
     /**
-     * @var User The user related with the notification.
+     * @var User the user related with the notification
      *
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="App\User\Entity\User", inversedBy="userNotifications")
@@ -69,7 +69,7 @@ class UserNotification
     private $user;
 
     /**
-     * @var bool The status of the notification (active/inactive).
+     * @var bool the status of the notification (active/inactive)
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"read","write"})
@@ -77,7 +77,7 @@ class UserNotification
     private $active;
 
     /**
-     * @var \DateTimeInterface Creation date of the user notification.
+     * @var \DateTimeInterface creation date of the user notification
      *
      * @ORM\Column(type="datetime")
      * @Groups("read")
@@ -85,7 +85,7 @@ class UserNotification
     private $createdDate;
 
     /**
-     * @var \DateTimeInterface Updated date of the user notification.
+     * @var \DateTimeInterface updated date of the user notification
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups("read")
@@ -166,7 +166,7 @@ class UserNotification
      */
     public function setAutoCreatedDate()
     {
-        $this->setCreatedDate(new \Datetime());
+        $this->setCreatedDate(new \DateTime());
     }
 
     /**
@@ -176,6 +176,6 @@ class UserNotification
      */
     public function setAutoUpdatedDate()
     {
-        $this->setUpdatedDate(new \Datetime());
+        $this->setUpdatedDate(new \DateTime());
     }
 }

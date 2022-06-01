@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Payment\Command;
 
@@ -35,7 +35,6 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
  */
-
 class PaymentExportBatchCommand extends Command
 {
     private $paymentManager;
@@ -50,11 +49,11 @@ class PaymentExportBatchCommand extends Command
     protected function configure()
     {
         $this
-        ->setName('app:payment:export-batch')
-        ->addArgument('fromDate', InputArgument::OPTIONAL, 'The start day of the period')
-        ->addArgument('toDate', InputArgument::OPTIONAL, 'The end day of the period (fromDate will be used if only fromDate is given)')
-        ->setDescription('Create the payment export files for the given period.')
-        ->setHelp('Create the payment export files dor the given period (default : previous day).')
+            ->setName('app:payment:export-batch')
+            ->addArgument('fromDate', InputArgument::OPTIONAL, 'The start day of the period')
+            ->addArgument('toDate', InputArgument::OPTIONAL, 'The end day of the period (fromDate will be used if only fromDate is given)')
+            ->setDescription('Create the payment export files for the given period.')
+            ->setHelp('Create the payment export files dor the given period (default : previous day).')
         ;
     }
 
@@ -63,10 +62,10 @@ class PaymentExportBatchCommand extends Command
         $fromDate = null;
         $toDate = null;
         if ($input->getArgument('fromDate')) {
-            $fromDate = DateTime::createFromFormat("Ymd", $input->getArgument('fromDate'));
+            $fromDate = DateTime::createFromFormat('Ymd', $input->getArgument('fromDate'));
             $fromDate->setTime(0, 0);
             if ($input->getArgument('toDate')) {
-                $toDate = DateTime::createFromFormat("Ymd", $input->getArgument('toDate'));
+                $toDate = DateTime::createFromFormat('Ymd', $input->getArgument('toDate'));
             } else {
                 $toDate = clone $fromDate;
             }

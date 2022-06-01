@@ -19,14 +19,14 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Auth\Rule;
 
 use App\Auth\Interfaces\AuthRuleInterface;
 
 /**
- *  Check that the campaign module is available
+ *  Check that the campaign module is available.
  */
 class CampaignAvailable implements AuthRuleInterface
 {
@@ -38,6 +38,7 @@ class CampaignAvailable implements AuthRuleInterface
         if (isset($params['campaign'])) {
             return $params['campaign'];
         }
+
         return true;
     }
 }

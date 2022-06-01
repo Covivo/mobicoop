@@ -19,18 +19,18 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\Ressource;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\User\Entity\User;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * A Review made by a User on another User
+ * A Review made by a User on another User.
  *
  * @ApiResource(
  *      attributes={
@@ -73,6 +73,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          }
  *      }
  * )
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class Review
@@ -80,7 +81,7 @@ class Review
     public const DEFAULT_ID = 999999999999;
 
     /**
-     * @var int $id The id of this Review.
+     * @var int the id of this Review
      *
      * @ApiProperty(identifier=true)
      * @Groups({"readReview","readPublicProfile"})
@@ -119,7 +120,7 @@ class Review
     private $left;
 
     /**
-     * @var \DateTimeInterface Creation date.
+     * @var \DateTimeInterface creation date
      * @Groups({"readReview","readPublicProfile"})
      */
     private $date;

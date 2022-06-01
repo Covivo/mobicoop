@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\Admin\Service;
 
@@ -40,7 +40,7 @@ class KibanaLoginManager
     private $loginsSolidaryOperator;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param EntityManagerInterface $entityManager The entity manager
      */
@@ -52,9 +52,8 @@ class KibanaLoginManager
         $this->loginsSolidaryOperator = $loginsSolidaryOperator;
     }
 
-
     /**
-     * Get the Kibana logins regarding the role of the caller
+     * Get the Kibana logins regarding the role of the caller.
      *
      * @return KibanaLogin[]
      */
@@ -78,9 +77,9 @@ class KibanaLoginManager
         }
 
         if (
-            in_array("ROLE_ADMIN", $rights) &&
-            array_key_exists('username', $this->loginsAdmin) &&
-            array_key_exists('password', $this->loginsAdmin)) {
+            in_array('ROLE_ADMIN', $rights)
+            && array_key_exists('username', $this->loginsAdmin)
+            && array_key_exists('password', $this->loginsAdmin)) {
             $kibanaLogin = new KibanaLogin();
             $kibanaLogin->setUsername($this->loginsAdmin['username']);
             $kibanaLogin->setPassword($this->loginsAdmin['password']);
@@ -89,13 +88,13 @@ class KibanaLoginManager
 
         if (
             (
-                in_array("ROLE_COMMUNITY_MANAGER", $rights) ||
-                in_array("ROLE_COMMUNITY_MANAGER_PUBLIC", $rights) ||
-                in_array("ROLE_COMMUNITY_MANAGER_PRIVATE", $rights) ||
-                in_array("ROLE_ADMIN", $rights)
-            ) &&
-            array_key_exists('username', $this->loginsCommunityManager) &&
-            array_key_exists('password', $this->loginsCommunityManager)) {
+                in_array('ROLE_COMMUNITY_MANAGER', $rights)
+                || in_array('ROLE_COMMUNITY_MANAGER_PUBLIC', $rights)
+                || in_array('ROLE_COMMUNITY_MANAGER_PRIVATE', $rights)
+                || in_array('ROLE_ADMIN', $rights)
+            )
+            && array_key_exists('username', $this->loginsCommunityManager)
+            && array_key_exists('password', $this->loginsCommunityManager)) {
             $kibanaLogin = new KibanaLogin();
             $kibanaLogin->setUsername($this->loginsCommunityManager['username']);
             $kibanaLogin->setPassword($this->loginsCommunityManager['password']);
@@ -104,11 +103,11 @@ class KibanaLoginManager
 
         if (
             (
-                in_array("ROLE_SOLIDARY_MANAGER", $rights) ||
-                in_array("ROLE_ADMIN", $rights)
-            ) &&
-            array_key_exists('username', $this->loginsSolidaryOperator) &&
-            array_key_exists('password', $this->loginsSolidaryOperator)) {
+                in_array('ROLE_SOLIDARY_MANAGER', $rights)
+                || in_array('ROLE_ADMIN', $rights)
+            )
+            && array_key_exists('username', $this->loginsSolidaryOperator)
+            && array_key_exists('password', $this->loginsSolidaryOperator)) {
             $kibanaLogin = new KibanaLogin();
             $kibanaLogin->setUsername($this->loginsSolidaryOperator['username']);
             $kibanaLogin->setPassword($this->loginsSolidaryOperator['password']);

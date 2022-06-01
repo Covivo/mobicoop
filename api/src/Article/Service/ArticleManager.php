@@ -19,22 +19,22 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Article\Service;
 
-use App\Article\Entity\Section;
-use Doctrine\ORM\EntityManagerInterface;
-use Psr\Log\LoggerInterface;
-use App\Article\Entity\Paragraph;
 use App\Article\Entity\Article as ArticleEntity;
 use App\Article\Entity\Iframe;
+use App\Article\Entity\Paragraph;
 use App\Article\Entity\RssElement;
-use App\Article\Repository\SectionRepository;
-use App\Article\Repository\ParagraphRepository;
+use App\Article\Entity\Section;
 use App\Article\Repository\ArticleRepository;
+use App\Article\Repository\ParagraphRepository;
+use App\Article\Repository\SectionRepository;
 use App\Article\Ressource\Article;
+use Doctrine\ORM\EntityManagerInterface;
 use DOMDocument;
+use Psr\Log\LoggerInterface;
 
 /**
  * Article manager service.
@@ -44,27 +44,31 @@ use DOMDocument;
  */
 class ArticleManager
 {
-    public const DIRECTION_UP = "up";
-    public const DIRECTION_DOWN = "down";
+    public const DIRECTION_UP = 'up';
+    public const DIRECTION_DOWN = 'down';
 
     /**
-     * @var EntityManagerInterface  $entityManager
+     * @var EntityManagerInterface
      */
     private $entityManager;
+
     /**
-     * @var LoggerInterface $logger
+     * @var LoggerInterface
      */
     private $logger;
+
     /**
-     * @var SectionRepository  $sectionRepository
+     * @var SectionRepository
      */
     private $sectionRepository;
+
     /**
-     * @var ParagraphRepository $paragraphRepository
+     * @var ParagraphRepository
      */
     private $paragraphRepository;
+
     /**
-     * @var ArticleRepository $articleRepository
+     * @var ArticleRepository
      */
     private $articleRepository;
 
@@ -75,8 +79,6 @@ class ArticleManager
 
     /**
      * Constructor.
-     *
-     * @param EntityManagerInterface $entityManager
      */
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -103,82 +105,121 @@ class ArticleManager
     /**
      * Change the position of a section, and the position of the associated section.
      *
-     * @param Section $section  The section
-     * @param string $direction The direction (up/down)
-     * @return Section  The section
+     * @param Section $section   The section
+     * @param string  $direction The direction (up/down)
+     *
+     * @return Section The section
      */
     public function changeSectionPosition(Section $section, string $direction): Section
     {
         switch ($direction) {
             case self::DIRECTION_UP:
                 if ($previousSection = $this->sectionRepository->findPrevious($section)) {
-                    $section->setPosition($section->getPosition()-1);
-                    $previousSection->setPosition($previousSection->getPosition()+1);
+                    $section->setPosition($section->getPosition() - 1);
+                    $previousSection->setPosition($previousSection->getPosition() + 1);
                     $this->entityManager->persist($section);
                     $this->entityManager->persist($previousSection);
                     $this->entityManager->flush();
                 }
+
                 break;
+
             case self::DIRECTION_DOWN:
             default:
                 if ($nextSection = $this->sectionRepository->findNext($section)) {
-                    $section->setPosition($section->getPosition()+1);
-                    $nextSection->setPosition($nextSection->getPosition()-1);
+                    $section->setPosition($section->getPosition() + 1);
+                    $nextSection->setPosition($nextSection->getPosition() - 1);
                     $this->entityManager->persist($section);
                     $this->entityManager->persist($nextSection);
                     $this->entityManager->flush();
                 }
+
                 break;
         }
+
         return $section;
     }
 
     /**
      * Change the position of a paragraph, and the position of the associated paragraph.
      *
-     * @param Paragraph $paragraph  The paragraph
-     * @param string $direction     The direction (up/down)
-     * @return Paragraph    The paragraph
+     * @param Paragraph $paragraph The paragraph
+     * @param string    $direction The direction (up/down)
+     *
+     * @return Paragraph The paragraph
      */
     public function changeParagraphPosition(Paragraph $paragraph, string $direction): Paragraph
     {
         switch ($direction) {
             case self::DIRECTION_UP:
                 if ($previousParagraph = $this->paragraphRepository->findPrevious($paragraph)) {
-                    $paragraph->setPosition($paragraph->getPosition()-1);
-                    $previousParagraph->setPosition($previousParagraph->getPosition()+1);
+                    $paragraph->setPosition($paragraph->getPosition() - 1);
+                    $previousParagraph->setPosition($previousParagraph->getPosition() + 1);
                     $this->entityManager->persist($paragraph);
                     $this->entityManager->persist($previousParagraph);
                     $this->entityManager->flush();
                 }
+
                 break;
+
             case self::DIRECTION_DOWN:
             default:
                 if ($nextParagraph = $this->paragraphRepository->findNext($paragraph)) {
-                    $paragraph->setPosition($paragraph->getPosition()+1);
-                    $nextParagraph->setPosition($nextParagraph->getPosition()-1);
+                    $paragraph->setPosition($paragraph->getPosition() + 1);
+                    $nextParagraph->setPosition($nextParagraph->getPosition() - 1);
                     $this->entityManager->persist($paragraph);
                     $this->entityManager->persist($nextParagraph);
                     $this->entityManager->flush();
                 }
+
                 break;
         }
+
         return $paragraph;
     }
 
     /**
-     * Get the external articles
+     * Get the external articles.
      */
-    public function getLastExternalArticles(int $nbArticles=ArticleEntity::NB_EXTERNAL_ARTICLES_DEFAULT)
+    public function getLastExternalArticles(int $nbArticles = ArticleEntity::NB_EXTERNAL_ARTICLES_DEFAULT)
     {
         return $this->articleRepository->findLastExternal($nbArticles);
     }
 
     /**
-     * Make an Article ressource from Article (Page) entity
+     * Get a collection of Article.
      *
-     * @param ArticleEntity $articleEntity
-     * @return Article
+     * @param string $context (optionnal) : Context to select specific articles
+     *
+     * @return Article[]
+     */
+    public function getArticles(string $context = null): array
+    {
+        $articles = [];
+
+        // Get the articles in database
+        if (is_null($context) || Article::CONTEXT_INTERNAL == $context) {
+            $pages = $this->articleRepository->findAll();
+
+            foreach ($pages as $page) {
+                $articles[] = $this->makeArticleFromEntity($page);
+            }
+        }
+
+        // Get the RSS articles
+        if (is_null($context) || Article::CONTEXT_HOME == $context) {
+            $rssItems = $this->getRssFeeds();
+
+            foreach ($rssItems as $rssItem) {
+                $articles[] = $this->makeArticleFromRss($rssItem);
+            }
+        }
+
+        return $articles;
+    }
+
+    /**
+     * Make an Article ressource from Article (Page) entity.
      */
     private function makeArticleFromEntity(ArticleEntity $articleEntity): Article
     {
@@ -189,12 +230,10 @@ class ArticleManager
         return $article;
     }
 
-
     /**
-     * Make an article ressource from an RSS element
-     * @param RssElement $rssElement   Rss element to convert
+     * Make an article ressource from an RSS element.
      *
-     * @return Article
+     * @param RssElement $rssElement Rss element to convert
      */
     private function makeArticleFromRss(RssElement $rssElement): Article
     {
@@ -215,13 +254,13 @@ class ArticleManager
     }
 
     /**
-     * Get Rss elements from all feeds (in .env ARTICLE_FEEDS)
+     * Get Rss elements from all feeds (in .env ARTICLE_FEEDS).
      *
      * @return RssElement[]
      */
     private function getRssFeeds(): array
     {
-        if ($this->articleFeed == "") {
+        if ('' == $this->articleFeed) {
             return [];
         }
         $rssElements = [];
@@ -232,8 +271,7 @@ class ArticleManager
         // transform xml to object
         $feedResult = simplexml_load_file($articleFeed, 'SimpleXMLElement', LIBXML_NOCDATA);
 
-
-        $counter=-1;
+        $counter = -1;
 
         foreach ($feedResult->channel->item as $item) {
             $rssElement = new RssElement();
@@ -248,14 +286,13 @@ class ArticleManager
             $start = strpos($description, '<p>');
             $end = strpos($description, '</p>', $start);
 
-            if (strlen($description)>=255) {
-                $description = substr($description, $start, $end-$start+234)." ...";
+            if (strlen($description) >= 255) {
+                $description = substr($description, $start, $end - $start + 234).' ...';
             } else {
-                $description = substr($description, $start, $end-$start+255)." ...";
+                $description = substr($description, $start, $end - $start + 255).' ...';
             }
 
             $description = strip_tags($description);
-
 
             $rssElement->setDescription(html_entity_decode($description));
 
@@ -279,13 +316,13 @@ class ArticleManager
                 $iframe->setSrc($dom->getElementsByTagName('iframe')->item(0)->getAttribute('src'));
                 $iframe->setTitle($dom->getElementsByTagName('iframe')->item(0)->getAttribute('title'));
 
-                if ((int)$dom->getElementsByTagName('iframe')->item(0)->getAttribute('width') > $this->articleIframeMaxWidth) {
+                if ((int) $dom->getElementsByTagName('iframe')->item(0)->getAttribute('width') > $this->articleIframeMaxWidth) {
                     $iframe->setWidth($this->articleIframeMaxWidth);
                 } else {
                     $iframe->setWidth($dom->getElementsByTagName('iframe')->item(0)->getAttribute('width'));
                 }
 
-                if ((int)$dom->getElementsByTagName('iframe')->item(0)->getAttribute('height') > $this->articleIframeMaxHeight) {
+                if ((int) $dom->getElementsByTagName('iframe')->item(0)->getAttribute('height') > $this->articleIframeMaxHeight) {
                     $iframe->setHeight($this->articleIframeMaxHeight);
                 } else {
                     $iframe->setHeight($dom->getElementsByTagName('iframe')->item(0)->getAttribute('height'));
@@ -296,44 +333,14 @@ class ArticleManager
                 $rssElement->setIframe($iframe);
             }
 
-            $counter++;
+            ++$counter;
             if ($counter == $articleFeedNumber) {
                 break;
             }
 
-            $rssElements[]=$rssElement;
+            $rssElements[] = $rssElement;
         }
+
         return $rssElements;
-    }
-
-    /**
-     * Get a collection of Article
-     *
-     * @param string $context   (optionnal) : Context to select specific articles
-     * @return Article[]
-     */
-    public function getArticles(string $context=null): array
-    {
-        $articles = [];
-
-        // Get the articles in database
-        if (is_null($context) || $context==Article::CONTEXT_INTERNAL) {
-            $pages = $this->articleRepository->findAll();
-
-            foreach ($pages as $page) {
-                $articles[] = $this->makeArticleFromEntity($page);
-            }
-        }
-
-        // Get the RSS articles
-        if (is_null($context) || $context==Article::CONTEXT_HOME) {
-            $rssItems = $this->getRssFeeds();
-
-            foreach ($rssItems as $rssItem) {
-                $articles[] = $this->makeArticleFromRss($rssItem);
-            }
-        }
-
-        return $articles;
     }
 }

@@ -19,18 +19,16 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Auth\Repository;
 
 use App\Auth\Entity\AuthItem;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
 use App\Auth\Entity\UserAuthAssignment;
 use App\User\Entity\User;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 
-/**
- */
 class UserAuthAssignmentRepository
 {
     /**
@@ -46,23 +44,21 @@ class UserAuthAssignmentRepository
     /**
      * Find Auth Item Assignment by AuthItem and User.
      *
-     * @param AuthItem $authItem    The auth item
-     * @param User $user            The user
-     * @return array
+     * @param AuthItem $authItem The auth item
+     * @param User     $user     The user
      */
     public function findByAuthItemAndUser(AuthItem $authItem, User $user): array
     {
-        return $this->repository->findBy(['authItem'=>$authItem,'user'=>$user]);
+        return $this->repository->findBy(['authItem' => $authItem, 'user' => $user]);
     }
 
     /**
      * Find Auth Item Assignment by User.
      *
-     * @param User $user            The user
-     * @return array
+     * @param User $user The user
      */
     public function findByUser(User $user): array
     {
-        return $this->repository->findBy(['user'=>$user]);
+        return $this->repository->findBy(['user' => $user]);
     }
 }

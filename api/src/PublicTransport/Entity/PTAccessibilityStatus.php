@@ -19,16 +19,13 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\PublicTransport\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Doctrine\Common\Collections\ArrayCollection;
-use App\Geography\Entity\Address;
-use Doctrine\ORM\Mapping as ORM;
 
 /**
  * An accessibility status for public transport lines.
@@ -60,6 +57,7 @@ class PTAccessibilityStatus
 {
     /**
      * @ApiProperty(identifier=true)
+     *
      * @var int id of this accessibility status
      * @Groups("pt")
      */

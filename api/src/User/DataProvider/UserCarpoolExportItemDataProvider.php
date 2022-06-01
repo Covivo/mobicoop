@@ -19,23 +19,22 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\DataProvider;
 
 use ApiPlatform\Core\DataProvider\ItemDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
+use App\Carpool\Service\CarpoolExportManager;
 use App\User\Entity\User;
 use Symfony\Component\Security\Core\Security;
-use App\Carpool\Service\CarpoolExportManager;
 
 /**
  * Collection data provider for user's carpoolExports.
- *
  */
 final class UserCarpoolExportItemDataProvider implements ItemDataProviderInterface, RestrictedDataProviderInterface
 {
-    protected $security;
+    private $security;
     private $carpoolExportManager;
 
     public function __construct(Security $security, CarpoolExportManager $carpoolExportManager)
@@ -46,7 +45,7 @@ final class UserCarpoolExportItemDataProvider implements ItemDataProviderInterfa
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return User::class === $resourceClass && $operationName === "getCarpoolExport";
+        return User::class === $resourceClass && 'getCarpoolExport' === $operationName;
     }
 
     public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): User
@@ -56,6 +55,7 @@ final class UserCarpoolExportItemDataProvider implements ItemDataProviderInterfa
          */
         $user = $this->security->getUser();
         $user->setCarpoolExport($this->carpoolExportManager->getCarpoolExports());
+
         return $user;
     }
 }

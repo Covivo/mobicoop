@@ -19,12 +19,12 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Payment\Repository;
 
-use Doctrine\ORM\EntityManagerInterface;
 use App\Payment\Entity\PaymentProfile;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Psr\Log\LoggerInterface;
 
@@ -55,7 +55,6 @@ class PaymentProfileRepository
 
     public function findOneBy(array $criteria): ?PaymentProfile
     {
-        $user = $this->repository->findOneBy($criteria);
-        return $user;
+        return $this->repository->findOneBy($criteria);
     }
 }

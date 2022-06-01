@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Geography\DataProvider;
 
@@ -31,14 +31,13 @@ use Symfony\Component\Asset\Exception\LogicException;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- * Collection data provider for getting the territories of a point by its latitude and longitude
+ * Collection data provider for getting the territories of a point by its latitude and longitude.
  *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
- *
  */
 final class TerritoryPointCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
-    protected $request;
+    private $request;
     private $territoryRepository;
     private $context;
 
@@ -51,21 +50,22 @@ final class TerritoryPointCollectionDataProvider implements CollectionDataProvid
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
         $this->context = $context;
-        return Territory::class === $resourceClass && $operationName === "territoriesPoint";
+
+        return Territory::class === $resourceClass && 'territoriesPoint' === $operationName;
     }
 
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
         if (!isset($this->context['filters'])) {
-            throw new LogicException("This route should always has latitude and longitude params");
+            throw new LogicException('This route should always has latitude and longitude params');
         }
 
         if (!isset($this->context['filters']['latitude']) || !is_numeric($this->context['filters']['latitude'])) {
-            throw new LogicException("Missing or invalid latitude");
+            throw new LogicException('Missing or invalid latitude');
         }
 
         if (!isset($this->context['filters']['longitude']) || !is_numeric($this->context['filters']['longitude'])) {
-            throw new LogicException("Missing or invalid longitude");
+            throw new LogicException('Missing or invalid longitude');
         }
 
         return $this->territoryRepository->findPointTerritories($this->context['filters']['latitude'], $this->context['filters']['longitude']);

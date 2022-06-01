@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\PublicTransport\Repository;
 
@@ -53,7 +53,7 @@ class PTJourneyRepository
     {
         $conn = $this->entityManager->getConnection();
 
-        $sql = "DELETE ptjourney FROM `ptjourney` INNER JOIN mass_person on mass_person.id = ptjourney.mass_person_id WHERE mass_person.mass_id = ".$massId;
+        $sql = 'DELETE ptjourney FROM `ptjourney` INNER JOIN mass_person on mass_person.id = ptjourney.mass_person_id WHERE mass_person.mass_id = '.$massId;
 
         $stmt = $conn->prepare($sql);
         $stmt->executeQuery();

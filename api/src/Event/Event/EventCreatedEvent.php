@@ -19,12 +19,12 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Event\Event;
 
-use Symfony\Contracts\EventDispatcher\Event;
 use App\Event\Entity\Event as EventEntity;
+use Symfony\Contracts\EventDispatcher\Event;
 
 /**
  * Event sent when an event is created.

@@ -15,7 +15,7 @@ final class Version20210629101841 extends AbstractMigration
     public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE log ADD carpool_payment_id INT DEFAULT NULL');
         $this->addSql('ALTER TABLE log ADD CONSTRAINT FK_8F3F68C51212FDF6 FOREIGN KEY (carpool_payment_id) REFERENCES carpool_payment (id)');
@@ -25,7 +25,7 @@ final class Version20210629101841 extends AbstractMigration
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE log DROP FOREIGN KEY FK_8F3F68C51212FDF6');
         $this->addSql('DROP INDEX IDX_8F3F68C51212FDF6 ON log');

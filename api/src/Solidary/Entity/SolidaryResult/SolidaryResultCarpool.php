@@ -19,18 +19,16 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\Entity\SolidaryResult;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * A solidary Result Carpool
+ * A solidary Result Carpool.
  *
  * ApiResource(
  *      attributes={
@@ -45,15 +43,15 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "get"
  *      }
  * )
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-
 class SolidaryResultCarpool
 {
     public const DEFAULT_ID = 999999999999;
 
     /**
-     * @var int The id of this subject.
+     * @var int the id of this subject
      *
      * @ApiProperty(identifier=true)
      * @Groups({"readSolidarySearch"})
@@ -67,9 +65,9 @@ class SolidaryResultCarpool
     private $author;
 
     /**
-    * @var int Id of the author
-    * @Groups({"readSolidarySearch"})
-    */
+     * @var int Id of the author
+     * @Groups({"readSolidarySearch"})
+     */
     private $authorId;
 
     /**
@@ -98,20 +96,20 @@ class SolidaryResultCarpool
 
     /**
      * @var int The proposal frequency (1 = punctual; 2 = regular)
-     * Based on Criteria's constants
+     *          Based on Criteria's constants
      * @Groups({"readSolidarySearch"})
      */
     private $frequency;
 
     /**
      * @var int The role (Driver : 1, Passenger : 2, Both : 3)
-     * Based on Ad's constants
+     *          Based on Ad's constants
      * @Groups({"readSolidarySearch"})
      */
     private $role;
 
     /**
-     * @var boolean If it's a solidary exclusive proposal
+     * @var bool If it's a solidary exclusive proposal
      * @Groups({"readSolidarySearch"})
      */
     private $solidaryExlusive;

@@ -18,13 +18,12 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\DataProvider;
 
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
 use App\User\Entity\User;
 use App\User\Ressource\ReviewDashboard;
 use App\User\Service\ReviewManager;
@@ -46,14 +45,15 @@ final class ReviewDashboardCollectionDataProvider implements CollectionDataProvi
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return ReviewDashboard::class === $resourceClass && $operationName === "get";
+        return ReviewDashboard::class === $resourceClass && 'get' === $operationName;
     }
 
     public function getCollection(string $resourceClass, string $operationName = null): iterable
     {
         if (!($this->security->getUser() instanceof User)) {
-            throw new \LogicException("Only a User can get Reviews");
+            throw new \LogicException('Only a User can get Reviews');
         }
+
         return $this->reviewManager->getReviewDashboard($this->security->getUser());
     }
 }

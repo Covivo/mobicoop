@@ -19,19 +19,17 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Gamification\Entity;
 
 use App\User\Entity\User;
-use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 /**
-* Gamification : A Validation Step to determine of a specific SequenceItem is valid
-* @author Maxime Bardot <maxime.bardot@mobicoop.org>
-*/
+ * Gamification : A Validation Step to determine of a specific SequenceItem is valid.
+ *
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ */
 class ValidationStep
 {
     /**
@@ -45,7 +43,7 @@ class ValidationStep
     private $user;
 
     /**
-     * @var boolean Indicate if the sequenceItem is validated during the validation process (used only for internal purpose)
+     * @var bool Indicate if the sequenceItem is validated during the validation process (used only for internal purpose)
      */
     private $validated;
 

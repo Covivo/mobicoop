@@ -18,7 +18,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\Admin\DataProvider;
 
@@ -51,7 +51,7 @@ final class SolidaryBeneficiaryCollectionDataProvider implements CollectionDataP
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return SolidaryBeneficiary::class === $resourceClass && $operationName === 'ADMIN_get';
+        return SolidaryBeneficiary::class === $resourceClass && 'ADMIN_get' === $operationName;
     }
 
     public function getCollection(string $resourceClass, string $operationName = null, array $context = []): iterable
@@ -59,46 +59,63 @@ final class SolidaryBeneficiaryCollectionDataProvider implements CollectionDataP
         // overload filters to avoid using complicated linked relations !
         $newContext = $context;
         if (isset($context['filters'])) {
-            foreach ($context['filters'] as $fkey=>$filter) {
+            foreach ($context['filters'] as $fkey => $filter) {
                 switch ($fkey) {
                     case 'order':
-                        foreach ($filter as $key=>$value) {
+                        foreach ($filter as $key => $value) {
                             switch ($key) {
                                 case 'givenName':
                                     $newContext['filters']['order']['user.givenName'] = $value;
                                     unset($newContext['filters']['order']['givenName']);
+
                                     break;
+
                                 case 'familyName':
                                     $newContext['filters']['order']['user.familyName'] = $value;
                                     unset($newContext['filters']['order']['familyName']);
+
                                     break;
+
                                 case 'telephone':
                                     $newContext['filters']['order']['user.telephone'] = $value;
                                     unset($newContext['filters']['order']['telephone']);
+
                                     break;
+
                                 case 'email':
-                                    $newContext['filters']['order']['user.email']= $value;
+                                    $newContext['filters']['order']['user.email'] = $value;
                                     unset($newContext['filters']['order']['email']);
+
                                     break;
                             }
                         }
+
                         break;
+
                     case 'givenName':
                         $newContext['filters']['user.givenName'] = $filter;
                         unset($newContext['filters']['givenName']);
+
                         break;
+
                     case 'familyName':
                         $newContext['filters']['user.familyName'] = $filter;
                         unset($newContext['filters']['familyName']);
+
                         break;
+
                     case 'telephone':
                         $newContext['filters']['user.telephone'] = $filter;
                         unset($newContext['filters']['telephone']);
+
                         break;
+
                     case 'email':
                         $newContext['filters']['user.email'] = $filter;
                         unset($newContext['filters']['email']);
+
                         break;
+
                     default:
                         break;
                 }
@@ -111,6 +128,7 @@ final class SolidaryBeneficiaryCollectionDataProvider implements CollectionDataP
         // we use the doctrine built-in filtering and pagination system
         // (on the parent SolidaryUser class, as we need to perform queries on an ORM table and not a resource only like SolidaryBeneficiary)
         $manager = $this->managerRegistry->getManagerForClass(SolidaryUser::class);
+
         /**
          * @var EntityRepository $repository
          */
@@ -120,7 +138,7 @@ final class SolidaryBeneficiaryCollectionDataProvider implements CollectionDataP
 
         // we add the beneficiary flag to keep only beneficiaries (and not volunteers)
         $rootAlias = $queryBuilder->getRootAliases()[0];
-        $queryBuilder->andWhere("$rootAlias.beneficiary = 1");
+        $queryBuilder->andWhere("{$rootAlias}.beneficiary = 1");
 
         foreach ($this->collectionExtensions as $extension) {
             $extension->applyToCollection($queryBuilder, $queryNameGenerator, SolidaryUser::class, $operationName, $newContext);

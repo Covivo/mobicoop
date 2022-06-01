@@ -19,15 +19,15 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Import\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
@@ -63,12 +63,12 @@ class Redirect
     public const TYPE_COMMUNITY = 0;
     public const TYPE_EVENT = 1;
     public const TYPE_ARTICLE = 2;
-    public const TYPE_COMMUNITY_WIDGET=3;
-    public const TYPE_EVENT_WIDGET=4;
+    public const TYPE_COMMUNITY_WIDGET = 3;
+    public const TYPE_EVENT_WIDGET = 4;
     public const TYPE_NO_LONGER_EXISTS = 99;
 
     /**
-     * @var int The id of this redirection.
+     * @var int the id of this redirection
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -79,7 +79,7 @@ class Redirect
     private $id;
 
     /**
-     * @var string The original URI.
+     * @var string the original URI
      *
      * @ORM\Column(type="string", length=255, nullable=false)
      * @Groups({"read","write"})
@@ -87,7 +87,7 @@ class Redirect
     private $originUri;
 
     /**
-     * @var int Redirection type.
+     * @var int redirection type
      *
      * @ORM\Column(type="smallint")
      * @Groups({"read","write"})
@@ -95,7 +95,7 @@ class Redirect
     private $type;
 
     /**
-     * @var string The language.
+     * @var string the language
      *
      * @ORM\Column(type="string", length=255, nullable=false)
      * @Groups({"read","write"})
@@ -103,7 +103,7 @@ class Redirect
     private $language;
 
     /**
-     * @var int Destination id.
+     * @var int destination id
      *
      * @ORM\Column(type="integer")
      * @Groups({"read","write"})
@@ -111,7 +111,7 @@ class Redirect
     private $destinationId;
 
     /**
-     * @var \DateTimeInterface Creation date of the redirect.
+     * @var \DateTimeInterface creation date of the redirect
      *
      * @ORM\Column(type="datetime")
      * @Groups({"read","write"})
@@ -119,7 +119,7 @@ class Redirect
     private $createdDate;
 
     /**
-     * @var \DateTimeInterface Update date of the redirect.
+     * @var \DateTimeInterface update date of the redirect
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read","write"})
@@ -230,7 +230,7 @@ class Redirect
      */
     public function setAutoCreatedDate()
     {
-        $this->setCreatedDate(new \Datetime());
+        $this->setCreatedDate(new \DateTime());
     }
 
     /**
@@ -240,6 +240,6 @@ class Redirect
      */
     public function setAutoUpdatedDate()
     {
-        $this->setUpdatedDate(new \Datetime());
+        $this->setUpdatedDate(new \DateTime());
     }
 }

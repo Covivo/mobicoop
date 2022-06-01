@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Community\DataProvider;
 
@@ -34,11 +34,10 @@ use Symfony\Component\Security\Core\Security;
  * Collection data provider for Community user search.
  *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
- *
  */
 final class CommunityUserCommunityCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
-    protected $request;
+    private $request;
     private $communityManager;
     private $security;
 
@@ -51,7 +50,7 @@ final class CommunityUserCommunityCollectionDataProvider implements CollectionDa
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return Community::class === $resourceClass && $operationName === "ismember";
+        return Community::class === $resourceClass && 'ismember' === $operationName;
     }
 
     public function getCollection(string $resourceClass, string $operationName = null): ?array

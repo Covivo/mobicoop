@@ -18,24 +18,25 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\RdexPlus\Exception;
 
 /**
- * RDEX+ Exception
+ * RDEX+ Exception.
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class RdexPlusException extends \LogicException
 {
-    public const USER_ID_REQUIRED = "user.id is required";
-    public const USER_UNKNOWN = "User Unknown";
-    public const INVALID_FREQUENCY = "Invalid frequency";
-    public const INVALID_PRICE_TYPE = "Invalid price type";
-    public const INVALID_CARPOOLER_TYPE = "Invalid carpoolerType";
+    public const USER_ID_REQUIRED = 'user.id is required';
+    public const USER_UNKNOWN = 'User Unknown';
+    public const INVALID_FREQUENCY = 'Invalid frequency';
+    public const INVALID_PRICE_TYPE = 'Invalid price type';
+    public const INVALID_CARPOOLER_TYPE = 'Invalid carpoolerType';
     public const FROM_LATITUDE_LONGITUDE_REQUIRED = "Origin's Latitude/Longitude are required";
     public const TO_LATITUDE_LONGITUDE_REQUIRED = "Destination's Latitude/Longitude are required";
-    public const NO_REGULAR_SCHEDULE = "Missing regular schedule";
-    public const NO_RETURN = "Missing return data";
-    public const NO_RETURN_REGULAR_SCHEDULE = "Missing return regular schedule";
+    public const NO_REGULAR_SCHEDULE = 'Missing regular schedule';
+    public const NO_RETURN = 'Missing return data';
+    public const NO_RETURN_REGULAR_SCHEDULE = 'Missing return regular schedule';
 }

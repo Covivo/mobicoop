@@ -18,14 +18,12 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Payment\DataProvider;
 
 use ApiPlatform\Core\DataProvider\ItemDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
-use App\Payment\Repository\CarpoolPaymentRepository;
 use App\Payment\Ressource\PaymentPayment;
 use App\Payment\Service\PaymentManager;
 
@@ -43,7 +41,7 @@ final class PaymentPaymentItemDataProvider implements ItemDataProviderInterface,
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return PaymentPayment::class === $resourceClass && $operationName === "get";
+        return PaymentPayment::class === $resourceClass && 'get' === $operationName;
     }
 
     public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?PaymentPayment

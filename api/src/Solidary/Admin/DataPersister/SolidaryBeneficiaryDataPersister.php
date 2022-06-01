@@ -18,7 +18,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\Admin\DataPersister;
 
@@ -28,7 +28,7 @@ use App\Solidary\Entity\SolidaryBeneficiary;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- * Data persister for Solidary beneficiaries in administration context
+ * Data persister for Solidary beneficiaries in administration context.
  */
 final class SolidaryBeneficiaryDataPersister implements ContextAwareDataPersisterInterface
 {
@@ -46,13 +46,18 @@ final class SolidaryBeneficiaryDataPersister implements ContextAwareDataPersiste
         if ($data instanceof SolidaryBeneficiary) {
             switch ($context) {
                 case isset($context['collection_operation_name']):
-                    return $context['collection_operation_name'] == 'ADMIN_post';
+                    return 'ADMIN_post' == $context['collection_operation_name'];
+
                     break;
+
                 case isset($context['item_operation_name']):
-                    return $context['item_operation_name'] == 'ADMIN_patch';
+                    return 'ADMIN_patch' == $context['item_operation_name'];
+
                     break;
+
                 default:
                     return false;
+
                     break;
             }
         } else {
@@ -62,10 +67,11 @@ final class SolidaryBeneficiaryDataPersister implements ContextAwareDataPersiste
 
     public function persist($data, array $context = [])
     {
-        if (isset($context['item_operation_name']) &&  $context['item_operation_name'] == 'ADMIN_patch') {
+        if (isset($context['item_operation_name']) && 'ADMIN_patch' == $context['item_operation_name']) {
             // for a patch operation, we update only some fields, we pass them to the method for further checkings
             $data = $this->solidaryBeneficiaryManager->patchSolidaryBeneficiary($this->request->get('id'), json_decode($this->request->getContent(), true));
         }
+
         return $data;
     }
 

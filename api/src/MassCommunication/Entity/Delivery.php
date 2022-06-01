@@ -19,16 +19,16 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\MassCommunication\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
-use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\User\Entity\User;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 /**
  * A mass communication delivery related to a campaign.
@@ -78,7 +78,7 @@ class Delivery
     public const STATUS_ERROR = 2;
 
     /**
-     * @var int The id of this delivery.
+     * @var int the id of this delivery
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -89,7 +89,7 @@ class Delivery
     private $id;
 
     /**
-     * @var bool The status of the delivery.
+     * @var bool the status of the delivery
      *
      * @ORM\Column(type="smallint")
      * @Groups({"read_campaign","write_campaign"})
@@ -97,7 +97,7 @@ class Delivery
     private $status;
 
     /**
-     * @var Campaign The campaign.
+     * @var Campaign the campaign
      *
      * @ORM\ManyToOne(targetEntity="\App\MassCommunication\Entity\Campaign")
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
@@ -107,7 +107,7 @@ class Delivery
     private $campaign;
 
     /**
-     * @var User The user recipient.
+     * @var User the user recipient
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="deliveries")
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
@@ -117,7 +117,7 @@ class Delivery
     private $user;
 
     /**
-     * @var \DateTimeInterface Creation date.
+     * @var \DateTimeInterface creation date
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read_campaign"})
@@ -125,7 +125,7 @@ class Delivery
     private $createdDate;
 
     /**
-     * @var \DateTimeInterface Updated date.
+     * @var \DateTimeInterface updated date
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read_campaign"})
@@ -133,7 +133,7 @@ class Delivery
     private $updatedDate;
 
     /**
-     * @var \DateTimeInterface Sent date.
+     * @var \DateTimeInterface sent date
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read_campaign","write_campaign"})
@@ -141,7 +141,7 @@ class Delivery
     private $sentDate;
 
     /**
-     * @var \DateTimeInterface Received date.
+     * @var \DateTimeInterface received date
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read_campaign","write_campaign"})
@@ -149,7 +149,7 @@ class Delivery
     private $receivedDate;
 
     /**
-     * @var \DateTimeInterface Read date.
+     * @var \DateTimeInterface read date
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read_campaign","write_campaign"})
@@ -280,7 +280,7 @@ class Delivery
      */
     public function setAutoCreatedDate()
     {
-        $this->setCreatedDate(new \Datetime());
+        $this->setCreatedDate(new \DateTime());
     }
 
     /**
@@ -290,6 +290,6 @@ class Delivery
      */
     public function setAutoUpdatedDate()
     {
-        $this->setUpdatedDate(new \Datetime());
+        $this->setUpdatedDate(new \DateTime());
     }
 }

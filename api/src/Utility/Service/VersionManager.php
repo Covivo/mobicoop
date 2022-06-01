@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Utility\Service;
 
@@ -49,6 +49,7 @@ class VersionManager
         if (is_array($versions) && array_key_exists($this->appId, $versions)) {
             return $versions[$this->appId];
         }
+
         return [];
     }
 }

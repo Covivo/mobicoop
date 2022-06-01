@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 declare(strict_types=1);
 
@@ -34,15 +34,15 @@ declare(strict_types=1);
 namespace App\Geography\ProviderFactory;
 
 use Geocoder\Collection;
-use Geocoder\Exception\InvalidServerResponse;
 use Geocoder\Exception\InvalidCredentials;
+use Geocoder\Exception\InvalidServerResponse;
+use Geocoder\Http\Provider\AbstractHttpProvider;
 use Geocoder\Location;
 use Geocoder\Model\AddressBuilder;
 use Geocoder\Model\AddressCollection;
+use Geocoder\Provider\Provider;
 use Geocoder\Query\GeocodeQuery;
 use Geocoder\Query\ReverseQuery;
-use Geocoder\Http\Provider\AbstractHttpProvider;
-use Geocoder\Provider\Provider;
 use Http\Client\HttpClient;
 
 /**
@@ -67,9 +67,10 @@ final class LocationIQ extends AbstractHttpProvider implements Provider
 
     /**
      * Limit search to a list of countries.
+     *
      * @var string
      */
-    private $countrycodes = "fr";
+    private $countrycodes = 'fr';
 
     /**
      * For responses with no city value in the address section,
@@ -77,6 +78,7 @@ final class LocationIQ extends AbstractHttpProvider implements Provider
      * locality, town, borough, municipality, village, hamlet,
      * quarter, neighbourhood - from the address section will be
      * normalized to city. Defaults to 0.
+     *
      * @var int
      */
     private $normalizecity = 1;
@@ -92,12 +94,10 @@ final class LocationIQ extends AbstractHttpProvider implements Provider
      * enforced before and not after de-duplicating, it is
      * possible that de-duplicating leaves you with less
      * results than requested.
+     *
      * @var int
      */
     private $dedupe = 1;
-
-
-
 
     /**
      * @param HttpClient $client an HTTP adapter
@@ -125,10 +125,10 @@ final class LocationIQ extends AbstractHttpProvider implements Provider
         // Check if there is a viewbox
         if ($query->getBounds()) {
             $url .= self::VIEWBOX;
-            $url = str_replace('%min_lon%', (string)$query->getBounds()->getWest(), $url);
-            $url = str_replace('%min_lat%', (string)$query->getBounds()->getSouth(), $url);
-            $url = str_replace('%max_lon%', (string)$query->getBounds()->getEast(), $url);
-            $url = str_replace('%max_lat%', (string)$query->getBounds()->getNorth(), $url);
+            $url = str_replace('%min_lon%', (string) $query->getBounds()->getWest(), $url);
+            $url = str_replace('%min_lat%', (string) $query->getBounds()->getSouth(), $url);
+            $url = str_replace('%max_lon%', (string) $query->getBounds()->getEast(), $url);
+            $url = str_replace('%max_lat%', (string) $query->getBounds()->getNorth(), $url);
         }
 
         $content = $this->executeQuery($url, $query->getLocale());
@@ -177,11 +177,13 @@ final class LocationIQ extends AbstractHttpProvider implements Provider
     }
 
     /**
-     * @param \DOMElement $resultNode
-     * @param \DOMElement $addressNode
-     *
-     * @return Location
+     * {@inheritdoc}
      */
+    public function getName(): string
+    {
+        return 'locationiq';
+    }
+
     private function xmlResultToArray(\DOMElement $resultNode, \DOMElement $addressNode): Location
     {
         $builder = new AddressBuilder($this->getName());
@@ -200,10 +202,10 @@ final class LocationIQ extends AbstractHttpProvider implements Provider
         $builder->setPostalCode($postalCode);
         $builder->setStreetName($this->getNodeValue($addressNode->getElementsByTagName('road')) ?: $this->getNodeValue($addressNode->getElementsByTagName('pedestrian')));
         $builder->setStreetNumber($this->getNodeValue($addressNode->getElementsByTagName('house_number')));
-        //Locality if city not set ->county & if county not set ->village
+        // Locality if city not set ->county & if county not set ->village
         $builder->setLocality($this->getNodeValue($addressNode->getElementsByTagName('village')) ?: $this->getNodeValue($addressNode->getElementsByTagName('town')) ?: $this->getNodeValue($addressNode->getElementsByTagName('city')) ?: $this->getNodeValue($addressNode->getElementsByTagName('county')));
-        //SubLocality if suburb(not useful for the moment) not set ->village & if village not set ->county
-        $builder->setSubLocality(/*$this->getNodeValue($addressNode->getElementsByTagName('suburb')) ?:*/ $this->getNodeValue($addressNode->getElementsByTagName('village')) /*?: $this->getNodeValue($addressNode->getElementsByTagName('county'))*/);
+        // SubLocality if suburb(not useful for the moment) not set ->village & if village not set ->county
+        $builder->setSubLocality(/* $this->getNodeValue($addressNode->getElementsByTagName('suburb')) ?: */ $this->getNodeValue($addressNode->getElementsByTagName('village')) /* ?: $this->getNodeValue($addressNode->getElementsByTagName('county')) */);
         $builder->setCountry($this->getNodeValue($addressNode->getElementsByTagName('country')));
         $builder->setCountryCode(strtoupper($this->getNodeValue($addressNode->getElementsByTagName('country_code'))));
         $builder->setCoordinates($resultNode->getAttribute('lat'), $resultNode->getAttribute('lon'));
@@ -218,20 +220,6 @@ final class LocationIQ extends AbstractHttpProvider implements Provider
         return $builder->build();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getName(): string
-    {
-        return 'locationiq';
-    }
-
-    /**
-     * @param string      $url
-     * @param string|null $locale
-     *
-     * @return string
-     */
     private function executeQuery(string $url, string $locale = null): string
     {
         if (null !== $locale) {
@@ -243,7 +231,7 @@ final class LocationIQ extends AbstractHttpProvider implements Provider
 
     private function getGeocodeEndpointUrl(): string
     {
-        return self::BASE_API_URL.'/search.php?q=%s&format=xml&addressdetails=1&limit=%d&normalizecity=1&key='.$this->apiKey."&countrycodes=".$this->countrycodes;
+        return self::BASE_API_URL.'/search.php?q=%s&format=xml&addressdetails=1&limit=%d&normalizecity=1&key='.$this->apiKey.'&countrycodes='.$this->countrycodes;
     }
 
     private function getReverseEndpointUrl(): string

@@ -19,20 +19,20 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiProperty;
-use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
-use Symfony\Component\Validator\Constraints as Assert;
 use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * A special need for a solidary record.
@@ -77,12 +77,13 @@ use Doctrine\Common\Collections\ArrayCollection;
  * )
  * @ApiFilter(OrderFilter::class, properties={"id", "label"}, arguments={"orderParameterName"="order"})
  * @ApiFilter(SearchFilter::class, properties={"label":"partial"})
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class Need
 {
     /**
-     * @var int The id of this need.
+     * @var int the id of this need
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -93,7 +94,7 @@ class Need
     private $id;
 
     /**
-     * @var string Label of the need.
+     * @var string label of the need
      *
      * @Assert\NotBlank
      * @ORM\Column(type="string", length=255)
@@ -102,7 +103,7 @@ class Need
     private $label;
 
     /**
-     * @var string Label of the need from the volunteer point of view.
+     * @var string label of the need from the volunteer point of view
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"aRead","readUser","readSolidary","writeSolidary","readNeeds"})
@@ -110,7 +111,7 @@ class Need
     private $labelVolunteer;
 
     /**
-     * @var bool The need is not publicly available.
+     * @var bool the need is not publicly available
      *
      * @ORM\Column(type="boolean", nullable=true)
      * @MaxDepth(1)
@@ -119,7 +120,7 @@ class Need
     private $private;
 
     /**
-     * @var Solidary Solidary if the need was created for a specific solidary record.
+     * @var Solidary solidary if the need was created for a specific solidary record
      *
      * @ORM\ManyToOne(targetEntity="App\Solidary\Entity\Solidary")
      * @ORM\JoinColumn(onDelete="CASCADE")
@@ -129,30 +130,30 @@ class Need
     private $solidary;
 
     /**
-    * @var ArrayCollection|null The structures associated to the need.
-    *
-    * @ORM\ManyToMany(targetEntity="\App\Solidary\Entity\Structure", mappedBy="needs")
-    * @Groups({"readSolidary", "writeSolidary"})
-    * @MaxDepth(1)
-    */
+     * @var null|ArrayCollection the structures associated to the need
+     *
+     * @ORM\ManyToMany(targetEntity="\App\Solidary\Entity\Structure", mappedBy="needs")
+     * @Groups({"readSolidary", "writeSolidary"})
+     * @MaxDepth(1)
+     */
     private $structures;
 
     /**
-    * @var ArrayCollection|null The volunteers associated to the need.
-    *
-    * @ORM\ManyToMany(targetEntity="\App\Solidary\Entity\SolidaryUser", mappedBy="needs")
-    */
+     * @var null|ArrayCollection the volunteers associated to the need
+     *
+     * @ORM\ManyToMany(targetEntity="\App\Solidary\Entity\SolidaryUser", mappedBy="needs")
+     */
     private $volunteers;
 
     /**
-    * @var ArrayCollection|null The solidaries associated to the need.
-    *
-    * @ORM\ManyToMany(targetEntity="\App\Solidary\Entity\Solidary", mappedBy="needs")
-    */
+     * @var null|ArrayCollection the solidaries associated to the need
+     *
+     * @ORM\ManyToMany(targetEntity="\App\Solidary\Entity\Solidary", mappedBy="needs")
+     */
     private $solidaries;
 
     /**
-     * @var \DateTimeInterface Creation date.
+     * @var \DateTimeInterface creation date
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"readNeeds"})
@@ -160,7 +161,7 @@ class Need
     private $createdDate;
 
     /**
-     * @var \DateTimeInterface Updated date.
+     * @var \DateTimeInterface updated date
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"readNeeds"})
@@ -168,7 +169,7 @@ class Need
     private $updatedDate;
 
     /**
-     * @var bool The need is removable (not removable if it is used for a solidary or a volunteer).
+     * @var bool the need is removable (not removable if it is used for a solidary or a volunteer)
      *
      * @Groups("aRead")
      */
@@ -258,6 +259,7 @@ class Need
         if (!$this->structures->contains($structure)) {
             $this->structures->add($structure);
         }
+
         return $this;
     }
 
@@ -266,6 +268,7 @@ class Need
         if ($this->structures->contains($structure)) {
             $this->structures->removeElement($structure);
         }
+
         return $this;
     }
 
@@ -279,6 +282,7 @@ class Need
         if (!$this->volunteers->contains($volunteer)) {
             $this->volunteers->add($volunteer);
         }
+
         return $this;
     }
 
@@ -287,6 +291,7 @@ class Need
         if ($this->volunteers->contains($volunteer)) {
             $this->volunteers->removeElement($volunteer);
         }
+
         return $this;
     }
 
@@ -300,6 +305,7 @@ class Need
         if (!$this->solidaries->contains($solidary)) {
             $this->solidaries->add($solidary);
         }
+
         return $this;
     }
 
@@ -308,6 +314,7 @@ class Need
         if ($this->solidaries->contains($solidary)) {
             $this->solidaries->removeElement($solidary);
         }
+
         return $this;
     }
 
@@ -337,7 +344,7 @@ class Need
 
     public function isRemovable(): ?bool
     {
-        return (count($this->getVolunteers())+count($this->getSolidaries()))==0;
+        return (count($this->getVolunteers()) + count($this->getSolidaries())) == 0;
     }
 
     // DOCTRINE EVENTS
@@ -349,7 +356,7 @@ class Need
      */
     public function setAutoCreatedDate()
     {
-        $this->setCreatedDate(new \Datetime());
+        $this->setCreatedDate(new \DateTime());
     }
 
     /**
@@ -359,6 +366,6 @@ class Need
      */
     public function setAutoUpdatedDate()
     {
-        $this->setUpdatedDate(new \Datetime());
+        $this->setUpdatedDate(new \DateTime());
     }
 }

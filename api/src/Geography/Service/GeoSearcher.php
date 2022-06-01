@@ -287,8 +287,6 @@ class GeoSearcher
      * The other informations are retrieved from the GeoSearcher.
      *
      * @param array $point The point
-     *
-     * @return Address
      */
     public function getAddressByPartialAddressArray(array $point): Address
     {

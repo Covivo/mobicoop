@@ -19,14 +19,14 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\Security;
 
 use App\Auth\Service\AuthManager;
-use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use App\User\Entity\PushToken;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class PushTokenVoter extends Voter
 {
@@ -45,18 +45,19 @@ class PushTokenVoter extends Voter
         // if the attribute isn't one we support, return false
         if (!in_array($attribute, [
             self::PUSH_TOKEN_CREATE,
-            self::PUSH_TOKEN_DELETE
-            ])) {
+            self::PUSH_TOKEN_DELETE,
+        ])) {
             return false;
         }
 
         // only vote on User objects inside this voter
         if (!in_array($attribute, [
             self::PUSH_TOKEN_CREATE,
-            self::PUSH_TOKEN_DELETE
-            ]) && !($subject instanceof PushToken)) {
+            self::PUSH_TOKEN_DELETE,
+        ]) && !($subject instanceof PushToken)) {
             return false;
         }
+
         return true;
     }
 
@@ -65,6 +66,7 @@ class PushTokenVoter extends Voter
         switch ($attribute) {
             case self::PUSH_TOKEN_CREATE:
                 return $this->canCreatePushToken();
+
             case self::PUSH_TOKEN_DELETE:
                 return $this->canDeletePushToken($subject);
         }
@@ -79,6 +81,6 @@ class PushTokenVoter extends Voter
 
     private function canDeletePushToken(PushToken $pushToken)
     {
-        return $this->authManager->isAuthorized(self::PUSH_TOKEN_DELETE, ['pushToken'=>$pushToken]);
+        return $this->authManager->isAuthorized(self::PUSH_TOKEN_DELETE, ['pushToken' => $pushToken]);
     }
 }

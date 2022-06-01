@@ -19,19 +19,18 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\Ressource;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
-use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
-use Symfony\Component\Validator\Constraints as Assert;
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\User\Entity\User;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * A Block made by a User
+ * A Block made by a User.
  *
  * @ApiResource(
  *      attributes={
@@ -85,6 +84,7 @@ use App\User\Entity\User;
  *          }
  *      }
  * )
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class Block
@@ -104,12 +104,11 @@ class Block
      *
      * @Assert\NotBlank
      * @Groups({"readBlock","writeBlock"})
-     *
-    */
+     */
     private $user;
 
     /**
-     * @var \DateTimeInterface Creation date.
+     * @var \DateTimeInterface creation date
      *
      * @Groups({"readBlock"})
      */
@@ -143,7 +142,6 @@ class Block
 
         return $this;
     }
-
 
     public function getCreatedDate(): ?\DateTimeInterface
     {

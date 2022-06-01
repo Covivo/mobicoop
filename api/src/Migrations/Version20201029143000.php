@@ -23,16 +23,16 @@ final class Version20201029143000 extends AbstractMigration
         $this->addSql("INSERT INTO `auth_item` (`id`, `auth_rule_id`, `type`, `name`, `description`) VALUES (249, NULL, 1, 'review_delete', 'Delete a review')");
         $this->addSql("INSERT INTO `auth_item` (`id`, `auth_rule_id`, `type`, `name`, `description`) VALUES (250, NULL, 1, 'review_list', 'List the reviews where the calling user is involved')");
 
-        $this->addSql("INSERT INTO `auth_item_child` (`parent_id`, `child_id`) VALUES (3, 246)");
-        $this->addSql("INSERT INTO `auth_item_child` (`parent_id`, `child_id`) VALUES (3, 247)");
-        $this->addSql("INSERT INTO `auth_item_child` (`parent_id`, `child_id`) VALUES (2, 248)");
-        $this->addSql("INSERT INTO `auth_item_child` (`parent_id`, `child_id`) VALUES (2, 249)");
-        $this->addSql("INSERT INTO `auth_item_child` (`parent_id`, `child_id`) VALUES (3, 250)");
+        $this->addSql('INSERT INTO `auth_item_child` (`parent_id`, `child_id`) VALUES (3, 246)');
+        $this->addSql('INSERT INTO `auth_item_child` (`parent_id`, `child_id`) VALUES (3, 247)');
+        $this->addSql('INSERT INTO `auth_item_child` (`parent_id`, `child_id`) VALUES (2, 248)');
+        $this->addSql('INSERT INTO `auth_item_child` (`parent_id`, `child_id`) VALUES (2, 249)');
+        $this->addSql('INSERT INTO `auth_item_child` (`parent_id`, `child_id`) VALUES (3, 250)');
     }
 
     public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
+        $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
     }
 }

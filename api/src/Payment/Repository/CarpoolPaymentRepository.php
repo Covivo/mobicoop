@@ -19,16 +19,15 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Payment\Repository;
 
 use App\Payment\Entity\CarpoolItem;
-use Doctrine\ORM\EntityManagerInterface;
 use App\Payment\Entity\CarpoolPayment;
-use App\Payment\Ressource\PaymentItem;
 use App\User\Entity\User;
 use DateTime;
+use Doctrine\ORM\EntityManagerInterface;
 
 class CarpoolPaymentRepository
 {
@@ -55,43 +54,43 @@ class CarpoolPaymentRepository
     }
 
     /**
-     * Find successful electronic payment and related items for the given period
+     * Find successful electronic payment and related items for the given period.
      *
-     * @param DateTime $fromDate        The start date and time
-     * @param DateTime $toDate          The end date and time
-     * @return CarpoolPayment[]|null    The carpool payments if found
+     * @param DateTime $fromDate The start date and time
+     * @param DateTime $toDate   The end date and time
+     *
+     * @return null|CarpoolPayment[] The carpool payments if found
      */
     public function findSuccessfulElectronicPaymentsForPeriod(DateTime $fromDate, DateTime $toDate): ?array
     {
         $query = $this->repository->createQueryBuilder('cp')
-        ->join('cp.carpoolItems', 'ci')
-        ->where('ci.debtorStatus = :debtorStatus')
-        ->andWhere('cp.status = :success and cp.transactionId IS NOT NULL')
-        ->andWhere('cp.transactionDate between :fromDate and :toDate')
-        ->setParameter('debtorStatus', CarpoolItem::DEBTOR_STATUS_ONLINE)
-        ->setParameter('success', CarpoolPayment::STATUS_SUCCESS)
-        ->setParameter('fromDate', $fromDate->format('Y-m-d H:i:s'))
-        ->setParameter('toDate', $toDate->format('Y-m-d H:i:s'))
+            ->join('cp.carpoolItems', 'ci')
+            ->where('ci.debtorStatus = :debtorStatus')
+            ->andWhere('cp.status = :success and cp.transactionId IS NOT NULL')
+            ->andWhere('cp.transactionDate between :fromDate and :toDate')
+            ->setParameter('debtorStatus', CarpoolItem::DEBTOR_STATUS_ONLINE)
+            ->setParameter('success', CarpoolPayment::STATUS_SUCCESS)
+            ->setParameter('fromDate', $fromDate->format('Y-m-d H:i:s'))
+            ->setParameter('toDate', $toDate->format('Y-m-d H:i:s'))
         ;
 
         return $query->getQuery()->getResult();
     }
 
     /**
-     * Find a carpoolpayment made by $debtor about a $carpoolItem
+     * Find a carpoolpayment made by $debtor about a $carpoolItem.
      *
-     * @param User $debtor
-     * @param CarpoolItem $carpoolItem
-     * @return CarpoolPayment[]|null
+     * @return null|CarpoolPayment[]
      */
     public function findCarpoolPaymentByDebtorAndCarpoolItem(User $debtor, CarpoolItem $carpoolItem): ?array
     {
         $query = $this->repository->createQueryBuilder('cp')
-        ->join('cp.carpoolItems', 'ci')
-        ->where('cp.user = :debtor')
-        ->andWhere('ci.id = :carpoolItemId')
-        ->setParameter('debtor', $debtor)
-        ->setParameter('carpoolItemId', $carpoolItem->getId());
+            ->join('cp.carpoolItems', 'ci')
+            ->where('cp.user = :debtor')
+            ->andWhere('ci.id = :carpoolItemId')
+            ->setParameter('debtor', $debtor)
+            ->setParameter('carpoolItemId', $carpoolItem->getId())
+        ;
 
         return $query->getQuery()->getResult();
     }

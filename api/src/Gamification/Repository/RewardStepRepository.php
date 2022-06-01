@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Gamification\Repository;
 
@@ -30,7 +30,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 
 /**
- * Gamification : RewardStep Repository
+ * Gamification : RewardStep Repository.
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class RewardStepRepository
@@ -69,17 +70,16 @@ class RewardStepRepository
     }
 
     /**
-     * Get the RewardStep that has not been notified yet
+     * Get the RewardStep that has not been notified yet.
      *
-     * @var User $user  The User we want to get the RewardStep in waiting
-     * @return array|null
+     * @var User The User we want to get the RewardStep in waiting
      */
     public function findWaiting(User $user): ?array
     {
         $query = $this->repository->createQueryBuilder('rs')
-        ->where('rs.notifiedDate is null')
-        ->andWhere('rs.user = :user')
-        ->setParameter('user', $user)
+            ->where('rs.notifiedDate is null')
+            ->andWhere('rs.user = :user')
+            ->setParameter('user', $user)
         ;
 
         return $query->getQuery()->getResult();

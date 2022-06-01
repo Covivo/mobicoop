@@ -19,14 +19,14 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Gamification\Rule;
 
 use App\Gamification\Interfaces\GamificationRuleInterface;
 
 /**
- * check that the user has only one ad
+ * check that the user has only one ad.
  */
 class HasOnlyOneAd implements GamificationRuleInterface
 {
@@ -45,9 +45,10 @@ class HasOnlyOneAd implements GamificationRuleInterface
                 $publishedProposals[] = $proposal;
             }
         }
-        if (count($publishedProposals) === 1) {
+        if (1 === count($publishedProposals)) {
             return true;
         }
+
         return false;
     }
 }

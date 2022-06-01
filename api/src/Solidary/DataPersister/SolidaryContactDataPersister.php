@@ -18,7 +18,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\DataPersister;
 
@@ -45,9 +45,10 @@ final class SolidaryContactDataPersister implements ContextAwareDataPersisterInt
 
     public function persist($data, array $context = [])
     {
-        if (isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'post') {
+        if (isset($context['collection_operation_name']) && 'post' == $context['collection_operation_name']) {
             $data = $this->solidaryContactManager->handleSolidaryContact($data);
         }
+
         return $data;
     }
 

@@ -19,18 +19,18 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\ExternalJourney\Ressource;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\User\Entity\User;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * An external connection (i.e. sending a message) to an ExternalJourneyProvider
+ * An external connection (i.e. sending a message) to an ExternalJourneyProvider.
  *
  * @ApiResource(
  *      attributes={
@@ -61,6 +61,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          }
  *      }
  * )
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class ExternalConnection
@@ -71,15 +72,15 @@ class ExternalConnection
     public const ROLE_PASSENGER = 2;
     public const ROLE_DRIVER_OR_PASSENGER = 3;
 
-    public const STATUS_RECIPIENT = "recipient";
-    public const STATUS_SENDER = "sender";
+    public const STATUS_RECIPIENT = 'recipient';
+    public const STATUS_SENDER = 'sender';
 
     /**
      * @var int Id of the ExternalConnection
      *
      * @ApiProperty(identifier=true)
      * @Groups({"readExternalConnection"})
-    */
+     */
     private $id;
 
     /**
@@ -88,7 +89,6 @@ class ExternalConnection
      * @Groups({"readExternalConnection","writeExternalConnection"})
      */
     private $provider;
-
 
     /**
      * @var int The role of the User who's sending the external connection

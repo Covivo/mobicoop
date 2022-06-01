@@ -19,14 +19,14 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\Controller;
 
 use App\TranslatorTrait;
-use Symfony\Component\HttpFoundation\Response;
 use App\User\Entity\User;
 use App\User\Service\UserManager;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Controller class for user threads (list of messages as sender or recipient).
@@ -45,17 +45,15 @@ class UserThreads
 
     /**
      * This method is invoked when the list of messages is asked.
-     *
-     * @param User $data
-     * @return Response
      */
     public function __invoke(User $data): Response
     {
         if (is_null($data)) {
-            throw new \InvalidArgumentException($this->translator->trans("bad User id is provided"));
+            throw new \InvalidArgumentException($this->translator->trans('bad User id is provided'));
         }
         // we search the messages
         $data->setThreads($this->userManager->getThreads($data));
+
         return $data;
     }
 }

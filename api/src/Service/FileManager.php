@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Service;
 
@@ -34,20 +34,17 @@ class FileManager
 {
     /**
      * Sanitizes a name (remove special chars, replace spaces...).
-     * @param string $string
-     * @param boolean $force_lowercase
-     * @param boolean $anal
+     *
      * @param string $replace The replacement char for forbidden chars
-     * @return string
      */
-    public function sanitize(string $string, bool $force_lowercase = true, bool $anal = false, string $replace = ""): string
+    public function sanitize(string $string, bool $force_lowercase = true, bool $anal = false, string $replace = ''): string
     {
-        $strip = array("~", "`", "!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "_", "=", "+", "[", "{", "]",
-            "}", "\\", "|", ";", ":", "\"", "'", "&#8216;", "&#8217;", "&#8220;", "&#8221;", "&#8211;", "&#8212;",
-            "â€”", "â€“", ",", "<", ".", ">", "/", "?");
+        $strip = ['~', '`', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '=', '+', '[', '{', ']',
+            '}', '\\', '|', ';', ':', '"', "'", '&#8216;', '&#8217;', '&#8220;', '&#8221;', '&#8211;', '&#8212;',
+            'â€”', 'â€“', ',', '<', '.', '>', '/', '?', ];
         $clean = trim(str_replace($strip, $replace, strip_tags($string)));
-        $clean = preg_replace('/\s+/', "-", $clean);
-        $clean = ($anal) ? preg_replace("/[^a-zA-Z0-9]/", $replace, $clean) : $clean ;
+        $clean = preg_replace('/\s+/', '-', $clean);
+        $clean = ($anal) ? preg_replace('/[^a-zA-Z0-9]/', $replace, $clean) : $clean;
         if ($force_lowercase) {
             if (function_exists('mb_strtolower')) {
                 $clean = mb_strtolower($clean, 'UTF-8');
@@ -56,37 +53,38 @@ class FileManager
             }
         }
 
-        $clean = strtr($clean, [
-            "à" => "a",
-            "â" => "a",
-            "ä" => "a",
-            "é" => "e",
-            "è" => "e",
-            "ê" => "e",
-            "ë" => "e",
-            "ï" => "i",
-            "î" => "i",
-            "ô" => "o",
-            "ö" => "o",
-            "ù" => "u",
-            "û" => "u",
-            "ü" => "u",
-            "ç" => "c"
+        return strtr($clean, [
+            'à' => 'a',
+            'â' => 'a',
+            'ä' => 'a',
+            'é' => 'e',
+            'è' => 'e',
+            'ê' => 'e',
+            'ë' => 'e',
+            'ï' => 'i',
+            'î' => 'i',
+            'ô' => 'o',
+            'ö' => 'o',
+            'ù' => 'u',
+            'û' => 'u',
+            'ü' => 'u',
+            'ç' => 'c',
         ]);
-        return $clean;
     }
 
     /**
      * Returns the extension of a file.
+     *
      * @param mixed $file
-     * @return string
      */
     public function getExtension($file): string
     {
         if (is_string($file)) {
             return substr(strrchr($file, '.'), 1);
-        } elseif (is_object($file)) {
+        }
+        if (is_object($file)) {
             $fileParts = pathinfo($file);
+
             return $fileParts['extension'];
         }
     }

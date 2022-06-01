@@ -391,8 +391,6 @@ class SolidaryManager
 
     /**
      * Create a solidary.
-     *
-     * @return Solidary
      */
     public function createSolidary(Solidary $solidary): Solidary
     {
@@ -526,8 +524,6 @@ class SolidaryManager
      * Get the solidary solutions of a solidary.
      *
      * @param int $solidaryId Id of the Solidary
-     *
-     * @return null|array
      */
     public function getSolidarySolutions(int $solidaryId): ?array
     {
@@ -536,8 +532,6 @@ class SolidaryManager
 
     /**
      * Get the list of all the Asks (Solidary or not) linked to a Solidary.
-     *
-     * @return Solidary
      */
     public function getAsksList(int $solidaryId): Solidary
     {
