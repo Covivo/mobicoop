@@ -42,13 +42,13 @@ final class SolidaryAnimationCollectionDataProvider implements CollectionDataPro
     {
         $this->solidaryAnimationManager = $solidaryAnimationManager;
     }
-    
+
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
         if (isset($context['filters'])) {
             $this->filters = $context['filters'];
         }
-        
+
         return SolidaryAnimation::class === $resourceClass && $operationName == "get";
     }
 

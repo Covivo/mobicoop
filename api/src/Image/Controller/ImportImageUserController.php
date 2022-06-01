@@ -32,12 +32,12 @@ class ImportImageUserController extends AbstractController
     use TranslatorTrait;
 
     private $imageManager;
-    
+
     public function __construct(ImageManager $imageManager)
     {
         $this->imageManager = $imageManager;
     }
-    
+
     public function __invoke()
     {
         return $this->imageManager->importUserImage();

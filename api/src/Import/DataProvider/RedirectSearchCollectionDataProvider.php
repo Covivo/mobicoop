@@ -39,18 +39,18 @@ final class RedirectSearchCollectionDataProvider implements CollectionDataProvid
 {
     protected $request;
     protected $redirectManager;
-    
+
     public function __construct(RequestStack $requestStack, RedirectManager $redirectManager)
     {
         $this->request = $requestStack->getCurrentRequest();
         $this->redirectManager = $redirectManager;
     }
-    
+
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
         return Redirect::class === $resourceClass && $operationName === "get";
     }
-    
+
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
         return $this->redirectManager->getRedirect($this->request->get("originUri"));

@@ -43,12 +43,12 @@ final class UserCarpoolExportItemDataProvider implements ItemDataProviderInterfa
         $this->security = $security;
         $this->carpoolExportManager = $carpoolExportManager;
     }
-    
+
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
         return User::class === $resourceClass && $operationName === "getCarpoolExport";
     }
-    
+
     public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): User
     {
         /**

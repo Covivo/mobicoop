@@ -39,18 +39,18 @@ final class EventIsCreatedByUserCollectionDataProvider implements CollectionData
 {
     protected $request;
     private $eventManager;
-    
+
     public function __construct(RequestStack $requestStack, eventManager $eventManager)
     {
         $this->request = $requestStack->getCurrentRequest();
         $this->eventManager = $eventManager;
     }
-    
+
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
         return event::class === $resourceClass && $operationName === "created";
     }
-    
+
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
         return $this->eventManager->getCreatedEvents($this->request->get("userId"));

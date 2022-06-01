@@ -53,7 +53,7 @@ class Position
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      */
     private $proposal;
-        
+
     /**
      * @var Waypoint The floating waypoint corresponding to the position.
      *
@@ -112,7 +112,7 @@ class Position
 
         return $this;
     }
-    
+
     public function getWaypoint(): ?Waypoint
     {
         return $this->waypoint;
@@ -129,11 +129,11 @@ class Position
     {
         return $this->direction;
     }
-    
+
     public function setDirection(?Direction $direction): self
     {
         $this->direction = $direction;
-        
+
         return $this;
     }
 
@@ -141,11 +141,11 @@ class Position
     {
         return $this->geoJsonPoints;
     }
-    
+
     public function setGeoJsonPoints($geoJsonPoints): self
     {
         $this->geoJsonPoints = $geoJsonPoints;
-        
+
         return $this;
     }
 
@@ -177,16 +177,16 @@ class Position
     {
         return $this->points;
     }
-    
+
     public function setPoints(array $points): self
     {
         $this->points = $points;
-        
+
         return $this;
     }
 
     // DOCTRINE EVENTS
-    
+
     /**
      * Creation date.
      *

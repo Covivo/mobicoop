@@ -51,7 +51,7 @@ final class UserMessagesThreadsItemDataProvider implements ItemDataProviderInter
     public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?User
     {
         $user = $this->userManager->getUser($id);
-        
+
         if ($operationName === "threadsDirectMessages") {
             $user->setThreads($this->userManager->getThreadsDirectMessages($user));
         }

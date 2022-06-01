@@ -41,19 +41,19 @@ final class TripPointCollectionDataProvider implements CollectionDataProviderInt
 {
     private $dataProvider;
     protected $request;
-    
+
     public function __construct(RequestStack $requestStack, PTDataProvider $dataProvider)
     {
         $this->dataProvider = $dataProvider;
         $this->request = $requestStack->getCurrentRequest();
     }
-    
-    
+
+
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
         return PTTripPoint::class === $resourceClass;
     }
-    
+
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
 

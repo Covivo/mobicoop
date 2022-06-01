@@ -39,7 +39,7 @@ final class SsoConnectionCollectionDataProvider implements CollectionDataProvide
     private $security;
     private $ssoManager;
     private $request;
-    
+
     public function __construct(RequestStack $request, Security $security, SsoManager $ssoManager)
     {
         $this->security = $security;
@@ -57,7 +57,7 @@ final class SsoConnectionCollectionDataProvider implements CollectionDataProvide
         if ($this->request->get('baseSiteUri')=="") {
             throw new \LogicException("Parameter missing : baseSiteUri");
         }
-        
+
         return $this->ssoManager->getSsoConnectionServices($this->request->get('baseSiteUri'));
     }
 }

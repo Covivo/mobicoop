@@ -40,12 +40,12 @@ final class GrantableRolesDataProvider implements CollectionDataProviderInterfac
     {
         $this->authManager = $authManager;
     }
-    
+
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
         return Permission::class === $resourceClass && $operationName === "ADMIN_grantable";
     }
-    
+
     public function getCollection(string $resourceClass, string $operationName = null): iterable
     {
         return $this->authManager->getGrantable();

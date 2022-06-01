@@ -78,7 +78,7 @@ class WeekSchedule
      * @Groups({"rdexPlusRead","rdexPlusWrite"})
      */
     private $wednesdayTimeDelta;
-    
+
     /**
      * @var string Time using a UTC partial time string (example "08:30:00") of departure for the journey (outward or return) on Thursdays, if any.
      *
@@ -92,7 +92,7 @@ class WeekSchedule
      * @Groups({"rdexPlusRead","rdexPlusWrite"})
      */
     private $thursdayTimeDelta;
-    
+
     /**
      * @var string Time using a UTC partial time string (example "08:30:00") of departure for the journey (outward or return) on Fridays, if any.
      *
@@ -106,7 +106,7 @@ class WeekSchedule
      * @Groups({"rdexPlusRead","rdexPlusWrite"})
      */
     private $fridayTimeDelta;
-    
+
     /**
      * @var string Time using a UTC partial time string (example "08:30:00") of departure for the journey (outward or return) on Saturdays, if any.
      *
@@ -120,7 +120,7 @@ class WeekSchedule
      * @Groups({"rdexPlusRead","rdexPlusWrite"})
      */
     private $saturdayTimeDelta;
-    
+
     /**
      * @var string Time using a UTC partial time string (example "08:30:00") of departure for the journey (outward or return) on Sundays, if any.
      *
@@ -147,7 +147,7 @@ class WeekSchedule
 
         return $this;
     }
-    
+
     public function getMondayTimeDelta(): ?int
     {
         return $this->mondayTimeDelta;
@@ -171,7 +171,7 @@ class WeekSchedule
 
         return $this;
     }
-    
+
     public function getTuesdayTimeDelta(): ?int
     {
         return $this->tuesdayTimeDelta;
@@ -183,7 +183,7 @@ class WeekSchedule
 
         return $this;
     }
-    
+
     public function getWednesdayTime(): ?string
     {
         return $this->wednesdayTime;
@@ -195,7 +195,7 @@ class WeekSchedule
 
         return $this;
     }
-    
+
     public function getWednesdayTimeDelta(): ?int
     {
         return $this->wednesdayTimeDelta;
@@ -207,7 +207,7 @@ class WeekSchedule
 
         return $this;
     }
-    
+
     public function getThursdayTime(): ?string
     {
         return $this->thursdayTime;
@@ -219,7 +219,7 @@ class WeekSchedule
 
         return $this;
     }
-    
+
     public function getThursdayTimeDelta(): ?int
     {
         return $this->thursdayTimeDelta;
@@ -231,7 +231,7 @@ class WeekSchedule
 
         return $this;
     }
-    
+
     public function getFridayTime(): ?string
     {
         return $this->fridayTime;
@@ -243,7 +243,7 @@ class WeekSchedule
 
         return $this;
     }
-    
+
     public function getFridayTimeDelta(): ?int
     {
         return $this->fridayTimeDelta;
@@ -255,7 +255,7 @@ class WeekSchedule
 
         return $this;
     }
-    
+
     public function getSaturdayTime(): ?string
     {
         return $this->saturdayTime;
@@ -267,7 +267,7 @@ class WeekSchedule
 
         return $this;
     }
-    
+
     public function getSaturdayTimeDelta(): ?int
     {
         return $this->saturdayTimeDelta;
@@ -279,7 +279,7 @@ class WeekSchedule
 
         return $this;
     }
-    
+
     public function getSundayTime(): ?string
     {
         return $this->sundayTime;
@@ -291,7 +291,7 @@ class WeekSchedule
 
         return $this;
     }
-    
+
     public function getSundayTimeDelta(): ?int
     {
         return $this->sundayTimeDelta;

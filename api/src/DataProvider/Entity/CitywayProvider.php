@@ -97,7 +97,7 @@ class CitywayProvider implements ProviderInterface
     private const CW_PT_MODE_METRO = "METRO";
     private const CW_PT_MODE_TROLLEY_BUS = "TROLLEY_BUS";
     private const CW_PT_MODE_UNKNOWN = "UNKNOWN";
- 
+
     private const CW_COUNTRY = "France";
     private const CW_NC = "";
 

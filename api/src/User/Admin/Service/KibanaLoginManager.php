@@ -52,7 +52,7 @@ class KibanaLoginManager
         $this->loginsSolidaryOperator = $loginsSolidaryOperator;
     }
 
-    
+
     /**
      * Get the Kibana logins regarding the role of the caller
      *

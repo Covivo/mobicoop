@@ -31,7 +31,7 @@ use App\Gamification\Resource\TestAction;
 
 class TestActionVoter extends Voter
 {
-    const GAMIFICATION_TEST_ACTION = 'gamification_test_action';
+    public const GAMIFICATION_TEST_ACTION = 'gamification_test_action';
 
     private $authManager;
 

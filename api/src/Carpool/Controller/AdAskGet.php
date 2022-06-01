@@ -37,11 +37,11 @@ use Symfony\Component\Security\Core\Security;
 class AdAskGet
 {
     use TranslatorTrait;
-    
+
     private $request;
     private $askManager;
     private $security;
-    
+
     public function __construct(RequestStack $requestStack, AskManager $askManager, Security $security)
     {
         $this->request = $requestStack->getCurrentRequest();

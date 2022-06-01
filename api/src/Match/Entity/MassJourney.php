@@ -31,7 +31,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
  */
 class MassJourney
 {
-
     /**
      * @var int $idPerson
      * @Groups({"mass","massCompute"})

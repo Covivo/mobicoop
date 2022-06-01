@@ -112,10 +112,10 @@ use App\User\Entity\User;
  */
 class SolidaryBeneficiary
 {
-    const DEFAULT_ID = 999999999999;
-    const TYPE = "beneficiary";
-    const AUTHORIZED_GENERIC_FILTERS = ['familyName','givenName','email'];
-    const VALIDATED_CANDIDATE_FILTER = 'validatedCandidate';
+    public const DEFAULT_ID = 999999999999;
+    public const TYPE = "beneficiary";
+    public const AUTHORIZED_GENERIC_FILTERS = ['familyName','givenName','email'];
+    public const VALIDATED_CANDIDATE_FILTER = 'validatedCandidate';
 
     /**
      * @var int The id of this solidary user.
@@ -210,7 +210,7 @@ class SolidaryBeneficiary
      * @Groups({"aReadItem","readSolidary","writeSolidary"})
      */
     private $proofs;
-    
+
     /**
      * @var bool|null If the candidate is validated or not
      * @Groups({"readSolidary","writeSolidary"})
@@ -275,16 +275,16 @@ class SolidaryBeneficiary
         $this->diaries = [];
         $this->solidaries = [];
     }
-    
+
     public function getId(): ?int
     {
         return $this->id;
     }
-    
+
     public function setId(int $id): self
     {
         $this->id = $id;
-        
+
         return $this;
     }
 
@@ -383,7 +383,7 @@ class SolidaryBeneficiary
 
         return $this;
     }
-    
+
     public function getUser(): ?User
     {
         return $this->user;
@@ -424,11 +424,11 @@ class SolidaryBeneficiary
     {
         return $this->comment;
     }
-    
+
     public function setComment(?string $comment): self
     {
         $this->comment = $comment;
-        
+
         return $this;
     }
 

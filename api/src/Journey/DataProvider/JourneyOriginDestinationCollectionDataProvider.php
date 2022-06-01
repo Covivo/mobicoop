@@ -39,19 +39,19 @@ final class JourneyOriginDestinationCollectionDataProvider implements Collection
     protected $journeyManager;
     protected $security;
     protected $request;
-    
+
     public function __construct(JourneyManager $journeyManager, RequestStack $requestStack, Security $security)
     {
         $this->journeyManager = $journeyManager;
         $this->security = $security;
         $this->request = $requestStack->getCurrentRequest();
     }
-    
+
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
         return Journey::class === $resourceClass && $operationName === "originDestination";
     }
-    
+
     public function getCollection(string $resourceClass, string $operationName = null, array $context = []): iterable
     {
         return $this->journeyManager->getFromTo($this->request->get('origin'), $this->request->get('destination'), $operationName, $context);

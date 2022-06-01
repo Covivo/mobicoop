@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /**
  * Copyright (c) 2018, MOBICOOP. All rights reserved.
@@ -31,7 +33,7 @@ use Doctrine\Migrations\AbstractMigration;
  */
 final class Version20190429152547 extends AbstractMigration
 {
-    public function up(Schema $schema) : void
+    public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
@@ -40,7 +42,7 @@ final class Version20190429152547 extends AbstractMigration
         $this->addSql('ALTER TABLE address ADD house_number VARCHAR(45) DEFAULT NULL, ADD street VARCHAR(255) DEFAULT NULL, ADD sub_locality VARCHAR(100) DEFAULT NULL, ADD local_admin VARCHAR(100) DEFAULT NULL, ADD county VARCHAR(100) DEFAULT NULL, ADD macro_county VARCHAR(100) DEFAULT NULL, ADD region VARCHAR(100) DEFAULT NULL, ADD macro_region VARCHAR(100) DEFAULT NULL, ADD country_code VARCHAR(10) DEFAULT NULL');
     }
 
-    public function down(Schema $schema) : void
+    public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');

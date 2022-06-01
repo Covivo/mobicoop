@@ -77,7 +77,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Review
 {
-    const DEFAULT_ID = 999999999999;
+    public const DEFAULT_ID = 999999999999;
 
     /**
      * @var int $id The id of this Review.
@@ -86,7 +86,7 @@ class Review
      * @Groups({"readReview","readPublicProfile"})
      */
     private $id;
-   
+
     /**
      * @var User The User who left this Review
      *
@@ -140,7 +140,7 @@ class Review
     public function setId(int $id): self
     {
         $this->id = $id;
-        
+
         return $this;
     }
 
@@ -152,7 +152,7 @@ class Review
     public function setReviewer(?User $reviewer): self
     {
         $this->reviewer = $reviewer;
-        
+
         return $this;
     }
 
@@ -164,7 +164,7 @@ class Review
     public function setReviewed(?User $reviewed): self
     {
         $this->reviewed = $reviewed;
-        
+
         return $this;
     }
 
@@ -176,7 +176,7 @@ class Review
     public function setContent(?string $content): self
     {
         $this->content = $content;
-        
+
         return $this;
     }
 
@@ -188,7 +188,7 @@ class Review
     public function setLeft(?bool $left): self
     {
         $this->left = $left;
-        
+
         return $this;
     }
 

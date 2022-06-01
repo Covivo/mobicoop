@@ -35,9 +35,9 @@ use App\TranslatorTrait;
 class SectionDown
 {
     use TranslatorTrait;
-    
+
     private $articleManager;
-    
+
     public function __construct(ArticleManager $articleManager)
     {
         $this->articleManager = $articleManager;

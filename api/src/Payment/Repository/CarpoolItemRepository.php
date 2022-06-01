@@ -35,7 +35,7 @@ use DateTime;
 class CarpoolItemRepository
 {
     private $repository;
-    
+
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->repository = $entityManager->getRepository(CarpoolItem::class);
@@ -141,7 +141,7 @@ class CarpoolItemRepository
         $query = $this->repository->createQueryBuilder('ci')
         ->where('ci.creditorUser = :user OR ci.debtorUser = :user')
         ->setParameter('user', $user);
-        
+
         return $query->getQuery()->getResult();
     }
 
@@ -155,8 +155,8 @@ class CarpoolItemRepository
         $query = $this->repository->createQueryBuilder('ci')
         ->where('ci.debtorConsumptionFeedbackDate is not null OR ci.creditorConsumptionFeedbackDate is not null')
         ->andWhere('(ci.debtorConsumptionFeedbackReturnCode is not null and ci.debtorConsumptionFeedbackReturnCode <> 200) OR (ci.creditorConsumptionFeedbackReturnCode is not null and ci.creditorConsumptionFeedbackReturnCode <> 200)');
-        
-        
+
+
         return $query->getQuery()->getResult();
     }
 }

@@ -64,7 +64,7 @@ final class RelayPointTerritoryFilterExtension implements QueryCollectionExtensi
 
         // we check if the user has limited territories
         $territories = $this->authManager->getTerritoriesForItem("relay_point_list");
-        
+
         if (count($territories)>0) {
             $rootAlias = $queryBuilder->getRootAliases()[0];
             $queryBuilder

@@ -33,12 +33,12 @@ use Symfony\Component\Security\Core\Security;
 
 class DynamicVoter extends Voter
 {
-    const DYNAMIC_AD_CREATE = 'dynamic_ad_create';
-    const DYNAMIC_AD_READ = 'dynamic_ad_read';
-    const DYNAMIC_AD_UPDATE = 'dynamic_ad_update';
-    const DYNAMIC_AD_DELETE = 'dynamic_ad_delete';
-    const DYNAMIC_AD_LIST = 'dynamic_ad_list';
-    
+    public const DYNAMIC_AD_CREATE = 'dynamic_ad_create';
+    public const DYNAMIC_AD_READ = 'dynamic_ad_read';
+    public const DYNAMIC_AD_UPDATE = 'dynamic_ad_update';
+    public const DYNAMIC_AD_DELETE = 'dynamic_ad_delete';
+    public const DYNAMIC_AD_LIST = 'dynamic_ad_list';
+
     private $security;
     private $request;
     private $authManager;

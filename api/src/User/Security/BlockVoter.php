@@ -32,10 +32,10 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class BlockVoter extends Voter
 {
-    const BLOCK_CREATE = 'block_create';
-    const BLOCK_BLOCKED = 'block_blocked';
-    const BLOCK_BLOCKEDBY = 'block_blockedby';
-    
+    public const BLOCK_CREATE = 'block_create';
+    public const BLOCK_BLOCKED = 'block_blocked';
+    public const BLOCK_BLOCKEDBY = 'block_blockedby';
+
     private $authManager;
 
     public function __construct(AuthManager $authManager)
@@ -53,7 +53,7 @@ class BlockVoter extends Voter
             ])) {
             return false;
         }
-      
+
         // only vote on User objects inside this voter
         if (!in_array($attribute, [
             self::BLOCK_CREATE,

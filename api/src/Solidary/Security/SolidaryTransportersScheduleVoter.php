@@ -34,8 +34,8 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
  */
 class SolidaryTransportersScheduleVoter extends Voter
 {
-    const SOLIDARY_TRANSPORTERS_SCHEDULE = 'solidary_transporters_schedule';
-    
+    public const SOLIDARY_TRANSPORTERS_SCHEDULE = 'solidary_transporters_schedule';
+
     private $authManager;
 
     public function __construct(AuthManager $authManager)
@@ -51,7 +51,7 @@ class SolidaryTransportersScheduleVoter extends Voter
             ])) {
             return false;
         }
-      
+
         // only vote on User objects inside this voter
         if (!in_array($attribute, [
             self::SOLIDARY_TRANSPORTERS_SCHEDULE

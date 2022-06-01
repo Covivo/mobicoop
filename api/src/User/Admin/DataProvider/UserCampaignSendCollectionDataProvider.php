@@ -54,7 +54,7 @@ final class UserCampaignSendCollectionDataProvider implements CollectionDataProv
     private $authManager;
     private $campaignManager;
 
-    const MAX_RESULTS = 999999;
+    public const MAX_RESULTS = 999999;
 
     public function __construct(RequestStack $requestStack, CampaignRepository $campaignRepository, AuthManager $authManager, CampaignManager $campaignManager, ManagerRegistry $managerRegistry, iterable $collectionExtensions)
     {

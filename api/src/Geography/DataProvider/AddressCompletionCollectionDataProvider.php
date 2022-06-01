@@ -39,18 +39,18 @@ final class AddressCompletionCollectionDataProvider implements CollectionDataPro
 {
     protected $request;
     private $addressManager;
-    
+
     public function __construct(RequestStack $requestStack, AddressManager $addressManager)
     {
         $this->request = $requestStack->getCurrentRequest();
         $this->addressManager = $addressManager;
     }
-    
+
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
         return Address::class === $resourceClass && $operationName === "completion";
     }
-    
+
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
         $this->addressManager->completeMinimalAddresses();

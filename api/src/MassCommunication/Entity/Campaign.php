@@ -172,23 +172,23 @@ use App\Action\Entity\Log;
  */
 class Campaign
 {
-    const STATUS_PENDING = 0;   // when the campaign has not been tested yet
-    const STATUS_CREATED = 1;   // when the campaign has been successfully tested
-    const STATUS_SENT = 2;      // when the campaign was sent
-    const STATUS_ARCHIVED = 3;  // when the campaign is archived (not editable anymore)
+    public const STATUS_PENDING = 0;   // when the campaign has not been tested yet
+    public const STATUS_CREATED = 1;   // when the campaign has been successfully tested
+    public const STATUS_SENT = 2;      // when the campaign was sent
+    public const STATUS_ARCHIVED = 3;  // when the campaign is archived (not editable anymore)
 
-    const SOURCE_USER = 1;          // user resource as source
-    const SOURCE_COMMUNITY = 2;     // community members as source
+    public const SOURCE_USER = 1;          // user resource as source
+    public const SOURCE_COMMUNITY = 2;     // community members as source
 
-    const SOURCES = [
+    public const SOURCES = [
         self::SOURCE_USER,
         self::SOURCE_COMMUNITY
     ];
 
-    const FILTER_TYPE_SELECTION = 1;    // filter using a selection of users
-    const FILTER_TYPE_FILTER = 2;       // filter using a resource filter (empty filter to get all users)
+    public const FILTER_TYPE_SELECTION = 1;    // filter using a selection of users
+    public const FILTER_TYPE_FILTER = 2;       // filter using a resource filter (empty filter to get all users)
 
-    const FILTER_TYPES = [
+    public const FILTER_TYPES = [
         self::FILTER_TYPE_SELECTION,
         self::FILTER_TYPE_FILTER
     ];
@@ -756,22 +756,22 @@ class Campaign
 
         return $this;
     }
-    
+
     public function getLogs()
     {
         return $this->logs->getValues();
     }
-    
+
     public function addLog(Log $log): self
     {
         if (!$this->logs->contains($log)) {
             $this->logs[] = $log;
             $log->setCampaign($this);
         }
-        
+
         return $this;
     }
-    
+
     public function removeLog(Log $log): self
     {
         if ($this->logs->contains($log)) {
@@ -781,7 +781,7 @@ class Campaign
                 $log->setCampaign(null);
             }
         }
-        
+
         return $this;
     }
 

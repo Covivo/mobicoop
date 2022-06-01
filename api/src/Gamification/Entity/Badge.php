@@ -76,20 +76,20 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
  */
 class Badge
 {
-    const STATUS_DRAFT = 0;
-    const STATUS_ACTIVE = 1;
-    const STATUS_INACTIVE = 2;
+    public const STATUS_DRAFT = 0;
+    public const STATUS_ACTIVE = 1;
+    public const STATUS_INACTIVE = 2;
 
-    const BADGE_id_1 = "remove_the_mask";
-    const BADGE_id_2 = "launch";
-    const BADGE_id_3 = "first_time";
-    const BADGE_id_4 = "welcome";
-    const BADGE_id_5 = "rally";
-    const BADGE_id_6 = "km_carpooled";
-    const BADGE_id_7 = "carbon_saved";
+    public const BADGE_id_1 = "remove_the_mask";
+    public const BADGE_id_2 = "launch";
+    public const BADGE_id_3 = "first_time";
+    public const BADGE_id_4 = "welcome";
+    public const BADGE_id_5 = "rally";
+    public const BADGE_id_6 = "km_carpooled";
+    public const BADGE_id_7 = "carbon_saved";
 
 
-    const TRANSLATABLE_ITEMS = [
+    public const TRANSLATABLE_ITEMS = [
         "title",
         "text"
     ];
@@ -214,7 +214,7 @@ class Badge
      * @Groups({"readGamification"})
      */
     private $territories;
-    
+
     /**
      * @var ArrayCollection|null The Users owning this Badge
      *
@@ -246,7 +246,7 @@ class Badge
         $this->badges = new ArrayCollection();
         $this->rewards = new ArrayCollection();
     }
-    
+
     public function getId(): ?int
     {
         return $this->id;
@@ -425,10 +425,10 @@ class Badge
         if (!$this->territories->contains($territory)) {
             $this->territories[] = $territory;
         }
-        
+
         return $this;
     }
-    
+
     public function removeTerritory(Territory $territory): self
     {
         if ($this->territories->contains($territory)) {
@@ -436,7 +436,7 @@ class Badge
         }
         return $this;
     }
-    
+
     public function getRewards()
     {
         return $this->rewards->getValues();
@@ -448,10 +448,10 @@ class Badge
             $this->rewards[] = $reward;
             $reward->setBadge($this);
         }
-        
+
         return $this;
     }
-    
+
     public function removeReward(Reward $reward): self
     {
         if ($this->rewards->contains($reward)) {

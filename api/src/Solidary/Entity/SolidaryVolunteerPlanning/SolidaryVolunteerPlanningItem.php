@@ -43,7 +43,7 @@ class SolidaryVolunteerPlanningItem
      * @Groups({"readSolidaryVolunteerPlanning"})
      */
     private $solidaryId;
-    
+
     /**
      * @var int Id of the SolidarySolution designated by this item
      * @Groups({"readSolidaryVolunteerPlanning"})
@@ -76,7 +76,7 @@ class SolidaryVolunteerPlanningItem
     public function setSolidaryId(int $solidaryId): self
     {
         $this->solidaryId = $solidaryId;
-        
+
         return $this;
     }
 
@@ -88,7 +88,7 @@ class SolidaryVolunteerPlanningItem
     public function setSolidarySolutionId(int $solidarySolutionId): self
     {
         $this->solidarySolutionId = $solidarySolutionId;
-        
+
         return $this;
     }
 
@@ -100,7 +100,7 @@ class SolidaryVolunteerPlanningItem
     public function setStatus(int $status): self
     {
         $this->status = $status;
-        
+
         return $this;
     }
 }

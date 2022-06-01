@@ -38,14 +38,14 @@ use Symfony\Component\Console\Output\OutputInterface;
 class RemoveExternalOutdatedSearchesCommand extends Command
 {
     private $proposalManager;
-    
+
     public function __construct(ProposalManager $proposalManager)
     {
         $this->proposalManager = $proposalManager;
-        
+
         parent::__construct();
     }
-    
+
     protected function configure()
     {
         $this

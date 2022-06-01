@@ -74,7 +74,7 @@ class SolidarySolutionManager
 
         // We get the Solidary of this SolidaryMatching and set it for the SolidarySolution ((yeah, it a shortcut for the model)
         $solidarySolution->setSolidary($solidarySolution->getSolidaryMatching()->getSolidary());
-        
+
         $this->entityManager->persist($solidarySolution);
         $this->entityManager->flush();
         return $solidarySolution;
@@ -86,7 +86,7 @@ class SolidarySolutionManager
      * @param SolidaryFormalRequest $solidarySolution
      * @return SolidaryFormalRequest|null
      */
-    public function makeFormalRequest(SolidaryFormalRequest $solidaryFormalRequest) : ?SolidaryFormalRequest
+    public function makeFormalRequest(SolidaryFormalRequest $solidaryFormalRequest): ?SolidaryFormalRequest
     {
         $solidarySolution = $solidaryFormalRequest->getSolidarySolution();
 
@@ -187,7 +187,7 @@ class SolidarySolutionManager
 
         // Dates
         $solidaryFormalRequest->setOutwardDate($criteria->getFromDate());
-        
+
         $solidaryFormalRequest->setOutwardLimitDate($criteria->getFromDate());
         if ($criteria->getFrequency()==Criteria::FREQUENCY_REGULAR) {
             $solidaryFormalRequest->setOutwardLimitDate($criteria->getToDate());
@@ -202,7 +202,7 @@ class SolidarySolutionManager
             ];
             $solidaryFormalRequest->setOutwardSchedule($outwardSchedule);
         }
-        
+
         // Return dates and schedule ? Only carpool
         if (!is_null($criteriaReturn)) {
             // Dates

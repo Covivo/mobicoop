@@ -41,7 +41,7 @@ final class DeserializeListener
     private $denormalizer;
     private $serializerContextBuilder;
 
-    const AUTHORIZED_FORM_URL = ['/rdex/connections'];
+    public const AUTHORIZED_FORM_URL = ['/rdex/connections'];
 
     public function __construct(DenormalizerInterface $denormalizer, SerializerContextBuilderInterface $serializerContextBuilder, DecoratedListener $decorated)
     {

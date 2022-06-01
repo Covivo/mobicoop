@@ -50,14 +50,14 @@ final class LocalityFilter extends AbstractContextAwareFilter
                 break;
         }
     }
-    
+
     // This function is only used to hook in documentation generators (supported by Swagger and Hydra)
     public function getDescription(string $resourceClass): array
     {
         if (!$this->properties) {
             return [];
         }
-        
+
         $description = [];
         foreach ($this->properties as $property => $strategy) {
             switch ($property) {
@@ -87,7 +87,7 @@ final class LocalityFilter extends AbstractContextAwareFilter
                     break;
             }
         }
-        
+
         return $description;
     }
 }

@@ -34,13 +34,13 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
  */
 class SolidaryVolunteerVoter extends Voter
 {
-    const SOLIDARY_VOLUNTEER_REGISTER = 'solidary_volunteer_register';
-    const SOLIDARY_VOLUNTEER_CREATE = 'solidary_volunteer_create';
-    const SOLIDARY_VOLUNTEER_READ = 'solidary_volunteer_read';
-    const SOLIDARY_VOLUNTEER_UPDATE = 'solidary_volunteer_update';
-    const SOLIDARY_VOLUNTEER_DELETE = 'solidary_volunteer_delete';
-    const SOLIDARY_VOLUNTEER_LIST = 'solidary_volunteer_list';
-    
+    public const SOLIDARY_VOLUNTEER_REGISTER = 'solidary_volunteer_register';
+    public const SOLIDARY_VOLUNTEER_CREATE = 'solidary_volunteer_create';
+    public const SOLIDARY_VOLUNTEER_READ = 'solidary_volunteer_read';
+    public const SOLIDARY_VOLUNTEER_UPDATE = 'solidary_volunteer_update';
+    public const SOLIDARY_VOLUNTEER_DELETE = 'solidary_volunteer_delete';
+    public const SOLIDARY_VOLUNTEER_LIST = 'solidary_volunteer_list';
+
     private $authManager;
 
     public function __construct(AuthManager $authManager)
@@ -61,7 +61,7 @@ class SolidaryVolunteerVoter extends Voter
             ])) {
             return false;
         }
-      
+
         // only vote on User objects inside this voter
         if (!in_array($attribute, [
             self::SOLIDARY_VOLUNTEER_REGISTER,
@@ -116,12 +116,12 @@ class SolidaryVolunteerVoter extends Voter
     {
         return $this->authManager->isAuthorized(self::SOLIDARY_VOLUNTEER_UPDATE, ['solidaryVolunteer'=>$solidaryVolunteer]);
     }
-    
+
     private function canDeleteSolidaryVolunteer(SolidaryVolunteer $solidaryVolunteer)
     {
         return $this->authManager->isAuthorized(self::SOLIDARY_VOLUNTEER_DELETE, ['solidaryVolunteer'=>$solidaryVolunteer]);
     }
-    
+
     private function canListSolidaryVolunteer()
     {
         return $this->authManager->isAuthorized(self::SOLIDARY_VOLUNTEER_LIST);

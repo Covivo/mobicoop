@@ -182,7 +182,7 @@ class GraphhopperProvider implements GeorouterInterface
             case self::MODE_SYNC:
                 // unsupported
                 break;
-            
+
             case self::MODE_ASYNC:
             {
                 $getParams = [];
@@ -203,14 +203,14 @@ class GraphhopperProvider implements GeorouterInterface
                             "&weighting=" . self::WEIGHTING .
                             "&instructions=" . self::INSTRUCTIONS .
                             "&points_encoded=".self::POINTS_ENCODED .
-                            ($this->detailDuration?'&details=time':'').
+                            ($this->detailDuration ? '&details=time' : '').
                             "&elevation=" . self::ELEVATION;
                         } else {
                             $params .= "locale=" . self::LOCALE .
                             "&profile=" . self::PROFILE_NO_TOLL . "&ch.disable=true" .
                             "&instructions=" . self::INSTRUCTIONS .
                             "&points_encoded=".self::POINTS_ENCODED .
-                            ($this->detailDuration?'&details=time':'').
+                            ($this->detailDuration ? '&details=time' : '').
                             "&elevation=" . self::ELEVATION;
                         }
                         $getParams[$i] = $params;
@@ -264,14 +264,14 @@ class GraphhopperProvider implements GeorouterInterface
                             "&weighting=" . self::WEIGHTING .
                             "&instructions=" . self::INSTRUCTIONS .
                             "&points_encoded=".self::POINTS_ENCODED .
-                            ($this->detailDuration?'&details=time':'').
+                            ($this->detailDuration ? '&details=time' : '').
                             "&elevation=" . self::ELEVATION;
                         } else {
                             $rparams .= "locale=" . self::LOCALE .
                             "&profile=" . self::PROFILE_NO_TOLL . "&ch.disable=true" .
                             "&instructions=" . self::INSTRUCTIONS .
                             "&points_encoded=".self::POINTS_ENCODED .
-                            ($this->detailDuration?'&details=time':'').
+                            ($this->detailDuration ? '&details=time' : '').
                             "&elevation=" . self::ELEVATION;
                         }
                         $urls[$i] = $rparams;
@@ -375,7 +375,7 @@ class GraphhopperProvider implements GeorouterInterface
                         break;
                     }
                 }
-                
+
                 // $this->print_mem(6);
                 foreach ($requestsOwner as $owner) {
                     $owner = null;
@@ -421,14 +421,14 @@ class GraphhopperProvider implements GeorouterInterface
                     "&weighting=" . self::WEIGHTING .
                     "&instructions=" . self::INSTRUCTIONS .
                     "&points_encoded=".self::POINTS_ENCODED .
-                    ($this->detailDuration?'&details=time':'').
+                    ($this->detailDuration ? '&details=time' : '').
                     "&elevation=" . self::ELEVATION;
                 } else {
                     $getParams .= "locale=" . self::LOCALE .
                     "&profile=" . self::PROFILE_NO_TOLL . "&ch.disable=true" .
                     "&instructions=" . self::INSTRUCTIONS .
                     "&points_encoded=".self::POINTS_ENCODED .
-                    ($this->detailDuration?'&details=time':'').
+                    ($this->detailDuration ? '&details=time' : '').
                     "&elevation=" . self::ELEVATION;
                 }
                 $this->bearing = $this->geoTools->getRhumbLineBearing($points[0]->getLatitude(), $points[0]->getLongitude(), $points[count($points)-1]->getLatitude(), $points[count($points)-1]->getLongitude());
@@ -459,7 +459,7 @@ class GraphhopperProvider implements GeorouterInterface
         }
         return $routes;
     }
-   
+
     /**
      * {@inheritdoc}
      */
@@ -618,7 +618,7 @@ class GraphhopperProvider implements GeorouterInterface
                 }
                 $duration += $value;
             }
-            
+
             $direction->setDurations($durations);
         }
 
@@ -673,7 +673,7 @@ class GraphhopperProvider implements GeorouterInterface
         }
         return $addresses;
     }
-    
+
     // Graphhopper path decoding function
     // This function is transposed from the JS function found in the points_encoded doc
     // (see https://github.com/graphhopper/graphhopper/blob/0.11/docs/web/api-doc.md)
@@ -685,7 +685,7 @@ class GraphhopperProvider implements GeorouterInterface
         $latitude = 0;
         $longitude = 0;
         $elevation = 0;
-        
+
         while ($index < $length) {
             $b = 0;
             $shift = 0;
@@ -697,7 +697,7 @@ class GraphhopperProvider implements GeorouterInterface
             } while ($b >= 0x20);
             $deltaLatitude = (($result & 1) ? ~($result >> 1) : ($result >> 1));
             $latitude += $deltaLatitude;
-            
+
             $shift = 0;
             $result = 0;
             do {
@@ -707,7 +707,7 @@ class GraphhopperProvider implements GeorouterInterface
             } while ($b >= 0x20);
             $deltaLongitude = (($result & 1) ? ~($result >> 1) : ($result >> 1));
             $longitude += $deltaLongitude;
-            
+
             if ($is3D) {
                 $shift = 0;
                 $result = 0;
@@ -732,12 +732,12 @@ class GraphhopperProvider implements GeorouterInterface
         }
         return $decoded;
     }
-    
+
     private static function charCodeAt($str, $i)
     {
         return ord(substr($str, $i, 1));
     }
-    
+
     private function createAddress($coordinate)
     {
         if (!$this->pointsOnly) {
@@ -770,7 +770,7 @@ class GraphhopperProvider implements GeorouterInterface
     {
         /* Currently used memory */
         $mem_usage = memory_get_usage();
-        
+
         /* Peak memory usage */
         $mem_peak = memory_get_peak_usage();
         $this->logger->debug($id . ' The script is now using: ' . round($mem_usage / 1024) . 'KB of memory.');

@@ -34,12 +34,12 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
  */
 class SubjectVoter extends Voter
 {
-    const SUBJECT_CREATE = 'subject_create';
-    const SUBJECT_READ = 'subject_read';
-    const SUBJECT_UPDATE = 'subject_update';
-    const SUBJECT_DELETE = 'subject_delete';
-    const SUBJECT_LIST = 'subject_list';
-    
+    public const SUBJECT_CREATE = 'subject_create';
+    public const SUBJECT_READ = 'subject_read';
+    public const SUBJECT_UPDATE = 'subject_update';
+    public const SUBJECT_DELETE = 'subject_delete';
+    public const SUBJECT_LIST = 'subject_list';
+
     private $authManager;
 
     public function __construct(AuthManager $authManager)
@@ -59,7 +59,7 @@ class SubjectVoter extends Voter
             ])) {
             return false;
         }
-      
+
         // only vote on User objects inside this voter
         if (!in_array($attribute, [
             self::SUBJECT_CREATE,
@@ -105,12 +105,12 @@ class SubjectVoter extends Voter
     {
         return $this->authManager->isAuthorized(self::SUBJECT_UPDATE, ['subject'=>$subject]);
     }
-    
+
     private function canDeleteSubject(Subject $subject)
     {
         return $this->authManager->isAuthorized(self::SUBJECT_DELETE, ['subject'=>$subject]);
     }
-    
+
     private function canListSubject()
     {
         return $this->authManager->isAuthorized(self::SUBJECT_LIST);

@@ -34,21 +34,21 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class SolidaryBeneficiaryVoter extends Voter
 {
-    const ADMIN_SOLIDARY_BENEFICIARY_CREATE = 'admin_solidary_beneficiary_create';
-    const ADMIN_SOLIDARY_BENEFICIARY_READ = 'admin_solidary_beneficiary_read';
-    const ADMIN_SOLIDARY_BENEFICIARY_UPDATE = 'admin_solidary_beneficiary_update';
-    const ADMIN_SOLIDARY_BENEFICIARY_DELETE = 'admin_solidary_beneficiary_delete';
-    const ADMIN_SOLIDARY_BENEFICIARY_LIST = 'admin_solidary_beneficiary_list';
-    const SOLIDARY_BENEFICIARY_CREATE = 'solidary_beneficiary_create';
-    const SOLIDARY_BENEFICIARY_READ = 'solidary_beneficiary_read';
-    const SOLIDARY_BENEFICIARY_UPDATE = 'solidary_beneficiary_update';
-    const SOLIDARY_BENEFICIARY_DELETE = 'solidary_beneficiary_delete';
-    const SOLIDARY_BENEFICIARY_LIST = 'solidary_beneficiary_list';
+    public const ADMIN_SOLIDARY_BENEFICIARY_CREATE = 'admin_solidary_beneficiary_create';
+    public const ADMIN_SOLIDARY_BENEFICIARY_READ = 'admin_solidary_beneficiary_read';
+    public const ADMIN_SOLIDARY_BENEFICIARY_UPDATE = 'admin_solidary_beneficiary_update';
+    public const ADMIN_SOLIDARY_BENEFICIARY_DELETE = 'admin_solidary_beneficiary_delete';
+    public const ADMIN_SOLIDARY_BENEFICIARY_LIST = 'admin_solidary_beneficiary_list';
+    public const SOLIDARY_BENEFICIARY_CREATE = 'solidary_beneficiary_create';
+    public const SOLIDARY_BENEFICIARY_READ = 'solidary_beneficiary_read';
+    public const SOLIDARY_BENEFICIARY_UPDATE = 'solidary_beneficiary_update';
+    public const SOLIDARY_BENEFICIARY_DELETE = 'solidary_beneficiary_delete';
+    public const SOLIDARY_BENEFICIARY_LIST = 'solidary_beneficiary_list';
 
     private $authManager;
     private $solidaryUserRepository;
     private $request;
- 
+
     public function __construct(RequestStack $requestStack, AuthManager $authManager, SolidaryUserRepository $solidaryUserRepository)
     {
         $this->authManager = $authManager;

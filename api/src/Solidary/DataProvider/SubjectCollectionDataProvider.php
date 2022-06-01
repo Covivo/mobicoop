@@ -62,7 +62,7 @@ final class SubjectCollectionDataProvider implements CollectionDataProviderInter
         if (!empty($this->filters['structureId'])) {
             $structureId = $this->filters['structureId'];
         }
-        
+
         // If the user whose making the request has a structure, we use its id
         if (!empty($this->security->getUser()->getSolidaryStructures())) {
             $structureId = $this->security->getUser()->getSolidaryStructures()[0]->getId();

@@ -51,7 +51,7 @@ class SolidaryBeneficiaryManager
     private $solidaryUserStructureRepository;
     private $formatDataManager;
     private $fileFolder;
-    
+
     /**
      * Constructor
      *
@@ -112,7 +112,7 @@ class SolidaryBeneficiaryManager
         $solidaryBeneficiary->setNewsSubscription($solidaryUser->getUser()->hasNewsSubscription());
         $solidaryBeneficiary->setHomeAddress($solidaryUser->getUser()->getHomeAddress() ? $solidaryUser->getUser()->getHomeAddress()->jsonSerialize() : null);
         $solidaryBeneficiary->setAvatar($solidaryUser->getUser()->getAvatar());
-        
+
         // get the status of the beneficiary for each structure attached, and get the diary and proofs if asked
         $beneficiaryStructures = [];
         $diaries = [];
@@ -266,7 +266,7 @@ class SolidaryBeneficiaryManager
         if (!$solidaryUser = $this->solidaryUserRepository->find($id)) {
             throw new SolidaryException(sprintf(SolidaryException::BENEFICIARY_NOT_FOUND, $id));
         }
-        
+
         // check if a new validation has been made
         if (array_key_exists('validation', $fields)) {
             return $this->treatValidation($solidaryUser, $fields['validation']);
@@ -371,7 +371,7 @@ class SolidaryBeneficiaryManager
                 }
             }
         }
-        
+
         // persist the solidary beneficiary
         $this->entityManager->persist($solidaryUser->getUser());
         $this->entityManager->flush();

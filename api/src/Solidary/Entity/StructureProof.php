@@ -87,9 +87,9 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class StructureProof
 {
-    const TYPE_REQUESTER = 1;
-    const TYPE_VOLUNTEER = 2;
-    
+    public const TYPE_REQUESTER = 1;
+    public const TYPE_VOLUNTEER = 2;
+
     /**
      * @var int The id of this structure proof.
      *
@@ -239,19 +239,19 @@ class StructureProof
     {
         $this->proofs = new ArrayCollection();
     }
-    
+
     public function getId(): ?int
     {
         return $this->id;
     }
-    
+
     public function setId(int $id): self
     {
         $this->id = $id;
-        
+
         return $this;
     }
-    
+
     public function getLabel(): ?string
     {
         return $this->label;
@@ -292,11 +292,11 @@ class StructureProof
     {
         return $this->checkbox;
     }
-    
+
     public function setCheckbox(?bool $isCheckbox): self
     {
         $this->checkbox = $isCheckbox;
-        
+
         return $this;
     }
 
@@ -304,11 +304,11 @@ class StructureProof
     {
         return $this->input;
     }
-    
+
     public function setInput(?bool $isInput): self
     {
         $this->input = $isInput;
-        
+
         return $this;
     }
 
@@ -316,11 +316,11 @@ class StructureProof
     {
         return $this->selectbox;
     }
-    
+
     public function setSelectbox(?bool $isSelectbox): self
     {
         $this->selectbox = $isSelectbox;
-        
+
         return $this;
     }
 
@@ -328,11 +328,11 @@ class StructureProof
     {
         return $this->radio;
     }
-    
+
     public function setRadio(?bool $isRadio): self
     {
         $this->radio = $isRadio;
-        
+
         return $this;
     }
 
@@ -340,7 +340,7 @@ class StructureProof
     {
         return $this->options;
     }
-    
+
     public function setOptions(?string $options)
     {
         $this->options = $options;
@@ -350,7 +350,7 @@ class StructureProof
     {
         return $this->acceptedValues;
     }
-    
+
     public function setAcceptedValues(?string $acceptedValues)
     {
         $this->acceptedValues = $acceptedValues;
@@ -360,11 +360,11 @@ class StructureProof
     {
         return $this->file;
     }
-    
+
     public function setFile(?bool $isFile): self
     {
         $this->file = $isFile;
-        
+
         return $this;
     }
 
@@ -372,11 +372,11 @@ class StructureProof
     {
         return $this->mandatory;
     }
-    
+
     public function setMandatory(?bool $mandatory): self
     {
         $this->mandatory = $mandatory;
-        
+
         return $this;
     }
 
@@ -420,17 +420,17 @@ class StructureProof
     {
         return $this->proofs->getValues();
     }
-    
+
     public function addProof(Proof $proof): self
     {
         if (!$this->proofs->contains($proof)) {
             $this->proofs->add($proof);
             $proof->setStructureProof($this);
         }
-        
+
         return $this;
     }
-    
+
     public function removeProof(Proof $proof): self
     {
         if ($this->proofs->contains($proof)) {
@@ -440,7 +440,7 @@ class StructureProof
                 $proof->setStructureProof(null);
             }
         }
-        
+
         return $this;
     }
 
@@ -450,7 +450,7 @@ class StructureProof
     }
 
     // DOCTRINE EVENTS
-    
+
     /**
      * Creation date.
      *

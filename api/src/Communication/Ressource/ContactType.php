@@ -63,9 +63,9 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class ContactType
 {
-    const DEFAULT_ID = 999999999999;
+    public const DEFAULT_ID = 999999999999;
 
-    const TYPE_SUPPORT = "technicalIssues";
+    public const TYPE_SUPPORT = "technicalIssues";
 
     /**
      * @var int The id of the contact type
@@ -109,7 +109,7 @@ class ContactType
     {
         $this->id = self::DEFAULT_ID;
     }
-    
+
     public function getId(): ?int
     {
         return $this->id;
@@ -118,7 +118,7 @@ class ContactType
     public function setId(int $id): self
     {
         $this->id = $id;
-        
+
         return $this;
     }
 
@@ -130,7 +130,7 @@ class ContactType
     public function setDemand(string $demand): self
     {
         $this->demand = $demand;
-        
+
         return $this;
     }
 
@@ -142,7 +142,7 @@ class ContactType
     public function setObjectCode(string $objectCode): self
     {
         $this->objectCode = $objectCode;
-        
+
         return $this;
     }
 
@@ -154,7 +154,7 @@ class ContactType
     public function setTo(array $to): self
     {
         $this->to = $to;
-        
+
         return $this;
     }
 
@@ -166,7 +166,7 @@ class ContactType
     public function setCc(array $cc): self
     {
         $this->cc = $cc;
-        
+
         return $this;
     }
 
@@ -178,7 +178,7 @@ class ContactType
     public function setBcc(array $bcc): self
     {
         $this->bcc = $bcc;
-        
+
         return $this;
     }
 }

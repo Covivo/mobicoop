@@ -36,10 +36,10 @@ use Symfony\Component\Security\Core\Security;
 
 class DynamicProofVoter extends Voter
 {
-    const DYNAMIC_PROOF_CREATE = 'dynamic_proof_create';
-    const DYNAMIC_PROOF_READ = 'dynamic_proof_read';
-    const DYNAMIC_PROOF_UPDATE = 'dynamic_proof_update';
-    
+    public const DYNAMIC_PROOF_CREATE = 'dynamic_proof_create';
+    public const DYNAMIC_PROOF_READ = 'dynamic_proof_read';
+    public const DYNAMIC_PROOF_UPDATE = 'dynamic_proof_update';
+
     private $security;
     private $request;
     private $authManager;

@@ -39,18 +39,18 @@ final class ArticlesCollectionDataProvider implements CollectionDataProviderInte
 {
     protected $request;
     private $articleManager;
-    
+
     public function __construct(RequestStack $requestStack, ArticleManager $articleManager)
     {
         $this->request = $requestStack->getCurrentRequest();
         $this->articleManager = $articleManager;
     }
-    
+
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
         return Article::class === $resourceClass && $operationName === "get";
     }
-    
+
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
         $context = null;

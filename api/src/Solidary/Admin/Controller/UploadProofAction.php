@@ -38,7 +38,7 @@ final class UploadProofAction
     ) {
         $this->solidaryManager = $solidaryManager;
     }
-    
+
     public function __invoke(Request $request): Proof
     {
         return $this->solidaryManager->createProof(

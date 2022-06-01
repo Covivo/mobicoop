@@ -43,25 +43,25 @@ use Doctrine\ORM\EntityManagerInterface;
  */
 class FakeUserController extends AbstractController
 {
-    const BATCH = 50;
-    const MIN_BIRTHDATE = "1930-01-01";
-    const MAX_BIRTHDATE = "2001-01-01";
-    const MIN_DATE = "2019-11-28";
-    const MAX_DATE = "2020-12-31";
-    const MIN_TIME = "05:00";
-    const MAX_TIME = "23:45";
-    const MIN_TIME_OUTWARD = "05:00";
-    const MAX_TIME_OUTWARD = "10:00";
-    const MIN_TIME_RETURN = "16:00";
-    const MAX_TIME_RETURN = "22:00";
-    const DOMAIN = "mobicoop-import.org";
-    const PASSWORD = "$2y$10$1n.jspEsnNz7ch4ZgjtT6O2WKXRqEpaL/9QrY5TqafqBtTiM2Xndu"; // "password" bcrypted
-    const ORIGIN = "ouestgo";
-    const PUNCTUAL_FREQ = 0.2;
-    const ONEWAY_FREQ = 0.3;
-    const DRIVER_FREQ = 0.3;
-    const PASSENGER_FREQ = 0.5;
-    const NB_FREQ = 0.8;
+    public const BATCH = 50;
+    public const MIN_BIRTHDATE = "1930-01-01";
+    public const MAX_BIRTHDATE = "2001-01-01";
+    public const MIN_DATE = "2019-11-28";
+    public const MAX_DATE = "2020-12-31";
+    public const MIN_TIME = "05:00";
+    public const MAX_TIME = "23:45";
+    public const MIN_TIME_OUTWARD = "05:00";
+    public const MAX_TIME_OUTWARD = "10:00";
+    public const MIN_TIME_RETURN = "16:00";
+    public const MAX_TIME_RETURN = "22:00";
+    public const DOMAIN = "mobicoop-import.org";
+    public const PASSWORD = "$2y$10$1n.jspEsnNz7ch4ZgjtT6O2WKXRqEpaL/9QrY5TqafqBtTiM2Xndu"; // "password" bcrypted
+    public const ORIGIN = "ouestgo";
+    public const PUNCTUAL_FREQ = 0.2;
+    public const ONEWAY_FREQ = 0.3;
+    public const DRIVER_FREQ = 0.3;
+    public const PASSENGER_FREQ = 0.5;
+    public const NB_FREQ = 0.8;
 
     private $addresses;
 
@@ -80,7 +80,7 @@ class FakeUserController extends AbstractController
         $pool = 0;
         $emails = []; // used to avoid duplicates
         $users = [];
-      
+
         echo "Start generating fake addresses at " . (new \DateTime("UTC"))->format("Ymd H:i:s.u") . "<br />";
         $this->generateFakeAddresses($number_addresses, $min_lat, $min_lon, $max_lat, $max_lon, $geoSearcher);
         echo "End generating fake addresses at " . (new \DateTime("UTC"))->format("Ymd H:i:s.u") . "<br />";
@@ -117,7 +117,7 @@ class FakeUserController extends AbstractController
             $proposal = new Proposal();
             $proposal->setType($this->randomFloat()<=self::ONEWAY_FREQ ? Proposal::TYPE_ONE_WAY : Proposal::TYPE_OUTWARD);
             $proposal->setPrivate(false);
-            
+
             $criteria = new Criteria();
             $criteria->setFrequency($this->randomFloat()<=self::PUNCTUAL_FREQ ? Criteria::FREQUENCY_PUNCTUAL : Criteria::FREQUENCY_REGULAR);
             $roleFreq = $this->randomFloat();
@@ -146,7 +146,7 @@ class FakeUserController extends AbstractController
             $criteria->setSeatsDriver(3);
             $criteria->setSeatsPassenger(1);
             $proposal->setCriteria($criteria);
-            
+
             $origin = new Waypoint();
             $origin->setPosition(0);
             $origin->setDestination(false);
@@ -169,7 +169,7 @@ class FakeUserController extends AbstractController
                 $proposalReturn = new Proposal();
                 $proposalReturn->setType(Proposal::TYPE_RETURN);
                 $proposalReturn->setPrivate(false);
-                
+
                 $criteriaReturn = new Criteria();
                 $criteriaReturn->setFrequency($criteria->getFrequency());
                 $criteriaReturn->setDriver($role == Ad::ROLE_DRIVER || $role == Ad::ROLE_DRIVER_OR_PASSENGER);
@@ -195,7 +195,7 @@ class FakeUserController extends AbstractController
                 $criteriaReturn->setSeatsDriver(3);
                 $criteriaReturn->setSeatsPassenger(1);
                 $proposalReturn->setCriteria($criteriaReturn);
-                
+
                 $originReturn = new Waypoint();
                 $originReturn->setPosition(0);
                 $originReturn->setDestination(false);
@@ -217,7 +217,7 @@ class FakeUserController extends AbstractController
 
             $users[] = $user;
             $generated++;
-            
+
             // batch
             $pool++;
             if ($pool>=self::BATCH) {
@@ -226,7 +226,7 @@ class FakeUserController extends AbstractController
                 $pool = 0;
             }
         }
-        
+
         $entityManager->flush();
         $entityManager->clear();
 

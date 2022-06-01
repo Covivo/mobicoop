@@ -39,14 +39,14 @@ use Symfony\Component\Console\Output\OutputInterface;
 class CarpoolItemBatchCommand extends Command
 {
     private $paymentManager;
-    
+
     public function __construct(PaymentManager $paymentManager)
     {
         $this->paymentManager = $paymentManager;
-        
+
         parent::__construct();
     }
-    
+
     protected function configure()
     {
         $this

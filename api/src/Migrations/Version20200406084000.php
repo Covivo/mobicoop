@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace DoctrineMigrations;
 
@@ -10,7 +12,7 @@ use Doctrine\Migrations\AbstractMigration;
  */
 final class Version20200406084000 extends AbstractMigration
 {
-    public function up(Schema $schema) : void
+    public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
@@ -36,7 +38,7 @@ final class Version20200406084000 extends AbstractMigration
         $this->addSql('ALTER TABLE structure ADD m_min_range_time TIME DEFAULT NULL, ADD m_max_range_time TIME DEFAULT NULL, ADD a_min_range_time TIME DEFAULT NULL, ADD a_max_range_time TIME DEFAULT NULL, ADD e_min_range_time TIME DEFAULT NULL, ADD e_max_range_time TIME DEFAULT NULL, CHANGE m_min_time m_min_time TIME DEFAULT NULL, CHANGE m_max_time m_max_time TIME DEFAULT NULL, CHANGE a_min_time a_min_time TIME DEFAULT NULL, CHANGE a_max_time a_max_time TIME DEFAULT NULL, CHANGE e_min_time e_min_time TIME DEFAULT NULL, CHANGE e_max_time e_max_time TIME DEFAULT NULL');
     }
 
-    public function down(Schema $schema) : void
+    public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');

@@ -71,8 +71,8 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
  */
 class PushToken
 {
-    const TYPE_IOS = 1;
-    const TYPE_ANDROID = 2;
+    public const TYPE_IOS = 1;
+    public const TYPE_ANDROID = 2;
 
     /**
      * @var int $id The id of this push token.
@@ -83,7 +83,7 @@ class PushToken
      * @Groups("readPushToken")
      */
     private $id;
-    
+
     /**
      * @var string The token.
      *
@@ -91,7 +91,7 @@ class PushToken
      * @Groups({"readPushToken","writePushToken"})
      */
     private $token;
-    
+
     /**
      * @var int The type of token (1=iOS; 2=Android).
      *
@@ -99,7 +99,7 @@ class PushToken
      * @Groups({"readPushToken","writePushToken"})
      */
     private $type;
-    
+
     /**
      * @var User The owner of the token.
      *
@@ -133,11 +133,11 @@ class PushToken
     {
         return $this->token;
     }
-    
+
     public function setToken(string $token): self
     {
         $this->token = $token;
-        
+
         return $this;
     }
 
@@ -145,11 +145,11 @@ class PushToken
     {
         return $this->type;
     }
-    
+
     public function setType(?int $type): self
     {
         $this->type = $type;
-        
+
         return $this;
     }
 
@@ -157,11 +157,11 @@ class PushToken
     {
         return $this->user;
     }
-    
+
     public function setUser(?User $user): self
     {
         $this->user = $user;
-        
+
         return $this;
     }
 
@@ -190,7 +190,7 @@ class PushToken
     }
 
     // DOCTRINE EVENTS
-    
+
     /**
      * Creation date.
      *

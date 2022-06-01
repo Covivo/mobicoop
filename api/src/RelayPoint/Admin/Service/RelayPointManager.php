@@ -182,7 +182,7 @@ class RelayPointManager
         // persist the relay point
         $this->entityManager->persist($relayPoint);
         $this->entityManager->flush();
-        
+
         // return the relay point
         return $relayPoint;
     }

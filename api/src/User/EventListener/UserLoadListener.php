@@ -54,7 +54,7 @@ class UserLoadListener
             // keep the phone number in case of update
             $user->setOldTelephone($user->getTelephone());
             $user->setOldEmail($user->getEmail());
-            
+
             $images = $user->getImages();
             foreach ($sizes as $size) {
                 if (count($images)>0 && count($images[0]->getVersions())>0 && isset($images[0]->getVersions()[$size])) {

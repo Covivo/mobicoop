@@ -33,7 +33,7 @@ final class LoginFilter extends AbstractContextAwareFilter
         if ($property != "login") {
             return;
         }
-        
+
         $queryBuilder
             ->andWhere('u.email = \'' .$value . '\'');
     }

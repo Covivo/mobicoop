@@ -34,37 +34,37 @@ class RdexDay implements \JsonSerializable
      * @var int The state for monday.
      */
     private $monday;
-    
+
     /**
      * @var int The state for tuesday.
      */
     private $tuesday;
-    
+
     /**
      * @var int The state for wednesday.
      */
     private $wednesday;
-    
+
     /**
      * @var int The state for thursday.
      */
     private $thursday;
-    
+
     /**
      * @var int The state for friday.
      */
     private $friday;
-    
+
     /**
      * @var int The state for saturday.
      */
     private $saturday;
-    
+
     /**
      * @var int The state for sunday.
      */
     private $sunday;
-    
+
     public function __construct()
     {
         $this->monday = 0;
@@ -75,7 +75,7 @@ class RdexDay implements \JsonSerializable
         $this->saturday = 0;
         $this->sunday = 0;
     }
-    
+
     /**
      * @return number
      */
@@ -187,7 +187,7 @@ class RdexDay implements \JsonSerializable
     {
         $this->sunday = $sunday;
     }
-    
+
     public function jsonSerialize(): mixed
     {
         return

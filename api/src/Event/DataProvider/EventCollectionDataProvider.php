@@ -42,20 +42,20 @@ final class EventCollectionDataProvider implements CollectionDataProviderInterfa
     protected $request;
     private $eventManager;
     private $context;
-    
+
     public function __construct(RequestStack $requestStack, eventManager $eventManager, iterable $collectionFilters)
     {
         $this->request = $requestStack->getCurrentRequest();
         $this->eventManager = $eventManager;
         $this->collectionFilters = $collectionFilters;
     }
-    
+
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
         $this->context = $context;
         return Event::class === $resourceClass && $operationName === "get";
     }
-    
+
     public function getCollection(string $resourceClass, string $operationName = null): iterable
     {
         $queryBuilder = $this->eventManager->getEvents();

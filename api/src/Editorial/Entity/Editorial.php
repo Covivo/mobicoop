@@ -116,8 +116,8 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  */
 class Editorial
 {
-    const STATUS_ACTIVE = 1;
-    const STATUS_INACTIVE = 0;
+    public const STATUS_ACTIVE = 1;
+    public const STATUS_INACTIVE = 0;
     /**
      * @var int The id of this EDITORIAL.
      *
@@ -128,7 +128,7 @@ class Editorial
      * @ApiProperty(identifier=true)
      */
     private $id;
-    
+
     /**
      * @var string The title of the editorial.
      *
@@ -168,7 +168,7 @@ class Editorial
      * @Groups({"aRead","aWrite"})
      */
     private $status;
-    
+
     /**
      * @var ArrayCollection The images of the editorial.
      *
@@ -207,29 +207,29 @@ class Editorial
      * @Groups("aRead")
      */
     private $avatar;
-    
-    
+
+
     public function __construct($id=null)
     {
         $this->id = $id;
         $this->images = new ArrayCollection();
     }
-    
+
     public function getId(): ?int
     {
         return $this->id;
     }
-    
+
     public function setId($id)
     {
         $this->id = $id;
     }
-    
+
     public function getTitle(): string
     {
         return $this->title;
     }
-    
+
     public function setTitle(string $title)
     {
         $this->title = $title;
@@ -239,7 +239,7 @@ class Editorial
     {
         return $this->text;
     }
-    
+
     public function setText(string $text)
     {
         $this->text = $text;
@@ -249,7 +249,7 @@ class Editorial
     {
         return $this->label;
     }
-    
+
     public function setLabel(string $label)
     {
         $this->label = $label;
@@ -259,7 +259,7 @@ class Editorial
     {
         return $this->link;
     }
-    
+
     public function setLink(string $link)
     {
         $this->link = $link;
@@ -269,27 +269,27 @@ class Editorial
     {
         return $this->status;
     }
-    
+
     public function setStatus(int $status)
     {
         $this->status = $status;
     }
-    
+
     public function getImages()
     {
         return $this->images->getValues();
     }
-    
+
     public function addImage(Image $image): self
     {
         if (!$this->images->contains($image)) {
             $this->images[] = $image;
             $image->setEditorial($this);
         }
-        
+
         return $this;
     }
-    
+
     public function removeImage(Image $image): self
     {
         if ($this->images->contains($image)) {
@@ -299,7 +299,7 @@ class Editorial
                 $image->setEditorial(null);
             }
         }
-        
+
         return $this;
     }
 
@@ -307,11 +307,11 @@ class Editorial
     {
         return $this->createdDate;
     }
-    
+
     public function setCreatedDate(\DateTimeInterface $createdDate): self
     {
         $this->createdDate = $createdDate;
-        
+
         return $this;
     }
 
@@ -344,7 +344,7 @@ class Editorial
     }
 
     // DOCTRINE EVENTS
-    
+
     /**
      * Creation date.
      *

@@ -38,9 +38,8 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 */
 class GamificationAction
 {
-
     // List of the translatable items of this entity
-    const TRANSLATABLE_ITEMS = [
+    public const TRANSLATABLE_ITEMS = [
         "title"
     ];
 

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace DoctrineMigrations;
 
@@ -10,7 +12,7 @@ use Doctrine\Migrations\AbstractMigration;
  */
 final class Version20200715121528 extends AbstractMigration
 {
-    public function up(Schema $schema) : void
+    public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
@@ -26,7 +28,7 @@ final class Version20200715121528 extends AbstractMigration
         $this->addSql('ALTER TABLE carpool_item ADD CONSTRAINT FK_3843443D27616656 FOREIGN KEY (creditor_user_id) REFERENCES user (id)');
     }
 
-    public function down(Schema $schema) : void
+    public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');

@@ -34,7 +34,7 @@ use DateInterval;
  */
 class AdDisconnectedAuthor implements AuthRuleInterface
 {
-    const DELAY = 600; // max age of the Ad in seconds
+    public const DELAY = 600; // max age of the Ad in seconds
 
     /**
      * {@inheritdoc}

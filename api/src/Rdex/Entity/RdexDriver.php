@@ -34,27 +34,27 @@ class RdexDriver implements \JsonSerializable
      * @var string The uuid of the driver.
      */
     private $uuid;
-    
+
     /**
      * @var string The pseudonym of the driver.
      */
     private $alias;
-    
+
     /**
      * @var string The image of the driver.
      */
     private $image;
-    
+
     /**
      * @var string The gender of the driver.
      */
     private $gender;
-    
+
     /**
      * @var int The number of available seats.
      */
     private $seats;
-    
+
     /**
      * @var int The state of the driver.
      */
@@ -64,7 +64,7 @@ class RdexDriver implements \JsonSerializable
     {
         $this->uuid = $uuid;
     }
-    
+
     /**
      * @return mixed
      */
@@ -96,7 +96,7 @@ class RdexDriver implements \JsonSerializable
     {
         return $this->gender;
     }
-    
+
     /**
      * @return number
      */
@@ -136,7 +136,7 @@ class RdexDriver implements \JsonSerializable
     {
         $this->image = $image;
     }
-    
+
     /**
      * @param string $gender
      */
@@ -160,7 +160,7 @@ class RdexDriver implements \JsonSerializable
     {
         $this->state = $state;
     }
-    
+
     public function jsonSerialize(): mixed
     {
         return

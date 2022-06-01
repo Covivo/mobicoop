@@ -1,4 +1,5 @@
 <?php
+
  /**
     * Copyright (c) 2020, MOBICOOP. All rights reserved.
     * This project is dual licensed under AGPL and proprietary licence.
@@ -19,7 +20,7 @@
     * Licence MOBICOOP described in the file
     * LICENSE
     **************************/
- 
+
  namespace App\User\Controller;
 
 use App\TranslatorTrait;
@@ -38,12 +39,12 @@ class UserSendValidationEmail
      * @var UserManager $userManager
      */
     private $userManager;
- 
+
     public function __construct(UserManager $userManager)
     {
         $this->userManager= $userManager;
     }
- 
+
     /**
      * Send a validation email to the user
      *
@@ -55,7 +56,7 @@ class UserSendValidationEmail
         if (is_null($user)) {
             throw new \InvalidArgumentException($this->translator->trans("bad User id is provided"));
         }
-        
+
         return $this->userManager->sendValidationEmail($user->getEmail());
     }
 }

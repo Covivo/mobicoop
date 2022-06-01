@@ -37,7 +37,7 @@ class NeedRepository
      * @var EntityRepository
      */
     private $repository;
-    
+
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->repository = $entityManager->getRepository(Need::class);

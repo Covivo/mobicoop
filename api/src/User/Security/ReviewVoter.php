@@ -33,12 +33,12 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class ReviewVoter extends Voter
 {
-    const REVIEW_CREATE = 'review_create';
-    const REVIEW_READ = 'review_read';
-    const REVIEW_UPDATE = 'review_update';
-    const REVIEW_DELETE = 'review_delete';
-    const REVIEW_LIST = 'review_list';
-    
+    public const REVIEW_CREATE = 'review_create';
+    public const REVIEW_READ = 'review_read';
+    public const REVIEW_UPDATE = 'review_update';
+    public const REVIEW_DELETE = 'review_delete';
+    public const REVIEW_LIST = 'review_list';
+
     private $authManager;
 
     public function __construct(AuthManager $authManager)
@@ -58,7 +58,7 @@ class ReviewVoter extends Voter
             ])) {
             return false;
         }
-      
+
         // only vote on User objects inside this voter
         if (!in_array($attribute, [
             self::REVIEW_CREATE,
@@ -104,12 +104,12 @@ class ReviewVoter extends Voter
     {
         return $this->authManager->isAuthorized(self::REVIEW_UPDATE, ['review'=>$review]);
     }
-    
+
     private function canDeleteReview(Review $review)
     {
         return $this->authManager->isAuthorized(self::REVIEW_DELETE, ['review'=>$review]);
     }
-    
+
     private function canListReview()
     {
         return $this->authManager->isAuthorized(self::REVIEW_LIST);

@@ -38,14 +38,14 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
  */
 class SolidaryVoter extends Voter
 {
-    const SOLIDARY_CREATE = 'solidary_create';
-    const SOLIDARY_READ = 'solidary_read';
-    const SOLIDARY_UPDATE = 'solidary_update';
-    const SOLIDARY_DELETE = 'solidary_delete';
-    const SOLIDARY_LIST = 'solidary_list';
-    const SOLIDARY_LIST_SELF = 'solidary_list_self';
-    const SOLIDARY_CONTACT = 'solidary_contact';
-    
+    public const SOLIDARY_CREATE = 'solidary_create';
+    public const SOLIDARY_READ = 'solidary_read';
+    public const SOLIDARY_UPDATE = 'solidary_update';
+    public const SOLIDARY_DELETE = 'solidary_delete';
+    public const SOLIDARY_LIST = 'solidary_list';
+    public const SOLIDARY_LIST_SELF = 'solidary_list_self';
+    public const SOLIDARY_CONTACT = 'solidary_contact';
+
     private $authManager;
 
     public function __construct(AuthManager $authManager)
@@ -67,7 +67,7 @@ class SolidaryVoter extends Voter
             ])) {
             return false;
         }
-      
+
         // only vote on User objects inside this voter
         if (!in_array($attribute, [
             self::SOLIDARY_CREATE,
@@ -127,12 +127,12 @@ class SolidaryVoter extends Voter
     {
         return $this->authManager->isAuthorized(self::SOLIDARY_UPDATE, ['solidary'=>$solidary]);
     }
-    
+
     private function canDeleteSolidary(Solidary $solidary)
     {
         return $this->authManager->isAuthorized(self::SOLIDARY_DELETE, ['solidary'=>$solidary]);
     }
-    
+
     private function canListSolidary()
     {
         return $this->authManager->isAuthorized(self::SOLIDARY_LIST);

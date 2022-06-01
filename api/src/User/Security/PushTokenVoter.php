@@ -30,9 +30,9 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class PushTokenVoter extends Voter
 {
-    const PUSH_TOKEN_CREATE = 'push_token_create';
-    const PUSH_TOKEN_DELETE = 'push_token_delete';
-    
+    public const PUSH_TOKEN_CREATE = 'push_token_create';
+    public const PUSH_TOKEN_DELETE = 'push_token_delete';
+
     private $authManager;
 
     public function __construct(AuthManager $authManager)
@@ -49,7 +49,7 @@ class PushTokenVoter extends Voter
             ])) {
             return false;
         }
-      
+
         // only vote on User objects inside this voter
         if (!in_array($attribute, [
             self::PUSH_TOKEN_CREATE,

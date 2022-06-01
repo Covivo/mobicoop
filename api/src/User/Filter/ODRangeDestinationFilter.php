@@ -42,7 +42,7 @@ final class ODRangeDestinationFilter extends AbstractContextAwareFilter
         if ($property != "destination") {
             return;
         }
-   
+
         // we decode the json we received for get Latitude and Longitude
         $value = json_decode($value);
 

@@ -56,7 +56,7 @@ class SolidaryDiaryEntry
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $author;
-  
+
     /**
      * @var User The user associated to this entry
      * @Groups({"readSolidary","writeSolidary"})
@@ -110,7 +110,7 @@ class SolidaryDiaryEntry
 
         return $this;
     }
-    
+
     public function getUser(): ?User
     {
         return $this->user;

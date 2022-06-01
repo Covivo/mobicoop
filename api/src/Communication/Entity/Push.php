@@ -60,7 +60,7 @@ class Push
         return $this;
     }
 
-    public function getTitle():? string
+    public function getTitle(): ?string
     {
         return $this->title;
     }
@@ -72,7 +72,7 @@ class Push
         return $this;
     }
 
-    public function getMessage():? string
+    public function getMessage(): ?string
     {
         return $this->message;
     }

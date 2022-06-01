@@ -29,7 +29,7 @@ use App\Carpool\Entity\Criteria;
 class CriteriaRepository
 {
     private $repository;
-    
+
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->repository = $entityManager->getRepository(Criteria::class);
@@ -60,9 +60,9 @@ class CriteriaRepository
             'a.longitude',
             'a.latitude'
         ];
-        
+
         $query->select($selection);
-        
+
         $query->join('c.proposal', 'p')
         ->join('p.waypoints', 'w')
         ->join('w.address', 'a')
@@ -74,7 +74,7 @@ class CriteriaRepository
             $query->andWhere('((c.frequency = 1 and c.fromDate >= :date) or (c.frequency=2 and c.toDate >= :date))')
             ->setParameter('date', $date->format('Y-m-d'));
         }
-        
+
         return $query->getQuery()->getResult();
     }
 
@@ -91,9 +91,9 @@ class CriteriaRepository
             'a.longitude',
             'a.latitude'
         ];
-        
+
         $query->select($selection);
-        
+
         $query->join('c.proposal', 'p')
         ->join('p.waypoints', 'w')
         ->join('w.address', 'a')

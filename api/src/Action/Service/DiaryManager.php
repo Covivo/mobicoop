@@ -60,7 +60,7 @@ class DiaryManager
         $diary->setAction($action);
         $diary->setUser($user);
         $diary->setAuthor($author);
-    
+
         if (!is_null($comment)) {
             $diary->setComment($comment);
         }

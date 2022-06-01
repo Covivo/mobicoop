@@ -41,7 +41,7 @@ final class ExternalPagesCollectionDataProvider implements ContextAwareCollectio
         $this->articleManager = $articleManager;
         $this->request = $request->getCurrentRequest();
     }
-    
+
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
         return Article::class === $resourceClass && $operationName == "externalArticles";
@@ -55,7 +55,7 @@ final class ExternalPagesCollectionDataProvider implements ContextAwareCollectio
         } else {
             $nbArticles = Article::NB_EXTERNAL_ARTICLES_DEFAULT;
         }
-        
+
         return $this->articleManager->getLastExternalArticles($nbArticles);
     }
 }

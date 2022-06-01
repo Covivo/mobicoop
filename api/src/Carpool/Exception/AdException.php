@@ -25,5 +25,5 @@ namespace App\Carpool\Exception;
 
 class AdException extends \LogicException
 {
-    const SELF_MATCHING = 'You cannot ask a carpool to yourself';
+    public const SELF_MATCHING = 'You cannot ask a carpool to yourself';
 }

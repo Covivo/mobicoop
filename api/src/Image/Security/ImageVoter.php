@@ -32,12 +32,12 @@ use App\Image\Entity\Icon;
 
 class ImageVoter extends Voter
 {
-    const IMAGE_CREATE = 'image_create';
-    const IMAGE_READ = 'image_read';
-    const IMAGE_UPDATE = 'image_update';
-    const IMAGE_DELETE = 'image_delete';
-    const IMAGE_LIST = 'image_list';
-    const IMAGE_REGENVERSIONS = 'images_regenversions';
+    public const IMAGE_CREATE = 'image_create';
+    public const IMAGE_READ = 'image_read';
+    public const IMAGE_UPDATE = 'image_update';
+    public const IMAGE_DELETE = 'image_delete';
+    public const IMAGE_LIST = 'image_list';
+    public const IMAGE_REGENVERSIONS = 'images_regenversions';
 
     private $authManager;
 
@@ -93,7 +93,7 @@ class ImageVoter extends Voter
 
         throw new \LogicException('This code should not be reached!');
     }
-    
+
     private function canCreateImage()
     {
         return $this->authManager->isAuthorized(self::IMAGE_CREATE);
@@ -113,12 +113,12 @@ class ImageVoter extends Voter
     {
         return $this->authManager->isAuthorized(self::IMAGE_UPDATE, ['image'=>$image]);
     }
-    
+
     private function canDeleteImage(Image $image)
     {
         return $this->authManager->isAuthorized(self::IMAGE_DELETE, ['image'=>$image]);
     }
-    
+
     private function canListImages()
     {
         return $this->authManager->isAuthorized(self::IMAGE_LIST);

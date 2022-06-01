@@ -41,7 +41,7 @@ final class CreateProofAction
     private $solidaryRepository;
     private $solidaryUserRepository;
     private $fileManager;
-    
+
     public function __construct(
         StructureProofRepository $structureProofRepository,
         SolidaryUserStructureRepository $solidaryUserStructureRepository,
@@ -55,7 +55,7 @@ final class CreateProofAction
         $this->solidaryUserRepository = $solidaryUserRepository;
         $this->fileManager = $fileManager;
     }
-    
+
     public function __invoke(Request $request): Proof
     {
         if (is_null($request)) {

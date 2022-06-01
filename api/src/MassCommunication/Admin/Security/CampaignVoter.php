@@ -31,19 +31,19 @@ use App\MassCommunication\Entity\Campaign;
 
 class CampaignVoter extends Voter
 {
-    const ADMIN_CAMPAIGN_CREATE = 'admin_campaign_create';
-    const ADMIN_CAMPAIGN_READ = 'admin_campaign_read';
-    const ADMIN_CAMPAIGN_UPDATE = 'admin_campaign_update';
-    const ADMIN_CAMPAIGN_DELETE = 'admin_campaign_delete';
-    const ADMIN_CAMPAIGN_LIST = 'admin_campaign_list';
-    const ADMIN_CAMPAIGN_SEND = 'admin_campaign_send';
-    const ADMIN_CAMPAIGN_TEST = 'admin_campaign_test';
-    const CAMPAIGN_CREATE = 'campaign_create';
-    const CAMPAIGN_READ = 'campaign_read';
-    const CAMPAIGN_UPDATE = 'campaign_update';
-    const CAMPAIGN_DELETE = 'campaign_delete';
-    const CAMPAIGN_LIST = 'campaign_list';
-    
+    public const ADMIN_CAMPAIGN_CREATE = 'admin_campaign_create';
+    public const ADMIN_CAMPAIGN_READ = 'admin_campaign_read';
+    public const ADMIN_CAMPAIGN_UPDATE = 'admin_campaign_update';
+    public const ADMIN_CAMPAIGN_DELETE = 'admin_campaign_delete';
+    public const ADMIN_CAMPAIGN_LIST = 'admin_campaign_list';
+    public const ADMIN_CAMPAIGN_SEND = 'admin_campaign_send';
+    public const ADMIN_CAMPAIGN_TEST = 'admin_campaign_test';
+    public const CAMPAIGN_CREATE = 'campaign_create';
+    public const CAMPAIGN_READ = 'campaign_read';
+    public const CAMPAIGN_UPDATE = 'campaign_update';
+    public const CAMPAIGN_DELETE = 'campaign_delete';
+    public const CAMPAIGN_LIST = 'campaign_list';
+
     public function __construct(AuthManager $authManager)
     {
         $this->authManager = $authManager;

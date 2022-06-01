@@ -23,9 +23,9 @@
 
 namespace App\User\Exception;
 
-use \Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class UserAlreadyExistsException extends BadRequestHttpException
 {
-    const USER_ALREADY_EXISTS = "A user with this email address already exists in our database";
+    public const USER_ALREADY_EXISTS = "A user with this email address already exists in our database";
 }

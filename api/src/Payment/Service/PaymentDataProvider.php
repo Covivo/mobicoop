@@ -66,7 +66,7 @@ class PaymentDataProvider
     private const SUPPORTED_PROVIDERS = [
         "MangoPay" => MangoPayProvider::class
     ];
-    
+
     public function __construct(
         PaymentProfileRepository $paymentProfileRepository,
         Security $security,
@@ -99,7 +99,7 @@ class PaymentDataProvider
         $this->apikey = $apikey;
         $this->sandBoxMode = $sandBoxMode;
     }
-    
+
     /**
      * Check if the payment is correcty configured
      */
@@ -137,7 +137,7 @@ class PaymentDataProvider
             throw new PaymentException(PaymentException::UNSUPPORTED_PROVIDER);
         }
     }
-    
+
 
     /**
      * Get the BankAccounts of a PaymentProfile
@@ -194,7 +194,7 @@ class PaymentDataProvider
                 /**
                  * @var PaymentProfile $paymentProfile
                  */
-                
+
                 if ($callExternalProvider) {
                     $bankAccounts = $this->providerInstance->getBankAccounts($paymentProfile);
                     foreach ($bankAccounts as $bankAccount) {
@@ -209,7 +209,7 @@ class PaymentDataProvider
         return $paymentProfiles;
     }
 
-    
+
     /**
      * Register a User on the payment provider platform
      *
@@ -310,7 +310,7 @@ class PaymentDataProvider
         return $this->providerInstance->uploadValidationDocument($validationDocument);
     }
 
-    
+
     public function getDocument(int $validationDocumentId)
     {
         $this->checkPaymentConfiguration();

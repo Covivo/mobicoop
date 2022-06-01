@@ -39,21 +39,21 @@ use CrEOF\Spatial\PHP\Types\Geometry\Point;
  */
 class CarpoolProof
 {
-    const STATUS_INITIATED = 0;     // not ready to be sent, proof still under construction
-    const STATUS_PENDING = 1;       // ready to be sent
-    const STATUS_SENT = 2;          // sent
-    const STATUS_ERROR = 3;         // error during the sending
-    const STATUS_CANCELED = 4;      // cancellation before sending
+    public const STATUS_INITIATED = 0;     // not ready to be sent, proof still under construction
+    public const STATUS_PENDING = 1;       // ready to be sent
+    public const STATUS_SENT = 2;          // sent
+    public const STATUS_ERROR = 3;         // error during the sending
+    public const STATUS_CANCELED = 4;      // cancellation before sending
 
-    const ACTOR_DRIVER = 1;
-    const ACTOR_PASSENGER = 2;
+    public const ACTOR_DRIVER = 1;
+    public const ACTOR_PASSENGER = 2;
 
-    const TYPE_LOW = "A";
-    const TYPE_MID = "B";
-    const TYPE_HIGH = "C";
+    public const TYPE_LOW = "A";
+    public const TYPE_MID = "B";
+    public const TYPE_HIGH = "C";
 
-    const TYPE_UNDETERMINED_CLASSIC = "CX";
-    const TYPE_UNDETERMINED_DYNAMIC = "DX";
+    public const TYPE_UNDETERMINED_CLASSIC = "CX";
+    public const TYPE_UNDETERMINED_DYNAMIC = "DX";
 
     /**
      * @var int The id of this proof.
@@ -267,7 +267,7 @@ class CarpoolProof
             // set the owning side
             $ask->addCarpoolProof($this);
         }
-        
+
         return $this;
     }
 
@@ -318,7 +318,7 @@ class CarpoolProof
 
         return $this;
     }
-    
+
     public function getPickUpPassengerAddress(): ?Address
     {
         return $this->pickUpPassengerAddress;
@@ -371,23 +371,23 @@ class CarpoolProof
     {
         return $this->direction;
     }
-    
+
     public function setDirection(?Direction $direction): self
     {
         $this->direction = $direction;
-        
+
         return $this;
     }
-    
+
     public function getGeoJsonPoints()
     {
         return $this->geoJsonPoints;
     }
-    
+
     public function setGeoJsonPoints($geoJsonPoints): self
     {
         $this->geoJsonPoints = $geoJsonPoints;
-        
+
         return $this;
     }
 
@@ -443,11 +443,11 @@ class CarpoolProof
     {
         return $this->points;
     }
-    
+
     public function setPoints(array $points): self
     {
         $this->points = $points;
-        
+
         return $this;
     }
 
@@ -500,7 +500,7 @@ class CarpoolProof
     }
 
     // DOCTRINE EVENTS
-    
+
     /**
      * Status.
      *

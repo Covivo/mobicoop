@@ -31,12 +31,12 @@ use App\Gamification\Entity\Badge;
 
 class BadgeVoter extends Voter
 {
-    const BADGE_CREATE = 'badge_create';
-    const BADGE_READ = 'badge_read';
-    const BADGE_UPDATE = 'badge_update';
-    const BADGE_DELETE = 'badge_delete';
-    const BADGE_LIST = 'badge_list';
-    const BADGES_BOARD = 'badges_board';
+    public const BADGE_CREATE = 'badge_create';
+    public const BADGE_READ = 'badge_read';
+    public const BADGE_UPDATE = 'badge_update';
+    public const BADGE_DELETE = 'badge_delete';
+    public const BADGE_LIST = 'badge_list';
+    public const BADGES_BOARD = 'badges_board';
 
     private $authManager;
 
@@ -108,12 +108,12 @@ class BadgeVoter extends Voter
     {
         return $this->authManager->isAuthorized(self::BADGE_UPDATE, ['badge'=>$badge]);
     }
-    
+
     private function canDelete(Badge $badge)
     {
         return $this->authManager->isAuthorized(self::BADGE_DELETE, ['badge'=>$badge]);
     }
-    
+
     private function canList()
     {
         return $this->authManager->isAuthorized(self::BADGE_LIST);

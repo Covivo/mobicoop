@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace DoctrineMigrations;
 
@@ -10,7 +12,7 @@ use Doctrine\Migrations\AbstractMigration;
  */
 final class Version20190521083701 extends AbstractMigration
 {
-    public function up(Schema $schema) : void
+    public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
@@ -19,7 +21,7 @@ final class Version20190521083701 extends AbstractMigration
         $this->addSql('ALTER TABLE mass_matching DROP INDEX UNIQ_9B3B75EB1AE2DA96, ADD INDEX IDX_9B3B75EB1AE2DA96 (mass_person1_id)');
     }
 
-    public function down(Schema $schema) : void
+    public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');

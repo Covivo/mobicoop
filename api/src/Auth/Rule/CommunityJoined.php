@@ -40,7 +40,7 @@ class CommunityJoined implements AuthRuleInterface
         if (!isset($params['community'])) {
             return false;
         }
-        
+
         if (!($params['community'] instanceof Community)) {
             return false;
         }
@@ -56,7 +56,7 @@ class CommunityJoined implements AuthRuleInterface
             if ($requester instanceof App) {
                 return false;
             }
-            
+
             $communityUsers = $community->getCommunityUsers();
             foreach ($communityUsers as $communityUser) {
                 if ($communityUser->getUser()->getId() == $requester->getId()) {

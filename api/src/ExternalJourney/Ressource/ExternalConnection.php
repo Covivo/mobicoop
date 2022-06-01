@@ -65,14 +65,14 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class ExternalConnection
 {
-    const DEFAULT_ID = 999999999999;
-    
-    const ROLE_DRIVER = 1;
-    const ROLE_PASSENGER = 2;
-    const ROLE_DRIVER_OR_PASSENGER = 3;
+    public const DEFAULT_ID = 999999999999;
 
-    const STATUS_RECIPIENT = "recipient";
-    const STATUS_SENDER = "sender";
+    public const ROLE_DRIVER = 1;
+    public const ROLE_PASSENGER = 2;
+    public const ROLE_DRIVER_OR_PASSENGER = 3;
+
+    public const STATUS_RECIPIENT = "recipient";
+    public const STATUS_SENDER = "sender";
 
     /**
      * @var int Id of the ExternalConnection
@@ -89,7 +89,7 @@ class ExternalConnection
      */
     private $provider;
 
-    
+
     /**
      * @var int The role of the User who's sending the external connection
      * @Groups({"readExternalConnection","writeExternalConnection"})
@@ -123,7 +123,7 @@ class ExternalConnection
             $this->id = $id;
         }
     }
-        
+
     public function getId(): ?int
     {
         return $this->id;
@@ -132,7 +132,7 @@ class ExternalConnection
     public function setId(?int $id): self
     {
         $this->id = $id;
-        
+
         return $this;
     }
 
@@ -144,7 +144,7 @@ class ExternalConnection
     public function setProvider(?string $provider): self
     {
         $this->provider = $provider;
-        
+
         return $this;
     }
 
@@ -156,7 +156,7 @@ class ExternalConnection
     public function setRole(?int $role): self
     {
         $this->role = $role;
-        
+
         return $this;
     }
 
@@ -168,10 +168,10 @@ class ExternalConnection
     public function setCarpoolerUuid(?string $carpoolerUuid): self
     {
         $this->carpoolerUuid = $carpoolerUuid;
-        
+
         return $this;
     }
-    
+
     public function getJourneysUuid(): ?string
     {
         return $this->journeysUuid;
@@ -180,7 +180,7 @@ class ExternalConnection
     public function setJourneysUuid(?string $journeysUuid): self
     {
         $this->journeysUuid = $journeysUuid;
-        
+
         return $this;
     }
 
@@ -192,7 +192,7 @@ class ExternalConnection
     public function setContent(?string $content): self
     {
         $this->content = $content;
-        
+
         return $this;
     }
 }

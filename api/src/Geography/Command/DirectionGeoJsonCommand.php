@@ -37,14 +37,14 @@ use Symfony\Component\Console\Output\OutputInterface;
 class DirectionGeoJsonCommand extends Command
 {
     private $directionManager;
-    
+
     public function __construct(DirectionManager $directionManager)
     {
         $this->directionManager = $directionManager;
-        
+
         parent::__construct();
     }
-    
+
     protected function configure()
     {
         $this

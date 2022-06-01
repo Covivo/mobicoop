@@ -31,16 +31,16 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class EditorialVoter extends Voter
 {
-    const ADMIN_EDITORIAL_CREATE = 'admin_editorial_create';
-    const ADMIN_EDITORIAL_READ = 'admin_editorial_read';
-    const ADMIN_EDITORIAL_UPDATE = 'admin_editorial_update';
-    const ADMIN_EDITORIAL_DELETE = 'admin_editorial_delete';
-    const ADMIN_EDITORIAL_LIST = 'admin_editorial_list';
-    const EDITORIAL_CREATE = 'editorial_create';
-    const EDITORIAL_READ = 'editorial_read';
-    const EDITORIAL_UPDATE = 'editorial_update';
-    const EDITORIAL_DELETE = 'editorial_delete';
-    const EDITORIAL_LIST = 'editorial_list';
+    public const ADMIN_EDITORIAL_CREATE = 'admin_editorial_create';
+    public const ADMIN_EDITORIAL_READ = 'admin_editorial_read';
+    public const ADMIN_EDITORIAL_UPDATE = 'admin_editorial_update';
+    public const ADMIN_EDITORIAL_DELETE = 'admin_editorial_delete';
+    public const ADMIN_EDITORIAL_LIST = 'admin_editorial_list';
+    public const EDITORIAL_CREATE = 'editorial_create';
+    public const EDITORIAL_READ = 'editorial_read';
+    public const EDITORIAL_UPDATE = 'editorial_update';
+    public const EDITORIAL_DELETE = 'editorial_delete';
+    public const EDITORIAL_LIST = 'editorial_list';
 
     private $authManager;
 

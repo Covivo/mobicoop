@@ -33,11 +33,11 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class CarVoter extends Voter
 {
-    const CREATE = 'car_create';
-    const READ = 'car_read';
-    const UPDATE = 'car_update';
-    const DELETE = 'car_delete';
-    const ADMIN_READ = 'car_admin_read';
+    public const CREATE = 'car_create';
+    public const READ = 'car_read';
+    public const UPDATE = 'car_update';
+    public const DELETE = 'car_delete';
+    public const ADMIN_READ = 'car_admin_read';
 
     private $security;
     private $permissionManager;
@@ -60,7 +60,7 @@ class CarVoter extends Voter
             ])) {
             return false;
         }
-      
+
         // only vote on Car objects inside this voter
         if (!$subject instanceof Car) {
             return false;

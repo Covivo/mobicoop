@@ -57,7 +57,7 @@ class JourneyManager
         $this->security = $security;
         $this->geoTools = $geoTools;
     }
-    
+
     /**
      * Post an Ad from a RDEX+ Journey
      *
@@ -70,7 +70,7 @@ class JourneyManager
         $this->checkJourney($journey);
 
         $ad = $this->buildAdFromJourney($journey);
-        
+
         //create ad
         $ad = $this->adManager->createAd($ad, true, false, false);
 
@@ -190,7 +190,7 @@ class JourneyManager
         } elseif ($journey->getPrice()->getType() == Price::TYPE_FREE) {
             $ad->setPriceKm(0);
         }
-        
+
         // Build the waypoints (Address)
         $outwardWaypoints = [];
 
@@ -215,14 +215,14 @@ class JourneyManager
         // Return's Waypoints
         if (!$ad->isOneWay()) {
             $returnWaypoints[] = $this->buildAddressFromGeopoint($journey->getTo());
-    
+
             // TO DO : treat waypoints
             if ($journey->getNumberOfWaypoints()>0) {
                 for ($i = (count($journey->getWaypoints())) ; $i>0 ; $i--) {
                     $returnWaypoints[] = $this->buildAddressFromWaypoint($journey->getWaypoints()[$i-1]);
                 }
             }
-            
+
             $returnWaypoints[] = $this->buildAddressFromGeopoint($journey->getFrom());
 
             $ad->setReturnWaypoints($returnWaypoints);
@@ -243,14 +243,14 @@ class JourneyManager
                 $ad->setReturnTime($returnDate->format("H:i"));
             }
         } else {
-            
+
             // We set a max date if it's given
             if (!is_null($journey->getOutward()->getMaxDate())) {
                 $outwardLimitDate = new \DateTime("now");
                 $outwardLimitDate->setTimestamp($journey->getOutward()->getMaxDate());
                 $ad->setOutwardLimitDate($outwardLimitDate);
             }
-            
+
             // If there is a return, we set the max date for the return if it's given
             if (!$ad->isOneWay() && !is_null($journey->getReturn()->getMaxDate())) {
                 $returnLimitDate = new \DateTime("now");
@@ -266,7 +266,7 @@ class JourneyManager
         // Margin duration
         // For now, we only use the OutWard delta time and ignore the rest
         $ad->setMarginDuration($journey->getOutward()->getTimeDelta());
-        
+
         return $ad;
     }
 
@@ -351,7 +351,7 @@ class JourneyManager
             "sat"=>false,
             "sun"=>false
         ];
-        
+
         // According to RDEX+ specs we can have several regularSchedule
         // WARNING : If two schedules contains the same day, we are keeping the last time given
         foreach ($waySchedule->getRegularSchedule() as $regularSchedule) {
@@ -382,7 +382,7 @@ class JourneyManager
                         $time = $regularSchedule->getSundayTime();
                         break;
                 }
-                
+
                 if (!is_null($time) && !empty($time) && $time !== "") {
                     $key = $this->checkSubScheduleDayExists($schedules, $day);
                     if ($key == -1) {
@@ -409,7 +409,7 @@ class JourneyManager
         }
         return $schedules;
     }
-    
+
     /**
      * Check if a subschedule is already defined for a given day
      *

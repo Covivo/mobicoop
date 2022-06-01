@@ -99,7 +99,7 @@ class RelayPointTypeManager
         // persist the relay point type
         $this->entityManager->persist($relayPointType);
         $this->entityManager->flush();
-        
+
         // return the relay point type
         return $relayPointType;
     }

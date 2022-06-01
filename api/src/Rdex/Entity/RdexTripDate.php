@@ -34,47 +34,47 @@ class RdexTripDate implements \JsonSerializable
      * @var \DateTime The min date.
      */
     private $mindate;
-    
+
     /**
      * @var \DateTime The max date.
      */
     private $maxdate;
-    
+
     /**
      * @var RdexDayTime The day time for monday.
      */
     private $monday;
-    
+
     /**
      * @var RdexDayTime The day time for tuesday.
      */
     private $tuesday;
-    
+
     /**
      * @var RdexDayTime The day time for wednesday.
      */
     private $wednesday;
-    
+
     /**
      * @var RdexDayTime The day time for thursday.
      */
     private $thursday;
-    
+
     /**
      * @var RdexDayTime The day time for friday.
      */
     private $friday;
-    
+
     /**
      * @var RdexDayTime The day time for saturday.
      */
     private $saturday;
-    
+
     /**
      * @var RdexDayTime The day time for sunday.
      */
     private $sunday;
-    
+
     /**
      * @return \DateTime
      */
@@ -218,7 +218,7 @@ class RdexTripDate implements \JsonSerializable
     {
         $this->sunday = $sunday;
     }
-    
+
     public function jsonSerialize(): mixed
     {
         return

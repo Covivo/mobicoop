@@ -42,7 +42,7 @@ final class ClassicProofItemDataProvider implements RestrictedDataProviderInterf
         $this->request = $requestStack->getCurrentRequest();
         $this->proofManager = $proofManager;
     }
-    
+
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
         return ClassicProof::class === $resourceClass && $operationName === "get";

@@ -43,19 +43,19 @@ final class RolesGrantedForCreationDataProvider implements CollectionDataProvide
     protected $request;
     private $authmanager;
     private $security;
-    
+
     public function __construct(RequestStack $requestStack, Authmanager $authmanager, Security $security)
     {
         $this->request = $requestStack->getCurrentRequest();
         $this->authmanager = $authmanager;
         $this->security = $security;
     }
-    
+
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
         return Permission::class === $resourceClass && $operationName === "roles_granted_for_creation";
     }
-    
+
     public function getCollection(string $resourceClass, string $operationName = null): iterable
     {
         return $this->authmanager->getAuthItemsGrantedForCreation($this->security->getUser());

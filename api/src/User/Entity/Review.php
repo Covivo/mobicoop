@@ -44,7 +44,7 @@ class Review
      * @ORM\Column(type="integer")
      */
     private $id;
-   
+
     /**
      * @var User The User who left this Review
      *
@@ -69,7 +69,7 @@ class Review
      * @ORM\Column(type="text")
      */
     private $content;
-   
+
     /**
      * @var \DateTimeInterface Creation date.
      *
@@ -92,7 +92,7 @@ class Review
     public function setId(int $id): self
     {
         $this->id = $id;
-        
+
         return $this;
     }
 
@@ -104,7 +104,7 @@ class Review
     public function setReviewer(?User $reviewer): self
     {
         $this->reviewer = $reviewer;
-        
+
         return $this;
     }
 
@@ -116,7 +116,7 @@ class Review
     public function setReviewed(?User $reviewed): self
     {
         $this->reviewed = $reviewed;
-        
+
         return $this;
     }
 
@@ -128,7 +128,7 @@ class Review
     public function setContent(?string $content): self
     {
         $this->content = $content;
-        
+
         return $this;
     }
 
@@ -157,7 +157,7 @@ class Review
     }
 
     // DOCTRINE EVENTS
-    
+
     /**
      * Creation date.
      *

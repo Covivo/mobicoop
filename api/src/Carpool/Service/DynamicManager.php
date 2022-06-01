@@ -184,7 +184,7 @@ class DynamicManager
 
         // comment
         $proposal->setComment($dynamic->getComment());
-        
+
         // criteria
 
         // driver / passenger / seats
@@ -192,7 +192,7 @@ class DynamicManager
         $criteria->setPassenger($dynamic->getRole() == Dynamic::ROLE_PASSENGER);
         $criteria->setSeatsDriver($dynamic->getRole() == Dynamic::ROLE_DRIVER ? $dynamic->getSeats() : 0);
         $criteria->setSeatsPassenger($dynamic->getRole() == Dynamic::ROLE_PASSENGER ? $dynamic->getSeats() : 0);
-        
+
         // prices
         $criteria->setPriceKm($dynamic->getPriceKm());
         if ($dynamic->getRole() == Dynamic::ROLE_DRIVER) {
@@ -241,12 +241,12 @@ class DynamicManager
         }
 
         $proposal->setCriteria($criteria);
-        
+
         $proposal = $this->proposalManager->prepareProposal($proposal);
         $this->logger->info("DynamicManager : end creating ad " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
         $this->entityManager->persist($proposal);
         $this->logger->info("DynamicManager : end persisting ad " . (new \DateTime("UTC"))->format("Ymd H:i:s.u"));
-        
+
         $position->setProposal($proposal);
         $this->entityManager->persist($position);
         $this->entityManager->flush();
@@ -258,14 +258,14 @@ class DynamicManager
         }
 
         // we compute the results
-        
+
         // default order
         $dynamic->setFilters([
             'order'=>[
                 'criteria'=>'date',
                 'value'=>'ASC'
             ]
-        
+
         ]);
 
         $dynamic->setResults(
@@ -384,7 +384,7 @@ class DynamicManager
                     $waypoint->getAddress()->setCountryCode($reversedGeocodeAddress->getCountryCode());
                     $waypoint->getAddress()->setVenue($reversedGeocodeAddress->getVenue());
                 }
-                
+
                 $this->entityManager->persist($waypoint);
                 $this->entityManager->flush();
             }
@@ -729,7 +729,7 @@ class DynamicManager
         // we use the matching criteria
         $criteria = clone $matching->getCriteria();
         $ask->setCriteria($criteria);
-        
+
         // we use the matching waypoints
         $waypoints = $matching->getWaypoints();
         foreach ($waypoints as $waypoint) {
@@ -763,7 +763,7 @@ class DynamicManager
         $this->entityManager->persist($matching->getProposalRequest());
 
         $this->entityManager->flush();
-        
+
         // todo : dispatch en event ?
 
         $dynamicAsk->setId($ask->getId());
@@ -948,7 +948,7 @@ class DynamicManager
      *  DYNAMIC PROOF *
      ******************/
 
-    
+
     /**
      * Create a proof for a dynamic ask.
      *
@@ -1017,7 +1017,7 @@ class DynamicManager
         } catch (ProofException $proofException) {
             throw new DynamicException($proofException->getMessage());
         }
-        
+
         return $dynamicProofData;
     }
 

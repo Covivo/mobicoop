@@ -34,7 +34,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class RelayPointMapVoter extends Voter
 {
-    const RELAYPOINTMAP_LIST = 'relay_point_map_list';
+    public const RELAYPOINTMAP_LIST = 'relay_point_map_list';
 
     private $request;
     private $relayPointMapManager;

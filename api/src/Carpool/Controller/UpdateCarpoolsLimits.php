@@ -35,9 +35,9 @@ use App\TranslatorTrait;
 class UpdateCarpoolsLimits
 {
     use TranslatorTrait;
-    
+
     private $adManager;
-    
+
     public function __construct(AdManager $adManager)
     {
         $this->adManager = $adManager;

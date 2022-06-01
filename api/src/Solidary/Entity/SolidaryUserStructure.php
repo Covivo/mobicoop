@@ -81,9 +81,9 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class SolidaryUserStructure
 {
-    const STATUS_PENDING = 0;
-    const STATUS_ACCEPTED = 1;
-    const STATUS_REFUSED = 2;
+    public const STATUS_PENDING = 0;
+    public const STATUS_ACCEPTED = 1;
+    public const STATUS_REFUSED = 2;
 
     /**
      * @var int The id of this SolidaryStructureProof.
@@ -95,7 +95,7 @@ class SolidaryUserStructure
      * @ApiProperty(identifier=true)
      */
     private $id;
-    
+
     /**
      * @var SolidaryUser Solidary User linked to this structure
      *
@@ -105,7 +105,7 @@ class SolidaryUserStructure
      * @MaxDepth(1)
      */
     private $solidaryUser;
-    
+
     /**
      * @var Structure Structure.
      *
@@ -186,35 +186,35 @@ class SolidaryUserStructure
     {
         return $this->id;
     }
-    
+
     public function setId(int $id): self
     {
         $this->id = $id;
-        
+
         return $this;
     }
-    
+
     public function getSolidaryUser(): ?SolidaryUser
     {
         return $this->solidaryUser;
     }
-    
+
     public function setSolidaryUser(?SolidaryUser $solidaryUser): self
     {
         $this->solidaryUser = $solidaryUser;
-        
+
         return $this;
     }
-    
+
     public function getStructure(): ?Structure
     {
         return $this->structure;
     }
-    
+
     public function setStructure(Structure $structure): self
     {
         $this->structure = $structure;
-        
+
         return $this;
     }
 
@@ -274,11 +274,11 @@ class SolidaryUserStructure
     {
         return $this->status;
     }
-    
+
     public function setStatus(int $status): self
     {
         $this->status = $status;
-        
+
         return $this;
     }
 
@@ -335,7 +335,7 @@ class SolidaryUserStructure
     }
 
     // DOCTRINE EVENTS
-    
+
     /**
      * Creation date.
      *

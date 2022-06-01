@@ -35,7 +35,7 @@ class EnvTwigExtension extends AbstractExtension
          new TwigFunction('api_env', 'getenv'),
      ];
     }
- 
+
     /**
      * Initializes the runtime environment.
      *
@@ -47,7 +47,7 @@ class EnvTwigExtension extends AbstractExtension
     {
         // TODO: Implement initRuntime() method.
     }
- 
+
     /**
      * Returns a list of global variables to add to the existing list.
      *
@@ -57,7 +57,7 @@ class EnvTwigExtension extends AbstractExtension
     {
         // TODO: Implement getGlobals() method.
     }
- 
+
     /**
      * Returns the name of the extension.
      *

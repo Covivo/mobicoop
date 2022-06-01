@@ -38,14 +38,14 @@ class CarpoolSubscriber implements EventSubscriberInterface
     {
         $this->solidaryManager = $solidaryManager;
     }
-    
+
     public static function getSubscribedEvents(): array
     {
         return [
             MatchingNewEvent::NAME => 'onNewMatching',
         ];
     }
-        
+
     /**
      * Executed when a new matching is discovered : check if the proposalRequest is a Solidary proposal.
      * If so, create the related SolidaryMatching.

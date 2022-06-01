@@ -92,7 +92,7 @@ class ZoneManager
         }
         return array_unique($zones, SORT_REGULAR);
     }
-    
+
     /**
      * Get the zones for an address.
      *
@@ -107,7 +107,7 @@ class ZoneManager
         if ($deep == 0) {
             return $zones;
         }
-            
+
         $nearbyZones = $this->getNear($address, $precision, $deep);
         $zones = array_unique(array_merge($zones, $nearbyZones), SORT_REGULAR);
         sort($zones);
@@ -126,7 +126,7 @@ class ZoneManager
         // we search the col and row for the gps point
         $col = (int)($longitude*(1/$precision)+1);
         $row = (int)($latitude*(1/$precision));
-        
+
         // we search the zone
         $zone = $col+360*$row;
 
@@ -146,7 +146,7 @@ class ZoneManager
         if ($deep<0) {
             return null;
         }
-        
+
         // we search for nearby zones
         // we nearby zones of the XX zone are defined like this :
         // X1 X2 X3
@@ -187,7 +187,7 @@ class ZoneManager
         $nearX6 = $this->getZonesForAddress($x6, $precision, $deep-1);
         $nearX7 = $this->getZonesForAddress($x7, $precision, $deep-1);
         $nearX8 = $this->getZonesForAddress($x8, $precision, $deep-1);
-        
+
         return array_merge($nearX1, $nearX2, $nearX3, $nearX4, $nearX5, $nearX6, $nearX7, $nearX8);
     }
 }

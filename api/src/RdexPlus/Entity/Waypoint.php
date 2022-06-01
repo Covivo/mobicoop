@@ -33,7 +33,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Waypoint
 {
-    
     /**
      * @var float Waypoint's longitude
      *
@@ -68,7 +67,7 @@ class Waypoint
      * @Groups({"rdexPlusRead","rdexPlusWrite"})
      */
     private $postalCode;
-    
+
     /**
      * @var string Waypoint's country
      *
@@ -96,7 +95,7 @@ class Waypoint
      * @Groups({"rdexPlusRead"})
      */
     private $stepDuration;
-    
+
     /**
      * @var string Waypoint's name
      *
@@ -122,7 +121,7 @@ class Waypoint
 
         return $this;
     }
-    
+
     public function getLongitude(): ?string
     {
         return $this->longitude;
@@ -146,7 +145,7 @@ class Waypoint
 
         return $this;
     }
-    
+
     public function getCity(): ?string
     {
         return $this->city;
@@ -158,7 +157,7 @@ class Waypoint
 
         return $this;
     }
-    
+
     public function getPostalCode(): ?string
     {
         return $this->postalCode;
@@ -182,7 +181,7 @@ class Waypoint
 
         return $this;
     }
-    
+
     public function getPoiName(): ?string
     {
         return $this->poiName;
@@ -194,7 +193,7 @@ class Waypoint
 
         return $this;
     }
-    
+
     public function getStepDistance(): ?int
     {
         return $this->stepDistance;
@@ -218,7 +217,7 @@ class Waypoint
 
         return $this;
     }
-    
+
     public function getType(): ?string
     {
         return $this->type;
@@ -230,7 +229,7 @@ class Waypoint
 
         return $this;
     }
-    
+
     public function isMandatory(): ?bool
     {
         return $this->mandatory;

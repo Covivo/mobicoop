@@ -139,7 +139,7 @@ class StatsManager
         // last month published ad
         $now = new \DateTime();
         $lastMonth = $now->modify('-1 months');
-         
+
         $startDate = DateTime::createFromFormat("d/n/Y h:i:s", "01/".$lastMonth->format('n')."/".$lastMonth->format('Y')."00:00:00");
         $endDate = DateTime::createFromFormat("d/n/Y h:i:s", $lastMonth->format('t')."/".$lastMonth->format('n')."/".$lastMonth->format('Y')."00:00:00");
         $this->addIndicator("ads_last_month", $this->proposalRepository->countProposalsBetweenCreateDate($startDate, $endDate));

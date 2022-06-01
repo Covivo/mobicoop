@@ -66,10 +66,10 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Article
 {
-    const DEFAULT_ID = "999999999999";
+    public const DEFAULT_ID = "999999999999";
 
-    const CONTEXT_HOME = "home";
-    const CONTEXT_INTERNAL = "internal";
+    public const CONTEXT_HOME = "home";
+    public const CONTEXT_INTERNAL = "internal";
 
     /**
      * @var int The id of the article
@@ -106,7 +106,7 @@ class Article
      * @Groups({"readArticle"})
      */
     private $iFrame;
-    
+
     /**
      * @var string The date of the post
      *
@@ -138,7 +138,7 @@ class Article
     public function setId(string $id): self
     {
         $this->id = $id;
-        
+
         return $this;
     }
 
@@ -150,7 +150,7 @@ class Article
     public function setTitle(?string $title): self
     {
         $this->title = $title;
-        
+
         return $this;
     }
 
@@ -162,7 +162,7 @@ class Article
     public function setDescription(?string $description): self
     {
         $this->description = $description;
-        
+
         return $this;
     }
 
@@ -174,7 +174,7 @@ class Article
     public function setImage(?string $image): self
     {
         $this->image = $image;
-        
+
         return $this;
     }
 
@@ -182,14 +182,14 @@ class Article
     {
         return $this->iFrame;
     }
-    
+
     public function setIFrame(?string $iFrame): self
     {
         $this->iFrame = $iFrame;
-        
+
         return $this;
     }
-    
+
     public function getPubDate(): ?string
     {
         return $this->pubDate;
@@ -198,7 +198,7 @@ class Article
     public function setPubDate(?string $pubDate): self
     {
         $this->pubDate = $pubDate;
-        
+
         return $this;
     }
 
@@ -210,7 +210,7 @@ class Article
     public function setLink(?string $link): self
     {
         $this->link = $link;
-        
+
         return $this;
     }
 }

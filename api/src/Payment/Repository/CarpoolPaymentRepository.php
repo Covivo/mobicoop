@@ -33,7 +33,7 @@ use DateTime;
 class CarpoolPaymentRepository
 {
     private $repository;
-    
+
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->repository = $entityManager->getRepository(CarpoolPayment::class);
@@ -48,7 +48,7 @@ class CarpoolPaymentRepository
     {
         return $this->repository->findBy($criteria, $orderBy, $limit, $offset);
     }
-    
+
     public function findOneBy(array $criteria): ?CarpoolPayment
     {
         return $this->repository->findOneBy($criteria);
@@ -73,7 +73,7 @@ class CarpoolPaymentRepository
         ->setParameter('fromDate', $fromDate->format('Y-m-d H:i:s'))
         ->setParameter('toDate', $toDate->format('Y-m-d H:i:s'))
         ;
-                
+
         return $query->getQuery()->getResult();
     }
 

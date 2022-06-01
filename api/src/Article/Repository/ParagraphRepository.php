@@ -39,7 +39,7 @@ class ParagraphRepository
      * @var EntityRepository
      */
     private $repository;
-    
+
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->repository = $entityManager->getRepository(Paragraph::class);
@@ -64,7 +64,7 @@ class ParagraphRepository
         ->setParameter('position', $paragraph->getPosition()+1)
         ->setParameter('section', $paragraph->getSection())
         ->getQuery();
-        
+
         return $query->getOneOrNullResult()
         ;
     }
@@ -83,7 +83,7 @@ class ParagraphRepository
         ->setParameter('position', $paragraph->getPosition()-1)
         ->setParameter('section', $paragraph->getSection())
         ->getQuery();
-        
+
         return $query->getOneOrNullResult()
         ;
     }

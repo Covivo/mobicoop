@@ -240,7 +240,7 @@ class MassComputeManager
         $this->mass->setPersonsCoords($this->tabCoords);
         $this->logger->info('Mass Compute | End buildPersonsCoords | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
     }
-    
+
     private function computeData()
     {
         $this->logger->info('Mass Compute | Begin computeData | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));

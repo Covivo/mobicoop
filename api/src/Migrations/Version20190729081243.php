@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace DoctrineMigrations;
 
@@ -10,7 +12,7 @@ use Doctrine\Migrations\AbstractMigration;
  */
 final class Version20190729081243 extends AbstractMigration
 {
-    public function up(Schema $schema) : void
+    public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
@@ -26,7 +28,7 @@ final class Version20190729081243 extends AbstractMigration
         $this->addSql('ALTER TABLE waypoint CHANGE proposal_id proposal_id INT DEFAULT NULL, CHANGE matching_id matching_id INT DEFAULT NULL, CHANGE ask_id ask_id INT DEFAULT NULL');
         $this->addSql('ALTER TABLE message CHANGE message_id message_id INT DEFAULT NULL, CHANGE title title VARCHAR(255) DEFAULT NULL');
         $this->addSql('ALTER TABLE notification CHANGE template_title template_title VARCHAR(255) DEFAULT NULL, CHANGE active active TINYINT(1) DEFAULT NULL, CHANGE active_default active_default TINYINT(1) DEFAULT NULL, CHANGE template_body template_body VARCHAR(255) DEFAULT NULL');
-        
+
         $this->addSql('ALTER TABLE notified CHANGE proposal_id proposal_id INT DEFAULT NULL, CHANGE matching_id matching_id INT DEFAULT NULL, CHANGE ask_history_id ask_history_id INT DEFAULT NULL, CHANGE recipient_id recipient_id INT DEFAULT NULL, CHANGE sent_date sent_date DATETIME DEFAULT NULL, CHANGE received_date received_date DATETIME DEFAULT NULL, CHANGE read_date read_date DATETIME DEFAULT NULL');
         $this->addSql('ALTER TABLE recipient CHANGE read_date read_date DATETIME DEFAULT NULL, CHANGE sent_date sent_date DATETIME DEFAULT NULL');
         $this->addSql('ALTER TABLE community CHANGE members_hidden members_hidden TINYINT(1) DEFAULT NULL, CHANGE proposals_hidden proposals_hidden TINYINT(1) DEFAULT NULL');
@@ -52,7 +54,7 @@ final class Version20190729081243 extends AbstractMigration
         $this->addSql('ALTER TABLE user CHANGE given_name given_name VARCHAR(100) DEFAULT NULL, CHANGE family_name family_name VARCHAR(100) DEFAULT NULL, CHANGE password password VARCHAR(100) DEFAULT NULL, CHANGE nationality nationality VARCHAR(100) DEFAULT NULL, CHANGE birth_date birth_date DATE DEFAULT NULL, CHANGE telephone telephone VARCHAR(100) DEFAULT NULL, CHANGE any_route_as_passenger any_route_as_passenger TINYINT(1) DEFAULT NULL, CHANGE multi_transport_mode multi_transport_mode TINYINT(1) DEFAULT NULL, CHANGE max_detour_duration max_detour_duration INT DEFAULT NULL, CHANGE max_detour_distance max_detour_distance INT DEFAULT NULL, CHANGE pupdtime pupdtime DATETIME DEFAULT NULL, CHANGE token token VARCHAR(100) DEFAULT NULL');
     }
 
-    public function down(Schema $schema) : void
+    public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
@@ -76,7 +78,7 @@ final class Version20190729081243 extends AbstractMigration
         $this->addSql('ALTER TABLE message CHANGE message_id message_id INT DEFAULT NULL, CHANGE title title VARCHAR(255) DEFAULT \'NULL\' COLLATE utf8mb4_unicode_ci');
         $this->addSql('ALTER TABLE notification CHANGE template_title template_title VARCHAR(255) DEFAULT \'NULL\' COLLATE utf8mb4_unicode_ci, CHANGE template_body template_body VARCHAR(255) DEFAULT \'NULL\' COLLATE utf8mb4_unicode_ci, CHANGE active active TINYINT(1) DEFAULT \'NULL\', CHANGE active_default active_default TINYINT(1) DEFAULT \'NULL\'');
         $this->addSql('ALTER TABLE notified CHANGE proposal_id proposal_id INT DEFAULT NULL, CHANGE matching_id matching_id INT DEFAULT NULL, CHANGE ask_history_id ask_history_id INT DEFAULT NULL, CHANGE recipient_id recipient_id INT DEFAULT NULL, CHANGE sent_date sent_date DATETIME DEFAULT \'NULL\', CHANGE received_date received_date DATETIME DEFAULT \'NULL\', CHANGE read_date read_date DATETIME DEFAULT \'NULL\'');
-        
+
         $this->addSql('ALTER TABLE paragraph CHANGE section_id section_id INT DEFAULT NULL');
         $this->addSql('ALTER TABLE proposal CHANGE proposal_linked_id proposal_linked_id INT DEFAULT NULL, CHANGE user_id user_id INT DEFAULT NULL, CHANGE criteria_id criteria_id INT DEFAULT NULL');
         $this->addSql('ALTER TABLE ptarrival CHANGE individual_stop_id individual_stop_id INT DEFAULT NULL, CHANGE name name VARCHAR(100) DEFAULT \'NULL\' COLLATE utf8mb4_unicode_ci');

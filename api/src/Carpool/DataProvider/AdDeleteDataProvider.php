@@ -39,7 +39,7 @@ final class AdDeleteDataProvider implements RestrictedDataProviderInterface, Ite
     {
         $this->proposalManager = $proposalManager;
     }
-    
+
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
         return Ad::class === $resourceClass && $operationName === "delete";

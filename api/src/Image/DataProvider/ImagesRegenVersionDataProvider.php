@@ -40,7 +40,7 @@ final class ImagesRegenVersionDataProvider implements ContextAwareCollectionData
     {
         $this->imageManager = $imageManager;
     }
-    
+
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
         return Image::class === $resourceClass && $operationName == "regenVersions";

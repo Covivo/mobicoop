@@ -62,21 +62,21 @@ use App\Geography\Entity\Address;
  */
 class PaymentPayment
 {
-    const DEFAULT_ID = 999999999999;
+    public const DEFAULT_ID = 999999999999;
 
-    const TYPE_PAY = 1;
-    const TYPE_VALIDATE = 2;
+    public const TYPE_PAY = 1;
+    public const TYPE_VALIDATE = 2;
 
-    const MODE_ONLINE = 1;
-    const MODE_DIRECT = 2;
+    public const MODE_ONLINE = 1;
+    public const MODE_DIRECT = 2;
 
-    const STATUS_INITIATED = 0;
-    const STATUS_SUCCESS = 1;
-    const STATUS_FAILURE = 2;
+    public const STATUS_INITIATED = 0;
+    public const STATUS_SUCCESS = 1;
+    public const STATUS_FAILURE = 2;
 
-    const ORIGIN_DESKTOP = 0;
-    const ORIGIN_MOBILE = 1;
-    const ORIGIN_MOBILE_SITE = 2;
+    public const ORIGIN_DESKTOP = 0;
+    public const ORIGIN_MOBILE = 1;
+    public const ORIGIN_MOBILE_SITE = 2;
 
     /**
      * @var int The id of this payment.

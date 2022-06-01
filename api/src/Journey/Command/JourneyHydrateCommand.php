@@ -37,13 +37,13 @@ use Symfony\Component\Console\Output\OutputInterface;
 class JourneyHydrateCommand extends Command
 {
     private $journeyManager;
-    
+
     public function __construct(JourneyManager $journeyManager)
     {
         $this->journeyManager = $journeyManager;
         parent::__construct();
     }
-    
+
     protected function configure()
     {
         $this

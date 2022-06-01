@@ -41,8 +41,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
  */
 class ResultRole
 {
-    const DEFAULT_ID = 999999999999;
-    
+    public const DEFAULT_ID = 999999999999;
+
     /**
      * @var int The id of this result role.
      * @ApiProperty(identifier=true)

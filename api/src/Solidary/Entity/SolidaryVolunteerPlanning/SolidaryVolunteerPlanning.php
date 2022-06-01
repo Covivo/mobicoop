@@ -64,7 +64,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class SolidaryVolunteerPlanning
 {
-    const DEFAULT_ID = 999999999999;
+    public const DEFAULT_ID = 999999999999;
 
     /**
      * @var int The id of this subject.
@@ -102,16 +102,16 @@ class SolidaryVolunteerPlanning
     {
         $this->id = self::DEFAULT_ID;
     }
-    
+
     public function getId(): ?int
     {
         return $this->id;
     }
-    
+
     public function setId(int $id): self
     {
         $this->id = $id;
-        
+
         return $this;
     }
 
@@ -150,7 +150,7 @@ class SolidaryVolunteerPlanning
     {
         return $this->afternoonSlot;
     }
-    
+
     public function setEveningSlot(SolidaryVolunteerPlanningItem $eveningSlot): self
     {
         $this->eveningSlot = $eveningSlot;

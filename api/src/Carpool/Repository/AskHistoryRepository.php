@@ -31,12 +31,12 @@ use App\User\Entity\User;
 class AskHistoryRepository
 {
     private $repository;
-    
+
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->repository = $entityManager->getRepository(AskHistory::class);
     }
-    
+
     /**
      * Find last ask history by ask and status
      *
@@ -62,7 +62,7 @@ class AskHistoryRepository
         ->where('a = :ask')
         ->setParameter('ask', $ask)
         ->orderBy('ah.createdDate', 'DESC');
-        
+
         return $query->getQuery()->getResult();
     }
 
@@ -81,7 +81,7 @@ class AskHistoryRepository
         ->setParameter('ask', $ask)
         ->orderBy('ah.createdDate', 'DESC')
         ->setMaxResults(1);
-        
+
         return $query->getQuery()->getOneOrNullResult();
     }
 }

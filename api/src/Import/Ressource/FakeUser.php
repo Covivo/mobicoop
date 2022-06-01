@@ -59,7 +59,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  */
 class FakeUser
 {
-    const DEFAULT_ID = 999999999999;
+    public const DEFAULT_ID = 999999999999;
 
     /**
      * @var int The id of this fake user.
@@ -68,7 +68,7 @@ class FakeUser
      * @ApiProperty(identifier=true)
      */
     private $id;
-    
+
     public function __construct($id = null)
     {
         $this->id = self::DEFAULT_ID;

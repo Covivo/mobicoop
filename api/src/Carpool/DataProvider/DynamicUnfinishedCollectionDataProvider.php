@@ -37,18 +37,18 @@ final class DynamicUnfinishedCollectionDataProvider implements CollectionDataPro
 {
     private $security;
     private $dynamicManager;
-    
+
     public function __construct(Security $security, DynamicManager $dynamicManager)
     {
         $this->security = $security;
         $this->dynamicManager = $dynamicManager;
     }
-    
+
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
         return Dynamic::class === $resourceClass && ($operationName =="active" || $operationName =="unfinished");
     }
-    
+
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
         if ($last = $this->dynamicManager->getLastDynamicUnfinished($this->security->getUser())) {

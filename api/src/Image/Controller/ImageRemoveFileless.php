@@ -37,12 +37,12 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 final class ImageRemoveFileless
 {
     private $imageManager;
-    
+
     public function __construct(ImageManager $imageManager)
     {
         $this->imageManager = $imageManager;
     }
-    
+
     public function __invoke(Request $request)
     {
         $this->imageManager->removeFileless();

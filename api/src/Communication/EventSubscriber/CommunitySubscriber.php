@@ -74,7 +74,7 @@ class CommunitySubscriber implements EventSubscriberInterface
 
         // we must notify the creator of the community
         $this->notificationManager->notifies(CommunityNewMembershipRequestEvent::NAME, $communityRecipient, $event->getCommunityUser());
-        
+
         // we also need to notify community's moderators
         $communityUsers = $event->getCommunityUser()->getCommunity()->getCommunityUsers();
         foreach ($communityUsers as $communityUser) {
@@ -95,10 +95,10 @@ class CommunitySubscriber implements EventSubscriberInterface
     {
         // the recipient is the new community member
         $communityRecipient = ($event->getCommunityUser()->getCommunity()->getUser());
-        
+
         // we must notify the creator of the community
         $this->notificationManager->notifies(CommunityNewMemberEvent::NAME, $communityRecipient, $event->getCommunityUser());
-        
+
         // we also need to notify community's moderators
         $communityUsers = $event->getCommunityUser()->getCommunity()->getCommunityUsers();
         foreach ($communityUsers as $communityUser) {
@@ -119,7 +119,7 @@ class CommunitySubscriber implements EventSubscriberInterface
     {
         // the recipient is the new community member
         $communityRecipient = ($event->getCommunity()->getUser());
-        
+
         // we must notify the creator of the community
         $this->notificationManager->notifies(CommunityCreatedEvent::NAME, $communityRecipient, $event->getCommunity());
 

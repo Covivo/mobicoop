@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /**
  * Copyright (c) 2018, MOBICOOP. All rights reserved.
@@ -31,7 +33,7 @@ use Doctrine\Migrations\AbstractMigration;
  */
 final class Version20190419143916 extends AbstractMigration
 {
-    public function up(Schema $schema) : void
+    public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
@@ -70,7 +72,7 @@ final class Version20190419143916 extends AbstractMigration
         $this->addSql('INSERT INTO `app_role` (`app_id`, `role_id`) VALUES (1, 1);');
     }
 
-    public function down(Schema $schema) : void
+    public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');

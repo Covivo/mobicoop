@@ -32,8 +32,8 @@ use App\Community\Entity\CommunityUser;
 class CommunityUserVoter extends Voter
 {
     // for now, update a member membership uses the community update right
-    const ADMIN_COMMUNITY_MEMBER_UPDATE = 'admin_community_member_update';
-    const COMMUNITY_UPDATE = 'community_update';
+    public const ADMIN_COMMUNITY_MEMBER_UPDATE = 'admin_community_member_update';
+    public const COMMUNITY_UPDATE = 'community_update';
 
     private $authManager;
 

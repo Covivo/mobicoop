@@ -41,7 +41,7 @@ interface ProviderInterface
      * @param array $params     The params to send to the request.
      */
     public function getCollection(string $class, string $apikey, array $params);
-    
+
     /**
      * Returns a single item.
      *
@@ -50,7 +50,7 @@ interface ProviderInterface
      * @param array $params     The params to send to the request.
      */
     public function getItem(string $class, string $apikey, array $params);
-    
+
     /**
      * Deserializes the data returned by the provider.
      *

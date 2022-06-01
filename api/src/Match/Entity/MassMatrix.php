@@ -33,7 +33,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
  */
 class MassMatrix
 {
-
     /**
      * @var array of MassJourneys
      * @Groups({"mass","massCompute"})
@@ -185,7 +184,7 @@ class MassMatrix
      * @param int $idPerson2
      * @return MassCarpool|null
      */
-    public function getCarpoolBetweenTwoPersons(int $idPerson1, int $idPerson2) : MassCarpool
+    public function getCarpoolBetweenTwoPersons(int $idPerson1, int $idPerson2): MassCarpool
     {
         foreach ($this->carpools as $carpool) {
             if ($carpool->getPerson1()->getId()==$idPerson1 && $carpool->getPerson2()->getId()==$idPerson2) {
@@ -200,7 +199,7 @@ class MassMatrix
      * @param int $idPerson
      * @return Collection
      */
-    public function getCarpoolsOfAPerson(int $idPerson) : Collection
+    public function getCarpoolsOfAPerson(int $idPerson): Collection
     {
         $carpools = new ArrayCollection();
 

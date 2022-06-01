@@ -57,7 +57,6 @@ class carpoolAdRenewalCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-
         if ($input->getArgument('numberOfDays')) {
             $this->proposalManager->sendCarpoolAdRenewal($input->getArgument('numberOfDays'));
             return 0;

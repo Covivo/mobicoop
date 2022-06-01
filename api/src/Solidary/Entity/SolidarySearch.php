@@ -61,8 +61,8 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class SolidarySearch
 {
-    const DEFAULT_ID = 999999999999;
-    
+    public const DEFAULT_ID = 999999999999;
+
     /**
      * @var int The id of this subject.
      *
@@ -100,16 +100,16 @@ class SolidarySearch
     {
         $this->id = self::DEFAULT_ID;
     }
-    
+
     public function getId(): ?int
     {
         return $this->id;
     }
-    
+
     public function setId(int $id): self
     {
         $this->id = $id;
-        
+
         return $this;
     }
 
@@ -117,11 +117,11 @@ class SolidarySearch
     {
         return $this->solidary;
     }
-    
+
     public function setSolidary(Solidary $solidary): self
     {
         $this->solidary = $solidary;
-        
+
         return $this;
     }
 
@@ -129,11 +129,11 @@ class SolidarySearch
     {
         return $this->way;
     }
-    
+
     public function setWay(string $way): self
     {
         $this->way = $way;
-        
+
         return $this;
     }
 
@@ -141,11 +141,11 @@ class SolidarySearch
     {
         return $this->results;
     }
-    
+
     public function setResults(array $results): self
     {
         $this->results = $results;
-        
+
         return $this;
     }
 }

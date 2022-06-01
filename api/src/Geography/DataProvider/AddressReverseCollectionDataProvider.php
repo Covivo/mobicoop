@@ -38,18 +38,18 @@ use App\Geography\Entity\Address;
 final class AddressReverseCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
     protected $request;
-    
+
     public function __construct(RequestStack $requestStack, GeoSearcher $geoSearcher)
     {
         $this->request = $requestStack->getCurrentRequest();
         $this->geoSearcher = $geoSearcher;
     }
-    
+
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
         return Address::class === $resourceClass && $operationName === "reverse";
     }
-    
+
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
         if ($this->request->get("latitude") !== null && $this->request->get("longitude") !== null) {

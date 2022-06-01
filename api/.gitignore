@@ -387,3 +387,5 @@ $RECYCLE.BIN/
 
 /tools/php-cs-fixer/vendor/
 /tools/php-mess-detector/vendor/
+
+.php-cs-fixer.cache

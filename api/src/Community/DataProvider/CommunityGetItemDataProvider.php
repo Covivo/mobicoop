@@ -59,7 +59,7 @@ final class CommunityGetItemDataProvider implements ItemDataProviderInterface, R
 
     public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?Community
     {
-        $user = ($this->security->getUser() && $this->security->getUser() instanceof User) ? $this->security->getUser()  : null;
+        $user = ($this->security->getUser() && $this->security->getUser() instanceof User) ? $this->security->getUser() : null;
         return $this->communityManager->getCommunity($id, $user);
     }
 }

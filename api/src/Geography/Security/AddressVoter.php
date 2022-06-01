@@ -33,13 +33,13 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class AddressVoter extends Voter
 {
-    const POST ='address_post';
-    const READ = 'address_read';
-    const UPDATE = 'address_update';
-    const DELETE = 'address_delete';
-    const ADMIN_MANAGE_EVENT = 'image_admin_manage_event';
-    const ADMIN_MANAGE_COMMUNITY = 'image_admin_manage_community';
-    const ADMIN_MANAGE_USER = 'image_admin_manage_user';
+    public const POST ='address_post';
+    public const READ = 'address_read';
+    public const UPDATE = 'address_update';
+    public const DELETE = 'address_delete';
+    public const ADMIN_MANAGE_EVENT = 'image_admin_manage_event';
+    public const ADMIN_MANAGE_COMMUNITY = 'image_admin_manage_community';
+    public const ADMIN_MANAGE_USER = 'image_admin_manage_user';
 
     private $security;
     private $permissionManager;
@@ -64,7 +64,7 @@ class AddressVoter extends Voter
             ])) {
             return false;
         }
-        
+
         // only vote on Image objects inside this voter
         if (!$subject instanceof Address) {
             return false;

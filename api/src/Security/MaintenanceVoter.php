@@ -30,7 +30,7 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
 
 class MaintenanceVoter extends Voter
 {
-    const MAINTENANCE = 'maintenance';
+    public const MAINTENANCE = 'maintenance';
 
 
     private $authManager;
@@ -48,7 +48,7 @@ class MaintenanceVoter extends Voter
             ])) {
             return false;
         }
-        
+
         if (!in_array($attribute, [
             self::MAINTENANCE
             ]) && !($subject instanceof Paginator)) {
@@ -66,7 +66,7 @@ class MaintenanceVoter extends Voter
 
         throw new \LogicException('This code should not be reached!');
     }
-    
+
     private function canMaintain()
     {
         return $this->authManager->isAuthorized(self::MAINTENANCE);

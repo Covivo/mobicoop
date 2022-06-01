@@ -87,7 +87,7 @@ class Car
      * @Groups("read")
      */
     private $id;
-    
+
     /**
      * @var string The brand of the car.
      *
@@ -95,7 +95,7 @@ class Car
      * @Groups({"read","write"})
      */
     private $brand;
-    
+
     /**
      * @var string The model of the car.
      *
@@ -103,7 +103,7 @@ class Car
      * @Groups({"read","write"})
      */
     private $model;
-    
+
     /**
      * @var string|null The color of the car.
      *
@@ -111,7 +111,7 @@ class Car
      * @Groups({"read","write"})
      */
     private $color;
-    
+
     /**
      * @var string|null The siv of the car.
      *
@@ -119,7 +119,7 @@ class Car
      * @Groups({"read","write"})
      */
     private $siv;
-    
+
     /**
      * @var int|null The default number of seats available for carpooling.
      *
@@ -127,7 +127,7 @@ class Car
      * @Groups({"read","write"})
      */
     private $seats;
-    
+
     /**
      * @var float|null The price per km.
      *
@@ -135,7 +135,7 @@ class Car
      * @Groups({"read","write"})
      */
     private $priceKm;
-    
+
     /**
      * @var User The owner of the car.
      *
@@ -179,11 +179,11 @@ class Car
     {
         return $this->brand;
     }
-    
+
     public function setBrand(string $brand): self
     {
         $this->brand = $brand;
-        
+
         return $this;
     }
 
@@ -191,11 +191,11 @@ class Car
     {
         return $this->model;
     }
-    
+
     public function setModel(string $model): self
     {
         $this->model = $model;
-        
+
         return $this;
     }
 
@@ -203,11 +203,11 @@ class Car
     {
         return $this->color;
     }
-    
+
     public function setColor(?string $color): self
     {
         $this->color = $color;
-        
+
         return $this;
     }
 
@@ -215,11 +215,11 @@ class Car
     {
         return $this->siv;
     }
-    
+
     public function setSiv(?string $siv): self
     {
         $this->siv = $siv;
-        
+
         return $this;
     }
 
@@ -227,24 +227,24 @@ class Car
     {
         return $this->seats;
     }
-    
+
     public function setSeats(?int $seats): self
     {
         $this->seats = $seats;
-        
+
         return $this;
     }
-    
+
     public function getPriceKm(): ?string
     {
         return $this->priceKm;
     }
-    
+
     public function setPriceKm(?string $priceKm)
     {
         $this->priceKm = $priceKm;
     }
-    
+
     public function getUser(): ?User
     {
         return $this->user;
@@ -253,7 +253,7 @@ class Car
     public function setUser(?User $user): self
     {
         $this->user = $user;
-        
+
         return $this;
     }
 
@@ -285,17 +285,17 @@ class Car
     {
         return $this->logs->getValues();
     }
-    
+
     public function addLog(Log $log): self
     {
         if (!$this->logs->contains($log)) {
             $this->logs[] = $log;
             $log->setCar($this);
         }
-        
+
         return $this;
     }
-    
+
     public function removeLog(Log $log): self
     {
         if ($this->logs->contains($log)) {
@@ -305,12 +305,12 @@ class Car
                 $log->setCar(null);
             }
         }
-        
+
         return $this;
     }
 
     // DOCTRINE EVENTS
-    
+
     /**
      * Creation date.
      *

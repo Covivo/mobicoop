@@ -182,11 +182,11 @@ use App\Solidary\Entity\Solidary;
  */
 class Ad
 {
-    const DEFAULT_ID = 999999999999;
-    
-    const ROLE_DRIVER = 1;
-    const ROLE_PASSENGER = 2;
-    const ROLE_DRIVER_OR_PASSENGER = 3;
+    public const DEFAULT_ID = 999999999999;
+
+    public const ROLE_DRIVER = 1;
+    public const ROLE_PASSENGER = 2;
+    public const ROLE_DRIVER_OR_PASSENGER = 3;
 
     /**
      * @var int The id of this ad.
@@ -308,7 +308,7 @@ class Ad
      * @Groups({"read","write"})
      */
     private $strictRegular;
-    
+
     /**
     * @var string|null The price per km.
     *
@@ -420,7 +420,7 @@ class Ad
      * @Groups({"readCommunity","readEvent","write"})
      */
     private $user;
-    
+
     /**
      * @var int|null The user id of the ad owner. Null for an anonymous search.
      *
@@ -441,7 +441,7 @@ class Ad
      *@Groups({"read","write"})
      */
     private $appPosterId;
-    
+
     /**
      * @var array|null The communities associated with the ad.
      *
@@ -462,7 +462,7 @@ class Ad
      * @Groups({"read","write"})
      */
     private $subjectId;
-    
+
     /**
      * @var array|null The carpool results.
      *
@@ -652,7 +652,7 @@ class Ad
         $this->filters = [];
         $this->asks = [];
     }
-    
+
     public function getId(): ?int
     {
         return $this->id;
@@ -676,7 +676,7 @@ class Ad
 
         return $this;
     }
-    
+
     public function getRole(): ?int
     {
         return $this->role;
@@ -700,7 +700,7 @@ class Ad
 
         return $this;
     }
-    
+
     public function getFrequency(): ?int
     {
         return $this->frequency;
@@ -717,11 +717,11 @@ class Ad
     {
         return $this->outwardWaypoints;
     }
-    
+
     public function setOutwardWaypoints(?array $outwardWaypoints): self
     {
         $this->outwardWaypoints = $outwardWaypoints;
-        
+
         return $this;
     }
 
@@ -729,11 +729,11 @@ class Ad
     {
         return $this->returnWaypoints;
     }
-    
+
     public function setReturnWaypoints(?array $returnWaypoints): self
     {
         $this->returnWaypoints = $returnWaypoints;
-        
+
         return $this;
     }
 
@@ -813,11 +813,11 @@ class Ad
     {
         return $this->schedule;
     }
-    
+
     public function setSchedule(?array $schedule): self
     {
         $this->schedule = $schedule;
-        
+
         return $this;
     }
 
@@ -825,11 +825,11 @@ class Ad
     {
         return $this->communities;
     }
-    
+
     public function setCommunities(?array $communities): self
     {
         $this->communities = $communities;
-        
+
         return $this;
     }
 
@@ -861,11 +861,11 @@ class Ad
     {
         return $this->strictDate;
     }
-    
+
     public function setStrictDate(?bool $isStrictDate): self
     {
         $this->strictDate = $isStrictDate;
-        
+
         return $this;
     }
 
@@ -873,11 +873,11 @@ class Ad
     {
         return $this->strictPunctual;
     }
-    
+
     public function setStrictPunctual(?bool $isStrictPunctual): self
     {
         $this->strictPunctual = $isStrictPunctual;
-        
+
         return $this;
     }
 
@@ -885,11 +885,11 @@ class Ad
     {
         return $this->strictRegular;
     }
-    
+
     public function setStrictRegular(?bool $isStrictRegular): self
     {
         $this->strictRegular = $isStrictRegular;
-        
+
         return $this;
     }
 
@@ -897,7 +897,7 @@ class Ad
     {
         return $this->priceKm;
     }
-    
+
     public function setPriceKm(?string $priceKm)
     {
         $this->priceKm = $priceKm;
@@ -907,7 +907,7 @@ class Ad
     {
         return $this->outwardDriverPrice;
     }
-    
+
     public function setOutwardDriverPrice(?string $outwardDriverPrice)
     {
         $this->outwardDriverPrice = $outwardDriverPrice;
@@ -917,7 +917,7 @@ class Ad
     {
         return $this->returnDriverPrice;
     }
-    
+
     public function setReturnDriverPrice(?string $returnDriverPrice)
     {
         $this->returnDriverPrice = $returnDriverPrice;
@@ -927,7 +927,7 @@ class Ad
     {
         return $this->outwardPassengerPrice;
     }
-    
+
     public function setOutwardPassengerPrice(?string $outwardPassengerPrice)
     {
         $this->outwardPassengerPrice = $outwardPassengerPrice;
@@ -937,7 +937,7 @@ class Ad
     {
         return $this->returnPassengerPrice;
     }
-    
+
     public function setReturnPassengerPrice(?string $returnPassengerPrice)
     {
         $this->returnPassengerPrice = $returnPassengerPrice;
@@ -971,11 +971,11 @@ class Ad
     {
         return $this->luggage;
     }
-    
+
     public function setLuggage(?bool $hasLuggage): self
     {
         $this->luggage = $hasLuggage;
-        
+
         return $this;
     }
 
@@ -983,11 +983,11 @@ class Ad
     {
         return $this->bike;
     }
-    
+
     public function setBike(?bool $hasBike): self
     {
         $this->bike = $hasBike;
-        
+
         return $this;
     }
 
@@ -995,11 +995,11 @@ class Ad
     {
         return $this->backSeats;
     }
-    
+
     public function setBackSeats(?bool $hasBackSeats): self
     {
         $this->backSeats = $hasBackSeats;
-        
+
         return $this;
     }
 
@@ -1007,11 +1007,11 @@ class Ad
     {
         return $this->solidary;
     }
-    
+
     public function setSolidary(?bool $isSolidary): self
     {
         $this->solidary = $isSolidary;
-        
+
         return $this;
     }
 
@@ -1019,11 +1019,11 @@ class Ad
     {
         return $this->solidaryExclusive;
     }
-    
+
     public function setSolidaryExclusive(?bool $isSolidaryExclusive): self
     {
         $this->solidaryExclusive = $isSolidaryExclusive;
-        
+
         return $this;
     }
 
@@ -1031,11 +1031,11 @@ class Ad
     {
         return $this->avoidMotorway;
     }
-    
+
     public function setAvoidMotorway(?bool $avoidMotorway): self
     {
         $this->avoidMotorway = $avoidMotorway;
-        
+
         return $this;
     }
 
@@ -1043,11 +1043,11 @@ class Ad
     {
         return $this->avoidToll;
     }
-    
+
     public function setAvoidToll(?bool $avoidToll): self
     {
         $this->avoidToll = $avoidToll;
-        
+
         return $this;
     }
 
@@ -1055,11 +1055,11 @@ class Ad
     {
         return $this->comment;
     }
-    
+
     public function setComment(?string $comment): self
     {
         $this->comment = $comment;
-        
+
         return $this;
     }
 
@@ -1199,11 +1199,11 @@ class Ad
     {
         return $this->canUpdateAsk;
     }
-    
+
     public function setCanUpdateAsk(?bool $canUpdateAsk): self
     {
         $this->canUpdateAsk = $canUpdateAsk;
-        
+
         return $this;
     }
 

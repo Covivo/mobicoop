@@ -42,7 +42,7 @@ final class RewardItemDataProvider implements RestrictedDataProviderInterface, I
         $this->request = $requestStack->getCurrentRequest();
         $this->gamificationManager = $gamificationManager;
     }
-    
+
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
         return Reward::class === $resourceClass && $operationName === "tagAsNotified";

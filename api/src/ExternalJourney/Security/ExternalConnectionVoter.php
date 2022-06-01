@@ -34,7 +34,7 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
  */
 class ExternalConnectionVoter extends Voter
 {
-    const EXTERNAL_CONNECTION_CREATE = 'external_connection_create';
+    public const EXTERNAL_CONNECTION_CREATE = 'external_connection_create';
 
     private $security;
     private $permissionManager;
@@ -52,7 +52,7 @@ class ExternalConnectionVoter extends Voter
             ])) {
             return false;
         }
-      
+
         // only vote on User objects inside this voter
         if (!in_array($attribute, [
             self::EXTERNAL_CONNECTION_CREATE,

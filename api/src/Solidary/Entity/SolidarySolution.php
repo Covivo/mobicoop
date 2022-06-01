@@ -67,9 +67,9 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class SolidarySolution
 {
-    const DEFAULT_ID = 999999999999;
-    const TRANSPORTER = 'transporter';
-    const CARPOOLER = 'carpooler';
+    public const DEFAULT_ID = 999999999999;
+    public const TRANSPORTER = 'transporter';
+    public const CARPOOLER = 'carpooler';
 
     /**
      * @var int $id The id of this solidary matching.

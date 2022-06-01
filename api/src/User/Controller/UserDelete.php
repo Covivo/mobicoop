@@ -1,4 +1,5 @@
 <?php
+
  /**
     * Copyright (c) 2019, MOBICOOP. All rights reserved.
     * This project is dual licensed under AGPL and proprietary licence.
@@ -19,7 +20,7 @@
     * Licence MOBICOOP described in the file
     * LICENSE
     **************************/
- 
+
  namespace App\User\Controller;
 
 use App\TranslatorTrait;
@@ -33,12 +34,12 @@ class UserDelete
      * @var UserManager $userManager
      */
     private $userManager;
- 
+
     public function __construct(UserManager $userManager)
     {
         $this->userManager= $userManager;
     }
- 
+
     /**
      * This method is invoked when a user updates its profile.
      * It returns the altered user.

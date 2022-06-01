@@ -34,7 +34,7 @@ class RdexOperator
      * @var string The name of the operator.
      */
     private $name;
-    
+
     /**
      * @var string The origin of the operator.
      */
@@ -49,7 +49,7 @@ class RdexOperator
      * @var array The routes for a given ad results in different languages
      */
     private $resultRoute;
-    
+
     public function __construct($name, $origin, $url, $resultRoute)
     {
         $this->setName($name);
@@ -57,7 +57,7 @@ class RdexOperator
         $this->setUrl($url);
         $this->setResultRoute($resultRoute);
     }
-    
+
     public function getName()
     {
         return $this->name;

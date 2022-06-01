@@ -43,12 +43,12 @@ final class KibanaLoginCollectionDataProvider implements CollectionDataProviderI
     {
         $this->kibanaLoginManager = $kibanaLoginManager;
     }
-    
+
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
         return KibanaLogin::class === $resourceClass && $operationName === "ADMIN_kibana_logins";
     }
-    
+
     public function getCollection(string $resourceClass, string $operationName = null, array $context = []): iterable
     {
         return $this->kibanaLoginManager->getKibanaLogins();

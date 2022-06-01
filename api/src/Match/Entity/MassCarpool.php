@@ -31,7 +31,6 @@ use Symfony\Component\Serializer\Annotation\Groups;
  */
 class MassCarpool
 {
-
     /**
      * @var MassPerson $person1
      * @Groups({"mass","massCompute"})

@@ -39,7 +39,7 @@ class RelayPointTypeListener
         $this->dataUri = $dataUri;
         $this->iconRepository = $iconRepository;
     }
-    
+
     /** @ORM\PostLoad */
     public function postLoadHandler(RelayPointType $relaypointype, LifecycleEventArgs $args)
     {

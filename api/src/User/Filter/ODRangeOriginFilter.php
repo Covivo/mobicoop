@@ -42,7 +42,7 @@ final class ODRangeOriginFilter extends AbstractContextAwareFilter
         if ($property != "origin") {
             return;
         }
-   
+
         // we decode the json we received for get Latitude and Longitude
         $value = json_decode($value);
 
@@ -56,7 +56,7 @@ final class ODRangeOriginFilter extends AbstractContextAwareFilter
                 cos(('.$value->lgt.' * 0.0175) - (aori.longitude * 0.0175))
             ) * 6371 <= :range')// Origin of proposal;
             ->setParameter('range', 1);
-    
+
         /* Uncomment for also set the home adresse in check
         ->leftJoin('u.addresses', 'homeAddress')
             ->orWhere('homeAddress.home=1 AND acos(sin(homeAddress.latitude * 0.0175) * sin(:latitude * 0.0175)

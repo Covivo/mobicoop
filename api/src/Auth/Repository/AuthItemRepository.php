@@ -43,7 +43,7 @@ class AuthItemRepository
     private $repository;
 
     private $entityManager;
-    
+
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
@@ -96,7 +96,7 @@ class AuthItemRepository
             ->setParameter('arrayIds', $ids)
             ->orderBy('a.id', 'ASC')
             ->getQuery();
-            
+
         return $query->getresult();
     }
 

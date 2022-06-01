@@ -39,18 +39,18 @@ final class EventAdsCollectionDataProvider implements CollectionDataProviderInte
 {
     protected $request;
     private $adManager;
-    
+
     public function __construct(RequestStack $requestStack, AdManager $adManager)
     {
         $this->request = $requestStack->getCurrentRequest();
         $this->adManager = $adManager;
     }
-    
+
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
         return Event::class === $resourceClass && $operationName === "ads";
     }
-    
+
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
         return $this->adManager->getAdsOfEvent($this->request->get("id"));

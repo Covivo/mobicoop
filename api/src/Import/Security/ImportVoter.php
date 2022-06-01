@@ -36,7 +36,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class ImportVoter extends Voter
 {
-    const IMPORT_CREATE = 'import_create';
+    public const IMPORT_CREATE = 'import_create';
 
     private $authManager;
     private $requestStack;

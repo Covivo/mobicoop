@@ -33,9 +33,9 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class LogVoter extends Voter
 {
-    const READ_LOG = 'log_read';
-    const READ_LOGS = 'logs_read';
-    
+    public const READ_LOG = 'log_read';
+    public const READ_LOGS = 'logs_read';
+
     private $security;
     private $request;
     private $permissionManager;

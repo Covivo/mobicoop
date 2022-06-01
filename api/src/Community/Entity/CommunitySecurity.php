@@ -80,7 +80,7 @@ class CommunitySecurity
      * @Groups("read")
      */
     private $id;
-        
+
     /**
      * @var Community The community.
      *
@@ -112,7 +112,7 @@ class CommunitySecurity
     public function setCommunity(?Community $community): self
     {
         $this->community = $community;
-        
+
         return $this;
     }
 
@@ -120,7 +120,7 @@ class CommunitySecurity
     {
         return $this->filename;
     }
-    
+
     public function setFilename(string $filename)
     {
         $this->filename = $filename;

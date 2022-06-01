@@ -37,7 +37,7 @@ use App\User\Service\UserManager;
 final class UserStructuresItemDataProvider implements ItemDataProviderInterface, RestrictedDataProviderInterface
 {
     private $userManager;
-    
+
     public function __construct(UserManager $userManager)
     {
         $this->userManager = $userManager;

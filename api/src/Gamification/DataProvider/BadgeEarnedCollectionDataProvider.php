@@ -36,7 +36,7 @@ use Symfony\Component\Security\Core\Security;
 final class BadgeEarnedCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
     private $security;
-    
+
     public function __construct(Security $security, GamificationManager $gamificationManager)
     {
         $this->security = $security;

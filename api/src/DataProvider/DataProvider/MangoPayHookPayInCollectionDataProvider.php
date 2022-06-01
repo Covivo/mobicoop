@@ -58,7 +58,7 @@ final class MangoPayHookPayInCollectionDataProvider implements CollectionDataPro
         ) {
             throw new PaymentException(PaymentException::MISSING_PARAMETER);
         }
-        
+
         if ($this->request->get('EventType')!==MangoPayHook::PAYIN_SUCCEEDED &&
             $this->request->get('EventType')!==MangoPayHook::PAYIN_FAILED
         ) {

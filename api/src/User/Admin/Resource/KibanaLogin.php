@@ -60,8 +60,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
  */
 class KibanaLogin
 {
-    const DEFAULT_ID = 999999999999;
-    
+    public const DEFAULT_ID = 999999999999;
+
     /**
      * @var int The id of this KibanaLogin
      *
@@ -97,7 +97,7 @@ class KibanaLogin
     public function setId(int $id): self
     {
         $this->id = $id;
-        
+
         return $this;
     }
 
@@ -109,7 +109,7 @@ class KibanaLogin
     public function setUsername(string $username): self
     {
         $this->username = $username;
-        
+
         return $this;
     }
 
@@ -121,7 +121,7 @@ class KibanaLogin
     public function setPassword(string $password): self
     {
         $this->password = $password;
-        
+
         return $this;
     }
 }

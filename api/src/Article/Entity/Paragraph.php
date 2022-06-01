@@ -100,11 +100,11 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  */
 class Paragraph
 {
-    const STATUS_PENDING = 0;
-    const STATUS_PUBLISHED = 1;
-    
+    public const STATUS_PENDING = 0;
+    public const STATUS_PUBLISHED = 1;
+
     // List of the translatable items of this entity
-    const TRANSLATABLE_ITEMS = [
+    public const TRANSLATABLE_ITEMS = [
         "text"
     ];
 
@@ -117,7 +117,7 @@ class Paragraph
      * @Groups({"aRead","read"})
      */
     private $id;
-            
+
     /**
      * @var string The text of the paragraph.
      *
@@ -171,16 +171,16 @@ class Paragraph
     {
         return $this->id;
     }
-            
+
     public function getText(): ?string
     {
         return $this->text;
     }
-    
+
     public function setText(?string $text): self
     {
         $this->text = $text;
-        
+
         return $this;
     }
 
@@ -188,11 +188,11 @@ class Paragraph
     {
         return $this->position;
     }
-    
+
     public function setPosition(?int $position): self
     {
         $this->position = $position;
-        
+
         return $this;
     }
 
@@ -200,7 +200,7 @@ class Paragraph
     {
         return $this->status;
     }
-    
+
     public function setStatus(?int $status)
     {
         $this->status = $status;
@@ -243,7 +243,7 @@ class Paragraph
     }
 
     // DOCTRINE EVENTS
-    
+
     /**
      * Creation date.
      *

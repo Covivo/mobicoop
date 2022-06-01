@@ -60,7 +60,7 @@ use App\Gamification\Entity\BadgeProgression;
  */
 class BadgesBoard
 {
-    const DEFAULT_ID = 999999999999;
+    public const DEFAULT_ID = 999999999999;
 
     /**
      * @var int The id of this BadgesBoard.

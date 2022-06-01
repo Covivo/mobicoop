@@ -32,7 +32,6 @@ namespace App\Service;
  */
 class FileManager
 {
-    
     /**
      * Sanitizes a name (remove special chars, replace spaces...).
      * @param string $string
@@ -56,7 +55,7 @@ class FileManager
                 $clean = strtolower($clean);
             }
         }
-        
+
         $clean = strtr($clean, [
             "à" => "a",
             "â" => "a",
@@ -76,7 +75,7 @@ class FileManager
         ]);
         return $clean;
     }
-    
+
     /**
      * Returns the extension of a file.
      * @param mixed $file

@@ -64,7 +64,7 @@ class PTLeg
      * @ApiProperty(identifier=true)
      */
     private $id;
-    
+
     /**
      * @var string The indication of this leg.
      *
@@ -72,7 +72,7 @@ class PTLeg
      * @Groups("pt")
      */
     private $indication;
-    
+
     /**
      * @var int The distance of this leg.
      *
@@ -80,7 +80,7 @@ class PTLeg
      * @Groups("pt")
      */
     private $distance;
-    
+
     /**
      * @var string The duration of this leg (in seconds).
      *
@@ -88,7 +88,7 @@ class PTLeg
      * @Groups("pt")
      */
     private $duration;
-    
+
     /**
      * @var int The position of this leg.
      *
@@ -96,7 +96,7 @@ class PTLeg
      * @Groups("pt")
      */
     private $position;
-    
+
     /**
      * @var bool The leg is the last leg of the journey.
      *
@@ -104,7 +104,7 @@ class PTLeg
      * @Groups("pt")
      */
     private $isLast;
-    
+
     /**
      * @var string The magnetic direction of this leg.
      *
@@ -112,7 +112,7 @@ class PTLeg
      * @Groups("pt")
      */
     private $magneticDirection;
-    
+
     /**
      * @var string The relative direction of this leg.
      *
@@ -120,7 +120,7 @@ class PTLeg
      * @Groups("pt")
      */
     private $relativeDirection;
-    
+
     /**
      * @var PTJourney The parent journey of this leg.
      *
@@ -129,7 +129,7 @@ class PTLeg
      * @Groups("pt")
      */
     private $ptjourney;
-    
+
     /**
      * @var PTDeparture The departure of this leg.
      *
@@ -138,7 +138,7 @@ class PTLeg
      * @Groups("pt")
      */
     private $ptdeparture;
-    
+
     /**
      * @var PTArrival The arrival of this leg.
      *
@@ -147,7 +147,7 @@ class PTLeg
      * @Groups("pt")
      */
     private $ptarrival;
-    
+
     /**
      * @var TravelMode The transport mode of this leg.
      *
@@ -156,7 +156,7 @@ class PTLeg
      * @Groups("pt")
      */
     private $travelMode;
-    
+
     /**
      * @var PTLine The public transport line of this leg.
      *
@@ -165,7 +165,7 @@ class PTLeg
      * @Groups("pt")
      */
     private $ptline;
-    
+
     /**
      * @var string The direction of the public transport line of this leg.
      *
@@ -173,7 +173,7 @@ class PTLeg
      * @Groups("pt")
      */
     private $direction;
-    
+
     /**
      * @var PTStep[] The steps of this leg.
      *
@@ -181,35 +181,35 @@ class PTLeg
      * @Groups("pt")
      */
     private $ptsteps;
-    
+
     public function __construct($id)
     {
         $this->id = $id;
         $this->setPosition($id);
         $this->ptsteps = new ArrayCollection();
     }
-    
+
     public function getId(): int
     {
         return $this->id;
     }
-    
+
     public function setId(int $id): self
     {
         $this->id = $id;
-        
+
         return $this;
     }
-    
+
     public function getIndication(): ?string
     {
         return $this->indication;
     }
-    
+
     public function setIndication(?string $indication): self
     {
         $this->indication = $indication;
-        
+
         return $this;
     }
 
@@ -217,23 +217,23 @@ class PTLeg
     {
         return $this->distance;
     }
-    
+
     public function setDistance(?int $distance): self
     {
         $this->distance = $distance;
-        
+
         return $this;
     }
-    
+
     public function getDuration(): ?int
     {
         return $this->duration;
     }
-    
+
     public function setDuration(?int $duration): self
     {
         $this->duration = $duration;
-        
+
         return $this;
     }
 
@@ -241,11 +241,11 @@ class PTLeg
     {
         return $this->position;
     }
-    
+
     public function setPosition(int $position): self
     {
         $this->position = $position;
-        
+
         return $this;
     }
 
@@ -253,35 +253,35 @@ class PTLeg
     {
         return $this->isLast;
     }
-    
+
     public function setIsLast(bool $isLast): self
     {
         $this->isLast = $isLast;
-        
+
         return $this;
     }
-    
+
     public function getMagneticDirection(): ?string
     {
         return $this->magneticDirection;
     }
-    
+
     public function setMagneticDirection(?string $magneticDirection): self
     {
         $this->magneticDirection = $magneticDirection;
-        
+
         return $this;
     }
-    
+
     public function getRelativeDirection(): ?string
     {
         return $this->relativeDirection;
     }
-    
+
     public function setRelativeDirection(?string $relativeDirection): self
     {
         $this->relativeDirection = $relativeDirection;
-        
+
         return $this;
     }
 
@@ -289,11 +289,11 @@ class PTLeg
     {
         return $this->ptjourney;
     }
-    
+
     public function setPTJourney(?PTJourney $ptjourney): self
     {
         $this->ptjourney = $ptjourney;
-        
+
         return $this;
     }
 
@@ -301,11 +301,11 @@ class PTLeg
     {
         return $this->ptdeparture;
     }
-    
+
     public function setPTDeparture(?PTDeparture $ptdeparture): self
     {
         $this->ptdeparture = $ptdeparture;
-        
+
         return $this;
     }
 
@@ -313,11 +313,11 @@ class PTLeg
     {
         return $this->ptarrival;
     }
-    
+
     public function setPTArrival(?PTArrival $ptarrival): self
     {
         $this->ptarrival = $ptarrival;
-        
+
         return $this;
     }
 
@@ -325,11 +325,11 @@ class PTLeg
     {
         return $this->travelMode;
     }
-    
+
     public function setTravelMode(TravelMode $travelMode): self
     {
         $this->travelMode = $travelMode;
-        
+
         return $this;
     }
 
@@ -337,11 +337,11 @@ class PTLeg
     {
         return $this->ptline;
     }
-    
+
     public function setPTLine(?PTLine $ptline): self
     {
         $this->ptline = $ptline;
-        
+
         return $this;
     }
 
@@ -349,14 +349,14 @@ class PTLeg
     {
         return $this->direction;
     }
-    
+
     public function setDirection(?string $direction): self
     {
         $this->direction = $direction;
-        
+
         return $this;
     }
-    
+
     public function getPTSteps()
     {
         return $this->ptsteps->getValues();
@@ -365,20 +365,20 @@ class PTLeg
     public function setPTSteps(ArrayCollection $ptsteps): self
     {
         $this->ptsteps = $ptsteps;
-        
+
         return $this;
     }
-    
+
     public function addPTStep(PTStep $ptstep): self
     {
         if (!$this->ptsteps->contains($ptstep)) {
             $this->ptsteps->add($ptstep);
             $ptstep->setPTLeg($this);
         }
-        
+
         return $this;
     }
-    
+
     public function removePTLeg(PTStep $ptstep): self
     {
         if ($this->ptsteps->contains($ptstep)) {
@@ -388,7 +388,7 @@ class PTLeg
                 $ptstep->setPTLeg(null);
             }
         }
-        
+
         return $this;
     }
 }

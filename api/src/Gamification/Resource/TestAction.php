@@ -70,7 +70,7 @@ use App\Geography\Entity\Address;
  */
 class TestAction
 {
-    const DEFAULT_ID = 999999999999;
+    public const DEFAULT_ID = 999999999999;
 
     /**
      * @var int The id of this TestAction.

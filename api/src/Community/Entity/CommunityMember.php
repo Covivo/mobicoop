@@ -73,7 +73,7 @@ class CommunityMember
         $this->moderator = false;
         $this->avatar = "";
     }
-    
+
     public function getid(): ?int
     {
         return $this->id;
@@ -121,7 +121,7 @@ class CommunityMember
 
         return $this;
     }
-    
+
     public function isModerator(): ?bool
     {
         return $this->moderator;
@@ -133,7 +133,7 @@ class CommunityMember
 
         return $this;
     }
-    
+
     public function getAvatar(): ?string
     {
         return $this->avatar;

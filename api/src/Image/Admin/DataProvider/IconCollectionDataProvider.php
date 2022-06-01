@@ -40,12 +40,12 @@ final class IconCollectionDataProvider implements CollectionDataProviderInterfac
     {
         $this->iconManager = $iconManager;
     }
-    
+
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
         return Icon::class === $resourceClass && $operationName === "ADMIN_get";
     }
-    
+
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
         return $this->iconManager->getIcons();

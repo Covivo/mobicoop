@@ -77,12 +77,12 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class DynamicAsk
 {
-    const DEFAULT_ID = 999999999999;
+    public const DEFAULT_ID = 999999999999;
 
-    const STATUS_PENDING = 1;
-    const STATUS_ACCEPTED = 2;
-    const STATUS_DECLINED = 3;
-    const STATUS_CANCELLED = 4;
+    public const STATUS_PENDING = 1;
+    public const STATUS_ACCEPTED = 2;
+    public const STATUS_DECLINED = 3;
+    public const STATUS_CANCELLED = 4;
 
     /**
      * @var int The id of this dynamic ad ask.

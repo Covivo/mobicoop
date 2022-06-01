@@ -58,7 +58,7 @@ final class CommunityUserCampaignAssociateCollectionDataProvider implements Coll
     private $authManager;
     private $campaignManager;
 
-    const MAX_RESULTS = 999999;
+    public const MAX_RESULTS = 999999;
 
     public function __construct(RequestStack $requestStack, CommunityUserRepository $communityUserRepository, CampaignRepository $campaignRepository, CommunityRepository $communityRepository, AuthManager $authManager, CampaignManager $campaignManager, ManagerRegistry $managerRegistry, iterable $collectionExtensions)
     {

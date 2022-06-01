@@ -33,16 +33,16 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class ArticleVoter extends Voter
 {
-    const ADMIN_ARTICLE_CREATE = 'admin_article_create';
-    const ADMIN_ARTICLE_READ = 'admin_article_read';
-    const ADMIN_ARTICLE_UPDATE = 'admin_article_update';
-    const ADMIN_ARTICLE_DELETE = 'admin_article_delete';
-    const ADMIN_ARTICLE_LIST = 'admin_article_list';
-    const ARTICLE_CREATE = 'article_create';
-    const ARTICLE_READ = 'article_read';
-    const ARTICLE_UPDATE = 'article_update';
-    const ARTICLE_DELETE = 'article_delete';
-    const ARTICLE_LIST = 'article_list';
+    public const ADMIN_ARTICLE_CREATE = 'admin_article_create';
+    public const ADMIN_ARTICLE_READ = 'admin_article_read';
+    public const ADMIN_ARTICLE_UPDATE = 'admin_article_update';
+    public const ADMIN_ARTICLE_DELETE = 'admin_article_delete';
+    public const ADMIN_ARTICLE_LIST = 'admin_article_list';
+    public const ARTICLE_CREATE = 'article_create';
+    public const ARTICLE_READ = 'article_read';
+    public const ARTICLE_UPDATE = 'article_update';
+    public const ARTICLE_DELETE = 'article_delete';
+    public const ARTICLE_LIST = 'article_list';
 
     private $authManager;
 

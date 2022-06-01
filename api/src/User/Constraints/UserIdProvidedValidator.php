@@ -34,7 +34,7 @@ use Symfony\Component\Validator\ConstraintValidator;
 final class UserIdProvidedValidator extends ConstraintValidator
 {
     private $security;
-    
+
     public function __construct(Security $security)
     {
         $this->security = $security;

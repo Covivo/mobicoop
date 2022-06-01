@@ -49,7 +49,7 @@ class SolidaryVolunteerManager
     private $formatDataManager;
     private $eventDispatcher;
     private $fileFolder;
-    
+
     /**
      * @var SolidaryUser
      */
@@ -167,7 +167,7 @@ class SolidaryVolunteerManager
         $solidaryVolunteer->setMSun($solidaryUser->hasMSun());
         $solidaryVolunteer->setASun($solidaryUser->hasASun());
         $solidaryVolunteer->setESun($solidaryUser->hasESun());
-        
+
         // get the status of the volunteer for each structure attached
         $volunteerStructures = [];
         $proofs = [];
@@ -253,7 +253,7 @@ class SolidaryVolunteerManager
         if (!$solidaryUser = $this->solidaryUserRepository->find($id)) {
             throw new SolidaryException(sprintf(SolidaryException::VOLUNTEER_NOT_FOUND, $id));
         }
-        
+
         $this->setSolidaryUser($solidaryUser);
         $this->setFields($fields);
 

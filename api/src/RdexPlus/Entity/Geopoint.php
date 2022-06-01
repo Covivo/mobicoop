@@ -33,7 +33,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Geopoint
 {
-    
     /**
      * @var float Geopoint's longitude
      * @Assert\NotBlank
@@ -68,7 +67,7 @@ class Geopoint
      * @Groups({"rdexPlusRead","rdexPlusWrite"})
      */
     private $postalCode;
-    
+
     /**
      * @var string Geopoint's country
      *
@@ -94,7 +93,7 @@ class Geopoint
 
         return $this;
     }
-    
+
     public function getLongitude(): ?string
     {
         return $this->longitude;
@@ -118,7 +117,7 @@ class Geopoint
 
         return $this;
     }
-    
+
     public function getCity(): ?string
     {
         return $this->city;
@@ -130,7 +129,7 @@ class Geopoint
 
         return $this;
     }
-    
+
     public function getPostalCode(): ?string
     {
         return $this->postalCode;
@@ -154,7 +153,7 @@ class Geopoint
 
         return $this;
     }
-    
+
     public function getPoiName(): ?string
     {
         return $this->poiName;

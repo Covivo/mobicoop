@@ -43,7 +43,7 @@ final class ProposalValidFilter extends AbstractContextAwareFilter
         if (strrpos($value, '/')) {
             $value = substr($value, strrpos($value, '/') + 1);
         }
-        
+
         $queryBuilder
             ->leftJoin('u.proposals', 'p2')
             ->leftJoin('p2.criteria', 'c')
@@ -58,7 +58,7 @@ final class ProposalValidFilter extends AbstractContextAwareFilter
         if (!$this->properties) {
             return [];
         }
-  
+
         $description = [];
         foreach ($this->properties as $property => $strategy) {
             $description["$property"] = [
@@ -72,7 +72,7 @@ final class ProposalValidFilter extends AbstractContextAwareFilter
                   ],
               ];
         }
-  
+
         return $description;
     }
 }

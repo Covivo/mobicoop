@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace DoctrineMigrations;
 
@@ -16,8 +18,8 @@ final class Version20191029140200 extends AbstractMigration
         $this->addSql('DELETE FROM `notification` WHERE `id` >= 23 and `id` <= 82');
         $this->addSql('DELETE FROM `action` WHERE `id` >= 12 and `id` <= 31');
     }
-    
-    public function down(Schema $schema) : void
+
+    public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');

@@ -37,7 +37,7 @@ final class ReviewCollectionDataProvider implements CollectionDataProviderInterf
 {
     private $security;
     private $reviewManager;
-    
+
     public function __construct(Security $security, ReviewManager $reviewManager)
     {
         $this->security = $security;

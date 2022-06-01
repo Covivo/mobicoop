@@ -32,8 +32,8 @@ use App\Communication\Entity\Contact;
 
 class ContactVoter extends Voter
 {
-    const COMMUNICATION_CONTACT = 'communication_contact';
-    
+    public const COMMUNICATION_CONTACT = 'communication_contact';
+
     private $authManager;
 
     public function __construct(AuthManager $authManager)

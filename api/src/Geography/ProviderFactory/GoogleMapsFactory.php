@@ -28,7 +28,6 @@ declare(strict_types=1);
  *  SOFTWARE.
  */
 
-
 namespace App\Geography\ProviderFactory;
 
 use Bazinga\GeocoderBundle\ProviderFactory\AbstractFactory;

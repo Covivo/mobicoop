@@ -50,8 +50,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class SolidaryResultTransport
 {
-    const DEFAULT_ID = 999999999999;
-    
+    public const DEFAULT_ID = 999999999999;
+
     /**
      * @var int The id of this subject.
      *
@@ -88,16 +88,16 @@ class SolidaryResultTransport
     {
         $this->id = self::DEFAULT_ID;
     }
-    
+
     public function getId(): ?int
     {
         return $this->id;
     }
-    
+
     public function setId(int $id): self
     {
         $this->id = $id;
-        
+
         return $this;
     }
 
@@ -105,11 +105,11 @@ class SolidaryResultTransport
     {
         return $this->volunteer;
     }
-    
+
     public function setVolunteer(string $volunteer): self
     {
         $this->volunteer = $volunteer;
-        
+
         return $this;
     }
 
@@ -117,35 +117,35 @@ class SolidaryResultTransport
     {
         return $this->volunteerId;
     }
-    
+
     public function setVolunteerId(int $volunteerId): self
     {
         $this->volunteerId = $volunteerId;
-        
+
         return $this;
     }
-    
+
     public function getHome(): ?string
     {
         return $this->home;
     }
-    
+
     public function setHome(string $home): self
     {
         $this->home = $home;
-        
+
         return $this;
     }
-    
+
     public function getSchedule(): ?array
     {
         return $this->schedule;
     }
-    
+
     public function setSchedule(array $schedule): self
     {
         $this->schedule = $schedule;
-        
+
         return $this;
     }
 }

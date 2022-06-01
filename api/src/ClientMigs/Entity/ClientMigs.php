@@ -47,16 +47,16 @@ class ClientMigs
      * @ORM\Column(type="datetime")
      */
     private $executedAt;
-    
+
     public function getVersion(): string
     {
         return $this->version;
     }
-    
+
     public function setVersion(string $version): self
     {
         $this->version = $version;
-        
+
         return $this;
     }
 

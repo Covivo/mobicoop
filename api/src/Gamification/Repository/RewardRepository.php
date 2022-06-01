@@ -38,9 +38,9 @@ class RewardRepository
      * @var EntityRepository
      */
     private $repository;
-    
+
     private $entityManager;
-    
+
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
@@ -80,7 +80,7 @@ class RewardRepository
         ->andWhere('r.user = :user')
         ->setParameter('user', $user)
         ;
-                
+
         return $query->getQuery()->getResult();
     }
 }

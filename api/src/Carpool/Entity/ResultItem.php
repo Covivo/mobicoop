@@ -31,8 +31,8 @@ use App\Geography\Entity\Address;
  */
 class ResultItem
 {
-    const DEFAULT_ID = 999999999999;
-    
+    public const DEFAULT_ID = 999999999999;
+
     /**
      * @var int The id of this result item.
      */
@@ -295,49 +295,49 @@ class ResultItem
      * @Groups("results")
      */
     private $originalDistance;
-    
+
     /**
      * @var int The accepted detour distance in metres.
      * @Groups("results")
      */
     private $acceptedDetourDistance;
-    
+
     /**
      * @var int The new distance in metres.
      * @Groups("results")
      */
     private $newDistance;
-    
+
     /**
      * @var int The detour distance in metres.
      * @Groups("results")
      */
     private $detourDistance;
-    
+
     /**
      * @var int The detour distance in percentage of the original distance.
      * @Groups("results")
      */
     private $detourDistancePercent;
-    
+
     /**
      * @var int The original duration in seconds.
      * @Groups("results")
      */
     private $originalDuration;
-    
+
     /**
      * @var int The accepted detour duration in seconds.
      * @Groups("results")
      */
     private $acceptedDetourDuration;
-    
+
     /**
      * @var int The new duration in seconds.
      * @Groups("results")
      */
     private $newDuration;
-    
+
     /**
      * @var int The detour duration in seconds.
      * @Groups("results")
@@ -349,7 +349,7 @@ class ResultItem
      * @Groups("results")
      */
     private $detourDurationPercent;
-    
+
     /**
      * @var int The common distance in metres (=passenger distance).
      * @Groups("results")
@@ -389,11 +389,11 @@ class ResultItem
     {
         return $this->proposalId;
     }
-    
+
     public function setProposalId(?int $proposalId): self
     {
         $this->proposalId = $proposalId;
-        
+
         return $this;
     }
 
@@ -401,11 +401,11 @@ class ResultItem
     {
         return $this->matchingId;
     }
-    
+
     public function setMatchingId(?int $matchingId): self
     {
         $this->matchingId = $matchingId;
-        
+
         return $this;
     }
 
@@ -540,7 +540,7 @@ class ResultItem
 
         return $this;
     }
-    
+
     public function getWaypoints()
     {
         return $this->waypoints;
@@ -733,11 +733,11 @@ class ResultItem
         }
         return null;
     }
-    
+
     public function setSunTime(?\DateTimeInterface $sunTime): self
     {
         $this->sunTime = $sunTime;
-        
+
         return $this;
     }
 
@@ -745,11 +745,11 @@ class ResultItem
     {
         return $this->monMarginDuration;
     }
-    
+
     public function setMonMarginDuration(?int $monMarginDuration): self
     {
         $this->monMarginDuration = $monMarginDuration;
-        
+
         return $this;
     }
 
@@ -757,11 +757,11 @@ class ResultItem
     {
         return $this->tueMarginDuration;
     }
-    
+
     public function setTueMarginDuration(?int $tueMarginDuration): self
     {
         $this->tueMarginDuration = $tueMarginDuration;
-        
+
         return $this;
     }
 
@@ -769,11 +769,11 @@ class ResultItem
     {
         return $this->wedMarginDuration;
     }
-    
+
     public function setWedMarginDuration(?int $wedMarginDuration): self
     {
         $this->wedMarginDuration = $wedMarginDuration;
-        
+
         return $this;
     }
 
@@ -781,11 +781,11 @@ class ResultItem
     {
         return $this->thuMarginDuration;
     }
-    
+
     public function setThuMarginDuration(?int $thuMarginDuration): self
     {
         $this->thuMarginDuration = $thuMarginDuration;
-        
+
         return $this;
     }
 
@@ -793,11 +793,11 @@ class ResultItem
     {
         return $this->friMarginDuration;
     }
-    
+
     public function setFriMarginDuration(?int $friMarginDuration): self
     {
         $this->friMarginDuration = $friMarginDuration;
-        
+
         return $this;
     }
 
@@ -805,11 +805,11 @@ class ResultItem
     {
         return $this->satMarginDuration;
     }
-    
+
     public function setSatMarginDuration(?int $satMarginDuration): self
     {
         $this->satMarginDuration = $satMarginDuration;
-        
+
         return $this;
     }
 
@@ -817,11 +817,11 @@ class ResultItem
     {
         return $this->sunMarginDuration;
     }
-    
+
     public function setSunMarginDuration(?int $sunMarginDuration): self
     {
         $this->sunMarginDuration = $sunMarginDuration;
-        
+
         return $this;
     }
 
@@ -864,7 +864,7 @@ class ResultItem
     {
         return $this->driverPriceKm;
     }
-    
+
     public function setDriverPriceKm(?string $driverPriceKm)
     {
         $this->driverPriceKm = $driverPriceKm;
@@ -874,7 +874,7 @@ class ResultItem
     {
         return $this->passengerPriceKm;
     }
-    
+
     public function setPassengerPriceKm(?string $passengerPriceKm)
     {
         $this->passengerPriceKm = $passengerPriceKm;
@@ -884,7 +884,7 @@ class ResultItem
     {
         return $this->driverOriginalPrice;
     }
-    
+
     public function setDriverOriginalPrice(?string $driverOriginalPrice)
     {
         $this->driverOriginalPrice = $driverOriginalPrice;
@@ -894,7 +894,7 @@ class ResultItem
     {
         return $this->passengerOriginalPrice;
     }
-    
+
     public function setPassengerOriginalPrice(?string $passengerOriginalPrice)
     {
         $this->passengerOriginalPrice = $passengerOriginalPrice;
@@ -904,7 +904,7 @@ class ResultItem
     {
         return $this->computedPrice;
     }
-    
+
     public function setComputedPrice(?string $computedPrice)
     {
         $this->computedPrice = $computedPrice;
@@ -914,7 +914,7 @@ class ResultItem
     {
         return $this->computedRoundedPrice;
     }
-    
+
     public function setComputedRoundedPrice(?string $computedRoundedPrice)
     {
         $this->computedRoundedPrice = $computedRoundedPrice;

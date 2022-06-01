@@ -33,16 +33,16 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class RelayPointVoter extends Voter
 {
-    const ADMIN_RELAY_POINT_CREATE = 'admin_relay_point_create';
-    const ADMIN_RELAY_POINT_READ = 'admin_relay_point_read';
-    const ADMIN_RELAY_POINT_UPDATE = 'admin_relay_point_update';
-    const ADMIN_RELAY_POINT_DELETE = 'admin_relay_point_delete';
-    const ADMIN_RELAY_POINT_LIST = 'admin_relay_point_list';
-    const RELAY_POINT_CREATE = 'relay_point_create';
-    const RELAY_POINT_READ = 'relay_point_read';
-    const RELAY_POINT_UPDATE = 'relay_point_update';
-    const RELAY_POINT_DELETE = 'relay_point_delete';
-    const RELAY_POINT_LIST = 'relay_point_list';
+    public const ADMIN_RELAY_POINT_CREATE = 'admin_relay_point_create';
+    public const ADMIN_RELAY_POINT_READ = 'admin_relay_point_read';
+    public const ADMIN_RELAY_POINT_UPDATE = 'admin_relay_point_update';
+    public const ADMIN_RELAY_POINT_DELETE = 'admin_relay_point_delete';
+    public const ADMIN_RELAY_POINT_LIST = 'admin_relay_point_list';
+    public const RELAY_POINT_CREATE = 'relay_point_create';
+    public const RELAY_POINT_READ = 'relay_point_read';
+    public const RELAY_POINT_UPDATE = 'relay_point_update';
+    public const RELAY_POINT_DELETE = 'relay_point_delete';
+    public const RELAY_POINT_LIST = 'relay_point_list';
 
     private $authManager;
     private $request;

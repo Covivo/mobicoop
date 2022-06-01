@@ -31,8 +31,8 @@ use App\Community\Entity\CommunityUser;
 
 class CommunityUserVoter extends Voter
 {
-    const COMMUNITY_JOIN = 'community_join';
-    const COMMUNITY_MEMBERSHIP= 'community_membership';
+    public const COMMUNITY_JOIN = 'community_join';
+    public const COMMUNITY_MEMBERSHIP= 'community_membership';
 
     private $authManager;
 

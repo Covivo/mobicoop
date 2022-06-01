@@ -39,19 +39,19 @@ final class JourneyPopularCollectionDataProvider implements CollectionDataProvid
     protected $journeyManager;
     protected $security;
     protected $request;
-    
+
     public function __construct(JourneyManager $journeyManager, RequestStack $requestStack, Security $security)
     {
         $this->journeyManager = $journeyManager;
         $this->security = $security;
         $this->request = $requestStack->getCurrentRequest();
     }
-    
+
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
         return Journey::class === $resourceClass && ($operationName === "popular" || $operationName === "popularHome");
     }
-    
+
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
         return $this->journeyManager->getPopularJourneys($operationName === "popularHome");

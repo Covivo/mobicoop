@@ -33,7 +33,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class ImageVoter extends Voter
 {
-    const ADMIN_IMAGE_POST = 'admin_image_post';
+    public const ADMIN_IMAGE_POST = 'admin_image_post';
 
     private $request;
     private $authManager;
@@ -68,16 +68,16 @@ class ImageVoter extends Voter
     protected function voteOnAttribute($attribute, $subject, TokenInterface $token): bool
     {
         $requester = $token->getUser();
-        
+
         switch ($attribute) {
             case self::ADMIN_IMAGE_POST:
                 return $this->canPost($requester, $this->request);
-        
+
         }
 
         throw new \LogicException('This code should not be reached!');
     }
-    
+
     private function canPost(UserInterface $requester, Request $request)
     {
         return true;

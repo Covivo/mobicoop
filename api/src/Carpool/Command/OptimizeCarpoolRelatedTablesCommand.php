@@ -37,14 +37,14 @@ use Symfony\Component\Console\Output\OutputInterface;
 class OptimizeCarpoolRelatedTablesCommand extends Command
 {
     private $proposalManager;
-    
+
     public function __construct(ProposalManager $proposalManager)
     {
         $this->proposalManager = $proposalManager;
-        
+
         parent::__construct();
     }
-    
+
     protected function configure()
     {
         $this

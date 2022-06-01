@@ -66,7 +66,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class SolidaryAnimation
 {
-    const DEFAULT_ID = 999999999999;
+    public const DEFAULT_ID = 999999999999;
 
     /**
      * @var int The id of this SolidaryAnimation action.

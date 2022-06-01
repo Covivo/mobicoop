@@ -64,7 +64,7 @@ final class CommunityTerritoryFilterExtension implements QueryCollectionExtensio
 
         // we check if the user has limited territories
         $territories = $this->authManager->getTerritoriesForItem("community_list");
-        
+
         if (count($territories)>0) {
             $rootAlias = $queryBuilder->getRootAliases()[0];
             $queryBuilder

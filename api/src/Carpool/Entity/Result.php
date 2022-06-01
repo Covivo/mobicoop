@@ -32,8 +32,8 @@ use App\Geography\Entity\Address;
  */
 class Result
 {
-    const DEFAULT_ID = 999999999999;
-    
+    public const DEFAULT_ID = 999999999999;
+
     /**
      * @var int The id of this result.
      * @Groups("results")
@@ -137,7 +137,7 @@ class Result
      * @Groups({"results","externalJourney"})
      */
     private $pickUpReturn;
-    
+
     /**
      * @var \DateTimeInterface|null The date to display.
      * @Groups({"results","externalJourney"})
@@ -414,7 +414,7 @@ class Result
 
         return $this;
     }
-        
+
     public function getCarpooler(): ?User
     {
         return $this->carpooler;
@@ -467,11 +467,11 @@ class Result
     {
         return $this->originFirst;
     }
-    
+
     public function setOriginFirst(bool $isOriginFirst): self
     {
         $this->originFirst = $isOriginFirst;
-        
+
         return $this;
     }
 
@@ -491,11 +491,11 @@ class Result
     {
         return $this->destinationLast;
     }
-    
+
     public function setDestinationLast(bool $isDestinationLast): self
     {
         $this->destinationLast = $isDestinationLast;
-        
+
         return $this;
     }
 
@@ -558,7 +558,7 @@ class Result
 
         return $this;
     }
-    
+
     public function getPickUpReturn(): ?Address
     {
         return $this->pickUpReturn;
@@ -659,7 +659,7 @@ class Result
     {
         return $this->price;
     }
-    
+
     public function setPrice(?string $price)
     {
         $this->price = $price;
@@ -669,7 +669,7 @@ class Result
     {
         return round($this->roundedPrice, 2);
     }
-    
+
     public function setRoundedPrice(?string $roundedPrice)
     {
         $this->roundedPrice = $roundedPrice;
@@ -679,11 +679,11 @@ class Result
     {
         return $this->comment;
     }
-    
+
     public function setComment(?string $comment): self
     {
         $this->comment = $comment;
-        
+
         return $this;
     }
 
@@ -835,11 +835,11 @@ class Result
     {
         return $this->return;
     }
-    
+
     public function setReturn(bool $hasReturn): self
     {
         $this->return = $hasReturn;
-        
+
         return $this;
     }
 
@@ -847,11 +847,11 @@ class Result
     {
         return $this->communities;
     }
-    
+
     public function setCommunities(?array $communities): self
     {
         $this->communities = $communities;
-        
+
         return $this;
     }
 
@@ -966,11 +966,11 @@ class Result
     {
         return $this->solidary;
     }
-    
+
     public function setSolidary(?bool $isSolidary): self
     {
         $this->solidary = $isSolidary;
-        
+
         return $this;
     }
 
@@ -978,11 +978,11 @@ class Result
     {
         return $this->solidaryExclusive;
     }
-    
+
     public function setSolidaryExclusive(?bool $isSolidaryExclusive): self
     {
         $this->solidaryExclusive = $isSolidaryExclusive;
-        
+
         return $this;
     }
 

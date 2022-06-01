@@ -89,7 +89,7 @@ class MassMatching
      * @Groups({"mass","massCompute"})
      */
     private $distance;
-    
+
     /**
      * @var int The total duration of the direction in milliseconds.
      * corresponding to newDuration in classic carpool matching
@@ -157,11 +157,11 @@ class MassMatching
     {
         return $this->distance;
     }
-    
+
     public function setDistance(?int $distance): self
     {
         $this->distance = $distance;
-        
+
         return $this;
     }
 
@@ -169,11 +169,11 @@ class MassMatching
     {
         return $this->duration;
     }
-    
+
     public function setDuration(?int $duration): self
     {
         $this->duration = $duration;
-        
+
         return $this;
     }
 
@@ -203,7 +203,7 @@ class MassMatching
     }
 
     // DOCTRINE EVENTS
-    
+
     /**
      * Creation date.
      *

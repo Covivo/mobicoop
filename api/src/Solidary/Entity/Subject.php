@@ -87,7 +87,6 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class Subject
 {
-    
     /**
      * @var int The id of this subject.
      *
@@ -173,19 +172,19 @@ class Subject
         $this->solidaries = new ArrayCollection();
         $this->proposals = new ArrayCollection();
     }
-    
+
     public function getId(): ?int
     {
         return $this->id;
     }
-    
+
     public function setId(int $id): self
     {
         $this->id = $id;
-        
+
         return $this;
     }
-    
+
     public function getLabel(): ?string
     {
         return $this->label;
@@ -214,11 +213,11 @@ class Subject
     {
         return $this->private;
     }
-    
+
     public function setPrivate(?bool $isPrivate): self
     {
         $this->private = $isPrivate;
-        
+
         return $this;
     }
 
@@ -308,7 +307,7 @@ class Subject
     }
 
     // DOCTRINE EVENTS
-    
+
     /**
      * Creation date.
      *

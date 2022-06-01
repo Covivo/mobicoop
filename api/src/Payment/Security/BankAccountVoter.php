@@ -34,9 +34,9 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
  */
 class BankAccountVoter extends Voter
 {
-    const BANK_ACCOUNT_CREATE = 'bank_account_create';
-    const BANK_ACCOUNT_LIST = 'bank_account_list';
-    const BANK_ACCOUNT_DISABLE = 'bank_account_disable';
+    public const BANK_ACCOUNT_CREATE = 'bank_account_create';
+    public const BANK_ACCOUNT_LIST = 'bank_account_list';
+    public const BANK_ACCOUNT_DISABLE = 'bank_account_disable';
 
     private $security;
     private $permissionManager;
@@ -56,7 +56,7 @@ class BankAccountVoter extends Voter
             ])) {
             return false;
         }
-      
+
         // only vote on User objects inside this voter
         if (!in_array($attribute, [
             self::BANK_ACCOUNT_CREATE,

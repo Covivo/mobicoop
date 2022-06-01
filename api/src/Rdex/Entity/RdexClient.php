@@ -34,7 +34,7 @@ class RdexClient
      * @var string The name of the client.
      */
     private $name;
-    
+
     /**
      * @var string The public key of the client.
      */
@@ -44,14 +44,14 @@ class RdexClient
      * @var string The private key of the client.
      */
     private $privateKey;
-    
+
     public function __construct($name, $publicKey, $privateKey)
     {
         $this->setName($name);
         $this->setPublicKey($publicKey);
         $this->setPrivateKey($privateKey);
     }
-    
+
     public function getName()
     {
         return $this->name;

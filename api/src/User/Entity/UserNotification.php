@@ -56,7 +56,7 @@ class UserNotification
      * @MaxDepth(1)
      */
     private $notification;
-        
+
     /**
      * @var User The user related with the notification.
      *
@@ -101,14 +101,14 @@ class UserNotification
     {
         return $this->notification;
     }
-    
+
     public function setNotification(?Notification $notification): self
     {
         $this->notification = $notification;
-        
+
         return $this;
     }
-    
+
     public function getUser(): ?User
     {
         return $this->user;
@@ -117,7 +117,7 @@ class UserNotification
     public function setUser(?User $user): self
     {
         $this->user = $user;
-        
+
         return $this;
     }
 
@@ -125,11 +125,11 @@ class UserNotification
     {
         return $this->active;
     }
-    
+
     public function setActive(?bool $isActive): self
     {
         $this->active = $isActive;
-        
+
         return $this;
     }
 

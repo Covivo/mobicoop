@@ -31,11 +31,11 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class ReportVoter extends Voter
 {
-    const REPORT_CREATE = 'report_create';
-    const REPORT_UPDATE = 'report_update';
-    const REPORT_READ = 'report_read';
-    const REPORT_DELETE = 'report_delete';
-    
+    public const REPORT_CREATE = 'report_create';
+    public const REPORT_UPDATE = 'report_update';
+    public const REPORT_READ = 'report_read';
+    public const REPORT_DELETE = 'report_delete';
+
     private $authManager;
 
     public function __construct(AuthManager $authManager)

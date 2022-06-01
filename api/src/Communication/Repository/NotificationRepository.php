@@ -33,12 +33,12 @@ class NotificationRepository
      * @var EntityRepository
      */
     private $repository;
-    
+
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->repository = $entityManager->getRepository(Notification::class);
     }
-    
+
     public function find(int $id): ?Notification
     {
         return $this->repository->find($id);

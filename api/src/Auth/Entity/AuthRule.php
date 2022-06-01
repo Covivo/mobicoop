@@ -71,7 +71,6 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  */
 class AuthRule
 {
-    
     /**
      * @var int The id of this rule.
      *
@@ -81,7 +80,7 @@ class AuthRule
      * @Groups("read")
      */
     private $id;
-            
+
     /**
      * @var string The name of the rule.
      *
@@ -89,21 +88,21 @@ class AuthRule
      * @Groups({"read","write"})
      */
     private $name;
-    
+
     public function getId(): ?int
     {
         return $this->id;
     }
-            
+
     public function getName(): ?string
     {
         return $this->name;
     }
-    
+
     public function setName(?string $name): self
     {
         $this->name = $name;
-        
+
         return $this;
     }
 }

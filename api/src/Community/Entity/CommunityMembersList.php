@@ -55,7 +55,7 @@ class CommunityMembersList
             $this->totalMembers = $totalMembers;
         }
     }
-    
+
     public function getMembers(): ?array
     {
         return $this->members;

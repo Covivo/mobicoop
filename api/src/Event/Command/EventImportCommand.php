@@ -38,7 +38,7 @@ class EventImportCommand extends Command
 {
     private $eventManager;
     private $eventImportEnabled;
-    
+
     public function __construct(EventManager $eventManager, Bool $eventImportEnabled)
     {
         $this->eventManager = $eventManager;
@@ -46,7 +46,7 @@ class EventImportCommand extends Command
 
         parent::__construct();
     }
-    
+
     protected function configure()
     {
         $this
@@ -61,7 +61,7 @@ class EventImportCommand extends Command
         if ($this->eventImportEnabled == false) {
             return 0;
         }
-        
+
         $this->eventManager->importEvents();
         return 0;
     }

@@ -66,7 +66,7 @@ use App\User\Entity\User;
  */
 class Report
 {
-    const DEFAULT_ID = 999999999999;
+    public const DEFAULT_ID = 999999999999;
 
     /**
      * @var int The id of the Report
@@ -107,7 +107,7 @@ class Report
     {
         $this->id = self::DEFAULT_ID;
     }
-    
+
     public function getId(): ?int
     {
         return $this->id;
@@ -116,7 +116,7 @@ class Report
     public function setId(int $id): self
     {
         $this->id = $id;
-        
+
         return $this;
     }
 
@@ -128,7 +128,7 @@ class Report
     public function setUserId(int $userId): self
     {
         $this->userId = $userId;
-        
+
         return $this;
     }
 
@@ -140,7 +140,7 @@ class Report
     public function setEventId(int $eventId): self
     {
         $this->eventId = $eventId;
-        
+
         return $this;
     }
 
@@ -152,10 +152,10 @@ class Report
     public function setReporterEmail(string $reporterEmail): self
     {
         $this->reporterEmail = $reporterEmail;
-        
+
         return $this;
     }
-    
+
     public function getText(): ?string
     {
         return $this->text;
@@ -164,7 +164,7 @@ class Report
     public function setText(string $text): self
     {
         $this->text = $text;
-        
+
         return $this;
     }
 }

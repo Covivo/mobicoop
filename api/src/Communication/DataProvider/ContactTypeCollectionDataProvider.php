@@ -38,18 +38,18 @@ final class ContactTypeCollectionDataProvider implements CollectionDataProviderI
 {
     protected $request;
     private $contactManager;
-    
+
     public function __construct(RequestStack $requestStack, ContactManager $contactManager)
     {
         $this->request = $requestStack->getCurrentRequest();
         $this->contactManager = $contactManager;
     }
-    
+
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
         return ContactType::class === $resourceClass && $operationName === "get";
     }
-    
+
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
         return $this->contactManager->getContactTypes();

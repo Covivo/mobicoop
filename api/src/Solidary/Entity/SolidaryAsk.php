@@ -67,15 +67,15 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class SolidaryAsk
 {
-    const STATUS_ASKED = 0;
-    const STATUS_REFUSED = 1;
-    const STATUS_PENDING = 2;
-    const STATUS_LOOKING_FOR_SOLUTION = 3;
-    const STATUS_FOLLOW_UP = 4;
-    const STATUS_CLOSED = 5;
-    const STATUS_ACCEPTED = 6;
-    
-    const DEFAULT_ID = 999999999999;
+    public const STATUS_ASKED = 0;
+    public const STATUS_REFUSED = 1;
+    public const STATUS_PENDING = 2;
+    public const STATUS_LOOKING_FOR_SOLUTION = 3;
+    public const STATUS_FOLLOW_UP = 4;
+    public const STATUS_CLOSED = 5;
+    public const STATUS_ACCEPTED = 6;
+
+    public const DEFAULT_ID = 999999999999;
 
     /**
      * @var int The id of this solidary ask.
@@ -178,7 +178,7 @@ class SolidaryAsk
         $this->id = self::DEFAULT_ID;
         $this->solidaryAskHistories = new ArrayCollection();
     }
-    
+
     public function getId(): ?int
     {
         return $this->id;
@@ -236,17 +236,17 @@ class SolidaryAsk
     {
         return $this->solidaryAskHistories->getValues();
     }
-    
+
     public function addSolidaryAskHistory(SolidaryAskHistory $solidaryAskHistory): self
     {
         if (!$this->solidaryAskHistories->contains($solidaryAskHistory)) {
             $this->solidaryAskHistories[] = $solidaryAskHistory;
             $solidaryAskHistory->setSolidaryAsk($this);
         }
-        
+
         return $this;
     }
-    
+
     public function removeSolidaryAskHistory(SolidaryAskHistory $solidaryAskHistory): self
     {
         if ($this->solidaryAskHistories->contains($solidaryAskHistory)) {
@@ -256,7 +256,7 @@ class SolidaryAsk
                 $solidaryAskHistory->setSolidaryAsk(null);
             }
         }
-        
+
         return $this;
     }
 
@@ -327,7 +327,7 @@ class SolidaryAsk
     }
 
     // DOCTRINE EVENTS
-    
+
     /**
      * Creation date.
      *

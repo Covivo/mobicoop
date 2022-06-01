@@ -87,7 +87,7 @@ class ActionEvent extends Event
     {
         return $this->user;
     }
-    
+
     public function setUser(User $user): self
     {
         $this->user = $user;
@@ -98,7 +98,7 @@ class ActionEvent extends Event
     {
         return $this->userDelegate;
     }
-    
+
     public function setUserDelegate(User $userDelegate): self
     {
         $this->userDelegate = $userDelegate;
@@ -109,7 +109,7 @@ class ActionEvent extends Event
     {
         return $this->userRelated;
     }
-    
+
     public function setUserRelated(User $userRelated): self
     {
         $this->userRelated = $userRelated;
@@ -120,7 +120,7 @@ class ActionEvent extends Event
     {
         return $this->proposal;
     }
-    
+
     public function setProposal(Proposal $proposal): self
     {
         $this->proposal = $proposal;
@@ -131,7 +131,7 @@ class ActionEvent extends Event
     {
         return $this->matching;
     }
-    
+
     public function setMatching(Matching $matching): self
     {
         $this->matching = $matching;
@@ -141,7 +141,7 @@ class ActionEvent extends Event
     {
         return $this->ask;
     }
-    
+
     public function setAsk(Ask $ask): self
     {
         $this->ask = $ask;
@@ -151,7 +151,7 @@ class ActionEvent extends Event
     {
         return $this->article;
     }
-    
+
     public function setArticle(Article $article): self
     {
         $this->article = $article;
@@ -161,7 +161,7 @@ class ActionEvent extends Event
     {
         return $this->event;
     }
-    
+
     public function setEvent(EntityEvent $event): self
     {
         $this->event = $event;
@@ -171,7 +171,7 @@ class ActionEvent extends Event
     {
         return $this->community;
     }
-    
+
     public function setCommunity(Community $community): self
     {
         $this->community = $community;
@@ -181,7 +181,7 @@ class ActionEvent extends Event
     {
         return $this->solidary;
     }
-    
+
     public function setSolidary(Solidary $solidary): self
     {
         $this->solidary = $solidary;
@@ -191,7 +191,7 @@ class ActionEvent extends Event
     {
         return $this->territory;
     }
-    
+
     public function setTerritory(Territory $territory): self
     {
         $this->territory = $territory;
@@ -201,7 +201,7 @@ class ActionEvent extends Event
     {
         return $this->car;
     }
-    
+
     public function setCar(Car $car): self
     {
         $this->car = $car;
@@ -211,7 +211,7 @@ class ActionEvent extends Event
     {
         return $this->message;
     }
-    
+
     public function setMessage(Message $message): self
     {
         $this->message = $message;
@@ -221,7 +221,7 @@ class ActionEvent extends Event
     {
         return $this->campaign;
     }
-    
+
     public function setCampaign(Campaign $campaign): self
     {
         $this->campaign = $campaign;
@@ -232,7 +232,7 @@ class ActionEvent extends Event
     {
         return $this->carpoolPayment;
     }
-    
+
     public function setCarpoolPayment(CarpoolPayment $carpoolPayment): self
     {
         $this->carpoolPayment = $carpoolPayment;
@@ -243,7 +243,7 @@ class ActionEvent extends Event
     {
         return $this->carpoolItem;
     }
-    
+
     public function setCarpoolItem(CarpoolItem $carpoolItem): self
     {
         $this->carpoolItem = $carpoolItem;

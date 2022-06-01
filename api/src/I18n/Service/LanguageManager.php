@@ -45,7 +45,7 @@ class LanguageManager
     private $defaultLanguage;
     private $request;
 
-    const SETTER_PREFIX = "set";
+    public const SETTER_PREFIX = "set";
 
     /**
         * Constructor.
@@ -82,7 +82,7 @@ class LanguageManager
     {
         // Set the id to the default language
         $idLanguage = $this->defaultLanguage;
-        
+
         if ($this->security->getUser() instanceof App) {
             // If the user is an App, we check if there is a locale given
             if ($this->request->headers->has('X-LOCALE')) {
@@ -145,7 +145,7 @@ class LanguageManager
                 }
             }
         }
-        
+
 
         return $object;
     }

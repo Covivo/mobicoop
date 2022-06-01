@@ -63,7 +63,7 @@ final class StructureProofCollectionDataProvider implements CollectionDataProvid
         if (!empty($this->filters['structureId'])) {
             $structureId = $this->filters['structureId'];
         }
-        
+
         // If the user whose making the request has a structure, we use its id
         if (!empty($this->security->getUser()->getSolidaryStructures())) {
             $structureId = $this->security->getUser()->getSolidaryStructures()[0]->getId();
@@ -73,7 +73,7 @@ final class StructureProofCollectionDataProvider implements CollectionDataProvid
             // We found no structureId we can't process this method
             throw new SolidaryException(SolidaryException::NO_STRUCTURE_ID);
         }
-        
+
         return $this->structureManager->getStructureProofs($structureId);
     }
 }

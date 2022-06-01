@@ -73,7 +73,6 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 */
 class RewardStep implements GamificationNotificationInterface
 {
-
     /**
      * @var int The RewardStep's id
      *

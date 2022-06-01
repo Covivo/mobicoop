@@ -36,10 +36,10 @@ use Symfony\Component\Security\Core\Security;
 
 class CarpoolProofVoter extends Voter
 {
-    const CARPOOL_PROOF_CREATE = 'carpool_proof_create';
-    const CARPOOL_PROOF_READ = 'carpool_proof_read';
-    const CARPOOL_PROOF_UPDATE = 'carpool_proof_update';
-    
+    public const CARPOOL_PROOF_CREATE = 'carpool_proof_create';
+    public const CARPOOL_PROOF_READ = 'carpool_proof_read';
+    public const CARPOOL_PROOF_UPDATE = 'carpool_proof_update';
+
     private $security;
     private $request;
     private $authManager;

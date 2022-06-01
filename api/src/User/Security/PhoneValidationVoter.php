@@ -31,8 +31,8 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class PhoneValidationVoter extends Voter
 {
-    const PHONE_VALIDATION_VALIDATION = 'phone_number_validation';
-    
+    public const PHONE_VALIDATION_VALIDATION = 'phone_number_validation';
+
     private $authManager;
 
     public function __construct(AuthManager $authManager)
@@ -48,7 +48,7 @@ class PhoneValidationVoter extends Voter
             ])) {
             return false;
         }
-      
+
         // only vote on User objects inside this voter
         if (!in_array($attribute, [
             self::PHONE_VALIDATION_VALIDATION

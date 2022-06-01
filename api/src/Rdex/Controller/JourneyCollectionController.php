@@ -42,13 +42,13 @@ class JourneyCollectionController
     use TranslatorTrait;
     private $rdexManager;
     protected $request;
-    
+
     public function __construct(RequestStack $requestStack, RdexManager $rdexManager)
     {
         $this->request = $requestStack->getCurrentRequest();
         $this->rdexManager = $rdexManager;
     }
-    
+
     /**
      * This method is invoked when a Journey collection is requested.
      *

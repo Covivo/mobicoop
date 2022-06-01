@@ -31,12 +31,12 @@ use App\MassCommunication\Entity\Campaign;
 
 class CampaignVoter extends Voter
 {
-    const CAMPAIGN_CREATE = 'campaign_create';
-    const CAMPAIGN_READ = 'campaign_read';
-    const CAMPAIGN_UPDATE = 'campaign_update';
-    const CAMPAIGN_DELETE = 'campaign_delete';
-    const CAMPAIGN_LIST = 'campaign_list';
-    
+    public const CAMPAIGN_CREATE = 'campaign_create';
+    public const CAMPAIGN_READ = 'campaign_read';
+    public const CAMPAIGN_UPDATE = 'campaign_update';
+    public const CAMPAIGN_DELETE = 'campaign_delete';
+    public const CAMPAIGN_LIST = 'campaign_list';
+
     public function __construct(AuthManager $authManager)
     {
         $this->authManager = $authManager;

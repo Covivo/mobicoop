@@ -34,10 +34,10 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class WeekItem
 {
-    const STATUS_PENDING = 0;
-    const STATUS_ONLINE = 1;
-    const STATUS_DIRECT = 2;
-    const STATUS_UNPAID = 3;
+    public const STATUS_PENDING = 0;
+    public const STATUS_ONLINE = 1;
+    public const STATUS_DIRECT = 2;
+    public const STATUS_UNPAID = 3;
 
     /**
      * @var \DateTimeInterface The start of the week item

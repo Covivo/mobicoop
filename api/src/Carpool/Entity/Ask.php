@@ -105,28 +105,28 @@ use App\Solidary\Entity\SolidaryAsk;
  */
 class Ask
 {
-    const STATUS_INITIATED = 1;
-    const STATUS_PENDING_AS_DRIVER = 2;
-    const STATUS_PENDING_AS_PASSENGER = 3;
-    const STATUS_ACCEPTED_AS_DRIVER = 4;
-    const STATUS_ACCEPTED_AS_PASSENGER = 5;
-    const STATUS_DECLINED_AS_DRIVER = 6;
-    const STATUS_DECLINED_AS_PASSENGER = 7; // asked by remi
-    
-    const ALL_ASKS = 0;
-    const ASKS_WITHOUT_SOLIDARY = 1;
-    const ASKS_WITH_SOLIDARY = 2;
+    public const STATUS_INITIATED = 1;
+    public const STATUS_PENDING_AS_DRIVER = 2;
+    public const STATUS_PENDING_AS_PASSENGER = 3;
+    public const STATUS_ACCEPTED_AS_DRIVER = 4;
+    public const STATUS_ACCEPTED_AS_PASSENGER = 5;
+    public const STATUS_DECLINED_AS_DRIVER = 6;
+    public const STATUS_DECLINED_AS_PASSENGER = 7; // asked by remi
 
-    const TYPE_ONE_WAY = 1;
-    const TYPE_OUTWARD_ROUNDTRIP = 2;
-    const TYPE_RETURN_ROUNDTRIP = 3;
+    public const ALL_ASKS = 0;
+    public const ASKS_WITHOUT_SOLIDARY = 1;
+    public const ASKS_WITH_SOLIDARY = 2;
 
-    const PAYMENT_STATUS_PENDING = 0;
-    const PAYMENT_STATUS_ONLINE = 1;
-    const PAYMENT_STATUS_DIRECT = 2;
-    const PAYMENT_STATUS_UNPAID = 3;
-    const PAYMENT_STATUS_PAID = 4; // Paid but with undetermined method
-    
+    public const TYPE_ONE_WAY = 1;
+    public const TYPE_OUTWARD_ROUNDTRIP = 2;
+    public const TYPE_RETURN_ROUNDTRIP = 3;
+
+    public const PAYMENT_STATUS_PENDING = 0;
+    public const PAYMENT_STATUS_ONLINE = 1;
+    public const PAYMENT_STATUS_DIRECT = 2;
+    public const PAYMENT_STATUS_UNPAID = 3;
+    public const PAYMENT_STATUS_PAID = 4; // Paid but with undetermined method
+
     /**
      * @var int The id of this ask.
      *
@@ -255,7 +255,7 @@ class Ask
      * @MaxDepth(1)
      */
     private $criteria;
-    
+
     /**
      * @var ArrayCollection The waypoints of the ask.
      *
@@ -321,7 +321,7 @@ class Ask
      * @ORM\OrderBy({"itemDate" = "ASC"})
      */
     private $carpoolItems;
-    
+
     /**
      * @var int|null The payment status of the Ask
      * @Groups({"read","readPaymentStatus"})
@@ -366,7 +366,7 @@ class Ask
         $this->carpoolProofs = new ArrayCollection();
         $this->carpoolItems = new ArrayCollection();
     }
-    
+
     public function getId(): ?int
     {
         return $this->id;
@@ -533,22 +533,22 @@ class Ask
 
         return $this;
     }
-    
+
     public function getWaypoints()
     {
         return $this->waypoints->getValues();
     }
-    
+
     public function addWaypoint(Waypoint $waypoint): self
     {
         if (!$this->waypoints->contains($waypoint)) {
             $this->waypoints[] = $waypoint;
             $waypoint->setAsk($this);
         }
-        
+
         return $this;
     }
-    
+
     public function removeWaypoint(Waypoint $waypoint): self
     {
         if ($this->waypoints->contains($waypoint)) {
@@ -558,7 +558,7 @@ class Ask
                 $waypoint->setAsk(null);
             }
         }
-        
+
         return $this;
     }
 
@@ -566,17 +566,17 @@ class Ask
     {
         return $this->askHistories->getValues();
     }
-    
+
     public function addAskHistory(AskHistory $askHistory): self
     {
         if (!$this->askHistories->contains($askHistory)) {
             $this->askHistories[] = $askHistory;
             $askHistory->setAsk($this);
         }
-        
+
         return $this;
     }
-    
+
     public function removeAskHistory(AskHistory $askHistory): self
     {
         if ($this->askHistories->contains($askHistory)) {
@@ -586,7 +586,7 @@ class Ask
                 $askHistory->setAsk(null);
             }
         }
-        
+
         return $this;
     }
 
@@ -594,17 +594,17 @@ class Ask
     {
         return $this->carpoolProofs->getValues();
     }
-    
+
     public function addCarpoolProof(CarpoolProof $carpoolProof): self
     {
         if (!$this->carpoolProofs->contains($carpoolProof)) {
             $this->carpoolProofs[] = $carpoolProof;
             $carpoolProof->setAsk($this);
         }
-        
+
         return $this;
     }
-    
+
     public function removeCarpoolProof(CarpoolProof $carpoolProof): self
     {
         if ($this->carpoolProofs->contains($carpoolProof)) {
@@ -614,7 +614,7 @@ class Ask
                 $carpoolProof->setAsk(null);
             }
         }
-        
+
         return $this;
     }
 
@@ -622,11 +622,11 @@ class Ask
     {
         return $this->matchingRelated;
     }
-    
+
     public function setMatchingRelated(?Matching $matchingRelated): self
     {
         $this->matchingRelated = $matchingRelated;
-                
+
         return $this;
     }
 
@@ -634,11 +634,11 @@ class Ask
     {
         return $this->matchingOpposite;
     }
-    
+
     public function setMatchingOpposite(?Matching $matchingOpposite): self
     {
         $this->matchingOpposite = $matchingOpposite;
-        
+
         return $this;
     }
 
@@ -653,7 +653,7 @@ class Ask
 
         return $this;
     }
-    
+
     public function getSolidaryAsk(): ?SolidaryAsk
     {
         return $this->solidaryAsk;
@@ -729,7 +729,7 @@ class Ask
 
         return $this;
     }
-    
+
     public function getPaymentItemWeek(): ?int
     {
         return $this->paymentItemWeek;
@@ -758,17 +758,17 @@ class Ask
     {
         return $this->logs->getValues();
     }
-    
+
     public function addLog(Log $log): self
     {
         if (!$this->logs->contains($log)) {
             $this->logs[] = $log;
             $log->setAsk($this);
         }
-        
+
         return $this;
     }
-    
+
     public function removeLog(Log $log): self
     {
         if ($this->logs->contains($log)) {
@@ -778,12 +778,12 @@ class Ask
                 $log->setAsk(null);
             }
         }
-        
+
         return $this;
     }
 
     // DOCTRINE EVENTS
-    
+
     /**
      * Creation date.
      *

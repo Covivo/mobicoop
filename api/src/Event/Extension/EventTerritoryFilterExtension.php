@@ -77,7 +77,7 @@ final class EventTerritoryFilterExtension implements QueryCollectionExtensionInt
                 }
             }
         }
-        
+
 
         if (count($territories)>0) {
             $rootAlias = $queryBuilder->getRootAliases()[0];

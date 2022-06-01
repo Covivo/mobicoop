@@ -30,59 +30,59 @@ namespace App\Rdex\Entity;
  */
 class RdexWaypoint implements \JsonSerializable
 {
-    const TYPE_PICK_UP = "pick-up";
-    const TYPE_DROP_OFF = "drop-off";
-    
+    public const TYPE_PICK_UP = "pick-up";
+    public const TYPE_DROP_OFF = "drop-off";
+
     /**
      * @var string The address.
      */
     private $address;
-    
+
     /**
      * @var string The city.
      */
     private $city;
-    
+
     /**
      * @var string The postal code.
      */
     private $postalcode;
-    
+
     /**
      * @var string The country.
      */
     private $country;
-    
+
     /**
      * @var float The latitude.
      */
     private $latitude;
-    
+
     /**
      * @var float The longitude.
      */
     private $longitude;
-    
+
     /**
      * @var int The distance of the step.
      */
     private $step_distance;
-    
+
     /**
      * @var int The duration of the step.
      */
     private $step_duration;
-    
+
     /**
      * @var string The type of the step.
      */
     private $type;
-    
+
     /**
      * @var bool The step is mandatory.
      */
     private $mandatory;
-    
+
     /**
      * @return string
      */
@@ -242,7 +242,7 @@ class RdexWaypoint implements \JsonSerializable
     {
         $this->mandatory = $mandatory;
     }
-    
+
     public function jsonSerialize(): mixed
     {
         return

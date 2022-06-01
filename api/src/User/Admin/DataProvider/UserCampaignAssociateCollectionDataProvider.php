@@ -55,7 +55,7 @@ final class UserCampaignAssociateCollectionDataProvider implements CollectionDat
     private $authManager;
     private $campaignManager;
 
-    const MAX_RESULTS = 999999;
+    public const MAX_RESULTS = 999999;
 
     public function __construct(RequestStack $requestStack, UserRepository $userRepository, CampaignRepository $campaignRepository, AuthManager $authManager, CampaignManager $campaignManager, ManagerRegistry $managerRegistry, iterable $collectionExtensions)
     {

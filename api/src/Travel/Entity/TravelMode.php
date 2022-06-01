@@ -45,22 +45,22 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class TravelMode
 {
-    const TRAVEL_MODE_CAR = "CAR";
-    const TRAVEL_MODE_BUS = "BUS";
-    const TRAVEL_MODE_TRAMWAY = "TRAMWAY";
-    const TRAVEL_MODE_COACH = "COACH";
-    const TRAVEL_MODE_TRAIN = "TRAIN";
-    const TRAVEL_MODE_TRAIN_LOCAL = "TRAIN_LOCAL";
-    const TRAVEL_MODE_TRAIN_HIGH_SPEED = "TRAIN_HIGH_SPEED";
-    const TRAVEL_MODE_BIKE = "BIKE";
-    const TRAVEL_MODE_WALK = "WALK";
-    const TRAVEL_MODE_SUBWAY = "SUBWAY";
-    const TRAVEL_MODE_WAITING = "WAITING";
-    const TRAVEL_UNKNOWN = "UNKNOWN";
-    const TRAVEL_MODE_ON_DEMAND = "TOD";
-    const TRAVEL_MODE_METRO = "METRO";
-    const TRAVEL_MODE_TROLLEY_BUS = "TROLLEY_BUS";
-    const TRAVEL_MODE_UNKNOWN = "UNKNOWN";
+    public const TRAVEL_MODE_CAR = "CAR";
+    public const TRAVEL_MODE_BUS = "BUS";
+    public const TRAVEL_MODE_TRAMWAY = "TRAMWAY";
+    public const TRAVEL_MODE_COACH = "COACH";
+    public const TRAVEL_MODE_TRAIN = "TRAIN";
+    public const TRAVEL_MODE_TRAIN_LOCAL = "TRAIN_LOCAL";
+    public const TRAVEL_MODE_TRAIN_HIGH_SPEED = "TRAIN_HIGH_SPEED";
+    public const TRAVEL_MODE_BIKE = "BIKE";
+    public const TRAVEL_MODE_WALK = "WALK";
+    public const TRAVEL_MODE_SUBWAY = "SUBWAY";
+    public const TRAVEL_MODE_WAITING = "WAITING";
+    public const TRAVEL_UNKNOWN = "UNKNOWN";
+    public const TRAVEL_MODE_ON_DEMAND = "TOD";
+    public const TRAVEL_MODE_METRO = "METRO";
+    public const TRAVEL_MODE_TROLLEY_BUS = "TROLLEY_BUS";
+    public const TRAVEL_MODE_UNKNOWN = "UNKNOWN";
 
     private const TRAVEL_MODES = [
         self::TRAVEL_MODE_CAR => 1,

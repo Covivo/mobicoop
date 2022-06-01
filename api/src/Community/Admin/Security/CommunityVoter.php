@@ -33,18 +33,18 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class CommunityVoter extends Voter
 {
-    const ADMIN_COMMUNITY_CREATE = 'admin_community_create';
-    const ADMIN_COMMUNITY_READ = 'admin_community_read';
-    const ADMIN_COMMUNITY_UPDATE = 'admin_community_update';
-    const ADMIN_COMMUNITY_DELETE = 'admin_community_delete';
-    const ADMIN_COMMUNITY_LIST = 'admin_community_list';
-    const ADMIN_COMMUNITY_MEMBERSHIP = 'admin_community_membership';
-    const COMMUNITY_CREATE = 'community_create';
-    const COMMUNITY_READ = 'community_read';
-    const COMMUNITY_UPDATE = 'community_update';
-    const COMMUNITY_DELETE = 'community_delete';
-    const COMMUNITY_LIST = 'community_list';
-    const COMMUNITY_MEMBERSHIP= 'community_membership';
+    public const ADMIN_COMMUNITY_CREATE = 'admin_community_create';
+    public const ADMIN_COMMUNITY_READ = 'admin_community_read';
+    public const ADMIN_COMMUNITY_UPDATE = 'admin_community_update';
+    public const ADMIN_COMMUNITY_DELETE = 'admin_community_delete';
+    public const ADMIN_COMMUNITY_LIST = 'admin_community_list';
+    public const ADMIN_COMMUNITY_MEMBERSHIP = 'admin_community_membership';
+    public const COMMUNITY_CREATE = 'community_create';
+    public const COMMUNITY_READ = 'community_read';
+    public const COMMUNITY_UPDATE = 'community_update';
+    public const COMMUNITY_DELETE = 'community_delete';
+    public const COMMUNITY_LIST = 'community_list';
+    public const COMMUNITY_MEMBERSHIP= 'community_membership';
 
     private $authManager;
     private $request;

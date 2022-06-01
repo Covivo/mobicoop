@@ -64,22 +64,22 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
  */
 class Action
 {
-    const TYPE_AUTO = 0;
-    const TYPE_TAKING_ACCOUNT_ASK = 1;
-    const TYPE_SOLUTION_FINDING = 2;
-    const TYPE_FOLLOW_UP_CARPOOL = 3;
-    const TYPE_CLOSING_ASK = 4;
-    const TYPE_FREE = 5;
+    public const TYPE_AUTO = 0;
+    public const TYPE_TAKING_ACCOUNT_ASK = 1;
+    public const TYPE_SOLUTION_FINDING = 2;
+    public const TYPE_FOLLOW_UP_CARPOOL = 3;
+    public const TYPE_CLOSING_ASK = 4;
+    public const TYPE_FREE = 5;
 
-    const SOLIDARY_CREATE = 37;
+    public const SOLIDARY_CREATE = 37;
 
-    const DOMAIN_TYPE_SOLIDARY = "solidary";
+    public const DOMAIN_TYPE_SOLIDARY = "solidary";
 
-    const TYPE_FILTER = [
+    public const TYPE_FILTER = [
         self::DOMAIN_TYPE_SOLIDARY => [1,2,3,4,5]
     ];
 
-    const TYPE_NAME = [
+    public const TYPE_NAME = [
         self::TYPE_AUTO => "Automatique",
         self::TYPE_TAKING_ACCOUNT_ASK => "Prise en compte de la demande",
         self::TYPE_SOLUTION_FINDING => "Recherche de solution",
@@ -88,7 +88,7 @@ class Action
         self::TYPE_FREE => "Action libre"
     ];
 
-    const ACTION_SOLIDARY_UPDATE_PROGRESS_MANUALLY = 39;
+    public const ACTION_SOLIDARY_UPDATE_PROGRESS_MANUALLY = 39;
 
     /**
      * @var int The id of this action.
@@ -186,14 +186,14 @@ class Action
     {
         return $this->id;
     }
-    
+
     public function setId(int $id): self
     {
         $this->id = $id;
-        
+
         return $this;
     }
-    
+
     public function getName(): ?string
     {
         return $this->name;
@@ -210,11 +210,11 @@ class Action
     {
         return $this->type;
     }
-    
+
     public function setType(int $type): self
     {
         $this->type = $type;
-        
+
         return $this;
     }
 
@@ -225,11 +225,11 @@ class Action
         }
         return null;
     }
-    
+
     public function setTypeName(string $typeName): self
     {
         $this->typeName = $typeName;
-        
+
         return $this;
     }
 
@@ -237,11 +237,11 @@ class Action
     {
         return $this->inLog;
     }
-    
+
     public function setInLog(bool $isInLog): self
     {
         $this->inLog = $isInLog;
-        
+
         return $this;
     }
 
@@ -249,11 +249,11 @@ class Action
     {
         return $this->inDiary;
     }
-    
+
     public function setInDiary(bool $isInDiary): self
     {
         $this->inDiary = $isInDiary;
-        
+
         return $this;
     }
 
@@ -330,7 +330,7 @@ class Action
     }
 
     // DOCTRINE EVENTS
-    
+
     /**
      * Creation date.
      *

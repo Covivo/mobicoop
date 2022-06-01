@@ -38,8 +38,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Wallet
 {
-    const DEFAULT_ID = "999999999999";
-    
+    public const DEFAULT_ID = "999999999999";
+
     /**
      * @var string The id of this wallet
      *
@@ -94,7 +94,7 @@ class Wallet
     {
         $this->id = self::DEFAULT_ID;
     }
-    
+
     public function getId(): ?String
     {
         return $this->id;
@@ -103,7 +103,7 @@ class Wallet
     public function setId(String $id): self
     {
         $this->id = $id;
-        
+
         return $this;
     }
 

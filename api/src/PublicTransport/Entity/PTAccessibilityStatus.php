@@ -58,7 +58,6 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class PTAccessibilityStatus
 {
-
     /**
      * @ApiProperty(identifier=true)
      * @var int id of this accessibility status

@@ -60,7 +60,7 @@ class SolidaryAnimationManager
     public function getSolidaryAnimations(int $solidaryId): array
     {
         $solidary = $this->solidaryRepository->find($solidaryId);
-        
+
         $diaries = $this->diaryRepository->findBy(['solidary'=>$solidary]);
 
         $return = [];

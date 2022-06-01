@@ -43,19 +43,19 @@ final class CommunityIsOwnedByUserCollectionDataProvider implements CollectionDa
     protected $request;
     private $communityManager;
     private $security;
-    
+
     public function __construct(RequestStack $requestStack, CommunityManager $communityManager, Security $security)
     {
         $this->request = $requestStack->getCurrentRequest();
         $this->communityManager = $communityManager;
         $this->security = $security;
     }
-    
+
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
         return Community::class === $resourceClass && $operationName === "owned";
     }
-    
+
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
         (!is_null($this->request->get("userId"))) ? $userId = $this->request->get("userId") : $userId = $this->security->getUser()->getId();

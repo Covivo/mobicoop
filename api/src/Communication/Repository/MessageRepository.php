@@ -38,13 +38,13 @@ class MessageRepository
      */
     private $repository;
     private $entityManager;
-    
+
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
         $this->repository = $entityManager->getRepository(Message::class);
     }
-    
+
     public function find(int $id): ?Message
     {
         return $this->repository->find($id);
@@ -87,7 +87,7 @@ class MessageRepository
 
         return $query->getQuery()->getResult();
     }
-    
+
     /**
      * Find the unread messages of a User
      *

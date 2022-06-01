@@ -58,9 +58,9 @@ use App\User\Entity\User;
  */
 class PublicProfile
 {
-    const SMOKE_NO = 0;
-    const SMOKE_NOT_IN_CAR = 1;
-    const SMOKE = 2;
+    public const SMOKE_NO = 0;
+    public const SMOKE_NOT_IN_CAR = 1;
+    public const SMOKE = 2;
 
     /**
      * @var int The id of the User
@@ -123,7 +123,7 @@ class PublicProfile
      * @Groups({"readPublicProfile"})
      */
     private $reviewActive;
-    
+
     /**
      * @var array|null Reviews about this user
      *
@@ -146,7 +146,7 @@ class PublicProfile
 
         $this->reviews = [];
     }
-    
+
     public function getId(): ?int
     {
         return $this->id;
@@ -155,7 +155,7 @@ class PublicProfile
     public function setId(int $id): self
     {
         $this->id = $id;
-        
+
         return $this;
     }
 
@@ -167,7 +167,7 @@ class PublicProfile
     public function setReviewActive(?bool $reviewActive): self
     {
         $this->reviewActive = $reviewActive;
-        
+
         return $this;
     }
 
@@ -179,7 +179,7 @@ class PublicProfile
     public function setProfileSummary(ProfileSummary $profileSummary): self
     {
         $this->profileSummary = $profileSummary;
-        
+
         return $this;
     }
 

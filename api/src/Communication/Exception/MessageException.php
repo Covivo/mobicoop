@@ -25,6 +25,6 @@ namespace App\Communication\Exception;
 
 class MessageException extends \LogicException
 {
-    const NOT_FOUND = "Message not found";
-    const SAME_SENDER_RECIPIENT = "The send and the recipient cannot be the same person";
+    public const NOT_FOUND = "Message not found";
+    public const SAME_SENDER_RECIPIENT = "The send and the recipient cannot be the same person";
 }

@@ -33,13 +33,13 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class EventVoter extends Voter
 {
-    const EVENT_CREATE = 'event_create';
-    const EVENT_READ = 'event_read';
-    const EVENT_UPDATE = 'event_update';
-    const EVENT_DELETE = 'event_delete';
-    const EVENT_REPORT = 'event_report';
-    const EVENT_LIST = 'event_list';
-    const EVENT_LIST_ADS = 'event_list_ads';
+    public const EVENT_CREATE = 'event_create';
+    public const EVENT_READ = 'event_read';
+    public const EVENT_UPDATE = 'event_update';
+    public const EVENT_DELETE = 'event_delete';
+    public const EVENT_REPORT = 'event_report';
+    public const EVENT_LIST = 'event_list';
+    public const EVENT_LIST_ADS = 'event_list_ads';
 
     private $authManager;
     private $request;
@@ -108,7 +108,7 @@ class EventVoter extends Voter
                 return false;
             case self::EVENT_LIST:
                 return $this->canListEvent();
-           
+
         }
 
         throw new \LogicException('This code should not be reached!');
@@ -128,12 +128,12 @@ class EventVoter extends Voter
     {
         return $this->authManager->isAuthorized(self::EVENT_UPDATE, ['event'=>$event]);
     }
-    
+
     private function canDeleteEvent(Event $event)
     {
         return $this->authManager->isAuthorized(self::EVENT_DELETE, ['event'=>$event]);
     }
-    
+
     private function canListEvent()
     {
         return $this->authManager->isAuthorized(self::EVENT_LIST);

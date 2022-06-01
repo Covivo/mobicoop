@@ -113,11 +113,11 @@ class ExternalJourneyProvider
     {
         return $this->name;
     }
-    
+
     public function setName(?string $name): self
     {
         $this->name = $name;
-        
+
         return $this;
     }
 
@@ -125,11 +125,11 @@ class ExternalJourneyProvider
     {
         return $this->url;
     }
-    
+
     public function setUrl(?string $url): self
     {
         $this->url = $url;
-        
+
         return $this;
     }
 
@@ -137,11 +137,11 @@ class ExternalJourneyProvider
     {
         return $this->resource;
     }
-    
+
     public function setResource(?string $resource): self
     {
         $this->resource = $resource;
-        
+
         return $this;
     }
 
@@ -149,11 +149,11 @@ class ExternalJourneyProvider
     {
         return $this->apiKey;
     }
-    
+
     public function setApiKey(?string $apiKey): self
     {
         $this->apiKey = $apiKey;
-        
+
         return $this;
     }
 
@@ -161,11 +161,11 @@ class ExternalJourneyProvider
     {
         return $this->privateKey;
     }
-    
+
     public function setPrivateKey(?string $privateKey): self
     {
         $this->privateKey = $privateKey;
-        
+
         return $this;
     }
 }

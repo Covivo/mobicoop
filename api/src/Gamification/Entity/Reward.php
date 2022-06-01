@@ -133,7 +133,7 @@ class Reward implements GamificationNotificationInterface
     public function __construct()
     {
     }
-    
+
     public function getId(): ?int
     {
         return $this->id;

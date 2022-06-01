@@ -44,9 +44,9 @@ use DOMDocument;
  */
 class ArticleManager
 {
-    const DIRECTION_UP = "up";
-    const DIRECTION_DOWN = "down";
-    
+    public const DIRECTION_UP = "up";
+    public const DIRECTION_DOWN = "down";
+
     /**
      * @var EntityManagerInterface  $entityManager
      */
@@ -205,7 +205,7 @@ class ArticleManager
         $article->setImage($rssElement->getImage());
         $article->setPubDate($rssElement->getPubDate());
         $article->setLink($rssElement->getLink());
-        
+
         if (!is_null($rssElement->getIframe())) {
             $rssIframe = $rssElement->getIframe();
             $article->setIFrame('<iframe src="'.$rssIframe->getSrc().'" allowfullscreen title="'.$rssIframe->getTitle().'" width="'.$rssIframe->getWidth().'" height="'.$rssIframe->getHeight().'" allow="'.$rssIframe->getAllow().'" frameborder="0"></iframe>');
@@ -278,13 +278,13 @@ class ArticleManager
                 $iframe = new Iframe();
                 $iframe->setSrc($dom->getElementsByTagName('iframe')->item(0)->getAttribute('src'));
                 $iframe->setTitle($dom->getElementsByTagName('iframe')->item(0)->getAttribute('title'));
-                
+
                 if ((int)$dom->getElementsByTagName('iframe')->item(0)->getAttribute('width') > $this->articleIframeMaxWidth) {
                     $iframe->setWidth($this->articleIframeMaxWidth);
                 } else {
                     $iframe->setWidth($dom->getElementsByTagName('iframe')->item(0)->getAttribute('width'));
                 }
-                
+
                 if ((int)$dom->getElementsByTagName('iframe')->item(0)->getAttribute('height') > $this->articleIframeMaxHeight) {
                     $iframe->setHeight($this->articleIframeMaxHeight);
                 } else {
@@ -292,7 +292,7 @@ class ArticleManager
                 }
 
                 $iframe->setAllow($dom->getElementsByTagName('iframe')->item(0)->getAttribute('allow'));
-                
+
                 $rssElement->setIframe($iframe);
             }
 
@@ -300,12 +300,12 @@ class ArticleManager
             if ($counter == $articleFeedNumber) {
                 break;
             }
-            
+
             $rssElements[]=$rssElement;
         }
         return $rssElements;
     }
-    
+
     /**
      * Get a collection of Article
      *
@@ -315,7 +315,7 @@ class ArticleManager
     public function getArticles(string $context=null): array
     {
         $articles = [];
-        
+
         // Get the articles in database
         if (is_null($context) || $context==Article::CONTEXT_INTERNAL) {
             $pages = $this->articleRepository->findAll();

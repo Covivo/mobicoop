@@ -114,7 +114,7 @@ class DetachSso
     public function setUuid(string $uuid): self
     {
         $this->uuid = $uuid;
-        
+
         return $this;
     }
 
@@ -126,7 +126,7 @@ class DetachSso
     public function setUserId(string $userId): self
     {
         $this->userId = $userId;
-        
+
         return $this;
     }
 
@@ -150,7 +150,7 @@ class DetachSso
     public function setUser(User $user): self
     {
         $this->user = $user;
-        
+
         return $this;
     }
 }

@@ -43,32 +43,32 @@ use Psr\Log\LoggerInterface;
  */
 class FakeManager
 {
-    const MIN_BIRTHDATE = "1940-01-01";
-    const MAX_BIRTHDATE = "2001-01-01";
-    const MIN_DATE = "2020-07-01";
-    const MAX_DATE = "2021-07-01";
-    const MIN_TIME = "05:00";
-    const MAX_TIME = "23:45";
-    const MIN_TIME_OUTWARD = "05:00";
-    const MAX_TIME_OUTWARD = "10:00";
-    const MIN_TIME_RETURN = "16:00";
-    const MAX_TIME_RETURN = "22:00";
-    const DOMAIN = "fake.org";
-    const MIN_DISTANCE = 10000;         // min ad distance in metres
-    const PUNCTUAL_FREQ = 0.3;          // punctual ad probability : 0 < random float < punctual_freq => punctual ad
-    const ONEWAY_FREQ = 0.3;            // one way ad probability : 0 < random float < oneway_freq => one way ad
-    const DRIVER_FREQ = 0.3;            // driver ad probability : 0 < random float < driver_freq => driver only ad
-    const PASSENGER_FREQ = 0.5;         // passenger ad probability : driver_freq < random float < passenger_freq => passenger only ad; random float > passenger_freq => driver and passenger ad
-    const NB_FREQ_1 = 0.7;              // number of ad probability : random_float < nb_freq_1 => 1 ad
-    const NB_FREQ_2 = 0.9;              // number of ad probability : nb_freq_1 < random_float < nb_freq_2 => 2 ads, else 3 ads
-    const MON_FREQ = 0.8;               // monday probability for regular ad : random_float < mon_freq => monday checked
-    const TUE_FREQ = 0.8;               // tuesday probability for regular ad : random_float < tue_freq => tuesday checked
-    const WED_FREQ = 0.6;               // wednesday probability for regular ad : random_float < wed_freq => wednesday checked
-    const THU_FREQ = 0.8;               // thursday probability for regular ad : random_float < thu_freq => thursday checked
-    const FRI_FREQ = 0.8;               // friday probability for regular ad : random_float < fri_freq => friday checked
-    const SAT_FREQ = 0.3;               // saturday probability for regular ad : random_float < sat_freq => saturday checked
-    const SUN_FREQ = 0.2;               // sunday probability for regular ad : random_float < sun_freq => sunday checked
-    const BATCH = 50;                   // batch number for multi treatment
+    public const MIN_BIRTHDATE = "1940-01-01";
+    public const MAX_BIRTHDATE = "2001-01-01";
+    public const MIN_DATE = "2020-07-01";
+    public const MAX_DATE = "2021-07-01";
+    public const MIN_TIME = "05:00";
+    public const MAX_TIME = "23:45";
+    public const MIN_TIME_OUTWARD = "05:00";
+    public const MAX_TIME_OUTWARD = "10:00";
+    public const MIN_TIME_RETURN = "16:00";
+    public const MAX_TIME_RETURN = "22:00";
+    public const DOMAIN = "fake.org";
+    public const MIN_DISTANCE = 10000;         // min ad distance in metres
+    public const PUNCTUAL_FREQ = 0.3;          // punctual ad probability : 0 < random float < punctual_freq => punctual ad
+    public const ONEWAY_FREQ = 0.3;            // one way ad probability : 0 < random float < oneway_freq => one way ad
+    public const DRIVER_FREQ = 0.3;            // driver ad probability : 0 < random float < driver_freq => driver only ad
+    public const PASSENGER_FREQ = 0.5;         // passenger ad probability : driver_freq < random float < passenger_freq => passenger only ad; random float > passenger_freq => driver and passenger ad
+    public const NB_FREQ_1 = 0.7;              // number of ad probability : random_float < nb_freq_1 => 1 ad
+    public const NB_FREQ_2 = 0.9;              // number of ad probability : nb_freq_1 < random_float < nb_freq_2 => 2 ads, else 3 ads
+    public const MON_FREQ = 0.8;               // monday probability for regular ad : random_float < mon_freq => monday checked
+    public const TUE_FREQ = 0.8;               // tuesday probability for regular ad : random_float < tue_freq => tuesday checked
+    public const WED_FREQ = 0.6;               // wednesday probability for regular ad : random_float < wed_freq => wednesday checked
+    public const THU_FREQ = 0.8;               // thursday probability for regular ad : random_float < thu_freq => thursday checked
+    public const FRI_FREQ = 0.8;               // friday probability for regular ad : random_float < fri_freq => friday checked
+    public const SAT_FREQ = 0.3;               // saturday probability for regular ad : random_float < sat_freq => saturday checked
+    public const SUN_FREQ = 0.2;               // sunday probability for regular ad : random_float < sun_freq => sunday checked
+    public const BATCH = 50;                   // batch number for multi treatment
 
     private $entityManager;
     private $userManager;

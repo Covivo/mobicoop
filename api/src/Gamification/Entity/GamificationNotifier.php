@@ -37,7 +37,7 @@ class GamificationNotifier
      * Implements GamificationNotificationInterface
      */
     private $notifications;
- 
+
     public function __construct()
     {
         $this->notifications = [];

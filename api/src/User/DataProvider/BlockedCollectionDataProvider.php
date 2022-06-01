@@ -38,7 +38,7 @@ final class BlockedCollectionDataProvider implements CollectionDataProviderInter
 {
     private $security;
     private $blockManager;
-    
+
     public function __construct(Security $security, BlockManager $blockManager)
     {
         $this->security = $security;

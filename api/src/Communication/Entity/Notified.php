@@ -84,9 +84,9 @@ use App\Community\Entity\Community;
  */
 class Notified
 {
-    const STATUS_SENT = 1;
-    const STATUS_RECEIVED = 2;
-    const STATUS_READ = 3;
+    public const STATUS_SENT = 1;
+    public const STATUS_RECEIVED = 2;
+    public const STATUS_READ = 3;
 
     /**
      * @var int The id of this notified.
@@ -225,7 +225,7 @@ class Notified
     {
         return $this->status;
     }
-    
+
     public function setStatus(?int $status)
     {
         $this->status = $status;
@@ -235,11 +235,11 @@ class Notified
     {
         return $this->user;
     }
-    
+
     public function setUser(?User $user): self
     {
         $this->user = $user;
-        
+
         return $this;
     }
 
@@ -247,11 +247,11 @@ class Notified
     {
         return $this->notification;
     }
-    
+
     public function setNotification(?Notification $notification): self
     {
         $this->notification = $notification;
-        
+
         return $this;
     }
 

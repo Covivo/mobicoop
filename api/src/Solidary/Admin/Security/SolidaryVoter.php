@@ -32,20 +32,20 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class SolidaryVoter extends Voter
 {
-    const ADMIN_SOLIDARY_CREATE = 'admin_solidary_create';
-    const ADMIN_SOLIDARY_READ = 'admin_solidary_read';
-    const ADMIN_SOLIDARY_UPDATE = 'admin_solidary_update';
-    const ADMIN_SOLIDARY_DELETE = 'admin_solidary_delete';
-    const ADMIN_SOLIDARY_LIST = 'admin_solidary_list';
-    const SOLIDARY_CREATE = 'solidary_create';
-    const SOLIDARY_READ = 'solidary_read';
-    const SOLIDARY_UPDATE = 'solidary_update';
-    const SOLIDARY_DELETE = 'solidary_delete';
-    const SOLIDARY_LIST = 'solidary_list';
+    public const ADMIN_SOLIDARY_CREATE = 'admin_solidary_create';
+    public const ADMIN_SOLIDARY_READ = 'admin_solidary_read';
+    public const ADMIN_SOLIDARY_UPDATE = 'admin_solidary_update';
+    public const ADMIN_SOLIDARY_DELETE = 'admin_solidary_delete';
+    public const ADMIN_SOLIDARY_LIST = 'admin_solidary_list';
+    public const SOLIDARY_CREATE = 'solidary_create';
+    public const SOLIDARY_READ = 'solidary_read';
+    public const SOLIDARY_UPDATE = 'solidary_update';
+    public const SOLIDARY_DELETE = 'solidary_delete';
+    public const SOLIDARY_LIST = 'solidary_list';
 
     private $authManager;
     private $request;
- 
+
     public function __construct(RequestStack $requestStack, AuthManager $authManager)
     {
         $this->authManager = $authManager;

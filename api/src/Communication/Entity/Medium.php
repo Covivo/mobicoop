@@ -62,11 +62,11 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  */
 class Medium
 {
-    const MEDIUM_MESSAGE = 1;   // internal message
-    const MEDIUM_EMAIL = 2;     // email
-    const MEDIUM_SMS = 3;       // sms
-    const MEDIUM_PUSH = 4;      // push notification
-    
+    public const MEDIUM_MESSAGE = 1;   // internal message
+    public const MEDIUM_EMAIL = 2;     // email
+    public const MEDIUM_SMS = 3;       // sms
+    public const MEDIUM_PUSH = 4;      // push notification
+
     /**
      * @var int The id of this medium.
      *
@@ -102,19 +102,19 @@ class Medium
      * @Groups({"read"})
      */
     private $updatedDate;
-    
+
     public function getId(): ?int
     {
         return $this->id;
     }
-    
+
     public function setId(int $id): self
     {
         $this->id = $id;
-        
+
         return $this;
     }
-    
+
     public function getName(): ?string
     {
         return $this->name;
@@ -152,7 +152,7 @@ class Medium
     }
 
     // DOCTRINE EVENTS
-    
+
     /**
      * Creation date.
      *

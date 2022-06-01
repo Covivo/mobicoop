@@ -40,14 +40,14 @@ use Symfony\Component\Console\Output\OutputInterface;
 class CarpoolProofBatchCommand extends Command
 {
     private $proofManager;
-    
+
     public function __construct(ProofManager $proofManager)
     {
         $this->proofManager = $proofManager;
-        
+
         parent::__construct();
     }
-    
+
     protected function configure()
     {
         $this

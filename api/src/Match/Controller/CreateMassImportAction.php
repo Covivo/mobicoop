@@ -61,7 +61,7 @@ final class CreateMassImportAction
         }
 
         $mass->setUser($this->security->getUser());
-        
+
         return $this->massImportManager->createMass($mass);
     }
 }

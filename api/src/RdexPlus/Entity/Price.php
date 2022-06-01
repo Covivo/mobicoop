@@ -33,17 +33,17 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Price
 {
-    const TYPE_FREE = "free";
-    const TYPE_FIXED = "fixed";
-    const TYPE_VARIABLE = "variable";
-    const TYPE_UNKNOWN = "unknown";
-    const VALID_TYPES = [
+    public const TYPE_FREE = "free";
+    public const TYPE_FIXED = "fixed";
+    public const TYPE_VARIABLE = "variable";
+    public const TYPE_UNKNOWN = "unknown";
+    public const VALID_TYPES = [
         self::TYPE_FREE,
         self::TYPE_FIXED,
         self::TYPE_VARIABLE,
         self::TYPE_UNKNOWN
     ];
-    
+
     /**
      * @var float Journey's amount Required if type=fixed or variable
      * @Assert\NotBlank
@@ -87,7 +87,7 @@ class Price
 
         return $this;
     }
-    
+
     public function getType(): ?string
     {
         return $this->type;
@@ -99,7 +99,7 @@ class Price
 
         return $this;
     }
-   
+
     public function isKilometricPrice(): ?string
     {
         return $this->kilometricPrice;

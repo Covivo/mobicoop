@@ -40,7 +40,7 @@ class ConsumptionFeedbackDataProvider
     private const SUPPORTED_PROVIDERS = [
         "PassMobilite" => WorldlineProvider::class
     ];
-    
+
     private $providerInstance;
     private $active;
 
@@ -90,7 +90,7 @@ class ConsumptionFeedbackDataProvider
     {
         return $this->providerInstance->getAccessToken();
     }
-    
+
     public function getConsumptionUser(): ?User
     {
         return $this->providerInstance->getConsumptionUser();

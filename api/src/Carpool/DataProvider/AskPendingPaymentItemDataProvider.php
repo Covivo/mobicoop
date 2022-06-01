@@ -49,7 +49,7 @@ final class AskPendingPaymentItemDataProvider implements RestrictedDataProviderI
         $this->askRepository = $askRepository;
         $this->security = $security;
     }
-    
+
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
         return Ask::class === $resourceClass && $operationName === "pending_payment";

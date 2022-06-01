@@ -33,16 +33,16 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class RelayPointTypeVoter extends Voter
 {
-    const ADMIN_RELAY_POINT_TYPE_CREATE = 'admin_relay_point_type_create';
-    const ADMIN_RELAY_POINT_TYPE_READ = 'admin_relay_point_type_read';
-    const ADMIN_RELAY_POINT_TYPE_UPDATE = 'admin_relay_point_type_update';
-    const ADMIN_RELAY_POINT_TYPE_DELETE = 'admin_relay_point_type_delete';
-    const ADMIN_RELAY_POINT_TYPE_LIST = 'admin_relay_point_type_list';
-    const RELAY_POINT_TYPE_CREATE = 'relay_point_type_create';
-    const RELAY_POINT_TYPE_READ = 'relay_point_type_read';
-    const RELAY_POINT_TYPE_UPDATE = 'relay_point_type_update';
-    const RELAY_POINT_TYPE_DELETE = 'relay_point_type_delete';
-    const RELAY_POINT_TYPE_LIST = 'relay_point_type_list';
+    public const ADMIN_RELAY_POINT_TYPE_CREATE = 'admin_relay_point_type_create';
+    public const ADMIN_RELAY_POINT_TYPE_READ = 'admin_relay_point_type_read';
+    public const ADMIN_RELAY_POINT_TYPE_UPDATE = 'admin_relay_point_type_update';
+    public const ADMIN_RELAY_POINT_TYPE_DELETE = 'admin_relay_point_type_delete';
+    public const ADMIN_RELAY_POINT_TYPE_LIST = 'admin_relay_point_type_list';
+    public const RELAY_POINT_TYPE_CREATE = 'relay_point_type_create';
+    public const RELAY_POINT_TYPE_READ = 'relay_point_type_read';
+    public const RELAY_POINT_TYPE_UPDATE = 'relay_point_type_update';
+    public const RELAY_POINT_TYPE_DELETE = 'relay_point_type_delete';
+    public const RELAY_POINT_TYPE_LIST = 'relay_point_type_list';
 
     private $authManager;
     private $request;

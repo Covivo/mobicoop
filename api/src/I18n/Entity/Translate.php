@@ -131,11 +131,11 @@ class Translate
     {
         return $this->id;
     }
-    
+
     public function setId(int $id): self
     {
         $this->id = $id;
-        
+
         return $this;
     }
 
@@ -159,7 +159,7 @@ class Translate
     public function setDomain(string $domain): self
     {
         $this->domain = $domain;
-        
+
         return $this;
     }
 
@@ -171,7 +171,7 @@ class Translate
     public function setIdEntity(string $idEntity): self
     {
         $this->idEntity = $idEntity;
-        
+
         return $this;
     }
 
@@ -183,7 +183,7 @@ class Translate
     public function setProperty(string $property): self
     {
         $this->property = $property;
-        
+
         return $this;
     }
 
@@ -195,7 +195,7 @@ class Translate
     public function setText(string $text): self
     {
         $this->text = $text;
-        
+
         return $this;
     }
 }

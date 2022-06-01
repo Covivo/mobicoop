@@ -34,12 +34,12 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
  */
 class ProofVoter extends Voter
 {
-    const PROOF_CREATE = 'proof_create';
-    const PROOF_READ = 'proof_read';
-    const PROOF_UPDATE = 'proof_update';
-    const PROOF_DELETE = 'proof_delete';
-    const PROOF_LIST = 'proof_list';
-    
+    public const PROOF_CREATE = 'proof_create';
+    public const PROOF_READ = 'proof_read';
+    public const PROOF_UPDATE = 'proof_update';
+    public const PROOF_DELETE = 'proof_delete';
+    public const PROOF_LIST = 'proof_list';
+
     private $authManager;
 
     public function __construct(AuthManager $authManager)
@@ -59,7 +59,7 @@ class ProofVoter extends Voter
             ])) {
             return false;
         }
-      
+
         // only vote on User objects inside this voter
         if (!in_array($attribute, [
             self::PROOF_CREATE,
@@ -105,12 +105,12 @@ class ProofVoter extends Voter
     {
         return $this->authManager->isAuthorized(self::PROOF_UPDATE, ['proof'=>$proof]);
     }
-    
+
     private function canDeleteProof(Proof $proof)
     {
         return $this->authManager->isAuthorized(self::PROOF_DELETE, ['proof'=>$proof]);
     }
-    
+
     private function canListProof()
     {
         return $this->authManager->isAuthorized(self::PROOF_LIST);

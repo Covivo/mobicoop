@@ -77,7 +77,7 @@ class GeoRouterController extends AbstractController
         $address10 = new Address(6);
         $address10->setLatitude(49.181491);
         $address10->setLongitude(5.695852);
-        
+
         $address11 = new Address(3);
         $address11->setLatitude(49.248909);
         $address11->setLongitude(4.037836);
@@ -113,14 +113,14 @@ class GeoRouterController extends AbstractController
             $address1,
             $address2
         ];
-        
+
         $addresses2 = [
             $address1,
             $address3,
             $address4,
             $address2
         ];
-        
+
         $addresses3 = [
             $address1,
             $address5,
@@ -134,14 +134,14 @@ class GeoRouterController extends AbstractController
             $address8,
             $address2
         ];
-        
+
         $addresses5 = [
             $address1,
             $address9,
             $address10,
             $address2
         ];
-        
+
         $addresses6 = [
             $address1,
             $address11,
@@ -182,7 +182,7 @@ class GeoRouterController extends AbstractController
         $start = microtime(true);
         $routes8 = $geoRouter->getRoutes($addresses100);
         $time_elapsed_secs = microtime(true) - $start;
-        
+
         /*$route1 = $routes1[0];
         $route2 = $routes2[0];
         $route3 = $routes3[0];
@@ -191,7 +191,7 @@ class GeoRouterController extends AbstractController
         $route6 = $routes6[0];
         $route7 = $routes7[0];*/
         $route8 = $routes8[0];
-        
+
         /*$duration1 = $route1->getDuration()/1000/60;
         $duration2 = $route2->getDuration()/1000/60;
         $duration3 = $route3->getDuration()/1000/60;
@@ -210,7 +210,7 @@ class GeoRouterController extends AbstractController
         $distance7 = $route7->getDistance()/1000;*/
         $distance8 = $route8->getDistance()/1000;
 
-        
+
         //echo "Route 1 // duration = $duration1 minutes, distance = $distance1 kms<br />";
         /*foreach ($route1->getWaypoints() as $waypoint) {
             echo $waypoint ->getLatitude() . ", " . $waypoint->getLongitude() . "<br />";
@@ -247,7 +247,7 @@ class GeoRouterController extends AbstractController
         echo "Calculation duration = $time_elapsed_secs s";
         exit;
     }
-    
+
     /**
      * @Route("/georouter/zones")
      */
@@ -266,38 +266,38 @@ class GeoRouterController extends AbstractController
         $address4 = new Address(4);
         $address4->setLatitude(48.45365);
         $address4->setLongitude(5.588119);
-        
+
         $addresses1 = [
             $address1,
             $address2
         ];
-        
+
         $addresses2 = [
             $address1,
             $address3,
             $address4,
             $address2
         ];
-        
+
         $start = microtime(true);
         $routes1 = $geoRouter->getRoutes($addresses1);
         $routes2 = $geoRouter->getRoutes($addresses2);
-        
-        
+
+
         $route1 = $routes1[0];
         $route2 = $routes2[0];
-        
+
         $duration1 = $route1->getTime()/1000/60;
         $duration2 = $route2->getTime()/1000/60;
-        
+
         $distance1 = $route1->getDistance()/1000;
         $distance2 = $route2->getDistance()/1000;
-        
+
         $zones1 = $zoneManager->getZonesForAddresses($route1->getPoints());
         $zones2 = $zoneManager->getZonesForAddresses($route1->getPoints(), 1);
-        
+
         $time_elapsed_secs = microtime(true) - $start;
-        
+
         echo "Route 1 // duration = $duration1 minutes, distance = $distance1 kms<br />";
         echo "Zones 1 // <br />";
         foreach ($zones1 as $zone) {

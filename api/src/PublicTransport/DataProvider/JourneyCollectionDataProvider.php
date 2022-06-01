@@ -41,19 +41,19 @@ final class JourneyCollectionDataProvider implements CollectionDataProviderInter
 {
     private $dataProvider;
     protected $request;
-    
+
     public function __construct(RequestStack $requestStack, PTDataProvider $dataProvider)
     {
         $this->dataProvider = $dataProvider;
         $this->request = $requestStack->getCurrentRequest();
     }
-    
-    
+
+
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
         return PTJourney::class === $resourceClass;
     }
-    
+
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
         if (
@@ -66,7 +66,7 @@ final class JourneyCollectionDataProvider implements CollectionDataProviderInter
         ) {
             return null;
         }
-        
+
         return $this->dataProvider->getJourneys(
             $this->request->get("provider"),
             $this->request->get("origin_latitude"),

@@ -39,7 +39,7 @@ final class UserCommunitiesCollectionDataProvider implements CollectionDataProvi
     private $security;
     private $request;
     private $userManager;
-    
+
     public function __construct(RequestStack $request, Security $security, UserManager $userManager)
     {
         $this->security = $security;

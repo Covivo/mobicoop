@@ -40,18 +40,18 @@ final class DirectionSearchCollectionDataProvider implements CollectionDataProvi
 {
     protected $request;
     protected $geoRouter;
-    
+
     public function __construct(RequestStack $requestStack, GeoRouter $geoRouter)
     {
         $this->request = $requestStack->getCurrentRequest();
         $this->geoRouter = $geoRouter;
     }
-    
+
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
         return Direction::class === $resourceClass && $operationName === "search";
     }
-    
+
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
         $addresses = [];

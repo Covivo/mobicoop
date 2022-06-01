@@ -30,7 +30,7 @@ use App\TranslatorTrait;
 final class MassAnalyzeAction
 {
     use TranslatorTrait;
-    
+
     private $massImportManager;
 
     public function __construct(MassImportManager $massImportManager)

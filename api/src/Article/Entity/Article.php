@@ -163,12 +163,12 @@ use App\Action\Entity\Log;
  */
 class Article
 {
-    const STATUS_PENDING = 0;
-    const STATUS_PUBLISHED = 1;
-    const NB_EXTERNAL_ARTICLES_DEFAULT = 3;
+    public const STATUS_PENDING = 0;
+    public const STATUS_PUBLISHED = 1;
+    public const NB_EXTERNAL_ARTICLES_DEFAULT = 3;
 
     // List of the translatable items of this entity
-    const TRANSLATABLE_ITEMS = [
+    public const TRANSLATABLE_ITEMS = [
         "title"
     ];
 
@@ -181,7 +181,7 @@ class Article
      * @Groups({"aRead","read"})
      */
     private $id;
-            
+
     /**
      * @var string The title of the article.
      *
@@ -222,7 +222,7 @@ class Article
      * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="article", cascade={"remove"})
      */
     private $logs;
-    
+
     /**
      * @var \DateTimeInterface Creation date.
      *
@@ -254,16 +254,16 @@ class Article
     {
         return $this->id;
     }
-            
+
     public function getTitle(): ?string
     {
         return $this->title;
     }
-    
+
     public function setTitle(?string $title): self
     {
         $this->title = $title;
-        
+
         return $this;
     }
 
@@ -271,7 +271,7 @@ class Article
     {
         return $this->status;
     }
-    
+
     public function setStatus(?int $status)
     {
         $this->status = $status;
@@ -315,11 +315,11 @@ class Article
     {
         return $this->iFrame;
     }
-    
+
     public function setIFrame(?string $iFrame): self
     {
         $this->iFrame = $iFrame;
-        
+
         return $this;
     }
 
@@ -363,17 +363,17 @@ class Article
     {
         return $this->logs->getValues();
     }
-    
+
     public function addLog(Log $log): self
     {
         if (!$this->logs->contains($log)) {
             $this->logs[] = $log;
             $log->setArticle($this);
         }
-        
+
         return $this;
     }
-    
+
     public function removeLog(Log $log): self
     {
         if ($this->logs->contains($log)) {
@@ -383,12 +383,12 @@ class Article
                 $log->setArticle(null);
             }
         }
-        
+
         return $this;
     }
 
     // DOCTRINE EVENTS
-    
+
     /**
      * Creation date.
      *

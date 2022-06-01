@@ -56,7 +56,7 @@ final class IsInCommunityFilter extends AbstractContextAwareFilter
         if (!$this->properties) {
             return [];
         }
-  
+
         $description = [];
         foreach ($this->properties as $property => $strategy) {
             $description["$property"] = [
@@ -70,7 +70,7 @@ final class IsInCommunityFilter extends AbstractContextAwareFilter
                   ],
               ];
         }
-  
+
         return $description;
     }
 }

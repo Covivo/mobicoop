@@ -31,7 +31,7 @@ use App\User\Admin\Resource\KibanaLogin;
 
 class KibanaLoginVoter extends Voter
 {
-    const ACCESS_ADMIN = 'access_admin';
+    public const ACCESS_ADMIN = 'access_admin';
 
     private $security;
     private $permissionManager;
@@ -51,7 +51,7 @@ class KibanaLoginVoter extends Voter
             ])) {
             return false;
         }
-      
+
         if (!in_array($attribute, [
             self::ACCESS_ADMIN
             ]) && !($subject instanceof Paginator) && !($subject instanceof KibanaLogin)) {

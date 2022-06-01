@@ -36,28 +36,27 @@ use App\EventListener\DeserializeListener;
  */
 class RdexConnectionUser
 {
-    
     /**
      * @var string The uuid of the user.
      *
      * @Groups("rdex")
      */
     private $uuid;
-    
+
     /**
      * @var string The alias of the user
      *
      * @Groups("rdex")
      */
     private $alias;
-    
+
     /**
      * @var string The state of the user (recipient or driver)
      *
      * @Groups("rdex")
      */
     private $state;
-    
+
     public function getUuid(): ?int
     {
         return $this->uuid;
@@ -78,7 +77,7 @@ class RdexConnectionUser
     public function setAlias(string $alias): self
     {
         $this->alias = $alias;
-        
+
         return $this;
     }
 

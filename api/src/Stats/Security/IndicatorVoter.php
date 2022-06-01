@@ -34,9 +34,9 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
  */
 class IndicatorVoter extends Voter
 {
-    const STATS_READ = 'stats_read';
-    const STATS_LIST = 'stats_list';
-    
+    public const STATS_READ = 'stats_read';
+    public const STATS_LIST = 'stats_list';
+
     private $authManager;
 
     public function __construct(AuthManager $authManager)
@@ -53,7 +53,7 @@ class IndicatorVoter extends Voter
             ])) {
             return false;
         }
-      
+
         // only vote on User objects inside this voter
         if (!in_array($attribute, [
             self::STATS_READ,

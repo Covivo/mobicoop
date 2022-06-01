@@ -59,11 +59,11 @@ use App\User\Entity\User;
  */
 class SsoConnection
 {
-    const DEFAULT_ID = 999999999999;
+    public const DEFAULT_ID = 999999999999;
 
-    const RETURN_URL = "user/sso/login";
-    const LOGIN_BUTTON_ICON = "/images/sso/{serviceId}-sso-login.png";
-    const LOGIN_BUTTON_PICTO = "/images/sso/{serviceId}-sso-login-picto.svg";
+    public const RETURN_URL = "user/sso/login";
+    public const LOGIN_BUTTON_ICON = "/images/sso/{serviceId}-sso-login.png";
+    public const LOGIN_BUTTON_PICTO = "/images/sso/{serviceId}-sso-login-picto.svg";
 
     /**
      * @var int The id of this Block
@@ -78,7 +78,7 @@ class SsoConnection
      * @Groups({"readSSOConnection"})
      */
     private $name;
-    
+
     /**
      * @var string The uri of the SSO login form
      * @Groups({"readSSOConnection"})
@@ -89,12 +89,12 @@ class SsoConnection
      * @var string The client id
      */
     private $clientId;
-    
+
     /**
      * @var string|null The client secret
      */
     private $clientSecret;
-    
+
     /**
      * @var string|null The return url after the connection
      */
@@ -123,7 +123,7 @@ class SsoConnection
      * @Groups({"readSSOConnection"})
      */
     private $picto;
-    
+
     /**
      * @var bool|null true : use the Button icon, false use the picto
      * @Groups({"readSSOConnection"})
@@ -143,7 +143,7 @@ class SsoConnection
     public function setId(string $id): self
     {
         $this->id = $id;
-        
+
         return $this;
     }
 
@@ -151,11 +151,11 @@ class SsoConnection
     {
         return $this->uri;
     }
-    
+
     public function setUri(string $uri): self
     {
         $this->uri = $uri;
-        
+
         return $this;
     }
 
@@ -163,11 +163,11 @@ class SsoConnection
     {
         return $this->clientId;
     }
-    
+
     public function setClientId(string $clientId): self
     {
         $this->clientId = $clientId;
-        
+
         return $this;
     }
 
@@ -175,11 +175,11 @@ class SsoConnection
     {
         return $this->clientSecret;
     }
-    
+
     public function setClientSecret(?string $clientSecret): self
     {
         $this->clientSecret = $clientSecret;
-        
+
         return $this;
     }
 
@@ -187,11 +187,11 @@ class SsoConnection
     {
         return $this->returnUrl;
     }
-    
+
     public function setReturnUrl(?string $returnUrl): self
     {
         $this->returnUrl = $returnUrl;
-        
+
         return $this;
     }
 
@@ -199,11 +199,11 @@ class SsoConnection
     {
         return $this->service;
     }
-    
+
     public function setService(string $service): self
     {
         $this->service = $service;
-        
+
         return $this;
     }
 
@@ -211,11 +211,11 @@ class SsoConnection
     {
         return $this->ssoProvider;
     }
-    
+
     public function setSsoProvider(?string $ssoProvider): self
     {
         $this->ssoProvider = $ssoProvider;
-        
+
         return $this;
     }
 
@@ -223,11 +223,11 @@ class SsoConnection
     {
         return str_replace('{serviceId}', $this->id, self::LOGIN_BUTTON_ICON);
     }
-    
+
     public function setButtonIcon(?string $buttonIcon): self
     {
         $this->buttonIcon = $buttonIcon;
-        
+
         return $this;
     }
 
@@ -235,11 +235,11 @@ class SsoConnection
     {
         return str_replace('{serviceId}', $this->id, self::LOGIN_BUTTON_PICTO);
     }
-    
+
     public function setPicto(?string $picto): self
     {
         $this->picto = $picto;
-        
+
         return $this;
     }
 
@@ -247,11 +247,11 @@ class SsoConnection
     {
         return (!is_null($this->useButtonIcon)) ? $this->useButtonIcon : false;
     }
-    
+
     public function setUseButtonIcon(?bool $useButtonIcon): self
     {
         $this->useButtonIcon = $useButtonIcon;
-        
+
         return $this;
     }
 }

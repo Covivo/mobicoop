@@ -50,8 +50,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class SolidaryResultCarpool
 {
-    const DEFAULT_ID = 999999999999;
-    
+    public const DEFAULT_ID = 999999999999;
+
     /**
      * @var int The id of this subject.
      *
@@ -120,16 +120,16 @@ class SolidaryResultCarpool
     {
         $this->id = self::DEFAULT_ID;
     }
-    
+
     public function getId(): ?int
     {
         return $this->id;
     }
-    
+
     public function setId(int $id): self
     {
         $this->id = $id;
-        
+
         return $this;
     }
 
@@ -137,11 +137,11 @@ class SolidaryResultCarpool
     {
         return $this->author;
     }
-    
+
     public function setAuthor(string $author): self
     {
         $this->author = $author;
-        
+
         return $this;
     }
 
@@ -149,11 +149,11 @@ class SolidaryResultCarpool
     {
         return $this->authorId;
     }
-    
+
     public function setAuthorId(int $authorId): self
     {
         $this->authorId = $authorId;
-        
+
         return $this;
     }
 
@@ -161,23 +161,23 @@ class SolidaryResultCarpool
     {
         return $this->origin;
     }
-    
+
     public function setOrigin(string $origin): self
     {
         $this->origin = $origin;
-        
+
         return $this;
     }
-    
+
     public function getDestination(): ?string
     {
         return $this->destination;
     }
-    
+
     public function setDestination(string $destination): self
     {
         $this->destination = $destination;
-        
+
         return $this;
     }
 
@@ -185,11 +185,11 @@ class SolidaryResultCarpool
     {
         return $this->schedule;
     }
-    
+
     public function setSchedule(array $schedule): self
     {
         $this->schedule = $schedule;
-        
+
         return $this;
     }
 
@@ -197,11 +197,11 @@ class SolidaryResultCarpool
     {
         return $this->date;
     }
-    
+
     public function setDate(\DateTimeInterface $date): self
     {
         $this->date = $date;
-        
+
         return $this;
     }
 
@@ -209,11 +209,11 @@ class SolidaryResultCarpool
     {
         return $this->frequency;
     }
-    
+
     public function setFrequency(int $frequency): self
     {
         $this->frequency = $frequency;
-        
+
         return $this;
     }
 
@@ -221,11 +221,11 @@ class SolidaryResultCarpool
     {
         return $this->role;
     }
-    
+
     public function setRole(int $role): self
     {
         $this->role = $role;
-        
+
         return $this;
     }
 
@@ -233,11 +233,11 @@ class SolidaryResultCarpool
     {
         return $this->solidaryExlusive;
     }
-    
+
     public function setSolidaryExlusive(bool $solidaryExlusive): self
     {
         $this->solidaryExlusive = $solidaryExlusive;
-        
+
         return $this;
     }
 }

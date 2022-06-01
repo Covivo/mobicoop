@@ -31,10 +31,10 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class MessageVoter extends Voter
 {
-    const USER_MESSAGE_CREATE = 'user_message_create';
-    const USER_MESSAGE_READ = 'user_message_read';
-    const USER_MESSAGE_DELETE = 'user_message_delete';
-    
+    public const USER_MESSAGE_CREATE = 'user_message_create';
+    public const USER_MESSAGE_READ = 'user_message_read';
+    public const USER_MESSAGE_DELETE = 'user_message_delete';
+
     private $authManager;
 
     public function __construct(AuthManager $authManager)

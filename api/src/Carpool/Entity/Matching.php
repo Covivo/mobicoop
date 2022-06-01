@@ -65,8 +65,8 @@ use App\Solidary\Entity\SolidaryMatching;
  */
 class Matching
 {
-    const DEFAULT_ID = 999999999999;
-    
+    public const DEFAULT_ID = 999999999999;
+
     /**
      * @var int The id of this matching.
      *
@@ -371,7 +371,7 @@ class Matching
     {
         return $this->matchingRelated;
     }
-    
+
     public function setMatchingRelated(?self $matchingRelated): self
     {
         $this->matchingRelated = $matchingRelated;
@@ -379,13 +379,13 @@ class Matching
         if (!$this->getMatchingRelated()) {
             return $this;
         }
-        
+
         // set (or unset) the owning side of the relation if necessary
         $newMatchingRelated = $matchingRelated === null ? null : $this;
         if ($newMatchingRelated !== $matchingRelated->getMatchingRelated()) {
             $matchingRelated->setMatchingRelated($newMatchingRelated);
         }
-        
+
         return $this;
     }
 
@@ -393,11 +393,11 @@ class Matching
     {
         return $this->matchingLinked;
     }
-    
+
     public function setMatchingLinked(?self $matchingLinked): self
     {
         $this->matchingLinked = $matchingLinked;
-        
+
         if (!$this->getMatchingLinked()) {
             return $this;
         }
@@ -407,7 +407,7 @@ class Matching
         if ($newMatchingLinked !== $matchingLinked->getMatchingLinked()) {
             $matchingLinked->setMatchingLinked($newMatchingLinked);
         }
-        
+
         return $this;
     }
 
@@ -415,7 +415,7 @@ class Matching
     {
         return $this->matchingOpposite;
     }
-    
+
     public function setMatchingOpposite(?self $matchingOpposite): self
     {
         $this->matchingOpposite = $matchingOpposite;
@@ -423,13 +423,13 @@ class Matching
         if (!$this->getMatchingOpposite()) {
             return $this;
         }
-        
+
         // set (or unset) the owning side of the relation if necessary
         $newMatchingOpposite = $matchingOpposite === null ? null : $this;
         if ($newMatchingOpposite !== $matchingOpposite->getMatchingOpposite()) {
             $matchingOpposite->setMatchingOpposite($newMatchingOpposite);
         }
-        
+
         return $this;
     }
 
@@ -493,17 +493,17 @@ class Matching
     {
         return $this->notifieds->getValues();
     }
-    
+
     public function addNotified(Notified $notified): self
     {
         if (!$this->notifieds->contains($notified)) {
             $this->notifieds[] = $notified;
             $notified->setMatching($this);
         }
-        
+
         return $this;
     }
-    
+
     public function removeNotified(Notified $notified): self
     {
         if ($this->notifieds->contains($notified)) {
@@ -513,7 +513,7 @@ class Matching
                 $notified->setMatching(null);
             }
         }
-        
+
         return $this;
     }
 
@@ -701,17 +701,17 @@ class Matching
     {
         return $this->logs->getValues();
     }
-    
+
     public function addLog(Log $log): self
     {
         if (!$this->logs->contains($log)) {
             $this->logs[] = $log;
             $log->setMatching($this);
         }
-        
+
         return $this;
     }
-    
+
     public function removeLog(Log $log): self
     {
         if ($this->logs->contains($log)) {
@@ -721,12 +721,12 @@ class Matching
                 $log->setMatching(null);
             }
         }
-        
+
         return $this;
     }
 
     // DOCTRINE EVENTS
-    
+
     /**
      * Creation date.
      *

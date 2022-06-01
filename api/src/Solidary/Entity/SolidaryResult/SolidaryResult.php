@@ -51,8 +51,8 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class SolidaryResult
 {
-    const DEFAULT_ID = 999999999999;
-    
+    public const DEFAULT_ID = 999999999999;
+
     /**
      * @var int The id of this subject.
      *
@@ -86,16 +86,16 @@ class SolidaryResult
     {
         $this->id = self::DEFAULT_ID;
     }
-    
+
     public function getId(): ?int
     {
         return $this->id;
     }
-    
+
     public function setId(int $id): self
     {
         $this->id = $id;
-        
+
         return $this;
     }
 
@@ -103,11 +103,11 @@ class SolidaryResult
     {
         return $this->solidaryResultTransport;
     }
-    
+
     public function setSolidaryResultTransport(SolidaryResultTransport $solidaryResultTransport): self
     {
         $this->solidaryResultTransport = $solidaryResultTransport;
-        
+
         return $this;
     }
 
@@ -115,11 +115,11 @@ class SolidaryResult
     {
         return $this->solidaryResultCarpool;
     }
-    
+
     public function setSolidaryResultCarpool(SolidaryResultCarpool $solidaryResultCarpool): self
     {
         $this->solidaryResultCarpool = $solidaryResultCarpool;
-        
+
         return $this;
     }
 
@@ -127,11 +127,11 @@ class SolidaryResult
     {
         return $this->solidaryMatching;
     }
-    
+
     public function setSolidaryMatching(SolidaryMatching $solidaryMatching): self
     {
         $this->solidaryMatching = $solidaryMatching;
-        
+
         return $this;
     }
 }

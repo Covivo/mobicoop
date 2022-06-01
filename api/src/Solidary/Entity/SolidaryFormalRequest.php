@@ -87,8 +87,8 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class SolidaryFormalRequest
 {
-    const DEFAULT_ID = 999999999999;
-    
+    public const DEFAULT_ID = 999999999999;
+
     /**
      * @var int The id of this subject.
      *
@@ -148,16 +148,16 @@ class SolidaryFormalRequest
     {
         $this->id = self::DEFAULT_ID;
     }
-    
+
     public function getId(): ?int
     {
         return $this->id;
     }
-    
+
     public function setId(int $id): self
     {
         $this->id = $id;
-        
+
         return $this;
     }
 
@@ -165,11 +165,11 @@ class SolidaryFormalRequest
     {
         return $this->solidarySolution;
     }
-    
+
     public function setSolidarySolution(SolidarySolution $solidarySolution): self
     {
         $this->solidarySolution = $solidarySolution;
-        
+
         return $this;
     }
 
@@ -225,11 +225,11 @@ class SolidaryFormalRequest
     {
         return $this->outwardSchedule;
     }
-    
+
     public function setOutwardSchedule(?array $outwardSchedule): self
     {
         $this->outwardSchedule = $outwardSchedule;
-        
+
         return $this;
     }
 
@@ -237,11 +237,11 @@ class SolidaryFormalRequest
     {
         return $this->returnSchedule;
     }
-    
+
     public function setReturnSchedule(?array $returnSchedule): self
     {
         $this->returnSchedule = $returnSchedule;
-        
+
         return $this;
     }
 }

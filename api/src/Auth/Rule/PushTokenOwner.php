@@ -39,7 +39,7 @@ class PushTokenOwner implements AuthRuleInterface
         if (!isset($params['pushToken'])) {
             return false;
         }
-        
+
         /**
          * @var PushToken $pushToken
          */

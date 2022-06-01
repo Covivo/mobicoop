@@ -34,12 +34,12 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
  */
 class SolidaryUserStructureVoter extends Voter
 {
-    const SOLIDARY_USER_STRUCTURE_CREATE = 'solidary_user_structure_create';
-    const SOLIDARY_USER_STRUCTURE_READ = 'solidary_user_structure_read';
-    const SOLIDARY_USER_STRUCTURE_UPDATE = 'solidary_user_structure_update';
-    const SOLIDARY_USER_STRUCTURE_DELETE = 'solidary_user_structure_delete';
-    const SOLIDARY_USER_STRUCTURE_LIST = 'solidary_user_structure_list';
-    
+    public const SOLIDARY_USER_STRUCTURE_CREATE = 'solidary_user_structure_create';
+    public const SOLIDARY_USER_STRUCTURE_READ = 'solidary_user_structure_read';
+    public const SOLIDARY_USER_STRUCTURE_UPDATE = 'solidary_user_structure_update';
+    public const SOLIDARY_USER_STRUCTURE_DELETE = 'solidary_user_structure_delete';
+    public const SOLIDARY_USER_STRUCTURE_LIST = 'solidary_user_structure_list';
+
     private $authManager;
 
     public function __construct(AuthManager $authManager)
@@ -59,7 +59,7 @@ class SolidaryUserStructureVoter extends Voter
             ])) {
             return false;
         }
-      
+
         // only vote on User objects inside this voter
         if (!in_array($attribute, [
             self::SOLIDARY_USER_STRUCTURE_CREATE,
@@ -105,12 +105,12 @@ class SolidaryUserStructureVoter extends Voter
     {
         return $this->authManager->isAuthorized(self::SOLIDARY_USER_STRUCTURE_UPDATE, ['solidaryUserStructure'=>$solidaryUserStructure]);
     }
-    
+
     private function canDeleteSolidaryUserStructure(SolidaryUserStructure $solidaryUserStructure)
     {
         return $this->authManager->isAuthorized(self::SOLIDARY_USER_STRUCTURE_DELETE, ['solidaryUserStructure'=>$solidaryUserStructure]);
     }
-    
+
     private function canListSolidaryUserStructure()
     {
         return $this->authManager->isAuthorized(self::SOLIDARY_USER_STRUCTURE_LIST);

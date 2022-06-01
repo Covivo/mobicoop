@@ -33,12 +33,12 @@ class UserNotificationRepository
      * @var EntityRepository
      */
     private $repository;
-    
+
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->repository = $entityManager->getRepository(UserNotification::class);
     }
-    
+
     public function find(int $id): ?UserNotification
     {
         return $this->repository->find($id);

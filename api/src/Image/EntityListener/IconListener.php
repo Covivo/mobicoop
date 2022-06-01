@@ -37,7 +37,7 @@ class IconListener
         $this->types = $types;
         $this->dataUri = $dataUri;
     }
-    
+
     /** @ORM\PostLoad */
     public function postLoadHandler(Icon $icon, LifecycleEventArgs $args)
     {

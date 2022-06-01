@@ -53,12 +53,12 @@ final class LocationIQ extends AbstractHttpProvider implements Provider
     /**
      * @var string
      */
-    const BASE_API_URL = 'https://eu1.locationiq.com/v1';
+    public const BASE_API_URL = 'https://eu1.locationiq.com/v1';
 
     /**
      * @var string
      */
-    const VIEWBOX = '&bounded=1&viewbox=%min_lon%,%min_lat%,%max_lon%,%max_lat%';
+    public const VIEWBOX = '&bounded=1&viewbox=%min_lon%,%min_lat%,%max_lon%,%max_lat%';
 
     /**
      * @var string
@@ -130,7 +130,7 @@ final class LocationIQ extends AbstractHttpProvider implements Provider
             $url = str_replace('%max_lon%', (string)$query->getBounds()->getEast(), $url);
             $url = str_replace('%max_lat%', (string)$query->getBounds()->getNorth(), $url);
         }
-        
+
         $content = $this->executeQuery($url, $query->getLocale());
 
         $doc = new \DOMDocument();

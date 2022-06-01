@@ -34,12 +34,12 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
  */
 class SolidaryBeneficiaryVoter extends Voter
 {
-    const SOLIDARY_BENEFICIARY_CREATE = 'solidary_beneficiary_create';
-    const SOLIDARY_BENEFICIARY_READ = 'solidary_beneficiary_read';
-    const SOLIDARY_BENEFICIARY_UPDATE = 'solidary_beneficiary_update';
-    const SOLIDARY_BENEFICIARY_DELETE = 'solidary_beneficiary_delete';
-    const SOLIDARY_BENEFICIARY_LIST = 'solidary_beneficiary_list';
-    
+    public const SOLIDARY_BENEFICIARY_CREATE = 'solidary_beneficiary_create';
+    public const SOLIDARY_BENEFICIARY_READ = 'solidary_beneficiary_read';
+    public const SOLIDARY_BENEFICIARY_UPDATE = 'solidary_beneficiary_update';
+    public const SOLIDARY_BENEFICIARY_DELETE = 'solidary_beneficiary_delete';
+    public const SOLIDARY_BENEFICIARY_LIST = 'solidary_beneficiary_list';
+
     private $authManager;
 
     public function __construct(AuthManager $authManager)
@@ -59,7 +59,7 @@ class SolidaryBeneficiaryVoter extends Voter
             ])) {
             return false;
         }
-      
+
         // only vote on User objects inside this voter
         if (!in_array($attribute, [
             self::SOLIDARY_BENEFICIARY_CREATE,
@@ -107,12 +107,12 @@ class SolidaryBeneficiaryVoter extends Voter
     {
         return $this->authManager->isAuthorized(self::SOLIDARY_BENEFICIARY_UPDATE, ['solidaryBeneficiary'=>$solidaryBeneficiary]);
     }
-    
+
     private function canDeleteSolidaryBeneficiary(SolidaryBeneficiary $solidaryBeneficiary)
     {
         return $this->authManager->isAuthorized(self::SOLIDARY_BENEFICIARY_DELETE, ['solidaryBeneficiary'=>$solidaryBeneficiary]);
     }
-    
+
     private function canListSolidaryBeneficiary()
     {
         return $this->authManager->isAuthorized(self::SOLIDARY_BENEFICIARY_LIST);

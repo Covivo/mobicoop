@@ -39,22 +39,22 @@ class RdexAddress implements \JsonSerializable
      * @var string The city.
      */
     private $city;
-    
+
     /**
      * @var string The postal code.
      */
     private $postalcode;
-    
+
     /**
      * @var string The country.
      */
     private $country;
-    
+
     /**
      * @var float The latitude.
      */
     private $latitude;
-    
+
     /**
      * @var float The longitude.
      */
@@ -155,7 +155,7 @@ class RdexAddress implements \JsonSerializable
     {
         $this->longitude = $longitude;
     }
-    
+
     public function jsonSerialize(): mixed
     {
         return

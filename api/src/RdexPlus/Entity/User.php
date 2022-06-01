@@ -33,10 +33,10 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class User
 {
-    const GENGER_MALE = "M";
-    const GENGER_FEMALE = "F";
-    const GENGER_OTHER = "O";
-    
+    public const GENGER_MALE = "M";
+    public const GENGER_FEMALE = "F";
+    public const GENGER_OTHER = "O";
+
     /**
      * @var string User's id
      * @Assert\NotBlank
@@ -78,7 +78,7 @@ class User
      * @Groups({"rdexPlusRead"})
      */
     private $picture;
-    
+
     /**
      * @var string User's gender (F, M, O)
      *
@@ -97,7 +97,7 @@ class User
 
         return $this;
     }
-    
+
     public function getAlias(): ?string
     {
         return $this->alias;
@@ -121,7 +121,7 @@ class User
 
         return $this;
     }
-    
+
     public function getLastName(): ?string
     {
         return $this->lastName;
@@ -133,7 +133,7 @@ class User
 
         return $this;
     }
-    
+
     public function getGrade(): ?string
     {
         return $this->grade;
@@ -157,7 +157,7 @@ class User
 
         return $this;
     }
-    
+
     public function getGender(): ?string
     {
         return $this->gender;

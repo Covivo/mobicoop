@@ -55,7 +55,6 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class PTDeparture
 {
-    
     /**
      * @var int $id The id of this departure.
      *
@@ -65,7 +64,7 @@ class PTDeparture
      * @ApiProperty(identifier=true)
      */
     private $id;
-    
+
     /**
      * @var string|null The name of this departure.
      *
@@ -73,7 +72,7 @@ class PTDeparture
      * @Groups("pt")
      */
     private $name;
-    
+
     /**
      * @var \DateTimeInterface The date and time of this departure.
      *
@@ -81,7 +80,7 @@ class PTDeparture
      * @Groups("pt")
      */
     private $date;
-   
+
     /**
      * @var Address The address of this departure.
      *
@@ -90,40 +89,40 @@ class PTDeparture
      * @Groups("pt")
      */
     private $address;
-    
+
     /**
      * @var IndividualStop|null Individual stop if multimodal using carpool.
      *
      * @ORM\ManyToOne(targetEntity="App\Carpool\Entity\IndividualStop")
      */
     private $individualStop;
-    
+
     public function __construct($id)
     {
         $this->id = $id;
     }
-    
+
     public function getId(): int
     {
         return $this->id;
     }
-    
+
     public function setId(int $id): self
     {
         $this->id = $id;
-        
+
         return $this;
     }
-    
+
     public function getName(): ?string
     {
         return $this->name;
     }
-    
+
     public function setName(?string $name): self
     {
         $this->name = $name;
-        
+
         return $this;
     }
 
@@ -131,11 +130,11 @@ class PTDeparture
     {
         return $this->date;
     }
-    
+
     public function setDate(\DateTimeInterface $date): self
     {
         $this->date = $date;
-        
+
         return $this;
     }
 
@@ -147,19 +146,19 @@ class PTDeparture
     public function setAddress(Address $address): self
     {
         $this->address = $address;
-        
+
         return $this;
     }
-    
+
     public function getIndividualStop(): ?IndividualStop
     {
         return $this->individualStop;
     }
-    
+
     public function setIndividualStop(?IndividualStop $individualStop): self
     {
         $this->individualStop = $individualStop;
-        
+
         return $this;
     }
 }

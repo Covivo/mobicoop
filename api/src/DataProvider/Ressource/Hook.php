@@ -35,13 +35,13 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Hook
 {
-    const DEFAULT_ID = "999999999999";
+    public const DEFAULT_ID = "999999999999";
 
-    const STATUS_FAILED = 0;
-    const STATUS_SUCCESS = 1;
-    const STATUS_DELAYED = 2;
-    const STATUS_REFUSED = 3;
-    const STATUS_OUTDATED_RESSOURCE = 4;
+    public const STATUS_FAILED = 0;
+    public const STATUS_SUCCESS = 1;
+    public const STATUS_DELAYED = 2;
+    public const STATUS_REFUSED = 3;
+    public const STATUS_OUTDATED_RESSOURCE = 4;
 
     /**
      * @var int The id of this pay in
@@ -99,7 +99,7 @@ class Hook
     public function setId(int $id): self
     {
         $this->id = $id;
-        
+
         return $this;
     }
 
@@ -111,10 +111,10 @@ class Hook
     public function setEventType(string $eventType): self
     {
         $this->eventType = $eventType;
-        
+
         return $this;
     }
-    
+
     public function getRessourceId(): ?int
     {
         return $this->ressourceId;
@@ -123,7 +123,7 @@ class Hook
     public function setRessourceId(int $ressourceId): self
     {
         $this->ressourceId = $ressourceId;
-        
+
         return $this;
     }
 
@@ -135,7 +135,7 @@ class Hook
     public function setDate(int $date): self
     {
         $this->date = $date;
-        
+
         return $this;
     }
 
@@ -147,7 +147,7 @@ class Hook
     public function setSecurityToken(string $securityToken): self
     {
         $this->securityToken = $securityToken;
-        
+
         return $this;
     }
 

@@ -37,18 +37,18 @@ final class MyCarpoolCollectionDataProvider implements CollectionDataProviderInt
 {
     protected $adManager;
     protected $security;
-    
+
     public function __construct(AdManager $adManager, Security $security)
     {
         $this->adManager = $adManager;
         $this->security = $security;
     }
-    
+
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
         return Ad::class === $resourceClass && $operationName === "getMyCarpools";
     }
-    
+
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
         return $this->adManager->getUserAcceptedCarpools($this->security->getUser()->getId());

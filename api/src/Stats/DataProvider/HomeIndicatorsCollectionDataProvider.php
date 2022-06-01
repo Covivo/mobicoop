@@ -30,7 +30,7 @@ use App\Stats\Service\StatsManager;
 final class HomeIndicatorsCollectionDataProvider implements ContextAwareCollectionDataProviderInterface, RestrictedDataProviderInterface
 {
     private $statsManager;
-    
+
     public function __construct(StatsManager $statsManager)
     {
         $this->statsManager = $statsManager;

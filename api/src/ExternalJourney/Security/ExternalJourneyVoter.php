@@ -34,7 +34,7 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
  */
 class ExternalJourneyVoter extends Voter
 {
-    const EXTERNAL_JOURNEY_LIST = 'external_journey_list';
+    public const EXTERNAL_JOURNEY_LIST = 'external_journey_list';
 
     private $security;
     private $permissionManager;
@@ -52,7 +52,7 @@ class ExternalJourneyVoter extends Voter
             ])) {
             return false;
         }
-      
+
         // only vote on User objects inside this voter
         if (!in_array($attribute, [
             self::EXTERNAL_JOURNEY_LIST,

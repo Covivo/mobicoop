@@ -62,7 +62,7 @@ class PTCompany
      * @Groups("pt")
      */
     private $id;
-    
+
     /**
      * @var string The name of this company.
      *
@@ -70,33 +70,33 @@ class PTCompany
      * @Groups("pt")
      */
     private $name;
-    
+
     public function __construct($id)
     {
         $this->id = $id;
     }
-    
+
     public function getId(): int
     {
         return $this->id;
     }
-    
+
     public function setId(int $id): self
     {
         $this->id = $id;
-        
+
         return $this;
     }
-    
+
     public function getName(): string
     {
         return $this->name;
     }
-    
+
     public function setName(string $name): self
     {
         $this->name = $name;
-        
+
         return $this;
     }
 }

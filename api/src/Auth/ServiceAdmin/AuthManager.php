@@ -42,7 +42,7 @@ class AuthManager
     private $authManager;
     private $authItemRepository;
 
-    const GRANTABLE_ROLES =  [
+    public const GRANTABLE_ROLES =  [
         AuthItem::ROLE_SUPER_ADMIN => [
             AuthItem::ROLE_SUPER_ADMIN,
             AuthItem::ROLE_ADMIN,

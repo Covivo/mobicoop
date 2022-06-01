@@ -34,11 +34,11 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Paginator;
 
 class MassVoter extends Voter
 {
-    const MASS_CREATE = 'mass_create';
-    const MASS_READ = 'mass_read';
-    const MASS_DELETE = 'mass_delete';
-    const MASS_LIST = 'mass_list';
-    
+    public const MASS_CREATE = 'mass_create';
+    public const MASS_READ = 'mass_read';
+    public const MASS_DELETE = 'mass_delete';
+    public const MASS_LIST = 'mass_list';
+
     private $security;
     private $request;
     private $authManager;

@@ -35,12 +35,12 @@ use App\TranslatorTrait;
 class AdAskPost
 {
     use TranslatorTrait;
-    
+
     private $askManager;
 
-    const TYPE_ASK = "ask";
-    const TYPE_CONTACT = "contact";
-    
+    public const TYPE_ASK = "ask";
+    public const TYPE_CONTACT = "contact";
+
     public function __construct(AskManager $askManager)
     {
         $this->askManager = $askManager;

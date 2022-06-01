@@ -38,7 +38,7 @@ class PdfManager
     private $pdf;
     private $twig;
     private $translator;
-    
+
     /**
      * PdfManager constructor
      *
@@ -52,7 +52,7 @@ class PdfManager
         $this->twig = $twig;
         $this->translator = $translator;
     }
-   
+
     /**
      * Create an PDF export of an array.
      *

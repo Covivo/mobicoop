@@ -39,19 +39,19 @@ final class JourneyCitiesCollectionDataProvider implements CollectionDataProvide
     protected $journeyManager;
     protected $security;
     protected $request;
-    
+
     public function __construct(JourneyManager $journeyManager, RequestStack $requestStack, Security $security)
     {
         $this->journeyManager = $journeyManager;
         $this->security = $security;
         $this->request = $requestStack->getCurrentRequest();
     }
-    
+
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
         return Journey::class === $resourceClass && $operationName === "cities";
     }
-    
+
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
         return $this->journeyManager->getCities($this->request->get('letter'));

@@ -39,18 +39,18 @@ final class TerritoryLinkCollectionDataProvider implements CollectionDataProvide
 {
     protected $request;
     private $territoryManager;
-    
+
     public function __construct(RequestStack $requestStack, TerritoryManager $territoryManager)
     {
         $this->request = $requestStack->getCurrentRequest();
         $this->territoryManager = $territoryManager;
     }
-    
+
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
         return Territory::class === $resourceClass && $operationName === "link";
     }
-    
+
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
         $this->territoryManager->initAddressesAndDirections();

@@ -30,7 +30,7 @@ use App\TranslatorTrait;
 final class MassMigrateAction
 {
     use TranslatorTrait;
-    
+
     private $massMigrateManager;
 
     public function __construct(MassMigrateManager $massMigrateManager)

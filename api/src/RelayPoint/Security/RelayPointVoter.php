@@ -31,12 +31,12 @@ use App\RelayPoint\Entity\RelayPoint;
 
 class RelayPointVoter extends Voter
 {
-    const RELAY_POINT_CREATE = 'relay_point_create';
-    const RELAY_POINT_READ = 'relay_point_read';
-    const RELAY_POINT_UPDATE = 'relay_point_update';
-    const RELAY_POINT_DELETE = 'relay_point_delete';
-    const RELAY_POINT_LIST = 'relay_point_list';
-    
+    public const RELAY_POINT_CREATE = 'relay_point_create';
+    public const RELAY_POINT_READ = 'relay_point_read';
+    public const RELAY_POINT_UPDATE = 'relay_point_update';
+    public const RELAY_POINT_DELETE = 'relay_point_delete';
+    public const RELAY_POINT_LIST = 'relay_point_list';
+
     public function __construct(AuthManager $authManager)
     {
         $this->authManager = $authManager;

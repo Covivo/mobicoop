@@ -83,7 +83,7 @@ class SolidaryUserRepository
                 }
             }
         }
-        
+
         // we want to get accepted volunteers only for the given structure, and that are not already in the matchings
         // first we get the accepted volunteers
         $query = $this->repository->createQueryBuilder('su')
@@ -93,7 +93,7 @@ class SolidaryUserRepository
         ->setParameter('structure', $structure)
         ->setParameter('status', SolidaryUserStructure::STATUS_ACCEPTED)
         ;
-        
+
         if ($criteria->getFrequency()==Criteria::FREQUENCY_PUNCTUAL) {
             $shortDay = $this->getShortDay($criteria->getFromDate()->format('w'));
             $query->andWhere(
@@ -192,7 +192,7 @@ class SolidaryUserRepository
             $sqlDistanceDestination = '(6378000 * acos(cos(radians(' . $centerPointDestination->getLatitude() . ')) * cos(radians(a.latitude)) * cos(radians(a.longitude) - radians(' . $centerPointDestination->getLongitude() . ')) + sin(radians(' . $centerPointDestination->getLatitude() . ')) * sin(radians(a.latitude))))';
             $query->andWhere($sqlDistanceDestination . " <= su.maxDistance");
         }
-        
+
         $acceptedVolunteers = $query->getQuery()->getResult();
 
         // we remove the volunteers that are already in the matchings (maybe find a way to do it in the sql request ???)

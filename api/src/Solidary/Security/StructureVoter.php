@@ -35,12 +35,12 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
  */
 class StructureVoter extends Voter
 {
-    const STRUCTURE_CREATE = 'structure_create';
-    const STRUCTURE_READ = 'structure_read';
-    const STRUCTURE_UPDATE = 'structure_update';
-    const STRUCTURE_DELETE = 'structure_delete';
-    const STRUCTURE_LIST = 'structure_list';
-    
+    public const STRUCTURE_CREATE = 'structure_create';
+    public const STRUCTURE_READ = 'structure_read';
+    public const STRUCTURE_UPDATE = 'structure_update';
+    public const STRUCTURE_DELETE = 'structure_delete';
+    public const STRUCTURE_LIST = 'structure_list';
+
     private $authManager;
 
     public function __construct(AuthManager $authManager)
@@ -60,7 +60,7 @@ class StructureVoter extends Voter
             ])) {
             return false;
         }
-      
+
         // only vote on User objects inside this voter
         if (!in_array($attribute, [
             self::STRUCTURE_CREATE,
@@ -106,12 +106,12 @@ class StructureVoter extends Voter
     {
         return $this->authManager->isAuthorized(self::STRUCTURE_UPDATE);
     }
-    
+
     private function canDeleteStructure()
     {
         return $this->authManager->isAuthorized(self::STRUCTURE_DELETE);
     }
-    
+
     private function canListStructure()
     {
         return $this->authManager->isAuthorized(self::STRUCTURE_LIST);

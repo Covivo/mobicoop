@@ -69,7 +69,7 @@ class IndividualStop
      * @Groups({"read","write"})
      */
     private $position;
-    
+
     /**
      * @var int Estimated stop delay in seconds (calculated with 0 as origin).
      *
@@ -86,7 +86,7 @@ class IndividualStop
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      */
     private $proposal;
-    
+
     /**
      * @var Address The address of the stop.
      *
@@ -113,7 +113,7 @@ class IndividualStop
      * @Groups({"read"})
      */
     private $updatedDate;
-    
+
     public function getId(): ?int
     {
         return $this->id;
@@ -130,16 +130,16 @@ class IndividualStop
 
         return $this;
     }
-    
+
     public function getDelay(): ?int
     {
         return $this->delay;
     }
-    
+
     public function setDelay(int $delay): self
     {
         $this->delay = $delay;
-        
+
         return $this;
     }
 
@@ -192,7 +192,7 @@ class IndividualStop
     }
 
     // DOCTRINE EVENTS
-    
+
     /**
      * Creation date.
      *

@@ -39,7 +39,7 @@ final class AdItemFullDataProvider implements RestrictedDataProviderInterface, I
     {
         $this->adManager = $adManager;
     }
-    
+
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
         return Ad::class === $resourceClass && $operationName === "get_full";

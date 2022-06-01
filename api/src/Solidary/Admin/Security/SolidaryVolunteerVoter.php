@@ -34,21 +34,21 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class SolidaryVolunteerVoter extends Voter
 {
-    const ADMIN_SOLIDARY_VOLUNTEER_CREATE = 'admin_solidary_volunteer_create';
-    const ADMIN_SOLIDARY_VOLUNTEER_READ = 'admin_solidary_volunteer_read';
-    const ADMIN_SOLIDARY_VOLUNTEER_UPDATE = 'admin_solidary_volunteer_update';
-    const ADMIN_SOLIDARY_VOLUNTEER_DELETE = 'admin_solidary_volunteer_delete';
-    const ADMIN_SOLIDARY_VOLUNTEER_LIST = 'admin_solidary_volunteer_list';
-    const SOLIDARY_VOLUNTEER_CREATE = 'solidary_volunteer_create';
-    const SOLIDARY_VOLUNTEER_READ = 'solidary_volunteer_read';
-    const SOLIDARY_VOLUNTEER_UPDATE = 'solidary_volunteer_update';
-    const SOLIDARY_VOLUNTEER_DELETE = 'solidary_volunteer_delete';
-    const SOLIDARY_VOLUNTEER_LIST = 'solidary_volunteer_list';
+    public const ADMIN_SOLIDARY_VOLUNTEER_CREATE = 'admin_solidary_volunteer_create';
+    public const ADMIN_SOLIDARY_VOLUNTEER_READ = 'admin_solidary_volunteer_read';
+    public const ADMIN_SOLIDARY_VOLUNTEER_UPDATE = 'admin_solidary_volunteer_update';
+    public const ADMIN_SOLIDARY_VOLUNTEER_DELETE = 'admin_solidary_volunteer_delete';
+    public const ADMIN_SOLIDARY_VOLUNTEER_LIST = 'admin_solidary_volunteer_list';
+    public const SOLIDARY_VOLUNTEER_CREATE = 'solidary_volunteer_create';
+    public const SOLIDARY_VOLUNTEER_READ = 'solidary_volunteer_read';
+    public const SOLIDARY_VOLUNTEER_UPDATE = 'solidary_volunteer_update';
+    public const SOLIDARY_VOLUNTEER_DELETE = 'solidary_volunteer_delete';
+    public const SOLIDARY_VOLUNTEER_LIST = 'solidary_volunteer_list';
 
     private $authManager;
     private $solidaryUserRepository;
     private $request;
- 
+
     public function __construct(RequestStack $requestStack, AuthManager $authManager, SolidaryUserRepository $solidaryUserRepository)
     {
         $this->authManager = $authManager;

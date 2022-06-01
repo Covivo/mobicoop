@@ -22,7 +22,7 @@ final class Version20220111102600 extends AbstractMigration
 
         // icon
         $this->addSql("INSERT IGNORE INTO `icon` (`id`, `private_icon_linked_id`, `name`, `file_name`) VALUES (25, 24, 'relaypoint-rezopouce', 'relaypoint-rezopouce.svg');");
-        
+
         //relay_point_type
         $this->addSql("INSERT IGNORE INTO `relay_point_type` (`id`, `name`, `created_date`, `updated_date`, `icon_id`) VALUES
         (1, 'Aire-covoiturage', NOW(), NULL, 15),

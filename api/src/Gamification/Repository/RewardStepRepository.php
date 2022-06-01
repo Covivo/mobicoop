@@ -39,9 +39,9 @@ class RewardStepRepository
      * @var EntityRepository
      */
     private $repository;
-    
+
     private $entityManager;
-    
+
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
@@ -81,7 +81,7 @@ class RewardStepRepository
         ->andWhere('rs.user = :user')
         ->setParameter('user', $user)
         ;
-                
+
         return $query->getQuery()->getResult();
     }
 
@@ -100,7 +100,7 @@ class RewardStepRepository
     //     ->setParameter('user', $user)
     //     ->setParameter('sequenceItem', $sequenceItem)
     //     ;
-                
+
     //     return $query->getQuery()->getResult();
     // }
 }

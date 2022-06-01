@@ -37,7 +37,7 @@ final class BadgesBoardCollectionDataProvider implements CollectionDataProviderI
 {
     private $security;
     private $reviewManager;
-    
+
     public function __construct(Security $security, BadgesBoardManager $badgesBoardManager)
     {
         $this->security = $security;

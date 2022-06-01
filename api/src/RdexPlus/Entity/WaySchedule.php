@@ -34,7 +34,7 @@ use App\RdexPlus\Entity\WeekSchedule;
  */
 class WaySchedule
 {
-    const DEFAULT_TIME_DELTA = 900;
+    public const DEFAULT_TIME_DELTA = 900;
 
     /**
      * @var int if frequency=punctual or both, departureDate specifies departure datetime using a UNIX UTC timestamp in seconds.
@@ -86,7 +86,7 @@ class WaySchedule
 
         return $this;
     }
-    
+
     public function getMaxDate(): ?int
     {
         return $this->maxDate;
@@ -98,7 +98,7 @@ class WaySchedule
 
         return $this;
     }
-   
+
     public function getRegularSchedule(): ?array
     {
         return $this->regularSchedule;
@@ -110,7 +110,7 @@ class WaySchedule
 
         return $this;
     }
-    
+
     public function getTimeDelta(): ?int
     {
         return (!is_null($this->timeDelta)) ? $this->timeDelta : self::DEFAULT_TIME_DELTA;

@@ -56,18 +56,18 @@ use App\Geography\Entity\Address;
  */
 class PaymentItem
 {
-    const DEFAULT_ID = 999999999999;
+    public const DEFAULT_ID = 999999999999;
 
-    const FREQUENCY_PUNCTUAL = 1;
-    const FREQUENCY_REGULAR = 2;
+    public const FREQUENCY_PUNCTUAL = 1;
+    public const FREQUENCY_REGULAR = 2;
 
-    const TYPE_PAY = 1;
-    const TYPE_COLLECT = 2;
+    public const TYPE_PAY = 1;
+    public const TYPE_COLLECT = 2;
 
-    const DAY_UNAVAILABLE = 0;
-    const DAY_CARPOOLED = 1;
-    const DAY_NOT_CARPOOLED = 2;
-    const DAY_UNPAID = 3;
+    public const DAY_UNAVAILABLE = 0;
+    public const DAY_CARPOOLED = 1;
+    public const DAY_NOT_CARPOOLED = 2;
+    public const DAY_UNPAID = 3;
 
     /**
      * @var int The id of this payment item.
@@ -375,7 +375,7 @@ class PaymentItem
     {
         return $this->amount;
     }
-    
+
     public function setAmount(?string $amount)
     {
         $this->amount = $amount;
@@ -385,7 +385,7 @@ class PaymentItem
     {
         return $this->outwardAmount;
     }
-    
+
     public function setOutwardAmount(?string $outwardAmount)
     {
         $this->outwardAmount = $outwardAmount;
@@ -395,7 +395,7 @@ class PaymentItem
     {
         return $this->returnAmount;
     }
-    
+
     public function setReturnAmount(?string $returnAmount)
     {
         $this->returnAmount = $returnAmount;

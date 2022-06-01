@@ -58,7 +58,7 @@ final class MangoPayHookKYCCollectionDataProvider implements CollectionDataProvi
         ) {
             throw new PaymentException(PaymentException::MISSING_PARAMETER);
         }
-        
+
         if (
             $this->request->get('EventType')!==MangoPayHook::VALIDATION_SUCCEEDED &&
             $this->request->get('EventType')!==MangoPayHook::VALIDATION_FAILED &&

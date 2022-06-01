@@ -144,19 +144,19 @@ class CampaignTemplate
      * @Groups({"read_campaign"})
      */
     private $updatedDate;
-    
+
     public function getId(): ?int
     {
         return $this->id;
     }
-    
+
     public function setId(int $id): self
     {
         $this->id = $id;
-        
+
         return $this;
     }
-    
+
     public function getName(): ?string
     {
         return $this->name;
@@ -209,11 +209,11 @@ class CampaignTemplate
     {
         return $this->medium;
     }
-    
+
     public function setMedium(?Medium $medium): self
     {
         $this->medium = $medium;
-        
+
         return $this;
     }
 
@@ -242,7 +242,7 @@ class CampaignTemplate
     }
 
     // DOCTRINE EVENTS
-    
+
     /**
      * Creation date.
      *

@@ -35,10 +35,10 @@ use App\Carpool\Entity\Criteria;
 class FormatDataManager
 {
     // limit price to round at .5 cents
-    const PRICE_LIMIT = 5;
-    const PRICE_ROUND_TYPE_1 = .1;
-    const PRICE_ROUND_TYPE_2 = .5;
-    const PRICE_ROUND_TYPE_3 = 1;
+    public const PRICE_LIMIT = 5;
+    public const PRICE_ROUND_TYPE_1 = .1;
+    public const PRICE_ROUND_TYPE_2 = .5;
+    public const PRICE_ROUND_TYPE_3 = 1;
 
     /**
      * Convert time given in seconds to a human readable format

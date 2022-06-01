@@ -45,12 +45,12 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class CampaignManager
 {
-    const MAIL_PROVIDER_SENDINBLUE = 'SendinBlue';
+    public const MAIL_PROVIDER_SENDINBLUE = 'SendinBlue';
 
-    const MODE_TEST = 1;
-    const MODE_PROD = 2;
+    public const MODE_TEST = 1;
+    public const MODE_PROD = 2;
 
-    const MODES = [
+    public const MODES = [
         self::MODE_TEST,
         self::MODE_PROD
     ];
@@ -136,7 +136,7 @@ class CampaignManager
         $campaign->setFromName($this->mailerSenderName);
         $this->entityManager->persist($campaign);
         $this->entityManager->flush();
-        
+
         return $campaign;
     }
 
@@ -152,7 +152,7 @@ class CampaignManager
         // persist the campaign
         $this->entityManager->persist($campaign);
         $this->entityManager->flush();
-        
+
         // return the campaign
         return $campaign;
     }
@@ -352,7 +352,7 @@ class CampaignManager
 
                 // we send the test email with the creator of the campaign as recipient
                 $this->massEmailProvider->sendCampaignTest($campaign->getName(), $campaign->getProviderCampaignId(), [$campaign->getUser()->getEmail()]);
-                
+
                 // update the campaign if needed
                 if ($campaign->getStatus() != Campaign::STATUS_CREATED) {
                     $campaign->setStatus(Campaign::STATUS_CREATED);

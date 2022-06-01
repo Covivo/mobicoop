@@ -76,7 +76,7 @@ clean-api-phpcs:
 	$(info $(violet)------------------------------------------------------)
 	$(info $(violet) Fix my php code !)
 	$(info $(violet)------------------------------------------------------$(RESET))
-	@docker exec -it mobicoop_platform_api_php /srv/api/tools/php-cs-fixer/vendor/bin/php-cs-fixer fix
+	@docker exec -it mobicoop_platform_api_php /srv/api/tools/php-cs-fixer/vendor/bin/php-cs-fixer fix src
 
 clean-api-phpmd:
 	$(info $(violet)------------------------------------------------------)

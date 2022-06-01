@@ -29,7 +29,7 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class PermissionVoter extends Voter
 {
-    const PERMISSION = 'permission';
+    public const PERMISSION = 'permission';
 
     private $authManager;
 

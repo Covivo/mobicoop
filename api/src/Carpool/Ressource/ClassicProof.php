@@ -90,7 +90,7 @@ use App\User\Entity\User;
  */
 class ClassicProof
 {
-    const DEFAULT_ID = 999999999999;
+    public const DEFAULT_ID = 999999999999;
 
     /**
      * @var int The id of this classic ad proof.

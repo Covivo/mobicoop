@@ -42,7 +42,7 @@ final class AdItemExternalDataProvider implements RestrictedDataProviderInterfac
         $this->request = $requestStack->getCurrentRequest();
         $this->adManager = $adManager;
     }
-    
+
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
         return Ad::class === $resourceClass && $operationName === "get_external";

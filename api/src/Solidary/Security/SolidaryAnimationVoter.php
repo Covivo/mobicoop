@@ -34,9 +34,9 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
  */
 class SolidaryAnimationVoter extends Voter
 {
-    const SOLIDARY_ANIMATION_CREATE = 'solidary_animation_create';
-    const SOLIDARY_ANIMATION_LIST = 'solidary_animation_list';
-    
+    public const SOLIDARY_ANIMATION_CREATE = 'solidary_animation_create';
+    public const SOLIDARY_ANIMATION_LIST = 'solidary_animation_list';
+
     private $authManager;
 
     public function __construct(AuthManager $authManager)
@@ -53,7 +53,7 @@ class SolidaryAnimationVoter extends Voter
             ])) {
             return false;
         }
-      
+
         // only vote on User objects inside this voter
         if (!in_array($attribute, [
             self::SOLIDARY_ANIMATION_CREATE,

@@ -38,18 +38,18 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class AdVoter extends Voter
 {
-    const AD_CREATE = 'ad_create';
-    const AD_READ = 'ad_read';
-    const AD_READ_EXTERNAL = 'ad_read_external';
-    const AD_UPDATE = 'ad_update';
-    const AD_DELETE = 'ad_delete';
-    const AD_LIST = 'ad_list';
-    const AD_ASK_CREATE = 'ad_ask_create';
-    const AD_ASK_READ = 'ad_ask_read';
-    const AD_ASK_UPDATE = 'ad_ask_update';
-    const AD_SEARCH_CREATE = 'ad_search_create';
-    const AD_CLAIM = 'ad_claim';
-    
+    public const AD_CREATE = 'ad_create';
+    public const AD_READ = 'ad_read';
+    public const AD_READ_EXTERNAL = 'ad_read_external';
+    public const AD_UPDATE = 'ad_update';
+    public const AD_DELETE = 'ad_delete';
+    public const AD_LIST = 'ad_list';
+    public const AD_ASK_CREATE = 'ad_ask_create';
+    public const AD_ASK_READ = 'ad_ask_read';
+    public const AD_ASK_UPDATE = 'ad_ask_update';
+    public const AD_SEARCH_CREATE = 'ad_search_create';
+    public const AD_CLAIM = 'ad_claim';
+
     private $request;
     private $authManager;
     private $matchingRepository;

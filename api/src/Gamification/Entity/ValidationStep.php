@@ -72,7 +72,7 @@ class ValidationStep
 
         return $this;
     }
-    
+
     public function isValidated(): ?bool
     {
         return $this->validated;

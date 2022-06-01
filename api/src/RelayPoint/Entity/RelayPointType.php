@@ -233,19 +233,19 @@ class RelayPointType
     {
         $this->images = new ArrayCollection();
     }
-    
+
     public function getId(): ?int
     {
         return $this->id;
     }
-    
+
     public function setId(int $id): self
     {
         $this->id = $id;
-        
+
         return $this;
     }
-    
+
     public function getName(): ?string
     {
         return $this->name;
@@ -262,17 +262,17 @@ class RelayPointType
     {
         return $this->images->getValues();
     }
-    
+
     public function addImage(Image $image): self
     {
         if (!$this->images->contains($image)) {
             $this->images[] = $image;
             $image->setRelayPointType($this);
         }
-        
+
         return $this;
     }
-    
+
     public function removeImage(Image $image): self
     {
         if ($this->images->contains($image)) {
@@ -282,7 +282,7 @@ class RelayPointType
                 $image->setRelayPointType(null);
             }
         }
-        
+
         return $this;
     }
 
@@ -369,7 +369,7 @@ class RelayPointType
 
 
     // DOCTRINE EVENTS
-    
+
     /**
      * Creation date.
      *

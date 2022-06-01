@@ -38,7 +38,7 @@ final class HomeAddressDirectionTerritoryFilter extends AbstractContextAwareFilt
         if (strrpos($value, '/')) {
             $value = substr($value, strrpos($value, '/') + 1);
         }
-        
+
         // $queryBuilder
         //     ->leftJoin('u.addresses', 'homeAddress')
         //     ->leftJoin('u.proposals', 'p')

@@ -89,7 +89,7 @@ use App\User\Entity\User;
  */
 class Block
 {
-    const DEFAULT_ID = 999999999999;
+    public const DEFAULT_ID = 999999999999;
 
     /**
      * @var int The id of this Block
@@ -107,7 +107,7 @@ class Block
      *
     */
     private $user;
-    
+
     /**
      * @var \DateTimeInterface Creation date.
      *
@@ -128,7 +128,7 @@ class Block
     public function setId(int $id): self
     {
         $this->id = $id;
-        
+
         return $this;
     }
 

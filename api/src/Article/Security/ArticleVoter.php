@@ -33,11 +33,11 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class ArticleVoter extends Voter
 {
-    const ARTICLE_CREATE = 'article_create';
-    const ARTICLE_READ = 'article_read';
-    const ARTICLE_UPDATE = 'article_update';
-    const ARTICLE_DELETE = 'article_delete';
-    const ARTICLE_LIST = 'article_list';
+    public const ARTICLE_CREATE = 'article_create';
+    public const ARTICLE_READ = 'article_read';
+    public const ARTICLE_UPDATE = 'article_update';
+    public const ARTICLE_DELETE = 'article_delete';
+    public const ARTICLE_LIST = 'article_list';
 
     private $authManager;
 

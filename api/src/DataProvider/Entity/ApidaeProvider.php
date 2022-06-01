@@ -36,24 +36,24 @@ use Exception;
  */
 class ApidaeProvider implements EventProviderInterface
 {
-    const SERVER_URL = "https://api.apidae-tourisme.com/api/v002/recherche/list-objets-touristiques";
+    public const SERVER_URL = "https://api.apidae-tourisme.com/api/v002/recherche/list-objets-touristiques";
 
-    const ID = "id";
-    const NAME = "nom";
-    const INFORMATIONS = "informations.moyensCommunication";
-    const PICTURE = "illustrations";
-    const SHORT_DESCRIPTION = "presentation.descriptifCourt";
-    const FULL_DESCRIPTION = "presentation.descriptifDetaille";
-    const START_DATE = "ouverture.periodesOuvertures.dateDebut";
-    const END_DATE = "ouverture.periodesOuvertures.dateFin";
-    const ADDRESS = "localisation.adresse";
-    const GEOLOCATION = "localisation.geolocalisation";
-    const PROVIDER = "Apidae";
-    const OBJECT_TYPE = "objetsTouristiques";
-    const NUMBER_OF_EVENTS = 20;
-    const WEB_URL = "Site web (URL)";
+    public const ID = "id";
+    public const NAME = "nom";
+    public const INFORMATIONS = "informations.moyensCommunication";
+    public const PICTURE = "illustrations";
+    public const SHORT_DESCRIPTION = "presentation.descriptifCourt";
+    public const FULL_DESCRIPTION = "presentation.descriptifDetaille";
+    public const START_DATE = "ouverture.periodesOuvertures.dateDebut";
+    public const END_DATE = "ouverture.periodesOuvertures.dateFin";
+    public const ADDRESS = "localisation.adresse";
+    public const GEOLOCATION = "localisation.geolocalisation";
+    public const PROVIDER = "Apidae";
+    public const OBJECT_TYPE = "objetsTouristiques";
+    public const NUMBER_OF_EVENTS = 20;
+    public const WEB_URL = "Site web (URL)";
 
-    
+
 
     public function __construct(string $apiKey, string $projectId, string $selectionIds)
     {
@@ -124,7 +124,7 @@ class ApidaeProvider implements EventProviderInterface
         // apidae data structuration : http://dev.apidae-tourisme.com/fr/documentation-technique/v2/formats-des-objets
         // http://dev.apidae-tourisme.com/fr/documentation-technique/v2/formats-des-objets/types-dobjet-touristique
         $newEvents = [];
-       
+
         foreach ($apidaeEvents as $event) {
             $newEvent = new Event();
             $newEvent->setExternalId($event->id);
@@ -134,7 +134,7 @@ class ApidaeProvider implements EventProviderInterface
             } else {
                 throw new Exception("Event name is mandatory", 1);
             }
-            
+
             if (isset($event->ouverture->periodesOuvertures[0])) {
                 // some events are annual so we check first if the year is up to date if not we set the actual year
                 $year = (new \DateTime($event->ouverture->periodesOuvertures[0]->dateDebut))->format('Y');
@@ -180,9 +180,9 @@ class ApidaeProvider implements EventProviderInterface
                 $address->setPostalCode(isset($event->localisation->adresse->codePostal) ? $event->localisation->adresse->codePostal : null);
                 $address->setAddressCountry(isset($event->localisation->adresse->commune->pays->libelleFr) ? $event->localisation->adresse->commune->pays->libelleFr : null);
             }
-            
+
             $newEvent->setAddress($address);
-            
+
             // We pass the newEvent in array
             $newEvents[] = $newEvent;
         }

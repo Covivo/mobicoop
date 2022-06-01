@@ -35,13 +35,13 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class CommunityVoter extends Voter
 {
-    const COMMUNITY_CREATE = 'community_create';
-    const COMMUNITY_READ = 'community_read';
-    const COMMUNITY_UPDATE = 'community_update';
-    const COMMUNITY_DELETE = 'community_delete';
-    const COMMUNITY_LIST = 'community_list';
-    const COMMUNITY_ADS = 'community_ads';
-    const COMMUNITY_LAST_MEMBERS = 'community_last_members';
+    public const COMMUNITY_CREATE = 'community_create';
+    public const COMMUNITY_READ = 'community_read';
+    public const COMMUNITY_UPDATE = 'community_update';
+    public const COMMUNITY_DELETE = 'community_delete';
+    public const COMMUNITY_LIST = 'community_list';
+    public const COMMUNITY_ADS = 'community_ads';
+    public const COMMUNITY_LAST_MEMBERS = 'community_last_members';
 
     private $request;
     private $communityManager;

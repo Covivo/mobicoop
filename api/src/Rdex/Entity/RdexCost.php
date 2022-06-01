@@ -34,12 +34,12 @@ class RdexCost implements \JsonSerializable
      * @var float The fixed cost.
      */
     private $fixed;
-    
+
     /**
      * @var float The variable cost.
      */
     private $variable;
-    
+
     /**
      * @return number
      */
@@ -71,7 +71,7 @@ class RdexCost implements \JsonSerializable
     {
         $this->variable = $variable;
     }
-    
+
     public function jsonSerialize(): mixed
     {
         return

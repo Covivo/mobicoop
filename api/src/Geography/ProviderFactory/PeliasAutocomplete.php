@@ -42,17 +42,17 @@ final class PeliasAutocomplete extends AbstractHttpProvider implements Provider
     /**
      * @var string
      */
-    const GEOCODE_ENDPOINT_URL = '/autocomplete?text=%s&size=%d&lang=%s&layers=locality,localAdmin';
+    public const GEOCODE_ENDPOINT_URL = '/autocomplete?text=%s&size=%d&lang=%s&layers=locality,localAdmin';
 
     /**
      * @var string
      */
-    const GEOCODE_ENDPOINT_PRIORITIZATION = '&focus.point.lat=%f&focus.point.lon=%f';
+    public const GEOCODE_ENDPOINT_PRIORITIZATION = '&focus.point.lat=%f&focus.point.lon=%f';
 
     /**
      * @var string
      */
-    const REVERSE_ENDPOINT_URL = '/reverse?point.lat=%f&point.lon=%f&size=%d&lang=%s';
+    public const REVERSE_ENDPOINT_URL = '/reverse?point.lat=%f&point.lon=%f&size=%d&lang=%s';
 
     /**
      * @var string
@@ -60,7 +60,7 @@ final class PeliasAutocomplete extends AbstractHttpProvider implements Provider
     private $uri;
 
     // minimum confidence to consider a result as pertinent
-    const MIN_CONFIDENCE = 0.85;
+    public const MIN_CONFIDENCE = 0.85;
 
     /**
      * @param HttpClient $client an HTTP adapter

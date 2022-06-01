@@ -56,7 +56,7 @@ class SolidaryAskManager
      */
     public function createSolidaryAsk(SolidaryAsk $solidaryAsk): ?SolidaryAsk
     {
-        
+
         // We create the associated SolidaryAskHistory
         $solidaryAsk = $this->createAssociatedSolidaryAskHistory($solidaryAsk);
 
@@ -121,7 +121,7 @@ class SolidaryAskManager
     private function createAssociatedSolidaryAskHistory(SolidaryAsk $solidaryAsk): ?SolidaryAsk
     {
         $solidaryAskHistory = new SolidaryAskHistory();
-        
+
         $solidaryAskHistory->setStatus($solidaryAsk->getStatus());
         $solidaryAskHistory->setSolidaryAsk($solidaryAsk);
 

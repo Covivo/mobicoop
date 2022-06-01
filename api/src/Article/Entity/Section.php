@@ -102,11 +102,11 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
  */
 class Section
 {
-    const STATUS_PENDING = 0;
-    const STATUS_PUBLISHED = 1;
-    
+    public const STATUS_PENDING = 0;
+    public const STATUS_PUBLISHED = 1;
+
     // List of the translatable items of this entity
-    const TRANSLATABLE_ITEMS = [
+    public const TRANSLATABLE_ITEMS = [
         "title",
         "subTitle"
     ];
@@ -120,7 +120,7 @@ class Section
      * @Groups({"aRead","read"})
      */
     private $id;
-            
+
     /**
      * @var string The title of the section.
      *
@@ -197,16 +197,16 @@ class Section
     {
         return $this->id;
     }
-            
+
     public function getTitle(): ?string
     {
         return $this->title;
     }
-    
+
     public function setTitle(?string $title): self
     {
         $this->title = $title;
-        
+
         return $this;
     }
 
@@ -214,11 +214,11 @@ class Section
     {
         return $this->subTitle;
     }
-    
+
     public function setSubTitle(?string $subTitle): self
     {
         $this->subTitle = $subTitle;
-        
+
         return $this;
     }
 
@@ -226,11 +226,11 @@ class Section
     {
         return $this->position;
     }
-    
+
     public function setPosition(?int $position): self
     {
         $this->position = $position;
-        
+
         return $this;
     }
 
@@ -238,7 +238,7 @@ class Section
     {
         return $this->status;
     }
-    
+
     public function setStatus(?int $status)
     {
         $this->status = $status;
@@ -315,7 +315,7 @@ class Section
     }
 
     // DOCTRINE EVENTS
-    
+
     /**
      * Creation date.
      *

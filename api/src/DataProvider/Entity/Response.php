@@ -28,24 +28,24 @@ namespace App\DataProvider\Entity;
  */
 class Response
 {
-    const DEFAULT_CODE = 404;
-    
+    public const DEFAULT_CODE = 404;
+
     /**
      * @var int $code The response code.
      */
     private $code;
-    
+
     /**
      * @var object|array $value The value of the response.
      */
     private $value;
-    
+
     public function __construct(int $code=self::DEFAULT_CODE, $value=null)
     {
         $this->setCode($code);
         $this->setValue($value);
     }
-    
+
     public function getCode(): int
     {
         return $this->code;

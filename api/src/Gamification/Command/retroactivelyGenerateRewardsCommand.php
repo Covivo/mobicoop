@@ -44,7 +44,7 @@ class retroactivelyGenerateRewardsCommand extends Command
 
         parent::__construct();
     }
-    
+
     protected function configure()
     {
         $this

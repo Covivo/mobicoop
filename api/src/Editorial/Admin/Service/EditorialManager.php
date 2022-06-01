@@ -107,7 +107,7 @@ class EditorialManager
         // persist the editorial
         $this->entityManager->persist($editorial);
         $this->entityManager->flush();
-        
+
         // return the editorial
         return $editorial;
     }

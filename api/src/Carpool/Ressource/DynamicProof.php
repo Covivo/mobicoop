@@ -77,7 +77,7 @@ use App\User\Entity\User;
  */
 class DynamicProof
 {
-    const DEFAULT_ID = 999999999999;
+    public const DEFAULT_ID = 999999999999;
 
     /**
      * @var int The id of this dynamic ad proof.

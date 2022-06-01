@@ -62,7 +62,7 @@ class MassPTJourney
      * @Groups("pt")
      */
     private $distance;
-    
+
     /**
      * @var int The total duration of this journey (in seconds).
      *
@@ -86,7 +86,7 @@ class MassPTJourney
      * @Groups("pt")
      */
     private $distanceWalkFromHome;
-    
+
     /**
      * @var int The duration from home of this journey (in seconds)
      *
@@ -144,11 +144,11 @@ class MassPTJourney
     {
         return $this->distance;
     }
-    
+
     public function setDistance(?int $distance): self
     {
         $this->distance = $distance;
-        
+
         return $this;
     }
 
@@ -156,11 +156,11 @@ class MassPTJourney
     {
         return $this->duration;
     }
-    
+
     public function setDuration(?int $duration): self
     {
         $this->duration = $duration;
-        
+
         return $this;
     }
 
@@ -168,11 +168,11 @@ class MassPTJourney
     {
         return $this->changeNumber;
     }
-    
+
     public function setChangeNumber(?int $changeNumber): self
     {
         $this->changeNumber = $changeNumber;
-        
+
         return $this;
     }
 
@@ -180,23 +180,23 @@ class MassPTJourney
     {
         return $this->distanceWalkFromHome;
     }
-    
+
     public function setDistanceWalkFromHome(?int $distanceWalkFromHome): self
     {
         $this->distanceWalkFromHome = $distanceWalkFromHome;
-        
+
         return $this;
     }
-    
+
     public function getDurationWalkFromHome(): ?int
     {
         return $this->durationWalkFromHome;
     }
-    
+
     public function setDurationWalkFromHome(?int $durationWalkFromHome): self
     {
         $this->durationWalkFromHome = $durationWalkFromHome;
-        
+
         return $this;
     }
 
@@ -204,11 +204,11 @@ class MassPTJourney
     {
         return $this->distanceWalkFromWork;
     }
-    
+
     public function setDistanceWalkFromWork(?int $distanceWalkFromWork): self
     {
         $this->distanceWalkFromWork = $distanceWalkFromWork;
-        
+
         return $this;
     }
 
@@ -216,11 +216,11 @@ class MassPTJourney
     {
         return $this->durationWalkFromWork;
     }
-    
+
     public function setDurationWalkFromWork(?int $durationWalkFromWork): self
     {
         $this->durationWalkFromWork = $durationWalkFromWork;
-        
+
         return $this;
     }
 
@@ -228,11 +228,11 @@ class MassPTJourney
     {
         return $this->massPerson;
     }
-    
+
     public function setMassPerson(?MassPerson $massPerson): self
     {
         $this->massPerson = $massPerson;
-        
+
         return $this;
     }
 
@@ -265,16 +265,16 @@ class MassPTJourney
     {
         return $this->provider;
     }
-    
+
     public function setProvider(?string $provider): self
     {
         $this->provider = $provider;
-        
+
         return $this;
     }
 
     // DOCTRINE EVENTS
-    
+
     /**
      * Creation date.
      *

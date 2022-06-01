@@ -105,7 +105,6 @@ use App\Solidary\Admin\Controller\UploadProofAction;
  */
 class Proof
 {
-    
     /**
      * @var int The id of this proof.
      *
@@ -142,7 +141,7 @@ class Proof
      * @Groups({"readProof","writeProof"})
      */
     private $fileName;
-    
+
     /**
      * @var string The original file name of the proof.
      *
@@ -158,7 +157,7 @@ class Proof
      * @Groups({"readProof","writeProof"})
      */
     private $size;
-    
+
     /**
      * @var string The mime type of the file.
      *
@@ -199,7 +198,7 @@ class Proof
      * @Groups({"readProof"})
      */
     private $updatedDate;
-    
+
     public function __construct($id=null)
     {
         $this->id = $id;
@@ -209,14 +208,14 @@ class Proof
     {
         return $this->id;
     }
-    
+
     public function setId(int $id): self
     {
         $this->id = $id;
-        
+
         return $this;
     }
-    
+
     public function getValue(): ?string
     {
         return $this->value;
@@ -257,17 +256,17 @@ class Proof
     {
         return $this->fileName;
     }
-    
+
     public function setFileName(?string $fileName)
     {
         $this->fileName = $fileName;
     }
-    
+
     public function getOriginalName(): ?string
     {
         return $this->originalName;
     }
-    
+
     public function setOriginalName(?string $originalName)
     {
         $this->originalName = $originalName;
@@ -277,19 +276,19 @@ class Proof
     {
         return $this->size;
     }
-    
+
     public function setSize(?int $size): self
     {
         $this->size = $size;
-        
+
         return $this;
     }
-    
+
     public function getMimeType(): ?string
     {
         return $this->mimeType;
     }
-    
+
     public function setMimeType(?string $mimeType)
     {
         $this->mimeType = $mimeType;
@@ -299,7 +298,7 @@ class Proof
     {
         return $this->file;
     }
-    
+
     public function setFile(?File $file): self
     {
         $this->file = $file;
@@ -311,7 +310,7 @@ class Proof
     {
         return $this->solidaryUserStructure;
     }
-    
+
     public function setSolidaryUserStructure(?SolidaryUserStructure $solidaryUserStructure): self
     {
         $this->solidaryUserStructure = $solidaryUserStructure;
@@ -349,7 +348,7 @@ class Proof
     }
 
     // DOCTRINE EVENTS
-    
+
     /**
      * Creation date.
      *

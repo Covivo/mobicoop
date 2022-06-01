@@ -33,7 +33,7 @@ final class PwdTokenFilter extends AbstractContextAwareFilter
         if ($property != "pwdToken") {
             return;
         }
-        
+
         $queryBuilder
             ->andWhere('u.pwdToken = \'' .$value . '\'');
     }

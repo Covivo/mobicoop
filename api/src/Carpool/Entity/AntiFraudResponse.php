@@ -49,8 +49,8 @@ class AntiFraudResponse
         $this->valid = $valid;
         $this->message = $message;
     }
-    
-    
+
+
     public function isValid(): ?bool
     {
         return $this->valid;
@@ -62,7 +62,7 @@ class AntiFraudResponse
 
         return $this;
     }
-    
+
     public function getMessage(): ?string
     {
         return $this->message;

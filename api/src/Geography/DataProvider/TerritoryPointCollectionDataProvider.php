@@ -41,19 +41,19 @@ final class TerritoryPointCollectionDataProvider implements CollectionDataProvid
     protected $request;
     private $territoryRepository;
     private $context;
-    
+
     public function __construct(RequestStack $requestStack, TerritoryRepository $territoryRepository)
     {
         $this->request = $requestStack->getCurrentRequest();
         $this->territoryRepository = $territoryRepository;
     }
-    
+
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
         $this->context = $context;
         return Territory::class === $resourceClass && $operationName === "territoriesPoint";
     }
-    
+
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
         if (!isset($this->context['filters'])) {

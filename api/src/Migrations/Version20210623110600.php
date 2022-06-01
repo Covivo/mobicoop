@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace DoctrineMigrations;
 
@@ -10,7 +12,7 @@ use Doctrine\Migrations\AbstractMigration;
  */
 final class Version20210623110600 extends AbstractMigration
 {
-    public function up(Schema $schema) : void
+    public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
@@ -27,7 +29,7 @@ final class Version20210623110600 extends AbstractMigration
         $this->addSql("UPDATE `action` SET `name` = 'carpool_ad_deleted_with_pending_drivers_urgent' WHERE `action`.`id` = 18;");
         $this->addSql("UPDATE `action` SET `name` = 'event_created' WHERE `action`.`id` = 21;");
 
-        
+
         // New actions
         $this->addSql("INSERT INTO `action` (`id`, `name`, `in_log`, `in_diary`, `progression`, `created_date`, `updated_date`, `position`, `type`) VALUES (91, 'user_mail_validation', '1', NULL, NULL, '2021-06-23 10:59:26', NULL, '0', NULL);");
         $this->addSql("INSERT INTO `action` (`id`, `name`, `in_log`, `in_diary`, `progression`, `created_date`, `updated_date`, `position`, `type`) VALUES (92, 'user_phone_validation', '1', NULL, NULL, '2021-06-23 10:59:26', NULL, '0', NULL);");
@@ -87,7 +89,7 @@ final class Version20210623110600 extends AbstractMigration
         $this->addSql("INSERT INTO `gamification_action` (`id`, `action_id`, `gamification_action_rule_id`, `name`) VALUES (23, '5', '13', 'user_home_address_updated');");
     }
 
-    public function down(Schema $schema) : void
+    public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');

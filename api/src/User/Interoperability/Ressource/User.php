@@ -140,13 +140,13 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class User
 {
-    const DEFAULT_ID = 999999999999;
+    public const DEFAULT_ID = 999999999999;
 
-    const GENDER_FEMALE = 1;
-    const GENDER_MALE = 2;
-    const GENDER_OTHER = 3;
+    public const GENDER_FEMALE = 1;
+    public const GENDER_MALE = 2;
+    public const GENDER_OTHER = 3;
 
-    const GENDERS = [
+    public const GENDERS = [
         self::GENDER_FEMALE,
         self::GENDER_MALE,
         self::GENDER_OTHER
@@ -250,7 +250,7 @@ class User
     public function setId(int $id): self
     {
         $this->id = $id;
-        
+
         return $this;
     }
 
@@ -358,7 +358,7 @@ class User
     public function setExternalId(?string $externalId): self
     {
         $this->externalId = $externalId;
-        
+
         return $this;
     }
 

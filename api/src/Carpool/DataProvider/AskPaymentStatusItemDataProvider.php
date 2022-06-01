@@ -42,7 +42,7 @@ final class AskPaymentStatusItemDataProvider implements RestrictedDataProviderIn
         $this->request = $requestStack->getCurrentRequest();
         $this->askManager = $askManager;
     }
-    
+
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
         return Ask::class === $resourceClass && $operationName === "payment_status";

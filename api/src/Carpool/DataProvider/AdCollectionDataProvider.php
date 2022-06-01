@@ -43,12 +43,12 @@ final class AdCollectionDataProvider implements CollectionDataProviderInterface,
         $this->adManager = $adManager;
         $this->security = $security;
     }
-    
+
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
         return Ad::class === $resourceClass && $operationName === "get";
     }
-    
+
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
         return $this->adManager->getAds($this->security->getUser()->getId());

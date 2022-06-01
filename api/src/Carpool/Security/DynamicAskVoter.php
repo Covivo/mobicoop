@@ -35,10 +35,10 @@ use Symfony\Component\Security\Core\Security;
 
 class DynamicAskVoter extends Voter
 {
-    const DYNAMIC_ASK_CREATE = 'dynamic_ask_create';
-    const DYNAMIC_ASK_READ = 'dynamic_ask_read';
-    const DYNAMIC_ASK_UPDATE = 'dynamic_ask_update';
-    
+    public const DYNAMIC_ASK_CREATE = 'dynamic_ask_create';
+    public const DYNAMIC_ASK_READ = 'dynamic_ask_read';
+    public const DYNAMIC_ASK_UPDATE = 'dynamic_ask_update';
+
     private $security;
     private $request;
     private $authManager;

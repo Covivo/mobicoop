@@ -40,12 +40,12 @@ final class JourneyCollectionDataProvider implements CollectionDataProviderInter
     {
         $this->security = $security;
     }
-    
+
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
         return Journey::class === $resourceClass && $operationName === "rdex_plus_journey_get";
     }
-    
+
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
         /* TO DO */

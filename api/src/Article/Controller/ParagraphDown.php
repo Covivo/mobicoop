@@ -35,7 +35,7 @@ use App\TranslatorTrait;
 class ParagraphDown
 {
     use TranslatorTrait;
-    
+
     private $articleManager;
 
     public function __construct(ArticleManager $articleManager)

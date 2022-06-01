@@ -60,7 +60,7 @@ class BadgeProgression
 
         return $this;
     }
-    
+
     public function isEarned(): ?bool
     {
         return $this->earned;

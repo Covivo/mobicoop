@@ -136,15 +136,15 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
  */
 class Journey
 {
-    const DEFAULT_ID = 999999999999;
-    
-    const FREQUENCY_PUNCTUAL = 1;
-    const FREQUENCY_REGULAR = 2;
-    const ROLE_DRIVER = 1;
-    const ROLE_PASSENGER = 2;
-    const ROLE_DRIVER_OR_PASSENGER = 3;
+    public const DEFAULT_ID = 999999999999;
 
-    const POPULAR_RANDOMIZATION_FACTOR = 5; // Used to shuffle the results for popular Journeys
+    public const FREQUENCY_PUNCTUAL = 1;
+    public const FREQUENCY_REGULAR = 2;
+    public const ROLE_DRIVER = 1;
+    public const ROLE_PASSENGER = 2;
+    public const ROLE_DRIVER_OR_PASSENGER = 3;
+
+    public const POPULAR_RANDOMIZATION_FACTOR = 5; // Used to shuffle the results for popular Journeys
 
     /**
      * @var int The id of this journey.
@@ -183,7 +183,7 @@ class Journey
      * @Groups({"readJourney"})
      */
     private $age;
-    
+
     /**
      * @var string The origin of the journey
      * @ORM\Column(type="string")
@@ -333,7 +333,7 @@ class Journey
     {
         return $this->proposalId;
     }
-    
+
     public function setProposalId(int $proposalId): self
     {
         $this->proposalId = $proposalId;
@@ -345,7 +345,7 @@ class Journey
     {
         return $this->userId;
     }
-    
+
     public function setUserId(int $userId): self
     {
         $this->userId = $userId;
@@ -369,7 +369,7 @@ class Journey
     {
         return $this->age;
     }
-    
+
     public function setAge(int $age): self
     {
         $this->age = $age;
@@ -381,7 +381,7 @@ class Journey
     {
         return $this->origin;
     }
-    
+
     public function setOrigin(string $origin): self
     {
         $this->origin = $origin;
@@ -413,7 +413,7 @@ class Journey
     {
         return $this->destination;
     }
-    
+
     public function setDestination(string $destination): self
     {
         $this->destination = $destination;

@@ -34,37 +34,37 @@ class RdexPassenger implements \JsonSerializable
      * @var string The uuid of the passenger.
      */
     private $uuid;
-    
+
     /**
      * @var string The pseudonym of the passenger.
      */
     private $alias;
-    
+
     /**
      * @var string The image of the passenger.
      */
     private $image;
-    
+
     /**
      * @var string The gender of the driver.
      */
     private $gender;
-    
+
     /**
      * @var int The number of persons.
      */
     private $persons;
-    
+
     /**
      * @var int The state of the passenger.
      */
     private $state;
-    
+
     public function __construct($uuid)
     {
         $this->uuid = $uuid;
     }
-    
+
     /**
      * @return mixed
      */
@@ -96,7 +96,7 @@ class RdexPassenger implements \JsonSerializable
     {
         return $this->gender;
     }
-    
+
     /**
      * @return number
      */
@@ -136,7 +136,7 @@ class RdexPassenger implements \JsonSerializable
     {
         $this->image = $image;
     }
-    
+
     /**
      * @param string $gender
      */
@@ -160,7 +160,7 @@ class RdexPassenger implements \JsonSerializable
     {
         $this->state = $state;
     }
-    
+
     public function jsonSerialize(): mixed
     {
         return

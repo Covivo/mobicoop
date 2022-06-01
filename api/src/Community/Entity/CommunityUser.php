@@ -160,10 +160,10 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
  */
 class CommunityUser
 {
-    const STATUS_PENDING = 0;
-    const STATUS_ACCEPTED_AS_MEMBER = 1;
-    const STATUS_ACCEPTED_AS_MODERATOR = 2;
-    const STATUS_REFUSED = 3;
+    public const STATUS_PENDING = 0;
+    public const STATUS_ACCEPTED_AS_MEMBER = 1;
+    public const STATUS_ACCEPTED_AS_MODERATOR = 2;
+    public const STATUS_REFUSED = 3;
 
     /**
      * @var int The id of this community user.
@@ -440,7 +440,7 @@ class CommunityUser
     {
         return ucfirst(strtolower($this->getUser()->getGivenName()));
     }
-    
+
     public function getFamilyName(): ?string
     {
         return ucfirst(strtolower($this->getUser()->getFamilyName()));

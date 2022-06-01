@@ -33,16 +33,16 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class EventVoter extends Voter
 {
-    const ADMIN_EVENT_CREATE = 'admin_event_create';
-    const ADMIN_EVENT_READ = 'admin_event_read';
-    const ADMIN_EVENT_UPDATE = 'admin_event_update';
-    const ADMIN_EVENT_DELETE = 'admin_event_delete';
-    const ADMIN_EVENT_LIST = 'admin_event_list';
-    const EVENT_CREATE = 'event_create';
-    const EVENT_READ = 'event_read';
-    const EVENT_UPDATE = 'event_update';
-    const EVENT_DELETE = 'event_delete';
-    const EVENT_LIST = 'event_list';
+    public const ADMIN_EVENT_CREATE = 'admin_event_create';
+    public const ADMIN_EVENT_READ = 'admin_event_read';
+    public const ADMIN_EVENT_UPDATE = 'admin_event_update';
+    public const ADMIN_EVENT_DELETE = 'admin_event_delete';
+    public const ADMIN_EVENT_LIST = 'admin_event_list';
+    public const EVENT_CREATE = 'event_create';
+    public const EVENT_READ = 'event_read';
+    public const EVENT_UPDATE = 'event_update';
+    public const EVENT_DELETE = 'event_delete';
+    public const EVENT_LIST = 'event_list';
 
     private $authManager;
     private $request;

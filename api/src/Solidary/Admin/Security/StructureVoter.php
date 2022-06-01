@@ -32,20 +32,20 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class StructureVoter extends Voter
 {
-    const ADMIN_STRUCTURE_CREATE = 'admin_structure_create';
-    const ADMIN_STRUCTURE_READ = 'admin_structure_read';
-    const ADMIN_STRUCTURE_UPDATE = 'admin_structure_update';
-    const ADMIN_STRUCTURE_DELETE = 'admin_structure_delete';
-    const ADMIN_STRUCTURE_LIST = 'admin_structure_list';
-    const STRUCTURE_CREATE = 'structure_create';
-    const STRUCTURE_READ = 'structure_read';
-    const STRUCTURE_UPDATE = 'structure_update';
-    const STRUCTURE_DELETE = 'structure_delete';
-    const STRUCTURE_LIST = 'structure_list';
+    public const ADMIN_STRUCTURE_CREATE = 'admin_structure_create';
+    public const ADMIN_STRUCTURE_READ = 'admin_structure_read';
+    public const ADMIN_STRUCTURE_UPDATE = 'admin_structure_update';
+    public const ADMIN_STRUCTURE_DELETE = 'admin_structure_delete';
+    public const ADMIN_STRUCTURE_LIST = 'admin_structure_list';
+    public const STRUCTURE_CREATE = 'structure_create';
+    public const STRUCTURE_READ = 'structure_read';
+    public const STRUCTURE_UPDATE = 'structure_update';
+    public const STRUCTURE_DELETE = 'structure_delete';
+    public const STRUCTURE_LIST = 'structure_list';
 
     private $authManager;
     private $request;
- 
+
     public function __construct(RequestStack $requestStack, AuthManager $authManager)
     {
         $this->authManager = $authManager;

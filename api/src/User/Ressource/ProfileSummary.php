@@ -58,9 +58,9 @@ use App\User\Entity\User;
  */
 class ProfileSummary
 {
-    const PHONE_DISPLAY_RESTRICTED = 1;
-    const PHONE_DISPLAY_ALL = 2;
-    
+    public const PHONE_DISPLAY_RESTRICTED = 1;
+    public const PHONE_DISPLAY_ALL = 2;
+
     /**
      * @var int The id of the User
      *
@@ -165,7 +165,7 @@ class ProfileSummary
             $this->id = $id;
         }
     }
-    
+
     public function getId(): ?int
     {
         return $this->id;
@@ -174,7 +174,7 @@ class ProfileSummary
     public function setId(int $id): self
     {
         $this->id = $id;
-        
+
         return $this;
     }
 
@@ -186,7 +186,7 @@ class ProfileSummary
     public function setGivenName(?string $givenName): self
     {
         $this->givenName = $givenName;
-        
+
         return $this;
     }
 
@@ -198,7 +198,7 @@ class ProfileSummary
     public function setShortFamilyName(string $shortFamilyName): self
     {
         $this->shortFamilyName = $shortFamilyName;
-        
+
         return $this;
     }
 
@@ -210,7 +210,7 @@ class ProfileSummary
     public function setAge(?int $age): self
     {
         $this->age = $age;
-        
+
         return $this;
     }
 
@@ -258,7 +258,7 @@ class ProfileSummary
     public function setCarpoolRealized(int $carpoolRealized): self
     {
         $this->carpoolRealized = $carpoolRealized;
-        
+
         return $this;
     }
 
@@ -270,7 +270,7 @@ class ProfileSummary
     public function setAnswerPct(int $answerPct): self
     {
         $this->answerPct = $answerPct;
-        
+
         return $this;
     }
 
@@ -285,7 +285,7 @@ class ProfileSummary
 
         return $this;
     }
-    
+
     public function getLastActivityDate(): ?\DateTimeInterface
     {
         return $this->lastActivityDate;

@@ -33,12 +33,12 @@ class AppRepository
      * @var EntityRepository
      */
     private $repository;
-    
+
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->repository = $entityManager->getRepository(App::class);
     }
-    
+
     public function find(int $id): ?App
     {
         return $this->repository->find($id);

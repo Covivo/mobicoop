@@ -37,10 +37,10 @@ use Exception;
  */
 class TourinsoftProvider implements EventProviderInterface
 {
-    const PROVIDER = "Tourinsoft";
-    const FORMAT = "JSON";
-    const COMMUNICATION_MEDIA_WEBSITE_KEY = "#Site web";
-    const REQUESTED_FIELDS = "SyndicObjectID,SyndicObjectName,MoyenDeCom,Description,ObjectTypeName,Adresse1,Adresse2,Adresse3,GmapLatitude,GmapLongitude,PeriodeOuverture,Photos,CodePostal,Commune,LieuManifestation";
+    public const PROVIDER = "Tourinsoft";
+    public const FORMAT = "JSON";
+    public const COMMUNICATION_MEDIA_WEBSITE_KEY = "#Site web";
+    public const REQUESTED_FIELDS = "SyndicObjectID,SyndicObjectName,MoyenDeCom,Description,ObjectTypeName,Adresse1,Adresse2,Adresse3,GmapLatitude,GmapLongitude,PeriodeOuverture,Photos,CodePostal,Commune,LieuManifestation";
 
     private $eventProviderServerUrl;
 

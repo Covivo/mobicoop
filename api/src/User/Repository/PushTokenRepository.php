@@ -33,12 +33,12 @@ class PushTokenRepository
      * @var EntityRepository
      */
     private $repository;
-    
+
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->repository = $entityManager->getRepository(PushToken::class);
     }
-    
+
     public function find(int $id): ?PushToken
     {
         return $this->repository->find($id);

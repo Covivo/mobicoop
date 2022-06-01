@@ -72,8 +72,8 @@ use App\RelayPoint\Entity\RelayPointType;
  */
 class Icon
 {
-    const DEFAULT_ICON_ID = 1; // Default Icon
-    
+    public const DEFAULT_ICON_ID = 1; // Default Icon
+
     /**
      * @var int The id of this icon.
      *
@@ -84,7 +84,7 @@ class Icon
      * @ApiProperty(identifier=true)
      */
     private $id;
-    
+
     /**
      * @var string The name of the icon.
      *
@@ -143,22 +143,22 @@ class Icon
     {
         $this->relayPointTypes = new ArrayCollection();
     }
-    
+
     public function getId(): ?int
     {
         return $this->id;
     }
-    
+
     public function setId($id)
     {
         $this->id = $id;
     }
-    
+
     public function getName(): string
     {
         return $this->name;
     }
-    
+
     public function setName(string $name)
     {
         $this->name = $name;
@@ -168,7 +168,7 @@ class Icon
     {
         return $this->fileName;
     }
-    
+
     public function setFileName(string $fileName)
     {
         $this->fileName = $fileName;
@@ -178,7 +178,7 @@ class Icon
     {
         return $this->url;
     }
-    
+
     public function setUrl(string $url)
     {
         $this->url = $url;
@@ -220,13 +220,13 @@ class Icon
     public function setPrivateIconLinked(?self $privateIconLinked): self
     {
         $this->privateIconLinked = $privateIconLinked;
-        
+
         // set (or unset) the owning side of the relation if necessary
         $newPrivateIconLinked = $privateIconLinked === null ? null : $this;
         if ($newPrivateIconLinked !== $privateIconLinked->getPrivateIconLinked()) {
             $privateIconLinked->setPrivateIconLinked($newPrivateIconLinked);
         }
-        
+
         return $this;
     }
 

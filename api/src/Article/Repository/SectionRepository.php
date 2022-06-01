@@ -39,7 +39,7 @@ class SectionRepository
      * @var EntityRepository
      */
     private $repository;
-    
+
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->repository = $entityManager->getRepository(Section::class);
@@ -64,7 +64,7 @@ class SectionRepository
         ->setParameter('position', $section->getPosition()+1)
         ->setParameter('article', $section->getArticle())
         ->getQuery();
-        
+
         return $query->getOneOrNullResult()
         ;
     }
@@ -83,7 +83,7 @@ class SectionRepository
         ->setParameter('position', $section->getPosition()-1)
         ->setParameter('article', $section->getArticle())
         ->getQuery();
-        
+
         return $query->getOneOrNullResult()
         ;
     }

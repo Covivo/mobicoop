@@ -65,7 +65,7 @@ class SolidaryMatcher
     public function buildSolidaryMatchingsForTransport(Solidary $solidary, array $results): ?array
     {
         $solidaryMatchings = [];
-        
+
         // We get the previous SolidaryMatchings of this solidary
         $previousMatchings = $this->solidaryMatchingRepository->findSolidaryMatchingTransportOfSolidary($solidary);
 
@@ -125,7 +125,7 @@ class SolidaryMatcher
         $previousMatchings = $this->solidaryMatchingRepository->findSolidaryMatchingCarpoolOfSolidary($solidary);
 
         foreach ($results as $result) {
-            
+
             /**
              * @var Result $result
              */
@@ -185,7 +185,7 @@ class SolidaryMatcher
     {
         $solidaryResult = new SolidaryResult();
         $solidaryResultTransport = new SolidaryResultTransport();
-        
+
         // The volunteer
         $solidaryResultTransport->setVolunteer($solidaryMatching->getSolidaryUser()->getUser()->getGivenName()." ".$solidaryMatching->getSolidaryUser()->getUser()->getFamilyName());
         $solidaryResultTransport->setVolunteerId($solidaryMatching->getSolidaryUser()->getUser()->getId());
@@ -197,7 +197,7 @@ class SolidaryMatcher
                 break;
             }
         }
-        
+
         // Schedule of the volunteer
         $solidaryResultTransport->setSchedule($this->getBuildedSchedule($solidaryMatching->getSolidaryUser()));
 
@@ -220,9 +220,9 @@ class SolidaryMatcher
     {
         $solidaryResult = new SolidaryResult();
         $solidaryResultCarpool = new SolidaryResultCarpool();
-        
+
         // We get the Proposal Offer with all the infos
-        
+
         // The author
         $solidaryResultCarpool->setAuthor($solidaryMatching->getMatching()->getProposalOffer()->getUser()->getGivenName()." ".$solidaryMatching->getMatching()->getProposalOffer()->getUser()->getShortFamilyName());
         $solidaryResultCarpool->setAuthorId($solidaryMatching->getMatching()->getProposalOffer()->getUser()->getId());
@@ -264,7 +264,7 @@ class SolidaryMatcher
         }
 
         $solidaryResult->setSolidaryResultCarpool($solidaryResultCarpool);
-        
+
 
         // We set the source solidaryMatching
         $solidaryResult->setSolidaryMatching($solidaryMatching);

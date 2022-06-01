@@ -37,7 +37,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class GeoRouter
 {
-
     /**
      * Georouter provider
      *
@@ -86,7 +85,7 @@ class GeoRouter
         }
         return $this->router->getDirections($addresses, GeorouterInterface::MODE_SYNC);
     }
-    
+
     /**
      * Get all the routes alternative between two or more addresses, async.
      *

@@ -31,8 +31,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
  */
 class SolidaryAsksListItem
 {
-    const DRIVER_TYPE_VOLUNTEER = 0;
-    const DRIVER_TYPE_CARPOOLER = 1;
+    public const DRIVER_TYPE_VOLUNTEER = 0;
+    public const DRIVER_TYPE_CARPOOLER = 1;
 
     /**
      * @var int The frequency (1 = punctual; 2 = regular).
@@ -63,7 +63,7 @@ class SolidaryAsksListItem
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $schedule;
-    
+
     /**
     * @var string The firstname + familyname of the volunteer/carpooler driver
     * @Groups({"readSolidary","writeSolidary"})
@@ -98,17 +98,17 @@ class SolidaryAsksListItem
     {
         $this->messages = [];
     }
-    
-    
+
+
     public function getFrequency(): ?int
     {
         return $this->frequency;
     }
-    
+
     public function setFrequency(int $frequency): self
     {
         $this->frequency = $frequency;
-        
+
         return $this;
     }
 
@@ -116,23 +116,23 @@ class SolidaryAsksListItem
     {
         return $this->status;
     }
-    
+
     public function setStatus(int $status): self
     {
         $this->status = $status;
-        
+
         return $this;
     }
-    
+
     public function getFromDate(): ?\DateTimeInterface
     {
         return $this->fromDate;
     }
-    
+
     public function setFromDate(\DateTimeInterface $fromDate): self
     {
         $this->fromDate = $fromDate;
-        
+
         return $this;
     }
 
@@ -140,11 +140,11 @@ class SolidaryAsksListItem
     {
         return $this->toDate;
     }
-    
+
     public function setToDate(\DateTimeInterface $toDate): self
     {
         $this->toDate = $toDate;
-        
+
         return $this;
     }
 
@@ -152,11 +152,11 @@ class SolidaryAsksListItem
     {
         return $this->schedule;
     }
-    
+
     public function setSchedule(array $schedule): self
     {
         $this->schedule = $schedule;
-        
+
         return $this;
     }
 
@@ -164,11 +164,11 @@ class SolidaryAsksListItem
     {
         return $this->driver;
     }
-    
+
     public function setDriver(string $driver): self
     {
         $this->driver = $driver;
-        
+
         return $this;
     }
 
@@ -176,11 +176,11 @@ class SolidaryAsksListItem
     {
         return $this->telephone;
     }
-    
+
     public function setTelephone(?string $telephone): self
     {
         $this->telephone = $telephone;
-        
+
         return $this;
     }
 
@@ -188,11 +188,11 @@ class SolidaryAsksListItem
     {
         return $this->driverType;
     }
-    
+
     public function setDriverType(int $driverType): self
     {
         $this->driverType = $driverType;
-        
+
         return $this;
     }
 
@@ -204,7 +204,7 @@ class SolidaryAsksListItem
     public function setSolidarySolutionId(int $solidarySolutionId): self
     {
         $this->solidarySolutionId = $solidarySolutionId;
-        
+
         return $this;
     }
 
@@ -212,11 +212,11 @@ class SolidaryAsksListItem
     {
         return $this->messages;
     }
-    
+
     public function setMessages(?array $messages): self
     {
         $this->messages = $messages;
-        
+
         return $this;
     }
 }

@@ -38,7 +38,7 @@ final class HomeAddressWaypointTerritoryFilter extends AbstractContextAwareFilte
         if (strrpos($value, '/')) {
             $value = substr($value, strrpos($value, '/') + 1);
         }
-        
+
         // $queryBuilder
         //     ->leftJoin('u.addresses', 'homeAddress')
         //     ->leftJoin('u.proposals', 'p')
@@ -46,7 +46,7 @@ final class HomeAddressWaypointTerritoryFilter extends AbstractContextAwareFilte
         //     ->leftJoin('w.address', 'a')
         //     ->join('\App\Geography\Entity\Territory', 'homeAddressWaypointTerritory')
         //     ->andWhere(sprintf('(homeAddressWaypointTerritory.id = %s AND (ST_INTERSECTS(homeAddressWaypointTerritory.geoJsonDetail,a.geoJson)=1) OR (ST_INTERSECTS(homeAddressWaypointTerritory.geoJsonDetail,homeAddress.geoJson)=1 AND homeAddress.home=1))', $value));
-    
+
         $queryBuilder
             ->leftJoin('u.addresses', 'homeAddress')
             ->leftJoin('homeAddress.territories', 't')

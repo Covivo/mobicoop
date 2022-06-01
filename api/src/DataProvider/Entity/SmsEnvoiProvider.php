@@ -32,7 +32,7 @@ class SmsEnvoiProvider implements ProviderInterface
     private const URI ="https://api.smsenvoi.com/";
     private const COLLECTION_RESSOURCE_SMS ="API/v1.0/REST/sms";
     private const COLLECTION_RESSOURCE_AUTH ="API/v1.0/REST/login";
-   
+
     private $collection;
     private $username;
     private $password;

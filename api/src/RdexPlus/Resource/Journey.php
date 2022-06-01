@@ -141,36 +141,36 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Journey
 {
-    const DEFAULT_ID = "999999999999";
+    public const DEFAULT_ID = "999999999999";
 
-    const TYPE_PLANNED = "planned";
-    const TYPE_DYNAMIC = "dynamic";
-    const TYPE_LINE = "line";
-    const VALID_TYPES = [
+    public const TYPE_PLANNED = "planned";
+    public const TYPE_DYNAMIC = "dynamic";
+    public const TYPE_LINE = "line";
+    public const VALID_TYPES = [
         self::TYPE_PLANNED,
         self::TYPE_DYNAMIC,
         self::TYPE_LINE
     ];
 
-    const CARPOOLER_TYPE_DRIVER = "driver";
-    const CARPOOLER_TYPE_PASSENGER = "passenger";
-    const CARPOOLER_TYPE_BOTH = "both";
-    const VALID_CARPOOLER_TYPES = [
+    public const CARPOOLER_TYPE_DRIVER = "driver";
+    public const CARPOOLER_TYPE_PASSENGER = "passenger";
+    public const CARPOOLER_TYPE_BOTH = "both";
+    public const VALID_CARPOOLER_TYPES = [
         self::CARPOOLER_TYPE_DRIVER,
         self::CARPOOLER_TYPE_PASSENGER,
         self::CARPOOLER_TYPE_BOTH
     ];
 
-    const FREQUENCY_PUNCTUAL = "punctual";
-    const FREQUENCY_REGULAR = "regular";
-    const FREQUENCY_BOTH = "both";
-    const VALID_FREQUENCIES = [
+    public const FREQUENCY_PUNCTUAL = "punctual";
+    public const FREQUENCY_REGULAR = "regular";
+    public const FREQUENCY_BOTH = "both";
+    public const VALID_FREQUENCIES = [
         self::FREQUENCY_PUNCTUAL,
         self::FREQUENCY_REGULAR,
         self::FREQUENCY_BOTH
     ];
 
-    const TIME_MARGIN_DEFAULT = 900;
+    public const TIME_MARGIN_DEFAULT = 900;
 
     /**
      * @var string Journey's id
@@ -207,7 +207,7 @@ class Journey
      * @Groups({"rdexPlusRead"})
      */
     private $operatorUrl;
-    
+
     /**
      * @var string Journey's carpooler's type (driver, passenger, both)
      * On GET : it's the role the poster is looking for
@@ -246,7 +246,7 @@ class Journey
      * @Groups({"rdexPlusRead","rdexPlusWrite"})
      */
     private $from;
-    
+
     /**
      * @var Geopoint Journey's destination
      * @Assert\NotBlank
@@ -275,7 +275,7 @@ class Journey
      * @Groups({"rdexPlusRead","rdexPlusWrite"})
      */
     private $numberOfWaypoints;
-    
+
     /**
      * @var Waypoint[] Journey's waypoints (required if numberOfWaypoints>0)
      *
@@ -334,7 +334,7 @@ class Journey
      * @Groups({"rdexPlusRead","rdexPlusWrite"})
      */
     private $return;
-    
+
     public function __construct(int $id = null)
     {
         if (is_null($id)) {
@@ -439,7 +439,7 @@ class Journey
 
         return $this;
     }
-    
+
     public function getRequestedSeats(): ?int
     {
         return $this->requestedSeats;
@@ -463,7 +463,7 @@ class Journey
 
         return $this;
     }
-    
+
     public function getTo(): ?Geopoint
     {
         return $this->to;
@@ -487,7 +487,7 @@ class Journey
 
         return $this;
     }
-    
+
     public function getDistance(): ?int
     {
         return $this->distance;
@@ -499,7 +499,7 @@ class Journey
 
         return $this;
     }
-    
+
     public function getNumberOfWaypoints(): ?int
     {
         return $this->numberOfWaypoints;
@@ -511,7 +511,7 @@ class Journey
 
         return $this;
     }
-    
+
     public function getWaypoints(): ?array
     {
         return $this->waypoints;
@@ -523,7 +523,7 @@ class Journey
 
         return $this;
     }
-    
+
     public function getPrice(): ?Price
     {
         return $this->price;
@@ -595,7 +595,7 @@ class Journey
 
         return $this;
     }
-    
+
     public function getReturn(): ?WaySchedule
     {
         return $this->return;

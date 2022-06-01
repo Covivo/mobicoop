@@ -47,7 +47,7 @@ final class ExternalJourneyProviderCollectionDataProvider implements CollectionD
     {
         $this->externalJourneyManager = $externalJourneyManager;
     }
-    
+
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
         return ExternalJourneyProvider::class === $resourceClass;

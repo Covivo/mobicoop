@@ -39,14 +39,14 @@ class SolidarySubscriber implements EventSubscriberInterface
     {
         $this->solidaryTransportMatcher = $solidaryTransportMatcher;
     }
-    
+
     public static function getSubscribedEvents(): array
     {
         return [
             VolunteerStatusChangedEvent::NAME => 'onVolunteerStatusChanged',
         ];
     }
-        
+
     /**
      * Executed when a volunteer status is changed within a Structure.
      *

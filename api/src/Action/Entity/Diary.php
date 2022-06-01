@@ -86,7 +86,7 @@ class Diary
      * @Groups({"read","write","readUser"})
      */
     private $progression;
-        
+
     /**
      * @var User The user related with the action.
      *
@@ -157,11 +157,11 @@ class Diary
     {
         return $this->action;
     }
-    
+
     public function setAction(?Action $action): self
     {
         $this->action = $action;
-        
+
         return $this;
     }
 
@@ -169,11 +169,11 @@ class Diary
     {
         return $this->comment;
     }
-    
+
     public function setComment(?string $comment): self
     {
         $this->comment = $comment;
-        
+
         return $this;
     }
 
@@ -188,7 +188,7 @@ class Diary
 
         return $this;
     }
-    
+
     public function getUser(): ?User
     {
         return $this->user;
@@ -197,7 +197,7 @@ class Diary
     public function setUser(?User $user): self
     {
         $this->user = $user;
-        
+
         return $this;
     }
 
@@ -209,7 +209,7 @@ class Diary
     public function setAuthor(?User $author): self
     {
         $this->author = $author;
-        
+
         return $this;
     }
 
@@ -217,11 +217,11 @@ class Diary
     {
         return $this->solidary;
     }
-    
+
     public function setSolidary(?Solidary $solidary): self
     {
         $this->solidary = $solidary;
-        
+
         return $this;
     }
 
@@ -229,11 +229,11 @@ class Diary
     {
         return $this->solidarySolution;
     }
-    
+
     public function setSolidarySolution(?SolidarySolution $solidarySolution): self
     {
         $this->solidarySolution = $solidarySolution;
-        
+
         return $this;
     }
 

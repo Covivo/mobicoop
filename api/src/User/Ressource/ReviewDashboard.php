@@ -59,7 +59,7 @@ use App\User\Ressource\Review;
  */
 class ReviewDashboard
 {
-    const DEFAULT_ID = 999999999999;
+    public const DEFAULT_ID = 999999999999;
 
     /**
      * @var int The id of this Review.
@@ -74,7 +74,7 @@ class ReviewDashboard
      * @Groups({"read","readReview"})
      */
     private $reviewActive;
-    
+
     /**
      * @var Review[] Given reviews
      *
@@ -95,7 +95,7 @@ class ReviewDashboard
      * @Groups({"readReview"})
      */
     private $reviewsToGive;
-   
+
     public function __construct(int $id = null)
     {
         $this->id = self::DEFAULT_ID;
@@ -116,7 +116,7 @@ class ReviewDashboard
     public function setId(int $id): self
     {
         $this->id = $id;
-        
+
         return $this;
     }
 
@@ -128,7 +128,7 @@ class ReviewDashboard
     public function setReviewActive(bool $reviewActive): self
     {
         $this->reviewActive = $reviewActive;
-        
+
         return $this;
     }
 
@@ -140,7 +140,7 @@ class ReviewDashboard
     public function setGivenReviews(?array $givenReviews): self
     {
         $this->givenReviews = $givenReviews;
-        
+
         return $this;
     }
 
@@ -159,7 +159,7 @@ class ReviewDashboard
     public function setReceivedReviews(?array $receivedReviews): self
     {
         $this->receivedReviews = $receivedReviews;
-        
+
         return $this;
     }
 
@@ -178,7 +178,7 @@ class ReviewDashboard
     public function setReviewsToGive(?array $reviewsToGive): self
     {
         $this->reviewsToGive = $reviewsToGive;
-        
+
         return $this;
     }
 

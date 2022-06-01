@@ -65,14 +65,14 @@ use App\Communication\Ressource\ContactType;
  */
 class Contact
 {
-    const DEFAULT_ID = 999999999999;
+    public const DEFAULT_ID = 999999999999;
 
-    const SUPPORT_CONTACT = 0;
-    const SIMPLE_CONTACT = 1;
+    public const SUPPORT_CONTACT = 0;
+    public const SIMPLE_CONTACT = 1;
 
-    const SEND_TO = 'To';
-    const SEND_CC = 'Cc';
-    const SEND_BCC = 'Bcc';
+    public const SEND_TO = 'To';
+    public const SEND_CC = 'Cc';
+    public const SEND_BCC = 'Bcc';
 
     /**
      * @var int The id of this contact.

@@ -56,7 +56,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  */
 class PaymentWeek
 {
-    const DEFAULT_ID = 999999999999;
+    public const DEFAULT_ID = 999999999999;
 
     /**
      * @var int The id of this payment week.

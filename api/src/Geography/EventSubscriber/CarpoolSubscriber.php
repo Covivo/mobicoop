@@ -30,24 +30,24 @@ use Psr\Log\LoggerInterface;
 
 class CarpoolSubscriber implements EventSubscriberInterface
 {
-    const FILENAME = "matching_";
-    
+    public const FILENAME = "matching_";
+
     private $logger;
     private $directory;
-    
+
     public function __construct(LoggerInterface $logger, string $directory)
     {
         $this->logger = $logger;
         $this->directory = $directory;
     }
-    
+
     public static function getSubscribedEvents(): array
     {
         return [
             MatchingNewEvent::NAME => 'onNewMatching',
         ];
     }
-        
+
     /**
      * Executed when a new matching is discovered
      *

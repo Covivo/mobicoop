@@ -38,7 +38,7 @@ final class DirectionTerritoryFilter extends AbstractContextAwareFilter
         if (strrpos($value, '/')) {
             $value = substr($value, strrpos($value, '/') + 1);
         }
-        
+
         // $queryBuilder
         //     ->leftJoin('u.proposals', 'p')
         //     ->leftJoin('p.criteria', 'c')

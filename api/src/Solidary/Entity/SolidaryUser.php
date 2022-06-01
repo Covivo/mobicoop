@@ -80,8 +80,8 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class SolidaryUser
 {
-    const DEFAULT_MAX_DISTANCE = 20000; // meters
-    const AUTHORIZED_GENERIC_FILTERS = ['q'];
+    public const DEFAULT_MAX_DISTANCE = 20000; // meters
+    public const AUTHORIZED_GENERIC_FILTERS = ['q'];
 
     /**
      * @var int The id of this solidary user.
@@ -117,7 +117,7 @@ class SolidaryUser
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $mMinTime;
-    
+
     /**
      * @var \DateTimeInterface Morning max time.
      *
@@ -125,7 +125,7 @@ class SolidaryUser
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $mMaxTime;
-    
+
     /**
      * @var \DateTimeInterface Afternoon min time.
      *
@@ -133,7 +133,7 @@ class SolidaryUser
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $aMinTime;
-    
+
     /**
      * @var \DateTimeInterface Afternoon max time.
      *
@@ -141,7 +141,7 @@ class SolidaryUser
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $aMaxTime;
-    
+
     /**
      * @var \DateTimeInterface Evening min time.
      *
@@ -149,7 +149,7 @@ class SolidaryUser
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $eMinTime;
-    
+
     /**
      * @var \DateTimeInterface Evening max time.
      *
@@ -157,7 +157,7 @@ class SolidaryUser
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $eMaxTime;
-    
+
     /**
      * @var bool Available on monday morning.
      *
@@ -165,7 +165,7 @@ class SolidaryUser
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $mMon;
-    
+
     /**
      * @var bool Available on monday afternoon.
      *
@@ -173,7 +173,7 @@ class SolidaryUser
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $aMon;
-    
+
     /**
      * @var bool Available on monday evening.
      *
@@ -181,7 +181,7 @@ class SolidaryUser
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $eMon;
-    
+
     /**
      * @var bool Available on tuesday morning.
      *
@@ -189,7 +189,7 @@ class SolidaryUser
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $mTue;
-    
+
     /**
      * @var bool Available on tuesday afternoon.
      *
@@ -197,7 +197,7 @@ class SolidaryUser
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $aTue;
-    
+
     /**
      * @var bool Available on tuesday evening.
      *
@@ -205,7 +205,7 @@ class SolidaryUser
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $eTue;
-    
+
     /**
      * @var bool Available on wednesday morning.
      *
@@ -213,7 +213,7 @@ class SolidaryUser
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $mWed;
-    
+
     /**
      * @var bool Available on wednesday afternoon.
      *
@@ -221,7 +221,7 @@ class SolidaryUser
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $aWed;
-    
+
     /**
      * @var bool Available on wednesday evening.
      *
@@ -229,7 +229,7 @@ class SolidaryUser
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $eWed;
-    
+
     /**
      * @var bool Available on thursday morning.
      *
@@ -237,7 +237,7 @@ class SolidaryUser
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $mThu;
-    
+
     /**
      * @var bool Available on thursday afternoon.
      *
@@ -245,7 +245,7 @@ class SolidaryUser
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $aThu;
-    
+
     /**
      * @var bool Available on thursday evening.
      *
@@ -253,7 +253,7 @@ class SolidaryUser
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $eThu;
-    
+
     /**
      * @var bool Available on friday morning.
      *
@@ -261,7 +261,7 @@ class SolidaryUser
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $mFri;
-    
+
     /**
      * @var bool Available on friday afternoon.
      *
@@ -269,7 +269,7 @@ class SolidaryUser
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $aFri;
-    
+
     /**
      * @var bool Available on friday evening.
      *
@@ -277,7 +277,7 @@ class SolidaryUser
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $eFri;
-    
+
     /**
      * @var bool Available on saturday morning.
      *
@@ -285,7 +285,7 @@ class SolidaryUser
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $mSat;
-    
+
     /**
      * @var bool Available on saturday afternoon.
      *
@@ -293,7 +293,7 @@ class SolidaryUser
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $aSat;
-    
+
     /**
      * @var bool Available on saturday evening.
      *
@@ -301,7 +301,7 @@ class SolidaryUser
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $eSat;
-    
+
     /**
      * @var bool Available on sunday morning.
      *
@@ -309,7 +309,7 @@ class SolidaryUser
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $mSun;
-    
+
     /**
      * @var bool Available on sunday afternoon.
      *
@@ -317,7 +317,7 @@ class SolidaryUser
      * @Groups({"readSolidary","writeSolidary"})
      */
     private $aSun;
-    
+
     /**
      * @var bool Available on sunday evening.
      *
@@ -425,16 +425,16 @@ class SolidaryUser
         $this->solidaryMatchings = new ArrayCollection();
         $this->setMaxDistance(self::DEFAULT_MAX_DISTANCE);
     }
-    
+
     public function getId(): ?int
     {
         return $this->id;
     }
-    
+
     public function setId(int $id): self
     {
         $this->id = $id;
-        
+
         return $this;
     }
 
@@ -473,7 +473,7 @@ class SolidaryUser
 
         return $this;
     }
-    
+
     public function getMMaxTime(): ?\DateTimeInterface
     {
         return $this->mMaxTime;
@@ -485,7 +485,7 @@ class SolidaryUser
 
         return $this;
     }
-    
+
     public function getAMinTime(): ?\DateTimeInterface
     {
         return $this->aMinTime;
@@ -497,7 +497,7 @@ class SolidaryUser
 
         return $this;
     }
-    
+
     public function getAMaxTime(): ?\DateTimeInterface
     {
         return $this->aMaxTime;
@@ -509,7 +509,7 @@ class SolidaryUser
 
         return $this;
     }
-    
+
     public function getEMinTime(): ?\DateTimeInterface
     {
         return $this->eMinTime;
@@ -521,7 +521,7 @@ class SolidaryUser
 
         return $this;
     }
-    
+
     public function getEMaxTime(): ?\DateTimeInterface
     {
         return $this->eMaxTime;
@@ -533,12 +533,12 @@ class SolidaryUser
 
         return $this;
     }
-    
+
     public function hasMMon(): ?bool
     {
         return $this->mMon;
     }
-    
+
     public function setMMon(bool $mMon): self
     {
         $this->mMon = $mMon;
@@ -557,223 +557,223 @@ class SolidaryUser
 
         return $this;
     }
-    
+
     public function hasEMon(): ?bool
     {
         return $this->eMon;
     }
-    
+
     public function setEMon(bool $eMon): self
     {
         $this->eMon = $eMon;
 
         return $this;
     }
-    
+
     public function hasMTue(): ?bool
     {
         return $this->mTue;
     }
-    
+
     public function setMTue(bool $mTue): self
     {
         $this->mTue = $mTue;
 
         return $this;
     }
-    
+
     public function hasATue(): ?bool
     {
         return $this->aTue;
     }
-   
+
     public function setATue(bool $aTue): self
     {
         $this->aTue = $aTue;
 
         return $this;
     }
-    
+
     public function hasETue(): ?bool
     {
         return $this->eTue;
     }
-   
+
     public function setETue(bool $eTue): self
     {
         $this->eTue = $eTue;
 
         return $this;
     }
-    
+
     public function hasMWed(): ?bool
     {
         return $this->mWed;
     }
-   
+
     public function setMWed(bool $mWed): self
     {
         $this->mWed = $mWed;
 
         return $this;
     }
-    
+
     public function hasAWed(): ?bool
     {
         return $this->aWed;
     }
-   
+
     public function setAWed(bool $aWed): self
     {
         $this->aWed = $aWed;
 
         return $this;
     }
-    
+
     public function hasEWed(): ?bool
     {
         return $this->eWed;
     }
-   
+
     public function setEWed(bool $eWed): self
     {
         $this->eWed = $eWed;
 
         return $this;
     }
-    
+
     public function hasMThu(): ?bool
     {
         return $this->mThu;
     }
-   
+
     public function setMThu(bool $mThu): self
     {
         $this->mThu = $mThu;
 
         return $this;
     }
-    
+
     public function hasAThu(): ?bool
     {
         return $this->aThu;
     }
-   
+
     public function setAThu(bool $aThu): self
     {
         $this->aThu = $aThu;
 
         return $this;
     }
-    
+
     public function hasEThu(): ?bool
     {
         return $this->eThu;
     }
-   
+
     public function setEThu(bool $eThu): self
     {
         $this->eThu = $eThu;
 
         return $this;
     }
-    
+
     public function hasMFri(): ?bool
     {
         return $this->mFri;
     }
-   
+
     public function setMFri(bool $mFri): self
     {
         $this->mFri = $mFri;
 
         return $this;
     }
-    
+
     public function hasAFri(): ?bool
     {
         return $this->aFri;
     }
-   
+
     public function setAFri(bool $aFri): self
     {
         $this->aFri = $aFri;
 
         return $this;
     }
-    
+
     public function hasEFri(): ?bool
     {
         return $this->eFri;
     }
-   
+
     public function setEFri(bool $eFri): self
     {
         $this->eFri = $eFri;
 
         return $this;
     }
-    
+
     public function hasMSat(): ?bool
     {
         return $this->mSat;
     }
-   
+
     public function setMSat(bool $mSat): self
     {
         $this->mSat = $mSat;
 
         return $this;
     }
-    
+
     public function hasASat(): ?bool
     {
         return $this->aSat;
     }
-   
+
     public function setASat(bool $aSat): self
     {
         $this->aSat = $aSat;
 
         return $this;
     }
-    
+
     public function hasESat(): ?bool
     {
         return $this->eSat;
     }
-   
+
     public function setESat(bool $eSat): self
     {
         $this->eSat = $eSat;
 
         return $this;
     }
-    
+
     public function hasMSun(): ?bool
     {
         return $this->mSun;
     }
-   
+
     public function setMSun(bool $mSun): self
     {
         $this->mSun = $mSun;
 
         return $this;
     }
-    
+
     public function hasASun(): ?bool
     {
         return $this->aSun;
     }
-   
+
     public function setASun(bool $aSun): self
     {
         $this->aSun = $aSun;
 
         return $this;
     }
-    
+
     public function hasESun(): ?bool
     {
         return $this->eSun;
@@ -839,11 +839,11 @@ class SolidaryUser
     {
         return $this->comment;
     }
-    
+
     public function setComment(?string $comment): self
     {
         $this->comment = $comment;
-        
+
         return $this;
     }
 
@@ -902,22 +902,22 @@ class SolidaryUser
     {
         return $this->solidaryMatchings->getValues();
     }
-    
+
     public function addSolidaryMatching(SolidaryMatching $solidaryMatching): self
     {
         if (!$this->solidaryMatchings->contains($solidaryMatching)) {
             $this->solidaryMatchings[] = $solidaryMatching;
         }
-        
+
         return $this;
     }
-    
+
     public function removeSolidaryMatching(SolidarySolution $solidaryMatching): self
     {
         if ($this->solidaryMatchings->contains($solidaryMatching)) {
             $this->solidaryMatchings->removeElement($solidaryMatching);
         }
-        
+
         return $this;
     }
 
@@ -946,7 +946,7 @@ class SolidaryUser
     }
 
     // DOCTRINE EVENTS
-    
+
     /**
      * Creation date.
      *

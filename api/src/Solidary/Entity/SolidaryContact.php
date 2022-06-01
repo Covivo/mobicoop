@@ -70,8 +70,8 @@ use App\Communication\Interfaces\MessagerInterface;
  */
 class SolidaryContact implements MessagerInterface
 {
-    const DEFAULT_ID = 999999999999;
-    
+    public const DEFAULT_ID = 999999999999;
+
     /**
      * @var int The id of this subject.
      *
@@ -117,16 +117,16 @@ class SolidaryContact implements MessagerInterface
         $this->id = self::DEFAULT_ID;
         $this->media = new ArrayCollection();
     }
-    
+
     public function getId(): ?int
     {
         return $this->id;
     }
-    
+
     public function setId(int $id): self
     {
         $this->id = $id;
-        
+
         return $this;
     }
 
@@ -134,11 +134,11 @@ class SolidaryContact implements MessagerInterface
     {
         return $this->solidarySolution;
     }
-    
+
     public function setSolidarySolution(SolidarySolution $solidarySolution): self
     {
         $this->solidarySolution = $solidarySolution;
-        
+
         return $this;
     }
 
@@ -146,11 +146,11 @@ class SolidaryContact implements MessagerInterface
     {
         return $this->content;
     }
-    
+
     public function setContent(string $content): self
     {
         $this->content = $content;
-        
+
         return $this;
     }
 
@@ -181,23 +181,23 @@ class SolidaryContact implements MessagerInterface
     {
         return $this->solidaryAsk;
     }
-    
+
     public function getMessage(): ?Message
     {
         return $this->message;
     }
-    
+
     public function setMessage(Message $message): self
     {
         $this->message = $message;
-        
+
         return $this;
     }
 
     public function setSolidaryAsk(SolidaryAsk $solidaryAsk): self
     {
         $this->solidaryAsk = $solidaryAsk;
-        
+
         return $this;
     }
 }

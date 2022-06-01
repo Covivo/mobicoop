@@ -33,17 +33,17 @@ use App\User\Entity\User;
  */
 class CarpoolExport
 {
-    const DEFAULT_ID = 999999999999;
+    public const DEFAULT_ID = 999999999999;
 
-    const ROLE_DRIVER = 1;
-    const ROLE_PASSENGER = 2;
+    public const ROLE_DRIVER = 1;
+    public const ROLE_PASSENGER = 2;
 
-    const MODE_ONLINE = 1;
-    const MODE_DIRECT = 2;
+    public const MODE_ONLINE = 1;
+    public const MODE_DIRECT = 2;
 
-    const CERTIFICATION_A = "A";
-    const CERTIFICATION_B = "B";
-    const CERTIFICATION_C = "C";
+    public const CERTIFICATION_A = "A";
+    public const CERTIFICATION_B = "B";
+    public const CERTIFICATION_C = "C";
 
     /**
      * @var int The id of this carpoolExport item.
@@ -90,8 +90,8 @@ class CarpoolExport
      * @var string|null The Certification of the payment for the carpool.
      */
     private $certification;
-   
-   
+
+
 
     public function __construct($id = null)
     {
@@ -177,7 +177,7 @@ class CarpoolExport
     {
         return $this->amount;
     }
-    
+
     public function setAmount(?string $amount)
     {
         $this->amount = $amount;
@@ -187,7 +187,7 @@ class CarpoolExport
     {
         return $this->mode;
     }
-    
+
     public function setMode(?int $mode)
     {
         $this->mode = $mode;
@@ -197,7 +197,7 @@ class CarpoolExport
     {
         return $this->certification;
     }
-    
+
     public function setCertification(?string $certification)
     {
         $this->certification = $certification;

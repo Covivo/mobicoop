@@ -43,28 +43,28 @@ use Http\Client\HttpClient;
  */
 final class Addok extends AbstractHttpProvider implements Provider
 {
-    const TYPE_HOUSENUMBER = 'housenumber';
-    const TYPE_STREET = 'street';
-    const TYPE_LOCALITY = 'locality';
-    const TYPE_MUNICIPALITY = 'municipality';
-    const COUNTRY = 'France';
-    const COUNTRY_CODE = 'FR';
-    const MIN_SCORE = 0.7;
+    public const TYPE_HOUSENUMBER = 'housenumber';
+    public const TYPE_STREET = 'street';
+    public const TYPE_LOCALITY = 'locality';
+    public const TYPE_MUNICIPALITY = 'municipality';
+    public const COUNTRY = 'France';
+    public const COUNTRY_CODE = 'FR';
+    public const MIN_SCORE = 0.7;
 
     /**
      * @var string
      */
-    const GEOCODE_ENDPOINT_URL = '/search/?q=%s&limit=%d&autocomplete=0';
+    public const GEOCODE_ENDPOINT_URL = '/search/?q=%s&limit=%d&autocomplete=0';
 
     /**
      * @var string
      */
-    const GEOCODE_ENDPOINT_PRIORITIZATION = '&lat=%f&lon=%f';
+    public const GEOCODE_ENDPOINT_PRIORITIZATION = '&lat=%f&lon=%f';
 
     /**
      * @var string
      */
-    const REVERSE_ENDPOINT_URL = '/reverse/?lat=%F&lon=%F&size=%f';
+    public const REVERSE_ENDPOINT_URL = '/reverse/?lat=%F&lon=%F&size=%f';
 
     /**
      * @var string

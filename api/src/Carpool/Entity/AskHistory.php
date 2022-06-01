@@ -156,7 +156,7 @@ class AskHistory implements MessagerInterface
     {
         $this->notifieds = new ArrayCollection();
     }
-    
+
     public function getId(): ?int
     {
         return $this->id;
@@ -238,17 +238,17 @@ class AskHistory implements MessagerInterface
     {
         return $this->notifieds->getValues();
     }
-    
+
     public function addNotified(Notified $notified): self
     {
         if (!$this->notifieds->contains($notified)) {
             $this->notifieds[] = $notified;
             $notified->setAskHistory($this);
         }
-        
+
         return $this;
     }
-    
+
     public function removeNotified(Notified $notified): self
     {
         if ($this->notifieds->contains($notified)) {
@@ -258,12 +258,12 @@ class AskHistory implements MessagerInterface
                 $notified->setAskHistory(null);
             }
         }
-        
+
         return $this;
     }
-    
+
     // DOCTRINE EVENTS
-    
+
     /**
      * Creation date.
      *

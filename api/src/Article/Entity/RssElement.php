@@ -20,7 +20,6 @@
  *    LICENSE
  **************************/
 
-
 namespace App\Article\Entity;
 
 /**
@@ -72,7 +71,7 @@ class RssElement
     public function setId(?string $id): self
     {
         $this->id = $id;
-        
+
         return $this;
     }
 
@@ -84,7 +83,7 @@ class RssElement
     public function setTitle(?string $title): self
     {
         $this->title = $title;
-        
+
         return $this;
     }
 
@@ -96,7 +95,7 @@ class RssElement
     public function setDescription(?string $description): self
     {
         $this->description = $description;
-        
+
         return $this;
     }
 
@@ -108,7 +107,7 @@ class RssElement
     public function setImage(?string $image): self
     {
         $this->image = $image;
-        
+
         return $this;
     }
 
@@ -120,7 +119,7 @@ class RssElement
     public function setIframe(?Iframe $iframe): self
     {
         $this->iframe = $iframe;
-        
+
         return $this;
     }
 
@@ -132,7 +131,7 @@ class RssElement
     public function setPubDate(?string $pubDate): self
     {
         $this->pubDate = $pubDate;
-        
+
         return $this;
     }
 
@@ -144,7 +143,7 @@ class RssElement
     public function setLink(?string $link): self
     {
         $this->link = $link;
-        
+
         return $this;
     }
 }

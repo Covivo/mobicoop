@@ -80,27 +80,27 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  */
 class AuthItem
 {
-    const TYPE_ROLE = 2;
-    const TYPE_ITEM = 1;
+    public const TYPE_ROLE = 2;
+    public const TYPE_ITEM = 1;
 
-    const SPECIAL_ITEMS = ["manage"];
+    public const SPECIAL_ITEMS = ["manage"];
 
-    const ROLE_SUPER_ADMIN = 1;
-    const ROLE_ADMIN = 2;
-    const ROLE_USER_REGISTERED_FULL = 3;
-    const ROLE_USER_REGISTERED_MINIMAL = 4;
-    const ROLE_USER = 5;
-    const ROLE_MASS_MATCH = 6;
-    const ROLE_COMMUNITY_MANAGER = 7;
-    const ROLE_COMMUNITY_MANAGER_PUBLIC = 8;
-    const ROLE_COMMUNITY_MANAGER_PRIVATE = 9;
-    const ROLE_SOLIDARY_MANAGER = 10;
-    const ROLE_SOLIDARY_VOLUNTEER = 11;
-    const ROLE_SOLIDARY_BENEFICIARY = 12;
-    const ROLE_COMMUNICATION_MANAGER = 13;
-    const ROLE_SOLIDARY_VOLUNTEER_CANDIDATE = 171;
-    const ROLE_SOLIDARY_BENEFICIARY_CANDIDATE = 172;
-    
+    public const ROLE_SUPER_ADMIN = 1;
+    public const ROLE_ADMIN = 2;
+    public const ROLE_USER_REGISTERED_FULL = 3;
+    public const ROLE_USER_REGISTERED_MINIMAL = 4;
+    public const ROLE_USER = 5;
+    public const ROLE_MASS_MATCH = 6;
+    public const ROLE_COMMUNITY_MANAGER = 7;
+    public const ROLE_COMMUNITY_MANAGER_PUBLIC = 8;
+    public const ROLE_COMMUNITY_MANAGER_PRIVATE = 9;
+    public const ROLE_SOLIDARY_MANAGER = 10;
+    public const ROLE_SOLIDARY_VOLUNTEER = 11;
+    public const ROLE_SOLIDARY_BENEFICIARY = 12;
+    public const ROLE_COMMUNICATION_MANAGER = 13;
+    public const ROLE_SOLIDARY_VOLUNTEER_CANDIDATE = 171;
+    public const ROLE_SOLIDARY_BENEFICIARY_CANDIDATE = 172;
+
     /**
      * @var int The id of this item.
      *
@@ -118,7 +118,7 @@ class AuthItem
      * @Groups({"authRead","authWrite"})
      */
     private $type;
-            
+
     /**
      * @var string The name of the item.
      *
@@ -168,7 +168,7 @@ class AuthItem
         $this->items = new ArrayCollection();
         $this->parents = new ArrayCollection();
     }
-    
+
     public function getId(): ?int
     {
         return $this->id;
@@ -182,19 +182,19 @@ class AuthItem
     public function setType(int $type): self
     {
         $this->type = $type;
-        
+
         return $this;
     }
-            
+
     public function getName(): ?string
     {
         return $this->name;
     }
-    
+
     public function setName(?string $name): self
     {
         $this->name = $name;
-        
+
         return $this;
     }
 
@@ -202,11 +202,11 @@ class AuthItem
     {
         return $this->description;
     }
-    
+
     public function setDescription(?string $description): self
     {
         $this->description = $description;
-        
+
         return $this;
     }
 
@@ -214,11 +214,11 @@ class AuthItem
     {
         return $this->authRule;
     }
-    
+
     public function setAuthRule(?AuthRule $authRule): self
     {
         $this->authRule = $authRule;
-        
+
         return $this;
     }
 
@@ -226,22 +226,22 @@ class AuthItem
     {
         return $this->items->getValues();
     }
-    
+
     public function addItem(AuthItem $item): self
     {
         if (!$this->items->contains($item)) {
             $this->items[] = $item;
         }
-        
+
         return $this;
     }
-    
+
     public function removeItem(AuthItem $item): self
     {
         if ($this->items->contains($item)) {
             $this->items->removeElement($item);
         }
-        
+
         return $this;
     }
 
@@ -249,22 +249,22 @@ class AuthItem
     {
         return $this->parents->getValues();
     }
-    
+
     public function addParent(AuthItem $parent): self
     {
         if (!$this->parents->contains($parent)) {
             $this->parents[] = $parent;
         }
-        
+
         return $this;
     }
-    
+
     public function removeParent(AuthItem $parent): self
     {
         if ($this->parents->contains($parent)) {
             $this->parents->removeElement($parent);
         }
-        
+
         return $this;
     }
 }

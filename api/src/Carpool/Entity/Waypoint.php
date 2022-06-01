@@ -46,10 +46,10 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Waypoint
 {
-    const DEFAULT_ID = 999999999999;
+    public const DEFAULT_ID = 999999999999;
 
-    const ROLE_DRIVER = 1;
-    const ROLE_PASSENGER = 2;
+    public const ROLE_DRIVER = 1;
+    public const ROLE_PASSENGER = 2;
 
     /**
      * @var int The id of this point.
@@ -102,7 +102,7 @@ class Waypoint
      * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private $proposal;
-    
+
     /**
      * @var Matching The matching that created the point.
      *
@@ -110,7 +110,7 @@ class Waypoint
      * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private $matching;
-    
+
     /**
      * @var Ask The ask that created the point.
      *
@@ -118,7 +118,7 @@ class Waypoint
      * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private $ask;
-    
+
     /**
      * @var Address The address of the point.
      *
@@ -159,7 +159,7 @@ class Waypoint
      * @Groups({"read"})
      */
     private $role;
-    
+
     public function __construct()
     {
         $this->id = self::DEFAULT_ID;
@@ -241,28 +241,28 @@ class Waypoint
 
         return $this;
     }
-    
+
     public function getMatching(): ?Matching
     {
         return $this->matching;
     }
-    
+
     public function setMatching(?Matching $matching): self
     {
         $this->matching = $matching;
-        
+
         return $this;
     }
-    
+
     public function getAsk(): ?Ask
     {
         return $this->ask;
     }
-    
+
     public function setAsk(?Ask $ask): self
     {
         $this->ask = $ask;
-        
+
         return $this;
     }
 
@@ -331,7 +331,7 @@ class Waypoint
     }
 
     // DOCTRINE EVENTS
-    
+
     /**
      * Creation date.
      *

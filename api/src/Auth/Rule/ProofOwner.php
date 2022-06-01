@@ -39,7 +39,7 @@ class ProofOwner implements AuthRuleInterface
         if (!isset($params['proof'])) {
             return false;
         }
-        
+
         /**
          * @var Proof $proof
          */

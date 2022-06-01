@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace DoctrineMigrations;
 
@@ -15,8 +17,8 @@ final class Version20191030113300 extends AbstractMigration
     {
         $this->addSql('UPDATE `notification` SET position=2 WHERE ID=30;');
     }
-    
-    public function down(Schema $schema) : void
+
+    public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');

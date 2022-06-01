@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace DoctrineMigrations;
 
@@ -10,7 +12,7 @@ use Doctrine\Migrations\AbstractMigration;
  */
 final class Version20201102095500 extends AbstractMigration
 {
-    public function up(Schema $schema) : void
+    public function up(Schema $schema): void
     {
         $this->addSql('DELETE FROM `auth_item_child` where `parent_id` = 8 and `child_id` = 105;');
         $this->addSql('DELETE FROM `auth_item_child` where `parent_id` = 8 and `child_id` = 110;');
@@ -25,7 +27,7 @@ final class Version20201102095500 extends AbstractMigration
         ');
     }
 
-    public function down(Schema $schema) : void
+    public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');

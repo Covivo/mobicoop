@@ -33,8 +33,8 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class MyAdVoter extends Voter
 {
-    const MY_AD_LIST_SELF = 'my_ad_list_self';
-    
+    public const MY_AD_LIST_SELF = 'my_ad_list_self';
+
     private $request;
     private $authManager;
     private $myAdManager;

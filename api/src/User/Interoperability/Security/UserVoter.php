@@ -33,10 +33,10 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 class UserVoter extends Voter
 {
-    const USER_CREATE = 'interop_user_create';
-    const USER_READ = 'interop_user_read';
-    const USER_UPDATE = 'interop_user_update';
-    
+    public const USER_CREATE = 'interop_user_create';
+    public const USER_READ = 'interop_user_read';
+    public const USER_UPDATE = 'interop_user_update';
+
     private $authManager;
     private $userManager;
 
@@ -56,7 +56,7 @@ class UserVoter extends Voter
             ])) {
             return false;
         }
-      
+
         // only vote on User objects inside this voter
         if (!in_array($attribute, [
             self::USER_CREATE,

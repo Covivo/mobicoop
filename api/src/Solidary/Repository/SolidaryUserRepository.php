@@ -35,16 +35,16 @@ use Doctrine\ORM\EntityRepository;
 */
 class SolidaryUserRepository
 {
-    const USE_DAY_RESTRICTION = true; // Restriction by the time range slot by slot (m,a,e) of a SolidaryVolunteer in matching
-    const USE_TIME_RESTRICTION = true; // Restriction by the time range slot by slot (m,a,e) of a SolidaryVolunteer in matching
-    const USE_GEOGRAPHIC_RESTRICTION = true; // Restriction by the maxDistance of a SolidaryVolunteer in matching
+    public const USE_DAY_RESTRICTION = true; // Restriction by the time range slot by slot (m,a,e) of a SolidaryVolunteer in matching
+    public const USE_TIME_RESTRICTION = true; // Restriction by the time range slot by slot (m,a,e) of a SolidaryVolunteer in matching
+    public const USE_GEOGRAPHIC_RESTRICTION = true; // Restriction by the maxDistance of a SolidaryVolunteer in matching
 
 
     /**
      * @var EntityRepository
      */
     private $repository;
-    
+
     private $entityManager;
     private $solidaryMatcher;
 
@@ -253,10 +253,10 @@ class SolidaryUserRepository
             $sqlDistance = '(6378000 * acos(cos(radians(' . $address->getLatitude() . ')) * cos(radians(a.latitude)) * cos(radians(a.longitude) - radians(' . $address->getLongitude() . ')) + sin(radians(' . $address->getLatitude() . ')) * sin(radians(a.latitude))))';
             $query->andWhere($sqlDistance . " <= su.maxDistance");
         }
-        
+
         $queryResults = $query->getQuery()->getResult();
 
-        
+
         // We need to build and persist all the new results as SolidaryMatching.
         $solidaryMatchings = $this->solidaryMatcher->buildSolidaryMatchingsForTransport($solidaryTransportSearch->getSolidary(), $queryResults);
 

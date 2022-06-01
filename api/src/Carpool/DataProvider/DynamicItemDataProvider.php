@@ -36,18 +36,18 @@ use Symfony\Component\HttpFoundation\RequestStack;
 final class DynamicItemDataProvider implements ItemDataProviderInterface, RestrictedDataProviderInterface
 {
     protected $request;
-    
+
     public function __construct(RequestStack $requestStack, DynamicManager $dynamicManager)
     {
         $this->request = $requestStack->getCurrentRequest();
         $this->dynamicManager = $dynamicManager;
     }
-    
+
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
         return Dynamic::class === $resourceClass && $operationName =="get";
     }
-    
+
     public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?Dynamic
     {
         return $this->dynamicManager->getDynamic($id);

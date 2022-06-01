@@ -34,12 +34,12 @@ use App\Action\Entity\Action;
  */
 class ActionVoter extends Voter
 {
-    const ACTION_CREATE = 'action_create';
-    const ACTION_READ = 'action_read';
-    const ACTION_UPDATE = 'action_update';
-    const ACTION_DELETE = 'action_delete';
-    const ACTION_LIST = 'action_list';
-    
+    public const ACTION_CREATE = 'action_create';
+    public const ACTION_READ = 'action_read';
+    public const ACTION_UPDATE = 'action_update';
+    public const ACTION_DELETE = 'action_delete';
+    public const ACTION_LIST = 'action_list';
+
     private $authManager;
 
     public function __construct(AuthManager $authManager)
@@ -107,12 +107,12 @@ class ActionVoter extends Voter
     {
         return $this->authManager->isAuthorized(self::ACTION_UPDATE, ['action'=>$action]);
     }
-    
+
     private function canDeleteAction(Action $action)
     {
         return $this->authManager->isAuthorized(self::ACTION_DELETE, ['action'=>$action]);
     }
-    
+
     private function canListAction()
     {
         return $this->authManager->isAuthorized(self::ACTION_LIST);

@@ -53,10 +53,10 @@ class FirebaseProvider implements ProviderInterface
             ->addRecipient($push->getRecipientDeviceIds())
             ->setTitle($push->getTitle())
             ->setBody($push->getMessage());
-            
+
         // send the notification
         $this->client->send($notification);
-    
+
         // todo : get the response and treat the bad device ids
 
         return new Response();

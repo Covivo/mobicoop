@@ -43,7 +43,7 @@ final class UserCheckPasswordTokenCollectionDataProvider implements CollectionDa
     private $userManager;
     private $request;
     private $translator;
-    
+
     public function __construct(UserManager $userManager, RequestStack $request, TranslatorInterface $translator)
     {
         $this->userManager = $userManager;
@@ -55,7 +55,7 @@ final class UserCheckPasswordTokenCollectionDataProvider implements CollectionDa
     {
         return User::class === $resourceClass && $operationName === "checkPasswordToken";
     }
-    
+
     public function getCollection(string $resourceClass, string $operationName = null, array $context = []): iterable
     {
         if (

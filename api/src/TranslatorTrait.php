@@ -30,8 +30,8 @@ trait TranslatorTrait
      * @var TranslatorInterface $translator
      */
     protected $translator;
-    
-    
+
+
     /**
      * @required
      * @param TranslatorInterface $translator

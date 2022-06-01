@@ -30,32 +30,32 @@ namespace App\Rdex\Entity;
  */
 class RdexError
 {
-    const ERROR_ACCESS_DENIED = "access_denied";
-    const ERROR_ALREADY_EXISTS = "already_exists";
-    const ERROR_INSUFFICIENT_PERMISSIONS = "insufficient_permissions";
-    const ERROR_INTERNAL_ERROR = "internal_error";
-    const ERROR_INVALID_INPUT = "invalid_input";
-    const ERROR_INVALID_URI = "invalid_uri";
-    const ERROR_INVALID_UUID = "invalid_uuid";
-    const ERROR_MISSING_MANDATORY_FIELD = "missing_mandatory_field";
-    const ERROR_MISSING_REQUIRED_QUERY_PARAMETER = "missing_required_query_parameter";
-    const ERROR_NO_POST_DATA = "no_post_data";
-    const ERROR_NO_PUT_DATA = "no_put_data";
-    const ERROR_NOT_IMPLEMENTED = "not_implemented";
-    const ERROR_ORIGIN_MISMATCH = "origin_mismatch";
-    const ERROR_RESOURCE_NOT_FOUND = "resource_not_found";
-    const ERROR_SIGNATURE_MISMATCH = "signature_mismatch";
-    const ERROR_TIMESTAMP_TOO_SKEWED = "timestamp_too_skewed";
-    const ERROR_TOO_LATE = "too_late";
-    const ERROR_TOO_MANY_POST = "too_many_post";
-    const ERROR_TOO_MANY_QUERIES = "too_many_queries";
-    const ERROR_UNDEFINED_ERROR = "undefined_error";
-    const ERROR_UNKNOWN_USER = "unknown_user";
-    const ERROR_UNSUPPORTED_HTTP_VERB = "unsupported_http_verb";
-    const ERROR_MISSING_CONFIG = "config_file_missing";
-    const ERROR_MISSING_OPERATOR ="operator_file_missing";
-    
-    const ERRORS = [
+    public const ERROR_ACCESS_DENIED = "access_denied";
+    public const ERROR_ALREADY_EXISTS = "already_exists";
+    public const ERROR_INSUFFICIENT_PERMISSIONS = "insufficient_permissions";
+    public const ERROR_INTERNAL_ERROR = "internal_error";
+    public const ERROR_INVALID_INPUT = "invalid_input";
+    public const ERROR_INVALID_URI = "invalid_uri";
+    public const ERROR_INVALID_UUID = "invalid_uuid";
+    public const ERROR_MISSING_MANDATORY_FIELD = "missing_mandatory_field";
+    public const ERROR_MISSING_REQUIRED_QUERY_PARAMETER = "missing_required_query_parameter";
+    public const ERROR_NO_POST_DATA = "no_post_data";
+    public const ERROR_NO_PUT_DATA = "no_put_data";
+    public const ERROR_NOT_IMPLEMENTED = "not_implemented";
+    public const ERROR_ORIGIN_MISMATCH = "origin_mismatch";
+    public const ERROR_RESOURCE_NOT_FOUND = "resource_not_found";
+    public const ERROR_SIGNATURE_MISMATCH = "signature_mismatch";
+    public const ERROR_TIMESTAMP_TOO_SKEWED = "timestamp_too_skewed";
+    public const ERROR_TOO_LATE = "too_late";
+    public const ERROR_TOO_MANY_POST = "too_many_post";
+    public const ERROR_TOO_MANY_QUERIES = "too_many_queries";
+    public const ERROR_UNDEFINED_ERROR = "undefined_error";
+    public const ERROR_UNKNOWN_USER = "unknown_user";
+    public const ERROR_UNSUPPORTED_HTTP_VERB = "unsupported_http_verb";
+    public const ERROR_MISSING_CONFIG = "config_file_missing";
+    public const ERROR_MISSING_OPERATOR ="operator_file_missing";
+
+    public const ERRORS = [
         self::ERROR_ACCESS_DENIED => 401,
         self::ERROR_ALREADY_EXISTS => 409,
         self::ERROR_INSUFFICIENT_PERMISSIONS => 403,
@@ -81,32 +81,32 @@ class RdexError
         self::ERROR_MISSING_CONFIG => 500,
         self::ERROR_MISSING_OPERATOR => 500
     ];
-    
+
     /**
      * @var string The error name.
      */
     private $name;
- 
+
     /**
      * @var int The http error code.
      */
     private $code;
-    
+
     /**
      * @var string Message for debugging purpose.
      */
     private $message_debug;
-    
+
     /**
      * @var string Message for the end-user.
      */
     private $message_user;
-    
+
     /**
      * @var string The field in question.
      */
     private $field;
-    
+
     public function __construct(string $field=null, string $error, string $message_debug=null, string $message_user=null)
     {
         $this->setName($error);
@@ -115,7 +115,7 @@ class RdexError
         $this->setMessageUser($message_user);
         $this->setCode(self::ERRORS[$error]);
     }
-    
+
     /**
      * @return string
      */

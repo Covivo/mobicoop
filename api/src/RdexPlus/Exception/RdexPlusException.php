@@ -28,14 +28,14 @@ namespace App\RdexPlus\Exception;
  */
 class RdexPlusException extends \LogicException
 {
-    const USER_ID_REQUIRED = "user.id is required";
-    const USER_UNKNOWN = "User Unknown";
-    const INVALID_FREQUENCY = "Invalid frequency";
-    const INVALID_PRICE_TYPE = "Invalid price type";
-    const INVALID_CARPOOLER_TYPE = "Invalid carpoolerType";
-    const FROM_LATITUDE_LONGITUDE_REQUIRED = "Origin's Latitude/Longitude are required";
-    const TO_LATITUDE_LONGITUDE_REQUIRED = "Destination's Latitude/Longitude are required";
-    const NO_REGULAR_SCHEDULE = "Missing regular schedule";
-    const NO_RETURN = "Missing return data";
-    const NO_RETURN_REGULAR_SCHEDULE = "Missing return regular schedule";
+    public const USER_ID_REQUIRED = "user.id is required";
+    public const USER_UNKNOWN = "User Unknown";
+    public const INVALID_FREQUENCY = "Invalid frequency";
+    public const INVALID_PRICE_TYPE = "Invalid price type";
+    public const INVALID_CARPOOLER_TYPE = "Invalid carpoolerType";
+    public const FROM_LATITUDE_LONGITUDE_REQUIRED = "Origin's Latitude/Longitude are required";
+    public const TO_LATITUDE_LONGITUDE_REQUIRED = "Destination's Latitude/Longitude are required";
+    public const NO_REGULAR_SCHEDULE = "Missing regular schedule";
+    public const NO_RETURN = "Missing return data";
+    public const NO_RETURN_REGULAR_SCHEDULE = "Missing return regular schedule";
 }

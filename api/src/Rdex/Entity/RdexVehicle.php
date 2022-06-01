@@ -34,17 +34,17 @@ class RdexVehicle implements \JsonSerializable
      * @var string The image of the vehicle.
      */
     private $vehicle_image;
-    
+
     /**
      * @var string The model of the vehicle.
      */
     private $model;
-    
+
     /**
      * @var string The color of the vehicle.
      */
     private $color;
-    
+
     /**
      * @return string
      */
@@ -92,7 +92,7 @@ class RdexVehicle implements \JsonSerializable
     {
         $this->color = $color;
     }
-    
+
     public function jsonSerialize(): mixed
     {
         return

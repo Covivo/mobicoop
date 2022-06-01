@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /**
  * Copyright (c) 2018, MOBICOOP. All rights reserved.
@@ -31,7 +33,7 @@ use Doctrine\Migrations\AbstractMigration;
  */
 final class Version20190125131955 extends AbstractMigration
 {
-    public function up(Schema $schema) : void
+    public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
@@ -46,7 +48,7 @@ final class Version20190125131955 extends AbstractMigration
         $this->addSql('ALTER TABLE image ADD crop_x1 INT NOT NULL, ADD crop_y1 INT NOT NULL, ADD crop_x2 INT NOT NULL, ADD crop_y2 INT NOT NULL, DROP image_type_id, CHANGE width width INT NOT NULL, CHANGE height height INT NOT NULL');
     }
 
-    public function down(Schema $schema) : void
+    public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');

@@ -35,9 +35,9 @@ use App\TranslatorTrait;
 class AskPut
 {
     use TranslatorTrait;
-    
+
     private $askManager;
-    
+
     public function __construct(AskManager $askManager)
     {
         $this->askManager = $askManager;

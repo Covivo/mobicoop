@@ -39,13 +39,13 @@ class ConnectionController
     use TranslatorTrait;
     private $rdexManager;
     protected $request;
-    
+
     public function __construct(RequestStack $requestStack, RdexManager $rdexManager)
     {
         $this->request = $requestStack->getCurrentRequest();
         $this->rdexManager = $rdexManager;
     }
-    
+
     /**
      * This method is invoked when a Journey collection is requested.
      *
@@ -62,7 +62,7 @@ class ConnectionController
         if ($this->rdexManager->isEmptyRequest($this->request)) {
             return $response;
         }
-        
+
         $validation = $this->rdexManager->validateConnection($this->request);
         if ($validation instanceof RdexError) {
             // Request invalid

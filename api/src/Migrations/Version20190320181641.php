@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /**
  * Copyright (c) 2018, MOBICOOP. All rights reserved.
@@ -31,7 +33,7 @@ use Doctrine\Migrations\AbstractMigration;
  */
 final class Version20190320181641 extends AbstractMigration
 {
-    public function up(Schema $schema) : void
+    public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
@@ -39,7 +41,7 @@ final class Version20190320181641 extends AbstractMigration
         $this->addSql('ALTER TABLE criteria ADD min_time TIME DEFAULT NULL, ADD max_time TIME DEFAULT NULL, ADD mon_min_time TIME DEFAULT NULL, ADD mon_max_time TIME DEFAULT NULL, ADD tue_min_time TIME DEFAULT NULL, ADD tue_max_time TIME DEFAULT NULL, ADD wed_min_time TIME DEFAULT NULL, ADD wed_max_time TIME DEFAULT NULL, ADD thu_min_time TIME DEFAULT NULL, ADD thu_max_time TIME DEFAULT NULL, ADD fri_min_time TIME DEFAULT NULL, ADD fri_max_time TIME DEFAULT NULL, ADD sat_min_time TIME DEFAULT NULL, ADD sat_max_time TIME DEFAULT NULL, ADD sun_min_time TIME DEFAULT NULL, ADD sun_max_time TIME DEFAULT NULL');
     }
 
-    public function down(Schema $schema) : void
+    public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');

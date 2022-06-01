@@ -32,7 +32,7 @@ class EditorialListener
 {
     private $editorialRepository;
     private $dataUri;
-    
+
     public function __construct(EditorialRepository $editorialRepository, string $dataUri)
     {
         $this->editorialRepository = $editorialRepository;

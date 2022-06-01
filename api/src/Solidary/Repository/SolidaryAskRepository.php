@@ -41,9 +41,9 @@ class SolidaryAskRepository
      * @var EntityRepository
      */
     private $repository;
-    
+
     private $entityManager;
-    
+
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
@@ -103,15 +103,15 @@ class SolidaryAskRepository
         ->join('sa.solidarySolution', 'ss')
         ->join('ss.solidaryMatching', 'sm')
         ->where('c.fromDate >= :startDate and (c.toDate <= :endDate or c.toDate is null)');
-        
+
         if (!is_null($solidaryVolunteer)) {
             $query->andWhere('sm.solidaryUser = :solidaryVolunteer');
         }
-        
+
         if ($onlySolidaryTransport) {
             $query->andWhere('sm.matching is null');
         }
-        
+
         $query->setParameter('startDate', $startDate->format("Y-m-d"))
         ->setParameter('endDate', $endDate->format("Y-m-d"));
 

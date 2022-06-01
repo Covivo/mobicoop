@@ -32,7 +32,6 @@ use Geocoder\Model\Address;
  */
 class PeliasAddress extends Address
 {
-
     /**
      * @var string|null
      */

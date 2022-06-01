@@ -72,7 +72,7 @@ use ApiPlatform\Core\Annotation\ApiProperty;
  */
 class Indicator
 {
-    const DEFAULT_ID = "999999999999";
+    public const DEFAULT_ID = "999999999999";
 
     /**
      * @var int The id of this Indicator
@@ -81,7 +81,7 @@ class Indicator
      * @Groups({"readStats"})
      */
     private $id;
-    
+
     /**
      * @var string The label of this Indicator
      *
@@ -105,7 +105,7 @@ class Indicator
     {
         $this->id = self::DEFAULT_ID;
     }
-    
+
     public function getId(): ?int
     {
         return $this->id;

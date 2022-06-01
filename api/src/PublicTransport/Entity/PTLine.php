@@ -62,7 +62,7 @@ class PTLine
      * @ApiProperty(identifier=true)
      */
     private $id;
-    
+
     /**
      * @var string The name of this line.
      *
@@ -70,7 +70,7 @@ class PTLine
      * @Groups("pt")
      */
     private $name;
-    
+
     /**
      * @var string The number of this line.
      *
@@ -78,7 +78,7 @@ class PTLine
      * @Groups("pt")
      */
     private $number;
-    
+
     /**
      * @var string The origin of this line.
      *
@@ -86,7 +86,7 @@ class PTLine
      * @Groups("pt")
      */
     private $origin;
-    
+
     /**
      * @var string The destination of this line.
      *
@@ -94,7 +94,7 @@ class PTLine
      * @Groups("pt")
      */
     private $destination;
-    
+
     /**
      * @var string The direction of this line if no origin / destination specified.
      *
@@ -102,7 +102,7 @@ class PTLine
      * @Groups("pt")
      */
     private $direction;
-    
+
     /**
      * @var PTCompany The company that manage this line.
      *
@@ -141,40 +141,40 @@ class PTLine
     {
         $this->id = $id;
     }
-    
+
     public function getId(): int
     {
         return $this->id;
     }
-    
+
     public function setId(int $id): self
     {
         $this->id = $id;
-        
+
         return $this;
     }
-    
+
     public function getName(): string
     {
         return $this->name;
     }
-    
+
     public function setName(string $name): self
     {
         $this->name = $name;
-        
+
         return $this;
     }
-    
+
     public function getNumber(): ?string
     {
         return $this->number;
     }
-    
+
     public function setNumber(?string $number): self
     {
         $this->number = $number;
-        
+
         return $this;
     }
 
@@ -182,35 +182,35 @@ class PTLine
     {
         return $this->origin;
     }
-    
+
     public function setOrigin(?string $origin): self
     {
         $this->origin = $origin;
-        
+
         return $this;
     }
-    
+
     public function getDestination(): ?string
     {
         return $this->destination;
     }
-    
+
     public function setDestination(?string $destination): self
     {
         $this->destination = $destination;
-        
+
         return $this;
     }
-    
+
     public function getDirection(): ?string
     {
         return $this->direction;
     }
-    
+
     public function setDirection(?string $direction): self
     {
         $this->direction = $direction;
-        
+
         return $this;
     }
 
@@ -222,19 +222,19 @@ class PTLine
     public function setPTCompany(PTCompany $ptcompany): self
     {
         $this->ptcompany = $ptcompany;
-        
+
         return $this;
     }
-    
+
     public function getTravelMode(): ?TravelMode
     {
         return $this->travelMode;
     }
-    
+
     public function setTravelMode(TravelMode $travelMode): self
     {
         $this->travelMode = $travelMode;
-        
+
         return $this;
     }
 

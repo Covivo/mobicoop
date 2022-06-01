@@ -41,19 +41,19 @@ final class ThreadCollectionDataProvider implements CollectionDataProviderInterf
     protected $request;
     private $security;
     private $internalMessageManager;
-    
+
     public function __construct(RequestStack $requestStack, Security $security, InternalMessageManager $internalMessageManager)
     {
         $this->request = $requestStack->getCurrentRequest();
         $this->internalMessageManager = $internalMessageManager;
         $this->security = $security;
     }
-    
+
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
         return Message::class === $resourceClass && $operationName === "completeThread";
     }
-    
+
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
         return $this->internalMessageManager->getCompleteThread($this->request->get("idMessage"), true, $this->security->getUser()->getId());

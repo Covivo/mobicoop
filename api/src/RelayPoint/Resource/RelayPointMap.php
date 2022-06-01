@@ -58,9 +58,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
  */
 class RelayPointMap
 {
-    const DEFAULT_ID = 999999999999;
-    const IMAGE_PATH = "relaypoints/images/versions";
-    const IMAGE_VERSION = 100;
+    public const DEFAULT_ID = 999999999999;
+    public const IMAGE_PATH = "relaypoints/images/versions";
+    public const IMAGE_VERSION = 100;
 
     /**
      * @var int The id of this  relay point map
@@ -116,7 +116,7 @@ class RelayPointMap
      * @Groups({"readRelayPoint"})
     */
     private $official;
-    
+
     /**
      * @var boolean|null The relay point is private to a community or a solidary structure.
      * @Groups({"readRelayPoint"})
@@ -145,7 +145,7 @@ class RelayPointMap
     public function setId(String $id): self
     {
         $this->id = $id;
-        
+
         return $this;
     }
 
@@ -187,19 +187,19 @@ class RelayPointMap
     {
         return $this->private;
     }
-    
+
     public function setPrivate(?bool $isPrivate): self
     {
         $this->private = $isPrivate;
-        
+
         return $this;
     }
-    
+
     public function getPlaces()
     {
         return $this->places;
     }
-    
+
     public function setPlaces(?int $places)
     {
         $this->places = $places;
@@ -209,7 +209,7 @@ class RelayPointMap
     {
         return $this->placesDisabled;
     }
-    
+
     public function setPlacesDisabled(?int $placesDisabled)
     {
         $this->placesDisabled = $placesDisabled;
@@ -219,11 +219,11 @@ class RelayPointMap
     {
         return $this->free;
     }
-    
+
     public function setFree(?bool $isFree): self
     {
         $this->free = $isFree;
-        
+
         return $this;
     }
 
@@ -231,11 +231,11 @@ class RelayPointMap
     {
         return $this->secured;
     }
-    
+
     public function setSecured(?bool $isSecured): self
     {
         $this->secured = $isSecured;
-        
+
         return $this;
     }
 
@@ -243,11 +243,11 @@ class RelayPointMap
     {
         return $this->official;
     }
-    
+
     public function setOfficial(?bool $isOfficial): self
     {
         $this->official = $isOfficial;
-        
+
         return $this;
     }
 
@@ -255,11 +255,11 @@ class RelayPointMap
     {
         return $this->image;
     }
-    
+
     public function setImage(?string $image): self
     {
         $this->image = $image;
-        
+
         return $this;
     }
 }

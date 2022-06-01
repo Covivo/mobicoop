@@ -33,7 +33,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class MCommunityVoter extends Voter
 {
-    const COMMUNITY_LIST = 'community_list';
+    public const COMMUNITY_LIST = 'community_list';
 
     private $request;
     private $communityManager;

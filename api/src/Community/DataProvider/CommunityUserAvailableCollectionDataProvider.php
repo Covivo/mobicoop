@@ -39,18 +39,18 @@ final class CommunityUserAvailableCollectionDataProvider implements CollectionDa
 {
     protected $request;
     private $communityManager;
-    
+
     public function __construct(RequestStack $requestStack, CommunityManager $communityManager)
     {
         $this->request = $requestStack->getCurrentRequest();
         $this->communityManager = $communityManager;
     }
-    
+
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
         return Community::class === $resourceClass && $operationName === "available";
     }
-    
+
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
         return $this->communityManager->getAvailableCommunitiesForUser($this->request->get("userId"));

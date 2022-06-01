@@ -32,7 +32,6 @@ use App\Carpool\Entity\MapsAd\MapsAd;
  */
 class MapsAds
 {
-
     /**
      * @var MapsAd[]
      * @Groups({"readCommunityAds"})

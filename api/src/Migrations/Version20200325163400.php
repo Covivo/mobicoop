@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace DoctrineMigrations;
 
@@ -10,7 +12,7 @@ use Doctrine\Migrations\AbstractMigration;
  */
 final class Version20200325163400 extends AbstractMigration
 {
-    public function up(Schema $schema) : void
+    public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
@@ -19,8 +21,8 @@ final class Version20200325163400 extends AbstractMigration
         // we remove all user_notification with media=internal_message
         $this->addSql('DELETE FROM `user_notification` WHERE `notification_id` IN (SELECT `id` FROM `notification` WHERE `medium_id` = 1)');
     }
-    
-    public function down(Schema $schema) : void
+
+    public function down(Schema $schema): void
     {
     }
 }

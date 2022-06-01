@@ -40,7 +40,7 @@ final class CreateImageAction
     private $logger;
     private $actionRepository;
     private $eventDispatcher;
-    
+
     public function __construct(ImageManager $imageManager, LoggerInterface $logger, ActionRepository $actionRepository, EventDispatcherInterface $eventDispatcher)
     {
         $this->imageManager = $imageManager;
@@ -48,7 +48,7 @@ final class CreateImageAction
         $this->actionRepository = $actionRepository;
         $this->eventDispatcher = $eventDispatcher;
     }
-    
+
     public function __invoke(Request $request): Image
     {
         if (is_null($request)) {
@@ -104,7 +104,7 @@ final class CreateImageAction
         } else {
             throw new BadRequestHttpException('A valid file is required');
         }
-        
+
         $image->setName($request->request->get('name'));
         $image->setOriginalName($request->request->get('originalName'));
         $image->setTitle($request->request->get('title'));
@@ -128,7 +128,7 @@ final class CreateImageAction
                 // we associate the owner and the image
                 $owner->addImage($image);
             }
-            
+
             // we search the position of the image if not provided
             if (is_null($image->getPosition())) {
                 $image->setPosition($this->imageManager->getNextPosition($image));
@@ -136,7 +136,7 @@ final class CreateImageAction
                 // the image position is provided, we remove the existing image at this position
                 $this->imageManager->removeImageAtPosition($owner, $image->getPosition());
             }
-            
+
             // we rename the image depending on the owner
             $image->setFileName($this->imageManager->generateFilename($image));
             if (is_null($image->getName())) {

@@ -44,15 +44,15 @@ class TestController extends AbstractController
     private $templating;
     private $translator;
     private $smsProvider;
-    
-    
+
+
     public function __construct(Environment $templating, TranslatorInterface $translator, array $params)
     {
         $this->templating = $templating;
         $this->translator = $translator;
         $this->smsProvider = new SmsEnvoiProvider($params['smsUsername'], $params['smsPassword'], $params['smsSender']);
     }
-    
+
     /**
      * Send a sms for testing purpose
      * @Route("/rd/communication/sms/{mobile}", name="testSMS")
@@ -69,7 +69,7 @@ class TestController extends AbstractController
 
 
         $context['message'] = "C'est un test";
-        
+
         $sms = new Sms();
         $sms->setRecipientTelephone($mobile);
         $sms->setMessage(
@@ -82,7 +82,7 @@ class TestController extends AbstractController
             ),
             'text/html'
         );
-        
+
         return $this->smsProvider->postCollection($sms);
     }
 }

@@ -38,7 +38,7 @@ final class WaypointTerritoryFilter extends AbstractContextAwareFilter
         if (strrpos($value, '/')) {
             $value = substr($value, strrpos($value, '/') + 1);
         }
-        
+
         // $queryBuilder
         //     ->leftJoin('u.proposals', 'p')
         //     ->leftJoin('p.waypoints', 'w')

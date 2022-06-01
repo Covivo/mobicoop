@@ -42,19 +42,19 @@ final class RelayPointMapCollectionDataprovider implements CollectionDataProvide
     protected $request;
     private $relayPointMapManager;
     private $security;
-    
+
     public function __construct(RequestStack $requestStack, RelayPointMapManager $relayPointMapManager, Security $security)
     {
         $this->request = $requestStack->getCurrentRequest();
         $this->relayPointMapManager = $relayPointMapManager;
         $this->security = $security;
     }
-    
+
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
         return RelayPointMap::class === $resourceClass && $operationName === "get";
     }
-    
+
     public function getCollection(string $resourceClass, string $operationName = null, array $context = []): ?array
     {
         if ($this->request->get("communityId")!== null) {

@@ -72,14 +72,14 @@ final class SolidarySearchCollectionDataProvider implements CollectionDataProvid
         if (empty($this->filters['way']) || !in_array($this->filters['way'], ["outward","return"])) {
             throw new SolidaryException(SolidaryException::WAY_MISSING_OR_INVALID);
         }
-        
-        
+
+
         // Creating the SolidarySearch entity for the service
         $solidarySearch = new SolidarySearch();
         $solidarySearch->setWay($this->filters['way']);
 
         $solidary = $this->solidaryManager->getSolidary($solidaryId);
-       
+
         $solidarySearch->setSolidary($solidary);
         if ($this->filters['type'] == 'transport') {
             return $this->solidaryManager->getSolidaryTransportSearchResults($solidarySearch);

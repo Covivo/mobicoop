@@ -81,12 +81,12 @@ use App\Solidary\Entity\Subject;
  */
 class Proposal
 {
-    const DEFAULT_ID = 999999999999;
+    public const DEFAULT_ID = 999999999999;
 
-    const TYPE_ONE_WAY = 1;
-    const TYPE_OUTWARD = 2;
-    const TYPE_RETURN = 3;
-    
+    public const TYPE_ONE_WAY = 1;
+    public const TYPE_OUTWARD = 2;
+    public const TYPE_RETURN = 3;
+
     /**
      * @var int The id of this proposal.
      *
@@ -105,7 +105,7 @@ class Proposal
      * @Groups({"read","results","write","threads","thread"})
      */
     private $type;
-    
+
     /**
      * @var string A comment about the proposal.
      *
@@ -220,7 +220,7 @@ class Proposal
      * @MaxDepth(1)
      */
     private $proposalLinked;
-    
+
     /**
      * @var User|null User for whom the proposal is submitted (in general the user itself, except when it is a "posting for").
      * Can be null for an anonymous search.
@@ -251,7 +251,7 @@ class Proposal
      * @MaxDepth(1)
      */
     private $appDelegate;
-    
+
     /**
      * @var ArrayCollection The waypoints of the proposal.
      *
@@ -262,7 +262,7 @@ class Proposal
      * @MaxDepth(1)
      */
     private $waypoints;
-    
+
     /**
      * @var ArrayCollection|null The travel modes accepted if the proposal is a request.
      *
@@ -314,7 +314,7 @@ class Proposal
      * @MaxDepth(1)
      */
     private $criteria;
-    
+
     /**
      * @var ArrayCollection The individual stops of the proposal.
      *
@@ -427,7 +427,7 @@ class Proposal
         $this->setExposed(false);
         $this->results = [];
     }
-    
+
     public function __clone()
     {
         // when we clone a Proposal we keep only the basic properties, we re-initialize all the collections
@@ -459,16 +459,16 @@ class Proposal
 
         return $this;
     }
-    
+
     public function getComment(): ?string
     {
         return $this->comment;
     }
-    
+
     public function setComment(?string $comment): self
     {
         $this->comment = $comment;
-        
+
         return $this;
     }
 
@@ -603,25 +603,25 @@ class Proposal
 
         return $this;
     }
-    
+
     public function getProposalLinked(): ?self
     {
         return $this->proposalLinked;
     }
-    
+
     public function setProposalLinked(?self $proposalLinked): self
     {
         $this->proposalLinked = $proposalLinked;
-        
+
         // set (or unset) the owning side of the relation if necessary
         $newProposalLinked = $proposalLinked === null ? null : $this;
         if ($proposalLinked && $newProposalLinked !== $proposalLinked->getProposalLinked()) {
             $proposalLinked->setProposalLinked($newProposalLinked);
         }
-        
+
         return $this;
     }
-    
+
     public function getUser(): ?User
     {
         return $this->user;
@@ -690,27 +690,27 @@ class Proposal
 
         return $this;
     }
-    
+
     public function getTravelModes()
     {
         return $this->travelModes->getValues();
     }
-    
+
     public function addTravelMode(TravelMode $travelMode): self
     {
         if (!$this->travelModes->contains($travelMode)) {
             $this->travelModes[] = $travelMode;
         }
-        
+
         return $this;
     }
-    
+
     public function removeTravelMode(TravelMode $travelMode): self
     {
         if ($this->travelModes->contains($travelMode)) {
             $this->travelModes->removeElement($travelMode);
         }
-        
+
         return $this;
     }
 
@@ -718,25 +718,25 @@ class Proposal
     {
         return $this->communities->getValues();
     }
-    
+
     public function addCommunity(Community $community): self
     {
         if (!$this->communities->contains($community)) {
             $this->communities[] = $community;
         }
-        
+
         return $this;
     }
-    
+
     public function removeCommunity(Community $community): self
     {
         if ($this->communities->contains($community)) {
             $this->communities->removeElement($community);
         }
-        
+
         return $this;
     }
-    
+
     public function getMatchingRequests()
     {
         return $this->matchingRequests->getValues();
@@ -764,22 +764,22 @@ class Proposal
 
         return $this;
     }
-    
+
     public function getMatchingOffers()
     {
         return $this->matchingOffers->getValues();
     }
-    
+
     public function addMatchingOffer(Matching $matchingOffer): self
     {
         if (!$this->matchingOffers->contains($matchingOffer)) {
             $this->matchingOffers[] = $matchingOffer;
             $matchingOffer->setProposalRequest($this);
         }
-        
+
         return $this;
     }
-    
+
     public function removeMatchingOffer(Matching $matchingOffer): self
     {
         if ($this->matchingOffers->contains($matchingOffer)) {
@@ -789,7 +789,7 @@ class Proposal
                 $matchingOffer->setProposalRequest(null);
             }
         }
-        
+
         return $this;
     }
 
@@ -804,25 +804,25 @@ class Proposal
             $criteria->setProposal($this);
         }
         $this->criteria = $criteria;
-        
+
         return $this;
     }
-    
+
     public function getIndividualStops()
     {
         return $this->individualStops->getValues();
     }
-    
+
     public function addIndividualStop(IndividualStop $individualStop): self
     {
         if (!$this->individualStops->contains($individualStop)) {
             $this->individualStops[] = $individualStop;
             $individualStop->setProposal($this);
         }
-        
+
         return $this;
     }
-    
+
     public function removeIndividualStop(IndividualStop $individualStop): self
     {
         if ($this->individualStops->contains($individualStop)) {
@@ -832,7 +832,7 @@ class Proposal
                 $individualStop->setProposal(null);
             }
         }
-        
+
         return $this;
     }
 
@@ -840,17 +840,17 @@ class Proposal
     {
         return $this->notifieds->getValues();
     }
-    
+
     public function addNotified(Notified $notified): self
     {
         if (!$this->notifieds->contains($notified)) {
             $this->notifieds[] = $notified;
             $notified->setProposal($this);
         }
-        
+
         return $this;
     }
-    
+
     public function removeNotified(Notified $notified): self
     {
         if ($this->notifieds->contains($notified)) {
@@ -860,10 +860,10 @@ class Proposal
                 $notified->setProposal(null);
             }
         }
-        
+
         return $this;
     }
-    
+
     public function getMatchingLinked(): ?Matching
     {
         return $this->matchingLinked;
@@ -916,10 +916,10 @@ class Proposal
             $this->positions[] = $position;
             $position->setProposal($this);
         }
-        
+
         return $this;
     }
-    
+
     public function removePosition(Position $position): self
     {
         if ($this->positions->contains($position)) {
@@ -929,10 +929,10 @@ class Proposal
                 $position->setProposal(null);
             }
         }
-        
+
         return $this;
     }
-        
+
     public function getExternal(): ?String
     {
         return $this->external;
@@ -984,17 +984,17 @@ class Proposal
     {
         return $this->logs->getValues();
     }
-    
+
     public function addLog(Log $log): self
     {
         if (!$this->logs->contains($log)) {
             $this->logs[] = $log;
             $log->setProposal($this);
         }
-        
+
         return $this;
     }
-    
+
     public function removeLog(Log $log): self
     {
         if ($this->logs->contains($log)) {
@@ -1004,12 +1004,12 @@ class Proposal
                 $log->setProposal(null);
             }
         }
-        
+
         return $this;
     }
 
     // DOCTRINE EVENTS
-    
+
     /**
      * Creation date.
      *
@@ -1064,10 +1064,10 @@ class Proposal
             $this->solidaries[] = $solidary;
             $solidary->setProposal($this);
         }
-        
+
         return $this;
     }
-    
+
     public function removesolidary(solidary $solidary): self
     {
         if ($this->solidaries->contains($solidary)) {
@@ -1077,7 +1077,7 @@ class Proposal
                 $solidary->setProposal(null);
             }
         }
-        
+
         return $this;
     }
 }

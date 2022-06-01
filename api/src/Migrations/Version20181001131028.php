@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /**
  * Copyright (c) 2018, MOBICOOP. All rights reserved.
@@ -21,7 +23,6 @@
  *    LICENSE
  **************************/
 
-
 namespace DoctrineMigrations;
 
 use Doctrine\DBAL\Schema\Schema;
@@ -32,7 +33,7 @@ use Doctrine\Migrations\AbstractMigration;
  */
 final class Version20181001131028 extends AbstractMigration
 {
-    public function up(Schema $schema) : void
+    public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
@@ -42,7 +43,7 @@ final class Version20181001131028 extends AbstractMigration
         $this->addSql('CREATE INDEX IDX_4FA96783293B97A1 ON solicitation (solicitation_linked_id)');
     }
 
-    public function down(Schema $schema) : void
+    public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');

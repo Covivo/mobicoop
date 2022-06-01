@@ -38,7 +38,7 @@ interface GeorouterInterface
     public const MODE_SYNC = 1;             // synchronous
     public const MODE_ASYNC = 2;            // simple asynchronous
     public const MODE_MULTIPLE_ASYNC = 3;   // multiple asynchronous
-    
+
     public const RETURN_TYPE_OBJECT = 1;    // the georouter will return results as objects
     public const RETURN_TYPE_ARRAY = 2;     // the georouter will return results as arrays
     public const RETURN_TYPE_RAW = 3;       // the georouter will return raw results (no transformation)

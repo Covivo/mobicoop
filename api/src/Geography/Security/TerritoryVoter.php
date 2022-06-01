@@ -34,12 +34,12 @@ use Symfony\Component\Security\Core\Security;
 
 class TerritoryVoter extends Voter
 {
-    const TERRITORY_CREATE ='territory_create';
-    const TERRITORY_READ = 'territory_read';
-    const TERRITORY_UPDATE = 'territory_update';
-    const TERRITORY_DELETE = 'territory_delete';
-    const TERRITORY_LIST = 'territory_list';
-    const TERRITORY_LINK = 'territory_link';
+    public const TERRITORY_CREATE ='territory_create';
+    public const TERRITORY_READ = 'territory_read';
+    public const TERRITORY_UPDATE = 'territory_update';
+    public const TERRITORY_DELETE = 'territory_delete';
+    public const TERRITORY_LIST = 'territory_list';
+    public const TERRITORY_LINK = 'territory_link';
 
     private $security;
     private $authManager;
@@ -66,7 +66,7 @@ class TerritoryVoter extends Voter
             ])) {
             return false;
         }
-        
+
         if (in_array($attribute, [
             self::TERRITORY_CREATE,
             self::TERRITORY_READ,

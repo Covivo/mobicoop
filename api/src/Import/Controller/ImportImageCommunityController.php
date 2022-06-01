@@ -32,12 +32,12 @@ class ImportImageCommunityController extends AbstractController
     use TranslatorTrait;
 
     private $importManager;
-    
+
     public function __construct(ImportManager $importManager)
     {
         $this->importManager = $importManager;
     }
-    
+
     public function __invoke()
     {
         return $this->importManager->importCommunityImage();

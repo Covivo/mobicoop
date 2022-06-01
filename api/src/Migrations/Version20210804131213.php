@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace DoctrineMigrations;
 
@@ -10,7 +12,7 @@ use Doctrine\Migrations\AbstractMigration;
  */
 final class Version20210804131213 extends AbstractMigration
 {
-    public function up(Schema $schema) : void
+    public function up(Schema $schema): void
     {
         // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
@@ -24,7 +26,7 @@ final class Version20210804131213 extends AbstractMigration
         $this->addSql("INSERT INTO `badge` (`id`, `name`, `title`, `text`, `status`, `public`, `start_date`, `end_date`, `created_date`, `updated_date`) VALUES (5, 'rally', 'Rallions-nous', 'Vous êtes maintenant un expert patenté du covoiturage! Vous en maîtrisez toutes les astuces. Pensez bien à les partager avec vos covoitureurs!', '1', '1', NULL, NULL, NULL, NULL);");
         $this->addSql("INSERT INTO `badge` (`id`, `name`, `title`, `text`, `status`, `public`, `start_date`, `end_date`, `created_date`, `updated_date`) VALUES (6, 'km_carpooled', 'Engagez-vous, rengagez-vous!', 'Votre constance et votre fidélité forcent le respect! Chapeau bas!', '1', '1', NULL, NULL, NULL, NULL);");
         $this->addSql("INSERT INTO `badge` (`id`, `name`, `title`, `text`, `status`, `public`, `start_date`, `end_date`, `created_date`, `updated_date`) VALUES (7, 'carbon_saved', 'Je pèse mon quintal comme écolo !', '100kg de CO² économisé, ça commence à peser, fichtre !\r\nÀ raison de l\'ordre de 0,1kg par kilomètre, les forts en math estimeront la distance nécessaire...\r\nPour vous donner un order de grandeur, saviez-vous que la production et la fin de vie d\'une voiture thermique a un bilan carbone moyen de 6,7t (et 10,2t pour une électrique)* ?\r\n\r\n*Source: Carbone4', '1', '1', NULL, NULL, NULL, NULL);");
-    
+
         $this->addSql("INSERT INTO `sequence_item` (`id`, `badge_id`, `gamification_action_id`, `position`, `min_count`, `min_unique_count`, `in_date_range`) VALUES (NULL, '1', '1', '1', NULL, NULL, NULL);");
         $this->addSql("INSERT INTO `sequence_item` (`id`, `badge_id`, `gamification_action_id`, `position`, `min_count`, `min_unique_count`, `in_date_range`) VALUES (NULL, '1', '2', '2', NULL, NULL, NULL);");
         $this->addSql("INSERT INTO `sequence_item` (`id`, `badge_id`, `gamification_action_id`, `position`, `min_count`, `min_unique_count`, `in_date_range`) VALUES (NULL, '1', '3', '3', NULL, NULL, NULL);");
@@ -40,7 +42,7 @@ final class Version20210804131213 extends AbstractMigration
         $this->addSql("INSERT INTO `sequence_item` (`id`, `badge_id`, `gamification_action_id`, `position`, `min_count`, `min_unique_count`, `in_date_range`) VALUES (NULL, '7', '13', '1', '100', NULL, NULL);");
     }
 
-    public function down(Schema $schema) : void
+    public function down(Schema $schema): void
     {
         // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');

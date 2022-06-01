@@ -30,7 +30,6 @@ use App\Gamification\Interfaces\GamificationRuleInterface;
  */
 class FirstMessageAnswer implements GamificationRuleInterface
 {
-
     /**
      * First Message Answer rule
      *

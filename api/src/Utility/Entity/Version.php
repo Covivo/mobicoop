@@ -55,7 +55,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  */
 class Version
 {
-    const DEFAULT_ID = 1;
+    public const DEFAULT_ID = 1;
 
     /**
      * @var int $id The id of this version.

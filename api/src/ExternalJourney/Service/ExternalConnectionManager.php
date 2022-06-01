@@ -54,7 +54,7 @@ class ExternalConnectionManager
      */
     public function sendConnection(ExternalConnection $externalConnection): ExternalConnection
     {
-        
+
         // Check if the provider is valid
         if (!isset($this->providers[$externalConnection->getProvider()])) {
             throw new \LogicException("Not a valid provider in providers.json");
@@ -68,13 +68,13 @@ class ExternalConnectionManager
         $provider->setPrivateKey($this->providers[$externalConnection->getProvider()]['private_key']);
 
         // Determine if the current User is the driver or the passenger
-        
+
         // By default, if not specified, the sender is the passenger
         $role = Ad::ROLE_PASSENGER;
         if (!is_null($externalConnection->getRole())) {
             $role = $externalConnection->getRole();
         }
-        
+
         if (!is_numeric($role) ||
             ($role !== Ad::ROLE_DRIVER && $role !== Ad::ROLE_PASSENGER  && $role !== Ad::ROLE_DRIVER_OR_PASSENGER)
         ) {
@@ -84,7 +84,7 @@ class ExternalConnectionManager
             $role = Ad::ROLE_PASSENGER;
         }
 
-        
+
         // initialize client API for any request
         $client = new Client();
 

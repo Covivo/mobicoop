@@ -55,13 +55,13 @@ use App\Communication\Entity\Notified;
  */
 class SolidaryAskHistory implements MessagerInterface
 {
-    const STATUS_ASKED = 0;
-    const STATUS_REFUSED = 1;
-    const STATUS_PENDING = 2;
-    const STATUS_LOOKING_FOR_SOLUTION = 3;
-    const STATUS_FOLLOW_UP = 4;
-    const STATUS_CLOSED = 5;
-    
+    public const STATUS_ASKED = 0;
+    public const STATUS_REFUSED = 1;
+    public const STATUS_PENDING = 2;
+    public const STATUS_LOOKING_FOR_SOLUTION = 3;
+    public const STATUS_FOLLOW_UP = 4;
+    public const STATUS_CLOSED = 5;
+
     /**
      * @var int The id of this ask history item.
      *
@@ -183,7 +183,7 @@ class SolidaryAskHistory implements MessagerInterface
     }
 
     // DOCTRINE EVENTS
-    
+
     /**
      * Creation date.
      *

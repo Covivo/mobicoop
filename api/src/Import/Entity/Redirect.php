@@ -60,12 +60,12 @@ use Symfony\Component\Serializer\Annotation\Groups;
  */
 class Redirect
 {
-    const TYPE_COMMUNITY = 0;
-    const TYPE_EVENT = 1;
-    const TYPE_ARTICLE = 2;
-    const TYPE_COMMUNITY_WIDGET=3;
-    const TYPE_EVENT_WIDGET=4;
-    const TYPE_NO_LONGER_EXISTS = 99;
+    public const TYPE_COMMUNITY = 0;
+    public const TYPE_EVENT = 1;
+    public const TYPE_ARTICLE = 2;
+    public const TYPE_COMMUNITY_WIDGET=3;
+    public const TYPE_EVENT_WIDGET=4;
+    public const TYPE_NO_LONGER_EXISTS = 99;
 
     /**
      * @var int The id of this redirection.
@@ -77,7 +77,7 @@ class Redirect
      * @ApiProperty(identifier=true)
      */
     private $id;
-    
+
     /**
      * @var string The original URI.
      *

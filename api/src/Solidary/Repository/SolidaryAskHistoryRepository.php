@@ -38,7 +38,7 @@ class SolidaryAskHistoryRepository
      * @var EntityRepository
      */
     private $repository;
-        
+
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->repository = $entityManager->getRepository(SolidaryAskHistory::class);
@@ -79,7 +79,7 @@ class SolidaryAskHistoryRepository
         ->setParameter('solidaryAsk', $solidaryAsk)
         ->orderBy('sah.createdDate', 'DESC')
         ->setMaxResults(1);
-        
+
         return $query->getQuery()->getOneOrNullResult();
     }
 
@@ -98,7 +98,7 @@ class SolidaryAskHistoryRepository
         ->setParameter('solidaryAsk', $solidaryAsk)
         ->orderBy('sah.createdDate', 'DESC')
         ->setMaxResults(1);
-        
+
         return $query->getQuery()->getOneOrNullResult();
     }
 }

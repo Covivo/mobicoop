@@ -54,7 +54,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class CarpoolSubscriber implements EventSubscriberInterface
 {
     use TranslatorTrait;
-    
+
     private $notificationManager;
     private $askHistoryRepository;
     private $logger;
@@ -74,7 +74,7 @@ class CarpoolSubscriber implements EventSubscriberInterface
         $this->router = $router;
         $this->blockManager = $blockManager;
     }
-    
+
     public static function getSubscribedEvents(): array
     {
         return [
@@ -95,7 +95,7 @@ class CarpoolSubscriber implements EventSubscriberInterface
             AdMajorUpdatedEvent::NAME => 'onAdMajorUpdated'
         ];
     }
-    
+
     /**
      * Executed when a new ask is posted
      *
@@ -109,7 +109,7 @@ class CarpoolSubscriber implements EventSubscriberInterface
         $adRecipient = ($event->getAd()->getResults()[0]->getCarpooler());
         $this->notificationManager->notifies(AskPostedEvent::NAME, $adRecipient, $event->getAd());
     }
-    
+
     /**
      * Executed when an ask is accepted
      *
@@ -123,7 +123,7 @@ class CarpoolSubscriber implements EventSubscriberInterface
         $adRecipient = ($event->getAd()->getResults()[0]->getCarpooler());
         $this->notificationManager->notifies(AskAcceptedEvent::NAME, $adRecipient, $event->getAd());
     }
-    
+
     /**
      * Executed when an ask is declined
      *
@@ -137,7 +137,7 @@ class CarpoolSubscriber implements EventSubscriberInterface
         $adRecipient = ($event->getAd()->getResults()[0]->getCarpooler());
         $this->notificationManager->notifies(AskRefusedEvent::NAME, $adRecipient, $event->getAd());
     }
-    
+
     // /**
     //  * Executed when Ask is updated
     //  *
@@ -158,7 +158,7 @@ class CarpoolSubscriber implements EventSubscriberInterface
     //         $this->notificationManager->notifies(AskUpdatedEvent::NAME, $askRecipient, $lastAskHistory);
     //     }
     // }
-    
+
     /**
      * Executed when a new matching is discovered
      *
@@ -184,7 +184,7 @@ class CarpoolSubscriber implements EventSubscriberInterface
             }
         }
     }
-    
+
     /**
      * Execute when a proposal is posted.
      *
@@ -207,7 +207,7 @@ class CarpoolSubscriber implements EventSubscriberInterface
     {
         $this->notificationManager->notifies(ProposalCanceledEvent::NAME, $event->getProposal()->getUser(), $event->getProposal());
     }
-    
+
     /**
      * Executed when an ad needs to be renewed
      *

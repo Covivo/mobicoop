@@ -37,18 +37,18 @@ final class VersionCollectionDataProvider implements CollectionDataProviderInter
 {
     private $security;
     private $versionManager;
-    
+
     public function __construct(Security $security, VersionManager $versionManager)
     {
         $this->security = $security;
         $this->versionManager = $versionManager;
     }
-    
+
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
         return Version::class === $resourceClass && $operationName =="get";
     }
-    
+
     public function getCollection(string $resourceClass, string $operationName = null): ?array
     {
         return [$this->versionManager->getVersions()];

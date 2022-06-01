@@ -31,12 +31,12 @@ use App\Image\Service\ImageManager;
 class ImageListener
 {
     private $imageManager;
-    
+
     public function __construct(ImageManager $imageManager)
     {
         $this->imageManager = $imageManager;
     }
-    
+
     /** @ORM\PostLoad */
     public function postLoadHandler(Image $image, LifecycleEventArgs $args)
     {

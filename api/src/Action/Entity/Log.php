@@ -71,7 +71,6 @@ use App\Payment\Entity\CarpoolItem;
  */
 class Log
 {
-    
     /**
      * @var int The id of this log action.
      *
@@ -253,11 +252,11 @@ class Log
     {
         return $this->id;
     }
-    
+
     public function setId(int $id): self
     {
         $this->id = $id;
-        
+
         return $this;
     }
 
@@ -289,11 +288,11 @@ class Log
     {
         return $this->action;
     }
-    
+
     public function setAction(?Action $action): self
     {
         $this->action = $action;
-        
+
         return $this;
     }
 
@@ -313,11 +312,11 @@ class Log
     {
         return $this->proposal;
     }
-    
+
     public function setProposal(?Proposal $proposal): self
     {
         $this->proposal = $proposal;
-        
+
         return $this;
     }
 
@@ -325,11 +324,11 @@ class Log
     {
         return $this->matching;
     }
-    
+
     public function setMatching(?Matching $matching): self
     {
         $this->matching = $matching;
-        
+
         return $this;
     }
 
@@ -337,11 +336,11 @@ class Log
     {
         return $this->ask;
     }
-    
+
     public function setAsk(?Ask $ask): self
     {
         $this->ask = $ask;
-        
+
         return $this;
     }
 
@@ -349,11 +348,11 @@ class Log
     {
         return $this->article;
     }
-    
+
     public function setArticle(?Article $article): self
     {
         $this->article = $article;
-        
+
         return $this;
     }
 
@@ -361,11 +360,11 @@ class Log
     {
         return $this->event;
     }
-    
+
     public function setEvent(?Event $event): self
     {
         $this->event = $event;
-        
+
         return $this;
     }
 
@@ -373,11 +372,11 @@ class Log
     {
         return $this->community;
     }
-    
+
     public function setCommunity(?Community $community): self
     {
         $this->community = $community;
-        
+
         return $this;
     }
 
@@ -385,11 +384,11 @@ class Log
     {
         return $this->solidary;
     }
-    
+
     public function setSolidary(?Solidary $solidary): self
     {
         $this->solidary = $solidary;
-        
+
         return $this;
     }
 
@@ -397,11 +396,11 @@ class Log
     {
         return $this->territory;
     }
-    
+
     public function setTerritory(?Territory $territory): self
     {
         $this->territory = $territory;
-        
+
         return $this;
     }
 
@@ -409,11 +408,11 @@ class Log
     {
         return $this->car;
     }
-    
+
     public function setCar(?Car $car): self
     {
         $this->car = $car;
-        
+
         return $this;
     }
 
@@ -421,11 +420,11 @@ class Log
     {
         return $this->message;
     }
-    
+
     public function setMessage(?Message $message): self
     {
         $this->message = $message;
-        
+
         return $this;
     }
 
@@ -433,11 +432,11 @@ class Log
     {
         return $this->campaign;
     }
-    
+
     public function setCampaign(?Campaign $campaign): self
     {
         $this->campaign = $campaign;
-        
+
         return $this;
     }
 
@@ -445,11 +444,11 @@ class Log
     {
         return $this->carpoolPayment;
     }
-    
+
     public function setCarpoolPayment(?CarpoolPayment $carpoolPayment): self
     {
         $this->carpoolPayment = $carpoolPayment;
-        
+
         return $this;
     }
 
@@ -457,11 +456,11 @@ class Log
     {
         return $this->carpoolItem;
     }
-    
+
     public function setCarpoolItem(?CarpoolItem $carpoolItem): self
     {
         $this->carpoolItem = $carpoolItem;
-        
+
         return $this;
     }
 

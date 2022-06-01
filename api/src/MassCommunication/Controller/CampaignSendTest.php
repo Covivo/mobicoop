@@ -36,7 +36,7 @@ class CampaignSendTest
     use TranslatorTrait;
 
     private $campaignManager;
-    
+
     public function __construct(CampaignManager $campaignManager)
     {
         $this->campaignManager = $campaignManager;

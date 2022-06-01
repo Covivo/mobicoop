@@ -46,7 +46,7 @@ class DriverAskAdDeletedEvent extends Event
     {
         return $this->ask;
     }
-    
+
     public function getDeleterId()
     {
         return $this->deleterId;

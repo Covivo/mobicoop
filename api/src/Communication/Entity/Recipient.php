@@ -78,8 +78,8 @@ use App\User\Entity\User;
  */
 class Recipient
 {
-    const STATUS_PENDING = 1;
-    const STATUS_READ = 2;
+    public const STATUS_PENDING = 1;
+    public const STATUS_READ = 2;
 
     /**
      * @var int The id of this recipient.
@@ -174,7 +174,7 @@ class Recipient
     {
         return $this->status;
     }
-    
+
     public function setStatus(?int $status)
     {
         $this->status = $status;
@@ -184,11 +184,11 @@ class Recipient
     {
         return $this->user;
     }
-    
+
     public function setUser(?User $user): self
     {
         $this->user = $user;
-        
+
         return $this;
     }
 
@@ -232,17 +232,17 @@ class Recipient
     {
         return $this->notifieds->getValues();
     }
-    
+
     public function addNotified(Notified $notified): self
     {
         if (!$this->notifieds->contains($notified)) {
             $this->notifieds[] = $notified;
             $notified->setRecipient($this);
         }
-        
+
         return $this;
     }
-    
+
     public function removeNotified(Notified $notified): self
     {
         if ($this->notifieds->contains($notified)) {
@@ -252,7 +252,7 @@ class Recipient
                 $notified->setRecipient(null);
             }
         }
-        
+
         return $this;
     }
 
@@ -281,7 +281,7 @@ class Recipient
     }
 
     // DOCTRINE EVENTS
-    
+
     /**
      * Creation date.
      *

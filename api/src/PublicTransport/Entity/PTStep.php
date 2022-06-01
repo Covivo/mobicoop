@@ -63,7 +63,7 @@ class PTStep
      * @ApiProperty(identifier=true)
      */
     private $id;
-    
+
     /**
      * @var int The distance of this step.
      *
@@ -71,7 +71,7 @@ class PTStep
      * @Groups("pt")
      */
     private $distance;
-    
+
     /**
      * @var string The duration of this step (in seconds).
      *
@@ -79,7 +79,7 @@ class PTStep
      * @Groups("pt")
      */
     private $duration;
-    
+
     /**
      * @var int The position of this step.
      *
@@ -87,7 +87,7 @@ class PTStep
      * @Groups("pt")
      */
     private $position;
-    
+
     /**
      * @var bool The step is the last step of the leg.
      *
@@ -95,7 +95,7 @@ class PTStep
      * @Groups("pt")
      */
     private $isLast;
-    
+
     /**
      * @var string The magnetic direction of this step.
      *
@@ -103,7 +103,7 @@ class PTStep
      * @Groups("pt")
      */
     private $magneticDirection;
-    
+
     /**
      * @var string The relative direction of this step.
      *
@@ -111,7 +111,7 @@ class PTStep
      * @Groups("pt")
      */
     private $relativeDirection;
-    
+
     /**
      * @var PTLeg The parent leg of this step.
      *
@@ -120,7 +120,7 @@ class PTStep
      * @Groups("pt")
      */
     private $ptleg;
-    
+
     /**
      * @var PTDeparture The departure of this step.
      *
@@ -129,7 +129,7 @@ class PTStep
      * @Groups("pt")
      */
     private $ptdeparture;
-    
+
     /**
      * @var PTArrival The arrival of this step.
      *
@@ -151,124 +151,124 @@ class PTStep
         $this->id = $id;
         $this->setPosition($id);
     }
-    
+
     public function getId(): int
     {
         return $this->id;
     }
-    
+
     public function setId(int $id): self
     {
         $this->id = $id;
-        
+
         return $this;
     }
-    
+
     public function getDistance(): ?int
     {
         return $this->distance;
     }
-    
+
     public function setDistance(?int $distance): self
     {
         $this->distance = $distance;
-        
+
         return $this;
     }
-    
+
     public function getDuration(): ?int
     {
         return $this->duration;
     }
-    
+
     public function setDuration(?int $duration): self
     {
         $this->duration = $duration;
-        
+
         return $this;
     }
-    
+
     public function getPosition(): int
     {
         return $this->position;
     }
-    
+
     public function setPosition(int $position): self
     {
         $this->position = $position;
-        
+
         return $this;
     }
-    
+
     public function isLast(): bool
     {
         return $this->isLast;
     }
-    
+
     public function setIsLast(bool $isLast): self
     {
         $this->isLast = $isLast;
-        
+
         return $this;
     }
-    
+
     public function getMagneticDirection(): ?string
     {
         return $this->magneticDirection;
     }
-    
+
     public function setMagneticDirection(?string $magneticDirection): self
     {
         $this->magneticDirection = $magneticDirection;
-        
+
         return $this;
     }
-    
+
     public function getRelativeDirection(): ?string
     {
         return $this->relativeDirection;
     }
-    
+
     public function setRelativeDirection(?string $relativeDirection): self
     {
         $this->relativeDirection = $relativeDirection;
-        
+
         return $this;
     }
-    
+
     public function getPTLeg(): PTLeg
     {
         return $this->ptleg;
     }
-    
+
     public function setPTLeg(?PTLeg $ptleg): self
     {
         $this->ptleg = $ptleg;
-        
+
         return $this;
     }
-    
+
     public function getPTDeparture(): PTDeparture
     {
         return $this->ptdeparture;
     }
-    
+
     public function setPTDeparture(PTDeparture $ptdeparture): self
     {
         $this->ptdeparture = $ptdeparture;
-        
+
         return $this;
     }
-    
+
     public function getPTArrival(): PTArrival
     {
         return $this->ptarrival;
     }
-    
+
     public function setPTArrival(PTArrival $ptarrival): self
     {
         $this->ptarrival = $ptarrival;
-        
+
         return $this;
     }
 

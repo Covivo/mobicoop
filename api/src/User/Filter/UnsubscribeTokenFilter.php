@@ -33,7 +33,7 @@ final class UnsubscribeTokenFilter extends AbstractContextAwareFilter
         if ($property != "unsubscribeToken") {
             return;
         }
-        
+
         $queryBuilder
             ->andWhere('u.unsubscribeToken = \'' .$value . '\'');
     }

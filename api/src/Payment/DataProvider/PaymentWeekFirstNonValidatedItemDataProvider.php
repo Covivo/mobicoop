@@ -45,7 +45,7 @@ final class PaymentWeekFirstNonValidatedItemDataProvider implements RestrictedDa
         $this->paymentManager = $paymentManager;
         $this->security = $security;
     }
-    
+
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
         return PaymentWeek::class === $resourceClass && $operationName === "get";

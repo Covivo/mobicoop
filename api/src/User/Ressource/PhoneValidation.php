@@ -69,7 +69,7 @@ use App\User\Entity\User;
  */
 class PhoneValidation
 {
-    const DEFAULT_ID = 999999999999;
+    public const DEFAULT_ID = 999999999999;
 
     /**
      * @var int The id
@@ -87,7 +87,7 @@ class PhoneValidation
      *
     */
     private $phoneNumber;
-    
+
     /**
      * @var bool If the phone number is valid
      *
@@ -115,7 +115,7 @@ class PhoneValidation
     public function setId(int $id): self
     {
         $this->id = $id;
-        
+
         return $this;
     }
 

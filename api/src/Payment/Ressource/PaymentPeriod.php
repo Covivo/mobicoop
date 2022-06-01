@@ -56,7 +56,7 @@ use App\Geography\Entity\Address;
  */
 class PaymentPeriod
 {
-    const DEFAULT_ID = 999999999999;
+    public const DEFAULT_ID = 999999999999;
 
     /**
      * @var int The id of this payment period.

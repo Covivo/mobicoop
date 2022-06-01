@@ -129,11 +129,11 @@ use App\Rdex\Entity\RdexConnectionUser;
  */
 class RdexConnection
 {
-    const MAX_LENGTH_DETAILS = 500;
+    public const MAX_LENGTH_DETAILS = 500;
 
-    const STATE_RECIPIENT = "recipient";
-    const STATE_SENDER = "sender";
-    const AUTHORIZED_STATE = [self::STATE_SENDER, self::STATE_RECIPIENT];
+    public const STATE_RECIPIENT = "recipient";
+    public const STATE_SENDER = "sender";
+    public const AUTHORIZED_STATE = [self::STATE_SENDER, self::STATE_RECIPIENT];
 
     /**
      * @ApiProperty(identifier=true)

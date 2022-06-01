@@ -31,12 +31,12 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 final class PostImageAction
 {
     private $imageManager;
-    
+
     public function __construct(ImageManager $imageManager)
     {
         $this->imageManager = $imageManager;
     }
-    
+
     public function __invoke(Request $request): Image
     {
         $image = new Image();
@@ -73,7 +73,7 @@ final class PostImageAction
         } else {
             throw new BadRequestHttpException('A valid file is required');
         }
-                
+
         $image->setName($request->request->get('name'));
         $image->setOriginalName($request->request->get('originalName'));
         $image->setTitle($request->request->get('title'));
@@ -87,7 +87,7 @@ final class PostImageAction
         if ($owner = $this->imageManager->getOwner($image)) {
             // we associate the owner and the image
             $owner->addImage($image);
-            
+
             // we rename the image depending on the owner and the position
             if (is_null($request->request->get('position'))) {
                 $image->setPosition($this->imageManager->getNextPosition($image));

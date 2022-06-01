@@ -34,13 +34,13 @@ class ArticleRepository
      */
     private $repository;
     private $entityManager;
-    
+
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
         $this->repository = $entityManager->getRepository(Article::class);
     }
-    
+
     /**
      * Find All the articles
      *
@@ -66,7 +66,7 @@ class ArticleRepository
         ->orderBy('a.createdDate', 'DESC')
         ->setMaxResults($nbArticles)
         ->getQuery();
-        
+
         return $query->getResult();
     }
 }

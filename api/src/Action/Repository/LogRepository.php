@@ -32,9 +32,9 @@ class LogRepository
      * @var EntityRepository
      */
     private $repository;
-    
+
     private $entityManager;
-    
+
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;

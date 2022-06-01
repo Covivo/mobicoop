@@ -31,7 +31,7 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
  */
 class RejectVoter extends Voter
 {
-    const REJECT = 'reject';
+    public const REJECT = 'reject';
 
     protected function supports($attribute, $subject): bool
     {
@@ -40,7 +40,7 @@ class RejectVoter extends Voter
             ])) {
             return false;
         }
-      
+
         return true;
     }
 

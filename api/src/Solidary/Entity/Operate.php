@@ -85,7 +85,6 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class Operate
 {
-    
     /**
      * @var int The id of the relation between user and structure
      *
@@ -136,11 +135,11 @@ class Operate
     {
         return $this->id;
     }
-    
+
     public function setId(int $id): self
     {
         $this->id = $id;
-        
+
         return $this;
     }
 
@@ -156,7 +155,7 @@ class Operate
 
         return $this;
     }
-    
+
     public function getUpdatedDate(): ?\DateTimeInterface
     {
         return $this->updatedDate;
@@ -192,7 +191,7 @@ class Operate
 
         return $this;
     }
-   
+
 
     // DOCTRINE EVENTS
     /**

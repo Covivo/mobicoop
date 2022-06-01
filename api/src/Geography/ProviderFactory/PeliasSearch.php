@@ -42,20 +42,20 @@ final class PeliasSearch extends AbstractHttpProvider implements Provider
     /**
      * @var string
      */
-    const GEOCODE_ENDPOINT_URL = '/search?text=%s&size=%d&lang=%s';
+    public const GEOCODE_ENDPOINT_URL = '/search?text=%s&size=%d&lang=%s';
 
     /**
      * @var string
      */
-    const GEOCODE_ENDPOINT_PRIORITIZATION = '&focus.point.lat=%f&focus.point.lon=%f';
+    public const GEOCODE_ENDPOINT_PRIORITIZATION = '&focus.point.lat=%f&focus.point.lon=%f';
 
     /**
      * @var string
      */
-    const REVERSE_ENDPOINT_URL = '/reverse?point.lat=%f&point.lon=%f&size=%d&lang=%s';
+    public const REVERSE_ENDPOINT_URL = '/reverse?point.lat=%f&point.lon=%f&size=%d&lang=%s';
 
     // minimum confidence to consider a result as pertinent
-    const MIN_CONFIDENCE = 0.80;
+    public const MIN_CONFIDENCE = 0.80;
 
     /**
      * @var string

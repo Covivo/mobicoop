@@ -33,8 +33,8 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
  */
 class VersionVoter extends Voter
 {
-    const VERSION_READ = 'app_versioning_read';
-    
+    public const VERSION_READ = 'app_versioning_read';
+
     private $authManager;
 
     public function __construct(AuthManager $authManager)
@@ -70,7 +70,7 @@ class VersionVoter extends Voter
 
         throw new \LogicException('This code should not be reached!');
     }
-    
+
     private function canReadVersion()
     {
         return $this->authManager->isAuthorized(self::VERSION_READ);

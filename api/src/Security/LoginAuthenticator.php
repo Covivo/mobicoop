@@ -37,7 +37,7 @@ class LoginAuthenticator
     {
         $this->ssoManager = $ssoManager;
     }
-    
+
     /**
      * @param AuthenticationSuccessEvent $event
      */

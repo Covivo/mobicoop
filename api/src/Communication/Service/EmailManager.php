@@ -25,12 +25,12 @@ namespace App\Communication\Service;
 
 use App\Communication\Entity\Email as EntityEmail;
 use App\Communication\Ressource\ContactType;
-use function GuzzleHttp\json_decode;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
+use function GuzzleHttp\json_decode;
 
 /**
  * Email sending service.

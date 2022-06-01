@@ -73,9 +73,9 @@ use App\User\Entity\User;
  */
 class Delivery
 {
-    const STATUS_PENDING = 0;
-    const STATUS_SENT = 1;
-    const STATUS_ERROR = 2;
+    public const STATUS_PENDING = 0;
+    public const STATUS_SENT = 1;
+    public const STATUS_ERROR = 2;
 
     /**
      * @var int The id of this delivery.
@@ -167,11 +167,11 @@ class Delivery
     {
         return $this->id;
     }
-    
+
     public function setId(int $id): self
     {
         $this->id = $id;
-        
+
         return $this;
     }
 
@@ -191,11 +191,11 @@ class Delivery
     {
         return $this->campaign;
     }
-    
+
     public function setCampaign(?Campaign $campaign): self
     {
         $this->campaign = $campaign;
-        
+
         return $this;
     }
 
@@ -203,11 +203,11 @@ class Delivery
     {
         return $this->user;
     }
-    
+
     public function setUser(?User $user): self
     {
         $this->user = $user;
-        
+
         return $this;
     }
 
@@ -272,7 +272,7 @@ class Delivery
     }
 
     // DOCTRINE EVENTS
-    
+
     /**
      * Creation date.
      *
