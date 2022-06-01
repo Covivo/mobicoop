@@ -112,8 +112,6 @@ class CommunityManager
      * To join an opened community, no credentials is needed, the user just need to be registered.
      * To join a closed community, a user needs to give credentials, we will call them login and password
      * even if they represent other kind of information (id, date of birth...).
-     *
-     * @return bool
      */
     public function canJoin(User $user, Community $community): bool
     {
@@ -166,8 +164,6 @@ class CommunityManager
      * Get communities available for a user.
      *
      * @param int $userId The user id
-     *
-     * @return null|array
      */
     public function getAvailableCommunitiesForUser(?int $userId): ?array
     {
@@ -200,8 +196,6 @@ class CommunityManager
      * Check if a community already exists with this name.
      *
      * @param Community $community
-     *
-     * @return null|Community
      */
     public function exists(?string $name): ?Community
     {
@@ -209,13 +203,11 @@ class CommunityManager
             return null;
         }
 
-        return $this->communityRepository->findBy(['name' => $name]);
+        return $this->communityRepository->findOneBy(['name' => $name]);
     }
 
     /**
      * Check if a user is a member of a community.
-     *
-     * @return bool
      */
     public function isRegistered(int $communityId, int $userId): bool
     {
@@ -226,8 +218,6 @@ class CommunityManager
      * Get a community by its id.
      *
      * @param null|User $user If a user is provided check and set that if he's in community and/or he's creator
-     *
-     * @return null|Community
      */
     public function getCommunity(int $communityId, User $user = null): ?Community
     {
@@ -245,8 +235,6 @@ class CommunityManager
      * Set the ads of a community.
      *
      * @param int Community's id
-     *
-     * @return Community
      */
     public function getAdsOfCommunity(int $communityId): Community
     {
@@ -284,8 +272,6 @@ class CommunityManager
 
     /**
      * retrive communities owned by a user.
-     *
-     * @return array
      */
     public function getOwnedCommunities(int $userId): array
     {
@@ -522,9 +508,6 @@ class CommunityManager
         return null;
     }
 
-    /**
-     * @return Community
-     */
     public function leaveCommunity(Community $community, User $user): Community
     {
         $communityUser = $this->communityUserRepository->findBy(['community' => $community, 'user' => $user]);
@@ -569,8 +552,6 @@ class CommunityManager
 
     /**
      * Check the credentials against a security file.
-     *
-     * @return bool
      */
     private function checkSecurity(CommunitySecurity $security, string $login, string $password): bool
     {

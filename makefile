@@ -50,3 +50,16 @@ stop:
 	$(info $(blue) Stop components...)
 	$(info $(blue)------------------------------------------------------$(reset))
 	@docker-compose down
+
+db-fixtures-basic:
+	$(info $(violet)------------------------------------------------------)
+	$(info $(violet) DB Basic Fixtures...)
+	$(info $(violet)------------------------------------------------------$(reset))
+	@docker exec -it mobicoop_platform_api_php /bin/zsh -c "php bin/console doctrine:fixtures:load -n -v --append --group=basic"
+
+db-fixtures-solidary:
+	$(info $(violet)------------------------------------------------------)
+	$(info $(violet) DB Solidary Fixtures...)
+	$(info $(violet)------------------------------------------------------$(reset))
+	@docker exec -it mobicoop_platform_api_php /bin/zsh -c "php bin/console doctrine:fixtures:load -n -v --append --group=solidary"
+

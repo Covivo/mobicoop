@@ -105,7 +105,7 @@ class BasicFixtures extends Fixture implements FixtureGroupInterface
                 echo "Importing : {$file->getBasename()} ".PHP_EOL;
                 if ($file = fopen($file, 'r')) {
                     while ($tab = fgetcsv($file, 4096, ';')) {
-                        $this->fixturesManager->createUser($tab);
+                        $this->fixturesManager->createUser($tab, $manager);
                     }
                 }
             }
@@ -235,6 +235,7 @@ class BasicFixtures extends Fixture implements FixtureGroupInterface
         // // we generate the matchings
         // $this->proposalManager->createMatchingsForAllProposals();
         // echo "Done !" . PHP_EOL;
+        $manager->flush();
     }
 
     public static function getGroups(): array

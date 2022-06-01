@@ -287,9 +287,10 @@ class TerritoryManager
                     geo POINT NOT NULL,
                     SPATIAL INDEX(geo),
                     PRIMARY KEY(id)
-                );')->execute()) {
+                );')->executeQuery()) {
             return $this->dropGeoJsonTerritoryIndex() && $this->closeRunningFile() && false;
         }
+        $result->free();
 
         $this->logger->info('INSERT INTO disaddress | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
         // in the following, we will assume addresses with same exact geo coordinates are equals, so they have the same territories...
@@ -300,19 +301,23 @@ class TerritoryManager
                         FROM address a LEFT JOIN address_territory adt ON a.id = adt.address_id
                         WHERE adt.address_id IS NULL AND a.latitude IS NOT NULL AND a.longitude IS NOT NULL AND a.geo_json IS NOT NULL
                     )
-                ;')->execute()) {
+                ;')->executeQuery()) {
             return $this->dropGeoJsonTerritoryIndex() && $this->closeRunningFile() && false;
         }
+        $result->free();
+
         $out = new \DateTime('UTC');
         $diff = $out->diff($in);
         $secs = ((($diff->format('%a') * 24) + $diff->format('%H')) * 60 + $diff->format('%i')) * 60 + $diff->format('%s');
         $this->logger->info('DURATION '.$secs.' | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
 
         if (!(
-            $nbAddresses = $this->entityManager->getConnection()->fetchColumn('SELECT count(*) as cid from disaddress;')
+            $nbAddresses = $this->entityManager->getConnection()->fetchOne('SELECT count(*) as cid from disaddress;')
         )) {
             return $this->dropGeoJsonTerritoryIndex() && $this->closeRunningFile() && false;
         }
+        $result->free();
+
         $this->logger->info('NB address '.$nbAddresses.' | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
 
         if (!$result =
@@ -328,50 +333,61 @@ class TerritoryManager
                 );')->executeQuery()) {
             return $this->dropGeoJsonTerritoryIndex() && $this->closeRunningFile() && false;
         }
+        $result->free();
 
-        $sqlt = 'SELECT id, admin_level from territory order by admin_level desc, id asc;';
-        $stmtt = $this->entityManager->getConnection()->prepare($sqlt);
-        $resultst = $stmtt->executeQuery()->fetchAllAssociative();
-        foreach ($resultst as $resultt) {
-            $territories = [$resultt['id']];
+        $sql_territory = 'SELECT id, admin_level from territory order by admin_level desc, id asc;';
+        $stmt_territory = $this->entityManager->getConnection()->prepare($sql_territory);
+        $result_territory = $stmt_territory->executeQuery();
+        $results_territory = $result_territory->fetchAllAssociative();
+        $result_territory->free();
+        foreach ($results_territory as $territoryAsArray) {
+            $territories = [$territoryAsArray['id']];
             if (!$result =
                 $this->entityManager->getConnection()->prepare('
                     DELETE FROM adter;
                     INSERT INTO adter (aid,tid,geo,lat,lon)
                         SELECT a.id, t.id, geo, lat, lon FROM disaddress a
-                        JOIN territory t ON t.id = '.$resultt['id'].'
-                        LEFT JOIN address_territory at ON at.address_id = a.id AND at.territory_id = '.$resultt['id'].'
+                        JOIN territory t ON t.id = '.$territoryAsArray['id'].'
+                        LEFT JOIN address_territory at ON at.address_id = a.id AND at.territory_id = '.$territoryAsArray['id'].'
                         WHERE ST_DISTANCE(geo, Polygon(ST_ExteriorRing(ST_ConvexHull(geo_json_detail))))=0 AND at.address_id IS NULL
                     ;')->executeQuery()) {
                 return $this->dropGeoJsonTerritoryIndex() && $this->closeRunningFile() && false;
             }
+            $result->free();
+
             if (!$result =
-                $this->entityManager->getConnection()->prepare('DELETE adter FROM adter INNER JOIN territory t ON t.id = '.$resultt['id'].' WHERE ST_DISTANCE(geo, geo_json_detail)>0;')->execute()) {
+                $this->entityManager->getConnection()->prepare('DELETE adter FROM adter INNER JOIN territory t ON t.id = '.$territoryAsArray['id'].' WHERE ST_DISTANCE(geo, geo_json_detail)>0;')->executeQuery()) {
                 return $this->dropGeoJsonTerritoryIndex() && $this->closeRunningFile() && false;
             }
+            $result->free();
 
             // search for parent territories
-            $sqlp = '
+            $sql_parent = '
                 SELECT parent.id from territory parent
-                JOIN territory child ON child.id = '.$resultt['id'].'
-                WHERE parent.admin_level < '.$resultt['admin_level'].'
+                JOIN territory child ON child.id = '.$territoryAsArray['id'].'
+                WHERE parent.admin_level < '.$territoryAsArray['admin_level'].'
                 AND ST_CONTAINS(parent.geo_json_detail,child.geo_json_detail)=1;
             ';
-            $stmtp = $this->entityManager->getConnection()->prepare($sqlp);
-            $resultsp = $stmtp->executeQuery()->fetchAllAssociative();
-            foreach ($resultsp as $resultp) {
-                $territories[] = $resultp['id'];
+            $stmt_parent = $this->entityManager->getConnection()->prepare($sql_parent);
+            $result_parent = $stmt_parent->executeQuery();
+            $results_parent = $result_parent->fetchAllAssociative();
+            $result_parent->free();
+            foreach ($results_parent as $parent) {
+                $territories[] = $parent['id'];
             }
 
             $sql = 'SELECT SQL_NO_CACHE aid,tid,lat,lon FROM adter';
             $stmt = $this->entityManager->getConnection()->prepare($sql);
-            $results = $stmt->executeQuery()->fetchAllAssociative();
+            $result = $stmt->executeQuery();
+            $results = $result->fetchAllAssociative();
+            $result->free();
             $this->entityManager->getConnection()->prepare('start transaction;')->executeQuery();
             foreach ($results as $result) {
                 foreach ($territories as $territory) {
                     $sqli = 'INSERT IGNORE INTO address_territory (address_id, territory_id) SELECT id, '.$territory.' from address WHERE latitude='.$result['lat'].' and longitude='.$result['lon'];
                     $stmti = $this->entityManager->getConnection()->prepare($sqli);
-                    $stmti->executeQuery();
+                    $result = $stmti->executeQuery();
+                    $result->free();
                 }
             }
             $this->entityManager->getConnection()->prepare('commit;')->executeQuery();
@@ -379,7 +395,9 @@ class TerritoryManager
 
         $sql = 'DROP TABLE disaddress;DROP TABLE adter;';
         $stmt = $this->entityManager->getConnection()->prepare($sql);
-        $stmt->executeQuery();
+        $result = $stmt->executeQuery();
+        $result->free();
+
         $this->logger->info('Insert into address_territory finished | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
 
         return $this->closeRunningFile() && $this->dropGeoJsonTerritoryIndex();
@@ -500,7 +518,9 @@ class TerritoryManager
     private function addGeoJsonTerritoryIndex()
     {
         $this->logger->info('Add spatial index to territory | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
-        $result = $this->entityManager->getConnection()->prepare('CREATE SPATIAL INDEX IF NOT EXISTS IDX_GEOJSON_DETAIL ON territory (geo_json_detail);')->execute();
+        $result = $this->entityManager->getConnection()->prepare('CREATE SPATIAL INDEX IF NOT EXISTS IDX_GEOJSON_DETAIL ON territory (geo_json_detail);')->executeQuery();
+        $result->free();
+
         $this->logger->info('End add spatial index to territory | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
 
         return $result;
@@ -509,7 +529,9 @@ class TerritoryManager
     private function dropGeoJsonTerritoryIndex()
     {
         $this->logger->info('Drop spatial index to territory | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
-        $result = $this->entityManager->getConnection()->prepare('DROP INDEX IDX_GEOJSON_DETAIL ON territory;')->execute();
+        $result = $this->entityManager->getConnection()->prepare('DROP INDEX IDX_GEOJSON_DETAIL ON territory;')->executeQuery();
+        $result->free();
+
         $this->logger->info('End drop spatial index to territory | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
 
         return $result;

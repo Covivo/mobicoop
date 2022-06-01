@@ -34,7 +34,9 @@ use App\Event\Entity\Event;
 use App\Event\Repository\EventRepository;
 use App\Gamification\Repository\BadgeRepository;
 use App\Geography\Entity\Address;
-use App\Geography\Service\GeoSearcher;
+use App\Geography\Service\Geocoder\MobicoopGeocoder;
+use App\Geography\Service\Point\AddressAdapter;
+use App\Geography\Service\Point\MobicoopGeocoderPointProvider;
 use App\Image\Entity\Icon;
 use App\Image\Entity\Image;
 use App\Image\Repository\IconRepository;
@@ -71,7 +73,7 @@ class BasicFixturesManager
 
     private $entityManager;
     private $userManager;
-    private $geoSearcher;
+    private $pointProvider;
     private $adManager;
     private $communityManager;
     private $iconRepository;
@@ -89,7 +91,7 @@ class BasicFixturesManager
     public function __construct(
         EntityManagerInterface $entityManager,
         UserManager $userManager,
-        GeoSearcher $geoSearcher,
+        MobicoopGeocoder $mobicoopGeocoder,
         AdManager $adManager,
         CommunityManager $communityManager,
         IconRepository $iconRepository,
@@ -103,7 +105,7 @@ class BasicFixturesManager
     ) {
         $this->entityManager = $entityManager;
         $this->userManager = $userManager;
-        $this->geoSearcher = $geoSearcher;
+        $this->pointProvider = new MobicoopGeocoderPointProvider($mobicoopGeocoder);
         $this->adManager = $adManager;
         $this->communityManager = $communityManager;
         $this->iconRepository = $iconRepository;
@@ -121,6 +123,7 @@ class BasicFixturesManager
      */
     public function clearBasicData()
     {
+        $this->entityManager->getConnection()->beginTransaction();
         $conn = $this->entityManager->getConnection();
         $sql = 'SET FOREIGN_KEY_CHECKS = 0;';
         $stmt = $conn->prepare($sql);
@@ -181,6 +184,7 @@ class BasicFixturesManager
         SET FOREIGN_KEY_CHECKS = 1;';
         $stmt = $conn->prepare($sql);
         $stmt->executeQuery();
+        $this->entityManager->getConnection()->commit();
     }
 
     /**
@@ -210,12 +214,12 @@ class BasicFixturesManager
 
         $user = $this->userManager->createAlerts($user, false);
         $user->setValidatedDate(new \DateTime());
-        $addresses = $this->geoSearcher->geoCode($tab[7]);
-        if (count($addresses) > 0) {
+        $points = $this->pointProvider->search($tab[7]);
+        if (count($points) > 0) {
             /**
              * @var Address $homeAddress
              */
-            $homeAddress = $addresses[0];
+            $homeAddress = AddressAdapter::pointToAddress($points[0]);
             $homeAddress->setHome(true);
             $this->entityManager->persist($homeAddress);
             $user->addAddress($homeAddress);
@@ -228,31 +232,29 @@ class BasicFixturesManager
      * Create an Ad from an array.
      *
      * @param array $tab The array containing the ad informations (model in ../Csv/Ads/ads.txt)
-     *
-     * @return null|Ad
      */
     public function createAd(array $tab): ?Ad
     {
         echo 'Import ad for user '.$tab[0].PHP_EOL;
         if ($user = $this->userManager->getUserByEmail($tab[0])) {
             $origin = $destination = null;
-            $addressesOrigin = $this->geoSearcher->geoCode($tab[5]);
-            if (count($addressesOrigin) > 0) {
+            $pointsOrigin = $this->pointProvider->search($tab[5]);
+            if (count($pointsOrigin) > 0) {
                 $origin = new Waypoint();
                 $origin->setPosition(0);
                 $origin->setDestination(false);
-                $origin->setAddress($addressesOrigin[0]);
+                $origin->setAddress(AddressAdapter::pointToAddress($pointsOrigin[0]));
             } else {
                 echo 'Wrong origin !'.PHP_EOL;
 
                 return null;
             }
-            $addressesDestination = $this->geoSearcher->geoCode($tab[6]);
-            if (count($addressesDestination) > 0) {
+            $pointsDestination = $this->pointProvider->search($tab[6]);
+            if (count($pointsDestination) > 0) {
                 $destination = new Waypoint();
                 $destination->setPosition(1);
                 $destination->setDestination(true);
-                $destination->setAddress($addressesDestination[0]);
+                $destination->setAddress(AddressAdapter::pointToAddress($pointsDestination[0]));
             } else {
                 echo 'Wrong destination !'.PHP_EOL;
 
@@ -358,12 +360,12 @@ class BasicFixturesManager
             $event = new Event();
             $event->setStatus(Event::STATUS_ACTIVE);
             $event->setUser($user);
-            $addresses = $this->geoSearcher->geoCode($tab[2]);
-            if (count($addresses) > 0) {
+            $points = $this->pointProvider->search($tab[2]);
+            if (count($points) > 0) {
                 /**
                  * @var Address $address
                  */
-                $address = $addresses[0];
+                $address = AddressAdapter::pointToAddress($points[0]);
                 $this->entityManager->persist($address);
                 $event->setAddress($address);
             } else {
@@ -400,12 +402,12 @@ class BasicFixturesManager
             $community->setStatus(1);
             $community->setUser($user);
             if ('' !== $tab[1]) {
-                $addresses = $this->geoSearcher->geoCode($tab[1]);
-                if (count($addresses) > 0) {
+                $points = $this->pointProvider->search($tab[1]);
+                if (count($points) > 0) {
                     /**
                      * @var Address $address
                      */
-                    $address = $addresses[0];
+                    $address = AddressAdapter::pointToAddress($points[0]);
                     $this->entityManager->persist($address);
                     $community->setAddress($address);
                 } else {
@@ -438,7 +440,7 @@ class BasicFixturesManager
             if ($community = $this->communityManager->exists($tab[1])) {
                 $communityUser = new CommunityUser();
                 $communityUser->setUser($user);
-                $communityUser->setCommunity($community[0]);
+                $communityUser->setCommunity($community);
                 $communityUser->setStatus($tab[2]);
                 $this->entityManager->persist($communityUser);
                 $this->entityManager->flush();
@@ -657,8 +659,6 @@ class BasicFixturesManager
      * Return the current date with the applied time modifier;.
      *
      * @param string $modifier The modifier
-     *
-     * @return DateTime
      */
     private function getDateFromModifier(string $modifier): DateTime
     {
