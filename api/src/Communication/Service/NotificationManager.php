@@ -289,8 +289,7 @@ class NotificationManager
     {
         $email = new Email();
         $email->setRecipientEmail($recipient->getEmail());
-        $structure = null;
-
+        $signature = [];
         $titleContext = [];
         $bodyContext = [];
         if ($object) {
@@ -550,11 +549,12 @@ class NotificationManager
         } else {
             if (!is_null($recipient->getSolidaryUser())) {
                 $structure = $recipient->getSolidaryUser()->getSolidaryUserStructures()[0]->getStructure();
-                if (count($structure->getImages()) > 0) {
-                    $structure->setLogoPath($this->structureLogoUri.$structure->getImages()[0]->getFileName());
-                }
+                $signature = [
+                    'text' => $structure->getSignature(),
+                    'logo' => count($structure->getImages()) > 0 ? $this->structureLogoUri.$structure->getImages()[0]->getFileName() : null,
+                ];
             }
-            $bodyContext = ['user' => $recipient, 'notification' => $notification, 'structure' => $structure];
+            $bodyContext = ['user' => $recipient, 'notification' => $notification, 'signature' => $signature];
         }
 
         $lang = self::LANG;
