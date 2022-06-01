@@ -67,6 +67,7 @@ class AnalyticManager
             'resource' => ['dashboard' => $dashboard['dashboardId']],
             'params' => [
                 'idterritoryoperational' => self::getTerritories($dashboard['auth_item']),
+                'organization' => $this->organization,
             ],
         ];
 
