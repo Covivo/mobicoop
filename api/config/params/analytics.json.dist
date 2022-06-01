@@ -1,5 +1,12 @@
 {
   "url": "",
   "secret": "",
-  "organization": ""
+  "organization": "",
+  "dashboards":[
+    {
+      "paramId":1,
+      "dashboardId":35,
+      "auth_item":"the_right_to_read"
+    }
+  ]
 }

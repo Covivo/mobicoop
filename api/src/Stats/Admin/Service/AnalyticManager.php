@@ -23,20 +23,29 @@
 namespace App\Stats\Admin\Service;
 
 use App\Stats\Admin\Resource\Analytic;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class AnalyticManager
 {
+    private $paramId;
     private $uri;
     private $organization;
+    private $secret;
+    private $dashboards;
 
-    public function __construct(array $params)
+    public function __construct(RequestStack $requestStack, array $params)
     {
         $this->uri = $params['url'];
         $this->organization = $params['organization'];
         $this->secret = $params['secret'];
+        $this->dashboards = $params['dashboards'];
+
+        $request = $this->request = $requestStack->getCurrentRequest();
+        $this->paramId = $request->get('id');
     }
 
     public function getAnalytics(): array
@@ -49,16 +58,34 @@ class AnalyticManager
         $analytic = new Analytic();
         $analytic->setId($id);
 
+        $dashboard = self::getDashboard();
+
         $payload = [
-            'resource' => ['dashboard' => 35],
+            'resource' => ['dashboard' => $dashboard['dashboardId']],
             'params' => [
-                'idterritoryoperational' => [226],
+                'idterritoryoperational' => self::getTerritories($dashboard['auth_item']),
             ],
         ];
 
         $analytic->setUrl($this->uri.'embed/dashboard/'.self::build_jwt_token($payload).'#bordered=false&titled=false');
 
         return $analytic;
+    }
+
+    private function getDashboard(): ?array
+    {
+        foreach ($this->dashboards as $dashboard) {
+            if ($dashboard['paramId'] == $this->paramId) {
+                return $dashboard;
+            }
+        }
+
+        throw new ResourceNotFoundException('Unknown dashboard');
+    }
+
+    private function getTerritories(string $auth_item): array
+    {
+        return [226];
     }
 
     private function build_jwt_token($payload): string
