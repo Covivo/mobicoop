@@ -384,3 +384,6 @@ $RECYCLE.BIN/
 .phpunit.result.cache
 /phpunit.xml
 ###< symfony/phpunit-bridge ###
+
+/tools/php-cs-fixer/vendor/
+/tools/php-mess-detector/vendor/

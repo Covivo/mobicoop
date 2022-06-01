@@ -13,12 +13,19 @@ install:
 	@make -s start
 	@make -s init-api
 	@make -s init-client
+	@make -s install-api
 
 build:
 	$(info $(pink)------------------------------------------------------)
 	$(info $(pink) Building docker services...)
 	$(info $(pink)------------------------------------------------------$(reset))
 	@docker-compose build
+
+install-api:
+	$(info $(pink)------------------------------------------------------)
+	$(info $(pink) Installing API dependencies...)
+	$(info $(pink)------------------------------------------------------$(reset))
+	@docker exec -it mobicoop_platform_api_php /bin/zsh -c "cd tools/php-cs-fixer; composer install; cd ../php-mess-detector; composer install"
 
 install-client:
 	$(info $(pink)------------------------------------------------------)
@@ -63,3 +70,16 @@ db-fixtures-solidary:
 	$(info $(violet)------------------------------------------------------$(reset))
 	@docker exec -it mobicoop_platform_api_php /bin/zsh -c "php bin/console doctrine:fixtures:load -n -v --append --group=solidary"
 
+clean-api: clean-api-phpcs clean-api-phpmd
+
+clean-api-phpcs:
+	$(info $(violet)------------------------------------------------------)
+	$(info $(violet) Fix my php code !)
+	$(info $(violet)------------------------------------------------------$(RESET))
+	@docker exec -it mobicoop_platform_api_php /srv/api/tools/php-cs-fixer/vendor/bin/php-cs-fixer fix
+
+clean-api-phpmd:
+	$(info $(violet)------------------------------------------------------)
+	$(info $(violet) Analyze my php code !)
+	$(info $(violet)------------------------------------------------------$(RESET))
+	@docker exec -it mobicoop_platform_api_php /srv/api/tools/php-mess-detector/vendor/bin/phpmd /srv/api/src/ ansi /srv/api/tools/php-mess-detector/mobicoop.xml
