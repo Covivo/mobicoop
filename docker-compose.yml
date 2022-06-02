@@ -1,24 +1,53 @@
-version: "2.4"
+version: "3.8"
+
 services:
-  client:
-    container_name: mobicoop_platform_client
-    image: mobicoop/php-node-chromium:2.0.0
-    # build: ./
-    ports:
-      - '9000:9000'
-      - '8079:8079'
-      - '8081:8081'
-    working_dir: /var/www
-    command: npm start
-    depends_on:
-      - db
-    tty: true
+  client_php:
+    build:
+      context: client
+      target: mobicoop_platform_client_php
+    container_name: ${CLIENT_PHP_CONTAINER_NAME}
     environment:
-      - COMPOSER_PROCESS_TIMEOUT=1200
+      APP_ENV: dev
+    ports:
+      - target: ${CLIENT_PHP_PORT_TARGET:-9001}
+        published: ${CLIENT_PHP_PORT_PUBLISHED:-9101}
+        protocol: tcp
+      - target: 8079
+        published: 8079
     volumes:
-      - ./:/var/www/:cached
+      - php_socket_client:/var/run/php
+      - ./client:/srv/client:rw
+      - ./client/var:/srv/client/var:rw
+      - ./client/docker/client/conf.d/mobicoop-platform-client.dev.ini:/usr/local/etc/php/conf.d/mobicoop-platform.ini
     networks:
       - mobicoop_platform
+    healthcheck:
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 30s
+    restart: unless-stopped
+    depends_on:
+      - api_php
+
+  client_nginx:
+    build:
+      context: client
+      target: mobicoop_platform_client_nginx
+    container_name: ${CLIENT_NGINX_CONTAINER_NAME}
+    ports:
+      - target: ${CLIENT_NGINX_PORT_TARGET:-80}
+        published: ${CLIENT_NGINX_PORT_PUBLISHED:-8081}
+        protocol: tcp
+    volumes:
+      - php_socket_client:/var/run/php
+      - ./client/public:/srv/client/public:ro
+      - ./client/nginx/logs:/var/log/nginx:rw
+    networks:
+      - mobicoop_platform
+    restart: unless-stopped
+    depends_on:
+      - client_php
 
   api_php:
     build:
@@ -28,7 +57,7 @@ services:
     environment:
       APP_ENV: dev
     ports:
-      - target: ${API_PHP_PORT_TARGET:-9001}
+      - target: ${API_PHP_PORT_TARGET:-9000}
         published: ${API_PHP_PORT_PUBLISHED:-9100}
         protocol: tcp
     volumes:
@@ -96,6 +125,7 @@ services:
 
 volumes:
   php_socket_api:
+  php_socket_client:
 
 networks:
   mobicoop_platform:

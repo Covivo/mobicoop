@@ -36,15 +36,13 @@
         "symfony/twig-bundle": "*",
         "symfony/validator": "*",
         "symfony/web-link": "*",
-        "symfony/web-server-bundle": "*",
         "symfony/webpack-encore-bundle": "^1.0",
         "symfony/yaml": "*",
         "twig/extra-bundle": "^2.12|^3.0",
         "twig/twig": "^2.12|^3.0",
-        "wikimedia/composer-merge-plugin": "^1.4"
+        "wikimedia/composer-merge-plugin": "^2.0"
     },
     "require-dev": {
-        "elephantly/kahlan-bundle": "^0.9.8",
         "phpunit/phpunit": "^8.5",
         "symfony/browser-kit": "*",
         "symfony/css-selector": "*",
@@ -59,7 +57,11 @@
             "*": "dist"
         },
         "sort-packages": true,
-        "process-timeout": 0
+        "process-timeout": 0,
+        "allow-plugins": {
+            "symfony/flex": true,
+            "wikimedia/composer-merge-plugin": true
+        }
     },
     "autoload": {
         "psr-4": {

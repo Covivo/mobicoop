@@ -27,58 +27,6 @@ stages:
   - admin_prod_deploy
 
 #
-# Deployment for dev branch
-#
-dev_deploy:
-  stage: deploy
-  environment:
-    name: dev
-    url: https://dev.mobicoop.io
-  only:
-    - dev
-  # variables:
-  #   APP_ENV: dev   # /!\ important : symfony env variable /!\
-  before_script:
-    - cd api && openssl genrsa -aes256 -passout pass:ca4ffed31ee358cc7c7083af6e5773cd -out config/jwt/private.pem 4096
-    - openssl rsa -in config/jwt/private.pem -passin pass:ca4ffed31ee358cc7c7083af6e5773cd -pubout -out config/jwt/public.pem
-    - chmod 777 config/jwt/*
-    - cp config/rdex/clients.json.dist config/rdex/clients.json 
-    - cp config/rdex/operator.json.dist config/rdex/operator.json
-    - cp config/rdex/providers.json.dist config/rdex/providers.json && cd ../
-    - npm install --unsafe-perm # Install the dependencies in the local node_modules folder
-    - npm run install-all-ci # Install the dependencies in the local node_modules folder
-    # - npm run update-db
-  script:
-    # - npm run test-and-coverage
-    - cd client && npm run compile && cd ../   
-    - npm run start-ci & wait-on client/public/build/entrypoints.json
-    # - npm run test-functional-ci-cypress 
-    #  Kill all node & php process if the e2e test are greatfully passed
-    # - killall node || true
-    # - killall php || true                                            
-    - echo "${SSH_DEV_PRIVATE_KEY}" > id_rsa                   # 
-    - chmod 700 id_rsa                                          # ssh identification on docker side 
-    - mv id_rsa ${HOME}/.ssh                                    #
-    - echo "${SSH_DEV_HOST_KEY}" > "${HOME}/.ssh/known_hosts"  #
-    - rsync --stats --quiet --group=www-data -hrvz --exclude-from=.gitlab-exclude --delete  -e "ssh -o StrictHostKeyChecking=no -p $SSH_PORT" ./ ${SSH_DEV_USER}@${SSH_DEV_IP}:/var/www/dev/mobicoop    # rsync the files on the server
-    - ssh -o StrictHostKeyChecking=no -p ${SSH_PORT} ${SSH_DEV_USER}@${SSH_DEV_IP} "cd /var/www/dev/mobicoop/; chmod +x postDeploy.sh; ./postDeploy.sh --version=dev --version-migrate=dev --instance=mobicoop"    # database migration and other after deploy works
-  when: manual      # /!\ important : job executed manually /!\  
-  except:
-    refs:
-      - tags    # job not executed on tags
-  cache:
-    key: "$CI_JOB_STAGE-$CI_COMMIT_REF_SLUG"
-    paths:    # excluded : not cached
-    - api/vendor/
-    - client/vendor/
-
-
-
-###############################################################################################
-############# Everything under this is execute only for Test env (test) ###################
-###############################################################################################
-
-#
 # Deployment for test branch
 #
 test_deploy:

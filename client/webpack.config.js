@@ -69,13 +69,13 @@ Encore
   .configureBabel(function (babelConfig) {
     // add additional presets
     babelConfig.plugins.push('transform-class-properties');
-      const preset = babelConfig.presets.find(([name]) => name === "@babel/preset-env");
-      if (preset !== undefined) {
-        preset[1].useBuiltIns = "usage";
-        preset[1].corejs = 3;
-      }
+    const preset = babelConfig.presets.find(([name]) => name === "@babel/preset-env");
+    if (preset !== undefined) {
+      preset[1].useBuiltIns = "usage";
+      preset[1].corejs = 3;
+    }
   }, {
-      exclude: /node_modules[\\/](?!(vuetify)).*/
+    exclude: /node_modules[\\/](?!(vuetify)).*/
   })
   .enablePostCssLoader();
 
@@ -112,7 +112,7 @@ encoreConfig.watchOptions = {
 
 // Add aliases for files !
 encoreConfig.resolve.alias = _.merge(encoreConfig.resolve.alias, { // merge is very important because if not present vue is not found because cnore add aliasl !! https://github.com/vuejs-templates/webpack/issues/215#issuecomment-514220431
-  '@root': path.resolve(__dirname, '..'),
+  '@root': path.resolve(__dirname, '.'),
   '@js': path.resolve(__dirname, 'src/MobicoopBundle/Resources/assets/js'),
   '@css': path.resolve(__dirname, 'src/MobicoopBundle/Resources/assets/css'),
   '@translations': path.resolve(__dirname, 'src/MobicoopBundle/Resources/translations'),

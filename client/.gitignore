@@ -348,3 +348,8 @@ cypress/screenshots
 
 # Geocomplete
 /config/geocomplete/palette.json
+
+###> phpunit/phpunit ###
+/phpunit.xml
+.phpunit.result.cache
+###< phpunit/phpunit ###

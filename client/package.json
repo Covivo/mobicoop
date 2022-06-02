@@ -1,16 +1,13 @@
 {
   "name": "mobicoop",
-  "version": "0.0.0",
+  "version": "1.52.0",
   "description": "Mobicoop front-end app",
   "main": "public/index.php",
   "directories": {
     "doc": "docs"
   },
   "scripts": {
-    "start": "php bin/console server:run 0.0.0.0:8081 & npm run compile-and-watch-vue",
-    "start-ci": "php bin/console server:run -q --no-debug 127.0.0.1:8081 & npm run compile",
     "compile": "encore production",
-    "compile-and-watch": "encore dev-server --public --host 0.0.0.0 --port 8079 --disable-host-check",
     "compile-and-watch-vue": "encore dev-server  --public --host 0.0.0.0 --port 8079 --disable-host-check --hot"
   },
   "repository": {

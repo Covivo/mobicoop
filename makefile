@@ -9,17 +9,24 @@ install:
 	$(info $(green) Installing components...)
 	$(info $(green)------------------------------------------------------$(reset))
 	@make -s build
+	@make -s start-containers
+	@make -s install-api
 	@make -s install-client
-	@make -s start
 	@make -s init-api
 	@make -s init-client
-	@make -s install-api
+	@make -s start-client
 
 build:
 	$(info $(pink)------------------------------------------------------)
 	$(info $(pink) Building docker services...)
 	$(info $(pink)------------------------------------------------------$(reset))
 	@docker-compose build
+
+start-containers:
+	$(info $(green)------------------------------------------------------)
+	$(info $(green) Start containers...)
+	$(info $(green)------------------------------------------------------$(reset))
+	@docker-compose up -d
 
 install-api:
 	$(info $(pink)------------------------------------------------------)
@@ -31,14 +38,7 @@ install-client:
 	$(info $(pink)------------------------------------------------------)
 	$(info $(pink) Installing client dependencies...)
 	$(info $(pink)------------------------------------------------------$(reset))
-	@docker-compose -f docker-compose-builder.yml run --rm install
-	@docker-compose -f docker-compose-builder.yml run --rm install-all
-
-start:
-	$(info $(green)------------------------------------------------------)
-	$(info $(green) Start components...)
-	$(info $(green)------------------------------------------------------$(reset))
-	@docker-compose up -d
+	@docker exec -it mobicoop_platform_client_php /bin/zsh -c "npm install; composer install"
 
 init-api:
 	$(info $(violet)------------------------------------------------------)
@@ -50,7 +50,12 @@ init-client:
 	$(info $(violet)------------------------------------------------------)
 	$(info $(violet) Init Client...)
 	$(info $(violet)------------------------------------------------------$(reset))
-	@docker exec mobicoop_platform_client client/docker/init-client.sh
+	@docker exec mobicoop_platform_client_php docker/client/init-client.sh
+
+start-client:
+	@docker exec -d mobicoop_platform_client_php /bin/zsh -c "npm run compile-and-watch-vue"
+
+start: start-containers start-client
 
 stop:
 	$(info $(blue)------------------------------------------------------)
@@ -95,3 +100,9 @@ go-api:
 	$(info $(green) Go into API...)
 	$(info $(green)------------------------------------------------------$(reset))
 	@docker exec -ti mobicoop_platform_api_php /bin/zsh
+
+go-client:
+	$(info $(green)------------------------------------------------------)
+	$(info $(green) Go into Client...)
+	$(info $(green)------------------------------------------------------$(reset))
+	@docker exec -ti mobicoop_platform_client_php /bin/zsh
