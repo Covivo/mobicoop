@@ -122,21 +122,6 @@
     "friendsofphp/proxy-manager-lts": {
         "version": "v1.0.1"
     },
-    "geo6/geocoder-php-addok-provider": {
-        "version": "v1.2.0"
-    },
-    "geocoder-php/chain-provider": {
-        "version": "4.0.1"
-    },
-    "geocoder-php/common-http": {
-        "version": "4.2.0"
-    },
-    "geocoder-php/google-maps-provider": {
-        "version": "4.3.0"
-    },
-    "geocoder-php/plugin": {
-        "version": "1.1.0"
-    },
     "gesdinet/jwt-refresh-token-bundle": {
         "version": "v0.9.1"
     },
@@ -224,9 +209,6 @@
     "nikic/php-parser": {
         "version": "v4.2.0"
     },
-    "php-http/discovery": {
-        "version": "1.6.0"
-    },
     "php-http/guzzle7-adapter": {
         "version": "1.0.0"
     },
@@ -274,9 +256,6 @@
     },
     "psr/log": {
         "version": "1.1.0"
-    },
-    "psr/simple-cache": {
-        "version": "1.0.1"
     },
     "ralouphie/getallheaders": {
         "version": "2.0.5"
@@ -572,18 +551,6 @@
     },
     "webmozart/assert": {
         "version": "1.4.0"
-    },
-    "willdurand/geocoder": {
-        "version": "4.2.1"
-    },
-    "willdurand/geocoder-bundle": {
-        "version": "5.0",
-        "recipe": {
-            "repo": "github.com/symfony/recipes-contrib",
-            "branch": "master",
-            "version": "5.0",
-            "ref": "b272ad4fbfcd45a20e7cbfdc4ad1b0e27a62fd3b"
-        }
     },
     "willdurand/negotiation": {
         "version": "v2.3.1"

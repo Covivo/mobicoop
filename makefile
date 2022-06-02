@@ -89,3 +89,9 @@ logs:
 	$(info $(violet) Logs... !)
 	$(info $(violet)------------------------------------------------------$(RESET))
 	@docker-compose logs -f
+
+go-api:
+	$(info $(green)------------------------------------------------------)
+	$(info $(green) Go into API...)
+	$(info $(green)------------------------------------------------------$(reset))
+	@docker exec -ti mobicoop_platform_api_php /bin/zsh
