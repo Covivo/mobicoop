@@ -508,19 +508,6 @@ services:
     App\Gamification\Service\RetroactivelyRewardService:
         tags:
             - { name: monolog.logger, channel: gamification }                                   
-    
-    # Geocoder; alias to allow this type to be autowired
-    Geocoder\Plugin\PluginProvider: '@bazinga_geocoder.provider.chain'
-
-    # Georouter, add prioritization
-    Georouter.query_data_plugin:
-        class: Geocoder\Plugin\Plugin\QueryDataPlugin
-        arguments:
-            - '%env(json:SIG_GEOCODER_PRIORITIZE_COORDINATES)%'
-    # Geography
-    App\Geography\Controller\:
-        resource: '../src/Geography/Controller'
-        tags: ['controller.service_arguments']
 
     App\Geography\EventSubscriber\CarpoolSubscriber:
         arguments:
@@ -555,21 +542,6 @@ services:
                 displayEvent: '%env(resolve:DISPLAY_EVENT)%'
                 displaySeparator: '%env(resolve:DISPLAY_SEPARATOR)%'
     
-    App\Geography\Service\GeoSearcher:
-        arguments:
-            $iconPath: '%env(resolve:GEOCOMPLETE_ICONS_PATH)%'
-            $dataPath: '%env(resolve:DATA_URI)%'
-            $defaultSigResultNumber: '%env(resolve:GEOCOMPLETE_SIG_DEFAULT_RESULTS)%'
-            $defaultSigReturnedResultNumber: '%env(resolve:GEOCOMPLETE_SIG_RETURNED_RESULTS)%'
-            $defaultNamedResultNumber: '%env(resolve:GEOCOMPLETE_NAMED_DEFAULT_RESULTS)%'
-            $defaultRelayPointResultNumber: '%env(resolve:GEOCOMPLETE_RELAY_POINTS_DEFAULT_RESULTS)%'
-            $defaultEventResultNumber: '%env(resolve:GEOCOMPLETE_EVENTS_DEFAULT_RESULTS)%'
-            $geoDataFixes: '%env(json:file:resolve:SIG_GEOCODER_FIXER_DATA)%'
-            $distanceOrder: '%env(bool:SIG_GEOCODER_PRIORITIZE_ORDER)%'
-            $sigPrioritizeCoordinates: '%env(json:SIG_GEOCODER_PRIORITIZE_COORDINATES)%'
-            $sigPrioritizeRegion: '%env(string:SIG_GEOCODER_PRIORITIZE_REGION)%'
-            $sigShowVenues: '%env(bool:SIG_GEOCODER_SHOW_VENUES)%'
-
     App\Geography\Service\Geocoder\MobicoopGeocoder:
         arguments:
             $uri: '%env(string:MOBICOOP_GEOCODER_URI)%'

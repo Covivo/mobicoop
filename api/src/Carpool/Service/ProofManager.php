@@ -35,8 +35,10 @@ use App\Carpool\Repository\WaypointRepository;
 use App\Carpool\Ressource\ClassicProof;
 use App\DataProvider\Entity\CarpoolProofGouvProvider;
 use App\Geography\Entity\Direction;
-use App\Geography\Service\GeoSearcher;
+use App\Geography\Service\AddressCompleter;
+use App\Geography\Service\Geocoder\MobicoopGeocoder;
 use App\Geography\Service\GeoTools;
+use App\Geography\Service\Point\MobicoopGeocoderPointProvider;
 use App\User\Entity\User;
 use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
@@ -55,7 +57,7 @@ class ProofManager
     private $carpoolProofRepository;
     private $askRepository;
     private $waypointRepository;
-    private $geoSearcher;
+    private $addressCompleter;
     private $geoTools;
     private $duration;
     private $minIdentityDistance;
@@ -82,7 +84,7 @@ class ProofManager
         CarpoolProofRepository $carpoolProofRepository,
         AskRepository $askRepository,
         WaypointRepository $waypointRepository,
-        GeoSearcher $geoSearcher,
+        MobicoopGeocoder $mobicoopGeocoder,
         GeoTools $geoTools,
         string $prefix,
         string $provider,
@@ -97,9 +99,10 @@ class ProofManager
         $this->askRepository = $askRepository;
         $this->waypointRepository = $waypointRepository;
         $this->geoTools = $geoTools;
-        $this->geoSearcher = $geoSearcher;
         $this->duration = $duration;
         $this->minIdentityDistance = $minIdentityDistance;
+
+        $this->addressCompleter = new AddressCompleter(new MobicoopGeocoderPointProvider($mobicoopGeocoder));
 
         switch ($provider) {
             case 'BetaGouv':
@@ -270,13 +273,13 @@ class ProofManager
         if ($author->getId() == $passenger->getId()) {
             // the author is the passenger
             $carpoolProof->setPickUpPassengerDate(new \DateTime('UTC'));
-            $carpoolProof->setPickUpPassengerAddress($this->geoSearcher->getAddressByPartialAddressArray(['latitude' => $latitude, 'longitude' => $longitude]));
+            $carpoolProof->setPickUpPassengerAddress($this->addressCompleter->getAddressByPartialAddressArray(['latitude' => $latitude, 'longitude' => $longitude]));
             $carpoolProof->setPoints([$carpoolProof->getPickUpPassengerAddress()]);
             $direction->setPoints([$carpoolProof->getPickUpPassengerAddress()]);
         } else {
             // the author is the driver
             $carpoolProof->setPickUpDriverDate(new \DateTime('UTC'));
-            $carpoolProof->setPickUpDriverAddress($this->geoSearcher->getAddressByPartialAddressArray(['latitude' => $latitude, 'longitude' => $longitude]));
+            $carpoolProof->setPickUpDriverAddress($this->addressCompleter->getAddressByPartialAddressArray(['latitude' => $latitude, 'longitude' => $longitude]));
             $carpoolProof->setPoints([$carpoolProof->getPickUpDriverAddress()]);
             $direction->setPoints([$carpoolProof->getPickUpDriverAddress()]);
         }
@@ -334,7 +337,7 @@ class ProofManager
                     if (is_null($carpoolProof->getDropOffPassengerAddress())) {
                         // the passenger has not set its dropoff
                         $carpoolProof->setDropOffDriverDate(new \DateTime('UTC'));
-                        $carpoolProof->setDropOffDriverAddress($this->geoSearcher->getAddressByPartialAddressArray(['latitude' => $latitude, 'longitude' => $longitude]));
+                        $carpoolProof->setDropOffDriverAddress($this->addressCompleter->getAddressByPartialAddressArray(['latitude' => $latitude, 'longitude' => $longitude]));
                     } else {
                         // the passenger has set its dropoff, we have to check the positions
                         if ($this->geoTools->haversineGreatCircleDistance(
@@ -345,7 +348,7 @@ class ProofManager
                         ) <= $distance) {
                             // drop off driver
                             $carpoolProof->setDropOffDriverDate(new \DateTime('UTC'));
-                            $carpoolProof->setDropOffDriverAddress($this->geoSearcher->getAddressByPartialAddressArray(['latitude' => $latitude, 'longitude' => $longitude]));
+                            $carpoolProof->setDropOffDriverAddress($this->addressCompleter->getAddressByPartialAddressArray(['latitude' => $latitude, 'longitude' => $longitude]));
                             // the driver and the passenger have made their certification, the proof is ready to be sent
                             $carpoolProof->setStatus(CarpoolProof::STATUS_PENDING);
                         // driver direction will be set when the dynamic ad of the driver will be finished
@@ -362,14 +365,14 @@ class ProofManager
                         $carpoolProof->getPickUpPassengerAddress()->getLongitude()
                     ) <= $distance) {
                         $carpoolProof->setPickupDriverDate(new \DateTime('UTC'));
-                        $carpoolProof->setPickUpDriverAddress($this->geoSearcher->getAddressByPartialAddressArray(['latitude' => $latitude, 'longitude' => $longitude]));
+                        $carpoolProof->setPickUpDriverAddress($this->addressCompleter->getAddressByPartialAddressArray(['latitude' => $latitude, 'longitude' => $longitude]));
                     } else {
                         throw new ProofException('Driver pickup certification failed : the passenger certified address is too far');
                     }
                 } else {
                     // the passenger has not set its pickup
                     $carpoolProof->setPickUpDriverDate(new \DateTime('UTC'));
-                    $carpoolProof->setPickUpDriverAddress($this->geoSearcher->getAddressByPartialAddressArray(['latitude' => $latitude, 'longitude' => $longitude]));
+                    $carpoolProof->setPickUpDriverAddress($this->addressCompleter->getAddressByPartialAddressArray(['latitude' => $latitude, 'longitude' => $longitude]));
                 }
 
                 break;
@@ -389,7 +392,7 @@ class ProofManager
                     if (is_null($carpoolProof->getDropOffDriverAddress())) {
                         // the driver has not set its dropoff
                         $carpoolProof->setDropOffPassengerDate(new \DateTime('UTC'));
-                        $carpoolProof->setDropOffPassengerAddress($this->geoSearcher->getAddressByPartialAddressArray(['latitude' => $latitude, 'longitude' => $longitude]));
+                        $carpoolProof->setDropOffPassengerAddress($this->addressCompleter->getAddressByPartialAddressArray(['latitude' => $latitude, 'longitude' => $longitude]));
                         // set the passenger dynamic ad to finished if relevant
                         if ($carpoolProof->getAsk()->getMatching()->getProposalRequest()->isDynamic()) {
                             $carpoolProof->getAsk()->getMatching()->getProposalRequest()->setFinished(true);
@@ -405,7 +408,7 @@ class ProofManager
                         ) <= $distance) {
                             // drop off passenger
                             $carpoolProof->setDropOffPassengerDate(new \DateTime('UTC'));
-                            $carpoolProof->setDropOffPassengerAddress($this->geoSearcher->getAddressByPartialAddressArray(['latitude' => $latitude, 'longitude' => $longitude]));
+                            $carpoolProof->setDropOffPassengerAddress($this->addressCompleter->getAddressByPartialAddressArray(['latitude' => $latitude, 'longitude' => $longitude]));
                             // set the passenger dynamic ad to finished if relevant
                             if ($carpoolProof->getAsk()->getMatching()->getProposalRequest()->isDynamic()) {
                                 $carpoolProof->getAsk()->getMatching()->getProposalRequest()->setFinished(true);
@@ -426,14 +429,14 @@ class ProofManager
                         $carpoolProof->getPickUpDriverAddress()->getLongitude()
                     ) <= $distance) {
                         $carpoolProof->setPickupPassengerDate(new \DateTime('UTC'));
-                        $carpoolProof->setPickUpPassengerAddress($this->geoSearcher->getAddressByPartialAddressArray(['latitude' => $latitude, 'longitude' => $longitude]));
+                        $carpoolProof->setPickUpPassengerAddress($this->addressCompleter->getAddressByPartialAddressArray(['latitude' => $latitude, 'longitude' => $longitude]));
                     } else {
                         throw new ProofException('Passenger pickup certification failed : the driver certified address is too far');
                     }
                 } else {
                     // the driver has not set its pickup
                     $carpoolProof->setPickupPassengerDate(new \DateTime('UTC'));
-                    $carpoolProof->setPickUpPassengerAddress($this->geoSearcher->getAddressByPartialAddressArray(['latitude' => $latitude, 'longitude' => $longitude]));
+                    $carpoolProof->setPickUpPassengerAddress($this->addressCompleter->getAddressByPartialAddressArray(['latitude' => $latitude, 'longitude' => $longitude]));
                 }
 
                 break;

@@ -28,6 +28,9 @@ use App\Action\Repository\ActionRepository;
 use App\Geography\Entity\Address;
 use App\Geography\Repository\AddressRepository;
 use App\Geography\Repository\TerritoryRepository;
+use App\Geography\Service\Geocoder\MobicoopGeocoder;
+use App\Geography\Service\Point\AddressAdapter;
+use App\Geography\Service\Point\MobicoopGeocoderPointProvider;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -42,25 +45,25 @@ class AddressManager
     private $entityManager;
     private $territoryRepository;
     private $addressRepository;
-    private $geoSearcher;
     private $logger;
     private $actionRepository;
     private $eventDispatcher;
     private $geoTools;
+    private $reversePointProvider;
 
     /**
      * Constructor.
      */
-    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, TerritoryRepository $territoryRepository, AddressRepository $addressRepository, GeoSearcher $geoSearcher, ActionRepository $actionRepository, EventDispatcherInterface $eventDispatcher, GeoTools $geoTools)
+    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, TerritoryRepository $territoryRepository, AddressRepository $addressRepository, ActionRepository $actionRepository, EventDispatcherInterface $eventDispatcher, GeoTools $geoTools, MobicoopGeocoder $mobicoopGeocoder)
     {
         $this->entityManager = $entityManager;
         $this->territoryRepository = $territoryRepository;
         $this->addressRepository = $addressRepository;
-        $this->geoSearcher = $geoSearcher;
         $this->logger = $logger;
         $this->actionRepository = $actionRepository;
         $this->eventDispatcher = $eventDispatcher;
         $this->geoTools = $geoTools;
+        $this->reversePointProvider = new MobicoopGeocoderPointProvider($mobicoopGeocoder);
     }
 
     /**
@@ -174,11 +177,12 @@ class AddressManager
      */
     public function reverseGeocodeAddress(Address $address): Address
     {
-        $reversedGeocodeAddress = null;
-        if ($foundAddresses = $this->geoSearcher->reverseGeoCode($address->getLatitude(), $address->getLongitude())) {
-            $reversedGeocodeAddress = $foundAddresses[0];
+        if ($points = $this->reversePointProvider->reverse((float) $address->getLongitude(), (float) $address->getLatitude())) {
+            if (count($points) > 0) {
+                $reversedGeocodeAddress = AddressAdapter::pointToAddress($points[0]);
+            }
         }
-        if (!is_null($reversedGeocodeAddress)) {
+        if (isset($reversedGeocodeAddress)) {
             $address->setLayer($reversedGeocodeAddress->getLayer());
             $address->setStreetAddress($reversedGeocodeAddress->getStreetAddress());
             $address->setPostalCode($reversedGeocodeAddress->getPostalCode());

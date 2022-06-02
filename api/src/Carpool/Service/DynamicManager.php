@@ -45,9 +45,12 @@ use App\Communication\Entity\Recipient;
 use App\Communication\Service\InternalMessageManager;
 use App\Geography\Entity\Address;
 use App\Geography\Entity\Direction;
+use App\Geography\Service\AddressCompleter;
+use App\Geography\Service\Geocoder\MobicoopGeocoder;
 use App\Geography\Service\GeoRouter;
-use App\Geography\Service\GeoSearcher;
 use App\Geography\Service\GeoTools;
+use App\Geography\Service\Point\AddressAdapter;
+use App\Geography\Service\Point\MobicoopGeocoderPointProvider;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -66,7 +69,8 @@ class DynamicManager
     private $resultManager;
     private $geoTools;
     private $geoRouter;
-    private $geoSearcher;
+    private $reversePointProvider;
+    private $addressCompleter;
     private $params;
     private $logger;
     private $matchingRepository;
@@ -86,7 +90,7 @@ class DynamicManager
         ResultManager $resultManager,
         GeoTools $geoTools,
         GeoRouter $geoRouter,
-        GeoSearcher $geoSearcher,
+        MobicoopGeocoder $mobicoopGeocoder,
         array $params,
         LoggerInterface $logger,
         MatchingRepository $matchingRepository,
@@ -102,7 +106,6 @@ class DynamicManager
         $this->resultManager = $resultManager;
         $this->geoTools = $geoTools;
         $this->geoRouter = $geoRouter;
-        $this->geoSearcher = $geoSearcher;
         $this->params = $params;
         $this->logger = $logger;
         $this->matchingRepository = $matchingRepository;
@@ -110,6 +113,8 @@ class DynamicManager
         $this->askHistoryRepository = $askHistoryRepository;
         $this->internalMessageManager = $internalMessageManager;
         $this->proofManager = $proofManager;
+        $this->reversePointProvider = new MobicoopGeocoderPointProvider($mobicoopGeocoder);
+        $this->addressCompleter = new AddressCompleter($this->reversePointProvider);
     }
 
     // DYNAMIC AD
@@ -206,7 +211,7 @@ class DynamicManager
         // waypoints
         foreach ($dynamic->getWaypoints() as $waypointPosition => $point) {
             $waypoint = new Waypoint();
-            $address = $this->geoSearcher->getAddressByPartialAddressArray($point);
+            $address = $this->addressCompleter->getAddressByPartialAddressArray($point);
             $waypoint->setAddress($address);
             $waypoint->setPosition($waypointPosition);
             $waypoint->setDestination($waypointPosition == count($dynamic->getWaypoints()) - 1);
@@ -355,9 +360,9 @@ class DynamicManager
             if ($waypoint->isFloating()) {
                 // update the floating waypoint address
                 // we reverse geocode, to get a full address
-                if ($addresses = $this->geoSearcher->reverseGeoCode($dynamic->getLatitude(), $dynamic->getLongitude())) {
-                    if (count($addresses) > 0) {
-                        $reversedGeocodeAddress = $addresses[0];
+                if ($points = $this->reversePointProvider->reverse((float) $dynamic->getLongitude(), (float) $dynamic->getLatitude())) {
+                    if (count($points) > 0) {
+                        $reversedGeocodeAddress = AddressAdapter::pointToAddress($points[0]);
                     }
                 }
                 $waypoint->getAddress()->setLongitude($dynamic->getLongitude());
