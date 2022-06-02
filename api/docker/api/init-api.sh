@@ -1,4 +1,5 @@
 #!/bin/sh
+cp -u /srv/api/config/params/analytics.json.dist /srv/api/config/params/analytics.json
 cp -u /srv/api/config/params/contacts.json.dist /srv/api/config/params/contacts.json
 cp -u /srv/api/config/params/modules.json.dist /srv/api/config/params/modules.json
 cp -u /srv/api/config/publicTransport/providers.json.dist /srv/api/config/publicTransport/providers.json
