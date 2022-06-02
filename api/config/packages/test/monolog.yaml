@@ -36,12 +36,6 @@ monolog:
             max_files: 30
             path: "%kernel.logs_dir%/consumptionFeedback.log"
             channels: [consumptionFeedback]
-        faker:
-            type: rotating_file
-            level: debug
-            max_files: 30
-            path: "%kernel.logs_dir%/faker.log"
-            channels: [faker]
         gamification:
             type: rotating_file
             level: debug
@@ -95,4 +89,4 @@ monolog:
             path: "%kernel.logs_dir%/%kernel.environment%.log"
             max_files: 30
             level: debug
-            channels: ["!event", "!carpool", "!carpool_dynamic", "!carpool_proof", "!communication", "!community", "!consumptionFeedback", "!faker", "!gamification", "!geography", "!geomatcher", "!georouter", "!maintenance", "!mass", "!notification", "!solidary"]
+            channels: ["!event", "!carpool", "!carpool_dynamic", "!carpool_proof", "!communication", "!community", "!consumptionFeedback", "!gamification", "!geography", "!geomatcher", "!georouter", "!maintenance", "!mass", "!notification", "!solidary"]

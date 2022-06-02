@@ -605,10 +605,6 @@ services:
             $sqlLog: '%env(bool:IMPORT_SQL_LOG)%'
             $directionsBatch: '%env(int:IMPORT_USERS_DIRECTIONS_BATCH_SIZE)%'
     
-    App\Import\Service\FakeManager:
-        tags:
-            - { name: monolog.logger, channel: faker }
-
     # Journey
     App\Journey\Service\JourneyManager:
         arguments:

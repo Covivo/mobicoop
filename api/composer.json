@@ -17,9 +17,6 @@
         "doctrine/orm": "^2.7",
         "edwinhoksberg/php-fcm": "^1.0",
         "friendsofphp/proxy-manager-lts": "1.0.12",
-        "geo6/geocoder-php-addok-provider": "^1.2",
-        "geocoder-php/chain-provider": "^4.0",
-        "geocoder-php/google-maps-provider": "^4.2",
         "gesdinet/jwt-refresh-token-bundle": "^1.1",
         "halaxa/json-machine": "^0.3.2",
         "knplabs/knp-snappy-bundle": "^1.7",
@@ -53,8 +50,7 @@
         "symfony/validator": "6.0.*",
         "symfony/yaml": "*",
         "twig/intl-extra": "^3.1",
-        "vich/uploader-bundle": "^1.8",
-        "willdurand/geocoder-bundle": "^5.3"
+        "vich/uploader-bundle": "^1.8"
     },
     "require-dev": {
         "doctrine/doctrine-fixtures-bundle": "^3.3",
