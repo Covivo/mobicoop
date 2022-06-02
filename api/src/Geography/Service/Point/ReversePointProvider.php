@@ -23,19 +23,11 @@
 
 declare(strict_types=1);
 
-namespace App\Geography\Service\Geocoder;
+namespace App\Geography\Service\Point;
 
-interface Geocoder
+interface ReversePointProvider
 {
-    public function setPrioritizeCentroid(float $lon, float $lat): void;
-
-    public function setPrioritizeBox(float $minLon, float $minLat, float $maxLon, float $maxLat): void;
-
-    public function setPrioritizeRegion(string $region): void;
-
-    public function setLang(string $lang): void;
-
-    public function geocode(string $search): array;
+    public function setMaxResults(int $maxResults): void;
 
     public function reverse(float $lon, float $lat): array;
 }

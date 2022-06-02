@@ -21,6 +21,8 @@
  *    LICENSE
  */
 
+declare(strict_types=1);
+
 namespace App\Geography\Service\Geocoder;
 
 use GuzzleHttp\Client;
@@ -92,7 +94,23 @@ class MobicoopGeocoder implements Geocoder
         try {
             $clientResponse = $this->client->get('?'.http_build_query($this->params), ['connect_timeout' => self::TIME_OUT]);
 
-            return json_decode($clientResponse->getBody(), true);
+            return json_decode((string) $clientResponse->getBody(), true);
+        } catch (TransferException $exception) {
+            return [];
+        } catch (ConnectException $exception) {
+            return [];
+        }
+    }
+
+    public function reverse(float $lon, float $lat): array
+    {
+        $this->params['lon'] = $lon;
+        $this->params['lat'] = $lat;
+
+        try {
+            $clientResponse = $this->client->get('/reverse?'.http_build_query($this->params), ['connect_timeout' => self::TIME_OUT]);
+
+            return json_decode((string) $clientResponse->getBody(), true);
         } catch (TransferException $exception) {
             return [];
         } catch (ConnectException $exception) {
