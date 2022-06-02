@@ -307,11 +307,13 @@ services:
 
     App\Communication\Service\NotificationManager:
         arguments:
-            $emailTemplatePath: '%env(resolve:NOTIFICATION_TEMPLATE_EMAIL_PATH)%'
+            $communicationFolder: '%env(resolve:COMMUNICATION_FOLDER)%'
+            $altCommunicationFolder: '%env(resolve:ALT_COMMUNICATION_FOLDER)%'
+            $emailTemplatePath: '%env(resolve:COMMUNICATION_TEMPLATE_EMAIL_PATH)%%env(resolve:NOTIFICATION_TEMPLATE_EMAIL_PATH)%'
             $emailTitleTemplatePath: '%env(resolve:COMMUNICATION_TEMPLATE_EMAIL_PATH)%%env(resolve:NOTIFICATION_TITLE_TEMPLATE_EMAIL_PATH)%'
-            $pushTemplatePath: '%env(resolve:NOTIFICATION_TEMPLATE_PUSH_PATH)%'
+            $pushTemplatePath: '%env(resolve:COMMUNICATION_TEMPLATE_PUSH_PATH)%%env(resolve:NOTIFICATION_TEMPLATE_PUSH_PATH)%'
             $pushTitleTemplatePath: '%env(resolve:COMMUNICATION_TEMPLATE_PUSH_PATH)%%env(resolve:NOTIFICATION_TITLE_TEMPLATE_PUSH_PATH)%'
-            $smsTemplatePath: '%env(resolve:NOTIFICATION_TEMPLATE_SMS_PATH)%'
+            $smsTemplatePath: '%env(resolve:COMMUNICATION_TEMPLATE_SMS_PATH)%%env(resolve:NOTIFICATION_TEMPLATE_SMS_PATH)%'
             $enabled: '%env(bool:resolve:NOTIFICATION_ENABLED)%'
             $mailsEnabled: '%env(bool:resolve:NOTIFICATION_MAIL_ENABLED)%'
             $smsEnabled: '%env(bool:resolve:NOTIFICATION_SMS_ENABLED)%'
@@ -325,7 +327,6 @@ services:
             $emailSenderName: '%env(resolve:MAILER_SENDER_NAME)%'
             $emailReplyTo: '%env(resolve:MAILER_REPLYTO)%'
             $emailReplyToName: '%env(resolve:MAILER_REPLYTO_NAME)%'
-            $templatePath: '%env(resolve:COMMUNICATION_TEMPLATE_EMAIL_PATH)%'
             $emailAdditionalHeaders: '%env(resolve:MAILER_ADDITIONAL_HEADERS)%'
         tags:
             - { name: monolog.logger, channel: communication }
@@ -338,7 +339,6 @@ services:
 
     App\Communication\Service\PushManager:
         arguments:
-            $templatePath: '%env(resolve:COMMUNICATION_TEMPLATE_PUSH_PATH)%'
             $pushProvider: '%env(resolve:PUSH_PROVIDER)%'
             $apiToken: '%env(resolve:PUSH_API_TOKEN)%'
             $senderId: '%env(resolve:PUSH_SENDER_ID)%'
@@ -347,7 +347,6 @@ services:
 
     App\Communication\Service\SmsManager:
         arguments:
-            $templatePath: '%env(resolve:COMMUNICATION_TEMPLATE_SMS_PATH)%'
             $smsProvider: '%env(resolve:SMS_PROVIDER)%'
             $username: '%env(resolve:SMS_USERNAME)%'
             $password: '%env(resolve:SMS_PASSWORD)%'
@@ -361,7 +360,8 @@ services:
 
     App\Communication\EventSubscriber\ContactSubscriber:
         arguments:
-            $emailTemplatePath: '%env(string:NOTIFICATION_TEMPLATE_EMAIL_PATH)%'
+            $communicationFolder: '%env(resolve:COMMUNICATION_FOLDER)%'
+            $emailTemplatePath: '%env(resolve:COMMUNICATION_TEMPLATE_EMAIL_PATH)%%env(resolve:NOTIFICATION_TEMPLATE_EMAIL_PATH)%'
             $platformName: '%env(string:EMAILS_PLATFORM_NAME)%'
 
     App\Communication\EventSubscriber\UserSubscriber:
@@ -370,8 +370,9 @@ services:
 
     App\Communication\Service\ReportManager:
         arguments:
-            $emailTemplatePath: '%env(string:NOTIFICATION_TEMPLATE_EMAIL_PATH)%'
-            $emailTitleTemplatePath: '%env(string:COMMUNICATION_TEMPLATE_EMAIL_PATH)%%env(string:NOTIFICATION_TITLE_TEMPLATE_EMAIL_PATH)%'
+            $communicationFolder: '%env(resolve:COMMUNICATION_FOLDER)%'
+            $emailTemplatePath: '%env(resolve:COMMUNICATION_TEMPLATE_EMAIL_PATH)%%env(resolve:NOTIFICATION_TEMPLATE_EMAIL_PATH)%'
+            $emailTitleTemplatePath: '%env(resolve:COMMUNICATION_TEMPLATE_EMAIL_PATH)%%env(resolve:NOTIFICATION_TITLE_TEMPLATE_EMAIL_PATH)%'
     # Community
     App\Community\Controller\:
         resource: '../src/Community/Controller'
@@ -581,6 +582,7 @@ services:
             $prioritizeCentroid: '%env(json:POINT_SEARCHER_PRIORITIZE_CENTROID)%'
             $prioritizeBox: '%env(json:POINT_SEARCHER_PRIORITIZE_BOX)%'
             $prioritizeRegion: '%env(string:POINT_SEARCHER_PRIORITIZE_REGION)%'
+            $restrictCountry: '%env(string:POINT_SEARCHER_RESTRICT_COUNTRY)%'
             $exclusionTypes: '%env(json:POINT_SEARCHER_EXCLUSION_TYPES)%'
             $relayPointParams: '%env(json:POINT_SEARCHER_RELAY_POINT_PARAMETERS)%'
 

@@ -19,19 +19,19 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Match\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Carpool\Entity\Proposal;
 use App\Geography\Entity\Address;
 use App\User\Entity\User;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Serializer\Annotation\Groups;
-use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * A mass matching person, imported from a mass matching file.
@@ -59,12 +59,11 @@ use Doctrine\Common\Collections\ArrayCollection;
  *          }
  *      }
  * )
- *
  */
 class MassPerson
 {
     /**
-     * @var int The id of this person.
+     * @var int the id of this person
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
@@ -73,7 +72,7 @@ class MassPerson
     private $id;
 
     /**
-     * @var string|null The given id of the person.
+     * @var null|string the given id of the person
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank(groups={"mass"})
      * @Groups({"mass","massCompute"})
@@ -81,25 +80,43 @@ class MassPerson
     private $givenId;
 
     /**
-     * @var string|null The first name of the person.
+     * @var null|string the first name of the person
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $givenName;
 
     /**
-     * @var string|null The family name of the person.
+     * @var null|string the family name of the person
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $familyName;
 
     /**
-     * @var string|null The email address of the person.
+     * @var null|\DateTimeInterface the birth date of the person
+     * @ORM\Column(type="date", nullable=true)
+     */
+    private $birthDate;
+
+    /**
+     * @var null|int The gender of the person (1=female, 2=male, 3=nc)
+     * @ORM\Column(type="smallint", nullable=true)
+     */
+    private $gender;
+
+    /**
+     * @var null|string the email address of the person
      * @ORM\Column(type="string", length=512, nullable=true)
      */
     private $email;
-    
+
     /**
-     * @var Address The personal address of the person.
+     * @var null|string the telephone number of the person
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $telephone;
+
+    /**
+     * @var Address the personal address of the person
      * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist"}, orphanRemoval=true)
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Assert\NotBlank(groups={"mass"})
@@ -109,7 +126,7 @@ class MassPerson
     private $personalAddress;
 
     /**
-     * @var Address The work address of the person.
+     * @var Address the work address of the person
      * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist"}, orphanRemoval=true)
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      * @Assert\NotBlank(groups={"mass"})
@@ -119,56 +136,56 @@ class MassPerson
     private $workAddress;
 
     /**
-     * @var int The total distance of the direction in meter.
+     * @var int the total distance of the direction in meter
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"mass","massCompute"})
      */
     private $distance;
-    
+
     /**
-     * @var int The total duration of the direction in milliseconds.
+     * @var int the total duration of the direction in milliseconds
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"mass","massCompute"})
      */
     private $duration;
 
     /**
-     * @var float The minimum longitude of the bounding box of the direction.
+     * @var float the minimum longitude of the bounding box of the direction
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
      * @Groups({"mass","massCompute"})
      */
     private $bboxMinLon;
 
     /**
-     * @var float The minimum latitude of the bounding box of the direction.
+     * @var float the minimum latitude of the bounding box of the direction
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
      * @Groups({"mass","massCompute"})
      */
     private $bboxMinLat;
-    
+
     /**
-     * @var float The maximum longitude of the bounding box of the direction.
+     * @var float the maximum longitude of the bounding box of the direction
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
      * @Groups({"mass","massCompute"})
      */
     private $bboxMaxLon;
-    
+
     /**
-     * @var float The maximum latitude of the bounding box of the direction.
+     * @var float the maximum latitude of the bounding box of the direction
      * @ORM\Column(type="decimal", precision=10, scale=6, nullable=true)
      * @Groups({"mass","massCompute"})
      */
     private $bboxMaxLat;
 
     /**
-     * @var int|null The initial bearing of the direction in degrees.
+     * @var null|int the initial bearing of the direction in degrees
      * @ORM\Column(type="integer",nullable=true)
      * @Groups({"mass","massCompute"})
      */
     private $bearing;
 
     /**
-     * @var Mass The original mass file of the person.
+     * @var Mass the original mass file of the person
      *
      * @Assert\NotBlank
      * @ORM\ManyToOne(targetEntity="\App\Match\Entity\Mass", cascade={"persist"}, inversedBy="persons")
@@ -178,7 +195,7 @@ class MassPerson
     private $mass;
 
     /**
-     * @var ArrayCollection|null The potential matchings if the person is driver.
+     * @var null|ArrayCollection the potential matchings if the person is driver
      *
      * @ORM\OneToMany(targetEntity="\App\Match\Entity\MassMatching", mappedBy="massPerson1", cascade={"persist"})
      * @MaxDepth(1)
@@ -187,7 +204,7 @@ class MassPerson
     private $matchingsAsDriver;
 
     /**
-     * @var ArrayCollection|null The potential matchings if the person is passenger.
+     * @var null|ArrayCollection the potential matchings if the person is passenger
      *
      * @ORM\OneToMany(targetEntity="\App\Match\Entity\MassMatching", mappedBy="massPerson2", cascade={"persist"})
      * @MaxDepth(1)
@@ -196,7 +213,7 @@ class MassPerson
     private $matchingsAsPassenger;
 
     /**
-     * @var \DateTimeInterface|null The outward time.
+     * @var null|\DateTimeInterface the outward time
      *
      * @Assert\Time()
      * @ORM\Column(type="time", nullable=true)
@@ -205,7 +222,7 @@ class MassPerson
     private $outwardTime;
 
     /**
-     * @var \DateTimeInterface|null The return time.
+     * @var null|\DateTimeInterface the return time
      *
      * @Assert\Time()
      * @ORM\Column(type="time", nullable=true)
@@ -214,7 +231,7 @@ class MassPerson
     private $returnTime;
 
     /**
-     * @var boolean The person accepts to be a driver.
+     * @var bool the person accepts to be a driver
      *
      * @Assert\Type("bool")
      * @Assert\NotNull
@@ -224,7 +241,7 @@ class MassPerson
     private $driver;
 
     /**
-     * @var boolean The person accepts to be a passenger.
+     * @var bool the person accepts to be a passenger
      *
      * @Assert\Type("bool")
      * @Assert\NotNull
@@ -234,7 +251,7 @@ class MassPerson
     private $passenger;
 
     /**
-     * @var \DateTimeInterface Creation date.
+     * @var \DateTimeInterface creation date
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read"})
@@ -242,7 +259,7 @@ class MassPerson
     private $createdDate;
 
     /**
-     * @var \DateTimeInterface Updated date.
+     * @var \DateTimeInterface updated date
      *
      * @ORM\Column(type="datetime", nullable=true)
      * @Groups({"read"})
@@ -250,7 +267,7 @@ class MassPerson
     private $updatedDate;
 
     /**
-     * @var User|null The User created based on this MassPerson
+     * @var null|User The User created based on this MassPerson
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="massPerson")
      * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
@@ -260,7 +277,7 @@ class MassPerson
     private $user;
 
     /**
-     * @var Proposal|null The Proposal created based on this MassPerson journey (only the outward for round trip)
+     * @var null|Proposal The Proposal created based on this MassPerson journey (only the outward for round trip)
      *
      * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Proposal")
      * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
@@ -270,7 +287,7 @@ class MassPerson
     private $proposal;
 
     /**
-     * @var ArrayCollection|null The MassPTJourneys linked to this mass person
+     * @var null|ArrayCollection The MassPTJourneys linked to this mass person
      *
      * @ORM\OneToMany(targetEntity="\App\Match\Entity\MassPTJourney", mappedBy="massPerson", cascade={"persist"})
      * @MaxDepth(1)
@@ -317,9 +334,10 @@ class MassPerson
     public function setGivenName(?string $givenName): self
     {
         $this->givenName = $givenName;
-        if ($this->givenName == '') {
+        if ('' == $this->givenName) {
             $this->givenName = null;
         }
+
         return $this;
     }
 
@@ -331,9 +349,34 @@ class MassPerson
     public function setFamilyName(?string $familyName): self
     {
         $this->familyName = $familyName;
-        if ($this->familyName == '') {
+        if ('' == $this->familyName) {
             $this->familyName = null;
         }
+
+        return $this;
+    }
+
+    public function getBirthDate(): ?\DateTimeInterface
+    {
+        return $this->birthDate;
+    }
+
+    public function setBirthDate(?\DateTimeInterface $birthDate): self
+    {
+        $this->birthDate = $birthDate;
+
+        return $this;
+    }
+
+    public function getGender(): ?int
+    {
+        return $this->gender;
+    }
+
+    public function setGender(?int $gender): self
+    {
+        $this->gender = $gender;
+
         return $this;
     }
 
@@ -345,7 +388,19 @@ class MassPerson
     public function setEmail(?string $email): self
     {
         $this->email = $email;
-        
+
+        return $this;
+    }
+
+    public function getTelephone(): ?string
+    {
+        return $this->telephone;
+    }
+
+    public function setTelephone(?string $telephone): self
+    {
+        $this->telephone = $telephone;
+
         return $this;
     }
 
@@ -389,11 +444,11 @@ class MassPerson
     {
         return $this->distance;
     }
-    
+
     public function setDistance(int $distance): self
     {
         $this->distance = $distance;
-        
+
         return $this;
     }
 
@@ -401,11 +456,11 @@ class MassPerson
     {
         return $this->duration;
     }
-    
+
     public function setDuration(int $duration): self
     {
         $this->duration = $duration;
-        
+
         return $this;
     }
 
@@ -413,47 +468,47 @@ class MassPerson
     {
         return $this->bboxMinLon;
     }
-    
+
     public function setBboxMinLon(?float $bboxMinLon): self
     {
         $this->bboxMinLon = $bboxMinLon;
-        
+
         return $this;
     }
-    
+
     public function getBboxMinLat(): ?float
     {
         return $this->bboxMinLat;
     }
-    
+
     public function setBboxMinLat(?float $bboxMinLat)
     {
         $this->bboxMinLat = $bboxMinLat;
-        
+
         return $this;
     }
-    
+
     public function getBboxMaxLon(): ?float
     {
         return $this->bboxMaxLon;
     }
-    
+
     public function setBboxMaxLon(?float $bboxMaxLon): self
     {
         $this->bboxMaxLon = $bboxMaxLon;
-        
+
         return $this;
     }
-    
+
     public function getBboxMaxLat(): ?float
     {
         return $this->bboxMaxLat;
     }
-    
+
     public function setBboxMaxLat(?float $bboxMaxLat): self
     {
         $this->bboxMaxLat = $bboxMaxLat;
-        
+
         return $this;
     }
 
@@ -461,11 +516,11 @@ class MassPerson
     {
         return $this->bearing;
     }
-    
+
     public function setBearing(?int $bearing): self
     {
         $this->bearing = $bearing;
-        
+
         return $this;
     }
 
@@ -487,7 +542,7 @@ class MassPerson
     public function setOutwardTime(?string $outwardTime): self
     {
         if ($outwardTime) {
-            $this->outwardTime = \Datetime::createFromFormat('H:i:s', $outwardTime);
+            $this->outwardTime = \DateTime::createFromFormat('H:i:s', $outwardTime);
         }
 
         return $this;
@@ -501,7 +556,7 @@ class MassPerson
     public function setReturnTime(?string $returnTime): self
     {
         if ($returnTime) {
-            $this->returnTime = \Datetime::createFromFormat('H:i:s', $returnTime);
+            $this->returnTime = \DateTime::createFromFormat('H:i:s', $returnTime);
         }
 
         return $this;
@@ -511,23 +566,23 @@ class MassPerson
     {
         return $this->driver;
     }
-    
+
     public function setDriver(bool $isDriver): self
     {
         $this->driver = $isDriver;
-        
+
         return $this;
     }
-    
+
     public function isPassenger(): ?bool
     {
         return $this->passenger;
     }
-    
+
     public function setPassenger(bool $isPassenger): self
     {
         $this->passenger = $isPassenger;
-        
+
         return $this;
     }
 
@@ -559,11 +614,11 @@ class MassPerson
     {
         return $this->user;
     }
-    
+
     public function setUser(User $user): self
     {
         $this->user = $user;
-        
+
         return $this;
     }
 
@@ -571,14 +626,14 @@ class MassPerson
     {
         return $this->proposal;
     }
-    
+
     public function setProposal(Proposal $proposal): self
     {
         $this->proposal = $proposal;
-        
+
         return $this;
     }
-    
+
     public function getMassPTJourneys()
     {
         return $this->massPTJourneys->getValues();
@@ -613,9 +668,9 @@ class MassPerson
 
         return $this;
     }
-    
+
     // DOCTRINE EVENTS
-    
+
     /**
      * Creation date.
      *
@@ -623,7 +678,7 @@ class MassPerson
      */
     public function setAutoCreatedDate()
     {
-        $this->setCreatedDate(new \Datetime());
+        $this->setCreatedDate(new \DateTime());
     }
 
     /**
@@ -633,6 +688,6 @@ class MassPerson
      */
     public function setAutoUpdatedDate()
     {
-        $this->setUpdatedDate(new \Datetime());
+        $this->setUpdatedDate(new \DateTime());
     }
 }

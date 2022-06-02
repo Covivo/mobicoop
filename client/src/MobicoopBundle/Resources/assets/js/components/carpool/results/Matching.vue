@@ -276,6 +276,7 @@
         :fraud-warning-display="fraudWarningDisplay"
         :age-display="ageDisplay"
         :refresh-map="refreshMapMatchingJourney"
+        :carpool-settings-display="carpoolSettingsDisplay"
         @close="carpoolDialog = false"
         @contact="contact"
         @carpool="launchCarpool"
@@ -426,6 +427,10 @@ export default {
       type: Boolean,
       default: false
     },
+    carpoolSettingsDisplay: { 
+      type: Boolean,
+      default: true
+    }
   },
   data : function() {
     return {

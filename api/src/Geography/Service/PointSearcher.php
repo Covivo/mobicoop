@@ -55,6 +55,7 @@ class PointSearcher
         array $prioritizeCentroid = null,
         array $prioritizeBox = null,
         string $prioritizeRegion = null,
+        string $restrictCountry = null,
         array $exclusionTypes = [],
         array $relayPointParams
     ) {
@@ -76,6 +77,9 @@ class PointSearcher
         }
         if ($prioritizeRegion) {
             $mobicoopGeocoder->setPrioritizeRegion($prioritizeRegion);
+        }
+        if ($restrictCountry) {
+            $mobicoopGeocoder->setRestrictCountry($restrictCountry);
         }
         if ($user instanceof User) {
             $userPointProvider->setUser($user);

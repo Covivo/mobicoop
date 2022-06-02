@@ -19,7 +19,10 @@ elementFormDefault="qualified">
             <xs:element name="givenId" type="xs:string"/>
             <xs:element name="givenName" type="xs:string"/>
             <xs:element name="familyName" type="xs:string"/>
+            <xs:element name="birthDate" type="xs:date"/>
+            <xs:element name="gender" type="xs:string"/>
             <xs:element name="email" type="xs:string"/>
+            <xs:element name="phoneNumber" type="xs:string"/>
             <xs:element name="personalAddress" type="address" />
             <xs:element name="workAddress" type="address"/>
             <xs:element name="outwardTime" type="xs:time" minOccurs="0" maxOccurs="1"/>

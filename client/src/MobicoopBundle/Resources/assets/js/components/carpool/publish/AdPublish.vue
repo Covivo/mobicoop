@@ -37,7 +37,7 @@
       top
       timeout="-1"
     >
-      {{ snackErrorPublish.message }}
+      {{ snackErrorPublishMessage }}
       <v-btn
         color="white"
         text
@@ -305,7 +305,7 @@
                 >
                   <v-select
                     v-model="seats"
-                    :items="numberSeats"
+                    :items="itemsSeatNumber"
                     item-text="text"
                     item-value="value"
                   />
@@ -318,126 +318,127 @@
                   {{ $t('stepper.content.passengers.seats.passengers') }}
                 </v-col>
               </v-row>
-
-              <v-row
-                align="center"
-                dense
-              >
-                <v-col
-                  cols="5"
-                  offset="3"
-                  align="left"
+              <div v-if="contentPassenger">
+                <v-row
+                  align="center"
+                  dense
                 >
-                  {{ $t('stepper.content.passengers.luggage.label') }}
-                </v-col>
-                <v-col
-                  cols="1"
-                >
-                  <v-switch
-                    v-model="luggage"
-                    inset
-                    hide-details
-                    class="mt-0 mb-1"
-                    color="primary"
-                  />
-                </v-col>
-                <v-col
-                  cols="1"
-                  align="left"
-                >
-                  <v-tooltip
-                    right
-                    color="info"
+                  <v-col
+                    cols="5"
+                    offset="3"
+                    align="left"
                   >
-                    <template v-slot:activator="{ on }">
-                      <v-icon v-on="on">
-                        mdi-help-circle-outline
-                      </v-icon>
-                    </template>
-                    <span>{{ $t('stepper.content.passengers.luggage.help') }}</span>
-                  </v-tooltip>
-                </v-col>
-              </v-row>
-
-              <v-row
-                align="center"
-                dense
-              >
-                <v-col
-                  cols="5"
-                  offset="3"
-                  align="left"
-                >
-                  {{ $t('stepper.content.passengers.bike.label') }}
-                </v-col>
-                <v-col
-                  cols="1"
-                >
-                  <v-switch
-                    v-model="bike"
-                    inset
-                    hide-details
-                    class="mt-0 mb-1"
-                    color="primary"
-                  />
-                </v-col>
-                <v-col
-                  cols="1"
-                  align="left"
-                >
-                  <v-tooltip
-                    right
-                    color="info"
+                    {{ $t('stepper.content.passengers.luggage.label') }}
+                  </v-col>
+                  <v-col
+                    cols="1"
                   >
-                    <template v-slot:activator="{ on }">
-                      <v-icon v-on="on">
-                        mdi-help-circle-outline
-                      </v-icon>
-                    </template>
-                    <span>{{ $t('stepper.content.passengers.bike.help') }}</span>
-                  </v-tooltip>
-                </v-col>
-              </v-row>
-
-              <v-row
-                align="center"
-                dense
-              >
-                <v-col
-                  cols="5"
-                  offset="3"
-                  align="left"
-                >
-                  {{ $t('stepper.content.passengers.backSeats.label') }}
-                </v-col>
-                <v-col
-                  cols="1"
-                >
-                  <v-switch
-                    v-model="backSeats"
-                    inset
-                    hide-details
-                    class="mt-0 mb-1"
-                    color="primary"
-                  />
-                </v-col>
-                <v-col
-                  cols="1"
-                  align="left"
-                >
-                  <v-tooltip
-                    color="info"
-                    right
+                    <v-switch
+                      v-model="luggage"
+                      inset
+                      hide-details
+                      class="mt-0 mb-1"
+                      color="primary"
+                    />
+                  </v-col>
+                  <v-col
+                    cols="1"
+                    align="left"
                   >
-                    <template v-slot:activator="{ on }">
-                      <v-icon v-on="on">
-                        mdi-help-circle-outline
-                      </v-icon>
-                    </template>
-                    <span>{{ $t('stepper.content.passengers.backSeats.help') }}</span>
-                  </v-tooltip>
-                </v-col>
-              </v-row>
+                    <v-tooltip
+                      right
+                      color="info"
+                    >
+                      <template v-slot:activator="{ on }">
+                        <v-icon v-on="on">
+                          mdi-help-circle-outline
+                        </v-icon>
+                      </template>
+                      <span>{{ $t('stepper.content.passengers.luggage.help') }}</span>
+                    </v-tooltip>
+                  </v-col>
+                </v-row>
+
+                <v-row
+                  align="center"
+                  dense
+                >
+                  <v-col
+                    cols="5"
+                    offset="3"
+                    align="left"
+                  >
+                    {{ $t('stepper.content.passengers.bike.label') }}
+                  </v-col>
+                  <v-col
+                    cols="1"
+                  >
+                    <v-switch
+                      v-model="bike"
+                      inset
+                      hide-details
+                      class="mt-0 mb-1"
+                      color="primary"
+                    />
+                  </v-col>
+                  <v-col
+                    cols="1"
+                    align="left"
+                  >
+                    <v-tooltip
+                      right
+                      color="info"
+                    >
+                      <template v-slot:activator="{ on }">
+                        <v-icon v-on="on">
+                          mdi-help-circle-outline
+                        </v-icon>
+                      </template>
+                      <span>{{ $t('stepper.content.passengers.bike.help') }}</span>
+                    </v-tooltip>
+                  </v-col>
+                </v-row>
+
+                <v-row
+                  align="center"
+                  dense
+                >
+                  <v-col
+                    cols="5"
+                    offset="3"
+                    align="left"
+                  >
+                    {{ $t('stepper.content.passengers.backSeats.label') }}
+                  </v-col>
+                  <v-col
+                    cols="1"
+                  >
+                    <v-switch
+                      v-model="backSeats"
+                      inset
+                      hide-details
+                      class="mt-0 mb-1"
+                      color="primary"
+                    />
+                  </v-col>
+                  <v-col
+                    cols="1"
+                    align="left"
+                  >
+                    <v-tooltip
+                      color="info"
+                      right
+                    >
+                      <template v-slot:activator="{ on }">
+                        <v-icon v-on="on">
+                          mdi-help-circle-outline
+                        </v-icon>
+                      </template>
+                      <span>{{ $t('stepper.content.passengers.backSeats.help') }}</span>
+                    </v-tooltip>
+                  </v-col>
+                </v-row>
+              </div>
             </v-stepper-content>
 
             <!-- Step 5 : participation (if driver) -->
@@ -879,6 +880,18 @@ export default {
       type: Boolean,
       default: false
     },
+    seatNumber : {
+      type: Number,
+      default:null
+    },
+    defaultSeatNumber : {
+      type: Number,
+      default:null
+    },
+    contentPassenger: { 
+      type: Boolean,
+      default: true
+    }
   },
   data() {
     return {
@@ -899,7 +912,7 @@ export default {
       bike: false,
       backSeats: false,
       schedules: null,
-      returnTrip:null,
+      returnTrip: null,
       route: null,
       price: null,
       pricePerKm: this.isUpdate && this.ad ? this.ad.priceKm : this.defaultPriceKm,
@@ -920,17 +933,16 @@ export default {
       useTime: null,            // not used yet
       anyRouteAsPassenger: null, // not used yet
       solidaryExclusive: this.solidaryExclusiveAd,
-      numberSeats : [ 1,2,3,4],
-      seats : 3,
+      seats : this.defaultSeatNumber,
       snackbar: {
         show: false,
         message: "",
         color: "success"
       },
+      isValidAd: true,
       snackErrorPublish: {
         show: false,
-        message: this.$t('snackBarErrorPublish'),
-        color:"error"
+        color: "error"
       },
       priceForbidden: false,
       returnTimeIsValid: true,
@@ -956,6 +968,9 @@ export default {
           "forbidden":0.5
         }
       }
+    },
+    snackErrorPublishMessage() {
+      return this.isValidAd ? this.$t("snackErrorPublish"): this.$t("snackErrorAntiFraud");
     },
     hintPricePerKm() {
       let pricePerKm = this.pricePerKm;
@@ -1106,6 +1121,9 @@ export default {
       else if (this.isMajorUpdate && this.hasPotentialAds) return this.$t('update.popup.major_update_ads.content');
       else if (!this.isMajorUpdate && this.hasAsks) return this.$t('update.popup.minor_update_asks.content');
       return '';
+    },
+    itemsSeatNumber() {
+      return [...Array(this.seatNumber+1).keys()].slice(1);
     }
   },
   watch: {
@@ -1258,15 +1276,21 @@ export default {
       })
         .then(response => {
           if (response.data) {
-            if(response.data.message == 'error'){
+            if (response.data.result) {
+              window.location.href = this.$t("route.myAds");
+            } else if (
+              response.data.includes("the new Ad") ||
+              response.data.includes("Too many") ||
+              response.data.includes("Not enough")
+            ) {
+              this.snackErrorPublish.show = true;
+              this.isValidAd = false;
+              this.loading = false;
+            } else if (response.data.includes("error")) {
               this.snackErrorPublish.show = true;
               this.loading = false;
             }
-            else{
-              window.location.href = this.$t('route.myAds');
-            }
           }
-          //console.log(response);
         })
         .catch(function (error) {
           console.log(error);

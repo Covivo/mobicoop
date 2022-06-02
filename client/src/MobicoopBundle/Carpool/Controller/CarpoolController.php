@@ -69,6 +69,10 @@ class CarpoolController extends AbstractController
     private $fraudWarningDisplay;
     private $ageDisplay;
     private $eventManager;
+    private $seatNumber;
+    private $defaultSeatNumber;
+    private $contentPassenger;
+    private $carpoolSettingsDisplay;
 
     public function __construct(
         PublicTransportManager $publicTransportManager,
@@ -78,12 +82,16 @@ class CarpoolController extends AbstractController
         $forbiddenPrice,
         $defaultRole,
         $participationText,
+        int $seatNumber,
+        int $defaultSeatNumber,
+        bool $contentPassenger,
         bool $defaultRegular,
         string $platformName,
         bool $carpoolRDEXJourneys,
         int $ptResults,
         bool $fraudWarningDisplay,
-        bool $ageDisplay
+        bool $ageDisplay,
+        bool $carpoolSettingsDisplay
     ) {
         $this->midPrice = $midPrice;
         $this->highPrice = $highPrice;
@@ -98,6 +106,10 @@ class CarpoolController extends AbstractController
         $this->fraudWarningDisplay = $fraudWarningDisplay;
         $this->ageDisplay = $ageDisplay;
         $this->eventManager = $eventManager;
+        $this->seatNumber = $seatNumber;
+        $this->defaultSeatNumber = $defaultSeatNumber;
+        $this->contentPassenger = $contentPassenger;
+        $this->carpoolSettingsDisplay = $carpoolSettingsDisplay;
     }
 
     /**
@@ -124,7 +136,7 @@ class CarpoolController extends AbstractController
                 return $this->json(['result' => $result]);
             }
 
-            return new JsonResponse(['message' => 'error']);
+            return $this->json($result);
         }
 
         return $this->render('@Mobicoop/carpool/publish.html.twig', [
@@ -135,6 +147,9 @@ class CarpoolController extends AbstractController
             ],
             'participationText' => $this->participationText,
             'ageDisplay' => $this->ageDisplay,
+            'seatNumber' => $this->seatNumber,
+            'defaultSeatNumber' => $this->defaultSeatNumber,
+            'contentPassenger' => $this->contentPassenger
         ]);
     }
 
@@ -222,6 +237,9 @@ class CarpoolController extends AbstractController
             'regular' => $this->defaultRegular,
             'participationText' => $this->participationText,
             'ageDisplay' => $this->ageDisplay,
+            'seatNumber' => $this->seatNumber,
+            'defaultSeatNumber' => $this->defaultSeatNumber,
+            'contentPassenger' => $this->contentPassenger
         ]);
     }
 
@@ -245,6 +263,9 @@ class CarpoolController extends AbstractController
                 'regular' => $this->defaultRegular,
                 'participationText' => $this->participationText,
                 'ageDisplay' => $this->ageDisplay,
+                'seatNumber' => $this->seatNumber,
+                'defaultSeatNumber' => $this->defaultSeatNumber,
+                'contentPassenger' => $this->contentPassenger
             ]
         );
     }
@@ -283,6 +304,10 @@ class CarpoolController extends AbstractController
                 ],
                 'participationText' => $this->participationText,
                 'ageDisplay' => $this->ageDisplay,
+                'seatNumber' => $this->seatNumber,
+                'defaultSeatNumber' => $this->defaultSeatNumber,
+                'contentPassenger' => $this->contentPassenger,
+                'carpoolSettingsDisplay' => $this->carpoolSettingsDisplay,
             ]
         );
     }
@@ -331,6 +356,7 @@ class CarpoolController extends AbstractController
             'originTitle' => $origin,
             'destinationTitle' => $destination,
             'ageDisplay' => $this->ageDisplay,
+            'carpoolSettingsDisplay' => $this->carpoolSettingsDisplay,
         ]);
     }
 
@@ -358,6 +384,7 @@ class CarpoolController extends AbstractController
                 'originTitle' => $origin,
                 'destinationTitle' => $destination,
                 'ageDisplay' => $this->ageDisplay,
+                'carpoolSettingsDisplay' => $this->carpoolSettingsDisplay
             ]);
         }
         // for now if the claim fails we redirect to home !
@@ -383,7 +410,7 @@ class CarpoolController extends AbstractController
             $origin = $ad->getOutwardWaypoints()[0];
             $destination = $ad->getOutwardWaypoints()[count($ad->getOutwardWaypoints()) - 1];
 
-            //$this->denyAccessUnlessGranted('results_ad', $ad);
+            // $this->denyAccessUnlessGranted('results_ad', $ad);
             return $this->json([
                 'origin' => $origin,
                 'destination' => $destination,
@@ -411,7 +438,7 @@ class CarpoolController extends AbstractController
             }
         }
         if ($ad = $adManager->getAdFromExternalId($id, $filters)) {
-            //$this->denyAccessUnlessGranted('results_ad', $ad);
+            // $this->denyAccessUnlessGranted('results_ad', $ad);
             return $this->json($ad->getResults());
         }
 
@@ -450,6 +477,7 @@ class CarpoolController extends AbstractController
             'originTitle' => $originTitle,
             'destinationTitle' => $destinationTitle,
             'ageDisplay' => $this->ageDisplay,
+            'carpoolSettingsDisplay' => $this->carpoolSettingsDisplay
         ]);
     }
 
@@ -490,6 +518,7 @@ class CarpoolController extends AbstractController
             'originTitle' => $originTitle,
             'destinationTitle' => $destinationTitle,
             'ageDisplay' => $this->ageDisplay,
+            'carpoolSettingsDisplay' => $this->carpoolSettingsDisplay
         ]);
     }
 
@@ -521,6 +550,7 @@ class CarpoolController extends AbstractController
             'destinationTitle' => $destination,
             'destinationLiteral' => $destination,
             'ageDisplay' => $this->ageDisplay,
+            'carpoolSettingsDisplay' => $this->carpoolSettingsDisplay
         ]);
     }
 

@@ -63,6 +63,10 @@ services:
             $participationText: '%env(bool:PARTICIPATION_TEXT)%'
             $fraudWarningDisplay: '%env(bool:FRAUD_WARNING_DISPLAY)%'
             $ageDisplay: '%env(bool:AGE_DISPLAY)%'
+            $seatNumber: '%env(int:SEAT_NUMBER)%'
+            $defaultSeatNumber: '%env(int:DEFAULT_SEAT_NUMBER)%'
+            $contentPassenger: '%env(bool:CONTENT_PASSENGER)%'
+            $carpoolSettingsDisplay: '%env(bool:CARPOOL_SETTINGS_DISPLAY)%'
     Mobicoop\Bundle\MobicoopBundle\Carpool\Service\:
         resource: '@MobicoopBundle/Carpool/Service/*'
     Mobicoop\Bundle\MobicoopBundle\Carpool\Security\:
@@ -241,6 +245,7 @@ services:
             $fraudWarningDisplay: '%env(bool:FRAUD_WARNING_DISPLAY)%'
             $ageDisplay: '%env(bool:AGE_DISPLAY)%'
             $birthDateDisplay: '%env(bool:BIRTHDATE_DISPLAY)%'
+            $carpoolSettingsDisplay: '%env(bool:CARPOOL_SETTINGS_DISPLAY)%'
         tags: ['controller.service_arguments']
     Mobicoop\Bundle\MobicoopBundle\User\Service\:
         resource: '@MobicoopBundle/User/Service/*'
