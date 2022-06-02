@@ -69,6 +69,12 @@ then
         cp /var/www/$VERSION/$INSTANCE/api/config/params/contacts.json.dist /var/www/$VERSION/$INSTANCE/api/config/params/contacts.json
     fi
 
+    # check analytics files
+    ANALYTICS_FILE=/var/www/$VERSION/$INSTANCE/api/config/params/analytics.json
+    if [ ! -f "$ANALYTICS_FILE" ]; then
+        cp /var/www/$VERSION/$INSTANCE/api/config/params/analytics.json.dist /var/www/$VERSION/$INSTANCE/api/config/params/analytics.json
+    fi
+
 	# check geocomplete palette file
     GEOCOMPLETE_PALETTE_FILE=/var/www/$VERSION/$INSTANCE/client/config/geocomplete/palette.json
     if [ ! -f "$GEOCOMPLETE_PALETTE_FILE" ]; then
@@ -157,6 +163,12 @@ else
     CONTACTS_FILE=/var/www/$INSTANCE/$VERSION/api/config/params/contacts.json
     if [ ! -f "$CONTACTS_FILE" ]; then
         cp /var/www/$INSTANCE/$VERSION/api/config/params/contacts.json.dist /var/www/$INSTANCE/$VERSION/api/config/params/contacts.json
+    fi
+
+    # check analytics files
+    ANALYTICS_FILE=/var/www/$INSTANCE/$VERSION/api/config/params/analytics.json
+    if [ ! -f "$ANALYTICS_FILE" ]; then
+        cp /var/www/$INSTANCE/$VERSION/api/config/params/analytics.json.dist /var/www/$INSTANCE/$VERSION/api/config/params/analytics.json
     fi
 
 	# check geocomplete palette file

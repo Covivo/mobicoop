@@ -22,127 +22,95 @@
 
 namespace App\Stats\Admin\Service;
 
+use App\Auth\Service\AuthManager;
 use App\Stats\Admin\Resource\Analytic;
-use Exception;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 
+/**
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ */
 class AnalyticManager
 {
-    public const IDS = [
-        1 => 'getUsersAnalytics',
-        2 => 'getSolidaryUsersAnalytics',
-    ];
+    private $paramId;
+    private $uri;
+    private $organization;
+    private $secret;
+    private $dashboards;
+    private $authManager;
 
-    private $dataManager;
-    private $analytic;
-    private $request;
-
-    public function __construct(DataManager $dataManager, RequestStack $requestStack)
+    public function __construct(RequestStack $requestStack, AuthManager $authManager, array $params)
     {
-        $this->dataManager = $dataManager;
-        $this->request = $requestStack->getCurrentRequest();
-        $this->setParameters();
+        $this->uri = $params['url'];
+        $this->organization = $params['organization'];
+        $this->secret = $params['secret'];
+        $this->dashboards = $params['dashboards'];
+        $this->authManager = $authManager;
+
+        $request = $this->request = $requestStack->getCurrentRequest();
+        $this->paramId = $request->get('id');
     }
 
     public function getAnalytics(): array
     {
-        $analytics = [];
-        foreach (self::IDS as $id) {
-            $analytics[] = $this->getAnalytic($id);
-        }
-
-        return $analytics;
+        return [];
     }
 
-    public function getAnalytic(int $id, ?array $filter = []): Analytic
+    public function getAnalytic(int $id): Analytic
     {
-        $this->analytic = new Analytic();
-        $this->analytic->setId($id);
+        $analytic = new Analytic();
+        $analytic->setId($id);
 
-        if (!in_array($id, array_keys(self::IDS))) {
-            throw new Exception('Unknown Id');
-        }
+        $dashboard = self::getDashboard();
 
-        if (is_callable([$this, self::IDS[$id]])) {
-            $this->{self::IDS[$id]}($id);
-        } else {
-            $this->getGenericAnalytics($id);
-        }
+        $payload = [
+            'resource' => ['dashboard' => $dashboard['dashboardId']],
+            'params' => [
+                'idterritoryoperational' => self::getTerritories($dashboard['auth_item']),
+                'organization' => $this->organization,
+            ],
+        ];
 
-        return $this->analytic;
+        $analytic->setUrl($this->uri.self::build_jwt_token($payload).'#bordered=false&titled=false');
+
+        return $analytic;
     }
 
-    public function getGenericAnalytics(int $id, ?array $filter = [])
+    private function getDashboard(): ?array
     {
-        $this->dataManager->setDataName(self::IDS[$id]);
-        $data = $this->dataManager->getData();
-        $this->analytic->setValue([
-            'total' => $data['total'],
-            'data' => $data['data'],
-        ]);
-    }
-
-    public function getUsersAnalytics(int $id, ?array $filter = [])
-    {
-        $analyticValue = ['data' => []];
-
-        $this->dataManager->setDataName(DataManager::DATA_NAME_VALIDATED_USERS_DETAILED);
-        $validatedUsers = $this->dataManager->getData();
-        $analyticValue['total'] = $validatedUsers['total'];
-        $analyticValue['data'][] = $validatedUsers['data'];
-
-        $this->dataManager->setDataName(DataManager::DATA_NAME_NOT_VALIDATED_USERS_DETAILED);
-        $notValidatedUsers = $this->dataManager->getData();
-        $analyticValue['data'][] = $notValidatedUsers['data'];
-
-        $this->analytic->setValue($this->normalizeResults($analyticValue));
-    }
-
-    private function setParameters()
-    {
-        if ($this->request->query->get('startDate') && '' !== trim($this->request->query->get('startDate'))) {
-            $startDate = \DateTime::createFromFormat('Y-m-d', $this->request->query->get('startDate'), new \DateTimeZone('Europe/Paris'));
-            if ($startDate) {
-                $this->dataManager->setStartDate($startDate);
-            }
-        }
-        if ($this->request->query->get('endDate') && '' !== trim($this->request->query->get('endDate'))) {
-            $endDate = \DateTime::createFromFormat('Y-m-d', $this->request->query->get('endDate'), new \DateTimeZone('Europe/Paris'));
-            if ($endDate) {
-                $this->dataManager->setEndDate($endDate);
-            }
-        }
-        if ($this->request->query->get('aggregInterval') && '' !== trim($this->request->query->get('aggregInterval'))) {
-            $this->dataManager->setAggregationInterval($this->request->query->get('aggregInterval'));
-        }
-    }
-
-    private function normalizeResults($analyticValue): array
-    {
-        foreach ($analyticValue['data'] as $key => $currentData) {
-            if (!isset($analyticValue['data'][$key + 1])) {
-                break;
-            }
-
-            $firstDateCurrent = new \DateTime($currentData[0]['key']);
-            $lastDateCurrent = new \DateTime($currentData[count($currentData) - 1]['key']);
-            $firstDateNextData = new \DateTime($analyticValue['data'][$key + 1][0]['key']);
-            $lastDateNextData = new \DateTime($analyticValue['data'][$key + 1][count($analyticValue['data']) - 1]['key']);
-
-            if ($firstDateCurrent > $firstDateNextData) {
-                $dataToAdd = $analyticValue['data'][$key + 1][0];
-                $dataToAdd['dataName'] = $currentData[0]['dataName'];
-                $dataToAdd['value'] = '-';
-                array_unshift($analyticValue['data'][$key], $dataToAdd);
-            }
-            if ($lastDateCurrent < $lastDateNextData) {
-                $dataToAdd = $analyticValue['data'][$key + 1][count($analyticValue['data']) - 1];
-                $dataToAdd['dataName'] = $currentData[0]['dataName'];
-                $dataToAdd['value'] = '-';
-                array_push($analyticValue['data'][$key], $dataToAdd);
+        foreach ($this->dashboards as $dashboard) {
+            if ($dashboard['paramId'] == $this->paramId) {
+                return $dashboard;
             }
         }
 
-        return $analyticValue;
+        throw new ResourceNotFoundException('Unknown dashboard');
+    }
+
+    private function getTerritories(string $auth_item): array
+    {
+        return $this->authManager->getTerritoriesForItem($auth_item);
+    }
+
+    private function build_jwt_token($payload): string
+    {
+        // build the headers
+        $headers = ['alg' => 'HS256', 'typ' => 'JWT'];
+        $headers_encoded = self::base64url_encode(json_encode($headers));
+
+        // build the payload
+        $payload_encoded = self::base64url_encode(json_encode($payload));
+
+        // build the signature
+        $signature = hash_hmac('sha256', "{$headers_encoded}.{$payload_encoded}", $this->secret, true);
+        $signature_encoded = self::base64url_encode($signature);
+
+        // build and return the token
+        return "{$headers_encoded}.{$payload_encoded}.{$signature_encoded}";
+    }
+
+    private function base64url_encode($data)
+    {
+        return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
     }
 }

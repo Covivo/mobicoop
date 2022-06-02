@@ -46,6 +46,6 @@ final class AnalyticItemDataProvider implements ItemDataProviderInterface, Restr
 
     public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?Analytic
     {
-        return $this->analyticManager->getAnalytic($id, $this->request->get('filter'));
+        return $this->analyticManager->getAnalytic($id);
     }
 }

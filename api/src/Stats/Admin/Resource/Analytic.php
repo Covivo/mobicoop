@@ -66,11 +66,11 @@ class Analytic
     private $id;
 
     /**
-     * Analytic value.
+     * Analytic url.
      *
      * @Groups({"aRead"})
      */
-    private $value;
+    private $url;
 
     public function getId(): ?int
     {
@@ -84,14 +84,14 @@ class Analytic
         return $this;
     }
 
-    public function getValue()
+    public function getUrl()
     {
-        return $this->value;
+        return $this->url;
     }
 
-    public function setValue($value): self
+    public function setUrl($url): self
     {
-        $this->value = $value;
+        $this->url = $url;
 
         return $this;
     }
