@@ -71,7 +71,7 @@ class AnalyticManager
             ],
         ];
 
-        $analytic->setUrl($this->uri.'embed/dashboard/'.self::build_jwt_token($payload).'#bordered=false&titled=false');
+        $analytic->setUrl($this->uri.self::build_jwt_token($payload).'#bordered=false&titled=false');
 
         return $analytic;
     }
