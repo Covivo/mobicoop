@@ -71,6 +71,8 @@ class CarpoolController extends AbstractController
     private $eventManager;
     private $seatNumber;
     private $defaultSeatNumber;
+    private $contentPassenger;
+    private $carpoolSettingsDisplay;
 
     public function __construct(
         PublicTransportManager $publicTransportManager,
@@ -82,12 +84,14 @@ class CarpoolController extends AbstractController
         $participationText,
         int $seatNumber,
         int $defaultSeatNumber,
+        bool $contentPassenger,
         bool $defaultRegular,
         string $platformName,
         bool $carpoolRDEXJourneys,
         int $ptResults,
         bool $fraudWarningDisplay,
-        bool $ageDisplay
+        bool $ageDisplay,
+        bool $carpoolSettingsDisplay
     ) {
         $this->midPrice = $midPrice;
         $this->highPrice = $highPrice;
@@ -104,6 +108,8 @@ class CarpoolController extends AbstractController
         $this->eventManager = $eventManager;
         $this->seatNumber = $seatNumber;
         $this->defaultSeatNumber = $defaultSeatNumber;
+        $this->contentPassenger = $contentPassenger;
+        $this->carpoolSettingsDisplay = $carpoolSettingsDisplay;
     }
 
     /**
@@ -143,6 +149,7 @@ class CarpoolController extends AbstractController
             'ageDisplay' => $this->ageDisplay,
             'seatNumber' => $this->seatNumber,
             'defaultSeatNumber' => $this->defaultSeatNumber,
+            'contentPassenger' => $this->contentPassenger
         ]);
     }
 
@@ -232,6 +239,7 @@ class CarpoolController extends AbstractController
             'ageDisplay' => $this->ageDisplay,
             'seatNumber' => $this->seatNumber,
             'defaultSeatNumber' => $this->defaultSeatNumber,
+            'contentPassenger' => $this->contentPassenger
         ]);
     }
 
@@ -257,6 +265,7 @@ class CarpoolController extends AbstractController
                 'ageDisplay' => $this->ageDisplay,
                 'seatNumber' => $this->seatNumber,
                 'defaultSeatNumber' => $this->defaultSeatNumber,
+                'contentPassenger' => $this->contentPassenger
             ]
         );
     }
@@ -297,6 +306,8 @@ class CarpoolController extends AbstractController
                 'ageDisplay' => $this->ageDisplay,
                 'seatNumber' => $this->seatNumber,
                 'defaultSeatNumber' => $this->defaultSeatNumber,
+                'contentPassenger' => $this->contentPassenger,
+                'carpoolSettingsDisplay' => $this->carpoolSettingsDisplay,
             ]
         );
     }
@@ -345,6 +356,7 @@ class CarpoolController extends AbstractController
             'originTitle' => $origin,
             'destinationTitle' => $destination,
             'ageDisplay' => $this->ageDisplay,
+            'carpoolSettingsDisplay' => $this->carpoolSettingsDisplay,
         ]);
     }
 
@@ -372,6 +384,7 @@ class CarpoolController extends AbstractController
                 'originTitle' => $origin,
                 'destinationTitle' => $destination,
                 'ageDisplay' => $this->ageDisplay,
+                'carpoolSettingsDisplay' => $this->carpoolSettingsDisplay
             ]);
         }
         // for now if the claim fails we redirect to home !
@@ -464,6 +477,7 @@ class CarpoolController extends AbstractController
             'originTitle' => $originTitle,
             'destinationTitle' => $destinationTitle,
             'ageDisplay' => $this->ageDisplay,
+            'carpoolSettingsDisplay' => $this->carpoolSettingsDisplay
         ]);
     }
 
@@ -504,6 +518,7 @@ class CarpoolController extends AbstractController
             'originTitle' => $originTitle,
             'destinationTitle' => $destinationTitle,
             'ageDisplay' => $this->ageDisplay,
+            'carpoolSettingsDisplay' => $this->carpoolSettingsDisplay
         ]);
     }
 
@@ -535,6 +550,7 @@ class CarpoolController extends AbstractController
             'destinationTitle' => $destination,
             'destinationLiteral' => $destination,
             'ageDisplay' => $this->ageDisplay,
+            'carpoolSettingsDisplay' => $this->carpoolSettingsDisplay
         ]);
     }
 
@@ -685,7 +701,7 @@ class CarpoolController extends AbstractController
         // If there is no date in params, we use 'now'
         $date = new \DateTime('now', new \DateTimeZone('Europe/Paris'));
         if (!empty($params['date'])) {
-            $date = new \DateTime($params['date'].' 08:00:00', new \DateTimeZone('Europe/Paris'));
+            $date = new \DateTime($params['date'] . ' 08:00:00', new \DateTimeZone('Europe/Paris'));
         }
         $journeys = $this->publicTransportManager->getJourneys(
             $params['from_latitude'],
