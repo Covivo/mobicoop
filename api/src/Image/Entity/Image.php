@@ -19,37 +19,29 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Image\Entity;
 
-use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping as ORM;
-use Doctrine\ORM\Events;
-use Doctrine\Common\Collections\ArrayCollection;
-use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiSubresource;
 use ApiPlatform\Core\Annotation\ApiProperty;
-use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
-use Symfony\Component\Validator\Constraints as Assert;
-use App\Event\Entity\Event;
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Community\Entity\Community;
-use App\Gamification\Entity\Badge;
-use App\RelayPoint\Entity\RelayPoint;
-use App\RelayPoint\Entity\RelayPointType;
-use App\MassCommunication\Entity\Campaign;
 use App\Editorial\Entity\Editorial;
+use App\Event\Entity\Event;
+use App\Gamification\Entity\Badge;
+use App\Image\Admin\Controller\PostImageAction;
 use App\Image\Controller\CreateImageAction;
 use App\Image\Controller\ImageRemoveFileless;
-use App\Image\Controller\CreateImageAdminCampaignController;
-use App\Image\Controller\ImportImageCommunityController;
-use App\Image\Controller\ImportImageEventController;
-use App\Image\Controller\ImportImageUserController;
-use Symfony\Component\HttpFoundation\File\File;
-use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use App\MassCommunication\Entity\Campaign;
+use App\RelayPoint\Entity\RelayPoint;
+use App\RelayPoint\Entity\RelayPointType;
+use App\Solidary\Entity\Structure;
 use App\User\Entity\User;
-use App\Image\Admin\Controller\PostImageAction;
+use Doctrine\ORM\Events;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
  * An uploaded image (for a user, an event, a community and so on).
@@ -57,7 +49,7 @@ use App\Image\Admin\Controller\PostImageAction;
  * @ORM\Entity()
  * @ORM\HasLifecycleCallbacks
  * @ORM\EntityListeners({"App\Image\EntityListener\ImageListener"})
-  * @ApiResource(
+ * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
@@ -130,7 +122,7 @@ use App\Image\Admin\Controller\PostImageAction;
 class Image
 {
     /**
-     * @var int The id of this image.
+     * @var int the id of this image
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -139,9 +131,9 @@ class Image
      * @ApiProperty(identifier=true)
      */
     private $id;
-    
+
     /**
-     * @var string The name of the image.
+     * @var string the name of the image
      *
      * @ORM\Column(type="string", length=255)
      * @Groups({"read","readUser","communities","listCommunities","readRelayPoint","readEditorial"})
@@ -149,23 +141,23 @@ class Image
     private $name;
 
     /**
-     * @var string The html title of the image.
+     * @var string the html title of the image
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"read","readUser","communities","listCommunities","readRelayPoint","readEditorial"})
      */
     private $title;
-    
+
     /**
-     * @var string The html alt of the image.
+     * @var string the html alt of the image
      *
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups("read")
      */
     private $alt;
-    
+
     /**
-     * @var int The left coordinate of the crop, in percentage of the full width.
+     * @var int the left coordinate of the crop, in percentage of the full width
      *
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"read","write"})
@@ -173,106 +165,106 @@ class Image
     private $cropX1;
 
     /**
-     * @var int The top coordinate of the crop, in percent of the full height.
+     * @var int the top coordinate of the crop, in percent of the full height
      *
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"read","write"})
      */
     private $cropY1;
-    
+
     /**
-     * @var int The right coordinate of the crop, in percentage of the full width.
+     * @var int the right coordinate of the crop, in percentage of the full width
      *
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"read","write"})
      */
     private $cropX2;
-    
+
     /**
-     * @var int The bottom coordinate of the crop, in percent of the full height.
+     * @var int the bottom coordinate of the crop, in percent of the full height
      *
      * @ORM\Column(type="integer", nullable=true)
      * @Groups({"read","write"})
      */
     private $cropY2;
-    
+
     /**
-     * @var string The final file name of the image.
+     * @var string the final file name of the image
      *
      * @ORM\Column(type="string", length=255)
      * @Groups({"read","results","write","readUser","readRelayPoint","readEditorial"})
      */
     private $fileName;
-    
+
     /**
-     * @var string The original file name of the image.
+     * @var string the original file name of the image
      *
      * @ORM\Column(type="string", length=255)
      * @Groups({"read","write"})
      */
     private $originalName;
-    
+
     /**
-     * @var array The original dimensions of the image.
+     * @var array the original dimensions of the image
      */
     private $dimensions;
-    
+
     /**
-    * @var int The width of the image in pixels.
-    *
-    * @ORM\Column(type="integer")
-    * @Groups({"read","write"})
-    */
+     * @var int the width of the image in pixels
+     *
+     * @ORM\Column(type="integer")
+     * @Groups({"read","write"})
+     */
     private $width;
-    
+
     /**
-     * @var int The height of the image in pixels.
+     * @var int the height of the image in pixels
      *
      * @ORM\Column(type="integer")
      * @Groups({"read","write"})
      */
     private $height;
-    
+
     /**
-     * @var int The size in bytes of the image.
+     * @var int the size in bytes of the image
      *
      * @ORM\Column(type="integer")
      * @Groups({"read","write"})
      */
     private $size;
-    
+
     /**
-     * @var string The mime type of the image.
+     * @var string the mime type of the image
      *
      * @ORM\Column(type="string", length=255)
      * @Groups("read")
      */
     private $mimeType;
-    
+
     /**
-     * @var int The position of the image if mulitple images are related to the same entity.
+     * @var int the position of the image if mulitple images are related to the same entity
      *
      * @ORM\Column(type="smallint")
      * @Groups({"read","write","aWrite"})
      */
     private $position;
-    
+
     /**
-     * @var \DateTimeInterface Creation date of the image.
+     * @var \DateTimeInterface creation date of the image
      *
      * @ORM\Column(type="datetime")
      */
     private $createdDate;
 
     /**
-     * @var \DateTimeInterface Updated date of the image.
+     * @var \DateTimeInterface updated date of the image
      *
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $updatedDate;
-    
+
     /**
-     * @var Event|null The event associated with the image.
+     * @var null|Event the event associated with the image
      *
      * @ORM\ManyToOne(targetEntity="\App\Event\Entity\Event", inversedBy="images", cascade="persist")
      * @ORM\JoinColumn(onDelete="CASCADE")
@@ -280,19 +272,19 @@ class Image
     private $event;
 
     /**
-     * @var File|null
+     * @var null|File
      * @Vich\UploadableField(mapping="event", fileNameProperty="fileName", originalName="originalName", size="size", mimeType="mimeType", dimensions="dimensions")
      */
     private $eventFile;
-    
+
     /**
-     * @var int|null The event id associated with the image.
+     * @var null|int the event id associated with the image
      * @Groups({"read","write"})
      */
     private $eventId;
 
     /**
-     * @var Community|null The community associated with the image.
+     * @var null|Community the community associated with the image
      *
      * @ORM\ManyToOne(targetEntity="\App\Community\Entity\Community", inversedBy="images", cascade="persist")
      * @ORM\JoinColumn(onDelete="CASCADE")
@@ -300,25 +292,25 @@ class Image
     private $community;
 
     /**
-     * @var File|null
+     * @var null|File
      * @Vich\UploadableField(mapping="community", fileNameProperty="fileName", originalName="originalName", size="size", mimeType="mimeType", dimensions="dimensions")
      */
     private $communityFile;
-    
+
     /**
-     * @var int|null The community id associated with the image.
+     * @var null|int the community id associated with the image
      * @Groups({"read","write"})
      */
     private $communityId;
-    
+
     /**
-     * @var File|null
+     * @var null|File
      * @Vich\UploadableField(mapping="user", fileNameProperty="fileName", originalName="originalName", size="size", mimeType="mimeType", dimensions="dimensions")
      */
     private $userFile;
-    
+
     /**
-     * @var User|null The user associated with the image.
+     * @var null|User the user associated with the image
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="images", cascade="persist")
      * @ORM\JoinColumn(onDelete="CASCADE")
@@ -326,13 +318,13 @@ class Image
     private $user;
 
     /**
-     * @var int|null The user id associated with the image.
+     * @var null|int the user id associated with the image
      * @Groups({"write","results"})
      */
     private $userId;
 
     /**
-     * @var RelayPoint|null The relay point associated with the image.
+     * @var null|RelayPoint the relay point associated with the image
      *
      * @ORM\ManyToOne(targetEntity="\App\RelayPoint\Entity\RelayPoint", inversedBy="images", cascade="persist")
      * @ORM\JoinColumn(onDelete="CASCADE")
@@ -340,19 +332,19 @@ class Image
     private $relayPoint;
 
     /**
-     * @var File|null
+     * @var null|File
      * @Vich\UploadableField(mapping="relayPoint", fileNameProperty="fileName", originalName="originalName", size="size", mimeType="mimeType", dimensions="dimensions")
      */
     private $relayPointFile;
-    
+
     /**
-     * @var int|null The relay point id associated with the image.
+     * @var null|int the relay point id associated with the image
      * @Groups({"read","write"})
      */
     private $relayPointId;
 
     /**
-     * @var RelayPointType|null The relay point type associated with the image.
+     * @var null|RelayPointType the relay point type associated with the image
      *
      * @ORM\ManyToOne(targetEntity="\App\RelayPoint\Entity\RelayPointType", inversedBy="images", cascade="persist")
      * @ORM\JoinColumn(onDelete="CASCADE")
@@ -360,7 +352,7 @@ class Image
     private $relayPointType;
 
     /**
-     * @var Badge|null The Badge for which this image is used as icon
+     * @var null|Badge The Badge for which this image is used as icon
      *
      * @ORM\OneToOne(targetEntity="\App\Gamification\Entity\Badge", inversedBy="icon", cascade={"persist"})
      * @ORM\JoinColumn(onDelete="CASCADE")
@@ -368,19 +360,19 @@ class Image
     private $badgeIcon;
 
     /**
-     * @var int|null The badge id associated with the image (icon).
+     * @var null|int the badge id associated with the image (icon)
      * @Groups({"write","read"})
      */
     private $badgeIconId;
 
     /**
-     * @var File|null
+     * @var null|File
      * @Vich\UploadableField(mapping="badge", fileNameProperty="fileName", originalName="originalName", size="size", mimeType="mimeType", dimensions="dimensions")
      */
     private $badgeIconFile;
 
     /**
-     * @var Badge|null The Badge for which this image is used as icon
+     * @var null|Badge The Badge for which this image is used as icon
      *
      * @ORM\OneToOne(targetEntity="\App\Gamification\Entity\Badge", inversedBy="decoratedIcon", cascade={"persist"})
      * @ORM\JoinColumn(onDelete="CASCADE")
@@ -388,19 +380,19 @@ class Image
     private $badgeDecoratedIcon;
 
     /**
-     * @var int|null The badge id associated with the image (decorated icon).
+     * @var null|int the badge id associated with the image (decorated icon)
      * @Groups({"write","read"})
      */
     private $badgeDecoratedIconId;
 
     /**
-     * @var File|null
+     * @var null|File
      * @Vich\UploadableField(mapping="badge", fileNameProperty="fileName", originalName="originalName", size="size", mimeType="mimeType", dimensions="dimensions")
      */
     private $badgeDecoratedIconFile;
 
     /**
-     * @var Badge|null The Badge for which this image is used as reward image
+     * @var null|Badge The Badge for which this image is used as reward image
      *
      * @ORM\OneToOne(targetEntity="\App\Gamification\Entity\Badge", inversedBy="image", cascade={"persist"})
      * @ORM\JoinColumn(onDelete="CASCADE")
@@ -408,19 +400,19 @@ class Image
     private $badgeImage;
 
     /**
-     * @var int|null The badge id associated with the image.
+     * @var null|int the badge id associated with the image
      * @Groups({"write","read"})
      */
     private $badgeImageId;
 
     /**
-     * @var File|null
+     * @var null|File
      * @Vich\UploadableField(mapping="badge", fileNameProperty="fileName", originalName="originalName", size="size", mimeType="mimeType", dimensions="dimensions")
      */
     private $badgeImageFile;
 
     /**
-     * @var Badge|null The Badge for which this image is used as reward image light
+     * @var null|Badge The Badge for which this image is used as reward image light
      *
      * @ORM\OneToOne(targetEntity="\App\Gamification\Entity\Badge", inversedBy="imageLight", cascade={"persist"})
      * @ORM\JoinColumn(onDelete="CASCADE")
@@ -428,31 +420,31 @@ class Image
     private $badgeImageLight;
 
     /**
-     * @var int|null The badge id associated with the image light.
+     * @var null|int the badge id associated with the image light
      * @Groups({"write","read"})
      */
     private $badgeImageLightId;
 
     /**
-     * @var File|null
+     * @var null|File
      * @Vich\UploadableField(mapping="badge", fileNameProperty="fileName", originalName="originalName", size="size", mimeType="mimeType", dimensions="dimensions")
      */
     private $badgeImageLightFile;
-    
+
     /**
-     * @var File|null
+     * @var null|File
      * @Vich\UploadableField(mapping="relayPointType", fileNameProperty="fileName", originalName="originalName", size="size", mimeType="mimeType", dimensions="dimensions")
      */
     private $relayPointTypeFile;
-    
+
     /**
-     * @var int|null The relay point type id associated with the image.
+     * @var null|int the relay point type id associated with the image
      * @Groups({"read","write"})
      */
     private $relayPointTypeId;
 
     /**
-     * @var Campaign|null The campaign associated with the image.
+     * @var null|Campaign the campaign associated with the image
      *
      * @ORM\ManyToOne(targetEntity="\App\MassCommunication\Entity\Campaign", inversedBy="images", cascade="persist")
      * @ORM\JoinColumn(onDelete="CASCADE")
@@ -460,19 +452,19 @@ class Image
     private $campaign;
 
     /**
-     * @var File|null
+     * @var null|File
      * @Vich\UploadableField(mapping="campaign", fileNameProperty="fileName", originalName="originalName", size="size", mimeType="mimeType", dimensions="dimensions")
      */
     private $campaignFile;
-    
+
     /**
-     * @var int|null The campaign id associated with the image.
+     * @var null|int the campaign id associated with the image
      * @Groups({"read","write"})
      */
     private $campaignId;
 
     /**
-     * @var Editorial|null The editorial associated with the image.
+     * @var null|Editorial the editorial associated with the image
      *
      * @ORM\ManyToOne(targetEntity="\App\Editorial\Entity\Editorial", inversedBy="images", cascade="persist")
      * @ORM\JoinColumn(onDelete="CASCADE")
@@ -480,233 +472,253 @@ class Image
     private $editorial;
 
     /**
-     * @var File|null
+     * @var null|File
      * @Vich\UploadableField(mapping="editorial", fileNameProperty="fileName", originalName="originalName", size="size", mimeType="mimeType", dimensions="dimensions")
      */
     private $editorialFile;
-    
+
     /**
-     * @var int|null The editorial id associated with the image.
+     * @var null|int the editorial id associated with the image
      * @Groups({"read","write"})
      */
     private $editorialId;
 
     /**
-     * @var array|null The versions of with the image.
+     * @var null|Structure The structure for which this image is used as logo
+     *
+     * @ORM\ManyToOne(targetEntity="\App\Solidary\Entity\Structure", inversedBy="images", cascade={"persist"})
+     * @ORM\JoinColumn(onDelete="CASCADE")
+     */
+    private $structure;
+
+    /**
+     * @var null|int the structure id associated with the image
+     * @Groups({"write","read"})
+     */
+    private $structureId;
+
+    /**
+     * @var null|File
+     * @Vich\UploadableField(mapping="structure", fileNameProperty="fileName", originalName="originalName", size="size", mimeType="mimeType", dimensions="dimensions")
+     */
+    private $structureFile;
+
+    /**
+     * @var null|array the versions of with the image
      * @Groups({"read","readCommunity","readRelayPoint","readCommunityUser","readEvent","readUser","results","communities","listCommunities"})
      */
     private $versions;
 
     /**
-     * @var string|null The default image
+     * @var null|string The default image
      * @Groups({"aRead"})
      */
     private $image;
 
     /**
-     * @var string|null The default avatar
+     * @var null|string The default avatar
      * @Groups({"aRead","readPublicProfile"})
      */
     private $avatar;
-        
+
     /**
-     * @var string|null The full url of the image. Used in specific situation (need a Listener)
+     * @var null|string The full url of the image. Used in specific situation (need a Listener)
      * @Groups({"readEditorial"})
      */
     private $url;
 
-    public function __construct($id=null)
+    public function __construct($id = null)
     {
         $this->id = $id;
     }
-    
+
     public function getId(): ?int
     {
         return $this->id;
     }
-    
+
     public function setId($id)
     {
         $this->id = $id;
     }
-    
+
     public function getName(): ?string
     {
         return $this->name;
     }
-    
+
     public function setName(?string $name)
     {
         $this->name = $name;
     }
-    
+
     public function getTitle(): ?string
     {
         return $this->title;
     }
-    
+
     public function setTitle(?string $title)
     {
         $this->title = $title;
     }
-    
+
     public function getAlt(): ?string
     {
         return $this->alt;
     }
-    
+
     public function setAlt(?string $alt)
     {
         $this->alt = $alt;
     }
-    
+
     public function getCropX1(): ?int
     {
         return $this->cropX1;
     }
-    
+
     public function setCropX1(?int $cropX1): self
     {
         $this->cropX1 = $cropX1;
-        
+
         return $this;
     }
-    
+
     public function getCropY1(): ?int
     {
         return $this->cropY1;
     }
-    
+
     public function setCropY1(?int $cropY1): self
     {
         $this->cropY1 = $cropY1;
-        
+
         return $this;
     }
-    
+
     public function getCropX2(): ?int
     {
         return $this->cropX2;
     }
-    
+
     public function setCropX2(?int $cropX2): self
     {
         $this->cropX2 = $cropX2;
-        
+
         return $this;
     }
-    
+
     public function getCropY2(): ?int
     {
         return $this->cropY2;
     }
-    
+
     public function setCropY2(?int $cropY2): self
     {
         $this->cropY2 = $cropY2;
-        
+
         return $this;
     }
-    
+
     public function getFileName(): ?string
     {
         return $this->fileName;
     }
-    
+
     public function setFileName(?string $fileName)
     {
         $this->fileName = $fileName;
     }
-    
+
     public function getOriginalName(): ?string
     {
         return $this->originalName;
     }
-    
+
     public function setOriginalName(?string $originalName)
     {
         $this->originalName = $originalName;
     }
-    
+
     public function getDimensions(): ?array
     {
         return $this->dimensions;
     }
-    
+
     public function setDimensions(?array $dimensions)
     {
         $this->dimensions = $dimensions;
         $this->setWidth($this->getDimensions()[0]);
         $this->setHeight($this->getDimensions()[1]);
     }
-    
+
     public function getWidth(): ?int
     {
         return $this->width;
     }
-    
+
     public function setWidth(?int $width): self
     {
         $this->width = $width;
-        
+
         return $this;
     }
-    
+
     public function getHeight(): ?int
     {
         return $this->height;
     }
-    
+
     public function setHeight(?int $height): self
     {
         $this->height = $height;
-        
+
         return $this;
     }
-    
+
     public function getSize(): ?int
     {
         return $this->size;
     }
-    
+
     public function setSize(?int $size): self
     {
         $this->size = $size;
-        
+
         return $this;
     }
-    
+
     public function getMimeType(): ?string
     {
         return $this->mimeType;
     }
-    
+
     public function setMimeType(?string $mimeType)
     {
         $this->mimeType = $mimeType;
     }
-    
+
     public function getPosition(): ?int
     {
         return $this->position;
     }
-    
+
     public function setPosition(?int $position): self
     {
         $this->position = $position;
-        
+
         return $this;
     }
-    
+
     public function getCreatedDate(): ?\DateTimeInterface
     {
         return $this->createdDate;
     }
-    
+
     public function setCreatedDate(\DateTimeInterface $createdDate): self
     {
         $this->createdDate = $createdDate;
-        
+
         return $this;
     }
 
@@ -721,34 +733,34 @@ class Image
 
         return $this;
     }
-    
+
     public function getEvent(): ?Event
     {
         return $this->event;
     }
-    
+
     public function setEvent(?Event $event): self
     {
         $this->event = $event;
-        
+
         return $this;
     }
-    
+
     public function getEventFile(): ?File
     {
         return $this->eventFile;
     }
-    
+
     public function setEventFile(?File $eventFile)
     {
         $this->eventFile = $eventFile;
     }
-    
+
     public function getEventId(): ?int
     {
         return $this->eventId;
     }
-    
+
     public function setEventId($eventId)
     {
         $this->eventId = $eventId;
@@ -758,62 +770,61 @@ class Image
     {
         return $this->community;
     }
-    
+
     public function setCommunity(?Community $community): self
     {
         $this->community = $community;
-        
+
         return $this;
     }
-    
+
     public function getCommunityFile(): ?File
     {
         return $this->communityFile;
     }
-    
+
     public function setCommunityFile(?File $communityFile)
     {
         $this->communityFile = $communityFile;
     }
-    
+
     public function getCommunityId(): ?int
     {
         return $this->communityId;
     }
-    
+
     public function setCommunityId($communityId)
     {
         $this->communityId = $communityId;
     }
-    
+
     public function getUserFile(): ?File
     {
         return $this->userFile;
     }
-    
+
     public function setUserFile(?File $userFile)
     {
         $this->userFile = $userFile;
     }
-    
+
     public function getUserId(): ?int
     {
         return $this->userId;
     }
 
-
     public function getUser(): ?User
     {
         return $this->user;
     }
-    
+
     public function setUser(?User $user): self
     {
         $this->user = $user;
-        
+
         return $this;
     }
-    
+
     public function setUserId($userId)
     {
         $this->userId = $userId;
@@ -823,29 +834,29 @@ class Image
     {
         return $this->relayPoint;
     }
-    
+
     public function setRelayPoint(?RelayPoint $relayPoint): self
     {
         $this->relayPoint = $relayPoint;
-        
+
         return $this;
     }
-    
+
     public function getRelayPointFile(): ?File
     {
         return $this->relayPointFile;
     }
-    
+
     public function setRelayPointFile(?File $relayPointFile)
     {
         $this->relayPointFile = $relayPointFile;
     }
-    
+
     public function getRelayPointId(): ?int
     {
         return $this->relayPointId;
     }
-    
+
     public function setRelayPointId($relayPointId)
     {
         $this->relayPointId = $relayPointId;
@@ -855,11 +866,11 @@ class Image
     {
         return $this->relayPointType;
     }
-    
+
     public function setRelayPointType(?RelayPointType $relayPointType): self
     {
         $this->relayPointType = $relayPointType;
-        
+
         return $this;
     }
 
@@ -867,23 +878,23 @@ class Image
     {
         return $this->badgeIconId;
     }
-    
+
     public function setBadgeIconId(?int $badgeIconId): self
     {
         $this->badgeIconId = $badgeIconId;
-        
+
         return $this;
     }
-    
+
     public function getBadgeIcon(): ?Badge
     {
         return $this->badgeIcon;
     }
-    
+
     public function setBadgeIcon(?Badge $badgeIcon): self
     {
         $this->badgeIcon = $badgeIcon;
-        
+
         return $this;
     }
 
@@ -891,7 +902,7 @@ class Image
     {
         return $this->badgeIconFile;
     }
-    
+
     public function setBadgeIconFile(?File $badgeIconFile)
     {
         $this->badgeIconFile = $badgeIconFile;
@@ -901,23 +912,23 @@ class Image
     {
         return $this->badgeDecoratedIconId;
     }
-    
+
     public function setBadgeDecoratedIconId(?int $badgeDecoratedIconId): self
     {
         $this->badgeDecoratedIconId = $badgeDecoratedIconId;
-        
+
         return $this;
     }
-    
+
     public function getBadgeDecoratedIcon(): ?Badge
     {
         return $this->badgeDecoratedIcon;
     }
-    
+
     public function setBadgeDecoratedIcon(?Badge $badgeDecoratedIcon): self
     {
         $this->badgeDecoratedIcon = $badgeDecoratedIcon;
-        
+
         return $this;
     }
 
@@ -925,7 +936,7 @@ class Image
     {
         return $this->badgeDecoratedIconFile;
     }
-    
+
     public function setBadgeDecoratedIconFile(?File $badgeDecoratedIconFile)
     {
         $this->badgeDecoratedIconFile = $badgeDecoratedIconFile;
@@ -935,11 +946,11 @@ class Image
     {
         return $this->badgeImageId;
     }
-    
+
     public function setBadgeImageId(?int $badgeImageId): self
     {
         $this->badgeImageId = $badgeImageId;
-        
+
         return $this;
     }
 
@@ -947,11 +958,11 @@ class Image
     {
         return $this->badgeImage;
     }
-    
+
     public function setBadgeImage(?Badge $badgeImage): self
     {
         $this->badgeImage = $badgeImage;
-        
+
         return $this;
     }
 
@@ -959,7 +970,7 @@ class Image
     {
         return $this->badgeImageFile;
     }
-    
+
     public function setBadgeImageFile(?File $badgeImageFile)
     {
         $this->badgeImageFile = $badgeImageFile;
@@ -969,11 +980,11 @@ class Image
     {
         return $this->badgeImageLight;
     }
-    
+
     public function setBadgeImageLight(?Badge $badgeImageLight): self
     {
         $this->badgeImageLight = $badgeImageLight;
-        
+
         return $this;
     }
 
@@ -981,11 +992,11 @@ class Image
     {
         return $this->badgeImageLightId;
     }
-    
+
     public function setBadgeImageLightId(?int $badgeImageLightId): self
     {
         $this->badgeImageLightId = $badgeImageLightId;
-        
+
         return $this;
     }
 
@@ -993,7 +1004,7 @@ class Image
     {
         return $this->badgeImageLightFile;
     }
-    
+
     public function setBadgeImageLightFile(?File $badgeImageLightFile)
     {
         $this->badgeImageLightFile = $badgeImageLightFile;
@@ -1003,17 +1014,17 @@ class Image
     {
         return $this->relayPointTypeFile;
     }
-    
+
     public function setRelayPointTypeFile(?File $relayPointTypeFile)
     {
         $this->relayPointTypeFile = $relayPointTypeFile;
     }
-    
+
     public function getRelayPointTypeId(): ?int
     {
         return $this->relayPointTypeId;
     }
-    
+
     public function setRelayPointTypeId($relayPointTypeId)
     {
         $this->relayPointTypeId = $relayPointTypeId;
@@ -1023,29 +1034,29 @@ class Image
     {
         return $this->campaign;
     }
-    
+
     public function setCampaign(?Campaign $campaign): self
     {
         $this->campaign = $campaign;
-        
+
         return $this;
     }
-    
+
     public function getCampaignFile(): ?File
     {
         return $this->campaignFile;
     }
-    
+
     public function setCampaignFile(?File $campaignFile)
     {
         $this->campaignFile = $campaignFile;
     }
-    
+
     public function getCampaignId(): ?int
     {
         return $this->campaignId;
     }
-    
+
     public function setCampaignId($campaignId)
     {
         $this->campaignId = $campaignId;
@@ -1055,39 +1066,71 @@ class Image
     {
         return $this->editorial;
     }
-    
+
     public function setEditorial(?Editorial $editorial): self
     {
         $this->editorial = $editorial;
-        
+
         return $this;
     }
-    
+
     public function getEditorialFile(): ?File
     {
         return $this->editorialFile;
     }
-    
+
     public function setEditorialFile(?File $editorialFile)
     {
         $this->editorialFile = $editorialFile;
     }
-    
+
     public function getEditorialId(): ?int
     {
         return $this->editorialId;
     }
-    
+
     public function setEditorialId($editorialId)
     {
         $this->editorialId = $editorialId;
     }
-    
+
+    public function getStructure(): ?Structure
+    {
+        return $this->structure;
+    }
+
+    public function setStructure(?Structure $structure): self
+    {
+        $this->structure = $structure;
+
+        return $this;
+    }
+
+    public function getStructureFile(): ?File
+    {
+        return $this->structureFile;
+    }
+
+    public function setStructureFile(?File $structureFile)
+    {
+        $this->structureFile = $structureFile;
+    }
+
+    public function getStructureId(): ?int
+    {
+        return $this->structureId;
+    }
+
+    public function setStructureId(?int $structureId)
+    {
+        $this->structureId = $structureId;
+    }
+
     public function getVersions(): ?array
     {
         return $this->versions;
     }
-    
+
     public function setVersions(?array $versions)
     {
         $this->versions = $versions;
@@ -1098,6 +1141,7 @@ class Image
         if (isset($this->getVersions()['square_800'])) {
             return $this->getVersions()['square_800'];
         }
+
         return null;
     }
 
@@ -1106,14 +1150,15 @@ class Image
         if (isset($this->getVersions()['square_250'])) {
             return $this->getVersions()['square_250'];
         }
+
         return null;
     }
-    
+
     public function getUrl(): ?string
     {
         return $this->url;
     }
-    
+
     public function setUrl(string $url)
     {
         $this->url = $url;
@@ -1133,9 +1178,9 @@ class Image
         $this->setBadgeImageLightFile(null);
         $this->setEditorialFile(null);
     }
-    
+
     // DOCTRINE EVENTS
-    
+
     /**
      * Creation date.
      *
@@ -1143,7 +1188,7 @@ class Image
      */
     public function setAutoCreatedDate()
     {
-        $this->setCreatedDate(new \Datetime());
+        $this->setCreatedDate(new \DateTime());
     }
 
     /**
@@ -1153,6 +1198,6 @@ class Image
      */
     public function setAutoUpdatedDate()
     {
-        $this->setUpdatedDate(new \Datetime());
+        $this->setUpdatedDate(new \DateTime());
     }
 }

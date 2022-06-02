@@ -19,19 +19,19 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Image\Controller;
 
-use App\TranslatorTrait;
-use Symfony\Component\HttpFoundation\Request;
-use App\Image\Service\ImageManager;
-use App\Image\Entity\Image;
-use Psr\Log\LoggerInterface;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use App\Action\Event\ActionEvent;
 use App\Action\Repository\ActionRepository;
+use App\Image\Entity\Image;
+use App\Image\Service\ImageManager;
+use App\TranslatorTrait;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 final class CreateImageAction
 {
@@ -40,7 +40,7 @@ final class CreateImageAction
     private $logger;
     private $actionRepository;
     private $eventDispatcher;
-    
+
     public function __construct(ImageManager $imageManager, LoggerInterface $logger, ActionRepository $actionRepository, EventDispatcherInterface $eventDispatcher)
     {
         $this->imageManager = $imageManager;
@@ -48,11 +48,11 @@ final class CreateImageAction
         $this->actionRepository = $actionRepository;
         $this->eventDispatcher = $eventDispatcher;
     }
-    
+
     public function __invoke(Request $request): Image
     {
         if (is_null($request)) {
-            throw new \InvalidArgumentException($this->translator->trans("Bad request"));
+            throw new \InvalidArgumentException($this->translator->trans('Bad request'));
         }
         $image = new Image();
 
@@ -101,10 +101,14 @@ final class CreateImageAction
             // editorial image
             $image->setEditorialFile($request->files->get('editorialFile'));
             $image->setEditorialId($request->request->get('editorialId'));
+        } elseif ($request->files->get('structureFile') && $request->request->get('structureId')) {
+            // structure image
+            $image->setStructureFile($request->files->get('structureFile'));
+            $image->setStructureId($request->request->get('structureId'));
         } else {
             throw new BadRequestHttpException('A valid file is required');
         }
-        
+
         $image->setName($request->request->get('name'));
         $image->setOriginalName($request->request->get('originalName'));
         $image->setTitle($request->request->get('title'));
@@ -128,7 +132,7 @@ final class CreateImageAction
                 // we associate the owner and the image
                 $owner->addImage($image);
             }
-            
+
             // we search the position of the image if not provided
             if (is_null($image->getPosition())) {
                 $image->setPosition($this->imageManager->getNextPosition($image));
@@ -136,7 +140,7 @@ final class CreateImageAction
                 // the image position is provided, we remove the existing image at this position
                 $this->imageManager->removeImageAtPosition($owner, $image->getPosition());
             }
-            
+
             // we rename the image depending on the owner
             $image->setFileName($this->imageManager->generateFilename($image));
             if (is_null($image->getName())) {
@@ -146,7 +150,7 @@ final class CreateImageAction
 
         //  we dispatch the gamification event associated
         if ($image->getUser()) {
-            $action = $this->actionRepository->findOneBy(['name'=>'user_avatar_uploaded']);
+            $action = $this->actionRepository->findOneBy(['name' => 'user_avatar_uploaded']);
             $actionEvent = new ActionEvent($action, $image->getUser());
             $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);
         }
