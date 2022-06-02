@@ -381,7 +381,7 @@ class RetroactivelyRewardService
                 $this->entityManager->getConnection()->prepare('
                     INSERT INTO reward_step (sequence_item_id,created_date,user_id,notified_date)
                     VALUES '.$string.'
-                ;')->execute();
+                ;')->executequery();
                 $i = 0;
                 $string = '';
             }
@@ -391,7 +391,7 @@ class RetroactivelyRewardService
             $this->entityManager->getConnection()->prepare('
                 INSERT INTO reward_step (sequence_item_id,created_date,user_id,notified_date)
                 VALUES '.$string.'
-            ;')->execute();
+            ;')->executequery();
         }
 
         $i = 0;
@@ -404,7 +404,7 @@ class RetroactivelyRewardService
                 $this->entityManager->getConnection()->prepare('
                     INSERT INTO reward (badge_id,user_id,created_date,notified_date)
                     VALUES '.$string.'
-                ;')->execute();
+                ;')->executequery();
                 $i = 0;
                 $string = '';
             }
@@ -414,7 +414,7 @@ class RetroactivelyRewardService
             $this->entityManager->getConnection()->prepare('
                 INSERT INTO reward (badge_id,user_id,created_date,notified_date)
                 VALUES '.$string.'
-            ;')->execute();
+            ;')->executequery();
         }
 
         $this->logger->info('end retroactivelyRewardUsers | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));

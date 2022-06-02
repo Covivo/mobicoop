@@ -83,3 +83,9 @@ clean-api-phpmd:
 	$(info $(violet) Analyze my php code !)
 	$(info $(violet)------------------------------------------------------$(RESET))
 	@docker exec -it mobicoop_platform_api_php /srv/api/tools/php-mess-detector/vendor/bin/phpmd /srv/api/src/ ansi /srv/api/tools/php-mess-detector/mobicoop.xml
+
+logs:
+	$(info $(violet)------------------------------------------------------)
+	$(info $(violet) Logs... !)
+	$(info $(violet)------------------------------------------------------$(RESET))
+	@docker-compose logs -f

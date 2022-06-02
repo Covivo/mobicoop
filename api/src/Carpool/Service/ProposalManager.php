@@ -499,7 +499,7 @@ class ProposalManager
             id int NOT NULL,
             PRIMARY KEY(id));
         '
-        )->execute()
+        )->executeQuery()
             && $this->entityManager->getConnection()->prepare(
                 "INSERT INTO outdated_proposals (id)
             (SELECT DISTINCT proposal.id FROM proposal
@@ -514,11 +514,11 @@ class ProposalManager
             (m1.id IS NULL OR a1.id IS NULL) AND
             (m2.id IS NULL OR a2.id IS NULL));
             "
-            )->execute()
-        && $this->entityManager->getConnection()->prepare('start transaction;')->execute()
-        && $this->entityManager->getConnection()->prepare('DELETE FROM proposal WHERE id in (select id from outdated_proposals);')->execute()
-        && $this->entityManager->getConnection()->prepare('commit;')->execute()
-        && $this->entityManager->getConnection()->prepare('DROP TABLE outdated_proposals;')->execute();
+            )->executeQuery()
+        && $this->entityManager->getConnection()->prepare('start transaction;')->executeQuery()
+        && $this->entityManager->getConnection()->prepare('DELETE FROM proposal WHERE id in (select id from outdated_proposals);')->executeQuery()
+        && $this->entityManager->getConnection()->prepare('commit;')->executeQuery()
+        && $this->entityManager->getConnection()->prepare('DROP TABLE outdated_proposals;')->executeQuery();
 
         fclose($fp);
         unlink($this->params['batchTemp'].self::CHECK_OUTDATED_SEARCHES_RUNNING_FILE);
@@ -558,7 +558,7 @@ class ProposalManager
         $this->logger->info('Start optimizing carpool related tables | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
         set_time_limit(self::OPTIMIZE_EXECUTION_LIMIT_IN_SECONDS);
         ini_set('memory_limit', self::OPTIMIZE_MEMORY_LIMIT_IN_MO.'M');
-        $result = $this->entityManager->getConnection()->prepare('OPTIMIZE TABLE proposal, criteria, matching, waypoint, address, address_territory, direction, direction_territory;')->execute();
+        $result = $this->entityManager->getConnection()->prepare('OPTIMIZE TABLE proposal, criteria, matching, waypoint, address, address_territory, direction, direction_territory;')->executeQuery();
         $this->logger->info('End optimizing carpool related tables | '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
 
         return $result;
@@ -693,7 +693,7 @@ class ProposalManager
     private function recodeActiveRegularProposalAddresses(array $addressesToRecode): bool
     {
         if (count($addressesToRecode) > 0) {
-            $this->entityManager->getConnection()->prepare('start transaction;')->execute();
+            $this->entityManager->getConnection()->prepare('start transaction;')->executeQuery();
             $i = 0;
             foreach ($addressesToRecode as $recode) {
                 ++$i;
@@ -713,11 +713,11 @@ class ProposalManager
                         address_locality="'.$recode['olocality'].'" AND
                         latitude='.$recode['olat'].' AND
                         longitude='.$recode['olon']
-                )->execute()) {
+                )->executeQuery()) {
                     return false;
                 }
             }
-            $this->entityManager->getConnection()->prepare('commit;')->execute();
+            $this->entityManager->getConnection()->prepare('commit;')->executeQuery();
         }
 
         return true;
@@ -1254,7 +1254,7 @@ class ProposalManager
                 id int NOT NULL,
                 PRIMARY KEY(id));
             '
-            )->execute()
+            )->executeQuery()
             && $this->entityManager->getConnection()->prepare(
                 'INSERT INTO outdated_criteria (id)
             (SELECT criteria.id FROM criteria
@@ -1270,11 +1270,11 @@ class ProposalManager
             solidary_ask.criteria_id IS NULL AND
             solidary_matching.criteria_id IS NULL);
             '
-            )->execute()
-        && $this->entityManager->getConnection()->prepare('start transaction;')->execute()
-        && $this->entityManager->getConnection()->prepare('DELETE FROM criteria WHERE id in (select id from outdated_criteria);')->execute()
-        && $this->entityManager->getConnection()->prepare('commit;')->execute()
-        && $this->entityManager->getConnection()->prepare('DROP TABLE outdated_criteria;')->execute();
+            )->executeQuery()
+        && $this->entityManager->getConnection()->prepare('start transaction;')->executeQuery()
+        && $this->entityManager->getConnection()->prepare('DELETE FROM criteria WHERE id in (select id from outdated_criteria);')->executeQuery()
+        && $this->entityManager->getConnection()->prepare('commit;')->executeQuery()
+        && $this->entityManager->getConnection()->prepare('DROP TABLE outdated_criteria;')->executeQuery();
     }
 
     private function removeOrphanAddresses()
@@ -1285,7 +1285,7 @@ class ProposalManager
                 id int NOT NULL,
                 PRIMARY KEY(id));
             '
-            )->execute()
+            )->executeQuery()
             && $this->entityManager->getConnection()->prepare(
                 'INSERT INTO outdated_address (id)
                 (SELECT address.id FROM address
@@ -1319,11 +1319,11 @@ class ProposalManager
                     cp5.origin_driver_address_id IS NULL AND
                     cp6.destination_driver_address_id IS NULL);
                 '
-            )->execute()
-            && $this->entityManager->getConnection()->prepare('start transaction;')->execute()
-            && $this->entityManager->getConnection()->prepare('DELETE FROM address WHERE id in (SELECT id FROM outdated_address);')->execute()
-            && $this->entityManager->getConnection()->prepare('commit;')->execute()
-            && $this->entityManager->getConnection()->prepare('DROP TABLE outdated_address;')->execute();
+            )->executeQuery()
+            && $this->entityManager->getConnection()->prepare('start transaction;')->executeQuery()
+            && $this->entityManager->getConnection()->prepare('DELETE FROM address WHERE id in (SELECT id FROM outdated_address);')->executeQuery()
+            && $this->entityManager->getConnection()->prepare('commit;')->executeQuery()
+            && $this->entityManager->getConnection()->prepare('DROP TABLE outdated_address;')->executeQuery();
     }
 
     private function removeOrphanDirections()
@@ -1334,7 +1334,7 @@ class ProposalManager
                 id int NOT NULL,
                 PRIMARY KEY(id));
             '
-            )->execute()
+            )->executeQuery()
             && $this->entityManager->getConnection()->prepare(
                 'INSERT INTO outdated_direction (id)
                 (SELECT direction.id FROM direction
@@ -1348,10 +1348,10 @@ class ProposalManager
                 position.direction_id IS NULL AND
                 carpool_proof.direction_id IS NULL);
                 '
-            )->execute()
-            && $this->entityManager->getConnection()->prepare('start transaction;')->execute()
-            && $this->entityManager->getConnection()->prepare('DELETE FROM direction WHERE id in (SELECT id FROM outdated_direction);')->execute()
-            && $this->entityManager->getConnection()->prepare('commit;')->execute()
-            && $this->entityManager->getConnection()->prepare('DROP TABLE outdated_direction;')->execute();
+            )->executeQuery()
+            && $this->entityManager->getConnection()->prepare('start transaction;')->executeQuery()
+            && $this->entityManager->getConnection()->prepare('DELETE FROM direction WHERE id in (SELECT id FROM outdated_direction);')->executeQuery()
+            && $this->entityManager->getConnection()->prepare('commit;')->executeQuery()
+            && $this->entityManager->getConnection()->prepare('DROP TABLE outdated_direction;')->executeQuery();
     }
 }
