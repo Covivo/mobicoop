@@ -887,6 +887,10 @@ export default {
     defaultSeatNumber : {
       type: Number,
       default:null
+    },
+    contentPassenger: { 
+      type: Boolean,
+      default: true
     }
   },
   data() {

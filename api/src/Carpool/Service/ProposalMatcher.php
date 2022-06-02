@@ -743,6 +743,8 @@ class ProposalMatcher
 
                             // We set the real matching day. The first carpooled day by the driver
                             $matchingCriteria->setFromDate($currentDate);
+
+                            break;
                         }
                         $currentDate->modify('+1 days');
                         ++$cptLoop;
@@ -1545,7 +1547,7 @@ class ProposalMatcher
     {
         $validMatchings = [];
         foreach ($matchings as $matching) {
-            $pickupDuration = null;
+            $pickupDuration = 0;
             $filters = $matching->getFilters();
             foreach ($filters['route'] as $value) {
                 if (2 == $value['candidate'] && 0 == $value['position']) {
@@ -2098,7 +2100,7 @@ class ProposalMatcher
      *
      * @return Matching The updated matching
      */
-    private function updateMatchingWithMatching(Matching $sourceMatching, Matching $destinationMatching): Matching
+    private function updateMatchingWithMatching(Matching $sourceMatching, Matching $destinationMatching)
     {
         // matching properties
         $destinationMatching->setOriginalDistance($sourceMatching->getOriginalDistance());

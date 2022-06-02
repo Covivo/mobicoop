@@ -35,6 +35,7 @@ use App\Image\Controller\ImageRemoveFileless;
 use App\MassCommunication\Entity\Campaign;
 use App\RelayPoint\Entity\RelayPoint;
 use App\RelayPoint\Entity\RelayPointType;
+use App\Solidary\Entity\Structure;
 use App\User\Entity\User;
 use Doctrine\ORM\Events;
 use Doctrine\ORM\Mapping as ORM;
@@ -481,6 +482,26 @@ class Image
      * @Groups({"read","write"})
      */
     private $editorialId;
+
+    /**
+     * @var null|Structure The structure for which this image is used as logo
+     *
+     * @ORM\ManyToOne(targetEntity="\App\Solidary\Entity\Structure", inversedBy="images", cascade={"persist"})
+     * @ORM\JoinColumn(onDelete="CASCADE")
+     */
+    private $structure;
+
+    /**
+     * @var null|int the structure id associated with the image
+     * @Groups({"write","read"})
+     */
+    private $structureId;
+
+    /**
+     * @var null|File
+     * @Vich\UploadableField(mapping="structure", fileNameProperty="fileName", originalName="originalName", size="size", mimeType="mimeType", dimensions="dimensions")
+     */
+    private $structureFile;
 
     /**
      * @var null|array the versions of with the image
@@ -1071,6 +1092,38 @@ class Image
     public function setEditorialId($editorialId)
     {
         $this->editorialId = $editorialId;
+    }
+
+    public function getStructure(): ?Structure
+    {
+        return $this->structure;
+    }
+
+    public function setStructure(?Structure $structure): self
+    {
+        $this->structure = $structure;
+
+        return $this;
+    }
+
+    public function getStructureFile(): ?File
+    {
+        return $this->structureFile;
+    }
+
+    public function setStructureFile(?File $structureFile)
+    {
+        $this->structureFile = $structureFile;
+    }
+
+    public function getStructureId(): ?int
+    {
+        return $this->structureId;
+    }
+
+    public function setStructureId(?int $structureId)
+    {
+        $this->structureId = $structureId;
     }
 
     public function getVersions(): ?array

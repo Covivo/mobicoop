@@ -70,6 +70,7 @@ use App\User\Controller\UserSendValidationEmail;
 use App\User\Controller\UserThreads;
 use App\User\Controller\UserUnsubscribeFromEmail;
 use App\User\Controller\UserUpdatePassword;
+use App\User\Filter\CardLetterFilter;
 use App\User\Filter\DirectionTerritoryFilter;
 use App\User\Filter\EmailTokenFilter;
 use App\User\Filter\FamilyAndGivenNameFilter;
@@ -86,6 +87,7 @@ use App\User\Filter\ODRangeRadiusFilter;
 use App\User\Filter\ODTerritoryFilter;
 use App\User\Filter\ProposalValidFilter;
 use App\User\Filter\PwdTokenFilter;
+use App\User\Filter\RezoKitFilter;
 use App\User\Filter\SolidaryCandidateFilter;
 use App\User\Filter\SolidaryExclusiveFilter;
 use App\User\Filter\SolidaryFilter;
@@ -563,9 +565,11 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ApiFilter(EmailTokenFilter::class, properties={"emailToken"})
  * @ApiFilter(IdentityStatusFilter::class, properties={"identityStatus"})
  * @ApiFilter(SolidaryFilter::class, properties={"solidary"})
- * @ApiFilter(BooleanFilter::class, properties={"solidaryUser.volunteer","solidaryUser.beneficiary","rezoKit","cardLetter"})
+ * @ApiFilter(BooleanFilter::class, properties={"solidaryUser.volunteer","solidaryUser.beneficiary"})
  * @ApiFilter(SolidaryCandidateFilter::class, properties={"solidaryCandidate"})
  * @ApiFilter(SolidaryExclusiveFilter::class)
+ * @ApiFilter(RezoKitFilter::class, properties={"rezoKit"})
+ * @ApiFilter(CardLetterFilter::class, properties={"cardLetter"})
  * @ApiFilter(DateFilter::class, properties={"createdDate": DateFilter::EXCLUDE_NULL,"lastActivityDate": DateFilter::EXCLUDE_NULL})
  * @ApiFilter(OrderFilter::class, properties={"id", "givenName", "status","familyName", "email", "gender", "identityStatus", "nationality", "birthDate", "createdDate", "validatedDate", "lastActivityDate", "telephone", "rezoKit", "cardLetter"}, arguments={"orderParameterName"="order"})
  */

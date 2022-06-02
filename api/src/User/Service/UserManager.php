@@ -84,6 +84,7 @@ use Exception;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -322,7 +323,7 @@ class UserManager
      *
      * @return User The user created
      */
-    public function registerUser(User $user, bool $encodePassword = true): User
+    public function registerUser(User $user, bool $encodePassword = true, bool $isSolidary = false)
     {
         // we check if the user is on the scammer list
         $this->checkIfScammer($user);
@@ -336,19 +337,21 @@ class UserManager
         // creation of the alert preferences
         $user = $this->createAlerts($user);
 
-        // dispatch en event
-        if (is_null($user->getUserDelegate())) {
-            // registration by the user itself
-            $event = new UserRegisteredEvent($user);
-            $this->eventDispatcher->dispatch($event, UserRegisteredEvent::NAME);
-        } else {
-            // delegate registration
-            $event = new UserDelegateRegisteredEvent($user);
-            $this->eventDispatcher->dispatch($event, UserDelegateRegisteredEvent::NAME);
-            // send password ?
-            if (User::PWD_SEND_TYPE_SMS == $user->getPasswordSendType()) {
-                $event = new UserDelegateRegisteredPasswordSendEvent($user);
-                $this->eventDispatcher->dispatch($event, UserDelegateRegisteredPasswordSendEvent::NAME);
+        if (!$isSolidary) {
+            // dispatch en event
+            if (is_null($user->getUserDelegate())) {
+                // registration by the user itself
+                $event = new UserRegisteredEvent($user);
+                $this->eventDispatcher->dispatch(UserRegisteredEvent::NAME, $event);
+            } else {
+                // delegate registration
+                $event = new UserDelegateRegisteredEvent($user);
+                $this->eventDispatcher->dispatch(UserDelegateRegisteredEvent::NAME, $event);
+                // send password ?
+                if (User::PWD_SEND_TYPE_SMS == $user->getPasswordSendType()) {
+                    $event = new UserDelegateRegisteredPasswordSendEvent($user);
+                    $this->eventDispatcher->dispatch(UserDelegateRegisteredPasswordSendEvent::NAME, $event);
+                }
             }
         }
 
@@ -1156,7 +1159,7 @@ class UserManager
     {
         $user = $this->userRepository->findOneBy(['pwdToken' => $data->getPwdToken()]);
         if (!is_null($user)) {
-            $user->setPassword($this->encoder->encodePassword($user, $data->getPassword()));
+            $user->setPassword($this->encoder->hashPassword($user, $data->getPassword()));
             // we reset tokens
             $user->setPwdTokenDate(null);
             $user->setPwdToken(null);
@@ -1716,11 +1719,11 @@ class UserManager
             switch ($ssoUser->getGender()) {
                 case SsoUser::GENDER_MALE:$user->setGender(User::GENDER_MALE);
 
-break;
+                break;
 
                 case SsoUser::GENDER_FEMALE:$user->setGender(User::GENDER_FEMALE);
 
-break;
+                break;
 
                 default: $user->setGender(User::GENDER_OTHER);
             }

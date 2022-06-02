@@ -40,6 +40,8 @@ use App\MassCommunication\Repository\CampaignRepository;
 use App\RelayPoint\Entity\RelayPoint;
 use App\RelayPoint\Repository\RelayPointRepository;
 use App\Service\FileManager;
+use App\Solidary\Entity\Structure;
+use App\Solidary\Repository\StructureRepository;
 use App\User\Entity\User;
 use App\User\Repository\UserRepository;
 use Doctrine\Common\Util\ClassUtils;
@@ -75,6 +77,7 @@ class ImageManager
     private $dataUri;
     private $badgeRepository;
     private $editorialRepository;
+    private $structureRepository;
 
     /**
      * Constructor.
@@ -99,7 +102,8 @@ class ImageManager
         CampaignRepository $campaignRepository,
         string $dataUri,
         BadgeRepository $badgeRepository,
-        EditorialRepository $editorialRepository
+        EditorialRepository $editorialRepository,
+        StructureRepository $structureRepository
     ) {
         $this->entityManager = $entityManager;
         $this->eventRepository = $eventRepository;
@@ -117,6 +121,7 @@ class ImageManager
         $this->dataUri = $dataUri;
         $this->badgeRepository = $badgeRepository;
         $this->editorialRepository = $editorialRepository;
+        $this->structureRepository = $structureRepository;
     }
 
     /**
@@ -206,6 +211,14 @@ class ImageManager
             // the image is an image for an editorial
             return $this->editorialRepository->find($image->getEditorial()->getId());
         }
+        if (!is_null($image->getStructureId())) {
+            // the image is an image for an structure
+            return $this->structureRepository->find($image->getStructureId());
+        }
+        if (!is_null($image->getStructure())) {
+            // the image is an image for an structure
+            return $this->structureRepository->find($image->getStructure()->getId());
+        }
 
         throw new OwnerNotFoundException('The owner of this image cannot be found');
     }
@@ -250,7 +263,7 @@ class ImageManager
 
             case RelayPoint::class:
                 // TODO : define a standard for the naming of the images (name of the owner + position ? uuid ?)
-                // for now, for a community, the filename will be the sanitized name of the community and the position of the image in the set
+                // for now, for a relayPoint, the filename will be the sanitized name of the relayPoint and the position of the image in the set
                 if ($fileName = $this->fileManager->sanitize($owner->getName().' '.$image->getPosition()).'.jpg') {
                     return $fileName;
                 }
@@ -268,7 +281,7 @@ class ImageManager
 
             case Campaign::class:
                 // TODO : define a standard for the naming of the images (name of the owner + position ? uuid ?)
-                // for now, for an event, the filename will be the sanitized name of the event and the position of the image in the set
+                // for now, for an campaign, the filename will be the sanitized name of the campaign and the position of the image in the set
                 if ($fileName = $this->fileManager->sanitize($owner->getName().' '.$image->getPosition()).'.jpg') {
                     return $fileName;
                 }
@@ -286,8 +299,17 @@ class ImageManager
 
             case Editorial::class:
                 // TODO : define a standard for the naming of the images (name of the owner + position ? uuid ?)
-                // for now, for a badge, the filename will be the sanitized name of the event and the position of the image in the set
+                // for now, for a editorial, the filename will be the sanitized title of the editorial and the position of the image in the set
                 if ($fileName = $this->fileManager->sanitize($owner->getTitle().' '.$image->getPosition()).'.jpg') {
+                    return $fileName;
+                }
+
+                break;
+
+            case Structure::class:
+                // TODO : define a standard for the naming of the images (name of the owner + position ? uuid ?)
+                // for now, for a structure, the filename will be the sanitized name of the structure and the position of the image in the set
+                if ($fileName = $this->fileManager->sanitize($owner->getName().' '.$image->getPosition()).'.jpg') {
                     return $fileName;
                 }
 
@@ -516,6 +538,15 @@ class ImageManager
                 case Editorial::class:
                     if (!file_exists(dirname(__FILE__).'/../../../public/upload/editorials/images/'.$image->getFileName())) {
                         $this->loggerMaintenance->info('ImageManager : remove image '.$image->getFileName().' without associated file of the Editorial n°'.$owner->getId().' .'.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
+                        $this->deleteVersions($image);
+                        $this->deleteBase($image, false);
+                    }
+
+                    break;
+
+                case Structure::class:
+                    if (!file_exists(dirname(__FILE__).'/../../../public/upload/structures/images/'.$image->getFileName())) {
+                        $this->loggerMaintenance->info('ImageManager : remove image '.$image->getFileName().' without associated file of the Structure n°'.$owner->getId().' .'.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
                         $this->deleteVersions($image);
                         $this->deleteBase($image, false);
                     }

@@ -30,6 +30,7 @@ use ApiPlatform\Core\Annotation\ApiSubresource;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use App\Geography\Entity\Territory;
+use App\Image\Entity\Image;
 use App\RelayPoint\Entity\RelayPoint;
 use App\User\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -552,6 +553,24 @@ class Structure
     private $territories;
 
     /**
+     * @var null|ArrayCollection the images of the structure
+     *
+     * @ORM\OneToMany(targetEntity="\App\Image\Entity\Image", mappedBy="structure", cascade={"persist"})
+     * @ORM\OrderBy({"position" = "ASC"})
+     * @Groups({"aRead","readSolidary","writeSolidary"})
+     * @MaxDepth(1)
+     */
+    private $images;
+
+    /**
+     * @var null|string the signature of the structure
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"aRead","aReadCol","aWrite","readSolidary","writeSolidary","readUser"})
+     */
+    private $signature;
+
+    /**
      * @var array Operators for this structure (more direct than operates for admin context)
      * @Groups("aRead")
      */
@@ -577,6 +596,7 @@ class Structure
         $this->structureProofs = new ArrayCollection();
         $this->territories = new ArrayCollection();
         $this->operators = [];
+        $this->images = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -1330,6 +1350,46 @@ class Structure
     public function setOperators(array $operators): self
     {
         $this->operators = $operators;
+
+        return $this;
+    }
+
+    public function getImages()
+    {
+        return $this->images->getValues();
+    }
+
+    public function addImage(Image $image): self
+    {
+        if (!$this->images->contains($image)) {
+            $this->images[] = $image;
+            $image->setStructure($this);
+        }
+
+        return $this;
+    }
+
+    public function removeImage(Image $image): self
+    {
+        if ($this->images->contains($image)) {
+            $this->images->removeElement($image);
+            // set the owning side to null (unless already changed)
+            if ($image->getStructure() === $this) {
+                $image->setStructure(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getSignature(): ?string
+    {
+        return $this->signature;
+    }
+
+    public function setSignature(?string $signature): self
+    {
+        $this->signature = $signature;
 
         return $this;
     }

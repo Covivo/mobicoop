@@ -442,6 +442,7 @@
               :user="result.carpooler"
               :refresh="refreshPublicProfile"
               :age-display="ageDisplay"
+              :carpool-settings-display="carpoolSettingsDisplay"
               @publicProfileRefresh="publicProfileRefresh"
             />
           </v-stepper-content>
@@ -751,6 +752,10 @@ export default {
     refreshMap: {
       type: Boolean,
       default: false
+    },
+    carpoolSettingsDisplay: { 
+      type: Boolean,
+      default: true
     }
   },
   data : function() {

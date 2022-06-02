@@ -101,6 +101,10 @@ final class CreateImageAction
             // editorial image
             $image->setEditorialFile($request->files->get('editorialFile'));
             $image->setEditorialId($request->request->get('editorialId'));
+        } elseif ($request->files->get('structureFile') && $request->request->get('structureId')) {
+            // structure image
+            $image->setStructureFile($request->files->get('structureFile'));
+            $image->setStructureId($request->request->get('structureId'));
         } else {
             throw new BadRequestHttpException('A valid file is required');
         }

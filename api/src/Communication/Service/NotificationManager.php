@@ -95,6 +95,7 @@ class NotificationManager
     private $proposalManager;
     private $communicationFolder;
     private $altCommunicationFolder;
+    private $structureLogoUri;
 
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -120,7 +121,8 @@ class NotificationManager
         AdManager $adManager,
         ProposalManager $proposalManager,
         string $communicationFolder,
-        string $altCommunicationFolder
+        string $altCommunicationFolder,
+        string $structureLogoUri
     ) {
         $this->entityManager = $entityManager;
         $this->internalMessageManager = $internalMessageManager;
@@ -146,6 +148,7 @@ class NotificationManager
         $this->proposalManager = $proposalManager;
         $this->communicationFolder = $communicationFolder;
         $this->altCommunicationFolder = $altCommunicationFolder;
+        $this->structureLogoUri = $structureLogoUri;
     }
 
     /**
@@ -286,6 +289,7 @@ class NotificationManager
     {
         $email = new Email();
         $email->setRecipientEmail($recipient->getEmail());
+        $signature = [];
         $titleContext = [];
         $bodyContext = [];
         if ($object) {
@@ -455,8 +459,13 @@ class NotificationManager
                 break;
 
                 case SolidaryContact::class:
+                    $structure = $recipient->getSolidaryUser()->getSolidaryUserStructures()[0]->getStructure();
+                    $signature = [
+                        'text' => $structure->getSignature(),
+                        'logo' => count($structure->getImages()) > 0 ? $this->structureLogoUri.$structure->getImages()[0]->getFileName() : null,
+                    ];
                     $titleContext = ['user' => $object->getSolidarySolution()->getSolidary()->getSolidaryUserStructure()->getSolidaryUser()->getUser()];
-                    $bodyContext = ['text' => $object->getContent(), 'recipient' => $recipient];
+                    $bodyContext = ['text' => $object->getContent(), 'recipient' => $recipient, 'signature' => $signature];
 
                 break;
 
@@ -543,7 +552,14 @@ class NotificationManager
                     }
             }
         } else {
-            $bodyContext = ['user' => $recipient, 'notification' => $notification];
+            if (!is_null($recipient->getSolidaryUser())) {
+                $structure = $recipient->getSolidaryUser()->getSolidaryUserStructures()[0]->getStructure();
+                $signature = [
+                    'text' => $structure->getSignature(),
+                    'logo' => count($structure->getImages()) > 0 ? $this->structureLogoUri.$structure->getImages()[0]->getFileName() : null,
+                ];
+            }
+            $bodyContext = ['user' => $recipient, 'notification' => $notification, 'signature' => $signature];
         }
 
         $lang = self::LANG;

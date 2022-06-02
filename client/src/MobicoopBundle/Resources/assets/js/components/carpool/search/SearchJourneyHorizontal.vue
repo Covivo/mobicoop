@@ -23,11 +23,14 @@
                 class="ma-0"
               >
                 <geocomplete
+                  id="labelOrgin"
                   :uri="geoSearchUrl"
                   :results-order="geoCompleteResultsOrder"
                   :palette="geoCompletePalette"
                   :chip="geoCompleteChip"
                   :label="labelOrigin"
+                  :aria-label="ariaLabelOrgin"
+                  :aria-labelledby="labelOrigin"
                   required
                   :prepend-icon="prependIconOrigin"
                   @address-selected="originSelected"
@@ -39,11 +42,14 @@
                 class="ma-0"
               >
                 <geocomplete
+                  id="labelDestination"
                   :uri="geoSearchUrl"
                   :results-order="geoCompleteResultsOrder"
                   :palette="geoCompletePalette"
                   :chip="geoCompleteChip"
                   :label="labelDestination"
+                  :aria-label="ariaLabelDestination"
+                  :aria-labelledby="labelDestination"
                   required
                   :prepend-icon="prependIconDestination"
                   @address-selected="destinationSelected"
@@ -116,6 +122,7 @@
                   :loading="loadingSearch"
                   color="secondary"
                   rounded
+                  :aria-label="$t('buttons.search.label')"
                   @click="search"
                 >
                   <v-icon>mdi-magnify</v-icon>
@@ -164,10 +171,6 @@ export default {
       default: false
     },
     showRequired: {
-      type: Boolean,
-      default: false
-    },
-    searchUnavailable: {
       type: Boolean,
       default: false
     },
@@ -231,6 +234,9 @@ export default {
       return this.date
         ? moment(this.date).format(this.$t("fullDate"))
         : null;
+    },
+    searchUnavailable() {
+      return (!this.origin || !this.destination || (!this.dataRegular && !this.date && !this.punctualDateOptional))
     },
     checkOutwardDate() {
       if (this.outwardDateClicked && !this.regular && !this.date && !this.punctualDateOptional) {

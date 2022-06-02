@@ -44,6 +44,7 @@ use App\Solidary\Repository\SolidaryUserRepository;
 use App\Solidary\Repository\StructureProofRepository;
 use App\Solidary\Repository\StructureRepository;
 use App\User\Entity\User;
+use App\User\Event\UserRegisteredEvent;
 use App\User\Repository\UserRepository;
 use App\User\Service\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -725,7 +726,7 @@ class SolidaryUserManager
                 $user->setPassword($solidaryVolunteer->getPassword());
 
                 // we treat the user to add right authItem and notifiactions
-                $this->userManager->registerUser($user);
+                $this->userManager->registerUser($user, true, true);
             }
         }
         if (!is_null($user->getSolidaryUser())) {
@@ -741,18 +742,18 @@ class SolidaryUserManager
             // we add the home address to the solidary user
             $homeAddress = $solidaryVolunteer->getHomeAddress();
             $address = new Address();
-            $address->setStreetAddress($homeAddress['streetAddress']);
-            $address->setAddressLocality($homeAddress['addressLocality']);
-            $address->setLocalAdmin($homeAddress['localAdmin']);
-            $address->setCounty($homeAddress['county']);
-            $address->setMacroCounty($homeAddress['macroCounty']);
-            $address->setRegion($homeAddress['region']);
-            $address->setMacroRegion($homeAddress['macroRegion']);
-            $address->setAddressCountry($homeAddress['addressCountry']);
-            $address->setCountryCode($homeAddress['countryCode']);
-            $address->setLatitude($homeAddress['latitude']);
-            $address->setLongitude($homeAddress['longitude']);
-            $address->setName($homeAddress['name']);
+            $address->setStreetAddress(isset($homeAddress['streetAddress']) ? $homeAddress['streetAddress'] : null);
+            $address->setAddressLocality(isset($homeAddress['addressLocality']) ? $homeAddress['addressLocality'] : null);
+            $address->setLocalAdmin(isset($homeAddress['localAdmin']) ? $homeAddress['localAdmin'] : null);
+            $address->setCounty(isset($homeAddress['county']) ? $homeAddress['county'] : null);
+            $address->setMacroCounty(isset($homeAddress['macroCounty']) ? $homeAddress['macroCounty'] : null);
+            $address->setRegion(isset($homeAddress['region']) ? $homeAddress['region'] : null);
+            $address->setMacroRegion(isset($homeAddress['macroRegion']) ? $homeAddress['macroRegion'] : null);
+            $address->setAddressCountry(isset($homeAddress['addressCountry']) ? $homeAddress['addressCountry'] : null);
+            $address->setCountryCode(isset($homeAddress['countryCode']) ? $homeAddress['countryCode'] : null);
+            $address->setLatitude(isset($homeAddress['latitude']) ? $homeAddress['latitude'] : null);
+            $address->setLongitude(isset($homeAddress['longitude']) ? $homeAddress['longitude'] : null);
+            $address->setName(isset($homeAddress['name']) ? $homeAddress['name'] : null);
             $address->setHome(true);
             $address->setUser($user);
             $solidaryUser->setAddress($address);
@@ -920,6 +921,9 @@ class SolidaryUserManager
 
         $this->entityManager->persist($user);
         $this->entityManager->flush();
+
+        $event = new UserRegisteredEvent($user);
+        $this->eventDispatcher->dispatch(UserRegisteredEvent::NAME, $event);
 
         // // dispatch SolidaryUser event
         $event = new SolidaryUserCreatedEvent($user, $this->security->getUser());
