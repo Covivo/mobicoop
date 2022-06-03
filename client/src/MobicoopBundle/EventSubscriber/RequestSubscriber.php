@@ -23,7 +23,7 @@ class RequestSubscriber implements EventSubscriberInterface
     {
         $request = $event->getRequest();
         if (
-            !$event->isMasterRequest()
+            !$event->isMainRequest()
             || $request->isXmlHttpRequest()
             || $request->isMethod('POST')
             || 'user_login' === $request->attributes->get('_route')
@@ -43,7 +43,7 @@ class RequestSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            KernelEvents::REQUEST => ['onKernelRequest']
+            KernelEvents::REQUEST => ['onKernelRequest'],
         ];
     }
 }

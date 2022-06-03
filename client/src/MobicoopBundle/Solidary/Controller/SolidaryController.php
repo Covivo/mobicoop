@@ -18,12 +18,10 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
-
+ */
 
 namespace Mobicoop\Bundle\MobicoopBundle\Solidary\Controller;
 
-use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\ProposalManager;
 use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
 use Mobicoop\Bundle\MobicoopBundle\Solidary\Entity\Solidary;
@@ -36,61 +34,42 @@ use Mobicoop\Bundle\MobicoopBundle\User\Service\UserManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface as TranslationTranslatorInterface;
 
 class SolidaryController extends AbstractController
 {
     use HydraControllerTrait;
 
-    private $encoder;
-
     /**
-     * Constructor
-     * @param UserPasswordEncoderInterface $encoder
-     */
-    public function __construct(UserPasswordEncoderInterface $encoder)
-    {
-        $this->encoder = $encoder;
-    }
-    
-    /**
-     * @param StructureManager $structureManager
-     * @param SubjectManager $subjectManager
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function index(StructureManager $structureManager, SubjectManager $subjectManager)
     {
         $structures = $structureManager->getStructures();
         $subjects = $subjectManager->getSubjects();
-        
+
         return $this->render(
             '@Mobicoop/solidary/solidary.html.twig',
             [
-                "subjects" => $subjects,
-                "structures" => $structures
+                'subjects' => $subjects,
+                'structures' => $structures,
             ]
         );
     }
 
     /**
-     * Handle post request from solidary form
+     * Handle post request from solidary form.
      *
-     * @param Request $request
-     * @param SolidaryManager $solidaryManager
-     * @param UserManager $userManager
      * @param TranslatorInterface $translator
-     * @param StructureManager $structureManager
-     * @param SubjectManager $subjectManager
      *
-     * @param ProposalManager $proposalManager
      * @return JsonResponse
      */
     public function solidaryCreate(
         Request $request,
         SolidaryManager $solidaryManager,
         UserManager $userManager,
-        TranslatorInterface $translator,
+        TranslationTranslatorInterface $translator,
         StructureManager $structureManager,
         SubjectManager $subjectManager,
         ProposalManager $proposalManager
@@ -107,7 +86,7 @@ class SolidaryController extends AbstractController
             } else {
                 $user = new User();
                 $address = new Address();
-                
+
                 // add home address to user if it exists
                 if (isset($data['address'])) {
                     $address->setAddressCountry($data['address']['addressCountry']);
@@ -128,7 +107,7 @@ class SolidaryController extends AbstractController
                     $address->setHome(true);
                 }
                 $user->addAddress($address);
-                
+
                 // todo: doesn't work because we need password
                 $year = new \DateTime($data['yearOfBirth']);
                 $user->setEmail($data['email']);
@@ -142,41 +121,41 @@ class SolidaryController extends AbstractController
 
             if (is_null($user)) {
                 return new JsonResponse(
-                    ["errors" => 'user.errors.required'],
+                    ['errors' => 'user.errors.required'],
                     \Symfony\Component\HttpFoundation\Response::HTTP_UNPROCESSABLE_ENTITY
                 );
             }
-            
-            $solidary->setProposal($proposalManager->createSolidaryProposalFromData($data["search"], $user));
+
+            $solidary->setProposal($proposalManager->createSolidaryProposalFromData($data['search'], $user));
 
             $solidary->setUser($user);
             $solidary->setCreatedDate($datetime);
             $solidary->setUpdatedDate($datetime);
             $solidary->setStatus(Solidary::ASKED);
-            $solidary->setAssisted(!empty($data["structure"]));
-            if (!empty($data["structure"])) {
-                $solidary->setStructure($structureManager->getStructure($data["structure"])->getName());
+            $solidary->setAssisted(!empty($data['structure']));
+            if (!empty($data['structure'])) {
+                $solidary->setStructure($structureManager->getStructure($data['structure'])->getName());
             }
-            if (!empty($data["subject"])) {
-                $solidary->setSubject($subjectManager->getSubject($data["subject"])->getLabel());
+            if (!empty($data['subject'])) {
+                $solidary->setSubject($subjectManager->getSubject($data['subject'])->getLabel());
             }
 
             // todo: activate
 //            if ($response = $solidaryManager->createSolidary($solidary)) {
             return new JsonResponse(
-                ["message" => "success"],
+                ['message' => 'success'],
                 \Symfony\Component\HttpFoundation\Response::HTTP_ACCEPTED
             );
 //            }
             return new JsonResponse(
-                ["message" => "error create"],
+                ['message' => 'error create'],
                 \Symfony\Component\HttpFoundation\Response::HTTP_BAD_REQUEST
             );
         }
 
         // todo: custom error and ok messages
         return new JsonResponse(
-            ["message" => "error"],
+            ['message' => 'error'],
             \Symfony\Component\HttpFoundation\Response::HTTP_FORBIDDEN
         );
     }

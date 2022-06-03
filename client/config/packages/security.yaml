@@ -1,4 +1,5 @@
 security:
+    enable_authenticator_manager: true
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     providers:
         webservice:
@@ -8,10 +9,8 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         main:
-            anonymous: true
-            guard:
-                authenticators:
-                    - Mobicoop\Bundle\MobicoopBundle\User\Security\TokenAuthenticator
+            custom_authenticators:
+              - Mobicoop\Bundle\MobicoopBundle\User\Security\TokenAuthenticator
             # https://symfony.com/doc/current/security/form_login_setup.html
             logout:
                 path: /user/logout
@@ -24,6 +23,6 @@ security:
     access_control:
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
-    encoders:
+    password_hashers:
         Mobicoop\Bundle\MobicoopBundle\User\Entity\User:
             algorithm: auto

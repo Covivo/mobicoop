@@ -25,7 +25,7 @@ namespace App\User\Service;
 use App\App\Service\AppManager;
 use App\User\Entity\User;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
-use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
+use Symfony\Component\Security\Core\Exception\UserNotFoundException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 
@@ -58,7 +58,7 @@ class UserProvider implements UserProviderInterface
             return $app;
         }
 
-        throw new UsernameNotFoundException(
+        throw new UserNotFoundException(
             sprintf('Username "%s" does not exist.', $username)
         );
     }
@@ -75,7 +75,7 @@ class UserProvider implements UserProviderInterface
             return $app;
         }
 
-        throw new UsernameNotFoundException(
+        throw new UserNotFoundException(
             sprintf('Username "%s" does not exist.', $username)
         );
     }

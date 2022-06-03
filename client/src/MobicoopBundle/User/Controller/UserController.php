@@ -51,8 +51,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -66,7 +66,6 @@ class UserController extends AbstractController
 {
     use HydraControllerTrait;
 
-    private $encoder;
     private $facebook_show;
     private $facebook_appid;
     private $required_home_address;
@@ -105,7 +104,6 @@ class UserController extends AbstractController
      * @param mixed $required_community
      */
     public function __construct(
-        UserPasswordEncoderInterface $encoder,
         $facebook_show,
         $facebook_appid,
         $required_home_address,
@@ -130,7 +128,6 @@ class UserController extends AbstractController
         bool $birthDateDisplay,
         bool $carpoolSettingsDisplay
     ) {
-        $this->encoder = $encoder;
         $this->facebook_show = $facebook_show;
         $this->facebook_appid = $facebook_appid;
         $this->required_home_address = $required_home_address;
@@ -163,16 +160,6 @@ class UserController extends AbstractController
      */
     public function login(Request $request, ?int $id = null, ?int $eventId = null, ?int $communityId = null, ?string $redirect = null)
     {
-        $errorMessage = '';
-        if (in_array('bad-credentials-api', $request->getSession()->getFlashBag()->peek('notice'))) {
-            $errorMessage = 'Bad credentials.';
-            $request->getSession()->getFlashBag()->clear();
-        }
-        // if ($eventId !== null && $destination == null && $event==null) {
-        //     $event = $this->eventManager->getEvent($eventId);
-        //     $destination = json_encode($event->getAddress());
-        // }
-
         // initializations for redirections
         $type = 'default';
         if (!is_null($id)) {
@@ -194,7 +181,7 @@ class UserController extends AbstractController
         return $this->render('@Mobicoop/user/login.html.twig', [
             'id' => $id,
             'type' => $type,
-            'errorMessage' => $errorMessage,
+            'errorMessage' => $request->getSession()->remove('bad-credentials'),
             'facebook_show' => ('true' === $this->facebook_show) ? true : false,
             'facebook_appid' => $this->facebook_appid,
             'signUpLinkInConnection' => $this->signUpLinkInConnection,
@@ -326,16 +313,10 @@ class UserController extends AbstractController
     //  */
     public function userSignUpValidation($token, $email, Request $request)
     {
-        $errorMessage = '';
-        if (in_array('bad-credentials-api', $request->getSession()->getFlashBag()->peek('notice'))) {
-            $errorMessage = 'Bad credentials.';
-            $request->getSession()->getFlashBag()->clear();
-        }
-
         return $this->render('@Mobicoop/user/signupValidation.html.twig', [
             'urlToken' => $token,
             'urlEmail' => $email,
-            'error' => $errorMessage,
+            'error' => $request->getSession()->remove('bad-credentials'),
         ]);
     }
 
@@ -344,17 +325,11 @@ class UserController extends AbstractController
     //  */
     public function userEmailValidation($token, $email, Request $request)
     {
-        $errorMessage = '';
-        if (in_array('bad-credentials-api', $request->getSession()->getFlashBag()->peek('notice'))) {
-            $errorMessage = 'Bad credentials.';
-            $request->getSession()->getFlashBag()->clear();
-        }
-
         return $this->render('@Mobicoop/user/signupValidation.html.twig', [
             'emailValidation' => true,
             'urlToken' => $token,
             'urlEmail' => $email,
-            'error' => $errorMessage,
+            'error' => $request->getSession()->remove('bad-credentials'),
         ]);
     }
 
@@ -413,24 +388,6 @@ class UserController extends AbstractController
         ];
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
-            // We need to check if the token is right
-            // if ($user->getPhoneToken() == $data['token']) {
-            //     if ($user->getPhoneValidatedDate()!==null) {
-            //         $phoneError["state"] = "true";
-            //         $phoneError["message"] = "snackBar.phoneAlreadyVerified";
-            //     } else {
-            //         $user->setPhoneValidatedDate(new \Datetime()); // TO DO : Correct timezone
-            //         $user = $userManager->updateUser($user);
-            //         if (!$user) {
-            //             $phoneError["state"] = "true";
-            //             $phoneError["message"] = "snackBar.phoneUpdate";
-            //         }
-            //     }
-            // } else {
-            //     $phoneError["state"] = "true";
-            //     $phoneError["message"] = "snackBar.unknown";
-            // }
-
             $response = $userManager->validPhoneByToken($data['token'], $data['telephone']);
 
             return new Response(json_encode($response));
@@ -612,7 +569,7 @@ class UserController extends AbstractController
      * User password update.
      * Ajax.
      */
-    public function userPasswordUpdate(UserManager $userManager, Request $request)
+    public function userPasswordUpdate(UserManager $userManager, Request $request, TokenStorageInterface $token)
     {
         // we clone the logged user to avoid getting logged out in case of error in the form
         $user = clone $userManager->getLoggedUser();
@@ -645,9 +602,9 @@ class UserController extends AbstractController
                     return $reponseofmanager;
                 }
                 // after successful update, we re-log the user
-                $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
-                $this->get('security.token_storage')->setToken($token);
-                $this->get('session')->set('_security_main', serialize($token));
+                $token = new UsernamePasswordToken($user, 'main', $user->getRoles());
+                // $this->get('security.token_storage')->setToken($token);
+                $request->getSession()->set('_security_main', serialize($token));
                 $error['message'] = 'Ok';
 
                 return new Response(json_encode($error));

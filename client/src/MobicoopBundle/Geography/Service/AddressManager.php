@@ -19,15 +19,12 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace Mobicoop\Bundle\MobicoopBundle\Geography\Service;
 
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use Psr\Log\LoggerInterface;
 
 /**
  * Address management service.
@@ -35,54 +32,39 @@ use Psr\Log\LoggerInterface;
 class AddressManager
 {
     private $dataProvider;
-    private $encoder;
-    private $tokenStorage;
-    private $logger;
 
-    
     /**
      * Constructor.
-     *
-     * @param DataProvider $dataProvider
-     * @param UserPasswordEncoderInterface $encoder
-     * @param TokenStorageInterface $tokenStorage
-     * @param LoggerInterface $logger
      */
-    public function __construct(DataProvider $dataProvider, UserPasswordEncoderInterface $encoder, TokenStorageInterface $tokenStorage, LoggerInterface $logger)
+    public function __construct(DataProvider $dataProvider)
     {
         $this->dataProvider = $dataProvider;
         $this->dataProvider->setClass(Address::class);
-        $this->encoder = $encoder;
-        $this->tokenStorage = $tokenStorage;
-        $this->logger = $logger;
     }
 
     /**
-     * Get an address by its identifier
+     * Get an address by its identifier.
      *
      * @param int $id The address id
      *
-     * @return Address|null The address found or null if not found.
+     * @return null|Address the address found or null if not found
      */
     public function getAddress(int $id)
     {
         $response = $this->dataProvider->getItem($id);
-        if ($response->getCode() == 200) {
-            $address = $response->getValue();
-            $this->logger->info('Address | Is found');
-            return $address;
+        if (200 == $response->getCode()) {
+            return $response->getValue();
         }
-        $this->logger->error('User | is Not found');
+
         return null;
     }
 
-    
     /**
-     * Update an address
+     * Update an address.
      *
      * @param Address $Address The address to update
      *
-     * @return Address|null The address updated or null if error.
+     * @return null|Address the address updated or null if error
      */
     public function updateAddress(Address $address)
     {
@@ -91,10 +73,10 @@ class AddressManager
         } else {
             $response = $this->dataProvider->put($address);
         }
-        if ($response->getCode() == 200) {
-            $this->logger->info('Address Update | Start');
+        if (200 == $response->getCode()) {
             return $response->getValue();
         }
+
         return null;
     }
 }
