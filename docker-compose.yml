@@ -98,7 +98,7 @@ services:
   db:
     image: mariadb:10.4
     #command: --max_allowed_packet=512000000
-    container_name: mobicoop_db
+    container_name: mobicoop_platform_db
     restart: always
     ports: ['3309:3306']
     environment:
@@ -110,7 +110,7 @@ services:
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
-    container_name: mobicoop_phpmyadmin
+    container_name: mobicoop_platform_phpmyadmin
     depends_on:
       - db
     environment:
