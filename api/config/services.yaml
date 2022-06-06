@@ -464,6 +464,9 @@ services:
   App\Event\Admin\DataProvider\EventCollectionDataProvider:
     arguments:
       $collectionFilters: !tagged api_platform.doctrine.orm.query_extension.collection
+  App\Event\Admin\Extension\EventCommunityFilterExtension:
+     arguments:
+         $communityManagerCanSeeAllEvents: '%env(bool:COMMUNITY_MANAGER_CAN_SEE_ALL_EVENTS)%'         
 
   # External Connection
   App\ExternalJourney\Service\ExternalConnectionManager:

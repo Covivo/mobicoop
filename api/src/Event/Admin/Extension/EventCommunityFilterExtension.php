@@ -39,13 +39,15 @@ final class EventCommunityFilterExtension implements QueryCollectionExtensionInt
     private $authManager;
     private $request;
     private $communityManager;
+    private $communityManagerCanSeeAllEvents;
 
-    public function __construct(Security $security, AuthManager $authManager, RequestStack $request, CommunityManager $communityManager)
+    public function __construct(Security $security, AuthManager $authManager, RequestStack $request, CommunityManager $communityManager, bool $communityManagerCanSeeAllEvents)
     {
         $this->security = $security;
         $this->authManager = $authManager;
         $this->request = $request->getCurrentRequest();
         $this->communityManager = $communityManager;
+        $this->communityManagerCanSeeAllEvents = $communityManagerCanSeeAllEvents;
     }
 
     public function applyToCollection(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
@@ -67,7 +69,7 @@ final class EventCommunityFilterExtension implements QueryCollectionExtensionInt
     {
         $communities = $this->communityManager->getModerated($this->security->getUser());
 
-        if (count($communities) > 0) {
+        if (count($communities) > 0 && false == $this->communityManagerCanSeeAllEvents) {
             $rootAlias = $queryBuilder->getRootAliases()[0];
             $queryBuilder
                 ->leftJoin($rootAlias.'.community', 'c')
