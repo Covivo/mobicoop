@@ -265,6 +265,17 @@ class CommunityManager
     }
 
     /**
+     * Delete a community user.
+     *
+     * @param CommunityUser $communityUser The community user to delete
+     */
+    public function deleteCommunityUser(CommunityUser $communityUser)
+    {
+        $this->entityManager->remove($communityUser);
+        $this->entityManager->flush();
+    }
+
+    /**
      * Add community manager role to the given user if needed.
      *
      * @param User $user The user
