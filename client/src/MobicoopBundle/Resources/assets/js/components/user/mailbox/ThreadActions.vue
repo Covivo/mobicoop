@@ -20,17 +20,24 @@
           @updateStatus="updateStatus"
         />
       </v-card>
-       
+
       <!-- Always visible (carpool or not) -->
-      <v-avatar v-if="!loading && ((infosComplete.carpooler && infosComplete.carpooler.avatars && infosComplete.carpooler.status != 3) || recipientAvatar)">
-        <img :src="(recipientAvatar) ? recipientAvatar : infosComplete.carpooler.avatars[0]">
-      </v-avatar>
-      <v-card-text
-        v-if="!loading && ((infosComplete.carpooler && infosComplete.carpooler.status != 3) || recipientName)"
-        class="font-weight-bold text-h5"
+      <v-card
+        v-if="!loading"
+        flat
+        @click="showProfileDialog = true"
       >
-        {{ buildedRecipientName }}
-      </v-card-text>
+        <v-avatar v-if="!loading && ((infosComplete.carpooler && infosComplete.carpooler.avatars && infosComplete.carpooler.status != 3) || recipientAvatar)">
+          <img :src="(recipientAvatar) ? recipientAvatar : infosComplete.carpooler.avatars[0]">
+        </v-avatar>
+
+        <v-card-text
+          v-if="!loading && ((infosComplete.carpooler && infosComplete.carpooler.status != 3) || recipientName)"
+          class="font-weight-bold text-h5"
+        >
+          {{ buildedRecipientName }}
+        </v-card-text>
+      </v-card>
       <v-card-text
         v-if="infosComplete.carpooler && infosComplete.carpooler.status == 3"
         class="font-weight-bold text-h5"
@@ -69,7 +76,7 @@
               <v-icon left>
                 mdi-account-cancel
               </v-icon> {{ $t('blocked') }}
-            </v-btn>        
+            </v-btn>
           </div>
         </v-col>
         <v-col
@@ -107,7 +114,7 @@
         </v-chip>
 
         <regular-days-summary
-          v-if="infosComplete.frequency==2" 
+          v-if="infosComplete.frequency==2"
           :mon-active="infos.outward.monCheck"
           :tue-active="infos.outward.tueCheck"
           :wed-active="infos.outward.wedCheck"
@@ -142,7 +149,7 @@
                     </v-icon>
                   </template>
                   <span>{{ $t('distanceTooltip') }}</span>
-                </v-tooltip>                
+                </v-tooltip>
               </td>
               <td class="text-left">
                 {{ distanceInKm }}
@@ -174,7 +181,7 @@
                     </v-icon>
                   </template>
                   <span>{{ $t('priceTooltip') }}</span>
-                </v-tooltip>                
+                </v-tooltip>
               </td>
               <td class="text-left font-weight-bold">
                 {{ infosComplete.roundedPrice }} €
@@ -236,6 +243,12 @@
         />
       </v-card>
     </v-dialog>
+    <PopupPublicProfile
+      :carpooler-id="idUser"
+      :carpooler-name="recipientName"
+      :show-profile-dialog="showProfileDialog"
+      @dialogClosed="showProfileDialog = false"
+    />
   </v-main>
 </template>
 <script>
@@ -246,6 +259,7 @@ import RegularDaysSummary from '@components/carpool/utilities/RegularDaysSummary
 import VJourney from '@components/carpool/utilities/VJourney';
 import MatchingJourney from '@components/carpool/results/MatchingJourney';
 import Report from "@components/utilities/Report";
+import PopupPublicProfile from "@components/user/profile/PopupPublicProfile";
 import maxios from "@utils/maxios";
 import moment from "moment";
 
@@ -263,7 +277,8 @@ export default {
     RegularDaysSummary,
     VJourney,
     MatchingJourney,
-    Report
+    Report,
+    PopupPublicProfile
   },
   props: {
     idAsk: {
@@ -336,7 +351,8 @@ export default {
       chosenRole:null,
       hideClickIcon : false,
       loadingBlock: false,
-      dataBlockerId: this.blockerId
+      dataBlockerId: this.blockerId,
+      showProfileDialog: false
     }
   },
   computed:{
@@ -497,7 +513,7 @@ export default {
         else{
           results = this.infosComplete.resultPassenger;
         }
-        
+
         // Outward parameters (checkbox and time)
         if(results.outward){
           // Times day by day
@@ -540,7 +556,7 @@ export default {
       this.$emit("updateStatusAskHistory",data);
     },
     block(){
-      
+
       if( (this.dataBlockerId==null) || (this.dataBlockerId == this.idUser)){
         this.loadingBlock = true;
         let params = {
@@ -560,7 +576,7 @@ export default {
           })
           .finally(() => {
             this.loadingBlock = false;
-          });      
+          });
       }
     }
 

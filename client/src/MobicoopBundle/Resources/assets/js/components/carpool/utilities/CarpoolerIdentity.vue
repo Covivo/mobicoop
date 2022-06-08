@@ -32,7 +32,8 @@
       </v-img>
     </v-list-item>
     <PopupPublicProfile
-      :carpooler="carpooler"
+      :carpooler-id="carpooler.id"
+      :carpooler-name="carpooler.givenName+' '+carpooler.shortFamilyName"
       :show-profile-dialog="showProfileDialog"
       @dialogClosed="showProfileDialog = false"
     />

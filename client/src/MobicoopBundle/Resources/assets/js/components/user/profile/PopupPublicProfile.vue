@@ -9,11 +9,11 @@
         <v-card-title
           class="text-h5"
         >
-          {{ $t('title', {carpooler: carpooler.givenName+' '+carpooler.shortFamilyName}) }}
+          {{ $t('title', {carpooler: carpoolerName}) }}
         </v-card-title>
         <v-card-text>
           <PublicProfile
-            :user="carpooler"
+            :user-id="carpoolerId"
           />
         </v-card-text>
 
@@ -51,10 +51,14 @@ export default {
       type: Boolean,
       default: false
     },
-    carpooler: {
+    carpoolerId: {
       type: Object,
       default: null
-    }
+    },
+    carpoolerName: {
+      type: String,
+      default: ""
+    },
   },
   data(){
     return{

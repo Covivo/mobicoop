@@ -439,7 +439,7 @@
 
           <v-stepper-content step="4">
             <PublicProfile
-              :user="result.carpooler"
+              :user-id="result.carpooler.id"
               :refresh="refreshPublicProfile"
               :age-display="ageDisplay"
               :carpool-settings-display="carpoolSettingsDisplay"
@@ -753,7 +753,7 @@ export default {
       type: Boolean,
       default: false
     },
-    carpoolSettingsDisplay: { 
+    carpoolSettingsDisplay: {
       type: Boolean,
       default: true
     }
