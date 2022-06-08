@@ -181,7 +181,7 @@ export default {
       default: null
     },
     userId:{
-      type:Object,
+      type:Number,
       default: null
     },
     showReportButton: {

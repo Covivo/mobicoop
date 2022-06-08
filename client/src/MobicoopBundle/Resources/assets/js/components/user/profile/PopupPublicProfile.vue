@@ -52,7 +52,7 @@ export default {
       default: false
     },
     carpoolerId: {
-      type: Object,
+      type: Number,
       default: null
     },
     carpoolerName: {
