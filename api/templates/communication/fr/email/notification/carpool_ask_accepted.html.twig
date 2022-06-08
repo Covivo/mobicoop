@@ -38,7 +38,7 @@
                         {% endif %}
                     </td>
                     <td style="width:30%">
-                        <img  style="border-radius:50px" src="{{sender.avatars[0]}}" alt="Avatar"/>
+                        <img  style="border-radius:50px" src="{{ api_env('EMAILS_PLATFORM_URL') }}{{sender.avatars[0]}}" alt="Avatar"/>
                     </td>
                 </tr>
             </table>
