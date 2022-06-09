@@ -43,7 +43,7 @@ class StructureProofManager
     /**
      * Delete a structureProof.
      *
-     * @param StructureProof $article The article to delete
+     * @param StructureProof $structureProof the Structureproof to delete
      */
     public function deleteStructureProof(StructureProof $structureProof)
     {
