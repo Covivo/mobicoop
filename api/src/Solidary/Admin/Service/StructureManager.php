@@ -47,6 +47,7 @@ class StructureManager
     private $userRepository;
     private $authManager;
     private $operateManager;
+    private $structureProofManager;
 
     /**
      * Constructor.
@@ -56,13 +57,15 @@ class StructureManager
         TerritoryRepository $territoryRepository,
         UserRepository $userRepository,
         AuthManager $authManager,
-        OperateManager $operateManager
+        OperateManager $operateManager,
+        StructureProofManager $structureProofManager
     ) {
         $this->entityManager = $entityManager;
         $this->territoryRepository = $territoryRepository;
         $this->userRepository = $userRepository;
         $this->authManager = $authManager;
         $this->operateManager = $operateManager;
+        $this->structureProofManager = $structureProofManager;
     }
 
     /**
@@ -122,6 +125,7 @@ class StructureManager
                     $proof->setType($aproof['type']);
                     $proof->setMandatory(isset($aproof['mandatory']) && $aproof['mandatory'] ? true : false);
                     $proof->setPosition($aproof['position']);
+                    $proof->setActivated($aproof['activated']);
                     $proof->setStructure($structure);
                     $proof->setCheckbox(false);
                     $proof->setRadio(false);
@@ -326,6 +330,7 @@ class StructureManager
                 if (StructureProof::TYPE_REQUESTER == $proof->getType() && !in_array($proof->getId(), $ids)) {
                     // proof removed
                     $structure->removeStructureProof($proof);
+                    $this->structureProofManager->deleteStructureProof($proof);
                 }
             }
 
@@ -427,6 +432,7 @@ class StructureManager
                 if (StructureProof::TYPE_VOLUNTEER == $proof->getType() && !in_array($proof->getId(), $ids)) {
                     // proof removed
                     $structure->removeStructureProof($proof);
+                    $this->structureProofManager->deleteStructureProof($proof);
                 }
             }
 
