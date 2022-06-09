@@ -388,7 +388,7 @@ class StructureManager
                     $proof->setLabel($aproof['label']);
                     $proof->setType($aproof['type']);
                     $proof->setMandatory(isset($aproof['mandatory']) && $aproof['mandatory'] ? true : false);
-                    $proof->setActivated(true);
+                    $proof->setActivated($aproof['activated']);
                     $proof->setPosition($aproof['position']);
                     $proof->setStructure($structure);
                     $proof->setCheckbox(false);
@@ -491,7 +491,7 @@ class StructureManager
                     $proof->setType($aproof['type']);
                     $proof->setMandatory(isset($aproof['mandatory']) && $aproof['mandatory'] ? true : false);
                     $proof->setPosition($aproof['position']);
-                    $proof->setActivated(true);
+                    $proof->setActivated($aproof['activated']);
                     $proof->setStructure($structure);
                     $proof->setCheckbox(false);
                     $proof->setRadio(false);
