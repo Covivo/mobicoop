@@ -5,13 +5,18 @@
       type="error"
     >
       {{ $t('fail') }}
-    </v-alert>       
+    </v-alert>
     <v-row class="align-center">
       <v-col
         cols="2"
         class="text-center"
       >
-        <ProfileAvatar :avatar="avatar" />
+        <v-card
+          flat
+          @click="showProfileDialog = true"
+        >
+          <ProfileAvatar :avatar="avatar" />
+        </v-card>
         <Report
           v-if="showReport"
           :user="reviewed"
@@ -22,7 +27,12 @@
         v-if="showReviewed"
         cols="2"
       >
-        {{ reviewedName }}
+        <v-card
+          flat
+          @click="showProfileDialog = true"
+        >
+          {{ reviewedName }}
+        </v-card>
       </v-col>
       <v-col :cols="showReviewed ? 6 : 8">
         <v-textarea
@@ -47,6 +57,12 @@
         </v-btn>
       </v-col>
     </v-row>
+    <PopupPublicProfile
+      :carpooler-id="reviewed.id"
+      :carpooler-name="reviewed.givenName+' '+reviewed.shortFamilyName"
+      :show-profile-dialog="showProfileDialog"
+      @dialogClosed="showProfileDialog = false"
+    />
   </v-container>
 </template>
 <script>
@@ -54,6 +70,7 @@ import maxios from "@utils/maxios";
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/utilities/Reviews/WriteReview";
 import ProfileAvatar from "@components/user/profile/ProfileAvatar";
 import Report from "@components/utilities/Report";
+import PopupPublicProfile from "@components/user/profile/PopupPublicProfile";
 export default {
   i18n: {
     messages: {
@@ -65,7 +82,8 @@ export default {
   },
   components:{
     ProfileAvatar,
-    Report
+    Report,
+    PopupPublicProfile
   },
   props:{
     reviewer:{
@@ -98,7 +116,8 @@ export default {
       content:null,
       valid:false,
       loading:false,
-      alertFail:false
+      alertFail:false,
+      showProfileDialog: false
     }
   },
   computed:{
@@ -146,7 +165,7 @@ export default {
         })
         .catch(function (error) {
           console.error(error);
-        });    
+        });
     }
   }
 }

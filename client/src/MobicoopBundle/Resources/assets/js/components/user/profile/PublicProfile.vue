@@ -5,7 +5,7 @@
         <v-skeleton-loader
           class="mx-auto"
           type="card"
-        />        
+        />
       </v-col>
     </v-row>
 
@@ -125,7 +125,7 @@
               :user="user"
             />
           </v-col>
-        </v-row> 
+        </v-row>
         <v-row>
           <v-col
             cols="8"
@@ -180,6 +180,10 @@ export default {
       type:Object,
       default: null
     },
+    userId:{
+      type:Number,
+      default: null
+    },
     showReportButton: {
       type: Boolean,
       default: true
@@ -192,7 +196,7 @@ export default {
       type: Boolean,
       default: true
     },
-    carpoolSettingsDisplay: { 
+    carpoolSettingsDisplay: {
       type: Boolean,
       default: true
     }
@@ -210,7 +214,7 @@ export default {
         return moment(this.publicProfile.lastActivityDate.date).format('DD/MM/YYYY');
       }
       return null;
-      
+
     },
     subscribedOn(){
       return moment(this.publicProfile.createdDate.date).format('DD/MM/YYYY');
@@ -231,7 +235,7 @@ export default {
     },
     musicIconToolTip(){
       return (this.publicProfile.chat) ? this.$t('params.music') : this.$t('params.noMusic');
-    },    
+    },
     chatIcon(){
       return (this.publicProfile.chat) ? 'mdi-account-voice' : 'mdi-voice-off';
     },
@@ -262,7 +266,7 @@ export default {
     },
     gamificationActive(){
       return this.$store.getters['g/isActive'];
-    } 
+    }
   },
   watch:{
     refresh(){
@@ -277,12 +281,12 @@ export default {
   },
   methods:{
     getPublicProfile(){
-      maxios.post(this.$t('getPublicProfileUri'),{'userId':this.user.id})
+      maxios.post(this.$t('getPublicProfileUri'),{'userId':(this.userId) ? this.userId : this.user.id})
         .then(response => {
           //console.log(response.data);
           this.publicProfile = response.data;
           this.loading = false;
-          this.$emit('publicProfileRefresh',{'user':this.user});
+          this.$emit('publicProfileRefresh',{'user':(this.userId) ? this.userId : this.user.id});
         })
         .catch(function (error) {
           console.error(error);

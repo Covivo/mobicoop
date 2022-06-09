@@ -602,7 +602,7 @@
 
         <v-card-text>
           <PublicProfile
-            :user="user"
+            :user-id="user.id"
             :show-report-button="false"
             :age-display="ageDisplay"
             :carpool-settings-display="carpoolSettingsDisplay"
@@ -700,7 +700,7 @@ export default {
       type: Boolean,
       default: false
     },
-    carpoolSettingsDisplay: { 
+    carpoolSettingsDisplay: {
       type: Boolean,
       default: true
     }
