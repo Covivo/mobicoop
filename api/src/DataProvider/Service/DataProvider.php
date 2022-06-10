@@ -80,10 +80,10 @@ class DataProvider
      *
      * @return Response the response of the operation
      */
-    public function getItem(array $params): Response
+    public function getItem(array $params, array $headers = null): Response
     {
         try {
-            $clientResponse = $this->client->get($this->resource.'?'.http_build_query($params));
+            $clientResponse = $this->client->get($this->resource.'?'.http_build_query($params), ['headers' => $headers]);
 
             return new Response($clientResponse->getStatusCode(), $clientResponse->getBody()->getContents());
         } catch (TransferException $e) {

@@ -492,8 +492,10 @@ class UserManager
         $user = $this->userRepository->find($userId);
 
         $rzpProvider = new RezopouceProvider();
-
-        $user->setRzpTerritoryStatus(1);
+        $territory = $rzpProvider->getCommuneTerritory(82112);
+        if (!is_null($territory)) {
+            $user->setRzpTerritoryStatus($territory->getStatus()->getId());
+        }
 
         return $user;
     }

@@ -525,7 +525,10 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "ADMIN_get_rzp_territory_status"={
  *              "path"="/admin/users/{id}/rzpTerritoryStatus",
  *              "method"="GET",
- *              "normalization_context"={"groups"={"aReadRzpTerritoryStatus"}},
+ *              "normalization_context"={
+ *                     "groups"={"aReadRzpTerritoryStatus"},
+ *                     "skip_null_values"=false
+ *              },
  *              "security"="is_granted('admin_user_read',object)",
  *              "swagger_context" = {
  *                  "tags"={"Administration"}
@@ -631,11 +634,6 @@ class User implements UserInterface, EquatableInterface
     public const AD_DRIVER = 1;
     public const AD_PASSENGER = 2;
     public const AD_DRIVER_PASSENGER = 3;
-
-    public const RZP_TERRITORY_STATUS_PONDERING = 1;
-    public const RZP_TERRITORY_STATUS_ONGOING = 2;
-    public const RZP_TERRITORY_STATUS_WORKING = 3;
-    public const RZP_TERRITORY_STATUS_UNSUSCRIBED = 4;
 
     /**
      * @var int the id of this user
