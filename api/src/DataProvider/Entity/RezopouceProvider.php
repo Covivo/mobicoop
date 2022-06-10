@@ -24,6 +24,7 @@
 namespace App\DataProvider\Entity;
 
 use App\DataProvider\Interfaces\ProviderInterface;
+use App\DataProvider\Service\DataProvider;
 
 /**
  * Rezopouce API data provider.
@@ -32,8 +33,35 @@ use App\DataProvider\Interfaces\ProviderInterface;
  */
 class RezopouceProvider implements ProviderInterface
 {
+    private const ROUTE_AUTH = '/auth-tokens';
+
+    private $uri;
+    private $login;
+    private $password;
+    private $token;
+
     public function __construct()
     {
+        $this->uri = 'https://api.rezopouce.fr';
+        $this->login = 'corentin.keroual@rezopouce.fr';
+        $this->password = 'Corentin@1234';
+        $this->token = $this->__getToken();
+    }
+
+    private function __getToken()
+    {
+        $dataProvider = new DataProvider($this->uri, self::ROUTE_AUTH);
+
+        $body = [
+            'login' => $this->login,
+            'password' => $this->password,
+        ];
+
+        $response = $dataProvider->postCollection($body);
+        if (201 == $response->getCode()) {
+            $data = json_decode($response->getValue(), true);
+            $this->token = $data['value'];
+        }
     }
 
     /**

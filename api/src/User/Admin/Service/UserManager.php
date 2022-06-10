@@ -27,6 +27,7 @@ use App\Auth\Entity\AuthItem;
 use App\Auth\Entity\UserAuthAssignment;
 use App\Auth\Repository\AuthItemRepository;
 use App\Community\Entity\Community;
+use App\DataProvider\Entity\RezopouceProvider;
 use App\Event\Entity\Event;
 use App\Geography\Entity\Address;
 use App\Geography\Repository\TerritoryRepository;
@@ -489,6 +490,9 @@ class UserManager
     public function getRzpTerritoryStatus(int $userId): ?User
     {
         $user = $this->userRepository->find($userId);
+
+        $rzpProvider = new RezopouceProvider();
+
         $user->setRzpTerritoryStatus(1);
 
         return $user;
