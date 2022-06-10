@@ -485,4 +485,12 @@ class UserManager
     {
         return $this->userManager->generateSubEmail($email);
     }
+
+    public function getRzpTerritoryStatus(int $userId): ?User
+    {
+        $user = $this->userRepository->find($userId);
+        $user->setRzpTerritoryStatus(1);
+
+        return $user;
+    }
 }

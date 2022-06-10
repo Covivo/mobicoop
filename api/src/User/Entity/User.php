@@ -522,6 +522,15 @@ use Symfony\Component\Validator\Constraints as Assert;
  *                  "tags"={"Administration"}
  *              }
  *          },
+ *          "ADMIN_get_rzp_territory_status"={
+ *              "path"="/admin/users/{id}/rzpTerritoryStatus",
+ *              "method"="GET",
+ *              "normalization_context"={"groups"={"aReadRzpTerritoryStatus"}},
+ *              "security"="is_granted('admin_user_read',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
+ *          },
  *          "ADMIN_patch"={
  *              "path"="/admin/users/{id}",
  *              "method"="PATCH",
@@ -623,13 +632,18 @@ class User implements UserInterface, EquatableInterface
     public const AD_PASSENGER = 2;
     public const AD_DRIVER_PASSENGER = 3;
 
+    public const RZP_TERRITORY_STATUS_PONDERING = 1;
+    public const RZP_TERRITORY_STATUS_ONGOING = 2;
+    public const RZP_TERRITORY_STATUS_WORKING = 3;
+    public const RZP_TERRITORY_STATUS_UNSUSCRIBED = 4;
+
     /**
      * @var int the id of this user
      *
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"aRead","readUser","readCommunity","communities","readCommunityUser","results","threads", "thread","externalJourney","userStructure", "readSolidary","readPayment","carpoolExport","readReview"})
+     * @Groups({"aRead","aReadRzpTerritoryStatus","readUser","readCommunity","communities","readCommunityUser","results","threads", "thread","externalJourney","userStructure", "readSolidary","readPayment","carpoolExport","readReview"})
      * @ApiProperty(identifier=true)
      */
     private $id;
@@ -1578,6 +1592,14 @@ class User implements UserInterface, EquatableInterface
      * @Groups({"aRead", "aWrite"})
      */
     private $cardLetter;
+
+    /**
+     * @var null|int If the User's home address is in a rezopouce Territory
+     *               Checked only for RezoPouce users
+     *
+     * @Groups({"aReadRzpTerritoryStatus"})
+     */
+    private $rzpTerritoryStatus;
 
     public function __construct($status = null)
     {
@@ -3689,6 +3711,18 @@ class User implements UserInterface, EquatableInterface
     public function setCardLetter(?bool $cardLetter): self
     {
         $this->cardLetter = $cardLetter;
+
+        return $this;
+    }
+
+    public function getRzpTerritoryStatus(): ?int
+    {
+        return $this->rzpTerritoryStatus;
+    }
+
+    public function setRzpTerritoryStatus(?int $rzpTerritoryStatus): self
+    {
+        $this->rzpTerritoryStatus = $rzpTerritoryStatus;
 
         return $this;
     }
