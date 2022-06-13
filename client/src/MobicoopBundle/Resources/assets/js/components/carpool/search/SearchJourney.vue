@@ -63,7 +63,6 @@
             :chip="geoCompleteChip"
             :label="labelOrigin"
             :aria-label="ariaLabelOrgin"
-            :aria-labelledby="labelOrigin"
             required
             aria-invalid="true"
             :address="customInitOrigin"
@@ -114,7 +113,6 @@
             :chip="geoCompleteChip"
             :label="labelDestination"
             :aria-label="ariaLabelDestination"
-            :aria-labelledby="labelDestination"
             required
             aria-invalid="true"
             :address="customInitDestination"
@@ -148,7 +146,6 @@
             hide-details
             class="mt-0"
             aria-label="switch"
-            aria-labelledby="switch"
             color="secondary"
             @change="switched"
           />
