@@ -23,22 +23,17 @@ TODAY=$(date +"%Y-%m-%d")
 
 for log_path in "${API_PATH}" "${BUNDLE_PATH}" "${CLIENT_PATH}"
 do
-  if [ -d "${log_path}" ]
-  then
-    for entry in "${log_path}"/*
-    do
-      if [[ $entry =~ [a-z]*-${TODAY}.log$ ]]
-      then
-        # Don't gz today's log
-        continue
-      elif [[ $entry =~ [a-z]*-[0-9]{4}-[0-9]{2}-[0-9]{2}.log$ ]]
-      then
-        # Gz log
-        chmod 774 "$entry"
-        gzip -9 "$entry"
-      fi
-    done
-    # Delete old files
-    find "${log_path}"/*.log.gz -mtime "+30" -delete
-  fi
+    if [ -d "${log_path}" ]
+    then
+        cd "${log_path}"
+        # gzip the logs except those of the current day
+        find . -maxdepth 1 \
+               -regextype posix-extended \
+               -regex "\./[a-z]+-[0-9]{4}-[0-9]{2}-[0-9]{2}\.log" \
+               -and -not -regex "\./[a-z]+-${TODAY}\.log" \
+               -exec chmod 774 '{}' \; -exec gzip -9 '{}' \;
+        # Delete files older than 30 days
+        find . -maxdepth 1 -name '*.log.gz' -and -mtime "+30" -delete
+        cd -
+    fi
 done
