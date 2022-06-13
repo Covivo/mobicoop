@@ -145,7 +145,7 @@
             inset
             hide-details
             class="mt-0"
-            aria-label="switch"
+            :aria-label="$t('switch.aria-label')"
             color="secondary"
             @change="switched"
           />
@@ -162,7 +162,6 @@
             <template v-slot:activator="{ on }">
               <v-icon
                 aria-hidden="false"
-                aria-describedby="switch"
                 v-on="on"
               >
                 mdi-help-circle-outline

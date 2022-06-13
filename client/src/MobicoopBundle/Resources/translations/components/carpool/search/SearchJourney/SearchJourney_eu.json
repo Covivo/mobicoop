@@ -27,7 +27,8 @@
         "regular": {
             "help": "Komutagailu honetan klik egizu zure bidaia noiztenkakoa dela zehazteko eta egun bat hauta ezazu",
             "label": "Bidaia erregularra"
-        }
+        },
+        "aria-label":"If the switch is active, you will post a regular ad. If not, this will be a punctual one."
     },
     "radio": {
         "both": {
