@@ -33,7 +33,7 @@ if [ -d "$API_PATH" ]; then
     do
       if [[ $entry =~ $logRegexToday ]]
       then
-        # Don't gz today's log 
+        # Don't gz today's log
         continue
       elif [[ $entry =~ $logRegexOther ]]
       then
@@ -52,7 +52,7 @@ if [ -d "$BUNDLE_PATH" ]; then
     do
       if [[ $entry =~ $logRegexToday ]]
       then
-        # Don't gz today's log 
+        # Don't gz today's log
         continue
       elif [[ $entry =~ $logRegexOther ]]
       then
@@ -71,7 +71,7 @@ if [ -d "$CLIENT_PATH" ]; then
     do
       if [[ $entry =~ $logRegexToday ]]
       then
-        # Don't gz today's log 
+        # Don't gz today's log
         continue
       elif [[ $entry =~ $logRegexOther ]]
       then
