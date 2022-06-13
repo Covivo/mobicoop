@@ -7,7 +7,7 @@
 #  we need to chmod 774 first...       #
 ########################################
 
-SCRIPT_PATH="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
+SCRIPT_PATH=$(dirname $(realpath "$0"))
 
 # API path
 API_PATH="$SCRIPT_PATH/../api/var/log"
