@@ -10,13 +10,13 @@
 SCRIPT_PATH=$(dirname $(realpath "$0"))
 
 # API path
-API_PATH="$SCRIPT_PATH/../api/var/log"
+API_PATH="${SCRIPT_PATH}/../api/var/log"
 
 # Bundle path
-BUNDLE_PATH="$SCRIPT_PATH/../client/var/log"
+BUNDLE_PATH="${SCRIPT_PATH}/../client/var/log"
 
 # Client path
-CLIENT_PATH="$SCRIPT_PATH/../../var/log"
+CLIENT_PATH="${SCRIPT_PATH}/../../var/log"
 
 # Date of the current day
 TODAY=$(date +"%Y-%m-%d")
