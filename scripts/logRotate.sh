@@ -18,68 +18,27 @@ BUNDLE_PATH="$SCRIPT_PATH/../client/var/log"
 # Client path
 CLIENT_PATH="$SCRIPT_PATH/../../var/log"
 
-# Date and time
-DATE=$(date +"%Y-%m-%d")
+# Date of the current day
+TODAY=$(date +"%Y-%m-%d")
 
-# Retention days (files older than retention days are removed)
-RETENTION=30
-
-logRegexToday="[a-z]*-$DATE.log$"
-logRegexOther="[a-z]*-[0-9]{4}-[0-9]{2}-[0-9]{2}.log$"
-
-# Gz log files for api
-if [ -d "$API_PATH" ]; then
-  for entry in "$API_PATH"/*
+for log_path in "${API_PATH}" "${BUNDLE_PATH}" "${CLIENT_PATH}"
+do
+  if [ -d "${log_path}" ]
+  then
+    for entry in "${log_path}"/*
     do
-      if [[ $entry =~ $logRegexToday ]]
+      if [[ $entry =~ [a-z]*-${TODAY}.log$ ]]
       then
         # Don't gz today's log
         continue
-      elif [[ $entry =~ $logRegexOther ]]
+      elif [[ $entry =~ [a-z]*-[0-9]{4}-[0-9]{2}-[0-9]{2}.log$ ]]
       then
         # Gz log
         chmod 774 "$entry"
         gzip -9 "$entry"
       fi
     done
-  # Delete old files
-  find $API_PATH/*.log.gz -mtime +$RETENTION -delete
-fi
-
-# Gz log files for bundle
-if [ -d "$BUNDLE_PATH" ]; then
-  for entry in "$BUNDLE_PATH"/*
-    do
-      if [[ $entry =~ $logRegexToday ]]
-      then
-        # Don't gz today's log
-        continue
-      elif [[ $entry =~ $logRegexOther ]]
-      then
-        # Gz log
-        chmod 774 "$entry"
-        gzip -9 "$entry"
-      fi
-    done
-  # Delete old files
-  find $BUNDLE_PATH/*.log.gz -mtime +$RETENTION -delete
-fi
-
-# Gz log files for client
-if [ -d "$CLIENT_PATH" ]; then
-  for entry in "$CLIENT_PATH"/*
-    do
-      if [[ $entry =~ $logRegexToday ]]
-      then
-        # Don't gz today's log
-        continue
-      elif [[ $entry =~ $logRegexOther ]]
-      then
-        # Gz log
-        chmod 774 "$entry"
-        gzip -9 "$entry"
-      fi
-    done
-  # Delete old files
-  find $CLIENT_PATH/*.log.gz -mtime +$RETENTION -delete
-fi
+    # Delete old files
+    find "${log_path}"/*.log.gz -mtime "+30" -delete
+  fi
+done
