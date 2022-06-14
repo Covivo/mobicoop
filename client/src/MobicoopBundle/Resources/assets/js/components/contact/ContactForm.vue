@@ -40,8 +40,6 @@
                   :label="$t('lastName.placeholder')+` *`"
                   :aria-label="$t('lastName.placeholder')"
                   name="familyName"
-                  aria-invalid="true"
-                  a
                   required
                   :rules="form.familyNameRules"
                   aria-required="true"
