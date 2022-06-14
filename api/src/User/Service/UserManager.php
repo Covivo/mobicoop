@@ -74,6 +74,7 @@ use App\User\Event\UserSendValidationEmailEvent;
 use App\User\Event\UserUpdatedSelfEvent;
 use App\User\Exception\UserDeleteException;
 use App\User\Exception\UserNotFoundException;
+use App\User\Exception\UserUnderAgeException;
 use App\User\Repository\UserNotificationRepository;
 use App\User\Repository\UserRepository;
 use App\User\Ressource\PhoneValidation;
@@ -126,6 +127,7 @@ class UserManager
     private $actionRepository;
     private $gamificationManager;
     private $scammerRepository;
+    private $userMinAge;
 
     // Default carpool settings
     private $chat;
@@ -149,6 +151,7 @@ class UserManager
      * @param mixed $smoke
      * @param mixed $music
      * @param mixed $passwordTokenValidity
+     * @param mixed $userMinAge
      */
     public function __construct(
         EntityManagerInterface $entityManager,
@@ -191,7 +194,8 @@ class UserManager
         ActionRepository $actionRepository,
         GamificationManager $gamificationManager,
         ScammerRepository $scammerRepository,
-        string $phoneValidationRegex
+        string $phoneValidationRegex,
+        $userMinAge
     ) {
         $this->entityManager = $entityManager;
         $this->imageManager = $imageManager;
@@ -234,6 +238,7 @@ class UserManager
         $this->gamificationManager = $gamificationManager;
         $this->scammerRepository = $scammerRepository;
         $this->phoneValidationRegex = $phoneValidationRegex;
+        $this->userMinAge = $userMinAge;
     }
 
     /**
@@ -330,6 +335,8 @@ class UserManager
     {
         // we check if the user is on the scammer list
         $this->checkIfScammer($user);
+        //  we check if the user is not underaged
+        $this->checkBirthDate($user);
 
         $user = $this->prepareUser($user, $encodePassword);
 
@@ -644,6 +651,9 @@ class UserManager
         if ($user->getHomeAddress() && $user->getSolidaryUser() && $user->getSolidaryUser()->isVolunteer()) {
             $user->getSolidaryUser()->setAddress($user->getHomeAddress());
         }
+
+        // we check if the user is not underaged
+        $this->checkBirthDate($user);
 
         // persist the user
         $this->entityManager->persist($user);
@@ -2089,5 +2099,17 @@ break;
         }
 
         return $user;
+    }
+
+    /**
+     * Check if the user is not underaged.
+     */
+    private function checkBirthDate(User $user): User
+    {
+        if ($user->getBirthDate()->diff(new \DateTime('now'))->y >= $this->userMinAge) {
+            return $user;
+        }
+
+        throw new UserUnderAgeException(UserUnderAgeException::USER_UNDER_AGED);
     }
 }

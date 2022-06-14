@@ -927,6 +927,7 @@ services:
       $passwordTokenValidity: "%env(int:PASSWORD_TOKEN_VALIDITY)%"
       $paymentActive: "%env(string:PAYMENT_ACTIVE)%"
       $phoneValidationRegex: "%env(string:USER_PHONE_FORMAT)%"
+      $userMinAge: "%env(int:USER_MIN_AGE)%"
 
   App\User\Interoperability\Service\UserManager:
     arguments:
