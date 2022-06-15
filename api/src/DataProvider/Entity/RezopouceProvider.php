@@ -26,6 +26,7 @@ namespace App\DataProvider\Entity;
 use App\DataProvider\Service\DataProvider;
 use App\Geography\Entity\RezoPouceTerritory;
 use App\Geography\Entity\RezoPouceTerritoryStatus;
+use LogicException;
 
 /**
  * Rezopouce API data provider.
@@ -42,11 +43,11 @@ class RezopouceProvider
     private $password;
     private $token;
 
-    public function __construct()
+    public function __construct(string $uri, string $login, string $password)
     {
-        $this->uri = 'https://api.rezopouce.fr';
-        $this->login = 'corentin.keroual@rezopouce.fr';
-        $this->password = 'Corentin@1234';
+        $this->uri = $uri;
+        $this->login = $login;
+        $this->password = $password;
     }
 
     private function __getToken()
@@ -57,12 +58,14 @@ class RezopouceProvider
             'login' => $this->login,
             'password' => $this->password,
         ];
-
         $response = $dataProvider->postCollection($body);
+
         if (201 == $response->getCode()) {
             $data = json_decode($response->getValue(), true);
 
             $this->token = $data['value'];
+        } else {
+            throw new LogicException('Error in RZP authentication process');
         }
     }
 

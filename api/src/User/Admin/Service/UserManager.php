@@ -67,6 +67,9 @@ class UserManager
     private $chat;
     private $music;
     private $smoke;
+    private $rzpUri;
+    private $rzpLogin;
+    private $rzpPassword;
 
     /**
      * Constructor.
@@ -90,7 +93,10 @@ class UserManager
         PointSearcher $pointSearcher,
         $chat,
         $smoke,
-        $music
+        $music,
+        string $rzpUri,
+        string $rzpLogin,
+        string $rzpPassword
     ) {
         $this->entityManager = $entityManager;
         $this->authItemRepository = $authItemRepository;
@@ -106,6 +112,9 @@ class UserManager
         $this->chat = $chat;
         $this->music = $music;
         $this->smoke = $smoke;
+        $this->rzpUri = $rzpUri;
+        $this->rzpLogin = $rzpLogin;
+        $this->rzpPassword = $rzpPassword;
     }
 
     private function __getLocalityCode(string $search): ?int
@@ -520,7 +529,7 @@ class UserManager
         $searchedLocality = $this->__getHomeAddressLocality($user->getAddresses());
         if (!is_null($searchedLocality)) {
             $localityCode = $this->__getLocalityCode($searchedLocality);
-            $rzpProvider = new RezopouceProvider();
+            $rzpProvider = new RezopouceProvider($this->rzpUri, $this->rzpLogin, $this->rzpPassword);
             $territory = $rzpProvider->getCommuneTerritory($localityCode);
             if (!is_null($territory)) {
                 $user->setRzpTerritoryStatus($territory->getStatus()->getId());
