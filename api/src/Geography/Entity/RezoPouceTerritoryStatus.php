@@ -32,6 +32,14 @@ class RezoPouceTerritoryStatus
     public const RZP_TERRITORY_STATUS_WORKING = 3;
     public const RZP_TERRITORY_STATUS_UNSUSCRIBED = 4;
 
+    public const RZP_TERRITORY_STATUS_LABELS = [
+        self::RZP_TERRITORY_STATUS_NOT_CONSIDERED => 'notConsidered',
+        self::RZP_TERRITORY_STATUS_PONDERING => 'pondering',
+        self::RZP_TERRITORY_STATUS_ONGOING => 'ongoing',
+        self::RZP_TERRITORY_STATUS_WORKING => 'working',
+        self::RZP_TERRITORY_STATUS_UNSUSCRIBED => 'unsuscribed',
+    ];
+
     /**
      * @var int the territory status is
      */

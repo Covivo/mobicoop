@@ -524,7 +524,7 @@ class UserManager
     public function getRzpTerritoryStatus(int $userId): ?User
     {
         $user = $this->userRepository->find($userId);
-        $user->setRzpTerritoryStatus(RezoPouceTerritoryStatus::RZP_TERRITORY_STATUS_NOT_CONSIDERED);
+        $user->setRzpTerritoryStatus(RezoPouceTerritoryStatus::RZP_TERRITORY_STATUS_LABELS[RezoPouceTerritoryStatus::RZP_TERRITORY_STATUS_NOT_CONSIDERED]);
 
         $searchedLocality = $this->__getHomeAddressLocality($user->getAddresses());
         if (!is_null($searchedLocality)) {
@@ -532,7 +532,7 @@ class UserManager
             $rzpProvider = new RezopouceProvider($this->rzpUri, $this->rzpLogin, $this->rzpPassword);
             $territory = $rzpProvider->getCommuneTerritory($localityCode);
             if (!is_null($territory)) {
-                $user->setRzpTerritoryStatus($territory->getStatus()->getId());
+                $user->setRzpTerritoryStatus(RezoPouceTerritoryStatus::RZP_TERRITORY_STATUS_LABELS[$territory->getStatus()->getId()]);
             }
         }
 

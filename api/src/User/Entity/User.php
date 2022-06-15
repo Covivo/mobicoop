@@ -1592,8 +1592,8 @@ class User implements UserInterface, EquatableInterface
     private $cardLetter;
 
     /**
-     * @var null|int If the User's home address is in a rezopouce Territory
-     *               Checked only for RezoPouce users
+     * @var null|string If the User's home address is in a rezopouce Territory
+     *                  Checked only for RezoPouce users
      *
      * @Groups({"aReadRzpTerritoryStatus"})
      */
@@ -3713,12 +3713,12 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
-    public function getRzpTerritoryStatus(): ?int
+    public function getRzpTerritoryStatus(): ?string
     {
         return $this->rzpTerritoryStatus;
     }
 
-    public function setRzpTerritoryStatus(?int $rzpTerritoryStatus): self
+    public function setRzpTerritoryStatus(?string $rzpTerritoryStatus): self
     {
         $this->rzpTerritoryStatus = $rzpTerritoryStatus;
 
