@@ -33,6 +33,7 @@ class CommunityUserVoter extends Voter
 {
     // for now, update a member membership uses the community update right
     public const ADMIN_COMMUNITY_MEMBER_UPDATE = 'admin_community_member_update';
+    public const ADMIN_COMMUNITY_MEMBER_DELETE = 'admin_community_member_delete';
     public const COMMUNITY_UPDATE = 'community_update';
 
     private $authManager;
@@ -47,6 +48,7 @@ class CommunityUserVoter extends Voter
         // if the attribute isn't one we support, return false
         if (!in_array($attribute, [
             self::ADMIN_COMMUNITY_MEMBER_UPDATE,
+            self::ADMIN_COMMUNITY_MEMBER_DELETE,
         ])) {
             return false;
         }
@@ -55,6 +57,7 @@ class CommunityUserVoter extends Voter
         // only for items actions
         if (!in_array($attribute, [
             self::ADMIN_COMMUNITY_MEMBER_UPDATE,
+            self::ADMIN_COMMUNITY_MEMBER_DELETE,
         ]) && !($subject instanceof Paginator) && !($subject instanceof CommunityUser)) {
             return false;
         }
@@ -66,6 +69,7 @@ class CommunityUserVoter extends Voter
     {
         switch ($attribute) {
             case self::ADMIN_COMMUNITY_MEMBER_UPDATE:
+            case self::ADMIN_COMMUNITY_MEMBER_DELETE:
                 // @var CommunityUser $subject
                 return $this->canUpdateMember($subject->getCommunity());
         }

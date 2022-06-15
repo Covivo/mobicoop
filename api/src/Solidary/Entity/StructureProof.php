@@ -236,6 +236,14 @@ class StructureProof
      */
     private $removable;
 
+    /**
+     * @var bool Is the proof activated ?
+     *
+     * @ORM\Column(type="boolean", options={"default":1})
+     * @Groups({"aRead","readUser","readSolidary","writeSolidary","userStructure","readStructureProofs","readProof"})
+     */
+    private $activated;
+
     public function __construct()
     {
         $this->proofs = new ArrayCollection();
@@ -448,6 +456,18 @@ class StructureProof
     public function isRemovable(): ?bool
     {
         return 0 == count($this->getProofs());
+    }
+
+    public function isActivated(): bool
+    {
+        return $this->activated;
+    }
+
+    public function setActivated(bool $activated): self
+    {
+        $this->activated = $activated;
+
+        return $this;
     }
 
     // DOCTRINE EVENTS

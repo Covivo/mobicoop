@@ -81,7 +81,7 @@ final class CommunityUserDataPersister implements ContextAwareDataPersisterInter
     {
         // no delete item yet !
         if (isset($context['item_operation_name']) && 'ADMIN_delete' == $context['item_operation_name']) {
-            return $data;
+            $this->communityManager->deleteCommunityUser($data);
         }
     }
 }

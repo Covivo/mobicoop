@@ -1262,10 +1262,6 @@ class Structure
     {
         if ($this->structureProofs->contains($structureProof)) {
             $this->structureProofs->removeElement($structureProof);
-            // set the owning side to null (unless already changed)
-            if ($structureProof->getStructure() === $this) {
-                $structureProof->setStructure(null);
-            }
         }
 
         return $this;

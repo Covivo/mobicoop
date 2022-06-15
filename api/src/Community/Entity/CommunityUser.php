@@ -151,6 +151,16 @@ use Symfony\Component\Validator\Constraints as Assert;
  *                  "tags"={"Administration"}
  *              }
  *          },
+ *          "ADMIN_delete"={
+ *              "path"="/admin/community_members/{id}",
+ *              "method"="DELETE",
+ *              "normalization_context"={"groups"={"aRead"}},
+ *              "denormalization_context"={"groups"={"aWrite"}},
+ *              "security"="is_granted('admin_community_member_delete',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
+ *          }
  *      }
  * )
  * @ApiFilter(NumericFilter::class, properties={"user.id","community.id","status"})
