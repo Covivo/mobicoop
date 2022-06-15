@@ -26,6 +26,7 @@ namespace App\Geography\Entity;
 // A Rezopouce Territory status
 class RezoPouceTerritoryStatus
 {
+    public const RZP_TERRITORY_STATUS_NOT_CONSIDERED = 0;
     public const RZP_TERRITORY_STATUS_PONDERING = 1;
     public const RZP_TERRITORY_STATUS_ONGOING = 2;
     public const RZP_TERRITORY_STATUS_WORKING = 3;
