@@ -129,4 +129,4 @@ volumes:
 
 networks:
   mobicoop_platform:
-    name: mobicoop_platform
+    name: mobicoop_platform_network
