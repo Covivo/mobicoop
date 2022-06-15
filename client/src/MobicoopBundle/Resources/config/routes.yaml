@@ -1654,6 +1654,17 @@ event_show:
     requirements:
         id: '\d+'
 
+# report event
+event_report:
+    methods: [POST]
+    path:
+        fr: /evenement/{id}/signaler
+        en: /event/{id}/report
+        nl: /event/{id}/report
+    controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::eventReport
+    requirements:
+        id: '\d+'
+        
 # display one event
 event_show_v1:
     path:
@@ -1681,17 +1692,6 @@ event_get_widget:
         en: /event/widget/get/{id}/{urlKey?}
         nl: /event/widget/get/{id}/{urlKey?}
     controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::eventGetWidget
-    requirements:
-        id: '\d+'
-
-# report event
-event_report:
-    methods: [POST]
-    path:
-        fr: /evenement/{id}/signaler
-        en: /event/{id}/report
-        nl: /event/{id}/report
-    controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::eventReport
     requirements:
         id: '\d+'
 
