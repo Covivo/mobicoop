@@ -74,6 +74,10 @@ class PaymentManager
     public const MIN_YEAR = 1970;
     public const MAX_YEAR = 2999;
 
+    public const KYC_DOCUMENT_VALIDATED = 'VALIDATED';
+    public const KYC_DOCUMENT_REFUSED = 'REFUSED';
+    public const KYC_DOCUMENT_OUTDATED = 'OUT_OF_DATE';
+
     private $entityManager;
     private $carpoolItemRepository;
     private $askRepository;
@@ -1140,6 +1144,26 @@ class PaymentManager
         $this->entityManager->flush();
 
         return $paymentProfile;
+    }
+
+    public function updatePaymentProfile($kycDocument)
+    {
+        switch ($kycDocument['status']) {
+            case self::KYC_DOCUMENT_OUTDATED:
+                // $this->paymentProfileRepository->updatePaymentProfile(PaymentProfile::VALIDATION_OUTDATED);
+
+                break;
+
+            case self::KYC_DOCUMENT_REFUSED:
+                // $this->paymentProfileRepository->updatePaymentProfile(PaymentProfile::VALIDATION_REJECTED, PaymentProfile::DOCUMENT_FALSIFIED);
+
+                break;
+
+            case self::KYC_DOCUMENT_VALIDATED:
+                // $this->paymentProfileRepository->updatePaymentProfile(PaymentProfile::VALIDATION_VALIDATED);
+
+                break;
+        }
     }
 
     /**
