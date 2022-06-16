@@ -75,13 +75,10 @@ class CheckPaymentProfileStatusCommand extends Command
             $userPaymentProfile = $this->paymentDataProvider->getUser($paymentProfile['identifier']);
 
             if (isset($userPaymentProfile['ProofOfIdentity']) && !is_null($userPaymentProfile['ProofOfIdentity'])) {
-                $kycDocument = $this->paymentDataProvider->getKycDocument(143377120);
-                $this->paymentManager->updatePaymentProfile($kycDocument);
+                $kycDocument = $this->paymentDataProvider->getKycDocument($userPaymentProfile['ProofOfIdentity']);
+                $this->paymentManager->updatePaymentProfile($paymentProfile['id'], $kycDocument);
             }
         }
-        var_dump('end');
-
-        exit;
 
         return 0;
     }

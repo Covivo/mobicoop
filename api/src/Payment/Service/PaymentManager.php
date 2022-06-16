@@ -1146,24 +1146,84 @@ class PaymentManager
         return $paymentProfile;
     }
 
-    public function updatePaymentProfile($kycDocument)
+    public function updatePaymentProfile(int $id, $kycDocument)
     {
-        switch ($kycDocument['status']) {
+        $paymentProfile = $this->paymentProfileRepository->find($id);
+
+        switch ($kycDocument['Status']) {
             case self::KYC_DOCUMENT_OUTDATED:
-                // $this->paymentProfileRepository->updatePaymentProfile(PaymentProfile::VALIDATION_OUTDATED);
+                $paymentProfile->setStatus(PaymentProfile::VALIDATION_OUTDATED);
+                $paymentProfile->setValidationId($kycDocument['Id']);
 
                 break;
 
             case self::KYC_DOCUMENT_REFUSED:
-                // $this->paymentProfileRepository->updatePaymentProfile(PaymentProfile::VALIDATION_REJECTED, PaymentProfile::DOCUMENT_FALSIFIED);
+                $paymentProfile->setStatus(PaymentProfile::VALIDATION_REJECTED, PaymentProfile::DOCUMENT_FALSIFIED);
+                $paymentProfile->setValidationId($kycDocument['Id']);
+
+                switch ($kycDocument['RefusedReasonType']) {
+                    case PaymentProfile::OUT_OF_DATE:
+                        $paymentProfile->setStatus(PaymentProfile::OUT_OF_DATE);
+
+                        break;
+
+                    case PaymentProfile::UNDERAGE_PERSON:
+                        $paymentProfile->setStatus(PaymentProfile::UNDERAGE_PERSON);
+
+                        break;
+
+                    case PaymentProfile::DOCUMENT_FALSIFIED:
+                        $paymentProfile->setStatus(PaymentProfile::DOCUMENT_FALSIFIED);
+
+                        break;
+
+                    case PaymentProfile::DOCUMENT_MISSING:
+                        $paymentProfile->setStatus(PaymentProfile::DOCUMENT_MISSING);
+
+                        break;
+
+                    case PaymentProfile::DOCUMENT_HAS_EXPIRED:
+                        $paymentProfile->setStatus(PaymentProfile::DOCUMENT_HAS_EXPIRED);
+
+                        break;
+
+                    case PaymentProfile::DOCUMENT_NOT_ACCEPTED:
+                        $paymentProfile->setStatus(PaymentProfile::DOCUMENT_NOT_ACCEPTED);
+
+                        break;
+
+                    case PaymentProfile::DOCUMENT_DO_NOT_MATCH_USER_DATA:
+                        $paymentProfile->setStatus(PaymentProfile::DOCUMENT_DO_NOT_MATCH_USER_DATA);
+
+                        break;
+
+                    case PaymentProfile::DOCUMENT_UNREADABLE:
+                        $paymentProfile->setStatus(PaymentProfile::DOCUMENT_UNREADABLE);
+
+                        break;
+
+                    case PaymentProfile::DOCUMENT_INCOMPLETE:
+                        $paymentProfile->setStatus(PaymentProfile::DOCUMENT_INCOMPLETE);
+
+                        break;
+
+                    case PaymentProfile::SPECIFIC_CASE:
+                        $paymentProfile->setStatus(PaymentProfile::SPECIFIC_CASE);
+
+                        break;
+                    }
 
                 break;
 
             case self::KYC_DOCUMENT_VALIDATED:
-                // $this->paymentProfileRepository->updatePaymentProfile(PaymentProfile::VALIDATION_VALIDATED);
+                $paymentProfile->setStatus(PaymentProfile::VALIDATION_VALIDATED);
+                $paymentProfile->setValidationId($kycDocument['Id']);
 
                 break;
         }
+
+        $this->entityManager->persist($paymentProfile);
+        $this->entityManager->flush();
     }
 
     /**
