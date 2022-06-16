@@ -883,8 +883,9 @@ class Criteria
         if (Criteria::FREQUENCY_PUNCTUAL === $this->getFrequency()) {
             $fromDate = clone $this->getFromDate();
             $fromTime = $this->getFromTime();
-            $fromDate->setTime($fromTime->format('H'), $fromTime->format('i'), $fromTime->format('s'));
-
+            if (!is_null($fromTime)) {
+                $fromDate->setTime($fromTime->format('H'), $fromTime->format('i'), $fromTime->format('s'));
+            }
             $duration = $this->getDuration();
             if (!is_null($duration)) {
                 return $fromDate->modify($duration.' seconds');
