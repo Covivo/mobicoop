@@ -7,79 +7,33 @@
 #  we need to chmod 774 first...       #
 ########################################
 
-SCRIPT_PATH="$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
+SCRIPT_PATH=$(dirname $(realpath "$0"))
 
 # API path
-API_PATH="$SCRIPT_PATH/../api/var/log"
+API_PATH="${SCRIPT_PATH}/../api/var/log"
 
 # Bundle path
-BUNDLE_PATH="$SCRIPT_PATH/../client/var/log"
+BUNDLE_PATH="${SCRIPT_PATH}/../client/var/log"
 
 # Client path
-CLIENT_PATH="$SCRIPT_PATH/../../var/log"
+CLIENT_PATH="${SCRIPT_PATH}/../../var/log"
 
-# Date and time
-DATE=$(date +"%Y-%m-%d")
+# Date of the current day
+TODAY=$(date +"%Y-%m-%d")
 
-# Retention days (files older than retention days are removed)
-RETENTION=30
-
-logRegexToday="[a-z]*-$DATE.log$"
-logRegexOther="[a-z]*-[0-9]{4}-[0-9]{2}-[0-9]{2}.log$"
-
-# Gz log files for api
-if [ -d "$API_PATH" ]; then
-  for entry in "$API_PATH"/*
-    do
-      if [[ $entry =~ $logRegexToday ]]
-      then
-        # Don't gz today's log 
-        continue
-      elif [[ $entry =~ $logRegexOther ]]
-      then
-        # Gz log
-        chmod 774 "$entry"
-        gzip -9 "$entry"
-      fi
-    done
-  # Delete old files
-  find $API_PATH/*.log.gz -mtime +$RETENTION -delete
-fi
-
-# Gz log files for bundle
-if [ -d "$BUNDLE_PATH" ]; then
-  for entry in "$BUNDLE_PATH"/*
-    do
-      if [[ $entry =~ $logRegexToday ]]
-      then
-        # Don't gz today's log 
-        continue
-      elif [[ $entry =~ $logRegexOther ]]
-      then
-        # Gz log
-        chmod 774 "$entry"
-        gzip -9 "$entry"
-      fi
-    done
-  # Delete old files
-  find $BUNDLE_PATH/*.log.gz -mtime +$RETENTION -delete
-fi
-
-# Gz log files for client
-if [ -d "$CLIENT_PATH" ]; then
-  for entry in "$CLIENT_PATH"/*
-    do
-      if [[ $entry =~ $logRegexToday ]]
-      then
-        # Don't gz today's log 
-        continue
-      elif [[ $entry =~ $logRegexOther ]]
-      then
-        # Gz log
-        chmod 774 "$entry"
-        gzip -9 "$entry"
-      fi
-    done
-  # Delete old files
-  find $CLIENT_PATH/*.log.gz -mtime +$RETENTION -delete
-fi
+for log_path in "${API_PATH}" "${BUNDLE_PATH}" "${CLIENT_PATH}"
+do
+    if [ -d "${log_path}" ]
+    then
+        cd "${log_path}"
+        # gzip the logs except those of the current day
+        find . -maxdepth 1 \
+               -regextype posix-extended \
+               -regex "\./[a-z]+-[0-9]{4}-[0-9]{2}-[0-9]{2}\.log" \
+               -and -not -regex "\./[a-z]+-${TODAY}\.log" \
+               -exec chmod 774 '{}' \; -exec gzip -9 '{}' \;
+        # Delete files older than 30 days
+        find . -maxdepth 1 -name '*.log.gz' -and -mtime "+30" -delete
+        cd -
+    fi
+done
