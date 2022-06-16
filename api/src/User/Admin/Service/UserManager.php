@@ -27,9 +27,13 @@ use App\Auth\Entity\AuthItem;
 use App\Auth\Entity\UserAuthAssignment;
 use App\Auth\Repository\AuthItemRepository;
 use App\Community\Entity\Community;
+use App\DataProvider\Entity\RezopouceProvider;
 use App\Event\Entity\Event;
 use App\Geography\Entity\Address;
+use App\Geography\Entity\RezoPouceTerritoryStatus;
 use App\Geography\Repository\TerritoryRepository;
+use App\Geography\Ressource\Point;
+use App\Geography\Service\PointSearcher;
 use App\Service\FormatDataManager;
 use App\User\Entity\User;
 use App\User\Event\UserDelegateRegisteredEvent;
@@ -59,9 +63,13 @@ class UserManager
     private $userRepository;
     private $formatDataManager;
     private $identityProofManager;
+    private $pointSearcher;
     private $chat;
     private $music;
     private $smoke;
+    private $rzpUri;
+    private $rzpLogin;
+    private $rzpPassword;
 
     /**
      * Constructor.
@@ -82,9 +90,13 @@ class UserManager
         UserRepository $userRepository,
         FormatDataManager $formatDataManager,
         IdentityProofManager $identityProofManager,
+        PointSearcher $pointSearcher,
         $chat,
         $smoke,
-        $music
+        $music,
+        string $rzpUri,
+        string $rzpLogin,
+        string $rzpPassword
     ) {
         $this->entityManager = $entityManager;
         $this->authItemRepository = $authItemRepository;
@@ -96,9 +108,32 @@ class UserManager
         $this->userRepository = $userRepository;
         $this->formatDataManager = $formatDataManager;
         $this->identityProofManager = $identityProofManager;
+        $this->pointSearcher = $pointSearcher;
         $this->chat = $chat;
         $this->music = $music;
         $this->smoke = $smoke;
+        $this->rzpUri = $rzpUri;
+        $this->rzpLogin = $rzpLogin;
+        $this->rzpPassword = $rzpPassword;
+    }
+
+    private function __getLocalityCode(string $search): ?int
+    {
+        $result = $this->pointSearcher->geocode($search);
+        if (isset($result[0]) && $result[0] instanceof Point) {
+            return $result[0]->getLocalityCode();
+        }
+
+        return null;
+    }
+
+    private function __getHomeAddressLocality(array $addresses): ?string
+    {
+        foreach ($addresses as $address) {
+            if ($address->isHome()) {
+                return $address->getAddressLocality();
+            }
+        }
     }
 
     /**
@@ -484,5 +519,23 @@ class UserManager
     public function generateSubEmail(string $email)
     {
         return $this->userManager->generateSubEmail($email);
+    }
+
+    public function getRzpTerritoryStatus(int $userId): ?User
+    {
+        $user = $this->userRepository->find($userId);
+        $user->setRzpTerritoryStatus(RezoPouceTerritoryStatus::RZP_TERRITORY_STATUS_LABELS[RezoPouceTerritoryStatus::RZP_TERRITORY_STATUS_NOT_CONSIDERED]);
+
+        $searchedLocality = $this->__getHomeAddressLocality($user->getAddresses());
+        if (!is_null($searchedLocality)) {
+            $localityCode = $this->__getLocalityCode($searchedLocality);
+            $rzpProvider = new RezopouceProvider($this->rzpUri, $this->rzpLogin, $this->rzpPassword);
+            $territory = $rzpProvider->getCommuneTerritory($localityCode);
+            if (!is_null($territory)) {
+                $user->setRzpTerritoryStatus(RezoPouceTerritoryStatus::RZP_TERRITORY_STATUS_LABELS[$territory->getStatus()->getId()]);
+            }
+        }
+
+        return $user;
     }
 }

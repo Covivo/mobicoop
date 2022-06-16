@@ -877,6 +877,9 @@ services:
       $chat: "%env(int:CARPOOL_DEFAULT_CHAT)%"
       $music: "%env(int:CARPOOL_DEFAULT_MUSIC)%"
       $smoke: "%env(bool:CARPOOL_DEFAULT_SMOKE)%"
+      $rzpUri: "%env(string:RZP_API_URI)%"
+      $rzpLogin: "%env(string:RZP_API_LOGIN)%"
+      $rzpPassword: "%env(string:RZP_API_PASSWORD)%"
 
   App\User\Admin\Service\KibanaLoginManager:
     arguments:
