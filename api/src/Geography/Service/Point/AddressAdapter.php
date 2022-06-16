@@ -49,4 +49,21 @@ class AddressAdapter
 
         return $point;
     }
+
+    public static function pointToAddress(Point $point): Address
+    {
+        $address = new Address();
+        $address->setAddressCountry($point->getCountry());
+        $address->setCountryCode($point->getCountryCode());
+        $address->setHouseNumber($point->getHouseNumber());
+        $address->setLatitude($point->getLat());
+        $address->setAddressLocality($point->getLocality());
+        $address->setLongitude($point->getLon());
+        $address->setMacroRegion($point->getMacroRegion());
+        $address->setPostalCode($point->getPostalCode());
+        $address->setRegion($point->getRegion());
+        $address->setStreet($point->getStreetName());
+
+        return $address;
+    }
 }

@@ -12,3 +12,9 @@
 5;Carte d'identité;2;1;0;0;0;0;;;1;1
 5;Permis de conduire;2;2;0;0;0;0;;;1;0
 5;Police d'assurance;2;3;0;0;0;0;;;1;0
+6;Carte d'identité;2;1;0;0;0;0;;;1;0
+6;Permis de conduire;2;2;0;0;0;0;;;1;1
+6;J'ai un véhicule et je suis assuré;2;3;0;0;0;0;;;1;1
+6;Bénéficiaire minima sociaux;1;1;0;0;0;0;;;1;0
+6;Sans permis;1;2;1;0;0;0;;;0;1
+6;Sans voiture;1;3;1;0;0;0;;;0;1

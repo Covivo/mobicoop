@@ -36,4 +36,6 @@ interface Geocoder
     public function setLang(string $lang): void;
 
     public function geocode(string $search): array;
+
+    public function reverse(float $lon, float $lat): array;
 }

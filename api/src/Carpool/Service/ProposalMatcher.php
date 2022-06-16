@@ -715,6 +715,7 @@ class ProposalMatcher
 
                             // We set the real matching day. The first carpooled day by the driver
                             $matchingCriteria->setFromDate($currentDate);
+                            break;
                         }
                         $currentDate->modify("+1 days");
                         $cptLoop++;

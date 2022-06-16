@@ -55,6 +55,7 @@ use App\Solidary\Repository\SolidaryUserStructureRepository;
 use App\Solidary\Repository\StructureProofRepository;
 use App\Solidary\Repository\StructureRepository;
 use App\User\Entity\User;
+use App\User\Event\UserRegisteredEvent;
 use App\User\Repository\UserRepository;
 use App\User\Service\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -986,7 +987,7 @@ break;
             $homeAddress->setHome(true);
             $user->addAddress($homeAddress);
 
-            $user = $this->userManager->registerUser($user);
+            $user = $this->userManager->registerUser($user, true, true);
         }
         // We also create the solidaryUser associated to the demand
         if (is_null($user->getSolidaryUser())) {
@@ -1088,6 +1089,9 @@ break;
 
         $this->entityManager->persist($user);
         $this->entityManager->flush();
+
+        $event = new UserRegisteredEvent($user);
+        $this->eventDispatcher->dispatch(UserRegisteredEvent::NAME, $event);
 
         return $user;
     }

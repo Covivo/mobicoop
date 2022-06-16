@@ -90,7 +90,16 @@ App\Image\Entity\Image:
                 minWidth: 200
                 maxWidth: 10000
                 minHeight: 200
-                maxHeight: 10000                        
+                maxHeight: 10000 
+        structureFile:
+            - File:
+                maxSize: 4M
+                mimeTypes: [image/png, image/jpeg]
+            - Image:
+                minWidth: 200
+                maxWidth: 10000
+                minHeight: 200
+                maxHeight: 10000                                
 # mass matching
 App\Match\Entity\Mass:
     properties:

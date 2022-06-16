@@ -28,7 +28,7 @@ namespace App\Geography\Service\Point;
 use App\Geography\Ressource\Point;
 use App\Geography\Service\Geocoder\MobicoopGeocoder;
 
-class MobicoopGeocoderPointProvider implements PointProvider
+class MobicoopGeocoderPointProvider implements PointProvider, ReversePointProvider
 {
     protected $mobicoopGeocoder;
     protected $maxResults;
@@ -55,6 +55,13 @@ class MobicoopGeocoderPointProvider implements PointProvider
     {
         return $this->geocoderPointsToPoints(
             $this->mobicoopGeocoder->geocode($search)
+        );
+    }
+
+    public function reverse(float $lon, float $lat): array
+    {
+        return $this->geocoderPointsToPoints(
+            $this->mobicoopGeocoder->reverse($lon, $lat)
         );
     }
 

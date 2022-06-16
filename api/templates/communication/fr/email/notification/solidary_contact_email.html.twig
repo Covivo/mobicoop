@@ -3,4 +3,12 @@
 {% block body %}
     <p>Un administrateur solidaire vous contacte.</p>
     <p>{{ context.text }}</p>
+    {% if context.signature != null %}
+        {% if context.signature.text != null %}
+            <p>{{ context.signature.text }}</p>
+        {% endif %}
+        {% if context.signature.logo != null %}
+            <img src="{{ context.signature.logo }}" alt="" style="width:40%;max-width:1000px;height:auto;max-height:250px;border-style:none;" />
+        {% endif %}
+    {% endif %}
 {% endblock %}

@@ -52,6 +52,12 @@ mobicoop-platform/api/public/upload/editorials/images/*.png
 mobicoop-platform/api/public/upload/editorials/images/versions/*.jpg
 mobicoop-platform/api/public/upload/editorials/images/versions/*.jpeg
 mobicoop-platform/api/public/upload/editorials/images/versions/*.png
+mobicoop-platform/api/public/upload/structures/images/*.jpg
+mobicoop-platform/api/public/upload/structures/images/*.jpeg
+mobicoop-platform/api/public/upload/structures/images/*.png
+mobicoop-platform/api/public/upload/structures/images/versions/*.jpg
+mobicoop-platform/api/public/upload/structures/images/versions/*.jpeg
+mobicoop-platform/api/public/upload/structures/images/versions/*.png
 mobicoop-platform/api/public/upload/events/images/*.jpg
 mobicoop-platform/api/public/upload/events/images/*.jpeg
 mobicoop-platform/api/public/upload/events/images/*.png
