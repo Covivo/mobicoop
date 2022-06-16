@@ -166,25 +166,6 @@
       >
         {{ $t('buttons.shareAnAd.label') }}
       </v-btn>
-      <!-- <div @click="snackbar = true">
-        <v-btn
-          v-if="!user && publishButtonAlwaysActive==false"
-          rounded
-          disabled
-          class="hidden-md-and-down"
-        >
-          {{ $t('buttons.shareAnAd.label') }}
-        </v-btn>
-      </div> -->
-      <v-btn
-        rounded
-        color="secondary"
-        :href="$t('buttons.solidary.route')"
-        class="hidden-md-and-down white--text mr-4"
-        small
-      >
-        {{ $t('buttons.solidary.label') }}
-      </v-btn>
 
       <MHeaderLanguage
         :languages="languages"
@@ -270,18 +251,6 @@
                 :aria-label="$t('buttons.shareAnAd.label')"
               >
                 {{ $t('buttons.shareAnAd.label') }}
-              </v-btn>
-            </v-list-item-title>
-          </v-list-item>
-          <v-list-item>
-            <v-list-item-title>
-              <v-btn
-                text
-                rounded
-                :disabled="!user"
-                :href="$t('buttons.solidary.route')"
-              >
-                {{ $t('buttons.solidary.label') }}
               </v-btn>
             </v-list-item-title>
           </v-list-item>
