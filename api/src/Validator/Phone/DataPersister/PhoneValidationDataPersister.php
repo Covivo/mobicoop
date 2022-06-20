@@ -18,34 +18,43 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
-namespace App\User\DataPersister;
+namespace App\Validator\Phone\DataPersister;
 
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
-use App\User\Ressource\PhoneValidation;
-use App\User\Service\UserManager;
+use App\Validator\Phone\PhoneValidator;
+use App\Validator\Phone\Resource\PhoneValidation;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 final class PhoneValidationDataPersister implements ContextAwareDataPersisterInterface
 {
-    private $userManager;
+    private $phoneValidator;
+    private $translator;
 
-    public function __construct(UserManager $userManager)
+    public function __construct(PhoneValidator $phoneValidator, TranslatorInterface $translator)
     {
-        $this->userManager = $userManager;
+        $this->phoneValidator = $phoneValidator;
+        $this->translator = $translator;
     }
 
     public function supports($data, array $context = []): bool
     {
-        return $data instanceof PhoneValidation && isset($context['collection_operation_name']) &&  $context['collection_operation_name'] == 'post';
+        return $data instanceof PhoneValidation && isset($context['collection_operation_name']) && 'post' == $context['collection_operation_name'];
     }
 
     public function persist($data, array $context = [])
     {
-        return $this->userManager->isPhoneValid($data);
+        $data->setValid($this->phoneValidator->validate($data->getPhoneNumber()));
+
+        if (!is_null($this->phoneValidator->message)) {
+            $data->setMessage($this->translator->trans($this->phoneValidator->message));
+        }
+
+        return $data;
     }
 
     public function remove($data, array $context = [])
