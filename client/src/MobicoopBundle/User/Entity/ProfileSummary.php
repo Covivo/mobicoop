@@ -19,21 +19,20 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace Mobicoop\Bundle\MobicoopBundle\User\Entity;
 
 use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
-use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * A User Profile Summary
+ * A User Profile Summary.
  */
 class ProfileSummary implements ResourceInterface, \JsonSerializable
 {
-    const PHONE_DISPLAY_RESTRICTED = 1;
-    const PHONE_DISPLAY_ALL = 2;
-    
+    public const PHONE_DISPLAY_RESTRICTED = 1;
+    public const PHONE_DISPLAY_ALL = 2;
+
     /**
      * @var int The id of the User
      */
@@ -55,22 +54,22 @@ class ProfileSummary implements ResourceInterface, \JsonSerializable
     private $age;
 
     /**
-     * @var int phone display configuration (1 = restricted (default); 2 = all).
+     * @var int phone display configuration (1 = restricted (default); 2 = all)
      */
     private $phoneDisplay;
 
     /**
-     * @var string|null The telephone number of the user.
+     * @var null|string the telephone number of the user
      */
     private $telephone;
 
     /**
-     * @var string|null Avatar of the user.
+     * @var null|string avatar of the user
      */
     private $avatar;
 
     /**
-     * @var int|null Nomber of carpool already done
+     * @var null|int Nomber of carpool already done
      */
     private $carpoolRealized;
 
@@ -90,18 +89,22 @@ class ProfileSummary implements ResourceInterface, \JsonSerializable
     private $lastActivityDate;
 
     /**
-     * @var boolean|null If the User is experienced
+     * @var null|bool If the User is experienced
      */
     private $experienced;
 
     /**
-     * @var int|null The savedCo2 of this user in grams
+     * @var null|int The savedCo2 of this user in grams
      */
     private $savedCo2;
 
     /**
-     * @var int|null The number of earned badges by the User
-     *
+     * @var null|bool True if the identity has been validated
+     */
+    private $verifiedIdentity;
+
+    /**
+     * @var null|int The number of earned badges by the User
      */
     private $numberOfBadges;
 
@@ -113,7 +116,7 @@ class ProfileSummary implements ResourceInterface, \JsonSerializable
     public function setId(int $id): self
     {
         $this->id = $id;
-        
+
         return $this;
     }
 
@@ -125,7 +128,7 @@ class ProfileSummary implements ResourceInterface, \JsonSerializable
     public function setGivenName(string $givenName): self
     {
         $this->givenName = $givenName;
-        
+
         return $this;
     }
 
@@ -137,7 +140,7 @@ class ProfileSummary implements ResourceInterface, \JsonSerializable
     public function setShortFamilyName(string $shortFamilyName): self
     {
         $this->shortFamilyName = $shortFamilyName;
-        
+
         return $this;
     }
 
@@ -149,7 +152,7 @@ class ProfileSummary implements ResourceInterface, \JsonSerializable
     public function setAge(int $age): self
     {
         $this->age = $age;
-        
+
         return $this;
     }
 
@@ -197,7 +200,7 @@ class ProfileSummary implements ResourceInterface, \JsonSerializable
     public function setCarpoolRealized(int $carpoolRealized): self
     {
         $this->carpoolRealized = $carpoolRealized;
-        
+
         return $this;
     }
 
@@ -209,10 +212,10 @@ class ProfileSummary implements ResourceInterface, \JsonSerializable
     public function setAnswerPct(int $answerPct): self
     {
         $this->answerPct = $answerPct;
-        
+
         return $this;
     }
-    
+
     public function getCreatedDate(): ?\DateTimeInterface
     {
         return $this->createdDate;
@@ -224,7 +227,7 @@ class ProfileSummary implements ResourceInterface, \JsonSerializable
 
         return $this;
     }
-    
+
     public function getLastActivityDate(): ?\DateTimeInterface
     {
         return $this->lastActivityDate;
@@ -273,25 +276,36 @@ class ProfileSummary implements ResourceInterface, \JsonSerializable
         return $this;
     }
 
+    public function getVerifiedIdentity()
+    {
+        return $this->verifiedIdentity;
+    }
+
+    public function setVerifiedIdentity($verifiedIdentity)
+    {
+        $this->verifiedIdentity = $verifiedIdentity;
+
+        return $this;
+    }
+
     public function jsonSerialize()
     {
-        $userSerialized = [
-            'id'                        => $this->getId(),
-            'givenName'                 => $this->getGivenName(),
-            'shortFamilyName'           => $this->getShortFamilyName(),
-            'age'                       => $this->getAge(),
-            'phoneDisplay'              => $this->getPhoneDisplay(),
-            'telephone'                 => $this->getTelephone(),
-            'avatar'                    => $this->getAvatar(),
-            'carpoolRealized'           => $this->getCarpoolRealized(),
-            'answerPct'                 => $this->getAnswerPct(),
-            'lastActivityDate'          => $this->getLastActivityDate(),
-            'createdDate'               => $this->getCreatedDate(),
-            'experienced'               => $this->isExperienced(),
-            'savedCo2'                  => $this->getSavedCo2(),
-            'numberOfBadges'              => $this->getNumberOfBadges()
+        return [
+            'id' => $this->getId(),
+            'givenName' => $this->getGivenName(),
+            'shortFamilyName' => $this->getShortFamilyName(),
+            'age' => $this->getAge(),
+            'phoneDisplay' => $this->getPhoneDisplay(),
+            'telephone' => $this->getTelephone(),
+            'avatar' => $this->getAvatar(),
+            'carpoolRealized' => $this->getCarpoolRealized(),
+            'answerPct' => $this->getAnswerPct(),
+            'lastActivityDate' => $this->getLastActivityDate(),
+            'createdDate' => $this->getCreatedDate(),
+            'experienced' => $this->isExperienced(),
+            'savedCo2' => $this->getSavedCo2(),
+            'numberOfBadges' => $this->getNumberOfBadges(),
+            'verifiedIdentity' => $this->getVerifiedIdentity(),
         ];
-
-        return $userSerialized;
     }
 }
