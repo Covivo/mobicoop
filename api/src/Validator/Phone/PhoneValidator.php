@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace App\Validator\Phone;
 
-use App\Validator\Phone\Validators\PhoneValidatorBE;
-use App\Validator\Phone\Validators\PhoneValidatorDE;
-use App\Validator\Phone\Validators\PhoneValidatorFR;
 use libphonenumber\PhoneNumberUtil;
 
 /**
@@ -18,9 +15,11 @@ class PhoneValidator
     public $message;
     private $validators;
 
-    public function __construct(PhoneNumberUtil $phoneNumberUtil)
+    public function __construct(PhoneNumberUtil $phoneNumberUtil, array $phoneValidationRegions)
     {
-        $this->validators = [new PhoneValidatorFR($phoneNumberUtil), new PhoneValidatorBE($phoneNumberUtil), new PhoneValidatorDE($phoneNumberUtil)];
+        foreach ($phoneValidationRegions as $region) {
+            $this->validators[] = new PhoneValidatorRegion($phoneNumberUtil, $region);
+        }
 
         foreach ($this->validators as $key => $validator) {
             if (isset($this->validators[$key + 1])) {

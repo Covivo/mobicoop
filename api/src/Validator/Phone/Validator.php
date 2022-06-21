@@ -41,7 +41,6 @@ abstract class Validator
 
     protected function isValid(string $phone): bool
     {
-        var_dump($this->getRegion());
         $phoneNumber = $this->parse($phone, $this->getRegion());
         if (!is_null($phoneNumber->getNationalNumber())) {
             return $this->phoneNumberUtil->isValidNumberForRegion($phoneNumber, $this->getRegion());

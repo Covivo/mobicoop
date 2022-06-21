@@ -141,8 +141,6 @@ class UserManager
 
     private $geoTools;
 
-    private $phoneValidationRegex;
-
     /**
      * Constructor.
      *
@@ -193,7 +191,6 @@ class UserManager
         ActionRepository $actionRepository,
         GamificationManager $gamificationManager,
         ScammerRepository $scammerRepository,
-        string $phoneValidationRegex,
         $userMinAge
     ) {
         $this->entityManager = $entityManager;
@@ -236,7 +233,6 @@ class UserManager
         $this->actionRepository = $actionRepository;
         $this->gamificationManager = $gamificationManager;
         $this->scammerRepository = $scammerRepository;
-        $this->phoneValidationRegex = $phoneValidationRegex;
         $this->userMinAge = $userMinAge;
     }
 
