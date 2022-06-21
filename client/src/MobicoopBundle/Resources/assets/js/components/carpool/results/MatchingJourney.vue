@@ -194,6 +194,7 @@
                     :user-id="result.carpooler.id"
                     :refresh="profileSummaryRefresh"
                     :age-display="ageDisplay"
+                    :verified-identity="result.carpooler.verifiedIdentity"
                     @showProfile="step=4"
                     @profileSummaryRefresh="refreshProfileSummary"
                   />

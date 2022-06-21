@@ -14,5 +14,9 @@
     "lastConnection": "Azken konexioaren data",
     "carpoolRealized": "Eginak izan diren autokidetzak",
     "yearsOld": "urte",
-    "getPublicProfileUri": "/utilisateur/profil/public"
+    "getPublicProfileUri": "/utilisateur/profil/public",
+    "identity": {
+      "verified": "Verified identity",
+      "unverified": "Unverified identity"
+    }
 }

@@ -20,6 +20,11 @@
           {{ age }}
         </v-list-item-title>
       </v-list-item-content>
+      <span class="mr-2">
+        <verified-identity
+          :verified-identity="carpooler.verifiedIdentity"
+        />
+      </span>
       <v-img
         v-if="hasBadges && gamificationActive"
         src="/images/badge.png"
@@ -44,6 +49,7 @@
 import moment from "moment";
 import ProfileAvatar from "@components/user/profile/ProfileAvatar";
 import PopupPublicProfile from "@components/user/profile/PopupPublicProfile";
+import VerifiedIdentity from "@components/user/profile/VerifiedIdentity";
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/carpool/utilities/CarpoolerSummary/";
 
 export default {
@@ -57,7 +63,8 @@ export default {
   },
   components:{
     ProfileAvatar,
-    PopupPublicProfile
+    PopupPublicProfile,
+    VerifiedIdentity
   },
   props: {
     carpooler: {

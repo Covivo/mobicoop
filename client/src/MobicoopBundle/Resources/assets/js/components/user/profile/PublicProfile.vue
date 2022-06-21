@@ -25,11 +25,18 @@
                 class="text-right"
               >
                 <v-row>
-                  <v-col>
+                  <v-col class="pb-0">
                     {{ publicProfile.givenName }} {{ publicProfile.shortFamilyName }}<br>
                     <span v-if="ageDisplay && publicProfile.age">
                       {{ publicProfile.age }} {{ $t('yearsOld') }}
                     </span>
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col class="pt-0">
+                    <verified-identity
+                      :verified-identity="publicProfile.verifiedIdentity"
+                    />
                   </v-col>
                 </v-row>
                 <v-row>
@@ -156,10 +163,12 @@
 import maxios from "@utils/maxios";
 import moment from "moment";
 import ProfileAvatar from "@components/user/profile/ProfileAvatar";
+import VerifiedIdentity from "@components/user/profile/VerifiedIdentity";
 import Reviews from "@components/utilities/Reviews/Reviews";
 import Badges from "@components/utilities/gamification/Badges";
 import Report from "@components/utilities/Report";
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/profile/PublicProfile/";
+
 export default {
   i18n: {
     messages: {
@@ -173,7 +182,8 @@ export default {
     ProfileAvatar,
     Report,
     Reviews,
-    Badges
+    Badges,
+    VerifiedIdentity
   },
   props:{
     user:{
