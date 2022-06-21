@@ -16,5 +16,6 @@
         "login": "/utilisateur/connexion"
     },
     "getCommunities": "/community/getCommunityList",
-    "filterByCommunity":"Filtrer par communauté"
+    "filterByCommunity":"Filtrer par communauté",
+    "seeEvent":"Voir l'évènement"
 }
