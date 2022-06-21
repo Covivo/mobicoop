@@ -630,7 +630,7 @@
         color="secondary"
         align-center
         style="margin-bottom: 30px;"
-        @click="--step"
+        @click="changeStep('previous')"
       >
         {{ $t('stepper.buttons.previous') }}
       </v-btn>
@@ -643,7 +643,7 @@
         color="secondary"
         align-center
         style="margin-left: 30px;"
-        @click="step++"
+        @click="changeStep"
       >
         {{ $t('stepper.buttons.next') }}
       </v-btn>
@@ -655,7 +655,7 @@
         color="secondary"
         align-center
         style="margin-left: 30px;"
-        @click="step++"
+        @click="changeStep"
       >
         {{ $t('stepper.buttons.next') }}
       </v-btn>
@@ -888,7 +888,7 @@ export default {
       type: Number,
       default:null
     },
-    contentPassenger: { 
+    contentPassenger: {
       type: Boolean,
       default: true
     }
@@ -1430,6 +1430,22 @@ export default {
       } else if (!isEmpty(this.initOrigin) || !isEmpty(this.initDestination)) {
         return 1;
       } else return 0;
+    },
+    changeStep(direction = 'next') {
+      switch (direction) {
+      case 'previous':
+        --this.step;
+        break;
+
+      default:
+        ++this.step;
+        break;
+      }
+
+      this.scrollToElement();
+    },
+    scrollToElement(element = "app") {
+      document.getElementById(element).scrollIntoView({behavior: 'smooth'});
     }
   }
 };
