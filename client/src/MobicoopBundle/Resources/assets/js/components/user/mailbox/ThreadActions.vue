@@ -244,7 +244,7 @@
       </v-card>
     </v-dialog>
     <PopupPublicProfile
-      :carpooler-id="idUser"
+      :carpooler-id="idRecipient"
       :carpooler-name="recipientName"
       :show-profile-dialog="showProfileDialog"
       @dialogClosed="showProfileDialog = false"
