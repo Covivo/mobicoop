@@ -554,7 +554,7 @@ class Community
     private $password;
 
     /**
-     * @var null|User admin that create the user
+     * @var null|User admin that create the community
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User")
      * @ORM\JoinColumn(onDelete="SET NULL")
