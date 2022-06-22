@@ -65,7 +65,7 @@ class PaymentProfile
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"read","readPayment"})
+     * @Groups({"readPayment"})
      */
     private $id;
 
@@ -75,7 +75,7 @@ class PaymentProfile
      * @ApiProperty(push=true)
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User")
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
-     * @Groups({"read","readPayment","writePayment"})
+     * @Groups({"readPayment","writePayment"})
      * @MaxDepth(1)
      * @Assert\NotBlank
      */
@@ -85,7 +85,7 @@ class PaymentProfile
      * @var string The provider managing this payment profile
      *
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read","readPayment","writePayment"})
+     * @Groups({"readPayment","writePayment"})
      */
     private $provider;
 

@@ -81,7 +81,6 @@ class MangoPayProvider implements PaymentProviderInterface
     public const DOCUMENT_UNREADABLE = 'DOCUMENT_UNREADABLE';
     public const DOCUMENT_INCOMPLETE = 'DOCUMENT_INCOMPLETE';
     public const SPECIFIC_CASE = 'SPECIFIC_CASE';
-    public const DOCUMENT_VALIDATED = 'VALIDATED';
 
     private $user;
     private $serverUrl;
@@ -789,10 +788,6 @@ class MangoPayProvider implements PaymentProviderInterface
 
         if (200 == $response->getCode()) {
             $data = json_decode($response->getValue(), true);
-
-            if (isset($data['Status']) && !is_null($data['Status'])) {
-                return $data;
-            }
 
             switch ($data['RefusedReasonType']) {
                 case self::OUT_OF_DATE:
