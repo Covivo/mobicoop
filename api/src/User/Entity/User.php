@@ -313,6 +313,18 @@ use Symfony\Component\Validator\Constraints as Assert;
  *                  "tags"={"Administration"}
  *              }
  *          },
+ *          "ADMIN_get_by_email"={
+ *              "path"="/admin/users/email",
+ *              "method"="GET",
+ *              "normalization_context"={
+ *                  "groups"={"aRead"},
+ *                  "skip_null_values"=false
+ *              },
+ *              "security"="is_granted('admin_user_list',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
+ *          },
  *          "ADMIN_post"={
  *              "path"="/admin/users",
  *              "method"="POST",
@@ -1573,7 +1585,7 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var null|bool If the User has a verified identity
      *
-     * @Groups({"readUser","results","write", "threads", "thread", "readCommunity", "readCommunityUser", "readEvent", "readPublicProfile","readReview","aRead"})
+     * @Groups({"readUser","results","write", "threads", "thread", "readCommunity", "readCommunityUser", "readEvent", "readPublicProfile","readReview","aRead","aWrite"})
      */
     private $verifiedIdentity;
 
@@ -3686,7 +3698,18 @@ class User implements UserInterface, EquatableInterface
 
     public function hasVerifiedIdentity(): ?bool
     {
+        if (!is_null($this->verifiedIdentity)) {
+            return $this->verifiedIdentity;
+        }
+
         return IdentityProof::STATUS_ACCEPTED == $this->identityStatus;
+    }
+
+    public function setVerifiedIdentity(bool $verifiedIdentity): self
+    {
+        $this->verifiedIdentity = $verifiedIdentity;
+
+        return $this;
     }
 
     public function hasRezoKit(): ?bool
