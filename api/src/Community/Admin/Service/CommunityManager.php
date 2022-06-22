@@ -41,6 +41,7 @@ use App\User\Entity\User;
 use App\User\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Security\Core\Security;
 
 /**
  * Community manager for admin context.
@@ -56,6 +57,7 @@ class CommunityManager
     private $userManager;
     private $authItemRepository;
     private $eventDispatcher;
+    private $security;
 
     /**
      * Constructor.
@@ -67,7 +69,8 @@ class CommunityManager
         UserRepository $userRepository,
         UserManager $userManager,
         AuthItemRepository $authItemRepository,
-        EventDispatcherInterface $eventDispatcher
+        EventDispatcherInterface $eventDispatcher,
+        Security $security
     ) {
         $this->entityManager = $entityManager;
         $this->communityUserRepository = $communityUserRepository;
@@ -76,6 +79,7 @@ class CommunityManager
         $this->userManager = $userManager;
         $this->authItemRepository = $authItemRepository;
         $this->eventDispatcher = $eventDispatcher;
+        $this->security = $security;
     }
 
     /**
@@ -103,6 +107,8 @@ class CommunityManager
      */
     public function addCommunity(Community $community)
     {
+        // add delegation
+        $community->setUserDelegate($this->security->getUser());
         if ($referrer = $this->userRepository->find($community->getReferrerId())) {
             $community->setUser($referrer);
             // add the community manager role to the referrer

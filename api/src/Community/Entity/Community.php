@@ -553,6 +553,16 @@ class Community
      */
     private $password;
 
+    /**
+     * @var null|User admin that create the user
+     *
+     * @ORM\ManyToOne(targetEntity="\App\User\Entity\User")
+     * @ORM\JoinColumn(onDelete="SET NULL")
+     * @Groups({"readUser","write"})
+     * @MaxDepth(1)
+     */
+    private $userDelegate;
+
     public function __construct($id = null)
     {
         $this->id = $id;
@@ -1027,6 +1037,18 @@ class Community
     public function setPassword(?string $password): self
     {
         $this->password = $password;
+
+        return $this;
+    }
+
+    public function getUserDelegate(): ?User
+    {
+        return $this->userDelegate;
+    }
+
+    public function setUserDelegate(?User $userDelegate): self
+    {
+        $this->userDelegate = $userDelegate;
 
         return $this;
     }
