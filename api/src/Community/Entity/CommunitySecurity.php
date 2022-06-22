@@ -94,7 +94,7 @@ class CommunitySecurity
     /**
      * @var string the filename of the community security
      *
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="string", length=255)
      * @Groups({"read","write"})
      */
     private $filename;

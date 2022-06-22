@@ -149,6 +149,7 @@ class CommunityManager
         if (Community::SECURED_VALIDATION == $community->getValidationType()) {
             $communitySecurity = new CommunitySecurity();
             $communitySecurity->setCommunity($community);
+            $communitySecurity->setFilename($community->getId().'.csv');
             $this->entityManager->persist($communitySecurity);
             $this->entityManager->flush();
         }
