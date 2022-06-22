@@ -43,7 +43,7 @@
       <p v-if="point.popup.date_begin && point.popup.date_end">
         {{ point.popup.date_begin }}<br> {{ point.popup.date_end }}
       </p>
-      <p v-if="point.popup.linktoevent && point.popup.linktoevent">
+      <p v-if="point.popup.linktoevent">
         >
         <a
           :href="point.popup.linktoevent"
