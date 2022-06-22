@@ -366,7 +366,7 @@ class PaymentProfile
         return $this->refusalReason;
     }
 
-    public function setRefusalReason(int $refusalReason): self
+    public function setRefusalReason(?int $refusalReason): self
     {
         $this->refusalReason = $refusalReason;
 
