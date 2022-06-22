@@ -291,6 +291,7 @@ class Community
     public const AUTO_VALIDATION = 0;
     public const MANUAL_VALIDATION = 1;
     public const DOMAIN_VALIDATION = 2;
+    public const SECURED_VALIDATION = 3;
 
     /**
      * @var int the id of this community

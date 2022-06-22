@@ -27,6 +27,7 @@ use App\Auth\Entity\AuthItem;
 use App\Auth\Entity\UserAuthAssignment;
 use App\Auth\Repository\AuthItemRepository;
 use App\Community\Entity\Community;
+use App\Community\Entity\CommunitySecurity;
 use App\Community\Entity\CommunityUser;
 use App\Community\Event\CommunityCreatedEvent;
 use App\Community\Event\CommunityMembershipAcceptedEvent;
@@ -141,6 +142,14 @@ class CommunityManager
             $address->setHome(true);
             $address->setCommunity($community);
             $this->entityManager->persist($address);
+            $this->entityManager->flush();
+        }
+
+        // if the community was secured, we need to insert the securities line
+        if (Community::SECURED_VALIDATION == $community->getValidationType()) {
+            $communitySecurity = new CommunitySecurity();
+            $communitySecurity->setCommunity($community);
+            $this->entityManager->persist($communitySecurity);
             $this->entityManager->flush();
         }
 
