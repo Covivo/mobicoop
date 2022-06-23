@@ -19,19 +19,17 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Payment\Interfaces;
 
 use App\DataProvider\Ressource\Hook;
 use App\Geography\Entity\Address;
 use App\Payment\Entity\CarpoolPayment;
-use App\User\Entity\User;
-use App\Payment\Ressource\BankAccount;
 use App\Payment\Entity\PaymentProfile;
-use App\Payment\Entity\Wallet;
-use App\Payment\Ressource\ElectronicPayment;
+use App\Payment\Ressource\BankAccount;
 use App\Payment\Ressource\ValidationDocument;
+use App\User\Entity\User;
 
 /**
  * Payment Provider interface.
@@ -40,24 +38,24 @@ use App\Payment\Ressource\ValidationDocument;
  *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  * @author Remi Wortemann <remi.wortemann@mobicoop.org>
- *
  */
 interface PaymentProviderInterface
 {
-
     /**
-     * Register a User on the platform
+     * Register a User on the platform.
      *
-     * @param User $user            The User to register
-     * @param Address|null $address The address to use to the registration
+     * @param User         $user    The User to register
+     * @param null|Address $address The address to use to the registration
+     *
      * @return string The identifier
      */
-    public function registerUser(User $user, Address $address=null);
+    public function registerUser(User $user, Address $address = null);
 
     /**
-     * Update a User on the platform
+     * Update a User on the platform.
      *
-     * @param User $user            The User to update
+     * @param User $user The User to update
+     *
      * @return string The identifier
      */
     public function updateUser(User $user);
@@ -65,37 +63,39 @@ interface PaymentProviderInterface
     /**
      * Returns a collection of Bank accounts.
      *
-     * @param PaymentProfile $paymentProfile     The User's payment profile related to the Bank accounts
+     * @param PaymentProfile $paymentProfile The User's payment profile related to the Bank accounts
+     *
      * @return BankAccount[]
      */
     public function getBankAccounts(PaymentProfile $paymentProfile, bool $onlyActive = true);
-    
+
     /**
-     * Add a BankAccount
+     * Add a BankAccount.
      *
-     * @param BankAccount $bankAccount                  The BankAccount to create
-     * @return BankAccount|null
+     * @param BankAccount $bankAccount The BankAccount to create
+     *
+     * @return null|BankAccount
      */
     public function addBankAccount(BankAccount $bankAccount);
 
     /**
-     * Disable a BankAccount
+     * Disable a BankAccount.
      *
-     * @param BankAccount $bankAccount                  The BankAccount to create
-     * @return BankAccount|null
+     * @param BankAccount $bankAccount The BankAccount to create
+     *
+     * @return null|BankAccount
      */
     public function disableBankAccount(BankAccount $bankAccount);
 
     /**
-     * Get the secured form's url for electronic payment
+     * Get the secured form's url for electronic payment.
      *
-     * @param CarpoolPayment $carpoolPayment
      * @return CarpoolPayment With redirectUrl filled
      */
     public function generateElectronicPaymentUrl(CarpoolPayment $carpoolPayment);
 
     /**
-     * Process an electronic payment between the $debtor and the $creditors
+     * Process an electronic payment between the $debtor and the $creditors.
      *
      * array of creditors are like this :
      * $creditors = [
@@ -104,10 +104,6 @@ interface PaymentProviderInterface
      *      "amount" => float
      *  ]
      * ]
-     *
-     * @param User $debtor
-     * @param array $creditors
-     * @return void
      */
     public function processElectronicPayment(User $debtor, array $creditors);
 
@@ -115,23 +111,30 @@ interface PaymentProviderInterface
      * Upload an identity validation document
      * The document is not stored on the platform. It has to be deleted.
      *
-     * @param ValidationDocument $validationDocument
      * @return ValidationDocument
      */
     public function uploadValidationDocument(ValidationDocument $validationDocument);
 
     /**
-     * Handle a payment web hook
+     * Handle a payment web hook.
+     *
      * @var object $hook The web hook from the payment provider
+     *
      * @return Hook with status and ressource id
      */
     public function handleHook(Hook $hook);
 
     /**
-     * Get a document
+     * Get a document.
      *
-     * @param Int $DocumentId Id of the document
-     * @return void
+     * @param int $DocumentId Id of the document
      */
-    public function getDocument(Int $DocumentId);
+    public function getDocument(int $DocumentId);
+
+    /**
+     * Get a kyc document.
+     *
+     * @param int $KycDocumentId Id of the kyc document
+     */
+    public function getKycDocument(int $KycDocumentId);
 }
