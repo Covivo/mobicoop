@@ -291,6 +291,7 @@ class Community
     public const AUTO_VALIDATION = 0;
     public const MANUAL_VALIDATION = 1;
     public const DOMAIN_VALIDATION = 2;
+    public const SECURED_VALIDATION = 3;
 
     /**
      * @var int the id of this community
@@ -551,6 +552,16 @@ class Community
      * @Groups("writeJoinCommunity")
      */
     private $password;
+
+    /**
+     * @var null|User admin that create the community
+     *
+     * @ORM\ManyToOne(targetEntity="\App\User\Entity\User")
+     * @ORM\JoinColumn(onDelete="SET NULL")
+     * @Groups({"readUser","write"})
+     * @MaxDepth(1)
+     */
+    private $userDelegate;
 
     public function __construct($id = null)
     {
@@ -1026,6 +1037,18 @@ class Community
     public function setPassword(?string $password): self
     {
         $this->password = $password;
+
+        return $this;
+    }
+
+    public function getUserDelegate(): ?User
+    {
+        return $this->userDelegate;
+    }
+
+    public function setUserDelegate(?User $userDelegate): self
+    {
+        $this->userDelegate = $userDelegate;
 
         return $this;
     }

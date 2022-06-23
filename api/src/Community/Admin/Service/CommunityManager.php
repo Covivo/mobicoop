@@ -27,6 +27,7 @@ use App\Auth\Entity\AuthItem;
 use App\Auth\Entity\UserAuthAssignment;
 use App\Auth\Repository\AuthItemRepository;
 use App\Community\Entity\Community;
+use App\Community\Entity\CommunitySecurity;
 use App\Community\Entity\CommunityUser;
 use App\Community\Event\CommunityCreatedEvent;
 use App\Community\Event\CommunityMembershipAcceptedEvent;
@@ -40,6 +41,7 @@ use App\User\Entity\User;
 use App\User\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Security\Core\Security;
 
 /**
  * Community manager for admin context.
@@ -55,6 +57,7 @@ class CommunityManager
     private $userManager;
     private $authItemRepository;
     private $eventDispatcher;
+    private $security;
 
     /**
      * Constructor.
@@ -66,7 +69,8 @@ class CommunityManager
         UserRepository $userRepository,
         UserManager $userManager,
         AuthItemRepository $authItemRepository,
-        EventDispatcherInterface $eventDispatcher
+        EventDispatcherInterface $eventDispatcher,
+        Security $security
     ) {
         $this->entityManager = $entityManager;
         $this->communityUserRepository = $communityUserRepository;
@@ -75,6 +79,7 @@ class CommunityManager
         $this->userManager = $userManager;
         $this->authItemRepository = $authItemRepository;
         $this->eventDispatcher = $eventDispatcher;
+        $this->security = $security;
     }
 
     /**
@@ -102,6 +107,8 @@ class CommunityManager
      */
     public function addCommunity(Community $community)
     {
+        // add delegation
+        $community->setUserDelegate($this->security->getUser());
         if ($referrer = $this->userRepository->find($community->getReferrerId())) {
             $community->setUser($referrer);
             // add the community manager role to the referrer
@@ -141,6 +148,15 @@ class CommunityManager
             $address->setHome(true);
             $address->setCommunity($community);
             $this->entityManager->persist($address);
+            $this->entityManager->flush();
+        }
+
+        // if the community was secured, we need to insert the securities line
+        if (Community::SECURED_VALIDATION == $community->getValidationType()) {
+            $communitySecurity = new CommunitySecurity();
+            $communitySecurity->setCommunity($community);
+            $communitySecurity->setFilename($community->getId().'.csv');
+            $this->entityManager->persist($communitySecurity);
             $this->entityManager->flush();
         }
 

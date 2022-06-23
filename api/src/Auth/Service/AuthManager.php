@@ -248,9 +248,9 @@ class AuthManager
      */
     public function getAuthItemsGrantedForCreation(User $user)
     {
-        //All the roles of the current user, set true for get the AuthItem, not just the name
+        // All the roles of the current user, set true for get the AuthItem, not just the name
         $rolesUser = $this->getAuthItems(AuthItem::TYPE_ROLE, true);
-        //Array we return, contain the roles current user can create
+        // Array we return, contain the roles current user can create
         $rolesGranted = [];
 
         foreach ($rolesUser as $role) {
@@ -320,6 +320,7 @@ class AuthManager
         }
         // at this point a rule is associated, we need to execute it
         $authRuleName = '\\App\\Auth\\Rule\\'.$authItem->getAuthRule()->getName();
+
         /**
          * @var AuthRuleInterface $authRule
          */
@@ -433,7 +434,7 @@ class AuthManager
      */
     private function checkRolesGrantedForRole(array $authItem, array $rolesGranted)
     {
-        //Array where we associate the granted roles for the roles who can cretae user
+        // Array where we associate the granted roles for the roles who can cretae user
         $rolesGrantedForCreation = [
             AuthItem::ROLE_SUPER_ADMIN => [
                 AuthItem::ROLE_SUPER_ADMIN,
@@ -474,7 +475,7 @@ class AuthManager
                 AuthItem::ROLE_SOLIDARY_BENEFICIARY_CANDIDATE,
             ],
         ];
-        //If the role is in our array of Roles -> granted roles, we add the roles user can create in the result array
+        // If the role is in our array of Roles -> granted roles, we add the roles user can create in the result array
         if (array_key_exists($authItem['id']->getId(), $rolesGrantedForCreation)) {
             $rolesGranted = array_unique(array_merge($rolesGrantedForCreation[$authItem['id']->getId()], $rolesGranted));
         }
