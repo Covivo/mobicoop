@@ -1,28 +1,32 @@
 <!DOCTYPE html>
 <html lang="fr">
-    <head>
-        <meta charset="UTF-8">
-        <title>
-            {% block title %}Welcome!
-            {% endblock %}
-        </title>
-        
-        <meta content="width=device-width, initial-scale=1" name="viewport">
-        {{ encore_entry_link_tags("#{assets_prefix ?? ''}app") }}
-        {{ encore_entry_link_tags("#{assets_prefix ?? ''}main") }}
-         {% block stylesheets %}
-         {% endblock %}
-    </head>
-    <body>
-        <div id="app">
-            <v-app>
-                <v-main>
-                    {% block main %}{% endblock %}
-                </v-main>
-            </v-app>
-        </div>
-    </body>
 
-    {{ encore_entry_script_tags("#{assets_prefix ?? ''}app") }}
-    {% block javascripts %}{% endblock %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex">
+    <title>
+        {% block title %}Welcome!
+        {% endblock %}
+    </title>
+
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    {{ encore_entry_link_tags("#{assets_prefix ?? ''}app") }}
+    {{ encore_entry_link_tags("#{assets_prefix ?? ''}main") }}
+    {% block stylesheets %}
+    {% endblock %}
+</head>
+
+<body>
+    <div id="app">
+        <v-app>
+            <v-main>
+                {% block main %}{% endblock %}
+            </v-main>
+        </v-app>
+    </div>
+</body>
+
+{{ encore_entry_script_tags("#{assets_prefix ?? ''}app") }}
+{% block javascripts %}{% endblock %}
+
 </html>
