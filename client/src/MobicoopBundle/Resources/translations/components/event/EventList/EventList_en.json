@@ -16,6 +16,7 @@
     "startEvent": "Start",
     "events": "The carpool events",
     "getCommunities": "/community/getCommunityList",
-    "filterByCommunity":"filtrer par communauté"
+    "filterByCommunity":"filtrer par communauté",
+    "seeEvent":"View the event"
 
 }
