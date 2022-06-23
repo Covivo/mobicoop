@@ -603,7 +603,7 @@
           <v-btn
             color="green darken-1"
             text
-            @click="carpoolDialog = false"
+            @click="closeConfirmationDialog"
           >
             {{ $t('cancel') }}
           </v-btn>
@@ -930,6 +930,13 @@ export default {
     this.$emit('resetStepMatchingJourney');
   },
   methods: {
+    closeConfirmationDialog() {
+      this.carpoolDialog = false;
+
+      if (this.carpoolRoleSelected) {
+        this.carpoolRoleSelected = null;
+      }
+    },
     computeMaxDate() {
       if (this.range == 0) {
         this.maxDate = moment(this.fromDate).add(1, 'W').toISOString();
