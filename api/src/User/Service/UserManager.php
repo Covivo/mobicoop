@@ -77,7 +77,6 @@ use App\User\Exception\UserNotFoundException;
 use App\User\Exception\UserUnderAgeException;
 use App\User\Repository\UserNotificationRepository;
 use App\User\Repository\UserRepository;
-use App\User\Ressource\PhoneValidation;
 use App\User\Ressource\ProfileSummary;
 use App\User\Ressource\PublicProfile;
 use Doctrine\ORM\EntityManagerInterface;
@@ -142,8 +141,6 @@ class UserManager
 
     private $geoTools;
 
-    private $phoneValidationRegex;
-
     /**
      * Constructor.
      *
@@ -194,7 +191,6 @@ class UserManager
         ActionRepository $actionRepository,
         GamificationManager $gamificationManager,
         ScammerRepository $scammerRepository,
-        string $phoneValidationRegex,
         $userMinAge
     ) {
         $this->entityManager = $entityManager;
@@ -237,7 +233,6 @@ class UserManager
         $this->actionRepository = $actionRepository;
         $this->gamificationManager = $gamificationManager;
         $this->scammerRepository = $scammerRepository;
-        $this->phoneValidationRegex = $phoneValidationRegex;
         $this->userMinAge = $userMinAge;
     }
 
@@ -1994,16 +1989,6 @@ break;
         }
 
         return $communities;
-    }
-
-    public function isPhoneValid(PhoneValidation $phoneValidation): PhoneValidation
-    {
-        $phoneValidation->setValid(preg_match($this->phoneValidationRegex, $phoneValidation->getPhoneNumber()));
-        if (!$phoneValidation->isValid()) {
-            $phoneValidation->setMessage($this->translator->trans('errors.phoneNumberInvalid'));
-        }
-
-        return $phoneValidation;
     }
 
     public function checkIfScammer(User $user)

@@ -266,7 +266,7 @@ class Image
     /**
      * @var null|Event the event associated with the image
      *
-     * @ORM\ManyToOne(targetEntity="\App\Event\Entity\Event", inversedBy="images", cascade="persist")
+     * @ORM\ManyToOne(targetEntity="\App\Event\Entity\Event", inversedBy="images", cascade={"persist"})
      * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private $event;
@@ -286,7 +286,7 @@ class Image
     /**
      * @var null|Community the community associated with the image
      *
-     * @ORM\ManyToOne(targetEntity="\App\Community\Entity\Community", inversedBy="images", cascade="persist")
+     * @ORM\ManyToOne(targetEntity="\App\Community\Entity\Community", inversedBy="images", cascade={"persist"})
      * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private $community;
@@ -312,7 +312,7 @@ class Image
     /**
      * @var null|User the user associated with the image
      *
-     * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="images", cascade="persist")
+     * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="images", cascade={"persist"})
      * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private $user;
@@ -326,7 +326,7 @@ class Image
     /**
      * @var null|RelayPoint the relay point associated with the image
      *
-     * @ORM\ManyToOne(targetEntity="\App\RelayPoint\Entity\RelayPoint", inversedBy="images", cascade="persist")
+     * @ORM\ManyToOne(targetEntity="\App\RelayPoint\Entity\RelayPoint", inversedBy="images", cascade={"persist"})
      * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private $relayPoint;
@@ -346,7 +346,7 @@ class Image
     /**
      * @var null|RelayPointType the relay point type associated with the image
      *
-     * @ORM\ManyToOne(targetEntity="\App\RelayPoint\Entity\RelayPointType", inversedBy="images", cascade="persist")
+     * @ORM\ManyToOne(targetEntity="\App\RelayPoint\Entity\RelayPointType", inversedBy="images", cascade={"persist"})
      * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private $relayPointType;
@@ -446,7 +446,7 @@ class Image
     /**
      * @var null|Campaign the campaign associated with the image
      *
-     * @ORM\ManyToOne(targetEntity="\App\MassCommunication\Entity\Campaign", inversedBy="images", cascade="persist")
+     * @ORM\ManyToOne(targetEntity="\App\MassCommunication\Entity\Campaign", inversedBy="images", cascade={"persist"})
      * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private $campaign;
@@ -466,7 +466,7 @@ class Image
     /**
      * @var null|Editorial the editorial associated with the image
      *
-     * @ORM\ManyToOne(targetEntity="\App\Editorial\Entity\Editorial", inversedBy="images", cascade="persist")
+     * @ORM\ManyToOne(targetEntity="\App\Editorial\Entity\Editorial", inversedBy="images", cascade={"persist"})
      * @ORM\JoinColumn(onDelete="CASCADE")
      */
     private $editorial;

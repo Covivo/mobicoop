@@ -150,6 +150,7 @@ api_platform:
         - '%kernel.project_dir%/src/RelayPoint/Resource'
         - '%kernel.project_dir%/src/Stats/Admin/Resource'
         - '%kernel.project_dir%/src/Scammer/Entity'
+        - '%kernel.project_dir%/src/Validator/Phone/Resource'
 
         
     formats:
