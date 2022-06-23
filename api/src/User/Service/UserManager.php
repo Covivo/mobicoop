@@ -1799,6 +1799,8 @@ break;
 
         $profileSummary->setAge($user->getBirthDate() ? $user->getBirthDate()->diff(new \DateTime())->y : null);
 
+        $profileSummary->setVerifiedIdentity($user->hasVerifiedIdentity());
+
         $profileSummary->setPhoneDisplay($user->getPhoneDisplay());
         if (User::PHONE_DISPLAY_ALL == $user->getPhoneDisplay()) {
             $profileSummary->setTelephone($user->getTelephone());
