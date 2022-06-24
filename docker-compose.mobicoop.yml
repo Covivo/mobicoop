@@ -2,23 +2,22 @@ version: "3.8"
 
 services:
   client_php:
-    build:
-      context: client
-      target: mobicoop_platform_client_php
-    container_name: ${CLIENT_PHP_CONTAINER_NAME}
+    image: registry.gitlab.com/mobicoop/instances/mobicoop-platform/mobicoop-platform-client-php
+    container_name: mobicoop_platform_evolution_client_php
     environment:
       APP_ENV: dev
     ports:
-      - target: ${CLIENT_PHP_PORT_TARGET:-9001}
-        published: ${CLIENT_PHP_PORT_PUBLISHED:-9101}
+      - target: 9001
+        published: 9101
         protocol: tcp
       - target: 8079
         published: 8079
     volumes:
       - php_socket_client:/var/run/php
-      - ./client:/srv/client:rw
-      - ./client/var:/srv/client/var:rw
-      - ./client/docker/client/conf.d/mobicoop-platform-client.dev.ini:/usr/local/etc/php/conf.d/mobicoop-platform.ini
+      - ./mobicoop/client/env.dev.local:/srv/client/.env.dev.local
+      - ./mobicoop/client/public:/srv/client/public
+      - ./mobicoop/client/var:/srv/client/var
+      - ./mobicoop/client/mobicoop-platform-client.dev.ini:/usr/local/etc/php/conf.d/mobicoop-platform.ini
     networks:
       - mobicoop_platform
     healthcheck:
@@ -31,18 +30,16 @@ services:
       - api_php
 
   client_nginx:
-    build:
-      context: client
-      target: mobicoop_platform_client_nginx
-    container_name: ${CLIENT_NGINX_CONTAINER_NAME}
+    image: registry.gitlab.com/mobicoop/instances/mobicoop-platform/mobicoop-platform-client-nginx
+    container_name: mobicoop_platform_evolution_client_nginx
     ports:
-      - target: ${CLIENT_NGINX_PORT_TARGET:-80}
-        published: ${CLIENT_NGINX_PORT_PUBLISHED:-8081}
+      - target: 80
+        published: 8081
         protocol: tcp
     volumes:
       - php_socket_client:/var/run/php
-      - ./client/public:/srv/client/public:ro
-      - ./client/nginx/logs:/var/log/nginx:rw
+      - ./mobicoop/client/public:/srv/client/public:ro
+      - ./mobicoop/client/nginx:/var/log/nginx:rw
     networks:
       - mobicoop_platform
     restart: unless-stopped
@@ -51,18 +48,19 @@ services:
 
   api_php:
     image: registry.gitlab.com/mobicoop/instances/mobicoop-platform/mobicoop-platform-api-php
-    container_name: ${API_PHP_CONTAINER_NAME}
+    container_name: mobicoop_platform_evolution_api_php
     environment:
       APP_ENV: dev
     ports:
-      - target: ${API_PHP_PORT_TARGET:-9000}
-        published: ${API_PHP_PORT_PUBLISHED:-9100}
+      - target: 9000
+        published: 9100
         protocol: tcp
     volumes:
       - php_socket_api:/var/run/php
-      - ./api/config/:/srv/api/config/
-      - ./api/evolution/var:/srv/api/var:rw
-      - ./api/docker/api/conf.d/mobicoop-platform-api.dev.ini:/usr/local/etc/php/conf.d/mobicoop-platform.ini
+      - ./mobicoop/api/env.dev.local:/srv/api/.env.dev.local
+      - ./mobicoop/api/public:/srv/api/public
+      - ./mobicoop/api/var:/srv/api/var
+      - ./mobicoop/api/mobicoop-platform-api.dev.ini:/usr/local/etc/php/conf.d/mobicoop-platform.ini
     networks:
       - mobicoop_platform
     healthcheck:
@@ -75,15 +73,16 @@ services:
       - db
 
   api_nginx:
-    image: registry.gitlab.com/mobicoop/instances/mobicoop-platform/mobicoop_platform_api_nginx
-    container_name: ${API_NGINX_CONTAINER_NAME}
+    image: registry.gitlab.com/mobicoop/instances/mobicoop-platform/mobicoop-platform-api-nginx
+    container_name: mobicoop_platform_evolution_api_nginx
     ports:
-      - target: ${API_NGINX_PORT_TARGET:-80}
-        published: ${API_NGINX_PORT_PUBLISHED:-8080}
+      - target: 80
+        published: 8080
         protocol: tcp
     volumes:
       - php_socket_api:/var/run/php
-      - ./api/evolution/nginx:/var/log/nginx
+      - ./mobicoop/api/public:/srv/api/public
+      - ./mobicoop/api/nginx:/var/log/nginx
     networks:
       - mobicoop_platform
     restart: unless-stopped
