@@ -48,10 +48,10 @@ class AnalyticManager
         $this->dashboards = $params['dashboards'];
         $this->authManager = $authManager;
 
-        $request = $this->request = $requestStack->getCurrentRequest();
+        $request = $requestStack->getCurrentRequest();
         $this->paramId = $request->get('id');
         $this->darkTheme = false;
-        if ('' !== $request->get('darkTheme') && true == $request->get('darkTheme')) {
+        if ('' !== $request->query->get('darkTheme') && true == (bool) $request->query->get('darkTheme')) {
             $this->darkTheme = true;
         }
     }
