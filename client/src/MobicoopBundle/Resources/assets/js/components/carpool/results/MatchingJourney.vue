@@ -439,7 +439,7 @@
 
           <v-stepper-content step="4">
             <PublicProfile
-              :user="result.carpooler"
+              :user-id="result.carpooler.id"
               :refresh="refreshPublicProfile"
               :age-display="ageDisplay"
               :carpool-settings-display="carpoolSettingsDisplay"
@@ -603,7 +603,7 @@
           <v-btn
             color="green darken-1"
             text
-            @click="carpoolDialog = false"
+            @click="closeConfirmationDialog"
           >
             {{ $t('cancel') }}
           </v-btn>
@@ -753,7 +753,7 @@ export default {
       type: Boolean,
       default: false
     },
-    carpoolSettingsDisplay: { 
+    carpoolSettingsDisplay: {
       type: Boolean,
       default: true
     }
@@ -930,6 +930,13 @@ export default {
     this.$emit('resetStepMatchingJourney');
   },
   methods: {
+    closeConfirmationDialog() {
+      this.carpoolDialog = false;
+
+      if (this.carpoolRoleSelected) {
+        this.carpoolRoleSelected = null;
+      }
+    },
     computeMaxDate() {
       if (this.range == 0) {
         this.maxDate = moment(this.fromDate).add(1, 'W').toISOString();

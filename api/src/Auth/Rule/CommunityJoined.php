@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Auth\Rule;
 
@@ -28,7 +28,7 @@ use App\Auth\Interfaces\AuthRuleInterface;
 use App\Community\Entity\Community;
 
 /**
- *  Check that the requester has joined the related Community
+ *  Check that the requester has joined the related Community.
  */
 class CommunityJoined implements AuthRuleInterface
 {
@@ -40,7 +40,7 @@ class CommunityJoined implements AuthRuleInterface
         if (!isset($params['community'])) {
             return false;
         }
-        
+
         if (!($params['community'] instanceof Community)) {
             return false;
         }
@@ -49,14 +49,19 @@ class CommunityJoined implements AuthRuleInterface
          * @var Community $community
          */
         $community = $params['community'];
+
+        if (!is_null($community->getUserDelegate()) && ($community->getUserDelegate()->getId() == $requester->getId())) {
+            return true;
+        }
+
         // We check if this is a secured Community
         // If so, we check if the requester is a member of this community
-        if (count($community->getCommunitySecurities())>0) {
+        if (count($community->getCommunitySecurities()) > 0) {
             // An app can't see a secured community
             if ($requester instanceof App) {
                 return false;
             }
-            
+
             $communityUsers = $community->getCommunityUsers();
             foreach ($communityUsers as $communityUser) {
                 if ($communityUser->getUser()->getId() == $requester->getId()) {

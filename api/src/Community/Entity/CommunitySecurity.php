@@ -19,12 +19,12 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Community\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 
@@ -72,7 +72,7 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
 class CommunitySecurity
 {
     /**
-     * @var int The id of this community security.
+     * @var int the id of this community security
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -80,9 +80,9 @@ class CommunitySecurity
      * @Groups("read")
      */
     private $id;
-        
+
     /**
-     * @var Community The community.
+     * @var Community the community
      *
      * @ORM\ManyToOne(targetEntity="\App\Community\Entity\Community", inversedBy="communitySecurities")
      * @ORM\JoinColumn(nullable=false)
@@ -92,7 +92,7 @@ class CommunitySecurity
     private $community;
 
     /**
-     * @var string The filename of the community security.
+     * @var string the filename of the community security
      *
      * @ORM\Column(type="string", length=255)
      * @Groups({"read","write"})
@@ -112,7 +112,7 @@ class CommunitySecurity
     public function setCommunity(?Community $community): self
     {
         $this->community = $community;
-        
+
         return $this;
     }
 
@@ -120,7 +120,7 @@ class CommunitySecurity
     {
         return $this->filename;
     }
-    
+
     public function setFilename(string $filename)
     {
         $this->filename = $filename;
