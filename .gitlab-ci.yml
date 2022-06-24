@@ -21,7 +21,7 @@ build-api-php-evolution:
     - mkdir -p ${HOME}/.ssh
     - mv id_rsa ${HOME}/.ssh
     - echo "${SSH_TEST_HOST_KEY}" > "${HOME}/.ssh/known_hosts"
-    - scp -o StrictHostKeyChecking=no ${SSH_TEST_USER}@${SSH_TEST_IP}:"${EVOLUTION_CI_INSTANCE_PATH}/${EVOLUTION_CI_INSTANCE_PATH_API}/.env.dev.local" ./api/
+    - scp -o StrictHostKeyChecking=no -P ${SSH_PORT} ${SSH_TEST_USER}@${SSH_TEST_IP}:"${EVOLUTION_CI_INSTANCE_PATH}/${EVOLUTION_CI_INSTANCE_PATH_API}/.env.dev.local" ./api/
     - docker build --pull --target mobicoop_platform_api_php -t "$EVOLUTION_CI_REGISTRY$EVOLUTION_CI_REGISTRY_PROJECT$EVOLUTION_CI_REGISTRY_IMAGE_PHP" ./api/
     - docker push "$EVOLUTION_CI_REGISTRY$EVOLUTION_CI_REGISTRY_PROJECT$EVOLUTION_CI_REGISTRY_IMAGE_PHP"
   only:
