@@ -57,4 +57,13 @@ class PaymentProfileRepository
     {
         return $this->repository->findOneBy($criteria);
     }
+
+    public function findAllIdentifiers(): ?array
+    {
+        $query = $this->repository->createQueryBuilder('pp')
+            ->select('pp.id', 'pp.identifier', 'pp.validationId')
+        ;
+
+        return $query->getQuery()->getResult();
+    }
 }

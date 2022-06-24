@@ -12,8 +12,8 @@
       :icon-anchor="point.icon.anchor"
       :icon-url="point.icon.url"
     />
-      
-  
+
+
     <l-tooltip
       v-if="point.title!==''"
     >
@@ -21,7 +21,7 @@
         class="font-weight-bold"
         v-html="point.title"
       />
-  
+
       <MMapRelayPointDescription
         v-if="relayPoints && point.misc"
         :data="point.misc"
@@ -43,6 +43,12 @@
       <p v-if="point.popup.date_begin && point.popup.date_end">
         {{ point.popup.date_begin }}<br> {{ point.popup.date_end }}
       </p>
+      <p v-if="point.popup.linktoevent">
+        >
+        <a
+          :href="point.popup.linktoevent"
+        >{{ $t('seeEvent') }}</a>
+      </p>
     </l-popup>
   </l-marker>
   <l-circle-marker
@@ -54,8 +60,25 @@
   />
 </template>
 <script>
+import { merge } from "lodash";
+import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/event/EventList/";
+import {messages_client_en, messages_client_fr, messages_client_eu, messages_client_nl} from "@clientTranslations/components/event/EventList/";
 import MMapRelayPointDescription from "@components/utilities/MMap/MMapRelayPointDescription"
+
+let MessagesMergedEn = merge(messages_en, messages_client_en);
+let MessagesMergedNl = merge(messages_nl, messages_client_nl);
+let MessagesMergedFr = merge(messages_fr, messages_client_fr);
+let MessagesMergedEu = merge(messages_eu, messages_client_eu);
+
 export default {
+  i18n: {
+    messages: {
+      'en': MessagesMergedEn,
+      'nl': MessagesMergedNl,
+      'fr': MessagesMergedFr,
+      'eu': MessagesMergedEu
+    }
+  },
   components: {
     MMapRelayPointDescription
   },
@@ -102,8 +125,8 @@ export default {
 .tooltip{
   overflow: hidden;
   max-width: 300px;
-  white-space: nowrap; 
-  text-overflow: ellipsis; 
+  white-space: nowrap;
+  text-overflow: ellipsis;
 
   }
 </style>

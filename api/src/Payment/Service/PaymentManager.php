@@ -74,6 +74,10 @@ class PaymentManager
     public const MIN_YEAR = 1970;
     public const MAX_YEAR = 2999;
 
+    public const KYC_DOCUMENT_VALIDATED = 'VALIDATED';
+    public const KYC_DOCUMENT_REFUSED = 'REFUSED';
+    public const KYC_DOCUMENT_OUTDATED = 'OUT_OF_DATE';
+
     private $entityManager;
     private $carpoolItemRepository;
     private $askRepository;
@@ -1136,6 +1140,91 @@ class PaymentManager
         $this->entityManager->flush();
 
         return $paymentProfile;
+    }
+
+    public function updatePaymentProfile(int $id, $kycDocument)
+    {
+        $paymentProfile = $this->paymentProfileRepository->find($id);
+
+        switch ($kycDocument['Status']) {
+            case self::KYC_DOCUMENT_OUTDATED:
+                $paymentProfile->setValidationStatus(PaymentProfile::VALIDATION_OUTDATED);
+                $paymentProfile->setValidationId($kycDocument['Id']);
+                $paymentProfile->setElectronicallyPayable(false);
+                $paymentProfile->setValidationOutdatedDate(new \Datetime());
+
+                break;
+
+            case self::KYC_DOCUMENT_REFUSED:
+                $paymentProfile->setValidationStatus(PaymentProfile::VALIDATION_REJECTED);
+                $paymentProfile->setValidationId($kycDocument['Id']);
+                $paymentProfile->setElectronicallyPayable(false);
+
+                switch ($kycDocument['RefusedReasonType']) {
+                    case PaymentProfile::OUT_OF_DATE:
+                        $paymentProfile->setRefusalReason(PaymentProfile::OUT_OF_DATE);
+
+                        break;
+
+                    case PaymentProfile::UNDERAGE_PERSON:
+                        $paymentProfile->setRefusalReason(PaymentProfile::UNDERAGE_PERSON);
+
+                        break;
+
+                    case PaymentProfile::DOCUMENT_FALSIFIED:
+                        $paymentProfile->setRefusalReason(PaymentProfile::DOCUMENT_FALSIFIED);
+
+                        break;
+
+                    case PaymentProfile::DOCUMENT_MISSING:
+                        $paymentProfile->setRefusalReason(PaymentProfile::DOCUMENT_MISSING);
+
+                        break;
+
+                    case PaymentProfile::DOCUMENT_HAS_EXPIRED:
+                        $paymentProfile->setRefusalReason(PaymentProfile::DOCUMENT_HAS_EXPIRED);
+
+                        break;
+
+                    case PaymentProfile::DOCUMENT_NOT_ACCEPTED:
+                        $paymentProfile->setRefusalReason(PaymentProfile::DOCUMENT_NOT_ACCEPTED);
+
+                        break;
+
+                    case PaymentProfile::DOCUMENT_DO_NOT_MATCH_USER_DATA:
+                        $paymentProfile->setRefusalReason(PaymentProfile::DOCUMENT_DO_NOT_MATCH_USER_DATA);
+
+                        break;
+
+                    case PaymentProfile::DOCUMENT_UNREADABLE:
+                        $paymentProfile->setRefusalReason(PaymentProfile::DOCUMENT_UNREADABLE);
+
+                        break;
+
+                    case PaymentProfile::DOCUMENT_INCOMPLETE:
+                        $paymentProfile->setRefusalReason(PaymentProfile::DOCUMENT_INCOMPLETE);
+
+                        break;
+
+                    case PaymentProfile::SPECIFIC_CASE:
+                        $paymentProfile->setRefusalReason(PaymentProfile::SPECIFIC_CASE);
+
+                        break;
+                    }
+
+                break;
+
+            case self::KYC_DOCUMENT_VALIDATED:
+                $paymentProfile->setValidationStatus(PaymentProfile::VALIDATION_VALIDATED);
+                $paymentProfile->setValidationId($kycDocument['Id']);
+                $paymentProfile->setElectronicallyPayable(true);
+                $paymentProfile->setValidatedDate(new \Datetime());
+                $paymentProfile->setRefusalReason(null);
+
+                break;
+        }
+        $this->entityManager->persist($paymentProfile);
+        $this->entityManager->flush();
     }
 
     /**

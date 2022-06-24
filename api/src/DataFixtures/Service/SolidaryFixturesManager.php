@@ -231,6 +231,7 @@ class SolidaryFixturesManager
             $structureProof->setAcceptedValues($tab[9]);
             $structureProof->setFile($tab[10]);
             $structureProof->setMandatory($tab[11]);
+            $structureProof->setActivated($tab[12]);
             $this->entityManager->persist($structureProof);
             $this->entityManager->flush();
         } else {

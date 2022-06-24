@@ -49,6 +49,11 @@ class CommunityJoined implements AuthRuleInterface
          * @var Community $community
          */
         $community = $params['community'];
+
+        if (!is_null($community->getUserDelegate()) && ($community->getUserDelegate()->getId() == $requester->getId())) {
+            return true;
+        }
+
         // We check if this is a secured Community
         // If so, we check if the requester is a member of this community
         if (count($community->getCommunitySecurities()) > 0) {

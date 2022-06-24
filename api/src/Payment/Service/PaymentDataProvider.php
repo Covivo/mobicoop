@@ -231,6 +231,16 @@ class PaymentDataProvider
     }
 
     /**
+     * Get a User on the payment provider platform.
+     */
+    public function getUser(int $identifier)
+    {
+        $this->checkPaymentConfiguration();
+
+        return $this->providerInstance->getUser($identifier);
+    }
+
+    /**
      * Create a wallet for a user.
      *
      * @param $identifier Identifier of the User (the one used on the provider's platform)
@@ -308,5 +318,12 @@ class PaymentDataProvider
         $this->checkPaymentConfiguration();
 
         return $this->providerInstance->getDocument($validationDocumentId);
+    }
+
+    public function getKycDocument(int $kycDocumentId)
+    {
+        $this->checkPaymentConfiguration();
+
+        return $this->providerInstance->getKycDocument($kycDocumentId);
     }
 }

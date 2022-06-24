@@ -421,6 +421,25 @@ class MangoPayProvider implements PaymentProviderInterface
     }
 
     /**
+     * Get a User to the provider.
+     */
+    public function getUser(int $identifier)
+    {
+        $dataProvider = new DataProvider($this->serverUrl.'users/'.$identifier);
+        $headers = [
+            'Authorization' => $this->authChain,
+        ];
+
+        $response = $dataProvider->getCollection(null, $headers);
+
+        if (200 == $response->getCode()) {
+            $data = json_decode($response->getValue(), true);
+        }
+
+        return $data;
+    }
+
+    /**
      * Get the secured form's url for electronic payment.
      *
      * @return CarpoolPayment With redirectUrl filled
@@ -757,8 +776,10 @@ class MangoPayProvider implements PaymentProviderInterface
         $headers = [
             'Authorization' => $this->authChain,
         ];
+
         $validationDocument = new ValidationDocument();
         $response = $dataProvider->getCollection(null, $headers);
+
         if (200 == $response->getCode()) {
             $data = json_decode($response->getValue(), true);
 
@@ -818,5 +839,25 @@ class MangoPayProvider implements PaymentProviderInterface
         }
 
         return $validationDocument;
+    }
+
+    public function getKycDocument(int $kycDocumentId)
+    {
+        $dataProvider = new DataProvider($this->serverUrl.'kyc/documents/'.$kycDocumentId.'/');
+        $headers = [
+            'Authorization' => $this->authChain,
+        ];
+
+        $response = $dataProvider->getCollection(null, $headers);
+
+        if (200 == $response->getCode()) {
+            $data = json_decode($response->getValue(), true);
+
+            if (isset($data['Status']) && !is_null($data['Status'])) {
+                return $data;
+            }
+        } else {
+            throw new PaymentException(PaymentException::ERROR_DOC);
+        }
     }
 }

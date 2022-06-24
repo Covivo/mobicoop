@@ -4,7 +4,11 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
+<<<<<<< HEAD
     "content-hash": "1cda04f02ea884c29d72a6eb93724989",
+=======
+    "content-hash": "dbba904daf7ff202b9de9d3856ce542d",
+>>>>>>> dev
     "packages": [
         {
             "name": "api-platform/core",
@@ -2309,6 +2313,124 @@
             "time": "2022-04-11T14:46:00+00:00"
         },
         {
+            "name": "giggsey/libphonenumber-for-php",
+            "version": "8.12.50",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/giggsey/libphonenumber-for-php.git",
+                "reference": "526c4b7f6d5e173770d8645e76340d7eb25dc348"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/giggsey/libphonenumber-for-php/zipball/526c4b7f6d5e173770d8645e76340d7eb25dc348",
+                "reference": "526c4b7f6d5e173770d8645e76340d7eb25dc348",
+                "shasum": ""
+            },
+            "require": {
+                "giggsey/locale": "^1.7|^2.0",
+                "php": ">=5.3.2",
+                "symfony/polyfill-mbstring": "^1.17"
+            },
+            "require-dev": {
+                "pear/pear-core-minimal": "^1.9",
+                "pear/pear_exception": "^1.0",
+                "pear/versioncontrol_git": "^0.5",
+                "phing/phing": "^2.7",
+                "php-coveralls/php-coveralls": "^1.0|^2.0",
+                "symfony/console": "^2.8|^3.0|^v4.4|^v5.2",
+                "symfony/phpunit-bridge": "^4.2 || ^5"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "8.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "libphonenumber\\": "src/"
+                },
+                "exclude-from-classmap": [
+                    "/src/data/",
+                    "/src/carrier/data/",
+                    "/src/geocoding/data/",
+                    "/src/timezone/data/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Joshua Gigg",
+                    "email": "giggsey@gmail.com",
+                    "homepage": "https://giggsey.com/"
+                }
+            ],
+            "description": "PHP Port of Google's libphonenumber",
+            "homepage": "https://github.com/giggsey/libphonenumber-for-php",
+            "keywords": [
+                "geocoding",
+                "geolocation",
+                "libphonenumber",
+                "mobile",
+                "phonenumber",
+                "validation"
+            ],
+            "time": "2022-06-09T14:55:00+00:00"
+        },
+        {
+            "name": "giggsey/locale",
+            "version": "2.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/giggsey/Locale.git",
+                "reference": "9c1dca769253f6a3e81f9a5c167f53b6a54ab635"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/giggsey/Locale/zipball/9c1dca769253f6a3e81f9a5c167f53b6a54ab635",
+                "reference": "9c1dca769253f6a3e81f9a5c167f53b6a54ab635",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.2"
+            },
+            "require-dev": {
+                "ext-json": "*",
+                "pear/pear-core-minimal": "^1.9",
+                "pear/pear_exception": "^1.0",
+                "pear/versioncontrol_git": "^0.5",
+                "phing/phing": "^2.7",
+                "php-coveralls/php-coveralls": "^2.0",
+                "phpunit/phpunit": "^8.5|^9.5",
+                "symfony/console": "^5.0",
+                "symfony/filesystem": "^5.0",
+                "symfony/finder": "^5.0",
+                "symfony/process": "^5.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Giggsey\\Locale\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Joshua Gigg",
+                    "email": "giggsey@gmail.com",
+                    "homepage": "https://giggsey.com/"
+                }
+            ],
+            "description": "Locale functions required by libphonenumber-for-php",
+            "time": "2022-04-06T07:33:59+00:00"
+        },
+        {
             "name": "guzzlehttp/guzzle",
             "version": "7.4.3",
             "source": {
@@ -3704,9 +3826,241 @@
                 "cors",
                 "crossdomain"
             ],
+<<<<<<< HEAD
             "support": {
                 "issues": "https://github.com/nelmio/NelmioCorsBundle/issues",
                 "source": "https://github.com/nelmio/NelmioCorsBundle/tree/2.2.0"
+=======
+            "time": "2019-11-15T08:54:08+00:00"
+        },
+        {
+            "name": "ocramius/package-versions",
+            "version": "1.4.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Ocramius/PackageVersions.git",
+                "reference": "44af6f3a2e2e04f2af46bcb302ad9600cba41c7d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Ocramius/PackageVersions/zipball/44af6f3a2e2e04f2af46bcb302ad9600cba41c7d",
+                "reference": "44af6f3a2e2e04f2af46bcb302ad9600cba41c7d",
+                "shasum": ""
+            },
+            "require": {
+                "composer-plugin-api": "^1.0.0",
+                "php": "^7.1.0"
+            },
+            "require-dev": {
+                "composer/composer": "^1.6.3",
+                "doctrine/coding-standard": "^5.0.1",
+                "ext-zip": "*",
+                "infection/infection": "^0.7.1",
+                "phpunit/phpunit": "^7.5.17"
+            },
+            "type": "composer-plugin",
+            "extra": {
+                "class": "PackageVersions\\Installer",
+                "branch-alias": {
+                    "dev-master": "2.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "PackageVersions\\": "src/PackageVersions"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Marco Pivetta",
+                    "email": "ocramius@gmail.com"
+                }
+            ],
+            "description": "Composer plugin that provides efficient querying for installed package versions (no runtime IO)",
+            "time": "2019-11-15T16:17:10+00:00"
+        },
+        {
+            "name": "ocramius/proxy-manager",
+            "version": "2.2.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Ocramius/ProxyManager.git",
+                "reference": "4d154742e31c35137d5374c998e8f86b54db2e2f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Ocramius/ProxyManager/zipball/4d154742e31c35137d5374c998e8f86b54db2e2f",
+                "reference": "4d154742e31c35137d5374c998e8f86b54db2e2f",
+                "shasum": ""
+            },
+            "require": {
+                "ocramius/package-versions": "^1.1.3",
+                "php": "^7.2.0",
+                "zendframework/zend-code": "^3.3.0"
+            },
+            "require-dev": {
+                "couscous/couscous": "^1.6.1",
+                "ext-phar": "*",
+                "humbug/humbug": "1.0.0-RC.0@RC",
+                "nikic/php-parser": "^3.1.1",
+                "padraic/phpunit-accelerator": "dev-master@DEV",
+                "phpbench/phpbench": "^0.12.2",
+                "phpstan/phpstan": "dev-master#856eb10a81c1d27c701a83f167dc870fd8f4236a as 0.9.999",
+                "phpstan/phpstan-phpunit": "dev-master#5629c0a1f4a9c417cb1077cf6693ad9753895761",
+                "phpunit/phpunit": "^6.4.3",
+                "squizlabs/php_codesniffer": "^2.9.1"
+            },
+            "suggest": {
+                "ocramius/generated-hydrator": "To have very fast object to array to object conversion for ghost objects",
+                "zendframework/zend-json": "To have the JsonRpc adapter (Remote Object feature)",
+                "zendframework/zend-soap": "To have the Soap adapter (Remote Object feature)",
+                "zendframework/zend-xmlrpc": "To have the XmlRpc adapter (Remote Object feature)"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-0": {
+                    "ProxyManager\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Marco Pivetta",
+                    "email": "ocramius@gmail.com",
+                    "homepage": "http://ocramius.github.io/"
+                }
+            ],
+            "description": "A library providing utilities to generate, instantiate and generally operate with Object Proxies",
+            "homepage": "https://github.com/Ocramius/ProxyManager",
+            "keywords": [
+                "aop",
+                "lazy loading",
+                "proxy",
+                "proxy pattern",
+                "service proxies"
+            ],
+            "time": "2019-08-10T08:37:15+00:00"
+        },
+        {
+            "name": "odolbeau/phone-number-bundle",
+            "version": "v3.4.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/odolbeau/phone-number-bundle.git",
+                "reference": "263642f0543dcd762ac058cf6590f09776a5558a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/odolbeau/phone-number-bundle/zipball/263642f0543dcd762ac058cf6590f09776a5558a",
+                "reference": "263642f0543dcd762ac058cf6590f09776a5558a",
+                "shasum": ""
+            },
+            "require": {
+                "giggsey/libphonenumber-for-php": "^8.0",
+                "php": ">7.2.5",
+                "symfony/framework-bundle": "^3.4|^4.3|^5.0",
+                "symfony/intl": "^3.4|^4.3|^5.0"
+            },
+            "replace": {
+                "misd/phone-number-bundle": "self.version"
+            },
+            "require-dev": {
+                "doctrine/doctrine-bundle": "^1.12|^2.0",
+                "phpunit/phpunit": "^8.4",
+                "symfony/form": "^3.4|^4.3|^5.0",
+                "symfony/property-access": "^3.4|^4.3|^5.0",
+                "symfony/serializer": "^3.4|^4.3|^5.0",
+                "symfony/twig-bundle": "^3.4|^4.3|^5.0",
+                "symfony/validator": "^3.4|^4.3|^5.0"
+            },
+            "suggest": {
+                "doctrine/doctrine-bundle": "Add a DBAL mapping type",
+                "symfony/form": "Add a data transformer",
+                "symfony/property-access": "Choose a path in the validation constraint",
+                "symfony/serializer": "Serialize/deserialize phone numbers using Symfony library",
+                "symfony/twig-bundle": "Format phone numbers in Twig templates",
+                "symfony/validator": "Add a validation constraint"
+            },
+            "type": "symfony-bundle",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.4.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Misd\\PhoneNumberBundle\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Integrates libphonenumber into your Symfony application",
+            "homepage": "https://github.com/odolbeau/phone-number-bundle",
+            "keywords": [
+                "bundle",
+                "libphonenumber",
+                "phone-number",
+                "phonenumber",
+                "telephone number"
+            ],
+            "time": "2021-06-28T15:48:50+00:00"
+        },
+        {
+            "name": "php-http/discovery",
+            "version": "1.8.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-http/discovery.git",
+                "reference": "10d9019f393773345aedc0dc79e7fd678da874ee"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-http/discovery/zipball/10d9019f393773345aedc0dc79e7fd678da874ee",
+                "reference": "10d9019f393773345aedc0dc79e7fd678da874ee",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.1"
+            },
+            "conflict": {
+                "nyholm/psr7": "<1.0"
+            },
+            "require-dev": {
+                "akeneo/phpspec-skip-example-extension": "^4.0",
+                "php-http/httplug": "^1.0 || ^2.0",
+                "php-http/message-factory": "^1.0",
+                "phpspec/phpspec": "^5.1",
+                "puli/composer-plugin": "1.0.0-beta10"
+            },
+            "suggest": {
+                "php-http/message": "Allow to use Guzzle, Diactoros or Slim Framework factories",
+                "puli/composer-plugin": "Sets up Puli which is recommended for Discovery to work. Check http://docs.php-http.org/en/latest/discovery.html for more details."
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.7-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Http\\Discovery\\": "src/"
+                }
+>>>>>>> dev
             },
             "time": "2021-12-01T09:34:27+00:00"
         },
@@ -4823,11 +5177,16 @@
                 "point in time",
                 "psr20"
             ],
+<<<<<<< HEAD
             "support": {
                 "issues": "https://gitlab.com/stella-maris/clock/-/issues",
                 "source": "https://gitlab.com/stella-maris/clock/-/tree/0.1.4"
             },
             "time": "2022-04-17T14:12:26+00:00"
+=======
+            "abandoned": "symfony/mailer",
+            "time": "2019-11-12T09:31:26+00:00"
+>>>>>>> dev
         },
         {
             "name": "symfony/asset",
@@ -5315,6 +5674,7 @@
             ],
             "description": "Allows you to standardize and centralize the way objects are constructed in your application",
             "homepage": "https://symfony.com",
+<<<<<<< HEAD
             "support": {
                 "source": "https://github.com/symfony/dependency-injection/tree/v6.0.9"
             },
@@ -5333,6 +5693,10 @@
                 }
             ],
             "time": "2022-05-27T06:40:13+00:00"
+=======
+            "abandoned": "symfony/error-handler",
+            "time": "2020-05-24T08:33:35+00:00"
+>>>>>>> dev
         },
         {
             "name": "symfony/deprecation-contracts",
@@ -6008,6 +6372,7 @@
         },
         {
             "name": "symfony/flex",
+<<<<<<< HEAD
             "version": "v1.18.7",
             "source": {
                 "type": "git",
@@ -6018,6 +6383,18 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/symfony/flex/zipball/e74319d17ed4edc5f27b9d24757e172930a7ebc4",
                 "reference": "e74319d17ed4edc5f27b9d24757e172930a7ebc4",
+=======
+            "version": "v1.19.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/flex.git",
+                "reference": "d1a692369be53445af6e391170b509d7f5d026cf"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/flex/zipball/d1a692369be53445af6e391170b509d7f5d026cf",
+                "reference": "d1a692369be53445af6e391170b509d7f5d026cf",
+>>>>>>> dev
                 "shasum": ""
             },
             "require": {
@@ -6051,9 +6428,27 @@
                 }
             ],
             "description": "Composer plugin for Symfony",
+<<<<<<< HEAD
             "support": {
                 "issues": "https://github.com/symfony/flex/issues",
                 "source": "https://github.com/symfony/flex/tree/v1.18.7"
+=======
+            "time": "2022-06-14T21:13:39+00:00"
+        },
+        {
+            "name": "symfony/form",
+            "version": "v4.4.10",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/form.git",
+                "reference": "d3d8ebb8525418161b862738c4cefe518e431ff3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/form/zipball/d3d8ebb8525418161b862738c4cefe518e431ff3",
+                "reference": "d3d8ebb8525418161b862738c4cefe518e431ff3",
+                "shasum": ""
+>>>>>>> dev
             },
             "funding": [
                 {
@@ -6478,7 +6873,12 @@
                     "type": "tidelift"
                 }
             ],
+<<<<<<< HEAD
             "time": "2022-04-12T16:11:42+00:00"
+=======
+            "abandoned": "EnglishInflector from the String component",
+            "time": "2020-05-20T08:37:50+00:00"
+>>>>>>> dev
         },
         {
             "name": "symfony/mailer",
@@ -8416,7 +8816,14 @@
                     "type": "tidelift"
                 }
             ],
+<<<<<<< HEAD
             "time": "2022-02-21T17:15:17+00:00"
+=======
+            "description": "Symfony SwiftmailerBundle",
+            "homepage": "http://symfony.com",
+            "abandoned": "symfony/mailer",
+            "time": "2019-11-14T16:18:31+00:00"
+>>>>>>> dev
         },
         {
             "name": "symfony/string",

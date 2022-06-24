@@ -1,6 +1,7 @@
 <?php
+
 /**
- * Copyright (c) 2021, MOBICOOP. All rights reserved.
+ * Copyright (c) 2022, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -20,36 +21,42 @@
  *    LICENSE
  */
 
-namespace App\User\DataPersister;
+namespace App\Geography\Entity;
 
-use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
-use App\User\Ressource\PhoneValidation;
-use App\User\Service\UserManager;
-
-/**
- * @author Maxime Bardot <maxime.bardot@mobicoop.org>
- */
-final class PhoneValidationDataPersister implements ContextAwareDataPersisterInterface
+// A Rezopouce Territory
+class RezoPouceTerritory
 {
-    private $userManager;
+    /**
+     * @var string the territory slug name
+     */
+    private $slug;
 
-    public function __construct(UserManager $userManager)
+    /**
+     * @var RezoPouceTerritoryStatus the territory status
+     */
+    private $status;
+
+    public function getSlug(): ?string
     {
-        $this->userManager = $userManager;
+        return $this->slug;
     }
 
-    public function supports($data, array $context = []): bool
+    public function setSlug(?string $slug): self
     {
-        return $data instanceof PhoneValidation && isset($context['collection_operation_name']) && 'post' == $context['collection_operation_name'];
+        $this->slug = $slug;
+
+        return $this;
     }
 
-    public function persist($data, array $context = [])
+    public function getStatus(): ?RezoPouceTerritoryStatus
     {
-        return $this->userManager->isPhoneValid($data);
+        return $this->status;
     }
 
-    public function remove($data, array $context = [])
+    public function setStatus(?RezoPouceTerritoryStatus $status): self
     {
-        // call your persistence layer to delete $data
+        $this->status = $status;
+
+        return $this;
     }
 }

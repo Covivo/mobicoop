@@ -314,6 +314,18 @@ use Symfony\Component\Validator\Constraints as Assert;
  *                  "tags"={"Administration"}
  *              }
  *          },
+ *          "ADMIN_get_by_email"={
+ *              "path"="/admin/users/email",
+ *              "method"="GET",
+ *              "normalization_context"={
+ *                  "groups"={"aRead"},
+ *                  "skip_null_values"=false
+ *              },
+ *              "security"="is_granted('admin_user_list',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
+ *          },
  *          "ADMIN_post"={
  *              "path"="/admin/users",
  *              "method"="POST",
@@ -523,6 +535,18 @@ use Symfony\Component\Validator\Constraints as Assert;
  *                  "tags"={"Administration"}
  *              }
  *          },
+ *          "ADMIN_get_rzp_territory_status"={
+ *              "path"="/admin/users/{id}/rzpTerritoryStatus",
+ *              "method"="GET",
+ *              "normalization_context"={
+ *                     "groups"={"aReadRzpTerritoryStatus"},
+ *                     "skip_null_values"=false
+ *              },
+ *              "security"="is_granted('admin_user_read',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
+ *          },
  *          "ADMIN_patch"={
  *              "path"="/admin/users/{id}",
  *              "method"="PATCH",
@@ -630,7 +654,7 @@ class User implements UserInterface, EquatableInterface, PasswordAuthenticatedUs
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"aRead","readUser","readCommunity","communities","readCommunityUser","results","threads", "thread","externalJourney","userStructure", "readSolidary","readPayment","carpoolExport","readReview"})
+     * @Groups({"aRead","aReadRzpTerritoryStatus","readUser","readCommunity","communities","readCommunityUser","results","threads", "thread","externalJourney","userStructure", "readSolidary","readPayment","carpoolExport","readReview"})
      * @ApiProperty(identifier=true)
      */
     private $id;
@@ -1562,7 +1586,7 @@ class User implements UserInterface, EquatableInterface, PasswordAuthenticatedUs
     /**
      * @var null|bool If the User has a verified identity
      *
-     * @Groups({"readUser","results","write", "threads", "thread", "readCommunity", "readCommunityUser", "readEvent", "readPublicProfile","readReview","aRead"})
+     * @Groups({"readUser","results","write", "threads", "thread", "readCommunity", "readCommunityUser", "readEvent", "readPublicProfile","readReview","aRead","aWrite"})
      */
     private $verifiedIdentity;
 
@@ -1579,6 +1603,14 @@ class User implements UserInterface, EquatableInterface, PasswordAuthenticatedUs
      * @Groups({"aRead", "aWrite"})
      */
     private $cardLetter;
+
+    /**
+     * @var null|string If the User's home address is in a rezopouce Territory
+     *                  Checked only for RezoPouce users
+     *
+     * @Groups({"aReadRzpTerritoryStatus"})
+     */
+    private $rzpTerritoryStatus;
 
     public function __construct($status = null)
     {
@@ -3672,7 +3704,18 @@ class User implements UserInterface, EquatableInterface, PasswordAuthenticatedUs
 
     public function hasVerifiedIdentity(): ?bool
     {
+        if (!is_null($this->verifiedIdentity)) {
+            return $this->verifiedIdentity;
+        }
+
         return IdentityProof::STATUS_ACCEPTED == $this->identityStatus;
+    }
+
+    public function setVerifiedIdentity(bool $verifiedIdentity): self
+    {
+        $this->verifiedIdentity = $verifiedIdentity;
+
+        return $this;
     }
 
     public function hasRezoKit(): ?bool
@@ -3695,6 +3738,18 @@ class User implements UserInterface, EquatableInterface, PasswordAuthenticatedUs
     public function setCardLetter(?bool $cardLetter): self
     {
         $this->cardLetter = $cardLetter;
+
+        return $this;
+    }
+
+    public function getRzpTerritoryStatus(): ?string
+    {
+        return $this->rzpTerritoryStatus;
+    }
+
+    public function setRzpTerritoryStatus(?string $rzpTerritoryStatus): self
+    {
+        $this->rzpTerritoryStatus = $rzpTerritoryStatus;
 
         return $this;
     }

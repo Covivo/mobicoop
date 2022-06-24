@@ -27,6 +27,7 @@
         "mandrill/mandrill": "^1.0",
         "nelmio/cors-bundle": "^2.2",
         "ocramius/package-versions": "^1.4",
+        "odolbeau/phone-number-bundle": "^3.4",
         "php-http/guzzle7-adapter": "^1.0",
         "php-http/message": "^1.7",
         "phpdocumentor/reflection-docblock": "^5.3",
