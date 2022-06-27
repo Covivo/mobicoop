@@ -42,8 +42,8 @@ build-client-php-evolution:
   services:
     - docker:20.10.16-dind
   before_script:
-    - apk --update add nodejs npm
-    - cd client && npm install && npm run compile
+    - apk --update add nodejs npm python3 make g++
+    - cd client && npm install && npm run compile && cd ..
     - echo "$EVOLUTION_CI_REGISTRY_PASSWORD" | docker login -u "$EVOLUTION_CI_REGISTRY_USER" --password-stdin $EVOLUTION_CI_REGISTRY
   script:
     - docker build --pull --target mobicoop_platform_client_php -t "$EVOLUTION_CI_REGISTRY$EVOLUTION_CI_REGISTRY_PROJECT$EVOLUTION_CI_REGISTRY_IMAGE_CLIENT_PHP" ./client/
