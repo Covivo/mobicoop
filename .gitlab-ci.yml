@@ -1,4 +1,4 @@
-image: docker:20.10.16
+image: docker:20.10.0
 
 stages:
   - build
@@ -12,7 +12,7 @@ stages:
 build-api-php-evolution:
   stage: build
   services:
-    - docker:20.10.16-dind
+    - docker:20.10.0-dind
   before_script:
     - echo "$EVOLUTION_CI_REGISTRY_PASSWORD" | docker login -u "$EVOLUTION_CI_REGISTRY_USER" --password-stdin $EVOLUTION_CI_REGISTRY
   script:
@@ -26,7 +26,7 @@ build-api-php-evolution:
 build-api-nginx-evolution:
   stage: build
   services:
-    - docker:20.10.16-dind
+    - docker:20.10.0-dind
   before_script:
     - echo "$EVOLUTION_CI_REGISTRY_PASSWORD" | docker login -u "$EVOLUTION_CI_REGISTRY_USER" --password-stdin $EVOLUTION_CI_REGISTRY
   script:
@@ -40,7 +40,7 @@ build-api-nginx-evolution:
 build-client-php-evolution:
   stage: build
   services:
-    - docker:20.10.16-dind
+    - docker:20.10.0-dind
   before_script:
     - apk --update add python2 make g++ nodejs npm
     - cd client && npm install && npm run compile && cd ..
@@ -56,7 +56,7 @@ build-client-php-evolution:
 build-client-nginx-evolution:
   stage: build
   services:
-    - docker:20.10.16-dind
+    - docker:20.10.0-dind
   before_script:
     - echo "$EVOLUTION_CI_REGISTRY_PASSWORD" | docker login -u "$EVOLUTION_CI_REGISTRY_USER" --password-stdin $EVOLUTION_CI_REGISTRY
   script:
