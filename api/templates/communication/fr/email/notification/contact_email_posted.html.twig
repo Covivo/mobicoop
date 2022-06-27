@@ -1,7 +1,6 @@
 {# CAREFUL : Some client might need to replicate this template #}
 {% extends 'communication/fr/email/notification/base.html.twig' %}
 {% block body %}
-    <p>Bonjour<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{context.contact.givenName|capitalize}} {{context.contact.familyName|capitalize}}</b>.</p>
     <p>
         Bonjour vous avez une nouvelle demande de contact.
     </p>
