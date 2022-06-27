@@ -25,22 +25,15 @@
 </template>
 
 <script>
-import { merge } from "lodash";
-import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/profile/ad/Ads/";
-import {messages_en as messages_client_en, messages_fr as messages_client_fr, messages_eu as messages_client_eu, messages_nl as messages_client_nl} from "@translations/components/carpool/search/Search/";
-
-let MessagesMergedEn = merge(messages_en, messages_client_en);
-let MessagesMergedNl = merge(messages_nl, messages_client_nl);
-let MessagesMergedFr = merge(messages_fr, messages_client_fr);
-let MessagesMergedEu = merge(messages_eu, messages_client_eu);
+import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/profile/ad/NoAd/";
 
 export default {
   i18n: {
     messages: {
-      'en': MessagesMergedEn,
-      'nl': MessagesMergedNl,
-      'fr': MessagesMergedFr,
-      'eu': MessagesMergedEu
+      'en': messages_en,
+      'nl': messages_nl,
+      'fr': messages_fr,
+      'eu': messages_eu
     }
   },
   props: {
