@@ -6,6 +6,9 @@ if [ "${1#-}" != "$1" ]; then
 	set -- php-fpm "$@"
 fi
 
+# copy required param files if needed
+cp -u /srv/client/config/params/geocomplete/palette.json.dist /srv/client/config/params/geocomplete/palette.json
+
 if [ "$1" = 'php-fpm' ] || [ "$1" = 'php' ] || [ "$1" = 'bin/console' ]; then
 	PHP_INI_RECOMMENDED="$PHP_INI_DIR/php.ini-production"
 	if [ "$APP_ENV" != 'prod' ]; then

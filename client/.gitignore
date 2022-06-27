@@ -347,7 +347,7 @@ cypress/videos/
 cypress/screenshots
 
 # Geocomplete
-/config/geocomplete/palette.json
+/config/params/geocomplete/palette.json
 
 ###> phpunit/phpunit ###
 /phpunit.xml

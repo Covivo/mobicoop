@@ -7,15 +7,14 @@ services:
     environment:
       APP_ENV: dev
     ports:
-      - target: 9001
+      - target: 9000
         published: 9101
         protocol: tcp
       - target: 8079
         published: 8079
     volumes:
       - php_socket_client:/var/run/php
-      - ./mobicoop/client/env.dev.local:/srv/client/.env.dev.local
-      - ./mobicoop/client/public:/srv/client/public
+      - ./mobicoop/client/.env.dev.local:/srv/client/.env.dev.local
       - ./mobicoop/client/var:/srv/client/var
       - ./mobicoop/client/mobicoop-platform-client.dev.ini:/usr/local/etc/php/conf.d/mobicoop-platform.ini
     networks:
@@ -38,7 +37,6 @@ services:
         protocol: tcp
     volumes:
       - php_socket_client:/var/run/php
-      - ./mobicoop/client/public:/srv/client/public:ro
       - ./mobicoop/client/nginx:/var/log/nginx:rw
     networks:
       - mobicoop_platform
@@ -57,8 +55,8 @@ services:
         protocol: tcp
     volumes:
       - php_socket_api:/var/run/php
-      - ./mobicoop/api/env.dev.local:/srv/api/.env.dev.local
-      - ./mobicoop/api/public:/srv/api/public
+      - ./mobicoop/api/.env.dev.local:/srv/api/.env.dev.local
+      - ./mobicoop/api/upload:/srv/api/public/upload
       - ./mobicoop/api/var:/srv/api/var
       - ./mobicoop/api/mobicoop-platform-api.dev.ini:/usr/local/etc/php/conf.d/mobicoop-platform.ini
     networks:
@@ -81,7 +79,6 @@ services:
         protocol: tcp
     volumes:
       - php_socket_api:/var/run/php
-      - ./mobicoop/api/public:/srv/api/public
       - ./mobicoop/api/nginx:/var/log/nginx
     networks:
       - mobicoop_platform

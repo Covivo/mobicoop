@@ -13,7 +13,6 @@ install:
 	@make -s install-api
 	@make -s install-client
 	@make -s init-api
-	@make -s init-client
 	@make -s start-client
 
 build:
@@ -45,12 +44,6 @@ init-api:
 	$(info $(violet) Init API...)
 	$(info $(violet)------------------------------------------------------$(reset))
 	@docker exec mobicoop_platform_api_php docker/api/init-api.sh
-
-init-client:
-	$(info $(violet)------------------------------------------------------)
-	$(info $(violet) Init Client...)
-	$(info $(violet)------------------------------------------------------$(reset))
-	@docker exec mobicoop_platform_client_php docker/client/init-client.sh
 
 start-client:
 	@docker exec -d mobicoop_platform_client_php /bin/zsh -c "npm run compile-and-watch-vue"
