@@ -115,7 +115,7 @@
                 :user="user"
                 :regular="regular"
                 :hide-publish="true"
-                :punctual-date-optional="true"
+                :punctual-date-optional="punctualDateOptional"
                 :results="true"
                 :default-destination="destination"
                 :default-origin="origin"
@@ -434,10 +434,14 @@ export default {
       type: Boolean,
       default: false
     },
-    carpoolSettingsDisplay: { 
+    carpoolSettingsDisplay: {
       type: Boolean,
       default: true
-    }
+    },
+    punctualDateOptional: {
+      type: Boolean,
+      default: false
+    },
   },
   data : function() {
     return {

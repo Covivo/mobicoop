@@ -11,14 +11,15 @@
     </div> #}
     <div>
         <relay-points
-            geo-search-url="{{ geoCompleteUri }}"
-            :geo-complete-results-order="{{geoCompleteResultsOrder|json_encode}}"
+            :attribution-copyright="{{ attributionCopyright|json_encode }}"
             :geo-complete-palette="{{geoCompletePalette|json_encode}}"
-            {{ geoCompleteChip ? 'geo-complete-chip' : '' }}
-            :user="{{ app.user|json_encode }}"
+            :geo-complete-results-order="{{geoCompleteResultsOrder|json_encode}}"
             :map-provider="{{ mapProvider|json_encode }}"
             :url-tiles="{{ urlTiles|json_encode }}"
-            :attribution-copyright="{{ attributionCopyright|json_encode }}"
+            :user="{{ app.user|json_encode }}"
+            {{ geoCompleteChip ? 'geo-complete-chip' : '' }}
+            {{ searchPunctualDate ? 'punctual-date-optional' : '' }}
+            geo-search-url="{{ geoCompleteUri }}"
         ><relay-points/>
     </div>
 {% endblock %}
