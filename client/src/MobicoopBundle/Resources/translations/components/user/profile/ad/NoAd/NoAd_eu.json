@@ -1,0 +1,10 @@
+{
+  "buttons": {
+    "shareAnAd": {
+        "label": "Iragarki bat argitaratu",
+        "route": "/covoiturage/publierannonce"
+    }
+  },
+  "no-active-ad": "Ez duzu uneko iragarkirik, partekatu zure bidaiak!",
+  "no-archived-ad": "Ez duzu artxibatutako iragarkirik!"
+}

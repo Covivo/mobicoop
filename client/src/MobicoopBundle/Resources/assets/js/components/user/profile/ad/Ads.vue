@@ -1,6 +1,6 @@
 <template>
   <v-container
-    fluid     
+    fluid
   >
     <!-- Alert message -->
     <v-snackbar
@@ -29,17 +29,23 @@
           <v-tab>{{ $t('active') }}</v-tab>
           <v-tab-item>
             <v-container v-if="localAds.active">
-              <v-row
-                v-for="ad in localAds.active"
-                :key="ad.id"
-              >
-                <v-col cols="12">
-                  <Ad
-                    :ad="ad"
-                    @ad-deleted="deleteAd"
-                  />
-                </v-col>
-              </v-row>
+              <div v-if="localAds.active.length">
+                <v-row
+                  v-for="ad in localAds.active"
+                  :key="ad.id"
+                >
+                  <v-col cols="12">
+                    <Ad
+                      :ad="ad"
+                      @ad-deleted="deleteAd"
+                    />
+                  </v-col>
+                </v-row>
+              </div>
+              <no-ad
+                v-else
+                active
+              />
             </v-container>
           </v-tab-item>
 
@@ -47,18 +53,21 @@
           <v-tab>{{ $t('archived') }}</v-tab>
           <v-tab-item>
             <v-container v-if="localAds.archived">
-              <v-row
-                v-for="ad in localAds.archived"
-                :key="ad.id"
-              >
-                <v-col cols="12">
-                  <Ad
-                    :ad="ad"
-                    :is-archived="true"
-                    @ad-deleted="deleteAd"
-                  />
-                </v-col>
-              </v-row>
+              <div v-if="localAds.archived.length">
+                <v-row
+                  v-for="ad in localAds.archived"
+                  :key="ad.id"
+                >
+                  <v-col cols="12">
+                    <Ad
+                      :ad="ad"
+                      :is-archived="true"
+                      @ad-deleted="deleteAd"
+                    />
+                  </v-col>
+                </v-row>
+              </div>
+              <no-ad v-else />
             </v-container>
           </v-tab-item>
         </v-tabs>
@@ -71,6 +80,7 @@
 import { omit } from "lodash";
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/profile/ad/Ads/";
 import Ad from "@components/user/profile/ad/Ad.vue";
+import NoAd from "@components/user/profile/ad/NoAd.vue";
 
 export default {
   i18n: {
@@ -78,11 +88,12 @@ export default {
       'en': messages_en,
       'nl': messages_nl,
       'fr': messages_fr,
-      'eu':messages_eu
+      'eu': messages_eu
     }
   },
   components: {
-    Ad
+    Ad,
+    NoAd
   },
   props: {
     ads: {

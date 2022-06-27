@@ -1,4 +1,6 @@
 {
     "active": "On going proposals",
-    "archived": "Archived proposals"
+    "archived": "Archived proposals",
+    "no-active-ad": "You have no current ads, share your trips!",
+    "no-archived-ad": "You have no archived ads!"
 }
