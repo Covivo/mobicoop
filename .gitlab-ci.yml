@@ -42,7 +42,7 @@ build-client-php-evolution:
   services:
     - docker:20.10.16-dind
   before_script:
-    - apk --update add nodejs npm python3 make g++
+    - apk --update add nodejs npm python make g++
     - cd client && npm install && npm run compile && cd ..
     - echo "$EVOLUTION_CI_REGISTRY_PASSWORD" | docker login -u "$EVOLUTION_CI_REGISTRY_USER" --password-stdin $EVOLUTION_CI_REGISTRY
   script:
