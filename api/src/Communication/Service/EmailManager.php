@@ -78,12 +78,6 @@ class EmailManager
     public function send(Email $mail, $template, $context = [], $lang = 'fr')
     {
         $failures = '';
-        // sender
-        if (is_null($mail->getSenderEmail()) || '' === trim($mail->getSenderEmail())) {
-            $senderEmail = $this->emailSenderDefault;
-        } else {
-            $senderEmail = $mail->getSenderEmail();
-        }
 
         // reply
         if (is_null($mail->getReturnEmail()) || '' === trim($mail->getReturnEmail())) {
@@ -100,12 +94,11 @@ class EmailManager
             $this->translator->setLocale($lang->getCode());
         }
 
-        $senderName = ('' !== $this->emailSenderNameDefault) ? $this->emailSenderNameDefault : $senderEmail;
-        $senderReplyToName = ('' !== $this->emailReplyToNameDefault) ? $this->emailReplyToNameDefault : $replyToEmail;
+        $senderName = ('' !== $this->emailSenderNameDefault) ? $this->emailSenderNameDefault : $this->emailSenderDefault;
         $message = (new \Swift_Message($mail->getObject()))
-            ->setFrom($senderEmail, $senderName)
+            ->setFrom($this->emailSenderDefault, $senderName)
             ->setTo($mail->getRecipientEmail())
-            ->setReplyTo($replyToEmail, $senderReplyToName)
+            ->setReplyTo($replyToEmail)
             ->setBody(
                 $this->templating->render(
                     $template.'.html.twig',

@@ -29,9 +29,14 @@
         >
           <v-col
             cols="11"
-            class="text-center"
+            class="d-flex justify-center align-center"
           >
-            {{ profileSummary.givenName }} {{ profileSummary.shortFamilyName }}
+            <span class="mt-1">{{ profileSummary.givenName }} {{ profileSummary.shortFamilyName }}</span>
+            <span class="ml-2">
+              <verified-identity
+                :verified-identity="verifiedIdentity"
+              />
+            </span>
           </v-col>
           <v-col
             v-if="profileSummary.numberOfBadges > 0 && gamificationActive"
@@ -115,7 +120,9 @@
 import maxios from "@utils/maxios";
 import moment from "moment";
 import ProfileAvatar from "@components/user/profile/ProfileAvatar";
+import VerifiedIdentity from "@components/user/profile/VerifiedIdentity";
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/profile/ProfileSummary/";
+
 export default {
   i18n: {
     messages: {
@@ -126,7 +133,8 @@ export default {
     }
   },
   components:{
-    ProfileAvatar
+    ProfileAvatar,
+    VerifiedIdentity
   },
   props:{
     userId:{
@@ -144,6 +152,10 @@ export default {
     ageDisplay: {
       type: Boolean,
       default: false
+    },
+    verifiedIdentity: {
+      type: Boolean,
+      default: false
     }
   },
   data(){
@@ -159,11 +171,11 @@ export default {
         return moment(this.profileSummary.lastActivityDate.date).format('DD/MM/YYYY');
       }
       return "-";
-      
+
     },
     gamificationActive(){
       return this.$store.getters['g/isActive'];
-    } 
+    }
   },
   watch:{
     refresh(){

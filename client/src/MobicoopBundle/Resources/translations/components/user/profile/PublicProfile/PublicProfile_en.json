@@ -15,5 +15,9 @@
         "noSmoke": "I don't smoke",
         "noSmoleInCar": "Je ne fume pas en voiture",
         "noSmokeInCar": "I do not smoke in the car"
+    },
+    "identity": {
+      "verified": "Verified identity",
+      "unverified": "Unverified identity"
     }
 }
