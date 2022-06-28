@@ -26,6 +26,8 @@ namespace App\DataProvider\Entity;
 use App\DataProvider\Service\DataProvider;
 use App\Geography\Entity\RezoPouceTerritory;
 use App\Geography\Entity\RezoPouceTerritoryStatus;
+use App\User\Entity\User;
+use GuzzleHttp\RequestOptions;
 use LogicException;
 
 /**
@@ -37,6 +39,7 @@ class RezopouceProvider
 {
     private const ROUTE_AUTH = '/auth-tokens';
     private const ROUTE_COMMUNE_IS_MEMBER = '/api/communes/{id}/isMember';
+    private const ROUTE_WELCOME_EMAIL = '/web_services/email/welcome';
 
     private $uri;
     private $login;
@@ -103,6 +106,28 @@ class RezopouceProvider
             }
 
             return $territory;
+        }
+
+        return null;
+    }
+
+    public function sendValidationEmail(User $user)
+    {
+        $token = $this->__getToken();
+
+        $dataProvider = new DataProvider($this->uri, self::ROUTE_WELCOME_EMAIL);
+
+        $response = $dataProvider->postCollection([
+            'latitude' => $user->getHomeAddress()->getLatitude(),
+            'longitude' => $user->getHomeAddress()->getLongitude(),
+            'family_name' => $user->getFamilyName(),
+            'given_name' => $user->getGivenName(),
+        ], $this->__buildHeaders(), [], RequestOptions::JSON);
+
+        if (200 == $response->getCode()) {
+            $data = json_decode($response->getValue(), true);
+
+            return null;
         }
 
         return null;
