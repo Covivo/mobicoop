@@ -25,9 +25,11 @@ namespace App\Match\Service;
 
 use App\Geography\Entity\Address;
 use App\Geography\Interfaces\GeorouterInterface;
+use App\Geography\Service\Geocoder\MobicoopGeocoder;
 use App\Geography\Service\GeoRouter;
-use App\Geography\Service\GeoSearcher;
 use App\Geography\Service\GeoTools;
+use App\Geography\Service\Point\AddressAdapter;
+use App\Geography\Service\Point\MobicoopGeocoderPointProvider;
 use App\Match\Entity\Candidate;
 use App\Match\Entity\Mass;
 use App\Match\Entity\MassData;
@@ -40,10 +42,7 @@ use App\Match\Repository\MassRepository;
 use App\Service\FileManager;
 use App\User\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Exception;
-use Geocoder\Location;
 use Geocoder\Plugin\PluginProvider;
-use Geocoder\Query\GeocodeQuery;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -83,7 +82,7 @@ class MassImportManager
     private $params;
     private $validator;
     private $geoTools;
-    private $geoSearcher;
+    private $pointProvider;
     private $geoRouter;
     private $geoMatcher;
     private $eventDispatcher;
@@ -102,7 +101,7 @@ class MassImportManager
         LoggerInterface $logger,
         ValidatorInterface $validator,
         GeoTools $geoTools,
-        GeoSearcher $geoSearcher,
+        MobicoopGeocoder $mobicoopGeocoder,
         PluginProvider $geocoder,
         GeoRouter $geoRouter,
         GeoMatcher $geoMatcher,
@@ -117,7 +116,7 @@ class MassImportManager
         $this->params = $params;
         $this->validator = $validator;
         $this->geoTools = $geoTools;
-        $this->geoSearcher = $geoSearcher;
+        $this->pointProvider = new MobicoopGeocoderPointProvider($mobicoopGeocoder);
         $this->geoRouter = $geoRouter;
         $this->geoMatcher = $geoMatcher;
         $this->eventDispatcher = $eventDispatcher;
@@ -650,87 +649,12 @@ class MassImportManager
 
     private function geoCode(string $input)
     {
-        try {
-            return $this->createAddressFromLocation($this->geocoder->geocodeQuery(GeocodeQuery::create($input))->first());
-        } catch (Exception $e) {
-            return false;
-        }
-    }
-
-    private function createAddressFromLocation(Location $location): Address
-    {
-        $address = new Address();
-
-        if ($location->getCoordinates() && $location->getCoordinates()->getLatitude()) {
-            $address->setLatitude((string) $location->getCoordinates()->getLatitude());
-        }
-        if ($location->getCoordinates() && $location->getCoordinates()->getLongitude()) {
-            $address->setLongitude((string) $location->getCoordinates()->getLongitude());
-        }
-        $address->setHouseNumber($location->getStreetNumber());
-        $address->setStreet($location->getStreetName());
-        $address->setStreetAddress($location->getStreetName() ? trim(($location->getStreetNumber() ? $location->getStreetNumber() : '').' '.$location->getStreetName()) : null);
-        $address->setSubLocality($location->getSubLocality());
-        $address->setAddressLocality($location->getLocality());
-        foreach ($location->getAdminLevels() as $level) {
-            switch ($level->getLevel()) {
-                case 1:
-                    $address->setLocalAdmin($level->getName());
-
-                    break;
-
-                case 2:
-                    $address->setCounty($level->getName());
-
-                    break;
-
-                case 3:
-                    $address->setMacroCounty($level->getName());
-
-                    break;
-
-                case 4:
-                    $address->setRegion($level->getName());
-
-                    break;
-
-                case 5:
-                    $address->setMacroRegion($level->getName());
-
-                    break;
-            }
-        }
-        $address->setPostalCode($location->getPostalCode());
-        if ($location->getCountry() && $location->getCountry()->getName()) {
-            $address->setAddressCountry($location->getCountry()->getName());
-        }
-        if ($location->getCountry() && $location->getCountry()->getCode()) {
-            $address->setCountryCode($location->getCountry()->getCode());
-        }
-        // add layer if handled by the provider
-        // if (method_exists($location, 'getLayer')) {
-        //     $address->setLayer($this->getLayer($location->getLayer()));
-        // }
-        // add venue if handled by the provider
-        if (method_exists($location, 'getVenue')) {
-            $address->setVenue($location->getVenue());
-        }
-        if ((method_exists($location, 'getEstablishment')) && (null != $location->getEstablishment())) {
-            $address->setVenue($location->getEstablishment());
-        }
-        if ((method_exists($location, 'getPointOfInterest')) && (null != $location->getPointOfInterest())) {
-            $address->setVenue($location->getPointOfInterest());
+        $points = $this->pointProvider->search($input);
+        if (count($points) > 0) {
+            return AddressAdapter::pointToAddress($points[0]);
         }
 
-        $address->setProvidedBy($location->getProvidedBy());
-
-        if (method_exists($location, 'getDistance')) {
-            if (!is_null($location->getDistance())) {
-                $address->setDistance($location->getDistance());
-            }
-        }
-
-        return $address;
+        return false;
     }
 
     /**
