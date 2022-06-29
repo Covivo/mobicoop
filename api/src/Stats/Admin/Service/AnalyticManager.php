@@ -50,10 +50,7 @@ class AnalyticManager
 
         $request = $requestStack->getCurrentRequest();
         $this->paramId = $request->get('id');
-        $this->darkTheme = false;
-        if ('' !== $request->query->get('darkTheme') && true == (bool) $request->query->get('darkTheme')) {
-            $this->darkTheme = true;
-        }
+        $this->darkTheme = $request->query->get('darkTheme', false);
     }
 
     public function getAnalytics(): array
