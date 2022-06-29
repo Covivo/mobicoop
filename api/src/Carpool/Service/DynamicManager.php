@@ -426,7 +426,7 @@ class DynamicManager
             $dynamic->getProposal()->getPosition()->getDirection()->setBboxMinLat($newDirection->getBboxMinLat());
             $dynamic->getProposal()->getPosition()->getDirection()->setBboxMaxLon($newDirection->getBboxMaxLon());
             $dynamic->getProposal()->getPosition()->getDirection()->setBboxMaxLat($newDirection->getBboxMaxLat());
-            //$dynamic->getProposal()->getPosition()->getDirection()->setDetail($newDirection->getDetail());
+            // $dynamic->getProposal()->getPosition()->getDirection()->setDetail($newDirection->getDetail());
             $dynamic->getProposal()->getPosition()->getDirection()->setFormat($newDirection->getFormat());
             $dynamic->getProposal()->getPosition()->getDirection()->setSnapped($newDirection->getSnapped());
             $dynamic->getProposal()->getPosition()->getDirection()->setBearing($newDirection->getBearing());
@@ -718,7 +718,7 @@ class DynamicManager
         $ask->addAskHistory($askHistory);
 
         // message
-        if (!is_null($dynamicAsk->getMessage())) {
+        if (!is_null($dynamicAsk->getMessage()) || '' != $dynamicAsk->getMessage()) {
             $message = new Message();
             $message->setUser($dynamicAsk->getUser());
             $message->setText($dynamicAsk->getMessage());
@@ -791,7 +791,7 @@ class DynamicManager
         $ask->addAskHistory($askHistory);
 
         // message => the driver is the userRelated, the passenger is the user
-        if (!is_null($dynamicAskData->getMessage())) {
+        if (!is_null($dynamicAskData->getMessage()) || '' != $dynamicAskData->getMessage()) {
             $message = new Message();
             $message->setText($dynamicAskData->getMessage());
             // we search the previous message if it exists
@@ -1109,7 +1109,7 @@ class DynamicManager
             $carpoolProof->getDirection()->setBboxMinLat($newDirection->getBboxMinLat());
             $carpoolProof->getDirection()->setBboxMaxLon($newDirection->getBboxMaxLon());
             $carpoolProof->getDirection()->setBboxMaxLat($newDirection->getBboxMaxLat());
-            //$carpoolProof->getDirection()->setDetail($newDirection->getDetail());
+            // $carpoolProof->getDirection()->setDetail($newDirection->getDetail());
             $carpoolProof->getDirection()->setFormat($newDirection->getFormat());
             $carpoolProof->getDirection()->setSnapped($newDirection->getSnapped());
             $carpoolProof->getDirection()->setBearing($newDirection->getBearing());
