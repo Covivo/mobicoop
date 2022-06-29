@@ -185,7 +185,7 @@ break;
                 $options[RequestOptions::AUTH] = $auth;
             }
 
-            // echo json_encode($body);
+            echo json_encode($body);
             // var_dump($options);
             // die;
 

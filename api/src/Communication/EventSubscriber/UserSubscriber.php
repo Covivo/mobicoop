@@ -25,6 +25,7 @@ namespace App\Communication\EventSubscriber;
 
 use App\Communication\Service\NotificationManager;
 use App\DataProvider\Entity\RezopouceProvider;
+use App\User\Admin\Service\UserManager as AdminUserManager;
 use App\User\Entity\IdentityProof;
 use App\User\Event\IdentityProofModeratedEvent;
 use App\User\Event\IdentityProofValidationReminderEvent;
@@ -54,6 +55,7 @@ class UserSubscriber implements EventSubscriberInterface
     public function __construct(
         NotificationManager $notificationManager,
         UserManager $userManager,
+        AdminUserManager $adminUserManager,
         bool $notificationSsoRegistration,
         string $rzpUri,
         string $rzpLogin,
@@ -61,6 +63,7 @@ class UserSubscriber implements EventSubscriberInterface
     ) {
         $this->notificationManager = $notificationManager;
         $this->userManager = $userManager;
+        $this->adminUserManager = $adminUserManager;
         $this->notificationSsoRegistration = $notificationSsoRegistration;
         $this->rzpUri = $rzpUri;
         $this->rzpLogin = $rzpLogin;
@@ -157,8 +160,11 @@ class UserSubscriber implements EventSubscriberInterface
     {
         if (IdentityProof::STATUS_ACCEPTED == $event->getIdentityProof()->getStatus()) {
             $rzpProvider = new RezopouceProvider($this->rzpUri, $this->rzpLogin, $this->rzpPassword);
-            $rzpProvider->sendValidationEmail($event->getIdentityProof()->getUser());
-        } elseif (IdentityProof::STATUS_REFUSED == $event->getIdentityProof()->getStatus()) {
+            if ($rzpProvider->sendValidationEmail($event->getIdentityProof()->getUser())) {
+                $this->adminUserManager->patchUser($event->getIdentityProof()->getUser(), ['rezoKit' => true, 'cardLetter' => true]);
+            }
+        }
+        if (IdentityProof::STATUS_REFUSED == $event->getIdentityProof()->getStatus()) {
             $this->notificationManager->notifies(IdentityProofModeratedEvent::NAME_REJECTED, $event->getIdentityProof()->getUser());
         }
     }

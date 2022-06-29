@@ -27,7 +27,6 @@ use App\DataProvider\Service\DataProvider;
 use App\Geography\Entity\RezoPouceTerritory;
 use App\Geography\Entity\RezoPouceTerritoryStatus;
 use App\User\Entity\User;
-use GuzzleHttp\RequestOptions;
 use LogicException;
 
 /**
@@ -117,19 +116,29 @@ class RezopouceProvider
 
         $dataProvider = new DataProvider($this->uri, self::ROUTE_WELCOME_EMAIL);
 
-        $response = $dataProvider->postCollection([
-            'latitude' => $user->getHomeAddress()->getLatitude(),
-            'longitude' => $user->getHomeAddress()->getLongitude(),
+        $houseNumber = !is_null($user->getHomeAddress()->getHouseNumber()) ? $user->getHomeAddress()->getHouseNumber() : '';
+        $streetAddress = !is_null($user->getHomeAddress()->getStreet()) ? $user->getHomeAddress()->getStreet() : '';
+
+        $body = [
+            'id' => $user->getId(),
             'family_name' => $user->getFamilyName(),
             'given_name' => $user->getGivenName(),
-        ], $this->__buildHeaders(), [], RequestOptions::JSON);
+            'email' => $user->getEmail(),
+            'phone' => $user->getTelephone(),
+            'birth_date' => $user->getBirthDate()->format('Y-m-d'),
+            'address' => $houseNumber.' '.$streetAddress,
+            'latitude' => $user->getHomeAddress()->getLatitude(),
+            'longitude' => $user->getHomeAddress()->getLongitude(),
+        ];
+
+        $response = $dataProvider->postCollection($body, $this->__buildHeaders());
 
         if (200 == $response->getCode()) {
             $data = json_decode($response->getValue(), true);
 
-            return null;
+            return true;
         }
 
-        return null;
+        return false;
     }
 }

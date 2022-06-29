@@ -370,6 +370,22 @@ class UserManager
             }
         }
 
+        if (in_array('rezoKit', array_keys($fields))) {
+            if (true === $fields['rezoKit']) {
+                $user->setRezoKit(true);
+            } else {
+                $user->setRezoKit(false);
+            }
+        }
+
+        if (in_array('cardLetter', array_keys($fields))) {
+            if (true === $fields['cardLetter']) {
+                $user->setCardLetter(true);
+            } else {
+                $user->setCardLetter(false);
+            }
+        }
+
         // persist the user
         $this->entityManager->persist($user);
         $this->entityManager->flush();
