@@ -382,6 +382,9 @@ services:
   App\Communication\EventSubscriber\UserSubscriber:
     arguments:
       $notificationSsoRegistration: "%env(bool:NOTIFICATION_SSO_REGISTRATION)%"
+      $rzpUri: "%env(string:RZP_API_URI)%"
+      $rzpLogin: "%env(string:RZP_API_LOGIN)%"
+      $rzpPassword: "%env(string:RZP_API_PASSWORD)%"
 
   App\Communication\Service\ReportManager:
     arguments:
