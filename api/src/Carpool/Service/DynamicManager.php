@@ -718,7 +718,7 @@ class DynamicManager
         $ask->addAskHistory($askHistory);
 
         // message
-        if (!is_null($dynamicAsk->getMessage()) || '' != $dynamicAsk->getMessage()) {
+        if (!is_null($dynamicAsk->getMessage()) && '' != $dynamicAsk->getMessage()) {
             $message = new Message();
             $message->setUser($dynamicAsk->getUser());
             $message->setText($dynamicAsk->getMessage());
@@ -791,7 +791,7 @@ class DynamicManager
         $ask->addAskHistory($askHistory);
 
         // message => the driver is the userRelated, the passenger is the user
-        if (!is_null($dynamicAskData->getMessage()) || '' != $dynamicAskData->getMessage()) {
+        if (!is_null($dynamicAskData->getMessage()) && '' != $dynamicAskData->getMessage()) {
             $message = new Message();
             $message->setText($dynamicAskData->getMessage());
             // we search the previous message if it exists
