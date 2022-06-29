@@ -245,6 +245,7 @@
                 :default-time-precision="defaultTimePrecision"
                 :init-schedule="initSchedule"
                 :route="route"
+                :staggered-schedules-allowed="staggeredSchedulesAllowed"
                 @change="planificationChanged"
               />
             </v-stepper-content>
@@ -888,72 +889,76 @@ export default {
       type: Number,
       default:null
     },
-    contentPassenger: { 
+    contentPassenger: {
       type: Boolean,
       default: true
+    },
+    staggeredSchedulesAllowed: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
     return {
-      locale: localStorage.getItem("X-LOCALE"),
-      distance: 0,
-      duration: 0,
-      outwardDate: this.initDate,
-      outwardTime: this.initTime,
-      returnDate: null,
-      returnTime: null,
-      origin: this.initOrigin,
-      destination: this.initDestination,
-      regular: this.initRegular,
-      step:1,
-      driver: true,
-      passenger: true,
-      luggage: false,
-      bike: false,
+      anyRouteAsPassenger: null, // not used yet
       backSeats: false,
-      schedules: null,
-      returnTrip: null,
-      route: null,
-      price: null,
-      pricePerKm: this.isUpdate && this.ad ? this.ad.priceKm : this.defaultPriceKm,
-      message: null,
       baseUrl: window.location.origin,
+      bbox:null,
+      bike: false,
+      bodyIsFullyLoaded: false,
+      cancellationMessage: "",
+      destination: this.initDestination,
+      dialog: false,
+      directionWay:[],
+      disableNextButton: false,
+      distance: 0,
+      driver: true,
+      duration: 0,
+      initSchedule: null,
+      initWaypoints: [],
+      initWaypointsCount: this.countWaypoints(),
+      isValidAd: true,
       loading: false,
       loadingPrice: false,
-      disableNextButton: false,
-      userDelegated: null, // if user delegation
-      selectedCommunities: null,
+      locale: localStorage.getItem("X-LOCALE"),
+      luggage: false,
+      message: null,
+      oldUpdateObject: null,
+      origin: this.initOrigin,
+      outwardDate: this.initDate,
+      outwardTime: this.initTime,
+      passenger: true,
       pointsToMap:[],
-      directionWay:[],
-      bbox:null,
+      price: null,
+      priceForbidden: false,
+      pricePerKm: this.isUpdate && this.ad ? this.ad.priceKm : this.defaultPriceKm,
+      regular: this.initRegular,
       regularLifeTime: null,    // not used yet
-      strictDate: null,         // not used yet
-      strictRegular: null,      // not used yet
-      strictPunctual: null,     // not used yet
-      useTime: null,            // not used yet
-      anyRouteAsPassenger: null, // not used yet
-      solidaryExclusive: this.solidaryExclusiveAd,
+      returnDate: null,
+      returnTime: null,
+      returnTimeIsValid: true,
+      returnTrip: null,
+      role: null,
+      route: null,
+      schedules: null,
       seats : this.defaultSeatNumber,
+      selectedCommunities: null,
       snackbar: {
         show: false,
         message: "",
         color: "success"
       },
-      isValidAd: true,
       snackErrorPublish: {
         show: false,
         color: "error"
       },
-      priceForbidden: false,
-      returnTimeIsValid: true,
-      initWaypoints: [],
-      initWaypointsCount: this.countWaypoints(),
-      initSchedule: null,
-      role: null,
-      dialog: false,
-      oldUpdateObject: null,
-      cancellationMessage: "",
-      bodyIsFullyLoaded: false
+      solidaryExclusive: this.solidaryExclusiveAd,
+      step:1,
+      strictDate: null,         // not used yet
+      strictPunctual: null,     // not used yet
+      strictRegular: null,      // not used yet
+      userDelegated: null,      // if user delegation
+      useTime: null             // not used yet
     }
   },
   computed: {
@@ -1010,13 +1015,7 @@ export default {
 
       // Step 2 regular schedule no return without outward
       if(this.regular && this.schedules){
-        let outwardSchedulesValid = true;
-        this.schedules.forEach((s, index) => {
-          if(s.returnTime !== null && s.outwardTime == null){
-            outwardSchedulesValid = false;
-          }
-        });
-        return outwardSchedulesValid;
+        return this.isOutwardSchedulesValid();
       }
 
       // Price to high. Forbidden to post
@@ -1044,13 +1043,7 @@ export default {
 
       // Step 2 regular schedule no return without outward
       if(this.step==2 && this.regular && this.schedules){
-        let outwardSchedulesValid = true;
-        this.schedules.forEach((s, index) => {
-          if(s.returnTime !== null && s.outwardTime == null){
-            outwardSchedulesValid = false;
-          }
-        });
-        return outwardSchedulesValid;
+        return this.isOutwardSchedulesValid();
       }
 
       //We get here if we give at least the departure time on the 1st day
@@ -1232,6 +1225,16 @@ export default {
     },
     buildUrl(route) {
       return `${this.baseUrl}/${route}`;
+    },
+    isOutwardSchedulesValid() {
+      let outwardSchedulesValid = true;
+      this.schedules.forEach((s, index) => {
+        if(!this.staggeredSchedulesAllowed && s.returnTime !== null && s.outwardTime == null){
+          outwardSchedulesValid = false;
+        }
+      });
+
+      return outwardSchedulesValid;
     },
     searchChanged: function(search) {
       this.passenger = search.passenger;

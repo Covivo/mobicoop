@@ -313,7 +313,7 @@
                   <template v-slot:activator="{ on }">
                     <v-text-field
                       v-model="item.outwardTime"
-                      :hint="item.id > 0 ? $t('optional') : ''"
+                      :hint="item.id > 0 && staggeredSchedulesAllowed ? $t('optional') : ''"
                       persistent-hint
                       :label="$t('regularOutwardTime.label')"
                       prepend-icon=""
@@ -500,6 +500,10 @@ export default {
   components: {
   },
   props: {
+    staggeredSchedulesAllowed: {
+      type: Boolean,
+      default: false
+    },
     regular: {
       type: Boolean,
       default: false
