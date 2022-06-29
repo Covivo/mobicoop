@@ -5,13 +5,14 @@
 {% block main %}
     <community-widget
         :community="{{ community|json_encode }}"
-        :geodata="{{ {'geocompleteuri':geoCompleteUri, 'searchroute':searchRoute}|json_encode }}"
-        :geo-complete-results-order="{{geoCompleteResultsOrder|json_encode}}"
         :geo-complete-palette="{{geoCompletePalette|json_encode}}"
-        {{ geoCompleteChip ? 'geo-complete-chip' : '' }}
+        :geo-complete-results-order="{{geoCompleteResultsOrder|json_encode}}"
+        :geodata="{{ {'geocompleteuri':geoCompleteUri, 'searchroute':searchRoute}|json_encode }}"
         :user="{{ app.user|json_encode }}"
-        url-alt-avatar="{{ community.defaultAvatar }}"
-        token="{{token.getToken}}"
+        {{ geoCompleteChip ? 'geo-complete-chip' : '' }}
+        {{ searchPunctualDate ? 'punctual-date-optional' : '' }}
         {{ searchRegular ? 'regular' : '' }}
+        token="{{token.getToken}}"
+        url-alt-avatar="{{ community.defaultAvatar }}"
     ></community-widget>
 {% endblock %}
