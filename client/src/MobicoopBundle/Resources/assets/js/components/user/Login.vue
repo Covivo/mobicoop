@@ -44,7 +44,6 @@
               :label="$t('email')"
               name="email"
               required
-              aria-invalid="true"
               aria-required="true"
               :aria-label="$t('email')"
             />

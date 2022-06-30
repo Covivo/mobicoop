@@ -31,7 +31,8 @@
         },
         "punctual": {
             "help": "Cliquez sur ce commutateur pour spécifier que votre trajet est régulier"
-        }
+        },
+        "aria-label":"Si ce selecteur est actif, vous déposez un trajet régulier. Sinon, c'est un trajet ponctuel."
     },
     "outwardDate": {
         "label": "Date de départ",

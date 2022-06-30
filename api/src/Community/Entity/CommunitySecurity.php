@@ -29,7 +29,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 /**
- * The securization of a community.
+ * The securization of a community security.
  *
  * @ORM\Entity
  * @ApiResource(
@@ -40,32 +40,21 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
  *      },
  *      collectionOperations={
  *          "get"={
+ *              "security"="is_granted('reject',object)",
  *              "swagger_context" = {
- *                  "tags"={"Communities"}
- *              }
- *          },
- *          "post"={
- *              "swagger_context" = {
- *                  "tags"={"Communities"}
- *              }
- *          },
- *      },
- *      itemOperations={
- *          "get"={
- *              "swagger_context" = {
- *                  "tags"={"Communities"}
- *              }
- *          },
- *          "put"={
- *              "swagger_context" = {
- *                  "tags"={"Communities"}
- *              }
- *          },
- *          "delete"={
- *              "swagger_context" = {
+ *                  "summary"="Not implemented",
  *                  "tags"={"Communities"}
  *              }
  *          }
+ *      },
+ *      itemOperations={
+ *          "get"={
+ *              "security"="is_granted('reject',object)",
+ *              "swagger_context" = {
+ *                  "summary"="Not implemented",
+ *                  "tags"={"Communities"}
+ *              }
+ *          },
  *      }
  * )
  */
@@ -77,7 +66,7 @@ class CommunitySecurity
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups("read")
+     * @Groups("readCommunity")
      */
     private $id;
 
@@ -95,7 +84,7 @@ class CommunitySecurity
      * @var string the filename of the community security
      *
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read","write"})
+     * @Groups({"readCommunity","write"})
      */
     private $filename;
 

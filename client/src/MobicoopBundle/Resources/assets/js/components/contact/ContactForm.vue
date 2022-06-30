@@ -39,10 +39,7 @@
                   v-model="form.familyName"
                   :label="$t('lastName.placeholder')+` *`"
                   :aria-label="$t('lastName.placeholder')"
-                  :aria-labelledby="$t('email.placeholder')"
                   name="familyName"
-                  aria-invalid="true"
-                  a
                   required
                   :rules="form.familyNameRules"
                   aria-required="true"
@@ -140,7 +137,7 @@
             >
               {{ $t('buttons.send.label') }}
             </v-btn>
-              
+
             <v-row
               class="mt-5"
             >
@@ -218,8 +215,8 @@ export default {
         ],
         website: "", // honey pot data
       },
-      // You need to use values corrresponding to your potential .env settings in CONTACT_TYPES 
-      // By default, contact type is used    
+      // You need to use values corrresponding to your potential .env settings in CONTACT_TYPES
+      // By default, contact type is used
       alert: {
         type: "success",
         message: ""
@@ -315,5 +312,5 @@ export default {
     top: -1500px;
     left: 0;
   }
-  
+
 </style>

@@ -42,9 +42,11 @@ use App\User\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
  * A community : a group of users sharing common interests.
@@ -268,6 +270,16 @@ use Symfony\Component\Validator\Constraints as Assert;
  *                  "tags"={"Administration"}
  *              }
  *          },
+ *          "ADMIN_patch_securities"={
+ *              "path"="/admin/communities/{id}/securities",
+ *              "method"="PATCH",
+ *              "normalization_context"={"groups"={"aRead"}},
+ *              "denormalization_context"={"groups"={"aWrite"}},
+ *              "security"="is_granted('admin_community_update',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
+ *          },
  *          "ADMIN_delete"={
  *              "path"="/admin/communities/{id}",
  *              "method"="DELETE",
@@ -280,6 +292,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          },
  *      }
  * )
+ * @Vich\Uploadable
  * @ApiFilter(OrderFilter::class, properties={"id", "name", "description", "createdDate"}, arguments={"orderParameterName"="order"})
  * @ApiFilter(SearchFilter::class, properties={"name":"partial"})
  * @ApiFilter(NumericFilter::class, properties={"communityUsers.user.id"})
@@ -463,6 +476,20 @@ class Community
      * @ApiSubresource(maxDepth=1)
      */
     private $communitySecurities;
+
+    /**
+     * @var null|File The document's file
+     *
+     * @Vich\UploadableField(mapping="communitySecurityFile", fileNameProperty="securityFileName", originalName="originalName", size="size", mimeType="mimeType")
+     */
+    private $communitySecurityFile;
+
+    /**
+     * @var string The document's filename
+     *
+     * @Groups({"readCommunity","write"})
+     */
+    private $securityFileName;
 
     /**
      * @var null|ArrayCollection the relay points related to the community
@@ -845,6 +872,26 @@ class Community
         }
 
         return $this;
+    }
+
+    public function getCommunitySecurityFile(): ?File
+    {
+        return $this->communitySecurityFile;
+    }
+
+    public function setCommunitySecurityFile(?File $communitySecurityFile)
+    {
+        $this->communitySecurityFile = $communitySecurityFile;
+    }
+
+    public function getSecurityFileName(): ?string
+    {
+        return $this->securityFileName;
+    }
+
+    public function setSecurityFileName(?string $securityFileName)
+    {
+        $this->securityFileName = $securityFileName;
     }
 
     public function getRelayPoints()

@@ -30,7 +30,6 @@
                   :chip="geoCompleteChip"
                   :label="labelOrigin"
                   :aria-label="ariaLabelOrgin"
-                  :aria-labelledby="labelOrigin"
                   required
                   :prepend-icon="prependIconOrigin"
                   @address-selected="originSelected"
@@ -49,7 +48,6 @@
                   :chip="geoCompleteChip"
                   :label="labelDestination"
                   :aria-label="ariaLabelDestination"
-                  :aria-labelledby="labelDestination"
                   required
                   :prepend-icon="prependIconDestination"
                   @address-selected="destinationSelected"

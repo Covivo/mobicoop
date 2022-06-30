@@ -4,7 +4,9 @@
     width="80%"
     @click:outside="close"
   >
-    <v-card>
+    <v-card
+      :aria-label="$t('aria-title')"
+    >
       <v-card-title class="headline grey lighten-2">
         <v-row dense>
           <v-col>
@@ -12,6 +14,7 @@
           </v-col>
           <v-col class="text-right">
             <v-btn
+              :aria-label="$t('buttons.close.aria-label')"
               class="text"
               icon
               @click="close"
