@@ -194,6 +194,7 @@
                     :user-id="result.carpooler.id"
                     :refresh="profileSummaryRefresh"
                     :age-display="ageDisplay"
+                    :verified-identity="result.carpooler.verifiedIdentity"
                     @showProfile="step=4"
                     @profileSummaryRefresh="refreshProfileSummary"
                   />
@@ -439,7 +440,7 @@
 
           <v-stepper-content step="4">
             <PublicProfile
-              :user="result.carpooler"
+              :user-id="result.carpooler.id"
               :refresh="refreshPublicProfile"
               :age-display="ageDisplay"
               :carpool-settings-display="carpoolSettingsDisplay"
@@ -753,7 +754,7 @@ export default {
       type: Boolean,
       default: false
     },
-    carpoolSettingsDisplay: { 
+    carpoolSettingsDisplay: {
       type: Boolean,
       default: true
     }

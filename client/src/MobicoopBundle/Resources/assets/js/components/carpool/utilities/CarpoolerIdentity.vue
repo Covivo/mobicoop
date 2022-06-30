@@ -1,37 +1,55 @@
 <template>
-  <v-list-item class="pa-0">
-    <!--Carpooler avatar-->
-    <ProfileAvatar
-      :avatar="carpooler.avatars[1]"
-      :experienced="carpooler.experienced"
-      :minimized="true"
-    />
-    <!--Carpooler data-->
-    <v-list-item-content>
-      <v-list-item-title class="font-weight-bold">
-        {{ carpooler.givenName }} {{ carpooler.shortFamilyName }}
-      </v-list-item-title>
-      
-      <v-list-item-title v-if="ageDisplay">
-        {{ age }}
-      </v-list-item-title>
-    </v-list-item-content>
-    <v-img
-      v-if="hasBadges && gamificationActive"
-      src="/images/badge.png"
-      contain
-      max-width="25"
+  <div>
+    <v-list-item
+      class="pa-0"
+      @click="showProfileDialog = true"
     >
-      <p class="caption text-center mt-1 primary--text font-weight-bold">
-        {{ carpooler.numberOfBadges }}
-      </p>
-    </v-img>
-  </v-list-item>
+      <!--Carpooler avatar-->
+      <ProfileAvatar
+        :avatar="carpooler.avatars[1]"
+        :experienced="carpooler.experienced"
+        :minimized="true"
+      />
+      <!--Carpooler data-->
+      <v-list-item-content>
+        <v-list-item-title class="font-weight-bold">
+          {{ carpooler.givenName }} {{ carpooler.shortFamilyName }}
+        </v-list-item-title>
+
+        <v-list-item-title v-if="ageDisplay">
+          {{ age }}
+        </v-list-item-title>
+      </v-list-item-content>
+      <span class="mr-2">
+        <verified-identity
+          :verified-identity="carpooler.verifiedIdentity"
+        />
+      </span>
+      <v-img
+        v-if="hasBadges && gamificationActive"
+        src="/images/badge.png"
+        contain
+        max-width="25"
+      >
+        <p class="caption text-center mt-1 primary--text font-weight-bold">
+          {{ carpooler.numberOfBadges }}
+        </p>
+      </v-img>
+    </v-list-item>
+    <PopupPublicProfile
+      :carpooler-id="carpooler.id"
+      :carpooler-name="carpooler.givenName+' '+carpooler.shortFamilyName"
+      :show-profile-dialog="showProfileDialog"
+      @dialogClosed="showProfileDialog = false"
+    />
+  </div>
 </template>
 
 <script>
 import moment from "moment";
 import ProfileAvatar from "@components/user/profile/ProfileAvatar";
+import PopupPublicProfile from "@components/user/profile/PopupPublicProfile";
+import VerifiedIdentity from "@components/user/profile/VerifiedIdentity";
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/carpool/utilities/CarpoolerSummary/";
 
 export default {
@@ -44,7 +62,9 @@ export default {
     },
   },
   components:{
-    ProfileAvatar
+    ProfileAvatar,
+    PopupPublicProfile,
+    VerifiedIdentity
   },
   props: {
     carpooler: {
@@ -59,7 +79,8 @@ export default {
   data () {
     return {
       locale: localStorage.getItem("X-LOCALE"),
-      hasBadges: this.carpooler.numberOfBadges>0 ? true : false
+      hasBadges: this.carpooler.numberOfBadges>0 ? true : false,
+      showProfileDialog: false
     }
   },
   computed: {
@@ -72,7 +93,7 @@ export default {
     },
     gamificationActive(){
       return this.$store.getters['g/isActive'];
-    }    
+    }
   },
   created() {
     moment.locale(this.locale); // DEFINE DATE LANGUAGE

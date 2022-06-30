@@ -5,7 +5,7 @@
         <v-skeleton-loader
           class="mx-auto"
           type="card"
-        />        
+        />
       </v-col>
     </v-row>
 
@@ -25,11 +25,18 @@
                 class="text-right"
               >
                 <v-row>
-                  <v-col>
+                  <v-col class="pb-0">
                     {{ publicProfile.givenName }} {{ publicProfile.shortFamilyName }}<br>
                     <span v-if="ageDisplay && publicProfile.age">
                       {{ publicProfile.age }} {{ $t('yearsOld') }}
                     </span>
+                  </v-col>
+                </v-row>
+                <v-row>
+                  <v-col class="pt-0">
+                    <verified-identity
+                      :verified-identity="publicProfile.verifiedIdentity"
+                    />
                   </v-col>
                 </v-row>
                 <v-row>
@@ -125,7 +132,7 @@
               :user="user"
             />
           </v-col>
-        </v-row> 
+        </v-row>
         <v-row>
           <v-col
             cols="8"
@@ -156,10 +163,12 @@
 import maxios from "@utils/maxios";
 import moment from "moment";
 import ProfileAvatar from "@components/user/profile/ProfileAvatar";
+import VerifiedIdentity from "@components/user/profile/VerifiedIdentity";
 import Reviews from "@components/utilities/Reviews/Reviews";
 import Badges from "@components/utilities/gamification/Badges";
 import Report from "@components/utilities/Report";
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/profile/PublicProfile/";
+
 export default {
   i18n: {
     messages: {
@@ -173,11 +182,16 @@ export default {
     ProfileAvatar,
     Report,
     Reviews,
-    Badges
+    Badges,
+    VerifiedIdentity
   },
   props:{
     user:{
       type:Object,
+      default: null
+    },
+    userId:{
+      type:Number,
       default: null
     },
     showReportButton: {
@@ -192,7 +206,7 @@ export default {
       type: Boolean,
       default: true
     },
-    carpoolSettingsDisplay: { 
+    carpoolSettingsDisplay: {
       type: Boolean,
       default: true
     }
@@ -210,7 +224,7 @@ export default {
         return moment(this.publicProfile.lastActivityDate.date).format('DD/MM/YYYY');
       }
       return null;
-      
+
     },
     subscribedOn(){
       return moment(this.publicProfile.createdDate.date).format('DD/MM/YYYY');
@@ -231,7 +245,7 @@ export default {
     },
     musicIconToolTip(){
       return (this.publicProfile.chat) ? this.$t('params.music') : this.$t('params.noMusic');
-    },    
+    },
     chatIcon(){
       return (this.publicProfile.chat) ? 'mdi-account-voice' : 'mdi-voice-off';
     },
@@ -262,7 +276,7 @@ export default {
     },
     gamificationActive(){
       return this.$store.getters['g/isActive'];
-    } 
+    }
   },
   watch:{
     refresh(){
@@ -277,12 +291,12 @@ export default {
   },
   methods:{
     getPublicProfile(){
-      maxios.post(this.$t('getPublicProfileUri'),{'userId':this.user.id})
+      maxios.post(this.$t('getPublicProfileUri'),{'userId':(this.userId) ? this.userId : this.user.id})
         .then(response => {
           //console.log(response.data);
           this.publicProfile = response.data;
           this.loading = false;
-          this.$emit('publicProfileRefresh',{'user':this.user});
+          this.$emit('publicProfileRefresh',{'user':(this.userId) ? this.userId : this.user.id});
         })
         .catch(function (error) {
           console.error(error);

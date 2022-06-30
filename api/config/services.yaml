@@ -877,6 +877,9 @@ services:
       $chat: "%env(int:CARPOOL_DEFAULT_CHAT)%"
       $music: "%env(int:CARPOOL_DEFAULT_MUSIC)%"
       $smoke: "%env(bool:CARPOOL_DEFAULT_SMOKE)%"
+      $rzpUri: "%env(string:RZP_API_URI)%"
+      $rzpLogin: "%env(string:RZP_API_LOGIN)%"
+      $rzpPassword: "%env(string:RZP_API_PASSWORD)%"
 
   App\User\Admin\Service\KibanaLoginManager:
     arguments:
@@ -927,6 +930,7 @@ services:
       $passwordTokenValidity: "%env(int:PASSWORD_TOKEN_VALIDITY)%"
       $paymentActive: "%env(string:PAYMENT_ACTIVE)%"
       $phoneValidationRegex: "%env(string:USER_PHONE_FORMAT)%"
+      $userMinAge: "%env(int:USER_MIN_AGE)%"
 
   App\User\Interoperability\Service\UserManager:
     arguments:

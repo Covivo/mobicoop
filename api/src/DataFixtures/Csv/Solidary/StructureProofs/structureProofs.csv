@@ -1,20 +1,20 @@
-1;Je souhaite être accompagné.e par "éhop près de chez moi";1;1;1;0;0;0;;;0;1
-1;Comment avez-vous entendu parler de ce service ?;1;2;0;1;0;0;;;0;0
-1;Carte d'identité;1;3;0;0;0;0;;;1;0
-1;J'ai un véhicule et je suis assuré;2;1;1;0;0;0;;;0;1
-1;Comment avez-vous entendu parler de ce service ?;2;2;0;1;0;0;;;0;0
-1;Permis de conduire;2;3;0;0;0;0;;;1;0
-2;Comment avez-vous entendu parler de ce service ?;1;1;0;1;0;0;;;0;0
-2;Permis de conduire;2;1;0;0;0;0;;;1;1
-2;Comment avez-vous connu ce service ?;2;2;0;1;0;0;;;0;0
-3;Comment avez-vous entendu parler de ce service ?;1;1;0;1;0;0;;;0;0
-4;Comment avez-vous entendu parler de ce service ?;1;1;0;1;0;0;;;0;0
-5;Carte d'identité;2;1;0;0;0;0;;;1;1
-5;Permis de conduire;2;2;0;0;0;0;;;1;0
-5;Police d'assurance;2;3;0;0;0;0;;;1;0
-6;Carte d'identité;2;1;0;0;0;0;;;1;0
-6;Permis de conduire;2;2;0;0;0;0;;;1;1
-6;J'ai un véhicule et je suis assuré;2;3;0;0;0;0;;;1;1
-6;Bénéficiaire minima sociaux;1;1;0;0;0;0;;;1;0
-6;Sans permis;1;2;1;0;0;0;;;0;1
-6;Sans voiture;1;3;1;0;0;0;;;0;1
+1;Je souhaite être accompagné.e par "éhop près de chez moi";1;1;1;0;0;0;;;0;1;1
+1;Comment avez-vous entendu parler de ce service ?;1;2;0;1;0;0;;;0;0;1
+1;Carte d'identité;1;3;0;0;0;0;;;1;0;1
+1;J'ai un véhicule et je suis assuré;2;1;1;0;0;0;;;0;1;1
+1;Comment avez-vous entendu parler de ce service ?;2;2;0;1;0;0;;;0;0;1
+1;Permis de conduire;2;3;0;0;0;0;;;1;0;1
+2;Comment avez-vous entendu parler de ce service ?;1;1;0;1;0;0;;;0;0;1
+2;Permis de conduire;2;1;0;0;0;0;;;1;1;1
+2;Comment avez-vous connu ce service ?;2;2;0;1;0;0;;;0;0;1
+3;Comment avez-vous entendu parler de ce service ?;1;1;0;1;0;0;;;0;0;1
+4;Comment avez-vous entendu parler de ce service ?;1;1;0;1;0;0;;;0;0;1
+5;Carte d'identité;2;1;0;0;0;0;;;1;1;1
+5;Permis de conduire;2;2;0;0;0;0;;;1;0;1
+5;Police d'assurance;2;3;0;0;0;0;;;1;0;1
+6;Carte d'identité;2;1;0;0;0;0;;;1;0;1
+6;Permis de conduire;2;2;0;0;0;0;;;1;1;1
+6;J'ai un véhicule et je suis assuré;2;3;0;0;0;0;;;1;1;1
+6;Bénéficiaire minima sociaux;1;1;0;0;0;0;;;1;0;1
+6;Sans permis;1;2;1;0;0;0;;;0;1;1
+6;Sans voiture;1;3;1;0;0;0;;;0;1;1

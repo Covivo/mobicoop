@@ -19,21 +19,20 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace Mobicoop\Bundle\MobicoopBundle\User\Entity;
 
 use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
-use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * A User Profile Summary
+ * A User Profile Summary.
  */
 class PublicProfile implements ResourceInterface, \JsonSerializable
 {
-    const SMOKE_NO = 0;
-    const SMOKE_NOT_IN_CAR = 1;
-    const SMOKE = 2;
+    public const SMOKE_NO = 0;
+    public const SMOKE_NOT_IN_CAR = 1;
+    public const SMOKE = 2;
 
     /**
      * @var int The id of the User
@@ -46,55 +45,54 @@ class PublicProfile implements ResourceInterface, \JsonSerializable
     private $profileSummary;
 
     /**
-     * @var int|null Smoking preferences.
-     * 0 = i don't smoke
-     * 1 = i don't smoke in car
-     * 2 = i smoke
-     *
+     * @var null|int Smoking preferences.
+     *               0 = i don't smoke
+     *               1 = i don't smoke in car
+     *               2 = i smoke
      */
     private $smoke;
 
     /**
-     * @var boolean|null Music preferences.
-     * 0 = no music
-     * 1 = i listen to music or radio
-     *
+     * @var null|bool Music preferences.
+     *                0 = no music
+     *                1 = i listen to music or radio
      */
     private $music;
 
     /**
-     * @var string|null Music favorites.
-     *
+     * @var null|string music favorites
      */
     private $musicFavorites;
 
     /**
-     * @var boolean|null Chat preferences.
-     * 0 = no chat
-     * 1 = chat
-     *
+     * @var null|bool Chat preferences.
+     *                0 = no chat
+     *                1 = chat
      */
     private $chat;
 
     /**
-     * @var string|null Chat favorite subjects.
-     *
+     * @var null|string chat favorite subjects
      */
     private $chatFavorites;
 
     /**
-     * @var bool|null True if the review system is enabled
+     * @var null|bool True if the review system is enabled
      */
     private $reviewActive;
 
     /**
-     * @var array|null Reviews about this user
+     * @var null|array Reviews about this user
      */
     private $reviews;
 
     /**
-     * @var array|null Badges won by this user
-     *
+     * @var null|bool True if the identity has been verified
+     */
+    private $verifiedIdentity;
+
+    /**
+     * @var null|array Badges won by this user
      */
     private $badges;
 
@@ -106,7 +104,7 @@ class PublicProfile implements ResourceInterface, \JsonSerializable
     public function setId(int $id): self
     {
         $this->id = $id;
-        
+
         return $this;
     }
 
@@ -118,7 +116,7 @@ class PublicProfile implements ResourceInterface, \JsonSerializable
     public function setReviewActive(?bool $reviewActive): self
     {
         $this->reviewActive = $reviewActive;
-        
+
         return $this;
     }
 
@@ -130,7 +128,7 @@ class PublicProfile implements ResourceInterface, \JsonSerializable
     public function setProfileSummary(ProfileSummary $profileSummary): self
     {
         $this->profileSummary = $profileSummary;
-        
+
         return $this;
     }
 
@@ -217,33 +215,44 @@ class PublicProfile implements ResourceInterface, \JsonSerializable
 
         return $this;
     }
-    
+
+    public function getVerifiedIdentity()
+    {
+        return $this->verifiedIdentity;
+    }
+
+    public function setVerifiedIdentity($verifiedIdentity)
+    {
+        $this->verifiedIdentity = $verifiedIdentity;
+
+        return $this;
+    }
+
     public function jsonSerialize()
     {
-        $userSerialized = [
-            'id'                        => $this->getId(),
-            'givenName'                 => $this->getProfileSummary()->getGivenName(),
-            'shortFamilyName'           => $this->getProfileSummary()->getShortFamilyName(),
-            'age'                       => $this->getProfileSummary()->getAge(),
-            'phoneDisplay'              => $this->getProfileSummary()->getPhoneDisplay(),
-            'telephone'                 => $this->getProfileSummary()->getTelephone(),
-            'avatar'                    => $this->getProfileSummary()->getAvatar(),
-            'carpoolRealized'           => $this->getProfileSummary()->getCarpoolRealized(),
-            'answerPct'                 => $this->getProfileSummary()->getAnswerPct(),
-            'smoke'                     => $this->getSmoke(),
-            'music'                     => $this->hasMusic(),
-            'musicFavorites'            => $this->getMusicFavorites(),
-            'chat'                      => $this->hasChat(),
-            'chatFavorites'             => $this->getChatFavorites(),
-            'lastActivityDate'          => $this->getProfileSummary()->getLastActivityDate(),
-            'createdDate'               => $this->getProfileSummary()->getCreatedDate(),
-            'reviewActive'              => $this->isReviewActive(),
-            'reviews'                   => $this->getReviews(),
-            'savedCo2'                  => $this->getProfileSummary()->getSavedCo2(),
-            'badges'                    => $this->getBadges(),
-            'experienced'               => $this->getProfileSummary()->isExperienced()
+        return [
+            'id' => $this->getId(),
+            'givenName' => $this->getProfileSummary()->getGivenName(),
+            'shortFamilyName' => $this->getProfileSummary()->getShortFamilyName(),
+            'age' => $this->getProfileSummary()->getAge(),
+            'phoneDisplay' => $this->getProfileSummary()->getPhoneDisplay(),
+            'telephone' => $this->getProfileSummary()->getTelephone(),
+            'avatar' => $this->getProfileSummary()->getAvatar(),
+            'carpoolRealized' => $this->getProfileSummary()->getCarpoolRealized(),
+            'answerPct' => $this->getProfileSummary()->getAnswerPct(),
+            'smoke' => $this->getSmoke(),
+            'music' => $this->hasMusic(),
+            'musicFavorites' => $this->getMusicFavorites(),
+            'chat' => $this->hasChat(),
+            'chatFavorites' => $this->getChatFavorites(),
+            'lastActivityDate' => $this->getProfileSummary()->getLastActivityDate(),
+            'createdDate' => $this->getProfileSummary()->getCreatedDate(),
+            'reviewActive' => $this->isReviewActive(),
+            'reviews' => $this->getReviews(),
+            'savedCo2' => $this->getProfileSummary()->getSavedCo2(),
+            'badges' => $this->getBadges(),
+            'experienced' => $this->getProfileSummary()->isExperienced(),
+            'verifiedIdentity' => $this->getProfileSummary()->getVerifiedIdentity(),
         ];
-
-        return $userSerialized;
     }
 }

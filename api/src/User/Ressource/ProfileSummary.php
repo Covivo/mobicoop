@@ -19,19 +19,17 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\Ressource;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
-use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
-use Symfony\Component\Validator\Constraints as Assert;
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\User\Entity\User;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * A ProfileSummary of a User
+ * A ProfileSummary of a User.
  *
  * @ApiResource(
  *      attributes={
@@ -54,13 +52,14 @@ use App\User\Entity\User;
  *          }
  *      }
  * )
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class ProfileSummary
 {
-    const PHONE_DISPLAY_RESTRICTED = 1;
-    const PHONE_DISPLAY_ALL = 2;
-    
+    public const PHONE_DISPLAY_RESTRICTED = 1;
+    public const PHONE_DISPLAY_ALL = 2;
+
     /**
      * @var int The id of the User
      *
@@ -91,35 +90,35 @@ class ProfileSummary
     private $age;
 
     /**
-     * @var int phone display configuration (1 = restricted (default); 2 = all).
+     * @var int phone display configuration (1 = restricted (default); 2 = all)
      *
      * @Groups({"readProfileSummary","readPublicProfile"})
      */
     private $phoneDisplay;
 
     /**
-     * @var string|null The telephone number of the user.
+     * @var null|string the telephone number of the user
      *
      * @Groups({"readProfileSummary","readPublicProfile"})
      */
     private $telephone;
 
     /**
-     * @var string|null Avatar of the user.
+     * @var null|string avatar of the user
      *
      * @Groups({"readProfileSummary","readPublicProfile"})
      */
     private $avatar;
 
     /**
-     * @var int|null Nomber of carpool already done
+     * @var null|int Nomber of carpool already done
      *
      * @Groups({"readProfileSummary","readPublicProfile"})
      */
     private $carpoolRealized;
 
     /**
-     * @var int|null Answer rate in percent
+     * @var null|int Answer rate in percent
      *
      * @Groups({"readProfileSummary","readPublicProfile"})
      */
@@ -140,32 +139,39 @@ class ProfileSummary
     private $lastActivityDate;
 
     /**
-     * @var boolean|null If the User is experienced
+     * @var null|bool If the User is experienced
      *
      * @Groups({"readProfileSummary","readPublicProfile"})
      */
     private $experienced;
 
     /**
-     * @var int|null The savedCo2 of this user in grams
+     * @var null|int The savedCo2 of this user in grams
      * @Groups({"readProfileSummary","readPublicProfile"})
      */
     private $savedCo2;
 
     /**
-     * @var int|null The number of earned badges by the User
+     * @var null|int The number of earned badges by the User
      *
      * @Groups({"readProfileSummary","readPublicProfile"})
      */
     private $numberOfBadges;
 
-    public function __construct($id=null)
+    /**
+     * @var null|bool True if identity has been validated
+     *
+     * @Groups({"readProfileSummary","readPublicProfile"})
+     */
+    private $verifiedIdentity;
+
+    public function __construct($id = null)
     {
         if (!is_null($id)) {
             $this->id = $id;
         }
     }
-    
+
     public function getId(): ?int
     {
         return $this->id;
@@ -174,7 +180,7 @@ class ProfileSummary
     public function setId(int $id): self
     {
         $this->id = $id;
-        
+
         return $this;
     }
 
@@ -186,7 +192,7 @@ class ProfileSummary
     public function setGivenName(?string $givenName): self
     {
         $this->givenName = $givenName;
-        
+
         return $this;
     }
 
@@ -198,7 +204,7 @@ class ProfileSummary
     public function setShortFamilyName(string $shortFamilyName): self
     {
         $this->shortFamilyName = $shortFamilyName;
-        
+
         return $this;
     }
 
@@ -210,7 +216,7 @@ class ProfileSummary
     public function setAge(?int $age): self
     {
         $this->age = $age;
-        
+
         return $this;
     }
 
@@ -258,7 +264,7 @@ class ProfileSummary
     public function setCarpoolRealized(int $carpoolRealized): self
     {
         $this->carpoolRealized = $carpoolRealized;
-        
+
         return $this;
     }
 
@@ -270,7 +276,7 @@ class ProfileSummary
     public function setAnswerPct(int $answerPct): self
     {
         $this->answerPct = $answerPct;
-        
+
         return $this;
     }
 
@@ -285,7 +291,7 @@ class ProfileSummary
 
         return $this;
     }
-    
+
     public function getLastActivityDate(): ?\DateTimeInterface
     {
         return $this->lastActivityDate;
@@ -330,6 +336,30 @@ class ProfileSummary
     public function setNumberOfBadges(?int $numberOfBadges): self
     {
         $this->numberOfBadges = $numberOfBadges;
+
+        return $this;
+    }
+
+    /**
+     * Get true if identity has been validated.
+     *
+     * @return null|bool
+     */
+    public function getVerifiedIdentity()
+    {
+        return $this->verifiedIdentity;
+    }
+
+    /**
+     * Set true if identity has been validated.
+     *
+     * @param null|bool $verifiedIdentity True if identity has been validated
+     *
+     * @return self
+     */
+    public function setVerifiedIdentity($verifiedIdentity)
+    {
+        $this->verifiedIdentity = $verifiedIdentity;
 
         return $this;
     }

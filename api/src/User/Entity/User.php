@@ -74,6 +74,7 @@ use App\User\Filter\CardLetterFilter;
 use App\User\Filter\DirectionTerritoryFilter;
 use App\User\Filter\EmailTokenFilter;
 use App\User\Filter\FamilyAndGivenNameFilter;
+use App\User\Filter\HitchHikerFilter;
 use App\User\Filter\HomeAddressDirectionTerritoryFilter;
 use App\User\Filter\HomeAddressODTerritoryFilter;
 use App\User\Filter\HomeAddressTerritoryFilter;
@@ -521,6 +522,18 @@ use Symfony\Component\Validator\Constraints as Assert;
  *                  "tags"={"Administration"}
  *              }
  *          },
+ *          "ADMIN_get_rzp_territory_status"={
+ *              "path"="/admin/users/{id}/rzpTerritoryStatus",
+ *              "method"="GET",
+ *              "normalization_context"={
+ *                     "groups"={"aReadRzpTerritoryStatus"},
+ *                     "skip_null_values"=false
+ *              },
+ *              "security"="is_granted('admin_user_read',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
+ *          },
  *          "ADMIN_patch"={
  *              "path"="/admin/users/{id}",
  *              "method"="PATCH",
@@ -569,6 +582,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ApiFilter(SolidaryExclusiveFilter::class)
  * @ApiFilter(RezoKitFilter::class, properties={"rezoKit"})
  * @ApiFilter(CardLetterFilter::class, properties={"cardLetter"})
+ * @ApiFilter(HitchHikerFilter::class)
  * @ApiFilter(DateFilter::class, properties={"createdDate": DateFilter::EXCLUDE_NULL,"lastActivityDate": DateFilter::EXCLUDE_NULL})
  * @ApiFilter(OrderFilter::class, properties={"id", "givenName", "status","familyName", "email", "gender", "identityStatus", "nationality", "birthDate", "createdDate", "validatedDate", "lastActivityDate", "telephone", "rezoKit", "cardLetter"}, arguments={"orderParameterName"="order"})
  */
@@ -627,7 +641,7 @@ class User implements UserInterface, EquatableInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"aRead","readUser","readCommunity","communities","readCommunityUser","results","threads", "thread","externalJourney","userStructure", "readSolidary","readPayment","carpoolExport","readReview"})
+     * @Groups({"aRead","aReadRzpTerritoryStatus","readUser","readCommunity","communities","readCommunityUser","results","threads", "thread","externalJourney","userStructure", "readSolidary","readPayment","carpoolExport","readReview"})
      * @ApiProperty(identifier=true)
      */
     private $id;
@@ -1576,6 +1590,14 @@ class User implements UserInterface, EquatableInterface
      * @Groups({"aRead", "aWrite"})
      */
     private $cardLetter;
+
+    /**
+     * @var null|string If the User's home address is in a rezopouce Territory
+     *                  Checked only for RezoPouce users
+     *
+     * @Groups({"aReadRzpTerritoryStatus"})
+     */
+    private $rzpTerritoryStatus;
 
     public function __construct($status = null)
     {
@@ -3687,6 +3709,18 @@ class User implements UserInterface, EquatableInterface
     public function setCardLetter(?bool $cardLetter): self
     {
         $this->cardLetter = $cardLetter;
+
+        return $this;
+    }
+
+    public function getRzpTerritoryStatus(): ?string
+    {
+        return $this->rzpTerritoryStatus;
+    }
+
+    public function setRzpTerritoryStatus(?string $rzpTerritoryStatus): self
+    {
+        $this->rzpTerritoryStatus = $rzpTerritoryStatus;
 
         return $this;
     }
