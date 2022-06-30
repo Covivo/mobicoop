@@ -631,7 +631,7 @@
         color="secondary"
         align-center
         style="margin-bottom: 30px;"
-        @click="--step"
+        @click="--step; scrollToElement()"
       >
         {{ $t('stepper.buttons.previous') }}
       </v-btn>
@@ -644,7 +644,7 @@
         color="secondary"
         align-center
         style="margin-left: 30px;"
-        @click="step++"
+        @click="++step; scrollToElement()"
       >
         {{ $t('stepper.buttons.next') }}
       </v-btn>
@@ -656,7 +656,7 @@
         color="secondary"
         align-center
         style="margin-left: 30px;"
-        @click="step++"
+        @click="++step; scrollToElement()"
       >
         {{ $t('stepper.buttons.next') }}
       </v-btn>
@@ -1433,6 +1433,10 @@ export default {
       } else if (!isEmpty(this.initOrigin) || !isEmpty(this.initDestination)) {
         return 1;
       } else return 0;
+    },
+    scrollToElement(element = "app") {
+      // this.$vuetify.goTo(0, {easing: 'easeInOutCubic'});
+      document.getElementById(element).scrollIntoView();
     }
   }
 };
