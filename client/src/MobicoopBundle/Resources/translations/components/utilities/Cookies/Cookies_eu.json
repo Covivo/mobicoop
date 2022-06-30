@@ -31,5 +31,10 @@
     "store": "Erregistratu",
     "yourBrowseryourChoice": "{appName} hautua ematen dauzu",
     "privateLife": "Bizi pribatua",
-    "title": "Cookies-en kudeaketa"
+    "title": "Cookies-en kudeaketa",
+    "buttons":{
+      "close":{
+        "aria-label":"Fermer la fenêtre de choix des cookies"
+      }
+    }
 }

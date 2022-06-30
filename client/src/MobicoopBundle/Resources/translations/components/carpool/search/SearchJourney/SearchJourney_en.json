@@ -20,7 +20,8 @@
         },
         "punctual": {
             "help": "Click this switch to specify that your trip is regular"
-        }
+        },
+        "aria-label":"If the switch is active, you will post a regular ad. If not, this will be a punctual one."
     },
     "datePicker": {
         "label": "Departure date"

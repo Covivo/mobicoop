@@ -63,7 +63,6 @@
             :chip="geoCompleteChip"
             :label="labelOrigin"
             :aria-label="ariaLabelOrgin"
-            :aria-labelledby="labelOrigin"
             required
             aria-invalid="true"
             :address="customInitOrigin"
@@ -114,7 +113,6 @@
             :chip="geoCompleteChip"
             :label="labelDestination"
             :aria-label="ariaLabelDestination"
-            :aria-labelledby="labelDestination"
             required
             aria-invalid="true"
             :address="customInitDestination"
@@ -147,8 +145,7 @@
             inset
             hide-details
             class="mt-0"
-            aria-label="switch"
-            aria-labelledby="switch"
+            :aria-label="$t('switch.aria-label')"
             color="secondary"
             @change="switched"
           />
@@ -165,7 +162,6 @@
             <template v-slot:activator="{ on }">
               <v-icon
                 aria-hidden="false"
-                aria-describedby="switch"
                 v-on="on"
               >
                 mdi-help-circle-outline

@@ -31,5 +31,10 @@
                 "title":"Social networks features"
             }
         }
+    },
+    "buttons":{
+      "close":{
+        "aria-label":"Close the Cookies choices popup"
+      }
     }
 }
