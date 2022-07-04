@@ -30,37 +30,7 @@
             <!-- Journey details and carpooler -->
             <v-row dense>
               <v-col cols="12">
-                <v-card
-                  v-if="fraudWarningDisplay"
-                  color="info"
-                  flat
-                  dark
-                  max-height="50px"
-                  rounded="0"
-                >
-                  <v-card-text>
-                    <v-icon
-                      left
-                    >
-                      mdi-alert
-                    </v-icon>
-                    <span class="white--text ">
-                      {{ $t('fraudWarningText.title') }}
-                    </span>
-                  </v-card-text>
-                </v-card>
-                <v-card
-                  v-if="fraudWarningDisplay"
-                  rounded="0"
-                  flat
-                >
-                  <v-card-text>
-                    {{ $t('fraudWarningText.part1') }} <a
-                      :href="$t('fraudWarningText.link')"
-                      target="_blank"
-                    >{{ $t('fraudWarningText.textLink') }}</a>
-                  </v-card-text>
-                </v-card>
+                <thread-warning :fraud-warning-display="fraudWarningDisplay" />
               </v-col>
             </v-row>
             <v-row dense>

@@ -1,3 +1,8 @@
 {
-    "message": "Please note, you are about to communicate with your carpooler outside our interface. We recommend that you use our Messaging and refuse any type of payment by prepaid card or by link sent by the driver. Report a user who does not respect our charter. <a href=\"https://pro.mobicoop.fr/comment-regler-ses-covoiturages-sur-mobicoop/\" target=\"_blank\">Learn more about payments on mobicoop.fr</a>."
+  "fraudWarningText": {
+    "part1": "For a serene use of the service, we advise you to stay on the Mobicoop messaging service for your exchanges. Payments are made by hand or by bank card on our platform. Refuse to pay by Transcash type prepaid card, or money transfer links, these are fraudulent practices. You can report a user who does not respect our charter.",
+    "link": "https://pro.mobicoop.fr/comment-regler-ses-covoiturages-sur-mobicoop/",
+    "textLink": "Learn more",
+    "title": "Beware of scammers!"
+  }
 }
