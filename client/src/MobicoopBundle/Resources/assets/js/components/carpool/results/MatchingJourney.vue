@@ -30,7 +30,7 @@
             <!-- Journey details and carpooler -->
             <v-row dense>
               <v-col cols="12">
-                <thread-warning :fraud-warning-display="fraudWarningDisplay" />
+                <warning-message :fraud-warning-display="fraudWarningDisplay" />
               </v-col>
             </v-row>
             <v-row dense>
@@ -600,6 +600,7 @@ import RegularAsk from "@components/carpool/utilities/RegularAsk";
 import ProfileSummary from "@components/user/profile/ProfileSummary";
 import PublicProfile from "@components/user/profile/PublicProfile";
 import MMap from "@components/utilities/MMap/MMap";
+import WarningMessage from "@components/utilities/WarningMessage";
 import L from "leaflet";
 
 export default {
@@ -609,7 +610,8 @@ export default {
     RegularAsk,
     ProfileSummary,
     PublicProfile,
-    MMap
+    MMap,
+    WarningMessage
   },
   i18n: {
     messages: {

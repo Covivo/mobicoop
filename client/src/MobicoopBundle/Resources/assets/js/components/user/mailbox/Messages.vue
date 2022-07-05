@@ -9,7 +9,7 @@
         justify="center"
       >
         <v-col class="mr-n12 ml-n12">
-          <thread-warning :fraudWarningDisplay="fraudWarningDisplay" />
+          <warning-message :fraud-warning-display="fraudWarningDisplay" />
         </v-col>
       </v-row>
       <v-row id="headGridMessages">
@@ -179,6 +179,7 @@
                 :id-user="idUser"
                 :refresh="refreshDetails"
                 :hide-no-thread-selected="(idRecipient!==null)"
+                :fraud-warning-display="fraudWarningDisplay"
                 @refreshCompleted="refreshDetailsCompleted"
               />
             </v-col>
@@ -232,7 +233,7 @@ import ThreadsSolidary from '@components/user/mailbox/ThreadsSolidary'
 import ThreadDetails from '@components/user/mailbox/ThreadDetails'
 import ThreadActions from '@components/user/mailbox/ThreadActions'
 import TypeText from '@components/user/mailbox/TypeText'
-import ThreadWarning from './ThreadWarning.vue';
+import WarningMessage from '@components/utilities/WarningMessage.vue';
 
 export default {
   i18n: {
@@ -250,8 +251,8 @@ export default {
     ThreadsSolidary,
     ThreadDetails,
     ThreadActions,
-    TypeText
-    ThreadWarning
+    TypeText,
+    WarningMessage
   },
   props: {
     idUser:{

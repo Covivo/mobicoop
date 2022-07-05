@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-card
-      v-if="displayed || fraudWarningDisplay"
+      v-if="fraudWarningDisplay || displayed"
       color="info"
       flat
       dark
@@ -20,7 +20,7 @@
       </v-card-text>
     </v-card>
     <v-card
-      v-if="displayed || fraudWarningDisplay"
+      v-if="fraudWarningDisplay || displayed"
       rounded="0"
       flat
     >
@@ -35,7 +35,7 @@
 </template>
 <script>
 import is from "@utils/is";
-import {messages_en, messages_fr, message_eu, message_nl} from "@translations/components/user/mailbox/ThreadWarning/";
+import {messages_en, messages_fr, message_eu, message_nl} from "@translations/components/utilities/WarningMessage";
 
 export default {
   i18n: {
