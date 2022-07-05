@@ -484,7 +484,6 @@ export default {
       maxios
         .post(this.$t('routes.getList'),params)
         .then(response => {
-          //console.error(response.data);
           if(response.data.eventComing){
             this.eventscoming = response.data.eventComing;
             this.totalItems = response.data.totalItems;
