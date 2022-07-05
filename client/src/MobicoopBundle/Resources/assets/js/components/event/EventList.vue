@@ -358,7 +358,6 @@ export default {
       ],
       loading: false,
       loadingMap: false,
-      errorUpdate: false,
       pointsComingMap : [],
       eventscoming:[],
       eventspassed:[],
@@ -368,8 +367,6 @@ export default {
       modelTabs:(this.tabDefault !== "") ? this.tabDefault : "tab-current",
       selectedCommunity: null,
       communities: [],
-
-
     }
   },
   watch:{
@@ -450,13 +447,14 @@ export default {
 
     },
     createMapComing () {
-      this.errorUpdate =200;
       this.loadingMap = true;
       this.pointsComingMap.length = 0;
 
       if(this.pointsComing != null){
         this.pointsComing.forEach((waypoint, index) => {
-          this.pointsComingMap.push(this.buildPoint(waypoint.event,waypoint.latLng.lat,waypoint.latLng.lon,waypoint.title));
+          if (waypoint.latLng.lat && waypoint.latLng.lon) {
+            this.pointsComingMap.push(this.buildPoint(waypoint.event,waypoint.latLng.lat,waypoint.latLng.lon,waypoint.title));
+          }
         });
         this.loadingMap = false;
         this.redrawMap();
@@ -489,8 +487,14 @@ export default {
           //console.error(response.data);
           if(response.data.eventComing){
             this.eventscoming = response.data.eventComing;
-            this.pointsComing = response.data.points;
             this.totalItems = response.data.totalItems;
+            params.page = 1;
+            params.perPage = 9999;
+            maxios
+              .post(this.$t('routes.getList'), params)
+              .then(responsePoints => {
+                this.pointsComing = responsePoints.data.points;
+              });
           }
           if(response.data.eventPassed){
             this.eventspassed = response.data.eventPassed;
