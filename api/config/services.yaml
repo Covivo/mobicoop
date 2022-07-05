@@ -146,6 +146,7 @@ services:
         avatarSizes: "%env(string:AVATAR_SIZES)%"
         avatarDefaultFolder: "%env(string:AVATAR_DEFAULT_FOLDER)%"
         userReview: "%env(bool:USER_REVIEW)%"
+        identityValidation: "%env(bool:USER_IDENTITY_VALIDATION)%"
     tags:
       - { name: doctrine.event_listener, event: postLoad }
 
