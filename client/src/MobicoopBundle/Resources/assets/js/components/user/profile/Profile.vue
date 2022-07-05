@@ -91,10 +91,13 @@
               </v-tab-item>
 
               <!-- ALERTS -->
-              <v-tab class="text-subtitle-1">
+              <v-tab
+                class="text-subtitle-1"
+                href="#alerts"
+              >
                 {{ $t("tabs.alerts") }}
               </v-tab>
-              <v-tab-item>
+              <v-tab-item value="alerts">
                 <Alerts :alerts="alerts" />
               </v-tab-item>
 
@@ -277,7 +280,7 @@ export default {
       type: Boolean,
       default: false
     },
-    carpoolSettingsDisplay: { 
+    carpoolSettingsDisplay: {
       type: Boolean,
       default: true
     }
