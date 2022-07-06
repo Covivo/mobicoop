@@ -664,29 +664,29 @@ class AskManager
         $askHistory->setType($ask->getType());
         $ask->addAskHistory($askHistory);
 
-        $this->entityManager->persist($ask);
+        // $this->entityManager->persist($ask);
 
         // If there is a SolidaryAsk we update it
-        if (!is_null($ask->getSolidaryAsk())) {
-            $solidaryAsk = $ask->getSolidaryAsk();
-            if (Ask::STATUS_ACCEPTED_AS_DRIVER == $ad->getAskStatus() || Ask::STATUS_ACCEPTED_AS_PASSENGER == $ad->getAskStatus()) {
-                $solidaryAsk->setStatus(SolidaryAsk::STATUS_ACCEPTED);
-            } elseif (Ask::STATUS_DECLINED_AS_DRIVER == $ad->getAskStatus() || Ask::STATUS_DECLINED_AS_PASSENGER == $ad->getAskStatus()) {
-                $solidaryAsk->setStatus(SolidaryAsk::STATUS_REFUSED);
-            }
+        // if (!is_null($ask->getSolidaryAsk())) {
+        //     $solidaryAsk = $ask->getSolidaryAsk();
+        //     if (Ask::STATUS_ACCEPTED_AS_DRIVER == $ad->getAskStatus() || Ask::STATUS_ACCEPTED_AS_PASSENGER == $ad->getAskStatus()) {
+        //         $solidaryAsk->setStatus(SolidaryAsk::STATUS_ACCEPTED);
+        //     } elseif (Ask::STATUS_DECLINED_AS_DRIVER == $ad->getAskStatus() || Ask::STATUS_DECLINED_AS_PASSENGER == $ad->getAskStatus()) {
+        //         $solidaryAsk->setStatus(SolidaryAsk::STATUS_REFUSED);
+        //     }
 
-            // We clone the updated Criteria of the Ask
-            $solidaryAsk->setCriteria(clone $ask->getCriteria());
+        //     // We clone the updated Criteria of the Ask
+        //     $solidaryAsk->setCriteria(clone $ask->getCriteria());
 
-            $solidaryAskHistory = new SolidaryAskHistory();
-            $solidaryAskHistory->setSolidaryAsk($solidaryAsk);
-            $solidaryAskHistory->setStatus($solidaryAsk->getStatus());
+        //     $solidaryAskHistory = new SolidaryAskHistory();
+        //     $solidaryAskHistory->setSolidaryAsk($solidaryAsk);
+        //     $solidaryAskHistory->setStatus($solidaryAsk->getStatus());
 
-            $solidaryAsk->addSolidaryAskHistory($solidaryAskHistory);
-            $this->entityManager->persist($solidaryAsk);
-        }
+        //     $solidaryAsk->addSolidaryAskHistory($solidaryAskHistory);
+        //     $this->entityManager->persist($solidaryAsk);
+        // }
 
-        $this->entityManager->flush();
+        // $this->entityManager->flush();
 
         // get the complete ad to have data for the email
         $ad = $this->getAskFromAd($ask->getId(), $userId);
