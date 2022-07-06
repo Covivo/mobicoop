@@ -19,16 +19,17 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\EventListener;
 
+use App\User\Entity\IdentityProof;
 use App\User\Entity\User;
 use App\User\Service\UserManager;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 
 /**
- * User Event listener
+ * User Event listener.
  */
 class UserLoadListener
 {
@@ -36,13 +37,15 @@ class UserLoadListener
     private $avatarDefaultFolder;
     private $userReviewActive;
     private $userManager;
+    private $identityValidation;
 
     public function __construct(UserManager $userManager, $params)
     {
-        $this->avatarSizes=$params['avatarSizes'];
-        $this->avatarDefaultFolder=$params['avatarDefaultFolder'];
-        $this->userReviewActive=$params['userReview'];
+        $this->avatarSizes = $params['avatarSizes'];
+        $this->avatarDefaultFolder = $params['avatarDefaultFolder'];
+        $this->userReviewActive = $params['userReview'];
         $this->userManager = $userManager;
+        $this->identityValidation = $params['identityValidation'];
     }
 
     public function postLoad(LifecycleEventArgs $args)
@@ -54,17 +57,17 @@ class UserLoadListener
             // keep the phone number in case of update
             $user->setOldTelephone($user->getTelephone());
             $user->setOldEmail($user->getEmail());
-            
+
             $images = $user->getImages();
             foreach ($sizes as $size) {
-                if (count($images)>0 && count($images[0]->getVersions())>0 && isset($images[0]->getVersions()[$size])) {
+                if (count($images) > 0 && count($images[0]->getVersions()) > 0 && isset($images[0]->getVersions()[$size])) {
                     $user->addAvatar($images[0]->getVersions()[$size]);
                 }
             }
             if (is_null($user->getAvatars())) {
                 foreach ($sizes as $size) {
                     if (in_array($size, User::AUTHORIZED_SIZES_DEFAULT_AVATAR)) {
-                        $user->addAvatar($this->avatarDefaultFolder.$size.".svg");
+                        $user->addAvatar($this->avatarDefaultFolder.$size.'.svg');
                     }
                 }
             }
@@ -72,6 +75,10 @@ class UserLoadListener
             $publicProfile = $this->userManager->getPublicProfile($user);
             $user->setExperienced((!is_null($publicProfile)) ? $publicProfile->getProfileSummary()->isExperienced() : false);
             $user->setSavedCo2((!is_null($publicProfile)) ? $publicProfile->getProfileSummary()->getSavedCo2() : false);
+            $user->setVerifiedIdentity(null);
+            if ($this->identityValidation && ($user->isHitchHikeDriver() || $user->isHitchHikePassenger())) {
+                $user->setVerifiedIdentity(IdentityProof::STATUS_ACCEPTED == $user->getIdentityStatus());
+            }
         }
     }
 }

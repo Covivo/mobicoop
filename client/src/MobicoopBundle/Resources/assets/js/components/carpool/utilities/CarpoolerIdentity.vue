@@ -20,7 +20,10 @@
           {{ age }}
         </v-list-item-title>
       </v-list-item-content>
-      <span class="mr-2">
+      <span
+        v-if="carpooler.verifiedIdentity !== null"
+        class="mr-2"
+      >
         <verified-identity
           :verified-identity="carpooler.verifiedIdentity"
         />

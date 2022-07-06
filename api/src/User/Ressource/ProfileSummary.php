@@ -342,10 +342,8 @@ class ProfileSummary
 
     /**
      * Get true if identity has been validated.
-     *
-     * @return null|bool
      */
-    public function getVerifiedIdentity()
+    public function getVerifiedIdentity(): ?bool
     {
         return $this->verifiedIdentity;
     }
@@ -357,7 +355,7 @@ class ProfileSummary
      *
      * @return self
      */
-    public function setVerifiedIdentity($verifiedIdentity)
+    public function setVerifiedIdentity(?bool $verifiedIdentity)
     {
         $this->verifiedIdentity = $verifiedIdentity;
 

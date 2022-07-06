@@ -31,8 +31,11 @@
             cols="11"
             class="d-flex justify-center align-center"
           >
-            <span class="mt-1">{{ profileSummary.givenName }} {{ profileSummary.shortFamilyName }}</span>
-            <span class="ml-2">
+            <span :class=" showVerifiedIdentity ? 'mt-1' : 'mt-3' ">{{ profileSummary.givenName }} {{ profileSummary.shortFamilyName }}</span>
+            <span
+              v-if="showVerifiedIdentity"
+              class="ml-2"
+            >
               <verified-identity
                 :verified-identity="verifiedIdentity"
               />
@@ -154,6 +157,10 @@ export default {
       default: false
     },
     verifiedIdentity: {
+      type: Boolean,
+      default: false
+    },
+    showVerifiedIdentity:{
       type: Boolean,
       default: false
     }

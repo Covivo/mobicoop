@@ -19,89 +19,89 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace Mobicoop\Bundle\MobicoopBundle\User\Entity;
 
-use Doctrine\Common\Collections\Collection;
-use Doctrine\Common\Collections\ArrayCollection;
-use Mobicoop\Bundle\MobicoopBundle\Match\Entity\Mass;
-use Mobicoop\Bundle\MobicoopBundle\Image\Entity\Image;
-use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Serializer\Annotation\Groups;
-use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
-use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
-use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Security\Core\User\EquatableInterface;
-use Mobicoop\Bundle\MobicoopBundle\I18n\Entity\Language;
-use Mobicoop\Bundle\MobicoopBundle\Gamification\Entity\GamificationEntity;
 use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
+use Mobicoop\Bundle\MobicoopBundle\Gamification\Entity\GamificationEntity;
+use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
+use Mobicoop\Bundle\MobicoopBundle\I18n\Entity\Language;
+use Mobicoop\Bundle\MobicoopBundle\Image\Entity\Image;
+use Mobicoop\Bundle\MobicoopBundle\Match\Entity\Mass;
+use Symfony\Component\Security\Core\User\EquatableInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * A user.
  */
 class User extends GamificationEntity implements ResourceInterface, UserInterface, EquatableInterface, \JsonSerializable
 {
-    const MAX_DEVIATION_TIME = 600;
-    const MAX_DEVIATION_DISTANCE = 10000;
+    public const MAX_DEVIATION_TIME = 600;
+    public const MAX_DEVIATION_DISTANCE = 10000;
 
-    const STATUS_ACTIVE = 1;
-    const STATUS_DISABLED = 2;
-    const STATUS_ANONYMIZED = 3;
+    public const STATUS_ACTIVE = 1;
+    public const STATUS_DISABLED = 2;
+    public const STATUS_ANONYMIZED = 3;
 
-    const GENDER_FEMALE = 1;
-    const GENDER_MALE = 2;
-    const GENDER_OTHER = 3;
+    public const GENDER_FEMALE = 1;
+    public const GENDER_MALE = 2;
+    public const GENDER_OTHER = 3;
 
-    const GENDERS = [
-        'gender.choice.female'  => self::GENDER_FEMALE,
-        'gender.choice.male'    => self::GENDER_MALE,
-        'gender.choice.nc'      => self::GENDER_OTHER
+    public const GENDERS = [
+        'gender.choice.female' => self::GENDER_FEMALE,
+        'gender.choice.male' => self::GENDER_MALE,
+        'gender.choice.nc' => self::GENDER_OTHER,
     ];
 
-    const PHONE_DISPLAY_RESTRICTED = 1;
-    const PHONE_DISPLAY_ALL = 2;
+    public const PHONE_DISPLAY_RESTRICTED = 1;
+    public const PHONE_DISPLAY_ALL = 2;
 
-    const HOME_ADDRESS_NAME = 'homeAddress';
+    public const HOME_ADDRESS_NAME = 'homeAddress';
 
     /**
-     * @var int The id of this user.
+     * @var int the id of this user
      */
     private $id;
 
     /**
-     * @var string|null The iri of this user.
+     * @var null|string the iri of this user
      *
      * @Groups({"post","put","password"})
      */
     private $iri;
 
     /**
-     * @var int User status (1 = active; 2 = disabled; 3 = anonymized).
+     * @var int user status (1 = active; 2 = disabled; 3 = anonymized)
      */
     private $status;
 
     /**
-     * @var string|null The first name of the user.
+     * @var null|string the first name of the user
      *
      * @Groups({"get","post","put"})
      */
     private $givenName;
 
     /**
-     * @var string|null The family name of the user.
+     * @var null|string the family name of the user
      *
      * @Groups({"post","put"})
      */
     private $familyName;
 
     /**
-     * @var string|null The shorten family name of the user.
+     * @var null|string the shorten family name of the user
      */
     private $shortFamilyName;
 
     /**
-     * @var string The email of the user.
+     * @var string the email of the user
      *
      * @Groups({"post","put","checkValidationToken","passwordUpdateRequest"})
      *
@@ -111,7 +111,7 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
     private $email;
 
     /**
-     * @var string|null The encoded password of the user.
+     * @var null|string the encoded password of the user
      *
      * @Groups({"post","put","password","passwordUpdate"})
      *
@@ -120,36 +120,35 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
     private $password;
 
     /**
-     * @var int|null The gender of the user.
+     * @var null|int the gender of the user
      *
      * @Groups({"post","put"})
      */
     private $gender;
 
     /**
-     * @var string|null The nationality of the user.
+     * @var null|string the nationality of the user
      *
      * @Groups({"post","put"})
      */
     private $nationality;
 
     /**
-     * @var \DateTimeInterface|null The birth date of the user.
+     * @var null|\DateTimeInterface the birth date of the user
      *
      * @Groups({"post","put"})
-     *
      */
     private $birthDate;
 
     /**
-     * @var string|null The telephone number of the user.
+     * @var null|string the telephone number of the user
      *
      * @Groups({"post","put","checkPhoneToken"})
      */
     private $telephone;
 
     /**
-     * @var int phone display configuration (1 = restricted; 2 = all).
+     * @var int phone display configuration (1 = restricted; 2 = all)
      *
      * @Assert\NotBlank
      * @Groups({"post","put"})
@@ -157,147 +156,147 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
     private $phoneDisplay;
 
     /**
-     * @var int|null The maximum deviation time (in seconds) as a driver to accept a request proposal.
+     * @var null|int the maximum deviation time (in seconds) as a driver to accept a request proposal
      *
      * @Groups({"post","put"})
      */
     private $maxDeviationTime;
 
     /**
-     * @var int|null The maximum deviation distance (in metres) as a driver to accept a request proposal.
+     * @var null|int the maximum deviation distance (in metres) as a driver to accept a request proposal
      *
      * @Groups({"post","put"})
      */
     private $maxDeviationDistance;
 
     /**
-     * @var boolean The user accepts any route as a passenger from its origin to the destination.
+     * @var bool the user accepts any route as a passenger from its origin to the destination
      *
      * @Groups({"post","put"})
      */
     private $anyRouteAsPassenger;
 
     /**
-     * @var int|null Smoking preferences.
-     * 0 = i don't smoke
-     * 1 = i don't smoke in car
-     * 2 = i smoke
+     * @var null|int Smoking preferences.
+     *               0 = i don't smoke
+     *               1 = i don't smoke in car
+     *               2 = i smoke
      *
      * @Groups({"post","put"})
      */
     private $smoke;
 
     /**
-     * @var boolean|null Music preferences.
-     * 0 = no music
-     * 1 = i listen to music or radio
+     * @var null|bool Music preferences.
+     *                0 = no music
+     *                1 = i listen to music or radio
      *
      * @Groups({"post","put"})
      */
     private $music;
 
     /**
-     * @var string|null Music favorites.
+     * @var null|string music favorites
      *
      * @Groups({"post","put"})
      */
     private $musicFavorites;
 
     /**
-     * @var boolean|null Chat preferences.
-     * 0 = no chat
-     * 1 = chat
+     * @var null|bool Chat preferences.
+     *                0 = no chat
+     *                1 = chat
      *
      * @Groups({"post","put"})
      */
     private $chat;
 
     /**
-     * @var boolean|null Gamification preferences.
-     * 0 = no Gamification tracking
-     * 1 = Gamification tracking
+     * @var null|bool Gamification preferences.
+     *                0 = no Gamification tracking
+     *                1 = Gamification tracking
      *
      * @Groups({"post","put"})
      */
     private $gamification;
 
     /**
-     * @var string|null Chat favorite subjects.
+     * @var null|string chat favorite subjects
      *
      * @Groups({"post","put"})
      */
     private $chatFavorites;
 
     /**
-     * @var boolean|null The user accepts to receive news about the platform.
+     * @var null|bool the user accepts to receive news about the platform
      *
      *@Groups({"post","put"})
      */
     private $newsSubscription;
 
     /**
-     * @var \DateTimeInterface Validation date of the user.
+     * @var \DateTimeInterface validation date of the user
      *
      * @Groups({"post","put"})
      */
     private $validatedDate;
 
     /**
-     * @var string|null Token for account validation by email
+     * @var null|string Token for account validation by email
      *
      * @Groups({"post","put","checkValidationToken"})
      */
     private $emailToken;
 
     /**
-     * @var boolean The user accepts any transportation mode.
+     * @var bool the user accepts any transportation mode
      *
      * @Groups({"post","put"})
      */
     private $multiTransportMode;
 
     /**
-     * @var Address[]|null A user may have many addresses.
+     * @var null|Address[] a user may have many addresses
      *
      * @Groups({"post","put"})
      */
     private $addresses;
 
     /**
-     * @var Car[]|null A user may have many cars.
+     * @var null|Car[] a user may have many cars
      */
     private $cars;
 
     /**
-     * @var Proposal[]|null The proposals made by this user.
+     * @var null|Proposal[] the proposals made by this user
      */
     private $proposals;
 
     /**
-     * @var Image[]|null The images of the user.
+     * @var null|Image[] the images of the user
      *
      * @Groups({"post","put"})
      */
     private $images;
 
     /**
-     * @var Array|null The images of the user.
+     * @var null|array the images of the user
      */
     private $avatars;
 
     /**
-     * @var Array|null The images of the user.
+     * @var null|array the images of the user
      */
     private $avatar;
 
     /**
-    * @var array|null User notification alert preferences.
-    * @Groups({"put"})
-    */
+     * @var null|array user notification alert preferences
+     * @Groups({"put"})
+     */
     private $alerts;
 
     /**
-     * @var int|null The birth year of the user.
+     * @var null|int the birth year of the user
      */
     private $birthYear;
 
@@ -308,146 +307,151 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
     private $conditions;
 
     /**
-     * @var Mass[]|null The mass import files of the user.
+     * @var null|Mass[] the mass import files of the user
      */
     private $masses;
 
     /**
-     * @var Address[]|null A user have only one homeAddress.
+     * @var null|Address[] a user have only one homeAddress
      */
     private $homeAddress;
 
     /**
-     * @var string|null Token for password modification.
-     *  @Groups({"post","put", "password_token", "passwordUpdate"})
+     * @var null|string token for password modification
+     * @Groups({"post","put", "password_token", "passwordUpdate"})
      */
     private $pwdToken;
 
     /**
-     * @var DateTime|null Date of token password modification.
+     * @var null|DateTime date of token password modification
      * @Groups({"post","put", "password_token"})
      */
     private $pwdTokenDate;
 
     /**
-     * @var string|null Token for direct api auth.
-     *  @Groups({"post","put"})
+     * @var null|string token for direct api auth
+     * @Groups({"post","put"})
      */
     private $token;
 
     /**
-     * @var string|null Token for phone validation.
+     * @var null|string token for phone validation
      * @Groups({"post","put","checkPhoneToken"})
      */
     private $phoneToken;
 
     /**
-     * @var \DateTimeInterface|null Validation date of the phone number.
+     * @var null|\DateTimeInterface validation date of the phone number
      * @Groups({"post","put"})
      */
     private $phoneValidatedDate;
 
     /**
-     * @var bool|null Mobile user.
+     * @var null|bool mobile user
      * @Groups({"post","put"})
      */
     private $mobile;
 
     /**
-     * @var Language|null The language of the user.
+     * @var null|Language the language of the user
      *
      * @Groups({"post","api","language"})
      */
     private $language;
 
     /**
-     * @var string|null Facebook ID of the user
+     * @var null|string Facebook ID of the user
      * @Groups({"post"})
      */
     private $facebookId;
 
     /**
-    * @var int|null Community choose by a user
-    * @Groups({"post"})
-    */
+     * @var null|int Community choose by a user
+     * @Groups({"post"})
+     */
     private $communityId;
 
     /**
-     * @var string|null the unsubscribe message we return by api
+     * @var null|string the unsubscribe message we return by api
      * @Groups({"post","put"})
      */
     private $unsubscribeMessage;
 
     /**
-     * @var bool|null used for community member list to know who is the referrer
+     * @var null|bool used for community member list to know who is the referrer
      */
     private $isCommunityReferrer;
 
     /**
-     * @var bool|null used for community member list to know who is the referrer
+     * @var null|bool used for community member list to know who is the referrer
      */
     private $isCommunityModerator;
 
     /**
-     * @var array|null BankAccounts of a User
+     * @var null|array BankAccounts of a User
      */
     private $bankAccounts;
 
     /**
-     * @var array|null Wallets of a User
+     * @var null|array Wallets of a User
      */
     private $wallets;
 
     /**
-     * @var string|null CarpoolExport of a User
+     * @var null|string CarpoolExport of a User
      */
     private $carpoolExport;
 
     /**
-     * @var bool|null If the User can receive a review from the current User (used in Carpool Results)
+     * @var null|bool If the User can receive a review from the current User (used in Carpool Results)
      */
     private $canReceiveReview;
 
     /**
-     * @var bool|null If the Reviews are enable on this instance
+     * @var null|bool If the Reviews are enable on this instance
      */
     private $userReviewsActive;
-    
+
     /**
-     * @var bool|null If the User is an experienced carpooler
+     * @var null|bool If the User is an experienced carpooler
      */
     private $experienced;
 
     /**
-     * @var int|null Number of unread carpool messages
+     * @var null|int Number of unread carpool messages
      */
     private $unreadCarpoolMessageNumber;
 
     /**
-     * @var int|null Number of unread direct messages
+     * @var null|int Number of unread direct messages
      */
     private $unreadDirectMessageNumber;
 
     /**
-     * @var int|null Number of unread solidary messages
+     * @var null|int Number of unread solidary messages
      */
     private $unreadSolidaryMessageNumber;
-    
+
     /**
-     * @var int|null The savedCo2 of this user in grams
+     * @var null|int The savedCo2 of this user in grams
      */
     private $savedCo2;
 
     /**
-    * @var int|null Number of badges earned by the user
-    */
+     * @var null|int Number of badges earned by the user
+     */
     private $numberOfBadges;
 
-    public function __construct($id=null, $status=null)
+    /**
+     * @var null|bool If the User has a verified identity (null if not used)
+     */
+    private $verifiedIdentity;
+
+    public function __construct($id = null, $status = null)
     {
         if ($id) {
             $this->setId($id);
-            $this->setIri("/users/".$id);
+            $this->setIri('/users/'.$id);
         }
         $this->addresses = new ArrayCollection();
         $this->cars = new ArrayCollection();
@@ -618,7 +622,7 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
 
     public function getMaxDeviationTime(): int
     {
-        return (!is_null($this->maxDeviationTime) ? $this->maxDeviationTime : self::MAX_DEVIATION_TIME);
+        return !is_null($this->maxDeviationTime) ? $this->maxDeviationTime : self::MAX_DEVIATION_TIME;
     }
 
     public function setMaxDeviationTime(?int $maxDeviationTime): self
@@ -630,7 +634,7 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
 
     public function getMaxDeviationDistance(): int
     {
-        return (!is_null($this->maxDeviationDistance) ? $this->maxDeviationDistance : self::MAX_DEVIATION_DISTANCE);
+        return !is_null($this->maxDeviationDistance) ? $this->maxDeviationDistance : self::MAX_DEVIATION_DISTANCE;
     }
 
     public function setMaxDeviationDistance(?int $maxDeviationDistance): self
@@ -756,6 +760,7 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
     public function setEmailToken(?string $emailToken): self
     {
         $this->emailToken = $emailToken;
+
         return $this;
     }
 
@@ -856,7 +861,6 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
     }
 
     /**
-     *
      * @return Collection|Image[]
      */
     public function getImages()
@@ -886,7 +890,6 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
 
         return $this;
     }
-
 
     public function getAvatars(): ?array
     {
@@ -932,7 +935,7 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
     public function setBirthYear(?int $birthYear)
     {
         $this->birthYear = $birthYear;
-        //$this->birthDate = DateTime::createFromFormat('Y-m-d', $birthYear . '-1-1');
+        // $this->birthDate = DateTime::createFromFormat('Y-m-d', $birthYear . '-1-1');
     }
 
     public function getConditions(): ?int
@@ -947,20 +950,17 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
 
     public function getGenderString(): ?string
     {
-        return ($this->getGender() ? array_search($this->getGender(), self::GENDERS) : null);
+        return $this->getGender() ? array_search($this->getGender(), self::GENDERS) : null;
     }
-
-
 
     public function getRoles()
     {
-        return array('ROLE_USER');
+        return ['ROLE_USER'];
     }
-
 
     public function getSalt()
     {
-        return  null;
+        return null;
     }
 
     public function getUsername()
@@ -985,6 +985,7 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
         if ($this->email !== $user->getUsername()) {
             return false;
         }
+
         return true;
     }
 
@@ -1011,11 +1012,12 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
                 return $address;
             }
         }
+
         return null;
     }
 
     /**
-     * @param Address[]|null $homeAddress
+     * @param null|Address[] $homeAddress
      */
     public function setHomeAddress(?Address $homeAddress)
     {
@@ -1035,11 +1037,12 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
     /**
      * Set the Token of password mofification.
      *
-     * @param string|null $pwdtoken
+     * @param null|string $pwdtoken
      */
     public function setPwdToken(?string $pwdToken)
     {
         $this->pwdToken = $pwdToken;
+
         return $this;
     }
 
@@ -1055,12 +1058,11 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
 
     /**
      * Set the date of password mofification.
-     *
-     * @param DateTime|null $pwdTokenDate
      */
     public function setPwdTokenDate(?DateTime $pwdTokenDate)
     {
         $this->pwdTokenDate = $pwdTokenDate;
+
         return $this;
     }
 
@@ -1072,6 +1074,7 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
     public function setToken(?string $token)
     {
         $this->token = $token;
+
         return $this;
     }
 
@@ -1083,6 +1086,7 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
     public function setPhoneToken(?string $phoneToken): self
     {
         $this->phoneToken = $phoneToken;
+
         return $this;
     }
 
@@ -1118,6 +1122,7 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
     public function setFacebookId(?string $facebookId): self
     {
         $this->facebookId = $facebookId;
+
         return $this;
     }
 
@@ -1162,40 +1167,28 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
 
         return $this;
     }
-    
-    /**
-     * @return bool|null
-     */
+
     public function getIsCommunityReferrer(): ?bool
     {
         return $this->isCommunityReferrer;
     }
 
-    /**
-     * @param bool|null $isCommunityReferrer
-     * @return User
-     */
     public function setIsCommunityReferrer(?bool $isCommunityReferrer): User
     {
         $this->isCommunityReferrer = $isCommunityReferrer;
+
         return $this;
     }
 
-    /**
-     * @return bool|null
-     */
     public function getIsCommunityModerator(): ?bool
     {
         return $this->isCommunityModerator;
     }
 
-    /**
-     * @param bool|null $isCommunityModerator
-     * @return User
-     */
     public function setIsCommunityModerator(?bool $isCommunityModerator): User
     {
         $this->isCommunityModerator = $isCommunityModerator;
+
         return $this;
     }
 
@@ -1242,7 +1235,7 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
 
         return $this;
     }
-    
+
     public function isUserReviewsActive(): ?bool
     {
         return $this->userReviewsActive;
@@ -1279,7 +1272,6 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
         return $this;
     }
 
-
     public function getUnreadDirectMessageNumber(): ?int
     {
         return $this->unreadDirectMessageNumber;
@@ -1291,7 +1283,6 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
 
         return $this;
     }
-
 
     public function getUnreadSolidaryMessageNumber(): ?int
     {
@@ -1329,56 +1320,69 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
         return $this;
     }
 
+    public function getVerifiedIdentity()
+    {
+        return $this->verifiedIdentity;
+    }
+
+    public function setVerifiedIdentity($verifiedIdentity)
+    {
+        $this->verifiedIdentity = $verifiedIdentity;
+
+        return $this;
+    }
+
     // If you want more info from user you just have to add it to the jsonSerialize function
     public function jsonSerialize()
     {
         $userSerialized = [
-            'id'                            => $this->getId(),
-            'givenName'                     => $this->getGivenName(),
-            'familyName'                    => $this->getFamilyName(),
-            'shortFamilyName'               => $this->getShortFamilyName(),
-            'gender'                        => $this->getGender(),
-            'status'                        => $this->getStatus(),
-            'email'                         => $this->getEmail(),
-            'telephone'                     => $this->getTelephone(),
-            'token'                         => $this->getToken(),
-            'birthYear'                     => $this->getBirthYear(),
-            'birthDate'                     => $this->getBirthDate(),
-            'homeAddress'                   => $this->getHomeAddress(),
-            'images'                        => $this->getImages(),
-            'avatars'                       => $this->getAvatars(),
-            'smoke'                         => $this->getSmoke(),
-            'chat'                          => $this->hasChat(),
-            'chatFavorites'                 => $this->getChatFavorites(),
-            'music'                         => $this->hasMusic(),
-            'musicFavorites'                => $this->getMusicFavorites(),
-            'gamification'                  => $this->hasGamification(),
-            'newsSubscription'              => $this->hasNewsSubscription(),
-            'phoneDisplay'                  => $this->getPhoneDisplay(),
-            'phoneValidatedDate'            => $this->getPhoneValidatedDate(),
-            'phoneToken'                    => $this->getPhoneToken(),
-            'unsubscribeMessage'            => $this->getUnsubscribeMessage(),
-            'communityId'                   => $this->getCommunityId(),
-            'bankAccounts'                  => $this->getBankAccounts(),
-            'carpoolExport'                 => $this->getCarpoolExport(),
-            'canReceiveReview'              => $this->getCanReceiveReview(),
-            'userReviewsActive'             => $this->isUserReviewsActive(),
-            'experienced'                   => $this->isExperienced(),
-            'validatedDate'                 => $this->getValidatedDate(),
-            'unreadCarpoolMessageNumber'    => $this->getUnreadCarpoolMessageNumber(),
-            'unreadDirectMessageNumber'     => $this->getUnreadDirectMessageNumber(),
-            'unreadSolidaryMessageNumber'   => $this->getUnreadSolidaryMessageNumber(),
-            'savedCo2'                      => $this->getSavedCo2(),
-            'language'                      => $this->getLanguage(),
-            'gamificationNotifications'     => $this->getGamificationNotifications(),
-            'numberOfBadges'                => $this->getNumberOfBadges()
+            'id' => $this->getId(),
+            'givenName' => $this->getGivenName(),
+            'familyName' => $this->getFamilyName(),
+            'shortFamilyName' => $this->getShortFamilyName(),
+            'gender' => $this->getGender(),
+            'status' => $this->getStatus(),
+            'email' => $this->getEmail(),
+            'telephone' => $this->getTelephone(),
+            'token' => $this->getToken(),
+            'birthYear' => $this->getBirthYear(),
+            'birthDate' => $this->getBirthDate(),
+            'homeAddress' => $this->getHomeAddress(),
+            'images' => $this->getImages(),
+            'avatars' => $this->getAvatars(),
+            'smoke' => $this->getSmoke(),
+            'chat' => $this->hasChat(),
+            'chatFavorites' => $this->getChatFavorites(),
+            'music' => $this->hasMusic(),
+            'musicFavorites' => $this->getMusicFavorites(),
+            'gamification' => $this->hasGamification(),
+            'newsSubscription' => $this->hasNewsSubscription(),
+            'phoneDisplay' => $this->getPhoneDisplay(),
+            'phoneValidatedDate' => $this->getPhoneValidatedDate(),
+            'phoneToken' => $this->getPhoneToken(),
+            'unsubscribeMessage' => $this->getUnsubscribeMessage(),
+            'communityId' => $this->getCommunityId(),
+            'bankAccounts' => $this->getBankAccounts(),
+            'carpoolExport' => $this->getCarpoolExport(),
+            'canReceiveReview' => $this->getCanReceiveReview(),
+            'userReviewsActive' => $this->isUserReviewsActive(),
+            'experienced' => $this->isExperienced(),
+            'validatedDate' => $this->getValidatedDate(),
+            'unreadCarpoolMessageNumber' => $this->getUnreadCarpoolMessageNumber(),
+            'unreadDirectMessageNumber' => $this->getUnreadDirectMessageNumber(),
+            'unreadSolidaryMessageNumber' => $this->getUnreadSolidaryMessageNumber(),
+            'savedCo2' => $this->getSavedCo2(),
+            'language' => $this->getLanguage(),
+            'gamificationNotifications' => $this->getGamificationNotifications(),
+            'numberOfBadges' => $this->getNumberOfBadges(),
+            'verifiedIdentity' => $this->getVerifiedIdentity(),
         ];
 
         if (!is_null($this->getIsCommunityReferrer())) {
-            $userSerialized["isCommunityReferrer"] = $this->getIsCommunityReferrer();
+            $userSerialized['isCommunityReferrer'] = $this->getIsCommunityReferrer();
         }
         if (!is_null($this->getIsCommunityModerator())) {
-            $userSerialized["isCommunityModerator"] = $this->getIsCommunityModerator();
+            $userSerialized['isCommunityModerator'] = $this->getIsCommunityModerator();
         }
 
         return $userSerialized;

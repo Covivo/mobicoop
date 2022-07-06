@@ -195,6 +195,7 @@
                     :refresh="profileSummaryRefresh"
                     :age-display="ageDisplay"
                     :verified-identity="result.carpooler.verifiedIdentity"
+                    :show-verified-identity="result.carpooler.verifiedIdentity !== null"
                     @showProfile="step=4"
                     @profileSummaryRefresh="refreshProfileSummary"
                   />
