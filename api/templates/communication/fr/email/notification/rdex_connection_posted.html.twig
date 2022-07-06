@@ -5,7 +5,7 @@
     <table align="center" style="border-spacing:0;text-align:left;vertical-align:top;width:100%;margin-top:20px;font-family:Roboto, sans-serif;">
     <tr>
         <td>
-            <p>Bonjour<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{context.user.givenName|capitalize}} {{context.user.shortFamilyName|capitalize}}</b>.</p>
+            <p>Bonjour<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{context.user.givenName|capitalize}} {{context.user.shortFamilyName|capitalize}}</b>,</p>
         </td>
     </tr>
     <tr>
@@ -28,8 +28,8 @@
     </tr>
     <tr>
         <td>
-            <p>Cet usager étant inscrit sur une autre platforme de covoiturage, vous ne pouvez pas lui répondre via {{ api_env('EMAILS_PLATFORM_NAME') }}</p>
-            <p>Vous pouvez utiliser les coordonnées qu'il vous a, en principe, transmis dans son message pour le contacter directement.</p>
+            <p>Cet usager étant inscrit sur une autre plateforme de covoiturage, vous ne pouvez pas lui répondre via {{ api_env('EMAILS_PLATFORM_NAME') }}</p>
+            <p>Vous pouvez utiliser les coordonnées qu'il vous a, en principe, transmises dans son message pour le contacter directement.</p>
         </td>
     </tr>
     <tr>
