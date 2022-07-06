@@ -460,7 +460,7 @@ class Community
      * @var null|ArrayCollection the security files of the community
      *
      * @ORM\OneToMany(targetEntity="\App\Community\Entity\CommunitySecurity", mappedBy="community", cascade={"persist"})
-     * @Groups({"readCommunity","write","listCommunities"})
+     * @Groups({"aRead","readCommunity","write","listCommunities"})
      * @MaxDepth(1)
      * @ApiSubresource(maxDepth=1)
      */

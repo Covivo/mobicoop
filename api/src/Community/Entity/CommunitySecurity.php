@@ -80,7 +80,7 @@ class CommunitySecurity
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups("readCommunity")
+     * @Groups({"aRead","readCommunity"})
      */
     private $id;
 
@@ -106,7 +106,7 @@ class CommunitySecurity
      * @var string the filename of the community security
      *
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read","write"})
+     * @Groups({"read","aRead","write"})
      */
     private $filename;
 
