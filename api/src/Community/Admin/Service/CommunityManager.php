@@ -292,6 +292,41 @@ class CommunityManager
     }
 
     /**
+     * Generate the UrlKey of a Community.
+     *
+     * @return string The url key
+     */
+    public function generateUrlKey(Community $community): string
+    {
+        $urlKey = $community->getName();
+        $urlKey = str_replace(' ', '-', $urlKey);
+        $urlKey = str_replace("'", '-', $urlKey);
+        $urlKey = strtr(utf8_decode($urlKey), utf8_decode('àáâãäçèéêëìíîïñòóôõöùúûüýÿÀÁÂÃÄÇÈÉÊËÌÍÎÏÑÒÓÔÕÖÙÚÛÜÝ'), 'aaaaaceeeeiiiinooooouuuuyyAAAAACEEEEIIIINOOOOOUUUUY');
+        $urlKey = preg_replace('/[^A-Za-z0-9\-]/', '', $urlKey);
+
+        // We don't want to finish with a single "-"
+        if ('-' == substr($urlKey, -1)) {
+            $urlKey = substr($urlKey, 0, strlen($urlKey) - 1);
+        }
+
+        return $urlKey;
+    }
+
+    /**
+     * Get a community by its id.
+     *
+     * @return null|Community
+     */
+    public function getCommunity(int $communityId)
+    {
+        if ($community = $this->communityRepository->find($communityId)) {
+            $community->setUrlKey($this->generateUrlKey($community));
+        }
+
+        return $community;
+    }
+
+    /**
      * Add community manager role to the given user if needed.
      *
      * @param User $user The user

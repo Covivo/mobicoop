@@ -43,9 +43,6 @@ final class CommunityDataPersister implements ContextAwareDataPersisterInterface
 
     public function supports($data, array $context = []): bool
     {
-        echo 'yo';
-
-        exit;
         if ($data instanceof Community) {
             switch ($context) {
                 case isset($context['collection_operation_name']):
