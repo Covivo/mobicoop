@@ -23,6 +23,8 @@
 
 namespace App\Community\Admin\Service;
 
+use App\Community\Admin\Repository\CommunitySecurityRepository;
+use App\Community\Entity\Community;
 use App\Community\Entity\CommunitySecurity;
 use Doctrine\ORM\EntityManagerInterface;
 use LogicException;
@@ -39,16 +41,25 @@ class CommunitySecurityManager
 {
     private $communityManager;
     private $entityManager;
+    private $communitySecurityRepository;
 
-    public function __construct(CommunityManager $communityManager, EntityManagerInterface $entityManager)
+    public function __construct(
+        CommunityManager $communityManager,
+        EntityManagerInterface $entityManager,
+        CommunitySecurityRepository $communitySecurityRepository
+    )
     {
         $this->communityManager = $communityManager;
         $this->entityManager = $entityManager;
+        $this->communitySecurityRepository = $communitySecurityRepository;
     }
 
     public function createSecurity(File $file, int $communityId): CommunitySecurity
     {
         if ($community = $this->communityManager->getCommunity($communityId)) {
+            // remove old securities
+            $this->removeOldCommunitySecurities($community);
+
             $communitySecurity = new CommunitySecurity();
             $communitySecurity->setFile($file);
             $communitySecurity->setFileName(time().'-'.$communityId);
@@ -60,5 +71,19 @@ class CommunitySecurityManager
         }
 
         throw new LogicException('Community '.$communityId.' not found');
+    }
+
+    public function removeOldCommunitySecurities(Community $community)
+    {
+        $communitySecurities = $this->getCommunitySecurities($community);
+        foreach ($communitySecurities as $communitySecurity) {
+            $this->entityManager->remove($communitySecurity);
+        }
+        $this->entityManager->flush();
+    }
+
+    public function getCommunitySecurities(Community $community): array
+    {
+        return $this->communitySecurityRepository->findBy(['community' => $community]);
     }
 }

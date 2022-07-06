@@ -152,12 +152,12 @@ class CommunitySecurity
         $this->file = $file;
     }
 
-    public function getFilename(): string
+    public function getFilename(): ?string
     {
         return $this->filename;
     }
 
-    public function setFilename(string $filename)
+    public function setFilename(?string $filename)
     {
         $this->filename = $filename;
     }
