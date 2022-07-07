@@ -15,8 +15,8 @@
         <td>
             <table cellpadding="6" cellspacing="6" summary="" border="0">
                 <tr> 
-                    <td style="text-align:center;">
-                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:20px;" ><b>Votre covoiturage et confirmé !</b></p>
+                    <td>
+                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:20px; text-align:center;" ><b>Votre covoiturage et confirmé !</b></p>
                     </td>
                 </tr>
             </table>
@@ -87,32 +87,39 @@
                          <p style="font-size:11px;">Prix: <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{ad.results[0].roundedPrice}}€</b></p>
                     </td>
                 </tr>
+               
                 <tr>
                     <td>
-                        <img
-                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/origin.png"
-                            style="border:0; height:19px; width:19px; background-color:transparent; vertical-align:top;"
-                        />
-                    </td>
-                    <td>
-                        <p style="font-size:11px;">{{outwardOrigin.time|date('H:i')}}</p>
-                    </td>
-                    <td>
-                        <p style="font-size:11px; color:{{api_env('EMAILS_COLOR_SECONDARY')}}"><b>{{ outwardOrigin.address.displayLabel[0] }}</b></p>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <img
-                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/destination.png"
-                            style="border:0; height:19px; width:19px; background-color:transparent; vertical-align:top;"
-                        />
-                    </td>
-                    <td>
-                        <p style="font-size:11px;">{{outwardDestination.time|date('H:i')}}</p>
-                    </td>
-                    <td>
-                        <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}};"> {{ outwardDestination.address.displayLabel[0] }}</b></p>
+                        <table cellpadding="6" cellspacing="6" summary="" border="0">
+                            <tr>
+                                <td>
+                                    <img
+                                        src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/origin.png"
+                                        style="border:0; height:19px; width:19px; background-color:transparent; vertical-align:top;"
+                                    />
+                                </td>
+                                <td>
+                                    <p style="font-size:11px;">{{outwardOrigin.time|date('H:i')}}</p>
+                                </td>
+                                <td>
+                                    <p style="font-size:11px; color:{{api_env('EMAILS_COLOR_SECONDARY')}}"><b>{{ outwardOrigin.address.displayLabel[0] }}</b></p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <img
+                                        src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/destination.png"
+                                        style="border:0; height:19px; width:19px; background-color:transparent; vertical-align:top;"
+                                    />
+                                </td>
+                                <td>
+                                    <p style="font-size:11px;">{{outwardDestination.time|date('H:i')}}</p>
+                                </td>
+                                <td>
+                                    <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}};"> {{ outwardDestination.address.displayLabel[0] }}</b></p>
+                                </td>
+                            </tr>
+                        </table>
                     </td>
                 </tr>
             </table>
