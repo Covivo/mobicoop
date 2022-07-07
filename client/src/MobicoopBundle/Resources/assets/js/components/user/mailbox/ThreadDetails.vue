@@ -49,7 +49,10 @@
             class="secondary--text font-weight-bold"
           >{{ item.createdDate }}</span>
         </v-timeline-item>
-        <thread-warning :threaded-posts="threadedPosts" />
+        <warning-message
+          :fraud-warning-display="fraudWarningDisplay"
+          :threaded-posts="threadedPosts"
+        />
       </v-timeline>
       <v-card v-else-if="(!loading && !hideNoThreadSelected) || clearClickIcon">
         <v-card-text
@@ -70,10 +73,10 @@
   </v-main>
 </template>
 <script>
-import ThreadWarning from '@components/user/mailbox/ThreadWarning';
 
 import maxios from "@utils/maxios";
 import moment from "moment";
+import WarningMessage from '../../utilities/WarningMessage.vue';
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/mailbox/ThreadDetails/";
 
 export default {
@@ -86,7 +89,7 @@ export default {
     }
   },
   components: {
-    ThreadWarning
+    WarningMessage
   },
   props: {
     idMessage: {
@@ -104,6 +107,10 @@ export default {
     hideNoThreadSelected:{
       type: Boolean,
       default:false
+    },
+    fraudWarningDisplay: {
+      type: Boolean,
+      default: false
     }
   },
   data(){
