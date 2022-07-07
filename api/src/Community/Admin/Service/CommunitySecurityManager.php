@@ -39,6 +39,10 @@ use Symfony\Component\HttpFoundation\File\File;
  */
 class CommunitySecurityManager
 {
+    public const MIME_TYPES = [
+        'text/plain',
+        'text/csv',
+    ];
     private $communityManager;
     private $entityManager;
     private $communitySecurityRepository;
@@ -47,18 +51,58 @@ class CommunitySecurityManager
         CommunityManager $communityManager,
         EntityManagerInterface $entityManager,
         CommunitySecurityRepository $communitySecurityRepository
-    )
-    {
+    ) {
         $this->communityManager = $communityManager;
         $this->entityManager = $entityManager;
         $this->communitySecurityRepository = $communitySecurityRepository;
     }
 
+    private function __validateSecurityFile(File $file)
+    {
+        $openedFile = fopen($file, 'r');
+
+        if (!in_array($file->getMimeType(), self::MIME_TYPES)) {
+            throw new LogicException('Incorrect MIME type');
+        }
+
+        $numLine = 1;
+        while (!feof($openedFile)) {
+            $line = fgetcsv($openedFile, 0, ';');
+            if ($line) {
+                $this->__validate_line($line, $numLine);
+            }
+            ++$numLine;
+        }
+    }
+
+    private function __validate_line(array $line, int $numLine)
+    {
+        if (2 != count($line)) {
+            throw new LogicException('Incorrect number of column line '.$numLine.' (2 expected)');
+        }
+        if (0 == strlen(trim($line[0])) || '' == trim($line[0])) {
+            throw new LogicException('First parameter cannot be empty line '.$numLine);
+        }
+        if (0 == strlen(trim($line[1])) || '' == trim($line[1])) {
+            throw new LogicException('Second parameter cannot be empty line '.$numLine);
+        }
+    }
+
+    private function __removeOldCommunitySecurities(Community $community)
+    {
+        $communitySecurities = $this->getCommunitySecurities($community);
+        foreach ($communitySecurities as $communitySecurity) {
+            $this->entityManager->remove($communitySecurity);
+        }
+        $this->entityManager->flush();
+    }
+
     public function createSecurity(File $file, int $communityId): CommunitySecurity
     {
         if ($community = $this->communityManager->getCommunity($communityId)) {
-            // remove old securities
-            $this->removeOldCommunitySecurities($community);
+            $this->__validateSecurityFile($file);
+
+            $this->__removeOldCommunitySecurities($community);
 
             $communitySecurity = new CommunitySecurity();
             $communitySecurity->setFile($file);
@@ -71,15 +115,6 @@ class CommunitySecurityManager
         }
 
         throw new LogicException('Community '.$communityId.' not found');
-    }
-
-    public function removeOldCommunitySecurities(Community $community)
-    {
-        $communitySecurities = $this->getCommunitySecurities($community);
-        foreach ($communitySecurities as $communitySecurity) {
-            $this->entityManager->remove($communitySecurity);
-        }
-        $this->entityManager->flush();
     }
 
     public function getCommunitySecurities(Community $community): array
