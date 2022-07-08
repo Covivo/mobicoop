@@ -166,6 +166,7 @@
             </table>    
         </td>    
     </tr> 
+    {% for schedule in ad.schedule %}
     <tr>
         <td>
             <table cellpadding="2" cellspacing="2" summary="" border="0">
@@ -174,7 +175,7 @@
                         <p> </p>
                     </td>
                     <td>
-                    {% if result.outward.monCheck %}
+                    {% if schedule.monCheck %}
                         <img
                             src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/monGreen.png"
                             style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
@@ -187,7 +188,7 @@
                     {% endif %}
                     </td>
                     <td>
-                        {% if result.outward.tueCheck %}
+                        {% if schedule.tueCheck %}
                             <img
                                 src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/tueGreen.png"
                                 style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
@@ -200,7 +201,7 @@
                         {% endif %}
                     </td>
                     <td>
-                        {% if result.outward.wedCheck %}
+                        {% if schedule.wedCheck %}
                             <img
                                 src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/wedGreen.png"
                                 style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
@@ -213,7 +214,7 @@
                         {% endif %}
                     </td>
                     <td>
-                        {% if result.outward.thuCheck %}
+                        {% if schedule.thuCheck %}
                             <img
                                 src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/thuGreen.png"
                                 style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
@@ -226,7 +227,7 @@
                         {% endif %}
                     </td>
                     <td>
-                        {% if result.outward.friCheck %}
+                        {% if schedule.friCheck %}
                             <img
                                 src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/friGreen.png"
                                 style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
@@ -239,7 +240,7 @@
                         {% endif %}
                     </td>
                     <td>
-                        {% if result.outward.satCheck %}
+                        {% if schedule.satCheck %}
                             <img
                                 src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/satGreen.png"
                                 style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
@@ -252,7 +253,7 @@
                         {% endif %}
                     </td>
                     <td>
-                        {% if result.outward.sunCheck %}
+                        {% if schedule.sunCheck %}
                             <img
                                 src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/sunGreen.png"
                                 style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
@@ -284,12 +285,12 @@
                             </tr>
                             <tr>
                                 <td>
-                                    <p style="font-size:11px;">Prise en charge à <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{outwardOrigin.time|date('H:i')}}</b></p>
+                                    <p style="font-size:11px;">Prise en charge à <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{schedule.outwardPickUpTime|date('H:i')}}</b></p>
                                 </td>
                             </tr>
                             <tr>
                                 <td>
-                                    <p style="font-size:11px;">Dépose à <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{outwardDestination.time|date('H:i')}}</b></p>
+                                    <p style="font-size:11px;">Dépose à <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{schedule.outwardDropOffTime|date('H:i')}}</b></p>
                                 </td>
                             </tr>
                         </table>
@@ -303,20 +304,22 @@
                             </tr>
                             <tr>
                                 <td>
-                                    <p style="font-size:11px;">Prise en charge à <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{returnOrigin.time|date('H:i')}}</b></p>
+                                    <p style="font-size:11px;">Prise en charge à <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{schedule.returnPickUpTime|date('H:i')}}</b></p>
                                 </td>
                             </tr>
                             <tr>
                                 <td>
-                                    <p style="font-size:11px;">Dépose à <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{returnDestination.time|date('H:i')}}</b></p>
+                                    <p style="font-size:11px;">Dépose à <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{schedule.returnDropOffTime|date('H:i')}}</b></p>
                                 </td>
                             </tr>
                         </table>
                     <td>
                 </tr>
             </table>
+            <hr style="border: 0.5px solid #F0BFFF;">
         </td>
     </tr>
+    {% endfor %}
 {% endif %}
 
 
