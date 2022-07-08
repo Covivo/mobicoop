@@ -259,7 +259,7 @@ class UserController extends AbstractController
             $user->setGivenName($data['givenName']);
             $user->setFamilyName($data['familyName']);
             $user->setGender($data['gender']);
-            //$user->setBirthYear($data->get('birthYear')); Replace only year by full birthday
+            // $user->setBirthYear($data->get('birthYear')); Replace only year by full birthday
             $user->setBirthDate(new DateTime($data['birthDay']));
 
             if (isset($data['newsSubscription'])) {
@@ -526,7 +526,7 @@ class UserController extends AbstractController
             }
         }
 
-        //TODO - fix : Change this when use router vue
+        // TODO - fix : Change this when use router vue
         if ('mes-annonces' == $tabDefault) {
             $tabDefault = 'myAds';
         }
@@ -547,6 +547,10 @@ class UserController extends AbstractController
 
         if ('alertes' == $selectedTab) {
             $tab = 'alerts';
+        }
+
+        if ('identite-bancaire' == $selectedTab) {
+            $tab = 'bankCoordinates';
         }
 
         return $this->render('@Mobicoop/user/updateProfile.html.twig', [
@@ -605,7 +609,7 @@ class UserController extends AbstractController
     {
         $user = clone $userManager->getLoggedUser();
         // To DO : Voter for deleting image
-        //$this->denyAccessUnlessGranted('update', $user);
+        // $this->denyAccessUnlessGranted('update', $user);
         $imageId = $user->getImages()[0]->getId();
         $imageManager->deleteImage($imageId);
 
@@ -749,7 +753,7 @@ class UserController extends AbstractController
         }
         $this->denyAccessUnlessGranted('update', $user);
         // To Do : Specific right for update a address ?
-        //$this->denyAccessUnlessGranted('address_update_self', $user);
+        // $this->denyAccessUnlessGranted('address_update_self', $user);
 
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);

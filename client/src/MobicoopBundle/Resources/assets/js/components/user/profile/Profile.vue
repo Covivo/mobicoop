@@ -116,10 +116,14 @@
               <v-tab
                 v-if="paymentElectronicActive"
                 class="text-subtitle-1"
+                href="#bankCoordinates"
               >
                 {{ $t("tabs.bankCoordinates") }}
               </v-tab>
-              <v-tab-item v-if="paymentElectronicActive">
+              <v-tab-item
+                v-if="paymentElectronicActive"
+                value="bankCoordinates"
+              >
                 <BankAccount
                   :user="user"
                   :geo-search-url="geoSearchUrl"

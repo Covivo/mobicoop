@@ -325,6 +325,11 @@
 
 {# Comment bien préparer votre covoiturage  #}
     <tr>
+        <td style="height:20px">
+            <p> </p>
+        </td>    
+    </tr>
+    <tr>
         <td>
             <table cellpadding="6" cellspacing="6" summary="" border="0">
                 <tr>
@@ -346,7 +351,7 @@
                     <td align="left" valign="top">
                         <img
                             src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/numbers/1.png"
-                            style="border:0; height:24px; width:24px; background-color:transparent; vertical-align:top;"
+                            style="border:0; height:24px; width:26px; background-color:transparent; vertical-align:top;"
                         />
                     </td>
                     <td align="center" >
@@ -364,7 +369,7 @@
                     <td align="left" valign="top" >
                         <img
                             src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/numbers/2.png"
-                            style="border:0; height:24px; width:24px; background-color:transparent; vertical-align:top;"
+                            style="border:0; height:24px; width:26px; background-color:transparent; vertical-align:top;"
                         />
                     </td>
                     <td align="center" >
@@ -403,7 +408,7 @@
                     <td align="left"  valign="top">
                         <img
                             src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/numbers/3.png"
-                            style="border:0; height:24px; width:24px; background-color:transparent; vertical-align:top;"
+                            style="border:0; height:24px; width:26px; background-color:transparent; vertical-align:top;"
                         />
                     <td align="left" >
                         <p style="font-size:11px; text-align: justify;">Si votre région ou département subventionne le covoiturage, il est alors primordial de certifier la prise en charge et la dépose le jour du covoiturage depuis votre application dans Mes covoiturages acceptés. Ceci active la géolocalisation et envoie une preuve de covoiturage à votre territoire. <a href="{{api_env('EMAILS_PLATFORM_URL')}}/FAQ" style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">Comprendre le système des subventions.</a></p>
@@ -412,5 +417,10 @@
             </table>
         </td>
     </tr>   
+    <tr>
+        <td style="height:20px">
+            <p> </p>
+        </td>    
+    </tr>
 </table>
 {% endblock %}
