@@ -21,7 +21,7 @@
                         "phone": "Mijn telefoonnummer is {phone}",
                         "email": "Mijn e-mailadres is {email}",
                         "name": "Mijn naam is {name}",
-                        "carpool": "Uw carpooltraject tussen {origin} en {destination} kan interessant voor me zijn. We zijn geen lid van hetzelfde carpoolnetwerk. Daarom geef ik u rechtstreeks mijn contactgegevens door zodat we in contact kunnen treden",
+                        "carpool": "Uw carpooltraject tussen {origin} en {destination} kan interessant voor me zijn. We zijn niet geregistreerd bij dezelfde carpoolnetwerken, daarom laat ik u direct mijn contactgegevens achter zodat u contact met mij kunt opnemen.",
                         "hello": "Hallo"
                     },
                     "label": "Uw bericht"

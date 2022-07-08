@@ -20,7 +20,7 @@
                     "label": "Your message",
                     "content": {
                         "hello": "Welcome",
-                        "carpool": "Your carpooling between {origin} and {destination} is likely to interest me. We are not registered with the same carpooling network, so I am leaving you my contact details so that we can contact each other",
+                        "carpool": "Your carpooling between {origin} and {destination} is likely to interest me. We are not registered with the same carpooling network, so I am leaving you my contact details so that you can contact me again",
                         "name": "My name is {name}",
                         "email": "My email is {email}",
                         "phone": "My phone number is {phone}",
