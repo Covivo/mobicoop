@@ -424,7 +424,7 @@ class NotificationManager
 
                 case Message::class:
                     $titleContext = ['user' => $object->getUser()];
-                    $bodyContext = ['text' => $object->getText(), 'user' => $recipient];
+                    $bodyContext = ['text' => $object->getText(), 'user' => $recipient, 'sender' => $object->getUser(), 'sendingDate' => $object->getCreatedDate()];
 
                 break;
 
