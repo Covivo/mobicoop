@@ -411,6 +411,10 @@ services:
       $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
       $communityNbLastUser: "%env(int:COMMUNITY_NB_LAST_USERS)%"
 
+  App\Community\Admin\Controller\:
+    resource: "../src/Community/Admin/Controller"
+    tags: ["controller.service_arguments"]
+
   'App\Community\Admin\DataProvider\CommunityUserCampaignAssociateCollectionDataProvider':
     arguments:
       $collectionExtensions: !tagged api_platform.doctrine.orm.query_extension.collection
