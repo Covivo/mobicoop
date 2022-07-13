@@ -32,7 +32,7 @@
                     </span>
                   </v-col>
                 </v-row>
-                <v-row>
+                <v-row v-if="publicProfile.verifiedIdentity !== null">
                   <v-col class="pt-0">
                     <verified-identity
                       :verified-identity="publicProfile.verifiedIdentity"

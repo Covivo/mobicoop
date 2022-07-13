@@ -276,7 +276,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              }
  *          },
  *          "me"={
- *              "normalization_context"={"groups"={"readUser"}},
+ *              "normalization_context"={"groups"={"readUser"},"skip_null_values"=false},
  *              "method"="GET",
  *              "path"="/users/me",
  *              "read"="false",
@@ -1583,7 +1583,7 @@ class User implements UserInterface, EquatableInterface
     private $numberOfBadges;
 
     /**
-     * @var null|bool If the User has a verified identity
+     * @var null|bool If the User has a verified identity  (null if not used)
      *
      * @Groups({"readUser","results","write", "threads", "thread", "readCommunity", "readCommunityUser", "readEvent", "readPublicProfile","readReview","aRead","aWrite"})
      */
@@ -3698,14 +3698,10 @@ class User implements UserInterface, EquatableInterface
 
     public function hasVerifiedIdentity(): ?bool
     {
-        if (!is_null($this->verifiedIdentity)) {
-            return $this->verifiedIdentity;
-        }
-
-        return IdentityProof::STATUS_ACCEPTED == $this->identityStatus;
+        return $this->verifiedIdentity;
     }
 
-    public function setVerifiedIdentity(bool $verifiedIdentity): self
+    public function setVerifiedIdentity(?bool $verifiedIdentity): self
     {
         $this->verifiedIdentity = $verifiedIdentity;
 
