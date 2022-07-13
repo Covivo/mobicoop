@@ -1,0 +1,10 @@
+{
+  "buttons": {
+    "shareAnAd": {
+        "label": "Publier une annonce",
+        "route": "/covoiturage/publierannonce"
+    }
+  },
+  "no-active-ad": "Vous n'avez aucune annonce en cours, partagez vos trajets !",
+  "no-archived-ad": "Vous n'avez aucune annonce archivée !"
+}

@@ -5,32 +5,22 @@
 {% block desc %}{% trans from 'meta' %}meta.home.description{% endtrans %}{% endblock %}
 
 {% block stylesheets %}
-    {#{{ encore_entry_link_tags("#{assets_prefix ?? ''}home/home") }}#}
+{#{{ encore_entry_link_tags("#{assets_prefix ?? ''}home/home") }}#}
 {% endblock %}
 
 {% block main %}
-    <home
-        geo-search-url="{{ geoCompleteUri }}"
-        :user="{{app.user|json_encode}}"
-        {{ searchRegular ? 'regular' : '' }}
-        {{ searchPunctualDate ? 'punctual-date-optional' : '' }}
-        :community-display="{{homeCommunityDisplay}}"
-        :additional-text-display="{{additionalTextDisplay }}"
-        :event-display="{{homeEventDisplay}}"
-        :solidary-display="{{homeSolidaryDisplay}}"
-        :display-delete-account="{{logout is defined ? 1 : 0}}"
-        :display-unsubscribe-email="{{ unsubscribe is defined ? unsubscribe : 'null' }}"
-        :publish-button-always-active="{{ publishButtonAlwaysActive ? "true" : "false" }}"
-        :url-mobile="{{urlMobile|json_encode}}"
-        :informative-message-active="{{ informativeMessageActive is defined ? informativeMessageActive ? "true" : "false" : "false" }}"
-        informative-message-text="{{ informativeMessageText is defined ? informativeMessageText : "" }}"
-        :search-component-horizontal="{{ searchComponentHorizontal is defined ? searchComponentHorizontal ? "true" : "false" : "false" }}"
-        :map-provider="{{ mapProvider|json_encode }}"
-        :url-tiles="{{ urlTiles|json_encode }}"
-        :attribution-copyright="{{ attributionCopyright|json_encode }}"
-        :geo-complete-results-order="{{geoCompleteResultsOrder|json_encode}}"
-        :geo-complete-palette="{{geoCompletePalette|json_encode}}"
-        {{ geoCompleteChip ? 'geo-complete-chip' : '' }}
-    />
+<home geo-search-url="{{ geoCompleteUri }}" :user="{{app.user|json_encode}}" {{ searchRegular ? 'regular' : '' }} {{
+    searchPunctualDate ? 'punctual-date-optional' : '' }} :community-display="{{homeCommunityDisplay}}"
+    :additional-text-display="{{additionalTextDisplay }}" :event-display="{{homeEventDisplay}}"
+    :solidary-display="{{homeSolidaryDisplay}}" :display-delete-account="{{logout is defined ? 1 : 0}}"
+    :display-unsubscribe-email="{{ unsubscribe is defined ? unsubscribe : 'null' }}"
+    :publish-button-always-active="{{ publishButtonAlwaysActive ? " true" : "false" }}"
+    :url-mobile="{{urlMobile|json_encode}}"
+    :informative-message-active="{{ informativeMessageActive is defined ? informativeMessageActive ? " true" : "false"
+    : "false" }}" informative-message-text="{{ informativeMessageText is defined ? informativeMessageText : "" }}"
+    :search-component-horizontal="{{ searchComponentHorizontal is defined ? searchComponentHorizontal ? " true"
+    : "false" : "false" }}" :map-provider="{{ mapProvider|json_encode }}" :url-tiles="{{ urlTiles|json_encode }}"
+    :attribution-copyright="{{ attributionCopyright|json_encode }}"
+    :geo-complete-results-order="{{geoCompleteResultsOrder|json_encode}}"
+    :geo-complete-palette="{{geoCompletePalette|json_encode}}" {{ geoCompleteChip ? 'geo-complete-chip' : '' }}></home>
 {% endblock %}
-

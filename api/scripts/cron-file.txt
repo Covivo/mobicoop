@@ -45,3 +45,6 @@
 
 # each day at 12pm : send carpool ad renewal
 0 12 * * * $1 $2 app:carpool-ad-renewal --env=$3
+
+# each day at 5 am : check and update if needed paymentProfiles
+0 5 * * * $1 $2 app:payment-profile:check-batch --env=$3

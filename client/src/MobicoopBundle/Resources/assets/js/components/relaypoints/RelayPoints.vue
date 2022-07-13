@@ -67,6 +67,7 @@
         :geo-complete-results-order="geoCompleteResultsOrder"
         :geo-complete-palette="geoCompletePalette"
         :geo-complete-chip="geoCompleteChip"
+        :punctual-date-optional="punctualDateOptional"
         :user="user"
       />
     </v-row>

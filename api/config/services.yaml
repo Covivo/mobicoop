@@ -146,6 +146,7 @@ services:
         avatarSizes: "%env(string:AVATAR_SIZES)%"
         avatarDefaultFolder: "%env(string:AVATAR_DEFAULT_FOLDER)%"
         userReview: "%env(bool:USER_REVIEW)%"
+        identityValidation: "%env(bool:USER_IDENTITY_VALIDATION)%"
     tags:
       - { name: doctrine.event_listener, event: postLoad }
 
@@ -382,6 +383,9 @@ services:
   App\Communication\EventSubscriber\UserSubscriber:
     arguments:
       $notificationSsoRegistration: "%env(bool:NOTIFICATION_SSO_REGISTRATION)%"
+      $rzpUri: "%env(string:RZP_API_URI)%"
+      $rzpLogin: "%env(string:RZP_API_LOGIN)%"
+      $rzpPassword: "%env(string:RZP_API_PASSWORD)%"
 
   App\Communication\Service\ReportManager:
     arguments:
@@ -929,7 +933,6 @@ services:
         userReview: "%env(bool:USER_REVIEW)%"
       $passwordTokenValidity: "%env(int:PASSWORD_TOKEN_VALIDITY)%"
       $paymentActive: "%env(string:PAYMENT_ACTIVE)%"
-      $phoneValidationRegex: "%env(string:USER_PHONE_FORMAT)%"
       $userMinAge: "%env(int:USER_MIN_AGE)%"
 
   App\User\Interoperability\Service\UserManager:
@@ -973,3 +976,7 @@ services:
     arguments:
       $repositoryFile: "%env(string:MOBILE_JSON_REPOSITORY)%"
       $appId: "%env(string:MOBILE_APP_ID)%"
+
+  App\Validator\Phone\PhoneValidator:
+    arguments:
+      $phoneValidationRegions: "%env(json:USER_PHONE_VALIDATION_REGIONS)%"

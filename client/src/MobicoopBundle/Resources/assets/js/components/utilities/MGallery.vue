@@ -14,6 +14,7 @@
       >
         <a
           :href="item.link"
+          :aria-label="item.arialabel"
         >
           <v-img
             :max-height="maxHeight"
@@ -44,7 +45,7 @@ export default {
       type: Number,
       default: null
     },
-  },  
+  },
 }
 
 </script>

@@ -224,7 +224,7 @@ class ProposalManager
 
         // note : we sould not check here for the characteristics of the proposal BEFORE sending the event,
         // it should be the subscriber that determines on reception wether the event is useful or not...
-        if (!$proposal->isPrivate() && !$proposal->isPaused()) {
+        if (!$proposal->isPrivate() && !$proposal->isPaused() && !$proposal->isDynamic()) {
             $matchings = array_merge($proposal->getMatchingOffers(), $proposal->getMatchingRequests());
             if ($persist) {
                 foreach ($matchings as $matching) {

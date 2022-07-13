@@ -8,31 +8,32 @@
 {% endblock %}
 {% block main %}
     <matching
-        :proposal-id = "{{ proposalId is defined ? (proposalId ? proposalId : 'null') : 'null' }}"
-        external-id = "{{ externalId is defined ? externalId : '' }}"
-        :community-proposal-id = "{{ communityProposalId is defined ? (communityProposalId ? communityProposalId : 'null') : 'null' }}"
-        :origin = "{{ origin is defined ? origin : 'null' }}"
-        origin-literal = "{{ originLiteral is defined ? originLiteral : 'null' }}"
-        :destination = "{{ destination is defined ? destination : 'null' }}"
-        destination-literal = "{{ destinationLiteral is defined ? destinationLiteral : 'null' }}"
-        date = "{{ date is defined ? date : '' }}"
-        time = "{{ time is defined ? time : '' }}"
-        :community-id = "{{ communityId is defined ? (communityId ? communityId : 'null') : 'null' }}"
-        :user="{{ app.user|json_encode }}"
-        {{ regular is defined ? (regular == 'true' ? 'regular' : '') : '' }}
-        {{ distinguishRegular ? 'distinguish-regular' : '' }}
-        geo-search-url="{{ geoCompleteUri }}"
-        :geo-complete-results-order="{{geoCompleteResultsOrder|json_encode}}"
-        :geo-complete-palette="{{geoCompletePalette|json_encode}}"
-        {{ geoCompleteChip ? 'geo-complete-chip' : '' }}
-        platform-name="{{ platformName }}"
-        :external-rdex-journeys="{{ (externalRDEXJourneys) ? 'true' : 'false' }}"
-        :pt-search="{{ (ptSearch) ? 'true' : 'false' }}"
-        :default-role="{{ defaultRole }}"
-        :fraud-warning-display="{{ (fraudWarningDisplay) ? 'true' : 'false' }}"
-        :age-display="{{ (ageDisplay) ? 'true' : 'false' }}"
-        :display-logo-no-result="{{ displayLogoNoResult ? 'true' : 'false'}}"
 	    :carpool-settings-display="{{ carpoolSettingsDisplay ? "true" : "false" }}"
+        :age-display="{{ (ageDisplay) ? 'true' : 'false' }}"
+        :community-id = "{{ communityId is defined ? (communityId ? communityId : 'null') : 'null' }}"
+        :community-proposal-id = "{{ communityProposalId is defined ? (communityProposalId ? communityProposalId : 'null') : 'null' }}"
+        :default-role="{{ defaultRole }}"
+        :destination = "{{ destination is defined ? destination : 'null' }}"
+        :display-logo-no-result="{{ displayLogoNoResult ? 'true' : 'false'}}"
+        :external-rdex-journeys="{{ (externalRDEXJourneys) ? 'true' : 'false' }}"
+        :fraud-warning-display="{{ (fraudWarningDisplay) ? 'true' : 'false' }}"
+        :geo-complete-palette="{{geoCompletePalette|json_encode}}"
+        :geo-complete-results-order="{{geoCompleteResultsOrder|json_encode}}"
+        :origin = "{{ origin is defined ? origin : 'null' }}"
+        :proposal-id = "{{ proposalId is defined ? (proposalId ? proposalId : 'null') : 'null' }}"
+        :pt-search="{{ (ptSearch) ? 'true' : 'false' }}"
+        :user="{{ app.user|json_encode }}"
+        {{ distinguishRegular ? 'distinguish-regular' : '' }}
+        {{ geoCompleteChip ? 'geo-complete-chip' : '' }}
+        {{ regular is defined ? (regular == 'true' ? 'regular' : '') : '' }}
+        {{ searchPunctualDate ? 'punctual-date-optional' : '' }}
+        date = "{{ date is defined ? date : '' }}"
+        destination-literal = "{{ destinationLiteral is defined ? destinationLiteral : 'null' }}"
+        external-id = "{{ externalId is defined ? externalId : '' }}"
+        geo-search-url="{{ geoCompleteUri }}"
+        origin-literal = "{{ originLiteral is defined ? originLiteral : 'null' }}"
+        platform-name="{{ platformName }}"
+        time = "{{ time is defined ? time : '' }}"
     />
 
 {% endblock %}

@@ -163,6 +163,8 @@
             <ProfileSummary
               :user-id="user.id"
               :show-link-profile="false"
+              :verified-identity="user.verifiedIdentity"
+              :show-verified-identity="user.verifiedIdentity !== null"
             />
           </div>
         </v-tabs>
@@ -277,7 +279,7 @@ export default {
       type: Boolean,
       default: false
     },
-    carpoolSettingsDisplay: { 
+    carpoolSettingsDisplay: {
       type: Boolean,
       default: true
     }

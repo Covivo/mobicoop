@@ -1,8 +1,9 @@
 {
     "title": "Gestion des cookies",
+    "aria-title":"Fenêtre de Gestion des cookies",
     "privateLife": "Vie privée",
     "yourBrowseryourChoice": "{appName} vous donne le choix",
-    "store":"Enregister",
+    "store":"Enregistrer",
     "working":{
         "line1":"Pour son fonctionnement, ce site utilise des cookies",
         "line2":"Choisissez librement les cookies que vous souhaitez activer"
@@ -31,5 +32,10 @@
                 "title":"Fonctionnalités liées aux réseaux sociaux"
             }
         }
+    },
+    "buttons":{
+      "close":{
+        "aria-label":"Fermer la fenêtre de choix des cookies"
+      }
     }
 }

@@ -33,6 +33,7 @@
     :seat-number = "{{ seatNumber }}"
     :default-seat-number = "{{ defaultSeatNumber }}"
     :content-passenger = "{{ contentPassenger ? "true" : "false"}}"
+    {{ staggeredSchedulesAllowed ? 'staggered-schedules-allowed' : '' }}
   />
 
 {% endblock %}

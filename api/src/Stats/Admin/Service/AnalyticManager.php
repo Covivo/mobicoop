@@ -33,6 +33,7 @@ use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 class AnalyticManager
 {
     private $paramId;
+    private $darkTheme;
     private $uri;
     private $organization;
     private $secret;
@@ -47,8 +48,9 @@ class AnalyticManager
         $this->dashboards = $params['dashboards'];
         $this->authManager = $authManager;
 
-        $request = $this->request = $requestStack->getCurrentRequest();
+        $request = $requestStack->getCurrentRequest();
         $this->paramId = $request->get('id');
+        $this->darkTheme = $request->query->get('darkTheme', false);
     }
 
     public function getAnalytics(): array
@@ -71,7 +73,12 @@ class AnalyticManager
             ],
         ];
 
-        $analytic->setUrl($this->uri.self::build_jwt_token($payload).'#bordered=false&titled=false');
+        $url = $this->uri.self::build_jwt_token($payload).'#bordered=false&titled=false';
+        if ($this->darkTheme) {
+            $url .= '&theme=night';
+        }
+
+        $analytic->setUrl($url);
 
         return $analytic;
     }

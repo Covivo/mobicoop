@@ -1,6 +1,5 @@
 <template>
   <v-container
-    aria-label="main"
     text-center
     fluid
     :style="'background-image:url(\''+$t('urlBackground')+'\');background-size:contain;width:100%;'"

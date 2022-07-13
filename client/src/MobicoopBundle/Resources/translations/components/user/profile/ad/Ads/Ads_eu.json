@@ -1,4 +1,6 @@
 {
     "archived": "Iragarki artxibatuak",
-    "active": "Indarrean diren iragarkiak"
+    "active": "Indarrean diren iragarkiak",
+    "no-active-ad": "Ez duzu uneko iragarkirik, partekatu zure bidaiak!",
+    "no-archived-ad": "Ez duzu artxibatutako iragarkirik!"
 }

@@ -5,11 +5,12 @@
 {% block main %}
     <event-widget
         :event="{{ event|json_encode }}"
-        :geodata="{{ {'geocompleteuri':geoCompleteUri, 'searchroute':searchRoute}|json_encode }}"
-        :geo-complete-results-order="{{geoCompleteResultsOrder|json_encode}}"
         :geo-complete-palette="{{geoCompletePalette|json_encode}}"
-        {{ geoCompleteChip ? 'geo-complete-chip' : '' }}
+        :geo-complete-results-order="{{geoCompleteResultsOrder|json_encode}}"
+        :geodata="{{ {'geocompleteuri':geoCompleteUri, 'searchroute':searchRoute}|json_encode }}"
         :user="{{ app.user|json_encode }}"
+        {{ geoCompleteChip ? 'geo-complete-chip' : '' }}
+        {{ searchPunctualDate ? 'punctual-date-optional' : '' }}
         token="{{token.getToken}}"
     ></event-widget>
 {% endblock %}

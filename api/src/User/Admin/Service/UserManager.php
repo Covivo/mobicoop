@@ -35,6 +35,7 @@ use App\Geography\Repository\TerritoryRepository;
 use App\Geography\Ressource\Point;
 use App\Geography\Service\PointSearcher;
 use App\Service\FormatDataManager;
+use App\User\Entity\IdentityProof;
 use App\User\Entity\User;
 use App\User\Event\UserDelegateRegisteredEvent;
 use App\User\Event\UserDelegateRegisteredPasswordSendEvent;
@@ -134,6 +135,8 @@ class UserManager
                 return $address->getAddressLocality();
             }
         }
+
+        return null;
     }
 
     /**
@@ -238,6 +241,11 @@ class UserManager
 
         // create token to unsubscribe from the instance news
         $user->setUnsubscribeToken($this->userManager->createToken($user));
+
+        // check if identity is validated manually
+        if ($user->hasVerifiedIdentity()) {
+            $user->setIdentityStatus(IdentityProof::STATUS_ACCEPTED);
+        }
 
         // persist the user
         $this->entityManager->persist($user);
@@ -350,6 +358,31 @@ class UserManager
                     $userAuthAssignment->setTerritory($territory);
                 }
                 $user->addUserAuthAssignment($userAuthAssignment);
+            }
+        }
+
+        // check if identity is validated manually
+        if (in_array('verifiedIdentity', array_keys($fields))) {
+            if (true === $fields['verifiedIdentity']) {
+                $user->setIdentityStatus(IdentityProof::STATUS_ACCEPTED);
+            } else {
+                $user->setIdentityStatus(IdentityProof::STATUS_NONE);
+            }
+        }
+
+        if (in_array('rezoKit', array_keys($fields))) {
+            if (true === $fields['rezoKit']) {
+                $user->setRezoKit(true);
+            } else {
+                $user->setRezoKit(false);
+            }
+        }
+
+        if (in_array('cardLetter', array_keys($fields))) {
+            if (true === $fields['cardLetter']) {
+                $user->setCardLetter(true);
+            } else {
+                $user->setCardLetter(false);
             }
         }
 
@@ -537,5 +570,14 @@ class UserManager
         }
 
         return $user;
+    }
+
+    public function getUserByEmail(string $email): ?User
+    {
+        if ($user = $this->userRepository->findOneBy(['email' => $email])) {
+            return $this->getUser($user->getId());
+        }
+
+        return null;
     }
 }

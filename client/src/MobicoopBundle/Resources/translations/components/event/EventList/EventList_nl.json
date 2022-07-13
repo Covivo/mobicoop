@@ -16,6 +16,7 @@
     "eventsAvailable": "Beschikbare evenementen",
     "events": "Carpoolevenementen",
     "getCommunities": "/community/getCommunityList",
-    "filterByCommunity":"filtrer par communauté"
+    "filterByCommunity":"filtrer par communauté",
+    "seeEvent":"Voir l'évènement"
 
 }

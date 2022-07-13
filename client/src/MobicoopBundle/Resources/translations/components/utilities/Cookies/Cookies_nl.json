@@ -31,5 +31,10 @@
     "store": "Opslaan",
     "yourBrowseryourChoice": "{appName} biedt u de keuze",
     "privateLife": "Privacy",
-    "title": "Beheer van cookies"
+    "title": "Beheer van cookies",
+    "buttons":{
+      "close":{
+        "aria-label":"Fermer la fenêtre de choix des cookies"
+      }
+    }
 }

@@ -1,85 +1,86 @@
 <!DOCTYPE html>
 <html lang="fr">
-    {% block head %}
-    <head>
-        <meta charset="UTF-8">
-        <title>{% if metaTitle is defined %}{{metaTitle}}{% else %}{% block title %}{% trans from 'meta' %}meta.default.title{% endtrans %}{% endblock %}{% endif %}</title>
-        
-        <meta content="width=device-width, initial-scale=1" name="viewport">
-        
-        {% if urlMobile != '' %}
-        <link rel="alternate" media="only screen and (max-width: 920px)" href="{{ urlMobile }}">
-        {% endif %}
-        
-        <meta name="description" content="{% if metaDescription is defined %}{{metaDescription}}{% else %}{% block desc %}{% trans from 'meta' %}meta.default.description{% endtrans %}{% endblock %}{% endif %}">
+{% block head %}
 
-        {{ encore_entry_link_tags("#{assets_prefix ?? ''}main") }}
-        {% block favicon %}
-         {% endblock %}
-         {% block stylesheets %}
-         {% endblock %}
+<head>
+    <meta charset="UTF-8">
+    <title>{% if metaTitle is defined %}{{metaTitle}}{% else %}{% block title %}{% trans from 'meta'
+        %}meta.default.title{% endtrans %}{% endblock %}{% endif %}</title>
 
+    <meta content="width=device-width, initial-scale=1" name="viewport">
 
-        {% set currentPath = app.request.attributes.get('_route')%}
+    {% if urlMobile != '' %}
+    <link rel="alternate" media="only screen and (max-width: 920px)" href="{{ urlMobile }}">
+    {% endif %}
 
-        {% if matomoUrl is defined and matomoUrl is not null and matomoUrl != '' %}
-            {% include '@Mobicoop/matomo.html.twig' %}
-        {% endif %}
+    <meta name="description"
+        content="{% if metaDescription is defined %}{{metaDescription}}{% else %}{% block desc %}{% trans from 'meta' %}meta.default.description{% endtrans %}{% endblock %}{% endif %}">
 
-        {% if googleAnalyticsId is defined and googleAnalyticsId is not null and googleAnalyticsId != '' %}
-            {% include '@Mobicoop/googleAnalytics.html.twig' %}
-        {% endif %}
-
-        {% if currentPath == 'home' %}
-            {% if googleAnalyticsHome is defined and googleAnalyticsHome is not null and googleAnalyticsHome != '' %}
-                {% include '@Mobicoop/googleAnalyticsHome.html.twig' %}
-            {% endif %}
-        {% endif %}
-
-        {% if currentPath == 'carpool_first_ad_post' %}
-            {% if googleAnalyticsFirstAd is defined and googleAnalyticsFirstAd is not null and googleAnalyticsFirstAd != '' %}
-                {% include '@Mobicoop/googleAnalyticsFirstAd.html.twig' %}
-            {% endif %}
-        {% endif %}
-
-
-    </head>
+    {{ encore_entry_link_tags("#{assets_prefix ?? ''}main") }}
+    {% block favicon %}
     {% endblock %}
-    <body>
-        <div id="app">
-            <v-app>
-                {% if app.user %}
-                    <m-header 
-                        :user="{{app.user|json_encode}}"
-                        :url-mobile="{{urlMobile|json_encode}}"                    
-                        :publish-button-always-active="{{ publishButtonAlwaysActive ? "true" : "false" }}"
-                        :show-reviews="{{ app.user.userReviewsActive ? "true" : "false" }}"
-                        :locale="{{ app.user.language ? app.user.language.code|json_encode : ''|json_encode }}"
-                        :languages="{{languages|json_encode}}"
-                        :gamification-active="{{ gamificationActive ? 'true' : 'false'}}"
-                    ></m-header>
-                {% else %}
-                    <m-header 
-                        token="{{token.getToken}}"
-                        :url-mobile="{{urlMobile|json_encode}}"
-                        :publish-button-always-active="{{ publishButtonAlwaysActive ? "true" : "false" }}"
-                        :languages="{{languages|json_encode}}"
-                        :gamification-active="{{ gamificationActive ? 'true' : 'false'}}"
-                    ></m-header>
+    {% block stylesheets %}
+    {% endblock %}
+
+
+    {% set currentPath = app.request.attributes.get('_route')%}
+
+    {% if matomoUrl is defined and matomoUrl is not null and matomoUrl != '' %}
+    {% include '@Mobicoop/matomo.html.twig' %}
+    {% endif %}
+
+    {% if googleAnalyticsId is defined and googleAnalyticsId is not null and googleAnalyticsId != '' %}
+    {% include '@Mobicoop/googleAnalytics.html.twig' %}
+    {% endif %}
+
+    {% if currentPath == 'home' %}
+    {% if googleAnalyticsHome is defined and googleAnalyticsHome is not null and googleAnalyticsHome != '' %}
+    {% include '@Mobicoop/googleAnalyticsHome.html.twig' %}
+    {% endif %}
+    {% endif %}
+
+    {% if currentPath == 'carpool_first_ad_post' %}
+    {% if googleAnalyticsFirstAd is defined and googleAnalyticsFirstAd is not null and googleAnalyticsFirstAd != '' %}
+    {% include '@Mobicoop/googleAnalyticsFirstAd.html.twig' %}
+    {% endif %}
+    {% endif %}
+
+
+</head>
+{% endblock %}
+
+<body>
+    <div id="app">
+        <v-app>
+            {% if app.user %}
+            <m-header :user="{{app.user|json_encode}}" :url-mobile="{{urlMobile|json_encode}}"
+                :publish-button-always-active="{{ publishButtonAlwaysActive ? " true" : "false" }}"
+                :show-reviews="{{ app.user.userReviewsActive ? " true" : "false" }}"
+                :locale="{{ app.user.language ? app.user.language.code|json_encode : ''|json_encode }}"
+                :languages="{{languages|json_encode}}"
+                :gamification-active="{{ gamificationActive ? 'true' : 'false'}}"></m-header>
+            {% else %}
+            <m-header token="{{token.getToken}}" :url-mobile="{{urlMobile|json_encode}}"
+                :publish-button-always-active="{{ publishButtonAlwaysActive ? " true" : "false" }}"
+                :languages="{{languages|json_encode}}"
+                :gamification-active="{{ gamificationActive ? 'true' : 'false'}}"></m-header>
             {% endif %}
 
-                {% block content %}                    
-                    <v-main role="main">
-                        {% block main %}{% endblock %}
-                    </v-main>
-                {% endblock %}
-                {% block footer %}
-                    <m-footer app-name="{{ app_name }}" :cookies-show-auto="{{ cookiesShowAuto ? 'true' : 'false'}}" :social-networks-active="{{ facebookShow ? 'true' : 'false'}}" :social-cookies="{{socialCookies|json_encode}}"></m-footer>
-                {% endblock %}
-            </v-app>
-        </div>
-    </body>
+            {% block content %}
+            <v-main role="main">
+                {% block main %}{% endblock %}
+            </v-main>
+            {% endblock %}
+            {% block footer %}
+            <m-footer app-name="{{ app_name }}" :cookies-show-auto="{{ cookiesShowAuto ? 'true' : 'false'}}"
+                :social-networks-active="{{ facebookShow ? 'true' : 'false'}}"
+                :social-cookies="{{socialCookies|json_encode}}"></m-footer>
+            {% endblock %}
+        </v-app>
+    </div>
+</body>
 
-    {{ encore_entry_script_tags("#{assets_prefix ?? ''}app") }}
-    {% block javascripts %}{% endblock %}
+{{ encore_entry_script_tags("#{assets_prefix ?? ''}app") }}
+{% block javascripts %}{% endblock %}
+
 </html>

@@ -26,6 +26,7 @@ namespace App\DataProvider\Entity;
 use App\DataProvider\Service\DataProvider;
 use App\Geography\Entity\RezoPouceTerritory;
 use App\Geography\Entity\RezoPouceTerritoryStatus;
+use App\User\Entity\User;
 use LogicException;
 
 /**
@@ -37,6 +38,7 @@ class RezopouceProvider
 {
     private const ROUTE_AUTH = '/auth-tokens';
     private const ROUTE_COMMUNE_IS_MEMBER = '/api/communes/{id}/isMember';
+    private const ROUTE_WELCOME_EMAIL = '/web_services/email/welcome';
 
     private $uri;
     private $login;
@@ -106,5 +108,37 @@ class RezopouceProvider
         }
 
         return null;
+    }
+
+    public function sendValidationEmail(User $user)
+    {
+        $token = $this->__getToken();
+
+        $dataProvider = new DataProvider($this->uri, self::ROUTE_WELCOME_EMAIL);
+
+        $houseNumber = !is_null($user->getHomeAddress()->getHouseNumber()) ? $user->getHomeAddress()->getHouseNumber() : '';
+        $streetAddress = !is_null($user->getHomeAddress()->getStreet()) ? $user->getHomeAddress()->getStreet() : '';
+
+        $body = [
+            'id' => $user->getId(),
+            'family_name' => $user->getFamilyName(),
+            'given_name' => $user->getGivenName(),
+            'email' => $user->getEmail(),
+            'phone' => $user->getTelephone(),
+            'birth_date' => $user->getBirthDate()->format('Y-m-d'),
+            'address' => $houseNumber.' '.$streetAddress,
+            'latitude' => $user->getHomeAddress()->getLatitude(),
+            'longitude' => $user->getHomeAddress()->getLongitude(),
+        ];
+
+        $response = $dataProvider->postCollection($body, $this->__buildHeaders());
+
+        if (200 == $response->getCode()) {
+            $data = json_decode($response->getValue(), true);
+
+            return true;
+        }
+
+        return false;
     }
 }

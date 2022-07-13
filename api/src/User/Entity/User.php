@@ -276,7 +276,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              }
  *          },
  *          "me"={
- *              "normalization_context"={"groups"={"readUser"}},
+ *              "normalization_context"={"groups"={"readUser"},"skip_null_values"=false},
  *              "method"="GET",
  *              "path"="/users/me",
  *              "read"="false",
@@ -303,6 +303,18 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          },
  *          "ADMIN_get"={
  *              "path"="/admin/users",
+ *              "method"="GET",
+ *              "normalization_context"={
+ *                  "groups"={"aRead"},
+ *                  "skip_null_values"=false
+ *              },
+ *              "security"="is_granted('admin_user_list',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"}
+ *              }
+ *          },
+ *          "ADMIN_get_by_email"={
+ *              "path"="/admin/users/email",
  *              "method"="GET",
  *              "normalization_context"={
  *                  "groups"={"aRead"},
@@ -1571,9 +1583,9 @@ class User implements UserInterface, EquatableInterface
     private $numberOfBadges;
 
     /**
-     * @var null|bool If the User has a verified identity
+     * @var null|bool If the User has a verified identity  (null if not used)
      *
-     * @Groups({"readUser","results","write", "threads", "thread", "readCommunity", "readCommunityUser", "readEvent", "readPublicProfile","readReview","aRead"})
+     * @Groups({"readUser","results","write", "threads", "thread", "readCommunity", "readCommunityUser", "readEvent", "readPublicProfile","readReview","aRead","aWrite"})
      */
     private $verifiedIdentity;
 
@@ -3686,7 +3698,14 @@ class User implements UserInterface, EquatableInterface
 
     public function hasVerifiedIdentity(): ?bool
     {
-        return IdentityProof::STATUS_ACCEPTED == $this->identityStatus;
+        return $this->verifiedIdentity;
+    }
+
+    public function setVerifiedIdentity(?bool $verifiedIdentity): self
+    {
+        $this->verifiedIdentity = $verifiedIdentity;
+
+        return $this;
     }
 
     public function hasRezoKit(): ?bool
