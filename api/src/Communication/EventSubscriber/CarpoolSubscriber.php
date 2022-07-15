@@ -441,9 +441,9 @@ class CarpoolSubscriber implements EventSubscriberInterface
                 $schedule['outwardDropOffTime'] = $outwardDriverDepartureTime ? $outwardDriverDepartureTime->modify('+'.$askConcerned->getMatching()->getDropOffDuration().' seconds') : null;
                 // return
                 $returnDriverDepartureTime = $returnResult->getMonTime() ? clone $returnResult->getMonTime() : null;
-                $schedule['returnPickUpTime'] = $returnDriverDepartureTime ? $returnDriverDepartureTime->modify('+'.$askConcerned->getMatching()->getPickUpDuration().' seconds') : null;
+                $schedule['returnPickUpTime'] = $returnDriverDepartureTime ? $returnDriverDepartureTime->modify('+'.$askConcerned->getAskLinked()->getMatching()->getPickUpDuration().' seconds') : null;
                 $returnDriverDepartureTime = $returnResult->getMonTime() ? clone $returnResult->getMonTime() : null;
-                $schedule['returnDropOffTime'] = $returnDriverDepartureTime ? $returnDriverDepartureTime->modify('+'.$askConcerned->getMatching()->getDropOffDuration().' seconds') : null;
+                $schedule['returnDropOffTime'] = $returnDriverDepartureTime ? $returnDriverDepartureTime->modify('+'.$askConcerned->getAskLinked()->getMatching()->getDropOffDuration().' seconds') : null;
                 $schedule['monCheck'] = true;
             }
             if (($outwardResult->getTueTime() ? $outwardResult->getTueTime()->format('H:i') : 'null').' '.($returnResult->getTueTime() ? $returnResult->getTueTime()->format('H:i') : 'null') == $time) {
@@ -454,9 +454,9 @@ class CarpoolSubscriber implements EventSubscriberInterface
                 $schedule['outwardDropOffTime'] = $outwardDriverDepartureTime ? $outwardDriverDepartureTime->modify('+'.$askConcerned->getMatching()->getDropOffDuration().' seconds') : null;
                 // return
                 $returnDriverDepartureTime = $returnResult->getTueTime() ? clone $returnResult->getTueTime() : null;
-                $schedule['returnPickUpTime'] = $returnDriverDepartureTime ? $returnDriverDepartureTime->modify('+'.$askConcerned->getMatching()->getPickUpDuration().' seconds') : null;
+                $schedule['returnPickUpTime'] = $returnDriverDepartureTime ? $returnDriverDepartureTime->modify('+'.$askConcerned->getAskLinked()->getMatching()->getPickUpDuration().' seconds') : null;
                 $returnDriverDepartureTime = $returnResult->getTueTime() ? clone $returnResult->getTueTime() : null;
-                $schedule['returnDropOffTime'] = $returnDriverDepartureTime ? $returnDriverDepartureTime->modify('+'.$askConcerned->getMatching()->getDropOffDuration().' seconds') : null;
+                $schedule['returnDropOffTime'] = $returnDriverDepartureTime ? $returnDriverDepartureTime->modify('+'.$askConcerned->getAskLinked()->getMatching()->getDropOffDuration().' seconds') : null;
                 $schedule['tueCheck'] = true;
             }
             if (($outwardResult->getWedTime() ? $outwardResult->getWedTime()->format('H:i') : 'null').' '.($returnResult->getWedTime() ? $returnResult->getWedTime()->format('H:i') : 'null') == $time) {
@@ -467,9 +467,9 @@ class CarpoolSubscriber implements EventSubscriberInterface
                 $schedule['outwardDropOffTime'] = $outwardDriverDepartureTime ? $outwardDriverDepartureTime->modify('+'.$askConcerned->getMatching()->getDropOffDuration().' seconds') : null;
                 // return
                 $returnDriverDepartureTime = $returnResult->getWedTime() ? clone $returnResult->getWedTime() : null;
-                $schedule['returnPickUpTime'] = $returnDriverDepartureTime ? $returnDriverDepartureTime->modify('+'.$askConcerned->getMatching()->getPickUpDuration().' seconds') : null;
+                $schedule['returnPickUpTime'] = $returnDriverDepartureTime ? $returnDriverDepartureTime->modify('+'.$askConcerned->getAskLinked()->getMatching()->getPickUpDuration().' seconds') : null;
                 $returnDriverDepartureTime = $returnResult->getWedTime() ? clone $returnResult->getWedTime() : null;
-                $schedule['returnDropOffTime'] = $returnDriverDepartureTime ? $returnDriverDepartureTime->modify('+'.$askConcerned->getMatching()->getDropOffDuration().' seconds') : null;
+                $schedule['returnDropOffTime'] = $returnDriverDepartureTime ? $returnDriverDepartureTime->modify('+'.$askConcerned->getAskLinked()->getMatching()->getDropOffDuration().' seconds') : null;
                 $schedule['wedCheck'] = true;
             }
             if (($outwardResult->getThuTime() ? $outwardResult->getThuTime()->format('H:i') : 'null').' '.($returnResult->getThuTime() ? $returnResult->getThuTime()->format('H:i') : 'null') == $time) {
@@ -480,9 +480,9 @@ class CarpoolSubscriber implements EventSubscriberInterface
                 $schedule['outwardDropOffTime'] = $outwardDriverDepartureTime ? $outwardDriverDepartureTime->modify('+'.$askConcerned->getMatching()->getDropOffDuration().' seconds') : null;
                 // return
                 $returnDriverDepartureTime = $returnResult->getThuTime() ? clone $returnResult->getThuTime() : null;
-                $schedule['returnPickUpTime'] = $returnDriverDepartureTime ? $returnDriverDepartureTime->modify('+'.$askConcerned->getMatching()->getPickUpDuration().' seconds') : null;
+                $schedule['returnPickUpTime'] = $returnDriverDepartureTime ? $returnDriverDepartureTime->modify('+'.$askConcerned->getAskLinked()->getMatching()->getPickUpDuration().' seconds') : null;
                 $returnDriverDepartureTime = $returnResult->getThuTime() ? clone $returnResult->getThuTime() : null;
-                $schedule['returnDropOffTime'] = $returnDriverDepartureTime ? $returnDriverDepartureTime->modify('+'.$askConcerned->getMatching()->getDropOffDuration().' seconds') : null;
+                $schedule['returnDropOffTime'] = $returnDriverDepartureTime ? $returnDriverDepartureTime->modify('+'.$askConcerned->getAskLinked()->getMatching()->getDropOffDuration().' seconds') : null;
                 $schedule['thuCheck'] = true;
             }
             if (($outwardResult->getFriTime() ? $outwardResult->getFriTime()->format('H:i') : 'null').' '.($returnResult->getFriTime() ? $returnResult->getFriTime()->format('H:i') : 'null') == $time) {
@@ -493,9 +493,9 @@ class CarpoolSubscriber implements EventSubscriberInterface
                 $schedule['outwardDropOffTime'] = $outwardDriverDepartureTime ? $outwardDriverDepartureTime->modify('+'.$askConcerned->getMatching()->getDropOffDuration().' seconds') : null;
                 // return
                 $returnDriverDepartureTime = $returnResult->getFriTime() ? clone $returnResult->getFriTime() : null;
-                $schedule['returnPickUpTime'] = $returnDriverDepartureTime ? $returnDriverDepartureTime->modify('+'.$askConcerned->getMatching()->getPickUpDuration().' seconds') : null;
+                $schedule['returnPickUpTime'] = $returnDriverDepartureTime ? $returnDriverDepartureTime->modify('+'.$askConcerned->getAskLinked()->getMatching()->getPickUpDuration().' seconds') : null;
                 $returnDriverDepartureTime = $returnResult->getFriTime() ? clone $returnResult->getFriTime() : null;
-                $schedule['returnDropOffTime'] = $returnDriverDepartureTime ? $returnDriverDepartureTime->modify('+'.$askConcerned->getMatching()->getDropOffDuration().' seconds') : null;
+                $schedule['returnDropOffTime'] = $returnDriverDepartureTime ? $returnDriverDepartureTime->modify('+'.$askConcerned->getAskLinked()->getMatching()->getDropOffDuration().' seconds') : null;
                 $schedule['friCheck'] = true;
             }
             if (($outwardResult->getSatTime() ? $outwardResult->getSatTime()->format('H:i') : 'null').' '.($returnResult->getSatTime() ? $returnResult->getSatTime()->format('H:i') : 'null') == $time) {
@@ -506,9 +506,9 @@ class CarpoolSubscriber implements EventSubscriberInterface
                 $schedule['outwardDropOffTime'] = $outwardDriverDepartureTime ? $outwardDriverDepartureTime->modify('+'.$askConcerned->getMatching()->getDropOffDuration().' seconds') : null;
                 // return
                 $returnDriverDepartureTime = $returnResult->getSatTime() ? clone $returnResult->getSatTime() : null;
-                $schedule['returnPickUpTime'] = $returnDriverDepartureTime ? $returnDriverDepartureTime->modify('+'.$askConcerned->getMatching()->getPickUpDuration().' seconds') : null;
+                $schedule['returnPickUpTime'] = $returnDriverDepartureTime ? $returnDriverDepartureTime->modify('+'.$askConcerned->getAskLinked()->getMatching()->getPickUpDuration().' seconds') : null;
                 $returnDriverDepartureTime = $returnResult->getSatTime() ? clone $returnResult->getSatTime() : null;
-                $schedule['returnDropOffTime'] = $returnDriverDepartureTime ? $returnDriverDepartureTime->modify('+'.$askConcerned->getMatching()->getDropOffDuration().' seconds') : null;
+                $schedule['returnDropOffTime'] = $returnDriverDepartureTime ? $returnDriverDepartureTime->modify('+'.$askConcerned->getAskLinked()->getMatching()->getDropOffDuration().' seconds') : null;
                 $schedule['satCheck'] = true;
             }
             if (($outwardResult->getSunTime() ? $outwardResult->getSunTime()->format('H:i') : 'null').' '.($returnResult->getSunTime() ? $returnResult->getSunTime()->format('H:i') : 'null') == $time) {
@@ -519,9 +519,9 @@ class CarpoolSubscriber implements EventSubscriberInterface
                 $schedule['outwardDropOffTime'] = $outwardDriverDepartureTime ? $outwardDriverDepartureTime->modify('+'.$askConcerned->getMatching()->getDropOffDuration().' seconds') : null;
                 // return
                 $returnDriverDepartureTime = $returnResult->getSunTime() ? clone $returnResult->getSunTime() : null;
-                $schedule['returnPickUpTime'] = $returnDriverDepartureTime ? $returnDriverDepartureTime->modify('+'.$askConcerned->getMatching()->getPickUpDuration().' seconds') : null;
+                $schedule['returnPickUpTime'] = $returnDriverDepartureTime ? $returnDriverDepartureTime->modify('+'.$askConcerned->getAskLinked()->getMatching()->getPickUpDuration().' seconds') : null;
                 $returnDriverDepartureTime = $returnResult->getSunTime() ? clone $returnResult->getSunTime() : null;
-                $schedule['returnDropOffTime'] = $returnDriverDepartureTime ? $returnDriverDepartureTime->modify('+'.$askConcerned->getMatching()->getDropOffDuration().' seconds') : null;
+                $schedule['returnDropOffTime'] = $returnDriverDepartureTime ? $returnDriverDepartureTime->modify('+'.$askConcerned->getAskLinked()->getMatching()->getDropOffDuration().' seconds') : null;
                 $schedule['sunCheck'] = true;
             }
             $multipleSchedules[] = $schedule;
