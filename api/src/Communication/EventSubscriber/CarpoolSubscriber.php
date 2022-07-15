@@ -112,11 +112,7 @@ class CarpoolSubscriber implements EventSubscriberInterface
     public function onAskPosted(AskPostedEvent $event)
     {
         $event->getAd()->setSchedule($this->addSchedule($event));
-        // we send the email to requester of the carpool
         $adRecipient = $event->getAd()->getResults()[0]->getCarpooler();
-        $this->notificationManager->notifies(AskPostedEvent::NAME, $adRecipient, $event->getAd());
-        //  we also send the eail to the offerer of the carpool
-        $adRecipient = $this->userManager->getUser($event->getAd()->getuserId());
         $this->notificationManager->notifies(AskPostedEvent::NAME, $adRecipient, $event->getAd());
     }
 
@@ -146,9 +142,6 @@ class CarpoolSubscriber implements EventSubscriberInterface
         $event->getAd()->setSchedule($this->addSchedule($event));
         // we send the email to requester of the carpool
         $adRecipient = $event->getAd()->getResults()[0]->getCarpooler();
-        $this->notificationManager->notifies(AskRefusedEvent::NAME, $adRecipient, $event->getAd());
-        //  we also send the eail to the offerer of the carpool
-        $adRecipient = $this->userManager->getUser($event->getAd()->getuserId());
         $this->notificationManager->notifies(AskRefusedEvent::NAME, $adRecipient, $event->getAd());
     }
 
