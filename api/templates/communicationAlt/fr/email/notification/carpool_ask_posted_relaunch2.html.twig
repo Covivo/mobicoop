@@ -129,158 +129,176 @@
         </td>
     </tr>
     {% for schedule in ad.schedule %}
-    <tr>
-        <td>
-            <table cellpadding="2" cellspacing="2" summary="" border="0">
-                <tr>
-                    <td style="width:30px">
-                        <p> </p>
-                    </td>
-                    <td>
-                    {% if schedule.monCheck %}
-                        <img
-                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/monGreen.png"
-                            style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
-                        />
-                    {% else %}
-                        <img
-                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/monGrey.png"
-                            style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
-                        />
-                    {% endif %}
-                    </td>
-                    <td>
-                        {% if schedule.tueCheck %}
+        <tr>
+            <td>
+                <table cellpadding="2" cellspacing="2" summary="" border="0">
+                    <tr>
+                        <td style="width:30px">
+                            <p> </p>
+                        </td>
+                        <td>
+                        {% if schedule.monCheck %}
                             <img
-                                src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/tueGreen.png"
+                                src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/monGreen.png"
                                 style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
                             />
-                        {% else %}
+                        {% else %} 
                             <img
-                                src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/tueGrey.png"
+                                src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/monGrey.png"
                                 style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
                             />
                         {% endif %}
-                    </td>
-                    <td>
-                        {% if schedule.wedCheck %}
-                            <img
-                                src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/wedGreen.png"
-                                style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
-                            />
-                        {% else %}
-                            <img
-                                src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/wedGrey.png"
-                                style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
-                            />
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if schedule.thuCheck %}
-                            <img
-                                src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/thuGreen.png"
-                                style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
-                            />
-                        {% else %}
-                            <img
-                                src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/thuGrey.png"
-                                style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
-                            />
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if schedule.friCheck %}
-                            <img
-                                src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/friGreen.png"
-                                style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
-                            />
-                        {% else %}
-                            <img
-                                src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/friGrey.png"
-                                style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
-                            />
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if schedule.satCheck %}
-                            <img
-                                src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/satGreen.png"
-                                style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
-                            />
-                        {% else %}
-                            <img
-                                src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/satGrey.png"
-                                style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
-                            />
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if schedule.sunCheck %}
-                            <img
-                                src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/sunGreen.png"
-                                style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
-                            />
-                        {% else %}
-                            <img
-                                src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/sunGrey.png"
-                                style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
-                            />
-                        {% endif %}
-                    </td>
-                </tr>
-            </table>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <table cellpadding="2" cellspacing="2" summary="" border="0">
-                <tr>
-                    <td style="width:26px">
-                        <p> </p>
-                    </td>
-                    <td>
-                        <table cellpadding="4" cellspacing="4" summary="" border="0">
-                            <tr>
-                                <td>
-                                    <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:11px;">Aller</p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <p style="font-size:11px;">Prise en charge à <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{schedule.outwardPickUpTime|date('H:i')}}</b></p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <p style="font-size:11px;">Dépose à <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{schedule.outwardDropOffTime|date('H:i')}}</b></p>
-                                </td>
-                            </tr>
-                        </table>
-                    <td>
-                    <td>
-                        <table cellpadding="4" cellspacing="4" summary="" border="0">
-                            <tr>
-                                <td>
-                                    <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:11px;">Retour</p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <p style="font-size:11px;">Prise en charge à <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{schedule.returnPickUpTime|date('H:i')}}</b></p>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <p style="font-size:11px;">Dépose à <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{schedule.returnDropOffTime|date('H:i')}}</b></p>
-                                </td>
-                            </tr>
-                        </table>
-                    <td>
-                </tr>
-            </table>
-            <hr style="border: 0.5px solid #F0BFFF;">
-        </td>
-    </tr>
+                        </td>
+                        <td>
+                            {% if schedule.tueCheck %}
+                                <img
+                                    src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/tueGreen.png"
+                                    style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
+                                />
+                            {% else %} 
+                                <img
+                                    src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/tueGrey.png"
+                                    style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
+                                />
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if schedule.wedCheck %}
+                                <img
+                                    src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/wedGreen.png"
+                                    style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
+                                />
+                            {% else %} 
+                                <img
+                                    src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/wedGrey.png"
+                                    style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
+                                />
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if schedule.thuCheck %}
+                                <img
+                                    src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/thuGreen.png"
+                                    style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
+                                />
+                            {% else %} 
+                                <img
+                                    src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/thuGrey.png"
+                                    style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
+                                />
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if schedule.friCheck %}
+                                <img
+                                    src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/friGreen.png"
+                                    style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
+                                />
+                            {% else %} 
+                                <img
+                                    src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/friGrey.png"
+                                    style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
+                                />
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if schedule.satCheck %}
+                                <img
+                                    src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/satGreen.png"
+                                    style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
+                                />
+                            {% else %} 
+                                <img
+                                    src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/satGrey.png"
+                                    style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
+                                />
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if schedule.sunCheck %}
+                                <img
+                                    src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/sunGreen.png"
+                                    style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
+                                />
+                            {% else %} 
+                                <img
+                                    src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/sunGrey.png"
+                                    style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
+                                />
+                            {% endif %}
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <table cellpadding="2" cellspacing="2" summary="" border="0">
+                    <tr>
+                        <td style="width:26px">
+                            <p> </p>
+                        </td>
+                        <td>
+                            <table cellpadding="4" cellspacing="4" summary="" border="0">
+                                <tr>
+                                    <td>
+                                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:11px;">Aller</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        {% if schedule.outwardPickUpTime == null %}
+                                            <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">Non concerné</b></p>
+                                        {% else %} 
+                                            <p style="font-size:11px;">Prise en charge à <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{schedule.outwardPickUpTime|date('H:i')}}</b></p>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        {% if schedule.outwardPickUpTime == null %}
+                                            <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">Non concerné</b></p>
+                                        {% else %} 
+                                            <p style="font-size:11px;">Dépose à <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{schedule.outwardDropOffTime|date('H:i')}}</b></p>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            </table>
+                        <td>
+                        <td>
+                            <table cellpadding="4" cellspacing="4" summary="" border="0">
+                                <tr>
+                                    <td>
+                                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:11px;">Retour</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        {% if schedule.returnPickUpTime == null %}
+                                            <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">Non concerné</b></p>
+                                        {% else %} 
+                                            <p style="font-size:11px;">Prise en charge à <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{schedule.returnPickUpTime|date('H:i')}}</b></p>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        {% if schedule.returnPickUpTime == null %}
+                                            <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">Non concerné</b></p>
+                                        {% else %} 
+                                            <p style="font-size:11px;">Dépose à <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{schedule.returnDropOffTime|date('H:i')}}</b></p>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            </table>
+                        <td>
+                    </tr>
+                </table>
+                {% if loop.last != true %}
+                    <hr style="border: 0.5px solid #F0BFFF;">
+                {% endif %}
+            </td>
+        </tr>
     {% endfor %}
 {% endif %}
 {# messages #}

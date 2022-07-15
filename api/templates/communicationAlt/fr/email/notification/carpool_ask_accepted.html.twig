@@ -10,6 +10,7 @@
 {% set returnOrigin = context.returnOrigin %}
 {% set returnDestination = context.returnDestination %}
 
+
 <table style="width:480px; font-family:{{api_env('EMAILS_FONT')}}, sans-serif;" cellpadding="0" cellspacing="0" summary="" border="0">
     <tr style="margin-bottom:21px; margin-top:19px;">
         <td align="center">
@@ -58,7 +59,11 @@
                             <tr>
                             {# gérer si conducteur ou passager #}
                                 <td align="left">
-                                    <p style="font-size:11px;">Votre conducteur / conductrice:
+                                    {% if context.recipientRole == 2 %}
+                                        <p style="font-size:11px;">Votre conducteur / conductrice:
+                                    {% else %}
+                                        <p style="font-size:11px;">Votre passager / passagère:
+                                    {% endif %}
                                 </td>
                             </tr>
                             <tr>
@@ -285,12 +290,20 @@
                             </tr>
                             <tr>
                                 <td>
-                                    <p style="font-size:11px;">Prise en charge à <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{schedule.outwardPickUpTime|date('H:i')}}</b></p>
+                                    {% if schedule.outwardPickUpTime == null %}
+                                        <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">Non concerné</b></p>
+                                    {% else %} 
+                                        <p style="font-size:11px;">Prise en charge à <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{schedule.outwardPickUpTime|date('H:i')}}</b></p>
+                                    {% endif %}
                                 </td>
                             </tr>
                             <tr>
                                 <td>
-                                    <p style="font-size:11px;">Dépose à <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{schedule.outwardDropOffTime|date('H:i')}}</b></p>
+                                    {% if schedule.outwardPickUpTime == null %}
+                                        <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">Non concerné</b></p>
+                                    {% else %} 
+                                        <p style="font-size:11px;">Dépose à <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{schedule.outwardDropOffTime|date('H:i')}}</b></p>
+                                    {% endif %}
                                 </td>
                             </tr>
                         </table>
@@ -304,19 +317,29 @@
                             </tr>
                             <tr>
                                 <td>
-                                    <p style="font-size:11px;">Prise en charge à <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{schedule.returnPickUpTime|date('H:i')}}</b></p>
+                                    {% if schedule.returnPickUpTime == null %}
+                                        <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">Non concerné</b></p>
+                                    {% else %} 
+                                        <p style="font-size:11px;">Prise en charge à <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{schedule.returnPickUpTime|date('H:i')}}</b></p>
+                                    {% endif %}
                                 </td>
                             </tr>
                             <tr>
                                 <td>
-                                    <p style="font-size:11px;">Dépose à <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{schedule.returnDropOffTime|date('H:i')}}</b></p>
+                                    {% if schedule.returnPickUpTime == null %}
+                                        <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">Non concerné</b></p>
+                                    {% else %} 
+                                        <p style="font-size:11px;">Dépose à <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{schedule.returnDropOffTime|date('H:i')}}</b></p>
+                                    {% endif %}
                                 </td>
                             </tr>
                         </table>
                     <td>
                 </tr>
             </table>
-            <hr style="border: 0.5px solid #F0BFFF;">
+            {% if loop.last != true %}
+                <hr style="border: 0.5px solid #F0BFFF;">
+            {% endif %}
         </td>
     </tr>
     {% endfor %}

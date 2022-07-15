@@ -47,6 +47,7 @@ use App\Communication\Service\NotificationManager;
 use App\TranslatorTrait;
 use App\User\Entity\User;
 use App\User\Service\BlockManager;
+use App\User\Service\UserManager;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Debug\Exception\ClassNotFoundException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -62,6 +63,7 @@ class CarpoolSubscriber implements EventSubscriberInterface
     private $router;
     private $blockManager;
     private $askManager;
+    private $userManager;
 
     public function __construct(
         NotificationManager $notificationManager,
@@ -69,7 +71,8 @@ class CarpoolSubscriber implements EventSubscriberInterface
         LoggerInterface $logger,
         UrlGeneratorInterface $router,
         BlockManager $blockManager,
-        AskManager $askManager
+        AskManager $askManager,
+        UserManager $userManager
     ) {
         $this->notificationManager = $notificationManager;
         $this->askHistoryRepository = $askHistoryRepository;
@@ -77,6 +80,7 @@ class CarpoolSubscriber implements EventSubscriberInterface
         $this->router = $router;
         $this->blockManager = $blockManager;
         $this->askManager = $askManager;
+        $this->userManager = $userManager;
     }
 
     public static function getSubscribedEvents()
@@ -108,8 +112,11 @@ class CarpoolSubscriber implements EventSubscriberInterface
     public function onAskPosted(AskPostedEvent $event)
     {
         $event->getAd()->setSchedule($this->addSchedule($event));
-        // the recipient is the carpooler
-        $adRecipient = ($event->getAd()->getResults()[0]->getCarpooler());
+        // we send the email to requester of the carpool
+        $adRecipient = $event->getAd()->getResults()[0]->getCarpooler();
+        $this->notificationManager->notifies(AskPostedEvent::NAME, $adRecipient, $event->getAd());
+        //  we also send the eail to the offerer of the carpool
+        $adRecipient = $this->userManager->getUser($event->getAd()->getuserId());
         $this->notificationManager->notifies(AskPostedEvent::NAME, $adRecipient, $event->getAd());
     }
 
@@ -121,8 +128,11 @@ class CarpoolSubscriber implements EventSubscriberInterface
     public function onAskAccepted(AskAcceptedEvent $event)
     {
         $event->getAd()->setSchedule($this->addSchedule($event));
-        // the recipient is the carpooler
-        $adRecipient = ($event->getAd()->getResults()[0]->getCarpooler());
+        // we send the email to requester of the carpool
+        $adRecipient = $event->getAd()->getResults()[0]->getCarpooler();
+        $this->notificationManager->notifies(AskAcceptedEvent::NAME, $adRecipient, $event->getAd());
+        //  we also send the eail to the offerer of the carpool
+        $adRecipient = $this->userManager->getUser($event->getAd()->getuserId());
         $this->notificationManager->notifies(AskAcceptedEvent::NAME, $adRecipient, $event->getAd());
     }
 
@@ -134,8 +144,11 @@ class CarpoolSubscriber implements EventSubscriberInterface
     public function onAskRefused(AskRefusedEvent $event)
     {
         $event->getAd()->setSchedule($this->addSchedule($event));
-        // the recipient is the carpooler
-        $adRecipient = ($event->getAd()->getResults()[0]->getCarpooler());
+        // we send the email to requester of the carpool
+        $adRecipient = $event->getAd()->getResults()[0]->getCarpooler();
+        $this->notificationManager->notifies(AskRefusedEvent::NAME, $adRecipient, $event->getAd());
+        //  we also send the eail to the offerer of the carpool
+        $adRecipient = $this->userManager->getUser($event->getAd()->getuserId());
         $this->notificationManager->notifies(AskRefusedEvent::NAME, $adRecipient, $event->getAd());
     }
 
@@ -171,7 +184,7 @@ class CarpoolSubscriber implements EventSubscriberInterface
             $event->getMatching()->getProposalOffer()->getUser()
             && $event->getMatching()->getProposalRequest()->getUser()
             && Proposal::TYPE_RETURN != $event->getWay()
-            ) {
+        ) {
             $askRecipient =
             ($event->getMatching()->getProposalOffer()->getUser()->getId() != $event->getSender()->getId()) ?
             $event->getMatching()->getProposalOffer()->getUser() :
@@ -380,27 +393,27 @@ class CarpoolSubscriber implements EventSubscriberInterface
         $askConcerned = $this->askManager->getAsk($event->getAd()->getAskId());
         $multipleSchedules = [];
 
-        $outwardTimes = [];
-        if (null != $outwardResult->getMonTime() && !in_array($outwardResult->getMonTime(), $outwardTimes)) {
-            $outwardTimes[] = $outwardResult->getMonTime();
+        $times = [];
+        if (!in_array(($outwardResult->getMonTime() ? $outwardResult->getMonTime()->format('H:i') : 'null').' '.($returnResult->getMonTime() ? $returnResult->getMonTime()->format('H:i') : 'null'), $times)) {
+            $times[] = ($outwardResult->getMonTime() ? $outwardResult->getMonTime()->format('H:i') : 'null').' '.($returnResult->getMonTime() ? $returnResult->getMonTime()->format('H:i') : 'null');
         }
-        if (null != $outwardResult->getTueTime() && !in_array($outwardResult->getTueTime(), $outwardTimes)) {
-            $outwardTimes[] = $outwardResult->getTueTime();
+        if (!in_array(($outwardResult->getTueTime() ? $outwardResult->getTueTime()->format('H:i') : 'null').' '.($returnResult->getTueTime() ? $returnResult->getTueTime()->format('H:i') : 'null'), $times)) {
+            $times[] = ($outwardResult->getTueTime() ? $outwardResult->getTueTime()->format('H:i') : 'null').' '.($returnResult->getTueTime() ? $returnResult->getTueTime()->format('H:i') : 'null');
         }
-        if (null != $outwardResult->getWedTime() && !in_array($outwardResult->getWedTime(), $outwardTimes)) {
-            $outwardTimes[] = $outwardResult->getWedTime();
+        if (!in_array(($outwardResult->getWedTime() ? $outwardResult->getWedTime()->format('H:i') : 'null').' '.($returnResult->getWedTime() ? $returnResult->getWedTime()->format('H:i') : 'null'), $times)) {
+            $times[] = ($outwardResult->getWedTime() ? $outwardResult->getWedTime()->format('H:i') : 'null').' '.($returnResult->getWedTime() ? $returnResult->getWedTime()->format('H:i') : 'null');
         }
-        if (null != $outwardResult->getThuTime() && !in_array($outwardResult->getThuTime(), $outwardTimes)) {
-            $outwardTimes[] = $outwardResult->getThuTime();
+        if (!in_array(($outwardResult->getThuTime() ? $outwardResult->getThuTime()->format('H:i') : 'null').' '.($returnResult->getThuTime() ? $returnResult->getThuTime()->format('H:i') : 'null'), $times)) {
+            $times[] = ($outwardResult->getThuTime() ? $outwardResult->getThuTime()->format('H:i') : 'null').' '.($returnResult->getThuTime() ? $returnResult->getThuTime()->format('H:i') : 'null');
         }
-        if (null != $outwardResult->getFriTime() && !in_array($outwardResult->getFriTime(), $outwardTimes)) {
-            $outwardTimes[] = $outwardResult->getFriTime();
+        if (!in_array(($outwardResult->getFriTime() ? $outwardResult->getFriTime()->format('H:i') : 'null').' '.($returnResult->getFriTime() ? $returnResult->getFriTime()->format('H:i') : 'null'), $times)) {
+            $times[] = ($outwardResult->getFriTime() ? $outwardResult->getFriTime()->format('H:i') : 'null').' '.($returnResult->getFriTime() ? $returnResult->getFriTime()->format('H:i') : 'null');
         }
-        if (null != $outwardResult->getSatTime() && !in_array($outwardResult->getSatTime(), $outwardTimes)) {
-            $outwardTimes[] = $outwardResult->getSatTime();
+        if (!in_array(($outwardResult->getSatTime() ? $outwardResult->getSatTime()->format('H:i') : 'null').' '.($returnResult->getSatTime() ? $returnResult->getSatTime()->format('H:i') : 'null'), $times)) {
+            $times[] = ($outwardResult->getSatTime() ? $outwardResult->getSatTime()->format('H:i') : 'null').' '.($returnResult->getSatTime() ? $returnResult->getSatTime()->format('H:i') : 'null');
         }
-        if (null != $outwardResult->getSunTime() && !in_array($outwardResult->getSunTime(), $outwardTimes)) {
-            $outwardTimes[] = $outwardResult->getSunTime();
+        if (!in_array(($outwardResult->getSunTime() ? $outwardResult->getSunTime()->format('H:i') : 'null').' '.($returnResult->getSunTime() ? $returnResult->getSunTime()->format('H:i') : 'null'), $times)) {
+            $times[] = ($outwardResult->getSunTime() ? $outwardResult->getSunTime()->format('H:i') : 'null').' '.($returnResult->getSunTime() ? $returnResult->getSunTime()->format('H:i') : 'null');
         }
 
         $schedule = [
@@ -416,60 +429,100 @@ class CarpoolSubscriber implements EventSubscriberInterface
             'satCheck' => false,
             'sunCheck' => false,
         ];
-        foreach ($outwardTimes as $outwardTime) {
-            $outwardPickUpTime = clone $outwardTime;
-            $schedule['outwardPickUpTime'] = $outwardPickUpTime ? $outwardPickUpTime->modify('+'.$askConcerned->getMatching()->getPickUpDuration().' seconds') : null;
-            $outwardDropOffTime = clone $schedule['outwardPickUpTime'];
-            $schedule['outwardDropOffTime'] = $outwardDropOffTime ? $outwardDropOffTime->modify('+'.$askConcerned->getMatching()->getDropOffDuration().' seconds') : null;
-
-            if (null != $outwardResult->getMonTime() && $outwardResult->getMonTime() == $outwardTime) {
+        foreach ($times as $time) {
+            if ('null null' == $time) {
+                continue;
+            }
+            if (($outwardResult->getMonTime() ? $outwardResult->getMonTime()->format('H:i') : 'null').' '.($returnResult->getMonTime() ? $returnResult->getMonTime()->format('H:i') : 'null') == $time) {
+                // outward
+                $outwardDriverDepartureTime = $outwardResult->getMonTime() ? clone $outwardResult->getMonTime() : null;
+                $schedule['outwardPickUpTime'] = $outwardDriverDepartureTime ? $outwardDriverDepartureTime->modify('+'.$askConcerned->getMatching()->getPickUpDuration().' seconds') : null;
+                $outwardDriverDepartureTime = $outwardResult->getMonTime() ? clone $outwardResult->getMonTime() : null;
+                $schedule['outwardDropOffTime'] = $outwardDriverDepartureTime ? $outwardDriverDepartureTime->modify('+'.$askConcerned->getMatching()->getDropOffDuration().' seconds') : null;
+                // return
+                $returnDriverDepartureTime = $returnResult->getMonTime() ? clone $returnResult->getMonTime() : null;
+                $schedule['returnPickUpTime'] = $returnDriverDepartureTime ? $returnDriverDepartureTime->modify('+'.$askConcerned->getMatching()->getPickUpDuration().' seconds') : null;
+                $returnDriverDepartureTime = $returnResult->getMonTime() ? clone $returnResult->getMonTime() : null;
+                $schedule['returnDropOffTime'] = $returnDriverDepartureTime ? $returnDriverDepartureTime->modify('+'.$askConcerned->getMatching()->getDropOffDuration().' seconds') : null;
                 $schedule['monCheck'] = true;
-                $returnPickUpTime = $returnResult->getMonTime() ? clone $returnResult->getMonTime() : null;
-                $schedule['returnPickUpTime'] = $returnPickUpTime ? $returnPickUpTime->modify('+'.$askConcerned->getMatching()->getPickUpDuration().' seconds') : null;
-                $returnDropOffTime = $schedule['returnPickUpTime'] ? clone $schedule['returnPickUpTime'] : null;
-                $schedule['returnDropOffTime'] = $returnDropOffTime ? $returnDropOffTime->modify('+'.$askConcerned->getMatching()->getDropOffDuration().'seconds') : null;
             }
-            if (null != $outwardResult->getTueTime() && $outwardResult->getTueTime() == $outwardTime) {
+            if (($outwardResult->getTueTime() ? $outwardResult->getTueTime()->format('H:i') : 'null').' '.($returnResult->getTueTime() ? $returnResult->getTueTime()->format('H:i') : 'null') == $time) {
+                // outward
+                $outwardDriverDepartureTime = $outwardResult->getTueTime() ? clone $outwardResult->getTueTime() : null;
+                $schedule['outwardPickUpTime'] = $outwardDriverDepartureTime ? $outwardDriverDepartureTime->modify('+'.$askConcerned->getMatching()->getPickUpDuration().' seconds') : null;
+                $outwardDriverDepartureTime = $outwardResult->getTueTime() ? clone $outwardResult->getTueTime() : null;
+                $schedule['outwardDropOffTime'] = $outwardDriverDepartureTime ? $outwardDriverDepartureTime->modify('+'.$askConcerned->getMatching()->getDropOffDuration().' seconds') : null;
+                // return
+                $returnDriverDepartureTime = $returnResult->getTueTime() ? clone $returnResult->getTueTime() : null;
+                $schedule['returnPickUpTime'] = $returnDriverDepartureTime ? $returnDriverDepartureTime->modify('+'.$askConcerned->getMatching()->getPickUpDuration().' seconds') : null;
+                $returnDriverDepartureTime = $returnResult->getTueTime() ? clone $returnResult->getTueTime() : null;
+                $schedule['returnDropOffTime'] = $returnDriverDepartureTime ? $returnDriverDepartureTime->modify('+'.$askConcerned->getMatching()->getDropOffDuration().' seconds') : null;
                 $schedule['tueCheck'] = true;
-                $returnPickUpTime = $returnResult->getTueTime() ? clone $returnResult->getTueTime() : null;
-                $schedule['returnPickUpTime'] = null == $schedule['returnPickUpTime'] ? ($returnPickUpTime ? $returnPickUpTime->modify('+'.$askConcerned->getMatching()->getPickUpDuration().' seconds') : null) : $schedule['returnPickUpTime'];
-                $returnDropOffTime = $schedule['returnPickUpTime'] ? clone $schedule['returnPickUpTime'] : null;
-                $schedule['returnDropOffTime'] = $returnDropOffTime ? $returnDropOffTime->modify('+'.$askConcerned->getMatching()->getDropOffDuration().'seconds') : null;
             }
-            if (null != $outwardResult->getWedTime() && $outwardResult->getWedTime() == $outwardTime) {
+            if (($outwardResult->getWedTime() ? $outwardResult->getWedTime()->format('H:i') : 'null').' '.($returnResult->getWedTime() ? $returnResult->getWedTime()->format('H:i') : 'null') == $time) {
+                // outward
+                $outwardDriverDepartureTime = $outwardResult->getWedTime() ? clone $outwardResult->getWedTime() : null;
+                $schedule['outwardPickUpTime'] = $outwardDriverDepartureTime ? $outwardDriverDepartureTime->modify('+'.$askConcerned->getMatching()->getPickUpDuration().' seconds') : null;
+                $outwardDriverDepartureTime = $outwardResult->getWedTime() ? clone $outwardResult->getWedTime() : null;
+                $schedule['outwardDropOffTime'] = $outwardDriverDepartureTime ? $outwardDriverDepartureTime->modify('+'.$askConcerned->getMatching()->getDropOffDuration().' seconds') : null;
+                // return
+                $returnDriverDepartureTime = $returnResult->getWedTime() ? clone $returnResult->getWedTime() : null;
+                $schedule['returnPickUpTime'] = $returnDriverDepartureTime ? $returnDriverDepartureTime->modify('+'.$askConcerned->getMatching()->getPickUpDuration().' seconds') : null;
+                $returnDriverDepartureTime = $returnResult->getWedTime() ? clone $returnResult->getWedTime() : null;
+                $schedule['returnDropOffTime'] = $returnDriverDepartureTime ? $returnDriverDepartureTime->modify('+'.$askConcerned->getMatching()->getDropOffDuration().' seconds') : null;
                 $schedule['wedCheck'] = true;
-                $returnPickUpTime = $returnResult->getWedTime() ? clone $returnResult->getWedTime() : null;
-                $schedule['returnPickUpTime'] = null == $schedule['returnPickUpTime'] ? ($returnPickUpTime ? $returnPickUpTime->modify('+'.$askConcerned->getMatching()->getPickUpDuration().' seconds') : null) : $schedule['returnPickUpTime'];
-                $returnDropOffTime = $schedule['returnPickUpTime'] ? clone $schedule['returnPickUpTime'] : null;
-                $schedule['returnDropOffTime'] = $returnDropOffTime ? $returnDropOffTime->modify('+'.$askConcerned->getMatching()->getDropOffDuration().'seconds') : null;
             }
-            if (null != $outwardResult->getThuTime() && $outwardResult->getThuTime() == $outwardTime) {
+            if (($outwardResult->getThuTime() ? $outwardResult->getThuTime()->format('H:i') : 'null').' '.($returnResult->getThuTime() ? $returnResult->getThuTime()->format('H:i') : 'null') == $time) {
+                // outward
+                $outwardDriverDepartureTime = $outwardResult->getThuTime() ? clone $outwardResult->getThuTime() : null;
+                $schedule['outwardPickUpTime'] = $outwardDriverDepartureTime ? $outwardDriverDepartureTime->modify('+'.$askConcerned->getMatching()->getPickUpDuration().' seconds') : null;
+                $outwardDriverDepartureTime = $outwardResult->getThuTime() ? clone $outwardResult->getThuTime() : null;
+                $schedule['outwardDropOffTime'] = $outwardDriverDepartureTime ? $outwardDriverDepartureTime->modify('+'.$askConcerned->getMatching()->getDropOffDuration().' seconds') : null;
+                // return
+                $returnDriverDepartureTime = $returnResult->getThuTime() ? clone $returnResult->getThuTime() : null;
+                $schedule['returnPickUpTime'] = $returnDriverDepartureTime ? $returnDriverDepartureTime->modify('+'.$askConcerned->getMatching()->getPickUpDuration().' seconds') : null;
+                $returnDriverDepartureTime = $returnResult->getThuTime() ? clone $returnResult->getThuTime() : null;
+                $schedule['returnDropOffTime'] = $returnDriverDepartureTime ? $returnDriverDepartureTime->modify('+'.$askConcerned->getMatching()->getDropOffDuration().' seconds') : null;
                 $schedule['thuCheck'] = true;
-                $returnPickUpTime = $returnResult->getThuTime() ? clone $returnResult->getThuTime() : null;
-                $schedule['returnPickUpTime'] = null == $schedule['returnPickUpTime'] ? ($returnPickUpTime ? $returnPickUpTime->modify('+'.$askConcerned->getMatching()->getPickUpDuration().' seconds') : null) : $schedule['returnPickUpTime'];
-                $returnDropOffTime = $schedule['returnPickUpTime'] ? clone $schedule['returnPickUpTime'] : null;
-                $schedule['returnDropOffTime'] = $returnDropOffTime ? $returnDropOffTime->modify('+'.$askConcerned->getMatching()->getDropOffDuration().'seconds') : null;
             }
-            if (null != $outwardResult->getFriTime() && $outwardResult->getFriTime() == $outwardTime) {
+            if (($outwardResult->getFriTime() ? $outwardResult->getFriTime()->format('H:i') : 'null').' '.($returnResult->getFriTime() ? $returnResult->getFriTime()->format('H:i') : 'null') == $time) {
+                // outward
+                $outwardDriverDepartureTime = $outwardResult->getFriTime() ? clone $outwardResult->getFriTime() : null;
+                $schedule['outwardPickUpTime'] = $outwardDriverDepartureTime ? $outwardDriverDepartureTime->modify('+'.$askConcerned->getMatching()->getPickUpDuration().' seconds') : null;
+                $outwardDriverDepartureTime = $outwardResult->getFriTime() ? clone $outwardResult->getFriTime() : null;
+                $schedule['outwardDropOffTime'] = $outwardDriverDepartureTime ? $outwardDriverDepartureTime->modify('+'.$askConcerned->getMatching()->getDropOffDuration().' seconds') : null;
+                // return
+                $returnDriverDepartureTime = $returnResult->getFriTime() ? clone $returnResult->getFriTime() : null;
+                $schedule['returnPickUpTime'] = $returnDriverDepartureTime ? $returnDriverDepartureTime->modify('+'.$askConcerned->getMatching()->getPickUpDuration().' seconds') : null;
+                $returnDriverDepartureTime = $returnResult->getFriTime() ? clone $returnResult->getFriTime() : null;
+                $schedule['returnDropOffTime'] = $returnDriverDepartureTime ? $returnDriverDepartureTime->modify('+'.$askConcerned->getMatching()->getDropOffDuration().' seconds') : null;
                 $schedule['friCheck'] = true;
-                $returnPickUpTime = $returnResult->getFriTime() ? clone $returnResult->getFriTime() : null;
-                $schedule['returnPickUpTime'] = null == $schedule['returnPickUpTime'] ? ($returnPickUpTime ? $returnPickUpTime->modify('+'.$askConcerned->getMatching()->getPickUpDuration().' seconds') : null) : $schedule['returnPickUpTime'];
-                $returnDropOffTime = $schedule['returnPickUpTime'] ? clone $schedule['returnPickUpTime'] : null;
-                $schedule['returnDropOffTime'] = $returnDropOffTime ? $returnDropOffTime->modify('+'.$askConcerned->getMatching()->getDropOffDuration().'seconds') : null;
             }
-            if (null != $outwardResult->getSatTime() && $outwardResult->getSatTime() == $outwardTime) {
+            if (($outwardResult->getSatTime() ? $outwardResult->getSatTime()->format('H:i') : 'null').' '.($returnResult->getSatTime() ? $returnResult->getSatTime()->format('H:i') : 'null') == $time) {
+                // outward
+                $outwardDriverDepartureTime = $outwardResult->getSatTime() ? clone $outwardResult->getSatTime() : null;
+                $schedule['outwardPickUpTime'] = $outwardDriverDepartureTime ? $outwardDriverDepartureTime->modify('+'.$askConcerned->getMatching()->getPickUpDuration().' seconds') : null;
+                $outwardDriverDepartureTime = $outwardResult->getSatTime() ? clone $outwardResult->getSatTime() : null;
+                $schedule['outwardDropOffTime'] = $outwardDriverDepartureTime ? $outwardDriverDepartureTime->modify('+'.$askConcerned->getMatching()->getDropOffDuration().' seconds') : null;
+                // return
+                $returnDriverDepartureTime = $returnResult->getSatTime() ? clone $returnResult->getSatTime() : null;
+                $schedule['returnPickUpTime'] = $returnDriverDepartureTime ? $returnDriverDepartureTime->modify('+'.$askConcerned->getMatching()->getPickUpDuration().' seconds') : null;
+                $returnDriverDepartureTime = $returnResult->getSatTime() ? clone $returnResult->getSatTime() : null;
+                $schedule['returnDropOffTime'] = $returnDriverDepartureTime ? $returnDriverDepartureTime->modify('+'.$askConcerned->getMatching()->getDropOffDuration().' seconds') : null;
                 $schedule['satCheck'] = true;
-                $returnPickUpTime = $returnResult->getSatTime() ? clone $returnResult->getSatTime() : null;
-                $schedule['returnPickUpTime'] = null == $schedule['returnPickUpTime'] ? ($returnPickUpTime ? $returnPickUpTime->modify('+'.$askConcerned->getMatching()->getPickUpDuration().' seconds') : null) : $schedule['returnPickUpTime'];
-                $returnDropOffTime = $schedule['returnPickUpTime'] ? clone $schedule['returnPickUpTime'] : null;
-                $schedule['returnDropOffTime'] = $returnDropOffTime ? $returnDropOffTime->modify('+'.$askConcerned->getMatching()->getDropOffDuration().'seconds') : null;
             }
-            if (null != $outwardResult->getSunTime() && $outwardResult->getSunTime() == $outwardTime) {
+            if (($outwardResult->getSunTime() ? $outwardResult->getSunTime()->format('H:i') : 'null').' '.($returnResult->getSunTime() ? $returnResult->getSunTime()->format('H:i') : 'null') == $time) {
+                // outward
+                $outwardDriverDepartureTime = $outwardResult->getSunTime() ? clone $outwardResult->getSunTime() : null;
+                $schedule['outwardPickUpTime'] = $outwardDriverDepartureTime ? $outwardDriverDepartureTime->modify('+'.$askConcerned->getMatching()->getPickUpDuration().' seconds') : null;
+                $outwardDriverDepartureTime = $outwardResult->getSunTime() ? clone $outwardResult->getSunTime() : null;
+                $schedule['outwardDropOffTime'] = $outwardDriverDepartureTime ? $outwardDriverDepartureTime->modify('+'.$askConcerned->getMatching()->getDropOffDuration().' seconds') : null;
+                // return
+                $returnDriverDepartureTime = $returnResult->getSunTime() ? clone $returnResult->getSunTime() : null;
+                $schedule['returnPickUpTime'] = $returnDriverDepartureTime ? $returnDriverDepartureTime->modify('+'.$askConcerned->getMatching()->getPickUpDuration().' seconds') : null;
+                $returnDriverDepartureTime = $returnResult->getSunTime() ? clone $returnResult->getSunTime() : null;
+                $schedule['returnDropOffTime'] = $returnDriverDepartureTime ? $returnDriverDepartureTime->modify('+'.$askConcerned->getMatching()->getDropOffDuration().' seconds') : null;
                 $schedule['sunCheck'] = true;
-                $returnPickUpTime = $returnResult->getSunTime() ? clone $returnResult->getSunTime() : null;
-                $schedule['returnPickUpTime'] = null == $schedule['returnPickUpTime'] ? ($returnPickUpTime ? $returnPickUpTime->modify('+'.$askConcerned->getMatching()->getPickUpDuration().' seconds') : null) : $schedule['returnPickUpTime'];
-                $returnDropOffTime = $schedule['returnPickUpTime'] ? clone $schedule['returnPickUpTime'] : null;
-                $schedule['returnDropOffTime'] = $returnDropOffTime ? $returnDropOffTime->modify('+'.$askConcerned->getMatching()->getDropOffDuration().'seconds') : null;
             }
             $multipleSchedules[] = $schedule;
             $schedule = [
