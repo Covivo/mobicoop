@@ -1,127 +1,208 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8"> 
-    <meta name="viewport" content="width=device-width"> 
-    <meta http-equiv="X-UA-Compatible" content="IE=edge"> 
-    <meta name="x-apple-disable-message-reformatting"> 
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="x-apple-disable-message-reformatting">
 </head>
 <body>
-<center style="width: 100%; background-color: {{api_env('EMAILS_EXTERIOR_BACKGROUND_COLOR')}};">
-<table style="width:700px;font-family:{{api_env('EMAILS_FONT')}}, sans-serif;background-color: {{api_env('EMAILS_INTERIOR_BACKGROUND_COLOR')}};">
+<center>
+<table style="width:640px; font-family:{{api_env('EMAILS_FONT')}};">
+<tbody>
     <tr>
         <td>
             <!-- Header -->
-            <table cellpadding="0" cellspacing="0" summary="" border="0" style="width:100%;">
+            <table cellpadding="0" cellspacing="0" summary="" border="0" style="width:640px;">
                 <tr>
                     <td align="center">
-                        <a href="{{api_env('EMAILS_PLATFORM_URL')}}" title="">
-                            <img src="{{api_env('EMAILS_BANNER_URL')}}" alt="" style="width:40%;max-width:1000px;height:auto;max-height:250px;border-style:none;" />
-                        </a>
+                        <img
+                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/headerAlt/top-header.png"
+                            style="border:0; height:122px; width:640px; background-color:transparent;"
+                        />
                     </td>
-                </tr>    
+                </tr>
             </table>
         </td>
     </tr>
     <tr>
-        <td style="padding:10px;">
-            <center>
-                <table cellpadding="0" cellspacing="0" summary="" border="0" style="width:100%;">
-                    <tr>
-                        <td>
-                        {% block body %}
-                        {% endblock %}
-                        </td>
-                    </tr>
-                </table>
-            </center>
+        <td >
+            <table cellpadding="0" cellspacing="0" summary="" border="0" style="width:640px; Margin-top:-6px;">
+                <tr>
+                    <td align="center" valign="top">
+                        <img
+                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/headerAlt/left-top-header.png"
+                            style="border:0; height:270px; width:80px; background-color:transparent; vertical-align:top;"
+                        />
+                    </td>
+                    <td>
+                        <table cellpadding="0" cellspacing="0" summary="" border="0" style="width:480px;">
+                            <tr>
+                                <td align="center">
+                                    {% block body %}
+                                    {% endblock %}
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td align="center" valign="top">
+                        <img
+                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/headerAlt/right-top-header.png"
+                            style="border:0; height:270px; width:80px; background-color:transparent; vertical-align:top;"
+                        />
+                    </td>
+                </tr>
+            </table>
         </td>
     </tr>
+</tbody>
+<tfooter>
     <tr>
-        <td style="border-spacing:0;text-align:center">
+        <td>
             <!-- Footer-->
-            <hr>
-            <table align="center" style="border-spacing:0;text-align:center;vertical-align:top;width:100%;margin-top:20px;font-family:{{api_env('EMAILS_FONT')}}, sans-serif;color:{{api_env('EMAILS_COLOR_SECONDARY')}}">
-                
-                <tr>
-                    <td style="width:10%"> 
-                        &nbsp;
-                    </td>
-                    <td style="text-align:center">
-                        <p>
-                            <a href="{{api_env('EMAILS_PLATFORM_URL')}}/FAQ" >
-                                FAQ | 
-                            </a>
-                            <a href="{{api_env('EMAILS_PLATFORM_URL')}}/contact" >
-                                Une question? |
-                            </a>
-                            <a href="{{api_env('EMAILS_PLATFORM_URL') ~ '/utilisateur/profil/modifier/mon-profil'}}" >
-                                Gérer vos alertes email
-                            </a>
-                        </p>    
-                    </td>
-                    <td style="width:10%">
-                        &nbsp; 
-                    </td>
-                </tr>
-                {# <tr>
-                    <td>
-                        &nbsp;
-                    </td>
-                    <td style="text-align:center">
-                        <p> Téléchargez l'application <b>Android</b> ou <b>IOS</b> </p>
-                    </td>
-                    <td>
-                        &nbsp;
-                    </td>
-                </tr> #}
-                {# <tr>
-                    <td>
-                        &nbsp;
-                    </td>
-                     <td style="text-align:center">
-                        <a href="{{api_env('EMAILS_ANDROID_URL')}}" >
-                            <img src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_ANDROID_LOGO')}}" alt="Android"/>
-                        </a>
-                        <a href="{{api_env('EMAILS_IOS_URL')}}" >
-                            <img src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_IOS_LOGO')}}" alt="AppleStore"/>
-                        </a>
-                    </td>
-                    <td>
-                        &nbsp;
-                    </td>
-                </tr>
+            <table
+                align="center"
+                style="border-spacing:0; text-align:center; vertical-align:top; width:640px; height:158px; background-color:{{api_env('EMAILS_COLOR_PRIMARY')}};"
+            >
                 <tr>
                     <td>
-                        &nbsp;
+                        <table
+                            align="center"
+                        >
+                            <tr>
+                                <td>
+                                    <p> </p>
+                                </td>
+                            </tr>
+                        </table>
                     </td>
-                    <td style="text-align:center">
-                        <p> Suivez-nous </p>
+                     <td>
+                        <table
+                            align="center"
+                            style="border-spacing:0;"
+                        >
+                            <tr>
+                                <td>
+                                    <img
+                                        src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/footerAlt/Logo_RZMBC_Blanc.png"
+                                        style="border:0; height:48px; width:133px; background-color:transparent; vertical-align:top;"
+                                    />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <table
+                                        align="left"
+                                    >
+                                        <tr>
+                                            <td>
+                                                <img
+                                                    src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/footerAlt/appStore.png"
+                                                    style="border:0; height:20px; width:63px; background-color:transparent; "
+                                                />
+                                            </td>
+                                            <td>
+                                                <img
+                                                    src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/footerAlt/playStore.png"
+                                                    style="border:0; height:29px; width:75px; background-color:transparent; "
+                                                />
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <table
+                                        align="left"
+                                    >
+                                        <tr>
+                                            <td>
+                                                <img
+                                                    src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/footerAlt/Facebook.png"
+                                                    style="border:0; height:13px; width:7px; background-color:transparent; margin-right: 2px;"
+                                                />
+                                            </td>
+                                            <td>
+                                                <img
+                                                    src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/footerAlt/Twitter.png"
+                                                    style="border:0; height:13px; width:15px; background-color:transparent; margin-left: 2px; margin-right: 2px;"
+                                                />
+                                            </td>
+                                            <td>
+                                                <img
+                                                    src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/footerAlt/Linkedin.png"
+                                                    style="border:0; height:13px; width:13px; background-color:transparent; margin-left: 2px;"
+                                                />
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <table
+                                        align="left"
+                                    >
+                                        <tr>
+                                            <td>
+                                                <p style="font-size: 8px; line-height: 1.0; word-break: break-word; mso-line-height-alt: 12px; margin: 0; color: white;">
+                                                    Pour gérer vos alertes e-mail <a href="{{api_env('EMAILS_PLATFORM_URL')}}/utilisateur/profil/modifier/mon-profil/alertes" style="color: white">cliquez ici</a>
+                                                </p>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <table
+                                        align="left"
+                                    >
+                                        <tr>
+                                            <td>
+                                                <p style="font-size: 8px; line-height: 1.0; word-break: break-word; mso-line-height-alt: 12px; margin: 0; color: white;">
+                                                    Une question? <a href="{{api_env('EMAILS_PLATFORM_URL')}}/FAQ" style="color: white">Consultez la FAQ.</a>
+                                                </p>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
                     </td>
                     <td>
-                        &nbsp;
+                        <table
+                            align="center"
+                        >
+                            <tr>
+                                <td>
+                                    <p> </p>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                     <td>
+                        <table
+                            align="center"
+                        >
+                            <tr>
+                                <td>
+                                    <img
+                                        src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/footerAlt/voiture.png"
+                                        style="border:0; height:101px; width:149px; background-color:transparent; vertical-align:top;"
+                                    />
+                                </td>
+                            </tr>
+                        </table>
                     </td>
                 </tr>
-                <tr>
-                    <td>
-                        &nbsp;
-                    </td>
-                    <td style="text-align:center">
-                        <a href="{{api_env('EMAILS_FACEBOOK_URL')}}" >
-                            <img src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_FACEBOOK_LOGO')}}" alt="facebook"/>
-                        </a>
-                        <a href="{{api_env('EMAILS_TWITTER_URL')}}" >
-                            <img src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}{{api_env('EMAILS_TWITTER_LOGO')}}" alt="twitter"/>
-                        </a>
-                    </td>
-                    <td>
-                        &nbsp;
-                    </td>
-                </tr>     #}
-        </table> 
+            </table>
         </td>
     </tr>
-</table>    
+</tfooter>
+
+</table>
 </center>
 </body>
 </html>
