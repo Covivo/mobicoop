@@ -8,8 +8,11 @@
                 <tr>
                     <td style="width:70%">
                         <p>Bonjour<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{context.recipient.givenName|capitalize}} {{context.recipient.shortFamilyName|capitalize}}</b></p>
-                        <p>Votre adhésion à la communauté  <b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{context.community.name}}</b> a été refusée.</p>
-                        <p>Merci, l'équipe {{api_env('EMAILS_PLATFORM_NAME')}}</p>
+                        <p>Merci beaucoup pour l’intérêt que vous portez au covoiturage et à la plateforme {{api_env('EMAILS_PLATFORM_NAME')}} !</p>
+                        <p>Vous avez demandé une adhésion à la communauté <b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{context.community.name}}</b> et cette dernière n'a pas pu être accepté. Vous n’y avez donc pas accès.</p>
+                        <p>Cela n’entraine aucune restriction à votre utilisation du service et votre pratique du covoiturage : vous pouvez utiliser la totalité des fonctionnalités de la plateforme et vous mettre en relation avec tous ses utilisateurs en postant 'une annonce ici' (intégrer un lien vers la publication d'annonce) !</p>
+                        <p>Bon covoiturage !</p>
+                        <p>L'équipe {{api_env('EMAILS_PLATFORM_NAME')}}</p>
                    </td>
                 </tr>
             </table>
