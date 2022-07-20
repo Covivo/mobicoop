@@ -28,7 +28,7 @@
         {{ $t('fraudWarningText.part1') }} <a
           :href="$t('fraudWarningText.link')"
           target="_blank"
-        >{{ $t('fraudWarningText.textLink') }}</a>.
+        >{{ $t('fraudWarningText.textLink') }}</a>
       </v-card-text>
     </v-card>
   </div>
