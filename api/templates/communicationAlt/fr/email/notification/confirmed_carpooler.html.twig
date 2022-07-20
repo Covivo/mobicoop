@@ -1,0 +1,241 @@
+{# CAREFUL : Some client might need to replicate this template #}
+{% extends 'communicationAlt/fr/email/notification/base.html.twig' %}
+{% block body %}
+
+<table style="width:480px; font-family:{{api_env('EMAILS_FONT')}}, sans-serif;" cellpadding="0" cellspacing="0" summary="" border="0">
+    <tr style="margin-bottom:21px; margin-top:19px;">
+        <td align="center">
+            <table cellpadding="6" cellspacing="6" summary="" border="0">
+                <tr> 
+                    <td align="center">
+                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:20px;" text-align="center" ><b>Bravo pour votre engagement !</b></p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td align="center">
+            <table style="width:100%;" cellpadding="2" cellspacing="2" summary="" border="0" >
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td align="left">
+                        <p style="font-size:11px; margin-bottom:16px;">Bonjour {{recipient.givenName|capitalize}} {{recipient.shortFamilyName|capitalize}},</p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td align="center">
+            <table style="width:100%;" cellpadding="2" cellspacing="2" summary="" border="0" >
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td align="left">
+                        <p style="font-size:11px; text-align: justify;">Vous avez déjà utilisé notre plateforme de covoiturage à maintes reprises, et nous saluons votre engagement dans la mobilité partagée ! Nous avons tous un rôle à jouer pour faire bouger les lignes. Changer ses habitudes prend du temps, mais l’urgence climatique n’attend pas !</p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="height:15px">
+            <p> </p>
+        </td>    
+    </tr>
+    <tr>
+        <td align="center">
+            <table style="width:100%;" cellpadding="2" cellspacing="2" summary="" border="0" >
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td align="left">
+                        <p style="font-size:11px; text-align: justify;">Vous souhaitez aller encore plus loin ? Il existe diverses manières de s’engager avec nous :</p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+
+    <tr>
+        <td>
+            <table cellpadding="2" cellspacing="2" summary="" border="0">
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td>
+                        <img
+                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/pinkArrow.png"
+                            style="border:0; height:9px; width:11px; background-color:transparent; vertical-align:top;"
+                        />    
+                    </td>
+                    <td align="left" >
+                        <p style="font-size:11px; color:{{api_env('EMAILS_COLOR_SECONDARY')}};"><b>Parler de Mobicoop autour de vous</b></p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <table cellpadding="2" cellspacing="2" summary="" border="0">    
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td>
+                        <p style="font-size:11px; text-align: justify;">Utilisez notre <a href="https://cloud.mobicoop.org/index.php/s/MHxrrMN2gNaRB4t" style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">Boîte à outils</a>, notamment nos affiches et textes pour interpeller vos élus et votre entourage.</p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>  
+    <tr>
+        <td style="height:15px">
+            <p> </p>
+        </td>    
+    </tr>
+    <tr>
+        <td>
+            <table cellpadding="2" cellspacing="2" summary="" border="0">
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td>
+                        <img
+                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/pinkArrow.png"
+                            style="border:0; height:9px; width:11px; background-color:transparent; vertical-align:top;"
+                        />    
+                    </td>
+                    <td align="left" >
+                        <p style="font-size:11px; color:{{api_env('EMAILS_COLOR_SECONDARY')}};"><b>Devenir sociétaire</b></p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <table cellpadding="2" cellspacing="2" summary="" border="0">
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td>
+                        <p style="font-size:11px; text-align: justify;">Mobicoop est une société coopérative : chacun peut prendre une part pour participer au projet et à la vie coopérative, sur le principe démocratique de <b>1 personne = 1 voix</b>, qu’importe le nombre de parts prises. <a href="https://membres.mobicoop.fr/fr/" style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">Prendre une part</a></p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="height:15px">
+            <p> </p>
+        </td>    
+    </tr>
+    <tr>
+        <td>
+            <table cellpadding="2" cellspacing="2" summary="" border="0">
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td>
+                        <img
+                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/pinkArrow.png"
+                            style="border:0; height:9px; width:11px; background-color:transparent; vertical-align:top;"
+                        />    
+                    </td>
+                    <td align="left" >
+                        <p style="font-size:11px; color:{{api_env('EMAILS_COLOR_SECONDARY')}};"><b>Tester nos autres services</b></p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <table cellpadding="2" cellspacing="2" summary="" border="0">
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td>
+                        <p style="font-size:11px; text-align: justify;">Vous pensez que la mobilité partagée n’en est qu’à ses débuts ? Sur votre application mobile, vous pouvez tester notre service <b>d’autostop Rezo Pouce.</b></p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="height:15px">
+            <p> </p>
+        </td>    
+    </tr>
+    <tr>
+        <td>
+            <table cellpadding="2" cellspacing="2" summary="" border="0">
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td>
+                        <img
+                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/pinkArrow.png"
+                            style="border:0; height:9px; width:11px; background-color:transparent; vertical-align:top;"
+                        />    
+                    </td>
+                    <td align="left" >
+                        <p style="font-size:11px; color:{{api_env('EMAILS_COLOR_SECONDARY')}};"><b>Faire un don</b></p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <table cellpadding="2" cellspacing="2" summary="" border="0">            
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td>
+                        <p style="font-size:11px; text-align: justify;">Rezo Mobicoop est un service sans commission, mais vous pouvez <a href="https://www.zeste.coop/fr/associations/mobicoop" style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">faire un don pour soutenir le projet.</a></p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="height:15px">
+            <p> </p>
+        </td>    
+    </tr>
+    <tr>
+        <td>
+            <table cellpadding="2" cellspacing="2" summary="" border="0">
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td align="center" style="width:100%;">
+                        <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">À bientôt pour vos prochains trajets partagés !</b></p>
+                    </td>
+                </tr>   
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="height:15px">
+            <p> </p>
+        </td>    
+    </tr>
+</table>
+{% endblock %}

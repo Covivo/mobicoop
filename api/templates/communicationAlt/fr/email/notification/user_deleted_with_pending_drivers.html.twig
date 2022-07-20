@@ -31,7 +31,7 @@
                     </td>
                     <td align="left">
                         <p style="font-size:11px; margin-bottom:16px;">Bonjour {{recipient.givenName|capitalize}} {{recipient.shortFamilyName|capitalize}},</p>
-                        <p style="font-size:11px;"><span style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">Bonjour {{deleter.givenName|capitalize}} {{deleter.shortFamilyName|capitalize}}</span> a annulé son trajet et ne pourra pas covoiturer avec vous pour le trajet suivant :</p>
+                        <p style="font-size:11px;"><span style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{deleter.givenName|capitalize}} {{deleter.shortFamilyName|capitalize}}</span> a annulé son trajet et ne pourra pas covoiturer avec vous pour le trajet suivant :</p>
                     </td>
                 </tr>
             </table>
