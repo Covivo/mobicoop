@@ -1,0 +1,150 @@
+{# CAREFUL : Some client might need to replicate this template #}
+{% extends 'communicationAlt/fr/email/notification/base.html.twig' %}
+{% block body %}
+
+<table style="width:480px; font-family:{{api_env('EMAILS_FONT')}}, sans-serif;" cellpadding="0" cellspacing="0" summary="" border="0">
+    <tr style="margin-bottom:21px; margin-top:19px;">
+        <td align="center">
+            <table cellpadding="6" cellspacing="6" summary="" border="0">
+                <tr> 
+                    <td align="center">
+                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:20px;" text-align="center" ><b>Avez-vous réglé les covoiturages de la semaine passée ?</b></p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td align="center">
+            <table style="width:100%;" cellpadding="2" cellspacing="2" summary="" border="0" >
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td align="left">
+                        <p style="font-size:11px; margin-bottom:16px;">Bonjour {{recipient.givenName|capitalize}} {{recipient.shortFamilyName|capitalize}},</p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td align="center">
+            <table style="width:100%;" cellpadding="2" cellspacing="2" summary="" border="0" >
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td align="left">
+                        <p style="font-size:11px; text-align: justify;">Votre semaine de covoiturage régulier, avec {{ context.creditor.givenName|capitalize }} {{ context.creditor.shortFamilyName|capitalize }} de {{context.origin}} à {{context.destination}} est terminée.</p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="height:15px">
+            <p> </p>
+        </td>    
+    </tr>
+    <tr>
+        <td align="center">
+            <table style="width:100%;" cellpadding="2" cellspacing="2" summary="" border="0" >
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td align="left">
+                        <p style="font-size:11px; text-align: justify;">N’oubliez pas de <b>marquer le trajet comme payé à la main</b> si vous avez déjà réglé le conducteur, ou de le <b>payer en ligne.</b></p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="height:15px">
+            <p> </p>
+        </td>    
+    </tr>
+    <tr>
+        <td align="center">
+            <table cellpadding="2" cellspacing="2" summary="" border="0">
+                <tr>
+                    <td align="center" style="width:100%;">
+                        <a href="href={{ api_env('EMAILS_PLATFORM_URL') }}/utilisateur/profil/modifier/mes-covoiturages-acceptes">
+                            <img
+                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/buttons/payOnline.png"
+                            style="border:0; height:29px; width:112; background-color:transparent; vertical-align:top;"
+                        />
+                        </a>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="height:15px">
+            <p> </p>
+        </td>    
+    </tr>
+     <tr>
+        <td align="center">
+            <table style="width:100%;" cellpadding="2" cellspacing="2" summary="" border="0" >
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td align="left">
+                        <p style="font-size:11px; text-align: justify;">Rezo Mobicoop est un <b>service sans commission</b>, mais vous pouvez faire un don pour soutenir le projet depuis la page des paiements ou ici.</p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="height:15px">
+            <p> </p>
+        </td>    
+    </tr>
+    <tr>
+        <td align="center">
+            <table cellpadding="2" cellspacing="2" summary="" border="0">
+                <tr>
+                    <td align="center" style="width:100%;">
+                        <a href="href=https://www.zeste.coop/fr/associations/mobicoop">
+                            <img
+                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/buttons/payOnline.png"
+                            style="border:0; height:29px; width:112; background-color:transparent; vertical-align:top;"
+                        />
+                        </a>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+     <tr>
+        <td style="height:15px">
+            <p> </p>
+        </td>    
+    </tr>
+    <tr>
+        <td align="center">
+            <table style="width:100%;" cellpadding="2" cellspacing="2" summary="" border="0" >
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td align="left">
+                        <p style="font-size:11px; text-align: justify;">Vous pouvez aussi <a href="{{api_env('EMAILS_PLATFORM_URL')}}/utilisateur/profil/modifier/avis" style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">donner un avis</a> sur votre covoiturage passé. Celui-ci n’est pas obligatoire mais permet de rassurer des nouveaux usagers qui se lanceraient dans le covoiturage.</p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="height:15px">
+            <p> </p>
+        </td>    
+    </tr>
+</table>
+{% endblock %}
