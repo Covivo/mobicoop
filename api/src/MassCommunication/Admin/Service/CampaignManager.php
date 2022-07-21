@@ -448,22 +448,19 @@ class CampaignManager
     private function stringFilters(array $filters)
     {
         $stringFilters = '';
+
         foreach ($filters as $filter => $value) {
             // value may be an array itself
             if (is_array($value)) {
-                foreach ($value as $val) {
-                    if ('createdDate' == $filter || 'lastActivityDate' == $filter) {
-                        $stringFilters .= $filter.'[after]='.$val.'&';
+                foreach ($value as $key => $val) {
+                    if (!is_int($key)) {
+                        $stringFilters .= $filter.'['.$key.']='.$val.'&';
                     } else {
                         $stringFilters .= $filter.'='.$val.'&';
                     }
                 }
             } else {
-                if ('createdDate' == $filter || 'lastActivityDate' == $filter) {
-                    $stringFilters .= $filter.'[after]='.$value.'&';
-                } else {
-                    $stringFilters .= $filter.'='.$value.'&';
-                }
+                $stringFilters .= $filter.'='.$value.'&';
             }
         }
 
