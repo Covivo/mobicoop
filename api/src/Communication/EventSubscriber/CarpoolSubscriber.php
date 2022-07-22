@@ -34,6 +34,8 @@ use App\Carpool\Event\AskAdDeletedEvent;
 // use App\Carpool\Event\AskUpdatedEvent;
 use App\Carpool\Event\AskPostedEvent;
 use App\Carpool\Event\AskRefusedEvent;
+use App\Carpool\Event\CarpoolAskPostedRelaunch1Event;
+use App\Carpool\Event\CarpoolAskPostedRelaunch2Event;
 use App\Carpool\Event\DriverAskAdDeletedEvent;
 use App\Carpool\Event\DriverAskAdDeletedUrgentEvent;
 use App\Carpool\Event\MatchingNewEvent;
@@ -101,6 +103,9 @@ class CarpoolSubscriber implements EventSubscriberInterface
             DriverAskAdDeletedUrgentEvent::NAME => 'onDriverAskAdDeletedUrgent',
             AdMinorUpdatedEvent::NAME => 'onAdMinorUpdated',
             AdMajorUpdatedEvent::NAME => 'onAdMajorUpdated',
+            AskPostedEvent::NAME => 'onAskPosted',
+            CarpoolAskPostedRelaunch1Event::NAME => 'onCarpoolAskPostedRelaunch1',
+            CarpoolAskPostedRelaunch2Event::NAME => 'onCarpoolAskPostedRelaunch2',
         ];
     }
 
@@ -372,6 +377,20 @@ class CarpoolSubscriber implements EventSubscriberInterface
         }
 
         return true;
+    }
+
+    public function onCarpoolAskPostedRelaunch1(CarpoolAskPostedRelaunch1Event $event)
+    {
+        $event->getAd()->setSchedule($this->addSchedule($event));
+        $adRecipient = $event->getAd()->getResults()[0]->getCarpooler();
+        $this->notificationManager->notifies(CarpoolAskPostedRelaunch1Event::NAME, $adRecipient, $event->getAd());
+    }
+
+    public function onCarpoolAskPostedRelaunch2(CarpoolAskPostedRelaunch2Event $event)
+    {
+        $event->getAd()->setSchedule($this->addSchedule($event));
+        $adRecipient = $event->getAd()->getResults()[0]->getCarpooler();
+        $this->notificationManager->notifies(CarpoolAskPostedRelaunch2Event::NAME, $adRecipient, $event->getAd());
     }
 
     public function addSchedule($event)

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2022, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,16 +21,24 @@
  *    LICENSE
  */
 
-declare(strict_types=1);
+namespace App\Carpool\Event;
 
-namespace App\Task;
+use App\Carpool\Ressource\Ad;
+use Symfony\Contracts\EventDispatcher\Event;
 
-class HelloWorldTask implements Task
+class CarpoolAskPostedRelaunch2Event extends Event
 {
-    public function execute(): int
-    {
-        echo 'Hello, world !';
+    public const NAME = 'carpool_ask_posted_relaunch_2';
 
-        return 0;
+    protected $ad;
+
+    public function __construct(Ad $ad)
+    {
+        $this->ad = $ad;
+    }
+
+    public function getAd()
+    {
+        return $this->ad;
     }
 }
