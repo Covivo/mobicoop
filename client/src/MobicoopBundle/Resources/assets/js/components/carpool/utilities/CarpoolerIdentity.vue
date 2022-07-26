@@ -21,7 +21,7 @@
         </v-list-item-title>
       </v-list-item-content>
       <span
-        v-if="carpooler.verifiedIdentity !== null"
+        v-if="carpooler.verifiedIdentity !== null && carpooler.verifiedIdentity !== undefined"
         class="mr-2"
       >
         <verified-identity

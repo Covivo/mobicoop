@@ -137,7 +137,7 @@
         cols="5"
         class="text-right"
       >
-        <regular-days-summary 
+        <regular-days-summary
           :mon-active="monActive"
           :tue-active="tueActive"
           :wed-active="wedActive"
@@ -225,10 +225,10 @@ export default {
   },
   computed:{
     pickUpOutwardDisplay() {
-      return (this.pickUpOutward.addressLocality) ? this.pickUpOutward.addressLocality : ''
+      return (this.pickUpOutward && this.pickUpOutward.addressLocality) ? this.pickUpOutward.addressLocality : ''
     },
     pickUpReturnDisplay() {
-      return (this.pickUpReturn.addressLocality) ? this.pickUpReturn.addressLocality : ''
+      return (this.pickUpReturn && this.pickUpReturn.addressLocality) ? this.pickUpReturn.addressLocality : ''
     }
   },
   created() {
