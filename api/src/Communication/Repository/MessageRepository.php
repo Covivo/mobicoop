@@ -147,7 +147,7 @@ class MessageRepository
     public function findNotAnsweredMessagesSinceXDays(int $nbOfDays)
     {
         $now = (new \DateTime('now'));
-        $createdDate = $now->modify('-'.$nbOfDays.' day')->format('Y-m-d');
+        $createdDate = $now->modify('-'.$nbOfDays.' days')->format('Y-m-d');
 
         $stmt = $this->entityManager->getConnection()->prepare(
             'SELECT mi.id
