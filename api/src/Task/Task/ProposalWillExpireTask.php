@@ -25,31 +25,31 @@ declare(strict_types=1);
 
 namespace App\Task;
 
-use App\User\Event\IncitateToPublishFirstAdEvent;
-use App\User\Repository\UserRepository;
+use App\Carpoll\Event\ProposalWillExpireEvent;
+use App\Carpool\Repository\ProposalRepository;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class InciteToPublishFirstAdTask implements Task
+class AdWillExpireTask implements Task
 {
-    public const RELAUNCH_DELAYS = [7, 20];
-    private $userRepository;
+    public const ALERT_DELAYS = [5, 14];
+    private $proposalRepository;
     private $eventDispatcher;
 
-    public function __construct(UserRepository $userRepository, EventDispatcherInterface $eventDispatcher)
+    public function __construct(ProposalRepository $proposalRepository, EventDispatcherInterface $eventDispatcher)
     {
-        $this->userRepository = $userRepository;
+        $this->proposalRepository = $proposalRepository;
         $this->eventDispatcher = $eventDispatcher;
     }
 
     public function execute(): int
     {
-        foreach (self::RELAUNCH_DELAYS as $delay) {
-            $usersIds = $this->userRepository->findUserWithNoAd($delay);
+        foreach (self::ALERT_DELAYS as $delay) {
+            $proposals = $this->proposalRepository->findSoonExpiredAds($delay);
 
-            if (count($usersIds) > 0) {
-                foreach ($usersIds as $userId) {
-                    $event = new IncitateToPublishFirstAdEvent($this->userRepository->find($userId));
-                    $this->eventDispatcher->dispatch(IncitateToPublishFirstAdEvent::NAME, $event);
+            if (count($proposals) > 0) {
+                foreach ($proposals as $proposal) {
+                    $event = new ProposalWillExpireEvent($proposal);
+                    $this->eventDispatcher->dispatch(ProposalWillExpireEvent::NAME, $event);
                 }
             }
         }
