@@ -17,7 +17,7 @@ final class Version20220725111709 extends AbstractMigration
         // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf('mysql' !== $this->connection->getDatabasePlatform()->getName(), 'Migration can only be executed safely on \'mysql\'.');
 
-        $this->addSql("INSERT INTO `action` (`id`, `name`, `in_log`, `in_diary`, `progression`, `created_date`, `updated_date`, `position`, `type`) VALUES (117, 'first_ad', NULL, NULL, NULL, '2022-07-25 11:17:09', NULL, 0, NULL);");
+        $this->addSql("INSERT INTO `action` (`id`, `name`, `in_log`, `in_diary`, `progression`, `created_date`, `updated_date`, `position`, `type`) VALUES (117, 'incite_to_publish_first_ad', NULL, NULL, NULL, '2022-07-25 11:17:09', NULL, 0, NULL);");
         $this->addSql("INSERT INTO `action` (`id`, `name`, `in_log`, `in_diary`, `progression`, `created_date`, `updated_date`, `position`, `type`) VALUES (118, 'confirmed_carpooler', NULL, NULL, NULL, '2022-07-25 11:17:09', NULL, 0, NULL);");
         $this->addSql("INSERT INTO `action` (`id`, `name`, `in_log`, `in_diary`, `progression`, `created_date`, `updated_date`, `position`, `type`) VALUES (119, 'ad_will_expire', NULL, NULL, NULL, '2022-07-25 11:17:09', NULL, 0, NULL);");
         $this->addSql("INSERT INTO `action` (`id`, `name`, `in_log`, `in_diary`, `progression`, `created_date`, `updated_date`, `position`, `type`) VALUES (120, 'regular_carpool_will_expire', NULL, NULL, NULL, '2022-07-25 11:17:09', NULL, 0, NULL);");
