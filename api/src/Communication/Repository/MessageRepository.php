@@ -149,24 +149,17 @@ class MessageRepository
         $now = (new \DateTime('now'));
         $createdDate = $now->modify('-'.$nbOfDays.' day')->format('Y-m-d');
 
-        // $stmt = $this->entityManager->getConnection()->prepare(
-        //     'SELECT *
-        //     FROM message m
-        //     WHERE m.createdDate ='.$createdDate.'
-        //     AND m.messageId IS NULL
-        //     AND m.id NOT IN (SELECT DICTINCT m.messageId)'
-        // );
-        // $stmt->execute();
-        // $messages = $stmt->fetchAll();
+        $stmt = $this->entityManager->getConnection()->prepare(
+            'SELECT mi.id
+            FROM message mi
+                LEFT JOIN
+                    (SELECT m1.id
+                    FROM message m1
+                        INNER JOIN message m2 on m2.message_id = m1.id AND m2.user_id != m1.user_id) replied_messages ON replied_messages.id = mi.id
+            WHERE mi.message_id IS NULL AND replied_messages.id IS NULL AND DATE(mi.created_date) = '.$createdDate
+        );
+        $stmt->execute();
 
-        // $this->repository = $this->entityManager->getRepository(Message::class);
-        // $query = $this->repository->createQueryBuilder('m')
-        //     ->where('m.createdDate = :createdDate')
-        //     ->andWhere('m.messageId is null')
-        //     ->andWhere ('m.id not in SELECT DISTINCT m.messageId')
-        //     ->setParameter('createdDate', $createdDate)
-        // ;
-
-        // return $query->getQuery()->getResult();
+        return $stmt->fetchAll();
     }
 }

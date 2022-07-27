@@ -43,12 +43,15 @@ class CommunicationInternanlMessageReceivedRelaunch2Task implements Task
 
     public function execute(): int
     {
-        $messages = [$this->messageRepository->findNotAnsweredMessagesSinceXDays(self::RELAUNCH_DELAY)];
+        $messagesIds = [$this->messageRepository->findNotAnsweredMessagesSinceXDays(self::RELAUNCH_DELAY)];
 
-        if (count($messages) > 0) {
-            foreach ($messages as $message) {
-                $event = new InternalMessageReceivedRelaunch2Event($message);
-                $this->eventDispatcher->dispatch(InternalMessageReceivedRelaunch2Event::NAME, $event);
+        if (count($messagesIds) > 0) {
+            foreach ($messagesIds as $messageId) {
+                $message = $this->messageRepository->find($messageId);
+                foreach ($message->getRecipients() as $recipient) {
+                    $event = new InternalMessageReceivedRelaunch2Event($recipient);
+                    $this->eventDispatcher->dispatch(InternalMessageReceivedRelaunch2Event::NAME, $event);
+                }
             }
         }
 
