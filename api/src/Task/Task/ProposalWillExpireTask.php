@@ -29,7 +29,7 @@ use App\Carpoll\Event\ProposalWillExpireEvent;
 use App\Carpool\Repository\ProposalRepository;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class AdWillExpireTask implements Task
+class ProposalWillExpireTask implements Task
 {
     public const ALERT_DELAYS = [5, 14];
     private $proposalRepository;
