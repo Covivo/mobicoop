@@ -29,6 +29,7 @@ use App\User\Admin\Service\UserManager as AdminUserManager;
 use App\User\Entity\IdentityProof;
 use App\User\Event\IdentityProofModeratedEvent;
 use App\User\Event\IdentityProofValidationReminderEvent;
+use App\User\Event\IncitateToPublishFirstAdEvent;
 use App\User\Event\ReviewReceivedEvent;
 use App\User\Event\UserDelegateRegisteredEvent;
 use App\User\Event\UserDelegateRegisteredPasswordSendEvent;
@@ -86,6 +87,7 @@ class UserSubscriber implements EventSubscriberInterface
             UserSendValidationEmailEvent::NAME => 'onUserSendValidationEmail',
             IdentityProofModeratedEvent::NAME => 'onIdentityProofModerated',
             IdentityProofValidationReminderEvent::NAME => 'onIdentityProofValidationReminder',
+            IncitateToPublishFirstAdEvent::NAME => 'onIncitateToPublishFirstAd',
         ];
     }
 
@@ -172,5 +174,10 @@ class UserSubscriber implements EventSubscriberInterface
     public function onIdentityProofValidationReminder(IdentityProofValidationReminderEvent $event)
     {
         $this->notificationManager->notifies(IdentityProofValidationReminderEvent::NAME, $event->getIdentityProof()->getUser());
+    }
+
+    public function onIncitateToPublishFirstAd(IncitateToPublishFirstAdEvent $event)
+    {
+        $this->notificationManager->notifies(IncitateToPublishFirstAdEvent::NAME, $event->getUser());
     }
 }
