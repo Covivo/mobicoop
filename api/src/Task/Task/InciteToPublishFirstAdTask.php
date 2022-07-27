@@ -31,7 +31,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class InciteToPublishFirstAdTask implements Task
 {
-    public const RELAUNCH_DELAYS = [5, 12];
+    public const RELAUNCH_DELAYS = [7, 20];
     private $userRepository;
     private $eventDispatcher;
     private $askManager;
