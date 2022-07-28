@@ -21,14 +21,14 @@
  *    LICENSE
  */
 
-namespace App\Carpoll\Event;
+namespace App\Carpool\Event;
 
 use App\Carpool\Entity\Proposal;
 use Symfony\Contracts\EventDispatcher\Event;
 
 class ProposalWillExpireEvent extends Event
 {
-    public const NAME = 'ad_will_expire';
+    public const NAME = 'proposal_will_expire';
 
     protected $proposal;
 
