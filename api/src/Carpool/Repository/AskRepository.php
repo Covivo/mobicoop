@@ -426,4 +426,21 @@ class AskRepository
 
         return $scammerVictimsIds;
     }
+
+    public function findPendingAsksSinceXDays(int $nbOfDays)
+    {
+        $now = (new \DateTime('now'));
+        $createdDate = $now->modify('-'.$nbOfDays.' day')->format('Y-m-d');
+
+        $query = $this->repository->createQueryBuilder('a')
+            ->select('a')
+            ->where('a.createdDate = :createdDate')
+            ->andWhere('(a.status = :pending_as_driver) or (a.status = :pending_as_passenger)')
+            ->setParameter('createdDate', $createdDate)
+            ->setParameter('pending_as_driver', Ask::STATUS_PENDING_AS_DRIVER)
+            ->setParameter('pending_as_passenger', Ask::STATUS_PENDING_AS_PASSENGER)
+        ;
+
+        return $query->getQuery()->getResult();
+    }
 }

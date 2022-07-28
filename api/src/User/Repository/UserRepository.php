@@ -98,7 +98,7 @@ class UserRepository
         ;
 
         if (null != $acceptEmail) {
-            $qb->andWhere(('u.newsSubscription = 1'));
+            $qb->andWhere('u.newsSubscription = 1');
         }
 
         return $qb
@@ -197,5 +197,19 @@ class UserRepository
         ;
 
         return $query->getQuery()->getSingleScalarResult();
+    }
+
+    public function findNewlyRegisteredUsers(): ?array
+    {
+        $now = (new \DateTime('now'));
+        $yesterday = $now->modify('-1 day')->format('Y-m-d');
+
+        $query = $this->repository->createQueryBuilder('u')
+            ->select('u')
+            ->where('u.createdDate = :yesterday')
+            ->setParameter('last6months', $yesterday)
+        ;
+
+        return $query->getQuery()->getResult();
     }
 }

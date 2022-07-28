@@ -21,16 +21,24 @@
  *    LICENSE
  */
 
-declare(strict_types=1);
+namespace App\Communication\Event;
 
-namespace App\Task;
+use App\Communication\Entity\Recipient;
+use Symfony\Contracts\EventDispatcher\Event;
 
-class HelloWorldTask implements Task
+class InternalMessageReceivedRelaunch1Event extends Event
 {
-    public function execute(): int
-    {
-        echo 'Hello, world !';
+    public const NAME = 'communication_internal_message_received_relaunch_1';
 
-        return 0;
+    protected $recipient;
+
+    public function __construct(Recipient $recipient)
+    {
+        $this->recipient = $recipient;
+    }
+
+    public function getRecipient()
+    {
+        return $this->recipient;
     }
 }
