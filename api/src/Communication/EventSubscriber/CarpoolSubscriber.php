@@ -43,6 +43,7 @@ use App\Carpool\Event\PassengerAskAdDeletedEvent;
 use App\Carpool\Event\PassengerAskAdDeletedUrgentEvent;
 use App\Carpool\Event\ProposalCanceledEvent;
 use App\Carpool\Event\ProposalPostedEvent;
+use App\Carpool\Event\ProposalWillExpireEvent;
 use App\Carpool\Repository\AskHistoryRepository;
 use App\Carpool\Service\AskManager;
 use App\Communication\Service\NotificationManager;

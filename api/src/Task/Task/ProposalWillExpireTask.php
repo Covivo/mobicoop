@@ -25,7 +25,7 @@ declare(strict_types=1);
 
 namespace App\Task;
 
-use App\Carpoll\Event\ProposalWillExpireEvent;
+use App\Carpool\Event\ProposalWillExpireEvent;
 use App\Carpool\Repository\ProposalRepository;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
