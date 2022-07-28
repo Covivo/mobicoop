@@ -1,21 +1,22 @@
 {# CAREFUL : Some client might need to replicate this template #}
 {% extends 'communicationAlt/fr/email/notification/base.html.twig' %}
 {% block body %}
-{% set ask = context.ask %}
+{% set ad = context.ad %}
 {% set recipient = context.user %}
-{% if recipient.id == ask.user.id %}
-    {% set deleter = ask.userRelated %}
-{% else %}
-    {% set deleter = ask.user %}
-{% endif %}
+{% set sender = context.sender %}
+{% set result = context.result %}
+{% set outwardOrigin = context.outwardOrigin %}
+{% set outwardDestination = context.outwardDestination %}
+{% set returnOrigin = context.returnOrigin %}
+{% set returnDestination = context.returnDestination %}
 
 <table style="width:480px; font-family:{{api_env('EMAILS_FONT')}}, sans-serif;" cellpadding="0" cellspacing="0" summary="" border="0">
     <tr style="margin-bottom:21px; margin-top:19px;">
         <td align="center">
             <table cellpadding="6" cellspacing="6" summary="" border="0">
-                <tr> 
+                <tr>
                     <td align="center">
-                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:20px;" text-align="center" ><b>Votre covoiturage est annulé</b></p>
+                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:19px;" text-align="center" ><b>Votre covoiturage régulier va bientôt expirer !</b></p>
                     </td>
                 </tr>
             </table>
@@ -31,38 +32,14 @@
                     </td>
                     <td align="left">
                         <p style="font-size:11px; margin-bottom:16px;">Bonjour {{recipient.givenName|capitalize}} {{recipient.shortFamilyName|capitalize}},</p>
-                        <p style="font-size:11px;"><span style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{deleter.givenName|capitalize}} {{deleter.shortFamilyName|capitalize}}</span> a annulé son trajet et ne pourra pas covoiturer avec vous pour le trajet suivant :</p>
+                        <p style="font-size:11px;">Votre covoiturage régulier avec {{sender.givenName|capitalize}} {{sender.shortFamilyName|capitalize}} expire dans une semaine.</p>
                     </td>
                 </tr>
             </table>
         </td>
     </tr>
+
 {# info trajet #}
-{% if ad.results[0].frequency == 1 %}
-{# ponctuel #}
-    <tr>
-        <td>
-            <table cellpadding="4" cellspacing="4" summary="" border="0">
-                <tr>
-                <td style="width:22px">
-                        <p> </p>
-                    </td>
-                    <td align="left">
-                         <p style="font-size:11px;">Date de votre covoiturage: <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{ ask.criteria.fromDate|date("d/m/Y") }}</b></p>
-                    </td>
-                </tr>
-                <tr>
-                <td style="width:22px">
-                        <p> </p>
-                    </td>
-                    <td align="left">
-                    {# to do get the price #}
-                         <p style="font-size:11px;">Prix: <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{ad.results[0].roundedPrice}}€</b></p>
-                    </td>
-                </tr>
-            </table>    
-        </td>    
-    </tr>                   
     <tr>
         <td>
             <table cellpadding="4" cellspacing="6" summary="" border="0">
@@ -76,12 +53,9 @@
                             style="border:0; height:19px; width:19px; background-color:transparent; vertical-align:top;"
                         />
                     </td>
+                   
                     <td>
-                    {# to do get time #}
-                        <p style="font-size:11px;">{{outwardOrigin.time|date('H:i')}}</p>
-                    </td>
-                    <td>
-                        <p style="font-size:11px; color:{{api_env('EMAILS_COLOR_SECONDARY')}}"><b>{{ context.origin.address.displayLabel[0] }}</b></p>
+                        <p style="font-size:11px; color:{{api_env('EMAILS_COLOR_SECONDARY')}}"><b>{{ outwardOrigin.address.displayLabel[0] }}</b></p>
                     </td>
                 </tr>
                 <tr>
@@ -94,41 +68,14 @@
                             style="border:0; height:19px; width:19px; background-color:transparent; vertical-align:top;"
                         />
                     </td>
+                   
                     <td>
-                    {# to do get time #}
-                        <p style="font-size:11px;">{{outwardDestination.time|date('H:i')}}</p>
-                    </td>
-                    <td>
-                        <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}};"> {{ context.destination.address.displayLabel[0] }}</b></p>
+                        <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}};"> {{ outwardDestination.address.displayLabel[0] }}</b></p>
                     </td>
                 </tr>
             </table>
         </td>
     </tr>
-{% else %}
-{# régulier #}
-    <tr>
-        <td>
-            <table cellpadding="4" cellspacing="4" summary="" border="0">
-                <tr>
-                <td style="width:22px">
-                        <p> </p>
-                    </td>
-                    <td align="left">
-                         <p style="font-size:11px;">Vos trajets réguliers: du <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{ ad.results[0].startDate|date("d/m/Y") }}</b> au <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{ ad.results[0].toDate|date("d/m/Y") }}</b></p>
-                    </td>
-                </tr>
-                <tr>
-                <td style="width:22px">
-                        <p> </p>
-                    </td>
-                    <td align="left">
-                         <p style="font-size:11px;">Prix: <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{ad.results[0].roundedPrice}}€</b></p>
-                    </td>
-                </tr>
-            </table>    
-        </td>    
-    </tr> 
     {% for schedule in ad.schedule %}
         <tr>
             <td>
@@ -301,38 +248,77 @@
             </td>
         </tr>
     {% endfor %}
-{% endif %}
+{# Comment bien préparer votre covoiturage  #}
+    <tr>
+        <td style="height:15px">
+            <p> </p>
+        </td>
+    </tr>
+    
+    <tr>
+        <td>
+            <table cellpadding="2" cellspacing="2" summary="" border="0">
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td>
+                        <p style="font-size:11px; text-align: justify;">Si vous souhaitez continuer à covoiturer ensemble, vous devez lui faire une <b>nouvelle demande et allonger la période du covoiturage.</b> Sans quoi, vos prochains trajets n’apparaîtront plus dans votre export de covoiturages et vous ne pourrez notamment plus payer vos trajets par carte bancaire.</p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+
+
+     <tr>
+        <td style="height:15px">
+            <p> </p>
+        </td>    
+    </tr>
+    <tr>
+        <td align="center">
+            <table cellpadding="2" cellspacing="2" summary="" border="0">
+                <tr>
+                    <td align="center" style="width:100%;">
+                        <a href="{{api_env('EMAILS_PLATFORM_URL')}}/" style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">
+                            <img
+                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/buttons/newCarpool.png"
+                            style="border:0; height:29px; width:306; background-color:transparent; vertical-align:top;"
+                        />
+                        </a>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="height:15px">
+            <p> </p>
+        </td>    
+    </tr>
 
     <tr>
-        <td>
-            <table cellpadding="4" cellspacing="4" summary="" border="0">
-                <tr>
-                    <td style="width:23px;">
-                       <p> </p>
-                    </td>
-                    <td align="center" >
-                        <p style="font-size:11px; text-align: justify;"> Pas de panique, vous pouvez <a href="{{api_env('EMAILS_PLATFORM_URL')}}" style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">rechercher un nouveau trajet</a> ou <a href="{{api_env('EMAILS_PLATFORM_URL')}}/covoiturage/publierannonce" style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">publier une annonce</a> de covoiturage afin d’être alerté s’il y a de nouveaux trajets près de vous.</p>
-                    </td>
-                </tr>
-            </table>
-        </td>
-    </tr>  
+        <td style="height:15px">
+            <p> </p>
+        </td>    
+    </tr>
     <tr>
         <td>
-            <table cellpadding="4" cellspacing="4" summary="" border="0">
+            <table cellpadding="2" cellspacing="2" summary="" border="0">
                 <tr>
-                   <td style="width:23px;">
-                       <p> </p>
+                    <td style="width:23px">
+                        <p> </p>
                     </td>
-                    <td align="center" >
-                        <p style="font-size:11px; text-align: justify;"> Rappel : Rezo Mobicoop ne prélève pas de paiement en amont, les paiement se font de la main à la main le jour du covoiturage ou par carte bancaire sur notre interface après le jour du covoiturage. <a href="{{api_env('EMAILS_PLATFORM_URL')}}/FAQ" style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">En savoir plus.</a></p>
+                    <td align="center" style="width:100%;">
+                        <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">Bon covoiturage sur {{api_env('EMAILS_PLATFORM_NAME')}}</b></p>
                     </td>
-                </tr>
+                </tr>   
             </table>
         </td>
-    </tr>   
+    </tr>
     <tr>
-        <td style="height:20px">
+        <td style="height:15px">
             <p> </p>
         </td>    
     </tr>

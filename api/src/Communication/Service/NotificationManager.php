@@ -295,8 +295,38 @@ class NotificationManager
         if ($object) {
             switch (ClassUtils::getRealClass(get_class($object))) {
                 case Proposal::class:
+                    $origin = null;
+                    $destination = null;
+                    $departureTime = null;
+                    $arrivalTime = null;
+                    foreach ($object->getWaypoints() as $waypoint) {
+                        if (0 == $waypoint->getPosition()) {
+                            $origin = $waypoint;
+                        }
+                        if ($waypoint->isDestination()) {
+                            $destination = $waypoint;
+                        }
+                    }
+                    if (Criteria::FREQUENCY_PUNCTUAL == $object->getCriteria()->getFrequency()) {
+                        $departureTime = $object->getCriteria()->getFromTime();
+                        if ($object->getCriteria()->isPassenger()) {
+                            $arrivalTime = clone $departureTime;
+                            $arrivalTime->modify('+'.$object->getCriteria()->getDiractionPassenger()->getDuration().' second');
+                        } else {
+                            $arrivalTime = clone $departureTime;
+                            $arrivalTime->modify('+'.$object->getCriteria()->getDiractionDriver()->getDuration().' second');
+                        }
+                    }
                     $titleContext = [];
-                    $bodyContext = ['user' => $recipient, 'notification' => $notification];
+                    $bodyContext = [
+                        'user' => $recipient,
+                        'notification' => $notification,
+                        'proposal' => $object,
+                        'origin' => $origin,
+                        'destination' => $destination,
+                        'departureTime' => $departureTime,
+                        'arrivalTime' => $arrivalTime,
+                    ];
 
                     break;
 

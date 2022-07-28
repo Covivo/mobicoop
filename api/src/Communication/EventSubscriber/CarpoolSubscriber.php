@@ -30,8 +30,8 @@ use App\Carpool\Event\AdMajorUpdatedEvent;
 use App\Carpool\Event\AdMinorUpdatedEvent;
 use App\Carpool\Event\AdRenewalEvent;
 use App\Carpool\Event\AskAcceptedEvent;
-use App\Carpool\Event\AskAdDeletedEvent;
 // use App\Carpool\Event\AskUpdatedEvent;
+use App\Carpool\Event\AskAdDeletedEvent;
 use App\Carpool\Event\AskPostedEvent;
 use App\Carpool\Event\AskRefusedEvent;
 use App\Carpool\Event\CarpoolAskPostedRelaunch1Event;
@@ -106,6 +106,7 @@ class CarpoolSubscriber implements EventSubscriberInterface
             AskPostedEvent::NAME => 'onAskPosted',
             CarpoolAskPostedRelaunch1Event::NAME => 'onCarpoolAskPostedRelaunch1',
             CarpoolAskPostedRelaunch2Event::NAME => 'onCarpoolAskPostedRelaunch2',
+            ProposalWillExpireEvent::NAME => 'onProposalWillExpire',
         ];
     }
 
@@ -212,6 +213,11 @@ class CarpoolSubscriber implements EventSubscriberInterface
     public function onProposalCanceled(ProposalCanceledEvent $event)
     {
         $this->notificationManager->notifies(ProposalCanceledEvent::NAME, $event->getProposal()->getUser(), $event->getProposal());
+    }
+
+    public function onProposalWillExpire(ProposalWillExpireEvent $event)
+    {
+        $this->notificationManager->notifies(ProposalWillExpireEvent::NAME, $event->getProposal()->getUser(), $event->getProposal());
     }
 
     /**
