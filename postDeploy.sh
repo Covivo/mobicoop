@@ -81,6 +81,12 @@ then
         cp /var/www/$VERSION/$INSTANCE/client/config/geocomplete/palette.json.dist /var/www/$VERSION/$INSTANCE/client/config/geocomplete/palette.json
     fi
 
+	# check automated tasks file
+	AUTOMATED_TASKS_FILE=/var/www/$VERSION/$INSTANCE/api/config/params/tasks.json
+	if [ ! -f "$AUTOMATED_TASKS_FILE" ]; then
+        cp /var/www/$VERSION/$INSTANCE/api/config/params/tasks.json.dist /var/www/$VERSION/$INSTANCE/api/config/params/tasks.json
+    fi
+
     # Migrations
     cd /var/www/$VERSION/$INSTANCE/api;
     php bin/console doctrine:migrations:migrate --env=$VERSION_MIGRATE -n;
@@ -175,6 +181,12 @@ else
     GEOCOMPLETE_PALETTE_FILE=/var/www/$INSTANCE/$VERSION/client/config/geocomplete/palette.json
     if [ ! -f "$GEOCOMPLETE_PALETTE_FILE" ]; then
         cp /var/www/$INSTANCE/$VERSION/client/config/geocomplete/palette.json.dist /var/www/$INSTANCE/$VERSION/client/config/geocomplete/palette.json
+    fi
+
+	# check automated tasks file
+	AUTOMATED_TASKS_FILE=/var/www/$INSTANCE/$VERSION/api/config/params/tasks.json
+	if [ ! -f "$AUTOMATED_TASKS_FILE" ]; then
+        cp /var/www/$INSTANCE/$VERSION/api/config/params/tasks.json.dist /var/www/$INSTANCE/$VERSION/api/config/params/tasks.json
     fi
 
     # Migrations

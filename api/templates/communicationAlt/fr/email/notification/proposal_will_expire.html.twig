@@ -1,0 +1,202 @@
+{# CAREFUL : Some client might need to replicate this template #}
+{% extends 'communicationAlt/fr/email/notification/base.html.twig' %}
+{% block body %}
+{% set proposal = context.proposal %}
+{% set recipient = context.user %}
+
+<table style="width:480px; font-family:{{api_env('EMAILS_FONT')}}, sans-serif;" cellpadding="0" cellspacing="0" summary="" border="0">
+    <tr style="margin-bottom:21px; margin-top:19px;">
+        <td align="center">
+            <table cellpadding="6" cellspacing="6" summary="" border="0">
+                <tr>
+                    <td align="center">
+                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:19px;" text-align="center" ><b>Votre annonce va bientôt expirer !</b></p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    {# intro #}
+    <tr>
+        <td align="center">
+            <table style="width:100%;" cellpadding="4" cellspacing="4" summary="" border="0" >
+                <tr>
+                    <td style="width:15px">
+                        <p> </p>
+                    </td>
+                    <td align="left">
+                        <p style="font-size:11px; margin-bottom:16px;">Bonjour {{recipient.givenName|capitalize}} {{recipient.shortFamilyName|capitalize}},</p>
+                        <p style="font-size:11px;">Votre annonce de covoiturage va bientôt expirer:</p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+
+{# info trajet #}
+    <tr>
+        <td>
+            <table cellpadding="4" cellspacing="4" summary="" border="0">
+                <tr>
+                    <td style="width:15px">
+                        <p> </p>
+                    </td>
+                    <td>
+                        <img
+                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/origin.png"
+                            style="border:0; height:19px; width:19px; background-color:transparent; vertical-align:top;"
+                        />
+                    </td>
+                    {% if proposal.criteria.frequency == 1 %}
+                        <td>
+                            <p style="font-size:11px;">{{context.departureTime.time|date('H:i')}}</p>
+                        </td>
+                    {% endif %}
+                    <td>
+                        <p style="font-size:11px; color:{{api_env('EMAILS_COLOR_SECONDARY')}}"><b>{{ context.origin.address.displayLabel[0] }}</b></p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:15px">
+                        <p> </p>
+                    </td>
+                    <td>
+                        <img
+                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/destination.png"
+                            style="border:0; height:19px; width:19px; background-color:transparent; vertical-align:top;"
+                        />
+                    </td>
+                    {% if proposal.criteria.frequency == 1 %}
+                        <td>
+                            <p style="font-size:11px;">{{context.arrivalTime.time|date('H:i')}}</p>
+                        </td>
+                    {% endif %}
+                    <td>
+                        <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}};"> {{ cotext.destination.address.displayLabel[0] }}</b></p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+
+
+    <tr>
+        <td style="height:15px">
+            <p> </p>
+        </td>    
+    </tr>
+     <tr>
+        <td align="center">
+            <table style="width:100%;" cellpadding="2" cellspacing="2" summary="" border="0" >
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td align="left">
+                        <p style="font-size:11px; text-align: justify;">Vous êtes maintenant plus de 550 000 covoitureurs sur notre plateforme, votre implication compte alors n’hésitez pas à mettre à jour vos annonces !</p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="height:15px">
+            <p> </p>
+        </td>    
+    </tr>
+    <tr>
+        <td align="center">
+            <table cellpadding="2" cellspacing="2" summary="" border="0">
+                <tr>
+                    <td align="center" style="width:100%;">
+                        <a href="{{api_env('EMAILS_PLATFORM_URL')}}/" style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">
+                            <img
+                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/buttons/publishAd.png"
+                            style="border:0; height:26px; width:175; background-color:transparent; vertical-align:top;"
+                        />
+                        </a>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="height:15px">
+            <p> </p>
+        </td>    
+    </tr>
+
+    <tr>
+        <td>
+            <table cellpadding="4" cellspacing="4" summary="" border="0">
+                <tr>
+                    <td style="width:6px" >
+                        <p> </p>
+                    </td>
+                    <td align="center" valign="top">
+                        <img
+                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/greenArrow.png"
+                            style="border:0; height:9px; width:11px; background-color:transparent; vertical-align:top;"
+                        />    
+                    </td>
+                    <td>
+                        <p style="font-size:11px; text-align: justify;">Économiser jusqu’à 2000 € par an.</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:6px" >
+                        <p> </p>
+                    </td>
+                    <td>
+                        <img
+                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/greenArrow.png"
+                            style="border:0; height:9px; width:11px; background-color:transparent; vertical-align:top;"
+                        />    
+                    </td>
+                    <td>
+                        <p style="font-size:11px; text-align: justify;">Réduire votre empreinte carbone de 1,5 tonnes de CO2, soit l’équivalent d’environ 3 mois de chauffage au gaz, pas mal !</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:6px" >
+                        <p> </p>
+                    </td>
+                    <td align="left" valign="top">
+                        <img
+                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/greenArrow.png"
+                            style="border:0; height:9px; width:11px; background-color:transparent; vertical-align:top;"
+                        />    
+                    </td>
+                    <td>
+                        <p style="font-size:11px; text-align: justify;"> Limiter les embouteillages et la mauvaise humeur qui en découle !</p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr> 
+    <tr>
+        <td style="height:15px">
+            <p> </p>
+        </td>    
+    </tr>
+    <tr>
+        <td>
+            <table cellpadding="2" cellspacing="2" summary="" border="0">
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td align="center" style="width:100%;">
+                        <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">Bon covoiturage sur {{api_env('EMAILS_PLATFORM_NAME')}}</b></p>
+                    </td>
+                </tr>   
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="height:15px">
+            <p> </p>
+        </td>    
+    </tr>
+</table>
+{% endblock %}

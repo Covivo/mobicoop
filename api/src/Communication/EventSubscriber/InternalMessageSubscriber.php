@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2019, MOBICOOP. All rights reserved.
+ * Copyright (c) 2022, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -19,16 +19,18 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Communication\EventSubscriber;
 
 use App\Action\Event\ActionEvent;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use App\Communication\Service\NotificationManager;
-use App\Communication\Event\InternalMessageReceivedEvent;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use App\Action\Repository\ActionRepository;
+use App\Communication\Event\InternalMessageReceivedEvent;
+use App\Communication\Event\InternalMessageReceivedRelaunch1Event;
+use App\Communication\Event\InternalMessageReceivedRelaunch2Event;
+use App\Communication\Service\NotificationManager;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class InternalMessageSubscriber implements EventSubscriberInterface
 {
@@ -46,7 +48,9 @@ class InternalMessageSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            InternalMessageReceivedEvent::NAME => 'onInternalMessageReceived'
+            InternalMessageReceivedEvent::NAME => 'onInternalMessageReceived',
+            InternalMessageReceivedRelaunch1Event::NAME => 'onInternalMessageReceivedRelaunch1',
+            InternalMessageReceivedRelaunch2Event::NAME => 'onInternalMessageReceivedRelaunch2',
         ];
     }
 
@@ -55,9 +59,19 @@ class InternalMessageSubscriber implements EventSubscriberInterface
         $this->notificationManager->notifies(InternalMessageReceivedEvent::NAME, $event->getRecipient()->getUser(), $event->getRecipient()->getMessage());
 
         //  we dispatch the gamification event associated
-        $action = $this->actionRepository->findOneBy(['name'=>'communication_internal_message_received']);
+        $action = $this->actionRepository->findOneBy(['name' => 'communication_internal_message_received']);
         $actionEvent = new ActionEvent($action, $event->getRecipient()->getMessage()->getUser());
         $actionEvent->setMessage($event->getRecipient()->getMessage());
         $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);
+    }
+
+    public function onInternalMessageReceivedRelaunch1(InternalMessageReceivedRelaunch1Event $event)
+    {
+        $this->notificationManager->notifies(InternalMessageReceivedRelaunch1Event::NAME, $event->getRecipient()->getUser(), $event->getRecipient()->getMessage());
+    }
+
+    public function onInternalMessageReceivedRelaunch2(InternalMessageReceivedRelaunch2Event $event)
+    {
+        $this->notificationManager->notifies(InternalMessageReceivedRelaunch2Event::NAME, $event->getRecipient()->getUser(), $event->getRecipient()->getMessage());
     }
 }

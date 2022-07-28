@@ -91,10 +91,13 @@
               </v-tab-item>
 
               <!-- ALERTS -->
-              <v-tab class="text-subtitle-1">
+              <v-tab
+                class="text-subtitle-1"
+                href="#alerts"
+              >
                 {{ $t("tabs.alerts") }}
               </v-tab>
-              <v-tab-item>
+              <v-tab-item value="alerts">
                 <Alerts :alerts="alerts" />
               </v-tab-item>
 
@@ -113,10 +116,14 @@
               <v-tab
                 v-if="paymentElectronicActive"
                 class="text-subtitle-1"
+                href="#bankCoordinates"
               >
                 {{ $t("tabs.bankCoordinates") }}
               </v-tab>
-              <v-tab-item v-if="paymentElectronicActive">
+              <v-tab-item
+                v-if="paymentElectronicActive"
+                value="bankCoordinates"
+              >
                 <BankAccount
                   :user="user"
                   :geo-search-url="geoSearchUrl"

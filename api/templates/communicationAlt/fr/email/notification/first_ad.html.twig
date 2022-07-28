@@ -1,0 +1,234 @@
+{# CAREFUL : Some client might need to replicate this template #}
+{% extends 'communicationAlt/fr/email/notification/base.html.twig' %}
+{% block body %}
+
+<table style="width:480px; font-family:{{api_env('EMAILS_FONT')}}, sans-serif;" cellpadding="0" cellspacing="0" summary="" border="0">
+    <tr style="margin-bottom:21px; margin-top:19px;">
+        <td align="center">
+            <table cellpadding="6" cellspacing="6" summary="" border="0">
+                <tr> 
+                    <td align="center">
+                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:20px;" text-align="center" ><b>Créez votre première annonce de covoiturage !</b></p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td align="center">
+            <table style="width:100%;" cellpadding="2" cellspacing="2" summary="" border="0" >
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td align="left">
+                        <p style="font-size:11px; margin-bottom:16px;">Bonjour {{recipient.givenName|capitalize}} {{recipient.shortFamilyName|capitalize}},</p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+   
+    {# part 1 #}
+    <tr>
+        <td align="center">
+            <table style="width:100%;" cellpadding="2" cellspacing="2" summary="" border="0" >
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td align="left">
+                        <p style="font-size:11px; text-align: justify;">Depuis votre inscription sur Rezo Mobicoop, vous n’avez pas encore publié d’annonce de trajet. </br>Sur notre plateforme, vous pouvez publier une annonce en tant que :</p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <table cellpadding="4" cellspacing="4" summary="" border="0">
+                <tr>
+                    <td style="width:6px" >
+                        <p> </p>
+                    </td>
+                    <td align="center" valign="top">
+                        <img
+                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/greenArrow.png"
+                            style="border:0; height:9px; width:11px; background-color:transparent; vertical-align:top;"
+                        />    
+                    </td>
+                    <td>
+                        <p style="font-size:11px; text-align: justify;"><b>Conducteur/conductrice</b> : vous avez un véhicule et vous cherchez des passagers pour remplir votre véhicule.</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:6px" >
+                        <p> </p>
+                    </td>
+                    <td>
+                        <img
+                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/greenArrow.png"
+                            style="border:0; height:9px; width:11px; background-color:transparent; vertical-align:top;"
+                        />    
+                    </td>
+                    <td>
+                        <p style="font-size:11px; text-align: justify;"><b>Passager/passagère</b> : vous n’avez pas de véhicule, et vous cherchez à rejoindre le véhicule d’un conducteur.</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:6px" >
+                        <p> </p>
+                    </td>
+                    <td align="left" valign="top">
+                        <img
+                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/greenArrow.png"
+                            style="border:0; height:9px; width:11px; background-color:transparent; vertical-align:top;"
+                        />    
+                    </td>
+                    <td>
+                        <p style="font-size:11px; text-align: justify;"><b>Peu importe</b> : vous êtes flexibles, vous pouvez prendre votre véhicule ou rejoindre celui d’un autre covoitureur.</p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr> 
+    <tr>
+        <td>
+            <table cellpadding="6" cellspacing="6" summary="" border="0">
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td align="center" style="width:100%;">
+                        <p style="text-align:center; font-size:11px; color:{{api_env('EMAILS_COLOR_SECONDARY')}};"><b>En publiant une annonce, vous serez alerté des prochains trajets qui correspondent !</b></p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td align="center" style="width:100%;">
+                        <a href="{{api_env('EMAILS_PLATFORM_URL')}}/covoiturage/publierannonce" style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">
+                            <img
+                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/buttons/publishAd.png"
+                            style="border:0; height:26px; width:156px; background-color:transparent; vertical-align:top;"
+                        /> 
+                        </a>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr> 
+    <tr>
+        <td style="height:15px">
+            <p> </p>
+        </td>    
+    </tr>
+    
+
+{# part 2 #}
+    <tr>
+        <td align="center">
+            <table style="width:100%;" cellpadding="2" cellspacing="2" summary="" border="0" >
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td align="left">
+                        <p style="font-size:11px; text-align: justify;">Notre interface permet de publier des annonces de covoiturages pour tous vos déplacements :</p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <table cellpadding="4" cellspacing="4" summary="" border="0">
+                <tr>
+                    <td style="width:6px" >
+                        <p> </p>
+                    </td>
+                    <td align="left" valign="top">
+                        <img
+                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/greenArrow.png"
+                            style="border:0; height:9px; width:11px; background-color:transparent; vertical-align:top;"
+                        />    
+                    </td>
+                    <td>
+                        <p style="font-size:11px; text-align: justify;">Trajets ponctuels.</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:6px" >
+                        <p> </p>
+                    </td>
+                    <td>
+                        <img
+                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/greenArrow.png"
+                            style="border:0; height:9px; width:11px; background-color:transparent; vertical-align:top;"
+                        />    
+                    </td>
+                    <td>
+                        <p style="font-size:11px; text-align: justify;">Trajets réguliers (ex. : domicile-travail). Vous pouvez mettre des créneaux différents selon les jours de la semaine.</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:6px" >
+                        <p> </p>
+                    </td>
+                    <td align="left" valign="top">
+                        <img
+                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/greenArrow.png"
+                            style="border:0; height:9px; width:11px; background-color:transparent; vertical-align:top;"
+                        />    
+                    </td>
+                    <td>
+                        <p style="font-size:11px; text-align: justify;">Pour vous rendre à vos événements publics ou privés.</p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr> 
+    <tr>
+        <td>
+            <table cellpadding="6" cellspacing="6" summary="" border="0">
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td align="center" style="width:100%;">
+                        <p style="text-align:center; font-size:11px;">Au besoin, regardez notre <a href="https://youtu.be/XETr5NoUnBs" style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">tutoriel pour publier une annonce de covoiturage.</a></p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td align="center" style="width:100%;">
+                        <p style="text-align:center; font-size:11px; color:{{api_env('EMAILS_COLOR_SECONDARY')}};"><b>Alors, on se lance ?</b></p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td align="center" style="width:100%;">
+                        <a href="{{api_env('EMAILS_PLATFORM_URL')}}/covoiturage/publierannonce" style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">
+                            <img
+                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/buttons/publishAd.png"
+                            style="border:0; height:26px; width:156px; background-color:transparent; vertical-align:top;"
+                        /> 
+                        </a>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr> 
+       
+    <tr>
+        <td style="height:20px">
+            <p> </p>
+        </td>    
+    </tr>
+</table>
+{% endblock %}

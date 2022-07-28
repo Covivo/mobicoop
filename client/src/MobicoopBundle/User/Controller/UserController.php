@@ -259,7 +259,7 @@ class UserController extends AbstractController
             $user->setGivenName($data['givenName']);
             $user->setFamilyName($data['familyName']);
             $user->setGender($data['gender']);
-            //$user->setBirthYear($data->get('birthYear')); Replace only year by full birthday
+            // $user->setBirthYear($data->get('birthYear')); Replace only year by full birthday
             $user->setBirthDate(new DateTime($data['birthDay']));
 
             if (isset($data['newsSubscription'])) {
@@ -526,7 +526,7 @@ class UserController extends AbstractController
             }
         }
 
-        //TODO - fix : Change this when use router vue
+        // TODO - fix : Change this when use router vue
         if ('mes-annonces' == $tabDefault) {
             $tabDefault = 'myAds';
         }
@@ -545,6 +545,14 @@ class UserController extends AbstractController
             $tab = 'myBadges';
         }
 
+        if ('alertes' == $selectedTab) {
+            $tab = 'alerts';
+        }
+
+        if ('identite-bancaire' == $selectedTab) {
+            $tab = 'bankCoordinates';
+        }
+
         return $this->render('@Mobicoop/user/updateProfile.html.twig', [
             'error' => $error,
             'alerts' => $userManager->getAlerts($user)['alerts'],
@@ -554,7 +562,7 @@ class UserController extends AbstractController
             'showReviews' => $user->isUserReviewsActive(),
             'ageDisplay' => $this->ageDisplay,
             'carpoolSettingsDisplay' => $this->carpoolSettingsDisplay,
-            'selectedTab' => $tab
+            'selectedTab' => $tab,
         ]);
     }
 
@@ -601,7 +609,7 @@ class UserController extends AbstractController
     {
         $user = clone $userManager->getLoggedUser();
         // To DO : Voter for deleting image
-        //$this->denyAccessUnlessGranted('update', $user);
+        // $this->denyAccessUnlessGranted('update', $user);
         $imageId = $user->getImages()[0]->getId();
         $imageManager->deleteImage($imageId);
 
@@ -745,7 +753,7 @@ class UserController extends AbstractController
         }
         $this->denyAccessUnlessGranted('update', $user);
         // To Do : Specific right for update a address ?
-        //$this->denyAccessUnlessGranted('address_update_self', $user);
+        // $this->denyAccessUnlessGranted('address_update_self', $user);
 
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
@@ -1029,8 +1037,8 @@ class UserController extends AbstractController
 
                 $days = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
                 foreach ($days as $day) {
-                    $currentOutwardTime = (!is_null($outwardSchedule)) ? $outwardSchedule[$day . 'Time'] : null;
-                    $currentReturnTime = (!is_null($returnSchedule)) ? $returnSchedule[$day . 'Time'] : null;
+                    $currentOutwardTime = (!is_null($outwardSchedule)) ? $outwardSchedule[$day.'Time'] : null;
+                    $currentReturnTime = (!is_null($returnSchedule)) ? $returnSchedule[$day.'Time'] : null;
 
                     // I need to know if there is already a section of the schedule with these times
                     $alreadyExists = false;
@@ -1379,7 +1387,7 @@ class UserController extends AbstractController
         $params = $this->ssoManager->guessSsoParameters($request->query->all());
 
         // We add the front url to the parameters
-        (isset($_SERVER['HTTPS'])) ? $params['baseSiteUri'] = 'https://' . $_SERVER['HTTP_HOST'] : $params['baseSiteUri'] = 'http://' . $_SERVER['HTTP_HOST'];
+        (isset($_SERVER['HTTPS'])) ? $params['baseSiteUri'] = 'https://'.$_SERVER['HTTP_HOST'] : $params['baseSiteUri'] = 'http://'.$_SERVER['HTTP_HOST'];
 
         // We add the service name
         $services = $this->userManager->getSsoServices();

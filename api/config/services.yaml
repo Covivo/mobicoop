@@ -879,6 +879,11 @@ services:
     arguments:
       $fileFolder: "%env(string:SOLIDARY_FILE_FOLDER)%"
 
+  # Tasks
+  App\Task\TaskFactory:
+    arguments:
+      $schedule: "%env(json:file:resolve:AUTOMATED_TASKS)%"
+
   # User
   App\User\Admin\Service\UserManager:
     arguments:
