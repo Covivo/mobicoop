@@ -452,7 +452,7 @@ class AskRepository
         $query = $this->repository->createQueryBuilder('a')
             ->select('a')
             ->join('a.criteria', 'c')
-            ->where('c.ToDate = :toDate')
+            ->where('c.toDate = :toDate')
             ->andWhere('(a.status = :accepted_as_driver) or (a.status = :accepted_as_passenger)')
             ->setParameter('toDate', $toDate)
             ->setParameter('pending_as_driver', Ask::STATUS_ACCEPTED_AS_DRIVER)

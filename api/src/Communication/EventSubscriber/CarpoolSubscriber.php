@@ -44,6 +44,7 @@ use App\Carpool\Event\PassengerAskAdDeletedUrgentEvent;
 use App\Carpool\Event\ProposalCanceledEvent;
 use App\Carpool\Event\ProposalPostedEvent;
 use App\Carpool\Event\ProposalWillExpireEvent;
+use App\Carpool\Event\RegularCarpoolWillExpireEvent;
 use App\Carpool\Repository\AskHistoryRepository;
 use App\Carpool\Service\AskManager;
 use App\Communication\Service\NotificationManager;
@@ -108,6 +109,7 @@ class CarpoolSubscriber implements EventSubscriberInterface
             CarpoolAskPostedRelaunch1Event::NAME => 'onCarpoolAskPostedRelaunch1',
             CarpoolAskPostedRelaunch2Event::NAME => 'onCarpoolAskPostedRelaunch2',
             ProposalWillExpireEvent::NAME => 'onProposalWillExpire',
+            RegularCarpoolWillExpireEvent::NAME => 'onRegularCarpoolWillExpire',
         ];
     }
 
@@ -398,6 +400,13 @@ class CarpoolSubscriber implements EventSubscriberInterface
         $event->getAd()->setSchedule($this->addSchedule($event));
         $adRecipient = $event->getAd()->getResults()[0]->getCarpooler();
         $this->notificationManager->notifies(CarpoolAskPostedRelaunch2Event::NAME, $adRecipient, $event->getAd());
+    }
+
+    public function onRegularCarpoolWillExpire(RegularCarpoolWillExpireEvent $event)
+    {
+        $event->getAd()->setSchedule($this->addSchedule($event));
+        $adRecipient = $event->getAd()->getResults()[0]->getCarpooler();
+        $this->notificationManager->notifies(RegularCarpoolWillExpireEvent::NAME, $adRecipient, $event->getAd());
     }
 
     public function addSchedule($event)
