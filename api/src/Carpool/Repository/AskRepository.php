@@ -189,8 +189,8 @@ class AskRepository
             ->andWhere('(
             (
                 c.frequency = :punctual and c.fromDate between :fromDate and :toDate
-            ) 
-            or 
+            )
+            or
             (
                 c.frequency = :regular and c.fromDate <= :toDate and c.toDate >= :fromDate and
                 ('.$regularWhere.')
@@ -288,8 +288,8 @@ class AskRepository
             ->andWhere('(
             (
                 c.frequency = :punctual and c.fromDate between :fromDate and :toDate
-            ) 
-            or 
+            )
+            or
             (
                 c.frequency = :regular and c.fromDate <= :toDate and c.toDate >= :fromDate and
                 ('.$regularWhere.')
@@ -439,6 +439,24 @@ class AskRepository
             ->setParameter('createdDate', $createdDate)
             ->setParameter('pending_as_driver', Ask::STATUS_PENDING_AS_DRIVER)
             ->setParameter('pending_as_passenger', Ask::STATUS_PENDING_AS_PASSENGER)
+        ;
+
+        return $query->getQuery()->getResult();
+    }
+
+    public function findAcceptedAsksThatWillExpireInXDays(int $nbOfDays)
+    {
+        $now = (new \DateTime('now'));
+        $toDate = $now->modify('+'.$nbOfDays.' day')->format('Y-m-d');
+
+        $query = $this->repository->createQueryBuilder('a')
+            ->select('a')
+            ->join('a.criteria', 'c')
+            ->where('c.ToDate = :toDate')
+            ->andWhere('(a.status = :accepted_as_driver) or (a.status = :accepted_as_passenger)')
+            ->setParameter('toDate', $toDate)
+            ->setParameter('pending_as_driver', Ask::STATUS_ACCEPTED_AS_DRIVER)
+            ->setParameter('pending_as_passenger', Ask::STATUS_ACCEPTED_AS_PASSENGER)
         ;
 
         return $query->getQuery()->getResult();
