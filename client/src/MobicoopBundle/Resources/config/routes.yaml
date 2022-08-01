@@ -1520,6 +1520,14 @@ dataProtectionAlt:
         nl: /data-policy-alt
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showDataProtectionAlt
 
+# display alternative moreAbout page
+MoreAboutAlt:
+    path:
+        fr: /en_savoir_plus
+        en: /more_about
+        nl: /more_about
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showMoreAboutAlt
+
 # display defi
 defi:
     path:
