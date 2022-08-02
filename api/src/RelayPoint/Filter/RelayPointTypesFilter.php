@@ -27,14 +27,11 @@ final class RelayPointTypesFilter extends AbstractContextAwareFilter
 
         $rootAlias = $queryBuilder->getRootAliases()[0];
 
-        $queryBuilder->leftJoin($rootAlias.'.relayPointType', 'rpt');
-
-        foreach ($this->_relayPointTypeIds as $key => $relayPointTypeId) {
-            $queryBuilder
-                ->andWhere('rpt.id =:id')
-                ->setParameter('id', $relayPointTypeId)
-            ;
-        }
+        $queryBuilder
+            ->leftJoin($rootAlias.'.relayPointType', 'rpt')
+            ->andWhere('rpt.id IN (:ids)')
+            ->setParameter('ids', $this->_relayPointTypeIds)
+        ;
     }
 
     public function getDescription(string $resourceClass): array
