@@ -79,6 +79,7 @@ class ArticleController extends AbstractController
     public const DATA_POLICY_ALT = 40;
     public const DATA_PROTECTION_ALT = 41;
     public const DEFI = 42;
+    public const MOREABOUT_ALT = 43;
 
     /**
      * Display of the project page.
@@ -370,7 +371,6 @@ class ArticleController extends AbstractController
         return $this->showArticle($articleManager->getArticle(self::I_AM_SOCIETY));
     }
 
-
     /**
      * Display of the GUARANTEED_RETURN page.
      */
@@ -402,6 +402,14 @@ class ArticleController extends AbstractController
     public function showDataProtectionAlt(ArticleManager $articleManager)
     {
         return $this->showArticle($articleManager->getArticle(self::DATA_PROTECTION_ALT));
+    }
+
+    /**
+     * Display of the MOREABOUT page.
+     */
+    public function showMoreAboutAlt(ArticleManager $articleManager)
+    {
+        return $this->showArticle($articleManager->getArticle(self::MOREABOUT_ALT));
     }
 
     public function showDefi(ArticleManager $articleManager)
