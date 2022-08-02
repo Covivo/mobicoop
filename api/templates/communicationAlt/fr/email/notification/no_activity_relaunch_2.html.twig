@@ -8,7 +8,7 @@
             <table cellpadding="6" cellspacing="6" summary="" border="0">
                 <tr>
                     <td align="center">
-                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:20px;" text-align="center" ><b>Vous n’avez plus d’annonce de covoiturage !</b></p>
+                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:20px;" text-align="center" ><b>Encore un petit pas pour reprendre le covoiturage !</b></p>
                     </td>
                 </tr>
             </table>
@@ -38,7 +38,7 @@
                         <p> </p>
                     </td>
                     <td align="left">
-                        <p style="font-size:11px; text-align: justify;">Depuis deux mois, vous n’avez plus d’annonces de covoiturage pour partager un véhicule sur Rezo Mobicoop. Pour rappel, notre interface propose une solution de mobilité pour chaque besoin :</p>
+                        <p style="font-size:11px; text-align: justify;">Cela fait six mois qu’on ne vous a plus vu covoiturer sur Rezo Mobicoop. Pourtant, la mobilité partagée est une solution clé pour faire face aux enjeux de demain. Par exemple, saviez-vous que le covoiturage vous permettait de :</p>
                     </td>
                 </tr>
             </table>
@@ -58,7 +58,7 @@
                         />
                     </td>
                     <td>
-                        <p style="font-size:11px; text-align: justify;">Pour un <b>trajet ponctuel</b> (partir en vacances par exemple).</p>
+                        <p style="font-size:11px; text-align: justify;">Économiser jusqu’à 2000 € par an.</p>
                     </td>
                 </tr>
                 <tr>
@@ -72,21 +72,7 @@
                         />
                     </td>
                     <td>
-                        <p style="font-size:11px; text-align: justify;">Pour vos <b>trajets réguliers</b> (domicile-travail, courses, … À la publication d’annonce cochez “régulier” puis choisissez vos jours et créneaux horaires.)</p>
-                    </td>
-                </tr>
-                <tr>
-                    <td style="width:6px" >
-                        <p> </p>
-                    </td>
-                    <td align="left" valign="top">
-                        <img
-                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/greenArrow.png"
-                            style="border:0; height:9px; width:11px; background-color:transparent; vertical-align:top;"
-                        />
-                    </td>
-                    <td>
-                        <p style="font-size:11px; text-align: justify;">Pour vos <a href="{{api_env('EMAILS_PLATFORM_URL')}}/covoiturages-evenements" style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">événements</a> <b>publics ou privés.</b></p>
+                        <p style="font-size:11px; text-align: justify;">Réduire votre empreinte carbone de 1,5 tonnes de CO2, soit l’équivalent d’environ 3 mois de chauffage au gaz, pas mal !</p>
                     </td>
                 </tr>
                 <tr>
@@ -100,21 +86,21 @@
                         />
                     </td>
                     <td>
-                        <p style="font-size:11px; text-align: justify;">Dans le cadre d’une <a href="{{api_env('EMAILS_PLATFORM_URL')}}/covoiturage-communaute" style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">communauté</a> (personnes d’une même association, ou du même lieu de loisirs par exemple).</p>
+                        <p style="font-size:11px; text-align: justify;">Limiter les embouteillages et la mauvaise humeur qui en découle !</p>
                     </td>
                 </tr>
+            </table>
+        </td>
+    </tr>
+     <tr>
+        <td align="center">
+            <table style="width:100%;" cellpadding="2" cellspacing="2" summary="" border="0" >
                 <tr>
-                    <td style="width:6px" >
+                    <td style="width:23px">
                         <p> </p>
                     </td>
-                    <td align="left" valign="top">
-                        <img
-                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/greenArrow.png"
-                            style="border:0; height:9px; width:11px; background-color:transparent; vertical-align:top;"
-                        />
-                    </td>
-                    <td>
-                        <p style="font-size:11px; text-align: justify;">Vous pouvez même faire de l’autostop avec nos arrêts Rezo Pouce. Découvrez l’espace Rezo Pouce dédié à <b>l’autostop</b> sur votre application mobile.</p>
+                    <td align="left">
+                        <p style="font-size:11px; text-align: justify;">En publiant une nouvelle annonce, vous serez alerté des covoiturages qui pourraient vous intéresser :</p>
                     </td>
                 </tr>
             </table>
@@ -209,75 +195,6 @@
             </table>
         </td>
     </tr>
-    <tr>
-        <td style="height:15px">
-            <p> </p>
-        </td>
-    </tr>
-    {# part 3 #}
-   <tr>
-        <td align="center">
-            <table style="width:100%;" cellpadding="2" cellspacing="2" summary="" border="0" >
-                <tr>
-                    <td style="width:23px">
-                        <p> </p>
-                    </td>
-                    <td align="left">
-                        <p style="font-size:11px; text-align: justify;">Saviez-vous que le covoiturage vous permet de :</p>
-                    </td>
-                </tr>
-            </table>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <table cellpadding="4" cellspacing="4" summary="" border="0">
-                <tr>
-                    <td style="width:6px" >
-                        <p> </p>
-                    </td>
-                    <td align="center" valign="top">
-                        <img
-                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/greenArrow.png"
-                            style="border:0; height:9px; width:11px; background-color:transparent; vertical-align:top;"
-                        />
-                    </td>
-                    <td>
-                        <p style="font-size:11px; text-align: justify;">Économiser jusqu’à 2000 € par an.</p>
-                    </td>
-                </tr>
-                <tr>
-                    <td style="width:6px" >
-                        <p> </p>
-                    </td>
-                    <td>
-                        <img
-                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/greenArrow.png"
-                            style="border:0; height:9px; width:11px; background-color:transparent; vertical-align:top;"
-                        />
-                    </td>
-                    <td>
-                        <p style="font-size:11px; text-align: justify;">Réduire votre empreinte carbone de 1,5 tonnes de CO2, soit l’équivalent d’environ 3 mois de chauffage au gaz, pas mal !</p>
-                    </td>
-                </tr>
-                <tr>
-                    <td style="width:6px" >
-                        <p> </p>
-                    </td>
-                    <td align="left" valign="top">
-                        <img
-                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/greenArrow.png"
-                            style="border:0; height:9px; width:11px; background-color:transparent; vertical-align:top;"
-                        />
-                    </td>
-                    <td>
-                        <p style="font-size:11px; text-align: justify;">Limiter les embouteillages et la mauvaise humeur qui en découle !</p>
-                    </td>
-                </tr>
-            </table>
-        </td>
-    </tr>
-
     <tr>
         <td style="height:15px">
             <p> </p>
