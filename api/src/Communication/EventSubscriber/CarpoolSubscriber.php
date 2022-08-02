@@ -24,13 +24,14 @@
 namespace App\Communication\EventSubscriber;
 
 use App\Carpool\Entity\Ask;
+use App\Carpool\Entity\Criteria;
 use App\Carpool\Entity\Proposal;
 use App\Carpool\Entity\Waypoint;
 use App\Carpool\Event\AdMajorUpdatedEvent;
 use App\Carpool\Event\AdMinorUpdatedEvent;
 use App\Carpool\Event\AdRenewalEvent;
-use App\Carpool\Event\AskAcceptedEvent;
 // use App\Carpool\Event\AskUpdatedEvent;
+use App\Carpool\Event\AskAcceptedEvent;
 use App\Carpool\Event\AskAdDeletedEvent;
 use App\Carpool\Event\AskPostedEvent;
 use App\Carpool\Event\AskRefusedEvent;
@@ -118,6 +119,8 @@ class CarpoolSubscriber implements EventSubscriberInterface
      */
     public function onAskPosted(AskPostedEvent $event)
     {
+        var_dump($event->getAd()->getFrequency());
+
         $event->getAd()->setSchedule($this->addSchedule($event));
         $adRecipient = $event->getAd()->getResults()[0]->getCarpooler();
         $this->notificationManager->notifies(AskPostedEvent::NAME, $adRecipient, $event->getAd());
@@ -402,6 +405,11 @@ class CarpoolSubscriber implements EventSubscriberInterface
 
     public function addSchedule($event)
     {
+        $multipleSchedules = [];
+
+        if (Criteria::FREQUENCY_PUNCTUAL == $event->getAd()->getFrequency()) {
+            return $multipleSchedules;
+        }
         if ($event->getAd()->getResults()[0]->getResultDriver()) {
             $outwardResult = $event->getAd()->getResults()[0]->getResultDriver()->getOutward();
             $returnResult = $event->getAd()->getResults()[0]->getResultDriver()->getReturn();
@@ -410,7 +418,6 @@ class CarpoolSubscriber implements EventSubscriberInterface
             $returnResult = $event->getAd()->getResults()[0]->getResultPassenger()->getReturn();
         }
         $askConcerned = $this->askManager->getAsk($event->getAd()->getAskId());
-        $multipleSchedules = [];
 
         $times = [];
         if (!in_array(($outwardResult->getMonTime() ? $outwardResult->getMonTime()->format('H:i') : 'null').' '.($returnResult->getMonTime() ? $returnResult->getMonTime()->format('H:i') : 'null'), $times)) {
