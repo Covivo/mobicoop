@@ -81,6 +81,7 @@ class RelayPointManager
             'address.latitude[between]' => $this->bbox_min_lat.'..'.$this->bbox_max_lat,
             'address.longitude[between]' => $this->bbox_min_lon.'..'.$this->bbox_max_lon,
             'perPage' => 999999,
+            'relayPointType.id' => 1,
         ];
         $this->dataProvider->setClass(RelayPointMap::class);
         $response = $this->dataProvider->getCollection($params);
