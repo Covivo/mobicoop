@@ -217,6 +217,7 @@ services:
     Mobicoop\Bundle\MobicoopBundle\RelayPoint\Service\RelayPointManager:
         arguments:
             $bbox: '%env(json:BBOX)%'
+            $defaultRelayPointTypeLayer: '%env(int:DEFAUT_RELAYPOINTTYPE_LAYER)%'
 
     # Solidary
     Mobicoop\Bundle\MobicoopBundle\Solidary\Controller\:
