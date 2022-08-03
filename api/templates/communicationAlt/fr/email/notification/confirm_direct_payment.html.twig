@@ -1,0 +1,62 @@
+{# CAREFUL : Some client might need to replicate this template #}
+{% extends 'communicationAlt/fr/email/notification/base.html.twig' %}
+{% block body %}
+<table style="width:480px; font-family:{{api_env('EMAILS_FONT')}}, sans-serif;" cellpadding="0" cellspacing="0" summary="" border="0">
+    <tr style="margin-bottom:21px; margin-top:19px;">
+        <td align="center">
+            <table cellpadding="6" cellspacing="6" summary="" border="0">
+                <tr>
+                    <td align="center">
+                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:20px;" text-align="center" ><b>Confirmez un paiement à la main.</b></p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="height:15px">
+            <p> </p>
+        </td>
+    </tr>
+    <tr>
+        <td align="center">
+            <table style="width:100%;" cellpadding="2" cellspacing="2" summary="" border="0" >
+                <tr>
+                    <td align="left">
+                        <p style="font-size:11px; margin-bottom:16px;">Bonjour {{ context.creditor.givenName|capitalize }} {{ context.creditor.shortFamilyName|capitalize }},</p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td align="center">
+            <table style="width:100%;" cellpadding="2" cellspacing="2" summary="" border="0" >
+                <tr>
+                    <td align="left">
+                        <p style="font-size:11px; margin-bottom:16px; text-align: justify;"><b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{ context.deptor.givenName|capitalize }} {{ context.deptor.shortFamilyName|capitalize }}</b> votre covoiturage de <b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{context.origin}}</b> à <b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">{{context.destination}}</b> comme étant payé à la main.</p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td align="center">
+            <table style="width:100%;" cellpadding="2" cellspacing="2" summary="" border="0" >
+                <tr>
+                    <td align="left">
+                        <p style="font-size:11px; margin-bottom:16px; text-align: justify;">Cliquez sur le lien suivant pour confirmer ce paiement à la main, ou au contraire signaler un impayé :  <a href="{{api_env('EMAILS_PLATFORM_URL')}}/utilisateur/profil/modifier/mes-covoiturages-acceptes" style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">Valider un paiement.</a></p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="height:15px">
+            <p> </p>
+        </td>
+    </tr>
+</table>
+{% endblock %}
+
+
