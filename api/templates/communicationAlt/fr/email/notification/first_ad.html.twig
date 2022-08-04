@@ -6,7 +6,7 @@
     <tr style="margin-bottom:21px; margin-top:19px;">
         <td align="center">
             <table cellpadding="6" cellspacing="6" summary="" border="0">
-                <tr> 
+                <tr>
                     <td align="center">
                         <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:20px;" text-align="center" ><b>Créez votre première annonce de covoiturage !</b></p>
                     </td>
@@ -22,13 +22,13 @@
                         <p> </p>
                     </td>
                     <td align="left">
-                        <p style="font-size:11px; margin-bottom:16px;">Bonjour {{recipient.givenName|capitalize}} {{recipient.shortFamilyName|capitalize}},</p>
+                        <p style="font-size:11px; margin-bottom:16px;">Bonjour {{context.recipient.givenName|capitalize}} {{context.recipient.shortFamilyName|capitalize}},</p>
                     </td>
                 </tr>
             </table>
         </td>
     </tr>
-   
+
     {# part 1 #}
     <tr>
         <td align="center">
@@ -55,7 +55,7 @@
                         <img
                             src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/greenArrow.png"
                             style="border:0; height:9px; width:11px; background-color:transparent; vertical-align:top;"
-                        />    
+                        />
                     </td>
                     <td>
                         <p style="font-size:11px; text-align: justify;"><b>Conducteur/conductrice</b> : vous avez un véhicule et vous cherchez des passagers pour remplir votre véhicule.</p>
@@ -69,7 +69,7 @@
                         <img
                             src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/greenArrow.png"
                             style="border:0; height:9px; width:11px; background-color:transparent; vertical-align:top;"
-                        />    
+                        />
                     </td>
                     <td>
                         <p style="font-size:11px; text-align: justify;"><b>Passager/passagère</b> : vous n’avez pas de véhicule, et vous cherchez à rejoindre le véhicule d’un conducteur.</p>
@@ -83,7 +83,7 @@
                         <img
                             src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/greenArrow.png"
                             style="border:0; height:9px; width:11px; background-color:transparent; vertical-align:top;"
-                        />    
+                        />
                     </td>
                     <td>
                         <p style="font-size:11px; text-align: justify;"><b>Peu importe</b> : vous êtes flexibles, vous pouvez prendre votre véhicule ou rejoindre celui d’un autre covoitureur.</p>
@@ -91,7 +91,7 @@
                 </tr>
             </table>
         </td>
-    </tr> 
+    </tr>
     <tr>
         <td>
             <table cellpadding="6" cellspacing="6" summary="" border="0">
@@ -112,19 +112,19 @@
                             <img
                             src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/buttons/publishAd.png"
                             style="border:0; height:26px; width:156px; background-color:transparent; vertical-align:top;"
-                        /> 
+                        />
                         </a>
                     </td>
                 </tr>
             </table>
         </td>
-    </tr> 
+    </tr>
     <tr>
         <td style="height:15px">
             <p> </p>
-        </td>    
+        </td>
     </tr>
-    
+
 
 {# part 2 #}
     <tr>
@@ -152,7 +152,7 @@
                         <img
                             src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/greenArrow.png"
                             style="border:0; height:9px; width:11px; background-color:transparent; vertical-align:top;"
-                        />    
+                        />
                     </td>
                     <td>
                         <p style="font-size:11px; text-align: justify;">Trajets ponctuels.</p>
@@ -166,7 +166,7 @@
                         <img
                             src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/greenArrow.png"
                             style="border:0; height:9px; width:11px; background-color:transparent; vertical-align:top;"
-                        />    
+                        />
                     </td>
                     <td>
                         <p style="font-size:11px; text-align: justify;">Trajets réguliers (ex. : domicile-travail). Vous pouvez mettre des créneaux différents selon les jours de la semaine.</p>
@@ -180,7 +180,7 @@
                         <img
                             src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/greenArrow.png"
                             style="border:0; height:9px; width:11px; background-color:transparent; vertical-align:top;"
-                        />    
+                        />
                     </td>
                     <td>
                         <p style="font-size:11px; text-align: justify;">Pour vous rendre à vos événements publics ou privés.</p>
@@ -188,7 +188,7 @@
                 </tr>
             </table>
         </td>
-    </tr> 
+    </tr>
     <tr>
         <td>
             <table cellpadding="6" cellspacing="6" summary="" border="0">
@@ -217,18 +217,18 @@
                             <img
                             src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/buttons/publishAd.png"
                             style="border:0; height:26px; width:156px; background-color:transparent; vertical-align:top;"
-                        /> 
+                        />
                         </a>
                     </td>
                 </tr>
             </table>
         </td>
-    </tr> 
-       
+    </tr>
+
     <tr>
         <td style="height:20px">
             <p> </p>
-        </td>    
+        </td>
     </tr>
 </table>
 {% endblock %}
