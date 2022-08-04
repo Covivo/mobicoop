@@ -1379,6 +1379,22 @@ class ProposalRepository
         return $query->getQuery()->getResult();
     }
 
+    public function findInactiveAdsSinceXDays(int $numberOfDays): ?array
+    {
+        $now = new DateTime();
+        $toDate = $now->modify('-'.$numberOfDays.' days')->format('Y-m-d');
+
+        $query = $this->repository->createQueryBuilder('p')
+            ->join('p.criteria', 'c')
+            ->where('p.private = 0 OR p.private IS NULL')
+            ->andWhere('c.frequency = :regularFrequency')
+            ->andWhere('DATE(c.toDate) = :toDate')
+            ->setParameter('toDate', $toDate)
+        ;
+
+        return $query->getQuery()->getResult();
+    }
+
     /**
      * Build the regular where part for a punctual proposal.
      *

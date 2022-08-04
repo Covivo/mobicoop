@@ -25,32 +25,30 @@ declare(strict_types=1);
 
 namespace App\Task;
 
-use App\User\Event\IncitateToPublishFirstAdEvent;
-use App\User\Repository\UserRepository;
+use App\Carpool\Event\InactiveAdRelaunchEvent;
+use App\Carpool\Repository\ProposalRepository;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class InciteToPublishFirstAdTask implements Task
+class InactiveAdRelaunchTask implements Task
 {
-    public const RELAUNCH_DELAYS = [7, 20];
-    private $userRepository;
+    public const RELAUNCH_DELAY = 15;
+    private $proposalRepository;
     private $eventDispatcher;
 
-    public function __construct(UserRepository $userRepository, EventDispatcherInterface $eventDispatcher)
+    public function __construct(ProposalRepository $proposalRepository, EventDispatcherInterface $eventDispatcher)
     {
-        $this->userRepository = $userRepository;
+        $this->proposalRepository = $proposalRepository;
         $this->eventDispatcher = $eventDispatcher;
     }
 
     public function execute(): int
     {
-        foreach (self::RELAUNCH_DELAYS as $delay) {
-            $usersIds = $this->userRepository->findUserWithNoAdSinceXDays($delay);
+        $proposals = $this->proposalRepository->findInactiveAdsSinceXDays(self::RELAUNCH_DELAY);
 
-            if (count($usersIds) > 0) {
-                foreach ($usersIds as $userId) {
-                    $event = new IncitateToPublishFirstAdEvent($this->userRepository->find($userId));
-                    $this->eventDispatcher->dispatch(IncitateToPublishFirstAdEvent::NAME, $event);
-                }
+        if (count($proposals) > 0) {
+            foreach ($proposals as $proposal) {
+                $event = new InactiveAdRelaunchEvent($proposal);
+                $this->eventDispatcher->dispatch(InactiveAdRelaunchEvent::NAME, $event);
             }
         }
 

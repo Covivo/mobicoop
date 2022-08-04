@@ -31,6 +31,8 @@ use App\User\Event\IdentityProofModeratedEvent;
 use App\User\Event\IdentityProofValidationReminderEvent;
 use App\User\Event\IncitateToPublishFirstAdEvent;
 use App\User\Event\NewlyRegisteredUserEvent;
+use App\User\Event\NoActivityRelaunch1Event;
+use App\User\Event\NoActivityRelaunch2Event;
 use App\User\Event\ReviewReceivedEvent;
 use App\User\Event\UserDelegateRegisteredEvent;
 use App\User\Event\UserDelegateRegisteredPasswordSendEvent;
@@ -90,6 +92,8 @@ class UserSubscriber implements EventSubscriberInterface
             IdentityProofValidationReminderEvent::NAME => 'onIdentityProofValidationReminder',
             IncitateToPublishFirstAdEvent::NAME => 'onIncitateToPublishFirstAd',
             NewlyRegisteredUserEvent::NAME => 'onNewlyRegisteredUser',
+            NoActivityRelaunch1Event::NAME => 'onNoactivityRelauch1',
+            NoActivityRelaunch2Event::NAME => 'onNoactivityRelauch2',
         ];
     }
 
@@ -186,5 +190,15 @@ class UserSubscriber implements EventSubscriberInterface
     public function onNewlyRegisteredUser(NewlyRegisteredUserEvent $event)
     {
         $this->notificationManager->notifies(NewlyRegisteredUserEvent::NAME, $event->getUser());
+    }
+
+    public function onNoactivityRelauch1(NoActivityRelaunch1Event $event)
+    {
+        $this->notificationManager->notifies(NoActivityRelaunch1Event::NAME, $event->getUser());
+    }
+
+    public function onNoactivityRelauch2(NoActivityRelaunch2Event $event)
+    {
+        $this->notificationManager->notifies(NoActivityRelaunch2Event::NAME, $event->getUser());
     }
 }

@@ -25,34 +25,34 @@ declare(strict_types=1);
 
 namespace App\Task;
 
-use App\User\Event\IncitateToPublishFirstAdEvent;
+use App\User\Event\NoActivityRelaunch1Event;
 use App\User\Repository\UserRepository;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class InciteToPublishFirstAdTask implements Task
+class NoActivityRelaunch1Task implements Task
 {
-    public const RELAUNCH_DELAYS = [7, 20];
+    public const RELAUNCH_DELAY = 60;
     private $userRepository;
     private $eventDispatcher;
 
     public function __construct(UserRepository $userRepository, EventDispatcherInterface $eventDispatcher)
     {
-        $this->userRepository = $userRepository;
+        $this->askRepository = $userRepository;
         $this->eventDispatcher = $eventDispatcher;
     }
 
     public function execute(): int
     {
-        foreach (self::RELAUNCH_DELAYS as $delay) {
-            $usersIds = $this->userRepository->findUserWithNoAd($delay);
+        $users = $this->userRepository->findUserWithNoAdSinceXDays(self::RELAUNCH_DELAY);
 
-            if (count($usersIds) > 0) {
-                foreach ($usersIds as $userId) {
-                    $event = new IncitateToPublishFirstAdEvent($this->userRepository->find($userId));
-                    $this->eventDispatcher->dispatch(IncitateToPublishFirstAdEvent::NAME, $event);
-                }
+        if (count($users) > 0) {
+            foreach ($users as $user) {
+                $event = new NoActivityRelaunch1Event($user);
+                $this->eventDispatcher->dispatch(NoActivityRelaunch1Event::NAME, $event);
             }
         }
+
+        // todo second condition
 
         return 0;
     }
