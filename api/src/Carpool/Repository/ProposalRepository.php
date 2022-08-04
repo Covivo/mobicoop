@@ -1395,6 +1395,62 @@ class ProposalRepository
         return $query->getQuery()->getResult();
     }
 
+    public function findPunctualAdWithoutAskSinceXDays(int $nbOfDays = null): ?array
+    {
+        $now = (new \DateTime('now'));
+        $createdDate = $now->modify('-'.$nbOfDays.' days')->format('Y-m-d');
+
+        $createdDate = '2022-06-01';
+        $stmt = $this->entityManager->getConnection()->prepare(
+            'SELECT proposal.id AS proposal_id,
+            count(DISTINCT ask.id) AS nb_ask
+            FROM proposal
+            INNER JOIN criteria ON proposal.criteria_id = criteria.id
+            INNER JOIN matching ON matching.proposal_offer_id = proposal.id
+            LEFT JOIN ask ON ask.matching_id = matching.id
+            WHERE date(proposal.created_date) = '.$createdDate.' AND criteria.frequency = 1 AND proposal.private = 0
+            GROUP BY proposal.id
+            HAVING nb_ask = 0;'
+        );
+        $stmt->execute();
+        $offers = $stmt->fetchAll();
+        var_dump($offers);
+
+        exit;
+
+        $stmt = $this->entityManager->getConnection()->prepare(
+            'SELECT proposal.id AS proposal_id,
+            count(DISTINCT ask.id) AS nb_ask
+            FROM proposal
+            INNER JOIN criteria ON proposal.criteria_id = criteria.id
+            INNER JOIN matching ON matching.proposal_request_id = proposal.id
+            LEFT JOIN ask ON ask.matching_id = matching.id
+            WHERE date(proposal.created_date) = '.$createdDate.' AND criteria.frequency = 1 AND proposal.private = 0
+            GROUP BY proposal.id
+            HAVING nb_ask = 0;'
+        );
+        $stmt->execute();
+        $requests = $stmt->fetchAll();
+        var_dump($requests);
+
+        exit;
+        $proposals = [];
+        foreach ($offers as $offer) {
+            if (in_array($offer, $proposals)) {
+                continue;
+            }
+            $proposals[] = $offer;
+        }
+        foreach ($requests as $request) {
+            if (in_array($request, $proposals)) {
+                continue;
+            }
+            $proposals[] = $request;
+        }
+
+        return $proposals;
+    }
+
     /**
      * Build the regular where part for a punctual proposal.
      *
