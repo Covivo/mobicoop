@@ -35,6 +35,7 @@ use App\Carpool\Event\DriverAskAdDeletedUrgentEvent;
 use App\Carpool\Event\MatchingNewEvent;
 use App\Carpool\Event\PassengerAskAdDeletedEvent;
 use App\Carpool\Event\PassengerAskAdDeletedUrgentEvent;
+use App\Carpool\Event\ProposalPostedEvent;
 use App\Carpool\Repository\CriteriaRepository;
 use App\Carpool\Repository\MatchingRepository;
 use App\Carpool\Repository\ProposalRepository;
@@ -234,9 +235,9 @@ class ProposalManager
             }
         }
 
-        //     // dispatch en event
-        //     $event = new ProposalPostedEvent($proposal);
-        //     $this->eventDispatcher->dispatch(ProposalPostedEvent::NAME, $event);
+        // dispatch en event
+        $event = new ProposalPostedEvent($proposal);
+        $this->eventDispatcher->dispatch(ProposalPostedEvent::NAME, $event);
 
         //     // dispatch en event
         //     // todo determine the right matching to send
@@ -512,8 +513,8 @@ class ProposalManager
             LEFT JOIN ask a1 ON a1.matching_id = m1.id
             LEFT JOIN ask a2 ON a2.matching_id = m2.id
             WHERE
-            proposal.private = 1 AND 
-            proposal.external_id IS NOT NULL AND 
+            proposal.private = 1 AND
+            proposal.external_id IS NOT NULL AND
             proposal.created_date <= '".$date->format('Y-m-d')."' AND
             (m1.id IS NULL OR a1.id IS NULL) AND
             (m2.id IS NULL OR a2.id IS NULL));
@@ -1263,7 +1264,7 @@ class ProposalManager
             )->execute()
             && $this->entityManager->getConnection()->prepare(
                 'INSERT INTO outdated_criteria (id)
-            (SELECT criteria.id FROM criteria 
+            (SELECT criteria.id FROM criteria
             LEFT JOIN ask ON ask.criteria_id = criteria.id
             LEFT JOIN matching ON matching.criteria_id = criteria.id
             LEFT JOIN proposal ON proposal.criteria_id = criteria.id
@@ -1294,8 +1295,8 @@ class ProposalManager
             )->execute()
             && $this->entityManager->getConnection()->prepare(
                 'INSERT INTO outdated_address (id)
-                (SELECT address.id FROM address 
-                LEFT JOIN user ON address.user_id = user.id 
+                (SELECT address.id FROM address
+                LEFT JOIN user ON address.user_id = user.id
                 LEFT JOIN solidary_user ON solidary_user.address_id = address.id
                 LEFT JOIN waypoint ON waypoint.address_id = address.id
                 LEFT JOIN community ON community.address_id = address.id
@@ -1309,8 +1310,8 @@ class ProposalManager
                 LEFT JOIN carpool_proof cp4 ON cp4.drop_off_driver_address_id = address.id
                 LEFT JOIN carpool_proof cp5 ON cp5.origin_driver_address_id = address.id
                 LEFT JOIN carpool_proof cp6 ON cp6.destination_driver_address_id = address.id
-                WHERE 
-                    user.id IS NULL AND 
+                WHERE
+                    user.id IS NULL AND
                     solidary_user.id IS NULL AND
                     waypoint.id IS NULL AND
                     community.id IS NULL AND
@@ -1343,7 +1344,7 @@ class ProposalManager
             )->execute()
             && $this->entityManager->getConnection()->prepare(
                 'INSERT INTO outdated_direction (id)
-                (SELECT direction.id FROM direction 
+                (SELECT direction.id FROM direction
                 LEFT JOIN criteria c1 ON c1.direction_driver_id = direction.id
                 LEFT JOIN criteria c2 ON c2.direction_passenger_id = direction.id
                 LEFT JOIN position ON position.direction_id = direction.id

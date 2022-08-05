@@ -45,7 +45,7 @@ class NotifiedRepository
         return $this->repository->find($id);
     }
 
-    public function findNotifiedByUserAndNotification(int $userId, int $notificationId)
+    public function findNotifiedByUserAndNotificationDuringLastMonth(int $userId, int $notificationId)
     {
         $now = (new \DateTime('now'));
         $today = $now->format('Y-m-d');
@@ -55,12 +55,25 @@ class NotifiedRepository
             ->select('n')
             ->where('n.user = :userId')
             ->andWhere('n.notification = :notificationId')
-            ->andWhere('n.sentDate > :aMonthAgo')
-            ->andWhere('n.sentDate < :today')
+            ->andWhere('n.sentDate >= :aMonthAgo')
+            ->andWhere('n.sentDate <= :today')
             ->setParameter('userId', $userId)
             ->setParameter('notificationId', $notificationId)
             ->setParameter('today', $today)
             ->setParameter('aMonthAgo', $aMonthAgo)
+        ;
+
+        return $query->getQuery()->getResult();
+    }
+
+    public function findNotifiedByUserAndNotification(int $userId, int $notificationId)
+    {
+        $query = $this->repository->createQueryBuilder('n')
+            ->select('n')
+            ->where('n.user = :userId')
+            ->andWhere('n.notification = :notificationId')
+            ->setParameter('userId', $userId)
+            ->setParameter('notificationId', $notificationId)
         ;
 
         return $query->getQuery()->getResult();

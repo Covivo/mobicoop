@@ -52,7 +52,14 @@ class NoActivityRelaunch2Task implements Task
             }
         }
 
-        // todo second condition
+        $usersIds = $this->userRepository->findUserWithOlderThanXDaysAd(self::RELAUNCH_DELAY);
+        if (count($usersIds) > 0) {
+            foreach ($usersIds as $userId) {
+                $user = $this->userRepository->find($userId);
+                $event = new NoActivityRelaunch2Event($user);
+                $this->eventDispatcher->dispatch(NoActivityRelaunch2Event::NAME, $event);
+            }
+        }
 
         return 0;
     }

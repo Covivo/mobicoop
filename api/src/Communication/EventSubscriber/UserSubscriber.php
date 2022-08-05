@@ -29,6 +29,7 @@ use App\Communication\Service\NotificationManager;
 use App\DataProvider\Entity\RezopouceProvider;
 use App\User\Admin\Service\UserManager as AdminUserManager;
 use App\User\Entity\IdentityProof;
+use App\User\Event\ConfirmedCarpoolerEvent;
 use App\User\Event\IdentityProofModeratedEvent;
 use App\User\Event\IdentityProofValidationReminderEvent;
 use App\User\Event\IncitateToPublishFirstAdEvent;
@@ -101,6 +102,7 @@ class UserSubscriber implements EventSubscriberInterface
             NoActivityRelaunch1Event::NAME => 'onNoactivityRelauch1',
             NoActivityRelaunch2Event::NAME => 'onNoactivityRelauch2',
             SendBoosterEvent::NAME => 'onSendBooster',
+            ConfirmedCarpoolerEvent::NAME => 'onCornfirmedCarpooler',
         ];
     }
 
@@ -211,9 +213,17 @@ class UserSubscriber implements EventSubscriberInterface
 
     public function onSendBooster(SendBoosterEvent $event)
     {
-        if (count($this->notifiedRepository->findNotifiedByUserAndNotification($event->getUser()->getId(), Notification::SEND_BOOSTER)) > 0) {
+        if (count($this->notifiedRepository->findNotifiedByUserAndNotificationDuringLastMonth($event->getUser()->getId(), Notification::SEND_BOOSTER)) > 0) {
             return;
         }
         $this->notificationManager->notifies(SendBoosterEvent::NAME, $event->getUser());
+    }
+
+    public function onCornfirmedCarpooler(ConfirmedCarpoolerEvent $event)
+    {
+        if (count($this->notifiedRepository->findNotifiedByUserAndNotification($event->getUser()->getId(), Notification::CONFIRMED_CARPOOLER)) > 0) {
+            return;
+        }
+        $this->notificationManager->notifies(ConfirmedCarpoolerEvent::NAME, $event->getUser());
     }
 }

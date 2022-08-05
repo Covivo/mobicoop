@@ -50,6 +50,7 @@ use App\Carpool\Service\AskManager;
 use App\Communication\Service\NotificationManager;
 use App\TranslatorTrait;
 use App\User\Entity\User;
+use App\User\Event\ConfirmedCarpoolerEvent;
 use App\User\Service\BlockManager;
 use App\User\Service\UserManager;
 use Psr\Log\LoggerInterface;
@@ -202,17 +203,18 @@ class CarpoolSubscriber implements EventSubscriberInterface
      */
     public function onProposalPosted(ProposalPostedEvent $event)
     {
-        // we check if it's not an anonymous proposal
-        if ($event->getProposal()->getUser()) {
-            $this->notificationManager->notifies(ProposalPostedEvent::NAME, $event->getProposal()->getUser(), $event->getProposal());
+        $user = $event->getProposal()->getUser();
+
+        if (5 == count($user->getProposals)) {
+            $event = new ConfirmedCarpoolerEvent($user);
+            $this->eventDispatcher->dispatch(ConfirmedCarpoolerEvent::NAME, $event);
         }
+        // we check if it's not an anonymous proposal
+        // if ($event->getProposal()->getUser()) {
+        //     $this->notificationManager->notifies(ProposalPostedEvent::NAME, $event->getProposal()->getUser(), $event->getProposal());
+        // }
     }
 
-    /**
-     * Execute when a proposal is canceled.
-     *
-     * @param ProposalPostedEvent $event
-     */
     public function onProposalCanceled(ProposalCanceledEvent $event)
     {
         $this->notificationManager->notifies(ProposalCanceledEvent::NAME, $event->getProposal()->getUser(), $event->getProposal());

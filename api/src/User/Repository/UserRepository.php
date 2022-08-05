@@ -230,4 +230,36 @@ class UserRepository
 
         return $query->getQuery()->getResult();
     }
+
+    public function findUserWithOlderThanXDaysAd(int $nbOfDays = null): ?array
+    {
+        $now = (new \DateTime('now'));
+        $createdDate = $now->modify('-'.$nbOfDays.' days')->format('Y-m-d');
+
+        $stmt = $this->entityManager->getConnection()->prepare(
+            'SELECT ponct.id
+            FROM
+                (SELECT id
+                    FROM
+                        (SELECT u.id , max(p.created_date) AS maxdate
+                        FROM user u
+                            INNER JOIN proposal p ON p.user_id = u.id
+                            INNER JOIN criteria c ON c.id = p.criteria_id
+                        WHERE p.private=0 AND c.frequency=1
+                        GROUP BY u.id) AS maxpropdate
+                    WHERE DATE(maxdate) = '.$createdDate.') AS ponct
+                LEFT JOIN
+                    (SELECT u.id
+                    FROM user u
+                        INNER JOIN proposal p ON p.user_id = u.id
+                        INNER JOIN criteria c ON c.id = p.criteria_id
+                    WHERE p.private = 0 AND c.frequency= 2 AND c.to_date >= NOW()
+                    GROUP BY u.id) AS regul ON regul.id = ponct.id
+            WHERE regul.id IS NULL'
+        );
+
+        $stmt->execute();
+
+        return $stmt->fetchAll();
+    }
 }
