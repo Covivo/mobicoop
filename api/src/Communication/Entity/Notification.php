@@ -82,6 +82,7 @@ class Notification
     public const PERMISSIVES = [
         self::USER_REGISTERED_DELEGATE_PASSWORD_SEND_SMS,
     ];
+    public const SEND_BOOSTER = 150;
 
     /**
      * @var int the id of this notification

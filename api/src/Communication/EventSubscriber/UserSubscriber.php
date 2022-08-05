@@ -23,6 +23,8 @@
 
 namespace App\Communication\EventSubscriber;
 
+use App\Communication\Entity\Notification;
+use App\Communication\Repository\NotifiedRepository;
 use App\Communication\Service\NotificationManager;
 use App\DataProvider\Entity\RezopouceProvider;
 use App\User\Admin\Service\UserManager as AdminUserManager;
@@ -34,6 +36,7 @@ use App\User\Event\NewlyRegisteredUserEvent;
 use App\User\Event\NoActivityRelaunch1Event;
 use App\User\Event\NoActivityRelaunch2Event;
 use App\User\Event\ReviewReceivedEvent;
+use App\User\Event\SendBoosterEvent;
 use App\User\Event\UserDelegateRegisteredEvent;
 use App\User\Event\UserDelegateRegisteredPasswordSendEvent;
 use App\User\Event\UserDeleteAccountWasDriverEvent;
@@ -55,11 +58,13 @@ class UserSubscriber implements EventSubscriberInterface
     private $rzpUri;
     private $rzpLogin;
     private $rzpPassword;
+    private $notifiedRepository;
 
     public function __construct(
         NotificationManager $notificationManager,
         UserManager $userManager,
         AdminUserManager $adminUserManager,
+        NotifiedRepository $notifiedRepository,
         bool $notificationSsoRegistration,
         string $rzpUri,
         string $rzpLogin,
@@ -72,6 +77,7 @@ class UserSubscriber implements EventSubscriberInterface
         $this->rzpUri = $rzpUri;
         $this->rzpLogin = $rzpLogin;
         $this->rzpPassword = $rzpPassword;
+        $this->notifiedRepository = $notifiedRepository;
     }
 
     public static function getSubscribedEvents()
@@ -94,6 +100,7 @@ class UserSubscriber implements EventSubscriberInterface
             NewlyRegisteredUserEvent::NAME => 'onNewlyRegisteredUser',
             NoActivityRelaunch1Event::NAME => 'onNoactivityRelauch1',
             NoActivityRelaunch2Event::NAME => 'onNoactivityRelauch2',
+            SendBoosterEvent::NAME => 'onSendBooster',
         ];
     }
 
@@ -200,5 +207,13 @@ class UserSubscriber implements EventSubscriberInterface
     public function onNoactivityRelauch2(NoActivityRelaunch2Event $event)
     {
         $this->notificationManager->notifies(NoActivityRelaunch2Event::NAME, $event->getUser());
+    }
+
+    public function onSendBooster(SendBoosterEvent $event)
+    {
+        if (count($this->notifiedRepository->findNotifiedByUserAndNotification($event->getUser()->getId(), Notification::SEND_BOOSTER)) > 0) {
+            return;
+        }
+        $this->notificationManager->notifies(SendBoosterEvent::NAME, $event->getUser());
     }
 }
