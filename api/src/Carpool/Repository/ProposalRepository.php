@@ -158,7 +158,7 @@ class ProposalRepository
 
         $query->select($selection);
 
-        //->select(['p','u','p.id as proposalId','SUM(ac.seats) as nbSeats'])
+        // ->select(['p','u','p.id as proposalId','SUM(ac.seats) as nbSeats'])
         // we need the criteria (for the dates, number of seats...)
         $query->join('p.criteria', 'c')
             // we will need the user informations
@@ -168,8 +168,8 @@ class ProposalRepository
             ->leftJoin('p.waypoints', 'w')
             ->leftJoin('w.address', 'a')
             // we need the matchings and asks to check the available seats
-            //->leftJoin('p.matchingOffers', 'm')->leftjoin('m.asks', 'a')->leftJoin('a.criteria', 'ac')->addGroupBy('proposalId')
-            //we need the communities
+            // ->leftJoin('p.matchingOffers', 'm')->leftjoin('m.asks', 'a')->leftJoin('a.criteria', 'ac')->addGroupBy('proposalId')
+            // we need the communities
             ->leftJoin('p.communities', 'co')
         ;
 
@@ -278,11 +278,11 @@ class ProposalRepository
                         $this->geoTools->moveGeoLon(
                             $proposal->getCriteria()->getDirectionDriver()->getBboxMinLon(),
                             $proposal->getCriteria()->getDirectionDriver()->getBboxMinLat(),
-                            -($this->getBBoxExtension($proposal->getCriteria()->getDirectionDriver()->getDistance()))
+                            -$this->getBBoxExtension($proposal->getCriteria()->getDirectionDriver()->getDistance())
                         ),
                         $this->geoTools->moveGeoLat(
                             $proposal->getCriteria()->getDirectionDriver()->getBboxMinLat(),
-                            -($this->getBBoxExtension($proposal->getCriteria()->getDirectionDriver()->getDistance()))
+                            -$this->getBBoxExtension($proposal->getCriteria()->getDirectionDriver()->getDistance())
                         ),
                         $this->geoTools->moveGeoLon(
                             $proposal->getCriteria()->getDirectionDriver()->getBboxMaxLon(),
@@ -357,11 +357,11 @@ class ProposalRepository
                         $this->geoTools->moveGeoLon(
                             $proposal->getCriteria()->getDirectionPassenger()->getBboxMinLon(),
                             $proposal->getCriteria()->getDirectionPassenger()->getBboxMinLat(),
-                            -($this->getBBoxExtension($proposal->getCriteria()->getDirectionPassenger()->getDistance()))
+                            -$this->getBBoxExtension($proposal->getCriteria()->getDirectionPassenger()->getDistance())
                         ),
                         $this->geoTools->moveGeoLat(
                             $proposal->getCriteria()->getDirectionPassenger()->getBboxMinLat(),
-                            -($this->getBBoxExtension($proposal->getCriteria()->getDirectionPassenger()->getDistance()))
+                            -$this->getBBoxExtension($proposal->getCriteria()->getDirectionPassenger()->getDistance())
                         ),
                         $this->geoTools->moveGeoLon(
                             $proposal->getCriteria()->getDirectionPassenger()->getBboxMaxLon(),
@@ -534,7 +534,7 @@ class ProposalRepository
                     $regularAndWhere .= ')';
                 }
 
-                //var_dump($regularAndWhere);die;
+                // var_dump($regularAndWhere);die;
                 if ($setMinTime) {
                     $query->setParameter('minTime', $proposal->getCriteria()->getMinTime()->format('H:i'));
                 }
@@ -892,7 +892,7 @@ class ProposalRepository
         //     echo $parameter->getName() . " " . ($parameter->getValue() instanceof User ? $parameter->getValue()->getId() : $parameter->getValue());
         // }
         // exit;
-        //var_dump(count($query->getQuery()->getParameters()));exit;
+        // var_dump(count($query->getQuery()->getParameters()));exit;
 
         // we launch the request and return the result
         return $query->getQuery()->getResult();
@@ -1136,7 +1136,7 @@ class ProposalRepository
      *
      * @return Proposal[]
      */
-    public function findByDate(\Datetime $date, User $user = null, bool $onlyOneWayOrOutward = false, int $minDistanceDriver = null, int $minDistancePassenger = null, array $excludedProposalIds = []): array
+    public function findByDate(DateTime $date, User $user = null, bool $onlyOneWayOrOutward = false, int $minDistanceDriver = null, int $minDistancePassenger = null, array $excludedProposalIds = []): array
     {
         $query = $this->repository->createQueryBuilder('p')
             ->join('p.criteria', 'c')
@@ -1400,7 +1400,6 @@ class ProposalRepository
         $now = (new \DateTime('now'));
         $createdDate = $now->modify('-'.$nbOfDays.' days')->format('Y-m-d');
 
-        $createdDate = '2022-06-01';
         $stmt = $this->entityManager->getConnection()->prepare(
             'SELECT proposal.id AS proposal_id,
             count(DISTINCT ask.id) AS nb_ask
@@ -1414,9 +1413,6 @@ class ProposalRepository
         );
         $stmt->execute();
         $offers = $stmt->fetchAll();
-        var_dump($offers);
-
-        exit;
 
         $stmt = $this->entityManager->getConnection()->prepare(
             'SELECT proposal.id AS proposal_id,
@@ -1431,9 +1427,7 @@ class ProposalRepository
         );
         $stmt->execute();
         $requests = $stmt->fetchAll();
-        var_dump($requests);
 
-        exit;
         $proposals = [];
         foreach ($offers as $offer) {
             if (in_array($offer, $proposals)) {
@@ -1456,7 +1450,6 @@ class ProposalRepository
         $now = (new \DateTime('now'));
         $createdDate = $now->modify('-'.$nbOfDays.' days')->format('Y-m-d');
 
-        $createdDate = '2022-06-01';
         $stmt = $this->entityManager->getConnection()->prepare(
             'SELECT proposal.id AS proposal_id,
             count(DISTINCT ask.id) AS nb_ask
@@ -1470,9 +1463,6 @@ class ProposalRepository
         );
         $stmt->execute();
         $offers = $stmt->fetchAll();
-        var_dump($offers);
-
-        exit;
 
         $stmt = $this->entityManager->getConnection()->prepare(
             'SELECT proposal.id AS proposal_id,
@@ -1487,9 +1477,7 @@ class ProposalRepository
         );
         $stmt->execute();
         $requests = $stmt->fetchAll();
-        var_dump($requests);
 
-        exit;
         $proposals = [];
         foreach ($offers as $offer) {
             if (in_array($offer, $proposals)) {
@@ -1559,7 +1547,7 @@ class ProposalRepository
         }
 
         $regularAndWhere .= ' and (c.frequency='.Criteria::FREQUENCY_REGULAR.' and ';
-        //$regularAndWhere .= "c.fromDate <= '".$day->format('Y-m-d')."' and ";
+        // $regularAndWhere .= "c.fromDate <= '".$day->format('Y-m-d')."' and ";
         $regularAndWhere .= "c.toDate >= '".$day->format('Y-m-d')."'))";
 
         return [

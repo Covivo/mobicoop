@@ -114,14 +114,14 @@ class PaymentSubscriber implements EventSubscriberInterface
         $creditor = $event->getCarpoolItem()->getCreditorUser();
         // we get all user's asks
         $asks = array_merge($creditor->getAsks(), $creditor->getAsksRelated());
-        $carpooledKm = null;
+        $carpooledKm = 0;
         foreach ($asks as $ask) {
             if (Ask::STATUS_ACCEPTED_AS_DRIVER == $ask->getStatus() || Ask::STATUS_ACCEPTED_AS_PASSENGER == $ask->getStatus()) {
                 $carpoolItems = $ask->getCarpoolItems();
-                $numberOfTravel = null;
+                $numberOfTravel = 0;
                 foreach ($carpoolItems as $carpoolItem) {
                     if (CarpoolItem::STATUS_REALIZED == $carpoolItem->getItemStatus()) {
-                        $numberOfTravel = +1;
+                        ++$numberOfTravel;
                     }
                 }
                 $carpooledKm = $carpooledKm + ($ask->getMatching()->getCommonDistance() * $numberOfTravel);
@@ -135,14 +135,14 @@ class PaymentSubscriber implements EventSubscriberInterface
         $debtor = $event->getCarpoolItem()->getDebtorUser();
         // we get all user's asks
         $asks = array_merge($debtor->getAsks(), $debtor->getAsksRelated());
-        $carpooledKm = null;
+        $carpooledKm = 0;
         foreach ($asks as $ask) {
             if (Ask::STATUS_ACCEPTED_AS_DRIVER == $ask->getStatus() || Ask::STATUS_ACCEPTED_AS_PASSENGER == $ask->getStatus()) {
                 $carpoolItems = $ask->getCarpoolItems();
-                $numberOfTravel = null;
+                $numberOfTravel = 0;
                 foreach ($carpoolItems as $carpoolItem) {
                     if (CarpoolItem::STATUS_REALIZED == $carpoolItem->getItemStatus()) {
-                        $numberOfTravel = +1;
+                        ++$numberOfTravel;
                     }
                 }
                 $carpooledKm = $carpooledKm + ($ask->getMatching()->getCommonDistance() * $numberOfTravel);
