@@ -1401,29 +1401,29 @@ class ProposalRepository
         $createdDate = $now->modify('-'.$nbOfDays.' days')->format('Y-m-d');
 
         $stmt = $this->entityManager->getConnection()->prepare(
-            'SELECT proposal.id AS proposal_id,
+            "SELECT proposal.id AS proposal_id,
             count(DISTINCT ask.id) AS nb_ask
             FROM proposal
             INNER JOIN criteria ON proposal.criteria_id = criteria.id
             INNER JOIN matching ON matching.proposal_offer_id = proposal.id
             LEFT JOIN ask ON ask.matching_id = matching.id
-            WHERE date(proposal.created_date) = '.$createdDate.' AND criteria.frequency = 1 AND proposal.private = 0
+            WHERE date(proposal.created_date) = '".$createdDate."' AND criteria.frequency = 1 AND proposal.private = 0
             GROUP BY proposal.id
-            HAVING nb_ask = 0;'
+            HAVING nb_ask = 0;"
         );
         $stmt->execute();
         $offers = $stmt->fetchAll();
 
         $stmt = $this->entityManager->getConnection()->prepare(
-            'SELECT proposal.id AS proposal_id,
+            "SELECT proposal.id AS proposal_id,
             count(DISTINCT ask.id) AS nb_ask
             FROM proposal
             INNER JOIN criteria ON proposal.criteria_id = criteria.id
             INNER JOIN matching ON matching.proposal_request_id = proposal.id
             LEFT JOIN ask ON ask.matching_id = matching.id
-            WHERE date(proposal.created_date) = '.$createdDate.' AND criteria.frequency = 1 AND proposal.private = 0
+            WHERE date(proposal.created_date) = '".$createdDate."' AND criteria.frequency = 1 AND proposal.private = 0
             GROUP BY proposal.id
-            HAVING nb_ask = 0;'
+            HAVING nb_ask = 0;"
         );
         $stmt->execute();
         $requests = $stmt->fetchAll();
@@ -1451,29 +1451,29 @@ class ProposalRepository
         $createdDate = $now->modify('-'.$nbOfDays.' days')->format('Y-m-d');
 
         $stmt = $this->entityManager->getConnection()->prepare(
-            'SELECT proposal.id AS proposal_id,
+            "SELECT proposal.id AS proposal_id,
             count(DISTINCT ask.id) AS nb_ask
             FROM proposal
             INNER JOIN criteria ON proposal.criteria_id = criteria.id
             INNER JOIN matching ON matching.proposal_offer_id = proposal.id
             LEFT JOIN ask ON ask.matching_id = matching.id
-            WHERE date(proposal.created_date) = '.$createdDate.' AND criteria.frequency = 2 AND proposal.private = 0
+            WHERE date(proposal.created_date) = '".$createdDate."' AND criteria.frequency = 2 AND proposal.private = 0
             GROUP BY proposal.id
-            HAVING nb_ask = 0;'
+            HAVING nb_ask = 0;"
         );
         $stmt->execute();
         $offers = $stmt->fetchAll();
 
         $stmt = $this->entityManager->getConnection()->prepare(
-            'SELECT proposal.id AS proposal_id,
+            "SELECT proposal.id AS proposal_id,
             count(DISTINCT ask.id) AS nb_ask
             FROM proposal
             INNER JOIN criteria ON proposal.criteria_id = criteria.id
             INNER JOIN matching ON matching.proposal_request_id = proposal.id
             LEFT JOIN ask ON ask.matching_id = matching.id
-            WHERE date(proposal.created_date) = '.$createdDate.' AND criteria.frequency = 2 AND proposal.private = 0
+            WHERE date(proposal.created_date) = '".$createdDate."' AND criteria.frequency = 2 AND proposal.private = 0
             GROUP BY proposal.id
-            HAVING nb_ask = 0;'
+            HAVING nb_ask = 0;"
         );
         $stmt->execute();
         $requests = $stmt->fetchAll();
