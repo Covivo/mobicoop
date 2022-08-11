@@ -18,25 +18,28 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Communication\EventSubscriber;
 
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use App\Carpool\Entity\Ask;
 use App\Communication\Service\NotificationManager;
+use App\Payment\Entity\CarpoolItem;
+use App\Payment\Event\CarpoolItemPersistedEvent;
 use App\Payment\Event\ConfirmDirectPaymentEvent;
 use App\Payment\Event\ConfirmDirectPaymentRegularEvent;
 use App\Payment\Event\IdentityProofAcceptedEvent;
-use App\Payment\Event\IdentityProofRejectedEvent;
 use App\Payment\Event\IdentityProofOutdatedEvent;
+use App\Payment\Event\IdentityProofRejectedEvent;
 use App\Payment\Event\PayAfterCarpoolEvent;
 use App\Payment\Event\PayAfterCarpoolRegularEvent;
 use App\Payment\Event\SignalDeptEvent;
+use App\User\Event\ConfirmedCarpoolerEvent;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class PaymentSubscriber implements EventSubscriberInterface
 {
     private $notificationManager;
-
 
     public function __construct(NotificationManager $notificationManager)
     {
@@ -53,7 +56,8 @@ class PaymentSubscriber implements EventSubscriberInterface
             SignalDeptEvent::NAME => 'onSignalDept',
             IdentityProofAcceptedEvent::NAME => 'onIdentityProofAccepted',
             IdentityProofRejectedEvent::NAME => 'onIdentityProofRejected',
-            IdentityProofOutdatedEvent::NAME => 'onIdentityProofOutdated'
+            IdentityProofOutdatedEvent::NAME => 'onIdentityProofOutdated',
+            CarpoolItemPersistedEvent::NAME => 'onPersistedCarpoolItem',
         ];
     }
 
@@ -103,5 +107,50 @@ class PaymentSubscriber implements EventSubscriberInterface
     {
         $recipient = $event->getPaymentProfile()->getUser();
         $this->notificationManager->notifies(IdentityProofOutdatedEvent::NAME, $recipient, $event->getPaymentProfile());
+    }
+
+    public function onPersistedCarpoolItem(CarpoolItemPersistedEvent $event)
+    {
+        $creditor = $event->getCarpoolItem()->getCreditorUser();
+        // we get all user's asks
+        $asks = array_merge($creditor->getAsks(), $creditor->getAsksRelated());
+        $carpooledKm = 0;
+        foreach ($asks as $ask) {
+            if (Ask::STATUS_ACCEPTED_AS_DRIVER == $ask->getStatus() || Ask::STATUS_ACCEPTED_AS_PASSENGER == $ask->getStatus()) {
+                $carpoolItems = $ask->getCarpoolItems();
+                $numberOfTravel = 0;
+                foreach ($carpoolItems as $carpoolItem) {
+                    if (CarpoolItem::STATUS_REALIZED == $carpoolItem->getItemStatus()) {
+                        ++$numberOfTravel;
+                    }
+                }
+                $carpooledKm = $carpooledKm + ($ask->getMatching()->getCommonDistance() * $numberOfTravel);
+            }
+        }
+        if ($carpooledKm / 1000 > 1000) {
+            $event = new ConfirmedCarpoolerEvent($creditor);
+            $this->eventDispatcher->dispatch(ConfirmedCarpoolerEvent::NAME, $event);
+        }
+
+        $debtor = $event->getCarpoolItem()->getDebtorUser();
+        // we get all user's asks
+        $asks = array_merge($debtor->getAsks(), $debtor->getAsksRelated());
+        $carpooledKm = 0;
+        foreach ($asks as $ask) {
+            if (Ask::STATUS_ACCEPTED_AS_DRIVER == $ask->getStatus() || Ask::STATUS_ACCEPTED_AS_PASSENGER == $ask->getStatus()) {
+                $carpoolItems = $ask->getCarpoolItems();
+                $numberOfTravel = 0;
+                foreach ($carpoolItems as $carpoolItem) {
+                    if (CarpoolItem::STATUS_REALIZED == $carpoolItem->getItemStatus()) {
+                        ++$numberOfTravel;
+                    }
+                }
+                $carpooledKm = $carpooledKm + ($ask->getMatching()->getCommonDistance() * $numberOfTravel);
+            }
+        }
+        if ($carpooledKm / 1000 > 1000) {
+            $event = new ConfirmedCarpoolerEvent($debtor);
+            $this->eventDispatcher->dispatch(ConfirmedCarpoolerEvent::NAME, $event);
+        }
     }
 }

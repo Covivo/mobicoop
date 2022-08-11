@@ -39,6 +39,7 @@ use App\Carpool\Event\CarpoolAskPostedRelaunch1Event;
 use App\Carpool\Event\CarpoolAskPostedRelaunch2Event;
 use App\Carpool\Event\DriverAskAdDeletedEvent;
 use App\Carpool\Event\DriverAskAdDeletedUrgentEvent;
+use App\Carpool\Event\InactiveAdRelaunchEvent;
 use App\Carpool\Event\MatchingNewEvent;
 use App\Carpool\Event\PassengerAskAdDeletedEvent;
 use App\Carpool\Event\PassengerAskAdDeletedUrgentEvent;
@@ -50,6 +51,7 @@ use App\Carpool\Service\AskManager;
 use App\Communication\Service\NotificationManager;
 use App\TranslatorTrait;
 use App\User\Entity\User;
+use App\User\Event\ConfirmedCarpoolerEvent;
 use App\User\Service\BlockManager;
 use App\User\Service\UserManager;
 use Psr\Log\LoggerInterface;
@@ -109,6 +111,7 @@ class CarpoolSubscriber implements EventSubscriberInterface
             CarpoolAskPostedRelaunch1Event::NAME => 'onCarpoolAskPostedRelaunch1',
             CarpoolAskPostedRelaunch2Event::NAME => 'onCarpoolAskPostedRelaunch2',
             ProposalWillExpireEvent::NAME => 'onProposalWillExpire',
+            InactiveAdRelaunchEvent::NAME => 'onInactiveAdRelaunch',
         ];
     }
 
@@ -203,23 +206,29 @@ class CarpoolSubscriber implements EventSubscriberInterface
      */
     public function onProposalPosted(ProposalPostedEvent $event)
     {
-        // we check if it's not an anonymous proposal
-        if ($event->getProposal()->getUser()) {
-            $this->notificationManager->notifies(ProposalPostedEvent::NAME, $event->getProposal()->getUser(), $event->getProposal());
+        $user = $event->getProposal()->getUser();
+
+        if (5 == count($user->getProposals)) {
+            $event = new ConfirmedCarpoolerEvent($user);
+            $this->eventDispatcher->dispatch(ConfirmedCarpoolerEvent::NAME, $event);
         }
+        // we check if it's not an anonymous proposal
+        // if ($event->getProposal()->getUser()) {
+        //     $this->notificationManager->notifies(ProposalPostedEvent::NAME, $event->getProposal()->getUser(), $event->getProposal());
+        // }
     }
 
-    /**
-     * Execute when a proposal is canceled.
-     *
-     * @param ProposalPostedEvent $event
-     */
     public function onProposalCanceled(ProposalCanceledEvent $event)
     {
         $this->notificationManager->notifies(ProposalCanceledEvent::NAME, $event->getProposal()->getUser(), $event->getProposal());
     }
 
     public function onProposalWillExpire(ProposalWillExpireEvent $event)
+    {
+        $this->notificationManager->notifies(ProposalWillExpireEvent::NAME, $event->getProposal()->getUser(), $event->getProposal());
+    }
+
+    public function onInactiveAdRelaunch(ProposalWillExpireEvent $event)
     {
         $this->notificationManager->notifies(ProposalWillExpireEvent::NAME, $event->getProposal()->getUser(), $event->getProposal());
     }

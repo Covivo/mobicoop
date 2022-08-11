@@ -6,7 +6,7 @@
     <tr style="margin-bottom:21px; margin-top:19px;">
         <td align="center">
             <table cellpadding="6" cellspacing="6" summary="" border="0">
-                <tr> 
+                <tr>
                     <td align="center">
                         <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:20px;" text-align="center" ><b>Bravo pour votre engagement !</b></p>
                     </td>
@@ -22,7 +22,7 @@
                         <p> </p>
                     </td>
                     <td align="left">
-                        <p style="font-size:11px; margin-bottom:16px;">Bonjour {{recipient.givenName|capitalize}} {{recipient.shortFamilyName|capitalize}},</p>
+                        <p style="font-size:11px; margin-bottom:16px;">Bonjour {{context.recipient.givenName|capitalize}} {{context.recipient.shortFamilyName|capitalize}},</p>
                     </td>
                 </tr>
             </table>
@@ -45,7 +45,7 @@
     <tr>
         <td style="height:15px">
             <p> </p>
-        </td>    
+        </td>
     </tr>
     <tr>
         <td align="center">
@@ -73,7 +73,7 @@
                         <img
                             src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/pinkArrow.png"
                             style="border:0; height:9px; width:11px; background-color:transparent; vertical-align:top;"
-                        />    
+                        />
                     </td>
                     <td align="left" >
                         <p style="font-size:11px; color:{{api_env('EMAILS_COLOR_SECONDARY')}};"><b>Parler de Mobicoop autour de vous</b></p>
@@ -84,7 +84,7 @@
     </tr>
     <tr>
         <td>
-            <table cellpadding="2" cellspacing="2" summary="" border="0">    
+            <table cellpadding="2" cellspacing="2" summary="" border="0">
                 <tr>
                     <td style="width:23px">
                         <p> </p>
@@ -95,11 +95,11 @@
                 </tr>
             </table>
         </td>
-    </tr>  
+    </tr>
     <tr>
         <td style="height:15px">
             <p> </p>
-        </td>    
+        </td>
     </tr>
     <tr>
         <td>
@@ -112,7 +112,7 @@
                         <img
                             src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/pinkArrow.png"
                             style="border:0; height:9px; width:11px; background-color:transparent; vertical-align:top;"
-                        />    
+                        />
                     </td>
                     <td align="left" >
                         <p style="font-size:11px; color:{{api_env('EMAILS_COLOR_SECONDARY')}};"><b>Devenir sociétaire</b></p>
@@ -138,7 +138,7 @@
     <tr>
         <td style="height:15px">
             <p> </p>
-        </td>    
+        </td>
     </tr>
     <tr>
         <td>
@@ -151,7 +151,7 @@
                         <img
                             src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/pinkArrow.png"
                             style="border:0; height:9px; width:11px; background-color:transparent; vertical-align:top;"
-                        />    
+                        />
                     </td>
                     <td align="left" >
                         <p style="font-size:11px; color:{{api_env('EMAILS_COLOR_SECONDARY')}};"><b>Tester nos autres services</b></p>
@@ -177,7 +177,7 @@
     <tr>
         <td style="height:15px">
             <p> </p>
-        </td>    
+        </td>
     </tr>
     <tr>
         <td>
@@ -190,7 +190,7 @@
                         <img
                             src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/pinkArrow.png"
                             style="border:0; height:9px; width:11px; background-color:transparent; vertical-align:top;"
-                        />    
+                        />
                     </td>
                     <td align="left" >
                         <p style="font-size:11px; color:{{api_env('EMAILS_COLOR_SECONDARY')}};"><b>Faire un don</b></p>
@@ -201,7 +201,7 @@
     </tr>
     <tr>
         <td>
-            <table cellpadding="2" cellspacing="2" summary="" border="0">            
+            <table cellpadding="2" cellspacing="2" summary="" border="0">
                 <tr>
                     <td style="width:23px">
                         <p> </p>
@@ -216,7 +216,7 @@
     <tr>
         <td style="height:15px">
             <p> </p>
-        </td>    
+        </td>
     </tr>
     <tr>
         <td>
@@ -228,14 +228,14 @@
                     <td align="center" style="width:100%;">
                         <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">À bientôt pour vos prochains trajets partagés !</b></p>
                     </td>
-                </tr>   
+                </tr>
             </table>
         </td>
     </tr>
     <tr>
         <td style="height:15px">
             <p> </p>
-        </td>    
+        </td>
     </tr>
 </table>
 {% endblock %}
