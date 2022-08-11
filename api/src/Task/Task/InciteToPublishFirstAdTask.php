@@ -44,7 +44,7 @@ class InciteToPublishFirstAdTask implements Task
     public function execute(): int
     {
         foreach (self::RELAUNCH_DELAYS as $delay) {
-            $usersIds = $this->userRepository->findUserWithNoAd($delay);
+            $usersIds = $this->userRepository->findUserWithNoAdSinceXDays($delay);
 
             if (count($usersIds) > 0) {
                 foreach ($usersIds as $userId) {

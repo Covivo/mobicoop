@@ -6,9 +6,9 @@
     <tr style="margin-bottom:21px; margin-top:19px;">
         <td align="center">
             <table cellpadding="6" cellspacing="6" summary="" border="0">
-                <tr> 
+                <tr>
                     <td align="center">
-                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:20px;" text-align="center" ><b>Créez votre première annonce de covoiturage !</b></p>
+                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:20px;" text-align="center" ><b>Booster vos chances de trouver un covoiturage !</b></p>
                     </td>
                 </tr>
             </table>
@@ -22,13 +22,13 @@
                         <p> </p>
                     </td>
                     <td align="left">
-                        <p style="font-size:11px; margin-bottom:16px;">Bonjour {{recipient.givenName|capitalize}} {{recipient.shortFamilyName|capitalize}},</p>
+                        <p style="font-size:11px; margin-bottom:16px;">Bonjour {{context.recipient.givenName|capitalize}} {{context.recipient.shortFamilyName|capitalize}},</p>
                     </td>
                 </tr>
             </table>
         </td>
     </tr>
-   
+
     {# part 1 #}
     <tr>
         <td align="center">
@@ -38,7 +38,21 @@
                         <p> </p>
                     </td>
                     <td align="left">
-                        <p style="font-size:11px; text-align: justify;">Depuis votre inscription sur Rezo Mobicoop, vous n’avez pas encore publié d’annonce de trajet. </br>Sur notre plateforme, vous pouvez publier une annonce en tant que :</p>
+                        <p style="font-size:11px; text-align: justify;">Nous sommes désolés que vous n’ayez pas encore trouvé de covoiturage sur vos trajets. Vous êtes plus de 550 000 covoitureurs à avoir rejoint notre projet et la plateforme continue de grandir chaque jour ! Peut-être manquons-nous encore de conducteurs ou de passagers autour de vous ?</p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td align="center">
+            <table style="width:100%;" cellpadding="2" cellspacing="2" summary="" border="0" >
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td align="left">
+                        <p style="font-size:11px; text-align: justify;">Voici quelques pistes pour aider à gagner des covoitureurs autour de vous :</p>
                     </td>
                 </tr>
             </table>
@@ -55,10 +69,10 @@
                         <img
                             src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/greenArrow.png"
                             style="border:0; height:9px; width:11px; background-color:transparent; vertical-align:top;"
-                        />    
+                        />
                     </td>
                     <td>
-                        <p style="font-size:11px; text-align: justify;"><b>Conducteur/conductrice</b> : vous avez un véhicule et vous cherchez des passagers pour remplir votre véhicule.</p>
+                        <p style="font-size:11px; text-align: justify;"><b>En parler à votre entreprise.</b> La loi LOM oblige les entreprises de plus de 50 salariés à mettre en place des solutions pour les déplacements domicile-travail.</p>
                     </td>
                 </tr>
                 <tr>
@@ -69,10 +83,10 @@
                         <img
                             src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/greenArrow.png"
                             style="border:0; height:9px; width:11px; background-color:transparent; vertical-align:top;"
-                        />    
+                        />
                     </td>
                     <td>
-                        <p style="font-size:11px; text-align: justify;"><b>Passager/passagère</b> : vous n’avez pas de véhicule, et vous cherchez à rejoindre le véhicule d’un conducteur.</p>
+                        <p style="font-size:11px; text-align: justify;"><b>Utilisez notre</b>  <a href="https://cloud.mobicoop.org/index.php/s/MHxrrMN2gNaRB4t" style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">boîte à outils</a>, notamment nos affiches et des textes pour interpeller vos élus ou votre entourage.</p>
                     </td>
                 </tr>
                 <tr>
@@ -83,51 +97,36 @@
                         <img
                             src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/greenArrow.png"
                             style="border:0; height:9px; width:11px; background-color:transparent; vertical-align:top;"
-                        />    
+                        />
                     </td>
                     <td>
-                        <p style="font-size:11px; text-align: justify;"><b>Peu importe</b> : vous êtes flexibles, vous pouvez prendre votre véhicule ou rejoindre celui d’un autre covoitureur.</p>
+                        <p style="font-size:11px; text-align: justify;">Faites du <a href="{{api_env('EMAILS_PLATFORM_URL')}}/covoiturages-evenements" style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">covoiturage pour vos événements</a> <b>privés et grand public ! Parlez-en aux organisateurs d’événements proches de vous.</b></p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:6px" >
+                        <p> </p>
+                    </td>
+                    <td align="left" valign="top">
+                        <img
+                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/greenArrow.png"
+                            style="border:0; height:9px; width:11px; background-color:transparent; vertical-align:top;"
+                        />
+                    </td>
+                    <td>
+                        <p style="font-size:11px; text-align: justify;">Vous pouvez même faire de l’autostop avec nos arrêts Rezo Pouce. Découvrez l’espace Rezo Pouce dédié à <b>l’autostop</b> sur votre application mobile.</p>
                     </td>
                 </tr>
             </table>
         </td>
-    </tr> 
-    <tr>
-        <td>
-            <table cellpadding="6" cellspacing="6" summary="" border="0">
-                <tr>
-                    <td style="width:23px">
-                        <p> </p>
-                    </td>
-                    <td align="center" style="width:100%;">
-                        <p style="text-align:center; font-size:11px; color:{{api_env('EMAILS_COLOR_SECONDARY')}};"><b>En publiant une annonce, vous serez alerté des prochains trajets qui correspondent !</b></p>
-                    </td>
-                </tr>
-                <tr>
-                    <td style="width:23px">
-                        <p> </p>
-                    </td>
-                    <td align="center" style="width:100%;">
-                        <a href="{{api_env('EMAILS_PLATFORM_URL')}}/covoiturage/publierannonce" style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">
-                            <img
-                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/buttons/publishAd.png"
-                            style="border:0; height:26px; width:156px; background-color:transparent; vertical-align:top;"
-                        /> 
-                        </a>
-                    </td>
-                </tr>
-            </table>
-        </td>
-    </tr> 
+    </tr>
     <tr>
         <td style="height:15px">
             <p> </p>
-        </td>    
+        </td>
     </tr>
-    
-
-{# part 2 #}
-    <tr>
+    {# part 2 #}
+   <tr>
         <td align="center">
             <table style="width:100%;" cellpadding="2" cellspacing="2" summary="" border="0" >
                 <tr>
@@ -135,7 +134,7 @@
                         <p> </p>
                     </td>
                     <td align="left">
-                        <p style="font-size:11px; text-align: justify;">Notre interface permet de publier des annonces de covoiturages pour tous vos déplacements :</p>
+                        <p style="font-size:11px; text-align: justify;">Saviez-vous que le covoiturage vous permet de :</p>
                     </td>
                 </tr>
             </table>
@@ -148,14 +147,14 @@
                     <td style="width:6px" >
                         <p> </p>
                     </td>
-                    <td align="left" valign="top">
+                    <td align="center" valign="top">
                         <img
                             src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/greenArrow.png"
                             style="border:0; height:9px; width:11px; background-color:transparent; vertical-align:top;"
-                        />    
+                        />
                     </td>
                     <td>
-                        <p style="font-size:11px; text-align: justify;">Trajets ponctuels.</p>
+                        <p style="font-size:11px; text-align: justify;">Économiser jusqu’à 2000 € par an.</p>
                     </td>
                 </tr>
                 <tr>
@@ -166,10 +165,10 @@
                         <img
                             src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/greenArrow.png"
                             style="border:0; height:9px; width:11px; background-color:transparent; vertical-align:top;"
-                        />    
+                        />
                     </td>
                     <td>
-                        <p style="font-size:11px; text-align: justify;">Trajets réguliers (ex. : domicile-travail). Vous pouvez mettre des créneaux différents selon les jours de la semaine.</p>
+                        <p style="font-size:11px; text-align: justify;">Réduire votre empreinte carbone de 1,5 tonnes de CO2, soit l’équivalent d’environ 3 mois de chauffage au gaz, pas mal !</p>
                     </td>
                 </tr>
                 <tr>
@@ -180,55 +179,20 @@
                         <img
                             src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/greenArrow.png"
                             style="border:0; height:9px; width:11px; background-color:transparent; vertical-align:top;"
-                        />    
+                        />
                     </td>
                     <td>
-                        <p style="font-size:11px; text-align: justify;">Pour vous rendre à vos événements publics ou privés.</p>
+                        <p style="font-size:11px; text-align: justify;">Limiter les embouteillages et la mauvaise humeur qui en découle !</p>
                     </td>
                 </tr>
             </table>
         </td>
-    </tr> 
-    <tr>
-        <td>
-            <table cellpadding="6" cellspacing="6" summary="" border="0">
-                <tr>
-                    <td style="width:23px">
-                        <p> </p>
-                    </td>
-                    <td align="center" style="width:100%;">
-                        <p style="text-align:center; font-size:11px;">Au besoin, regardez notre <a href="https://youtu.be/XETr5NoUnBs" style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">tutoriel pour publier une annonce de covoiturage.</a></p>
-                    </td>
-                </tr>
-                <tr>
-                    <td style="width:23px">
-                        <p> </p>
-                    </td>
-                    <td align="center" style="width:100%;">
-                        <p style="text-align:center; font-size:11px; color:{{api_env('EMAILS_COLOR_SECONDARY')}};"><b>Alors, on se lance ?</b></p>
-                    </td>
-                </tr>
-                <tr>
-                    <td style="width:23px">
-                        <p> </p>
-                    </td>
-                    <td align="center" style="width:100%;">
-                        <a href="{{api_env('EMAILS_PLATFORM_URL')}}/covoiturage/publierannonce" style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">
-                            <img
-                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/buttons/publishAd.png"
-                            style="border:0; height:26px; width:156px; background-color:transparent; vertical-align:top;"
-                        /> 
-                        </a>
-                    </td>
-                </tr>
-            </table>
-        </td>
-    </tr> 
-       
-    <tr>
-        <td style="height:20px">
-            <p> </p>
-        </td>    
     </tr>
+    <tr>
+        <td style="height:15px">
+            <p> </p>
+        </td>
+    </tr>
+
 </table>
 {% endblock %}

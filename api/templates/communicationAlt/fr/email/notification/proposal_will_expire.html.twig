@@ -25,7 +25,7 @@
                         <p> </p>
                     </td>
                     <td align="left">
-                        <p style="font-size:11px; margin-bottom:16px;">Bonjour {{recipient.givenName|capitalize}} {{recipient.shortFamilyName|capitalize}},</p>
+                        <p style="font-size:11px; margin-bottom:16px;">Bonjour {{context.recipient.givenName|capitalize}} {{context.recipient.shortFamilyName|capitalize}},</p>
                         <p style="font-size:11px;">Votre annonce de covoiturage va bientôt expirer:</p>
                     </td>
                 </tr>
@@ -83,7 +83,7 @@
     <tr>
         <td style="height:15px">
             <p> </p>
-        </td>    
+        </td>
     </tr>
      <tr>
         <td align="center">
@@ -102,7 +102,7 @@
     <tr>
         <td style="height:15px">
             <p> </p>
-        </td>    
+        </td>
     </tr>
     <tr>
         <td align="center">
@@ -123,7 +123,7 @@
     <tr>
         <td style="height:15px">
             <p> </p>
-        </td>    
+        </td>
     </tr>
 
     <tr>
@@ -137,7 +137,7 @@
                         <img
                             src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/greenArrow.png"
                             style="border:0; height:9px; width:11px; background-color:transparent; vertical-align:top;"
-                        />    
+                        />
                     </td>
                     <td>
                         <p style="font-size:11px; text-align: justify;">Économiser jusqu’à 2000 € par an.</p>
@@ -151,7 +151,7 @@
                         <img
                             src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/greenArrow.png"
                             style="border:0; height:9px; width:11px; background-color:transparent; vertical-align:top;"
-                        />    
+                        />
                     </td>
                     <td>
                         <p style="font-size:11px; text-align: justify;">Réduire votre empreinte carbone de 1,5 tonnes de CO2, soit l’équivalent d’environ 3 mois de chauffage au gaz, pas mal !</p>
@@ -165,7 +165,7 @@
                         <img
                             src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/greenArrow.png"
                             style="border:0; height:9px; width:11px; background-color:transparent; vertical-align:top;"
-                        />    
+                        />
                     </td>
                     <td>
                         <p style="font-size:11px; text-align: justify;"> Limiter les embouteillages et la mauvaise humeur qui en découle !</p>
@@ -173,11 +173,11 @@
                 </tr>
             </table>
         </td>
-    </tr> 
+    </tr>
     <tr>
         <td style="height:15px">
             <p> </p>
-        </td>    
+        </td>
     </tr>
     <tr>
         <td>
@@ -189,14 +189,14 @@
                     <td align="center" style="width:100%;">
                         <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">Bon covoiturage sur {{api_env('EMAILS_PLATFORM_NAME')}}</b></p>
                     </td>
-                </tr>   
+                </tr>
             </table>
         </td>
     </tr>
     <tr>
         <td style="height:15px">
             <p> </p>
-        </td>    
+        </td>
     </tr>
 </table>
 {% endblock %}

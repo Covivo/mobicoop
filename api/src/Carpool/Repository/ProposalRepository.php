@@ -158,7 +158,7 @@ class ProposalRepository
 
         $query->select($selection);
 
-        //->select(['p','u','p.id as proposalId','SUM(ac.seats) as nbSeats'])
+        // ->select(['p','u','p.id as proposalId','SUM(ac.seats) as nbSeats'])
         // we need the criteria (for the dates, number of seats...)
         $query->join('p.criteria', 'c')
             // we will need the user informations
@@ -168,8 +168,8 @@ class ProposalRepository
             ->leftJoin('p.waypoints', 'w')
             ->leftJoin('w.address', 'a')
             // we need the matchings and asks to check the available seats
-            //->leftJoin('p.matchingOffers', 'm')->leftjoin('m.asks', 'a')->leftJoin('a.criteria', 'ac')->addGroupBy('proposalId')
-            //we need the communities
+            // ->leftJoin('p.matchingOffers', 'm')->leftjoin('m.asks', 'a')->leftJoin('a.criteria', 'ac')->addGroupBy('proposalId')
+            // we need the communities
             ->leftJoin('p.communities', 'co')
         ;
 
@@ -278,11 +278,11 @@ class ProposalRepository
                         $this->geoTools->moveGeoLon(
                             $proposal->getCriteria()->getDirectionDriver()->getBboxMinLon(),
                             $proposal->getCriteria()->getDirectionDriver()->getBboxMinLat(),
-                            -($this->getBBoxExtension($proposal->getCriteria()->getDirectionDriver()->getDistance()))
+                            -$this->getBBoxExtension($proposal->getCriteria()->getDirectionDriver()->getDistance())
                         ),
                         $this->geoTools->moveGeoLat(
                             $proposal->getCriteria()->getDirectionDriver()->getBboxMinLat(),
-                            -($this->getBBoxExtension($proposal->getCriteria()->getDirectionDriver()->getDistance()))
+                            -$this->getBBoxExtension($proposal->getCriteria()->getDirectionDriver()->getDistance())
                         ),
                         $this->geoTools->moveGeoLon(
                             $proposal->getCriteria()->getDirectionDriver()->getBboxMaxLon(),
@@ -357,11 +357,11 @@ class ProposalRepository
                         $this->geoTools->moveGeoLon(
                             $proposal->getCriteria()->getDirectionPassenger()->getBboxMinLon(),
                             $proposal->getCriteria()->getDirectionPassenger()->getBboxMinLat(),
-                            -($this->getBBoxExtension($proposal->getCriteria()->getDirectionPassenger()->getDistance()))
+                            -$this->getBBoxExtension($proposal->getCriteria()->getDirectionPassenger()->getDistance())
                         ),
                         $this->geoTools->moveGeoLat(
                             $proposal->getCriteria()->getDirectionPassenger()->getBboxMinLat(),
-                            -($this->getBBoxExtension($proposal->getCriteria()->getDirectionPassenger()->getDistance()))
+                            -$this->getBBoxExtension($proposal->getCriteria()->getDirectionPassenger()->getDistance())
                         ),
                         $this->geoTools->moveGeoLon(
                             $proposal->getCriteria()->getDirectionPassenger()->getBboxMaxLon(),
@@ -534,7 +534,7 @@ class ProposalRepository
                     $regularAndWhere .= ')';
                 }
 
-                //var_dump($regularAndWhere);die;
+                // var_dump($regularAndWhere);die;
                 if ($setMinTime) {
                     $query->setParameter('minTime', $proposal->getCriteria()->getMinTime()->format('H:i'));
                 }
@@ -892,7 +892,7 @@ class ProposalRepository
         //     echo $parameter->getName() . " " . ($parameter->getValue() instanceof User ? $parameter->getValue()->getId() : $parameter->getValue());
         // }
         // exit;
-        //var_dump(count($query->getQuery()->getParameters()));exit;
+        // var_dump(count($query->getQuery()->getParameters()));exit;
 
         // we launch the request and return the result
         return $query->getQuery()->getResult();
@@ -1136,7 +1136,7 @@ class ProposalRepository
      *
      * @return Proposal[]
      */
-    public function findByDate(\Datetime $date, User $user = null, bool $onlyOneWayOrOutward = false, int $minDistanceDriver = null, int $minDistancePassenger = null, array $excludedProposalIds = []): array
+    public function findByDate(DateTime $date, User $user = null, bool $onlyOneWayOrOutward = false, int $minDistanceDriver = null, int $minDistancePassenger = null, array $excludedProposalIds = []): array
     {
         $query = $this->repository->createQueryBuilder('p')
             ->join('p.criteria', 'c')
@@ -1379,6 +1379,122 @@ class ProposalRepository
         return $query->getQuery()->getResult();
     }
 
+    public function findInactiveAdsSinceXDays(int $numberOfDays): ?array
+    {
+        $now = new DateTime();
+        $toDate = $now->modify('-'.$numberOfDays.' days')->format('Y-m-d');
+
+        $query = $this->repository->createQueryBuilder('p')
+            ->join('p.criteria', 'c')
+            ->where('p.private = 0 OR p.private IS NULL')
+            ->andWhere('c.frequency = :regularFrequency')
+            ->andWhere('DATE(c.toDate) = :toDate')
+            ->setParameter('toDate', $toDate)
+        ;
+
+        return $query->getQuery()->getResult();
+    }
+
+    public function findPunctualAdWithoutAskSinceXDays(int $nbOfDays = null): ?array
+    {
+        $now = (new \DateTime('now'));
+        $createdDate = $now->modify('-'.$nbOfDays.' days')->format('Y-m-d');
+
+        $stmt = $this->entityManager->getConnection()->prepare(
+            "SELECT proposal.id AS proposal_id,
+            count(DISTINCT ask.id) AS nb_ask
+            FROM proposal
+            INNER JOIN criteria ON proposal.criteria_id = criteria.id
+            INNER JOIN matching ON matching.proposal_offer_id = proposal.id
+            LEFT JOIN ask ON ask.matching_id = matching.id
+            WHERE date(proposal.created_date) = '".$createdDate."' AND criteria.frequency = 1 AND proposal.private = 0
+            GROUP BY proposal.id
+            HAVING nb_ask = 0;"
+        );
+        $stmt->execute();
+        $offers = $stmt->fetchAll();
+
+        $stmt = $this->entityManager->getConnection()->prepare(
+            "SELECT proposal.id AS proposal_id,
+            count(DISTINCT ask.id) AS nb_ask
+            FROM proposal
+            INNER JOIN criteria ON proposal.criteria_id = criteria.id
+            INNER JOIN matching ON matching.proposal_request_id = proposal.id
+            LEFT JOIN ask ON ask.matching_id = matching.id
+            WHERE date(proposal.created_date) = '".$createdDate."' AND criteria.frequency = 1 AND proposal.private = 0
+            GROUP BY proposal.id
+            HAVING nb_ask = 0;"
+        );
+        $stmt->execute();
+        $requests = $stmt->fetchAll();
+
+        $proposals = [];
+        foreach ($offers as $offer) {
+            if (in_array($offer, $proposals)) {
+                continue;
+            }
+            $proposals[] = $offer;
+        }
+        foreach ($requests as $request) {
+            if (in_array($request, $proposals)) {
+                continue;
+            }
+            $proposals[] = $request;
+        }
+
+        return $proposals;
+    }
+
+    public function findRegularAdWithoutAskSinceXDays(int $nbOfDays = null): ?array
+    {
+        $now = (new \DateTime('now'));
+        $createdDate = $now->modify('-'.$nbOfDays.' days')->format('Y-m-d');
+
+        $stmt = $this->entityManager->getConnection()->prepare(
+            "SELECT proposal.id AS proposal_id,
+            count(DISTINCT ask.id) AS nb_ask
+            FROM proposal
+            INNER JOIN criteria ON proposal.criteria_id = criteria.id
+            INNER JOIN matching ON matching.proposal_offer_id = proposal.id
+            LEFT JOIN ask ON ask.matching_id = matching.id
+            WHERE date(proposal.created_date) = '".$createdDate."' AND criteria.frequency = 2 AND proposal.private = 0
+            GROUP BY proposal.id
+            HAVING nb_ask = 0;"
+        );
+        $stmt->execute();
+        $offers = $stmt->fetchAll();
+
+        $stmt = $this->entityManager->getConnection()->prepare(
+            "SELECT proposal.id AS proposal_id,
+            count(DISTINCT ask.id) AS nb_ask
+            FROM proposal
+            INNER JOIN criteria ON proposal.criteria_id = criteria.id
+            INNER JOIN matching ON matching.proposal_request_id = proposal.id
+            LEFT JOIN ask ON ask.matching_id = matching.id
+            WHERE date(proposal.created_date) = '".$createdDate."' AND criteria.frequency = 2 AND proposal.private = 0
+            GROUP BY proposal.id
+            HAVING nb_ask = 0;"
+        );
+        $stmt->execute();
+        $requests = $stmt->fetchAll();
+
+        $proposals = [];
+        foreach ($offers as $offer) {
+            if (in_array($offer, $proposals)) {
+                continue;
+            }
+            $proposals[] = $offer;
+        }
+        foreach ($requests as $request) {
+            if (in_array($request, $proposals)) {
+                continue;
+            }
+            $proposals[] = $request;
+        }
+
+        return $proposals;
+    }
+
     /**
      * Build the regular where part for a punctual proposal.
      *
@@ -1431,7 +1547,7 @@ class ProposalRepository
         }
 
         $regularAndWhere .= ' and (c.frequency='.Criteria::FREQUENCY_REGULAR.' and ';
-        //$regularAndWhere .= "c.fromDate <= '".$day->format('Y-m-d')."' and ";
+        // $regularAndWhere .= "c.fromDate <= '".$day->format('Y-m-d')."' and ";
         $regularAndWhere .= "c.toDate >= '".$day->format('Y-m-d')."'))";
 
         return [

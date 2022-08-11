@@ -1,0 +1,224 @@
+{# CAREFUL : Some client might need to replicate this template #}
+{% extends 'communicationAlt/fr/email/notification/base.html.twig' %}
+{% block body %}
+
+<table style="width:480px; font-family:{{api_env('EMAILS_FONT')}}, sans-serif;" cellpadding="0" cellspacing="0" summary="" border="0">
+    <tr style="margin-bottom:21px; margin-top:19px;">
+        <td align="center">
+            <table cellpadding="6" cellspacing="6" summary="" border="0">
+                <tr>
+                    <td align="center">
+                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:20px;" text-align="center" ><b>Encore un petit pas pour reprendre le covoiturage !</b></p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td align="center">
+            <table style="width:100%;" cellpadding="2" cellspacing="2" summary="" border="0" >
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td align="left">
+                        <p style="font-size:11px; margin-bottom:16px;">Bonjour {{context.user.givenName|capitalize}} {{context.user.shortFamilyName|capitalize}},</p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+
+    {# part 1 #}
+    <tr>
+        <td align="center">
+            <table style="width:100%;" cellpadding="2" cellspacing="2" summary="" border="0" >
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td align="left">
+                        <p style="font-size:11px; text-align: justify;">Cela fait six mois qu’on ne vous a plus vu covoiturer sur Rezo Mobicoop. Pourtant, la mobilité partagée est une solution clé pour faire face aux enjeux de demain. Par exemple, saviez-vous que le covoiturage vous permettait de :</p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <table cellpadding="4" cellspacing="4" summary="" border="0">
+                <tr>
+                    <td style="width:6px" >
+                        <p> </p>
+                    </td>
+                    <td align="center" valign="top">
+                        <img
+                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/greenArrow.png"
+                            style="border:0; height:9px; width:11px; background-color:transparent; vertical-align:top;"
+                        />
+                    </td>
+                    <td>
+                        <p style="font-size:11px; text-align: justify;">Économiser jusqu’à 2000 € par an.</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:6px" >
+                        <p> </p>
+                    </td>
+                    <td>
+                        <img
+                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/greenArrow.png"
+                            style="border:0; height:9px; width:11px; background-color:transparent; vertical-align:top;"
+                        />
+                    </td>
+                    <td>
+                        <p style="font-size:11px; text-align: justify;">Réduire votre empreinte carbone de 1,5 tonnes de CO2, soit l’équivalent d’environ 3 mois de chauffage au gaz, pas mal !</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:6px" >
+                        <p> </p>
+                    </td>
+                    <td align="left" valign="top">
+                        <img
+                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/greenArrow.png"
+                            style="border:0; height:9px; width:11px; background-color:transparent; vertical-align:top;"
+                        />
+                    </td>
+                    <td>
+                        <p style="font-size:11px; text-align: justify;">Limiter les embouteillages et la mauvaise humeur qui en découle !</p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+     <tr>
+        <td align="center">
+            <table style="width:100%;" cellpadding="2" cellspacing="2" summary="" border="0" >
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td align="left">
+                        <p style="font-size:11px; text-align: justify;">En publiant une nouvelle annonce, vous serez alerté des covoiturages qui pourraient vous intéresser :</p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <table cellpadding="6" cellspacing="6" summary="" border="0">
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td align="center" style="width:100%;">
+                        <a href="{{api_env('EMAILS_PLATFORM_URL')}}/covoiturage/publierannonce" style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">
+                            <img
+                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/buttons/publishAd.png"
+                            style="border:0; height:26px; width:156px; background-color:transparent; vertical-align:top;"
+                        />
+                        </a>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="height:15px">
+            <p> </p>
+        </td>
+    </tr>
+
+
+{# part 2 #}
+    <tr>
+        <td align="center">
+            <table style="width:100%;" cellpadding="2" cellspacing="2" summary="" border="0" >
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td align="left">
+                        <p style="font-size:11px; text-align: justify;">Vous êtes maintenant plus de 550 000 covoitureurs et covoitureuses sur notre plateforme, votre implication compte alors n’hésitez pas à mettre à jour vos annonces ! Mais peut-être que nous manquons encore de covoitureurs autour de vous ? Voici quelques pistes pour développer la mobilité partagée :</p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <table cellpadding="4" cellspacing="4" summary="" border="0">
+                <tr>
+                    <td style="width:6px" >
+                        <p> </p>
+                    </td>
+                    <td align="center" valign="top">
+                        <img
+                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/greenArrow.png"
+                            style="border:0; height:9px; width:11px; background-color:transparent; vertical-align:top;"
+                        />
+                    </td>
+                    <td>
+                        <p style="font-size:11px; text-align: justify;"><b>En parler à votre entreprise.</b> La loi LOM oblige les entreprises de plus de 50 salariés à mettre en place des solutions pour les déplacements domicile-travail.</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:6px" >
+                        <p> </p>
+                    </td>
+                    <td>
+                        <img
+                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/greenArrow.png"
+                            style="border:0; height:9px; width:11px; background-color:transparent; vertical-align:top;"
+                        />
+                    </td>
+                    <td>
+                        <p style="font-size:11px; text-align: justify;"><b>Utilisez notre</b>  <a href="https://cloud.mobicoop.org/index.php/s/MHxrrMN2gNaRB4t" style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">boîte à outils</a>, notamment nos affiches et des textes pour interpeller vos élus ou votre entourage.</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:6px" >
+                        <p> </p>
+                    </td>
+                    <td align="left" valign="top">
+                        <img
+                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/greenArrow.png"
+                            style="border:0; height:9px; width:11px; background-color:transparent; vertical-align:top;"
+                        />
+                    </td>
+                    <td>
+                        <p style="font-size:11px; text-align: justify;">Faites du <a href="{{api_env('EMAILS_PLATFORM_URL')}}/covoiturages-evenements" style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">covoiturage pour vos événements</a> <b>privés et grand public ! Parlez-en aux organisateurs d’événements proches de vous.</b></p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="height:15px">
+            <p> </p>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <table>
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td align="center" style="width:100%;">
+                        <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">Bon covoiturage sur Rezo Mobicoop !</b></p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="height:15px">
+            <p> </p>
+        </td>
+    </tr>
+
+</table>
+{% endblock %}

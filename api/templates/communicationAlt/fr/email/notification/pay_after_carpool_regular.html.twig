@@ -6,7 +6,7 @@
     <tr style="margin-bottom:21px; margin-top:19px;">
         <td align="center">
             <table cellpadding="6" cellspacing="6" summary="" border="0">
-                <tr> 
+                <tr>
                     <td align="center">
                         <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:20px;" text-align="center" ><b>Avez-vous réglé les covoiturages de la semaine passée ?</b></p>
                     </td>
@@ -22,7 +22,7 @@
                         <p> </p>
                     </td>
                     <td align="left">
-                        <p style="font-size:11px; margin-bottom:16px;">Bonjour {{recipient.givenName|capitalize}} {{recipient.shortFamilyName|capitalize}},</p>
+                        <p style="font-size:11px; margin-bottom:16px;">Bonjour {{context.creditor.givenName|capitalize}} {{context.creditor.shortFamilyName|capitalize}},</p>
                     </td>
                 </tr>
             </table>
@@ -45,7 +45,7 @@
     <tr>
         <td style="height:15px">
             <p> </p>
-        </td>    
+        </td>
     </tr>
     <tr>
         <td align="center">
@@ -64,7 +64,7 @@
     <tr>
         <td style="height:15px">
             <p> </p>
-        </td>    
+        </td>
     </tr>
     <tr>
         <td align="center">
@@ -85,7 +85,7 @@
     <tr>
         <td style="height:15px">
             <p> </p>
-        </td>    
+        </td>
     </tr>
      <tr>
         <td align="center">
@@ -104,7 +104,7 @@
     <tr>
         <td style="height:15px">
             <p> </p>
-        </td>    
+        </td>
     </tr>
     <tr>
         <td align="center">
@@ -125,7 +125,7 @@
      <tr>
         <td style="height:15px">
             <p> </p>
-        </td>    
+        </td>
     </tr>
     <tr>
         <td align="center">
@@ -144,7 +144,7 @@
     <tr>
         <td style="height:15px">
             <p> </p>
-        </td>    
+        </td>
     </tr>
 </table>
 {% endblock %}

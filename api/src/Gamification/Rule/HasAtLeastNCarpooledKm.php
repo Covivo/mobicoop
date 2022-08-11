@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Gamification\Rule;
 
@@ -29,15 +29,16 @@ use App\Gamification\Interfaces\GamificationRuleInterface;
 use App\Payment\Entity\CarpoolItem;
 
 /**
- * Check if the user has at least carpooled N km
+ * Check if the user has at least carpooled N km.
  */
 class HasAtLeastNCarpooledKm implements GamificationRuleInterface
 {
     /**
-     * has at least N carpooled Km rule
+     * has at least N carpooled Km rule.
      *
      * @param $log
      * @param $sequenceItem
+     *
      * @return bool
      */
     public function execute($log, $sequenceItem)
@@ -46,14 +47,14 @@ class HasAtLeastNCarpooledKm implements GamificationRuleInterface
         $user = $log->getUser();
         // we get all user's asks
         $asks = array_merge($user->getAsks(), $user->getAsksRelated());
-        $carpooledKm = null;
+        $carpooledKm = 0;
         foreach ($asks as $ask) {
-            if ($ask->getStatus() == Ask::STATUS_ACCEPTED_AS_DRIVER || $ask->getStatus() == Ask::STATUS_ACCEPTED_AS_PASSENGER) {
+            if (Ask::STATUS_ACCEPTED_AS_DRIVER == $ask->getStatus() || Ask::STATUS_ACCEPTED_AS_PASSENGER == $ask->getStatus()) {
                 $carpoolItems = $ask->getCarpoolItems();
-                $numberOfTravel = null;
+                $numberOfTravel = 0;
                 foreach ($carpoolItems as $carpoolItem) {
-                    if ($carpoolItem->getItemStatus() == CarpoolItem::STATUS_REALIZED) {
-                        $numberOfTravel = + 1;
+                    if (CarpoolItem::STATUS_REALIZED == $carpoolItem->getItemStatus()) {
+                        ++$numberOfTravel;
                     }
                 }
                 $carpooledKm = $carpooledKm + ($ask->getMatching()->getCommonDistance() * $numberOfTravel);
@@ -64,11 +65,13 @@ class HasAtLeastNCarpooledKm implements GamificationRuleInterface
             if (($carpooledKm / 1000) >= $sequenceItem->getValue()) {
                 return true;
             }
+
             return false;
         }
         if (($carpooledKm / 1000) >= $sequenceItem['si_value']) {
             return true;
         }
+
         return false;
     }
 }
