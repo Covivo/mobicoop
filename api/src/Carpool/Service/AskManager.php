@@ -249,6 +249,8 @@ class AskManager
                     }
                 }
             }
+        } elseif ($ad->getOutwardTime()) {
+            $criteria->setFromTime(new DateTime($ad->getOutwardTime()));
         }
 
         $ask->setCriteria($criteria);

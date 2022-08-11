@@ -2089,7 +2089,7 @@ class User implements UserInterface, EquatableInterface
         return $this->hitchHikeDriver;
     }
 
-    public function setHitchHikeDriver(bool $isHitchHikeDriver): self
+    public function setHitchHikeDriver(?bool $isHitchHikeDriver): self
     {
         $this->hitchHikeDriver = $isHitchHikeDriver;
 
@@ -2101,7 +2101,7 @@ class User implements UserInterface, EquatableInterface
         return $this->hitchHikePassenger;
     }
 
-    public function setHitchHikePassenger(bool $isHitchHikePassenger): self
+    public function setHitchHikePassenger(?bool $isHitchHikePassenger): self
     {
         $this->hitchHikePassenger = $isHitchHikePassenger;
 
