@@ -48,7 +48,7 @@
             <v-list-item-avatar
               class="grey lighten-2 ml-1 mr-1"
               contain
-              :size="avatarSize" 
+              :size="avatarSize"
               v-on="on"
             >
               <v-img
@@ -65,7 +65,7 @@
             </v-list-item-avatar>
           </template>
           <span>
-            {{ community.name }}</span> 
+            {{ community.name }}</span>
         </v-tooltip>
       </v-col>
       <v-col
@@ -150,9 +150,9 @@
         <v-card-text class="py-0">
           <em>{{ externalOrigin }}</em>
         </v-card-text>
-      </v-col>  
+      </v-col>
     </v-row>
-    
+
     <v-dialog
       v-model="dialogExternalContact"
       width="80%"
@@ -164,7 +164,7 @@
         </v-card-title>
 
         <v-card-text>
-          <p>{{ $t('externalResult.contact.popup.intro', {origin:externalOrigin}) }}.</p>
+          <p>{{ $t('externalResult.contact.popup.intro', {origin:externalOrigin, platform: platformName}) }}.</p>
           <p>
             {{ $t('externalResult.contact.popup.instructions.line1') }}.<br>
             {{ $t('externalResult.contact.popup.instructions.line2') }}.
@@ -252,7 +252,7 @@ export default {
     externalUrl: {
       type: String,
       default: null
-    },    
+    },
     externalOrigin: {
       type: String,
       default: null
@@ -272,7 +272,11 @@ export default {
     ageDisplay: {
       type: Boolean,
       default: false
-    }
+    },
+    platformName: {
+      type: String,
+      default: ""
+    },
   },
   data() {
     return {
@@ -296,7 +300,7 @@ export default {
         return '35';
       default:
         return '20';
-      } 
+      }
     },
     defaultTextContact(){
 
@@ -348,11 +352,11 @@ export default {
 
           // Message ok or error
           (response.data.error) ? this.showSendError = true : this.showSendSuccess = true;
-          
+
         })
         .catch(function (error) {
           console.error(error);
-        });     
+        });
     }
   }
 };

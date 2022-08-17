@@ -10,17 +10,17 @@
             },
             "popup":{
                 "title":"Contacter",
-                "intro":"Cette annonce ne provient pas de notre site de covoiturage mais du site partenaire {origin}",
+                "intro":"Cette annonce ne provient pas de {platform} de covoiturage mais du site partenaire {origin}",
                 "instructions":{
-                    "line1":"Merci de compléter ou de modifier le message ci-dessous.",
-                    "line2":"Pensez à laisser au moins un moyen de contact, tel que votre addresse email et/ou numéro de téléphone afin que le covoitureur du site partenaire puisse vous contacter"
+                    "line1":"Merci de compléter ou de modifier le message ci-dessous",
+                    "line2":"Pensez à laisser au moins un moyen de contact, tel que votre adresse email et/ou votre numéro de téléphone afin que la personne du site partenaire puisse vous contacter"
                 },
                 "cancel":"Annuler",
                 "textarea":{
                     "label":"Votre message",
                     "content":{
                         "hello":"Bonjour",
-                        "carpool":"Votre covoiturage entre {origin} et {destination} est susceptible de m'intéresser. Nous ne sommes pas inscrits auprès du même réseaux de covoiturage c'est pourquoi je vous laisse directement mes coordonnées pour que vous puissiez me contacter",
+                        "carpool":"Votre covoiturage entre {origin} et {destination} est susceptible de m'intéresser. Nous ne sommes pas inscrit·e·s auprès du même réseau de covoiturage c'est pourquoi je vous laisse directement mes coordonnées pour que vous puissiez me contacter",
                         "name":"Mon nom est {name}",
                         "email":"Mon mail est {email}",
                         "phone":"Mon numéro de téléphone est le {phone}",
