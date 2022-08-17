@@ -81,10 +81,10 @@ then
         cp /var/www/$VERSION/$INSTANCE/client/config/geocomplete/palette.json.dist /var/www/$VERSION/$INSTANCE/client/config/geocomplete/palette.json
     fi
 
-	# check automated tasks file
-	AUTOMATED_TASKS_FILE=/var/www/$VERSION/$INSTANCE/api/config/params/tasks.json
-	if [ ! -f "$AUTOMATED_TASKS_FILE" ]; then
-        cp /var/www/$VERSION/$INSTANCE/api/config/params/tasks.json.dist /var/www/$VERSION/$INSTANCE/api/config/params/tasks.json
+	# check automated commands file
+	AUTOMATED_COMMANDS_FILE=/var/www/$VERSION/$INSTANCE/api/config/params/commands.json
+	if [ ! -f "$AUTOMATED_COMMANDS_FILE" ]; then
+        cp /var/www/$VERSION/$INSTANCE/api/config/params/commands.json.dist /var/www/$VERSION/$INSTANCE/api/config/params/commands.json
     fi
 
     # Migrations
@@ -183,10 +183,10 @@ else
         cp /var/www/$INSTANCE/$VERSION/client/config/geocomplete/palette.json.dist /var/www/$INSTANCE/$VERSION/client/config/geocomplete/palette.json
     fi
 
-	# check automated tasks file
-	AUTOMATED_TASKS_FILE=/var/www/$INSTANCE/$VERSION/api/config/params/tasks.json
-	if [ ! -f "$AUTOMATED_TASKS_FILE" ]; then
-        cp /var/www/$INSTANCE/$VERSION/api/config/params/tasks.json.dist /var/www/$INSTANCE/$VERSION/api/config/params/tasks.json
+	# check automated commands file
+	AUTOMATED_COMMANDS_FILE=/var/www/$INSTANCE/$VERSION/api/config/params/commands.json
+	if [ ! -f "$AUTOMATED_COMMANDS_FILE" ]; then
+        cp /var/www/$INSTANCE/$VERSION/api/config/params/commands.json.dist /var/www/$INSTANCE/$VERSION/api/config/params/commands.json
     fi
 
     # Migrations

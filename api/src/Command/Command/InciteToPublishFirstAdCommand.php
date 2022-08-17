@@ -23,13 +23,16 @@
 
 declare(strict_types=1);
 
-namespace App\Task;
+namespace App\Command;
 
 use App\User\Event\IncitateToPublishFirstAdEvent;
 use App\User\Repository\UserRepository;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class InciteToPublishFirstAdTask implements Task
+class InciteToPublishFirstAdCommand extends Command
 {
     public const RELAUNCH_DELAYS = [7, 20];
     private $userRepository;
@@ -39,9 +42,19 @@ class InciteToPublishFirstAdTask implements Task
     {
         $this->userRepository = $userRepository;
         $this->eventDispatcher = $eventDispatcher;
+
+        parent::__construct();
     }
 
-    public function execute(): int
+    protected function configure()
+    {
+        $this
+            ->setName('app:commands:incite-to-publish-first-ad')
+            ->setDescription('InciteToPublishFirstAdCommand')
+        ;
+    }
+
+    protected function execute(InputInterface $input, OutputInterface $output)
     {
         foreach (self::RELAUNCH_DELAYS as $delay) {
             $usersIds = $this->userRepository->findUserWithNoAdSinceXDays($delay);

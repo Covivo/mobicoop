@@ -23,32 +23,45 @@
 
 declare(strict_types=1);
 
-namespace App\Task;
+namespace App\Command;
 
-use App\User\Event\NoActivityRelaunch2Event;
+use App\User\Event\NoActivityRelaunch1Event;
 use App\User\Repository\UserRepository;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class NoActivityRelaunch2Task implements Task
+class NoActivityRelaunch1Command extends Command
 {
-    public const RELAUNCH_DELAY = 182;
+    public const RELAUNCH_DELAY = 60;
     private $userRepository;
     private $eventDispatcher;
 
     public function __construct(UserRepository $userRepository, EventDispatcherInterface $eventDispatcher)
     {
-        $this->askRepository = $userRepository;
+        $this->userRepository = $userRepository;
         $this->eventDispatcher = $eventDispatcher;
+
+        parent::__construct();
     }
 
-    public function execute(): int
+    protected function configure()
+    {
+        $this
+            ->setName('app:commands:no-activity-relaunch1')
+            ->setDescription('NoActivityRelaunch1Command')
+        ;
+    }
+
+    protected function execute(InputInterface $input, OutputInterface $output)
     {
         $users = $this->userRepository->findUserWithNoAdSinceXDays(self::RELAUNCH_DELAY);
 
         if (count($users) > 0) {
             foreach ($users as $user) {
-                $event = new NoActivityRelaunch2Event($user);
-                $this->eventDispatcher->dispatch(NoActivityRelaunch2Event::NAME, $event);
+                $event = new NoActivityRelaunch1Event($user);
+                $this->eventDispatcher->dispatch(NoActivityRelaunch1Event::NAME, $event);
             }
         }
 
@@ -56,8 +69,8 @@ class NoActivityRelaunch2Task implements Task
         if (count($usersIds) > 0) {
             foreach ($usersIds as $userId) {
                 $user = $this->userRepository->find($userId);
-                $event = new NoActivityRelaunch2Event($user);
-                $this->eventDispatcher->dispatch(NoActivityRelaunch2Event::NAME, $event);
+                $event = new NoActivityRelaunch1Event($user);
+                $this->eventDispatcher->dispatch(NoActivityRelaunch1Event::NAME, $event);
             }
         }
 

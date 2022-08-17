@@ -23,13 +23,16 @@
 
 declare(strict_types=1);
 
-namespace App\Task;
+namespace App\Command;
 
 use App\Carpool\Event\ProposalWillExpireEvent;
 use App\Carpool\Repository\ProposalRepository;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class ProposalWillExpireTask implements Task
+class ProposalWillExpireCommand extends Command
 {
     public const ALERT_DELAYS = [5, 14];
     private $proposalRepository;
@@ -39,9 +42,19 @@ class ProposalWillExpireTask implements Task
     {
         $this->proposalRepository = $proposalRepository;
         $this->eventDispatcher = $eventDispatcher;
+
+        parent::__construct();
     }
 
-    public function execute(): int
+    protected function configure()
+    {
+        $this
+            ->setName('app:commands:proposal-will-expire')
+            ->setDescription('ProposalWillExpireCommand')
+        ;
+    }
+
+    protected function execute(InputInterface $input, OutputInterface $output)
     {
         foreach (self::ALERT_DELAYS as $delay) {
             $proposals = $this->proposalRepository->findSoonExpiredAds($delay);

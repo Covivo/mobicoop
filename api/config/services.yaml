@@ -306,6 +306,45 @@ services:
       $carpoolNoticeableDetourDurationPercent: "%env(int:CARPOOL_NOTICEABLE_DETOUR_DURATION_PERCENT)%"
       $carpoolNoticeableDetourDistancePercent: "%env(int:CARPOOL_NOTICEABLE_DETOUR_DISTANCE_PERCENT)%"
 
+  # Commands
+  App\Command\CarpoolAskPostedRelaunch1Command:
+    tags:
+        - { name: 'console.command', command: 'app:commands:carpool-ask-posted-relaunch1' }
+  App\Command\CarpoolAskPostedRelaunch2Command:
+    tags:
+        - { name: 'console.command', command: 'app:commands:carpool-ask-posted-relaunch2' }
+  App\Command\CommunicationInternalMessageReceivedRelaunch1Command:
+    tags:
+        - { name: 'console.command', command: 'app:commands:communication-internal-message-received-relaunch1' }
+  App\Command\CommunicationInternalMessageReceivedRelaunch2Command:
+    tags:
+        - { name: 'console.command', command: 'app:commands:communication-internal-message-received-relaunch2' }
+  App\Command\InactiveAdRelaunchCommand:
+    tags:
+        - { name: 'console.command', command: 'app:commands:inactive-ad-relaunch' }
+  App\Command\InciteToPublishFirstAdCommand:
+    tags:
+        - { name: 'console.command', command: 'app:commands:incite-to-publish-first-ad' }
+  App\Command\NoActivityRelaunch1Command:
+    tags:
+        - { name: 'console.command', command: 'app:commands:no-activity-relaunch1' }
+  App\Command\NoActivityRelaunch2Command:
+    tags:
+        - { name: 'console.command', command: 'app:commands:no-activity-relaunch2' }
+  App\Command\ProposalWillExpireCommand:
+    tags:
+        - { name: 'console.command', command: 'app:commands:proposal-will-expire' }
+  App\Command\SendBoosterCommand:
+    tags:
+        - { name: 'console.command', command: 'app:commands:send-booster' }
+  App\Command\SendWelcomeEmailCommand:
+    tags:
+        - { name: 'console.command', command: 'app:commands:send-welcome-email' }
+
+  App\Command\ExecuteCommandsCommand:
+    arguments:
+      $schedule: "%env(json:file:resolve:AUTOMATED_COMMANDS)%"
+
   # Communication
   App\Communication\Controller\:
     resource: "../src/Communication/Controller"
@@ -392,6 +431,7 @@ services:
       $communicationFolder: "%env(resolve:COMMUNICATION_FOLDER)%"
       $emailTemplatePath: "%env(resolve:COMMUNICATION_TEMPLATE_EMAIL_PATH)%%env(resolve:NOTIFICATION_TEMPLATE_EMAIL_PATH)%"
       $emailTitleTemplatePath: "%env(resolve:COMMUNICATION_TEMPLATE_EMAIL_PATH)%%env(resolve:NOTIFICATION_TITLE_TEMPLATE_EMAIL_PATH)%"
+  
   # Community
   App\Community\Controller\:
     resource: "../src/Community/Controller"
@@ -878,11 +918,6 @@ services:
   App\Solidary\Admin\Service\SolidaryVolunteerManager:
     arguments:
       $fileFolder: "%env(string:SOLIDARY_FILE_FOLDER)%"
-
-  # Tasks
-  App\Task\TaskFactory:
-    arguments:
-      $schedule: "%env(json:file:resolve:AUTOMATED_TASKS)%"
 
   # User
   App\User\Admin\Service\UserManager:

@@ -23,41 +23,44 @@
 
 declare(strict_types=1);
 
-namespace App\Task;
+namespace App\Command;
 
-use App\User\Event\NoActivityRelaunch1Event;
+use App\User\Event\NewlyRegisteredUserEvent;
 use App\User\Repository\UserRepository;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class NoActivityRelaunch1Task implements Task
+class SendWelcomeEmailCommand extends Command
 {
-    public const RELAUNCH_DELAY = 60;
     private $userRepository;
     private $eventDispatcher;
 
     public function __construct(UserRepository $userRepository, EventDispatcherInterface $eventDispatcher)
     {
-        $this->askRepository = $userRepository;
+        $this->userRepository = $userRepository;
         $this->eventDispatcher = $eventDispatcher;
+
+        parent::__construct();
     }
 
-    public function execute(): int
+    protected function configure()
     {
-        $users = $this->userRepository->findUserWithNoAdSinceXDays(self::RELAUNCH_DELAY);
+        $this
+            ->setName('app:commands:send-welcome-email')
+            ->setDescription('SendWelcomeEmailCommand')
+        ;
+    }
+
+    protected function execute(InputInterface $input, OutputInterface $output)
+    {
+        $users = $this->userRepository->findNewlyRegisteredUsers();
 
         if (count($users) > 0) {
             foreach ($users as $user) {
-                $event = new NoActivityRelaunch1Event($user);
-                $this->eventDispatcher->dispatch(NoActivityRelaunch1Event::NAME, $event);
-            }
-        }
-
-        $usersIds = $this->userRepository->findUserWithOlderThanXDaysAd(self::RELAUNCH_DELAY);
-        if (count($usersIds) > 0) {
-            foreach ($usersIds as $userId) {
-                $user = $this->userRepository->find($userId);
-                $event = new NoActivityRelaunch1Event($user);
-                $this->eventDispatcher->dispatch(NoActivityRelaunch1Event::NAME, $event);
+                $event = new NewlyRegisteredUserEvent($user);
+                $this->eventDispatcher->dispatch(NewlyRegisteredUserEvent::NAME, $event);
             }
         }
 
