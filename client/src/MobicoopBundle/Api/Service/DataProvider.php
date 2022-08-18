@@ -203,7 +203,7 @@ class DataProvider
         $this->deserializer = $deserializer;
         $this->format = self::RETURN_OBJECT;
 
-        $this->client = new Client(['base_uri' => $this->uri]);
+        $this->client = new Client(['base_uri' => $this->uri, 'verify' => false]);
     }
 
     /**
@@ -386,6 +386,7 @@ class DataProvider
          * see https://medium.com/@rebolon/the-symfony-serializer-a-great-but-complex-component-fbc09baa65a0
          */
         // return $this->serializer->deserialize((string) $response->getBody(), $this->class, self::SERIALIZER_ENCODER);
+
         try {
             if (self::RETURN_ARRAY == $this->format) {
                 $headers = $this->getHeaders();
