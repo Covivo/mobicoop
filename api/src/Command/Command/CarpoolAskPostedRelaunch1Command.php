@@ -21,20 +21,30 @@
  *    LICENSE
  */
 
-namespace App\Task\Command;
+declare(strict_types=1);
 
-use App\Task\TaskFactory;
+namespace App\Command;
+
+use App\Carpool\Event\CarpoolAskPostedRelaunch1Event;
+use App\Carpool\Repository\AskRepository;
+use App\Carpool\Service\AskManager;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class ExecuteTasksCommand extends Command
+class CarpoolAskPostedRelaunch1Command extends Command
 {
-    private $taskFactory;
+    public const RELAUNCH_DELAY = 2;
+    private $askRepository;
+    private $eventDispatcher;
+    private $askManager;
 
-    public function __construct(TaskFactory $taskFactory)
+    public function __construct(AskRepository $askRepository, EventDispatcherInterface $eventDispatcher, AskManager $askManager)
     {
-        $this->taskFactory = $taskFactory;
+        $this->askRepository = $askRepository;
+        $this->eventDispatcher = $eventDispatcher;
+        $this->askManager = $askManager;
 
         parent::__construct();
     }
@@ -42,19 +52,23 @@ class ExecuteTasksCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('app:tasks:execute')
-            ->setDescription('Execute tasks at a given time')
+            ->setName('app:commands:carpool-ask-posted-relaunch1')
+            ->setDescription('CarpoolAskPostedRelaunch1Command')
         ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $result = 0;
-        $tasks = $this->taskFactory->create();
-        foreach ($tasks as $task) {
-            $result += $task->execute();
+        $asks = $this->askRepository->findPendingAsksSinceXDays(self::RELAUNCH_DELAY);
+
+        if (count($asks) > 0) {
+            foreach ($asks as $ask) {
+                $ad = $this->askManager->getAskFromAd($ask->getId(), $ask->getUser()->getId());
+                $event = new CarpoolAskPostedRelaunch1Event($ad);
+                $this->eventDispatcher->dispatch(CarpoolAskPostedRelaunch1Event::NAME, $event);
+            }
         }
 
-        return !(0 == $result);
+        return 0;
     }
 }

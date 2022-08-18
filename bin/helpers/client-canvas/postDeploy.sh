@@ -77,10 +77,10 @@ then
         cp /var/www/$VERSION/$INSTANCE/client/geocomplete/palette.json.dist /var/www/$VERSION/$INSTANCE/config/geocomplete/palette.json
     fi
 
-	# check automated tasks file
-	AUTOMATED_TASKS_FILE=/var/www/$VERSION/$INSTANCE/mobicoop-platform/api/config/params/tasks.json
-	if [ ! -f "$AUTOMATED_TASKS_FILE" ]; then
-        cp /var/www/$VERSION/$INSTANCE/mobicoop-platform/api/config/params/tasks.json.dist /var/www/$VERSION/$INSTANCE/mobicoop-platform/api/config/params/tasks.json
+	# check automated commands file
+	AUTOMATED_COMMANDS_FILE=/var/www/$VERSION/$INSTANCE/mobicoop-platform/api/config/params/commands.json
+	if [ ! -f "$AUTOMATED_COMMANDS_FILE" ]; then
+        cp /var/www/$VERSION/$INSTANCE/mobicoop-platform/api/config/params/commands.json.dist /var/www/$VERSION/$INSTANCE/mobicoop-platform/api/config/params/commands.json
     fi
 
     # check env files
@@ -190,10 +190,10 @@ else
         cp /var/www/$INSTANCE/$VERSION/config/geocomplete/palette.json.dist /var/www/$INSTANCE/$VERSION/config/geocomplete/palette.json
     fi
 
-	# check automated tasks file
-	AUTOMATED_TASKS_FILE=/var/www/$INSTANCE/$VERSION/mobicoop-platform/api/config/params/tasks.json
-	if [ ! -f "$AUTOMATED_TASKS_FILE" ]; then
-        cp /var/www/$INSTANCE/$VERSION/mobicoop-platform/api/config/params/tasks.json.dist /var/www/$INSTANCE/$VERSION/mobicoop-platform/api/config/params/tasks.json
+	# check automated commands file
+	AUTOMATED_COMMANDS_FILE=/var/www/$INSTANCE/$VERSION/mobicoop-platform/api/config/params/commands.json
+	if [ ! -f "$AUTOMATED_COMMANDS_FILE" ]; then
+        cp /var/www/$INSTANCE/$VERSION/mobicoop-platform/api/config/params/commands.json.dist /var/www/$INSTANCE/$VERSION/mobicoop-platform/api/config/params/commands.json
     fi
 
     # check env files

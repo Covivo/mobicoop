@@ -23,14 +23,18 @@
 
 declare(strict_types=1);
 
-namespace App\Task;
+namespace App\Command;
 
-use App\User\Event\NewlyRegisteredUserEvent;
+use App\User\Event\NoActivityRelaunch2Event;
 use App\User\Repository\UserRepository;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class SendWelcomeEmailTask implements Task
+class NoActivityRelaunch2Command extends Command
 {
+    public const RELAUNCH_DELAY = 182;
     private $userRepository;
     private $eventDispatcher;
 
@@ -38,16 +42,35 @@ class SendWelcomeEmailTask implements Task
     {
         $this->userRepository = $userRepository;
         $this->eventDispatcher = $eventDispatcher;
+
+        parent::__construct();
     }
 
-    public function execute(): int
+    protected function configure()
     {
-        $users = $this->userRepository->findNewlyRegisteredUsers();
+        $this
+            ->setName('app:commands:no-activity-relaunch2')
+            ->setDescription('NoActivityRelaunch2Command')
+        ;
+    }
+
+    protected function execute(InputInterface $input, OutputInterface $output)
+    {
+        $users = $this->userRepository->findUserWithNoAdSinceXDays(self::RELAUNCH_DELAY);
 
         if (count($users) > 0) {
             foreach ($users as $user) {
-                $event = new NewlyRegisteredUserEvent($user);
-                $this->eventDispatcher->dispatch(NewlyRegisteredUserEvent::NAME, $event);
+                $event = new NoActivityRelaunch2Event($user);
+                $this->eventDispatcher->dispatch(NoActivityRelaunch2Event::NAME, $event);
+            }
+        }
+
+        $usersIds = $this->userRepository->findUserWithOlderThanXDaysAd(self::RELAUNCH_DELAY);
+        if (count($usersIds) > 0) {
+            foreach ($usersIds as $userId) {
+                $user = $this->userRepository->find($userId);
+                $event = new NoActivityRelaunch2Event($user);
+                $this->eventDispatcher->dispatch(NoActivityRelaunch2Event::NAME, $event);
             }
         }
 

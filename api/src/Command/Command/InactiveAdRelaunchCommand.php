@@ -23,13 +23,16 @@
 
 declare(strict_types=1);
 
-namespace App\Task;
+namespace App\Command;
 
 use App\Carpool\Event\InactiveAdRelaunchEvent;
 use App\Carpool\Repository\ProposalRepository;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class InactiveAdRelaunchTask implements Task
+class InactiveAdRelaunchCommand extends Command
 {
     public const RELAUNCH_DELAY = 15;
     private $proposalRepository;
@@ -39,9 +42,19 @@ class InactiveAdRelaunchTask implements Task
     {
         $this->proposalRepository = $proposalRepository;
         $this->eventDispatcher = $eventDispatcher;
+
+        parent::__construct();
     }
 
-    public function execute(): int
+    protected function configure()
+    {
+        $this
+            ->setName('app:commands:inactive-ad-relaunch')
+            ->setDescription('InactiveAdRelaunchCommand')
+        ;
+    }
+
+    protected function execute(InputInterface $input, OutputInterface $output)
     {
         $proposals = $this->proposalRepository->findInactiveAdsSinceXDays(self::RELAUNCH_DELAY);
 

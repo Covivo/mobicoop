@@ -23,16 +23,19 @@
 
 declare(strict_types=1);
 
-namespace App\Task;
+namespace App\Command;
 
-use App\Carpool\Event\CarpoolAskPostedRelaunch1Event;
+use App\Carpool\Event\CarpoolAskPostedRelaunch2Event;
 use App\Carpool\Repository\AskRepository;
 use App\Carpool\Service\AskManager;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class SendBoosterTask implements Task
+class CarpoolAskPostedRelaunch2Command extends Command
 {
-    public const RELAUNCH_DELAY = 2;
+    public const RELAUNCH_DELAY = 5;
     private $askRepository;
     private $eventDispatcher;
     private $askManager;
@@ -42,17 +45,27 @@ class SendBoosterTask implements Task
         $this->askRepository = $askRepository;
         $this->eventDispatcher = $eventDispatcher;
         $this->askManager = $askManager;
+
+        parent::__construct();
     }
 
-    public function execute(): int
+    protected function configure()
+    {
+        $this
+            ->setName('app:commands:carpool-ask-posted-relaunch2')
+            ->setDescription('CarpoolAskPostedRelaunch2Command')
+        ;
+    }
+
+    protected function execute(InputInterface $input, OutputInterface $output)
     {
         $asks = $this->askRepository->findPendingAsksSinceXDays(self::RELAUNCH_DELAY);
 
         if (count($asks) > 0) {
             foreach ($asks as $ask) {
                 $ad = $this->askManager->getAskFromAd($ask->getId(), $ask->getUser()->getId());
-                $event = new CarpoolAskPostedRelaunch1Event($ad);
-                $this->eventDispatcher->dispatch(CarpoolAskPostedRelaunch1Event::NAME, $event);
+                $event = new CarpoolAskPostedRelaunch2Event($ad);
+                $this->eventDispatcher->dispatch(CarpoolAskPostedRelaunch2Event::NAME, $event);
             }
         }
 
