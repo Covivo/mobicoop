@@ -874,6 +874,10 @@ services:
     resource: "../src/Solidary/Admin/Controller"
     tags: ["controller.service_arguments"]
 
+  App\Solidary\EventSubscriber\SolidarySubscriber:
+    arguments:
+      $isOperatorNotificationAllowed: "%env(bool:resolve:SOLIDARY_ON_DEMAND_CREATE_NOTIFY_MANAGER)%"
+
   App\Solidary\Service\SolidaryMatcher:
     arguments:
       $params:
