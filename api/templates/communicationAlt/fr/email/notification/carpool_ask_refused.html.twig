@@ -32,7 +32,7 @@
                     </td>
                     <td align="left">
                         <p style="font-size:11px; margin-bottom:16px;">Bonjour {{recipient.givenName|capitalize}} {{recipient.shortFamilyName|capitalize}},</p>
-                        <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{sender.givenName|capitalize}} {{sender.shortFamilyName|capitalize}}</b> vous propose de covoiturer avec lui/elle !</p>
+                        <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{sender.givenName|capitalize}} {{sender.shortFamilyName|capitalize}}</b> n'a pas validé le covoiturage pour le trajet suivant:</p>
                     </td>
                 </tr>
             </table>
@@ -123,6 +123,40 @@
                     </td>
                     <td align="left">
                          <p style="font-size:11px;">Prix: <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{ad.results[0].roundedPrice}}€</b></p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <table cellpadding="4" cellspacing="6" summary="" border="0">
+                <tr>
+                    <td style="width:20px">
+                        <p> </p>
+                    </td>
+                    <td>
+                        <img
+                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/origin.png"
+                            style="border:0; height:19px; width:19px; background-color:transparent; vertical-align:top;"
+                        />
+                    </td>
+                    <td>
+                        <p style="font-size:11px; color:{{api_env('EMAILS_COLOR_SECONDARY')}}"><b>{{ outwardOrigin.address.displayLabel[0] }}</b></p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:20px">
+                        <p> </p>
+                    </td>
+                    <td>
+                        <img
+                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/destination.png"
+                            style="border:0; height:19px; width:19px; background-color:transparent; vertical-align:top;"
+                        />
+                    </td>
+                    <td>
+                        <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}};"> {{ outwardDestination.address.displayLabel[0] }}</b></p>
                     </td>
                 </tr>
             </table>
