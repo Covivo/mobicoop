@@ -1,1 +1,75 @@
-{}
+{
+  "subtitleAnimation": "Supports d'animation",
+  "subtitleVisual": "Supports visuels",
+  "itemsAnimation": [
+    {
+      "title": "Fiche données de mobilité",
+      "image": "images/communication/RZM_fiches_donnees.jpg",
+      "textDownload": "> Téléchargez",
+      "downloadLink": "images/communication/RZM_fiches_donnees.pdf"
+    },
+    {
+      "title": "Jeux",
+      "image": "images/communication/thumbnail_games.png",
+      "textDownload": "> Téléchargez",
+      "downloadLink": "client/public/images/communication/Mobicoop-Jeux.zip"
+    },
+    {
+      "title": "Interpeller autour de soi",
+      "image": "images/communication/thumbail_partager_autour_de_soi.png",
+      "textDownload": "> Téléchargez",
+      "downloadLink": "images/communication/Mobicoop-Partager_le_projet_autour_de_soi.pdf"
+    }
+  ],
+  "itemsVisual": [
+    {
+      "title": "Affiche Rezo Mobicoop",
+      "image": "images/communication/Vignette_Affiche.jpg",
+      "textLogo1": "40x60",
+      "link1": "images/communication/RZM_Affiche_40x60_Print.pdf",
+      "textLogo2": "A4",
+      "link2": "images/communication/RZM_Affiche_A4_Print.pdf",
+      "textLogo3": "A3",
+      "link3": "images/communication/RZM_Affiche_A3_Print.pdf"
+    },
+    {
+      "title": "Flyer Rezo Mobicoop",
+      "image": "images/communication/RZM_Flyer_Vignette.jpg",
+      "textLogo1": "Pour imprimer",
+      "link1": "images/communication/RZM_Flyer_Print.pdf",
+      "textLogo2": "Pour le Web",
+      "link2": "images/communication/RZM_Flyer_web.pdf"
+    },
+    {
+      "title": "Logos",
+      "image": "images/communication/Logo_logo.jpg",
+      "textDownload": "> Téléchargez",
+      "downloadLink": "images/communication/Kit_logos.zip"
+    },
+    {
+      "title": "Stickers",
+      "image": "images/communication/RZM_Stickers_Rond_Vignette.jpg",
+      "textDownload": "> Téléchargez",
+      "downloadLink": "images/communication/RZM_Stickers_Rond_95mm.pdf"
+    },
+    {
+      "title": "A coller près de chez soi",
+      "image": "images/communication/thumbnail_a_coller_pres_de_chez_soi.png",
+      "textDownload": "> Téléchargez",
+      "downloadLink": "client/public/images/communication/Mobicoop-A_coller_pres_de_chez_soi.zip"
+    },
+    {
+      "title": "Vidéo de présentation de Mobicoop",
+      "image": "images/communication/thumbnail_video_presentation.jpg",
+      "textDownload": "Consultez toutes nos vidéos sur la chaine Youtube",
+      "downloadLink": "https://www.youtube.com/channel/UCf3AcIf-PCt6FqK09YL1sCw/videos",
+      "textLogo1": "Téléchargez la vidéo de présentation",
+      "link1": "https://youtu.be/tbXcNO7iJx8"
+    },
+    {
+      "title": "Vidéo contre l'autosolisme",
+      "textDownload": "> Télécharger",
+      "downloadLink": ""
+    }
+  ]
+}
