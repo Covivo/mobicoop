@@ -37,8 +37,6 @@
           :attribution-copyright="attributionCopyright"
           :markers-draggable="false"
           :relay-points="true"
-          @SelectedAsDestination="selectedAsDestination"
-          @SelectedAsOrigin="selectedAsOrigin"
         />
       </v-col>
     </v-row>
