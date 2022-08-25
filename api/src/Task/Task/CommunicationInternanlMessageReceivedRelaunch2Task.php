@@ -23,7 +23,7 @@
 
 declare(strict_types=1);
 
-namespace App\Task;
+namespace App\Task\Task;
 
 use App\Communication\Event\InternalMessageReceivedRelaunch2Event;
 use App\Communication\Repository\MessageRepository;

@@ -23,7 +23,7 @@
 
 declare(strict_types=1);
 
-namespace App\Task;
+namespace App\Task\Task;
 
 use App\Carpool\Event\CarpoolAskPostedRelaunch1Event;
 use App\Carpool\Repository\AskRepository;
