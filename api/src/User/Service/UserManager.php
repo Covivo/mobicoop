@@ -807,21 +807,21 @@ class UserManager
         }
 
         switch ($type) {
-                case Message::TYPE_DIRECT:
-                    $messages = $this->parseThreadsDirectMessages($user, $threads);
+            case Message::TYPE_DIRECT:
+                $messages = $this->parseThreadsDirectMessages($user, $threads);
 
                 break;
 
-                case Message::TYPE_SOLIDARY:
-                    $messages = $this->parseThreadsSolidaryMessages($user, $threads);
+            case Message::TYPE_SOLIDARY:
+                $messages = $this->parseThreadsSolidaryMessages($user, $threads);
 
-                    break;
+                break;
 
-                case Message::TYPE_CARPOOL:
-                    $messages = $this->parseThreadsCarpoolMessages($user, $threads);
+            case Message::TYPE_CARPOOL:
+                $messages = $this->parseThreadsCarpoolMessages($user, $threads);
 
-                    break;
-            }
+                break;
+        }
 
         return $messages;
     }
@@ -1748,11 +1748,11 @@ class UserManager
             switch ($ssoUser->getGender()) {
                 case SsoUser::GENDER_MALE:$user->setGender(User::GENDER_MALE);
 
-break;
+                    break;
 
                 case SsoUser::GENDER_FEMALE:$user->setGender(User::GENDER_FEMALE);
 
-break;
+                    break;
 
                 default: $user->setGender(User::GENDER_OTHER);
             }
@@ -2093,7 +2093,16 @@ break;
      */
     private function checkBirthDate(User $user): User
     {
-        if ($user->getBirthDate()->diff(new \DateTime('now'))->y >= $this->userMinAge) {
+        if (is_null($user->getBirthDate()) || '' === $user->getBirthDate()) {
+            return $user;
+        }
+
+        $today = new \DateTime('now');
+        if ($user->getBirthDate()->format('Y-m-d') == $today->format('Y-m-d')) {
+            return $user;
+        }
+
+        if ($user->getBirthDate()->diff($today)->y >= $this->userMinAge) {
             return $user;
         }
 
