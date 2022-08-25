@@ -4,9 +4,9 @@
   "itemsAnimation": [
     {
       "title": "Fiche données de mobilité",
-      "image": "images/communication/RZM_fiches_donnees.jpg",
+      "image": "images/communication/thumbnail_fiche_donnees_de_mobilite.jpg",
       "textDownload": "> Téléchargez",
-      "downloadLink": "images/communication/RZM_fiches_donnees.pdf"
+      "downloadLink": "images/communication/RZM_Fiche_donnees_mobilite.pdf"
     },
     {
       "title": "Jeux",
@@ -16,9 +16,9 @@
     },
     {
       "title": "Interpeller autour de soi",
-      "image": "images/communication/thumbail_partager_autour_de_soi.png",
+      "image": "images/communication/thumnail_RZM_Partager_le_projet_autour_de_soi.jpg",
       "textDownload": "> Téléchargez",
-      "downloadLink": "images/communication/Mobicoop-Partager_le_projet_autour_de_soi.pdf"
+      "downloadLink": "images/communication/RZM_ Partager_le_projet_autour_de_soi.pdf"
     }
   ],
   "itemsVisual": [
