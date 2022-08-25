@@ -27,6 +27,7 @@ namespace App\Task\Task;
 
 use App\Carpool\Event\ProposalWillExpireEvent;
 use App\Carpool\Repository\ProposalRepository;
+use App\Task\Task;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ProposalWillExpireTask implements Task

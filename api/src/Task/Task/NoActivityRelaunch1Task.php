@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace App\Task\Task;
 
+use App\Task\Task;
 use App\User\Event\NoActivityRelaunch1Event;
 use App\User\Repository\UserRepository;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;

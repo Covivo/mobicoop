@@ -28,6 +28,7 @@ namespace App\Task\Task;
 use App\Carpool\Event\CarpoolAskPostedRelaunch1Event;
 use App\Carpool\Repository\AskRepository;
 use App\Carpool\Service\AskManager;
+use App\Task\Task;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class SendBoosterTask implements Task

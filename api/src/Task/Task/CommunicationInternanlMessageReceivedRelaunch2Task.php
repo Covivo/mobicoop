@@ -27,6 +27,7 @@ namespace App\Task\Task;
 
 use App\Communication\Event\InternalMessageReceivedRelaunch2Event;
 use App\Communication\Repository\MessageRepository;
+use App\Task\Task;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class CommunicationInternanlMessageReceivedRelaunch2Task implements Task
