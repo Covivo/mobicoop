@@ -292,6 +292,7 @@ class NotificationManager
         $signature = [];
         $titleContext = [];
         $bodyContext = [];
+
         if ($object) {
             switch (ClassUtils::getRealClass(get_class($object))) {
                 case Proposal::class:
@@ -493,6 +494,12 @@ class NotificationManager
                         'journeyDate' => $date,
                         'journeyTime' => $time,
                     ];
+
+                    break;
+
+                case Solidary::class:
+                    $titleContext = [];
+                    $bodyContext = [];
 
                     break;
 
