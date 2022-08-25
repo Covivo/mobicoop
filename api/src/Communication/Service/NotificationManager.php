@@ -295,8 +295,38 @@ class NotificationManager
         if ($object) {
             switch (ClassUtils::getRealClass(get_class($object))) {
                 case Proposal::class:
+                    $origin = null;
+                    $destination = null;
+                    $departureTime = null;
+                    $arrivalTime = null;
+                    foreach ($object->getWaypoints() as $waypoint) {
+                        if (0 == $waypoint->getPosition()) {
+                            $origin = $waypoint;
+                        }
+                        if ($waypoint->isDestination()) {
+                            $destination = $waypoint;
+                        }
+                    }
+                    if (Criteria::FREQUENCY_PUNCTUAL == $object->getCriteria()->getFrequency()) {
+                        $departureTime = $object->getCriteria()->getFromTime();
+                        if ($object->getCriteria()->isPassenger()) {
+                            $arrivalTime = clone $departureTime;
+                            $arrivalTime->modify('+'.$object->getCriteria()->getDiractionPassenger()->getDuration().' second');
+                        } else {
+                            $arrivalTime = clone $departureTime;
+                            $arrivalTime->modify('+'.$object->getCriteria()->getDiractionDriver()->getDuration().' second');
+                        }
+                    }
                     $titleContext = [];
-                    $bodyContext = ['user' => $recipient, 'notification' => $notification];
+                    $bodyContext = [
+                        'user' => $recipient,
+                        'notification' => $notification,
+                        'proposal' => $object,
+                        'origin' => $origin,
+                        'destination' => $destination,
+                        'departureTime' => $departureTime,
+                        'arrivalTime' => $arrivalTime,
+                    ];
 
                     break;
 
@@ -331,12 +361,19 @@ class NotificationManager
                     $outwardDestination = null;
                     $returnOrigin = null;
                     $returnDestination = null;
-                    $sender = $this->userManager->getUser($object->getUserId());
+                    $sender = $this->userManager->getUser($object->getUserId()) == $recipient ? $object->getResults()[0]->getCarpooler() : $this->userManager->getUser($object->getUserId());
                     if (null !== $object->getResults()[0]->getResultPassenger()) {
                         $result = $object->getResults()[0]->getResultPassenger();
                     } else {
                         $result = $object->getResults()[0]->getResultDriver();
                     }
+
+                    if ($recipient->getId() !== $object->getUserId()) {
+                        $recipientRole = $object->getRole();
+                    } else {
+                        $recipientRole = ad::ROLE_DRIVER == $object->getRole() ? ad::ROLE_PASSENGER : ad::ROLE_DRIVER;
+                    }
+
                     if (null !== $result->getOutward()) {
                         foreach ($result->getOutward()->getWaypoints() as $waypoint) {
                             if ('passenger' == $waypoint['role'] && 'origin' == $waypoint['type']) {
@@ -377,6 +414,7 @@ class NotificationManager
                         'outwardDestination' => $outwardDestination,
                         'returnOrigin' => $returnOrigin,
                         'returnDestination' => $returnDestination,
+                        'recipientRole' => $recipientRole,
                     ];
 
                     break;
@@ -424,9 +462,9 @@ class NotificationManager
 
                 case Message::class:
                     $titleContext = ['user' => $object->getUser()];
-                    $bodyContext = ['text' => $object->getText(), 'user' => $recipient];
+                    $bodyContext = ['text' => $object->getText(), 'user' => $recipient, 'sender' => $object->getUser(), 'sendingDate' => $object->getCreatedDate()];
 
-                break;
+                    break;
 
                 case RdexConnection::class:
                     $titleContext = [];
@@ -456,7 +494,7 @@ class NotificationManager
                         'journeyTime' => $time,
                     ];
 
-                break;
+                    break;
 
                 case SolidaryContact::class:
                     $structure = $recipient->getSolidaryUser()->getSolidaryUserStructures()[0]->getStructure();
@@ -467,7 +505,7 @@ class NotificationManager
                     $titleContext = ['user' => $object->getSolidarySolution()->getSolidary()->getSolidaryUserStructure()->getSolidaryUser()->getUser()];
                     $bodyContext = ['text' => $object->getContent(), 'recipient' => $recipient, 'signature' => $signature];
 
-                break;
+                    break;
 
                 case Mass::class:
                     $titleContext = ['massId' => $object->getId()];

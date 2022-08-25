@@ -27,7 +27,6 @@ use App\Auth\Entity\AuthItem;
 use App\Auth\Entity\UserAuthAssignment;
 use App\Auth\Repository\AuthItemRepository;
 use App\Community\Entity\Community;
-use App\Community\Entity\CommunitySecurity;
 use App\Community\Entity\CommunityUser;
 use App\Community\Event\CommunityCreatedEvent;
 use App\Community\Event\CommunityMembershipAcceptedEvent;
@@ -148,15 +147,6 @@ class CommunityManager
             $address->setHome(true);
             $address->setCommunity($community);
             $this->entityManager->persist($address);
-            $this->entityManager->flush();
-        }
-
-        // if the community was secured, we need to insert the securities line
-        if (Community::SECURED_VALIDATION == $community->getValidationType()) {
-            $communitySecurity = new CommunitySecurity();
-            $communitySecurity->setCommunity($community);
-            $communitySecurity->setFilename($community->getId().'.csv');
-            $this->entityManager->persist($communitySecurity);
             $this->entityManager->flush();
         }
 
@@ -289,6 +279,41 @@ class CommunityManager
     {
         $this->entityManager->remove($communityUser);
         $this->entityManager->flush();
+    }
+
+    /**
+     * Generate the UrlKey of a Community.
+     *
+     * @return string The url key
+     */
+    public function generateUrlKey(Community $community): string
+    {
+        $urlKey = $community->getName();
+        $urlKey = str_replace(' ', '-', $urlKey);
+        $urlKey = str_replace("'", '-', $urlKey);
+        $urlKey = strtr(utf8_decode($urlKey), utf8_decode('àáâãäçèéêëìíîïñòóôõöùúûüýÿÀÁÂÃÄÇÈÉÊËÌÍÎÏÑÒÓÔÕÖÙÚÛÜÝ'), 'aaaaaceeeeiiiinooooouuuuyyAAAAACEEEEIIIINOOOOOUUUUY');
+        $urlKey = preg_replace('/[^A-Za-z0-9\-]/', '', $urlKey);
+
+        // We don't want to finish with a single "-"
+        if ('-' == substr($urlKey, -1)) {
+            $urlKey = substr($urlKey, 0, strlen($urlKey) - 1);
+        }
+
+        return $urlKey;
+    }
+
+    /**
+     * Get a community by its id.
+     *
+     * @return null|Community
+     */
+    public function getCommunity(int $communityId)
+    {
+        if ($community = $this->communityRepository->find($communityId)) {
+            $community->setUrlKey($this->generateUrlKey($community));
+        }
+
+        return $community;
     }
 
     /**

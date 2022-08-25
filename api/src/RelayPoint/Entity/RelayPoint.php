@@ -34,7 +34,9 @@ use App\Community\Entity\Community;
 use App\Geography\Entity\Address;
 use App\Image\Entity\Image;
 use App\Import\Entity\RelayPointImport;
+use App\RelayPoint\Filter\BoundsFilter;
 use App\RelayPoint\Filter\RelayPointAddressTerritoryFilter;
+use App\RelayPoint\Filter\RelayPointTypesFilter;
 use App\RelayPoint\Filter\TerritoryFilter;
 use App\Solidary\Entity\Structure;
 use App\User\Entity\User;
@@ -158,6 +160,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ApiFilter(RangeFilter::class, properties={"address.longitude","address.latitude"})
  * @ApiFilter(TerritoryFilter::class, properties={"territory"})
  * @ApiFilter(RelayPointAddressTerritoryFilter::class, properties={"relayPointAddressTerritoryFilter"})
+ * @ApiFilter(BoundsFilter::class, properties={"bounds"})
+ * @ApiFilter(RelayPointTypesFilter::class, properties={"relayPointTypes"})
  */
 class RelayPoint
 {

@@ -65,6 +65,24 @@ then
         cp /var/www/$VERSION/$INSTANCE/mobicoop-platform/api/config/params/contacts.json.dist /var/www/$VERSION/$INSTANCE/mobicoop-platform/api/config/params/contacts.json
     fi
 
+	# check analytics files
+    ANALYTICS_FILE=/var/www/$VERSION/$INSTANCE/mobicoop-platform/api/config/params/analytics.json
+    if [ ! -f "$ANALYTICS_FILE" ]; then
+        cp /var/www/$VERSION/$INSTANCE/mobicoop-platform/api/config/params/analytics.json.dist /var/www/$VERSION/$INSTANCE/mobicoop-platform/api/config/params/analytics.json
+    fi
+
+	# check geocomplete palette file
+    GEOCOMPLETE_PALETTE_FILE=/var/www/$VERSION/$INSTANCE/config/geocomplete/palette.json
+    if [ ! -f "$GEOCOMPLETE_PALETTE_FILE" ]; then
+        cp /var/www/$VERSION/$INSTANCE/client/geocomplete/palette.json.dist /var/www/$VERSION/$INSTANCE/config/geocomplete/palette.json
+    fi
+
+	# check automated tasks file
+	AUTOMATED_TASKS_FILE=/var/www/$VERSION/$INSTANCE/mobicoop-platform/api/config/params/tasks.json
+	if [ ! -f "$AUTOMATED_TASKS_FILE" ]; then
+        cp /var/www/$VERSION/$INSTANCE/mobicoop-platform/api/config/params/tasks.json.dist /var/www/$VERSION/$INSTANCE/mobicoop-platform/api/config/params/tasks.json
+    fi
+
     # check env files
     python3 /var/www/$VERSION/$INSTANCE/mobicoop-platform/scripts/checkClientEnv.py -path /var/www/$VERSION/$INSTANCE/mobicoop-platform -env $VERSION_MIGRATE
 
@@ -158,6 +176,24 @@ else
     CONTACTS_FILE=/var/www/$INSTANCE/$VERSION/mobicoop-platform/api/config/params/contacts.json
     if [ ! -f "$CONTACTS_FILE" ]; then
         cp /var/www/$INSTANCE/$VERSION/mobicoop-platform/api/config/params/contacts.json.dist /var/www/$INSTANCE/$VERSION/mobicoop-platform/api/config/params/contacts.json
+    fi
+
+	# check analytics files
+    ANALYTICS_FILE=/var/www/$INSTANCE/$VERSION/mobicoop-platform/api/config/params/analytics.json
+    if [ ! -f "$ANALYTICS_FILE" ]; then
+        cp /var/www/$INSTANCE/$VERSION/mobicoop-platform/api/config/params/analytics.json.dist /var/www/$INSTANCE/$VERSION/mobicoop-platform/api/config/params/analytics.json
+    fi
+
+	# check geocomplete palette file
+    GEOCOMPLETE_PALETTE_FILE=/var/www/$INSTANCE/$VERSION/config/geocomplete/palette.json
+    if [ ! -f "$GEOCOMPLETE_PALETTE_FILE" ]; then
+        cp /var/www/$INSTANCE/$VERSION/config/geocomplete/palette.json.dist /var/www/$INSTANCE/$VERSION/config/geocomplete/palette.json
+    fi
+
+	# check automated tasks file
+	AUTOMATED_TASKS_FILE=/var/www/$INSTANCE/$VERSION/mobicoop-platform/api/config/params/tasks.json
+	if [ ! -f "$AUTOMATED_TASKS_FILE" ]; then
+        cp /var/www/$INSTANCE/$VERSION/mobicoop-platform/api/config/params/tasks.json.dist /var/www/$INSTANCE/$VERSION/mobicoop-platform/api/config/params/tasks.json
     fi
 
     # check env files

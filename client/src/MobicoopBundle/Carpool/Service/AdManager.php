@@ -262,6 +262,8 @@ class AdManager
             $ad->setSchedule($schedule);
             $ad->setOutwardDate(\DateTime::createFromFormat('Y-m-d', $params['fromDate']));
             $ad->setOutwardLimitdate(\DateTime::createFromFormat('Y-m-d', $params['toDate']));
+        } elseif (!$params['regular'] && $params['time']) {
+            $ad->setOutwardTime($params['time']);
         }
 
         // creation of the ad ask

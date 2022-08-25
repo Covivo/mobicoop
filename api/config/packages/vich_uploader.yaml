@@ -1,108 +1,115 @@
 vich_uploader:
-    db_driver: orm
+  db_driver: orm
 
-    mappings:
+  mappings:
+    # mapping for event images
+    event:
+      uri_prefix: /upload/events/images/
+      upload_destination: "%kernel.project_dir%/public/upload/events/images/"
+      namer:
+        service: Vich\UploaderBundle\Naming\PropertyNamer
+        options: { property: "fileName" }
 
-        # mapping for event images
-        event:
-            uri_prefix: /upload/events/images/
-            upload_destination: '%kernel.project_dir%/public/upload/events/images/'
-            namer:
-                service: Vich\UploaderBundle\Naming\PropertyNamer
-                options: { property: 'fileName'}
+    # mapping for communities images
+    community:
+      uri_prefix: /upload/communities/images/
+      upload_destination: "%kernel.project_dir%/public/upload/communities/images/"
+      namer:
+        service: Vich\UploaderBundle\Naming\PropertyNamer
+        options: { property: "fileName" }
 
-        # mapping for communities images
-        community:
-            uri_prefix: /upload/communities/images/
-            upload_destination: '%kernel.project_dir%/public/upload/communities/images/'
-            namer:
-                service: Vich\UploaderBundle\Naming\PropertyNamer
-                options: { property: 'fileName'}
-        
-        # mapping for user images (avatar)
-        user:
-            uri_prefix: /upload/users/images/
-            upload_destination: '%kernel.project_dir%/public/upload/users/images/' 
-            namer:
-                service: Vich\UploaderBundle\Naming\PropertyNamer
-                options: { property: 'fileName'}   
+    # mapping for community security import files
+    communitySecurityFile:
+      uri_prefix: /upload/communities/security/
+      upload_destination: "%kernel.project_dir%/public/upload/communities/security/"
+      namer:
+        service: Vich\UploaderBundle\Naming\PropertyNamer
+        options: { property: "filename" }
 
-        # mapping for user identity proof
-        identityProof:
-            uri_prefix: /upload/users/proofs/
-            upload_destination: '%kernel.project_dir%/public/upload/users/proofs/' 
-            namer:
-                service: Vich\UploaderBundle\Naming\PropertyNamer
-                options: { property: 'fileName'}   
-        
-        # mapping for mass import files
-        mass:
-            uri_prefix: /upload/mass/files/
-            upload_destination: '%kernel.project_dir%/public/upload/mass/files/'  
-            namer:
-                service: Vich\UploaderBundle\Naming\PropertyNamer
-                options: { property: 'fileName'}  
+    # mapping for user images (avatar)
+    user:
+      uri_prefix: /upload/users/images/
+      upload_destination: "%kernel.project_dir%/public/upload/users/images/"
+      namer:
+        service: Vich\UploaderBundle\Naming\PropertyNamer
+        options: { property: "fileName" }
 
-        # mapping for mass communication images
-        campaign:
-            uri_prefix: /upload/masscommunication/images/
-            upload_destination: '%kernel.project_dir%/public/upload/masscommunication/images/' 
-            namer:
-                service: Vich\UploaderBundle\Naming\PropertyNamer
-                options: { property: 'fileName'}
+    # mapping for user identity proof
+    identityProof:
+      uri_prefix: /upload/users/proofs/
+      upload_destination: "%kernel.project_dir%/public/upload/users/proofs/"
+      namer:
+        service: Vich\UploaderBundle\Naming\PropertyNamer
+        options: { property: "fileName" }
 
-        # mapping for solidary proof files
-        proof:
-            uri_prefix: /upload/solidary/proofs/
-            upload_destination: '%kernel.project_dir%/public/upload/solidary/proofs/'
-            namer:
-                service: Vich\UploaderBundle\Naming\PropertyNamer
-                options: { property: 'fileName'}
+    # mapping for mass import files
+    mass:
+      uri_prefix: /upload/mass/files/
+      upload_destination: "%kernel.project_dir%/public/upload/mass/files/"
+      namer:
+        service: Vich\UploaderBundle\Naming\PropertyNamer
+        options: { property: "fileName" }
 
-        # mapping for payment validation document import files
-        validationDocument:
-            uri_prefix: /upload/payment/validation/files/
-            upload_destination: '%kernel.project_dir%/public/upload/payment/validation/files/'  
-            namer:
-                service: Vich\UploaderBundle\Naming\PropertyNamer
-                options: { property: 'fileName'}
-        
-        # mapping for relay points images
-        relayPoint:
-            uri_prefix: /upload/relaypoints/images/
-            upload_destination: '%kernel.project_dir%/public/upload/relaypoints/images/'
-            namer:
-                service: Vich\UploaderBundle\Naming\PropertyNamer
-                options: { property: 'fileName'}
+    # mapping for mass communication images
+    campaign:
+      uri_prefix: /upload/masscommunication/images/
+      upload_destination: "%kernel.project_dir%/public/upload/masscommunication/images/"
+      namer:
+        service: Vich\UploaderBundle\Naming\PropertyNamer
+        options: { property: "fileName" }
 
-        # mapping for relay point types images
-        relayPointType:
-            uri_prefix: /upload/relaypointtypes/images/
-            upload_destination: '%kernel.project_dir%/public/upload/relaypointtypes/images/'
-            namer:
-                service: Vich\UploaderBundle\Naming\PropertyNamer
-                options: { property: 'fileName'}
+    # mapping for solidary proof files
+    proof:
+      uri_prefix: /upload/solidary/proofs/
+      upload_destination: "%kernel.project_dir%/public/upload/solidary/proofs/"
+      namer:
+        service: Vich\UploaderBundle\Naming\PropertyNamer
+        options: { property: "fileName" }
 
-        # mapping for badge images
-        badge:
-            uri_prefix: /upload/badges/images/
-            upload_destination: '%kernel.project_dir%/public/upload/badges/images/'
-            namer:
-                service: Vich\UploaderBundle\Naming\PropertyNamer
-                options: { property: 'fileName'}
+    # mapping for payment validation document import files
+    validationDocument:
+      uri_prefix: /upload/payment/validation/files/
+      upload_destination: "%kernel.project_dir%/public/upload/payment/validation/files/"
+      namer:
+        service: Vich\UploaderBundle\Naming\PropertyNamer
+        options: { property: "fileName" }
 
-        # mapping for editorial images
-        editorial:
-            uri_prefix: /upload/editorials/images/
-            upload_destination: '%kernel.project_dir%/public/upload/editorials/images/'
-            namer:
-                service: Vich\UploaderBundle\Naming\PropertyNamer
-                options: { property: 'fileName'} 
+    # mapping for relay points images
+    relayPoint:
+      uri_prefix: /upload/relaypoints/images/
+      upload_destination: "%kernel.project_dir%/public/upload/relaypoints/images/"
+      namer:
+        service: Vich\UploaderBundle\Naming\PropertyNamer
+        options: { property: "fileName" }
 
-        # mapping for struture images
-        structure:
-            uri_prefix: /upload/structures/images/
-            upload_destination: '%kernel.project_dir%/public/upload/structures/images/'
-            namer:
-                service: Vich\UploaderBundle\Naming\PropertyNamer
-                options: { property: 'fileName'}                
+    # mapping for relay point types images
+    relayPointType:
+      uri_prefix: /upload/relaypointtypes/images/
+      upload_destination: "%kernel.project_dir%/public/upload/relaypointtypes/images/"
+      namer:
+        service: Vich\UploaderBundle\Naming\PropertyNamer
+        options: { property: "fileName" }
+
+    # mapping for badge images
+    badge:
+      uri_prefix: /upload/badges/images/
+      upload_destination: "%kernel.project_dir%/public/upload/badges/images/"
+      namer:
+        service: Vich\UploaderBundle\Naming\PropertyNamer
+        options: { property: "fileName" }
+
+    # mapping for editorial images
+    editorial:
+      uri_prefix: /upload/editorials/images/
+      upload_destination: "%kernel.project_dir%/public/upload/editorials/images/"
+      namer:
+        service: Vich\UploaderBundle\Naming\PropertyNamer
+        options: { property: "fileName" }
+
+    # mapping for struture images
+    structure:
+      uri_prefix: /upload/structures/images/
+      upload_destination: "%kernel.project_dir%/public/upload/structures/images/"
+      namer:
+        service: Vich\UploaderBundle\Naming\PropertyNamer
+        options: { property: "fileName" }

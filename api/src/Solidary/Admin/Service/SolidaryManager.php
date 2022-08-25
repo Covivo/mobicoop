@@ -370,147 +370,147 @@ class SolidaryManager
                         $solidaryMatching->getCriteria()->isMonCheck()
                         && strtotime($solidaryMatching->getCriteria()->getMonMinTime()->format('H:i:s')) < strtotime($solidaryMatching->getSolidaryUser()->getMMaxTime()->format('H:i:s'))
                         && strtotime($solidaryMatching->getCriteria()->getMonMaxTime()->format('H:i:s')) >= strtotime($solidaryMatching->getSolidaryUser()->getMMinTime()->format('H:i:s'))
-                        ) {
+                    ) {
                         $volunteer['schedule']['mMon'] = true;
                     }
                     if (
                         $solidaryMatching->getCriteria()->isMonCheck()
                         && strtotime($solidaryMatching->getCriteria()->getMonMinTime()->format('H:i:s')) < strtotime($solidaryMatching->getSolidaryUser()->getAMaxTime()->format('H:i:s'))
                         && strtotime($solidaryMatching->getCriteria()->getMonMaxTime()->format('H:i:s')) >= strtotime($solidaryMatching->getSolidaryUser()->getAMinTime()->format('H:i:s'))
-                        ) {
+                    ) {
                         $volunteer['schedule']['aMon'] = true;
                     }
                     if (
                         $solidaryMatching->getCriteria()->isMonCheck()
                         && strtotime($solidaryMatching->getCriteria()->getMonMinTime()->format('H:i:s')) < strtotime($solidaryMatching->getSolidaryUser()->getEMaxTime()->format('H:i:s'))
                         && strtotime($solidaryMatching->getCriteria()->getMonMaxTime()->format('H:i:s')) >= strtotime($solidaryMatching->getSolidaryUser()->getEMinTime()->format('H:i:s'))
-                        ) {
+                    ) {
                         $volunteer['schedule']['eMon'] = true;
                     }
                     if (
                         $solidaryMatching->getCriteria()->isTueCheck()
                         && strtotime($solidaryMatching->getCriteria()->getTueMinTime()->format('H:i:s')) < strtotime($solidaryMatching->getSolidaryUser()->getMMaxTime()->format('H:i:s'))
                         && strtotime($solidaryMatching->getCriteria()->getTueMaxTime()->format('H:i:s')) >= strtotime($solidaryMatching->getSolidaryUser()->getMMinTime()->format('H:i:s'))
-                        ) {
+                    ) {
                         $volunteer['schedule']['mTue'] = true;
                     }
                     if (
                         $solidaryMatching->getCriteria()->isTueCheck()
                         && strtotime($solidaryMatching->getCriteria()->getTueMinTime()->format('H:i:s')) < strtotime($solidaryMatching->getSolidaryUser()->getAMaxTime()->format('H:i:s'))
                         && strtotime($solidaryMatching->getCriteria()->getTueMaxTime()->format('H:i:s')) >= strtotime($solidaryMatching->getSolidaryUser()->getAMinTime()->format('H:i:s'))
-                        ) {
+                    ) {
                         $volunteer['schedule']['aTue'] = true;
                     }
                     if (
                         $solidaryMatching->getCriteria()->isTueCheck()
                         && strtotime($solidaryMatching->getCriteria()->getTueMinTime()->format('H:i:s')) < strtotime($solidaryMatching->getSolidaryUser()->getEMaxTime()->format('H:i:s'))
                         && strtotime($solidaryMatching->getCriteria()->getTueMaxTime()->format('H:i:s')) >= strtotime($solidaryMatching->getSolidaryUser()->getEMinTime()->format('H:i:s'))
-                        ) {
+                    ) {
                         $volunteer['schedule']['eTue'] = true;
                     }
                     if (
                         $solidaryMatching->getCriteria()->isWedCheck()
                         && strtotime($solidaryMatching->getCriteria()->getWedMinTime()->format('H:i:s')) < strtotime($solidaryMatching->getSolidaryUser()->getMMaxTime()->format('H:i:s'))
                         && strtotime($solidaryMatching->getCriteria()->getWedMaxTime()->format('H:i:s')) >= strtotime($solidaryMatching->getSolidaryUser()->getMMinTime()->format('H:i:s'))
-                        ) {
+                    ) {
                         $volunteer['schedule']['mWed'] = true;
                     }
                     if (
                         $solidaryMatching->getCriteria()->isWedCheck()
                         && strtotime($solidaryMatching->getCriteria()->getWedMinTime()->format('H:i:s')) < strtotime($solidaryMatching->getSolidaryUser()->getAMaxTime()->format('H:i:s'))
                         && strtotime($solidaryMatching->getCriteria()->getWedMaxTime()->format('H:i:s')) >= strtotime($solidaryMatching->getSolidaryUser()->getAMinTime()->format('H:i:s'))
-                        ) {
+                    ) {
                         $volunteer['schedule']['aWed'] = true;
                     }
                     if (
                         $solidaryMatching->getCriteria()->isWedCheck()
                         && strtotime($solidaryMatching->getCriteria()->getWedMinTime()->format('H:i:s')) < strtotime($solidaryMatching->getSolidaryUser()->getEMaxTime()->format('H:i:s'))
                         && strtotime($solidaryMatching->getCriteria()->getWedMaxTime()->format('H:i:s')) >= strtotime($solidaryMatching->getSolidaryUser()->getEMinTime()->format('H:i:s'))
-                        ) {
+                    ) {
                         $volunteer['schedule']['eWed'] = true;
                     }
                     if (
                         $solidaryMatching->getCriteria()->isThuCheck()
                         && strtotime($solidaryMatching->getCriteria()->getThuMinTime()->format('H:i:s')) < strtotime($solidaryMatching->getSolidaryUser()->getMMaxTime()->format('H:i:s'))
                         && strtotime($solidaryMatching->getCriteria()->getThuMaxTime()->format('H:i:s')) >= strtotime($solidaryMatching->getSolidaryUser()->getMMinTime()->format('H:i:s'))
-                        ) {
+                    ) {
                         $volunteer['schedule']['mThu'] = true;
                     }
                     if (
                         $solidaryMatching->getCriteria()->isThuCheck()
                         && strtotime($solidaryMatching->getCriteria()->getThuMinTime()->format('H:i:s')) < strtotime($solidaryMatching->getSolidaryUser()->getAMaxTime()->format('H:i:s'))
                         && strtotime($solidaryMatching->getCriteria()->getThuMaxTime()->format('H:i:s')) >= strtotime($solidaryMatching->getSolidaryUser()->getAMinTime()->format('H:i:s'))
-                        ) {
+                    ) {
                         $volunteer['schedule']['aThu'] = true;
                     }
                     if (
                         $solidaryMatching->getCriteria()->isThuCheck()
                         && strtotime($solidaryMatching->getCriteria()->getThuMinTime()->format('H:i:s')) < strtotime($solidaryMatching->getSolidaryUser()->getEMaxTime()->format('H:i:s'))
                         && strtotime($solidaryMatching->getCriteria()->getThuMaxTime()->format('H:i:s')) >= strtotime($solidaryMatching->getSolidaryUser()->getEMinTime()->format('H:i:s'))
-                        ) {
+                    ) {
                         $volunteer['schedule']['eThu'] = true;
                     }
                     if (
                         $solidaryMatching->getCriteria()->isFriCheck()
                         && strtotime($solidaryMatching->getCriteria()->getFriMinTime()->format('H:i:s')) < strtotime($solidaryMatching->getSolidaryUser()->getMMaxTime()->format('H:i:s'))
                         && strtotime($solidaryMatching->getCriteria()->getFriMaxTime()->format('H:i:s')) >= strtotime($solidaryMatching->getSolidaryUser()->getMMinTime()->format('H:i:s'))
-                        ) {
+                    ) {
                         $volunteer['schedule']['mFri'] = true;
                     }
                     if (
                         $solidaryMatching->getCriteria()->isFriCheck()
                         && strtotime($solidaryMatching->getCriteria()->getFriMinTime()->format('H:i:s')) < strtotime($solidaryMatching->getSolidaryUser()->getAMaxTime()->format('H:i:s'))
                         && strtotime($solidaryMatching->getCriteria()->getFriMaxTime()->format('H:i:s')) >= strtotime($solidaryMatching->getSolidaryUser()->getAMinTime()->format('H:i:s'))
-                        ) {
+                    ) {
                         $volunteer['schedule']['aFri'] = true;
                     }
                     if (
                         $solidaryMatching->getCriteria()->isFriCheck()
                         && strtotime($solidaryMatching->getCriteria()->getFriMinTime()->format('H:i:s')) < strtotime($solidaryMatching->getSolidaryUser()->getEMaxTime()->format('H:i:s'))
                         && strtotime($solidaryMatching->getCriteria()->getFriMaxTime()->format('H:i:s')) >= strtotime($solidaryMatching->getSolidaryUser()->getEMinTime()->format('H:i:s'))
-                        ) {
+                    ) {
                         $volunteer['schedule']['eFri'] = true;
                     }
                     if (
                         $solidaryMatching->getCriteria()->isSatCheck()
                         && strtotime($solidaryMatching->getCriteria()->getSatMinTime()->format('H:i:s')) < strtotime($solidaryMatching->getSolidaryUser()->getMMaxTime()->format('H:i:s'))
                         && strtotime($solidaryMatching->getCriteria()->getSatMaxTime()->format('H:i:s')) >= strtotime($solidaryMatching->getSolidaryUser()->getMMinTime()->format('H:i:s'))
-                        ) {
+                    ) {
                         $volunteer['schedule']['mSat'] = true;
                     }
                     if (
                         $solidaryMatching->getCriteria()->isSatCheck()
                         && strtotime($solidaryMatching->getCriteria()->getSatMinTime()->format('H:i:s')) < strtotime($solidaryMatching->getSolidaryUser()->getAMaxTime()->format('H:i:s'))
                         && strtotime($solidaryMatching->getCriteria()->getSatMaxTime()->format('H:i:s')) >= strtotime($solidaryMatching->getSolidaryUser()->getAMinTime()->format('H:i:s'))
-                        ) {
+                    ) {
                         $volunteer['schedule']['aSat'] = true;
                     }
                     if (
                         $solidaryMatching->getCriteria()->isSatCheck()
                         && strtotime($solidaryMatching->getCriteria()->getSatMinTime()->format('H:i:s')) < strtotime($solidaryMatching->getSolidaryUser()->getEMaxTime()->format('H:i:s'))
                         && strtotime($solidaryMatching->getCriteria()->getSatMaxTime()->format('H:i:s')) >= strtotime($solidaryMatching->getSolidaryUser()->getEMinTime()->format('H:i:s'))
-                        ) {
+                    ) {
                         $volunteer['schedule']['eSat'] = true;
                     }
                     if (
                         $solidaryMatching->getCriteria()->isSunCheck()
                         && strtotime($solidaryMatching->getCriteria()->getSunMinTime()->format('H:i:s')) < strtotime($solidaryMatching->getSolidaryUser()->getMMaxTime()->format('H:i:s'))
                         && strtotime($solidaryMatching->getCriteria()->getSunMaxTime()->format('H:i:s')) >= strtotime($solidaryMatching->getSolidaryUser()->getMMinTime()->format('H:i:s'))
-                        ) {
+                    ) {
                         $volunteer['schedule']['mSun'] = true;
                     }
                     if (
                         $solidaryMatching->getCriteria()->isSunCheck()
                         && strtotime($solidaryMatching->getCriteria()->getSunMinTime()->format('H:i:s')) < strtotime($solidaryMatching->getSolidaryUser()->getAMaxTime()->format('H:i:s'))
                         && strtotime($solidaryMatching->getCriteria()->getSunMaxTime()->format('H:i:s')) >= strtotime($solidaryMatching->getSolidaryUser()->getAMinTime()->format('H:i:s'))
-                        ) {
+                    ) {
                         $volunteer['schedule']['aSun'] = true;
                     }
                     if (
                         $solidaryMatching->getCriteria()->isSunCheck()
                         && strtotime($solidaryMatching->getCriteria()->getSunMinTime()->format('H:i:s')) < strtotime($solidaryMatching->getSolidaryUser()->getEMaxTime()->format('H:i:s'))
                         && strtotime($solidaryMatching->getCriteria()->getSunMaxTime()->format('H:i:s')) >= strtotime($solidaryMatching->getSolidaryUser()->getEMinTime()->format('H:i:s'))
-                        ) {
+                    ) {
                         $volunteer['schedule']['eSun'] = true;
                     }
                 } else {
@@ -520,31 +520,31 @@ class SolidaryManager
                     switch ($solidaryMatching->getCriteria()->getFromDate()->format('w')) {
                         case 0: $key = 'Sun';
 
-break;
+                            break;
 
                         case 1: $key = 'Mon';
 
-break;
+                            break;
 
                         case 2: $key = 'Tue';
 
-break;
+                            break;
 
                         case 3: $key = 'Wed';
 
-break;
+                            break;
 
                         case 4: $key = 'Thu';
 
-break;
+                            break;
 
                         case 5: $key = 'Fri';
 
-break;
+                            break;
 
                         case 6: $key = 'Sat';
 
-break;
+                            break;
                     }
                     if (
                         strtotime($solidaryMatching->getCriteria()->getMinTime()->format('H:i:s')) < strtotime($solidaryMatching->getSolidaryUser()->getMMaxTime()->format('H:i:s'))
@@ -832,7 +832,7 @@ break;
         $solidary->setAdmindiary($diaries);
 
         // get distance
-        $solidary->setDistance(($solidary->getProposal()->getCriteria()->getDirectionPassenger()->getDistance() / 1000));
+        $solidary->setDistance($solidary->getProposal()->getCriteria()->getDirectionPassenger()->getDistance() / 1000);
 
         return $solidary;
     }
@@ -959,7 +959,7 @@ break;
         if (
             (isset($fields['beneficiary']['id']) && !$solidaryUser = $this->solidaryUserRepository->findByUserId($fields['beneficiary']['id']))
             || $newUser
-            ) {
+        ) {
             // not already a solidary user, we need to create a new one
             $solidaryUser = new SolidaryUser();
             $solidaryUser->setBeneficiary(true);
@@ -1274,7 +1274,7 @@ break;
             }
         } elseif (isset($fields['additionalSubject'])) {
             $updated = true;
-            if ($solidary->getSubject()->isPrivate()) {
+            if (!is_null($solidary->getSubject()) && $solidary->getSubject()->isPrivate()) {
                 // update an existing additional subject
                 $solidary->getSubject()->setLabel($fields['additionalSubject']);
             } else {
@@ -1373,7 +1373,9 @@ break;
             || (isset($fields['punctualOutwardMinTime']))
             || (isset($fields['punctualReturnDate']))
             || (isset($fields['punctualReturnTime']))
-            ) {
+            || (isset($fields['regularMinDate']))
+            || (isset($fields['regularMaxDate']))
+        ) {
             return $this->duplicateSolidary($solidary, $fields);
         }
 

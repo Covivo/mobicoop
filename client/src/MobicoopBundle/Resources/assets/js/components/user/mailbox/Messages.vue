@@ -9,37 +9,7 @@
         justify="center"
       >
         <v-col class="mr-n12 ml-n12">
-          <v-card
-            v-if="fraudWarningDisplay"
-            color="info"
-            flat
-            dark
-            max-height="50px"
-            rounded="0"
-          >
-            <v-card-text>
-              <v-icon
-                left
-              >
-                mdi-alert
-              </v-icon>
-              <span class="white--text ">
-                {{ $t('fraudWarningText.title') }}
-              </span>
-            </v-card-text>
-          </v-card>
-          <v-card
-            v-if="fraudWarningDisplay"
-            flat
-            rounded="0"
-          >
-            <v-card-text>
-              {{ $t('fraudWarningText.part1') }} <a
-                :href="$t('fraudWarningText.link')"
-                target="_blank"
-              >{{ $t('fraudWarningText.textLink') }}</a>
-            </v-card-text>
-          </v-card>
+          <warning-message :fraud-warning-display="fraudWarningDisplay" />
         </v-col>
       </v-row>
       <v-row id="headGridMessages">
@@ -209,6 +179,7 @@
                 :id-user="idUser"
                 :refresh="refreshDetails"
                 :hide-no-thread-selected="(idRecipient!==null)"
+                :fraud-warning-display="fraudWarningDisplay"
                 @refreshCompleted="refreshDetailsCompleted"
               />
             </v-col>
@@ -262,6 +233,7 @@ import ThreadsSolidary from '@components/user/mailbox/ThreadsSolidary'
 import ThreadDetails from '@components/user/mailbox/ThreadDetails'
 import ThreadActions from '@components/user/mailbox/ThreadActions'
 import TypeText from '@components/user/mailbox/TypeText'
+import WarningMessage from '@components/utilities/WarningMessage.vue';
 
 export default {
   i18n: {
@@ -279,7 +251,8 @@ export default {
     ThreadsSolidary,
     ThreadDetails,
     ThreadActions,
-    TypeText
+    TypeText,
+    WarningMessage
   },
   props: {
     idUser:{

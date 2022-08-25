@@ -30,37 +30,7 @@
             <!-- Journey details and carpooler -->
             <v-row dense>
               <v-col cols="12">
-                <v-card
-                  v-if="fraudWarningDisplay"
-                  color="info"
-                  flat
-                  dark
-                  max-height="50px"
-                  rounded="0"
-                >
-                  <v-card-text>
-                    <v-icon
-                      left
-                    >
-                      mdi-alert
-                    </v-icon>
-                    <span class="white--text ">
-                      {{ $t('fraudWarningText.title') }}
-                    </span>
-                  </v-card-text>
-                </v-card>
-                <v-card
-                  v-if="fraudWarningDisplay"
-                  rounded="0"
-                  flat
-                >
-                  <v-card-text>
-                    {{ $t('fraudWarningText.part1') }} <a
-                      :href="$t('fraudWarningText.link')"
-                      target="_blank"
-                    >{{ $t('fraudWarningText.textLink') }}</a>
-                  </v-card-text>
-                </v-card>
+                <warning-message :fraud-warning-display="fraudWarningDisplay" />
               </v-col>
             </v-row>
             <v-row dense>
@@ -631,6 +601,7 @@ import RegularAsk from "@components/carpool/utilities/RegularAsk";
 import ProfileSummary from "@components/user/profile/ProfileSummary";
 import PublicProfile from "@components/user/profile/PublicProfile";
 import MMap from "@components/utilities/MMap/MMap";
+import WarningMessage from "@components/utilities/WarningMessage";
 import L from "leaflet";
 
 export default {
@@ -640,7 +611,8 @@ export default {
     RegularAsk,
     ProfileSummary,
     PublicProfile,
-    MMap
+    MMap,
+    WarningMessage
   },
   i18n: {
     messages: {

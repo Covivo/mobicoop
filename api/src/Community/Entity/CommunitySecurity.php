@@ -24,12 +24,15 @@
 namespace App\Community\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use App\Community\Admin\Controller\CreateCommunitySecurityAction;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
- * The securization of a community.
+ * The securization of a community security.
  *
  * @ORM\Entity
  * @ApiResource(
@@ -40,34 +43,34 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
  *      },
  *      collectionOperations={
  *          "get"={
+ *              "security"="is_granted('reject',object)",
  *              "swagger_context" = {
+ *                  "summary"="Not implemented",
  *                  "tags"={"Communities"}
  *              }
  *          },
- *          "post"={
+ *          "ADMIN_post_securities"={
+ *              "path"="/admin/community_securities",
+ *              "method"="POST",
+ *              "controller"=CreateCommunitySecurityAction::class,
+ *              "denormalization_context"={"groups"={"aWrite"}},
+ *              "deserialize"=false,
  *              "swagger_context" = {
- *                  "tags"={"Communities"}
+ *                  "tags"={"Administration"}
  *              }
  *          },
  *      },
  *      itemOperations={
  *          "get"={
+ *              "security"="is_granted('reject',object)",
  *              "swagger_context" = {
+ *                  "summary"="Not implemented",
  *                  "tags"={"Communities"}
  *              }
  *          },
- *          "put"={
- *              "swagger_context" = {
- *                  "tags"={"Communities"}
- *              }
- *          },
- *          "delete"={
- *              "swagger_context" = {
- *                  "tags"={"Communities"}
- *              }
- *          }
  *      }
  * )
+ * @Vich\Uploadable
  */
 class CommunitySecurity
 {
@@ -77,7 +80,7 @@ class CommunitySecurity
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups("read")
+     * @Groups({"aRead","readCommunity"})
      */
     private $id;
 
@@ -92,12 +95,35 @@ class CommunitySecurity
     private $community;
 
     /**
+     * @var null|File The document's file
+     *
+     * @Vich\UploadableField(mapping="communitySecurityFile", fileNameProperty="filename", originalName="originalName")
+     * @Groups({"aWrite"})
+     */
+    private $file;
+
+    /**
      * @var string the filename of the community security
      *
      * @ORM\Column(type="string", length=255)
-     * @Groups({"read","write"})
+     * @Groups({"read","aRead","write"})
      */
     private $filename;
+
+    /**
+     * @var string the original file name of the proof
+     *
+     * @ORM\Column(type="string", length=255)
+     * @Groups({"read","aRead"})
+     */
+    private $originalName;
+
+    /**
+     * @var string Id of the community (used on the post)
+     *
+     * @Groups({"aWrite"})
+     */
+    private $communityId;
 
     public function getId(): ?int
     {
@@ -116,13 +142,45 @@ class CommunitySecurity
         return $this;
     }
 
-    public function getFilename(): string
+    public function getFile(): ?File
+    {
+        return $this->file;
+    }
+
+    public function setFile(?File $file)
+    {
+        $this->file = $file;
+    }
+
+    public function getFilename(): ?string
     {
         return $this->filename;
     }
 
-    public function setFilename(string $filename)
+    public function setFilename(?string $filename)
     {
         $this->filename = $filename;
+    }
+
+    public function getOriginalName(): ?string
+    {
+        return $this->originalName;
+    }
+
+    public function setOriginalName(?string $originalName)
+    {
+        $this->originalName = $originalName;
+    }
+
+    public function getCommunityId(): ?int
+    {
+        return $this->communityId;
+    }
+
+    public function setCommunityId(?int $communityId): self
+    {
+        $this->communityId = $communityId;
+
+        return $this;
     }
 }

@@ -45,6 +45,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
 use Symfony\Component\Validator\Constraints as Assert;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
  * A community : a group of users sharing common interests.
@@ -280,6 +281,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          },
  *      }
  * )
+ * @Vich\Uploadable
  * @ApiFilter(OrderFilter::class, properties={"id", "name", "description", "createdDate"}, arguments={"orderParameterName"="order"})
  * @ApiFilter(SearchFilter::class, properties={"name":"partial"})
  * @ApiFilter(NumericFilter::class, properties={"communityUsers.user.id"})
@@ -458,7 +460,7 @@ class Community
      * @var null|ArrayCollection the security files of the community
      *
      * @ORM\OneToMany(targetEntity="\App\Community\Entity\CommunitySecurity", mappedBy="community", cascade={"persist"})
-     * @Groups({"readCommunity","write","listCommunities"})
+     * @Groups({"aRead","readCommunity","write","listCommunities"})
      * @MaxDepth(1)
      * @ApiSubresource(maxDepth=1)
      */

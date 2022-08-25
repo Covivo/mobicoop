@@ -1,0 +1,77 @@
+{# CAREFUL : Some client might need to replicate this template #}
+{% extends 'communicationAlt/fr/email/notification/base.html.twig' %}
+{% block body %}
+<table style="width:480px; font-family:{{api_env('EMAILS_FONT')}}, sans-serif;" cellpadding="0" cellspacing="0" summary="" border="0">
+    <tr style="margin-bottom:21px; margin-top:19px;">
+        <td align="center">
+            <table cellpadding="6" cellspacing="6" summary="" border="0">
+                <tr>
+                    <td align="center">
+                        <p style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}; font-size:20px;" text-align="center" ><b>Votre événement est enregistré !</b></p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <table style="width:100%;">
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                <tr>
+                    <td style="width:70%">
+                        <p style="font-size:11px;">Bonjour {{context.user.givenName|capitalize}} {{context.user.shortFamilyName|capitalize}}</p>
+                        <p style="font-size:11px;">Votre événement a bien été enregistré!</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p style="font-size:11px;">Voici les détails de votre événement :</p>
+                        <ul>
+                            <li style="font-size:11px;">Nom: <a style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}" href="{{api_env('EMAILS_PLATFORM_URL')}}/covoiturages-evenements/{{context.event.id}}/{{context.event.urlKey}}">{{ context.event.name }} </a></li>
+                            <li style="font-size:11px;">Adresse: {{ context.event.address.displayLabel[0] }} </li>
+                            <li style="font-size:11px;">Description: {{ context.event.description }} </li>
+                            {% if context.event.private == true %}
+                            <li style="font-size:11px;">
+                            	Lien à partager de l'événement privé :
+                            	<a style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}" href="{{api_env('EMAILS_PLATFORM_URL')}}/covoiturages-evenements/{{context.event.id}}/{{context.event.urlKey}}">{{api_env('EMAILS_PLATFORM_URL')}}/covoiturages-evenements/{{context.event.id}}/{{context.event.urlKey}}</a>
+                            </li>
+                            {% endif %}
+
+
+                        </ul>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+
+     <tr>
+        <td style="height:15px">
+            <p> </p>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <table cellpadding="2" cellspacing="2" summary="" border="0">
+                <tr>
+                    <td style="width:23px">
+                        <p> </p>
+                    </td>
+                    <td align="center" style="width:100%;">
+                        <p style="font-size:11px;">A bientôt sur <a href="{{api_env('EMAILS_PLATFORM_URL')}}" style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">Rezo Mobicoop</a>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td style="height:15px">
+            <p> </p>
+        </td>
+    </tr>
+</table>
+{% endblock %}
+
