@@ -95,7 +95,7 @@ class CarpoolExportManager
         foreach ($carpoolItems as $carpoolItem) {
             // Check if the User is debtor or creditor
             $isCreditor = false;
-            if ($carpoolItem->getCreditorUser()->getId() == $user->getId()) {
+            if (!is_null($carpoolItem->getCreditorUser()) && $carpoolItem->getCreditorUser()->getId() == $user->getId()) {
                 $isCreditor = true;
             }
 
@@ -111,13 +111,13 @@ class CarpoolExportManager
                         case CarpoolItem::CREDITOR_STATUS_DIRECT:
                             $carpoolExport->setMode(CarpoolExport::MODE_DIRECT);
 
-                        break;
+                            break;
 
                         case CarpoolItem::CREDITOR_STATUS_ONLINE:
                         case CarpoolItem::CREDITOR_STATUS_PENDING_ONLINE:
                             $carpoolExport->setMode(CarpoolExport::MODE_ONLINE);
 
-                        break;
+                            break;
                     }
                 } else {
                     switch ($carpoolItem->getDebtorStatus()) {
@@ -125,26 +125,30 @@ class CarpoolExportManager
                         case CarpoolItem::DEBTOR_STATUS_PENDING_DIRECT:
                             $carpoolExport->setMode(CarpoolExport::MODE_DIRECT);
 
-                        break;
+                            break;
 
                         case CarpoolItem::DEBTOR_STATUS_ONLINE:
                         case CarpoolItem::DEBTOR_STATUS_PENDING_ONLINE:
                             $carpoolExport->setMode(CarpoolExport::MODE_ONLINE);
 
-                        break;
+                            break;
                     }
                 }
             }
             //    we set the role and the carpooler
             if ($isCreditor) {
                 $carpoolExport->setRole(CarpoolExport::ROLE_DRIVER);
-                $carpoolExport->setCarpooler($carpoolItem->getDebtorUser());
+                if (!is_null($carpoolItem->getDebtorUser())) {
+                    $carpoolExport->setCarpooler($carpoolItem->getDebtorUser());
+                }
                 if (0 !== $carpoolItem->getItemStatus()) {
                     $sumReceived = $sumReceived + $carpoolItem->getAmount();
                 }
             } else {
                 $carpoolExport->setRole(CarpoolExport::ROLE_PASSENGER);
-                $carpoolExport->setCarpooler($carpoolItem->getCreditorUser());
+                if (!is_null($carpoolItem->getCreditorUser())) {
+                    $carpoolExport->setCarpooler($carpoolItem->getCreditorUser());
+                }
                 if (0 !== $carpoolItem->getItemStatus()) {
                     $sumPaid = $sumPaid + $carpoolItem->getAmount();
                 }
