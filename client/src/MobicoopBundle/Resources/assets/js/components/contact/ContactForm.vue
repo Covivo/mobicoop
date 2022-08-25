@@ -129,7 +129,7 @@
             </v-row>
 
             <v-btn
-              :disabled="!valid"
+              :disabled="!valid || loading"
               :loading="loading"
               color="primary"
               rounded
