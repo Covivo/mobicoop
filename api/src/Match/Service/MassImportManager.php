@@ -746,7 +746,7 @@ class MassImportManager
 
                 return $massDataReturn;
 
-            break;
+                break;
         }
     }
 
@@ -1011,12 +1011,14 @@ class MassImportManager
                         }
                     } elseif ('returnTime' == $fields[$i] && '' == $tab[$i]) {
                         $massPerson->setReturnTime(self::DEFAULT_RETURN_TIME);
-                    } elseif ('birthDate' == $fields[$i] && '' != $tab[$i]) {
-                        $massPerson->setBirthDate(\DateTime::createFromFormat('DD-MM-YYYY', $tab[$i]) ? \DateTime::createFromFormat('DD-MM-YYYY', $tab[$i]) : null);
-                    } elseif ('gender' == $fields[$i] && '' != $tab[$i]) {
+                    } elseif ('birthDate' == $fields[$i] && '' !== $tab[$i]) {
+                        $massPerson->setBirthDate(\DateTime::createFromFormat('DD-MM-YYYY', $tab[$i]));
+                    } elseif ('gender' == $fields[$i] && '' !== $tab[$i]) {
                         $massPerson->setGender(intval($tab[$i]));
                     } elseif (method_exists($massPerson, $setter)) {
-                        $massPerson->{$setter}($tab[$i]);
+                        if ('' !== $tab[$i]) {
+                            $massPerson->{$setter}($tab[$i]);
+                        }
                     }
                 }
                 $massPerson->setPersonalAddress($personalAddress);
