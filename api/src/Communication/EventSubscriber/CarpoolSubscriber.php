@@ -208,6 +208,10 @@ class CarpoolSubscriber implements EventSubscriberInterface
     {
         $user = $event->getProposal()->getUser();
 
+        if (is_null($user)) {
+            return;
+        }
+
         if (5 == count($user->getProposals())) {
             $event = new ConfirmedCarpoolerEvent($user);
             $this->eventDispatcher->dispatch(ConfirmedCarpoolerEvent::NAME, $event);
