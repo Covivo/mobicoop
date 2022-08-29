@@ -7,12 +7,28 @@
       />
       <v-spacer />
     </v-row>
-    <v-row justify="center">
+    <v-row
+      v-if="!loading"
+      justify="center"
+    >
       <MRssArticlesItem
         v-for="(article, index) in articles"
         :key="index"
         :article="article"
       />
+    </v-row>
+    <v-row v-else>
+      <v-col
+        v-for="n in 3"
+        :key="n"
+        cols="4"
+      >
+        <v-skeleton-loader
+          class="mx-auto"
+          max-width="100%"
+          type="card"
+        />
+      </v-col>
     </v-row>
   </div>
 </template>
@@ -46,6 +62,7 @@ export default {
   data() {
     return {
       articles: null,
+      loading: true
     };
   },
   mounted() {
@@ -57,6 +74,7 @@ export default {
         .then(response => {
           // console.error(response.data);
           this.articles = response.data;
+          this.loading = false;
         });
     }
   }
