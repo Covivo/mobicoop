@@ -73,7 +73,7 @@ export default {
       enabled: Object.keys(this.languages).length > 1
     }
   },
-  mounted(){
+  created() {
     if(localStorage.getItem('X-LOCALE') && localStorage.getItem('X-LOCALE') !== ''){
       this.selectedLanguage = localStorage.getItem('X-LOCALE');
       this.displayedLanguage = localStorage.getItem('X-LOCALE');

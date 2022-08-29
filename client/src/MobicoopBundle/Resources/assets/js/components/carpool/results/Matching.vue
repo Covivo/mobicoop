@@ -194,6 +194,7 @@
                 :user="user"
                 :loading-prop="loadingExternal"
                 :external-rdex-journeys="externalRdexJourneys"
+                :platform-name="platformName"
                 @carpool="carpool"
               />
             </v-tab-item>

@@ -1372,7 +1372,8 @@ class ProposalRepository
             ->join('p.criteria', 'c')
             ->where('p.private = 0 OR p.private IS NULL')
             ->andWhere('c.frequency = :regularFrequency')
-            ->andWhere('DATE(c.toDate) = :toDate')
+            ->andWhere('c.toDate = :toDate')
+            ->setParameter('regularFrequency', Criteria::FREQUENCY_REGULAR)
             ->setParameter('toDate', $toDate)
         ;
 
@@ -1388,7 +1389,8 @@ class ProposalRepository
             ->join('p.criteria', 'c')
             ->where('p.private = 0 OR p.private IS NULL')
             ->andWhere('c.frequency = :regularFrequency')
-            ->andWhere('DATE(c.toDate) = :toDate')
+            ->andWhere('c.toDate = :toDate')
+            ->setParameter('regularFrequency', Criteria::FREQUENCY_REGULAR)
             ->setParameter('toDate', $toDate)
         ;
 

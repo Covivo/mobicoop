@@ -83,6 +83,7 @@
             :origin="result.origin"
             :destination="result.destination"
             :age-display="ageDisplay"
+            :platform-name="platformName"
             @carpool="carpool"
             @loginOrRegister="loginOrRegister"
           />
@@ -138,7 +139,11 @@ export default {
     ageDisplay: {
       type: Boolean,
       default: false
-    }
+    },
+    platformName: {
+      type: String,
+      default: ""
+    },
   },
   data : function() {
     return {
