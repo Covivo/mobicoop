@@ -23,7 +23,7 @@
 
 declare(strict_types=1);
 
-namespace App\Command;
+namespace App\Command\Command;
 
 use App\Communication\Event\InternalMessageReceivedRelaunch1Event;
 use App\Communication\Repository\MessageRepository;
