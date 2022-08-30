@@ -341,7 +341,7 @@ services:
     tags:
         - { name: 'console.command', command: 'app:commands:send-welcome-email' }
 
-  App\Command\ExecuteCommandsCommand:
+  App\Command\Command\ExecuteCommandsCommand:
     arguments:
       $schedule: "%env(json:file:resolve:AUTOMATED_COMMANDS)%"
 
