@@ -23,7 +23,7 @@
 
 declare(strict_types=1);
 
-namespace App\Command;
+namespace App\Command\Command;
 
 use App\User\Event\NoActivityRelaunch2Event;
 use App\User\Repository\UserRepository;
