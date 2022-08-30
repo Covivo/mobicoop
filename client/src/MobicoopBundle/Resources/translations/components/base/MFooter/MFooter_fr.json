@@ -21,6 +21,10 @@
         "joinUs":{
             "title":"Devenir sociétaire",
             "link":"https://lacampagne.mobicoop.fr/"
+        },
+        "toolbox": {
+          "title": "Boite à outils",
+          "link": "/boite-a-outils"
         }
     },
     "services":{
