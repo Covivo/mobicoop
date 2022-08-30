@@ -356,10 +356,10 @@ class NotificationManager
                             $passengerDestinationWaypoint = $waypoint;
                         }
                     }
-                    if (null !== $object->getResults()[0]->getResultPassenger()) {
-                        $result = $object->getResults()[0]->getResultPassenger();
+                    if (null !== $object->getAd()->getResults()[0]->getResultPassenger()) {
+                        $result = $object->getAd()->getResults()[0]->getResultPassenger();
                     } else {
-                        $result = $object->getResults()[0]->getResultDriver();
+                        $result = $object->getAd()->getResults()[0]->getResultDriver();
                     }
                     if (null !== $result->getOutward()) {
                         foreach ($result->getOutward()->getWaypoints() as $waypoint) {
@@ -371,7 +371,7 @@ class NotificationManager
                         }
                         // We check if there is really at least one day checked. Otherwide, we force the $result->outward at null to hide it in the mail
                         // It's the case when the user who made the ask only checked return days
-                        if (Criteria::FREQUENCY_REGULAR == $object->getFrequency()
+                        if (Criteria::FREQUENCY_REGULAR == $object->getAd()->getFrequency()
                         && !$result->getOutward()->isMonCheck()
                         && !$result->getOutward()->isTueCheck()
                         && !$result->getOutward()->isWedCheck()

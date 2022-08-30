@@ -258,7 +258,7 @@ class CarpoolSubscriber implements EventSubscriberInterface
                 $event->getAsk()->setAd($ad);
                 $this->notificationManager->notifies(AskAdDeletedEvent::NAME, $event->getAsk()->getUserRelated(), $event->getAsk());
             } else {
-                $ad = ${$this}->askManager->getAskFromAd($event->getAsk()->getId(), $event->getAsk()->getUser()->getId());
+                $ad = $this->askManager->getAskFromAd($event->getAsk()->getId(), $event->getAsk()->getUser()->getId());
                 $ad->setSchedule($this->addSchedule($ad));
                 $event->getAsk()->setAd($ad);
                 $this->notificationManager->notifies(AskAdDeletedEvent::NAME, $event->getAsk()->getUser(), $event->getAsk());
@@ -281,7 +281,7 @@ class CarpoolSubscriber implements EventSubscriberInterface
                 $event->getAsk()->setAd($ad);
                 $this->notificationManager->notifies(PassengerAskAdDeletedEvent::NAME, $event->getAsk()->getUserRelated(), $event->getAsk());
             } else {
-                $ad = ${$this}->askManager->getAskFromAd($event->getAsk()->getId(), $event->getAsk()->getUser()->getId());
+                $ad = $this->askManager->getAskFromAd($event->getAsk()->getId(), $event->getAsk()->getUser()->getId());
                 $ad->setSchedule($this->addSchedule($ad));
                 $event->getAsk()->setAd($ad);
                 $this->notificationManager->notifies(PassengerAskAdDeletedEvent::NAME, $event->getAsk()->getUser(), $event->getAsk());
@@ -302,7 +302,7 @@ class CarpoolSubscriber implements EventSubscriberInterface
                 $event->getAsk()->setAd($ad);
                 $this->notificationManager->notifies(PassengerAskAdDeletedUrgentEvent::NAME, $event->getAsk()->getUserRelated(), $event->getAsk());
             } else {
-                $ad = ${$this}->askManager->getAskFromAd($event->getAsk()->getId(), $event->getAsk()->getUser()->getId());
+                $ad = $this->askManager->getAskFromAd($event->getAsk()->getId(), $event->getAsk()->getUser()->getId());
                 $ad->setSchedule($this->addSchedule($ad));
                 $event->getAsk()->setAd($ad);
                 $this->notificationManager->notifies(PassengerAskAdDeletedUrgentEvent::NAME, $event->getAsk()->getUser(), $event->getAsk());
@@ -323,7 +323,7 @@ class CarpoolSubscriber implements EventSubscriberInterface
                 $event->getAsk()->setAd($ad);
                 $this->notificationManager->notifies(DriverAskAdDeletedEvent::NAME, $event->getAsk()->getUserRelated(), $event->getAsk());
             } else {
-                $ad = ${$this}->askManager->getAskFromAd($event->getAsk()->getId(), $event->getAsk()->getUser()->getId());
+                $ad = $this->askManager->getAskFromAd($event->getAsk()->getId(), $event->getAsk()->getUser()->getId());
                 $ad->setSchedule($this->addSchedule($ad));
                 $event->getAsk()->setAd($ad);
                 $this->notificationManager->notifies(DriverAskAdDeletedEvent::NAME, $event->getAsk()->getUser(), $event->getAsk());
@@ -344,7 +344,7 @@ class CarpoolSubscriber implements EventSubscriberInterface
                 $event->getAsk()->setAd($ad);
                 $this->notificationManager->notifies(DriverAskAdDeletedUrgentEvent::NAME, $event->getAsk()->getUserRelated(), $event->getAsk());
             } else {
-                $ad = ${$this}->askManager->getAskFromAd($event->getAsk()->getId(), $event->getAsk()->getUser()->getId());
+                $ad = $this->askManager->getAskFromAd($event->getAsk()->getId(), $event->getAsk()->getUser()->getId());
                 $ad->setSchedule($this->addSchedule($ad));
                 $event->getAsk()->setAd($ad);
                 $this->notificationManager->notifies(DriverAskAdDeletedUrgentEvent::NAME, $event->getAsk()->getUser(), $event->getAsk());
@@ -363,7 +363,7 @@ class CarpoolSubscriber implements EventSubscriberInterface
         foreach ($event->getAsks() as $ask) {
             $object->ask = $ask;
             if ($this->canNotify($ask->getUser(), $ask->getUserRelated())) {
-                $ad = ${$this}->askManager->getAskFromAd($ask->getId(), $ask->getUser()->getId());
+                $ad = $this->askManager->getAskFromAd($ask->getId(), $ask->getUser()->getId());
                 $ad->setSchedule($this->addSchedule($ad));
                 $ask->setAd($ad);
                 $this->notificationManager->notifies(AdMinorUpdatedEvent::NAME, $ask->getUser(), $object);
@@ -417,7 +417,7 @@ class CarpoolSubscriber implements EventSubscriberInterface
 //            $routeParams = ["pid" => $proposalId];
             $object->searchLink = $event->getMailSearchLink().'?'.http_build_query($routeParams);
             if ($this->canNotify($ask->getUser(), $ask->getUserRelated())) {
-                $ad = ${$this}->askManager->getAskFromAd($ask->getId(), $ask->getUser()->getId());
+                $ad = $this->askManager->getAskFromAd($ask->getId(), $ask->getUser()->getId());
                 $ad->setSchedule($this->addSchedule($ad));
                 $ask->setAd($ad);
                 $this->notificationManager->notifies(AdMajorUpdatedEvent::NAME, $ask->getUser(), $object);
