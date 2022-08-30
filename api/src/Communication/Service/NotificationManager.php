@@ -345,6 +345,10 @@ class NotificationManager
 
                 case Ask::class:
                     $titleContext = [];
+                    $outwardOrigin = null;
+                    $outwardDestination = null;
+                    $returnOrigin = null;
+                    $returnDestination = null;
                     foreach ($object->getMatching()->getProposalRequest()->getWaypoints() as $waypoint) {
                         if (0 == $waypoint->getPosition()) {
                             $passengerOriginWaypoint = $waypoint;
@@ -352,7 +356,53 @@ class NotificationManager
                             $passengerDestinationWaypoint = $waypoint;
                         }
                     }
-                    $bodyContext = ['user' => $recipient, 'ask' => $object, 'origin' => $passengerOriginWaypoint, 'destination' => $passengerDestinationWaypoint];
+                    if (null !== $object->getResults()[0]->getResultPassenger()) {
+                        $result = $object->getResults()[0]->getResultPassenger();
+                    } else {
+                        $result = $object->getResults()[0]->getResultDriver();
+                    }
+                    if (null !== $result->getOutward()) {
+                        foreach ($result->getOutward()->getWaypoints() as $waypoint) {
+                            if ('passenger' == $waypoint['role'] && 'origin' == $waypoint['type']) {
+                                $outwardOrigin = $waypoint;
+                            } elseif ('passenger' == $waypoint['role'] && 'destination' == $waypoint['type']) {
+                                $outwardDestination = $waypoint;
+                            }
+                        }
+                        // We check if there is really at least one day checked. Otherwide, we force the $result->outward at null to hide it in the mail
+                        // It's the case when the user who made the ask only checked return days
+                        if (Criteria::FREQUENCY_REGULAR == $object->getFrequency()
+                        && !$result->getOutward()->isMonCheck()
+                        && !$result->getOutward()->isTueCheck()
+                        && !$result->getOutward()->isWedCheck()
+                        && !$result->getOutward()->isThuCheck()
+                        && !$result->getOutward()->isFriCheck()
+                        && !$result->getOutward()->isSatCheck()
+                        && !$result->getOutward()->isSunCheck()
+                        ) {
+                            $result->setOutward(null);
+                        }
+                    }
+                    if (null !== $result->getReturn()) {
+                        foreach ($result->getReturn()->getWaypoints() as $waypoint) {
+                            if ('passenger' == $waypoint['role'] && 'origin' == $waypoint['type']) {
+                                $returnOrigin = $waypoint;
+                            } elseif ('passenger' == $waypoint['role'] && 'destination' == $waypoint['type']) {
+                                $returnDestination = $waypoint;
+                            }
+                        }
+                    }
+                    $bodyContext = [
+                        'user' => $recipient,
+                        'ask' => $object,
+                        'origin' => $passengerOriginWaypoint,
+                        'destination' => $passengerDestinationWaypoint,
+                        'result' => $result,
+                        'outwardOrigin' => $outwardOrigin,
+                        'outwardDestination' => $outwardDestination,
+                        'returnOrigin' => $returnOrigin,
+                        'returnDestination' => $returnDestination,
+                    ];
 
                     break;
 
