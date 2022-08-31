@@ -135,6 +135,40 @@
             </table>    
         </td>    
     </tr> 
+    <tr>
+        <td>
+            <table cellpadding="4" cellspacing="6" summary="" border="0">
+                <tr>
+                    <td style="width:20px">
+                        <p> </p>
+                    </td>
+                    <td>
+                        <img
+                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/origin.png"
+                            style="border:0; height:19px; width:19px; background-color:transparent; vertical-align:top;"
+                        />
+                    </td>
+                    <td>
+                        <p style="font-size:11px; color:{{api_env('EMAILS_COLOR_SECONDARY')}}"><b>{{ context.origin.address.displayLabel[0] }}</b></p>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:20px">
+                        <p> </p>
+                    </td>
+                    <td>
+                        <img
+                            src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/destination.png"
+                            style="border:0; height:19px; width:19px; background-color:transparent; vertical-align:top;"
+                        />
+                    </td>
+                    <td>
+                        <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}};"> {{ context.destination.address.displayLabel[0] }}</b></p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
     {% for schedule in ad.schedule %}
         <tr>
             <td>
