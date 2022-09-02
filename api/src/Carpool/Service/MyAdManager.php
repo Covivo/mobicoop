@@ -207,13 +207,15 @@ class MyAdManager
         $passengers = [];
         $myAd->setAsks(false);
 
+        $today = new DateTime('now');
         foreach ($this->matchingRepository->getProposalMatchingAsOffersWithBothUsers($proposal) as $matchingOffer) {
             // the user is passenger
             /**
              * @var Matching $matchingOffer
              */
-            // we exclude private proposals for the carpooler count
-            if (!$matchingOffer->getProposalOffer()->isPrivate()) {
+            // we exclude private proposals and expired matchings for the carpooler count
+            // We need them though to treat former ask without sending another request
+            if (!$matchingOffer->getProposalOffer()->isPrivate() && $matchingOffer->getCriteria()->getFromDate()->format('Y-m-d') >= $today->format('Y-m-d')) {
                 $carpoolers[] = $matchingOffer->getProposalOffer()->getUser()->getId();
             }
             // check for asks (driver)
@@ -270,11 +272,13 @@ class MyAdManager
             /**
              * @var Matching $matchingRequest
              */
-            // we exclude private proposals for the carpooler count, as well as solidaries
+            // we exclude private proposals for the carpooler count, as well as solidaries and expired matching
+            // We need them though to treat former ask without sending another request
             if (
                 !$matchingRequest->getProposalRequest()->isPrivate()
                 && !$matchingRequest->getProposalRequest()->getSolidary()
                 && !in_array($matchingRequest->getProposalRequest()->getUser()->getId(), $carpoolers)
+                && $matchingRequest->getCriteria()->getFromDate()->format('Y-m-d') >= $today->format('Y-m-d')
             ) {
                 $carpoolers[] = $matchingRequest->getProposalRequest()->getUser()->getId();
             }
