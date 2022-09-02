@@ -43,7 +43,7 @@
               style="text-decoration:none;"
               class="white--text"
               target="_blank"
-            >              
+            >
               {{ $t('cooperative.talkAboutUs.title') }}
             </a>
           </v-card-text>
@@ -56,6 +56,13 @@
             >
               {{ $t('cooperative.joinUs.title') }}
             </a>
+          </v-card-text>
+          <v-card-text class="my-0 py-1">
+            <a
+              :href="$t('cooperative.toolbox.link')"
+              style="text-decoration:none;"
+              class="white--text"
+            >{{ $t('cooperative.toolbox.title') }}</a>
           </v-card-text>
 
           <v-card-text class="my-0 pt-10 pb-0 white--text font-weight-bold">
@@ -324,7 +331,7 @@ export default {
     socialCookies:{
       type: Array,
       default: null
-    }  
+    }
   },
   data() {
     return {
