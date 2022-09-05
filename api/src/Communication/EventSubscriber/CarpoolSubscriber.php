@@ -56,6 +56,7 @@ use App\User\Service\BlockManager;
 use App\User\Service\UserManager;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Debug\Exception\ClassNotFoundException;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -70,6 +71,7 @@ class CarpoolSubscriber implements EventSubscriberInterface
     private $blockManager;
     private $askManager;
     private $userManager;
+    private $eventDispatcher;
 
     public function __construct(
         NotificationManager $notificationManager,
@@ -78,7 +80,8 @@ class CarpoolSubscriber implements EventSubscriberInterface
         UrlGeneratorInterface $router,
         BlockManager $blockManager,
         AskManager $askManager,
-        UserManager $userManager
+        UserManager $userManager,
+        EventDispatcherInterface $eventDispatcher
     ) {
         $this->notificationManager = $notificationManager;
         $this->askHistoryRepository = $askHistoryRepository;
@@ -87,6 +90,7 @@ class CarpoolSubscriber implements EventSubscriberInterface
         $this->blockManager = $blockManager;
         $this->askManager = $askManager;
         $this->userManager = $userManager;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     public static function getSubscribedEvents()
