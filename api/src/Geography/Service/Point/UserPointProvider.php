@@ -65,7 +65,7 @@ class UserPointProvider implements PointProvider
         $points = [];
         foreach ($addresses as $address) {
             $point = AddressAdapter::addressToPoint($address);
-            $point->setId($address->getId());
+            $point->setId((string) $address->getId());
             $point->setName($this->translator->trans($address->getName()));
             $point->setType('user');
             $points[] = $point;
