@@ -42,7 +42,6 @@ use App\Match\Repository\MassRepository;
 use App\Service\FileManager;
 use App\User\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Geocoder\Plugin\PluginProvider;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -86,7 +85,6 @@ class MassImportManager
     private $geoRouter;
     private $geoMatcher;
     private $eventDispatcher;
-    private $geocoder;
 
     /**
      * Constructor.
@@ -102,12 +100,36 @@ class MassImportManager
         ValidatorInterface $validator,
         GeoTools $geoTools,
         MobicoopGeocoder $mobicoopGeocoder,
-        PluginProvider $geocoder,
         GeoRouter $geoRouter,
         GeoMatcher $geoMatcher,
         EventDispatcherInterface $eventDispatcher,
-        array $params
+        array $params,
+        array $prioritizeCentroid = null,
+        array $prioritizeBox = null,
+        string $prioritizeRegion = null,
+        string $restrictCountry = null,
+        array $exclusionTypes = []
     ) {
+        if ($prioritizeCentroid) {
+            $mobicoopGeocoder->setPrioritizeCentroid(
+                $prioritizeCentroid['lon'],
+                $prioritizeCentroid['lat']
+            );
+        }
+        if ($prioritizeBox) {
+            $mobicoopGeocoder->setPrioritizeBox(
+                $prioritizeBox['minLon'],
+                $prioritizeBox['minLat'],
+                $prioritizeBox['maxLon'],
+                $prioritizeBox['maxLat']
+            );
+        }
+        if ($prioritizeRegion) {
+            $mobicoopGeocoder->setPrioritizeRegion($prioritizeRegion);
+        }
+        if ($restrictCountry) {
+            $mobicoopGeocoder->setRestrictCountry($restrictCountry);
+        }
         $this->entityManager = $entityManager;
         $this->massRepository = $massRepository;
         $this->massPersonRepository = $massPersonRepository;
@@ -117,10 +139,10 @@ class MassImportManager
         $this->validator = $validator;
         $this->geoTools = $geoTools;
         $this->pointProvider = new MobicoopGeocoderPointProvider($mobicoopGeocoder);
+        $this->pointProvider->setExclusionTypes($exclusionTypes);
         $this->geoRouter = $geoRouter;
         $this->geoMatcher = $geoMatcher;
         $this->eventDispatcher = $eventDispatcher;
-        $this->geocoder = $geocoder;
     }
 
     /**
@@ -1011,12 +1033,14 @@ class MassImportManager
                         }
                     } elseif ('returnTime' == $fields[$i] && '' == $tab[$i]) {
                         $massPerson->setReturnTime(self::DEFAULT_RETURN_TIME);
-                    } elseif ('birthDate' == $fields[$i] && '' != $tab[$i]) {
-                        $massPerson->setBirthDate(\DateTime::createFromFormat('DD-MM-YYYY', $tab[$i]) ? \DateTime::createFromFormat('DD-MM-YYYY', $tab[$i]) : null);
-                    } elseif ('gender' == $fields[$i] && '' != $tab[$i]) {
+                    } elseif ('birthDate' == $fields[$i] && '' !== $tab[$i]) {
+                        $massPerson->setBirthDate(\DateTime::createFromFormat('DD-MM-YYYY', $tab[$i]));
+                    } elseif ('gender' == $fields[$i] && '' !== $tab[$i]) {
                         $massPerson->setGender(intval($tab[$i]));
                     } elseif (method_exists($massPerson, $setter)) {
-                        $massPerson->{$setter}($tab[$i]);
+                        if ('' !== $tab[$i]) {
+                            $massPerson->{$setter}($tab[$i]);
+                        }
                     }
                 }
                 $massPerson->setPersonalAddress($personalAddress);

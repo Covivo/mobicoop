@@ -734,6 +734,11 @@ services:
   App\Match\Service\MassImportManager:
     arguments:
       $params: "%mass%"
+      $prioritizeCentroid: "%env(json:POINT_SEARCHER_PRIORITIZE_CENTROID)%"
+      $prioritizeBox: "%env(json:POINT_SEARCHER_PRIORITIZE_BOX)%"
+      $prioritizeRegion: "%env(string:POINT_SEARCHER_PRIORITIZE_REGION)%"
+      $restrictCountry: "%env(string:POINT_SEARCHER_RESTRICT_COUNTRY)%"
+      $exclusionTypes: "%env(json:POINT_SEARCHER_EXCLUSION_TYPES)%"
     tags:
       - { name: monolog.logger, channel: mass }
 
