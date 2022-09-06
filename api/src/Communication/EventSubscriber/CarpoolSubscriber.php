@@ -234,9 +234,9 @@ class CarpoolSubscriber implements EventSubscriberInterface
         $this->notificationManager->notifies(ProposalWillExpireEvent::NAME, $event->getProposal()->getUser(), $event->getProposal());
     }
 
-    public function onInactiveAdRelaunch(ProposalWillExpireEvent $event)
+    public function onInactiveAdRelaunch(InactiveAdRelaunchEvent $event)
     {
-        $this->notificationManager->notifies(ProposalWillExpireEvent::NAME, $event->getProposal()->getUser(), $event->getProposal());
+        $this->notificationManager->notifies(InactiveAdRelaunchEvent::NAME, $event->getProposal()->getUser(), $event->getProposal());
     }
 
     /**
