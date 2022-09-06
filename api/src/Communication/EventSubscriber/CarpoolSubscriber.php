@@ -463,7 +463,7 @@ class CarpoolSubscriber implements EventSubscriberInterface
         if (Criteria::FREQUENCY_PUNCTUAL == $ad->getFrequency()) {
             return $multipleSchedules;
         }
-        if (${$ad}->getResults()[0]->getResultDriver()) {
+        if ($ad->getResults()[0]->getResultDriver()) {
             $outwardResult = $ad->getResults()[0]->getResultDriver()->getOutward();
             $returnResult = $ad->getResults()[0]->getResultDriver()->getReturn();
         } else {
