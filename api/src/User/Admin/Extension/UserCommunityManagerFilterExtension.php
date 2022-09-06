@@ -19,24 +19,23 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\Admin\Extension;
 
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryCollectionExtensionInterface;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryItemExtensionInterface;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
-use App\User\Entity\User;
 use App\Auth\Service\AuthManager;
 use App\Community\Entity\CommunityUser;
+use App\User\Entity\User;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\Security\Core\Security;
 
 /**
-  *  Extension used to add an automatic filter to the admin get collection request for community managers
-  *  Non-admin community managers can only manage and see the users that belong to their communities
-*/
-
+ *  Extension used to add an automatic filter to the admin get collection request for community managers
+ *  Non-admin community managers can only manage and see the users that belong to their communities.
+ */
 final class UserCommunityManagerFilterExtension implements QueryCollectionExtensionInterface, QueryItemExtensionInterface
 {
     private $security;
@@ -51,14 +50,13 @@ final class UserCommunityManagerFilterExtension implements QueryCollectionExtens
     public function applyToCollection(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
     {
         // concerns only admin get collection
-        if ($resourceClass == User::class && $operationName == "ADMIN_get") {
+        if (User::class == $resourceClass && in_array($operationName, ['ADMIN_get', 'ADMIN_associate_campaign', 'ADMIN_send_campaign'])) {
             $this->addWhere($queryBuilder, $resourceClass, false, $operationName);
         }
     }
 
     public function applyToItem(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, array $identifiers, string $operationName = null, array $context = [])
     {
-        return;
     }
 
     private function addWhere(QueryBuilder $queryBuilder, string $resourceClass, bool $isItem, string $operationName = null, array $identifiers = [], array $context = []): void
@@ -76,8 +74,8 @@ final class UserCommunityManagerFilterExtension implements QueryCollectionExtens
         $user = $this->security->getUser();
         $rootAlias = $queryBuilder->getRootAliases()[0];
         $queryBuilder
-            ->join(sprintf("%s.communityUsers", $rootAlias), 'ucmfe_cu')
-            ->join(sprintf("%s.communityUsers", $rootAlias), 'ucmfe_cu2')
+            ->join(sprintf('%s.communityUsers', $rootAlias), 'ucmfe_cu')
+            ->join(sprintf('%s.communityUsers', $rootAlias), 'ucmfe_cu2')
             ->andWhere('ucmfe_cu.user = :user AND ucmfe_cu.status = :status AND ucmfe_cu2.community = ucmfe_cu.community')
         ;
         $queryBuilder->setParameter('user', $user);
