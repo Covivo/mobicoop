@@ -62,7 +62,7 @@ class SendBoosterCommand extends Command
 
         if (count($punctualProposals) > 0) {
             foreach ($punctualProposals as $punctualProposal) {
-                $proposal = $this->proposalRepository->find($punctualProposal['proposal_id']);
+                $proposal = $this->proposalRepository->find(intval($punctualProposal['proposal_id']));
                 $event = new SendBoosterEvent($proposal->getUser());
                 $this->eventDispatcher->dispatch(SendBoosterEvent::NAME, $event);
             }
