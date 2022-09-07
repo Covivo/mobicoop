@@ -202,7 +202,7 @@ class UserRepository
     public function findUserWithNoAdSinceXDays(int $nbOfDays = null): ?array
     {
         $now = (new \DateTime('now'));
-        $createdDate = $now->modify('-'.$nbOfDays.' days')->format('Y-m-d');
+        $createdDate = $now->modify('- '.$nbOfDays.' days')->format('Y-m-d');
 
         $stmt = $this->entityManager->getConnection()->prepare(
             "SELECT u.id
