@@ -49,7 +49,7 @@ final class UserCommunityManagerFilterExtension implements QueryCollectionExtens
 
     public function applyToCollection(QueryBuilder $queryBuilder, QueryNameGeneratorInterface $queryNameGenerator, string $resourceClass, string $operationName = null)
     {
-        // concerns only admin get collection
+        // concerns only admin get and campaigns collections
         if (User::class == $resourceClass && in_array($operationName, ['ADMIN_get', 'ADMIN_associate_campaign', 'ADMIN_send_campaign'])) {
             $this->addWhere($queryBuilder, $resourceClass, false, $operationName);
         }
