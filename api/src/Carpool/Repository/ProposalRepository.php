@@ -1372,7 +1372,8 @@ class ProposalRepository
             ->join('p.criteria', 'c')
             ->where('p.private = 0 OR p.private IS NULL')
             ->andWhere('c.frequency = :regularFrequency')
-            ->andWhere('DATE(c.toDate) = :toDate')
+            ->andWhere('c.toDate = :toDate')
+            ->setParameter('regularFrequency', Criteria::FREQUENCY_REGULAR)
             ->setParameter('toDate', $toDate)
         ;
 
@@ -1388,7 +1389,8 @@ class ProposalRepository
             ->join('p.criteria', 'c')
             ->where('p.private = 0 OR p.private IS NULL')
             ->andWhere('c.frequency = :regularFrequency')
-            ->andWhere('DATE(c.toDate) = :toDate')
+            ->andWhere('c.toDate = :toDate')
+            ->setParameter('regularFrequency', Criteria::FREQUENCY_REGULAR)
             ->setParameter('toDate', $toDate)
         ;
 
@@ -1405,7 +1407,7 @@ class ProposalRepository
             count(DISTINCT ask.id) AS nb_ask
             FROM proposal
             INNER JOIN criteria ON proposal.criteria_id = criteria.id
-            INNER JOIN matching ON matching.proposal_offer_id = proposal.id
+            LEFT JOIN matching ON matching.proposal_offer_id = proposal.id
             LEFT JOIN ask ON ask.matching_id = matching.id
             WHERE date(proposal.created_date) = '".$createdDate."' AND criteria.frequency = 1 AND proposal.private = 0
             GROUP BY proposal.id
@@ -1419,7 +1421,7 @@ class ProposalRepository
             count(DISTINCT ask.id) AS nb_ask
             FROM proposal
             INNER JOIN criteria ON proposal.criteria_id = criteria.id
-            INNER JOIN matching ON matching.proposal_request_id = proposal.id
+            LEFT JOIN matching ON matching.proposal_request_id = proposal.id
             LEFT JOIN ask ON ask.matching_id = matching.id
             WHERE date(proposal.created_date) = '".$createdDate."' AND criteria.frequency = 1 AND proposal.private = 0
             GROUP BY proposal.id

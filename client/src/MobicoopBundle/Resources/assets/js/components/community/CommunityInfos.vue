@@ -1,28 +1,21 @@
 <template>
-  <v-row align="center">
-    <v-col
-      cols="4"
-      md="4"
-      justify="center"
-      align="center"
-    >
-      <v-img
-        :src="(community.images[0] && community['images'][0]['versions']['square_250']) ? community['images'][0]['versions']['square_250'] : urlAltAvatar"
-        width="225"
-        height="200"
-        :aspect-ratio="1"
-        :alt="community.name"
-        contain
-      />
-    </v-col>
-
-    <v-col
-      cols="8"
-      md="8"
-    >
+  <div>
+    <div class="d-flex justify-center align-item-start">
       <v-card
         flat
-        justify="center"
+      >
+        <v-img
+          :src="(community.images[0] && community['images'][0]['versions']['square_250']) ? community['images'][0]['versions']['square_250'] : urlAltAvatar"
+          width="225"
+          height="200"
+          :aspect-ratio="1"
+          :alt="community.name"
+          contain
+        />
+      </v-card>
+      <v-card
+        flat
+        class="align-self-center flex-grow-1"
       >
         <v-card-text>
           <h3 :class="justifyTitle">
@@ -37,20 +30,20 @@
           >
             {{ $t('infos.members', {members:community.nbMembers}) }}
           </v-chip>
-          <p
-            v-if="displayDescription"
-            class="text-body-1 text-justify"
-            v-html="community.description" 
-          />
-          <p
-            v-if="displayDescription"
-            class="text-body-2 text-justify"
-            v-html="community.fullDescription"
-          />
         </v-card-text>
       </v-card>
-    </v-col>
-  </v-row>
+    </div>
+    <p
+      v-if="displayDescription"
+      class="text-body-1 text-justify"
+      v-html="community.description"
+    />
+    <p
+      v-if="displayDescription"
+      class="text-body-2 text-justify"
+      v-html="community.fullDescription"
+    />
+  </div>
 </template>
 <script>
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/community/Community/";

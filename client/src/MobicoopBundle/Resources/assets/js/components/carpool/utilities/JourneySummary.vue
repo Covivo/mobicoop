@@ -122,15 +122,15 @@ export default {
     date: {
       type: String,
       default: null
-    }, 
+    },
     time: {
       type: String,
       default: null
-    }, 
+    },
     price: {
       type: String,
       default: null
-    },  
+    },
     seats: {
       type: Number,
       default: null
@@ -152,9 +152,9 @@ export default {
   computed: {
     computedTime() {
       if (this.time) {
-        return moment.utc(this.time).format(this.$t("hourMinute"));  
+        return moment.utc(this.time).format(this.$t("hourMinute"));
       }
-      return null;  
+      return null;
     },
     computedDate() {
       if (this.date) {
@@ -166,11 +166,17 @@ export default {
       return (this.pickUp.addressLocality) ? this.pickUp.addressLocality : '';
     },
   },
+  created() {
+    this.setMomentLocale();
+  },
   beforeUpdate() {
-    this.locale = localStorage.getItem("X-LOCALE");
-    moment.locale(this.locale);
+    this.setMomentLocale();
   },
   methods: {
+    setMomentLocale() {
+      this.locale = localStorage.getItem("X-LOCALE");
+      moment.locale(this.locale);
+    }
   }
 };
 </script>

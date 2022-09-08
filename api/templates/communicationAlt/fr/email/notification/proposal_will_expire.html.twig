@@ -2,7 +2,6 @@
 {% extends 'communicationAlt/fr/email/notification/base.html.twig' %}
 {% block body %}
 {% set proposal = context.proposal %}
-{% set recipient = context.user %}
 
 <table style="width:480px; font-family:{{api_env('EMAILS_FONT')}}, sans-serif;" cellpadding="0" cellspacing="0" summary="" border="0">
     <tr style="margin-bottom:21px; margin-top:19px;">
@@ -25,7 +24,7 @@
                         <p> </p>
                     </td>
                     <td align="left">
-                        <p style="font-size:11px; margin-bottom:16px;">Bonjour {{context.recipient.givenName|capitalize}} {{context.recipient.shortFamilyName|capitalize}},</p>
+                        <p style="font-size:11px; margin-bottom:16px;">Bonjour {{context.user.givenName|capitalize}} {{context.user.shortFamilyName|capitalize}},</p>
                         <p style="font-size:11px;">Votre annonce de covoiturage va bientôt expirer:</p>
                     </td>
                 </tr>
@@ -72,7 +71,7 @@
                         </td>
                     {% endif %}
                     <td>
-                        <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}};"> {{ cotext.destination.address.displayLabel[0] }}</b></p>
+                        <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}};"> {{ context.destination.address.displayLabel[0] }}</b></p>
                     </td>
                 </tr>
             </table>
