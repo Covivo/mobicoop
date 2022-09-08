@@ -1,6 +1,6 @@
 {
   "name": "mobicoop-platform",
-  "version": "1.56.0",
+  "version": "1.57.0",
   "description": "API & Front mobicoop carpool app",
   "main": "package.json",
   "scripts": {
