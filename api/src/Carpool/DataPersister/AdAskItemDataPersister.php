@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Carpool\DataPersister;
 
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
@@ -19,21 +20,20 @@ final class AdAskItemDataPersister implements ContextAwareDataPersisterInterface
         $this->request = $requestStack->getCurrentRequest();
         $this->security = $security;
     }
-  
+
     public function supports($data, array $context = []): bool
     {
-        return $data instanceof Ad && isset($context['item_operation_name']) &&  $context['item_operation_name'] == 'put_ask';
+        return $data instanceof Ad && isset($context['item_operation_name']) && 'put_ask' == $context['item_operation_name'];
     }
 
     public function persist($data, array $context = [])
     {
         // call your persistence layer to save $data
         if (is_null($data)) {
-            throw new \InvalidArgumentException($this->translator->trans("bad Ad id is provided"));
+            throw new \InvalidArgumentException($this->translator->trans('bad Ad id is provided'));
         }
-        $data = $this->askManager->updateAskFromAd($data, $this->request->get("id"), $this->security->getUser()->getId());
 
-        return $data;
+        return $this->askManager->updateAskFromAd($data, $this->request->get('id'), $this->security->getUser()->getId());
     }
 
     public function remove($data, array $context = [])

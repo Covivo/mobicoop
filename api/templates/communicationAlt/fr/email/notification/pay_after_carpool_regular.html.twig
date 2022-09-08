@@ -22,7 +22,7 @@
                         <p> </p>
                     </td>
                     <td align="left">
-                        <p style="font-size:11px; margin-bottom:16px;">Bonjour {{context.creditor.givenName|capitalize}} {{context.creditor.shortFamilyName|capitalize}},</p>
+                        <p style="font-size:11px; margin-bottom:16px;">Bonjour {{context.debtor.givenName|capitalize}} {{context.debtor.shortFamilyName|capitalize}},</p>
                     </td>
                 </tr>
             </table>
@@ -71,7 +71,7 @@
             <table cellpadding="2" cellspacing="2" summary="" border="0">
                 <tr>
                     <td align="center" style="width:100%;">
-                        <a href="href={{ api_env('EMAILS_PLATFORM_URL') }}/utilisateur/profil/modifier/mes-covoiturages-acceptes">
+                        <a href="{{ api_env('EMAILS_PLATFORM_URL') }}/utilisateur/profil/modifier/mes-covoiturages-acceptes">
                             <img
                             src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/buttons/payOnline.png"
                             style="border:0; height:29px; width:112; background-color:transparent; vertical-align:top;"
@@ -111,7 +111,7 @@
             <table cellpadding="2" cellspacing="2" summary="" border="0">
                 <tr>
                     <td align="center" style="width:100%;">
-                        <a href="href=https://www.zeste.coop/fr/associations/mobicoop">
+                        <a href="https://www.zeste.coop/fr/associations/mobicoop">
                             <img
                             src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/buttons/donate.png"
                             style="border:0; height:29px; width:112; background-color:transparent; vertical-align:top;"

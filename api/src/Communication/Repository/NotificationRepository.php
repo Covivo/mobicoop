@@ -19,13 +19,13 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Communication\Repository;
 
+use App\Communication\Entity\Notification;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use App\Communication\Entity\Notification;
 
 class NotificationRepository
 {
@@ -33,40 +33,40 @@ class NotificationRepository
      * @var EntityRepository
      */
     private $repository;
-    
+
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->repository = $entityManager->getRepository(Notification::class);
     }
-    
+
     public function find(int $id): ?Notification
     {
         return $this->repository->find($id);
     }
 
     /**
-     * Find active notifications for a given action
-     *
-     * @param string $action
+     * Find active notifications for a given action.
      */
     public function findActiveByAction(string $action)
     {
         $query = $this->repository->createQueryBuilder('n')
-        ->join('n.action', 'a')
-        ->where('a.name = :action and n.active=1 and n.userEditable=0')
-        ->setParameter('action', $action)
+            ->join('n.action', 'a')
+            ->where('a.name = :action and n.active=1 and n.userEditable=0')
+            ->setParameter('action', $action)
         ;
+
         return $query->getQuery()->getResult();
     }
 
     /**
-     * Find user editable notifications
+     * Find user editable notifications.
      */
     public function findUserEditable()
     {
         $query = $this->repository->createQueryBuilder('n')
-        ->where('n.userEditable=1')
+            ->where('n.userEditable=1')
         ;
+
         return $query->getQuery()->getResult();
     }
 }

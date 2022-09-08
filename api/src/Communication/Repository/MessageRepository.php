@@ -150,13 +150,13 @@ class MessageRepository
         $createdDate = $now->modify('-'.$nbOfDays.' days')->format('Y-m-d');
 
         $stmt = $this->entityManager->getConnection()->prepare(
-            'SELECT mi.id
+            "SELECT mi.id
             FROM message mi
                 LEFT JOIN
                     (SELECT m1.id
                     FROM message m1
                         INNER JOIN message m2 on m2.message_id = m1.id AND m2.user_id != m1.user_id) replied_messages ON replied_messages.id = mi.id
-            WHERE mi.message_id IS NULL AND replied_messages.id IS NULL AND DATE(mi.created_date) = '.$createdDate
+            WHERE mi.message_id IS NULL AND replied_messages.id IS NULL AND DATE(mi.created_date) = '".$createdDate."';"
         );
         $stmt->execute();
 

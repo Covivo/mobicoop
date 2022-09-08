@@ -34,7 +34,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class CommunicationInternalMessageReceivedRelaunch1Command extends Command
 {
-    public const RELAUNCH_DELAY = 5;
+    public const RELAUNCH_DELAY = 2;
     private $messageRepository;
     private $eventDispatcher;
 
@@ -60,7 +60,7 @@ class CommunicationInternalMessageReceivedRelaunch1Command extends Command
 
         if (count($messagesIds) > 0) {
             foreach ($messagesIds as $messageId) {
-                $message = $this->messageRepository->find($messageId);
+                $message = $this->messageRepository->find(intval($messageId['id']));
                 foreach ($message->getRecipients() as $recipient) {
                     $event = new InternalMessageReceivedRelaunch1Event($recipient);
                     $this->eventDispatcher->dispatch(InternalMessageReceivedRelaunch1Event::NAME, $event);
