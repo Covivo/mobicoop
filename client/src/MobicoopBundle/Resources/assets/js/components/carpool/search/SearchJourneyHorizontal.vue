@@ -234,7 +234,7 @@ export default {
         : null;
     },
     searchUnavailable() {
-      return (!this.origin || !this.destination || (!this.dataRegular && !this.date && !this.punctualDateOptional))
+      return (!this.origin || !this.destination || (!this.date && !this.regular))
     },
     checkOutwardDate() {
       if (this.outwardDateClicked && !this.regular && !this.date && !this.punctualDateOptional) {
