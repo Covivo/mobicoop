@@ -34,7 +34,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class InactiveAdRelaunchCommand extends Command
 {
-    public const RELAUNCH_DELAY = 15;
+    public const RELAUNCH_DELAY = 14;
     private $proposalRepository;
     private $eventDispatcher;
 

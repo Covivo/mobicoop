@@ -38,29 +38,13 @@
             <table style="width:100%;" cellpadding="4" cellspacing="4" summary="" border="0" >
                 <tr>
                     <td align="left">
-                        <p style="font-size:11px; margin-bottom:16px;">{{sender.givenName|capitalize}} {{sender.shortFamilyName|capitalize}} vous a contacté le {{ sendingDate|date("d/m/Y") }}. Vous n’ avez pas encore répondu à son message. A ce jour, vous n’avez pas encore répondu à son message, faites-le au plus vite, la personne attend votre retour pour organiser ses prochains trajets en covoiturage.</p>
+                        <p style="font-size:11px; margin-bottom:16px;">{{sender.givenName|capitalize}} {{sender.shortFamilyName|capitalize}} vous a contacté le {{ sendingDate|date("d/m/Y") }}. A ce jour, vous n’avez pas encore répondu à son message, faites-le au plus vite, la personne attend votre retour pour organiser ses prochains trajets en covoiturage.</p>
                     </td>
                 </tr>
             </table>
         </td>
     </tr>
-    <tr>
-        <td align="center">
-            <table style="width:100%; border-style:solid; border-width:0.5px; border-color:grey; margin-bottom:16px;" cellpadding="6" cellspacing="6" summary="" border="0" >
-                <tr>
-                    <td style="width:5px">
-                        <p> </p>
-                    </td>
-                    <td align="left">
-                        <p style="font-size:11px; text-align:justify">{{ context.text | nl2br }}</p>
-                    </td>
-                    <td style="width:5px">
-                        <p> </p>
-                    </td>
-                </tr>
-            </table>
-        </td>
-    </tr>
+    
     <tr>
         <td>
             <table cellpadding="6" cellspacing="6" summary="" border="0">

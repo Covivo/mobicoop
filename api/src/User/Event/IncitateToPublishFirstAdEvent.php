@@ -31,7 +31,7 @@ use Symfony\Contracts\EventDispatcher\Event;
  */
 class IncitateToPublishFirstAdEvent extends Event
 {
-    public const NAME = 'incitate_to_publish_first_ad';
+    public const NAME = 'incite_to_publish_first_ad';
 
     protected $user;
 

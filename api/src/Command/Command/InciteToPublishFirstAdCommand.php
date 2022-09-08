@@ -61,7 +61,7 @@ class InciteToPublishFirstAdCommand extends Command
 
             if (count($usersIds) > 0) {
                 foreach ($usersIds as $userId) {
-                    $event = new IncitateToPublishFirstAdEvent($this->userRepository->find($userId));
+                    $event = new IncitateToPublishFirstAdEvent($this->userRepository->find(intval($userId['id'])));
                     $this->eventDispatcher->dispatch(IncitateToPublishFirstAdEvent::NAME, $event);
                 }
             }

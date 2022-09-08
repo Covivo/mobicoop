@@ -60,7 +60,7 @@ class CommunicationInternalMessageReceivedRelaunch2Command extends Command
 
         if (count($messagesIds) > 0) {
             foreach ($messagesIds as $messageId) {
-                $message = $this->messageRepository->find($messageId);
+                $message = $this->messageRepository->find(intval($messageId['id']));
                 foreach ($message->getRecipients() as $recipient) {
                     $event = new InternalMessageReceivedRelaunch2Event($recipient);
                     $this->eventDispatcher->dispatch(InternalMessageReceivedRelaunch2Event::NAME, $event);

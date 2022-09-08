@@ -25,9 +25,8 @@ declare(strict_types=1);
 
 namespace App\Command\Command;
 
-use App\Carpool\Event\CarpoolAskPostedRelaunch1Event;
-use App\Carpool\Repository\AskRepository;
-use App\Carpool\Service\AskManager;
+use App\Carpool\Repository\ProposalRepository;
+use App\User\Event\SendBoosterEvent;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -35,16 +34,15 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class SendBoosterCommand extends Command
 {
-    public const RELAUNCH_DELAY = 2;
-    private $askRepository;
+    public const RELAUNCH_DELAY_PUNCTUAL = 2;
+    public const REALUNCH_DELAY_REGULAR = 7;
     private $eventDispatcher;
-    private $askManager;
+    private $proposalRepository;
 
-    public function __construct(AskRepository $askRepository, EventDispatcherInterface $eventDispatcher, AskManager $askManager)
+    public function __construct(EventDispatcherInterface $eventDispatcher, ProposalRepository $proposalRepository)
     {
-        $this->askRepository = $askRepository;
         $this->eventDispatcher = $eventDispatcher;
-        $this->askManager = $askManager;
+        $this->proposalRepository = $proposalRepository;
 
         parent::__construct();
     }
@@ -59,13 +57,21 @@ class SendBoosterCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $asks = $this->askRepository->findPendingAsksSinceXDays(self::RELAUNCH_DELAY);
+        $punctualProposals = $this->proposalRepository->findPunctualAdWithoutAskSinceXDays(self::RELAUNCH_DELAY_PUNCTUAL);
+        $regularProposals = $this->proposalRepository->findRegularAdWithoutAskSinceXDays(self::REALUNCH_DELAY_REGULAR);
 
-        if (count($asks) > 0) {
-            foreach ($asks as $ask) {
-                $ad = $this->askManager->getAskFromAd($ask->getId(), $ask->getUser()->getId());
-                $event = new CarpoolAskPostedRelaunch1Event($ad);
-                $this->eventDispatcher->dispatch(CarpoolAskPostedRelaunch1Event::NAME, $event);
+        if (count($punctualProposals) > 0) {
+            foreach ($punctualProposals as $punctualProposal) {
+                $proposal = $this->proposalRepository->find(intval($punctualProposal['proposal_id']));
+                $event = new SendBoosterEvent($proposal->getUser());
+                $this->eventDispatcher->dispatch(SendBoosterEvent::NAME, $event);
+            }
+        }
+        if (count($regularProposals) > 0) {
+            foreach ($regularProposals as $regularProposal) {
+                $proposal = $this->proposalRepository->find(intval($regularProposal['proposal_id']));
+                $event = new SendBoosterEvent($proposal->getUser());
+                $this->eventDispatcher->dispatch(SendBoosterEvent::NAME, $event);
             }
         }
 
