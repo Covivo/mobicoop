@@ -78,6 +78,7 @@
 /api/public/upload/badges/images/versions/*.jpeg
 /api/public/upload/badges/images/versions/*.png
 /api/public/upload/badges/images/versions/*.gif
+/api/public/upload/users/proofs/*.*
 /api/public/upload/communities/security/*
 /api/public/upload/communities/images/*.jpg
 /api/public/upload/communities/images/*.jpeg
