@@ -113,7 +113,7 @@ class AntiFraudManager
         // var_dump($route);
 
         // If the journey is above the $distanceMinCheck paramaters we need to check it otherwise, it's an immediate validation
-        if (($route[0]->getDistance() / 1000) > $this->distanceMinCheck) {
+        if (count($route) > 0 && $route[0] && ($route[0]->getDistance() / 1000) > $this->distanceMinCheck) {
             // FIRST CHECK
             $response = $this->validAdFirstCheck($ad);
             if (!$response->isValid()) {
