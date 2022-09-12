@@ -1350,9 +1350,14 @@ export default {
           }
         })
         .catch(error => {
-          console.log(error);
+          let message = this.$t('update.error');
+          if (error.message.includes('401')) {
+            message = this.$t("snackErrorDisconnected");
+          } else if (this.isSearchToSave) {
+            message = this.$t('searchToSave.error');
+          }
           this.snackbar = {
-            message: this.isSearchToSave ? this.$t('searchToSave.error') : this.$t('update.error'),
+            message: message,
             color: "error",
             show: true
           };
