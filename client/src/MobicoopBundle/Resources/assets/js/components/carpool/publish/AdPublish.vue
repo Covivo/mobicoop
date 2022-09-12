@@ -911,6 +911,7 @@ export default {
       dialog: false,
       directionWay:[],
       disableNextButton: false,
+      disconnected: false,
       distance: 0,
       driver: true,
       duration: 0,
@@ -975,6 +976,9 @@ export default {
       }
     },
     snackErrorPublishMessage() {
+      if (this.disconnected) {
+        return this.disconnect();
+      }
       return this.isValidAd ? this.$t("snackErrorPublish"): this.$t("snackErrorAntiFraud");
     },
     hintPricePerKm() {
@@ -1226,6 +1230,10 @@ export default {
     buildUrl(route) {
       return `${this.baseUrl}/${route}`;
     },
+    disconnect() {
+      this.disconnected = false;
+      return this.$t("snackErrorDisconnected");
+    },
     isOutwardSchedulesValid() {
       let outwardSchedulesValid = true;
       this.schedules.forEach((s, index) => {
@@ -1288,6 +1296,10 @@ export default {
             ) {
               this.snackErrorPublish.show = true;
               this.isValidAd = false;
+              this.loading = false;
+            } else if (response.data.includes("<login")) {
+              this.disconnected = true;
+              this.snackErrorPublish.show = true;
               this.loading = false;
             } else if (response.data.includes("error")) {
               this.snackErrorPublish.show = true;
