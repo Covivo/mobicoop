@@ -457,6 +457,7 @@ export default {
       this.hideClickIcon = true;
       this.idMessage = -2;
       this.currentIdAsk = -2;
+      this.recipientName = null;
     },
     refreshDetailsCompleted(data){
       //this.refreshActions = true;
