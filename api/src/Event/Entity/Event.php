@@ -398,7 +398,7 @@ class Event
 
     /**
      * @var int The creator id
-     * @Groups({"aRead","aWrite"})
+     * @Groups({"aRead","aWrite", "readEvent"})
      */
     private $creatorId;
 
