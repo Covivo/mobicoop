@@ -132,7 +132,7 @@ class MyAdManager
 
                 $myAd->setOutwardDate($fromDate->format('Y-m-d'));
                 $myAd->setOutwardTime($fromDate->format('H:i'));
-                if (Proposal::TYPE_OUTWARD == $proposal->getType()) {
+                if ((Proposal::TYPE_OUTWARD == $proposal->getType()) && (!null == $proposal->getProposalLinked())) {
                     // there's a return trip
                     /**
                      * @var DateTime $returnDate
