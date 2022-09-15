@@ -25,7 +25,7 @@
           xl="6"
           align="center"
         >
-          <h1>{{ $t('title') }}</h1>
+          <h1>{{ edit ? $t('titleEdit') : $t('title') }}</h1>
         </v-col>
       </v-row>
       <v-form
@@ -81,6 +81,7 @@
                   :palette="geoCompletePalette"
                   :chip="geoCompleteChip"
                   :label="$t('form.address.label')"
+                  :address="eventAddress"
                   @address-selected="addressSelected"
                 />
               </v-col>
@@ -292,7 +293,7 @@
             </v-row>
             <!-- Community -->
             <v-row
-              v-if="canSelectCommunity"
+              v-if="canSelectCommunity && communities.length>0"
               justify="center"
             >
               <v-col cols="6">
@@ -305,12 +306,16 @@
                   :label="(mandatoryCommunity) ? $t('form.community.label')+' '+$t('form.mandatoryCharacter') : $t('form.community.label')"
                   single-line
                   clearable
+                  :disabled="edit"
                   :rules="mandatoryCommunity ? selectedCommunityRules : []"
                 />
               </v-col>
             </v-row>
             <!-- Image -->
-            <v-row justify="center">
+            <v-row
+              v-if="!edit"
+              justify="center"
+            >
               <v-col cols="6">
                 <v-file-input
                   ref="avatar"
@@ -326,6 +331,43 @@
                 />
               </v-col>
             </v-row>
+            <div
+              v-else
+            >
+              <!-- New image -->
+              <v-row
+                justify="center"
+              >
+                <img
+                  :src="(event.images[0]) ? event['images'][0]['versions']['square_250'] : event.community ? event.community.image : urlAltAvatar"
+                  width="300"
+                  height="200"
+                  contain
+                >
+              </v-row>
+              <v-row
+                justify="center"
+              >
+                <v-col
+                  cols="6"
+                  class="d-flex justify-center"
+                >
+                  <v-file-input
+                    ref="avatar"
+                    v-model="avatar"
+                    :rules="avatarNotRequiredRules"
+                    accept="image/png, image/jpeg, image/jpg"
+                    :label="$t('form.avatar.label')"
+                    prepend-icon="mdi-image"
+                    :hint="$t('form.avatar.minPxSize', {size: imageMinPxSize})+', '+$t('form.avatar.maxMbSize', {size: imageMaxMbSize})"
+                    persistent-hint
+                    show-size
+                    @change="selectedAvatar"
+                  />
+                </v-col>
+              </v-row>
+            </div>
+            <!-- Save -->
             <v-row justify="center">
               <v-col cols="6">
                 <div class="text-center">
@@ -336,7 +378,7 @@
                     :disabled="!valid"
                     @click="dialog=true"
                   >
-                    {{ $t('buttons.create.label') }}
+                    {{ edit ? $t('buttons.edit.label') : $t('buttons.create.label') }}
                   </v-btn>
                 </div>
               </v-col>
@@ -354,7 +396,7 @@
           class="text-h5 grey lighten-2"
           primary-title
         >
-          {{ $t('popUp.title') }}
+          {{ edit ? $t('popUpEdit.title') : $t('popUp.title') }}
         </v-card-title>
 
         <v-card-text>
@@ -413,7 +455,15 @@ export default {
     Geocomplete
   },
   props:{
+    edit: {
+      type: Boolean,
+      default: false
+    },
     user: {
+      type: Object,
+      default: null
+    },
+    event: {
       type: Object,
       default: null
     },
@@ -468,10 +518,10 @@ export default {
   },
   data () {
     return {
-      startDate: null,
-      endDate : null,
-      startTime: null,
-      endTime: null,
+      startDate: this.event ? moment(this.event.fromDate.date).format(this.$t("startDate.format")) : null,
+      endDate : this.event ? moment(this.event.toDate.date).format(this.$t("endDate.format")) : null,
+      startTime: this.event ? moment(this.event.fromDate.date).format(this.$t("startTime.format")) : null,
+      endTime: this.event ? moment(this.event.toDate.date).format(this.$t("endTime.format")) : null,
       menuOutwardDate: false,
       menuReturnDate: false,
       menuStartTime: false,
@@ -488,17 +538,17 @@ export default {
         v => !v || this.avatarHeight >= this.imageMinPxSize || this.$t("form.avatar.pxSize", { size: this.imageMinPxSize, height: this.avatarHeight, width: this.avatarWidth }),
         v => !v || this.avatarWidth >= this.imageMinPxSize || this.$t("form.avatar.pxSize", { size: this.imageMinPxSize, height: this.avatarHeight, width: this.avatarWidth }),
       ],
-      eventAddress: null,
-      name: null,
+      eventAddress: this.event ? this.event.address : null,
+      name: this.event ? this.event.name : null,
       nameRules: [
         v => !!v || this.$t("form.name.required"),
       ],
-      description: null,
+      description: this.event ? this.event.description : null,
       descriptionRules: [
         v => !!v || this.$t("form.description.required"),
         v => (v||'').length <= 512 || this.$t("error.event.descriptionLength"),
       ],
-      fullDescription: null,
+      fullDescription: this.event ? this.event.fullDescription : null,
       fullDescriptionRules: [
         v => !!v || this.$t("form.fullDescription.required"),
         v => (v||'').length <= 2500 || this.$t("error.event.fullDescriptionLength"),
@@ -510,23 +560,23 @@ export default {
       endDateRules: [
         v => !!v || this.$t("endDate.error"),
       ],
-      isPrivate: false,
+      isPrivate: this.event ? this.event.private : false,
       avatar: null,
       avatarHeight: null,
       avatarWidth: null,
       loading: false,
       snackError: null,
       snackbar: false,
-      urlEvent: null,
+      urlEvent: this.event ? this.event.url : null,
       urlEventRules: [
         v => !v || /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([-.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/.test(v) || this.$t("form.urlEvent.error")
       ],
       dialog: false,
-      endDatePickerMinDate: null,
+      endDatePickerMinDate: this.event ? this.event.fromDate.date : null,
       startDatePickerMaxDate: null,
       nowDate : new Date().toISOString().slice(0,10),
       valid: false,
-      selectedCommunity: null,
+      selectedCommunity: this.event ? this.event.community : null,
       selectedCommunityRules: [
         v => !!v || this.$t("form.community.required")
       ],
@@ -567,7 +617,6 @@ export default {
       this.eventAddress = address;
     },
     createEvent() {
-      console.log(this.selectedCommunity);
       let newEvent = new FormData();
       newEvent.append("name", this.name);
       newEvent.append("fullDescription", this.fullDescription);
@@ -583,8 +632,10 @@ export default {
       if (this.urlEvent) newEvent.append("urlEvent", this.urlEvent);
       this.loading = true;
 
+      let route = this.edit ? this.$t('buttons.edit.route', { id: this.event.id}) : this.$t('buttons.create.route');
+
       maxios
-        .post(this.$t('buttons.create.route'), newEvent, {
+        .post(route, newEvent, {
           headers:{
             'content-type': 'multipart/form-data'
           }

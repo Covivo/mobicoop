@@ -1627,7 +1627,6 @@ get_last_events_created:
         nl: /events/getLastEventsCreated
     controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::getLastEventCreated
 
-
 # display events
 event_list:
     path:
@@ -1659,6 +1658,16 @@ event_show:
         en: /carpools-events/{id}/{urlKey?}
         nl: /carpools-events/{id}/{urlKey?}
     controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::eventShow
+    requirements:
+        id: '\d+'
+
+# edit event
+event_edit:
+    path:
+        fr: /evenement/{id}/modifier
+        en: /event/{id}/edit
+        nl: /event/{id}/edit
+    controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::eventEdit
     requirements:
         id: '\d+'
 

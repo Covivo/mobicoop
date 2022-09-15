@@ -193,7 +193,7 @@ class EventController extends AbstractController
      *
      * @param mixed $id
      */
-    public function eventShow($id, EventManager $eventManager, UserManager $userManager, Request $request)
+    public function eventShow($id, EventManager $eventManager, UserManager $userManager)
     {
         // retreive event;
         $event = $eventManager->getEvent($id);
@@ -253,6 +253,44 @@ class EventController extends AbstractController
             'destination' => $event->getAddress(),
             'searchRoute' => 'covoiturage/recherche',
             'points' => $ways,
+        ]);
+    }
+
+    public function eventEdit($id, EventManager $eventManager, ImageManager $imageManager, Request $request)
+    {
+        $event = $eventManager->getEvent($id);
+        $this->denyAccessUnlessGranted('update', $event);
+
+        if ($request->isMethod('POST')) {
+            if ($event = $eventManager->updateEvent($request->request, $event)) {
+                if (null != $request->files->get('avatar')) {
+                    if (count($event->getImages()) > 0) {
+                        $imageManager->deleteImage($event->getImages()[0]->getId());
+                    }
+                    $image = new Image();
+                    $image->setEventFile($request->files->get('avatar'));
+                    $image->setEventId($event->getId());
+                    $image->setName($event->getName());
+                    if ($image = $imageManager->createImage($image)) {
+                        return new Response();
+                    }
+
+                    return new Response(json_encode('error.image'));
+                }
+
+                return new Response();
+            }
+            // return error if event post didn't work
+            return new Response(json_encode('error.event.create'));
+        }
+
+        return $this->render('@Mobicoop/event/updateEvent.html.twig', [
+            'event' => $event,
+            'mandatoryDescription' => $this->mandatoryDescription,
+            'mandatoryFullDescription' => $this->mandatoryFullDescription,
+            'mandatoryImage' => $this->mandatoryImage,
+            'canSelectCommunity' => $this->eventAssociatedToCommunity['activated'],
+            'mandatoryCommunity' => $this->eventAssociatedToCommunity['mandatory'],
         ]);
     }
 

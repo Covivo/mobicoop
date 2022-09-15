@@ -53,14 +53,24 @@
                 </v-btn>
                 <v-btn
                   class="mt-3"
-
                   color="primary"
                   rounded
                   :href="$t('buttons.widget.route', {'id':event.id,'urlKey':event.urlKey})"
                 >
                   {{ $t('buttons.widget.label') }}
                 </v-btn>
-                <Report
+                <br>
+                <v-btn
+                  v-if="user && event.creatorId == user.id"
+                  class="mt-3"
+                  color="warning"
+                  rounded
+                  :href="$t('buttons.edit.route', {'id':event.id})"
+                >
+                  {{ $t('buttons.edit.label') }}
+                </v-btn>
+                <report
+                  v-if="!user || event.creatorId !== user.id"
                   class="mt-3"
                   :event="event"
                 />
@@ -261,7 +271,7 @@ export default {
     }
   },
   computed: {
-    dateFormated() { 
+    dateFormated() {
       return this.date
         ? moment.utc(this.date).format("YYYY-MM-DD")
         : "";

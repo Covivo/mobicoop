@@ -127,7 +127,7 @@ class Image
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"aRead","read","readUser","communities","listCommunities","readRelayPoint","readEditorial"})
+     * @Groups({"aRead","read","readUser","communities","listCommunities","readRelayPoint","readEditorial","readEvent"})
      * @ApiProperty(identifier=true)
      */
     private $id;
