@@ -699,6 +699,7 @@ export default {
           this.buildPoint(
             this.community.address.latitude,
             this.community.address.longitude,
+            this.community.address,
             this.community.name
           )
         );
@@ -744,6 +745,7 @@ export default {
             this.buildPoint(
               proposal.origin.latitude,
               proposal.origin.longitude,
+              proposal.origin,
               currentProposal.desc,
               "",
               [],
@@ -761,6 +763,7 @@ export default {
             this.buildPoint(
               proposal.destination.latitude,
               proposal.destination.longitude,
+              proposal.destination,
               currentProposal.desc,
               "",
               [],
@@ -806,6 +809,7 @@ export default {
     buildPoint: function(
       lat,
       lng,
+      address= "", 
       title = "",
       pictoUrl = "",
       size = [],
@@ -816,6 +820,7 @@ export default {
         title: title,
         latLng: L.latLng(lat, lng),
         icon: {},
+        address:address
       };
 
       if (pictoUrl !== "") {
@@ -855,11 +860,11 @@ export default {
       return point;
     },
     selectedAsDestination(destination) {
-      console.error(destination);
+      // console.error(destination);
       this.selectedDestination = destination;
     },
     selectedAsOrigin(origin) {
-      console.error(origin);
+      // console.error(origin);
       this.selectedOrigin = origin;
     },
     contact: function(data) {
