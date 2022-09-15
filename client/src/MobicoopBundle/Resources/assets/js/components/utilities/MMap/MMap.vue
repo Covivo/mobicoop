@@ -36,7 +36,7 @@
           :circle-marker="(point.circleMarker) ? point.circleMarker : false"
           @updateLatLng="updateLatLng"
           @clickOnPoint="clickOnPoint(point.address)"
-        />        
+        />
         <v-dialog
           v-model="dialog"
           max-width="400"
@@ -71,7 +71,7 @@
           :color="(way.color!=='' && way.color !==undefined)?way.color:'blue'"
           :dash-array="(way.dashArray) ? way.dashArray : ''"
           @click="clickOnPolyline"
-        >        
+        >
           <l-tooltip v-if="way.title !==undefined && way.title!==''">
             <p v-html="way.title" />
           </l-tooltip>
@@ -130,7 +130,7 @@ export default {
     zoom: {
       type: Number,
       default: 13
-    },    
+    },
     typeMap: {
       type: String,
       default: ""
@@ -158,6 +158,10 @@ export default {
     dashArray:{
       type: String,
       default: null
+    },
+    defaultMapBounds: {
+      type: Object,
+      default: null
     }
   },
   data() {
@@ -182,6 +186,13 @@ export default {
       return arrayAttribution.join(', ');
     }
   },
+  watch: {
+    defaultMapBounds (bounds) {
+      if (bounds && this.points.length === 0) {
+        this.$refs.mmap.mapObject.fitBounds(bounds);
+      }
+    }
+  },
   methods: {
     redrawMap: function() {
       // To redraw the map (when you resize the div you have to redraw the map)
@@ -193,7 +204,10 @@ export default {
         this.points.forEach((pointForBound, index) => {
           bounds.push([pointForBound.latLng.lat,pointForBound.latLng.lng]);
         });
-        if(bounds.length>0){
+        if(bounds.length === 0 && this.defaultMapBounds) {
+          bounds = this.defaultMapBounds;
+        }
+        if (bounds.length > 0) {
           this.$refs.mmap.mapObject.fitBounds(bounds);
         }
       }, 100);

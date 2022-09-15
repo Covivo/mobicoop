@@ -272,3 +272,9 @@ services:
         tags: ['controller.service_arguments']
     Mobicoop\Bundle\MobicoopBundle\Stats\Service\:
         resource: '@MobicoopBundle/Stats/Service/*'
+
+    # Territories
+    Mobicoop\Bundle\MobicoopBundle\Territory\Controller\:
+        resource: '@MobicoopBundle/Territory/Controller/*'
+    Mobicoop\Bundle\MobicoopBundle\Territory\Service\:
+        resource: '@MobicoopBundle/Territory/Service/*'

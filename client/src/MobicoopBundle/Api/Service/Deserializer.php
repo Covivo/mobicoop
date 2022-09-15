@@ -81,6 +81,7 @@ use Mobicoop\Bundle\MobicoopBundle\RelayPoint\Entity\RelayPointType;
 use Mobicoop\Bundle\MobicoopBundle\Solidary\Entity\Structure;
 use Mobicoop\Bundle\MobicoopBundle\Solidary\Entity\Subject;
 use Mobicoop\Bundle\MobicoopBundle\Stats\Entity\Indicator;
+use Mobicoop\Bundle\MobicoopBundle\Territory\Entity\Territory;
 use Mobicoop\Bundle\MobicoopBundle\Travel\Entity\TravelMode;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\Block;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\ProfileSummary;
@@ -349,6 +350,11 @@ class Deserializer
 
             case Indicator::class:
                 return $this->deserializeIndicator($data);
+
+                break;
+
+            case Territory::class:
+                return $this->deserializeTerritory($data);
 
                 break;
 
@@ -1179,6 +1185,13 @@ class Deserializer
         $indicator = new Indicator();
 
         return $this->autoSet($indicator, $data);
+    }
+
+    private function deserializeTerritory($data)
+    {
+        $territory = new Territory();
+
+        return $this->autoset($territory, $data);
     }
 
     private function autoSet($object, $data)

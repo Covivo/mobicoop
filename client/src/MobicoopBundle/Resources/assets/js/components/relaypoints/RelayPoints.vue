@@ -37,6 +37,7 @@
           :attribution-copyright="attributionCopyright"
           :markers-draggable="false"
           :relay-points="true"
+          :default-map-bounds="getTerritoryBounds"
         />
       </v-col>
     </v-row>
@@ -141,6 +142,10 @@ export default {
       type: Boolean,
       default: false
     },
+    territoryId: {
+      type: String,
+      default: null
+    },
   },
   data () {
     return {
@@ -150,11 +155,21 @@ export default {
       directionWay:[],
       selectedDestination: null,
       selectedOrigin: null,
-      loading:true
+      loading:true,
+      territory: null,
+      mapCenterDefault: null
+    }
+  },
+  computed: {
+    getTerritoryBounds() {
+      return this.territory && this.territory.bounds ? this.territory.bounds : null;
     }
   },
   mounted() {
     this.getRelayPoints();
+    if (this.territoryId) {
+      this.getTerritory();
+    }
   },
   methods:{
     getRelayPoints() {
@@ -166,6 +181,18 @@ export default {
           this.showRelayPoints();
         });
 
+    },
+    getTerritory() {
+      maxios
+        .post(`${this.$t("territory")}/${this.territoryId}`)
+        .then(res => {
+          this.territory = res.data;
+
+          if (this.territory.minLatitude && this.territory.maxLatitude && this.territory.minLongitude && this.territory.maxLongitude) {
+            this.territory.bounds = L.latLngBounds(L.latLng(this.territory.minLatitude,this.territory.minLongitude), L.latLng(this.territory.maxLatitude, this.territory.maxLongitude));
+          }
+        })
+        .catch(err => console.error(err));
     },
     showRelayPoints () {
       this.pointsToMap.length = 0;
