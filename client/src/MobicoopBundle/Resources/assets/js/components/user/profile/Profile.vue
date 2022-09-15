@@ -162,7 +162,9 @@
             v-if="showReviews"
             value="reviews"
           >
-            <ReviewDashboard />
+            <ReviewDashboard
+              :selected-tab="selectedTab"
+            />
           </v-tab-item>
 
           <!-- PROFILE SUMMARY -->

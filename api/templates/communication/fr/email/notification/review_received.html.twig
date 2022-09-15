@@ -1,6 +1,6 @@
 {# CAREFUL : Some client might need to replicate this template #}
 {% extends 'communication/fr/email/notification/base.html.twig' %}
 {% block body %}
-    <p>Vous avez reçu un avis de la part de {{ context.givenName }} {{ context.shortFamilyName }}"</p>
-    <p>Vous pouvez consulter cet avis en vous rendant dans votre profil.</p>
+    <p>Vous avez reçu un avis de la part de {{ context.givenName }} {{ context.shortFamilyName }} en lien avec vos derniers covoiturages."</p>
+    <p>Vous pouvez consulter cet avis en vous rendant dans <a href="{{ api_env('EMAILS_PLATFORM_URL') }}/utilisateur/profil/modifier/avis/avis-recus">votre profil.<a></p>
 {% endblock %}
