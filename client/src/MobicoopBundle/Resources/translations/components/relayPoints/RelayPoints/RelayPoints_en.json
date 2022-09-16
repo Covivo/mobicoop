@@ -1,6 +1,5 @@
 {
     "title": "Carpooling areas",
     "search": "Find a journey",
-    "relayPointList": "/relay-points/getRelayPointList",
-    "territory": "/territories"
+    "relayPointList": "/relay-points/getRelayPointList"
 }

@@ -1,6 +1,5 @@
 {
     "title": "Les aires de covoiturage",
     "search": "Chercher un trajet",
-    "relayPointList": "/points-relais/getRelayPointList",
-    "territory": "/territoires"
+    "relayPointList": "/points-relais/getRelayPointList"
 }
