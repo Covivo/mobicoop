@@ -19,44 +19,62 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\Admin\EventSubscriber;
 
-use App\Solidary\Admin\Service\SolidaryTransportMatcher;
-use App\Solidary\Entity\SolidaryUserStructure;
+use App\Solidary\Admin\Event\BeneficiaryStatusChangedEvent;
 use App\Solidary\Admin\Event\VolunteerStatusChangedEvent;
+use App\Solidary\Admin\Service\SolidaryBeneficiaryManager;
+use App\Solidary\Admin\Service\SolidaryTransportMatcher;
+use App\Solidary\Admin\Service\SolidaryVolunteerManager;
+use App\Solidary\Entity\SolidaryUserStructure;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
- * Subscriber for solidary related events
+ * Subscriber for solidary related events.
  */
 class SolidarySubscriber implements EventSubscriberInterface
 {
     private $solidaryTransportMatcher;
+    private $solidaryVolunteerManager;
+    private $solidaryBeneficiaryManager;
 
-    public function __construct(SolidaryTransportMatcher $solidaryTransportMatcher)
+    public function __construct(SolidaryTransportMatcher $solidaryTransportMatcher, SolidaryVolunteerManager $solidaryVolunteerManager, SolidaryBeneficiaryManager $solidaryBeneficiaryManager)
     {
         $this->solidaryTransportMatcher = $solidaryTransportMatcher;
+        $this->solidaryVolunteerManager = $solidaryVolunteerManager;
+        $this->solidaryBeneficiaryManager = $solidaryBeneficiaryManager;
     }
-    
+
     public static function getSubscribedEvents()
     {
         return [
             VolunteerStatusChangedEvent::NAME => 'onVolunteerStatusChanged',
+            BeneficiaryStatusChangedEvent::NAME => 'onBeneficiaryStatusChanged',
         ];
     }
-        
+
     /**
      * Executed when a volunteer status is changed within a Structure.
      *
-     * @param VolunteerStatusChangedEvent $event   The event
-     * @return void
+     * @param VolunteerStatusChangedEvent $event The event
      */
     public function onVolunteerStatusChanged(VolunteerStatusChangedEvent $event)
     {
-        if ($event->getSolidaryUserStructure()->getStatus() == SolidaryUserStructure::STATUS_ACCEPTED) {
+        if (SolidaryUserStructure::STATUS_ACCEPTED == $event->getSolidaryUserStructure()->getStatus()) {
             $this->solidaryTransportMatcher->matchForStructure($event->getSolidaryUserStructure()->getStructure());
         }
+        $this->solidaryVolunteerManager->checkIsVolunteer($event->getSolidaryUserStructure());
+    }
+
+    /**
+     * Executed when a beneficiary status is changed within a Structure.
+     *
+     * @param BeneficiaryStatusChangedEvent $event The event
+     */
+    public function onBeneficiaryStatusChanged(BeneficiaryStatusChangedEvent $event)
+    {
+        $this->solidaryBeneficiaryManager->checkIsBeneficiary($event->getSolidaryUserStructure());
     }
 }
