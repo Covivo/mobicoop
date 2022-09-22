@@ -9,7 +9,7 @@
     "externalJourneyUrl": "/covoiturage/rdexJourney",
     "ptSearchUrl": "/transport-public/recherche",
     "search": "Recherche en cours...",
-    "search2": "Patience, nous avons beaucoup de covoitureurs potentiels !",
+    "search2": "Patience, nous recherchons les trajets compatibles...",
     "search3": "Encore quelques instants...",
     "newSearch": "Nouvelle recherche",
     "AskNewSearch": "Réessayer en modifiant votre recherche ? Un autre itinéraire ?",
@@ -39,5 +39,5 @@
             "label": "Créer une alerte"
         }
 	},
-    "logoNoResult": "/images/pages/results/logoNoResult.png"    
+    "logoNoResult": "/images/pages/results/logoNoResult.png"
 }

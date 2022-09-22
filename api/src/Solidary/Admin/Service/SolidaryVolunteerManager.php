@@ -19,21 +19,23 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\Admin\Service;
 
 use ApiPlatform\Core\DataProvider\PaginatorInterface;
+use App\Auth\Entity\AuthItem;
+use App\Auth\ServiceAdmin\AuthManager;
 use App\Paginator\MobicoopPaginator;
 use App\Service\FormatDataManager;
+use App\Solidary\Admin\Event\VolunteerStatusChangedEvent;
 use App\Solidary\Admin\Exception\SolidaryException;
-use Doctrine\ORM\EntityManagerInterface;
 use App\Solidary\Entity\SolidaryUser;
 use App\Solidary\Entity\SolidaryUserStructure;
 use App\Solidary\Entity\SolidaryVolunteer;
-use App\Solidary\Admin\Event\VolunteerStatusChangedEvent;
 use App\Solidary\Repository\SolidaryUserRepository;
 use App\Solidary\Repository\SolidaryUserStructureRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -46,10 +48,11 @@ class SolidaryVolunteerManager
     private $entityManager;
     private $solidaryUserRepository;
     private $solidaryUserStructureRepository;
+    private $authManager;
     private $formatDataManager;
     private $eventDispatcher;
     private $fileFolder;
-    
+
     /**
      * @var SolidaryUser
      */
@@ -61,14 +64,13 @@ class SolidaryVolunteerManager
     private $fields;
 
     /**
-     * Constructor
-     *
-     * @param EntityManagerInterface $entityManager
+     * Constructor.
      */
     public function __construct(
         EntityManagerInterface $entityManager,
         SolidaryUserRepository $solidaryUserRepository,
         SolidaryUserStructureRepository $solidaryUserStructureRepository,
+        AuthManager $authManager,
         FormatDataManager $formatDataManager,
         EventDispatcherInterface $eventDispatcher,
         string $fileFolder
@@ -76,15 +78,106 @@ class SolidaryVolunteerManager
         $this->entityManager = $entityManager;
         $this->solidaryUserRepository = $solidaryUserRepository;
         $this->solidaryUserStructureRepository = $solidaryUserStructureRepository;
+        $this->authManager = $authManager;
         $this->formatDataManager = $formatDataManager;
         $this->eventDispatcher = $eventDispatcher;
         $this->fileFolder = $fileFolder;
+    }
+
+    /**
+     * Get Solidary Volunteer records (transform SolidaryUsers to SolidaryVolunteers).
+     *
+     * @param PaginatorInterface $solidaryUsers The solidary user objects
+     *
+     * @return null|array The solidary volunteer records
+     */
+    public function getSolidaryVolunteers(PaginatorInterface $solidaryUsers)
+    {
+        $solidaryVolunteers = [];
+        foreach ($solidaryUsers as $solidaryUser) {
+            // @var SolidaryUser $solidaryUser
+            $solidaryVolunteers[] = $this->createSolidaryVolunteerFromSolidaryUser($solidaryUser);
+        }
+        // we need to return a paginator, we already have all informations but we need to build a custom paginator object
+        return new MobicoopPaginator($solidaryVolunteers, $solidaryUsers->getCurrentPage(), $solidaryUsers->getItemsPerPage(), $solidaryUsers->getTotalItems());
+    }
+
+    /**
+     * Get a Solidary Volunteer by its id.
+     *
+     * @param int $id The Solidary Volunteer id
+     *
+     * @return null|SolidaryVolunteer The Solidary Volunteer or null if not found
+     */
+    public function getSolidaryVolunteer(int $id)
+    {
+        if (!$solidaryUser = $this->solidaryUserRepository->find($id)) {
+            throw new SolidaryException(sprintf(SolidaryException::VOLUNTEER_NOT_FOUND, $id));
+        }
+        if (!$solidaryUser->isVolunteer()) {
+            throw new SolidaryException(sprintf(SolidaryException::VOLUNTEER_NOT_FOUND, $id));
+        }
+
+        return $this->createSolidaryVolunteerFromSolidaryUser($solidaryUser, true, true);
+    }
+
+    /**
+     * Patch a solidary volunteer.
+     *
+     * @param int   $id     The id of the solidaryVolunteer to update
+     * @param array $fields The updated fields
+     *
+     * @return SolidaryVolunteer The solidaryVolunteer updated
+     */
+    public function patchSolidaryVolunteer(int $id, array $fields)
+    {
+        if (!$solidaryUser = $this->solidaryUserRepository->find($id)) {
+            throw new SolidaryException(sprintf(SolidaryException::VOLUNTEER_NOT_FOUND, $id));
+        }
+
+        $this->setSolidaryUser($solidaryUser);
+        $this->setFields($fields);
+
+        $this->updateAvailabilities();
+        $this->treatValidation();
+
+        // persist the solidary volunteer
+        $this->entityManager->persist($this->getSolidaryUser()->getUser());
+        $this->entityManager->flush();
+
+        return $this->getSolidaryVolunteer($this->getSolidaryUser()->getId());
+    }
+
+    public function checkIsVolunteer(SolidaryUserStructure $solidaryUserStructure)
+    {
+        $isVolunteer = false;
+
+        foreach ($solidaryUserStructure->getSolidaryUser()->getSolidaryUserStructures() as $curSolidaryUserStructure) {
+            if (SolidaryUserStructure::STATUS_ACCEPTED === $curSolidaryUserStructure->getStatus()) {
+                $isVolunteer = true;
+
+                break;
+            }
+        }
+        if ($isVolunteer) {
+            if ($authItem = $this->authManager->getAuthItem(AuthItem::ROLE_SOLIDARY_VOLUNTEER)) {
+                $this->authManager->grant($solidaryUserStructure->getSolidaryUser()->getUser(), $authItem);
+            }
+            if ($authItem = $this->authManager->getAuthItem(AuthItem::ROLE_SOLIDARY_VOLUNTEER_CANDIDATE)) {
+                $this->authManager->revoke($solidaryUserStructure->getSolidaryUser()->getUser(), $authItem, null);
+            }
+        } else {
+            if ($authItem = $this->authManager->getAuthItem(AuthItem::ROLE_SOLIDARY_VOLUNTEER)) {
+                $this->authManager->revoke($solidaryUserStructure->getSolidaryUser()->getUser(), $authItem, null);
+            }
+        }
     }
 
     private function getSolidaryUser(): SolidaryUser
     {
         return $this->solidaryUser;
     }
+
     private function setSolidaryUser(SolidaryUser $solidaryUser)
     {
         $this->solidaryUser = $solidaryUser;
@@ -94,37 +187,20 @@ class SolidaryVolunteerManager
     {
         return $this->fields;
     }
+
     private function setFields(array $fields)
     {
         $this->fields = $fields;
     }
 
     /**
-     * Get Solidary Volunteer records (transform SolidaryUsers to SolidaryVolunteers)
+     * Create a SolidaryVolunteer from a SolidaryUser.
      *
-     * @param PaginatorInterface $solidaryUsers  The solidary user objects
-     * @return array|null The solidary volunteer records
-     */
-    public function getSolidaryVolunteers(PaginatorInterface $solidaryUsers)
-    {
-        $solidaryVolunteers = [];
-        foreach ($solidaryUsers as $solidaryUser) {
-            /**
-             * @var SolidaryUser $solidaryUser
-             */
-            $solidaryVolunteers[] = $this->createSolidaryVolunteerFromSolidaryUser($solidaryUser);
-        }
-        // we need to return a paginator, we already have all informations but we need to build a custom paginator object
-        return new MobicoopPaginator($solidaryVolunteers, $solidaryUsers->getCurrentPage(), $solidaryUsers->getItemsPerPage(), $solidaryUsers->getTotalItems());
-    }
-
-    /**
-     * Create a SolidaryVolunteer from a SolidaryUser
+     * @param SolidaryUser $solidaryUser The SolidaryUser
+     * @param bool         $withDiary    Include the diary for the SolidaryUser
+     * @param bool         $withProofs   Include the proofs for the SolidaryUser
      *
-     * @param SolidaryUser $solidaryUser    The SolidaryUser
-     * @param boolean $withDiary            Include the diary for the SolidaryUser
-     * @param boolean $withProofs           Include the proofs for the SolidaryUser
-     * @return SolidaryVolunteer            The SolidaryVolunteer
+     * @return SolidaryVolunteer The SolidaryVolunteer
      */
     private function createSolidaryVolunteerFromSolidaryUser(SolidaryUser $solidaryUser, bool $withDiary = false, bool $withProofs = false): SolidaryVolunteer
     {
@@ -167,20 +243,18 @@ class SolidaryVolunteerManager
         $solidaryVolunteer->setMSun($solidaryUser->hasMSun());
         $solidaryVolunteer->setASun($solidaryUser->hasASun());
         $solidaryVolunteer->setESun($solidaryUser->hasESun());
-        
+
         // get the status of the volunteer for each structure attached
         $volunteerStructures = [];
         $proofs = [];
         foreach ($solidaryUser->getSolidaryUserStructures() as $solidaryUserStructure) {
-            /**
-             * @var SolidaryUserStructure $solidaryUserStructure
-             */
+            // @var SolidaryUserStructure $solidaryUserStructure
 
             $volunteerStructures[] = [
-                "id" => $solidaryUserStructure->getStructure()->getId(),
-                "userStructureId" => $solidaryUserStructure->getId(),
-                "name" => $solidaryUserStructure->getStructure()->getName(),
-                "status" => $solidaryUserStructure->getStatus()
+                'id' => $solidaryUserStructure->getStructure()->getId(),
+                'userStructureId' => $solidaryUserStructure->getId(),
+                'name' => $solidaryUserStructure->getStructure()->getName(),
+                'status' => $solidaryUserStructure->getStatus(),
             ];
             // get the proofs
             if ($withProofs) {
@@ -191,7 +265,7 @@ class SolidaryVolunteerManager
                     // get the real value for checkbox, selectbox, radio
                     $value = $proof->getValue();
                     if ($proof->getStructureProof()->isCheckbox()) {
-                        $value = (bool)$proof->getValue();
+                        $value = (bool) $proof->getValue();
                     } elseif ($proof->getStructureProof()->isRadio() || $proof->getStructureProof()->isSelectbox()) {
                         $options = explode(';', $proof->getStructureProof()->getOptions());
                         $values = explode(';', $proof->getStructureProof()->getAcceptedValues());
@@ -213,7 +287,7 @@ class SolidaryVolunteerManager
                         'value' => $value,
                         'originalName' => $proof->getStructureProof()->isFile() ? $proof->getOriginalName() : null,
                         'fileName' => $proof->getStructureProof()->isFile() ? $this->fileFolder.rawurlencode($proof->getFileName()) : null,
-                        'fileSize' => $proof->getStructureProof()->isFile() ? $this->formatDataManager->convertFilesize($proof->getSize()) : null
+                        'fileSize' => $proof->getStructureProof()->isFile() ? $this->formatDataManager->convertFilesize($proof->getSize()) : null,
                     ];
                 }
             }
@@ -222,49 +296,6 @@ class SolidaryVolunteerManager
         $solidaryVolunteer->setProofs($proofs);
 
         return $solidaryVolunteer;
-    }
-
-    /**
-     * Get a Solidary Volunteer by its id
-     *
-     * @param integer $id                   The Solidary Volunteer id
-     * @return SolidaryVolunteer|null       The Solidary Volunteer or null if not found
-     */
-    public function getSolidaryVolunteer(int $id)
-    {
-        if (!$solidaryUser = $this->solidaryUserRepository->find($id)) {
-            throw new SolidaryException(sprintf(SolidaryException::VOLUNTEER_NOT_FOUND, $id));
-        }
-        if (!$solidaryUser->isVolunteer()) {
-            throw new SolidaryException(sprintf(SolidaryException::VOLUNTEER_NOT_FOUND, $id));
-        }
-        return $this->createSolidaryVolunteerFromSolidaryUser($solidaryUser, true, true);
-    }
-
-    /**
-     * Patch a solidary volunteer.
-     *
-     * @param int   $id         The id of the solidaryVolunteer to update
-     * @param array $fields     The updated fields
-     * @return SolidaryVolunteer     The solidaryVolunteer updated
-     */
-    public function patchSolidaryVolunteer(int $id, array $fields)
-    {
-        if (!$solidaryUser = $this->solidaryUserRepository->find($id)) {
-            throw new SolidaryException(sprintf(SolidaryException::VOLUNTEER_NOT_FOUND, $id));
-        }
-        
-        $this->setSolidaryUser($solidaryUser);
-        $this->setFields($fields);
-
-        $this->updateAvailabilities();
-        $this->treatValidation();
-
-        // persist the solidary volunteer
-        $this->entityManager->persist($this->getSolidaryUser()->getUser());
-        $this->entityManager->flush();
-
-        return $this->getSolidaryVolunteer($this->getSolidaryUser()->getId());
     }
 
     private function updateAvailabilities()
@@ -277,9 +308,9 @@ class SolidaryVolunteerManager
     {
         foreach (SolidaryVolunteer::DAYS_SLOTS as $slot) {
             if (array_key_exists($slot, $this->getFields())) {
-                $setter = "set".ucFirst($slot);
+                $setter = 'set'.ucfirst($slot);
                 if (method_exists($this->getSolidaryUser(), $setter)) {
-                    $this->getSolidaryUser()->$setter($this->getFields()[$slot]);
+                    $this->getSolidaryUser()->{$setter}($this->getFields()[$slot]);
                 }
             }
         }
@@ -289,13 +320,13 @@ class SolidaryVolunteerManager
     {
         foreach (SolidaryVolunteer::TIMES_SLOTS as $slot) {
             if (array_key_exists($slot, $this->getFields())) {
-                $setter = "set".ucFirst($slot);
+                $setter = 'set'.ucfirst($slot);
                 if (method_exists($this->getSolidaryUser(), $setter)) {
                     $datetime = new \DateTime($this->getFields()[$slot]);
                     if (!$datetime) {
-                        throw new \LogicException("Datetime invalid");
+                        throw new \LogicException('Datetime invalid');
                     }
-                    $this->getSolidaryUser()->$setter($datetime);
+                    $this->getSolidaryUser()->{$setter}($datetime);
                 }
             }
         }
@@ -317,7 +348,7 @@ class SolidaryVolunteerManager
             throw new SolidaryException(sprintf(SolidaryException::SOLIDARY_USER_STRUCTURE_NOT_FOUND, $this->getFields()['validation']['id']));
         }
 
-        $solidaryUserStructure->setStatus($this->getFields()['validation']['validate'] === true ? SolidaryUserStructure::STATUS_ACCEPTED : SolidaryUserStructure::STATUS_REFUSED);
+        $solidaryUserStructure->setStatus(true === $this->getFields()['validation']['validate'] ? SolidaryUserStructure::STATUS_ACCEPTED : SolidaryUserStructure::STATUS_REFUSED);
         $this->entityManager->persist($solidaryUserStructure);
         $this->entityManager->flush();
 

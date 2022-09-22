@@ -288,6 +288,10 @@ export default {
       type: Boolean,
       default: false
     },
+    territoryId: {
+      type: String,
+      default: null
+    }
   },
   data () {
     return {

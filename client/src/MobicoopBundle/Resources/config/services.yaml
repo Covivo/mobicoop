@@ -217,7 +217,9 @@ services:
     Mobicoop\Bundle\MobicoopBundle\RelayPoint\Service\RelayPointManager:
         arguments:
             $bbox: '%env(json:BBOX)%'
-            $defaultRelayPointTypeLayer: '%env(int:DEFAUT_RELAYPOINTTYPE_LAYER)%'
+            $defaultRelayPointTypeLayer: '%env(int:DEFAULT_RELAYPOINTTYPE_LAYER)%'
+            $referenceTerritory: '%env(resolve:REFERENCE_TERRITORY)%'
+            $relaypointsMapTypesDisplayed: '%env(json:RELAYPOINTS_MAP_TYPES_DISPLAYED)%'            
 
     # Solidary
     Mobicoop\Bundle\MobicoopBundle\Solidary\Controller\:
@@ -270,3 +272,9 @@ services:
         tags: ['controller.service_arguments']
     Mobicoop\Bundle\MobicoopBundle\Stats\Service\:
         resource: '@MobicoopBundle/Stats/Service/*'
+
+    # Territories
+    Mobicoop\Bundle\MobicoopBundle\Territory\Controller\:
+        resource: '@MobicoopBundle/Territory/Controller/*'
+    Mobicoop\Bundle\MobicoopBundle\Territory\Service\:
+        resource: '@MobicoopBundle/Territory/Service/*'

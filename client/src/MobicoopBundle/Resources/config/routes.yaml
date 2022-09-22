@@ -38,6 +38,18 @@ refresh_token:
         fr: /refreshToken
     controller: Mobicoop\Bundle\MobicoopBundle\Controller\DefaultController::refreshToken 
 
+
+######################
+# territories routes #
+######################
+territory:
+    methods: [POST]
+    path:
+        fr: /territoires/{id}
+        en: /territories/{id}
+        nl: /territories/{id}
+    controller: Mobicoop\Bundle\MobicoopBundle\Territory\Controller\TerritoryController::getTerritory
+
 ###############
 # user routes #
 ###############
@@ -1635,7 +1647,6 @@ get_last_events_created:
         nl: /events/getLastEventsCreated
     controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::getLastEventCreated
 
-
 # display events
 event_list:
     path:
@@ -1667,6 +1678,16 @@ event_show:
         en: /carpools-events/{id}/{urlKey?}
         nl: /carpools-events/{id}/{urlKey?}
     controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::eventShow
+    requirements:
+        id: '\d+'
+
+# edit event
+event_edit:
+    path:
+        fr: /evenement/{id}/modifier
+        en: /event/{id}/edit
+        nl: /event/{id}/edit
+    controller: Mobicoop\Bundle\MobicoopBundle\Event\Controller\EventController::eventEdit
     requirements:
         id: '\d+'
 

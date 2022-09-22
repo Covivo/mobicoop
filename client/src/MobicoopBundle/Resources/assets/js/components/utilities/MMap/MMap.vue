@@ -36,7 +36,7 @@
           :circle-marker="(point.circleMarker) ? point.circleMarker : false"
           @updateLatLng="updateLatLng"
           @clickOnPoint="clickOnPoint(point.address)"
-        />        
+        />
         <v-dialog
           v-model="dialog"
           max-width="400"
@@ -71,7 +71,7 @@
           :color="(way.color!=='' && way.color !==undefined)?way.color:'blue'"
           :dash-array="(way.dashArray) ? way.dashArray : ''"
           @click="clickOnPolyline"
-        >        
+        >
           <l-tooltip v-if="way.title !==undefined && way.title!==''">
             <p v-html="way.title" />
           </l-tooltip>
@@ -88,6 +88,7 @@
 
 <script>
 import L from "leaflet";
+import maxios from "@utils/maxios";
 import VMarkerCluster from 'vue2-leaflet-markercluster'
 import MMarker from "@components/utilities/MMap/MMarker"
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/utilities/MMap/MMap";
@@ -130,7 +131,7 @@ export default {
     zoom: {
       type: Number,
       default: 13
-    },    
+    },
     typeMap: {
       type: String,
       default: ""
@@ -158,7 +159,11 @@ export default {
     dashArray:{
       type: String,
       default: null
-    }
+    },
+    territoryId: {
+      type: String,
+      default: null
+    },
   },
   data() {
     return {
@@ -168,7 +173,8 @@ export default {
       markers:this.points,
       dialog: false,
       address: null,
-      clusterOptions: {}
+      clusterOptions: {},
+      territory: null
     };
   },
   computed: {
@@ -182,7 +188,25 @@ export default {
       return arrayAttribution.join(', ');
     }
   },
+  mounted() {
+    if (this.territoryId) {
+      this.getTerritory();
+    }
+  },
   methods: {
+    getTerritory() {
+      maxios
+        .post(`${this.$t("territory")}/${this.territoryId}`)
+        .then(res => {
+          this.territory = res.data;
+
+          if (this.territory.minLatitude && this.territory.maxLatitude && this.territory.minLongitude && this.territory.maxLongitude) {
+            this.territory.bounds = L.latLngBounds(L.latLng(this.territory.minLatitude,this.territory.minLongitude), L.latLng(this.territory.maxLatitude, this.territory.maxLongitude));
+            this.redrawMap();
+          }
+        })
+        .catch(err => console.error(err));
+    },
     redrawMap: function() {
       // To redraw the map (when you resize the div you have to redraw the map)
       setTimeout(() => {
@@ -193,7 +217,10 @@ export default {
         this.points.forEach((pointForBound, index) => {
           bounds.push([pointForBound.latLng.lat,pointForBound.latLng.lng]);
         });
-        if(bounds.length>0){
+        if (bounds.length === 0){
+          bounds.push(this.territory.bounds);
+        }
+        if (bounds.length > 0) {
           this.$refs.mmap.mapObject.fitBounds(bounds);
         }
       }, 100);
