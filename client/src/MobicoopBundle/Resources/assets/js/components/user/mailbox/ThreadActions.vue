@@ -50,7 +50,7 @@
           cols="6"
           class="text-right align-center"
         >
-          <div v-if="infosComplete.carpooler && !loading">
+          <div v-if="idRecipient && !loading">
             <v-btn
               v-if="dataBlockerId==null"
               class="ma-2"

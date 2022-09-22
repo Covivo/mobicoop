@@ -12,7 +12,7 @@
       "title": "Jeux",
       "image": "images/communication/thumbnail_games.png",
       "textDownload": "> Téléchargez",
-      "downloadLink": "client/public/images/communication/Mobicoop-Jeux.zip"
+      "downloadLink": "images/communication/Mobicoop-Jeux.zip"
     },
     {
       "title": "Interpeller autour de soi",
@@ -56,7 +56,7 @@
       "title": "A coller près de chez soi",
       "image": "images/communication/thumbnail_a_coller_pres_de_chez_soi.png",
       "textDownload": "> Téléchargez",
-      "downloadLink": "client/public/images/communication/Mobicoop-A_coller_pres_de_chez_soi.zip"
+      "downloadLink": "images/communication/Mobicoop-A_coller_pres_de_chez_soi.zip"
     },
     {
       "title": "Vidéo de présentation de Mobicoop",

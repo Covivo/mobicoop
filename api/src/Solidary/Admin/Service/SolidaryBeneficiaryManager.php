@@ -19,25 +19,29 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\Admin\Service;
 
 use ApiPlatform\Core\DataProvider\PaginatorInterface;
-use App\Solidary\Admin\Exception\SolidaryException;
-use App\Solidary\Entity\SolidaryBeneficiary;
-use Doctrine\ORM\EntityManagerInterface;
-use App\Solidary\Entity\SolidaryUser;
-use App\Solidary\Entity\SolidaryUserStructure;
-use App\Solidary\Entity\Solidary;
 use App\Action\Entity\Diary;
+use App\Auth\Entity\AuthItem;
+use App\Auth\ServiceAdmin\AuthManager;
 use App\Paginator\MobicoopPaginator;
 use App\Service\FormatDataManager;
+use App\Solidary\Admin\Event\BeneficiaryStatusChangedEvent;
+use App\Solidary\Admin\Exception\SolidaryException;
 use App\Solidary\Entity\Proof;
+use App\Solidary\Entity\Solidary;
+use App\Solidary\Entity\SolidaryBeneficiary;
+use App\Solidary\Entity\SolidaryUser;
+use App\Solidary\Entity\SolidaryUserStructure;
 use App\Solidary\Entity\Structure;
 use App\Solidary\Repository\SolidaryUserRepository;
 use App\Solidary\Repository\SolidaryUserStructureRepository;
 use DateTime;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Solidary beneficiary manager in admin context.
@@ -49,41 +53,44 @@ class SolidaryBeneficiaryManager
     private $entityManager;
     private $solidaryUserRepository;
     private $solidaryUserStructureRepository;
+    private $authManager;
     private $formatDataManager;
+    private $eventDispatcher;
     private $fileFolder;
-    
+
     /**
-     * Constructor
-     *
-     * @param EntityManagerInterface $entityManager
+     * Constructor.
      */
     public function __construct(
         EntityManagerInterface $entityManager,
         SolidaryUserRepository $solidaryUserRepository,
         SolidaryUserStructureRepository $solidaryUserStructureRepository,
+        AuthManager $authManager,
         FormatDataManager $formatDataManager,
+        EventDispatcherInterface $eventDispatcher,
         string $fileFolder
     ) {
         $this->entityManager = $entityManager;
         $this->solidaryUserRepository = $solidaryUserRepository;
         $this->solidaryUserStructureRepository = $solidaryUserStructureRepository;
+        $this->authManager = $authManager;
+        $this->eventDispatcher = $eventDispatcher;
         $this->formatDataManager = $formatDataManager;
         $this->fileFolder = $fileFolder;
     }
 
     /**
-     * Get Solidary Beneficiary records (transform SolidaryUsers to SolidaryBeneficiaries)
+     * Get Solidary Beneficiary records (transform SolidaryUsers to SolidaryBeneficiaries).
      *
-     * @param PaginatorInterface $solidaryUsers  The solidary user objects
-     * @return array|null The solidary beneficiary records
+     * @param PaginatorInterface $solidaryUsers The solidary user objects
+     *
+     * @return null|array The solidary beneficiary records
      */
     public function getSolidaryBeneficiaries(PaginatorInterface $solidaryUsers)
     {
         $solidaryBeneficiaries = [];
         foreach ($solidaryUsers as $solidaryUser) {
-            /**
-             * @var SolidaryUser $solidaryUser
-             */
+            // @var SolidaryUser $solidaryUser
             $solidaryBeneficiaries[] = $this->createSolidaryBeneficiaryFromSolidaryUser($solidaryUser);
         }
         // we need to return a paginator, we already have all informations but we need to build a custom paginator object
@@ -91,109 +98,12 @@ class SolidaryBeneficiaryManager
     }
 
     /**
-     * Create a SolidaryBeneficiary from a SolidaryUser
+     * Get the proofs for a solidaryUserStructure.
      *
-     * @param SolidaryUser $solidaryUser    The SolidaryUser
-     * @param boolean $withDiary            Include the diary for the SolidaryUser
-     * @param boolean $withProofs           Include the proofs for the SolidaryUser
-     * @return SolidaryBeneficiary          The SolidaryBeneficiary
-     */
-    private function createSolidaryBeneficiaryFromSolidaryUser(SolidaryUser $solidaryUser, bool $withDiary = false, bool $withProofs = false): SolidaryBeneficiary
-    {
-        $solidaryBeneficiary = new SolidaryBeneficiary();
-        $solidaryBeneficiary->setId($solidaryUser->getId());
-        $solidaryBeneficiary->setUserId($solidaryUser->getUser()->getId());
-        $solidaryBeneficiary->setEmail($solidaryUser->getUser()->getEmail());
-        $solidaryBeneficiary->setTelephone($solidaryUser->getUser()->getTelephone());
-        $solidaryBeneficiary->setGivenName($solidaryUser->getUser()->getGivenName());
-        $solidaryBeneficiary->setFamilyName($solidaryUser->getUser()->getFamilyName());
-        $solidaryBeneficiary->setGender($solidaryUser->getUser()->getGender());
-        $solidaryBeneficiary->setBirthDate($solidaryUser->getUser()->getBirthDate());
-        $solidaryBeneficiary->setNewsSubscription($solidaryUser->getUser()->hasNewsSubscription());
-        $solidaryBeneficiary->setHomeAddress($solidaryUser->getUser()->getHomeAddress() ? $solidaryUser->getUser()->getHomeAddress()->jsonSerialize() : null);
-        $solidaryBeneficiary->setAvatar($solidaryUser->getUser()->getAvatar());
-        
-        // get the status of the beneficiary for each structure attached, and get the diary and proofs if asked
-        $beneficiaryStructures = [];
-        $diaries = [];
-        $proofs = [];
-        foreach ($solidaryUser->getSolidaryUserStructures() as $solidaryUserStructure) {
-            /**
-             * @var SolidaryUserStructure $solidaryUserStructure
-             */
-
-            $beneficiaryStructures[] = [
-                "id" => $solidaryUserStructure->getStructure()->getId(),
-                "name" => $solidaryUserStructure->getStructure()->getName(),
-                "status" => $solidaryUserStructure->getStatus()
-            ];
-            // get the diary
-            if ($withDiary) {
-                $diaries = $this->getDiaryForSolidaryUserStructure($solidaryUserStructure);
-            }
-            // get the proofs
-            if ($withProofs) {
-                $proofs = $this->getProofsForSolidaryUserStructure($solidaryUserStructure);
-            }
-        }
-        $solidaryBeneficiary->setStructures($beneficiaryStructures);
-        // reorder diaries by date and solidary id
-        usort($diaries, function ($a, $b) {
-            if ($a['date'] == $b['date']) {
-                return $b['solidary'] <=> $a['solidary'];
-            }
-            return $b['date'] <=> $a['date'];
-        });
-        $solidaryBeneficiary->setDiaries($diaries);
-        $solidaryBeneficiary->setProofs($proofs);
-
-        return $solidaryBeneficiary;
-    }
-
-    /**
-     * Get the diary entries for a solidaryUserStructure
+     * @param SolidaryUserStructure $solidaryUserStructure The solidaryUserStructure
+     * @param null|Structure        $structure             The structure if we want the proofs for a given structure only
      *
-     * @param SolidaryUserStructure         $solidaryUserStructure  The solidaryUserStructure
-     * @return array    The proofs
-     */
-    private function getDiaryForSolidaryUserStructure(SolidaryUserStructure $solidaryUserStructure)
-    {
-        $diaries = [];
-        foreach ($solidaryUserStructure->getSolidaries() as $solidary) {
-            /**
-             * @var Solidary $solidary
-             */
-            foreach ($solidary->getDiaries() as $diary) {
-                /**
-                 * @var Diary $diary
-                 */
-                $diaries[] = [
-                    'action' => $diary->getAction()->getName(),
-                    'comment' => $diary->getComment(),
-                    'progression' => $diary->getProgression(),
-                    'authorGivenName' => $diary->getAuthor()->getGivenName(),
-                    'authorFamilyName' => $diary->getAuthor()->getFamilyName(),
-                    'authorAvatar' => $diary->getAuthor()->getAvatar(),
-                    'userId' => $diary->getUser()->getId(),
-                    'givenName' => $diary->getUser()->getGivenName(),
-                    'familyName' => $diary->getUser()->getFamilyName(),
-                    'avatar' => $diary->getUser()->getAvatar(),
-                    'date' => $diary->getCreatedDate(),
-                    'solidary' => $solidary->getId(),
-                    'origin' => $solidary->getAdminorigin()->jsonSerialize(),
-                    'destination' => $solidary->getAdmindestination()->jsonSerialize()
-                ];
-            }
-        }
-        return $diaries;
-    }
-
-    /**
-     * Get the proofs for a solidaryUserStructure
-     *
-     * @param SolidaryUserStructure $solidaryUserStructure  The solidaryUserStructure
-     * @param Structure|null        $structure              The structure if we want the proofs for a given structure only
-     * @return array    The proofs
+     * @return array The proofs
      */
     public function getProofsForSolidaryUserStructure(SolidaryUserStructure $solidaryUserStructure, ?Structure $structure = null)
     {
@@ -206,7 +116,7 @@ class SolidaryBeneficiaryManager
                 // get the real value for checkbox, selectbox, radio
                 $value = $proof->getValue();
                 if ($proof->getStructureProof()->isCheckbox()) {
-                    $value = (bool)$proof->getValue();
+                    $value = (bool) $proof->getValue();
                 } elseif ($proof->getStructureProof()->isRadio() || $proof->getStructureProof()->isSelectbox()) {
                     $options = explode(';', $proof->getStructureProof()->getOptions());
                     $values = explode(';', $proof->getStructureProof()->getAcceptedValues());
@@ -230,18 +140,20 @@ class SolidaryBeneficiaryManager
                     'value' => $value,
                     'originalName' => $proof->getStructureProof()->isFile() ? $proof->getOriginalName() : null,
                     'fileName' => $proof->getStructureProof()->isFile() ? $this->fileFolder.rawurlencode($proof->getFileName()) : null,
-                    'fileSize' => $proof->getStructureProof()->isFile() ? $this->formatDataManager->convertFilesize($proof->getSize()) : null
+                    'fileSize' => $proof->getStructureProof()->isFile() ? $this->formatDataManager->convertFilesize($proof->getSize()) : null,
                 ];
             }
         }
+
         return $proofs;
     }
 
     /**
-     * Get a Solidary Beneficiary by its id
+     * Get a Solidary Beneficiary by its id.
      *
-     * @param integer $id                   The Solidary Beneficiary id
-     * @return SolidaryBeneficiary|null     The Solidary Beneficiary or null if not found
+     * @param int $id The Solidary Beneficiary id
+     *
+     * @return null|SolidaryBeneficiary The Solidary Beneficiary or null if not found
      */
     public function getSolidaryBeneficiary(int $id)
     {
@@ -251,22 +163,24 @@ class SolidaryBeneficiaryManager
         if (!$solidaryUser->isBeneficiary()) {
             throw new SolidaryException(sprintf(SolidaryException::BENEFICIARY_NOT_FOUND, $id));
         }
+
         return $this->createSolidaryBeneficiaryFromSolidaryUser($solidaryUser, true, true);
     }
 
     /**
      * Patch a solidary beneficiary.
      *
-     * @param int   $id         The id of the solidaryBeneficiary to update
-     * @param array $fields     The updated fields
-     * @return SolidaryBeneficiary     The solidaryBeneficiary updated
+     * @param int   $id     The id of the solidaryBeneficiary to update
+     * @param array $fields The updated fields
+     *
+     * @return SolidaryBeneficiary The solidaryBeneficiary updated
      */
     public function patchSolidaryBeneficiary(int $id, array $fields)
     {
         if (!$solidaryUser = $this->solidaryUserRepository->find($id)) {
             throw new SolidaryException(sprintf(SolidaryException::BENEFICIARY_NOT_FOUND, $id));
         }
-        
+
         // check if a new validation has been made
         if (array_key_exists('validation', $fields)) {
             return $this->treatValidation($solidaryUser, $fields['validation']);
@@ -301,14 +215,15 @@ class SolidaryBeneficiaryManager
             foreach ($solidaryUser->getUser()->getAddresses() as $address) {
                 if ($address->isHome()) {
                     $homeAddress = $address;
+
                     break;
                 }
             }
             if (!is_null($homeAddress)) {
                 // we have to update each field...
                 /**
-                * @var Address $homeAddress
-                */
+                 * @var Address $homeAddress
+                 */
                 $updated = false;
                 if (isset($fields['homeAddress']['streetAddress']) && $homeAddress->getStreetAddress() != $fields['homeAddress']['streetAddress']) {
                     $updated = true;
@@ -371,7 +286,7 @@ class SolidaryBeneficiaryManager
                 }
             }
         }
-        
+
         // persist the solidary beneficiary
         $this->entityManager->persist($solidaryUser->getUser());
         $this->entityManager->flush();
@@ -379,12 +294,136 @@ class SolidaryBeneficiaryManager
         return $this->getSolidaryBeneficiary($solidaryUser->getId());
     }
 
+    public function checkIsBeneficiary(SolidaryUserStructure $solidaryUserStructure)
+    {
+        $isBeneficiary = false;
+
+        foreach ($solidaryUserStructure->getSolidaryUser()->getSolidaryUserStructures() as $curSolidaryUserStructure) {
+            if (SolidaryUserStructure::STATUS_ACCEPTED === $curSolidaryUserStructure->getStatus()) {
+                $isBeneficiary = true;
+
+                break;
+            }
+        }
+        if ($isBeneficiary) {
+            if ($authItem = $this->authManager->getAuthItem(AuthItem::ROLE_SOLIDARY_BENEFICIARY)) {
+                $this->authManager->grant($solidaryUserStructure->getSolidaryUser()->getUser(), $authItem);
+            }
+            if ($authItem = $this->authManager->getAuthItem(AuthItem::ROLE_SOLIDARY_BENEFICIARY_CANDIDATE)) {
+                $this->authManager->revoke($solidaryUserStructure->getSolidaryUser()->getUser(), $authItem, null);
+            }
+        } else {
+            if ($authItem = $this->authManager->getAuthItem(AuthItem::ROLE_SOLIDARY_BENEFICIARY)) {
+                $this->authManager->revoke($solidaryUserStructure->getSolidaryUser()->getUser(), $authItem, null);
+            }
+        }
+    }
+
+    /**
+     * Create a SolidaryBeneficiary from a SolidaryUser.
+     *
+     * @param SolidaryUser $solidaryUser The SolidaryUser
+     * @param bool         $withDiary    Include the diary for the SolidaryUser
+     * @param bool         $withProofs   Include the proofs for the SolidaryUser
+     *
+     * @return SolidaryBeneficiary The SolidaryBeneficiary
+     */
+    private function createSolidaryBeneficiaryFromSolidaryUser(SolidaryUser $solidaryUser, bool $withDiary = false, bool $withProofs = false): SolidaryBeneficiary
+    {
+        $solidaryBeneficiary = new SolidaryBeneficiary();
+        $solidaryBeneficiary->setId($solidaryUser->getId());
+        $solidaryBeneficiary->setUserId($solidaryUser->getUser()->getId());
+        $solidaryBeneficiary->setEmail($solidaryUser->getUser()->getEmail());
+        $solidaryBeneficiary->setTelephone($solidaryUser->getUser()->getTelephone());
+        $solidaryBeneficiary->setGivenName($solidaryUser->getUser()->getGivenName());
+        $solidaryBeneficiary->setFamilyName($solidaryUser->getUser()->getFamilyName());
+        $solidaryBeneficiary->setGender($solidaryUser->getUser()->getGender());
+        $solidaryBeneficiary->setBirthDate($solidaryUser->getUser()->getBirthDate());
+        $solidaryBeneficiary->setNewsSubscription($solidaryUser->getUser()->hasNewsSubscription());
+        $solidaryBeneficiary->setHomeAddress($solidaryUser->getUser()->getHomeAddress() ? $solidaryUser->getUser()->getHomeAddress()->jsonSerialize() : null);
+        $solidaryBeneficiary->setAvatar($solidaryUser->getUser()->getAvatar());
+
+        // get the status of the beneficiary for each structure attached, and get the diary and proofs if asked
+        $beneficiaryStructures = [];
+        $diaries = [];
+        $proofs = [];
+        foreach ($solidaryUser->getSolidaryUserStructures() as $solidaryUserStructure) {
+            // @var SolidaryUserStructure $solidaryUserStructure
+
+            $beneficiaryStructures[] = [
+                'id' => $solidaryUserStructure->getStructure()->getId(),
+                'name' => $solidaryUserStructure->getStructure()->getName(),
+                'status' => $solidaryUserStructure->getStatus(),
+            ];
+            // get the diary
+            if ($withDiary) {
+                $diaries = $this->getDiaryForSolidaryUserStructure($solidaryUserStructure);
+            }
+            // get the proofs
+            if ($withProofs) {
+                $proofs = $this->getProofsForSolidaryUserStructure($solidaryUserStructure);
+            }
+        }
+        $solidaryBeneficiary->setStructures($beneficiaryStructures);
+        // reorder diaries by date and solidary id
+        usort($diaries, function ($a, $b) {
+            if ($a['date'] == $b['date']) {
+                return $b['solidary'] <=> $a['solidary'];
+            }
+
+            return $b['date'] <=> $a['date'];
+        });
+        $solidaryBeneficiary->setDiaries($diaries);
+        $solidaryBeneficiary->setProofs($proofs);
+
+        return $solidaryBeneficiary;
+    }
+
+    /**
+     * Get the diary entries for a solidaryUserStructure.
+     *
+     * @param SolidaryUserStructure $solidaryUserStructure The solidaryUserStructure
+     *
+     * @return array The proofs
+     */
+    private function getDiaryForSolidaryUserStructure(SolidaryUserStructure $solidaryUserStructure)
+    {
+        $diaries = [];
+        foreach ($solidaryUserStructure->getSolidaries() as $solidary) {
+            /**
+             * @var Solidary $solidary
+             */
+            foreach ($solidary->getDiaries() as $diary) {
+                // @var Diary $diary
+                $diaries[] = [
+                    'action' => $diary->getAction()->getName(),
+                    'comment' => $diary->getComment(),
+                    'progression' => $diary->getProgression(),
+                    'authorGivenName' => $diary->getAuthor()->getGivenName(),
+                    'authorFamilyName' => $diary->getAuthor()->getFamilyName(),
+                    'authorAvatar' => $diary->getAuthor()->getAvatar(),
+                    'userId' => $diary->getUser()->getId(),
+                    'givenName' => $diary->getUser()->getGivenName(),
+                    'familyName' => $diary->getUser()->getFamilyName(),
+                    'avatar' => $diary->getUser()->getAvatar(),
+                    'date' => $diary->getCreatedDate(),
+                    'solidary' => $solidary->getId(),
+                    'origin' => $solidary->getAdminorigin()->jsonSerialize(),
+                    'destination' => $solidary->getAdmindestination()->jsonSerialize(),
+                ];
+            }
+        }
+
+        return $diaries;
+    }
+
     /**
      * Treat a validation for a solidary beneficiary.
      *
-     * @param SolidaryUser          $solidaryUser           The solidaryUser corresponding to the solidarybeneficiary to update
-     * @param array                 $validation             The validation fields
-     * @return SolidaryBeneficiary  The solidaryBeneficiary updated
+     * @param SolidaryUser $solidaryUser The solidaryUser corresponding to the solidarybeneficiary to update
+     * @param array        $validation   The validation fields
+     *
+     * @return SolidaryBeneficiary The solidaryBeneficiary updated
      */
     private function treatValidation(SolidaryUser $solidaryUser, array $validation)
     {
@@ -398,9 +437,13 @@ class SolidaryBeneficiaryManager
             throw new SolidaryException(sprintf(SolidaryException::SOLIDARY_USER_STRUCTURE_NOT_FOUND, $validation['id']));
         }
 
-        $solidaryUserStructure->setStatus($validation['validate'] === true ? SolidaryUserStructure::STATUS_ACCEPTED : SolidaryUserStructure::STATUS_REFUSED);
+        $solidaryUserStructure->setStatus(true === $validation['validate'] ? SolidaryUserStructure::STATUS_ACCEPTED : SolidaryUserStructure::STATUS_REFUSED);
         $this->entityManager->persist($solidaryUserStructure);
         $this->entityManager->flush();
+
+        // dispatch the event
+        $event = new BeneficiaryStatusChangedEvent($solidaryUserStructure);
+        $this->eventDispatcher->dispatch($event, BeneficiaryStatusChangedEvent::NAME);
 
         return $this->getSolidaryBeneficiary($solidaryUser->getId());
     }

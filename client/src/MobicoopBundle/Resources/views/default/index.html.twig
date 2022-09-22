@@ -8,6 +8,7 @@
 {#{{ encore_entry_link_tags("#{assets_prefix ?? ''}home/home") }}#}
 {% endblock %}
 
+
 {% block main %}
 <home geo-search-url="{{ geoCompleteUri }}" :user="{{app.user|json_encode}}" {{ searchRegular ? 'regular' : '' }} {{
     searchPunctualDate ? 'punctual-date-optional' : '' }} :community-display="{{homeCommunityDisplay}}"

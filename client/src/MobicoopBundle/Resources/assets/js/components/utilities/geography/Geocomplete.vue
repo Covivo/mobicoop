@@ -215,7 +215,8 @@ export default {
         "housenumber",
         "street",
         "venue",
-        "event"
+        "event",
+        "other"
       ];
     },
     defaultPalette() {
@@ -253,7 +254,7 @@ export default {
         event: {
           main: "teal",
           text: "white",
-        },
+        }
       };
     },
     colors() {
@@ -329,7 +330,7 @@ export default {
           "icon-text": this.defaultPalette.event.text+"--text",
           title: this.defaultPalette.event.main+"--text text--darken-3",
           subtitle: this.defaultPalette.event.main+"--text text--lighten-1",
-        },
+        }
       };
     },
     rules() {
@@ -390,7 +391,7 @@ export default {
           "name":this.address.event ? this.address.event.name : this.address.name,
           "provider":this.address.providedBy,
           "distance":this.address.distance,
-          "type":this.address.type,
+          "type":this.address.type ? this.address.type : "other",
           "id":this.address.id,
           "regionCode":this.address.regionCode
         };

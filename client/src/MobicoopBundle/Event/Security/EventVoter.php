@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace Mobicoop\Bundle\MobicoopBundle\Event\Security;
 
@@ -31,9 +31,10 @@ use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 class EventVoter extends Voter
 {
-    const CREATE = 'create';
-    const SHOW = 'show';
-    const REPORT = 'report';
+    public const CREATE = 'create';
+    public const UPDATE = 'update';
+    public const SHOW = 'show';
+    public const REPORT = 'report';
 
     private $permissionManager;
 
@@ -47,9 +48,10 @@ class EventVoter extends Voter
         // if the attribute isn't one we support, return false
         if (!in_array($attribute, [
             self::CREATE,
+            self::UPDATE,
             self::SHOW,
             self::REPORT,
-            ])) {
+        ])) {
             return false;
         }
 
@@ -71,8 +73,13 @@ class EventVoter extends Voter
         switch ($attribute) {
             case self::CREATE:
                 return $this->canCreate($user);
+
+            case self::UPDATE:
+                return $this->canUpdate($user, $subject);
+
             case self::SHOW:
                 return $this->canShow($user);
+
             case self::REPORT:
                 return $this->canReport($user);
         }
@@ -83,6 +90,11 @@ class EventVoter extends Voter
     private function canCreate(?User $user = null)
     {
         return $this->permissionManager->checkPermission('event_create', $user);
+    }
+
+    private function canUpdate(?User $user = null, Event $event)
+    {
+        return $user && $event->getCreatorId() == $user->getId();
     }
 
     private function canShow(?User $user = null)

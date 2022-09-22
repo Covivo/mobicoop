@@ -4,6 +4,10 @@
             "label": "Publier une annonce",
             "route": "covoiturage/evenement/{id}/poster"
         },
+        "edit": {
+            "label": "Modifier",
+            "route": "/evenement/{id}/modifier"
+        },
         "login": {
             "route": "/utilisateur/connexion"
         },

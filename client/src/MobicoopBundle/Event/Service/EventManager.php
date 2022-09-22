@@ -202,15 +202,47 @@ class EventManager
         return null;
     }
 
-    /**
-     * Update an event.
-     *
-     * @param Event $event The event to update
-     *
-     * @return null|Event the event updated or null if error
-     */
-    public function updateEvent(Event $event)
+    public function updateEvent($data, Event $event)
     {
+        $address = new Address();
+
+        // set event address
+        $eventAddress = json_decode($data->get('address'), true);
+        $address->setLayer(isset($eventAddress['layer']) ? $eventAddress['layer'] : null);
+        $address->setAddressCountry(isset($eventAddress['addressCountry']) ? $eventAddress['addressCountry'] : null);
+        $address->setAddressLocality(isset($eventAddress['addressLocality']) ? $eventAddress['addressLocality'] : null);
+        $address->setCountryCode(isset($eventAddress['countryCode']) ? $eventAddress['countryCode'] : null);
+        $address->setCounty(isset($eventAddress['county']) ? $eventAddress['county'] : null);
+        $address->setLatitude(isset($eventAddress['latitude']) ? $eventAddress['latitude'] : null);
+        $address->setLocalAdmin(isset($eventAddress['localAdmin']) ? $eventAddress['localAdmin'] : null);
+        $address->setLongitude(isset($eventAddress['longitude']) ? $eventAddress['longitude'] : null);
+        $address->setMacroCounty(isset($eventAddress['macroCounty']) ? $eventAddress['macroCounty'] : null);
+        $address->setMacroRegion(isset($eventAddress['macroRegion']) ? $eventAddress['macroRegion'] : null);
+        $address->setPostalCode(isset($eventAddress['postalCode']) ? $eventAddress['postalCode'] : null);
+        $address->setRegion(isset($eventAddress['region']) ? $eventAddress['region'] : null);
+        $address->setStreet(isset($eventAddress['street']) ? $eventAddress['street'] : null);
+        $address->setHouseNumber(isset($eventAddress['houseNumber']) ? $eventAddress['houseNumber'] : null);
+        $address->setStreetAddress(isset($eventAddress['streetAddress']) ? $eventAddress['streetAddress'] : null);
+        $address->setSubLocality(isset($eventAddress['subLocality']) ? $eventAddress['subLocality'] : null);
+        $address->setDisplayLabel(isset($eventAddress['displayLabel']) ? $eventAddress['displayLabel'] : null);
+
+        // Set Datetime from data
+        $from = null != $data->get('startTime') ? new \DateTime($data->get('startDate').'.'.$data->get('startTime')) : new \DateTime($data->get('startDate'));
+        $to = null != $data->get('endTime') ? new \DateTime($data->get('endDate').'.'.$data->get('endTime')) : new \DateTime($data->get('endDate'));
+        // Set use time = 1, if user set time
+        $flagTime = (null == $data->get('endTime') && null == $data->get('startTime')) ? 0 : 1;
+        $event->setUseTime($flagTime);
+
+        // set event infos
+        $event->setName($data->get('name'));
+        $event->setPrivate(('true' == $data->get('private')) ? true : false);
+        $event->setDescription($data->get('description'));
+        $event->setFullDescription($data->get('fullDescription'));
+        $event->setAddress($address);
+        $event->setUrl($data->get('urlEvent'));
+        $event->setFromDate($from);
+        $event->setToDate($to);
+
         $response = $this->dataProvider->put($event);
 
         return $response->getValue();

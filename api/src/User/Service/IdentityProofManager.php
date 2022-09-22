@@ -75,8 +75,28 @@ class IdentityProofManager
         $identityProof->setFile($file);
         $identityProof->setUser($user);
         $identityProof->setFileName($user->getId().'-'.time());
+        $identityProof->setStatus(IdentityProof::STATUS_PENDING);
 
         return $identityProof;
+    }
+
+    public function addValidatedByAdminIdentityProof(IdentityProof $identityProof)
+    {
+        if ($this->userHasAcceptedProof($identityProof->getUser())) {
+            throw new Exception('This user already has an accepted identity proof.');
+        }
+        $validatedByAdminIdentityProof = new IdentityProof();
+        $validatedByAdminIdentityProof->setUser($identityProof->getUser());
+        $validatedByAdminIdentityProof->setStatus(IdentityProof::STATUS_ACCEPTED);
+        $validatedByAdminIdentityProof->setAdmin($this->admin);
+
+        $this->entityManager->persist($validatedByAdminIdentityProof);
+        $this->entityManager->flush();
+
+        $event = new IdentityProofModeratedEvent($validatedByAdminIdentityProof);
+        $this->eventDispatcher->dispatch(IdentityProofModeratedEvent::NAME, $event);
+
+        return $validatedByAdminIdentityProof;
     }
 
     public function patchIdentityProof(int $id, array $fields)
