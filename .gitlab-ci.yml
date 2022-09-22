@@ -2,9 +2,8 @@
 image: mobicoop/php-node-chromium:2.0.0
 
 services:
-- name: mariadb:10.4
-  alias: db
-
+  - name: mariadb:10.4
+    alias: db
 
 variables:
   # Configure mysql service (https://hub.docker.com/_/mysql/)
@@ -13,14 +12,13 @@ variables:
   npm_config_cache: "$CI_PROJECT_DIR/.npm"
   CYPRESS_CACHE_FOLDER: "$CI_PROJECT_DIR/cache/Cypress"
 
-
 # Cache modules in between jobs
 cache:
   key: "$CI_JOB_STAGE-$CI_COMMIT_REF_SLUG"
-  paths:    # excluded : not cached
-  - .npm
-  - cache/Cypress
-  - /root/.cache/Cypress
+  paths: # excluded : not cached
+    - .npm
+    - cache/Cypress
+    - /root/.cache/Cypress
 
 # Name of the stages that can be executed on a pipeline by the runner
 stages:
@@ -31,7 +29,6 @@ stages:
   - admin_prod_deploy
   - doc
   - reports
-
 
 ###############################################################################################
 ############# Everything under this is execute for all push (branch) ##########################
@@ -54,9 +51,9 @@ stages:
 
 #   only:
 #     - pushes # job executed only on test
-#   except:       
+#   except:
 #     refs:   # job not executed for these branches & tags
-#       - tags    
+#       - tags
 #       - dev
 #       - test
 #       - master
@@ -71,7 +68,6 @@ stages:
 #     - client/vendor/
 #     - client/node_modules/
 #     - admin/node_modules/
-
 
 ###############################################################################################
 ############# Everything under this is execute only for Dev env (dev) ############################
@@ -93,7 +89,7 @@ dev_deploy:
     - cd api && openssl genrsa -aes256 -passout pass:ca4ffed31ee358cc7c7083af6e5773cd -out config/jwt/private.pem 4096
     - openssl rsa -in config/jwt/private.pem -passin pass:ca4ffed31ee358cc7c7083af6e5773cd -pubout -out config/jwt/public.pem
     - chmod 777 config/jwt/*
-    - cp config/rdex/clients.json.dist config/rdex/clients.json 
+    - cp config/rdex/clients.json.dist config/rdex/clients.json
     - cp config/rdex/operator.json.dist config/rdex/operator.json
     - cp config/rdex/providers.json.dist config/rdex/providers.json && cd ../
     - npm install --unsafe-perm # Install the dependencies in the local node_modules folder
@@ -101,29 +97,27 @@ dev_deploy:
     # - npm run update-db
   script:
     # - npm run test-and-coverage
-    - cd client && npm run compile && cd ../   
+    - cd client && npm run compile && cd ../
     - npm run start-ci & wait-on client/public/build/entrypoints.json
-    # - npm run test-functional-ci-cypress 
+    # - npm run test-functional-ci-cypress
     #  Kill all node & php process if the e2e test are greatfully passed
     # - killall node || true
-    # - killall php || true                                            
-    - echo "${SSH_DEV_PRIVATE_KEY}" > id_rsa                   # 
-    - chmod 700 id_rsa                                          # ssh identification on docker side 
-    - mv id_rsa ${HOME}/.ssh                                    #
-    - echo "${SSH_DEV_HOST_KEY}" > "${HOME}/.ssh/known_hosts"  #
-    - rsync --stats --quiet --group=www-data -hrvz --exclude-from=.gitlab-exclude --delete  -e "ssh -o StrictHostKeyChecking=no -p $SSH_PORT" ./ ${SSH_DEV_USER}@${SSH_DEV_IP}:/var/www/dev/mobicoop    # rsync the files on the server
-    - ssh -o StrictHostKeyChecking=no -p ${SSH_PORT} ${SSH_DEV_USER}@${SSH_DEV_IP} "cd /var/www/dev/mobicoop/; chmod +x postDeploy.sh; ./postDeploy.sh --version=dev --version-migrate=dev --instance=mobicoop"    # database migration and other after deploy works
-  when: manual      # /!\ important : job executed manually /!\  
+    # - killall php || true
+    - echo "${SSH_DEV_PRIVATE_KEY}" > id_rsa #
+    - chmod 700 id_rsa # ssh identification on docker side
+    - mv id_rsa ${HOME}/.ssh #
+    - echo "${SSH_DEV_HOST_KEY}" > "${HOME}/.ssh/known_hosts" #
+    - rsync --stats --quiet --group=www-data -hrvz --exclude-from=.gitlab-exclude --delete  -e "ssh -o StrictHostKeyChecking=no -p $SSH_PORT" ./ ${SSH_DEV_USER}@${SSH_DEV_IP}:/var/www/dev/mobicoop # rsync the files on the server
+    - ssh -o StrictHostKeyChecking=no -p ${SSH_PORT} ${SSH_DEV_USER}@${SSH_DEV_IP} "cd /var/www/dev/mobicoop/; chmod +x postDeploy.sh; ./postDeploy.sh --version=dev --version-migrate=dev --instance=mobicoop" # database migration and other after deploy works
+  when: manual # /!\ important : job executed manually /!\
   except:
     refs:
-      - tags    # job not executed on tags
+      - tags # job not executed on tags
   cache:
     key: "$CI_JOB_STAGE-$CI_COMMIT_REF_SLUG"
-    paths:    # excluded : not cached
-    - api/vendor/
-    - client/vendor/
-
-
+    paths: # excluded : not cached
+      - api/vendor/
+      - client/vendor/
 
 ###############################################################################################
 ############# Everything under this is execute only for Test env (test) ###################
@@ -146,56 +140,54 @@ test_deploy:
     - cd api && openssl genrsa -aes256 -passout pass:ca4ffed31ee358cc7c7083af6e5773cd -out config/jwt/private.pem 4096
     - openssl rsa -in config/jwt/private.pem -passin pass:ca4ffed31ee358cc7c7083af6e5773cd -pubout -out config/jwt/public.pem
     - chmod 777 config/jwt/*
-    - cp config/rdex/clients.json.dist config/rdex/clients.json 
+    - cp config/rdex/clients.json.dist config/rdex/clients.json
     - cp config/rdex/operator.json.dist config/rdex/operator.json
     - cp config/rdex/providers.json.dist config/rdex/providers.json && cd ../
     - npm install --unsafe-perm # Install the dependencies in the local node_modules folder
     - npm run install-all-ci # Install the dependencies in the local node_modules folder
     - npm run update-db
   script:
-    # - npm run test-and-coverage    
+    # - npm run test-and-coverage
     - npm run start-ci & wait-on client/public/build/entrypoints.json
-    # - npm run test-functional-ci || true 
+    # - npm run test-functional-ci || true
     #  Kill all node & php process if the e2e test are greatfully passed
     - killall node || true
-    - killall php || true                                            
-    - echo "${SSH_TEST_PRIVATE_KEY}" > id_rsa                   # 
-    - chmod 700 id_rsa                                          # ssh identification on docker side 
-    - mv id_rsa ${HOME}/.ssh                                    #
-    - echo "${SSH_TEST_HOST_KEY}" > "${HOME}/.ssh/known_hosts"  #
-    - ssh -o StrictHostKeyChecking=no -p ${SSH_PORT} ${SSH_TEST_USER}@${SSH_TEST_IP} "cd /var/www/test/mobicoop/client/; touch ./public/maintenance.enable; cd /var/www/test/mobicoop/api/; touch ./public/maintenance.enable;"    # put the site on maintenance
-    - rsync --stats --quiet --group=www-data -hrvz --exclude-from=.gitlab-exclude --delete  -e "ssh -o StrictHostKeyChecking=no -p $SSH_PORT" ./ ${SSH_TEST_USER}@${SSH_TEST_IP}:/var/www/test/mobicoop    # rsync the files on the server
-    - ssh -o StrictHostKeyChecking=no -p ${SSH_PORT} ${SSH_TEST_USER}@${SSH_TEST_IP} "cd /var/www/test/mobicoop/; chmod +x postDeploy.sh; ./postDeploy.sh --version=test --version-migrate=test --instance=mobicoop"    # database migration and other after deploy works
+    - killall php || true
+    - echo "${SSH_TEST_PRIVATE_KEY}" > id_rsa #
+    - chmod 700 id_rsa # ssh identification on docker side
+    - mv id_rsa ${HOME}/.ssh #
+    - echo "${SSH_TEST_HOST_KEY}" > "${HOME}/.ssh/known_hosts" #
+    - ssh -o StrictHostKeyChecking=no -p ${SSH_PORT} ${SSH_TEST_USER}@${SSH_TEST_IP} "cd /var/www/test/mobicoop/client/; touch ./public/maintenance.enable; cd /var/www/test/mobicoop/api/; touch ./public/maintenance.enable;" # put the site on maintenance
+    - rsync --stats --quiet --group=www-data -hrvz --exclude-from=.gitlab-exclude --delete  -e "ssh -o StrictHostKeyChecking=no -p $SSH_PORT" ./ ${SSH_TEST_USER}@${SSH_TEST_IP}:/var/www/test/mobicoop # rsync the files on the server
+    - ssh -o StrictHostKeyChecking=no -p ${SSH_PORT} ${SSH_TEST_USER}@${SSH_TEST_IP} "cd /var/www/test/mobicoop/; chmod +x postDeploy.sh; ./postDeploy.sh --version=test --version-migrate=test --instance=mobicoop" # database migration and other after deploy works
   after_script:
     #  Kill all node & php process if the e2e not passed
     - killall node || true
     - killall php || true
-  when: manual      # /!\ important : job executed manually /!\  
+  when: manual # /!\ important : job executed manually /!\
   except:
     refs:
-      - tags    # job not executed on tags
+      - tags # job not executed on tags
   artifacts:
     paths:
-    - client/cypress/screenshots
-    - client/public/build
-    - client/node_modules/
-    - client/vendor/
-    - api/vendor/
-    - node_modules/
+      - client/cypress/screenshots
+      - client/public/build
+      - client/node_modules/
+      - client/vendor/
+      - api/vendor/
+      - node_modules/
     expire_in: 1 week
-
 
 ###############################################################################################
 ############# Everything under this is execute only for Production (MASTER) ###################
 ###############################################################################################
-
 
 #
 # Deployment for master branch on test server
 #
 prod_test_deploy:
   stage: prod_deploy
-  only:     # job executed only on master branch
+  only: # job executed only on master branch
     - master
   # variables:
   #   APP_ENV: prod   # /!\ important : symfony env variable /!\
@@ -203,35 +195,35 @@ prod_test_deploy:
     name: prod
     url: https://mobicoop.io
   before_script: # This is required to send the prod type no dev, since it creates errors
-  #dependencies:
-   #- test_deploy
+    #dependencies:
+    #- test_deploy
     - echo API_URI=http://localhost:8080/ >> client/.env # Override default docker value for gitlab-ci
     - cd api && openssl genrsa -aes256 -passout pass:ca4ffed31ee358cc7c7083af6e5773cd -out config/jwt/private.pem 4096
     - openssl rsa -in config/jwt/private.pem -passin pass:ca4ffed31ee358cc7c7083af6e5773cd -pubout -out config/jwt/public.pem
     - chmod 777 config/jwt/*
-    - cp config/rdex/clients.json.dist config/rdex/clients.json 
+    - cp config/rdex/clients.json.dist config/rdex/clients.json
     - cp config/rdex/operator.json.dist config/rdex/operator.json
     - cp config/rdex/providers.json.dist config/rdex/providers.json && cd ../
     - npm install --unsafe-perm # Install the dependencies in the local node_modules folder
     - npm run install-all-ci # Install the dependencies in the local node_modules folder
-    - npm run update-db   
-  script:                                          
-    - cd client && npm run compile && cd ../   
-    - echo "${SSH_PROD_TEST_PRIVATE_KEY}" > id_rsa                       #
-    - chmod 700 id_rsa                                              #
-    - mv id_rsa ${HOME}/.ssh                                        # ssh identification on docker side
-    - echo "${SSH_PROD_TEST_HOST_KEY}" > "${HOME}/.ssh/known_hosts"      #
-    - rsync --stats --quiet --group=www-data -hrvz --exclude-from=.gitlab-exclude --delete  -e "ssh -o StrictHostKeyChecking=no -p $SSH_PORT" ./ ${SSH_PROD_TEST_USER}@${SSH_PROD_TEST_IP}:/var/www/prod/mobicoop    # rsync the files on the server
-    - ssh -o StrictHostKeyChecking=no -p ${SSH_PORT} ${SSH_PROD_TEST_USER}@${SSH_PROD_TEST_IP} "cd /var/www/prod/mobicoop/; chmod +x postDeploy.sh; ./postDeploy.sh --version=prod --version-migrate=prod --instance=mobicoop"    # database migration and other after deploy works
-  when: manual      # /!\ important : job executed manually /!\
+    - npm run update-db
+  script:
+    - cd client && npm run compile && cd ../
+    - echo "${SSH_PROD_TEST_PRIVATE_KEY}" > id_rsa #
+    - chmod 700 id_rsa #
+    - mv id_rsa ${HOME}/.ssh # ssh identification on docker side
+    - echo "${SSH_PROD_TEST_HOST_KEY}" > "${HOME}/.ssh/known_hosts" #
+    - rsync --stats --quiet --group=www-data -hrvz --exclude-from=.gitlab-exclude --delete  -e "ssh -o StrictHostKeyChecking=no -p $SSH_PORT" ./ ${SSH_PROD_TEST_USER}@${SSH_PROD_TEST_IP}:/var/www/prod/mobicoop # rsync the files on the server
+    - ssh -o StrictHostKeyChecking=no -p ${SSH_PORT} ${SSH_PROD_TEST_USER}@${SSH_PROD_TEST_IP} "cd /var/www/prod/mobicoop/; chmod +x postDeploy.sh; ./postDeploy.sh --version=prod --version-migrate=prod --instance=mobicoop" # database migration and other after deploy works
+  when: manual # /!\ important : job executed manually /!\
   artifacts:
     paths:
-    - client/cypress/screenshots
-    - client/public/build
-    - client/node_modules/
-    - client/vendor/
-    - api/vendor/
-    - node_modules/
+      - client/cypress/screenshots
+      - client/public/build
+      - client/node_modules/
+      - client/vendor/
+      - api/vendor/
+      - node_modules/
     expire_in: 1 week
 
 #
@@ -239,7 +231,7 @@ prod_test_deploy:
 #
 staging_deploy:
   stage: prod_deploy
-  only:     # job executed only on master branch
+  only: # job executed only on master branch
     - master
   # variables:
   #   APP_ENV: prod   # /!\ important : symfony env variable /!\
@@ -247,35 +239,36 @@ staging_deploy:
     name: prod
     url: https://www.mobicoop.fr
   before_script: # This is required to send the prod type no dev, since it creates errors
-  #dependencies:
-   #- test_deploy
+    #dependencies:
+    #- test_deploy
     - echo API_URI=http://localhost:8080/ >> client/.env # Override default docker value for gitlab-ci
     - cd api && openssl genrsa -aes256 -passout pass:ca4ffed31ee358cc7c7083af6e5773cd -out config/jwt/private.pem 4096
     - openssl rsa -in config/jwt/private.pem -passin pass:ca4ffed31ee358cc7c7083af6e5773cd -pubout -out config/jwt/public.pem
     - chmod 777 config/jwt/*
-    - cp config/rdex/clients.json.dist config/rdex/clients.json 
+    - cp config/rdex/clients.json.dist config/rdex/clients.json
     - cp config/rdex/operator.json.dist config/rdex/operator.json
     - cp config/rdex/providers.json.dist config/rdex/providers.json && cd ../
     - npm install --unsafe-perm # Install the dependencies in the local node_modules folder
     - npm run install-all-ci # Install the dependencies in the local node_modules folder
-    - npm run update-db   
-  script:                                          
-    - cd client && npm run compile && cd ../   
-    - echo "${SSH_PROD_PRIVATE_KEY}" > id_rsa                       #
-    - chmod 700 id_rsa                                              #
-    - mv id_rsa ${HOME}/.ssh                                        # ssh identification on docker side
-    - echo "${SSH_PROD_HOST_KEY}" > "${HOME}/.ssh/known_hosts"      #
-    - rsync --stats --quiet --group=www-data -hrvz --exclude-from=.gitlab-exclude --delete  -e "ssh -o StrictHostKeyChecking=no -p $SSH_PORT" ./ ${SSH_PROD_USER}@${SSH_PROD_IP}:/var/www/mobicoop/staging    # rsync the files on the server
-    - ssh -o StrictHostKeyChecking=no -p ${SSH_PORT} ${SSH_PROD_USER}@${SSH_PROD_IP} "cd /var/www/mobicoop/staging/; chmod +x postDeploy.sh; ./postDeploy.sh --version=staging --version-migrate=prod --instance=mobicoop"    # database migration and other after deploy works
-  when: manual      # /!\ important : job executed manually /!\
+    - npm run update-db
+  script:
+    - cd client && npm run compile && cd ../
+    - echo "${SSH_PROD_PRIVATE_KEY}" > id_rsa #
+    - chmod 700 id_rsa #
+    - mv id_rsa ${HOME}/.ssh # ssh identification on docker side
+    - echo "${SSH_PROD_HOST_KEY}" > "${HOME}/.ssh/known_hosts" #
+    - ssh -o StrictHostKeyChecking=no -p ${SSH_PORT} ${SSH_PROD_USER}@${SSH_PROD_IP} "cd /var/www/mobicoop/staging/client/; touch ./public/maintenance.enable; cd /var/www/mobicoop/staging/api/; touch ./public/maintenance.enable;" # put the site on maintenance
+    - rsync --stats --quiet --group=www-data -hrvz --exclude-from=.gitlab-exclude --delete  -e "ssh -o StrictHostKeyChecking=no -p $SSH_PORT" ./ ${SSH_PROD_USER}@${SSH_PROD_IP}:/var/www/mobicoop/staging # rsync the files on the server
+    - ssh -o StrictHostKeyChecking=no -p ${SSH_PORT} ${SSH_PROD_USER}@${SSH_PROD_IP} "cd /var/www/mobicoop/staging/; chmod +x postDeploy.sh; ./postDeploy.sh --version=staging --version-migrate=prod --instance=mobicoop" # database migration and other after deploy works
+  when: manual # /!\ important : job executed manually /!\
   artifacts:
     paths:
-    - client/cypress/screenshots
-    - client/public/build
-    - client/node_modules/
-    - client/vendor/
-    - api/vendor/
-    - node_modules/
+      - client/cypress/screenshots
+      - client/public/build
+      - client/node_modules/
+      - client/vendor/
+      - api/vendor/
+      - node_modules/
     expire_in: 1 week
 
 #
@@ -283,7 +276,7 @@ staging_deploy:
 #
 prod_deploy:
   stage: prod_deploy
-  only:     # job executed only on master branch
+  only: # job executed only on master branch
     - master
   # variables:
   #   APP_ENV: prod   # /!\ important : symfony env variable /!\
@@ -291,43 +284,41 @@ prod_deploy:
     name: prod
     url: https://www.mobicoop.fr
   before_script: # This is required to send the prod type no dev, since it creates errors
-  #dependencies:
-   #- test_deploy
+    #dependencies:
+    #- test_deploy
     - echo API_URI=http://localhost:8080/ >> client/.env # Override default docker value for gitlab-ci
     - cd api && openssl genrsa -aes256 -passout pass:ca4ffed31ee358cc7c7083af6e5773cd -out config/jwt/private.pem 4096
     - openssl rsa -in config/jwt/private.pem -passin pass:ca4ffed31ee358cc7c7083af6e5773cd -pubout -out config/jwt/public.pem
     - chmod 777 config/jwt/*
-    - cp config/rdex/clients.json.dist config/rdex/clients.json 
+    - cp config/rdex/clients.json.dist config/rdex/clients.json
     - cp config/rdex/operator.json.dist config/rdex/operator.json
     - cp config/rdex/providers.json.dist config/rdex/providers.json && cd ../
     - npm install --unsafe-perm # Install the dependencies in the local node_modules folder
     - npm run install-all-ci # Install the dependencies in the local node_modules folder
-    - npm run update-db   
-  script:                                          
-    - cd client && npm run compile && cd ../   
-    - echo "${SSH_PROD_PRIVATE_KEY}" > id_rsa                       #
-    - chmod 700 id_rsa                                              #
-    - mv id_rsa ${HOME}/.ssh                                        # ssh identification on docker side
-    - echo "${SSH_PROD_HOST_KEY}" > "${HOME}/.ssh/known_hosts"      #
-    - ssh -o StrictHostKeyChecking=no -p ${SSH_PORT} ${SSH_PROD_USER}@${SSH_PROD_IP} "cd /var/www/mobicoop/prod/client/; touch ./public/maintenance.enable; cd /var/www/mobicoop/prod/api/; touch ./public/maintenance.enable;"    # put the site on maintenance
-    - rsync --stats --quiet --group=www-data -hrvz --exclude-from=.gitlab-exclude --delete  -e "ssh -o StrictHostKeyChecking=no -p $SSH_PORT" ./ ${SSH_PROD_USER}@${SSH_PROD_IP}:/var/www/mobicoop/prod    # rsync the files on the server
-    - ssh -o StrictHostKeyChecking=no -p ${SSH_PORT} ${SSH_PROD_USER}@${SSH_PROD_IP} "cd /var/www/mobicoop/prod/; chmod +x postDeploy.sh; ./postDeploy.sh --version=prod --version-migrate=prod --instance=mobicoop"    # database migration and other after deploy works
-  when: manual      # /!\ important : job executed manually /!\
+    - npm run update-db
+  script:
+    - cd client && npm run compile && cd ../
+    - echo "${SSH_PROD_PRIVATE_KEY}" > id_rsa #
+    - chmod 700 id_rsa #
+    - mv id_rsa ${HOME}/.ssh # ssh identification on docker side
+    - echo "${SSH_PROD_HOST_KEY}" > "${HOME}/.ssh/known_hosts" #
+    - ssh -o StrictHostKeyChecking=no -p ${SSH_PORT} ${SSH_PROD_USER}@${SSH_PROD_IP} "cd /var/www/mobicoop/prod/client/; touch ./public/maintenance.enable; cd /var/www/mobicoop/prod/api/; touch ./public/maintenance.enable;" # put the site on maintenance
+    - rsync --stats --quiet --group=www-data -hrvz --exclude-from=.gitlab-exclude --delete  -e "ssh -o StrictHostKeyChecking=no -p $SSH_PORT" ./ ${SSH_PROD_USER}@${SSH_PROD_IP}:/var/www/mobicoop/prod # rsync the files on the server
+    - ssh -o StrictHostKeyChecking=no -p ${SSH_PORT} ${SSH_PROD_USER}@${SSH_PROD_IP} "cd /var/www/mobicoop/prod/; chmod +x postDeploy.sh; ./postDeploy.sh --version=prod --version-migrate=prod --instance=mobicoop" # database migration and other after deploy works
+  when: manual # /!\ important : job executed manually /!\
   artifacts:
     paths:
-    - client/cypress/screenshots
-    - client/public/build
-    - client/node_modules/
-    - client/vendor/
-    - api/vendor/
-    - node_modules/
+      - client/cypress/screenshots
+      - client/public/build
+      - client/node_modules/
+      - client/vendor/
+      - api/vendor/
+      - node_modules/
     expire_in: 1 week
-
 
 ###############################################################################################
 ########## Admin                                                            ###################
 ###############################################################################################
-
 
 admin_test_deploy:
   image: alpine:3.6
@@ -354,12 +345,12 @@ admin_test_deploy:
     - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
     # ru docker container
     - ssh -o StrictHostKeyChecking=no -p ${SSH_PORT} ${SSH_TEST_USER}@${SSH_TEST_IP} "docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}; docker stop ${ADMIN_CONTAINER_NAME}; docker pull ${CI_REGISTRY_IMAGE}:${RELEASE_VERSION}; docker run -d --env-file=/var/www/test/mobicoop/admin.env --name=${ADMIN_CONTAINER_NAME} -p 127.0.0.1:${ADMIN_DOCKER_PORT}:80/tcp --rm ${CI_REGISTRY_IMAGE}:${RELEASE_VERSION}"
-  when: manual      # /!\ important : job executed manually /!\  
+  when: manual # /!\ important : job executed manually /!\
   except:
     refs:
-      - tags    # job not executed on tags
+      - tags # job not executed on tags
     variables:
-      - $CI_COMMIT_MESSAGE =~ /skipci/    # job not executed when commit message contains this expression
+      - $CI_COMMIT_MESSAGE =~ /skipci/ # job not executed when commit message contains this expression
 
 admin_prod_deploy:
   image: alpine:3.6
@@ -386,49 +377,45 @@ admin_prod_deploy:
     - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
     # ru docker container
     - ssh -o StrictHostKeyChecking=no -p ${SSH_PORT} ${SSH_PROD_USER}@${SSH_PROD_IP} "cd /var/www/mobicoop/prod/; docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}; docker stop ${ADMIN_CONTAINER_NAME}; docker pull ${CI_REGISTRY_IMAGE}; docker run -d --env-file=admin.prod.env --name=${ADMIN_CONTAINER_NAME} -p 127.0.0.1:${ADMIN_DOCKER_PORT}:80/tcp --rm ${CI_REGISTRY_IMAGE}"
-  when: manual      # /!\ important : job executed manually /!\  
+  when: manual # /!\ important : job executed manually /!\
   except:
     refs:
-      - tags    # job not executed on tags
+      - tags # job not executed on tags
     variables:
-      - $CI_COMMIT_MESSAGE =~ /skipci/    # job not executed when commit message contains this expression
+      - $CI_COMMIT_MESSAGE =~ /skipci/ # job not executed when commit message contains this expression
 
 ###############################################################################################
 ########## Deploy the produciton documentation based on  master branch ###################
 ###############################################################################################
 
 pages:
- stage: doc
- script:
-  - echo 'Deploying all the doc...'
-  - npm run download-tools
-  - npm run generateDocs
-  - mkdir .public
-  - cp -r docs/* .public
-  - mv .public public
- dependencies:
-   - prod_deploy
- artifacts:
-   paths:
-   - public
- only:
-   - master
- when: manual      # /!\ important : job executed manually /!\  
-
-
-
+  stage: doc
+  script:
+    - echo 'Deploying all the doc...'
+    - npm run download-tools
+    - npm run generateDocs
+    - mkdir .public
+    - cp -r docs/* .public
+    - mv .public public
+  dependencies:
+    - prod_deploy
+  artifacts:
+    paths:
+      - public
+  only:
+    - master
+  when: manual # /!\ important : job executed manually /!\
 
 ###############################################################################################
 ########## Everything under this is execute only for Reports security on default branch (Dev) #
 ###############################################################################################
 
-    
 #
 # Static Application Security Testing (SAST)
-# (gitlab preconfigured job) 
+# (gitlab preconfigured job)
 #
 sast:
-  stage : reports
+  stage: reports
   image: docker:stable
   cache: {}
   variables:
@@ -446,5 +433,5 @@ sast:
   artifacts:
     reports:
       sast: gl-sast-report.json
-  only:     # job executed only on dev & master branches
+  only: # job executed only on dev & master branches
     - dev

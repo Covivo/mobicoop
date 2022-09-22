@@ -71,6 +71,7 @@
 /api/public/upload/users/images/versions/*.jpg
 /api/public/upload/users/images/versions/*.jpeg
 /api/public/upload/users/images/versions/*.png
+/api/public/upload/users/proofs/*.*
 /api/public/upload/badges/images/*.jpg
 /api/public/upload/badges/images/*.jpeg
 /api/public/upload/badges/images/*.png
