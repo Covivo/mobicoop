@@ -1443,28 +1443,21 @@ class UserManager
 
     public function checkPhoneToken($data)
     {
-        $userFound = $this->userRepository->findOneBy(['phoneToken' => $data->getPhoneToken()]);
-
+        $userFound = $this->userRepository->findOneBy(['phoneToken' => $data->getPhoneToken(), 'telephone' => $data->getTelephone()]);
         if (!is_null($userFound)) {
-            if ($data->getTelephone() === $userFound->getTelephone()) {
-                // User found by token match with the given Telephone. We update de validated date, persist, then return the user found
-                $userFound->setPhoneValidatedDate(new \DateTime());
-                $this->entityManager->persist($userFound);
-                $this->entityManager->flush();
+            // User found by token match with the given Telephone. We update de validated date, persist, then return the user found
+            $userFound->setPhoneValidatedDate(new \DateTime());
+            $this->entityManager->persist($userFound);
+            $this->entityManager->flush();
 
-                //  we dispatch the gamification event associated
-                $action = $this->actionRepository->findOneBy(['name' => 'user_phone_validation']);
-                $actionEvent = new ActionEvent($action, $userFound);
-                $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);
+            //  we dispatch the gamification event associated
+            $action = $this->actionRepository->findOneBy(['name' => 'user_phone_validation']);
+            $actionEvent = new ActionEvent($action, $userFound);
+            $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);
 
-                return $userFound;
-            }
-            // User found by token doesn't match with the given telephone. We return nothing.
-            return new JsonResponse();
+            return $userFound;
         }
         // No user found. We return nothing.
-        return new JsonResponse();
-
         return new JsonResponse();
     }
 
