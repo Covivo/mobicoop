@@ -3,5 +3,6 @@
         "title": "Select this relay point as:",
         "origin": "Origin",
         "destination": "Destination"
-    }
+    },
+    "territory": "/territories"
 }

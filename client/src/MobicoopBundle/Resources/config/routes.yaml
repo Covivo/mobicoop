@@ -38,6 +38,18 @@ refresh_token:
         fr: /refreshToken
     controller: Mobicoop\Bundle\MobicoopBundle\Controller\DefaultController::refreshToken 
 
+
+######################
+# territories routes #
+######################
+territory:
+    methods: [POST]
+    path:
+        fr: /territoires/{id}
+        en: /territories/{id}
+        nl: /territories/{id}
+    controller: Mobicoop\Bundle\MobicoopBundle\Territory\Controller\TerritoryController::getTerritory
+
 ###############
 # user routes #
 ###############
