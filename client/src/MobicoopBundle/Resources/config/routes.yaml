@@ -1528,6 +1528,14 @@ MoreAboutAlt:
         nl: /more_about
     controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showMoreAboutAlt
 
+# display alternative moreAbout page
+MoreAboutAlt2:
+    path:
+        fr: /en_savoir_plus_2
+        en: /more_about_2
+        nl: /more_about_2
+    controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showMoreAboutAlt2
+
 # display defi
 defi:
     path:
