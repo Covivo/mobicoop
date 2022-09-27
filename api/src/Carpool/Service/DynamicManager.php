@@ -164,7 +164,9 @@ class DynamicManager
             }
         }
         // set Date
-        $dynamic->setDate(new \DateTime('UTC'));
+        if (is_null($dynamic->getDate())) {
+            $dynamic->setDate(new \DateTime('UTC'));
+        }
 
         // creation of the proposal
         $this->logger->info('DynamicManager : start '.(new \DateTime('UTC'))->format('Ymd H:i:s.u'));
