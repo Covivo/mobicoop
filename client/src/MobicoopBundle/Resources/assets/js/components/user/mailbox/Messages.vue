@@ -456,8 +456,13 @@ export default {
       this.refreshDetails = true;
       this.hideClickIcon = true;
       this.idMessage = -2;
-      this.currentIdAsk = -2;
+      this.cleanAsk();
+    },
+    cleanAsk(){
       this.recipientName = null;
+      this.currentIdAsk = null;
+      this.idRecipient = null;
+      this.recipientAvatar = null;
     },
     refreshDetailsCompleted(data){
       //this.refreshActions = true;
