@@ -80,7 +80,7 @@ class IdentityProofManager
         return $identityProof;
     }
 
-    public function addValidatedByAdminIdentityProof(IdentityProof $identityProof)
+    public function postIdentityProof(IdentityProof $identityProof)
     {
         if ($this->userHasAcceptedProof($identityProof->getUser())) {
             throw new Exception('This user already has an accepted identity proof.');
