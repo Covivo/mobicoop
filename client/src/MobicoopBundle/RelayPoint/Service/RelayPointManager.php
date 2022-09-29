@@ -88,9 +88,6 @@ class RelayPointManager
      */
     public function getRelayPoints(bool $official = true, ?array $bbox = null)
     {
-        var_dump($this);
-
-        exit;
         if (is_array($bbox)) {
             list($this->bbox_min_lon, $this->bbox_min_lat, $this->bbox_max_lon, $this->bbox_max_lat) = $bbox;
         }
