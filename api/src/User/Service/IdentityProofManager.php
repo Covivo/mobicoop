@@ -85,18 +85,16 @@ class IdentityProofManager
         if ($this->userHasAcceptedProof($identityProof->getUser())) {
             throw new Exception('This user already has an accepted identity proof.');
         }
-        $validatedByAdminIdentityProof = new IdentityProof();
-        $validatedByAdminIdentityProof->setUser($identityProof->getUser());
-        $validatedByAdminIdentityProof->setStatus(IdentityProof::STATUS_ACCEPTED);
-        $validatedByAdminIdentityProof->setAdmin($this->admin);
+        $identityProof->setStatus(IdentityProof::STATUS_ACCEPTED);
+        $identityProof->setAdmin($this->admin);
 
-        $this->entityManager->persist($validatedByAdminIdentityProof);
+        $this->entityManager->persist($identityProof);
         $this->entityManager->flush();
 
-        $event = new IdentityProofModeratedEvent($validatedByAdminIdentityProof);
+        $event = new IdentityProofModeratedEvent($identityProof);
         $this->eventDispatcher->dispatch(IdentityProofModeratedEvent::NAME, $event);
 
-        return $validatedByAdminIdentityProof;
+        return $identityProof;
     }
 
     public function patchIdentityProof(int $id, array $fields)
