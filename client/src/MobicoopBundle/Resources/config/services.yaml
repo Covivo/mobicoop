@@ -217,6 +217,7 @@ services:
     Mobicoop\Bundle\MobicoopBundle\RelayPoint\Service\RelayPointManager:
         arguments:
             $bbox: '%env(json:BBOX)%'
+            $relaypointsMapByDefaultType: '%env(bool:RELAYPOINTS_MAP_BY_DEFAULT_TYPE)%'
             $defaultRelayPointTypeLayer: '%env(int:DEFAULT_RELAYPOINTTYPE_LAYER)%'
             $referenceTerritory: '%env(resolve:REFERENCE_TERRITORY)%'
             $relaypointsMapTypesDisplayed: '%env(json:RELAYPOINTS_MAP_TYPES_DISPLAYED)%'            

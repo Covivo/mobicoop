@@ -41,6 +41,7 @@ class RelayPointManager
     private $bbox_min_lat;
     private $bbox_max_lon;
     private $bbox_max_lat;
+    private $_relaypointsMapByDefaultType;
     private $_default_relaypointtype_layer;
     private $_referenceTerritory;
     private $_relaypointsMapTypesDisplayed;
@@ -53,6 +54,7 @@ class RelayPointManager
     public function __construct(
         DataProvider $dataProvider,
         array $bbox,
+        bool $relaypointsMapByDefaultType,
         int $defaultRelayPointTypeLayer,
         ?string $referenceTerritory = null,
         array $relaypointsMapTypesDisplayed = []
@@ -70,6 +72,7 @@ class RelayPointManager
             $this->bbox_max_lon = $bbox['max_lon'];
             $this->bbox_max_lat = $bbox['max_lat'];
         }
+        $this->_relaypointsMapByDefaultType = $relaypointsMapByDefaultType;
         $this->_default_relaypointtype_layer = $defaultRelayPointTypeLayer;
         $this->_referenceTerritory = $referenceTerritory;
         $this->_relaypointsMapTypesDisplayed = $relaypointsMapTypesDisplayed;
@@ -85,6 +88,9 @@ class RelayPointManager
      */
     public function getRelayPoints(bool $official = true, ?array $bbox = null)
     {
+        var_dump($this);
+
+        exit;
         if (is_array($bbox)) {
             list($this->bbox_min_lon, $this->bbox_min_lat, $this->bbox_max_lon, $this->bbox_max_lat) = $bbox;
         }
@@ -100,14 +106,17 @@ class RelayPointManager
             $params['territory'] = $this->_referenceTerritory;
         }
 
-        if (!empty($this->_relaypointsMapTypesDisplayed)) {
-            $params['relayPointTypes'] = join(',', $this->_relaypointsMapTypesDisplayed);
-        } else {
-            $params['relayPointType.id'] = $this->_default_relaypointtype_layer;
+        if (true === $this->_relaypointsMapByDefaultType) {
+            if (!empty($this->_relaypointsMapTypesDisplayed)) {
+                $params['relayPointTypes'] = join(',', $this->_relaypointsMapTypesDisplayed);
+            } else {
+                $params['relayPointType.id'] = $this->_default_relaypointtype_layer;
+            }
         }
 
         $this->dataProvider->setClass(RelayPointMap::class);
         $response = $this->dataProvider->getCollection($params);
+
         if ($response->getCode() >= 200 && $response->getCode() <= 300) {
             return $response->getValue()->getMember();
         }
