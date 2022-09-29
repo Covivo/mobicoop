@@ -102,6 +102,12 @@ use Symfony\Component\Validator\Constraints as Assert;
  *                          "type" = "boolean",
  *                          "required" = false,
  *                          "description" = "ONLY GET - If the User has been attached to an already existing User not created by SSO"
+ *                      },
+ *                      {
+ *                          "name" = "communityId",
+ *                          "type" = "int",
+ *                          "required" = false,
+ *                          "description" = "The id of the community to associate to the user."
  *                      }
  *                  }
  *              }
