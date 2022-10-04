@@ -8,35 +8,35 @@
 </head>
 <body>
 <center>
-<table style="width:640px; font-family:{{api_env('EMAILS_FONT')}};">
+<table style="width:640px; font-family:{{api_env('EMAILS_FONT')}}; border-collapse: collapse; border-spacing: 0px; padding:0px;">
 <tbody>
-    <tr>
-        <td>
+    <tr style="border-collapse: collapse; border-spacing: 0px; padding:0px;">
+        <td style="border-collapse: collapse; border-spacing: 0px; padding:0px;">
             <!-- Header -->
-            <table cellpadding="0" cellspacing="0" summary="" border="0" style="width:640px;">
-                <tr>
-                    <td align="center">
+            <table cellpadding="0" cellspacing="0" summary="" border="0" style="width:640px; border-collapse: collapse; border-spacing: 0px; padding:0px;">
+                <tr style="border-collapse: collapse; border-spacing: 0px; padding:0px;">
+                    <td align="center" style="border-collapse: collapse; border-spacing: 0px; padding:0px;">
                         <img
                             src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/headerAlt/top-header.png"
-                            style="border:0; height:122px; width:640px; background-color:transparent;"
+                            style="border:0; height:152px; width:640px; background-color:transparent; display:block"
                         />
                     </td>
                 </tr>
             </table>
         </td>
     </tr>
-    <tr>
-        <td >
-            <table cellpadding="0" cellspacing="0" summary="" border="0" style="width:640px; Margin-top:-6px;">
-                <tr>
-                    <td align="center" valign="top">
+    <tr style="border-collapse: collapse; border-spacing: 0px; padding:0px;">
+        <td style="border-collapse: collapse; border-spacing: 0px; padding:0px;">
+            <table cellpadding="0" cellspacing="0" summary="" border="0" style="width:640px; border-collapse: collapse; border-spacing: 0px; padding:0px;" >
+                <tr style="border-collapse: collapse; border-spacing: 0px; padding:0px;">
+                    <td align="center" valign="top" style="border-collapse: collapse; border-spacing: 0px; padding:0px;">
                         <img
                             src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/headerAlt/left-top-header.png"
-                            style="border:0; height:270px; width:80px; background-color:transparent; vertical-align:top;"
+                            style="border:0; height:240px; width:80px; background-color:transparent; vertical-align:top; display:block; margin-top: -6px;"
                         />
                     </td>
-                    <td>
-                        <table cellpadding="0" cellspacing="0" summary="" border="0" style="width:480px;">
+                    <td style="border-collapse: collapse; border-spacing: 0px; padding:0px;">
+                        <table cellpadding="0" cellspacing="0" summary="" border="0" style="width:510px;">
                             <tr>
                                 <td align="center">
                                     {% block body %}
@@ -45,10 +45,10 @@
                             </tr>
                         </table>
                     </td>
-                    <td align="center" valign="top">
+                    <td align="center" valign="top" style="border-collapse: collapse; border-spacing: 0px; padding:0px;">
                         <img
                             src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/headerAlt/right-top-header.png"
-                            style="border:0; height:270px; width:80px; background-color:transparent; vertical-align:top;"
+                            style="border:0; height:252px; width:50px; background-color:transparent; vertical-align:top; display:block; margin-top: -6px;"
                         />
                     </td>
                 </tr>
@@ -96,16 +96,20 @@
                                     >
                                         <tr>
                                             <td>
-                                                <img
-                                                    src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/footerAlt/appStore.png"
-                                                    style="border:0; height:20px; width:63px; background-color:transparent; "
-                                                />
+                                                <a href="https://apps.apple.com/fr/app/mobicoop-covoiturage-libre/id388658537">
+                                                    <img
+                                                        src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/footerAlt/appStore.png"
+                                                        style="border:0; height:20px; width:63px; background-color:transparent; "
+                                                    />
+                                                </a>
                                             </td>
                                             <td>
-                                                <img
-                                                    src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/footerAlt/playStore.png"
-                                                    style="border:0; height:29px; width:75px; background-color:transparent; "
-                                                />
+                                                <a href="https://play.google.com/store/apps/details?id=fr.covivo.android.lorraine&hl=fr&gl=US">
+                                                    <img
+                                                        src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/footerAlt/playStore.png"
+                                                        style="border:0; height:29px; width:75px; background-color:transparent; "
+                                                    />
+                                                </a>
                                             </td>
                                         </tr>
                                     </table>
