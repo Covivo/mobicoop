@@ -26,6 +26,7 @@ namespace App\Communication\DataPersister;
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
 use App\Carpool\Service\AdManager;
 use App\Carpool\Service\AskManager;
+use App\Carpool\Service\MatchingManager;
 use App\Carpool\Service\ProposalManager;
 use App\Communication\Entity\Message;
 use App\Communication\Exception\MessageException;
@@ -47,6 +48,7 @@ final class MessageCollectionDataPersister implements ContextAwareDataPersisterI
     private $adManager;
     private $askManager;
     private $proposalManager;
+    private $_matchingManager;
 
     public function __construct(
         InternalMessageManager $internalMessageManager,
@@ -54,7 +56,8 @@ final class MessageCollectionDataPersister implements ContextAwareDataPersisterI
         Security $security,
         AdManager $adManager,
         AskManager $askManager,
-        ProposalManager $proposalManager
+        ProposalManager $proposalManager,
+        MatchingManager $matchingManager
     ) {
         $this->internalMessageManager = $internalMessageManager;
         $this->blockManager = $blockManager;
@@ -62,6 +65,7 @@ final class MessageCollectionDataPersister implements ContextAwareDataPersisterI
         $this->adManager = $adManager;
         $this->askManager = $askManager;
         $this->proposalManager = $proposalManager;
+        $this->_matchingManager = $matchingManager;
     }
 
     public function supports($data, array $context = []): bool
@@ -93,7 +97,8 @@ final class MessageCollectionDataPersister implements ContextAwareDataPersisterI
         // We check if there is an Ad id. If so, we create the ask.
         if (null !== $data->getIdProposal() && null !== $data->getIdMatching()) {
             // Create an Ad from the proposal
-            $ad = $this->adManager->makeAd($this->proposalManager->get($data->getIdProposal()), $data->getUser()->getId());
+            $matching = $this->_matchingManager->getMatching($data->getIdMatching());
+            $ad = $this->adManager->makeAd($this->proposalManager->get($data->getIdProposal()), $data->getUser()->getId(), false, null, $matching);
             $ad->setMatchingId($data->getIdMatching());
             $ad->setAdId($data->getIdAdToRespond()); // yeah... i found it strange too, check the AdId comment in Ad entity. You don't do that, you don't set up the roles correctly
             $ad = $this->askManager->createAskFromAd($ad, false);

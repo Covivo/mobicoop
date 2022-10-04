@@ -220,6 +220,10 @@ services:
     tags:
       - { name: monolog.logger, channel: carpool }
 
+  App\Carpool\Service\MatchingManager:
+    arguments:
+      $repository: '@App\Carpool\Repository\MatchingRepository'
+
   App\Carpool\Service\MyAdManager:
     arguments:
       $paymentActive: "%env(string:PAYMENT_ACTIVE)%"
