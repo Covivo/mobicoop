@@ -118,7 +118,7 @@ then
         mkdir externalCgu;
     fi
     cd /var/www/$VERSION/$INSTANCE/public/externalCgu;
-    wget https://www.mangopay.com/terms/PSP/PSP_MANGOPAY_FR.pdf
+    wget -N https://www.mangopay.com/terms/PSP/PSP_MANGOPAY_FR.pdf
 
     # Remove maintenance page
     rm /var/www/$VERSION/$INSTANCE/mobicoop-platform/api/public/maintenance.enable
@@ -231,7 +231,7 @@ else
         mkdir externalCgu;
     fi
     cd /var/www/$INSTANCE/$VERSION/public/externalCgu;
-    wget https://www.mangopay.com/terms/PSP/PSP_MANGOPAY_FR.pdf
+    wget -N https://www.mangopay.com/terms/PSP/PSP_MANGOPAY_FR.pdf
 
     # Remove maintenance page
     rm /var/www/$INSTANCE/$VERSION/mobicoop-platform/api/public/maintenance.enable
