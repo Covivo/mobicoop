@@ -32,8 +32,8 @@ do
                -regex "\./[a-z]+-[0-9]{4}-[0-9]{2}-[0-9]{2}\.log" \
                -and -not -regex "\./[a-z]+-${TODAY}\.log" \
                -exec chmod 774 '{}' \; -exec gzip -9 '{}' \;
-        # Delete files older than 30 days
-        find . -maxdepth 1 -name '*.log.gz' -and -mtime "+30" -delete
+        # Delete files older than 10 days
+        find . -maxdepth 1 -name '*.log.gz' -and -mtime "+10" -delete
         cd -
     fi
 done

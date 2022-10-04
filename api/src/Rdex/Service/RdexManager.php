@@ -326,7 +326,7 @@ class RdexManager
          */
         foreach ($ad->getResults() as $result) {
             // For each result we need to check if the date matches the requested max date (if specified) because of the api carpool settings especialy on the punctuals
-            if (isset($parameters['outward']) && $parameters['outward']['maxdate']) {
+            if (isset($parameters['outward'], $parameters['outward']['maxdate'])) {
                 $maxDateParameter = \DateTime::createFromFormat('Y-m-d', $parameters['outward']['maxdate']);
                 if (Criteria::FREQUENCY_PUNCTUAL == $result->getFrequency()) {
                     // For punctual, we check the requested date
