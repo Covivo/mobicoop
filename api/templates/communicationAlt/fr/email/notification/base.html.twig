@@ -6,54 +6,37 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="x-apple-disable-message-reformatting">
 </head>
-<style type="text/css">
-  {# table,
-  td,
-  tr {
-      border-collapse: collapse;
-      border-spacing: 0px;
-      padding:0px;
-  } #}
-  img {
-    display:block;
-  }
-  .no-padding {
-    border-collapse: collapse;
-      border-spacing: 0px;
-      padding:0px;
-  }
-</style>
 <body>
 <center>
-<table style="width:640px; font-family:{{api_env('EMAILS_FONT')}};" class="no-padding">
+<table style="width:640px; font-family:{{api_env('EMAILS_FONT')}}; border-collapse: collapse; border-spacing: 0px; padding:0px;">
 <tbody>
-    <tr class="no-padding">
-        <td class="no-padding">
+    <tr style="border-collapse: collapse; border-spacing: 0px; padding:0px;">
+        <td style="border-collapse: collapse; border-spacing: 0px; padding:0px;">
             <!-- Header -->
-            <table cellpadding="0" cellspacing="0" summary="" border="0" style="width:640px;" class="no-padding">
-                <tr class="no-padding">
-                    <td align="center" class="no-padding">
+            <table cellpadding="0" cellspacing="0" summary="" border="0" style="width:640px; border-collapse: collapse; border-spacing: 0px; padding:0px;">
+                <tr style="border-collapse: collapse; border-spacing: 0px; padding:0px;">
+                    <td align="center" style="border-collapse: collapse; border-spacing: 0px; padding:0px;">
                         <img
                             src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/headerAlt/top-header.png"
-                            style="border:0; height:122px; width:640px; background-color:transparent;"
+                            style="border:0; height:152px; width:640px; background-color:transparent; display:block"
                         />
                     </td>
                 </tr>
             </table>
         </td>
     </tr>
-    <tr class="no-padding">
-        <td class="no-padding">
-            <table cellpadding="0" cellspacing="0" summary="" border="0" style="width:640px;" class="no-padding">
-                <tr class="no-padding">
-                    <td align="center" valign="top" class="no-padding">
+    <tr style="border-collapse: collapse; border-spacing: 0px; padding:0px;">
+        <td style="border-collapse: collapse; border-spacing: 0px; padding:0px;">
+            <table cellpadding="0" cellspacing="0" summary="" border="0" style="width:640px; border-collapse: collapse; border-spacing: 0px; padding:0px;" >
+                <tr style="border-collapse: collapse; border-spacing: 0px; padding:0px;">
+                    <td align="center" valign="top" style="border-collapse: collapse; border-spacing: 0px; padding:0px;">
                         <img
                             src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/headerAlt/left-top-header.png"
-                            style="border:0; height:270px; width:80px; background-color:transparent; vertical-align:top; margin-top:-2px;"
+                            style="border:0; height:240px; width:80px; background-color:transparent; vertical-align:top; display:block; margin-top: -6px;"
                         />
                     </td>
-                    <td class="no-padding">
-                        <table cellpadding="0" cellspacing="0" summary="" border="0" style="width:480px;">
+                    <td style="border-collapse: collapse; border-spacing: 0px; padding:0px;">
+                        <table cellpadding="0" cellspacing="0" summary="" border="0" style="width:510px;">
                             <tr>
                                 <td align="center">
                                     {% block body %}
@@ -62,10 +45,10 @@
                             </tr>
                         </table>
                     </td>
-                    <td align="center" valign="top" class="no-padding">
+                    <td align="center" valign="top" style="border-collapse: collapse; border-spacing: 0px; padding:0px;">
                         <img
                             src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/headerAlt/right-top-header.png"
-                            style="border:0; height:270px; width:80px; background-color:transparent; vertical-align:top; margin-top:-2px;"
+                            style="border:0; height:252px; width:50px; background-color:transparent; vertical-align:top; display:block; margin-top: -6px;"
                         />
                     </td>
                 </tr>
