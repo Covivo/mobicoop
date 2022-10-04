@@ -19,17 +19,17 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\Interoperability\Ressource;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * A User for Interoperability
+ * A User for Interoperability.
  *
  * @ApiResource(
  *      routePrefix="/interoperability",
@@ -102,6 +102,12 @@ use Symfony\Component\Validator\Constraints as Assert;
  *                          "type" = "boolean",
  *                          "required" = false,
  *                          "description" = "ONLY GET - If the User has been attached to an already existing User not created by SSO"
+ *                      },
+ *                      {
+ *                          "name" = "communityId",
+ *                          "type" = "int",
+ *                          "required" = false,
+ *                          "description" = "The id of the community to associate to the user."
  *                      }
  *                  }
  *              }
@@ -136,20 +142,21 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          }
  *      }
  * )
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class User
 {
-    const DEFAULT_ID = 999999999999;
+    public const DEFAULT_ID = 999999999999;
 
-    const GENDER_FEMALE = 1;
-    const GENDER_MALE = 2;
-    const GENDER_OTHER = 3;
+    public const GENDER_FEMALE = 1;
+    public const GENDER_MALE = 2;
+    public const GENDER_OTHER = 3;
 
-    const GENDERS = [
+    public const GENDERS = [
         self::GENDER_FEMALE,
         self::GENDER_MALE,
-        self::GENDER_OTHER
+        self::GENDER_OTHER,
     ];
 
     /**
@@ -161,7 +168,7 @@ class User
     private $id;
 
     /**
-     * @var string|null The first name of the user.
+     * @var null|string the first name of the user
      *
      * @Assert\NotBlank
      * @Groups({"readUser","writeUser"})
@@ -169,7 +176,7 @@ class User
     private $givenName;
 
     /**
-     * @var string|null The family name of the user.
+     * @var null|string the family name of the user
      *
      * @Assert\NotBlank
      * @Groups({"readUser","writeUser"})
@@ -177,7 +184,7 @@ class User
     private $familyName;
 
     /**
-     * @var string The email of the user.
+     * @var string the email of the user
      *
      * @Assert\Email()
      * @Groups({"readUser","writeUser"})
@@ -185,35 +192,36 @@ class User
     private $email;
 
     /**
-     * @var \DateTimeInterface|null The birth date of the user
+     * @var null|\DateTimeInterface The birth date of the user
      *
      * @Groups({"readUser","writeUser"})
      */
     private $birthDate;
 
     /**
-     * @var string|null The telephone number of the user
+     * @var null|string The telephone number of the user
      *
      * @Groups({"readUser","writeUser"})
      */
     private $telephone;
 
     /**
-     * @var string The encoded password of the user.
+     * @var string the encoded password of the user
      *
      * @Groups({"writeUser"})
      */
     private $password;
 
     /**
-     * @var int|null The gender of the user (1=female, 2=male, 3=nc)
+     * @var null|int The gender of the user (1=female, 2=male, 3=nc)
+     *
      * @Assert\NotBlank
      * @Groups({"readUser","writeUser"})
      */
     private $gender;
 
     /**
-     * @var boolean|null The user accepts to receive news about the platform.
+     * @var null|bool the user accepts to receive news about the platform
      *
      * @Groups({"readUser","writeUser"})
      */
@@ -233,6 +241,13 @@ class User
      */
     private $previouslyExisting;
 
+    /**
+     * @var null|int
+     *
+     * @Groups({"writeUser"})
+     */
+    private $communityId;
+
     public function __construct(int $id = null)
     {
         if (!is_null($id)) {
@@ -250,7 +265,7 @@ class User
     public function setId(int $id): self
     {
         $this->id = $id;
-        
+
         return $this;
     }
 
@@ -358,7 +373,7 @@ class User
     public function setExternalId(?string $externalId): self
     {
         $this->externalId = $externalId;
-        
+
         return $this;
     }
 
@@ -370,6 +385,18 @@ class User
     public function setPreviouslyExisting(?bool $previouslyExisting): self
     {
         $this->previouslyExisting = $previouslyExisting;
+
+        return $this;
+    }
+
+    public function getCommunityId(): ?int
+    {
+        return $this->communityId;
+    }
+
+    public function setCommunityId(?int $communityId): self
+    {
+        $this->communityId = $communityId;
 
         return $this;
     }

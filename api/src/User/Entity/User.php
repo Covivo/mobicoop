@@ -710,6 +710,7 @@ class User implements UserInterface, EquatableInterface
 
     /**
      * @var null|string the email of the user
+     *
      * @Groups({"readUser", "write"})
      */
     private $oldEmail;
@@ -766,7 +767,6 @@ class User implements UserInterface, EquatableInterface
      *
      * @ORM\Column(type="date", nullable=true)
      * @Groups({"aRead","aWrite","readUser","write"})
-     *
      * @ApiProperty(
      *     attributes={
      *         "swagger_context"={"type"="string", "format"="date"}
@@ -792,6 +792,7 @@ class User implements UserInterface, EquatableInterface
 
     /**
      * @var null|string the telephone number of the user
+     *
      * @Groups({"readUser", "write"})
      */
     private $oldTelephone;
@@ -1012,6 +1013,7 @@ class User implements UserInterface, EquatableInterface
 
     /**
      * @var int The status of the current identity proof
+     *
      * @ORM\Column(type="smallint", nullable=true)
      * @Groups({"aRead","readUser","results","write"})
      */
@@ -1022,7 +1024,9 @@ class User implements UserInterface, EquatableInterface
      *
      * @ORM\OneToMany(targetEntity="\App\Geography\Entity\Address", mappedBy="user", cascade={"persist"})
      * @MaxDepth(1)
+     *
      * @ApiSubresource
+     *
      * @Groups({"readUser","write"})
      */
     private $addresses;
@@ -1049,6 +1053,7 @@ class User implements UserInterface, EquatableInterface
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Proposal", mappedBy="user")
      * @MaxDepth(1)
      * @Groups({"proposals", "get"})
+     *
      * @Apisubresource
      */
     private $proposals;
@@ -1058,6 +1063,7 @@ class User implements UserInterface, EquatableInterface
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Proposal", mappedBy="userDelegate")
      * @MaxDepth(1)
+     *
      * @Apisubresource
      */
     private $proposalsDelegate;
@@ -1092,6 +1098,7 @@ class User implements UserInterface, EquatableInterface
 
     /**
      * @var null|int Community choose by a user
+     *
      * @Groups({"readUser","write"})
      */
     private $communityId;
@@ -1142,6 +1149,7 @@ class User implements UserInterface, EquatableInterface
      * @ORM\OneToMany(targetEntity="\App\Match\Entity\Mass", mappedBy="user", cascade={"persist"})
      * @Groups({"mass"})
      * @MaxDepth(1)
+     *
      * @ApiSubresource
      */
     private $masses;
@@ -1151,6 +1159,7 @@ class User implements UserInterface, EquatableInterface
      *
      * @ORM\OneToMany(targetEntity="\App\Communication\Entity\Message", mappedBy="user", cascade={"persist"})
      * @MaxDepth(1)
+     *
      * @ApiSubresource
      */
     private $messages;
@@ -1259,30 +1268,35 @@ class User implements UserInterface, EquatableInterface
 
     /**
      * @var null|array The avatars of the user
+     *
      * @Groups({"readUser","readCommunity","results","threads","thread","externalJourney", "readSolidary", "readAnimation"})
      */
     private $avatars;
 
     /**
      * @var null|string Default avatar of the user
+     *
      * @Groups({"aRead","readUser","readPublicProfile","readReview"})
      */
     private $avatar;
 
     /**
      * @var null|array The threads of the user
+     *
      * @Groups("threads")
      */
     private $threads;
 
     /**
      * @var null|array The permissions granted
+     *
      * @Groups({"permissions"})
      */
     private $permissions;
 
     /**
      * @var null|array The user alerts preferences
+     *
      * @Groups("alerts")
      */
     private $alerts;
@@ -1319,6 +1333,7 @@ class User implements UserInterface, EquatableInterface
 
     /**
      * @var null|bool true : the user has been created by sso (false mean no sso or only attached a previously existing account)
+     *
      * @ORM\Column(type="boolean", nullable=true)
      */
     private $createdBySso;
@@ -1375,12 +1390,14 @@ class User implements UserInterface, EquatableInterface
 
     /**
      * @var null|string the unsubscribe message we return to client : change this later By listener
+     *
      * @Groups({"readUser"})
      */
     private $unsubscribeMessage;
 
     /**
      * @var null|bool used to indicate a attempt to import this already registered user
+     *
      * @Groups({"massMigrate"})
      */
     private $alreadyRegistered;
@@ -1394,6 +1411,7 @@ class User implements UserInterface, EquatableInterface
 
     /**
      * @var null|string The link used to validate the email (useful for mobile apps)
+     *
      * @Groups({"readUser","write","passwordUpdateRequest"})
      */
     private $backLink;
@@ -1408,6 +1426,7 @@ class User implements UserInterface, EquatableInterface
 
     /**
      * @var null|SolidaryUser The SolidaryUser possibly linked to this User
+     *
      * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\SolidaryUser", inversedBy="user", cascade={"persist"})
      * @ORM\JoinColumn(onDelete="CASCADE")
      * @Groups({"readUser","write","writeSolidary"})
@@ -1417,6 +1436,7 @@ class User implements UserInterface, EquatableInterface
 
     /**
      * @var null|array used to get the solidaries of a user
+     *
      * @Groups({"readSolidary"})
      * @MaxDepth(1)
      */
@@ -1424,6 +1444,7 @@ class User implements UserInterface, EquatableInterface
 
     /**
      * @var null|array Get User Solidary Structures
+     *
      * @Groups({"readUser", "write"})
      * @MaxDepth(1)
      */
@@ -1431,6 +1452,7 @@ class User implements UserInterface, EquatableInterface
 
     /**
      * @var null|CommunityUser The communityUser link to the user, use in admin for get the record CommunityUser from the User ressource
+     *
      * @Groups({"readUserAdmin" })
      */
     private $adminCommunityUser;
@@ -1494,36 +1516,42 @@ class User implements UserInterface, EquatableInterface
 
     /**
      * @var null|bool If the Reviews are enable on this instance
+     *
      * @Groups({"readUser", "readReview"})
      */
     private $userReviewsActive;
 
     /**
      * @var null|bool If the User is an experienced carpooler
+     *
      * @Groups({"readUser","results","write", "threads", "thread", "readCommunity", "readCommunityUser", "readEvent", "massMigrate", "readExport","readPublicProfile","readReview"})
      */
     private $experienced;
 
     /**
      * @var null|int Number of unread carpool messages
+     *
      * @Groups({"readUser"})
      */
     private $unreadCarpoolMessageNumber;
 
     /**
      * @var null|int Number of unread direct messages
+     *
      * @Groups({"readUser"})
      */
     private $unreadDirectMessageNumber;
 
     /**
      * @var null|int Number of unread solidary messages
+     *
      * @Groups({"readUser"})
      */
     private $unreadSolidaryMessageNumber;
 
     /**
      * @var null|int The savedCo2 of this user in grams
+     *
      * @Groups({"readUser","results","write", "threads", "thread", "readCommunity", "readCommunityUser", "readEvent", "massMigrate", "readExport","readPublicProfile","readReview"})
      */
     private $savedCo2;
@@ -1546,24 +1574,28 @@ class User implements UserInterface, EquatableInterface
 
     /**
      * @var null|string The user main image
+     *
      * @Groups({"aRead","aWrite"})
      */
     private $image;
 
     /**
      * @var Address The user home address
+     *
      * @Groups({"aRead","aWrite","write"})
      */
     private $homeAddress;
 
     /**
      * @var null|array The user roles
+     *
      * @Groups({"aRead","aWrite"})
      */
     private $rolesTerritory;
 
     /**
      * @var null|int Ad type for the user (0 = none, 1 = as driver only, 2 = as passenger only, 3 = as driver and passenger)
+     *
      * @Groups("aRead")
      */
     private $adType;
@@ -1591,6 +1623,7 @@ class User implements UserInterface, EquatableInterface
 
     /**
      * @var null|bool If the User has the Rezo Kit
+     *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"aRead", "aWrite"})
      */
@@ -1598,6 +1631,7 @@ class User implements UserInterface, EquatableInterface
 
     /**
      * @var null|bool If the User has the card letter
+     *
      * @ORM\Column(type="boolean", nullable=true)
      * @Groups({"aRead", "aWrite"})
      */
