@@ -8,6 +8,7 @@
 {#{{ encore_entry_link_tags("#{assets_prefix ?? ''}home/home") }}#}
 {% endblock %}
 
+
 {% block main %}
 <home geo-search-url="{{ geoCompleteUri }}" :user="{{app.user|json_encode}}" {{ searchRegular ? 'regular' : '' }} {{
     searchPunctualDate ? 'punctual-date-optional' : '' }} :community-display="{{homeCommunityDisplay}}"
@@ -22,5 +23,7 @@
     : "false" : "false" }}" :map-provider="{{ mapProvider|json_encode }}" :url-tiles="{{ urlTiles|json_encode }}"
     :attribution-copyright="{{ attributionCopyright|json_encode }}"
     :geo-complete-results-order="{{geoCompleteResultsOrder|json_encode}}"
-    :geo-complete-palette="{{geoCompletePalette|json_encode}}" {{ geoCompleteChip ? 'geo-complete-chip' : '' }}></home>
+    :geo-complete-palette="{{geoCompletePalette|json_encode}}" {{ geoCompleteChip ? 'geo-complete-chip' : '' }}
+    :territory-id="{{ referenceTerritory is defined and referenceTerritory != "" ? referenceTerritory : 'null' }}">
+</home>
 {% endblock %}

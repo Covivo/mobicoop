@@ -577,7 +577,7 @@ class NotificationManager
                     break;
 
                 case CarpoolItem::class:
-                    $titleContext = ['deptor' => $object->getDebtorUser()];
+                    $titleContext = ['debtor' => $object->getDebtorUser()];
                     foreach ($object->getAsk()->getMatching()->getProposalRequest()->getWaypoints() as $waypoint) {
                         if (0 == $waypoint->getPosition()) {
                             $passengerOrigin = $waypoint->getAddress()->getAddressLocality();
@@ -593,7 +593,7 @@ class NotificationManager
                         $firstDayOfWeek = $day->format('l d F Y');
                     }
                     $bodyContext = [
-                        'deptor' => $object->getDebtorUser(),
+                        'debtor' => $object->getDebtorUser(),
                         'creditor' => $object->getCreditorUser(),
                         'amount' => $object->getAmount(),
                         'origin' => $passengerOrigin,
@@ -810,7 +810,7 @@ class NotificationManager
                         $firstDayOfWeek = $day->format('l d F Y');
                     }
                     $bodyContext = [
-                        'deptor' => $object->getDebtorUser(),
+                        'debtor' => $object->getDebtorUser(),
                         'creditor' => $object->getCreditorUser(),
                         'amount' => $object->getAmount(),
                         'origin' => $passengerOrigin,
@@ -1006,7 +1006,7 @@ class NotificationManager
                     break;
 
                 case CarpoolItem::class:
-                    $titleContext = ['deptor' => $object->getDebtorUser()];
+                    $titleContext = ['debtor' => $object->getDebtorUser()];
                     foreach ($object->getAsk()->getMatching()->getProposalRequest()->getWaypoints() as $waypoint) {
                         if (0 == $waypoint->getPosition()) {
                             $passengerOrigin = $waypoint->getAddress()->getAddressLocality();
@@ -1021,7 +1021,7 @@ class NotificationManager
                         $firstDayOfWeek = $day->format('l d F Y');
                     }
                     $bodyContext = [
-                        'deptor' => $object->getDebtorUser(),
+                        'debtor' => $object->getDebtorUser(),
                         'creditor' => $object->getCreditorUser(),
                         'amount' => $object->getAmount(),
                         'origin' => $passengerOrigin,

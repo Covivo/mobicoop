@@ -135,7 +135,7 @@ class RdexManager
                 // we search for the end of the signature (we add 1 to avoid getting the current &)
                 $posEndSignature = strpos($urlToCheck, '&', $posSignature + 1);
                 if (false !== $posEndSignature) {
-                    $unsignedUrl = substr_replace($urlToCheck, '', $posSignature, ($posEndSignature - $posSignature));
+                    $unsignedUrl = substr_replace($urlToCheck, '', $posSignature, $posEndSignature - $posSignature);
                 } else {
                     $unsignedUrl = substr_replace($urlToCheck, '', $posSignature);
                 }
@@ -144,7 +144,7 @@ class RdexManager
                 // I need to replace it at the beginning otherwise, the signature is wrongly computed.
                 $posTimestamp = strpos($unsignedUrl, '&timestamp=');
                 $posEndTimestamp = strlen($unsignedUrl);
-                $unsignedUrl = substr_replace($unsignedUrl, '', $posTimestamp, ($posEndTimestamp - $posTimestamp));
+                $unsignedUrl = substr_replace($unsignedUrl, '', $posTimestamp, $posEndTimestamp - $posTimestamp);
                 $unsignedUrl = str_replace('?', '?timestamp='.$request->get('timestamp').'&', $unsignedUrl);
             }
 
@@ -163,9 +163,9 @@ class RdexManager
     /**
      * Validates the parameters of a request.
      *
-     * @throws \Exception
-     *
      * @return bool|RdexError True if validation is ok, error if not
+     *
+     * @throws \Exception
      */
     public function validate(Request $request)
     {
@@ -326,7 +326,7 @@ class RdexManager
          */
         foreach ($ad->getResults() as $result) {
             // For each result we need to check if the date matches the requested max date (if specified) because of the api carpool settings especialy on the punctuals
-            if (isset($parameters['outward']) && $parameters['outward']['maxdate']) {
+            if (isset($parameters['outward'], $parameters['outward']['maxdate'])) {
                 $maxDateParameter = \DateTime::createFromFormat('Y-m-d', $parameters['outward']['maxdate']);
                 if (Criteria::FREQUENCY_PUNCTUAL == $result->getFrequency()) {
                     // For punctual, we check the requested date
@@ -531,10 +531,10 @@ class RdexManager
         // If the driver is the recipient, the uuid must be given
         if ('recipient' === $request->get('driver')['state']) {
             if (
-                        !isset($request->get('driver')['uuid'])
-                        || '' === trim($request->get('driver')['uuid'])
-                        || !is_numeric($request->get('driver')['uuid'])
-                    ) {
+                !isset($request->get('driver')['uuid'])
+                || '' === trim($request->get('driver')['uuid'])
+                || !is_numeric($request->get('driver')['uuid'])
+            ) {
                 return new RdexError("driver['uuid']", RdexError::ERROR_MISSING_MANDATORY_FIELD);
             }
         }
@@ -553,10 +553,10 @@ class RdexManager
         // If the driver is the recipient, the uuid must be given
         if ('recipient' === $request->get('passenger')['state']) {
             if (
-                        !isset($request->get('passenger')['uuid'])
-                        || '' === trim($request->get('passenger')['uuid'])
-                        || !is_numeric($request->get('passenger')['uuid'])
-                    ) {
+                !isset($request->get('passenger')['uuid'])
+                || '' === trim($request->get('passenger')['uuid'])
+                || !is_numeric($request->get('passenger')['uuid'])
+            ) {
                 return new RdexError("passenger['uuid']", RdexError::ERROR_MISSING_MANDATORY_FIELD);
             }
         }

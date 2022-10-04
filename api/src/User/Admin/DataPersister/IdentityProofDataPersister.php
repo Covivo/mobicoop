@@ -42,6 +42,11 @@ final class IdentityProofDataPersister implements ContextAwareDataPersisterInter
     {
         if ($data instanceof IdentityProof) {
             switch ($context) {
+                case isset($context['collection_operation_name']):
+                    return 'ADMIN_post' == $context['collection_operation_name'];
+
+                    break;
+
                 case isset($context['item_operation_name']):
                     return 'ADMIN_patch' == $context['item_operation_name'];
 
@@ -59,7 +64,9 @@ final class IdentityProofDataPersister implements ContextAwareDataPersisterInter
 
     public function persist($data, array $context = [])
     {
-        if (isset($context['item_operation_name']) && 'ADMIN_patch' == $context['item_operation_name']) {
+        if (isset($context['collection_operation_name']) && 'ADMIN_post' == $context['collection_operation_name']) {
+            $data = $this->identityProofManager->postIdentityProof($data);
+        } elseif (isset($context['item_operation_name']) && 'ADMIN_patch' == $context['item_operation_name']) {
             $data = $this->identityProofManager->patchIdentityProof($this->request->get('id'), json_decode($this->request->getContent(), true));
         }
 

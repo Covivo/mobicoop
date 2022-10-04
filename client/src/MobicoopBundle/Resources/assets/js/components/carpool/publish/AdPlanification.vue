@@ -533,7 +533,7 @@ export default {
       default: null
     },
     initSchedule: {
-      type: Object,
+      type: Array,
       default: null
     },
     defaultTimePrecision: {
@@ -748,7 +748,7 @@ export default {
     //Fill array for verification time + date
     setData(){
       if (!isEmpty(this.initSchedule)) {
-        let schedule = this.initSchedule;
+        let schedule = Array.isArray(this.initSchedule) ? this.initSchedule[0] : this.initSchedule;
         let tempSchedules = [];
         let days = clone(this.arrayDay);
         this.arrayDay.forEach(day => {

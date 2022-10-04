@@ -37,6 +37,7 @@
           :attribution-copyright="attributionCopyright"
           :markers-draggable="false"
           :relay-points="true"
+          :territory-id="territoryId"
         />
       </v-col>
     </v-row>
@@ -141,6 +142,10 @@ export default {
       type: Boolean,
       default: false
     },
+    territoryId: {
+      type: String,
+      default: null
+    },
   },
   data () {
     return {
@@ -150,7 +155,7 @@ export default {
       directionWay:[],
       selectedDestination: null,
       selectedOrigin: null,
-      loading:true
+      loading:true,
     }
   },
   mounted() {

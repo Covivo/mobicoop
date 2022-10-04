@@ -884,7 +884,7 @@ class PaymentManager
                     }
 
                     if (CarpoolItem::DEBTOR_STATUS_NULL !== $carpoolItem->getDebtorStatus()) {
-                        // we execute event to inform passenger to pay for the carpool only if the deptor status is not null
+                        // we execute event to inform passenger to pay for the carpool only if the debtor status is not null
                         $event = new PayAfterCarpoolEvent($carpoolItem, $carpoolItem->getDebtorUser());
                         $this->eventDispatcher->dispatch(PayAfterCarpoolEvent::NAME, $event);
                     }

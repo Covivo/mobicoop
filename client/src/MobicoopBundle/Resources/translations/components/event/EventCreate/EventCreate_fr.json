@@ -1,9 +1,14 @@
 {
     "title": "Créez votre événement",
+    "titleEdit": "Modifiez votre événement",
     "buttons": {
         "create": {
             "label": "Créer l'événement",
             "route": "/evenement/creer"
+        },
+        "edit": {
+            "label": "Modifier l'événement",
+            "route": "/evenement/{id}/modifier"
         }
     },
     "form": {
@@ -62,23 +67,30 @@
     },
     "startDate": {
         "label": "Date de début*",
-        "error": "Obligatoire"
+        "error": "Obligatoire",
+        "format": "YYYY-MM-DD"
     },
     "endDate": {
         "label": "Date de fin*",
-        "error": "Obligatoire"
+        "error": "Obligatoire",
+        "format": "YYYY-MM-DD"
     },
     "startTime": {
-        "label": "Heure de début"
+        "label": "Heure de début",
+        "format": "HH:mm"
     },
     "endTime": {
-        "label": "Heure de fin"
+        "label": "Heure de fin",
+        "format": "HH:mm"
     },
     "popUp": {
         "title": "Confirmation de création de l'événement",
         "label": "J'ai bien compris que cette fonctionnalité ne sert PAS à publier mon annonce de covoiturage personnelle, mais permet de créer un espace dédié à l'événement que j'organise (pour regrouper tous les trajets qui s'y rendent ou qui en partent).\nPour publier votre annonce personnelle, inscrivez-vous (ou connectez-vous si vous êtes déjà inscrit) et créez votre nouvelle annonce depuis votre profil.",
         "validation": "Publier l'événement",
         "cancel": "Annuler"
+    },
+    "popUpEdit": {
+        "title": "Confirmation de modification de l'événement"
     },
     "fullDate": "ddd Do MMMM YYYY",
     "getCommunities": "/community/getCommunityList"

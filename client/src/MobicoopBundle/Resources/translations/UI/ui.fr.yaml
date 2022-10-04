@@ -53,6 +53,8 @@ events:
         title: "Evénement"
     create:
         title: "Créer un événement"
+    edit:
+        title: "Modifier un événement"
     widget:
         title: "Widget événement"
 widget:

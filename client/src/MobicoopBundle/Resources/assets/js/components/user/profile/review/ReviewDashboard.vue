@@ -1,5 +1,8 @@
 <template>
-  <v-tabs grow>
+  <v-tabs
+    v-model="modelTabsH"
+    grow
+  >
     <v-tab href="#reviewsToGive">
       {{ $t('tabs.reviewsToGive') }}
     </v-tab>
@@ -38,9 +41,11 @@
     >
       <v-skeleton-loader
         type="article"
-      />      
+      />
     </v-tab-item>
-    <v-tab-item value="receivedReviews">
+    <v-tab-item
+      value="receivedReviews"
+    >
       <div v-if="receivedReviews && receivedReviews.length>0">
         <Reviews
           :reviews="receivedReviews"
@@ -93,12 +98,20 @@ export default {
     Reviews,
     WriteReview
   },
+  props: {
+    selectedTab: {
+      type: String,
+      default: null
+    }
+  },
   data(){
     return{
       givenReviews:null,
       receivedReviews:null,
       reviewsToGive:null,
-      loading:false
+      loading:false,
+      modelTabsH:(this.selectedTab !== "") ? this.selectedTab : "reviewsToGive",
+
     }
   },
   mounted(){
@@ -114,7 +127,7 @@ export default {
           this.receivedReviews = res.data.receivedReviews;
           this.reviewsToGive = res.data.reviewsToGive;
           this.loading = false;
-        });        
+        });
     },
     reviewLeft(data){
       if(data.success){

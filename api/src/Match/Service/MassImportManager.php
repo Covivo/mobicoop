@@ -768,7 +768,7 @@ class MassImportManager
 
                 return $massDataReturn;
 
-            break;
+                break;
         }
     }
 

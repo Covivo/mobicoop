@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Geography\Extension;
 
@@ -27,9 +27,8 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryCollectionExtensionInter
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryItemExtensionInterface;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGeneratorInterface;
 use App\App\Entity\App;
-use App\Community\Entity\Community;
-use App\Geography\Entity\Territory;
 use App\Auth\Service\AuthManager;
+use App\Geography\Entity\Territory;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\Security\Core\Security;
 
@@ -73,25 +72,25 @@ final class TerritoryTerritoryFilterExtension implements QueryCollectionExtensio
         if ($isItem) {
         } else {
             switch ($operationName) {
-                case "get":
-                    $territories = $this->authManager->getTerritoriesForItem("territory_list");
+                case 'get':
+                    $territories = $this->authManager->getTerritoriesForItem('territory_list');
             }
         }
 
-        if (count($territories)>0) {
+        if (count($territories) > 0) {
             $rootAlias = $queryBuilder->getRootAliases()[0];
-            $where = "(";
+            $where = '(';
             /**
              * @var Territory $territory
              */
             foreach ($territories as $territory) {
-                if ($where != '(') {
-                    $where .= " OR ";
+                if ('(' != $where) {
+                    $where .= ' OR ';
                 }
                 $territoryFrom = 'territory'.$territory;
-                $where .= sprintf("%s.id = %s", $rootAlias, $territory);
+                $where .= sprintf('%s.id = %s', $rootAlias, $territory);
             }
-            $where .= ")";
+            $where .= ')';
             $queryBuilder->andWhere($where);
         }
     }

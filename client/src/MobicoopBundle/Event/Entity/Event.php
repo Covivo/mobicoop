@@ -166,6 +166,13 @@ class Event extends GamificationEntity implements ResourceInterface, \JsonSerial
      */
     private $community;
 
+    /**
+     * @var int the creator id of the event
+     *
+     * @Groups({"post","put"})
+     */
+    private $creatorId;
+
     public function __construct($id = null)
     {
         if ($id) {
@@ -392,11 +399,21 @@ class Event extends GamificationEntity implements ResourceInterface, \JsonSerial
         return $this->community;
     }
 
-    public function setCommunity(Community $community): self
+    public function setCommunity(?Community $community): self
     {
         $this->community = $community;
 
         return $this;
+    }
+
+    public function getCreatorId(): ?int
+    {
+        return $this->creatorId;
+    }
+
+    public function setCreatorId(int $creatorId)
+    {
+        $this->creatorId = $creatorId;
     }
 
     public function jsonSerialize()
@@ -422,6 +439,7 @@ class Event extends GamificationEntity implements ResourceInterface, \JsonSerial
                 'externalImageUrl' => $this->getExternalImageUrl(),
                 'gamificationNotifications' => $this->getGamificationNotifications(),
                 'community' => $this->getCommunity(),
+                'creatorId' => $this->getCreatorId(),
             ];
     }
 }

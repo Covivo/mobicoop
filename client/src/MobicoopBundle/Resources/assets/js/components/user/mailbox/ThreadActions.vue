@@ -10,6 +10,7 @@
         flat
       >
         <threads-actions-buttons
+          v-if="infosComplete"
           :can-update-ask="infosComplete.canUpdateAsk && dataBlockerId==null"
           :status="infosComplete.askStatus"
           :regular="infosComplete.frequency==2"
@@ -27,19 +28,19 @@
         flat
         @click="showProfileDialog = true"
       >
-        <v-avatar v-if="!loading && ((infosComplete.carpooler && infosComplete.carpooler.avatars && infosComplete.carpooler.status != 3) || recipientAvatar)">
+        <v-avatar v-if="!loading && ((infosComplete && infosComplete.carpooler && infosComplete.carpooler.avatars && infosComplete.carpooler.status != 3) || recipientAvatar)">
           <img :src="(recipientAvatar) ? recipientAvatar : infosComplete.carpooler.avatars[0]">
         </v-avatar>
 
         <v-card-text
-          v-if="!loading && ((infosComplete.carpooler && infosComplete.carpooler.status != 3) || recipientName)"
+          v-if="!loading && ((infosComplete && infosComplete.carpooler && infosComplete.carpooler.status != 3) || recipientName)"
           class="font-weight-bold text-h5"
         >
           {{ buildedRecipientName }}
         </v-card-text>
       </v-card>
       <v-card-text
-        v-if="infosComplete.carpooler && infosComplete.carpooler.status == 3"
+        v-if="infosComplete && infosComplete.carpooler && infosComplete.carpooler.status == 3"
         class="font-weight-bold text-h5"
       >
         {{ $t("userDelete") }}
@@ -50,7 +51,7 @@
           cols="6"
           class="text-right align-center"
         >
-          <div v-if="infosComplete.carpooler && !loading">
+          <div v-if="idRecipient && !loading">
             <v-btn
               v-if="dataBlockerId==null"
               class="ma-2"
@@ -380,6 +381,11 @@ export default {
     },
     blockerId(){
       this.dataBlockerId = this.blockerId;
+    },
+    idAsk(){
+      if(this.idAsk==null){
+        this.infosComplete = null
+      }
     }
   },
   created() {

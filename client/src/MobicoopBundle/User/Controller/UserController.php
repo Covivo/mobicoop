@@ -553,6 +553,10 @@ class UserController extends AbstractController
             $tab = 'bankCoordinates';
         }
 
+        if ('avis-recus' == $selectedTab) {
+            $tab = 'receivedReviews';
+        }
+
         return $this->render('@Mobicoop/user/updateProfile.html.twig', [
             'error' => $error,
             'alerts' => $userManager->getAlerts($user)['alerts'],
