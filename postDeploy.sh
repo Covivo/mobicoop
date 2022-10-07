@@ -22,7 +22,7 @@ then
 
     if [ $VERSION == "prod_test" ]
     then
-        $VERSION="prod"
+        VERSION="prod"
     fi
 
     # check RDEX files
