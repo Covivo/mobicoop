@@ -22,6 +22,7 @@
 
 import os.path
 import argparse
+import collections
 
 script_absolute_path = os.path.dirname(os.path.realpath(__file__))
 platform_path = os.path.abspath(script_absolute_path
@@ -59,37 +60,34 @@ api_path = args.path + "/api/"
 def env_file_to_dict(file, check_duplicates = False):
 
     my_dict = {}
-    duplicates = 0
 
     if not os.path.isfile(file):
-        print(file+" not found !")
+        print(f"{file} not found !")
         return my_dict
 
-    # open file
-    dotenv = open(file, "r")
+    if check_duplicates:
+        key_counter = collections.defaultdict(int)
 
-    # read file line by line
-    file_lines = dotenv.readlines()
-
-    for line in file_lines:
-        #skip lines starting with '#'
-        if line[0] == '#':
-            continue
-        # find key
-        index = line.find('=')
-        if index > 0:
-            key = line[:index]
-            if check_duplicates and key in my_dict.keys():
-                print("Duplicate key \033[1;37;40m"+key+"\033[0;37;40m")
-                duplicates = duplicates + 1
-            # find value, we strip if there's a comment on the same line
-            value = line[index+1:]
-            my_dict[key] = value.strip()
-
-    dotenv.close()
+    with open(file, mode="r", encoding="utf-8") as dotenv:
+        for line in dotenv:
+            if not line.strip() or line[0] == '#':
+                continue
+            try:
+                key, value = line.split('=')
+            except ValueError:
+                pass
+            else:
+                my_dict[key] = value.strip()
+                if check_duplicates:
+                    key_counter[key] += 1
 
     if check_duplicates:
-        if duplicates == 0:
+        duplicates = False
+        for key, count in filter(lambda t: t[1] > 1, key_counter.items()):
+            print(
+      f"Duplicate key \033[1;37;40m{key}\033[0;37;40m {count-1} times")
+            duplicates = True
+        if not duplicates:
             print("No duplicates found")
 
     return my_dict
