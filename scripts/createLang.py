@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 # Copyright (c) 2020, MOBICOOP. All rights reserved.
 # This project is dual licensed under AGPL and proprietary licence.
