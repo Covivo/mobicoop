@@ -84,7 +84,7 @@ then
     fi
 
     # check env files
-    python3 /var/www/$VERSION/$INSTANCE/mobicoop-platform/scripts/checkClientEnv.py -path /var/www/$VERSION/$INSTANCE/mobicoop-platform -env $VERSION_MIGRATE
+    python3 /var/www/$VERSION/$INSTANCE/mobicoop-platform/scripts/checkClientEnv.py --path=/var/www/$VERSION/$INSTANCE/mobicoop-platform --env=$VERSION_MIGRATE
 
     # Migrations platform
     cd /var/www/$VERSION/$INSTANCE/mobicoop-platform/api;
@@ -197,7 +197,7 @@ else
     fi
 
     # check env files
-    python3 /var/www/$INSTANCE/$VERSION/mobicoop-platform/scripts/checkClientEnv.py -path /var/www/$INSTANCE/$VERSION/mobicoop-platform -env $VERSION_MIGRATE
+    python3 /var/www/$INSTANCE/$VERSION/mobicoop-platform/scripts/checkClientEnv.py --path=/var/www/$INSTANCE/$VERSION/mobicoop-platform --env=$VERSION_MIGRATE
 
     # Migrations platform
     cd /var/www/$INSTANCE/$VERSION/mobicoop-platform/api;
