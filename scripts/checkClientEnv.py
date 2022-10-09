@@ -57,16 +57,38 @@ client_path = args.path + "/client/"
 api_path = args.path + "/api/"
 
 
-def env_file_to_dict(file, check_duplicates = False):
+class DuplicatesCounter:
+
+    def __init__(self):
+        self.d = collections.defaultdict(int)
+
+    def compute(self, key):
+        self.d[key] += 1
+
+    def print(self):
+        duplicates = False
+        for key, count in filter(lambda t: t[1] > 1, self.d.items()):
+            print(f"Duplicate key \033[1;37;40m{key}\033[0;37;40m"
+                  f" {count-1} times")
+            duplicates = True
+        if not duplicates:
+            print("No duplicates found")
+
+class DuplicatesBypass:
+
+    def compute(self, key):
+        pass
+
+    def print(self):
+        pass
+
+def env_file_to_dict(file, duplicates=DuplicatesBypass()):
 
     my_dict = {}
 
     if not os.path.isfile(file):
         print(f"{file} not found !")
         return my_dict
-
-    if check_duplicates:
-        key_counter = collections.defaultdict(int)
 
     with open(file, mode="r", encoding="utf-8") as dotenv:
         for line in dotenv:
@@ -78,17 +100,9 @@ def env_file_to_dict(file, check_duplicates = False):
                 pass
             else:
                 my_dict[key] = value.strip()
-                if check_duplicates:
-                    key_counter[key] += 1
+                duplicates.compute(key)
 
-    if check_duplicates:
-        duplicates = False
-        for key, count in filter(lambda t: t[1] > 1, key_counter.items()):
-            print(
-      f"Duplicate key \033[1;37;40m{key}\033[0;37;40m {count-1} times")
-            duplicates = True
-        if not duplicates:
-            print("No duplicates found")
+    duplicates.print()
 
     return my_dict
 
@@ -155,12 +169,12 @@ print ("----------------------")
 print ("\033[1;34;40m")
 print ("Checking instance .env."+env+".local")
 print ("\033[0;37;40m")
-dict_instance_local = env_file_to_dict(".env."+env+".local",True)
+dict_instance_local = env_file_to_dict(".env."+env+".local", DuplicatesCounter())
 
 print ("\033[1;34;40m")
 print ("Checking API .env."+env+".local")
 print ("\033[0;37;40m")
-dict_api_local = env_file_to_dict(api_path+".env."+env+".local",True)
+dict_api_local = env_file_to_dict(api_path+".env."+env+".local", DuplicatesCounter())
 
 ################################
 # 3. identify unnecessary keys #
