@@ -2,7 +2,31 @@
     "dialog": {
         "title": "Select this relay point as:",
         "origin": "Origin",
-        "destination": "Destination"
+        "destination": "Destination",
+        "relayPointType": {
+          "1":"Aire-covoiturage",
+          "2":"P+R",
+          "3":"Gare",
+          "4":"Parking",
+          "5":"Zone activité",
+          "6":"aucun",
+          "7":"Arrêt",
+          "8":"Bâtiment",
+          "9":"Taxi",
+          "10":"Communauté",
+          "11":"Arrêt-covoiturage",
+          "12":"Arrêt Rezo Pouce"
+        },
+        "latLng": "Lat: {lat} | Lng: {lng}",
+        "availableSpaces": "Places disponibles",
+        "availableDisabledSpaces": "Places PMR disponibles",
+        "free": "Accès gratuit",
+        "private": "Privé",
+        "secured": "Sécurisé",
+        "official": "Officiel",
+        "selectRelayPoint": "Sélectionner ce point relais comme:"
     },
-    "territory": "/territories"
+    "territory": "/territoires",
+    "true": "oui",
+    "false": "non"
 }
