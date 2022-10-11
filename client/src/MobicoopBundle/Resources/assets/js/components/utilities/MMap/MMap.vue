@@ -38,7 +38,7 @@
           @clickOnPoint="clickOnPoint(point)"
         />
         <v-dialog
-          v-if="selectedRelayPoint"
+          v-if="selectedRelayPoint && selectedRelayPoint.misc"
           v-model="dialog"
           max-width="700"
         >
@@ -274,6 +274,34 @@
             </v-card-actions>
           </v-card>
         </v-dialog>
+        <v-dialog
+          v-else
+          v-model="dialog"
+          max-width="400"
+        >
+          <v-card>
+            <v-card-title class="text-h6 justify-center">
+              {{ $t('dialog.title') }}
+            </v-card-title>
+            <v-card-actions class="justify-center">
+              <v-btn
+                class="ml-8"
+                color="primary"
+                text
+                @click="selectRelayPointAsOrigin"
+              >
+                {{ $t('dialog.origin') }}
+              </v-btn>
+              <v-btn
+                color="primary"
+                text
+                @click="selectRelayPointAsDestination"
+              >
+                {{ $t('dialog.destination') }}
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
         <l-polyline
           v-for="(way, i) in ways"
           :key="'w'+i"
@@ -453,6 +481,7 @@ export default {
     },
     selectRelayPointAsOrigin() {
       if (this.relayPoints) {
+        console.error(this.address);
         this.$emit("SelectedAsOrigin",this.address);
         this.address= null;
         this.dialog= false;

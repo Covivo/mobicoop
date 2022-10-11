@@ -38,6 +38,8 @@
           :markers-draggable="false"
           :relay-points="true"
           :territory-id="territoryId"
+          @SelectedAsDestination="selectedAsDestination"
+          @SelectedAsOrigin="selectedAsOrigin"
         />
       </v-col>
     </v-row>
