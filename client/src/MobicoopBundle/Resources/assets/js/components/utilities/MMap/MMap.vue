@@ -481,7 +481,6 @@ export default {
     },
     selectRelayPointAsOrigin() {
       if (this.relayPoints) {
-        console.error(this.address);
         this.$emit("SelectedAsOrigin",this.address);
         this.address= null;
         this.dialog= false;
