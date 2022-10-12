@@ -38,6 +38,7 @@
           :markers-draggable="false"
           :relay-points="true"
           :territory-id="territoryId"
+          :can-select-point="true"
         />
       </v-col>
     </v-row>
