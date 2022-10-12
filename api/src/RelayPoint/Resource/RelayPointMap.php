@@ -19,12 +19,12 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\RelayPoint\Resource;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Community\Entity\Community;
 use App\Geography\Entity\Address;
 use App\RelayPoint\Entity\RelayPointType;
@@ -32,6 +32,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * A relay point map.
+ *
  * @ApiResource(
  *     attributes={
  *          "force_eager"=false,
@@ -54,16 +55,18 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *          },
  *      }
  * )
+ *
  * @author Céline Jacquet <celine.jacquet@mobicoop.org>
  */
 class RelayPointMap
 {
-    const DEFAULT_ID = 999999999999;
-    const IMAGE_PATH = "relaypoints/images/versions";
-    const IMAGE_VERSION = 100;
+    public const DEFAULT_ID = 999999999999;
+    public const IMAGE_PATH = 'relaypoints/images/versions';
+    public const IMAGE_VERSION = 100;
 
     /**
      * @var int The id of this  relay point map
+     *
      * @ApiProperty(identifier=true)
      * @Groups({"readRelayPoint"})
      */
@@ -71,63 +74,80 @@ class RelayPointMap
 
     /**
      * @var string The name of this relay point map
+     *
      * @Groups({"readRelayPoint"})
      */
     private $name;
 
     /**
-     * @var RelayPointType The relay point type of the relay point map.
+     * @var RelayPointType the relay point type of the relay point map
+     *
      * @Groups({"readRelayPoint"})
      */
     private $relayPointType;
 
     /**
-     * @var Address The address of the relay point map.
+     * @var Address the address of the relay point map
+     *
      * @Groups({"readRelayPoint"})
      */
     private $address;
 
     /**
-     * @var int|null The number of places.
+     * @var null|int the number of places
+     *
      * @Groups({"readRelayPoint"})
      */
     private $places;
 
     /**
-     * @var int|null The number of places for disabled people.
+     * @var null|int the number of places for disabled people
+     *
      * @Groups({"readRelayPoint"})
      */
     private $placesDisabled;
 
     /**
-    * @var boolean|null The relay point is free.
+     * @var null|bool the relay point is free
+     *
      * @Groups({"readRelayPoint"})
-    */
+     */
     private $free;
 
     /**
-    * @var boolean|null The relay point is secured.
+     * @var null|bool the relay point is secured
+     *
      * @Groups({"readRelayPoint"})
-    */
+     */
     private $secured;
 
     /**
-    * @var boolean|null The relay point is official.
+     * @var null|bool the relay point is official
+     *
      * @Groups({"readRelayPoint"})
-    */
+     */
     private $official;
-    
+
     /**
-     * @var boolean|null The relay point is private to a community or a solidary structure.
+     * @var null|bool the relay point is private to a community or a solidary structure
+     *
      * @Groups({"readRelayPoint"})
      */
     private $private;
 
     /**
-     * @var string|null Image of the RelayPointMap
+     * @var null|string Image of the RelayPointMap
+     *
      * @Groups({"readRelayPoint"})
      */
     private $image;
+
+    /**
+     * @var null|string the description of the relay point
+     *
+     * @Groups({"readRelayPoint"})
+     */
+    private $description;
 
     public function __construct($id = null)
     {
@@ -142,10 +162,10 @@ class RelayPointMap
         return $this->id;
     }
 
-    public function setId(String $id): self
+    public function setId(string $id): self
     {
         $this->id = $id;
-        
+
         return $this;
     }
 
@@ -187,19 +207,19 @@ class RelayPointMap
     {
         return $this->private;
     }
-    
+
     public function setPrivate(?bool $isPrivate): self
     {
         $this->private = $isPrivate;
-        
+
         return $this;
     }
-    
+
     public function getPlaces()
     {
         return $this->places;
     }
-    
+
     public function setPlaces(?int $places)
     {
         $this->places = $places;
@@ -209,7 +229,7 @@ class RelayPointMap
     {
         return $this->placesDisabled;
     }
-    
+
     public function setPlacesDisabled(?int $placesDisabled)
     {
         $this->placesDisabled = $placesDisabled;
@@ -219,11 +239,11 @@ class RelayPointMap
     {
         return $this->free;
     }
-    
+
     public function setFree(?bool $isFree): self
     {
         $this->free = $isFree;
-        
+
         return $this;
     }
 
@@ -231,11 +251,11 @@ class RelayPointMap
     {
         return $this->secured;
     }
-    
+
     public function setSecured(?bool $isSecured): self
     {
         $this->secured = $isSecured;
-        
+
         return $this;
     }
 
@@ -243,11 +263,11 @@ class RelayPointMap
     {
         return $this->official;
     }
-    
+
     public function setOfficial(?bool $isOfficial): self
     {
         $this->official = $isOfficial;
-        
+
         return $this;
     }
 
@@ -255,11 +275,21 @@ class RelayPointMap
     {
         return $this->image;
     }
-    
+
     public function setImage(?string $image): self
     {
         $this->image = $image;
-        
+
         return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description)
+    {
+        $this->description = $description;
     }
 }

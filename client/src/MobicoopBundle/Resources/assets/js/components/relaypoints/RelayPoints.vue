@@ -38,6 +38,7 @@
           :markers-draggable="false"
           :relay-points="true"
           :territory-id="territoryId"
+          :can-select-point="true"
           @SelectedAsDestination="selectedAsDestination"
           @SelectedAsOrigin="selectedAsOrigin"
         />
@@ -168,7 +169,7 @@ export default {
       maxios
         .post(this.$t("relayPointList"))
         .then(res => {
-          //console.error(res.data);
+          console.error(res.data);
           this.relayPointsToMap = res.data;
           this.showRelayPoints();
         });
@@ -194,7 +195,8 @@ export default {
             places:relayPoint.places,
             placesDisabled:relayPoint.placesDisabled,
             image:relayPoint.image,
-            type:relayPoint.relayPointType.id
+            type:relayPoint.relayPointType ? relayPoint.relayPointType.id : 13,
+            description:relayPoint.description
           }
 
           this.pointsToMap.push(this.buildPoint(relayPoint.address.latitude,relayPoint.address.longitude,relayPoint.name,relayPoint.address,icon,misc));

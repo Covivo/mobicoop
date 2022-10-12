@@ -38,7 +38,7 @@
           @clickOnPoint="clickOnPoint(point)"
         />
         <v-dialog
-          v-if="selectedRelayPoint && selectedRelayPoint.misc"
+          v-if="selectedRelayPoint && selectedRelayPoint.misc && canSelectPoint"
           v-model="dialog"
           max-width="700"
         >
@@ -84,6 +84,16 @@
                   </div>
                   <div>{{ selectedRelayPoint.address.displayLabel[0] }}</div>
                   <div>{{ $t('dialog.latLng', {'lat': selectedRelayPoint.address.latitude, 'lng': selectedRelayPoint.address.longitude}) }}</div>
+                </v-col>
+              </v-row>
+              <v-row v-if="selectedRelayPoint.misc.description">
+                <v-col>
+                  <div class="black--text text-h6">
+                    {{ $t('dialog.moreInfos') }}
+                  </div>
+                  <div>
+                    {{ selectedRelayPoint.misc.description }}
+                  </div>
                 </v-col>
               </v-row>
               <v-row justify="start">
@@ -275,7 +285,7 @@
           </v-card>
         </v-dialog>
         <v-dialog
-          v-else
+          v-else-if="canSelectPoint"
           v-model="dialog"
           max-width="400"
         >
@@ -402,6 +412,10 @@ export default {
       type: String,
       default: null
     },
+    canSelectPoint: {
+      type: Boolean,
+      default: false
+    }
   },
   data() {
     return {

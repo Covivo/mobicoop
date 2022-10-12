@@ -15,7 +15,8 @@
           "9":"Taxi",
           "10":"Communauté",
           "11":"Arrêt-covoiturage",
-          "12":"Arrêt Rezo Pouce"
+          "12":"Arrêt Rezo Pouce",
+          "13": " "
         },
         "latLng": "Lat: {lat} | Lng: {lng}",
         "availableSpaces": "Places disponibles",
@@ -24,7 +25,8 @@
         "private": "Privé",
         "secured": "Sécurisé",
         "official": "Officiel",
-        "selectRelayPoint": "Sélectionner ce point relais comme:"
+        "selectRelayPoint": "Sélectionner ce point relais comme:",
+        "moreInfos": "Informations supplémentaires:"
     },
     "territory": "/territoires",
     "true": "oui",
