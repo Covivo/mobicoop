@@ -77,16 +77,19 @@ class CarpoolExportManager
     /**
      * Method to get all carpoolExports for a user.
      *
+     * @param null|mixed $fromDate
+     * @param null|mixed $toDate
+     *
      * @return string
      */
-    public function getCarpoolExports()
+    public function getCarpoolExports($fromDate = null, $toDate = null)
     {
         /**
          * @var User $user
          */
         $user = $this->security->getUser();
         // we get all carpoolItems of a user as debtor or creditor
-        $carpoolItems = $this->carpoolItemRepository->findByUser($user);
+        $carpoolItems = $this->carpoolItemRepository->findByUserAndDate($user, $fromDate, $toDate);
 
         $carpoolExports = [];
         $sumPaid = null;

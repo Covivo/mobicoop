@@ -19,23 +19,24 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\DataProvider;
 
 use ApiPlatform\Core\DataProvider\ItemDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
+use App\Carpool\Service\CarpoolExportManager;
 use App\User\Entity\User;
 use Symfony\Component\Security\Core\Security;
-use App\Carpool\Service\CarpoolExportManager;
 
 /**
  * Collection data provider for user's carpoolExports.
- *
  */
 final class UserCarpoolExportItemDataProvider implements ItemDataProviderInterface, RestrictedDataProviderInterface
 {
-    protected $security;
+    public const FROM_DATE = 'fromDate';
+    public const TO_DATE = 'toDate';
+    private $security;
     private $carpoolExportManager;
 
     public function __construct(Security $security, CarpoolExportManager $carpoolExportManager)
@@ -43,19 +44,23 @@ final class UserCarpoolExportItemDataProvider implements ItemDataProviderInterfa
         $this->security = $security;
         $this->carpoolExportManager = $carpoolExportManager;
     }
-    
+
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return User::class === $resourceClass && $operationName === "getCarpoolExport";
+        return User::class === $resourceClass && 'getCarpoolExport' === $operationName;
     }
-    
+
     public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): User
     {
+        $fromDate = $context['filters'][self::FROM_DATE];
+        $toDate = $context['filters'][self::TO_DATE];
+
         /**
          * @var User
          */
         $user = $this->security->getUser();
-        $user->setCarpoolExport($this->carpoolExportManager->getCarpoolExports());
+        $user->setCarpoolExport($this->carpoolExportManager->getCarpoolExports($fromDate, $toDate));
+
         return $user;
     }
 }
