@@ -59,6 +59,7 @@
 
 	 			{% set refYear = null %}
 			    {% set alreadyOpen = false %}
+                {% set nb = 1 %}
 			    {% for carpoolExport in dataToPdf.carpoolExports %}
 
 					{% if refYear != carpoolExport.date|date("Y") %}
@@ -66,6 +67,7 @@
 						{#Not the first loop, we have to close the previous table#}
 						{% if alreadyOpen == true %}
 							</table>
+                            {% set nb = 1 %}
 						{% endif %}
 
 						<table style="font-family:Roboto,sans-serif; border: 1px solid black;padding: 10px;">
@@ -73,6 +75,7 @@
 						<h3>{{ carpoolExport.date|date("Y") }}</h3>
 							{# thead #}
 							<tr>
+                                <th/>
 								<th>{{ "date"|trans }}</th>
 								<th>{{ "role"|trans }}</th>
 								<th>{{ "carpooler"|trans }}</th>
@@ -91,6 +94,7 @@
 					{% endif %}
 
 						<tr>
+                            <td>{{nb}}</td>
 							{# Date #}
 							<td>{{ carpoolExport.date|date("d/m/Y") }}</td>
 							{# Role #}
@@ -149,12 +153,10 @@
 								<td></td>
 							{% endif %}
 						</tr>
+                        {% set nb = nb + 1 %}
 				{% endfor %}
 			</table>
-
-
 			</div>
-
     	</div>
 	</body>
 </html>
