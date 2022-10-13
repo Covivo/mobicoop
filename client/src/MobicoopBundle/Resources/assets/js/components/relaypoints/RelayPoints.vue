@@ -169,7 +169,7 @@ export default {
       maxios
         .post(this.$t("relayPointList"))
         .then(res => {
-          console.error(res.data);
+          // console.error(res.data);
           this.relayPointsToMap = res.data;
           this.showRelayPoints();
         });

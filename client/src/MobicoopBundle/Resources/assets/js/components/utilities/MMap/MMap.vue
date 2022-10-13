@@ -48,7 +48,7 @@
           >
             <v-img
               height="150"
-              src="https://cdn.vuetifyjs.com/images/cards/docks.jpg"
+              :src="$t('dialog.bannerUrl')"
             />
             <v-card-title>
               <v-row>

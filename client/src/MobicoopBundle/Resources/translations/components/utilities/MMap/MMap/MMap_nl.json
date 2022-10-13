@@ -26,7 +26,8 @@
         "secured": "Sécurisé",
         "official": "Officiel",
         "selectRelayPoint": "Sélectionner ce point relais comme:",
-        "moreInfos": "Informations supplémentaires:"
+        "moreInfos": "Informations supplémentaires:",
+        "bannerUrl": "/images/illus-covoit.png"
     },
     "territory": "/territoires",
     "true": "oui",
