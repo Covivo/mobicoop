@@ -103,6 +103,7 @@ class CarpoolExportManager
             $carpoolExport->setId($carpoolItem->getId());
             $carpoolExport->setDate($carpoolItem->getItemDate());
             $carpoolExport->setAmount($carpoolItem->getAmount());
+            $carpoolExport->setDistance($carpoolItem->getAsk()->getMatching()->getCommonDistance() / 1000);
             //    we set the payment mode
             if (0 !== $carpoolItem->getItemStatus()) {
                 // We check the status of the right role

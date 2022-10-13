@@ -98,6 +98,7 @@ typeOfpayment: Ordainketa
 amount: Ekarpena
 dropOffLocality: Uzte lekua
 pickUpLocality: Hartze lekua
+distance: "Distance"
 carpooler: Autokidea
 role: Eginkizuna
 date: Eguna
