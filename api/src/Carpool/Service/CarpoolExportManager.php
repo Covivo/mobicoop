@@ -94,6 +94,7 @@ class CarpoolExportManager
         $carpoolExports = [];
         $sumPaid = null;
         $sumReceived = null;
+        $totalDistance = null;
         // we create an array of carpoolExport
         foreach ($carpoolItems as $carpoolItem) {
             // Check if the User is debtor or creditor
@@ -107,6 +108,7 @@ class CarpoolExportManager
             $carpoolExport->setDate($carpoolItem->getItemDate());
             $carpoolExport->setAmount($carpoolItem->getAmount());
             $carpoolExport->setDistance($carpoolItem->getAsk()->getMatching()->getCommonDistance() / 1000);
+            $totalDistance = $totalDistance + ($carpoolItem->getAsk()->getMatching()->getCommonDistance() / 1000);
             //    we set the payment mode
             if (0 !== $carpoolItem->getItemStatus()) {
                 // We check the status of the right role
@@ -202,6 +204,8 @@ class CarpoolExportManager
         $infoForPdf['tax'] = $sumReceived > 300 ? true : false;
         $infoForPdf['carpoolExports'] = $carpoolExports;
         $infoForPdf['paymentActive'] = $this->paymentActive;
+        $infoForPdf['totalDistance'] = $totalDistance;
+        $infoForPdf['savedCo2'] = 25;
 
         return $this->pdfManager->generatePDF($infoForPdf);
     }

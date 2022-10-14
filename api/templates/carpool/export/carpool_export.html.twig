@@ -43,20 +43,48 @@
         	</div>
 
         	{# body #}
+			{% if dataToPdf.carpoolExports|length > 0 %}
 			<div>
-                {# sum paid #}
-                {% if dataToPdf.paid %}
-                    <p style="font-family:Roboto,sans-serif;text-align:right;">{{ "totalPaid"|trans }} {{ dataToPdf.paid }} €</p>
-                {% endif %}
-                {# sum received #}
-                {% if dataToPdf.received %}
-				    <p style="font-family:Roboto,sans-serif;text-align:right;">{{ "totalReceived"|trans }} {{ dataToPdf.received }} €</p>
-                {% endif %}
-                {# tax info #}
-				{% if dataToPdf.tax %}
-				    <p style="font-family:Roboto,sans-serif;text-align:right;">{{ "taxInfo"|trans }}</p>
-				{% endif %}
-
+				<table>
+					<tr>
+						<td>
+                			{# sum paid #}
+                			{% if dataToPdf.totalDistance %}
+                			    <p style="font-family:Roboto,sans-serif;text-align:right;">Distance totale covoiturée : {{ dataToPdf.totalDistance }} km</p>
+							{% endif %}
+						</td>
+						<td>
+                			{# sum received #}
+                			{% if dataToPdf.savedCo2 %}
+							    <p style="font-family:Roboto,sans-serif;text-align:right;">Co² économisé : {{ dataToPdf.savedCo2 }} tonnes</p>
+							{% endif %}
+						</td>
+					</tr>
+					<tr>
+						<td>
+                			{# sum paid #}
+                			{% if dataToPdf.paid %}
+                			    <p style="font-family:Roboto,sans-serif;text-align:right;">{{ "totalPaid"|trans }} {{ dataToPdf.paid }} €</p>
+                			{% else %}
+                			    <p style="font-family:Roboto,sans-serif;text-align:right;">{{ "totalPaid"|trans }} 0 €</p>
+							{% endif %}
+						</td>
+						<td>
+                			{# sum received #}
+                			{% if dataToPdf.received %}
+							    <p style="font-family:Roboto,sans-serif;text-align:right;">{{ "totalReceived"|trans }} {{ dataToPdf.received }} €</p>
+                			 {% else %}
+                			    <p style="font-family:Roboto,sans-serif;text-align:right;">{{ "totalReceived"|trans }} 0 €</p>
+							{% endif %}
+						</td>
+					</tr>
+				</table>
+				<div>
+                	{# tax info #}
+					{% if dataToPdf.tax %}
+					    <p style="font-family:Roboto,sans-serif;text-align:right;color:red;">{{ "taxInfo"|trans }}</p>
+					{% endif %}
+				</div>
 	 			{% set refYear = null %}
 			    {% set alreadyOpen = false %}
                 {% set nb = 1 %}
@@ -75,7 +103,7 @@
 						<h3>{{ carpoolExport.date|date("Y") }}</h3>
 							{# thead #}
 							<tr>
-                                <th/>
+                                <th>#</th>
 								<th>{{ "date"|trans }}</th>
 								<th>{{ "role"|trans }}</th>
 								<th>{{ "carpooler"|trans }}</th>
@@ -94,7 +122,7 @@
 					{% endif %}
 
 						<tr>
-                            <td>{{nb}}</td>
+                            <td style="color:grey">{{nb}}</td>
 							{# Date #}
 							<td>{{ carpoolExport.date|date("d/m/Y") }}</td>
 							{# Role #}
@@ -157,6 +185,11 @@
 				{% endfor %}
 			</table>
 			</div>
+			{% else %}
+				<div>
+                    <h3 style="font-family:Roboto,sans-serif;text-align:center;color:red">Aucun covoiturage pour la période sélectionnée</h3>
+				</div>
+			{% endif %}
     	</div>
 	</body>
 </html>

@@ -597,12 +597,16 @@ class UserController extends AbstractController
         if (!$user instanceof User) {
             return $this->redirectToRoute('user_login');
         }
+
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
-            $params['fromDate'] = $data['fromDate'];
-            $params['toDate'] = $data['toDate'];
+            $params = [
+                'fromDate' => $data['fromDate'],
+                'toDate' => $data['toDate'],
+            ];
+            $user = $this->userManager->getCarpoolExport($user, $params);
 
-            return new JsonResponse($this->userManager->getCarpoolExport($user, $params)->getCarpoolExport());
+            return new JsonResponse($user->getCarpoolExport());
         }
 
         return null;

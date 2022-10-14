@@ -34,8 +34,6 @@ use Symfony\Component\Security\Core\Security;
  */
 final class UserCarpoolExportItemDataProvider implements ItemDataProviderInterface, RestrictedDataProviderInterface
 {
-    public const FROM_DATE = 'fromDate';
-    public const TO_DATE = 'toDate';
     private $security;
     private $carpoolExportManager;
 
@@ -52,8 +50,8 @@ final class UserCarpoolExportItemDataProvider implements ItemDataProviderInterfa
 
     public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): User
     {
-        $fromDate = $context['filters'][self::FROM_DATE];
-        $toDate = $context['filters'][self::TO_DATE];
+        $fromDate = isset($context['filters']) ? $context['filters']['fromDate'] : null;
+        $toDate = isset($context['filters']) ? $context['filters']['toDate'] : null;
 
         /**
          * @var User
