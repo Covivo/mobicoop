@@ -82,30 +82,43 @@
     </v-row>
     <v-dialog
       v-model="carpoolExportDialog"
-      max-width="600"
+      max-width="800"
       persistent
     >
       <v-card
-        class="mx-auto"
-        max-width="600"
+        max-width="800"
       >
-        <v-card-title class="text-h6">
-          Exporter les covoiturages entre :
-        </v-card-title>
+        <v-toolbar
+          color="primary"
+        >
+          <v-toolbar-title class="white--text">
+            {{ $t('dialog.title') }}
+          </v-toolbar-title>
+          <v-spacer />
+          <v-btn
+            color="white"
+            icon
+            @click="carpoolExportDialog = false"
+          >
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-toolbar>
+       
         <v-row
           align="center"
-          justify="center"
+          dense
+          class="ml-2 mr-10"
         >
+          <v-col cols="1" />
           <v-col
             justify="center"
             cols="2"
           >
-            <div
-              justify="center"
+            <p
               align="center"
             >
-              le
-            </div>
+              {{ $t('dialog.label1') }}
+            </p>
           </v-col>
           <v-col
             cols="3"
@@ -138,12 +151,11 @@
             justify="center"
             cols="2"
           >
-            <div
-              justify="center"
+            <p
               align="center"
             >
-              et le
-            </div>
+              {{ $t('dialog.label2') }}
+            </p>
           </v-col>
           <v-col
             cols="3"
@@ -180,17 +192,19 @@
             color="primary"
             rounded
             width="175px"
-            @click="carpoolExportDialog = false"
-          >
-            Annuler
-          </v-btn>
-          <v-btn
-            color="secondary"
-            rounded
-            width="175px"
+            :disabled="fromDate == null || toDate == null"
             @click="carpoolExportDialog = false; getExport();"
           >
-            Exporter
+            {{ $t('dialog.exportButtonLabel') }}
+          </v-btn>
+          <v-btn
+            color="primary"
+            rounded
+            width="175px"
+            :disabled="fromDate !== null || toDate !== null"
+            @click="carpoolExportDialog = false; getExport();"
+          >
+            {{ $t('dialog.exportAllButtonLabel') }}
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -253,7 +267,7 @@ export default {
         .then(res => {
           this.fromDate = null;
           this.toDate = null;
-          this.openFileDownload(res);
+          //this.openFileDownload(res);
         })
         .catch(function (error) {
           this.fromDate = null;

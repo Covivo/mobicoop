@@ -7,5 +7,12 @@
     "carpools": {
         "archived": "Iragan diren autokidetzak",
         "active": "Bidean diren autokidetzak"
+    },
+    "dialog": {
+        "exportButtonLabel": "Exporter",
+        "exportAllButtonLabel": "Exporter tout",
+        "title": "Exporter les covoiturages :",
+        "label1": "entre le",
+        "label2": "et le"
     }
 }
