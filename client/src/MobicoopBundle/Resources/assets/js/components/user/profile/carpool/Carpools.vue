@@ -11,7 +11,7 @@
           >
             {{ $t('needCarpoolProofs') }}
           </v-col>
-          <v-col                   
+          <v-col
             cols="8"
             class="font-italic text-caption"
           >
@@ -27,7 +27,7 @@
                 <v-btn
                   color="secondary"
                   rounded
-                  :disabled="disableExportButton" 
+                  :disabled="disableExportButton"
                   width="175px"
                   @click="carpoolExportDialog = true"
                 >
@@ -103,7 +103,7 @@
             <v-icon>mdi-close</v-icon>
           </v-btn>
         </v-toolbar>
-       
+
         <v-row
           align="center"
           dense
@@ -186,7 +186,7 @@
           </v-col>
           <v-spacer />
         </v-row>
-          
+
         <v-card-actions class="justify-center">
           <v-btn
             color="primary"
@@ -260,7 +260,7 @@ export default {
   methods:{
     getExport(){
       let params = {
-        'fromDate':this.fromDate, 
+        'fromDate':this.fromDate,
         'toDate':this.toDate
       }
       maxios.post(this.$t("exportUrl"), params)

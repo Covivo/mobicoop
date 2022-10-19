@@ -6,21 +6,6 @@
     	<meta name="viewport" content="width=device-width, initial-scale=1">
 		<title> {{ "listCrapoolPayments"|trans }}</title>
 
-		<style type="text/css">
-			table{
-				border-collapse: collapse
-			  }
-
-			  th{
-				border: 1px solid black;
-				padding: 10px;
-			  }
-
-			  td{
-				border: 1px solid black;
-				padding: 10px;
-			  }
-			</style>
 
 	  </head>
   	<body>
@@ -44,37 +29,37 @@
 
         	{# body #}
 			{% if dataToPdf.carpoolExports|length > 0 %}
-			<div>
-				<table>
+			<div >
+				<table style="border: 0px;" width="100%">
 					<tr>
-						<td>
+						<td style="text-align: center" width="50%">
                 			{# sum paid #}
                 			{% if dataToPdf.totalDistance %}
-                			    <p style="font-family:Roboto,sans-serif;text-align:right;">Distance totale covoiturée : {{ dataToPdf.totalDistance }} km</p>
+                			    <p style="font-family:Roboto,sans-serif;text-align:center;">Distance totale covoiturée : {{ dataToPdf.totalDistance }} km</p>
 							{% endif %}
 						</td>
-						<td>
+						<td style="text-align: center" width="50%">
                 			{# sum received #}
                 			{% if dataToPdf.savedCo2 %}
-							    <p style="font-family:Roboto,sans-serif;text-align:right;">Co² économisé : {{ dataToPdf.savedCo2 }} tonnes</p>
+							    <p style="font-family:Roboto,sans-serif;text-align:center;">Co² économisé : {{ dataToPdf.savedCo2 }} tonnes</p>
 							{% endif %}
 						</td>
 					</tr>
 					<tr>
-						<td>
+						<td style="text-align: center" width="50%">
                 			{# sum paid #}
                 			{% if dataToPdf.paid %}
-                			    <p style="font-family:Roboto,sans-serif;text-align:right;">{{ "totalPaid"|trans }} {{ dataToPdf.paid }} €</p>
+                			    <p style="font-family:Roboto,sans-serif;text-align:center;">{{ "totalPaid"|trans }} {{ dataToPdf.paid }} €</p>
                 			{% else %}
-                			    <p style="font-family:Roboto,sans-serif;text-align:right;">{{ "totalPaid"|trans }} 0 €</p>
+                			    <p style="font-family:Roboto,sans-serif;text-align:center;">{{ "totalPaid"|trans }} 0 €</p>
 							{% endif %}
 						</td>
-						<td>
+						<td style="text-align: center" width="50%">
                 			{# sum received #}
                 			{% if dataToPdf.received %}
-							    <p style="font-family:Roboto,sans-serif;text-align:right;">{{ "totalReceived"|trans }} {{ dataToPdf.received }} €</p>
+							    <p style="font-family:Roboto,sans-serif;text-align:center;">{{ "totalReceived"|trans }} {{ dataToPdf.received }} €</p>
                 			 {% else %}
-                			    <p style="font-family:Roboto,sans-serif;text-align:right;">{{ "totalReceived"|trans }} 0 €</p>
+                			    <p style="font-family:Roboto,sans-serif;text-align:center;">{{ "totalReceived"|trans }} 0 €</p>
 							{% endif %}
 						</td>
 					</tr>
@@ -98,23 +83,23 @@
                             {% set nb = 1 %}
 						{% endif %}
 
-						<table style="font-family:Roboto,sans-serif; border: 1px solid black;padding: 10px;">
+						<table style="font-family:Roboto,sans-serif; border: 1px solid black;padding: 10px; border-collapse: collapse;">
 
 						<h3>{{ carpoolExport.date|date("Y") }}</h3>
 							{# thead #}
 							<tr>
-                                <th>#</th>
-								<th>{{ "date"|trans }}</th>
-								<th>{{ "role"|trans }}</th>
-								<th>{{ "carpooler"|trans }}</th>
-								<th>{{ "pickUpLocality"|trans }}</th>
-								<th>{{ "dropOffLocality"|trans }}</th>
-                                <th>{{"distance"|trans}}</th>
-								<th>{{ "amount"|trans }}</th>
+                                <th style="border: 1px solid black;padding: 10px;">#</th>
+								<th style="border: 1px solid black;padding: 10px;">{{ "date"|trans }}</th>
+								<th style="border: 1px solid black;padding: 10px;">{{ "role"|trans }}</th>
+								<th style="border: 1px solid black;padding: 10px;">{{ "carpooler"|trans }}</th>
+								<th style="border: 1px solid black;padding: 10px;">{{ "pickUpLocality"|trans }}</th>
+								<th style="border: 1px solid black;padding: 10px;">{{ "dropOffLocality"|trans }}</th>
+                                <th style="border: 1px solid black;padding: 10px;">{{"distance"|trans}}</th>
+								<th style="border: 1px solid black;padding: 10px;">{{ "amount"|trans }}</th>
 								{% if dataToPdf.paymentActive %}
-								<th>{{ "typeOfpayment"|trans }}</th>
+								<th style="border: 1px solid black;padding: 10px;">{{ "typeOfpayment"|trans }}</th>
 								{% endif %}
-								<th>{{ "certified"|trans }} (<a href="https://doc.covoiturage.beta.gouv.fr/le-registre-de-preuve-de-covoiturage/classes-de-preuve-and-identite">{{ "seeProofsClasses"|trans }}</a>)</th>							</tr>
+								<th style="border: 1px solid black;padding: 10px;">{{ "certified"|trans }} (<a href="https://doc.covoiturage.beta.gouv.fr/le-registre-de-preuve-de-covoiturage/classes-de-preuve-and-identite">{{ "seeProofsClasses"|trans }}</a>)</th>							</tr>
 							{# tbody #}
 
 							{% set refYear = carpoolExport.date|date("Y") %}
@@ -122,63 +107,63 @@
 					{% endif %}
 
 						<tr>
-                            <td style="color:grey">{{nb}}</td>
+                            <td style="color: grey; border: 1px solid black;padding: 10px;">{{nb}}</td>
 							{# Date #}
-							<td>{{ carpoolExport.date|date("d/m/Y") }}</td>
+							<td style="border: 1px solid black;padding: 10px;">{{ carpoolExport.date|date("d/m/Y") }}</td>
 							{# Role #}
 							{% if (carpoolExport.role == 1 or carpoolExport.role == 3) %}
-								<td>{{ "driver"|trans }}</td>
+								<td style="border: 1px solid black;padding: 10px;">{{ "driver"|trans }}</td>
 							{% else  %}
-								<td>{{ "passenger"|trans }}</td>
+								<td style="border: 1px solid black;padding: 10px;">{{ "passenger"|trans }}</td>
 							{% endif %}
 							{# carpooler name #}
 							{% if (carpoolExport.carpooler) %}
-								<td>{{ carpoolExport.carpooler.givenName }} {{ carpoolExport.carpooler.shortFamilyName }}</td>
+								<td style="border: 1px solid black;padding: 10px;">{{ carpoolExport.carpooler.givenName }} {{ carpoolExport.carpooler.shortFamilyName }}</td>
 							{% else %}
-								<td>{{ "deleted"|trans }}</td>
+								<td style="border: 1px solid black;padding: 10px;">{{ "deleted"|trans }}</td>
 							{% endif %}
 							{# pickup locality #}
 							{% if (carpoolExport.pickUp) %}
-								<td>{{ carpoolExport.pickUp.addressLocality }}</td>
+								<td style="border: 1px solid black;padding: 10px;">{{ carpoolExport.pickUp.addressLocality }}</td>
 							{% else %}
-								<td>{{ "deleted"|trans }}</td>
+								<td style="border: 1px solid black;padding: 10px;">{{ "deleted"|trans }}</td>
 							{% endif %}
 
 							{# dropOff locality #}
 							{% if (carpoolExport.dropOff) %}
-								<td>{{ carpoolExport.dropOff.addressLocality }}</td>
+								<td style="border: 1px solid black;padding: 10px;">{{ carpoolExport.dropOff.addressLocality }}</td>
 							{% else %}
-								<td>{{ "deleted"|trans }}</td>
+								<td style="border: 1px solid black;padding: 10px;">{{ "deleted"|trans }}</td>
 							{% endif %}
 
                             {# distance #}
 							{% if (carpoolExport.distance) %}
-								<td>{{ carpoolExport.distance }}km</td>
+								<td style="border: 1px solid black;padding: 10px;">{{ carpoolExport.distance }}km</td>
 							{% else %}
-								<td>{{ "deleted"|trans }}</td>
+								<td style="border: 1px solid black;padding: 10px;">{{ "deleted"|trans }}</td>
 							{% endif %}
 
 							{# amount paid/received #}
 							{% if carpoolExport.Amount %}
-								<td>{{ carpoolExport.Amount }}€</td>
+								<td style="border: 1px solid black;padding: 10px;">{{ carpoolExport.Amount }}€</td>
 							{% else %}
-								<td></td>
+								<td style="border: 1px solid black;padding: 10px;"></td>
 							{% endif %}
 							{# type of payment #}
 							{% if dataToPdf.paymentActive %}
 								{% if (carpoolExport.mode == 1) %}
-									<td>{{ "onLinePayment"|trans }}</td>
+									<td style="border: 1px solid black;padding: 10px;">{{ "onLinePayment"|trans }}</td>
 								{% elseif (carpoolExport.mode == 2) %}
-									<td>{{ "directPayment"|trans }}</td>
+									<td style="border: 1px solid black;padding: 10px;">{{ "directPayment"|trans }}</td>
 								{% else %}
-									<td>{{ "paymentNotDone"|trans }}</td>
+									<td style="border: 1px solid black;padding: 10px;">{{ "paymentNotDone"|trans }}</td>
 								{% endif %}
 							{% endif %}
 							{# certification #}
 							{% if (carpoolExport.certification) %}
-								<td> {{ carpoolExport.certification }} </td>
+								<td style="border: 1px solid black;padding: 10px;"> {{ carpoolExport.certification }} </td>
 							{% else %}
-								<td></td>
+								<td style="border: 1px solid black;padding: 10px;"></td>
 							{% endif %}
 						</tr>
                         {% set nb = nb + 1 %}

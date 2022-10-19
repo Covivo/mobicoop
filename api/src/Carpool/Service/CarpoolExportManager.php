@@ -27,6 +27,7 @@ use App\Carpool\Entity\CarpoolExport;
 use App\Payment\Entity\CarpoolItem;
 use App\Payment\Repository\CarpoolItemRepository;
 use App\User\Entity\User;
+use App\User\Service\UserManager;
 use App\Utility\Service\PdfManager;
 use DateTime;
 use Symfony\Component\Security\Core\Security;
@@ -46,6 +47,7 @@ class CarpoolExportManager
     private $carpoolExportPlatformName;
     private $paymentActive;
     private $paymentActiveDate;
+    private $userManager;
 
     /**
      * Constructor.
@@ -56,6 +58,7 @@ class CarpoolExportManager
         Security $security,
         PdfManager $pdfManager,
         CarpoolItemRepository $carpoolItemRepository,
+        UserManager $userManager,
         string $carpoolExportUri,
         string $carpoolExportPath,
         string $carpoolExportPlatformName,
@@ -64,6 +67,7 @@ class CarpoolExportManager
         $this->security = $security;
         $this->pdfManager = $pdfManager;
         $this->carpoolItemRepository = $carpoolItemRepository;
+        $this->userManager = $userManager;
         $this->carpoolExportUri = $carpoolExportUri;
         $this->carpoolExportPath = $carpoolExportPath;
         $this->carpoolExportPlatformName = $carpoolExportPlatformName;
@@ -95,6 +99,7 @@ class CarpoolExportManager
         $sumPaid = null;
         $sumReceived = null;
         $totalDistance = null;
+        $totalSavedCo2 = null;
         // we create an array of carpoolExport
         foreach ($carpoolItems as $carpoolItem) {
             // Check if the User is debtor or creditor
@@ -109,6 +114,7 @@ class CarpoolExportManager
             $carpoolExport->setAmount($carpoolItem->getAmount());
             $carpoolExport->setDistance($carpoolItem->getAsk()->getMatching()->getCommonDistance() / 1000);
             $totalDistance = $totalDistance + ($carpoolItem->getAsk()->getMatching()->getCommonDistance() / 1000);
+            $totalSavedCo2 += ($this->userManager->computeSavedCo2($carpoolItem->getAsk(), $user->getId(), true));
             //    we set the payment mode
             if (0 !== $carpoolItem->getItemStatus()) {
                 // We check the status of the right role
@@ -205,7 +211,7 @@ class CarpoolExportManager
         $infoForPdf['carpoolExports'] = $carpoolExports;
         $infoForPdf['paymentActive'] = $this->paymentActive;
         $infoForPdf['totalDistance'] = $totalDistance;
-        $infoForPdf['savedCo2'] = 25;
+        $infoForPdf['savedCo2'] = ($totalSavedCo2 / 1000);
 
         return $this->pdfManager->generatePDF($infoForPdf);
     }
