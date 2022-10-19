@@ -68,6 +68,7 @@ class CarpoolController extends AbstractController
     private $participationText;
     private $fraudWarningDisplay;
     private $ageDisplay;
+    private $birthdateDisplay;
     private $eventManager;
     private $seatNumber;
     private $defaultSeatNumber;
@@ -91,6 +92,7 @@ class CarpoolController extends AbstractController
         int $ptResults,
         bool $fraudWarningDisplay,
         bool $ageDisplay,
+        bool $birthdateDisplay,
         bool $carpoolSettingsDisplay
     ) {
         $this->midPrice = $midPrice;
@@ -105,6 +107,7 @@ class CarpoolController extends AbstractController
         $this->participationText = $participationText;
         $this->fraudWarningDisplay = $fraudWarningDisplay;
         $this->ageDisplay = $ageDisplay;
+        $this->birthdateDisplay = $birthdateDisplay;
         $this->eventManager = $eventManager;
         $this->seatNumber = $seatNumber;
         $this->defaultSeatNumber = $defaultSeatNumber;
@@ -478,6 +481,7 @@ class CarpoolController extends AbstractController
             'originTitle' => $originTitle,
             'destinationTitle' => $destinationTitle,
             'ageDisplay' => $this->ageDisplay,
+            'birthdateDisplay' => $this->birthdateDisplay,
             'carpoolSettingsDisplay' => $this->carpoolSettingsDisplay,
         ]);
     }

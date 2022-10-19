@@ -30,7 +30,7 @@
         :length="Math.ceil(nbResults/perPage)"
         @input="paginate(lPage)"
       />
-      <v-row 
+      <v-row
         v-for="(result,index) in results"
         :key="index"
         justify="center"
@@ -46,6 +46,7 @@
             :distinguish-regular="distinguishRegular"
             :external-rdex-journeys="externalRdexJourneys"
             :age-display="ageDisplay"
+            :birthdate-display="birthdateDisplay"
             @carpool="carpool(result)"
             @loginOrRegister="loginOrRegister(result)"
           />
@@ -119,6 +120,10 @@ export default {
       default:10
     },
     ageDisplay: {
+      type: Boolean,
+      default: false
+    },
+    birthdateDisplay: {
       type: Boolean,
       default: false
     }
