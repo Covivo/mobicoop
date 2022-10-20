@@ -19,14 +19,14 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Utility\Service;
 
 use Knp\Snappy\Pdf;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 use Twig\Extra\Intl\IntlExtension;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Version manager service.
@@ -38,13 +38,9 @@ class PdfManager
     private $pdf;
     private $twig;
     private $translator;
-    
+
     /**
-     * PdfManager constructor
-     *
-     * @param Pdf $pdf
-     * @param Environment $twig
-     * @param TranslatorInterface $translator
+     * PdfManager constructor.
      */
     public function __construct(Pdf $pdf, Environment $twig, TranslatorInterface $translator)
     {
@@ -52,16 +48,15 @@ class PdfManager
         $this->twig = $twig;
         $this->translator = $translator;
     }
-   
+
     /**
      * Create an PDF export of an array.
      *
-     * @param array $dataToPdf
-     * @return String link to the pdf file.
+     * @return string link to the pdf file
      */
     public function generatePDF(array $dataToPdf)
     {
-        $sessionLocale= $this->translator->getLocale();
+        $sessionLocale = $this->translator->getLocale();
         // add locale date translation on twig template
         $this->twig->addExtension(new IntlExtension());
 
@@ -69,14 +64,15 @@ class PdfManager
             $this->twig->render(
                 $dataToPdf['twigPath'],
                 [
-                        'dataToPdf' => $dataToPdf,
-                        'locale' => $sessionLocale
-                    ]
+                    'dataToPdf' => $dataToPdf,
+                    'locale' => $sessionLocale,
+                ]
             ),
             $dataToPdf['filePath'].$dataToPdf['fileName'],
-            [],
+            ['orientation' => 'landscape'],
             true
         );
+
         return $dataToPdf['returnUrl'];
     }
 }

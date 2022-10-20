@@ -152,6 +152,30 @@ class CarpoolItemRepository
     }
 
     /**
+     * Find carpoolItems for a user as creditor or debtor.
+     *
+     * @param mixed $toDate
+     * @param mixed $fromDate
+     *
+     * @return array
+     */
+    public function findByUserAndDate(User $user, $fromDate, $toDate)
+    {
+        $query = $this->repository->createQueryBuilder('ci')
+            ->where('ci.creditorUser = :user OR ci.debtorUser = :user')
+            ->setParameter('user', $user)
+        ;
+        if (null != $fromDate && null != $toDate) {
+            $query->andWhere('ci.itemDate BETWEEN :fromDate and :toDate')
+                ->setParameter('fromDate', $fromDate)
+                ->setParameter('toDate', $toDate)
+            ;
+        }
+
+        return $query->getQuery()->getResult();
+    }
+
+    /**
      * Find carpoolItems where the consumption feedback is in error.
      *
      * @return array

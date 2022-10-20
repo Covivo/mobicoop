@@ -501,7 +501,7 @@ class UserController extends AbstractController
             $user->setPhoneDisplay($data->get('phoneDisplay'));
             $user->setGivenName($data->get('givenName'));
             $user->setFamilyName($data->get('familyName'));
-            $user->setGender((int) ($data->get('gender')));
+            $user->setGender((int) $data->get('gender'));
             $user->setBirthDate(new \DateTime($data->get('birthDay')));
             // cause we use FormData to post data
             $user->setNewsSubscription('true' === $data->get('newsSubscription') ? true : false);
@@ -593,13 +593,20 @@ class UserController extends AbstractController
     public function getExport(Request $request)
     {
         $user = $this->userManager->getLoggedUser();
-
         // Redirect to user_login
         if (!$user instanceof User) {
             return $this->redirectToRoute('user_login');
         }
+
         if ($request->isMethod('POST')) {
-            return new JsonResponse($this->userManager->getCarpoolExport($user)->getCarpoolExport());
+            $data = json_decode($request->getContent(), true);
+            $params = [
+                'fromDate' => $data['fromDate'],
+                'toDate' => $data['toDate'],
+            ];
+            $user = $this->userManager->getCarpoolExport($user, $params);
+
+            return new JsonResponse($user->getCarpoolExport());
         }
 
         return null;
@@ -781,7 +788,7 @@ class UserController extends AbstractController
             $homeAddress->setName($translator->trans('homeAddress', [], 'signup'));
             $homeAddress->setHome(true);
 
-            if (($data['id']) == null) {
+            if (null == $data['id']) {
                 $user->addAddress($homeAddress);
                 $user = $userManager->updateUser($user);
                 $addressData = $addressManager->updateAddress($user->getHomeAddress());
