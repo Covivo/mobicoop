@@ -198,6 +198,7 @@
                 :url-tiles="urlTiles"
                 :attribution-copyright="attributionCopyright"
                 :markers-draggable="false"
+                :can-select-point="isMember && user"
                 class="pa-4 mt-5"
                 :relay-points="true"
                 @SelectedAsDestination="selectedAsDestination"

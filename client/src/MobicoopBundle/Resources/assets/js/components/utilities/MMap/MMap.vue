@@ -38,6 +38,7 @@
           @clickOnPoint="clickOnPoint(point.address)"
         />
         <v-dialog
+          v-if="canSelectPoint"
           v-model="dialog"
           max-width="400"
         >
@@ -164,6 +165,10 @@ export default {
       type: String,
       default: null
     },
+    canSelectPoint: {
+      type: Boolean,
+      default: false
+    }
   },
   data() {
     return {
