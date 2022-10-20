@@ -10,6 +10,7 @@
     <matching
 	    :carpool-settings-display="{{ carpoolSettingsDisplay ? "true" : "false" }}"
         :age-display="{{ (ageDisplay) ? 'true' : 'false' }}"
+        :birthdate-display="{{ birthdateDisplay is defined ? (birthdateDisplay ? 'true' : 'false') : 'false' }}"
         :community-id = "{{ communityId is defined ? (communityId ? communityId : 'null') : 'null' }}"
         :community-proposal-id = "{{ communityProposalId is defined ? (communityProposalId ? communityProposalId : 'null') : 'null' }}"
         :default-role="{{ defaultRole }}"

@@ -42,6 +42,7 @@ typeOfpayment: Betaling
 amount: Bijdrage
 dropOffLocality: Afzetten
 pickUpLocality: Ophalen
+distance: "Distance"
 carpooler: Carpooler
 role: Functie
 date: Datum

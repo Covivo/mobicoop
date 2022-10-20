@@ -63,6 +63,7 @@ services:
             $participationText: '%env(bool:PARTICIPATION_TEXT)%'
             $fraudWarningDisplay: '%env(bool:FRAUD_WARNING_DISPLAY)%'
             $ageDisplay: '%env(bool:AGE_DISPLAY)%'
+            $birthdateDisplay: '%env(bool:BIRTHDATE_DISPLAY)%'
             $seatNumber: '%env(int:SEAT_NUMBER)%'
             $defaultSeatNumber: '%env(int:DEFAULT_SEAT_NUMBER)%'
             $contentPassenger: '%env(bool:CONTENT_PASSENGER)%'

@@ -184,6 +184,7 @@ services:
   App\Auth\Service\AuthManager:
     arguments:
       $modules: "%env(json:file:resolve:MODULES_AUTHORIZED)%"
+      $communityManagerCanManageEvents: "%env(bool:COMMUNITY_MANAGER_CAN_MANAGE_EVENTS)%"
 
   # Carpool
   App\Carpool\Controller\:

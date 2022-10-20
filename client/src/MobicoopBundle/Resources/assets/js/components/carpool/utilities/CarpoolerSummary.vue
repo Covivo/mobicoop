@@ -27,6 +27,7 @@
         <carpooler-identity
           :carpooler="carpooler"
           :age-display="ageDisplay"
+          :birthdate-display="birthdateDisplay"
         />
       </v-col>
 
@@ -270,6 +271,10 @@ export default {
       default: null
     },
     ageDisplay: {
+      type: Boolean,
+      default: false
+    },
+    birthdateDisplay: {
       type: Boolean,
       default: false
     },
