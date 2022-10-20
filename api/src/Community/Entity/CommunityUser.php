@@ -257,6 +257,14 @@ class CommunityUser
     private $refusedDate;
 
     /**
+     * @var \DateTimeInterface last activity date
+     *
+     *
+     * @Groups({"aRead"})
+     */
+    private $lastActivityDate;
+
+    /**
      * @var string the login to join the community if the community is secured
      * @Groups("write")
      */
@@ -466,6 +474,10 @@ class CommunityUser
         }
 
         return null;
+    }
+    public function getLastActivityDate(): ?\DateTimeInterface
+    {
+        return $this->getUser()->getLastActivityDate();
     }
 
     // DOCTRINE EVENTS
