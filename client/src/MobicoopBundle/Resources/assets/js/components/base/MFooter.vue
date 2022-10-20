@@ -249,17 +249,6 @@
                   :alt="$t('logoTwitterAlt')"
                 />
               </a>
-              <a
-                :href="$t('urlFramasphere')"
-                target="_blank"
-              >
-                <v-img
-                  contain
-                  :src="$t('urlFramasphereLogo')"
-                  max-width="75px"
-                  :alt="$t('logoFramasphereAlt')"
-                />
-              </a>
             </v-row>
           </v-card-text>
           <v-col>
