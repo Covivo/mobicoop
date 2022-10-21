@@ -312,6 +312,21 @@ class CommunityUser
      */
     private $newsSubscription;
 
+    /**
+     * @var null|int Ad type for the user (0 = none, 1 = as driver only, 2 = as passenger only, 3 = as driver and passenger)
+     *
+     * @Groups("aRead")
+     */
+    private $adType;
+
+        /**
+     * @var int user id
+     *
+     * @Groups("aRead")
+     */
+    private $userId;
+
+
     public function getId(): ?int
     {
         return $this->id;
@@ -478,6 +493,11 @@ class CommunityUser
     public function getLastActivityDate(): ?\DateTimeInterface
     {
         return $this->getUser()->getLastActivityDate();
+    }
+
+    public function getUserId(): ?int
+    {
+        return $this->getUser()->getId();
     }
 
     // DOCTRINE EVENTS
