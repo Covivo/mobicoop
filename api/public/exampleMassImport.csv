@@ -3,6 +3,6 @@ ABC1;NC;NC;05-10-1955;1;test.migrate@yopmail.com;0123654789;13;rue des jardinier
 
 indications about data formating:
 gender: 1=female, 2=male, 3=nc
-birthDate: DD-MM-YYYY
+birthDate: DD-MM-YYYY Not mandatory : you can put NC or leaving empty
 driver: 0 or 1, false=0 true=1
 passenger:  0 or 1, false=0 true=1

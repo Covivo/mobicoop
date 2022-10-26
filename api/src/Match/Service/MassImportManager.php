@@ -1033,7 +1033,7 @@ class MassImportManager
                         }
                     } elseif ('returnTime' == $fields[$i] && '' == $tab[$i]) {
                         $massPerson->setReturnTime(self::DEFAULT_RETURN_TIME);
-                    } elseif ('birthDate' == $fields[$i] && '' !== $tab[$i]) {
+                    } elseif ('birthDate' == $fields[$i] && '' !== $tab[$i] && 'NC' !== $tab[$i]) {
                         $birthdate = $this->parseDate($tab[$i]);
                         if (!$birthdate) {
                             $error = true;
