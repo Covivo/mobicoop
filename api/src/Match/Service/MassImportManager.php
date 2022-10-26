@@ -1034,7 +1034,18 @@ class MassImportManager
                     } elseif ('returnTime' == $fields[$i] && '' == $tab[$i]) {
                         $massPerson->setReturnTime(self::DEFAULT_RETURN_TIME);
                     } elseif ('birthDate' == $fields[$i] && '' !== $tab[$i]) {
-                        $massPerson->setBirthDate(\DateTime::createFromFormat('DD-MM-YYYY', $tab[$i]));
+                        $birthdate = $this->parseDate($tab[$i]);
+                        if (!$birthdate) {
+                            $error = true;
+                            $errors[] = [
+                                'code' => '',
+                                'file' => basename($csv),
+                                'line' => $line,
+                                'message' => 'Date de naissance incorrecte',
+                            ];
+                        } else {
+                            $massPerson->setBirthDate($birthdate);
+                        }
                     } elseif ('gender' == $fields[$i] && '' !== $tab[$i]) {
                         $massPerson->setGender(intval($tab[$i]));
                     } elseif (method_exists($massPerson, $setter)) {
@@ -1103,6 +1114,22 @@ class MassImportManager
         if ($errors) {
             throw new MassException('Cannot open file');
         }
+    }
+
+    /**
+     * Try to return a DateTime object from a string using several specifics format.
+     */
+    private function parseDate(string $date)
+    {
+        $datetime = \DateTime::createFromFormat('d-m-Y', $date);
+        if (!$datetime) {
+            $datetime = \DateTime::createFromFormat('d/m/Y', $date);
+        }
+        if (!$datetime) {
+            $datetime = \DateTime::createFromFormat('Y-m-d', $date);
+        }
+
+        return $datetime;
     }
 
     /**
@@ -1214,9 +1241,9 @@ class DOMValidator
     /**
      * Validate Incoming Feeds against Listing Schema.
      *
-     * @throws \Exception
-     *
      * @return bool
+     *
+     * @throws \Exception
      */
     public function validate()
     {
