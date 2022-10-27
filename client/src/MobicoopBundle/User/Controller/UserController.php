@@ -318,6 +318,7 @@ class UserController extends AbstractController
             'required_community' => ('true' === $this->required_community) ? true : false,
             'newsSubscription' => $newsSubscription,
             'birthDateDisplay' => $this->birthDateDisplay,
+            'communityId' => $communityId,
         ]);
     }
 
