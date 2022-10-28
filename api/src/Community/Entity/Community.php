@@ -34,6 +34,7 @@ use App\Action\Entity\Log;
 use App\Carpool\Entity\Proposal;
 use App\Community\Filter\CommunityAddressTerritoryFilter;
 use App\Community\Filter\TerritoryFilter;
+use App\Community\Filter\ReferrerFilter;
 use App\Geography\Entity\Address;
 use App\Image\Entity\Image;
 use App\Match\Entity\Mass;
@@ -287,6 +288,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  * @ApiFilter(NumericFilter::class, properties={"communityUsers.user.id"})
  * @ApiFilter(TerritoryFilter::class, properties={"territory"})
  * @ApiFilter(CommunityAddressTerritoryFilter::class, properties={"communityAddressTerritoryFilter"})
+ * @ApiFilter(ReferrerFilter::class, properties={"referrer"})
  */
 class Community
 {
