@@ -1,1 +1,7 @@
-{}
+{
+    "tooltip": "Zanechat recenzi",
+    "intro": {
+        "part1": "Recenzi můžete zanechat na adrese {user}",
+        "part2": "Tento komentář bude viditelný pro všechny uživatele."
+    }
+}
