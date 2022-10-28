@@ -27,6 +27,7 @@ use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\NumericFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
@@ -286,9 +287,11 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  * @ApiFilter(OrderFilter::class, properties={"id", "name", "description", "createdDate"}, arguments={"orderParameterName"="order"})
  * @ApiFilter(SearchFilter::class, properties={"name":"partial"})
  * @ApiFilter(NumericFilter::class, properties={"communityUsers.user.id"})
+ * @ApiFilter(NumericFilter::class, properties={"validationType"})
  * @ApiFilter(TerritoryFilter::class, properties={"territory"})
  * @ApiFilter(CommunityAddressTerritoryFilter::class, properties={"communityAddressTerritoryFilter"})
  * @ApiFilter(ReferrerFilter::class, properties={"referrer"})
+ * @ApiFilter(DateFilter::class, properties={"createdDate": DateFilter::EXCLUDE_NULL})
  */
 class Community
 {
