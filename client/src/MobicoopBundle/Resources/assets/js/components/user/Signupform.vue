@@ -631,6 +631,10 @@ export default {
       type: Boolean,
       default: false
     },
+    communityId: {
+      type: Number,
+      default: null
+    }
   },
   data() {
     return {
@@ -848,7 +852,7 @@ export default {
         this.loadingCommunity = true;
         this.getCommunities();
       }
-    }
+    },
   },
   mounted: function() {
     //get scroll target
@@ -1056,6 +1060,8 @@ export default {
         .then((res) => {
           this.communities = res.data;
           this.loadingCommunity = false;
+
+          if (this.communityId) this.selectedCommunity = this.communities.find(community => community.id === this.communityId);
         });
     }
   },
