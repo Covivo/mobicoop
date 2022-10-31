@@ -30,6 +30,7 @@ use App\Gamification\Entity\RewardStep;
 use App\Gamification\Repository\RewardRepository;
 use App\Gamification\Repository\RewardStepRepository;
 use App\User\Entity\User;
+use App\Community\Entity\CommunityUser;
 use App\User\Service\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -115,9 +116,15 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
         $data = $this->decorated->normalize($object, $format, $context);
 
         // add adType to User in admin
-        if (isset($context['collection_operation_name']) && 'ADMIN_get' === $context['collection_operation_name'] && $object instanceof User) {
-            $nbDriver = $this->proposalRepository->getNbActiveAdsForUserAndRole($data['id'], Ad::ROLE_DRIVER);
-            $nbPassenger = $this->proposalRepository->getNbActiveAdsForUserAndRole($data['id'], Ad::ROLE_PASSENGER);
+
+        if (isset($context['collection_operation_name']) && 'ADMIN_get' === $context['collection_operation_name'] && ($object instanceof User || $object instanceof CommunityUser )) {
+            if ($object instanceof User){
+                $user = $data["id"];
+            } else {
+                $user = $data["userId"];
+            }
+            $nbDriver = $this->proposalRepository->getNbActiveAdsForUserAndRole($user, Ad::ROLE_DRIVER);
+            $nbPassenger = $this->proposalRepository->getNbActiveAdsForUserAndRole($user, Ad::ROLE_PASSENGER);
             if ($nbDriver > 0 && $nbPassenger > 0) {
                 $data['adType'] = User::AD_DRIVER_PASSENGER;
             } elseif ($nbDriver > 0) {
@@ -127,7 +134,6 @@ final class ApiNormalizer implements NormalizerInterface, DenormalizerInterface,
             } else {
                 $data['adType'] = User::AD_NONE;
             }
-
             return $data;
         }
         // We check if there is some gamificationNotifications entities in waiting for the current User

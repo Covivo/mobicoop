@@ -257,6 +257,14 @@ class CommunityUser
     private $refusedDate;
 
     /**
+     * @var \DateTimeInterface last activity date
+     *
+     *
+     * @Groups({"aRead"})
+     */
+    private $lastActivityDate;
+
+    /**
      * @var string the login to join the community if the community is secured
      * @Groups("write")
      */
@@ -303,6 +311,21 @@ class CommunityUser
      * @Groups("aRead")
      */
     private $newsSubscription;
+
+    /**
+     * @var null|int Ad type for the user (0 = none, 1 = as driver only, 2 = as passenger only, 3 = as driver and passenger)
+     *
+     * @Groups("aRead")
+     */
+    private $adType;
+
+        /**
+     * @var int user id
+     *
+     * @Groups("aRead")
+     */
+    private $userId;
+
 
     public function getId(): ?int
     {
@@ -466,6 +489,15 @@ class CommunityUser
         }
 
         return null;
+    }
+    public function getLastActivityDate(): ?\DateTimeInterface
+    {
+        return $this->getUser()->getLastActivityDate();
+    }
+
+    public function getUserId(): ?int
+    {
+        return $this->getUser()->getId();
     }
 
     // DOCTRINE EVENTS
