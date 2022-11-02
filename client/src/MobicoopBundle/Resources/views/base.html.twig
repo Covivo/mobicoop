@@ -28,6 +28,7 @@
     {% if matomoUrl is defined and matomoUrl is not null and matomoUrl != '' %}
     {% include '@Mobicoop/matomo.html.twig' %}
     {% endif %}
+     {% include '@Mobicoop/browserUpdate.html.twig' %}
 
     {% if googleAnalyticsId is defined and googleAnalyticsId is not null and googleAnalyticsId != '' %}
     {% include '@Mobicoop/googleAnalytics.html.twig' %}
