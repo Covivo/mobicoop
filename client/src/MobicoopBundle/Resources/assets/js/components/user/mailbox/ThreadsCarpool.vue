@@ -4,18 +4,18 @@
       v-for="(message, index) in messages"
       :key="index"
       :avatar="message.avatarsRecipient"
-      :given-name="message.givenName"
-      :short-family-name="message.shortFamilyName"
+      :blocker-id="message.blockerId"
+      :criteria="message.carpoolInfos.criteria"
       :date="message.date"
+      :destination="message.carpoolInfos.destination"
+      :given-name="message.givenName"
+      :id-ask-selected="idAskSelected"
+      :id-ask="message.idAsk"
       :id-message="message.idMessage"
       :id-recipient="message.idRecipient"
-      :selected-default="message.selected"
       :origin="message.carpoolInfos.origin"
-      :destination="message.carpoolInfos.destination"
-      :criteria="message.carpoolInfos.criteria"
-      :id-ask="message.idAsk"
-      :id-ask-selected="idAskSelected"
-      :blocker-id="message.blockerId"
+      :selected-default="message.selected"
+      :short-family-name="message.shortFamilyName"
       :unread-messages="message.unreadMessages"
       @idMessageForTimeLine="emit"
       @toggleSelected="emitToggle"
@@ -53,6 +53,10 @@ export default {
     ThreadCarpool
   },
   props: {
+    idMessage: {
+      type: Number,
+      default: null
+    },
     idThreadDefault:{
       type: Number,
       default:null
@@ -119,6 +123,9 @@ export default {
         .then(response => {
           this.SkeletonHidden = true;
           this.messages = response.data.threads;
+          if (this.idMessage) {
+            this.selectDefaultThread();
+          }
           // I'm pushing the new "virtual" thread
           if(this.newThread){
             response.data.threads.push({
@@ -165,6 +172,15 @@ export default {
     },
     name(givenName, shortFamilyName) {
       return givenName + " " + shortFamilyName;
+    },
+    selectDefaultThread: function() {
+      const i = this.messages.map(message => message.idMessage).indexOf(this.idMessage);
+
+      if (i !== -1) {
+        this.messages[i].selected = true;
+        this.messages[i].selectedDefault = true;
+        this.$emit("toggleSelected", {idAsk: this.messages[i].idAsk});
+      }
     }
   }
 }

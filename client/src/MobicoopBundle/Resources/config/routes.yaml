@@ -435,7 +435,7 @@ user_message_complete_thread:
         fr: /utilisateur/messages/{idMessage}/fil
         en: /user/messages/{idMessage}/thread
         nl: /user/messages/{idMessage}/thread
-    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userMessageThread
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userMessageCompleteThread
 
 user_message_actions_infos:
     methods: [POST]

@@ -23,7 +23,6 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\User\Controller;
 
-use DateTime;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Service\AdManager;
@@ -260,7 +259,7 @@ class UserController extends AbstractController
             $user->setFamilyName($data['familyName']);
             $user->setGender($data['gender']);
             // $user->setBirthYear($data->get('birthYear')); Replace only year by full birthday
-            $user->setBirthDate(new DateTime($data['birthDay']));
+            $user->setBirthDate(new \DateTime($data['birthDay']));
 
             if (isset($data['newsSubscription'])) {
                 $newsSubscription = $data['newsSubscription'];
@@ -824,7 +823,7 @@ class UserController extends AbstractController
      *
      * @param null|mixed $askId
      */
-    public function mailBox($askId = null, UserManager $userManager, Request $request, InternalMessageManager $messageManager)
+    public function mailBox($askId = null, UserManager $userManager, Request $request, InternalMessageManager $messageManager, int $msgId = null)
     {
         $user = $userManager->getLoggedUser();
 
@@ -837,7 +836,7 @@ class UserController extends AbstractController
         $data = $request->request;
         $newThread = null;
         $idThreadDefault = null;
-        $idMessage = null;
+        $idMessage = $msgId ? $msgId : null;
         $idRecipient = null;
         $idAsk = $askId ? $askId : null;
 
@@ -941,11 +940,19 @@ class UserController extends AbstractController
     }
 
     /**
+     * Display user mailbox with a preselected thread.
+     */
+    public function userMessageThread(int $idFirstMessage, UserManager $userManager, Request $request, InternalMessageManager $messageManager)
+    {
+        return $this->mailBox(null, $userManager, $request, $messageManager, $idFirstMessage);
+    }
+
+    /**
      * Get direct messages threads.
      *
      * @param mixed $idMessage
      */
-    public function userMessageThread($idMessage, InternalMessageManager $internalMessageManager, UserManager $userManager)
+    public function userMessageCompleteThread($idMessage, InternalMessageManager $internalMessageManager, UserManager $userManager)
     {
         $user = $userManager->getLoggedUser();
         $this->denyAccessUnlessGranted('messages', $user);
