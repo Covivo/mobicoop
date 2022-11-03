@@ -267,7 +267,7 @@ export default {
         .then(res => {
           this.fromDate = null;
           this.toDate = null;
-          //this.openFileDownload(res);
+          this.openFileDownload(res);
         })
         .catch(function (error) {
           this.fromDate = null;
