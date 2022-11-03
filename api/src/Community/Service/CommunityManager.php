@@ -256,9 +256,11 @@ class CommunityManager
         $proposals = $this->proposalRepository->findCommunityAds($this->communityRepository->find($communityId));
 
         foreach ($proposals as $proposal) {
-            $mapsAd = $this->adManager->makeMapsAdFromProposal($proposal);
-            $mapsAd->setEntityId($communityId);
-            $mapsAds[] = $mapsAd;
+            if (!$proposal->hasExpired()) {
+                $mapsAd = $this->adManager->makeMapsAdFromProposal($proposal);
+                $mapsAd->setEntityId($communityId);
+                $mapsAds[] = $mapsAd;
+            }
         }
 
         return new mapsAds($mapsAds);
@@ -308,7 +310,7 @@ class CommunityManager
 
         $authItem = $this->authItemRepository->find(AuthItem::ROLE_COMMUNITY_MANAGER_PUBLIC);
 
-        //Check if the user dont have the ROLE_COMMUNITY_MANAGER_PUBLIC right yet
+        // Check if the user dont have the ROLE_COMMUNITY_MANAGER_PUBLIC right yet
         if (!$this->userManager->checkUserHaveAuthItem($user, $authItem)) {
             $userAuthAssignment = new UserAuthAssignment();
             $userAuthAssignment->setAuthItem($authItem);
@@ -356,7 +358,7 @@ class CommunityManager
             $this->entityManager->persist($communityUser);
         }
 
-        //Check if the user dont have the ROLE_COMMUNITY_MANAGER_PUBLIC right yet
+        // Check if the user dont have the ROLE_COMMUNITY_MANAGER_PUBLIC right yet
         $authItem = $this->authItemRepository->find(AuthItem::ROLE_COMMUNITY_MANAGER_PUBLIC);
 
         if (!$this->userManager->checkUserHaveAuthItem($user, $authItem)) {

@@ -27,6 +27,7 @@ use App\Carpool\Entity\CarpoolExport;
 use App\Payment\Entity\CarpoolItem;
 use App\Payment\Repository\CarpoolItemRepository;
 use App\User\Entity\User;
+use App\User\Service\UserManager;
 use App\Utility\Service\PdfManager;
 use DateTime;
 use Symfony\Component\Security\Core\Security;
@@ -46,6 +47,7 @@ class CarpoolExportManager
     private $carpoolExportPlatformName;
     private $paymentActive;
     private $paymentActiveDate;
+    private $userManager;
 
     /**
      * Constructor.
@@ -56,6 +58,7 @@ class CarpoolExportManager
         Security $security,
         PdfManager $pdfManager,
         CarpoolItemRepository $carpoolItemRepository,
+        UserManager $userManager,
         string $carpoolExportUri,
         string $carpoolExportPath,
         string $carpoolExportPlatformName,
@@ -64,6 +67,7 @@ class CarpoolExportManager
         $this->security = $security;
         $this->pdfManager = $pdfManager;
         $this->carpoolItemRepository = $carpoolItemRepository;
+        $this->userManager = $userManager;
         $this->carpoolExportUri = $carpoolExportUri;
         $this->carpoolExportPath = $carpoolExportPath;
         $this->carpoolExportPlatformName = $carpoolExportPlatformName;
@@ -77,20 +81,25 @@ class CarpoolExportManager
     /**
      * Method to get all carpoolExports for a user.
      *
+     * @param null|mixed $fromDate
+     * @param null|mixed $toDate
+     *
      * @return string
      */
-    public function getCarpoolExports()
+    public function getCarpoolExports($fromDate = null, $toDate = null)
     {
         /**
          * @var User $user
          */
         $user = $this->security->getUser();
         // we get all carpoolItems of a user as debtor or creditor
-        $carpoolItems = $this->carpoolItemRepository->findByUser($user);
+        $carpoolItems = $this->carpoolItemRepository->findByUserAndDate($user, $fromDate, $toDate);
 
         $carpoolExports = [];
         $sumPaid = null;
         $sumReceived = null;
+        $totalDistance = null;
+        $totalSavedCo2 = null;
         // we create an array of carpoolExport
         foreach ($carpoolItems as $carpoolItem) {
             // Check if the User is debtor or creditor
@@ -103,6 +112,9 @@ class CarpoolExportManager
             $carpoolExport->setId($carpoolItem->getId());
             $carpoolExport->setDate($carpoolItem->getItemDate());
             $carpoolExport->setAmount($carpoolItem->getAmount());
+            $carpoolExport->setDistance($carpoolItem->getAsk()->getMatching()->getCommonDistance() / 1000);
+            $totalDistance = $totalDistance + ($carpoolItem->getAsk()->getMatching()->getCommonDistance() / 1000);
+            $totalSavedCo2 += ($this->userManager->computeSavedCo2($carpoolItem->getAsk(), $user->getId(), true));
             //    we set the payment mode
             if (0 !== $carpoolItem->getItemStatus()) {
                 // We check the status of the right role
@@ -198,6 +210,8 @@ class CarpoolExportManager
         $infoForPdf['tax'] = $sumReceived > 300 ? true : false;
         $infoForPdf['carpoolExports'] = $carpoolExports;
         $infoForPdf['paymentActive'] = $this->paymentActive;
+        $infoForPdf['totalDistance'] = $totalDistance;
+        $infoForPdf['savedCo2'] = ($totalSavedCo2 / 1000);
 
         return $this->pdfManager->generatePDF($infoForPdf);
     }

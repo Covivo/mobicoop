@@ -2,7 +2,34 @@
     "dialog": {
         "title": "Sélectionner ce point relais comme :",
         "origin": "Origine",
-        "destination": "Destination"
+        "destination": "Destination",
+        "relayPointType": {
+          "1":"Aire-covoiturage",
+          "2":"P+R",
+          "3":"Gare",
+          "4":"Parking",
+          "5":"Zone activité",
+          "6":"aucun",
+          "7":"Arrêt",
+          "8":"Bâtiment",
+          "9":"Taxi",
+          "10":"Communauté",
+          "11":"Arrêt-covoiturage",
+          "12":"Arrêt Rezo Pouce",
+          "13": " "
+        },
+        "latLng": "Lat: {lat} | Lng: {lng}",
+        "availableSpaces": "Places disponibles",
+        "availableDisabledSpaces": "Places PMR disponibles",
+        "free": "Accès gratuit",
+        "private": "Privé",
+        "secured": "Sécurisé",
+        "official": "Officiel",
+        "selectRelayPoint": "Sélectionner ce point relais comme:",
+        "moreInfos": "Informations supplémentaires:",
+        "bannerUrl": "/images/illus-covoit.png"
     },
-    "territory": "/territoires"
+    "territory": "/territoires",
+    "true": "oui",
+    "false": "non"
 }

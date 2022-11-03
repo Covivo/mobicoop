@@ -11,7 +11,7 @@
           >
             {{ $t('needCarpoolProofs') }}
           </v-col>
-          <v-col                   
+          <v-col
             cols="8"
             class="font-italic text-caption"
           >
@@ -27,9 +27,9 @@
                 <v-btn
                   color="secondary"
                   rounded
-                  :disabled="disableExportButton" 
+                  :disabled="disableExportButton"
                   width="175px"
-                  @click="getExport()"
+                  @click="carpoolExportDialog = true"
                 >
                   {{ $t('export') }}
                 </v-btn>
@@ -80,6 +80,135 @@
         </v-tabs>
       </v-col>
     </v-row>
+    <v-dialog
+      v-model="carpoolExportDialog"
+      max-width="800"
+      persistent
+    >
+      <v-card
+        max-width="800"
+      >
+        <v-toolbar
+          color="primary"
+        >
+          <v-toolbar-title class="white--text">
+            {{ $t('dialog.title') }}
+          </v-toolbar-title>
+          <v-spacer />
+          <v-btn
+            color="white"
+            icon
+            @click="carpoolExportDialog = false"
+          >
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-toolbar>
+
+        <v-row
+          align="center"
+          dense
+          class="ml-2 mr-10"
+        >
+          <v-col cols="1" />
+          <v-col
+            justify="center"
+            cols="2"
+          >
+            <p
+              align="center"
+            >
+              {{ $t('dialog.label1') }}
+            </p>
+          </v-col>
+          <v-col
+            cols="3"
+            justify="center"
+            align="center"
+          >
+            <v-menu
+              v-model="menu"
+              :close-on-content-click="false"
+              :nudge-right="40"
+              offset-y
+              min-width="auto"
+            >
+              <template v-slot:activator="{ on, attrs }">
+                <v-text-field
+                  v-model="fromDate"
+                  prepend-icon="mdi-calendar"
+                  readonly
+                  v-bind="attrs"
+                  v-on="on"
+                />
+              </template>
+              <v-date-picker
+                v-model="fromDate"
+                @input="menu = false"
+              />
+            </v-menu>
+          </v-col>
+          <v-col
+            justify="center"
+            cols="2"
+          >
+            <p
+              align="center"
+            >
+              {{ $t('dialog.label2') }}
+            </p>
+          </v-col>
+          <v-col
+            cols="3"
+            justify="center"
+            align="center"
+          >
+            <v-menu
+              v-model="menu2"
+              :close-on-content-click="false"
+              :nudge-right="40"
+              offset-y
+              min-width="auto"
+            >
+              <template v-slot:activator="{ on, attrs }">
+                <v-text-field
+                  v-model="toDate"
+                  prepend-icon="mdi-calendar"
+                  readonly
+                  v-bind="attrs"
+                  v-on="on"
+                />
+              </template>
+              <v-date-picker
+                v-model="toDate"
+                @input="menu2 = false"
+              />
+            </v-menu>
+          </v-col>
+          <v-spacer />
+        </v-row>
+
+        <v-card-actions class="justify-center">
+          <v-btn
+            color="primary"
+            rounded
+            width="175px"
+            :disabled="fromDate == null || toDate == null"
+            @click="carpoolExportDialog = false; getExport();"
+          >
+            {{ $t('dialog.exportButtonLabel') }}
+          </v-btn>
+          <v-btn
+            color="primary"
+            rounded
+            width="175px"
+            :disabled="fromDate !== null || toDate !== null"
+            @click="carpoolExportDialog = false; getExport();"
+          >
+            {{ $t('dialog.exportAllButtonLabel') }}
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 <script>
@@ -116,6 +245,11 @@ export default {
   },
   data(){
     return {
+      carpoolExportDialog: false,
+      fromDate: null,
+      toDate: null,
+      menu: false,
+      menu2: false
     }
   },
   computed: {
@@ -125,11 +259,19 @@ export default {
   },
   methods:{
     getExport(){
-      maxios.post(this.$t("exportUrl"))
+      let params = {
+        'fromDate':this.fromDate,
+        'toDate':this.toDate
+      }
+      maxios.post(this.$t("exportUrl"), params)
         .then(res => {
+          this.fromDate = null;
+          this.toDate = null;
           this.openFileDownload(res);
         })
         .catch(function (error) {
+          this.fromDate = null;
+          this.toDate = null;
           console.error(error);
         });
     },

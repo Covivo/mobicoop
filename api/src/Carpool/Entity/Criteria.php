@@ -143,6 +143,7 @@ class Criteria
 
     /**
      * @var \DateTimeInterface The arrival date if punctual
+     *
      * @Groups({"read","results","write","thread","threads"})
      */
     private $arrivalDateTime;
@@ -281,6 +282,7 @@ class Criteria
 
     /**
      * @var \DateTimeInterface The arrival time on Mondays
+     *
      * @Groups({"read","results","write","thread","threads"})
      */
     private $arrivalMonTime;
@@ -314,6 +316,7 @@ class Criteria
 
     /**
      * @var \DateTimeInterface The arrival time on Tuesdays
+     *
      * @Groups({"read","results","write","thread","threads"})
      */
     private $arrivalTueTime;
@@ -347,6 +350,7 @@ class Criteria
 
     /**
      * @var \DateTimeInterface The arrival time on Wednesdays
+     *
      * @Groups({"read","results","write","thread","threads"})
      */
     private $arrivalWedTime;
@@ -380,6 +384,7 @@ class Criteria
 
     /**
      * @var \DateTimeInterface The arrival time on Thursdays
+     *
      * @Groups({"read","results","write","thread","threads"})
      */
     private $arrivalThuTime;
@@ -413,6 +418,7 @@ class Criteria
 
     /**
      * @var \DateTimeInterface The arrival time on Friday
+     *
      * @Groups({"read","results","write","thread","threads"})
      */
     private $arrivalFriTime;
@@ -446,6 +452,7 @@ class Criteria
 
     /**
      * @var \DateTimeInterface The arrival time on Saturdays
+     *
      * @Groups({"read","results","write","thread","threads"})
      */
     private $arrivalSatTime;
@@ -479,6 +486,7 @@ class Criteria
 
     /**
      * @var \DateTimeInterface The arrival time on Sundays
+     *
      * @Groups({"read","results","write","thread","threads"})
      */
     private $arrivalSunTime;
@@ -623,6 +631,7 @@ class Criteria
 
     /**
      * @var null|float The driver master price to use. It's the price if it's not null, otherwise the computedPrice.
+     *
      * @Groups({"read","results","thread"})
      */
     private $driverMasterPrice;
@@ -653,6 +662,7 @@ class Criteria
 
     /**
      * @var null|float The passenger master price to use. It's the price if it's not null, otherwise the computedPrice.
+     *
      * @Groups({"read","results","thread"})
      */
     private $passengerMasterPrice;
@@ -759,6 +769,7 @@ class Criteria
 
     /**
      * @var int Journey's Duration in secondes based on DirectionDriver if it exists or else on DirectionPassenger
+     *
      * @Groups({"read","results"})
      */
     private $duration;
@@ -2065,5 +2076,28 @@ class Criteria
     public function setAutoUpdatedDate()
     {
         $this->setUpdatedDate(new \DateTime());
+    }
+
+    public function getExpirationDate(): \DateTime
+    {
+        switch (true) {
+            case !is_null($this->getToDate()):
+                $date = $this->getToDate();
+
+                $day = $date->format('D');
+
+                $timeGetter = 'get'.$day.'Time';
+                $time = $this->{$timeGetter}();
+
+                break;
+
+            case !is_null($this->getFromDate()):
+                $date = $this->getFromDate();
+                $time = $this->getFromTime();
+
+                break;
+        }
+
+        return new \DateTime($date->format('Y-m-d').' '.$time->format('H:i:s'));
     }
 }

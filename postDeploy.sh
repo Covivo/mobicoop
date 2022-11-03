@@ -105,7 +105,7 @@ then
         mkdir externalCgu;
     fi
     cd /var/www/$VERSION/$INSTANCE/client/public/externalCgu;
-    wget https://www.mangopay.com/terms/PSP/PSP_MANGOPAY_FR.pdf;
+    wget -N https://www.mangopay.com/terms/PSP/PSP_MANGOPAY_FR.pdf;
 
     # clear cache
     cd /var/www/$VERSION/$INSTANCE/api;
@@ -207,7 +207,7 @@ else
         mkdir externalCgu;
     fi
     cd /var/www/$INSTANCE/$VERSION/client/public/externalCgu;
-    wget https://www.mangopay.com/terms/PSP/PSP_MANGOPAY_FR.pdf
+    wget -N https://www.mangopay.com/terms/PSP/PSP_MANGOPAY_FR.pdf
 
      # clear cache
     cd /var/www/$INSTANCE/$VERSION/api;

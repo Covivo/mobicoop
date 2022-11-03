@@ -7,5 +7,12 @@
     "clickAndGetFile": "Click on \"Export\" to download your carpools in PDF format.",
     "export": "Export",
     "tooltip": "Active as soon as carpools are validated",
-    "exportUrl": "/utilisateur/profil/modifier/mes-covoiturages-acceptes/export"
+    "exportUrl": "/utilisateur/profil/modifier/mes-covoiturages-acceptes/export",
+    "dialog": {
+        "exportButtonLabel": "Exporter",
+        "exportAllButtonLabel": "Exporter tout",
+        "title": "Exporter les covoiturages :",
+        "label1": "entre le",
+        "label2": "et le"
+    }
 }

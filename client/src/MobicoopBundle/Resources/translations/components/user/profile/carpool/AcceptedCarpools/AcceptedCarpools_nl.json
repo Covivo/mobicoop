@@ -7,5 +7,12 @@
     "carpools": {
         "archived": "Afgelopen carpoolings",
         "active": "Carpoolings in uitvoering"
+    },
+    "dialog": {
+        "exportButtonLabel": "Exporter",
+        "exportAllButtonLabel": "Exporter tout",
+        "title": "Exporter les covoiturages :",
+        "label1": "entre le",
+        "label2": "et le"
     }
 }

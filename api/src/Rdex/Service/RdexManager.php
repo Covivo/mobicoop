@@ -447,7 +447,7 @@ class RdexManager
             // We get some datas that relies on being passenger or driver
             $fromAddress = $resultItem->getOutward()->getOrigin();
             $toAddress = $resultItem->getOutward()->getDestination();
-            $distance = $resultItem->getOutward()->getCommonDistance() + $resultItem->getOutward()->getDetourDistance();
+            $distance = $resultItem->getOutward()->getCommonDistance();
             $kilometersPrice = $resultItem->getOutward()->getDriverPriceKm();
 
             $from->setAddress($fromAddress->getStreetAddress());
@@ -469,7 +469,7 @@ class RdexManager
 
             // Metrics / Prices
             $journey->setDistance($distance);
-            $journey->setDuration($resultItem->getOutward()->getNewDuration());
+            $journey->setDuration($result->getCommonDuration());
 //            $journey->setCost(['fixed'=>$result->getRoundedPrice()]);
             $journey->setCost(['variable' => $kilometersPrice]);
 
@@ -688,13 +688,7 @@ class RdexManager
     private function computeMinMaxTime(\DateTime $time, int $margin)
     {
         $mintime = clone $time;
-
-        // No margin on mintime because we use margin to handle mintime and maxtime from RDEX request.
-        // exemple :
-        // Mintime : 08:00
-        // Maxtime : 12:00
-        // 4 hours of margin so we keep mintime = 08:00 and mintime + margin = 12:00 and not 04:00->12:00
-        // $mintime->sub(new \DateInterval("PT" . $margin. "S"));
+        $mintime->sub(new \DateInterval('PT'.$margin.'S'));
 
         $maxtime = clone $time;
         $maxtime->add(new \DateInterval('PT'.$margin.'S'));

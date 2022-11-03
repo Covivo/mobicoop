@@ -184,6 +184,7 @@ services:
   App\Auth\Service\AuthManager:
     arguments:
       $modules: "%env(json:file:resolve:MODULES_AUTHORIZED)%"
+      $communityManagerCanManageEvents: "%env(bool:COMMUNITY_MANAGER_CAN_MANAGE_EVENTS)%"
 
   # Carpool
   App\Carpool\Controller\:
@@ -219,6 +220,10 @@ services:
         paymentActive: "%env(string:PAYMENT_ACTIVE)%"
     tags:
       - { name: monolog.logger, channel: carpool }
+
+  App\Carpool\Service\MatchingManager:
+    arguments:
+      $repository: '@App\Carpool\Repository\MatchingRepository'
 
   App\Carpool\Service\MyAdManager:
     arguments:

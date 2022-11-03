@@ -368,6 +368,8 @@ class MangoPayProvider implements PaymentProviderInterface
         }
 
         $body['KYCLevel'] = 'LIGHT';
+        $body['TermsAndConditionsAccepted'] = true;
+        $body['UserCategory'] = 'OWNER';
 
         $dataProvider = new DataProvider($this->serverUrl.'users/', self::ITEM_USER_NATURAL);
         $headers = [

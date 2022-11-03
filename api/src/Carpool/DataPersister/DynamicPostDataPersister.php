@@ -19,13 +19,13 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
- namespace App\Carpool\DataPersister;
+namespace App\Carpool\DataPersister;
 
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
-use App\Carpool\Ressource\Dynamic;
 use App\Carpool\Exception\DynamicException;
+use App\Carpool\Ressource\Dynamic;
 use App\Carpool\Service\DynamicManager;
 use App\User\Entity\User;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -36,7 +36,7 @@ final class DynamicPostDataPersister implements ContextAwareDataPersisterInterfa
     private $security;
     private $request;
     private $dynamicManager;
-    
+
     public function __construct(Security $security, DynamicManager $dynamicManager, RequestStack $requestStack)
     {
         $this->security = $security;
@@ -46,20 +46,19 @@ final class DynamicPostDataPersister implements ContextAwareDataPersisterInterfa
 
     public function supports($data, array $context = []): bool
     {
-        return $data instanceof Dynamic && isset($context['collection_operation_name']) && $context['collection_operation_name'] == 'post';
+        return $data instanceof Dynamic && isset($context['collection_operation_name']) && 'post' == $context['collection_operation_name'];
     }
 
     public function persist($data, array $context = [])
     {
-        /**
-         * @var Dynamic $data
-         */
+        // @var Dynamic $data
         // we check if the request is sent by a real user
         if ($this->security->getUser() instanceof User) {
             $data->setUser($this->security->getUser());
         } else {
-            throw new DynamicException("Operation not permited");
+            throw new DynamicException('Operation not permited');
         }
+
         return $this->dynamicManager->createDynamic($data);
     }
 

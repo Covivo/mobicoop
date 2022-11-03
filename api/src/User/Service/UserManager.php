@@ -1913,7 +1913,7 @@ class UserManager
      * @param Ask $ask    The Ask
      * @param int $userId The User id
      */
-    public function computeSavedCo2(Ask $ask, int $userId): int
+    public function computeSavedCo2(Ask $ask, int $userId, $export=false): int
     {
         $driver = ($ask->getMatching()->getProposalOffer()->getUser()->getId() == $userId);
 
@@ -1945,7 +1945,7 @@ class UserManager
         }
 
         // If the is a Ask linked, it's twice the economy (round trip)
-        if (!is_null($ask->getAskLinked())) {
+        if (!is_null($ask->getAskLinked()) && !$export) {
             $savedDistance = $savedDistance * 2;
         }
 

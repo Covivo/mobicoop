@@ -19,17 +19,16 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace Mobicoop\Bundle\MobicoopBundle\RelayPoint\Entity;
 
 use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
 use Mobicoop\Bundle\MobicoopBundle\Geography\Entity\Address;
-use Symfony\Component\Serializer\Annotation\Groups;
-use Mobicoop\Bundle\MobicoopBundle\RelayPoint\Entity\RelayPointType;
 
 /**
  * A relay point map.
+ *
  * @author Céline Jacquet <celine.jacquet@mobicoop.org>
  */
 class RelayPointMap implements ResourceInterface, \JsonSerializable
@@ -43,53 +42,58 @@ class RelayPointMap implements ResourceInterface, \JsonSerializable
      * @var string The name of this relay point map
      */
     private $name;
-            
+
     /**
-     * @var RelayPointType The relay point type of the relay point map.
+     * @var RelayPointType the relay point type of the relay point map
      */
     private $relayPointType;
 
     /**
-     * @var Address The address of the relay point map.
+     * @var Address the address of the relay point map
      */
     private $address;
-   
+
     /**
-     * @var int|null The number of places.
+     * @var null|int the number of places
      */
     private $places;
 
     /**
-     * @var int|null The number of places for disabled people.
+     * @var null|int the number of places for disabled people
      */
     private $placesDisabled;
 
     /**
-    * @var boolean|null The relay point is free.
-    */
+     * @var null|bool the relay point is free
+     */
     private $free;
 
     /**
-    * @var boolean|null The relay point is secured.
-    */
+     * @var null|bool the relay point is secured
+     */
     private $secured;
 
     /**
-    * @var boolean|null The relay point is official.
-    */
+     * @var null|bool the relay point is official
+     */
     private $official;
-    
+
     /**
-     * @var boolean|null The relay point is private to a community or a solidary structure.
+     * @var null|bool the relay point is private to a community or a solidary structure
      */
     private $private;
-    
+
     /**
-     * @var string|null Image of the RelayPointMap
+     * @var null|string Image of the RelayPointMap
      */
     private $image;
 
-    public function __construct($id=null)
+    /**
+     * @var null|string the description of the relay point
+     */
+    private $description;
+
+    public function __construct($id = null)
     {
         if ($id) {
             $this->setId($id);
@@ -144,19 +148,19 @@ class RelayPointMap implements ResourceInterface, \JsonSerializable
     {
         return $this->private;
     }
-    
+
     public function setPrivate(?bool $isPrivate): self
     {
         $this->private = $isPrivate;
-        
+
         return $this;
     }
-    
+
     public function getPlaces()
     {
         return $this->places;
     }
-    
+
     public function setPlaces(?int $places)
     {
         $this->places = $places;
@@ -166,7 +170,7 @@ class RelayPointMap implements ResourceInterface, \JsonSerializable
     {
         return $this->placesDisabled;
     }
-    
+
     public function setPlacesDisabled(?int $placesDisabled)
     {
         $this->placesDisabled = $placesDisabled;
@@ -176,11 +180,11 @@ class RelayPointMap implements ResourceInterface, \JsonSerializable
     {
         return $this->free;
     }
-    
+
     public function setFree(?bool $isFree): self
     {
         $this->free = $isFree;
-        
+
         return $this;
     }
 
@@ -188,11 +192,11 @@ class RelayPointMap implements ResourceInterface, \JsonSerializable
     {
         return $this->secured;
     }
-    
+
     public function setSecured(?bool $isSecured): self
     {
         $this->secured = $isSecured;
-        
+
         return $this;
     }
 
@@ -200,41 +204,52 @@ class RelayPointMap implements ResourceInterface, \JsonSerializable
     {
         return $this->official;
     }
-    
+
     public function setOfficial(?bool $isOfficial): self
     {
         $this->official = $isOfficial;
-        
+
         return $this;
     }
-    
+
     public function getImage(): ?string
     {
         return $this->image;
     }
-    
+
     public function setImage(?string $image): self
     {
         $this->image = $image;
-        
+
         return $this;
     }
-    
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description)
+    {
+        $this->description = $description;
+    }
+
     public function jsonSerialize()
     {
         return
         [
-            'id'                => $this->getId(),
-            'name'              => $this->getName(),
-            'address'           => $this->getAddress(),
-            'relayPointType'    => $this->getRelayPointType(),
-            'private'           => $this->isPrivate(),
-            'places'            => $this->getPlaces(),
-            'placesDisabled'    => $this->getPlacesDisabled(),
-            'free'              => $this->isFree(),
-            'secured'           => $this->isSecured(),
-            'official'          => $this->isOfficial(),
-            'image'             => $this->getImage()
+            'id' => $this->getId(),
+            'name' => $this->getName(),
+            'address' => $this->getAddress(),
+            'relayPointType' => $this->getRelayPointType(),
+            'private' => $this->isPrivate(),
+            'places' => $this->getPlaces(),
+            'placesDisabled' => $this->getPlacesDisabled(),
+            'free' => $this->isFree(),
+            'secured' => $this->isSecured(),
+            'official' => $this->isOfficial(),
+            'image' => $this->getImage(),
+            'description' => $this->getDescription(),
         ];
     }
 }

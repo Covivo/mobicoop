@@ -178,6 +178,7 @@
                 :loading-prop="loading"
                 :page="page"
                 :age-display="ageDisplay"
+                :birthdate-display="birthdateDisplay"
                 @carpool="carpool"
                 @loginOrRegister="loginOrRegister"
                 @paginate="paginate"
@@ -440,6 +441,10 @@ export default {
       default: true
     },
     punctualDateOptional: {
+      type: Boolean,
+      default: false
+    },
+    birthdateDisplay: {
       type: Boolean,
       default: false
     },

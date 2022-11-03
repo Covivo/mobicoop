@@ -24,6 +24,8 @@
 namespace App\User\Interoperability\Service;
 
 use App\App\Entity\App;
+use App\Community\Entity\CommunityUser;
+use App\Community\Repository\CommunityRepository;
 use App\User\Entity\User as UserEntity;
 use App\User\Interoperability\Ressource\DetachSso;
 use App\User\Interoperability\Ressource\User;
@@ -42,18 +44,20 @@ class UserManager
     private $security;
     private $entityManager;
     private $notificationSsoRegistration;
+    private $communityRepository;
 
     /**
      * @var DetachSso
      */
     private $detachSso;
 
-    public function __construct(UserEntityManager $userEntityManager, Security $security, EntityManagerInterface $entityManager, bool $notificationSsoRegistration)
+    public function __construct(UserEntityManager $userEntityManager, Security $security, EntityManagerInterface $entityManager, bool $notificationSsoRegistration, CommunityRepository $communityRepository)
     {
         $this->userEntityManager = $userEntityManager;
         $this->security = $security;
         $this->entityManager = $entityManager;
         $this->notificationSsoRegistration = $notificationSsoRegistration;
+        $this->communityRepository = $communityRepository;
     }
 
     /**
@@ -152,6 +156,15 @@ class UserManager
 
             $this->entityManager->persist($userEntity);
             $this->entityManager->flush();
+
+            if (!is_null($user->getCommunityId())) {
+                $communityUser = new CommunityUser();
+                $communityUser->setUser($userEntity);
+                $communityUser->setCommunity($this->communityRepository->find($user->getCommunityId()));
+                $communityUser->setStatus(CommunityUser::STATUS_ACCEPTED_AS_MEMBER);
+                $this->entityManager->persist($communityUser);
+                $this->entityManager->flush();
+            }
         }
 
         return $this->buildUserFromUserEntity($userEntity);
@@ -275,6 +288,7 @@ class UserManager
             $userEntity->setSsoProvider($this->security->getUser()->getName());
         }
         $userEntity->setSsoId($user->getExternalId());
+        $userEntity->setCommunityId($user->getCommunityId());
 
         return $userEntity;
     }

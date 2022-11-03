@@ -7,5 +7,12 @@
     "clickAndGetFile": "En cliquant sur «Exporter» vous pouvez télécharger tous vos covoiturages au format pdf.",
     "export": "Exporter",
     "tooltip": "Actif dès que des covoiturages seront validés",
-    "exportUrl": "/utilisateur/profil/modifier/mes-covoiturages-acceptes/export"
+    "exportUrl": "/utilisateur/profil/modifier/mes-covoiturages-acceptes/export",
+    "dialog": {
+        "exportButtonLabel": "Exporter",
+        "exportAllButtonLabel": "Exporter tout",
+        "title": "Exporter les covoiturages :",
+        "label1": "entre le",
+        "label2": "et le"
+    }
 }
