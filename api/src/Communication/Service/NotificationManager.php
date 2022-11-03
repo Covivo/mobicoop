@@ -44,6 +44,7 @@ use App\Communication\Interfaces\MessagerInterface;
 use App\Communication\Repository\NotificationRepository;
 use App\Community\Entity\Community;
 use App\Community\Entity\CommunityUser;
+use App\DataProvider\Entity\Response;
 use App\Event\Entity\Event;
 use App\Match\Entity\Mass;
 use App\Match\Entity\MassPerson;
@@ -880,12 +881,24 @@ class NotificationManager
         }
         // if a template is associated with the action in the notification, we us it; otherwise we try the name of the action as template name
         if ($notification->hasAlt()) {
-            $this->smsManager->send($sms, $this->altCommunicationFolder.$templateLanguage.$this->smsTemplatePath.$notification->getAction()->getName(), $bodyContext, $lang);
+            $response = $this->smsManager->send($sms, $this->altCommunicationFolder.$templateLanguage.$this->smsTemplatePath.$notification->getAction()->getName(), $bodyContext, $lang);
         } else {
-            $this->smsManager->send($sms, $this->communicationFolder.$templateLanguage.$this->smsTemplatePath.$notification->getAction()->getName(), $bodyContext, $lang);
+            $response = $this->smsManager->send($sms, $this->communicationFolder.$templateLanguage.$this->smsTemplatePath.$notification->getAction()->getName(), $bodyContext, $lang);
         }
+
+        // ? #4705- Log creation when SMS is not send
+        if (!$this->checkSmsSending($response)) {
+            $this->logger->error('Sms notification to '.$recipient->getId().' for the '.$notification->getAction()->getName().' has failed');
+        }
+
         $this->createNotified($notification, $recipient, $object);
+
         $this->logger->info('Sms notification for '.$notification->getAction()->getName().' / '.$recipient->getEmail());
+    }
+
+    private function checkSmsSending(Response $response): bool
+    {
+        return in_array($response->getCode(), [200, 201, 204]);
     }
 
     /**
