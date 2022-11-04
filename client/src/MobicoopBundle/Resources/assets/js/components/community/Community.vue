@@ -812,12 +812,12 @@ export default {
             this.buildPoint(
               proposal.origin.latitude,
               proposal.origin.longitude,
-              proposal.origin,
-              currentProposal.desc,
+              "",
+              proposal.origin.displayLabel[0],
               "",
               [],
               [],
-              "<p>" + proposal.origin.displayLabel[0] + "</p>"
+              "<p>" + currentProposal.desc + "</p>"
             )
           );
 
@@ -825,12 +825,12 @@ export default {
             this.buildPoint(
               proposal.destination.latitude,
               proposal.destination.longitude,
-              proposal.destination,
-              currentProposal.desc,
+              "",
+              proposal.destination.displayLabel[0],
               "",
               [],
               [],
-              "<p>" + proposal.destination.displayLabel[0] + "</p>"
+              "<p>" + currentProposal.desc + "</p>"
             )
           );
 
