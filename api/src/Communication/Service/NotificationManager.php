@@ -513,7 +513,13 @@ class NotificationManager
 
                 case Message::class:
                     $titleContext = ['user' => $object->getUser()];
-                    $bodyContext = ['text' => $object->getText(), 'user' => $recipient, 'sender' => $object->getUser(), 'sendingDate' => $object->getCreatedDate()];
+                    $bodyContext = [
+                        'sender' => $object->getUser(),
+                        'sendingDate' => $object->getCreatedDate(),
+                        'text' => $object->getText(),
+                        'thread' => is_null($object->getMessage()) ? $object->getId() : $object->getMessage()->getId(),
+                        'user' => $recipient,
+                    ];
 
                     break;
 
