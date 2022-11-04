@@ -429,11 +429,11 @@ export default {
             this.buildPoint(
               waypoint.latLng.lat,
               waypoint.latLng.lon,
-              currentProposal.desc,
+              waypoint.title,
               "",
               [],
               [],
-              "<p>" + waypoint.title + "</p>"
+              "<p>" + currentProposal.desc + "</p>"
             )
           );
         });
