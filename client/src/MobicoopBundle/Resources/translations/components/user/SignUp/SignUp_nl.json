@@ -43,9 +43,7 @@
     },
     "chart": {
         "required": "De validatie van het charter is vereist",
-        "route": "/cgu",
-        "link": "het charter van het platform en zijn privacybeleid",
-        "text": "Ik aanvaard "
+        "text": "J'accepte <a class='primary--text' target='_blank' href='/cgu' aria-label='la charte de la plateforme et sa politique de protection des données lien')</a> la charte de la plateforme et sa politique de protection des données"
     },
     "checkEmail": {
         "error": "Dit e-mailadres is al in gebruik",
