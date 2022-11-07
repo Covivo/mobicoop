@@ -5,14 +5,16 @@
       color="success"
       top
     >
-      <v-icon>mdi-check-circle-outline</v-icon> {{ $t('externalResult.contact.return.ok') }}
+      <v-icon>mdi-check-circle-outline</v-icon>
+      {{ $t("externalResult.contact.return.ok") }}
     </v-snackbar>
     <v-snackbar
       v-model="showSendError"
       color="error"
       top
     >
-      <v-icon>mdi-close-circle-outline</v-icon> {{ $t('externalResult.contact.return.error') }}
+      <v-icon>mdi-close-circle-outline</v-icon>
+      {{ $t("externalResult.contact.return.error") }}
     </v-snackbar>
     <v-row
       align="center"
@@ -65,8 +67,7 @@
               />
             </v-list-item-avatar>
           </template>
-          <span>
-            {{ community.name }}</span>
+          <span> {{ community.name }}</span>
         </v-tooltip>
       </v-col>
       <v-col
@@ -88,7 +89,6 @@
         />
       </v-col>
 
-
       <!-- Carpool button -->
       <v-col
         v-if="!externalRdexJourneys"
@@ -103,7 +103,7 @@
           @click="emitCarpoolEvent"
         >
           <span>
-            {{ $t('seeDetails') }}
+            {{ $t("seeDetails") }}
           </span>
         </v-btn>
       </v-col>
@@ -122,7 +122,7 @@
           class="mt-1"
         >
           <span>
-            {{ $t('externalResult.go') }}
+            {{ $t("externalResult.go") }}
           </span>
         </v-btn>
         <v-tooltip bottom>
@@ -141,12 +141,12 @@
                 @click="externalContactModal"
               >
                 <span>
-                  {{ $t('externalResult.contact.button.label') }}
+                  {{ $t("externalResult.contact.button.label") }}
                 </span>
               </v-btn>
             </div>
           </template>
-          <span>{{ $t('externalResult.contact.button.tooltip') }}</span>
+          <span>{{ $t("externalResult.contact.button.tooltip") }}</span>
         </v-tooltip>
         <v-card-text class="py-0">
           <em>{{ externalOrigin }}</em>
@@ -161,14 +161,21 @@
     >
       <v-card>
         <v-card-title class="headline grey lighten-2">
-          {{ $t('externalResult.contact.popup.title') }}
+          {{ $t("externalResult.contact.popup.title") }}
         </v-card-title>
 
         <v-card-text>
-          <p>{{ $t('externalResult.contact.popup.intro', {origin:externalOrigin, platform: platformName}) }}.</p>
           <p>
-            {{ $t('externalResult.contact.popup.instructions.line1') }}.<br>
-            {{ $t('externalResult.contact.popup.instructions.line2') }}.
+            {{
+              $t("externalResult.contact.popup.intro", {
+                origin: externalOrigin,
+                platform: platformName
+              })
+            }}.
+          </p>
+          <p>
+            {{ $t("externalResult.contact.popup.instructions.line1") }}.<br>
+            {{ $t("externalResult.contact.popup.instructions.line2") }}.
           </p>
         </v-card-text>
         <v-card-text>
@@ -186,7 +193,7 @@
               :loading="loadingSendContact"
               @click="externalContactSend"
             >
-              {{ $t('externalResult.contact.popup.send') }}
+              {{ $t("externalResult.contact.popup.send") }}
             </v-btn>
           </p>
         </v-card-text>
@@ -198,7 +205,7 @@
             text
             @click="dialogExternalContact = false"
           >
-            {{ $t('externalResult.contact.popup.cancel') }}
+            {{ $t("externalResult.contact.popup.cancel") }}
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -208,18 +215,23 @@
 
 <script>
 import maxios from "@utils/maxios";
-import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/carpool/utilities/CarpoolerSummary/";
+import {
+  messages_en,
+  messages_fr,
+  messages_eu,
+  messages_nl
+} from "@translations/components/carpool/utilities/CarpoolerSummary/";
 import CarpoolerIdentity from "./CarpoolerIdentity";
 import CarpoolerContact from "./CarpoolerContact";
 
 export default {
   i18n: {
     messages: {
-      'en': messages_en,
-      'nl': messages_nl,
-      'fr': messages_fr,
-      'eu':messages_eu
-    },
+      en: messages_en,
+      nl: messages_nl,
+      fr: messages_fr,
+      eu: messages_eu
+    }
   },
   components: {
     CarpoolerIdentity,
@@ -267,7 +279,7 @@ export default {
       default: null
     },
     communities: {
-      type: Object,
+      type: Array,
       default: null
     },
     ageDisplay: {
@@ -281,46 +293,67 @@ export default {
     platformName: {
       type: String,
       default: ""
-    },
+    }
   },
   data() {
     return {
       connected: null !== this.user,
       dialogExternalContact: false,
       loadingSendContact: false,
-      content:"",
+      content: "",
       showSendError: false,
       showSendSuccess: false,
-      enabled: (null !== this.communities) ? Object.keys(this.communities).length > 0 : null
+      enabled:
+        null !== this.communities
+          ? Object.keys(this.communities).length > 0
+          : null
     };
   },
   computed: {
     avatarSize() {
       switch (this.$vuetify.breakpoint.name) {
       case "md":
-        return '20';
+        return "20";
       case "lg":
-        return '30';
+        return "30";
       case "xl":
-        return '35';
+        return "35";
       default:
-        return '20';
+        return "20";
       }
     },
-    defaultTextContact(){
+    defaultTextContact() {
+      if (this.user == null) return null;
 
-      if(this.user==null) return null;
-
-      let text = this.$t('externalResult.contact.popup.textarea.content.hello')+" "+this.carpooler.givenName+"\n\n";
-      text += this.$t('externalResult.contact.popup.textarea.content.carpool',{origin:this.origin.addressLocality,destination:this.destination.addressLocality})+".\n";
-      text += this.$t('externalResult.contact.popup.textarea.content.name',{name:this.user.givenName+" "+this.user.shortFamilyName})+"\n";
-      if(this.user.phoneDisplay==1) text += this.$t('externalResult.contact.popup.textarea.content.phone',{phone:this.user.telephone})+".\n";
-      text += this.$t('externalResult.contact.popup.textarea.content.email',{email:this.user.email})+".\n\n";
-      text += this.$t('externalResult.contact.popup.textarea.content.seeya')+" !";
+      let text =
+        this.$t("externalResult.contact.popup.textarea.content.hello") +
+        " " +
+        this.carpooler.givenName +
+        "\n\n";
+      text +=
+        this.$t("externalResult.contact.popup.textarea.content.carpool", {
+          origin: this.origin.addressLocality,
+          destination: this.destination.addressLocality
+        }) + ".\n";
+      text +=
+        this.$t("externalResult.contact.popup.textarea.content.name", {
+          name: this.user.givenName + " " + this.user.shortFamilyName
+        }) + "\n";
+      if (this.user.phoneDisplay == 1)
+        text +=
+          this.$t("externalResult.contact.popup.textarea.content.phone", {
+            phone: this.user.telephone
+          }) + ".\n";
+      text +=
+        this.$t("externalResult.contact.popup.textarea.content.email", {
+          email: this.user.email
+        }) + ".\n\n";
+      text +=
+        this.$t("externalResult.contact.popup.textarea.content.seeya") + " !";
       return text;
     }
   },
-  created(){
+  created() {
     this.content = this.defaultTextContact;
   },
   methods: {
@@ -334,10 +367,10 @@ export default {
         this.$emit("loginOrRegister");
       }
     },
-    externalContactModal(){
+    externalContactModal() {
       this.dialogExternalContact = true;
     },
-    externalContactSend(){
+    externalContactSend() {
       this.loadingSendContact = true;
 
       // ROLE is always passenger for now. See Matchings.vue, we search only driver by RDEX
@@ -349,17 +382,19 @@ export default {
         content: this.content
       };
 
-      maxios.post(this.$t("externalResult.contact.urlSendContact"),params)
+      maxios
+        .post(this.$t("externalResult.contact.urlSendContact"), params)
         .then(response => {
           // console.error(response.data);
           this.loadingSendContact = false;
           this.dialogExternalContact = false;
 
           // Message ok or error
-          (response.data.error) ? this.showSendError = true : this.showSendSuccess = true;
-
+          response.data.error
+            ? (this.showSendError = true)
+            : (this.showSendSuccess = true);
         })
-        .catch(function (error) {
+        .catch(function(error) {
           console.error(error);
         });
     }
