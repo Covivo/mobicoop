@@ -1061,7 +1061,10 @@ export default {
           this.communities = res.data;
           this.loadingCommunity = false;
 
-          if (this.communityId) this.selectedCommunity = this.communities.find(community => community.id === this.communityId);
+          if (this.communityId) {
+            this.selectedCommunity = this.communityId;
+            this.emitEvent();
+          }
         });
     }
   },
