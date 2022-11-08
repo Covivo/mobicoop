@@ -470,7 +470,9 @@ class CarpoolSubscriber implements EventSubscriberInterface
             $returnResult = $ad->getResults()[0]->getResultPassenger()->getReturn();
         }
         $askConcerned = $this->askManager->getAsk($ad->getAskId());
-        $askLinkedConcerned = $this->askManager->getAsk($askConcerned->getAskLinked()->getId());
+        if (!is_null($askConcerned->getAskLinked())) {
+            $askLinkedConcerned = $this->askManager->getAsk($askConcerned->getAskLinked()->getId());
+        }
         $times = [];
 
         if (!in_array((($outwardResult->getMonTime() && $askConcerned->getCriteria()->isMonCheck()) ? $outwardResult->getMonTime()->format('H:i') : 'null').' '.(($returnResult->getMonTime() && $askLinkedConcerned->getCriteria()->isMonCheck()) ? $returnResult->getMonTime()->format('H:i') : 'null'), $times)) {
