@@ -77,8 +77,8 @@
         "error": "Ce numéro de téléphone n'est pas valide"
     },
     "chart": {
-        "text": "J'accepte <a class='primary--text' target='_blank' href='/cgu' aria-label='la charte de la plateforme et sa politique de protection des données lien')</a> la charte de la plateforme et sa politique de protection des données",
-        "required": "Validation of the charter is required"
+      "text": "J'accepte <a class='primary--text' target='_blank' href='/cgu' aria-label='la charte de la plateforme et sa politique de protection des données lien')> la charte de la plateforme et sa politique de protection des données</a>",
+      "required": "Validation of the charter is required"
     },
     "newsSubscription": {
         "text": "I agree to receive news about the service (useful information for carpooling, and new services or new features)"
