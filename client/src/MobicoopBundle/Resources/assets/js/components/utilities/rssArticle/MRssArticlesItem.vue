@@ -38,7 +38,7 @@
           {{ article.description }}
         </p>
         <v-btn
-          :href="$t('feedUrl')"
+          :href="article.link ? article.link : $t('feedUrl')"
           target="_blank"
           rounded
           color="secondary"
