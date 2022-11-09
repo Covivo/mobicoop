@@ -39,7 +39,6 @@ use App\User\Entity\User;
 use App\User\Repository\ReviewRepository;
 use App\User\Service\BlockManager;
 use App\User\Service\ReviewManager;
-use DateTime;
 use Symfony\Component\Security\Core\Security;
 
 /**
@@ -1975,7 +1974,7 @@ class ResultManager
         $rdate->modify('+'.$nbLoop.'days');
 
         // we check if the tested day is the current day : if so we will force the time check to avoid presenting a past carpool
-        $isToday = (new DateTime())->format('Ymd') == $rdate->format('Ymd');
+        $isToday = (new \DateTime())->format('Ymd') == $rdate->format('Ymd');
         ++$nbLoop;
         if ($nbLoop > 8) {
             return null;
@@ -1998,12 +1997,12 @@ class ResultManager
      * Valid the carpool day between a regular and a part of a regular as Request
      * TO : Use the pickup time instead of the driver's start time.
      *
-     * @param int           $day      Day's number
-     * @param Proposal      $proposal The Proposal that is matching
-     * @param bool          $useTime  If we use the time
-     * @param null|DateTime $time     Time of the search if we want to check it
+     * @param int            $day      Day's number
+     * @param Proposal       $proposal The Proposal that is matching
+     * @param bool           $useTime  If we use the time
+     * @param null|\DateTime $time     Time of the search if we want to check it
      */
-    private function getValidCarpoolAsRequest(int $day, Proposal $proposal, bool $useTime = true, DateTime $time = null): ?array
+    private function getValidCarpoolAsRequest(int $day, Proposal $proposal, bool $useTime = true, \DateTime $time = null): ?array
     {
         switch ($day) {
             case 0:
@@ -2175,11 +2174,11 @@ class ResultManager
      * Valid the carpool day between a regular and a part of a regular as Offer
      * TO : Use the pickup time instead of the driver's start time.
      *
-     * @param int           $day      Day's number
-     * @param Proposal      $proposal The Proposal that is matching
-     * @param null|DateTime $time     Time of the search if we want to check it
+     * @param int            $day      Day's number
+     * @param Proposal       $proposal The Proposal that is matching
+     * @param null|\DateTime $time     Time of the search if we want to check it
      */
-    private function getValidCarpoolAsOffer(int $day, Proposal $proposal, DateTime $time = null): ?array
+    private function getValidCarpoolAsOffer(int $day, Proposal $proposal, \DateTime $time = null): ?array
     {
         switch ($day) {
             case 0:
