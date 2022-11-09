@@ -1,1 +1,8 @@
-{}
+{
+    "origin": "Místo odjezdu",
+    "destination": "Místo příjezdu",
+    "refreshRoute": "/refreshToken",
+    "relayPoints": "Bodové relace",
+    "required": "Je vyžadována adresa",
+    "events": "Události"
+}
