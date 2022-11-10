@@ -34,12 +34,12 @@ contact:
   title: Gurekin harremanetan jarri
 journey:
   from_to:
-    title2: ' Ondoko lekura '
-    title1: 'Komisiorik gabeko autokidetza '
+    title2: " Ondoko lekura "
+    title1: "Komisiorik gabeko autokidetza "
   to:
-    title: 'Autokidetza ondoko tokitik iritsiz '
+    title: "Autokidetza ondoko tokitik iritsiz "
   from:
-    title: 'Autokidetzak ondoko tokitik abiatuz '
+    title: "Autokidetzak ondoko tokitik abiatuz "
   cities:
     title: Autokidetzak hirika
 carpool:
@@ -66,3 +66,5 @@ user:
     title: Zure e-mezuaren egiaztatzea
   signup:
     title: Izen ematea
+browserUpdate:
+  language: "fr"
