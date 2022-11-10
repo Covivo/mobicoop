@@ -59,8 +59,7 @@ class AuthManager
         UserAuthAssignmentRepository $userAuthAssignmentRepository,
         TokenStorageInterface $tokenStorage,
         UserManager $userManager,
-        array $modules,
-        bool $communityManagerCanManageEvents
+        array $modules
     ) {
         $this->authItemRepository = $authItemRepository;
         $this->userAuthAssignmentRepository = $userAuthAssignmentRepository;
@@ -68,7 +67,6 @@ class AuthManager
         $this->user = null;
         $this->userManager = $userManager;
         $this->modules = $modules;
-        $this->communityManagerCanManageEvents = $communityManagerCanManageEvents;
     }
 
     /**
