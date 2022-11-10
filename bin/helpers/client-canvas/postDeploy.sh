@@ -84,7 +84,7 @@ then
     fi
 
     # check env files
-    python3 /var/www/$VERSION/$INSTANCE/mobicoop-platform/scripts/checkClientEnv.py -path /var/www/$VERSION/$INSTANCE/mobicoop-platform -env $VERSION_MIGRATE
+    python3 /var/www/$VERSION/$INSTANCE/mobicoop-platform/scripts/checkClientEnv.py --path=/var/www/$VERSION/$INSTANCE/mobicoop-platform --env=$VERSION_MIGRATE
 
     # Migrations platform
     cd /var/www/$VERSION/$INSTANCE/mobicoop-platform/api;
@@ -109,7 +109,7 @@ then
     php bin/console doctrine:migrations:migrate --env=$VERSION_MIGRATE -n;
 
     # Crontab update
-    python3 /var/www/$VERSION/$INSTANCE/scripts/updateCrontab.py -env $VERSION_MIGRATE
+    python3 /var/www/$VERSION/$INSTANCE/scripts/updateCrontab.py --env=$VERSION_MIGRATE
 
     # External Cgu Mango
     EXTERNAL_CGU_DIRECTORY=/var/www/$VERSION/$INSTANCE/public/externalCgu
@@ -197,7 +197,7 @@ else
     fi
 
     # check env files
-    python3 /var/www/$INSTANCE/$VERSION/mobicoop-platform/scripts/checkClientEnv.py -path /var/www/$INSTANCE/$VERSION/mobicoop-platform -env $VERSION_MIGRATE
+    python3 /var/www/$INSTANCE/$VERSION/mobicoop-platform/scripts/checkClientEnv.py --path=/var/www/$INSTANCE/$VERSION/mobicoop-platform --env=$VERSION_MIGRATE
 
     # Migrations platform
     cd /var/www/$INSTANCE/$VERSION/mobicoop-platform/api;
@@ -222,7 +222,7 @@ else
     php bin/console doctrine:migrations:migrate --env=$VERSION_MIGRATE -n;
 
     # Crontab update
-    python3 /var/www/$INSTANCE/$VERSION/scripts/updateCrontab.py -env $VERSION_MIGRATE
+    python3 /var/www/$INSTANCE/$VERSION/scripts/updateCrontab.py --env=$VERSION_MIGRATE
 
     # External Cgu Mango
     EXTERNAL_CGU_DIRECTORY=/var/www/$INSTANCE/$VERSION/public/externalCgu

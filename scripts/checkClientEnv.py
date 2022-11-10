@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 # Copyright (c) 2020, MOBICOOP. All rights reserved.
 # This project is dual licensed under AGPL and proprietary licence.
@@ -20,59 +20,40 @@
 # LICENSE
 # #######################################
 
-"""
+import os.path
+import argparse
+
+script_absolute_path = os.path.dirname(os.path.realpath(__file__))
+platform_path = os.path.abspath(script_absolute_path
+                                + "/../mobicoop-platform")
+
+parser = argparse.ArgumentParser(
+  description='''\
 Dotenv instance checker
 =======================
-
 This script allows to check the (many) dotenv files of an instance of Mobicoop-platform.
 It must be launched from the root directory of the instance.
 It does the following :
 
-    1. check that all bundle client .env keys are present in instance .env, if not it copies the missing keys with default values
+    1. check that all bundle client .env keys are present in instance .env,\
+ if not it copies the missing keys with default values
     2. identify the duplicate keys in local .env (instance, bundle api)
     3. identify unnecessary local .env keys
-
-Parameters
-----------
-    -h :
-        This help
-    -path <platform_path> : str, optional
-        The absolute path to the mobicoop platform (default : absolute path of *current_script_path*/../mobicoop-platform)
-    -env <env> : str, optional
-        The env to check : dev, test or prod (default : dev)
-    -dry :
-        Show information only (no append file)
-"""
-
-import os.path
-import sys
-
-script_absolute_path = os.path.dirname(os.path.realpath(__file__))
-platform_path = os.path.abspath(script_absolute_path+"/../mobicoop-platform")
-dry = False
-env = "dev"
-
+''',
+  formatter_class=argparse.RawDescriptionHelpFormatter
+)
+parser.add_argument('-p', '--path', default=platform_path,
+                    help='The absolute path to the mobicoop platform')
+parser.add_argument('-e', '--env', choices=('test', 'dev', 'prod'),
+     default='dev', help='The env to check: dev, test or prod (default: dev)')
+parser.add_argument('--dry', help='Show information only (no append file)',
+                    action='store_true')
 # read arguments
-if len(sys.argv)>1:
-    if (len(sys.argv)>7):
-        print("Wrong number of arguments !")
-        exit()
-    pos = 1
-    args = len(sys.argv) - 1
-    while (args >= pos):
-        if sys.argv[pos] == "-h":
-            print(__doc__)
-            exit()
-        elif sys.argv[pos] == "-path":
-            platform_path = sys.argv[pos+1]
-        elif sys.argv[pos] == "-env":
-            env = sys.argv[pos+1]
-        elif sys.argv[pos] == "-dry":
-            dry = True
-        pos = pos + 1
+args = parser.parse_args()
 
-client_path = platform_path+"/client/"
-api_path = platform_path+"/api/"
+env = args.env
+client_path = args.path + "/client/"
+api_path = args.path + "/api/"
 
 
 def env_file_to_dict(file, check_duplicates = False):
@@ -155,7 +136,7 @@ differences = 0
 for key in dict_client:
     if key not in dict_instance.keys():
         print ("Key \033[1;37;40m"+key+"\033[0;37;40m not found !")
-        if not dry:
+        if not args.dry:
             print("=> adding it with default value : "+dict_client.get(key))
             differences = differences + 1
             dotenv_instance.write("\n"+key+'='+dict_client.get(key))
