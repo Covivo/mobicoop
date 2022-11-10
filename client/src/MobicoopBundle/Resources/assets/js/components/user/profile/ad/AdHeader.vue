@@ -20,7 +20,6 @@
         <v-icon>mdi-close-circle-outline</v-icon>
       </v-btn>
     </v-snackbar>
-
     <v-row :class="paused ? 'warning' : ''">
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
@@ -96,17 +95,6 @@
         cols="3"
         class="text-right"
       >
-        <v-btn
-          v-if="isPausable && !isArchived && paused"
-          class="success my-1"
-          icon
-          :loading="loading"
-          @click="pauseAd"
-        >
-          <v-icon class="white--text">
-            mdi-play
-          </v-icon>
-        </v-btn>
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-btn
@@ -128,7 +116,7 @@
               </v-icon>
             </v-btn>
           </template>
-          <span> "POUBELLE" </span>
+          <span> {{ $t("ads.tooltips.delete") }} </span>
         </v-tooltip>
 
         <v-tooltip bottom>
@@ -146,20 +134,47 @@
               </v-icon>
             </v-btn>
           </template>
-          <span> "oui " </span>
+          <span> {{ $t("ads.tooltips.update") }} </span>
         </v-tooltip>
 
-        <v-btn
-          v-if="isPausable && !isArchived && !paused"
-          class="secondary my-1"
-          icon
-          :loading="loading"
-          @click="pauseAd"
+        <v-tooltip
+          v-if="isPausable && !isArchived && paused"
+          bottom
         >
-          <v-icon class="white--text">
-            mdi-pause
-          </v-icon>
-        </v-btn>
+          <template v-slot:activator="{ on }">
+            <v-btn
+              class="success my-1"
+              icon
+              :loading="loading"
+              @click="pauseAd"
+              v-on="on"
+            >
+              <v-icon class="white--text">
+                mdi-play
+              </v-icon>
+            </v-btn>
+          </template>
+          <span>{{ $t("ads.tooltips.play") }}</span>
+        </v-tooltip>
+        <v-tooltip
+          v-if="isPausable && !isArchived && !paused"
+          bottom
+        >
+          <template v-slot:activator="{ on }">
+            <v-btn
+              class="secondary my-1"
+              icon
+              :loading="loading"
+              v-on="on"
+              @click="pauseAd"
+            >
+              <v-icon class="white--text">
+                mdi-pause
+              </v-icon>
+            </v-btn>
+          </template>
+          <span>{{ $t("ads.tooltips.pause") }}</span>
+        </v-tooltip>
       </v-col>
       <v-col
         v-else-if="paymentStatus !== null"
@@ -381,7 +396,6 @@ export default {
           }
         })
         .then(res => {
-          console.error(res.data);
           if (res.data && res.data.message == "error") {
             this.alert = {
               type: "warning",
