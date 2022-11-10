@@ -2,7 +2,13 @@
   <v-container class="py-0">
     <v-snackbar
       v-model="snackbar"
-      :color="(alert.type === 'error')?'error':(alert.type === 'warning') ? 'warning' : 'success'"
+      :color="
+        alert.type === 'error'
+          ? 'error'
+          : alert.type === 'warning'
+            ? 'warning'
+            : 'success'
+      "
       top
     >
       {{ alert.message }}
@@ -15,7 +21,7 @@
       </v-btn>
     </v-snackbar>
 
-    <v-row :class="paused?'warning':''">
+    <v-row :class="paused ? 'warning' : ''">
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
           <v-icon
@@ -26,7 +32,7 @@
             mdi-car
           </v-icon>
         </template>
-        <span> {{ $t('ads.tooltips.driver') }} </span>
+        <span> {{ $t("ads.tooltips.driver") }} </span>
       </v-tooltip>
       <v-tooltip
         v-if="isPassenger && isDriver"
@@ -48,7 +54,7 @@
             mdi-car
           </v-icon>
         </template>
-        <span>{{ $t('ads.tooltips.driverOrPassenger') }}</span>
+        <span>{{ $t("ads.tooltips.driverOrPassenger") }}</span>
       </v-tooltip>
       <v-divider
         v-if="isDriver && isPassenger"
@@ -64,7 +70,7 @@
             mdi-walk
           </v-icon>
         </template>
-        <span>{{ $t('ads.tooltips.passenger') }}</span>
+        <span>{{ $t("ads.tooltips.passenger") }} </span>
       </v-tooltip>
       <v-spacer />
       <v-col
@@ -76,13 +82,13 @@
           v-if="isPausable && !isArchived && paused && !loading"
           class="white--text font-weight-bold my-3"
         >
-          {{ $t('pause.info') }}
+          {{ $t("pause.info") }}
         </p>
         <p
           v-if="isSolidaryExclusive"
           class="text-left font-weight-bold my-3"
         >
-          {{ $t('solidary.exclusive') }}
+          {{ $t("solidary.exclusive") }}
         </p>
       </v-col>
       <v-col
@@ -101,30 +107,48 @@
             mdi-play
           </v-icon>
         </v-btn>
-        <v-btn
-          class="secondary my-1"
-          :class="isArchived ? 'mr-1' : ''"
-          icon
-          :loading="loading"
-          @click="hasAcceptedAsk ? activeAcceptedAskDialog() : hasAsk ? activeAskDialog() : activeBaseDialog()"
-        >
-          <v-icon
-            class="white--text"
-          >
-            mdi-delete-outline
-          </v-icon>
-        </v-btn>
-        <v-btn
-          v-if="!isArchived"
-          class="secondary my-1"
-          icon
-          :loading="loading"
-          @click="updateAd"
-        >
-          <v-icon class="white--text">
-            mdi-pencil
-          </v-icon>
-        </v-btn>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-btn
+              class="secondary my-1"
+              :class="isArchived ? 'mr-1' : ''"
+              icon
+              :loading="loading"
+              v-on="on"
+              @click="
+                hasAcceptedAsk
+                  ? activeAcceptedAskDialog()
+                  : hasAsk
+                    ? activeAskDialog()
+                    : activeBaseDialog()
+              "
+            >
+              <v-icon class="white--text">
+                mdi-delete-outline
+              </v-icon>
+            </v-btn>
+          </template>
+          <span> "POUBELLE" </span>
+        </v-tooltip>
+
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-btn
+              v-if="!isArchived"
+              class="secondary my-1"
+              icon
+              :loading="loading"
+              @click="updateAd"
+              v-on="on"
+            >
+              <v-icon class="white--text">
+                mdi-pencil
+              </v-icon>
+            </v-btn>
+          </template>
+          <span> "oui " </span>
+        </v-tooltip>
+
         <v-btn
           v-if="isPausable && !isArchived && !paused"
           class="secondary my-1"
@@ -138,7 +162,7 @@
         </v-btn>
       </v-col>
       <v-col
-        v-else-if="paymentStatus!==null"
+        v-else-if="paymentStatus !== null"
         class="text-right"
       >
         <AdPayment
@@ -202,16 +226,21 @@
 <script>
 import maxios from "@utils/maxios";
 import formData from "../../../../utils/request";
-import AdPayment from '@components/user/profile/ad/AdPayment.vue';
-import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/profile/ad/AdHeader/";
+import AdPayment from "@components/user/profile/ad/AdPayment.vue";
+import {
+  messages_en,
+  messages_fr,
+  messages_eu,
+  messages_nl
+} from "@translations/components/user/profile/ad/AdHeader/";
 
 export default {
   i18n: {
     messages: {
-      'en': messages_en,
-      'nl': messages_nl,
-      'fr': messages_fr,
-      'eu':messages_eu
+      en: messages_en,
+      nl: messages_nl,
+      fr: messages_fr,
+      eu: messages_eu
     }
   },
   components: {
@@ -281,9 +310,9 @@ export default {
     paymentElectronicActive: {
       type: Boolean,
       default: false
-    },
+    }
   },
-  data () {
+  data() {
     return {
       loading: false,
       snackbar: false,
@@ -299,40 +328,46 @@ export default {
       },
       deleteMessage: "",
       paused: this.isPaused
-    }
+    };
   },
   methods: {
-    deleteAd () {
+    deleteAd() {
       this.resetAlert();
       const self = this;
       this.loading = true;
-      maxios.delete(this.$t('delete.route'), {
-        data: {
-          adId: this.adId,
-          deletionMessage: this.deleteMessage
-        }
-      })
-        .then(function (response) {
-          self.$emit('ad-deleted', self.isArchived, self.adId, self.$t("delete.success"));
+      maxios
+        .delete(this.$t("delete.route"), {
+          data: {
+            adId: this.adId,
+            deletionMessage: this.deleteMessage
+          }
         })
-        .catch(function (error) {
+        .then(function(response) {
+          self.$emit(
+            "ad-deleted",
+            self.isArchived,
+            self.adId,
+            self.$t("delete.success")
+          );
+        })
+        .catch(function(error) {
           self.alert = {
             type: "error",
             message: self.$t("delete.error")
           };
         })
-        .finally(function () {
+        .finally(function() {
           if (self.alert.message.length > 0) {
             self.snackbar = true;
           }
           self.loading = false;
           self.dialogActive = false;
-        })
+        });
     },
-    updateAd () {
-      formData(this.$t('update.route', {id : this.adId}), null, 'GET');
+    updateAd() {
+      formData(this.$t("update.route", { id: this.adId }), null, "GET");
     },
-    pauseAd () {
+    pauseAd() {
       this.paused = !this.paused;
       this.loading = true;
       let ad = {
@@ -340,31 +375,33 @@ export default {
         paused: this.paused
       };
       maxios
-        .put(this.$t('update.route', {id : this.adId}), ad,
-          {
-            headers:{
-              'content-type': 'application/json'
-            }
-          })
+        .put(this.$t("update.route", { id: this.adId }), ad, {
+          headers: {
+            "content-type": "application/json"
+          }
+        })
         .then(res => {
           console.error(res.data);
-          if (res.data && res.data.message == 'error') {
+          if (res.data && res.data.message == "error") {
             this.alert = {
               type: "warning",
               message: this.$t("pause.error.antifraud")
             };
             this.paused = !this.paused;
-          }
-          else if (res.data && res.data.result.id) {
+          } else if (res.data && res.data.result.id) {
             this.alert = {
               type: "success",
-              message: res.data.result.paused ? this.$t("pause.success.pause") : this.$t("pause.success.unpause")
+              message: res.data.result.paused
+                ? this.$t("pause.success.pause")
+                : this.$t("pause.success.unpause")
             };
-            this.$emit('pause-ad', res.data.result.paused);
+            this.$emit("pause-ad", res.data.result.paused);
           } else {
             this.alert = {
               type: "error",
-              message: this.paused ? this.$t("pause.error.pause") : this.$t("pause.error.unpause")
+              message: this.paused
+                ? this.$t("pause.error.pause")
+                : this.$t("pause.error.unpause")
             };
             this.paused = !this.paused;
           }
@@ -376,42 +413,40 @@ export default {
       this.alert = {
         type: "success",
         message: ""
-      }
+      };
     },
-    activeBaseDialog () {
+    activeBaseDialog() {
       this.deleteMessage = "";
       this.dialog = {
-        title: this.$t('delete.dialog.base.title'),
-        content: this.$t('delete.dialog.base.text'),
+        title: this.$t("delete.dialog.base.title"),
+        content: this.$t("delete.dialog.base.text"),
         textarea: false
       };
       this.dialogActive = true;
     },
-    activeAskDialog () {
+    activeAskDialog() {
       this.deleteMessage = "";
       this.dialog = {
-        title: this.$t('delete.dialog.pending.title'),
-        content: this.$t('delete.dialog.pending.text'),
+        title: this.$t("delete.dialog.pending.title"),
+        content: this.$t("delete.dialog.pending.text"),
         textarea: true
       };
       this.dialogActive = true;
     },
-    activeAcceptedAskDialog () {
+    activeAcceptedAskDialog() {
       this.deleteMessage = "";
       this.dialog = {
-        title: this.$t('delete.dialog.accepted.title'),
-        content: this.$t('delete.dialog.accepted.text'),
+        title: this.$t("delete.dialog.accepted.title"),
+        content: this.$t("delete.dialog.accepted.text"),
         textarea: true
       };
       this.dialogActive = true;
     },
     activePanel() {
-      this.$emit('activePanel');
+      this.$emit("activePanel");
     }
-  },
-}
+  }
+};
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>
