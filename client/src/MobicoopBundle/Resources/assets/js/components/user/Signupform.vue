@@ -416,7 +416,10 @@
                   required
                 >
                   <template v-slot:label>
-                    <div v-html="$t('chart.text')" />
+                    <div
+                      @click.stop
+                      v-html="$t('chart.text')"
+                    />
                   </template>
                 </v-checkbox>
 
