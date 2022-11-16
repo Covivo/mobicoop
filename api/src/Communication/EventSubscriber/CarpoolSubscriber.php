@@ -471,7 +471,9 @@ class CarpoolSubscriber implements EventSubscriberInterface
         }
         $askConcerned = $this->askManager->getAsk($ad->getAskId());
 
-        $askLinkedConcerned = $askConcerned->getAskLinked() ? $this->askManager->getAsk($askConcerned->getAskLinked()->getId()) : null;
+        if (!is_null($askConcerned->getAskLinked())) {
+            $askLinkedConcerned = $this->askManager->getAsk($askConcerned->getAskLinked()->getId());
+        }
         $times = [];
 
         if (!in_array((($outwardResult->getMonTime() && $askConcerned->getCriteria()->isMonCheck()) ? $outwardResult->getMonTime()->format('H:i') : 'null').' '.((!is_null($askLinkedConcerned) && $returnResult->getMonTime() && $askLinkedConcerned->getCriteria()->isMonCheck()) ? $returnResult->getMonTime()->format('H:i') : 'null'), $times)) {
