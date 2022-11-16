@@ -59,8 +59,7 @@ class AuthManager
         UserAuthAssignmentRepository $userAuthAssignmentRepository,
         TokenStorageInterface $tokenStorage,
         UserManager $userManager,
-        array $modules,
-        bool $communityManagerCanManageEvents
+        array $modules
     ) {
         $this->authItemRepository = $authItemRepository;
         $this->userAuthAssignmentRepository = $userAuthAssignmentRepository;
@@ -68,7 +67,6 @@ class AuthManager
         $this->user = null;
         $this->userManager = $userManager;
         $this->modules = $modules;
-        $this->communityManagerCanManageEvents = $communityManagerCanManageEvents;
     }
 
     /**
@@ -190,17 +188,6 @@ class AuthManager
         return $permission;
     }
 
-    public function specialFilters(array $authItems): array
-    {
-        foreach ($authItems as $key => $authItemName) {
-            if ('event_manage' == $authItemName && !$this->communityManagerCanManageEvents) {
-                unset($authItems[$key]);
-            }
-        }
-
-        return $authItems;
-    }
-
     /**
      * Return the assigned AuthItem of the current user.
      *
@@ -248,8 +235,6 @@ class AuthManager
                 $this->getChildrenNames($userAssignment->getAuthItem(), $type, $authItems, $withId);
             }
         }
-
-        $authItems = $this->specialFilters($authItems);
 
         return $withId ? array_map('unserialize', array_unique(array_map('serialize', $authItems))) : array_unique($authItems);
     }
