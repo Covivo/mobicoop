@@ -23,6 +23,7 @@
 import os.path
 import argparse
 import collections
+import string
 
 script_absolute_path = os.path.dirname(os.path.realpath(__file__))
 platform_path = os.path.abspath(script_absolute_path
@@ -140,22 +141,27 @@ dict_client = env_file_to_dict(client_path+".env")
 # create instance dictionary
 dict_instance = env_file_to_dict(".env")
 
-# open instance .env file for append
-dotenv_instance = open(".env", "a+")
-
 # check for differences
-differences = 0
-for key in dict_client:
-    if key not in dict_instance.keys():
-        print ("Key \033[1;37;40m"+key+"\033[0;37;40m not found !")
-        if not args.dry:
-            print("=> adding it with default value : "+dict_client.get(key))
-            differences = differences + 1
-            dotenv_instance.write("\n"+key+'='+dict_client.get(key))
-if differences == 0:
-    print("No differences found")
+key_not_found = string.Template(
+  "Key \033[1;37;40m$key\033[0;37;40m not found!")
 
-dotenv_instance.close()
+if args.dry:
+    differences = False
+    for key in filter(lambda key: key not in dict_instance, dict_client):
+        print(key_not_found.substitute({'key': key}))
+        differences = True
+    if not differences:
+        print("No differences found")
+else:
+    differences = False
+    with open(".env", mode="a+", encoding="utf-8") as dotenv_instance:
+        for key in filter(lambda key: key not in dict_instance, dict_client):
+            print(key_not_found.substitute({'key': key}))
+            print(f"=> adding it with default value: {dict_client[key]}")
+            dotenv_instance.write(f"\n{key}={dict_client[key]}")
+            differences = True
+    if not differences:
+        print("No differences found")
 
 ##############################
 # 2. identify duplicate keys #
