@@ -169,11 +169,11 @@ class DataProvider
                     switch ($bodyType) {
                         case self::BODY_TYPE_JSON: $options[self::BODY_TYPE_JSON] = $body;
 
-break;
+                            break;
 
                         case self::BODY_TYPE_FORM_PARAMS: $options[self::BODY_TYPE_FORM_PARAMS] = $body;
 
-break;
+                            break;
 
                         default: $options[self::BODY_TYPE_JSON] = $body;
                     }
@@ -230,11 +230,11 @@ break;
                     switch ($bodyType) {
                         case self::BODY_TYPE_JSON: $options[self::BODY_TYPE_JSON] = $body;
 
-break;
+                            break;
 
                         case self::BODY_TYPE_FORM_PARAMS: $options[self::BODY_TYPE_FORM_PARAMS] = $body;
 
-break;
+                            break;
 
                         default: $options[self::BODY_TYPE_JSON] = $body;
                     }

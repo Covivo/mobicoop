@@ -19,357 +19,413 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Carpool\Entity;
 
-use Symfony\Component\Serializer\Annotation\Groups;
 use App\Geography\Entity\Address;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * Carpooling : result item for an ad.
  */
 class ResultItem
 {
-    const DEFAULT_ID = 999999999999;
-    
+    public const DEFAULT_ID = 999999999999;
+
     /**
-     * @var int The id of this result item.
+     * @var int the id of this result item
      */
     private $id;
 
     /**
-     * @var int The matching proposal id.
+     * @var int the matching proposal id
+     *
      * @Groups("results")
      */
     private $proposalId;
 
     /**
-     * @var int The matching id if it has already been persisted.
+     * @var int the matching id if it has already been persisted
+     *
      * @Groups("results")
      */
     private $matchingId;
 
     /**
-     * @var \DateTimeInterface The computed date for a punctual journey for the requester.
+     * @var \DateTimeInterface the computed date for a punctual journey for the requester
+     *
      * @Groups("results")
      */
     private $date;
 
     /**
-     * @var \DateTimeInterface The computed time for a punctual journey for the requester.
+     * @var \DateTimeInterface the computed time for a punctual journey for the requester
+     *
      * @Groups("results")
      */
     private $time;
 
     /**
-     * @var int Accepted margin duration for punctual journey in seconds.
+     * @var int accepted margin duration for punctual journey in seconds
+     *
      * @Groups("results")
      */
     private $marginDuration;
 
     /**
-     * @var \DateTimeInterface The min date for a regular journey.
+     * @var \DateTimeInterface the min date for a regular journey
+     *
      * @Groups("results")
      */
     private $fromDate;
 
     /**
-     * @var \DateTimeInterface The max date for a regular journey.
+     * @var \DateTimeInterface the max date for a regular journey
+     *
      * @Groups("results")
      */
     private $toDate;
 
     /**
-     * @var Address The origin address (the origin of the requester).
+     * @var Address the origin address (the origin of the requester)
+     *
      * @Groups("results")
      */
     private $origin;
 
     /**
-     * @var Address The destination address (the destination of the requester).
+     * @var Address the destination address (the destination of the requester)
+     *
      * @Groups("results")
      */
     private $destination;
 
     /**
-     * @var Address The origin address of the driver.
+     * @var Address the origin address of the driver
+     *
      * @Groups("results")
      */
     private $originDriver;
 
     /**
-     * @var Address The destination address of the driver.
+     * @var Address the destination address of the driver
+     *
      * @Groups("results")
      */
     private $destinationDriver;
 
     /**
-     * @var Address The origin address of the passenger.
+     * @var Address the origin address of the passenger
+     *
      * @Groups("results")
      */
     private $originPassenger;
 
     /**
-     * @var Address The destination address of the passenger.
+     * @var Address the destination address of the passenger
+     *
      * @Groups("results")
      */
     private $destinationPassenger;
 
     /**
-     * @var array The waypoints of the journey.
+     * @var array the waypoints of the journey
+     *
      * @Groups("results")
      */
     private $waypoints;
 
     /**
-     * @var boolean|null The journey is available on mondays (if regular).
+     * @var null|bool the journey is available on mondays (if regular)
+     *
      * @Groups("results")
      */
     private $monCheck;
 
     /**
-     * @var boolean|null The journey is available on tuesdays (if regular).
+     * @var null|bool the journey is available on tuesdays (if regular)
+     *
      * @Groups("results")
      */
     private $tueCheck;
 
     /**
-     * @var boolean|null The journey is available on wednesdays (if regular).
+     * @var null|bool the journey is available on wednesdays (if regular)
+     *
      * @Groups("results")
      */
     private $wedCheck;
 
     /**
-     * @var boolean|null The journey is available on thursdays (if regular).
+     * @var null|bool the journey is available on thursdays (if regular)
+     *
      * @Groups("results")
      */
     private $thuCheck;
 
     /**
-     * @var boolean|null The journey is available on fridays (if regular).
+     * @var null|bool the journey is available on fridays (if regular)
+     *
      * @Groups("results")
      */
     private $friCheck;
 
     /**
-     * @var boolean|null The journey is available on saturdays (if regular).
+     * @var null|bool the journey is available on saturdays (if regular)
+     *
      * @Groups("results")
      */
     private $satCheck;
 
     /**
-     * @var boolean|null The journey is available on sundays (if regular).
+     * @var null|bool the journey is available on sundays (if regular)
+     *
      * @Groups("results")
      */
     private $sunCheck;
 
     /**
-     * @var \DateTimeInterface|null Mondays computed starting time (if regular).
+     * @var null|\DateTimeInterface mondays computed starting time (if regular)
+     *
      * @Groups("results")
      */
     private $monTime;
 
     /**
-     * @var \DateTimeInterface|null Tuesdays computed starting time (if regular).
+     * @var null|\DateTimeInterface tuesdays computed starting time (if regular)
+     *
      * @Groups("results")
      */
     private $tueTime;
 
     /**
-     * @var \DateTimeInterface|null Wednesdays computed starting time (if regular).
+     * @var null|\DateTimeInterface wednesdays computed starting time (if regular)
+     *
      * @Groups("results")
      */
     private $wedTime;
 
     /**
-     * @var \DateTimeInterface|null Thursdays computed starting time (if regular).
+     * @var null|\DateTimeInterface thursdays computed starting time (if regular)
+     *
      * @Groups("results")
      */
     private $thuTime;
 
     /**
-     * @var \DateTimeInterface|null Fridays computed starting time (if regular).
+     * @var null|\DateTimeInterface fridays computed starting time (if regular)
+     *
      * @Groups("results")
      */
     private $friTime;
 
     /**
-     * @var \DateTimeInterface|null Saturdays computed starting time (if regular).
+     * @var null|\DateTimeInterface saturdays computed starting time (if regular)
+     *
      * @Groups("results")
      */
     private $satTime;
 
     /**
-     * @var \DateTimeInterface|null Sundays computed starting time (if regular).
+     * @var null|\DateTimeInterface sundays computed starting time (if regular)
+     *
      * @Groups("results")
      */
     private $sunTime;
 
     /**
-     * @var int Accepted margin for monday starting time in seconds.
+     * @var int accepted margin for monday starting time in seconds
+     *
      * @Groups("results")
      */
     private $monMarginDuration;
 
     /**
-     * @var int Accepted margin for tuesday starting time in seconds.
+     * @var int accepted margin for tuesday starting time in seconds
+     *
      * @Groups("results")
      */
     private $tueMarginDuration;
 
     /**
-     * @var int Accepted margin for wednesday starting time in seconds.
+     * @var int accepted margin for wednesday starting time in seconds
+     *
      * @Groups("results")
      */
     private $wedMarginDuration;
 
     /**
-     * @var int Accepted margin for thurdays starting time in seconds.
+     * @var int accepted margin for thurdays starting time in seconds
+     *
      * @Groups("results")
      */
     private $thuMarginDuration;
 
     /**
-     * @var int Accepted margin for friday starting time in seconds.
+     * @var int accepted margin for friday starting time in seconds
+     *
      * @Groups("results")
      */
     private $friMarginDuration;
 
     /**
-     * @var int Accepted margin for saturday starting time in seconds.
+     * @var int accepted margin for saturday starting time in seconds
+     *
      * @Groups("results")
      */
     private $satMarginDuration;
 
     /**
-     * @var int Accepted margin for sunday starting time in seconds.
+     * @var int accepted margin for sunday starting time in seconds
+     *
      * @Groups("results")
      */
     private $sunMarginDuration;
 
     /**
-     * @var boolean|null Multiple times are used for the days.
+     * @var null|bool multiple times are used for the days
+     *
      * @Groups("results")
      */
     private $multipleTimes;
 
     /**
-     * @var string The price by km asked by the driver.
+     * @var string the price by km asked by the driver
+     *
      * @Groups("results")
      */
     private $driverPriceKm;
 
     /**
-     * @var string The price by km proposed by the passenger.
+     * @var string the price by km proposed by the passenger
+     *
      * @Groups("results")
      */
     private $passengerPriceKm;
 
     /**
-     * @var string The original price asked by the driver for his trip.
+     * @var string the original price asked by the driver for his trip
+     *
      * @Groups("results")
      */
     private $driverOriginalPrice;
 
     /**
-     * @var string The original price proposed by the passenger for his trip.
+     * @var string the original price proposed by the passenger for his trip
+     *
      * @Groups("results")
      */
     private $passengerOriginalPrice;
 
     /**
-     * @var string The computed price for the carpool.
+     * @var string the computed price for the carpool
+     *
      * @Groups("results")
      */
     private $computedPrice;
 
     /**
-     * @var string The rounded computed price.
+     * @var string the rounded computed price
+     *
      * @Groups("results")
      */
     private $computedRoundedPrice;
 
     /**
-     * @var int The driver original distance in metres.
+     * @var null|int the driver original distance in metres
+     *
      * @Groups("results")
      */
     private $originalDistance;
-    
+
     /**
-     * @var int The accepted detour distance in metres.
+     * @var null|int the accepted detour distance in metres
+     *
      * @Groups("results")
      */
     private $acceptedDetourDistance;
-    
+
     /**
-     * @var int The new distance in metres.
+     * @var null|int the new distance in metres
+     *
      * @Groups("results")
      */
     private $newDistance;
-    
+
     /**
-     * @var int The detour distance in metres.
+     * @var null|int the detour distance in metres
+     *
      * @Groups("results")
      */
     private $detourDistance;
-    
+
     /**
-     * @var int The detour distance in percentage of the original distance.
+     * @var null|int the detour distance in percentage of the original distance
+     *
      * @Groups("results")
      */
     private $detourDistancePercent;
-    
+
     /**
-     * @var int The original duration in seconds.
+     * @var null|int the original duration in seconds
+     *
      * @Groups("results")
      */
     private $originalDuration;
-    
+
     /**
-     * @var int The accepted detour duration in seconds.
+     * @var null|int the accepted detour duration in seconds
+     *
      * @Groups("results")
      */
     private $acceptedDetourDuration;
-    
+
     /**
-     * @var int The new duration in seconds.
+     * @var null|int the new duration in seconds
+     *
      * @Groups("results")
      */
     private $newDuration;
-    
+
     /**
-     * @var int The detour duration in seconds.
+     * @var null|int the detour duration in seconds
+     *
      * @Groups("results")
      */
     private $detourDuration;
 
     /**
-     * @var int The detour duration in percent of the original duration.
+     * @var null|int the detour duration in percent of the original duration
+     *
      * @Groups("results")
      */
     private $detourDurationPercent;
-    
+
     /**
-     * @var int The common distance in metres (=passenger distance).
+     * @var null|int the common distance in metres (=passenger distance)
+     *
      * @Groups("results")
      */
     private $commonDistance;
 
     /**
-     * @var boolean If the ResultItem has a initiated Ask
+     * @var bool If the ResultItem has a initiated Ask
+     *
      * @Groups("results")
      */
     private $initiatedAsk;
 
     /**
-     * @var boolean If the ResultItem has a pending Ask
+     * @var bool If the ResultItem has a pending Ask
+     *
      * @Groups("results")
      */
     private $pendingAsk;
 
     /**
-     * @var boolean If the ResultItem has an accepted Ask
+     * @var bool If the ResultItem has an accepted Ask
+     *
      * @Groups("results")
      */
     private $acceptedAsk;
@@ -389,11 +445,11 @@ class ResultItem
     {
         return $this->proposalId;
     }
-    
+
     public function setProposalId(?int $proposalId): self
     {
         $this->proposalId = $proposalId;
-        
+
         return $this;
     }
 
@@ -401,11 +457,11 @@ class ResultItem
     {
         return $this->matchingId;
     }
-    
+
     public function setMatchingId(?int $matchingId): self
     {
         $this->matchingId = $matchingId;
-        
+
         return $this;
     }
 
@@ -540,7 +596,7 @@ class ResultItem
 
         return $this;
     }
-    
+
     public function getWaypoints()
     {
         return $this->waypoints;
@@ -549,6 +605,7 @@ class ResultItem
     public function setWaypoints($waypoints): self
     {
         $this->waypoints = $waypoints;
+
         return $this;
     }
 
@@ -641,6 +698,7 @@ class ResultItem
         if ($this->monTime) {
             return \DateTime::createFromFormat('His', $this->monTime->format('His'));
         }
+
         return null;
     }
 
@@ -656,6 +714,7 @@ class ResultItem
         if ($this->tueTime) {
             return \DateTime::createFromFormat('His', $this->tueTime->format('His'));
         }
+
         return null;
     }
 
@@ -671,6 +730,7 @@ class ResultItem
         if ($this->wedTime) {
             return \DateTime::createFromFormat('His', $this->wedTime->format('His'));
         }
+
         return null;
     }
 
@@ -686,6 +746,7 @@ class ResultItem
         if ($this->thuTime) {
             return \DateTime::createFromFormat('His', $this->thuTime->format('His'));
         }
+
         return null;
     }
 
@@ -701,6 +762,7 @@ class ResultItem
         if ($this->friTime) {
             return \DateTime::createFromFormat('His', $this->friTime->format('His'));
         }
+
         return null;
     }
 
@@ -716,6 +778,7 @@ class ResultItem
         if ($this->satTime) {
             return \DateTime::createFromFormat('His', $this->satTime->format('His'));
         }
+
         return null;
     }
 
@@ -731,13 +794,14 @@ class ResultItem
         if ($this->sunTime) {
             return \DateTime::createFromFormat('His', $this->sunTime->format('His'));
         }
+
         return null;
     }
-    
+
     public function setSunTime(?\DateTimeInterface $sunTime): self
     {
         $this->sunTime = $sunTime;
-        
+
         return $this;
     }
 
@@ -745,11 +809,11 @@ class ResultItem
     {
         return $this->monMarginDuration;
     }
-    
+
     public function setMonMarginDuration(?int $monMarginDuration): self
     {
         $this->monMarginDuration = $monMarginDuration;
-        
+
         return $this;
     }
 
@@ -757,11 +821,11 @@ class ResultItem
     {
         return $this->tueMarginDuration;
     }
-    
+
     public function setTueMarginDuration(?int $tueMarginDuration): self
     {
         $this->tueMarginDuration = $tueMarginDuration;
-        
+
         return $this;
     }
 
@@ -769,11 +833,11 @@ class ResultItem
     {
         return $this->wedMarginDuration;
     }
-    
+
     public function setWedMarginDuration(?int $wedMarginDuration): self
     {
         $this->wedMarginDuration = $wedMarginDuration;
-        
+
         return $this;
     }
 
@@ -781,11 +845,11 @@ class ResultItem
     {
         return $this->thuMarginDuration;
     }
-    
+
     public function setThuMarginDuration(?int $thuMarginDuration): self
     {
         $this->thuMarginDuration = $thuMarginDuration;
-        
+
         return $this;
     }
 
@@ -793,11 +857,11 @@ class ResultItem
     {
         return $this->friMarginDuration;
     }
-    
+
     public function setFriMarginDuration(?int $friMarginDuration): self
     {
         $this->friMarginDuration = $friMarginDuration;
-        
+
         return $this;
     }
 
@@ -805,11 +869,11 @@ class ResultItem
     {
         return $this->satMarginDuration;
     }
-    
+
     public function setSatMarginDuration(?int $satMarginDuration): self
     {
         $this->satMarginDuration = $satMarginDuration;
-        
+
         return $this;
     }
 
@@ -817,14 +881,13 @@ class ResultItem
     {
         return $this->sunMarginDuration;
     }
-    
+
     public function setSunMarginDuration(?int $sunMarginDuration): self
     {
         $this->sunMarginDuration = $sunMarginDuration;
-        
+
         return $this;
     }
-
 
     public function hasMultipleTimes(): ?bool
     {
@@ -855,7 +918,7 @@ class ResultItem
         if (($this->isSunCheck() || !$hasTime) && $this->getSunTime()) {
             $time[$this->getSunTime()->format('His')] = 1;
         }
-        $this->multipleTimes = (count($time) == 0 || count($time) > 1);
+        $this->multipleTimes = (0 == count($time) || count($time) > 1);
 
         return $this;
     }
@@ -864,7 +927,7 @@ class ResultItem
     {
         return $this->driverPriceKm;
     }
-    
+
     public function setDriverPriceKm(?string $driverPriceKm)
     {
         $this->driverPriceKm = $driverPriceKm;
@@ -874,7 +937,7 @@ class ResultItem
     {
         return $this->passengerPriceKm;
     }
-    
+
     public function setPassengerPriceKm(?string $passengerPriceKm)
     {
         $this->passengerPriceKm = $passengerPriceKm;
@@ -884,7 +947,7 @@ class ResultItem
     {
         return $this->driverOriginalPrice;
     }
-    
+
     public function setDriverOriginalPrice(?string $driverOriginalPrice)
     {
         $this->driverOriginalPrice = $driverOriginalPrice;
@@ -894,7 +957,7 @@ class ResultItem
     {
         return $this->passengerOriginalPrice;
     }
-    
+
     public function setPassengerOriginalPrice(?string $passengerOriginalPrice)
     {
         $this->passengerOriginalPrice = $passengerOriginalPrice;
@@ -904,7 +967,7 @@ class ResultItem
     {
         return $this->computedPrice;
     }
-    
+
     public function setComputedPrice(?string $computedPrice)
     {
         $this->computedPrice = $computedPrice;
@@ -914,7 +977,7 @@ class ResultItem
     {
         return $this->computedRoundedPrice;
     }
-    
+
     public function setComputedRoundedPrice(?string $computedRoundedPrice)
     {
         $this->computedRoundedPrice = $computedRoundedPrice;
@@ -925,7 +988,7 @@ class ResultItem
         return $this->originalDistance;
     }
 
-    public function setOriginalDistance(int $originalDistance): self
+    public function setOriginalDistance(?int $originalDistance): self
     {
         $this->originalDistance = $originalDistance;
 
@@ -937,7 +1000,7 @@ class ResultItem
         return $this->acceptedDetourDistance;
     }
 
-    public function setAcceptedDetourDistance(int $acceptedDetourDistance): self
+    public function setAcceptedDetourDistance(?int $acceptedDetourDistance): self
     {
         $this->acceptedDetourDistance = $acceptedDetourDistance;
 
@@ -949,7 +1012,7 @@ class ResultItem
         return $this->newDistance;
     }
 
-    public function setNewDistance(int $newDistance): self
+    public function setNewDistance(?int $newDistance): self
     {
         $this->newDistance = $newDistance;
 
@@ -961,7 +1024,7 @@ class ResultItem
         return $this->detourDistance;
     }
 
-    public function setDetourDistance(int $detourDistance): self
+    public function setDetourDistance(?int $detourDistance): self
     {
         $this->detourDistance = $detourDistance;
 
@@ -973,7 +1036,7 @@ class ResultItem
         return $this->detourDistancePercent;
     }
 
-    public function setDetourDistancePercent(int $detourDistancePercent): self
+    public function setDetourDistancePercent(?int $detourDistancePercent): self
     {
         $this->detourDistancePercent = $detourDistancePercent;
 
@@ -985,7 +1048,7 @@ class ResultItem
         return $this->originalDuration;
     }
 
-    public function setOriginalDuration(int $originalDuration): self
+    public function setOriginalDuration(?int $originalDuration): self
     {
         $this->originalDuration = $originalDuration;
 
@@ -997,7 +1060,7 @@ class ResultItem
         return $this->acceptedDetourDuration;
     }
 
-    public function setAcceptedDetourDuration(int $acceptedDetourDuration): self
+    public function setAcceptedDetourDuration(?int $acceptedDetourDuration): self
     {
         $this->acceptedDetourDuration = $acceptedDetourDuration;
 
@@ -1009,7 +1072,7 @@ class ResultItem
         return $this->newDuration;
     }
 
-    public function setNewDuration(int $newDuration): self
+    public function setNewDuration(?int $newDuration): self
     {
         $this->newDuration = $newDuration;
 
@@ -1021,7 +1084,7 @@ class ResultItem
         return $this->detourDuration;
     }
 
-    public function setDetourDuration(int $detourDuration): self
+    public function setDetourDuration(?int $detourDuration): self
     {
         $this->detourDuration = $detourDuration;
 
@@ -1033,7 +1096,7 @@ class ResultItem
         return $this->detourDurationPercent;
     }
 
-    public function setDetourDurationPercent(int $detourDurationPercent): self
+    public function setDetourDurationPercent(?int $detourDurationPercent): self
     {
         $this->detourDurationPercent = $detourDurationPercent;
 
@@ -1045,7 +1108,7 @@ class ResultItem
         return $this->commonDistance;
     }
 
-    public function setCommonDistance(int $commonDistance): self
+    public function setCommonDistance(?int $commonDistance): self
     {
         $this->commonDistance = $commonDistance;
 

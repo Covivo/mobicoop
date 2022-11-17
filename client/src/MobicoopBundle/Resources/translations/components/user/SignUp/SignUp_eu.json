@@ -43,9 +43,7 @@
     },
     "chart": {
         "required": "Itunaren baieztapena beharrezkoa da",
-        "route": "/cgu",
-        "link": "plataformaren ituna eta bere datuen babesteko duen politika",
-        "text": "Onartzen dut "
+        "text": "J'accepte <a class='primary--text' target='_blank' href='/cgu' aria-label='la charte de la plateforme et sa politique de protection des données lien')> la charte de la plateforme et sa politique de protection des données</a>"
     },
     "checkEmail": {
         "error": "Helbide elektroniko hau jadanik erabilia da",

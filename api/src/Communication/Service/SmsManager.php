@@ -24,6 +24,7 @@
 namespace App\Communication\Service;
 
 use App\Communication\Entity\Sms;
+use App\DataProvider\Entity\Response;
 use App\DataProvider\Entity\SmsEnvoiProvider;
 use Psr\Log\LoggerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -56,11 +57,11 @@ class SmsManager
         switch ($smsProvider) {
             case 'smsEnvoi':  $this->smsProvider = new SmsEnvoiProvider($username, $password, $sender);
 
-        break;
+                break;
 
             default:  $this->smsProvider = new SmsEnvoiProvider($username, $password, $sender);
 
-        break;
+                break;
         }
     }
 
@@ -74,7 +75,7 @@ class SmsManager
      *
      * @return string
      */
-    public function send(Sms $sms, $template, $context = [], $lang = 'fr')
+    public function send(Sms $sms, $template, $context = [], $lang = 'fr'): Response
     {
         $sessionLocale = $this->translator->getLocale();
         if (self::LANG == $lang) {
@@ -95,6 +96,6 @@ class SmsManager
         $this->translator->setLocale($sessionLocale);
 
         // to do send sms via smsEnvoi
-        $this->smsProvider->postCollection($sms);
+        return $this->smsProvider->postCollection($sms);
     }
 }

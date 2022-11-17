@@ -22,7 +22,7 @@ then
 
     if [ $VERSION == "prod_test" ]
     then
-        $VERSION="prod"
+        VERSION="prod"
     fi
 
     # check RDEX files
@@ -96,7 +96,7 @@ then
     php bin/console doctrine:migrations:migrate --env=$VERSION_MIGRATE -n;
 
     # Crontab update
-    python3 /var/www/$VERSION/$INSTANCE/scripts/updateCrontab.py -env $VERSION_MIGRATE
+    python3 /var/www/$VERSION/$INSTANCE/scripts/updateCrontab.py --env=$VERSION_MIGRATE
 
     # External Cgu Mango
     EXTERNAL_CGU_DIRECTORY=/var/www/$VERSION/$INSTANCE/client/public/externalCgu
@@ -198,7 +198,7 @@ else
     php bin/console doctrine:migrations:migrate --env=$VERSION_MIGRATE -n;
 
     # Crontab update
-    python3 /var/www/$INSTANCE/$VERSION/scripts/updateCrontab.py -env $VERSION_MIGRATE
+    python3 /var/www/$INSTANCE/$VERSION/scripts/updateCrontab.py --env=$VERSION_MIGRATE
 
     # External Cgu Mango
     EXTERNAL_CGU_DIRECTORY=/var/www/$INSTANCE/$VERSION/client/public/externalCgu

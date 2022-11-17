@@ -32,7 +32,6 @@ use App\Carpool\Event\AdRenewalEvent;
 use App\Carpool\Event\AskAdDeletedEvent;
 use App\Carpool\Event\DriverAskAdDeletedEvent;
 use App\Carpool\Event\DriverAskAdDeletedUrgentEvent;
-use App\Carpool\Event\MatchingNewEvent;
 use App\Carpool\Event\PassengerAskAdDeletedEvent;
 use App\Carpool\Event\PassengerAskAdDeletedUrgentEvent;
 use App\Carpool\Event\ProposalPostedEvent;
@@ -220,18 +219,6 @@ class ProposalManager
                 $actionEvent = new ActionEvent($action, $proposal->getUser());
                 $actionEvent->setProposal($proposal);
                 $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);
-            }
-        }
-
-        // note : we sould not check here for the characteristics of the proposal BEFORE sending the event,
-        // it should be the subscriber that determines on reception wether the event is useful or not...
-        if (!$proposal->isPrivate() && !$proposal->isPaused() && !$proposal->isDynamic()) {
-            $matchings = array_merge($proposal->getMatchingOffers(), $proposal->getMatchingRequests());
-            if ($persist) {
-                foreach ($matchings as $matching) {
-                    $event = new MatchingNewEvent($matching, $proposal->getUser(), $proposal->getType());
-                    $this->eventDispatcher->dispatch(MatchingNewEvent::NAME, $event);
-                }
             }
         }
 

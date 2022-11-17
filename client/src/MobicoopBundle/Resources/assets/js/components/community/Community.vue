@@ -46,7 +46,11 @@
               class="text-center"
             >
               <!-- button if domain validation -->
-              <div v-if="domain == false && isSecured == false && isAccepted == false">
+              <div
+                v-if="
+                  domain == false && isSecured == false && isAccepted == false
+                "
+              >
                 <v-tooltip
                   left
                   color="info"
@@ -119,7 +123,10 @@
                       <v-btn
                         color="secondary"
                         rounded
-                        :disabled="(!publishButtonAlwaysActive && !checkValidation) || !isAccepted"
+                        :disabled="
+                          (!publishButtonAlwaysActive && !checkValidation) ||
+                            !isAccepted
+                        "
                         :loading="loading"
                       >
                         {{ $t("buttons.publish.label") }}
@@ -154,7 +161,11 @@
                       <v-btn
                         color="secondary"
                         rounded
-                        :disabled="(!publishButtonAlwaysActive && !checkValidation) || !isLogged ||!isAccepted"
+                        :disabled="
+                          (!publishButtonAlwaysActive && !checkValidation) ||
+                            !isLogged ||
+                            !isAccepted
+                        "
                         :loading="loading"
                         @click="publish"
                       >
@@ -171,7 +182,11 @@
                   rounded
                   :loading="loading || (checkValidation && isLogged)"
                   :disabled="checkValidation"
-                  @click="isLogged ? joinCommunityDialog = true : loginOrRegisterDialog = true"
+                  @click="
+                    isLogged
+                      ? (joinCommunityDialog = true)
+                      : (loginOrRegisterDialog = true)
+                  "
                 >
                   {{ $t("buttons.join.label") }}
                 </v-btn>
@@ -362,17 +377,22 @@
       :id="community.id"
       :show-dialog="loginOrRegisterDialog"
       type="community"
-      @closeLoginOrRegisterDialog="loginOrRegisterDialog = false "
+      @closeLoginOrRegisterDialog="loginOrRegisterDialog = false"
     />
   </div>
 </template>
 <script>
 import maxios from "@utils/maxios";
-import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/community/Community/";
+import {
+  messages_en,
+  messages_fr,
+  messages_eu,
+  messages_nl
+} from "@translations/components/community/Community/";
 import CommunityMemberList from "@components/community/CommunityMemberList";
 import CommunityInfos from "@components/community/CommunityInfos";
 import Search from "@components/carpool/search/Search";
-import LoginOrRegisterFirst from '@components/utilities/LoginOrRegisterFirst';
+import LoginOrRegisterFirst from "@components/utilities/LoginOrRegisterFirst";
 import CommunityLastUsers from "@components/community/CommunityLastUsers";
 import MMap from "@components/utilities/MMap/MMap";
 import L, { LatLng } from "leaflet";
@@ -388,20 +408,20 @@ export default {
   },
   i18n: {
     messages: {
-      'en': messages_en,
-      'nl': messages_nl,
-      'fr': messages_fr,
-      'eu':messages_eu
-    },
+      en: messages_en,
+      nl: messages_nl,
+      fr: messages_fr,
+      eu: messages_eu
+    }
   },
   props: {
     user: {
       type: Object,
-      default: null,
+      default: null
     },
     geodata: {
       type: Object,
-      default: null,
+      default: null
     },
     geoSearchUrl: {
       type: String,
@@ -409,51 +429,51 @@ export default {
     },
     community: {
       type: Object,
-      default: null,
+      default: null
     },
     urlAltAvatar: {
       type: String,
-      default: null,
+      default: null
     },
     regular: {
       type: Boolean,
-      default: false,
+      default: false
     },
     punctualDateOptional: {
       type: Boolean,
-      default: false,
+      default: false
     },
     mapProvider: {
       type: String,
-      default: "",
+      default: ""
     },
     urlTiles: {
       type: String,
-      default: "",
+      default: ""
     },
     attributionCopyright: {
       type: String,
-      default: "",
+      default: ""
     },
     userCommunityStatus: {
       type: Number,
-      default: -1,
+      default: -1
     },
     isMember: {
       type: Boolean,
-      default: false,
+      default: false
     },
     urlAdmin: {
       type: String,
-      default: null,
+      default: null
     },
     canAccessAdminFromCommunity: {
       type: Boolean,
-      default: false,
+      default: false
     },
     publishButtonAlwaysActive: {
       type: Boolean,
-      default: false,
+      default: false
     },
     directMessage: {
       type: Boolean,
@@ -470,7 +490,7 @@ export default {
     geoCompleteChip: {
       type: Boolean,
       default: false
-    },
+    }
   },
   data() {
     return {
@@ -480,12 +500,12 @@ export default {
           text: "Id",
           align: "left",
           sortable: false,
-          value: "id",
+          value: "id"
         },
         { text: "Nom", value: "familyName" },
-        { text: "Prenom", value: "givenName" },
+        { text: "Prenom", value: "givenName" }
       ],
-      points:null,
+      points: null,
       pointsToMap: [],
       relayPointsMap: [],
       directionWay: [],
@@ -515,9 +535,9 @@ export default {
       selectedOrigin: null
     };
   },
-  computed:{
-    canAdmin(){
-      return this.isCreator || (this.userCommunityStatus==2)
+  computed: {
+    canAdmin() {
+      return this.isCreator || this.userCommunityStatus == 2;
     }
   },
   mounted() {
@@ -525,8 +545,7 @@ export default {
       this.isAccepted =
         this.userCommunityStatus == 1 || this.userCommunityStatus == 2;
       this.askedToJoin = true;
-    }
-    else if(this.isMember){
+    } else if (this.isMember) {
       this.askedToJoin = true;
     }
 
@@ -541,9 +560,9 @@ export default {
     this.getRelayPointsMap();
   },
   methods: {
-    getMapsAds(){
+    getMapsAds() {
       maxios
-        .post(this.$t('mapsAds.url',{'communityId':this.community.id}))
+        .post(this.$t("mapsAds.url", { communityId: this.community.id }))
         .then(res => {
           this.points = res.data.mapsAds;
           this.showCommunityProposals();
@@ -571,10 +590,10 @@ export default {
     },
     getRelayPointsMap() {
       let params = {
-        'communityId': this.community.id
+        communityId: this.community.id
       };
       maxios
-        .post(this.$t("relaypoints.url"),params)
+        .post(this.$t("relaypoints.url"), params)
         .then(res => {
           this.relayPointsMap = res.data;
           // console.log(res.data);
@@ -589,12 +608,23 @@ export default {
       if (this.relayPointsMap.length > 0) {
         this.relayPointsMap.forEach(relayPoint => {
           let icon = null;
-          if(relayPoint.relayPointType){
-            if(relayPoint.relayPointType.icon && relayPoint.relayPointType.icon.url !== ""){
+          if (relayPoint.relayPointType) {
+            if (
+              relayPoint.relayPointType.icon &&
+              relayPoint.relayPointType.icon.url !== ""
+            ) {
               icon = relayPoint.relayPointType.icon.url;
             }
           }
-          this.pointsToMap.push(this.buildRelayPoint(relayPoint.address.latitude,relayPoint.address.longitude,relayPoint.name,relayPoint.address,icon));
+          this.pointsToMap.push(
+            this.buildRelayPoint(
+              relayPoint.address.latitude,
+              relayPoint.address.longitude,
+              relayPoint.name,
+              relayPoint.address,
+              icon
+            )
+          );
         });
       }
       this.$refs.mmap.redrawMap();
@@ -605,9 +635,9 @@ export default {
         maxios
           .post(this.$t("urlCommunityUser"), {
             communityId: this.community.id,
-            userId: this.user.id,
+            userId: this.user.id
           })
-          .then((res) => {
+          .then(res => {
             if (res.data.length > 0) {
               //accepted as user or moderator
               this.isAccepted =
@@ -626,11 +656,11 @@ export default {
       maxios
         .post(this.$t("buttons.join.route", { id: this.community.id }), {
           headers: {
-            "content-type": "application/json",
-          },
+            "content-type": "application/json"
+          }
         })
-        .then((res) => {
-          (res.data.id) ? this.errorUpdate = false : this.errorUpdate = true;
+        .then(res => {
+          res.data.id ? (this.errorUpdate = false) : (this.errorUpdate = true);
           this.askedToJoin = true;
           this.snackbar = true;
           this.textSnackbar = this.errorUpdate
@@ -661,7 +691,7 @@ export default {
           regular: this.regular,
           date: null,
           time: null,
-          ...this.params,
+          ...this.params
         };
         this.post(`${this.$t("buttons.publish.route")}`, lParams);
       } else {
@@ -673,10 +703,10 @@ export default {
       maxios
         .post(this.$t("leaveCommunity.route", { id: this.community.id }), {
           headers: {
-            "content-type": "application/json",
-          },
+            "content-type": "application/json"
+          }
         })
-        .then((res) => {
+        .then(res => {
           this.errorUpdate = res.data.state;
           this.askedToJoin = false;
           this.textSnackbar = this.errorUpdate
@@ -688,8 +718,7 @@ export default {
         });
     },
     showCommunityProposals() {
-
-      if(!this.points){
+      if (!this.points) {
         return;
       }
 
@@ -723,7 +752,7 @@ export default {
             destinationLat: null,
             destinationLon: null,
             carpoolerFirstName: "",
-            carpoolerLastName: "",
+            carpoolerLastName: ""
           };
 
           infosForPopUp.carpoolerFirstName = proposal.carpoolerFirstName;
@@ -737,41 +766,22 @@ export default {
             infosForPopUp.carpoolerLastName +
             "</strong></p>";
 
-          currentProposal.latLngs.push(L.latLng(proposal.origin.latitude, proposal.origin.longitude));
-          currentProposal.latLngs.push(L.latLng(proposal.destination.latitude, proposal.destination.longitude));
+          currentProposal.latLngs.push(
+            L.latLng(proposal.origin.latitude, proposal.origin.longitude)
+          );
+          currentProposal.latLngs.push(
+            L.latLng(
+              proposal.destination.latitude,
+              proposal.destination.longitude
+            )
+          );
           infosForPopUp.origin = proposal.origin.displayLabel[0];
           infosForPopUp.originLat = proposal.origin.latitude;
           infosForPopUp.originLon = proposal.origin.longitude;
-          this.pointsToMap.push(
-            this.buildPoint(
-              proposal.origin.latitude,
-              proposal.origin.longitude,
-              proposal.origin,
-              currentProposal.desc,
-              "",
-              [],
-              [],
-              "<p>" + proposal.origin.displayLabel[0] + "</p>"
-            )
-          );
-
 
           infosForPopUp.destination = proposal.destination.displayLabel[0];
           infosForPopUp.destinationLat = proposal.destination.latitude;
           infosForPopUp.destinationLon = proposal.destination.longitude;
-
-          this.pointsToMap.push(
-            this.buildPoint(
-              proposal.destination.latitude,
-              proposal.destination.longitude,
-              proposal.destination,
-              currentProposal.desc,
-              "",
-              [],
-              [],
-              "<p>" + proposal.destination.displayLabel[0] + "</p>"
-            )
-          );
 
           currentProposal.desc +=
             "<p style='text-align:left;'><strong>" +
@@ -795,13 +805,35 @@ export default {
             "'>" +
             this.$t("map.search.label") +
             "</a></p>";
-
+          currentProposal.desc += "</p>";
           // And now the content of a tooltip (same as popup but without the button)
           currentProposal.title = currentProposal.desc;
+          this.pointsToMap.push(
+            this.buildPoint(
+              proposal.origin.latitude,
+              proposal.origin.longitude,
+              "",
+              proposal.origin.displayLabel[0],
+              "",
+              [],
+              [],
+              "<p>" + currentProposal.desc + "</p>"
+            )
+          );
 
-          // We are closing the two p
-          currentProposal.title += "</p>";
-          currentProposal.desc += "</p>";
+          this.pointsToMap.push(
+            this.buildPoint(
+              proposal.destination.latitude,
+              proposal.destination.longitude,
+              "",
+              proposal.destination.displayLabel[0],
+              "",
+              [],
+              [],
+              "<p>" + currentProposal.desc + "</p>"
+            )
+          );
+
           this.directionWay.push(currentProposal);
         });
       }
@@ -810,7 +842,7 @@ export default {
     buildPoint: function(
       lat,
       lng,
-      address= "", 
+      address = "",
       title = "",
       pictoUrl = "",
       size = [],
@@ -821,42 +853,38 @@ export default {
         title: title,
         latLng: L.latLng(lat, lng),
         icon: {},
-        address:address
+        address: address
       };
 
       if (pictoUrl !== "") {
         point.icon = {
           url: pictoUrl,
           size: size,
-          anchor: anchor,
+          anchor: anchor
         };
       }
 
       if (popupDesc !== "") {
         point.popup = {
           title: title,
-          description: popupDesc,
+          description: popupDesc
         };
       }
       return point;
     },
-    buildRelayPoint: function(
-      lat,lng,title="",
-      address="",
-      icon=null
-    ) {
+    buildRelayPoint: function(lat, lng, title = "", address = "", icon = null) {
       let point = {
-        title:title,
-        latLng:L.latLng(lat, lng),
+        title: title,
+        latLng: L.latLng(lat, lng),
         icon: {},
-        address:address
+        address: address
       };
 
-      if(icon){
+      if (icon) {
         point.icon = {
-          size:[36,42],
-          url:icon
-        }
+          size: [36, 42],
+          url: icon
+        };
       }
       return point;
     },
@@ -879,7 +907,7 @@ export default {
         idRecipient: data.id,
         shortFamilyName: data.shortFamilyName,
         givenName: data.firstName,
-        avatar: data.avatar,
+        avatar: data.avatar
       };
       for (const key in params) {
         if (params.hasOwnProperty(key)) {
@@ -901,8 +929,8 @@ export default {
     },
     searchMatchings() {
       console.error("searchMatchings");
-    },
-  },
+    }
+  }
 };
 </script>
 

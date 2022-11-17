@@ -134,6 +134,7 @@
               <v-tab-item value="tab-cm">
                 <threads-carpool
                   :new-thread="newThreadCarpool"
+                  :id-message="idMessage"
                   :id-thread-default="idThreadDefault"
                   :id-ask-to-select="currentIdAsk"
                   :refresh-threads="refreshThreadsCarpool"
