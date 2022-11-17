@@ -577,9 +577,9 @@ class UserManager
      *
      * @param User $user
      *
-     * @throws \ReflectionException
-     *
      * @return array|object
+     *
+     * @throws \ReflectionException
      */
     public function getAds(bool $isAcceptedCarpools = false)
     {
@@ -677,10 +677,10 @@ class UserManager
                 }
             }
             if (count($myAd->getDriver()) > 0) {
-                if (2 == $myAd['driver']['askFrequency']) {
-                    $carpoolDate = \DateTime::createFromFormat('Y-m-d', $myAd['driver']['toDate']);
+                if (2 == $myAd->getDriver()['askFrequency']) {
+                    $carpoolDate = \DateTime::createFromFormat('Y-m-d', $myAd->getDriver()['toDate']);
                 } else {
-                    $carpoolDate = \DateTime::createFromFormat('Y-m-d', $myAd['driver']['fromDate']);
+                    $carpoolDate = \DateTime::createFromFormat('Y-m-d', $myAd->getDriver()['fromDate']);
                 }
                 $carpoolDate->setTime(0, 0);
                 if ($valid && $carpoolDate >= $now) {
