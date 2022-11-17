@@ -936,43 +936,43 @@ class ResultManager
 
                     switch ($matching['request']->getProposalRequest()->getCriteria()->getFromDate()->format('w')) {
                         case 0:
-                            $fromTime = clone $proposal->getCriteria()->getSunTime();
+                            $fromTime = !is_null($proposal->getCriteria()->getSunTime()) ? clone $proposal->getCriteria()->getSunTime() : null;
                             $item->setMonMarginDuration($proposal->getCriteria()->getMonMarginDuration());
 
                             break;
 
                         case 1:
-                            $fromTime = clone $proposal->getCriteria()->getMonTime();
+                            $fromTime = !is_null($proposal->getCriteria()->getMonTime()) ? clone $proposal->getCriteria()->getMonTime() : null;
                             $item->setTueMarginDuration($proposal->getCriteria()->getTueMarginDuration());
 
                             break;
 
                         case 2:
-                            $fromTime = clone $proposal->getCriteria()->getTueTime();
+                            $fromTime = !is_null($proposal->getCriteria()->getTueTime()) ? clone $proposal->getCriteria()->getTueTime() : null;
                             $item->setWedMarginDuration($proposal->getCriteria()->getWedMarginDuration());
 
                             break;
 
                         case 3:
-                            $fromTime = clone $proposal->getCriteria()->getWedTime();
+                            $fromTime = !is_null($proposal->getCriteria()->getWedTime()) ? clone $proposal->getCriteria()->getWedTime() : null;
                             $item->setThuMarginDuration($proposal->getCriteria()->getThuMarginDuration());
 
                             break;
 
                         case 4:
-                            $fromTime = clone $proposal->getCriteria()->getThuTime();
+                            $fromTime = !is_null($proposal->getCriteria()->getThuTime()) ? clone $proposal->getCriteria()->getThuTime() : null;
                             $item->setFriMarginDuration($proposal->getCriteria()->getFriMarginDuration());
 
                             break;
 
                         case 5:
-                            $fromTime = clone $proposal->getCriteria()->getFriTime();
+                            $fromTime = !is_null($proposal->getCriteria()->getFriTime()) ? clone $proposal->getCriteria()->getFriTime() : null;
                             $item->setSatMarginDuration($proposal->getCriteria()->getSatMarginDuration());
 
                             break;
 
                         case 6:
-                            $fromTime = clone $proposal->getCriteria()->getSatTime();
+                            $fromTime = !is_null($proposal->getCriteria()->getSatTime()) ? clone $proposal->getCriteria()->getSatTime() : null;
                             $item->setSunMarginDuration($proposal->getCriteria()->getSunMarginDuration());
 
                             break;
