@@ -23,6 +23,7 @@
 import os.path
 import argparse
 import collections
+import re
 import string
 
 script_absolute_path = os.path.dirname(os.path.realpath(__file__))
@@ -56,6 +57,8 @@ args = parser.parse_args()
 env = args.env
 client_path = args.path + "/client/"
 api_path = args.path + "/api/"
+
+key_value_regexp = re.compile('(?P<key>[^#=]+)=(?P<value>[^#]*)')
 
 
 class DuplicatesCounter:
@@ -93,15 +96,10 @@ def env_file_to_dict(file, duplicates=DuplicatesBypass()):
 
     with open(file, mode="r", encoding="utf-8") as dotenv:
         for line in dotenv:
-            if not line.strip() or line[0] == '#':
-                continue
-            try:
-                key, value = line.split('=')
-            except ValueError:
-                pass
-            else:
-                my_dict[key] = value.strip()
-                duplicates.compute(key)
+            match = key_value_regexp.match(line)
+            if match:
+                my_dict[match.group('key')] = match.group('value').strip()
+                duplicates.compute(match.group('key'))
 
     duplicates.print()
 
