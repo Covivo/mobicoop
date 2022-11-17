@@ -6,8 +6,8 @@
       "driverOrPassenger": "Not important: I will be the driver or a passenger",
       "passenger": "I will be a passenger",
       "driver": "I will be the driver",
-      "pause": "Remove this ad from the searches",
-      "play": "Reupload this ad ",
+      "pause": "Temporarily hide ad in results",
+      "play": "Tedisplay this ad in results",
       "delete": "Delete this ad",
       "update": "Update this ad"
     }

@@ -6,10 +6,10 @@
       "driver": "Je serai conducteur",
       "passenger": "Je serai passager",
       "driverOrPassenger": "Peu importe: je serai conducteur ou passager",
-      "pause": "Retirer cette annonce des recherches",
-      "play": "Remettre cette annonce des recherches ",
+      "pause": "Masquer temporairement l'annonce dans les résultats",
+      "play": "Afficher de nouveau l'annonce dans les résultats",
       "delete": "Supprimer l'annonce",
-      "update": "mettre à jour l'annonce"
+      "update": "Mettre à jour l'annonce"
     }
   },
   "pause": {
