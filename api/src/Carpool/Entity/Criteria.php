@@ -2098,6 +2098,10 @@ class Criteria
                 break;
         }
 
-        return new \DateTime($date->format('Y-m-d').' '.$time->format('H:i:s'));
+        if (!is_null($time)) {
+            $date->setTime($time->format('H'), $time->format('i'), $time->format('s'));
+        }
+
+        return $date;
     }
 }
