@@ -10,11 +10,11 @@
       :is-paused="ad.paused"
       :is-archived="isArchived"
       :is-solidary-exclusive="ad.isSolidaryExclusive"
-      :has-accepted-ask="!Array.isArray(ad.driver) || ad.passengers.length>0"
+      :has-accepted-ask="!Array.isArray(ad.driver) || ad.passengers.length > 0"
       :has-ask="ad.asks"
       :ad-id="ad.id"
       @ad-deleted="adDeleted"
-      @pause-ad="ad.paused"
+      @pause-ad="adPaused"
     />
 
     <v-card-text v-if="ad.frequency === 2">
@@ -31,8 +31,8 @@
       <ad-footer
         v-if="!ad.paused"
         :id="ad.id"
-        :seats="(ad.roleDriver && !ad.rolePassenger) ? ad.seats : null"
-        :price="(ad.roleDriver && !ad.rolePassenger) ? ad.price : null"
+        :seats="ad.roleDriver && !ad.rolePassenger ? ad.seats : null"
+        :price="ad.roleDriver && !ad.rolePassenger ? ad.price : null"
         :id-message="lastMessageId"
         :nb-matchings="ad.carpoolers"
         :is-archived="isArchived"
@@ -42,10 +42,10 @@
 </template>
 
 <script>
-import AdHeader from '@components/user/profile/ad/AdHeader.vue';
-import AdFooter from '@components/user/profile/ad/AdFooter.vue';
-import AdContentRegular from '@components/user/profile/ad/AdContentRegular.vue';
-import AdContentPunctual from '@components/user/profile/ad/AdContentPunctual.vue';
+import AdHeader from "@components/user/profile/ad/AdHeader.vue";
+import AdFooter from "@components/user/profile/ad/AdFooter.vue";
+import AdContentRegular from "@components/user/profile/ad/AdContentRegular.vue";
+import AdContentPunctual from "@components/user/profile/ad/AdContentPunctual.vue";
 
 export default {
   components: {
@@ -64,18 +64,20 @@ export default {
       default: false
     }
   },
-  data () {
+  data() {
     return {
       lastMessageId: null
-    }
+    };
   },
   methods: {
     adDeleted(isArchived, id, message) {
-      this.$emit('ad-deleted', isArchived, id, message)
+      this.$emit("ad-deleted", isArchived, id, message);
+    },
+    adPaused(paused) {
+      this.ad.paused = paused;
     }
   }
-}
+};
 </script>
 
-<style scoped lang="scss">
-</style>
+<style scoped lang="scss"></style>

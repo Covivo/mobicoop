@@ -1,49 +1,53 @@
 {
-	"ads": {
-		"ongoing": "Annonces en cours",
-		"archived": "Annonces archivées",
-		"tooltips": {
-			"driver": "Je serai conducteur",
-			"passenger": "Je serai passager",
-			"driverOrPassenger": "Peu importe: je serai conducteur ou passager"
-		}
-	},
-	"pause": {
-		"error": {
-			"pause": "Une erreur est survenue votre annonce n'a pas été mise en pause.",
-			"unpause": "Une erreur est survenue votre annonce n'a pas été activée",
-			"antifraud": "Trajet incompatible avec vos annonces déjà publiées. Si votre annonce déjà publiée à cette date n'est plus valable, vous devez la mettre en pause, la modifier ou la supprimer."
-		},
-		"success": {
-			"pause": "Votre annonce est maintenant en pause.",
-			"unpause": "Votre annonce est maintenant active."
-		},
-		"info": "Attention annonce en pause!"
-	},
-	"delete": {
-		"route": "/covoiturage/annonce/supprimer",
-		"success": "Votre annonce a été supprimée avec succès.",
-		"error": "Une erreur est survenue lors de la suppression de votre annonce.",
-		"dialog": {
-			"base": {
-				"title": "Etes-vous sur de vouloir supprimer cette annonce ?",
-				"text": "Toute suppression d'annonce est définitive, êtes-vous sur de vouloir supprimer cette annonce ?"
-			},
-			"accepted": {
-				"title": "Il existe au moins un covoiturage planifié pour cette annonce",
-				"text": "Un ou plusieurs covoiturages ont déjà été planifiés en lien avec cette annonce. Votre suppression annulera donc ces covoiturages acceptés. Si vous confirmez votre suppression, quel message voulez-vous envoyer aux covoitureurs avec qui vous annulez ?"
-			},
-			"pending": {
-				"title": "Il existe au moins une demande pour cette annonce",
-				"text": "Une ou plusieurs demandes ont déjà été faites en lien avec cette annonce. Votre suppression rejettera donc toutes les demandes en cours. Si vous confirmez votre suppression, quel message voulez-vous envoyer aux covoitureurs dont vous rejetez les demandes ?"
-			},
-			"cancel": "Annuler",
-			"validate": "Confirmer"
-		}
-	},
-	"update": {
-		"route": "/covoiturage/annonce/{id}/modifier"
-	},
+  "ads": {
+    "ongoing": "Annonces en cours",
+    "archived": "Annonces archivées",
+    "tooltips": {
+      "driver": "Je serai conducteur",
+      "passenger": "Je serai passager",
+      "driverOrPassenger": "Peu importe: je serai conducteur ou passager",
+      "pause": "Masquer temporairement l'annonce dans les résultats",
+      "play": "Afficher de nouveau l'annonce dans les résultats",
+      "delete": "Supprimer l'annonce",
+      "update": "Mettre à jour l'annonce"
+    }
+  },
+  "pause": {
+    "error": {
+      "pause": "Une erreur est survenue votre annonce n'a pas été mise en pause.",
+      "unpause": "Une erreur est survenue votre annonce n'a pas été activée",
+      "antifraud": "Trajet incompatible avec vos annonces déjà publiées. Si votre annonce déjà publiée à cette date n'est plus valable, vous devez la mettre en pause, la modifier ou la supprimer."
+    },
+    "success": {
+      "pause": "Votre annonce est maintenant en pause.",
+      "unpause": "Votre annonce est maintenant active."
+    },
+    "info": "Attention annonce en pause!"
+  },
+  "delete": {
+    "route": "/covoiturage/annonce/supprimer",
+    "success": "Votre annonce a été supprimée avec succès.",
+    "error": "Une erreur est survenue lors de la suppression de votre annonce.",
+    "dialog": {
+      "base": {
+        "title": "Etes-vous sur de vouloir supprimer cette annonce ?",
+        "text": "Toute suppression d'annonce est définitive, êtes-vous sur de vouloir supprimer cette annonce ?"
+      },
+      "accepted": {
+        "title": "Il existe au moins un covoiturage planifié pour cette annonce",
+        "text": "Un ou plusieurs covoiturages ont déjà été planifiés en lien avec cette annonce. Votre suppression annulera donc ces covoiturages acceptés. Si vous confirmez votre suppression, quel message voulez-vous envoyer aux covoitureurs avec qui vous annulez ?"
+      },
+      "pending": {
+        "title": "Il existe au moins une demande pour cette annonce",
+        "text": "Une ou plusieurs demandes ont déjà été faites en lien avec cette annonce. Votre suppression rejettera donc toutes les demandes en cours. Si vous confirmez votre suppression, quel message voulez-vous envoyer aux covoitureurs dont vous rejetez les demandes ?"
+      },
+      "cancel": "Annuler",
+      "validate": "Confirmer"
+    }
+  },
+  "update": {
+    "route": "/covoiturage/annonce/{id}/modifier"
+  },
   "solidary": {
     "exclusive": "Annonce de covoiturage solidaire exclusif"
   }
