@@ -576,6 +576,21 @@ class ProofManager
         return $nbSent;
     }
 
+    public function checkProofs()
+    {
+        $proofs = $this->carpoolProofRepository->findBy(['status' => CarpoolProof::STATUS_SENT]);
+        $nbChecked = 0;
+        foreach ($proofs as $proof) {
+            /**
+             * @var CarpoolProof $proof
+             */
+            $result = $this->provider->getItem();
+        }
+        $this->entityManager->flush();
+
+        return $nbChecked;
+    }
+
     /**
      * Validate the pending proofs for the given period.
      * Used to update pending with undetermined final class.
