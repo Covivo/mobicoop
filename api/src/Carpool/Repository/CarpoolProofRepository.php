@@ -127,4 +127,14 @@ class CarpoolProofRepository
 
         return $query->getQuery()->getResult();
     }
+
+    public function findCarpoolProofToChack(array $status): ?array
+    {
+        $query = $this->repository->createQueryBuilder('cp')
+            ->where('cp.status in (:status)')
+            ->setParameter('status', $status)
+        ;
+
+        return $query->getQuery()->getResult();
+    }
 }

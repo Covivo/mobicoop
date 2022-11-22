@@ -578,13 +578,59 @@ class ProofManager
 
     public function checkProofs()
     {
-        $proofs = $this->carpoolProofRepository->findBy(['status' => CarpoolProof::STATUS_SENT]);
+        $proofs = $this->carpoolProofRepository->findCarpoolProofToChack([CarpoolProof::STATUS_UNDER_CHECKING, CarpoolProof::STATUS_SENT]);
         $nbChecked = 0;
+
         foreach ($proofs as $proof) {
             /**
              * @var CarpoolProof $proof
              */
-            $result = $this->provider->getItem();
+            $result = $this->provider->getCarpoolProof($proof);
+
+            if (200 == $result->getCode()) {
+                $data = (json_decode($result->getValue(), true));
+
+                switch ($data['result']['data']['status']) {
+                    case 'acquisition_error':
+                        $proof->setStatus(CarpoolProof::STATUS_ACQUISITION_ERROR);
+
+                        break;
+
+                    case 'normalization_error':
+                        $proof->setStatus(CarpoolProof::STATUS_NORMALIZATION_ERROR);
+
+                        break;
+
+                    case 'fraudcheck_error':
+                        $proof->setStatus(CarpoolProof::STATUS_FRAUD_ERROR);
+
+                        break;
+
+                    case 'ok':
+                        $proof->setStatus(CarpoolProof::STATUS_VALIDATED);
+
+                        break;
+
+                    case 'expired':
+                        $proof->setStatus(CarpoolProof::STATUS_EXPIRED);
+
+                        break;
+
+                    case 'canceled':
+                        $proof->setStatus(CarpoolProof::STATUS_CANCELED_BY_OPERATOR);
+
+                        break;
+
+                    case 'pending':
+                        $proof->setStatus(CarpoolProof::STATUS_UNDER_CHECKING);
+
+                        break;
+                }
+                ++$nbChecked;
+            } else {
+                $proof->setStatus(CarpoolProof::STATUS_ERROR);
+            }
+            $this->entityManager->persist($proof);
         }
         $this->entityManager->flush();
 

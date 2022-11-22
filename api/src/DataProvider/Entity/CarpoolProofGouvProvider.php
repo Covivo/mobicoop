@@ -39,6 +39,7 @@ class CarpoolProofGouvProvider implements ProviderInterface
 {
     public const RESSOURCE_POST = 'v2/journeys';
     public const ISO6801 = 'Y-m-d\TH:i:s\Z';
+    public const RESSOURCE_GET_ITEM = 'v2/journeys/';
 
     private $uri;
     private $token;
@@ -257,6 +258,20 @@ break;
         }
 
         return $journey;
+    }
+
+    public function getCarpoolProof(CarpoolProof $carpoolProof)
+    {
+        $journeyId = (!is_null($this->prefix) ? $this->prefix : '').(string) $carpoolProof->getId();
+        $dataProvider = new DataProvider($this->uri, self::RESSOURCE_GET_ITEM.$journeyId);
+
+        // creation of the headers
+        $headers = [
+            'Authorization' => 'Bearer '.$this->token,
+            'Content-Type' => 'application/json',
+        ];
+
+        return $dataProvider->getItem([], $headers);
     }
 
     /**
