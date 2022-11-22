@@ -34,12 +34,12 @@ contact:
   title: Contact met ons op te nemen
 journey:
   from_to:
-    title2: ' naar '
-    title1: 'Carpooling zonder commissie van '
+    title2: " naar "
+    title1: "Carpooling zonder commissie van "
   from:
-    title: 'Carpoolings met vertrek vanaf '
+    title: "Carpoolings met vertrek vanaf "
   to:
-    title: 'Carpoolings met aankomst in '
+    title: "Carpoolings met aankomst in "
   cities:
     title: Carpoolings per gemeente
 carpool:
@@ -66,3 +66,5 @@ user:
     title: Aanmelden
   signupValidation:
     title: Verificatie van uw e-mailadres
+browserUpdate:
+  language: "nl"

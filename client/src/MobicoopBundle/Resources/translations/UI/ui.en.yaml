@@ -1,38 +1,38 @@
 # pages
 user:
   signup:
-    title: 'Register'
+    title: "Register"
   signupValidation:
-    title: 'Verify your email'
+    title: "Verify your email"
   login:
-    title: 'Login'
+    title: "Login"
   profile:
-    title: 'My profile'
+    title: "My profile"
   profile_update:
-    title: 'Update my profile'
+    title: "Update my profile"
   profile_password_update:
-    title: 'Update my password'
+    title: "Update my password"
   messages:
-    title: 'Mailbox'
+    title: "Mailbox"
   password_recovery:
-    title: 'Password recovery'
+    title: "Password recovery"
 carpool:
   ad_create:
-    title: 'Post a carpool announcement'
+    title: "Post a carpool announcement"
   ad_update:
-    title: 'Change your carpool announcement'
+    title: "Change your carpool announcement"
   results:
-    title: 'Carpool results'
+    title: "Carpool results"
 journey:
   results:
     title: "Journey by city"
   from_to:
-    title2: ' to '
-    title1: 'Carpools without commission from '
+    title2: " to "
+    title1: "Carpools without commission from "
   to:
-    title: 'Carpools arriving from '
+    title: "Carpools arriving from "
   from:
-    title: 'Carpools from '
+    title: "Carpools from "
   cities:
     title: Carpools by city
 contact:
@@ -71,3 +71,5 @@ toolbox:
   title: Toolbox
 dynamicslines:
   title: "Dynamics lines"
+browserUpdate:
+  language: "en"

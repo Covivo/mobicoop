@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 # Copyright (c) 2020, MOBICOOP. All rights reserved.
 # This project is dual licensed under AGPL and proprietary licence.
@@ -20,96 +20,88 @@
 # LICENSE
 # #######################################
 
-"""
+import os.path
+import argparse
+import collections
+import re
+import string
+
+script_absolute_path = os.path.dirname(os.path.realpath(__file__))
+platform_path = os.path.abspath(script_absolute_path
+                                + "/../mobicoop-platform")
+
+parser = argparse.ArgumentParser(
+  description='''\
 Dotenv instance checker
 =======================
-
 This script allows to check the (many) dotenv files of an instance of Mobicoop-platform.
 It must be launched from the root directory of the instance.
 It does the following :
 
-    1. check that all bundle client .env keys are present in instance .env, if not it copies the missing keys with default values
+    1. check that all bundle client .env keys are present in instance .env,\
+ if not it copies the missing keys with default values
     2. identify the duplicate keys in local .env (instance, bundle api)
     3. identify unnecessary local .env keys
-
-Parameters
-----------
-    -h :
-        This help
-    -path <platform_path> : str, optional
-        The absolute path to the mobicoop platform (default : absolute path of *current_script_path*/../mobicoop-platform)
-    -env <env> : str, optional
-        The env to check : dev, test or prod (default : dev)
-    -dry :
-        Show information only (no append file)
-"""
-
-import os.path
-import sys
-
-script_absolute_path = os.path.dirname(os.path.realpath(__file__))
-platform_path = os.path.abspath(script_absolute_path+"/../mobicoop-platform")
-dry = False
-env = "dev"
-
+''',
+  formatter_class=argparse.RawDescriptionHelpFormatter
+)
+parser.add_argument('-p', '--path', default=platform_path,
+                    help='The absolute path to the mobicoop platform')
+parser.add_argument('-e', '--env', choices=('test', 'dev', 'prod'),
+     default='dev', help='The env to check: dev, test or prod (default: dev)')
+parser.add_argument('--dry', help='Show information only (no append file)',
+                    action='store_true')
 # read arguments
-if len(sys.argv)>1:
-    if (len(sys.argv)>7):
-        print("Wrong number of arguments !")
-        exit()
-    pos = 1
-    args = len(sys.argv) - 1
-    while (args >= pos):
-        if sys.argv[pos] == "-h":
-            print(__doc__)
-            exit()
-        elif sys.argv[pos] == "-path":
-            platform_path = sys.argv[pos+1]
-        elif sys.argv[pos] == "-env":
-            env = sys.argv[pos+1]
-        elif sys.argv[pos] == "-dry":
-            dry = True
-        pos = pos + 1
+args = parser.parse_args()
 
-client_path = platform_path+"/client/"
-api_path = platform_path+"/api/"
+env = args.env
+client_path = args.path + "/client/"
+api_path = args.path + "/api/"
+
+key_value_regexp = re.compile('(?P<key>[^#=]+)=(?P<value>[^#]*)')
 
 
-def env_file_to_dict(file, check_duplicates = False):
+class DuplicatesCounter:
+
+    def __init__(self):
+        self.d = collections.defaultdict(int)
+
+    def compute(self, key):
+        self.d[key] += 1
+
+    def print(self):
+        duplicates = False
+        for key, count in filter(lambda t: t[1] > 1, self.d.items()):
+            print(f"Duplicate key \033[1;37;40m{key}\033[0;37;40m"
+                  f" {count-1} times")
+            duplicates = True
+        if not duplicates:
+            print("No duplicates found")
+
+class DuplicatesBypass:
+
+    def compute(self, key):
+        pass
+
+    def print(self):
+        pass
+
+def env_file_to_dict(file, duplicates=DuplicatesBypass()):
 
     my_dict = {}
-    duplicates = 0
 
     if not os.path.isfile(file):
-        print(file+" not found !")
+        print(f"{file} not found !")
         return my_dict
 
-    # open file
-    dotenv = open(file, "r")
+    with open(file, mode="r", encoding="utf-8") as dotenv:
+        for line in dotenv:
+            match = key_value_regexp.match(line)
+            if match:
+                my_dict[match.group('key')] = match.group('value').strip()
+                duplicates.compute(match.group('key'))
 
-    # read file line by line
-    file_lines = dotenv.readlines()
-
-    for line in file_lines:
-        #skip lines starting with '#'
-        if line[0] == '#':
-            continue
-        # find key
-        index = line.find('=')
-        if index > 0:
-            key = line[:index]
-            if check_duplicates and key in my_dict.keys():
-                print("Duplicate key \033[1;37;40m"+key+"\033[0;37;40m")
-                duplicates = duplicates + 1
-            # find value, we strip if there's a comment on the same line
-            value = line[index+1:]
-            my_dict[key] = value.strip()
-
-    dotenv.close()
-
-    if check_duplicates:
-        if duplicates == 0:
-            print("No duplicates found")
+    duplicates.print()
 
     return my_dict
 
@@ -147,22 +139,27 @@ dict_client = env_file_to_dict(client_path+".env")
 # create instance dictionary
 dict_instance = env_file_to_dict(".env")
 
-# open instance .env file for append
-dotenv_instance = open(".env", "a+")
-
 # check for differences
-differences = 0
-for key in dict_client:
-    if key not in dict_instance.keys():
-        print ("Key \033[1;37;40m"+key+"\033[0;37;40m not found !")
-        if not dry:
-            print("=> adding it with default value : "+dict_client.get(key))
-            differences = differences + 1
-            dotenv_instance.write("\n"+key+'='+dict_client.get(key))
-if differences == 0:
-    print("No differences found")
+key_not_found = string.Template(
+  "Key \033[1;37;40m$key\033[0;37;40m not found!")
 
-dotenv_instance.close()
+if args.dry:
+    differences = False
+    for key in filter(lambda key: key not in dict_instance, dict_client):
+        print(key_not_found.substitute({'key': key}))
+        differences = True
+    if not differences:
+        print("No differences found")
+else:
+    differences = False
+    with open(".env", mode="a+", encoding="utf-8") as dotenv_instance:
+        for key in filter(lambda key: key not in dict_instance, dict_client):
+            print(key_not_found.substitute({'key': key}))
+            print(f"=> adding it with default value: {dict_client[key]}")
+            dotenv_instance.write(f"\n{key}={dict_client[key]}")
+            differences = True
+    if not differences:
+        print("No differences found")
 
 ##############################
 # 2. identify duplicate keys #
@@ -176,12 +173,12 @@ print ("----------------------")
 print ("\033[1;34;40m")
 print ("Checking instance .env."+env+".local")
 print ("\033[0;37;40m")
-dict_instance_local = env_file_to_dict(".env."+env+".local",True)
+dict_instance_local = env_file_to_dict(".env."+env+".local", DuplicatesCounter())
 
 print ("\033[1;34;40m")
 print ("Checking API .env."+env+".local")
 print ("\033[0;37;40m")
-dict_api_local = env_file_to_dict(api_path+".env."+env+".local",True)
+dict_api_local = env_file_to_dict(api_path+".env."+env+".local", DuplicatesCounter())
 
 ################################
 # 3. identify unnecessary keys #

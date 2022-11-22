@@ -3,7 +3,7 @@
     <!--SnackBar-->
     <v-snackbar
       v-model="snackbar"
-      :color="(errorUpdate)?'error':'warning'"
+      :color="errorUpdate ? 'error' : 'warning'"
       top
     >
       <!--      {{ (errorUpdate)?textSnackError:textSnackOk }}-->
@@ -18,9 +18,7 @@
 
     <v-container>
       <!-- event buttons and map -->
-      <v-row
-        justify="center"
-      >
+      <v-row justify="center">
         <v-col
           cols="12"
           lg="9"
@@ -34,9 +32,7 @@
             :url-alt-avatar="urlAltAvatar"
           />
           <!-- event buttons and map -->
-          <v-row
-            class="text-center"
-          >
+          <v-row class="text-center">
             <v-col
               cols="4"
               class="text-center"
@@ -49,15 +45,20 @@
                   rounded
                   @click="publish"
                 >
-                  {{ $t('buttons.publish.label') }}
+                  {{ $t("buttons.publish.label") }}
                 </v-btn>
                 <v-btn
                   class="mt-3"
                   color="primary"
                   rounded
-                  :href="$t('buttons.widget.route', {'id':event.id,'urlKey':event.urlKey})"
+                  :href="
+                    $t('buttons.widget.route', {
+                      id: event.id,
+                      urlKey: event.urlKey
+                    })
+                  "
                 >
-                  {{ $t('buttons.widget.label') }}
+                  {{ $t("buttons.widget.label") }}
                 </v-btn>
                 <br>
                 <v-btn
@@ -65,9 +66,9 @@
                   class="mt-3"
                   color="warning"
                   rounded
-                  :href="$t('buttons.edit.route', {'id':event.id})"
+                  :href="$t('buttons.edit.route', { id: event.id })"
                 >
-                  {{ $t('buttons.edit.label') }}
+                  {{ $t("buttons.edit.label") }}
                 </v-btn>
                 <report
                   v-if="!user || event.creatorId !== user.id"
@@ -77,9 +78,7 @@
               </div>
             </v-col>
             <!-- map -->
-            <v-col
-              cols="8"
-            >
+            <v-col cols="8">
               <v-card
                 v-show="loadingMap"
                 flat
@@ -119,7 +118,7 @@
           class="text-center mt-6"
         >
           <h3 class="text-h5 text-justify font-weight-bold">
-            {{ $t('title.searchCarpool') }}
+            {{ $t("title.searchCarpool") }}
           </h3>
         </v-col>
       </v-row>
@@ -147,18 +146,22 @@
       :id="lEventId"
       :show-dialog="loginOrRegisterDialog"
       type="event"
-      @closeLoginOrRegisterDialog="loginOrRegisterDialog = false "
+      @closeLoginOrRegisterDialog="loginOrRegisterDialog = false"
     />
   </div>
 </template>
 <script>
-
-import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/event/Event/";
+import {
+  messages_en,
+  messages_fr,
+  messages_eu,
+  messages_nl
+} from "@translations/components/event/Event/";
 import EventInfos from "@components/event/EventInfos";
 import Report from "@components/utilities/Report";
 import Search from "@components/carpool/search/Search";
-import LoginOrRegisterFirst from '@components/utilities/LoginOrRegisterFirst';
-import MMap from "@components/utilities/MMap/MMap"
+import LoginOrRegisterFirst from "@components/utilities/LoginOrRegisterFirst";
+import MMap from "@components/utilities/MMap/MMap";
 import L from "leaflet";
 import moment from "moment";
 
@@ -172,13 +175,13 @@ export default {
   },
   i18n: {
     messages: {
-      'en': messages_en,
-      'nl': messages_nl,
-      'fr': messages_fr,
-      'eu':messages_eu
-    },
+      en: messages_en,
+      nl: messages_nl,
+      fr: messages_fr,
+      eu: messages_eu
+    }
   },
-  props:{
+  props: {
     user: {
       type: Object,
       default: null
@@ -191,7 +194,7 @@ export default {
       type: Array,
       default: null
     },
-    event:{
+    event: {
       type: Object,
       default: null
     },
@@ -207,15 +210,15 @@ export default {
       type: Boolean,
       default: false
     },
-    mapProvider:{
+    mapProvider: {
       type: String,
       default: ""
     },
-    urlTiles:{
+    urlTiles: {
       type: String,
       default: ""
     },
-    attributionCopyright:{
+    attributionCopyright: {
       type: String,
       default: ""
     },
@@ -231,9 +234,9 @@ export default {
       type: Array,
       default: null
     },
-    publishButtonAlwaysActive:{
+    publishButtonAlwaysActive: {
       type: Boolean,
-      default:false
+      default: false
     },
     geoCompleteResultsOrder: {
       type: Array,
@@ -246,42 +249,40 @@ export default {
     geoCompleteChip: {
       type: Boolean,
       default: false
-    },
+    }
   },
-  data () {
+  data() {
     return {
       locale: localStorage.getItem("X-LOCALE"),
-      destination: '',
+      destination: "",
       origin: this.initOrigin,
-      search: '',
-      pointsToMap:[],
-      directionWay:[],
+      search: "",
+      pointsToMap: [],
+      directionWay: [],
       loading: false,
       snackbar: false,
       errorUpdate: false,
       isLogged: false,
       loadingMap: false,
-      params: { 'eventId' : this.event.id },
+      params: { eventId: this.event.id },
       defaultDestination: this.initDestination,
       regular: false,
       eventPassed: false,
       loginOrRegisterDialog: false,
       lEventId: this.event.id ? this.event.id : null,
-      date:this.event.fromDate.date
-    }
+      date: this.event.fromDate.date
+    };
   },
   computed: {
     dateFormated() {
-      return this.date
-        ? moment.utc(this.date).format("YYYY-MM-DD")
-        : "";
-    },
+      return this.date ? moment.utc(this.date).format("YYYY-MM-DD") : "";
+    }
 
     // Link the event in the adresse
   },
-  created: function () {
+  created: function() {
     moment.locale(this.locale); // DEFINE DATE LANGUAGE
-    this.$set(this.initDestination, 'event', this.event);
+    this.$set(this.initDestination, "event", this.event);
     this.destination = this.initDestination;
   },
   mounted() {
@@ -289,22 +290,22 @@ export default {
     this.checkIfEventIsPassed();
     this.checkIfUserLogged();
   },
-  methods:{
-    searchChanged: function (search) {
+  methods: {
+    searchChanged: function(search) {
       this.origin = search.origin;
       this.destination = search.destination;
       this.dataRegular = search.regular;
       this.date = search.date;
     },
-    post: function (path, params, method='post') {
-      const form = document.createElement('form');
+    post: function(path, params, method = "post") {
+      const form = document.createElement("form");
       form.method = method;
-      form.action = window.location.origin+'/'+path;
+      form.action = window.location.origin + "/" + path;
 
       for (const key in params) {
         if (params.hasOwnProperty(key)) {
-          const hiddenField = document.createElement('input');
-          hiddenField.type = 'hidden';
+          const hiddenField = document.createElement("input");
+          hiddenField.type = "hidden";
           hiddenField.name = key;
           hiddenField.value = params[key];
           form.appendChild(hiddenField);
@@ -320,15 +321,15 @@ export default {
     },
     checkDomain() {
       if (this.event.validationType == 2) {
-        let mailDomain = (this.user.email.split("@"))[1];
-        if (!(this.event.domain.includes(mailDomain))) {
-          return this.domain = false;
+        let mailDomain = this.user.email.split("@")[1];
+        if (!this.event.domain.includes(mailDomain)) {
+          return (this.domain = false);
         }
       }
     },
 
     publish() {
-      if (this.isLogged){
+      if (this.isLogged) {
         let lParams = {
           origin: null,
           destination: JSON.stringify(this.destination),
@@ -337,104 +338,136 @@ export default {
           time: null,
           ...this.params
         };
-        this.post(`${this.$t("buttons.publish.route", {id: this.lEventId})}`, lParams);
+        this.post(
+          `${this.$t("buttons.publish.route", { id: this.lEventId })}`,
+          lParams
+        );
       } else {
         this.loginOrRegister();
       }
     },
 
-    showEventProposals () {
+    showEventProposals() {
       this.pointsToMap.length = 0;
       // add the event address to display on the map
       if (this.event.address) {
-        this.pointsToMap.push(this.buildPoint(this.event.address.latitude,this.event.address.longitude,this.event.name,"/images/cartography/pictos/destination.png",[36, 42]));
+        this.pointsToMap.push(
+          this.buildPoint(
+            this.event.address.latitude,
+            this.event.address.longitude,
+            this.event.name,
+            "/images/cartography/pictos/destination.png",
+            [36, 42]
+          )
+        );
       }
 
       // add all the waypoints of the event to display on the map
       // We draw straight lines between those points
       // if the user is already accepted or if the doesn't hide members or proposals to non members.
       this.points.forEach((proposal, index) => {
-        let currentProposal = {latLngs:[]};
+        let currentProposal = { latLngs: [] };
         let infosForPopUp = {
-          origin:'',
-          destination:'',
-          originLat:null,
-          originLon:null,
-          destinationLat:null,
-          destinationLon:null,
-          carpoolerFirstName:"",
-          carpoolerLastName:""
+          origin: "",
+          destination: "",
+          originLat: null,
+          originLon: null,
+          destinationLat: null,
+          destinationLon: null,
+          carpoolerFirstName: "",
+          carpoolerLastName: ""
         };
-
 
         infosForPopUp.carpoolerFirstName = proposal.carpoolerFirstName;
         infosForPopUp.carpoolerLastName = proposal.carpoolerLastName;
 
         // We build the content of the popup
-        currentProposal.desc = "<p style='text-align:center;'><strong>"+infosForPopUp.carpoolerFirstName+" "+infosForPopUp.carpoolerLastName+"</strong></p>"
+        currentProposal.desc =
+          "<p style='text-align:center;'><strong>" +
+          infosForPopUp.carpoolerFirstName +
+          " " +
+          infosForPopUp.carpoolerLastName +
+          "</strong></p>";
+        // get the origin waypoint (first)
+        infosForPopUp.origin = proposal.waypoints[0].title;
+        infosForPopUp.originLat = proposal.waypoints[0].latLng.lat;
+        infosForPopUp.originLon = proposal.waypoints[0].latLng.lon;
 
-
-        proposal.waypoints.forEach((waypoint, index) => {
-          currentProposal.latLngs.push(waypoint.latLng);
-          if(index==0){
-            infosForPopUp.origin = waypoint.title;
-            infosForPopUp.originLat = waypoint.latLng.lat;
-            infosForPopUp.originLon = waypoint.latLng.lon;
-          }
-          this.pointsToMap.push(this.buildPoint(waypoint.latLng.lat,waypoint.latLng.lon,currentProposal.desc,"",[],[],"<p>"+waypoint.title+"</p>"));
-        });
-
-
-        currentProposal.desc += "<p style='text-align:left;'><strong>"+this.$t('map.origin')+"</strong> : "+infosForPopUp.origin+"<br />";
-        if(proposal.frequency=='regular') currentProposal.desc += "<em>"+this.$t('map.regular')+"</em>";
+        currentProposal.desc +=
+          "<p style='text-align:left;'>" +
+          this.$t("map.origin") +
+          "</strong> : " +
+          infosForPopUp.origin +
+          "<br />";
+        if (proposal.frequency == "regular")
+          currentProposal.desc += "<em>" + this.$t("map.regular") + "</em>";
 
         // We add link to make the same search
         currentProposal.desc +=
-            "<p><a href='" +
-            proposal.searchLink +
-            "'>" +
-            this.$t("map.search.label") +
-            "</a></p>";
+          "<p><a href='" +
+          proposal.searchLink +
+          "'>" +
+          this.$t("map.search.label") +
+          "</a></p>";
+        // We are closing the two p;
+        currentProposal.desc += "</p>";
 
         // And now the content of a tooltip (same as popup but without the button)
         currentProposal.title = currentProposal.desc;
 
-        // We are closing the two p
-        currentProposal.title += "</p>";
-        currentProposal.desc += "</p>";
-
         // We set the destination before the push to directinWay. It's the address of the event
         let destination = {
-          "lat":this.event.address.latitude,
-          "lon":this.event.address.longitude
-        }
+          lat: this.event.address.latitude,
+          lon: this.event.address.longitude
+        };
         currentProposal.latLngs.push(destination);
 
         this.directionWay.push(currentProposal);
-
+        proposal.waypoints.forEach((waypoint, index) => {
+          currentProposal.latLngs.push(waypoint.latLng);
+          this.pointsToMap.push(
+            this.buildPoint(
+              waypoint.latLng.lat,
+              waypoint.latLng.lon,
+              waypoint.title,
+              "",
+              [],
+              [],
+              "<p>" + currentProposal.desc + "</p>"
+            )
+          );
+        });
       });
       this.$refs.mmap.redrawMap();
     },
-    buildPoint: function(lat,lng,title="",pictoUrl="",size=[],anchor=[],popupDesc=""){
+    buildPoint: function(
+      lat,
+      lng,
+      title = "",
+      pictoUrl = "",
+      size = [],
+      anchor = [],
+      popupDesc = ""
+    ) {
       let point = {
-        title:title,
-        latLng:L.latLng(lat, lng),
-        icon: {},
+        title: title,
+        latLng: L.latLng(lat, lng),
+        icon: {}
       };
 
-      if(pictoUrl!==""){
+      if (pictoUrl !== "") {
         point.icon = {
-          url:pictoUrl,
-          size:size,
-          anchor:anchor
-        }
+          url: pictoUrl,
+          size: size,
+          anchor: anchor
+        };
       }
 
-      if(popupDesc!==""){
+      if (popupDesc !== "") {
         point.popup = {
-          title:title,
-          description:popupDesc
-        }
+          title: title,
+          description: popupDesc
+        };
       }
       return point;
     },
@@ -449,5 +482,5 @@ export default {
       this.loginOrRegisterDialog = true;
     }
   }
-}
+};
 </script>

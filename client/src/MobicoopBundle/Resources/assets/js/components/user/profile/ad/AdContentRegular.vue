@@ -6,7 +6,7 @@
     <v-row>
       <v-col cols="6">
         <regular-days-summary
-          v-if="!isCarpool || (isCarpool && ad.passengers.length>0)"
+          v-if="!isCarpool || (isCarpool && ad.published && ad.passengers.length>0)"
           :mon-active="ad.schedule.mon.check"
           :tue-active="ad.schedule.tue.check"
           :wed-active="ad.schedule.wed.check"
@@ -14,6 +14,17 @@
           :fri-active="ad.schedule.fri.check"
           :sat-active="ad.schedule.sat.check"
           :sun-active="ad.schedule.sun.check"
+          :date-end-of-validity="ad.toDate"
+        />
+        <regular-days-summary
+          v-else-if="isCarpool && !ad.published && ad.passengers.length>0"
+          :mon-active="ad.passengers[0].schedule.mon.check"
+          :tue-active="ad.passengers[0].schedule.tue.check"
+          :wed-active="ad.passengers[0].schedule.wed.check"
+          :thu-active="ad.passengers[0].schedule.thu.check"
+          :fri-active="ad.passengers[0].schedule.fri.check"
+          :sat-active="ad.passengers[0].schedule.sat.check"
+          :sun-active="ad.passengers[0].schedule.sun.check"
           :date-end-of-validity="ad.toDate"
         />
         <regular-days-summary
@@ -28,7 +39,7 @@
           :date-end-of-validity="ad.toDate"
         />
       </v-col>
-      
+
       <v-col class="py-0">
         <schedules
           v-if="!isCarpool || (isCarpool && ad.passengers.length>0)"

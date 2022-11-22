@@ -48,7 +48,6 @@ use App\Solidary\Entity\SolidaryAskHistory;
 use App\User\Entity\User;
 use App\User\Exception\BlockException;
 use App\User\Service\BlockManager;
-use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -102,7 +101,7 @@ class AskManager
         $this->carpoolItemRepository = $carpoolItemRepository;
         $this->carpoolProofRepository = $carpoolProofRepository;
         $this->paymentActive = false;
-        if ($this->paymentActiveDate = DateTime::createFromFormat('Y-m-d', $paymentActive)) {
+        if ($this->paymentActiveDate = \DateTime::createFromFormat('Y-m-d', $paymentActive)) {
             $this->paymentActiveDate->setTime(0, 0);
             $this->paymentActive = true;
         }
@@ -196,7 +195,6 @@ class AskManager
         $criteria = clone $matching->getCriteria();
 
         // we treat the outward
-
         // for regular trips we need to check the dates and days
         if (Criteria::FREQUENCY_REGULAR == $matching->getCriteria()->getFrequency()) {
             if ($ad->getOutwardDate()) {
@@ -221,36 +219,44 @@ class AskManager
             $criteria->setFriTime($matching->getProposalOffer()->getCriteria()->getFriTime());
             $criteria->setSatTime($matching->getProposalOffer()->getCriteria()->getSatTime());
             $criteria->setSunTime($matching->getProposalOffer()->getCriteria()->getSunTime());
+
             if (Ad::ROLE_DRIVER_OR_PASSENGER != $ad->getRole()) {
                 // we fill the selected days if a role has been set
                 foreach ($ad->getSchedule() as $schedule) {
                     if (isset($schedule['outwardTime']) && '' != $schedule['outwardTime']) {
                         if (isset($schedule['mon']) && $schedule['mon']) {
                             $criteria->setMonCheck(true);
+                            $criteria->setMonTime(new \DateTime($schedule['outwardTime']));
                         }
                         if (isset($schedule['tue']) && $schedule['tue']) {
                             $criteria->setTueCheck(true);
+                            $criteria->setTueTime(new \DateTime($schedule['outwardTime']));
                         }
                         if (isset($schedule['wed']) && $schedule['wed']) {
                             $criteria->setWedCheck(true);
+                            $criteria->setWedTime(new \DateTime($schedule['outwardTime']));
                         }
                         if (isset($schedule['thu']) && $schedule['thu']) {
                             $criteria->setThuCheck(true);
+                            $criteria->setThuTime(new \DateTime($schedule['outwardTime']));
                         }
                         if (isset($schedule['fri']) && $schedule['fri']) {
                             $criteria->setFriCheck(true);
+                            $criteria->setFriTime(new \DateTime($schedule['outwardTime']));
                         }
                         if (isset($schedule['sat']) && $schedule['sat']) {
                             $criteria->setSatCheck(true);
+                            $criteria->setSatTime(new \DateTime($schedule['outwardTime']));
                         }
                         if (isset($schedule['sun']) && $schedule['sun']) {
                             $criteria->setSunCheck(true);
+                            $criteria->setSunTime(new \DateTime($schedule['outwardTime']));
                         }
                     }
                 }
             }
         } elseif ($ad->getOutwardTime()) {
-            $criteria->setFromTime(new DateTime($ad->getOutwardTime()));
+            $criteria->setFromTime(new \DateTime($ad->getOutwardTime()));
         }
 
         $ask->setCriteria($criteria);
@@ -365,24 +371,31 @@ class AskManager
                     if (isset($schedule['returnTime']) && '' != $schedule['returnTime']) {
                         if (isset($schedule['mon']) && $schedule['mon']) {
                             $criteriaReturn->setMonCheck(true);
+                            $criteria->setMonTime(new \DateTime($schedule['returnTime']));
                         }
                         if (isset($schedule['tue']) && $schedule['tue']) {
                             $criteriaReturn->setTueCheck(true);
+                            $criteria->setTueTime(new \DateTime($schedule['returnTime']));
                         }
                         if (isset($schedule['wed']) && $schedule['wed']) {
                             $criteriaReturn->setWedCheck(true);
+                            $criteria->setWedTime(new \DateTime($schedule['returnTime']));
                         }
                         if (isset($schedule['thu']) && $schedule['thu']) {
                             $criteriaReturn->setThuCheck(true);
+                            $criteria->setThuTime(new \DateTime($schedule['returnTime']));
                         }
                         if (isset($schedule['fri']) && $schedule['fri']) {
                             $criteriaReturn->setFriCheck(true);
+                            $criteria->setFriTime(new \DateTime($schedule['returnTime']));
                         }
                         if (isset($schedule['sat']) && $schedule['sat']) {
                             $criteriaReturn->setSatCheck(true);
+                            $criteria->setSatTime(new \DateTime($schedule['returnTime']));
                         }
                         if (isset($schedule['sun']) && $schedule['sun']) {
                             $criteriaReturn->setSunCheck(true);
+                            $criteria->setSunTime(new \DateTime($schedule['returnTime']));
                         }
                     }
                 }
@@ -792,7 +805,7 @@ class AskManager
         }
 
         // get the current proof id if relevant
-        if ($carpoolProof = $this->carpoolProofRepository->findByAskAndDate($ask, new DateTime())) {
+        if ($carpoolProof = $this->carpoolProofRepository->findByAskAndDate($ask, new \DateTime())) {
             $ad->setCarpoolProofId($carpoolProof->getId());
         }
 

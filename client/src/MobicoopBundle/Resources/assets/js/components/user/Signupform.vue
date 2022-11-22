@@ -416,17 +416,10 @@
                   required
                 >
                   <template v-slot:label>
-                    <div>
-                      {{ $t("chart.text") }}
-                      <a
-                        class="primary--text"
-                        target="_blank"
-                        :href="$t('chart.route')"
-                        :aria-label="$t('chart.aria')"
-                        @click.stop
-                      >{{ $t("chart.link") }}
-                      </a>
-                    </div>
+                    <div
+                      @click.stop
+                      v-html="$t('chart.text')"
+                    />
                   </template>
                 </v-checkbox>
 
@@ -631,6 +624,10 @@ export default {
       type: Boolean,
       default: false
     },
+    communityId: {
+      type: Number,
+      default: null
+    }
   },
   data() {
     return {
@@ -848,7 +845,7 @@ export default {
         this.loadingCommunity = true;
         this.getCommunities();
       }
-    }
+    },
   },
   mounted: function() {
     //get scroll target
@@ -1056,6 +1053,11 @@ export default {
         .then((res) => {
           this.communities = res.data;
           this.loadingCommunity = false;
+
+          if (this.communityId) {
+            this.selectedCommunity = this.communityId;
+            this.emitEvent();
+          }
         });
     }
   },

@@ -67,7 +67,7 @@
                         <p> </p>
                     </td>
                     <td align="center" style="width:100%;">
-                        <a href="{{api_env('EMAILS_PLATFORM_URL')}}/utilisateur/messages" style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">
+                        <a href="{{api_env('EMAILS_PLATFORM_URL')}}/utilisateur/messages{{ context.thread is defined ? '/' ~ context.thread : '' }}" style="color:{{api_env('EMAILS_COLOR_SECONDARY')}}">
                             <img
                             src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/buttons/mailBox.png"
                             style="border:0; height:26px; width:231; background-color:transparent; vertical-align:top;"

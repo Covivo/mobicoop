@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 # Copyright (c) 2020, MOBICOOP. All rights reserved.
 # This project is dual licensed under AGPL and proprietary licence.
@@ -20,34 +20,39 @@
 # LICENSE
 # #######################################
 
-"""
+import os
+import re
+import sys
+import argparse
+import ntpath
+from shutil import copyfile
+
+parser = argparse.ArgumentParser(
+  description='''\
 Add a language
 ==============
-
-This script create all necessary files to handle a new translation language of Mobicoop-platform.
-It must be launched from the root directory of the instance. It uses the english files as model.
-It does the following : 
+This script create all necessary files to handle a new\
+ translation language of Mobicoop-platform.
+It must be launched from the root directory of the instance.
+It uses the english files as model.
+It does the following :
 
     1. create client components translation files
     2. create client components translation files for instances
     3. update client components with the new language
     4. create client ui translation files
     5. create client routes
-    6. create api translation files
+    6. create api translation files''',
+  formatter_class=argparse.RawDescriptionHelpFormatter
+)
+parser.add_argument('lang', help='The language code')
+args = parser.parse_args()
 
-Parameters
-----------
-    -h :
-        This help
-    -lang <language> : str, mandatory
-        The language code
-"""
+# lang is mandatory but could be given the empty string value
+if not args.lang:
+    sys.exit('lang must not be the empty string!')
 
-import os
-import re
-import sys
-import ntpath
-from shutil import copyfile
+lang = args.lang
 
 script_absolute_path = os.path.dirname(os.path.realpath(__file__))
 client_components_translation_path = os.path.abspath(
@@ -62,25 +67,6 @@ client_route_file = os.path.abspath(
     script_absolute_path+"/../client/src/MobicoopBundle/Resources/config/routes.yaml")
 api_translations_path = os.path.abspath(
     script_absolute_path+"/../api/translations/")
-lang = ""
-
-if len(sys.argv) < 3:
-    print("Language code is mandatory")
-    exit()
-
-pos = 1
-args = len(sys.argv) - 1
-while (args >= pos):
-    if sys.argv[pos] == "-h":
-        print(__doc__)
-        exit()
-    elif sys.argv[pos] == "-lang":
-        lang = sys.argv[pos+1]
-    pos = pos + 1
-
-if lang == "":
-    print("Language code is mandatory")
-    exit()
 
 # useful functions
 def directory_spider(input_dir, path_pattern="", file_pattern=""):

@@ -676,8 +676,33 @@ class UserManager
                     $ads['published']['archived'][] = $myAd;
                 }
             }
-            if (count($myAd->getDriver()) > 0 || count($myAd->getPassengers()) > 0) {
-                if ($valid) {
+            if (count($myAd->getDriver()) > 0) {
+                if (2 == $myAd->getDriver()['askFrequency']) {
+                    $carpoolDate = \DateTime::createFromFormat('Y-m-d', $myAd->getDriver()['toDate']);
+                } else {
+                    $carpoolDate = \DateTime::createFromFormat('Y-m-d', $myAd->getDriver()['fromDate']);
+                }
+                $carpoolDate->setTime(0, 0);
+                if ($valid && $carpoolDate >= $now) {
+                    $ads['accepted']['active'][] = $myAd;
+                } else {
+                    $ads['accepted']['archived'][] = $myAd;
+                }
+            }
+            if (count($myAd->getPassengers()) > 0) {
+                $validCarpool = false;
+                foreach ($myAd->getPassengers() as $passenger) {
+                    if (2 == $passenger['askFrequency']) {
+                        $carpoolDate = \DateTime::createFromFormat('Y-m-d', $passenger['toDate']);
+                    } else {
+                        $carpoolDate = \DateTime::createFromFormat('Y-m-d', $passenger['fromDate']);
+                    }
+                    $carpoolDate->setTime(0, 0);
+                    if ($carpoolDate >= $now) {
+                        $validCarpool = true;
+                    }
+                }
+                if ($valid && $validCarpool) {
                     $ads['accepted']['active'][] = $myAd;
                 } else {
                     $ads['accepted']['archived'][] = $myAd;

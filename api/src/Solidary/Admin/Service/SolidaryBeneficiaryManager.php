@@ -39,7 +39,6 @@ use App\Solidary\Entity\SolidaryUserStructure;
 use App\Solidary\Entity\Structure;
 use App\Solidary\Repository\SolidaryUserRepository;
 use App\Solidary\Repository\SolidaryUserStructureRepository;
-use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -203,7 +202,7 @@ class SolidaryBeneficiaryManager
             $solidaryUser->getUser()->setGender($fields['gender']);
         }
         if (isset($fields['birthDate']) && $fields['birthDate'] != $solidaryUser->getUser()->getBirthDate()) {
-            $solidaryUser->getUser()->setBirthDate(new DateTime($fields['birthDate']));
+            $solidaryUser->getUser()->setBirthDate(new \DateTime($fields['birthDate']));
         }
         if (isset($fields['newsSubscription']) && $fields['newsSubscription'] != $solidaryUser->getUser()->hasNewsSubscription()) {
             $solidaryUser->getUser()->setNewsSubscription($fields['newsSubscription']);

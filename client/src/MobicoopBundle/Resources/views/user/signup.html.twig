@@ -26,6 +26,7 @@
     :required-home-address = "{{ required_home_address ? "true" : "false" }}"
     :required-community = "{{ required_community  ? "true" : "false" }}"
     :community-show = "{{ community_show ? "true" : "false"  }}"
+    :community-id = "{{ communityId is not null ? communityId : 'null' }}"
     :id = "{{ id is defined ? (id ? id : 'null') : 'null' }}"
     :login-link-in-connection = "{{ loginLinkInConnection ? "true" : "false" }}"
     :signup-rgpd-infos = "{{ signup_rgpd_infos|json_encode }}"
