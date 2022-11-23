@@ -24,7 +24,6 @@
 namespace App\Incentive\Service;
 
 use App\Carpool\Entity\CarpoolProof;
-use App\Carpool\Service\ProofManager;
 use App\Incentive\Resource\CeeStatus;
 use App\User\Entity\User;
 
@@ -35,8 +34,6 @@ use App\User\Entity\User;
  */
 class CeeStatusManager
 {
-    private $proofManager;
-
     /**
      * @var CeeStatus
      */
@@ -47,9 +44,8 @@ class CeeStatusManager
      */
     private $ceeEligibleProofs;
 
-    public function __construct(ProofManager $proofManager)
+    public function __construct()
     {
-        $this->proofManager = $proofManager;
         $this->ceeEligibleProofs = [];
     }
 
