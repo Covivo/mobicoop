@@ -45,10 +45,10 @@ class CarpoolProof
     public const STATUS_ERROR = 3;                  // error during the sending
     public const STATUS_CANCELED = 4;               // cancellation before sending
     public const STATUS_ACQUISITION_ERROR = 5;      // proof not recorded by the carpool register
-    public const STATUS_NORMALIZATION_ERROR = 6;    // proof recorded but data not not normalized by the carpool register
+    public const STATUS_NORMALIZATION_ERROR = 6;    // proof recorded but data not normalized by the carpool register
     public const STATUS_FRAUD_ERROR = 7;            // fraud detected by carpool register
     public const STATUS_VALIDATED = 8;              // proof validated by the carpool register
-    public const STATUS_EXPIRED = 9;                // proof sent to late to the carpool register
+    public const STATUS_EXPIRED = 9;                // proof sent too late to the carpool register
     public const STATUS_CANCELED_BY_OPERATOR = 10;  // proof canceled by the operator
     public const STATUS_UNDER_CHECKING = 11;        // proof under review by the carpool register
 
@@ -194,6 +194,7 @@ class CarpoolProof
 
     /**
      * @var string History of geographic points as a linestring, used to compute the direction. Updated at each new position. Can be emptied when the carpool is finished.
+     *
      * @ORM\Column(type="linestring", nullable=true)
      */
     private $geoJsonPoints;
@@ -527,7 +528,7 @@ class CarpoolProof
      */
     public function setAutoCreatedDate()
     {
-        $this->setCreatedDate(new \Datetime());
+        $this->setCreatedDate(new \DateTime());
     }
 
     /**
@@ -537,7 +538,7 @@ class CarpoolProof
      */
     public function setAutoUpdatedDate()
     {
-        $this->setUpdatedDate(new \Datetime());
+        $this->setUpdatedDate(new \DateTime());
     }
 
     /**

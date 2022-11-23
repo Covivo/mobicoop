@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2019, MOBICOOP. All rights reserved.
+ * Copyright (c) 2022, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -23,25 +23,25 @@
 
 namespace App\Carpool\Event;
 
-use App\Carpool\Entity\Proposal;
+use App\Carpool\Entity\CarpoolProof;
 use Symfony\Contracts\EventDispatcher\Event;
 
 /**
- * Event sent when a new proposal is posted.
+ * Event sent when a carpoolProof is validated by the carpool register.
  */
-class ProposalPostedEvent extends Event
+class CarpoolProofValidatedEvent extends Event
 {
-    public const NAME = 'carpool_ad_posted';
+    public const NAME = 'carpool_proof_validated';
 
-    protected $proposal;
+    protected $carpoolProof;
 
-    public function __construct(Proposal $proposal)
+    public function __construct(CarpoolProof $carpoolProof)
     {
-        $this->proposal = $proposal;
+        $this->carpoolProof = $carpoolProof;
     }
 
-    public function getProposal()
+    public function getCarpoolProof()
     {
-        return $this->proposal;
+        return $this->carpoolProof;
     }
 }
