@@ -19,17 +19,17 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Carpool\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 use App\Geography\Entity\Address;
 use App\Geography\Entity\Direction;
 use App\User\Entity\User;
-use Symfony\Component\Validator\Constraints as Assert;
 use CrEOF\Spatial\PHP\Types\Geometry\LineString;
 use CrEOF\Spatial\PHP\Types\Geometry\Point;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Carpooling : carpool proof.
@@ -39,24 +39,31 @@ use CrEOF\Spatial\PHP\Types\Geometry\Point;
  */
 class CarpoolProof
 {
-    const STATUS_INITIATED = 0;     // not ready to be sent, proof still under construction
-    const STATUS_PENDING = 1;       // ready to be sent
-    const STATUS_SENT = 2;          // sent
-    const STATUS_ERROR = 3;         // error during the sending
-    const STATUS_CANCELED = 4;      // cancellation before sending
+    public const STATUS_INITIATED = 0;              // not ready to be sent, proof still under construction
+    public const STATUS_PENDING = 1;                // ready to be sent
+    public const STATUS_SENT = 2;                   // sent
+    public const STATUS_ERROR = 3;                  // error during the sending
+    public const STATUS_CANCELED = 4;               // cancellation before sending
+    public const STATUS_ACQUISITION_ERROR = 5;      // proof not recorded by the carpool register
+    public const STATUS_NORMALIZATION_ERROR = 6;    // proof recorded but data not not normalized by the carpool register
+    public const STATUS_FRAUD_ERROR = 7;            // fraud detected by carpool register
+    public const STATUS_VALIDATED = 8;              // proof validated by the carpool register
+    public const STATUS_EXPIRED = 9;                // proof sent too late to the carpool register
+    public const STATUS_CANCELED_BY_OPERATOR = 10;  // proof canceled by the operator
+    public const STATUS_UNDER_CHECKING = 11;        // proof under review by the carpool register
 
-    const ACTOR_DRIVER = 1;
-    const ACTOR_PASSENGER = 2;
+    public const ACTOR_DRIVER = 1;
+    public const ACTOR_PASSENGER = 2;
 
-    const TYPE_LOW = "A";
-    const TYPE_MID = "B";
-    const TYPE_HIGH = "C";
+    public const TYPE_LOW = 'A';
+    public const TYPE_MID = 'B';
+    public const TYPE_HIGH = 'C';
 
-    const TYPE_UNDETERMINED_CLASSIC = "CX";
-    const TYPE_UNDETERMINED_DYNAMIC = "DX";
+    public const TYPE_UNDETERMINED_CLASSIC = 'CX';
+    public const TYPE_UNDETERMINED_DYNAMIC = 'DX';
 
     /**
-     * @var int The id of this proof.
+     * @var int the id of this proof
      *
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -65,7 +72,7 @@ class CarpoolProof
     private $id;
 
     /**
-     * @var int Proof status (0 = pending, 1 = sent to the register; 2 = error while sending to the register).
+     * @var int proof status (0 = pending, 1 = sent to the register; 2 = error while sending to the register)
      *
      * @Assert\NotBlank
      * @ORM\Column(type="smallint")
@@ -73,14 +80,14 @@ class CarpoolProof
     private $status;
 
     /**
-     * @var string Register system proof type.
+     * @var string register system proof type
      *
      * @ORM\Column(type="string", length=5, nullable=true)
      */
     private $type;
 
     /**
-     * @var Ask The ask related to the proof.
+     * @var Ask the ask related to the proof
      *
      * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Ask", inversedBy="carpoolProofs")
      * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
@@ -88,21 +95,21 @@ class CarpoolProof
     private $ask;
 
     /**
-     * @var \DateTimeInterface Driver start date.
+     * @var \DateTimeInterface driver start date
      *
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $startDriverDate;
 
     /**
-     * @var \DateTimeInterface Driver end date.
+     * @var \DateTimeInterface driver end date
      *
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $endDriverDate;
 
     /**
-     * @var Address Origin of the driver.
+     * @var Address origin of the driver
      *
      * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist"})
      * @ORM\JoinColumn(onDelete="CASCADE")
@@ -110,7 +117,7 @@ class CarpoolProof
     private $originDriverAddress;
 
     /**
-     * @var Address Destination of the driver.
+     * @var Address destination of the driver
      *
      * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist"})
      * @ORM\JoinColumn(onDelete="CASCADE")
@@ -118,35 +125,35 @@ class CarpoolProof
     private $destinationDriverAddress;
 
     /**
-     * @var \DateTimeInterface Passenger pickup certification date.
+     * @var \DateTimeInterface passenger pickup certification date
      *
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $pickUpPassengerDate;
 
     /**
-     * @var \DateTimeInterface Driver pickup certification date.
+     * @var \DateTimeInterface driver pickup certification date
      *
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $pickUpDriverDate;
 
     /**
-     * @var \DateTimeInterface Passenger dropoff certification date.
+     * @var \DateTimeInterface passenger dropoff certification date
      *
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $dropOffPassengerDate;
 
     /**
-     * @var \DateTimeInterface Driver dropoff certification date.
+     * @var \DateTimeInterface driver dropoff certification date
      *
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $dropOffDriverDate;
 
     /**
-     * @var Address Position of the passenger when pickup certification is asked.
+     * @var Address position of the passenger when pickup certification is asked
      *
      * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist"})
      * @ORM\JoinColumn(onDelete="CASCADE")
@@ -154,7 +161,7 @@ class CarpoolProof
     private $pickUpPassengerAddress;
 
     /**
-     * @var Address Position of the driver when pickup certification is asked.
+     * @var Address position of the driver when pickup certification is asked
      *
      * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist"})
      * @ORM\JoinColumn(onDelete="CASCADE")
@@ -162,7 +169,7 @@ class CarpoolProof
     private $pickUpDriverAddress;
 
     /**
-     * @var Address Position of the passenger when dropoff certification is asked.
+     * @var Address position of the passenger when dropoff certification is asked
      *
      * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist"})
      * @ORM\JoinColumn(onDelete="CASCADE")
@@ -170,7 +177,7 @@ class CarpoolProof
     private $dropOffPassengerAddress;
 
     /**
-     * @var Address Position of the driver when dropoff certification is asked.
+     * @var Address position of the driver when dropoff certification is asked
      *
      * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Address", cascade={"persist"})
      * @ORM\JoinColumn(onDelete="CASCADE")
@@ -178,7 +185,7 @@ class CarpoolProof
     private $dropOffDriverAddress;
 
     /**
-     * @var Direction|null The direction related with the proof.
+     * @var null|Direction the direction related with the proof
      *
      * @ORM\OneToOne(targetEntity="\App\Geography\Entity\Direction", cascade={"persist"})
      * @ORM\JoinColumn(onDelete="CASCADE")
@@ -187,12 +194,13 @@ class CarpoolProof
 
     /**
      * @var string History of geographic points as a linestring, used to compute the direction. Updated at each new position. Can be emptied when the carpool is finished.
+     *
      * @ORM\Column(type="linestring", nullable=true)
      */
     private $geoJsonPoints;
 
     /**
-     * @var User|null The driver, used to keep a link to the driver if the passenger deletes its ad (the ask may be deleted aswell).
+     * @var null|User the driver, used to keep a link to the driver if the passenger deletes its ad (the ask may be deleted aswell)
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="carpoolProofsAsDriver")
      * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
@@ -200,7 +208,7 @@ class CarpoolProof
     private $driver;
 
     /**
-     * @var User|null The passenger, used to keep a link to the passenger if the driver deletes its ad (the ask may be deleted aswell).
+     * @var null|User the passenger, used to keep a link to the passenger if the driver deletes its ad (the ask may be deleted aswell)
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="carpoolProofsAsPassenger")
      * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
@@ -208,21 +216,21 @@ class CarpoolProof
     private $passenger;
 
     /**
-     * @var \DateTimeInterface Creation date.
+     * @var \DateTimeInterface creation date
      *
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $createdDate;
 
     /**
-     * @var \DateTimeInterface Updated date.
+     * @var \DateTimeInterface updated date
      *
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $updatedDate;
 
     /**
-     * @var array|null The array of points as Address objects. Used to create the geoJsonPoints.
+     * @var null|array The array of points as Address objects. Used to create the geoJsonPoints.
      */
     private $points;
 
@@ -267,7 +275,7 @@ class CarpoolProof
             // set the owning side
             $ask->addCarpoolProof($this);
         }
-        
+
         return $this;
     }
 
@@ -318,7 +326,7 @@ class CarpoolProof
 
         return $this;
     }
-    
+
     public function getPickUpPassengerAddress(): ?Address
     {
         return $this->pickUpPassengerAddress;
@@ -371,23 +379,23 @@ class CarpoolProof
     {
         return $this->direction;
     }
-    
+
     public function setDirection(?Direction $direction): self
     {
         $this->direction = $direction;
-        
+
         return $this;
     }
-    
+
     public function getGeoJsonPoints()
     {
         return $this->geoJsonPoints;
     }
-    
+
     public function setGeoJsonPoints($geoJsonPoints): self
     {
         $this->geoJsonPoints = $geoJsonPoints;
-        
+
         return $this;
     }
 
@@ -443,11 +451,11 @@ class CarpoolProof
     {
         return $this->points;
     }
-    
+
     public function setPoints(array $points): self
     {
         $this->points = $points;
-        
+
         return $this;
     }
 
@@ -500,7 +508,7 @@ class CarpoolProof
     }
 
     // DOCTRINE EVENTS
-    
+
     /**
      * Status.
      *
@@ -520,7 +528,7 @@ class CarpoolProof
      */
     public function setAutoCreatedDate()
     {
-        $this->setCreatedDate(new \Datetime());
+        $this->setCreatedDate(new \DateTime());
     }
 
     /**
@@ -530,7 +538,7 @@ class CarpoolProof
      */
     public function setAutoUpdatedDate()
     {
-        $this->setUpdatedDate(new \Datetime());
+        $this->setUpdatedDate(new \DateTime());
     }
 
     /**

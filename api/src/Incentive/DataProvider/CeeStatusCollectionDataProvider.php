@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2020, MOBICOOP. All rights reserved.
+ * Copyright (c) 2022, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -20,42 +20,40 @@
  *    LICENSE
  */
 
-namespace App\User\DataProvider;
+namespace App\Incentive\DataProvider;
 
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use App\User\Ressource\SsoConnection;
-use App\User\Service\SsoManager;
-use Symfony\Component\HttpFoundation\RequestStack;
+use App\Incentive\Resource\CeeStatus;
+use App\Incentive\Service\CeeStatusManager;
+use App\User\Entity\User;
 use Symfony\Component\Security\Core\Security;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-final class SsoConnectionCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
+final class CeeStatusCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
     private $security;
-    private $ssoManager;
-    private $request;
+    private $ceeStatusManager;
 
-    public function __construct(RequestStack $request, Security $security, SsoManager $ssoManager)
+    public function __construct(Security $security, CeeStatusManager $ceeStatusManager)
     {
         $this->security = $security;
-        $this->ssoManager = $ssoManager;
-        $this->request = $request->getCurrentRequest();
+        $this->ceeStatusManager = $ceeStatusManager;
     }
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return SsoConnection::class === $resourceClass && 'get' === $operationName;
+        return CeeStatus::class === $resourceClass && 'get' === $operationName;
     }
 
     public function getCollection(string $resourceClass, string $operationName = null)
     {
-        if ('' == $this->request->get('baseSiteUri')) {
-            throw new \LogicException('Parameter missing : baseSiteUri');
+        if (!$this->security->getUser() instanceof User) {
+            throw new \LogicException('Only a User can make this');
         }
 
-        return $this->ssoManager->getSsoConnectionServices($this->request->get('baseSiteUri'), $this->request->get('serviceId'));
+        return $this->ceeStatusManager->getStatus($this->security->getUser());
     }
 }

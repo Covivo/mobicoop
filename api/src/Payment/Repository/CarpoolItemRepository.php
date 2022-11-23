@@ -27,7 +27,6 @@ use App\Carpool\Entity\Ask;
 use App\Payment\Entity\CarpoolItem;
 use App\Payment\Ressource\PaymentItem;
 use App\User\Entity\User;
-use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 
 class CarpoolItemRepository
@@ -52,12 +51,12 @@ class CarpoolItemRepository
     /**
      * Find a carpool item by ask and date.
      *
-     * @param Ask      $ask  The ask
-     * @param DateTime $date The date
+     * @param Ask       $ask  The ask
+     * @param \DateTime $date The date
      *
      * @return null|CarpoolItem The carpool item found or null if not found
      */
-    public function findByAskAndDate(Ask $ask, DateTime $date)
+    public function findByAskAndDate(Ask $ask, \DateTime $date)
     {
         $query = $this->repository->createQueryBuilder('ci')
             ->where('ci.ask = :ask')
@@ -73,13 +72,13 @@ class CarpoolItemRepository
      * Find all carpool items for a given ask in a given period.
      * Results are ordered by item date asc.
      *
-     * @param Ask      $ask      The ask
-     * @param DateTime $fromDate The start of the period
-     * @param DateTime $toDate   The end of the period
+     * @param Ask       $ask      The ask
+     * @param \DateTime $fromDate The start of the period
+     * @param \DateTime $toDate   The end of the period
      *
      * @return CarpoolItem[] The carpool items found
      */
-    public function findByAskAndPeriod(Ask $ask, DateTime $fromDate, DateTime $toDate)
+    public function findByAskAndPeriod(Ask $ask, \DateTime $fromDate, \DateTime $toDate)
     {
         $query = $this->repository->createQueryBuilder('ci')
             ->where('ci.ask = :ask')
@@ -96,15 +95,15 @@ class CarpoolItemRepository
     /**
      * Find carpool items for payments.
      *
-     * @param int      $frequency The frequency for the items
-     * @param int      $type      The type of items (1 = to pay, 2 = to collect)
-     * @param User     $user      The user concerned
-     * @param DateTime $fromDate  The start of the period for which we want to get the items
-     * @param DateTime $toDate    The end of the period  for which we want to get the items
+     * @param int       $frequency The frequency for the items
+     * @param int       $type      The type of items (1 = to pay, 2 = to collect)
+     * @param User      $user      The user concerned
+     * @param \DateTime $fromDate  The start of the period for which we want to get the items
+     * @param \DateTime $toDate    The end of the period  for which we want to get the items
      *
      * @return array The carpool items found
      */
-    public function findForPayments(int $frequency, int $type, User $user, DateTime $fromDate, DateTime $toDate)
+    public function findForPayments(int $frequency, int $type, User $user, \DateTime $fromDate, \DateTime $toDate)
     {
         $query = $this->repository->createQueryBuilder('ci')
             ->join('ci.ask', 'a')
@@ -185,6 +184,24 @@ class CarpoolItemRepository
         $query = $this->repository->createQueryBuilder('ci')
             ->where('ci.debtorConsumptionFeedbackDate is not null OR ci.creditorConsumptionFeedbackDate is not null')
             ->andWhere('(ci.debtorConsumptionFeedbackReturnCode is not null and ci.debtorConsumptionFeedbackReturnCode <> 200) OR (ci.creditorConsumptionFeedbackReturnCode is not null and ci.creditorConsumptionFeedbackReturnCode <> 200)')
+        ;
+
+        return $query->getQuery()->getResult();
+    }
+
+    /**
+     * Find carpoolItems using electronic payment for a user as creditor.
+     *
+     * @return CarpoolItem[]
+     */
+    public function findByCreditorElectronically(User $user)
+    {
+        $query = $this->repository->createQueryBuilder('ci')
+            ->where('ci.creditorUser = :user')
+            ->andWhere('ci.creditorStatus = :paid or ci.creditorStatus = :pending')
+            ->setParameter('user', $user)
+            ->setParameter('paid', CarpoolItem::CREDITOR_STATUS_ONLINE)
+            ->setParameter('pending', CarpoolItem::CREDITOR_STATUS_PENDING_ONLINE)
         ;
 
         return $query->getQuery()->getResult();
