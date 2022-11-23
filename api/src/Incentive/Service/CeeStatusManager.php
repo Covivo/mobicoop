@@ -25,6 +25,8 @@ namespace App\Incentive\Service;
 
 use App\Carpool\Entity\CarpoolProof;
 use App\Incentive\Resource\CeeStatus;
+use App\Payment\Entity\CarpoolItem;
+use App\Payment\Repository\CarpoolItemRepository;
 use App\User\Entity\User;
 
 /**
@@ -40,19 +42,28 @@ class CeeStatusManager
     private $ceeStatus;
 
     /**
-     * @var array
+     * @var CarpoolProof[]
      */
     private $ceeEligibleProofs;
 
-    public function __construct()
+    /**
+     * @var CarpoolItem[]
+     */
+    private $ceeEligibleItems;
+
+    private $carpoolItemRepository;
+
+    public function __construct(CarpoolItemRepository $carpoolItemRepository)
     {
         $this->ceeEligibleProofs = [];
+        $this->ceeEligibleItems = [];
+        $this->carpoolItemRepository = $carpoolItemRepository;
     }
 
     /**
-     * Keep only the eligible proofs (short distance only).
+     * Keep only the eligible proofs (for short distance only).
      */
-    private function __getCEEEligibleProofs(User $user)
+    private function __getCEEEligibleProofsShortDistance(User $user)
     {
         foreach ($user->getCarpoolProofsAsDriver() as $proof) {
             if (!is_null($proof->getAsk()) && $proof->getAsk()->getMatching()->getCommonDistance() >= CeeStatus::LONG_DISTANCE_MINIMUM_IN_METERS) {
@@ -67,10 +78,30 @@ class CeeStatusManager
         }
     }
 
+    /**
+     * Keep only the eligible carpool items (for long distance only).
+     */
+    private function __filterCEEEligibleItemsLongDistance()
+    {
+        foreach ($this->ceeEligibleItems as $key => $carpoolItem) {
+            if ($carpoolItem->getAsk()->getMatching()->getCommonDistance() < CeeStatus::LONG_DISTANCE_MINIMUM_IN_METERS) {
+                unset($this->ceeEligibleItems[$key]);
+
+                continue;
+            }
+
+            if (round($carpoolItem->getAsk()->getCriteria()->getPriceKm(), 2) < CeeStatus::LONG_DISTANCE_MINIMUM_PRICE_BY_KM) {
+                unset($this->ceeEligibleItems[$key]);
+
+                continue;
+            }
+        }
+    }
+
     private function __computeShortDistance(User $user)
     {
         $ceeShortDistanceStatus = $this->ceeStatus->getShortDistanceStatus();
-        $this->__getCEEEligibleProofs($user);
+        $this->__getCEEEligibleProofsShortDistance($user);
         foreach ($this->ceeEligibleProofs as $proof) {
             switch ($proof->getStatus()) {
                 case CarpoolProof::STATUS_PENDING:
@@ -94,9 +125,32 @@ class CeeStatusManager
         $this->ceeStatus->setShortDistanceStatus($ceeShortDistanceStatus);
     }
 
+    private function __computeLongDistance(User $user)
+    {
+        $ceeLongDistanceStatus = $this->ceeStatus->getLongDistanceStatus();
+        $this->ceeEligibleItems = $this->carpoolItemRepository->findByCreditorElectronically($user);
+        $this->__filterCEEEligibleItemsLongDistance();
+        foreach ($this->ceeEligibleItems as $carpoolItem) {
+            switch ($carpoolItem->getCreditorStatus()) {
+                case CarpoolItem::CREDITOR_STATUS_PENDING_ONLINE:
+                    $ceeLongDistanceStatus->setNbElectronicallyPending($ceeLongDistanceStatus->getNbElectronicallyPending() + 1);
+
+                    break;
+
+                case CarpoolItem::CREDITOR_STATUS_ONLINE:
+                    $ceeLongDistanceStatus->setNbElectronicallyPaid($ceeLongDistanceStatus->getNbElectronicallyPaid() + 1);
+
+                    break;
+            }
+        }
+
+        $this->ceeStatus->setLongDistanceStatus($ceeLongDistanceStatus);
+    }
+
     private function __computeNbCarpoolProofs(User $user)
     {
         $this->__computeShortDistance($user);
+        $this->__computeLongDistance($user);
     }
 
     public function getStatus(User $user): CeeStatus

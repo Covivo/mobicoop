@@ -62,7 +62,7 @@ class CeeStatus
 {
     public const DEFAULT_ID = '999999999999';
     public const LONG_DISTANCE_MINIMUM_IN_METERS = 80000;
-    public const SHORT_DISTANCE_MIN_PRICE_BY_KM = 0.06;
+    public const LONG_DISTANCE_MINIMUM_PRICE_BY_KM = 0.06;
 
     /**
      * @var int The id of this CEE Status
