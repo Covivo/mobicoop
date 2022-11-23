@@ -44,6 +44,12 @@ class CeeLongDistanceStatus
      */
     private $nbElectronicallyPaid;
 
+    public function __construct()
+    {
+        $this->nbElectronicallyPending = 0;
+        $this->nbElectronicallyPaid = 0;
+    }
+
     public function getNbElectronicallyPaid(): ?int
     {
         return $this->nbElectronicallyPaid;

@@ -23,8 +23,8 @@
 
 namespace App\Incentive\Service;
 
-use App\Icentive\Entity\CeeLongDistanceStatus;
-use App\Icentive\Entity\CeeShortDistanceStatus;
+use App\Carpool\Entity\CarpoolProof;
+use App\Carpool\Service\ProofManager;
 use App\Incentive\Resource\CeeStatus;
 use App\User\Entity\User;
 
@@ -35,13 +35,80 @@ use App\User\Entity\User;
  */
 class CeeStatusManager
 {
-    public function getStatus(User $user)
-    {
-        $ceeStatus = new CeeStatus();
-        $ceeStatus->setId($user->getId());
-        $ceeStatus->setLongDistanceStatus(new CeeLongDistanceStatus());
-        $ceeStatus->setShortDistanceStatus(new CeeShortDistanceStatus());
+    private $proofManager;
 
-        return $ceeStatus;
+    /**
+     * @var CeeStatus
+     */
+    private $ceeStatus;
+
+    /**
+     * @var array
+     */
+    private $ceeEligibleProofs;
+
+    public function __construct(ProofManager $proofManager)
+    {
+        $this->proofManager = $proofManager;
+        $this->ceeEligibleProofs = [];
+    }
+
+    /**
+     * Keep only the eligible proofs (short distance only).
+     */
+    private function __getCEEEligibleProofs(User $user)
+    {
+        foreach ($user->getCarpoolProofsAsDriver() as $proof) {
+            if (!is_null($proof->getAsk()) && $proof->getAsk()->getMatching()->getCommonDistance() >= CeeStatus::LONG_DISTANCE_MINIMUM_IN_METERS) {
+                continue;
+            }
+
+            if (CarpoolProof::TYPE_HIGH !== $proof->getType() && CarpoolProof::TYPE_UNDETERMINED_DYNAMIC !== $proof->getType()) {
+                continue;
+            }
+
+            $this->ceeEligibleProofs[] = $proof;
+        }
+    }
+
+    private function __computeShortDistance(User $user)
+    {
+        $ceeShortDistanceStatus = $this->ceeStatus->getShortDistanceStatus();
+        $this->__getCEEEligibleProofs($user);
+        foreach ($this->ceeEligibleProofs as $proof) {
+            switch ($proof->getStatus()) {
+                case CarpoolProof::STATUS_PENDING:
+                case CarpoolProof::STATUS_SENT:$ceeShortDistanceStatus->setNbPendingProofs($ceeShortDistanceStatus->getNbPendingProofs() + 1);
+
+                    break;
+
+                case CarpoolProof::STATUS_ERROR:
+                case CarpoolProof::STATUS_ACQUISITION_ERROR:
+                case CarpoolProof::STATUS_NORMALIZATION_ERROR:
+                case CarpoolProof::STATUS_FRAUD_ERROR:$ceeShortDistanceStatus->setNbRejectedProofs($ceeShortDistanceStatus->getNbRejectedProofs() + 1);
+
+                    break;
+
+                case CarpoolProof::STATUS_VALIDATED:$ceeShortDistanceStatus->setNbValidatedProofs($ceeShortDistanceStatus->getNbValidatedProofs() + 1);
+
+                    break;
+            }
+        }
+
+        $this->ceeStatus->setShortDistanceStatus($ceeShortDistanceStatus);
+    }
+
+    private function __computeNbCarpoolProofs(User $user)
+    {
+        $this->__computeShortDistance($user);
+    }
+
+    public function getStatus(User $user): CeeStatus
+    {
+        $this->ceeStatus = new CeeStatus();
+        $this->ceeStatus->setId($user->getId());
+        $this->__computeNbCarpoolProofs($user);
+
+        return $this->ceeStatus;
     }
 }

@@ -51,6 +51,13 @@ class CeeShortDistanceStatus
      */
     private $nbRejectedProofs;
 
+    public function __construct()
+    {
+        $this->nbPendingProofs = 0;
+        $this->nbValidatedProofs = 0;
+        $this->nbRejectedProofs = 0;
+    }
+
     public function getNbPendingProofs(): ?int
     {
         return $this->nbPendingProofs;

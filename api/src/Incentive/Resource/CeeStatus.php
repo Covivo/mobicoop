@@ -61,7 +61,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 class CeeStatus
 {
     public const DEFAULT_ID = '999999999999';
-    public const LONG_DISTANCE_MINIMUM_KMS = 80;
+    public const LONG_DISTANCE_MINIMUM_IN_METERS = 80000;
     public const SHORT_DISTANCE_MIN_PRICE_BY_KM = 0.06;
 
     /**
@@ -92,6 +92,8 @@ class CeeStatus
         if ($id) {
             $this->id = $id;
         }
+        $this->longDistanceStatus = new CeeLongDistanceStatus();
+        $this->shortDistanceStatus = new CeeShortDistanceStatus();
     }
 
     public function getId(): int
