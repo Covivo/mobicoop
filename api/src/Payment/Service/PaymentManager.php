@@ -36,6 +36,7 @@ use App\Payment\Entity\CarpoolPayment;
 use App\Payment\Entity\PaymentProfile;
 use App\Payment\Event\ConfirmDirectPaymentEvent;
 use App\Payment\Event\ConfirmDirectPaymentRegularEvent;
+use App\Payment\Event\ElectronicPaymentValidatedEvent;
 use App\Payment\Event\IdentityProofAcceptedEvent;
 use App\Payment\Event\IdentityProofOutdatedEvent;
 use App\Payment\Event\IdentityProofRejectedEvent;
@@ -55,9 +56,7 @@ use App\Payment\Ressource\ValidationDocument;
 use App\User\DataProvider\ConsumptionFeedbackDataProvider;
 use App\User\Entity\User;
 use App\User\Service\UserManager;
-use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
-use Exception;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -144,7 +143,7 @@ class PaymentManager
         $this->paymentProfileRepository = $paymentProfileRepository;
         $this->userManager = $userManager;
         $this->paymentActive = false;
-        if ($this->paymentActiveDate = DateTime::createFromFormat('Y-m-d', $paymentActive)) {
+        if ($this->paymentActiveDate = \DateTime::createFromFormat('Y-m-d', $paymentActive)) {
             $this->paymentActiveDate->setTime(0, 0);
             $this->paymentActive = true;
         }
@@ -177,15 +176,15 @@ class PaymentManager
         $fromDate = null;
         $toDate = null;
 
-        $minDate = new DateTime('2999-01-01');
-        $maxDate = new DateTime('1970-01-01');
+        $minDate = new \DateTime('2999-01-01');
+        $maxDate = new \DateTime('1970-01-01');
 
         if (Criteria::FREQUENCY_REGULAR == $frequency) {
             if (is_null($day) && is_null($week)) {
                 throw new PaymentException(PaymentException::DAY_OR_WEEK_NOT_PROVIDED);
             }
             if (!is_null($day)) {
-                $fromDate = DateTime::createFromFormat('Ymd', $day);
+                $fromDate = \DateTime::createFromFormat('Ymd', $day);
                 $fromDate->modify('first day of this month');
                 $toDate = clone $fromDate;
                 $toDate->modify('last day of this month');
@@ -195,9 +194,9 @@ class PaymentManager
                 if ($weekNumber < self::MIN_WEEK || $weekNumber > self::MAX_WEEK || $weekYear < self::MIN_YEAR || $weekYear > self::MAX_YEAR) {
                     throw new PaymentException(PaymentException::WEEK_WRONG_FORMAT);
                 }
-                $fromDate = new DateTime();
+                $fromDate = new \DateTime();
                 $fromDate->setISODate($weekYear, $weekNumber);
-                $toDate = new DateTime();
+                $toDate = new \DateTime();
                 $toDate->setISODate($weekYear, $weekNumber, 7);
             }
             $fromDate->setTime(0, 0, 0);
@@ -505,11 +504,11 @@ class PaymentManager
         $week = null;
         $validated = false;
         if (!$carpoolItem = $this->carpoolItemRepository->find($id)) {
-            return new Exception('Wrong carpoolItem id');
+            return new \Exception('Wrong carpoolItem id');
         }
         $ask = $carpoolItem->getAsk();
         if ($ask->getUser()->getId() != $user->getId() && $ask->getUserRelated()->getId() != $user->getId()) {
-            return new Exception('Unauthaurized');
+            return new \Exception('Unauthaurized');
         }
         if (count($ask->getCarpoolItems()) > 0) {
             $week = $ask->getCarpoolItems()[0]->getItemDate()->format('WY');
@@ -698,7 +697,7 @@ class PaymentManager
                     $carpoolItem->setUnpaidDate(new \DateTime('now'));
 
                 // Unpaid doesn't change the status
-                    // $carpoolItem->setItemStatus(CarpoolItem::CREDITOR_STATUS_UNPAID);
+                // $carpoolItem->setItemStatus(CarpoolItem::CREDITOR_STATUS_UNPAID);
                 } elseif (PaymentItem::DAY_CARPOOLED == $item['status']) {
                     $carpoolItem->setItemStatus(CarpoolItem::STATUS_REALIZED);
                     $carpoolItem->setUnpaidDate(null);
@@ -820,19 +819,19 @@ class PaymentManager
     /**
      * Create the carpool payment items from the accepted asks.
      *
-     * @param null|DateTime $fromDate The start of the period for which we want to create the items
-     * @param null|DateTime $toDate   The end of the period  for which we want to create the items
-     * @param null|User     $user     The user concerned (if no user is provided we generate the items for everyone)
+     * @param null|\DateTime $fromDate The start of the period for which we want to create the items
+     * @param null|\DateTime $toDate   The end of the period  for which we want to create the items
+     * @param null|User      $user     The user concerned (if no user is provided we generate the items for everyone)
      */
-    public function createCarpoolItems(?DateTime $fromDate = null, ?DateTime $toDate = null, ?User $user = null)
+    public function createCarpoolItems(?\DateTime $fromDate = null, ?\DateTime $toDate = null, ?User $user = null)
     {
         // if no dates are sent, we use the origin of times till "now" ("now" = now less the margin time)
         if (is_null($fromDate)) {
-            $fromDate = new DateTime('1970-01-01');
+            $fromDate = new \DateTime('1970-01-01');
             $fromDate->setTime(0, 0);
         }
         if (is_null($toDate)) {
-            $toDate = new DateTime();
+            $toDate = new \DateTime();
             $toDate->modify('-1 day');
             $toDate->setTime(23, 59, 59, 999);
         }
@@ -1005,23 +1004,23 @@ class PaymentManager
     /**
      * Get the carpool payment items for the given frequency, type, period and user.
      *
-     * @param int           $frequency The frequency for the items
-     * @param int           $type      The type of items (1 = to pay, 2 = to collect)
-     * @param User          $user      The user concerned
-     * @param null|DateTime $fromDate  The start of the period for which we want to get the items
-     * @param null|DateTime $toDate    The end of the period  for which we want to get the items
+     * @param int            $frequency The frequency for the items
+     * @param int            $type      The type of items (1 = to pay, 2 = to collect)
+     * @param User           $user      The user concerned
+     * @param null|\DateTime $fromDate  The start of the period for which we want to get the items
+     * @param null|\DateTime $toDate    The end of the period  for which we want to get the items
      *
      * @return array The items found
      */
-    public function getCarpoolItems(int $frequency, int $type, User $user, ?DateTime $fromDate = null, ?DateTime $toDate = null)
+    public function getCarpoolItems(int $frequency, int $type, User $user, ?\DateTime $fromDate = null, ?\DateTime $toDate = null)
     {
         // if no dates are sent, we use the origin of times till the previous day
         if (is_null($fromDate)) {
-            $fromDate = new DateTime('1970-01-01');
+            $fromDate = new \DateTime('1970-01-01');
             $fromDate->setTime(0, 0);
         }
         if (is_null($toDate)) {
-            $toDate = new DateTime();
+            $toDate = new \DateTime();
             $toDate->modify('-1 day');
             $toDate->setTime(23, 59, 59, 999);
         }
@@ -1155,7 +1154,7 @@ class PaymentManager
                 $paymentProfile->setValidationStatus(PaymentProfile::VALIDATION_OUTDATED);
                 $paymentProfile->setValidationId($kycDocument['Id']);
                 $paymentProfile->setElectronicallyPayable(false);
-                $paymentProfile->setValidationOutdatedDate(new \Datetime());
+                $paymentProfile->setValidationOutdatedDate(new \DateTime());
 
                 break;
 
@@ -1214,7 +1213,7 @@ class PaymentManager
                         $paymentProfile->setRefusalReason(PaymentProfile::SPECIFIC_CASE);
 
                         break;
-                    }
+                }
 
                 break;
 
@@ -1222,7 +1221,7 @@ class PaymentManager
                 $paymentProfile->setValidationStatus(PaymentProfile::VALIDATION_VALIDATED);
                 $paymentProfile->setValidationId($kycDocument['Id']);
                 $paymentProfile->setElectronicallyPayable(true);
-                $paymentProfile->setValidatedDate(new \Datetime());
+                $paymentProfile->setValidatedDate(new \DateTime());
                 $paymentProfile->setRefusalReason(null);
 
                 break;
@@ -1282,8 +1281,11 @@ class PaymentManager
         $this->entityManager->persist($carpoolPayment);
         $this->entityManager->flush();
 
-        //  we dispatch the gamification event associated
         if (CarpoolPayment::STATUS_SUCCESS == $carpoolPayment->getStatus) {
+            $event = new ElectronicPaymentValidatedEvent($carpoolPayment);
+            $this->eventDispatcher->dispatch($event, ElectronicPaymentValidatedEvent::NAME);
+
+            //  we dispatch the gamification event associated
             $action = $this->actionRepository->findOneBy(['name' => 'electronic_payment_made']);
             $actionEvent = new ActionEvent($action, $carpoolPayment->getUser());
             $actionEvent->setCarpoolPayment($carpoolPayment);
@@ -1323,7 +1325,7 @@ class PaymentManager
                 $actionEvent = new ActionEvent($action, $event->getPaymentProfile()->getUser());
                 $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);
 
-            break;
+                break;
 
             case Hook::STATUS_FAILED:
                 $paymentProfile->setValidationStatus(PaymentProfile::VALIDATION_REJECTED);
@@ -1333,7 +1335,7 @@ class PaymentManager
                 $event = new IdentityProofRejectedEvent($paymentProfile);
                 $this->eventDispatcher->dispatch(IdentityProofRejectedEvent::NAME, $event);
 
-            break;
+                break;
 
             case Hook::STATUS_OUTDATED_RESSOURCE:
                 $paymentProfile->setValidationStatus(PaymentProfile::VALIDATION_OUTDATED);
@@ -1346,7 +1348,7 @@ class PaymentManager
                 $event = new IdentityProofOutdatedEvent($paymentProfile);
                 $this->eventDispatcher->dispatch(IdentityProofOutdatedEvent::NAME, $event);
 
-            break;
+                break;
         }
 
         $this->entityManager->persist($paymentProfile);
@@ -1415,19 +1417,19 @@ class PaymentManager
     /**
      * Export online payment to xml files.
      *
-     * @param null|DateTime $fromDate The start date for the export
-     * @param null|DateTime $toDate   The end date for the export
+     * @param null|\DateTime $fromDate The start date for the export
+     * @param null|\DateTime $toDate   The end date for the export
      */
-    public function exportPayments(?DateTime $fromDate = null, ?DateTime $toDate = null)
+    public function exportPayments(?\DateTime $fromDate = null, ?\DateTime $toDate = null)
     {
         // if no dates are sent, we use the previous day
         if (is_null($fromDate)) {
-            $fromDate = new DateTime();
+            $fromDate = new \DateTime();
             $fromDate->modify('-1 day');
             $fromDate->setTime(0, 0);
         }
         if (is_null($toDate)) {
-            $toDate = new DateTime();
+            $toDate = new \DateTime();
             $toDate->modify('-1 day');
             $toDate->setTime(23, 59, 59, 999);
         }
