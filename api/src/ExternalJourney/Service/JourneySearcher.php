@@ -35,14 +35,16 @@ class JourneySearcher
     public function __construct(?array $providers = [])
     {
         foreach ($providers as $name => $detail) {
-            switch ($detail['protocol']) {
-                case 'RDEX': $this->_providers[] = $this->createProviderRdex($name, $detail);
+            if (isset($detail['protocol'])) {
+                switch ($detail['protocol']) {
+                    case 'RDEX': $this->_providers[] = $this->createProviderRdex($name, $detail);
 
-                    break;
+                        break;
 
-                case 'STANDARD_RDEX': $this->_providers[] = $this->createProviderStandardRdex($name, $detail);
+                    case 'STANDARD_RDEX': $this->_providers[] = $this->createProviderStandardRdex($name, $detail);
 
-                    break;
+                        break;
+                }
             }
         }
     }
