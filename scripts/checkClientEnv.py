@@ -55,8 +55,8 @@ parser.add_argument('--dry', help='Show information only (no append file)',
 args = parser.parse_args()
 
 env = args.env
-client_path = args.path + "/client"
-api_path = args.path + "/api"
+client_path = f"{args.path}/client"
+api_path = f"{args.path}/api"
 
 key_value_regexp = re.compile('(?P<key>[^#=]+)=(?P<value>[^#]*)')
 
@@ -91,7 +91,7 @@ def env_file_to_dict(file, duplicates=DuplicatesBypass()):
     my_dict = {}
 
     if not os.path.isfile(file):
-        print(f"{file} not found !")
+        print(f"{file} not found!")
         return my_dict
 
     with open(file, mode="r", encoding="utf-8") as dotenv:
@@ -116,25 +116,25 @@ print ("--------------------")
 print ("\033[0;37;40m")
 
 # find api .env
-if not os.path.isfile(api_path+"/.env"):
-    print ("API .env not found in "+api_path+" !")
+if not os.path.isfile(f"{api_path}/.env"):
+    print (f"API .env not found in {api_path}!")
     exit()
 
 # find client .env
-if not os.path.isfile(client_path+"/.env"):
-    print ("Client .env not found in "+client_path+" !")
+if not os.path.isfile(f"{client_path}/.env"):
+    print (f"Client .env not found in {client_path}!")
     exit()
 
 # find instance .env file and append or create it
 if not os.path.isfile(".env"):
-    print ("Instance .env not found !")
+    print ("Instance .env not found!")
     exit()
 
 # create api dictionary
-dict_api = env_file_to_dict(api_path+"/.env")
+dict_api = env_file_to_dict(f"{api_path}/.env")
 
 # create client dictionary
-dict_client = env_file_to_dict(client_path+"/.env")
+dict_client = env_file_to_dict(f"{client_path}/.env")
 
 # create instance dictionary
 dict_instance = env_file_to_dict(".env")
@@ -171,14 +171,14 @@ print ("2. IDENTIFY DUPLICATES")
 print ("----------------------")
 
 print ("\033[1;34;40m")
-print ("Checking instance .env."+env+".local")
+print (f"Checking instance .env.{env}.local")
 print ("\033[0;37;40m")
-dict_instance_local = env_file_to_dict(".env."+env+".local", DuplicatesCounter())
+dict_instance_local = env_file_to_dict(f".env.{env}.local", DuplicatesCounter())
 
 print ("\033[1;34;40m")
-print ("Checking API .env."+env+".local")
+print (f"Checking API .env.{env}.local")
 print ("\033[0;37;40m")
-dict_api_local = env_file_to_dict(api_path+"/.env."+env+".local", DuplicatesCounter())
+dict_api_local = env_file_to_dict(f"{api_path}/.env.{env}.local", DuplicatesCounter())
 
 ################################
 # 3. identify unnecessary keys #
@@ -191,30 +191,30 @@ print ("----------------------------")
 
 # api
 print ("\033[1;34;40m")
-print ("Checking instance .env."+env+".local")
+print (f"Checking instance .env.{env}.local")
 print ("\033[0;37;40m")
 if len(dict_instance_local)>0:
     unnecessary_keys = 0
     for key in dict_instance_local:
         if key not in dict_instance.keys():
-            print ("Key \033[1;37;40m"+key+"\033[0;37;40m not found in instance .env."+env+".local !")
+            print (f"Key \033[1;37;40m{key}\033[0;37;40m not found in instance .env.{env}.local!")
             unnecessary_keys = unnecessary_keys + 1
     if unnecessary_keys == 0:
-        print ("Instance .env."+env+".local OK")
+        print (f"Instance .env.{env}.local OK")
 else:
     print ("Nothing to check")
 
 # api
 print ("\033[1;34;40m")
-print ("Checking API .env."+env+".local")
+print (f"Checking API .env.{env}.local")
 print ("\033[0;37;40m")
 if len(dict_api_local)>0:
     unnecessary_keys = 0
     for key in dict_api_local:
         if key not in dict_api.keys():
-            print ("Key \033[1;37;40m"+key+"\033[0;37;40m not found in API .env."+env+".local !")
+            print (f"Key \033[1;37;40m{key}\033[0;37;40m not found in API .env.{env}.local!")
             unnecessary_keys = unnecessary_keys + 1
     if unnecessary_keys == 0:
-        print ("API .env."+env+".local OK")
+        print (f"API .env.{env}.local OK")
 else:
     print ("Nothing to check")
