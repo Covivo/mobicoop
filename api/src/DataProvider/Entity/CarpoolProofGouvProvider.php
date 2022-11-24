@@ -27,7 +27,6 @@ use App\Carpool\Entity\CarpoolProof;
 use App\Carpool\Entity\Criteria;
 use App\DataProvider\Interfaces\ProviderInterface;
 use App\DataProvider\Service\DataProvider;
-use DateTime;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -39,6 +38,7 @@ class CarpoolProofGouvProvider implements ProviderInterface
 {
     public const RESSOURCE_POST = 'v2/journeys';
     public const ISO6801 = 'Y-m-d\TH:i:s\Z';
+    public const RESSOURCE_GET_ITEM = 'v2/journeys/';
 
     private $uri;
     private $token;
@@ -103,7 +103,7 @@ class CarpoolProofGouvProvider implements ProviderInterface
         // creation of the journey
         $over18 = null;
         if (!is_null($carpoolProof->getPassenger()->getBirthDate())) {
-            $over18 = $carpoolProof->getPassenger()->getBirthDate()->diff(new DateTime('now'))->y >= 18;
+            $over18 = $carpoolProof->getPassenger()->getBirthDate()->diff(new \DateTime('now'))->y >= 18;
         }
 
         // note : the casts are mandatory as the register checks for types
@@ -153,7 +153,7 @@ class CarpoolProofGouvProvider implements ProviderInterface
 
         // Passenger or driver start and end need to be filled with lat/lon to be valid
         // In organized journey, we don't have pickup or dropoff for passengers. We use it's origin/destination
-        if ((CarpoolProof::TYPE_LOW == $carpoolProof->getType() || CarpoolProof::TYPE_MID == $carpoolProof->getType())) {
+        if (CarpoolProof::TYPE_LOW == $carpoolProof->getType() || CarpoolProof::TYPE_MID == $carpoolProof->getType()) {
             if (is_null($journey['passenger']['start']['lon']) && is_null($journey['passenger']['start']['lat'])) {
                 $matchingWaypoints = $carpoolProof->getAsk()->getMatching()->getWaypoints();
                 $passengerWaypoints = [];
@@ -187,7 +187,7 @@ class CarpoolProofGouvProvider implements ProviderInterface
                             }
                             $fromTime = $carpoolProof->getAsk()->getCriteria()->getSunTime();
 
-break;
+                            break;
 
                         case 1:
                             if (!$carpoolProof->getAsk()->getCriteria()->isMonCheck()) {
@@ -195,7 +195,7 @@ break;
                             }
                             $fromTime = $carpoolProof->getAsk()->getCriteria()->getMonTime();
 
-break;
+                            break;
 
                         case 2:
                             if (!$carpoolProof->getAsk()->getCriteria()->isTueCheck()) {
@@ -203,7 +203,7 @@ break;
                             }
                             $fromTime = $carpoolProof->getAsk()->getCriteria()->getTueTime();
 
-break;
+                            break;
 
                         case 3:
                             if (!$carpoolProof->getAsk()->getCriteria()->isWedCheck()) {
@@ -211,7 +211,7 @@ break;
                             }
                             $fromTime = $carpoolProof->getAsk()->getCriteria()->getWedTime();
 
-break;
+                            break;
 
                         case 4:
                             if (!$carpoolProof->getAsk()->getCriteria()->isThuCheck()) {
@@ -219,7 +219,7 @@ break;
                             }
                             $fromTime = $carpoolProof->getAsk()->getCriteria()->getThuTime();
 
-break;
+                            break;
 
                         case 5:
                             if (!$carpoolProof->getAsk()->getCriteria()->isFriCheck()) {
@@ -227,7 +227,7 @@ break;
                             }
                             $fromTime = $carpoolProof->getAsk()->getCriteria()->getFriTime();
 
-break;
+                            break;
 
                         case 6:
                             if (!$carpoolProof->getAsk()->getCriteria()->isSatCheck()) {
@@ -235,7 +235,7 @@ break;
                             }
                             $fromTime = $carpoolProof->getAsk()->getCriteria()->getSatTime();
 
-break;
+                            break;
                     }
                 }
 
@@ -257,6 +257,20 @@ break;
         }
 
         return $journey;
+    }
+
+    public function getCarpoolProof(CarpoolProof $carpoolProof)
+    {
+        $journeyId = (!is_null($this->prefix) ? $this->prefix : '').(string) $carpoolProof->getId();
+        $dataProvider = new DataProvider($this->uri, self::RESSOURCE_GET_ITEM.$journeyId);
+
+        // creation of the headers
+        $headers = [
+            'Authorization' => 'Bearer '.$this->token,
+            'Content-Type' => 'application/json',
+        ];
+
+        return $dataProvider->getItem([], $headers);
     }
 
     /**

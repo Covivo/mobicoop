@@ -45,7 +45,7 @@ class CarpoolProof
     public const STATUS_ERROR = 3;                  // error during the sending
     public const STATUS_CANCELED = 4;               // cancellation before sending
     public const STATUS_ACQUISITION_ERROR = 5;      // proof not recorded by the carpool register
-    public const STATUS_NORMALIZATION_ERROR = 6;    // proof recorded but data not not normalized by the carpool register
+    public const STATUS_NORMALIZATION_ERROR = 6;    // proof recorded but data not normalized by the carpool register
     public const STATUS_FRAUD_ERROR = 7;            // fraud detected by carpool register
     public const STATUS_VALIDATED = 8;              // proof validated by the carpool register
     public const STATUS_EXPIRED = 9;                // proof sent too late to the carpool register
