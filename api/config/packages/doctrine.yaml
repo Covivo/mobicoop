@@ -141,6 +141,12 @@ doctrine:
                 dir: '%kernel.project_dir%/src/Import/Entity'
                 prefix: 'App\Import\Entity'
                 alias: Import
+            Incentive:
+                is_bundle: false
+                type: annotation
+                dir: '%kernel.project_dir%/src/Incentive/Entity'
+                prefix: 'App\Incentive\Entity'
+                alias: Incentive
             Journey:
                 is_bundle: false
                 type: annotation
