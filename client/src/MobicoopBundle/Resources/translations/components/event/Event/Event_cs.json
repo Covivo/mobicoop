@@ -1,1 +1,7 @@
-{}
+{
+    "buttons": {
+        "publish": {
+            "label": "Zveřejnění inzerátu"
+        }
+    }
+}
