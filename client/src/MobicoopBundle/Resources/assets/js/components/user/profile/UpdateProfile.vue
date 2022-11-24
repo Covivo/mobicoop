@@ -500,7 +500,7 @@
       <v-card-title>
         {{ $t('buttons.supprimerAccount') }}
       </v-card-title>
-      <v-card-text>
+      <v-card-text v-if="!ssoExternalAccountDeletion">
         <v-row justify="center">
           <v-col class="d-flex justify-center">
             <v-dialog
@@ -787,7 +787,8 @@ export default {
       disabledCreatedEvents: false,
       locale: null,
       emailChanged: false,
-      dialogEmail: false
+      dialogEmail: false,
+      ssoConnection: null
     };
   },
   computed : {
@@ -805,6 +806,15 @@ export default {
     },
     savedCo2(){
       return Number.parseFloat(this.user.savedCo2  / 1000000 ).toPrecision(1);
+    },
+    isSsoLinked(){
+      if(this.user.ssoId && this.user.ssoProvider){
+        return true;
+      }
+      return false;
+    },
+    ssoExternalAccountDeletion(){
+      return this.isSsoLinked
     }
   },
   watch: {
@@ -851,6 +861,9 @@ export default {
     this.checkVerifiedEmail();
     this.getOwnedCommunities();
     this.getCreatedEvents();
+    if(this.isSsoLinked){
+      this.getSso();
+    }
   },
   methods: {
     homeAddressSelected(address){
@@ -1080,6 +1093,14 @@ export default {
       let maxDate = new Date();
       maxDate.setFullYear (maxDate.getFullYear() - this.ageMin);
       return maxDate.toISOString().substr(0, 10);
+    },
+    getSso(){
+      maxios.post(this.$t("urlGetSsoServices"))
+        .then(response => {
+          if(response.data.length > 0){
+            this.ssoConnection = response.data[0];
+          }
+        });
     }
   }
 }

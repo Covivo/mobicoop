@@ -1,181 +1,182 @@
 {
-    "news": {
-        "confirmation": {
-            "title": "Desinkripzioaren baieztapena",
-            "content": "Kasu, zerbitzuko aktualitateetatik desinskribatuko zirelarik, ez duzu gehiago ondoko argibiderik errezibituko:br><ul><li>plataformaren funtzionalitate berriak eta zerbitzu berriak</li><li>zure lurraldeko autokidetzaren berriak </li><li>zure komunitateen berriak</li><li>laguntza pertsonalizatua </li></ul><br> Segur ote zira desinskribatu nahi duzula?"
-        },
-        "tooltip": "Zerbitzuen berriak, e-mezuak dira zerbitzuaren garapenaren berri emateko eta autokidetza praktika hobetzeko helburu dutenak. Adibidez, plataformaren edo zure komunitate bateko erreferente baten e-mezuen eguneraketak. Informazio horiek plataformaren eguneraketak izan daitezke. E-mezu horien bidez ez da iragarkirik eginen.",
-        "label": "Zerbitzuaren aktualitateak {platform} (Argibide baliagarriak autokidetza egiteko, eta zerbitzu berriak edo funtzionalitate berriak)"
+  "news": {
+    "confirmation": {
+      "title": "Desinkripzioaren baieztapena",
+      "content": "Kasu, zerbitzuko aktualitateetatik desinskribatuko zirelarik, ez duzu gehiago ondoko argibiderik errezibituko:br><ul><li>plataformaren funtzionalitate berriak eta zerbitzu berriak</li><li>zure lurraldeko autokidetzaren berriak </li><li>zure komunitateen berriak</li><li>laguntza pertsonalizatua </li></ul><br> Segur ote zira desinskribatu nahi duzula?"
     },
-    "route": {
-        "supprimer": "/utilisateur/profil/supprimer",
-        "update": "/utilisateur/profil/modifier"
+    "tooltip": "Zerbitzuen berriak, e-mezuak dira zerbitzuaren garapenaren berri emateko eta autokidetza praktika hobetzeko helburu dutenak. Adibidez, plataformaren edo zure komunitate bateko erreferente baten e-mezuen eguneraketak. Informazio horiek plataformaren eguneraketak izan daitezke. E-mezu horien bidez ez da iragarkirik eginen.",
+    "label": "Zerbitzuaren aktualitateak {platform} (Argibide baliagarriak autokidetza egiteko, eta zerbitzu berriak edo funtzionalitate berriak)"
+  },
+  "route": {
+    "supprimer": "/utilisateur/profil/supprimer",
+    "update": "/utilisateur/profil/modifier"
+  },
+  "avatar": {
+    "delete": {
+      "label": "Irudia ezabatu",
+      "route": "/utilisateur/profil/avatar/supprimer"
     },
-    "avatar": {
-        "delete": {
-            "label": "Irudia ezabatu",
-            "route": "/utilisateur/profil/avatar/supprimer"
-        },
-        "size": "Abatarraren gehieneko izaria gainditu duzu",
-        "mbSize": "You have exceeded the maximum avatar size (Max {size} Mb)",
-        "pxSize": "The image is too small : {width}x{height}px (Min {size}x{size}px)",
-        "label": "Argazkia",
-        "minPxSize": "Minimum size {size}x{size}px",
-        "maxMbSize": "maximum weight {size} Mb"
+    "size": "Abatarraren gehieneko izaria gainditu duzu",
+    "mbSize": "You have exceeded the maximum avatar size (Max {size} Mb)",
+    "pxSize": "The image is too small : {width}x{height}px (Min {size}x{size}px)",
+    "label": "Argazkia",
+    "minPxSize": "Minimum size {size}x{size}px",
+    "maxMbSize": "maximum weight {size} Mb"
+  },
+  "snackBar": {
+    "emailError": "Huts bat gertatu da, e-mezua ez da bidalia izan",
+    "emailOk": "Egiaztapen e-mezua igorria izan da.",
+    "tokenError": "Huts bat gertatu da, kodea ez da bidalia izan",
+    "tokenOk": "Egiaztatze-kodea bidalia izan da.",
+    "unknown": "Egiaztatze-kodea okerra da.",
+    "phoneValidated": "Zure telefonoa egiaztatua izan da.",
+    "phoneUpdate": "Akats bat bada, zure telefonoa ez da egiaztatua izan.",
+    "phoneAlreadyVerified": "Zure telefonoa egiaztatua izan da.",
+    "errorProfileUpdate": "Akats bat bada, zure profila ez da eguneratua izan.",
+    "profileUpdated": "Zure profila eguneratua izan da!"
+  },
+  "titles": {
+    "deleteAccount": "Nire kontua ezabatu",
+    "password": "Pasahitza",
+    "personnalInfos": "Informazio pertsonalak"
+  },
+  "savedCo2": "Horrenbeste urreztu duzu {savedCo2} t",
+  "no": "ez",
+  "yes": "bai",
+  "save": "Erregistratu",
+  "homeTown": {
+    "label": "Bizilekuaren hiria"
+  },
+  "birthDay": {
+    "errors": {
+      "notadult": "16 urte beteak behar dituzu plataforman izena emateko",
+      "required": "Sorteguna beharrezkoa da"
     },
-    "snackBar": {
-        "emailError": "Huts bat gertatu da, e-mezua ez da bidalia izan",
-        "emailOk": "Egiaztapen e-mezua igorria izan da.",
-        "tokenError": "Huts bat gertatu da, kodea ez da bidalia izan",
-        "tokenOk": "Egiaztatze-kodea bidalia izan da.",
-        "unknown": "Egiaztatze-kodea okerra da.",
-        "phoneValidated": "Zure telefonoa egiaztatua izan da.",
-        "phoneUpdate": "Akats bat bada, zure telefonoa ez da egiaztatua izan.",
-        "phoneAlreadyVerified": "Zure telefonoa egiaztatua izan da.",
-        "errorProfileUpdate": "Akats bat bada, zure profila ez da eguneratua izan.",
-        "profileUpdated": "Zure profila eguneratua izan da!"
+    "label": "Sorteguna"
+  },
+  "gender": {
+    "values": {
+      "other": "Beste",
+      "female": "Anderea",
+      "male": "Jauna"
+    },
+    "label": "Zibilitatea"
+  },
+  "familyName": {
+    "label": "Deitura"
+  },
+  "givenName": {
+    "label": "Izena"
+  },
+  "email": {
+    "verificationRoute": "/utilisateur/email/validation",
+    "buttons": {
+      "label": {
+        "generateEmailAgain": "Egiaztatze e-mezu bat berriz bidali",
+        "generateEmail": "Egiaztatze e-mezu bat bidali"
+      }
+    },
+    "tooltips": {
+      "notVerified": "Zure helbide elektronikoa ez da egiaztatua",
+      "verified": "Zure helbide elektronikoa egiaztatua izan da"
+    },
+    "errors": {
+      "valid": "Helbide elektronikoa formatu onean izan behar da"
+    },
+    "label": "E-mezu"
+  },
+  "events": {
+    "route": "/user/events/created"
+  },
+  "communities": {
+    "route": "/user/communities/owned"
+  },
+  "address": {
+    "update": {
+      "route": "/utilisateur/profil/modifier/adresse",
+      "label": "Helbidea erregistratu"
+    }
+  },
+  "buttons": {
+    "supprimerAccount": "Nire kontua ezabatu"
+  },
+  "dialogEmail": {
+    "buttons": {
+      "cancelUpdate": "Ezeztatu",
+      "confirmUpdate": "Nire helbide elektronikoa aldatzen dut"
+    },
+    "content": "<p>zure helbide elektronikoa aldatu duzu.</p><p>Jarraitzen baduzu, baieztatze e-mezu bat bidalia izanen zaizu zure helbide elektronikora, eta deskonektatua izanen zira. </p><p>Jarraitu nahi ote duzu?</p>",
+    "title": "Zure helbide elektronikoa aldatu duzu"
+  },
+  "dialog": {
+    "buttons": {
+      "close": "Hetsi",
+      "confirmDelete": "Ezabatzea baieztatzen dut"
+    },
+    "content": {
+      "errorCommunities": "Komunitate erreferente gisa ezin duzu zure kontua ezabatu, erreferentea zireno. <br/> <a href=/contact> Sustengu teknikoarekin harremanetan jar zaitez </a> erreferentez aldatzeko edo komunitate honen ezabatzeko.<br/>",
+      "errorEvents": "Oraino etortzekoan den ekitaldi baten antolatzaile gisa, <br/> kontu hau ezin dezakezu ezaba, honen antolatzailea zireno. <br/> <a href=/contact> Sustengu teknikoarekin harremanetan jar zaitez</a>ekitaldiaren antolatzailearen aldatzeko edo ekitaldi honen ezabatzeko edo goaita ezazu ekitaldia pasatua izan arte.",
+      "deleteAccount": "Segur ote zira zure kontua ezabatu nahi duzula?<br/> Ekintza hau ezin itzulizkoa da.<br/> Ondoko ondorioak izanen ditu: <br/> - zure datu pertsonal guziak ezabatzea<br/> -beste erabiltzaileekin trukatu dituzun mezu guziak ezabatzea<br/> - Anonimo bilakatuko zira beste autokideen autokidetza-artxiboetan <br/> oraino aktibo zenituzkeen autokidetzairagarki guzien ezabatzea <br/> - ukan dituzun eta bidean diren autokidetza eskaera guziakukatzea <br/> planifikatuak diren autokidetza guziak ezeztatzea <br/> Baieztatzen ote duzu?"
     },
     "titles": {
-        "deleteAccount": "Nire kontua ezabatu",
-        "password": "Pasahitza",
-        "personnalInfos": "Informazio pertsonalak"
+      "deletionImpossible": "Zure kontua ezin ezabatua da",
+      "deleteAccount": "Zure kontuaren ezabatzea"
+    }
+  },
+  "phone": {
+    "checkValidity": {
+      "url": "/utilisateur/verif/telephone",
+      "error": "Telefono-zenbaki honek ez du balio"
     },
-    "savedCo2": "Horrenbeste urreztu duzu {savedCo2} t",
-    "no": "ez",
-    "yes": "bai",
-    "save": "Erregistratu",
-    "homeTown": {
-        "label": "Bizilekuaren hiria"
-    },
-    "birthDay": {
-        "errors": {
-            "notadult": "16 urte beteak behar dituzu plataforman izena emateko",
-            "required": "Sorteguna beharrezkoa da"
-        },
-        "label": "Sorteguna"
-    },
-    "gender": {
-        "values": {
-            "other": "Beste",
-            "female": "Anderea",
-            "male": "Jauna"
-        },
-        "label": "Zibilitatea"
-    },
-    "familyName": {
-        "label": "Deitura"
-    },
-    "givenName": {
-        "label": "Izena"
-    },
-    "email": {
-        "verificationRoute": "/utilisateur/email/validation",
-        "buttons": {
-            "label": {
-                "generateEmailAgain": "Egiaztatze e-mezu bat berriz bidali",
-                "generateEmail": "Egiaztatze e-mezu bat bidali"
-            }
-        },
-        "tooltips": {
-            "notVerified": "Zure helbide elektronikoa ez da egiaztatua",
-            "verified": "Zure helbide elektronikoa egiaztatua izan da"
-        },
-        "errors": {
-            "valid": "Helbide elektronikoa formatu onean izan behar da"
-        },
-        "label": "E-mezu"
-    },
-    "events": {
-        "route": "/user/events/created"
-    },
-    "communities": {
-        "route": "/user/communities/owned"
-    },
-    "address": {
-        "update": {
-            "route": "/utilisateur/profil/modifier/adresse",
-            "label": "Helbidea erregistratu"
+    "i18n": {
+      "time": {
+        "format": {
+          "hourMinute": "HH[h]mm"
         }
+      },
+      "date": {
+        "format": {
+          "computeDate": "DD-MM-YYYY",
+          "shortDate": "YYYY/MM/DD",
+          "fullDate": "ddd Do MMMM YYYY"
+        }
+      }
+    },
+    "token": {
+      "inputError": "Egiaztatze kodea 4 zenbakiz osatua da.",
+      "route": "/utilisateur/telephone/token"
+    },
+    "validation": {
+      "route": "/utilisateur/telephone/validation",
+      "label": "Zure egiaztatze kodea"
     },
     "buttons": {
-        "supprimerAccount": "Nire kontua ezabatu"
+      "label": {
+        "validate": "Egiazkotu",
+        "generateNewToken": "Kode berri bat bidali",
+        "generateToken": "Egiaztatze kode bat bidali"
+      }
     },
-    "dialogEmail": {
-        "buttons": {
-            "cancelUpdate": "Ezeztatu",
-            "confirmUpdate": "Nire helbide elektronikoa aldatzen dut"
-        },
-        "content": "<p>zure helbide elektronikoa aldatu duzu.</p><p>Jarraitzen baduzu, baieztatze e-mezu bat bidalia izanen zaizu zure helbide elektronikora, eta deskonektatua izanen zira. </p><p>Jarraitu nahi ote duzu?</p>",
-        "title": "Zure helbide elektronikoa aldatu duzu"
+    "tooltips": {
+      "notVerified": "Zure mugikorraren zenbakia ez da egiaztatua",
+      "verified": "Zure mugikorraren zenbakia egiaztatua da"
     },
-    "dialog": {
-        "buttons": {
-            "close": "Hetsi",
-            "confirmDelete": "Ezabatzea baieztatzen dut"
-        },
-        "content": {
-            "errorCommunities": "Komunitate erreferente gisa ezin duzu zure kontua ezabatu, erreferentea zireno. <br/> <a href=/contact> Sustengu teknikoarekin harremanetan jar zaitez </a> erreferentez aldatzeko edo komunitate honen ezabatzeko.<br/>",
-            "errorEvents": "Oraino etortzekoan den ekitaldi baten antolatzaile gisa, <br/> kontu hau ezin dezakezu ezaba, honen antolatzailea zireno. <br/> <a href=/contact> Sustengu teknikoarekin harremanetan jar zaitez</a>ekitaldiaren antolatzailearen aldatzeko edo ekitaldi honen ezabatzeko edo goaita ezazu ekitaldia pasatua izan arte.",
-            "deleteAccount": "Segur ote zira zure kontua ezabatu nahi duzula?<br/> Ekintza hau ezin itzulizkoa da.<br/> Ondoko ondorioak izanen ditu: <br/> - zure datu pertsonal guziak ezabatzea<br/> -beste erabiltzaileekin trukatu dituzun mezu guziak ezabatzea<br/> - Anonimo bilakatuko zira beste autokideen autokidetza-artxiboetan <br/> oraino aktibo zenituzkeen autokidetzairagarki guzien ezabatzea <br/> - ukan dituzun eta bidean diren autokidetza eskaera guziakukatzea <br/> planifikatuak diren autokidetza guziak ezeztatzea <br/> Baieztatzen ote duzu?"
-        },
-        "titles": {
-            "deletionImpossible": "Zure kontua ezin ezabatua da",
-            "deleteAccount": "Zure kontuaren ezabatzea"
-        }
+    "errors": {
+      "valid": "Telefono zenbakia bali izan behar da"
     },
-    "phone": {
-        "checkValidity": {
-          "url": "/utilisateur/verif/telephone",
-          "error": "Telefono-zenbaki honek ez du balio"
-        },
-        "i18n": {
-            "time": {
-                "format": {
-                    "hourMinute": "HH[h]mm"
-                }
-            },
-            "date": {
-                "format": {
-                    "computeDate": "DD-MM-YYYY",
-                    "shortDate": "YYYY/MM/DD",
-                    "fullDate": "ddd Do MMMM YYYY"
-                }
-            }
-        },
-        "token": {
-            "inputError": "Egiaztatze kodea 4 zenbakiz osatua da.",
-            "route": "/utilisateur/telephone/token"
-        },
-        "validation": {
-            "route": "/utilisateur/telephone/validation",
-            "label": "Zure egiaztatze kodea"
-        },
-        "buttons": {
-            "label": {
-                "validate": "Egiazkotu",
-                "generateNewToken": "Kode berri bat bidali",
-                "generateToken": "Egiaztatze kode bat bidali"
-            }
-        },
-        "tooltips": {
-            "notVerified": "Zure mugikorraren zenbakia ez da egiaztatua",
-            "verified": "Zure mugikorraren zenbakia egiaztatua da"
-        },
-        "errors": {
-            "valid": "Telefono zenbakia bali izan behar da"
-        },
-        "label": "Telefono mugikorra"
-    },
-    "phoneDisplay": {
-        "label": {
-            "all": "Izena eman duten guziez ikusgai iragarkia argitaratu orduko.",
-            "general": "Nire telefono zenbakiaren ikuspena.",
-            "restricted": "Ikusgai soilik autokidetza onartua izan ondoren, parte hartzaileen ganik bakarrik."
-        }
-    },
-    "publicProfile": {
-        "close": "Hetsi",
-        "see": "Ikus profil publikoa",
-        "title": "Profil publikoa"
+    "label": "Telefono mugikorra"
+  },
+  "phoneDisplay": {
+    "label": {
+      "all": "Izena eman duten guziez ikusgai iragarkia argitaratu orduko.",
+      "general": "Nire telefono zenbakiaren ikuspena.",
+      "restricted": "Ikusgai soilik autokidetza onartua izan ondoren, parte hartzaileen ganik bakarrik."
     }
+  },
+  "publicProfile": {
+    "close": "Hetsi",
+    "see": "Ikus profil publikoa",
+    "title": "Profil publikoa"
+  },
+  "urlGetSsoServices": "/user/getSsoServices"
 }

@@ -936,7 +936,7 @@ class User implements UserInterface, EquatableInterface
     private $updatedDate;
 
     /**
-     * @var null|DateTime date of password token generation modification
+     * @var null|\DateTime date of password token generation modification
      *
      * @ORM\Column(type="datetime", length=255, nullable=true)
      * @Groups({"readUser","write"})
@@ -1313,6 +1313,7 @@ class User implements UserInterface, EquatableInterface
      * @var null|string External ID of the user for a SSO connection
      *
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"readUser"})
      */
     private $ssoId;
 
@@ -1320,6 +1321,7 @@ class User implements UserInterface, EquatableInterface
      * @var null|string External Provider for a SSO connection
      *
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"readUser"})
      */
     private $ssoProvider;
 
@@ -2063,7 +2065,7 @@ class User implements UserInterface, EquatableInterface
         return $this->pwdTokenDate;
     }
 
-    public function setPwdTokenDate(?DateTime $pwdTokenDate): self
+    public function setPwdTokenDate(?\DateTime $pwdTokenDate): self
     {
         $this->pwdTokenDate = $pwdTokenDate;
 

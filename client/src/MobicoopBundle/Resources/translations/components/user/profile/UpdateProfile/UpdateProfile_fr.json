@@ -1,186 +1,186 @@
 {
-    "titles": {
-        "personnalInfos": "Informations personnelles",
-        "password": "Mot de passe",
-        "deleteAccount": "Supprimer mon compte"
+  "titles": {
+    "personnalInfos": "Informations personnelles",
+    "password": "Mot de passe",
+    "deleteAccount": "Supprimer mon compte"
+  },
+  "snackBar": {
+    "profileUpdated": "Votre profil a bien été mis à jour!",
+    "errorProfileUpdate": "Erreur, votre profil n'a pas été mis à jour.",
+    "phoneAlreadyVerified": "Votre téléphone est déjà vérifié.",
+    "phoneUpdate": "Erreur votre télephone n'a pas été vérifié.",
+    "phoneValidated": "Votre télephone a bien été vérifié.",
+    "unknown": "Le code de validation est erroné.",
+    "tokenOk": "Le code de validation a bien été envoyé.",
+    "tokenError": "Erreur le code n'a pas été envoyé",
+    "emailOk": "L'email de validation a bien été envoyé.",
+    "emailError": "Erreur l'email n'a pas été envoyé"
+  },
+  "avatar": {
+    "label": "Nouvelle photo",
+    "mbSize": "Vous avez dépassé la taille maximale de l'avatar (Max {size} Mb)",
+    "pxSize": "L'image n'est pas assez grande : {width}x{height}px (Min {size}x{size}px)",
+    "minPxSize": "Taille minimum {size}x{size}px",
+    "maxMbSize": "poids maximum {size} Mb",
+    "delete": {
+      "route": "/utilisateur/profil/avatar/supprimer",
+      "label": "Supprimer l'image"
+    }
+  },
+  "route": {
+    "update": "/utilisateur/profil/modifier",
+    "supprimer": "/utilisateur/profil/supprimer"
+  },
+  "news": {
+    "label": "Actualités du service {platform}  (informations utiles pour covoiturer, et nouveaux services ou nouvelles fonctionnalités)",
+    "tooltip": "Les actualités du service sont des emails répondant uniquement à la finalité de vous maintenir informé des évolutions du service et favoriser votre pratique du covoiturage. Comme des mises à jour de la plateforme ou des emails provenant du référent d'une communauté à laquelle vous appartenez. Ces informations peuvent concerner des mises à jour de la plateforme. Aucune sollicitation commerciale n'est réalisée via ces emails.",
+    "confirmation": {
+      "title": "Confirmation de désinscription",
+      "content": "Attention, en vous désinscrivant de ces actualités de service, vous ne recevrez plus aucune information sur tous les sujets suivants :<br><ul><li>nouvelles fonctionnalités et nouveaux services de la plate-forme</li><li>actualités covoiturage de votre territoire</li><li>actualités de vos communautés</li><li>accompagnement personnalisé</li></ul><br>Êtes-vous sûr de vouloir vous désinscrire ?"
+    }
+  },
+  "phoneDisplay": {
+    "label": {
+      "general": "Visibilité de mon numéro de téléphone :",
+      "restricted": "Visible seulement après acceptation du covoiturage, uniquement par les participants",
+      "all": "Visible dès la publication de l'annonce, par tous les inscrits"
+    }
+  },
+  "phone": {
+    "checkValidity": {
+      "url": "/utilisateur/verif/telephone",
+      "error": "Ce numéro de téléphone n'est pas valide"
     },
-    "snackBar": {
-        "profileUpdated": "Votre profil a bien été mis à jour!",
-        "errorProfileUpdate": "Erreur, votre profil n'a pas été mis à jour.",
-        "phoneAlreadyVerified": "Votre téléphone est déjà vérifié.",
-        "phoneUpdate": "Erreur votre télephone n'a pas été vérifié.",
-        "phoneValidated": "Votre télephone a bien été vérifié.",
-        "unknown": "Le code de validation est erroné.",
-        "tokenOk": "Le code de validation a bien été envoyé.",
-        "tokenError": "Erreur le code n'a pas été envoyé",
-        "emailOk": "L'email de validation a bien été envoyé.",
-        "emailError": "Erreur l'email n'a pas été envoyé"
-
+    "label": "Téléphone portable",
+    "errors": {
+      "valid": "Le numéro de téléphone doit être valide"
     },
-    "avatar": {
-        "label": "Nouvelle photo",
-        "mbSize": "Vous avez dépassé la taille maximale de l'avatar (Max {size} Mb)",
-        "pxSize": "L'image n'est pas assez grande : {width}x{height}px (Min {size}x{size}px)",
-        "minPxSize": "Taille minimum {size}x{size}px",
-        "maxMbSize": "poids maximum {size} Mb",
-        "delete": {
-            "route": "/utilisateur/profil/avatar/supprimer",
-            "label": "Supprimer l'image"
-        }
-    },
-    "route": {
-        "update": "/utilisateur/profil/modifier",
-        "supprimer": "/utilisateur/profil/supprimer"
-    },
-    "news": {
-        "label": "Actualités du service {platform}  (informations utiles pour covoiturer, et nouveaux services ou nouvelles fonctionnalités)",
-        "tooltip": "Les actualités du service sont des emails répondant uniquement à la finalité de vous maintenir informé des évolutions du service et favoriser votre pratique du covoiturage. Comme des mises à jour de la plateforme ou des emails provenant du référent d'une communauté à laquelle vous appartenez. Ces informations peuvent concerner des mises à jour de la plateforme. Aucune sollicitation commerciale n'est réalisée via ces emails.",
-        "confirmation": {
-            "title": "Confirmation de désinscription",
-            "content": "Attention, en vous désinscrivant de ces actualités de service, vous ne recevrez plus aucune information sur tous les sujets suivants :<br><ul><li>nouvelles fonctionnalités et nouveaux services de la plate-forme</li><li>actualités covoiturage de votre territoire</li><li>actualités de vos communautés</li><li>accompagnement personnalisé</li></ul><br>Êtes-vous sûr de vouloir vous désinscrire ?"
-        }
-    },
-    "phoneDisplay": {
-        "label": {
-            "general": "Visibilité de mon numéro de téléphone :",
-            "restricted": "Visible seulement après acceptation du covoiturage, uniquement par les participants",
-            "all": "Visible dès la publication de l'annonce, par tous les inscrits"
-        }
-    },
-    "phone": {
-        "checkValidity": {
-          "url": "/utilisateur/verif/telephone",
-          "error": "Ce numéro de téléphone n'est pas valide"
-        },
-        "label": "Téléphone portable",
-        "errors": {
-            "valid": "Le numéro de téléphone doit être valide"
-        },
-        "tooltips": {
-            "verified": "Votre numéro de portable est vérifié",
-            "notVerified": "Votre numéro de portable n'est pas vérifié"
-        },
-        "buttons": {
-            "label": {
-                "generateToken": "Envoyer un code de vérification",
-                "generateNewToken": "Envoyer un nouveau code",
-                "validate": "Valider"
-            }
-        },
-        "validation": {
-            "label": "Votre code de vérification",
-            "route": "/utilisateur/telephone/validation"
-        },
-        "token": {
-            "route": "/utilisateur/telephone/token",
-            "inputError": "Le code de validation est composé de 4 chiffres."
-        },
-        "i18n": {
-            "date": {
-                "format": {
-                    "fullDate": "ddd Do MMMM YYYY",
-                    "shortDate": "DD/MM/YYYY",
-                    "computeDate": "YYYY-MM-DD"
-                }
-            },
-            "time": {
-                "format": {
-                    "hourMinute": "HH[h]mm"
-                }
-            }
-        }
-    },
-    "dialog": {
-        "titles": {
-            "deleteAccount": "Suppression de votre compte",
-            "deletionImpossible": "Suppression de votre compte impossible"
-        },
-        "content": {
-            "deleteAccount": "Êtes-vous sûr de vouloir supprimer votre compte ?<br/> Cette action est irréversible.<br/> Elle aura pour conséquences de :<br/> - supprimer l’intégralité de vos données personnelles<br/>- supprimer tous vos messages échangés avec d’autres usagers<br/>- vous anonymiser dans les archives de covoiturages d’autres covoitureurs<br/>- supprimer toutes les annonces de covoiturage encore actives que vous auriez<br/>- rejeter toutes les demandes de covoiturage reçues en cours<br/>- annuler tous les covoiturages planifiés<br/><br/>Confirmez-vous ?",
-            "errorEvents": "En tant qu’auteur d'un événement toujours à venir,<br/> vous ne pouvez supprimer votre compte tant que vous en êtes auteur ou qu’il reste à venir.<br/> <a href=/contact>Contactez le support technique</a> pour changer l’auteur de l’événement ou demander de le supprimer, ou attendez que l’événement soit passé.",
-            "errorCommunities": "En tant que référent d'une communauté vous ne pouvez pas supprimer votre compte tant que vous êtes référent.<br/> <a href=/contact>Contactez le support technique</a> pour changer de référent ou supprimer cette communauté. <br/>"
-        },
-        "buttons": {
-            "confirmDelete": "Je confirme la suppression",
-            "close": "Fermer"
-        }
-    },
-    "dialogEmail": {
-        "title": "Vous avez modifié votre adresse email",
-        "content": "<p>Vous avez modifié votre adresse email.</p><p>Si vous poursuivez, un email de validation de votre adresse email va vous être envoyé, et vous allez être déconnecté.</p><p>Voulez-vous poursuivre ?</p>",
-        "buttons": {
-            "confirmUpdate": "Je modifie mon adresse email",
-            "cancelUpdate": "Annuler"
-        }
+    "tooltips": {
+      "verified": "Votre numéro de portable est vérifié",
+      "notVerified": "Votre numéro de portable n'est pas vérifié"
     },
     "buttons": {
-        "supprimerAccount": "Supprimer mon compte"
+      "label": {
+        "generateToken": "Envoyer un code de vérification",
+        "generateNewToken": "Envoyer un nouveau code",
+        "validate": "Valider"
+      }
     },
-    "address": {
-        "update": {
-            "label": "Enregistrer adresse",
-            "route": "/utilisateur/profil/modifier/adresse"
+    "validation": {
+      "label": "Votre code de vérification",
+      "route": "/utilisateur/telephone/validation"
+    },
+    "token": {
+      "route": "/utilisateur/telephone/token",
+      "inputError": "Le code de validation est composé de 4 chiffres."
+    },
+    "i18n": {
+      "date": {
+        "format": {
+          "fullDate": "ddd Do MMMM YYYY",
+          "shortDate": "DD/MM/YYYY",
+          "computeDate": "YYYY-MM-DD"
         }
-    },
-    "communities": {
-        "route": "/user/communities/owned"
-    },
-    "events": {
-        "route": "/user/events/created"
-    },
-    "email": {
-        "label": "Email",
-        "errors": {
-            "valid": "L'adresse email doit être au bon format"
-        },
-        "tooltips": {
-            "verified": "Votre adresse email est vérifiée",
-            "notVerified": "Votre adresse email n'est pas vérifiée"
-        },
-        "buttons": {
-            "label": {
-                "generateEmail": "Envoyer un email de vérification",
-                "generateEmailAgain": "Renvoyer un email de vérification"
-            }
-        },
-        "verificationRoute":"/utilisateur/email/validation"
-    },
-    "givenName": {
-        "label": "Prénom"
-    },
-    "familyName": {
-        "label": "Nom"
-    },
-    "gender": {
-        "label": "Civilité",
-        "values": {
-            "male": "Monsieur",
-            "female": "Madame",
-            "other": "Autre"
+      },
+      "time": {
+        "format": {
+          "hourMinute": "HH[h]mm"
         }
-    },
-    "birthDay": {
-        "label": "Date de naissance",
-        "errors": {
-            "required": "La date de naissance est requise",
-            "notadult": "Vous devez avoir 16 ans pour vous inscrire sur la plateforme"
-        }
-    },
-    "homeTown": {
-        "label": "Commune de résidence"
-    },
-    "save": "Enregistrer",
-    "yes": "oui",
-    "no": "non",
-    "savedCo2":"Vous avez économisé {savedCo2} t de",
-    "publicProfile":{
-        "title":"Profil public",
-        "see":"Voir profil public",
-        "close":"Fermer"
-    },
-    "badges":{
-        "title":"Badges",
-        "see":"Voir les badges",
-        "close":"Fermer"
+      }
     }
+  },
+  "dialog": {
+    "titles": {
+      "deleteAccount": "Suppression de votre compte",
+      "deletionImpossible": "Suppression de votre compte impossible"
+    },
+    "content": {
+      "deleteAccount": "Êtes-vous sûr de vouloir supprimer votre compte ?<br/> Cette action est irréversible.<br/> Elle aura pour conséquences de :<br/> - supprimer l’intégralité de vos données personnelles<br/>- supprimer tous vos messages échangés avec d’autres usagers<br/>- vous anonymiser dans les archives de covoiturages d’autres covoitureurs<br/>- supprimer toutes les annonces de covoiturage encore actives que vous auriez<br/>- rejeter toutes les demandes de covoiturage reçues en cours<br/>- annuler tous les covoiturages planifiés<br/><br/>Confirmez-vous ?",
+      "errorEvents": "En tant qu’auteur d'un événement toujours à venir,<br/> vous ne pouvez supprimer votre compte tant que vous en êtes auteur ou qu’il reste à venir.<br/> <a href=/contact>Contactez le support technique</a> pour changer l’auteur de l’événement ou demander de le supprimer, ou attendez que l’événement soit passé.",
+      "errorCommunities": "En tant que référent d'une communauté vous ne pouvez pas supprimer votre compte tant que vous êtes référent.<br/> <a href=/contact>Contactez le support technique</a> pour changer de référent ou supprimer cette communauté. <br/>"
+    },
+    "buttons": {
+      "confirmDelete": "Je confirme la suppression",
+      "close": "Fermer"
+    }
+  },
+  "dialogEmail": {
+    "title": "Vous avez modifié votre adresse email",
+    "content": "<p>Vous avez modifié votre adresse email.</p><p>Si vous poursuivez, un email de validation de votre adresse email va vous être envoyé, et vous allez être déconnecté.</p><p>Voulez-vous poursuivre ?</p>",
+    "buttons": {
+      "confirmUpdate": "Je modifie mon adresse email",
+      "cancelUpdate": "Annuler"
+    }
+  },
+  "buttons": {
+    "supprimerAccount": "Supprimer mon compte"
+  },
+  "address": {
+    "update": {
+      "label": "Enregistrer adresse",
+      "route": "/utilisateur/profil/modifier/adresse"
+    }
+  },
+  "communities": {
+    "route": "/user/communities/owned"
+  },
+  "events": {
+    "route": "/user/events/created"
+  },
+  "email": {
+    "label": "Email",
+    "errors": {
+      "valid": "L'adresse email doit être au bon format"
+    },
+    "tooltips": {
+      "verified": "Votre adresse email est vérifiée",
+      "notVerified": "Votre adresse email n'est pas vérifiée"
+    },
+    "buttons": {
+      "label": {
+        "generateEmail": "Envoyer un email de vérification",
+        "generateEmailAgain": "Renvoyer un email de vérification"
+      }
+    },
+    "verificationRoute": "/utilisateur/email/validation"
+  },
+  "givenName": {
+    "label": "Prénom"
+  },
+  "familyName": {
+    "label": "Nom"
+  },
+  "gender": {
+    "label": "Civilité",
+    "values": {
+      "male": "Monsieur",
+      "female": "Madame",
+      "other": "Autre"
+    }
+  },
+  "birthDay": {
+    "label": "Date de naissance",
+    "errors": {
+      "required": "La date de naissance est requise",
+      "notadult": "Vous devez avoir 16 ans pour vous inscrire sur la plateforme"
+    }
+  },
+  "homeTown": {
+    "label": "Commune de résidence"
+  },
+  "save": "Enregistrer",
+  "yes": "oui",
+  "no": "non",
+  "savedCo2": "Vous avez économisé {savedCo2} t de",
+  "publicProfile": {
+    "title": "Profil public",
+    "see": "Voir profil public",
+    "close": "Fermer"
+  },
+  "badges": {
+    "title": "Badges",
+    "see": "Voir les badges",
+    "close": "Fermer"
+  },
+  "urlGetSsoServices": "/user/getSsoServices"
 }
