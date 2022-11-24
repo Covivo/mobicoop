@@ -34,6 +34,7 @@ use App\Carpool\Entity\Proposal;
 use App\Carpool\Entity\Result;
 use App\Carpool\Entity\Waypoint;
 use App\Carpool\Event\AdMinorUpdatedEvent;
+use App\Carpool\Event\MatchingNewEvent;
 use App\Carpool\Exception\AdException;
 use App\Carpool\Exception\AntiFraudException;
 use App\Carpool\Exception\ProofException;
@@ -164,9 +165,9 @@ class AdManager
      * @param bool $withSolidaries  Return also the matching solidary asks
      * @param bool $forceNotUseTime For to set useTime at false
      *
-     * @return Ad
-     *
      * @throws \Exception
+     *
+     * @return Ad
      */
     public function createAd(Ad $ad, bool $doPrepare = true, bool $withSolidaries = true, bool $withResults = true, $forceNotUseTime = false)
     {
@@ -586,6 +587,28 @@ class AdManager
         // we load the proposal again to get the last updates
         if ($proposalRefresh) {
             $outwardProposal = $this->proposalRepository->find($outwardProposal->getId());
+        }
+
+        if (!$outwardProposal->isPrivate() && !$outwardProposal->isPaused() && !$outwardProposal->isDynamic()) {
+            $matchings = array_merge($outwardProposal->getMatchingOffers(), $outwardProposal->getMatchingRequests());
+            foreach ($matchings as $matching) {
+                $this->entityManager->refresh($matching);
+                if (is_null($matching->getMatchingOpposite())) {
+                    $event = new MatchingNewEvent($matching, $outwardProposal->getUser(), $outwardProposal->getType());
+                    $this->eventDispatcher->dispatch(MatchingNewEvent::NAME, $event);
+                }
+            }
+        }
+
+        if (!$ad->isOneWay() && !$returnProposal->isPrivate() && !$returnProposal->isPaused() && !$returnProposal->isDynamic()) {
+            $matchings = array_merge($returnProposal->getMatchingOffers(), $returnProposal->getMatchingRequests());
+            foreach ($matchings as $matching) {
+                $this->entityManager->refresh($matching);
+                if (is_null($matching->getMatchingOpposite())) {
+                    $event = new MatchingNewEvent($matching, $returnProposal->getUser(), $returnProposal->getType());
+                    $this->eventDispatcher->dispatch(MatchingNewEvent::NAME, $event);
+                }
+            }
         }
 
         // we compute the results
@@ -1163,9 +1186,9 @@ class AdManager
      * Update a Schedule with pick up durations from a Matching
      * Used when the Ad role is passenger.
      *
-     * @return array
-     *
      * @throws \Exception
+     *
+     * @return array
      */
     public function updateScheduleTimesWithPickUpDurations(array $schedule, string $outwardPickUpDuration, ?string $returnPickUpDuration = null)
     {
@@ -1242,9 +1265,9 @@ class AdManager
      * @param Ad   $ad             The ad to update
      * @param bool $withSolidaries Return also the solidary asks
      *
-     * @return Ad
-     *
      * @throws \Exception
+     *
+     * @return Ad
      */
     public function updateAd(Ad $ad, bool $withSolidaries = true)
     {
@@ -1337,9 +1360,9 @@ class AdManager
     /**
      * Check if Ad update needs a major update and so, deleting then creating a new one.
      *
-     * @return bool
-     *
      * @throws \Exception
+     *
+     * @return bool
      */
     public function checkForMajorUpdate(Ad $oldAd, Ad $newAd)
     {
@@ -1379,9 +1402,9 @@ class AdManager
      * @param mixed $old
      * @param mixed $new
      *
-     * @return bool
-     *
      * @throws \Exception
+     *
+     * @return bool
      */
     public function compareSchedules($old, $new)
     {
@@ -1509,9 +1532,9 @@ class AdManager
     /**
      * Compare Date and time for Outward and Returns.
      *
-     * @return bool
-     *
      * @throws \Exception
+     *
+     * @return bool
      */
     public function compareDateTimes(Ad $old, Ad $new)
     {

@@ -23,7 +23,6 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\Carpool\Controller;
 
-use DateTime;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\Deserializer;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
@@ -283,6 +282,12 @@ class CarpoolController extends AbstractController
         // init destination if provided
         $destination = $request->request->get('destination');
 
+        $regular = $request->request->get('regular')
+            ? json_decode($request->request->get('regular'))
+            : !is_null($request->get('eventId'))
+                ? false
+                : $this->defaultRegular;
+
         // ad for an event ?
         if (!is_null($eventId) && $event = $this->eventManager->getEvent($eventId)) {
             $destination = json_encode($event->getAddress());
@@ -298,7 +303,7 @@ class CarpoolController extends AbstractController
                 'origin' => $request->request->get('origin'),
                 'destination' => $destination,
                 'eventId' => $eventId,
-                'regular' => $request->request->get('regular') ? json_decode($request->request->get('regular')) : $this->defaultRegular,
+                'regular' => $regular,
                 'date' => $request->request->get('date'),
                 'time' => $request->request->get('time'),
                 'pricesRange' => [
@@ -599,14 +604,14 @@ class CarpoolController extends AbstractController
         $params = json_decode($request->getContent(), true);
         $date = null;
         if (isset($params['date']) && '' != $params['date']) {
-            $date = new DateTime($params['date']);
+            $date = new \DateTime($params['date']);
         }
         //  else {
         //     $date = new \DateTime();
         // }
         $time = null;
         if (isset($params['time']) && '' != $params['time']) {
-            $time = \Datetime::createFromFormat('H:i', $params['time']);
+            $time = \DateTime::createFromFormat('H:i', $params['time']);
         }
         $regular = isset($params['regular']) ? $params['regular'] : false;
         $strictDate = isset($params['strictDate']) ? $params['strictDate'] : null;

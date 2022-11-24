@@ -1,71 +1,73 @@
 # pages
 user:
-    signup:
-        title: 'Inscription'
-    signupValidation:
-        title: 'Vérification de votre email'
-    login:
-        title: 'Connexion'
-    profile:
-        title: 'Mon profil'
-    profile_update:
-        title: 'Mettre à jour mon profil'
-    profile_password_update:
-        title: 'Mettre à jour mon mot de passe'
-    messages:
-        title: 'Messagerie'
-    password_recovery:
-        title: 'Récupération du mot de passe'
+  signup:
+    title: "Inscription"
+  signupValidation:
+    title: "Vérification de votre email"
+  login:
+    title: "Connexion"
+  profile:
+    title: "Mon profil"
+  profile_update:
+    title: "Mettre à jour mon profil"
+  profile_password_update:
+    title: "Mettre à jour mon mot de passe"
+  messages:
+    title: "Messagerie"
+  password_recovery:
+    title: "Récupération du mot de passe"
 carpool:
-    ad_create:
-        title: 'Publier une annonce de covoiturage'
-    ad_update:
-        title: 'Modifier votre annonce de covoiturage'
-    results:
-        title: 'Résultats de covoiturage'
+  ad_create:
+    title: "Publier une annonce de covoiturage"
+  ad_update:
+    title: "Modifier votre annonce de covoiturage"
+  results:
+    title: "Résultats de covoiturage"
 journey:
-    cities:
-        title: 'Covoiturages par ville'
-    from:
-        title: 'Covoiturages au départ de '
-    to:
-        title: "Covoiturage à l'arrivée de "
-    from_to:
-        title1: "Covoiturage sans commission de "
-        title2: " à "
+  cities:
+    title: "Covoiturages par ville"
+  from:
+    title: "Covoiturages au départ de "
+  to:
+    title: "Covoiturage à l'arrivée de "
+  from_to:
+    title1: "Covoiturage sans commission de "
+    title2: " à "
 contact:
-    title: "Nous contacter"
+  title: "Nous contacter"
 solidary:
-    title: "Faire une demande de covoiturage solidaire"
+  title: "Faire une demande de covoiturage solidaire"
 communities:
-    community:
-        title: "Communauté"
-    communities:
-        title: "Les Communautés"
-    create:
-        title: "Créer une communauté"
-    widget:
-        title: "Widget communauté"
+  community:
+    title: "Communauté"
+  communities:
+    title: "Les Communautés"
+  create:
+    title: "Créer une communauté"
+  widget:
+    title: "Widget communauté"
 events:
-    events:
-        title: "Les événements"
-    event:
-        title: "Evénement"
-    create:
-        title: "Créer un événement"
-    edit:
-        title: "Modifier un événement"
-    widget:
-        title: "Widget événement"
+  events:
+    title: "Les événements"
+  event:
+    title: "Evénement"
+  create:
+    title: "Créer un événement"
+  edit:
+    title: "Modifier un événement"
+  widget:
+    title: "Widget événement"
 widget:
-    title: "Widget"
+  title: "Widget"
 toolbox:
-    title: "Boîte à outils"
+  title: "Boîte à outils"
 dynamicslines:
   title: "Lignes dynamiques"
 relaypoints:
-    title: "Points relais"
+  title: "Points relais"
 payment:
-    title: "Paiements"
+  title: "Paiements"
 rssfeeds:
-    title: "Rss feeds"             
+  title: "Rss feeds"
+browserUpdate:
+  language: "fr"

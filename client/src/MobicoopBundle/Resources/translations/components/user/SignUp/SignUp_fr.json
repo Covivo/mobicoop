@@ -77,11 +77,8 @@
         "error": "Ce numéro de téléphone n'est pas valide"
     },
     "chart": {
-        "text": "J'accepte ",
-        "link": "la charte de la plateforme et sa politique de protection des données",
-        "route": "/cgu",
-        "required": "La validation de la charte est requise",
-        "aria":  "la charte de la plateforme et sa politique de protection des données lien"
+        "text": "J'accepte <a class='primary--text' target='_blank' href='/cgu' aria-label='la charte de la plateforme et sa politique de protection des données lien')> la charte de la plateforme et sa politique de protection des données</a>",
+        "required": "La validation de la charte est requise"
     },
     "newsSubscription":{
         "text":"J'accepte de recevoir les actualités du service (informations utiles pour covoiturer, et nouveaux services ou nouvelles fonctionnalités)"

@@ -416,17 +416,10 @@
                   required
                 >
                   <template v-slot:label>
-                    <div>
-                      {{ $t("chart.text") }}
-                      <a
-                        class="primary--text"
-                        target="_blank"
-                        :href="$t('chart.route')"
-                        :aria-label="$t('chart.aria')"
-                        @click.stop
-                      >{{ $t("chart.link") }}
-                      </a>
-                    </div>
+                    <div
+                      @click.stop
+                      v-html="$t('chart.text')"
+                    />
                   </template>
                 </v-checkbox>
 
