@@ -89,6 +89,7 @@ class UserController extends AbstractController
     private $birthDateDisplay;
     private $eventManager;
     private $carpoolSettingsDisplay;
+    private $signInSsoOriented;
 
     /**
      * Constructor.
@@ -127,7 +128,8 @@ class UserController extends AbstractController
         bool $fraudWarningDisplay,
         bool $ageDisplay,
         bool $birthDateDisplay,
-        bool $carpoolSettingsDisplay
+        bool $carpoolSettingsDisplay,
+        bool $signInSsoOriented
     ) {
         $this->encoder = $encoder;
         $this->facebook_show = $facebook_show;
@@ -153,6 +155,7 @@ class UserController extends AbstractController
         $this->birthDateDisplay = $birthDateDisplay;
         $this->eventManager = $eventManager;
         $this->ssoManager = $ssoManager;
+        $this->signInSsoOriented = $signInSsoOriented;
     }
 
     // PROFILE
@@ -190,7 +193,9 @@ class UserController extends AbstractController
             $id = 1; // default id
         }
 
-        return $this->render('@Mobicoop/user/login.html.twig', [
+        $template = $this->signInSsoOriented ? 'login-sso-oriented.html.twig' : 'login.html.twig';
+
+        return $this->render('@Mobicoop/user/'.$template, [
             'id' => $id,
             'type' => $type,
             'errorMessage' => $errorMessage,
