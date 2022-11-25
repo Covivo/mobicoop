@@ -182,5 +182,6 @@
     "see": "Voir les badges",
     "close": "Fermer"
   },
-  "urlGetSsoServices": "/user/getSsoServices"
+  "urlGetSsoServices": "/user/getSsoService",
+  "ssoDeleteAccountWarning": "Votre compte est lié au service {service}. Pour supprimer votre compte vous devez vous y rendre et utiliser la fonctionnalité prévue à cet effet."
 }

@@ -1458,6 +1458,22 @@ class UserController extends AbstractController
     }
 
     /**
+     * Return a specific Sso connection service of the platform.
+     *
+     * AJAX
+     */
+    public function getSsoService(Request $request)
+    {
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+
+            return new JsonResponse($this->userManager->getSsoService($data['service']));
+        }
+
+        return new JsonResponse();
+    }
+
+    /**
      * Return the user profile summary.
      *
      * @return JsonResponse

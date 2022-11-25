@@ -74,6 +74,7 @@ class SsoManager
                     $ssoConnection->setService($ssoService['name']);
                     $ssoConnection->setSsoProvider($serviceName);
                     $ssoConnection->setUseButtonIcon($this->ssoUseButtonIcon);
+                    $ssoConnection->setExternalAccountDeletion($ssoService['externalAccountDeletion']);
                     $ssoServices[] = $ssoConnection;
                 }
             }

@@ -588,6 +588,15 @@
           </v-col>
         </v-row>
       </v-card-text>
+      <v-card-text v-else>
+        <v-row>
+          <v-col
+            col="12"
+          >
+            {{ $t('ssoDeleteAccountWarning',{'service':ssoConnection.service}) }}
+          </v-col>
+        </v-row>
+      </v-card-text>
     </v-card>
 
     <!-- PUBLIC PROFILE DIALOG -->
@@ -814,7 +823,12 @@ export default {
       return false;
     },
     ssoExternalAccountDeletion(){
-      return this.isSsoLinked
+      if(this.isSsoLinked){
+        if(this.ssoConnection && this.ssoConnection.externalAccountDeletion){
+          return true;
+        }
+      }
+      return false;
     }
   },
   watch: {
@@ -1095,7 +1109,10 @@ export default {
       return maxDate.toISOString().substr(0, 10);
     },
     getSso(){
-      maxios.post(this.$t("urlGetSsoServices"))
+      let params = {
+        "service":this.user.ssoProvider
+      }
+      maxios.post(this.$t("urlGetSsoServices"), params)
         .then(response => {
           if(response.data.length > 0){
             this.ssoConnection = response.data[0];

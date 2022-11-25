@@ -177,5 +177,6 @@
       "general": "Visibility of my telephone number:"
     }
   },
-  "urlGetSsoServices": "/user/getSsoServices"
+  "urlGetSsoServices": "/user/getSsoService",
+  "ssoDeleteAccountWarning": "Votre compte est lié au service {service}. Pour supprimer votre compte vous devez vous y rendre et utiliser la fonctionnalité prévue à cet effet."
 }
