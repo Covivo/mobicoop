@@ -147,7 +147,7 @@ class CeeStatusManager
         $this->ceeStatus->setLongDistanceStatus($ceeLongDistanceStatus);
     }
 
-    private function __computeNbCarpoolProofs(User $user)
+    private function __computeNbJourneysProofs(User $user)
     {
         $this->__computeShortDistance($user);
         $this->__computeLongDistance($user);
@@ -157,7 +157,7 @@ class CeeStatusManager
     {
         $this->ceeStatus = new CeeStatus();
         $this->ceeStatus->setId($user->getId());
-        $this->__computeNbCarpoolProofs($user);
+        $this->__computeNbJourneysProofs($user);
 
         return $this->ceeStatus;
     }

@@ -21,7 +21,7 @@
  *    LICENSE
  */
 
-namespace App\Icentive\Entity;
+namespace App\Incentive\Entity;
 
 use Symfony\Component\Serializer\Annotation\Groups;
 
