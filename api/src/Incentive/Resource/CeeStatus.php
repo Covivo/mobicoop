@@ -25,8 +25,8 @@ namespace App\Incentive\Resource;
 
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
-use App\Icentive\Entity\CeeLongDistanceStatus;
-use App\Icentive\Entity\CeeShortDistanceStatus;
+use App\Incentive\Entity\CeeLongDistanceStatus;
+use App\Incentive\Entity\CeeShortDistanceStatus;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
