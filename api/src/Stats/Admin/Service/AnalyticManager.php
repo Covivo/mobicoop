@@ -62,18 +62,16 @@ class AnalyticManager
     {
         $analytic = new Analytic();
         $analytic->setId($id);
-
-        $dashboard = self::getDashboard();
-
+        $dashboard = $this->getDashboard();
         $payload = [
             'resource' => ['dashboard' => $dashboard['dashboardId']],
             'params' => [
-                'idterritoryoperational' => self::getTerritories($dashboard['auth_item']),
+                'idterritoryoperational' => $this->getTerritories($dashboard['auth_item']),
                 'organization' => $this->organization,
             ],
         ];
 
-        $url = $this->uri.self::build_jwt_token($payload).'#bordered=false&titled=false';
+        $url = $this->uri.$this->build_jwt_token($payload).'#bordered=false&titled=false';
         if ($this->darkTheme) {
             $url .= '&theme=night';
         }
@@ -96,7 +94,15 @@ class AnalyticManager
 
     private function getTerritories(string $auth_item): array
     {
-        return $this->authManager->getTerritoriesForItem($auth_item);
+        $territories = $this->authManager->getTerritoriesForItem($auth_item);
+
+        if (0 == count($territories)) {
+            return [strtolower($this->organization)];
+        }
+
+        foreach ($territories as $key => $territory) {
+            $territories[$key] = strtolower($this->organization).'_'.$territories[$key];
+        }
     }
 
     private function build_jwt_token($payload): string
