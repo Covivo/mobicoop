@@ -49,6 +49,20 @@ class ShortDistanceSubscription
     private $subscriptionId;
 
     /**
+     * @var string the initial timestamp of the mobConnect subscription
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $initialTimestamp;
+
+    /**
+     * @var string the last timestamp of the mobConnect subscription
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $lastTimestamp;
+
+    /**
      * @var string the status of the journey
      *
      * @ORM\Column(type="string", length=10, nullable=true)
@@ -221,6 +235,48 @@ class ShortDistanceSubscription
     public function setSubscriptionId(string $subscriptionId): self
     {
         $this->subscriptionId = $subscriptionId;
+
+        return $this;
+    }
+
+    /**
+     * Get the initial timestamp of the mobConnect subscription.
+     */
+    public function getInitialTimestamp(): string
+    {
+        return $this->initialTimestamp;
+    }
+
+    /**
+     * Set the initial timestamp of the mobConnect subscription.
+     *
+     * @param string $initialTimestamp the initial timestamp of the mobConnect subscription
+     */
+    public function setInitialTimestamp(string $initialTimestamp): self
+    {
+        $this->initialTimestamp = $initialTimestamp;
+
+        return $this;
+    }
+
+    /**
+     * Get the last timestamp of the mobConnect subscription.
+     *
+     * @return string
+     */
+    public function getLastTimestamp(): ?string
+    {
+        return $this->lastTimestamp;
+    }
+
+    /**
+     * Set the last timestamp of the mobConnect subscription.
+     *
+     * @param string $lastTimestamp the last timestamp of the mobConnect subscription
+     */
+    public function setLastTimestamp(string $lastTimestamp): self
+    {
+        $this->lastTimestamp = $lastTimestamp;
 
         return $this;
     }
