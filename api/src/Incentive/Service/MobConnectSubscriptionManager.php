@@ -135,7 +135,6 @@ class MobConnectSubscriptionManager
     {
         $this->_authManager->createAuth($authorizationCode);
 
-        // TODO: intercept the timestamp for the long and short distance subscription
         $mobConnectShortDistanceSubscription = $this->_mobConnectApiProvider->postSubscriptionForShortDistance();
         $shortDistanceSubscription = new ShortDistanceSubscription($this->_user, $mobConnectShortDistanceSubscription);
 
@@ -215,9 +214,9 @@ class MobConnectSubscriptionManager
         }
 
         if (self::HIGH_THRESHOLD_PROOF === $declaredJourneysNumber) {
-            // TODO: intercept the timestamp for the short distance subscription
             $response = $this->_mobConnectApiProvider->verifyUserSubscription($subscriptionId);
             $userSubscription->setStatus($response->getStatus());
+            $userSubscription->setLastTimestamp($response->getTimestamp());
         }
 
         $this->_em->flush();

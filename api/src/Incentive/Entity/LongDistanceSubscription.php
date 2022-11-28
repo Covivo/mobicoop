@@ -145,6 +145,7 @@ class LongDistanceSubscription
 
         $this->setUser($user);
         $this->setSubscriptionId($mobConnectSubscriptionResponse->getId());
+        $this->setInitialTimestamp($mobConnectSubscriptionResponse->getTimestamp());
 
         $this->setGivenName($user->getGivenName());
         $this->setFamilyName($user->getFamilyName());
