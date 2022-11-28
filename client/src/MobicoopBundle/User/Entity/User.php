@@ -447,6 +447,12 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
      */
     private $verifiedIdentity;
 
+    /**
+     * @var null|string Additional home address details
+     * @Groups({"post","put"})
+     */
+    private $additionalHomeAddressDetails;
+
     public function __construct($id = null, $status = null)
     {
         if ($id) {
@@ -1332,6 +1338,18 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
         return $this;
     }
 
+    public function getAdditionalHomeAddressDetails(): ?string
+    {
+        return $this->additionalHomeAddressDetails;
+    }
+
+    public function setAdditionalHomeAddressDetails(?string $additionalHomeAddressDetails): self
+    {
+        $this->additionalHomeAddressDetails = $additionalHomeAddressDetails;
+
+        return $this;
+    }
+
     // If you want more info from user you just have to add it to the jsonSerialize function
     public function jsonSerialize()
     {
@@ -1376,6 +1394,7 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
             'gamificationNotifications' => $this->getGamificationNotifications(),
             'numberOfBadges' => $this->getNumberOfBadges(),
             'verifiedIdentity' => $this->getVerifiedIdentity(),
+            'additionalHomeAddressDetails' => $this->getAdditionalHomeAddressDetails(),
         ];
 
         if (!is_null($this->getIsCommunityReferrer())) {

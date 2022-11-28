@@ -1570,6 +1570,14 @@ class User implements UserInterface, EquatableInterface
      */
     private $blockBys;
 
+    /**
+     * @var null|string Additional home address details
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"aRead","aWrite","readUser","write"})
+     */
+    private $additionalHomeAddressDetails;
+
     // ADMIN
 
     /**
@@ -3774,6 +3782,18 @@ class User implements UserInterface, EquatableInterface
     public function setRzpTerritoryStatus(?string $rzpTerritoryStatus): self
     {
         $this->rzpTerritoryStatus = $rzpTerritoryStatus;
+
+        return $this;
+    }
+
+    public function getAdditionalHomeAddressDetails(): ?string
+    {
+        return $this->additionalHomeAddressDetails;
+    }
+
+    public function setAdditionalHomeAddressDetails(?string $additionalHomeAddressDetails): self
+    {
+        $this->additionalHomeAddressDetails = $additionalHomeAddressDetails;
 
         return $this;
     }
