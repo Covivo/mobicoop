@@ -1321,6 +1321,7 @@ class User implements UserInterface, EquatableInterface
      * @var null|string External ID of the user for a SSO connection
      *
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"readUser"})
      */
     private $ssoId;
 
@@ -1328,6 +1329,7 @@ class User implements UserInterface, EquatableInterface
      * @var null|string External Provider for a SSO connection
      *
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"readUser"})
      */
     private $ssoProvider;
 

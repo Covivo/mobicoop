@@ -32,6 +32,7 @@ import CommunityGetWidget from "@components/community/CommunityGetWidget";
 
 // USER
 import Login from '@components/user/Login'
+import LoginSsoOriented from '@components/user/LoginSsoOriented'
 import LoginAdmin from '@components/user/LoginAdmin'
 import Messages from '@components/user/mailbox/Messages'
 import PasswordRecovery from '@components/user/PasswordRecovery'
@@ -103,6 +104,7 @@ export default {
   CommunityWidget,
   CommunityGetWidget,
   Login,
+  LoginSsoOriented,
   LoginAdmin,
   Messages,
   PasswordRecovery,
