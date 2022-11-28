@@ -732,6 +732,24 @@ services:
     tags:
       - { name: monolog.logger, channel: faker }
 
+  # INCENTIVE
+  App\Incentive\EventListener\MobConnectListener:
+
+  App\Incentive\Service\MobConnectAuthManager:
+    arguments:
+      $ssoServices: "%env(json:file:resolve:SSO_SERVICES)%"
+  
+  App\Incentive\Service\MobConnectSubscriptionManager:
+    arguments:
+      $mobConnectParams:
+        api_uri: "%env(string:MOBCONNECT_API_URI)%"
+        credentials:
+          client_id: "%env(string:MOBCONNECT_CLIENT_ID)%"
+          api_key: "%env(string:MOBCONNECT_API_KEY)%"
+        subscription_ids:
+          short_distance: "%env(string:MOBCONNECT_SHORTDISTANCE_SUBSCRIPTIONID)%"
+          long_distance: "%env(string:MOBCONNECT_LONGDISTANCE_SUBSCRIPTIONID)%"
+
   # Journey
   App\Journey\Service\JourneyManager:
     arguments:

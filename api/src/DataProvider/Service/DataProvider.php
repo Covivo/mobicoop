@@ -109,7 +109,7 @@ class DataProvider
                 return new Response($clientResponse->getStatusCode(), $clientResponse->getBody());
             }
         } catch (TransferException $e) {
-            return new Response($e->getCode());
+            return new Response($e->getCode(), $e->getMessage() ? $e->getMessage() : null);
         }
 
         return new Response();
