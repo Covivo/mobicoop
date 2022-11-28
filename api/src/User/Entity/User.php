@@ -1667,6 +1667,15 @@ class User implements UserInterface, EquatableInterface
     private $shortDistanceSubscription;
 
     /**
+     * Specifies whether subscriptions to CEE sheets have just been made.
+     *
+     * @var bool
+     *
+     * @Groups({"readUser"})
+     */
+    private $subscriptionsJustCreate = false;
+
+    /**
      * @ORM\OneToOne(targetEntity="\App\Incentive\Entity\MobConnectAuth", mappedBy="user", cascade={"remove"})
      */
     private $mobConnectAuth;
@@ -3890,6 +3899,26 @@ class User implements UserInterface, EquatableInterface
     public function setMobConnectAuth($mobConnectAuth): self
     {
         $this->mobConnectAuth = $mobConnectAuth;
+
+        return $this;
+    }
+
+    /**
+     * Get specifies whether subscriptions to CEE sheets have just been made.
+     */
+    public function isSubscriptionsJustCreate(): bool
+    {
+        return $this->subscriptionsJustCreate;
+    }
+
+    /**
+     * Set specifies whether subscriptions to CEE sheets have just been made.
+     *
+     * @param bool $subscriptionsJustCreate specifies whether subscriptions to CEE sheets have just been made
+     */
+    public function setSubscriptionsJustCreate(bool $subscriptionsJustCreate): self
+    {
+        $this->subscriptionsJustCreate = $subscriptionsJustCreate;
 
         return $this;
     }

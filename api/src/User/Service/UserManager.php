@@ -62,6 +62,9 @@ use App\Solidary\Repository\StructureRepository;
 use App\User\Entity\SsoUser;
 use App\User\Entity\User;
 use App\User\Entity\UserNotification;
+use App\User\Event\SsoAssociationEvent;
+use App\User\Event\SsoAuthenticationEvent;
+use App\User\Event\SsoCreationEvent;
 use App\User\Event\UserDelegateRegisteredEvent;
 use App\User\Event\UserDelegateRegisteredPasswordSendEvent;
 use App\User\Event\UserDeleteAccountWasDriverEvent;
@@ -1157,11 +1160,10 @@ class UserManager
             $this->eventDispatcher->dispatch($event, UserPasswordChangeAskedEvent::NAME);
         }
         // send response with the sender information in all case
-            $user= new User();
-            $user->setEmail( $data->getEmail());
-            return $user;
+        $user = new User();
+        $user->setEmail($data->getEmail());
 
-
+        return $user;
     }
 
     /**
@@ -1710,6 +1712,9 @@ class UserManager
                             throw new \LogicException('Autocreate/Autoattach account disable');
                         }
                     } else {
+                        $event = new SsoAuthenticationEvent($user);
+                        $this->eventDispatcher->dispatch(SsoAuthenticationEvent::NAME, $event);
+
                         return $user;
                     }
                 }
@@ -1722,6 +1727,9 @@ class UserManager
                 }
                 $this->entityManager->persist($user);
                 $this->entityManager->flush();
+
+                $event = new SsoAssociationEvent($user);
+                $this->eventDispatcher->dispatch(SsoAssociationEvent::NAME, $event);
 
                 return $user;
             }
@@ -1758,6 +1766,9 @@ class UserManager
 
             $user = $this->registerUser($user);
         }
+
+        $event = new SsoCreationEvent($user);
+        $this->eventDispatcher->dispatch(SsoCreationEvent::NAME, $event);
 
         return $user;
     }
@@ -1912,10 +1923,11 @@ class UserManager
     /**
      * Compute the saved Co2 on a Ask by a user.
      *
-     * @param Ask $ask    The Ask
-     * @param int $userId The User id
+     * @param Ask   $ask    The Ask
+     * @param int   $userId The User id
+     * @param mixed $export
      */
-    public function computeSavedCo2(Ask $ask, int $userId, $export=false): int
+    public function computeSavedCo2(Ask $ask, int $userId, $export = false): int
     {
         $driver = ($ask->getMatching()->getProposalOffer()->getUser()->getId() == $userId);
 
@@ -1991,7 +2003,7 @@ class UserManager
     public function checkIfScammer(User $user)
     {
         if ($this->scammerRepository->findOneBy(['email' => $user->getEmail()]) || $this->scammerRepository->findOneBy(['telephone' => $user->getTelephone()])) {
-            throw new Exception('', 1);
+            throw new \Exception('', 1);
         }
     }
 
