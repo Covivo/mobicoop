@@ -52,6 +52,9 @@ use App\Geography\Entity\Address;
 use App\I18n\Entity\Language;
 use App\Image\Entity\Image;
 use App\Import\Entity\UserImport;
+use App\Incentive\Entity\LongDistanceSubscription;
+use App\Incentive\Entity\MobConnectAuth;
+use App\Incentive\Entity\ShortDistanceSubscription;
 use App\MassCommunication\Entity\Campaign;
 use App\MassCommunication\Entity\Delivery;
 use App\Match\Entity\Mass;
@@ -1652,6 +1655,21 @@ class User implements UserInterface, EquatableInterface
      * @Groups({"aReadRzpTerritoryStatus"})
      */
     private $rzpTerritoryStatus;
+
+    /**
+     * @ORM\OneToOne(targetEntity="\App\Incentive\Entity\LongDistanceSubscription", mappedBy="user")
+     */
+    private $longDistanceSubscription;
+
+    /**
+     * @ORM\OneToOne(targetEntity="\App\Incentive\Entity\ShortDistanceSubscription", mappedBy="user")
+     */
+    private $shortDistanceSubscription;
+
+    /**
+     * @ORM\OneToOne(targetEntity="\App\Incentive\Entity\MobConnectAuth", mappedBy="user", cascade={"remove"})
+     */
+    private $mobConnectAuth;
 
     public function __construct($status = null)
     {
@@ -3818,5 +3836,61 @@ class User implements UserInterface, EquatableInterface
     public function setAutoUpdatedDate()
     {
         $this->setUpdatedDate(new \DateTime());
+    }
+
+    /**
+     * Get the value of longDistanceSubscription.
+     */
+    public function getLongDistanceSubscription(): LongDistanceSubscription
+    {
+        return $this->longDistanceSubscription;
+    }
+
+    /**
+     * Set the value of longDistanceSubscription.
+     */
+    public function setLongDistanceSubscription(LongDistanceSubscription $longDistanceSubscription): self
+    {
+        $this->longDistanceSubscription = $longDistanceSubscription;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of shortDistanceSubscription.
+     */
+    public function getShortDistanceSubscription(): ShortDistanceSubscription
+    {
+        return $this->shortDistanceSubscription;
+    }
+
+    /**
+     * Set the value of shortDistanceSubscription.
+     */
+    public function setShortDistanceSubscription(ShortDistanceSubscription $shortDistanceSubscription): self
+    {
+        $this->shortDistanceSubscription = $shortDistanceSubscription;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of mobConnectAuth.
+     */
+    public function getMobConnectAuth(): ?MobConnectAuth
+    {
+        return $this->mobConnectAuth;
+    }
+
+    /**
+     * Set the value of mobConnectAuth.
+     *
+     * @param mixed $mobConnectAuth
+     */
+    public function setMobConnectAuth($mobConnectAuth): self
+    {
+        $this->mobConnectAuth = $mobConnectAuth;
+
+        return $this;
     }
 }
