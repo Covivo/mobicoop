@@ -103,6 +103,8 @@ class AnalyticManager
         foreach ($territories as $key => $territory) {
             $territories[$key] = strtolower($this->organization).'_'.$territories[$key];
         }
+
+        return $territories;
     }
 
     private function build_jwt_token($payload): string
