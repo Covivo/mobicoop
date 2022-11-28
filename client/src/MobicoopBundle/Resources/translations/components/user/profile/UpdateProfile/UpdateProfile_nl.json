@@ -1,181 +1,183 @@
 {
-    "savedCo2": "U hebt {savedCo2} t CO2 bespaard",
-    "no": "nee",
-    "yes": "ja",
-    "save": "Opslaan",
-    "homeTown": {
-        "label": "Gemeente waar u woont"
+  "savedCo2": "U hebt {savedCo2} t CO2 bespaard",
+  "no": "nee",
+  "yes": "ja",
+  "save": "Opslaan",
+  "homeTown": {
+    "label": "Gemeente waar u woont"
+  },
+  "birthDay": {
+    "errors": {
+      "notadult": "U moet 16 jaar zijn om u te registreren op het platform",
+      "required": "De geboortedatum is vereist"
     },
-    "birthDay": {
-        "errors": {
-            "notadult": "U moet 16 jaar zijn om u te registreren op het platform",
-            "required": "De geboortedatum is vereist"
-        },
-        "label": "Geboortedatum"
+    "label": "Geboortedatum"
+  },
+  "gender": {
+    "values": {
+      "other": "Andere",
+      "female": "Mevrouw",
+      "male": "Mijnheer"
     },
-    "gender": {
-        "values": {
-            "other": "Andere",
-            "female": "Mevrouw",
-            "male": "Mijnheer"
-        },
-        "label": "Aanspreektitel"
-    },
-    "familyName": {
-        "label": "Naam"
-    },
-    "givenName": {
-        "label": "Voornaam"
-    },
-    "email": {
-        "verificationRoute": "/utilisateur/email/validation",
-        "buttons": {
-            "label": {
-                "generateEmailAgain": "Een verificatiemail opnieuw verzenden",
-                "generateEmail": "Een verificatiemail verzenden"
-            }
-        },
-        "tooltips": {
-            "notVerified": "Uw e-mailadres wordt niet geverifieerd",
-            "verified": "Uw e-mailadres werd geverifieerd"
-        },
-        "errors": {
-            "valid": "Het e-mailadres moet het juiste formaat hebben"
-        },
-        "label": "E-mail"
-    },
-    "events": {
-        "route": "/user/events/created"
-    },
-    "communities": {
-        "route": "/user/communities/owned"
-    },
-    "address": {
-        "update": {
-            "route": "/utilisateur/profil/modifier/adresse",
-            "label": "Adres opslaan"
-        }
-    },
+    "label": "Aanspreektitel"
+  },
+  "familyName": {
+    "label": "Naam"
+  },
+  "givenName": {
+    "label": "Voornaam"
+  },
+  "email": {
+    "verificationRoute": "/utilisateur/email/validation",
     "buttons": {
-        "supprimerAccount": "Mijn account verwijderen"
+      "label": {
+        "generateEmailAgain": "Een verificatiemail opnieuw verzenden",
+        "generateEmail": "Een verificatiemail verzenden"
+      }
     },
-    "dialogEmail": {
-        "buttons": {
-            "cancelUpdate": "Annuleren",
-            "confirmUpdate": "Ik wijzig mijn e-mailadres"
-        },
-        "content": "<p>U hebt uw e-mailadres gewijzigd.</p><p>Als u doorgaat, zult u een e-mail ontvangen ter validatie van uw e-mailadres, en zult u afgemeld worden.</p><p>Wilt u doorgaan ?</p>",
-        "title": "U hebt uw e-mailadres gewijzigd"
+    "tooltips": {
+      "notVerified": "Uw e-mailadres wordt niet geverifieerd",
+      "verified": "Uw e-mailadres werd geverifieerd"
     },
-    "dialog": {
-        "buttons": {
-            "close": "Sluiten",
-            "confirmDelete": "Ik bevestig de verwijdering"
-        },
-        "content": {
-            "errorCommunities": "Als aanspreekpunt van een community kunt u uw account niet verwijderen zolang u aanspreekpunt blijft.<br/> <a href=/contact>Neem contact op met de technische helpdesk</a> om een ander aanspreekpunt in te stellen of deze community te verwijderen. <br/>",
-            "errorEvents": "Als auteur van een evenement in de toekomst,<br/> kunt u uw account niet verwijderen zolang u er de auteur van bent en dit evenement in de toekomst ligt.<br/> <a href=/contact>Neem contact op met de technische helpdesk</a> om de auteur van het evenement te wijzigen of te vragen om het evenement te verwijderen, of wacht tot het evenement voorbij is.",
-            "deleteAccount": "Bent u zeker dat u uw account wilt verwijderen?<br/> Deze actie is onomkeerbaar.<br/> De gevolgen hiervan zijn:<br/> - verwijderen van al uw persoonsgegevens<br/>- verwijderen van al uw berichten die u hebt uitgewisseld met andere gebruikers<br/>- u wordt geanonimiseerd in de carpoolarchieven van andere carpoolers<br/>- verwijderen van al uw carpooladvertenties die eventueel nog actief zijn <br/>- afwijzen van alle lopende carpoolaanvragen die u ontvangen hebt<br/>- annuleren van alle geplande carpoolings<br/><br/>Bevestigt u?"
-        },
-        "titles": {
-            "deletionImpossible": "Uw account kan niet verwijderd worden",
-            "deleteAccount": "Verwijderen van uw account"
-        }
+    "errors": {
+      "valid": "Het e-mailadres moet het juiste formaat hebben"
     },
-    "phone": {
-        "checkValidity": {
-          "url": "/utilisateur/verif/telephone",
-          "error": "Dit telefoonnummer is niet geldig"
-        },
-        "i18n": {
-            "time": {
-                "format": {
-                    "hourMinute": "UU[u]mm"
-                }
-            },
-            "date": {
-                "format": {
-                    "computeDate": "YYYY-MM-DD",
-                    "shortDate": "DD/MM/YYYY",
-                    "fullDate": "ddd Do MMMM YYYY"
-                }
-            }
-        },
-        "token": {
-            "inputError": "De validatiecode bestaat uit 4 cijfers.",
-            "route": "/utilisateur/telephone/token"
-        },
-        "validation": {
-            "route": "/utilisateur/telephone/validation",
-            "label": "Uw verificatiecode"
-        },
-        "buttons": {
-            "label": {
-                "validate": "Bevestigen",
-                "generateNewToken": "Een nieuwe code verzenden",
-                "generateToken": "Een verificatiecode verzenden"
-            }
-        },
-        "tooltips": {
-            "notVerified": "Uw mobiele telefoonnummer werd niet geverifieerd",
-            "verified": "Uw mobiele telefoonnummer werd geverifieerd"
-        },
-        "errors": {
-            "valid": "Het telefoonnummer moet geldig zijn"
-        },
-        "label": "Mobiele telefoon"
+    "label": "E-mail"
+  },
+  "events": {
+    "route": "/user/events/created"
+  },
+  "communities": {
+    "route": "/user/communities/owned"
+  },
+  "address": {
+    "update": {
+      "route": "/utilisateur/profil/modifier/adresse",
+      "label": "Adres opslaan"
+    }
+  },
+  "buttons": {
+    "supprimerAccount": "Mijn account verwijderen"
+  },
+  "dialogEmail": {
+    "buttons": {
+      "cancelUpdate": "Annuleren",
+      "confirmUpdate": "Ik wijzig mijn e-mailadres"
     },
-    "phoneDisplay": {
-        "label": {
-            "all": "Zichtbaar vanaf de publicatie van de advertentie, door alle ingeschrevenen.",
-            "restricted": "Alleen zichtbaar na aanvaarding van carpooling, uitsluitend door de deelnemers.",
-            "general": "Zichtbaarheid van mijn telefoonnummer."
-        }
+    "content": "<p>U hebt uw e-mailadres gewijzigd.</p><p>Als u doorgaat, zult u een e-mail ontvangen ter validatie van uw e-mailadres, en zult u afgemeld worden.</p><p>Wilt u doorgaan ?</p>",
+    "title": "U hebt uw e-mailadres gewijzigd"
+  },
+  "dialog": {
+    "buttons": {
+      "close": "Sluiten",
+      "confirmDelete": "Ik bevestig de verwijdering"
     },
-    "news": {
-        "confirmation": {
-            "content": "Opgelet: nadat u uitschrijft voor het nieuws over de dienst, zult u geen informatie meer ontvangen over de volgende onderwerpen:<br><ul><li>nieuwe functies en nieuwe diensten van het platform</li><li>nieuws over carpooling in uw streek</li><li>nieuws over uw community's</li><li>gepersonaliseerde begeleiding</li></ul><br>Bent u zeker dat u zich wilt uitschrijven?",
-            "title": "Bevestiging van uitschrijving"
-        },
-        "tooltip": "Het nieuws over de dienst zijn e-mails die enkel beantwoorden aan het doel u op de hoogte te houden van de evoluties van de dienst en het carpoolen in de praktijk voor u te bevorderen. Zoals updates van het platform of e-mails van het aanspreekpunt van een community waartoe u behoort. Deze informatie kan betrekking hebben op updates van het platform. Deze e-mails hebben geen commerciële doeleinden.",
-        "label": "Nieuws over {platform}  (nuttige info om te carpoolen, en nieuwe diensten en nieuwe functies)"
-    },
-    "route": {
-        "supprimer": "/utilisateur/profil/supprimer",
-        "update": "/utilisateur/profil/modifier"
-    },
-    "avatar": {
-        "delete": {
-            "label": "De afbeeldingen verwijderen",
-            "route": "/utilisateur/profil/avatar/supprimer"
-        },
-        "size": "De maximale grootte van de avatar werd overschreven",
-        "mbSize": "You have exceeded the maximum avatar size (Max {size} Mb)",
-        "pxSize": "The image is too small : {width}x{height}px (Min {size}x{size}px)",
-        "label": "Foto",
-        "minPxSize": "Minimum size {size}x{size}px",
-        "maxMbSize": "maximum weight {size} Mb"
-    },
-    "snackBar": {
-        "emailError": "Fout: de e-mail werd niet verzonden",
-        "emailOk": "De bevestigingse-mail werd verzonden.",
-        "tokenError": "Fout: de code werd niet verzonden",
-        "tokenOk": "De validatiecode werd verzonden.",
-        "unknown": "De validatiecode is niet correct.",
-        "phoneValidated": "Uw telefoonnummer werd geverifieerd.",
-        "phoneAlreadyVerified": "Uw telefoonnummer werd al geverifieerd.",
-        "phoneUpdate": "Fout: uw telefoonnummer werd niet geverifieerd.",
-        "errorProfileUpdate": "Fout: uw profiel werd niet bijgewerkt.",
-        "profileUpdated": "Uw profiel werd bijgewerkt!"
+    "content": {
+      "errorCommunities": "Als aanspreekpunt van een community kunt u uw account niet verwijderen zolang u aanspreekpunt blijft.<br/> <a href=/contact>Neem contact op met de technische helpdesk</a> om een ander aanspreekpunt in te stellen of deze community te verwijderen. <br/>",
+      "errorEvents": "Als auteur van een evenement in de toekomst,<br/> kunt u uw account niet verwijderen zolang u er de auteur van bent en dit evenement in de toekomst ligt.<br/> <a href=/contact>Neem contact op met de technische helpdesk</a> om de auteur van het evenement te wijzigen of te vragen om het evenement te verwijderen, of wacht tot het evenement voorbij is.",
+      "deleteAccount": "Bent u zeker dat u uw account wilt verwijderen?<br/> Deze actie is onomkeerbaar.<br/> De gevolgen hiervan zijn:<br/> - verwijderen van al uw persoonsgegevens<br/>- verwijderen van al uw berichten die u hebt uitgewisseld met andere gebruikers<br/>- u wordt geanonimiseerd in de carpoolarchieven van andere carpoolers<br/>- verwijderen van al uw carpooladvertenties die eventueel nog actief zijn <br/>- afwijzen van alle lopende carpoolaanvragen die u ontvangen hebt<br/>- annuleren van alle geplande carpoolings<br/><br/>Bevestigt u?"
     },
     "titles": {
-        "deleteAccount": "Mijn account verwijderen",
-        "password": "Wachtwoord",
-        "personnalInfos": "Persoonsgegevens"
-    },
-    "publicProfile": {
-        "close": "Sluiten",
-        "see": "Openbaar profiel weergeven",
-        "title": "Openbaar profiel"
+      "deletionImpossible": "Uw account kan niet verwijderd worden",
+      "deleteAccount": "Verwijderen van uw account"
     }
+  },
+  "phone": {
+    "checkValidity": {
+      "url": "/utilisateur/verif/telephone",
+      "error": "Dit telefoonnummer is niet geldig"
+    },
+    "i18n": {
+      "time": {
+        "format": {
+          "hourMinute": "UU[u]mm"
+        }
+      },
+      "date": {
+        "format": {
+          "computeDate": "YYYY-MM-DD",
+          "shortDate": "DD/MM/YYYY",
+          "fullDate": "ddd Do MMMM YYYY"
+        }
+      }
+    },
+    "token": {
+      "inputError": "De validatiecode bestaat uit 4 cijfers.",
+      "route": "/utilisateur/telephone/token"
+    },
+    "validation": {
+      "route": "/utilisateur/telephone/validation",
+      "label": "Uw verificatiecode"
+    },
+    "buttons": {
+      "label": {
+        "validate": "Bevestigen",
+        "generateNewToken": "Een nieuwe code verzenden",
+        "generateToken": "Een verificatiecode verzenden"
+      }
+    },
+    "tooltips": {
+      "notVerified": "Uw mobiele telefoonnummer werd niet geverifieerd",
+      "verified": "Uw mobiele telefoonnummer werd geverifieerd"
+    },
+    "errors": {
+      "valid": "Het telefoonnummer moet geldig zijn"
+    },
+    "label": "Mobiele telefoon"
+  },
+  "phoneDisplay": {
+    "label": {
+      "all": "Zichtbaar vanaf de publicatie van de advertentie, door alle ingeschrevenen.",
+      "restricted": "Alleen zichtbaar na aanvaarding van carpooling, uitsluitend door de deelnemers.",
+      "general": "Zichtbaarheid van mijn telefoonnummer."
+    }
+  },
+  "news": {
+    "confirmation": {
+      "content": "Opgelet: nadat u uitschrijft voor het nieuws over de dienst, zult u geen informatie meer ontvangen over de volgende onderwerpen:<br><ul><li>nieuwe functies en nieuwe diensten van het platform</li><li>nieuws over carpooling in uw streek</li><li>nieuws over uw community's</li><li>gepersonaliseerde begeleiding</li></ul><br>Bent u zeker dat u zich wilt uitschrijven?",
+      "title": "Bevestiging van uitschrijving"
+    },
+    "tooltip": "Het nieuws over de dienst zijn e-mails die enkel beantwoorden aan het doel u op de hoogte te houden van de evoluties van de dienst en het carpoolen in de praktijk voor u te bevorderen. Zoals updates van het platform of e-mails van het aanspreekpunt van een community waartoe u behoort. Deze informatie kan betrekking hebben op updates van het platform. Deze e-mails hebben geen commerciële doeleinden.",
+    "label": "Nieuws over {platform}  (nuttige info om te carpoolen, en nieuwe diensten en nieuwe functies)"
+  },
+  "route": {
+    "supprimer": "/utilisateur/profil/supprimer",
+    "update": "/utilisateur/profil/modifier"
+  },
+  "avatar": {
+    "delete": {
+      "label": "De afbeeldingen verwijderen",
+      "route": "/utilisateur/profil/avatar/supprimer"
+    },
+    "size": "De maximale grootte van de avatar werd overschreven",
+    "mbSize": "You have exceeded the maximum avatar size (Max {size} Mb)",
+    "pxSize": "The image is too small : {width}x{height}px (Min {size}x{size}px)",
+    "label": "Foto",
+    "minPxSize": "Minimum size {size}x{size}px",
+    "maxMbSize": "maximum weight {size} Mb"
+  },
+  "snackBar": {
+    "emailError": "Fout: de e-mail werd niet verzonden",
+    "emailOk": "De bevestigingse-mail werd verzonden.",
+    "tokenError": "Fout: de code werd niet verzonden",
+    "tokenOk": "De validatiecode werd verzonden.",
+    "unknown": "De validatiecode is niet correct.",
+    "phoneValidated": "Uw telefoonnummer werd geverifieerd.",
+    "phoneAlreadyVerified": "Uw telefoonnummer werd al geverifieerd.",
+    "phoneUpdate": "Fout: uw telefoonnummer werd niet geverifieerd.",
+    "errorProfileUpdate": "Fout: uw profiel werd niet bijgewerkt.",
+    "profileUpdated": "Uw profiel werd bijgewerkt!"
+  },
+  "titles": {
+    "deleteAccount": "Mijn account verwijderen",
+    "password": "Wachtwoord",
+    "personnalInfos": "Persoonsgegevens"
+  },
+  "publicProfile": {
+    "close": "Sluiten",
+    "see": "Openbaar profiel weergeven",
+    "title": "Openbaar profiel"
+  },
+  "urlGetSsoServices": "/user/getSsoService",
+  "ssoDeleteAccountWarning": "Votre compte est lié au service {service}. Pour supprimer votre compte vous devez vous y rendre et utiliser la fonctionnalité prévue à cet effet."
 }

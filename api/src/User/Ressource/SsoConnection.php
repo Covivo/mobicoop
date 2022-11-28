@@ -88,6 +88,13 @@ class SsoConnection
     private $id;
 
     /**
+     * @var string The Name of the SSO service
+     *
+     * @Groups({"readSSOConnection"})
+     */
+    private $name;
+
+    /**
      * @var string The uri of the SSO login form
      *
      * @Groups({"readSSOConnection"})
@@ -143,6 +150,13 @@ class SsoConnection
      * @Groups({"readSSOConnection"})
      */
     private $useButtonIcon;
+
+    /**
+     * @var null|bool true : This SSO provider allow deletation of account only on its side
+     *
+     * @Groups({"readSSOConnection"})
+     */
+    private $externalAccountDeletion;
 
     public function __construct(string $id = null)
     {
@@ -265,6 +279,18 @@ class SsoConnection
     public function setUseButtonIcon(?bool $useButtonIcon): self
     {
         $this->useButtonIcon = $useButtonIcon;
+
+        return $this;
+    }
+
+    public function hasExternalAccountDeletion(): ?bool
+    {
+        return (!is_null($this->externalAccountDeletion)) ? $this->externalAccountDeletion : false;
+    }
+
+    public function setExternalAccountDeletion(?bool $externalAccountDeletion): self
+    {
+        $this->externalAccountDeletion = $externalAccountDeletion;
 
         return $this;
     }
