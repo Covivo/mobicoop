@@ -556,6 +556,10 @@ services:
       $operator: "%env(json:file:resolve:RDEX_OPERATOR)%"
       $clients: "%env(json:file:resolve:RDEX_CLIENTS)%"
       $providers: "%env(json:file:resolve:RDEX_PROVIDERS)%"
+  
+  App\ExternalJourney\Service\JourneySearcher:
+   arguments:
+      $providers: "%env(json:file:resolve:RDEX_PROVIDERS)%"
 
   # Fixtures Basic
   App\DataFixtures\BasicFixtures:

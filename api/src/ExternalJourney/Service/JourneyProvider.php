@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * Copyright (c) 2022, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,58 +21,21 @@
  *    LICENSE
  */
 
-namespace App\ExternalJourney\Entity;
+declare(strict_types=1);
 
-use ApiPlatform\Core\Annotation\ApiProperty;
-use ApiPlatform\Core\Annotation\ApiResource;
-use Symfony\Component\Serializer\Annotation\Groups;
+namespace App\ExternalJourney\Service;
 
-/**
- * An external carpool journey provider.
- * For now providers are configured in a json config file, but maybe it should be in the database.
- *
- * @ApiResource(
- *      attributes={
- *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"}
- *      },
- *      collectionOperations={
- *          "get"={
- *              "swagger_context" = {
- *                  "tags"={"Carpool"}
- *              }
- *          },
- *          "ADMIN_get"={
- *              "method"="GET",
- *              "path"="/admin/external_journey_providers",
- *              "swagger_context" = {
- *                  "tags"={"Administration"}
- *              }
- *          }
- *      },
- *      itemOperations={
- *          "get"={
- *              "swagger_context" = {
- *                  "tags"={"Carpool"}
- *              }
- *          }
- *      }
- * )
- *
- * @author Sofiane Belaribi <sofiane.belaribi@covivo.eu>
- */
-class ExternalJourneyProvider
+use Symfony\Component\HttpFoundation\Request;
+
+abstract class JourneyProvider
 {
     /**
      * @var int The id of the provider (not useful yet but needed for api)
-     *
-     * @ApiProperty(identifier=true)
      */
     private $id;
 
     /**
      * @var string The name of the provider
-     *
-     * @Groups("read")
      */
     private $name;
 
@@ -187,4 +150,6 @@ class ExternalJourneyProvider
 
         return $this;
     }
+
+    abstract public function getJourneys(JourneyProvider $provider, Request $request): array;
 }
