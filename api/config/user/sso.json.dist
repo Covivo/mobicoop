@@ -5,6 +5,7 @@
         "clientId":"clientId",
         "clientSecret":"clientSecret",
         "autoCreateAccount":true,
+        "externalAccountDeletion": false,
         "logOutRedirectUri":""
     }
 }
