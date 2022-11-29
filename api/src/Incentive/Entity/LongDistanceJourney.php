@@ -268,7 +268,7 @@ class LongDistanceJourney
     /**
      * Get the value of longDistanceSubscription.
      */
-    public function longDistanceSubscription(): LongDistanceSubscription
+    public function getlongDistanceSubscription(): LongDistanceSubscription
     {
         return $this->longDistanceSubscription;
     }
