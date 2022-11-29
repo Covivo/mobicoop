@@ -1155,13 +1155,13 @@ class UserManager
             $user->setMobileRegistration($mobileRegistration);
             $event = new UserPasswordChangeAskedEvent($user);
             $this->eventDispatcher->dispatch($event, UserPasswordChangeAskedEvent::NAME);
-        }
-        // send response with the sender information in all case
-            $user= new User();
-            $user->setEmail( $data->getEmail());
+
             return $user;
+        }
+        $user = new User();
+        $user->setEmail($data->getEmail());
 
-
+        return $user;
     }
 
     /**
@@ -1912,10 +1912,11 @@ class UserManager
     /**
      * Compute the saved Co2 on a Ask by a user.
      *
-     * @param Ask $ask    The Ask
-     * @param int $userId The User id
+     * @param Ask   $ask    The Ask
+     * @param int   $userId The User id
+     * @param mixed $export
      */
-    public function computeSavedCo2(Ask $ask, int $userId, $export=false): int
+    public function computeSavedCo2(Ask $ask, int $userId, $export = false): int
     {
         $driver = ($ask->getMatching()->getProposalOffer()->getUser()->getId() == $userId);
 
