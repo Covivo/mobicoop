@@ -457,6 +457,12 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
     private $verifiedIdentity;
 
     /**
+     * @var null|string postal address
+     * @Groups({"post","put"})
+     */
+    private $postalAddress;
+
+    /**
      * @var null|string External ID of the user for a SSO connection
      */
     private $ssoId;
@@ -1078,7 +1084,7 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
     /**
      * Set the date of password mofification.
      */
-    public function setPwdTokenDate(?\DateTime $pwdTokenDate)
+    public function setPwdTokenDate(?DateTime $pwdTokenDate)
     {
         $this->pwdTokenDate = $pwdTokenDate;
 
@@ -1351,6 +1357,18 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
         return $this;
     }
 
+    public function getPostalAddress(): ?string
+    {
+        return $this->postalAddress;
+    }
+
+    public function setPostalAddress(?string $postalAddress): self
+    {
+        $this->postalAddress = $postalAddress;
+
+        return $this;
+    }
+
     public function getSsoId(): ?string
     {
         return $this->ssoId;
@@ -1419,6 +1437,7 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
             'gamificationNotifications' => $this->getGamificationNotifications(),
             'numberOfBadges' => $this->getNumberOfBadges(),
             'verifiedIdentity' => $this->getVerifiedIdentity(),
+            'postalAddress' => $this->getPostalAddress(),
             'ssoId' => $this->getSsoId(),
             'ssoProvider' => $this->getSsoProvider(),
         ];

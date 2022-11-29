@@ -1580,6 +1580,14 @@ class User implements UserInterface, EquatableInterface
      */
     private $blockBys;
 
+    /**
+     * @var null|string postal address
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"aRead","aWrite","readUser","write"})
+     */
+    private $postalAddress;
+
     // ADMIN
 
     /**
@@ -3796,6 +3804,18 @@ class User implements UserInterface, EquatableInterface
     public function setRzpTerritoryStatus(?string $rzpTerritoryStatus): self
     {
         $this->rzpTerritoryStatus = $rzpTerritoryStatus;
+
+        return $this;
+    }
+
+    public function getPostalAddress(): ?string
+    {
+        return $this->postalAddress;
+    }
+
+    public function setPostalAddress(?string $postalAddress): self
+    {
+        $this->postalAddress = $postalAddress;
 
         return $this;
     }
