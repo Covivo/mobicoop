@@ -1,1 +1,11 @@
-{}
+{
+    "titleFromCity": "Spolujízda z {city}",
+    "titleToCity": "Spolujízda do {city}",
+    "journeyFrom": "Spolujízda z ",
+    "journeyTo": " à ",
+    "listJourneys": "Seznam spolujízd",
+    "routeToCity": "/communes/covoiturage-vers-{city}",
+    "routeFromCityToCity": "/covoiturage/{origin}/{destination}",
+    "routeFromCity": "/communes/covoiturage/{city}",
+    "nbResults": "Nenalezena žádná trasa | Nalezena 1 trasa pro spolujízdu | {nb} nalezeny trasy pro spolujízdu"
+}
