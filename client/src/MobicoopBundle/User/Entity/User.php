@@ -448,10 +448,10 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
     private $verifiedIdentity;
 
     /**
-     * @var null|string Additional home address details
+     * @var null|string postal address
      * @Groups({"post","put"})
      */
-    private $additionalHomeAddressDetails;
+    private $postalAddress;
 
     public function __construct($id = null, $status = null)
     {
@@ -1338,14 +1338,14 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
         return $this;
     }
 
-    public function getAdditionalHomeAddressDetails(): ?string
+    public function getPostalAddress(): ?string
     {
-        return $this->additionalHomeAddressDetails;
+        return $this->postalAddress;
     }
 
-    public function setAdditionalHomeAddressDetails(?string $additionalHomeAddressDetails): self
+    public function setPostalAddress(?string $postalAddress): self
     {
-        $this->additionalHomeAddressDetails = $additionalHomeAddressDetails;
+        $this->postalAddress = $postalAddress;
 
         return $this;
     }
@@ -1394,7 +1394,7 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
             'gamificationNotifications' => $this->getGamificationNotifications(),
             'numberOfBadges' => $this->getNumberOfBadges(),
             'verifiedIdentity' => $this->getVerifiedIdentity(),
-            'additionalHomeAddressDetails' => $this->getAdditionalHomeAddressDetails(),
+            'postalAddress' => $this->getPostalAddress(),
         ];
 
         if (!is_null($this->getIsCommunityReferrer())) {
