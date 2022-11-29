@@ -598,6 +598,7 @@
         </v-row>
       </v-card-text>
     </v-card>
+    <EECIncentiveStatus />
 
     <!-- PUBLIC PROFILE DIALOG -->
     <v-dialog
@@ -641,6 +642,7 @@ import moment from "moment";
 import Geocomplete from "@components/utilities/geography/Geocomplete";
 import ChangePassword from "@components/user/profile/ChangePassword";
 import PublicProfile from "@components/user/profile/PublicProfile";
+import EECIncentiveStatus from "@components/utilities/EECIncentiveStatus";
 import { merge } from "lodash";
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/profile/UpdateProfile/";
 import {messages_client_en, messages_client_fr, messages_client_eu, messages_client_nl} from "@clientTranslations/components/user/profile/UpdateProfile/";
@@ -662,7 +664,8 @@ export default {
   components: {
     PublicProfile,
     Geocomplete,
-    ChangePassword
+    ChangePassword,
+    EECIncentiveStatus
   },
   props: {
     geoSearchUrl: {
