@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2019, MOBICOOP. All rights reserved.
+ * Copyright (c) 2020, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,27 +21,27 @@
  *    LICENSE
  */
 
-namespace App\Carpool\Event;
+namespace App\Payment\Event;
 
-use App\Carpool\Entity\Proposal;
+use App\Payment\Entity\CarpoolPayment;
 use Symfony\Contracts\EventDispatcher\Event;
 
-/**
- * Event sent when a new proposal is posted.
- */
-class ProposalPostedEvent extends Event
+class ElectronicPaymentValidatedEvent extends Event
 {
-    public const NAME = 'carpool_ad_posted';
+    public const NAME = 'electronic_payment_validated';
 
-    protected $proposal;
+    /**
+     * @var CarpoolPayment
+     */
+    private $carpoolPayment;
 
-    public function __construct(Proposal $proposal)
+    public function __construct(CarpoolPayment $carpoolPayment)
     {
-        $this->proposal = $proposal;
+        $this->carpoolPayment = $carpoolPayment;
     }
 
-    public function getProposal()
+    public function getCarpoolPayment(): CarpoolPayment
     {
-        return $this->proposal;
+        return $this->carpoolPayment;
     }
 }

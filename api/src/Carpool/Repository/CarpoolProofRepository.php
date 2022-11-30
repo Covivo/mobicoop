@@ -26,7 +26,6 @@ namespace App\Carpool\Repository;
 use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\CarpoolProof;
 use App\User\Entity\User;
-use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 
 class CarpoolProofRepository
@@ -51,12 +50,12 @@ class CarpoolProofRepository
     /**
      * Find a proof by ask and date.
      *
-     * @param Ask      $ask  The ask
-     * @param DateTime $date The date
+     * @param Ask       $ask  The ask
+     * @param \DateTime $date The date
      *
      * @return null|CarpoolProof The carpool proof found or null if not found
      */
-    public function findByAskAndDate(Ask $ask, DateTime $date)
+    public function findByAskAndDate(Ask $ask, \DateTime $date)
     {
         $startDate = clone $date;
         $startDate->setTime(0, 0);
@@ -96,14 +95,14 @@ class CarpoolProofRepository
     /**
      * Find proofs with given types and given period.
      *
-     * @param array    $types     The possible types
-     * @param DateTime $startDate The start date of the period
-     * @param DateTime $endDate   The end date of the period
-     * @param array    $status    The possible status
+     * @param array     $types     The possible types
+     * @param \DateTime $startDate The start date of the period
+     * @param \DateTime $endDate   The end date of the period
+     * @param array     $status    The possible status
      *
      * @return CarpoolProof[] The carpool proofs found
      */
-    public function findByTypesAndPeriod(array $types, DateTime $startDate, DateTime $endDate, array $status = null)
+    public function findByTypesAndPeriod(array $types, \DateTime $startDate, \DateTime $endDate, array $status = null)
     {
         $startDate->setTime(0, 0);
         $endDate->setTime(23, 59, 59, 999);
@@ -123,6 +122,16 @@ class CarpoolProofRepository
             ->setParameter('types', $types)
             ->setParameter('startDate', $startDate->format('Y-m-d H:i:s'))
             ->setParameter('endDate', $endDate->format('Y-m-d H:i:s'))
+        ;
+
+        return $query->getQuery()->getResult();
+    }
+
+    public function findCarpoolProofToCheck(array $status): ?array
+    {
+        $query = $this->repository->createQueryBuilder('cp')
+            ->where('cp.status in (:status)')
+            ->setParameter('status', $status)
         ;
 
         return $query->getQuery()->getResult();
