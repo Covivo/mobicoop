@@ -1401,7 +1401,7 @@ class UserController extends AbstractController
      * Return page after a SSO Login
      * Url is something like /user/sso/login?state=PassMobilite&code=1.
      */
-    public function userReturnConnectSSO(Request $request)
+    public function userReturnConnectSSO(Request $request, bool $mobConnectOrigin = false)
     {
         $params = $this->ssoManager->guessSsoParameters($request->query->all());
 
@@ -1419,6 +1419,10 @@ class UserController extends AbstractController
             }
         }
 
+        if ($mobConnectOrigin) {
+            $params['fromMobConnectSso'] = true;
+        }
+
         return $this->redirectToRoute('user_login_sso', $params);
     }
 
@@ -1428,7 +1432,7 @@ class UserController extends AbstractController
      */
     public function userReturnConnectSSOMobConnect(Request $request)
     {
-        return $this->userReturnConnectSSO($request);
+        return $this->userReturnConnectSSO($request, true);
     }
 
     /**
