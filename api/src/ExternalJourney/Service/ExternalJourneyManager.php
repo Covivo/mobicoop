@@ -26,10 +26,8 @@ namespace App\ExternalJourney\Service;
 use App\Carpool\Entity\Criteria;
 use App\Carpool\Entity\Result;
 use App\Carpool\Entity\ResultRole;
-use App\ExternalJourney\Entity\ExternalJourneyProvider;
 use App\Geography\Entity\Address;
 use App\User\Entity\User;
-use GuzzleHttp\Client;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -37,28 +35,22 @@ use Symfony\Component\HttpFoundation\Request;
  *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ * @author Remi Wortemann <remi.wortemann@mobicoop.org>
  */
 class ExternalJourneyManager
 {
-    private const EXTERNAL_JOURNEY_HASH = 'sha256';         // hash algorithm
     private $operator;
     private $clients;
     private $providers;
     private $params;
+    private $journeySearcher;
 
-    public function __construct(?array $operator = [], ?array $clients = [], ?array $providers = [])
+    public function __construct(?array $operator = [], ?array $clients = [], ?array $providers = [], JourneySearcher $journeySearcher)
     {
         $this->operator = $operator;
         $this->clients = $clients;
-        foreach ($providers as $providerName => $details) {
-            $provider = new ExternalJourneyProvider();
-            $provider->setName($providerName);
-            $provider->setUrl($details['url']);
-            $provider->setResource($details['resource']);
-            $provider->setApiKey($details['api_key']);
-            $provider->setPrivateKey($details['private_key']);
-            $this->providers[] = $provider;
-        }
+        $this->providers = $providers;
+        $this->journeySearcher = $journeySearcher;
     }
 
     public function getOperator()
@@ -79,119 +71,48 @@ class ExternalJourneyManager
     public function getExternalJourneys(Request $request, array $params): array
     {
         $this->params = $params;
-
-        // initialize client API for any request
-        $client = new Client();
-
-        // we collect search parameters here
-        $providerName = $request->get('provider');
-        $driver = $request->get('driver');
-        $passenger = $request->get('passenger');
-        $fromLatitude = $request->get('from_latitude');
-        $fromLongitude = $request->get('from_longitude');
-        $toLatitude = $request->get('to_latitude');
-        $toLongitude = $request->get('to_longitude');
-        $date = $request->get('date');
-        $outwardMinDate = $request->get('outward_mindate');
-        $outwardMaxDate = $request->get('outward_maxdate');
-        $frequency = $request->get('frequency');
         $rawJson = $request->get('rawJson');
-        $days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 
-        // then we set these parameters
-        $searchParameters = [
-            'driver' => [
-                'state' => $driver,
-            ],
-            'passenger' => [
-                'state' => $passenger,
-            ],
-            'from' => [
-                'latitude' => $fromLatitude,
-                'longitude' => $fromLongitude,
-            ],
-            'to' => [
-                'latitude' => $toLatitude,
-                'longitude' => $toLongitude,
-            ],
-        ];
-
-        if ('' !== $frequency && ('regular' == $frequency || 'punctual' == $frequency)) {
-            $searchParameters['frequency'] = $frequency;
-        }
-
-        if (!is_null($outwardMinDate) && '' !== $outwardMinDate) {
-            $searchParameters['outward']['mindate'] = $outwardMinDate;
-        }
-        if (!is_null($outwardMaxDate) && '' !== $outwardMaxDate) {
-            $searchParameters['outward']['maxdate'] = $outwardMaxDate;
-        }
-        // Override
-        if (!is_null($date) && '' !== $date) {
-            $searchParameters['outward']['mindate'] = $date;
-            $searchParameters['outward']['maxdate'] = $date;
-        }
-
-        // Days treatment for regular journeys
-        // which days
-        foreach ($days as $day) {
-            $currentday = $request->get('days_'.$day);
-            if ('' !== $currentday) {
-                $searchParameters['days'][$day] = $currentday;
-            } else {
-                $searchParameters['days'][$day] = 0;
-            }
-        }
-
-        // mintime and maxtime for days
-        foreach ($days as $day) {
-            $mintime = $request->get($day.'_mintime');
-            if ('' !== $mintime) {
-                $searchParameters['outward'][$day]['mintime'] = $mintime;
-            }
-            $maxtime = $request->get($day.'_maxtime');
-            if ('' !== $maxtime) {
-                $searchParameters['outward'][$day]['maxtime'] = $maxtime;
-            }
-        }
+        $results = $this->journeySearcher->search($request);
 
         $aggregatedResults = [];
-        $providers = $this->getProviders();
+        foreach ($results as $nonFormatedResults) {
+            foreach ($nonFormatedResults as $protocol => $result) {
+                switch ($protocol) {
+                    case 'RDEX':
+                        if ('' !== $result['journeys']) {
+                            if (1 == $rawJson) {
+                                // rawJson flag set. We return RDEX format.
+                                $aggregatedResults = json_decode($result['journeys'], true);
+                            } else {
+                                // No rawJson flag set or set to 0. We return array of Carpool -> Result.
+                                foreach ($this->createResultFromRDEX($result['journeys'], $result['providerName']) as $currentResult) {
+                                    $aggregatedResults[] = $currentResult;
+                                }
+                            }
+                        }
 
-        // If a provider is given in parameters, we take only this one
-        // Otherwise, we use all providers
-        if ('' !== $providerName) {
-            foreach ($providers as $provider) {
-                if ($provider->getName() == $providerName) {
-                    $providers = [$provider];
-                }
-            }
-        }
+                        break;
 
-        // @todo error management (api not responding, bad parameters...)
-        foreach ($providers as $provider) {
-            $query = [
-                'timestamp' => time(),
-                'apikey' => $provider->getApiKey(),
-                'p' => $searchParameters,
-            ];
-            // construct the requested url
-            $url = $provider->getUrl().'/'.$provider->getResource().'?'.http_build_query($query);
-            $signature = hash_hmac(self::EXTERNAL_JOURNEY_HASH, $url, $provider->getPrivateKey());
-            $signedUrl = $url.'&signature='.$signature;
-            // request url
-            $data = $client->request('GET', $signedUrl);
-            $data = $data->getBody()->getContents();
+                    case 'STANDARD_RDEX':
+                        if ('' !== $result['journeys']) {
+                            if (1 == $rawJson) {
+                                // rawJson flag set. We return RDEX format.
+                                $aggregatedResults = json_decode($result['journeys'], true);
+                            } else {
+                                // No rawJson flag set or set to 0. We return array of Carpool -> Result.
+                                foreach ($this->createResultFromRDEX($result['journeys'], $result['providerName']) as $currentResult) {
+                                    $aggregatedResults[] = $currentResult;
+                                }
+                            }
+                        }
 
-            if ('' !== $data) {
-                if (1 == $rawJson) {
-                    // rawJson flag set. We return RDEX format.
-                    $aggregatedResults = json_decode($data, true);
-                } else {
-                    // No rawJson flag set or set to 0. We return array of Carpool -> Result.
-                    foreach ($this->createResultFromRDEX($data, $provider) as $currentResult) {
-                        $aggregatedResults[] = $currentResult;
-                    }
+                        break;
+
+                    default:
+                        $aggregatedResults = json_decode($result['journeys'], true);
+
+                        break;
                 }
             }
         }
@@ -199,7 +120,7 @@ class ExternalJourneyManager
         return $aggregatedResults;
     }
 
-    private function createResultFromRDEX($data, $provider): array
+    private function createResultFromRDEX($data, $providerName): array
     {
         $results = [];
         $journeys = json_decode($data, true);
@@ -339,7 +260,7 @@ class ExternalJourneyManager
 
             $result->setExternalOrigin($currentJourney['origin']);
             $result->setExternalOperator($currentJourney['operator']);
-            $result->setExternalProvider($provider->getName());
+            $result->setExternalProvider($providerName);
             $result->setExternalJourneyId($currentJourney['uuid']);
             $results[] = $result;
         }

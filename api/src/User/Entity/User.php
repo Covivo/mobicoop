@@ -807,6 +807,14 @@ class User implements UserInterface, EquatableInterface
     private $phoneDisplay;
 
     /**
+     * @var null|string the driving licence number
+     *
+     * @ORM\Column(type="string", length=15, nullable=true)
+     * @Groups({"aRead","aWrite","readUser","write"})
+     */
+    private $drivingLicenseNumber;
+
+    /**
      * @var null|int the maximum detour duration (in seconds) as a driver to accept a request proposal
      *
      * @ORM\Column(type="integer", nullable=true)
@@ -936,7 +944,7 @@ class User implements UserInterface, EquatableInterface
     private $updatedDate;
 
     /**
-     * @var null|DateTime date of password token generation modification
+     * @var null|\DateTime date of password token generation modification
      *
      * @ORM\Column(type="datetime", length=255, nullable=true)
      * @Groups({"readUser","write"})
@@ -1313,6 +1321,7 @@ class User implements UserInterface, EquatableInterface
      * @var null|string External ID of the user for a SSO connection
      *
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"readUser"})
      */
     private $ssoId;
 
@@ -1320,6 +1329,7 @@ class User implements UserInterface, EquatableInterface
      * @var null|string External Provider for a SSO connection
      *
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"readUser"})
      */
     private $ssoProvider;
 
@@ -1569,6 +1579,14 @@ class User implements UserInterface, EquatableInterface
      * @ORM\OneToMany(targetEntity="\App\User\Entity\Block", mappedBy="blockedUser")
      */
     private $blockBys;
+
+    /**
+     * @var null|string postal address
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"aRead","aWrite","readUser","write"})
+     */
+    private $postalAddress;
 
     // ADMIN
 
@@ -1913,6 +1931,18 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
+    public function getDrivingLicenseNumber(): ?string
+    {
+        return $this->drivingLicenseNumber;
+    }
+
+    public function setDrivingLicenseNumber(?string $drivingLicenseNumber): self
+    {
+        $this->drivingLicenseNumber = $drivingLicenseNumber;
+
+        return $this;
+    }
+
     public function getMaxDetourDuration(): ?int
     {
         return !is_null($this->maxDetourDuration) ? $this->maxDetourDuration : self::MAX_DETOUR_DURATION;
@@ -2063,7 +2093,7 @@ class User implements UserInterface, EquatableInterface
         return $this->pwdTokenDate;
     }
 
-    public function setPwdTokenDate(?DateTime $pwdTokenDate): self
+    public function setPwdTokenDate(?\DateTime $pwdTokenDate): self
     {
         $this->pwdTokenDate = $pwdTokenDate;
 
@@ -3774,6 +3804,18 @@ class User implements UserInterface, EquatableInterface
     public function setRzpTerritoryStatus(?string $rzpTerritoryStatus): self
     {
         $this->rzpTerritoryStatus = $rzpTerritoryStatus;
+
+        return $this;
+    }
+
+    public function getPostalAddress(): ?string
+    {
+        return $this->postalAddress;
+    }
+
+    public function setPostalAddress(?string $postalAddress): self
+    {
+        $this->postalAddress = $postalAddress;
 
         return $this;
     }

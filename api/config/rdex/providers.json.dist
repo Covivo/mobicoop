@@ -4,13 +4,15 @@
         "resource": "resource",
         "resourceConnection": "connections",
         "api_key": "api_key", 
-        "private_key": "private_key"
+        "private_key": "private_key",
+        "protocol": "RDEX"
     },
     "name2": {
         "url": "url", 
         "resource": "resource",
         "resourceConnection": "connections",
         "api_key": "api_key", 
-        "private_key": "private_key"
+        "private_key": "private_key",
+        "protocol": "STANDARD_RDEX"
     }
 }
