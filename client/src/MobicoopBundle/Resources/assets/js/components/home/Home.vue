@@ -332,7 +332,7 @@ export default {
     }
 
     // Displays the mobConnect snackbar
-    if (this.mobConnectSubscriptions) {
+    if ((this.mobConnectSubscriptions && 'null' !== this.mobConnectSubscriptions) || '' === this.mobConnectSubscriptions) {
       const baseText = this.$t('mobConnect-snackbar.text.base');
       const additionnalText = '1' === this.mobConnectSubscriptions ? this.$t('mobConnect-snackbar.text.success') : this.$t('mobConnect-snackbar.text.error');
 
