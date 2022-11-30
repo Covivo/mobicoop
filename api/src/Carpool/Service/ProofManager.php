@@ -582,7 +582,7 @@ class ProofManager
 
     public function checkProofs()
     {
-        $proofs = $this->carpoolProofRepository->findCarpoolProofToChack([CarpoolProof::STATUS_UNDER_CHECKING, CarpoolProof::STATUS_SENT]);
+        $proofs = $this->carpoolProofRepository->findCarpoolProofToCheck([CarpoolProof::STATUS_UNDER_CHECKING, CarpoolProof::STATUS_SENT]);
         $nbChecked = 0;
 
         foreach ($proofs as $proof) {
