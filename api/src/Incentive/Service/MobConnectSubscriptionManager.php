@@ -10,7 +10,7 @@ use App\Incentive\Entity\LongDistanceJourney;
 use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceJourney;
 use App\Incentive\Entity\ShortDistanceSubscription;
-use App\Incentive\Resource\CeeStatus;
+use App\Incentive\Resource\EecStatus;
 use App\Payment\Entity\CarpoolItem;
 use App\Payment\Entity\CarpoolPayment;
 use App\User\Entity\User;
@@ -97,14 +97,14 @@ class MobConnectSubscriptionManager
             case $carpool instanceof CarpoolProof:
                 return
                     !is_null($carpool->getDirection())
-                    && CeeStatus::LONG_DISTANCE_MINIMUM_IN_METERS > $carpool->getDirection()->getDistance()
+                    && EecStatus::LONG_DISTANCE_MINIMUM_IN_METERS > $carpool->getDirection()->getDistance()
                     && CarpoolProof::TYPE_HIGH === $carpool->getType();
 
             case $carpool instanceof CarpoolItem:
                 return
                     !is_null($carpool->getAsk())
                     && !is_null($carpool->getAsk()->getMatching())
-                    && CeeStatus::LONG_DISTANCE_MINIMUM_IN_METERS <= $carpool->getAsk()->getMatching()->getCommonDistance();
+                    && EecStatus::LONG_DISTANCE_MINIMUM_IN_METERS <= $carpool->getAsk()->getMatching()->getCommonDistance();
 
             default:
                 return false;

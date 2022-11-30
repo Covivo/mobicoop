@@ -25,12 +25,10 @@ namespace App\Incentive\Resource;
 
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
-use App\Incentive\Entity\CeeLongDistanceStatus;
-use App\Incentive\Entity\CeeShortDistanceStatus;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * A CEE status.
+ * The EEC Service used on this platform.
  *
  * @ApiResource(
  *      attributes={
@@ -58,14 +56,12 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class CeeStatus
+class EecProvider
 {
     public const DEFAULT_ID = '999999999999';
-    public const LONG_DISTANCE_MINIMUM_IN_METERS = 80000;
-    public const LONG_DISTANCE_MINIMUM_PRICE_BY_KM = 0.06;
 
     /**
-     * @var int The id of this CEE Status
+     * @var int The id of this EEC service
      *
      * @ApiProperty(identifier=true)
      * @Groups({"readIncentive"})
@@ -73,18 +69,11 @@ class CeeStatus
     private $id;
 
     /**
-     * @var CeeLongDistanceStatus Long distance journeys status (>= LONG_DISTANCE_MINIMUM_KMS)
+     * @var string The EEC service name
      *
      * @Groups({"readIncentive"})
      */
-    private $longDistanceStatus;
-
-    /**
-     * @var CeeShortDistanceStatus Short distance journeys status (< LONG_DISTANCE_MINIMUM_KMS and >= SHORT_DISTANCE_MIN_PRICE_BY_KM)
-     *
-     * @Groups({"readIncentive"})
-     */
-    private $shortDistanceStatus;
+    private $name;
 
     public function __construct($id = null)
     {
@@ -92,8 +81,6 @@ class CeeStatus
         if ($id) {
             $this->id = $id;
         }
-        $this->longDistanceStatus = new CeeLongDistanceStatus();
-        $this->shortDistanceStatus = new CeeShortDistanceStatus();
     }
 
     public function getId(): int
@@ -108,26 +95,14 @@ class CeeStatus
         return $this;
     }
 
-    public function getLongDistanceStatus(): ?CeeLongDistanceStatus
+    public function getname(): ?string
     {
-        return $this->longDistanceStatus;
+        return $this->name;
     }
 
-    public function setLongDistanceStatus(?CeeLongDistanceStatus $longDistanceStatus): self
+    public function setname(?string $name): self
     {
-        $this->longDistanceStatus = $longDistanceStatus;
-
-        return $this;
-    }
-
-    public function getShortDistanceStatus(): ?CeeShortDistanceStatus
-    {
-        return $this->shortDistanceStatus;
-    }
-
-    public function setShortDistanceStatus(?CeeShortDistanceStatus $shortDistanceStatus): self
-    {
-        $this->shortDistanceStatus = $shortDistanceStatus;
+        $this->name = $name;
 
         return $this;
     }

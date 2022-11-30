@@ -556,9 +556,9 @@ services:
       $operator: "%env(json:file:resolve:RDEX_OPERATOR)%"
       $clients: "%env(json:file:resolve:RDEX_CLIENTS)%"
       $providers: "%env(json:file:resolve:RDEX_PROVIDERS)%"
-  
+
   App\ExternalJourney\Service\JourneySearcher:
-   arguments:
+    arguments:
       $providers: "%env(json:file:resolve:RDEX_PROVIDERS)%"
 
   # Fixtures Basic
@@ -692,6 +692,11 @@ services:
     arguments:
       $params: "%env(json:file:resolve:ANALYTICS_PARAMETERS)%"
 
+  # Incentive
+  App\Incentive\Service\EecProviderManager:
+    arguments:
+      $eecIncentiveProvider: "%env(string:EEC_INCENTIVE_PROVIDER)%"
+
   # Image
   App\Image\Controller\:
     resource: "../src/Image/Controller"
@@ -742,7 +747,7 @@ services:
   App\Incentive\Service\MobConnectAuthManager:
     arguments:
       $ssoServices: "%env(json:file:resolve:SSO_SERVICES)%"
-  
+
   App\Incentive\Service\MobConnectSubscriptionManager:
     arguments:
       $mobConnectParams:

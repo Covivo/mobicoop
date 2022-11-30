@@ -24,28 +24,28 @@ namespace App\Incentive\DataProvider;
 
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use App\Incentive\Resource\CeeStatus;
-use App\Incentive\Service\CeeStatusManager;
+use App\Incentive\Resource\EecStatus;
+use App\Incentive\Service\EecStatusManager;
 use App\User\Entity\User;
 use Symfony\Component\Security\Core\Security;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-final class CeeStatusCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
+final class EecStatusCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
     private $security;
-    private $ceeStatusManager;
+    private $eecStatusManager;
 
-    public function __construct(Security $security, CeeStatusManager $ceeStatusManager)
+    public function __construct(Security $security, EecStatusManager $eecStatusManager)
     {
         $this->security = $security;
-        $this->ceeStatusManager = $ceeStatusManager;
+        $this->eecStatusManager = $eecStatusManager;
     }
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return CeeStatus::class === $resourceClass && 'get' === $operationName;
+        return EecStatus::class === $resourceClass && 'get' === $operationName;
     }
 
     public function getCollection(string $resourceClass, string $operationName = null)
@@ -54,6 +54,6 @@ final class CeeStatusCollectionDataProvider implements CollectionDataProviderInt
             throw new \LogicException('Only a User can make this');
         }
 
-        return $this->ceeStatusManager->getStatus($this->security->getUser());
+        return $this->eecStatusManager->getStatus($this->security->getUser());
     }
 }
