@@ -86,6 +86,7 @@ api_platform:
             '%kernel.project_dir%/src/Gamification/Entity',
             '%kernel.project_dir%/src/Geography/Entity',
             '%kernel.project_dir%/src/I18n/Entity',
+            '%kernel.project_dir%/src/Incentive/Entity',
             '%kernel.project_dir%/src/Image/Entity',
             '%kernel.project_dir%/src/Import/Entity',
             '%kernel.project_dir%/src/Journey/Entity',
@@ -116,6 +117,7 @@ api_platform:
         - '%kernel.project_dir%/src/Communication/Entity'
         - '%kernel.project_dir%/src/Community/Entity'
         - '%kernel.project_dir%/src/Community/Resource'
+        - '%kernel.project_dir%/src/DataProvider/Ressource'
         - '%kernel.project_dir%/src/Editorial/Entity'
         - '%kernel.project_dir%/src/ExternalJourney/Entity'
         - '%kernel.project_dir%/src/ExternalJourney/Ressource'
@@ -125,6 +127,8 @@ api_platform:
         - '%kernel.project_dir%/src/Geography/Entity'
         - '%kernel.project_dir%/src/Geography/Ressource'
         - '%kernel.project_dir%/src/I18n/Entity'
+        - '%kernel.project_dir%/src/Incentive/Entity'
+        - '%kernel.project_dir%/src/Incentive/Resource'
         - '%kernel.project_dir%/src/Image/Entity'
         - '%kernel.project_dir%/src/Import/Entity'
         - '%kernel.project_dir%/src/Import/Ressource'
@@ -145,7 +149,6 @@ api_platform:
         - '%kernel.project_dir%/src/User/Admin/Resource'
         - '%kernel.project_dir%/src/User/Interoperability/Ressource'
         - '%kernel.project_dir%/src/Utility/Entity'
-        - '%kernel.project_dir%/src/DataProvider/Ressource'
         - '%kernel.project_dir%/src/Communication/Ressource'
         - '%kernel.project_dir%/src/RelayPoint/Resource'
         - '%kernel.project_dir%/src/Stats/Admin/Resource'

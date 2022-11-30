@@ -59,16 +59,21 @@ class SsoManager
     /**
      * Get all Sso connection services active on this instance.
      *
-     * @param string $baseSiteUri Url of the calling website
+     * @param string      $baseSiteUri Url of the calling website
+     * @param null|string $serviceId   Id of the SSO Service to filter on a specific one
      *
      * @return SsoConnection[]
      */
-    public function getSsoConnectionServices(string $baseSiteUri): array
+    public function getSsoConnectionServices(string $baseSiteUri, ?string $serviceId): array
     {
         $ssoServices = [];
         if ($this->ssoServicesActive) {
             foreach ($this->ssoServices as $serviceName => $ssoService) {
-                $provider = $this->getSsoProvider($serviceName, $baseSiteUri);
+                $provider = null;
+                if (is_null($serviceId) || $serviceId == $serviceName) {
+                    $provider = $this->getSsoProvider($serviceName, $baseSiteUri);
+                }
+
                 if (!is_null($provider)) {
                     $ssoConnection = new SsoConnection($serviceName);
                     $ssoConnection->setUri($provider->getConnectFormUrl());
@@ -76,6 +81,7 @@ class SsoManager
                     $ssoConnection->setService($ssoService['name']);
                     $ssoConnection->setSsoProvider($serviceName);
                     $ssoConnection->setUseButtonIcon($this->ssoUseButtonIcon);
+                    $ssoConnection->setExternalAccountDeletion($ssoService['externalAccountDeletion']);
                     $ssoServices[] = $ssoConnection;
                 }
             }
