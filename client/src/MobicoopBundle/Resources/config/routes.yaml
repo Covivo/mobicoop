@@ -508,7 +508,7 @@ user_return_sso:
         fr: /user/sso/login
         en: /user/sso/login
         nl: /user/sso/login
-    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::se
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userReturnConnectSso
 
 user_return_sso_mobConnect:
     path:
