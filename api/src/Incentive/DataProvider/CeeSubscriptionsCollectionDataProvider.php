@@ -33,6 +33,6 @@ class CeeSubscriptionsCollectionDataProvider implements CollectionDataProviderIn
             throw new \LogicException('Only a User can make this');
         }
 
-        return $this->_subscriptionManager->getUserSubscriptions();
+        return $this->_subscriptionManager->getUserSubscriptions($user);
     }
 }

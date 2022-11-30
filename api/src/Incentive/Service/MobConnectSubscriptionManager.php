@@ -238,18 +238,18 @@ class MobConnectSubscriptionManager
     /**
      * Returns flat paths to be used in particular as logs.
      */
-    public function getUserSubscriptions(): CeeSubscriptions
+    public function getUserSubscriptions(User $user): CeeSubscriptions
     {
         $ceeSubscription = new CeeSubscriptions($this->_user->getId());
 
-        if (!is_null($this->_user->getShortDistanceSubscription())) {
-            $shortDistanceSubscriptions = $this->__getFlatJourneys($this->_user->getShortDistanceSubscription()->getShortDistanceJourneys());
+        if (!is_null($user->getShortDistanceSubscription())) {
+            $shortDistanceSubscriptions = $this->__getFlatJourneys($user->getShortDistanceSubscription()->getShortDistanceJourneys());
 
             $ceeSubscription->setShortDistanceSubscriptions($shortDistanceSubscriptions);
         }
 
-        if (!is_null($this->_user->getLongDistanceSubscription())) {
-            $longDistanceSubscriptions = $this->__getFlatJourneys($this->_user->getLongDistanceSubscription()->getLongDistanceJourneys());
+        if (!is_null($user->getLongDistanceSubscription())) {
+            $longDistanceSubscriptions = $this->__getFlatJourneys($user->getLongDistanceSubscription()->getLongDistanceJourneys());
 
             $ceeSubscription->setLongDistanceSubscriptions($longDistanceSubscriptions);
         }
