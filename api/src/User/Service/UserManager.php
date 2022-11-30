@@ -62,6 +62,9 @@ use App\Solidary\Repository\StructureRepository;
 use App\User\Entity\SsoUser;
 use App\User\Entity\User;
 use App\User\Entity\UserNotification;
+use App\User\Event\SsoAssociationEvent;
+use App\User\Event\SsoAuthenticationEvent;
+use App\User\Event\SsoCreationEvent;
 use App\User\Event\UserDelegateRegisteredEvent;
 use App\User\Event\UserDelegateRegisteredPasswordSendEvent;
 use App\User\Event\UserDeleteAccountWasDriverEvent;
@@ -1155,9 +1158,8 @@ class UserManager
             $user->setMobileRegistration($mobileRegistration);
             $event = new UserPasswordChangeAskedEvent($user);
             $this->eventDispatcher->dispatch($event, UserPasswordChangeAskedEvent::NAME);
-
-            return $user;
         }
+        // send response with the sender information in all case
         $user = new User();
         $user->setEmail($data->getEmail());
 
@@ -1710,6 +1712,9 @@ class UserManager
                             throw new \LogicException('Autocreate/Autoattach account disable');
                         }
                     } else {
+                        $event = new SsoAuthenticationEvent($user);
+                        $this->eventDispatcher->dispatch(SsoAuthenticationEvent::NAME, $event);
+
                         return $user;
                     }
                 }
@@ -1722,6 +1727,9 @@ class UserManager
                 }
                 $this->entityManager->persist($user);
                 $this->entityManager->flush();
+
+                $event = new SsoAssociationEvent($user);
+                $this->eventDispatcher->dispatch(SsoAssociationEvent::NAME, $event);
 
                 return $user;
             }
@@ -1758,6 +1766,9 @@ class UserManager
 
             $user = $this->registerUser($user);
         }
+
+        $event = new SsoCreationEvent($user);
+        $this->eventDispatcher->dispatch(SsoCreationEvent::NAME, $event);
 
         return $user;
     }
@@ -1992,7 +2003,7 @@ class UserManager
     public function checkIfScammer(User $user)
     {
         if ($this->scammerRepository->findOneBy(['email' => $user->getEmail()]) || $this->scammerRepository->findOneBy(['telephone' => $user->getTelephone()])) {
-            throw new Exception('', 1);
+            throw new \Exception('', 1);
         }
     }
 

@@ -40,7 +40,7 @@ class CarpoolProofValidatedEvent extends Event
         $this->carpoolProof = $carpoolProof;
     }
 
-    public function getCarpoolProof()
+    public function getCarpoolProof(): CarpoolProof
     {
         return $this->carpoolProof;
     }
