@@ -39,6 +39,8 @@ class OpenIdSsoProvider implements SsoProviderInterface
     // Supported Providers names
     public const SSO_PROVIDER_GLCONNECT = 'GLConnect';
     public const SSO_PROVIDER_PASSMOBILITE = 'PassMobilite';
+    public const SSO_PROVIDER_MOBCONNECT = 'mobConnect';
+    public const SSO_PROVIDER_MOBCONNECT_TEST = 'mobConnect-test';
 
     public const AUTHORIZATION_URL = 'Authorization_Url';
     public const TOKEN_URL = 'Token_Url';
@@ -53,6 +55,18 @@ class OpenIdSsoProvider implements SsoProviderInterface
         ],
         self::SSO_PROVIDER_PASSMOBILITE => [
             self::AUTHORIZATION_URL => 'auth/realms/Passmobilite/protocol/openid-connect/auth/?client_id={CLIENT_ID}&scope=openid profile email&response_type=code&state={SERVICE_NAME}&redirect_uri={REDIRECT_URI}',
+            self::TOKEN_URL => 'auth/realms/Passmobilite/protocol/openid-connect/token/',
+            self::USERINFOS_URL => 'auth/realms/Passmobilite/protocol/openid-connect/userinfo',
+            self::LOGOUT_URL => 'auth/realms/Passmobilite/protocol/openid-connect/logout?post_logout_redirect_uri={REDIRECT_URI}',
+        ],
+        self::SSO_PROVIDER_MOBCONNECT_TEST => [
+            self::AUTHORIZATION_URL => '/auth/realms/mcm/protocol/openid-connect/auth?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&state={SERVICE_NAME}&response_mode=fragment&response_type=code&scope=openid&nonce=21a8befa-b65f-41c5-916b-29c9e8d70177',
+            self::TOKEN_URL => 'auth/realms/Passmobilite/protocol/openid-connect/token/',
+            self::USERINFOS_URL => 'auth/realms/Passmobilite/protocol/openid-connect/userinfo',
+            self::LOGOUT_URL => 'auth/realms/Passmobilite/protocol/openid-connect/logout?post_logout_redirect_uri={REDIRECT_URI}',
+        ],
+        self::SSO_PROVIDER_MOBCONNECT => [
+            self::AUTHORIZATION_URL => '/auth/realms/mcm/protocol/openid-connect/auth?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&state={SERVICE_NAME}&response_mode=fragment&response_type=code&scope=openid&nonce=21a8befa-b65f-41c5-916b-29c9e8d70177',
             self::TOKEN_URL => 'auth/realms/Passmobilite/protocol/openid-connect/token/',
             self::USERINFOS_URL => 'auth/realms/Passmobilite/protocol/openid-connect/userinfo',
             self::LOGOUT_URL => 'auth/realms/Passmobilite/protocol/openid-connect/logout?post_logout_redirect_uri={REDIRECT_URI}',

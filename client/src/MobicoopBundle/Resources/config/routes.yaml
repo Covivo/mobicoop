@@ -511,11 +511,20 @@ user_get_sso_service:
 
 # Login form SSO
 user_return_sso:
-  path:
-    fr: /user/sso/login
-    en: /user/sso/login
-    nl: /user/sso/login
-  controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userReturnConnectSSO
+    path:
+        fr: /user/sso/login
+        en: /user/sso/login
+        nl: /user/sso/login
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userReturnConnectSso
+
+user_return_sso_mobConnect:
+    path:
+        fr: /user/sso/cee-incentive
+        en: /user/sso/cee-incentive
+        nl: /user/sso/cee-incentive
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userReturnConnectSSOMobConnect
+
+
 
 user_login_sso:
   path:
