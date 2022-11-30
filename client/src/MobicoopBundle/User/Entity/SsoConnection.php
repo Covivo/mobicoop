@@ -19,25 +19,25 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace Mobicoop\Bundle\MobicoopBundle\User\Entity;
 
-use Symfony\Component\Validator\Constraints as Assert;
-
 /**
- * A SSO Connection
+ * A SSO Connection.
  */
 class SsoConnection implements \JsonSerializable
 {
     /**
      * @var string The SSO service
+     *
      * @Groups({"post"})
      */
     private $service;
 
     /**
      * @var string The SSO provider internal name
+     *
      * @Groups({"readSSOConnection"})
      */
     private $ssoProvider;
@@ -46,31 +46,36 @@ class SsoConnection implements \JsonSerializable
      * @var string The uri of the SSO login form
      */
     private $uri;
-    
+
     /**
-     * @var string|null The SSO service icon for the button
+     * @var null|string The SSO service icon for the button
      */
     private $buttonIcon;
-    
+
     /**
-     * @var string|null The SSO service picto for the text button
+     * @var null|string The SSO service picto for the text button
      */
     private $picto;
 
     /**
-     * @var bool|null true : use the Button icon, false use the picto
+     * @var null|bool true : use the Button icon, false use the picto
      */
     private $useButtonIcon;
+
+    /**
+     * @var null|bool true : This SSO provider allow deletation of account only on its side
+     */
+    private $externalAccountDeletion;
 
     public function getService(): string
     {
         return $this->service;
     }
-    
+
     public function setService(string $service): self
     {
         $this->service = $service;
-        
+
         return $this;
     }
 
@@ -78,23 +83,23 @@ class SsoConnection implements \JsonSerializable
     {
         return $this->ssoProvider;
     }
-    
+
     public function setSsoProvider(?string $ssoProvider): self
     {
         $this->ssoProvider = $ssoProvider;
-        
+
         return $this;
     }
-    
+
     public function getUri(): string
     {
         return $this->uri;
     }
-    
+
     public function setUri(string $uri): self
     {
         $this->uri = $uri;
-        
+
         return $this;
     }
 
@@ -102,11 +107,11 @@ class SsoConnection implements \JsonSerializable
     {
         return $this->picto;
     }
-    
+
     public function setPicto(?string $picto): self
     {
         $this->picto = $picto;
-        
+
         return $this;
     }
 
@@ -114,11 +119,11 @@ class SsoConnection implements \JsonSerializable
     {
         return $this->buttonIcon;
     }
-    
+
     public function setButtonIcon(?string $buttonIcon): self
     {
         $this->buttonIcon = $buttonIcon;
-        
+
         return $this;
     }
 
@@ -126,11 +131,23 @@ class SsoConnection implements \JsonSerializable
     {
         return $this->useButtonIcon;
     }
-    
+
     public function setUseButtonIcon(?bool $useButtonIcon): self
     {
         $this->useButtonIcon = $useButtonIcon;
-        
+
+        return $this;
+    }
+
+    public function hasExternalAccountDeletion(): ?bool
+    {
+        return (!is_null($this->externalAccountDeletion)) ? $this->externalAccountDeletion : false;
+    }
+
+    public function setExternalAccountDeletion(?bool $externalAccountDeletion): self
+    {
+        $this->externalAccountDeletion = $externalAccountDeletion;
+
         return $this;
     }
 
@@ -138,12 +155,13 @@ class SsoConnection implements \JsonSerializable
     public function jsonSerialize()
     {
         return [
-            'service'               => $this->getService(),
-            'ssoProvider'           => $this->getSsoProvider(),
-            'uri'                   => $this->getUri(),
-            'buttonIcon'            => $this->getButtonIcon(),
-            'picto'                 => $this->getPicto(),
-            'useButtonIcon'         => $this->hasUseButtonIcon()
+            'service' => $this->getService(),
+            'ssoProvider' => $this->getSsoProvider(),
+            'uri' => $this->getUri(),
+            'buttonIcon' => $this->getButtonIcon(),
+            'picto' => $this->getPicto(),
+            'useButtonIcon' => $this->hasUseButtonIcon(),
+            'externalAccountDeletion' => $this->hasExternalAccountDeletion(),
         ];
     }
 }

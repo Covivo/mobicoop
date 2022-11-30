@@ -1324,6 +1324,7 @@ class User implements UserInterface, EquatableInterface
      * @var null|string External ID of the user for a SSO connection
      *
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"readUser"})
      */
     private $ssoId;
 
@@ -1331,6 +1332,7 @@ class User implements UserInterface, EquatableInterface
      * @var null|string External Provider for a SSO connection
      *
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"readUser"})
      */
     private $ssoProvider;
 
@@ -1580,6 +1582,14 @@ class User implements UserInterface, EquatableInterface
      * @ORM\OneToMany(targetEntity="\App\User\Entity\Block", mappedBy="blockedUser")
      */
     private $blockBys;
+
+    /**
+     * @var null|string postal address
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"aRead","aWrite","readUser","write"})
+     */
+    private $postalAddress;
 
     // ADMIN
 
@@ -3821,6 +3831,18 @@ class User implements UserInterface, EquatableInterface
     public function setRzpTerritoryStatus(?string $rzpTerritoryStatus): self
     {
         $this->rzpTerritoryStatus = $rzpTerritoryStatus;
+
+        return $this;
+    }
+
+    public function getPostalAddress(): ?string
+    {
+        return $this->postalAddress;
+    }
+
+    public function setPostalAddress(?string $postalAddress): self
+    {
+        $this->postalAddress = $postalAddress;
 
         return $this;
     }
