@@ -27,6 +27,7 @@
         </p>
         <SsoLogins
           class="mt-5"
+          :specific-service="$t('service')"
         />
         <p>
           <v-row align="center">
@@ -43,7 +44,7 @@
             >
               <v-img
                 contain
-                src="/images/logo-france-connect.png"
+                :src="$t('logo-france-connect')"
               />
             </v-col>
           </v-row>

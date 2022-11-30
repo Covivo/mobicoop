@@ -1451,6 +1451,11 @@ class UserController extends AbstractController
     public function getSsoServices(Request $request)
     {
         if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+            if (isset($data['service']) && !is_null($data['service'])) {
+                return $this->getSsoService($request);
+            }
+
             return new JsonResponse($this->userManager->getSsoServices());
         }
 

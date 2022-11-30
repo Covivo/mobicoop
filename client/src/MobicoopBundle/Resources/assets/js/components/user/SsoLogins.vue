@@ -8,7 +8,7 @@
       :picto="ssoConnection.picto"
       :use-button-icon="ssoConnection.useButtonIcon"
       :service="ssoConnection.service"
-    />      
+    />
   </div>
 </template>
 <script>
@@ -27,6 +27,12 @@ export default {
   components:{
     SsoLogin
   },
+  props:{
+    specificService:{
+      type: String,
+      default: ""
+    }
+  },
   data() {
     return {
       ssoConnections:[]
@@ -37,11 +43,14 @@ export default {
   },
   methods:{
     getSso(){
-      maxios.post(this.$t("urlGetSsoServices"))
+      let data = {
+        "service": this.specificService ? this.specificService : null
+      };
+      maxios.post(this.$t("urlGetSsoServices"), data)
         .then(response => {
           this.ssoConnections = response.data;
-        });      
-    }      
+        });
+    }
   }
 }
 </script>

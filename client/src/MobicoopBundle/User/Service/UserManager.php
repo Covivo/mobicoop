@@ -919,7 +919,6 @@ class UserManager
 
         // We add the front url to the parameters
         $baseSiteUri = (isset($_SERVER['HTTPS'])) ? 'https://'.$_SERVER['HTTP_HOST'] : 'http://'.$_SERVER['HTTP_HOST'];
-
         $response = $this->dataProvider->getCollection(['baseSiteUri' => $baseSiteUri, 'serviceId' => $service]);
         if (200 == $response->getCode()) {
             return $response->getValue()->getMember();
