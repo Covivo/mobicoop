@@ -24,6 +24,8 @@
     :attribution-copyright="{{ attributionCopyright|json_encode }}"
     :geo-complete-results-order="{{geoCompleteResultsOrder|json_encode}}"
     :geo-complete-palette="{{geoCompletePalette|json_encode}}" {{ geoCompleteChip ? 'geo-complete-chip' : '' }}
-    :territory-id="{{ referenceTerritory is defined and referenceTerritory != "" ? referenceTerritory : 'null' }}">
+    :territory-id="{{ referenceTerritory is defined and referenceTerritory != "" ? referenceTerritory : 'null' }}"
+    mob-connect-subscriptions="{{ mobConnectSubscriptions is defined ? mobConnectSubscriptions : '0' }}"
+    >
 </home>
 {% endblock %}

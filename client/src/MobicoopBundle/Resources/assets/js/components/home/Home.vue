@@ -171,6 +171,23 @@
       :url-mobile="mobileUrl"
       :user-id="(user && user.id) ? user.id : null"
     />
+    <v-snackbar
+      v-model="mobConnectSnackbar"
+      :timeout="10000"
+      top
+    >
+      {{ mobConnect_snackbar_text }}
+      <template v-slot:action="{ attrs }">
+        <v-btn
+          color="pink"
+          text
+          v-bind="attrs"
+          @click="mobConnectSnackbar = false"
+        >
+          {{ $t('mobConnect-snackbar.close-btn') }}
+        </v-btn>
+      </template>
+    </v-snackbar>
     <!-- end homeBottom -->
   </v-container>
 </template>
@@ -291,6 +308,10 @@ export default {
     territoryId: {
       type: String,
       default: null
+    },
+    mobConnectSubscriptions: {
+      type: String,
+      default: null
     }
   },
   data () {
@@ -298,7 +319,9 @@ export default {
       snackbar: true,
       displayVerifiedMessagePhone: false,
       mobileUrl: this.urlMobile,
-      displayVerifiedMessageEmail: false
+      displayVerifiedMessageEmail: false,
+      mobConnectSnackbar: false,
+      mobConnect_snackbar_text: null
     }
   },
   mounted() {
@@ -308,6 +331,14 @@ export default {
       this.checkVerifiedEmail();
     }
 
+    // Displays the mobConnect snackbar
+    if (this.mobConnectSubscriptions) {
+      const baseText = this.$t('mobConnect-snackbar.text.base');
+      const additionnalText = '1' === this.mobConnectSubscriptions ? this.$t('mobConnect-snackbar.text.success') : this.$t('mobConnect-snackbar.text.error');
+
+      this.mobConnect_snackbar_text = `${baseText} ${additionnalText}`;
+      this.mobConnectSnackbar = true;
+    }
   },
   methods:{
     checkVerifiedPhone() {

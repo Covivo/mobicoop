@@ -26,5 +26,13 @@
             "title":"La coopérative du covoiturage",
             "text":"Mobicoop est une coopérative, la plateforme appartient donc à ses sociétaires dans la logique 1 sociétaire = 1 voix. Ce statut permet une gouvernance ouverte entre sociétaires, salariés, utilisateurs de la plateforme et clients. Toutefois il n’est pas obligatoire d’être sociétaire pour utiliser le service de covoiturage."
         }
-    ]
+    ],
+    "mobConnect-snackbar": {
+      "close-btn": "Fermer",
+      "text": {
+        "base": "L'inscription à la prime CEE",
+        "success": "a bien été effectuée",
+        "error": "a echouée"
+      }
+    }
 }
