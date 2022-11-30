@@ -5,7 +5,7 @@ namespace App\Incentive\Entity\Flat;
 use App\Incentive\Entity\ShortDistanceJourney;
 use Symfony\Component\Serializer\Annotation\Groups;
 
-class ShortDistanceSubscription
+class ShortDistanceSubscription extends Subscription
 {
     /**
      * @var string

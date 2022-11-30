@@ -217,7 +217,7 @@ class ShortDistanceSubscription
         return $this->shortDistanceJourney->removeElement($shortDistanceJourney);
     }
 
-    public function getShortDistanceJourneys(): ArrayCollection
+    public function getShortDistanceJourneys()
     {
         return $this->shortDistanceJourneys;
     }

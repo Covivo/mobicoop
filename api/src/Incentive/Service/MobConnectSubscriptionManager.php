@@ -238,7 +238,7 @@ class MobConnectSubscriptionManager
     /**
      * Returns flat paths to be used in particular as logs.
      */
-    public function getUserSubscriptions(User $user): CeeSubscriptions
+    public function getUserSubscriptions(User $user)
     {
         $ceeSubscription = new CeeSubscriptions($this->_user->getId());
 
@@ -254,6 +254,6 @@ class MobConnectSubscriptionManager
             $ceeSubscription->setLongDistanceSubscriptions($longDistanceSubscriptions);
         }
 
-        return $ceeSubscription;
+        return [$ceeSubscription];
     }
 }
