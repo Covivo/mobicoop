@@ -38,6 +38,8 @@ class SsoManager
     private const SUPPORTED_PROVIDERS = [
         OpenIdSsoProvider::SSO_PROVIDER_GLCONNECT => OpenIdSsoProvider::class,
         OpenIdSsoProvider::SSO_PROVIDER_PASSMOBILITE => OpenIdSsoProvider::class,
+        OpenIdSsoProvider::SSO_PROVIDER_MOBCONNECT => OpenIdSsoProvider::class,
+        OpenIdSsoProvider::SSO_PROVIDER_MOBCONNECT_TEST => OpenIdSsoProvider::class,
     ];
     private $userManager;
     private $ssoServices;
@@ -150,7 +152,16 @@ class SsoManager
         if (isset(self::SUPPORTED_PROVIDERS[$serviceName])) {
             $service = $this->ssoServices[$serviceName];
             $providerClass = self::SUPPORTED_PROVIDERS[$serviceName];
-            $provider = new $providerClass($serviceName, $baseSiteUri, $service['baseUri'], $service['clientId'], $service['clientSecret'], SsoConnection::RETURN_URL, $service['autoCreateAccount'], $service['logOutRedirectUri']);
+            $provider = new $providerClass(
+                $serviceName,
+                $baseSiteUri,
+                $service['baseUri'],
+                $service['clientId'],
+                $service['clientSecret'],
+                isset($service['returnUrl']) ? $service['returnUrl'] : SsoConnection::RETURN_URL,
+                $service['autoCreateAccount'],
+                $service['logOutRedirectUri']
+            );
             $provider->setLogger($this->logger);
 
             return $provider;

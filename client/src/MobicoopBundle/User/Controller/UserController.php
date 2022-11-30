@@ -1410,6 +1410,7 @@ class UserController extends AbstractController
 
         // We add the service name
         $services = $this->userManager->getSsoServices();
+
         if (!is_null($services) && is_array($services)) {
             foreach ($services as $service) {
                 if ($service->getSsoProvider() == $params['ssoProvider']) {
@@ -1419,6 +1420,15 @@ class UserController extends AbstractController
         }
 
         return $this->redirectToRoute('user_login_sso', $params);
+    }
+
+    /**
+     * Return page after a SSO Login from mobConnect
+     * Url is something like /user/sso/cee-incentive?state=PassMobilite&code=1.
+     */
+    public function userReturnConnectSSOMobConnect(Request $request)
+    {
+        return $this->userReturnConnectSSO($request);
     }
 
     /**

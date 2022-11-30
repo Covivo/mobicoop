@@ -19,7 +19,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace Mobicoop\Bundle\MobicoopBundle\User\Service;
 
@@ -28,22 +28,19 @@ namespace Mobicoop\Bundle\MobicoopBundle\User\Service;
  */
 class SsoManager
 {
+    private const ALLOWED_PROVIDERS = ['GLConnect', 'mobConnect', 'mobConnect-test', 'PassMobilite'];
+
     /**
-     * Guess and return the parameters for a SSO connection
+     * Guess and return the parameters for a SSO connection.
      *
-     * @param array $params
      * @return array
      */
     public function guessSsoParameters(array $params)
     {
         $return = [];
-        if (isset($params['state'])) {
-            switch ($params['state']) {
-                case "GLConnect":
-                case "PassMobilite":
-                    $return = ['ssoId'=>$params['code'], 'ssoProvider'=>$params['state']];
-                break;
-            }
+
+        if (isset($params['state']) && in_array($params['state'], self::ALLOWED_PROVIDERS)) {
+            $return = ['ssoId' => $params['code'], 'ssoProvider' => $params['state']];
         }
 
         return $return;
