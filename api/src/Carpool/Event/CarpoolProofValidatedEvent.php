@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2020, MOBICOOP. All rights reserved.
+ * Copyright (c) 2022, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,28 +21,27 @@
  *    LICENSE
  */
 
-namespace Mobicoop\Bundle\MobicoopBundle\User\Service;
+namespace App\Carpool\Event;
+
+use App\Carpool\Entity\CarpoolProof;
+use Symfony\Contracts\EventDispatcher\Event;
 
 /**
- * Sso management service.
+ * Event sent when a carpoolProof is validated by the carpool register.
  */
-class SsoManager
+class CarpoolProofValidatedEvent extends Event
 {
-    private const ALLOWED_PROVIDERS = ['GLConnect', 'mobConnect', 'mobConnect-test', 'PassMobilite'];
+    public const NAME = 'carpool_proof_validated';
 
-    /**
-     * Guess and return the parameters for a SSO connection.
-     *
-     * @return array
-     */
-    public function guessSsoParameters(array $params)
+    protected $carpoolProof;
+
+    public function __construct(CarpoolProof $carpoolProof)
     {
-        $return = [];
+        $this->carpoolProof = $carpoolProof;
+    }
 
-        if (isset($params['state']) && in_array($params['state'], self::ALLOWED_PROVIDERS)) {
-            $return = ['ssoId' => $params['code'], 'ssoProvider' => $params['state']];
-        }
-
-        return $return;
+    public function getCarpoolProof(): CarpoolProof
+    {
+        return $this->carpoolProof;
     }
 }

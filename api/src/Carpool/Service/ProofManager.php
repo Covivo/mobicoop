@@ -27,6 +27,7 @@ use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\CarpoolProof;
 use App\Carpool\Entity\Criteria;
 use App\Carpool\Entity\Waypoint;
+use App\Carpool\Event\CarpoolProofValidatedEvent;
 use App\Carpool\Exception\DynamicException;
 use App\Carpool\Exception\ProofException;
 use App\Carpool\Repository\AskRepository;
@@ -40,9 +41,9 @@ use App\Geography\Service\Geocoder\MobicoopGeocoder;
 use App\Geography\Service\GeoTools;
 use App\Geography\Service\Point\MobicoopGeocoderPointProvider;
 use App\User\Entity\User;
-use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Carpool proof manager service, used to send proofs to a register.
@@ -61,6 +62,7 @@ class ProofManager
     private $geoTools;
     private $duration;
     private $minIdentityDistance;
+    private $eventDispatcher;
 
     /**
      * Constructor.
@@ -86,6 +88,7 @@ class ProofManager
         WaypointRepository $waypointRepository,
         MobicoopGeocoder $mobicoopGeocoder,
         GeoTools $geoTools,
+        EventDispatcherInterface $eventDispatcher,
         string $prefix,
         string $provider,
         string $uri,
@@ -101,6 +104,7 @@ class ProofManager
         $this->geoTools = $geoTools;
         $this->duration = $duration;
         $this->minIdentityDistance = $minIdentityDistance;
+        $this->eventDispatcher = $eventDispatcher;
 
         $this->addressCompleter = new AddressCompleter(new MobicoopGeocoderPointProvider($mobicoopGeocoder));
 
@@ -153,12 +157,12 @@ class ProofManager
     /**
      * Get a proof for an Ask an a date.
      *
-     * @param Ask      $ask  The ask
-     * @param DateTime $date The date
+     * @param Ask       $ask  The ask
+     * @param \DateTime $date The date
      *
      * @return null|CarpoolProof The carpool proof if it exists
      */
-    public function getProofForDate(Ask $ask, DateTime $date)
+    public function getProofForDate(Ask $ask, \DateTime $date)
     {
         return $this->carpoolProofRepository->findByAskAndDate($ask, $date);
     }
@@ -191,13 +195,13 @@ class ProofManager
         if (Criteria::FREQUENCY_PUNCTUAL == $ask->getCriteria()->getFrequency()) {
             // for a punctual ad, we use fromDate and fromTime (both are theoretical, they *should* be correct !)
             /**
-             * @var DateTime $startDate
+             * @var \DateTime $startDate
              */
             $startDate = clone $ask->getCriteria()->getFromDate();
             $startDate->setTime($ask->getCriteria()->getFromTime()->format('H'), $ask->getCriteria()->getFromTime()->format('i'));
         } else {
             // for a regular ad, we use the current date and the theoretical time
-            $startDate = new DateTime('UTC');
+            $startDate = new \DateTime('UTC');
 
             switch ($startDate->format('w')) {
                 // we check for each date of the period if it's a carpoool day
@@ -254,7 +258,7 @@ class ProofManager
         $carpoolProof->setStartDriverDate($startDate);
 
         /**
-         * @var DateTime $endDate
+         * @var \DateTime $endDate
          */
         // we init the end date with the start date
         $endDate = clone $startDate;
@@ -504,8 +508,8 @@ class ProofManager
             if (!is_null($carpoolProof->getDriver())) {
                 $carpoolProof->setDriver(null);
             // uncomment the following to anonymize driver addresses used in the proof
-                // $carpoolProof->setOriginDriverAddress(null);
-                // $carpoolProof->setDestinationDriverAddress(null);
+            // $carpoolProof->setOriginDriverAddress(null);
+            // $carpoolProof->setDestinationDriverAddress(null);
             } elseif (!is_null($carpoolProof->getPassenger())) {
                 $carpoolProof->setPassenger(null);
                 // uncomment the following to anonymize passenger addresses used in the proof
@@ -526,21 +530,21 @@ class ProofManager
     /**
      * Send the pending proofs.
      *
-     * @param null|DateTime $fromDate The start of the period for which we want to send the proofs
-     * @param null|DateTime $toDate   The end of the period  for which we want to send the proofs
+     * @param null|\DateTime $fromDate The start of the period for which we want to send the proofs
+     * @param null|\DateTime $toDate   The end of the period  for which we want to send the proofs
      *
      * @return int The number of proofs sent
      */
-    public function sendProofs(?DateTime $fromDate = null, ?DateTime $toDate = null)
+    public function sendProofs(?\DateTime $fromDate = null, ?\DateTime $toDate = null)
     {
         // if no dates are sent, we use the last {duration} days
         if (is_null($fromDate)) {
-            $fromDate = new DateTime();
+            $fromDate = new \DateTime();
             $fromDate->modify('-'.$this->duration.' day');
             $fromDate->setTime(0, 0);
         }
         if (is_null($toDate)) {
-            $toDate = new DateTime();
+            $toDate = new \DateTime();
             $toDate->modify('-1 day');
             $toDate->setTime(23, 59, 59, 999);
         }
@@ -576,14 +580,80 @@ class ProofManager
         return $nbSent;
     }
 
+    public function checkProofs()
+    {
+        $proofs = $this->carpoolProofRepository->findCarpoolProofToCheck([CarpoolProof::STATUS_UNDER_CHECKING, CarpoolProof::STATUS_SENT]);
+        $nbChecked = 0;
+
+        foreach ($proofs as $proof) {
+            /**
+             * @var CarpoolProof $proof
+             */
+            $result = $this->provider->getCarpoolProof($proof);
+
+            if (200 == $result->getCode()) {
+                $data = json_decode($result->getValue(), true);
+
+                switch ($data['result']['data']['status']) {
+                    case 'acquisition_error':
+                        $proof->setStatus(CarpoolProof::STATUS_ACQUISITION_ERROR);
+
+                        break;
+
+                    case 'normalization_error':
+                        $proof->setStatus(CarpoolProof::STATUS_NORMALIZATION_ERROR);
+
+                        break;
+
+                    case 'fraudcheck_error':
+                        $proof->setStatus(CarpoolProof::STATUS_FRAUD_ERROR);
+
+                        break;
+
+                    case 'ok':
+                        $proof->setStatus(CarpoolProof::STATUS_VALIDATED);
+
+                        break;
+
+                    case 'expired':
+                        $proof->setStatus(CarpoolProof::STATUS_EXPIRED);
+
+                        break;
+
+                    case 'canceled':
+                        $proof->setStatus(CarpoolProof::STATUS_CANCELED_BY_OPERATOR);
+
+                        break;
+
+                    case 'pending':
+                        $proof->setStatus(CarpoolProof::STATUS_UNDER_CHECKING);
+
+                        break;
+                }
+                ++$nbChecked;
+            } else {
+                $proof->setStatus(CarpoolProof::STATUS_ERROR);
+            }
+            $this->entityManager->persist($proof);
+            $this->entityManager->flush();
+
+            if (CarpoolProof::STATUS_VALIDATED === $proof->getStatus()) {
+                $event = new CarpoolProofValidatedEvent($proof);
+                $this->eventDispatcher->dispatch(CarpoolProofValidatedEvent::NAME, $event);
+            }
+        }
+
+        return $nbChecked;
+    }
+
     /**
      * Validate the pending proofs for the given period.
      * Used to update pending with undetermined final class.
      *
-     * @param DateTime $fromDate The start of the period for which we want to update the proofs
-     * @param DateTime $toDate   The end of the period  for which we want to update the proofs
+     * @param \DateTime $fromDate The start of the period for which we want to update the proofs
+     * @param \DateTime $toDate   The end of the period  for which we want to update the proofs
      */
-    private function validateProofs(DateTime $fromDate, DateTime $toDate)
+    private function validateProofs(\DateTime $fromDate, \DateTime $toDate)
     {
         // first we search the undetermined proofs for the given period
         $carpoolProofs = $this->carpoolProofRepository->findByTypesAndPeriod([CarpoolProof::TYPE_UNDETERMINED_CLASSIC, CarpoolProof::TYPE_UNDETERMINED_DYNAMIC], $fromDate, $toDate);
@@ -625,7 +695,7 @@ class ProofManager
                     $dropOffWaypoint = $this->waypointRepository->findMaxPositionForAskAndRole($carpoolProof->getAsk(), Waypoint::ROLE_PASSENGER);
 
                     /**
-                     * @var Datetime $pickUpDate
+                     * @var \Datetime $pickUpDate
                      */
                     // we init the pickup date with the start date of the driver
                     $pickUpDate = clone $carpoolProof->getStartDriverDate();
@@ -633,7 +703,7 @@ class ProofManager
                     $pickUpDate->modify('+'.$pickUpWaypoint->getDuration().' second');
 
                     /**
-                     * @var Datetime $dropOffDate
+                     * @var \Datetime $dropOffDate
                      */
                     // we init the dropoff date with the start date of the driver
                     $dropOffDate = clone $carpoolProof->getStartDriverDate();
@@ -713,12 +783,12 @@ class ProofManager
      * Create and return the pending proofs for the given period.
      * Used to generate non-realtime proofs.
      *
-     * @param DateTime $fromDate The start of the period for which we want to get the proofs
-     * @param DateTime $toDate   The end of the period  for which we want to get the proofs
+     * @param \DateTime $fromDate The start of the period for which we want to get the proofs
+     * @param \DateTime $toDate   The end of the period  for which we want to get the proofs
      *
      * @return array The proofs
      */
-    private function getProofs(DateTime $fromDate, DateTime $toDate)
+    private function getProofs(\DateTime $fromDate, \DateTime $toDate)
     {
         // first we search the pending asks for the given period
         $pendingAsks = $this->askRepository->findPendingAsksForPeriod($fromDate, $toDate);
@@ -760,14 +830,14 @@ class ProofManager
                     $carpoolProof->setDropOffPassengerAddress(clone $dropOffWaypoint->getAddress());
 
                     /**
-                     * @var Datetime $startDate
+                     * @var \Datetime $startDate
                      */
                     $startDate = clone $ask->getCriteria()->getFromDate();
                     $startDate->setTime($ask->getCriteria()->getFromTime()->format('H'), $ask->getCriteria()->getFromTime()->format('i'));
                     $carpoolProof->setStartDriverDate($startDate);
 
                     /**
-                     * @var Datetime $endDate
+                     * @var \Datetime $endDate
                      */
                     // we init the end date with the start date
                     $endDate = clone $startDate;
@@ -776,7 +846,7 @@ class ProofManager
                     $carpoolProof->setEndDriverDate($endDate);
 
                     /**
-                     * @var Datetime $pickUpDate
+                     * @var \Datetime $pickUpDate
                      */
                     // we init the pickup date with the start date of the driver
                     $pickUpDate = clone $ask->getCriteria()->getFromDate();
@@ -785,7 +855,7 @@ class ProofManager
                     $pickUpDate->modify('+'.$pickUpWaypoint->getDuration().' second');
 
                     /**
-                     * @var Datetime $dropOffDate
+                     * @var \Datetime $dropOffDate
                      */
                     // we init the dropoff date with the start date of the driver
                     $dropOffDate = clone $startDate;
@@ -811,12 +881,12 @@ class ProofManager
                         $carpoolDay = false;
 
                         /**
-                         * @var Datetime $startDate
+                         * @var \Datetime $startDate
                          */
                         $startDate = clone $curDate;
 
                         /**
-                         * @var Datetime $pickUpDate
+                         * @var \Datetime $pickUpDate
                          */
                         // we init the pickup date with the start date of the driver
                         $pickUpDate = clone $curDate;
@@ -936,7 +1006,7 @@ class ProofManager
                             $carpoolProof->setStartDriverDate($startDate);
 
                             /**
-                             * @var Datetime $endDate
+                             * @var \Datetime $endDate
                              */
                             // we init the end date with the start date
                             $endDate = clone $startDate;
@@ -947,7 +1017,7 @@ class ProofManager
                             $pickUpDate->modify('+'.$pickUpWaypoint->getDuration().' second');
 
                             /**
-                             * @var Datetime $dropOffDate
+                             * @var \Datetime $dropOffDate
                              */
                             // we init the dropoff date with the start date of the driver
                             $dropOffDate = clone $startDate;

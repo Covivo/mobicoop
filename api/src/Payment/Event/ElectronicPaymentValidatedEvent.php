@@ -21,28 +21,27 @@
  *    LICENSE
  */
 
-namespace Mobicoop\Bundle\MobicoopBundle\User\Service;
+namespace App\Payment\Event;
 
-/**
- * Sso management service.
- */
-class SsoManager
+use App\Payment\Entity\CarpoolPayment;
+use Symfony\Contracts\EventDispatcher\Event;
+
+class ElectronicPaymentValidatedEvent extends Event
 {
-    private const ALLOWED_PROVIDERS = ['GLConnect', 'mobConnect', 'mobConnect-test', 'PassMobilite'];
+    public const NAME = 'electronic_payment_validated';
 
     /**
-     * Guess and return the parameters for a SSO connection.
-     *
-     * @return array
+     * @var CarpoolPayment
      */
-    public function guessSsoParameters(array $params)
+    private $carpoolPayment;
+
+    public function __construct(CarpoolPayment $carpoolPayment)
     {
-        $return = [];
+        $this->carpoolPayment = $carpoolPayment;
+    }
 
-        if (isset($params['state']) && in_array($params['state'], self::ALLOWED_PROVIDERS)) {
-            $return = ['ssoId' => $params['code'], 'ssoProvider' => $params['state']];
-        }
-
-        return $return;
+    public function getCarpoolPayment(): CarpoolPayment
+    {
+        return $this->carpoolPayment;
     }
 }
