@@ -69,6 +69,8 @@ class MobConnectApiProvider extends MobConnectProvider
     // Updates a user subscription with a carpool proof
     public function patchUserSubscription(string $subscriptionId, string $rpcJourneyId): MobConnectSubscriptionResponse
     {
+        return;
+        // TODO: Lorsque la route en Patch sera disponible au niveau de mobConnect
         $data = [
             'Identifiant du trajet' => $rpcJourneyId,
         ];
@@ -76,7 +78,7 @@ class MobConnectApiProvider extends MobConnectProvider
         $this->_createDataProvider(self::ROUTE_PATCH_SUBSCRIPTIONS, $subscriptionId);
 
         return new MobConnectSubscriptionResponse(
-            $this->_getResponse($this->_dataProvider->postCollection($data, $this->_buildHeaders($this->_user->getMobConnectAuth()->getAccessToken())))
+            $this->_getResponse($this->_dataProvider->patchCollection($data, $this->_buildHeaders($this->_user->getMobConnectAuth()->getAccessToken())))
         );
     }
 
