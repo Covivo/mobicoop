@@ -18,6 +18,9 @@ class MobConnectApiProvider extends MobConnectProvider
     private const ROUTE_PATCH_SUBSCRIPTIONS = '/v1/subscriptions/{SUBSCRIPTION_ID}';
     private const ROUTE_SUBSCRIPTIONS_VERIFY = '/v1/subscriptions/{SUBSCRIPTION_ID}/verify';
 
+    private const SHORT_DISTANCE_LABEL = 'Court';
+    private const LONG_DISTANCE_LABEL = 'Long';
+
     /**
      * @var MobConnectApiParams
      */
@@ -40,14 +43,18 @@ class MobConnectApiProvider extends MobConnectProvider
         return $shortDistance ? $this->_apiParams->getShortDistanceSubscriptionId() : $this->_apiParams->getLongDistanceSubscriptionId();
     }
 
-    private function __postSubscription(string $incentiveId, bool $short = false)
+    private function __postSubscription(string $incentiveId, bool $isShortDistance = false, string $phoneNumber = null)
     {
         $data = [
             'incentiveId' => $incentiveId,
             'consent' => true,
-            'Type de trajet' => $short,
+            'Type de trajet' => true === $isShortDistance ? self::SHORT_DISTANCE_LABEL : self::LONG_DISTANCE_LABEL,
             'Numéro de permis de conduire' => $this->_user->getDrivingLicenseNumber(),
         ];
+
+        if (false === $isShortDistance) {
+            $data['Numéro de téléphone'] = self::LONG_DISTANCE_LABEL;
+        }
 
         $this->_createDataProvider(self::ROUTE_SUBSCRIPTIONS);
 
@@ -63,20 +70,26 @@ class MobConnectApiProvider extends MobConnectProvider
 
     public function postSubscriptionForLongDistance()
     {
-        return new MobConnectSubscriptionResponse($this->__postSubscription($this->_apiParams->getLongDistanceSubscriptionId()));
+        return new MobConnectSubscriptionResponse($this->__postSubscription($this->_apiParams->getLongDistanceSubscriptionId(), false, $this->_user->getTelephone()));
     }
 
     // Updates a user subscription with a carpool proof
-    public function patchUserSubscription(string $subscriptionId, string $rpcJourneyId): MobConnectSubscriptionResponse
+    public function patchUserSubscription(string $subscriptionId, string $rpcJourneyId, bool $isShortDistance = false, ?\DateTimeInterface $costSharingDate = null): MobConnectSubscriptionResponse
     {
-        $data = [
-            'Identifiant du trajet' => $rpcJourneyId,
-        ];
+        // Todo: this route is not available on the provider API
+        return;
+        $data = [];
+
+        if (true === $isShortDistance) {
+            $data['Identifiant du trajet'] = $rpcJourneyId;
+        } else {
+            $data['Date de partage des frais'] = $costSharingDate->format('d/m/Y');
+        }
 
         $this->_createDataProvider(self::ROUTE_PATCH_SUBSCRIPTIONS, $subscriptionId);
 
         return new MobConnectSubscriptionResponse(
-            $this->_getResponse($this->_dataProvider->postCollection($data, $this->_buildHeaders($this->_user->getMobConnectAuth()->getAccessToken())))
+            $this->_getResponse($this->_dataProvider->patchCollection($data, $this->_buildHeaders($this->_user->getMobConnectAuth()->getAccessToken())))
         );
     }
 

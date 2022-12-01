@@ -163,14 +163,13 @@ class MobConnectSubscriptionManager
     public function updateLongDistanceSubscription(CarpoolPayment $carpoolPayment)
     {
         $userSubscription = $this->_user->getLongDistanceSubscription();
-
-        if (is_null($userSubscription)) {
-            throw new BadRequestHttpException(MobConnectMessages::USER_SHORT_DISTANCE_SUBSCRIPTION_MISSING);
-        }
-
         $declaredJourneysNumber = count($userSubscription->getLongDistanceJourneys());
 
-        if (self::HIGH_THRESHOLD_PROOF < $declaredJourneysNumber) {
+        if (
+            is_null($userSubscription)                                              // The subscription was not created
+            || self::HIGH_THRESHOLD_PROOF < $declaredJourneysNumber                 // The number of journeys already declared is greater than 20
+            || CarpoolPayment::STATUS_SUCCESS !== $carpoolPayment->getStatus()      // The payment was not made successfully
+        ) {
             return;
         }
 
@@ -182,6 +181,8 @@ class MobConnectSubscriptionManager
             $this->__isUserCarpoolDriver($carpoolItem->getCreditorUser());
 
             $userSubscription->addLongDistanceJourney(new LongDistanceJourney($carpoolItem, $this->__getCarpoolersNumber($carpoolItem)));
+
+            $this->_mobConnectApiProvider->patchUserSubscription($userSubscription->getSubscriptionId(), $this->__getRpcJourneyId($carpoolItem->getId()), false, $carpoolPayment->getCreatedDate());
         }
 
         $this->_em->flush();
@@ -190,16 +191,12 @@ class MobConnectSubscriptionManager
     public function updateShortDistanceSubscription(CarpoolProof $carpoolProof): void
     {
         $userSubscription = $this->_user->getShortDistanceSubscription();
-
-        if (is_null($userSubscription)) {
-            throw new BadRequestHttpException(MobConnectMessages::USER_SHORT_DISTANCE_SUBSCRIPTION_MISSING);
-        }
-
         $declaredJourneysNumber = count($userSubscription->getShortDistanceJourneys());
 
         if (
-            self::HIGH_THRESHOLD_PROOF < $declaredJourneysNumber    // The number of journeys already declared is greater than 20
-            || !$this->__isShortDistanceJourney($carpoolProof)      // The journey is not a short distance journey
+            is_null($userSubscription)
+            || self::HIGH_THRESHOLD_PROOF < $declaredJourneysNumber    // The number of journeys already declared is greater than 20
+            || !$this->__isShortDistanceJourney($carpoolProof)         // The journey is not a short distance journey
         ) {
             return;
         }
@@ -219,12 +216,7 @@ class MobConnectSubscriptionManager
 
         $subscriptionId = $userSubscription->getSubscriptionId();
 
-        if (
-            self::LOW_THRESHOLD_PROOF > $declaredJourneysNumber
-            || self::HIGH_THRESHOLD_PROOF - 1 === $declaredJourneysNumber
-        ) {
-            $this->_mobConnectApiProvider->patchUserSubscription($subscriptionId, $this->__getRpcJourneyId($carpoolProof->getId()));
-        }
+        $this->_mobConnectApiProvider->patchUserSubscription($subscriptionId, $this->__getRpcJourneyId($carpoolProof->getId()), true);
 
         if (self::HIGH_THRESHOLD_PROOF === $declaredJourneysNumber) {
             $response = $this->_mobConnectApiProvider->verifyUserSubscription($subscriptionId);
