@@ -6,11 +6,13 @@ use App\Carpool\Entity\CarpoolProof;
 use App\Carpool\Repository\CarpoolProofRepository;
 use App\DataProvider\Entity\MobConnect\MobConnectApiProvider;
 use App\DataProvider\Ressource\MobConnectApiParams;
+use App\Incentive\Entity\Flat\ShortDistanceSubscription as FlatShortDistanceSubscription;
 use App\Incentive\Entity\LongDistanceJourney;
 use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceJourney;
 use App\Incentive\Entity\ShortDistanceSubscription;
 use App\Incentive\Resource\CeeStatus;
+use App\Incentive\Resource\CeeSubscriptions;
 use App\Payment\Entity\CarpoolItem;
 use App\Payment\Entity\CarpoolPayment;
 use App\User\Entity\User;
@@ -84,6 +86,17 @@ class MobConnectSubscriptionManager
         $stmt->execute();
 
         return count($stmt->fetchAll(\PDO::FETCH_COLUMN)) + 1;
+    }
+
+    private function __getFlatJourneys($journeys): array
+    {
+        $subscriptions = [];
+
+        foreach ($journeys as $journey) {
+            array_push($subscriptions, new FlatShortDistanceSubscription($journey));
+        }
+
+        return $subscriptions;
     }
 
     private function __getRpcJourneyId(int $id): string
@@ -220,5 +233,27 @@ class MobConnectSubscriptionManager
         }
 
         $this->_em->flush();
+    }
+
+    /**
+     * Returns flat paths to be used in particular as logs.
+     */
+    public function getUserSubscriptions(User $user)
+    {
+        $ceeSubscription = new CeeSubscriptions($this->_user->getId());
+
+        if (!is_null($user->getShortDistanceSubscription())) {
+            $shortDistanceSubscriptions = $this->__getFlatJourneys($user->getShortDistanceSubscription()->getShortDistanceJourneys());
+
+            $ceeSubscription->setShortDistanceSubscriptions($shortDistanceSubscriptions);
+        }
+
+        if (!is_null($user->getLongDistanceSubscription())) {
+            $longDistanceSubscriptions = $this->__getFlatJourneys($user->getLongDistanceSubscription()->getLongDistanceJourneys());
+
+            $ceeSubscription->setLongDistanceSubscriptions($longDistanceSubscriptions);
+        }
+
+        return [$ceeSubscription];
     }
 }

@@ -243,7 +243,7 @@ class LongDistanceSubscription
     /**
      * Get the initial timestamp of the mobConnect subscription.
      */
-    public function getInitialTimestamp(): string
+    public function getInitialTimestamp(): ?string
     {
         return $this->initialTimestamp;
     }
@@ -285,7 +285,7 @@ class LongDistanceSubscription
     /**
      * Get the status of the journey.
      */
-    public function getStatus(): string
+    public function getStatus(): ?string
     {
         return $this->status;
     }

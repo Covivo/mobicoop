@@ -519,12 +519,10 @@ user_return_sso:
 
 user_return_sso_mobConnect:
     path:
-        fr: /user/sso/cee-incentive
-        en: /user/sso/cee-incentive
-        nl: /user/sso/cee-incentive
+        fr: /user/sso/eec-incentive
+        en: /user/sso/eec-incentive
+        nl: /user/sso/eec-incentive
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userReturnConnectSSOMobConnect
-
-
 
 user_login_sso:
   path:
