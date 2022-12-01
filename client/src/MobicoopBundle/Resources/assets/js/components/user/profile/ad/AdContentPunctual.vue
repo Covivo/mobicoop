@@ -2,6 +2,8 @@
   <v-container class="py-0">
     <v-row>
       <schedules
+        :is-return="ad.type == 2"
+        :is-outward="ad.type == 0 || ad.type == 1"
         date-time-format="shortDate"
         :outward-time="isCarpool ? (ad.driver.fromDate ? ad.driver.fromDate : ad.passengers[0].fromDate) : ad.outwardDate"
         :is-refined="isRefined"
@@ -17,29 +19,6 @@
           :type="ad.frequency"
           :time="isCarpool ? (ad.driver.pickUpTime ? ad.driver.pickUpTime : ad.outwardTime) : ad.outwardTime"
           :compact="true"
-          text-color-class="primary--text"
-          icon-color="accent"
-        />
-      </v-col>
-    </v-row>
-    <v-row v-if="ad.returnDate !== null && !isRefined">
-      <schedules
-        :is-return="true"
-        :is-outward="false"
-        date-time-format="shortDate"
-        :return-time="isCarpool ? (ad.driver.returnfromDate ? ad.driver.returnfromDate : ad.passengers[0].returnfromDate) : ad.returnDate"
-      />
-    </v-row>
-    <v-row v-if="ad.returnDate !== null && !isRefined">
-      <v-col
-        class="pa-0"
-      >
-        <route-summary
-          :origin="destination"
-          :destination="origin"
-          :type="ad.frequency"
-          :compact="true"
-          :time="isCarpool ? (ad.driver.returnPickUpTime ? ad.driver.returnPickUpTime : ad.returnTime) : ad.returnTime"
           text-color-class="primary--text"
           icon-color="accent"
         />

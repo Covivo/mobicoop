@@ -35,7 +35,6 @@ use App\Payment\Entity\CarpoolItem;
 use App\Payment\Repository\CarpoolItemRepository;
 use App\User\Entity\User;
 use App\User\Service\ReviewManager;
-use DateTime;
 
 /**
  * MyAd manager service.
@@ -73,7 +72,7 @@ class MyAdManager
         $this->paymentActive = false;
         $this->proofManager = $proofManager;
         $this->matchingRepository = $matchingRepository;
-        if ($this->paymentActiveDate = DateTime::createFromFormat('Y-m-d', $paymentActive)) {
+        if ($this->paymentActiveDate = \DateTime::createFromFormat('Y-m-d', $paymentActive)) {
             $this->paymentActiveDate->setTime(0, 0);
             $this->paymentActive = true;
         }
@@ -120,7 +119,7 @@ class MyAdManager
         switch ($proposal->getCriteria()->getFrequency()) {
             case Criteria::FREQUENCY_PUNCTUAL:
                 /**
-                 * @var DateTime $fromDate
+                 * @var \DateTime $fromDate
                  */
                 $fromDate = $proposal->getCriteria()->getFromDate();
                 if (!is_null($proposal->getCriteria()->getFromTime())) {
@@ -132,22 +131,13 @@ class MyAdManager
 
                 $myAd->setOutwardDate($fromDate->format('Y-m-d'));
                 $myAd->setOutwardTime($fromDate->format('H:i'));
-                if ((Proposal::TYPE_OUTWARD == $proposal->getType()) && (!is_null($proposal->getProposalLinked()))) {
-                    // there's a return trip
-                    /**
-                     * @var DateTime $returnDate
-                     */
-                    $returnDate = $proposal->getProposalLinked()->getCriteria()->getFromDate();
-                    if (Criteria::FREQUENCY_PUNCTUAL == $proposal->getCriteria()->getFrequency()) {
-                        if (!is_null($proposal->getProposalLinked()->getCriteria()->getFromTime())) {
-                            $returnDate->setTime(
-                                $proposal->getProposalLinked()->getCriteria()->getFromTime()->format('H'),
-                                $proposal->getProposalLinked()->getCriteria()->getFromTime()->format('i')
-                            );
-                        }
-                    }
-                    $myAd->setReturnDate($returnDate->format('Y-m-d'));
-                    $myAd->setReturnTime($returnDate->format('H:i'));
+
+                if (Proposal::TYPE_ONE_WAY == $proposal->getType()) {
+                    $myAd->setType(MyAd::TYPE_ONE_WAY);
+                } elseif (Proposal::TYPE_OUTWARD == $proposal->getType()) {
+                    $myAd->setType(MyAd::TYPE_OUTWARD);
+                } elseif (Proposal::TYPE_RETURN == $proposal->getType()) {
+                    $myAd->setType(MyAd::TYPE_RETURN);
                 }
 
                 break;
@@ -207,7 +197,7 @@ class MyAdManager
         $passengers = [];
         $myAd->setAsks(false);
 
-        $today = new DateTime('now');
+        $today = new \DateTime('now');
         foreach ($this->matchingRepository->getProposalMatchingAsOffersWithBothUsers($proposal) as $matchingOffer) {
             // the user is passenger
             /**
@@ -242,7 +232,7 @@ class MyAdManager
                             }
                         }
                     } else {
-                        $today = new DateTime('Today');
+                        $today = new \DateTime('Today');
                         foreach ($ask->getCarpoolProofs() as $carpoolProof) {
                             $date = $carpoolProof->getStartDriverDate();
                             $date->setTime(0, 0, 0);
@@ -310,7 +300,7 @@ class MyAdManager
                             }
                         }
                     } else {
-                        $today = new DateTime('Today');
+                        $today = new \DateTime('Today');
                         foreach ($ask->getCarpoolProofs() as $carpoolProof) {
                             $date = $carpoolProof->getStartDriverDate();
                             $date->setTime(0, 0, 0);
@@ -537,7 +527,7 @@ class MyAdManager
         switch ($ask->getCriteria()->getFrequency()) {
             case Criteria::FREQUENCY_PUNCTUAL:
                 /**
-                 * @var DateTime $startDate
+                 * @var \DateTime $startDate
                  */
                 $startDate = $ask->getCriteria()->getFromDate();
                 if (!is_null($ask->getCriteria()->getFromTime())) {
@@ -738,7 +728,7 @@ class MyAdManager
             switch ($ask->getAskLinked()->getCriteria()->getFrequency()) {
                 case Criteria::FREQUENCY_PUNCTUAL:
                     /**
-                     * @var DateTime $startDate
+                     * @var \DateTime $startDate
                      */
                     $startDate = $ask->getAskLinked()->getCriteria()->getFromDate();
                     if (!is_null($ask->getAskLinked()->getCriteria()->getFromTime())) {
@@ -1082,7 +1072,7 @@ class MyAdManager
         switch ($ask->getCriteria()->getFrequency()) {
             case Criteria::FREQUENCY_PUNCTUAL:
                 /**
-                 * @var DateTime $startDate
+                 * @var \DateTime $startDate
                  */
                 $startDate = $ask->getCriteria()->getFromDate();
                 if (!is_null($ask->getCriteria()->getFromTime())) {
@@ -1280,7 +1270,7 @@ class MyAdManager
             switch ($ask->getAskLinked()->getCriteria()->getFrequency()) {
                 case Criteria::FREQUENCY_PUNCTUAL:
                     /**
-                     * @var DateTime $startDate
+                     * @var \DateTime $startDate
                      */
                     $startDate = $ask->getAskLinked()->getCriteria()->getFromDate();
                     if (!is_null($ask->getAskLinked()->getCriteria()->getFromTime())) {
