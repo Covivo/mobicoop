@@ -31,7 +31,6 @@ use App\Community\Entity\Community;
 use App\Geography\Service\GeoTools;
 use App\User\Entity\User;
 use App\User\Service\UserManager;
-use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
@@ -975,7 +974,7 @@ class ProposalRepository
         $query = $this->repository->createQueryBuilder('p')
             ->join('p.user', 'u')
             ->join('p.criteria', 'c')
-            ->where('p.user = :user and p.private <> 1 and p.type <> :return')
+            ->where('(p.user = :user and p.private <> 1 and p.type <> :return and c.frequency = 2) or (p.user = :user and p.private <> 1 and c.frequency = 1)')
             ->orderBy('c.fromDate', 'ASC')
             ->setParameter('user', $user)
             ->setParameter('return', Proposal::TYPE_RETURN)
@@ -1136,7 +1135,7 @@ class ProposalRepository
      *
      * @return Proposal[]
      */
-    public function findByDate(DateTime $date, User $user = null, bool $onlyOneWayOrOutward = false, int $minDistanceDriver = null, int $minDistancePassenger = null, array $excludedProposalIds = []): array
+    public function findByDate(\DateTime $date, User $user = null, bool $onlyOneWayOrOutward = false, int $minDistanceDriver = null, int $minDistancePassenger = null, array $excludedProposalIds = []): array
     {
         $query = $this->repository->createQueryBuilder('p')
             ->join('p.criteria', 'c')
@@ -1227,7 +1226,7 @@ class ProposalRepository
      */
     public function getNbActiveAdsForUserAndRole(int $userId, int $role): int
     {
-        $now = new DateTime();
+        $now = new \DateTime();
         $qb = $this->repository->createQueryBuilder('p')
             ->leftJoin('p.criteria', 'c')
             ->leftJoin('p.user', 'u')
@@ -1264,7 +1263,7 @@ class ProposalRepository
      *
      * @return int
      */
-    public function countProposalsBetweenCreateDate(DateTime $startDate, DateTime $endDate): ?int
+    public function countProposalsBetweenCreateDate(\DateTime $startDate, \DateTime $endDate): ?int
     {
         $query = $this->repository->createQueryBuilder('p')
             ->select('count(p.id)')
@@ -1345,7 +1344,7 @@ class ProposalRepository
      */
     public function findProposalsOutdated(int $numberOfDays): ?array
     {
-        $now = new DateTime();
+        $now = new \DateTime();
 
         $query = $this->repository->createQueryBuilder('p')
             ->join('p.criteria', 'c')
@@ -1365,7 +1364,7 @@ class ProposalRepository
 
     public function findSoonExpiredAds(int $numberOfDays): ?array
     {
-        $now = new DateTime();
+        $now = new \DateTime();
         $toDate = $now->modify('+'.$numberOfDays.' days')->format('Y-m-d');
 
         $query = $this->repository->createQueryBuilder('p')
@@ -1382,7 +1381,7 @@ class ProposalRepository
 
     public function findInactiveAdsSinceXDays(int $numberOfDays): ?array
     {
-        $now = new DateTime();
+        $now = new \DateTime();
         $toDate = $now->modify('-'.$numberOfDays.' days')->format('Y-m-d');
 
         $query = $this->repository->createQueryBuilder('p')
@@ -1508,7 +1507,7 @@ class ProposalRepository
      * @param bool      $useTime     If we use the time
      */
     private function buildRegularAndWhere(
-        DateTime $fromDate,
+        \DateTime $fromDate,
         int $offset,
         bool $driver,
         bool $passenger,

@@ -60,6 +60,10 @@ class MyAd
     public const ROLE_DRIVER = 1;
     public const ROLE_PASSENGER = 2;
 
+    public const TYPE_ONE_WAY = 0;
+    public const TYPE_OUTWARD = 1;
+    public const TYPE_RETURN = 2;
+
     /**
      * @var int the id of this ad
      *
@@ -191,6 +195,11 @@ class MyAd
      * @var int the overall payment status of this ad
      */
     private $paymentStatus;
+
+    /**
+     * @var null|int the type of the ad 0:oneWay, 1:outward, 2:return
+     */
+    private $type;
 
     public function __construct()
     {
@@ -506,6 +515,18 @@ class MyAd
     public function setSolidaryExclusive(bool $solidaryExclusive): self
     {
         $this->solidaryExclusive = $solidaryExclusive;
+
+        return $this;
+    }
+
+    public function getType(): ?int
+    {
+        return $this->type;
+    }
+
+    public function setType(?int $type): self
+    {
+        $this->type = $type;
 
         return $this;
     }
