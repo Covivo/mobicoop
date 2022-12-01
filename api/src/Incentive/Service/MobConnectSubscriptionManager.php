@@ -71,7 +71,6 @@ class MobConnectSubscriptionManager
         $this->_authManager = $authManager;
 
         $this->_user = $tokenStorageInterface->getToken()->getUser();
-        $this->__checkUser();
 
         $this->_mobConnectApiProvider = new MobConnectApiProvider(new MobConnectApiParams($mobConnectParams), $this->_user);
     }
@@ -146,6 +145,8 @@ class MobConnectSubscriptionManager
 
     public function createSubscriptions(string $authorizationCode)
     {
+        $this->__checkUser();
+
         $this->_authManager->createAuth($authorizationCode);
 
         $mobConnectShortDistanceSubscription = $this->_mobConnectApiProvider->postSubscriptionForShortDistance();
