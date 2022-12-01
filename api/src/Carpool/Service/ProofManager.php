@@ -40,6 +40,8 @@ use App\Geography\Service\AddressCompleter;
 use App\Geography\Service\Geocoder\MobicoopGeocoder;
 use App\Geography\Service\GeoTools;
 use App\Geography\Service\Point\MobicoopGeocoderPointProvider;
+use App\Payment\Entity\PaymentProfile;
+use App\Payment\Repository\PaymentProfileRepository;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -63,6 +65,7 @@ class ProofManager
     private $duration;
     private $minIdentityDistance;
     private $eventDispatcher;
+    private $paymentProfileRepository;
 
     /**
      * Constructor.
@@ -89,6 +92,7 @@ class ProofManager
         MobicoopGeocoder $mobicoopGeocoder,
         GeoTools $geoTools,
         EventDispatcherInterface $eventDispatcher,
+        PaymentProfileRepository $paymentProfileRepository,
         string $prefix,
         string $provider,
         string $uri,
@@ -105,6 +109,7 @@ class ProofManager
         $this->duration = $duration;
         $this->minIdentityDistance = $minIdentityDistance;
         $this->eventDispatcher = $eventDispatcher;
+        $this->paymentProfileRepository = $paymentProfileRepository;
 
         $this->addressCompleter = new AddressCompleter(new MobicoopGeocoderPointProvider($mobicoopGeocoder));
 
@@ -115,6 +120,40 @@ class ProofManager
 
                 break;
         }
+    }
+
+    private function __checkUpgradeToHigh(CarpoolProof $carpoolProof): CarpoolProof
+    {
+        if (is_null($carpoolProof->getDriver()) || is_null($carpoolProof->getPassenger())) {
+            return $carpoolProof;
+        }
+
+        $driverPaymentProfile = $this->paymentProfileRepository->findBy(
+            [
+                'user' => $carpoolProof->getDriver(),
+                'status' => PaymentProfile::STATUS_ACTIVE,
+                'validationStatus' => PaymentProfile::VALIDATION_VALIDATED,
+            ]
+        );
+        $passengerPaymentProfile = $this->paymentProfileRepository->findBy(
+            [
+                'user' => $carpoolProof->getPassenger(),
+                'status' => PaymentProfile::STATUS_ACTIVE,
+                'validationStatus' => PaymentProfile::VALIDATION_VALIDATED,
+            ]
+        );
+
+        if (0 == count($driverPaymentProfile) || 0 == count($passengerPaymentProfile)) {
+            return $carpoolProof;
+        }
+
+        if ($driverPaymentProfile[0]->getId() == $passengerPaymentProfile[0]->getId()) {
+            return $carpoolProof;
+        }
+
+        $carpoolProof->setType(CarpoolProof::TYPE_HIGH);
+
+        return $carpoolProof;
     }
 
     // PROOF MANAGEMENT
@@ -711,6 +750,10 @@ class ProofManager
                     $dropOffDate->modify('+'.$dropOffWaypoint->getDuration().' second');
                     $carpoolProof->setPickUpPassengerDate($pickUpDate);
                     $carpoolProof->setDropOffPassengerDate($dropOffDate);
+
+                    // The proof meets de B criteria, we check if it could meet de C criteria
+                    $carpoolProof = $this->__checkUpgradeToHigh($carpoolProof);
+
                     $this->entityManager->persist($carpoolProof);
 
                     continue;
@@ -726,6 +769,10 @@ class ProofManager
                     $carpoolProof->setOriginDriverAddress(null);
                     $carpoolProof->setDestinationDriverAddress(null);
                     $carpoolProof->setType(CarpoolProof::TYPE_MID);
+
+                    // The proof meets de B criteria, we check if it could meet de C criteria
+                    $carpoolProof = $this->__checkUpgradeToHigh($carpoolProof);
+
                     $this->entityManager->persist($carpoolProof);
 
                     continue;
