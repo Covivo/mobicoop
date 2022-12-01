@@ -8,9 +8,7 @@ use App\DataProvider\Ressource\MobConnectAuthParams;
 use App\Incentive\Entity\MobConnectAuth;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 /**
@@ -48,7 +46,9 @@ class MobConnectAuthManager
         $this->_user = $tokenStorageInterface->getToken()->getUser();
         $this->_ssoServices = $ssoServices;
 
-        $this->_authProvider = new MobConnectMobConnectAuthProvider(new MobConnectAuthParams($this->__getMobConnectSsoParams()), $this->_user);
+        if ($this->__getMobConnectSsoParams()) {
+            $this->_authProvider = new MobConnectMobConnectAuthProvider(new MobConnectAuthParams($this->__getMobConnectSsoParams()), $this->_user);
+        }
     }
 
     private function __getJWTToken(): string
@@ -65,7 +65,7 @@ class MobConnectAuthManager
         return $userAuth->getAccessToken();
     }
 
-    private function __getMobConnectSsoParams(): array
+    private function __getMobConnectSsoParams(): ?array
     {
         foreach ($this->_ssoServices as $key => $service) {
             if (preg_match('/'.self::SERVICE_NAME.'/', $key)) {
@@ -73,7 +73,7 @@ class MobConnectAuthManager
             }
         }
 
-        throw new HttpException(Response::HTTP_INTERNAL_SERVER_ERROR, str_replace('{SERVICE_NAME}', self::SERVICE_NAME, MobConnectMessages::MOB_CONFIG_UNAVAILABLE));
+        return null;
     }
 
     private function __isAccessAuthorized(): bool
