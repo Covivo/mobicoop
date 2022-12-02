@@ -3,7 +3,6 @@
 namespace App\Incentive\Service;
 
 use App\Carpool\Entity\CarpoolProof;
-use App\Carpool\Repository\CarpoolProofRepository;
 use App\DataProvider\Entity\MobConnect\MobConnectApiProvider;
 use App\DataProvider\Ressource\MobConnectApiParams;
 use App\Incentive\Entity\Flat\ShortDistanceSubscription as FlatShortDistanceSubscription;
@@ -18,7 +17,7 @@ use App\Payment\Entity\CarpoolPayment;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Security;
 
 /**
  * Subscription Management Manager.
@@ -48,9 +47,9 @@ class MobConnectSubscriptionManager
     private $_mobConnectApiProvider;
 
     /**
-     * @var CarpoolProofRepository
+     * @var array
      */
-    private $_carpoolProofRepository;
+    private $_mobConnectParams;
 
     /**
      * The authenticated user.
@@ -61,18 +60,25 @@ class MobConnectSubscriptionManager
 
     public function __construct(
         EntityManagerInterface $em,
-        TokenStorageInterface $tokenStorageInterface,
+        Security $security,
         MobConnectAuthManager $authManager,
-        CarpoolProofRepository $carpoolProofRepository,
         array $mobConnectParams
     ) {
         $this->_em = $em;
-        $this->_carpoolProofRepository = $carpoolProofRepository;
         $this->_authManager = $authManager;
 
-        $this->_user = $tokenStorageInterface->getToken()->getUser();
+        $this->_user = $security->getUser();
 
-        $this->_mobConnectApiProvider = new MobConnectApiProvider(new MobConnectApiParams($mobConnectParams), $this->_user);
+        $this->_mobConnectParams = $mobConnectParams;
+    }
+
+    private function __checkUser(): self
+    {
+        if (is_null($this->_user->getDrivingLicenseNumber())) {
+            throw new BadRequestHttpException(MobConnectMessages::USER_DRIVING_LICENCE_MISSING);
+        }
+
+        return $this;
     }
 
     private function __getCarpoolersNumber($carpool): int
@@ -134,13 +140,9 @@ class MobConnectSubscriptionManager
         return true;
     }
 
-    private function __checkUser(): self
+    private function __setApiProviderParams()
     {
-        if (is_null($this->_user->getDrivingLicenseNumber())) {
-            throw new BadRequestHttpException(MobConnectMessages::USER_DRIVING_LICENCE_MISSING);
-        }
-
-        return $this;
+        $this->_mobConnectApiProvider = new MobConnectApiProvider(new MobConnectApiParams($this->_mobConnectParams), $this->_user);
     }
 
     public function createSubscriptions(string $authorizationCode)
@@ -148,6 +150,8 @@ class MobConnectSubscriptionManager
         $this->__checkUser();
 
         $this->_authManager->createAuth($authorizationCode);
+
+        $this->__setApiProviderParams();
 
         $mobConnectShortDistanceSubscription = $this->_mobConnectApiProvider->postSubscriptionForShortDistance();
         $shortDistanceSubscription = new ShortDistanceSubscription($this->_user, $mobConnectShortDistanceSubscription);
@@ -183,6 +187,8 @@ class MobConnectSubscriptionManager
 
             $userSubscription->addLongDistanceJourney(new LongDistanceJourney($carpoolItem, $this->__getCarpoolersNumber($carpoolItem)));
 
+            $this->__setApiProviderParams();
+
             $this->_mobConnectApiProvider->patchUserSubscription($userSubscription->getSubscriptionId(), $this->__getRpcJourneyId($carpoolItem->getId()), false, $carpoolPayment->getCreatedDate());
         }
 
@@ -216,6 +222,8 @@ class MobConnectSubscriptionManager
         ++$declaredJourneysNumber;
 
         $subscriptionId = $userSubscription->getSubscriptionId();
+
+        $this->__setApiProviderParams();
 
         $this->_mobConnectApiProvider->patchUserSubscription($subscriptionId, $this->__getRpcJourneyId($carpoolProof->getId()), true);
 
