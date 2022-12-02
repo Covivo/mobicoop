@@ -2,14 +2,14 @@
 
 namespace App\Incentive\Service;
 
-use App\DataProvider\Entity\MobConnect\MobConnectAuthProvider as MobConnectMobConnectAuthProvider;
-use App\DataProvider\Entity\MobConnectAuthProvider;
+use App\DataProvider\Entity\MobConnect\MobConnectAuthProvider;
 use App\DataProvider\Ressource\MobConnectAuthParams;
 use App\Incentive\Entity\MobConnectAuth;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Security;
 
 /**
  * Manager the user authentication for the service MobConnect.
@@ -40,20 +40,18 @@ class MobConnectAuthManager
      */
     private $_user;
 
-    public function __construct(EntityManagerInterface $em, TokenStorageInterface $tokenStorageInterface, array $ssoServices)
+    public function __construct(EntityManagerInterface $em, Security $security, array $ssoServices)
     {
         $this->_em = $em;
-        $this->_user = $tokenStorageInterface->getToken()->getUser();
+        $this->_user = $security->getUser();
         $this->_ssoServices = $ssoServices;
-
-        if ($this->__getMobConnectSsoParams()) {
-            $this->_authProvider = new MobConnectMobConnectAuthProvider(new MobConnectAuthParams($this->__getMobConnectSsoParams()), $this->_user);
-        }
     }
 
     private function __getJWTToken(): string
     {
         $userAuth = $this->_user->getMobConnectAuth();
+
+        $this->_authProvider = new MobConnectAuthProvider(new MobConnectAuthParams($this->__getMobConnectSsoParams()), $this->_user);
 
         $response = $this->_authProvider->getJWTToken($userAuth->getAuthorizationCode(), $userAuth->getRefreshToken());
 
@@ -73,7 +71,7 @@ class MobConnectAuthManager
             }
         }
 
-        return null;
+        throw new \LogicException(MobConnectMessages::MOB_CONFIG_UNAVAILABLE, Response::HTTP_BAD_REQUEST);
     }
 
     private function __isAccessAuthorized(): bool
