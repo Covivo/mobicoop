@@ -189,32 +189,34 @@ print ("----------------------------")
 print ("3. IDENTIFY UNNECESSARY KEYS")
 print ("----------------------------")
 
-# api
+key_not_found = string.Template(
+  f"Key \033[1;37;40m$key\033[0;37;40m not found in $where")
+
+# instance
 print ("\033[1;34;40m")
 print (f"Checking instance .env.{env}.local")
 print ("\033[0;37;40m")
-if len(dict_instance_local)>0:
-    unnecessary_keys = 0
-    for key in dict_instance_local:
-        if key not in dict_instance.keys():
-            print (f"Key \033[1;37;40m{key}\033[0;37;40m not found in instance .env.{env}.local!")
-            unnecessary_keys = unnecessary_keys + 1
-    if unnecessary_keys == 0:
-        print (f"Instance .env.{env}.local OK")
+if dict_instance_local:
+    unnecessary_keys = False
+    for key in filter(lambda key: key not in dict_instance,
+                      dict_instance_local):
+        print(key_not_found.substitute(key=key, where="instance .env"))
+        unnecessary_keys = True
+    if not unnecessary_keys:
+        print(f"Instance .env.{env}.local OK")
 else:
-    print ("Nothing to check")
+    print("Nothing to check")
 
 # api
 print ("\033[1;34;40m")
 print (f"Checking API .env.{env}.local")
 print ("\033[0;37;40m")
-if len(dict_api_local)>0:
-    unnecessary_keys = 0
-    for key in dict_api_local:
-        if key not in dict_api.keys():
-            print (f"Key \033[1;37;40m{key}\033[0;37;40m not found in API .env.{env}.local!")
-            unnecessary_keys = unnecessary_keys + 1
-    if unnecessary_keys == 0:
-        print (f"API .env.{env}.local OK")
+if dict_api_local:
+    unnecessary_keys = False
+    for key in filter(lambda key: key not in dict_api, dict_api_local):
+        print(key_not_found.substitute(key=key, where=f"API {api_path}/.env"))
+        unnecessary_keys = True
+    if not unnecessary_keys:
+        print(f"API .env.{env}.local OK")
 else:
-    print ("Nothing to check")
+    print("Nothing to check")
