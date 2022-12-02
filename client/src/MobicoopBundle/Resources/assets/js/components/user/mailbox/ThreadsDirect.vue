@@ -48,6 +48,10 @@ export default {
     ThreadDirect
   },
   props: {
+    idMessage: {
+      type: Number,
+      default: null
+    },
     idThreadDefault:{
       type: Number,
       default:null
@@ -126,6 +130,9 @@ export default {
             });
           }
           this.messages = response.data.threads;
+          if (this.idMessage) {
+            this.selectDefaultThread();
+          }
           (idMessageSelected) ? this.refreshSelected(idMessageSelected) : '';
           this.$emit("refreshThreadsDirectCompleted");
         })
@@ -135,6 +142,24 @@ export default {
     },
     name(givenName, shortFamilyName) {
       return givenName + " " + shortFamilyName;
+    },
+    selectDefaultThread: function() {
+      const i = this.messages.map(message => message.idMessage).indexOf(this.idMessage);
+
+      if (i !== -1) {
+        this.messages[i].selected = true;
+        this.messages[i].selectedDefault = true;
+        this.emitToggle({idMessage: this.messages[i].idMessage});
+        this.emit({
+          type:"Direct",
+          idMessage: this.messages[i].idMessage,
+          idRecipient: this.messages[i].idRecipient,
+          avatar: this.messages[i].avatarsRecipient,
+          name: `${this.messages[i].givenName} ${this.messages[i].shortFamilyName}`,
+          blockerId: this.messages[i].blockerId,
+          formerUnreadMessages:this.messages[i].unreadMessages
+        });
+      }
     }
   }
 }
