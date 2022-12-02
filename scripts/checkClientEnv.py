@@ -20,9 +20,9 @@
 # LICENSE
 # #######################################
 
-import os.path
 import argparse
 import collections
+import os.path
 import re
 import string
 import sys
