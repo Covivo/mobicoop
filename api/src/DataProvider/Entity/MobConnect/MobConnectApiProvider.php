@@ -74,7 +74,7 @@ class MobConnectApiProvider extends MobConnectProvider
     }
 
     // Updates a user subscription with a carpool proof
-    public function patchUserSubscription(string $subscriptionId, string $rpcJourneyId, bool $isShortDistance = false, ?\DateTimeInterface $costSharingDate = null): MobConnectSubscriptionResponse
+    public function patchUserSubscription(string $subscriptionId, string $rpcJourneyId, bool $isShortDistance = false, ?\DateTimeInterface $costSharingDate = null)
     {
         // Todo: this route is not available on the provider API
         return;

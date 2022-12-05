@@ -803,7 +803,6 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var int phone display configuration (1 = restricted (default); 2 = all)
      *
-     * @Assert\NotBlank
      * @ORM\Column(type="smallint")
      * @Groups({"aRead","aWrite","readUser","write","results"})
      */
