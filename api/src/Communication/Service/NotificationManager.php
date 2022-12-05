@@ -514,11 +514,28 @@ class NotificationManager
 
                 case Message::class:
                     $titleContext = ['user' => $object->getUser()];
+
+                    // ask history
+                    if (is_null($object->getMessage())) {
+                        $threadType = 'direct';
+                    } elseif (
+                        !is_null($object->getMessage()->getAskHistory())
+                        && !is_null($object->getMessage()->getAskHistory()->getAsk())
+                        && !is_null($object->getMessage()->getAskHistory()->getAsk()->getCriteria())
+                        && $object->getMessage()->getAskHistory()->getAsk()->getCriteria()->isSolidaryExclusive()
+                    ) {
+                        $threadType = 'solidary';
+                    } else {
+                        $threadType = 'carpool';
+                    }
+
+                    $threadMessageId = is_null($object->getMessage()) ? $object->getId() : $object->getMessage()->getId();
+
                     $bodyContext = [
                         'sender' => $object->getUser(),
                         'sendingDate' => $object->getCreatedDate(),
                         'text' => $object->getText(),
-                        'thread' => is_null($object->getMessage()) ? $object->getId() : $object->getMessage()->getId(),
+                        'link' => "/{$threadMessageId}?type={$threadType}",
                         'user' => $recipient,
                     ];
 
