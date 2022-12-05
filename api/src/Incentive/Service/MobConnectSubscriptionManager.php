@@ -219,7 +219,7 @@ class MobConnectSubscriptionManager
 
         $this->_mobConnectApiProvider->patchUserSubscription($subscriptionId, $this->__getRpcJourneyId($carpoolProof->getId()), true);
 
-        if (self::HIGH_THRESHOLD_PROOF === $declaredJourneysNumber) {
+        if (self::LOW_THRESHOLD_PROOF === $declaredJourneysNumber) {
             $response = $this->_mobConnectApiProvider->verifyUserSubscription($subscriptionId);
             $userSubscription->setStatus($response->getStatus());
             $userSubscription->setLastTimestamp($response->getTimestamp());
