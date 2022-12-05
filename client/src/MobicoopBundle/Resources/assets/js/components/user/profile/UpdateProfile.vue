@@ -844,15 +844,21 @@ export default {
       this.emailChanged = true;
     }
   },
+  created() {
+    this.setMomentLocale();
+  },
   mounted() {
-    this.locale = localStorage.getItem("X-LOCALE");
-    moment.locale(this.locale);
+    this.setMomentLocale();
     this.checkVerifiedPhone();
     this.checkVerifiedEmail();
     this.getOwnedCommunities();
     this.getCreatedEvents();
   },
   methods: {
+    setMomentLocale() {
+      this.locale = localStorage.getItem("X-LOCALE");
+      moment.locale(this.locale);
+    },
     homeAddressSelected(address){
       this.homeAddress = address;
       this.disabledAddress = false;
