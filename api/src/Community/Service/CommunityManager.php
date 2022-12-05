@@ -443,10 +443,6 @@ class CommunityManager
             $communityUsers = $this->communityUserRepository->findForCommunity($community, $context, $operationName);
 
             foreach ($communityUsers as $communityUser) {
-                if (CommunityUser::STATUS_ACCEPTED_AS_MEMBER !== $communityUser->getStatus() && CommunityUser::STATUS_ACCEPTED_AS_MODERATOR !== $communityUser->getStatus()) {
-                    continue;
-                }
-
                 $communityMember = new CommunityMember();
                 $communityMember->setId($communityUser->getUser()->getId());
                 $communityMember->setFirstName($communityUser->getUser()->getGivenName());
