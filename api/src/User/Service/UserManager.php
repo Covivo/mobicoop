@@ -1158,6 +1158,10 @@ class UserManager
             $user->setMobileRegistration($mobileRegistration);
             $event = new UserPasswordChangeAskedEvent($user);
             $this->eventDispatcher->dispatch($event, UserPasswordChangeAskedEvent::NAME);
+
+            $user->setPwdToken(null);
+
+            return $user;
         }
         // send response with the sender information in all case
         $user = new User();
