@@ -151,7 +151,7 @@ class CommunityManager
             $communityDomains = explode(';', str_replace('@', '', $community->getDomain()));
 
             foreach ($communityDomains as $communityDomain) {
-                if ($communityDomain == $userDomain) {
+                if (trim($communityDomain) == $userDomain) {
                     $authorized = true;
 
                     break;
@@ -321,6 +321,7 @@ class CommunityManager
 
         if (!is_null($community->getDomain())) {
             $community->setValidationType(Community::DOMAIN_VALIDATION);
+            $community->setDomain(trim($community->getDomain()));
         } else {
             $community->setValidationType(Community::AUTO_VALIDATION);
         }
