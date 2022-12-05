@@ -65,6 +65,8 @@ class UserController extends AbstractController
 {
     use HydraControllerTrait;
 
+    private const ALLOWED_TAB_TYPE = ['carpool', 'direct', 'solidary'];
+
     private $encoder;
     private $facebook_show;
     private $facebook_appid;
@@ -837,6 +839,7 @@ class UserController extends AbstractController
         $newThread = null;
         $idThreadDefault = null;
         $idMessage = $msgId ? $msgId : null;
+        $defaultThreadTab = null;
         $idRecipient = null;
         $idAsk = $askId ? $askId : null;
 
@@ -887,6 +890,10 @@ class UserController extends AbstractController
             }
         }
 
+        if ($request->isMethod('GET') && !is_null($request->get('type')) && in_array($request->get('type'), self::ALLOWED_TAB_TYPE)) {
+            $defaultThreadTab = $request->get('type');
+        }
+
         return $this->render('@Mobicoop/user/messages.html.twig', [
             'idUser' => $user->getId(),
             'emailUser' => $user->getEmail(),
@@ -900,6 +907,7 @@ class UserController extends AbstractController
             'newThread' => $newThread,
             'solidaryDisplay' => $this->solidaryDisplay,
             'fraudWarningDisplay' => $this->fraudWarningDisplay,
+            'defaultThreadTab' => $defaultThreadTab,
         ]);
     }
 

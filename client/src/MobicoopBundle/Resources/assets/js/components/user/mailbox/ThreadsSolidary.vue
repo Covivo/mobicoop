@@ -53,6 +53,10 @@ export default {
     ThreadCarpool
   },
   props: {
+    idMessage: {
+      type: Number,
+      default: null
+    },
     idThreadDefault:{
       type: Number,
       default:null
@@ -118,6 +122,9 @@ export default {
         .then(response => {
           this.SkeletonHidden = true;
           this.messages = response.data.threads;
+          if (this.idMessage) {
+            this.selectDefaultThread();
+          }
           // I'm pushing the new "virtual" thread
           if(this.newThread){
             response.data.threads.push({
@@ -137,6 +144,15 @@ export default {
     },
     name(givenName, shortFamilyName) {
       return givenName + " " + shortFamilyName;
+    },
+    selectDefaultThread: function() {
+      const i = this.messages.map(message => message.idMessage).indexOf(this.idMessage);
+
+      if (i !== -1) {
+        this.messages[i].selected = true;
+        this.messages[i].selectedDefault = true;
+        this.emitToggle({idAsk: this.messages[i].idAsk});
+      }
     }
   }
 }
