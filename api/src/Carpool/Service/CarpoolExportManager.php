@@ -112,9 +112,9 @@ class CarpoolExportManager
             $carpoolExport->setId($carpoolItem->getId());
             $carpoolExport->setDate($carpoolItem->getItemDate());
             $carpoolExport->setAmount($carpoolItem->getAmount());
-            $carpoolExport->setDistance($carpoolItem->getAsk()->getMatching()->getCommonDistance() / 1000);
-            $totalDistance = $totalDistance + ($carpoolItem->getAsk()->getMatching()->getCommonDistance() / 1000);
-            $totalSavedCo2 += ($this->userManager->computeSavedCo2($carpoolItem->getAsk(), $user->getId(), true));
+            $carpoolExport->setDistance(!is_null($carpoolItem->getAsk()) ? $carpoolItem->getAsk()->getMatching()->getCommonDistance() / 1000 : null);
+            $totalDistance += !is_null($carpoolItem->getAsk()) ? ($carpoolItem->getAsk()->getMatching()->getCommonDistance() / 1000) : 0;
+            $totalSavedCo2 += !is_null($carpoolItem->getAsk()) ? ($this->userManager->computeSavedCo2($carpoolItem->getAsk(), $user->getId(), true)) : 0;
             //    we set the payment mode
             if (0 !== $carpoolItem->getItemStatus()) {
                 // We check the status of the right role
