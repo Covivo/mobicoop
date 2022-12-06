@@ -19,17 +19,17 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Community\Repository;
 
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryResultCollectionExtensionInterface;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGenerator;
 use ApiPlatform\Core\DataProvider\PaginatorInterface;
 use App\Community\Entity\Community;
 use App\Community\Entity\CommunityUser;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGenerator;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryResultCollectionExtensionInterface;
 
 class CommunityUserRepository
 {
@@ -39,7 +39,7 @@ class CommunityUserRepository
     private $repository;
     private $collectionExtensions;
     private $communityNbLastUser;
-    
+
     public function __construct(EntityManagerInterface $entityManager, iterable $collectionExtensions, int $communityNbLastUser)
     {
         $this->repository = $entityManager->getRepository(CommunityUser::class);
@@ -48,9 +48,8 @@ class CommunityUserRepository
     }
 
     /**
-     * Find communities by criteria
+     * Find communities by criteria.
      *
-     * @param array $criteria
      * @return array
      */
     public function findBy(array $criteria)
@@ -59,55 +58,61 @@ class CommunityUserRepository
     }
 
     /**
-     * Find community users for a given community
+     * Find community users for a given community.
      *
-     * @param Community $community  The community
+     * @param Community $community The community
+     *
      * @return array The members
      */
     public function findForCommunity(Community $community, array $context = [], string $operationName): PaginatorInterface
     {
         $query = $this->repository->createQueryBuilder('cu');
-        $query->where("cu.community = :community")
-        ->join("cu.user", "u")
-        ->setParameter('community', $community);
-        
-        // Sort and Filters
-        if (isset($context["filters"])) {
+        $query->where('cu.community = :community')
+            ->andWhere('cu.status = :accepted_as_moderator or cu.status = :accepted_as_member')
+            ->join('cu.user', 'u')
+            ->setParameter('community', $community)
+            ->setParameter('accepted_as_moderator', CommunityUser::STATUS_ACCEPTED_AS_MODERATOR)
+            ->setParameter('accepted_as_member', CommunityUser::STATUS_ACCEPTED_AS_MEMBER)
+        ;
 
+        // Sort and Filters
+        if (isset($context['filters'])) {
             // Filters
-            $excludedFilters = ["page","perPage","order"];
-            foreach ($context["filters"] as $filter => $value) {
+            $excludedFilters = ['page', 'perPage', 'order'];
+            foreach ($context['filters'] as $filter => $value) {
                 if (!in_array($filter, $excludedFilters)) {
                     switch ($filter) {
-                        case "givenName":
-                        case "familyName":$query->andWhere("u.".$filter." like '%".$value."%'");
+                        case 'givenName':
+                        case 'familyName':$query->andWhere('u.'.$filter." like '%".$value."%'");
+
                             break;
-                        default: $query->andWhere("cu.".$filter." like '%".$value."%'");
+
+                        default: $query->andWhere('cu.'.$filter." like '%".$value."%'");
                     }
                 }
             }
 
             // Sort
-            if (isset($context["filters"]['order'])) {
-                foreach ($context["filters"]['order'] as $sort => $order) {
+            if (isset($context['filters']['order'])) {
+                foreach ($context['filters']['order'] as $sort => $order) {
                     switch ($sort) {
-                        case "givenName":
-                        case "familyName":$query->addOrderBy("u.".$sort, $order);
+                        case 'givenName':
+                        case 'familyName':$query->addOrderBy('u.'.$sort, $order);
+
                             break;
-                        default: $query->addOrderBy("cu.".$sort, $order);
+
+                        default: $query->addOrderBy('cu.'.$sort, $order);
                     }
                 }
             }
         }
-
 
         $queryNameGenerator = new QueryNameGenerator();
 
         foreach ($this->collectionExtensions as $extension) {
             $extension->applyToCollection($query, $queryNameGenerator, CommunityUser::class, $operationName, $context);
             if ($extension instanceof QueryResultCollectionExtensionInterface && $extension->supportsResult(CommunityUser::class, $operationName)) {
-                $result = $extension->getResult($query, CommunityUser::class, $operationName);
-                return $result;
+                return $extension->getResult($query, CommunityUser::class, $operationName);
             }
         }
 
@@ -115,36 +120,36 @@ class CommunityUserRepository
     }
 
     /**
-     * Get accepted members by their id if they accept emailing
+     * Get accepted members by their id if they accept emailing.
      *
-     * @param array $ids    The ids of the users
-     * @return array|null   The users
+     * @param array $ids The ids of the users
+     *
+     * @return null|array The users
      */
     public function findAcceptedDeliveriesByIds(array $ids)
     {
         return $this->repository->createQueryBuilder('cu')
-        ->join('cu.user', 'u')
-        ->where("cu.id IN(:ids) and u.newsSubscription=1 and cu.status IN (:statuses)")
-        ->setParameter('ids', $ids)
-        ->setParameter('statuses', [CommunityUser::STATUS_ACCEPTED_AS_MEMBER,CommunityUser::STATUS_ACCEPTED_AS_MODERATOR])
-        ->getQuery()->getResult();
+            ->join('cu.user', 'u')
+            ->where('cu.id IN(:ids) and u.newsSubscription=1 and cu.status IN (:statuses)')
+            ->setParameter('ids', $ids)
+            ->setParameter('statuses', [CommunityUser::STATUS_ACCEPTED_AS_MEMBER, CommunityUser::STATUS_ACCEPTED_AS_MODERATOR])
+            ->getQuery()->getResult();
     }
 
     /**
-     * @param Community $community
      * @return CommunityUser[]
      */
     public function findNLastUsersOfACommunity(Community $community): array
     {
         return $this->repository->createQueryBuilder('cu')
-        ->where('cu.community = :community')
-        ->andWhere('cu.status != :pending')
-        ->andWhere('cu.status != :refused')
-        ->orderBy('cu.createdDate', 'DESC')
-        ->setMaxResults($this->communityNbLastUser)
-        ->setParameter('community', $community)
-        ->setParameter('pending', CommunityUser::STATUS_PENDING)
-        ->setParameter('refused', CommunityUser::STATUS_REFUSED)
-        ->getQuery()->getResult();
+            ->where('cu.community = :community')
+            ->andWhere('cu.status != :pending')
+            ->andWhere('cu.status != :refused')
+            ->orderBy('cu.createdDate', 'DESC')
+            ->setMaxResults($this->communityNbLastUser)
+            ->setParameter('community', $community)
+            ->setParameter('pending', CommunityUser::STATUS_PENDING)
+            ->setParameter('refused', CommunityUser::STATUS_REFUSED)
+            ->getQuery()->getResult();
     }
 }

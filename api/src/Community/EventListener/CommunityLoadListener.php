@@ -19,30 +19,32 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Community\EventListener;
 
 use App\Community\Entity\Community;
 use App\Community\Entity\CommunityUser;
 use App\Community\Service\CommunityManager;
-use App\Image\Entity\Image;
+use App\User\Service\UserManager;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- * CommunityUser Event listener
+ * CommunityUser Event listener.
  */
 class CommunityLoadListener
 {
     private $requestStack;
     private $communityManager;
+    private $userManager;
     private $avatarDefault;
 
-    public function __construct(RequestStack $requestStack, CommunityManager $communityManager, string $avatarDefault)
+    public function __construct(RequestStack $requestStack, CommunityManager $communityManager, UserManager $userManager, string $avatarDefault)
     {
         $this->requestStack = $requestStack;
         $this->communityManager = $communityManager;
+        $this->userManager = $userManager;
         $this->avatarDefault = $avatarDefault;
     }
 
@@ -53,20 +55,11 @@ class CommunityLoadListener
 
             $community = $args->getEntity();
             if ($community instanceof Community) {
-                if ($request->get("userId")) {
-                    /** @var CommunityUser[] $communityUsers */
-                    $communityUsers = $community->getCommunityUsers();
-                    foreach ($communityUsers as $communityUser) {
-                        if ($request->get("userId") == $communityUser->getUser()->getId() &&
-                            ($communityUser->getStatus() == CommunityUser::STATUS_ACCEPTED_AS_MEMBER || CommunityUser::STATUS_ACCEPTED_AS_MODERATOR)
-                        ) {
-                            $community->setMember(true);
-                            break;
-                        }
-                    }
+                if ($request->get('userId')) {
+                    $community->setMember($this->communityManager->checkIfMember($this->userManager->getUser($request->get('userId')), $community));
                 }
                 // Number of members if this community
-                $community->setNbMembers(count($community->getCommunityUsers()));
+                $community->setNbMembers($this->communityManager->getNbMembers($community));
 
                 // Url Key of the community
                 $community->setUrlKey($this->communityManager->generateUrlKey($community));

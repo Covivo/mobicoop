@@ -463,7 +463,7 @@ class CommunityManager
             }
         }
 
-        return new CommunityMembersList($communityMembers, (is_array($community->getCommunityUsers())) ? count($community->getCommunityUsers()) : 0);
+        return new CommunityMembersList($communityMembers, count($communityMembers));
     }
 
     // MCommunity management
@@ -568,6 +568,32 @@ class CommunityManager
         }
 
         return $urlKey;
+    }
+
+    public function getNbMembers(Community $community): int
+    {
+        $communityUsers = $this->communityUserRepository->findBy(['community' => $community, 'status' => [CommunityUser::STATUS_ACCEPTED_AS_MEMBER, CommunityUser::STATUS_ACCEPTED_AS_MODERATOR]]);
+
+        return count($communityUsers);
+    }
+
+    public function checkIfMember(?User $user, Community $community): bool
+    {
+        if (is_null($user)) {
+            return false;
+        }
+
+        if ($this->communityUserRepository->findBy(
+            [
+                'user' => $user,
+                'community' => $community,
+                'status' => [CommunityUser::STATUS_ACCEPTED_AS_MEMBER, CommunityUser::STATUS_ACCEPTED_AS_MODERATOR],
+            ]
+        )) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
