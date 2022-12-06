@@ -8,6 +8,8 @@ use App\Payment\Event\ElectronicPaymentValidatedEvent;
 use App\User\Event\SsoAssociationEvent;
 use App\User\Event\SsoCreationEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Security;
 
 class MobConnectListener implements EventSubscriberInterface
@@ -17,19 +19,30 @@ class MobConnectListener implements EventSubscriberInterface
     private $_subscriptionManager;
 
     /**
+     * @var Request
+     */
+    private $_request;
+
+    /**
      * @var User
      */
     private $_user;
 
-    public function __construct(Security $security, MobConnectSubscriptionManager $subscriptionManager)
+    public function __construct(RequestStack $requestStack, Security $security, MobConnectSubscriptionManager $subscriptionManager)
     {
+        $this->_request = $requestStack->getCurrentRequest();
         $this->_user = $security->getUser();
         $this->_subscriptionManager = $subscriptionManager;
     }
 
-    private function __isUserMobConnected(): bool
+    private function __isRequestSetForCreatingSubscriptions(): bool
     {
-        return preg_match('/'.self::ALLOWED_PROVIDER.'/', $this->_user->getSsoProvider()) && !is_null($this->_user->getSsoId());
+        $decodedRequest = json_decode($this->_request->getContent());
+
+        return
+            isset($decodedRequest->fromSsoMobConnect)       // Is the `fromSsoMobConnect` param in the request
+            && $decodedRequest->fromSsoMobConnect           // The `fromSsoMobConnect` param is true
+            && $this->__isUserMobConnected();               // The current user is authenticated with mobConnect
     }
 
     private function __createSubscriptions($event)
@@ -44,6 +57,11 @@ class MobConnectListener implements EventSubscriberInterface
         }
     }
 
+    private function __isUserMobConnected(): bool
+    {
+        return preg_match('/'.self::ALLOWED_PROVIDER.'/', $this->_user->getSsoProvider()) && !is_null($this->_user->getSsoId());
+    }
+
     public static function getSubscribedEvents()
     {
         return [
@@ -56,14 +74,14 @@ class MobConnectListener implements EventSubscriberInterface
 
     public function onUserAssociated(SsoAssociationEvent $event)
     {
-        if ($this->__isUserMobConnected()) {
+        if ($this->__isRequestSetForCreatingSubscriptions()) {
             $this->__createSubscriptions($event);
         }
     }
 
     public function onUserCreated(SsoCreationEvent $event)
     {
-        if ($this->__isUserMobConnected()) {
+        if ($this->__isRequestSetForCreatingSubscriptions()) {
             $this->__createSubscriptions($event);
         }
     }
@@ -71,12 +89,16 @@ class MobConnectListener implements EventSubscriberInterface
     // For long distance journey
     public function onPaymentValidated(ElectronicPaymentValidatedEvent $event)
     {
-        $this->_subscriptionManager->updateLongDistanceSubscription($event->getCarpoolPayment());
+        if ($this->__isUserMobConnected()) {
+            $this->_subscriptionManager->updateLongDistanceSubscription($event->getCarpoolPayment());
+        }
     }
 
     // For short distance journey
     public function onProofValidated(CarpoolProofValidatedEvent $event)
     {
-        $this->_subscriptionManager->updateShortDistanceSubscription($event->getCarpoolProof());
+        if ($this->__isUserMobConnected()) {
+            $this->_subscriptionManager->updateShortDistanceSubscription($event->getCarpoolProof());
+        }
     }
 }
