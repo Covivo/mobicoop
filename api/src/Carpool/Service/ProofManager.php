@@ -128,6 +128,27 @@ class ProofManager
             return $carpoolProof;
         }
 
+        if (
+            is_null($carpoolProof->getPickUpPassengerAddress())
+            || is_null($carpoolProof->getDropOffPassengerAddress())
+            || is_null($carpoolProof->getPickUpDriverAddress())
+            || is_null($carpoolProof->getDropOffDriverAddress())
+        ) {
+            return $carpoolProof;
+        }
+
+        $pickUpPassengerAddress = $carpoolProof->getPickUpPassengerAddress();
+        $dropOffPassengerAddress = $carpoolProof->getDropOffPassengerAddress();
+        $pickUpDriverAddress = $carpoolProof->getPickUpDriverAddress();
+        $dropOffDriverAddress = $carpoolProof->getDropOffDriverAddress();
+
+        $pickUpsDistance = round($this->geoTools->get_distance_m($pickUpPassengerAddress->getLatitude(), $pickUpPassengerAddress->getLongitude(), $pickUpDriverAddress->getLatitude(), $pickUpDriverAddress->getLongitude()), 3);
+        $dropOffsDistance = round($this->geoTools->get_distance_m($dropOffPassengerAddress->getLatitude(), $dropOffPassengerAddress->getLongitude(), $dropOffDriverAddress->getLatitude(), $dropOffDriverAddress->getLongitude()), 3);
+
+        if (($pickUpsDistance > CarpoolProof::MINIMUM_DISTANCE_GPS_FOR_TYPE_HIGH) || ($dropOffsDistance > CarpoolProof::MINIMUM_DISTANCE_GPS_FOR_TYPE_HIGH)) {
+            return $carpoolProof;
+        }
+
         $driverPaymentProfile = $this->paymentProfileRepository->findBy(
             [
                 'user' => $carpoolProof->getDriver(),
