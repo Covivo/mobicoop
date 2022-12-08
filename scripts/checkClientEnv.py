@@ -20,11 +20,12 @@
 # LICENSE
 # #######################################
 
-import os.path
 import argparse
 import collections
+import os.path
 import re
 import string
+import sys
 
 script_absolute_path = os.path.dirname(os.path.realpath(__file__))
 platform_path = os.path.abspath(script_absolute_path
@@ -117,13 +118,11 @@ print ("\033[0;37;40m")
 
 # find api .env
 if not os.path.isfile(f"{api_path}/.env"):
-    print (f"API .env not found in {api_path}!")
-    exit()
+    sys.exit(f"API .env not found in {api_path}!")
 
 # find client .env
 if not os.path.isfile(f"{client_path}/.env"):
-    print (f"Client .env not found in {client_path}!")
-    exit()
+    sys.exit(f"Client .env not found in {client_path}!")
 
 # find instance .env file and append or create it
 with open(".env", mode="a", encoding="utf-8") as env_file:
