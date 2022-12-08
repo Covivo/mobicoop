@@ -140,9 +140,9 @@ class ExternalJourneyManager
             $carpooler->setId($currentJourneyCarpooler['uuid']);
             $carpooler->setGivenName($currentJourneyCarpooler['alias']);
             $carpooler->setGender(User::GENDER_FEMALE);
-            // if ('male' === $currentJourneyCarpooler['gender']) {
-            //     $carpooler->setGender(User::GENDER_MALE);
-            // }
+            if ('male' === $currentJourneyCarpooler['gender']) {
+                $carpooler->setGender(User::GENDER_MALE);
+            }
             if (is_null($currentJourneyCarpooler['image'])) {
                 foreach (json_decode($this->params['avatarSizes']) as $size) {
                     if (in_array($size, User::AUTHORIZED_SIZES_DEFAULT_AVATAR)) {
@@ -210,7 +210,7 @@ class ExternalJourneyManager
             $origin = new Address();
             $origin->setLatitude($currentJourney['from']['latitude']);
             $origin->setLongitude($currentJourney['from']['longitude']);
-            // $origin->setStreetAddress($currentJourney['from']['address']);
+            $origin->setStreetAddress($currentJourney['from']['address']);
             $origin->setPostalCode(isset($currentJourney['from']['postalcode']) ? $currentJourney['from']['postalcode'] : null);
             $origin->setAddressLocality($currentJourney['from']['city']);
             $origin->setAddressCountry($currentJourney['from']['country']);
@@ -220,7 +220,7 @@ class ExternalJourneyManager
             $destination = new Address();
             $destination->setLatitude($currentJourney['to']['latitude']);
             $destination->setLongitude($currentJourney['to']['longitude']);
-            // $destination->setStreetAddress($currentJourney['to']['address']);
+            $destination->setStreetAddress($currentJourney['to']['address']);
             $destination->setPostalCode(isset($currentJourney['to']['postalcode']) ? $currentJourney['to']['postalcode'] : null);
             $destination->setAddressLocality($currentJourney['to']['city']);
             $destination->setAddressCountry($currentJourney['to']['country']);
