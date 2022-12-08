@@ -77,6 +77,7 @@ class DataProvider
     public const RETURN_ARRAY = 2;
     public const RETURN_JSON = 3;
     public const RETURN_LDJSON = 4;
+    private const MOB_CONNECT_CEE_LOGIN = '1';
 
     private $uri;
     private $username;
@@ -472,7 +473,7 @@ class DataProvider
                 $clientResponse = $this->client->get($this->resource, ['query' => $params, 'headers' => $headers]);
             } else {
                 $headers = $this->getHeaders();
-                //var_dump($this->resource, ['query'=>$params, 'headers' => $headers]);die;
+                // var_dump($this->resource, ['query'=>$params, 'headers' => $headers]);die;
 
                 $clientResponse = $this->client->get($this->resource, ['query' => $params, 'headers' => $headers]);
             }
@@ -530,9 +531,9 @@ class DataProvider
      * @param string     $subClassRoute The class route of the subresource (used for custom routes, if not provided the route will be the subClassName pluralized)
      * @param null|array $params        An array of parameters
      *
-     * @throws \ReflectionException
-     *
      * @return Response the response of the operation
+     *
+     * @throws \ReflectionException
      */
     public function getSubCollection(int $id, string $subClassName, ?string $subClassRoute = null, ?array $params = null): Response
     {
@@ -943,7 +944,7 @@ class DataProvider
                 } catch (ServerException $e) {
                     throw new ApiTokenException('Unable to get an API token.');
                 } catch (ClientException $e) {
-                    //Wrong credentials
+                    // Wrong credentials
                     if ('401' == $e->getCode()) {
                         return new JsonResponse('bad-credentials-api');
                     }
@@ -951,6 +952,21 @@ class DataProvider
                     throw new ApiTokenException('Unable to get an API token.');
                 }
             } elseif (!is_null($this->ssoId) && !is_null($this->ssoProvider)) {
+                $params = [
+                    'ssoId' => $this->ssoId,
+                    'ssoProvider' => $this->ssoProvider,
+                    'baseSiteUri' => $this->baseSiteUri,
+                ];
+
+                if (!is_null($this->request->get('fromMobConnectSso') && self::MOB_CONNECT_CEE_LOGIN === $this->request->get('fromMobConnectSso'))) {
+                    $params['fromSsoMobConnect'] = true;
+                }
+
+                $clientResponse = $this->client->post($this->authLoginPath, [
+                    'headers' => ['accept' => 'application/json'],
+                    RequestOptions::JSON => $params,
+                ]);
+
                 try {
                     $clientResponse = $this->client->post($this->authLoginPath, [
                         'headers' => ['accept' => 'application/json'],
@@ -964,7 +980,7 @@ class DataProvider
                 } catch (ServerException $e) {
                     throw new ApiTokenException('Unable to get an API token.');
                 } catch (ClientException $e) {
-                    //Wrong credentials
+                    // Wrong credentials
                     if ('401' == $e->getCode()) {
                         return new JsonResponse('bad-credentials-api');
                     }
@@ -986,7 +1002,7 @@ class DataProvider
                 } catch (ServerException $e) {
                     throw new ApiTokenException('Unable to get an API token.');
                 } catch (ClientException $e) {
-                    //Wrong credentials
+                    // Wrong credentials
                     if ('401' == $e->getCode()) {
                         return new JsonResponse('bad-credentials-api');
                     }
@@ -1007,7 +1023,7 @@ class DataProvider
                 } catch (ServerException $e) {
                     throw new ApiTokenException('Unable to get an API token.');
                 } catch (ClientException $e) {
-                    //Wrong credentials
+                    // Wrong credentials
                     if ('401' == $e->getCode()) {
                         return new JsonResponse('bad-credentials-api');
                     }
