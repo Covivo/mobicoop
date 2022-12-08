@@ -126,9 +126,8 @@ if not os.path.isfile(f"{client_path}/.env"):
     exit()
 
 # find instance .env file and append or create it
-if not os.path.isfile(".env"):
-    print ("Instance .env not found!")
-    exit()
+with open(".env", mode="a", encoding="utf-8") as env_file:
+    pass
 
 # create api dictionary
 dict_api = env_file_to_dict(f"{api_path}/.env")
