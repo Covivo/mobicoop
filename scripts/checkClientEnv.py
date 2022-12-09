@@ -138,9 +138,6 @@ if not os.path.isfile(f"{client_path}/.env"):
 with open(".env", mode="a", encoding="utf-8") as env_file:
     pass
 
-# create client dictionary
-dict_client = env_file_to_dict(f"{client_path}/.env")
-
 # create instance dictionary
 dict_instance = env_file_to_dict(".env")
 
@@ -149,13 +146,24 @@ key_not_found = string.Template(
   "Key \033[1;37;40m$key\033[0;37;40m not found!")
 
 if args.dry:
+    # here we need only the keys of client env
+    client_keys = get_keys_from_file(f"{client_path}/.env")
+    #check the differences
     differences = False
-    for key in filter(lambda key: key not in dict_instance, dict_client):
+    for key in filter(lambda key: key not in dict_instance, client_keys):
         print(key_not_found.substitute({'key': key}))
         differences = True
     if not differences:
         print("No differences found")
 else:
+    # here we need both keys and values of client env
+    with open(f"{client_path}/.env", mode="r", encoding="utf-8") as clt_env:
+        dict_client = {
+            match.group("key"): match.group("value").strip() for match in
+            map(lambda line: key_value_regexp.match(line), clt_env)
+            if match
+        }
+    # check the differences
     differences = False
     with open(".env", mode="a+", encoding="utf-8") as dotenv_instance:
         for key in filter(lambda key: key not in dict_instance, dict_client):
