@@ -22,6 +22,7 @@
 
 import os.path
 import argparse
+import string
 from crontab import CronTab
 
 script_absolute_path = os.path.dirname(os.path.realpath(__file__))
@@ -36,10 +37,10 @@ parser = argparse.ArgumentParser(
   ' It has to be launched by the target crontab user.',
   formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 parser.add_argument('-c', '--console', default=console_path,
-                    dest='console_path', help='The console command path')
-parser.add_argument('-e', '--env', default='dev', dest='env_mode',
+                    help='The console command path')
+parser.add_argument('-e', '--env', default='dev',
                     choices=('test', 'dev', 'prod'), help='The environment')
-parser.add_argument('-p', '--php', default='php', dest='php_path',
+parser.add_argument('-p', '--php', default='php',
                     help='The absolute path to the php binary')
 # read arguments
 args = parser.parse_args()
@@ -54,11 +55,13 @@ with open(file=crontab_file_path, mode="r", encoding="utf-8") as crontab_file:
         if not line.strip() or line[0] == '#':
             continue
 
-        line = line.replace("$1", args.php_path)
-        line = line.replace("$2", args.console_path)
-        line = line.replace("$3", args.env_mode)
+        line = string.Template(line).substitute({
+            'console': args.console,
+            'env': args.env,
+            'php': args.php
+        })
 
-        schedule = line.split(args.php_path, 1)[0].strip()
+        schedule = line.split(args.php, 1)[0].strip()
         command = line.split(schedule, 1)[1].strip()
 
         # search if job already exists
