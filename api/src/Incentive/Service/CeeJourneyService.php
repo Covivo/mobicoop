@@ -187,7 +187,6 @@ abstract class CeeJourneyService
             && self::__isLongDistance(self::$_matching->getCommonDistance())
             && self::__isOriginOrDestinationFromReferenceCountry()
             && !is_null($carpoolProof->getAsk()->getCriteria())
-            && CeeStatus::LONG_DISTANCE_MINIMUM_PRICE_BY_KM < $carpoolProof->getAsk()->getCriteria()->getPriceKm()
             && self::__hasBeenCarpoolPaymentRegularized($carpoolProof)
         ;
     }
