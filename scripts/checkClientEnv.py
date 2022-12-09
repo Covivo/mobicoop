@@ -138,9 +138,6 @@ if not os.path.isfile(f"{client_path}/.env"):
 with open(".env", mode="a", encoding="utf-8") as env_file:
     pass
 
-# create instance dictionary
-dict_instance = env_file_to_dict(".env")
-
 # check for differences
 key_not_found = string.Template(
   "Key \033[1;37;40m$key\033[0;37;40m not found!")
@@ -148,9 +145,11 @@ key_not_found = string.Template(
 if args.dry:
     # here we need only the keys of client env
     client_keys = get_keys_from_file(f"{client_path}/.env")
+    # get instance keys
+    instance_keys = get_keys_from_file(".env")
     #check the differences
     differences = False
-    for key in filter(lambda key: key not in dict_instance, client_keys):
+    for key in filter(lambda key: key not in instance_keys, client_keys):
         print(key_not_found.substitute({'key': key}))
         differences = True
     if not differences:
@@ -165,8 +164,15 @@ else:
         }
     # check the differences
     differences = False
-    with open(".env", mode="a+", encoding="utf-8") as dotenv_instance:
-        for key in filter(lambda key: key not in dict_instance, dict_client):
+    with open(".env", mode="r+", encoding="utf-8") as dotenv_instance:
+        # get instance keys
+        instance_keys = {
+            match.group("key") for match in
+            map(lambda line: key_value_regexp.match(line), dotenv_instance)
+            if match
+        }
+        # add missing keys and values
+        for key in filter(lambda key: key not in instance_keys, dict_client):
             print(key_not_found.substitute({'key': key}))
             print(f"=> adding it with default value: {dict_client[key]}")
             dotenv_instance.write(f"\n{key}={dict_client[key]}")
@@ -211,7 +217,7 @@ print (f"Checking instance .env.{env}.local")
 print ("\033[0;37;40m")
 if dict_instance_local:
     unnecessary_keys = False
-    for key in filter(lambda key: key not in dict_instance,
+    for key in filter(lambda key: key not in instance_keys,
                       dict_instance_local):
         print(key_not_found.substitute(key=key, where="instance .env"))
         unnecessary_keys = True
