@@ -62,6 +62,16 @@ api_path = f"{args.path}/api"
 key_value_regexp = re.compile('(?P<key>[^#=]+)=(?P<value>[^#]*)')
 
 
+def get_keys_from_file(filename):
+
+    with open(filename, mode="r", encoding="utf-8") as file:
+        keys = {
+            match.group("key") for match in
+            map(lambda line: key_value_regexp.match(line), file)
+            if match
+        }
+    return keys
+
 class DuplicatesCounter:
 
     def __init__(self):
