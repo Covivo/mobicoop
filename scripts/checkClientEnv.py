@@ -59,7 +59,14 @@ env = args.env
 client_path = f"{args.path}/client"
 api_path = f"{args.path}/api"
 
-key_value_regexp = re.compile('(?P<key>[^#=]+)=(?P<value>[^#]*)')
+
+class KeyAndValue:
+
+    key_value_regexp = re.compile('(?P<key>[^#=]+)=(?P<value>[^#]*)')
+
+    @staticmethod
+    def matches(line):
+        return KeyAndValue.key_value_regexp.match(line)
 
 
 def get_keys_from_file(filename):
@@ -67,7 +74,7 @@ def get_keys_from_file(filename):
     with open(filename, mode="r", encoding="utf-8") as file:
         keys = {
             match.group("key") for match in
-            map(lambda line: key_value_regexp.match(line), file)
+            map(KeyAndValue.matches, file)
             if match
         }
     return keys
@@ -81,7 +88,7 @@ def keys_and_duplicates_from_env_file(file):
     with open(file, mode="r", encoding="utf-8") as dotenv:
         counter = collections.Counter(
             match.group("key") for match in
-            map(lambda line: key_value_regexp.match(line), dotenv)
+            map(KeyAndValue.matches, dotenv)
             if match
         )
 
@@ -138,7 +145,7 @@ else:
     with open(f"{client_path}/.env", mode="r", encoding="utf-8") as clt_env:
         dict_client = {
             match.group("key"): match.group("value").strip() for match in
-            map(lambda line: key_value_regexp.match(line), clt_env)
+            map(KeyAndValue.matches, clt_env)
             if match
         }
     # check the differences
@@ -147,7 +154,7 @@ else:
         # get instance keys
         instance_keys = {
             match.group("key") for match in
-            map(lambda line: key_value_regexp.match(line), dotenv_instance)
+            map(KeyAndValue.matches, dotenv_instance)
             if match
         }
         # add missing keys and values
