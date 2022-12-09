@@ -138,9 +138,6 @@ if not os.path.isfile(f"{client_path}/.env"):
 with open(".env", mode="a", encoding="utf-8") as env_file:
     pass
 
-# create api dictionary
-dict_api = env_file_to_dict(f"{api_path}/.env")
-
 # create client dictionary
 dict_client = env_file_to_dict(f"{client_path}/.env")
 
@@ -220,8 +217,10 @@ print ("\033[1;34;40m")
 print (f"Checking API .env.{env}.local")
 print ("\033[0;37;40m")
 if dict_api_local:
+    # get api keys
+    api_keys = get_keys_from_file(f"{api_path}/.env")
     unnecessary_keys = False
-    for key in filter(lambda key: key not in dict_api, dict_api_local):
+    for key in filter(lambda key: key not in api_keys, dict_api_local):
         print(key_not_found.substitute(key=key, where=f"API {api_path}/.env"))
         unnecessary_keys = True
     if not unnecessary_keys:
