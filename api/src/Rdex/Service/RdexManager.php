@@ -298,7 +298,6 @@ class RdexManager
     public function getJourneys(array $parameters)
     {
         $returnArray = [];
-        $journeys = [];
 
         if (is_null($this->client)) {
             return new RdexError('apikey', RdexError::ERROR_ACCESS_DENIED, 'Invalid apikey');

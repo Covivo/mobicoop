@@ -35,6 +35,7 @@ use App\Carpool\Event\DriverAskAdDeletedUrgentEvent;
 use App\Carpool\Event\PassengerAskAdDeletedEvent;
 use App\Carpool\Event\PassengerAskAdDeletedUrgentEvent;
 use App\Carpool\Event\ProposalPostedEvent;
+use App\Carpool\Exception\AdException;
 use App\Carpool\Repository\CriteriaRepository;
 use App\Carpool\Repository\MatchingRepository;
 use App\Carpool\Repository\ProposalRepository;
@@ -178,7 +179,11 @@ class ProposalManager
      */
     public function prepareProposal(Proposal $proposal): Proposal
     {
-        return $this->treatProposal($this->setDefaults($proposal), true, $proposal->isPrivate() ? false : true);
+        try {
+            return $this->treatProposal($this->setDefaults($proposal), true, $proposal->isPrivate() ? false : true);
+        } catch (AdException $exception) {
+            throw $exception;
+        }
     }
 
     /**
@@ -198,7 +203,11 @@ class ProposalManager
         $proposal = $this->setMinMax($proposal);
 
         // set the directions
-        $proposal = $this->setDirections($proposal);
+        try {
+            $proposal = $this->setDirections($proposal);
+        } catch (AdException $exception) {
+            throw $exception;
+        }
 
         // we have the directions, we can compute the lacking prices
         $proposal = $this->setPrices($proposal);
@@ -241,9 +250,9 @@ class ProposalManager
     }
 
     /**
-     * @throws \Exception
-     *
      * @return Response
+     *
+     * @throws \Exception
      */
     public function deleteProposal(Proposal $proposal, ?array $body = null)
     {
@@ -286,7 +295,7 @@ class ProposalManager
                         $event = new AskAdDeletedEvent($ask, $deleter->getId());
                         $this->eventDispatcher->dispatch(AskAdDeletedEvent::NAME, $event);
                     }
-                    // Ask user is passenger
+                // Ask user is passenger
                 } elseif (($this->askManager->isAskUserPassenger($ask) && ($ask->getUser()->getId() == $deleter->getId())) || ($this->askManager->isAskUserDriver($ask) && ($ask->getUserRelated()->getId() == $deleter->getId()))) {
                     // TO DO check if the deletion is just before 24h and in that case send an other email
                     // /** @var Criteria $criteria */
@@ -859,7 +868,9 @@ class ProposalManager
                 // if we ever want alternative routes we should pass the route as parameter of this method
                 // (problem : the route has no id, we should pass the whole route to check which route is chosen by the user...
                 //      => we would have to think of a way to simplify...)
-                $direction = $routes[0];
+                if (($direction = $routes[0]) == null) {
+                    throw new AdException(AdException::NO_DIRECTION);
+                }
                 $direction->setAutoGeoJsonDetail();
                 $proposal->getCriteria()->setDirectionDriver($direction);
                 $proposal->getCriteria()->setMaxDetourDistance($direction->getDistance() * $this->proposalMatcher::getMaxDetourDistancePercent() / 100);
@@ -888,6 +899,8 @@ class ProposalManager
                     $direction->setAutoGeoJsonDetail();
                     $proposal->getCriteria()->setDirectionPassenger($direction);
                 }
+            } else {
+                throw new AdException(AdException::NO_DIRECTION);
             }
         }
 
