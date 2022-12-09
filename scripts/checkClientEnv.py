@@ -72,49 +72,28 @@ def get_keys_from_file(filename):
         }
     return keys
 
-class DuplicatesCounter:
-
-    def __init__(self):
-        self.d = collections.defaultdict(int)
-
-    def compute(self, key):
-        self.d[key] += 1
-
-    def print(self):
-        duplicates = False
-        for key, count in filter(lambda t: t[1] > 1, self.d.items()):
-            print(f"Duplicate key \033[1;37;40m{key}\033[0;37;40m"
-                  f" {count-1} times")
-            duplicates = True
-        if not duplicates:
-            print("No duplicates found")
-
-class DuplicatesBypass:
-
-    def compute(self, key):
-        pass
-
-    def print(self):
-        pass
-
-def env_file_to_dict(file, duplicates=DuplicatesBypass()):
-
-    my_dict = {}
+def keys_and_duplicates_from_env_file(file):
 
     if not os.path.isfile(file):
         print(f"{file} not found!")
-        return my_dict
+        return set()
 
     with open(file, mode="r", encoding="utf-8") as dotenv:
-        for line in dotenv:
-            match = key_value_regexp.match(line)
-            if match:
-                my_dict[match.group('key')] = match.group('value').strip()
-                duplicates.compute(match.group('key'))
+        counter = collections.Counter(
+            match.group("key") for match in
+            map(lambda line: key_value_regexp.match(line), dotenv)
+            if match
+        )
 
-    duplicates.print()
+    duplicates = False
+    for key, count in filter(lambda t: t[1] > 1, counter.items()):
+        print(f"Duplicate key \033[1;37;40m{key}\033[0;37;40m"
+                f" {count-1} times")
+        duplicates = True
+    if not duplicates:
+        print("No duplicates found")
 
-    return my_dict
+    return set(counter)
 
 ####################################################
 # 1. check differences between bundle and instance #
@@ -193,12 +172,12 @@ print ("----------------------")
 print ("\033[1;34;40m")
 print (f"Checking instance .env.{env}.local")
 print ("\033[0;37;40m")
-dict_instance_local = env_file_to_dict(f".env.{env}.local", DuplicatesCounter())
+instance_local_keys = keys_and_duplicates_from_env_file(f".env.{env}.local")
 
 print ("\033[1;34;40m")
 print (f"Checking API .env.{env}.local")
 print ("\033[0;37;40m")
-dict_api_local = env_file_to_dict(f"{api_path}/.env.{env}.local", DuplicatesCounter())
+api_local_keys = keys_and_duplicates_from_env_file(f"{api_path}/.env.{env}.local")
 
 ################################
 # 3. identify unnecessary keys #
@@ -216,10 +195,10 @@ key_not_found = string.Template(
 print ("\033[1;34;40m")
 print (f"Checking instance .env.{env}.local")
 print ("\033[0;37;40m")
-if dict_instance_local:
+if instance_local_keys:
     unnecessary_keys = False
     for key in filter(lambda key: key not in instance_keys,
-                      dict_instance_local):
+                      instance_local_keys):
         print(key_not_found.substitute(key=key, where="instance .env"))
         unnecessary_keys = True
     if not unnecessary_keys:
@@ -231,11 +210,11 @@ else:
 print ("\033[1;34;40m")
 print (f"Checking API .env.{env}.local")
 print ("\033[0;37;40m")
-if dict_api_local:
+if api_local_keys:
     # get api keys
     api_keys = get_keys_from_file(f"{api_path}/.env")
     unnecessary_keys = False
-    for key in filter(lambda key: key not in api_keys, dict_api_local):
+    for key in filter(lambda key: key not in api_keys, api_local_keys):
         print(key_not_found.substitute(key=key, where=f"API {api_path}/.env"))
         unnecessary_keys = True
     if not unnecessary_keys:
