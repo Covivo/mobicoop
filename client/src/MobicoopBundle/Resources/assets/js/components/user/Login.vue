@@ -42,6 +42,7 @@
               v-model="email"
               :rules="emailRules"
               :label="$t('email')"
+              :placeholder="$t('email')"
               name="email"
               required
               aria-required="true"
@@ -56,6 +57,7 @@
               :type="showPwd ? 'text' : 'password'"
               name="password"
               :label="$t('password')"
+              :placeholder="$t('password')"
               :aria-label="$t('password')"
               aria-required="true"
               @click:append="showPwd = !showPwd"
@@ -251,7 +253,7 @@ export default {
             return false;
           }
         }
-        
+
         return true;
       }
 
