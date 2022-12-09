@@ -454,8 +454,6 @@ class ShortDistanceSubscription
 
     /**
      * Get the value of createdAt.
-     *
-     * @return \DateTimeInterface
      */
     public function getCreatedAt(): \DateTime
     {
@@ -464,8 +462,6 @@ class ShortDistanceSubscription
 
     /**
      * Get the value of updatedAt.
-     *
-     * @return \DateTimeInterface
      */
     public function getUpdatedAt(): \DateTime
     {
