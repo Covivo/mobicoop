@@ -172,10 +172,11 @@ else:
             if match
         }
         # add missing keys and values
-        for key in filter(lambda key: key not in instance_keys, dict_client):
+        for key, value in filter(lambda pair: pair[0] not in instance_keys,
+                                 dict_client.items()):
             print(key_not_found.substitute({'key': key}))
-            print(f"=> adding it with default value: {dict_client[key]}")
-            dotenv_instance.write(f"\n{key}={dict_client[key]}")
+            print(f"=> adding it with default value: {value}")
+            dotenv_instance.write(f"\n{key}={value}")
             differences = True
     if not differences:
         print("No differences found")
