@@ -159,6 +159,8 @@ else:
             print(key_not_found.substitute({'key': key}))
             print(f"=> adding it with default value: {value}")
             dotenv_instance.write(f"\n{key}={value}")
+            # add the key in instance_keys since it will be used later
+            instance_keys.add(key)
             differences = True
     if not differences:
         print("No differences found")
