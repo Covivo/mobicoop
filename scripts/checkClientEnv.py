@@ -142,15 +142,8 @@ if args.dry:
         print("No differences found")
 else:
     # here we need both keys and values of client env
-    with open(f"{client_path}/.env", mode="r", encoding="utf-8") as clt_env:
-        dict_client = {
-            match.group("key"): match.group("value").strip() for match in
-            map(KeyAndValue.matches, clt_env)
-            if match
-        }
-    # check the differences
-    differences = False
-    with open(".env", mode="r+", encoding="utf-8") as dotenv_instance:
+    with open(".env", mode="r+", encoding="utf-8") as dotenv_instance,\
+         open(f"{client_path}/.env", mode="r", encoding="utf-8") as clt_env:
         # get instance keys
         instance_keys = {
             match.group("key") for match in
@@ -158,8 +151,11 @@ else:
             if match
         }
         # add missing keys and values
-        for key, value in filter(lambda pair: pair[0] not in instance_keys,
-                                 dict_client.items()):
+        differences = False
+        for match in filter(lambda match: match and
+                            match.group("key") not in instance_keys,
+                            map(KeyAndValue.matches, clt_env)):
+            key, value = match.group("key"), match.group("value").strip()
             print(key_not_found.substitute({'key': key}))
             print(f"=> adding it with default value: {value}")
             dotenv_instance.write(f"\n{key}={value}")
