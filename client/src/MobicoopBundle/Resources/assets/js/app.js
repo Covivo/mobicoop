@@ -6,8 +6,12 @@ import { store } from './store';
 
 import components from '@js/config/components'
 
+import { Incentive } from '@js/utils/eec-incentive';
+
 // Import css
 import '@css/main.scss'
+
+new Incentive();
 
 new Vue({
   el: '#app',

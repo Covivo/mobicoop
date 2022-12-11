@@ -1432,10 +1432,6 @@ class UserController extends AbstractController
             }
         }
 
-        if ($mobConnectOrigin) {
-            $params['fromMobConnectSso'] = true;
-        }
-
         return $this->redirectToRoute('user_login_sso', $params);
     }
 
@@ -1445,7 +1441,7 @@ class UserController extends AbstractController
      */
     public function userReturnConnectSSOMobConnect(Request $request)
     {
-        return $this->userReturnConnectSSO($request, true);
+        return $this->render('@Mobicoop/incentives/sso.html.twig');
     }
 
     /**
