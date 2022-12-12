@@ -40,7 +40,6 @@ class OpenIdSsoProvider implements SsoProviderInterface
     public const SSO_PROVIDER_GLCONNECT = 'GLConnect';
     public const SSO_PROVIDER_PASSMOBILITE = 'PassMobilite';
     public const SSO_PROVIDER_MOBCONNECT = 'mobConnect';
-    public const SSO_PROVIDER_MOBCONNECT_TEST = 'mobConnect-test';
 
     public const AUTHORIZATION_URL = 'Authorization_Url';
     public const TOKEN_URL = 'Token_Url';
@@ -59,17 +58,11 @@ class OpenIdSsoProvider implements SsoProviderInterface
             self::USERINFOS_URL => 'auth/realms/Passmobilite/protocol/openid-connect/userinfo',
             self::LOGOUT_URL => 'auth/realms/Passmobilite/protocol/openid-connect/logout?post_logout_redirect_uri={REDIRECT_URI}',
         ],
-        self::SSO_PROVIDER_MOBCONNECT_TEST => [
-            self::AUTHORIZATION_URL => '/auth/realms/mcm/protocol/openid-connect/auth?redirect_uri={REDIRECT_URI}&client_id={CLIENT_ID}&state={SERVICE_NAME}&response_mode=fragment&response_type=code&scope=openid&nonce=21a8befa-b65f-41c5-916b-29c9e8d70177&code_challenge_method=S256&code_challenge=6SIyGGLxI9gZsWbZnv-Go-jxElFTClo41RdC_XNQlzM&kc_idp_hint=franceconnect-particulier',
-            self::TOKEN_URL => 'auth/realms/Passmobilite/protocol/openid-connect/token/',
-            self::USERINFOS_URL => 'auth/realms/Passmobilite/protocol/openid-connect/userinfo',
-            self::LOGOUT_URL => 'auth/realms/Passmobilite/protocol/openid-connect/logout?post_logout_redirect_uri={REDIRECT_URI}',
-        ],
         self::SSO_PROVIDER_MOBCONNECT => [
-            self::AUTHORIZATION_URL => '/auth/realms/mcm/protocol/openid-connect/auth?redirect_uri={REDIRECT_URI}&client_id={CLIENT_ID}&state={SERVICE_NAME}&response_mode=fragment&response_type=code&scope=openid&nonce=21a8befa-b65f-41c5-916b-29c9e8d70177&code_challenge_method=S256&code_challenge=6SIyGGLxI9gZsWbZnv-Go-jxElFTClo41RdC_XNQlzM',
-            self::TOKEN_URL => 'auth/realms/Passmobilite/protocol/openid-connect/token/',
-            self::USERINFOS_URL => 'auth/realms/Passmobilite/protocol/openid-connect/userinfo',
-            self::LOGOUT_URL => 'auth/realms/Passmobilite/protocol/openid-connect/logout?post_logout_redirect_uri={REDIRECT_URI}',
+            self::AUTHORIZATION_URL => '/auth/realms/mcm/protocol/openid-connect/auth?redirect_uri={REDIRECT_URI}&client_id={CLIENT_ID}&state={SERVICE_NAME}&response_mode=fragment&response_type=code&scope=openid&nonce=21a8befa-b65f-41c5-916b-29c9e8d70177&code_challenge_method=S256&code_challenge=6SIyGGLxI9gZsWbZnv-Go-jxElFTClo41RdC_XNQlzM&kc_idp_hint=franceconnect-particulier',
+            self::TOKEN_URL => 'auth/realms/mcm/protocol/openid-connect/token',
+            self::USERINFOS_URL => 'auth/realms/mcm/protocol/openid-connect/userinfo',
+            self::LOGOUT_URL => 'auth/realms/mcm/protocol/openid-connect/logout?post_logout_redirect_uri={REDIRECT_URI}',
         ],
     ];
 
@@ -207,7 +200,6 @@ class OpenIdSsoProvider implements SsoProviderInterface
         $dataProvider = new DataProvider($this->baseUri, self::URLS[$this->serviceName][self::TOKEN_URL]);
 
         $response = $dataProvider->postCollection($body, null, null, DataProvider::BODY_TYPE_FORM_PARAMS, [$this->clientId, $this->clientSecret]);
-
         if (200 == $response->getCode()) {
             $data = json_decode($response->getValue(), true);
 

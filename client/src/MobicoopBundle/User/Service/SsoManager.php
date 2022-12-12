@@ -28,7 +28,7 @@ namespace Mobicoop\Bundle\MobicoopBundle\User\Service;
  */
 class SsoManager
 {
-    private const ALLOWED_PROVIDERS = ['GLConnect', 'mobConnect', 'mobConnect-test', 'PassMobilite'];
+    private const ALLOWED_PROVIDERS = ['GLConnect', 'mobConnect', 'PassMobilite'];
 
     /**
      * Guess and return the parameters for a SSO connection.
@@ -40,7 +40,14 @@ class SsoManager
         $return = [];
 
         if (isset($params['state']) && in_array($params['state'], self::ALLOWED_PROVIDERS)) {
-            $return = ['ssoId' => $params['code'], 'ssoProvider' => $params['state']];
+            $return = [
+                'ssoId' => $params['code'],
+                'ssoProvider' => $params['state'],
+            ];
+        }
+
+        if (isset($params['origin']) && 'mobConnect' === $params['origin']) {
+            $return['fromMobConnectSso'] = true;
         }
 
         return $return;

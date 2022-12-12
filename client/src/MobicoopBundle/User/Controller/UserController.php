@@ -1414,7 +1414,7 @@ class UserController extends AbstractController
      * Return page after a SSO Login
      * Url is something like /user/sso/login?state=PassMobilite&code=1.
      */
-    public function userReturnConnectSSO(Request $request, bool $mobConnectOrigin = false)
+    public function userReturnConnectSSO(Request $request)
     {
         $params = $this->ssoManager->guessSsoParameters($request->query->all());
 
@@ -1432,20 +1432,16 @@ class UserController extends AbstractController
             }
         }
 
-        if ($mobConnectOrigin) {
-            $params['fromMobConnectSso'] = true;
-        }
-
         return $this->redirectToRoute('user_login_sso', $params);
     }
 
     /**
      * Return page after a SSO Login from mobConnect
-     * Url is something like /user/sso/cee-incentive?state=PassMobilite&code=1.
+     * Url is something like /user/sso/cee-incentive?state=mobConnect&code=1.
      */
-    public function userReturnConnectSSOMobConnect(Request $request)
+    public function userReturnConnectSSOMobConnect()
     {
-        return $this->userReturnConnectSSO($request, true);
+        return $this->render('@Mobicoop/incentives/sso.html.twig');
     }
 
     /**
