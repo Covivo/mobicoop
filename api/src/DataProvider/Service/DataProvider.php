@@ -260,4 +260,56 @@ class DataProvider
 
         return new Response();
     }
+
+    /**
+     * Patch item operation.
+     *
+     * @param null|mixed $body     The body
+     * @param null|array $headers  An array of headers
+     * @param null|mixed $params   An array or string of parameters
+     * @param null|mixed $bodyType
+     *
+     * @return Response the response of the operation
+     */
+    public function patchItem($body = null, $headers = null, $params = null, $bodyType = null): Response
+    {
+        try {
+            $options = [];
+            if ($params) {
+                $options['query'] = $params;
+            }
+            if ($headers) {
+                $options['headers'] = $headers;
+            }
+            if ($body) {
+                if (is_null($bodyType)) {
+                    switch ($bodyType) {
+                        case self::BODY_TYPE_JSON: $options[self::BODY_TYPE_JSON] = $body;
+
+                            break;
+
+                        case self::BODY_TYPE_FORM_PARAMS: $options[self::BODY_TYPE_FORM_PARAMS] = $body;
+
+                            break;
+
+                        default: $options[self::BODY_TYPE_JSON] = $body;
+                    }
+                } else {
+                    $options[$bodyType] = $body;
+                }
+            }
+
+            $clientResponse = $this->client->patch($this->resource, $options);
+
+            switch ($clientResponse->getStatusCode()) {
+                case 200:
+                case 201:
+                    return new Response($clientResponse->getStatusCode(), $clientResponse->getBody());
+            }
+        } catch (TransferException $e) {
+            return new Response($e->getCode(), $e->getMessage());
+        }
+
+        return new Response();
+    }
 }
