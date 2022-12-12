@@ -371,31 +371,31 @@ class AskManager
                     if (isset($schedule['returnTime']) && '' != $schedule['returnTime']) {
                         if (isset($schedule['mon']) && $schedule['mon']) {
                             $criteriaReturn->setMonCheck(true);
-                            $criteria->setMonTime(new \DateTime($schedule['returnTime']));
+                            $criteriaReturn->setMonTime(new \DateTime($schedule['returnTime']));
                         }
                         if (isset($schedule['tue']) && $schedule['tue']) {
                             $criteriaReturn->setTueCheck(true);
-                            $criteria->setTueTime(new \DateTime($schedule['returnTime']));
+                            $criteriaReturn->setTueTime(new \DateTime($schedule['returnTime']));
                         }
                         if (isset($schedule['wed']) && $schedule['wed']) {
                             $criteriaReturn->setWedCheck(true);
-                            $criteria->setWedTime(new \DateTime($schedule['returnTime']));
+                            $criteriaReturn->setWedTime(new \DateTime($schedule['returnTime']));
                         }
                         if (isset($schedule['thu']) && $schedule['thu']) {
                             $criteriaReturn->setThuCheck(true);
-                            $criteria->setThuTime(new \DateTime($schedule['returnTime']));
+                            $criteriaReturn->setThuTime(new \DateTime($schedule['returnTime']));
                         }
                         if (isset($schedule['fri']) && $schedule['fri']) {
                             $criteriaReturn->setFriCheck(true);
-                            $criteria->setFriTime(new \DateTime($schedule['returnTime']));
+                            $criteriaReturn->setFriTime(new \DateTime($schedule['returnTime']));
                         }
                         if (isset($schedule['sat']) && $schedule['sat']) {
                             $criteriaReturn->setSatCheck(true);
-                            $criteria->setSatTime(new \DateTime($schedule['returnTime']));
+                            $criteriaReturn->setSatTime(new \DateTime($schedule['returnTime']));
                         }
                         if (isset($schedule['sun']) && $schedule['sun']) {
                             $criteriaReturn->setSunCheck(true);
-                            $criteria->setSunTime(new \DateTime($schedule['returnTime']));
+                            $criteriaReturn->setSunTime(new \DateTime($schedule['returnTime']));
                         }
                     }
                 }
