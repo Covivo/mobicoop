@@ -26,5 +26,5 @@ namespace App\Carpool\Exception;
 class AdException extends \LogicException
 {
     public const SELF_MATCHING = 'You cannot ask a carpool to yourself';
-    public const NO_DIRECTION = 'No direction';
+    public const WRONG_COORDINATES = 'Wrong coordinates';
 }

@@ -25,6 +25,7 @@ namespace App\Rdex\Service;
 
 use App\Carpool\Entity\Criteria;
 use App\Carpool\Entity\Result;
+use App\Carpool\Exception\AdException;
 use App\Carpool\Service\AdManager;
 use App\Carpool\Service\ProposalManager;
 use App\Communication\Service\NotificationManager;
@@ -163,9 +164,9 @@ class RdexManager
     /**
      * Validates the parameters of a request.
      *
-     * @return bool|RdexError True if validation is ok, error if not
-     *
      * @throws \Exception
+     *
+     * @return bool|RdexError True if validation is ok, error if not
      */
     public function validate(Request $request)
     {
@@ -303,18 +304,22 @@ class RdexManager
             return new RdexError('apikey', RdexError::ERROR_ACCESS_DENIED, 'Invalid apikey');
         }
 
-        $ad = $this->adManager->getAdForRdex(
-            $this->client->getName(),
-            $parameters['driver']['state'],
-            $parameters['passenger']['state'],
-            $parameters['from']['longitude'],
-            $parameters['from']['latitude'],
-            $parameters['to']['longitude'],
-            $parameters['to']['latitude'],
-            isset($parameters['frequency']) ? $parameters['frequency'] : 'punctual',
-            isset($parameters['days']) ? $parameters['days'] : null,
-            isset($parameters['outward']) ? $parameters['outward'] : null
-        );
+        try {
+            $ad = $this->adManager->getAdForRdex(
+                $this->client->getName(),
+                $parameters['driver']['state'],
+                $parameters['passenger']['state'],
+                $parameters['from']['longitude'],
+                $parameters['from']['latitude'],
+                $parameters['to']['longitude'],
+                $parameters['to']['latitude'],
+                isset($parameters['frequency']) ? $parameters['frequency'] : 'punctual',
+                isset($parameters['days']) ? $parameters['days'] : null,
+                isset($parameters['outward']) ? $parameters['outward'] : null
+            );
+        } catch (AdException $e) {
+            throw $e;
+        }
 
         if ($ad instanceof RdexError) {
             return $ad;

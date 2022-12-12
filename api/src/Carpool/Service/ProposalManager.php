@@ -179,11 +179,7 @@ class ProposalManager
      */
     public function prepareProposal(Proposal $proposal): Proposal
     {
-        try {
-            return $this->treatProposal($this->setDefaults($proposal), true, $proposal->isPrivate() ? false : true);
-        } catch (AdException $exception) {
-            throw $exception;
-        }
+        return $this->treatProposal($this->setDefaults($proposal), true, $proposal->isPrivate() ? false : true);
     }
 
     /**
@@ -203,11 +199,7 @@ class ProposalManager
         $proposal = $this->setMinMax($proposal);
 
         // set the directions
-        try {
-            $proposal = $this->setDirections($proposal);
-        } catch (AdException $exception) {
-            throw $exception;
-        }
+        $proposal = $this->setDirections($proposal);
 
         // we have the directions, we can compute the lacking prices
         $proposal = $this->setPrices($proposal);
@@ -250,9 +242,9 @@ class ProposalManager
     }
 
     /**
-     * @return Response
-     *
      * @throws \Exception
+     *
+     * @return Response
      */
     public function deleteProposal(Proposal $proposal, ?array $body = null)
     {
@@ -295,7 +287,7 @@ class ProposalManager
                         $event = new AskAdDeletedEvent($ask, $deleter->getId());
                         $this->eventDispatcher->dispatch(AskAdDeletedEvent::NAME, $event);
                     }
-                // Ask user is passenger
+                    // Ask user is passenger
                 } elseif (($this->askManager->isAskUserPassenger($ask) && ($ask->getUser()->getId() == $deleter->getId())) || ($this->askManager->isAskUserDriver($ask) && ($ask->getUserRelated()->getId() == $deleter->getId()))) {
                     // TO DO check if the deletion is just before 24h and in that case send an other email
                     // /** @var Criteria $criteria */
@@ -869,7 +861,7 @@ class ProposalManager
                 // (problem : the route has no id, we should pass the whole route to check which route is chosen by the user...
                 //      => we would have to think of a way to simplify...)
                 if (($direction = $routes[0]) == null) {
-                    throw new AdException(AdException::NO_DIRECTION);
+                    throw new AdException(AdException::WRONG_COORDINATES);
                 }
                 $direction->setAutoGeoJsonDetail();
                 $proposal->getCriteria()->setDirectionDriver($direction);
@@ -900,7 +892,7 @@ class ProposalManager
                     $proposal->getCriteria()->setDirectionPassenger($direction);
                 }
             } else {
-                throw new AdException(AdException::NO_DIRECTION);
+                throw new AdException(AdException::WRONG_COORDINATES);
             }
         }
 
