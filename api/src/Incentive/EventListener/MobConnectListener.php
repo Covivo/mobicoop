@@ -9,25 +9,18 @@ use App\User\Event\SsoAssociationEvent;
 use App\User\Event\SsoCreationEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
+/**
+ * Class providing the functions necessary for listening to events allowing the operation of EEC sheets.
+ *
+ * @author Olivier Fillol <olivier.fillol@mobicoop.org>
+ */
 class MobConnectListener implements EventSubscriberInterface
 {
     private $_subscriptionManager;
-    private $_user;
 
     public function __construct(MobConnectSubscriptionManager $subscriptionManager)
     {
         $this->_subscriptionManager = $subscriptionManager;
-    }
-
-    private function __createSubscriptions($event)
-    {
-        $user = $event->getUser();
-
-        if (is_null($user->getShortDistanceSubscription() && is_null($user->getLongDistanceSubscription()))) {
-            $this->_subscriptionManager->createSubscriptions($user->getSsoId());
-
-            $user->setSubscriptionsJustCreate(true);
-        }
     }
 
     public static function getSubscribedEvents()
@@ -40,25 +33,35 @@ class MobConnectListener implements EventSubscriberInterface
         ];
     }
 
-    public function onUserAssociated(SsoAssociationEvent $event)
+    /**
+     * Listener called when a Mobicoop user is authenticated with an openId account.
+     */
+    public function onUserAssociated(SsoAssociationEvent $event): void
     {
-        $this->__createSubscriptions($event);
+        $this->_subscriptionManager->createSubscriptions($event->getUser()->getSsoId());
     }
 
-    public function onUserCreated(SsoCreationEvent $event)
+    /**
+     * Listener called when a new user is authenticated with an openId account.
+     */
+    public function onUserCreated(SsoCreationEvent $event): void
     {
-        $this->__createSubscriptions($event);
+        $this->_subscriptionManager->createSubscriptions($event->getUser()->getSsoId());
     }
 
-    // For long distance journey
-    public function onPaymentValidated(ElectronicPaymentValidatedEvent $event)
+    /**
+     * Listener called when an electronic payment is validated.
+     */
+    public function onPaymentValidated(ElectronicPaymentValidatedEvent $event): void
     {
-        $this->_subscriptionManager->updateLongDistanceSubscription($event->getCarpoolPayment());
+        $this->_subscriptionManager->updateLongDistanceSubscriptionAfterPayment($event->getCarpoolPayment());
     }
 
-    // For short distance journey
-    public function onProofValidated(CarpoolProofValidatedEvent $event)
+    /**
+     * Listener called when a carpool proof is validated.
+     */
+    public function onProofValidated(CarpoolProofValidatedEvent $event): void
     {
-        $this->_subscriptionManager->updateShortDistanceSubscription($event->getCarpoolProof());
+        $this->_subscriptionManager->updateSubscription($event->getCarpoolProof());
     }
 }
