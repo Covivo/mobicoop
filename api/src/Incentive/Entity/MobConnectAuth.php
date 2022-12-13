@@ -90,6 +90,14 @@ class MobConnectAuth
         $this->setRefreshTokenExpiresDate($ssoUser->getRefreshTokenExpiresDuration());
     }
 
+    public function updateTokens(array $tokens)
+    {
+        $this->setAccessToken($tokens['access_token']);
+        $this->setAccessTokenExpiresDate($tokens['expires_in']);
+        $this->setRefreshToken($tokens['refresh_token']);
+        $this->setRefreshTokenExpiresDate($tokens['refresh_expires_in']);
+    }
+
     /**
      * @ORM\PrePersist
      */
@@ -243,11 +251,11 @@ class MobConnectAuth
 
     private function getExpirationDateFromDuration(int $duration): \DateTime
     {
-        $duration += 15;
+        $duration -= 15;
 
         $now = new \DateTime('now');
         $expirationDate = clone $now;
 
-        return $expirationDate->sub(new \DateInterval('PT'.$duration.'S'));
+        return $expirationDate->add(new \DateInterval('PT'.$duration.'S'));
     }
 }

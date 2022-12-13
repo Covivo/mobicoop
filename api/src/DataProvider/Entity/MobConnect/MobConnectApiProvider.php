@@ -5,6 +5,7 @@ namespace App\DataProvider\Entity\MobConnect;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionResponse;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionVerifyResponse;
 use App\DataProvider\Ressource\MobConnectApiParams;
+use App\Incentive\Service\MobConnectAuthManager;
 use App\User\Entity\User;
 
 /**
@@ -27,13 +28,21 @@ class MobConnectApiProvider extends MobConnectProvider
     private $_apiParams;
 
     /**
+     * @var MobConnectAuthManager;
+     */
+    private $_authManager;
+
+    /**
      * @var string
      */
     private $_JWTToken;
 
-    public function __construct(MobConnectApiParams $params, User $user)
+    public function __construct(MobConnectAuthManager $authManager, MobConnectApiParams $params, User $user)
     {
         $this->_apiParams = $params;
+
+        $this->_authManager = $authManager;
+
         $this->_apiUri = $this->_apiParams->getApiUri();
         $this->_user = $user;
     }
@@ -58,8 +67,10 @@ class MobConnectApiProvider extends MobConnectProvider
 
         $this->_createDataProvider(self::ROUTE_SUBSCRIPTIONS);
 
+        $token = $this->_authManager->getToken();
+
         return $this->_getResponse(
-            $this->_dataProvider->postCollection($data, $this->_buildHeaders($this->_user->getMobConnectAuth()->getAccessToken()))
+            $this->_dataProvider->postCollection($data, $this->_buildHeaders($token))
         );
     }
 

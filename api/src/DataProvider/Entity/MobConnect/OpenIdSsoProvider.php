@@ -7,6 +7,9 @@ use App\DataProvider\Service\DataProvider;
 use App\User\Entity\SsoUser;
 use App\User\Entity\User;
 
+/**
+ * @author Olivier Fillol <olivier.fillol@mobicoop.org>
+ */
 class OpenIdSsoProvider extends EntityOpenIdSsoProvider
 {
     public function __construct(
@@ -84,16 +87,30 @@ class OpenIdSsoProvider extends EntityOpenIdSsoProvider
         throw new \LogicException('Error get Token');
     }
 
+    public function getRefreshToken(string $refreshToken)
+    {
+        return $this->execute([
+            'grant_type' => 'refresh_token',
+            'scope' => 'offline_access',
+            'refresh_token' => $refreshToken,
+            'redirect_uri' => $this->redirectUri,
+            'code_verifier' => $this->codeVerifier,
+        ]);
+    }
+
     protected function getToken($code)
     {
-        $body = [
+        return $this->execute([
             'grant_type' => 'authorization_code',
             'code' => $code,
             'redirect_uri' => $this->redirectUri,
             'scope' => 'offline_access',
             'code_verifier' => $this->codeVerifier,
-        ];
+        ]);
+    }
 
+    private function execute(array $body)
+    {
         $dataProvider = new DataProvider($this->baseUri, self::URLS[$this->serviceName][self::TOKEN_URL]);
 
         $response = $dataProvider->postCollection($body, null, null, DataProvider::BODY_TYPE_FORM_PARAMS, [$this->clientId, $this->clientSecret]);

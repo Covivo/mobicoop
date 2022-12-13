@@ -3,13 +3,11 @@
 namespace App\Incentive\Service;
 
 use App\DataProvider\Entity\MobConnect\MobConnectAuthProvider;
-use App\DataProvider\Ressource\MobConnectAuthParams;
+use App\DataProvider\Entity\MobConnect\OpenIdSsoProvider;
 use App\Incentive\Entity\MobConnectAuth;
 use App\User\Entity\SsoUser;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Security\Core\Security;
 
 /**
@@ -20,6 +18,7 @@ use Symfony\Component\Security\Core\Security;
 class MobConnectAuthManager
 {
     private const SERVICE_NAME = 'mobConnect';
+    private const BASE_SITE_URI = 'http://localhost:8081';
 
     /**
      * @var MobConnectAuthProvider
@@ -48,40 +47,35 @@ class MobConnectAuthManager
         $this->_ssoServices = $ssoServices;
     }
 
-    private function __getJWTToken(): string
+    private function __refreshToken()
     {
-        $userAuth = $this->_user->getMobConnectAuth();
+        if (!array_key_exists(self::SERVICE_NAME, $this->_ssoServices)) {
+            throw new \LogicException(str_replace('{SERVICE_NAME}', self::SERVICE_NAME, MobConnectMessages::MOB_CONFIG_UNAVAILABLE));
+        }
 
-        $this->_authProvider = new MobConnectAuthProvider(new MobConnectAuthParams($this->__getMobConnectSsoParams()), $this->_user);
+        $service = $this->_ssoServices[self::SERVICE_NAME];
 
-        $response = $this->_authProvider->getJWTToken($userAuth->getAuthorizationCode(), $userAuth->getRefreshToken());
+        $provider = new OpenIdSsoProvider(
+            self::SERVICE_NAME,
+            self::BASE_SITE_URI,
+            $service['baseUri'],
+            $service['clientId'],
+            $service['clientSecret'],
+            self::BASE_SITE_URI.'/'.$service['returnUrl'],
+            $service['autoCreateAccount'],
+            $service['logOutRedirectUri'] = '',
+            $service['codeVerifier'] = null
+        );
 
-        $userAuth->setAccessToken($response->getAccessToken());
-        $userAuth->setRefreshToken($response->getRefreshToken());
+        $mobConnectAuth = $this->_user->getMobConnectAuth();
+
+        $tokens = $provider->getRefreshToken($mobConnectAuth->getRefreshToken());
+
+        $mobConnectAuth->updateTokens($tokens);
 
         $this->_em->flush();
 
-        return $userAuth->getAccessToken();
-    }
-
-    private function __getMobConnectSsoParams(): ?array
-    {
-        foreach ($this->_ssoServices as $key => $service) {
-            if (preg_match('/'.self::SERVICE_NAME.'/', $key)) {
-                return $service;
-            }
-        }
-
-        throw new \LogicException(MobConnectMessages::MOB_CONFIG_UNAVAILABLE, Response::HTTP_BAD_REQUEST);
-    }
-
-    private function __isAccessAuthorized(): bool
-    {
-        // L'utilisateur n'a pas de compte associé
-        return
-            !is_null($this->_user->getMobConnectAuth())
-            && !empty($this->_user->getMobConnectAuth()->getAuthorizationCode())
-        ;
+        return $mobConnectAuth->getAccessToken();
     }
 
     public function createAuth(User $user, SsoUser $ssoUser)
@@ -92,14 +86,26 @@ class MobConnectAuthManager
         $this->_em->flush();
     }
 
-    public function getAuthenticatedUser(): User
+    public function getToken(): string
     {
-        if (!$this->__isAccessAuthorized()) {
-            throw new BadRequestHttpException(MobConnectMessages::MOB_CONNECTION_ERROR);
+        $mobConnectAuth = $this->_user->getMobConnectAuth();
+
+        if (is_null($mobConnectAuth)) {
+            throw new \LogicException(MobConnectMessages::USER_AUTHENTICATION_MISSING);
         }
 
-        $this->__getJWTToken();
+        $now = new \DateTime('now');
 
-        return $this->_user;
+        if ($now >= $mobConnectAuth->getRefreshTokenExpiresDate()) {
+            throw new \LogicException(MobConnectMessages::USER_AUTHENTICATION_EXPIRED);
+        }
+
+        if ($now >= $mobConnectAuth->getAccessTokenExpiresDate()) {
+            $token = $mobConnectAuth->getAccessToken();
+        } else {
+            $token = $this->__refreshToken();
+        }
+
+        return $token;
     }
 }

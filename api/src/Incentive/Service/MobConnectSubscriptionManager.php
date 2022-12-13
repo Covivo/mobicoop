@@ -116,7 +116,7 @@ class MobConnectSubscriptionManager
 
     private function __setApiProviderParams()
     {
-        $this->_mobConnectApiProvider = new MobConnectApiProvider(new MobConnectApiParams($this->_mobConnectParams), $this->_user);
+        $this->_mobConnectApiProvider = new MobConnectApiProvider($this->_authManager, new MobConnectApiParams($this->_mobConnectParams), $this->_user);
     }
 
     private function __verifySubscription()
@@ -137,27 +137,41 @@ class MobConnectSubscriptionManager
     {
         $this->_user = $user;
 
-        if (is_null($user->getMobConnectAuth())) {
-            $this->_authManager->createAuth($user, $ssoUser);
+        if (is_null($this->_user->getMobConnectAuth())) {
+            $this->_authManager->createAuth($this->_user, $ssoUser);
         }
 
+        $shortDistanceSubscription = $this->createShortDistanceSubscription();
+
+        $this->_em->persist($shortDistanceSubscription);
+
+        $longDistanceSubscription = $this->createLongDistanceSubscription();
+
+        $this->_em->persist($longDistanceSubscription);
+
+        $this->_em->flush();
+    }
+
+    public function createShortDistanceSubscription()
+    {
         $this->__setApiProviderParams();
 
         if (is_null($this->_user->getShortDistanceSubscription()) && CeeJourneyService::isUserAccountReadyForShortDistanceSubscription($this->_user)) {
             $mobConnectShortDistanceSubscription = $this->_mobConnectApiProvider->postSubscriptionForShortDistance();
-            $shortDistanceSubscription = new ShortDistanceSubscription($this->_user, $mobConnectShortDistanceSubscription);
 
-            $this->_em->persist($shortDistanceSubscription);
+            return new ShortDistanceSubscription($this->_user, $mobConnectShortDistanceSubscription);
         }
+    }
+
+    public function createLongDistanceSubscription()
+    {
+        $this->__setApiProviderParams();
 
         if (is_null($this->_user->getLongDistanceSubscription()) && CeeJourneyService::isUserAccountReadyForLongDistanceSubscription($this->_user)) {
             $mobConnectLongDistanceSubscription = $this->_mobConnectApiProvider->postSubscriptionForLongDistance();
-            $longDistanceSubscription = new LongDistanceSubscription($this->_user, $mobConnectLongDistanceSubscription);
 
-            $this->_em->persist($longDistanceSubscription);
+            return new LongDistanceSubscription($this->_user, $mobConnectLongDistanceSubscription);
         }
-
-        $this->_em->flush();
     }
 
     /**
