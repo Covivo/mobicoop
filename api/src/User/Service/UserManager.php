@@ -64,7 +64,6 @@ use App\User\Entity\User;
 use App\User\Entity\UserNotification;
 use App\User\Event\SsoAssociationEvent;
 use App\User\Event\SsoAuthenticationEvent;
-use App\User\Event\SsoCreationEvent;
 use App\User\Event\UserDelegateRegisteredEvent;
 use App\User\Event\UserDelegateRegisteredPasswordSendEvent;
 use App\User\Event\UserDeleteAccountWasDriverEvent;
@@ -1716,7 +1715,7 @@ class UserManager
                             throw new \LogicException('Autocreate/Autoattach account disable');
                         }
                     } else {
-                        $event = new SsoAuthenticationEvent($user);
+                        $event = new SsoAuthenticationEvent($user, $ssoUser);
                         $this->eventDispatcher->dispatch(SsoAuthenticationEvent::NAME, $event);
 
                         return $user;
@@ -1732,7 +1731,7 @@ class UserManager
                 $this->entityManager->persist($user);
                 $this->entityManager->flush();
 
-                $event = new SsoAssociationEvent($user);
+                $event = new SsoAssociationEvent($user, $ssoUser);
                 $this->eventDispatcher->dispatch(SsoAssociationEvent::NAME, $event);
 
                 return $user;
@@ -1770,9 +1769,6 @@ class UserManager
 
             $user = $this->registerUser($user);
         }
-
-        $event = new SsoCreationEvent($user);
-        $this->eventDispatcher->dispatch(SsoCreationEvent::NAME, $event);
 
         return $user;
     }

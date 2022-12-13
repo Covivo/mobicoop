@@ -1432,6 +1432,9 @@ class UserController extends AbstractController
             }
         }
 
+        // var_dump($params);
+        // exit;
+
         return $this->redirectToRoute('user_login_sso', $params);
     }
 
@@ -1439,7 +1442,7 @@ class UserController extends AbstractController
      * Return page after a SSO Login from mobConnect
      * Url is something like /user/sso/cee-incentive?state=mobConnect&code=1.
      */
-    public function userReturnConnectSSOMobConnect()
+    public function userReturnConnectSSOMobConnect(Request $request)
     {
         return $this->render('@Mobicoop/incentives/sso.html.twig');
     }

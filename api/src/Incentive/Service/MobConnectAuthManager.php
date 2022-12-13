@@ -5,6 +5,7 @@ namespace App\Incentive\Service;
 use App\DataProvider\Entity\MobConnect\MobConnectAuthProvider;
 use App\DataProvider\Ressource\MobConnectAuthParams;
 use App\Incentive\Entity\MobConnectAuth;
+use App\User\Entity\SsoUser;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -83,9 +84,9 @@ class MobConnectAuthManager
         ;
     }
 
-    public function createAuth(string $authorizationCode)
+    public function createAuth(User $user, SsoUser $ssoUser)
     {
-        $mobConnectAuth = new MobConnectAuth($this->_user, $authorizationCode);
+        $mobConnectAuth = new MobConnectAuth($user, $ssoUser);
 
         $this->_em->persist($mobConnectAuth);
         $this->_em->flush();

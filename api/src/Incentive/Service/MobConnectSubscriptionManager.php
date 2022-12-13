@@ -18,6 +18,7 @@ use App\Incentive\Event\LastShortDistanceJourneyValidatedEvent;
 use App\Incentive\Resource\CeeSubscriptions;
 use App\Payment\Entity\CarpoolItem;
 use App\Payment\Entity\CarpoolPayment;
+use App\User\Entity\SsoUser;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -132,9 +133,13 @@ class MobConnectSubscriptionManager
     /**
      * For the authenticated user, if needed, creates the CEE sheets.
      */
-    public function createSubscriptions(string $authorizationCode)
+    public function createSubscriptions(User $user, SsoUser $ssoUser)
     {
-        $this->_authManager->createAuth($authorizationCode);
+        $this->_user = $user;
+
+        if (is_null($user->getMobConnectAuth())) {
+            $this->_authManager->createAuth($user, $ssoUser);
+        }
 
         $this->__setApiProviderParams();
 

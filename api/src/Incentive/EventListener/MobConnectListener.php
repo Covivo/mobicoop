@@ -5,8 +5,8 @@ namespace App\Incentive\EventListener;
 use App\Carpool\Event\CarpoolProofValidatedEvent;
 use App\Incentive\Service\MobConnectSubscriptionManager;
 use App\Payment\Event\ElectronicPaymentValidatedEvent;
+use App\User\Entity\User;
 use App\User\Event\SsoAssociationEvent;
-use App\User\Event\SsoCreationEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -29,7 +29,6 @@ class MobConnectListener implements EventSubscriberInterface
             CarpoolProofValidatedEvent::NAME => 'onProofValidated',
             ElectronicPaymentValidatedEvent::NAME => 'onPaymentValidated',
             SsoAssociationEvent::NAME => 'onUserAssociated',
-            SsoCreationEvent::NAME => 'onUserCreated',
         ];
     }
 
@@ -38,15 +37,7 @@ class MobConnectListener implements EventSubscriberInterface
      */
     public function onUserAssociated(SsoAssociationEvent $event): void
     {
-        $this->_subscriptionManager->createSubscriptions($event->getUser()->getSsoId());
-    }
-
-    /**
-     * Listener called when a new user is authenticated with an openId account.
-     */
-    public function onUserCreated(SsoCreationEvent $event): void
-    {
-        $this->_subscriptionManager->createSubscriptions($event->getUser()->getSsoId());
+        $this->_subscriptionManager->createSubscriptions($event->getUser(), $event->getSsoUser());
     }
 
     /**

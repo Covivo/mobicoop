@@ -23,6 +23,7 @@
 
 namespace App\User\Service;
 
+use App\DataProvider\Entity\MobConnect\OpenIdSsoProvider as MobConnectOpenIdSsoProvider;
 use App\DataProvider\Entity\OpenIdSsoProvider;
 use App\User\Entity\User;
 use App\User\Ressource\SsoConnection;
@@ -38,7 +39,7 @@ class SsoManager
     private const SUPPORTED_PROVIDERS = [
         OpenIdSsoProvider::SSO_PROVIDER_GLCONNECT => OpenIdSsoProvider::class,
         OpenIdSsoProvider::SSO_PROVIDER_PASSMOBILITE => OpenIdSsoProvider::class,
-        OpenIdSsoProvider::SSO_PROVIDER_MOBCONNECT => OpenIdSsoProvider::class,
+        OpenIdSsoProvider::SSO_PROVIDER_MOBCONNECT => MobConnectOpenIdSsoProvider::class,
     ];
     private $userManager;
     private $ssoServices;
@@ -160,7 +161,8 @@ class SsoManager
                 $service['clientSecret'],
                 isset($service['returnUrl']) ? $service['returnUrl'] : SsoConnection::RETURN_URL,
                 $service['autoCreateAccount'],
-                $service['logOutRedirectUri']
+                $service['logOutRedirectUri'],
+                $service['codeVerifier']
             );
             $provider->setLogger($this->logger);
 
