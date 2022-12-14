@@ -9,6 +9,7 @@ use App\DataProvider\Ressource\MobConnectApiParams;
 use App\Incentive\Entity\Flat\ShortDistanceSubscription as FlatShortDistanceSubscription;
 use App\Incentive\Entity\LongDistanceJourney;
 use App\Incentive\Entity\LongDistanceSubscription;
+use App\Incentive\Entity\MobConnectAuth;
 use App\Incentive\Entity\ShortDistanceJourney;
 use App\Incentive\Entity\ShortDistanceSubscription;
 use App\Incentive\Event\FirstLongDistanceJourneyValidatedEvent;
@@ -32,11 +33,6 @@ use Symfony\Component\Security\Core\Security;
 class MobConnectSubscriptionManager
 {
     /**
-     * @var MobConnectAuthManager
-     */
-    private $_authManager;
-
-    /**
      * @var EntityManagerInterface
      */
     private $_em;
@@ -57,6 +53,11 @@ class MobConnectSubscriptionManager
     private $_mobConnectParams;
 
     /**
+     * @var array
+     */
+    private $_ssoServices;
+
+    /**
      * The authenticated user.
      *
      * @var User
@@ -69,16 +70,26 @@ class MobConnectSubscriptionManager
         EntityManagerInterface $em,
         Security $security,
         EventDispatcherInterface $eventDispatcher,
-        MobConnectAuthManager $authManager,
+        array $ssoServices,
         array $mobConnectParams
     ) {
         $this->_em = $em;
         $this->_eventDispatcher = $eventDispatcher;
-        $this->_authManager = $authManager;
 
         $this->_user = $security->getUser();
 
+        $this->_ssoServices = $ssoServices;
         $this->_mobConnectParams = $mobConnectParams;
+    }
+
+    private function __createAuth(User $user, SsoUser $ssoUser)
+    {
+        $mobConnectAuth = new MobConnectAuth($user, $ssoUser);
+
+        $this->_user->setMobConnectAuth($mobConnectAuth);
+
+        $this->_em->persist($mobConnectAuth);
+        $this->_em->flush();
     }
 
     private function __getCarpoolersNumber(int $askId): int
@@ -116,7 +127,7 @@ class MobConnectSubscriptionManager
 
     private function __setApiProviderParams()
     {
-        $this->_mobConnectApiProvider = new MobConnectApiProvider($this->_authManager, new MobConnectApiParams($this->_mobConnectParams), $this->_user);
+        $this->_mobConnectApiProvider = new MobConnectApiProvider($this->_em, new MobConnectApiParams($this->_mobConnectParams), $this->_user, $this->_ssoServices);
     }
 
     private function __verifySubscription()
@@ -138,7 +149,7 @@ class MobConnectSubscriptionManager
         $this->_user = $user;
 
         if (is_null($this->_user->getMobConnectAuth())) {
-            $this->_authManager->createAuth($this->_user, $ssoUser);
+            $this->__createAuth($this->_user, $ssoUser);
         }
 
         $shortDistanceSubscription = $this->createShortDistanceSubscription();
