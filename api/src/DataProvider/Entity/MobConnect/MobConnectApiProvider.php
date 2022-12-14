@@ -56,6 +56,24 @@ class MobConnectApiProvider extends MobConnectProvider
         return $shortDistance ? $this->_apiParams->getShortDistanceSubscriptionId() : $this->_apiParams->getLongDistanceSubscriptionId();
     }
 
+    private function __getToken(): string
+    {
+        $mobConnectAuth = $this->_user->getMobConnectAuth();
+
+        if (is_null($mobConnectAuth)) {
+            throw new \LogicException(MobConnectMessages::USER_AUTHENTICATION_MISSING);
+        }
+
+        $now = new \DateTime('now');
+
+        if ($now >= $mobConnectAuth->getRefreshTokenExpiresDate()) {
+            throw new \LogicException(MobConnectMessages::USER_AUTHENTICATION_EXPIRED);
+        }
+
+        return $now >= $mobConnectAuth->getAccessTokenExpiresDate()
+            ? $this->__refreshToken() : $mobConnectAuth->getAccessToken();
+    }
+
     private function __postSubscription(string $incentiveId, bool $isShortDistance = false, string $phoneNumber = null)
     {
         $data = [
@@ -71,10 +89,8 @@ class MobConnectApiProvider extends MobConnectProvider
 
         $this->_createDataProvider(self::ROUTE_SUBSCRIPTIONS);
 
-        $token = $this->getToken();
-
         return $this->_getResponse(
-            $this->_dataProvider->postCollection($data, $this->_buildHeaders($token))
+            $this->_dataProvider->postCollection($data, $this->_buildHeaders($this->__getToken()))
         );
     }
 
@@ -109,24 +125,6 @@ class MobConnectApiProvider extends MobConnectProvider
         return $mobConnectAuth->getAccessToken();
     }
 
-    public function getToken(): string
-    {
-        $mobConnectAuth = $this->_user->getMobConnectAuth();
-
-        if (is_null($mobConnectAuth)) {
-            throw new \LogicException(MobConnectMessages::USER_AUTHENTICATION_MISSING);
-        }
-
-        $now = new \DateTime('now');
-
-        if ($now >= $mobConnectAuth->getRefreshTokenExpiresDate()) {
-            throw new \LogicException(MobConnectMessages::USER_AUTHENTICATION_EXPIRED);
-        }
-
-        return $now >= $mobConnectAuth->getAccessTokenExpiresDate()
-            ? $this->__refreshToken() : $mobConnectAuth->getAccessToken();
-    }
-
     public function postSubscriptionForShortDistance()
     {
         return new MobConnectSubscriptionResponse($this->__postSubscription($this->_apiParams->getShortDistanceSubscriptionId(), true));
@@ -153,7 +151,7 @@ class MobConnectApiProvider extends MobConnectProvider
         $this->_createDataProvider(self::ROUTE_PATCH_SUBSCRIPTIONS, $subscriptionId);
 
         return new MobConnectSubscriptionResponse(
-            $this->_getResponse($this->_dataProvider->patchItem($data, $this->_buildHeaders($this->_user->getMobConnectAuth()->getAccessToken())))
+            $this->_getResponse($this->_dataProvider->patchItem($data, $this->_buildHeaders($this->__getToken())))
         );
     }
 
@@ -163,7 +161,7 @@ class MobConnectApiProvider extends MobConnectProvider
 
         return new MobConnectSubscriptionVerifyResponse(
             $this->_getResponse(
-                $this->_dataProvider->postCollection(null, $this->_buildHeaders($this->_user->getMobConnectAuth()->getAccessToken()))
+                $this->_dataProvider->postCollection(null, $this->_buildHeaders($this->__getToken()))
             )
         );
     }
