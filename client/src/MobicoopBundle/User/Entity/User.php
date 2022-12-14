@@ -458,6 +458,7 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
 
     /**
      * @var null|string postal address
+     *
      * @Groups({"post","put"})
      */
     private $postalAddress;
@@ -471,6 +472,16 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
      * @var null|string External Provider for a SSO connection
      */
     private $ssoProvider;
+
+    /**
+     * @var null|array
+     */
+    private $longDistanceSubscription;
+
+    /**
+     * @var null|array
+     */
+    private $shortDistanceSubscription;
 
     public function __construct($id = null, $status = null)
     {
@@ -1084,7 +1095,7 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
     /**
      * Set the date of password mofification.
      */
-    public function setPwdTokenDate(?DateTime $pwdTokenDate)
+    public function setPwdTokenDate(?\DateTime $pwdTokenDate)
     {
         $this->pwdTokenDate = $pwdTokenDate;
 
@@ -1393,6 +1404,30 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
         return $this;
     }
 
+    public function getLongDistanceSubscription()
+    {
+        return $this->longDistanceSubscription;
+    }
+
+    public function setLongDistanceSubscription($longDistanceSubscription)
+    {
+        $this->longDistanceSubscription = $longDistanceSubscription;
+
+        return $this;
+    }
+
+    public function getShortDistanceSubscription()
+    {
+        return $this->shortDistanceSubscription;
+    }
+
+    public function setShortDistanceSubscription($shortDistanceSubscription)
+    {
+        $this->shortDistanceSubscription = $shortDistanceSubscription;
+
+        return $this;
+    }
+
     // If you want more info from user you just have to add it to the jsonSerialize function
     public function jsonSerialize()
     {
@@ -1440,6 +1475,8 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
             'postalAddress' => $this->getPostalAddress(),
             'ssoId' => $this->getSsoId(),
             'ssoProvider' => $this->getSsoProvider(),
+            'longDistanceSubscription' => $this->getLongDistanceSubscription(),
+            'shortDistanceSubscription' => $this->getShortDistanceSubscription(),
         ];
 
         if (!is_null($this->getIsCommunityReferrer())) {

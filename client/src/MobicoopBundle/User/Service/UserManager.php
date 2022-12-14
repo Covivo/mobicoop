@@ -941,6 +941,15 @@ class UserManager
         return $response->getValue();
     }
 
+    public function patchUserForSsoAssociation(User $user, array $params)
+    {
+        $this->dataProvider->setClass(User::class);
+
+        $response = $this->dataProvider->patch($user->getId(), 'updateSso', $params);
+
+        return $response->getValue();
+    }
+
     /**
      * Cleaning the Matchings related to private Proposals.
      *

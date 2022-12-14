@@ -1451,10 +1451,9 @@ class UserController extends AbstractController
             $params['eec'] = boolval($params['eec']);
         }
 
-        return new JsonResponse($params);
-        // TODO
-        // 1. Faire un appel à l'API sur /user/{id}/updateSso
-        // 2. Rediriger l'utilisateur vers /utilisateur
+        $user = $this->userManager->patchUserForSsoAssociation($this->getUser(), $params);
+
+        return $this->redirectToRoute('home', ['fromMobConnectSso' => true]);
     }
 
     /**
