@@ -1697,6 +1697,22 @@ class UserManager
         return implode($pass); // turn the array into a string
     }
 
+    public function updateUserSsoProperties(User $user, SsoUser $ssoUser): User
+    {
+        $user->setSsoId($ssoUser->getSub());
+        $user->setSsoProvider($ssoUser->getProvider());
+        if (is_null($user->getCreatedSsoDate())) {
+            $user->setCreatedSsoDate(new \DateTime('now'));
+        }
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+
+        $event = new SsoAssociationEvent($user, $ssoUser);
+        $this->eventDispatcher->dispatch(SsoAssociationEvent::NAME, $event);
+
+        return $user;
+    }
+
     /**
      * Return a User from a SsoUser
      * Existing user or a new one.
@@ -1723,18 +1739,7 @@ class UserManager
                 }
 
                 // We update the user with ssoId and ssoProvider and return it
-                $user->setSsoId($ssoUser->getSub());
-                $user->setSsoProvider($ssoUser->getProvider());
-                if (is_null($user->getCreatedSsoDate())) {
-                    $user->setCreatedSsoDate(new \DateTime('now'));
-                }
-                $this->entityManager->persist($user);
-                $this->entityManager->flush();
-
-                $event = new SsoAssociationEvent($user, $ssoUser);
-                $this->eventDispatcher->dispatch(SsoAssociationEvent::NAME, $event);
-
-                return $user;
+                return $this->updateUserSsoProperties($user, $ssoUser);
             }
 
             if (!$ssoUser->hasAutoCreateAccount()) {

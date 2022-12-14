@@ -1432,9 +1432,6 @@ class UserController extends AbstractController
             }
         }
 
-        // var_dump($params);
-        // exit;
-
         return $this->redirectToRoute('user_login_sso', $params);
     }
 
@@ -1444,7 +1441,20 @@ class UserController extends AbstractController
      */
     public function userReturnConnectSSOMobConnect(Request $request)
     {
-        return $this->render('@Mobicoop/incentives/sso.html.twig');
+        $params = $request->query->all();
+
+        if (empty($params)) {
+            return $this->render('@Mobicoop/incentives/mobConnectSso.html.twig');
+        }
+
+        if (isset($params['eec'])) {
+            $params['eec'] = boolval($params['eec']);
+        }
+
+        return new JsonResponse($params);
+        // TODO
+        // 1. Faire un appel à l'API sur /user/{id}/updateSso
+        // 2. Rediriger l'utilisateur vers /utilisateur
     }
 
     /**

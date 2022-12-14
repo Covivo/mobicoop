@@ -79,7 +79,7 @@ class MobConnectApiProvider extends MobConnectProvider
         $data = [
             'incentiveId' => $incentiveId,
             'consent' => true,
-            'Type de trajet' => true === $isShortDistance ? self::SHORT_DISTANCE_LABEL : self::LONG_DISTANCE_LABEL,
+            'Type de trajet' => true === $isShortDistance ? [self::SHORT_DISTANCE_LABEL] : [self::LONG_DISTANCE_LABEL],
             'Numéro de permis de conduire' => $this->_user->getDrivingLicenseNumber(),
         ];
 

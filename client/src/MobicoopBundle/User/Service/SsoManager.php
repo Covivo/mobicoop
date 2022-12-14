@@ -46,10 +46,6 @@ class SsoManager
             ];
         }
 
-        if (isset($params['origin']) && 'mobConnect' === $params['origin']) {
-            $return['fromMobConnectSso'] = true;
-        }
-
         return $return;
     }
 }

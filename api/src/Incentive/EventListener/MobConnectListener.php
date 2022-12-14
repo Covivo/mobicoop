@@ -8,6 +8,8 @@ use App\Payment\Event\ElectronicPaymentValidatedEvent;
 use App\User\Entity\User;
 use App\User\Event\SsoAssociationEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Class providing the functions necessary for listening to events allowing the operation of EEC sheets.
@@ -16,10 +18,21 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 class MobConnectListener implements EventSubscriberInterface
 {
+    private const ALLOWED_SSO_PROVIDER = 'mobConnect';
+
+    /**
+     * @var Request
+     */
+    private $_request;
+
+    /**
+     * @var MobConnectSubscriptionManager
+     */
     private $_subscriptionManager;
 
-    public function __construct(MobConnectSubscriptionManager $subscriptionManager)
+    public function __construct(RequestStack $requestStack, MobConnectSubscriptionManager $subscriptionManager)
     {
+        $this->_request = $requestStack->getCurrentRequest();
         $this->_subscriptionManager = $subscriptionManager;
     }
 
@@ -37,7 +50,16 @@ class MobConnectListener implements EventSubscriberInterface
      */
     public function onUserAssociated(SsoAssociationEvent $event): void
     {
-        $this->_subscriptionManager->createSubscriptions($event->getUser(), $event->getSsoUser());
+        $decodeRequest = json_decode($this->_request->getContent());
+
+        if (
+            property_exists($decodeRequest, 'ssoProvider')
+            && self::ALLOWED_SSO_PROVIDER === $decodeRequest->ssoProvider
+            && property_exists($decodeRequest, 'eec')
+            && true === $decodeRequest->eec
+        ) {
+            $this->_subscriptionManager->createSubscriptions($event->getUser(), $event->getSsoUser());
+        }
     }
 
     /**

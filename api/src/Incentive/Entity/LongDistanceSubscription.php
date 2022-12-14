@@ -253,7 +253,7 @@ class LongDistanceSubscription
      *
      * @param string $initialTimestamp the initial timestamp of the mobConnect subscription
      */
-    public function setInitialTimestamp(string $initialTimestamp): self
+    public function setInitialTimestamp(?string $initialTimestamp): self
     {
         $this->initialTimestamp = $initialTimestamp;
 
@@ -275,7 +275,7 @@ class LongDistanceSubscription
      *
      * @param string $lastTimestamp the last timestamp of the mobConnect subscription
      */
-    public function setLastTimestamp(string $lastTimestamp): self
+    public function setLastTimestamp(?string $lastTimestamp): self
     {
         $this->lastTimestamp = $lastTimestamp;
 
