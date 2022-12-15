@@ -16,6 +16,8 @@ use App\Incentive\Event\FirstLongDistanceJourneyValidatedEvent;
 use App\Incentive\Event\FirstShortDistanceJourneyValidatedEvent;
 use App\Incentive\Event\LastLongDistanceJourneyValidatedEvent;
 use App\Incentive\Event\LastShortDistanceJourneyValidatedEvent;
+use App\Incentive\Event\LongDistanceSubscriptionClosedEvent;
+use App\Incentive\Event\ShortDistanceSubscriptionClosedEvent;
 use App\Incentive\Resource\CeeSubscriptions;
 use App\Payment\Entity\CarpoolItem;
 use App\Payment\Entity\CarpoolPayment;
@@ -263,19 +265,16 @@ class MobConnectSubscriptionManager
         if ($this->_userSubscription) {
             $this->__setApiProviderParams();
 
-            // The journey is added to the EEC sheet
-            $this->_mobConnectApiProvider->patchUserSubscription($this->__getSubscriptionId(), $this->__getRpcJourneyId($carpoolProof->getId()), true);
-
             switch (true) {
                 case $this->_userSubscription instanceof LongDistanceSubscription:
                     switch (count($this->_userSubscription->getLongDistanceJourneys())) {
                         case CeeJourneyService::LOW_THRESHOLD_PROOF:
+                            // The journey is added to the EEC sheet
+                            $this->_mobConnectApiProvider->patchUserSubscription($this->__getSubscriptionId(), $this->__getRpcJourneyId($carpoolProof->getId()), true);
+
                             $event = new FirstLongDistanceJourneyValidatedEvent($journey);
                             $this->eventDispatcher->dispatch(FirstLongDistanceJourneyValidatedEvent::NAME, $event);
 
-                            break;
-
-                        case CeeJourneyService::LONG_DISTANCE_TRIP_THRESHOLD:
                             $this->__verifySubscription();
 
                             if (LongDistanceSubscription::STATUS_VALIDATED === $this->_userSubscription->getStatus()) {
@@ -284,25 +283,37 @@ class MobConnectSubscriptionManager
                             }
 
                             break;
+
+                        case CeeJourneyService::LONG_DISTANCE_TRIP_THRESHOLD:
+                            $event = new LongDistanceSubscriptionClosedEvent($this->_userSubscription);
+                            $this->_eventDispatcher->dispatch(LongDistanceSubscriptionClosedEvent::NAME, $event);
+
+                            break;
                     }
 
                     break;
 
                 case $this->_userSubscription instanceof ShortDistanceSubscription:
-                    switch (count($this->_userSubscription->getLongDistanceJourneys())) {
+                    switch (count($this->_userSubscription->getShortDistanceJourneys())) {
                         case CeeJourneyService::LOW_THRESHOLD_PROOF:
+                            // The journey is added to the EEC sheet
+                            $this->_mobConnectApiProvider->patchUserSubscription($this->__getSubscriptionId(), $this->__getRpcJourneyId($carpoolProof->getId()), true);
+
                             $event = new FirstShortDistanceJourneyValidatedEvent($journey);
                             $this->_eventDispatcher->dispatch(FirstShortDistanceJourneyValidatedEvent::NAME, $event);
 
-                            break;
-
-                        case CeeJourneyService::SHORT_DISTANCE_TRIP_THRESHOLD:
                             $this->__verifySubscription();
 
                             if (ShortDistanceSubscription::STATUS_VALIDATED === $this->_userSubscription->getStatus()) {
                                 $event = new LastShortDistanceJourneyValidatedEvent($journey);
                                 $this->_eventDispatcher->dispatch(LastShortDistanceJourneyValidatedEvent::NAME, $event);
                             }
+
+                            break;
+
+                        case CeeJourneyService::SHORT_DISTANCE_TRIP_THRESHOLD:
+                            $event = new ShortDistanceSubscriptionClosedEvent($this->_userSubscription);
+                            $this->_eventDispatcher->dispatch(ShortDistanceSubscriptionClosedEvent::NAME, $event);
 
                             break;
                     }
