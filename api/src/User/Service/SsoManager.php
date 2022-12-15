@@ -23,7 +23,9 @@
 
 namespace App\User\Service;
 
+use App\DataProvider\Entity\MobConnect\OpenIdSsoProvider as MobConnectOpenIdSsoProvider;
 use App\DataProvider\Entity\OpenIdSsoProvider;
+use App\User\Entity\SsoUser;
 use App\User\Entity\User;
 use App\User\Ressource\SsoConnection;
 use Psr\Log\LoggerInterface;
@@ -38,7 +40,7 @@ class SsoManager
     private const SUPPORTED_PROVIDERS = [
         OpenIdSsoProvider::SSO_PROVIDER_GLCONNECT => OpenIdSsoProvider::class,
         OpenIdSsoProvider::SSO_PROVIDER_PASSMOBILITE => OpenIdSsoProvider::class,
-        OpenIdSsoProvider::SSO_PROVIDER_MOBCONNECT => OpenIdSsoProvider::class,
+        OpenIdSsoProvider::SSO_PROVIDER_MOBCONNECT => MobConnectOpenIdSsoProvider::class,
     ];
     private $userManager;
     private $ssoServices;
@@ -89,6 +91,14 @@ class SsoManager
         return $ssoServices;
     }
 
+    public function getSsoUserProfile(string $serviceName, string $code, string $baseSiteUri): SsoUser
+    {
+        $provider = $this->getSsoProvider($serviceName, $baseSiteUri);
+        $provider->setCode($code);
+
+        return $provider->getUserProfile($code);
+    }
+
     /**
      * Get a User from an SSO connection (existing or new one).
      *
@@ -98,10 +108,9 @@ class SsoManager
      */
     public function getUser(string $serviceName, string $code, string $baseSiteUri): User
     {
-        $provider = $this->getSsoProvider($serviceName, $baseSiteUri);
-        $provider->setCode($code);
+        $ssoUser = $this->getSsoUserProfile($serviceName, $code, $baseSiteUri);
 
-        return $this->userManager->getUserFromSso($provider->getUserProfile($code));
+        return $this->userManager->getUserFromSso($ssoUser);
     }
 
     /**
@@ -160,7 +169,8 @@ class SsoManager
                 $service['clientSecret'],
                 isset($service['returnUrl']) ? $service['returnUrl'] : SsoConnection::RETURN_URL,
                 $service['autoCreateAccount'],
-                $service['logOutRedirectUri']
+                $service['logOutRedirectUri'],
+                $service['codeVerifier']
             );
             $provider->setLogger($this->logger);
 

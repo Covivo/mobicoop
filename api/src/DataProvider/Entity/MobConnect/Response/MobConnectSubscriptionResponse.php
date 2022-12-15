@@ -20,10 +20,10 @@ class MobConnectSubscriptionResponse
 
     public function __construct(\stdClass $mobConnectResponse)
     {
-        $this->setId($mobConnectResponse->subscriptionId);
+        $this->setId($mobConnectResponse->id);
 
         // TODO: Check the property name
-        if (isset($mobConnectResponse->timestamp)) {
+        if (property_exists($mobConnectResponse, 'timestamp') && !is_null($mobConnectResponse->timestamp)) {
             $this->setTimestamp($mobConnectResponse->timestamp);
         }
     }

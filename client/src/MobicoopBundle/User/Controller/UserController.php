@@ -1439,9 +1439,29 @@ class UserController extends AbstractController
      * Return page after a SSO Login from mobConnect
      * Url is something like /user/sso/cee-incentive?state=mobConnect&code=1.
      */
-    public function userReturnConnectSSOMobConnect()
+    public function userReturnConnectSSOMobConnect(Request $request)
     {
-        return $this->render('@Mobicoop/incentives/sso.html.twig');
+        $params = $request->query->all();
+
+        if (empty($params)) {
+            return $this->render('@Mobicoop/incentives/mobConnectSso.html.twig');
+        }
+
+        if (isset($params['eec'])) {
+            $params['eec'] = boolval($params['eec']);
+        }
+
+        $isMobConnectSubscriptionSuccessFull = false;
+
+        if ($this->getUser()) {
+            $user = $this->userManager->patchUserForSsoAssociation($this->getUser(), $params);
+
+            if ($user instanceof User) {
+                $isMobConnectSubscriptionSuccessFull = !is_null($user->getShortDistanceSubscription()) && !is_null($user->getLongDistanceSubscription());
+            }
+        }
+
+        return $this->redirectToRoute('home', ['isMobConnectSubscriptionSuccessFull' => $isMobConnectSubscriptionSuccessFull]);
     }
 
     /**

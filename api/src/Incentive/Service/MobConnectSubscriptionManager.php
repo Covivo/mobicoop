@@ -9,6 +9,7 @@ use App\DataProvider\Ressource\MobConnectApiParams;
 use App\Incentive\Entity\Flat\ShortDistanceSubscription as FlatShortDistanceSubscription;
 use App\Incentive\Entity\LongDistanceJourney;
 use App\Incentive\Entity\LongDistanceSubscription;
+use App\Incentive\Entity\MobConnectAuth;
 use App\Incentive\Entity\ShortDistanceJourney;
 use App\Incentive\Entity\ShortDistanceSubscription;
 use App\Incentive\Event\FirstLongDistanceJourneyValidatedEvent;
@@ -18,6 +19,7 @@ use App\Incentive\Event\LastShortDistanceJourneyValidatedEvent;
 use App\Incentive\Resource\CeeSubscriptions;
 use App\Payment\Entity\CarpoolItem;
 use App\Payment\Entity\CarpoolPayment;
+use App\User\Entity\SsoUser;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -30,11 +32,6 @@ use Symfony\Component\Security\Core\Security;
  */
 class MobConnectSubscriptionManager
 {
-    /**
-     * @var MobConnectAuthManager
-     */
-    private $_authManager;
-
     /**
      * @var EntityManagerInterface
      */
@@ -56,6 +53,11 @@ class MobConnectSubscriptionManager
     private $_mobConnectParams;
 
     /**
+     * @var array
+     */
+    private $_ssoServices;
+
+    /**
      * The authenticated user.
      *
      * @var User
@@ -68,16 +70,26 @@ class MobConnectSubscriptionManager
         EntityManagerInterface $em,
         Security $security,
         EventDispatcherInterface $eventDispatcher,
-        MobConnectAuthManager $authManager,
+        array $ssoServices,
         array $mobConnectParams
     ) {
         $this->_em = $em;
         $this->_eventDispatcher = $eventDispatcher;
-        $this->_authManager = $authManager;
 
         $this->_user = $security->getUser();
 
+        $this->_ssoServices = $ssoServices;
         $this->_mobConnectParams = $mobConnectParams;
+    }
+
+    private function __createAuth(User $user, SsoUser $ssoUser)
+    {
+        $mobConnectAuth = new MobConnectAuth($user, $ssoUser);
+
+        $this->_user->setMobConnectAuth($mobConnectAuth);
+
+        $this->_em->persist($mobConnectAuth);
+        $this->_em->flush();
     }
 
     private function __getCarpoolersNumber(int $askId): int
@@ -115,7 +127,7 @@ class MobConnectSubscriptionManager
 
     private function __setApiProviderParams()
     {
-        $this->_mobConnectApiProvider = new MobConnectApiProvider(new MobConnectApiParams($this->_mobConnectParams), $this->_user);
+        $this->_mobConnectApiProvider = new MobConnectApiProvider($this->_em, new MobConnectApiParams($this->_mobConnectParams), $this->_user, $this->_ssoServices);
     }
 
     private function __verifySubscription()
@@ -132,27 +144,45 @@ class MobConnectSubscriptionManager
     /**
      * For the authenticated user, if needed, creates the CEE sheets.
      */
-    public function createSubscriptions(string $authorizationCode)
+    public function createSubscriptions(User $user, SsoUser $ssoUser)
     {
-        $this->_authManager->createAuth($authorizationCode);
+        $this->_user = $user;
 
+        if (is_null($this->_user->getMobConnectAuth())) {
+            $this->__createAuth($this->_user, $ssoUser);
+        }
+
+        $shortDistanceSubscription = $this->createShortDistanceSubscription();
+
+        $this->_em->persist($shortDistanceSubscription);
+
+        $longDistanceSubscription = $this->createLongDistanceSubscription();
+
+        $this->_em->persist($longDistanceSubscription);
+
+        $this->_em->flush();
+    }
+
+    public function createShortDistanceSubscription()
+    {
         $this->__setApiProviderParams();
 
         if (is_null($this->_user->getShortDistanceSubscription()) && CeeJourneyService::isUserAccountReadyForShortDistanceSubscription($this->_user)) {
             $mobConnectShortDistanceSubscription = $this->_mobConnectApiProvider->postSubscriptionForShortDistance();
-            $shortDistanceSubscription = new ShortDistanceSubscription($this->_user, $mobConnectShortDistanceSubscription);
 
-            $this->_em->persist($shortDistanceSubscription);
+            return new ShortDistanceSubscription($this->_user, $mobConnectShortDistanceSubscription);
         }
+    }
+
+    public function createLongDistanceSubscription()
+    {
+        $this->__setApiProviderParams();
 
         if (is_null($this->_user->getLongDistanceSubscription()) && CeeJourneyService::isUserAccountReadyForLongDistanceSubscription($this->_user)) {
             $mobConnectLongDistanceSubscription = $this->_mobConnectApiProvider->postSubscriptionForLongDistance();
-            $longDistanceSubscription = new LongDistanceSubscription($this->_user, $mobConnectLongDistanceSubscription);
 
-            $this->_em->persist($longDistanceSubscription);
+            return new LongDistanceSubscription($this->_user, $mobConnectLongDistanceSubscription);
         }
-
-        $this->_em->flush();
     }
 
     /**

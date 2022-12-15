@@ -60,7 +60,7 @@ class OpenIdSsoProvider implements SsoProviderInterface
             self::LOGOUT_URL => 'auth/realms/Passmobilite/protocol/openid-connect/logout?post_logout_redirect_uri={REDIRECT_URI}',
         ],
         self::SSO_PROVIDER_MOBCONNECT => [
-            self::AUTHORIZATION_URL => 'auth/realms/mcm/protocol/openid-connect/auth?redirect_uri={REDIRECT_URI}&client_id={CLIENT_ID}&state={SERVICE_NAME}&response_mode=fragment&response_type=code&scope=openid&nonce=21a8befa-b65f-41c5-916b-29c9e8d70177&code_challenge_method=S256&code_challenge=6SIyGGLxI9gZsWbZnv-Go-jxElFTClo41RdC_XNQlzM&kc_idp_hint=franceconnect-particulier',
+            self::AUTHORIZATION_URL => 'auth/realms/mcm/protocol/openid-connect/auth?redirect_uri={REDIRECT_URI}&client_id={CLIENT_ID}&state={SERVICE_NAME}&response_mode=fragment&response_type=code&scope=openid&nonce=21a8befa-b65f-41c5-916b-29c9e8d70177&code_challenge_method=S256&code_challenge={CODE_CHALLENGE}&kc_idp_hint=franceconnect-particulier',
             self::TOKEN_URL => 'auth/realms/mcm/protocol/openid-connect/token',
             self::USERINFOS_URL => 'auth/realms/mcm/protocol/openid-connect/userinfo',
             self::LOGOUT_URL => 'auth/realms/mcm/protocol/openid-connect/logout?post_logout_redirect_uri={REDIRECT_URI}',
@@ -73,25 +73,30 @@ class OpenIdSsoProvider implements SsoProviderInterface
         ],
     ];
 
-    private $serviceName;
-    private $baseUri;
-    private $clientId;
-    private $clientSecret;
+    protected $baseUri;
+    protected $clientId;
+    protected $clientSecret;
+    protected $redirectUri;
+    protected $serviceName;
+
+    /**
+     * @var string
+     */
+    protected $codeVerifier;
+    protected $autoCreateAccount;
+
     private $redirectUrl;
-    private $redirectUri;
     private $baseSiteUri;
-    private $autoCreateAccount;
     private $logOutRedirectUri;
 
     private $code;
     private $logger;
 
-    public function __construct(string $serviceName, string $baseSiteUri, string $baseUri, string $clientId, string $clientSecret, string $redirectUrl, bool $autoCreateAccount, string $logOutRedirectUri = '')
+    public function __construct(string $serviceName, string $baseSiteUri, string $baseUri, string $clientId, string $clientSecret, string $redirectUrl, bool $autoCreateAccount, string $logOutRedirectUri = '', ?string $codeVerifier = null)
     {
         if (!isset(self::URLS[$serviceName])) {
             throw new \LogicException('Service unknown');
         }
-
         $this->serviceName = $serviceName;
         $this->baseUri = $baseUri;
         $this->clientId = $clientId;
@@ -101,6 +106,12 @@ class OpenIdSsoProvider implements SsoProviderInterface
         $this->redirectUri = $this->baseSiteUri.'/'.$this->redirectUrl;
         $this->autoCreateAccount = $autoCreateAccount;
         $this->logOutRedirectUri = $logOutRedirectUri;
+        $this->codeVerifier = $codeVerifier;
+    }
+
+    private function __getCodeChallenge(): string
+    {
+        return strtr(rtrim(base64_encode(hash('sha256', $this->codeVerifier, true)), '='), '+/', '-_');
     }
 
     public function setCode(string $code)
@@ -118,11 +129,17 @@ class OpenIdSsoProvider implements SsoProviderInterface
      */
     public function getConnectFormUrl(): string
     {
-        return $this->baseUri.''.str_replace('{CLIENT_ID}', $this->clientId, str_replace(
+        $url = $this->baseUri.''.str_replace('{CLIENT_ID}', $this->clientId, str_replace(
             '{SERVICE_NAME}',
             $this->serviceName,
             str_replace('{REDIRECT_URI}', $this->redirectUri, self::URLS[$this->serviceName][self::AUTHORIZATION_URL])
         ));
+
+        if (!is_null($this->codeVerifier) && !empty($this->codeVerifier) && preg_match('/\{CODE_CHALLENGE\}/', $url)) {
+            $url = str_replace('{CODE_CHALLENGE}', $this->__getCodeChallenge(), $url);
+        }
+
+        return $url;
     }
 
     /**
@@ -196,7 +213,7 @@ class OpenIdSsoProvider implements SsoProviderInterface
         return (isset(self::URLS[$this->serviceName][self::LOGOUT_URL])) ? $this->baseUri.''.self::URLS[$this->serviceName][self::LOGOUT_URL] : null;
     }
 
-    private function getToken($code)
+    protected function getToken($code)
     {
         $body = [
             'grant_type' => 'authorization_code',
