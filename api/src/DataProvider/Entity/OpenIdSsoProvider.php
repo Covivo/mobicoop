@@ -60,7 +60,7 @@ class OpenIdSsoProvider implements SsoProviderInterface
             self::LOGOUT_URL => 'auth/realms/Passmobilite/protocol/openid-connect/logout?post_logout_redirect_uri={REDIRECT_URI}',
         ],
         self::SSO_PROVIDER_MOBCONNECT => [
-            self::AUTHORIZATION_URL => '/auth/realms/mcm/protocol/openid-connect/auth?redirect_uri={REDIRECT_URI}&client_id={CLIENT_ID}&state={SERVICE_NAME}&response_mode=fragment&response_type=code&scope=openid&nonce=21a8befa-b65f-41c5-916b-29c9e8d70177&code_challenge_method=S256&code_challenge=6SIyGGLxI9gZsWbZnv-Go-jxElFTClo41RdC_XNQlzM&kc_idp_hint=franceconnect-particulier',
+            self::AUTHORIZATION_URL => 'auth/realms/mcm/protocol/openid-connect/auth?redirect_uri={REDIRECT_URI}&client_id={CLIENT_ID}&state={SERVICE_NAME}&response_mode=fragment&response_type=code&scope=openid&nonce=21a8befa-b65f-41c5-916b-29c9e8d70177&code_challenge_method=S256&code_challenge=6SIyGGLxI9gZsWbZnv-Go-jxElFTClo41RdC_XNQlzM&kc_idp_hint=franceconnect-particulier',
             self::TOKEN_URL => 'auth/realms/mcm/protocol/openid-connect/token',
             self::USERINFOS_URL => 'auth/realms/mcm/protocol/openid-connect/userinfo',
             self::LOGOUT_URL => 'auth/realms/mcm/protocol/openid-connect/logout?post_logout_redirect_uri={REDIRECT_URI}',
