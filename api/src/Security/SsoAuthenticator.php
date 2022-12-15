@@ -97,7 +97,7 @@ class SsoAuthenticator extends AbstractGuardAuthenticator
     {
         $user = $token->getUser();
 
-        //Time for valid refresh token, define in gesdinet_jwt_refresh_token, careful to let this value in secondes
+        // Time for valid refresh token, define in gesdinet_jwt_refresh_token, careful to let this value in secondes
         $addTime = 'PT'.$this->params->get('gesdinet_jwt_refresh_token.ttl').'S';
 
         $now = new \DateTime('now');

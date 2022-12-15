@@ -19,19 +19,19 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\Entity;
 
 /**
- * A SSO User
+ * A SSO User.
  *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class SsoUser
 {
-    const GENDER_MALE = 'male';
-    const GENDER_FEMALE = 'female';
+    public const GENDER_MALE = 'male';
+    public const GENDER_FEMALE = 'female';
 
     private $provider;
     private $sub;
@@ -64,6 +64,26 @@ class SsoUser
     private $professional_phone;
     private $birthdepartment;
     private $autoCreateAccount;
+
+    /**
+     * @var string
+     */
+    private $accessToken;
+
+    /**
+     * @var int
+     */
+    private $accessTokenExpiresDuration;
+
+    /**
+     * @var string
+     */
+    private $refreshToken;
+
+    /**
+     * @var int
+     */
+    private $refreshTokenExpiresDuration;
 
     public function getProvider()
     {
@@ -373,5 +393,81 @@ class SsoUser
     public function setAutoCreateAccount(?bool $autoCreateAccount)
     {
         $this->autoCreateAccount = $autoCreateAccount;
+    }
+
+    /**
+     * Get the value of accessToken.
+     */
+    public function getAccessToken(): ?string
+    {
+        return $this->accessToken;
+    }
+
+    /**
+     * Set the value of accessToken.
+     */
+    public function setAccessToken(string $accessToken): self
+    {
+        $this->accessToken = $accessToken;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of accessTokenExpiresDuration.
+     */
+    public function getAccessTokenExpiresDuration(): ?int
+    {
+        return $this->accessTokenExpiresDuration;
+    }
+
+    /**
+     * Set the value of accessTokenExpiresDuration.
+     */
+    public function setAccessTokenExpiresDuration(int $accessTokenExpiresDuration): self
+    {
+        $this->accessTokenExpiresDuration = $accessTokenExpiresDuration;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of refreshToken.
+     */
+    public function getRefreshToken()
+    {
+        return $this->refreshToken;
+    }
+
+    /**
+     * Set the value of refreshToken.
+     *
+     * @param mixed $refreshToken
+     *
+     * @return self
+     */
+    public function setRefreshToken($refreshToken)
+    {
+        $this->refreshToken = $refreshToken;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of refreshTokenExpiresDuration.
+     */
+    public function getRefreshTokenExpiresDuration(): ?int
+    {
+        return $this->refreshTokenExpiresDuration;
+    }
+
+    /**
+     * Set the value of refreshTokenExpiresDuration.
+     */
+    public function setRefreshTokenExpiresDuration(int $refreshTokenExpiresDuration): self
+    {
+        $this->refreshTokenExpiresDuration = $refreshTokenExpiresDuration;
+
+        return $this;
     }
 }

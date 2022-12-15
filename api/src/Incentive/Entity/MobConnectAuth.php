@@ -2,6 +2,7 @@
 
 namespace App\Incentive\Entity;
 
+use App\User\Entity\SsoUser;
 use App\User\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -33,9 +34,16 @@ class MobConnectAuth
     /**
      * @var string
      *
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      */
     private $accessToken;
+
+    /**
+     * @var \DateTimeInterface
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $accessTokenExpiresDate;
 
     /**
      * @var string
@@ -47,9 +55,16 @@ class MobConnectAuth
     /**
      * @var string
      *
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="text", nullable=true)
      */
     private $refreshToken;
+
+    /**
+     * @var \DateTimeInterface
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $refreshTokenExpiresDate;
 
     /**
      * @var \DateTimeInterface
@@ -65,10 +80,22 @@ class MobConnectAuth
      */
     private $updatedAt;
 
-    public function __construct(User $user, string $authorizationCode)
+    public function __construct(User $user, SsoUser $ssoUser)
     {
         $this->setUser($user);
-        $this->setAuthorizationCode($authorizationCode);
+        $this->setAuthorizationCode($user->getSsoId());
+        $this->setAccessToken($ssoUser->getAccessToken());
+        $this->setAccessTokenExpiresDate($ssoUser->getAccessTokenExpiresDuration());
+        $this->setRefreshToken($ssoUser->getRefreshToken());
+        $this->setRefreshTokenExpiresDate($ssoUser->getRefreshTokenExpiresDuration());
+    }
+
+    public function updateTokens(array $tokens)
+    {
+        $this->setAccessToken($tokens['access_token']);
+        $this->setAccessTokenExpiresDate($tokens['expires_in']);
+        $this->setRefreshToken($tokens['refresh_token']);
+        $this->setRefreshTokenExpiresDate($tokens['refresh_expires_in']);
     }
 
     /**
@@ -135,6 +162,24 @@ class MobConnectAuth
     }
 
     /**
+     * Get the value of accessTokenExpiresDate.
+     */
+    public function getAccessTokenExpiresDate(): ?\DateTime
+    {
+        return $this->accessTokenExpiresDate;
+    }
+
+    /**
+     * Set the value of accessTokenExpiresDate.
+     */
+    public function setAccessTokenExpiresDate(int $accessTokenExpiresDuration): self
+    {
+        $this->accessTokenExpiresDate = $this->getExpirationDateFromDuration($accessTokenExpiresDuration);
+
+        return $this;
+    }
+
+    /**
      * Get the value of authorizationCode.
      */
     public function getAuthorizationCode(): string
@@ -171,9 +216,25 @@ class MobConnectAuth
     }
 
     /**
+     * Get the value of refreshTokenExpiresDate.
+     */
+    public function getRefreshTokenExpiresDate(): \DateTime
+    {
+        return $this->refreshTokenExpiresDate;
+    }
+
+    /**
+     * Set the value of refreshTokenExpiresDate.
+     */
+    public function setRefreshTokenExpiresDate(int $refreshTokenExpiresDuration): self
+    {
+        $this->refreshTokenExpiresDate = $this->getExpirationDateFromDuration($refreshTokenExpiresDuration);
+
+        return $this;
+    }
+
+    /**
      * Get the value of createdAt.
-     *
-     * @return \DateTimeInterface
      */
     public function getCreatedAt(): \DateTime
     {
@@ -182,11 +243,19 @@ class MobConnectAuth
 
     /**
      * Get the value of updatedAt.
-     *
-     * @return \DateTimeInterface
      */
     public function getUpdatedAt(): \DateTime
     {
         return $this->updatedAt;
+    }
+
+    private function getExpirationDateFromDuration(int $duration): \DateTime
+    {
+        $duration -= 15;
+
+        $now = new \DateTime('now');
+        $expirationDate = clone $now;
+
+        return $expirationDate->add(new \DateInterval('PT'.$duration.'S'));
     }
 }

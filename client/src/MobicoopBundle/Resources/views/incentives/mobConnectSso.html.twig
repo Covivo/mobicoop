@@ -26,7 +26,6 @@
 
             init = () => {
                 const strQuery = window.location.hash ? window.location.hash.substring(1) : null;
-
                 if (strQuery) {
                     const objQuery = this.parseQuery(strQuery);
 
@@ -35,7 +34,7 @@
                         && DEFAULT_NODE === objQuery.state
                         && objQuery.hasOwnProperty('code')
                     ) {
-                        this.redirectUrl = new URL(`${this.baseUri}/user/sso/login?state=${objQuery.state}&code=${objQuery.code}&origin=mobConnect`);
+                        this.redirectUrl = new URL(`${this.baseUri}/user/sso/eec-incentive?ssoProvider=${objQuery.state}&ssoId=${objQuery.code}&baseSiteUri=${this.baseUri}&eec=1`);
                     }
                 }
 
