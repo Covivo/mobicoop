@@ -16,7 +16,6 @@ use Doctrine\ORM\EntityManagerInterface;
  */
 class MobConnectApiProvider extends MobConnectProvider
 {
-    private const BASE_SITE_URI = 'http://localhost:8081';
     private const SERVICE_NAME = 'mobConnect';
 
     private const ROUTE_SUBSCRIPTIONS = '/v1/maas/subscriptions';
@@ -104,11 +103,11 @@ class MobConnectApiProvider extends MobConnectProvider
 
         $provider = new OpenIdSsoProvider(
             self::SERVICE_NAME,
-            self::BASE_SITE_URI,
+            '',
             $service['baseUri'],
             $service['clientId'],
             $service['clientSecret'],
-            self::BASE_SITE_URI.'/'.$service['returnUrl'],
+            '',
             $service['autoCreateAccount'],
             $service['logOutRedirectUri'] = '',
             $service['codeVerifier'] = null
