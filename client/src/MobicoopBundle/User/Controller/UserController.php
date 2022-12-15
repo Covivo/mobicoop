@@ -1451,9 +1451,17 @@ class UserController extends AbstractController
             $params['eec'] = boolval($params['eec']);
         }
 
-        $user = $this->userManager->patchUserForSsoAssociation($this->getUser(), $params);
+        $isMobConnectSubscriptionSuccessFull = false;
 
-        return $this->redirectToRoute('home', ['fromMobConnectSso' => true]);
+        if ($this->getUser()) {
+            $user = $this->userManager->patchUserForSsoAssociation($this->getUser(), $params);
+
+            if ($user instanceof User) {
+                $isMobConnectSubscriptionSuccessFull = !is_null($user->getShortDistanceSubscription()) && !is_null($user->getLongDistanceSubscription());
+            }
+        }
+
+        return $this->redirectToRoute('home', ['isMobConnectSubscriptionSuccessFull' => $isMobConnectSubscriptionSuccessFull]);
     }
 
     /**
