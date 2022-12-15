@@ -24,12 +24,12 @@
 namespace App\Carpool\Service;
 
 use App\Carpool\Entity\CarpoolExport;
+use App\Carpool\Entity\CarpoolProof;
 use App\Payment\Entity\CarpoolItem;
 use App\Payment\Repository\CarpoolItemRepository;
 use App\User\Entity\User;
 use App\User\Service\UserManager;
 use App\Utility\Service\PdfManager;
-use DateTime;
 use Symfony\Component\Security\Core\Security;
 
 /**
@@ -72,7 +72,7 @@ class CarpoolExportManager
         $this->carpoolExportPath = $carpoolExportPath;
         $this->carpoolExportPlatformName = $carpoolExportPlatformName;
         $this->paymentActive = false;
-        if ($this->paymentActiveDate = DateTime::createFromFormat('Y-m-d', $paymentActive)) {
+        if ($this->paymentActiveDate = \DateTime::createFromFormat('Y-m-d', $paymentActive)) {
             $this->paymentActiveDate->setTime(0, 0);
             $this->paymentActive = true;
         }
@@ -181,9 +181,9 @@ class CarpoolExportManager
             //    we set the certification type
             if ($carpoolItem->getAsk()->getCarpoolProofs()) {
                 foreach ($carpoolItem->getAsk()->getCarpoolProofs() as $carpoolProof) {
-                    // if ($carpoolProof->getPickUpPassengerDate() == $carpoolItem->getItemDate()) {
-                    $carpoolExport->setCertification($carpoolProof->getType());
-                    // }
+                    if (CarpoolProof::STATUS_VALIDATED == $carpoolProof->getStatus()) {
+                        $carpoolExport->setCertification($carpoolProof->getType());
+                    }
                 }
             }
 
@@ -192,9 +192,9 @@ class CarpoolExportManager
 
         // we put all infos needed in an array to build pdf
         $infoForPdf = [];
-        $now = new DateTime();
+        $now = new \DateTime();
         $infoForPdf['date'] = $now->format('l d F Y');
-        $infoForPdf['year'] = new DateTime();
+        $infoForPdf['year'] = new \DateTime();
         $infoForPdf['twigPath'] = 'carpool/export/carpool_export.html.twig';
         // we sanitize username to use it in the fileName
         $sanitizeUserName = \Transliterator::create('NFD; [:Nonspacing Mark:] Remove; NFC')
