@@ -152,13 +152,17 @@ class MobConnectSubscriptionManager
             $this->__createAuth($this->_user, $ssoUser);
         }
 
-        $shortDistanceSubscription = $this->createShortDistanceSubscription();
+        if (is_null($this->_user->getShortDistanceSubscription())) {
+            $shortDistanceSubscription = $this->createShortDistanceSubscription();
 
-        $this->_em->persist($shortDistanceSubscription);
+            $this->_em->persist($shortDistanceSubscription);
+        }
 
-        $longDistanceSubscription = $this->createLongDistanceSubscription();
+        if (is_null($this->_user->getLongDistanceSubscription())) {
+            $longDistanceSubscription = $this->createLongDistanceSubscription();
 
-        $this->_em->persist($longDistanceSubscription);
+            $this->_em->persist($longDistanceSubscription);
+        }
 
         $this->_em->flush();
     }

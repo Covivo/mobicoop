@@ -93,7 +93,6 @@ class OpenIdSsoProvider extends EntityOpenIdSsoProvider
             'grant_type' => 'refresh_token',
             'scope' => 'offline_access',
             'refresh_token' => $refreshToken,
-            'redirect_uri' => $this->redirectUri,
             'code_verifier' => $this->codeVerifier,
         ]);
     }
