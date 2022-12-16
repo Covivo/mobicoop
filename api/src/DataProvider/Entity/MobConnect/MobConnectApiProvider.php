@@ -135,13 +135,22 @@ class MobConnectApiProvider extends MobConnectProvider
         return new MobConnectSubscriptionResponse($this->__postSubscription($this->_apiParams->getLongDistanceSubscriptionId(), false, $this->_user->getTelephone()));
     }
 
-    // Updates a user subscription with a carpool proof
-    public function patchUserSubscription(string $subscriptionId, string $rpcJourneyId, bool $isShortDistance = false, ?\DateTimeInterface $costSharingDate = null)
-    {
-        // Todo: this route is not available on the provider API
-        return;
+    /**
+     * Updates a user subscription with a carpool proof.
+     *
+     * @param string            $subscriptionId  The ID of the subscription that needs to be updated
+     * @param string            $rpcJourneyId    The RPC ID of the journey
+     * @param bool              $isShortDistance Specifies whether the trip is a short distance trip
+     * @param DateTimeInterface $costSharingDate The date of payment for the trip
+     */
+    public function patchUserSubscription(
+        string $subscriptionId,
+        ?string $rpcJourneyId = null,
+        bool $isShortDistance = false,
+        ?\DateTimeInterface $costSharingDate = null
+    ): MobConnectSubscriptionResponse {
         $data = [];
-
+        // TODO: Vérifier le fonctionnement de la requête
         if (true === $isShortDistance) {
             $data['Identifiant du trajet'] = $rpcJourneyId;
         } else {

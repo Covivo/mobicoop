@@ -213,7 +213,7 @@ class MobConnectSubscriptionManager
     /**
      * Updates subscriptions (long or short distance) based on provided carpoolProof.
      */
-    public function updateSubscription(CarpoolProof $carpoolProof): void
+    public function updateSubscription(CarpoolProof $carpoolProof, \DateTimeInterface $paymentDate = null): void
     {
         switch (true) {
             case CeeJourneyService::isValidLongDistanceJourney($carpoolProof):
@@ -270,7 +270,11 @@ class MobConnectSubscriptionManager
                     switch (count($this->_userSubscription->getLongDistanceJourneys())) {
                         case CeeJourneyService::LOW_THRESHOLD_PROOF:
                             // The journey is added to the EEC sheet
-                            $this->_mobConnectApiProvider->patchUserSubscription($this->__getSubscriptionId(), $this->__getRpcJourneyId($carpoolProof->getId()), true);
+                            if (is_null($paymentDate)) {
+                                throw new \LogicException(MobConnectMessages::PAYMENT_DATE_MISSING);
+                            }
+
+                            $this->_mobConnectApiProvider->patchUserSubscription($this->__getSubscriptionId(), null, false, $paymentDate);
 
                             $event = new FirstLongDistanceJourneyValidatedEvent($journey);
                             $this->eventDispatcher->dispatch(FirstLongDistanceJourneyValidatedEvent::NAME, $event);
@@ -328,7 +332,7 @@ class MobConnectSubscriptionManager
     /**
      * Updates long distance subscription after a payment has been validated.
      */
-    public function updateLongDistanceSubscriptionAfterPayment(CarpoolPayment $carpoolPayment): void
+    public function updateLongDistanceSubscriptionAfterPayment(CarpoolPayment $carpoolPayment, \DateTime): void
     {
         // Array of carpoolItem where driver is associated with MobConnect
         $filteredCarpoolItems = array_filter($carpoolPayment->getCarpoolItems(), function (CarpoolItem $carpoolItem) {
@@ -350,7 +354,7 @@ class MobConnectSubscriptionManager
             });
 
             foreach ($filteredCarpoolProofs as $carpool) {
-                $this->updateSubscription($carpool);
+                $this->updateSubscription($carpool, $carpoolPayment->getUpdatedDate());
             }
         }
     }
