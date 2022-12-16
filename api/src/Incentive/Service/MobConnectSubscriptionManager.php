@@ -332,7 +332,7 @@ class MobConnectSubscriptionManager
     /**
      * Updates long distance subscription after a payment has been validated.
      */
-    public function updateLongDistanceSubscriptionAfterPayment(CarpoolPayment $carpoolPayment, \DateTime): void
+    public function updateLongDistanceSubscriptionAfterPayment(CarpoolPayment $carpoolPayment): void
     {
         // Array of carpoolItem where driver is associated with MobConnect
         $filteredCarpoolItems = array_filter($carpoolPayment->getCarpoolItems(), function (CarpoolItem $carpoolItem) {
