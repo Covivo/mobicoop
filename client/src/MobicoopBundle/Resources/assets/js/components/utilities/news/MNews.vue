@@ -29,7 +29,7 @@
         <v-btn
           color="primary"
           class="white--text"
-          :href="$t('news.button.link')"
+          :href="mobileUrl + $t('news.button.link')"
         >
           {{ $t('news.button.label') }}
         </v-btn>
