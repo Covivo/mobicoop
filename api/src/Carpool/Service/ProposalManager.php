@@ -35,6 +35,7 @@ use App\Carpool\Event\DriverAskAdDeletedUrgentEvent;
 use App\Carpool\Event\PassengerAskAdDeletedEvent;
 use App\Carpool\Event\PassengerAskAdDeletedUrgentEvent;
 use App\Carpool\Event\ProposalPostedEvent;
+use App\Carpool\Exception\AdException;
 use App\Carpool\Repository\CriteriaRepository;
 use App\Carpool\Repository\MatchingRepository;
 use App\Carpool\Repository\ProposalRepository;
@@ -859,7 +860,9 @@ class ProposalManager
                 // if we ever want alternative routes we should pass the route as parameter of this method
                 // (problem : the route has no id, we should pass the whole route to check which route is chosen by the user...
                 //      => we would have to think of a way to simplify...)
-                $direction = $routes[0];
+                if (($direction = $routes[0]) == null) {
+                    throw new AdException(AdException::WRONG_COORDINATES);
+                }
                 $direction->setAutoGeoJsonDetail();
                 $proposal->getCriteria()->setDirectionDriver($direction);
                 $proposal->getCriteria()->setMaxDetourDistance($direction->getDistance() * $this->proposalMatcher::getMaxDetourDistancePercent() / 100);
@@ -888,6 +891,8 @@ class ProposalManager
                     $direction->setAutoGeoJsonDetail();
                     $proposal->getCriteria()->setDirectionPassenger($direction);
                 }
+            } else {
+                throw new AdException(AdException::WRONG_COORDINATES);
             }
         }
 
