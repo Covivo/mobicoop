@@ -66,7 +66,7 @@ class OpenIdSsoProvider implements SsoProviderInterface
             self::LOGOUT_URL => 'auth/realms/mcm/protocol/openid-connect/logout?post_logout_redirect_uri={REDIRECT_URI}',
         ],
         self::SSO_PROVIDER_MOBIGO => [
-            self::AUTHORIZATION_URL => 'connect/authorize?redirect_uri={REDIRECT_URI}&client_id={CLIENT_ID}&state={SERVICE_NAME}&response_mode=fragment&response_type=code&scope=openid+profile+email+phone&nonce=963378f1-5e39-40b9-95dc-dff120a10694',
+            self::AUTHORIZATION_URL => 'connect/authorize?redirect_uri={REDIRECT_URI}&client_id={CLIENT_ID}&state={SERVICE_NAME}&response_type=code&scope=openid+profile+email+phone&nonce=963378f1-5e39-40b9-95dc-dff120a10694',
             self::TOKEN_URL => 'connect/token',
             self::USERINFOS_URL => 'connect/userinfo',
             self::LOGOUT_URL => 'connect/logout?post_logout_redirect_uri={REDIRECT_URI}',
