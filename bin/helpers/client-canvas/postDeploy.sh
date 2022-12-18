@@ -1,21 +1,18 @@
 #!/bin/bash
 
-for i in "$@"
+for arg
 do
-case $i in
-    --version=*)
-    VERSION="${i#*=}"
-    shift # past argument=value
-    ;;
-    --version-migrate=*)
-    VERSION_MIGRATE="${i#*=}"
-    shift # past argument=value
-    ;;
-    --instance=*)
-    INSTANCE="${i#*=}"
-    shift # past argument=value
-    ;;
-esac
+    case "${arg}" in
+        --version=* )
+            VERSION="${arg#*=}"
+	    ;;
+        --version-migrate=* )
+            VERSION_MIGRATE="${arg#*=}"
+            ;;
+        --instance=* )
+            INSTANCE="${arg#*=}"
+            ;;
+    esac
 done
 
 if [ $VERSION == "dev" ] || [ $VERSION == "test" ]
