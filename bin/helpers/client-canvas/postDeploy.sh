@@ -87,7 +87,7 @@ wget -N https://www.mangopay.com/terms/PSP/PSP_MANGOPAY_FR.pdf
 rm ${ROOT}/mobicoop-platform/api/public/maintenance.enable ${ROOT}/public/maintenance.enable
 
 # Fixtures for test
-if [ "${VERSION}" == "test" ]
+if [ "${VERSION}" = "test" ]
 then
     cd ${ROOT}/mobicoop-platform/api
     php bin/console doctrine:fixtures:load -n -v --append --group=basic --env=${VERSION_MIGRATE}

@@ -84,7 +84,7 @@ php bin/console cache:clear --env=${VERSION_MIGRATE}
 rm ${ROOT}/api/public/maintenance.enable ${ROOT}/client/public/maintenance.enable
 
 # Fixtures for test
-if [ "${VERSION}" == "test" ]
+if [ "${VERSION}" = "test" ]
 then
     cd ${ROOT}/api
     php bin/console doctrine:fixtures:load -n -v --append --group=basic --env=${VERSION_MIGRATE}
