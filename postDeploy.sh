@@ -81,8 +81,7 @@ cd ${ROOT}/client
 php bin/console cache:clear --env=${VERSION_MIGRATE}
 
 # Remove maintenance page
-rm ${ROOT}/api/public/maintenance.enable
-rm ${ROOT}/client/public/maintenance.enable
+rm ${ROOT}/api/public/maintenance.enable ${ROOT}/client/public/maintenance.enable
 
 # Fixtures for test
 if [ "${VERSION}" == "test" ]

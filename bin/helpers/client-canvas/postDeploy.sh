@@ -84,8 +84,7 @@ cd "${EXTERNAL_CGU_DIRECTORY}"
 wget -N https://www.mangopay.com/terms/PSP/PSP_MANGOPAY_FR.pdf
 
 # Remove maintenance page
-rm ${ROOT}/mobicoop-platform/api/public/maintenance.enable
-rm ${ROOT}/public/maintenance.enable
+rm ${ROOT}/mobicoop-platform/api/public/maintenance.enable ${ROOT}/public/maintenance.enable
 
 # Fixtures for test
 if [ "${VERSION}" == "test" ]
