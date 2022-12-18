@@ -84,12 +84,8 @@ python3 ${ROOT}/scripts/updateCrontab.py --env=${VERSION_MIGRATE}
 
 # External Cgu Mango
 EXTERNAL_CGU_DIRECTORY=${ROOT}/public/externalCgu
-if [ ! -d "$EXTERNAL_CGU_DIRECTORY" ]
-then
-    cd ${ROOT}/public/
-    mkdir externalCgu
-fi
-cd ${ROOT}/public/externalCgu
+[ -d "${EXTERNAL_CGU_DIRECTORY}" ] || mkdir -p "${EXTERNAL_CGU_DIRECTORY}"
+cd "${EXTERNAL_CGU_DIRECTORY}"
 wget -N https://www.mangopay.com/terms/PSP/PSP_MANGOPAY_FR.pdf
 
 # Remove maintenance page
