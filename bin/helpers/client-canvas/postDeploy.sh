@@ -62,17 +62,12 @@ cd ${ROOT}/mobicoop-platform/api;
 php bin/console doctrine:migrations:migrate --env=${VERSION_MIGRATE} -n;
 
 # SymLink custom email translations
-if [ -d "../../translations/email" ]; then
-    if [ ! -f "translations_client" ]; then
-        ln -s ../../translations/email/ translations_client;
-    fi
-fi
+[ -d "../../translations/email" ] && [ ! -f "translations_client" ] && ln -s ../../translations/email/ translations_client
 
 # Symlink custom email templates
-if [ -d "../../templates/bundles/MobicoopBundle/email" ]; then
-    if [ ! -f "templates/email_client" ]; then
-        ln -s  ../../../templates/bundles/MobicoopBundle/email templates/email_client
-    fi
+if [ -d "../../templates/bundles/MobicoopBundle/email" ] && [ ! -f "templates/email_client" ]
+then
+    ln -s  ../../../templates/bundles/MobicoopBundle/email templates/email_client
 fi
 
 # Migrations instance
