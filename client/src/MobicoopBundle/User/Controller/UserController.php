@@ -1441,15 +1441,14 @@ class UserController extends AbstractController
      */
     public function userReturnConnectSSOMobConnect(Request $request)
     {
-        $params = $request->query->all();
+        $requestParams = $request->query->all();
 
-        if (empty($params)) {
-            return $this->render('@Mobicoop/incentives/mobConnectSso.html.twig');
-        }
-
-        if (isset($params['eec'])) {
-            $params['eec'] = boolval($params['eec']);
-        }
+        $params = [
+            'ssoProvider' => $requestParams['state'],
+            'ssoId' => $requestParams['code'],
+            'baseSiteUri' => $request->getScheme().'://'.$request->server->get('HTTP_HOST'),
+            'eec' => 1,
+        ];
 
         $isMobConnectSubscriptionSuccessFull = false;
 
