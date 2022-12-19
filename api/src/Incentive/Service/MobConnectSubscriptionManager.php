@@ -92,6 +92,18 @@ class MobConnectSubscriptionManager
         $this->_em->flush();
     }
 
+    private function __updateAuth(SsoUser $ssoUser)
+    {
+        $mobConnectAuth = $this->_user->getMobConnectAuth();
+
+        $mobConnectAuth->setAccessToken($ssoUser->getAccessToken());
+        $mobConnectAuth->setAccessTokenExpiresDate($ssoUser->getAccessTokenExpiresDuration());
+        $mobConnectAuth->setRefreshToken($ssoUser->getRefreshToken());
+        $mobConnectAuth->setRefreshTokenExpiresDate($ssoUser->getRefreshTokenExpiresDuration());
+
+        $this->_em->flush();
+    }
+
     private function __getCarpoolersNumber(int $askId): int
     {
         $conn = $this->_em->getConnection();
@@ -150,6 +162,8 @@ class MobConnectSubscriptionManager
 
         if (is_null($this->_user->getMobConnectAuth())) {
             $this->__createAuth($this->_user, $ssoUser);
+        } else {
+            $this->__updateAuth($ssoUser);
         }
 
         if (is_null($this->_user->getShortDistanceSubscription())) {
