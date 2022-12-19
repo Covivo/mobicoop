@@ -182,8 +182,7 @@ abstract class CeeJourneyService
         self::__setMatchingFromCarpoolProof($carpoolProof);
 
         return
-            CarpoolProof::TYPE_HIGH === $carpoolProof->getType()
-            && !is_null(self::$_matching)
+            !is_null(self::$_matching)
             && self::__isLongDistance(self::$_matching->getCommonDistance())
             && self::__isOriginOrDestinationFromReferenceCountry()
             && !is_null($carpoolProof->getAsk()->getCriteria())

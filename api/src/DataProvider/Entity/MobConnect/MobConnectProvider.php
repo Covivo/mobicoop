@@ -78,6 +78,8 @@ abstract class MobConnectProvider
 
         switch ($response->getCode()) {
             case 200:
+            case 201:
+            case 204:
                 return json_decode($responseValue);
 
             case 400:

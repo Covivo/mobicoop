@@ -16,6 +16,8 @@ use App\Incentive\Event\FirstLongDistanceJourneyValidatedEvent;
 use App\Incentive\Event\FirstShortDistanceJourneyValidatedEvent;
 use App\Incentive\Event\LastLongDistanceJourneyValidatedEvent;
 use App\Incentive\Event\LastShortDistanceJourneyValidatedEvent;
+use App\Incentive\Event\LongDistanceSubscriptionClosedEvent;
+use App\Incentive\Event\ShortDistanceSubscriptionClosedEvent;
 use App\Incentive\Resource\CeeSubscriptions;
 use App\Payment\Entity\CarpoolItem;
 use App\Payment\Entity\CarpoolPayment;
@@ -133,8 +135,7 @@ class MobConnectSubscriptionManager
     private function __verifySubscription()
     {
         $response = $this->_mobConnectApiProvider->verifyUserSubscription($this->__getSubscriptionId());
-        // TODO s'assurer du moment où se fait la vérification de la demande: après chaque trajet ou bien une fois que le quotas maximal a été atteint
-        // TODO En fonction de la réponse, modifier l'emplacement de la propriété statut (soit dans les journey, soit dans les souscription)
+
         $this->_userSubscription->setStatus($response->getStatus());
         $this->_userSubscription->setLastTimestamp($response->getTimestamp());
     }
@@ -215,7 +216,7 @@ class MobConnectSubscriptionManager
     /**
      * Updates subscriptions (long or short distance) based on provided carpoolProof.
      */
-    public function updateSubscription(CarpoolProof $carpoolProof): void
+    public function updateSubscription(CarpoolProof $carpoolProof, \DateTimeInterface $paymentDate = null): void
     {
         switch (true) {
             case CeeJourneyService::isValidLongDistanceJourney($carpoolProof):
@@ -267,19 +268,20 @@ class MobConnectSubscriptionManager
         if ($this->_userSubscription) {
             $this->__setApiProviderParams();
 
-            // The journey is added to the EEC sheet
-            $this->_mobConnectApiProvider->patchUserSubscription($this->__getSubscriptionId(), $this->__getRpcJourneyId($carpoolProof->getId()), true);
-
             switch (true) {
                 case $this->_userSubscription instanceof LongDistanceSubscription:
                     switch (count($this->_userSubscription->getLongDistanceJourneys())) {
                         case CeeJourneyService::LOW_THRESHOLD_PROOF:
+                            // The journey is added to the EEC sheet
+                            if (is_null($paymentDate)) {
+                                throw new \LogicException(MobConnectMessages::PAYMENT_DATE_MISSING);
+                            }
+
+                            $this->_mobConnectApiProvider->patchUserSubscription($this->__getSubscriptionId(), null, false, $paymentDate);
+
                             $event = new FirstLongDistanceJourneyValidatedEvent($journey);
                             $this->eventDispatcher->dispatch(FirstLongDistanceJourneyValidatedEvent::NAME, $event);
 
-                            break;
-
-                        case CeeJourneyService::LONG_DISTANCE_TRIP_THRESHOLD:
                             $this->__verifySubscription();
 
                             if (LongDistanceSubscription::STATUS_VALIDATED === $this->_userSubscription->getStatus()) {
@@ -288,25 +290,37 @@ class MobConnectSubscriptionManager
                             }
 
                             break;
+
+                        case CeeJourneyService::LONG_DISTANCE_TRIP_THRESHOLD:
+                            $event = new LongDistanceSubscriptionClosedEvent($this->_userSubscription);
+                            $this->_eventDispatcher->dispatch(LongDistanceSubscriptionClosedEvent::NAME, $event);
+
+                            break;
                     }
 
                     break;
 
                 case $this->_userSubscription instanceof ShortDistanceSubscription:
-                    switch (count($this->_userSubscription->getLongDistanceJourneys())) {
+                    switch (count($this->_userSubscription->getShortDistanceJourneys())) {
                         case CeeJourneyService::LOW_THRESHOLD_PROOF:
+                            // The journey is added to the EEC sheet
+                            $this->_mobConnectApiProvider->patchUserSubscription($this->__getSubscriptionId(), $this->__getRpcJourneyId($carpoolProof->getId()), true);
+
                             $event = new FirstShortDistanceJourneyValidatedEvent($journey);
                             $this->_eventDispatcher->dispatch(FirstShortDistanceJourneyValidatedEvent::NAME, $event);
 
-                            break;
-
-                        case CeeJourneyService::SHORT_DISTANCE_TRIP_THRESHOLD:
                             $this->__verifySubscription();
 
                             if (ShortDistanceSubscription::STATUS_VALIDATED === $this->_userSubscription->getStatus()) {
                                 $event = new LastShortDistanceJourneyValidatedEvent($journey);
                                 $this->_eventDispatcher->dispatch(LastShortDistanceJourneyValidatedEvent::NAME, $event);
                             }
+
+                            break;
+
+                        case CeeJourneyService::SHORT_DISTANCE_TRIP_THRESHOLD:
+                            $event = new ShortDistanceSubscriptionClosedEvent($this->_userSubscription);
+                            $this->_eventDispatcher->dispatch(ShortDistanceSubscriptionClosedEvent::NAME, $event);
 
                             break;
                     }
@@ -343,7 +357,7 @@ class MobConnectSubscriptionManager
             });
 
             foreach ($filteredCarpoolProofs as $carpool) {
-                $this->updateSubscription($carpool);
+                $this->updateSubscription($carpool, $carpoolPayment->getUpdatedDate());
             }
         }
     }
