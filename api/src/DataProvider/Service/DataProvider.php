@@ -304,6 +304,7 @@ class DataProvider
             switch ($clientResponse->getStatusCode()) {
                 case 200:
                 case 201:
+                case 204:
                     return new Response($clientResponse->getStatusCode(), $clientResponse->getBody());
             }
         } catch (TransferException $e) {

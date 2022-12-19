@@ -149,7 +149,7 @@ class MobConnectApiProvider extends MobConnectProvider
         ?\DateTimeInterface $costSharingDate = null
     ): MobConnectSubscriptionResponse {
         $data = [];
-        // TODO: Vérifier le fonctionnement de la requête
+
         if (true === $isShortDistance) {
             $data['Identifiant du trajet'] = $rpcJourneyId;
         } else {

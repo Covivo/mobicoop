@@ -135,8 +135,7 @@ class MobConnectSubscriptionManager
     private function __verifySubscription()
     {
         $response = $this->_mobConnectApiProvider->verifyUserSubscription($this->__getSubscriptionId());
-        // TODO s'assurer du moment où se fait la vérification de la demande: après chaque trajet ou bien une fois que le quotas maximal a été atteint
-        // TODO En fonction de la réponse, modifier l'emplacement de la propriété statut (soit dans les journey, soit dans les souscription)
+
         $this->_userSubscription->setStatus($response->getStatus());
         $this->_userSubscription->setLastTimestamp($response->getTimestamp());
     }
