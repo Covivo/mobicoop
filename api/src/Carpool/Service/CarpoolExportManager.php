@@ -24,6 +24,7 @@
 namespace App\Carpool\Service;
 
 use App\Carpool\Entity\CarpoolExport;
+use App\Carpool\Entity\CarpoolProof;
 use App\Payment\Entity\CarpoolItem;
 use App\Payment\Repository\CarpoolItemRepository;
 use App\User\Entity\User;
@@ -181,7 +182,22 @@ class CarpoolExportManager
             if ($carpoolItem->getAsk()->getCarpoolProofs()) {
                 foreach ($carpoolItem->getAsk()->getCarpoolProofs() as $carpoolProof) {
                     // if ($carpoolProof->getPickUpPassengerDate() == $carpoolItem->getItemDate()) {
-                    $carpoolExport->setCertification($carpoolProof->getType());
+                    switch ($carpoolProof->getType()) {
+                        case CarpoolProof::TYPE_UNDETERMINED_CLASSIC:
+                            $carpoolExport->setCertification(null);
+
+                            break;
+
+                        case CarpoolProof::TYPE_UNDETERMINED_DYNAMIC:
+                            $carpoolExport->setCertification(null);
+
+                            break;
+
+                        default:
+                            $carpoolExport->setCertification($carpoolProof->getType());
+
+                            break;
+                    }
                     // }
                 }
             }
