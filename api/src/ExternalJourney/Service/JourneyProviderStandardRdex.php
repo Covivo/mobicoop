@@ -104,6 +104,7 @@ class JourneyProviderStandardRdex extends JourneyProvider
         $client = new Client();
 
         $query = [
+            'timestamp' => time(),
             'p' => $searchParameters,
         ];
 

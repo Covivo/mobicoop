@@ -738,13 +738,10 @@ services:
 
   # INCENTIVE
   App\Incentive\EventListener\MobConnectListener:
-
-  App\Incentive\Service\MobConnectAuthManager:
-    arguments:
-      $ssoServices: "%env(json:file:resolve:SSO_SERVICES)%"
   
   App\Incentive\Service\MobConnectSubscriptionManager:
     arguments:
+      $ssoServices: "%env(json:file:resolve:SSO_SERVICES)%"
       $mobConnectParams:
         api_uri: "%env(string:MOBCONNECT_API_URI)%"
         credentials:

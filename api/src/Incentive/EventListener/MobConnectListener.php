@@ -5,18 +5,20 @@ namespace App\Incentive\EventListener;
 use App\Carpool\Event\CarpoolProofValidatedEvent;
 use App\Incentive\Service\MobConnectSubscriptionManager;
 use App\Payment\Event\ElectronicPaymentValidatedEvent;
+use App\User\Entity\User;
 use App\User\Event\SsoAssociationEvent;
-use App\User\Event\SsoCreationEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Security\Core\Security;
 
+/**
+ * Class providing the functions necessary for listening to events allowing the operation of EEC sheets.
+ *
+ * @author Olivier Fillol <olivier.fillol@mobicoop.org>
+ */
 class MobConnectListener implements EventSubscriberInterface
 {
-    private const ALLOWED_PROVIDER = 'mobConnect';
-
-    private $_subscriptionManager;
+    private const ALLOWED_SSO_PROVIDER = 'mobConnect';
 
     /**
      * @var Request
@@ -24,42 +26,14 @@ class MobConnectListener implements EventSubscriberInterface
     private $_request;
 
     /**
-     * @var User
+     * @var MobConnectSubscriptionManager
      */
-    private $_user;
+    private $_subscriptionManager;
 
-    public function __construct(RequestStack $requestStack, Security $security, MobConnectSubscriptionManager $subscriptionManager)
+    public function __construct(RequestStack $requestStack, MobConnectSubscriptionManager $subscriptionManager)
     {
         $this->_request = $requestStack->getCurrentRequest();
-        $this->_user = $security->getUser();
         $this->_subscriptionManager = $subscriptionManager;
-    }
-
-    private function __isRequestSetForCreatingSubscriptions(): bool
-    {
-        $decodedRequest = json_decode($this->_request->getContent());
-
-        return
-            isset($decodedRequest->fromSsoMobConnect)       // Is the `fromSsoMobConnect` param in the request
-            && $decodedRequest->fromSsoMobConnect           // The `fromSsoMobConnect` param is true
-            && $this->__isUserMobConnected();               // The current user is authenticated with mobConnect
-    }
-
-    private function __createSubscriptions($event)
-    {
-        $user = $event->getUser();
-
-        if (
-            is_null($user->getShortDistanceSubscription())
-            && is_null($user->getLongDistanceSubscription())
-        ) {
-            $this->_subscriptionManager->createSubscriptions($user->getSsoId());
-        }
-    }
-
-    private function __isUserMobConnected(): bool
-    {
-        return preg_match('/'.self::ALLOWED_PROVIDER.'/', $this->_user->getSsoProvider()) && !is_null($this->_user->getSsoId());
     }
 
     public static function getSubscribedEvents()
@@ -68,37 +42,39 @@ class MobConnectListener implements EventSubscriberInterface
             CarpoolProofValidatedEvent::NAME => 'onProofValidated',
             ElectronicPaymentValidatedEvent::NAME => 'onPaymentValidated',
             SsoAssociationEvent::NAME => 'onUserAssociated',
-            SsoCreationEvent::NAME => 'onUserCreated',
         ];
     }
 
-    public function onUserAssociated(SsoAssociationEvent $event)
+    /**
+     * Listener called when a Mobicoop user is authenticated with an openId account.
+     */
+    public function onUserAssociated(SsoAssociationEvent $event): void
     {
-        if ($this->__isRequestSetForCreatingSubscriptions()) {
-            $this->__createSubscriptions($event);
+        $decodeRequest = json_decode($this->_request->getContent());
+
+        if (
+            property_exists($decodeRequest, 'ssoProvider')
+            && self::ALLOWED_SSO_PROVIDER === $decodeRequest->ssoProvider
+            && property_exists($decodeRequest, 'eec')
+            && 1 === $decodeRequest->eec
+        ) {
+            $this->_subscriptionManager->createSubscriptions($event->getUser(), $event->getSsoUser());
         }
     }
 
-    public function onUserCreated(SsoCreationEvent $event)
+    /**
+     * Listener called when an electronic payment is validated.
+     */
+    public function onPaymentValidated(ElectronicPaymentValidatedEvent $event): void
     {
-        if ($this->__isRequestSetForCreatingSubscriptions()) {
-            $this->__createSubscriptions($event);
-        }
+        $this->_subscriptionManager->updateLongDistanceSubscriptionAfterPayment($event->getCarpoolPayment());
     }
 
-    // For long distance journey
-    public function onPaymentValidated(ElectronicPaymentValidatedEvent $event)
+    /**
+     * Listener called when a carpool proof is validated.
+     */
+    public function onProofValidated(CarpoolProofValidatedEvent $event): void
     {
-        if ($this->__isUserMobConnected()) {
-            $this->_subscriptionManager->updateLongDistanceSubscription($event->getCarpoolPayment());
-        }
-    }
-
-    // For short distance journey
-    public function onProofValidated(CarpoolProofValidatedEvent $event)
-    {
-        if ($this->__isUserMobConnected()) {
-            $this->_subscriptionManager->updateShortDistanceSubscription($event->getCarpoolProof());
-        }
+        $this->_subscriptionManager->updateSubscription($event->getCarpoolProof());
     }
 }
