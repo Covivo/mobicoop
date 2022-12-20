@@ -1678,13 +1678,13 @@ class User implements UserInterface, EquatableInterface
 
     /**
      * @ORM\OneToOne(targetEntity="\App\Incentive\Entity\LongDistanceSubscription", mappedBy="user")
-     * @Groups({"patchSso", "user_read"})
+     * @Groups({"patchSso", "readUser"})
      */
     private $longDistanceSubscription;
 
     /**
      * @ORM\OneToOne(targetEntity="\App\Incentive\Entity\ShortDistanceSubscription", mappedBy="user")
-     * @Groups({"patchSso", "user_read"})
+     * @Groups({"patchSso", "readUser"})
      */
     private $shortDistanceSubscription;
 
