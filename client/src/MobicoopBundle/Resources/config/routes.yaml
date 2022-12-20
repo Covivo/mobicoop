@@ -517,12 +517,26 @@ user_return_sso:
         nl: /user/sso/login
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userReturnConnectSso
 
+user_return_sso_mobile:
+    path:
+        fr: /user/sso-mobile/login
+        en: /user/sso-mobile/login
+        nl: /user/sso-mobile/login
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userReturnConnectSsoMobile
+
 user_return_sso_mobConnect:
     path:
         fr: /user/sso/eec-incentive
         en: /user/sso/eec-incentive
         nl: /user/sso/eec-incentive
     controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userReturnConnectSSOMobConnect
+
+ser_return_sso_mobConnect_mobile:
+    path:
+        fr: /user/sso-mobile/eec-incentive
+        en: /user/sso-mobile/eec-incentive
+        nl: /user/sso-mobile/eec-incentive
+    controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userReturnConnectSsoMobConnectMobile
 
 user_login_sso:
   path:

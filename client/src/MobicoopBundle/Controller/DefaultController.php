@@ -53,13 +53,17 @@ class DefaultController extends AbstractController
             'searchComponentHorizontal' => $this->searchComponentHorizontal,
         ];
 
-        if (!is_null($request->get('fromMobConnectSso')) && true === boolval($request->get('fromMobConnectSso'))) {
-            $this->dataProvider->setClass(CeeSubscription::class, CeeSubscription::RESOURCE_NAME);
-            $response = $this->dataProvider->getCollection();
+        if (!is_null($request->get('isMobConnectSubscriptionSuccessFull'))) {
+            $params['mobConnectSubscriptions'] = false;
 
-            if (200 === $response->getCode()) {
-                $subscriptions = $response->getValue()->getMember()[0];
-                $params['mobConnectSubscriptions'] = !is_null($subscriptions->getShortDistanceSubscriptions()) && !is_null($subscriptions->getLongDistanceSubscriptions());
+            if (true === boolval($request->get('isMobConnectSubscriptionSuccessFull'))) {
+                $this->dataProvider->setClass(CeeSubscription::class, CeeSubscription::RESOURCE_NAME);
+                $response = $this->dataProvider->getCollection();
+
+                if (200 === $response->getCode()) {
+                    $subscriptions = $response->getValue()->getMember()[0];
+                    $params['mobConnectSubscriptions'] = !is_null($subscriptions->getShortDistanceSubscriptions()) && !is_null($subscriptions->getLongDistanceSubscriptions());
+                }
             }
         }
 

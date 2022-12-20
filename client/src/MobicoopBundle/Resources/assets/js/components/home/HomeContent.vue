@@ -15,7 +15,9 @@
         md="12"
         class="px-14"
       >
-        <m-news />
+        <m-news
+          :url-mobile="mobileUrl"
+        />
       </v-col>
     </v-row>
     <!-- features -->

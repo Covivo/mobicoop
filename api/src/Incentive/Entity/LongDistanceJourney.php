@@ -2,7 +2,7 @@
 
 namespace App\Incentive\Entity;
 
-use App\Payment\Entity\CarpoolItem;
+use App\Carpool\Entity\CarpoolProof;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -86,22 +86,19 @@ class LongDistanceJourney
      */
     private $updatedAt;
 
-    public function __construct(CarpoolItem $carpoolItem, int $carpoolersNumber)
+    public function __construct(CarpoolProof $carpoolProof, int $carpoolersNumber)
     {
-        foreach ($carpoolItem->getAsk()->getMatching()->getProposalOffer()->getWaypoints() as $waypoint) {
-            if (true === $waypoint->getDestination()) {
-                $this->setEndAddressLocality($waypoint->getAddress()->getAddressLocality());
-            } else {
-                $this->setStartAddressLocality($waypoint->getAddress()->getAddressLocality());
-            }
-        }
-
-        $this->setDistance($carpoolItem->getAsk()->getMatching()->getCommonDistance());
+        $this->setStartAddressLocality($carpoolProof->getOriginDriverAddress()->getAddressLocality());
+        $this->setEndAddressLocality($carpoolProof->getDestinationDriverAddress()->getAddressLocality());
+        $this->setDistance($carpoolProof->getAsk()->getMatching()->getCommonDistance());
         $this->setCarpoolersNumber($carpoolersNumber);
 
-        $startDate = \DateTime::createFromFormat('Y-m-d H:i:s', $carpoolItem->getAsk()->getMatching()->getProposalOffer()->getCriteria()->getFromDate()->format('Y-m-d').' '.$carpoolItem->getAsk()->getMatching()->getProposalOffer()->getCriteria()->getFromTime()->format('H:i:s'));
+        $startDate = \DateTime::createFromFormat(
+            'Y-m-d H:i:s',
+            $carpoolProof->getAsk()->getMatching()->getCriteria()->getFromDate()->format('Y-m-d').' '.$carpoolProof->getAsk()->getMatching()->getCriteria()->getFromTime()->format('H:i:s')
+        );
         $endDate = clone $startDate;
-        $endDate->add(new \DateInterval('PT'.$carpoolItem->getAsk()->getMatching()->getNewDuration().'S'));
+        $endDate->add(new \DateInterval('PT'.$carpoolProof->getAsk()->getMatching()->getNewDuration().'S'));
         $this->setStartDate($startDate->format('Y-m-d H:i:s'));
         $this->setEndDate($endDate->format('Y-m-d H:i:s'));
     }

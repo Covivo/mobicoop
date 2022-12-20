@@ -739,6 +739,26 @@ class DataProvider
         return new Response();
     }
 
+    public function patch($id, string $operation, array $params = null, bool $reverseOperationId = false): Response
+    {
+        try {
+            $headers = $this->getHeaders();
+            $headers['Content-Type'] = 'application/merge-patch+json';
+
+            $clientResponse = $this->client->patch($this->resource.'/'.$id.'/'.$operation, ['body' => json_encode($params), 'headers' => $headers]);
+
+            if (200 == $clientResponse->getStatusCode()) {
+                return new Response($clientResponse->getStatusCode(), $this->deserializer->deserialize($this->class, json_decode((string) $clientResponse->getBody(), true)));
+            }
+        } catch (ClientException|ServerException $e) {
+            return new Response($e->getCode(), $this->treatHydraCollection($e->getResponse()->getBody()->getContents(), true));
+        } catch (TransferException $e) {
+            return new Response($e->getCode());
+        }
+
+        return new Response();
+    }
+
     /**
      * Put item operation.
      *

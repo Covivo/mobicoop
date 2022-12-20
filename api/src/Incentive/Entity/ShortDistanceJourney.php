@@ -112,7 +112,7 @@ class ShortDistanceJourney
     {
         $this->setStartAddressLocality($carpoolProof->getOriginDriverAddress()->getAddressLocality());
         $this->setEndAddressLocality($carpoolProof->getDestinationDriverAddress()->getAddressLocality());
-        $this->setDistance($carpoolProof->getDirection()->getDistance());
+        $this->setDistance($carpoolProof->getAsk()->getMatching()->getCommonDistance());
         $this->setCarpoolersNumber($carpoolersNumber);
         $this->setOperatorUserId($carpoolProof->getDriver()->getId());
         $this->setRpcJourneyId($rpcJourneyId);

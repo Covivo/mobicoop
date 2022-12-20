@@ -62,6 +62,8 @@ class CarpoolProof
     public const TYPE_UNDETERMINED_CLASSIC = 'CX';
     public const TYPE_UNDETERMINED_DYNAMIC = 'DX';
 
+    public const MINIMUM_DISTANCE_GPS_FOR_TYPE_HIGH = 3000; // Minimum distance required between driver/passenger pickUp/dropOff in meters
+
     /**
      * @var int the id of this proof
      *
