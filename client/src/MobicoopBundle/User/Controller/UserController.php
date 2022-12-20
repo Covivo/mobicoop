@@ -160,6 +160,20 @@ class UserController extends AbstractController
         $this->signInSsoOriented = $signInSsoOriented;
     }
 
+    private function __parsePostParams(string $response): array
+    {
+        $parsed_reponse = [];
+
+        $array_response = explode('&', $response);
+
+        foreach ($array_response as $value) {
+            $parsed_item = explode('=', $value);
+            $parsed_reponse[$parsed_item[0]] = $parsed_item[1];
+        }
+
+        return $parsed_reponse;
+    }
+
     // PROFILE
 
     /**
@@ -1413,10 +1427,23 @@ class UserController extends AbstractController
     /**
      * Return page after a SSO Login
      * Url is something like /user/sso/login?state=PassMobilite&code=1.
+     * It can also be a POST form if the response_mode of the SSO Provider is form_post.
      */
     public function userReturnConnectSSO(Request $request)
     {
-        $params = $this->ssoManager->guessSsoParameters($request->query->all());
+        if ($request->isMethod('POST')) {
+            $response_body = $this->__parsePostParams($request->getContent());
+        } else {
+            $response_body = $request->query->all();
+        }
+
+        var_dump($response_body);
+
+        $params = $this->ssoManager->guessSsoParameters($response_body);
+
+        var_dump($params);
+
+        exit;
 
         // We add the front url to the parameters
         (isset($_SERVER['HTTPS'])) ? $params['baseSiteUri'] = 'https://'.$_SERVER['HTTP_HOST'] : $params['baseSiteUri'] = 'http://'.$_SERVER['HTTP_HOST'];
