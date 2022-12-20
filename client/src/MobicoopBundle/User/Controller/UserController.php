@@ -1463,6 +1463,16 @@ class UserController extends AbstractController
         return $this->redirectToRoute('home', ['isMobConnectSubscriptionSuccessFull' => $isMobConnectSubscriptionSuccessFull]);
     }
 
+    public function userReturnConnectSsoMobile(Request $request)
+    {
+        return $this->mobileRedirect($request->server->get('URL_MOBILE'), 'login', $request->query->all());
+    }
+
+    public function userReturnConnectSsoMobConnectMobile(Request $request)
+    {
+        return $this->mobileRedirect($request->server->get('URL_MOBILE'), 'eec-incentive', $request->query->all());
+    }
+
     /**
      * Login route with sso credentials
      * Something like /user/sso/login/autolog?ssoId=1&ssoProvider=PassMobilite&baseSiteUri=http://localhost:8081.
@@ -1664,5 +1674,12 @@ class UserController extends AbstractController
         }
 
         throw new AccessDeniedException('Access Denied.');
+    }
+
+    private function mobileRedirect(string $host, string $path, array $params)
+    {
+        $redirectUri = $host.'/#/carpools/user/sso/'.$path.'?'.http_build_query($params, '', '&');
+
+        return $this->redirect($redirectUri);
     }
 }
