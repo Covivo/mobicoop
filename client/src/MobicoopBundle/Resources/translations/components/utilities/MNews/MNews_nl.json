@@ -4,8 +4,8 @@
         "subtitle": "Jusqu’à 200€ de prime covoiturage !",
         "text": "Tous vos trajets courte et longue distance réalisés sur mobicoop.fr sont éligibles à la prime covoiturage annoncée par le gouvernement. Vérifiez votre éligibilité depuis votre profil dès maintenant puis publiez vos prochains trajets en covoiturage !",
         "button": {
-            "label":"Lancer la demande de prime",
-            "link": "/#/carpools/prime"
+            "label":"En savoir plus",
+            "link": "https://pro.mobicoop.fr/comment-obtenir-prime-covoiturage/"
         },
         "popIn": {
             "ios": "IOS",

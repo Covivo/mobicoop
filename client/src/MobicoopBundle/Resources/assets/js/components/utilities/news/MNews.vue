@@ -29,7 +29,7 @@
         <v-btn
           color="primary"
           class="white--text"
-          :href="mobileUrl + $t('news.button.link')"
+          :href="$t('news.button.link')"
         >
           {{ $t('news.button.label') }}
         </v-btn>
@@ -80,8 +80,8 @@
       </v-col>
       <v-spacer />
 
-      <v-col 
-        cols="5"           
+      <v-col
+        cols="5"
         class="align-self-center"
       >
         <v-img
