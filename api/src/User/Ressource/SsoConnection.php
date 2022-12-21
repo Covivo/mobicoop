@@ -19,19 +19,16 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\Ressource;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
-use Symfony\Component\Validator\Constraints as Assert;
-use App\User\Entity\User;
 
 /**
- * A SSO Connection
+ * A SSO Connection.
  *
  * @ApiResource(
  *      attributes={
@@ -42,31 +39,48 @@ use App\User\Entity\User;
  *      collectionOperations={
  *          "get"={
  *              "swagger_context" = {
- *                  "tags"={"Users"}
+ *                  "tags"={"Users"},
+ *                  "summary"="Get SSO Connection available on this instance",
+ *                  "parameters" = {
+ *                      {
+ *                          "name" = "baseSiteUri",
+ *                          "type" = "string",
+ *                          "required" = true,
+ *                          "description" = "Url of the calling website"
+ *                      },
+ *                      {
+ *                          "name" = "serviceId",
+ *                          "type" = "string",
+ *                          "required" = false,
+ *                          "description" = "Id of the SSO Service to filter on a specific one"
+ *                      }
+ *                  }
  *              }
- *          },
+ *          }
  *      },
  *      itemOperations={
  *          "get"={
  *              "security"="is_granted('reject',object)",
  *              "swagger_context" = {
- *                  "tags"={"Users"}
+ *                  "tags"={"Users"},
+ *                  "summary"="Not implemented"
  *              }
  *          }
  *      }
  * )
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
 class SsoConnection
 {
-    const DEFAULT_ID = 999999999999;
+    public const DEFAULT_ID = 999999999999;
 
-    const RETURN_URL = "user/sso/login";
-    const LOGIN_BUTTON_ICON = "/images/sso/{serviceId}-sso-login.png";
-    const LOGIN_BUTTON_PICTO = "/images/sso/{serviceId}-sso-login-picto.svg";
+    public const RETURN_URL = 'user/sso/login';
+    public const LOGIN_BUTTON_ICON = '/images/sso/{serviceId}-sso-login.png';
+    public const LOGIN_BUTTON_PICTO = '/images/sso/{serviceId}-sso-login-picto.svg';
 
     /**
-     * @var int The id of this Block
+     * @var int The id of the SSO service
      *
      * @ApiProperty(identifier=true)
      * @Groups({"readSSOConnection"})
@@ -75,12 +89,14 @@ class SsoConnection
 
     /**
      * @var string The Name of the SSO service
+     *
      * @Groups({"readSSOConnection"})
      */
     private $name;
-    
+
     /**
      * @var string The uri of the SSO login form
+     *
      * @Groups({"readSSOConnection"})
      */
     private $uri;
@@ -89,48 +105,60 @@ class SsoConnection
      * @var string The client id
      */
     private $clientId;
-    
+
     /**
-     * @var string|null The client secret
+     * @var null|string The client secret
      */
     private $clientSecret;
-    
+
     /**
-     * @var string|null The return url after the connection
+     * @var null|string The return url after the connection
      */
     private $returnUrl;
 
     /**
      * @var string The SSO service name
+     *
      * @Groups({"readSSOConnection"})
      */
     private $service;
 
     /**
      * @var string The SSO provider internal name
+     *
      * @Groups({"readSSOConnection"})
      */
     private $ssoProvider;
 
     /**
-     * @var string|null The SSO service icon for the button
+     * @var null|string The SSO service icon for the button
+     *
      * @Groups({"readSSOConnection"})
      */
     private $buttonIcon;
 
     /**
-     * @var string|null The SSO service picto for the text button
+     * @var null|string The SSO service picto for the text button
+     *
      * @Groups({"readSSOConnection"})
      */
     private $picto;
-    
+
     /**
-     * @var bool|null true : use the Button icon, false use the picto
+     * @var null|bool true : use the Button icon, false use the picto
+     *
      * @Groups({"readSSOConnection"})
      */
     private $useButtonIcon;
 
-    public function __construct(string $id=null)
+    /**
+     * @var null|bool true : This SSO provider allow deletation of account only on its side
+     *
+     * @Groups({"readSSOConnection"})
+     */
+    private $externalAccountDeletion;
+
+    public function __construct(string $id = null)
     {
         (is_null($id)) ? $this->id = self::DEFAULT_ID : $this->id = $id;
     }
@@ -143,31 +171,31 @@ class SsoConnection
     public function setId(string $id): self
     {
         $this->id = $id;
-        
+
         return $this;
     }
 
-    public function getUri(): string
+    public function getUri(): ?string
     {
         return $this->uri;
     }
-    
-    public function setUri(string $uri): self
+
+    public function setUri(?string $uri): self
     {
         $this->uri = $uri;
-        
+
         return $this;
     }
 
-    public function getClientId(): string
+    public function getClientId(): ?string
     {
         return $this->clientId;
     }
-    
-    public function setClientId(string $clientId): self
+
+    public function setClientId(?string $clientId): self
     {
         $this->clientId = $clientId;
-        
+
         return $this;
     }
 
@@ -175,11 +203,11 @@ class SsoConnection
     {
         return $this->clientSecret;
     }
-    
+
     public function setClientSecret(?string $clientSecret): self
     {
         $this->clientSecret = $clientSecret;
-        
+
         return $this;
     }
 
@@ -187,23 +215,23 @@ class SsoConnection
     {
         return $this->returnUrl;
     }
-    
+
     public function setReturnUrl(?string $returnUrl): self
     {
         $this->returnUrl = $returnUrl;
-        
+
         return $this;
     }
 
-    public function getService(): string
+    public function getService(): ?string
     {
         return $this->service;
     }
-    
-    public function setService(string $service): self
+
+    public function setService(?string $service): self
     {
         $this->service = $service;
-        
+
         return $this;
     }
 
@@ -211,11 +239,11 @@ class SsoConnection
     {
         return $this->ssoProvider;
     }
-    
+
     public function setSsoProvider(?string $ssoProvider): self
     {
         $this->ssoProvider = $ssoProvider;
-        
+
         return $this;
     }
 
@@ -223,11 +251,11 @@ class SsoConnection
     {
         return str_replace('{serviceId}', $this->id, self::LOGIN_BUTTON_ICON);
     }
-    
+
     public function setButtonIcon(?string $buttonIcon): self
     {
         $this->buttonIcon = $buttonIcon;
-        
+
         return $this;
     }
 
@@ -235,11 +263,11 @@ class SsoConnection
     {
         return str_replace('{serviceId}', $this->id, self::LOGIN_BUTTON_PICTO);
     }
-    
+
     public function setPicto(?string $picto): self
     {
         $this->picto = $picto;
-        
+
         return $this;
     }
 
@@ -247,11 +275,23 @@ class SsoConnection
     {
         return (!is_null($this->useButtonIcon)) ? $this->useButtonIcon : false;
     }
-    
+
     public function setUseButtonIcon(?bool $useButtonIcon): self
     {
         $this->useButtonIcon = $useButtonIcon;
-        
+
+        return $this;
+    }
+
+    public function hasExternalAccountDeletion(): ?bool
+    {
+        return (!is_null($this->externalAccountDeletion)) ? $this->externalAccountDeletion : false;
+    }
+
+    public function setExternalAccountDeletion(?bool $externalAccountDeletion): self
+    {
+        $this->externalAccountDeletion = $externalAccountDeletion;
+
         return $this;
     }
 }

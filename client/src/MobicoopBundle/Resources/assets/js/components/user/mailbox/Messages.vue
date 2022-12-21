@@ -146,6 +146,7 @@
               <v-tab-item value="tab-dm">
                 <threads-direct
                   :new-thread="newThreadDirect"
+                  :id-message="idMessage"
                   :id-thread-default="idThreadDefault"
                   :id-message-to-select="idMessage"
                   :refresh-threads="refreshThreadsDirect"
@@ -159,6 +160,7 @@
                 value="tab-sm"
               >
                 <threads-solidary
+                  :id-message="idMessage"
                   :id-thread-default="idThreadDefault"
                   :id-ask-to-select="currentIdAsk"
                   :refresh-threads="refreshThreadsSolidary"
@@ -291,6 +293,10 @@ export default {
     fraudWarningDisplay: {
       type: Boolean,
       default: false
+    },
+    defaultThreadTab: {
+      type: String,
+      default: null
     }
   },
   data() {
@@ -319,6 +325,19 @@ export default {
         currentUnreadSolidaryMessages: 0
       }
     };
+  },
+  created() {
+    switch (this.defaultThreadTab) {
+    case 'carpool':
+      this.modelTabs="tab-cm";
+      break;
+    case 'direct':
+      this.modelTabs="tab-dm";
+      break;
+    case 'solidary':
+      this.modelTabs="tab-sm";
+      break;
+    }
   },
   mounted() {
     // If there is a new thread we give it to te right component

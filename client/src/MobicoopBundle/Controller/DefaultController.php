@@ -19,18 +19,18 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace Mobicoop\Bundle\MobicoopBundle\Controller;
 
 use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
 use Mobicoop\Bundle\MobicoopBundle\JsonLD\Entity\Hydra;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
-use Symfony\Component\Routing\Annotation\Route;
+use Mobicoop\Bundle\MobicoopBundle\User\Entity\CeeSubscription;
 use Mobicoop\Bundle\MobicoopBundle\User\Service\UserManager;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Routing\Annotation\Route;
 
 class DefaultController extends AbstractController
 {
@@ -44,21 +44,37 @@ class DefaultController extends AbstractController
     }
 
     /**
-     * HomePage
+     * HomePage.
      */
-    public function index()
+    public function index(Request $request)
     {
+        $params = [
+            'baseUri' => $_ENV['API_URI'],
+            'searchComponentHorizontal' => $this->searchComponentHorizontal,
+        ];
+
+        if (!is_null($request->get('isMobConnectSubscriptionSuccessFull'))) {
+            $params['mobConnectSubscriptions'] = false;
+
+            if (true === boolval($request->get('isMobConnectSubscriptionSuccessFull'))) {
+                $this->dataProvider->setClass(CeeSubscription::class, CeeSubscription::RESOURCE_NAME);
+                $response = $this->dataProvider->getCollection();
+
+                if (200 === $response->getCode()) {
+                    $subscriptions = $response->getValue()->getMember()[0];
+                    $params['mobConnectSubscriptions'] = !is_null($subscriptions->getShortDistanceSubscriptions()) && !is_null($subscriptions->getLongDistanceSubscriptions());
+                }
+            }
+        }
+
         return $this->render(
             '@Mobicoop/default/index.html.twig',
-            [
-                'baseUri' => $_ENV['API_URI'],
-                'searchComponentHorizontal' => $this->searchComponentHorizontal
-            ]
+            $params
         );
     }
 
     /**
-     * HomePage, coming from an delete account
+     * HomePage, coming from an delete account.
      */
     public function indexLogout()
     {
@@ -67,23 +83,24 @@ class DefaultController extends AbstractController
             [
                 'baseUri' => $_ENV['API_URI'],
                 'logout' => 1,
-                'searchComponentHorizontal' => $this->searchComponentHorizontal
+                'searchComponentHorizontal' => $this->searchComponentHorizontal,
             ]
         );
     }
 
     /**
      * Error Page.
-     * @Route("/provider/errors", name="api_hydra_errors")
      *
+     * @Route("/provider/errors", name="api_hydra_errors")
      */
     public function showErrorsAction()
     {
-        $session= $this->get('session');
+        $session = $this->get('session');
         $hydra = $session->get('hydra');
         if ($hydra instanceof Hydra) {
-            return $this->render('@Mobicoop/hydra/error.html.twig', ['hydra'=> $hydra]);
+            return $this->render('@Mobicoop/hydra/error.html.twig', ['hydra' => $hydra]);
         }
+
         return null;
     }
 
@@ -97,7 +114,7 @@ class DefaultController extends AbstractController
 
         return $this->render('@Mobicoop/platform-widget.html.twig', [
             'user' => $user,
-            'searchRoute' => 'covoiturage/recherche'
+            'searchRoute' => 'covoiturage/recherche',
         ]);
     }
 
@@ -106,12 +123,12 @@ class DefaultController extends AbstractController
      */
     public function getPlatformWidget()
     {
-        //$this->denyAccessUnlessGranted('show', $community);
+        // $this->denyAccessUnlessGranted('show', $community);
         return $this->render('@Mobicoop/platform-get-widget.html.twig');
     }
 
     /**
-     * Show a default page when the request page no longer exists
+     * Show a default page when the request page no longer exists.
      */
     public function getPageNoLongerExists()
     {
@@ -119,29 +136,26 @@ class DefaultController extends AbstractController
     }
 
     /**
-     * Store language selected by user in session
-     *
-     * @param Request $request
-     * @return void
+     * Store language selected by user in session.
      */
     public function setSessionLanguage(Request $request)
     {
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
         }
+
         return new JsonResponse();
     }
 
     /**
-     * Refresh the api token
-     *
-     * @return void
+     * Refresh the api token.
      */
     public function refreshToken(Request $request)
     {
         if ($request->isMethod('POST')) {
             return new JsonResponse(['token' => $this->dataProvider->getToken()]);
         }
+
         return new JsonResponse();
     }
 }

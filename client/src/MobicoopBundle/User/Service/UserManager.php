@@ -909,6 +909,26 @@ class UserManager
     }
 
     /**
+     * Get a specific Sso connection service of the platform.
+     *
+     * @param string $service The service name (according API sso.json)
+     */
+    public function getSsoService(string $service): ?array
+    {
+        $this->dataProvider->setClass(SsoConnection::class);
+
+        // We add the front url to the parameters
+        $baseSiteUri = (isset($_SERVER['HTTPS'])) ? 'https://'.$_SERVER['HTTP_HOST'] : 'http://'.$_SERVER['HTTP_HOST'];
+
+        $response = $this->dataProvider->getCollection(['baseSiteUri' => $baseSiteUri, 'serviceId' => $service]);
+        if (200 == $response->getCode()) {
+            return $response->getValue()->getMember();
+        }
+
+        return null;
+    }
+
+    /**
      * Send a validation email.
      *
      * @param User $user the user
@@ -917,6 +937,15 @@ class UserManager
     {
         $this->dataProvider->setFormat(DataProvider::RETURN_JSON);
         $response = $this->dataProvider->getSpecialItem($user->getId(), 'sendValidationEmail');
+
+        return $response->getValue();
+    }
+
+    public function patchUserForSsoAssociation(User $user, array $params)
+    {
+        $this->dataProvider->setClass(User::class);
+
+        $response = $this->dataProvider->patch($user->getId(), 'updateSso', $params);
 
         return $response->getValue();
     }

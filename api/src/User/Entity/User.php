@@ -52,6 +52,9 @@ use App\Geography\Entity\Address;
 use App\I18n\Entity\Language;
 use App\Image\Entity\Image;
 use App\Import\Entity\UserImport;
+use App\Incentive\Entity\LongDistanceSubscription;
+use App\Incentive\Entity\MobConnectAuth;
+use App\Incentive\Entity\ShortDistanceSubscription;
 use App\MassCommunication\Entity\Campaign;
 use App\MassCommunication\Entity\Delivery;
 use App\Match\Entity\Mass;
@@ -70,6 +73,7 @@ use App\User\Controller\UserSendValidationEmail;
 use App\User\Controller\UserThreads;
 use App\User\Controller\UserUnsubscribeFromEmail;
 use App\User\Controller\UserUpdatePassword;
+use App\User\Controller\UserUpdateSso;
 use App\User\Filter\CardLetterFilter;
 use App\User\Filter\DirectionTerritoryFilter;
 use App\User\Filter\EmailTokenFilter;
@@ -116,7 +120,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
- *          "normalization_context"={"groups"={"readUser","mass","readSolidary","userStructure", "readExport","carpoolExport"}, "enable_max_depth"="true","skip_null_values"="false"},
+ *          "normalization_context"={"groups"={"patchSso", "readUser","mass","readSolidary","userStructure", "readExport","carpoolExport"}, "enable_max_depth"="true","skip_null_values"="false"},
  *          "denormalization_context"={"groups"={"write","writeSolidary"}}
  *      },
  *      collectionOperations={
@@ -498,6 +502,16 @@ use Symfony\Component\Validator\Constraints as Assert;
  *                  "tags"={"Users", "Carpool"}
  *              }
  *          },
+ *          "patchSso"={
+ *              "method"="PATCH",
+ *              "path"="/users/{id}/updateSso",
+ *              "controller"=UserUpdateSso::class,
+ *              "security"="is_granted('user_update',object)",
+ *              "normalization_context"={"groups"={"patchSso"}, "skip_null_values"=false},
+ *              "swagger_context" = {
+ *                  "tags"={"Users"}
+ *              }
+ *          },
  *          "unsubscribe_user"={
  *              "method"="PUT",
  *              "path"="/users/{id}/unsubscribe_user",
@@ -509,7 +523,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "updateLanguage"={
  *              "method"="PUT",
  *              "path"="/users/{id}/updateLanguage",
- *  *           "normalization_context"={"groups"={"readUser"}},
+ *              "normalization_context"={"groups"={"readUser"}},
  *              "denormalization_context"={"groups"={"write"}},
  *              "security"="is_granted('user_update',object)",
  *              "swagger_context" = {
@@ -653,7 +667,7 @@ class User implements UserInterface, EquatableInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"aRead","aReadRzpTerritoryStatus","readUser","readCommunity","communities","readCommunityUser","results","threads", "thread","externalJourney","userStructure", "readSolidary","readPayment","carpoolExport","readReview"})
+     * @Groups({"aRead","aReadRzpTerritoryStatus","readUser","readCommunity","communities","readCommunityUser","results","threads", "thread","externalJourney","userStructure", "readSolidary","readPayment","carpoolExport","readReview", "patchSso"})
      * @ApiProperty(identifier=true)
      */
     private $id;
@@ -671,7 +685,7 @@ class User implements UserInterface, EquatableInterface
      * @var null|string the first name of the user
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"aRead","aWrite","readUser","readCommunity","readCommunityUser","results","write", "threads", "thread","externalJourney", "readEvent", "massMigrate","communities", "readSolidary", "readAnimation", "readExport","readPublicProfile","readReview"})
+     * @Groups({"aRead","aWrite","readUser","readCommunity","readCommunityUser","results","write", "threads", "thread","externalJourney", "readEvent", "massMigrate","communities", "readSolidary", "readAnimation", "readExport","readPublicProfile","readReview", "patchSso"})
      */
     private $givenName;
 
@@ -679,7 +693,7 @@ class User implements UserInterface, EquatableInterface
      * @var null|string the family name of the user
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"aRead","aWrite","readUser","write","communities", "readSolidary", "readAnimation", "readExport"})
+     * @Groups({"aRead","aWrite","readUser","write","communities", "readSolidary", "readAnimation", "readExport", "patchSso"})
      */
     private $familyName;
 
@@ -704,7 +718,7 @@ class User implements UserInterface, EquatableInterface
      * @Assert\NotBlank
      * @Assert\Email()
      * @ORM\Column(type="string", length=255, unique=true)
-     * @Groups({"aRead","aWrite","readUser","write","checkValidationToken","passwordUpdateRequest","passwordUpdate", "readSolidary"})
+     * @Groups({"aRead","aWrite","readUser","write","checkValidationToken","passwordUpdateRequest","passwordUpdate", "readSolidary", "patchSso"})
      */
     private $email;
 
@@ -800,11 +814,18 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var int phone display configuration (1 = restricted (default); 2 = all)
      *
-     * @Assert\NotBlank
      * @ORM\Column(type="smallint")
      * @Groups({"aRead","aWrite","readUser","write","results"})
      */
     private $phoneDisplay;
+
+    /**
+     * @var null|string the driving licence number
+     *
+     * @ORM\Column(type="string", length=15, nullable=true)
+     * @Groups({"aRead","aWrite","readUser","write"})
+     */
+    private $drivingLicenseNumber;
 
     /**
      * @var null|int the maximum detour duration (in seconds) as a driver to accept a request proposal
@@ -936,7 +957,7 @@ class User implements UserInterface, EquatableInterface
     private $updatedDate;
 
     /**
-     * @var null|DateTime date of password token generation modification
+     * @var null|\DateTime date of password token generation modification
      *
      * @ORM\Column(type="datetime", length=255, nullable=true)
      * @Groups({"readUser","write"})
@@ -1313,6 +1334,7 @@ class User implements UserInterface, EquatableInterface
      * @var null|string External ID of the user for a SSO connection
      *
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"readUser"})
      */
     private $ssoId;
 
@@ -1320,6 +1342,7 @@ class User implements UserInterface, EquatableInterface
      * @var null|string External Provider for a SSO connection
      *
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"readUser"})
      */
     private $ssoProvider;
 
@@ -1570,6 +1593,14 @@ class User implements UserInterface, EquatableInterface
      */
     private $blockBys;
 
+    /**
+     * @var null|string postal address
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"aRead","aWrite","readUser","write"})
+     */
+    private $postalAddress;
+
     // ADMIN
 
     /**
@@ -1644,6 +1675,23 @@ class User implements UserInterface, EquatableInterface
      * @Groups({"aReadRzpTerritoryStatus"})
      */
     private $rzpTerritoryStatus;
+
+    /**
+     * @ORM\OneToOne(targetEntity="\App\Incentive\Entity\LongDistanceSubscription", mappedBy="user")
+     * @Groups({"patchSso", "readUser"})
+     */
+    private $longDistanceSubscription;
+
+    /**
+     * @ORM\OneToOne(targetEntity="\App\Incentive\Entity\ShortDistanceSubscription", mappedBy="user")
+     * @Groups({"patchSso", "readUser"})
+     */
+    private $shortDistanceSubscription;
+
+    /**
+     * @ORM\OneToOne(targetEntity="\App\Incentive\Entity\MobConnectAuth", mappedBy="user", cascade={"remove"})
+     */
+    private $mobConnectAuth;
 
     public function __construct($status = null)
     {
@@ -1913,6 +1961,18 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
+    public function getDrivingLicenseNumber(): ?string
+    {
+        return $this->drivingLicenseNumber;
+    }
+
+    public function setDrivingLicenseNumber(?string $drivingLicenseNumber): self
+    {
+        $this->drivingLicenseNumber = $drivingLicenseNumber;
+
+        return $this;
+    }
+
     public function getMaxDetourDuration(): ?int
     {
         return !is_null($this->maxDetourDuration) ? $this->maxDetourDuration : self::MAX_DETOUR_DURATION;
@@ -2063,7 +2123,7 @@ class User implements UserInterface, EquatableInterface
         return $this->pwdTokenDate;
     }
 
-    public function setPwdTokenDate(?DateTime $pwdTokenDate): self
+    public function setPwdTokenDate(?\DateTime $pwdTokenDate): self
     {
         $this->pwdTokenDate = $pwdTokenDate;
 
@@ -3778,6 +3838,18 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
+    public function getPostalAddress(): ?string
+    {
+        return $this->postalAddress;
+    }
+
+    public function setPostalAddress(?string $postalAddress): self
+    {
+        $this->postalAddress = $postalAddress;
+
+        return $this;
+    }
+
     // DOCTRINE EVENTS
 
     /**
@@ -3798,5 +3870,61 @@ class User implements UserInterface, EquatableInterface
     public function setAutoUpdatedDate()
     {
         $this->setUpdatedDate(new \DateTime());
+    }
+
+    /**
+     * Get the value of longDistanceSubscription.
+     */
+    public function getLongDistanceSubscription(): ?LongDistanceSubscription
+    {
+        return $this->longDistanceSubscription;
+    }
+
+    /**
+     * Set the value of longDistanceSubscription.
+     */
+    public function setLongDistanceSubscription(LongDistanceSubscription $longDistanceSubscription): self
+    {
+        $this->longDistanceSubscription = $longDistanceSubscription;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of shortDistanceSubscription.
+     */
+    public function getShortDistanceSubscription(): ?ShortDistanceSubscription
+    {
+        return $this->shortDistanceSubscription;
+    }
+
+    /**
+     * Set the value of shortDistanceSubscription.
+     */
+    public function setShortDistanceSubscription(ShortDistanceSubscription $shortDistanceSubscription): self
+    {
+        $this->shortDistanceSubscription = $shortDistanceSubscription;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of mobConnectAuth.
+     */
+    public function getMobConnectAuth(): ?MobConnectAuth
+    {
+        return $this->mobConnectAuth;
+    }
+
+    /**
+     * Set the value of mobConnectAuth.
+     *
+     * @param mixed $mobConnectAuth
+     */
+    public function setMobConnectAuth($mobConnectAuth): self
+    {
+        $this->mobConnectAuth = $mobConnectAuth;
+
+        return $this;
     }
 }

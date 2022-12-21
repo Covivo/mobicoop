@@ -104,7 +104,6 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
      * @var string the email of the user
      *
      * @Groups({"post","put","checkValidationToken","passwordUpdateRequest"})
-     *
      * @Assert\NotBlank(groups={"signUp","update"})
      * @Assert\Email()
      */
@@ -114,7 +113,6 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
      * @var null|string the encoded password of the user
      *
      * @Groups({"post","put","password","passwordUpdate"})
-     *
      * @Assert\NotBlank(groups={"signUp","password"})
      */
     private $password;
@@ -291,6 +289,7 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
 
     /**
      * @var null|array user notification alert preferences
+     *
      * @Groups({"put"})
      */
     private $alerts;
@@ -302,6 +301,7 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
 
     /**
      * @var int Validation of conditions
+     *
      * @Assert\NotBlank(groups={"signUp"})
      */
     private $conditions;
@@ -318,36 +318,42 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
 
     /**
      * @var null|string token for password modification
+     *
      * @Groups({"post","put", "password_token", "passwordUpdate"})
      */
     private $pwdToken;
 
     /**
-     * @var null|DateTime date of token password modification
+     * @var null|\DateTime date of token password modification
+     *
      * @Groups({"post","put", "password_token"})
      */
     private $pwdTokenDate;
 
     /**
      * @var null|string token for direct api auth
+     *
      * @Groups({"post","put"})
      */
     private $token;
 
     /**
      * @var null|string token for phone validation
+     *
      * @Groups({"post","put","checkPhoneToken"})
      */
     private $phoneToken;
 
     /**
      * @var null|\DateTimeInterface validation date of the phone number
+     *
      * @Groups({"post","put"})
      */
     private $phoneValidatedDate;
 
     /**
      * @var null|bool mobile user
+     *
      * @Groups({"post","put"})
      */
     private $mobile;
@@ -361,18 +367,21 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
 
     /**
      * @var null|string Facebook ID of the user
+     *
      * @Groups({"post"})
      */
     private $facebookId;
 
     /**
      * @var null|int Community choose by a user
+     *
      * @Groups({"post"})
      */
     private $communityId;
 
     /**
      * @var null|string the unsubscribe message we return by api
+     *
      * @Groups({"post","put"})
      */
     private $unsubscribeMessage;
@@ -446,6 +455,33 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
      * @var null|bool If the User has a verified identity (null if not used)
      */
     private $verifiedIdentity;
+
+    /**
+     * @var null|string postal address
+     *
+     * @Groups({"post","put"})
+     */
+    private $postalAddress;
+
+    /**
+     * @var null|string External ID of the user for a SSO connection
+     */
+    private $ssoId;
+
+    /**
+     * @var null|string External Provider for a SSO connection
+     */
+    private $ssoProvider;
+
+    /**
+     * @var null|array
+     */
+    private $longDistanceSubscription;
+
+    /**
+     * @var null|array
+     */
+    private $shortDistanceSubscription;
 
     public function __construct($id = null, $status = null)
     {
@@ -1049,7 +1085,7 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
     /**
      * Return the date of password mofification.
      *
-     * @return DateTime
+     * @return \DateTime
      */
     public function getPwdTokenDate()
     {
@@ -1059,7 +1095,7 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
     /**
      * Set the date of password mofification.
      */
-    public function setPwdTokenDate(?DateTime $pwdTokenDate)
+    public function setPwdTokenDate(?\DateTime $pwdTokenDate)
     {
         $this->pwdTokenDate = $pwdTokenDate;
 
@@ -1332,6 +1368,66 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
         return $this;
     }
 
+    public function getPostalAddress(): ?string
+    {
+        return $this->postalAddress;
+    }
+
+    public function setPostalAddress(?string $postalAddress): self
+    {
+        $this->postalAddress = $postalAddress;
+
+        return $this;
+    }
+
+    public function getSsoId(): ?string
+    {
+        return $this->ssoId;
+    }
+
+    public function setSsoId(?string $ssoId): self
+    {
+        $this->ssoId = $ssoId;
+
+        return $this;
+    }
+
+    public function getSsoProvider(): ?string
+    {
+        return $this->ssoProvider;
+    }
+
+    public function setSsoProvider(?string $ssoProvider): self
+    {
+        $this->ssoProvider = $ssoProvider;
+
+        return $this;
+    }
+
+    public function getLongDistanceSubscription()
+    {
+        return $this->longDistanceSubscription;
+    }
+
+    public function setLongDistanceSubscription($longDistanceSubscription)
+    {
+        $this->longDistanceSubscription = $longDistanceSubscription;
+
+        return $this;
+    }
+
+    public function getShortDistanceSubscription()
+    {
+        return $this->shortDistanceSubscription;
+    }
+
+    public function setShortDistanceSubscription($shortDistanceSubscription)
+    {
+        $this->shortDistanceSubscription = $shortDistanceSubscription;
+
+        return $this;
+    }
+
     // If you want more info from user you just have to add it to the jsonSerialize function
     public function jsonSerialize()
     {
@@ -1376,6 +1472,11 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
             'gamificationNotifications' => $this->getGamificationNotifications(),
             'numberOfBadges' => $this->getNumberOfBadges(),
             'verifiedIdentity' => $this->getVerifiedIdentity(),
+            'postalAddress' => $this->getPostalAddress(),
+            'ssoId' => $this->getSsoId(),
+            'ssoProvider' => $this->getSsoProvider(),
+            'longDistanceSubscription' => $this->getLongDistanceSubscription(),
+            'shortDistanceSubscription' => $this->getShortDistanceSubscription(),
         ];
 
         if (!is_null($this->getIsCommunityReferrer())) {

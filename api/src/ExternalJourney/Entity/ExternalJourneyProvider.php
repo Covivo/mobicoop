@@ -19,12 +19,12 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\ExternalJourney\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
@@ -63,36 +63,43 @@ use Symfony\Component\Serializer\Annotation\Groups;
 class ExternalJourneyProvider
 {
     /**
-    * @var int $id  The id of the provider (not useful yet but needed for api)
-    * @ApiProperty(identifier=true)
-    */
+     * @var int The id of the provider (not useful yet but needed for api)
+     *
+     * @ApiProperty(identifier=true)
+     */
     private $id;
 
     /**
-     * @var string $name        The name of the provider
+     * @var string The name of the provider
+     *
      * @Groups("read")
      */
     private $name;
 
     /**
-     * @var string $url         The url of the provider
+     * @var string The url of the provider
      */
     private $url;
 
     /**
-     * @var string $resource    The name of the resource of the provider
+     * @var string The name of the resource of the provider
      */
     private $resource;
 
     /**
-     * @var string $apiKey      The api key of the provider
+     * @var string The api key of the provider
      */
     private $apiKey;
 
     /**
-     * @var string $privateKey  The private key of the provider
+     * @var string The private key of the provider
      */
     private $privateKey;
+
+    /**
+     * @var string The protocol of the provider
+     */
+    private $protocol;
 
     public function __construct()
     {
@@ -113,11 +120,11 @@ class ExternalJourneyProvider
     {
         return $this->name;
     }
-    
+
     public function setName(?string $name): self
     {
         $this->name = $name;
-        
+
         return $this;
     }
 
@@ -125,11 +132,11 @@ class ExternalJourneyProvider
     {
         return $this->url;
     }
-    
+
     public function setUrl(?string $url): self
     {
         $this->url = $url;
-        
+
         return $this;
     }
 
@@ -137,11 +144,11 @@ class ExternalJourneyProvider
     {
         return $this->resource;
     }
-    
+
     public function setResource(?string $resource): self
     {
         $this->resource = $resource;
-        
+
         return $this;
     }
 
@@ -149,11 +156,11 @@ class ExternalJourneyProvider
     {
         return $this->apiKey;
     }
-    
+
     public function setApiKey(?string $apiKey): self
     {
         $this->apiKey = $apiKey;
-        
+
         return $this;
     }
 
@@ -161,11 +168,23 @@ class ExternalJourneyProvider
     {
         return $this->privateKey;
     }
-    
+
     public function setPrivateKey(?string $privateKey): self
     {
         $this->privateKey = $privateKey;
-        
+
+        return $this;
+    }
+
+    public function getProtocol(): ?string
+    {
+        return $this->protocol;
+    }
+
+    public function setProtocol(?string $protocol): self
+    {
+        $this->protocol = $protocol;
+
         return $this;
     }
 }

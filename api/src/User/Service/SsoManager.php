@@ -23,7 +23,9 @@
 
 namespace App\User\Service;
 
+use App\DataProvider\Entity\MobConnect\OpenIdSsoProvider as MobConnectOpenIdSsoProvider;
 use App\DataProvider\Entity\OpenIdSsoProvider;
+use App\User\Entity\SsoUser;
 use App\User\Entity\User;
 use App\User\Ressource\SsoConnection;
 use Psr\Log\LoggerInterface;
@@ -38,6 +40,8 @@ class SsoManager
     private const SUPPORTED_PROVIDERS = [
         OpenIdSsoProvider::SSO_PROVIDER_GLCONNECT => OpenIdSsoProvider::class,
         OpenIdSsoProvider::SSO_PROVIDER_PASSMOBILITE => OpenIdSsoProvider::class,
+        OpenIdSsoProvider::SSO_PROVIDER_MOBCONNECT => MobConnectOpenIdSsoProvider::class,
+        OpenIdSsoProvider::SSO_PROVIDER_MOBIGO => OpenIdSsoProvider::class,
     ];
     private $userManager;
     private $ssoServices;
@@ -57,16 +61,21 @@ class SsoManager
     /**
      * Get all Sso connection services active on this instance.
      *
-     * @param string $baseSiteUri Url of the calling website
+     * @param string      $baseSiteUri Url of the calling website
+     * @param null|string $serviceId   Id of the SSO Service to filter on a specific one
      *
      * @return SsoConnection[]
      */
-    public function getSsoConnectionServices(string $baseSiteUri): array
+    public function getSsoConnectionServices(string $baseSiteUri, ?string $serviceId): array
     {
         $ssoServices = [];
         if ($this->ssoServicesActive) {
             foreach ($this->ssoServices as $serviceName => $ssoService) {
-                $provider = $this->getSsoProvider($serviceName, $baseSiteUri);
+                $provider = null;
+                if (is_null($serviceId) || $serviceId == $serviceName) {
+                    $provider = $this->getSsoProvider($serviceName, $baseSiteUri);
+                }
+
                 if (!is_null($provider)) {
                     $ssoConnection = new SsoConnection($serviceName);
                     $ssoConnection->setUri($provider->getConnectFormUrl());
@@ -74,12 +83,21 @@ class SsoManager
                     $ssoConnection->setService($ssoService['name']);
                     $ssoConnection->setSsoProvider($serviceName);
                     $ssoConnection->setUseButtonIcon($this->ssoUseButtonIcon);
+                    $ssoConnection->setExternalAccountDeletion($ssoService['externalAccountDeletion']);
                     $ssoServices[] = $ssoConnection;
                 }
             }
         }
 
         return $ssoServices;
+    }
+
+    public function getSsoUserProfile(string $serviceName, string $code, string $baseSiteUri): SsoUser
+    {
+        $provider = $this->getSsoProvider($serviceName, $baseSiteUri);
+        $provider->setCode($code);
+
+        return $provider->getUserProfile($code);
     }
 
     /**
@@ -91,10 +109,9 @@ class SsoManager
      */
     public function getUser(string $serviceName, string $code, string $baseSiteUri): User
     {
-        $provider = $this->getSsoProvider($serviceName, $baseSiteUri);
-        $provider->setCode($code);
+        $ssoUser = $this->getSsoUserProfile($serviceName, $code, $baseSiteUri);
 
-        return $this->userManager->getUserFromSso($provider->getUserProfile($code));
+        return $this->userManager->getUserFromSso($ssoUser);
     }
 
     /**
@@ -145,7 +162,17 @@ class SsoManager
         if (isset(self::SUPPORTED_PROVIDERS[$serviceName])) {
             $service = $this->ssoServices[$serviceName];
             $providerClass = self::SUPPORTED_PROVIDERS[$serviceName];
-            $provider = new $providerClass($serviceName, $baseSiteUri, $service['baseUri'], $service['clientId'], $service['clientSecret'], SsoConnection::RETURN_URL, $service['autoCreateAccount'], $service['logOutRedirectUri']);
+            $provider = new $providerClass(
+                $serviceName,
+                $baseSiteUri,
+                $service['baseUri'],
+                $service['clientId'],
+                $service['clientSecret'],
+                isset($service['returnUrl']) ? $service['returnUrl'] : SsoConnection::RETURN_URL,
+                $service['autoCreateAccount'],
+                $service['logOutRedirectUri'],
+                $service['codeVerifier']
+            );
             $provider->setLogger($this->logger);
 
             return $provider;

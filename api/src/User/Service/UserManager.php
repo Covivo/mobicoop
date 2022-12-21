@@ -62,6 +62,8 @@ use App\Solidary\Repository\StructureRepository;
 use App\User\Entity\SsoUser;
 use App\User\Entity\User;
 use App\User\Entity\UserNotification;
+use App\User\Event\SsoAssociationEvent;
+use App\User\Event\SsoAuthenticationEvent;
 use App\User\Event\UserDelegateRegisteredEvent;
 use App\User\Event\UserDelegateRegisteredPasswordSendEvent;
 use App\User\Event\UserDeleteAccountWasDriverEvent;
@@ -1155,13 +1157,16 @@ class UserManager
             $user->setMobileRegistration($mobileRegistration);
             $event = new UserPasswordChangeAskedEvent($user);
             $this->eventDispatcher->dispatch($event, UserPasswordChangeAskedEvent::NAME);
+
+            $user->setPwdToken(null);
+
+            return $user;
         }
         // send response with the sender information in all case
-            $user= new User();
-            $user->setEmail( $data->getEmail());
-            return $user;
+        $user = new User();
+        $user->setEmail($data->getEmail());
 
-
+        return $user;
     }
 
     /**
@@ -1692,6 +1697,22 @@ class UserManager
         return implode($pass); // turn the array into a string
     }
 
+    public function updateUserSsoProperties(User $user, SsoUser $ssoUser): User
+    {
+        $user->setSsoId($ssoUser->getSub());
+        $user->setSsoProvider($ssoUser->getProvider());
+        if (is_null($user->getCreatedSsoDate())) {
+            $user->setCreatedSsoDate(new \DateTime('now'));
+        }
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+
+        $event = new SsoAssociationEvent($user, $ssoUser);
+        $this->eventDispatcher->dispatch(SsoAssociationEvent::NAME, $event);
+
+        return $user;
+    }
+
     /**
      * Return a User from a SsoUser
      * Existing user or a new one.
@@ -1710,20 +1731,15 @@ class UserManager
                             throw new \LogicException('Autocreate/Autoattach account disable');
                         }
                     } else {
+                        $event = new SsoAuthenticationEvent($user, $ssoUser);
+                        $this->eventDispatcher->dispatch(SsoAuthenticationEvent::NAME, $event);
+
                         return $user;
                     }
                 }
 
                 // We update the user with ssoId and ssoProvider and return it
-                $user->setSsoId($ssoUser->getSub());
-                $user->setSsoProvider($ssoUser->getProvider());
-                if (is_null($user->getCreatedSsoDate())) {
-                    $user->setCreatedSsoDate(new \DateTime('now'));
-                }
-                $this->entityManager->persist($user);
-                $this->entityManager->flush();
-
-                return $user;
+                return $this->updateUserSsoProperties($user, $ssoUser);
             }
 
             if (!$ssoUser->hasAutoCreateAccount()) {
@@ -1912,10 +1928,11 @@ class UserManager
     /**
      * Compute the saved Co2 on a Ask by a user.
      *
-     * @param Ask $ask    The Ask
-     * @param int $userId The User id
+     * @param Ask   $ask    The Ask
+     * @param int   $userId The User id
+     * @param mixed $export
      */
-    public function computeSavedCo2(Ask $ask, int $userId, $export=false): int
+    public function computeSavedCo2(Ask $ask, int $userId, $export = false): int
     {
         $driver = ($ask->getMatching()->getProposalOffer()->getUser()->getId() == $userId);
 
@@ -1991,7 +2008,7 @@ class UserManager
     public function checkIfScammer(User $user)
     {
         if ($this->scammerRepository->findOneBy(['email' => $user->getEmail()]) || $this->scammerRepository->findOneBy(['telephone' => $user->getTelephone()])) {
-            throw new Exception('', 1);
+            throw new \Exception('', 1);
         }
     }
 

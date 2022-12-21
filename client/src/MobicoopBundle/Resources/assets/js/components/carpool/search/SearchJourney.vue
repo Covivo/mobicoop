@@ -363,11 +363,17 @@ export default {
       this.destination = this.initDestination;
     }
   },
+  created() {
+    this.setMomentLocale();
+  },
   beforeUpdate() {
-    this.locale = localStorage.getItem("X-LOCALE");
-    moment.locale(this.locale);
+    this.setMomentLocale();
   },
   methods: {
+    setMomentLocale() {
+      this.locale = localStorage.getItem("X-LOCALE");
+      moment.locale(this.locale);
+    },
     originSelected: function(address) {
       this.origin = address;
       this.emitEvent();

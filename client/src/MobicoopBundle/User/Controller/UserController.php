@@ -65,6 +65,8 @@ class UserController extends AbstractController
 {
     use HydraControllerTrait;
 
+    private const ALLOWED_TAB_TYPE = ['carpool', 'direct', 'solidary'];
+
     private $encoder;
     private $facebook_show;
     private $facebook_appid;
@@ -89,6 +91,7 @@ class UserController extends AbstractController
     private $birthDateDisplay;
     private $eventManager;
     private $carpoolSettingsDisplay;
+    private $signInSsoOriented;
 
     /**
      * Constructor.
@@ -127,7 +130,8 @@ class UserController extends AbstractController
         bool $fraudWarningDisplay,
         bool $ageDisplay,
         bool $birthDateDisplay,
-        bool $carpoolSettingsDisplay
+        bool $carpoolSettingsDisplay,
+        bool $signInSsoOriented
     ) {
         $this->encoder = $encoder;
         $this->facebook_show = $facebook_show;
@@ -153,6 +157,7 @@ class UserController extends AbstractController
         $this->birthDateDisplay = $birthDateDisplay;
         $this->eventManager = $eventManager;
         $this->ssoManager = $ssoManager;
+        $this->signInSsoOriented = $signInSsoOriented;
     }
 
     // PROFILE
@@ -190,7 +195,9 @@ class UserController extends AbstractController
             $id = 1; // default id
         }
 
-        return $this->render('@Mobicoop/user/login.html.twig', [
+        $template = $this->signInSsoOriented ? 'login-sso-oriented.html.twig' : 'login.html.twig';
+
+        return $this->render('@Mobicoop/user/'.$template, [
             'id' => $id,
             'type' => $type,
             'errorMessage' => $errorMessage,
@@ -837,6 +844,7 @@ class UserController extends AbstractController
         $newThread = null;
         $idThreadDefault = null;
         $idMessage = $msgId ? $msgId : null;
+        $defaultThreadTab = null;
         $idRecipient = null;
         $idAsk = $askId ? $askId : null;
 
@@ -887,6 +895,10 @@ class UserController extends AbstractController
             }
         }
 
+        if ($request->isMethod('GET') && !is_null($request->get('type')) && in_array($request->get('type'), self::ALLOWED_TAB_TYPE)) {
+            $defaultThreadTab = $request->get('type');
+        }
+
         return $this->render('@Mobicoop/user/messages.html.twig', [
             'idUser' => $user->getId(),
             'emailUser' => $user->getEmail(),
@@ -900,6 +912,7 @@ class UserController extends AbstractController
             'newThread' => $newThread,
             'solidaryDisplay' => $this->solidaryDisplay,
             'fraudWarningDisplay' => $this->fraudWarningDisplay,
+            'defaultThreadTab' => $defaultThreadTab,
         ]);
     }
 
@@ -1410,6 +1423,7 @@ class UserController extends AbstractController
 
         // We add the service name
         $services = $this->userManager->getSsoServices();
+
         if (!is_null($services) && is_array($services)) {
             foreach ($services as $service) {
                 if ($service->getSsoProvider() == $params['ssoProvider']) {
@@ -1419,6 +1433,44 @@ class UserController extends AbstractController
         }
 
         return $this->redirectToRoute('user_login_sso', $params);
+    }
+
+    /**
+     * Return page after a SSO Login from mobConnect
+     * Url is something like /user/sso/cee-incentive?state=mobConnect&code=1.
+     */
+    public function userReturnConnectSSOMobConnect(Request $request)
+    {
+        $requestParams = $request->query->all();
+
+        $params = [
+            'ssoProvider' => $requestParams['state'],
+            'ssoId' => $requestParams['code'],
+            'baseSiteUri' => $request->getScheme().'://'.$request->server->get('HTTP_HOST').'/user/sso',
+            'eec' => 1,
+        ];
+
+        $isMobConnectSubscriptionSuccessFull = false;
+
+        if ($this->getUser()) {
+            $user = $this->userManager->patchUserForSsoAssociation($this->getUser(), $params);
+
+            if ($user instanceof User) {
+                $isMobConnectSubscriptionSuccessFull = !is_null($user->getShortDistanceSubscription()) && !is_null($user->getLongDistanceSubscription());
+            }
+        }
+
+        return $this->redirectToRoute('home', ['isMobConnectSubscriptionSuccessFull' => $isMobConnectSubscriptionSuccessFull]);
+    }
+
+    public function userReturnConnectSsoMobile(Request $request)
+    {
+        return $this->mobileRedirect($request->server->get('URL_MOBILE'), 'login', $request->query->all());
+    }
+
+    public function userReturnConnectSsoMobConnectMobile(Request $request)
+    {
+        return $this->mobileRedirect($request->server->get('URL_MOBILE'), 'eec-incentive', $request->query->all());
     }
 
     /**
@@ -1447,6 +1499,22 @@ class UserController extends AbstractController
     {
         if ($request->isMethod('POST')) {
             return new JsonResponse($this->userManager->getSsoServices());
+        }
+
+        return new JsonResponse();
+    }
+
+    /**
+     * Return a specific Sso connection service of the platform.
+     *
+     * AJAX
+     */
+    public function getSsoService(Request $request)
+    {
+        if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+
+            return new JsonResponse($this->userManager->getSsoService($data['service']));
         }
 
         return new JsonResponse();
@@ -1606,5 +1674,12 @@ class UserController extends AbstractController
         }
 
         throw new AccessDeniedException('Access Denied.');
+    }
+
+    private function mobileRedirect(string $host, string $path, array $params)
+    {
+        $redirectUri = $host.'/#/carpools/user/sso/'.$path.'?'.http_build_query($params, '', '&');
+
+        return $this->redirect($redirectUri);
     }
 }
