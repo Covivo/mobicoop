@@ -165,7 +165,9 @@ class MangoPayProvider implements PaymentProviderInterface
         // Build the body
         $body['OwnerName'] = $this->user->getGivenName().' '.$this->user->getFamilyName();
         $body['IBAN'] = $bankAccount->getIban();
-        $body['BIC'] = $bankAccount->getBic();
+        if (!null == $bankAccount->getBic()) {
+            $body['BIC'] = $bankAccount->getBic();
+        }
 
         $street = '';
         if ('' != $bankAccount->getAddress()->getStreetAddress()) {
