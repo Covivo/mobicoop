@@ -16,7 +16,7 @@ use Doctrine\ORM\EntityManagerInterface;
  */
 class MobConnectApiProvider extends MobConnectProvider
 {
-    private const SERVICE_NAME = 'mobConnect';
+    public const SERVICE_NAME = 'mobConnect';
 
     private const ROUTE_SUBSCRIPTIONS = '/v1/maas/subscriptions';
     private const ROUTE_PATCH_SUBSCRIPTIONS = '/v1/subscriptions/{SUBSCRIPTION_ID}';
