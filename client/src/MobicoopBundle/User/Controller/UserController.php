@@ -1448,7 +1448,7 @@ class UserController extends AbstractController
         if (!is_null($services) && is_array($services)) {
             foreach ($services as $service) {
                 if ($service->getSsoProvider() == $params['ssoProvider']) {
-                    $params['ssoProviderName'] = $service->getService();
+                    $params['ssoProviderName'] = $service->getSsoProvider();
                 }
             }
         }

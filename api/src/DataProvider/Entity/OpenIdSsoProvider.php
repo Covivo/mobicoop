@@ -169,7 +169,7 @@ class OpenIdSsoProvider implements SsoProviderInterface
      */
     public function getUserProfile(string $code): SsoUser
     {
-        /** Mock data for dev purpose */
+        // Mock data for dev purpose
         // $ssoUser = new SsoUser();
         // $ssoUser->setSub('999');
         // $ssoUser->setEmail('tenshikuroi18@yopmail.com');
@@ -183,9 +183,10 @@ class OpenIdSsoProvider implements SsoProviderInterface
         // return $ssoUser;
         // end mock data
 
-        $token = $this->getToken($code);
         if (self::RESPONSE_TYPE_ID_TOKEN_TOKEN == $this->responseType) {
             $token = $code;
+        } else {
+            $token = $this->getToken($code);
         }
 
         $dataProvider = new DataProvider($this->baseUri, self::URLS[$this->serviceName][self::USERINFOS_URL]);
@@ -219,7 +220,7 @@ class OpenIdSsoProvider implements SsoProviderInterface
             return $ssoUser;
         }
 
-        throw new \LogicException('Error get Token');
+        throw new \LogicException('Error getUserProfile');
     }
 
     public function getLogoutUrl(): ?string
