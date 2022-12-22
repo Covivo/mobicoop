@@ -151,7 +151,7 @@ class CommunityManager
             $communityDomains = explode(';', str_replace('@', '', $community->getDomain()));
 
             foreach ($communityDomains as $communityDomain) {
-                if ($communityDomain == $userDomain) {
+                if (trim($communityDomain) == $userDomain) {
                     $authorized = true;
 
                     break;
@@ -321,6 +321,7 @@ class CommunityManager
 
         if (!is_null($community->getDomain())) {
             $community->setValidationType(Community::DOMAIN_VALIDATION);
+            $community->setDomain(trim($community->getDomain()));
         } else {
             $community->setValidationType(Community::AUTO_VALIDATION);
         }
@@ -462,7 +463,7 @@ class CommunityManager
             }
         }
 
-        return new CommunityMembersList($communityMembers, (is_array($community->getCommunityUsers())) ? count($community->getCommunityUsers()) : 0);
+        return new CommunityMembersList($communityMembers, count($communityMembers));
     }
 
     // MCommunity management
@@ -567,6 +568,32 @@ class CommunityManager
         }
 
         return $urlKey;
+    }
+
+    public function getNbMembers(Community $community): int
+    {
+        $communityUsers = $this->communityUserRepository->findBy(['community' => $community, 'status' => [CommunityUser::STATUS_ACCEPTED_AS_MEMBER, CommunityUser::STATUS_ACCEPTED_AS_MODERATOR]]);
+
+        return count($communityUsers);
+    }
+
+    public function checkIfMember(?User $user, Community $community): bool
+    {
+        if (is_null($user)) {
+            return false;
+        }
+
+        if ($this->communityUserRepository->findBy(
+            [
+                'user' => $user,
+                'community' => $community,
+                'status' => [CommunityUser::STATUS_ACCEPTED_AS_MEMBER, CommunityUser::STATUS_ACCEPTED_AS_MODERATOR],
+            ]
+        )) {
+            return true;
+        }
+
+        return false;
     }
 
     /**

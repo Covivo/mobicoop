@@ -18,17 +18,15 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Solidary\Service;
 
 use App\Geography\Repository\TerritoryRepository;
 use App\Solidary\Entity\Structure;
-use App\Solidary\Exception\SolidaryException;
 use App\Solidary\Repository\StructureProofRepository;
 use App\Solidary\Repository\StructureRepository;
 use App\Solidary\Repository\SubjectRepository;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
@@ -57,9 +55,8 @@ class StructureManager
     }
 
     /**
-     * Get a Structure
+     * Get a Structure.
      *
-     * @param integer $structureId
      * @return Structure
      */
     public function getStructure(int $structureId): ?Structure
@@ -67,16 +64,13 @@ class StructureManager
         return $this->structureRepository->find($structureId);
     }
 
-
     /**
-     * Get the StructureProofs of a Structure
+     * Get the StructureProofs of a Structure.
      *
-     * @param integer $structureId
      * @return array
      */
     public function getStructureProofs(int $structureId): ?array
     {
-
         // We get the structure
         $structure = $this->structureRepository->find($structureId);
 
@@ -85,14 +79,12 @@ class StructureManager
     }
 
     /**
-     * Get the Subjects of a Structure
+     * Get the Subjects of a Structure.
      *
-     * @param integer $structureId
      * @return array
      */
     public function getStructureSubjects(int $structureId): ?array
     {
-
         // We get the structure
         $structure = $this->structureRepository->find($structureId);
 
@@ -102,13 +94,26 @@ class StructureManager
 
     /**
      * Get the list of a Structure near a lat/lon location
+     * Only returns territories containing the lat/lon defined point.
      *
-     * @param float $lat    Latitude
-     * @param float $lon    Longitude
-     * @return array|null   Array of Structures
+     * @param float $lat Latitude
+     * @param float $lon Longitude
+     *
+     * @return null|array Array of Structures
      */
     public function getGeolocalisedStructures(float $lat, float $lon): ?array
     {
-        return $this->structureRepository->findByPoint($lon, $lat);
+        $structures = $this->structureRepository->findByPoint($lon, $lat);
+
+        $territoriesId = $this->territoryRepository->findPointTerritoriesIds($lat, $lon);
+        foreach ($structures as $structure) {
+            foreach ($structure->getTerritories() as $territory) {
+                if (!in_array($territory->getId(), $territoriesId)) {
+                    $structure->removeTerritory($territory);
+                }
+            }
+        }
+
+        return $structures;
     }
 }

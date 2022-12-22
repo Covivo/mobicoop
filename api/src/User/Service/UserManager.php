@@ -1994,7 +1994,7 @@ class UserManager
      */
     public function getUserCommunities(User $user)
     {
-        $communityUsers = $this->communityUserRepository->findBy(['user' => $user]);
+        $communityUsers = $this->communityUserRepository->findBy(['user' => $user, 'status' => [CommunityUser::STATUS_ACCEPTED_AS_MEMBER, CommunityUser::STATUS_ACCEPTED_AS_MODERATOR]]);
         $communities = [];
         if (!is_null($communityUsers) && count($communityUsers) > 0) {
             foreach ($communityUsers as $communityUser) {

@@ -1,7 +1,15 @@
-<?php namespace App\Security;
+<?php
 
+namespace App\Security;
+
+use App\Action\Event\ActionEvent;
+use App\Action\Repository\ActionRepository;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Gesdinet\JWTRefreshTokenBundle\Model\RefreshTokenManagerInterface;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -10,12 +18,6 @@ use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
-use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
-use Gesdinet\JWTRefreshTokenBundle\Model\RefreshTokenManagerInterface;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use App\Action\Event\ActionEvent;
-use App\Action\Repository\ActionRepository;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class TokenAuthenticator extends AbstractGuardAuthenticator
 {
@@ -25,6 +27,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
     private $params;
     private $actionRepository;
     private $eventDispatcher;
+    private $specialReturnMessage;
 
     public function __construct(EntityManagerInterface $em, JWTTokenManagerInterface $jwtTokenManagerInterface, RefreshTokenManagerInterface $refreshTokenManager, ParameterBagInterface $params, ActionRepository $actionRepository, EventDispatcherInterface $eventDispatcher)
     {
@@ -34,6 +37,7 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
         $this->params = $params;
         $this->actionRepository = $actionRepository;
         $this->eventDispatcher = $eventDispatcher;
+        $this->specialReturnMessage = null;
     }
 
     /**
@@ -54,10 +58,10 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
     {
         $decodeRequest = json_decode($request->getContent());
         if (isset($decodeRequest->emailToken) && !empty($decodeRequest->emailToken)) {
-            $credentials['email'] =  $decodeRequest->email;
-            $credentials['emailToken'] =  $decodeRequest->emailToken;
+            $credentials['email'] = $decodeRequest->email;
+            $credentials['emailToken'] = $decodeRequest->emailToken;
         } elseif (isset($decodeRequest->passwordToken) && !empty($decodeRequest->passwordToken)) {
-            $credentials['passwordToken'] =  $decodeRequest->passwordToken;
+            $credentials['passwordToken'] = $decodeRequest->passwordToken;
         } else {
             return false;
         }
@@ -66,9 +70,11 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
     }
 
     /** We search an user by :
-    * Case 1 : the pair email + emailToken
-    * Case 2 : the pws reset token
-    */
+     * Case 1 : the pair email + emailToken
+     * Case 2 : the pws reset token.
+     *
+     * @param mixed $credentials
+     */
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
         if (null === $credentials) {
@@ -76,9 +82,18 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
             // Code 401 "Unauthorized"
             return null;
         }
-        $user = isset($credentials['emailToken'])
-              ? $this->em->getRepository(User::class)->findOneBy([ 'email' => $credentials['email'], 'emailToken' => $credentials['emailToken']   ])
-              : $this->em->getRepository(User::class)->findOneBy([ 'pwdToken' => $credentials['passwordToken']  ]);
+        if (isset($credentials['emailToken'])) {
+            if (!$user = $this->em->getRepository(User::class)->findOneBy(['email' => $credentials['email'], 'emailToken' => $credentials['emailToken']])) {
+                $user = $this->em->getRepository(User::class)->findOneBy(['email' => $credentials['email']]);
+                if (!is_null($user) && !is_null($user->getValidatedDate())) {
+                    $this->specialReturnMessage = new JsonResponse(['message' => 'User already validated']);
+                } else {
+                    return null;
+                }
+            }
+        } else {
+            $user = $this->em->getRepository(User::class)->findOneBy(['pwdToken' => $credentials['passwordToken']]);
+        }
 
         // if a User is returned, checkCredentials() is called
         return $user;
@@ -100,8 +115,12 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
          */
         $user = $token->getUser();
 
-        //Time for valid refresh token, define in gesdinet_jwt_refresh_token, careful to let this value in secondes
-        $addTime = "PT".$this->params->get('gesdinet_jwt_refresh_token.ttl')."S";
+        if (!is_null($this->specialReturnMessage)) {
+            return $this->specialReturnMessage;
+        }
+
+        // Time for valid refresh token, define in gesdinet_jwt_refresh_token, careful to let this value in secondes
+        $addTime = 'PT'.$this->params->get('gesdinet_jwt_refresh_token.ttl').'S';
 
         $now = new \DateTime('now');
         $now->add(new \DateInterval($addTime));
@@ -113,48 +132,47 @@ class TokenAuthenticator extends AbstractGuardAuthenticator
 
         $this->refreshTokenManager->save($refreshToken);
 
-        //Email token is not null = we activate account from email -> we set token at null and the validated date at today
-        if ($user->getEmailToken() != null) {
+        // Email token is not null = we activate account from email -> we set token at null and the validated date at today
+        if (null != $user->getEmailToken()) {
             $user->setValidatedDate(new \DateTime('now'));
             $user->setEmailToken(null);
 
             //  we dispatch the gamification event associated
-            $action = $this->actionRepository->findOneBy(['name'=>'user_mail_validation']);
+            $action = $this->actionRepository->findOneBy(['name' => 'user_mail_validation']);
             $actionEvent = new ActionEvent($action, $user);
             $this->eventDispatcher->dispatch($actionEvent, ActionEvent::NAME);
-            
-        //Password token is not null = we reset password -> we set password token and the asking reset date at null
-        } elseif ($user->getPwdToken() != null) {
+
+        // Password token is not null = we reset password -> we set password token and the asking reset date at null
+        } elseif (null != $user->getPwdToken()) {
             $user->setPwdToken(null);
             $user->setPwdTokenDate(null);
         }
         $this->em->persist($user);
         $this->em->flush();
-        
+
         // on success, let the request continue
         return new JsonResponse([
-          'token'=>$this->jwtTokenManagerInterface->create($token->getUser()),
-          'refreshToken' => $refreshToken->getRefreshToken()
+            'token' => $this->jwtTokenManagerInterface->create($token->getUser()),
+            'refreshToken' => $refreshToken->getRefreshToken(),
         ]);
     }
-
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
     {
         $data = [
-            'message' => strtr($exception->getMessageKey(), $exception->getMessageData())
+            'message' => strtr($exception->getMessageKey(), $exception->getMessageData()),
         ];
 
         return new JsonResponse($data, Response::HTTP_UNAUTHORIZED);
     }
 
     /**
-     * Called when authentication is needed, but it's not sent
+     * Called when authentication is needed, but it's not sent.
      */
     public function start(Request $request, AuthenticationException $authException = null)
     {
         $data = [
-            'message' => 'Authentication Required'
+            'message' => 'Authentication Required',
         ];
 
         return new JsonResponse($data, Response::HTTP_UNAUTHORIZED);

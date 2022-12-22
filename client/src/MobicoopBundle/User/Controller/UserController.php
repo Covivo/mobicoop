@@ -1470,12 +1470,10 @@ class UserController extends AbstractController
     {
         $requestParams = $request->query->all();
 
-        $path = str_replace('/eec-incentive', '', $request->server->get('PATH_INFO'));
-
         $params = [
             'ssoProvider' => $requestParams['state'],
             'ssoId' => $requestParams['code'],
-            'baseSiteUri' => $request->getScheme().'://'.$request->server->get('HTTP_HOST').$path,
+            'baseSiteUri' => $request->getScheme().'://'.$request->server->get('HTTP_HOST').'/user/sso',
             'eec' => 1,
         ];
 

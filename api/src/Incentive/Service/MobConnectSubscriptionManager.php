@@ -139,6 +139,40 @@ class MobConnectSubscriptionManager
         return $this->_userSubscription->getSubscriptionId();
     }
 
+    private function __isValidParameters(): bool
+    {
+        return
+                !empty($this->_ssoServices)
+                && array_key_exists(MobConnectApiProvider::SERVICE_NAME, $this->_ssoServices)
+
+            && (
+                !empty($this->_mobConnectParams)
+                && (
+                    array_key_exists('api_uri', $this->_mobConnectParams)
+                    && !is_null($this->_mobConnectParams['api_uri'])
+                    && !empty($this->_mobConnectParams['api_uri'])
+                )
+                && (
+                    array_key_exists('credentials', $this->_mobConnectParams)
+                    && is_array($this->_mobConnectParams['credentials'])
+                    && !empty($this->_mobConnectParams['credentials'])
+                    && array_key_exists('client_id', $this->_mobConnectParams['credentials'])
+                    && !empty($this->_mobConnectParams['credentials']['client_id'])
+                    && array_key_exists('api_key', $this->_mobConnectParams['credentials'])
+                )
+                && (
+                    array_key_exists('subscription_ids', $this->_mobConnectParams)
+                    && is_array($this->_mobConnectParams['subscription_ids'])
+                    && !empty($this->_mobConnectParams['subscription_ids'])
+                    && array_key_exists('short_distance', $this->_mobConnectParams['subscription_ids'])
+                    && !empty($this->_mobConnectParams['subscription_ids']['short_distance'])
+                    && array_key_exists('long_distance', $this->_mobConnectParams['subscription_ids'])
+                    && !empty($this->_mobConnectParams['subscription_ids']['long_distance'])
+                )
+            )
+        ;
+    }
+
     private function __setApiProviderParams()
     {
         $this->_mobConnectApiProvider = new MobConnectApiProvider($this->_em, new MobConnectApiParams($this->_mobConnectParams), $this->_user, $this->_ssoServices);
@@ -159,6 +193,10 @@ class MobConnectSubscriptionManager
      */
     public function createSubscriptions(User $user, SsoUser $ssoUser)
     {
+        if (!$this->__isValidParameters()) {
+            return;
+        }
+
         $this->_user = $user;
 
         if (is_null($this->_user->getMobConnectAuth())) {
@@ -232,6 +270,10 @@ class MobConnectSubscriptionManager
      */
     public function updateSubscription(CarpoolProof $carpoolProof, \DateTimeInterface $paymentDate = null): void
     {
+        if (!$this->__isValidParameters()) {
+            return;
+        }
+
         switch (true) {
             case CeeJourneyService::isValidLongDistanceJourney($carpoolProof):
                 $this->_userSubscription = $this->_user->getLongDistanceSubscription();
@@ -351,6 +393,10 @@ class MobConnectSubscriptionManager
      */
     public function updateLongDistanceSubscriptionAfterPayment(CarpoolPayment $carpoolPayment): void
     {
+        if (!$this->__isValidParameters()) {
+            return;
+        }
+
         // Array of carpoolItem where driver is associated with MobConnect
         $filteredCarpoolItems = array_filter($carpoolPayment->getCarpoolItems(), function (CarpoolItem $carpoolItem) {
             $driver = $carpoolItem->getCreditorUser();

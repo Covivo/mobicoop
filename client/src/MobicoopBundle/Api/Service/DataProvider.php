@@ -77,6 +77,7 @@ class DataProvider
     public const RETURN_ARRAY = 2;
     public const RETURN_JSON = 3;
     public const RETURN_LDJSON = 4;
+    private const MOB_CONNECT_CEE_LOGIN = '1';
 
     private $uri;
     private $username;
@@ -971,6 +972,21 @@ class DataProvider
                     throw new ApiTokenException('Unable to get an API token.');
                 }
             } elseif (!is_null($this->ssoId) && !is_null($this->ssoProvider)) {
+                $params = [
+                    'ssoId' => $this->ssoId,
+                    'ssoProvider' => $this->ssoProvider,
+                    'baseSiteUri' => $this->baseSiteUri,
+                ];
+
+                if (!is_null($this->request->get('fromMobConnectSso') && self::MOB_CONNECT_CEE_LOGIN === $this->request->get('fromMobConnectSso'))) {
+                    $params['fromSsoMobConnect'] = true;
+                }
+
+                $clientResponse = $this->client->post($this->authLoginPath, [
+                    'headers' => ['accept' => 'application/json'],
+                    RequestOptions::JSON => $params,
+                ]);
+
                 try {
                     $clientResponse = $this->client->post($this->authLoginPath, [
                         'headers' => ['accept' => 'application/json'],
