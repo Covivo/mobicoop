@@ -663,7 +663,8 @@ class UserManager
                     'Y-m-d H:i',
                     (!is_null($myAd->getReturnDate()) && !is_null($myAd->getReturnTime())) ?
                     $myAd->getReturnDate().' '.$myAd->getReturnTime() :
-                    $myAd->getOutwardDate().' '.$myAd->getOutwardTime()
+                    $myAd->getOutwardDate().' '.$myAd->getOutwardTime(),
+                    new \DateTimeZone('Europe/Paris')
                 );
             }
             if ($date >= $now) {
@@ -679,10 +680,12 @@ class UserManager
             if (count($myAd->getDriver()) > 0) {
                 if (2 == $myAd->getDriver()['askFrequency']) {
                     $carpoolDate = \DateTime::createFromFormat('Y-m-d', $myAd->getDriver()['toDate']);
+                    $carpoolDate->setTime(0, 0);
                 } else {
                     $carpoolDate = \DateTime::createFromFormat('Y-m-d', $myAd->getDriver()['fromDate']);
+                    $carpoolDate = \DateTime::createFromFormat('H:i', $myAd->getDriver()['startTime'], new \DateTimeZone('Europe/Paris'));
                 }
-                $carpoolDate->setTime(0, 0);
+
                 if ($valid && $carpoolDate >= $now) {
                     $ads['accepted']['active'][] = $myAd;
                 } else {
@@ -694,10 +697,11 @@ class UserManager
                 foreach ($myAd->getPassengers() as $passenger) {
                     if (2 == $passenger['askFrequency']) {
                         $carpoolDate = \DateTime::createFromFormat('Y-m-d', $passenger['toDate']);
+                        $carpoolDate->setTime(0, 0);
                     } else {
                         $carpoolDate = \DateTime::createFromFormat('Y-m-d', $passenger['fromDate']);
+                        $carpoolDate = \DateTime::createFromFormat('H:i', $passenger['startTime'], new \DateTimeZone('Europe/Paris'));
                     }
-                    $carpoolDate->setTime(0, 0);
                     if ($carpoolDate >= $now) {
                         $validCarpool = true;
                     }
@@ -936,6 +940,15 @@ class UserManager
     {
         $this->dataProvider->setFormat(DataProvider::RETURN_JSON);
         $response = $this->dataProvider->getSpecialItem($user->getId(), 'sendValidationEmail');
+
+        return $response->getValue();
+    }
+
+    public function patchUserForSsoAssociation(User $user, array $params)
+    {
+        $this->dataProvider->setClass(User::class);
+
+        $response = $this->dataProvider->patch($user->getId(), 'updateSso', $params);
 
         return $response->getValue();
     }

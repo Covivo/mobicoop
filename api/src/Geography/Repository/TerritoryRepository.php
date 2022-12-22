@@ -19,19 +19,19 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Geography\Repository;
 
 use App\Geography\Entity\Address;
+use App\Geography\Entity\Direction;
+use App\Geography\Entity\Territory;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use App\Geography\Entity\Territory;
-use App\Geography\Entity\Direction;
 
 /**
- * @method Territory|null find($id, $lockMode = null, $lockVersion = null)
- * @method Territory|null findOneBy(array $criteria, array $orderBy = null)
+ * @method null|Territory find($id, $lockMode = null, $lockVersion = null)
+ * @method null|Territory findOneBy(array $criteria, array $orderBy = null)
  * @method Territory[]    findAll()
  * @method Territory[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
@@ -41,15 +41,15 @@ class TerritoryRepository
      * @var EntityRepository
      */
     private $repository;
-    
+
     private $entityManager;
-    
+
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
         $this->repository = $entityManager->getRepository(Territory::class);
     }
-    
+
     public function find(int $id): ?Territory
     {
         return $this->repository->find($id);
@@ -62,19 +62,17 @@ class TerritoryRepository
 
     /**
      * Search a territory by its geoJson.
-     *
-     * @param array $geoJson
-     * @return void
      */
     public function findByGeoJson(array $geoJson)
     {
     }
 
     /**
-     * Find territories for a direction
+     * Find territories for a direction.
      *
-     * @param Direction $direction  The direction
-     * @return Territory[]|null       The territories
+     * @param Direction $direction The direction
+     *
+     * @return null|Territory[] The territories
      */
     public function findDirectionTerritories(Direction $direction)
     {
@@ -82,15 +80,18 @@ class TerritoryRepository
             ->join('\App\Geography\Entity\Direction', 'd')
             ->where('d.id = :id')
             ->setParameter('id', $direction->getId())
-            ->andWhere('ST_INTERSECTS(t.geoJsonDetail,d.geoJsonDetail)=1');
+            ->andWhere('ST_INTERSECTS(t.geoJsonDetail,d.geoJsonDetail)=1')
+        ;
+
         return $query->getQuery()->getResult();
     }
 
     /**
-     * Find territories for an Address
+     * Find territories for an Address.
      *
-     * @param Address $address  The address
-     * @return Territory[]|null       The territories
+     * @param Address $address The address
+     *
+     * @return null|Territory[] The territories
      */
     public function findAddressTerritories(Address $address)
     {
@@ -98,16 +99,19 @@ class TerritoryRepository
             ->join('\App\Geography\Entity\Address', 'a')
             ->where('a.id = :id')
             ->setParameter('id', $address->getId())
-            ->andWhere('ST_INTERSECTS(t.geoJsonDetail,a.geoJson)=1');
+            ->andWhere('ST_INTERSECTS(t.geoJsonDetail,a.geoJson)=1')
+        ;
+
         return $query->getQuery()->getResult();
     }
 
     /**
-     * Find territories of a point defined by its latitude and longitude
+     * Find territories of a point defined by its latitude and longitude.
      *
-     * @param float $latitude   Latitude of the point
-     * @param float $longitude  Longitude of the point
-     * @return array|null       The territories
+     * @param float $latitude  Latitude of the point
+     * @param float $longitude Longitude of the point
+     *
+     * @return null|array The territories
      */
     public function findPointTerritories(float $latitude, float $longitude)
     {
@@ -115,10 +119,31 @@ class TerritoryRepository
 
         // we get only structure's ids
         $sql = "SELECT t.id FROM territory t
-        WHERE ST_INTERSECTS(t.geo_json_detail,ST_GEOMFROMTEXT('POINT($longitude $latitude)'))=1
+        WHERE ST_INTERSECTS(t.geo_json_detail,ST_GEOMFROMTEXT('POINT({$longitude} {$latitude})'))=1
         ";
         $stmt = $conn->prepare($sql);
         $stmt->execute();
+
         return $stmt->fetchAll();
+    }
+
+    /**
+     * Find territories ids of a point defined by its latitude and longitude.
+     *
+     * @param float $latitude  Latitude of the point
+     * @param float $longitude Longitude of the point
+     *
+     * @return null|array The territories ids
+     */
+    public function findPointTerritoriesIds(float $latitude, float $longitude)
+    {
+        $territories = $this->findPointTerritories($latitude, $longitude);
+
+        $territoriesId = [];
+        foreach ($territories as $territory) {
+            $territoriesId[] = $territory['id'];
+        }
+
+        return $territoriesId;
     }
 }

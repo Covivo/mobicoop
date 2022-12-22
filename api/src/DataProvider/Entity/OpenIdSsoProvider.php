@@ -40,58 +40,81 @@ class OpenIdSsoProvider implements SsoProviderInterface
     public const SSO_PROVIDER_GLCONNECT = 'GLConnect';
     public const SSO_PROVIDER_PASSMOBILITE = 'PassMobilite';
     public const SSO_PROVIDER_MOBCONNECT = 'mobConnect';
-    public const SSO_PROVIDER_MOBCONNECT_TEST = 'mobConnect-test';
+    public const SSO_PROVIDER_MOBIGO = 'mobigo';
 
     public const AUTHORIZATION_URL = 'Authorization_Url';
     public const TOKEN_URL = 'Token_Url';
     public const USERINFOS_URL = 'UserInfos_Url';
     public const LOGOUT_URL = 'Logout_Url';
 
+    public const RESPONSE_TYPE_ID_TOKEN_TOKEN = 'id_token+token';
+    public const RESPONSE_TYPE_CODE = 'code';
+    public const RESPONSE_MODE_FORM_POST = 'form_post';
+    public const RESPONSE_MODE_QUERY = 'query';
+
     public const URLS = [
         self::SSO_PROVIDER_GLCONNECT => [
-            self::AUTHORIZATION_URL => 'idp/oidc/authorize/?client_id={CLIENT_ID}&scope=openid profile email&response_type=code&state={SERVICE_NAME}&redirect_uri={REDIRECT_URI}',
+            self::AUTHORIZATION_URL => 'idp/oidc/authorize/?client_id={CLIENT_ID}&scope=openid profile email&response_type={RESPONSE_TYPE}&state={SERVICE_NAME}&redirect_uri={REDIRECT_URI}',
             self::TOKEN_URL => 'idp/oidc/token/',
             self::USERINFOS_URL => 'idp/oidc/user_info',
         ],
         self::SSO_PROVIDER_PASSMOBILITE => [
-            self::AUTHORIZATION_URL => 'auth/realms/Passmobilite/protocol/openid-connect/auth/?client_id={CLIENT_ID}&scope=openid profile email&response_type=code&state={SERVICE_NAME}&redirect_uri={REDIRECT_URI}',
-            self::TOKEN_URL => 'auth/realms/Passmobilite/protocol/openid-connect/token/',
-            self::USERINFOS_URL => 'auth/realms/Passmobilite/protocol/openid-connect/userinfo',
-            self::LOGOUT_URL => 'auth/realms/Passmobilite/protocol/openid-connect/logout?post_logout_redirect_uri={REDIRECT_URI}',
-        ],
-        self::SSO_PROVIDER_MOBCONNECT_TEST => [
-            self::AUTHORIZATION_URL => '/auth/realms/mcm/protocol/openid-connect/auth?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&state={SERVICE_NAME}&response_mode=fragment&response_type=code&scope=openid&nonce=21a8befa-b65f-41c5-916b-29c9e8d70177',
+            self::AUTHORIZATION_URL => 'auth/realms/Passmobilite/protocol/openid-connect/auth/?client_id={CLIENT_ID}&scope=openid profile email&response_type={RESPONSE_TYPE}&state={SERVICE_NAME}&redirect_uri={REDIRECT_URI}',
             self::TOKEN_URL => 'auth/realms/Passmobilite/protocol/openid-connect/token/',
             self::USERINFOS_URL => 'auth/realms/Passmobilite/protocol/openid-connect/userinfo',
             self::LOGOUT_URL => 'auth/realms/Passmobilite/protocol/openid-connect/logout?post_logout_redirect_uri={REDIRECT_URI}',
         ],
         self::SSO_PROVIDER_MOBCONNECT => [
-            self::AUTHORIZATION_URL => '/auth/realms/mcm/protocol/openid-connect/auth?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&state={SERVICE_NAME}&response_mode=fragment&response_type=code&scope=openid&nonce=21a8befa-b65f-41c5-916b-29c9e8d70177',
-            self::TOKEN_URL => 'auth/realms/Passmobilite/protocol/openid-connect/token/',
-            self::USERINFOS_URL => 'auth/realms/Passmobilite/protocol/openid-connect/userinfo',
-            self::LOGOUT_URL => 'auth/realms/Passmobilite/protocol/openid-connect/logout?post_logout_redirect_uri={REDIRECT_URI}',
+            self::AUTHORIZATION_URL => 'auth/realms/mcm/protocol/openid-connect/auth?redirect_uri={REDIRECT_URI}&client_id={CLIENT_ID}&state={SERVICE_NAME}&response_mode={RESPONSE_MODE}&response_type={RESPONSE_TYPE}&scope=openid&nonce=21a8befa-b65f-41c5-916b-29c9e8d70177&code_challenge_method=S256&code_challenge={CODE_CHALLENGE}&kc_idp_hint=franceconnect-particulier',
+            self::TOKEN_URL => 'auth/realms/mcm/protocol/openid-connect/token',
+            self::USERINFOS_URL => 'auth/realms/mcm/protocol/openid-connect/userinfo',
+            self::LOGOUT_URL => 'auth/realms/mcm/protocol/openid-connect/logout?post_logout_redirect_uri={REDIRECT_URI}',
+        ],
+        self::SSO_PROVIDER_MOBIGO => [
+            self::AUTHORIZATION_URL => 'connect/authorize?client_id={CLIENT_ID}&state={SERVICE_NAME}&response_mode={RESPONSE_MODE}&response_type={RESPONSE_TYPE}&scope=openid+profile+email+phone&nonce=963378f1-5e39-40b9-95dc-dff120a10694&redirect_uri={REDIRECT_URI}',
+            self::TOKEN_URL => 'connect/token',
+            self::USERINFOS_URL => 'connect/userinfo',
+            self::LOGOUT_URL => 'connect/logout?post_logout_redirect_uri={REDIRECT_URI}',
         ],
     ];
 
-    private $serviceName;
-    private $baseUri;
-    private $clientId;
-    private $clientSecret;
+    protected $baseUri;
+    protected $clientId;
+    protected $clientSecret;
+    protected $redirectUri;
+    protected $serviceName;
+
+    /**
+     * @var string
+     */
+    protected $codeVerifier;
+    protected $autoCreateAccount;
+    protected $responseMode;
+    protected $responseType;
+
     private $redirectUrl;
-    private $redirectUri;
     private $baseSiteUri;
-    private $autoCreateAccount;
     private $logOutRedirectUri;
 
     private $code;
     private $logger;
 
-    public function __construct(string $serviceName, string $baseSiteUri, string $baseUri, string $clientId, string $clientSecret, string $redirectUrl, bool $autoCreateAccount, string $logOutRedirectUri = '')
-    {
+    public function __construct(
+        string $serviceName,
+        string $baseSiteUri,
+        string $baseUri,
+        string $clientId,
+        string $clientSecret,
+        string $redirectUrl,
+        bool $autoCreateAccount,
+        string $logOutRedirectUri = '',
+        ?string $codeVerifier = null,
+        ?string $responseMode = 'query',
+        ?string $responseType = 'code'
+    ) {
         if (!isset(self::URLS[$serviceName])) {
             throw new \LogicException('Service unknown');
         }
-
         $this->serviceName = $serviceName;
         $this->baseUri = $baseUri;
         $this->clientId = $clientId;
@@ -101,6 +124,14 @@ class OpenIdSsoProvider implements SsoProviderInterface
         $this->redirectUri = $this->baseSiteUri.'/'.$this->redirectUrl;
         $this->autoCreateAccount = $autoCreateAccount;
         $this->logOutRedirectUri = $logOutRedirectUri;
+        $this->codeVerifier = $codeVerifier;
+        $this->responseMode = $responseMode;
+        $this->responseType = $responseType;
+    }
+
+    private function __getCodeChallenge(): string
+    {
+        return strtr(rtrim(base64_encode(hash('sha256', $this->codeVerifier, true)), '='), '+/', '-_');
     }
 
     public function setCode(string $code)
@@ -118,11 +149,19 @@ class OpenIdSsoProvider implements SsoProviderInterface
      */
     public function getConnectFormUrl(): string
     {
-        return $this->baseUri.''.str_replace('{CLIENT_ID}', $this->clientId, str_replace(
+        $url = $this->baseUri.''.str_replace('{CLIENT_ID}', $this->clientId, str_replace(
             '{SERVICE_NAME}',
             $this->serviceName,
             str_replace('{REDIRECT_URI}', $this->redirectUri, self::URLS[$this->serviceName][self::AUTHORIZATION_URL])
         ));
+
+        if (!is_null($this->codeVerifier) && !empty($this->codeVerifier) && preg_match('/\{CODE_CHALLENGE\}/', $url)) {
+            $url = str_replace('{CODE_CHALLENGE}', $this->__getCodeChallenge(), $url);
+        }
+
+        $url = str_replace('{RESPONSE_MODE}', $this->responseMode, $url);
+
+        return str_replace('{RESPONSE_TYPE}', $this->responseType, $url);
     }
 
     /**
@@ -130,7 +169,7 @@ class OpenIdSsoProvider implements SsoProviderInterface
      */
     public function getUserProfile(string $code): SsoUser
     {
-        /** Mock data for dev purpose */
+        // Mock data for dev purpose
         // $ssoUser = new SsoUser();
         // $ssoUser->setSub('999');
         // $ssoUser->setEmail('tenshikuroi18@yopmail.com');
@@ -144,7 +183,11 @@ class OpenIdSsoProvider implements SsoProviderInterface
         // return $ssoUser;
         // end mock data
 
-        $token = $this->getToken($code);
+        if (self::RESPONSE_TYPE_ID_TOKEN_TOKEN == $this->responseType) {
+            $token = $code;
+        } else {
+            $token = $this->getToken($code);
+        }
 
         $dataProvider = new DataProvider($this->baseUri, self::URLS[$this->serviceName][self::USERINFOS_URL]);
         $headers = [
@@ -177,7 +220,7 @@ class OpenIdSsoProvider implements SsoProviderInterface
             return $ssoUser;
         }
 
-        throw new \LogicException('Error get Token');
+        throw new \LogicException('Error getUserProfile');
     }
 
     public function getLogoutUrl(): ?string
@@ -196,7 +239,7 @@ class OpenIdSsoProvider implements SsoProviderInterface
         return (isset(self::URLS[$this->serviceName][self::LOGOUT_URL])) ? $this->baseUri.''.self::URLS[$this->serviceName][self::LOGOUT_URL] : null;
     }
 
-    private function getToken($code)
+    protected function getToken($code)
     {
         $body = [
             'grant_type' => 'authorization_code',
@@ -207,7 +250,6 @@ class OpenIdSsoProvider implements SsoProviderInterface
         $dataProvider = new DataProvider($this->baseUri, self::URLS[$this->serviceName][self::TOKEN_URL]);
 
         $response = $dataProvider->postCollection($body, null, null, DataProvider::BODY_TYPE_FORM_PARAMS, [$this->clientId, $this->clientSecret]);
-
         if (200 == $response->getCode()) {
             $data = json_decode($response->getValue(), true);
 

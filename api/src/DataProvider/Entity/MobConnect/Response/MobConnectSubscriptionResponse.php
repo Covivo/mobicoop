@@ -18,13 +18,15 @@ class MobConnectSubscriptionResponse
      */
     protected $_timestamp;
 
-    public function __construct(\stdClass $mobConnectResponse)
+    public function __construct(?\stdClass $mobConnectResponse)
     {
-        $this->setId($mobConnectResponse->subscriptionId);
+        if (!is_null($mobConnectResponse)) {
+            $this->setId($mobConnectResponse->id);
 
-        // TODO: Check the property name
-        if (isset($mobConnectResponse->timestamp)) {
-            $this->setTimestamp($mobConnectResponse->timestamp);
+            // TODO: Check the property name
+            if (property_exists($mobConnectResponse, 'timestamp') && !is_null($mobConnectResponse->timestamp)) {
+                $this->setTimestamp($mobConnectResponse->timestamp);
+            }
         }
     }
 

@@ -5,6 +5,7 @@ namespace App\DataProvider\Entity\MobConnect;
 use App\DataProvider\Entity\Response as ProviderResponse;
 use App\DataProvider\Service\DataProvider;
 use App\Incentive\Service\MobConnectMessages;
+use App\User\Entity\User;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -77,6 +78,8 @@ abstract class MobConnectProvider
 
         switch ($response->getCode()) {
             case 200:
+            case 201:
+            case 204:
                 return json_decode($responseValue);
 
             case 400:

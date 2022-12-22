@@ -6,6 +6,9 @@
         "clientSecret":"clientSecret",
         "autoCreateAccount":true,
         "externalAccountDeletion": false,
-        "logOutRedirectUri":""
+        "logOutRedirectUri":"",
+        "codeVerifier": null,
+        "response_mode": "query",
+        "response_type": "code"
     }
 }

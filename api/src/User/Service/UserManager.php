@@ -64,7 +64,6 @@ use App\User\Entity\User;
 use App\User\Entity\UserNotification;
 use App\User\Event\SsoAssociationEvent;
 use App\User\Event\SsoAuthenticationEvent;
-use App\User\Event\SsoCreationEvent;
 use App\User\Event\UserDelegateRegisteredEvent;
 use App\User\Event\UserDelegateRegisteredPasswordSendEvent;
 use App\User\Event\UserDeleteAccountWasDriverEvent;
@@ -1158,6 +1157,10 @@ class UserManager
             $user->setMobileRegistration($mobileRegistration);
             $event = new UserPasswordChangeAskedEvent($user);
             $this->eventDispatcher->dispatch($event, UserPasswordChangeAskedEvent::NAME);
+
+            $user->setPwdToken(null);
+
+            return $user;
         }
         // send response with the sender information in all case
         $user = new User();
@@ -1694,6 +1697,22 @@ class UserManager
         return implode($pass); // turn the array into a string
     }
 
+    public function updateUserSsoProperties(User $user, SsoUser $ssoUser): User
+    {
+        $user->setSsoId($ssoUser->getSub());
+        $user->setSsoProvider($ssoUser->getProvider());
+        if (is_null($user->getCreatedSsoDate())) {
+            $user->setCreatedSsoDate(new \DateTime('now'));
+        }
+        $this->entityManager->persist($user);
+        $this->entityManager->flush();
+
+        $event = new SsoAssociationEvent($user, $ssoUser);
+        $this->eventDispatcher->dispatch(SsoAssociationEvent::NAME, $event);
+
+        return $user;
+    }
+
     /**
      * Return a User from a SsoUser
      * Existing user or a new one.
@@ -1712,7 +1731,7 @@ class UserManager
                             throw new \LogicException('Autocreate/Autoattach account disable');
                         }
                     } else {
-                        $event = new SsoAuthenticationEvent($user);
+                        $event = new SsoAuthenticationEvent($user, $ssoUser);
                         $this->eventDispatcher->dispatch(SsoAuthenticationEvent::NAME, $event);
 
                         return $user;
@@ -1720,18 +1739,7 @@ class UserManager
                 }
 
                 // We update the user with ssoId and ssoProvider and return it
-                $user->setSsoId($ssoUser->getSub());
-                $user->setSsoProvider($ssoUser->getProvider());
-                if (is_null($user->getCreatedSsoDate())) {
-                    $user->setCreatedSsoDate(new \DateTime('now'));
-                }
-                $this->entityManager->persist($user);
-                $this->entityManager->flush();
-
-                $event = new SsoAssociationEvent($user);
-                $this->eventDispatcher->dispatch(SsoAssociationEvent::NAME, $event);
-
-                return $user;
+                return $this->updateUserSsoProperties($user, $ssoUser);
             }
 
             if (!$ssoUser->hasAutoCreateAccount()) {
@@ -1766,9 +1774,6 @@ class UserManager
 
             $user = $this->registerUser($user);
         }
-
-        $event = new SsoCreationEvent($user);
-        $this->eventDispatcher->dispatch(SsoCreationEvent::NAME, $event);
 
         return $user;
     }
@@ -1989,7 +1994,7 @@ class UserManager
      */
     public function getUserCommunities(User $user)
     {
-        $communityUsers = $this->communityUserRepository->findBy(['user' => $user]);
+        $communityUsers = $this->communityUserRepository->findBy(['user' => $user, 'status' => [CommunityUser::STATUS_ACCEPTED_AS_MEMBER, CommunityUser::STATUS_ACCEPTED_AS_MODERATOR]]);
         $communities = [];
         if (!is_null($communityUsers) && count($communityUsers) > 0) {
             foreach ($communityUsers as $communityUser) {

@@ -6,6 +6,7 @@ use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionResponse;
 use App\User\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity
@@ -87,6 +88,7 @@ class ShortDistanceSubscription
      * @var string the driving licence number of the user
      *
      * @ORM\Column(type="string", length=15)
+     * @Groups({"readSubscription"})
      */
     private $drivingLicenseNumber;
 
@@ -215,7 +217,7 @@ class ShortDistanceSubscription
         return $this->shortDistanceJourney->removeElement($shortDistanceJourney);
     }
 
-    public function getShortDistanceJourneys(): ArrayCollection
+    public function getShortDistanceJourneys()
     {
         return $this->shortDistanceJourneys;
     }
@@ -243,7 +245,7 @@ class ShortDistanceSubscription
     /**
      * Get the initial timestamp of the mobConnect subscription.
      */
-    public function getInitialTimestamp(): string
+    public function getInitialTimestamp(): ?string
     {
         return $this->initialTimestamp;
     }
@@ -253,7 +255,7 @@ class ShortDistanceSubscription
      *
      * @param string $initialTimestamp the initial timestamp of the mobConnect subscription
      */
-    public function setInitialTimestamp(string $initialTimestamp): self
+    public function setInitialTimestamp(?string $initialTimestamp): self
     {
         $this->initialTimestamp = $initialTimestamp;
 
@@ -275,7 +277,7 @@ class ShortDistanceSubscription
      *
      * @param string $lastTimestamp the last timestamp of the mobConnect subscription
      */
-    public function setLastTimestamp(string $lastTimestamp): self
+    public function setLastTimestamp(?string $lastTimestamp): self
     {
         $this->lastTimestamp = $lastTimestamp;
 
@@ -285,7 +287,7 @@ class ShortDistanceSubscription
     /**
      * Get the status of the journey.
      */
-    public function getStatus(): string
+    public function getStatus(): ?string
     {
         return $this->status;
     }
@@ -452,8 +454,6 @@ class ShortDistanceSubscription
 
     /**
      * Get the value of createdAt.
-     *
-     * @return \DateTimeInterface
      */
     public function getCreatedAt(): \DateTime
     {
@@ -462,8 +462,6 @@ class ShortDistanceSubscription
 
     /**
      * Get the value of updatedAt.
-     *
-     * @return \DateTimeInterface
      */
     public function getUpdatedAt(): \DateTime
     {

@@ -5,29 +5,35 @@ namespace App\Incentive\EventListener;
 use App\Carpool\Event\CarpoolProofValidatedEvent;
 use App\Incentive\Service\MobConnectSubscriptionManager;
 use App\Payment\Event\ElectronicPaymentValidatedEvent;
+use App\User\Entity\User;
 use App\User\Event\SsoAssociationEvent;
-use App\User\Event\SsoCreationEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 
+/**
+ * Class providing the functions necessary for listening to events allowing the operation of EEC sheets.
+ *
+ * @author Olivier Fillol <olivier.fillol@mobicoop.org>
+ */
 class MobConnectListener implements EventSubscriberInterface
 {
+    private const ALLOWED_SSO_PROVIDER = 'mobConnect';
+
+    /**
+     * @var Request
+     */
+    private $_request;
+
+    /**
+     * @var MobConnectSubscriptionManager
+     */
     private $_subscriptionManager;
-    private $_user;
 
-    public function __construct(MobConnectSubscriptionManager $subscriptionManager)
+    public function __construct(RequestStack $requestStack, MobConnectSubscriptionManager $subscriptionManager)
     {
+        $this->_request = $requestStack->getCurrentRequest();
         $this->_subscriptionManager = $subscriptionManager;
-    }
-
-    private function __createSubscriptions($event)
-    {
-        $user = $event->getUser();
-
-        if (is_null($user->getShortDistanceSubscription() && is_null($user->getLongDistanceSubscription()))) {
-            $this->_subscriptionManager->createSubscriptions($user->getSsoId());
-
-            $user->setSubscriptionsJustCreate(true);
-        }
     }
 
     public static function getSubscribedEvents()
@@ -36,29 +42,39 @@ class MobConnectListener implements EventSubscriberInterface
             CarpoolProofValidatedEvent::NAME => 'onProofValidated',
             ElectronicPaymentValidatedEvent::NAME => 'onPaymentValidated',
             SsoAssociationEvent::NAME => 'onUserAssociated',
-            SsoCreationEvent::NAME => 'onUserCreated',
         ];
     }
 
-    public function onUserAssociated(SsoAssociationEvent $event)
+    /**
+     * Listener called when a Mobicoop user is authenticated with an openId account.
+     */
+    public function onUserAssociated(SsoAssociationEvent $event): void
     {
-        $this->__createSubscriptions($event);
+        $decodeRequest = json_decode($this->_request->getContent());
+
+        if (
+            property_exists($decodeRequest, 'ssoProvider')
+            && self::ALLOWED_SSO_PROVIDER === $decodeRequest->ssoProvider
+            && property_exists($decodeRequest, 'eec')
+            && 1 === $decodeRequest->eec
+        ) {
+            $this->_subscriptionManager->createSubscriptions($event->getUser(), $event->getSsoUser());
+        }
     }
 
-    public function onUserCreated(SsoCreationEvent $event)
+    /**
+     * Listener called when an electronic payment is validated.
+     */
+    public function onPaymentValidated(ElectronicPaymentValidatedEvent $event): void
     {
-        $this->__createSubscriptions($event);
+        $this->_subscriptionManager->updateLongDistanceSubscriptionAfterPayment($event->getCarpoolPayment());
     }
 
-    // For long distance journey
-    public function onPaymentValidated(ElectronicPaymentValidatedEvent $event)
+    /**
+     * Listener called when a carpool proof is validated.
+     */
+    public function onProofValidated(CarpoolProofValidatedEvent $event): void
     {
-        $this->_subscriptionManager->updateLongDistanceSubscription($event->getCarpoolPayment());
-    }
-
-    // For short distance journey
-    public function onProofValidated(CarpoolProofValidatedEvent $event)
-    {
-        $this->_subscriptionManager->updateShortDistanceSubscription($event->getCarpoolProof());
+        $this->_subscriptionManager->updateSubscription($event->getCarpoolProof());
     }
 }

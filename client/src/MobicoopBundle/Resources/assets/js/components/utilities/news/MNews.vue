@@ -20,21 +20,20 @@
           {{ $t('news.text') }}
         </p>
 
-        <v-dialog
+        <!-- <v-dialog
           v-model="dialog"
           cover
           width="450"
         >
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn
-              color="primary"
-              class="white--text"
-              v-bind="attrs"
-              v-on="on"
-            >
-              {{ $t('news.button.label') }}
-            </v-btn>
-          </template>
+          <template v-slot:activator="{ on, attrs }"> -->
+        <v-btn
+          color="primary"
+          class="white--text"
+          :href="$t('news.button.link')"
+        >
+          {{ $t('news.button.label') }}
+        </v-btn>
+        <!-- </template>
 
           <v-card
             style="overflow:hidden"
@@ -77,16 +76,16 @@
               </v-col>
             </v-row>
           </v-card>
-        </v-dialog>
+        </v-dialog> -->
       </v-col>
       <v-spacer />
 
-      <v-col 
-        cols="5"           
+      <v-col
+        cols="5"
         class="align-self-center"
       >
         <v-img
-          :src="imageLink + 'RezoMobicoop_Visuel Actu.png'"
+          :src="imageLink + 'Mobicoop_Actu_CEE.png'"
           cover
           :alt="$t('news.imageAlt')"
         />

@@ -73,6 +73,7 @@ use App\User\Controller\UserSendValidationEmail;
 use App\User\Controller\UserThreads;
 use App\User\Controller\UserUnsubscribeFromEmail;
 use App\User\Controller\UserUpdatePassword;
+use App\User\Controller\UserUpdateSso;
 use App\User\Filter\CardLetterFilter;
 use App\User\Filter\DirectionTerritoryFilter;
 use App\User\Filter\EmailTokenFilter;
@@ -119,7 +120,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
- *          "normalization_context"={"groups"={"readUser","mass","readSolidary","userStructure", "readExport","carpoolExport"}, "enable_max_depth"="true","skip_null_values"="false"},
+ *          "normalization_context"={"groups"={"patchSso", "readUser","mass","readSolidary","userStructure", "readExport","carpoolExport"}, "enable_max_depth"="true","skip_null_values"="false"},
  *          "denormalization_context"={"groups"={"write","writeSolidary"}}
  *      },
  *      collectionOperations={
@@ -501,6 +502,16 @@ use Symfony\Component\Validator\Constraints as Assert;
  *                  "tags"={"Users", "Carpool"}
  *              }
  *          },
+ *          "patchSso"={
+ *              "method"="PATCH",
+ *              "path"="/users/{id}/updateSso",
+ *              "controller"=UserUpdateSso::class,
+ *              "security"="is_granted('user_update',object)",
+ *              "normalization_context"={"groups"={"patchSso"}, "skip_null_values"=false},
+ *              "swagger_context" = {
+ *                  "tags"={"Users"}
+ *              }
+ *          },
  *          "unsubscribe_user"={
  *              "method"="PUT",
  *              "path"="/users/{id}/unsubscribe_user",
@@ -512,7 +523,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "updateLanguage"={
  *              "method"="PUT",
  *              "path"="/users/{id}/updateLanguage",
- *  *           "normalization_context"={"groups"={"readUser"}},
+ *              "normalization_context"={"groups"={"readUser"}},
  *              "denormalization_context"={"groups"={"write"}},
  *              "security"="is_granted('user_update',object)",
  *              "swagger_context" = {
@@ -656,7 +667,7 @@ class User implements UserInterface, EquatableInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"aRead","aReadRzpTerritoryStatus","readUser","readCommunity","communities","readCommunityUser","results","threads", "thread","externalJourney","userStructure", "readSolidary","readPayment","carpoolExport","readReview"})
+     * @Groups({"aRead","aReadRzpTerritoryStatus","readUser","readCommunity","communities","readCommunityUser","results","threads", "thread","externalJourney","userStructure", "readSolidary","readPayment","carpoolExport","readReview", "patchSso"})
      * @ApiProperty(identifier=true)
      */
     private $id;
@@ -674,7 +685,7 @@ class User implements UserInterface, EquatableInterface
      * @var null|string the first name of the user
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"aRead","aWrite","readUser","readCommunity","readCommunityUser","results","write", "threads", "thread","externalJourney", "readEvent", "massMigrate","communities", "readSolidary", "readAnimation", "readExport","readPublicProfile","readReview"})
+     * @Groups({"aRead","aWrite","readUser","readCommunity","readCommunityUser","results","write", "threads", "thread","externalJourney", "readEvent", "massMigrate","communities", "readSolidary", "readAnimation", "readExport","readPublicProfile","readReview", "patchSso"})
      */
     private $givenName;
 
@@ -682,7 +693,7 @@ class User implements UserInterface, EquatableInterface
      * @var null|string the family name of the user
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"aRead","aWrite","readUser","write","communities", "readSolidary", "readAnimation", "readExport"})
+     * @Groups({"aRead","aWrite","readUser","write","communities", "readSolidary", "readAnimation", "readExport", "patchSso"})
      */
     private $familyName;
 
@@ -707,7 +718,7 @@ class User implements UserInterface, EquatableInterface
      * @Assert\NotBlank
      * @Assert\Email()
      * @ORM\Column(type="string", length=255, unique=true)
-     * @Groups({"aRead","aWrite","readUser","write","checkValidationToken","passwordUpdateRequest","passwordUpdate", "readSolidary"})
+     * @Groups({"aRead","aWrite","readUser","write","checkValidationToken","passwordUpdateRequest","passwordUpdate", "readSolidary", "patchSso"})
      */
     private $email;
 
@@ -803,7 +814,6 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var int phone display configuration (1 = restricted (default); 2 = all)
      *
-     * @Assert\NotBlank
      * @ORM\Column(type="smallint")
      * @Groups({"aRead","aWrite","readUser","write","results"})
      */
@@ -1668,22 +1678,15 @@ class User implements UserInterface, EquatableInterface
 
     /**
      * @ORM\OneToOne(targetEntity="\App\Incentive\Entity\LongDistanceSubscription", mappedBy="user")
+     * @Groups({"patchSso", "readUser"})
      */
     private $longDistanceSubscription;
 
     /**
      * @ORM\OneToOne(targetEntity="\App\Incentive\Entity\ShortDistanceSubscription", mappedBy="user")
+     * @Groups({"patchSso", "readUser"})
      */
     private $shortDistanceSubscription;
-
-    /**
-     * Specifies whether subscriptions to CEE sheets have just been made.
-     *
-     * @var bool
-     *
-     * @Groups({"readUser"})
-     */
-    private $subscriptionsJustCreate = false;
 
     /**
      * @ORM\OneToOne(targetEntity="\App\Incentive\Entity\MobConnectAuth", mappedBy="user", cascade={"remove"})
@@ -3872,7 +3875,7 @@ class User implements UserInterface, EquatableInterface
     /**
      * Get the value of longDistanceSubscription.
      */
-    public function getLongDistanceSubscription(): LongDistanceSubscription
+    public function getLongDistanceSubscription(): ?LongDistanceSubscription
     {
         return $this->longDistanceSubscription;
     }
@@ -3890,7 +3893,7 @@ class User implements UserInterface, EquatableInterface
     /**
      * Get the value of shortDistanceSubscription.
      */
-    public function getShortDistanceSubscription(): ShortDistanceSubscription
+    public function getShortDistanceSubscription(): ?ShortDistanceSubscription
     {
         return $this->shortDistanceSubscription;
     }
@@ -3921,26 +3924,6 @@ class User implements UserInterface, EquatableInterface
     public function setMobConnectAuth($mobConnectAuth): self
     {
         $this->mobConnectAuth = $mobConnectAuth;
-
-        return $this;
-    }
-
-    /**
-     * Get specifies whether subscriptions to CEE sheets have just been made.
-     */
-    public function isSubscriptionsJustCreate(): bool
-    {
-        return $this->subscriptionsJustCreate;
-    }
-
-    /**
-     * Set specifies whether subscriptions to CEE sheets have just been made.
-     *
-     * @param bool $subscriptionsJustCreate specifies whether subscriptions to CEE sheets have just been made
-     */
-    public function setSubscriptionsJustCreate(bool $subscriptionsJustCreate): self
-    {
-        $this->subscriptionsJustCreate = $subscriptionsJustCreate;
 
         return $this;
     }

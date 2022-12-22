@@ -138,9 +138,8 @@ class BankAccount
     private $iban;
 
     /**
-     * @var string The bic number of this bank account
+     * @var null|string The bic number of this bank account
      *
-     * @Assert\NotBlank
      * @Assert\Bic
      * @Groups({"readPayment","writePayment"})
      */

@@ -35,7 +35,7 @@
             <span
               v-if="!isRefined"
               class="accent--text text--accent font-weight-bold text-body-1"
-            >{{ $t('outward') }}</span>
+            >{{ isReturn ? $t('return') : $t('outward') }}</span>
 
             <v-icon
               v-if="!isRefined"
@@ -140,7 +140,15 @@ export default {
     hasDays: {
       type: Boolean,
       default: false
-    }
+    },
+    isReturn: {
+      type: Boolean,
+      default: false
+    },
+    isOutward: {
+      type: Boolean,
+      default: true
+    },
   },
   data() {
     return {

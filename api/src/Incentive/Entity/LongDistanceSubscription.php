@@ -243,7 +243,7 @@ class LongDistanceSubscription
     /**
      * Get the initial timestamp of the mobConnect subscription.
      */
-    public function getInitialTimestamp(): string
+    public function getInitialTimestamp(): ?string
     {
         return $this->initialTimestamp;
     }
@@ -253,7 +253,7 @@ class LongDistanceSubscription
      *
      * @param string $initialTimestamp the initial timestamp of the mobConnect subscription
      */
-    public function setInitialTimestamp(string $initialTimestamp): self
+    public function setInitialTimestamp(?string $initialTimestamp): self
     {
         $this->initialTimestamp = $initialTimestamp;
 
@@ -275,7 +275,7 @@ class LongDistanceSubscription
      *
      * @param string $lastTimestamp the last timestamp of the mobConnect subscription
      */
-    public function setLastTimestamp(string $lastTimestamp): self
+    public function setLastTimestamp(?string $lastTimestamp): self
     {
         $this->lastTimestamp = $lastTimestamp;
 
@@ -285,7 +285,7 @@ class LongDistanceSubscription
     /**
      * Get the status of the journey.
      */
-    public function getStatus(): string
+    public function getStatus(): ?string
     {
         return $this->status;
     }
@@ -452,8 +452,6 @@ class LongDistanceSubscription
 
     /**
      * Get the value of createdAt.
-     *
-     * @return \DateTimeInterface
      */
     public function getCreatedAt(): \DateTime
     {
@@ -462,8 +460,6 @@ class LongDistanceSubscription
 
     /**
      * Get the value of updatedAt.
-     *
-     * @return \DateTimeInterface
      */
     public function getUpdatedAt(): \DateTime
     {

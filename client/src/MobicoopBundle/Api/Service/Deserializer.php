@@ -84,6 +84,7 @@ use Mobicoop\Bundle\MobicoopBundle\Stats\Entity\Indicator;
 use Mobicoop\Bundle\MobicoopBundle\Territory\Entity\Territory;
 use Mobicoop\Bundle\MobicoopBundle\Travel\Entity\TravelMode;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\Block;
+use Mobicoop\Bundle\MobicoopBundle\User\Entity\CeeSubscription;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\ProfileSummary;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\PublicProfile;
 use Mobicoop\Bundle\MobicoopBundle\User\Entity\ReviewDashboard;
@@ -92,7 +93,6 @@ use Mobicoop\Bundle\MobicoopBundle\User\Entity\User;
 use Symfony\Component\PropertyInfo\Extractor\PhpDocExtractor;
 use Symfony\Component\PropertyInfo\Extractor\ReflectionExtractor;
 use Symfony\Component\PropertyInfo\PropertyInfoExtractor;
-use TypeError;
 
 /**
  * Custom deserializer service.
@@ -357,6 +357,9 @@ class Deserializer
                 return $this->deserializeTerritory($data);
 
                 break;
+
+            case CeeSubscription::class:
+                return $this->deserializeCeeSubscripton($data);
 
             default:
                 break;
@@ -1194,6 +1197,13 @@ class Deserializer
         return $this->autoset($territory, $data);
     }
 
+    private function deserializeCeeSubscripton($data)
+    {
+        $ceeSubscription = new CeeSubscription();
+
+        return $this->autoset($ceeSubscription, $data);
+    }
+
     private function autoSet($object, $data)
     {
         $phpDocExtractor = new PhpDocExtractor();
@@ -1219,7 +1229,7 @@ class Deserializer
                     try {
                         // it works !!!
                         $object->{$setter}($data[$property]);
-                    } catch (TypeError $error) {
+                    } catch (\TypeError $error) {
                         // fail... it must be an object or array property, we will treat it manually
                         $type = null;
                         if (!is_null($propertyInfo->getTypes(get_class($object), $property)[0])) {
