@@ -7,6 +7,8 @@
         "autoCreateAccount":true,
         "externalAccountDeletion": false,
         "logOutRedirectUri":"",
-        "codeVerifier": null
+        "codeVerifier": null,
+        "response_mode": "query",
+        "response_type": "code"
     }
 }
