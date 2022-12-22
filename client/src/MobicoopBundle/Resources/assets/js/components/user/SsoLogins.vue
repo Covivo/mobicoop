@@ -8,6 +8,7 @@
       :picto="ssoConnection.picto"
       :use-button-icon="ssoConnection.useButtonIcon"
       :service="ssoConnection.service"
+      :sso-provider="ssoConnection.ssoProvider"
     />
   </div>
 </template>
@@ -31,12 +32,27 @@ export default {
     specificService:{
       type: String,
       default: ""
+    },
+    defaultButtonsActive: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
     return {
       ssoConnections:[]
     };
+  },
+  watch:{
+    ssoConnections(){
+      this.ssoConnections.forEach(ssoConnections => {
+        this.$store.commit('sso/setSsoButtonsActiveStatus', {
+          ssoId: ssoConnections.ssoProvider,
+          status: this.defaultButtonsActive
+        });
+      });
+
+    }
   },
   mounted(){
     this.getSso();

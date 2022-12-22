@@ -23,11 +23,13 @@
           <v-checkbox
             v-model="checkboxes"
             :label="item"
+            :value="i"
           />
         </p>
         <SsoLogins
           class="mt-5"
           :specific-service="$t('service')"
+          :default-buttons-active="false"
         />
         <p>
           <v-row align="center">
@@ -75,7 +77,28 @@ export default {
   data() {
     return {
       items: this.$t('items'),
-      checkboxes: []
+      checkboxes: [],
+      checkboxesAllChecked:false
+    }
+  },
+  watch:{
+    checkboxes(){
+      this.checkboxesAllChecked = false;
+      if(this.checkboxes.length == this.items.length){
+        this.checkboxesAllChecked = true;
+      }
+    },
+    checkboxesAllChecked(){
+      this.updateStore(this.checkboxesAllChecked);
+    }
+  },
+  methods:{
+    updateStore(status){
+      this.$store.commit('sso/setSsoButtonsActiveStatus', {
+        ssoId: this.$t('service'),
+        status: status
+      });
+      this.$store.commit('sso/setRefreshActiveButtons', true);
     }
   },
 };

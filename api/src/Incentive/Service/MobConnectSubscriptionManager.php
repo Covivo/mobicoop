@@ -252,7 +252,6 @@ class MobConnectSubscriptionManager
 
         if (!is_null($user->getShortDistanceSubscription())) {
             $shortDistanceSubscriptions = $this->__getFlatJourneys($user->getShortDistanceSubscription()->getShortDistanceJourneys());
-
             $ceeSubscription->setShortDistanceSubscriptions($shortDistanceSubscriptions);
         }
 

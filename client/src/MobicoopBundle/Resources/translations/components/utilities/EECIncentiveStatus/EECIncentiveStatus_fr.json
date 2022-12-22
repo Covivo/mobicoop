@@ -10,5 +10,6 @@
     "que je ne signerai pas, pour cette opération, d’attestation sur l’honneur semblable avec une autre personne morale ;",
     "l’exactitude des informations que je communiquerai sur les caractéristiques de mes trajets de covoiturage et que l’opération d’économies d’énergie décrites ici ont été intégralement réalisées. Je suis informé que je suis susceptible d’être contacté par les services du ministère chargé de l’énergie (ou tout organisme désigné par le ministère chargé de l’énergie) ou par Mobicoop ou son partenaire (ou tout organisme désigné par ceux-ci), dans le cadre d’un contrôle concernant la nature de l’opération et la réalisation effective de celle-ci. La réalisation effective d’un contrôle à la demande du demandeur ou de son partenaire (ou tout organisme désigné par ceux-ci) peut être une des conditions imposées par ces derniers pour le versement de leur contribution au financement de l’opération. Je m’engage à répondre aux demandes qui me seront faites dans le cadre des contrôles et, le cas échéant, à permettre l’accès au lieu de l’opération pour la réalisation de ces contrôles."
   ],
-  "logo-france-connect": "/images/logo-france-connect.png"
+  "logo-france-connect": "/images/logo-france-connect.png",
+  "service": "mobConnect"
 }
