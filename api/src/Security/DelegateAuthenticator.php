@@ -1,10 +1,16 @@
-<?php namespace App\Security;
+<?php
+
+namespace App\Security;
 
 use App\Auth\Service\AuthManager;
 use App\User\Entity\User;
 use App\User\Event\LoginDelegateEvent;
 use App\User\Service\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Gesdinet\JWTRefreshTokenBundle\Model\RefreshTokenManagerInterface;
+use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,13 +19,9 @@ use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
-use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
-use Gesdinet\JWTRefreshTokenBundle\Model\RefreshTokenManagerInterface;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
- * Authenticator for login delegation
+ * Authenticator for login delegation.
  */
 class DelegateAuthenticator extends AbstractGuardAuthenticator
 {
@@ -62,9 +64,9 @@ class DelegateAuthenticator extends AbstractGuardAuthenticator
         if (!isset($decodeRequest->username) || !isset($decodeRequest->username_delegate) || !isset($decodeRequest->password)) {
             return false;
         }
-        $credentials['username'] =  $decodeRequest->username;
-        $credentials['username_delegate'] =  $decodeRequest->username_delegate;
-        $credentials['password'] =  $decodeRequest->password;
+        $credentials['username'] = $decodeRequest->username;
+        $credentials['username_delegate'] = $decodeRequest->username_delegate;
+        $credentials['password'] = $decodeRequest->password;
 
         return $credentials;
     }
@@ -105,45 +107,42 @@ class DelegateAuthenticator extends AbstractGuardAuthenticator
         $userDelegate = $this->em->getRepository(User::class)->findOneBy(['email' => $decodeRequest->username_delegate]);
 
         // time for valid refresh token, define in gesdinet_jwt_refresh_token, careful to let this value in seconds
-        $addTime = "PT".$this->params->get('gesdinet_jwt_refresh_token.ttl')."S";
+        $addTime = 'PT'.$this->params->get('gesdinet_jwt_refresh_token.ttl').'S';
 
         $now = new \DateTime('now');
         $now->add(new \DateInterval($addTime));
-
         $refreshToken = $this->refreshTokenManager->create();
         $refreshToken->setUsername($userDelegate->getRefresh());
         $refreshToken->setRefreshToken();
         $refreshToken->setValid($now);
 
         $this->refreshTokenManager->save($refreshToken);
-
         // send login delegation event
         $event = new LoginDelegateEvent($user, $userDelegate);
         $this->eventDispatcher->dispatch($event, LoginDelegateEvent::NAME);
 
         return new JsonResponse([
-          'token'=>$this->jwtTokenManagerInterface->create($userDelegate),
-          'refreshToken' => $refreshToken->getRefreshToken()
+            'token' => $this->jwtTokenManagerInterface->create($userDelegate),
+            'refreshToken' => $refreshToken->getRefreshToken(),
         ]);
     }
-
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception)
     {
         $data = [
-            'message' => strtr($exception->getMessageKey(), $exception->getMessageData())
+            'message' => strtr($exception->getMessageKey(), $exception->getMessageData()),
         ];
 
         return new JsonResponse($data, Response::HTTP_UNAUTHORIZED);
     }
 
     /**
-     * Called when authentication is needed, but it's not sent
+     * Called when authentication is needed, but it's not sent.
      */
     public function start(Request $request, AuthenticationException $authException = null)
     {
         $data = [
-            'message' => 'Authentication Required'
+            'message' => 'Authentication Required',
         ];
 
         return new JsonResponse($data, Response::HTTP_UNAUTHORIZED);

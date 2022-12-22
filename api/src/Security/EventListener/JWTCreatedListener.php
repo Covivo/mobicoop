@@ -19,21 +19,21 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Security\EventListener;
 
-use App\User\Entity\User;
 use App\App\Entity\App;
 use App\Auth\Service\AuthManager;
-use Lexik\Bundle\JWTAuthenticationBundle\Event\JWTCreatedEvent;
-use Symfony\Component\Security\Core\Security;
+use App\User\Entity\User;
 use App\User\Service\UserManager;
+use Lexik\Bundle\JWTAuthenticationBundle\Event\JWTCreatedEvent;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Core\Security;
 
 /**
  * Json Web Token Event listener
- * Used to customize the payload of the token, eg. add user id to payload
+ * Used to customize the payload of the token, eg. add user id to payload.
  */
 class JWTCreatedListener
 {
@@ -50,16 +50,12 @@ class JWTCreatedListener
         $this->userManager = $userManager;
     }
 
-    /**
-     * @param JWTCreatedEvent $event
-     *
-     * @return void
-     */
     public function onJWTCreated(JWTCreatedEvent $event)
     {
         $payload = $event->getData();
+
         /**
-         * @var User|App $user
+         * @var App|User $user
          */
         $user = $event->getUser();
         $payload['id'] = $user->getId();
@@ -72,10 +68,13 @@ class JWTCreatedListener
             $payload['admin'] = $this->authManager->isAuthorized('access_admin');
             // TODO : when log system is on, send here an event for "logged user", and treat the mobile in this event
             // for now we set the mobile here
-            if ($this->request->get("mobile")) {
+            if ($this->request->get('mobile')) {
                 $user->setMobile(true);
             }
-            $this->userManager->updateActivity($user);
+
+            if ($this->security->getUser()->getId() == $user->getId()) {
+                $this->userManager->updateActivity($user);
+            }
         }
         $event->setData($payload);
 
