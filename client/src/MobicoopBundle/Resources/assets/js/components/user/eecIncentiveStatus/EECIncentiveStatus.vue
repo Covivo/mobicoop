@@ -1,64 +1,12 @@
 <template>
   <div>
-    <v-card color="grey lighten-4">
-      <v-card-title
-        class="text-center"
-      >
-        {{ $t('title') }}
-      </v-card-title>
-      <v-card-text class="text-center">
-        <h2
-          class="mb-4"
-        >
-          {{ $t('subtitle') }}
-        </h2>
-        <p>
-          {{ $t('intro') }}
-        </p>
-        <p>{{ $t('title_list') }}</p>
-        <p
-          v-for="(item, i) in items"
-          :key="i"
-        >
-          <v-checkbox
-            v-model="checkboxes"
-            :label="item"
-            :value="i"
-          />
-        </p>
-        <SsoLogins
-          class="mt-5"
-          :specific-service="$t('service')"
-          :default-buttons-active="false"
-        />
-        <p>
-          <v-row align="center">
-            <v-col
-              cols="3"
-              offset="3"
-              class="text-right"
-            >
-              et identifiez-vous avec
-            </v-col>
-            <v-col
-              cols="2"
-              class="text-left"
-            >
-              <v-img
-                contain
-                :src="$t('logo-france-connect')"
-              />
-            </v-col>
-          </v-row>
-        </p>
-      </v-card-text>
-    </v-card>
+    <EECIncentiveInitiateSubscription v-if="!subscriptionInitiated" />
   </div>
 </template>
 
 <script>
 import maxios from "@utils/maxios";
-import SsoLogins from '@components/user/SsoLogins';
+import EECIncentiveInitiateSubscription from '@components/user/eecIncentiveStatus/EECIncentiveInitiateSubscription';
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/EECIncentiveStatus/";
 
 export default {
@@ -71,40 +19,27 @@ export default {
     }
   },
   components:{
-    SsoLogins
+    EECIncentiveInitiateSubscription
   },
   props: {
   },
   data() {
     return {
-      items: this.$t('items'),
-      checkboxes: [],
-      checkboxesAllChecked:false,
       subscriptions:null
     }
   },
-  watch:{
-    checkboxes(){
-      this.checkboxesAllChecked = false;
-      if(this.checkboxes.length == this.items.length){
-        this.checkboxesAllChecked = true;
+  computed:{
+    subscriptionInitiated(){
+      if(this.subscriptions && (this.subscriptions.longDistanceSubscriptions || this.subscriptions.shortDistanceSubscriptions)){
+        return true;
       }
-    },
-    checkboxesAllChecked(){
-      this.updateStore(this.checkboxesAllChecked);
+      return false;
     }
   },
   mounted(){
     this.getMyCeeSubscriptions();
   },
   methods:{
-    updateStore(status){
-      this.$store.commit('sso/setSsoButtonsActiveStatus', {
-        ssoId: this.$t('service'),
-        status: status
-      });
-      this.$store.commit('sso/setRefreshActiveButtons', true);
-    },
     getMyCeeSubscriptions(){
       maxios.get(this.$t("routes.getMyCeeSubscriptions"))
         .then(res => {
