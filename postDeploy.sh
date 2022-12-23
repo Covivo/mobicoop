@@ -18,9 +18,9 @@ done
 
 ROOT=/var/www
 case "${VERSION}" in
-    prod_test )
-        VERSION=prod
-        ;&
+    prod_test ) # prod_test is a special case
+        ROOT+="/prod/${INSTANCE}"
+        ;;
     dev | test )
         ROOT+="/${VERSION}/${INSTANCE}"
         ;;
