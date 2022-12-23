@@ -1885,14 +1885,12 @@ gamification_tag_reward_as_notified:
 # Incentive routes #
 #######################
 
-# Tag the given reward as notified
-incentive_eec_provider:
-  methods: [POST]
+my_cee_subscriptions:
   path:
-    fr: /incentive/getEecIncentiveProvider
-    en: /incentive/getEecIncentiveProvider
-    nl: /incentive/getEecIncentiveProvider
-  controller: Mobicoop\Bundle\MobicoopBundle\Incentive\Controller\IncentiveController::getEecIncentiveProvider
+    fr: /getMyCeeSubscriptions
+    en: /getMyCeeSubscriptions
+    nl: /getMyCeeSubscriptions
+  controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::myCeeSubscriptions
 
 ###############
 # misc routes #

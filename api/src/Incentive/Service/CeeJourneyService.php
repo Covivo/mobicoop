@@ -18,7 +18,7 @@ use App\User\Entity\User;
 abstract class CeeJourneyService
 {
     public const REFERENCE_COUNTRY = 'France';
-    public const REFERENCE_DATE = '2023-01-01';
+    public const REFERENCE_DATE = '2022-12-01';
     public const REFERENCE_PERIOD = 3;                   // Period expressed in years
     public const REFERENCE_TIME_LIMIT = 3;           // In months
     public const LOW_THRESHOLD_PROOF = 1;

@@ -38,6 +38,7 @@ use Mobicoop\Bundle\MobicoopBundle\I18n\Entity\Language;
 use Mobicoop\Bundle\MobicoopBundle\I18n\Service\LanguageManager;
 use Mobicoop\Bundle\MobicoopBundle\Image\Entity\Image;
 use Mobicoop\Bundle\MobicoopBundle\Image\Service\ImageManager;
+use Mobicoop\Bundle\MobicoopBundle\Incentive\Service\CeeSubscriptionManager;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\ValidationDocument;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Service\PaymentManager;
 use Mobicoop\Bundle\MobicoopBundle\Traits\HydraControllerTrait;
@@ -90,6 +91,7 @@ class UserController extends AbstractController
     private $ageDisplay;
     private $birthDateDisplay;
     private $eventManager;
+    private $ceeSubscriptionManager;
     private $carpoolSettingsDisplay;
     private $signInSsoOriented;
 
@@ -125,6 +127,7 @@ class UserController extends AbstractController
         PaymentManager $paymentManager,
         LanguageManager $languageManager,
         EventManager $eventManager,
+        CeeSubscriptionManager $ceeSubscriptionManager,
         $required_community,
         bool $loginDelegate,
         bool $fraudWarningDisplay,
@@ -156,6 +159,7 @@ class UserController extends AbstractController
         $this->carpoolSettingsDisplay = $carpoolSettingsDisplay;
         $this->birthDateDisplay = $birthDateDisplay;
         $this->eventManager = $eventManager;
+        $this->ceeSubscriptionManager = $ceeSubscriptionManager;
         $this->ssoManager = $ssoManager;
         $this->signInSsoOriented = $signInSsoOriented;
     }
@@ -1700,6 +1704,11 @@ class UserController extends AbstractController
         }
 
         throw new AccessDeniedException('Access Denied.');
+    }
+
+    public function myCeeSubscriptions()
+    {
+        return new JsonResponse($this->ceeSubscriptionManager->myCeeSubscriptions());
     }
 
     private function mobileRedirect(string $host, string $path, array $params)

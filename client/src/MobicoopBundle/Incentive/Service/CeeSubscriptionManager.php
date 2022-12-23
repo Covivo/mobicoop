@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright (c) 2022, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
@@ -21,30 +20,33 @@
  *    LICENSE
  */
 
-namespace Mobicoop\Bundle\MobicoopBundle\Incentive\Controller;
+namespace Mobicoop\Bundle\MobicoopBundle\Incentive\Service;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
+use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
+use Mobicoop\Bundle\MobicoopBundle\User\Entity\CeeSubscription;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class IncentiveController extends AbstractController
+class CeeSubscriptionManager
 {
-    public function __construct()
+    private $dataProvider;
+
+    public function __construct(DataProvider $dataProvider)
     {
+        $this->dataProvider = $dataProvider;
+        $this->dataProvider->setClass(CeeSubscription::class);
     }
 
-    /**
-     * Get the EEC Incentive Provider of an instance.
-     */
-    public function getEecIncentiveProvider(Request $request)
+    public function myCeeSubscriptions(): array
     {
-        if ($request->isMethod('POST')) {
-            // to do call api
+        $this->dataProvider->setFormat(DataProvider::RETURN_JSON);
+        $response = $this->dataProvider->simpleGet('my_cee_subscriptions');
+
+        if (!is_null($response->getValue()) && is_array($response->getValue())) {
+            return $response->getValue()[0];
         }
 
-        return new JsonResponse();
+        return [];
     }
 }

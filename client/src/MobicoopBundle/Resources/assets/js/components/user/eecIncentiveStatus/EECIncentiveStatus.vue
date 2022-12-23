@@ -57,8 +57,9 @@
 </template>
 
 <script>
+import maxios from "@utils/maxios";
 import SsoLogins from '@components/user/SsoLogins';
-import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/utilities/EECIncentiveStatus/";
+import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/EECIncentiveStatus/";
 
 export default {
   i18n: {
@@ -78,7 +79,8 @@ export default {
     return {
       items: this.$t('items'),
       checkboxes: [],
-      checkboxesAllChecked:false
+      checkboxesAllChecked:false,
+      subscriptions:null
     }
   },
   watch:{
@@ -92,6 +94,9 @@ export default {
       this.updateStore(this.checkboxesAllChecked);
     }
   },
+  mounted(){
+    this.getMyCeeSubscriptions();
+  },
   methods:{
     updateStore(status){
       this.$store.commit('sso/setSsoButtonsActiveStatus', {
@@ -99,6 +104,15 @@ export default {
         status: status
       });
       this.$store.commit('sso/setRefreshActiveButtons', true);
+    },
+    getMyCeeSubscriptions(){
+      maxios.get(this.$t("routes.getMyCeeSubscriptions"))
+        .then(res => {
+          this.subscriptions = res.data;
+        })
+        .catch(function (error) {
+
+        });
     }
   },
 };
