@@ -44,6 +44,9 @@
     },
     "label": "E-mail"
   },
+  "drivingLicenceNumber": {
+    "label": "Driving licence number"
+  },
   "events": {
     "route": "/user/events/created"
   },

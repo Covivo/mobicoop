@@ -308,6 +308,11 @@
                   @change="save"
                 />
               </v-menu>
+              <v-text-field
+                v-model="drivingLicenceNumber"
+                :label="$t('drivingLicenceNumber.label')"
+                class="drivingLicenceNumber"
+              />
             </v-col>
             <!-- Avatar -->
             <v-col cols="5">
@@ -598,7 +603,10 @@
         </v-row>
       </v-card-text>
     </v-card>
-    <EECIncentiveStatus />
+    <EECIncentiveStatus
+      :confirmed-phone-number="user.phoneValidatedDate ? true : false"
+      :driving-licence-number-filled="user.drivingLicenceNumber ? true : false"
+    />
 
     <!-- PUBLIC PROFILE DIALOG -->
     <v-dialog
@@ -737,6 +745,7 @@ export default {
       familyName: this.user.familyName,
       birthDay: this.user.birthDate ? this.user.birthDate.date : null,
       homeAddress: this.user.homeAddress ? this.user.homeAddress : null,
+      drivingLicenceNumber: this.user.drivingLicenceNumber ? this.user.drivingLicenceNumber : null,
       phoneErrors: [],
       phoneToken: this.user.phoneToken,
       phoneValidatedDate: this.user.phoneValidatedDate,
@@ -925,6 +934,7 @@ export default {
       updateUser.append("avatar", this.avatar);
       updateUser.append("newsSubscription", this.newsSubscription);
       updateUser.append("phoneDisplay", this.phoneDisplay.value);
+      updateUser.append("drivingLicenceNumber", this.drivingLicenceNumber);
 
       maxios
         .post(this.$t('route.update'), updateUser,

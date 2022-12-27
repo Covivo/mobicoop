@@ -103,7 +103,7 @@ abstract class CeeJourneyService
     private function __isUserValid(User $user): bool
     {
         return
-            !is_null($user->getDrivingLicenseNumber())
+            !is_null($user->getDrivingLicenceNumber())
             && !is_null($user->getTelephone())
             && !is_null($user->getPhoneValidatedDate())
         ;

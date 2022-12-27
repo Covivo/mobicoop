@@ -80,6 +80,9 @@
   "homeTown": {
     "label": "Place of residence"
   },
+  "drivingLicenceNumber": {
+    "label": "Driving licence number"
+  },
   "save": "Register",
   "yes": "Yes",
   "no": "No",

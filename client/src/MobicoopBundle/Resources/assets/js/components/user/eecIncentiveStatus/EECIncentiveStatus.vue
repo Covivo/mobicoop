@@ -1,12 +1,18 @@
 <template>
   <div>
-    <EECIncentiveInitiateSubscription v-if="!subscriptionInitiated" />
+    <EECIncentiveInitiateSubscription
+      v-if="!subscriptionInitiated"
+      :confirmed-phone-number="confirmedPhoneNumber"
+      :driving-licence-number-filled="drivingLicenceNumberFilled"
+    />
+    <EECIncentiveAdditionalInformations v-else />
   </div>
 </template>
 
 <script>
 import maxios from "@utils/maxios";
 import EECIncentiveInitiateSubscription from '@components/user/eecIncentiveStatus/EECIncentiveInitiateSubscription';
+import EECIncentiveAdditionalInformations from '@components/user/eecIncentiveStatus/EECIncentiveAdditionalInformations';
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/EECIncentiveStatus/";
 
 export default {
@@ -19,9 +25,18 @@ export default {
     }
   },
   components:{
-    EECIncentiveInitiateSubscription
+    EECIncentiveInitiateSubscription,
+    EECIncentiveAdditionalInformations
   },
   props: {
+    confirmedPhoneNumber:{
+      type: Boolean,
+      default: false
+    },
+    drivingLicenceNumberFilled:{
+      type: Boolean,
+      default: false
+    }
   },
   data() {
     return {

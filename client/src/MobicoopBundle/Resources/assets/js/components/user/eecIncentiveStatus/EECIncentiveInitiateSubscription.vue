@@ -12,10 +12,38 @@
         >
           {{ $t('subtitle') }}
         </h2>
-        <p>
+        <p class="font-weight-bold">
           {{ $t('intro') }}
         </p>
-        <p>{{ $t('title_list') }}</p>
+        <p>
+          <v-list class="text-left">
+            <v-list-item>
+              <v-list-item-content>
+                <v-list-item-title>{{ $t('mandatory1') }}</v-list-item-title>
+              </v-list-item-content>
+
+              <v-list-item-icon>
+                <v-icon :color="confirmedPhoneNumber ? 'green' : 'red'">
+                  {{ confirmedPhoneNumber ? 'mdi-check' : 'mdi-close' }}
+                </v-icon>
+              </v-list-item-icon>
+            </v-list-item>
+            <v-list-item>
+              <v-list-item-content>
+                <v-list-item-title>{{ $t('mandatory2') }}</v-list-item-title>
+              </v-list-item-content>
+
+              <v-list-item-icon>
+                <v-icon :color="drivingLicenceNumberFilled ? 'green' : 'red'">
+                  {{ drivingLicenceNumberFilled ? 'mdi-check' : 'mdi-close' }}
+                </v-icon>
+              </v-list-item-icon>
+            </v-list-item>
+          </v-list>
+        </p>
+        <p class="font-weight-bold">
+          {{ $t('title_list') }}
+        </p>
         <p
           v-for="(item, i) in items"
           :key="i"
@@ -73,12 +101,25 @@ export default {
     SsoLogins
   },
   props: {
+    confirmedPhoneNumber:{
+      type: Boolean,
+      default: false
+    },
+    drivingLicenceNumberFilled:{
+      type: Boolean,
+      default: false
+    }
   },
   data() {
     return {
       items: this.$t('items'),
       checkboxes: [],
       checkboxesAllChecked:false
+    }
+  },
+  computed:{
+    canSubscribe(){
+      return this.confirmedPhoneNumber && this.drivingLicenceNumberFilled && this.checkboxesAllChecked;
     }
   },
   watch:{
@@ -89,7 +130,7 @@ export default {
       }
     },
     checkboxesAllChecked(){
-      this.updateStore(this.checkboxesAllChecked);
+      this.updateStore(this.canSubscribe);
     }
   },
   methods:{

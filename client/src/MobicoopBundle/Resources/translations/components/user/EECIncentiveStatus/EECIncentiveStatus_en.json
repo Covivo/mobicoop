@@ -1,7 +1,10 @@
 {
   "title": "Prime covoiturage",
   "subtitle": "Inscription",
-  "intro": "Pour bénéficier de la prime de 100€, une authentification sur moB via FranceConnect est nécessaire. Celle-ci liera votre compte Rezo Mobicoop à un compte sur moB pour commencer votre demande.",
+  "intro": "Pour bénéficier de la prime de 100€ vous devez :",
+  "mandatory1": "Confirmer votre numéro de téléphone",
+  "mandatory2": "Renseigner votre numéro de permis de conduire",
+  "intro2": "Par ailleur, une authentification sur moB via FranceConnect est nécessaire. Celle-ci liera votre compte Rezo Mobicoop à un compte sur moB pour commencer votre demande.",
   "title_list": "En tant que bénéficiaire de l’opération d’économies d’énergie, j’atteste sur l’honneur :",
   "items": [
     "que Mobicoop m’a apporté une contribution individualisée (action personnalisée de sensibilisation ou d’accompagnement, aide financière ou équivalent). Cette contribution m’a incité à réaliser cette opération d’économies d’énergie ;",

@@ -530,6 +530,7 @@ class UserController extends AbstractController
             $user->setBirthDate(new \DateTime($data->get('birthDay')));
             // cause we use FormData to post data
             $user->setNewsSubscription('true' === $data->get('newsSubscription') ? true : false);
+            $user->setDrivingLicenceNumber('' !== trim($data->get('drivingLicenceNumber')) ? (int) $data->get('drivingLicenceNumber') : null);
 
             if ($user = $userManager->updateUser($user)) {
                 $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
