@@ -31,31 +31,10 @@ class OpenIdSsoProvider extends EntityOpenIdSsoProvider
      */
     public function getUserProfile(string $code): SsoUser
     {
-        /** Mock data for dev purpose */
-        // $ssoUser = new SsoUser();
-        // $ssoUser->setSub('999');
-        // $ssoUser->setEmail('tenshikuroi18@yopmail.com');
-        // $ssoUser->setFirstname('Johnny');
-        // $ssoUser->setLastname('Sso');
-        // $ssoUser->setProvider('PassMobilite');
-        // $ssoUser->setGender(User::GENDER_MALE);
-        // $ssoUser->setBirthdate(null);
-        // $ssoUser->setAutoCreateAccount($this->autoCreateAccount);
-
-        // return $ssoUser;
-        // end mock data
-
         $tokens = $this->getToken($code);
 
-        $dataProvider = new DataProvider($this->baseUri, self::URLS[$this->serviceName][self::USERINFOS_URL]);
-        $headers = [
-            'Authorization' => 'Bearer '.$tokens['access_token'],
-        ];
-
-        $response = $dataProvider->getCollection(null, $headers);
-
-        if (200 == $response->getCode()) {
-            $data = json_decode($response->getValue(), true);
+        if (!is_null($tokens) && is_array($tokens) && isset($tokens['access_token'])) {
+            $data = json_decode(base64_decode(str_replace('_', '/', str_replace('-', '+', explode('.', $tokens['access_token'])[1]))), true);
 
             $ssoUser = new SsoUser();
             $ssoUser->setSub((isset($data['sub'])) ? $data['sub'] : null);
