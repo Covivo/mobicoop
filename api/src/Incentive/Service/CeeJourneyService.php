@@ -5,7 +5,7 @@ namespace App\Incentive\Service;
 use App\Carpool\Entity\CarpoolProof;
 use App\Carpool\Entity\Matching;
 use App\Geography\Entity\Address;
-use App\Incentive\Resource\CeeStatus;
+use App\Incentive\Resource\CeeSubscriptions;
 use App\Payment\Entity\CarpoolItem;
 use App\User\Entity\User;
 
@@ -47,7 +47,7 @@ abstract class CeeJourneyService
      */
     private function __isLongDistance(int $distance): bool
     {
-        return CeeStatus::LONG_DISTANCE_MINIMUM_IN_METERS < $distance;
+        return CeeSubscriptions::LONG_DISTANCE_MINIMUM_IN_METERS < $distance;
     }
 
     /**
@@ -94,7 +94,7 @@ abstract class CeeJourneyService
      */
     private function __isShortDistance(int $distance): bool
     {
-        return CeeStatus::LONG_DISTANCE_MINIMUM_IN_METERS >= $distance;
+        return CeeSubscriptions::LONG_DISTANCE_MINIMUM_IN_METERS >= $distance;
     }
 
     /**
