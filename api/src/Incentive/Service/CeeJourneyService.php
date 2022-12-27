@@ -4,7 +4,6 @@ namespace App\Incentive\Service;
 
 use App\Carpool\Entity\CarpoolProof;
 use App\Carpool\Entity\Matching;
-use App\Carpool\Entity\Waypoint;
 use App\Geography\Entity\Address;
 use App\Incentive\Resource\CeeStatus;
 use App\Payment\Entity\CarpoolItem;
@@ -62,10 +61,6 @@ abstract class CeeJourneyService
 
         $waypoints = self::$_matching->getWaypoints();
 
-        // $startAddress = array_filter($waypoints, function (Waypoint $waypoint) {
-        //     return 0 === $waypoint->getPosition();
-        // })[0]->getAddress();
-
         $startAddress = null;
         foreach ($waypoints as $waypoint) {
             if (0 === $waypoint->getPosition()) {
@@ -74,10 +69,6 @@ abstract class CeeJourneyService
                 break;
             }
         }
-
-        // $endAddress = array_filter($waypoints, function (Waypoint $waypoint) {
-        //     return $waypoint->isDestination();
-        // })[0]->getAddress();
 
         $endAddress = null;
         foreach ($waypoints as $waypoint) {
