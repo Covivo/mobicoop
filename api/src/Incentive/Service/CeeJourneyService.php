@@ -4,7 +4,6 @@ namespace App\Incentive\Service;
 
 use App\Carpool\Entity\CarpoolProof;
 use App\Carpool\Entity\Matching;
-use App\Carpool\Entity\Waypoint;
 use App\Geography\Entity\Address;
 use App\Incentive\Resource\CeeStatus;
 use App\Payment\Entity\CarpoolItem;
@@ -29,13 +28,17 @@ abstract class CeeJourneyService
     /**
      * @var Matching
      */
-    private $_matching;
+    private static $_matching;
 
     /**
      * Returns if an address is located in the REFERENCE_COUNTRY.
      */
-    private function __isAddressInFrance(Address $address): bool
+    private function __isAddressInFrance(?Address $address): bool
     {
+        if (is_null($address)) {
+            return false;
+        }
+
         return self::REFERENCE_COUNTRY === $address->getAddressCountry();
     }
 
@@ -52,14 +55,36 @@ abstract class CeeJourneyService
      */
     private function __isOriginOrDestinationFromReferenceCountry(): bool
     {
+        if (is_null(self::$_matching)) {
+            return true;
+        }
+
         $waypoints = self::$_matching->getWaypoints();
 
-        $startAddress = array_filter($waypoints, function (Waypoint $waypoint) {
-            return 0 === $waypoint->getPosition();
-        })[0]->getAddress();
-        $endAddress = array_filter($waypoints, function (Waypoint $waypoint) {
-            return $waypoint->isDestination();
-        })[0]->getAddress();
+        $startAddress = null;
+        foreach ($waypoints as $waypoint) {
+            if (0 === $waypoint->getPosition()) {
+                $startAddress = $waypoint->getAddress();
+
+                break;
+            }
+        }
+
+        $endAddress = null;
+        foreach ($waypoints as $waypoint) {
+            if ($waypoint->isDestination()) {
+                $endAddress = $waypoint->getAddress();
+
+                break;
+            }
+        }
+
+        if (is_null($startAddress)) {
+            throw new \LogicException('No start Address');
+        }
+        if (is_null($endAddress)) {
+            throw new \LogicException('No end Address');
+        }
 
         return self::__isAddressInFrance($startAddress) || self::__isAddressInFrance($endAddress);
     }
@@ -101,12 +126,10 @@ abstract class CeeJourneyService
     /**
      * Sets the carpool matching.
      */
-    private function __setMatchingFromCarpoolProof(CarpoolProof $carpoolProof): self
+    private function __setMatchingFromCarpoolProof(CarpoolProof $carpoolProof)
     {
         self::$_matching = !is_null($carpoolProof->getAsk()) && !is_null($carpoolProof->getAsk()->getMatching())
                 ? $carpoolProof->getAsk()->getMatching() : null;
-
-        return $this;
     }
 
     // * PUBLIC FUNCTIONS ---------------------------------------------------------------------------------------------------------------------------
