@@ -6,6 +6,7 @@ use App\Carpool\Entity\CarpoolProof;
 use App\DataProvider\Entity\MobConnect\MobConnectApiProvider;
 use App\DataProvider\Entity\OpenIdSsoProvider;
 use App\DataProvider\Ressource\MobConnectApiParams;
+use App\Incentive\Entity\Flat\LongDistanceSubscription as FlatLongDistanceSubscription;
 use App\Incentive\Entity\Flat\ShortDistanceSubscription as FlatShortDistanceSubscription;
 use App\Incentive\Entity\LongDistanceJourney;
 use App\Incentive\Entity\LongDistanceSubscription;
@@ -123,7 +124,11 @@ class MobConnectSubscriptionManager
         $subscriptions = [];
 
         foreach ($journeys as $journey) {
-            array_push($subscriptions, new FlatShortDistanceSubscription($journey));
+            if ($journey instanceof ShortDistanceJourney) {
+                array_push($subscriptions, new FlatShortDistanceSubscription($journey));
+            } else {
+                array_push($subscriptions, new FlatLongDistanceSubscription($journey));
+            }
         }
 
         return $subscriptions;
