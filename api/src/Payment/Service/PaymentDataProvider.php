@@ -34,7 +34,6 @@ use App\Payment\Repository\PaymentProfileRepository;
 use App\Payment\Ressource\BankAccount;
 use App\Payment\Ressource\ValidationDocument;
 use App\User\Entity\User;
-use DateTime;
 use Symfony\Component\Security\Core\Security;
 
 /**
@@ -88,7 +87,7 @@ class PaymentDataProvider
         $this->baseMobileUri = $baseMobileUri;
         $this->platformName = $platformName;
         $this->paymentActive = false;
-        if ($this->paymentActiveDate = DateTime::createFromFormat('Y-m-d', $paymentActive)) {
+        if ($this->paymentActiveDate = \DateTime::createFromFormat('Y-m-d', $paymentActive)) {
             $this->paymentActiveDate->setTime(0, 0);
             $this->paymentActive = true;
         }

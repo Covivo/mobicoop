@@ -1,11 +1,22 @@
 <template>
   <div>
-    <EECIncentiveInitiateSubscription
-      v-if="!subscriptionInitiated"
-      :confirmed-phone-number="confirmedPhoneNumber"
-      :driving-licence-number-filled="drivingLicenceNumberFilled"
-    />
-    <EECIncentiveAdditionalInformations v-else />
+    <div v-if="!loading">
+      <EECIncentiveInitiateSubscription
+        v-if="!subscriptionInitiated"
+        :confirmed-phone-number="confirmedPhoneNumber"
+        :driving-licence-number-filled="drivingLicenceNumberFilled"
+      />
+      <EECIncentiveAdditionalInformations
+        v-else
+      />
+    </div>
+    <div v-else>
+      <v-skeleton-loader
+        class="mx-auto"
+        max-width="100%"
+        type="paragraph@2"
+      />
+    </div>
   </div>
 </template>
 
@@ -40,7 +51,8 @@ export default {
   },
   data() {
     return {
-      subscriptions:null
+      subscriptions:null,
+      loading: false
     }
   },
   computed:{
@@ -56,9 +68,11 @@ export default {
   },
   methods:{
     getMyCeeSubscriptions(){
+      this.loading = true;
       maxios.get(this.$t("routes.getMyCeeSubscriptions"))
         .then(res => {
           this.subscriptions = res.data;
+          this.loading = false;
         })
         .catch(function (error) {
 
