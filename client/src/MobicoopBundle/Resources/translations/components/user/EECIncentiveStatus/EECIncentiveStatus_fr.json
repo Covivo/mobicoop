@@ -29,6 +29,20 @@
   },
   "followup": {
     "subtitle": "Suivi des trajets",
-    "intro": "yooo"
+    "longDistance": {
+      "header": "Prime longue distance (plus de 80km)",
+      "progress": "{nb}/3 trajets longs",
+      "hints": {
+        "hint1": "Preuve géolocalisée du conducteur et du passager",
+        "hint2": "Trajet payé en ligne"
+      }
+    },
+    "shortDistance": {
+      "header": "Prime courte distance (jusqu'à 80km)",
+      "progress": "{nb}/10 trajets courts",
+      "hints": {
+        "hint1": "Preuve géolocalisée du conducteur et du passager"
+      }
+    }
   }
 }

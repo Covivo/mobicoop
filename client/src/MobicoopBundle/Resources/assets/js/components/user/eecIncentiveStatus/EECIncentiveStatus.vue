@@ -8,6 +8,8 @@
       />
       <EECIncentiveAdditionalInformations
         v-else
+        :long-distance-subscriptions="subscriptions.longDistanceSubscriptions"
+        :short-distance-subscriptions="subscriptions.shortDistanceSubscriptions"
       />
     </div>
     <div v-else>

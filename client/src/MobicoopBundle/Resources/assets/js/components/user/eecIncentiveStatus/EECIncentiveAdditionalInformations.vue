@@ -47,7 +47,10 @@
       </v-card-text>
     </v-card>
     <div v-else>
-      <EECIncentiveFollowUp />
+      <EECIncentiveFollowUp
+        :long-distance-subscriptions="longDistanceSubscriptions"
+        :short-distance-subscriptions="shortDistanceSubscriptions"
+      />
     </div>
   </div>
 </template>
@@ -71,6 +74,14 @@ export default {
     EECIncentiveFollowUp
   },
   props: {
+    longDistanceSubscriptions:{
+      type: Object,
+      default: null
+    },
+    shortDistanceSubscriptions:{
+      type: Object,
+      default: null
+    }
   },
   data() {
     return {
