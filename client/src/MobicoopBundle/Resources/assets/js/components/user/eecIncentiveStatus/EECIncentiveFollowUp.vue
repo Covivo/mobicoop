@@ -77,6 +77,28 @@
             </v-expansion-panel-content>
           </v-expansion-panel>
         </v-expansion-panels>
+        <v-row>
+          <v-col cols="6">
+            <v-row>
+              <v-col class="text-h3">
+                {{ pendingProofs }}
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col>{{ $t('followup.proofs.pending') }}</v-col>
+            </v-row>
+          </v-col>
+          <v-col cols="6">
+            <v-row>
+              <v-col class="text-h3">
+                {{ refusedProofs }}
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col>{{ $t('followup.proofs.refused') }}</v-col>
+            </v-row>
+          </v-col>
+        </v-row>
       </v-card-text>
     </v-card>
   </div>
@@ -103,6 +125,14 @@ export default {
     shortDistanceSubscriptions:{
       type: Object,
       default: null
+    },
+    pendingProofs:{
+      type: Number,
+      default: 0
+    },
+    refusedProofs:{
+      type: Number,
+      default: 0
     }
   },
   data() {

@@ -10,6 +10,8 @@
         v-else
         :long-distance-subscriptions="subscriptions.longDistanceSubscriptions"
         :short-distance-subscriptions="subscriptions.shortDistanceSubscriptions"
+        :pending-proofs="subscriptions.nbPendingProofs"
+        :refused-proofs="subscriptions.nbRejectedProofs"
       />
     </div>
     <div v-else>

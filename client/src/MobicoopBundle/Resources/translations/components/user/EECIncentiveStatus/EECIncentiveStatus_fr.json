@@ -43,6 +43,10 @@
       "hints": {
         "hint1": "Preuve géolocalisée du conducteur et du passager"
       }
+    },
+    "proofs": {
+      "pending": "Preuves de covoiturage en cours de validation",
+      "refused": "Preuves de covoiturage refusées"
     }
   }
 }

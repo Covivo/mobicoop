@@ -50,6 +50,8 @@
       <EECIncentiveFollowUp
         :long-distance-subscriptions="longDistanceSubscriptions"
         :short-distance-subscriptions="shortDistanceSubscriptions"
+        :pending-proofs="pendingProofs"
+        :refused-proofs="refusedProofs"
       />
     </div>
   </div>
@@ -81,6 +83,14 @@ export default {
     shortDistanceSubscriptions:{
       type: Object,
       default: null
+    },
+    pendingProofs:{
+      type: Number,
+      default: 0
+    },
+    refusedProofs:{
+      type: Number,
+      default: 0
     }
   },
   data() {
