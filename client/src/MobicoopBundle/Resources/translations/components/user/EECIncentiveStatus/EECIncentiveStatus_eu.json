@@ -1,5 +1,5 @@
 {
-  "title": "Prime covoiturage",
+  "title": "Prime covoiturage CEE",
   "subtitle": "Inscription",
   "intro": "Pour bénéficier de la prime de 100€ vous devez :",
   "mandatory1": "Confirmer votre numéro de téléphone",
@@ -19,12 +19,16 @@
     "getMyCeeSubscriptions": "/getMyCeeSubscriptions"
   },
   "additional": {
-    "title": "Informations complémentaires",
+    "subtitle": "Informations complémentaires",
     "intro": "Pour recevoir votre prime et le paiement de vos passagers, vous devez :",
     "mandatory1": "Renseigner vos coordonnées bancaires",
     "mandatory2": "Envoyer une photo d'une pièce d'identité valide",
     "uri": {
-      "getCoordinates": "/user/bank-details"
+      "getCoordinates": "/utilisateur/coordonnees-bancaires"
     }
+  },
+  "followup": {
+    "subtitle": "Suivi des trajets",
+    "intro": "yooo"
   }
 }

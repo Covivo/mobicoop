@@ -1,12 +1,20 @@
 <template>
   <div>
-    <v-card color="grey lighten-4">
+    <v-card
+      v-if="!hasBankCoordinates || !validatedIdentity"
+      color="grey lighten-4"
+    >
       <v-card-title
         class="text-center"
       >
-        {{ $t('additional.title') }}
+        {{ $t('title') }}
       </v-card-title>
       <v-card-text class="text-center">
+        <h2
+          class="mb-4"
+        >
+          {{ $t('additional.subtitle') }}
+        </h2>
         <p class="font-weight-bold">
           {{ $t('additional.intro') }}
         </p>
@@ -38,12 +46,17 @@
         </p>
       </v-card-text>
     </v-card>
+    <div v-else>
+      <EECIncentiveFollowUp />
+    </div>
   </div>
 </template>
 
 <script>
 import maxios from "@utils/maxios";
+import EECIncentiveFollowUp from '@components/user/eecIncentiveStatus/EECIncentiveFollowUp';
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/EECIncentiveStatus/";
+
 
 export default {
   i18n: {
@@ -53,6 +66,9 @@ export default {
       'fr': messages_fr,
       'eu':messages_eu
     }
+  },
+  components:{
+    EECIncentiveFollowUp
   },
   props: {
   },
