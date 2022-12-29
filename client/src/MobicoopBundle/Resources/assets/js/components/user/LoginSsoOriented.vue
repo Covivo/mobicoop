@@ -99,21 +99,22 @@
                     {{ $t('textRecovery') }}
                   </a>
                 </v-card-text>
-                <v-card-text
-                  v-if="signUpLinkInConnection"
-                >
-                  <a
-                    :href="$t('urlSignUp')"
-                    :title="$t('signUp')"
-                    :aria-label="$t('signUpAria')"
-                    class="font-italic"
-                  >
-                    {{ $t('signUp') }}
-                  </a>
-                </v-card-text>
               </v-expansion-panel-content>
             </v-expansion-panel>
           </v-expansion-panels>
+          <p
+            v-if="signUpLinkInConnection"
+            class="mt-5"
+          >
+            <a
+              :href="$t('urlSignUp')"
+              :title="$t('signUp')"
+              :aria-label="$t('signUpAria')"
+              class="font-italic"
+            >
+              {{ $t('signUp') }}
+            </a>
+          </p>
         </v-col>
       </v-row>
       <v-row
