@@ -622,6 +622,36 @@ class DataProvider
     }
 
     /**
+     * Get a given url.
+     *
+     * @param string $url        The url to post on
+     * @param array  $parameters The parameters
+     *
+     * @return Response The response
+     */
+    public function simpleGet(string $url, array $parameters = []): Response
+    {
+        try {
+            if (self::RETURN_JSON == $this->format) {
+                $headers = $this->getHeaders(['json']);
+            } else {
+                $headers = $this->getHeaders();
+            }
+
+            $clientResponse = $this->client->get($url, ['query' => $parameters, 'headers' => $headers]);
+            if (200 == $clientResponse->getStatusCode()) {
+                return new Response($clientResponse->getStatusCode(), $this->treatHydraCollection($clientResponse->getBody()));
+            }
+        } catch (ClientException|ServerException $e) {
+            return new Response($e->getCode(), $this->treatHydraCollection($e->getResponse()->getBody()->getContents(), true));
+        } catch (TransferException $e) {
+            return new Response($e->getCode());
+        }
+
+        return new Response();
+    }
+
+    /**
      * Post on a given url.
      *
      * @param string $url        The url to post on

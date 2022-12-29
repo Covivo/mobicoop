@@ -79,7 +79,7 @@ class MobConnectApiProvider extends MobConnectProvider
             'incentiveId' => $incentiveId,
             'consent' => true,
             'Type de trajet' => true === $isShortDistance ? [self::SHORT_DISTANCE_LABEL] : [self::LONG_DISTANCE_LABEL],
-            'Numéro de permis de conduire' => $this->_user->getDrivingLicenseNumber(),
+            'Numéro de permis de conduire' => $this->_user->getDrivingLicenceNumber(),
         ];
 
         if (false === $isShortDistance) {

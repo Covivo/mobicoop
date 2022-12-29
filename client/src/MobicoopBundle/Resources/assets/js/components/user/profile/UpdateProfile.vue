@@ -308,6 +308,11 @@
                   @change="save"
                 />
               </v-menu>
+              <v-text-field
+                v-model="drivingLicenceNumber"
+                :label="$t('drivingLicenceNumber.label')"
+                class="drivingLicenceNumber"
+              />
             </v-col>
             <!-- Avatar -->
             <v-col cols="5">
@@ -598,6 +603,10 @@
         </v-row>
       </v-card-text>
     </v-card>
+    <EECIncentiveStatus
+      :confirmed-phone-number="user.phoneValidatedDate ? true : false"
+      :driving-licence-number-filled="user.drivingLicenceNumber ? true : false"
+    />
 
     <!-- PUBLIC PROFILE DIALOG -->
     <v-dialog
@@ -641,6 +650,7 @@ import moment from "moment";
 import Geocomplete from "@components/utilities/geography/Geocomplete";
 import ChangePassword from "@components/user/profile/ChangePassword";
 import PublicProfile from "@components/user/profile/PublicProfile";
+import EECIncentiveStatus from "@components/user/eecIncentiveStatus/EECIncentiveStatus";
 import { merge } from "lodash";
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/profile/UpdateProfile/";
 import {messages_client_en, messages_client_fr, messages_client_eu, messages_client_nl} from "@clientTranslations/components/user/profile/UpdateProfile/";
@@ -662,7 +672,8 @@ export default {
   components: {
     PublicProfile,
     Geocomplete,
-    ChangePassword
+    ChangePassword,
+    EECIncentiveStatus
   },
   props: {
     geoSearchUrl: {
@@ -734,6 +745,7 @@ export default {
       familyName: this.user.familyName,
       birthDay: this.user.birthDate ? this.user.birthDate.date : null,
       homeAddress: this.user.homeAddress ? this.user.homeAddress : null,
+      drivingLicenceNumber: this.user.drivingLicenceNumber ? this.user.drivingLicenceNumber : null,
       phoneErrors: [],
       phoneToken: this.user.phoneToken,
       phoneValidatedDate: this.user.phoneValidatedDate,
@@ -922,6 +934,7 @@ export default {
       updateUser.append("avatar", this.avatar);
       updateUser.append("newsSubscription", this.newsSubscription);
       updateUser.append("phoneDisplay", this.phoneDisplay.value);
+      updateUser.append("drivingLicenceNumber", this.drivingLicenceNumber);
 
       maxios
         .post(this.$t('route.update'), updateUser,

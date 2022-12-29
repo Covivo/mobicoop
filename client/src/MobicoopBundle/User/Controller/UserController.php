@@ -38,6 +38,7 @@ use Mobicoop\Bundle\MobicoopBundle\I18n\Entity\Language;
 use Mobicoop\Bundle\MobicoopBundle\I18n\Service\LanguageManager;
 use Mobicoop\Bundle\MobicoopBundle\Image\Entity\Image;
 use Mobicoop\Bundle\MobicoopBundle\Image\Service\ImageManager;
+use Mobicoop\Bundle\MobicoopBundle\Incentive\Service\CeeSubscriptionManager;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\ValidationDocument;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Service\PaymentManager;
 use Mobicoop\Bundle\MobicoopBundle\Traits\HydraControllerTrait;
@@ -90,6 +91,7 @@ class UserController extends AbstractController
     private $ageDisplay;
     private $birthDateDisplay;
     private $eventManager;
+    private $ceeSubscriptionManager;
     private $carpoolSettingsDisplay;
     private $signInSsoOriented;
 
@@ -125,6 +127,7 @@ class UserController extends AbstractController
         PaymentManager $paymentManager,
         LanguageManager $languageManager,
         EventManager $eventManager,
+        CeeSubscriptionManager $ceeSubscriptionManager,
         $required_community,
         bool $loginDelegate,
         bool $fraudWarningDisplay,
@@ -156,6 +159,7 @@ class UserController extends AbstractController
         $this->carpoolSettingsDisplay = $carpoolSettingsDisplay;
         $this->birthDateDisplay = $birthDateDisplay;
         $this->eventManager = $eventManager;
+        $this->ceeSubscriptionManager = $ceeSubscriptionManager;
         $this->ssoManager = $ssoManager;
         $this->signInSsoOriented = $signInSsoOriented;
     }
@@ -526,6 +530,7 @@ class UserController extends AbstractController
             $user->setBirthDate(new \DateTime($data->get('birthDay')));
             // cause we use FormData to post data
             $user->setNewsSubscription('true' === $data->get('newsSubscription') ? true : false);
+            $user->setDrivingLicenceNumber('' !== trim($data->get('drivingLicenceNumber')) ? (int) $data->get('drivingLicenceNumber') : null);
 
             if ($user = $userManager->updateUser($user)) {
                 $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
@@ -1519,6 +1524,11 @@ class UserController extends AbstractController
     public function getSsoServices(Request $request)
     {
         if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+            if (isset($data['service']) && !is_null($data['service'])) {
+                return $this->getSsoService($request);
+            }
+
             return new JsonResponse($this->userManager->getSsoServices());
         }
 
@@ -1695,6 +1705,11 @@ class UserController extends AbstractController
         }
 
         throw new AccessDeniedException('Access Denied.');
+    }
+
+    public function myCeeSubscriptions()
+    {
+        return new JsonResponse($this->ceeSubscriptionManager->myCeeSubscriptions());
     }
 
     private function mobileRedirect(string $host, string $path, array $params)

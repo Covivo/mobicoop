@@ -27,6 +27,7 @@
       color="secondary"
       type="button"
       rounded
+      :disabled="!buttonActive"
       @click="click"
     >
       {{ $t('useSsoService', {'service':service}) }} <span v-if="picto"><img
@@ -70,9 +71,32 @@ export default {
       type: String,
       default: null
     },
+    ssoProvider:{
+      type: String,
+      default: null
+    },
     maxWidth:{
       type: Number,
       default:200
+    }
+  },
+  data(){
+    return {
+      buttonActive: false
+    }
+  },
+  computed:{
+    ssoButtonsActiveStatus(){
+      return this.$store.getters['sso/ssoButtonsActiveStatus'];
+    },
+    refreshActiveButtons(){
+      return this.$store.getters['sso/refreshActiveButtons'];
+    }
+  },
+  watch:{
+    refreshActiveButtons(){
+      this.buttonActive = this.ssoButtonsActiveStatus[this.ssoProvider];
+      this.$store.commit('sso/setRefreshActiveButtons', false);
     }
   },
   methods:{
