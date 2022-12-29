@@ -269,6 +269,10 @@ services:
   Mobicoop\Bundle\MobicoopBundle\I18n\Service\:
     resource: "@MobicoopBundle/I18n/Service/*"
 
+  # Incentive
+  Mobicoop\Bundle\MobicoopBundle\Incentive\Service\:
+    resource: "@MobicoopBundle/Incentive/Service/*"
+
   # Stats
   Mobicoop\Bundle\MobicoopBundle\Stats\Controller\:
     resource: "@MobicoopBundle/Stats/Controller/*"

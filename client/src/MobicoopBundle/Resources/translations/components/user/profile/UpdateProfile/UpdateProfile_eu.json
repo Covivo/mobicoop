@@ -68,6 +68,9 @@
   "givenName": {
     "label": "Izena"
   },
+  "drivingLicenceNumber": {
+    "label": "Driving licence number"
+  },
   "email": {
     "verificationRoute": "/utilisateur/email/validation",
     "buttons": {

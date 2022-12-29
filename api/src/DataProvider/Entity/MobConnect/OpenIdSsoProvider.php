@@ -63,7 +63,7 @@ class OpenIdSsoProvider extends EntityOpenIdSsoProvider
             return $ssoUser;
         }
 
-        throw new \LogicException('Error get Token');
+        throw new \LogicException('Error getUserProfile');
     }
 
     public function getRefreshToken(string $refreshToken)

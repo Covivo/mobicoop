@@ -36,6 +36,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
 class CeeSubscriptions
 {
     public const DEFAULT_ID = '999999999999';
+    public const LONG_DISTANCE_MINIMUM_IN_METERS = 80000;
+    public const LONG_DISTANCE_MINIMUM_PRICE_BY_KM = 0.06;
 
     /**
      * @var int The id of this CEE subscription
@@ -59,9 +61,33 @@ class CeeSubscriptions
      */
     private $longDistanceSubscriptions;
 
+    /**
+     * @var int Nb pending class C proofs
+     *
+     * @Groups({"readSubscription"})
+     */
+    private $nbPendingProofs;
+
+    /**
+     * @var int Nb validated class C proofs
+     *
+     * @Groups({"readSubscription"})
+     */
+    private $nbValidatedProofs;
+
+    /**
+     * @var int Nb rejected class C proofs
+     *
+     * @Groups({"readSubscription"})
+     */
+    private $nbRejectedProofs;
+
     public function __construct($id = null)
     {
         $this->id = $id ? $id : self::DEFAULT_ID;
+        $this->nbPendingProofs = 0;
+        $this->nbValidatedProofs = 0;
+        $this->nbRejectedProofs = 0;
     }
 
     public function getId(): int
@@ -115,6 +141,42 @@ class CeeSubscriptions
     public function setLongDistanceSubscriptions(?array $longDistanceSubscriptions)
     {
         $this->longDistanceSubscriptions = $longDistanceSubscriptions;
+
+        return $this;
+    }
+
+    public function getNbPendingProofs(): ?int
+    {
+        return $this->nbPendingProofs;
+    }
+
+    public function setNbPendingProofs(int $nbPendingProofs): self
+    {
+        $this->nbPendingProofs = $nbPendingProofs;
+
+        return $this;
+    }
+
+    public function getNbValidatedProofs(): ?int
+    {
+        return $this->nbValidatedProofs;
+    }
+
+    public function setNbValidatedProofs(int $nbValidatedProofs): self
+    {
+        $this->nbValidatedProofs = $nbValidatedProofs;
+
+        return $this;
+    }
+
+    public function getNbRejectedProofs(): ?int
+    {
+        return $this->nbRejectedProofs;
+    }
+
+    public function setNbRejectedProofs(int $nbRejectedProofs): self
+    {
+        $this->nbRejectedProofs = $nbRejectedProofs;
 
         return $this;
     }

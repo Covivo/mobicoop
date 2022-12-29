@@ -5,7 +5,7 @@ namespace App\Incentive\Service;
 use App\Carpool\Entity\CarpoolProof;
 use App\Carpool\Entity\Matching;
 use App\Geography\Entity\Address;
-use App\Incentive\Resource\CeeStatus;
+use App\Incentive\Resource\CeeSubscriptions;
 use App\Payment\Entity\CarpoolItem;
 use App\User\Entity\User;
 
@@ -17,7 +17,7 @@ use App\User\Entity\User;
 abstract class CeeJourneyService
 {
     public const REFERENCE_COUNTRY = 'France';
-    public const REFERENCE_DATE = '2023-01-01';
+    public const REFERENCE_DATE = '2022-12-01';
     public const REFERENCE_PERIOD = 3;                   // Period expressed in years
     public const REFERENCE_TIME_LIMIT = 3;           // In months
     public const LOW_THRESHOLD_PROOF = 1;
@@ -47,7 +47,7 @@ abstract class CeeJourneyService
      */
     private function __isLongDistance(int $distance): bool
     {
-        return CeeStatus::LONG_DISTANCE_MINIMUM_IN_METERS < $distance;
+        return CeeSubscriptions::LONG_DISTANCE_MINIMUM_IN_METERS < $distance;
     }
 
     /**
@@ -94,7 +94,7 @@ abstract class CeeJourneyService
      */
     private function __isShortDistance(int $distance): bool
     {
-        return CeeStatus::LONG_DISTANCE_MINIMUM_IN_METERS >= $distance;
+        return CeeSubscriptions::LONG_DISTANCE_MINIMUM_IN_METERS >= $distance;
     }
 
     /**
@@ -103,7 +103,7 @@ abstract class CeeJourneyService
     private function __isUserValid(User $user): bool
     {
         return
-            !is_null($user->getDrivingLicenseNumber())
+            !is_null($user->getDrivingLicenceNumber())
             && !is_null($user->getTelephone())
             && !is_null($user->getPhoneValidatedDate())
         ;

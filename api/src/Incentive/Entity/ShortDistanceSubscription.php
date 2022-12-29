@@ -90,7 +90,7 @@ class ShortDistanceSubscription
      * @ORM\Column(type="string", length=15)
      * @Groups({"readSubscription"})
      */
-    private $drivingLicenseNumber;
+    private $drivingLicenceNumber;
 
     /**
      * @var string the full street address of the user
@@ -151,7 +151,7 @@ class ShortDistanceSubscription
 
         $this->setGivenName($user->getGivenName());
         $this->setFamilyName($user->getFamilyName());
-        $this->setDrivingLicenseNumber($user->getDrivingLicenseNumber());
+        $this->setDrivingLicenceNumber($user->getDrivingLicenceNumber());
         $this->setStreetAddress($user->getHomeAddress()->getHouseNumber().' '.$user->getHomeAddress()->getStreetAddress());
         $this->setPostalCode($user->getHomeAddress()->getPostalCode());
         $this->setAddressLocality($user->getHomeAddress()->getAddressLocality());
@@ -343,17 +343,17 @@ class ShortDistanceSubscription
     /**
      * Get the driving licence number of the user.
      */
-    public function getDrivingLicenseNumber(): string
+    public function getDrivingLicenceNumber(): string
     {
-        return $this->drivingLicenseNumber;
+        return $this->drivingLicenceNumber;
     }
 
     /**
      * Set the driving licence number of the user.
      */
-    public function setDrivingLicenseNumber(string $drivingLicenseNumber): self
+    public function setDrivingLicenceNumber(string $drivingLicenceNumber): self
     {
-        $this->drivingLicenseNumber = $drivingLicenseNumber;
+        $this->drivingLicenceNumber = $drivingLicenceNumber;
 
         return $this;
     }

@@ -825,7 +825,7 @@ class User implements UserInterface, EquatableInterface
      * @ORM\Column(type="string", length=15, nullable=true)
      * @Groups({"aRead","aWrite","readUser","write"})
      */
-    private $drivingLicenseNumber;
+    private $drivingLicenceNumber;
 
     /**
      * @var null|int the maximum detour duration (in seconds) as a driver to accept a request proposal
@@ -1961,14 +1961,14 @@ class User implements UserInterface, EquatableInterface
         return $this;
     }
 
-    public function getDrivingLicenseNumber(): ?string
+    public function getDrivingLicenceNumber(): ?string
     {
-        return $this->drivingLicenseNumber;
+        return $this->drivingLicenceNumber;
     }
 
-    public function setDrivingLicenseNumber(?string $drivingLicenseNumber): self
+    public function setDrivingLicenceNumber(?string $drivingLicenceNumber): self
     {
-        $this->drivingLicenseNumber = $drivingLicenseNumber;
+        $this->drivingLicenceNumber = $drivingLicenceNumber;
 
         return $this;
     }

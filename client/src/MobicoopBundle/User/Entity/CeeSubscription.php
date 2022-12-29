@@ -59,11 +59,50 @@ class CeeSubscription implements ResourceInterface, \JsonSerializable
         return $this;
     }
 
+    public function getNbPendingProofs(): ?int
+    {
+        return $this->nbPendingProofs;
+    }
+
+    public function setNbPendingProofs(int $nbPendingProofs): self
+    {
+        $this->nbPendingProofs = $nbPendingProofs;
+
+        return $this;
+    }
+
+    public function getNbValidatedProofs(): ?int
+    {
+        return $this->nbValidatedProofs;
+    }
+
+    public function setNbValidatedProofs(int $nbValidatedProofs): self
+    {
+        $this->nbValidatedProofs = $nbValidatedProofs;
+
+        return $this;
+    }
+
+    public function getNbRejectedProofs(): ?int
+    {
+        return $this->nbRejectedProofs;
+    }
+
+    public function setNbRejectedProofs(int $nbRejectedProofs): self
+    {
+        $this->nbRejectedProofs = $nbRejectedProofs;
+
+        return $this;
+    }
+
     public function jsonSerialize()
     {
         return [
             'long_distance_subscriptions' => $this->getLongDistanceSubscriptions(),
             'short_distance_subscriptions' => $this->getShortDistanceSubscriptions(),
+            'nbPendingProofs' => $this->getNbPendingProofs(),
+            'nbValidatedProofs' => $this->getNbValidatedProofs(),
+            'nbRejectedProofs' => $this->getNbRejectedProofs(),
         ];
     }
 }

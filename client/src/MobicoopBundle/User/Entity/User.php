@@ -154,6 +154,13 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
     private $phoneDisplay;
 
     /**
+     * @var null|string the driving licence number
+     *
+     * @Groups({"post","put"})
+     */
+    private $drivingLicenceNumber;
+
+    /**
      * @var null|int the maximum deviation time (in seconds) as a driver to accept a request proposal
      *
      * @Groups({"post","put"})
@@ -652,6 +659,18 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
     public function setPhoneDisplay(?int $phoneDisplay): self
     {
         $this->phoneDisplay = $phoneDisplay;
+
+        return $this;
+    }
+
+    public function getDrivingLicenceNumber(): ?string
+    {
+        return $this->drivingLicenceNumber;
+    }
+
+    public function setDrivingLicenceNumber(?string $drivingLicenceNumber): self
+    {
+        $this->drivingLicenceNumber = $drivingLicenceNumber;
 
         return $this;
     }
@@ -1454,6 +1473,7 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
             'gamification' => $this->hasGamification(),
             'newsSubscription' => $this->hasNewsSubscription(),
             'phoneDisplay' => $this->getPhoneDisplay(),
+            'drivingLicenceNumber' => $this->getDrivingLicenceNumber(),
             'phoneValidatedDate' => $this->getPhoneValidatedDate(),
             'phoneToken' => $this->getPhoneToken(),
             'unsubscribeMessage' => $this->getUnsubscribeMessage(),
