@@ -71,6 +71,7 @@ class UserManager
     private $rzpUri;
     private $rzpLogin;
     private $rzpPassword;
+    private $userDelegateEmailBase;
 
     /**
      * Constructor.
@@ -97,7 +98,8 @@ class UserManager
         $music,
         string $rzpUri,
         string $rzpLogin,
-        string $rzpPassword
+        string $rzpPassword,
+        string $userDelegateEmailBase
     ) {
         $this->entityManager = $entityManager;
         $this->authItemRepository = $authItemRepository;
@@ -116,6 +118,7 @@ class UserManager
         $this->rzpUri = $rzpUri;
         $this->rzpLogin = $rzpLogin;
         $this->rzpPassword = $rzpPassword;
+        $this->userDelegateEmailBase = $userDelegateEmailBase;
     }
 
     private function __getLocalityCode(string $search): ?int
@@ -234,6 +237,11 @@ class UserManager
 
         if (is_null($user->getSmoke())) {
             $user->setSmoke($this->smoke);
+        }
+
+        if (is_null($user->getEmail())) {
+            // no email set => we use the structure as base for subaddressing
+            $user->setEmail($this->userManager->generateSubEmail($this->userDelegateEmailBase));
         }
 
         // create token to validate regisration

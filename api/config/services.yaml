@@ -991,6 +991,8 @@ services:
       $rzpUri: "%env(string:RZP_API_URI)%"
       $rzpLogin: "%env(string:RZP_API_LOGIN)%"
       $rzpPassword: "%env(string:RZP_API_PASSWORD)%"
+      $userDelegateEmailBase: "%env(string:USER_DELEGATE_EMAIL_BASE)%"
+
 
   App\User\Admin\Service\KibanaLoginManager:
     arguments:

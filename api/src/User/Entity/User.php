@@ -715,7 +715,6 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var string the email of the user
      *
-     * @Assert\NotBlank
      * @Assert\Email()
      * @ORM\Column(type="string", length=255, unique=true)
      * @Groups({"aRead","aWrite","readUser","write","checkValidationToken","passwordUpdateRequest","passwordUpdate", "readSolidary", "patchSso"})
@@ -2123,7 +2122,7 @@ class User implements UserInterface, EquatableInterface
         return $this->pwdTokenDate;
     }
 
-    public function setPwdTokenDate(?\DateTime $pwdTokenDate): self
+    public function setPwdTokenDate(?DateTime $pwdTokenDate): self
     {
         $this->pwdTokenDate = $pwdTokenDate;
 

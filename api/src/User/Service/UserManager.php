@@ -75,6 +75,7 @@ use App\User\Event\UserRegisteredEvent;
 use App\User\Event\UserSendValidationEmailEvent;
 use App\User\Event\UserUpdatedSelfEvent;
 use App\User\Exception\UserDeleteException;
+use App\User\Exception\UserException;
 use App\User\Exception\UserNotFoundException;
 use App\User\Exception\UserUnderAgeException;
 use App\User\Repository\UserNotificationRepository;
@@ -334,6 +335,10 @@ class UserManager
         $this->checkIfScammer($user);
         //  we check if the user is not underaged
         $this->checkBirthDate($user);
+        // we check if the user has an email
+        if (is_null($user->getEmail())) {
+            throw new UserException(UserException::EMAIL_IS_MANDATORY);
+        }
 
         $user = $this->prepareUser($user, $encodePassword);
 
