@@ -326,6 +326,8 @@ class MobConnectSubscriptionManager
             return;
         }
 
+        $journeyDate = $carpoolProof->getAsk()->getCriteria()->getFromDate();
+
         switch (true) {
             case CeeJourneyService::isValidLongDistanceJourney($carpoolProof):
                 $this->_userSubscription = $this->_user->getLongDistanceSubscription();
@@ -333,7 +335,7 @@ class MobConnectSubscriptionManager
                 if (
                     $this->_user !== $carpoolProof->getDriver()
                     || is_null($this->_userSubscription)
-                    || CeeJourneyService::isDateExpired($this->_userSubscription->getCreatedAt()->add(new \DateInterval('P'.CeeJourneyService::REFERENCE_TIME_LIMIT.'M')))
+                    || CeeJourneyService::isDateExpired($journeyDate->add(new \DateInterval('P'.CeeJourneyService::REFERENCE_TIME_LIMIT.'M')))
                     || CeeJourneyService::LONG_DISTANCE_TRIP_THRESHOLD < count($this->_userSubscription->getLongDistanceJourneys())
                 ) {
                     return;
@@ -355,7 +357,7 @@ class MobConnectSubscriptionManager
                 if (
                     $this->_user !== $carpoolProof->getDriver()
                     || is_null($this->_userSubscription)
-                    || CeeJourneyService::isDateExpired($this->_userSubscription->getCreatedAt()->add(new \DateInterval('P'.CeeJourneyService::REFERENCE_TIME_LIMIT.'M')))
+                    || CeeJourneyService::isDateAfterReferenceDate($journeyDate)
                     || CeeJourneyService::SHORT_DISTANCE_TRIP_THRESHOLD <= count($this->_userSubscription->getShortDistanceJourneys())
                 ) {
                     return;
@@ -388,7 +390,7 @@ class MobConnectSubscriptionManager
                             $this->_mobConnectApiProvider->patchUserSubscription($this->__getSubscriptionId(), null, false, $paymentDate);
 
                             $event = new FirstLongDistanceJourneyValidatedEvent($journey);
-                            $this->eventDispatcher->dispatch(FirstLongDistanceJourneyValidatedEvent::NAME, $event);
+                            $this->_eventDispatcher->dispatch(FirstLongDistanceJourneyValidatedEvent::NAME, $event);
 
                             $this->__verifySubscription();
 
