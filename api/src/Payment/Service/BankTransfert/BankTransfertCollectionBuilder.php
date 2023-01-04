@@ -33,7 +33,10 @@ class BankTransfertCollectionBuilder
 {
     public const CSV_DELIMITER = ';';
 
-    private $_file;
+    /**
+     * @var string
+     */
+    private $_filepath;
 
     /**
      * @var array
@@ -51,9 +54,9 @@ class BankTransfertCollectionBuilder
         $this->_bankTransfertBuilder = $bankTransfertBuilder;
     }
 
-    public function setFile(string $file): self
+    public function setFilePath(string $filepath): self
     {
-        $this->_file = $file;
+        $this->_filepath = $filepath;
 
         return $this;
     }
@@ -66,9 +69,9 @@ class BankTransfertCollectionBuilder
     public function build()
     {
         try {
-            $file = fopen($this->_file, 'r');
+            $file = fopen($this->_filepath, 'r');
         } catch (\Exception $e) {
-            throw new BankTransfertException(BankTransfertException::ERROR_OPENING_FILE.' '.$file);
+            throw new BankTransfertException(BankTransfertException::ERROR_OPENING_FILE.' '.$this->_filepath);
         }
 
         while (!feof($file)) {

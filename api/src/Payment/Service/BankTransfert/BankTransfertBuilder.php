@@ -38,6 +38,9 @@ class BankTransfertBuilder
     public const COL_CARPOOL_PROOF_ID = 3;
     public const COL_DETAILS_MIN = 4;
 
+    /**
+     * @var array
+     */
     private $_data;
 
     /**

@@ -45,9 +45,9 @@ class BankTransfertManager
     public function makeBankTransferts(): bool
     {
         $files = glob(self::PATH_TO_FILES.'/*.'.self::FILES_EXTENTION);
-        foreach ($files as $file) {
-            $this->_checkCsvDelimiter($file);
-            $this->_bankTransfertCollectionBuilder->setFile($file);
+        foreach ($files as $filepath) {
+            $this->_checkCsvDelimiter($filepath);
+            $this->_bankTransfertCollectionBuilder->setFilePath($filepath);
             $this->_bankTransfertCollectionBuilder->build();
             var_dump($this->_bankTransfertCollectionBuilder->getBankTransferts());
         }
