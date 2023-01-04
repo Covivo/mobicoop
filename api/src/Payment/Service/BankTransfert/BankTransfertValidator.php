@@ -192,6 +192,8 @@ class BankTransfertValidator
             if (!$carpoolProof = $this->_carpoolProofRepository->find($carpoolProofId)) {
                 $this->_valid = false;
                 echo 'Unknown CarpoolProof : '.$carpoolProofId.PHP_EOL;
+
+                return null;
             }
 
             if ($carpoolProof->getDriver()->getId() !== $this->_user->getId() && $carpoolProof->getPassenger()->getId() !== $this->_user->getId()) {

@@ -23,6 +23,7 @@
 namespace App\Payment\Service\BankTransfert;
 
 use App\Payment\Exception\BankTransfertException;
+use Doctrine\ORM\EntityManagerInterface;
 
 /**
  * Bank Transfert Manager service.
@@ -36,10 +37,12 @@ class BankTransfertManager
     public const CSV_DELIMITER = ';';
 
     private $_bankTransfertCollectionBuilder;
+    private $_entityManager;
 
-    public function __construct(BankTransfertCollectionBuilder $bankTransfertCollectionBuilder)
+    public function __construct(BankTransfertCollectionBuilder $bankTransfertCollectionBuilder, EntityManagerInterface $entityManager)
     {
         $this->_bankTransfertCollectionBuilder = $bankTransfertCollectionBuilder;
+        $this->_entityManager = $entityManager;
     }
 
     public function makeBankTransferts(): bool
@@ -50,6 +53,10 @@ class BankTransfertManager
             $this->_bankTransfertCollectionBuilder->setFilePath($filepath);
             $this->_bankTransfertCollectionBuilder->build();
             $this->_showConsoleResults();
+            foreach ($this->_bankTransfertCollectionBuilder->getBankTransferts() as $bankTransfert) {
+                $this->_entityManager->persist($bankTransfert);
+            }
+            $this->_entityManager->flush();
         }
 
         return true;
