@@ -58,6 +58,10 @@
         "map": {
             "link": "/points-relais",
             "title": "De kaart met carpoolparkings"
+        },
+        "carpoolIncentive": {
+            "title":"Prime Covoiturage",
+            "link":"/mobility-package"
         }
     },
     "services": {

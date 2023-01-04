@@ -133,6 +133,13 @@
           </v-card-text>
           <v-card-text class="my-0 py-1">
             <a
+              :href="$t('tools.carpoolIncentive.link')"
+              style="text-decoration:none;"
+              class="white--text"
+            >{{ $t('tools.carpoolIncentive.title') }}</a>
+          </v-card-text>
+          <v-card-text class="my-0 py-1">
+            <a
               style="text-decoration:none;"
               class="white--text"
               @click="showCookiesAction()"
