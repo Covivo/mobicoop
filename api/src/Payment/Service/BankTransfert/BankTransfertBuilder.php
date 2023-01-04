@@ -22,6 +22,8 @@
 
 namespace App\Payment\Service\BankTransfert;
 
+use App\Carpool\Entity\CarpoolProof;
+use App\Carpool\Repository\CarpoolProofRepository;
 use App\Geography\Entity\Territory;
 use App\Geography\Service\TerritoryManager;
 use App\Payment\Entity\BankTransfert;
@@ -53,23 +55,30 @@ class BankTransfertBuilder
     private $_bankTransferts;
 
     /**
-     * @var User
+     * @var ?User
      */
     private $_user;
 
     /**
-     * @var Territory
+     * @var ?Territory
      */
     private $_territory;
 
+    /**
+     * @var ?CarpoolProof
+     */
+    private $_carpoolProof;
+
     private $_userManager;
     private $_territoryManager;
+    private $_carpoolProofRepository;
     private $_valid;
 
-    public function __construct(UserManager $userManager, TerritoryManager $territoryManager)
+    public function __construct(UserManager $userManager, TerritoryManager $territoryManager, CarpoolProofRepository $carpoolProofRepository)
     {
         $this->_userManager = $userManager;
         $this->_territoryManager = $territoryManager;
+        $this->_carpoolProofRepository = $carpoolProofRepository;
         $this->_valid = true;
     }
 
@@ -88,6 +97,7 @@ class BankTransfertBuilder
 
         $this->_user = $this->_checkRecipient();
         $this->_territory = $this->_checkTerritory();
+        $this->_carpoolProof = $this->_checkCarpoolProof();
 
         return $this->_build();
     }
@@ -99,6 +109,7 @@ class BankTransfertBuilder
             $bankTransfert->setAmount(str_replace(',', '.', $this->_data[self::COL_AMOUNT]));
             $bankTransfert->setRecipient($this->_user);
             $bankTransfert->setTerritory($this->_territory);
+            $bankTransfert->setCarpoolProof($this->_carpoolProof);
 
             return $bankTransfert;
         }
@@ -128,5 +139,19 @@ class BankTransfertBuilder
         }
 
         return $territory;
+    }
+
+    private function _checkCarpoolProof(): ?CarpoolProof
+    {
+        if (is_null($this->_data[self::COL_CARPOOL_PROOF_ID]) || '' === trim($this->_data[self::COL_CARPOOL_PROOF_ID])) {
+            return null;
+        }
+
+        if (!$carpoolProof = $this->_carpoolProofRepository->find($this->_data[self::COL_CARPOOL_PROOF_ID])) {
+            $this->_valid = false;
+            echo 'Unknown CarpoolProof : '.$this->_data[self::COL_CARPOOL_PROOF_ID].PHP_EOL;
+        }
+
+        return $carpoolProof;
     }
 }
