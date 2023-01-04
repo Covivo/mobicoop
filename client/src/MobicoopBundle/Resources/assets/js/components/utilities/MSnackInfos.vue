@@ -4,7 +4,7 @@
     :top="top"
     timeout="-1"
   >
-    <span v-html="text" />
+    <span v-html="$t('text')" />
 
     <template v-slot:action="{ attrs }">
       <v-btn
