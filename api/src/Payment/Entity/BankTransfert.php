@@ -44,6 +44,7 @@ class BankTransfert
     public const DEFAULT_ID = '999999999999';
 
     public const STATUS_INITIATED = 0;
+    public const STATUS_INVALID = 1;
 
     /**
      * @var string The id of this bank transfert

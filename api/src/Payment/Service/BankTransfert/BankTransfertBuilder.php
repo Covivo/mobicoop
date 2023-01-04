@@ -22,14 +22,8 @@
 
 namespace App\Payment\Service\BankTransfert;
 
-use App\Carpool\Entity\CarpoolProof;
-use App\Carpool\Repository\CarpoolProofRepository;
-use App\Geography\Entity\Territory;
-use App\Geography\Service\TerritoryManager;
 use App\Payment\Entity\BankTransfert;
 use App\Payment\Exception\BankTransfertException;
-use App\User\Entity\User;
-use App\User\Service\UserManager;
 
 /**
  * Bank Transfert Builder.
@@ -38,48 +32,16 @@ use App\User\Service\UserManager;
  */
 class BankTransfertBuilder
 {
-    public const COL_USER_ID = 0;
-    public const COL_AMOUNT = 1;
-    public const COL_TERRITORY_ID = 2;
-    public const COL_CARPOOL_PROOF_ID = 3;
-    public const COL_DETAILS_MIN = 4;
-
     /**
      * @var array
      */
     private $_data;
 
-    /**
-     * @var array
-     */
-    private $_bankTransferts;
+    private $_bankTransfertValidator;
 
-    /**
-     * @var ?User
-     */
-    private $_user;
-
-    /**
-     * @var ?Territory
-     */
-    private $_territory;
-
-    /**
-     * @var ?CarpoolProof
-     */
-    private $_carpoolProof;
-
-    private $_userManager;
-    private $_territoryManager;
-    private $_carpoolProofRepository;
-    private $_valid;
-
-    public function __construct(UserManager $userManager, TerritoryManager $territoryManager, CarpoolProofRepository $carpoolProofRepository)
+    public function __construct(BankTransfertValidator $bankTransfertValidator)
     {
-        $this->_userManager = $userManager;
-        $this->_territoryManager = $territoryManager;
-        $this->_carpoolProofRepository = $carpoolProofRepository;
-        $this->_valid = true;
+        $this->_bankTransfertValidator = $bankTransfertValidator;
     }
 
     public function setData(array $data): self
@@ -95,63 +57,22 @@ class BankTransfertBuilder
             throw new BankTransfertException(BankTransfertException::BT_BUILDER_NO_DATA);
         }
 
-        $this->_user = $this->_checkRecipient();
-        $this->_territory = $this->_checkTerritory();
-        $this->_carpoolProof = $this->_checkCarpoolProof();
-
         return $this->_build();
     }
 
     private function _build(): ?BankTransfert
     {
-        if ($this->_valid) {
-            $bankTransfert = new BankTransfert();
-            $bankTransfert->setAmount(str_replace(',', '.', $this->_data[self::COL_AMOUNT]));
-            $bankTransfert->setRecipient($this->_user);
-            $bankTransfert->setTerritory($this->_territory);
-            $bankTransfert->setCarpoolProof($this->_carpoolProof);
+        $this->_bankTransfertValidator->setData($this->_data);
+        $this->_bankTransfertValidator->valid();
 
-            return $bankTransfert;
-        }
+        $bankTransfert = new BankTransfert();
+        $bankTransfert->setAmount($this->_bankTransfertValidator->getAmount());
+        $bankTransfert->setRecipient($this->_bankTransfertValidator->getRecipient());
+        $bankTransfert->setTerritory($this->_bankTransfertValidator->getTerritory());
+        $bankTransfert->setCarpoolProof($this->_bankTransfertValidator->getCarpoolProof());
+        $bankTransfert->setDetails($this->_bankTransfertValidator->getOptionalColumns());
+        $bankTransfert->setStatus($this->_bankTransfertValidator->getValid() ? BankTransfert::STATUS_INITIATED : BankTransfert::STATUS_INVALID);
 
-        return null;
-    }
-
-    private function _checkRecipient(): ?User
-    {
-        if (!$user = $this->_userManager->getUser($this->_data[self::COL_USER_ID])) {
-            echo 'Unknown Recipient : '.$this->_data[self::COL_USER_ID].PHP_EOL;
-            $this->_valid = false;
-        }
-
-        return $user;
-    }
-
-    private function _checkTerritory(): ?Territory
-    {
-        if (is_null($this->_data[self::COL_TERRITORY_ID]) || '' === trim($this->_data[self::COL_TERRITORY_ID])) {
-            return null;
-        }
-
-        if (!$territory = $this->_territoryManager->getTerritory($this->_data[self::COL_TERRITORY_ID])) {
-            $this->_valid = false;
-            echo 'Unknown Territory : '.$this->_data[self::COL_TERRITORY_ID].PHP_EOL;
-        }
-
-        return $territory;
-    }
-
-    private function _checkCarpoolProof(): ?CarpoolProof
-    {
-        if (is_null($this->_data[self::COL_CARPOOL_PROOF_ID]) || '' === trim($this->_data[self::COL_CARPOOL_PROOF_ID])) {
-            return null;
-        }
-
-        if (!$carpoolProof = $this->_carpoolProofRepository->find($this->_data[self::COL_CARPOOL_PROOF_ID])) {
-            $this->_valid = false;
-            echo 'Unknown CarpoolProof : '.$this->_data[self::COL_CARPOOL_PROOF_ID].PHP_EOL;
-        }
-
-        return $carpoolProof;
+        return $bankTransfert;
     }
 }

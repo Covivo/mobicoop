@@ -87,6 +87,9 @@ class BankTransfertManager
             echo 'amount : '.$bankTransfert->getAmount().PHP_EOL;
             echo 'recipientId : '.$bankTransfert->getRecipient()->getId().PHP_EOL;
             echo 'territoryId : '.(!is_null($bankTransfert->getTerritory()) ? $bankTransfert->getTerritory()->getId() : 'null').PHP_EOL;
+            echo 'carpoolProofId : '.(!is_null($bankTransfert->getCarpoolProof()) ? $bankTransfert->getCarpoolProof()->getId() : 'null').PHP_EOL;
+            echo 'details : '.$bankTransfert->getDetails().PHP_EOL;
+            echo 'status : '.$bankTransfert->getStatus().PHP_EOL;
             echo '------------------'.PHP_EOL;
         }
     }
