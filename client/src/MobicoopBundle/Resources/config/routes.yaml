@@ -1942,9 +1942,9 @@ home_stats_indicators:
 ###############
 # mobility aids routes #
 ###############
-mobility:
+assistive_devices:
   path:
     fr: /aides-a-la-mobilite
     en: /aides-a-la-mobilite
     nl: /aides-a-la-mobilite
-  controller: Mobicoop\Bundle\MobicoopBundle\MobilityAids\Controller\MobilityController::mobilityAid
+  controller: Mobicoop\Bundle\MobicoopBundle\AssistiveDevices\Controller\AssistiveController::assistiveDevices
