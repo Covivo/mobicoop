@@ -338,31 +338,30 @@ class MangoPayProvider implements PaymentProviderInterface
         }
 
         if (!is_null($address)) {
-            $street = '';
-            if ('' != $address->getStreetAddress()) {
-                $street = $address->getStreetAddress();
-            } else {
-                $street = trim($address->getHouseNumber().' '.$address->getStreet());
-            }
-
-            $body['Address'] = [
-                'AddressLine1' => $street,
-                'City' => $address->getAddressLocality(),
-                'Region' => $address->getRegion(),
-                'PostalCode' => $address->getPostalCode(),
-                'Country' => substr($address->getCountryCode(), 0, 2),
-            ];
-
+            // the address of a user is optionnal we sent it only if it's a full address
             if (
-                ('' == $address->getStreetAddress() && '' == $address->getStreet())
-                || '' == $address->getAddressLocality()
-                || '' == $address->getRegion()
-                || '' == $address->getPostalCode()
-                || '' == $address->getCountryCode()
+                '' !== $address->getStreetAddress()
+                && '' !== $address->getStreet()
+                && '' !== $address->getAddressLocality()
+                && '' !== $address->getRegion()
+                && '' !== $address->getPostalCode()
+                && '' !== $address->getCountryCode()
             ) {
-                throw new PaymentException(PaymentException::ADDRESS_INVALID);
+                $street = '';
+                if ('' != $address->getStreetAddress()) {
+                    $street = $address->getStreetAddress();
+                } else {
+                    $street = trim($address->getHouseNumber().' '.$address->getStreet());
+                }
+                $body['Address'] = [
+                    'AddressLine1' => $street,
+                    'City' => $address->getAddressLocality(),
+                    'Region' => $address->getRegion(),
+                    'PostalCode' => $address->getPostalCode(),
+                    'Country' => substr($address->getCountryCode(), 0, 2),
+                ];
             }
-
+            // the Nationality and the country of residence are required
             $body['Nationality'] = substr($address->getCountryCode(), 0, 2);
             $body['CountryOfResidence'] = substr($address->getCountryCode(), 0, 2);
         } else {
