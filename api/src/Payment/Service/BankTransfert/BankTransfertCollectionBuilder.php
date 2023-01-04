@@ -1,0 +1,84 @@
+<?php
+/**
+ * Copyright (c) 2022, MOBICOOP. All rights reserved.
+ * This project is dual licensed under AGPL and proprietary licence.
+ ***************************
+ *    This program is free software: you can redistribute it and/or modify
+ *    it under the terms of the GNU Affero General Public License as
+ *    published by the Free Software Foundation, either version 3 of the
+ *    License, or (at your option) any later version.
+ *
+ *    This program is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU Affero General Public License for more details.
+ *
+ *    You should have received a copy of the GNU Affero General Public License
+ *    along with this program.  If not, see <gnu.org/licenses>.
+ ***************************
+ *    Licence MOBICOOP described in the file
+ *    LICENSE
+ */
+
+namespace App\Payment\Service\BankTransfert;
+
+use App\Payment\Exception\BankTransfertException;
+
+/**
+ * Bank Transfert Builder.
+ *
+ * @author Maxime Bardot <maxime.bardot@mobicoop.org>
+ */
+class BankTransfertCollectionBuilder
+{
+    public const CSV_DELIMITER = ';';
+
+    private $_file;
+
+    /**
+     * @var array
+     */
+    private $_bankTransferts;
+
+    /**
+     * @var BankTransfertBuilder
+     */
+    private $_bankTransfertBuilder;
+
+    public function __construct(BankTransfertBuilder $bankTransfertBuilder)
+    {
+        $this->_bankTransferts = [];
+        $this->_bankTransfertBuilder = $bankTransfertBuilder;
+    }
+
+    public function setFile(string $file): self
+    {
+        $this->_file = $file;
+
+        return $this;
+    }
+
+    public function getBankTransferts(): array
+    {
+        return $this->_bankTransferts;
+    }
+
+    public function build()
+    {
+        try {
+            $file = fopen($this->_file, 'r');
+        } catch (\Exception $e) {
+            throw new BankTransfertException(BankTransfertException::ERROR_OPENING_FILE.' '.$file);
+        }
+
+        while (!feof($file)) {
+            $line = fgetcsv($file, 0, self::CSV_DELIMITER);
+            if ($line) {
+                $this->_bankTransfertBuilder->setData($line);
+                $this->_bankTransferts[] = $this->_bankTransfertBuilder->build();
+            }
+        }
+
+        fclose($file);
+    }
+}

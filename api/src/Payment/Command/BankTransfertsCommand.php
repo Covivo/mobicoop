@@ -23,7 +23,7 @@
 
 namespace App\Payment\Command;
 
-use App\Payment\Service\BankTransfertManager;
+use App\Payment\Service\BankTransfert\BankTransfertManager;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;

@@ -20,16 +20,47 @@
  *    LICENSE
  */
 
-namespace App\Payment\Exception;
+namespace App\Payment\Service\BankTransfert;
+
+use App\Payment\Entity\BankTransfert;
+use App\Payment\Exception\BankTransfertException;
 
 /**
+ * Bank Transfert Builder.
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class BankTransfertException extends \LogicException
+class BankTransfertBuilder
 {
-    public const ERROR_OPENING_FILE = 'Error opening file : ';
-    public const BAD_DELIMITER = 'Bad CSV delimiter. The CSV file MUST use semicolon ; as delimiter : ';
+    public const COL_USER_ID = 0;
+    public const COL_AMOUNT = 1;
+    public const COL_TERRITORY_ID = 2;
+    public const COL_CARPOOL_PROOF_ID = 3;
+    public const COL_DETAILS_MIN = 4;
 
-    // Bank Transfert Builder
-    public const BT_BUILDER_NO_DATA = 'No data to build';
+    private $_data;
+
+    /**
+     * @var array
+     */
+    private $_bankTransferts;
+
+    public function setData(array $data): self
+    {
+        $this->_data = $data;
+
+        return $this;
+    }
+
+    public function build(): BankTransfert
+    {
+        if (is_null($this->_data)) {
+            throw new BankTransfertException(BankTransfertException::BT_BUILDER_NO_DATA);
+        }
+
+        $bankTransfert = new BankTransfert();
+        $bankTransfert->setAmount(str_replace(',', '.', $this->_data[self::COL_AMOUNT]));
+
+        return $bankTransfert;
+    }
 }
