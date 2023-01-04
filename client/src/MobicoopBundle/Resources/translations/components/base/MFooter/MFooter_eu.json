@@ -58,6 +58,10 @@
         "map": {
             "link": "/points-relais",
             "title": "Autokidetza eremuen mapa"
+        },
+        "carpoolIncentive": {
+            "title":"Prime Covoiturage",
+            "link":"/mobility-package"
         }
     },
     "services": {

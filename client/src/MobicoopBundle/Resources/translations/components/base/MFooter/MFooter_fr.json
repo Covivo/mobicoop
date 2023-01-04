@@ -61,6 +61,10 @@
         "cookies":{
             "title":"Gestion des cookies",
             "link":"#"
+        },
+        "carpoolIncentive": {
+            "title":"Prime Covoiturage",
+            "link":"/mobilite"
         }
     },
     "contacts":{

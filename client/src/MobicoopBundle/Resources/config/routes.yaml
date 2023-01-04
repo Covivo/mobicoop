@@ -1473,7 +1473,7 @@ Accessibility:
 # display mobility package page
 Mobility:
   path:
-    fr: /forfait-mobilite-durable
+    fr: /mobilite
     en: /mobility-package
     nl: /mobility-package
   controller: Mobicoop\Bundle\MobicoopBundle\Article\Controller\ArticleController::showMobility
