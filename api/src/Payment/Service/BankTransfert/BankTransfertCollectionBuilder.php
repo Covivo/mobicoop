@@ -78,7 +78,9 @@ class BankTransfertCollectionBuilder
             $line = fgetcsv($file, 0, self::CSV_DELIMITER);
             if ($line) {
                 $this->_bankTransfertBuilder->setData($line);
-                $this->_bankTransferts[] = $this->_bankTransfertBuilder->build();
+                if (!is_null($bankTransfert = $this->_bankTransfertBuilder->build())) {
+                    $this->_bankTransferts[] = $bankTransfert;
+                }
             }
         }
 

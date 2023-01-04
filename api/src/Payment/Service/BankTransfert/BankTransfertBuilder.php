@@ -22,8 +22,12 @@
 
 namespace App\Payment\Service\BankTransfert;
 
+use App\Geography\Entity\Territory;
+use App\Geography\Service\TerritoryManager;
 use App\Payment\Entity\BankTransfert;
 use App\Payment\Exception\BankTransfertException;
+use App\User\Entity\User;
+use App\User\Service\UserManager;
 
 /**
  * Bank Transfert Builder.
@@ -48,6 +52,27 @@ class BankTransfertBuilder
      */
     private $_bankTransferts;
 
+    /**
+     * @var User
+     */
+    private $_user;
+
+    /**
+     * @var Territory
+     */
+    private $_territory;
+
+    private $_userManager;
+    private $_territoryManager;
+    private $_valid;
+
+    public function __construct(UserManager $userManager, TerritoryManager $territoryManager)
+    {
+        $this->_userManager = $userManager;
+        $this->_territoryManager = $territoryManager;
+        $this->_valid = true;
+    }
+
     public function setData(array $data): self
     {
         $this->_data = $data;
@@ -55,15 +80,53 @@ class BankTransfertBuilder
         return $this;
     }
 
-    public function build(): BankTransfert
+    public function build(): ?BankTransfert
     {
         if (is_null($this->_data)) {
             throw new BankTransfertException(BankTransfertException::BT_BUILDER_NO_DATA);
         }
 
-        $bankTransfert = new BankTransfert();
-        $bankTransfert->setAmount(str_replace(',', '.', $this->_data[self::COL_AMOUNT]));
+        $this->_user = $this->_checkRecipient();
+        $this->_territory = $this->_checkTerritory();
 
-        return $bankTransfert;
+        return $this->_build();
+    }
+
+    private function _build(): ?BankTransfert
+    {
+        if ($this->_valid) {
+            $bankTransfert = new BankTransfert();
+            $bankTransfert->setAmount(str_replace(',', '.', $this->_data[self::COL_AMOUNT]));
+            $bankTransfert->setRecipient($this->_user);
+            $bankTransfert->setTerritory($this->_territory);
+
+            return $bankTransfert;
+        }
+
+        return null;
+    }
+
+    private function _checkRecipient(): ?User
+    {
+        if (!$user = $this->_userManager->getUser($this->_data[self::COL_USER_ID])) {
+            echo 'Unknown Recipient : '.$this->_data[self::COL_USER_ID].PHP_EOL;
+            $this->_valid = false;
+        }
+
+        return $user;
+    }
+
+    private function _checkTerritory(): ?Territory
+    {
+        if (is_null($this->_data[self::COL_TERRITORY_ID]) || '' === trim($this->_data[self::COL_TERRITORY_ID])) {
+            return null;
+        }
+
+        if (!$territory = $this->_territoryManager->getTerritory($this->_data[self::COL_TERRITORY_ID])) {
+            $this->_valid = false;
+            echo 'Unknown Territory : '.$this->_data[self::COL_TERRITORY_ID].PHP_EOL;
+        }
+
+        return $territory;
     }
 }

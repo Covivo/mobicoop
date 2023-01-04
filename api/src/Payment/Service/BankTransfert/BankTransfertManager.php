@@ -49,7 +49,7 @@ class BankTransfertManager
             $this->_checkCsvDelimiter($filepath);
             $this->_bankTransfertCollectionBuilder->setFilePath($filepath);
             $this->_bankTransfertCollectionBuilder->build();
-            var_dump($this->_bankTransfertCollectionBuilder->getBankTransferts());
+            $this->_showConsoleResults();
         }
 
         return true;
@@ -77,5 +77,17 @@ class BankTransfertManager
         }
 
         fclose($file);
+    }
+
+    private function _showConsoleResults()
+    {
+        echo '------------------'.PHP_EOL;
+        foreach ($this->_bankTransfertCollectionBuilder->getBankTransferts() as $bankTransfert) {
+            echo 'id : '.$bankTransfert->getId().PHP_EOL;
+            echo 'amount : '.$bankTransfert->getAmount().PHP_EOL;
+            echo 'recipientId : '.$bankTransfert->getRecipient()->getId().PHP_EOL;
+            echo 'territoryId : '.(!is_null($bankTransfert->getTerritory()) ? $bankTransfert->getTerritory()->getId() : 'null').PHP_EOL;
+            echo '------------------'.PHP_EOL;
+        }
     }
 }
