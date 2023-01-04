@@ -22,6 +22,8 @@
 
 namespace App\Payment\Service;
 
+use App\Payment\Exception\BankTransfertException;
+
 /**
  * Bank Transfert Manager service.
  *
@@ -29,8 +31,41 @@ namespace App\Payment\Service;
  */
 class BankTransfertManager
 {
-    public function makeBankTransferts()
+    public const PATH_TO_FILES = __DIR__.'/../../../public/upload/bankTransferts';
+    public const FILES_EXTENTION = 'csv';
+
+    private $_file;
+
+    private function __openFile(string $file)
     {
-        echo 'makeBankTransferts';
+        try {
+            $this->_file = fopen($file, 'r');
+        } catch (\Exception $e) {
+            throw new BankTransfertException(BankTransfertException::ERROR_OPENING_FILE.' '.$file);
+        }
+    }
+
+    private function __checkSeparator(): bool
+    {
+        $firstLine = fgets($this->_file);
+        fclose($this->_file);
+        if (false !== strpos($firstLine, ';')) {
+            return true;
+        }
+
+        throw new BankTransfertException(BankTransfertException::BAD_SEPARATOR);
+    }
+
+    public function makeBankTransferts(): bool
+    {
+        $files = glob(self::PATH_TO_FILES.'/*.'.self::FILES_EXTENTION);
+        foreach ($files as $file) {
+            echo 'Opening : '.$file.PHP_EOL;
+            $this->__openFile($file);
+            $this->__checkSeparator();
+            echo '-> Valid'.PHP_EOL;
+        }
+
+        return true;
     }
 }
