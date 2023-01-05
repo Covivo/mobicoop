@@ -77,7 +77,7 @@ class BankTransfertBuilder
         $bankTransfert->setRecipient($this->_bankTransfertValidator->getRecipient());
         $bankTransfert->setTerritory($this->_bankTransfertValidator->getTerritory());
         $bankTransfert->setCarpoolProof($this->_bankTransfertValidator->getCarpoolProof());
-        $bankTransfert->setDetails('' !== trim($this->_bankTransfertValidator->getOptionalColumns()) ? $this->_bankTransfertValidator->getOptionalColumns() : null);
+        $bankTransfert->setDetails($this->_bankTransfertValidator->getOptionalColumns());
         $bankTransfert->setStatus($this->_bankTransfertValidator->getValid() ? BankTransfert::STATUS_INITIATED : BankTransfert::STATUS_INVALID);
         $bankTransfert->setBatchId($this->_batchId);
 

@@ -222,9 +222,10 @@ class BankTransfertValidator
     {
         $options = [];
         for ($i = self::COL_DETAILS_MIN; $i < count($this->_data); ++$i) {
-            $options[] = $this->_data[$i];
+            if ('' !== trim($this->_data[$i])) {
+                $options[] = $this->_data[$i];
+            }
         }
-
-        $this->_optionalColumns = implode('|', $options);
+        $this->_optionalColumns = (0 != count($options)) ? json_encode($options) : null;
     }
 }
