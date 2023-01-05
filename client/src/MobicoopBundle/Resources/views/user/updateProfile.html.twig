@@ -27,6 +27,7 @@
 	  :platform="{{ app_name|json_encode }}"
 	  :show-reviews="{{ showReviews ? "true" : "false" }}"
 	  :user="{{app.user|json_encode}}"
+	  :cee-display="{{ ceeDisplay ? "true" : "false" }}"
 	></Profile>
 
 {% endblock %}

@@ -87,6 +87,7 @@
                   :platform="platform"
                   :gamification-active="gamificationActive"
                   :carpool-settings-display="carpoolSettingsDisplay"
+                  :cee-display="ceeDisplay"
                 />
               </v-tab-item>
 
@@ -289,6 +290,10 @@ export default {
       default: false
     },
     carpoolSettingsDisplay: {
+      type: Boolean,
+      default: true
+    },
+    ceeDisplay: {
       type: Boolean,
       default: true
     }
