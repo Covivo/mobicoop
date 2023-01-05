@@ -35,4 +35,8 @@ class BankTransfertException extends \LogicException
 
     // Bank Transfert Emitter
     public const EMITTER_NO_TRANSFERT_FOR_THIS_BATCH_ID = 'No bank transfert found for this batch id';
+
+    // Bank Transfert Emitter Validator
+    public const EMITTER_VALIDATOR_NO_TRANSFERT = 'No bank transfert';
+    public const FUNDS_UNAVAILABLE = 'Not enough funds';
 }

@@ -226,6 +226,6 @@ class BankTransfertValidator
                 $options[] = $this->_data[$i];
             }
         }
-        $this->_optionalColumns = (0 != count($options)) ? json_encode($options) : null;
+        $this->_optionalColumns = (0 != count($options)) ? json_encode($options, JSON_UNESCAPED_UNICODE) : null;
     }
 }

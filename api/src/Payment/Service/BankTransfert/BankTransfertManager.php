@@ -61,6 +61,7 @@ class BankTransfertManager
             $this->_checkCsvDelimiter($filepath);
             $this->_bankTransfertCollectionBuilder->setFilePath($filepath);
             $this->_bankTransfertCollectionBuilder->build();
+            $this->_bankTransfertCollectionBuilder->getBatchId();
             $this->_showConsoleResults();
             foreach ($this->_bankTransfertCollectionBuilder->getBankTransferts() as $bankTransfert) {
                 $this->_entityManager->persist($bankTransfert);

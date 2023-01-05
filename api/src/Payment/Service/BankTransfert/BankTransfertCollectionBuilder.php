@@ -84,13 +84,13 @@ class BankTransfertCollectionBuilder
             throw new BankTransfertException(BankTransfertException::ERROR_OPENING_FILE.' '.$this->_filepath);
         }
 
-        $_batchId = time();
+        $this->_batchId = time();
 
         while (!feof($file)) {
             $line = fgetcsv($file, 0, self::CSV_DELIMITER);
             if ($line) {
                 $this->_bankTransfertBuilder->setData($line);
-                if (!is_null($bankTransfert = $this->_bankTransfertBuilder->build($_batchId))) {
+                if (!is_null($bankTransfert = $this->_bankTransfertBuilder->build($this->_batchId))) {
                     $this->_bankTransferts[] = $bankTransfert;
                 }
             }

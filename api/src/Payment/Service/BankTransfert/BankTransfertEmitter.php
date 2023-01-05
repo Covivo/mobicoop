@@ -22,6 +22,7 @@
 
 namespace App\Payment\Service\BankTransfert;
 
+use App\Payment\Entity\BankTransfert;
 use App\Payment\Exception\BankTransfertException;
 use App\Payment\Repository\BankTransfertRepository;
 
@@ -34,23 +35,33 @@ class BankTransfertEmitter
 {
     private $_bankTransferts;
     private $_bankTransfertRepository;
+    private $_bankTransfertEmitterValidator;
 
-    public function __construct(BankTransfertRepository $bankTransfertRepository)
+    public function __construct(BankTransfertRepository $bankTransfertRepository, BankTransfertEmitterValidator $bankTransfertEmitterValidator)
     {
         $this->_bankTransfertRepository = $bankTransfertRepository;
-    }
-
-    public function setBankTransferts(array $bankTransferts): self
-    {
-        $this->_bankTransferts = $bankTransferts;
-
-        return $this;
+        $this->_bankTransfertEmitterValidator = $bankTransfertEmitterValidator;
     }
 
     public function emit(int $batchId)
     {
-        if (!$bankTransferts = $this->_bankTransfertRepository->findBy(['batchId' => $batchId])) {
+        if (!$this->_bankTransferts = $this->_bankTransfertRepository->findBy(['batchId' => $batchId])) {
             throw new BankTransfertException(BankTransfertException::EMITTER_NO_TRANSFERT_FOR_THIS_BATCH_ID);
         }
+
+        $this->_bankTransfertEmitterValidator->setBankTransferts($this->_getOnlyInitiatedTransfert());
+        $this->_bankTransfertEmitterValidator->validate();
+    }
+
+    private function _getOnlyInitiatedTransfert(): array
+    {
+        $bankTransfertsToEmit = [];
+        foreach ($this->_bankTransferts as $bankTransfert) {
+            if (BankTransfert::STATUS_INITIATED == $bankTransfert->getStatus()) {
+                $bankTransfertsToEmit[] = $bankTransfert;
+            }
+        }
+
+        return $bankTransfertsToEmit;
     }
 }
