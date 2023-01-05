@@ -240,7 +240,6 @@ class UserManager
         }
 
         if (is_null($user->getEmail())) {
-            // no email set => we use the structure as base for subaddressing
             $user->setEmail($this->userManager->generateSubEmail($this->userDelegateEmailBase));
         }
 
