@@ -39,4 +39,5 @@ class BankTransfertException extends \LogicException
     // Bank Transfert Emitter Validator
     public const EMITTER_VALIDATOR_NO_TRANSFERT = 'No bank transfert';
     public const FUNDS_UNAVAILABLE = 'Not enough funds';
+    public const NO_PAYMENT_PROVIDER = 'No payment provider';
 }

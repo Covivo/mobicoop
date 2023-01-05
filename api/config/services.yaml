@@ -889,6 +889,12 @@ services:
     tags:
       - { name: monolog.logger, channel: bank_transfert }
 
+  App\Payment\Service\BankTransfert\BankTransfertEmitterValidator:
+    arguments:
+      $paymentActive: "%env(string:PAYMENT_ACTIVE)%"
+    tags:
+      - { name: monolog.logger, channel: bank_transfert }
+
   # Price
   App\Price\Controller\:
     resource: "../src/Price/Controller"

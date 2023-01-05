@@ -24,6 +24,7 @@ namespace App\Payment\Service\BankTransfert;
 
 use App\Payment\Entity\BankTransfert;
 use App\Payment\Exception\BankTransfertException;
+use App\Payment\Service\PaymentDataProvider;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 
@@ -38,11 +39,19 @@ class BankTransfertEmitterValidator
     private $_totalAmount;
     private $_logger;
     private $_entityManager;
+    private $_paymentProvider;
+    private $_paymentActive;
 
-    public function __construct(LoggerInterface $logger, EntityManagerInterface $entityManager)
-    {
+    public function __construct(
+        LoggerInterface $logger,
+        EntityManagerInterface $entityManager,
+        PaymentDataProvider $paymentProvider,
+        string $paymentActive
+    ) {
         $this->_logger = $logger;
         $this->_entityManager = $entityManager;
+        $this->_paymentProvider = $paymentProvider;
+        $this->_paymentActive = $paymentActive;
     }
 
     public function setBankTransferts(array $bankTransferts): self
@@ -58,12 +67,9 @@ class BankTransfertEmitterValidator
             throw new BankTransfertException(BankTransfertException::EMITTER_VALIDATOR_NO_TRANSFERT);
         }
 
+        $this->_checkPaymentProvider();
         $this->_computeTotalAmount();
-        if (!$this->_checkFundsAvailability()) {
-            $this->_logger->error('[BatchId : '.$this->_bankTransferts[0]->getBatchId().'] Not enough funds');
-
-            throw new BankTransfertException(BankTransfertException::FUNDS_UNAVAILABLE);
-        }
+        $this->_checkFundsAvailability();
         echo $this->_totalAmount;
     }
 
@@ -84,9 +90,24 @@ class BankTransfertEmitterValidator
         $this->_entityManager->flush();
     }
 
+    private function _checkPaymentProvider(): bool
+    {
+        if (!$this->_paymentActive) {
+            $this->_updateAllTransfertsStatus(BankTransfert::STATUS_ABANDONNED_NO_PAYMENT_PROVIDER);
+            $this->_logger->error('[BatchId : '.$this->_bankTransferts[0]->getBatchId().'] No payment provider');
+
+            throw new BankTransfertException(BankTransfertException::NO_PAYMENT_PROVIDER);
+        }
+
+        return false;
+    }
+
     private function _checkFundsAvailability(): bool
     {
         $this->_updateAllTransfertsStatus(BankTransfert::STATUS_ABANDONNED_FUNDS_UNAVAILABLE);
+        $this->_logger->error('[BatchId : '.$this->_bankTransferts[0]->getBatchId().'] Not enough funds');
+
+        throw new BankTransfertException(BankTransfertException::FUNDS_UNAVAILABLE);
 
         return false;
     }

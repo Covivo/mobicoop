@@ -48,7 +48,8 @@ class BankTransfert
     public const STATUS_EMITTED = 1;
     public const STATUS_EXECUTED = 2;
     public const STATUS_FAILED = 3;
-    public const STATUS_ABANDONNED_FUNDS_UNAVAILABLE = 4;
+    public const STATUS_ABANDONNED_NO_PAYMENT_PROVIDER = 4;
+    public const STATUS_ABANDONNED_FUNDS_UNAVAILABLE = 5;
 
     /**
      * @var string The id of this bank transfert
