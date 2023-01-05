@@ -41,6 +41,10 @@
             </v-list-item>
           </v-list>
         </p>
+        <p
+          class="text-justify"
+          v-html="$t('intro2')"
+        />
         <p class="font-weight-bold">
           {{ $t('title_list') }}
         </p>
