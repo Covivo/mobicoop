@@ -210,7 +210,7 @@ class BankTransfert
         return $this->details;
     }
 
-    public function setDetails(string $details): self
+    public function setDetails(?string $details): self
     {
         $this->details = $details;
 
@@ -275,16 +275,6 @@ class BankTransfert
     public function setAutoCreatedDate()
     {
         $this->setCreatedDate(new \DateTime());
-    }
-
-    /**
-     * Batch id (timestamp).
-     *
-     * @ORM\PrePersist
-     */
-    public function setAutoBatchId()
-    {
-        $this->setBatchId(time());
     }
 
     /**

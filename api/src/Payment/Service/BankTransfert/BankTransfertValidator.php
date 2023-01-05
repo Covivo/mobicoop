@@ -28,6 +28,7 @@ use App\Geography\Entity\Territory;
 use App\Geography\Service\TerritoryManager;
 use App\User\Entity\User;
 use App\User\Service\UserManager;
+use Psr\Log\LoggerInterface;
 
 /**
  * Bank Transfert Builder.
@@ -77,15 +78,22 @@ class BankTransfertValidator
      */
     private $_valid;
 
+    /**
+     * @var int
+     */
+    private $_batchId;
+
     private $_userManager;
     private $_territoryManager;
     private $_carpoolProofRepository;
+    private $_logger;
 
-    public function __construct(UserManager $userManager, TerritoryManager $territoryManager, CarpoolProofRepository $carpoolProofRepository)
+    public function __construct(UserManager $userManager, TerritoryManager $territoryManager, CarpoolProofRepository $carpoolProofRepository, LoggerInterface $logger)
     {
         $this->_userManager = $userManager;
         $this->_territoryManager = $territoryManager;
         $this->_carpoolProofRepository = $carpoolProofRepository;
+        $this->_logger = $logger;
         $this->_init();
     }
 
@@ -126,9 +134,10 @@ class BankTransfertValidator
         return $this->_valid;
     }
 
-    public function valid()
+    public function valid(int $batchId)
     {
         $this->_init();
+        $this->_batchId = $batchId;
         $this->_checkAmount();
         $this->_checkRecipient();
         $this->_checkTerritory();
@@ -159,7 +168,7 @@ class BankTransfertValidator
     private function _checkRecipient()
     {
         if (!$user = $this->_userManager->getUser($this->_data[self::COL_USER_ID])) {
-            echo 'Unknown Recipient : '.$this->_data[self::COL_USER_ID].PHP_EOL;
+            $this->_logger->error('[BatchId : '.$this->_batchId.'] Unknown Recipient : '.$this->_data[self::COL_USER_ID]);
             $this->_valid = false;
         }
 
@@ -174,7 +183,7 @@ class BankTransfertValidator
 
         if (!$territory = $this->_territoryManager->getTerritory($this->_data[self::COL_TERRITORY_ID])) {
             $this->_valid = false;
-            echo 'Unknown Territory : '.$this->_data[self::COL_TERRITORY_ID].PHP_EOL;
+            $this->_logger->error('[BatchId : '.$this->_batchId.'] Unknown Territory : '.$this->_data[self::COL_TERRITORY_ID]);
         }
 
         $this->_territory = $territory;
@@ -190,19 +199,19 @@ class BankTransfertValidator
 
         if (!isset($dataCarpoolProof[1]) || !is_numeric($dataCarpoolProof[1])) {
             $this->_valid = false;
-            echo 'CarpoolProof Invalid: '.$this->_data[self::COL_CARPOOL_PROOF_ID].PHP_EOL;
+            $this->_logger->error('[BatchId : '.$this->_batchId.'] CarpoolProof Invalid: '.$this->_data[self::COL_CARPOOL_PROOF_ID]);
         } else {
             $carpoolProofId = $dataCarpoolProof[1];
             if (!$carpoolProof = $this->_carpoolProofRepository->find($carpoolProofId)) {
                 $this->_valid = false;
-                echo 'Unknown CarpoolProof : '.$carpoolProofId.PHP_EOL;
+                $this->_logger->error('[BatchId : '.$this->_batchId.'] Unknown CarpoolProof : '.$carpoolProofId);
 
                 return null;
             }
 
             if ($carpoolProof->getDriver()->getId() !== $this->_user->getId() && $carpoolProof->getPassenger()->getId() !== $this->_user->getId()) {
                 $this->_valid = false;
-                echo 'User '.$this->_user->getId().' not involve in CarpoolProof : '.$carpoolProof->getId().PHP_EOL;
+                $this->_logger->error('[BatchId : '.$this->_batchId.'] User '.$this->_user->getId().' not involve in CarpoolProof : '.$carpoolProof->getId());
             }
 
             $this->_carpoolProof = $carpoolProof;

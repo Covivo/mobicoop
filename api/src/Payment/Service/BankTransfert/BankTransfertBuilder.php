@@ -37,6 +37,11 @@ class BankTransfertBuilder
      */
     private $_data;
 
+    /**
+     * @var int
+     */
+    private $_batchId;
+
     private $_bankTransfertValidator;
 
     public function __construct(BankTransfertValidator $bankTransfertValidator)
@@ -51,8 +56,10 @@ class BankTransfertBuilder
         return $this;
     }
 
-    public function build(): ?BankTransfert
+    public function build(int $batchId): ?BankTransfert
     {
+        $this->_batchId = $batchId;
+
         if (is_null($this->_data)) {
             throw new BankTransfertException(BankTransfertException::BT_BUILDER_NO_DATA);
         }
@@ -63,15 +70,16 @@ class BankTransfertBuilder
     private function _build(): ?BankTransfert
     {
         $this->_bankTransfertValidator->setData($this->_data);
-        $this->_bankTransfertValidator->valid();
+        $this->_bankTransfertValidator->valid($this->_batchId);
 
         $bankTransfert = new BankTransfert();
         $bankTransfert->setAmount($this->_bankTransfertValidator->getAmount());
         $bankTransfert->setRecipient($this->_bankTransfertValidator->getRecipient());
         $bankTransfert->setTerritory($this->_bankTransfertValidator->getTerritory());
         $bankTransfert->setCarpoolProof($this->_bankTransfertValidator->getCarpoolProof());
-        $bankTransfert->setDetails($this->_bankTransfertValidator->getOptionalColumns());
+        $bankTransfert->setDetails('' !== trim($this->_bankTransfertValidator->getOptionalColumns()) ? $this->_bankTransfertValidator->getOptionalColumns() : null);
         $bankTransfert->setStatus($this->_bankTransfertValidator->getValid() ? BankTransfert::STATUS_INITIATED : BankTransfert::STATUS_INVALID);
+        $bankTransfert->setBatchId($this->_batchId);
 
         return $bankTransfert;
     }

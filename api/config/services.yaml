@@ -884,6 +884,11 @@ services:
       $validationDocsAuthorizedExtensions: "%env(json:VALIDATION_DOC_AUTHORIZED_EXTENTIONS)%"
       $exportPath: "%env(resolve:PAYMENT_EXPORT_PATH)%"
 
+  App\Payment\Service\BankTransfert\:
+    resource: "../src/Payment/Service/BankTransfert/*"
+    tags:
+      - { name: monolog.logger, channel: bank_transfert }
+
   # Price
   App\Price\Controller\:
     resource: "../src/Price/Controller"

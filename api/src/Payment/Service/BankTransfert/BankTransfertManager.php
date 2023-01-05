@@ -98,8 +98,8 @@ class BankTransfertManager
         echo '------------------'.PHP_EOL;
         foreach ($this->_bankTransfertCollectionBuilder->getBankTransferts() as $bankTransfert) {
             echo 'id : '.$bankTransfert->getId().PHP_EOL;
-            echo 'amount : '.$bankTransfert->getAmount().PHP_EOL;
-            echo 'recipientId : '.$bankTransfert->getRecipient()->getId().PHP_EOL;
+            echo 'amount : '.(!is_null($bankTransfert->getAmount()) ? $bankTransfert->getAmount() : 'null').PHP_EOL;
+            echo 'recipientId : '.(!is_null($bankTransfert->getRecipient()) ? $bankTransfert->getRecipient()->getId() : 'null').PHP_EOL;
             echo 'territoryId : '.(!is_null($bankTransfert->getTerritory()) ? $bankTransfert->getTerritory()->getId() : 'null').PHP_EOL;
             echo 'carpoolProofId : '.(!is_null($bankTransfert->getCarpoolProof()) ? $bankTransfert->getCarpoolProof()->getId() : 'null').PHP_EOL;
             echo 'details : '.$bankTransfert->getDetails().PHP_EOL;
