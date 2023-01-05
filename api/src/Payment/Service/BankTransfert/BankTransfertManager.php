@@ -48,6 +48,13 @@ class BankTransfertManager
     public function makeBankTransferts(): bool
     {
         $files = glob(self::PATH_TO_FILES.'/*.'.self::FILES_EXTENTION);
+
+        if (0 == count($files)) {
+            echo 'No file detected';
+
+            return true;
+        }
+
         foreach ($files as $filepath) {
             $this->_checkCsvDelimiter($filepath);
             $this->_bankTransfertCollectionBuilder->setFilePath($filepath);
