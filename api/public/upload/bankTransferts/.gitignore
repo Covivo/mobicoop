@@ -1,3 +1,4 @@
 *.*
 # Except this file
 !.gitignore
+!scheme.csv.dist
