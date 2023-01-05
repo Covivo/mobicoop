@@ -60,6 +60,8 @@ class BankTransfertEmitterValidator
 
         $this->_computeTotalAmount();
         if (!$this->_checkFundsAvailability()) {
+            $this->_logger->error('[BatchId : '.$this->_bankTransferts[0]->getBatchId().'] Not enough funds');
+
             throw new BankTransfertException(BankTransfertException::FUNDS_UNAVAILABLE);
         }
         echo $this->_totalAmount;
