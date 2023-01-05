@@ -38,21 +38,23 @@ class BankTransfertManager
 
     private $_bankTransfertCollectionBuilder;
     private $_entityManager;
+    private $_bankTransfertEmitter;
 
-    public function __construct(BankTransfertCollectionBuilder $bankTransfertCollectionBuilder, EntityManagerInterface $entityManager)
+    public function __construct(BankTransfertCollectionBuilder $bankTransfertCollectionBuilder, EntityManagerInterface $entityManager, BankTransfertEmitter $bankTransfertEmitter)
     {
         $this->_bankTransfertCollectionBuilder = $bankTransfertCollectionBuilder;
         $this->_entityManager = $entityManager;
+        $this->_bankTransfertEmitter = $bankTransfertEmitter;
     }
 
-    public function makeBankTransferts(): bool
+    public function makeBankTransferts()
     {
         $files = glob(self::PATH_TO_FILES.'/*.'.self::FILES_EXTENTION);
 
         if (0 == count($files)) {
             echo 'No file detected';
 
-            return true;
+            return;
         }
 
         foreach ($files as $filepath) {
@@ -66,7 +68,7 @@ class BankTransfertManager
             $this->_entityManager->flush();
         }
 
-        return true;
+        $this->_bankTransfertEmitter->emit($this->_bankTransfertCollectionBuilder->getBatchId());
     }
 
     private function _checkCsvDelimiter(string $filepath)

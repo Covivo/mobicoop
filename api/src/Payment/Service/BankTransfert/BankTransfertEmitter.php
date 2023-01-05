@@ -20,19 +20,37 @@
  *    LICENSE
  */
 
-namespace App\Payment\Exception;
+namespace App\Payment\Service\BankTransfert;
+
+use App\Payment\Exception\BankTransfertException;
+use App\Payment\Repository\BankTransfertRepository;
 
 /**
+ * Bank Transfert emitter.
+ *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class BankTransfertException extends \LogicException
+class BankTransfertEmitter
 {
-    public const ERROR_OPENING_FILE = 'Error opening file : ';
-    public const BAD_DELIMITER = 'Bad CSV delimiter. The CSV file MUST use semicolon ; as delimiter : ';
+    private $_bankTransferts;
+    private $_bankTransfertRepository;
 
-    // Bank Transfert Builder
-    public const BT_BUILDER_NO_DATA = 'No data to build';
+    public function __construct(BankTransfertRepository $bankTransfertRepository)
+    {
+        $this->_bankTransfertRepository = $bankTransfertRepository;
+    }
 
-    // Bank Transfert Emitter
-    public const EMITTER_NO_TRANSFERT_FOR_THIS_BATCH_ID = 'No bank transfert found for this batch id';
+    public function setBankTransferts(array $bankTransferts): self
+    {
+        $this->_bankTransferts = $bankTransferts;
+
+        return $this;
+    }
+
+    public function emit(int $batchId)
+    {
+        if (!$bankTransferts = $this->_bankTransfertRepository->findBy(['batchId' => $batchId])) {
+            throw new BankTransfertException(BankTransfertException::EMITTER_NO_TRANSFERT_FOR_THIS_BATCH_ID);
+        }
+    }
 }

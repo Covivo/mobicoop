@@ -44,6 +44,11 @@ class BankTransfertCollectionBuilder
     private $_bankTransferts;
 
     /**
+     * @var int
+     */
+    private $_batchId;
+
+    /**
      * @var BankTransfertBuilder
      */
     private $_bankTransfertBuilder;
@@ -66,6 +71,11 @@ class BankTransfertCollectionBuilder
         return $this->_bankTransferts;
     }
 
+    public function getBatchId(): int
+    {
+        return $this->_batchId;
+    }
+
     public function build()
     {
         try {
@@ -74,13 +84,13 @@ class BankTransfertCollectionBuilder
             throw new BankTransfertException(BankTransfertException::ERROR_OPENING_FILE.' '.$this->_filepath);
         }
 
-        $batchId = time();
+        $_batchId = time();
 
         while (!feof($file)) {
             $line = fgetcsv($file, 0, self::CSV_DELIMITER);
             if ($line) {
                 $this->_bankTransfertBuilder->setData($line);
-                if (!is_null($bankTransfert = $this->_bankTransfertBuilder->build($batchId))) {
+                if (!is_null($bankTransfert = $this->_bankTransfertBuilder->build($_batchId))) {
                     $this->_bankTransferts[] = $bankTransfert;
                 }
             }

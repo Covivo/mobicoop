@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2022, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
@@ -20,19 +21,36 @@
  *    LICENSE
  */
 
-namespace App\Payment\Exception;
+namespace App\Payment\Repository;
 
-/**
- * @author Maxime Bardot <maxime.bardot@mobicoop.org>
- */
-class BankTransfertException extends \LogicException
+use App\Payment\Entity\BankTransfert;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
+
+class BankTransfertRepository
 {
-    public const ERROR_OPENING_FILE = 'Error opening file : ';
-    public const BAD_DELIMITER = 'Bad CSV delimiter. The CSV file MUST use semicolon ; as delimiter : ';
+    /**
+     * @var EntityRepository
+     */
+    private $repository;
 
-    // Bank Transfert Builder
-    public const BT_BUILDER_NO_DATA = 'No data to build';
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->repository = $entityManager->getRepository(BankTransfert::class);
+    }
 
-    // Bank Transfert Emitter
-    public const EMITTER_NO_TRANSFERT_FOR_THIS_BATCH_ID = 'No bank transfert found for this batch id';
+    public function find(int $id): ?BankTransfert
+    {
+        return $this->repository->find($id);
+    }
+
+    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null): ?array
+    {
+        return $this->repository->findBy($criteria, $orderBy, $limit, $offset);
+    }
+
+    public function findOneBy(array $criteria): ?BankTransfert
+    {
+        return $this->repository->findOneBy($criteria);
+    }
 }
