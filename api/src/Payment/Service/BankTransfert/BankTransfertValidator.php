@@ -72,10 +72,14 @@ class BankTransfertValidator
      */
     private $_optionalColumns;
 
+    /**
+     * @var bool
+     */
+    private $_valid;
+
     private $_userManager;
     private $_territoryManager;
     private $_carpoolProofRepository;
-    private $_valid;
 
     public function __construct(UserManager $userManager, TerritoryManager $territoryManager, CarpoolProofRepository $carpoolProofRepository)
     {
