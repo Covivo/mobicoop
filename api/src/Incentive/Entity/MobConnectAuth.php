@@ -251,11 +251,15 @@ class MobConnectAuth
 
     private function getExpirationDateFromDuration(int $duration): \DateTime
     {
-        $duration -= 15;
-
         $now = new \DateTime('now');
         $expirationDate = clone $now;
 
-        return $expirationDate->add(new \DateInterval('PT'.$duration.'S'));
+        if ($duration > 0) {
+            $duration -= 15;
+
+            return $expirationDate->add(new \DateInterval('PT'.$duration.'S'));
+        }
+
+        return $expirationDate->add(new \DateInterval('P2Y'));
     }
 }
