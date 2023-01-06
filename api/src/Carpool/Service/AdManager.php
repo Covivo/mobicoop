@@ -149,7 +149,7 @@ class AdManager
         $this->antiFraudManager = $antiFraudManager;
         $this->userRepository = $userRepository;
         $this->reversePointProvider = new MobicoopGeocoderPointProvider($mobicoopGeocoder);
-        if ($this->params['paymentActiveDate'] = DateTime::createFromFormat('Y-m-d', $this->params['paymentActive'])) {
+        if ($this->params['paymentActiveDate'] = \DateTime::createFromFormat('Y-m-d', $this->params['paymentActive'])) {
             $this->params['paymentActiveDate']->setTime(0, 0);
             $this->params['paymentActive'] = true;
         }
@@ -165,9 +165,9 @@ class AdManager
      * @param bool $withSolidaries  Return also the matching solidary asks
      * @param bool $forceNotUseTime For to set useTime at false
      *
-     * @throws \Exception
-     *
      * @return Ad
+     *
+     * @throws \Exception
      */
     public function createAd(Ad $ad, bool $doPrepare = true, bool $withSolidaries = true, bool $withResults = true, $forceNotUseTime = false)
     {
@@ -1186,9 +1186,9 @@ class AdManager
      * Update a Schedule with pick up durations from a Matching
      * Used when the Ad role is passenger.
      *
-     * @throws \Exception
-     *
      * @return array
+     *
+     * @throws \Exception
      */
     public function updateScheduleTimesWithPickUpDurations(array $schedule, string $outwardPickUpDuration, ?string $returnPickUpDuration = null)
     {
@@ -1265,9 +1265,9 @@ class AdManager
      * @param Ad   $ad             The ad to update
      * @param bool $withSolidaries Return also the solidary asks
      *
-     * @throws \Exception
-     *
      * @return Ad
+     *
+     * @throws \Exception
      */
     public function updateAd(Ad $ad, bool $withSolidaries = true)
     {
@@ -1360,9 +1360,9 @@ class AdManager
     /**
      * Check if Ad update needs a major update and so, deleting then creating a new one.
      *
-     * @throws \Exception
-     *
      * @return bool
+     *
+     * @throws \Exception
      */
     public function checkForMajorUpdate(Ad $oldAd, Ad $newAd)
     {
@@ -1402,9 +1402,9 @@ class AdManager
      * @param mixed $old
      * @param mixed $new
      *
-     * @throws \Exception
-     *
      * @return bool
+     *
+     * @throws \Exception
      */
     public function compareSchedules($old, $new)
     {
@@ -1532,9 +1532,9 @@ class AdManager
     /**
      * Compare Date and time for Outward and Returns.
      *
-     * @throws \Exception
-     *
      * @return bool
+     *
+     * @throws \Exception
      */
     public function compareDateTimes(Ad $old, Ad $new)
     {
@@ -1776,7 +1776,8 @@ class AdManager
             /** @var Matching $matching */
             foreach ($proposal->getMatchingRequests() as $matching) {
                 // We check if the matching have an ask
-                /** @var Ask $ask */
+                // @var Ask $ask
+                var_dump($matching->getId());
                 foreach ($matching->getAsks() as $ask) {
                     // We check if the ask is accepted if yes we put the ask in the tab
                     if (Ask::STATUS_ACCEPTED_AS_DRIVER === $ask->getStatus() || Ask::STATUS_ACCEPTED_AS_PASSENGER === $ask->getStatus()) {
@@ -1794,6 +1795,7 @@ class AdManager
             // We check for each proposal if he have matching
             foreach ($proposal->getMatchingOffers() as $matching) {
                 // We check if the matching have an ask
+                var_dump($matching->getId());
                 foreach ($matching->getAsks() as $ask) {
                     // We check if the ask is accepted if yes we put the ask in the tab
                     if (Ask::STATUS_ACCEPTED_AS_DRIVER === $ask->getStatus() || Ask::STATUS_ACCEPTED_AS_PASSENGER === $ask->getStatus()) {
@@ -1876,7 +1878,7 @@ class AdManager
         }
 
         // check if a proof already exists for this day
-        if ($carpoolProof = $this->proofManager->getProofForDate($ask, new DateTime())) {
+        if ($carpoolProof = $this->proofManager->getProofForDate($ask, new \DateTime())) {
             // the proof already exists, it's an update
             return $this->updateCarpoolProof($carpoolProof->getId(), $classicProof);
         }

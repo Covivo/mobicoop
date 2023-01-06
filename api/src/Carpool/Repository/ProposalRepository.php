@@ -974,10 +974,9 @@ class ProposalRepository
         $query = $this->repository->createQueryBuilder('p')
             ->join('p.user', 'u')
             ->join('p.criteria', 'c')
-            ->where('(p.user = :user and p.private <> 1 and p.type <> :return and c.frequency = 2) or (p.user = :user and p.private <> 1 and c.frequency = 1)')
+            ->where('(p.user = :user and p.private <> 1)')
             ->orderBy('c.fromDate', 'ASC')
             ->setParameter('user', $user)
-            ->setParameter('return', Proposal::TYPE_RETURN)
         ;
         $proposals = $query->getQuery()->getResult();
 
