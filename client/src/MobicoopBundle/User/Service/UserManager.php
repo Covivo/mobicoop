@@ -683,7 +683,7 @@ class UserManager
                     $carpoolDate->setTime(0, 0);
                 } else {
                     $carpoolDate = \DateTime::createFromFormat('Y-m-d', $myAd->getDriver()['fromDate']);
-                    $carpoolDate = \DateTime::createFromFormat('H:i', $myAd->getDriver()['startTime'], new \DateTimeZone('Europe/Paris'));
+                    $carpoolDate::createFromFormat('H:i', $myAd->getDriver()['startTime'], new \DateTimeZone('Europe/Paris'));
                 }
 
                 if ($valid && $carpoolDate >= $now) {
@@ -700,12 +700,13 @@ class UserManager
                         $carpoolDate->setTime(0, 0);
                     } else {
                         $carpoolDate = \DateTime::createFromFormat('Y-m-d', $passenger['fromDate']);
-                        $carpoolDate = \DateTime::createFromFormat('H:i', $passenger['startTime'], new \DateTimeZone('Europe/Paris'));
+                        $carpoolDate::createFromFormat('H:i', $passenger['startTime'], new \DateTimeZone('Europe/Paris'));
                     }
                     if ($carpoolDate >= $now) {
                         $validCarpool = true;
                     }
                 }
+
                 if ($valid && $validCarpool) {
                     $ads['accepted']['active'][] = $myAd;
                 } else {
