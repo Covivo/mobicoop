@@ -80,7 +80,7 @@
           {{ $t('assistiveDevices.buttons.signin.text') }}
         </v-btn>
         <v-btn
-          v-if="!isMobActivated"
+          v-if="isUserAuthenticated && !isMobActivated"
           class="font-weight-bold mr-4"
           rounded
           @click="activateMob()"
@@ -113,6 +113,10 @@ export default {
     }
   },
   props: {
+    activationUri: {
+      type: String,
+      default: null
+    },
     user: {
       type: Object,
       default: null
@@ -123,14 +127,18 @@ export default {
       return this.user ? true : false;
     },
     isMobActivated: function() {
-      // TODO: mettre en place une fonction de vérification
-      return this.isUserAuthenticated && false;
+      return this.isUserAuthenticated
+        && this.user.ssoId
+        && this.user.ssoProvider === 'mobConnect';
     }
   },
   methods: {
     activateMob: function () {
-      // TODO: Rediriger vers l'URL reçue
-      console.log('Test');
+      if (!this.isMobActivated && this.activationUri) {
+        window.location.href = new URL(this.activationUri);
+      } else {
+        alert(this.$t('errors.mob-activation'));
+      }
     }
   },
 }

@@ -285,3 +285,8 @@ services:
     resource: "@MobicoopBundle/Territory/Controller/*"
   Mobicoop\Bundle\MobicoopBundle\Territory\Service\:
     resource: "@MobicoopBundle/Territory/Service/*"
+
+# Assistive devices
+  Mobicoop\Bundle\MobicoopBundle\AssistiveDevices\Controller\:
+    resource: "@MobicoopBundle/AssistiveDevices/Controller/*"
+    tags: ["controller.service_arguments"]

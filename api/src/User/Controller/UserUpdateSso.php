@@ -44,10 +44,18 @@ class UserUpdateSso
     {
         $params = json_decode($this->_request->getContent());
 
-        $ssoUser = $this->_ssoManager->getSsoUserProfile($params->ssoProvider, $params->ssoId, $params->baseSiteUri);
+        if (!property_exists($params, 'redirectUri')) {
+            $params->redirectUri = null;
+        }
+
+        if (!property_exists($params, 'eec')) {
+            $params->eec = true;
+        }
+
+        $ssoUser = $this->_ssoManager->getSsoUserProfile($params->ssoProvider, $params->ssoId, $params->baseSiteUri, $params->redirectUri);
 
         // if ($ssoUser->getEmail() === $user->getEmail()) {
-        return $this->_userManager->updateUserSsoProperties($user, $ssoUser);
+        return $this->_userManager->updateUserSsoProperties($user, $ssoUser, $params->eec);
         // }
     }
 }

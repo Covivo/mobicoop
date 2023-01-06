@@ -1697,7 +1697,7 @@ class UserManager
         return implode($pass); // turn the array into a string
     }
 
-    public function updateUserSsoProperties(User $user, SsoUser $ssoUser): User
+    public function updateUserSsoProperties(User $user, SsoUser $ssoUser, bool $eec = true): User
     {
         $user->setSsoId($ssoUser->getSub());
         $user->setSsoProvider($ssoUser->getProvider());
@@ -1707,8 +1707,10 @@ class UserManager
         $this->entityManager->persist($user);
         $this->entityManager->flush();
 
-        $event = new SsoAssociationEvent($user, $ssoUser);
-        $this->eventDispatcher->dispatch(SsoAssociationEvent::NAME, $event);
+        if (true === $eec) {
+            $event = new SsoAssociationEvent($user, $ssoUser);
+            $this->eventDispatcher->dispatch(SsoAssociationEvent::NAME, $event);
+        }
 
         return $user;
     }

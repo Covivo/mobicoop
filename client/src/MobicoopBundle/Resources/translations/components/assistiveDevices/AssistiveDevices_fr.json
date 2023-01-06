@@ -31,5 +31,8 @@
         "href": "/"
       }
     }
+  },
+  "errors": {
+    "mob-activation": "Nous rencontrons un problème dans l'activation de moB"
   }
 }
