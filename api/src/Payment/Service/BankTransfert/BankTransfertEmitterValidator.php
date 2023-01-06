@@ -130,7 +130,7 @@ class BankTransfertEmitterValidator
         return false;
     }
 
-    private function _checkFundsAvailability(): bool
+    private function _checkFundsAvailability()
     {
         // get the wallet of the holder user
         if (!$wallets = $this->_paymentProvider->getUserWallets($this->_holder)) {
@@ -148,7 +148,5 @@ class BankTransfertEmitterValidator
 
             throw new BankTransfertException(BankTransfertException::FUNDS_UNAVAILABLE);
         }
-
-        return false;
     }
 }
