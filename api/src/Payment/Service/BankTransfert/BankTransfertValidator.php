@@ -79,7 +79,7 @@ class BankTransfertValidator
     private $_valid;
 
     /**
-     * @var int
+     * @var string
      */
     private $_batchId;
 
@@ -134,7 +134,7 @@ class BankTransfertValidator
         return $this->_valid;
     }
 
-    public function valid(int $batchId)
+    public function valid(string $batchId)
     {
         $this->_init();
         $this->_batchId = $batchId;

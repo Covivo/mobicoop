@@ -43,7 +43,7 @@ class BankTransfertEmitter
         $this->_bankTransfertEmitterValidator = $bankTransfertEmitterValidator;
     }
 
-    public function emit(int $batchId)
+    public function emit(string $batchId)
     {
         if (!$this->_bankTransferts = $this->_bankTransfertRepository->findBy(['batchId' => $batchId])) {
             throw new BankTransfertException(BankTransfertException::EMITTER_NO_TRANSFERT_FOR_THIS_BATCH_ID);

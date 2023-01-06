@@ -45,7 +45,7 @@ class BankTransfertCollectionBuilder
     private $_bankTransferts;
 
     /**
-     * @var int
+     * @var string
      */
     private $_batchId;
 
@@ -75,7 +75,7 @@ class BankTransfertCollectionBuilder
         return $this->_bankTransferts;
     }
 
-    public function getBatchId(): int
+    public function getBatchId(): string
     {
         return $this->_batchId;
     }
@@ -88,7 +88,7 @@ class BankTransfertCollectionBuilder
             throw new BankTransfertException(BankTransfertException::ERROR_OPENING_FILE.' '.$this->_filepath);
         }
 
-        $this->_batchId = time();
+        $this->_batchId = $this->_generateUuid();
         $this->_logger->info('Starting BatchId : '.$this->_batchId);
         while (!feof($file)) {
             $line = fgetcsv($file, 0, self::CSV_DELIMITER);
@@ -101,5 +101,24 @@ class BankTransfertCollectionBuilder
         }
 
         fclose($file);
+    }
+
+    private function _generateUuid()
+    {
+        // Generate a random string of bytes
+        $bytes = openssl_random_pseudo_bytes(16);
+
+        // Convert the bytes to a hexadecimal string
+        $hex = bin2hex($bytes);
+
+        // Format the hexadecimal string as a UUID
+        return sprintf(
+            '%s-%s-%s-%s-%s',
+            substr($hex, 0, 8),
+            substr($hex, 8, 4),
+            substr($hex, 12, 4),
+            substr($hex, 16, 4),
+            substr($hex, 20, 12)
+        );
     }
 }

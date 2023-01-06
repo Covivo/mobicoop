@@ -38,7 +38,7 @@ class BankTransfertBuilder
     private $_data;
 
     /**
-     * @var int
+     * @var string
      */
     private $_batchId;
 
@@ -56,7 +56,7 @@ class BankTransfertBuilder
         return $this;
     }
 
-    public function build(int $batchId): ?BankTransfert
+    public function build(string $batchId): ?BankTransfert
     {
         $this->_batchId = $batchId;
 

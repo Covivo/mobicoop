@@ -120,7 +120,7 @@ class BankTransfert
     /**
      * @var string Bank Transfert batch id (timestamp)
      *
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="string", length=36)
      * @Groups({"readPayment"})
      */
     private $batchId;
@@ -235,12 +235,12 @@ class BankTransfert
         return $this;
     }
 
-    public function getBatchId(): ?int
+    public function getBatchId(): ?string
     {
         return $this->batchId;
     }
 
-    public function setBatchId(int $batchId): self
+    public function setBatchId(string $batchId): self
     {
         $this->batchId = $batchId;
 
