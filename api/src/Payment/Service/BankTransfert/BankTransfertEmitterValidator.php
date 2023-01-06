@@ -28,6 +28,7 @@ use App\Payment\Exception\BankTransfertException;
 use App\Payment\Repository\PaymentProfileRepository;
 use App\Payment\Service\PaymentDataProvider;
 use App\User\Entity\User;
+use App\User\Service\UserManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 
@@ -47,12 +48,14 @@ class BankTransfertEmitterValidator
     private $_holderId;
     private $_holder;
     private $_paymentProfileRepository;
+    private $_userManager;
 
     public function __construct(
         LoggerInterface $logger,
         EntityManagerInterface $entityManager,
         PaymentDataProvider $paymentProvider,
         PaymentProfileRepository $paymentProfileRepository,
+        UserManager $userManager,
         string $paymentActive,
         string $holderId
     ) {
@@ -62,6 +65,7 @@ class BankTransfertEmitterValidator
         $this->_paymentActive = $paymentActive;
         $this->_holderId = $holderId;
         $this->_paymentProfileRepository = $paymentProfileRepository;
+        $this->_userManager = $userManager;
     }
 
     public function setBankTransferts(array $bankTransferts): self
@@ -69,6 +73,11 @@ class BankTransfertEmitterValidator
         $this->_bankTransferts = $bankTransferts;
 
         return $this;
+    }
+
+    public function getHolder(): User
+    {
+        return $this->_holder;
     }
 
     public function validate()
@@ -81,6 +90,31 @@ class BankTransfertEmitterValidator
         $this->_checkPaymentProvider();
         $this->_computeTotalAmount();
         $this->_checkFundsAvailability();
+        $this->_checkRecipientsWallets();
+    }
+
+    public function _checkRecipientsWallets()
+    {
+        $recipientsIds = [];
+        foreach ($this->_bankTransferts as $bankTransfert) {
+            if (!in_array($bankTransfert->getRecipient()->getId(), $recipientsIds)) {
+                $recipientsIds[] = $bankTransfert->getRecipient()->getId();
+                $wallet = $this->_getUserWallet($bankTransfert->getRecipient());
+                if (is_null($wallet)) {
+                    $this->_updateTransfertStatus($bankTransfert, BankTransfert::STATUS_ABANDONNED_NO_RECIPIENT_WALLET);
+                    $this->_logger->error('[BatchId : '.$this->_bankTransferts[0]->getBatchId().'] No recipient Wallet for User '.$bankTransfert->getRecipient()->getId());
+
+                    continue;
+                }
+            }
+        }
+    }
+
+    private function _updateTransfertStatus(BankTransfert $bankTransfert, int $status)
+    {
+        $bankTransfert->setStatus($status);
+        $this->_entityManager->persist($bankTransfert);
+        $this->_entityManager->flush();
     }
 
     private function _getHolder()
@@ -133,7 +167,9 @@ class BankTransfertEmitterValidator
 
     private function _getUserWallet(User $user): ?Wallet
     {
-        if (!$wallets = $this->_paymentProvider->getUserWallets($user)) {
+        $user = $this->_userManager->getPaymentProfile($user);
+
+        if (!$wallets = $user->getWallets()) {
             return null;
         }
 
