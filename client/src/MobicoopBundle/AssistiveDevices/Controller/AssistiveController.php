@@ -11,8 +11,7 @@ use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 class AssistiveController extends AbstractController
 {
-    private const PROVIDER = 'mobConnect';
-    private const SSO_ACTIVATION_PATH = '/sso-activation';
+    private const PROVIDER = 'mobConnectBasic';
     private const ERROR_MISSING_PROVIDER = 'There is no SSO service to pass to the view!';
 
     private $_logger;
@@ -41,8 +40,7 @@ class AssistiveController extends AbstractController
                 )
             )
         ) {
-            $redirectUri = str_replace('/', '', $request->getPathInfo()).self::SSO_ACTIVATION_PATH;
-            $ssoServices = $this->_userManager->getSsoService(self::PROVIDER, $redirectUri);
+            $ssoServices = $this->_userManager->getSsoService(self::PROVIDER);
 
             if (empty($ssoServices)) {
                 $this->_logger->error(self::ERROR_MISSING_PROVIDER);

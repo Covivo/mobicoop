@@ -7,7 +7,7 @@
 
 {% block main %}
     <assistive
-        activation-uri="{{ activationUri }}"
+        activation-uri="{{ activationUri is defined ? activationUri : null }}"
         :user="{{app.user|json_encode}}"
     ></assistive>
 {% endblock %}

@@ -132,6 +132,9 @@ export default {
         && this.user.ssoProvider === 'mobConnect';
     }
   },
+  mounted() {
+    this.activationUri = this.activationUri === '' ? null : this.activationUri;
+  },
   methods: {
     activateMob: function () {
       if (!this.isMobActivated && this.activationUri) {
@@ -140,6 +143,6 @@ export default {
         alert(this.$t('errors.mob-activation'));
       }
     }
-  },
+  }
 }
 </script>
