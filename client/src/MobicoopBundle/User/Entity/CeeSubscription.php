@@ -23,6 +23,21 @@ class CeeSubscription implements ResourceInterface, \JsonSerializable
      */
     private $longDistanceSubscriptions;
 
+    /**
+     * @var int Nb pending class C proofs
+     */
+    private $nbPendingProofs;
+
+    /**
+     * @var int Nb validated class C proofs
+     */
+    private $nbValidatedProofs;
+
+    /**
+     * @var int Nb rejected class C proofs
+     */
+    private $nbRejectedProofs;
+
     public function getId(): ?int
     {
         return $this->id;

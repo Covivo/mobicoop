@@ -252,6 +252,7 @@ services:
       $birthDateDisplay: "%env(bool:BIRTHDATE_DISPLAY)%"
       $carpoolSettingsDisplay: "%env(bool:CARPOOL_SETTINGS_DISPLAY)%"
       $signInSsoOriented: "%env(bool:SIGNIN_SSO_ORIENTED)%"
+      $ceeDisplay: "%env(bool:CEE_DISPLAY)%"
     tags: ["controller.service_arguments"]
   Mobicoop\Bundle\MobicoopBundle\User\Service\:
     resource: "@MobicoopBundle/User/Service/*"
