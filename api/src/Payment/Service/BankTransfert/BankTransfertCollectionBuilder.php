@@ -23,6 +23,7 @@
 namespace App\Payment\Service\BankTransfert;
 
 use App\Payment\Exception\BankTransfertException;
+use Psr\Log\LoggerInterface;
 
 /**
  * Bank Transfert Builder.
@@ -53,10 +54,13 @@ class BankTransfertCollectionBuilder
      */
     private $_bankTransfertBuilder;
 
-    public function __construct(BankTransfertBuilder $bankTransfertBuilder)
+    private $_logger;
+
+    public function __construct(BankTransfertBuilder $bankTransfertBuilder, LoggerInterface $logger)
     {
         $this->_bankTransferts = [];
         $this->_bankTransfertBuilder = $bankTransfertBuilder;
+        $this->_logger = $logger;
     }
 
     public function setFilePath(string $filepath): self
@@ -85,7 +89,7 @@ class BankTransfertCollectionBuilder
         }
 
         $this->_batchId = time();
-
+        $this->_logger->info('Starting BatchId : '.$this->_batchId);
         while (!feof($file)) {
             $line = fgetcsv($file, 0, self::CSV_DELIMITER);
             if ($line) {

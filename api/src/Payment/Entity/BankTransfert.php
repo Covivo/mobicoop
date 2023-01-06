@@ -53,6 +53,7 @@ class BankTransfert
     public const STATUS_ABANDONNED_NO_HOLDER_WALLET = 6;
     public const STATUS_ABANDONNED_NO_PAYMENT_PROVIDER = 7;
     public const STATUS_ABANDONNED_FUNDS_UNAVAILABLE = 8;
+    public const STATUS_ABANDONNED_NO_RECIPIENT_WALLET = 9;
 
     /**
      * @var string The id of this bank transfert
