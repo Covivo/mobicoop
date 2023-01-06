@@ -47,13 +47,14 @@ class BankTransfert
     public const STATUS_INITIATED = 1;
     public const STATUS_EMITTED = 1;
     public const STATUS_EXECUTED = 2;
-    public const STATUS_FAILED = 3;
-    public const STATUS_ABANDONNED_NO_HOLDER_ID = 4;
-    public const STATUS_ABANDONNED_NO_HOLDER_FOUND = 5;
-    public const STATUS_ABANDONNED_NO_HOLDER_WALLET = 6;
-    public const STATUS_ABANDONNED_NO_PAYMENT_PROVIDER = 7;
-    public const STATUS_ABANDONNED_FUNDS_UNAVAILABLE = 8;
-    public const STATUS_ABANDONNED_NO_RECIPIENT_WALLET = 9;
+    public const STATUS_ABANDONNED_NO_HOLDER_ID = 3;
+    public const STATUS_ABANDONNED_NO_HOLDER_FOUND = 4;
+    public const STATUS_ABANDONNED_NO_HOLDER_WALLET = 5;
+    public const STATUS_ABANDONNED_NO_PAYMENT_PROVIDER = 6;
+    public const STATUS_ABANDONNED_FUNDS_UNAVAILABLE = 7;
+    public const STATUS_ABANDONNED_NO_RECIPIENT_WALLET = 8;
+    public const STATUS_FAILED_WALLET_TO_WALLET = 9;
+    public const STATUS_FAILED_PAYOUT = 10;
 
     /**
      * @var string The id of this bank transfert

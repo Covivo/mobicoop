@@ -39,6 +39,7 @@ class BankTransfertEmitter
     private $_bankTransferts;
     private $_bankTransfertRepository;
     private $_bankTransfertEmitterValidator;
+    private $_bankTransfertEmitterVerifier;
     private $_paymentProvider;
     private $_logger;
     private $_entityManager;
@@ -51,12 +52,14 @@ class BankTransfertEmitter
     public function __construct(
         BankTransfertRepository $bankTransfertRepository,
         BankTransfertEmitterValidator $bankTransfertEmitterValidator,
+        BankTransfertEmitterVerifier $bankTransfertEmitterVerifier,
         PaymentDataProvider $paymentProvider,
         LoggerInterface $logger,
         EntityManagerInterface $entityManager
     ) {
         $this->_bankTransfertRepository = $bankTransfertRepository;
         $this->_bankTransfertEmitterValidator = $bankTransfertEmitterValidator;
+        $this->_bankTransfertEmitterVerifier = $bankTransfertEmitterVerifier;
         $this->_logger = $logger;
         $this->_paymentProvider = $paymentProvider;
         $this->_entityManager = $entityManager;
@@ -90,9 +93,11 @@ class BankTransfertEmitter
                 ],
             ];
 
-            $this->_paymentProvider->processElectronicPayment($this->_bankTransfertEmitterValidator->getHolder(), $recipient);
+            $return = $this->_paymentProvider->processElectronicPayment($this->_bankTransfertEmitterValidator->getHolder(), $recipient);
+
             $this->_logger->info('[BatchId : '.$this->_batchId.'] Transfering '.$bankTransfert->getAmount().' from User '.$this->_bankTransfertEmitterValidator->getHolder()->getId().' to User '.$bankTransfert->getRecipient()->getId());
-            $this->_updateTransfertStatus($bankTransfert, BankTransfert::STATUS_EXECUTED);
+            $this->_updateTransfertStatus($bankTransfert, BankTransfert::STATUS_EMITTED);
+            $this->_bankTransfertEmitterVerifier->verify($bankTransfert, $return);
         }
         $this->_logger->info('[BatchId : '.$this->_batchId.'] End Bank Transferts');
     }

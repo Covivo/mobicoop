@@ -322,10 +322,11 @@ class PaymentDataProvider
      *  ]
      * ]
      */
-    public function processElectronicPayment(User $debtor, array $creditors)
+    public function processElectronicPayment(User $debtor, array $creditors): array
     {
         $this->checkPaymentConfiguration();
-        $this->providerInstance->processElectronicPayment($debtor, $creditors);
+
+        return $this->providerInstance->processElectronicPayment($debtor, $creditors);
     }
 
     /**
