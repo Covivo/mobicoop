@@ -81,20 +81,6 @@ class BankTransfertEmitterValidator
         $this->_checkPaymentProvider();
         $this->_computeTotalAmount();
         $this->_checkFundsAvailability();
-        $this->_emittTransferts();
-    }
-
-    private function _emittTransferts()
-    {
-        foreach ($this->_bankTransferts as $bankTransfert) {
-            $wallet = $this->_getUserWallet($bankTransfert->getRecipient());
-            if (is_null($wallet)) {
-                $this->_updateTransfertStatus($bankTransfert, BankTransfert::STATUS_ABANDONNED_NO_RECIPIENT_WALLET);
-                $this->_logger->error('[BatchId : '.$this->_bankTransferts[0]->getBatchId().'] No recipient Wallet for User '.$bankTransfert->getRecipient()->getId());
-
-                continue;
-            }
-        }
     }
 
     private function _getHolder()
@@ -130,13 +116,6 @@ class BankTransfertEmitterValidator
             $bankTransfert->setStatus($status);
             $this->_entityManager->persist($bankTransfert);
         }
-        $this->_entityManager->flush();
-    }
-
-    private function _updateTransfertStatus(BankTransfert $bankTransfert, int $status)
-    {
-        $bankTransfert->setStatus($status);
-        $this->_entityManager->persist($bankTransfert);
         $this->_entityManager->flush();
     }
 

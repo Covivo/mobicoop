@@ -23,8 +23,13 @@
 namespace App\Payment\Service\BankTransfert;
 
 use App\Payment\Entity\BankTransfert;
+use App\Payment\Entity\Wallet;
 use App\Payment\Exception\BankTransfertException;
 use App\Payment\Repository\BankTransfertRepository;
+use App\Payment\Service\PaymentDataProvider;
+use App\User\Entity\User;
+use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * Bank Transfert emitter.
@@ -36,32 +41,72 @@ class BankTransfertEmitter
     private $_bankTransferts;
     private $_bankTransfertRepository;
     private $_bankTransfertEmitterValidator;
+    private $_paymentProvider;
+    private $_logger;
+    private $_entityManager;
 
-    public function __construct(BankTransfertRepository $bankTransfertRepository, BankTransfertEmitterValidator $bankTransfertEmitterValidator)
-    {
+    /**
+     * @var string
+     */
+    private $_batchId;
+
+    public function __construct(
+        BankTransfertRepository $bankTransfertRepository,
+        BankTransfertEmitterValidator $bankTransfertEmitterValidator,
+        PaymentDataProvider $paymentProvider,
+        LoggerInterface $logger,
+        EntityManagerInterface $entityManager
+    ) {
         $this->_bankTransfertRepository = $bankTransfertRepository;
         $this->_bankTransfertEmitterValidator = $bankTransfertEmitterValidator;
+        $this->_logger = $logger;
+        $this->_paymentProvider = $paymentProvider;
+        $this->_entityManager = $entityManager;
     }
 
     public function emit(string $batchId)
     {
-        if (!$this->_bankTransferts = $this->_bankTransfertRepository->findBy(['batchId' => $batchId])) {
-            throw new BankTransfertException(BankTransfertException::EMITTER_NO_TRANSFERT_FOR_THIS_BATCH_ID);
-        }
-
+        $this->_batchId = $batchId;
         $this->_bankTransfertEmitterValidator->setBankTransferts($this->_getOnlyInitiatedTransfert());
         $this->_bankTransfertEmitterValidator->validate();
+        $this->_emittTransferts();
     }
 
     private function _getOnlyInitiatedTransfert(): array
     {
-        $bankTransfertsToEmit = [];
-        foreach ($this->_bankTransferts as $bankTransfert) {
-            if (BankTransfert::STATUS_INITIATED == $bankTransfert->getStatus()) {
-                $bankTransfertsToEmit[] = $bankTransfert;
-            }
+        if (!$bankTransfertsToEmit = $this->_bankTransfertRepository->findBy(['batchId' => $this->_batchId, 'status' => BankTransfert::STATUS_INITIATED])) {
+            throw new BankTransfertException(BankTransfertException::EMITTER_NO_TRANSFERT_FOR_THIS_BATCH_ID);
         }
 
         return $bankTransfertsToEmit;
+    }
+
+    private function _emittTransferts()
+    {
+        foreach ($this->_getOnlyInitiatedTransfert() as $bankTransfert) {
+            $wallet = $this->_getUserWallet($bankTransfert->getRecipient());
+            if (is_null($wallet)) {
+                $this->_updateTransfertStatus($bankTransfert, BankTransfert::STATUS_ABANDONNED_NO_RECIPIENT_WALLET);
+                $this->_logger->error('[BatchId : '.$this->_batchId.'] No recipient Wallet for User '.$bankTransfert->getRecipient()->getId());
+
+                continue;
+            }
+        }
+    }
+
+    private function _getUserWallet(User $user): ?Wallet
+    {
+        if (!$wallets = $this->_paymentProvider->getUserWallets($user)) {
+            return null;
+        }
+
+        return $wallets[0];
+    }
+
+    private function _updateTransfertStatus(BankTransfert $bankTransfert, int $status)
+    {
+        $bankTransfert->setStatus($status);
+        $this->_entityManager->persist($bankTransfert);
+        $this->_entityManager->flush();
     }
 }
