@@ -40,4 +40,7 @@ class BankTransfertException extends \LogicException
     public const EMITTER_VALIDATOR_NO_TRANSFERT = 'No bank transfert';
     public const FUNDS_UNAVAILABLE = 'Not enough funds';
     public const NO_PAYMENT_PROVIDER = 'No payment provider';
+    public const NO_HOLDER_ID = 'No Holder id';
+    public const NO_HOLDER_FOUND = 'No Holder found';
+    public const NO_HOLDER_WALLET = 'No holder wallet';
 }

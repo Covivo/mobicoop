@@ -210,6 +210,27 @@ class PaymentDataProvider
     }
 
     /**
+     * Get the wallets of a user.
+     *
+     * @return Wallet[]
+     */
+    public function getUserWallets(User $user): array
+    {
+        $this->checkPaymentConfiguration();
+        $paymentProfiles = $this->paymentProfileRepository->findBy(['user' => $user]);
+        $wallets = [];
+        if (!is_null($paymentProfiles)) {
+            foreach ($paymentProfiles as $paymentProfile) {
+                foreach ($this->providerInstance->getWallets($paymentProfile) as $wallet) {
+                    $wallets[] = $wallet;
+                }
+            }
+        }
+
+        return $wallets;
+    }
+
+    /**
      * Register a User on the payment provider platform.
      *
      * @param null|Address $address The address to use to the registration

@@ -24,6 +24,7 @@ namespace App\Payment\Service\BankTransfert;
 
 use App\Payment\Entity\BankTransfert;
 use App\Payment\Exception\BankTransfertException;
+use App\Payment\Repository\PaymentProfileRepository;
 use App\Payment\Service\PaymentDataProvider;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -41,17 +42,24 @@ class BankTransfertEmitterValidator
     private $_entityManager;
     private $_paymentProvider;
     private $_paymentActive;
+    private $_holderId;
+    private $_holder;
+    private $_paymentProfileRepository;
 
     public function __construct(
         LoggerInterface $logger,
         EntityManagerInterface $entityManager,
         PaymentDataProvider $paymentProvider,
-        string $paymentActive
+        PaymentProfileRepository $paymentProfileRepository,
+        string $paymentActive,
+        string $holderId
     ) {
         $this->_logger = $logger;
         $this->_entityManager = $entityManager;
         $this->_paymentProvider = $paymentProvider;
         $this->_paymentActive = $paymentActive;
+        $this->_holderId = $holderId;
+        $this->_paymentProfileRepository = $paymentProfileRepository;
     }
 
     public function setBankTransferts(array $bankTransferts): self
@@ -67,10 +75,30 @@ class BankTransfertEmitterValidator
             throw new BankTransfertException(BankTransfertException::EMITTER_VALIDATOR_NO_TRANSFERT);
         }
 
+        $this->_getHolder();
         $this->_checkPaymentProvider();
         $this->_computeTotalAmount();
         $this->_checkFundsAvailability();
         echo $this->_totalAmount;
+    }
+
+    private function _getHolder()
+    {
+        if (is_null($this->_holderId) || !is_numeric($this->_holderId)) {
+            $this->_updateAllTransfertsStatus(BankTransfert::STATUS_ABANDONNED_NO_HOLDER_ID);
+            $this->_logger->error('[BatchId : '.$this->_bankTransferts[0]->getBatchId().'] No Holder id');
+
+            throw new BankTransfertException(BankTransfertException::NO_HOLDER_ID);
+        }
+
+        if (!$holderPaymenProfile = $this->_paymentProfileRepository->findOneBy(['identifier' => $this->_holderId])) {
+            $this->_updateAllTransfertsStatus(BankTransfert::STATUS_ABANDONNED_NO_HOLDER_FOUND);
+            $this->_logger->error('[BatchId : '.$this->_bankTransferts[0]->getBatchId().'] No Holder found');
+
+            throw new BankTransfertException(BankTransfertException::NO_HOLDER_FOUND);
+        }
+
+        $this->_holder = $holderPaymenProfile->getUser();
     }
 
     private function _computeTotalAmount()
@@ -104,10 +132,22 @@ class BankTransfertEmitterValidator
 
     private function _checkFundsAvailability(): bool
     {
-        $this->_updateAllTransfertsStatus(BankTransfert::STATUS_ABANDONNED_FUNDS_UNAVAILABLE);
-        $this->_logger->error('[BatchId : '.$this->_bankTransferts[0]->getBatchId().'] Not enough funds');
+        // get the wallet of the holder user
+        if (!$wallets = $this->_paymentProvider->getUserWallets($this->_holder)) {
+            $this->_updateAllTransfertsStatus(BankTransfert::STATUS_ABANDONNED_NO_HOLDER_WALLET);
+            $this->_logger->error('[BatchId : '.$this->_bankTransferts[0]->getBatchId().'] No holder wallet');
 
-        throw new BankTransfertException(BankTransfertException::FUNDS_UNAVAILABLE);
+            throw new BankTransfertException(BankTransfertException::NO_HOLDER_WALLET);
+        }
+
+        // check if enough found for $this->_totalAmount;
+        if ($wallets[0]->getBalance()->getAmount() < $this->_totalAmount) {
+            $this->_updateAllTransfertsStatus(BankTransfert::STATUS_ABANDONNED_FUNDS_UNAVAILABLE);
+            $this->_logger->error('[BatchId : '.$this->_bankTransferts[0]->getBatchId().'] Not enough funds');
+            $this->_logger->error('[BatchId : '.$this->_bankTransferts[0]->getBatchId().'] '.$this->_totalAmount.' needed '.$wallets[0]->getBalance()->getAmount().' available.');
+
+            throw new BankTransfertException(BankTransfertException::FUNDS_UNAVAILABLE);
+        }
 
         return false;
     }
