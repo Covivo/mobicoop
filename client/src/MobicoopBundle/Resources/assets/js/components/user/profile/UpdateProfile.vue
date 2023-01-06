@@ -604,6 +604,7 @@
       </v-card-text>
     </v-card>
     <EECIncentiveStatus
+      v-if="ceeDisplay"
       :confirmed-phone-number="user.phoneValidatedDate ? true : false"
       :driving-licence-number-filled="user.drivingLicenceNumber ? true : false"
     />
@@ -721,6 +722,10 @@ export default {
       default: false
     },
     carpoolSettingsDisplay: {
+      type: Boolean,
+      default: true
+    },
+    ceeDisplay: {
       type: Boolean,
       default: true
     }

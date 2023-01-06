@@ -94,6 +94,7 @@ class UserController extends AbstractController
     private $ceeSubscriptionManager;
     private $carpoolSettingsDisplay;
     private $signInSsoOriented;
+    private $ceeDisplay;
 
     /**
      * Constructor.
@@ -134,7 +135,8 @@ class UserController extends AbstractController
         bool $ageDisplay,
         bool $birthDateDisplay,
         bool $carpoolSettingsDisplay,
-        bool $signInSsoOriented
+        bool $signInSsoOriented,
+        bool $ceeDisplay
     ) {
         $this->encoder = $encoder;
         $this->facebook_show = $facebook_show;
@@ -162,6 +164,7 @@ class UserController extends AbstractController
         $this->ceeSubscriptionManager = $ceeSubscriptionManager;
         $this->ssoManager = $ssoManager;
         $this->signInSsoOriented = $signInSsoOriented;
+        $this->ceeDisplay = $ceeDisplay;
     }
 
     private function __parsePostParams(string $response): array
@@ -593,6 +596,7 @@ class UserController extends AbstractController
             'ageDisplay' => $this->ageDisplay,
             'carpoolSettingsDisplay' => $this->carpoolSettingsDisplay,
             'selectedTab' => $tab,
+            'ceeDisplay' => $this->ceeDisplay,
         ]);
     }
 
