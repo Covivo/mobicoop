@@ -92,6 +92,7 @@ class BankTransfertEmitter
 
             $this->_paymentProvider->processElectronicPayment($this->_bankTransfertEmitterValidator->getHolder(), $recipient);
             $this->_logger->info('[BatchId : '.$this->_batchId.'] Transfering '.$bankTransfert->getAmount().' from User '.$this->_bankTransfertEmitterValidator->getHolder()->getId().' to User '.$bankTransfert->getRecipient()->getId());
+            $this->_updateTransfertStatus($bankTransfert, BankTransfert::STATUS_EXECUTED);
         }
         $this->_logger->info('[BatchId : '.$this->_batchId.'] End Bank Transferts');
     }
