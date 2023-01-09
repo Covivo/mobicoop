@@ -132,6 +132,23 @@ abstract class CeeJourneyService
                 ? $carpoolProof->getAsk()->getMatching() : null;
     }
 
+    private function __writeLog(array $log): void
+    {
+        $path = $_SERVER['DOCUMENT_ROOT'].'/incentives-logs';
+        if (!file_exists($path)) {
+            mkdir($path, 0777);
+        }
+        $filename = $path.'/logs.json';
+
+        $initialContent = file_exists($filename) ? file_get_contents($filename).",\n" : '';
+        $initialContent = str_replace('[', '', $initialContent);
+        $initialContent = str_replace(']', '', $initialContent);
+
+        $content = "[\n".$initialContent."\t".json_encode($log)."\n]";
+
+        file_put_contents($filename, $content);
+    }
+
     // * PUBLIC FUNCTIONS ---------------------------------------------------------------------------------------------------------------------------
 
     public static function isDateAfterReferenceDate(\DateTime $date): bool
@@ -209,6 +226,17 @@ abstract class CeeJourneyService
     {
         self::__setMatchingFromCarpoolProof($carpoolProof);
 
+        self::__writeLog([
+            'datetime' => new \DateTime(),
+            'proof-id' => $carpoolProof->getId(),
+            'type' => CarpoolProof::TYPE_HIGH === $carpoolProof->getType(),
+            'matching_id' => !is_null(self::$_matching) ? self::$_matching->getId() : null,
+            'test-type' => 'Long distance',
+            'is_long' => self::__isLongDistance(self::$_matching->getCommonDistance()),
+            'from-france' => self::__isOriginOrDestinationFromReferenceCountry(),
+            'payment-regularized' => self::__hasBeenCarpoolPaymentRegularized($carpoolProof),
+        ]);
+
         return
             !is_null(self::$_matching)
             && self::__isLongDistance(self::$_matching->getCommonDistance())
@@ -224,6 +252,16 @@ abstract class CeeJourneyService
     public static function isValidShortDistanceJourney(CarpoolProof $carpoolProof): bool
     {
         self::__setMatchingFromCarpoolProof($carpoolProof);
+
+        self::__writeLog([
+            'datetime' => new \DateTime(),
+            'proof-id' => $carpoolProof->getId(),
+            'type' => CarpoolProof::TYPE_HIGH === $carpoolProof->getType(),
+            'matching_id' => !is_null(self::$_matching) ? self::$_matching->getId() : null,
+            'test-type' => 'Short distance',
+            'is_short' => self::__isShortDistance(self::$_matching->getCommonDistance()),
+            'from-france' => self::__isOriginOrDestinationFromReferenceCountry(),
+        ]);
 
         return
             CarpoolProof::TYPE_HIGH === $carpoolProof->getType()
