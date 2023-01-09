@@ -140,13 +140,10 @@ abstract class CeeJourneyService
         }
         $filename = $path.'/logs.json';
 
-        $initialContent = file_exists($filename) ? file_get_contents($filename).",\n" : '';
-        $initialContent = str_replace('[', '', $initialContent);
-        $initialContent = str_replace(']', '', $initialContent);
+        $content = file_exists($filename) ? json_decode(file_get_contents($filename)) : [];
+        array_push($content, $log);
 
-        $content = "[\n".$initialContent."\t".json_encode($log)."\n]";
-
-        file_put_contents($filename, $content);
+        file_put_contents($filename, json_encode($content));
     }
 
     // * PUBLIC FUNCTIONS ---------------------------------------------------------------------------------------------------------------------------
