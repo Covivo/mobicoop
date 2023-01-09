@@ -239,15 +239,8 @@ class MobConnectSubscriptionManager
 
     // * PUBLIC FUNCTIONS ---------------------------------------------------------------------------------------------------------------------------
 
-    /**
-     * For the authenticated user, if needed, creates the CEE sheets.
-     */
-    public function createSubscriptions(User $user, SsoUser $ssoUser)
+    public function updateAuth(User $user, SsoUser $ssoUser)
     {
-        if (!$this->__isValidParameters()) {
-            return;
-        }
-
         $this->_user = $user;
 
         if (is_null($this->_user->getMobConnectAuth())) {
@@ -255,6 +248,20 @@ class MobConnectSubscriptionManager
         } else {
             $this->__updateAuth($ssoUser);
         }
+
+        $this->_em->flush();
+    }
+
+    /**
+     * For the authenticated user, if needed, creates the CEE sheets.
+     */
+    public function createSubscriptions(User $user)
+    {
+        if (!$this->__isValidParameters()) {
+            return;
+        }
+
+        $this->_user = $user;
 
         if (is_null($this->_user->getShortDistanceSubscription())) {
             $shortDistanceSubscription = $this->createShortDistanceSubscription();

@@ -90,6 +90,7 @@
         <v-btn
           v-if="isMobActivated"
           class="font-weight-bold"
+          disabled
           rounded
           :href="$t('assistiveDevices.buttons.assistiveConsult.href')"
         >
@@ -117,6 +118,10 @@ export default {
       type: String,
       default: null
     },
+    assistiveSsoProvider: {
+      type: String,
+      default: null
+    },
     user: {
       type: Object,
       default: null
@@ -129,7 +134,7 @@ export default {
     isMobActivated: function() {
       return this.isUserAuthenticated
         && this.user.ssoId
-        && this.user.ssoProvider === 'mobConnect';
+        && this.user.ssoProvider === this.assistiveSsoProvider;
     }
   },
   mounted() {

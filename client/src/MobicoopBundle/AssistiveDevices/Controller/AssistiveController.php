@@ -11,16 +11,17 @@ use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 class AssistiveController extends AbstractController
 {
-    private const PROVIDER = 'mobConnectBasic';
     private const ERROR_MISSING_PROVIDER = 'There is no SSO service to pass to the view!';
 
+    private $_assistiveSsoProvider;
     private $_logger;
     private $_userManager;
 
-    public function __construct(UserManager $userManager, LoggerInterface $logger)
+    public function __construct(UserManager $userManager, LoggerInterface $logger, string $assistiveSsoProvider)
     {
         $this->_userManager = $userManager;
         $this->_logger = $logger;
+        $this->_assistiveSsoProvider = $assistiveSsoProvider;
     }
 
     public function assistiveDevices(Request $request)
@@ -36,11 +37,11 @@ class AssistiveController extends AbstractController
                 || (
                     !is_null($user->getSsoId())
                     && !is_null($user->getSsoProvider())
-                    && self::PROVIDER != $user->getSsoProvider()
+                    && $this->_assistiveSsoProvider != $user->getSsoProvider()
                 )
             )
         ) {
-            $ssoServices = $this->_userManager->getSsoService(self::PROVIDER);
+            $ssoServices = $this->_userManager->getSsoService($this->_assistiveSsoProvider);
 
             if (empty($ssoServices)) {
                 $this->_logger->error(self::ERROR_MISSING_PROVIDER);
@@ -52,6 +53,8 @@ class AssistiveController extends AbstractController
             // return new JsonResponse($ssoServices);
             $params['activationUri'] = $ssoServices[0]->getUri();
         }
+
+        // return new JsonResponse($this->getUser());
 
         return $this->render(
             '@Mobicoop/assistiveDevices/assistive.html.twig',
@@ -66,13 +69,11 @@ class AssistiveController extends AbstractController
         $queryParams = $request->query->all();
 
         // return new JsonResponse($queryParams);
-        if (!is_null($user) && self::PROVIDER === $queryParams['state']) {
-            // TODO: PATCH de l'utilisateur
+        if (!is_null($user) && $this->_assistiveSsoProvider === $queryParams['state']) {
             $data = [
-                'ssoProvider' => self::PROVIDER,
+                'ssoProvider' => $this->_assistiveSsoProvider,
                 'ssoId' => $queryParams['code'],
                 'baseSiteUri' => 'http://localhost:9091',
-                'redirectUri' => 'aides-a-la-mobilite'.self::SSO_ACTIVATION_PATH,
                 'eec' => false,
             ];
 

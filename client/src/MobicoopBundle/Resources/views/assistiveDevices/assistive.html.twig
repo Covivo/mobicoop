@@ -8,6 +8,7 @@
 {% block main %}
     <assistive
         activation-uri="{{ activationUri is defined ? activationUri : null }}"
+        assistive-sso-provider="{{ assistiveSsoProvider }}"
         :user="{{app.user|json_encode}}"
     ></assistive>
 {% endblock %}
