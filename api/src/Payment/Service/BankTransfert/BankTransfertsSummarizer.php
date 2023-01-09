@@ -22,16 +22,18 @@
 
 namespace App\Payment\Service\BankTransfert;
 
+use App\Payment\Event\BankTransfertsSummarizedEvent;
 use App\Payment\Exception\BankTransfertException;
 use App\Payment\Repository\BankTransfertRepository;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Bank Transfert emitter.
  *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class BankTransfertSummarizer
+class BankTransfertsSummarizer
 {
     public const PATH_TO_FILES = __DIR__.'/../../../../public/upload/bankTransferts/reports';
     public const FILES_EXTENTION = 'csv';
@@ -40,7 +42,7 @@ class BankTransfertSummarizer
     public const CSV_HEADERS = ['batchId', 'createdDate', 'status', 'recipient', 'amount', 'territoryId'];
     private $_bankTransfertRepository;
     private $_logger;
-    private $_entityManager;
+    private $_eventDispatcher;
 
     /**
      * @var BankTransfert[]
@@ -54,10 +56,12 @@ class BankTransfertSummarizer
 
     public function __construct(
         BankTransfertRepository $bankTransfertRepository,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        EventDispatcherInterface $eventDispatcher
     ) {
         $this->_bankTransfertRepository = $bankTransfertRepository;
         $this->_logger = $logger;
+        $this->_eventDispatcher = $eventDispatcher;
     }
 
     public function summarize(string $batchId)
@@ -88,6 +92,8 @@ class BankTransfertSummarizer
             fputcsv($file, $line, self::CSV_DELIMITER);
         }
         fclose($file);
+        $event = new BankTransfertsSummarizedEvent($this->_batchId);
+        $this->_eventDispatcher->dispatch(BankTransfertsSummarizedEvent::NAME, $event);
     }
 
     private function _getTransferts()

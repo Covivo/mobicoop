@@ -39,18 +39,18 @@ class BankTransfertManager
     private $_bankTransfertCollectionBuilder;
     private $_entityManager;
     private $_bankTransfertEmitter;
-    private $_bankTransfertSummarizer;
+    private $_bankTransfertsSummarizer;
 
     public function __construct(
         BankTransfertCollectionBuilder $bankTransfertCollectionBuilder,
         EntityManagerInterface $entityManager,
         BankTransfertEmitter $bankTransfertEmitter,
-        BankTransfertSummarizer $bankTransfertSummarizer
+        BankTransfertsSummarizer $bankTransfertsSummarizer
     ) {
         $this->_bankTransfertCollectionBuilder = $bankTransfertCollectionBuilder;
         $this->_entityManager = $entityManager;
         $this->_bankTransfertEmitter = $bankTransfertEmitter;
-        $this->_bankTransfertSummarizer = $bankTransfertSummarizer;
+        $this->_bankTransfertsSummarizer = $bankTransfertsSummarizer;
     }
 
     public function makeBankTransferts()
@@ -76,9 +76,7 @@ class BankTransfertManager
         }
 
         // $this->_bankTransfertEmitter->emit($this->_bankTransfertCollectionBuilder->getBatchId());
-        $this->_bankTransfertSummarizer->summarize($this->_bankTransfertCollectionBuilder->getBatchId());
-
-        // $this->_bankTransfertSummarizer->summarize('dc086ae0-30a3-91d6-241c-454b44c94530');
+        $this->_bankTransfertsSummarizer->summarize($this->_bankTransfertCollectionBuilder->getBatchId());
     }
 
     private function _checkCsvDelimiter(string $filepath)
