@@ -5,7 +5,6 @@ namespace Mobicoop\Bundle\MobicoopBundle\AssistiveDevices\Controller;
 use Mobicoop\Bundle\MobicoopBundle\User\Service\UserManager;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
@@ -30,7 +29,6 @@ class AssistiveController extends AbstractController
 
         $params = [];
 
-        // return new JsonResponse($this->getUser());
         if (
             !is_null($user)
             && (
@@ -50,12 +48,8 @@ class AssistiveController extends AbstractController
                 throw new UnprocessableEntityHttpException(self::ERROR_MISSING_PROVIDER);
             }
 
-            // return new JsonResponse($this->getUser());
-            // return new JsonResponse($ssoServices);
             $params['activationUri'] = $ssoServices[0]->getUri();
         }
-
-        // return new JsonResponse($this->getUser());
 
         return $this->render(
             '@Mobicoop/assistiveDevices/assistive.html.twig',
@@ -65,11 +59,9 @@ class AssistiveController extends AbstractController
 
     public function ssoActivation(Request $request)
     {
-        // return new JsonResponse($this->getUser());
         $user = $this->getUser();
         $queryParams = $request->query->all();
 
-        // return new JsonResponse($queryParams);
         if (!is_null($user) && $this->_assistiveSsoProvider === $queryParams['state']) {
             $data = [
                 'ssoProvider' => $this->_assistiveSsoProvider,
@@ -78,12 +70,8 @@ class AssistiveController extends AbstractController
                 'eec' => false,
             ];
 
-            // return new JsonResponse($data);
-            // TODO: La mise à jour de l'utilisateur est fonctionnelle mais constinue malgré tout de créer les souscription CEE.
             $this->_userManager->patchUserForSsoAssociation($user, $data);
         }
-
-        // exit('Fin avant redirection');
 
         return $this->redirectToRoute('assistive.devices');
     }
