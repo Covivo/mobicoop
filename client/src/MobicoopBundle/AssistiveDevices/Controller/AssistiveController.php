@@ -11,8 +11,6 @@ use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 class AssistiveController extends AbstractController
 {
-    private const PROVIDER = 'mobConnectBasic';
-
     private const ERROR_MISSING_PROVIDER = 'There is no SSO service to pass to the view!';
 
     private $_assistiveSsoProvider;
@@ -57,6 +55,8 @@ class AssistiveController extends AbstractController
             $params['activationUri'] = $ssoServices[0]->getUri();
         }
 
+        // return new JsonResponse($this->getUser());
+
         return $this->render(
             '@Mobicoop/assistiveDevices/assistive.html.twig',
             $params
@@ -71,7 +71,6 @@ class AssistiveController extends AbstractController
 
         // return new JsonResponse($queryParams);
         if (!is_null($user) && $this->_assistiveSsoProvider === $queryParams['state']) {
-            // TODO: PATCH de l'utilisateur
             $data = [
                 'ssoProvider' => $this->_assistiveSsoProvider,
                 'ssoId' => $queryParams['code'],

@@ -1707,10 +1707,8 @@ class UserManager
         $this->entityManager->persist($user);
         $this->entityManager->flush();
 
-        if (true === $eec) {
-            $event = new SsoAssociationEvent($user, $ssoUser);
-            $this->eventDispatcher->dispatch(SsoAssociationEvent::NAME, $event);
-        }
+        $event = new SsoAssociationEvent($user, $ssoUser);
+        $this->eventDispatcher->dispatch(SsoAssociationEvent::NAME, $event);
 
         return $user;
     }

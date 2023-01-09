@@ -90,6 +90,7 @@
         <v-btn
           v-if="isMobActivated"
           class="font-weight-bold"
+          disabled
           rounded
           :href="$t('assistiveDevices.buttons.assistiveConsult.href')"
         >
@@ -136,6 +137,9 @@ export default {
         && this.user.ssoProvider === this.assistiveSsoProvider;
     }
   },
+  mounted() {
+    this.activationUri = this.activationUri === '' ? null : this.activationUri;
+  },
   methods: {
     activateMob: function () {
       if (!this.isMobActivated && this.activationUri) {
@@ -144,6 +148,6 @@ export default {
         alert(this.$t('errors.mob-activation'));
       }
     }
-  },
+  }
 }
 </script>
