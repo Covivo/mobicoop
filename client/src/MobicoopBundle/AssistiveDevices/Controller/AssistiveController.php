@@ -15,7 +15,7 @@ class AssistiveController extends AbstractController
 
     private const ERROR_MISSING_PROVIDER = 'There is no SSO service to pass to the view!';
 
-    private $_assistiveProvider;
+    private $_assistiveSsoProvider;
     private $_logger;
     private $_userManager;
 
@@ -23,7 +23,7 @@ class AssistiveController extends AbstractController
     {
         $this->_userManager = $userManager;
         $this->_logger = $logger;
-        $this->_assistiveProvider = $assistiveSsoProvider;
+        $this->_assistiveSsoProvider = $assistiveSsoProvider;
     }
 
     public function assistiveDevices(Request $request)
@@ -32,6 +32,7 @@ class AssistiveController extends AbstractController
 
         $params = [];
 
+        // return new JsonResponse($this->getUser());
         if (
             !is_null($user)
             && (
@@ -39,11 +40,11 @@ class AssistiveController extends AbstractController
                 || (
                     !is_null($user->getSsoId())
                     && !is_null($user->getSsoProvider())
-                    && $this->_assistiveProvider != $user->getSsoProvider()
+                    && $this->_assistiveSsoProvider != $user->getSsoProvider()
                 )
             )
         ) {
-            $ssoServices = $this->_userManager->getSsoService($this->_assistiveProvider);
+            $ssoServices = $this->_userManager->getSsoService($this->_assistiveSsoProvider);
 
             if (empty($ssoServices)) {
                 $this->_logger->error(self::ERROR_MISSING_PROVIDER);
@@ -69,21 +70,18 @@ class AssistiveController extends AbstractController
         $queryParams = $request->query->all();
 
         // return new JsonResponse($queryParams);
-        if (!is_null($user) && $this->_assistiveProvider === $queryParams['state']) {
+        if (!is_null($user) && $this->_assistiveSsoProvider === $queryParams['state']) {
             // TODO: PATCH de l'utilisateur
             $data = [
-                'ssoProvider' => $this->_assistiveProvider,
+                'ssoProvider' => $this->_assistiveSsoProvider,
                 'ssoId' => $queryParams['code'],
                 'baseSiteUri' => 'http://localhost:9091',
                 'eec' => false,
             ];
 
-            return new JsonResponse($data);
-            $response = $this->_userManager->patchUserForSsoAssociation($user, $data);
-
-            // var_dump($response);
-
-            // exit;
+            // return new JsonResponse($data);
+            // TODO: La mise à jour de l'utilisateur est fonctionnelle mais constinue malgré tout de créer les souscription CEE.
+            $this->_userManager->patchUserForSsoAssociation($user, $data);
         }
 
         // exit('Fin avant redirection');
