@@ -127,6 +127,14 @@ class BankTransfert
     private $batchId;
 
     /**
+     * @var null|string Error returned by the payment provider (if there is any)
+     *
+     * @ORM\Column(type="text", nullable=true)
+     * @Groups({"readPayment"})
+     */
+    private $error;
+
+    /**
      * @var \DateTimeInterface creation date
      *
      * @ORM\Column(type="datetime")
@@ -244,6 +252,18 @@ class BankTransfert
     public function setBatchId(string $batchId): self
     {
         $this->batchId = $batchId;
+
+        return $this;
+    }
+
+    public function getError(): ?string
+    {
+        return $this->error;
+    }
+
+    public function setError(?string $error): self
+    {
+        $this->error = $error;
 
         return $this;
     }

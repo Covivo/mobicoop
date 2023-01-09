@@ -35,8 +35,15 @@ class BankTransfertEmitterVerifier
 {
     public const WALLET_TRANSFERT_TYPE = 'TRANSFER';
     public const WALLET_TRANSFERT_STATUS = 'SUCCEEDED';
+    public const PAYOUT_TYPE = 'PAYOUT';
+    public const PAYOUT_STATUS = 'CREATED';
     private $_logger;
     private $_entityManager;
+
+    /**
+     * @var BankTransfert
+     */
+    private $_bankTransfert;
 
     public function __construct(
         LoggerInterface $logger,
@@ -48,35 +55,62 @@ class BankTransfertEmitterVerifier
 
     public function verify(BankTransfert $bankTransfert, array $return)
     {
+        $this->_bankTransfert = $bankTransfert;
         if (!$this->_checkWalletToWallet($return[0])) {
-            $bankTransfert->setStatus(BankTransfert::STATUS_FAILED_WALLET_TO_WALLET);
-            $this->_updateTransfert($bankTransfert);
+            $this->_bankTransfert->setStatus(BankTransfert::STATUS_FAILED_WALLET_TO_WALLET);
+            $this->_updateTransfert();
 
             return;
         }
         if (!$this->_checkPayout($return[1])) {
-            $bankTransfert->setStatus(BankTransfert::STATUS_FAILED_PAYOUT);
-            $this->_updateTransfert($bankTransfert);
+            $this->_bankTransfert->setStatus(BankTransfert::STATUS_FAILED_PAYOUT);
+            $this->_updateTransfert();
 
             return;
         }
-        $bankTransfert->setStatus(BankTransfert::STATUS_EXECUTED);
-        $this->_updateTransfert($bankTransfert);
+        $this->_bankTransfert->setStatus(BankTransfert::STATUS_EXECUTED);
+        $this->_updateTransfert();
     }
 
     private function _checkWalletToWallet(string $return): bool
     {
+        $trace = json_decode($return, true);
+
+        if (isset($trace['Status'], $trace['Type'])
+        && self::WALLET_TRANSFERT_STATUS == $trace['Status']
+        && self::WALLET_TRANSFERT_TYPE == $trace['Type']) {
+            $this->_logger->info($return);
+
+            return true;
+        }
+
+        $this->_logger->error($return);
+        $this->_bankTransfert->setError($return);
+
         return false;
     }
 
     private function _checkPayout(string $return): bool
     {
+        $trace = json_decode($return, true);
+
+        if (isset($trace['Status'], $trace['Type'])
+        && self::PAYOUT_STATUS == $trace['Status']
+        && self::PAYOUT_TYPE == $trace['Type']) {
+            $this->_logger->info($return);
+
+            return true;
+        }
+
+        $this->_logger->error($return);
+        $this->_bankTransfert->setError($return);
+
         return false;
     }
 
-    private function _updateTransfert(BankTransfert $bankTransfert)
+    private function _updateTransfert()
     {
-        $this->_entityManager->persist($bankTransfert);
+        $this->_entityManager->persist($this->_bankTransfert);
         $this->_entityManager->flush();
     }
 }
