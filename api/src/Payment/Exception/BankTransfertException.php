@@ -46,4 +46,5 @@ class BankTransfertException extends \LogicException
 
     // Bank Transfert Summarizer Validator
     public const SUMMARIZER_NO_TRANSFERT_FOR_THIS_BATCH_ID = 'No bank transfert to summarize';
+    public const NO_REPORT_RECIPIENTS = 'No recipients for report';
 }

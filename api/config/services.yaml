@@ -896,6 +896,15 @@ services:
     tags:
       - { name: monolog.logger, channel: bank_transfert }
 
+  App\Payment\Service\BankTransfert\BankTransfertsSummarizer:
+    arguments:
+      $communicationFolder: "%env(resolve:COMMUNICATION_FOLDER)%"
+      $emailTemplatePath: "%env(resolve:COMMUNICATION_TEMPLATE_EMAIL_PATH)%%env(resolve:NOTIFICATION_TEMPLATE_EMAIL_PATH)%"
+      $emailTitleTemplatePath: "%env(resolve:COMMUNICATION_TEMPLATE_EMAIL_PATH)%%env(resolve:NOTIFICATION_TITLE_TEMPLATE_EMAIL_PATH)%"
+      $emailRecipients: "%env(json:BANK_TRANSFERT_REPORT_EMAIL)%"
+    tags:
+      - { name: monolog.logger, channel: bank_transfert }
+
   # Price
   App\Price\Controller\:
     resource: "../src/Price/Controller"

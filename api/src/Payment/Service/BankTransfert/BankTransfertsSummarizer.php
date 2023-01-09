@@ -22,11 +22,12 @@
 
 namespace App\Payment\Service\BankTransfert;
 
-use App\Payment\Event\BankTransfertsSummarizedEvent;
+use App\Communication\Entity\Email;
+use App\Communication\Service\EmailManager;
 use App\Payment\Exception\BankTransfertException;
 use App\Payment\Repository\BankTransfertRepository;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Twig\Environment;
 
 /**
  * Bank Transfert emitter.
@@ -40,9 +41,18 @@ class BankTransfertsSummarizer
     public const CSV_DELIMITER = ';';
 
     public const CSV_HEADERS = ['batchId', 'createdDate', 'status', 'recipient', 'amount', 'territoryId'];
+
+    public const EMAIL_TEMPLATE = 'bank_transferts_report';
+    public const EMAIL_LANGUAGE = 'fr';
+
     private $_bankTransfertRepository;
     private $_logger;
-    private $_eventDispatcher;
+    private $_emailManager;
+    private $_communicationFolder;
+    private $_emailTemplatePath;
+    private $_emailTitleTemplatePath;
+    private $_templating;
+    private $_emailRecipients;
 
     /**
      * @var BankTransfert[]
@@ -57,11 +67,21 @@ class BankTransfertsSummarizer
     public function __construct(
         BankTransfertRepository $bankTransfertRepository,
         LoggerInterface $logger,
-        EventDispatcherInterface $eventDispatcher
+        EmailManager $emailManager,
+        Environment $templating,
+        string $communicationFolder,
+        string $emailTemplatePath,
+        string $emailTitleTemplatePath,
+        array $emailRecipients
     ) {
         $this->_bankTransfertRepository = $bankTransfertRepository;
         $this->_logger = $logger;
-        $this->_eventDispatcher = $eventDispatcher;
+        $this->_emailManager = $emailManager;
+        $this->_communicationFolder = $communicationFolder;
+        $this->_emailTemplatePath = $emailTemplatePath;
+        $this->_emailTitleTemplatePath = $emailTitleTemplatePath;
+        $this->_templating = $templating;
+        $this->_emailRecipients = $emailRecipients;
     }
 
     public function summarize(string $batchId)
@@ -69,6 +89,7 @@ class BankTransfertsSummarizer
         $this->_batchId = $batchId;
         $this->_getTransferts();
         $this->_makeCsvFile();
+        $this->_sendEmail();
     }
 
     private function _makeCsvFile()
@@ -92,8 +113,6 @@ class BankTransfertsSummarizer
             fputcsv($file, $line, self::CSV_DELIMITER);
         }
         fclose($file);
-        $event = new BankTransfertsSummarizedEvent($this->_batchId);
-        $this->_eventDispatcher->dispatch(BankTransfertsSummarizedEvent::NAME, $event);
     }
 
     private function _getTransferts()
@@ -101,5 +120,25 @@ class BankTransfertsSummarizer
         if (!$this->_bankTransferts = $this->_bankTransfertRepository->findBy(['batchId' => $this->_batchId])) {
             $this->_logger->error('[BatchId : '.$this->_batchId.'] '.BankTransfertException::SUMMARIZER_NO_TRANSFERT_FOR_THIS_BATCH_ID);
         }
+    }
+
+    private function _sendEmail()
+    {
+        $email = new Email();
+        if (0 == count($this->_emailRecipients)) {
+            throw new BankTransfertException(BankTransfertException::NO_REPORT_RECIPIENTS);
+        }
+        $email->setRecipientEmail($this->_emailRecipients[0]);
+
+        if (count($this->_emailRecipients) > 1) {
+            $email->setRecipientEmailCc(array_slice($this->_emailRecipients, 1));
+        }
+
+        $titleTemplate = $this->_communicationFolder.self::EMAIL_LANGUAGE.$this->_emailTitleTemplatePath.self::EMAIL_TEMPLATE.'.html.twig';
+        $email->setObject($this->_templating->render($titleTemplate));
+
+        $bodyContext = [];
+        $attachements = [self::PATH_TO_FILES.'/'.$this->_batchId.'.'.self::FILES_EXTENTION];
+        $this->_emailManager->send($email, $this->_communicationFolder.self::EMAIL_LANGUAGE.$this->_emailTemplatePath.self::EMAIL_TEMPLATE, $bodyContext, self::EMAIL_LANGUAGE, $attachements);
     }
 }
