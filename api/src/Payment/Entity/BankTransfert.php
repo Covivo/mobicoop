@@ -55,6 +55,12 @@ class BankTransfert
     public const STATUS_ABANDONNED_NO_RECIPIENT_WALLET = 8;
     public const STATUS_FAILED_WALLET_TO_WALLET = 9;
     public const STATUS_FAILED_PAYOUT = 10;
+    public const STATUS_UNKNOWN_RECIPIENT = 11;
+    public const STATUS_UNKNOWN_CARPOOL_PROOF = 12;
+    public const STATUS_INVALID_CARPOOL_PROOF = 13;
+    public const STATUS_USER_NOT_INVOLVE_CARPOOL_PROOF = 14;
+    public const STATUS_UNKNOWN_TERRITORY = 15;
+    public const STATUS_NO_AMOUNT = 16;
 
     /**
      * @var string The id of this bank transfert
@@ -77,7 +83,7 @@ class BankTransfert
     private $recipient;
 
     /**
-     * @var float Amount of this bank transfert
+     * @var float Amount of this bank transfert (in €)
      *
      * @ORM\Column(type="decimal", precision=10, scale=6)
      * @Assert\NotBlank

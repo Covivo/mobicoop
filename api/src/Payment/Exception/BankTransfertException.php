@@ -43,4 +43,7 @@ class BankTransfertException extends \LogicException
     public const NO_HOLDER_ID = 'No Holder id';
     public const NO_HOLDER_FOUND = 'No Holder found';
     public const NO_HOLDER_WALLET = 'No holder wallet';
+
+    // Bank Transfert Summarizer Validator
+    public const SUMMARIZER_NO_TRANSFERT_FOR_THIS_BATCH_ID = 'No bank transfert to summarize';
 }
