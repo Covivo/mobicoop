@@ -104,6 +104,7 @@ class BankTransfertsSummarizer
             $line[3] = (!is_null($bankTransfert->getRecipient())) ? $bankTransfert->getRecipient()->getId() : null;
             $line[4] = $bankTransfert->getAmount();
             $line[5] = (!is_null($bankTransfert->getTerritory())) ? $bankTransfert->getTerritory()->getId() : null;
+            $line[6] = (!is_null($bankTransfert->getCarpoolProof())) ? $bankTransfert->getCarpoolProof()->getId() : null;
             $details = json_decode($bankTransfert->getDetails(), true);
             if (is_array($details)) {
                 foreach ($details as $detail) {
