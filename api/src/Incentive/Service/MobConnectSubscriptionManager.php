@@ -326,6 +326,10 @@ class MobConnectSubscriptionManager
             return;
         }
 
+        if (is_null($this->_user)) {
+            $this->_user = $carpoolProof->getDriver();
+        }
+
         $journeyDate = $carpoolProof->getAsk()->getCriteria()->getFromDate();
 
         switch (true) {
@@ -333,8 +337,7 @@ class MobConnectSubscriptionManager
                 $this->_userSubscription = $this->_user->getLongDistanceSubscription();
 
                 if (
-                    $this->_user !== $carpoolProof->getDriver()
-                    || is_null($this->_userSubscription)
+                    is_null($this->_userSubscription)
                     || CeeJourneyService::isDateExpired($journeyDate->add(new \DateInterval('P'.CeeJourneyService::REFERENCE_TIME_LIMIT.'M')))
                     || CeeJourneyService::LONG_DISTANCE_TRIP_THRESHOLD < count($this->_userSubscription->getLongDistanceJourneys())
                 ) {
@@ -355,9 +358,8 @@ class MobConnectSubscriptionManager
                 $this->_userSubscription = $this->_user->getShortDistanceSubscription();
 
                 if (
-                    $this->_user !== $carpoolProof->getDriver()
-                    || is_null($this->_userSubscription)
-                    || CeeJourneyService::isDateAfterReferenceDate($journeyDate)
+                    is_null($this->_userSubscription)
+                    || !CeeJourneyService::isDateAfterReferenceDate($journeyDate)
                     || CeeJourneyService::SHORT_DISTANCE_TRIP_THRESHOLD <= count($this->_userSubscription->getShortDistanceJourneys())
                 ) {
                     return;

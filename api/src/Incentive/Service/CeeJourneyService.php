@@ -226,7 +226,7 @@ abstract class CeeJourneyService
         self::__writeLog([
             'datetime' => new \DateTime(),
             'proof-id' => $carpoolProof->getId(),
-            'type' => CarpoolProof::TYPE_HIGH === $carpoolProof->getType(),
+            'type C' => CarpoolProof::TYPE_HIGH === $carpoolProof->getType(),
             'matching_id' => !is_null(self::$_matching) ? self::$_matching->getId() : null,
             'test-type' => 'Long distance',
             'is_long' => self::__isLongDistance(self::$_matching->getCommonDistance()),
@@ -253,7 +253,7 @@ abstract class CeeJourneyService
         self::__writeLog([
             'datetime' => new \DateTime(),
             'proof-id' => $carpoolProof->getId(),
-            'type' => CarpoolProof::TYPE_HIGH === $carpoolProof->getType(),
+            'type C' => CarpoolProof::TYPE_HIGH === $carpoolProof->getType(),
             'matching_id' => !is_null(self::$_matching) ? self::$_matching->getId() : null,
             'test-type' => 'Short distance',
             'is_short' => self::__isShortDistance(self::$_matching->getCommonDistance()),
