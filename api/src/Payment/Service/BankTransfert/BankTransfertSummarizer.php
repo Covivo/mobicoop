@@ -33,7 +33,11 @@ use Psr\Log\LoggerInterface;
  */
 class BankTransfertSummarizer
 {
-    public const CSV_HEADERS = ['batchId', 'status', 'recipient', 'amount', 'territoryId'];
+    public const PATH_TO_FILES = __DIR__.'/../../../../public/upload/bankTransferts/reports';
+    public const FILES_EXTENTION = 'csv';
+    public const CSV_DELIMITER = ';';
+
+    public const CSV_HEADERS = ['batchId', 'createdDate', 'status', 'recipient', 'amount', 'territoryId'];
     private $_bankTransfertRepository;
     private $_logger;
     private $_entityManager;
@@ -65,15 +69,25 @@ class BankTransfertSummarizer
 
     private function _makeCsvFile()
     {
+        $file = fopen(self::PATH_TO_FILES.'/'.$this->_batchId.'.'.self::FILES_EXTENTION, 'w');
+        fputcsv($file, self::CSV_HEADERS, self::CSV_DELIMITER);
         foreach ($this->_bankTransferts as $bankTransfert) {
             $line = [];
             $line[0] = $bankTransfert->getBatchId();
-            $line[1] = $bankTransfert->getStatus();
-            $line[2] = $bankTransfert->getRecipient()->getId();
-            $line[3] = $bankTransfert->getAmount();
-            $line[4] = $bankTransfert->getTerritory()->getId();
-            var_dump($line);
+            $line[1] = $bankTransfert->getCreatedDate()->format('d/m/Y');
+            $line[2] = $bankTransfert->getStatus();
+            $line[3] = (!is_null($bankTransfert->getRecipient())) ? $bankTransfert->getRecipient()->getId() : null;
+            $line[4] = $bankTransfert->getAmount();
+            $line[5] = (!is_null($bankTransfert->getTerritory())) ? $bankTransfert->getTerritory()->getId() : null;
+            $details = json_decode($bankTransfert->getDetails(), true);
+            if (is_array($details)) {
+                foreach ($details as $detail) {
+                    $line[] = $detail;
+                }
+            }
+            fputcsv($file, $line, self::CSV_DELIMITER);
         }
+        fclose($file);
     }
 
     private function _getTransferts()

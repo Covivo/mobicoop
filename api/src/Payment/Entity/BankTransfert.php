@@ -109,7 +109,7 @@ class BankTransfert
     private $carpoolProof;
 
     /**
-     * @var null|string Various textual details about this bank transfert (separated by |)
+     * @var null|string Various textual details about this bank transfert (json)
      *
      * @ORM\Column(type="text", nullable=true)
      * @Groups({"readPayment"})
