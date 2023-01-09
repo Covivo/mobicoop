@@ -24,8 +24,10 @@ namespace App\Payment\Service\BankTransfert;
 
 use App\Communication\Entity\Email;
 use App\Communication\Service\EmailManager;
+use App\Payment\Entity\BankTransfert;
 use App\Payment\Exception\BankTransfertException;
 use App\Payment\Repository\BankTransfertRepository;
+use App\TranslatorTrait;
 use Psr\Log\LoggerInterface;
 use Twig\Environment;
 
@@ -36,6 +38,8 @@ use Twig\Environment;
  */
 class BankTransfertsSummarizer
 {
+    use TranslatorTrait;
+
     public const PATH_TO_FILES = __DIR__.'/../../../../public/upload/bankTransferts/reports';
     public const FILES_EXTENTION = 'csv';
     public const CSV_DELIMITER = ';';
@@ -100,7 +104,7 @@ class BankTransfertsSummarizer
             $line = [];
             $line[0] = $bankTransfert->getBatchId();
             $line[1] = $bankTransfert->getCreatedDate()->format('d/m/Y');
-            $line[2] = $bankTransfert->getStatus();
+            $line[2] = $this->translator->trans(BankTransfert::STATUS_TXT[$bankTransfert->getStatus()]);
             $line[3] = (!is_null($bankTransfert->getRecipient())) ? $bankTransfert->getRecipient()->getId() : null;
             $line[4] = $bankTransfert->getAmount();
             $line[5] = (!is_null($bankTransfert->getTerritory())) ? $bankTransfert->getTerritory()->getId() : null;

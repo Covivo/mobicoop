@@ -141,7 +141,6 @@ yourPasswordHasBeenSendBySms: "Votre mot de passe vous a été envoyé par SMS."
 emailValidation: "Validation de votre adresse email"
 emailValidationUrl: "/utilisateur/email/validation/"
 
-
 # USER_UPDATED_SELF
 
 theModificationIsConfirmed: "La modification de votre profil est confirmée"
@@ -292,7 +291,7 @@ errors:
   wrongDomains: "Votre adresse email doit être dans un de ces domaines : {domains}"
   alreadyUsed: "Cette adresse e-mail est déjà utilisée"
   phoneNumberInvalid: "Ce numéro de téléphone n'est pas valide"
-  
+
 # USER_UPDATED_SELF
 
 updatedSefl: "Modification de votre profil"
@@ -405,7 +404,7 @@ carpoolRealizedBy: "Covoiturages réalisés par"
 onTheSite: "sur le site"
 totalPaid: "Total payé"
 totalReceived: "Total reçu"
-taxInfo : "Vous avez reçu plus de 300,00€ en 2020 : la loi vous impose de le déclarer aux impôts."
+taxInfo: "Vous avez reçu plus de 300,00€ en 2020 : la loi vous impose de le déclarer aux impôts."
 date: "Date"
 role: "Rôle"
 carpooler: "Covoitureur"
@@ -421,10 +420,28 @@ passenger: "Passager"
 paymentNotDone: "Paiement non déclaré"
 onLinePayment: "Paiement en ligne"
 directPayment: "Paiement à la main"
-deleted : "Supprimé"
-
-
+deleted: "Supprimé"
 
 # GEOGRAPHY SERVICE
-domicile: 'homeAddress'
-homeAddress: 'Domicile'
+domicile: "homeAddress"
+homeAddress: "Domicile"
+
+# Bank Transfert
+bt_invalid: "Invalide"
+bt_initiated: "Initié"
+bt_emitted: "Emis"
+bt_executed: "Executé"
+bt_abandonnedNoHolderId: "Abandonné : Pas de holder"
+bt_abandonnedNoHolderFound: "Abandonné : Holder non trouvé"
+bt_abandonnedNoHolderWallet: "Abandonné : Le holder n'a pas de coordonnées bancaires"
+bt_abandonnedNoPaymentProvider: "Abandonné : Il n'y pas de prestataire de paiement"
+bt_abandonnedFundsUnavailable: "Abandonné : fonds non disponibles"
+bt_abandonnedNoRecipientWallet: "Abandonné : le bénéficiaire n'a pas de coordonnées bancaires"
+bt_failedWalletToWallet: "Transfert wallet à wallet a échoué"
+bt_failedPayout: "Le payout du bénéficiaire a échoué"
+bt_unknownRecipient: "Bénéficiaire inconnu"
+bt_unknownCarpoolProof: "Preuve de covoiturage inconnue"
+bt_invalidCarpoolProof: "Preuve de covoiturage non valide"
+bt_userNotInvolvedInCarpoolProof: "Le bénéficiaire n'est pas impliqué dans le covoiturage lié à cette preuve"
+bt_unknownTerritory: "Territoire inconnu"
+bt_noAmount: "Montant non fourni"

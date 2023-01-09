@@ -45,22 +45,43 @@ class BankTransfert
 
     public const STATUS_INVALID = 0;
     public const STATUS_INITIATED = 1;
-    public const STATUS_EMITTED = 1;
-    public const STATUS_EXECUTED = 2;
-    public const STATUS_ABANDONNED_NO_HOLDER_ID = 3;
-    public const STATUS_ABANDONNED_NO_HOLDER_FOUND = 4;
-    public const STATUS_ABANDONNED_NO_HOLDER_WALLET = 5;
-    public const STATUS_ABANDONNED_NO_PAYMENT_PROVIDER = 6;
-    public const STATUS_ABANDONNED_FUNDS_UNAVAILABLE = 7;
-    public const STATUS_ABANDONNED_NO_RECIPIENT_WALLET = 8;
-    public const STATUS_FAILED_WALLET_TO_WALLET = 9;
-    public const STATUS_FAILED_PAYOUT = 10;
-    public const STATUS_UNKNOWN_RECIPIENT = 11;
-    public const STATUS_UNKNOWN_CARPOOL_PROOF = 12;
-    public const STATUS_INVALID_CARPOOL_PROOF = 13;
-    public const STATUS_USER_NOT_INVOLVE_CARPOOL_PROOF = 14;
-    public const STATUS_UNKNOWN_TERRITORY = 15;
-    public const STATUS_NO_AMOUNT = 16;
+    public const STATUS_EMITTED = 2;
+    public const STATUS_EXECUTED = 3;
+    public const STATUS_ABANDONNED_NO_HOLDER_ID = 4;
+    public const STATUS_ABANDONNED_NO_HOLDER_FOUND = 5;
+    public const STATUS_ABANDONNED_NO_HOLDER_WALLET = 6;
+    public const STATUS_ABANDONNED_NO_PAYMENT_PROVIDER = 7;
+    public const STATUS_ABANDONNED_FUNDS_UNAVAILABLE = 8;
+    public const STATUS_ABANDONNED_NO_RECIPIENT_WALLET = 9;
+    public const STATUS_FAILED_WALLET_TO_WALLET = 10;
+    public const STATUS_FAILED_PAYOUT = 11;
+    public const STATUS_UNKNOWN_RECIPIENT = 12;
+    public const STATUS_UNKNOWN_CARPOOL_PROOF = 13;
+    public const STATUS_INVALID_CARPOOL_PROOF = 14;
+    public const STATUS_USER_NOT_INVOLVE_CARPOOL_PROOF = 15;
+    public const STATUS_UNKNOWN_TERRITORY = 16;
+    public const STATUS_NO_AMOUNT = 17;
+
+    public const STATUS_TXT = [
+        self::STATUS_INVALID => 'bt_invalid',
+        self::STATUS_INITIATED => 'bt_initiated',
+        self::STATUS_EMITTED => 'bt_emitted',
+        self::STATUS_EXECUTED => 'bt_executed',
+        self::STATUS_ABANDONNED_NO_HOLDER_ID => 'bt_abandonnedNoHolderId',
+        self::STATUS_ABANDONNED_NO_HOLDER_FOUND => 'bt_abandonnedNoHolderFound',
+        self::STATUS_ABANDONNED_NO_HOLDER_WALLET => 'bt_abandonnedNoHolderWallet',
+        self::STATUS_ABANDONNED_NO_PAYMENT_PROVIDER => 'bt_abandonnedNoPaymentProvider',
+        self::STATUS_ABANDONNED_FUNDS_UNAVAILABLE => 'bt_abandonnedFundsUnavailable',
+        self::STATUS_ABANDONNED_NO_RECIPIENT_WALLET => 'bt_abandonnedNoRecipientWallet',
+        self::STATUS_FAILED_WALLET_TO_WALLET => 'bt_failedWalletToWallet',
+        self::STATUS_FAILED_PAYOUT => 'bt_failedPayout',
+        self::STATUS_UNKNOWN_RECIPIENT => 'bt_unknownRecipient',
+        self::STATUS_UNKNOWN_CARPOOL_PROOF => 'bt_unknownCarpoolProof',
+        self::STATUS_INVALID_CARPOOL_PROOF => 'bt_invalidCarpoolProof',
+        self::STATUS_USER_NOT_INVOLVE_CARPOOL_PROOF => 'bt_userNotInvolvedInCarpoolProof',
+        self::STATUS_UNKNOWN_TERRITORY => 'bt_unknownTerritory',
+        self::STATUS_NO_AMOUNT => 'bt_noAmount',
+    ];
 
     /**
      * @var string The id of this bank transfert
