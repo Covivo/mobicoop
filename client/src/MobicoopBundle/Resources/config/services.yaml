@@ -290,3 +290,5 @@ services:
   Mobicoop\Bundle\MobicoopBundle\AssistiveDevices\Controller\:
     resource: "@MobicoopBundle/AssistiveDevices/Controller/*"
     tags: ["controller.service_arguments"]
+    arguments:
+      $assistiveSsoProvider: "%env(string:ASSISTIVE_SSO_PROVIDER)%"

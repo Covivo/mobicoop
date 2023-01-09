@@ -11,17 +11,19 @@ use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 class AssistiveController extends AbstractController
 {
-    private const PROVIDER = 'mobConnect';
-    private const SSO_ACTIVATION_PATH = '/sso-activation';
+    private const PROVIDER = 'mobConnectBasic';
+
     private const ERROR_MISSING_PROVIDER = 'There is no SSO service to pass to the view!';
 
+    private $_assistiveProvider;
     private $_logger;
     private $_userManager;
 
-    public function __construct(UserManager $userManager, LoggerInterface $logger)
+    public function __construct(UserManager $userManager, LoggerInterface $logger, string $assistiveSsoProvider)
     {
         $this->_userManager = $userManager;
         $this->_logger = $logger;
+        $this->_assistiveProvider = $assistiveSsoProvider;
     }
 
     public function assistiveDevices(Request $request)
@@ -37,12 +39,11 @@ class AssistiveController extends AbstractController
                 || (
                     !is_null($user->getSsoId())
                     && !is_null($user->getSsoProvider())
-                    && self::PROVIDER != $user->getSsoProvider()
+                    && $this->_assistiveProvider != $user->getSsoProvider()
                 )
             )
         ) {
-            $redirectUri = str_replace('/', '', $request->getPathInfo()).self::SSO_ACTIVATION_PATH;
-            $ssoServices = $this->_userManager->getSsoService(self::PROVIDER, $redirectUri);
+            $ssoServices = $this->_userManager->getSsoService($this->_assistiveProvider);
 
             if (empty($ssoServices)) {
                 $this->_logger->error(self::ERROR_MISSING_PROVIDER);
@@ -68,17 +69,16 @@ class AssistiveController extends AbstractController
         $queryParams = $request->query->all();
 
         // return new JsonResponse($queryParams);
-        if (!is_null($user) && self::PROVIDER === $queryParams['state']) {
+        if (!is_null($user) && $this->_assistiveProvider === $queryParams['state']) {
             // TODO: PATCH de l'utilisateur
             $data = [
-                'ssoProvider' => self::PROVIDER,
+                'ssoProvider' => $this->_assistiveProvider,
                 'ssoId' => $queryParams['code'],
                 'baseSiteUri' => 'http://localhost:9091',
-                'redirectUri' => 'aides-a-la-mobilite'.self::SSO_ACTIVATION_PATH,
                 'eec' => false,
             ];
 
-            // return new JsonResponse($data);
+            return new JsonResponse($data);
             $response = $this->_userManager->patchUserForSsoAssociation($user, $data);
 
             // var_dump($response);

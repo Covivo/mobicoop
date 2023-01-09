@@ -117,6 +117,10 @@ export default {
       type: String,
       default: null
     },
+    assistiveSsoProvider: {
+      type: String,
+      default: null
+    },
     user: {
       type: Object,
       default: null
@@ -129,7 +133,7 @@ export default {
     isMobActivated: function() {
       return this.isUserAuthenticated
         && this.user.ssoId
-        && this.user.ssoProvider === 'mobConnect';
+        && this.user.ssoProvider === this.assistiveSsoProvider;
     }
   },
   methods: {
