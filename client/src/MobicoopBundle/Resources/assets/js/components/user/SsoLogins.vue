@@ -9,6 +9,7 @@
       :use-button-icon="ssoConnection.useButtonIcon"
       :service="ssoConnection.service"
       :sso-provider="ssoConnection.ssoProvider"
+      :default-buttons-active="defaultButtonsActive"
     />
   </div>
 </template>
