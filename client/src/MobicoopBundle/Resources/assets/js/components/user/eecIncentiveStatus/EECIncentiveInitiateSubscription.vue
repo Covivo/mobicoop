@@ -88,7 +88,7 @@
             <v-col
               cols="3"
               class="text-right"
-            > 
+            >
               *{{ $t('EEC-provider-siren') }}
             </v-col>
           </v-row>
@@ -137,9 +137,14 @@ export default {
       checkboxesAllChecked:false,
       eecPlatform: this.$t('EEC-platform'),
       eecProvider: this.$t('EEC-provider'),
-      items: this.$t('items', {eecProvider: this.eecProvider}),
+      items: [this.$t('item1', {eecProvider: this.$t('EEC-provider')}),
+        this.$t('item2', {eecProvider: this.$t('EEC-provider')}),
+        this.$t('item3', {eecProvider: this.$t('EEC-provider')}),
+        this.$t('item4', {eecProvider: this.$t('EEC-provider')}),
+        this.$t('item5', {eecProvider: this.$t('EEC-provider')})
+      ],
 
-      
+
     }
   },
   computed:{
