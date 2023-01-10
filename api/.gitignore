@@ -382,6 +382,3 @@ $RECYCLE.BIN/
 
 # SSO Services
 /config/user/sso.json
-
-## Incentives logs
-/public/incentives-logs*
