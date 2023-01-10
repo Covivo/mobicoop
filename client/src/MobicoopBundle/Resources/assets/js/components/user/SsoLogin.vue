@@ -78,11 +78,15 @@ export default {
     maxWidth:{
       type: Number,
       default:200
+    },
+    defaultButtonsActive: {
+      type: Boolean,
+      default: true
     }
   },
   data(){
     return {
-      buttonActive: false
+      buttonActive: this.defaultButtonsActive
     }
   },
   computed:{
