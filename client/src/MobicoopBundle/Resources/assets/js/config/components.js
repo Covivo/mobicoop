@@ -84,6 +84,9 @@ import MSnackInfos from "@components/utilities/MSnackInfos";
 import Payment from "@components/payment/Payment"
 import PaymentPaid from "@components/user/profile/payment/PaymentPaid"
 
+// AssistiveDevices
+import Assistive from "@components/assistiveDevices/Assistive"
+
 export default {
   MHeader,
   MFooter,
@@ -132,5 +135,6 @@ export default {
   PaymentPaid,
   SsoLoginReturn,
   ErrorPage,
-  MSnackInfos
+  MSnackInfos,
+  Assistive,
 }

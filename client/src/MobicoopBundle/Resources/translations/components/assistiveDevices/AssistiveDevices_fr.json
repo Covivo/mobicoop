@@ -1,0 +1,38 @@
+{
+  "title": "Aides à la mobilité",
+  "solidary": {
+    "title": "Covoiturage solidaire",
+    "btn-1": {
+      "text": "Besoin d'un coup de pouce ?",
+      "href": "https://m.mobil.aude.fr/#/carpools/solidary/home/request"
+    },
+    "btn-2": {
+      "text": "Donner un coup de pouce",
+      "href": "/covoiturage/publierannonce/solidaire"
+    }
+  },
+  "assistiveDevices": {
+    "title": "Dispositif d'aide, avec \"moB\"",
+    "text": "<p><strong>moB</strong> est une initiative publique nationale appuyée par le Département de l'Aude.</p><p>Consulter les aides auxquelles vous avez droit (accompagnement à la mobilité, aide à l'achat de véhicules, remboursement de frais de déplacements, ...).</p><p>Pour Consulter les aides :</p>",
+    "buttons": {
+      "login": {
+        "text": "Connexion",
+        "href": "/utilisateur/connexion"
+      },
+      "signin": {
+        "text": "Inscription",
+        "href": "/utilisateur/inscription"
+      },
+      "activate": {
+        "text": "Activer le service moB"
+      },
+      "assistiveConsult": {
+        "text": "Consulter les aides",
+        "href": "/"
+      }
+    }
+  },
+  "errors": {
+    "mob-activation": "Nous rencontrons un problème dans l'activation de moB"
+  }
+}

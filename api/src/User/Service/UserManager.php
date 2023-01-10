@@ -1702,7 +1702,7 @@ class UserManager
         return implode($pass); // turn the array into a string
     }
 
-    public function updateUserSsoProperties(User $user, SsoUser $ssoUser): User
+    public function updateUserSsoProperties(User $user, SsoUser $ssoUser, bool $eec = true): User
     {
         $user->setSsoId($ssoUser->getSub());
         $user->setSsoProvider($ssoUser->getProvider());
