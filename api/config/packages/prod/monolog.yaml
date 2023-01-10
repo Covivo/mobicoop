@@ -1,126 +1,149 @@
 monolog:
-    handlers:
-        main:
-            type:               rotating_file
-            action_level:       info
-            max_files: 30
-            handler:            grouped
-            channels:           ["!carpool", "!carpool_dynamic", "!carpool_proof", "!communication", "!community", "!consumptionFeedback", "!faker", "!gamification", "!geography", "!geomatcher", "!georouter", "!maintenance", "!mass", "!notification", "!solidary"]
-        grouped:
-            type:               group
-            members:            [streamed]
-        streamed:
-            type:               stream
-            path:               "%kernel.logs_dir%/%kernel.environment%.log"
-            level:              info
-        # swift:
-        #     type:               swift_mailer
-        #     from_email:         "%env(MAIL_ERROR)%"
-        #     to_email:           "%env(MAIL_ERROR)%"
-        #     subject:    'An Error Occurred! %%message%%'
-        #     level:     error
-        #     formatter:  monolog.formatter.html
-        #     content_type: text/html
-        carpool:        
-            type: rotating_file
-            level: debug
-            max_files: 30
-            path: "%kernel.logs_dir%/carpool.log"
-            channels: [carpool]
-        carpool_dynamic:
-            type: rotating_file
-            level: debug
-            max_files: 30
-            path: "%kernel.logs_dir%/carpool_dynamic.log"
-            channels: [carpool_dynamic]
-        carpool_proof:
-            type: rotating_file
-            level: debug
-            max_files: 30
-            path: "%kernel.logs_dir%/carpool_proof.log"
-            channels: [carpool_proof]
-        communication:
-            type: rotating_file
-            level: debug
-            max_files: 30
-            path: "%kernel.logs_dir%/communication.log"
-            channels: [communication]
-        community:
-            type: rotating_file
-            level: debug
-            max_files: 30
-            path: "%kernel.logs_dir%/community.log"
-            channels: [community]
-        consumptionFeedback:
-            type: rotating_file
-            level: debug
-            max_files: 30
-            path: "%kernel.logs_dir%/consumptionFeedback.log"
-            channels: [consumptionFeedback]
-        faker:
-            type: rotating_file
-            level: debug
-            max_files: 30
-            path: "%kernel.logs_dir%/faker.log"
-            channels: [faker]
-        gamification:
-            type: rotating_file
-            level: debug
-            max_files: 30
-            path: "%kernel.logs_dir%/gamification.log"
-            channels: [gamification]    
-        geography:
-            type: rotating_file
-            level: debug
-            max_files: 30
-            path: "%kernel.logs_dir%/geography.log"
-            channels: [geography]
-        geomatcher:
-            type: rotating_file
-            level: debug
-            max_files: 30
-            path: "%kernel.logs_dir%/geomatcher.log"    
-            channels: [geomatcher]
-        georouter:
-            type: rotating_file
-            level: debug
-            max_files: 30
-            path: "%kernel.logs_dir%/georouter.log"
-            channels: [georouter]
-        maintenance:
-            type: rotating_file
-            level: info
-            max_files: 30
-            path: "%kernel.logs_dir%/maintenance.log"
-            channels: [maintenance]    
-        mass:
-            type: rotating_file
-            level: info
-            max_files: 30
-            path: "%kernel.logs_dir%/mass.log"
-            channels: [mass]
-        notification:
-            type: rotating_file
-            level: debug
-            max_files: 30
-            path: "%kernel.logs_dir%/notification.log"
-            channels: [notification]
-        solidary:
-            type: rotating_file
-            level: debug
-            max_files: 30
-            path: "%kernel.logs_dir%/solidary.log"
-            channels: [solidary]        
-        console:
-            type: console
-            process_psr_3_messages: false
-            channels: ["!event", "!doctrine"]
-        deprecation:
-            type: rotating_file
-            max_files: 30
-            path: "%kernel.logs_dir%/%kernel.environment%.deprecations.log"
-        deprecation_filter:
-            type: filter
-            handler: deprecation
-            max_level: info
-            channels: ["php"]
+  handlers:
+    main:
+      type: rotating_file
+      action_level: info
+      max_files: 30
+      handler: grouped
+      channels:
+        [
+          "!carpool",
+          "!carpool_dynamic",
+          "!carpool_proof",
+          "!communication",
+          "!community",
+          "!consumptionFeedback",
+          "!faker",
+          "!gamification",
+          "!geography",
+          "!geomatcher",
+          "!georouter",
+          "!incentive_subscription",
+          "!maintenance",
+          "!mass",
+          "!notification",
+          "!solidary",
+        ]
+    grouped:
+      type: group
+      members: [streamed]
+    streamed:
+      type: stream
+      path: "%kernel.logs_dir%/%kernel.environment%.log"
+      level: info
+    # swift:
+    #     type:               swift_mailer
+    #     from_email:         "%env(MAIL_ERROR)%"
+    #     to_email:           "%env(MAIL_ERROR)%"
+    #     subject:    'An Error Occurred! %%message%%'
+    #     level:     error
+    #     formatter:  monolog.formatter.html
+    #     content_type: text/html
+    carpool:
+      type: rotating_file
+      level: debug
+      max_files: 30
+      path: "%kernel.logs_dir%/carpool.log"
+      channels: [carpool]
+    carpool_dynamic:
+      type: rotating_file
+      level: debug
+      max_files: 30
+      path: "%kernel.logs_dir%/carpool_dynamic.log"
+      channels: [carpool_dynamic]
+    carpool_proof:
+      type: rotating_file
+      level: debug
+      max_files: 30
+      path: "%kernel.logs_dir%/carpool_proof.log"
+      channels: [carpool_proof]
+    communication:
+      type: rotating_file
+      level: debug
+      max_files: 30
+      path: "%kernel.logs_dir%/communication.log"
+      channels: [communication]
+    community:
+      type: rotating_file
+      level: debug
+      max_files: 30
+      path: "%kernel.logs_dir%/community.log"
+      channels: [community]
+    consumptionFeedback:
+      type: rotating_file
+      level: debug
+      max_files: 30
+      path: "%kernel.logs_dir%/consumptionFeedback.log"
+      channels: [consumptionFeedback]
+    faker:
+      type: rotating_file
+      level: debug
+      max_files: 30
+      path: "%kernel.logs_dir%/faker.log"
+      channels: [faker]
+    gamification:
+      type: rotating_file
+      level: debug
+      max_files: 30
+      path: "%kernel.logs_dir%/gamification.log"
+      channels: [gamification]
+    geography:
+      type: rotating_file
+      level: debug
+      max_files: 30
+      path: "%kernel.logs_dir%/geography.log"
+      channels: [geography]
+    geomatcher:
+      type: rotating_file
+      level: debug
+      max_files: 30
+      path: "%kernel.logs_dir%/geomatcher.log"
+      channels: [geomatcher]
+    georouter:
+      type: rotating_file
+      level: debug
+      max_files: 30
+      path: "%kernel.logs_dir%/georouter.log"
+      channels: [georouter]
+    incentive_subscription:
+      type: stream
+      level: debug
+      path: "%kernel.logs_dir%/incentive_subscription.log"
+      channels: [incentive_subscription]
+    maintenance:
+      type: rotating_file
+      level: info
+      max_files: 30
+      path: "%kernel.logs_dir%/maintenance.log"
+      channels: [maintenance]
+    mass:
+      type: rotating_file
+      level: info
+      max_files: 30
+      path: "%kernel.logs_dir%/mass.log"
+      channels: [mass]
+    notification:
+      type: rotating_file
+      level: debug
+      max_files: 30
+      path: "%kernel.logs_dir%/notification.log"
+      channels: [notification]
+    solidary:
+      type: rotating_file
+      level: debug
+      max_files: 30
+      path: "%kernel.logs_dir%/solidary.log"
+      channels: [solidary]
+    console:
+      type: console
+      process_psr_3_messages: false
+      channels: ["!event", "!doctrine"]
+    deprecation:
+      type: rotating_file
+      max_files: 30
+      path: "%kernel.logs_dir%/%kernel.environment%.deprecations.log"
+    deprecation_filter:
+      type: filter
+      handler: deprecation
+      max_level: info
+      channels: ["php"]

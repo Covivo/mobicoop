@@ -8,6 +8,7 @@ use App\Geography\Entity\Address;
 use App\Incentive\Resource\CeeSubscriptions;
 use App\Payment\Entity\CarpoolItem;
 use App\User\Entity\User;
+use Psr\Log\LoggerInterface;
 
 /**
  * Provides functions necessary for the CEE journeys validation.
@@ -29,6 +30,11 @@ abstract class CeeJourneyService
      * @var Matching
      */
     private static $_matching;
+
+    /**
+     * @var LoggerInterface
+     */
+    private static $_logger;
 
     /**
      * Returns if an address is located in the REFERENCE_COUNTRY.
@@ -132,20 +138,6 @@ abstract class CeeJourneyService
                 ? $carpoolProof->getAsk()->getMatching() : null;
     }
 
-    private function __writeLog(array $log): void
-    {
-        $path = $_SERVER['DOCUMENT_ROOT'].'/incentives-logs';
-        if (!file_exists($path)) {
-            mkdir($path, 0777);
-        }
-        $filename = $path.'/logs.json';
-
-        $content = file_exists($filename) ? json_decode(file_get_contents($filename)) : [];
-        array_push($content, $log);
-
-        file_put_contents($filename, json_encode($content));
-    }
-
     // * PUBLIC FUNCTIONS ---------------------------------------------------------------------------------------------------------------------------
 
     public static function isDateAfterReferenceDate(\DateTime $date): bool
@@ -219,11 +211,11 @@ abstract class CeeJourneyService
     /**
      * Returns if the trip is valid for a long distance for EEC sheet.
      */
-    public static function isValidLongDistanceJourney(CarpoolProof $carpoolProof): bool
+    public static function isValidLongDistanceJourney(CarpoolProof $carpoolProof, LoggerInterface $logger): bool
     {
         self::__setMatchingFromCarpoolProof($carpoolProof);
 
-        self::__writeLog([
+        $logger->info(json_encode([
             'datetime' => new \DateTime(),
             'proof-id' => $carpoolProof->getId(),
             'type C' => CarpoolProof::TYPE_HIGH === $carpoolProof->getType(),
@@ -232,7 +224,7 @@ abstract class CeeJourneyService
             'is_long' => self::__isLongDistance(self::$_matching->getCommonDistance()),
             'from-france' => self::__isOriginOrDestinationFromReferenceCountry(),
             'payment-regularized' => self::__hasBeenCarpoolPaymentRegularized($carpoolProof),
-        ]);
+        ]));
 
         return
             !is_null(self::$_matching)
@@ -246,11 +238,11 @@ abstract class CeeJourneyService
     /**
      * Returns if the trip is valid for a short distance for EEC sheet.
      */
-    public static function isValidShortDistanceJourney(CarpoolProof $carpoolProof): bool
+    public static function isValidShortDistanceJourney(CarpoolProof $carpoolProof, LoggerInterface $logger): bool
     {
         self::__setMatchingFromCarpoolProof($carpoolProof);
 
-        self::__writeLog([
+        $logger->info(json_encode([
             'datetime' => new \DateTime(),
             'proof-id' => $carpoolProof->getId(),
             'type C' => CarpoolProof::TYPE_HIGH === $carpoolProof->getType(),
@@ -258,7 +250,7 @@ abstract class CeeJourneyService
             'test-type' => 'Short distance',
             'is_short' => self::__isShortDistance(self::$_matching->getCommonDistance()),
             'from-france' => self::__isOriginOrDestinationFromReferenceCountry(),
-        ]);
+        ]));
 
         return
             CarpoolProof::TYPE_HIGH === $carpoolProof->getType()

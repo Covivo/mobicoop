@@ -754,6 +754,9 @@ services:
         subscription_ids:
           short_distance: "%env(string:MOBCONNECT_SHORTDISTANCE_SUBSCRIPTIONID)%"
           long_distance: "%env(string:MOBCONNECT_LONGDISTANCE_SUBSCRIPTIONID)%"
+    tags:
+      - { name: monolog.logger, channel: incentive_subscription }
+
 
   # Journey
   App\Journey\Service\JourneyManager:
