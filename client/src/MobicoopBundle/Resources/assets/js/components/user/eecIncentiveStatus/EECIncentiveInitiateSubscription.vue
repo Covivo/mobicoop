@@ -13,7 +13,7 @@
           {{ $t('subtitle') }}
         </h2>
         <p class="font-weight-bold">
-          {{ $t('intro') }}
+          {{ $t('intro', {eecProvider: eecProvider}) }}
         </p>
         <p>
           <v-list class="text-left">
@@ -43,10 +43,10 @@
         </p>
         <p
           class="text-justify"
-          v-html="$t('intro2')"
+          v-html="$t('intro2', {eecPlatform: eecPlatform})"
         />
         <p class="font-weight-bold">
-          {{ $t('title_list') }}
+          {{ $t('title_list', {eecPlatform: eecPlatform, eecProvider: eecProvider}) }}
         </p>
         <p
           v-for="(item, i) in items"
@@ -83,22 +83,39 @@
             </v-col>
           </v-row>
         </p>
+        <p style="color: grey; font-size: 12px;">
+          <v-row align="center">
+            <v-col
+              cols="3"
+              class="text-right"
+            > 
+              *{{ $t('EEC-provider-siren') }}
+            </v-col>
+          </v-row>
+        </p>
       </v-card-text>
     </v-card>
   </div>
 </template>
 
 <script>
+import { merge } from "lodash";
 import SsoLogins from '@components/user/SsoLogins';
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/EECIncentiveStatus/";
+import {messages_client_en, messages_client_fr, messages_client_eu, messages_client_nl} from "@clientTranslations/components/user/EECIncentiveStatus/";
+
+let MessagesMergedEn = merge(messages_en, messages_client_en);
+let MessagesMergedNl = merge(messages_nl, messages_client_nl);
+let MessagesMergedFr = merge(messages_fr, messages_client_fr);
+let MessagesMergedEu = merge(messages_eu, messages_client_eu);
 
 export default {
   i18n: {
     messages: {
-      'en': messages_en,
-      'nl': messages_nl,
-      'fr': messages_fr,
-      'eu':messages_eu
+      'en': MessagesMergedEn,
+      'nl': MessagesMergedNl,
+      'fr': MessagesMergedFr,
+      'eu': MessagesMergedEu
     }
   },
   components:{
@@ -116,9 +133,13 @@ export default {
   },
   data() {
     return {
-      items: this.$t('items'),
       checkboxes: [],
-      checkboxesAllChecked:false
+      checkboxesAllChecked:false,
+      eecPlatform: this.$t('EEC-platform'),
+      eecProvider: this.$t('EEC-provider'),
+      items: this.$t('items', {eecProvider: this.eecProvider}),
+
+      
     }
   },
   computed:{
