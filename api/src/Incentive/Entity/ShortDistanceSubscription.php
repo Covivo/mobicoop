@@ -15,8 +15,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
  */
 class ShortDistanceSubscription
 {
-    public const STATUS_REJECTED = 'VALIDEE';
-    public const STATUS_VALIDATED = 'REJETEE';
+    public const STATUS_REJECTED = 'REJETEE';
+    public const STATUS_VALIDATED = 'VALIDEE';
 
     /**
      * @var int The user subscription ID

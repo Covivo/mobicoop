@@ -62,7 +62,7 @@ class ShortDistanceJourney
     /**
      * @var string the ID of the user
      *
-     * @ORM\Column(type="string", unique=true, nullable=true)
+     * @ORM\Column(type="string", unique=false, nullable=true)
      */
     private $operatorUserId;
 

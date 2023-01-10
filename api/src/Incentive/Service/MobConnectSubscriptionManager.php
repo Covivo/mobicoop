@@ -25,6 +25,7 @@ use App\Payment\Entity\CarpoolPayment;
 use App\User\Entity\SsoUser;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Security\Core\Security;
 
@@ -44,6 +45,11 @@ class MobConnectSubscriptionManager
      * @var EventDispatcherInterface
      */
     private $_eventDispatcher;
+
+    /**
+     * @var LoggerInterface
+     */
+    private $_logger;
 
     /**
      * @var MobConnectApiProvider
@@ -76,11 +82,13 @@ class MobConnectSubscriptionManager
         EntityManagerInterface $em,
         Security $security,
         EventDispatcherInterface $eventDispatcher,
+        LoggerInterface $logger,
         array $ssoServices,
         array $mobConnectParams
     ) {
         $this->_em = $em;
         $this->_eventDispatcher = $eventDispatcher;
+        $this->_logger = $logger;
 
         $this->_user = $security->getUser();
 
@@ -333,12 +341,11 @@ class MobConnectSubscriptionManager
         $journeyDate = $carpoolProof->getAsk()->getCriteria()->getFromDate();
 
         switch (true) {
-            case CeeJourneyService::isValidLongDistanceJourney($carpoolProof):
+            case CeeJourneyService::isValidLongDistanceJourney($carpoolProof, $this->_logger):
                 $this->_userSubscription = $this->_user->getLongDistanceSubscription();
 
                 if (
-                    $this->_user !== $carpoolProof->getDriver()
-                    || is_null($this->_userSubscription)
+                    is_null($this->_userSubscription)
                     || CeeJourneyService::isDateExpired($journeyDate->add(new \DateInterval('P'.CeeJourneyService::REFERENCE_TIME_LIMIT.'M')))
                     || CeeJourneyService::LONG_DISTANCE_TRIP_THRESHOLD < count($this->_userSubscription->getLongDistanceJourneys())
                 ) {
@@ -355,13 +362,12 @@ class MobConnectSubscriptionManager
 
                 break;
 
-            case CeeJourneyService::isValidShortDistanceJourney($carpoolProof):
+            case CeeJourneyService::isValidShortDistanceJourney($carpoolProof, $this->_logger):
                 $this->_userSubscription = $this->_user->getShortDistanceSubscription();
 
                 if (
-                    $this->_user !== $carpoolProof->getDriver()
-                    || is_null($this->_userSubscription)
-                    || CeeJourneyService::isDateAfterReferenceDate($journeyDate)
+                    is_null($this->_userSubscription)
+                    || !CeeJourneyService::isDateAfterReferenceDate($journeyDate)
                     || CeeJourneyService::SHORT_DISTANCE_TRIP_THRESHOLD <= count($this->_userSubscription->getShortDistanceJourneys())
                 ) {
                     return;
