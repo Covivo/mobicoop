@@ -3,6 +3,7 @@
 namespace App\Incentive\Entity;
 
 use App\Carpool\Entity\CarpoolProof;
+use App\Payment\Entity\CarpoolPayment;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -15,6 +16,10 @@ use Doctrine\ORM\Mapping as ORM;
 class LongDistanceJourney
 {
     public const STANDARDIZED_SHEET_OPERATION = 'TRA-SE-115';
+
+    public const BONUS_STATUS_PENDING = 0;
+    public const BONUS_STATUS_NO = 1;
+    public const BONUS_STATUS_OK = 2;
 
     /**
      * @var int The cee ID
@@ -86,8 +91,28 @@ class LongDistanceJourney
      */
     private $updatedAt;
 
-    public function __construct(CarpoolProof $carpoolProof, int $carpoolersNumber)
+    /**
+     * Bonus Status of the journey.
+     *
+     * @var int
+     *
+     * @ORM\Column(type="smallint", options={"default": 1, "comment":"Bonus Status of the EEC form"})
+     */
+    private $bonusStatus = self::BONUS_STATUS_NO;
+
+    /**
+     * The carpool proof associate with the journey.
+     *
+     * @var CarpoolPayment
+     *
+     * @ORM\OneToOne(targetEntity=CarpoolPayment::class)
+     * @ORM\JoinColumn(nullable=true)
+     */
+    private $carpoolPayment;
+
+    public function __construct(CarpoolPayment $carpoolPayment, CarpoolProof $carpoolProof, int $carpoolersNumber)
     {
+        $this->setCarpoolPayment($carpoolPayment);
         $this->setStartAddressLocality($carpoolProof->getOriginDriverAddress()->getAddressLocality());
         $this->setEndAddressLocality($carpoolProof->getDestinationDriverAddress()->getAddressLocality());
         $this->setDistance($carpoolProof->getAsk()->getMatching()->getCommonDistance());
@@ -276,6 +301,46 @@ class LongDistanceJourney
     public function setLongDistanceSubscription(LongDistanceSubscription $longDistanceSubscription): self
     {
         $this->longDistanceSubscription = $longDistanceSubscription;
+
+        return $this;
+    }
+
+    /**
+     * Get bonus Status of the EEC form.
+     */
+    public function getBonusStatus(): int
+    {
+        return $this->bonusStatus;
+    }
+
+    /**
+     * Set bonus Status of the EEC form.
+     *
+     * @param int $bonusStatus bonus Status of the EEC form
+     */
+    public function setBonusStatus(int $bonusStatus): self
+    {
+        $this->bonusStatus = $bonusStatus;
+
+        return $this;
+    }
+
+    /**
+     * Get the carpool proof associate with the journey.
+     */
+    public function getCarpoolPayment(): CarpoolPayment
+    {
+        return $this->carpoolPayment;
+    }
+
+    /**
+     * Set the carpool proof associate with the journey.
+     *
+     * @param CarpoolPayment $carpoolPayment the carpool proof associate with the journey
+     */
+    public function setCarpoolPayment(CarpoolPayment $carpoolPayment): self
+    {
+        $this->carpoolPayment = $carpoolPayment;
 
         return $this;
     }
