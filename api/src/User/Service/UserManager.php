@@ -130,6 +130,7 @@ class UserManager
     private $gamificationManager;
     private $scammerRepository;
     private $userMinAge;
+    private $paymentProfileRepository;
 
     // Default carpool settings
     private $chat;

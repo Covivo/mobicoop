@@ -1,98 +1,122 @@
 monolog:
-    handlers:
-        carpool:
-            type: rotating_file
-            level: debug
-            max_files: 30
-            path: "%kernel.logs_dir%/carpool.log"
-            channels: [carpool]
-        carpool_dynamic:
-            type: rotating_file
-            level: debug
-            max_files: 30
-            path: "%kernel.logs_dir%/carpool_dynamic.log"
-            channels: [carpool_dynamic]
-        carpool_proof:
-            type: rotating_file
-            level: debug
-            max_files: 30
-            path: "%kernel.logs_dir%/carpool_proof.log"
-            channels: [carpool_proof]
-        communication:
-            type: rotating_file
-            level: debug
-            max_files: 30
-            path: "%kernel.logs_dir%/communication.log"
-            channels: [communication]
-        community:
-            type: rotating_file
-            level: debug
-            max_files: 30
-            path: "%kernel.logs_dir%/community.log"
-            channels: [community]
-        consumptionFeedback:
-            type: rotating_file
-            level: debug
-            max_files: 30
-            path: "%kernel.logs_dir%/consumptionFeedback.log"
-            channels: [consumptionFeedback]
-        faker:
-            type: rotating_file
-            level: debug
-            max_files: 30
-            path: "%kernel.logs_dir%/faker.log"
-            channels: [faker]
-        gamification:
-            type: rotating_file
-            level: debug
-            max_files: 30
-            path: "%kernel.logs_dir%/gamification.log"
-            channels: [gamification]     
-        geography:
-            type: rotating_file
-            level: debug
-            max_files: 30
-            path: "%kernel.logs_dir%/geography.log"
-            channels: [geography]
-        geomatcher:
-            type: rotating_file
-            level: debug
-            max_files: 30
-            path: "%kernel.logs_dir%/geomatcher.log"    
-            channels: [geomatcher]
-        georouter:
-            type: rotating_file
-            level: debug
-            max_files: 30
-            path: "%kernel.logs_dir%/georouter.log"
-            channels: [georouter]
-        maintenance:
-            type: rotating_file
-            level: debug
-            max_files: 30
-            path: "%kernel.logs_dir%/maintenance.log"
-            channels: [maintenance]        
-        mass:
-            type: rotating_file
-            level: debug
-            max_files: 30
-            path: "%kernel.logs_dir%/mass.log"
-            channels: [mass]
-        notification:
-            type: rotating_file
-            level: debug
-            max_files: 30
-            path: "%kernel.logs_dir%/notification.log"
-            channels: [notification]     
-        solidary:
-            type: rotating_file
-            level: debug
-            max_files: 30
-            path: "%kernel.logs_dir%/solidary.log"
-            channels: [solidary]      
-        main:
-            type: rotating_file
-            path: "%kernel.logs_dir%/%kernel.environment%.log"
-            max_files: 30
-            level: debug
-            channels: ["!event", "!carpool", "!carpool_dynamic", "!carpool_proof", "!communication", "!community", "!consumptionFeedback", "!faker", "!gamification", "!geography", "!geomatcher", "!georouter", "!maintenance", "!mass", "!notification", "!solidary"]
+  handlers:
+    bank_transfert:
+      type: stream
+      level: debug
+      path: "%kernel.logs_dir%/bank_transfert.log"
+      channels: [bank_transfert]
+    carpool:
+      type: rotating_file
+      level: debug
+      max_files: 30
+      path: "%kernel.logs_dir%/carpool.log"
+      channels: [carpool]
+    carpool_dynamic:
+      type: rotating_file
+      level: debug
+      max_files: 30
+      path: "%kernel.logs_dir%/carpool_dynamic.log"
+      channels: [carpool_dynamic]
+    carpool_proof:
+      type: rotating_file
+      level: debug
+      max_files: 30
+      path: "%kernel.logs_dir%/carpool_proof.log"
+      channels: [carpool_proof]
+    communication:
+      type: rotating_file
+      level: debug
+      max_files: 30
+      path: "%kernel.logs_dir%/communication.log"
+      channels: [communication]
+    community:
+      type: rotating_file
+      level: debug
+      max_files: 30
+      path: "%kernel.logs_dir%/community.log"
+      channels: [community]
+    consumptionFeedback:
+      type: rotating_file
+      level: debug
+      max_files: 30
+      path: "%kernel.logs_dir%/consumptionFeedback.log"
+      channels: [consumptionFeedback]
+    faker:
+      type: rotating_file
+      level: debug
+      max_files: 30
+      path: "%kernel.logs_dir%/faker.log"
+      channels: [faker]
+    gamification:
+      type: rotating_file
+      level: debug
+      max_files: 30
+      path: "%kernel.logs_dir%/gamification.log"
+      channels: [gamification]
+    geography:
+      type: rotating_file
+      level: debug
+      max_files: 30
+      path: "%kernel.logs_dir%/geography.log"
+      channels: [geography]
+    geomatcher:
+      type: rotating_file
+      level: debug
+      max_files: 30
+      path: "%kernel.logs_dir%/geomatcher.log"
+      channels: [geomatcher]
+    georouter:
+      type: rotating_file
+      level: debug
+      max_files: 30
+      path: "%kernel.logs_dir%/georouter.log"
+      channels: [georouter]
+    maintenance:
+      type: rotating_file
+      level: debug
+      max_files: 30
+      path: "%kernel.logs_dir%/maintenance.log"
+      channels: [maintenance]
+    mass:
+      type: rotating_file
+      level: debug
+      max_files: 30
+      path: "%kernel.logs_dir%/mass.log"
+      channels: [mass]
+    notification:
+      type: rotating_file
+      level: debug
+      max_files: 30
+      path: "%kernel.logs_dir%/notification.log"
+      channels: [notification]
+    solidary:
+      type: rotating_file
+      level: debug
+      max_files: 30
+      path: "%kernel.logs_dir%/solidary.log"
+      channels: [solidary]
+    main:
+      type: rotating_file
+      path: "%kernel.logs_dir%/%kernel.environment%.log"
+      max_files: 30
+      level: debug
+      channels:
+        [
+          "!bank_transfert",
+          "!event",
+          "!carpool",
+          "!carpool_dynamic",
+          "!carpool_proof",
+          "!communication",
+          "!community",
+          "!consumptionFeedback",
+          "!faker",
+          "!gamification",
+          "!geography",
+          "!geomatcher",
+          "!georouter",
+          "!maintenance",
+          "!mass",
+          "!notification",
+          "!solidary",
+        ]

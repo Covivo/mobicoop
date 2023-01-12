@@ -7,27 +7,30 @@ clickHereToChangePassword: Clicca su questo collegamento per cambiare la tua pas
 askNewPassword: Hai richiesto una nuova password
 askNewPasswordTitle: Nuova password
 changePassword: Ti invitiamo vivamente a cambiarla alla tua prossima connessione
-temporaryPassword: '{password}'
+temporaryPassword: "{password}"
 temporaryPasswordAttributed: Ti è stata assegnata una password temporanea
 massMigrated: Il tuo account di covetturaggio
 journeyDetailTime: programmato il {journeyDate} alle {journeyTime}.
-journeyDetailDestination: '{journeyDestination}'
+journeyDetailDestination: "{journeyDestination}"
 journeyDetailTo: a
-journeyDetailOrigin: '{journeyOrigin}'
-youReceivedExternalContactOrigin: '{origin}'
+journeyDetailOrigin: "{journeyOrigin}"
+youReceivedExternalContactOrigin: "{origin}"
 rdexMessage: Il suo messaggio
-unsubscribeEmail: Fai clic qui per annullare l'iscrizione al servizio di notizie di
+unsubscribeEmail:
+  Fai clic qui per annullare l'iscrizione al servizio di notizie di
   {instanceName}
 header2Data: senderEmail
 urlMobileEmailValidation: /#/confirm-registration/
 clickHereToConfirm: Clicca su questo collegamento per confermare la tua e-mail
 email: E-mail
-getProblem: Se questa e-mail contiene un messaggio non conforme allo statuto, non
+getProblem:
+  Se questa e-mail contiene un messaggio non conforme allo statuto, non
   esitare a contattarci
-canAnswerViaEmailFrom: È possibile rispondere a questo messaggio tramite il sistema
+canAnswerViaEmailFrom:
+  È possibile rispondere a questo messaggio tramite il sistema
   di messaggistica di
-eventLocation: 'Indirizzo: '
-eventName: 'Nome: '
+eventLocation: "Indirizzo: "
+eventName: "Nome: "
 firstname: Nome
 name: Cognome
 to: al
@@ -36,7 +39,7 @@ occasionalCarpool: Riepilogo del tuo viaggio occasionale dal
 isConfirmed: è confermato!
 yourCarpoolWith: Il tuo covetturaggio con
 acceptedCarpool: IL TUO COVETTURAGGIO È CONFERMATO!
-signature: 'A presto su '
+signature: "A presto su "
 FollowUs: Seguici
 Download: Scarica l'applicazione <b>Android</b> o <b>iOS</b>
 URLEmailsAlerts: utente/profilo/modifica/mio-profilo
@@ -45,8 +48,8 @@ FAQ: Domande frequenti
 AQuestion: Una domanda?
 hello: Ciao
 theUser: L'utente
-eventDescription: 'Descrizione: '
-eventDetail: 'Ecco i dettagli del tuo evento:'
+eventDescription: "Descrizione: "
+eventDetail: "Ecco i dettagli del tuo evento:"
 event: IL TUO EVENTO È REGISTRATO!
 clickOnLinkToSearchAgain: Clicca su questo collegamento per riavviare la tua ricerca
 hasDeletedTheAssociateAd: ha cancellato l'annuncio associato.
@@ -72,3 +75,23 @@ errors:
   wrongDomains: "Your email address must be in one of these domains: {domains}"
   alreadyUsed: "This email address is already in use"
   phoneNumberInvalid: "This phone number is not valid"
+
+# Bank Transfert
+bt_invalid: "Invalide"
+bt_initiated: "Initié"
+bt_emitted: "Emis"
+bt_executed: "Executé"
+bt_abandonnedNoHolderId: "Abandonné : Pas de holder"
+bt_abandonnedNoHolderFound: "Abandonné : Holder non trouvé"
+bt_abandonnedNoHolderWallet: "Abandonné : Le holder n'a pas de coordonnées bancaires"
+bt_abandonnedNoPaymentProvider: "Abandonné : Il n'y pas de prestataire de paiement"
+bt_abandonnedFundsUnavailable: "Abandonné : fonds non disponibles"
+bt_abandonnedNoRecipientWallet: "Abandonné : le bénéficiaire n'a pas de coordonnées bancaires"
+bt_failedWalletToWallet: "Transfert wallet à wallet a échoué"
+bt_failedPayout: "Le payout du bénéficiaire a échoué"
+bt_unknownRecipient: "Bénéficiaire inconnu"
+bt_unknownCarpoolProof: "Preuve de covoiturage inconnue"
+bt_invalidCarpoolProof: "Preuve de covoiturage non valide"
+bt_userNotInvolvedInCarpoolProof: "Le bénéficiaire n'est pas impliqué dans le covoiturage lié à cette preuve"
+bt_unknownTerritory: "Territoire inconnu"
+bt_noAmount: "Montant non fourni"
