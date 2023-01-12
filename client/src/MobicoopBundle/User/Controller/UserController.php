@@ -1549,7 +1549,9 @@ class UserController extends AbstractController
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
 
-            return new JsonResponse($this->userManager->getSsoService($data['service']));
+            $path = isset($data['path']) ? $data['path'] : null;
+
+            return new JsonResponse($this->userManager->getSsoService($data['service'], $path));
         }
 
         return new JsonResponse();
