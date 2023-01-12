@@ -108,6 +108,7 @@
 /api/public/upload/export/*.*
 /api/public/upload/export/carpool
 /api/public/upload/export/carpool/*.*
+/api/public/upload/bankTransferts/reports/*.*
 /api/public/import/
 /api/public/import/*.*
 /api/public/import/Avatar/*.*
