@@ -16,7 +16,6 @@ use App\Incentive\Entity\ShortDistanceSubscription;
 use App\Incentive\Event\FirstLongDistanceJourneyValidatedEvent;
 use App\Incentive\Event\FirstShortDistanceJourneyValidatedEvent;
 use App\Incentive\Event\LastLongDistanceJourneyValidatedEvent;
-use App\Incentive\Event\LastShortDistanceJourneyValidatedEvent;
 use App\Incentive\Event\LongDistanceSubscriptionClosedEvent;
 use App\Incentive\Event\ShortDistanceSubscriptionClosedEvent;
 use App\Incentive\Resource\CeeSubscriptions;
@@ -264,14 +263,18 @@ class MobConnectSubscriptionManager
             $this->__updateAuth($ssoUser);
         }
 
+        // TODO: #5359 we generate the Initial Commitment Proof. The path is already defined as constant in Short or Long distance Subscription entiy
+
         if (is_null($this->_user->getShortDistanceSubscription())) {
             $shortDistanceSubscription = $this->createShortDistanceSubscription();
+            // TODO: #5359 -> $shortDistanceSubscription->setInitialCommitmentProof($initialCommitmentproof);
 
             $this->_em->persist($shortDistanceSubscription);
         }
 
         if (is_null($this->_user->getLongDistanceSubscription())) {
             $longDistanceSubscription = $this->createLongDistanceSubscription();
+            // TODO: #5359 -> $longDistanceSubscription->setInitialCommitmentProof($initialCommitmentproof);
 
             $this->_em->persist($longDistanceSubscription);
         }
@@ -328,7 +331,7 @@ class MobConnectSubscriptionManager
     /**
      * Updates subscriptions (long or short distance) based on provided carpoolProof.
      */
-    public function updateSubscription(CarpoolProof $carpoolProof, \DateTimeInterface $paymentDate = null): void
+    public function updateSubscription(CarpoolProof $carpoolProof, CarpoolPayment $carpoolPayment = null): void
     {
         if (!$this->__isValidParameters()) {
             return;
@@ -352,10 +355,9 @@ class MobConnectSubscriptionManager
                     return;
                 }
                 $journey = new LongDistanceJourney(
+                    $carpoolPayment,
                     $carpoolProof,
-                    $this->__getCarpoolersNumber($carpoolProof->getAsk()->getId()),
-                    $this->__getRpcJourneyId($carpoolProof->getId()),
-                    CeeJourneyService::RPC_NUMBER_STATUS
+                    $this->__getCarpoolersNumber($carpoolProof->getAsk()->getId())
                 );
 
                 $this->_userSubscription->addLongDistanceJourney($journey);
@@ -385,6 +387,8 @@ class MobConnectSubscriptionManager
                 break;
         }
 
+        $paymentDate = !is_null($carpoolPayment) && !is_null($carpoolPayment->getUpdatedDate()) ? $carpoolPayment->getUpdatedDate() : null;
+
         if ($this->_userSubscription) {
             $this->__setApiProviderParams();
 
@@ -398,6 +402,9 @@ class MobConnectSubscriptionManager
                             }
 
                             $this->_mobConnectApiProvider->patchUserSubscription($this->__getSubscriptionId(), null, false, $paymentDate);
+
+                            // TODO: #5359 we generate the long distance honour certificate
+                            // TODO: #5359 $this->_userSubscription->setHonourCertificate($honourCertificate);
 
                             $event = new FirstLongDistanceJourneyValidatedEvent($journey);
                             $this->_eventDispatcher->dispatch(FirstLongDistanceJourneyValidatedEvent::NAME, $event);
@@ -426,19 +433,23 @@ class MobConnectSubscriptionManager
                             // The journey is added to the EEC sheet
                             $this->_mobConnectApiProvider->patchUserSubscription($this->__getSubscriptionId(), $this->__getRpcJourneyId($carpoolProof->getId()), true);
 
-                            $event = new FirstShortDistanceJourneyValidatedEvent($journey);
-                            $this->_eventDispatcher->dispatch(FirstShortDistanceJourneyValidatedEvent::NAME, $event);
+                            // TODO: #5359 we generate the short distance honour certificate
+                            // TODO: #5359 $this->_userSubscription->setHonourCertificate($honourCertificate);
 
                             $this->__verifySubscription();
 
                             if (ShortDistanceSubscription::STATUS_VALIDATED === $this->_userSubscription->getStatus()) {
-                                $event = new LastShortDistanceJourneyValidatedEvent($journey);
-                                $this->_eventDispatcher->dispatch(LastShortDistanceJourneyValidatedEvent::NAME, $event);
+                                $journey->setBonusStatus(ShortDistanceJourney::BONUS_STATUS_PENDING);
+
+                                $event = new FirstShortDistanceJourneyValidatedEvent($journey);
+                                $this->_eventDispatcher->dispatch(FirstShortDistanceJourneyValidatedEvent::NAME, $event);
                             }
 
                             break;
 
                         case CeeJourneyService::SHORT_DISTANCE_TRIP_THRESHOLD:
+                            $journey->setBonusStatus(ShortDistanceJourney::BONUS_STATUS_PENDING);
+
                             $event = new ShortDistanceSubscriptionClosedEvent($this->_userSubscription);
                             $this->_eventDispatcher->dispatch(ShortDistanceSubscriptionClosedEvent::NAME, $event);
 
@@ -481,7 +492,7 @@ class MobConnectSubscriptionManager
             });
 
             foreach ($filteredCarpoolProofs as $carpool) {
-                $this->updateSubscription($carpool, $carpoolPayment->getUpdatedDate());
+                $this->updateSubscription($carpool, $carpoolPayment);
             }
         }
     }
