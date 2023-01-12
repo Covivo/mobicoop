@@ -8,6 +8,7 @@ use App\Geography\Entity\Address;
 use App\Incentive\Resource\CeeSubscriptions;
 use App\Payment\Entity\CarpoolItem;
 use App\User\Entity\User;
+use Psr\Log\LoggerInterface;
 
 /**
  * Provides functions necessary for the CEE journeys validation.
@@ -29,6 +30,11 @@ abstract class CeeJourneyService
      * @var Matching
      */
     private static $_matching;
+
+    /**
+     * @var LoggerInterface
+     */
+    private static $_logger;
 
     /**
      * Returns if an address is located in the REFERENCE_COUNTRY.
@@ -205,9 +211,20 @@ abstract class CeeJourneyService
     /**
      * Returns if the trip is valid for a long distance for EEC sheet.
      */
-    public static function isValidLongDistanceJourney(CarpoolProof $carpoolProof): bool
+    public static function isValidLongDistanceJourney(CarpoolProof $carpoolProof, LoggerInterface $logger): bool
     {
         self::__setMatchingFromCarpoolProof($carpoolProof);
+
+        $logger->info(json_encode([
+            'datetime' => new \DateTime(),
+            'proof-id' => $carpoolProof->getId(),
+            'type C' => CarpoolProof::TYPE_HIGH === $carpoolProof->getType(),
+            'matching_id' => !is_null(self::$_matching) ? self::$_matching->getId() : null,
+            'test-type' => 'Long distance',
+            'is_long' => self::__isLongDistance(self::$_matching->getCommonDistance()),
+            'from-france' => self::__isOriginOrDestinationFromReferenceCountry(),
+            'payment-regularized' => self::__hasBeenCarpoolPaymentRegularized($carpoolProof),
+        ]));
 
         return
             !is_null(self::$_matching)
@@ -221,9 +238,19 @@ abstract class CeeJourneyService
     /**
      * Returns if the trip is valid for a short distance for EEC sheet.
      */
-    public static function isValidShortDistanceJourney(CarpoolProof $carpoolProof): bool
+    public static function isValidShortDistanceJourney(CarpoolProof $carpoolProof, LoggerInterface $logger): bool
     {
         self::__setMatchingFromCarpoolProof($carpoolProof);
+
+        $logger->info(json_encode([
+            'datetime' => new \DateTime(),
+            'proof-id' => $carpoolProof->getId(),
+            'type C' => CarpoolProof::TYPE_HIGH === $carpoolProof->getType(),
+            'matching_id' => !is_null(self::$_matching) ? self::$_matching->getId() : null,
+            'test-type' => 'Short distance',
+            'is_short' => self::__isShortDistance(self::$_matching->getCommonDistance()),
+            'from-france' => self::__isOriginOrDestinationFromReferenceCountry(),
+        ]));
 
         return
             CarpoolProof::TYPE_HIGH === $carpoolProof->getType()

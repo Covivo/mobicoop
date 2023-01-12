@@ -71,6 +71,11 @@ monolog:
       max_files: 30
       path: "%kernel.logs_dir%/georouter.log"
       channels: [georouter]
+    incentive_subscription:
+      type: stream
+      level: debug
+      path: "%kernel.logs_dir%/incentive_subscription.log"
+      channels: [incentive_subscription]
     maintenance:
       type: rotating_file
       level: debug
@@ -115,6 +120,7 @@ monolog:
           "!geography",
           "!geomatcher",
           "!georouter",
+          "!incentive_subscription",
           "!maintenance",
           "!mass",
           "!notification",
