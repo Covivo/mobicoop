@@ -108,6 +108,12 @@
 /api/public/upload/export/*.*
 /api/public/upload/export/carpool
 /api/public/upload/export/carpool/*.*
+/api/public/upload/eec-incentives/*.*
+/api/public/upload/eec-incentives/initial-commitment-proof/*.*
+/api/public/upload/eec-incentives/long-distance-subscription/*.*
+/api/public/upload/eec-incentives/long-distance-subscription/honour-certificate/*.*
+/api/public/upload/eec-incentives/short-distance-subscription/*.*
+/api/public/upload/eec-incentives/short-distance-subscription/honour-certificate/*.*
 /api/public/upload/bankTransferts/reports/*.*
 /api/public/import/
 /api/public/import/*.*

@@ -918,19 +918,16 @@ class UserManager
      *
      * @param string $service The service name (according API sso.json)
      */
-    public function getSsoService(string $service, ?string $redirectUri = null): ?array
+    public function getSsoService(string $service, string $additionalBaseSiteUri): ?array
     {
         $this->dataProvider->setClass(SsoConnection::class);
 
         // We add the front url to the parameters
         $baseSiteUri = (isset($_SERVER['HTTPS'])) ? 'https://'.$_SERVER['HTTP_HOST'] : 'http://'.$_SERVER['HTTP_HOST'];
-        $params = ['baseSiteUri' => $baseSiteUri, 'serviceId' => $service];
-
-        if (!is_null($redirectUri)) {
-            $params['redirectUri'] = $redirectUri;
+        if (!is_null($additionalBaseSiteUri)) {
+            $baseSiteUri .= "/{$additionalBaseSiteUri}";
         }
-
-        $response = $this->dataProvider->getCollection($params);
+        $response = $this->dataProvider->getCollection(['baseSiteUri' => $baseSiteUri, 'serviceId' => $service]);
         if (200 == $response->getCode()) {
             return $response->getValue()->getMember();
         }

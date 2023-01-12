@@ -20,7 +20,7 @@ class MobConnectApiProvider extends MobConnectProvider
 
     private const ROUTE_SUBSCRIPTIONS = '/v1/maas/subscriptions';
     private const ROUTE_PATCH_SUBSCRIPTIONS = '/v1/subscriptions/{SUBSCRIPTION_ID}';
-    private const ROUTE_SUBSCRIPTIONS_VERIFY = '/v1/subscriptions/{SUBSCRIPTION_ID}/verify';
+    private const ROUTE_SUBSCRIPTIONS_VERIFY = '/v1/maas/subscriptions/{SUBSCRIPTION_ID}/verify';
 
     private const SHORT_DISTANCE_LABEL = 'Court';
     private const LONG_DISTANCE_LABEL = 'Long';

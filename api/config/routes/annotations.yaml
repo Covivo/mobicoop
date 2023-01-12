@@ -18,3 +18,6 @@ controllers:
 # communication:
 #     resource: 'Communication/Controller/'
 #     type: annotation
+# incentive:
+#     resource: 'Incentive/Controller/'
+#     type: annotation

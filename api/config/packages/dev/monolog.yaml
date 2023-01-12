@@ -60,6 +60,11 @@ monolog:
       level: debug
       path: "%kernel.logs_dir%/georouter.log"
       channels: [georouter]
+    incentive_subscription:
+      type: stream
+      level: debug
+      path: "%kernel.logs_dir%/incentive_subscription.log"
+      channels: [incentive_subscription]
     maintenance:
       type: stream
       level: debug
@@ -99,6 +104,7 @@ monolog:
           "!geography",
           "!geomatcher",
           "!georouter",
+          "!incentive_subscription",
           "!maintenance",
           "!mass",
           "!notification",
