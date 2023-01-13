@@ -61,6 +61,7 @@
         <SsoLogins
           class="mt-5"
           :specific-service="$t('service')"
+          :specific-path="$t('specificPath')"
           :default-buttons-active="false"
         />
         <p>

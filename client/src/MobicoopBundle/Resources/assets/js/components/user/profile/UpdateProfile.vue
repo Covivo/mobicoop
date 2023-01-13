@@ -1134,8 +1134,7 @@ export default {
     },
     getSso(){
       let params = {
-        "service":this.user.ssoProvider,
-        "path":"user/sso"
+        "service":this.user.ssoProvider
       }
       maxios.post(this.$t("urlGetSsoServices"), params)
         .then(response => {

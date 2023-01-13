@@ -5,6 +5,7 @@ namespace App\Incentive\Service;
 use App\Carpool\Entity\CarpoolProof;
 use App\Carpool\Entity\Matching;
 use App\Geography\Entity\Address;
+use App\Incentive\Entity\Log;
 use App\Incentive\Resource\CeeSubscriptions;
 use App\Payment\Entity\CarpoolItem;
 use App\User\Entity\User;
@@ -25,6 +26,12 @@ abstract class CeeJourneyService
     public const RPC_NUMBER_STATUS = 'OK';
     public const LONG_DISTANCE_TRIP_THRESHOLD = 3;
     public const SHORT_DISTANCE_TRIP_THRESHOLD = 10;
+
+    // LOG
+    private const ACCOUNT_READY_FOR_LONG_SUBSCRIPTION = 'is_user_account_ready_for_long_subscription';
+    private const ACCOUNT_READY_FOR_SHORT_SUBSCRIPTION = 'is_user_account_ready_for_short_subscription';
+    private const VALID_LONG_DISTANCE_JOURNEY = 'is_valid_long_distance_journey';
+    private const VALID_SHORT_DISTANCE_JOURNEY = 'is_valid_short_distance_journey';
 
     /**
      * @var Matching
@@ -153,23 +160,23 @@ abstract class CeeJourneyService
     /**
      * The user has not made any valid long-distance journeys for 3 years.
      */
-    public static function isUserAccountReadyForLongDistanceSubscription(User $user): bool
+    public static function isUserAccountReadyForLongDistanceSubscription(User $user, LoggerInterface $logger): bool
     {
         $carpoolProofs = $user->getCarpoolProofsAsDriver();
-
-        if (!self::__isUserValid($user)) {
-            return false;
-        }
+        $isUserValid = self::__isUserValid($user);
 
         if (is_null($carpoolProofs) || empty($carpoolProofs)) {
-            return true;
+            $isEmptyCarpoolProof = true;
+            new Log($logger, self::ACCOUNT_READY_FOR_LONG_SUBSCRIPTION, $user, [Log::IS_USER_VALID => $isUserValid, Log::IS_CARPOOL_PROOFS_VALID => $isEmptyCarpoolProof]);
+
+            return $isEmptyCarpoolProof;
         }
 
         $today = new \DateTime('now');
         $startDate = clone $today;
         $startDate = $startDate->sub(new \DateInterval('P'.self::REFERENCE_PERIOD.'Y'));
 
-        return empty(array_filter($carpoolProofs, function (CarpoolProof $carpoolProof) use ($startDate, $today) {
+        $filteredCarpoolProofs = array_filter($carpoolProofs, function (CarpoolProof $carpoolProof) use ($startDate, $today) {
             self::__setMatchingFromCarpoolProof($carpoolProof);
 
             return
@@ -178,25 +185,34 @@ abstract class CeeJourneyService
                 && self::__isOriginOrDestinationFromReferenceCountry()
                 && $startDate <= $carpoolProof->getStartDriverDate() && $carpoolProof->getStartDriverDate() <= $today
             ;
-        }));
-    }
+        });
 
-    /**
-     * The user has not made any valid short-distance journeys since the reference date.
-     */
-    public static function isUserAccountReadyForShortDistanceSubscription(User $user): bool
-    {
-        $carpoolProofs = $user->getCarpoolProofsAsDriver();
+        new Log($logger, self::ACCOUNT_READY_FOR_LONG_SUBSCRIPTION, $user, [Log::IS_USER_VALID => $isUserValid, Log::IS_CARPOOL_PROOFS_VALID => is_null($carpoolProofs) || !empty($carpoolProofs) || empty($filteredCarpoolProofs)]);
 
         if (!self::__isUserValid($user)) {
             return false;
         }
 
+        return empty($filteredCarpoolProofs);
+    }
+
+    /**
+     * The user has not made any valid short-distance journeys since the reference date.
+     */
+    public static function isUserAccountReadyForShortDistanceSubscription(User $user, LoggerInterface $logger): bool
+    {
+        $carpoolProofs = $user->getCarpoolProofsAsDriver();
+
+        $isUserValid = self::__isUserValid($user);
+
         if (is_null($carpoolProofs) || empty($carpoolProofs)) {
-            return true;
+            $isEmptyCarpoolProof = true;
+            new Log($logger, self::ACCOUNT_READY_FOR_SHORT_SUBSCRIPTION, $user, [Log::IS_USER_VALID => $isUserValid, Log::IS_CARPOOL_PROOFS_VALID => $isEmptyCarpoolProof]);
+
+            return $isEmptyCarpoolProof;
         }
 
-        return empty(array_filter($carpoolProofs, function (CarpoolProof $carpoolProof) {
+        $filteredCarpoolProofs = array_filter($carpoolProofs, function (CarpoolProof $carpoolProof) {
             self::__setMatchingFromCarpoolProof($carpoolProof);
 
             return
@@ -205,7 +221,15 @@ abstract class CeeJourneyService
                 && self::__isOriginOrDestinationFromReferenceCountry()
                 && $carpoolProof->getStartDriverDate() < \DateTime::createFromFormat('Y-m-d', self::REFERENCE_DATE)
             ;
-        }));
+        });
+
+        new Log($logger, self::ACCOUNT_READY_FOR_SHORT_SUBSCRIPTION, $user, [Log::IS_USER_VALID => $isUserValid, Log::IS_CARPOOL_PROOFS_VALID => is_null($carpoolProofs) || empty($carpoolProofs) || empty($filteredCarpoolProofs)]);
+
+        if (!self::__isUserValid($user)) {
+            return false;
+        }
+
+        return empty($filteredCarpoolProofs);
     }
 
     /**
@@ -215,16 +239,7 @@ abstract class CeeJourneyService
     {
         self::__setMatchingFromCarpoolProof($carpoolProof);
 
-        $logger->info(json_encode([
-            'datetime' => new \DateTime(),
-            'proof-id' => $carpoolProof->getId(),
-            'type C' => CarpoolProof::TYPE_HIGH === $carpoolProof->getType(),
-            'matching_id' => !is_null(self::$_matching) ? self::$_matching->getId() : null,
-            'test-type' => 'Long distance',
-            'is_long' => self::__isLongDistance(self::$_matching->getCommonDistance()),
-            'from-france' => self::__isOriginOrDestinationFromReferenceCountry(),
-            'payment-regularized' => self::__hasBeenCarpoolPaymentRegularized($carpoolProof),
-        ]));
+        new Log($logger, self::VALID_LONG_DISTANCE_JOURNEY, $carpoolProof->getDriver(), [Log::CARPOOL_PROOF_ID => $carpoolProof->getId(), Log::TYPE_C => CarpoolProof::TYPE_HIGH === $carpoolProof->getType(), Log::MATCHING_ID => !is_null(self::$_matching) ? self::$_matching->getId() : 0, Log::IS_LONG_DISTANCE => self::__isLongDistance(self::$_matching->getCommonDistance()), Log::IS_FROM_FRANCE => self::__isOriginOrDestinationFromReferenceCountry(), Log::IS_PAYMENT_REGULARIZED => self::__hasBeenCarpoolPaymentRegularized($carpoolProof)]);
 
         return
             !is_null(self::$_matching)
@@ -242,15 +257,7 @@ abstract class CeeJourneyService
     {
         self::__setMatchingFromCarpoolProof($carpoolProof);
 
-        $logger->info(json_encode([
-            'datetime' => new \DateTime(),
-            'proof-id' => $carpoolProof->getId(),
-            'type C' => CarpoolProof::TYPE_HIGH === $carpoolProof->getType(),
-            'matching_id' => !is_null(self::$_matching) ? self::$_matching->getId() : null,
-            'test-type' => 'Short distance',
-            'is_short' => self::__isShortDistance(self::$_matching->getCommonDistance()),
-            'from-france' => self::__isOriginOrDestinationFromReferenceCountry(),
-        ]));
+        new Log($logger, self::VALID_SHORT_DISTANCE_JOURNEY, $carpoolProof->getDriver(), [Log::TYPE_C => CarpoolProof::TYPE_HIGH === $carpoolProof->getType(), Log::MATCHING_ID => !is_null(self::$_matching) ? self::$_matching->getId() : 0, Log::IS_LONG_DISTANCE => self::__isLongDistance(self::$_matching->getCommonDistance()), Log::IS_FROM_FRANCE => self::__isOriginOrDestinationFromReferenceCountry()]);
 
         return
             CarpoolProof::TYPE_HIGH === $carpoolProof->getType()

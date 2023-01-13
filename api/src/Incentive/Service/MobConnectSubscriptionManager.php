@@ -246,15 +246,8 @@ class MobConnectSubscriptionManager
 
     // * PUBLIC FUNCTIONS ---------------------------------------------------------------------------------------------------------------------------
 
-    /**
-     * For the authenticated user, if needed, creates the CEE sheets.
-     */
-    public function createSubscriptions(User $user, SsoUser $ssoUser)
+    public function updateAuth(User $user, SsoUser $ssoUser)
     {
-        if (!$this->__isValidParameters()) {
-            return;
-        }
-
         $this->_user = $user;
 
         if (is_null($this->_user->getMobConnectAuth())) {
@@ -263,7 +256,19 @@ class MobConnectSubscriptionManager
             $this->__updateAuth($ssoUser);
         }
 
-        // TODO: #5359 we generate the Initial Commitment Proof. The path is already defined as constant in Short or Long distance Subscription entiy
+        $this->_em->flush();
+    }
+
+    /**
+     * For the authenticated user, if needed, creates the CEE sheets.
+     */
+    public function createSubscriptions(User $user)
+    {
+        if (!$this->__isValidParameters()) {
+            return;
+        }
+
+        $this->_user = $user;
 
         if (is_null($this->_user->getShortDistanceSubscription())) {
             $shortDistanceSubscription = $this->createShortDistanceSubscription();
@@ -286,7 +291,7 @@ class MobConnectSubscriptionManager
     {
         $this->__setApiProviderParams();
 
-        if (is_null($this->_user->getShortDistanceSubscription()) && CeeJourneyService::isUserAccountReadyForShortDistanceSubscription($this->_user)) {
+        if (is_null($this->_user->getShortDistanceSubscription()) && CeeJourneyService::isUserAccountReadyForShortDistanceSubscription($this->_user, $this->_logger)) {
             $mobConnectShortDistanceSubscription = $this->_mobConnectApiProvider->postSubscriptionForShortDistance();
 
             return new ShortDistanceSubscription($this->_user, $mobConnectShortDistanceSubscription);
@@ -297,7 +302,7 @@ class MobConnectSubscriptionManager
     {
         $this->__setApiProviderParams();
 
-        if (is_null($this->_user->getLongDistanceSubscription()) && CeeJourneyService::isUserAccountReadyForLongDistanceSubscription($this->_user)) {
+        if (is_null($this->_user->getLongDistanceSubscription()) && CeeJourneyService::isUserAccountReadyForLongDistanceSubscription($this->_user, $this->_logger)) {
             $mobConnectLongDistanceSubscription = $this->_mobConnectApiProvider->postSubscriptionForLongDistance();
 
             return new LongDistanceSubscription($this->_user, $mobConnectLongDistanceSubscription);
