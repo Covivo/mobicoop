@@ -34,6 +34,10 @@ export default {
       type: String,
       default: ""
     },
+    specificPath:{
+      type: String,
+      default: null
+    },
     defaultButtonsActive: {
       type: Boolean,
       default: true
@@ -61,7 +65,8 @@ export default {
   methods:{
     getSso(){
       let data = {
-        "service": this.specificService ? this.specificService : null
+        "service": this.specificService ? this.specificService : null,
+        "path": this.specificPath
       };
       maxios.post(this.$t("urlGetSsoServices"), data)
         .then(response => {
