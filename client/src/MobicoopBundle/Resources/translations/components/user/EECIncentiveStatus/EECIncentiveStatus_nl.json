@@ -15,6 +15,7 @@
   ],
   "logo-france-connect": "/images/logo-france-connect.png",
   "service": "mobConnect",
+  "specificPath": "user/sso",
   "routes": {
     "getMyCeeSubscriptions": "/getMyCeeSubscriptions"
   },
