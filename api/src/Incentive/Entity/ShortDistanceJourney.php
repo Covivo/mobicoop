@@ -50,9 +50,9 @@ class ShortDistanceJourney
     private $endAddressLocality;
 
     /**
-     * @var int the distance in meter of the journey
+     * @var int the distance in kilometer of the journey
      *
-     * @ORM\Column(type="integer", nullable=true)
+     * @ORM\Column(type="decimal", scale=1, precision=5, nullable=true)
      */
     private $distance;
 
@@ -223,7 +223,8 @@ class ShortDistanceJourney
      */
     public function setDistance(int $distance): self
     {
-        $this->distance = $distance;
+        // We convert the distance given in meter to kilometer
+        $this->distance = $distance / 1000;
 
         return $this;
     }
