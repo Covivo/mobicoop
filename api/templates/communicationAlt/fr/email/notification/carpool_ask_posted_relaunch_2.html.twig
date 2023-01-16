@@ -176,7 +176,7 @@
                                 src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/monGreen.png"
                                 style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
                             />
-                        {% else %} 
+                        {% else %}
                             <img
                                 src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/monGrey.png"
                                 style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
@@ -189,7 +189,7 @@
                                     src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/tueGreen.png"
                                     style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
                                 />
-                            {% else %} 
+                            {% else %}
                                 <img
                                     src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/tueGrey.png"
                                     style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
@@ -202,7 +202,7 @@
                                     src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/wedGreen.png"
                                     style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
                                 />
-                            {% else %} 
+                            {% else %}
                                 <img
                                     src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/wedGrey.png"
                                     style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
@@ -215,7 +215,7 @@
                                     src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/thuGreen.png"
                                     style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
                                 />
-                            {% else %} 
+                            {% else %}
                                 <img
                                     src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/thuGrey.png"
                                     style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
@@ -228,7 +228,7 @@
                                     src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/friGreen.png"
                                     style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
                                 />
-                            {% else %} 
+                            {% else %}
                                 <img
                                     src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/friGrey.png"
                                     style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
@@ -241,7 +241,7 @@
                                     src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/satGreen.png"
                                     style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
                                 />
-                            {% else %} 
+                            {% else %}
                                 <img
                                     src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/satGrey.png"
                                     style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
@@ -254,7 +254,7 @@
                                     src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/sunGreen.png"
                                     style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
                                 />
-                            {% else %} 
+                            {% else %}
                                 <img
                                     src="{{api_env('EMAILS_PLATFORM_URL')}}{{api_env('EMAILS_IMAGES_BASE_URL')}}/bodyAlt/days/sunGrey.png"
                                     style="border:0; height:25px; width:25px; background-color:transparent; vertical-align:top;"
@@ -283,7 +283,7 @@
                                     <td>
                                         {% if schedule.outwardPickUpTime == null %}
                                             <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">Non concerné</b></p>
-                                        {% else %} 
+                                        {% else %}
                                             <p style="font-size:11px;">Prise en charge à <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{schedule.outwardPickUpTime|date('H:i')}}</b></p>
                                         {% endif %}
                                     </td>
@@ -292,7 +292,7 @@
                                     <td>
                                         {% if schedule.outwardPickUpTime == null %}
                                             <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">Non concerné</b></p>
-                                        {% else %} 
+                                        {% else %}
                                             <p style="font-size:11px;">Dépose à <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{schedule.outwardDropOffTime|date('H:i')}}</b></p>
                                         {% endif %}
                                     </td>
@@ -310,7 +310,7 @@
                                     <td>
                                         {% if schedule.returnPickUpTime == null %}
                                             <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">Non concerné</b></p>
-                                        {% else %} 
+                                        {% else %}
                                             <p style="font-size:11px;">Prise en charge à <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{schedule.returnPickUpTime|date('H:i')}}</b></p>
                                         {% endif %}
                                     </td>
@@ -319,7 +319,7 @@
                                     <td>
                                         {% if schedule.returnPickUpTime == null %}
                                             <p style="font-size:11px;"><b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">Non concerné</b></p>
-                                        {% else %} 
+                                        {% else %}
                                             <p style="font-size:11px;">Dépose à <b style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};">{{schedule.returnDropOffTime|date('H:i')}}</b></p>
                                         {% endif %}
                                     </td>
@@ -372,7 +372,7 @@
                         <p> </p>
                     </td>
                     <td align="center" >
-                        <p style="font-size:11px; text-align: justify;"> Nous vous rappelons l’importance de répondre à ses sollicitations de covoiturage. En l’absence de réponse, la personne est bloquée dans l’organisation de son trajet et cela pénalise la communauté de covoitureurs de Rezo Mobicoop. Nous vous remercions de votre compréhension.</p>
+                        <p style="font-size:11px; text-align: justify;"> Nous vous rappelons l’importance de répondre à ses sollicitations de covoiturage. En l’absence de réponse, la personne est bloquée dans l’organisation de son trajet et cela pénalise la communauté de covoitureurs de Mobicoop. Nous vous remercions de votre compréhension.</p>
                     </td>
                 </tr>
             </table>
