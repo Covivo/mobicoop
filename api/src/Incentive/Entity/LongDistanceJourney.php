@@ -118,10 +118,11 @@ class LongDistanceJourney
         $this->setDistance($carpoolProof->getAsk()->getMatching()->getCommonDistance());
         $this->setCarpoolersNumber($carpoolersNumber);
 
-        $startDate = \DateTime::createFromFormat(
-            'Y-m-d H:i:s',
-            $carpoolProof->getAsk()->getMatching()->getCriteria()->getFromDate()->format('Y-m-d').' '.$carpoolProof->getAsk()->getMatching()->getCriteria()->getFromTime()->format('H:i:s')
-        );
+        $date = $carpoolProof->getAsk()->getMatching()->getCriteria()->getFromDate()->format('Y-m-d');
+        $time = !is_null($carpoolProof->getAsk()->getMatching()->getCriteria()->getFromTime())
+            ? $carpoolProof->getAsk()->getMatching()->getCriteria()->getFromTime()->format('H:i:s') : '00:00:00';
+
+        $startDate = \DateTime::createFromFormat('Y-m-d H:i:s', "{$date} {$time}");
         $endDate = clone $startDate;
         $endDate->add(new \DateInterval('PT'.$carpoolProof->getAsk()->getMatching()->getNewDuration().'S'));
         $this->setStartDate($startDate->format('Y-m-d H:i:s'));

@@ -227,7 +227,7 @@ class LongDistanceSubscription
 
     public function addLongDistanceJourney(LongDistanceJourney $longDistanceJourney): self
     {
-        $this->longDistanceSubscriptions[] = $longDistanceJourney;
+        $this->longDistanceJourneys[] = $longDistanceJourney;
         $longDistanceJourney->setLongDistanceSubscription($this);
 
         return $this;
@@ -235,7 +235,7 @@ class LongDistanceSubscription
 
     public function removeLongDistanceJourney(LongDistanceJourney $longDistanceJourney)
     {
-        return $this->longDistanceSubscription->removeElement($longDistanceJourney);
+        return $this->longDistanceJourneys->removeElement($longDistanceJourney);
     }
 
     public function getLongDistanceJourneys()
