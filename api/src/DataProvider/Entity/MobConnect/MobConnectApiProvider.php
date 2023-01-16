@@ -153,7 +153,7 @@ class MobConnectApiProvider extends MobConnectProvider
         if (true === $isShortDistance) {
             $data['Identifiant du trajet'] = $rpcJourneyId;
         } else {
-            $data['Date de partage des frais'] = $costSharingDate->format('d/m/Y');
+            $data['Date de partage des frais'] = $costSharingDate->format('Y-m-d');
         }
 
         $this->_createDataProvider(self::ROUTE_PATCH_SUBSCRIPTIONS, $subscriptionId);

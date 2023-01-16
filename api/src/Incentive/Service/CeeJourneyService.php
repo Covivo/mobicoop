@@ -245,6 +245,7 @@ abstract class CeeJourneyService
             !is_null(self::$_matching)
             && self::__isLongDistance(self::$_matching->getCommonDistance())
             && self::__isOriginOrDestinationFromReferenceCountry()
+            && CarpoolProof::TYPE_HIGH === $carpoolProof->getType()
             && !is_null($carpoolProof->getAsk()->getCriteria())
             && self::__hasBeenCarpoolPaymentRegularized($carpoolProof)
         ;
