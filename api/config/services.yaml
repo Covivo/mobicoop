@@ -309,6 +309,12 @@ services:
       $userReview: "%env(bool:USER_REVIEW)%"
       $carpoolNoticeableDetourDurationPercent: "%env(int:CARPOOL_NOTICEABLE_DETOUR_DURATION_PERCENT)%"
       $carpoolNoticeableDetourDistancePercent: "%env(int:CARPOOL_NOTICEABLE_DETOUR_DISTANCE_PERCENT)%"
+  
+  # CarpoolStandard
+  App\DataProvider\Entity\InteropProvider:
+    arguments:
+      $interopApiKey: "%env(string:INTEROP_API_KEY)%"
+      $interopBaseUri: "%env(string:INTEROP_BASE_URI)%"
 
   # Commands
   App\Command\CarpoolAskPostedRelaunch1Command:
