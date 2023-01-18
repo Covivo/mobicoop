@@ -918,7 +918,7 @@ class UserManager
      *
      * @param string $service The service name (according API sso.json)
      */
-    public function getSsoService(string $service, string $additionalBaseSiteUri): ?array
+    public function getSsoService(string $service, string $additionalBaseSiteUri = null): ?array
     {
         $this->dataProvider->setClass(SsoConnection::class);
 
