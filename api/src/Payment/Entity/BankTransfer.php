@@ -39,7 +39,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class BankTransfert
+class BankTransfer
 {
     public const DEFAULT_ID = '999999999999';
 

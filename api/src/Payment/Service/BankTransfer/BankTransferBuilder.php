@@ -20,17 +20,17 @@
  *    LICENSE
  */
 
-namespace App\Payment\Service\BankTransfert;
+namespace App\Payment\Service\BankTransfer;
 
-use App\Payment\Entity\BankTransfert;
-use App\Payment\Exception\BankTransfertException;
+use App\Payment\Entity\BankTransfer;
+use App\Payment\Exception\BankTransferException;
 
 /**
  * Bank Transfert Builder.
  *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class BankTransfertBuilder
+class BankTransferBuilder
 {
     /**
      * @var array
@@ -42,11 +42,11 @@ class BankTransfertBuilder
      */
     private $_batchId;
 
-    private $_bankTransfertValidator;
+    private $_bankTransferValidator;
 
-    public function __construct(BankTransfertValidator $bankTransfertValidator)
+    public function __construct(BankTransferValidator $bankTransferValidator)
     {
-        $this->_bankTransfertValidator = $bankTransfertValidator;
+        $this->_bankTransferValidator = $bankTransferValidator;
     }
 
     public function setData(array $data): self
@@ -56,31 +56,31 @@ class BankTransfertBuilder
         return $this;
     }
 
-    public function build(string $batchId): ?BankTransfert
+    public function build(string $batchId): ?BankTransfer
     {
         $this->_batchId = $batchId;
 
         if (is_null($this->_data)) {
-            throw new BankTransfertException(BankTransfertException::BT_BUILDER_NO_DATA);
+            throw new BankTransferException(BankTransferException::BT_BUILDER_NO_DATA);
         }
 
         return $this->_build();
     }
 
-    private function _build(): ?BankTransfert
+    private function _build(): ?BankTransfer
     {
-        $this->_bankTransfertValidator->setData($this->_data);
-        $this->_bankTransfertValidator->valid($this->_batchId);
+        $this->_bankTransferValidator->setData($this->_data);
+        $this->_bankTransferValidator->valid($this->_batchId);
 
-        $bankTransfert = new BankTransfert();
-        $bankTransfert->setAmount($this->_bankTransfertValidator->getAmount());
-        $bankTransfert->setRecipient($this->_bankTransfertValidator->getRecipient());
-        $bankTransfert->setTerritory($this->_bankTransfertValidator->getTerritory());
-        $bankTransfert->setCarpoolProof($this->_bankTransfertValidator->getCarpoolProof());
-        $bankTransfert->setDetails($this->_bankTransfertValidator->getOptionalColumns());
-        $bankTransfert->setStatus($this->_bankTransfertValidator->getStatus());
-        $bankTransfert->setBatchId($this->_batchId);
+        $bankTransfer = new BankTransfer();
+        $bankTransfer->setAmount($this->_bankTransferValidator->getAmount());
+        $bankTransfer->setRecipient($this->_bankTransferValidator->getRecipient());
+        $bankTransfer->setTerritory($this->_bankTransferValidator->getTerritory());
+        $bankTransfer->setCarpoolProof($this->_bankTransferValidator->getCarpoolProof());
+        $bankTransfer->setDetails($this->_bankTransferValidator->getOptionalColumns());
+        $bankTransfer->setStatus($this->_bankTransferValidator->getStatus());
+        $bankTransfer->setBatchId($this->_batchId);
 
-        return $bankTransfert;
+        return $bankTransfer;
     }
 }

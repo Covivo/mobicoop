@@ -20,13 +20,13 @@
  *    LICENSE
  */
 
-namespace App\Payment\Service\BankTransfert;
+namespace App\Payment\Service\BankTransfer;
 
 use App\Communication\Entity\Email;
 use App\Communication\Service\EmailManager;
-use App\Payment\Entity\BankTransfert;
-use App\Payment\Exception\BankTransfertException;
-use App\Payment\Repository\BankTransfertRepository;
+use App\Payment\Entity\BankTransfer;
+use App\Payment\Exception\BankTransferException;
+use App\Payment\Repository\BankTransferRepository;
 use App\TranslatorTrait;
 use Psr\Log\LoggerInterface;
 use Twig\Environment;
@@ -36,20 +36,20 @@ use Twig\Environment;
  *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class BankTransfertsSummarizer
+class BankTransfersSummarizer
 {
     use TranslatorTrait;
 
-    public const PATH_TO_FILES = __DIR__.'/../../../../public/upload/bankTransferts/reports';
+    public const PATH_TO_FILES = __DIR__.'/../../../../public/upload/bankTransfers/reports';
     public const FILES_EXTENTION = 'csv';
     public const CSV_DELIMITER = ';';
 
     public const CSV_HEADERS = ['batchId', 'createdDate', 'status', 'recipient', 'amount', 'territoryId'];
 
-    public const EMAIL_TEMPLATE = 'bank_transferts_report';
+    public const EMAIL_TEMPLATE = 'bank_transfers_report';
     public const EMAIL_LANGUAGE = 'fr';
 
-    private $_bankTransfertRepository;
+    private $_BankTransferRepository;
     private $_logger;
     private $_emailManager;
     private $_communicationFolder;
@@ -59,9 +59,9 @@ class BankTransfertsSummarizer
     private $_emailRecipients;
 
     /**
-     * @var BankTransfert[]
+     * @var BankTransfer[]
      */
-    private $_bankTransferts;
+    private $_BankTransfers;
 
     /**
      * @var string
@@ -69,7 +69,7 @@ class BankTransfertsSummarizer
     private $_batchId;
 
     public function __construct(
-        BankTransfertRepository $bankTransfertRepository,
+        BankTransferRepository $BankTransferRepository,
         LoggerInterface $logger,
         EmailManager $emailManager,
         Environment $templating,
@@ -78,7 +78,7 @@ class BankTransfertsSummarizer
         string $emailTitleTemplatePath,
         array $emailRecipients
     ) {
-        $this->_bankTransfertRepository = $bankTransfertRepository;
+        $this->_BankTransferRepository = $BankTransferRepository;
         $this->_logger = $logger;
         $this->_emailManager = $emailManager;
         $this->_communicationFolder = $communicationFolder;
@@ -100,16 +100,16 @@ class BankTransfertsSummarizer
     {
         $file = fopen(self::PATH_TO_FILES.'/'.$this->_batchId.'.'.self::FILES_EXTENTION, 'w');
         fputcsv($file, self::CSV_HEADERS, self::CSV_DELIMITER);
-        foreach ($this->_bankTransferts as $bankTransfert) {
+        foreach ($this->_BankTransfers as $BankTransfer) {
             $line = [];
-            $line[0] = $bankTransfert->getBatchId();
-            $line[1] = $bankTransfert->getCreatedDate()->format('d/m/Y');
-            $line[2] = $this->translator->trans(BankTransfert::STATUS_TXT[$bankTransfert->getStatus()]);
-            $line[3] = (!is_null($bankTransfert->getRecipient())) ? $bankTransfert->getRecipient()->getId() : null;
-            $line[4] = $bankTransfert->getAmount();
-            $line[5] = (!is_null($bankTransfert->getTerritory())) ? $bankTransfert->getTerritory()->getId() : null;
-            $line[6] = (!is_null($bankTransfert->getCarpoolProof())) ? $bankTransfert->getCarpoolProof()->getId() : null;
-            $details = json_decode($bankTransfert->getDetails(), true);
+            $line[0] = $BankTransfer->getBatchId();
+            $line[1] = $BankTransfer->getCreatedDate()->format('d/m/Y');
+            $line[2] = $this->translator->trans(BankTransfer::STATUS_TXT[$BankTransfer->getStatus()]);
+            $line[3] = (!is_null($BankTransfer->getRecipient())) ? $BankTransfer->getRecipient()->getId() : null;
+            $line[4] = $BankTransfer->getAmount();
+            $line[5] = (!is_null($BankTransfer->getTerritory())) ? $BankTransfer->getTerritory()->getId() : null;
+            $line[6] = (!is_null($BankTransfer->getCarpoolProof())) ? $BankTransfer->getCarpoolProof()->getId() : null;
+            $details = json_decode($BankTransfer->getDetails(), true);
             if (is_array($details)) {
                 foreach ($details as $detail) {
                     $line[] = $detail;
@@ -122,8 +122,8 @@ class BankTransfertsSummarizer
 
     private function _getTransferts()
     {
-        if (!$this->_bankTransferts = $this->_bankTransfertRepository->findBy(['batchId' => $this->_batchId])) {
-            $this->_logger->error('[BatchId : '.$this->_batchId.'] '.BankTransfertException::SUMMARIZER_NO_TRANSFERT_FOR_THIS_BATCH_ID);
+        if (!$this->_BankTransfers = $this->_BankTransferRepository->findBy(['batchId' => $this->_batchId])) {
+            $this->_logger->error('[BatchId : '.$this->_batchId.'] '.BankTransferException::SUMMARIZER_NO_TRANSFERT_FOR_THIS_BATCH_ID);
         }
     }
 
@@ -131,7 +131,7 @@ class BankTransfertsSummarizer
     {
         $email = new Email();
         if (0 == count($this->_emailRecipients)) {
-            throw new BankTransfertException(BankTransfertException::NO_REPORT_RECIPIENTS);
+            throw new BankTransferException(BankTransferException::NO_REPORT_RECIPIENTS);
         }
         $email->setRecipientEmail($this->_emailRecipients[0]);
 

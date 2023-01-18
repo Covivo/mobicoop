@@ -20,9 +20,9 @@
  *    LICENSE
  */
 
-namespace App\Payment\Service\BankTransfert;
+namespace App\Payment\Service\BankTransfer;
 
-use App\Payment\Exception\BankTransfertException;
+use App\Payment\Exception\BankTransferException;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
@@ -30,30 +30,30 @@ use Doctrine\ORM\EntityManagerInterface;
  *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class BankTransfertManager
+class BankTransferManager
 {
-    public const PATH_TO_FILES = __DIR__.'/../../../../public/upload/bankTransferts';
+    public const PATH_TO_FILES = __DIR__.'/../../../../public/upload/bankTransfers';
     public const FILES_EXTENTION = 'csv';
     public const CSV_DELIMITER = ';';
 
-    private $_bankTransfertCollectionBuilder;
+    private $_BankTransferCollectionBuilder;
     private $_entityManager;
-    private $_bankTransfertEmitter;
-    private $_bankTransfertsSummarizer;
+    private $_BankTransferEmitter;
+    private $_BankTransfersSummarizer;
 
     public function __construct(
-        BankTransfertCollectionBuilder $bankTransfertCollectionBuilder,
+        BankTransferCollectionBuilder $BankTransferCollectionBuilder,
         EntityManagerInterface $entityManager,
-        BankTransfertEmitter $bankTransfertEmitter,
-        BankTransfertsSummarizer $bankTransfertsSummarizer
+        BankTransferEmitter $BankTransferEmitter,
+        BankTransfersSummarizer $BankTransfersSummarizer
     ) {
-        $this->_bankTransfertCollectionBuilder = $bankTransfertCollectionBuilder;
+        $this->_BankTransferCollectionBuilder = $BankTransferCollectionBuilder;
         $this->_entityManager = $entityManager;
-        $this->_bankTransfertEmitter = $bankTransfertEmitter;
-        $this->_bankTransfertsSummarizer = $bankTransfertsSummarizer;
+        $this->_BankTransferEmitter = $BankTransferEmitter;
+        $this->_BankTransfersSummarizer = $BankTransfersSummarizer;
     }
 
-    public function makeBankTransferts()
+    public function makeBankTransfers()
     {
         $files = glob(self::PATH_TO_FILES.'/*.'.self::FILES_EXTENTION);
 
@@ -65,18 +65,18 @@ class BankTransfertManager
 
         foreach ($files as $filepath) {
             $this->_checkCsvDelimiter($filepath);
-            $this->_bankTransfertCollectionBuilder->setFilePath($filepath);
-            $this->_bankTransfertCollectionBuilder->build();
-            $this->_bankTransfertCollectionBuilder->getBatchId();
+            $this->_BankTransferCollectionBuilder->setFilePath($filepath);
+            $this->_BankTransferCollectionBuilder->build();
+            $this->_BankTransferCollectionBuilder->getBatchId();
             $this->_showConsoleResults();
-            foreach ($this->_bankTransfertCollectionBuilder->getBankTransferts() as $bankTransfert) {
-                $this->_entityManager->persist($bankTransfert);
+            foreach ($this->_BankTransferCollectionBuilder->getBankTransfers() as $BankTransfer) {
+                $this->_entityManager->persist($BankTransfer);
             }
             $this->_entityManager->flush();
         }
 
-        $this->_bankTransfertEmitter->emit($this->_bankTransfertCollectionBuilder->getBatchId());
-        $this->_bankTransfertsSummarizer->summarize($this->_bankTransfertCollectionBuilder->getBatchId());
+        // $this->_BankTransferEmitter->emit($this->_BankTransferCollectionBuilder->getBatchId());
+        $this->_BankTransfersSummarizer->summarize($this->_BankTransferCollectionBuilder->getBatchId());
     }
 
     private function _checkCsvDelimiter(string $filepath)
@@ -84,7 +84,7 @@ class BankTransfertManager
         try {
             $file = fopen($filepath, 'r');
         } catch (\Exception $e) {
-            throw new BankTransfertException(BankTransfertException::ERROR_OPENING_FILE.$filepath);
+            throw new BankTransferException(BankTransferException::ERROR_OPENING_FILE.$filepath);
         }
 
         $cpt = 0;
@@ -95,7 +95,7 @@ class BankTransfertManager
                 if (false == strpos($line, self::CSV_DELIMITER)) {
                     fclose($file);
 
-                    throw new BankTransfertException(BankTransfertException::BAD_DELIMITER.$line);
+                    throw new BankTransferException(BankTransferException::BAD_DELIMITER.$line);
                 }
             }
         }
@@ -106,14 +106,14 @@ class BankTransfertManager
     private function _showConsoleResults()
     {
         echo '------------------'.PHP_EOL;
-        foreach ($this->_bankTransfertCollectionBuilder->getBankTransferts() as $bankTransfert) {
-            echo 'id : '.$bankTransfert->getId().PHP_EOL;
-            echo 'amount : '.(!is_null($bankTransfert->getAmount()) ? $bankTransfert->getAmount() : 'null').PHP_EOL;
-            echo 'recipientId : '.(!is_null($bankTransfert->getRecipient()) ? $bankTransfert->getRecipient()->getId() : 'null').PHP_EOL;
-            echo 'territoryId : '.(!is_null($bankTransfert->getTerritory()) ? $bankTransfert->getTerritory()->getId() : 'null').PHP_EOL;
-            echo 'carpoolProofId : '.(!is_null($bankTransfert->getCarpoolProof()) ? $bankTransfert->getCarpoolProof()->getId() : 'null').PHP_EOL;
-            echo 'details : '.$bankTransfert->getDetails().PHP_EOL;
-            echo 'status : '.$bankTransfert->getStatus().PHP_EOL;
+        foreach ($this->_BankTransferCollectionBuilder->getBankTransfers() as $BankTransfer) {
+            echo 'id : '.$BankTransfer->getId().PHP_EOL;
+            echo 'amount : '.(!is_null($BankTransfer->getAmount()) ? $BankTransfer->getAmount() : 'null').PHP_EOL;
+            echo 'recipientId : '.(!is_null($BankTransfer->getRecipient()) ? $BankTransfer->getRecipient()->getId() : 'null').PHP_EOL;
+            echo 'territoryId : '.(!is_null($BankTransfer->getTerritory()) ? $BankTransfer->getTerritory()->getId() : 'null').PHP_EOL;
+            echo 'carpoolProofId : '.(!is_null($BankTransfer->getCarpoolProof()) ? $BankTransfer->getCarpoolProof()->getId() : 'null').PHP_EOL;
+            echo 'details : '.$BankTransfer->getDetails().PHP_EOL;
+            echo 'status : '.$BankTransfer->getStatus().PHP_EOL;
             echo '------------------'.PHP_EOL;
         }
     }

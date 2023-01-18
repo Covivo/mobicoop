@@ -20,9 +20,9 @@
  *    LICENSE
  */
 
-namespace App\Payment\Service\BankTransfert;
+namespace App\Payment\Service\BankTransfer;
 
-use App\Payment\Exception\BankTransfertException;
+use App\Payment\Exception\BankTransferException;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -30,7 +30,7 @@ use Psr\Log\LoggerInterface;
  *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class BankTransfertCollectionBuilder
+class BankTransferCollectionBuilder
 {
     public const CSV_DELIMITER = ';';
 
@@ -42,7 +42,7 @@ class BankTransfertCollectionBuilder
     /**
      * @var array
      */
-    private $_bankTransferts;
+    private $_BankTransfers;
 
     /**
      * @var string
@@ -50,16 +50,16 @@ class BankTransfertCollectionBuilder
     private $_batchId;
 
     /**
-     * @var BankTransfertBuilder
+     * @var BankTransferBuilder
      */
-    private $_bankTransfertBuilder;
+    private $_BankTransferBuilder;
 
     private $_logger;
 
-    public function __construct(BankTransfertBuilder $bankTransfertBuilder, LoggerInterface $logger)
+    public function __construct(BankTransferBuilder $BankTransferBuilder, LoggerInterface $logger)
     {
-        $this->_bankTransferts = [];
-        $this->_bankTransfertBuilder = $bankTransfertBuilder;
+        $this->_BankTransfers = [];
+        $this->_BankTransferBuilder = $BankTransferBuilder;
         $this->_logger = $logger;
     }
 
@@ -70,9 +70,9 @@ class BankTransfertCollectionBuilder
         return $this;
     }
 
-    public function getBankTransferts(): array
+    public function getBankTransfers(): array
     {
-        return $this->_bankTransferts;
+        return $this->_BankTransfers;
     }
 
     public function getBatchId(): string
@@ -85,7 +85,7 @@ class BankTransfertCollectionBuilder
         try {
             $file = fopen($this->_filepath, 'r');
         } catch (\Exception $e) {
-            throw new BankTransfertException(BankTransfertException::ERROR_OPENING_FILE.' '.$this->_filepath);
+            throw new BankTransferException(BankTransferException::ERROR_OPENING_FILE.' '.$this->_filepath);
         }
 
         $this->_batchId = $this->_generateUuid();
@@ -93,9 +93,9 @@ class BankTransfertCollectionBuilder
         while (!feof($file)) {
             $line = fgetcsv($file, 0, self::CSV_DELIMITER);
             if ($line) {
-                $this->_bankTransfertBuilder->setData($line);
-                if (!is_null($bankTransfert = $this->_bankTransfertBuilder->build($this->_batchId))) {
-                    $this->_bankTransferts[] = $bankTransfert;
+                $this->_BankTransferBuilder->setData($line);
+                if (!is_null($BankTransfer = $this->_BankTransferBuilder->build($this->_batchId))) {
+                    $this->_BankTransfers[] = $BankTransfer;
                 }
             }
         }

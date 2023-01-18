@@ -20,9 +20,9 @@
  *    LICENSE
  */
 
-namespace App\Payment\Service\BankTransfert;
+namespace App\Payment\Service\BankTransfer;
 
-use App\Payment\Entity\BankTransfert;
+use App\Payment\Entity\BankTransfer;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 
@@ -31,7 +31,7 @@ use Psr\Log\LoggerInterface;
  *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class BankTransfertEmitterVerifier
+class BankTransferEmitterVerifier
 {
     public const WALLET_TRANSFERT_TYPE = 'TRANSFER';
     public const WALLET_TRANSFERT_STATUS = 'SUCCEEDED';
@@ -41,9 +41,9 @@ class BankTransfertEmitterVerifier
     private $_entityManager;
 
     /**
-     * @var BankTransfert
+     * @var BankTransfer
      */
-    private $_bankTransfert;
+    private $_BankTransfer;
 
     public function __construct(
         LoggerInterface $logger,
@@ -53,22 +53,22 @@ class BankTransfertEmitterVerifier
         $this->_entityManager = $entityManager;
     }
 
-    public function verify(BankTransfert $bankTransfert, array $return)
+    public function verify(BankTransfer $BankTransfer, array $return)
     {
-        $this->_bankTransfert = $bankTransfert;
+        $this->_BankTransfer = $BankTransfer;
         if (!$this->_checkWalletToWallet($return[0])) {
-            $this->_bankTransfert->setStatus(BankTransfert::STATUS_FAILED_WALLET_TO_WALLET);
+            $this->_BankTransfer->setStatus(BankTransfer::STATUS_FAILED_WALLET_TO_WALLET);
             $this->_updateTransfert();
 
             return;
         }
         if (!$this->_checkPayout($return[1])) {
-            $this->_bankTransfert->setStatus(BankTransfert::STATUS_FAILED_PAYOUT);
+            $this->_BankTransfer->setStatus(BankTransfer::STATUS_FAILED_PAYOUT);
             $this->_updateTransfert();
 
             return;
         }
-        $this->_bankTransfert->setStatus(BankTransfert::STATUS_EXECUTED);
+        $this->_BankTransfer->setStatus(BankTransfer::STATUS_EXECUTED);
         $this->_updateTransfert();
     }
 
@@ -85,7 +85,7 @@ class BankTransfertEmitterVerifier
         }
 
         $this->_logger->error($return);
-        $this->_bankTransfert->setError($return);
+        $this->_BankTransfer->setError($return);
 
         return false;
     }
@@ -103,14 +103,14 @@ class BankTransfertEmitterVerifier
         }
 
         $this->_logger->error($return);
-        $this->_bankTransfert->setError($return);
+        $this->_BankTransfer->setError($return);
 
         return false;
     }
 
     private function _updateTransfert()
     {
-        $this->_entityManager->persist($this->_bankTransfert);
+        $this->_entityManager->persist($this->_BankTransfer);
         $this->_entityManager->flush();
     }
 }

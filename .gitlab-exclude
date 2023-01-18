@@ -114,7 +114,7 @@
 /api/public/upload/eec-incentives/long-distance-subscription/honour-certificate/*.*
 /api/public/upload/eec-incentives/short-distance-subscription/*.*
 /api/public/upload/eec-incentives/short-distance-subscription/honour-certificate/*.*
-/api/public/upload/bankTransferts/reports/*.*
+/api/public/upload/bankTransfers/reports/*.*
 /api/public/import/
 /api/public/import/*.*
 /api/public/import/Avatar/*.*
