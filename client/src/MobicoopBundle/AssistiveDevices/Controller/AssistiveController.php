@@ -66,7 +66,7 @@ class AssistiveController extends AbstractController
             $data = [
                 'ssoProvider' => $this->_assistiveSsoProvider,
                 'ssoId' => $queryParams['code'],
-                'baseSiteUri' => 'http://localhost:9091',
+                'baseSiteUri' => $request->getScheme().'://'.$request->getHost(),
                 'eec' => false,
             ];
 
