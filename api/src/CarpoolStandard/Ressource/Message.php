@@ -43,6 +43,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *                  "tags"={"CarpoolStandard"}
  *              }
  *          }
+ *      }
  * )
  *
  * @author Remi Wortemann <remi.wortemann@mobicoop.org>
