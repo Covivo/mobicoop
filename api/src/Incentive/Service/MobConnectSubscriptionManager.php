@@ -274,14 +274,18 @@ class MobConnectSubscriptionManager
             $shortDistanceSubscription = $this->createShortDistanceSubscription();
             // TODO: #5359 -> $shortDistanceSubscription->setInitialCommitmentProof($initialCommitmentproof);
 
-            $this->_em->persist($shortDistanceSubscription);
+            if (!is_null($shortDistanceSubscription)) {
+                $this->_em->persist($shortDistanceSubscription);
+            }
         }
 
         if (is_null($this->_user->getLongDistanceSubscription())) {
             $longDistanceSubscription = $this->createLongDistanceSubscription();
             // TODO: #5359 -> $longDistanceSubscription->setInitialCommitmentProof($initialCommitmentproof);
 
-            $this->_em->persist($longDistanceSubscription);
+            if (!is_null($longDistanceSubscription)) {
+                $this->_em->persist($longDistanceSubscription);
+            }
         }
 
         $this->_em->flush();
@@ -296,6 +300,8 @@ class MobConnectSubscriptionManager
 
             return new ShortDistanceSubscription($this->_user, $mobConnectShortDistanceSubscription);
         }
+
+        return null;
     }
 
     public function createLongDistanceSubscription()
@@ -307,6 +313,8 @@ class MobConnectSubscriptionManager
 
             return new LongDistanceSubscription($this->_user, $mobConnectLongDistanceSubscription);
         }
+
+        return null;
     }
 
     /**
