@@ -21,30 +21,30 @@
 # CRON JOBS
 # All the jobs here are installed using a python script (/scripts/updateCrontab.py)
 # Parameters used in the python script :
-# $1 => the php binary path
-# $2 => the symfony api console path
-# $3 => the environment (dev / test / prod)
+# $php => the php binary path
+# $console => the symfony api console path
+# $env => the environment (dev / test / prod)
 
 # each 5 minutes : link addresses and directions to territories
-# */5 * * * *    $1 $2 app:geography:territory-link-batch --env=$3
+# */5 * * * *    $php $console app:geography:territory-link-batch --env=$env
 
 # each day at 1am : create and send the carpool proofs for the day before
-0 1 * * *   $1 $2 app:carpool:proof-batch --env=$3
+0 1 * * *   $php $console app:carpool:proof-batch --env=$env
 
 # each day at 2am : create the payment export
-# 0 2 * * *   $1 $2 app:payment:export-batch --env=$3
+# 0 2 * * *   $php $console app:payment:export-batch --env=$env
 
 # each day at 2am : create the carpool items for the payment and/or export
-0 2 * * * $1 $2 app:carpool:item-batch --env=$3
+0 2 * * * $php $console app:carpool:item-batch --env=$env
 
 # each day at 4am : create the journeys
-0 4 * * * $1 $2 app:journey:hydrate --env=$3
+0 4 * * * $php $console app:journey:hydrate --env=$env
 
 # each day at 3am : import events from provider
-0 3 * * * $1 $2 app:events:import --env=$3
+0 3 * * * $php $console app:events:import --env=$env
 
 # each day at 12pm : send carpool ad renewal
-0 12 * * * $1 $2 app:carpool-ad-renewal --env=$3
+0 12 * * * $php $console app:carpool-ad-renewal --env=$env
 
 # each day at 5 am : check and update if needed paymentProfiles
-0 5 * * * $1 $2 app:payment-profile:check-batch --env=$3
+0 5 * * * $php $console app:payment-profile:check-batch --env=$env

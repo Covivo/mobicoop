@@ -12,7 +12,7 @@ class LongDistanceSubscription extends Subscription
 
         $this->familyName = $this->subscription->getFamilyName();
         $this->givenName = $this->subscription->getGivenName();
-        $this->drivingLicenceNumber = $this->subscription->getDrivingLicenseNumber();
+        $this->drivingLicenceNumber = $this->subscription->getDrivingLicenceNumber();
         $this->email = $this->subscription->getEmail();
         $this->telephone = $this->subscription->getTelephone();
         $this->streetAddress = $this->subscription->getStreetAddress();

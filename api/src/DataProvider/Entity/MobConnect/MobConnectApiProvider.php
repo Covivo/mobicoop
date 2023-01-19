@@ -20,7 +20,7 @@ class MobConnectApiProvider extends MobConnectProvider
 
     private const ROUTE_SUBSCRIPTIONS = '/v1/maas/subscriptions';
     private const ROUTE_PATCH_SUBSCRIPTIONS = '/v1/subscriptions/{SUBSCRIPTION_ID}';
-    private const ROUTE_SUBSCRIPTIONS_VERIFY = '/v1/subscriptions/{SUBSCRIPTION_ID}/verify';
+    private const ROUTE_SUBSCRIPTIONS_VERIFY = '/v1/maas/subscriptions/{SUBSCRIPTION_ID}/verify';
 
     private const SHORT_DISTANCE_LABEL = 'Court';
     private const LONG_DISTANCE_LABEL = 'Long';
@@ -79,7 +79,7 @@ class MobConnectApiProvider extends MobConnectProvider
             'incentiveId' => $incentiveId,
             'consent' => true,
             'Type de trajet' => true === $isShortDistance ? [self::SHORT_DISTANCE_LABEL] : [self::LONG_DISTANCE_LABEL],
-            'Numéro de permis de conduire' => $this->_user->getDrivingLicenseNumber(),
+            'Numéro de permis de conduire' => $this->_user->getDrivingLicenceNumber(),
         ];
 
         if (false === $isShortDistance) {
@@ -153,7 +153,7 @@ class MobConnectApiProvider extends MobConnectProvider
         if (true === $isShortDistance) {
             $data['Identifiant du trajet'] = $rpcJourneyId;
         } else {
-            $data['Date de partage des frais'] = $costSharingDate->format('d/m/Y');
+            $data['Date de partage des frais'] = $costSharingDate->format('Y-m-d');
         }
 
         $this->_createDataProvider(self::ROUTE_PATCH_SUBSCRIPTIONS, $subscriptionId);

@@ -52,6 +52,7 @@ use App\Payment\Entity\CarpoolItem;
 use App\Payment\Entity\PaymentProfile;
 use App\Rdex\Entity\RdexConnection;
 use App\Scammer\Entity\Scammer;
+use App\Solidary\Entity\Solidary;
 use App\Solidary\Entity\SolidaryContact;
 use App\User\Entity\PushToken;
 use App\User\Entity\Review;
@@ -72,6 +73,8 @@ use Twig\Environment;
 class NotificationManager
 {
     public const LANG = 'fr';
+    private const ADMIN_SOLIDARY_ITEM_URL = '/solidaryrecords/show/{SOLIDARY_ID}';
+
     private $entityManager;
     private $internalMessageManager;
     private $emailManager;
@@ -187,7 +190,6 @@ class NotificationManager
             // if the user have no notifications, we use the default notifications
             $notifications = $this->notificationRepository->findActiveByAction($action);
         }
-
         if ($notifications && is_array($notifications)) {
             foreach ($notifications as $notification) {
                 switch ($notification->getMedium()->getId()) {
@@ -573,7 +575,16 @@ class NotificationManager
 
                 case Solidary::class:
                     $titleContext = [];
-                    $bodyContext = [];
+                    $bodyContext = [
+                        'adminUrl' => preg_replace('/\{SOLIDARY_ID\}/', $object->getId(), self::ADMIN_SOLIDARY_ITEM_URL),
+                        'applicant' => $object->getSolidaryUserStructure()->getSolidaryUser()->getUser(),
+                        'structure' => [
+                            'logo' => !empty($object->getSolidaryUserStructure()->getStructure()->getImages()) ? $object->getSolidaryUserStructure()->getStructure()->getImages()[0] : null,
+                            'name' => $object->getSolidaryUserStructure()->getStructure()->getName(),
+                            'signature' => $object->getSolidaryUserStructure()->getStructure()->getSignature(),
+                        ],
+                        'journey' => $object->getProposal(),
+                    ];
 
                     break;
 

@@ -168,6 +168,9 @@
   "homeTown": {
     "label": "Commune de résidence"
   },
+  "drivingLicenceNumber": {
+    "label": "Numéro de permis de conduire"
+  },
   "save": "Enregistrer",
   "yes": "oui",
   "no": "non",

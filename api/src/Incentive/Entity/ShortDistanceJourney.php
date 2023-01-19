@@ -17,6 +17,10 @@ class ShortDistanceJourney
 {
     public const STANDARDIZED_SHEET_OPERATION = 'TRA-SE-115';
 
+    public const BONUS_STATUS_PENDING = 0;
+    public const BONUS_STATUS_NO = 1;
+    public const BONUS_STATUS_OK = 2;
+
     /**
      * @var int The cee ID
      *
@@ -46,9 +50,9 @@ class ShortDistanceJourney
     private $endAddressLocality;
 
     /**
-     * @var int the distance in meter of the journey
+     * @var int the distance in kilometer of the journey
      *
-     * @ORM\Column(type="integer", nullable=true)
+     * @ORM\Column(type="decimal", scale=1, precision=5, nullable=true)
      */
     private $distance;
 
@@ -62,7 +66,7 @@ class ShortDistanceJourney
     /**
      * @var string the ID of the user
      *
-     * @ORM\Column(type="string", unique=true, nullable=true)
+     * @ORM\Column(type="string", unique=false, nullable=true)
      */
     private $operatorUserId;
 
@@ -108,8 +112,28 @@ class ShortDistanceJourney
      */
     private $updatedAt;
 
+    /**
+     * Bonus Status of the journey.
+     *
+     * @var int
+     *
+     * @ORM\Column(type="smallint", options={"default": 1, "comment":"Bonus Status of the EEC form"})
+     */
+    private $bonusStatus = self::BONUS_STATUS_NO;
+
+    /**
+     * The carpool proof associate with the journey.
+     *
+     * @var CarpoolProof
+     *
+     * @ORM\OneToOne(targetEntity=CarpoolProof::class)
+     * @ORM\JoinColumn(nullable=true)
+     */
+    private $carpoolProof;
+
     public function __construct(CarpoolProof $carpoolProof, int $carpoolersNumber, string $rpcJourneyId, string $rpcStatus)
     {
+        $this->setCarpoolProof($carpoolProof);
         $this->setStartAddressLocality($carpoolProof->getOriginDriverAddress()->getAddressLocality());
         $this->setEndAddressLocality($carpoolProof->getDestinationDriverAddress()->getAddressLocality());
         $this->setDistance($carpoolProof->getAsk()->getMatching()->getCommonDistance());
@@ -199,7 +223,8 @@ class ShortDistanceJourney
      */
     public function setDistance(int $distance): self
     {
-        $this->distance = $distance;
+        // We convert the distance given in meter to kilometer
+        $this->distance = $distance / 1000;
 
         return $this;
     }
@@ -352,6 +377,46 @@ class ShortDistanceJourney
     public function setShortDistanceSubscription(ShortDistanceSubscription $shortDistanceSubscription): self
     {
         $this->shortDistanceSubscription = $shortDistanceSubscription;
+
+        return $this;
+    }
+
+    /**
+     * Get bonus Status of the EEC form.
+     */
+    public function getBonusStatus(): int
+    {
+        return $this->bonusStatus;
+    }
+
+    /**
+     * Set bonus Status of the EEC form.
+     *
+     * @param int $bonusStatus bonus Status of the EEC form
+     */
+    public function setBonusStatus(int $bonusStatus): self
+    {
+        $this->bonusStatus = $bonusStatus;
+
+        return $this;
+    }
+
+    /**
+     * Get the carpool proof associate with the journey.
+     */
+    public function getCarpoolProof(): CarpoolProof
+    {
+        return $this->carpoolProof;
+    }
+
+    /**
+     * Set the carpool proof associate with the journey.
+     *
+     * @param CarpoolProof $carpoolProof the carpool proof associate with the journey
+     */
+    public function setCarpoolProof(CarpoolProof $carpoolProof): self
+    {
+        $this->carpoolProof = $carpoolProof;
 
         return $this;
     }

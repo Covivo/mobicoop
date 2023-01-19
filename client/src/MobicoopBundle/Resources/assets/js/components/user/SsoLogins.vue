@@ -8,7 +8,9 @@
       :picto="ssoConnection.picto"
       :use-button-icon="ssoConnection.useButtonIcon"
       :service="ssoConnection.service"
-    />      
+      :sso-provider="ssoConnection.ssoProvider"
+      :default-buttons-active="defaultButtonsActive"
+    />
   </div>
 </template>
 <script>
@@ -27,21 +29,50 @@ export default {
   components:{
     SsoLogin
   },
+  props:{
+    specificService:{
+      type: String,
+      default: ""
+    },
+    specificPath:{
+      type: String,
+      default: null
+    },
+    defaultButtonsActive: {
+      type: Boolean,
+      default: true
+    }
+  },
   data() {
     return {
       ssoConnections:[]
     };
+  },
+  watch:{
+    ssoConnections(){
+      this.ssoConnections.forEach(ssoConnections => {
+        this.$store.commit('sso/setSsoButtonsActiveStatus', {
+          ssoId: ssoConnections.ssoProvider,
+          status: this.defaultButtonsActive
+        });
+      });
+
+    }
   },
   mounted(){
     this.getSso();
   },
   methods:{
     getSso(){
-      maxios.post(this.$t("urlGetSsoServices"))
+      let data = {
+        "service": this.specificService ? this.specificService : null,
+        "path": this.specificPath
+      };
+      maxios.post(this.$t("urlGetSsoServices"), data)
         .then(response => {
           this.ssoConnections = response.data;
-        });      
-    }      
+        });
+    }
   }
 }
 </script>

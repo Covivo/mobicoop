@@ -37,12 +37,15 @@ use Psr\Log\LoggerInterface;
  */
 class SsoManager
 {
+    public const DEFAULT_RESPONSE_MODE = 'query';
+    public const DEFAULT_RESPONSE_TYPE = 'code';
     private const SUPPORTED_PROVIDERS = [
         OpenIdSsoProvider::SSO_PROVIDER_GLCONNECT => OpenIdSsoProvider::class,
         OpenIdSsoProvider::SSO_PROVIDER_PASSMOBILITE => OpenIdSsoProvider::class,
         OpenIdSsoProvider::SSO_PROVIDER_MOBCONNECT => MobConnectOpenIdSsoProvider::class,
         OpenIdSsoProvider::SSO_PROVIDER_MOBIGO => OpenIdSsoProvider::class,
     ];
+
     private $userManager;
     private $ssoServices;
     private $ssoServicesActive;
@@ -171,7 +174,9 @@ class SsoManager
                 isset($service['returnUrl']) ? $service['returnUrl'] : SsoConnection::RETURN_URL,
                 $service['autoCreateAccount'],
                 $service['logOutRedirectUri'],
-                $service['codeVerifier']
+                $service['codeVerifier'],
+                isset($service['response_mode']) ? $service['response_mode'] : self::DEFAULT_RESPONSE_MODE,
+                isset($service['response_type']) ? $service['response_type'] : self::DEFAULT_RESPONSE_TYPE
             );
             $provider->setLogger($this->logger);
 

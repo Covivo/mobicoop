@@ -66,7 +66,6 @@
                 v-model="form.bic"
                 :label="$t('form.label.bic')"
                 :rules="form.rules.bicRules"
-                required
               />
             </v-col>
           </v-row>
@@ -351,8 +350,7 @@ export default {
             v => (/[a-zA-Z]{2}[0-9]{2}[a-zA-Z0-9]{4}[0-9]{7}([a-zA-Z0-9]?){0,16}/).test(v) || this.$t('form.errors.iban'),
           ],
           bicRules: [
-            v => !!v || this.$t('form.errors.bicRequired'),
-            v => (/[a-zA-Z]{4}[a-zA-Z]{2}[a-zA-Z0-9]{2}([a-zA-Z0-9]{3})?/).test(v) || this.$t('form.errors.bic'),
+            v => (/[a-zA-Z]{4}[a-zA-Z]{2}[a-zA-Z0-9]{2}([a-zA-Z0-9]{3})?|^$/).test(v) || this.$t('form.errors.bic'),
           ],
           streetRules: [
             v => !!v || this.$t('form.errors.streetRequired'),

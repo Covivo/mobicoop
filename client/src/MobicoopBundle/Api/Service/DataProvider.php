@@ -77,6 +77,7 @@ class DataProvider
     public const RETURN_ARRAY = 2;
     public const RETURN_JSON = 3;
     public const RETURN_LDJSON = 4;
+    private const MOB_CONNECT_CEE_LOGIN = '1';
 
     private $uri;
     private $username;
@@ -621,6 +622,36 @@ class DataProvider
     }
 
     /**
+     * Get a given url.
+     *
+     * @param string $url        The url to post on
+     * @param array  $parameters The parameters
+     *
+     * @return Response The response
+     */
+    public function simpleGet(string $url, array $parameters = []): Response
+    {
+        try {
+            if (self::RETURN_JSON == $this->format) {
+                $headers = $this->getHeaders(['json']);
+            } else {
+                $headers = $this->getHeaders();
+            }
+
+            $clientResponse = $this->client->get($url, ['query' => $parameters, 'headers' => $headers]);
+            if (200 == $clientResponse->getStatusCode()) {
+                return new Response($clientResponse->getStatusCode(), $this->treatHydraCollection($clientResponse->getBody()));
+            }
+        } catch (ClientException|ServerException $e) {
+            return new Response($e->getCode(), $this->treatHydraCollection($e->getResponse()->getBody()->getContents(), true));
+        } catch (TransferException $e) {
+            return new Response($e->getCode());
+        }
+
+        return new Response();
+    }
+
+    /**
      * Post on a given url.
      *
      * @param string $url        The url to post on
@@ -971,6 +1002,21 @@ class DataProvider
                     throw new ApiTokenException('Unable to get an API token.');
                 }
             } elseif (!is_null($this->ssoId) && !is_null($this->ssoProvider)) {
+                $params = [
+                    'ssoId' => $this->ssoId,
+                    'ssoProvider' => $this->ssoProvider,
+                    'baseSiteUri' => $this->baseSiteUri,
+                ];
+
+                if (!is_null($this->request->get('fromMobConnectSso') && self::MOB_CONNECT_CEE_LOGIN === $this->request->get('fromMobConnectSso'))) {
+                    $params['fromSsoMobConnect'] = true;
+                }
+
+                $clientResponse = $this->client->post($this->authLoginPath, [
+                    'headers' => ['accept' => 'application/json'],
+                    RequestOptions::JSON => $params,
+                ]);
+
                 try {
                     $clientResponse = $this->client->post($this->authLoginPath, [
                         'headers' => ['accept' => 'application/json'],

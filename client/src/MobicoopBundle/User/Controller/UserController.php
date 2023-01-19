@@ -38,6 +38,7 @@ use Mobicoop\Bundle\MobicoopBundle\I18n\Entity\Language;
 use Mobicoop\Bundle\MobicoopBundle\I18n\Service\LanguageManager;
 use Mobicoop\Bundle\MobicoopBundle\Image\Entity\Image;
 use Mobicoop\Bundle\MobicoopBundle\Image\Service\ImageManager;
+use Mobicoop\Bundle\MobicoopBundle\Incentive\Service\CeeSubscriptionManager;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Entity\ValidationDocument;
 use Mobicoop\Bundle\MobicoopBundle\Payment\Service\PaymentManager;
 use Mobicoop\Bundle\MobicoopBundle\Traits\HydraControllerTrait;
@@ -90,8 +91,10 @@ class UserController extends AbstractController
     private $ageDisplay;
     private $birthDateDisplay;
     private $eventManager;
+    private $ceeSubscriptionManager;
     private $carpoolSettingsDisplay;
     private $signInSsoOriented;
+    private $ceeDisplay;
 
     /**
      * Constructor.
@@ -125,13 +128,15 @@ class UserController extends AbstractController
         PaymentManager $paymentManager,
         LanguageManager $languageManager,
         EventManager $eventManager,
+        CeeSubscriptionManager $ceeSubscriptionManager,
         $required_community,
         bool $loginDelegate,
         bool $fraudWarningDisplay,
         bool $ageDisplay,
         bool $birthDateDisplay,
         bool $carpoolSettingsDisplay,
-        bool $signInSsoOriented
+        bool $signInSsoOriented,
+        bool $ceeDisplay
     ) {
         $this->encoder = $encoder;
         $this->facebook_show = $facebook_show;
@@ -156,8 +161,24 @@ class UserController extends AbstractController
         $this->carpoolSettingsDisplay = $carpoolSettingsDisplay;
         $this->birthDateDisplay = $birthDateDisplay;
         $this->eventManager = $eventManager;
+        $this->ceeSubscriptionManager = $ceeSubscriptionManager;
         $this->ssoManager = $ssoManager;
         $this->signInSsoOriented = $signInSsoOriented;
+        $this->ceeDisplay = $ceeDisplay;
+    }
+
+    private function __parsePostParams(string $response): array
+    {
+        $parsed_reponse = [];
+
+        $array_response = explode('&', $response);
+
+        foreach ($array_response as $value) {
+            $parsed_item = explode('=', $value);
+            $parsed_reponse[$parsed_item[0]] = $parsed_item[1];
+        }
+
+        return $parsed_reponse;
     }
 
     // PROFILE
@@ -512,6 +533,7 @@ class UserController extends AbstractController
             $user->setBirthDate(new \DateTime($data->get('birthDay')));
             // cause we use FormData to post data
             $user->setNewsSubscription('true' === $data->get('newsSubscription') ? true : false);
+            $user->setDrivingLicenceNumber('' !== trim($data->get('drivingLicenceNumber')) ? (int) $data->get('drivingLicenceNumber') : null);
 
             if ($user = $userManager->updateUser($user)) {
                 $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
@@ -574,6 +596,7 @@ class UserController extends AbstractController
             'ageDisplay' => $this->ageDisplay,
             'carpoolSettingsDisplay' => $this->carpoolSettingsDisplay,
             'selectedTab' => $tab,
+            'ceeDisplay' => $this->ceeDisplay,
         ]);
     }
 
@@ -1413,10 +1436,17 @@ class UserController extends AbstractController
     /**
      * Return page after a SSO Login
      * Url is something like /user/sso/login?state=PassMobilite&code=1.
+     * It can also be a POST form if the response_mode of the SSO Provider is form_post.
      */
     public function userReturnConnectSSO(Request $request)
     {
-        $params = $this->ssoManager->guessSsoParameters($request->query->all());
+        if ($request->isMethod('POST')) {
+            $response_body = $this->__parsePostParams($request->getContent());
+        } else {
+            $response_body = $request->query->all();
+        }
+
+        $params = $this->ssoManager->guessSsoParameters($response_body);
 
         // We add the front url to the parameters
         (isset($_SERVER['HTTPS'])) ? $params['baseSiteUri'] = 'https://'.$_SERVER['HTTP_HOST'] : $params['baseSiteUri'] = 'http://'.$_SERVER['HTTP_HOST'];
@@ -1427,7 +1457,7 @@ class UserController extends AbstractController
         if (!is_null($services) && is_array($services)) {
             foreach ($services as $service) {
                 if ($service->getSsoProvider() == $params['ssoProvider']) {
-                    $params['ssoProviderName'] = $service->getService();
+                    $params['ssoProviderName'] = $service->getSsoProvider();
                 }
             }
         }
@@ -1498,6 +1528,11 @@ class UserController extends AbstractController
     public function getSsoServices(Request $request)
     {
         if ($request->isMethod('POST')) {
+            $data = json_decode($request->getContent(), true);
+            if (isset($data['service']) && !is_null($data['service'])) {
+                return $this->getSsoService($request);
+            }
+
             return new JsonResponse($this->userManager->getSsoServices());
         }
 
@@ -1514,7 +1549,9 @@ class UserController extends AbstractController
         if ($request->isMethod('POST')) {
             $data = json_decode($request->getContent(), true);
 
-            return new JsonResponse($this->userManager->getSsoService($data['service']));
+            $path = isset($data['path']) ? $data['path'] : null;
+
+            return new JsonResponse($this->userManager->getSsoService($data['service'], $path));
         }
 
         return new JsonResponse();
@@ -1674,6 +1711,11 @@ class UserController extends AbstractController
         }
 
         throw new AccessDeniedException('Access Denied.');
+    }
+
+    public function myCeeSubscriptions()
+    {
+        return new JsonResponse($this->ceeSubscriptionManager->myCeeSubscriptions());
     }
 
     private function mobileRedirect(string $host, string $path, array $params)
