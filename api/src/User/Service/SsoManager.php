@@ -96,9 +96,9 @@ class SsoManager
         return $ssoServices;
     }
 
-    public function getSsoUserProfile(string $serviceName, string $code, string $baseSiteUri): SsoUser
+    public function getSsoUserProfile(string $serviceName, string $code, string $baseSiteUri, ?string $redirectUri): SsoUser
     {
-        $provider = $this->getSsoProvider($serviceName, $baseSiteUri);
+        $provider = $this->getSsoProvider($serviceName, $baseSiteUri, $redirectUri);
         $provider->setCode($code);
 
         return $provider->getUserProfile($code);
