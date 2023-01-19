@@ -23,6 +23,7 @@
 
 namespace App\CarpoolStandard\Ressource;
 
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -31,16 +32,32 @@ use Symfony\Component\Validator\Constraints as Assert;
  * A message.
  *
  * @ApiResource(
+ *      routePrefix="/carpool_standard",
  *      attributes={
  *          "force_eager"=false,
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
- *      collectionOperations={
- *          "post"={
- *              "path"="/carpool_standard_messages",
+ *       collectionOperations={
+ *          "get"={
+ *             "security"="is_granted('reject',object)",
  *              "swagger_context" = {
- *                  "tags"={"CarpoolStandard"}
+ *                  "tags"={"Carpool Standard"}
+ *              }
+ *          },
+ *          "post"={
+ *              "method"="POST",
+ *              "path"="/messages",
+ *              "swagger_context" = {
+ *                  "tags"={"Carpool Standard"}
+ *              }
+ *          }
+ *      },
+ *      itemOperations={
+ *          "get"={
+ *             "security"="is_granted('reject',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Carpool Standard"}
  *              }
  *          }
  *      }
@@ -50,6 +67,16 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Message
 {
+    public const DEFAULT_ID = 999999999999;
+
+    /**
+     * @var int the id of this payment week
+     *
+     * @Groups({"read", "write"})
+     * @ApiProperty(identifier=true)
+     */
+    private $id;
+
     /**
      * @var User the sender of the message
      *
@@ -102,6 +129,14 @@ class Message
      * @Groups({"read", "write"})
      */
     private $bookingId;
+
+    public function __construct($id = null)
+    {
+        $this->id = self::DEFAULT_ID;
+        if ($id) {
+            $this->id = $id;
+        }
+    }
 
     public function getFrom(): User
     {

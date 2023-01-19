@@ -23,18 +23,43 @@
 
 namespace App\CarpoolStandard\Ressource;
 
+use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * A Bank Account.
+ * A User.
  *
  * @ApiResource(
+ *      routePrefix="/carpool_standard",
  *      attributes={
  *          "force_eager"=false,
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
+ *      },
+ *      collectionOperations={
+ *          "post"={
+ *              "method"="POST",
+ *              "path"="/users",
+ *              "swagger_context" = {
+ *                  "tags"={"Carpool Standard"}
+ *              }
+ *          },
+ *          "get"={
+ *              "security"="is_granted('reject',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Carpool Standard"}
+ *              }
+ *          }
+ *      },
+ *      itemOperations={
+ *          "get"={
+ *             "security"="is_granted('reject',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Carpool Standard"}
+ *              }
+ *          }
  *      }
  * )
  *
@@ -46,7 +71,8 @@ class User
      * @var string The id of this user
      *
      * @Assert\NotBlank
-     * @Groups({"read"})
+     * @Groups({"read", "write"})
+     * @ApiProperty(identifier=true)
      */
     private $id;
 
@@ -54,7 +80,7 @@ class User
      * @var string the operator identifier
      *
      * @Assert\NotBlank
-     * @Groups({"read"})
+     * @Groups({"read", "write"})
      */
     private $operator;
 
@@ -62,49 +88,49 @@ class User
      * @var string User's alias
      *
      * @Assert\NotBlank
-     * @Groups({"read"})
+     * @Groups({"read", "write"})
      */
     private $alias;
 
     /**
      * @var string user's first name
      *
-     * @Groups({"read"})
+     * @Groups({"read", "write"})
      */
     private $firstName;
 
     /**
      * @var string user's last name
      *
-     * @Groups({"read"})
+     * @Groups({"read", "write"})
      */
     private $lastName;
 
     /**
      * @var int user's grade from 1 to 5
      *
-     * @Groups({"read"})
+     * @Groups({"read", "write"})
      */
     private $grade;
 
     /**
      * @var string user's profile picture absolute URL
      *
-     * @Groups({"read"})
+     * @Groups({"read", "write"})
      */
     private $picture;
 
     /**
      * @var string User's gender. [ F, M, O ] 'O' stands for 'Other'.
      *
-     * @Groups({"read"})
+     * @Groups({"read", "write"})
      */
     private $gender;
 
     /**
      * @var bool
      *
-     * @Groups({"read"})
+     * @Groups({"read", "write"})
      */
     private $verifiedIdentity;
 
