@@ -283,12 +283,11 @@ class TerritoryManager
         if (!$result =
             $this->entityManager->getConnection()->prepare('
                 CREATE TEMPORARY TABLE disaddress (
-                    id int AUTO_INCREMENT NOT NULL,
                     lat decimal(10,6) NOT NULL,
                     lon decimal(10,6) NOT NULL,
-                    geo POINT NOT NULL, 
+                    geo POINT NOT NULL,
                     SPATIAL INDEX(geo),
-                    PRIMARY KEY(id)
+                    PRIMARY KEY(geo)
                 );')->execute()) {
             return $this->dropGeoJsonTerritoryIndex() && $this->closeRunningFile() && false;
         }
@@ -297,11 +296,11 @@ class TerritoryManager
         // in the following, we will assume addresses with same exact geo coordinates are equals, so they have the same territories...
         if (!$result =
             $this->entityManager->getConnection()->prepare('
-                INSERT INTO disaddress (lat,lon,geo)
-                    (   SELECT DISTINCT a.latitude,a.longitude, a.geo_json 
-                        FROM address a LEFT JOIN address_territory adt ON a.id = adt.address_id 
+                INSERT IGNORE INTO disaddress (lat,lon,geo)
+                    SELECT a.latitude,a.longitude, a.geo_json
+                        FROM address a LEFT JOIN address_territory adt ON a.id = adt.address_id
                         WHERE adt.address_id IS NULL AND a.latitude IS NOT NULL AND a.longitude IS NOT NULL AND a.geo_json IS NOT NULL
-                    )
+
                 ;')->execute()) {
             return $this->dropGeoJsonTerritoryIndex() && $this->closeRunningFile() && false;
         }
@@ -320,13 +319,12 @@ class TerritoryManager
         if (!$result =
             $this->entityManager->getConnection()->prepare('
                 CREATE TEMPORARY TABLE adter (
-                    aid int NOT NULL,
                     tid int NOT NULL,
                     geo POINT NOT NULL,
                     lat decimal(10,6) NOT NULL,
                     lon decimal(10,6) NOT NULL,
                     SPATIAL INDEX(geo),
-                    PRIMARY KEY(aid)
+                    PRIMARY KEY(geo)
                 );')->execute()) {
             return $this->dropGeoJsonTerritoryIndex() && $this->closeRunningFile() && false;
         }
@@ -339,12 +337,11 @@ class TerritoryManager
             $territories = [$resultt['id']];
             if (!$result =
                 $this->entityManager->getConnection()->prepare('
-                    DELETE FROM adter; 
-                    INSERT INTO adter (aid,tid,geo,lat,lon) 
-                        SELECT a.id, t.id, geo, lat, lon FROM disaddress a 
+                    DELETE FROM adter;
+                    INSERT INTO adter (tid,geo,lat,lon)
+                        SELECT t.id, geo, lat, lon FROM disaddress a
                         JOIN territory t ON t.id = '.$resultt['id'].'
-                        LEFT JOIN address_territory at ON at.address_id = a.id AND at.territory_id = '.$resultt['id'].'
-                        WHERE ST_DISTANCE(geo, Polygon(ST_ExteriorRing(ST_ConvexHull(geo_json_detail))))=0 AND at.address_id IS NULL
+                        WHERE ST_DISTANCE(geo, Polygon(ST_ExteriorRing(ST_ConvexHull(geo_json_detail))))=0
                     ;')->execute()) {
                 return $this->dropGeoJsonTerritoryIndex() && $this->closeRunningFile() && false;
             }
@@ -357,7 +354,7 @@ class TerritoryManager
             $sqlp = '
                 SELECT parent.id from territory parent
                 JOIN territory child ON child.id = '.$resultt['id'].'
-                WHERE parent.admin_level < '.$resultt['admin_level'].' 
+                WHERE parent.admin_level < '.$resultt['admin_level'].'
                 AND ST_CONTAINS(parent.geo_json_detail,child.geo_json_detail)=1;
             ';
             $stmtp = $this->entityManager->getConnection()->prepare($sqlp);
@@ -368,7 +365,7 @@ class TerritoryManager
             }
             $stmtp->closeCursor();
 
-            $sql = 'SELECT SQL_NO_CACHE aid,tid,lat,lon FROM adter';
+            $sql = 'SELECT SQL_NO_CACHE tid,lat,lon FROM adter';
             $stmt = $this->entityManager->getConnection()->prepare($sql);
             $stmt->execute();
             $results = $stmt->fetchAll();
@@ -423,11 +420,11 @@ class TerritoryManager
             $this->entityManager->getConnection()->prepare('start transaction;')->execute()
             && $this->entityManager->getConnection()->prepare("
                 insert into address_territory (address_id, territory_id)
-                select a.id, t.id 
-                from address a 
+                select a.id, t.id
+                from address a
                     inner join territory t on a.latitude between t.min_latitude and t.max_latitude and a.longitude between t.min_longitude and t.max_longitude
-                where a.id not in (select address_id from address_territory at inner join territory t on t.id = at.territory_id where t.admin_level = {$maxLevel}) 
-                    and t.admin_level = {$maxLevel} 
+                where a.id not in (select address_id from address_territory at inner join territory t on t.id = at.territory_id where t.admin_level = {$maxLevel})
+                    and t.admin_level = {$maxLevel}
                     and st_contains(t.geo_json_detail, a.geo_json)=1;")->execute()
             && $this->entityManager->getConnection()->prepare('commit;')->execute()) {
             return $this->dropGeoJsonTerritoryIndex() && $this->closeRunningFile() && false;
@@ -438,9 +435,9 @@ class TerritoryManager
             if (!$result =
                 $this->entityManager->getConnection()->prepare('start transaction;')->execute()
                 && $this->entityManager->getConnection()->prepare('
-                    insert into address_territory (address_id, territory_id) 
+                    insert into address_territory (address_id, territory_id)
                     select a.id, tt.parent_id
-                    from address a 
+                    from address a
                         inner join address_territory at3 on at3.address_id = a.id
                         inner join territory t3 on t3.id = at3.territory_id and t3.admin_level = '.(1 + $i)." and t3.id in (select tt.child_id from territory_parent as tt where 1 group by child_id having count(*)=1)
                         inner join territory_parent tt on tt.child_id = t3.id
@@ -451,9 +448,9 @@ class TerritoryManager
             if (!$result =
                 $this->entityManager->getConnection()->prepare('start transaction;')->execute()
                 && $this->entityManager->getConnection()->prepare('
-                    insert into address_territory (address_id, territory_id) 
+                    insert into address_territory (address_id, territory_id)
                     select a.id, t2.id
-                    from address a 
+                    from address a
                         inner join address_territory at3 on at3.address_id = a.id
                         inner join territory t3 on t3.id = at3.territory_id and t3.admin_level = '.(1 + $i)." and t3.id in (select tt.child_id from territory_parent as tt where 1 group by child_id having count(*)>1)
                         inner join territory t2 on t2.admin_level = {$i} and a.latitude between t2.min_latitude and t2.max_latitude and a.longitude between t2.min_longitude and t2.max_longitude
@@ -468,10 +465,10 @@ class TerritoryManager
         if (!$result =
             $this->entityManager->getConnection()->prepare('start transaction;')->execute()
             && $this->entityManager->getConnection()->prepare('
-                insert into address_territory (address_id, territory_id) 
-                select a.id, t.id 
-                from address a 
-                    inner join territory t on a.latitude between t.min_latitude and t.max_latitude and a.longitude between t.min_longitude and t.max_longitude 
+                insert into address_territory (address_id, territory_id)
+                select a.id, t.id
+                from address a
+                    inner join territory t on a.latitude between t.min_latitude and t.max_latitude and a.longitude between t.min_longitude and t.max_longitude
                 where a.id not in (select at.address_id from address_territory at) and st_contains(t.geo_json_detail, a.geo_json)=1;')->execute()
             && $this->entityManager->getConnection()->prepare('commit;')->execute()) {
             return $this->dropGeoJsonTerritoryIndex() && $this->closeRunningFile() && false;
@@ -481,10 +478,10 @@ class TerritoryManager
         if (!$result =
             $this->entityManager->getConnection()->prepare('start transaction;')->execute()
             && $this->entityManager->getConnection()->prepare('
-                insert into address_territory (address_id, territory_id) 
-                select a.id, t.id 
-                from address a 
-                    inner join territory t on a.latitude between t.min_latitude and t.max_latitude and a.longitude between t.min_longitude and t.max_longitude 
+                insert into address_territory (address_id, territory_id)
+                select a.id, t.id
+                from address a
+                    inner join territory t on a.latitude between t.min_latitude and t.max_latitude and a.longitude between t.min_longitude and t.max_longitude
                 where a.id not in (select at.address_id from address_territory at where at.territory_id = t.id) and st_contains(t.geo_json_detail, a.geo_json)=1;')->execute()
             && $this->entityManager->getConnection()->prepare('commit;')->execute()) {
             return $this->dropGeoJsonTerritoryIndex() && $this->closeRunningFile() && false;
