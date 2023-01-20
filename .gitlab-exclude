@@ -76,6 +76,7 @@
 /api/public/upload/badges/images/*.jpg
 /api/public/upload/badges/images/*.jpeg
 /api/public/upload/badges/images/*.png
+/api/public/upload/badges/images/*.gif
 /api/public/upload/badges/images/versions/*.jpg
 /api/public/upload/badges/images/versions/*.jpeg
 /api/public/upload/badges/images/versions/*.png
