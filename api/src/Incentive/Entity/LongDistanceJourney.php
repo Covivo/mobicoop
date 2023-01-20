@@ -50,9 +50,9 @@ class LongDistanceJourney
     private $endAddressLocality;
 
     /**
-     * @var int the distance in meter of the journey
+     * @var int the distance in kilometer of the journey
      *
-     * @ORM\Column(type="integer", nullable=true)
+     * @ORM\Column(type="decimal", scale=1, precision=5, nullable=true)
      */
     private $distance;
 
@@ -118,10 +118,11 @@ class LongDistanceJourney
         $this->setDistance($carpoolProof->getAsk()->getMatching()->getCommonDistance());
         $this->setCarpoolersNumber($carpoolersNumber);
 
-        $startDate = \DateTime::createFromFormat(
-            'Y-m-d H:i:s',
-            $carpoolProof->getAsk()->getMatching()->getCriteria()->getFromDate()->format('Y-m-d').' '.$carpoolProof->getAsk()->getMatching()->getCriteria()->getFromTime()->format('H:i:s')
-        );
+        $date = $carpoolProof->getAsk()->getMatching()->getCriteria()->getFromDate()->format('Y-m-d');
+        $time = !is_null($carpoolProof->getAsk()->getMatching()->getCriteria()->getFromTime())
+            ? $carpoolProof->getAsk()->getMatching()->getCriteria()->getFromTime()->format('H:i:s') : '00:00:00';
+
+        $startDate = \DateTime::createFromFormat('Y-m-d H:i:s', "{$date} {$time}");
         $endDate = clone $startDate;
         $endDate->add(new \DateInterval('PT'.$carpoolProof->getAsk()->getMatching()->getNewDuration().'S'));
         $this->setStartDate($startDate->format('Y-m-d H:i:s'));
@@ -206,7 +207,8 @@ class LongDistanceJourney
      */
     public function setDistance(int $distance): self
     {
-        $this->distance = $distance;
+        // We convert the distance given in meter to kilometer
+        $this->distance = $distance / 1000;
 
         return $this;
     }

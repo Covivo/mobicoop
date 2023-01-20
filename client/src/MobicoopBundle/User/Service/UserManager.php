@@ -577,9 +577,9 @@ class UserManager
      *
      * @param User $user
      *
-     * @return array|object
-     *
      * @throws \ReflectionException
+     *
+     * @return array|object
      */
     public function getAds(bool $isAcceptedCarpools = false)
     {
@@ -659,13 +659,31 @@ class UserManager
                 $date->setTime(0, 0);
             } else {
                 // punctual
-                $date = \DateTime::createFromFormat(
-                    'Y-m-d H:i',
-                    (!is_null($myAd->getReturnDate()) && !is_null($myAd->getReturnTime())) ?
-                    $myAd->getReturnDate().' '.$myAd->getReturnTime() :
-                    $myAd->getOutwardDate().' '.$myAd->getOutwardTime(),
-                    new \DateTimeZone('Europe/Paris')
-                );
+                if (count($myAd->getDriver()) > 0) {
+                    $date = \DateTime::createFromFormat(
+                        'Y-m-d H:i',
+                        (!is_null($myAd->getReturnDate()) && !is_null($myAd->getReturnTime())) ?
+                        $myAd->getReturnDate().' '.$myAd->getReturnTime() :
+                        $myAd->getOutwardDate().' '.$myAd->getDriver()['pickUpTime'],
+                        new \DateTimeZone('Europe/Paris')
+                    );
+                } elseif (count($myAd->getPassengers()) > 0) {
+                    $date = \DateTime::createFromFormat(
+                        'Y-m-d H:i',
+                        (!is_null($myAd->getReturnDate()) && !is_null($myAd->getReturnTime())) ?
+                        $myAd->getReturnDate().' '.$myAd->getReturnTime() :
+                        $myAd->getOutwardDate().' '.$myAd->getPassengers()[0]['startTime'],
+                        new \DateTimeZone('Europe/Paris')
+                    );
+                } else {
+                    $date = \DateTime::createFromFormat(
+                        'Y-m-d H:i',
+                        (!is_null($myAd->getReturnDate()) && !is_null($myAd->getReturnTime())) ?
+                        $myAd->getReturnDate().' '.$myAd->getReturnTime() :
+                        $myAd->getOutwardDate().' '.$myAd->getOutwardTime(),
+                        new \DateTimeZone('Europe/Paris')
+                    );
+                }
             }
             if ($date >= $now) {
                 $valid = true;
@@ -683,9 +701,8 @@ class UserManager
                     $carpoolDate->setTime(0, 0);
                 } else {
                     $carpoolDate = \DateTime::createFromFormat('Y-m-d', $myAd->getDriver()['fromDate']);
-                    $carpoolDate::createFromFormat('H:i', $myAd->getDriver()['startTime'], new \DateTimeZone('Europe/Paris'));
+                    $carpoolDate = $carpoolDate::createFromFormat('H:i', $myAd->getDriver()['startTime'], new \DateTimeZone('Europe/Paris'));
                 }
-
                 if ($valid && $carpoolDate >= $now) {
                     $ads['accepted']['active'][] = $myAd;
                 } else {
@@ -700,13 +717,12 @@ class UserManager
                         $carpoolDate->setTime(0, 0);
                     } else {
                         $carpoolDate = \DateTime::createFromFormat('Y-m-d', $passenger['fromDate']);
-                        $carpoolDate::createFromFormat('H:i', $passenger['startTime'], new \DateTimeZone('Europe/Paris'));
+                        $carpoolDate = $carpoolDate::createFromFormat('H:i', $passenger['startTime'], new \DateTimeZone('Europe/Paris'));
                     }
                     if ($carpoolDate >= $now) {
                         $validCarpool = true;
                     }
                 }
-
                 if ($valid && $validCarpool) {
                     $ads['accepted']['active'][] = $myAd;
                 } else {
@@ -918,7 +934,7 @@ class UserManager
      *
      * @param string $service The service name (according API sso.json)
      */
-    public function getSsoService(string $service, string $additionalBaseSiteUri): ?array
+    public function getSsoService(string $service, string $additionalBaseSiteUri = null): ?array
     {
         $this->dataProvider->setClass(SsoConnection::class);
 

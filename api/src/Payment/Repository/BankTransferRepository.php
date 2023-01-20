@@ -23,11 +23,11 @@
 
 namespace App\Payment\Repository;
 
-use App\Payment\Entity\BankTransfert;
+use App\Payment\Entity\BankTransfer;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 
-class BankTransfertRepository
+class BankTransferRepository
 {
     /**
      * @var EntityRepository
@@ -36,10 +36,10 @@ class BankTransfertRepository
 
     public function __construct(EntityManagerInterface $entityManager)
     {
-        $this->repository = $entityManager->getRepository(BankTransfert::class);
+        $this->repository = $entityManager->getRepository(BankTransfer::class);
     }
 
-    public function find(int $id): ?BankTransfert
+    public function find(int $id): ?BankTransfer
     {
         return $this->repository->find($id);
     }
@@ -49,7 +49,7 @@ class BankTransfertRepository
         return $this->repository->findBy($criteria, $orderBy, $limit, $offset);
     }
 
-    public function findOneBy(array $criteria): ?BankTransfert
+    public function findOneBy(array $criteria): ?BankTransfer
     {
         return $this->repository->findOneBy($criteria);
     }

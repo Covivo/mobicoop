@@ -1,10 +1,10 @@
 monolog:
   handlers:
-    bank_transfert:
+    bank_transfer:
       type: stream
       level: debug
-      path: "%kernel.logs_dir%/bank_transfert.log"
-      channels: [bank_transfert]
+      path: "%kernel.logs_dir%/bank_transfer.log"
+      channels: [bank_transfer]
     carpool:
       type: stream
       level: debug
@@ -91,7 +91,7 @@ monolog:
       level: debug
       channels:
         [
-          "!bank_transfert",
+          "!bank_transfer",
           "!event",
           "!carpool",
           "!carpool_dynamic",

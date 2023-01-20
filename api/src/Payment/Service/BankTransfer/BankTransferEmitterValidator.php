@@ -20,11 +20,11 @@
  *    LICENSE
  */
 
-namespace App\Payment\Service\BankTransfert;
+namespace App\Payment\Service\BankTransfer;
 
-use App\Payment\Entity\BankTransfert;
+use App\Payment\Entity\BankTransfer;
 use App\Payment\Entity\Wallet;
-use App\Payment\Exception\BankTransfertException;
+use App\Payment\Exception\BankTransferException;
 use App\Payment\Repository\PaymentProfileRepository;
 use App\Payment\Service\PaymentDataProvider;
 use App\User\Entity\User;
@@ -37,9 +37,9 @@ use Psr\Log\LoggerInterface;
  *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class BankTransfertEmitterValidator
+class BankTransferEmitterValidator
 {
-    private $_bankTransferts;
+    private $_BankTransfers;
     private $_totalAmount;
     private $_logger;
     private $_entityManager;
@@ -68,9 +68,9 @@ class BankTransfertEmitterValidator
         $this->_userManager = $userManager;
     }
 
-    public function setBankTransferts(array $bankTransferts): self
+    public function setBankTransfers(array $BankTransfers): self
     {
-        $this->_bankTransferts = $bankTransferts;
+        $this->_BankTransfers = $BankTransfers;
 
         return $this;
     }
@@ -82,8 +82,8 @@ class BankTransfertEmitterValidator
 
     public function validate()
     {
-        if (is_null($this->_bankTransferts)) {
-            throw new BankTransfertException(BankTransfertException::EMITTER_VALIDATOR_NO_TRANSFERT);
+        if (is_null($this->_BankTransfers)) {
+            throw new BankTransferException(BankTransferException::EMITTER_VALIDATOR_NO_TRANSFERT);
         }
 
         $this->_getHolder();
@@ -96,13 +96,13 @@ class BankTransfertEmitterValidator
     public function _checkRecipientsWallets()
     {
         $recipientsIds = [];
-        foreach ($this->_bankTransferts as $bankTransfert) {
-            if (!in_array($bankTransfert->getRecipient()->getId(), $recipientsIds)) {
-                $recipientsIds[] = $bankTransfert->getRecipient()->getId();
-                $wallet = $this->_getUserWallet($bankTransfert->getRecipient());
+        foreach ($this->_BankTransfers as $BankTransfer) {
+            if (!in_array($BankTransfer->getRecipient()->getId(), $recipientsIds)) {
+                $recipientsIds[] = $BankTransfer->getRecipient()->getId();
+                $wallet = $this->_getUserWallet($BankTransfer->getRecipient());
                 if (is_null($wallet)) {
-                    $this->_updateTransfertStatus($bankTransfert, BankTransfert::STATUS_ABANDONNED_NO_RECIPIENT_WALLET);
-                    $this->_logger->error('[BatchId : '.$this->_bankTransferts[0]->getBatchId().'] No recipient Wallet for User '.$bankTransfert->getRecipient()->getId());
+                    $this->_updateTransfertStatus($BankTransfer, BankTransfer::STATUS_ABANDONNED_NO_RECIPIENT_WALLET);
+                    $this->_logger->error('[BatchId : '.$this->_BankTransfers[0]->getBatchId().'] No recipient Wallet for User '.$BankTransfer->getRecipient()->getId());
 
                     continue;
                 }
@@ -110,27 +110,27 @@ class BankTransfertEmitterValidator
         }
     }
 
-    private function _updateTransfertStatus(BankTransfert $bankTransfert, int $status)
+    private function _updateTransfertStatus(BankTransfer $BankTransfer, int $status)
     {
-        $bankTransfert->setStatus($status);
-        $this->_entityManager->persist($bankTransfert);
+        $BankTransfer->setStatus($status);
+        $this->_entityManager->persist($BankTransfer);
         $this->_entityManager->flush();
     }
 
     private function _getHolder()
     {
         if (is_null($this->_holderId) || !is_numeric($this->_holderId)) {
-            $this->_updateAllTransfertsStatus(BankTransfert::STATUS_ABANDONNED_NO_HOLDER_ID);
-            $this->_logger->error('[BatchId : '.$this->_bankTransferts[0]->getBatchId().'] No Holder id');
+            $this->_updateAllTransfertsStatus(BankTransfer::STATUS_ABANDONNED_NO_HOLDER_ID);
+            $this->_logger->error('[BatchId : '.$this->_BankTransfers[0]->getBatchId().'] No Holder id');
 
-            throw new BankTransfertException(BankTransfertException::NO_HOLDER_ID);
+            throw new BankTransferException(BankTransferException::NO_HOLDER_ID);
         }
 
         if (!$holderPaymenProfile = $this->_paymentProfileRepository->findOneBy(['identifier' => $this->_holderId])) {
-            $this->_updateAllTransfertsStatus(BankTransfert::STATUS_ABANDONNED_NO_HOLDER_FOUND);
-            $this->_logger->error('[BatchId : '.$this->_bankTransferts[0]->getBatchId().'] No Holder found');
+            $this->_updateAllTransfertsStatus(BankTransfer::STATUS_ABANDONNED_NO_HOLDER_FOUND);
+            $this->_logger->error('[BatchId : '.$this->_BankTransfers[0]->getBatchId().'] No Holder found');
 
-            throw new BankTransfertException(BankTransfertException::NO_HOLDER_FOUND);
+            throw new BankTransferException(BankTransferException::NO_HOLDER_FOUND);
         }
 
         $this->_holder = $holderPaymenProfile->getUser();
@@ -139,16 +139,16 @@ class BankTransfertEmitterValidator
     private function _computeTotalAmount()
     {
         $this->_totalAmount = 0;
-        foreach ($this->_bankTransferts as $bankTransfert) {
-            $this->_totalAmount += $bankTransfert->getAmount();
+        foreach ($this->_BankTransfers as $BankTransfer) {
+            $this->_totalAmount += $BankTransfer->getAmount();
         }
     }
 
     private function _updateAllTransfertsStatus(int $status)
     {
-        foreach ($this->_bankTransferts as $bankTransfert) {
-            $bankTransfert->setStatus($status);
-            $this->_entityManager->persist($bankTransfert);
+        foreach ($this->_BankTransfers as $BankTransfer) {
+            $BankTransfer->setStatus($status);
+            $this->_entityManager->persist($BankTransfer);
         }
         $this->_entityManager->flush();
     }
@@ -156,10 +156,10 @@ class BankTransfertEmitterValidator
     private function _checkPaymentProvider(): bool
     {
         if (!$this->_paymentActive) {
-            $this->_updateAllTransfertsStatus(BankTransfert::STATUS_ABANDONNED_NO_PAYMENT_PROVIDER);
-            $this->_logger->error('[BatchId : '.$this->_bankTransferts[0]->getBatchId().'] No payment provider');
+            $this->_updateAllTransfertsStatus(BankTransfer::STATUS_ABANDONNED_NO_PAYMENT_PROVIDER);
+            $this->_logger->error('[BatchId : '.$this->_BankTransfers[0]->getBatchId().'] No payment provider');
 
-            throw new BankTransfertException(BankTransfertException::NO_PAYMENT_PROVIDER);
+            throw new BankTransferException(BankTransferException::NO_PAYMENT_PROVIDER);
         }
 
         return false;
@@ -181,20 +181,20 @@ class BankTransfertEmitterValidator
         // get the wallet of the holder user
         $wallet = $this->_getUserWallet($this->_holder);
         if (is_null($wallet)) {
-            $this->_updateAllTransfertsStatus(BankTransfert::STATUS_ABANDONNED_NO_HOLDER_WALLET);
-            $this->_logger->error('[BatchId : '.$this->_bankTransferts[0]->getBatchId().'] No holder wallet');
+            $this->_updateAllTransfertsStatus(BankTransfer::STATUS_ABANDONNED_NO_HOLDER_WALLET);
+            $this->_logger->error('[BatchId : '.$this->_BankTransfers[0]->getBatchId().'] No holder wallet');
 
-            throw new BankTransfertException(BankTransfertException::NO_HOLDER_WALLET);
+            throw new BankTransferException(BankTransferException::NO_HOLDER_WALLET);
         }
 
         // check if enough found for $this->_totalAmount;
         if ($wallet->getBalance()->getAmount() / 100 < $this->_totalAmount) {
-            $this->_updateAllTransfertsStatus(BankTransfert::STATUS_ABANDONNED_FUNDS_UNAVAILABLE);
-            $this->_logger->error('[BatchId : '.$this->_bankTransferts[0]->getBatchId().'] Not enough funds');
-            $this->_logger->error('[BatchId : '.$this->_bankTransferts[0]->getBatchId().'] '.$this->_totalAmount.' needed '.$wallet->getBalance()->getAmount().' available.');
+            $this->_updateAllTransfertsStatus(BankTransfer::STATUS_ABANDONNED_FUNDS_UNAVAILABLE);
+            $this->_logger->error('[BatchId : '.$this->_BankTransfers[0]->getBatchId().'] Not enough funds');
+            $this->_logger->error('[BatchId : '.$this->_BankTransfers[0]->getBatchId().'] '.$this->_totalAmount.' needed '.$wallet->getBalance()->getAmount().' available.');
 
-            throw new BankTransfertException(BankTransfertException::FUNDS_UNAVAILABLE);
+            throw new BankTransferException(BankTransferException::FUNDS_UNAVAILABLE);
         }
-        $this->_logger->info('[BatchId : '.$this->_bankTransferts[0]->getBatchId().'] Funds available : '.$this->_totalAmount.' needed '.($wallet->getBalance()->getAmount() / 100).' available.');
+        $this->_logger->info('[BatchId : '.$this->_BankTransfers[0]->getBatchId().'] Funds available : '.$this->_totalAmount.' needed '.($wallet->getBalance()->getAmount() / 100).' available.');
     }
 }

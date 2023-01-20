@@ -48,7 +48,11 @@ class UserUpdateSso
             $params->eec = true;
         }
 
-        $ssoUser = $this->_ssoManager->getSsoUserProfile($params->ssoProvider, $params->ssoId, $params->baseSiteUri);
+        if (!property_exists($params, 'redirectUri')) {
+            $params->redirectUri = null;
+        }
+
+        $ssoUser = $this->_ssoManager->getSsoUserProfile($params->ssoProvider, $params->ssoId, $params->baseSiteUri, $params->redirectUri);
 
         // if ($ssoUser->getEmail() === $user->getEmail()) {
         return $this->_userManager->updateUserSsoProperties($user, $ssoUser);

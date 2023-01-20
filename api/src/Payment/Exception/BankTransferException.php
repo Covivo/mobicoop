@@ -25,7 +25,7 @@ namespace App\Payment\Exception;
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class BankTransfertException extends \LogicException
+class BankTransferException extends \LogicException
 {
     public const ERROR_OPENING_FILE = 'Error opening file : ';
     public const BAD_DELIMITER = 'Bad CSV delimiter. The CSV file MUST use semicolon ; as delimiter : ';

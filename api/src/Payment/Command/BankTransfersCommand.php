@@ -23,7 +23,7 @@
 
 namespace App\Payment\Command;
 
-use App\Payment\Service\BankTransfert\BankTransfertManager;
+use App\Payment\Service\BankTransfer\BankTransferManager;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -33,20 +33,20 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
-class BankTransfertsCommand extends Command
+class BankTransfersCommand extends Command
 {
-    private $_bankTransfertManager;
+    private $_BankTransferManager;
 
-    public function __construct(BankTransfertManager $bankTransfertManager)
+    public function __construct(BankTransferManager $BankTransferManager)
     {
         parent::__construct();
-        $this->_bankTransfertManager = $bankTransfertManager;
+        $this->_BankTransferManager = $BankTransferManager;
     }
 
     protected function configure()
     {
         $this
-            ->setName('app:payment:bank-transferts')
+            ->setName('app:payment:bank-transfers')
             ->setDescription('Make a serie of Bank Transfert using a CSV file as input.')
             ->setHelp('Make a serie of Bank Transfert using a CSV file as input.')
         ;
@@ -54,6 +54,6 @@ class BankTransfertsCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        return $this->_bankTransfertManager->makeBankTransferts();
+        return $this->_BankTransferManager->makeBankTransfers();
     }
 }
