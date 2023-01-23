@@ -34,19 +34,19 @@ class CarpoolStandardProvider
     private const SUPPORTED_PROVIDERS = [
         'Interop' => InteropProvider::class,
     ];
-    private $carpoolStandardProvider;
+    private $provider;
+    private $baseUri;
+    private $apiKey;
     private $providerInstance;
-    private $interopBaseUri;
-    private $interopApiKey;
 
     public function __construct(
-        string $carpoolStandardProvider,
-        string $interopBaseUri,
-        string $interopApiKey
+        string $provider,
+        string $baseUri,
+        string $apiKey
     ) {
-        $this->carpoolStandardProvider = $carpoolStandardProvider;
-        $this->interopBaseUri = $interopBaseUri;
-        $this->interopApiKey = $interopApiKey;
+        $this->provider = $provider;
+        $this->baseUri = $baseUri;
+        $this->apiKey = $apiKey;
     }
 
     /**
@@ -54,12 +54,13 @@ class CarpoolStandardProvider
      */
     public function checkCarpoolStandardConfiguration()
     {
-        if ('' !== $this->carpoolStandardProvider) {
-            if (isset(self::SUPPORTED_PROVIDERS[$this->carpoolStandardProvider])) {
-                $providerClass = self::SUPPORTED_PROVIDERS[$this->carpoolStandardProvider];
+        if ('' !== $this->provider) {
+            if (isset(self::SUPPORTED_PROVIDERS[$this->provider])) {
+                $providerClass = self::SUPPORTED_PROVIDERS[$this->provider];
                 $this->providerInstance = new $providerClass(
-                    $this->interopBaseUri,
-                    $this->interopApiKey
+                    $this->provider,
+                    $this->baseUri,
+                    $this->apiKey
                 );
             }
         } else {

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * Copyright (c) 2023, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -21,41 +21,24 @@
  *    LICENSE
  */
 
-namespace App\DataProvider\Entity;
+namespace App\CarpoolStandard\Service;
 
-use App\CarpoolStandard\Interfaces\CarpoolStandardProviderInterface;
 use App\CarpoolStandard\Ressource\Message;
-use App\DataProvider\Service\DataProvider;
 
-class InteropProvider implements CarpoolStandardProviderInterface
+/**
+ * @author Remi Wortemann <remi.wortemann@mobicoop.org>
+ */
+class MessageManager
 {
-    private const RESSOURCE_MESSAGE = '/messages';
+    private $carpoolStandardProvider;
 
-    private $baseUri;
-    private $apiKey;
-
-    public function __construct(string $provider, string $baseUri, string $apiKey)
+    public function __construct(CarpoolStandardProvider $carpoolStandardProvider)
     {
-        $this->baseUri = $baseUri;
-        $this->apiKey = $apiKey;
+        $this->carpoolStandardProvider = $carpoolStandardProvider;
     }
 
     public function postMessage(Message $message)
     {
-        $dataProvider = new DataProvider($this->baseUri.self::RESSOURCE_MESSAGE);
-
-        $headers = [
-            'X-API-KEY' => $this->baseUri,
-        ];
-        // Build the body
-        $body['from'] = [];
-        $body['to'] = [];
-        $body['message'] = '';
-        $body['recipientCarpoolerType'] = '';
-        $body['driverJourneyId'] = '';
-        $body['passengerJourneyId'] = '';
-        $body['bookingId'] = '';
-
-        return $dataProvider->postCollection($body, $headers);
+        $this->carpoolStandardProvider->postMessage($message);
     }
 }

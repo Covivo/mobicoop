@@ -311,10 +311,11 @@ services:
       $carpoolNoticeableDetourDistancePercent: "%env(int:CARPOOL_NOTICEABLE_DETOUR_DISTANCE_PERCENT)%"
   
   # CarpoolStandard
-  App\DataProvider\Entity\InteropProvider:
+  App\CarpoolStandard\Service\CarpoolStandardProvider:
     arguments:
-      $interopApiKey: "%env(string:INTEROP_API_KEY)%"
-      $interopBaseUri: "%env(string:INTEROP_BASE_URI)%"
+      $provider: "%env(string:CARPOOL_STANDARD_PROVIDER)%"
+      $apiKey: "%env(string:CARPOOL_STANDARD_API_KEY)%"
+      $baseUri: "%env(string:CARPOOL_STANDARD_BASE_URI)%"
 
   # Commands
   App\Command\CarpoolAskPostedRelaunch1Command:
