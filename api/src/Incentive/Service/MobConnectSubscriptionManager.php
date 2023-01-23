@@ -199,6 +199,10 @@ class MobConnectSubscriptionManager
         $response = $this->_mobConnectApiProvider->verifyUserSubscription($this->__getSubscriptionId());
 
         $this->_userSubscription->setStatus($response->getStatus());
+        $this->_userSubscription->setRejectionReason($response->getRejectReason());
+        $this->_userSubscription->setComment($response->getComment());
+        $this->_userSubscription->setVerificationDate();
+
         $this->_userSubscription->setLastTimestamp($response->getTimestamp());
     }
 
