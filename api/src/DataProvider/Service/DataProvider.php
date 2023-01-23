@@ -185,10 +185,10 @@ class DataProvider
                 $options[RequestOptions::AUTH] = $auth;
             }
 
-            echo json_encode($body);
-            var_dump($options);
+            // var_dump($body);
+            // var_dump($options);
 
-            exit;
+            // exit;
 
             $clientResponse = $this->client->post($this->resource, $options);
 

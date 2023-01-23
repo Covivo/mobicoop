@@ -72,10 +72,6 @@ class CarpoolStandardProvider
     {
         $this->checkCarpoolStandardConfiguration();
 
-        var_dump(get_class($this->providerInstance));
-
-        exit;
-
         return $this->providerInstance->postMessage($message);
     }
 }
