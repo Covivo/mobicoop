@@ -59,6 +59,7 @@ use App\Solidary\Repository\SolidaryAskHistoryRepository;
 use App\Solidary\Repository\SolidaryAskRepository;
 use App\Solidary\Repository\SolidaryRepository;
 use App\Solidary\Repository\StructureRepository;
+use App\User\Entity\AuthenticationDelegation;
 use App\User\Entity\SsoUser;
 use App\User\Entity\User;
 use App\User\Entity\UserNotification;
@@ -1506,6 +1507,13 @@ class UserManager
         $user->setLastActivityDate(new \DateTime());
 
         $this->entityManager->persist($user);
+        $this->entityManager->flush();
+    }
+
+    public function createAuthenticationDelegation(User $userByDelegation, User $user): void
+    {
+        $authenticationDelegation = new AuthenticationDelegation($userByDelegation, $user);
+        $this->entityManager->persist($authenticationDelegation);
         $this->entityManager->flush();
     }
 
