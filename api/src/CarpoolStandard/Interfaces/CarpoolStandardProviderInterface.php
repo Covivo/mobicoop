@@ -26,9 +26,9 @@ namespace App\CarpoolStandard\Interfaces;
 use App\CarpoolStandard\Ressource\Message;
 
 /**
- * Payment Provider interface.
+ * CarpoolStandard Provider interface.
  *
- * An Interop provider entity class must implement all these methods in order to perform all possible interop related actions
+ * An CarpoolStandard provider entity class must implement all these methods in order to perform all possible interop related actions
  *
  * @author Remi Wortemann <remi.wortemann@mobicoop.org>
  */
