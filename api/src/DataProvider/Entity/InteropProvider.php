@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2018, MOBICOOP. All rights reserved.
+ * Copyright (c) 2023, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -34,7 +34,7 @@ class InteropProvider implements CarpoolStandardProviderInterface
     private $baseUri;
     private $apiKey;
 
-    public function __construct(string $provider, string $baseUri, string $apiKey)
+    public function __construct(string $baseUri, string $apiKey)
     {
         $this->baseUri = $baseUri;
         $this->apiKey = $apiKey;
@@ -45,7 +45,7 @@ class InteropProvider implements CarpoolStandardProviderInterface
         $dataProvider = new DataProvider($this->baseUri.self::RESSOURCE_MESSAGE);
 
         $headers = [
-            'X-API-KEY' => $this->baseUri,
+            'X-API-KEY' => $this->apiKey,
         ];
         // Build the body
         $body['from'] = [];

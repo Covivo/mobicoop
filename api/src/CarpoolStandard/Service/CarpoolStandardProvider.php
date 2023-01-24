@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright (c) 2020, MOBICOOP. All rights reserved.
+ * Copyright (c) 2023, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
  ***************************
  *    This program is free software: you can redistribute it and/or modify
@@ -23,6 +23,7 @@
 
 namespace App\CarpoolStandard\Service;
 
+use App\CarpoolStandard\Exception\CarpoolStandardException;
 use App\CarpoolStandard\Ressource\Message;
 use App\DataProvider\Entity\InteropProvider;
 
@@ -49,9 +50,6 @@ class CarpoolStandardProvider
         $this->apiKey = $apiKey;
     }
 
-    /**
-     * Check if the payment is correcty configured.
-     */
     public function checkCarpoolStandardConfiguration()
     {
         if ('' !== $this->provider) {
@@ -65,6 +63,13 @@ class CarpoolStandardProvider
             }
         } else {
             return;
+        }
+        if (empty($this->provider)) {
+            throw new CarpoolStandardException(CarpoolStandardException::NO_PROVIDER);
+        }
+
+        if (!isset(self::SUPPORTED_PROVIDERS[$this->provider])) {
+            throw new CarpoolStandardException(CarpoolStandardException::UNSUPPORTED_PROVIDER);
         }
     }
 
