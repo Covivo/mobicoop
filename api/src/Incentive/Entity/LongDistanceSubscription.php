@@ -66,11 +66,32 @@ class LongDistanceSubscription
     private $lastTimestamp;
 
     /**
-     * @var string the status of the journey
+     * @var string the subscription status
      *
      * @ORM\Column(type="string", length=10, nullable=true)
      */
     private $status;
+
+    /**
+     * @var \DateTimeInterface
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $verificationDate;
+
+    /**
+     * @var string the mobConnect rejection reason
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $rejectReason;
+
+    /**
+     * @var string a mobConnect comment for the verify operation
+     *
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $comment;
 
     /**
      * @var string the first name of the user
@@ -527,6 +548,70 @@ class LongDistanceSubscription
     public function setHonourCertificate(string $honourCertificate): self
     {
         $this->honourCertificate = $honourCertificate;
+
+        return $this;
+    }
+
+    /**
+     * Get the mobConnect rejection reason.
+     *
+     * @return string
+     */
+    public function getRejectReason(): ?string
+    {
+        return $this->rejectReason;
+    }
+
+    /**
+     * Set the mobConnect rejection reason.
+     *
+     * @param string $rejectReason the mobConnect rejection reason
+     */
+    public function setRejectReason(?string $rejectReason): self
+    {
+        $this->rejectReason = $rejectReason;
+
+        return $this;
+    }
+
+    /**
+     * Get a mobConnect comment for the verify operation.
+     *
+     * @return string
+     */
+    public function getComment(): ?string
+    {
+        return $this->comment;
+    }
+
+    /**
+     * Set a mobConnect comment for the verify operation.
+     *
+     * @param string $comment a mobConnect comment for the verify operation
+     */
+    public function setComment(?string $comment): self
+    {
+        $this->comment = $comment;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of verificationDate.
+     *
+     * @return \DateTimeInterface
+     */
+    public function getVerificationDate(): ?\DateTime
+    {
+        return $this->verificationDate;
+    }
+
+    /**
+     * Set the value of verificationDate.
+     */
+    public function setVerificationDate(): self
+    {
+        $this->verificationDate = new \DateTime('now');
 
         return $this;
     }

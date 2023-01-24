@@ -73,7 +73,7 @@ class MobConnectApiProvider extends MobConnectProvider
             ? $this->__refreshToken() : $mobConnectAuth->getAccessToken();
     }
 
-    private function __postSubscription(string $incentiveId, bool $isShortDistance = false, string $phoneNumber = null)
+    private function __postSubscription(string $incentiveId, bool $isShortDistance = false)
     {
         $data = [
             'incentiveId' => $incentiveId,
