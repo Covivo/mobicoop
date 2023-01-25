@@ -1703,6 +1703,13 @@ class User implements UserInterface, EquatableInterface
      */
     private $mobConnectAuth;
 
+    /**
+     * @var null|string id of the user of an external journey (uuid)
+     *
+     * @Groups({"externalJourney"})
+     */
+    private $externalJourneyUserId;
+
     public function __construct($status = null)
     {
         $this->id = self::DEFAULT_ID;
@@ -3934,6 +3941,18 @@ class User implements UserInterface, EquatableInterface
     public function setMobConnectAuth($mobConnectAuth): self
     {
         $this->mobConnectAuth = $mobConnectAuth;
+
+        return $this;
+    }
+
+    public function getExternalJourneyUserId(): ?string
+    {
+        return $this->externalJourneyUserId;
+    }
+
+    public function setExternalJourneyUserId(?string $externalJourneyUserId): self
+    {
+        $this->externalJourneyUserId = $externalJourneyUserId;
 
         return $this;
     }
