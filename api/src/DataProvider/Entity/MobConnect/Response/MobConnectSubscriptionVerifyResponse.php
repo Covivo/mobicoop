@@ -17,7 +17,7 @@ class MobConnectSubscriptionVerifyResponse extends MobConnectSubscriptionRespons
     /**
      * @var string
      */
-    private $_comment;
+    private $_comments;
 
     public function __construct(\stdClass $mobConnectResponse)
     {
@@ -25,12 +25,12 @@ class MobConnectSubscriptionVerifyResponse extends MobConnectSubscriptionRespons
 
         $this->setStatus($mobConnectResponse->status);
 
-        if (isset($mobConnectResponse->motif_de_rejet)) {
+        if (isset($mobConnectResponse->rejectionReason)) {
             $this->setRejectReason($mobConnectResponse->motif_de_rejet);
         }
 
-        if (isset($mobConnectResponse->commentaire)) {
-            $this->setComment($mobConnectResponse->commentaire);
+        if (isset($mobConnectResponse->comments)) {
+            $this->setComment($mobConnectResponse->comments);
         }
     }
 
@@ -79,15 +79,15 @@ class MobConnectSubscriptionVerifyResponse extends MobConnectSubscriptionRespons
      */
     public function getComment(): ?string
     {
-        return $this->_comment;
+        return $this->_comments;
     }
 
     /**
      * Set the value of _comment.
      */
-    public function setComment(string $_comment): self
+    public function setComment(string $_comments): self
     {
-        $this->_comment = $_comment;
+        $this->_comments = $_comments;
 
         return $this;
     }

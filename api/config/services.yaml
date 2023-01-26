@@ -1077,6 +1077,12 @@ services:
     arguments:
       $notificationSsoRegistration: "%env(bool:NOTIFICATION_SSO_REGISTRATION)%"
 
+  App\User\Controller\EECSubscription:
+    tags:
+      - controller.service_arguments
+    arguments:
+      $ceeSubscriptionProvider: "%env(string:EEC_INCENTIVE_PROVIDER)%"
+
   App\User\Service\ReviewManager:
     arguments:
       $userReview: "%env(bool:USER_REVIEW)%"

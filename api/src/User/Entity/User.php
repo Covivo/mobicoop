@@ -62,6 +62,7 @@ use App\Match\Entity\MassPerson;
 use App\Solidary\Entity\Operate;
 use App\Solidary\Entity\Solidary;
 use App\Solidary\Entity\SolidaryUser;
+use App\User\Controller\EECSubscription;
 use App\User\Controller\UserAlerts;
 use App\User\Controller\UserAlertsUpdate;
 use App\User\Controller\UserAsks;
@@ -500,6 +501,16 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "security"="is_granted('user_read',object)",
  *              "swagger_context" = {
  *                  "tags"={"Users", "Carpool"}
+ *              }
+ *          },
+ *          "post_my_cee_subscriptions"={
+ *              "method"="POST",
+ *              "path"="/users/{id}/my-cee-subscriptions",
+ *              "controller"=EECSubscription::class,
+ *              "security"="is_granted('user_update',object)",
+ *              "normalization_context"={"groups"={"patchSso"}, "skip_null_values"=false},
+ *              "swagger_context" = {
+ *                  "tags"={"Users"}
  *              }
  *          },
  *          "patchSso"={
@@ -1692,6 +1703,13 @@ class User implements UserInterface, EquatableInterface
      */
     private $mobConnectAuth;
 
+    /**
+     * @var null|string id of the user of an external journey (uuid)
+     *
+     * @Groups({"externalJourney"})
+     */
+    private $externalJourneyUserId;
+
     public function __construct($status = null)
     {
         $this->id = self::DEFAULT_ID;
@@ -2122,7 +2140,7 @@ class User implements UserInterface, EquatableInterface
         return $this->pwdTokenDate;
     }
 
-    public function setPwdTokenDate(?DateTime $pwdTokenDate): self
+    public function setPwdTokenDate(?\DateTime $pwdTokenDate): self
     {
         $this->pwdTokenDate = $pwdTokenDate;
 
@@ -3923,6 +3941,18 @@ class User implements UserInterface, EquatableInterface
     public function setMobConnectAuth($mobConnectAuth): self
     {
         $this->mobConnectAuth = $mobConnectAuth;
+
+        return $this;
+    }
+
+    public function getExternalJourneyUserId(): ?string
+    {
+        return $this->externalJourneyUserId;
+    }
+
+    public function setExternalJourneyUserId(?string $externalJourneyUserId): self
+    {
+        $this->externalJourneyUserId = $externalJourneyUserId;
 
         return $this;
     }

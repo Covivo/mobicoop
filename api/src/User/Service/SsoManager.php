@@ -70,7 +70,7 @@ class SsoManager
      *
      * @return SsoConnection[]
      */
-    public function getSsoConnectionServices(string $baseSiteUri, ?string $serviceId, ?string $redirectUri): array
+    public function getSsoConnectionServices(string $baseSiteUri, ?string $serviceId, ?string $redirectUri = null): array
     {
         $ssoServices = [];
         if ($this->ssoServicesActive) {
@@ -96,7 +96,7 @@ class SsoManager
         return $ssoServices;
     }
 
-    public function getSsoUserProfile(string $serviceName, string $code, string $baseSiteUri, ?string $redirectUri): SsoUser
+    public function getSsoUserProfile(string $serviceName, string $code, string $baseSiteUri, ?string $redirectUri = null): SsoUser
     {
         $provider = $this->getSsoProvider($serviceName, $baseSiteUri, $redirectUri);
         $provider->setCode($code);
