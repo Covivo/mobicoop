@@ -71,3 +71,5 @@ rssfeeds:
   title: "Rss feeds"
 browserUpdate:
   language: "fr"
+assistiveDevices:
+  title: "Aides à la mobilité"

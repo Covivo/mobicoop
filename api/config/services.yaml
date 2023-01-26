@@ -757,7 +757,6 @@ services:
     tags:
       - { name: monolog.logger, channel: incentive_subscription }
 
-
   # Journey
   App\Journey\Service\JourneyManager:
     arguments:
@@ -887,6 +886,27 @@ services:
       $validationDocsAuthorizedExtensions: "%env(json:VALIDATION_DOC_AUTHORIZED_EXTENTIONS)%"
       $exportPath: "%env(resolve:PAYMENT_EXPORT_PATH)%"
 
+  App\Payment\Service\BankTransfer\:
+    resource: "../src/Payment/Service/BankTransfer/*"
+    tags:
+      - { name: monolog.logger, channel: bank_transfer }
+
+  App\Payment\Service\BankTransfer\BankTransferEmitterValidator:
+    arguments:
+      $paymentActive: "%env(string:PAYMENT_ACTIVE)%"
+      $holderId: "%env(string:BANK_TRANSFER_HOLDER_ID)%"
+    tags:
+      - { name: monolog.logger, channel: bank_transfer }
+
+  App\Payment\Service\BankTransfer\BankTransfersSummarizer:
+    arguments:
+      $communicationFolder: "%env(resolve:COMMUNICATION_FOLDER)%"
+      $emailTemplatePath: "%env(resolve:COMMUNICATION_TEMPLATE_EMAIL_PATH)%%env(resolve:NOTIFICATION_TEMPLATE_EMAIL_PATH)%"
+      $emailTitleTemplatePath: "%env(resolve:COMMUNICATION_TEMPLATE_EMAIL_PATH)%%env(resolve:NOTIFICATION_TITLE_TEMPLATE_EMAIL_PATH)%"
+      $emailRecipients: "%env(json:BANK_TRANSFER_REPORT_EMAIL)%"
+    tags:
+      - { name: monolog.logger, channel: bank_transfer }
+
   # Price
   App\Price\Controller\:
     resource: "../src/Price/Controller"
@@ -994,6 +1014,7 @@ services:
       $rzpUri: "%env(string:RZP_API_URI)%"
       $rzpLogin: "%env(string:RZP_API_LOGIN)%"
       $rzpPassword: "%env(string:RZP_API_PASSWORD)%"
+      $userDelegateEmailBase: "%env(string:USER_DELEGATE_EMAIL_BASE)%"
 
   App\User\Admin\Service\KibanaLoginManager:
     arguments:
@@ -1048,6 +1069,12 @@ services:
   App\User\Interoperability\Service\UserManager:
     arguments:
       $notificationSsoRegistration: "%env(bool:NOTIFICATION_SSO_REGISTRATION)%"
+
+  App\User\Controller\EECSubscription:
+    tags:
+      - controller.service_arguments
+    arguments:
+      $ceeSubscriptionProvider: "%env(string:EEC_INCENTIVE_PROVIDER)%"
 
   App\User\Service\ReviewManager:
     arguments:

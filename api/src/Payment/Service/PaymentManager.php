@@ -414,13 +414,8 @@ class PaymentManager
             }
         }
 
-        if (
-            ('' == $homeAddress->getStreet() && '' == $homeAddress->getStreetAddress())
-            || '' == $homeAddress->getAddressLocality()
-            || '' == $homeAddress->getRegion()
-            || '' == $homeAddress->getPostalCode()
-            || '' == $homeAddress->getCountryCode()
-        ) {
+        // the nationality and country of residence are required
+        if ('' == $homeAddress->getCountryCode()) {
             return false;
         }
 

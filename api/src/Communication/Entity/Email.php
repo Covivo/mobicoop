@@ -19,20 +19,20 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Communication\Entity;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * An Email
+ * An Email.
  */
 class Email
 {
-
     /**
      * @var string sender of the email
+     *
      * @Assert\NotBlank
      * @Assert\Email()
      */
@@ -40,18 +40,21 @@ class Email
 
     /**
      * @var string sender's name of the email
+     *
      * @Assert\NotBlank
      */
     private $senderName;
 
     /**
      * @var string sender's first name of the email
+     *
      * @Assert\NotBlank
      */
     private $senderFirstName;
 
     /**
      * @var mixed An array or string of recipient(s) of the email
+     *
      * @Assert\Email()
      * @Assert\NotBlank
      */
@@ -59,30 +62,35 @@ class Email
 
     /**
      * @var array recipient on copy of the email
+     *
      * @Assert\Email()
      */
     private $recipientEmailCc;
 
     /**
      * @var array recipient on blind copy of the email
+     *
      * @Assert\Email()
      */
     private $recipientEmailBcc;
 
     /**
      * @var string return email
+     *
      * @Assert\Email()
      */
     private $returnEmail;
 
     /**
      * @var string object of the email
+     *
      * @Assert\NotBlank
      */
     private $object;
 
     /**
      * @var string message body of the email
+     *
      * @Assert\NotBlank
      */
     private $message;
@@ -171,7 +179,7 @@ class Email
         return $this;
     }
 
-    public function getObject(): string
+    public function getObject(): ?string
     {
         return $this->object;
     }
@@ -183,7 +191,7 @@ class Email
         return $this;
     }
 
-    public function getMessage():? string
+    public function getMessage(): ?string
     {
         return $this->message;
     }

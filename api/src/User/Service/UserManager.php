@@ -75,6 +75,7 @@ use App\User\Event\UserRegisteredEvent;
 use App\User\Event\UserSendValidationEmailEvent;
 use App\User\Event\UserUpdatedSelfEvent;
 use App\User\Exception\UserDeleteException;
+use App\User\Exception\UserException;
 use App\User\Exception\UserNotFoundException;
 use App\User\Exception\UserUnderAgeException;
 use App\User\Repository\UserNotificationRepository;
@@ -129,6 +130,7 @@ class UserManager
     private $gamificationManager;
     private $scammerRepository;
     private $userMinAge;
+    private $paymentProfileRepository;
 
     // Default carpool settings
     private $chat;
@@ -334,6 +336,10 @@ class UserManager
         $this->checkIfScammer($user);
         //  we check if the user is not underaged
         $this->checkBirthDate($user);
+        // we check if the user has an email
+        if (is_null($user->getEmail())) {
+            throw new UserException(UserException::EMAIL_IS_MANDATORY);
+        }
 
         $user = $this->prepareUser($user, $encodePassword);
 
@@ -1697,7 +1703,7 @@ class UserManager
         return implode($pass); // turn the array into a string
     }
 
-    public function updateUserSsoProperties(User $user, SsoUser $ssoUser): User
+    public function updateUserSsoProperties(User $user, SsoUser $ssoUser, bool $eec = true): User
     {
         $user->setSsoId($ssoUser->getSub());
         $user->setSsoProvider($ssoUser->getProvider());

@@ -56,6 +56,6 @@ final class SsoConnectionCollectionDataProvider implements CollectionDataProvide
             throw new \LogicException('Parameter missing : baseSiteUri');
         }
 
-        return $this->ssoManager->getSsoConnectionServices($this->request->get('baseSiteUri'), $this->request->get('serviceId'));
+        return $this->ssoManager->getSsoConnectionServices($this->request->get('baseSiteUri'), $this->request->get('serviceId'), $this->request->get('redirectUri'));
     }
 }

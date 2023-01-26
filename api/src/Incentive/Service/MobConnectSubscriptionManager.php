@@ -199,6 +199,10 @@ class MobConnectSubscriptionManager
         $response = $this->_mobConnectApiProvider->verifyUserSubscription($this->__getSubscriptionId());
 
         $this->_userSubscription->setStatus($response->getStatus());
+        $this->_userSubscription->setRejectionReason($response->getRejectReason());
+        $this->_userSubscription->setComment($response->getComment());
+        $this->_userSubscription->setVerificationDate();
+
         $this->_userSubscription->setLastTimestamp($response->getTimestamp());
     }
 
@@ -354,7 +358,7 @@ class MobConnectSubscriptionManager
             $this->_user = $carpoolProof->getDriver();
         }
 
-        $journeyDate = $carpoolProof->getAsk()->getCriteria()->getFromDate();
+        $journeyDate = $carpoolProof->getStartDriverDate();
 
         switch (true) {
             case CeeJourneyService::isValidLongDistanceJourney($carpoolProof, $this->_logger):
@@ -362,7 +366,6 @@ class MobConnectSubscriptionManager
 
                 if (
                     is_null($this->_userSubscription)
-                    || CeeJourneyService::isDateExpired($journeyDate->add(new \DateInterval('P'.CeeJourneyService::REFERENCE_TIME_LIMIT.'M')))
                     || CeeJourneyService::LONG_DISTANCE_TRIP_THRESHOLD < count($this->_userSubscription->getLongDistanceJourneys())
                 ) {
                     return;

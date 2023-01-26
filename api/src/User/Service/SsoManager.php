@@ -43,6 +43,7 @@ class SsoManager
         OpenIdSsoProvider::SSO_PROVIDER_GLCONNECT => OpenIdSsoProvider::class,
         OpenIdSsoProvider::SSO_PROVIDER_PASSMOBILITE => OpenIdSsoProvider::class,
         OpenIdSsoProvider::SSO_PROVIDER_MOBCONNECT => MobConnectOpenIdSsoProvider::class,
+        OpenIdSsoProvider::SSO_PROVIDER_MOBCONNECTBASIC => MobConnectOpenIdSsoProvider::class,
         OpenIdSsoProvider::SSO_PROVIDER_MOBIGO => OpenIdSsoProvider::class,
     ];
 
@@ -69,14 +70,14 @@ class SsoManager
      *
      * @return SsoConnection[]
      */
-    public function getSsoConnectionServices(string $baseSiteUri, ?string $serviceId): array
+    public function getSsoConnectionServices(string $baseSiteUri, ?string $serviceId, ?string $redirectUri = null): array
     {
         $ssoServices = [];
         if ($this->ssoServicesActive) {
             foreach ($this->ssoServices as $serviceName => $ssoService) {
                 $provider = null;
                 if (is_null($serviceId) || $serviceId == $serviceName) {
-                    $provider = $this->getSsoProvider($serviceName, $baseSiteUri);
+                    $provider = $this->getSsoProvider($serviceName, $baseSiteUri, $redirectUri);
                 }
 
                 if (!is_null($provider)) {
@@ -95,9 +96,9 @@ class SsoManager
         return $ssoServices;
     }
 
-    public function getSsoUserProfile(string $serviceName, string $code, string $baseSiteUri): SsoUser
+    public function getSsoUserProfile(string $serviceName, string $code, string $baseSiteUri, ?string $redirectUri = null): SsoUser
     {
-        $provider = $this->getSsoProvider($serviceName, $baseSiteUri);
+        $provider = $this->getSsoProvider($serviceName, $baseSiteUri, $redirectUri);
         $provider->setCode($code);
 
         return $provider->getUserProfile($code);
@@ -160,7 +161,7 @@ class SsoManager
      *
      * @param string $baseSiteUri Url of the calling website
      */
-    private function getSsoProvider(string $serviceName, string $baseSiteUri = '')
+    private function getSsoProvider(string $serviceName, string $baseSiteUri = '', ?string $redirectUri = null)
     {
         if (isset(self::SUPPORTED_PROVIDERS[$serviceName])) {
             $service = $this->ssoServices[$serviceName];
@@ -171,7 +172,7 @@ class SsoManager
                 $service['baseUri'],
                 $service['clientId'],
                 $service['clientSecret'],
-                isset($service['returnUrl']) ? $service['returnUrl'] : SsoConnection::RETURN_URL,
+                !is_null($redirectUri) ? $redirectUri : (isset($service['returnUrl']) ? $service['returnUrl'] : SsoConnection::RETURN_URL),
                 $service['autoCreateAccount'],
                 $service['logOutRedirectUri'],
                 $service['codeVerifier'],

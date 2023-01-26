@@ -50,7 +50,7 @@
     "to": " au ",
     "noOnlinePayment": {
         "line1": "Votre profil n'étant pas complet vous ne pouvez pas payer en ligne.",
-        "line2": "Vous devez par exemple saisir votre adresse complète (numéro, nom de rue...) et non uniquement votre commune de résidence."
+        "line2": "Vous devez saisir à minima votre commune de résidence dans votre profil."
     },
     "noMoreItems":"Il n'y a plus de paiement à réaliser ou en attente de confirmation.",
     "loadingPageText":"Chargement des paiements à réaliser ou à confirmer",

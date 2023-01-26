@@ -25,7 +25,9 @@ namespace App\Communication\Service;
 
 use App\Communication\Entity\Email;
 use App\Communication\Ressource\ContactType;
+
 use function GuzzleHttp\json_decode;
+
 use Psr\Log\LoggerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
@@ -68,14 +70,15 @@ class EmailManager
     /**
      * Send an email.
      *
-     * @param Email  $mail     the email to send
-     * @param string $template the email's template
-     * @param array  $context  optional array of parameters that can be included in the template
+     * @param Email  $mail        the email to send
+     * @param string $template    the email's template
+     * @param array  $context     optional array of parameters that can be included in the template
      * @param mixed  $lang
+     * @param array  $attachments Array of string path to files. The files will be send as attachements
      *
      * @return string
      */
-    public function send(Email $mail, $template, $context = [], $lang = 'fr')
+    public function send(Email $mail, $template, $context = [], $lang = 'fr', $attachments = [])
     {
         $failures = '';
 
@@ -132,6 +135,10 @@ class EmailManager
                 }
                 $message->getHeaders()->addTextHeader($this->translator->trans($key), $data);
             }
+        }
+
+        foreach ($attachments as $attachment) {
+            $message->attach(\Swift_Attachment::fromPath($attachment));
         }
 
         $this->translator->setLocale($sessionLocale);

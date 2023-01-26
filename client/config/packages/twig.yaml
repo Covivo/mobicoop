@@ -56,3 +56,4 @@ twig:
         ssoButtonDisplay: '%env(bool:SSO_DISPLAY)%'
         staggeredSchedulesAllowed: '%env(bool:CARPOOL_STAGGERED_SCHEDULES_ALLOWED)%'
         referenceTerritory: '%env(string:REFERENCE_TERRITORY)%'
+        assistiveSsoProvider: '%env(string:ASSISTIVE_SSO_PROVIDER)%'

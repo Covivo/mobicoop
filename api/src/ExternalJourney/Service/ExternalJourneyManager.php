@@ -137,7 +137,7 @@ class ExternalJourneyManager
                 $currentJourneyCarpooler = $currentJourney['passenger'];
             }
 
-            $carpooler->setId($currentJourneyCarpooler['uuid']);
+            $carpooler->setExternalJourneyUserId($currentJourneyCarpooler['uuid']);
             $carpooler->setGivenName($currentJourneyCarpooler['alias']);
             $carpooler->setGender(User::GENDER_FEMALE);
             if ('male' === $currentJourneyCarpooler['gender']) {

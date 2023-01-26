@@ -1,222 +1,93 @@
 #!/bin/bash
-for i in "$@"
+
+for arg
 do
-case $i in
-    --version=*)
-    VERSION="${i#*=}"
-    shift # past argument=value
-    ;;
-    --version-migrate=*)
-    VERSION_MIGRATE="${i#*=}"
-    shift # past argument=value
-    ;;
-    --instance=*)
-    INSTANCE="${i#*=}"
-    shift # past argument=value
-    ;;
-esac
+    case "${arg}" in
+        --version=* )
+            VERSION="${arg#*=}"
+            ;;
+        --version-migrate=* )
+            VERSION_MIGRATE="${arg#*=}"
+            ;;
+        --instance=* )
+            INSTANCE="${arg#*=}"
+            ;;
+    esac
 done
 
-if [ $VERSION == "dev" ] || [ $VERSION == "test" ] || [ $VERSION == "prod_test" ]
+
+ROOT=/var/www
+case "${VERSION}" in
+    prod_test ) # prod_test is a special case
+        ROOT+="/prod/${INSTANCE}"
+        ;;
+    dev | test )
+        ROOT+="/${VERSION}/${INSTANCE}"
+        ;;
+    * )
+        ROOT+="/${INSTANCE}/${VERSION}"
+        ;;
+esac
+
+# check json files
+RDEX_CLIENTS_FILE="${ROOT}/api/config/rdex/clients.json"
+RDEX_OPERATOR_FILE="${ROOT}/api/config/rdex/operator.json"
+RDEX_PROVIDERS_FILE="${ROOT}/api/config/rdex/providers.json"
+PT_PROVIDERS_FILE="${ROOT}/api/config/publicTransport/providers.json"
+MODULES_FILE="${ROOT}/api/config/params/modules.json"
+CONTACTS_FILE="${ROOT}/api/config/params/contacts.json"
+ANALYTICS_FILE="${ROOT}/api/config/params/analytics.json"
+GEOCOMPLETE_PALETTE_FILE="${ROOT}/client/config/geocomplete/palette.json"
+AUTOMATED_COMMANDS_FILE="${ROOT}/api/config/params/commands.json"
+
+# if json file does not exist, copy it from .dist file
+for json_file in "${RDEX_CLIENTS_FILE}" "${RDEX_OPERATOR_FILE}" "${RDEX_PROVIDERS_FILE}" "${PT_PROVIDERS_FILE}"\
+                 "${MODULES_FILE}" "${CONTACTS_FILE}" "${ANALYTICS_FILE}" "${GEOCOMPLETE_PALETTE_FILE}"\
+                 "${AUTOMATED_COMMANDS_FILE}"
+do
+    [ -f "${json_file}" ] || cp "${json_file}.dist" "${json_file}"
+done
+
+DOMAINS_FILE="${ROOT}/api/config/user/domains.json"
+SSO_FILE="${ROOT}/api/config/user/sso.json"
+
+# if json file does not exist, create it with empty braces
+for json_file in "${DOMAINS_FILE}" "${SSO_FILE}"
+do
+    [ -f "${json_file}" ] || echo "{}" >"${json_file}"
+done
+
+# Migrations
+cd ${ROOT}/api
+php bin/console doctrine:migrations:migrate --env=${VERSION_MIGRATE} -n
+
+# Migrations instance
+cd ${ROOT}/client
+php bin/console doctrine:migrations:migrate --env=${VERSION_MIGRATE} -n
+
+# Crontab update
+python3 ${ROOT}/scripts/updateCrontab.py --env=${VERSION_MIGRATE}
+
+# External Cgu Mango
+EXTERNAL_CGU_DIRECTORY=${ROOT}/client/public/externalCgu
+[ -d "${EXTERNAL_CGU_DIRECTORY}" ] || mkdir -p "${EXTERNAL_CGU_DIRECTORY}"
+cd "${EXTERNAL_CGU_DIRECTORY}"
+wget -N https://www.mangopay.com/terms/PSP/PSP_MANGOPAY_FR.pdf
+
+# clear cache
+cd ${ROOT}/api
+php bin/console cache:clear --env=${VERSION_MIGRATE}
+cd ${ROOT}/client
+php bin/console cache:clear --env=${VERSION_MIGRATE}
+
+# Remove maintenance page
+rm ${ROOT}/api/public/maintenance.enable ${ROOT}/client/public/maintenance.enable
+
+# Fixtures for test
+if [ "${VERSION}" = "test" ]
 then
-
-    if [ $VERSION == "prod_test" ]
-    then
-        VERSION="prod"
-    fi
-
-    # check RDEX files
-    RDEX_CLIENTS_FILE=/var/www/$VERSION/$INSTANCE/api/config/rdex/clients.json
-    RDEX_OPERATOR_FILE=/var/www/$VERSION/$INSTANCE/api/config/rdex/operator.json
-    RDEX_PROVIDERS_FILE=/var/www/$VERSION/$INSTANCE/api/config/rdex/providers.json
-    if [ ! -f "$RDEX_CLIENTS_FILE" ]; then
-        cp /var/www/$VERSION/$INSTANCE/api/config/rdex/clients.json.dist /var/www/$VERSION/$INSTANCE/api/config/rdex/clients.json
-    fi
-    if [ ! -f "$RDEX_OPERATOR_FILE" ]; then
-        cp /var/www/$VERSION/$INSTANCE/api/config/rdex/operator.json.dist /var/www/$VERSION/$INSTANCE/api/config/rdex/operator.json
-    fi
-    if [ ! -f "$RDEX_PROVIDERS_FILE" ]; then
-        cp /var/www/$VERSION/$INSTANCE/api/config/rdex/providers.json.dist /var/www/$VERSION/$INSTANCE/api/config/rdex/providers.json
-    fi
-
-    # check PT files
-    PT_PROVIDERS_FILE=/var/www/$VERSION/$INSTANCE/api/config/publicTransport/providers.json
-    if [ ! -f "$PT_PROVIDERS_FILE" ]; then
-        cp /var/www/$VERSION/$INSTANCE/api/config/publicTransport/providers.json.dist /var/www/$VERSION/$INSTANCE/api/config/publicTransport/providers.json
-    fi
-
-    # check Domains files
-    DOMAINS_FILE=/var/www/$VERSION/$INSTANCE/api/config/user/domains.json
-    if [ ! -f "$DOMAINS_FILE" ]; then
-        echo "{}" >> /var/www/$VERSION/$INSTANCE/api/config/user/domains.json
-    fi
-
-    # check SSO files
-    SSO_FILE=/var/www/$VERSION/$INSTANCE/api/config/user/sso.json
-    if [ ! -f "$SSO_FILE" ]; then
-        echo "{}" >> /var/www/$VERSION/$INSTANCE/api/config/user/sso.json
-    fi
-
-    # check Modules files
-    MODULES_FILE=/var/www/$VERSION/$INSTANCE/api/config/params/modules.json
-    if [ ! -f "$MODULES_FILE" ]; then
-        cp /var/www/$VERSION/$INSTANCE/api/config/params/modules.json.dist /var/www/$VERSION/$INSTANCE/api/config/params/modules.json
-    fi
-
-    # check Contacts files
-    CONTACTS_FILE=/var/www/$VERSION/$INSTANCE/api/config/params/contacts.json
-    if [ ! -f "$CONTACTS_FILE" ]; then
-        cp /var/www/$VERSION/$INSTANCE/api/config/params/contacts.json.dist /var/www/$VERSION/$INSTANCE/api/config/params/contacts.json
-    fi
-
-    # check analytics files
-    ANALYTICS_FILE=/var/www/$VERSION/$INSTANCE/api/config/params/analytics.json
-    if [ ! -f "$ANALYTICS_FILE" ]; then
-        cp /var/www/$VERSION/$INSTANCE/api/config/params/analytics.json.dist /var/www/$VERSION/$INSTANCE/api/config/params/analytics.json
-    fi
-
-	# check geocomplete palette file
-    GEOCOMPLETE_PALETTE_FILE=/var/www/$VERSION/$INSTANCE/client/config/geocomplete/palette.json
-    if [ ! -f "$GEOCOMPLETE_PALETTE_FILE" ]; then
-        cp /var/www/$VERSION/$INSTANCE/client/config/geocomplete/palette.json.dist /var/www/$VERSION/$INSTANCE/client/config/geocomplete/palette.json
-    fi
-
-	# check automated commands file
-	AUTOMATED_COMMANDS_FILE=/var/www/$VERSION/$INSTANCE/api/config/params/commands.json
-	if [ ! -f "$AUTOMATED_COMMANDS_FILE" ]; then
-        cp /var/www/$VERSION/$INSTANCE/api/config/params/commands.json.dist /var/www/$VERSION/$INSTANCE/api/config/params/commands.json
-    fi
-
-    # Migrations
-    cd /var/www/$VERSION/$INSTANCE/api;
-    php bin/console doctrine:migrations:migrate --env=$VERSION_MIGRATE -n;
-
-    # Migrations instance
-    cd /var/www/$VERSION/$INSTANCE/client;
-    php bin/console doctrine:migrations:migrate --env=$VERSION_MIGRATE -n;
-
-    # Crontab update
-    python3 /var/www/$VERSION/$INSTANCE/scripts/updateCrontab.py --env=$VERSION_MIGRATE
-
-    # External Cgu Mango
-    EXTERNAL_CGU_DIRECTORY=/var/www/$VERSION/$INSTANCE/client/public/externalCgu
-    if [ ! -d "$EXTERNAL_CGU_DIRECTORY" ]; then
-        cd /var/www/$VERSION/$INSTANCE/client/public/;
-        mkdir externalCgu;
-    fi
-    cd /var/www/$VERSION/$INSTANCE/client/public/externalCgu;
-    wget -N https://www.mangopay.com/terms/PSP/PSP_MANGOPAY_FR.pdf;
-
-    # clear cache
-    cd /var/www/$VERSION/$INSTANCE/api;
-    php bin/console cache:clear --env=$VERSION_MIGRATE;
-    cd /var/www/$VERSION/$INSTANCE/client;
-    php bin/console cache:clear --env=$VERSION_MIGRATE;
-
-    # Remove maintenance page
-    rm /var/www/$VERSION/$INSTANCE/api/public/maintenance.enable
-    rm /var/www/$VERSION/$INSTANCE/client/public/maintenance.enable
-
-    # Fixtures for test
-    if [ $VERSION == "test" ]
-    then
-        cd /var/www/$VERSION/$INSTANCE/api;
-        php bin/console doctrine:fixtures:load -n -v --append --group=basic --env=$VERSION_MIGRATE
-        php bin/console doctrine:fixtures:load -n -v --append --group=solidary --env=$VERSION_MIGRATE
-    fi
-
-else
-
-    # check RDEX files
-    RDEX_CLIENTS_FILE=/var/www/$INSTANCE/$VERSION/api/config/rdex/clients.json
-    RDEX_OPERATOR_FILE=/var/www/$INSTANCE/$VERSION/api/config/rdex/operator.json
-    RDEX_PROVIDERS_FILE=/var/www/$INSTANCE/$VERSION/api/config/rdex/providers.json
-    if [ ! -f "$RDEX_CLIENTS_FILE" ]; then
-        cp /var/www/$INSTANCE/$VERSION/api/config/rdex/clients.json.dist /var/www/$INSTANCE/$VERSION/api/config/rdex/clients.json
-    fi
-    if [ ! -f "$RDEX_OPERATOR_FILE" ]; then
-        cp /var/www/$INSTANCE/$VERSION/api/config/rdex/operator.json.dist /var/www/$INSTANCE/$VERSION/api/config/rdex/operator.json
-    fi
-    if [ ! -f "$RDEX_PROVIDERS_FILE" ]; then
-        cp /var/www/$INSTANCE/$VERSION/api/config/rdex/providers.json.dist /var/www/$INSTANCE/$VERSION/api/config/rdex/providers.json
-    fi
-
-    # check PT files
-    PT_PROVIDERS_FILE=/var/www/$INSTANCE/$VERSION/api/config/publicTransport/providers.json
-    if [ ! -f "$PT_PROVIDERS_FILE" ]; then
-        cp /var/www/$INSTANCE/$VERSION/api/config/publicTransport/providers.json.dist /var/www/$INSTANCE/$VERSION/api/config/publicTransport/providers.json
-    fi
-
-    # check Domains files
-    DOMAINS_FILE=/var/www/$INSTANCE/$VERSION/api/config/user/domains.json
-    if [ ! -f "$DOMAINS_FILE" ]; then
-        echo "{}" >> /var/www/$INSTANCE/$VERSION/api/config/user/domains.json
-    fi
-
-    # SSO files
-    SSO_FILE=/var/www/$INSTANCE/$VERSION/api/config/user/sso.json
-    if [ ! -f "$SSO_FILE" ]; then
-        echo "{}" >> /var/www/$INSTANCE/$VERSION/api/config/user/sso.json
-    fi
-
-    # check Modules files
-    MODULES_FILE=/var/www/$INSTANCE/$VERSION/api/config/params/modules.json
-    if [ ! -f "$MODULES_FILE" ]; then
-        cp /var/www/$INSTANCE/$VERSION/api/config/params/modules.json.dist /var/www/$INSTANCE/$VERSION/api/config/params/modules.json
-    fi
-
-    # check Contacts files
-    CONTACTS_FILE=/var/www/$INSTANCE/$VERSION/api/config/params/contacts.json
-    if [ ! -f "$CONTACTS_FILE" ]; then
-        cp /var/www/$INSTANCE/$VERSION/api/config/params/contacts.json.dist /var/www/$INSTANCE/$VERSION/api/config/params/contacts.json
-    fi
-
-    # check analytics files
-    ANALYTICS_FILE=/var/www/$INSTANCE/$VERSION/api/config/params/analytics.json
-    if [ ! -f "$ANALYTICS_FILE" ]; then
-        cp /var/www/$INSTANCE/$VERSION/api/config/params/analytics.json.dist /var/www/$INSTANCE/$VERSION/api/config/params/analytics.json
-    fi
-
-	# check geocomplete palette file
-    GEOCOMPLETE_PALETTE_FILE=/var/www/$INSTANCE/$VERSION/client/config/geocomplete/palette.json
-    if [ ! -f "$GEOCOMPLETE_PALETTE_FILE" ]; then
-        cp /var/www/$INSTANCE/$VERSION/client/config/geocomplete/palette.json.dist /var/www/$INSTANCE/$VERSION/client/config/geocomplete/palette.json
-    fi
-
-	# check automated commands file
-	AUTOMATED_COMMANDS_FILE=/var/www/$INSTANCE/$VERSION/api/config/params/commands.json
-	if [ ! -f "$AUTOMATED_COMMANDS_FILE" ]; then
-        cp /var/www/$INSTANCE/$VERSION/api/config/params/commands.json.dist /var/www/$INSTANCE/$VERSION/api/config/params/commands.json
-    fi
-
-    # Migrations
-    cd /var/www/$INSTANCE/$VERSION/api;
-    php bin/console doctrine:migrations:migrate --env=$VERSION_MIGRATE -n;
-
-    # Migrations instance
-    cd /var/www/$INSTANCE/$VERSION/client;
-    php bin/console doctrine:migrations:migrate --env=$VERSION_MIGRATE -n;
-
-    # Crontab update
-    python3 /var/www/$INSTANCE/$VERSION/scripts/updateCrontab.py --env=$VERSION_MIGRATE
-
-    # External Cgu Mango
-    EXTERNAL_CGU_DIRECTORY=/var/www/$INSTANCE/$VERSION/client/public/externalCgu
-    if [ ! -d "$EXTERNAL_CGU_DIRECTORY" ]; then
-        cd /var/www/$INSTANCE/$VERSION/client/public/;
-        mkdir externalCgu;
-    fi
-    cd /var/www/$INSTANCE/$VERSION/client/public/externalCgu;
-    wget -N https://www.mangopay.com/terms/PSP/PSP_MANGOPAY_FR.pdf
-
-     # clear cache
-    cd /var/www/$INSTANCE/$VERSION/api;
-    php bin/console cache:clear --env=$VERSION_MIGRATE;
-    cd /var/www/$INSTANCE/$VERSION/client;
-    php bin/console cache:clear --env=$VERSION_MIGRATE;
-
-    # Remove maintenance page
-    rm /var/www/$INSTANCE/$VERSION/api/public/maintenance.enable
-    rm /var/www/$INSTANCE/$VERSION/client/public/maintenance.enable
-
+    cd ${ROOT}/api
+    php bin/console doctrine:fixtures:load -n -v --append --group=basic --env=${VERSION_MIGRATE}
+    php bin/console doctrine:fixtures:load -n -v --append --group=solidary --env=${VERSION_MIGRATE}
 fi
+

@@ -62,6 +62,7 @@ use App\Match\Entity\MassPerson;
 use App\Solidary\Entity\Operate;
 use App\Solidary\Entity\Solidary;
 use App\Solidary\Entity\SolidaryUser;
+use App\User\Controller\EECSubscription;
 use App\User\Controller\UserAlerts;
 use App\User\Controller\UserAlertsUpdate;
 use App\User\Controller\UserAsks;
@@ -502,6 +503,16 @@ use Symfony\Component\Validator\Constraints as Assert;
  *                  "tags"={"Users", "Carpool"}
  *              }
  *          },
+ *          "post_my_cee_subscriptions"={
+ *              "method"="POST",
+ *              "path"="/users/{id}/my-cee-subscriptions",
+ *              "controller"=EECSubscription::class,
+ *              "security"="is_granted('user_update',object)",
+ *              "normalization_context"={"groups"={"patchSso"}, "skip_null_values"=false},
+ *              "swagger_context" = {
+ *                  "tags"={"Users"}
+ *              }
+ *          },
  *          "patchSso"={
  *              "method"="PATCH",
  *              "path"="/users/{id}/updateSso",
@@ -715,7 +726,6 @@ class User implements UserInterface, EquatableInterface
     /**
      * @var string the email of the user
      *
-     * @Assert\NotBlank
      * @Assert\Email()
      * @ORM\Column(type="string", length=255, unique=true)
      * @Groups({"aRead","aWrite","readUser","write","checkValidationToken","passwordUpdateRequest","passwordUpdate", "readSolidary", "patchSso"})
@@ -1334,7 +1344,7 @@ class User implements UserInterface, EquatableInterface
      * @var null|string External ID of the user for a SSO connection
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readUser"})
+     * @Groups({"readUser", "patchSso"})
      */
     private $ssoId;
 
@@ -1342,7 +1352,7 @@ class User implements UserInterface, EquatableInterface
      * @var null|string External Provider for a SSO connection
      *
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"readUser"})
+     * @Groups({"readUser", "patchSso"})
      */
     private $ssoProvider;
 
@@ -1692,6 +1702,13 @@ class User implements UserInterface, EquatableInterface
      * @ORM\OneToOne(targetEntity="\App\Incentive\Entity\MobConnectAuth", mappedBy="user", cascade={"remove"})
      */
     private $mobConnectAuth;
+
+    /**
+     * @var null|string id of the user of an external journey (uuid)
+     *
+     * @Groups({"externalJourney"})
+     */
+    private $externalJourneyUserId;
 
     public function __construct($status = null)
     {
@@ -3924,6 +3941,18 @@ class User implements UserInterface, EquatableInterface
     public function setMobConnectAuth($mobConnectAuth): self
     {
         $this->mobConnectAuth = $mobConnectAuth;
+
+        return $this;
+    }
+
+    public function getExternalJourneyUserId(): ?string
+    {
+        return $this->externalJourneyUserId;
+    }
+
+    public function setExternalJourneyUserId(?string $externalJourneyUserId): self
+    {
+        $this->externalJourneyUserId = $externalJourneyUserId;
 
         return $this;
     }

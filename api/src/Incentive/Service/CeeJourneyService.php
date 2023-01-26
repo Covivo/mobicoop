@@ -152,9 +152,13 @@ abstract class CeeJourneyService
         return new \DateTime(self::REFERENCE_DATE) <= $date;
     }
 
-    public static function isDateExpired(\DateTime $date): bool
+    public static function isDateInPeriod(\DateTime $dateToCheck): bool
     {
-        return $date < new \DateTime('now');
+        $dateEndPeriod = new \DateTime('now');
+        $dateStartPeriod = clone $dateEndPeriod;
+        $dateStartPeriod = $dateStartPeriod->sub(new \DateInterval('P'.self::REFERENCE_PERIOD.'M'));
+
+        return $dateStartPeriod <= $dateToCheck && $dateToCheck <= $dateEndPeriod;
     }
 
     /**
@@ -173,17 +177,15 @@ abstract class CeeJourneyService
         }
 
         $today = new \DateTime('now');
-        $startDate = clone $today;
-        $startDate = $startDate->sub(new \DateInterval('P'.self::REFERENCE_PERIOD.'Y'));
 
-        $filteredCarpoolProofs = array_filter($carpoolProofs, function (CarpoolProof $carpoolProof) use ($startDate, $today) {
+        $filteredCarpoolProofs = array_filter($carpoolProofs, function (CarpoolProof $carpoolProof) {
             self::__setMatchingFromCarpoolProof($carpoolProof);
 
             return
                 self::__isLongDistance(self::$_matching->getCommonDistance())
                 && CarpoolProof::TYPE_HIGH === $carpoolProof->getType()
                 && self::__isOriginOrDestinationFromReferenceCountry()
-                && $startDate <= $carpoolProof->getStartDriverDate() && $carpoolProof->getStartDriverDate() <= $today
+                && self::isDateInPeriod($carpoolProof->getStartDriverDate())
             ;
         });
 
@@ -219,7 +221,7 @@ abstract class CeeJourneyService
                 self::__isShortDistance(self::$_matching->getCommonDistance())
                 && CarpoolProof::TYPE_HIGH === $carpoolProof->getType()
                 && self::__isOriginOrDestinationFromReferenceCountry()
-                && $carpoolProof->getStartDriverDate() < \DateTime::createFromFormat('Y-m-d', self::REFERENCE_DATE)
+                && self::isDateAfterReferenceDate($carpoolProof->getStartDriverDate())
             ;
         });
 
@@ -242,12 +244,11 @@ abstract class CeeJourneyService
         new Log($logger, self::VALID_LONG_DISTANCE_JOURNEY, $carpoolProof->getDriver(), [Log::CARPOOL_PROOF_ID => $carpoolProof->getId(), Log::TYPE_C => CarpoolProof::TYPE_HIGH === $carpoolProof->getType(), Log::MATCHING_ID => !is_null(self::$_matching) ? self::$_matching->getId() : 0, Log::IS_LONG_DISTANCE => self::__isLongDistance(self::$_matching->getCommonDistance()), Log::IS_FROM_FRANCE => self::__isOriginOrDestinationFromReferenceCountry(), Log::IS_PAYMENT_REGULARIZED => self::__hasBeenCarpoolPaymentRegularized($carpoolProof)]);
 
         return
-            !is_null(self::$_matching)
-            && self::__isLongDistance(self::$_matching->getCommonDistance())
-            && self::__isOriginOrDestinationFromReferenceCountry()
+            self::__isLongDistance(self::$_matching->getCommonDistance())
             && CarpoolProof::TYPE_HIGH === $carpoolProof->getType()
-            && !is_null($carpoolProof->getAsk()->getCriteria())
+            && self::__isOriginOrDestinationFromReferenceCountry()
             && self::__hasBeenCarpoolPaymentRegularized($carpoolProof)
+            && !self::isDateInPeriod($carpoolProof->getStartDriverDate())
         ;
     }
 
@@ -261,10 +262,10 @@ abstract class CeeJourneyService
         new Log($logger, self::VALID_SHORT_DISTANCE_JOURNEY, $carpoolProof->getDriver(), [Log::TYPE_C => CarpoolProof::TYPE_HIGH === $carpoolProof->getType(), Log::MATCHING_ID => !is_null(self::$_matching) ? self::$_matching->getId() : 0, Log::IS_LONG_DISTANCE => self::__isLongDistance(self::$_matching->getCommonDistance()), Log::IS_FROM_FRANCE => self::__isOriginOrDestinationFromReferenceCountry()]);
 
         return
-            CarpoolProof::TYPE_HIGH === $carpoolProof->getType()
-            && !is_null(self::$_matching)
-            && self::__isShortDistance(self::$_matching->getCommonDistance())
+            self::__isShortDistance(self::$_matching->getCommonDistance())
+            && CarpoolProof::TYPE_HIGH === $carpoolProof->getType()
             && self::__isOriginOrDestinationFromReferenceCountry()
+            && !self::isDateAfterReferenceDate($carpoolProof->getStartDriverDate())
         ;
     }
 }
