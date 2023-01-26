@@ -411,7 +411,7 @@ class LongDistanceSubscription
     /**
      * Set the full street address of the user.
      */
-    public function setStreetAddress(string $streetAddress): self
+    public function setStreetAddress(?string $streetAddress): self
     {
         $this->streetAddress = $streetAddress;
 
@@ -431,7 +431,7 @@ class LongDistanceSubscription
      *
      * @param string $postalCode the address postal code of the user
      */
-    public function setPostalCode(string $postalCode): self
+    public function setPostalCode(?string $postalCode): self
     {
         $this->postalCode = $postalCode;
 
@@ -451,7 +451,7 @@ class LongDistanceSubscription
      *
      * @param string $addressLocality the address locality of the user
      */
-    public function setAddressLocality(string $addressLocality): self
+    public function setAddressLocality(?string $addressLocality): self
     {
         $this->addressLocality = $addressLocality;
 
