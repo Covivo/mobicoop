@@ -305,8 +305,6 @@ class MobConnectSubscriptionManager
             return new ShortDistanceSubscription($this->_user, $mobConnectShortDistanceSubscription);
         }
 
-        // TODO: Return to the user that was unable to create the short distance subscription
-
         return null;
     }
 
@@ -319,8 +317,6 @@ class MobConnectSubscriptionManager
 
             return new LongDistanceSubscription($this->_user, $mobConnectLongDistanceSubscription);
         }
-
-        // TODO: Return to the user that was unable to create the long distance subscription
 
         return null;
     }
