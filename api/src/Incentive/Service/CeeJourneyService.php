@@ -248,7 +248,7 @@ abstract class CeeJourneyService
             && CarpoolProof::TYPE_HIGH === $carpoolProof->getType()
             && self::__isOriginOrDestinationFromReferenceCountry()
             && self::__hasBeenCarpoolPaymentRegularized($carpoolProof)
-            && !self::isDateInPeriod($carpoolProof->getStartDriverDate())
+            && self::isDateInPeriod($carpoolProof->getStartDriverDate())
         ;
     }
 
