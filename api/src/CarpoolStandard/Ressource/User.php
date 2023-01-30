@@ -39,14 +39,16 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "denormalization_context"={"groups"={"write"}}
  *      },
  *      collectionOperations={
- *          "post"={
+ *          "carpool_standard_post"={
  *              "method"="POST",
  *              "path"="/users",
  *              "swagger_context" = {
  *                  "tags"={"Carpool Standard"}
  *              }
  *          },
- *          "get"={
+ *          "carpool_standard_get"={
+ *              "method"="GET",
+ *              "path"="/users",
  *              "security"="is_granted('reject',object)",
  *              "swagger_context" = {
  *                  "tags"={"Carpool Standard"}
@@ -54,7 +56,9 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          }
  *      },
  *      itemOperations={
- *          "get"={
+ *          "carpool_standard_get"={
+ *             "method"="GET",
+ *             "path"="/users/{id}",
  *             "security"="is_granted('reject',object)",
  *              "swagger_context" = {
  *                  "tags"={"Carpool Standard"}
@@ -67,10 +71,11 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class User
 {
+    public const DEFAULT_ID = 999999999999;
+
     /**
-     * @var string The id of this user
+     * @var null|string The id of this user
      *
-     * @Assert\NotBlank
      * @Groups({"read", "write"})
      * @ApiProperty(identifier=true)
      */
@@ -134,12 +139,20 @@ class User
      */
     private $verifiedIdentity;
 
-    public function getId(): string
+    public function __construct($id = null)
+    {
+        $this->id = self::DEFAULT_ID;
+        if ($id) {
+            $this->id = $id;
+        }
+    }
+
+    public function getId(): ?string
     {
         return $this->id;
     }
 
-    public function setId(string $id): self
+    public function setId(?string $id): self
     {
         $this->id = $id;
 

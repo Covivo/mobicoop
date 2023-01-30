@@ -48,7 +48,7 @@ final class MessageCollectionDataPersister implements ContextAwareDataPersisterI
 
     public function supports($data, array $context = []): bool
     {
-        return $data instanceof Message && isset($context['collection_operation_name']) && 'post' == $context['collection_operation_name'];
+        return $data instanceof Message && isset($context['collection_operation_name']) && 'carpool_standard_post' == $context['collection_operation_name'];
     }
 
     public function persist($data, array $context = [])

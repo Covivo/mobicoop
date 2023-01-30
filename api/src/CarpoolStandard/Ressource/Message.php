@@ -39,13 +39,15 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "denormalization_context"={"groups"={"write"}}
  *      },
  *       collectionOperations={
- *          "get"={
+ *          "carpool_standard_get"={
+ *             "method"="GET",
+ *             "path"="/messages",
  *             "security"="is_granted('reject',object)",
  *              "swagger_context" = {
  *                  "tags"={"Carpool Standard"}
  *              }
  *          },
- *          "post"={
+ *          "carpool_standard_post"={
  *              "method"="POST",
  *              "path"="/messages",
  *              "swagger_context" = {
@@ -54,7 +56,9 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          }
  *      },
  *      itemOperations={
- *          "get"={
+ *          "carpool_standard_get"={
+ *             "method"="GET",
+ *             "path"="/messages",
  *             "security"="is_granted('reject',object)",
  *              "swagger_context" = {
  *                  "tags"={"Carpool Standard"}
@@ -136,6 +140,18 @@ class Message
         if ($id) {
             $this->id = $id;
         }
+    }
+
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
+    public function setId(int $id): self
+    {
+        $this->id = $id;
+
+        return $this;
     }
 
     public function getFrom(): User
