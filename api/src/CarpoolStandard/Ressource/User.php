@@ -47,6 +47,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              }
  *          },
  *          "carpool_standard_get"={
+ *              "method"="GET",
  *              "security"="is_granted('reject',object)",
  *              "swagger_context" = {
  *                  "tags"={"Carpool Standard"}
@@ -55,6 +56,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *      },
  *      itemOperations={
  *          "carpool_standard_get"={
+ *              "method"="GET",
  *             "security"="is_granted('reject',object)",
  *              "swagger_context" = {
  *                  "tags"={"Carpool Standard"}
