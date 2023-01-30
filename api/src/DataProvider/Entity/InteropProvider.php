@@ -29,20 +29,22 @@ use App\DataProvider\Service\DataProvider;
 
 class InteropProvider implements CarpoolStandardProviderInterface
 {
-    private const RESSOURCE_MESSAGE = '/messages';
+    private const RESSOURCE_MESSAGE = 'messages';
 
+    private $provider;
     private $baseUri;
     private $apiKey;
 
-    public function __construct(string $baseUri, string $apiKey)
+    public function __construct(string $provider, string $baseUri, string $apiKey)
     {
+        $this->provider = $provider;
         $this->baseUri = $baseUri;
         $this->apiKey = $apiKey;
     }
 
     public function postMessage(Message $message)
     {
-        $dataProvider = new DataProvider($this->baseUri.self::RESSOURCE_MESSAGE);
+        $dataProvider = new DataProvider($this->baseUri, self::RESSOURCE_MESSAGE);
 
         $headers = [
             'X-API-KEY' => $this->apiKey,
