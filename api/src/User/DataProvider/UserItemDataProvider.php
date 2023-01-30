@@ -46,10 +46,6 @@ final class UserItemDataProvider implements ItemDataProviderInterface, Restricte
 
     public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?User
     {
-        var_dump('ici');
-
-        exit;
-
         return $this->userManager->getUser($id);
     }
 }
