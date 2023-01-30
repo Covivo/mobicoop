@@ -39,13 +39,13 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "denormalization_context"={"groups"={"write"}}
  *      },
  *       collectionOperations={
- *          "get"={
+ *          "standard_carpool_get"={
  *             "security"="is_granted('reject',object)",
  *              "swagger_context" = {
  *                  "tags"={"Carpool Standard"}
  *              }
  *          },
- *          "post"={
+ *          "standard_carpool_post"={
  *              "method"="POST",
  *              "path"="/messages",
  *              "swagger_context" = {
@@ -54,7 +54,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          }
  *      },
  *      itemOperations={
- *          "get"={
+ *          "standard_carpool_get"={
  *             "security"="is_granted('reject',object)",
  *              "swagger_context" = {
  *                  "tags"={"Carpool Standard"}
