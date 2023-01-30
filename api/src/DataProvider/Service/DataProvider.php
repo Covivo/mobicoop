@@ -187,6 +187,7 @@ class DataProvider
 
             // var_dump($body);
             // var_dump($options);
+            // var_dump($this->resource);
 
             // exit;
 
@@ -199,7 +200,10 @@ class DataProvider
                     return new Response($clientResponse->getStatusCode(), $clientResponse->getBody());
             }
         } catch (TransferException $e) {
-            // var_dump($e->getMessage());die;
+            // var_dump($e->getMessage());
+
+            // exit;
+
             return new Response($e->getCode(), $e->getMessage());
         }
 

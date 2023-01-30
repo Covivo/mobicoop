@@ -40,6 +40,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  *      },
  *       collectionOperations={
  *          "carpool_standard_get"={
+ *             "method"="GET",
+ *             "path"="/messages",
  *             "security"="is_granted('reject',object)",
  *              "swagger_context" = {
  *                  "tags"={"Carpool Standard"}
@@ -55,6 +57,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  *      },
  *      itemOperations={
  *          "carpool_standard_get"={
+ *             "method"="GET",
+ *             "path"="/messages",
  *             "security"="is_granted('reject',object)",
  *              "swagger_context" = {
  *                  "tags"={"Carpool Standard"}
@@ -136,6 +140,18 @@ class Message
         if ($id) {
             $this->id = $id;
         }
+    }
+
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
+    public function setId(int $id): self
+    {
+        $this->id = $id;
+
+        return $this;
     }
 
     public function getFrom(): User
