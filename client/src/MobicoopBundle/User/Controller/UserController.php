@@ -1550,8 +1550,9 @@ class UserController extends AbstractController
             $data = json_decode($request->getContent(), true);
 
             $path = isset($data['path']) ? $data['path'] : null;
+            $redirectUri = isset($data['redirectUri']) ? $data['redirectUri'] : null;
 
-            return new JsonResponse($this->userManager->getSsoService($data['service'], $path));
+            return new JsonResponse($this->userManager->getSsoService($data['service'], $path, $redirectUri));
         }
 
         return new JsonResponse();

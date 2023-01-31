@@ -577,9 +577,9 @@ class UserManager
      *
      * @param User $user
      *
-     * @throws \ReflectionException
-     *
      * @return array|object
+     *
+     * @throws \ReflectionException
      */
     public function getAds(bool $isAcceptedCarpools = false)
     {
@@ -934,7 +934,7 @@ class UserManager
      *
      * @param string $service The service name (according API sso.json)
      */
-    public function getSsoService(string $service, string $additionalBaseSiteUri = null): ?array
+    public function getSsoService(string $service, ?string $additionalBaseSiteUri = null, ?string $redirectUri = null): ?array
     {
         $this->dataProvider->setClass(SsoConnection::class);
 
@@ -943,7 +943,7 @@ class UserManager
         if (!is_null($additionalBaseSiteUri)) {
             $baseSiteUri .= "/{$additionalBaseSiteUri}";
         }
-        $response = $this->dataProvider->getCollection(['baseSiteUri' => $baseSiteUri, 'serviceId' => $service]);
+        $response = $this->dataProvider->getCollection(['baseSiteUri' => $baseSiteUri, 'serviceId' => $service, 'redirectUri' => $redirectUri]);
         if (200 == $response->getCode()) {
             return $response->getValue()->getMember();
         }
