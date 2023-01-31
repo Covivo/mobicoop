@@ -3,6 +3,7 @@
 namespace App\Incentive\EventListener;
 
 use App\Carpool\Event\CarpoolProofValidatedEvent;
+use App\DataProvider\Entity\OpenIdSsoProvider;
 use App\Incentive\Service\MobConnectSubscriptionManager;
 use App\Payment\Event\ElectronicPaymentValidatedEvent;
 use App\User\Entity\User;
@@ -18,7 +19,11 @@ use Symfony\Component\HttpFoundation\RequestStack;
  */
 class MobConnectListener implements EventSubscriberInterface
 {
-    private const ALLOWED_SSO_PROVIDER = 'mobConnect';
+    private const ALLOWED_SSO_PROVIDERS = [
+        OpenIdSsoProvider::SSO_PROVIDER_MOBCONNECT,
+        OpenIdSsoProvider::SSO_PROVIDER_MOBCONNECTAUTH,
+        OpenIdSsoProvider::SSO_PROVIDER_MOBCONNECTBASIC,
+    ];
 
     /**
      * @var Request
@@ -56,7 +61,7 @@ class MobConnectListener implements EventSubscriberInterface
 
         if (
             property_exists($decodeRequest, 'ssoProvider')
-            && self::ALLOWED_SSO_PROVIDER === $decodeRequest->ssoProvider
+            && in_array($decodeRequest->ssoProvider, self::ALLOWED_SSO_PROVIDERS)
             && property_exists($decodeRequest, 'eec')
             && (1 === $decodeRequest->eec || true === $decodeRequest)
         ) {
