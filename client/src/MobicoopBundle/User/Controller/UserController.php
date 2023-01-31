@@ -1449,7 +1449,8 @@ class UserController extends AbstractController
         $params = $this->ssoManager->guessSsoParameters($response_body);
 
         // We add the front url to the parameters
-        (isset($_SERVER['HTTPS'])) ? $params['baseSiteUri'] = 'https://'.$_SERVER['HTTP_HOST'] : $params['baseSiteUri'] = 'http://'.$_SERVER['HTTP_HOST'];
+        $params['baseSiteUri'] = isset($_SERVER['HTTPS']) ? 'https://'.$_SERVER['HTTP_HOST'] : 'http://'.$_SERVER['HTTP_HOST'];
+        $params['redirectUri'] = $request->getPathInfo();
 
         // We add the service name
         $services = $this->userManager->getSsoServices();
