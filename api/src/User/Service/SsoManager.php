@@ -43,6 +43,7 @@ class SsoManager
         OpenIdSsoProvider::SSO_PROVIDER_GLCONNECT => OpenIdSsoProvider::class,
         OpenIdSsoProvider::SSO_PROVIDER_PASSMOBILITE => OpenIdSsoProvider::class,
         OpenIdSsoProvider::SSO_PROVIDER_MOBCONNECT => MobConnectOpenIdSsoProvider::class,
+        OpenIdSsoProvider::SSO_PROVIDER_MOBCONNECTAUTH => MobConnectOpenIdSsoProvider::class,
         OpenIdSsoProvider::SSO_PROVIDER_MOBCONNECTBASIC => MobConnectOpenIdSsoProvider::class,
         OpenIdSsoProvider::SSO_PROVIDER_MOBIGO => OpenIdSsoProvider::class,
     ];

@@ -330,7 +330,7 @@ class UserManager
      *
      * @return User The user created
      */
-    public function registerUser(User $user, bool $encodePassword = true, bool $isSolidary = false)
+    public function registerUser(User $user, bool $encodePassword = true, bool $isSolidary = false, ?SsoUser $ssoUser = null)
     {
         // we check if the user is on the scammer list
         $this->checkIfScammer($user);
@@ -346,6 +346,10 @@ class UserManager
         // persist the user
         $this->entityManager->persist($user);
         $this->entityManager->flush();
+
+        if (!is_null($ssoUser)) {
+            $this->updateUserSsoProperties($user, $ssoUser);
+        }
 
         // creation of the alert preferences
         $user = $this->createAlerts($user);
@@ -1778,8 +1782,10 @@ class UserManager
                 $user->setBirthDate(\DateTime::createFromFormat('Y-m-d', $ssoUser->getBirthdate()));
             }
 
-            $user = $this->registerUser($user);
+            $user = $this->registerUser($user, true, false, $ssoUser);
         }
+
+        $this->updateUserSsoProperties($user, $ssoUser);
 
         return $user;
     }

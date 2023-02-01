@@ -28,7 +28,7 @@ namespace Mobicoop\Bundle\MobicoopBundle\User\Service;
  */
 class SsoManager
 {
-    private const ALLOWED_PROVIDERS = ['GLConnect', 'mobConnect', 'PassMobilite', 'mobigo'];
+    private const ALLOWED_PROVIDERS = ['GLConnect', 'mobConnect', 'mobConnectAuth', 'mobConnectBasic', 'PassMobilite', 'mobigo'];
 
     /**
      * Guess and return the parameters for a SSO connection.

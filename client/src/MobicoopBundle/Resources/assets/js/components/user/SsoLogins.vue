@@ -41,6 +41,10 @@ export default {
     defaultButtonsActive: {
       type: Boolean,
       default: true
+    },
+    specificSsoServices: {
+      type: Array,
+      default: () => []
     }
   },
   data() {
@@ -64,14 +68,31 @@ export default {
   },
   methods:{
     getSso(){
-      let data = {
-        "service": this.specificService ? this.specificService : null,
-        "path": this.specificPath
-      };
-      maxios.post(this.$t("urlGetSsoServices"), data)
-        .then(response => {
-          this.ssoConnections = response.data;
-        });
+      if (this.specificSsoServices.length) {
+        this.specificSsoServices.forEach((service) => {
+          let data = {
+            "service": service.name,
+            "path": service.baseSiteUri ? service.baseSiteUri : null,
+            "redirectUri": service.redirectUri ? service.redirectUri : null
+          };
+
+          maxios.post(this.$t("urlGetSsoService"), data)
+            .then(response => {
+              response.data.forEach(service => {
+                this.ssoConnections.push(service);
+              });
+            });
+        })
+      } else {
+        let data = {
+          "service": this.specificService ? this.specificService : null,
+          "path": this.specificPath,
+        };
+        maxios.post(this.$t("urlGetSsoServices"), data)
+          .then(response => {
+            this.ssoConnections = response.data;
+          });
+      }
     }
   }
 }
