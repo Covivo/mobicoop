@@ -85,7 +85,8 @@
           </v-form>
 
           <SsoLogins
-            v-if="consent && ssoButtonDisplay "
+            v-if="consent && ssoButtonDisplay"
+            :specific-sso-services="specificSsoServices"
             class="mt-5"
           />
 
@@ -202,6 +203,10 @@ export default {
     ssoButtonDisplay:{
       type: Boolean,
       default:false
+    },
+    specificSsoServices: {
+      type: Array,
+      default: () => []
     }
   },
   data() {
@@ -218,7 +223,7 @@ export default {
       passwordRules: [
         v => !!v || this.$t("passwordRequired")
       ],
-      errorDisplay: ""
+      errorDisplay: "",
     };
   },
   computed: {
