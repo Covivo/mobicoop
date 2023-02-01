@@ -1012,19 +1012,10 @@ class DataProvider
                     $params['fromSsoMobConnect'] = true;
                 }
 
-                $clientResponse = $this->client->post($this->authLoginPath, [
-                    'headers' => ['accept' => 'application/json'],
-                    RequestOptions::JSON => $params,
-                ]);
-
                 try {
                     $clientResponse = $this->client->post($this->authLoginPath, [
                         'headers' => ['accept' => 'application/json'],
-                        RequestOptions::JSON => [
-                            'ssoId' => $this->ssoId,
-                            'ssoProvider' => $this->ssoProvider,
-                            'baseSiteUri' => $this->baseSiteUri,
-                        ],
+                        RequestOptions::JSON => $params,
                     ]);
                     $value = json_decode((string) $clientResponse->getBody(), true);
                 } catch (ServerException $e) {
