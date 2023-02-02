@@ -233,7 +233,7 @@ class OpenIdSsoProvider implements SsoProviderInterface
     public function getLogoutUrl(): ?string
     {
         $url = null;
-        if (isset(self::URLS[$this->serviceName][self::LOGOUT_URL])) {
+        if (isset(self::URLS[$this->serviceName][self::LOGOUT_URL]) && '' !== $this->logOutRedirectUri) {
             $url = $this->baseUri.''.self::URLS[$this->serviceName][self::LOGOUT_URL];
             $url = str_replace('{REDIRECT_URI}', $this->logOutRedirectUri, $url);
         }
@@ -243,7 +243,7 @@ class OpenIdSsoProvider implements SsoProviderInterface
 
     public function getLogoutUrls(): ?string
     {
-        return (isset(self::URLS[$this->serviceName][self::LOGOUT_URL])) ? $this->baseUri.''.self::URLS[$this->serviceName][self::LOGOUT_URL] : null;
+        return (isset(self::URLS[$this->serviceName][self::LOGOUT_URL]) && '' !== $this->logOutRedirectUri) ? $this->baseUri.''.self::URLS[$this->serviceName][self::LOGOUT_URL] : null;
     }
 
     protected function getToken($code)
