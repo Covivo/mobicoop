@@ -99,7 +99,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 class UserManager
 {
     private const DELETE_AVAILABLE_FIELDS = ['birthDate', 'chat', 'chatFavorites', 'drivingLicenceNumber', 'emailToken', 'familyName', 'gamification', 'givenName', 'mobile', 'music', 'musicFavorites', 'newsSubscription', 'oldEmail', 'oldTelephone', 'postalAddress', 'proEmail', 'proName', 'smoke', 'solidaryUser', 'ssoId', 'ssoProvider', 'telephone', 'unsubscribeToken'];
-    private const PSEUDONYMISED_EMAIL_SUFFIX = '@mobicoop-anonymised.io';
+    private const PSEUDONYMISED_EMAIL_SUFFIX = '@mobicoop-anonymized.io';
 
     private $entityManager;
     private $imageManager;
