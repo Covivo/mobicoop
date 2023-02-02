@@ -2026,7 +2026,7 @@ class UserManager
         $today = new \DateTime('now');
         $user->setPassword(password_hash($today->format('Y-m-d H:m:s'), PASSWORD_DEFAULT));
         $user->setGender(User::GENDER_OTHER);
-        $user->setStatus(User::STATUS_ANONYMIZED);
+        $user->setStatus(User::STATUS_PSEUDONYMIZED);
 
         return $user;
     }
