@@ -19,47 +19,50 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\Admin\DataProvider;
 
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryResultCollectionExtensionInterface;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGenerator;
 use ApiPlatform\Core\DataProvider\CollectionDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
 use App\User\Entity\User;
 use Doctrine\Common\Persistence\ManagerRegistry;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGenerator;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Extension\QueryResultCollectionExtensionInterface;
 
 /**
  * Collection data provider for users in admin context.
  *
  * @author Sylvain Briat <sylvain.briat@mobicoop.org>
- *
  */
 final class UserCollectionDataProvider implements CollectionDataProviderInterface, RestrictedDataProviderInterface
 {
     private $collectionExtensions;
     private $managerRegistry;
-    
+
     public function __construct(ManagerRegistry $managerRegistry, iterable $collectionExtensions)
     {
         $this->collectionExtensions = $collectionExtensions;
         $this->managerRegistry = $managerRegistry;
     }
-    
+
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return User::class === $resourceClass && $operationName === "ADMIN_get";
+        return User::class === $resourceClass && 'ADMIN_get' === $operationName;
     }
-    
+
     public function getCollection(string $resourceClass, string $operationName = null, array $context = []): iterable
     {
         $manager = $this->managerRegistry->getManagerForClass($resourceClass);
+
         /**
          * @var EntityRepository $repository
          */
         $repository = $manager->getRepository($resourceClass);
         $queryBuilder = $repository->createQueryBuilder('u');
+        // We exclude pseudoynymized users
+        $queryBuilder->where('u.status != :status');
+        $queryBuilder->setParameter('status', User::STATUS_PSEUDONYMIZED);
         $queryNameGenerator = new QueryNameGenerator();
 
         foreach ($this->collectionExtensions as $extension) {
