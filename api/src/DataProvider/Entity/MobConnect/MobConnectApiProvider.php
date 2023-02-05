@@ -5,6 +5,7 @@ namespace App\DataProvider\Entity\MobConnect;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionResponse;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionVerifyResponse;
 use App\DataProvider\Ressource\MobConnectApiParams;
+use App\Incentive\Service\LoggerService;
 use App\Incentive\Service\MobConnectMessages;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
@@ -40,12 +41,13 @@ class MobConnectApiProvider extends MobConnectProvider
      */
     private $_ssoServices;
 
-    public function __construct(EntityManagerInterface $em, MobConnectApiParams $params, User $user, array $ssoServices)
+    public function __construct(EntityManagerInterface $em, MobConnectApiParams $params, LoggerService $loggerService, User $user, array $ssoServices)
     {
         $this->_em = $em;
         $this->_apiParams = $params;
 
         $this->_apiUri = $this->_apiParams->getApiUri();
+        $this->_loggerService = $loggerService;
         $this->_user = $user;
         $this->_ssoServices = $ssoServices;
     }
@@ -150,6 +152,8 @@ class MobConnectApiProvider extends MobConnectProvider
     ): MobConnectSubscriptionResponse {
         $data = [];
 
+        $this->_loggerService->log('The journey will be declared on moBConnect');
+
         if (true === $isShortDistance) {
             $data['Identifiant du trajet'] = $rpcJourneyId;
         } else {
@@ -165,6 +169,8 @@ class MobConnectApiProvider extends MobConnectProvider
 
     public function verifyUserSubscription(string $subscriptionId): MobConnectSubscriptionVerifyResponse
     {
+        $this->_loggerService->log('The journey will be verify on moBConnect');
+
         $this->_createDataProvider(self::ROUTE_SUBSCRIPTIONS_VERIFY, $subscriptionId);
 
         return new MobConnectSubscriptionVerifyResponse(

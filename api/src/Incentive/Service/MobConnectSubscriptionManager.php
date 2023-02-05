@@ -46,6 +46,11 @@ class MobConnectSubscriptionManager
     private $_eventDispatcher;
 
     /**
+     * @var LoggerService
+     */
+    private $_loggerService;
+
+    /**
      * @var LoggerInterface
      */
     private $_logger;
@@ -81,13 +86,15 @@ class MobConnectSubscriptionManager
         EntityManagerInterface $em,
         Security $security,
         EventDispatcherInterface $eventDispatcher,
-        LoggerInterface $logger,
+        LoggerService $loggerService,
+        LoggerInterface $loggerInterface,
         array $ssoServices,
         array $mobConnectParams
     ) {
         $this->_em = $em;
         $this->_eventDispatcher = $eventDispatcher;
-        $this->_logger = $logger;
+        $this->_loggerService = $loggerService;
+        $this->_logger = $loggerInterface;
 
         $this->_user = $security->getUser();
 
@@ -191,7 +198,7 @@ class MobConnectSubscriptionManager
 
     private function __setApiProviderParams()
     {
-        $this->_mobConnectApiProvider = new MobConnectApiProvider($this->_em, new MobConnectApiParams($this->_mobConnectParams), $this->_user, $this->_ssoServices);
+        $this->_mobConnectApiProvider = new MobConnectApiProvider($this->_em, new MobConnectApiParams($this->_mobConnectParams), $this->_loggerService, $this->_user, $this->_ssoServices);
     }
 
     private function __verifySubscription()
@@ -354,20 +361,26 @@ class MobConnectSubscriptionManager
             return;
         }
 
-        if (is_null($this->_user)) {
-            $this->_user = $carpoolProof->getDriver();
-        }
+        $this->_user = $carpoolProof->getDriver();
 
         $journeyDate = $carpoolProof->getStartDriverDate();
 
         switch (true) {
             case CeeJourneyService::isValidLongDistanceJourney($carpoolProof, $this->_logger):
+                $this->_loggerService->log('The journey successfully passed the long distance test');
                 $this->_userSubscription = $this->_user->getLongDistanceSubscription();
 
                 if (
                     is_null($this->_userSubscription)
-                    || CeeJourneyService::LONG_DISTANCE_TRIP_THRESHOLD < count($this->_userSubscription->getLongDistanceJourneys())
+                    || CeeJourneyService::LONG_DISTANCE_TRIP_THRESHOLD <= count($this->_userSubscription->getLongDistanceJourneys())
                 ) {
+                    if (is_null($this->_userSubscription)) {
+                        $this->_loggerService->log('The user does not have a subscription for long distance journeys', 'alert');
+                    }
+                    if (!is_null($this->_userSubscription) && CeeJourneyService::LONG_DISTANCE_TRIP_THRESHOLD <= count($this->_userSubscription->getLongDistanceJourneys())) {
+                        $this->_loggerService->log('The number of declared long-distance journeys has already reached its maximum', 'alert');
+                    }
+
                     return;
                 }
                 $journey = new LongDistanceJourney(
@@ -381,13 +394,20 @@ class MobConnectSubscriptionManager
                 break;
 
             case CeeJourneyService::isValidShortDistanceJourney($carpoolProof, $this->_logger):
+                $this->_loggerService->log('The journey successfully passed the short distance test');
                 $this->_userSubscription = $this->_user->getShortDistanceSubscription();
 
                 if (
                     is_null($this->_userSubscription)
-                    || !CeeJourneyService::isDateAfterReferenceDate($journeyDate)
                     || CeeJourneyService::SHORT_DISTANCE_TRIP_THRESHOLD <= count($this->_userSubscription->getShortDistanceJourneys())
                 ) {
+                    if (is_null($this->_userSubscription)) {
+                        $this->_loggerService->log('The user does not have a subscription for short distance journeys', 'alert');
+                    }
+                    if (!is_null($this->_userSubscription) && CeeJourneyService::SHORT_DISTANCE_TRIP_THRESHOLD <= count($this->_userSubscription->getShortDistanceJourneys())) {
+                        $this->_loggerService->log('The number of declared short-distance journeys has already reached its maximum', 'alert');
+                    }
+
                     return;
                 }
 
@@ -401,6 +421,11 @@ class MobConnectSubscriptionManager
                 $this->_userSubscription->addShortDistanceJourney($journey);
 
                 break;
+
+            default:
+                $this->_loggerService->log('The trip failed the short  long distance tests');
+
+                break;
         }
 
         $paymentDate = !is_null($carpoolPayment) && !is_null($carpoolPayment->getUpdatedDate()) ? $carpoolPayment->getUpdatedDate() : null;
@@ -410,10 +435,15 @@ class MobConnectSubscriptionManager
 
             switch (true) {
                 case $this->_userSubscription instanceof LongDistanceSubscription:
+                    $this->_loggerService->log('Action processing for long distance subscriptions');
+
                     switch (count($this->_userSubscription->getLongDistanceJourneys())) {
                         case CeeJourneyService::LOW_THRESHOLD_PROOF:
+                            $this->_loggerService->log('The journey is the first');
                             // The journey is added to the EEC sheet
                             if (is_null($paymentDate)) {
+                                $this->_loggerService->log(MobConnectMessages::PAYMENT_DATE_MISSING, 'alert');
+
                                 throw new \LogicException(MobConnectMessages::PAYMENT_DATE_MISSING);
                             }
 
@@ -432,11 +462,26 @@ class MobConnectSubscriptionManager
                                 $this->_eventDispatcher->dispatch(LastLongDistanceJourneyValidatedEvent::NAME, $event);
                             }
 
+                            $this->_em->flush();
+
                             break;
 
                         case CeeJourneyService::LONG_DISTANCE_TRIP_THRESHOLD:
+                            $this->_loggerService->log('The journey is the last ('.CeeJourneyService::LONG_DISTANCE_TRIP_THRESHOLD.')');
                             $event = new LongDistanceSubscriptionClosedEvent($this->_userSubscription);
                             $this->_eventDispatcher->dispatch(LongDistanceSubscriptionClosedEvent::NAME, $event);
+
+                            $this->_em->flush();
+
+                            break;
+
+                        default:
+                            if (CeeJourneyService::LOW_THRESHOLD_PROOF < count($this->_userSubscription->getShortDistanceJourneys()) && count($this->_userSubscription->getShortDistanceJourneys()) < CeeJourneyService::LONG_DISTANCE_TRIP_THRESHOLD) {
+                                $this->_loggerService->log('Treatment for a number of trips equal to '.count($this->_userSubscription->getShortDistanceJourneys()));
+                                $this->_em->flush();
+                            } else {
+                                $this->_loggerService->log('No treatment-The current number of journeys is greater than the maximum threshold');
+                            }
 
                             break;
                     }
@@ -444,8 +489,12 @@ class MobConnectSubscriptionManager
                     break;
 
                 case $this->_userSubscription instanceof ShortDistanceSubscription:
+                    $this->_loggerService->log('Action processing for short distance subscriptions');
+
                     switch (count($this->_userSubscription->getShortDistanceJourneys())) {
                         case CeeJourneyService::LOW_THRESHOLD_PROOF:
+                            $this->_loggerService->log('The journey is the first');
+
                             // The journey is added to the EEC sheet
                             $this->_mobConnectApiProvider->patchUserSubscription($this->__getSubscriptionId(), $this->__getRpcJourneyId($carpoolProof->getId()), true);
 
@@ -461,21 +510,39 @@ class MobConnectSubscriptionManager
                                 $this->_eventDispatcher->dispatch(FirstShortDistanceJourneyValidatedEvent::NAME, $event);
                             }
 
+                            $this->_em->flush();
+
                             break;
 
                         case CeeJourneyService::SHORT_DISTANCE_TRIP_THRESHOLD:
+                            $this->_loggerService->log('The journey is the last ('.CeeJourneyService::SHORT_DISTANCE_TRIP_THRESHOLD.')');
                             $journey->setBonusStatus(ShortDistanceJourney::BONUS_STATUS_PENDING);
 
                             $event = new ShortDistanceSubscriptionClosedEvent($this->_userSubscription);
                             $this->_eventDispatcher->dispatch(ShortDistanceSubscriptionClosedEvent::NAME, $event);
 
+                            $this->_em->flush();
+
+                            break;
+
+                        default:
+                            if (CeeJourneyService::LOW_THRESHOLD_PROOF < count($this->_userSubscription->getShortDistanceJourneys()) && count($this->_userSubscription->getShortDistanceJourneys()) < CeeJourneyService::SHORT_DISTANCE_TRIP_THRESHOLD) {
+                                $this->_loggerService->log('Treatment for a number of trips equal to '.count($this->_userSubscription->getShortDistanceJourneys()));
+                                $this->_em->flush();
+                            } else {
+                                $this->_loggerService->log('No treatment-The current number of journeys is greater than the maximum threshold');
+                            }
+
                             break;
                     }
 
                     break;
-            }
 
-            $this->_em->flush();
+                default:
+                    $this->_loggerService->log('Unknown subscription type', 'alert');
+
+                    break;
+            }
         }
     }
 

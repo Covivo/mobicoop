@@ -4,6 +4,7 @@ namespace App\DataProvider\Entity\MobConnect;
 
 use App\DataProvider\Entity\Response as ProviderResponse;
 use App\DataProvider\Service\DataProvider;
+use App\Incentive\Service\LoggerService;
 use App\Incentive\Service\MobConnectMessages;
 use App\User\Entity\User;
 use Symfony\Component\HttpFoundation\Response;
@@ -35,6 +36,11 @@ abstract class MobConnectProvider
      * @var string
      */
     protected $_apiUri;
+
+    /**
+     * @var LoggerService
+     */
+    protected $_loggerService;
 
     /**
      * The authenticated user.
@@ -75,6 +81,8 @@ abstract class MobConnectProvider
     protected function _getResponse(ProviderResponse $response)
     {
         $responseValue = $response->getValue();
+
+        $this->_loggerService->log('The journey has been declared with the result: '.$response->getCode().' | '.$responseValue);
 
         switch ($response->getCode()) {
             case 200:
