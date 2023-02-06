@@ -26,9 +26,9 @@ class LoggerService
         $this->_logger = $loggerInterface;
     }
 
-    public function log(string $msg, string $type = 'info')
+    public function log(string $msg, string $type = 'info', ?bool $forced = false)
     {
-        if ($this->_areLogsOpen()) {
+        if ($this->_areLogsOpen() || true === $forced) {
             $this->_logger->{$type}('TEST-'.$msg);
         }
     }

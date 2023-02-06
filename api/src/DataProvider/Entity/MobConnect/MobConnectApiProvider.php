@@ -152,14 +152,13 @@ class MobConnectApiProvider extends MobConnectProvider
     ): MobConnectSubscriptionResponse {
         $data = [];
 
-        $this->_loggerService->log('The journey will be declared on moBConnect');
-
         if (true === $isShortDistance) {
             $data['Identifiant du trajet'] = $rpcJourneyId;
         } else {
             $data['Date de partage des frais'] = $costSharingDate->format('Y-m-d');
         }
 
+        $this->_loggerService->log('We PATCH the subscription on mobConnect', 'info', true);
         $this->_createDataProvider(self::ROUTE_PATCH_SUBSCRIPTIONS, $subscriptionId);
 
         return new MobConnectSubscriptionResponse(
@@ -169,8 +168,7 @@ class MobConnectApiProvider extends MobConnectProvider
 
     public function verifyUserSubscription(string $subscriptionId): MobConnectSubscriptionVerifyResponse
     {
-        $this->_loggerService->log('The journey will be verify on moBConnect');
-
+        $this->_loggerService->log('We verify the subscription on mobConnect', 'info', true);
         $this->_createDataProvider(self::ROUTE_SUBSCRIPTIONS_VERIFY, $subscriptionId);
 
         return new MobConnectSubscriptionVerifyResponse(
