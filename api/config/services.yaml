@@ -750,6 +750,8 @@ services:
 
   # INCENTIVE
   App\Incentive\Service\LoggerService:
+      arguments:
+          $globalForcingLogs: "%env(bool:EEC_FORCING_LOGS)%"
       tags:
           - { name: monolog.logger, channel: incentive_subscription }
           

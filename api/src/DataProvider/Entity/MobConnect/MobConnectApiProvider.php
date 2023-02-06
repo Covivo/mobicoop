@@ -128,11 +128,15 @@ class MobConnectApiProvider extends MobConnectProvider
 
     public function postSubscriptionForShortDistance()
     {
+        $this->_loggerService->log('We create the short distance subscription on mobConnect', 'info', true);
+
         return new MobConnectSubscriptionResponse($this->__postSubscription($this->_apiParams->getShortDistanceSubscriptionId(), true));
     }
 
     public function postSubscriptionForLongDistance()
     {
+        $this->_loggerService->log('We create the long distance subscription on mobConnect', 'info', true);
+
         return new MobConnectSubscriptionResponse($this->__postSubscription($this->_apiParams->getLongDistanceSubscriptionId(), false, $this->_user->getTelephone()));
     }
 

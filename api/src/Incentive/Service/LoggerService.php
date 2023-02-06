@@ -8,7 +8,10 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class LoggerService
 {
-    private const LOG_TYPES = ['error', 'notice', 'info', 'debug'];
+    /**
+     * @var bool
+     */
+    private $_globalForcingLogs;
 
     /**
      * @var LoggerInterface
@@ -20,15 +23,16 @@ class LoggerService
      */
     private $_request;
 
-    public function __construct(RequestStack $requestStack, LoggerInterface $loggerInterface)
+    public function __construct(RequestStack $requestStack, LoggerInterface $loggerInterface, bool $globalForcingLogs)
     {
         $this->_request = $requestStack->getCurrentRequest();
         $this->_logger = $loggerInterface;
+        $this->_globalForcingLogs = $globalForcingLogs;
     }
 
     public function log(string $msg, string $type = 'info', ?bool $forced = false)
     {
-        if ($this->_areLogsOpen() || true === $forced) {
+        if (true === $this->_globalForcingLogs || $this->_areLogsOpen() || true === $forced) {
             $this->_logger->{$type}('TEST-'.$msg);
         }
     }
