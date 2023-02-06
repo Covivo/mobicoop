@@ -86,7 +86,7 @@ class ExternalJourneyManager
                                 $aggregatedResults = json_decode($result['journeys'], true);
                             } else {
                                 // No rawJson flag set or set to 0. We return array of Carpool -> Result.
-                                foreach ($this->createResultFromRDEX($result['journeys'], $result['providerName']) as $currentResult) {
+                                foreach ($this->createResultFromRDEX($result['journeys'], $result['providerName'], Result::RDEX_PROVIDER) as $currentResult) {
                                     $aggregatedResults[] = $currentResult;
                                 }
                             }
@@ -101,7 +101,7 @@ class ExternalJourneyManager
                                 $aggregatedResults = json_decode($result['journeys'], true);
                             } else {
                                 // No rawJson flag set or set to 0. We return array of Carpool -> Result.
-                                foreach ($this->createResultFromRDEX($result['journeys'], $result['providerName']) as $currentResult) {
+                                foreach ($this->createResultFromRDEX($result['journeys'], $result['providerName'], Result::STANDARD_RDEX_PROVIDER) as $currentResult) {
                                     $aggregatedResults[] = $currentResult;
                                 }
                             }
@@ -120,7 +120,7 @@ class ExternalJourneyManager
         return $aggregatedResults;
     }
 
-    private function createResultFromRDEX($data, $providerName): array
+    private function createResultFromRDEX($data, $providerName, $providerType): array
     {
         $results = [];
         $journeys = json_decode($data, true);
@@ -261,6 +261,7 @@ class ExternalJourneyManager
             $result->setExternalOrigin($currentJourney['origin']);
             $result->setExternalOperator($currentJourney['operator']);
             $result->setExternalProvider($providerName);
+            $result->setExternalProviderType($providerType);
             $result->setExternalJourneyId($currentJourney['uuid']);
             $results[] = $result;
         }

@@ -33,6 +33,8 @@ use Symfony\Component\Serializer\Annotation\Groups;
 class Result
 {
     public const DEFAULT_ID = 999999999999;
+    public const RDEX_PROVIDER = 1;
+    public const STANDARD_RDEX_PROVIDER = 2;
 
     /**
      * @var int the id of this result
@@ -370,6 +372,13 @@ class Result
      * @Groups("externalJourney")
      */
     private $externalProvider;
+
+    /**
+     * @var null|int Type of provider RDEX = 1, STANDARD_RDEX = 2
+     *
+     * @Groups("externalJourney")
+     */
+    private $externalProviderType;
 
     /**
      * @var string External journeyId of the result if it's an external result (like RDEX)
@@ -998,6 +1007,18 @@ class Result
     public function setExternalProvider(?string $externalProvider): self
     {
         $this->externalProvider = $externalProvider;
+
+        return $this;
+    }
+
+    public function getExternalProviderType(): ?int
+    {
+        return $this->externalProviderType;
+    }
+
+    public function setExternalProviderType(?int $externalProviderType): self
+    {
+        $this->externalProviderType = $externalProviderType;
 
         return $this;
     }

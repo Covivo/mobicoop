@@ -132,6 +132,7 @@
               v-on="on"
             >
               <v-btn
+                v-if="externalProviderType == 1"
                 :disabled="user == null"
                 rounded
                 color="primary"
@@ -273,6 +274,10 @@ export default {
     externalProvider: {
       type: String,
       default: null
+    },
+    externalProviderType: {
+      type: Number,
+      default: 1
     },
     externalJourneyId: {
       type: String,
