@@ -10,7 +10,9 @@ use Doctrine\ORM\Mapping as ORM;
  * A short distance journey.
  *
  * @ORM\Entity
+ *
  * @ORM\Table(name="mobconnect__short_distance_journey")
+ *
  * @ORM\HasLifecycleCallbacks
  */
 class ShortDistanceJourney
@@ -25,7 +27,9 @@ class ShortDistanceJourney
      * @var int The cee ID
      *
      * @ORM\Column(name="id", type="integer")
+     *
      * @ORM\Id
+     *
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
@@ -122,11 +126,21 @@ class ShortDistanceJourney
     private $bonusStatus = self::BONUS_STATUS_NO;
 
     /**
+     * Status of http request to mobConnect.
+     *
+     * @var int
+     *
+     * @ORM\Column(type="integer", nullable=true, options={"comment":"Status of http request to mobConnect"})
+     */
+    private $httpRequestStatus;
+
+    /**
      * The carpool proof associate with the journey.
      *
      * @var CarpoolProof
      *
      * @ORM\OneToOne(targetEntity=CarpoolProof::class)
+     *
      * @ORM\JoinColumn(nullable=true)
      */
     private $carpoolProof;
@@ -155,6 +169,7 @@ class ShortDistanceJourney
 
     /**
      * @ORM\PrePersist
+     *
      * @ORM\PreUpdate
      */
     public function preUpdate()
@@ -417,6 +432,24 @@ class ShortDistanceJourney
     public function setCarpoolProof(CarpoolProof $carpoolProof): self
     {
         $this->carpoolProof = $carpoolProof;
+
+        return $this;
+    }
+
+    /**
+     * Get status of http request to mobConnect.
+     */
+    public function getHttpRequestStatus(): ?int
+    {
+        return $this->httpRequestStatus;
+    }
+
+    /**
+     * Set status of http request to mobConnect.
+     */
+    public function setHttpRequestStatus(int $httpRequestStatus): self
+    {
+        $this->httpRequestStatus = $httpRequestStatus;
 
         return $this;
     }

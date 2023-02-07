@@ -260,7 +260,7 @@ class MobConnectSubscriptionManager
     /**
      * Create or update a moBConnect journey.
      */
-    private function __associateJourneyToSubscription(array $journeys, CarpoolProof $carpoolProof, CarpoolPayment $carpoolPayment = null): void
+    private function __associateJourneyToSubscription(array $journeys, CarpoolProof $carpoolProof, CarpoolPayment $carpoolPayment = null)
     {
         $filteredJourneys = array_filter($journeys, function ($journey) use ($carpoolProof) {
             return $journey->getCarpoolProof() === $carpoolProof;
@@ -445,6 +445,9 @@ class MobConnectSubscriptionManager
                     return;
                 }
 
+                /**
+                 * @var LongDistanceJourney
+                 */
                 $journey = $this->__associateJourneyToSubscription(
                     $this->_userSubscription->getLongDistanceJourneys()->toArray(),
                     $carpoolProof,
@@ -471,6 +474,9 @@ class MobConnectSubscriptionManager
                     return;
                 }
 
+                /**
+                 * @var ShortDistanceJourney
+                 */
                 $journey = $this->__associateJourneyToSubscription($this->_userSubscription->getShortDistanceJourneys()->toArray(), $carpoolProof);
 
                 break;
@@ -500,7 +506,8 @@ class MobConnectSubscriptionManager
                                 throw new \LogicException(MobConnectMessages::PAYMENT_DATE_MISSING);
                             }
 
-                            $this->_mobConnectApiProvider->patchUserSubscription($this->__getSubscriptionId(), null, false, $paymentDate);
+                            $mobConnectResponse = $this->_mobConnectApiProvider->patchUserSubscription($this->__getSubscriptionId(), null, false, $paymentDate);
+                            $journey->setHttpRequestStatus($mobConnectResponse->getCode());
 
                             $this->__verifySubscription();
 
@@ -536,7 +543,8 @@ class MobConnectSubscriptionManager
                             $this->_loggerService->log('The journey is the first');
 
                             // The journey is added to the EEC sheet
-                            $this->_mobConnectApiProvider->patchUserSubscription($this->__getSubscriptionId(), $this->__getRpcJourneyId($carpoolProof->getId()), true);
+                            $mobConnectResponse = $this->_mobConnectApiProvider->patchUserSubscription($this->__getSubscriptionId(), $this->__getRpcJourneyId($carpoolProof->getId()), true);
+                            $journey->setHttpRequestStatus($mobConnectResponse->getCode());
 
                             $this->__verifySubscription();
 

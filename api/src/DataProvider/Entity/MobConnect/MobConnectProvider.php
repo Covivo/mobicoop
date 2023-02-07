@@ -7,14 +7,7 @@ use App\DataProvider\Service\DataProvider;
 use App\Incentive\Service\LoggerService;
 use App\Incentive\Service\MobConnectMessages;
 use App\User\Entity\User;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\HttpKernel\Exception\HttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\HttpKernel\Exception\PreconditionFailedHttpException;
-use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
-use Symfony\Component\HttpKernel\Exception\UnsupportedMediaTypeHttpException;
 
 /**
  * MobConnect provider.
@@ -84,36 +77,10 @@ abstract class MobConnectProvider
 
         $this->_logRequestResult($response->getCode(), $responseValue);
 
-        switch ($response->getCode()) {
-            case 200:
-            case 201:
-            case 204:
-                return json_decode($responseValue);
-
-            case 400:
-                throw new BadRequestHttpException($responseValue);
-
-            case 401:
-                throw new AccessDeniedHttpException($responseValue);
-
-            case 403:
-                throw new HttpException(Response::HTTP_FORBIDDEN, $responseValue);
-
-            case 404:
-                throw new NotFoundHttpException($responseValue);
-
-            case 412:
-                throw new PreconditionFailedHttpException($responseValue);
-
-            case 415:
-                throw new UnsupportedMediaTypeHttpException($responseValue);
-
-            case 422:
-                throw new UnprocessableEntityHttpException($responseValue);
-
-            default:
-                throw new HttpException(Response::HTTP_INTERNAL_SERVER_ERROR, 'The MobConnect API response is unknown!');
-        }
+        return [
+            'code' => $response->getCode(),
+            'content' => $responseValue,
+        ];
     }
 
     private function _logRequestResult(int $code, string $content)
