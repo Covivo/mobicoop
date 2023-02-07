@@ -31,6 +31,11 @@ use Symfony\Component\Security\Core\Security;
 class MobConnectSubscriptionManager
 {
     /**
+     * @var int
+     */
+    private $_carpoolProofDeadline;
+
+    /**
      * @var EntityManagerInterface
      */
     private $_em;
@@ -84,7 +89,8 @@ class MobConnectSubscriptionManager
         LoggerService $loggerService,
         LoggerInterface $loggerInterface,
         array $ssoServices,
-        array $mobConnectParams
+        array $mobConnectParams,
+        int $proofDeadline
     ) {
         $this->_em = $em;
         $this->_eventDispatcher = $eventDispatcher;
@@ -96,6 +102,7 @@ class MobConnectSubscriptionManager
         $this->_ssoServices = $ssoServices;
         $this->_mobConnectParams = $mobConnectParams;
         $this->_ceeEligibleProofs = [];
+        $this->_carpoolProofDeadline = $proofDeadline;
     }
 
     private function __createAuth(User $user, SsoUser $ssoUser)
