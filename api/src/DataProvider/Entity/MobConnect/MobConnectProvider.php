@@ -4,6 +4,7 @@ namespace App\DataProvider\Entity\MobConnect;
 
 use App\DataProvider\Entity\Response as ProviderResponse;
 use App\DataProvider\Service\DataProvider;
+use App\Incentive\Service\LoggerService;
 use App\Incentive\Service\MobConnectMessages;
 use App\User\Entity\User;
 use Symfony\Component\HttpFoundation\Response;
@@ -35,6 +36,11 @@ abstract class MobConnectProvider
      * @var string
      */
     protected $_apiUri;
+
+    /**
+     * @var LoggerService
+     */
+    protected $_loggerService;
 
     /**
      * The authenticated user.
@@ -76,6 +82,8 @@ abstract class MobConnectProvider
     {
         $responseValue = $response->getValue();
 
+        $this->_logRequestResult($response->getCode(), $responseValue);
+
         switch ($response->getCode()) {
             case 200:
             case 201:
@@ -106,5 +114,24 @@ abstract class MobConnectProvider
             default:
                 throw new HttpException(Response::HTTP_INTERNAL_SERVER_ERROR, 'The MobConnect API response is unknown!');
         }
+    }
+
+    private function _logRequestResult(int $code, string $content)
+    {
+        switch ($code) {
+            case 200:
+            case 201:
+            case 204:
+                $logType = 'info';
+
+                break;
+
+            default:
+                $logType = 'error';
+
+                break;
+        }
+
+        $this->_loggerService->log('The mobConnect request response is: '.$code.' | '.$content, $logType, true);
     }
 }

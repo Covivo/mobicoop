@@ -742,6 +742,11 @@ services:
       - { name: monolog.logger, channel: faker }
 
   # INCENTIVE
+  App\Incentive\Service\LoggerService:
+    arguments:
+      $globalForcingLogs: "%env(bool:EEC_FORCING_LOGS)%"
+    tags:
+      - { name: monolog.logger, channel: incentive_subscription }
 
   App\Incentive\Service\MobConnectSubscriptionManager:
     arguments:
