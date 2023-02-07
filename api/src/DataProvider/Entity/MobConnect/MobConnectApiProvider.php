@@ -5,6 +5,7 @@ namespace App\DataProvider\Entity\MobConnect;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionResponse;
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionVerifyResponse;
 use App\DataProvider\Ressource\MobConnectApiParams;
+use App\Incentive\Service\LoggerService;
 use App\Incentive\Service\MobConnectMessages;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
@@ -40,12 +41,13 @@ class MobConnectApiProvider extends MobConnectProvider
      */
     private $_ssoServices;
 
-    public function __construct(EntityManagerInterface $em, MobConnectApiParams $params, User $user, array $ssoServices)
+    public function __construct(EntityManagerInterface $em, MobConnectApiParams $params, LoggerService $loggerService, User $user, array $ssoServices)
     {
         $this->_em = $em;
         $this->_apiParams = $params;
 
         $this->_apiUri = $this->_apiParams->getApiUri();
+        $this->_loggerService = $loggerService;
         $this->_user = $user;
         $this->_ssoServices = $ssoServices;
     }
@@ -126,11 +128,15 @@ class MobConnectApiProvider extends MobConnectProvider
 
     public function postSubscriptionForShortDistance()
     {
+        $this->_loggerService->log('We create the short distance subscription on mobConnect', 'info', true);
+
         return new MobConnectSubscriptionResponse($this->__postSubscription($this->_apiParams->getShortDistanceSubscriptionId(), true));
     }
 
     public function postSubscriptionForLongDistance()
     {
+        $this->_loggerService->log('We create the long distance subscription on mobConnect', 'info', true);
+
         return new MobConnectSubscriptionResponse($this->__postSubscription($this->_apiParams->getLongDistanceSubscriptionId(), false, $this->_user->getTelephone()));
     }
 
@@ -156,6 +162,7 @@ class MobConnectApiProvider extends MobConnectProvider
             $data['Date de partage des frais'] = $costSharingDate->format('Y-m-d');
         }
 
+        $this->_loggerService->log('We PATCH the subscription on mobConnect', 'info', true);
         $this->_createDataProvider(self::ROUTE_PATCH_SUBSCRIPTIONS, $subscriptionId);
 
         return new MobConnectSubscriptionResponse(
@@ -165,6 +172,7 @@ class MobConnectApiProvider extends MobConnectProvider
 
     public function verifyUserSubscription(string $subscriptionId): MobConnectSubscriptionVerifyResponse
     {
+        $this->_loggerService->log('We verify the subscription on mobConnect', 'info', true);
         $this->_createDataProvider(self::ROUTE_SUBSCRIPTIONS_VERIFY, $subscriptionId);
 
         return new MobConnectSubscriptionVerifyResponse(
