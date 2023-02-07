@@ -87,6 +87,7 @@
             :birthdate-display="birthdateDisplay"
             :platform-name="platformName"
             @carpool="carpool"
+            @standardContact="standardContact"
             @loginOrRegister="loginOrRegister"
           />
         </v-col>
@@ -171,6 +172,39 @@ export default {
       this.$emit("loginOrRegister", {
         //matching: this.matching
       });
+    },
+    standardContact() {
+      console.log('standardContact');
+      // Creating a "virtual" new carpool thread
+      const form = document.createElement("form");
+      form.method = "post";
+      form.action = this.$t("contactUrl");
+
+      const paramsForm = {
+        carpool: 1,
+        idRecipient: this.result.carpooler.externalJourneyUserId,
+        givenName:this.result.carpooler.givenName,
+        avatar: this.result.carpooler.avatars[0],
+        origin: this.result.origin,
+        destination: this.result.destination,
+        frequency: 1,
+        externalJourneyId: this.result.externalJourneyId,
+        externalJourneyOperator:this.result.externalOperator,
+        date: this.result.date,
+        driver: this.result.resultDriver.lenght > 1 ? 1 :null,
+        passenger: this.result.resultPassenger.lenght > 1 ? 1 :null,
+      };
+      for (const key in paramsForm) {
+        if (paramsForm.hasOwnProperty(key)) {
+          const hiddenField = document.createElement("input");
+          hiddenField.type = "hidden";
+          hiddenField.name = key;
+          hiddenField.value = paramsForm[key];
+          form.appendChild(hiddenField);
+        }
+      }
+      document.body.appendChild(form);
+      form.submit();
     }
   }
 };

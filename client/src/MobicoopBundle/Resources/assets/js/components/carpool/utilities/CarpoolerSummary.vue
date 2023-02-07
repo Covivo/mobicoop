@@ -129,7 +129,7 @@
           <template v-slot:activator="{ on }">
             <div
               class="ma-0 pa-0"
-              v-on="on"
+              v-on="(user == null) && on"
             >
               <v-btn
                 v-if="externalProviderType == 1"
@@ -140,6 +140,20 @@
                 target="_blank"
                 class="mt-1"
                 @click="externalContactModal"
+              >
+                <span>
+                  {{ $t("externalResult.contact.button.label") }}
+                </span>
+              </v-btn>
+              <v-btn
+                v-if="externalProviderType == 2"
+                :disabled="user == null"
+                rounded
+                color="primary"
+                type="button"
+                target="_blank"
+                class="mt-1"
+                @click="standardContact"
               >
                 <span>
                   {{ $t("externalResult.contact.button.label") }}
@@ -402,6 +416,10 @@ export default {
         .catch(function(error) {
           console.error(error);
         });
+    },
+    standardContact() {
+      this.$emit("standardContact", {
+      });
     }
   }
 };
