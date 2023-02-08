@@ -239,13 +239,15 @@ class ExternalJourneyManager
 
             // We only set resultPassenger and resultDriver for the roles.
             // We don't need the data.
-            if (isset($currentJourney['driver']) && !is_null($currentJourney['driver'])) {
-                $resultPassenger = new ResultRole();
-                $result->setResultPassenger($resultPassenger);
-            }
-            if (isset($currentJourney['passenger']) && !is_null($currentJourney['passenger'])) {
+            if (isset($currentJourney['passenger']) && !is_null($currentJourney['passenger']) && 1 == $currentJourney['passenger']['state']) {
                 $resultDriver = new ResultRole();
                 $result->setResultDriver($resultDriver);
+                $result->setResultPassenger(null);
+            }
+            if (isset($currentJourney['driver']) && !is_null($currentJourney['driver']) && 1 == $currentJourney['driver']['state']) {
+                $resultPassenger = new ResultRole();
+                $result->setResultPassenger($resultPassenger);
+                $result->setResultDriver(null);
             }
 
             if (!isset($currentJourney['url']) || '' === trim($currentJourney['url'])) {

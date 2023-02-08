@@ -191,8 +191,8 @@ export default {
         externalJourneyId: this.result.externalJourneyId,
         externalJourneyOperator:this.result.externalOperator,
         date: this.result.date,
-        driver: this.result.resultDriver.lenght > 1 ? 1 :null,
-        passenger: this.result.resultPassenger.lenght > 1 ? 1 :null,
+        driver: this.result.resultDriver ? 1 :null,
+        passenger: this.result.resultPassenger ? 1 :null,
         externalProviderType: this.result.externalProviderType
       };
       for (const key in paramsForm) {
