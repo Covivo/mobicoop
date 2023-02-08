@@ -19,5 +19,6 @@
         "context": "Advertentie",
         "messages": "Berichten"
     },
-    "title": "Berichtensysteem"
+    "title": "Berichtensysteem",
+    "urlSendExternalMessage": "/utilisateur/messages/externe/envoyer"
 }

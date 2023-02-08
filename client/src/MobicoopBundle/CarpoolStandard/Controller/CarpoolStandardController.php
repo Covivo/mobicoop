@@ -31,9 +31,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-/**
- * Controller class for community related actions.
- */
 class CarpoolStandardController extends AbstractController
 {
     use HydraControllerTrait;

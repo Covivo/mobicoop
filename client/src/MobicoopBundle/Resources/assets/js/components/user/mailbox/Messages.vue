@@ -439,7 +439,7 @@ export default {
       this.loadingTypeText = false;
 
       
-      maxios.post(this.$t("/utilisateur/messages/externe/envoyer"), messageToSend).then(res => {
+      maxios.post(this.$t("urlSendExternalMessage"), messageToSend).then(res => {
         this.loadingTypeText = false;
         // Update the threads list
         this.refreshThreadsCarpool = true;
