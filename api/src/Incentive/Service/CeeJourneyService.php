@@ -182,7 +182,8 @@ abstract class CeeJourneyService
             self::__setMatchingFromCarpoolProof($carpoolProof);
 
             return
-                self::__isLongDistance(self::$_matching->getCommonDistance())
+                !is_null(self::$_matching)
+                && self::__isLongDistance(self::$_matching->getCommonDistance())
                 && CarpoolProof::TYPE_HIGH === $carpoolProof->getType()
                 && self::__isOriginOrDestinationFromReferenceCountry()
                 && self::isDateInPeriod($carpoolProof->getStartDriverDate())
@@ -218,7 +219,8 @@ abstract class CeeJourneyService
             self::__setMatchingFromCarpoolProof($carpoolProof);
 
             return
-                self::__isShortDistance(self::$_matching->getCommonDistance())
+                !is_null(self::$_matching)
+                && self::__isShortDistance(self::$_matching->getCommonDistance())
                 && CarpoolProof::TYPE_HIGH === $carpoolProof->getType()
                 && self::__isOriginOrDestinationFromReferenceCountry()
                 && self::isDateAfterReferenceDate($carpoolProof->getStartDriverDate())
