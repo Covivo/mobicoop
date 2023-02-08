@@ -2,7 +2,7 @@
 
 namespace App\DataProvider\Entity\MobConnect\Response;
 
-class MobConnectSubscriptionVerifyResponse extends MobConnectSubscriptionResponse
+class MobConnectSubscriptionVerifyResponse extends MobConnectResponse
 {
     /**
      * @var string
