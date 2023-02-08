@@ -3,6 +3,7 @@
 namespace App\Incentive\Entity;
 
 use App\Carpool\Entity\CarpoolProof;
+use App\Incentive\Service\CeeJourneyService;
 use App\User\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -17,12 +18,6 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class ShortDistanceJourney
 {
-    public const STANDARDIZED_SHEET_OPERATION = 'TRA-SE-115';
-
-    public const BONUS_STATUS_PENDING = 0;
-    public const BONUS_STATUS_NO = 1;
-    public const BONUS_STATUS_OK = 2;
-
     /**
      * @var int The cee ID
      *
@@ -123,7 +118,7 @@ class ShortDistanceJourney
      *
      * @ORM\Column(type="smallint", options={"default": 1, "comment":"Bonus Status of the EEC form"})
      */
-    private $bonusStatus = self::BONUS_STATUS_NO;
+    private $bonusStatus = CeeJourneyService::BONUS_STATUS_NO;
 
     /**
      * Status of http request to mobConnect.
@@ -133,6 +128,24 @@ class ShortDistanceJourney
      * @ORM\Column(type="integer", nullable=true, options={"comment":"Status of http request to mobConnect"})
      */
     private $httpRequestStatus;
+
+    /**
+     * Status of verification.
+     *
+     * @var int
+     *
+     * @ORM\Column(type="integer", nullable=true, options={"default":0, "comment":"Status of verification"})
+     */
+    private $verificationStatus = CeeJourneyService::VERIFICATION_STATUS_PENDING;
+
+    /**
+     * Rank of the journey for the user.
+     *
+     * @var int
+     *
+     * @ORM\Column(type="integer", nullable=true, options={"comment":"Rank of the journey for the user"})
+     */
+    private $rank;
 
     /**
      * The carpool proof associate with the journey.
@@ -450,6 +463,46 @@ class ShortDistanceJourney
     public function setHttpRequestStatus(int $httpRequestStatus): self
     {
         $this->httpRequestStatus = $httpRequestStatus;
+
+        return $this;
+    }
+
+    /**
+     * Get status of http request to mobConnect.
+     */
+    public function getVerificationStatus(): int
+    {
+        return $this->verificationStatus;
+    }
+
+    /**
+     * Set status of http request to mobConnect.
+     *
+     * @param int $verificationStatus status of http request to mobConnect
+     */
+    public function setVerificationStatus(int $verificationStatus): self
+    {
+        $this->verificationStatus = $verificationStatus;
+
+        return $this;
+    }
+
+    /**
+     * Get rank of the journey for the user.
+     */
+    public function getRank(): int
+    {
+        return $this->rank;
+    }
+
+    /**
+     * Set rank of the journey for the user.
+     *
+     * @param int $rank rank of the journey for the user
+     */
+    public function setRank(int $rank): self
+    {
+        $this->rank = $rank;
 
         return $this;
     }

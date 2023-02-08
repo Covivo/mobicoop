@@ -27,6 +27,15 @@ abstract class CeeJourneyService
     public const LONG_DISTANCE_TRIP_THRESHOLD = 3;
     public const SHORT_DISTANCE_TRIP_THRESHOLD = 10;
 
+    public const STANDARDIZED_SHEET_OPERATION = 'TRA-SE-115';
+
+    public const BONUS_STATUS_PENDING = 0;
+    public const BONUS_STATUS_NO = 1;
+    public const BONUS_STATUS_OK = 2;
+
+    public const VERIFICATION_STATUS_PENDING = 0;
+    public const VERIFICATION_STATUS_ENDED = 1;
+
     // LOG
     private const ACCOUNT_READY_FOR_LONG_SUBSCRIPTION = 'is_user_account_ready_for_long_subscription';
     private const ACCOUNT_READY_FOR_SHORT_SUBSCRIPTION = 'is_user_account_ready_for_short_subscription';
