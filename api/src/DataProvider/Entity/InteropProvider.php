@@ -23,8 +23,8 @@
 
 namespace App\DataProvider\Entity;
 
+use App\CarpoolStandard\Entity\Message;
 use App\CarpoolStandard\Interfaces\CarpoolStandardProviderInterface;
-use App\CarpoolStandard\Ressource\Message;
 use App\DataProvider\Service\DataProvider;
 
 class InteropProvider implements CarpoolStandardProviderInterface

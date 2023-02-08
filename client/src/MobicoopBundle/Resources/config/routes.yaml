@@ -461,6 +461,14 @@ user_message_send:
     nl: /user/messages/send
   controller: Mobicoop\Bundle\MobicoopBundle\User\Controller\UserController::userMessageSend
 
+# send an external message
+send_external_message:
+  path:
+    fr: /utilisateur/messages/externe/envoyer
+    en: /user/messages/external/send
+    nl: /user/messages/external/send
+  controller: Mobicoop\Bundle\MobicoopBundle\CarpoolStandard\Controller\CarpoolStandardController::sendExternalMessage  
+
 # get a message thread
 user_message_thread:
   path:

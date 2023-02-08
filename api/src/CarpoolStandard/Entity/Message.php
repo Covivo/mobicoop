@@ -21,7 +21,7 @@
  *    LICENSE
  */
 
-namespace App\CarpoolStandard\Ressource;
+namespace App\CarpoolStandard\Entity;
 
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
@@ -29,7 +29,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * A User.
+ * A message.
  *
  * @ApiResource(
  *      routePrefix="/carpool_standard",
@@ -38,18 +38,18 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
  *          "denormalization_context"={"groups"={"write"}}
  *      },
- *      collectionOperations={
- *          "carpool_standard_post"={
- *              "method"="POST",
- *              "path"="/users",
+ *       collectionOperations={
+ *          "carpool_standard_get"={
+ *             "method"="GET",
+ *             "path"="/messages",
+ *             "security"="is_granted('reject',object)",
  *              "swagger_context" = {
  *                  "tags"={"Carpool Standard"}
  *              }
  *          },
- *          "carpool_standard_get"={
- *              "method"="GET",
- *              "path"="/users",
- *              "security"="is_granted('reject',object)",
+ *          "carpool_standard_post"={
+ *              "method"="POST",
+ *              "path"="/messages",
  *              "swagger_context" = {
  *                  "tags"={"Carpool Standard"}
  *              }
@@ -58,7 +58,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *      itemOperations={
  *          "carpool_standard_get"={
  *             "method"="GET",
- *             "path"="/users/{id}",
+ *             "path"="/messages",
  *             "security"="is_granted('reject',object)",
  *              "swagger_context" = {
  *                  "tags"={"Carpool Standard"}
@@ -69,75 +69,75 @@ use Symfony\Component\Validator\Constraints as Assert;
  *
  * @author Remi Wortemann <remi.wortemann@mobicoop.org>
  */
-class User
+class Message
 {
     public const DEFAULT_ID = 999999999999;
 
     /**
-     * @var null|string The id of this user
+     * @var int the id of this payment week
      *
      * @Groups({"read", "write"})
+     *
      * @ApiProperty(identifier=true)
      */
     private $id;
 
     /**
-     * @var string the operator identifier
+     * @var User the sender of the message
      *
      * @Assert\NotBlank
+     *
      * @Groups({"read", "write"})
      */
-    private $operator;
+    private $from;
 
     /**
-     * @var string User's alias
+     * @var User the recipient of the message
      *
      * @Assert\NotBlank
-     * @Groups({"read", "write"})
-     */
-    private $alias;
-
-    /**
-     * @var string user's first name
      *
      * @Groups({"read", "write"})
      */
-    private $firstName;
+    private $to;
 
     /**
-     * @var string user's last name
+     * @var string the content of the message
+     *
+     * @Assert\NotBlank
      *
      * @Groups({"read", "write"})
      */
-    private $lastName;
+    private $message;
 
     /**
-     * @var int user's grade from 1 to 5
+     * @var string Defines if the recipient of this message is either the driver or the passenger. [DRIVER, PASSENGER]
+     *
+     * @Assert\NotBlank
      *
      * @Groups({"read", "write"})
      */
-    private $grade;
+    private $recipientCarpoolerType;
 
     /**
-     * @var string user's profile picture absolute URL
+     * @var string ID of the Driver's journey to which the message is related (if any)
      *
      * @Groups({"read", "write"})
      */
-    private $picture;
+    private $driverJourneyId;
 
     /**
-     * @var string User's gender. [ F, M, O ] 'O' stands for 'Other'.
+     * @var string ID of the Passenger's journey to which the message is related (if any)
      *
      * @Groups({"read", "write"})
      */
-    private $gender;
+    private $passengerJourneyId;
 
     /**
-     * @var bool
+     * @var string ID ($uuid) of the booking to which the message is related (if any)
      *
      * @Groups({"read", "write"})
      */
-    private $verifiedIdentity;
+    private $bookingId;
 
     public function __construct($id = null)
     {
@@ -147,110 +147,98 @@ class User
         }
     }
 
-    public function getId(): ?string
+    public function getId(): int
     {
         return $this->id;
     }
 
-    public function setId(?string $id): self
+    public function setId(int $id): self
     {
         $this->id = $id;
 
         return $this;
     }
 
-    public function getOperator(): string
+    public function getFrom(): User
     {
-        return $this->operator;
+        return $this->from;
     }
 
-    public function setOperator(string $operator): self
+    public function setFrom(User $from): self
     {
-        $this->operator = $operator;
+        $this->from = $from;
 
         return $this;
     }
 
-    public function getAlias(): string
+    public function getTo(): User
     {
-        return $this->alias;
+        return $this->to;
     }
 
-    public function setAlias(string $alias): self
+    public function setTo(User $to): self
     {
-        $this->alias = $alias;
+        $this->to = $to;
 
         return $this;
     }
 
-    public function getFirstName(): ?string
+    public function getMessage(): string
     {
-        return $this->firstName;
+        return $this->message;
     }
 
-    public function setFirstName(string $firstName): self
+    public function setMessage(string $message): self
     {
-        $this->firstName = $firstName;
+        $this->message = $message;
 
         return $this;
     }
 
-    public function getLastName(): ?string
+    public function getRecipientCarpoolerType(): string
     {
-        return $this->lastName;
+        return $this->recipientCarpoolerType;
     }
 
-    public function setLastName(string $lastName): self
+    public function setRecipientCarpoolerType(string $recipientCarpoolerType): self
     {
-        $this->lastName = $lastName;
+        $this->recipientCarpoolerType = $recipientCarpoolerType;
 
         return $this;
     }
 
-    public function getGrade(): ?int
+    public function getDriverJourneyId(): string
     {
-        return $this->grade;
+        return $this->driverJourneyId;
     }
 
-    public function setGrade(int $grade): self
+    public function setDriverJourneyId(string $driverJourneyId): self
     {
-        $this->grade = $grade;
+        $this->driverJourneyId = $driverJourneyId;
 
         return $this;
     }
 
-    public function getPicture(): ?string
+    public function getPassengerJourneyId(): string
     {
-        return $this->picture;
+        return $this->passengerJourneyId;
     }
 
-    public function setPicture(string $picture): self
+    public function setPassengerJourneyId(string $passengerJourneyId): self
     {
-        $this->picture = $picture;
+        $this->passengerJourneyId = $passengerJourneyId;
 
         return $this;
     }
 
-    public function getGender(): ?string
+    public function getBookingId(): string
     {
-        return $this->gender;
+        return $this->bookingId;
     }
 
-    public function setGender(string $gender): self
+    public function setBookingId(string $bookingId): self
     {
-        $this->gender = $gender;
-
-        return $this;
-    }
-
-    public function getVerifiedIdentity(): ?bool
-    {
-        return $this->verifiedIdentity;
-    }
-
-    public function setVerifiedIdentity(bool $verifiedIdentity): self
-    {
-        $this->verifiedIdentity = $verifiedIdentity;
+        $this->bookingId = $bookingId;
 
         return $this;
     }

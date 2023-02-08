@@ -21,63 +21,25 @@
  *    LICENSE
  */
 
-namespace App\CarpoolStandard\Ressource;
+namespace Mobicoop\Bundle\MobicoopBundle\CarpoolStandard\Entity;
 
-use ApiPlatform\Core\Annotation\ApiProperty;
-use ApiPlatform\Core\Annotation\ApiResource;
+use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * A message.
  *
- * @ApiResource(
- *      routePrefix="/carpool_standard",
- *      attributes={
- *          "force_eager"=false,
- *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
- *          "denormalization_context"={"groups"={"write"}}
- *      },
- *       collectionOperations={
- *          "carpool_standard_get"={
- *             "method"="GET",
- *             "path"="/messages",
- *             "security"="is_granted('reject',object)",
- *              "swagger_context" = {
- *                  "tags"={"Carpool Standard"}
- *              }
- *          },
- *          "carpool_standard_post"={
- *              "method"="POST",
- *              "path"="/messages",
- *              "swagger_context" = {
- *                  "tags"={"Carpool Standard"}
- *              }
- *          }
- *      },
- *      itemOperations={
- *          "carpool_standard_get"={
- *             "method"="GET",
- *             "path"="/messages",
- *             "security"="is_granted('reject',object)",
- *              "swagger_context" = {
- *                  "tags"={"Carpool Standard"}
- *              }
- *          }
- *      }
- * )
- *
  * @author Remi Wortemann <remi.wortemann@mobicoop.org>
  */
-class Message
+class Message implements ResourceInterface, \JsonSerializable
 {
     public const DEFAULT_ID = 999999999999;
 
     /**
      * @var int the id of this payment week
      *
-     * @Groups({"read", "write"})
-     * @ApiProperty(identifier=true)
+     * @Groups({"post"})
      */
     private $id;
 
@@ -85,7 +47,8 @@ class Message
      * @var User the sender of the message
      *
      * @Assert\NotBlank
-     * @Groups({"read", "write"})
+     *
+     * @Groups({"post"})
      */
     private $from;
 
@@ -93,7 +56,8 @@ class Message
      * @var User the recipient of the message
      *
      * @Assert\NotBlank
-     * @Groups({"read", "write"})
+     *
+     * @Groups({"post"})
      */
     private $to;
 
@@ -101,7 +65,8 @@ class Message
      * @var string the content of the message
      *
      * @Assert\NotBlank
-     * @Groups({"read", "write"})
+     *
+     * @Groups({"post"})
      */
     private $message;
 
@@ -109,28 +74,29 @@ class Message
      * @var string Defines if the recipient of this message is either the driver or the passenger. [DRIVER, PASSENGER]
      *
      * @Assert\NotBlank
-     * @Groups({"read", "write"})
+     *
+     * @Groups({"post"})
      */
     private $recipientCarpoolerType;
 
     /**
-     * @var string ID of the Driver's journey to which the message is related (if any)
+     * @var null|string ID of the Driver's journey to which the message is related (if any)
      *
-     * @Groups({"read", "write"})
+     * @Groups({"post"})
      */
     private $driverJourneyId;
 
     /**
-     * @var string ID of the Passenger's journey to which the message is related (if any)
+     * @var null|string ID of the Passenger's journey to which the message is related (if any)
      *
-     * @Groups({"read", "write"})
+     * @Groups({"post"})
      */
     private $passengerJourneyId;
 
     /**
-     * @var string ID ($uuid) of the booking to which the message is related (if any)
+     * @var null|string ID ($uuid) of the booking to which the message is related (if any)
      *
-     * @Groups({"read", "write"})
+     * @Groups({"post"})
      */
     private $bookingId;
 
@@ -202,39 +168,54 @@ class Message
         return $this;
     }
 
-    public function getDriverJourneyId(): string
+    public function getDriverJourneyId(): ?string
     {
         return $this->driverJourneyId;
     }
 
-    public function setDriverJourneyId(string $driverJourneyId): self
+    public function setDriverJourneyId(?string $driverJourneyId): self
     {
         $this->driverJourneyId = $driverJourneyId;
 
         return $this;
     }
 
-    public function getPassengerJourneyId(): string
+    public function getPassengerJourneyId(): ?string
     {
         return $this->passengerJourneyId;
     }
 
-    public function setPassengerJourneyId(string $passengerJourneyId): self
+    public function setPassengerJourneyId(?string $passengerJourneyId): self
     {
         $this->passengerJourneyId = $passengerJourneyId;
 
         return $this;
     }
 
-    public function getBookingId(): string
+    public function getBookingId(): ?string
     {
         return $this->bookingId;
     }
 
-    public function setBookingId(string $bookingId): self
+    public function setBookingId(?string $bookingId): self
     {
         $this->bookingId = $bookingId;
 
         return $this;
+    }
+
+    public function jsonSerialize()
+    {
+        return
+            [
+                'id' => $this->getId(),
+                'from' => $this->getFrom(),
+                'to' => $this->getTo(),
+                'message' => $this->getMessage(),
+                'recipientCarpoolerType' => $this->getRecipientCarpoolerType(),
+                'driverJourneyId' => $this->getDriverJourneyId(),
+                'passengerJourneyId' => $this->getPassengerJourneyId(),
+                'bookingId' => $this->getBookingId(),
+            ];
     }
 }

@@ -9,6 +9,7 @@
 
 {% block main %}
       <Messages
+        :user="{{ user|json_encode }}"
         :id-user="{{ idUser }}"
         email-user="{{ emailUser }}"
         :unread-carpool-messages="{{ unreadCarpoolMessages }}"

@@ -74,6 +74,12 @@ services:
   Mobicoop\Bundle\MobicoopBundle\Carpool\Security\:
     resource: "@MobicoopBundle/Carpool/Security/*"
 
+  # CarpoolStandard
+  Mobicoop\Bundle\MobicoopBundle\CarpoolStandard\Controller\:
+    resource: "@MobicoopBundle/CarpoolStandard/Controller/*"
+  Mobicoop\Bundle\MobicoopBundle\CarpoolStandard\Service\:
+    resource: "@MobicoopBundle/CarpoolStandard/Service/*"  
+   
   # Communication
   Mobicoop\Bundle\MobicoopBundle\Communication\Controller\:
     resource: "@MobicoopBundle/Communication/Controller/*"
@@ -293,3 +299,5 @@ services:
     tags: ["controller.service_arguments"]
     arguments:
       $assistiveSsoProvider: "%env(string:ASSISTIVE_SSO_PROVIDER)%"
+
+

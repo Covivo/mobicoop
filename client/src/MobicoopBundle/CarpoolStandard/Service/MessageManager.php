@@ -21,24 +21,41 @@
  *    LICENSE
  */
 
-namespace App\CarpoolStandard\Service;
+namespace Mobicoop\Bundle\MobicoopBundle\CarpoolStandard\Service;
 
-use App\CarpoolStandard\Entity\Message;
+use Mobicoop\Bundle\MobicoopBundle\Api\Service\DataProvider;
+use Mobicoop\Bundle\MobicoopBundle\CarpoolStandard\Entity\Message;
+use Symfony\Component\Security\Core\Security;
 
 /**
- * @author Remi Wortemann <remi.wortemann@mobicoop.org>
+ * Message management service.
  */
 class MessageManager
 {
-    private $carpoolStandardProvider;
+    private $dataProvider;
 
-    public function __construct(CarpoolStandardProvider $carpoolStandardProvider)
+    private $security;
+
+    /**
+     * Constructor.
+     *
+     * @throws \ReflectionException
+     */
+    public function __construct(DataProvider $dataProvider, Security $security)
     {
-        $this->carpoolStandardProvider = $carpoolStandardProvider;
+        $this->dataProvider = $dataProvider;
+        $this->dataProvider->setClass(Message::class, 'carpool_standard');
+        $this->dataProvider->setFormat(DataProvider::RETURN_OBJECT);
+        $this->security = $security;
     }
 
-    public function postMessage(Message $message)
+    public function postCarpoolStandardMessage(Message $message)
     {
-        $this->carpoolStandardProvider->postMessage($message);
+        $response = $this->dataProvider->post($message, 'messages');
+        if (201 != $response->getCode()) {
+            return $response->getValue();
+        }
+
+        return $response->getValue();
     }
 }

@@ -182,7 +182,7 @@ export default {
 
       const paramsForm = {
         carpool: 1,
-        idRecipient: this.result.carpooler.externalJourneyUserId,
+        externalJourneyUserId: this.result.carpooler.externalJourneyUserId,
         givenName:this.result.carpooler.givenName,
         avatar: this.result.carpooler.avatars[0],
         origin: this.result.origin.streetAddress,
@@ -193,6 +193,7 @@ export default {
         date: this.result.date,
         driver: this.result.resultDriver.lenght > 1 ? 1 :null,
         passenger: this.result.resultPassenger.lenght > 1 ? 1 :null,
+        externalProviderType: this.result.externalProviderType
       };
       for (const key in paramsForm) {
         if (paramsForm.hasOwnProperty(key)) {

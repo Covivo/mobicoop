@@ -197,9 +197,11 @@
                 :id-thread-message="idMessage"
                 :id-recipient="idRecipient"
                 :loading="loadingTypeText"
+                :is-external-standard-message="isExternalStandard"
                 :hidden="hideClickIcon"
                 :recipient-blocked-id="blockerId"
                 @sendInternalMessage="sendInternalMessage"
+                @sendExternalStandardMessage="sendExternalStandardMessage"
               />
             </v-col>
           </v-row>
@@ -258,6 +260,10 @@ export default {
     WarningMessage
   },
   props: {
+    user: {
+      type: Object,
+      default:null
+    },
     idUser:{
       type: Number,
       default:null
@@ -323,7 +329,9 @@ export default {
         currentUnreadCarpoolMessages: 0,
         currentUnreadDirectMessages: 0,
         currentUnreadSolidaryMessages: 0
-      }
+      },
+      isExternalStandard: this.newThread.externalProviderType == 2 ? true : false,
+      isExternalRdex: this.newThread.externalProviderType == 1 ? true : false
     };
   },
   created() {
@@ -413,6 +421,32 @@ export default {
         this.newThreadDirect = null;
         this.newThreadCarpool = null;
         (this.currentIdAsk) ? this.refreshSelected({'idAsk':this.currentIdAsk}) : this.refreshSelected({'idMessage':this.idMessage});
+      });
+    },
+    sendExternalStandardMessage(data){
+      this.loadingTypeText = true;
+      let messageToSend = {
+        text: data.textToSend,
+        senderId: this.idUser,
+        senderAlias: this.user.givenName +' '+this.user.shortFamilyName,
+        driver: this.newThreadCarpool.driver,
+        passenger: this.newThreadCarpool.passenger,
+        externalJourneyId: this.newThreadCarpool.externalJourneyId,
+        externalJourneyOperator: this.newThreadCarpool.externalJourneyOperator,
+        externalJourneyUserId: this.newThreadCarpool.externalJourneyUserId,
+        recipientName: this.newThreadCarpool.givenName
+      };
+      this.loadingTypeText = false;
+
+      
+      maxios.post(this.$t("/utilisateur/messages/externe/envoyer"), messageToSend).then(res => {
+        this.loadingTypeText = false;
+        // Update the threads list
+        this.refreshThreadsCarpool = true;
+        // We need to delete new thread data or we'll have two identical entries
+        this.refreshDetails = true;
+        this.newThreadDirect = null;
+        this.newThreadCarpool = null;
       });
     },
     updateStatusAskHistory(data){

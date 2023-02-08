@@ -885,6 +885,23 @@ class UserController extends AbstractController
                 $idMessage = $idThreadDefault = !empty($message->getMessage()) ? $message->getMessage()->getId() : $message->getMessage();
                 $idRecipient = $message->getRecipients()[0]->getId();
                 $idAsk = $message->getIdAsk();
+            } elseif ($data->has('externalProviderType')) {
+                $newThread = [
+                    'carpool' => (int) $request->request->get('carpool'),
+                    'externalJourneyUserId' => (int) $request->request->get('externalJourneyUserId'),
+                    'givenName' => $request->request->get('givenName'),
+                    'avatar' => $request->request->get('avatar'),
+                    'origin' => $request->request->get('origin'),
+                    'destination' => $request->request->get('destination'),
+                    'frequency' => (int) $request->request->get('frequency'),
+                    'fromDate' => $request->request->get('date'),
+                    'driver' => (bool) $request->request->get('driver'),
+                    'passenger' => (bool) $request->request->get('passenger'),
+                    'externalJourneyId' => $request->request->get('externalJourneyId'),
+                    'externalJourneyOperator' => $request->request->get('externalJourneyOperator'),
+                    'externalProviderType' => $request->request->get('externalProviderType'),
+                ];
+                $idThreadDefault = -1; // To preselect the new thread. Id is always -1 because it doesn't really exist yet
             } else {
                 $newThread = [
                     'carpool' => (int) $request->request->get('carpool'),
@@ -908,7 +925,6 @@ class UserController extends AbstractController
                     'adId' => (int) $request->request->get('adIdResult'),
                     'matchingId' => (int) $request->request->get('matchingId'),
                     'proposalId' => (int) $request->request->get('proposalId'),
-                    'date' => $request->request->get('date'),
                     'time' => $request->request->get('time'),
                     'driver' => (bool) $request->request->get('driver'),
                     'passenger' => (bool) $request->request->get('passenger'),
@@ -923,6 +939,7 @@ class UserController extends AbstractController
         }
 
         return $this->render('@Mobicoop/user/messages.html.twig', [
+            'user' => $user,
             'idUser' => $user->getId(),
             'emailUser' => $user->getEmail(),
             'unreadCarpoolMessages' => $user->getUnreadCarpoolMessageNumber(),

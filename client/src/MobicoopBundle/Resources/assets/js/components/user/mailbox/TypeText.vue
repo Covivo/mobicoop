@@ -66,6 +66,10 @@ export default {
     recipientBlockedId: {
       type: Number,
       default: null
+    },
+    isExternalStandardMessage: {
+      type: Boolean,
+      default: false
     }
   },
   data(){
@@ -75,13 +79,21 @@ export default {
   },
   methods:{
     emit(message){
-      this.$emit("sendInternalMessage",
-        {
-          idThreadMessage:this.idThreadMessage,
-          idRecipient:this.idRecipient,
-          textToSend:this.textToSend
-        });
-      this.textToSend = "";
+      if(this.isExternalStandardMessage) {
+        this.$emit("sendExternalStandardMessage",
+          {
+            textToSend:this.textToSend
+          });
+        this.textToSend = "";
+      } else {
+        this.$emit("sendInternalMessage",
+          {
+            idThreadMessage:this.idThreadMessage,
+            idRecipient:this.idRecipient,
+            textToSend:this.textToSend
+          });
+        this.textToSend = "";
+      }
     }
   }
 }

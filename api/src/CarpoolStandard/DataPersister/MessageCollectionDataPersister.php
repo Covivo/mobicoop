@@ -24,7 +24,7 @@
 namespace App\CarpoolStandard\DataPersister;
 
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
-use App\CarpoolStandard\Ressource\Message;
+use App\CarpoolStandard\Entity\Message;
 use App\CarpoolStandard\Service\MessageManager;
 use Symfony\Component\Security\Core\Security;
 
@@ -53,6 +53,10 @@ final class MessageCollectionDataPersister implements ContextAwareDataPersisterI
 
     public function persist($data, array $context = [])
     {
+        var_dump('ici');
+
+        exit;
+
         return $this->messageManager->postMessage($data);
     }
 
