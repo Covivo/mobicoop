@@ -62,12 +62,11 @@ class CarpoolStandardController extends AbstractController
             $message->setTo($to);
             $message->setMessage($data['text']);
 
-            $message->setRecipientCarpoolerType('DRIVER');
-            // if ($data['driver']) {
-            //     $message->setRecipientCarpoolerType('DRIVER');
-            // } else {
-            //     $message->setRecipientCarpoolerType('PASSENGER');
-            // }
+            if ($data['senderIsPassenger']) {
+                $message->setRecipientCarpoolerType('DRIVER');
+            } else {
+                $message->setRecipientCarpoolerType('PASSENGER');
+            }
 
             return new Response($this->messageManager->postCarpoolStandardMessage($message));
         }
