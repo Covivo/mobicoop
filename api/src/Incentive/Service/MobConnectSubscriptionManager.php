@@ -427,7 +427,7 @@ class MobConnectSubscriptionManager
         $this->_user = $carpoolProof->getDriver();
 
         switch (true) {
-            case CeeJourneyService::isValidLongDistanceJourney($carpoolProof, $this->_logger):
+            case CeeJourneyService::isValidLongDistanceJourney($carpoolProof, $this->_carpoolProofDeadline, $this->_logger):
                 $this->_loggerService->log('The journey successfully passed the long distance test');
                 $this->_userSubscription = $this->_user->getLongDistanceSubscription();
 
@@ -456,7 +456,7 @@ class MobConnectSubscriptionManager
 
                 break;
 
-            case CeeJourneyService::isValidShortDistanceJourney($carpoolProof, $this->_logger):
+            case CeeJourneyService::isValidShortDistanceJourney($carpoolProof, $this->_carpoolProofDeadline, $this->_logger):
                 $this->_loggerService->log('The journey successfully passed the short distance test');
                 $this->_userSubscription = $this->_user->getShortDistanceSubscription();
 
