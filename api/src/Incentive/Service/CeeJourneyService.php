@@ -264,7 +264,7 @@ abstract class CeeJourneyService
     /**
      * Returns if the trip is valid for a long distance for EEC sheet.
      */
-    public static function isValidLongDistanceJourney(CarpoolProof $carpoolProof, int $carpoolProofDeadline, LoggerInterface $logger): bool
+    public static function isValidLongDistanceJourney(CarpoolProof $carpoolProof, LoggerInterface $logger): bool
     {
         self::__setMatchingFromCarpoolProof($carpoolProof);
 
@@ -274,7 +274,6 @@ abstract class CeeJourneyService
             $carpoolProof->getDriver(),
             [
                 Log::CARPOOL_PROOF_ID => $carpoolProof->getId(),
-                Log::CARPOOL_PROOF_DEADLINE => self::__hasCarpoolProofDeadlinePassed($carpoolProof, $carpoolProofDeadline),
                 Log::TYPE_C => CarpoolProof::TYPE_HIGH === $carpoolProof->getType(),
                 Log::MATCHING_ID => !is_null(self::$_matching) ? self::$_matching->getId() : 0,
                 Log::IS_LONG_DISTANCE => self::__isLongDistance(self::$_matching->getCommonDistance()),
@@ -284,7 +283,7 @@ abstract class CeeJourneyService
         );
 
         return
-            self::__hasCarpoolProofDeadlinePassed($carpoolProof, $carpoolProofDeadline)
+            !is_null(self::$_matching)
             && self::__isLongDistance(self::$_matching->getCommonDistance())
             && CarpoolProof::TYPE_HIGH === $carpoolProof->getType()
             && self::__isOriginOrDestinationFromReferenceCountry()
@@ -296,7 +295,7 @@ abstract class CeeJourneyService
     /**
      * Returns if the trip is valid for a short distance for EEC sheet.
      */
-    public static function isValidShortDistanceJourney(CarpoolProof $carpoolProof, int $carpoolProofDeadline, LoggerInterface $logger): bool
+    public static function isValidShortDistanceJourney(CarpoolProof $carpoolProof, LoggerInterface $logger): bool
     {
         self::__setMatchingFromCarpoolProof($carpoolProof);
 
@@ -306,7 +305,6 @@ abstract class CeeJourneyService
             $carpoolProof->getDriver(),
             [
                 Log::CARPOOL_PROOF_ID => $carpoolProof->getId(),
-                Log::CARPOOL_PROOF_DEADLINE => self::__hasCarpoolProofDeadlinePassed($carpoolProof, $carpoolProofDeadline),
                 Log::TYPE_C => CarpoolProof::TYPE_HIGH === $carpoolProof->getType(),
                 Log::MATCHING_ID => !is_null(self::$_matching) ? self::$_matching->getId() : 0,
                 Log::IS_LONG_DISTANCE => self::__isLongDistance(self::$_matching->getCommonDistance()),
@@ -315,7 +313,7 @@ abstract class CeeJourneyService
         );
 
         return
-            self::__hasCarpoolProofDeadlinePassed($carpoolProof, $carpoolProofDeadline)
+            !is_null(self::$_matching)
             && self::__isShortDistance(self::$_matching->getCommonDistance())
             && CarpoolProof::TYPE_HIGH === $carpoolProof->getType()
             && self::__isOriginOrDestinationFromReferenceCountry()
