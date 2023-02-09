@@ -8,6 +8,7 @@ use Psr\Log\LoggerInterface;
 class Log
 {
     public const CARPOOL_PROOF_ID = 'carpoolProofId';                   // CarpoolProof entity ID
+    public const CARPOOL_PROOF_DEADLINE = 'carpoolProofDeadline';       // Has the deadline passed
     public const DATETIME = 'datetime';                                 // The log timestamp
     public const IS_CARPOOL_PROOFS_VALID = 'isCarpoolProofsValid';      // The journeys of the user, already made, correspond to the standard defined within the framework of the CEE
     public const IS_FROM_FRANCE = 'isFromFrance';                       // Does the journey have an origin and/or a destination from France
@@ -21,6 +22,7 @@ class Log
 
     private const ALLOWED_ARGUMENTS = [
         self::CARPOOL_PROOF_ID,
+        self::CARPOOL_PROOF_DEADLINE,
         self::DATETIME,
         self::IS_CARPOOL_PROOFS_VALID,
         self::IS_FROM_FRANCE,
