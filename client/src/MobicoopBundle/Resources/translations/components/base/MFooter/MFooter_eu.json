@@ -1,101 +1,101 @@
 {
-    "logo": "logo mobicoop permettant de revenir vers la page d'accueil",
-    "logoIosAlt" : "Télécharger dans l'App Store",
-    "urlIosLogo": "/images/footer/IOS.svg",
-    "urlIos": "https://apps.apple.com/fr/app/mobicoop-covoiturage-libre/id388658537",
-    "logoAndroidAlt" : "Disponible sur Google Play",
-    "urlAndroidLogo": "/images/footer/android.svg",
-    "urlAndroid": "https://play.google.com/store/apps/details?id=fr.covivo.android.lorraine&hl=fr&gl=US",
-    "logoFacebookAlt" : "logo Facebook permettant de se rendre sur la page Facebook de mobicoop",
-    "urlFacebookLogo": "/images/footer/facebook.svg",
-    "urlFacebook": "https://fr-fr.facebook.com/Mobicoop/",
-    "logoInstragramAlt" : "logo Instagram permettant de se rendre sur la page instagram de mobicoop",
-    "urlInstagram": "https://www.instagram.com/mobicoopcovoiturage/",
-    "urlInstagramLogo": "/images/footer/instagram.svg",
-    "logoTwitterAlt" : "logo Twitter permettant de se rendre sur la page twitter de mobicoop",
-    "urlTwitter": "https://twitter.com/Mobicoop",
-    "urlTwitterLogo": "/images/footer/twitter.svg",
-    "logoFramasphereAlt" : "logo Framasphere permettant de se rendre sur la page framasphère de mobicoop",
-    "urlFramasphere": "https://framasphere.org/tags/mobicoop",
-    "urlFramasphereLogo": "/images/footer/framasphere.svg",
-    "need": {
-        "community": {
-            "link": "autokidetza-komunitatea",
-            "title": "Komunitate bat sor ezazu mobicoop.fr-en!"
-        }
-    },
-    "contacts": {
-        "presse": {
-            "link": "https://pro.mobicoop.fr/category/revue-de-presse/",
-            "title": "Prentsa"
-        },
-        "hotline": {
-            "link": "/contact",
-            "title": "Hotline"
-        }
-    },
-    "tools": {
-        "cookies": {
-            "link": "#",
-            "title": "Cookies-en kudeaketa"
-        },
-        "dataPolicy": {
-            "link": "/protection-donnees",
-            "title": "Datuen babesa"
-        },
-        "cgu": {
-            "link": "/cgu",
-            "title": "Erabilera Baldintza Orokorrak"
-        },
-        "faq": {
-            "link": "/FAQ",
-            "title": "FAQ"
-        },
-        "events": {
-            "link": "/covoiturages-evenements",
-            "title": "Autokidetza-ekitaldiak"
-        },
-        "map": {
-            "link": "/points-relais",
-            "title": "Autokidetza eremuen mapa"
-        },
-        "carpoolIncentive": {
-            "title":"Prime Covoiturage",
-            "link":"/mobility-package"
-        }
-    },
-    "services": {
-        "covievent": {
-            "link": "https://www.covievent.org/",
-            "title": "www.covievent.org"
-        },
-        "mobicoop": {
-            "link": "https://pro.mobicoop.fr/",
-            "title": "pro.mobicoop.fr"
-        }
-    },
-    "cooperative": {
-        "joinUs": {
-            "link": "https://lacampagne.mobicoop.fr/",
-            "title": "Bazkide izan"
-        },
-        "talkAboutUs": {
-            "link": "https://pro.mobicoop.fr/cooperative/",
-            "title": "Nor ote gira?"
-        }
-    },
-    "category": {
-        "download": "MOBICOOP APLIKAZIOA TELEKARGA EZAZU",
-        "need": "Zure egiturarentzat autokidetza aterabide bat beharra duzu?",
-        "contacts": "Harremanak",
-        "services": "Mobicoop zerbitzuak",
-        "tools": "Tresnak",
-        "cooperative": "Kooperatiba"
-    },
-    "buttons": {
-        "contact": {
-            "label": "Gurekin harremanetan jarri",
-            "route": "/contact"
-        }
+  "logo": "logo mobicoop permettant de revenir vers la page d'accueil",
+  "logoIosAlt": "Télécharger dans l'App Store",
+  "urlIosLogo": "/images/footer/IOS.svg",
+  "urlIos": "https://apps.apple.com/fr/app/mobicoop-covoiturage-libre/id388658537",
+  "logoAndroidAlt": "Disponible sur Google Play",
+  "urlAndroidLogo": "/images/footer/android.svg",
+  "urlAndroid": "https://play.google.com/store/apps/details?id=fr.covivo.android.lorraine&hl=fr&gl=US",
+  "logoFacebookAlt": "logo Facebook permettant de se rendre sur la page Facebook de mobicoop",
+  "urlFacebookLogo": "/images/footer/facebook.svg",
+  "urlFacebook": "https://fr-fr.facebook.com/Mobicoop/",
+  "logoInstragramAlt": "logo Instagram permettant de se rendre sur la page instagram de mobicoop",
+  "urlInstagram": "https://www.instagram.com/mobicoopcovoiturage/",
+  "urlInstagramLogo": "/images/footer/instagram.svg",
+  "logoTwitterAlt": "logo Twitter permettant de se rendre sur la page twitter de mobicoop",
+  "urlTwitter": "https://twitter.com/Mobicoop",
+  "urlTwitterLogo": "/images/footer/twitter.svg",
+  "logoFramasphereAlt": "logo Framasphere permettant de se rendre sur la page framasphère de mobicoop",
+  "urlFramasphere": "https://framasphere.org/tags/mobicoop",
+  "urlFramasphereLogo": "/images/footer/framasphere.svg",
+  "need": {
+    "community": {
+      "link": "autokidetza-komunitatea",
+      "title": "Komunitate bat sor ezazu mobicoop.fr-en!"
     }
+  },
+  "contacts": {
+    "presse": {
+      "link": "https://pro.mobicoop.fr/category/revue-de-presse/",
+      "title": "Prentsa"
+    },
+    "hotline": {
+      "link": "http://support.mobicoop.fr",
+      "title": "Hotline"
+    }
+  },
+  "tools": {
+    "cookies": {
+      "link": "#",
+      "title": "Cookies-en kudeaketa"
+    },
+    "dataPolicy": {
+      "link": "/protection-donnees",
+      "title": "Datuen babesa"
+    },
+    "cgu": {
+      "link": "/cgu",
+      "title": "Erabilera Baldintza Orokorrak"
+    },
+    "faq": {
+      "link": "http://support.mobicoop.fr",
+      "title": "FAQ"
+    },
+    "events": {
+      "link": "/covoiturages-evenements",
+      "title": "Autokidetza-ekitaldiak"
+    },
+    "map": {
+      "link": "/points-relais",
+      "title": "Autokidetza eremuen mapa"
+    },
+    "carpoolIncentive": {
+      "title": "Prime Covoiturage",
+      "link": "/mobility-package"
+    }
+  },
+  "services": {
+    "covievent": {
+      "link": "https://www.covievent.org/",
+      "title": "www.covievent.org"
+    },
+    "mobicoop": {
+      "link": "https://pro.mobicoop.fr/",
+      "title": "pro.mobicoop.fr"
+    }
+  },
+  "cooperative": {
+    "joinUs": {
+      "link": "https://lacampagne.mobicoop.fr/",
+      "title": "Bazkide izan"
+    },
+    "talkAboutUs": {
+      "link": "https://pro.mobicoop.fr/cooperative/",
+      "title": "Nor ote gira?"
+    }
+  },
+  "category": {
+    "download": "MOBICOOP APLIKAZIOA TELEKARGA EZAZU",
+    "need": "Zure egiturarentzat autokidetza aterabide bat beharra duzu?",
+    "contacts": "Harremanak",
+    "services": "Mobicoop zerbitzuak",
+    "tools": "Tresnak",
+    "cooperative": "Kooperatiba"
+  },
+  "buttons": {
+    "contact": {
+      "label": "Gurekin harremanetan jarri",
+      "route": "/contact"
+    }
+  }
 }
