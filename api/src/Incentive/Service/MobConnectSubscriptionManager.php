@@ -588,6 +588,8 @@ class MobConnectSubscriptionManager
 
                             $this->_em->flush();
 
+                            $this->_em->flush();
+
                             break;
 
                         default:
@@ -603,16 +605,6 @@ class MobConnectSubscriptionManager
                             }
 
                             $this->_em->flush();
-
-                            break;
-
-                        default:
-                            if (CeeJourneyService::LOW_THRESHOLD_PROOF < count($this->_userSubscription->getShortDistanceJourneys()) && count($this->_userSubscription->getShortDistanceJourneys()) < CeeJourneyService::SHORT_DISTANCE_TRIP_THRESHOLD) {
-                                $this->_loggerService->log('Treatment for a number of trips equal to '.count($this->_userSubscription->getShortDistanceJourneys()));
-                                $this->_em->flush();
-                            } else {
-                                $this->_loggerService->log('No treatment-The current number of journeys is greater than the maximum threshold');
-                            }
 
                             break;
                     }
