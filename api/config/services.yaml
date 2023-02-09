@@ -749,7 +749,23 @@ services:
       - { name: monolog.logger, channel: faker }
 
   # INCENTIVE
+  App\Incentive\JourneysVerificationCommand:
+    tags:
+      - { name: "console.command", command: "app:incentive:journeys-verification" }
 
+  App\Incentive\Repository\LongDistanceJourneyRepository:
+    arguments:
+      $deadline: "%env(int:EEC_JOURNEY_DECLARATION_DEADLINE)%"
+  App\Incentive\Repository\ShortDistanceJourneyRepository:
+    arguments:
+      $deadline: "%env(int:EEC_JOURNEY_DECLARATION_DEADLINE)%"
+
+  App\Incentive\Service\LoggerService:
+      arguments:
+          $globalForcingLogs: "%env(bool:EEC_FORCING_LOGS)%"
+      tags:
+          - { name: monolog.logger, channel: incentive_subscription }
+          
   App\Incentive\Service\MobConnectSubscriptionManager:
     arguments:
       $ssoServices: "%env(json:file:resolve:SSO_SERVICES)%"
@@ -761,6 +777,7 @@ services:
         subscription_ids:
           short_distance: "%env(string:MOBCONNECT_SHORTDISTANCE_SUBSCRIPTIONID)%"
           long_distance: "%env(string:MOBCONNECT_LONGDISTANCE_SUBSCRIPTIONID)%"
+      $proofDeadline: "%env(int:EEC_JOURNEY_DECLARATION_DEADLINE)%"
     tags:
       - { name: monolog.logger, channel: incentive_subscription }
 

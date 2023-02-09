@@ -4,16 +4,10 @@ namespace App\DataProvider\Entity\MobConnect;
 
 use App\DataProvider\Entity\Response as ProviderResponse;
 use App\DataProvider\Service\DataProvider;
+use App\Incentive\Service\LoggerService;
 use App\Incentive\Service\MobConnectMessages;
 use App\User\Entity\User;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\HttpKernel\Exception\HttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\HttpKernel\Exception\PreconditionFailedHttpException;
-use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
-use Symfony\Component\HttpKernel\Exception\UnsupportedMediaTypeHttpException;
 
 /**
  * MobConnect provider.
@@ -35,6 +29,11 @@ abstract class MobConnectProvider
      * @var string
      */
     protected $_apiUri;
+
+    /**
+     * @var LoggerService
+     */
+    protected $_loggerService;
 
     /**
      * The authenticated user.
@@ -76,35 +75,30 @@ abstract class MobConnectProvider
     {
         $responseValue = $response->getValue();
 
-        switch ($response->getCode()) {
+        $this->_logRequestResult($response->getCode(), $responseValue);
+
+        return [
+            'code' => $response->getCode(),
+            'content' => $responseValue,
+        ];
+    }
+
+    private function _logRequestResult(int $code, string $content)
+    {
+        switch ($code) {
             case 200:
             case 201:
             case 204:
-                return json_decode($responseValue);
+                $logType = 'info';
 
-            case 400:
-                throw new BadRequestHttpException($responseValue);
-
-            case 401:
-                throw new AccessDeniedHttpException($responseValue);
-
-            case 403:
-                throw new HttpException(Response::HTTP_FORBIDDEN, $responseValue);
-
-            case 404:
-                throw new NotFoundHttpException($responseValue);
-
-            case 412:
-                throw new PreconditionFailedHttpException($responseValue);
-
-            case 415:
-                throw new UnsupportedMediaTypeHttpException($responseValue);
-
-            case 422:
-                throw new UnprocessableEntityHttpException($responseValue);
+                break;
 
             default:
-                throw new HttpException(Response::HTTP_INTERNAL_SERVER_ERROR, 'The MobConnect API response is unknown!');
+                $logType = 'error';
+
+                break;
         }
+
+        $this->_loggerService->log('The mobConnect request response is: '.$code.' | '.$content, $logType, true);
     }
 }

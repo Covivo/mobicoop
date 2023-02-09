@@ -8,9 +8,16 @@
 {% endblock %}
 
 {% block main %}
-<login :errormessage="{{ {'value': errorMessage}|json_encode(1) }}" :show-facebook-login="{{ facebook_show ? " true"
-    : "false" }}" facebook-login-app-id="{{ facebook_appid }}" :id="{{ id is defined ? (id ? id : 'null') : 'null' }}"
-    type="{{ type }}" :sign-up-link-in-connection="{{ signUpLinkInConnection ? " true" : "false" }}"
-    service="{{ service is defined ? service : 'null' }}" app-name="{{ app_name }}"
-    :sso-button-display="{{ ssoButtonDisplay ? " true" : "false" }}" />
+<login
+    app-name="{{ app_name }}"
+    facebook-login-app-id="{{ facebook_appid }}"
+    service="{{ service is defined ? service : 'null' }}"
+    type="{{ type }}"
+    :errormessage="{{ {'value': errorMessage}|json_encode(1) }}"
+    :id="{{ id is defined ? (id ? id : 'null') : 'null' }}"
+    :show-facebook-login="{{ facebook_show ? " true" : "false" }}"
+    :sign-up-link-in-connection="{{ signUpLinkInConnection ? " true" : "false" }}"
+    :specific-sso-services="{{ specificSsoServices|json_encode }}"
+    :sso-button-display="{{ ssoButtonDisplay ? " true" : "false" }}"
+/>
 {% endblock %}
