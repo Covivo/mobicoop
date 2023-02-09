@@ -168,8 +168,8 @@ class ShortDistanceJourney
         $this->setOperatorUserId($carpoolProof->getDriver()->getId());
         $this->setRpcJourneyId($rpcJourneyId);
         $this->setRpcNumberStatus($rpcStatus);
-        $this->setStartDate($carpoolProof->getStartDriverDate()->format('Y-m-d H:i:s'));
-        $this->setEndDate($carpoolProof->getEndDriverDate()->format('Y-m-d H:i:s'));
+        $this->setStartDate($carpoolProof->getAsk()->getMatching()->getProposalOffer()->getCreatedDate()->format('Y-m-d H:i:s'));
+        $this->setEndDate($carpoolProof->getCreatedDate()->format('Y-m-d H:i:s'));
     }
 
     /**

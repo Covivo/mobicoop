@@ -129,11 +129,14 @@ class SsoManager
             foreach ($this->ssoServices as $serviceName => $ssoService) {
                 $provider = $this->getSsoProvider($serviceName);
                 if (!is_null($provider)) {
-                    $logoutUrls[$serviceName] = $provider->getLogoutUrl();
+                    $logOutUrl = $provider->getLogoutUrl();
+                    if (!is_null($logOutUrl)) {
+                        $logoutUrls[$serviceName] = $logOutUrl;
+                    }
                 }
             }
 
-            return [$logoutUrls];
+            return count($logoutUrls) > 0 ? [$logoutUrls] : [];
         }
 
         return [];

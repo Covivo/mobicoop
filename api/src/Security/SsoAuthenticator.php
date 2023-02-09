@@ -110,12 +110,22 @@ class SsoAuthenticator extends AbstractGuardAuthenticator
 
         $this->refreshTokenManager->save($refreshToken);
 
-        // on success, let the request continue
-        return new JsonResponse([
+        $response = [
             'token' => $this->jwtTokenManagerInterface->create($token->getUser()),
             'refreshToken' => $refreshToken->getRefreshToken(),
-            'logoutUrl' => (!is_null($user->getSsoProvider())) ? $this->ssoManager->getSsoLogoutUrl($user) : null,
-        ]);
+        ];
+
+        if (!is_null($user->getSsoProvider())) {
+            $logoutUrl = $this->ssoManager->getSsoLogoutUrl($user);
+            if ($logoutUrl) {
+                $response = [
+                    'logoutUrl' => (!is_null($user->getSsoProvider())) ? $this->ssoManager->getSsoLogoutUrl($user) : null,
+                ];
+            }
+        }
+
+        // on success, let the request continue
+        return new JsonResponse($response);
     }
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception)

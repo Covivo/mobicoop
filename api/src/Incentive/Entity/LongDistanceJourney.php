@@ -144,16 +144,8 @@ class LongDistanceJourney
         $this->setEndAddressLocality($carpoolProof->getDestinationDriverAddress()->getAddressLocality());
         $this->setDistance($carpoolProof->getAsk()->getMatching()->getCommonDistance());
         $this->setCarpoolersNumber($carpoolersNumber);
-
-        $date = $carpoolProof->getAsk()->getMatching()->getCriteria()->getFromDate()->format('Y-m-d');
-        $time = !is_null($carpoolProof->getAsk()->getMatching()->getCriteria()->getFromTime())
-            ? $carpoolProof->getAsk()->getMatching()->getCriteria()->getFromTime()->format('H:i:s') : '00:00:00';
-
-        $startDate = \DateTime::createFromFormat('Y-m-d H:i:s', "{$date} {$time}");
-        $endDate = clone $startDate;
-        $endDate->add(new \DateInterval('PT'.$carpoolProof->getAsk()->getMatching()->getNewDuration().'S'));
-        $this->setStartDate($startDate->format('Y-m-d H:i:s'));
-        $this->setEndDate($endDate->format('Y-m-d H:i:s'));
+        $this->setStartDate($carpoolProof->getAsk()->getMatching()->getProposalOffer()->getCreatedDate()->format('Y-m-d H:i:s'));
+        $this->setEndDate($carpoolPayment->getCreatedDate()->format('Y-m-d H:i:s'));
     }
 
     /**

@@ -115,9 +115,13 @@ use Symfony\Component\Validator\Constraints as Assert;
  * Note : force eager is set to false to avoid max number of nested relations (can occure despite of maxdepth... https://github.com/api-platform/core/issues/1910)
  *
  * @ORM\Entity
+ *
  * @ORM\Table(indexes={@ORM\Index(name="IDX_NEWS_SUBSCRIPTION", columns={"news_subscription"})})
+ *
  * @ORM\HasLifecycleCallbacks
+ *
  * @UniqueEntity("email")
+ *
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
@@ -593,6 +597,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *          },
  *      }
  * )
+ *
  * @ApiFilter(NumericFilter::class, properties={"id","gender"})
  * @ApiFilter(SearchFilter::class, properties={"email":"partial", "givenName":"partial", "familyName":"partial", "geoToken":"exact","telephone" : "exact"})
  * @ApiFilter(FamilyAndGivenNameFilter::class, properties={"q"})
@@ -633,6 +638,7 @@ class User implements UserInterface, EquatableInterface
     public const STATUS_ACTIVE = 1;
     public const STATUS_DISABLED = 2;
     public const STATUS_ANONYMIZED = 3;
+    public const STATUS_PSEUDONYMIZED = 4;
 
     public const GENDER_FEMALE = 1;
     public const GENDER_MALE = 2;
@@ -676,9 +682,13 @@ class User implements UserInterface, EquatableInterface
      * @var int the id of this user
      *
      * @ORM\Id
+     *
      * @ORM\GeneratedValue
+     *
      * @ORM\Column(type="integer")
+     *
      * @Groups({"aRead","aReadRzpTerritoryStatus","readUser","readCommunity","communities","readCommunityUser","results","threads", "thread","externalJourney","userStructure", "readSolidary","readPayment","carpoolExport","readReview", "patchSso"})
+     *
      * @ApiProperty(identifier=true)
      */
     private $id;
@@ -687,7 +697,9 @@ class User implements UserInterface, EquatableInterface
      * @var int user status (1 = active; 2 = disabled; 3 = anonymized)
      *
      * @Assert\NotBlank
+     *
      * @ORM\Column(type="smallint")
+     *
      * @Groups({"aRead","aWrite","readUser","readCommunityUser","results","write"})
      */
     private $status;
@@ -696,6 +708,7 @@ class User implements UserInterface, EquatableInterface
      * @var null|string the first name of the user
      *
      * @ORM\Column(type="string", length=255, nullable=true)
+     *
      * @Groups({"aRead","aWrite","readUser","readCommunity","readCommunityUser","results","write", "threads", "thread","externalJourney", "readEvent", "massMigrate","communities", "readSolidary", "readAnimation", "readExport","readPublicProfile","readReview", "patchSso"})
      */
     private $givenName;
@@ -704,6 +717,7 @@ class User implements UserInterface, EquatableInterface
      * @var null|string the family name of the user
      *
      * @ORM\Column(type="string", length=255, nullable=true)
+     *
      * @Groups({"aRead","aWrite","readUser","write","communities", "readSolidary", "readAnimation", "readExport", "patchSso"})
      */
     private $familyName;
@@ -719,6 +733,7 @@ class User implements UserInterface, EquatableInterface
      * @var null|string the name of the user in a professional context
      *
      * @ORM\Column(type="string", length=255, nullable=true)
+     *
      * @Groups({"readUser","write"})
      */
     private $proName;
@@ -727,7 +742,9 @@ class User implements UserInterface, EquatableInterface
      * @var string the email of the user
      *
      * @Assert\Email()
+     *
      * @ORM\Column(type="string", length=255, unique=true)
+     *
      * @Groups({"aRead","aWrite","readUser","write","checkValidationToken","passwordUpdateRequest","passwordUpdate", "readSolidary", "patchSso"})
      */
     private $email;
@@ -743,7 +760,9 @@ class User implements UserInterface, EquatableInterface
      * @var string the email of the user in a professional context
      *
      * @Assert\Email()
+     *
      * @ORM\Column(type="string", length=255, nullable=true)
+     *
      * @Groups({"readUser","write"})
      */
     private $proEmail;
@@ -752,6 +771,7 @@ class User implements UserInterface, EquatableInterface
      * @var string the encoded password of the user
      *
      * @ORM\Column(type="string", length=255, nullable=true)
+     *
      * @Groups({"readUser","write","passwordUpdate"})
      */
     private $password;
@@ -774,6 +794,7 @@ class User implements UserInterface, EquatableInterface
      * @var null|int The gender of the user (1=female, 2=male, 3=nc)
      *
      * @ORM\Column(type="smallint")
+     *
      * @Groups({"aRead","aWrite","readUser","results","write","externalJourney"})
      */
     private $gender;
@@ -782,6 +803,7 @@ class User implements UserInterface, EquatableInterface
      * @var null|string the nationality of the user
      *
      * @ORM\Column(type="string", length=255, nullable=true)
+     *
      * @Groups({"aRead","aWrite","readUser","write"})
      */
     private $nationality;
@@ -790,7 +812,9 @@ class User implements UserInterface, EquatableInterface
      * @var null|\DateTimeInterface the birth date of the user
      *
      * @ORM\Column(type="date", nullable=true)
+     *
      * @Groups({"aRead","aWrite","readUser","write"})
+     *
      * @ApiProperty(
      *     attributes={
      *         "swagger_context"={"type"="string", "format"="date"}
@@ -810,6 +834,7 @@ class User implements UserInterface, EquatableInterface
      * @var null|string the telephone number of the user
      *
      * @ORM\Column(type="string", length=255, nullable=true)
+     *
      * @Groups({"aRead","aWrite","readUser","write","checkPhoneToken","results", "readSolidary"})
      */
     private $telephone;
@@ -825,6 +850,7 @@ class User implements UserInterface, EquatableInterface
      * @var int phone display configuration (1 = restricted (default); 2 = all)
      *
      * @ORM\Column(type="smallint")
+     *
      * @Groups({"aRead","aWrite","readUser","write","results"})
      */
     private $phoneDisplay;
@@ -833,6 +859,7 @@ class User implements UserInterface, EquatableInterface
      * @var null|string the driving licence number
      *
      * @ORM\Column(type="string", length=15, nullable=true)
+     *
      * @Groups({"aRead","aWrite","readUser","write"})
      */
     private $drivingLicenceNumber;
@@ -841,6 +868,7 @@ class User implements UserInterface, EquatableInterface
      * @var null|int the maximum detour duration (in seconds) as a driver to accept a request proposal
      *
      * @ORM\Column(type="integer", nullable=true)
+     *
      * @Groups({"readUser","write"})
      */
     private $maxDetourDuration;
@@ -849,6 +877,7 @@ class User implements UserInterface, EquatableInterface
      * @var null|int the maximum detour distance (in metres) as a driver to accept a request proposal
      *
      * @ORM\Column(type="integer", nullable=true)
+     *
      * @Groups({"readUser","write"})
      */
     private $maxDetourDistance;
@@ -857,6 +886,7 @@ class User implements UserInterface, EquatableInterface
      * @var null|bool the user accepts any route as a passenger from its origin to the destination
      *
      * @ORM\Column(type="boolean", nullable=true)
+     *
      * @Groups({"readUser","write"})
      */
     private $anyRouteAsPassenger;
@@ -865,6 +895,7 @@ class User implements UserInterface, EquatableInterface
      * @var null|bool the user accepts any transportation mode
      *
      * @ORM\Column(type="boolean", nullable=true)
+     *
      * @Groups({"readUser","write"})
      */
     private $multiTransportMode;
@@ -876,6 +907,7 @@ class User implements UserInterface, EquatableInterface
      *               2 = i smoke
      *
      * @ORM\Column(type="integer", nullable=true)
+     *
      * @Groups({"aRead","aWrite","readUser","write"})
      */
     private $smoke;
@@ -886,6 +918,7 @@ class User implements UserInterface, EquatableInterface
      *                1 = i listen to music or radio
      *
      * @ORM\Column(type="boolean", nullable=true)
+     *
      * @Groups({"aRead","aWrite","readUser","write"})
      */
     private $music;
@@ -894,6 +927,7 @@ class User implements UserInterface, EquatableInterface
      * @var null|string music favorites
      *
      * @ORM\Column(type="string", length=255, nullable=true)
+     *
      * @Groups({"aRead","aWrite","readUser","write"})
      */
     private $musicFavorites;
@@ -904,6 +938,7 @@ class User implements UserInterface, EquatableInterface
      *                1 = chat
      *
      * @ORM\Column(type="boolean", nullable=true)
+     *
      * @Groups({"aRead","aWrite","readUser","write"})
      */
     private $chat;
@@ -912,6 +947,7 @@ class User implements UserInterface, EquatableInterface
      * @var null|string chat favorite subjects
      *
      * @ORM\Column(type="string", length=255, nullable=true)
+     *
      * @Groups({"aRead","aWrite","readUser","write"})
      */
     private $chatFavorites;
@@ -922,6 +958,7 @@ class User implements UserInterface, EquatableInterface
      *                1 = accept gamification
      *
      * @ORM\Column(type="boolean", nullable=true)
+     *
      * @Groups({"aRead","aWrite","readUser","write"})
      */
     private $gamification;
@@ -930,6 +967,7 @@ class User implements UserInterface, EquatableInterface
      * @var null|bool the user accepts to receive news about the platform
      *
      * @ORM\Column(type="boolean", nullable=true)
+     *
      * @Groups({"aRead","aWrite","readUser","write","readCommunity","readCommunityUser"})
      */
     private $newsSubscription;
@@ -938,6 +976,7 @@ class User implements UserInterface, EquatableInterface
      * @var \DateTimeInterface creation date of the user
      *
      * @ORM\Column(type="datetime")
+     *
      * @Groups({"aRead","readUser"})
      */
     private $createdDate;
@@ -946,6 +985,7 @@ class User implements UserInterface, EquatableInterface
      * @var \DateTimeInterface validation date of the user
      *
      * @ORM\Column(type="datetime", nullable=true)
+     *
      * @Groups({"readUser","write"})
      */
     private $validatedDate;
@@ -954,6 +994,7 @@ class User implements UserInterface, EquatableInterface
      * @var null|string Token for account validation by email
      *
      * @ORM\Column(type="string", length=255, nullable=true)
+     *
      * @Groups({"readUser","write","checkValidationToken"})
      */
     private $emailToken;
@@ -962,6 +1003,7 @@ class User implements UserInterface, EquatableInterface
      * @var \DateTimeInterface updated date of the user
      *
      * @ORM\Column(type="datetime", nullable=true)
+     *
      * @Groups("readUser")
      */
     private $updatedDate;
@@ -970,6 +1012,7 @@ class User implements UserInterface, EquatableInterface
      * @var null|\DateTime date of password token generation modification
      *
      * @ORM\Column(type="datetime", length=255, nullable=true)
+     *
      * @Groups({"readUser","write"})
      */
     private $pwdTokenDate;
@@ -978,6 +1021,7 @@ class User implements UserInterface, EquatableInterface
      * @var null|string token for password modification
      *
      * @ORM\Column(type="string", length=255, nullable=true)
+     *
      * @Groups({"readUser","write","passwordUpdateRequest","passwordUpdate"})
      */
     private $pwdToken;
@@ -986,6 +1030,7 @@ class User implements UserInterface, EquatableInterface
      * @var null|string token for phone validation
      *
      * @ORM\Column(type="string", length=255, nullable=true)
+     *
      * @Groups({"readUser","write","checkPhoneToken"})
      */
     private $phoneToken;
@@ -994,6 +1039,7 @@ class User implements UserInterface, EquatableInterface
      * @var null|\DateTimeInterface validation date of the phone number
      *
      * @ORM\Column(type="datetime", nullable=true)
+     *
      * @Groups({"readUser","write"})
      */
     private $phoneValidatedDate;
@@ -1002,6 +1048,7 @@ class User implements UserInterface, EquatableInterface
      * @var null|bool Mobile user
      *
      * @ORM\Column(type="boolean", nullable=true)
+     *
      * @Groups({"readUser","write"})
      */
     private $mobile;
@@ -1010,8 +1057,11 @@ class User implements UserInterface, EquatableInterface
      * @var null|Language the language of the user
      *
      * @ORM\ManyToOne(targetEntity="\App\I18n\Entity\Language", inversedBy="users")
+     *
      * @ORM\JoinColumn(onDelete="SET NULL")
+     *
      * @Groups({"read","readUser","write"})
+     *
      * @MaxDepth(1)
      */
     private $language;
@@ -1020,6 +1070,7 @@ class User implements UserInterface, EquatableInterface
      * @var bool the user can be driver for a hitch hike
      *
      * @ORM\Column(type="boolean", nullable=true)
+     *
      * @Groups({"read","readUser","write","aRead","aWrite"})
      */
     private $hitchHikeDriver;
@@ -1028,6 +1079,7 @@ class User implements UserInterface, EquatableInterface
      * @var bool the user can be passenger for a hitch hike
      *
      * @ORM\Column(type="boolean", nullable=true)
+     *
      * @Groups({"read","readUser","write","aRead","aWrite"})
      */
     private $hitchHikePassenger;
@@ -1036,8 +1088,11 @@ class User implements UserInterface, EquatableInterface
      * @var null|ArrayCollection a user may have many identity proofs
      *
      * @ORM\OneToMany(targetEntity="\App\User\Entity\IdentityProof", mappedBy="user", cascade={"persist"})
+     *
      * @ORM\OrderBy({"id" = "DESC"})
+     *
      * @MaxDepth(1)
+     *
      * @Groups({"aWrite","aRead"})
      */
     private $identityProofs;
@@ -1046,6 +1101,7 @@ class User implements UserInterface, EquatableInterface
      * @var int The status of the current identity proof
      *
      * @ORM\Column(type="smallint", nullable=true)
+     *
      * @Groups({"aRead","readUser","results","write"})
      */
     private $identityStatus;
@@ -1054,6 +1110,7 @@ class User implements UserInterface, EquatableInterface
      * @var null|ArrayCollection a user may have many addresses
      *
      * @ORM\OneToMany(targetEntity="\App\Geography\Entity\Address", mappedBy="user", cascade={"persist"})
+     *
      * @MaxDepth(1)
      *
      * @ApiSubresource
@@ -1066,6 +1123,7 @@ class User implements UserInterface, EquatableInterface
      * @var null|ArrayCollection a user may have many cars
      *
      * @ORM\OneToMany(targetEntity="\App\User\Entity\Car", mappedBy="user", cascade={"persist"})
+     *
      * @Groups({"readUser","write"})
      */
     private $cars;
@@ -1074,6 +1132,7 @@ class User implements UserInterface, EquatableInterface
      * @var null|ArrayCollection a user may have many push token ids
      *
      * @ORM\OneToMany(targetEntity="\App\User\Entity\PushToken", mappedBy="user", cascade={"persist"})
+     *
      * @Groups({"readUser","write"})
      */
     private $pushTokens;
@@ -1082,7 +1141,9 @@ class User implements UserInterface, EquatableInterface
      * @var null|ArrayCollection the proposals made for this user (in general by the user itself, except when it is a "posting for")
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Proposal", mappedBy="user")
+     *
      * @MaxDepth(1)
+     *
      * @Groups({"proposals", "get"})
      *
      * @Apisubresource
@@ -1093,6 +1154,7 @@ class User implements UserInterface, EquatableInterface
      * @var null|ArrayCollection the proposals made by this user for another user
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Proposal", mappedBy="userDelegate")
+     *
      * @MaxDepth(1)
      *
      * @Apisubresource
@@ -1152,9 +1214,13 @@ class User implements UserInterface, EquatableInterface
      * @var null|ArrayCollection the images of the user
      *
      * @ORM\OneToMany(targetEntity="\App\Image\Entity\Image", mappedBy="user", cascade={"persist"})
+     *
      * @ORM\OrderBy({"position" = "ASC"})
+     *
      * @Groups({"readUser","results","write"})
+     *
      * @MaxDepth(1)
+     *
      * @ApiSubresource(maxDepth=1)
      */
     private $images;
@@ -1163,13 +1229,16 @@ class User implements UserInterface, EquatableInterface
      * @var null|ArrayCollection a user may have many auth assignments
      *
      * @ORM\OneToMany(targetEntity="\App\Auth\Entity\UserAuthAssignment", mappedBy="user", cascade={"persist"})
+     *
      * @Groups({"readUser","write"})
+     *
      * @MaxDepth(1)
      */
     private $userAuthAssignments;
 
     /**
      * @Groups({"readUser"})
+     *
      * @MaxDepth(1)
      */
     private $roles;
@@ -1178,7 +1247,9 @@ class User implements UserInterface, EquatableInterface
      * @var null|ArrayCollection the mass import files of the user
      *
      * @ORM\OneToMany(targetEntity="\App\Match\Entity\Mass", mappedBy="user", cascade={"persist"})
+     *
      * @Groups({"mass"})
+     *
      * @MaxDepth(1)
      *
      * @ApiSubresource
@@ -1189,6 +1260,7 @@ class User implements UserInterface, EquatableInterface
      * @var null|ArrayCollection the messages sent by the user
      *
      * @ORM\OneToMany(targetEntity="\App\Communication\Entity\Message", mappedBy="user", cascade={"persist"})
+     *
      * @MaxDepth(1)
      *
      * @ApiSubresource
@@ -1199,6 +1271,7 @@ class User implements UserInterface, EquatableInterface
      * @var null|ArrayCollection the messages received by the user
      *
      * @ORM\OneToMany(targetEntity="\App\Communication\Entity\Recipient", mappedBy="user", cascade={"persist"})
+     *
      * @MaxDepth(1)
      * ApiSubresource
      */
@@ -1215,6 +1288,7 @@ class User implements UserInterface, EquatableInterface
      * @var null|ArrayCollection a user may have many action logs
      *
      * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="user", cascade={"persist"})
+     *
      * @Groups({"write"})
      */
     private $logs;
@@ -1223,6 +1297,7 @@ class User implements UserInterface, EquatableInterface
      * @var null|ArrayCollection a user may have many action logs as an delegate
      *
      * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="userDelegate", cascade={"persist"})
+     *
      * @Groups({"write"})
      */
     private $logsAsDelegate;
@@ -1231,6 +1306,7 @@ class User implements UserInterface, EquatableInterface
      * @var null|ArrayCollection a user may have many action logs as a user related
      *
      * @ORM\OneToMany(targetEntity="\App\Action\Entity\Log", mappedBy="userRelated", cascade={"persist"})
+     *
      * @Groups({"readUser","write"})
      */
     private $logsAsRelated;
@@ -1239,6 +1315,7 @@ class User implements UserInterface, EquatableInterface
      * @var null|ArrayCollection a user may have many action logs
      *
      * @ORM\OneToMany(targetEntity="\App\Action\Entity\Diary", mappedBy="user", cascade={"persist"})
+     *
      * @Groups({"readUser","write"})
      */
     private $diaries;
@@ -1247,6 +1324,7 @@ class User implements UserInterface, EquatableInterface
      * @var null|ArrayCollection a user may have many diary action logs
      *
      * @ORM\OneToMany(targetEntity="\App\Action\Entity\Diary", mappedBy="author", cascade={"persist"})
+     *
      * @Groups({"write"})
      */
     private $diariesAuthor;
@@ -1276,7 +1354,9 @@ class User implements UserInterface, EquatableInterface
      * @var null|UserImport the user import data
      *
      * @ORM\OneToOne(targetEntity="\App\Import\Entity\UserImport", mappedBy="user", cascade={"remove"})
+     *
      * @Groups({"readUser"})
+     *
      * @MaxDepth(1)
      */
     private $import;
@@ -1292,7 +1372,9 @@ class User implements UserInterface, EquatableInterface
      * @var null|ArrayCollection the RewardSteps earned by this User
      *
      * @ORM\OneToMany(targetEntity="\App\Gamification\Entity\RewardStep", mappedBy="user")
+     *
      * @ORM\JoinTable(name="reward")
+     *
      * @Groups({"readGamification"})
      */
     private $rewardSteps;
@@ -1336,6 +1418,7 @@ class User implements UserInterface, EquatableInterface
      * @var null|string Facebook ID of the user
      *
      * @ORM\Column(type="string", length=255, nullable=true)
+     *
      * @Groups({"readUser","write"})
      */
     private $facebookId;
@@ -1344,6 +1427,7 @@ class User implements UserInterface, EquatableInterface
      * @var null|string External ID of the user for a SSO connection
      *
      * @ORM\Column(type="string", length=255, nullable=true)
+     *
      * @Groups({"readUser", "patchSso"})
      */
     private $ssoId;
@@ -1352,6 +1436,7 @@ class User implements UserInterface, EquatableInterface
      * @var null|string External Provider for a SSO connection
      *
      * @ORM\Column(type="string", length=255, nullable=true)
+     *
      * @Groups({"readUser", "patchSso"})
      */
     private $ssoProvider;
@@ -1360,6 +1445,7 @@ class User implements UserInterface, EquatableInterface
      * @var \DateTimeInterface Creation date of the user by Sso (attachment date if already existing)
      *
      * @ORM\Column(type="datetime", nullable=true)
+     *
      * @Groups({"aRead","readUser"})
      */
     private $createdSsoDate;
@@ -1375,8 +1461,11 @@ class User implements UserInterface, EquatableInterface
      * @var null|User admin that create the user
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User")
+     *
      * @ORM\JoinColumn(onDelete="SET NULL")
+     *
      * @Groups({"readUser","write"})
+     *
      * @MaxDepth(1)
      */
     private $userDelegate;
@@ -1385,8 +1474,11 @@ class User implements UserInterface, EquatableInterface
      * @var null|App app that create the user
      *
      * @ORM\ManyToOne(targetEntity="\App\App\Entity\App")
+     *
      * @ORM\JoinColumn(onDelete="SET NULL")
+     *
      * @Groups({"readUser","write"})
+     *
      * @MaxDepth(1)
      */
     private $appDelegate;
@@ -1409,6 +1501,7 @@ class User implements UserInterface, EquatableInterface
      * @var null|string Token for news unsubscription
      *
      * @ORM\Column(type="string", length=255, nullable=true)
+     *
      * @Groups({"readUser","write"})
      */
     private $unsubscribeToken;
@@ -1417,6 +1510,7 @@ class User implements UserInterface, EquatableInterface
      * @var \DateTimeInterface Date when user unsubscribe from email
      *
      * @ORM\Column(type="datetime", nullable=true)
+     *
      * @Groups("readUser")
      */
     private $unsubscribeDate;
@@ -1453,6 +1547,7 @@ class User implements UserInterface, EquatableInterface
      * @var \DateTimeInterface Last user activity date
      *
      * @ORM\Column(type="datetime", nullable=true)
+     *
      * @Groups({"aRead","readUser","write"})
      */
     private $lastActivityDate;
@@ -1461,8 +1556,11 @@ class User implements UserInterface, EquatableInterface
      * @var null|SolidaryUser The SolidaryUser possibly linked to this User
      *
      * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\SolidaryUser", inversedBy="user", cascade={"persist"})
+     *
      * @ORM\JoinColumn(onDelete="CASCADE")
+     *
      * @Groups({"readUser","write","writeSolidary"})
+     *
      * @MaxDepth(1)
      */
     private $solidaryUser;
@@ -1471,6 +1569,7 @@ class User implements UserInterface, EquatableInterface
      * @var null|array used to get the solidaries of a user
      *
      * @Groups({"readSolidary"})
+     *
      * @MaxDepth(1)
      */
     private $solidaries;
@@ -1479,6 +1578,7 @@ class User implements UserInterface, EquatableInterface
      * @var null|array Get User Solidary Structures
      *
      * @Groups({"readUser", "write"})
+     *
      * @MaxDepth(1)
      */
     private $solidaryStructures;
@@ -1494,7 +1594,9 @@ class User implements UserInterface, EquatableInterface
      * @var null|MassPerson The Mass person related to the suer if the user is imported from a Mass migration
      *
      * @ORM\OneToOne(targetEntity="\App\Match\Entity\MassPerson", mappedBy="user")
+     *
      * @MaxDepth(1)
+     *
      * @Groups({"readUser"})
      */
     private $massPerson;
@@ -1503,7 +1605,9 @@ class User implements UserInterface, EquatableInterface
      * @var null|ArrayCollection A User can have multiple entry in Operate
      *
      * @ORM\OneToMany(targetEntity="\App\Solidary\Entity\Operate", mappedBy="user", cascade={"persist"})
+     *
      * @Groups({"readUser", "write"})
+     *
      * @MaxDepth(1)
      */
     private $operates;
@@ -1512,6 +1616,7 @@ class User implements UserInterface, EquatableInterface
      * @var null|int PaymentProfileId of a User
      *
      * @Groups({"readPayment"})
+     *
      * @MaxDepth(1)
      */
     private $paymentProfileId;
@@ -1520,6 +1625,7 @@ class User implements UserInterface, EquatableInterface
      * @var null|array BankAccounts of a User
      *
      * @Groups({"readPayment"})
+     *
      * @MaxDepth(1)
      */
     private $bankAccounts;
@@ -1528,6 +1634,7 @@ class User implements UserInterface, EquatableInterface
      * @var null|array Wallets of a User
      *
      * @Groups({"readPayment"})
+     *
      * @MaxDepth(1)
      */
     private $wallets;
@@ -1536,6 +1643,7 @@ class User implements UserInterface, EquatableInterface
      * @var null|string CarpoolExport of a User
      *
      * @Groups({"carpoolExport"})
+     *
      * @MaxDepth(1)
      */
     private $carpoolExport;
@@ -1607,6 +1715,7 @@ class User implements UserInterface, EquatableInterface
      * @var null|string postal address
      *
      * @ORM\Column(type="string", length=255, nullable=true)
+     *
      * @Groups({"aRead","aWrite","readUser","write"})
      */
     private $postalAddress;
@@ -1666,6 +1775,7 @@ class User implements UserInterface, EquatableInterface
      * @var null|bool If the User has the Rezo Kit
      *
      * @ORM\Column(type="boolean", nullable=true)
+     *
      * @Groups({"aRead", "aWrite"})
      */
     private $rezoKit;
@@ -1674,6 +1784,7 @@ class User implements UserInterface, EquatableInterface
      * @var null|bool If the User has the card letter
      *
      * @ORM\Column(type="boolean", nullable=true)
+     *
      * @Groups({"aRead", "aWrite"})
      */
     private $cardLetter;
@@ -1688,12 +1799,14 @@ class User implements UserInterface, EquatableInterface
 
     /**
      * @ORM\OneToOne(targetEntity="\App\Incentive\Entity\LongDistanceSubscription", mappedBy="user")
+     *
      * @Groups({"patchSso", "readUser"})
      */
     private $longDistanceSubscription;
 
     /**
      * @ORM\OneToOne(targetEntity="\App\Incentive\Entity\ShortDistanceSubscription", mappedBy="user")
+     *
      * @Groups({"patchSso", "readUser"})
      */
     private $shortDistanceSubscription;

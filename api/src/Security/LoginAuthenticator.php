@@ -18,7 +18,7 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Security;
 
@@ -37,10 +37,7 @@ class LoginAuthenticator
     {
         $this->ssoManager = $ssoManager;
     }
-    
-    /**
-     * @param AuthenticationSuccessEvent $event
-     */
+
     public function onAuthenticationSuccessResponse(AuthenticationSuccessEvent $event)
     {
         $data = $event->getData();
@@ -51,7 +48,10 @@ class LoginAuthenticator
         }
 
         if (!is_null($user->getSsoProvider())) {
-            $data['logoutUrl'] = $this->ssoManager->getSsoLogoutUrl($user);
+            $logoutUrl = $this->ssoManager->getSsoLogoutUrl($user);
+            if ($logoutUrl) {
+                $data['logoutUrl'] = $this->ssoManager->getSsoLogoutUrl($user);
+            }
         }
 
         $event->setData($data);
