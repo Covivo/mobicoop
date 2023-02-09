@@ -10,7 +10,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity
+ *
  * @ORM\Table(name="mobconnect__short_distance_subscription")
+ *
  * @ORM\HasLifecycleCallbacks
  */
 class ShortDistanceSubscription
@@ -25,7 +27,9 @@ class ShortDistanceSubscription
      * @var int The user subscription ID
      *
      * @ORM\Column(name="id", type="integer")
+     *
      * @ORM\Id
+     *
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
@@ -34,6 +38,7 @@ class ShortDistanceSubscription
      * @var User The user
      *
      * @ORM\OneToOne(targetEntity="\App\User\Entity\User", inversedBy="shortDistanceSubscription")
+     *
      * @ORM\JoinColumn(onDelete="SET NULL", unique=true)
      */
     private $user;
@@ -112,6 +117,7 @@ class ShortDistanceSubscription
      * @var string the driving licence number of the user
      *
      * @ORM\Column(type="string", length=15)
+     *
      * @Groups({"readSubscription"})
      */
     private $drivingLicenceNumber;
@@ -213,6 +219,7 @@ class ShortDistanceSubscription
 
     /**
      * @ORM\PrePersist
+     *
      * @ORM\PreUpdate
      */
     public function preUpdate()

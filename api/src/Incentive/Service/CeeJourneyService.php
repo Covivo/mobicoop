@@ -27,6 +27,15 @@ abstract class CeeJourneyService
     public const LONG_DISTANCE_TRIP_THRESHOLD = 3;
     public const SHORT_DISTANCE_TRIP_THRESHOLD = 10;
 
+    public const STANDARDIZED_SHEET_OPERATION = 'TRA-SE-115';
+
+    public const BONUS_STATUS_PENDING = 0;
+    public const BONUS_STATUS_NO = 1;
+    public const BONUS_STATUS_OK = 2;
+
+    public const VERIFICATION_STATUS_PENDING = 0;
+    public const VERIFICATION_STATUS_ENDED = 1;
+
     // LOG
     private const ACCOUNT_READY_FOR_LONG_SUBSCRIPTION = 'is_user_account_ready_for_long_subscription';
     private const ACCOUNT_READY_FOR_SHORT_SUBSCRIPTION = 'is_user_account_ready_for_short_subscription';
@@ -127,6 +136,10 @@ abstract class CeeJourneyService
      */
     private function __hasBeenCarpoolPaymentRegularized(CarpoolProof $carpoolProof): bool
     {
+        if (is_null($carpoolProof->getAsk()) || is_null($carpoolProof->getAsk()->getCarpoolItems())) {
+            return false;
+        }
+
         return !empty(array_filter($carpoolProof->getAsk()->getCarpoolItems(), function (CarpoolItem $carpoolItem) use ($carpoolProof) {
             return
                 (CarpoolItem::CREDITOR_STATUS_ONLINE === $carpoolItem->getCreditorStatus() || CarpoolItem::CREDITOR_STATUS_DIRECT === $carpoolItem->getCreditorStatus())
@@ -143,6 +156,22 @@ abstract class CeeJourneyService
     {
         self::$_matching = !is_null($carpoolProof->getAsk()) && !is_null($carpoolProof->getAsk()->getMatching())
                 ? $carpoolProof->getAsk()->getMatching() : null;
+    }
+
+    private function __hasCarpoolProofDeadlinePassed(CarpoolProof $carpoolProof, int $carpoolProofDeadline): bool
+    {
+        if (!is_null($carpoolProof->getCreatedDate())) {
+            $now = new \DateTime('now');
+
+            $dateToCheck = clone $carpoolProof->getCreatedDate();
+            $dateToCheck = $dateToCheck->add(new \DateInterval('P'.$carpoolProofDeadline.'D'));
+
+            if ($dateToCheck <= $now) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     // * PUBLIC FUNCTIONS ---------------------------------------------------------------------------------------------------------------------------
@@ -182,7 +211,8 @@ abstract class CeeJourneyService
             self::__setMatchingFromCarpoolProof($carpoolProof);
 
             return
-                self::__isLongDistance(self::$_matching->getCommonDistance())
+                !is_null(self::$_matching)
+                && self::__isLongDistance(self::$_matching->getCommonDistance())
                 && CarpoolProof::TYPE_HIGH === $carpoolProof->getType()
                 && self::__isOriginOrDestinationFromReferenceCountry()
                 && self::isDateInPeriod($carpoolProof->getStartDriverDate())
@@ -218,7 +248,8 @@ abstract class CeeJourneyService
             self::__setMatchingFromCarpoolProof($carpoolProof);
 
             return
-                self::__isShortDistance(self::$_matching->getCommonDistance())
+                !is_null(self::$_matching)
+                && self::__isShortDistance(self::$_matching->getCommonDistance())
                 && CarpoolProof::TYPE_HIGH === $carpoolProof->getType()
                 && self::__isOriginOrDestinationFromReferenceCountry()
                 && self::isDateAfterReferenceDate($carpoolProof->getStartDriverDate())
@@ -247,17 +278,21 @@ abstract class CeeJourneyService
             $carpoolProof->getDriver(),
             [
                 Log::CARPOOL_PROOF_ID => $carpoolProof->getId(),
-                Log::MATCHING_ID => !is_null(self::$_matching) ? self::$_matching->getId() : 0,
-                Log::IS_LONG_DISTANCE => self::__isLongDistance(self::$_matching->getCommonDistance()),
                 Log::TYPE_C => CarpoolProof::TYPE_HIGH === $carpoolProof->getType(),
+                Log::MATCHING_ID => !is_null(self::$_matching) ? self::$_matching->getId() : 0,
+                Log::IS_LONG_DISTANCE => !is_null(self::$_matching) ? self::__isLongDistance(self::$_matching->getCommonDistance()) : false,
                 Log::IS_FROM_FRANCE => self::__isOriginOrDestinationFromReferenceCountry(),
                 Log::IS_PAYMENT_REGULARIZED => self::__hasBeenCarpoolPaymentRegularized($carpoolProof),
-                Log::IS_DATE_IN_PERIOD => self::isDateInPeriod($carpoolProof->getStartDriverDate()),
             ]
         );
 
+        if (is_null($carpoolProof->getDriver())) {
+            return false;
+        }
+
         return
-            self::__isLongDistance(self::$_matching->getCommonDistance())
+            !is_null(self::$_matching)
+            && self::__isLongDistance(self::$_matching->getCommonDistance())
             && CarpoolProof::TYPE_HIGH === $carpoolProof->getType()
             && self::__isOriginOrDestinationFromReferenceCountry()
             && self::__hasBeenCarpoolPaymentRegularized($carpoolProof)
@@ -279,14 +314,18 @@ abstract class CeeJourneyService
             [
                 Log::TYPE_C => CarpoolProof::TYPE_HIGH === $carpoolProof->getType(),
                 Log::MATCHING_ID => !is_null(self::$_matching) ? self::$_matching->getId() : 0,
-                Log::IS_SHORT_DISTANCE => self::__isShortDistance(self::$_matching->getCommonDistance()),
+                Log::IS_LONG_DISTANCE => !is_null(self::$_matching) ? self::__isLongDistance(self::$_matching->getCommonDistance()) : false,
                 Log::IS_FROM_FRANCE => self::__isOriginOrDestinationFromReferenceCountry(),
-                Log::IS_DATE_AFTER_REFERENCE_DATE => self::isDateAfterReferenceDate($carpoolProof->getStartDriverDate()),
             ]
         );
 
+        if (is_null($carpoolProof->getDriver())) {
+            return false;
+        }
+
         return
-            self::__isShortDistance(self::$_matching->getCommonDistance())
+            !is_null(self::$_matching)
+            && self::__isShortDistance(self::$_matching->getCommonDistance())
             && CarpoolProof::TYPE_HIGH === $carpoolProof->getType()
             && self::__isOriginOrDestinationFromReferenceCountry()
             && self::isDateAfterReferenceDate($carpoolProof->getStartDriverDate())

@@ -1,3 +1,4 @@
 {
-    "urlGetSsoServices":"/user/getSsoServices"
+    "urlGetSsoServices":"/user/getSsoServices",
+    "urlGetSsoService":"/user/getSsoService"
 }
