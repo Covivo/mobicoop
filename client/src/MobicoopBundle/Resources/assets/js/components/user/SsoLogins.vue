@@ -93,7 +93,6 @@ export default {
             this.ssoConnections = response.data;
           });
       }
-
     }
   }
 }

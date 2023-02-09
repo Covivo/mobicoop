@@ -337,10 +337,10 @@ class MobConnectSubscriptionManager
 
         if (is_null($this->_user->getMobConnectAuth())) {
             $this->__createAuth($this->_user, $ssoUser);
-            $this->_loggerService->log('The mobConnectAuth entity has been created');
+            $this->_loggerService->log('The mobConnectAuth entity for user '.$user->getId().' has been created');
         } else {
             $this->__updateAuth($ssoUser);
-            $this->_loggerService->log('The mobConnectAuth entity has been updated');
+            $this->_loggerService->log('The mobConnectAuth entity for user '.$user->getId().' has been updated');
         }
 
         $this->_em->flush();
@@ -505,7 +505,7 @@ class MobConnectSubscriptionManager
                 break;
 
             default:
-                $this->_loggerService->log('The trip failed the short  long distance tests');
+                $this->_loggerService->log('The trip failed the short and long distance tests');
 
                 break;
         }
@@ -577,6 +577,8 @@ class MobConnectSubscriptionManager
 
                             $this->_em->flush();
 
+                            $this->_em->flush();
+
                             break;
 
                         case CeeJourneyService::SHORT_DISTANCE_TRIP_THRESHOLD:
@@ -595,6 +597,18 @@ class MobConnectSubscriptionManager
                             ) {
                                 $this->_loggerService->log('Treatment for a number of trips equal to '.$shortDistanceJourneysNumber);
                                 $journey->setRank($shortDistanceJourneysNumber);
+                                $this->_em->flush();
+                            } else {
+                                $this->_loggerService->log('No treatment-The current number of journeys is greater than the maximum threshold');
+                            }
+
+                            $this->_em->flush();
+
+                            break;
+
+                        default:
+                            if (CeeJourneyService::LOW_THRESHOLD_PROOF < count($this->_userSubscription->getShortDistanceJourneys()) && count($this->_userSubscription->getShortDistanceJourneys()) < CeeJourneyService::SHORT_DISTANCE_TRIP_THRESHOLD) {
+                                $this->_loggerService->log('Treatment for a number of trips equal to '.count($this->_userSubscription->getShortDistanceJourneys()));
                                 $this->_em->flush();
                             } else {
                                 $this->_loggerService->log('No treatment-The current number of journeys is greater than the maximum threshold');

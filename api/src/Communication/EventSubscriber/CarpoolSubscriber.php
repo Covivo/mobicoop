@@ -470,7 +470,7 @@ class CarpoolSubscriber implements EventSubscriberInterface
             $returnResult = $ad->getResults()[0]->getResultPassenger()->getReturn();
         }
         $askConcerned = $this->askManager->getAsk($ad->getAskId());
-
+        $askLinkedConcerned = null;
         if (!is_null($askConcerned->getAskLinked())) {
             $askLinkedConcerned = $this->askManager->getAsk($askConcerned->getAskLinked()->getId());
         }
