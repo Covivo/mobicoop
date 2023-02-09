@@ -136,6 +136,10 @@ abstract class CeeJourneyService
      */
     private function __hasBeenCarpoolPaymentRegularized(CarpoolProof $carpoolProof): bool
     {
+        if (is_null($carpoolProof->getAsk()) || is_null($carpoolProof->getAsk()->getCarpoolItems())) {
+            return false;
+        }
+
         return !empty(array_filter($carpoolProof->getAsk()->getCarpoolItems(), function (CarpoolItem $carpoolItem) use ($carpoolProof) {
             return
                 (CarpoolItem::CREDITOR_STATUS_ONLINE === $carpoolItem->getCreditorStatus() || CarpoolItem::CREDITOR_STATUS_DIRECT === $carpoolItem->getCreditorStatus())
@@ -276,11 +280,15 @@ abstract class CeeJourneyService
                 Log::CARPOOL_PROOF_ID => $carpoolProof->getId(),
                 Log::TYPE_C => CarpoolProof::TYPE_HIGH === $carpoolProof->getType(),
                 Log::MATCHING_ID => !is_null(self::$_matching) ? self::$_matching->getId() : 0,
-                Log::IS_LONG_DISTANCE => self::__isLongDistance(self::$_matching->getCommonDistance()),
+                Log::IS_LONG_DISTANCE => !is_null(self::$_matching) ? self::__isLongDistance(self::$_matching->getCommonDistance()) : false,
                 Log::IS_FROM_FRANCE => self::__isOriginOrDestinationFromReferenceCountry(),
                 Log::IS_PAYMENT_REGULARIZED => self::__hasBeenCarpoolPaymentRegularized($carpoolProof),
             ]
         );
+
+        if (is_null($carpoolProof->getDriver())) {
+            return false;
+        }
 
         return
             !is_null(self::$_matching)
@@ -304,13 +312,16 @@ abstract class CeeJourneyService
             self::VALID_SHORT_DISTANCE_JOURNEY,
             $carpoolProof->getDriver(),
             [
-                Log::CARPOOL_PROOF_ID => $carpoolProof->getId(),
                 Log::TYPE_C => CarpoolProof::TYPE_HIGH === $carpoolProof->getType(),
                 Log::MATCHING_ID => !is_null(self::$_matching) ? self::$_matching->getId() : 0,
-                Log::IS_LONG_DISTANCE => self::__isLongDistance(self::$_matching->getCommonDistance()),
+                Log::IS_LONG_DISTANCE => !is_null(self::$_matching) ? self::__isLongDistance(self::$_matching->getCommonDistance()) : false,
                 Log::IS_FROM_FRANCE => self::__isOriginOrDestinationFromReferenceCountry(),
             ]
         );
+
+        if (is_null($carpoolProof->getDriver())) {
+            return false;
+        }
 
         return
             !is_null(self::$_matching)
