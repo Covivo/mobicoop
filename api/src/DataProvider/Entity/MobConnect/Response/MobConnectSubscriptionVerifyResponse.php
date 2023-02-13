@@ -2,7 +2,7 @@
 
 namespace App\DataProvider\Entity\MobConnect\Response;
 
-class MobConnectSubscriptionVerifyResponse extends MobConnectSubscriptionResponse
+class MobConnectSubscriptionVerifyResponse extends MobConnectResponse
 {
     /**
      * @var string
@@ -19,18 +19,20 @@ class MobConnectSubscriptionVerifyResponse extends MobConnectSubscriptionRespons
      */
     private $_comments;
 
-    public function __construct(\stdClass $mobConnectResponse)
+    public function __construct(array $mobConnectResponse)
     {
         parent::__construct($mobConnectResponse);
 
-        $this->setStatus($mobConnectResponse->status);
+        if (!in_array($this->getCode(), self::ERROR_CODES) && !is_null($this->_content)) {
+            $this->setStatus($this->_content->status);
 
-        if (isset($mobConnectResponse->rejectionReason)) {
-            $this->setRejectReason($mobConnectResponse->motif_de_rejet);
-        }
+            if (isset($this->_content->rejectionReason)) {
+                $this->setRejectReason($this->_content->motif_de_rejet);
+            }
 
-        if (isset($mobConnectResponse->comments)) {
-            $this->setComment($mobConnectResponse->comments);
+            if (isset($this->_content->comments)) {
+                $this->setComment($this->_content->comments);
+            }
         }
     }
 

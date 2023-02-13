@@ -332,6 +332,9 @@ class DataProvider
                 // private request, store in session
                 $this->session->set('apiToken', $this->jwtToken);
                 $this->session->set('apiRefreshToken', $this->refreshToken);
+                if (isset($tokens['delegate-authentication']) && true === $tokens['delegate-authentication']) {
+                    $this->session->set('delegate-authentication', true);
+                }
                 if (isset($tokens['logoutUrl']) && '' !== $tokens['logoutUrl']) {
                     $this->session->set('logoutUrl', $tokens['logoutUrl']);
                 }
@@ -506,6 +509,19 @@ class DataProvider
             } else {
                 // var_dump($this->resource.'/'.$operation, ['query'=>$params]);
                 $headers = $this->getHeaders();
+
+                $delegateAuthentication = $this->session->get('delegate-authentication');
+
+                if (true === $delegateAuthentication) {
+                    if (is_null($params)) {
+                        $params = [
+                            'delegate-authentication' => true,
+                        ];
+                    } else {
+                        $params['delegate-authentication'] = true;
+                    }
+                }
+
                 if ('bad-credentials-api' == $headers) {
                     return new Response(401, 'bad-credentials-api');
                 }
@@ -1012,19 +1028,10 @@ class DataProvider
                     $params['fromSsoMobConnect'] = true;
                 }
 
-                $clientResponse = $this->client->post($this->authLoginPath, [
-                    'headers' => ['accept' => 'application/json'],
-                    RequestOptions::JSON => $params,
-                ]);
-
                 try {
                     $clientResponse = $this->client->post($this->authLoginPath, [
                         'headers' => ['accept' => 'application/json'],
-                        RequestOptions::JSON => [
-                            'ssoId' => $this->ssoId,
-                            'ssoProvider' => $this->ssoProvider,
-                            'baseSiteUri' => $this->baseSiteUri,
-                        ],
+                        RequestOptions::JSON => $params,
                     ]);
                     $value = json_decode((string) $clientResponse->getBody(), true);
                 } catch (ServerException $e) {

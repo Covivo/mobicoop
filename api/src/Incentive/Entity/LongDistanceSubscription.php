@@ -9,7 +9,9 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity
+ *
  * @ORM\Table(name="mobconnect__long_distance_subscription")
+ *
  * @ORM\HasLifecycleCallbacks
  */
 class LongDistanceSubscription
@@ -24,7 +26,9 @@ class LongDistanceSubscription
      * @var int The user subscription ID
      *
      * @ORM\Column(name="id", type="integer")
+     *
      * @ORM\Id
+     *
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
@@ -33,6 +37,7 @@ class LongDistanceSubscription
      * @var User The user
      *
      * @ORM\OneToOne(targetEntity="\App\User\Entity\User", inversedBy="longDistanceSubscription")
+     *
      * @ORM\JoinColumn(onDelete="SET NULL", unique=true)
      */
     private $user;
@@ -211,6 +216,7 @@ class LongDistanceSubscription
 
     /**
      * @ORM\PrePersist
+     *
      * @ORM\PreUpdate
      */
     public function preUpdate()

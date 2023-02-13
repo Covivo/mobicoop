@@ -1,105 +1,105 @@
 {
-    "buttons": {
-        "contact": {
-            "route": "/contact",
-            "label": "Contact us"
-        }
+  "buttons": {
+    "contact": {
+      "route": "/contact",
+      "label": "Contact us"
+    }
+  },
+  "category": {
+    "cooperative": "La coopérative",
+    "tools": "Les outils",
+    "services": "Les services mobicoop",
+    "contacts": "Contacts",
+    "need": "Besoin d’une solution de covoiturage pour votre structure ?",
+    "download": "TÉLÉCHARGEZ L’APPLICATION MOBICOOP"
+  },
+  "cooperative": {
+    "talkAboutUs": {
+      "title": "Qui sommes-nous ?",
+      "link": "https://pro.mobicoop.fr/cooperative/"
     },
-    "category":{
-        "cooperative":"La coopérative",
-        "tools":"Les outils",
-        "services":"Les services mobicoop",
-        "contacts":"Contacts",
-        "need":"Besoin d’une solution de covoiturage pour votre structure ?",
-        "download":"TÉLÉCHARGEZ L’APPLICATION MOBICOOP"
+    "joinUs": {
+      "title": "Devenir sociétaire",
+      "link": "https://lacampagne.mobicoop.fr/"
     },
-    "cooperative":{
-        "talkAboutUs": {
-            "title":"Qui sommes-nous ?",
-            "link":"https://pro.mobicoop.fr/cooperative/"
-        },
-        "joinUs":{
-            "title":"Devenir sociétaire",
-            "link":"https://lacampagne.mobicoop.fr/"
-        },
-        "toolbox": {
-          "title": "Boite à outils",
-          "link": "/boite-a-outils"
-        }
+    "toolbox": {
+      "title": "Boite à outils",
+      "link": "/boite-a-outils"
+    }
+  },
+  "services": {
+    "mobicoop": {
+      "title": "pro.mobicoop.fr",
+      "link": "https://pro.mobicoop.fr/"
     },
-    "services":{
-        "mobicoop":{
-            "title":"pro.mobicoop.fr",
-            "link":"https://pro.mobicoop.fr/"
-        },
-        "covievent" :{
-            "title":"www.covievent.org",
-            "link":"https://www.covievent.org/"
-        }
+    "covievent": {
+      "title": "www.covievent.org",
+      "link": "https://www.covievent.org/"
+    }
+  },
+  "tools": {
+    "map": {
+      "title": "La carte des aires de covoiturage",
+      "link": "/points-relais"
     },
-    "tools":{
-        "map":{
-            "title":"La carte des aires de covoiturage",
-            "link":"/points-relais"
-        },
-        "events" :{
-            "title":"Les événements en covoiturage",
-            "link":"/covoiturages-evenements"
-        },
-        "faq":{
-            "title":"FAQ",
-            "link":"/FAQ"
-        },
-        "cgu":{
-            "title":"CGU",
-            "link":"/cgu"
-        },
-        "dataPolicy":{
-            "title":"Protection des données",
-            "link":"/protection-donnees"
-        },
-        "cookies":{
-            "title":"Gestion des cookies",
-            "link":"#"
-        },
-        "carpoolIncentive": {
-            "title":"Prime Covoiturage",
-            "link":"/mobilite"
-        }
+    "events": {
+      "title": "Les événements en covoiturage",
+      "link": "/covoiturages-evenements"
     },
-    "contacts":{
-        "hotline":{
-            "title":"Hotline",
-            "link":"/contact"
-        },
-        "presse" :{
-            "title":"Presse",
-            "link":"https://pro.mobicoop.fr/category/revue-de-presse/"
-        }
+    "faq": {
+      "title": "FAQ",
+      "link": "http://support.mobicoop.fr"
     },
-    "need":{
-        "community":{
-            "title":"Créez une communauté sur mobicoop.fr !",
-            "link":"/covoiturage-communaute"
-        }
+    "cgu": {
+      "title": "CGU",
+      "link": "/cgu"
     },
-    "logo": "logo mobicoop permettant de revenir vers la page d'accueil",
-    "logoIosAlt" : "Télécharger dans l'App Store",
-    "urlIosLogo": "/images/footer/IOS.svg",
-    "urlIos": "https://apps.apple.com/fr/app/mobicoop-covoiturage-libre/id388658537",
-    "logoAndroidAlt" : "Disponible sur Google Play",
-    "urlAndroidLogo": "/images/footer/android.svg",
-    "urlAndroid": "https://play.google.com/store/apps/details?id=fr.covivo.android.lorraine&hl=fr&gl=US",
-    "logoFacebookAlt" : "logo Facebook permettant de se rendre sur la page Facebook de mobicoop",
-    "urlFacebookLogo": "/images/footer/facebook.svg",
-    "urlFacebook": "https://fr-fr.facebook.com/Mobicoop/",
-    "logoInstragramAlt" : "logo Instagram permettant de se rendre sur la page instagram de mobicoop",
-    "urlInstagram": "https://www.instagram.com/mobicoopcovoiturage/",
-    "urlInstagramLogo": "/images/footer/instagram.svg",
-    "logoTwitterAlt" : "logo Twitter permettant de se rendre sur la page twitter de mobicoop",
-    "urlTwitter": "https://twitter.com/Mobicoop",
-    "urlTwitterLogo": "/images/footer/twitter.svg",
-    "logoFramasphereAlt" : "logo Framasphere permettant de se rendre sur la page framasphère de mobicoop",
-    "urlFramasphere": "https://framasphere.org/tags/mobicoop",
-    "urlFramasphereLogo": "/images/footer/framasphere.svg"
+    "dataPolicy": {
+      "title": "Protection des données",
+      "link": "/protection-donnees"
+    },
+    "cookies": {
+      "title": "Gestion des cookies",
+      "link": "#"
+    },
+    "carpoolIncentive": {
+      "title": "Prime Covoiturage",
+      "link": "/mobilite"
+    }
+  },
+  "contacts": {
+    "hotline": {
+      "title": "Hotline",
+      "link": "http://support.mobicoop.fr"
+    },
+    "presse": {
+      "title": "Presse",
+      "link": "https://pro.mobicoop.fr/category/revue-de-presse/"
+    }
+  },
+  "need": {
+    "community": {
+      "title": "Créez une communauté sur mobicoop.fr !",
+      "link": "/covoiturage-communaute"
+    }
+  },
+  "logo": "logo mobicoop permettant de revenir vers la page d'accueil",
+  "logoIosAlt": "Télécharger dans l'App Store",
+  "urlIosLogo": "/images/footer/IOS.svg",
+  "urlIos": "https://apps.apple.com/fr/app/mobicoop-covoiturage-libre/id388658537",
+  "logoAndroidAlt": "Disponible sur Google Play",
+  "urlAndroidLogo": "/images/footer/android.svg",
+  "urlAndroid": "https://play.google.com/store/apps/details?id=fr.covivo.android.lorraine&hl=fr&gl=US",
+  "logoFacebookAlt": "logo Facebook permettant de se rendre sur la page Facebook de mobicoop",
+  "urlFacebookLogo": "/images/footer/facebook.svg",
+  "urlFacebook": "https://fr-fr.facebook.com/Mobicoop/",
+  "logoInstragramAlt": "logo Instagram permettant de se rendre sur la page instagram de mobicoop",
+  "urlInstagram": "https://www.instagram.com/mobicoopcovoiturage/",
+  "urlInstagramLogo": "/images/footer/instagram.svg",
+  "logoTwitterAlt": "logo Twitter permettant de se rendre sur la page twitter de mobicoop",
+  "urlTwitter": "https://twitter.com/Mobicoop",
+  "urlTwitterLogo": "/images/footer/twitter.svg",
+  "logoFramasphereAlt": "logo Framasphere permettant de se rendre sur la page framasphère de mobicoop",
+  "urlFramasphere": "https://framasphere.org/tags/mobicoop",
+  "urlFramasphereLogo": "/images/footer/framasphere.svg"
 }

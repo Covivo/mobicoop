@@ -8,6 +8,7 @@ use Psr\Log\LoggerInterface;
 class Log
 {
     public const CARPOOL_PROOF_ID = 'carpoolProofId';                   // CarpoolProof entity ID
+    public const CARPOOL_PROOF_DEADLINE = 'carpoolProofDeadline';       // Has the deadline passed
     public const DATETIME = 'datetime';                                 // The log timestamp
     public const IS_CARPOOL_PROOFS_VALID = 'isCarpoolProofsValid';      // The journeys of the user, already made, correspond to the standard defined within the framework of the CEE
     public const IS_DATE_AFTER_REFERENCE_DATE = 'isDateAfterReference'; // Is the date after the référene date
@@ -24,6 +25,7 @@ class Log
 
     private const ALLOWED_ARGUMENTS = [
         self::CARPOOL_PROOF_ID,
+        self::CARPOOL_PROOF_DEADLINE,
         self::DATETIME,
         self::IS_CARPOOL_PROOFS_VALID,
         self::IS_DATE_AFTER_REFERENCE_DATE,
@@ -52,7 +54,7 @@ class Log
     public function __construct(
         LoggerInterface $logger,
         string $name,
-        User $user,
+        ?User $user,
         array $optionalArgs = []
     ) {
         $this->_logger = $logger;
@@ -60,7 +62,7 @@ class Log
         $this->_log = [
             'name' => $name,
             'datetime' => new \DateTime('now'),
-            'user' => $user->getId(),
+            'user' => !is_null($user) ? $user->getId() : null,
         ];
 
         foreach ($optionalArgs as $key => $arg) {
