@@ -23,8 +23,8 @@
 
 namespace App\CarpoolStandard\Service;
 
+use App\CarpoolStandard\Entity\Message;
 use App\CarpoolStandard\Exception\CarpoolStandardException;
-use App\CarpoolStandard\Ressource\Message;
 use App\DataProvider\Entity\InteropProvider;
 
 /**

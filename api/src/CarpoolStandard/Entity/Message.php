@@ -21,7 +21,7 @@
  *    LICENSE
  */
 
-namespace App\CarpoolStandard\Ressource;
+namespace App\CarpoolStandard\Entity;
 
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
@@ -58,7 +58,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *      itemOperations={
  *          "carpool_standard_get"={
  *             "method"="GET",
- *             "path"="/messages",
+ *             "path"="/messages/{id}",
  *             "security"="is_granted('reject',object)",
  *              "swagger_context" = {
  *                  "tags"={"Carpool Standard"}
@@ -74,9 +74,9 @@ class Message
     public const DEFAULT_ID = 999999999999;
 
     /**
-     * @var int the id of this payment week
+     * @var int the id of the message
      *
-     * @Groups({"read", "write"})
+     * @Groups({"read"})
      * @ApiProperty(identifier=true)
      */
     private $id;

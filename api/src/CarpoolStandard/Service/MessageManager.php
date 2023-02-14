@@ -23,7 +23,7 @@
 
 namespace App\CarpoolStandard\Service;
 
-use App\CarpoolStandard\Ressource\Message;
+use App\CarpoolStandard\Entity\Message;
 
 /**
  * @author Remi Wortemann <remi.wortemann@mobicoop.org>

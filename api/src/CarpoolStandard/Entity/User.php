@@ -21,51 +21,13 @@
  *    LICENSE
  */
 
-namespace App\CarpoolStandard\Ressource;
+namespace App\CarpoolStandard\Entity;
 
-use ApiPlatform\Core\Annotation\ApiProperty;
-use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * A User.
- *
- * @ApiResource(
- *      routePrefix="/carpool_standard",
- *      attributes={
- *          "force_eager"=false,
- *          "normalization_context"={"groups"={"read"}, "enable_max_depth"="true"},
- *          "denormalization_context"={"groups"={"write"}}
- *      },
- *      collectionOperations={
- *          "carpool_standard_post"={
- *              "method"="POST",
- *              "path"="/users",
- *              "swagger_context" = {
- *                  "tags"={"Carpool Standard"}
- *              }
- *          },
- *          "carpool_standard_get"={
- *              "method"="GET",
- *              "path"="/users",
- *              "security"="is_granted('reject',object)",
- *              "swagger_context" = {
- *                  "tags"={"Carpool Standard"}
- *              }
- *          }
- *      },
- *      itemOperations={
- *          "carpool_standard_get"={
- *             "method"="GET",
- *             "path"="/users/{id}",
- *             "security"="is_granted('reject',object)",
- *              "swagger_context" = {
- *                  "tags"={"Carpool Standard"}
- *              }
- *          }
- *      }
- * )
  *
  * @author Remi Wortemann <remi.wortemann@mobicoop.org>
  */
@@ -76,8 +38,7 @@ class User
     /**
      * @var null|string The id of this user
      *
-     * @Groups({"read", "write"})
-     * @ApiProperty(identifier=true)
+     * @Groups({"read"})
      */
     private $id;
 
