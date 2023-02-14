@@ -23,6 +23,7 @@
 
 namespace App\DataProvider\Entity;
 
+use App\CarpoolStandard\Entity\Booking;
 use App\CarpoolStandard\Entity\Message;
 use App\CarpoolStandard\Interfaces\CarpoolStandardProviderInterface;
 use App\DataProvider\Service\DataProvider;
@@ -30,6 +31,7 @@ use App\DataProvider\Service\DataProvider;
 class InteropProvider implements CarpoolStandardProviderInterface
 {
     private const RESSOURCE_MESSAGE = 'messages';
+    private const RESSOURCE_BOOKING = 'bookings';
 
     private $provider;
     private $baseUri;
@@ -50,13 +52,41 @@ class InteropProvider implements CarpoolStandardProviderInterface
             'X-API-KEY' => $this->apiKey,
         ];
         // Build the body
-        $body['from'] = [];
-        $body['to'] = [];
-        $body['message'] = '';
-        $body['recipientCarpoolerType'] = '';
-        $body['driverJourneyId'] = '';
-        $body['passengerJourneyId'] = '';
-        $body['bookingId'] = '';
+        $body['from'] = $message->getFrom();
+        $body['to'] = $message->getTo();
+        $body['message'] = $message->getMessage();
+        $body['recipientCarpoolerType'] = $message->getRecipientCarpoolerType();
+        $body['driverJourneyId'] = $message->getDriverJourneyId();
+        $body['passengerJourneyId'] = $message->getPassengerJourneyId();
+        $body['bookingId'] = $message->getBookingId();
+
+        return $dataProvider->postCollection($body, $headers);
+    }
+
+    public function postBooking(Booking $booking)
+    {
+        $dataProvider = new DataProvider($this->baseUri, self::RESSOURCE_BOOKING);
+
+        $headers = [
+            'X-API-KEY' => $this->apiKey,
+        ];
+        // Build the body
+        $body['driver'] = $booking->getDriver();
+        $body['passenger'] = $booking->getPassenger();
+        $body['passengerPickupDate'] = $booking->getPassengerPickupDate();
+        $body['passengerPickupLat'] = $booking->getPassengerPickupLat();
+        $body['passengerPickupLng'] = $booking->getPassengerPickupLng();
+        $body['passengerDropLat'] = $booking->getPassengerDropLat();
+        $body['passengerDropLng'] = $booking->getPassengerDropLng();
+        $body['passengerPickupAddress'] = $booking->getPassengerPickupAddress();
+        $body['passengerDropAddress'] = $booking->getPassengerDropAddress();
+        $body['status'] = $booking->getStatus();
+        $body['duration'] = $booking->getDuration();
+        $body['distance'] = $booking->getDistance();
+        $body['webUrl'] = $booking->getWebUrl();
+        $body['price'] = $booking->getPrice();
+        $body['driverJourneyId'] = $booking->getDriverJourneyId();
+        $body['passengerJourneyId'] = $booking->getPassengerJourneyId();
 
         return $dataProvider->postCollection($body, $headers);
     }
