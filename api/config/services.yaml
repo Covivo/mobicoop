@@ -309,7 +309,7 @@ services:
       $userReview: "%env(bool:USER_REVIEW)%"
       $carpoolNoticeableDetourDurationPercent: "%env(int:CARPOOL_NOTICEABLE_DETOUR_DURATION_PERCENT)%"
       $carpoolNoticeableDetourDistancePercent: "%env(int:CARPOOL_NOTICEABLE_DETOUR_DISTANCE_PERCENT)%"
-  
+
   # CarpoolStandard
   App\CarpoolStandard\Service\CarpoolStandardProvider:
     arguments:
@@ -751,7 +751,10 @@ services:
   # INCENTIVE
   App\Incentive\JourneysVerificationCommand:
     tags:
-      - { name: "console.command", command: "app:incentive:journeys-verification" }
+      - {
+          name: "console.command",
+          command: "app:incentive:journeys-verification",
+        }
 
   App\Incentive\Repository\LongDistanceJourneyRepository:
     arguments:
@@ -761,11 +764,11 @@ services:
       $deadline: "%env(int:EEC_JOURNEY_DECLARATION_DEADLINE)%"
 
   App\Incentive\Service\LoggerService:
-      arguments:
-          $globalForcingLogs: "%env(bool:EEC_FORCING_LOGS)%"
-      tags:
-          - { name: monolog.logger, channel: incentive_subscription }
-          
+    arguments:
+      $globalForcingLogs: "%env(bool:EEC_FORCING_LOGS)%"
+    tags:
+      - { name: monolog.logger, channel: incentive_subscription }
+
   App\Incentive\Service\MobConnectSubscriptionManager:
     arguments:
       $ssoServices: "%env(json:file:resolve:SSO_SERVICES)%"
@@ -1065,6 +1068,11 @@ services:
   'App\User\Filter\HomeAddressTerritoryFilter':
     # Uncomment only if autoconfiguration isn't enabled
     #tags: [ 'api_platform.filter' ]
+
+  App\User\Service\UserAutoDeleter:
+    arguments:
+      $active: "%env(bool:USER_AUTO_DELETE_AFTER_INACTIVITY)%"
+      $period: "%env(int:USER_AUTO_DELETE_PERIOD)%"
 
   App\User\Service\IdentityProofManager:
     arguments:
