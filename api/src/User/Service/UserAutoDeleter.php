@@ -27,6 +27,7 @@ use App\User\Event\AutoUnsubscribedEvent;
 use App\User\Event\TooLongInactivityFirstWarningEvent;
 use App\User\Event\TooLongInactivityLastWarningEvent;
 use App\User\Repository\UserRepository;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -43,14 +44,17 @@ class UserAutoDeleter
     private $_eventDispatcher;
     private $_active;
     private $_period;
+    private $_logger;
 
     public function __construct(
+        LoggerInterface $logger,
         UserRepository $userRepository,
         UserManager $userManager,
         EventDispatcherInterface $eventDispatcher,
         bool $active,
         int $period
     ) {
+        $this->_logger = $logger;
         $this->_active = $active;
         $this->_period = $period;
         $this->_userRepository = $userRepository;
@@ -72,12 +76,13 @@ class UserAutoDeleter
         $inactiveUsers = $this->_userRepository->findBeforeLastActivityDate($this->_computeReadyToBeDeletedLastConnexionDate());
         foreach ($inactiveUsers as $inactiveUser) {
             try {
-                echo 'delete '.$inactiveUser->getId().PHP_EOL;
+                $this->_logger->info('Deleting User '.$inactiveUser->getId());
                 $this->_eventDispatcher->dispatch(AutoUnsubscribedEvent::NAME, new AutoUnsubscribedEvent($inactiveUser));
                 $this->_userManager->deleteUser($inactiveUser);
+                $this->_logger->info('Deleted');
             } catch (\Exception $e) {
-                echo 'Error deleting user '.$inactiveUser->getId().PHP_EOL;
-                echo $e->getMessage().PHP_EOL;
+                $this->_logger->error('Error');
+                $this->_logger->error($e->getMessage());
             }
         }
     }

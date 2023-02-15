@@ -1073,6 +1073,8 @@ services:
     arguments:
       $active: "%env(bool:USER_AUTO_DELETE_AFTER_INACTIVITY)%"
       $period: "%env(int:USER_AUTO_DELETE_PERIOD)%"
+    tags:
+      - { name: monolog.logger, channel: user_auto_delete }
 
   App\User\Service\IdentityProofManager:
     arguments:
