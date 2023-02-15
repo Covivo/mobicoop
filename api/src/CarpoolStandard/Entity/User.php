@@ -38,7 +38,7 @@ class User
     /**
      * @var null|string The id of this user
      *
-     * @Groups({"read"})
+     * @Groups({"read", "write"})
      */
     private $id;
 
@@ -46,6 +46,7 @@ class User
      * @var string the operator identifier
      *
      * @Assert\NotBlank
+     *
      * @Groups({"read", "write"})
      */
     private $operator;
@@ -54,6 +55,7 @@ class User
      * @var string User's alias
      *
      * @Assert\NotBlank
+     *
      * @Groups({"read", "write"})
      */
     private $alias;
