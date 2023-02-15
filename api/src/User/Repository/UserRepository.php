@@ -268,8 +268,22 @@ class UserRepository
         $query = $this->repository->createQueryBuilder('u')
             ->where('u.lastActivityDate >= :lastActivityDateBottom')
             ->andwhere('u.lastActivityDate <= :lastActivityDateUp')
+            ->andwhere('u.status <> :statusPseudonymized')
             ->setParameter('lastActivityDateBottom', $lastActivityDate->format('Y-m-d').' 00:00:00')
             ->setParameter('lastActivityDateUp', $lastActivityDate->format('Y-m-d').' 23:59:59')
+            ->setParameter('statusPseudonymized', User::STATUS_PSEUDONYMIZED)
+        ;
+
+        return $query->getQuery()->getResult();
+    }
+
+    public function findBeforeLastActivityDate(\DateTime $lastActivityDate): ?array
+    {
+        $query = $this->repository->createQueryBuilder('u')
+            ->andwhere('u.lastActivityDate <= :lastActivityDateUp')
+            ->andwhere('u.status <> :statusPseudonymized')
+            ->setParameter('lastActivityDateUp', $lastActivityDate->format('Y-m-d').' 23:59:59')
+            ->setParameter('statusPseudonymized', User::STATUS_PSEUDONYMIZED)
         ;
 
         return $query->getQuery()->getResult();

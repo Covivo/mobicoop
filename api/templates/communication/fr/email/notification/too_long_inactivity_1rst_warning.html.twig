@@ -1,0 +1,62 @@
+{# CAREFUL : Some client might need to replicate this template #}
+{% extends 'communication/fr/email/notification/base.html.twig' %}
+{% block body %}
+<table style="width:100%;font-family:{{api_env('EMAILS_FONT')}}, sans-serif;">
+    <tr>
+        <td>
+            <table>
+                <tr>
+                    <td>
+                        <p style="color:{{api_env('EMAILS_COLOR_SECONDARY')}};font-size:30"><b>Votre compte va être
+                                supprimé</b></p>
+                        <hr>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <table style="width:100%;">
+                <tr>
+                    <td style="width:70%">
+                        <p>Bonjour<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">
+                                {{context.user.givenName|capitalize}} {{context.user.shortFamilyName|capitalize}}</b>
+                        </p>
+                        <p>Vous ne vous êtes pas connecté au service <b
+                                style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">
+                                {{api_env('EMAILS_PLATFORM_NAME')}}</b> depuis longtemps.</p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <table style="width:100%;">
+                <tr style="text-align:left">
+                    <td>
+                        <p>A bientôt sur <a style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"
+                                href="{{api_env('EMAILS_PLATFORM_URL')}}">{{api_env('EMAILS_PLATFORM_NAME')}}</a>
+                    </td>
+                </tr>
+                <tr style="text-align:left">
+                    <td>
+                        {% if context.signature != null %}
+                        {% if context.signature.text != null %}
+                        <p>{{ context.signature.text }}</p>
+                        {% endif %}
+                        {% if context.signature.logo != null %}
+                        <img src="{{ context.signature.logo }}" alt=""
+                            style="width:40%;max-width:1000px;height:auto;max-height:250px;border-style:none;" />
+                        {% endif %}
+                        {% endif %}
+                    </td>
+                </tr>
+
+                <hr>
+            </table>
+        </td>
+    </tr>
+</table>
+{% endblock %}

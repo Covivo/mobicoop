@@ -23,6 +23,7 @@
 
 namespace App\User\Service;
 
+use App\User\Event\AutoUnsubscribedEvent;
 use App\User\Event\TooLongInactivityFirstWarningEvent;
 use App\User\Event\TooLongInactivityLastWarningEvent;
 use App\User\Repository\UserRepository;
@@ -38,15 +39,22 @@ class UserAutoDeleter
     public const NB_DAYS_IN_A_MONTH = 30;
 
     private $_userRepository;
+    private $_userManager;
     private $_eventDispatcher;
     private $_active;
     private $_period;
 
-    public function __construct(UserRepository $userRepository, EventDispatcherInterface $eventDispatcher, bool $active, int $period)
-    {
+    public function __construct(
+        UserRepository $userRepository,
+        UserManager $userManager,
+        EventDispatcherInterface $eventDispatcher,
+        bool $active,
+        int $period
+    ) {
         $this->_active = $active;
         $this->_period = $period;
         $this->_userRepository = $userRepository;
+        $this->_userManager = $userManager;
         $this->_eventDispatcher = $eventDispatcher;
     }
 
@@ -61,6 +69,17 @@ class UserAutoDeleter
 
     private function _deleteAccounts()
     {
+        $inactiveUsers = $this->_userRepository->findBeforeLastActivityDate($this->_computeReadyToBeDeletedLastConnexionDate());
+        foreach ($inactiveUsers as $inactiveUser) {
+            try {
+                echo 'delete '.$inactiveUser->getId().PHP_EOL;
+                $this->_eventDispatcher->dispatch(AutoUnsubscribedEvent::NAME, new AutoUnsubscribedEvent($inactiveUser));
+                $this->_userManager->deleteUser($inactiveUser);
+            } catch (\Exception $e) {
+                echo 'Error deleting user '.$inactiveUser->getId().PHP_EOL;
+                echo $e->getMessage().PHP_EOL;
+            }
+        }
     }
 
     private function _sendWarnings()
@@ -69,28 +88,30 @@ class UserAutoDeleter
         $this->_sendLastWarnings();
     }
 
+    private function _computeReadyToBeDeletedLastConnexionDate()
+    {
+        $lastConnexionDate = new \DateTime('now');
+        $lastConnexionDate->modify('- '.$this->_period.' month');
+
+        return $lastConnexionDate;
+    }
+
     private function _computeFirstWarningLastConnexionDate()
     {
-        echo '_computeFirstWarningLastConnexionDate'.PHP_EOL;
         $offsetInMonths = $this->_computeFirstWarningTimeOffsetInMonth();
         $lastConnexionDate = new \DateTime('now');
-        var_dump($lastConnexionDate);
         $lastConnexionDate->modify('+ '.$offsetInMonths.' month');
         $lastConnexionDate->modify('- '.$this->_period.' month');
-        var_dump($lastConnexionDate);
 
         return $lastConnexionDate;
     }
 
     private function _computeLastWarningLastConnexionDate()
     {
-        echo '_computeLastWarningLastConnexionDate'.PHP_EOL;
         $offsetInDays = $this->_computeLastWarningTimeOffsetInMonth();
         $lastConnexionDate = new \DateTime('now');
-        var_dump($lastConnexionDate);
         $lastConnexionDate->modify('+ '.$offsetInDays.' day');
         $lastConnexionDate->modify('- '.$this->_period.' month');
-        var_dump($lastConnexionDate);
 
         return $lastConnexionDate;
     }
@@ -98,7 +119,6 @@ class UserAutoDeleter
     private function _sendFirstWarnings()
     {
         $inactiveUsers = $this->_getInactiveUsers($this->_computeFirstWarningLastConnexionDate());
-        echo count($inactiveUsers).PHP_EOL;
         foreach ($inactiveUsers as $inactiveUser) {
             $event = new TooLongInactivityFirstWarningEvent($inactiveUser);
             $this->_eventDispatcher->dispatch(TooLongInactivityFirstWarningEvent::NAME, $event);
@@ -108,7 +128,6 @@ class UserAutoDeleter
     private function _sendLastWarnings()
     {
         $inactiveUsers = $this->_getInactiveUsers($this->_computeLastWarningLastConnexionDate());
-        echo count($inactiveUsers).PHP_EOL;
         foreach ($inactiveUsers as $inactiveUser) {
             $event = new TooLongInactivityLastWarningEvent($inactiveUser);
             $this->_eventDispatcher->dispatch(TooLongInactivityLastWarningEvent::NAME, $event);
