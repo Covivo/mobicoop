@@ -29,6 +29,7 @@ use App\Communication\Service\NotificationManager;
 use App\DataProvider\Entity\RezopouceProvider;
 use App\User\Admin\Service\UserManager as AdminUserManager;
 use App\User\Entity\IdentityProof;
+use App\User\Event\AutoUnsubscribedEvent;
 use App\User\Event\ConfirmedCarpoolerEvent;
 use App\User\Event\IdentityProofModeratedEvent;
 use App\User\Event\IdentityProofValidationReminderEvent;
@@ -38,6 +39,8 @@ use App\User\Event\NoActivityRelaunch1Event;
 use App\User\Event\NoActivityRelaunch2Event;
 use App\User\Event\ReviewReceivedEvent;
 use App\User\Event\SendBoosterEvent;
+use App\User\Event\TooLongInactivityFirstWarningEvent;
+use App\User\Event\TooLongInactivityLastWarningEvent;
 use App\User\Event\UserDelegateRegisteredEvent;
 use App\User\Event\UserDelegateRegisteredPasswordSendEvent;
 use App\User\Event\UserDeleteAccountWasDriverEvent;
@@ -55,6 +58,7 @@ class UserSubscriber implements EventSubscriberInterface
 {
     private $notificationManager;
     private $userManager;
+    private $adminUserManager;
     private $notificationSsoRegistration;
     private $rzpUri;
     private $rzpLogin;
@@ -103,6 +107,9 @@ class UserSubscriber implements EventSubscriberInterface
             NoActivityRelaunch2Event::NAME => 'onNoactivityRelauch2',
             SendBoosterEvent::NAME => 'onSendBooster',
             ConfirmedCarpoolerEvent::NAME => 'onCornfirmedCarpooler',
+            TooLongInactivityFirstWarningEvent::NAME => 'onTooLongInactivityFirstWarning',
+            TooLongInactivityLastWarningEvent::NAME => 'onTooLongInactivityLastWarning',
+            AutoUnsubscribedEvent::NAME => 'onAutoUnsubscribedEvent',
         ];
     }
 
@@ -225,5 +232,20 @@ class UserSubscriber implements EventSubscriberInterface
             return;
         }
         $this->notificationManager->notifies(ConfirmedCarpoolerEvent::NAME, $event->getUser());
+    }
+
+    public function onTooLongInactivityFirstWarning(TooLongInactivityFirstWarningEvent $event)
+    {
+        $this->notificationManager->notifies(TooLongInactivityFirstWarningEvent::NAME, $event->getUser());
+    }
+
+    public function onTooLongInactivityLastWarning(TooLongInactivityLastWarningEvent $event)
+    {
+        $this->notificationManager->notifies(TooLongInactivityLastWarningEvent::NAME, $event->getUser());
+    }
+
+    public function onAutoUnsubscribedEvent(AutoUnsubscribedEvent $event)
+    {
+        $this->notificationManager->notifies(AutoUnsubscribedEvent::NAME, $event->getUser());
     }
 }

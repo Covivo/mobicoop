@@ -266,8 +266,10 @@ class UserRepository
     public function findByLastActivityDate(\DateTime $lastActivityDate): ?array
     {
         $query = $this->repository->createQueryBuilder('u')
-            ->where('u.lastActivityDate <= :lastActivityDate')
-            ->setParameter('lastActivityDate', $lastActivityDate)
+            ->where('u.lastActivityDate >= :lastActivityDateBottom')
+            ->andwhere('u.lastActivityDate <= :lastActivityDateUp')
+            ->setParameter('lastActivityDateBottom', $lastActivityDate->format('Y-m-d').' 00:00:00')
+            ->setParameter('lastActivityDateUp', $lastActivityDate->format('Y-m-d').' 23:59:59')
         ;
 
         return $query->getQuery()->getResult();

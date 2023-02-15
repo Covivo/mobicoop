@@ -23,7 +23,10 @@
 
 namespace App\User\Service;
 
+use App\User\Event\TooLongInactivityFirstWarningEvent;
+use App\User\Event\TooLongInactivityLastWarningEvent;
 use App\User\Repository\UserRepository;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
@@ -35,14 +38,16 @@ class UserAutoDeleter
     public const NB_DAYS_IN_A_MONTH = 30;
 
     private $_userRepository;
+    private $_eventDispatcher;
     private $_active;
     private $_period;
 
-    public function __construct(UserRepository $userRepository, bool $active, int $period)
+    public function __construct(UserRepository $userRepository, EventDispatcherInterface $eventDispatcher, bool $active, int $period)
     {
         $this->_active = $active;
         $this->_period = $period;
         $this->_userRepository = $userRepository;
+        $this->_eventDispatcher = $eventDispatcher;
     }
 
     public function autoDelete()
@@ -64,18 +69,50 @@ class UserAutoDeleter
         $this->_sendLastWarnings();
     }
 
+    private function _computeFirstWarningLastConnexionDate()
+    {
+        echo '_computeFirstWarningLastConnexionDate'.PHP_EOL;
+        $offsetInMonths = $this->_computeFirstWarningTimeOffsetInMonth();
+        $lastConnexionDate = new \DateTime('now');
+        var_dump($lastConnexionDate);
+        $lastConnexionDate->modify('+ '.$offsetInMonths.' month');
+        $lastConnexionDate->modify('- '.$this->_period.' month');
+        var_dump($lastConnexionDate);
+
+        return $lastConnexionDate;
+    }
+
+    private function _computeLastWarningLastConnexionDate()
+    {
+        echo '_computeLastWarningLastConnexionDate'.PHP_EOL;
+        $offsetInDays = $this->_computeLastWarningTimeOffsetInMonth();
+        $lastConnexionDate = new \DateTime('now');
+        var_dump($lastConnexionDate);
+        $lastConnexionDate->modify('+ '.$offsetInDays.' day');
+        $lastConnexionDate->modify('- '.$this->_period.' month');
+        var_dump($lastConnexionDate);
+
+        return $lastConnexionDate;
+    }
+
     private function _sendFirstWarnings()
     {
-        $offsetInMonths = $this->_computeFirstWarningTimeOffsetInMonth();
-        echo $offsetInMonths.PHP_EOL;
-        $inactiveUsers = $this->_getInactiveUsers('- '.$offsetInMonths.' months');
+        $inactiveUsers = $this->_getInactiveUsers($this->_computeFirstWarningLastConnexionDate());
         echo count($inactiveUsers).PHP_EOL;
+        foreach ($inactiveUsers as $inactiveUser) {
+            $event = new TooLongInactivityFirstWarningEvent($inactiveUser);
+            $this->_eventDispatcher->dispatch(TooLongInactivityFirstWarningEvent::NAME, $event);
+        }
     }
 
     private function _sendLastWarnings()
     {
-        $offsetInDays = $this->_computeLastWarningTimeOffsetInMonth();
-        echo $offsetInDays.PHP_EOL;
+        $inactiveUsers = $this->_getInactiveUsers($this->_computeLastWarningLastConnexionDate());
+        echo count($inactiveUsers).PHP_EOL;
+        foreach ($inactiveUsers as $inactiveUser) {
+            $event = new TooLongInactivityLastWarningEvent($inactiveUser);
+            $this->_eventDispatcher->dispatch(TooLongInactivityLastWarningEvent::NAME, $event);
+        }
     }
 
     private function _computeFirstWarningTimeOffsetInMonth(): int
@@ -88,13 +125,8 @@ class UserAutoDeleter
         return floor($this->_period * self::LAST_WARNING_RATIO * self::NB_DAYS_IN_A_MONTH);
     }
 
-    private function _getInactiveUsers($timeOffsetString): array
+    private function _getInactiveUsers(\DateTime $lastConnexionDate): array
     {
-        $dateReference = new \DateTime('now');
-        var_dump($dateReference);
-        $dateReference->modify($timeOffsetString);
-        var_dump($dateReference);
-
-        return $this->_userRepository->findByLastActivityDate($dateReference);
+        return $this->_userRepository->findByLastActivityDate($lastConnexionDate);
     }
 }
