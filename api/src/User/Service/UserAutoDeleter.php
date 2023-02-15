@@ -23,6 +23,8 @@
 
 namespace App\User\Service;
 
+use App\User\Repository\UserRepository;
+
 /**
  * @author Maxime Bardot <maxime.bardot@mobicoop.org>
  */
@@ -32,13 +34,15 @@ class UserAutoDeleter
     public const LAST_WARNING_RATIO = 0.042;
     public const NB_DAYS_IN_A_MONTH = 30;
 
+    private $_userRepository;
     private $_active;
     private $_period;
 
-    public function __construct(bool $active, int $period)
+    public function __construct(UserRepository $userRepository, bool $active, int $period)
     {
         $this->_active = $active;
         $this->_period = $period;
+        $this->_userRepository = $userRepository;
     }
 
     public function autoDelete()
@@ -46,10 +50,32 @@ class UserAutoDeleter
         if (!$this->_active) {
             return;
         }
+        $this->_sendWarnings();
+        $this->_deleteAccounts();
+    }
 
-        echo $this->_computeFirstWarningTimeOffsetInMonth();
-        echo PHP_EOL;
-        echo $this->_computeLastWarningTimeOffsetInMonth();
+    private function _deleteAccounts()
+    {
+    }
+
+    private function _sendWarnings()
+    {
+        $this->_sendFirstWarnings();
+        $this->_sendLastWarnings();
+    }
+
+    private function _sendFirstWarnings()
+    {
+        $offsetInMonths = $this->_computeFirstWarningTimeOffsetInMonth();
+        echo $offsetInMonths.PHP_EOL;
+        $inactiveUsers = $this->_getInactiveUsers('- '.$offsetInMonths.' months');
+        echo count($inactiveUsers).PHP_EOL;
+    }
+
+    private function _sendLastWarnings()
+    {
+        $offsetInDays = $this->_computeLastWarningTimeOffsetInMonth();
+        echo $offsetInDays.PHP_EOL;
     }
 
     private function _computeFirstWarningTimeOffsetInMonth(): int
@@ -60,5 +86,15 @@ class UserAutoDeleter
     private function _computeLastWarningTimeOffsetInMonth(): int
     {
         return floor($this->_period * self::LAST_WARNING_RATIO * self::NB_DAYS_IN_A_MONTH);
+    }
+
+    private function _getInactiveUsers($timeOffsetString): array
+    {
+        $dateReference = new \DateTime('now');
+        var_dump($dateReference);
+        $dateReference->modify($timeOffsetString);
+        var_dump($dateReference);
+
+        return $this->_userRepository->findByLastActivityDate($dateReference);
     }
 }

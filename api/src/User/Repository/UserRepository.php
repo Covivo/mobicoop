@@ -262,4 +262,14 @@ class UserRepository
 
         return $stmt->fetchAll();
     }
+
+    public function findByLastActivityDate(\DateTime $lastActivityDate): ?array
+    {
+        $query = $this->repository->createQueryBuilder('u')
+            ->where('u.lastActivityDate <= :lastActivityDate')
+            ->setParameter('lastActivityDate', $lastActivityDate)
+        ;
+
+        return $query->getQuery()->getResult();
+    }
 }
