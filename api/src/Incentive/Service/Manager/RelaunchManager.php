@@ -152,7 +152,7 @@ class RelaunchManager
 
         foreach ($undeclaredCarpoolProofs as $carpoolProof) {
             $carpoolPayment = $this->_isProcessForLongDistance()
-                ? CeeJourneyService::getCarpoolPaymentFromCarpoolProof($this->_carpoolProof)
+                ? CeeJourneyService::getCarpoolPaymentFromCarpoolProof($carpoolProof)
                 : null
             ;
 
