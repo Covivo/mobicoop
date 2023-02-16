@@ -144,6 +144,9 @@ class CarpoolProofRepository
         return $query->getQuery()->getResult();
     }
 
+    /**
+     * EEC query.
+     */
     public function findCarpoolProofForEccRelaunch(User $driver, ?int $excludeId, array $allreadyDeaclaredJourneys, bool $isLongDistanceProcess = true): ?array
     {
         // TODO Vérifier que le trajet ne soit pas déjà une longue ou courte souscription
@@ -159,6 +162,7 @@ class CarpoolProofRepository
             ->where('cp.driver = :driver')
             ->andWhere($qb->expr()->notIn('cp.id', $allreadyDeaclaredJourneys))
             ->andWhere('cp.type = :class')
+            ->andWhere('cp.createDate >= :referenceDate')
             ->andWhere('ao.addressCountry = :country OR ad.addressCountry = :country')
         ;
 
@@ -186,6 +190,7 @@ class CarpoolProofRepository
                 'distance' => CeeSubscriptions::LONG_DISTANCE_MINIMUM_IN_METERS,
                 'driver' => $driver,
                 'excludeId' => $excludeId,
+                'referenceDate' => \DateTime::createFromFormat('Y-m-d', CeeJourneyService::REFERENCE_DATE),
             ])
         ;
 
