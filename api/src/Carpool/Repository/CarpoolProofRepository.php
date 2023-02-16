@@ -25,11 +25,18 @@ namespace App\Carpool\Repository;
 
 use App\Carpool\Entity\Ask;
 use App\Carpool\Entity\CarpoolProof;
+use App\Incentive\Resource\CeeSubscriptions;
+use App\Incentive\Service\CeeJourneyService;
+use App\Payment\Entity\CarpoolItem;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
 
 class CarpoolProofRepository
 {
+    /**
+     * @var EntityRepository
+     */
     private $repository;
 
     public function __construct(EntityManagerInterface $entityManager)
@@ -135,5 +142,50 @@ class CarpoolProofRepository
         ;
 
         return $query->getQuery()->getResult();
+    }
+
+    public function findCarpoolProofForEccRelaunch(User $driver, int $excludeId, array $allreadyDeaclaredJourneys, bool $isLong = true): ?array
+    {
+        // TODO Vérifier que le trajet ne soit pas déjà une longue ou courte souscription
+        $qb = $this->repository->createQueryBuilder('cp');
+
+        $qb
+            ->innerJoin('cp.ask', 'a')
+            ->innerJoin('a.matching', 'm')
+            ->innerJoin('m.waypoints', 'wo', 'WITH', 'wo.position = 0')
+            ->leftJoin('wo.address', 'ao')
+            ->innerJoin('m.waypoints', 'wd', 'WITH', 'wd.position != 0 AND wd.destination = 1')
+            ->leftJoin('wd.address', 'ad')
+            ->where('cp.id != :excludeId')
+            ->andWhere($qb->expr()->notIn('cp.id', $allreadyDeaclaredJourneys))
+            ->andWhere('cp.driver = :driver')
+            ->andWhere('cp.type = :class')
+            ->andWhere('ao.addressCountry = :country OR ad.addressCountry = :country')
+        ;
+
+        if ($isLong) {
+            $qb
+                ->innerJoin('a.carpoolItems', 'c', 'WITH', 'c.creditorUser = :driver')
+                ->andWhere('m.commonDistance >= :distance')
+                ->andWhere('c.creditorStatus = :creditorStatus')
+            ;
+        } else {
+            $qb
+                ->andWhere('m.commonDistance < :distance')
+            ;
+        }
+
+        $qb
+            ->setParameters([
+                'class' => CarpoolProof::TYPE_HIGH,
+                'country' => CeeJourneyService::REFERENCE_COUNTRY,
+                'creditorStatus' => CarpoolItem::DEBTOR_STATUS_ONLINE,
+                'distance' => CeeSubscriptions::LONG_DISTANCE_MINIMUM_IN_METERS,
+                'driver' => $driver,
+                'excludeId' => $excludeId,
+            ])
+        ;
+
+        return $qb->getQuery()->getResult();
     }
 }
