@@ -27,7 +27,6 @@ use App\CarpoolStandard\Entity\Booking;
 use App\CarpoolStandard\Entity\Message;
 use App\CarpoolStandard\Interfaces\CarpoolStandardProviderInterface;
 use App\DataProvider\Service\DataProvider;
-use GuzzleHttp\Client;
 
 class InteropProvider implements CarpoolStandardProviderInterface
 {
@@ -47,46 +46,22 @@ class InteropProvider implements CarpoolStandardProviderInterface
 
     public function postMessage(Message $message)
     {
-        // $dataProvider = new DataProvider($this->baseUri, self::RESSOURCE_MESSAGE);
+        $dataProvider = new DataProvider($this->baseUri, self::RESSOURCE_MESSAGE);
 
-        // $headers = [
-        //     'X-API-KEY' => $this->apiKey,
-        // ];
-        // // Build the body
-        // $body['from'] = $message->getFrom();
-        // $body['to'] = $message->getTo();
-        // $body['message'] = $message->getMessage();
-        // $body['recipientCarpoolerType'] = $message->getRecipientCarpoolerType();
-        // $body['driverJourneyId'] = $message->getDriverJourneyId();
-        // $body['passengerJourneyId'] = $message->getPassengerJourneyId();
-        // $body['bookingId'] = $message->getBookingId();
+        $headers = [
+            'X-API-KEY' => $this->apiKey,
+        ];
+        // Build the body
+        $body['from'] = $message->getFrom();
+        $body['to'] = $message->getTo();
+        $body['message'] = $message->getMessage();
+        $body['recipientCarpoolerType'] = $message->getRecipientCarpoolerType();
+        $body['driverJourneyId'] = $message->getDriverJourneyId();
+        $body['passengerJourneyId'] = $message->getPassengerJourneyId();
+        $body['bookingId'] = $message->getBookingId();
 
-        // return $dataProvider->postCollection($body, $headers);
-
-        $client = new Client();
-
-        // construct the requested url
-        $url = $this->baseUri.'/'.self::RESSOURCE_MESSAGE;
-        // request url
-
-        $data = $client->request('POST', $url, [
-            'headers' => [
-                'X-API-KEY' => $this->apiKey,
-            ],
-            'body' => [
-                'from' => $message->getFrom(),
-                'to' => $message->getTo(),
-                'message' => $message->getMessage(),
-                'recipientCarpoolerType' => $message->getRecipientCarpoolerType(),
-                'driverJourneyId' => $message->getDriverJourneyId(),
-                'passengerJourneyId' => $message->getPassengerJourneyId(),
-                'bookingId' => $message->getBookingId(),
-            ],
-        ]);
-
-        var_dump($data);
-
-        exit;
+        $response = $dataProvider->postCollection($body, $headers);
+        var_dump($response);
     }
 
     public function postBooking(Booking $booking)
@@ -114,6 +89,7 @@ class InteropProvider implements CarpoolStandardProviderInterface
         $body['driverJourneyId'] = $booking->getDriverJourneyId();
         $body['passengerJourneyId'] = $booking->getPassengerJourneyId();
 
-        return $dataProvider->postCollection($body, $headers);
+        $response = $dataProvider->postCollection($body, $headers);
+        var_dump($response);
     }
 }
