@@ -144,7 +144,7 @@ class CarpoolProofRepository
         return $query->getQuery()->getResult();
     }
 
-    public function findCarpoolProofForEccRelaunch(User $driver, int $excludeId, array $allreadyDeaclaredJourneys, bool $isLong = true): ?array
+    public function findCarpoolProofForEccRelaunch(User $driver, ?int $excludeId, array $allreadyDeaclaredJourneys, bool $isLongDistanceProcess = true): ?array
     {
         // TODO Vérifier que le trajet ne soit pas déjà une longue ou courte souscription
         $qb = $this->repository->createQueryBuilder('cp');
@@ -156,14 +156,17 @@ class CarpoolProofRepository
             ->leftJoin('wo.address', 'ao')
             ->innerJoin('m.waypoints', 'wd', 'WITH', 'wd.position != 0 AND wd.destination = 1')
             ->leftJoin('wd.address', 'ad')
-            ->where('cp.id != :excludeId')
+            ->where('cp.driver = :driver')
             ->andWhere($qb->expr()->notIn('cp.id', $allreadyDeaclaredJourneys))
-            ->andWhere('cp.driver = :driver')
             ->andWhere('cp.type = :class')
             ->andWhere('ao.addressCountry = :country OR ad.addressCountry = :country')
         ;
 
-        if ($isLong) {
+        if (!is_null($excludeId)) {
+            $qb->andWhere('cp.id != :excludeId');
+        }
+
+        if ($isLongDistanceProcess) {
             $qb
                 ->innerJoin('a.carpoolItems', 'c', 'WITH', 'c.creditorUser = :driver')
                 ->andWhere('m.commonDistance >= :distance')

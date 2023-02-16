@@ -1,15 +1,17 @@
 <?php
 
-namespace App\Incentive\Service;
+namespace App\Incentive\Service\Manager;
 
 use App\Carpool\Entity\CarpoolProof;
 use App\Carpool\Repository\CarpoolProofRepository;
 use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\ShortDistanceSubscription;
+use App\Incentive\Service\CeeJourneyService;
+use App\Incentive\Service\MobConnectSubscriptionManager;
 use App\User\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
 
-class RelaunchService
+class RelaunchManager
 {
     /**
      * @var CarpoolProofRepository
@@ -58,14 +60,27 @@ class RelaunchService
         $this->_subscriptionManager = $mobConnectSubscriptionManager;
     }
 
+    public function relaunchJourneysForUser(int $userId): void
+    {
+        $this->_user = $this->_em->getRepository(User::class)->find($userId);
+
+        if (is_null($this->_user)) {
+            return;
+        }
+
+        $this->relaunchUserProofs();
+    }
+
     /**
-     * Relaunch the declaration process for user carpool proofs.
+     * Relaunch the declaration process for user carpool roofs.
      */
-    public function relaunchUserProofs(?CarpoolProof $carpoolProof): void
+    public function relaunchUserProofs(?CarpoolProof $carpoolProof = null): void
     {
         $this->_carpoolProof = $carpoolProof;
 
-        $this->_user = $this->_carpoolProof->getDriver();
+        if (is_null($this->_user) && !is_null($this->_carpoolProof)) {
+            $this->_user = $this->_carpoolProof->getDriver();
+        }
 
         if (
             is_null($this->_user)
@@ -122,7 +137,7 @@ class RelaunchService
 
         return $this->_carpoolProofRepository->findCarpoolProofForEccRelaunch(
             $this->_user,
-            $this->_carpoolProof->getId(),
+            !is_null($this->_carpoolProof) ? $this->_carpoolProof->getId() : null,
             $allreadyDeclaredJourneysIds,
             $this->_isProcessForLongDistance()
         );

@@ -3,19 +3,19 @@
 namespace App\Incentive\EventListener;
 
 use App\Carpool\Event\CarpoolProofValidatedEvent;
-use App\Incentive\Service\RelaunchService;
+use App\Incentive\Service\Manager\RelaunchManager;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class ProofRelaunchListener implements EventSubscriberInterface
 {
     /**
-     * @var RelaunchService
+     * @var RelaunchManager
      */
-    private $_relaunchService;
+    private $_relaunchManager;
 
-    public function __construct(RelaunchService $relaunchService)
+    public function __construct(RelaunchManager $relaunchManager)
     {
-        $this->_relaunchService = $relaunchService;
+        $this->_relaunchManager = $relaunchManager;
     }
 
     public static function getSubscribedEvents()
@@ -27,6 +27,6 @@ class ProofRelaunchListener implements EventSubscriberInterface
 
     public function onProofValidated(CarpoolProofValidatedEvent $event): void
     {
-        $this->_relaunchService->relaunchUserProofs($event->getCarpoolProof());
+        $this->_relaunchManager->relaunchUserProofs($event->getCarpoolProof());
     }
 }
