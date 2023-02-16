@@ -127,6 +127,10 @@ abstract class CeeJourneyService
      */
     private function __hasBeenCarpoolPaymentRegularized(CarpoolProof $carpoolProof): bool
     {
+        if (is_null($carpoolProof->getAsk()) || is_null($carpoolProof->getAsk()->getCarpoolItems())) {
+            return false;
+        }
+
         return !empty(array_filter($carpoolProof->getAsk()->getCarpoolItems(), function (CarpoolItem $carpoolItem) use ($carpoolProof) {
             return
                 (CarpoolItem::CREDITOR_STATUS_ONLINE === $carpoolItem->getCreditorStatus() || CarpoolItem::CREDITOR_STATUS_DIRECT === $carpoolItem->getCreditorStatus())
