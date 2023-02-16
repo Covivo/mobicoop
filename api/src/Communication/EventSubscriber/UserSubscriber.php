@@ -236,12 +236,12 @@ class UserSubscriber implements EventSubscriberInterface
 
     public function onTooLongInactivityFirstWarning(TooLongInactivityFirstWarningEvent $event)
     {
-        $this->notificationManager->notifies(TooLongInactivityFirstWarningEvent::NAME, $event->getUser());
+        $this->notificationManager->notifies(TooLongInactivityFirstWarningEvent::NAME, $event->getUser(), $event);
     }
 
     public function onTooLongInactivityLastWarning(TooLongInactivityLastWarningEvent $event)
     {
-        $this->notificationManager->notifies(TooLongInactivityLastWarningEvent::NAME, $event->getUser());
+        $this->notificationManager->notifies(TooLongInactivityLastWarningEvent::NAME, $event->getUser(), $event);
     }
 
     public function onAutoUnsubscribedEvent(AutoUnsubscribedEvent $event)

@@ -29,16 +29,30 @@ use Symfony\Contracts\EventDispatcher\Event;
 class TooLongInactivityFirstWarningEvent extends Event
 {
     public const NAME = 'too_long_inactivity_1rst_warning';
+    public $nbMonthsOfInactvity;
+    public $autoDeleteDate;
 
-    protected $user;
+    protected $_user;
 
-    public function __construct(User $user)
+    public function __construct(User $user, int $nbMonthsOfInactvity, \DateTime $autoDeleteDate)
     {
-        $this->user = $user;
+        $this->_user = $user;
+        $this->nbMonthsOfInactvity = $nbMonthsOfInactvity;
+        $this->autoDeleteDate = $autoDeleteDate;
     }
 
     public function getUser()
     {
-        return $this->user;
+        return $this->_user;
+    }
+
+    public function getNbMonthsOfInactvity()
+    {
+        return $this->nbMonthsOfInactvity;
+    }
+
+    public function getAutoDeleteDate()
+    {
+        return $this->autoDeleteDate;
     }
 }

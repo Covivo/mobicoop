@@ -57,6 +57,8 @@ use App\Solidary\Entity\SolidaryContact;
 use App\User\Entity\PushToken;
 use App\User\Entity\Review;
 use App\User\Entity\User;
+use App\User\Event\TooLongInactivityFirstWarningEvent;
+use App\User\Event\TooLongInactivityLastWarningEvent;
 use App\User\Repository\UserNotificationRepository;
 use App\User\Service\UserManager;
 use Doctrine\Common\Util\ClassUtils;
@@ -295,7 +297,6 @@ class NotificationManager
         $signature = [];
         $titleContext = [];
         $bodyContext = [];
-
         if ($object) {
             switch (ClassUtils::getRealClass(get_class($object))) {
                 case Proposal::class:
@@ -656,6 +657,13 @@ class NotificationManager
                 case Scammer::class:
                     $titleContext = [];
                     $bodyContext = ['scammer' => $object];
+
+                    break;
+
+                case TooLongInactivityLastWarningEvent::class:
+                case TooLongInactivityFirstWarningEvent::class:
+                    $titleContext = [];
+                    $bodyContext = ['user' => $recipient, 'details' => $object, 'signature' => $signature];
 
                     break;
 

@@ -23,9 +23,8 @@
                         <p>Bonjour<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">
                                 {{context.user.givenName|capitalize}} {{context.user.shortFamilyName|capitalize}}</b>
                         </p>
-                        <p>Vous ne vous êtes pas connecté au service <b
-                                style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}">
-                                {{api_env('EMAILS_PLATFORM_NAME')}}</b> depuis bien trop longtemps.</p>
+                        <p>Votre compte est inactif depuis {{context.details.nbMonthsOfInactvity}} mois. Sans action de votre part, il sera automatiquement supprimé le {{context.details.autoDeleteDate|date("d/m/Y")}}.
+                        <br />Cette suppression <strong>détruira totalement toutes les données associées à votre compte</strong>, et ces données ne seront pas récupérables. <br />Pour relancer votre compte, il vous suffit de vous connecter.</p>
                     </td>
                 </tr>
             </table>

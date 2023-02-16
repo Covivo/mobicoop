@@ -23,6 +23,7 @@
 
 namespace App\User\Service;
 
+use App\User\Entity\User;
 use App\User\Event\AutoUnsubscribedEvent;
 use App\User\Event\TooLongInactivityFirstWarningEvent;
 use App\User\Event\TooLongInactivityLastWarningEvent;
@@ -69,6 +70,20 @@ class UserAutoDeleter
         }
         $this->_sendWarnings();
         $this->_deleteAccounts();
+    }
+
+    public function getNbMonthOfInactivity(User $user): int
+    {
+        $diff = $user->getLastActivityDate()->diff(new \DateTime('now'));
+
+        return floor((int) $diff->format('%a') / self::NB_DAYS_IN_A_MONTH);
+    }
+
+    public function getAutoDeleteDate(User $user): \DateTime
+    {
+        $lastActivityDate = clone $user->getLastActivityDate();
+
+        return $lastActivityDate->modify('+ '.$this->_period.' month');
     }
 
     private function _deleteAccounts()
@@ -125,7 +140,7 @@ class UserAutoDeleter
     {
         $inactiveUsers = $this->_getInactiveUsers($this->_computeFirstWarningLastConnexionDate());
         foreach ($inactiveUsers as $inactiveUser) {
-            $event = new TooLongInactivityFirstWarningEvent($inactiveUser);
+            $event = new TooLongInactivityFirstWarningEvent($inactiveUser, $this->getNbMonthOfInactivity($inactiveUser), $this->getAutoDeleteDate($inactiveUser));
             $this->_eventDispatcher->dispatch(TooLongInactivityFirstWarningEvent::NAME, $event);
         }
     }
@@ -134,7 +149,7 @@ class UserAutoDeleter
     {
         $inactiveUsers = $this->_getInactiveUsers($this->_computeLastWarningLastConnexionDate());
         foreach ($inactiveUsers as $inactiveUser) {
-            $event = new TooLongInactivityLastWarningEvent($inactiveUser);
+            $event = new TooLongInactivityLastWarningEvent($inactiveUser, $this->getNbMonthOfInactivity($inactiveUser), $this->getAutoDeleteDate($inactiveUser));
             $this->_eventDispatcher->dispatch(TooLongInactivityLastWarningEvent::NAME, $event);
         }
     }
