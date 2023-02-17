@@ -40,6 +40,8 @@ class UserRepository
      */
     private $repository;
 
+    private $entityManager;
+
     private $logger;
 
     public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger)
@@ -265,9 +267,14 @@ class UserRepository
 
     public function findByLastActivityDate(\DateTime $lastActivityDate): ?array
     {
+        $dateCondition = '
+            (u.lastActivityDate is not null and u.lastActivityDate >= :lastActivityDateBottom and u.lastActivityDate <= :lastActivityDateUp)
+            OR
+            (u.lastActivityDate is null and u.createdDate >= :lastActivityDateBottom and u.createdDate <= :lastActivityDateUp)
+        ';
+
         $query = $this->repository->createQueryBuilder('u')
-            ->where('u.lastActivityDate >= :lastActivityDateBottom')
-            ->andwhere('u.lastActivityDate <= :lastActivityDateUp')
+            ->where($dateCondition)
             ->andwhere('u.status <> :statusPseudonymized')
             ->setParameter('lastActivityDateBottom', $lastActivityDate->format('Y-m-d').' 00:00:00')
             ->setParameter('lastActivityDateUp', $lastActivityDate->format('Y-m-d').' 23:59:59')
@@ -279,8 +286,14 @@ class UserRepository
 
     public function findBeforeLastActivityDate(\DateTime $lastActivityDate): ?array
     {
+        $dateCondition = '
+            (u.lastActivityDate is not null u.lastActivityDate <= :lastActivityDateUp)
+            OR
+            (u.lastActivityDate is null and u.createdDate <= :lastActivityDateUp)
+        ';
+
         $query = $this->repository->createQueryBuilder('u')
-            ->andwhere('u.lastActivityDate <= :lastActivityDateUp')
+            ->andwhere($dateCondition)
             ->andwhere('u.status <> :statusPseudonymized')
             ->setParameter('lastActivityDateUp', $lastActivityDate->format('Y-m-d').' 23:59:59')
             ->setParameter('statusPseudonymized', User::STATUS_PSEUDONYMIZED)
