@@ -52,16 +52,41 @@ class InteropProvider implements CarpoolStandardProviderInterface
             'X-API-KEY' => $this->apiKey,
         ];
         // Build the body
-        $body['from'] = $message->getFrom();
-        $body['to'] = $message->getTo();
-        $body['message'] = $message->getMessage();
-        $body['recipientCarpoolerType'] = $message->getRecipientCarpoolerType();
-        $body['driverJourneyId'] = $message->getDriverJourneyId();
-        $body['passengerJourneyId'] = $message->getPassengerJourneyId();
-        $body['bookingId'] = $message->getBookingId();
+        $body = [
+            'from' => [
+                'id' => $message->getFrom()->getId(),
+                'operator' => $message->getFrom()->getOperator(),
+                'alias' => preg_replace('/\s+/', '-', $message->getFrom()->getAlias()),
+                'firstName' => $message->getFrom()->getFirstName(),
+                'lastName' => $message->getFrom()->getLastName(),
+                'grade' => $message->getFrom()->getGrade(),
+                'picture' => $message->getFrom()->getPicture(),
+                'gender' => $message->getFrom()->getGender(),
+                'verifiedIdentity' => $message->getFrom()->getVerifiedIdentity(),
+            ],
+            'to' => [
+                'id' => $message->getTo()->getId(),
+                'operator' => $message->getTo()->getOperator(),
+                'alias' => preg_replace('/\s+/', '-', $message->getTo()->getAlias()),
+                'firstName' => $message->getTo()->getFirstName(),
+                'lastName' => $message->getTo()->getLastName(),
+                'grade' => $message->getTo()->getGrade(),
+                'picture' => $message->getTo()->getPicture(),
+                'gender' => $message->getTo()->getGender(),
+                'verifiedIdentity' => $message->getTo()->getVerifiedIdentity(),
+            ],
+            'message' => $message->getMessage(),
+            'recipientCarpoolerType' => $message->getRecipientCarpoolerType(),
+            'driverJourneyId' => $message->getDriverJourneyId(),
+            'passengerJourneyId' => $message->getPassengerJourneyId(),
+            'bookingId' => $message->getBookingId(),
+        ];
 
-        $response = $dataProvider->postCollection($body, $headers);
+        $response = $dataProvider->postCollection(json_encode($body), $headers);
+        var_dump('ici');
         var_dump($response);
+
+        exit;
     }
 
     public function postBooking(Booking $booking)
@@ -72,24 +97,70 @@ class InteropProvider implements CarpoolStandardProviderInterface
             'X-API-KEY' => $this->apiKey,
         ];
         // Build the body
-        $body['driver'] = $booking->getDriver();
-        $body['passenger'] = $booking->getPassenger();
-        $body['passengerPickupDate'] = $booking->getPassengerPickupDate();
-        $body['passengerPickupLat'] = $booking->getPassengerPickupLat();
-        $body['passengerPickupLng'] = $booking->getPassengerPickupLng();
-        $body['passengerDropLat'] = $booking->getPassengerDropLat();
-        $body['passengerDropLng'] = $booking->getPassengerDropLng();
-        $body['passengerPickupAddress'] = $booking->getPassengerPickupAddress();
-        $body['passengerDropAddress'] = $booking->getPassengerDropAddress();
-        $body['status'] = $booking->getStatus();
-        $body['duration'] = $booking->getDuration();
-        $body['distance'] = $booking->getDistance();
-        $body['webUrl'] = $booking->getWebUrl();
-        $body['price'] = $booking->getPrice();
-        $body['driverJourneyId'] = $booking->getDriverJourneyId();
-        $body['passengerJourneyId'] = $booking->getPassengerJourneyId();
+        $body = [
+            'id' => $this->_generateUuid(),
+            'driver' => [
+                'id' => $booking->getDriver()->getId(),
+                'operator' => $booking->getDriver()->getOperator(),
+                'alias' => preg_replace('/\s+/', '-', $booking->getDriver()->getAlias()),
+                'firstName' => $booking->getDriver()->getFirstName(),
+                'lastName' => $booking->getDriver()->getLastName(),
+                'grade' => $booking->getDriver()->getGrade(),
+                'picture' => $booking->getDriver()->getPicture(),
+                'gender' => $booking->getDriver()->getGender(),
+                'verifiedIdentity' => $booking->getDriver()->getVerifiedIdentity(),
+            ],
+            'passenger' => [
+                'id' => $booking->getPassenger()->getId(),
+                'operator' => $booking->getPassenger()->getOperator(),
+                'alias' => preg_replace('/\s+/', '-', $booking->getPassenger()->getAlias()),
+                'firstName' => $booking->getPassenger()->getFirstName(),
+                'lastName' => $booking->getPassenger()->getLastName(),
+                'grade' => $booking->getPassenger()->getGrade(),
+                'picture' => $booking->getPassenger()->getPicture(),
+                'gender' => $booking->getPassenger()->getGender(),
+                'verifiedIdentity' => $booking->getPassenger()->getVerifiedIdentity(),
+            ],
+            'passengerPickupDate' => $booking->getPassengerPickupDate(),
+            'passengerPickupLat' => $booking->getPassengerPickupLat(),
+            'passengerPickupLng' => $booking->getPassengerPickupLng(),
+            'passengerDropLat' => $booking->getPassengerDropLat(),
+            'passengerDropLng' => $booking->getPassengerDropLng(),
+            'passengerPickupAddress' => $booking->getPassengerPickupAddress(),
+            'passengerDropAddress' => $booking->getPassengerDropAddress(),
+            'status' => $booking->getStatus(),
+            'duration' => $booking->getDuration(),
+            'distance' => $booking->getDistance(),
+            'webUrl' => $booking->getWebUrl(),
+            'price' => [
+                'type' => $booking->getPrice()->getType(),
+                'operator' => $booking->getPrice()->getAmount(),
+                'alias' => $booking->getPrice()->getCurrency(),
+            ],
+            'driverJourneyId' => $booking->getDriverJourneyId(),
+            'passengerJourneyId' => $booking->getPassengerJourneyId(),
+        ];
 
-        $response = $dataProvider->postCollection($body, $headers);
+        $response = $dataProvider->postCollection(json_encode($body), $headers);
         var_dump($response);
+    }
+
+    private function _generateUuid()
+    {
+        // Generate a random string of bytes
+        $bytes = openssl_random_pseudo_bytes(16);
+
+        // Convert the bytes to a hexadecimal string
+        $hex = bin2hex($bytes);
+
+        // Format the hexadecimal string as a UUID
+        return sprintf(
+            '%s-%s-%s-%s-%s',
+            substr($hex, 0, 8),
+            substr($hex, 8, 4),
+            substr($hex, 12, 4),
+            substr($hex, 16, 4),
+            substr($hex, 20, 12)
+        );
     }
 }

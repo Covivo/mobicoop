@@ -71,12 +71,11 @@ use Symfony\Component\Validator\Constraints as Assert;
  */
 class Booking
 {
-    public const DEFAULT_ID = 999999999999;
-
     /**
-     * @var string the id of the booking
+     * @var string the uuid of the booking
      *
      * @Groups({"read"})
+     *
      * @ApiProperty(identifier=true)
      */
     private $id;
@@ -85,6 +84,7 @@ class Booking
      * @var User the driver of the carpool
      *
      * @Assert\NotBlank
+     *
      * @Groups({"read", "write"})
      */
     private $driver;
@@ -93,6 +93,7 @@ class Booking
      * @var User the passenger of the carpool
      *
      * @Assert\NotBlank
+     *
      * @Groups({"read", "write"})
      */
     private $passenger;
@@ -101,6 +102,7 @@ class Booking
      * @var int Passenger pickup datetime as a UNIX UTC timestamp in seconds
      *
      * @Assert\NotBlank
+     *
      * @Groups({"read", "write"})
      */
     private $passengerPickupDate;
@@ -109,27 +111,34 @@ class Booking
      * @var float latitude of the passenger pick-up point
      *
      * @Assert\NotBlank
+     *
      * @Groups({"read", "write"})
      */
     private $passengerPickupLat;
 
     /**
      * @var float longitude of the passenger pick-up point
+     *
      * @Assert\NotBlank
+     *
      * @Groups({"read", "write"})
      */
     private $passengerPickupLng;
 
     /**
      * @var float latitude of the passenger drop-off point
+     *
      * @Assert\NotBlank
+     *
      * @Groups({"read", "write"})
      */
     private $passengerDropLat;
 
     /**
      * @var float longitude of the passenger drop-off point
+     *
      * @Assert\NotBlank
+     *
      * @Groups({"read", "write"})
      */
     private $passengerDropLng;
@@ -150,7 +159,9 @@ class Booking
 
     /**
      * @var string Status of the booking [WAITING_CONFIRMATION, CONFIRMED, CANCELLED, COMPLETED_PENDING_VALIDATION, VALIDATED]
+     *
      * @Assert\NotBlank
+     *
      * @Groups({"read", "write"})
      */
     private $status;
@@ -178,7 +189,9 @@ class Booking
 
     /**
      * @var Price Price
+     *
      * @Assert\NotBlank
+     *
      * @Groups({"read", "write"})
      */
     private $price;
@@ -196,14 +209,6 @@ class Booking
      * @Groups({"read", "write"})
      */
     private $passengerJourneyId;
-
-    public function __construct($id = null)
-    {
-        $this->id = self::DEFAULT_ID;
-        if ($id) {
-            $this->id = $id;
-        }
-    }
 
     public function getId(): string
     {
