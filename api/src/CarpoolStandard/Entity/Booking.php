@@ -23,7 +23,6 @@
 
 namespace App\CarpoolStandard\Entity;
 
-use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -72,11 +71,9 @@ use Symfony\Component\Validator\Constraints as Assert;
 class Booking
 {
     /**
-     * @var string the uuid of the booking
+     * @var null|string the uuid of the booking
      *
-     * @Groups({"read"})
-     *
-     * @ApiProperty(identifier=true)
+     * @Groups({"read", "write"})
      */
     private $id;
 
