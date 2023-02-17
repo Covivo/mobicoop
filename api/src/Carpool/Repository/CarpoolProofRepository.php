@@ -158,6 +158,7 @@ class CarpoolProofRepository
             'distance' => CeeSubscriptions::LONG_DISTANCE_MINIMUM_IN_METERS,
             'driver' => $driver,
             'referenceDate' => \DateTime::createFromFormat('Y-m-d', CeeJourneyService::REFERENCE_DATE),
+            'status' => CarpoolProof::STATUS_VALIDATED,
         ];
 
         $qb
@@ -169,6 +170,7 @@ class CarpoolProofRepository
             ->leftJoin('wd.address', 'ad')
             ->where('cp.driver = :driver')
             ->andWhere('cp.type = :class')
+            ->andWhere('cp.status = :status')
             ->andWhere('cp.createdDate >= :referenceDate')
             ->andWhere('ao.addressCountry = :country OR ad.addressCountry = :country')
         ;

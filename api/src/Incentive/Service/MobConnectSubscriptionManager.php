@@ -285,9 +285,9 @@ class MobConnectSubscriptionManager
      */
     private function __associateJourneyToSubscription(array $journeys, CarpoolProof $carpoolProof, CarpoolPayment $carpoolPayment = null)
     {
-        $filteredJourneys = array_filter($journeys, function ($journey) use ($carpoolProof) {
+        $filteredJourneys = array_values(array_filter($journeys, function ($journey) use ($carpoolProof) {
             return $journey->getCarpoolProof() === $carpoolProof;
-        });
+        }));
 
         switch (is_null($carpoolPayment)) {
             case true:
