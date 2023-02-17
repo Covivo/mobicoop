@@ -46,10 +46,11 @@ class InteropProvider implements CarpoolStandardProviderInterface
 
     public function postMessage(Message $message)
     {
-        $dataProvider = new DataProvider($this->baseUri, self::RESSOURCE_MESSAGE);
+        $dataProvider = new DataProvider($this->baseUri.'/'.self::RESSOURCE_MESSAGE);
 
         $headers = [
             'X-API-KEY' => $this->apiKey,
+            'Content-Type' => 'application/json',
         ];
         // Build the body
         $body = [
@@ -83,7 +84,6 @@ class InteropProvider implements CarpoolStandardProviderInterface
         ];
 
         $response = $dataProvider->postCollection(json_encode($body), $headers);
-        var_dump('ici');
         var_dump($response);
 
         exit;
@@ -91,16 +91,17 @@ class InteropProvider implements CarpoolStandardProviderInterface
 
     public function postBooking(Booking $booking)
     {
-        $dataProvider = new DataProvider($this->baseUri, self::RESSOURCE_BOOKING);
+        $dataProvider = new DataProvider($this->baseUri.'/'.self::RESSOURCE_BOOKING);
 
         $headers = [
             'X-API-KEY' => $this->apiKey,
+            'Content-Type' => 'application/json',
         ];
         // Build the body
         $body = [
-            'id' => $this->_generateUuid(),
+            'id' => (string) $this->_generateUuid(),
             'driver' => [
-                'id' => $booking->getDriver()->getId(),
+                'id' => (string) $booking->getDriver()->getId(),
                 'operator' => $booking->getDriver()->getOperator(),
                 'alias' => preg_replace('/\s+/', '-', $booking->getDriver()->getAlias()),
                 'firstName' => $booking->getDriver()->getFirstName(),
@@ -111,7 +112,7 @@ class InteropProvider implements CarpoolStandardProviderInterface
                 'verifiedIdentity' => $booking->getDriver()->getVerifiedIdentity(),
             ],
             'passenger' => [
-                'id' => $booking->getPassenger()->getId(),
+                'id' => (string) $booking->getPassenger()->getId(),
                 'operator' => $booking->getPassenger()->getOperator(),
                 'alias' => preg_replace('/\s+/', '-', $booking->getPassenger()->getAlias()),
                 'firstName' => $booking->getPassenger()->getFirstName(),
@@ -142,7 +143,10 @@ class InteropProvider implements CarpoolStandardProviderInterface
         ];
 
         $response = $dataProvider->postCollection(json_encode($body), $headers);
+
         var_dump($response);
+
+        exit;
     }
 
     private function _generateUuid()
