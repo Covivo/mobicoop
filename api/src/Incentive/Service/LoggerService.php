@@ -39,8 +39,10 @@ class LoggerService
 
     private function _areLogsOpen(): bool
     {
-        $param = $this->_request->get('log');
+        if (!is_null($this->_request)) {
+            $param = $this->_request->get('log');
+        }
 
-        return is_null($param) || 'false' === $param ? false : true;
+        return !isset($param) || is_null($param) || 'false' === $param ? false : true;
     }
 }
