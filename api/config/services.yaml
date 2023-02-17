@@ -749,11 +749,11 @@ services:
       - { name: monolog.logger, channel: faker }
 
   # INCENTIVE
-  App\Incentive\JourneysVerificationCommand:
+  App\Incentive\Command\JourneysVerificationCommand:
     tags:
       - { name: "console.command", command: "app:incentive:journeys-verification" }
   
-  App\Incentive\RestartUserJourneysCommand:
+  App\Incentive\Command\RestartUserJourneysCommand:
     tags:
       - { name: "console.command", command: "app:incentive:restart-user-journeys" }
 
