@@ -644,13 +644,15 @@ class MobConnectSubscriptionManager
         foreach ($filteredCarpoolItems as $carpoolItem) {
             $driver = $carpoolItem->getCreditorUser();
 
-            // Array of carpoolProof where driver is the carpoolItem driver
-            $filteredCarpoolProofs = array_filter($carpoolItem->getAsk()->getCarpoolProofs(), function (CarpoolProof $carpoolProof) use ($driver) {
-                return $carpoolProof->getDriver() === $driver;
-            });
+            if (!is_null($carpoolItem->getAsk())) {
+                // Array of carpoolProof where driver is the carpoolItem driver
+                $filteredCarpoolProofs = array_filter($carpoolItem->getAsk()->getCarpoolProofs(), function (CarpoolProof $carpoolProof) use ($driver) {
+                    return $carpoolProof->getDriver() === $driver;
+                });
 
-            foreach ($filteredCarpoolProofs as $carpool) {
-                $this->updateSubscription($carpool, $carpoolPayment);
+                foreach ($filteredCarpoolProofs as $carpoolProof) {
+                    $this->updateSubscription($carpoolProof, $carpoolPayment);
+                }
             }
         }
     }

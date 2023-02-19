@@ -113,7 +113,7 @@ class LongDistanceJourney
      *
      * @var CarpoolPayment
      *
-     * @ORM\OneToOne(targetEntity=CarpoolPayment::class)
+     * @ORM\ManyToOne(targetEntity=CarpoolPayment::class)
      *
      * @ORM\JoinColumn(nullable=true)
      */
