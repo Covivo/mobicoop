@@ -92,8 +92,8 @@ export default {
   },
   computed: {
     age (){
-      if (this.carpooler.birthYear) {
-        return moment().diff(moment([this.carpooler.birthYear]),'years') + ' ' + this.$t("birthYears");
+      if (this.carpooler.age) {
+        return this.carpooler.age + ' ' + this.$t("birthYears");
       } else {
         return null;
       }

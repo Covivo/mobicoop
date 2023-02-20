@@ -831,6 +831,13 @@ class User implements UserInterface, EquatableInterface
     private $birthYear;
 
     /**
+     * @var null|int Age of the user
+     *
+     * @Groups({"readUser","results"})
+     */
+    private $age;
+
+    /**
      * @var null|string the telephone number of the user
      *
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -2053,6 +2060,18 @@ class User implements UserInterface, EquatableInterface
     public function getBirthYear(): ?int
     {
         return $this->birthDate ? $this->birthDate->format('Y') : null;
+    }
+
+    public function getAge(): ?int
+    {
+        if (!$this->birthDate) {
+            return null;
+        }
+
+        $now = new \DateTime('now');
+        $age = $now->diff($this->birthDate);
+
+        return floor((int) $age->format('%y'));
     }
 
     public function getTelephone(): ?string
