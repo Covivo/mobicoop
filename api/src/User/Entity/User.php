@@ -62,6 +62,7 @@ use App\Match\Entity\MassPerson;
 use App\Solidary\Entity\Operate;
 use App\Solidary\Entity\Solidary;
 use App\Solidary\Entity\SolidaryUser;
+use App\User\Admin\Resource\UserExport;
 use App\User\Controller\EECSubscription;
 use App\User\Controller\UserAlerts;
 use App\User\Controller\UserAlertsUpdate;
@@ -87,6 +88,7 @@ use App\User\Filter\HomeAddressWaypointTerritoryFilter;
 use App\User\Filter\IdentityStatusFilter;
 use App\User\Filter\IsInCommunityFilter;
 use App\User\Filter\LoginFilter;
+use App\User\Filter\NewsSubscriptionFilter;
 use App\User\Filter\ODRangeDestinationFilter;
 use App\User\Filter\ODRangeOriginFilter;
 use App\User\Filter\ODRangeRadiusFilter;
@@ -343,6 +345,14 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "swagger_context" = {
  *                  "tags"={"Administration"}
  *              }
+ *          },
+ *          "ADMIN_exportAll"={
+ *              "method"="GET",
+ *              "path"="/admin/users/export",
+ *              "formats"={"csv"={"text/csv"}},
+ *              "pagination_enabled"=false,
+ *              "output"=UserExport::class,
+ *              "normalization_context"={"groups"={"user-export"}}
  *          },
  *          "ADMIN_associate_campaign"={
  *              "path"="/admin/users/associate-campaign",
@@ -624,6 +634,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ApiFilter(SolidaryExclusiveFilter::class)
  * @ApiFilter(RezoKitFilter::class, properties={"rezoKit"})
  * @ApiFilter(CardLetterFilter::class, properties={"cardLetter"})
+ * @ApiFilter(NewsSubscriptionFilter::class, properties={"newsSubscription"})
  * @ApiFilter(HitchHikerFilter::class)
  * @ApiFilter(DateFilter::class, properties={"createdDate": DateFilter::EXCLUDE_NULL,"lastActivityDate": DateFilter::EXCLUDE_NULL})
  * @ApiFilter(OrderFilter::class, properties={"id", "givenName", "status","familyName", "email", "gender", "identityStatus", "nationality", "birthDate", "createdDate", "validatedDate", "lastActivityDate", "telephone", "rezoKit", "cardLetter"}, arguments={"orderParameterName"="order"})

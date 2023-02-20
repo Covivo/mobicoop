@@ -57,6 +57,11 @@ class ProposalRepository
     private $userManager;
     private $geoTools;
 
+    /**
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
+
     public function __construct(EntityManagerInterface $entityManager, UserManager $userManager, GeoTools $geoTools, array $params)
     {
         $this->entityManager = $entityManager;
@@ -1493,6 +1498,17 @@ class ProposalRepository
         }
 
         return $proposals;
+    }
+
+    public function userExportActiveProposal(User $user)
+    {
+        $query = "SELECT tp_extended.user_id, GROUP_CONCAT(tp_extended.Annonce1_Origine) as Annonce1_Origine, GROUP_CONCAT(tp_extended.Annonce1_Destination) as Annonce1_Destination, GROUP_CONCAT(tp_extended.Annonce1_Frequence) as Annonce1_Frequence, GROUP_CONCAT(tp_extended.Annonce2_Origine) as Annonce2_Origine, GROUP_CONCAT(tp_extended.Annonce2_Destination) as Annonce2_Destination, GROUP_CONCAT(tp_extended.Annonce2_Frequence) as Annonce2_Frequence, GROUP_CONCAT(tp_extended.Annonce3_Origine) as Annonce3_Origine, GROUP_CONCAT(tp_extended.Annonce3_Destination) as Annonce3_Destination, GROUP_CONCAT(tp_extended.Annonce3_Frequence) as Annonce3_Frequence, MAX(tp_extended.NombreAnnonces) as NombreAnnonces FROM ( SELECT tp.user_id, case when tp.OrdreAnnonce = 1 then tp.AnnonceOrigine end as Annonce1_Origine, case when tp.OrdreAnnonce = 1 then tp.AnnonceDestination end as Annonce1_Destination, case when tp.OrdreAnnonce = 1 then tp.AnnonceFrequence end as Annonce1_Frequence, case when tp.OrdreAnnonce = 2 then tp.AnnonceOrigine end as Annonce2_Origine, case when tp.OrdreAnnonce = 2 then tp.AnnonceDestination end as Annonce2_Destination, case when tp.OrdreAnnonce = 2 then tp.AnnonceFrequence end as Annonce2_Frequence, case when tp.OrdreAnnonce = 3 then tp.AnnonceOrigine end as Annonce3_Origine, case when tp.OrdreAnnonce = 3 then tp.AnnonceDestination end as Annonce3_Destination, case when tp.OrdreAnnonce = 3 then tp.AnnonceFrequence end as Annonce3_Frequence, max(tp.OrdreAnnonce) as NombreAnnonces FROM ( select p.user_id, ROW_NUMBER() OVER ( PARTITION BY p.user_id ORDER BY p.created_date ASC ) as OrdreAnnonce, ad.address_locality as AnnonceOrigine, aa.address_locality as AnnonceDestination, CASE c.frequency WHEN 1 THEN 'Occasionnel' WHEN 2 THEN 'Régulier' END as AnnonceFrequence from proposal p inner join criteria c on c.id = p.criteria_id inner join waypoint wd on ( wd.proposal_id = p.id and wd.position = 0 ) inner join waypoint wa on ( wa.proposal_id = p.id and wa.destination = 1 ) inner join address ad on ad.id = wd.address_id inner join address aa on aa.id = wa.address_id where p.private = 0 and ( p.dynamic != 1 or p.dynamic is null ) and ( ( c.frequency = 1 and c.from_date > NOW() ) or c.frequency = 2 and c.to_date > NOW() ) AND p.user_id = :user_id ) as tp GROUP BY tp.user_id, Annonce1_Origine, Annonce1_Destination, Annonce1_Frequence, Annonce2_Origine, Annonce2_Destination, Annonce2_Frequence, Annonce3_Origine, Annonce3_Destination, Annonce3_Frequence ) as tp_extended GROUP BY tp_extended.user_id";
+
+        $conn = $this->entityManager->getConnection();
+        $stmt = $conn->prepare($query);
+        $stmt->execute(['user_id' => $user->getId()]);
+
+        return $stmt->fetch();
     }
 
     /**
