@@ -305,7 +305,7 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
     private $alerts;
 
     /**
-     * @var null|int the age of the user
+     * @var null|int the birth year of the user
      */
     private $birthYear;
 
