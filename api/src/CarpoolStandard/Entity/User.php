@@ -61,42 +61,42 @@ class User
     private $alias;
 
     /**
-     * @var string user's first name
+     * @var null|string user's first name
      *
      * @Groups({"read", "write"})
      */
     private $firstName;
 
     /**
-     * @var string user's last name
+     * @var null|string user's last name
      *
      * @Groups({"read", "write"})
      */
     private $lastName;
 
     /**
-     * @var int user's grade from 1 to 5
+     * @var null|int user's grade from 1 to 5
      *
      * @Groups({"read", "write"})
      */
     private $grade;
 
     /**
-     * @var string user's profile picture absolute URL
+     * @var null|string user's profile picture absolute URL
      *
      * @Groups({"read", "write"})
      */
     private $picture;
 
     /**
-     * @var string User's gender. [ F, M, O ] 'O' stands for 'Other'.
+     * @var null|string User's gender. [ F, M, O ] 'O' stands for 'Other'.
      *
      * @Groups({"read", "write"})
      */
     private $gender;
 
     /**
-     * @var bool
+     * @var null|bool
      *
      * @Groups({"read", "write"})
      */
@@ -151,7 +151,7 @@ class User
         return $this->firstName;
     }
 
-    public function setFirstName(string $firstName): self
+    public function setFirstName(?string $firstName): self
     {
         $this->firstName = $firstName;
 
@@ -163,7 +163,7 @@ class User
         return $this->lastName;
     }
 
-    public function setLastName(string $lastName): self
+    public function setLastName(?string $lastName): self
     {
         $this->lastName = $lastName;
 
@@ -175,7 +175,7 @@ class User
         return $this->grade;
     }
 
-    public function setGrade(int $grade): self
+    public function setGrade(?int $grade): self
     {
         $this->grade = $grade;
 
@@ -187,7 +187,7 @@ class User
         return $this->picture;
     }
 
-    public function setPicture(string $picture): self
+    public function setPicture(?string $picture): self
     {
         $this->picture = $picture;
 
@@ -199,7 +199,7 @@ class User
         return $this->gender;
     }
 
-    public function setGender(string $gender): self
+    public function setGender(?string $gender): self
     {
         $this->gender = $gender;
 
@@ -211,7 +211,7 @@ class User
         return $this->verifiedIdentity;
     }
 
-    public function setVerifiedIdentity(bool $verifiedIdentity): self
+    public function setVerifiedIdentity(?bool $verifiedIdentity): self
     {
         $this->verifiedIdentity = $verifiedIdentity;
 

@@ -83,10 +83,7 @@ class InteropProvider implements CarpoolStandardProviderInterface
             'bookingId' => $message->getBookingId(),
         ];
 
-        $response = $dataProvider->postCollection(json_encode($body), $headers);
-        var_dump($response);
-
-        exit;
+        return $dataProvider->postCollection($body, $headers);
     }
 
     public function postBooking(Booking $booking)
@@ -136,17 +133,13 @@ class InteropProvider implements CarpoolStandardProviderInterface
             'price' => [
                 'type' => $booking->getPrice()->getType(),
                 'operator' => $booking->getPrice()->getAmount(),
-                'alias' => $booking->getPrice()->getCurrency(),
+                'currency' => $booking->getPrice()->getCurrency(),
             ],
             'driverJourneyId' => $booking->getDriverJourneyId(),
             'passengerJourneyId' => $booking->getPassengerJourneyId(),
         ];
 
-        $response = $dataProvider->postCollection(json_encode($body), $headers);
-
-        var_dump($response);
-
-        exit;
+        return $dataProvider->postCollection($body, $headers);
     }
 
     private function _generateUuid()
