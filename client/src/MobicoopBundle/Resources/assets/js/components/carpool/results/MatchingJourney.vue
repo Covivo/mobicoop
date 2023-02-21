@@ -1,13 +1,9 @@
 <template>
   <div>
-    <v-card
-      style="overflow:hidden"
-    >
-      <v-toolbar
-        color="primary"
-      >
+    <v-card style="overflow:hidden">
+      <v-toolbar color="primary">
         <v-toolbar-title class="toolbar">
-          {{ $t('detailTitle') }}
+          {{ $t("detailTitle") }}
         </v-toolbar-title>
 
         <v-spacer />
@@ -36,7 +32,6 @@
             <v-row dense>
               <v-col cols="8">
                 <!-- Journey Details -->
-
 
                 <v-row dense>
                   <v-col cols="12">
@@ -76,7 +71,11 @@
                           cols="2"
                           class="text-h6 text-center"
                         >
-                          {{ $tc('places', lResult.seats, { seats: lResult.seats }) }}
+                          {{
+                            $tc("places", lResult.seats, {
+                              seats: lResult.seats
+                            })
+                          }}
                         </v-col>
 
                         <!-- Price -->
@@ -84,7 +83,11 @@
                           cols="3"
                           class="text-h6 text-center"
                         >
-                          {{ lResult.roundedPrice ? lResult.roundedPrice +'€' : '' }}
+                          {{
+                            lResult.roundedPrice
+                              ? lResult.roundedPrice + "€"
+                              : ""
+                          }}
                           <v-tooltip
                             slot="append"
                             right
@@ -99,7 +102,7 @@
                                 mdi-help-circle-outline
                               </v-icon>
                             </template>
-                            <span>{{ $t('priceTooltip') }}</span>
+                            <span>{{ $t("priceTooltip") }}</span>
                           </v-tooltip>
                         </v-col>
                       </v-row>
@@ -110,34 +113,36 @@
                         dense
                       >
                         <!-- Route -->
-                        <v-col
-                          cols="12"
-                        >
+                        <v-col cols="12">
                           <v-row
                             v-if="lResult.noticeableDetour"
                             class="subtitle-2"
                             dense
                           >
                             <v-col v-if="lResult.role == 1">
-                              <v-icon>mdi-clock</v-icon> {{ $t('detour.onlyDriver') }}
+                              <v-icon>mdi-clock</v-icon>
+                              {{ $t("detour.onlyDriver") }}
                             </v-col>
                             <v-col v-else>
-                              <v-icon>mdi-clock</v-icon> {{ $t('detour.default') }}
+                              <v-icon>mdi-clock</v-icon>
+                              {{ $t("detour.default") }}
                             </v-col>
                           </v-row>
 
                           <v-row dense>
                             <v-col>
                               <v-journey
-                                :time="lResult.time || lResult.outwardTime ? true : false"
+                                :time="
+                                  lResult.time || lResult.outwardTime
+                                    ? true
+                                    : false
+                                "
                                 :waypoints="waypoints"
                                 :noticeable-detour="lResult.noticeableDetour"
                               />
                             </v-col>
                           </v-row>
-                          <v-row
-                            v-if="lResult.comment"
-                          >
+                          <v-row v-if="lResult.comment">
                             <v-col>
                               <v-card
                                 outlined
@@ -157,28 +162,31 @@
               </v-col>
               <v-col cols="4">
                 <!-- Carpooler -->
-                <v-card
-                  outlined
-                >
+                <v-card outlined>
                   <ProfileSummary
                     :user-id="result.carpooler.id"
                     :refresh="profileSummaryRefresh"
                     :age-display="ageDisplay"
                     :verified-identity="result.carpooler.verifiedIdentity"
-                    :show-verified-identity="result.carpooler.verifiedIdentity !== null"
-                    @showProfile="step=4"
+                    :show-verified-identity="
+                      result.carpooler.verifiedIdentity !== null
+                    "
+                    @showProfile="step = 4"
                     @profileSummaryRefresh="refreshProfileSummary"
                   />
                   <v-card-text>
-                    <v-row
-                      dense
-                    >
+                    <v-row dense>
                       <v-col
                         cols="12"
                         class="text-center"
                       >
                         <v-btn
-                          v-if="!hideContact && lResult.pendingAsk == false && lResult.acceptedAsk == false && lResult.initiatedAsk == false"
+                          v-if="
+                            !hideContact &&
+                              lResult.pendingAsk == false &&
+                              lResult.acceptedAsk == false &&
+                              lResult.initiatedAsk == false
+                          "
                           color="primary"
                           :disabled="contactDisabled"
                           :loading="contactLoading"
@@ -187,40 +195,83 @@
                           <v-icon>
                             mdi-email
                           </v-icon>
-                          {{ $t('contact') }}
+                          {{ $t("contact") }}
                         </v-btn>
                         <!-- Carpool (driver xor passenger) -->
                         <v-btn
-                          v-if="((driver ^ passenger) && step == 1 && lResult.pendingAsk == false && lResult.acceptedAsk == false && lResult.initiatedAsk == false) || (carpoolRoleSelected && step == 1)"
+                          v-if="
+                            (driver ^ passenger &&
+                              step == 1 &&
+                              lResult.pendingAsk == false &&
+                              lResult.acceptedAsk == false &&
+                              lResult.initiatedAsk == false) ||
+                              (carpoolRoleSelected && step == 1)
+                          "
                           class="mt-4"
                           color="secondary"
                           :disabled="carpoolDisabled"
                           :loading="carpoolLoading"
-                          @click="lResult.frequency == 1 ? (driver ? carpoolConfirm(1) : carpoolConfirm(2)) : step = 2"
+                          @click="
+                            lResult.frequency == 1
+                              ? driver
+                                ? carpoolConfirm(1)
+                                : carpoolConfirm(2)
+                              : (step = 2)
+                          "
                         >
-                          {{ lResult.frequency == 1 ? $t('carpool') : $t('outward') }}
+                          {{
+                            lResult.frequency == 1
+                              ? $t("carpool")
+                              : $t("outward")
+                          }}
                         </v-btn>
 
                         <!-- Step 2 (regular outward, no return) -->
                         <v-btn
-                          v-if="step == 2 && !lResult.return && outwardTrip.length>0 && lResult.pendingAsk == false && lResult.acceptedAsk == false && lResult.initiatedAsk == false"
+                          v-if="
+                            step == 2 &&
+                              !lResult.return &&
+                              outwardTrip.length > 0 &&
+                              lResult.pendingAsk == false &&
+                              lResult.acceptedAsk == false &&
+                              lResult.initiatedAsk == false
+                          "
                           color="secondary"
                           :disabled="carpoolDisabled"
                           :loading="carpoolLoading"
-                          @click="carpoolRoleSelected ? carpoolConfirm(carpoolRoleSelected) : driver ? carpoolConfirm(1) : carpoolConfirm(2)"
+                          @click="
+                            carpoolRoleSelected
+                              ? carpoolConfirm(carpoolRoleSelected)
+                              : driver
+                                ? carpoolConfirm(1)
+                                : carpoolConfirm(2)
+                          "
                         >
-                          {{ $t('carpool') }}
+                          {{ $t("carpool") }}
                         </v-btn>
 
                         <!-- Step 3 (regular return) -->
                         <v-btn
-                          v-if="step == 3 && (outwardTrip.length > 0 || returnTrip.length>0) && lResult.pendingAsk == false && lResult.acceptedAsk == false && lResult.initiatedAsk == false"
+                          v-if="
+                            step == 3 &&
+                              (outwardTrip.length > 0 ||
+                                returnTrip.length > 0) &&
+                              lResult.pendingAsk == false &&
+                              lResult.acceptedAsk == false &&
+                              lResult.initiatedAsk == false
+                          "
                           color="secondary"
                           :disabled="carpoolDisabled"
                           :loading="carpoolLoading"
-                          @click="carpoolRoleSelected ? carpoolConfirm(carpoolRoleSelected) : driver ? carpoolConfirm(1) : carpoolConfirm(2)"
+                          @click="
+                            carpoolRoleSelected
+                              ? carpoolConfirm(carpoolRoleSelected)
+                              : driver
+                                ? carpoolConfirm(1)
+                                : carpoolConfirm(2)
+                          "
                         >
-                          {{ $t('carpool') }}
+                          {{ $t("carpool") }}
                         </v-btn>
                         <v-card
                           v-else
@@ -230,19 +281,19 @@
                             v-if="lResult.acceptedAsk"
                             class="success--text"
                           >
-                            {{ $t('contactTips.acceptedAsk') }}
+                            {{ $t("contactTips.acceptedAsk") }}
                           </v-card-text>
                           <v-card-text
                             v-else-if="lResult.pendingAsk"
                             class="warning--text"
                           >
-                            {{ $t('contactTips.pendingAsk') }}
+                            {{ $t("contactTips.pendingAsk") }}
                           </v-card-text>
                           <v-card-text
                             v-else-if="lResult.initiatedAsk"
                             class="warning--text"
                           >
-                            {{ $t('contactTips.initiatedAsk') }}
+                            {{ $t("contactTips.initiatedAsk") }}
                           </v-card-text>
                         </v-card>
                       </v-col>
@@ -271,13 +322,9 @@
 
           <!-- Step 2 : outward and date range -->
           <v-stepper-content step="2">
-            <v-row
-              align="center"
-            >
+            <v-row align="center">
               <!-- Start date -->
-              <v-col
-                cols="3"
-              >
+              <v-col cols="3">
                 <v-menu
                   v-model="menuFromDate"
                   :close-on-content-click="false"
@@ -307,9 +354,7 @@
               </v-col>
 
               <!-- Slider -->
-              <v-col
-                cols="6"
-              >
+              <v-col cols="6">
                 <v-slider
                   v-model="range"
                   :tick-labels="$t('ranges')"
@@ -322,9 +367,7 @@
               </v-col>
 
               <!-- End date -->
-              <v-col
-                cols="3"
-              >
+              <v-col cols="3">
                 <v-menu
                   v-model="menuMaxDate"
                   :close-on-content-click="false"
@@ -337,7 +380,7 @@
                       :value="computedMaxDate"
                       :label="$t('maxDate')"
                       readonly
-                      :disabled="range<3"
+                      :disabled="range < 3"
                       v-on="on"
                     />
                   </template>
@@ -371,8 +414,12 @@
               :fri-time="outwardFriTime"
               :sat-time="outwardSatTime"
               :sun-time="outwardSunTime"
-              :origin-driver="lResult.resultDriver ? lResult.originDriver : null"
-              :destination-driver="lResult.resultDriver ? lResult.destinationDriver : null"
+              :origin-driver="
+                lResult.resultDriver ? lResult.originDriver : null
+              "
+              :destination-driver="
+                lResult.resultDriver ? lResult.destinationDriver : null
+              "
               :origin-passenger="lResult.originPassenger"
               :destination-passenger="lResult.destinationPassenger"
               :from-date="fromDate"
@@ -399,8 +446,12 @@
               :fri-time="returnFriTime"
               :sat-time="returnSatTime"
               :sun-time="returnSunTime"
-              :origin-driver="lResult.resultDriver ? lResult.destinationDriver : null"
-              :destination-driver="lResult.resultDriver ? lResult.originDriver : null"
+              :origin-driver="
+                lResult.resultDriver ? lResult.destinationDriver : null
+              "
+              :destination-driver="
+                lResult.resultDriver ? lResult.originDriver : null
+              "
               :origin-passenger="lResult.destinationPassenger"
               :destination-passenger="lResult.originPassenger"
               :from-date="fromDate"
@@ -422,52 +473,80 @@
       </v-stepper>
 
       <!-- Action buttons -->
-      <v-card-actions
-        v-if="(driver ^ passenger) || (driver && passenger)"
-      >
+      <v-card-actions v-if="driver ^ passenger || (driver && passenger)">
         <v-spacer />
         <!-- Carpool regular(driver) -->
         <v-btn
-          v-if="(lResult.return && step == 3 || !lResult.return && step == 2 ) && driver && lResult.pendingAsk == false && lResult.acceptedAsk == false && lResult.initiatedAsk == false && lResult.frequency == 2 && !carpoolRoleSelected"
+          v-if="
+            ((lResult.return && step == 3) || (!lResult.return && step == 2)) &&
+              driver &&
+              lResult.pendingAsk == false &&
+              lResult.acceptedAsk == false &&
+              lResult.initiatedAsk == false &&
+              lResult.frequency == 2 &&
+              !carpoolRoleSelected
+          "
           color="secondary"
           :disabled="carpoolDisabled"
           :loading="carpoolLoading"
           @click="carpoolConfirmRegular(1)"
         >
-          {{ $t('carpoolAsDriver') }}
+          {{ $t("carpoolAsDriver") }}
         </v-btn>
 
         <!-- Carpool regular(passenger) -->
         <v-btn
-          v-if="(lResult.return && step == 3 || !lResult.return && step == 2 ) && !driver && passenger && lResult.pendingAsk == false && lResult.acceptedAsk == false && lResult.initiatedAsk == false && lResult.frequency == 2 && !carpoolRoleSelected"
+          v-if="
+            ((lResult.return && step == 3) || (!lResult.return && step == 2)) &&
+              !driver &&
+              passenger &&
+              lResult.pendingAsk == false &&
+              lResult.acceptedAsk == false &&
+              lResult.initiatedAsk == false &&
+              lResult.frequency == 2 &&
+              !carpoolRoleSelected
+          "
           color="secondary"
           :disabled="carpoolDisabled"
           :loading="carpoolLoading"
           @click="carpoolConfirmRegular(2)"
         >
-          {{ $t('carpoolAsPassenger') }}
+          {{ $t("carpoolAsPassenger") }}
         </v-btn>
 
         <!-- Carpool punctual(driver) -->
         <v-btn
-          v-if="driver && lResult.pendingAsk == false && lResult.acceptedAsk == false && lResult.initiatedAsk == false && lResult.frequency == 1"
+          v-if="
+            driver &&
+              lResult.pendingAsk == false &&
+              lResult.acceptedAsk == false &&
+              lResult.initiatedAsk == false &&
+              lResult.frequency == 1
+          "
           color="secondary"
           :disabled="carpoolDisabled"
           :loading="carpoolLoading"
           @click="carpoolConfirm(1)"
         >
-          {{ $t('carpoolAsDriver') }}
+          {{ $t("carpoolAsDriver") }}
         </v-btn>
 
         <!-- Carpool punctual(passenger) -->
         <v-btn
-          v-if="!driver && passenger && lResult.pendingAsk == false && lResult.acceptedAsk == false && lResult.initiatedAsk == false && lResult.frequency == 1"
+          v-if="
+            !driver &&
+              passenger &&
+              lResult.pendingAsk == false &&
+              lResult.acceptedAsk == false &&
+              lResult.initiatedAsk == false &&
+              lResult.frequency == 1
+          "
           color="secondary"
           :disabled="carpoolDisabled"
           :loading="carpoolLoading"
           @click="carpoolConfirm(2)"
         >
-          {{ $t('carpoolAsPassenger') }}
+          {{ $t("carpoolAsPassenger") }}
         </v-btn>
 
         <v-row>
@@ -484,27 +563,23 @@
                 <v-icon color="warning">
                   mdi-alert
                 </v-icon>
-                {{ $t('alreadyAskCarpool') }}
+                {{ $t("alreadyAskCarpool") }}
               </p>
             </v-col>
           </v-row>
 
           <!-- if an ask is initiated -->
-          <v-row
-            v-if="lResult.initiatedAsk == true"
-          >
+          <v-row v-if="lResult.initiatedAsk == true">
             <v-col
               cols="8"
               align-self="end"
               class="text-right"
             >
-              <p
-                class="warning--text font-weight-bold mb-n1"
-              >
+              <p class="warning--text font-weight-bold mb-n1">
                 <v-icon color="warning">
                   mdi-alert
                 </v-icon>
-                {{ $t('alreadyInitiatedCarpool') }}
+                {{ $t("alreadyInitiatedCarpool") }}
               </p>
             </v-col>
             <v-col
@@ -516,10 +591,8 @@
                 :href="this.$t('seeMessages.route')"
                 style="text-decoration:none;"
               >
-                <v-btn
-                  color="secondary"
-                >
-                  {{ $t('seeMessages.label') }}
+                <v-btn color="secondary">
+                  {{ $t("seeMessages.label") }}
                 </v-btn>
               </a>
             </v-col>
@@ -535,7 +608,7 @@
           outlined
           @click="step = 1"
         >
-          {{ $t('previous') }}
+          {{ $t("previous") }}
         </v-btn>
 
         <v-btn
@@ -544,7 +617,7 @@
           outlined
           @click="step--"
         >
-          {{ $t('previous') }}
+          {{ $t("previous") }}
         </v-btn>
 
         <!-- Step 2 (regular outward, return available) -->
@@ -553,7 +626,7 @@
           color="secondary"
           @click="step = 3"
         >
-          {{ $t('return') }}
+          {{ $t("return") }}
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -565,10 +638,10 @@
     >
       <v-card>
         <v-card-title>
-          {{ $t('confirmCarpoolTitle') }}
+          {{ $t("confirmCarpoolTitle") }}
         </v-card-title>
         <v-card-text>
-          {{ $t('confirmCarpool', { carpooler: lResult.carpooler.givenName }) }}
+          {{ $t("confirmCarpool", { carpooler: lResult.carpooler.givenName }) }}
         </v-card-text>
         <v-card-actions>
           <v-spacer />
@@ -577,13 +650,13 @@
             text
             @click="closeConfirmationDialog"
           >
-            {{ $t('cancel') }}
+            {{ $t("cancel") }}
           </v-btn>
           <v-btn
             color="primary"
             @click="carpool(carpoolRole)"
           >
-            {{ $t('confirm') }}
+            {{ $t("confirm") }}
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -594,7 +667,12 @@
 <script>
 import moment from "moment";
 import maxios from "@utils/maxios";
-import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/carpool/results/MatchingJourney/";
+import {
+  messages_en,
+  messages_fr,
+  messages_eu,
+  messages_nl
+} from "@translations/components/carpool/results/MatchingJourney/";
 import VJourney from "@components/carpool/utilities/VJourney";
 import RegularDaysSummary from "@components/carpool/utilities/RegularDaysSummary";
 import RegularAsk from "@components/carpool/utilities/RegularAsk";
@@ -616,11 +694,11 @@ export default {
   },
   i18n: {
     messages: {
-      'en': messages_en,
-      'nl': messages_nl,
-      'fr': messages_fr,
-      'eu':messages_eu
-    },
+      en: messages_en,
+      nl: messages_nl,
+      fr: messages_fr,
+      eu: messages_eu
+    }
   },
   props: {
     result: {
@@ -633,11 +711,15 @@ export default {
     },
     defaultOutwardTrip: {
       type: Array,
-      default: function(){return []}
+      default: function() {
+        return [];
+      }
     },
     defaultReturnTrip: {
       type: Array,
-      default: function(){return []}
+      default: function() {
+        return [];
+      }
     },
     defaultOutwardMonTime: {
       type: String,
@@ -695,9 +777,9 @@ export default {
       type: String,
       default: null
     },
-    defaultRole:{
+    defaultRole: {
       type: String,
-      default:null
+      default: null
     },
     user: {
       type: Object,
@@ -732,7 +814,7 @@ export default {
       default: true
     }
   },
-  data : function() {
+  data: function() {
     return {
       locale: localStorage.getItem("X-LOCALE"),
       lResult: this.result,
@@ -740,7 +822,7 @@ export default {
       carpoolLoading: false,
       contactDisabled: this.result.myOwn,
       carpoolDisabled: this.result.myOwn,
-      step:this.defaultStep,
+      step: this.defaultStep,
       fromDate: this.result.startDate ? this.result.startDate : null,
       menuFromDate: false,
       maxDate: this.result.startDate ? this.result.startDate : null,
@@ -769,44 +851,48 @@ export default {
       directionWay: [],
       primaryColor: this.$vuetify.theme.themes.light.primary,
       secondaryColor: this.$vuetify.theme.themes.light.secondary,
-      geoRouteUrl:"/georoute",
-      route:[],
-      routeRequester:[],
-      routeCarpooler:[],
+      geoRouteUrl: "/georoute",
+      route: [],
+      routeRequester: [],
+      routeCarpooler: [],
       carpoolDialog: false,
       carpoolRole: null,
-      carpoolRoleSelected: null,
-    }
+      carpoolRoleSelected: null
+    };
   },
   computed: {
     today() {
       return moment().toISOString();
     },
     driver() {
-      if(this.defaultRole){
-        return (this.defaultRole == "driver");
-      }
-      else{
-        return (this.lResult != null && this.lResult.resultDriver != null);
+      if (this.defaultRole) {
+        return this.defaultRole == "driver";
+      } else {
+        return this.lResult != null && this.lResult.resultDriver != null;
       }
     },
     passenger() {
-      if(this.defaultRole){
-        return (this.defaultRole=="passenger");
-      }
-      else{
-        return (this.lResult != null && this.lResult.resultPassenger != null);
+      if (this.defaultRole) {
+        return this.defaultRole == "passenger";
+      } else {
+        return this.lResult != null && this.lResult.resultPassenger != null;
       }
     },
     regular() {
       return this.lResult && this.lResult.frequency == 2;
     },
     computedTime() {
-      if (this.lResult && this.lResult.time) return moment.utc(this.lResult.time).format(this.$t("i18n.time.format.hourMinute"));
+      if (this.lResult && this.lResult.time)
+        return moment
+          .utc(this.lResult.time)
+          .format(this.$t("i18n.time.format.hourMinute"));
       return null;
     },
     computedDate() {
-      if (this.lResult && this.lResult.date) return moment.utc(this.lResult.date).format(this.$t("i18n.date.format.fullDate"));
+      if (this.lResult && this.lResult.date)
+        return moment
+          .utc(this.lResult.date)
+          .format(this.$t("i18n.date.format.fullDate"));
       return null;
     },
     computedFromDate() {
@@ -821,34 +907,37 @@ export default {
     },
     age() {
       if (this.lResult) {
-        if (this.lResult.carpooler.birthYear) {
-          return moment().diff(moment([this.lResult.carpooler.birthYear]),'years')+' '+this.$t("birthYears");
+        if (this.lResult.carpooler.age) {
+          return this.lResult.carpooler.age + " " + this.$t("birthYears");
         }
       }
+
       return null;
     },
     waypoints() {
-      return this.lResult.resultPassenger ? this.lResult.resultPassenger.outward.waypoints : this.lResult.resultDriver.outward.waypoints;
+      return this.lResult.resultPassenger
+        ? this.lResult.resultPassenger.outward.waypoints
+        : this.lResult.resultDriver.outward.waypoints;
     },
-    monCheckDefault(){
+    monCheckDefault() {
       return this.checkDay("mon");
     },
-    tueCheckDefault(){
+    tueCheckDefault() {
       return this.checkDay("tue");
     },
-    wedCheckDefault(){
+    wedCheckDefault() {
       return this.checkDay("wed");
     },
-    thuCheckDefault(){
+    thuCheckDefault() {
       return this.checkDay("thu");
     },
-    friCheckDefault(){
+    friCheckDefault() {
       return this.checkDay("fri");
     },
-    satCheckDefault(){
+    satCheckDefault() {
       return this.checkDay("sat");
     },
-    sunCheckDefault(){
+    sunCheckDefault() {
       return this.checkDay("sun");
     }
   },
@@ -861,30 +950,32 @@ export default {
       this.carpoolDisabled = this.result.myOwn;
       this.computeTimes();
     },
-    resetStep(){
-      if(this.resetStep){
+    resetStep() {
+      if (this.resetStep) {
         this.step = 1;
-        this.$emit('resetStepMatchingJourney');
+        this.$emit("resetStepMatchingJourney");
       }
     },
-    step(){
-      if(this.step==4){
+    step() {
+      if (this.step == 4) {
         this.refreshPublicProfile = true;
-      } else if (this.step==1) {
+      } else if (this.step == 1) {
         this.carpoolRoleSelected = null;
       }
     },
-    route(){
-      if(this.route.directPoints) this.buildJourney(this.route);
+    route() {
+      if (this.route.directPoints) this.buildJourney(this.route);
     },
-    routeCarpooler(){
-      if(this.routeCarpooler.directPoints) this.buildJourney(this.routeCarpooler, false);
+    routeCarpooler() {
+      if (this.routeCarpooler.directPoints)
+        this.buildJourney(this.routeCarpooler, false);
     },
-    routeRequester(){
-      if(this.routeRequester.directPoints) this.buildJourney(this.routeRequester, true);
+    routeRequester() {
+      if (this.routeRequester.directPoints)
+        this.buildJourney(this.routeRequester, true);
     },
-    refreshMap(){
-      if(this.refreshMap){
+    refreshMap() {
+      if (this.refreshMap) {
         this.cleanMap();
         this.getRoute();
         this.buildMarkers();
@@ -901,7 +992,7 @@ export default {
     moment.locale(this.locale); // DEFINE DATE LANGUAGE
     // We need to emit this event because the first time Matching has send the reset intruction,
     // MatchingJourney was not created yet. So the watcher can't trigger and therefore, not send the event.
-    this.$emit('resetStepMatchingJourney');
+    this.$emit("resetStepMatchingJourney");
   },
   methods: {
     closeConfirmationDialog() {
@@ -913,92 +1004,339 @@ export default {
     },
     computeMaxDate() {
       if (this.range == 0) {
-        this.maxDate = moment(this.fromDate).add(1, 'W').toISOString();
-      }
-      else if (this.range == 1) {
-        this.maxDate = moment(this.fromDate).add(1, 'M').toISOString();
+        this.maxDate = moment(this.fromDate)
+          .add(1, "W")
+          .toISOString();
+      } else if (this.range == 1) {
+        this.maxDate = moment(this.fromDate)
+          .add(1, "M")
+          .toISOString();
       } else if (this.range == 2) {
-        this.maxDate = moment(this.fromDate).add(3, 'M').toISOString();
+        this.maxDate = moment(this.fromDate)
+          .add(3, "M")
+          .toISOString();
       } else if (moment(this.maxDate).isBefore(moment(this.fromDate))) {
         this.maxDate = this.fromDate;
       }
     },
     computeTimes() {
-      if (this.lResult.frequency == 2 && this.lResult.resultPassenger && !this.lResult.resultDriver) {
+      if (
+        this.lResult.frequency == 2 &&
+        this.lResult.resultPassenger &&
+        !this.lResult.resultDriver
+      ) {
         if (this.lResult.resultPassenger.outward) {
-          this.outwardMonTime = this.lResult.resultPassenger.outward.monTime ? moment.utc(this.lResult.resultPassenger.outward.monTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-          this.outwardTueTime = this.lResult.resultPassenger.outward.tueTime ? moment.utc(this.lResult.resultPassenger.outward.tueTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-          this.outwardWedTime = this.lResult.resultPassenger.outward.wedTime ? moment.utc(this.lResult.resultPassenger.outward.wedTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-          this.outwardThuTime = this.lResult.resultPassenger.outward.thuTime ? moment.utc(this.lResult.resultPassenger.outward.thuTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-          this.outwardFriTime = this.lResult.resultPassenger.outward.friTime ? moment.utc(this.lResult.resultPassenger.outward.friTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-          this.outwardSatTime = this.lResult.resultPassenger.outward.satTime ? moment.utc(this.lResult.resultPassenger.outward.satTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-          this.outwardSunTime = this.lResult.resultPassenger.outward.sunTime ? moment.utc(this.lResult.resultPassenger.outward.sunTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+          this.outwardMonTime = this.lResult.resultPassenger.outward.monTime
+            ? moment
+              .utc(this.lResult.resultPassenger.outward.monTime)
+              .format(this.$t("i18n.time.format.hourMinute"))
+            : null;
+          this.outwardTueTime = this.lResult.resultPassenger.outward.tueTime
+            ? moment
+              .utc(this.lResult.resultPassenger.outward.tueTime)
+              .format(this.$t("i18n.time.format.hourMinute"))
+            : null;
+          this.outwardWedTime = this.lResult.resultPassenger.outward.wedTime
+            ? moment
+              .utc(this.lResult.resultPassenger.outward.wedTime)
+              .format(this.$t("i18n.time.format.hourMinute"))
+            : null;
+          this.outwardThuTime = this.lResult.resultPassenger.outward.thuTime
+            ? moment
+              .utc(this.lResult.resultPassenger.outward.thuTime)
+              .format(this.$t("i18n.time.format.hourMinute"))
+            : null;
+          this.outwardFriTime = this.lResult.resultPassenger.outward.friTime
+            ? moment
+              .utc(this.lResult.resultPassenger.outward.friTime)
+              .format(this.$t("i18n.time.format.hourMinute"))
+            : null;
+          this.outwardSatTime = this.lResult.resultPassenger.outward.satTime
+            ? moment
+              .utc(this.lResult.resultPassenger.outward.satTime)
+              .format(this.$t("i18n.time.format.hourMinute"))
+            : null;
+          this.outwardSunTime = this.lResult.resultPassenger.outward.sunTime
+            ? moment
+              .utc(this.lResult.resultPassenger.outward.sunTime)
+              .format(this.$t("i18n.time.format.hourMinute"))
+            : null;
         }
         if (this.lResult.resultPassenger.return) {
-          this.returnMonTime = this.lResult.resultPassenger.return.monTime ? moment.utc(this.lResult.resultPassenger.return.monTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-          this.returnTueTime = this.lResult.resultPassenger.return.tueTime ? moment.utc(this.lResult.resultPassenger.return.tueTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-          this.returnWedTime = this.lResult.resultPassenger.return.wedTime ? moment.utc(this.lResult.resultPassenger.return.wedTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-          this.returnThuTime = this.lResult.resultPassenger.return.thuTime ? moment.utc(this.lResult.resultPassenger.return.thuTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-          this.returnFriTime = this.lResult.resultPassenger.return.friTime ? moment.utc(this.lResult.resultPassenger.return.friTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-          this.returnSatTime = this.lResult.resultPassenger.return.satTime ? moment.utc(this.lResult.resultPassenger.return.satTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-          this.returnSunTime = this.lResult.resultPassenger.return.sunTime ? moment.utc(this.lResult.resultPassenger.return.sunTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+          this.returnMonTime = this.lResult.resultPassenger.return.monTime
+            ? moment
+              .utc(this.lResult.resultPassenger.return.monTime)
+              .format(this.$t("i18n.time.format.hourMinute"))
+            : null;
+          this.returnTueTime = this.lResult.resultPassenger.return.tueTime
+            ? moment
+              .utc(this.lResult.resultPassenger.return.tueTime)
+              .format(this.$t("i18n.time.format.hourMinute"))
+            : null;
+          this.returnWedTime = this.lResult.resultPassenger.return.wedTime
+            ? moment
+              .utc(this.lResult.resultPassenger.return.wedTime)
+              .format(this.$t("i18n.time.format.hourMinute"))
+            : null;
+          this.returnThuTime = this.lResult.resultPassenger.return.thuTime
+            ? moment
+              .utc(this.lResult.resultPassenger.return.thuTime)
+              .format(this.$t("i18n.time.format.hourMinute"))
+            : null;
+          this.returnFriTime = this.lResult.resultPassenger.return.friTime
+            ? moment
+              .utc(this.lResult.resultPassenger.return.friTime)
+              .format(this.$t("i18n.time.format.hourMinute"))
+            : null;
+          this.returnSatTime = this.lResult.resultPassenger.return.satTime
+            ? moment
+              .utc(this.lResult.resultPassenger.return.satTime)
+              .format(this.$t("i18n.time.format.hourMinute"))
+            : null;
+          this.returnSunTime = this.lResult.resultPassenger.return.sunTime
+            ? moment
+              .utc(this.lResult.resultPassenger.return.sunTime)
+              .format(this.$t("i18n.time.format.hourMinute"))
+            : null;
         }
-      } else if (this.lResult.frequency == 2 && this.lResult.resultDriver && !this.lResult.resultPassenger) {
+      } else if (
+        this.lResult.frequency == 2 &&
+        this.lResult.resultDriver &&
+        !this.lResult.resultPassenger
+      ) {
         if (this.lResult.resultDriver.outward) {
-          this.outwardMonTime = this.lResult.resultDriver.outward.monTime ? moment.utc(this.lResult.resultDriver.outward.monTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-          this.outwardTueTime = this.lResult.resultDriver.outward.tueTime ? moment.utc(this.lResult.resultDriver.outward.tueTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-          this.outwardWedTime = this.lResult.resultDriver.outward.wedTime ? moment.utc(this.lResult.resultDriver.outward.wedTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-          this.outwardThuTime = this.lResult.resultDriver.outward.thuTime ? moment.utc(this.lResult.resultDriver.outward.thuTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-          this.outwardFriTime = this.lResult.resultDriver.outward.friTime ? moment.utc(this.lResult.resultDriver.outward.friTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-          this.outwardSatTime = this.lResult.resultDriver.outward.satTime ? moment.utc(this.lResult.resultDriver.outward.satTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-          this.outwardSunTime = this.lResult.resultDriver.outward.sunTime ? moment.utc(this.lResult.resultDriver.outward.sunTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+          this.outwardMonTime = this.lResult.resultDriver.outward.monTime
+            ? moment
+              .utc(this.lResult.resultDriver.outward.monTime)
+              .format(this.$t("i18n.time.format.hourMinute"))
+            : null;
+          this.outwardTueTime = this.lResult.resultDriver.outward.tueTime
+            ? moment
+              .utc(this.lResult.resultDriver.outward.tueTime)
+              .format(this.$t("i18n.time.format.hourMinute"))
+            : null;
+          this.outwardWedTime = this.lResult.resultDriver.outward.wedTime
+            ? moment
+              .utc(this.lResult.resultDriver.outward.wedTime)
+              .format(this.$t("i18n.time.format.hourMinute"))
+            : null;
+          this.outwardThuTime = this.lResult.resultDriver.outward.thuTime
+            ? moment
+              .utc(this.lResult.resultDriver.outward.thuTime)
+              .format(this.$t("i18n.time.format.hourMinute"))
+            : null;
+          this.outwardFriTime = this.lResult.resultDriver.outward.friTime
+            ? moment
+              .utc(this.lResult.resultDriver.outward.friTime)
+              .format(this.$t("i18n.time.format.hourMinute"))
+            : null;
+          this.outwardSatTime = this.lResult.resultDriver.outward.satTime
+            ? moment
+              .utc(this.lResult.resultDriver.outward.satTime)
+              .format(this.$t("i18n.time.format.hourMinute"))
+            : null;
+          this.outwardSunTime = this.lResult.resultDriver.outward.sunTime
+            ? moment
+              .utc(this.lResult.resultDriver.outward.sunTime)
+              .format(this.$t("i18n.time.format.hourMinute"))
+            : null;
         }
         if (this.lResult.resultDriver.return) {
-          this.returnMonTime = this.lResult.resultDriver.return.monTime ? moment.utc(this.lResult.resultDriver.return.monTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-          this.returnTueTime = this.lResult.resultDriver.return.tueTime ? moment.utc(this.lResult.resultDriver.return.tueTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-          this.returnWedTime = this.lResult.resultDriver.return.wedTime ? moment.utc(this.lResult.resultDriver.return.wedTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-          this.returnThuTime = this.lResult.resultDriver.return.thuTime ? moment.utc(this.lResult.resultDriver.return.thuTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-          this.returnFriTime = this.lResult.resultDriver.return.friTime ? moment.utc(this.lResult.resultDriver.return.friTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-          this.returnSatTime = this.lResult.resultDriver.return.satTime ? moment.utc(this.lResult.resultDriver.return.satTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-          this.returnSunTime = this.lResult.resultDriver.return.sunTime ? moment.utc(this.lResult.resultDriver.return.sunTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+          this.returnMonTime = this.lResult.resultDriver.return.monTime
+            ? moment
+              .utc(this.lResult.resultDriver.return.monTime)
+              .format(this.$t("i18n.time.format.hourMinute"))
+            : null;
+          this.returnTueTime = this.lResult.resultDriver.return.tueTime
+            ? moment
+              .utc(this.lResult.resultDriver.return.tueTime)
+              .format(this.$t("i18n.time.format.hourMinute"))
+            : null;
+          this.returnWedTime = this.lResult.resultDriver.return.wedTime
+            ? moment
+              .utc(this.lResult.resultDriver.return.wedTime)
+              .format(this.$t("i18n.time.format.hourMinute"))
+            : null;
+          this.returnThuTime = this.lResult.resultDriver.return.thuTime
+            ? moment
+              .utc(this.lResult.resultDriver.return.thuTime)
+              .format(this.$t("i18n.time.format.hourMinute"))
+            : null;
+          this.returnFriTime = this.lResult.resultDriver.return.friTime
+            ? moment
+              .utc(this.lResult.resultDriver.return.friTime)
+              .format(this.$t("i18n.time.format.hourMinute"))
+            : null;
+          this.returnSatTime = this.lResult.resultDriver.return.satTime
+            ? moment
+              .utc(this.lResult.resultDriver.return.satTime)
+              .format(this.$t("i18n.time.format.hourMinute"))
+            : null;
+          this.returnSunTime = this.lResult.resultDriver.return.sunTime
+            ? moment
+              .utc(this.lResult.resultDriver.return.sunTime)
+              .format(this.$t("i18n.time.format.hourMinute"))
+            : null;
         }
-      } else if (this.lResult.frequency == 2 && this.lResult.resultDriver && this.lResult.resultPassenger && this.carpoolRoleSelected == 1) {
+      } else if (
+        this.lResult.frequency == 2 &&
+        this.lResult.resultDriver &&
+        this.lResult.resultPassenger &&
+        this.carpoolRoleSelected == 1
+      ) {
         if (this.lResult.resultDriver.outward) {
-          this.outwardMonTime = this.lResult.resultDriver.outward.monTime ? moment.utc(this.lResult.resultDriver.outward.monTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-          this.outwardTueTime = this.lResult.resultDriver.outward.tueTime ? moment.utc(this.lResult.resultDriver.outward.tueTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-          this.outwardWedTime = this.lResult.resultDriver.outward.wedTime ? moment.utc(this.lResult.resultDriver.outward.wedTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-          this.outwardThuTime = this.lResult.resultDriver.outward.thuTime ? moment.utc(this.lResult.resultDriver.outward.thuTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-          this.outwardFriTime = this.lResult.resultDriver.outward.friTime ? moment.utc(this.lResult.resultDriver.outward.friTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-          this.outwardSatTime = this.lResult.resultDriver.outward.satTime ? moment.utc(this.lResult.resultDriver.outward.satTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-          this.outwardSunTime = this.lResult.resultDriver.outward.sunTime ? moment.utc(this.lResult.resultDriver.outward.sunTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+          this.outwardMonTime = this.lResult.resultDriver.outward.monTime
+            ? moment
+              .utc(this.lResult.resultDriver.outward.monTime)
+              .format(this.$t("i18n.time.format.hourMinute"))
+            : null;
+          this.outwardTueTime = this.lResult.resultDriver.outward.tueTime
+            ? moment
+              .utc(this.lResult.resultDriver.outward.tueTime)
+              .format(this.$t("i18n.time.format.hourMinute"))
+            : null;
+          this.outwardWedTime = this.lResult.resultDriver.outward.wedTime
+            ? moment
+              .utc(this.lResult.resultDriver.outward.wedTime)
+              .format(this.$t("i18n.time.format.hourMinute"))
+            : null;
+          this.outwardThuTime = this.lResult.resultDriver.outward.thuTime
+            ? moment
+              .utc(this.lResult.resultDriver.outward.thuTime)
+              .format(this.$t("i18n.time.format.hourMinute"))
+            : null;
+          this.outwardFriTime = this.lResult.resultDriver.outward.friTime
+            ? moment
+              .utc(this.lResult.resultDriver.outward.friTime)
+              .format(this.$t("i18n.time.format.hourMinute"))
+            : null;
+          this.outwardSatTime = this.lResult.resultDriver.outward.satTime
+            ? moment
+              .utc(this.lResult.resultDriver.outward.satTime)
+              .format(this.$t("i18n.time.format.hourMinute"))
+            : null;
+          this.outwardSunTime = this.lResult.resultDriver.outward.sunTime
+            ? moment
+              .utc(this.lResult.resultDriver.outward.sunTime)
+              .format(this.$t("i18n.time.format.hourMinute"))
+            : null;
         }
         if (this.lResult.resultDriver.return) {
-          this.returnMonTime = this.lResult.resultDriver.return.monTime ? moment.utc(this.lResult.resultDriver.return.monTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-          this.returnTueTime = this.lResult.resultDriver.return.tueTime ? moment.utc(this.lResult.resultDriver.return.tueTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-          this.returnWedTime = this.lResult.resultDriver.return.wedTime ? moment.utc(this.lResult.resultDriver.return.wedTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-          this.returnThuTime = this.lResult.resultDriver.return.thuTime ? moment.utc(this.lResult.resultDriver.return.thuTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-          this.returnFriTime = this.lResult.resultDriver.return.friTime ? moment.utc(this.lResult.resultDriver.return.friTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-          this.returnSatTime = this.lResult.resultDriver.return.satTime ? moment.utc(this.lResult.resultDriver.return.satTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-          this.returnSunTime = this.lResult.resultDriver.return.sunTime ? moment.utc(this.lResult.resultDriver.return.sunTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+          this.returnMonTime = this.lResult.resultDriver.return.monTime
+            ? moment
+              .utc(this.lResult.resultDriver.return.monTime)
+              .format(this.$t("i18n.time.format.hourMinute"))
+            : null;
+          this.returnTueTime = this.lResult.resultDriver.return.tueTime
+            ? moment
+              .utc(this.lResult.resultDriver.return.tueTime)
+              .format(this.$t("i18n.time.format.hourMinute"))
+            : null;
+          this.returnWedTime = this.lResult.resultDriver.return.wedTime
+            ? moment
+              .utc(this.lResult.resultDriver.return.wedTime)
+              .format(this.$t("i18n.time.format.hourMinute"))
+            : null;
+          this.returnThuTime = this.lResult.resultDriver.return.thuTime
+            ? moment
+              .utc(this.lResult.resultDriver.return.thuTime)
+              .format(this.$t("i18n.time.format.hourMinute"))
+            : null;
+          this.returnFriTime = this.lResult.resultDriver.return.friTime
+            ? moment
+              .utc(this.lResult.resultDriver.return.friTime)
+              .format(this.$t("i18n.time.format.hourMinute"))
+            : null;
+          this.returnSatTime = this.lResult.resultDriver.return.satTime
+            ? moment
+              .utc(this.lResult.resultDriver.return.satTime)
+              .format(this.$t("i18n.time.format.hourMinute"))
+            : null;
+          this.returnSunTime = this.lResult.resultDriver.return.sunTime
+            ? moment
+              .utc(this.lResult.resultDriver.return.sunTime)
+              .format(this.$t("i18n.time.format.hourMinute"))
+            : null;
         }
-      } else if (this.lResult.frequency == 2 && this.lResult.resultDriver && this.lResult.resultPassenger && this.carpoolRoleSelected == 2) {
+      } else if (
+        this.lResult.frequency == 2 &&
+        this.lResult.resultDriver &&
+        this.lResult.resultPassenger &&
+        this.carpoolRoleSelected == 2
+      ) {
         if (this.lResult.resultPassenger.outward) {
-          this.outwardMonTime = this.lResult.resultPassenger.outward.monTime ? moment.utc(this.lResult.resultPassenger.outward.monTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-          this.outwardTueTime = this.lResult.resultPassenger.outward.tueTime ? moment.utc(this.lResult.resultPassenger.outward.tueTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-          this.outwardWedTime = this.lResult.resultPassenger.outward.wedTime ? moment.utc(this.lResult.resultPassenger.outward.wedTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-          this.outwardThuTime = this.lResult.resultPassenger.outward.thuTime ? moment.utc(this.lResult.resultPassenger.outward.thuTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-          this.outwardFriTime = this.lResult.resultPassenger.outward.friTime ? moment.utc(this.lResult.resultPassenger.outward.friTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-          this.outwardSatTime = this.lResult.resultPassenger.outward.satTime ? moment.utc(this.lResult.resultPassenger.outward.satTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-          this.outwardSunTime = this.lResult.resultPassenger.outward.sunTime ? moment.utc(this.lResult.resultPassenger.outward.sunTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+          this.outwardMonTime = this.lResult.resultPassenger.outward.monTime
+            ? moment
+              .utc(this.lResult.resultPassenger.outward.monTime)
+              .format(this.$t("i18n.time.format.hourMinute"))
+            : null;
+          this.outwardTueTime = this.lResult.resultPassenger.outward.tueTime
+            ? moment
+              .utc(this.lResult.resultPassenger.outward.tueTime)
+              .format(this.$t("i18n.time.format.hourMinute"))
+            : null;
+          this.outwardWedTime = this.lResult.resultPassenger.outward.wedTime
+            ? moment
+              .utc(this.lResult.resultPassenger.outward.wedTime)
+              .format(this.$t("i18n.time.format.hourMinute"))
+            : null;
+          this.outwardThuTime = this.lResult.resultPassenger.outward.thuTime
+            ? moment
+              .utc(this.lResult.resultPassenger.outward.thuTime)
+              .format(this.$t("i18n.time.format.hourMinute"))
+            : null;
+          this.outwardFriTime = this.lResult.resultPassenger.outward.friTime
+            ? moment
+              .utc(this.lResult.resultPassenger.outward.friTime)
+              .format(this.$t("i18n.time.format.hourMinute"))
+            : null;
+          this.outwardSatTime = this.lResult.resultPassenger.outward.satTime
+            ? moment
+              .utc(this.lResult.resultPassenger.outward.satTime)
+              .format(this.$t("i18n.time.format.hourMinute"))
+            : null;
+          this.outwardSunTime = this.lResult.resultPassenger.outward.sunTime
+            ? moment
+              .utc(this.lResult.resultPassenger.outward.sunTime)
+              .format(this.$t("i18n.time.format.hourMinute"))
+            : null;
         }
         if (this.lResult.resultPassenger.return) {
-          this.returnMonTime = this.lResult.resultPassenger.return.monTime ? moment.utc(this.lResult.resultPassenger.return.monTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-          this.returnTueTime = this.lResult.resultPassenger.return.tueTime ? moment.utc(this.lResult.resultPassenger.return.tueTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-          this.returnWedTime = this.lResult.resultPassenger.return.wedTime ? moment.utc(this.lResult.resultPassenger.return.wedTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-          this.returnThuTime = this.lResult.resultPassenger.return.thuTime ? moment.utc(this.lResult.resultPassenger.return.thuTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-          this.returnFriTime = this.lResult.resultPassenger.return.friTime ? moment.utc(this.lResult.resultPassenger.return.friTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-          this.returnSatTime = this.lResult.resultPassenger.return.satTime ? moment.utc(this.lResult.resultPassenger.return.satTime).format(this.$t('i18n.time.format.hourMinute')) : null;
-          this.returnSunTime = this.lResult.resultPassenger.return.sunTime ? moment.utc(this.lResult.resultPassenger.return.sunTime).format(this.$t('i18n.time.format.hourMinute')) : null;
+          this.returnMonTime = this.lResult.resultPassenger.return.monTime
+            ? moment
+              .utc(this.lResult.resultPassenger.return.monTime)
+              .format(this.$t("i18n.time.format.hourMinute"))
+            : null;
+          this.returnTueTime = this.lResult.resultPassenger.return.tueTime
+            ? moment
+              .utc(this.lResult.resultPassenger.return.tueTime)
+              .format(this.$t("i18n.time.format.hourMinute"))
+            : null;
+          this.returnWedTime = this.lResult.resultPassenger.return.wedTime
+            ? moment
+              .utc(this.lResult.resultPassenger.return.wedTime)
+              .format(this.$t("i18n.time.format.hourMinute"))
+            : null;
+          this.returnThuTime = this.lResult.resultPassenger.return.thuTime
+            ? moment
+              .utc(this.lResult.resultPassenger.return.thuTime)
+              .format(this.$t("i18n.time.format.hourMinute"))
+            : null;
+          this.returnFriTime = this.lResult.resultPassenger.return.friTime
+            ? moment
+              .utc(this.lResult.resultPassenger.return.friTime)
+              .format(this.$t("i18n.time.format.hourMinute"))
+            : null;
+          this.returnSatTime = this.lResult.resultPassenger.return.satTime
+            ? moment
+              .utc(this.lResult.resultPassenger.return.satTime)
+              .format(this.$t("i18n.time.format.hourMinute"))
+            : null;
+          this.returnSunTime = this.lResult.resultPassenger.return.sunTime
+            ? moment
+              .utc(this.lResult.resultPassenger.return.sunTime)
+              .format(this.$t("i18n.time.format.hourMinute"))
+            : null;
         }
       }
     },
@@ -1006,9 +1344,9 @@ export default {
       this.contactLoading = true;
       this.carpoolDisabled = true;
       let params = {
-        "driver": this.lResult.resultDriver ? true : false,
-        "passenger": this.lResult.resultPassenger ? true : false,
-        "regular" : this.lResult.frequency == 2
+        driver: this.lResult.resultDriver ? true : false,
+        passenger: this.lResult.resultPassenger ? true : false,
+        regular: this.lResult.frequency == 2
       };
       let resultChoice = null;
       if (this.lResult.resultPassenger) {
@@ -1032,19 +1370,22 @@ export default {
         origin: this.lResult.origin.addressLocality,
         destination: this.lResult.destination.addressLocality,
         criteria: {
-          frequency:this.lResult.frequency,
-          fromDate:this.lResult.frequency==1 ? this.lResult.date : this.lResult.startDate,
-          fromTime:this.lResult.time,
-          monCheck:this.lResult.monCheck,
-          tueCheck:this.lResult.tueCheck,
-          wedCheck:this.lResult.wedCheck,
-          thuCheck:this.lResult.thuCheck,
-          friCheck:this.lResult.friCheck,
-          satCheck:this.lResult.satCheck,
-          sunCheck:this.lResult.sunCheck
+          frequency: this.lResult.frequency,
+          fromDate:
+            this.lResult.frequency == 1
+              ? this.lResult.date
+              : this.lResult.startDate,
+          fromTime: this.lResult.time,
+          monCheck: this.lResult.monCheck,
+          tueCheck: this.lResult.tueCheck,
+          wedCheck: this.lResult.wedCheck,
+          thuCheck: this.lResult.thuCheck,
+          friCheck: this.lResult.friCheck,
+          satCheck: this.lResult.satCheck,
+          sunCheck: this.lResult.sunCheck
         }
       };
-      this.$emit('contact', params);
+      this.$emit("contact", params);
     },
     carpoolConfirm(role) {
       this.carpoolRole = role;
@@ -1061,18 +1402,24 @@ export default {
       this.carpoolLoading = true;
       this.contactDisabled = true;
       let params = {
-        "driver": role==1,
-        "passenger": role==2,
-        "regular": this.lResult.frequency == 2,
-        "status" : this.lResult.askStatus
+        driver: role == 1,
+        passenger: role == 2,
+        regular: this.lResult.frequency == 2,
+        status: this.lResult.askStatus
       };
       let resultChoice = this.lResult.resultDriver;
       if (role == 2) resultChoice = this.lResult.resultPassenger;
       if (this.lResult.frequency == 2) {
         params.outwardSchedule = this.getDays(this.outwardTrip);
         params.returnSchedule = this.getDays(this.returnTrip);
-        params.fromDate = this.fromDate ? moment(this.fromDate).format(this.$t('i18n.date.format.computeDate')) : null;
-        params.toDate = this.maxDate ? moment(this.maxDate).format(this.$t('i18n.date.format.computeDate')) : null;
+        params.fromDate = this.fromDate
+          ? moment(this.fromDate).format(
+            this.$t("i18n.date.format.computeDate")
+          )
+          : null;
+        params.toDate = this.maxDate
+          ? moment(this.maxDate).format(this.$t("i18n.date.format.computeDate"))
+          : null;
       } else {
         params.date = resultChoice.outward.date;
         params.time = resultChoice.outward.time;
@@ -1080,7 +1427,7 @@ export default {
       // proposal and matching results
       params.adId = resultChoice.outward.proposalId;
       params.matchingId = resultChoice.outward.matchingId;
-      this.$emit('carpool', params);
+      this.$emit("carpool", params);
     },
     change() {
       this.computeMaxDate();
@@ -1092,92 +1439,104 @@ export default {
       this.returnTrip = params;
     },
     getDays(trip) {
-
-      if(trip.length==0) return null;
+      if (trip.length == 0) return null;
 
       let days = {
-        "monTime": null,
-        "tueTime": null,
-        "wedTime": null,
-        "thuTime": null,
-        "friTime": null,
-        "satTime": null,
-        "sunTime": null
+        monTime: null,
+        tueTime: null,
+        wedTime: null,
+        thuTime: null,
+        friTime: null,
+        satTime: null,
+        sunTime: null
       };
       for (var i = 0; i < trip.length; i++) {
-        if (trip[i].day == "mon") days.monTime = (trip[i].time) ? trip[i].time.replace("h",":") : null;
-        if (trip[i].day == "tue") days.tueTime = (trip[i].time) ? trip[i].time.replace("h",":") : null;
-        if (trip[i].day == "wed") days.wedTime = (trip[i].time) ? trip[i].time.replace("h",":") : null;
-        if (trip[i].day == "thu") days.thuTime = (trip[i].time) ? trip[i].time.replace("h",":") : null;
-        if (trip[i].day == "fri") days.friTime = (trip[i].time) ? trip[i].time.replace("h",":") : null;
-        if (trip[i].day == "sat") days.satTime = (trip[i].time) ? trip[i].time.replace("h",":") : null;
-        if (trip[i].day == "sun") days.sunTime = (trip[i].time) ? trip[i].time.replace("h",":") : null;
+        if (trip[i].day == "mon")
+          days.monTime = trip[i].time ? trip[i].time.replace("h", ":") : null;
+        if (trip[i].day == "tue")
+          days.tueTime = trip[i].time ? trip[i].time.replace("h", ":") : null;
+        if (trip[i].day == "wed")
+          days.wedTime = trip[i].time ? trip[i].time.replace("h", ":") : null;
+        if (trip[i].day == "thu")
+          days.thuTime = trip[i].time ? trip[i].time.replace("h", ":") : null;
+        if (trip[i].day == "fri")
+          days.friTime = trip[i].time ? trip[i].time.replace("h", ":") : null;
+        if (trip[i].day == "sat")
+          days.satTime = trip[i].time ? trip[i].time.replace("h", ":") : null;
+        if (trip[i].day == "sun")
+          days.sunTime = trip[i].time ? trip[i].time.replace("h", ":") : null;
       }
       return days;
     },
-    checkDay(day){
+    checkDay(day) {
       let found = false;
       this.outwardTrip.forEach((currentDay, index) => {
-        if(currentDay.day==day){
+        if (currentDay.day == day) {
           found = true;
         }
       });
       return found;
     },
-    publicProfileRefresh(data){
+    publicProfileRefresh(data) {
       this.refreshPublicProfile = false;
     },
-    refreshProfileSummary(data){
-      this.$emit("profileSummaryRefresh",data);
+    refreshProfileSummary(data) {
+      this.$emit("profileSummaryRefresh", data);
     },
-    getIcon(type,role) {
-      if (role == 'driver') {
-        if (type == 'origin') return "/images/cartography/pictos/home.svg";
-        if (type == 'destination') return "/images/cartography/pictos/flag.svg";
-        if (type == 'step') return "";
+    getIcon(type, role) {
+      if (role == "driver") {
+        if (type == "origin") return "/images/cartography/pictos/home.svg";
+        if (type == "destination") return "/images/cartography/pictos/flag.svg";
+        if (type == "step") return "";
       } else {
-        if (type == 'origin') return "pickup";
-        if (type == 'destination') return "dropoff";
-        if (type == 'step') return "";
+        if (type == "origin") return "pickup";
+        if (type == "destination") return "dropoff";
+        if (type == "step") return "";
       }
     },
-    buildMarkers(){
+    buildMarkers() {
       this.waypoints.forEach((waypoint, index) => {
-
         // Determine the icon
-        let icon = this.getIcon(waypoint.type,waypoint.role);
+        let icon = this.getIcon(waypoint.type, waypoint.role);
 
-        this.pointsToMap.push(this.buildPoint(waypoint.address.latitude,waypoint.address.longitude,"",icon,[36, 42],[10, 25]));
+        this.pointsToMap.push(
+          this.buildPoint(
+            waypoint.address.latitude,
+            waypoint.address.longitude,
+            "",
+            icon,
+            [36, 42],
+            [10, 25]
+          )
+        );
       });
       this.$refs.mmap.redrawMap();
     },
-    getColorCircleMarker(){
+    getColorCircleMarker() {
       return this.primaryColor;
     },
-    getColorJourney(requester = null){
-      if(requester == null){
-        if(this.lResult.role == 1 || this.lResult.role == 2){
+    getColorJourney(requester = null) {
+      if (requester == null) {
+        if (this.lResult.role == 1 || this.lResult.role == 2) {
           return this.secondaryColor;
         }
-      }
-      else if(requester){
+      } else if (requester) {
         return this.primaryColor;
-      }
-      else{
+      } else {
         return this.secondaryColor;
       }
       return this.primaryColor;
     },
-    buildJourney(route, requester = null){
+    buildJourney(route, requester = null) {
       let currentProposal = {
-        latLngs:route.directPoints,
-        color:this.getColorJourney(requester),
-        dashArray:(requester !== null && requester) ? '12' : null
+        latLngs: route.directPoints,
+        color: this.getColorJourney(requester),
+        dashArray: requester !== null && requester ? "12" : null
       };
 
       this.directionWay.push(currentProposal);
       this.$refs.mmap.redrawMap();
-      this.$emit('mapRefreshed');
+      this.$emit("mapRefreshed");
     },
     buildPoint: function(
       lat,
@@ -1191,10 +1550,10 @@ export default {
       let point = {
         title: title,
         latLng: L.latLng(lat, lng),
-        icon: {},
+        icon: {}
       };
 
-      if(pictoUrl == "pickup" || pictoUrl == "dropoff"){
+      if (pictoUrl == "pickup" || pictoUrl == "dropoff") {
         point.circleMarker = true;
         point.color = this.getColorCircleMarker();
       }
@@ -1203,69 +1562,71 @@ export default {
         point.icon = {
           url: pictoUrl,
           size: size,
-          anchor: anchor,
+          anchor: anchor
         };
       }
 
       if (popupDesc !== "") {
         point.popup = {
           title: title,
-          description: popupDesc,
+          description: popupDesc
         };
       }
 
       return point;
     },
     getRoute() {
-
-      if(this.lResult.role == 3){
-
+      if (this.lResult.role == 3) {
         let paramsRequester = "?";
         let paramsCarpooler = "?";
         let nbWaypointsRequester = 0;
         let nbWaypointsCarpooler = 0;
-        this.waypoints.forEach((item,key) => {
+        this.waypoints.forEach((item, key) => {
           if (item.address) {
-            if(item.person=="carpooler"){
+            if (item.person == "carpooler") {
               nbWaypointsCarpooler++;
-              paramsCarpooler += `&points[${nbWaypointsCarpooler}][longitude]=${item.address.longitude}&points[${nbWaypointsCarpooler}][latitude]=${item.address.latitude}`;
-            }
-            else{
+              paramsCarpooler += `&points[${nbWaypointsCarpooler}][longitude]=${
+                item.address.longitude
+              }&points[${nbWaypointsCarpooler}][latitude]=${
+                item.address.latitude
+              }`;
+            } else {
               nbWaypointsRequester++;
-              paramsRequester += `&points[${nbWaypointsRequester}][longitude]=${item.address.longitude}&points[${nbWaypointsRequester}][latitude]=${item.address.latitude}`;
+              paramsRequester += `&points[${nbWaypointsRequester}][longitude]=${
+                item.address.longitude
+              }&points[${nbWaypointsRequester}][latitude]=${
+                item.address.latitude
+              }`;
             }
           }
         });
 
-        this.callSig(paramsCarpooler,false);
-        this.callSig(paramsRequester,true);
-
-      }
-      else{
+        this.callSig(paramsCarpooler, false);
+        this.callSig(paramsRequester, true);
+      } else {
         let params = "?";
         let nbWaypoints = 0;
-        this.waypoints.forEach((item,key) => {
+        this.waypoints.forEach((item, key) => {
           if (item.address) {
             nbWaypoints++;
-            params += `&points[${nbWaypoints}][longitude]=${item.address.longitude}&points[${nbWaypoints}][latitude]=${item.address.latitude}`;
+            params += `&points[${nbWaypoints}][longitude]=${
+              item.address.longitude
+            }&points[${nbWaypoints}][latitude]=${item.address.latitude}`;
           }
         });
         this.callSig(params);
         nbWaypoints++;
       }
-
     },
-    callSig(params, requester = null){
+    callSig(params, requester = null) {
       maxios
         .get(`${this.geoRouteUrl}${params}`)
         .then(res => {
-          if(requester == null){
+          if (requester == null) {
             this.route = res.data.member[0];
-          }
-          else if(requester){
+          } else if (requester) {
             this.routeRequester = res.data.member[0];
-          }
-          else{
+          } else {
             this.routeCarpooler = res.data.member[0];
           }
         })
@@ -1273,7 +1634,7 @@ export default {
           console.error(err);
         });
     },
-    cleanMap(){
+    cleanMap() {
       this.route = [];
       this.routeCarpooler = [];
       this.routeRequester = [];
@@ -1282,12 +1643,11 @@ export default {
       this.directionWay = [];
       this.$refs.mmap.redrawMap();
     }
-
-  },
+  }
 };
 </script>
 <style lang="scss" scoped>
-.toolbar{
-    color: #fff;
+.toolbar {
+  color: #fff;
 }
 </style>
