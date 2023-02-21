@@ -24,8 +24,8 @@
 namespace App\CarpoolStandard\DataPersister;
 
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
-use App\CarpoolStandard\Entity\Message;
-use App\CarpoolStandard\Service\MessageManager;
+use App\CarpoolStandard\Entity\Booking;
+use App\CarpoolStandard\Service\BookingManager;
 use Symfony\Component\Security\Core\Security;
 
 /**
@@ -33,27 +33,27 @@ use Symfony\Component\Security\Core\Security;
  *
  * @author Remi Wortemann <remi.wortemann@mobicoop.org>
  */
-final class MessageCollectionDataPersister implements ContextAwareDataPersisterInterface
+final class BookingCollectionDataPersister implements ContextAwareDataPersisterInterface
 {
     private $security;
-    private $messageManager;
+    private $bookingManager;
 
     public function __construct(
         Security $security,
-        MessageManager $messageManager
+        BookingManager $bookingManager
     ) {
         $this->security = $security;
-        $this->messageManager = $messageManager;
+        $this->bookingManager = $bookingManager;
     }
 
     public function supports($data, array $context = []): bool
     {
-        return $data instanceof Message && isset($context['collection_operation_name']) && 'carpool_standard_post' == $context['collection_operation_name'];
+        return $data instanceof Booking && isset($context['collection_operation_name']) && 'carpool_standard_post' == $context['collection_operation_name'];
     }
 
     public function persist($data, array $context = [])
     {
-        return $this->messageManager->postMessage($data);
+        return $this->bookingManager->postBooking($data);
     }
 
     public function remove($data, array $context = [])

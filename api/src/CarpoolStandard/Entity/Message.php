@@ -21,7 +21,7 @@
  *    LICENSE
  */
 
-namespace App\CarpoolStandard\Ressource;
+namespace App\CarpoolStandard\Entity;
 
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
@@ -58,7 +58,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *      itemOperations={
  *          "carpool_standard_get"={
  *             "method"="GET",
- *             "path"="/messages",
+ *             "path"="/messages/{id}",
  *             "security"="is_granted('reject',object)",
  *              "swagger_context" = {
  *                  "tags"={"Carpool Standard"}
@@ -74,9 +74,9 @@ class Message
     public const DEFAULT_ID = 999999999999;
 
     /**
-     * @var int the id of this payment week
+     * @var int the id of the message
      *
-     * @Groups({"read", "write"})
+     * @Groups({"read"})
      * @ApiProperty(identifier=true)
      */
     private $id;
@@ -114,21 +114,21 @@ class Message
     private $recipientCarpoolerType;
 
     /**
-     * @var string ID of the Driver's journey to which the message is related (if any)
+     * @var null|string ID of the Driver's journey to which the message is related (if any)
      *
      * @Groups({"read", "write"})
      */
     private $driverJourneyId;
 
     /**
-     * @var string ID of the Passenger's journey to which the message is related (if any)
+     * @var null|string ID of the Passenger's journey to which the message is related (if any)
      *
      * @Groups({"read", "write"})
      */
     private $passengerJourneyId;
 
     /**
-     * @var string ID ($uuid) of the booking to which the message is related (if any)
+     * @var null|string ID ($uuid) of the booking to which the message is related (if any)
      *
      * @Groups({"read", "write"})
      */
@@ -202,36 +202,36 @@ class Message
         return $this;
     }
 
-    public function getDriverJourneyId(): string
+    public function getDriverJourneyId(): ?string
     {
         return $this->driverJourneyId;
     }
 
-    public function setDriverJourneyId(string $driverJourneyId): self
+    public function setDriverJourneyId(?string $driverJourneyId): self
     {
         $this->driverJourneyId = $driverJourneyId;
 
         return $this;
     }
 
-    public function getPassengerJourneyId(): string
+    public function getPassengerJourneyId(): ?string
     {
         return $this->passengerJourneyId;
     }
 
-    public function setPassengerJourneyId(string $passengerJourneyId): self
+    public function setPassengerJourneyId(?string $passengerJourneyId): self
     {
         $this->passengerJourneyId = $passengerJourneyId;
 
         return $this;
     }
 
-    public function getBookingId(): string
+    public function getBookingId(): ?string
     {
         return $this->bookingId;
     }
 
-    public function setBookingId(string $bookingId): self
+    public function setBookingId(?string $bookingId): self
     {
         $this->bookingId = $bookingId;
 
