@@ -202,8 +202,6 @@ class MobConnectSubscriptionManager
         $response = $this->_mobConnectApiProvider->verifyUserSubscription($this->__getSubscriptionId());
 
         $this->_userSubscription->setStatus($response->getStatus());
-        $this->_userSubscription->setRejectionReason($response->getRejectReason());
-        $this->_userSubscription->setComment($response->getComment());
         $this->_userSubscription->setVerificationDate();
 
         $this->_userSubscription->setLastTimestamp($response->getTimestamp());
@@ -477,7 +475,7 @@ class MobConnectSubscriptionManager
 
         $paymentDate = !is_null($carpoolPayment) && !is_null($carpoolPayment->getUpdatedDate()) ? $carpoolPayment->getUpdatedDate() : null;
 
-        if ($this->_userSubscription) {
+        if (isset($journey) && $this->_userSubscription) {
             $this->__setApiProviderParams();
 
             switch (true) {

@@ -46,7 +46,7 @@ class Log
     public function __construct(
         LoggerInterface $logger,
         string $name,
-        User $user,
+        ?User $user,
         array $optionalArgs = []
     ) {
         $this->_logger = $logger;
@@ -54,7 +54,7 @@ class Log
         $this->_log = [
             'name' => $name,
             'datetime' => new \DateTime('now'),
-            'user' => $user->getId(),
+            'user' => !is_null($user) ? $user->getId() : null,
         ];
 
         foreach ($optionalArgs as $key => $arg) {
