@@ -285,9 +285,9 @@ class MobConnectSubscriptionManager
      */
     private function __associateJourneyToSubscription(array $journeys, CarpoolProof $carpoolProof, CarpoolPayment $carpoolPayment = null)
     {
-        $filteredJourneys = array_filter($journeys, function ($journey) use ($carpoolProof) {
+        $filteredJourneys = array_values(array_filter($journeys, function ($journey) use ($carpoolProof) {
             return $journey->getCarpoolProof() === $carpoolProof;
-        });
+        }));
 
         switch (is_null($carpoolPayment)) {
             case true:
@@ -644,13 +644,15 @@ class MobConnectSubscriptionManager
         foreach ($filteredCarpoolItems as $carpoolItem) {
             $driver = $carpoolItem->getCreditorUser();
 
-            // Array of carpoolProof where driver is the carpoolItem driver
-            $filteredCarpoolProofs = array_filter($carpoolItem->getAsk()->getCarpoolProofs(), function (CarpoolProof $carpoolProof) use ($driver) {
-                return $carpoolProof->getDriver() === $driver;
-            });
+            if (!is_null($carpoolItem->getAsk())) {
+                // Array of carpoolProof where driver is the carpoolItem driver
+                $filteredCarpoolProofs = array_filter($carpoolItem->getAsk()->getCarpoolProofs(), function (CarpoolProof $carpoolProof) use ($driver) {
+                    return $carpoolProof->getDriver() === $driver;
+                });
 
-            foreach ($filteredCarpoolProofs as $carpool) {
-                $this->updateSubscription($carpool, $carpoolPayment);
+                foreach ($filteredCarpoolProofs as $carpoolProof) {
+                    $this->updateSubscription($carpoolProof, $carpoolPayment);
+                }
             }
         }
     }
