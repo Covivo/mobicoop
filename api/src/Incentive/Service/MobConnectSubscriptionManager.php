@@ -512,7 +512,7 @@ class MobConnectSubscriptionManager
 
         $paymentDate = !is_null($carpoolPayment) && !is_null($carpoolPayment->getUpdatedDate()) ? $carpoolPayment->getUpdatedDate() : null;
 
-        if ($this->_userSubscription) {
+        if (isset($journey) && $this->_userSubscription) {
             $this->__setApiProviderParams();
 
             switch (true) {
