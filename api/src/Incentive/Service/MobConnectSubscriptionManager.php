@@ -577,16 +577,12 @@ class MobConnectSubscriptionManager
 
                             $this->_em->flush();
 
-                            $this->_em->flush();
-
                             break;
 
                         case CeeJourneyService::SHORT_DISTANCE_TRIP_THRESHOLD:
                             $this->_loggerService->log('The journey is the last ('.CeeJourneyService::SHORT_DISTANCE_TRIP_THRESHOLD.')');
                             $journey->setBonusStatus(CeeJourneyService::BONUS_STATUS_PENDING);
                             $journey->setRank(CeeJourneyService::SHORT_DISTANCE_TRIP_THRESHOLD);
-
-                            $this->_em->flush();
 
                             $this->_em->flush();
 
