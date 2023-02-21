@@ -37,7 +37,7 @@ class MobConnectSubscriptionVerifyResponse extends MobConnectSubscriptionRespons
     /**
      * Get the value of _status.
      */
-    public function getStatus(): string
+    public function getStatus(): ?string
     {
         return $this->_status;
     }
