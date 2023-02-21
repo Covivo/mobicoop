@@ -65,7 +65,7 @@ class MobConnectSubscriptionVerifyResponse extends MobConnectSubscriptionRespons
     /**
      * Set the value of _rejectReason.
      */
-    public function setRejectReason(string $_rejectReason): self
+    public function setRejectReason(?string $_rejectReason): self
     {
         $this->_rejectReason = $_rejectReason;
 
@@ -85,7 +85,7 @@ class MobConnectSubscriptionVerifyResponse extends MobConnectSubscriptionRespons
     /**
      * Set the value of _comment.
      */
-    public function setComment(string $_comments): self
+    public function setComment(?string $_comments): self
     {
         $this->_comments = $_comments;
 
