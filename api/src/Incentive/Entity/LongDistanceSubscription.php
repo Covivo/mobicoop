@@ -19,9 +19,6 @@ class LongDistanceSubscription
     public const INITIAL_COMMITMENT_PROOF_PATH = '/api/public/upload/eec-incentives/initial-commitment-proof';
     public const HONOUR_CERTIFICATE_PATH = '/api/public/upload/eec-incentives/long-distance-subscription/honour-certificate/';
 
-    public const STATUS_REJECTED = 'VALIDEE';
-    public const STATUS_VALIDATED = 'REJETEE';
-
     /**
      * @var int The user subscription ID
      *
@@ -45,7 +42,7 @@ class LongDistanceSubscription
     /**
      * @var ArrayCollection The long distance log associated with the user
      *
-     * @ORM\OneToMany(targetEntity="\App\Incentive\Entity\LongDistanceJourney", mappedBy="longDistanceSubscription", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="\App\Incentive\Entity\LongDistanceJourney", mappedBy="subscription", cascade={"persist"})
      */
     private $longDistanceJourneys;
 
@@ -255,7 +252,7 @@ class LongDistanceSubscription
     public function addLongDistanceJourney(LongDistanceJourney $longDistanceJourney): self
     {
         $this->longDistanceJourneys[] = $longDistanceJourney;
-        $longDistanceJourney->setLongDistanceSubscription($this);
+        $longDistanceJourney->setSubscription($this);
 
         return $this;
     }

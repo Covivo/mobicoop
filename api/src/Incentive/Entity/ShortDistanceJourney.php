@@ -32,7 +32,7 @@ class ShortDistanceJourney
     /**
      * @ORM\ManyToOne(targetEntity="\App\Incentive\Entity\ShortDistanceSubscription", inversedBy="shortDistanceSubscriptions")
      */
-    private $shortDistanceSubscription;
+    private $subscription;
 
     /**
      * @var string the start locality of the journey
@@ -391,21 +391,19 @@ class ShortDistanceJourney
     }
 
     /**
-     * Get the value of shortDistanceSubscription.
+     * Get the value of subscription.
      */
-    public function getShortDistanceSubscription(): ShortDistanceSubscription
+    public function getSubscription(): ShortDistanceSubscription
     {
-        return $this->shortDistanceSubscription;
+        return $this->subscription;
     }
 
     /**
-     * Set the value of shortDistanceSubscription.
-     *
-     * @param mixed $shortDistanceSubscription
+     * Set the value of subscription.
      */
-    public function setShortDistanceSubscription(ShortDistanceSubscription $shortDistanceSubscription): self
+    public function setSubscription(ShortDistanceSubscription $subscription): self
     {
-        $this->shortDistanceSubscription = $shortDistanceSubscription;
+        $this->subscription = $subscription;
 
         return $this;
     }

@@ -36,6 +36,9 @@ abstract class CeeJourneyService
     public const VERIFICATION_STATUS_PENDING = 0;
     public const VERIFICATION_STATUS_ENDED = 1;
 
+    public const STATUS_REJECTED = 'REJETEE';
+    public const STATUS_VALIDATED = 'VALIDEE';
+
     // LOG
     private const ACCOUNT_READY_FOR_LONG_SUBSCRIPTION = 'is_user_account_ready_for_long_subscription';
     private const ACCOUNT_READY_FOR_SHORT_SUBSCRIPTION = 'is_user_account_ready_for_short_subscription';

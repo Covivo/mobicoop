@@ -32,7 +32,7 @@ class LongDistanceJourney
     /**
      * @ORM\ManyToOne(targetEntity="\App\Incentive\Entity\LongDistanceSubscription", inversedBy="longDistanceJourneys")
      */
-    private $longDistanceSubscription;
+    private $subscription;
 
     /**
      * @var string the start locality of the journey
@@ -311,19 +311,19 @@ class LongDistanceJourney
     }
 
     /**
-     * Get the value of longDistanceSubscription.
+     * Get the value of subscription.
      */
-    public function getlongDistanceSubscription(): LongDistanceSubscription
+    public function getSubscription(): LongDistanceSubscription
     {
-        return $this->longDistanceSubscription;
+        return $this->subscription;
     }
 
     /**
-     * Set the value of longDistanceSubscription.
+     * Set the value of subscription.
      */
-    public function setLongDistanceSubscription(LongDistanceSubscription $longDistanceSubscription): self
+    public function setSubscription(LongDistanceSubscription $subscription): self
     {
-        $this->longDistanceSubscription = $longDistanceSubscription;
+        $this->subscription = $subscription;
 
         return $this;
     }
