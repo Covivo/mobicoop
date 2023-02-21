@@ -95,7 +95,7 @@ class LongDistanceJourney
      *
      * @var int
      *
-     * @ORM\Column(type="smallint", options={"default": 1, "comment":"Bonus Status of the EEC form"})
+     * @ORM\Column(type="smallint", options={"default": 0, "comment":"Bonus Status of the EEC form"})
      */
     private $bonusStatus = CeeJourneyService::BONUS_STATUS_NO;
 
@@ -146,6 +146,7 @@ class LongDistanceJourney
         $this->setCarpoolersNumber($carpoolersNumber);
         $this->setStartDate($carpoolProof->getAsk()->getMatching()->getProposalOffer()->getCreatedDate()->format('Y-m-d H:i:s'));
         $this->setEndDate($carpoolPayment->getCreatedDate()->format('Y-m-d H:i:s'));
+        $this->setBonusStatus(CeeJourneyService::BONUS_STATUS_PENDING);
     }
 
     /**
