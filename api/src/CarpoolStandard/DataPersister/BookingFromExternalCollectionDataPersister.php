@@ -21,29 +21,43 @@
  *    LICENSE
  */
 
-namespace App\CarpoolStandard\Service;
+namespace App\CarpoolStandard\DataPersister;
 
+use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
 use App\CarpoolStandard\Entity\Booking;
+use App\CarpoolStandard\Service\BookingManager;
+use Symfony\Component\Security\Core\Security;
 
 /**
+ * Post a Message.
+ *
  * @author Remi Wortemann <remi.wortemann@mobicoop.org>
  */
-class BookingManager
+final class BookingFromExternalCollectionDataPersister implements ContextAwareDataPersisterInterface
 {
-    private $carpoolStandardProvider;
+    private $security;
+    private $bookingManager;
 
-    public function __construct(CarpoolStandardProvider $carpoolStandardProvider)
-    {
-        $this->carpoolStandardProvider = $carpoolStandardProvider;
+    public function __construct(
+        Security $security,
+        BookingManager $bookingManager
+    ) {
+        $this->security = $security;
+        $this->bookingManager = $bookingManager;
     }
 
-    public function postBooking(Booking $booking)
+    public function supports($data, array $context = []): bool
     {
-        $this->carpoolStandardProvider->postBooking($booking);
+        return $data instanceof Booking && isset($context['collection_operation_name']) && 'carpool_standard_post_from_external' == $context['collection_operation_name'];
     }
 
-    public function treatExternalBooking(Booking $booking)
+    public function persist($data, array $context = [])
     {
-        return 'data send';
+        return $this->bookingManager->treatExternalBooking($data);
+    }
+
+    public function remove($data, array $context = [])
+    {
+        // call your persistence layer to delete $data
     }
 }
