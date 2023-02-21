@@ -512,7 +512,7 @@ class MobConnectSubscriptionManager
 
         $paymentDate = !is_null($carpoolPayment) && !is_null($carpoolPayment->getUpdatedDate()) ? $carpoolPayment->getUpdatedDate() : null;
 
-        if ($this->_userSubscription) {
+        if (isset($journey) && $this->_userSubscription) {
             $this->__setApiProviderParams();
 
             switch (true) {
@@ -675,23 +675,27 @@ class MobConnectSubscriptionManager
             switch (true) {
                 case $journey instanceof LongDistanceJourney:
                     $this->_loggerService->log('Verification for the long-distance journey with the ID '.$journey->getId());
-                    $this->_userSubscription = $journey->getLongDistanceSubscription();
 
                     break;
 
                 case $journey instanceof ShortDistanceJourney:
                     $this->_loggerService->log('Verification for the short-distance journey with the ID '.$journey->getId());
-                    $this->_userSubscription = $journey->getShortDistanceSubscription();
 
                     break;
             }
+
+            $this->_userSubscription = $journey->getSubscription();
 
             $this->_user = $this->_userSubscription->getUser();
 
             $response = $this->__verifySubscription();
 
-            if (ShortDistanceSubscription::STATUS_VALIDATED === $this->_userSubscription->getStatus()) {
-                $journey->setBonusStatus(CeeJourneyService::BONUS_STATUS_PENDING);
+            if (!is_null($this->_userSubscription) && CeeJourneyService::STATUS_VALIDATED === $this->_userSubscription->getStatus()) {
+                $journey->setBonusStatus(CeeJourneyService::BONUS_STATUS_OK);
+                $journey->getSubscription()->setStatus(CeeJourneyService::STATUS_VALIDATED);
+            } else {
+                $journey->setBonusStatus(CeeJourneyService::BONUS_STATUS_NO);
+                $journey->getSubscription()->setStatus(CeeJourneyService::STATUS_REJECTED);
             }
 
             $journey->setHttpRequestStatus($response->getCode());

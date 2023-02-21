@@ -20,9 +20,6 @@ class ShortDistanceSubscription
     public const INITIAL_COMMITMENT_PROOF_PATH = '/api/public/upload/eec-incentives/initial-commitment-proof';
     public const HONOUR_CERTIFICATE_PATH = '/api/public/upload/eec-incentives/short-distance-subscription/honour-certificate/';
 
-    public const STATUS_REJECTED = 'REJETEE';
-    public const STATUS_VALIDATED = 'VALIDEE';
-
     /**
      * @var int The user subscription ID
      *
@@ -46,7 +43,7 @@ class ShortDistanceSubscription
     /**
      * @var ArrayCollection The short distance log associated with the user
      *
-     * @ORM\OneToMany(targetEntity="\App\Incentive\Entity\ShortDistanceJourney", mappedBy="shortDistanceSubscription", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="\App\Incentive\Entity\ShortDistanceJourney", mappedBy="subscription", cascade={"persist"})
      */
     private $shortDistanceJourneys;
 
@@ -258,14 +255,14 @@ class ShortDistanceSubscription
     public function addShortDistanceJourney(ShortDistanceJourney $shortDistanceJourney): self
     {
         $this->shortDistanceJourneys[] = $shortDistanceJourney;
-        $shortDistanceJourney->setShortDistanceSubscription($this);
+        $shortDistanceJourney->setSubscription($this);
 
         return $this;
     }
 
     public function removeShortDistanceJourney(ShortDistanceJourney $shortDistanceJourney)
     {
-        return $this->shortDistanceJourney->removeElement($shortDistanceJourney);
+        return $this->shortDistanceJourneys->removeElement($shortDistanceJourney);
     }
 
     public function getShortDistanceJourneys()
