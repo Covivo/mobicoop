@@ -13,7 +13,6 @@ use App\Incentive\Entity\LongDistanceSubscription;
 use App\Incentive\Entity\MobConnectAuth;
 use App\Incentive\Entity\ShortDistanceJourney;
 use App\Incentive\Entity\ShortDistanceSubscription;
-use App\Incentive\Event\ShortDistanceSubscriptionClosedEvent;
 use App\Incentive\Resource\CeeSubscriptions;
 use App\Payment\Entity\CarpoolItem;
 use App\Payment\Entity\CarpoolPayment;
@@ -554,9 +553,6 @@ class MobConnectSubscriptionManager
                         case CeeJourneyService::SHORT_DISTANCE_TRIP_THRESHOLD:
                             $this->_loggerService->log('The journey is the last ('.CeeJourneyService::SHORT_DISTANCE_TRIP_THRESHOLD.')');
                             $journey->setBonusStatus(ShortDistanceJourney::BONUS_STATUS_PENDING);
-
-                            $event = new ShortDistanceSubscriptionClosedEvent($this->_userSubscription);
-                            $this->_eventDispatcher->dispatch(ShortDistanceSubscriptionClosedEvent::NAME, $event);
 
                             $this->_em->flush();
 
