@@ -45,7 +45,7 @@ class MobConnectSubscriptionVerifyResponse extends MobConnectSubscriptionRespons
     /**
      * Set the value of _status.
      */
-    public function setStatus(string $_status): self
+    public function setStatus(?string $_status): self
     {
         $this->_status = $_status;
 
