@@ -264,7 +264,7 @@ class UserManager
         $params = null;
         if (!is_null($orderBy)) {
             $params = [];
-            $params["order['.{$orderBy}']"] = $order;
+            $params["order[{$orderBy}]"] = $order;
         }
 
         $response = $this->dataProvider->getSubCollection($id, Mass::class, null, $params);
