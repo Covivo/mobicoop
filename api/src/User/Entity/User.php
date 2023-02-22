@@ -354,6 +354,10 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "pagination_enabled"=false,
  *              "output"=UserExport::class,
  *              "normalization_context"={"groups"={"user-export"}},
+ *              "security"="is_granted('admin_user_export_all',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"},
+ *              }
  *          },
  *          "ADMIN_associate_campaign"={
  *              "path"="/admin/users/associate-campaign",
