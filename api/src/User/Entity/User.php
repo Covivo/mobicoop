@@ -62,13 +62,13 @@ use App\Match\Entity\MassPerson;
 use App\Solidary\Entity\Operate;
 use App\Solidary\Entity\Solidary;
 use App\Solidary\Entity\SolidaryUser;
-use App\User\Admin\Resource\UserExport;
 use App\User\Controller\EECSubscription;
 use App\User\Controller\UserAlerts;
 use App\User\Controller\UserAlertsUpdate;
 use App\User\Controller\UserAsks;
 use App\User\Controller\UserCheckPhoneToken;
 use App\User\Controller\UserDelete;
+use App\User\Controller\UserExport;
 use App\User\Controller\UserGeneratePhoneToken;
 use App\User\Controller\UserRegistration;
 use App\User\Controller\UserSendValidationEmail;
@@ -337,6 +337,17 @@ use Symfony\Component\Validator\Constraints as Assert;
  *                  "tags"={"Administration"}
  *              }
  *          },
+ *          "ADMIN_exportAll"={
+ *              "method"="GET",
+ *              "path"="/admin/users/export",
+ *              "controller"=UserExport::class,
+ *              "formats"={"csv"={"text/csv"}},
+ *              "normalization_context"={"groups"={"user-export"}},
+ *              "security"="is_granted('admin_user_export_all',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"},
+ *              }
+ *          },
  *          "ADMIN_post"={
  *              "path"="/admin/users",
  *              "method"="POST",
@@ -345,18 +356,6 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "security"="is_granted('admin_user_create',object)",
  *              "swagger_context" = {
  *                  "tags"={"Administration"}
- *              }
- *          },
- *          "ADMIN_exportAll"={
- *              "method"="GET",
- *              "path"="/admin/users/export",
- *              "formats"={"csv"={"text/csv"}},
- *              "pagination_enabled"=false,
- *              "output"=UserExport::class,
- *              "normalization_context"={"groups"={"user-export"}},
- *              "security"="is_granted('admin_user_export_all',object)",
- *              "swagger_context" = {
- *                  "tags"={"Administration"},
  *              }
  *          },
  *          "ADMIN_associate_campaign"={

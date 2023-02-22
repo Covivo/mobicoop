@@ -1,8 +1,7 @@
 <?php
 
-namespace App\User\Admin\Resource;
+namespace App\User\Entity;
 
-use App\User\Entity\User;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 
