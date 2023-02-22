@@ -37,7 +37,11 @@ class UserExportDataTransformer implements DataTransformerInterface
         $userExport->setTelephone($object->getTelephone());
         $userExport->setBirthDate($object->getBirthDate());
         $userExport->setRegistrationDate($object->getCreatedDate());
+        $userExport->setLastActivityDate($object->getLastActivityDate());
         $userExport->setNewsletterSubscription($object->hasNewsSubscription());
+
+        $maxValidityDate = $this->_proposalRepository->getUserMaxValidityAnnonceDate($object);
+        $userExport->setMaxValidityAnnonceDate(isset($maxValidityDate['MaxValiditeAnnonce']) ? new \DateTime($maxValidityDate['MaxValiditeAnnonce']) : null);
 
         $adresses = array_values(array_filter($object->getAddresses(), function ($address) {
             return $address->isHome();
@@ -47,7 +51,6 @@ class UserExportDataTransformer implements DataTransformerInterface
         $userExport->setSolidaryUser($this->isUserSolidary($object));
 
         $communities = $this->_communityUserRepository->findUserCommunities($object);
-
         $userExport->setCommunity1(isset($communities['Communauté1']) ? $communities['Communauté1'] : null);
         $userExport->setCommunity1(isset($communities['Communauté2']) ? $communities['Communauté2'] : null);
         $userExport->setCommunity1(isset($communities['Communauté3']) ? $communities['Communauté3'] : null);

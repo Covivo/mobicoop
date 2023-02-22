@@ -1511,6 +1511,17 @@ class ProposalRepository
         return $stmt->fetch();
     }
 
+    public function getUserMaxValidityAnnonceDate(User $user)
+    {
+        $query = 'SELECT MAX(tmva.AnnonceFinValidite) as MaxValiditeAnnonce FROM ( select p.user_id, CASE c.frequency WHEN 1 THEN c.from_date WHEN 2 THEN c.to_date END as AnnonceFinValidite from proposal p inner join criteria c on c.id = p.criteria_id where p.private = 0 and ( p.dynamic != 1 or p.dynamic is null ) AND p.user_id = :user_id ) as tmva GROUP BY tmva.user_id';
+
+        $conn = $this->entityManager->getConnection();
+        $stmt = $conn->prepare($query);
+        $stmt->execute(['user_id' => $user->getId()]);
+
+        return $stmt->fetch();
+    }
+
     /**
      * Build the regular where part for a punctual proposal.
      *

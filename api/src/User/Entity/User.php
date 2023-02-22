@@ -99,6 +99,7 @@ use App\User\Filter\RezoKitFilter;
 use App\User\Filter\SolidaryCandidateFilter;
 use App\User\Filter\SolidaryExclusiveFilter;
 use App\User\Filter\SolidaryFilter;
+use App\User\Filter\TerritoryFilter;
 use App\User\Filter\UnsubscribeTokenFilter;
 use App\User\Filter\WaypointTerritoryFilter;
 use DateTime;
@@ -352,7 +353,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "formats"={"csv"={"text/csv"}},
  *              "pagination_enabled"=false,
  *              "output"=UserExport::class,
- *              "normalization_context"={"groups"={"user-export"}}
+ *              "normalization_context"={"groups"={"user-export"}},
  *          },
  *          "ADMIN_associate_campaign"={
  *              "path"="/admin/users/associate-campaign",
@@ -638,6 +639,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ApiFilter(HitchHikerFilter::class)
  * @ApiFilter(DateFilter::class, properties={"createdDate": DateFilter::EXCLUDE_NULL,"lastActivityDate": DateFilter::EXCLUDE_NULL})
  * @ApiFilter(OrderFilter::class, properties={"id", "givenName", "status","familyName", "email", "gender", "identityStatus", "nationality", "birthDate", "createdDate", "validatedDate", "lastActivityDate", "telephone", "rezoKit", "cardLetter"}, arguments={"orderParameterName"="order"})
+ * @ApiFilter(TerritoryFilter::class, properties={"territory"})
  */
 class User implements UserInterface, EquatableInterface
 {

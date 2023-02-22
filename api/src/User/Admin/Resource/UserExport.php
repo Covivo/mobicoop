@@ -83,9 +83,27 @@ class UserExport
      *
      * @Groups({"user-export"})
      *
+     * @SerializedName("Date de dernière activité")
+     */
+    private $lastActivityDate;
+
+    /**
+     * @var string
+     *
+     * @Groups({"user-export"})
+     *
      * @SerializedName("Accord pour newsletter")
      */
     private $newsletterSubscription = self::FALSE;
+
+    /**
+     * @var string
+     *
+     * @Groups({"user-export"})
+     *
+     * @SerializedName("Date de validité d'annonce")
+     */
+    private $maxValidityAnnonceDate;
 
     /**
      * @var string
@@ -226,7 +244,7 @@ class UserExport
     /**
      * Set the value of familyName.
      */
-    public function setFamilyName(string $familyName): self
+    public function setFamilyName(?string $familyName): self
     {
         $this->familyName = $familyName;
 
@@ -246,7 +264,7 @@ class UserExport
     /**
      * Set the value of givenName.
      */
-    public function setGivenName(string $givenName): self
+    public function setGivenName(?string $givenName): self
     {
         $this->givenName = $givenName;
 
@@ -266,7 +284,7 @@ class UserExport
     /**
      * Set the value of gender.
      */
-    public function setGender(string $gender): self
+    public function setGender(?string $gender): self
     {
         if (!in_array($gender, User::GENDERS)) {
             throw new \LogicException('Gender is not defined');
@@ -307,7 +325,7 @@ class UserExport
     /**
      * Set the value of email.
      */
-    public function setEmail(string $email): self
+    public function setEmail(?string $email): self
     {
         $this->email = $email;
 
@@ -327,7 +345,7 @@ class UserExport
     /**
      * Set the value of telephone.
      */
-    public function setTelephone(string $telephone): self
+    public function setTelephone(?string $telephone): self
     {
         $this->telephone = $telephone;
 
@@ -347,17 +365,15 @@ class UserExport
     /**
      * Set the value of birthDate.
      */
-    public function setBirthDate(\DateTime $birthDate): self
+    public function setBirthDate(?\DateTime $birthDate): self
     {
-        $this->birthDate = $birthDate->format('d-m-Y');
+        $this->birthDate = $this->dateToString($birthDate);
 
         return $this;
     }
 
     /**
      * Get the value of registrationDate.
-     *
-     * @return string
      */
     public function getRegistrationDate(): ?string
     {
@@ -367,9 +383,27 @@ class UserExport
     /**
      * Set the value of registrationDate.
      */
-    public function setRegistrationDate(\DateTime $registrationDate): self
+    public function setRegistrationDate(?\DateTime $registrationDate): self
     {
-        $this->registrationDate = $registrationDate->format('d-m-Y');
+        $this->registrationDate = $this->dateToString($registrationDate);
+
+        return $this;
+    }
+
+    /**
+     * Get the value of lastActivityDate.
+     */
+    public function getLastActivityDate(): ?string
+    {
+        return $this->lastActivityDate;
+    }
+
+    /**
+     * Set the value of lastActivityDate.
+     */
+    public function setLastActivityDate(?\DateTime $lastActivityDate): self
+    {
+        $this->lastActivityDate = $this->dateToString($lastActivityDate);
 
         return $this;
     }
@@ -385,9 +419,27 @@ class UserExport
     /**
      * Set the value of newsletterSubscription.
      */
-    public function setNewsletterSubscription(bool $newsletterSubscription): self
+    public function setNewsletterSubscription(?bool $newsletterSubscription): self
     {
         $this->newsletterSubscription = $newsletterSubscription ? self::TRUE : self::FALSE;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of maxValidityAnnonceDate.
+     */
+    public function getMaxValidityAnnonceDate(): ?string
+    {
+        return $this->maxValidityAnnonceDate;
+    }
+
+    /**
+     * Set the value of maxValidityAnnonceDate.
+     */
+    public function setMaxValidityAnnonceDate(?\DateTime $maxValidityAnnonceDate): self
+    {
+        $this->maxValidityAnnonceDate = $this->dateToString($maxValidityAnnonceDate);
 
         return $this;
     }
@@ -423,7 +475,7 @@ class UserExport
     /**
      * Set the value of solidaryUser.
      */
-    public function setSolidaryUser(string $solidaryUser): self
+    public function setSolidaryUser(?string $solidaryUser): self
     {
         $this->solidaryUser = $solidaryUser;
 
@@ -688,5 +740,10 @@ class UserExport
         $this->carpool3Frequency = $carpool3Frequency;
 
         return $this;
+    }
+
+    private function dateToString(?\DateTime $date): ?string
+    {
+        return !is_null($date) ? $date->format('d-m-Y') : null;
     }
 }
