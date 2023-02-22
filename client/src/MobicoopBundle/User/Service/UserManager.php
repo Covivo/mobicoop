@@ -253,13 +253,21 @@ class UserManager
     /**
      * Get masses of a user.
      *
-     * @param int $id The user id
+     * @param int    $id      The user id
+     * @param string $orderBy orderBy field
+     * @param string $order   order
      *
-     * @return null|Mass[] the user found or null if not found
+     * @return null|Mass[] the Masses found or empty array
      */
-    public function getMasses(int $id)
+    public function getMasses(int $id, string $orderBy = null, string $order = 'desc')
     {
-        $response = $this->dataProvider->getSubCollection($id, Mass::class);
+        $params = null;
+        if (!is_null($orderBy)) {
+            $params = [];
+            $params["order['.{$orderBy}']"] = $order;
+        }
+
+        $response = $this->dataProvider->getSubCollection($id, Mass::class, null, $params);
 
         return $response->getValue();
     }
