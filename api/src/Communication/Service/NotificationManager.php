@@ -32,6 +32,7 @@ use App\Carpool\Entity\Waypoint;
 use App\Carpool\Ressource\Ad;
 use App\Carpool\Service\AdManager;
 use App\Carpool\Service\ProposalManager;
+use App\CarpoolStandard\Entity\Booking;
 use App\Communication\Entity\Email;
 use App\Communication\Entity\Medium;
 use App\Communication\Entity\Message;
@@ -656,6 +657,12 @@ class NotificationManager
                 case Scammer::class:
                     $titleContext = [];
                     $bodyContext = ['scammer' => $object];
+
+                    break;
+
+                case Booking::class:
+                    $titleContext = [];
+                    $bodyContext = ['booking' => $object];
 
                     break;
 
