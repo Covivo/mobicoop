@@ -109,15 +109,26 @@ class LongDistanceJourney
     private $httpRequestStatus;
 
     /**
-     * The carpool proof associate with the journey.
+     * The carpool payment associate with the journey.
      *
      * @var CarpoolPayment
      *
-     * @ORM\OneToOne(targetEntity=CarpoolPayment::class)
+     * @ORM\ManyToOne(targetEntity=CarpoolPayment::class)
      *
      * @ORM\JoinColumn(nullable=true)
      */
     private $carpoolPayment;
+
+    /**
+     * The carpool proof associate with the journey.
+     *
+     * @var null|CarpoolProof
+     *
+     * @ORM\OneToOne(targetEntity=CarpoolProof::class)
+     *
+     * @ORM\JoinColumn(nullable=true)
+     */
+    private $carpoolProof;
 
     /**
      * Status of verification.
@@ -139,12 +150,13 @@ class LongDistanceJourney
 
     public function __construct(CarpoolPayment $carpoolPayment, CarpoolProof $carpoolProof, int $carpoolersNumber)
     {
+        $this->setCarpoolProof($carpoolProof);
         $this->setCarpoolPayment($carpoolPayment);
-        $this->setStartAddressLocality($carpoolProof->getOriginDriverAddress()->getAddressLocality());
-        $this->setEndAddressLocality($carpoolProof->getDestinationDriverAddress()->getAddressLocality());
-        $this->setDistance($carpoolProof->getAsk()->getMatching()->getCommonDistance());
+        $this->setStartAddressLocality($this->carpoolProof->getOriginDriverAddress()->getAddressLocality());
+        $this->setEndAddressLocality($this->carpoolProof->getDestinationDriverAddress()->getAddressLocality());
+        $this->setDistance($this->carpoolProof->getAsk()->getMatching()->getCommonDistance());
         $this->setCarpoolersNumber($carpoolersNumber);
-        $this->setStartDate($carpoolProof->getAsk()->getMatching()->getProposalOffer()->getCreatedDate()->format('Y-m-d H:i:s'));
+        $this->setStartDate($this->carpoolProof->getAsk()->getMatching()->getProposalOffer()->getCreatedDate()->format('Y-m-d H:i:s'));
         $this->setEndDate($carpoolPayment->getCreatedDate()->format('Y-m-d H:i:s'));
     }
 
@@ -423,6 +435,26 @@ class LongDistanceJourney
     public function setRank(int $rank): self
     {
         $this->rank = $rank;
+
+        return $this;
+    }
+
+    /**
+     * Get the carpool proof associate with the journey.
+     */
+    public function getCarpoolProof(): ?CarpoolProof
+    {
+        return $this->carpoolProof;
+    }
+
+    /**
+     * Set the carpool proof associate with the journey.
+     *
+     * @param null|CarpoolProof $carpoolProof the carpool proof associate with the journey
+     */
+    public function setCarpoolProof($carpoolProof): self
+    {
+        $this->carpoolProof = $carpoolProof;
 
         return $this;
     }
