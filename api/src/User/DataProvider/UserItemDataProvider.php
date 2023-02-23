@@ -18,13 +18,12 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\User\DataProvider;
 
 use ApiPlatform\Core\DataProvider\ItemDataProviderInterface;
 use ApiPlatform\Core\DataProvider\RestrictedDataProviderInterface;
-use ApiPlatform\Core\Exception\ResourceClassNotSupportedException;
 use App\User\Entity\User;
 use App\User\Service\UserManager;
 
@@ -42,7 +41,7 @@ final class UserItemDataProvider implements ItemDataProviderInterface, Restricte
 
     public function supports(string $resourceClass, string $operationName = null, array $context = []): bool
     {
-        return User::class === $resourceClass && $operationName == "get";
+        return User::class === $resourceClass && 'get' == $operationName;
     }
 
     public function getItem(string $resourceClass, $id, string $operationName = null, array $context = []): ?User

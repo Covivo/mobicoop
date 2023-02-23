@@ -3,6 +3,7 @@
 namespace App\Incentive\Entity;
 
 use App\Carpool\Entity\CarpoolProof;
+use App\Incentive\Service\CeeJourneyService;
 use App\Payment\Entity\CarpoolPayment;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -10,22 +11,20 @@ use Doctrine\ORM\Mapping as ORM;
  * A long distance journey.
  *
  * @ORM\Entity
+ *
  * @ORM\Table(name="mobconnect__long_distance_journey")
+ *
  * @ORM\HasLifecycleCallbacks
  */
 class LongDistanceJourney
 {
-    public const STANDARDIZED_SHEET_OPERATION = 'TRA-SE-115';
-
-    public const BONUS_STATUS_PENDING = 0;
-    public const BONUS_STATUS_NO = 1;
-    public const BONUS_STATUS_OK = 2;
-
     /**
      * @var int The cee ID
      *
      * @ORM\Column(name="id", type="integer")
+     *
      * @ORM\Id
+     *
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
@@ -33,7 +32,7 @@ class LongDistanceJourney
     /**
      * @ORM\ManyToOne(targetEntity="\App\Incentive\Entity\LongDistanceSubscription", inversedBy="longDistanceJourneys")
      */
-    private $longDistanceSubscription;
+    private $subscription;
 
     /**
      * @var string the start locality of the journey
@@ -96,9 +95,18 @@ class LongDistanceJourney
      *
      * @var int
      *
-     * @ORM\Column(type="smallint", options={"default": 1, "comment":"Bonus Status of the EEC form"})
+     * @ORM\Column(type="smallint", options={"default": 0, "comment":"Bonus Status of the EEC form"})
      */
-    private $bonusStatus = self::BONUS_STATUS_NO;
+    private $bonusStatus = CeeJourneyService::BONUS_STATUS_NO;
+
+    /**
+     * Status of http request to mobConnect.
+     *
+     * @var int
+     *
+     * @ORM\Column(type="integer", nullable=true, options={"comment":"Status of http request to mobConnect"})
+     */
+    private $httpRequestStatus;
 
     /**
      * The carpool proof associate with the journey.
@@ -106,9 +114,28 @@ class LongDistanceJourney
      * @var CarpoolPayment
      *
      * @ORM\OneToOne(targetEntity=CarpoolPayment::class)
+     *
      * @ORM\JoinColumn(nullable=true)
      */
     private $carpoolPayment;
+
+    /**
+     * Status of verification.
+     *
+     * @var int
+     *
+     * @ORM\Column(type="integer", nullable=true, options={"default":0, "comment":"Status of verification"})
+     */
+    private $verificationStatus = CeeJourneyService::VERIFICATION_STATUS_PENDING;
+
+    /**
+     * Rank of the journey for the user. Crossed with the verification status, this property makes it possible to target the 1st pending trip.
+     *
+     * @var int
+     *
+     * @ORM\Column(type="integer", nullable=true, options={"comment":"Rank of the journey for the user"})
+     */
+    private $rank;
 
     public function __construct(CarpoolPayment $carpoolPayment, CarpoolProof $carpoolProof, int $carpoolersNumber)
     {
@@ -117,16 +144,9 @@ class LongDistanceJourney
         $this->setEndAddressLocality($carpoolProof->getDestinationDriverAddress()->getAddressLocality());
         $this->setDistance($carpoolProof->getAsk()->getMatching()->getCommonDistance());
         $this->setCarpoolersNumber($carpoolersNumber);
-
-        $date = $carpoolProof->getAsk()->getMatching()->getCriteria()->getFromDate()->format('Y-m-d');
-        $time = !is_null($carpoolProof->getAsk()->getMatching()->getCriteria()->getFromTime())
-            ? $carpoolProof->getAsk()->getMatching()->getCriteria()->getFromTime()->format('H:i:s') : '00:00:00';
-
-        $startDate = \DateTime::createFromFormat('Y-m-d H:i:s', "{$date} {$time}");
-        $endDate = clone $startDate;
-        $endDate->add(new \DateInterval('PT'.$carpoolProof->getAsk()->getMatching()->getNewDuration().'S'));
-        $this->setStartDate($startDate->format('Y-m-d H:i:s'));
-        $this->setEndDate($endDate->format('Y-m-d H:i:s'));
+        $this->setStartDate($carpoolProof->getAsk()->getMatching()->getProposalOffer()->getCreatedDate()->format('Y-m-d H:i:s'));
+        $this->setEndDate($carpoolPayment->getCreatedDate()->format('Y-m-d H:i:s'));
+        $this->setBonusStatus(CeeJourneyService::BONUS_STATUS_PENDING);
     }
 
     /**
@@ -139,6 +159,7 @@ class LongDistanceJourney
 
     /**
      * @ORM\PrePersist
+     *
      * @ORM\PreUpdate
      */
     public function preUpdate()
@@ -290,19 +311,19 @@ class LongDistanceJourney
     }
 
     /**
-     * Get the value of longDistanceSubscription.
+     * Get the value of subscription.
      */
-    public function getlongDistanceSubscription(): LongDistanceSubscription
+    public function getSubscription(): LongDistanceSubscription
     {
-        return $this->longDistanceSubscription;
+        return $this->subscription;
     }
 
     /**
-     * Set the value of longDistanceSubscription.
+     * Set the value of subscription.
      */
-    public function setLongDistanceSubscription(LongDistanceSubscription $longDistanceSubscription): self
+    public function setSubscription(LongDistanceSubscription $subscription): self
     {
-        $this->longDistanceSubscription = $longDistanceSubscription;
+        $this->subscription = $subscription;
 
         return $this;
     }
@@ -343,6 +364,66 @@ class LongDistanceJourney
     public function setCarpoolPayment(CarpoolPayment $carpoolPayment): self
     {
         $this->carpoolPayment = $carpoolPayment;
+
+        return $this;
+    }
+
+    /**
+     * Get status of http request to mobConnect.
+     */
+    public function getHttpRequestStatus(): int
+    {
+        return $this->httpRequestStatus;
+    }
+
+    /**
+     * Set status of http request to mobConnect.
+     *
+     * @param mixed $httpRequestStatus
+     */
+    public function setHttpRequestStatus(int $httpRequestStatus): self
+    {
+        $this->httpRequestStatus = $httpRequestStatus;
+
+        return $this;
+    }
+
+    /**
+     * Get status of verification.
+     */
+    public function getVerificationStatus(): int
+    {
+        return $this->verificationStatus;
+    }
+
+    /**
+     * Set status of verification.
+     *
+     * @param int $verificationStatus status of verification
+     */
+    public function setVerificationStatus(int $verificationStatus): self
+    {
+        $this->verificationStatus = $verificationStatus;
+
+        return $this;
+    }
+
+    /**
+     * Get rank of the journey for the user.
+     */
+    public function getRank(): int
+    {
+        return $this->rank;
+    }
+
+    /**
+     * Set rank of the journey for the user.
+     *
+     * @param int $rank rank of the journey for the user
+     */
+    public function setRank(int $rank): self
+    {
+        $this->rank = $rank;
 
         return $this;
     }

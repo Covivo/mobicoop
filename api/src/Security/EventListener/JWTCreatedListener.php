@@ -19,21 +19,22 @@
  ***************************
  *    Licence MOBICOOP described in the file
  *    LICENSE
- **************************/
+ */
 
 namespace App\Security\EventListener;
 
-use App\User\Entity\User;
 use App\App\Entity\App;
 use App\Auth\Service\AuthManager;
-use Lexik\Bundle\JWTAuthenticationBundle\Event\JWTCreatedEvent;
-use Symfony\Component\Security\Core\Security;
+use App\User\Entity\User;
 use App\User\Service\UserManager;
+use Doctrine\ORM\EntityManagerInterface;
+use Lexik\Bundle\JWTAuthenticationBundle\Event\JWTCreatedEvent;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Core\Security;
 
 /**
  * Json Web Token Event listener
- * Used to customize the payload of the token, eg. add user id to payload
+ * Used to customize the payload of the token, eg. add user id to payload.
  */
 class JWTCreatedListener
 {
@@ -42,24 +43,26 @@ class JWTCreatedListener
     private $userManager;
     private $request;
 
-    public function __construct(RequestStack $requestStack, AuthManager $authManager, Security $security, userManager $userManager)
+    /**
+     * @var EntityManagerInterface
+     */
+    private $_em;
+
+    public function __construct(EntityManagerInterface $em, RequestStack $requestStack, AuthManager $authManager, Security $security, userManager $userManager)
     {
         $this->request = $requestStack->getCurrentRequest();
         $this->authManager = $authManager;
         $this->security = $security;
         $this->userManager = $userManager;
+        $this->_em = $em;
     }
 
-    /**
-     * @param JWTCreatedEvent $event
-     *
-     * @return void
-     */
     public function onJWTCreated(JWTCreatedEvent $event)
     {
         $payload = $event->getData();
+
         /**
-         * @var User|App $user
+         * @var App|User $user
          */
         $user = $event->getUser();
         $payload['id'] = $user->getId();
@@ -72,10 +75,15 @@ class JWTCreatedListener
             $payload['admin'] = $this->authManager->isAuthorized('access_admin');
             // TODO : when log system is on, send here an event for "logged user", and treat the mobile in this event
             // for now we set the mobile here
-            if ($this->request->get("mobile")) {
+            if ($this->request->get('mobile')) {
                 $user->setMobile(true);
             }
-            $this->userManager->updateActivity($user);
+
+            if ($user->getId() === $this->security->getUser()->getId()) {
+                $this->userManager->updateActivity($user);
+            } else {
+                $this->userManager->createAuthenticationDelegation($this->security->getUser(), $user);
+            }
         }
         $event->setData($payload);
 

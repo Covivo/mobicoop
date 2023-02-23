@@ -154,7 +154,7 @@ api_platform:
         - '%kernel.project_dir%/src/Stats/Admin/Resource'
         - '%kernel.project_dir%/src/Scammer/Entity'
         - '%kernel.project_dir%/src/Validator/Phone/Resource'
-
+        - '%kernel.project_dir%/src/CarpoolStandard/Ressource'
         
     formats:
         jsonld:   ['application/ld+json']

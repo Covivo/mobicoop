@@ -3,6 +3,7 @@
 namespace App\Incentive\Entity;
 
 use App\Carpool\Entity\CarpoolProof;
+use App\Incentive\Service\CeeJourneyService;
 use App\User\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -10,22 +11,20 @@ use Doctrine\ORM\Mapping as ORM;
  * A short distance journey.
  *
  * @ORM\Entity
+ *
  * @ORM\Table(name="mobconnect__short_distance_journey")
+ *
  * @ORM\HasLifecycleCallbacks
  */
 class ShortDistanceJourney
 {
-    public const STANDARDIZED_SHEET_OPERATION = 'TRA-SE-115';
-
-    public const BONUS_STATUS_PENDING = 0;
-    public const BONUS_STATUS_NO = 1;
-    public const BONUS_STATUS_OK = 2;
-
     /**
      * @var int The cee ID
      *
      * @ORM\Column(name="id", type="integer")
+     *
      * @ORM\Id
+     *
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
@@ -33,7 +32,7 @@ class ShortDistanceJourney
     /**
      * @ORM\ManyToOne(targetEntity="\App\Incentive\Entity\ShortDistanceSubscription", inversedBy="shortDistanceSubscriptions")
      */
-    private $shortDistanceSubscription;
+    private $subscription;
 
     /**
      * @var string the start locality of the journey
@@ -117,9 +116,36 @@ class ShortDistanceJourney
      *
      * @var int
      *
-     * @ORM\Column(type="smallint", options={"default": 1, "comment":"Bonus Status of the EEC form"})
+     * @ORM\Column(type="smallint", options={"default": 0, "comment":"Bonus Status of the EEC form"})
      */
-    private $bonusStatus = self::BONUS_STATUS_NO;
+    private $bonusStatus = CeeJourneyService::BONUS_STATUS_NO;
+
+    /**
+     * Status of http request to mobConnect.
+     *
+     * @var int
+     *
+     * @ORM\Column(type="integer", nullable=true, options={"comment":"Status of http request to mobConnect"})
+     */
+    private $httpRequestStatus;
+
+    /**
+     * Status of verification.
+     *
+     * @var int
+     *
+     * @ORM\Column(type="integer", nullable=true, options={"default":0, "comment":"Status of verification"})
+     */
+    private $verificationStatus = CeeJourneyService::VERIFICATION_STATUS_PENDING;
+
+    /**
+     * Rank of the journey for the user.
+     *
+     * @var int
+     *
+     * @ORM\Column(type="integer", nullable=true, options={"comment":"Rank of the journey for the user"})
+     */
+    private $rank;
 
     /**
      * The carpool proof associate with the journey.
@@ -127,6 +153,7 @@ class ShortDistanceJourney
      * @var CarpoolProof
      *
      * @ORM\OneToOne(targetEntity=CarpoolProof::class)
+     *
      * @ORM\JoinColumn(nullable=true)
      */
     private $carpoolProof;
@@ -141,8 +168,9 @@ class ShortDistanceJourney
         $this->setOperatorUserId($carpoolProof->getDriver()->getId());
         $this->setRpcJourneyId($rpcJourneyId);
         $this->setRpcNumberStatus($rpcStatus);
-        $this->setStartDate($carpoolProof->getStartDriverDate()->format('Y-m-d H:i:s'));
-        $this->setEndDate($carpoolProof->getEndDriverDate()->format('Y-m-d H:i:s'));
+        $this->setStartDate($carpoolProof->getAsk()->getMatching()->getProposalOffer()->getCreatedDate()->format('Y-m-d H:i:s'));
+        $this->setEndDate($carpoolProof->getCreatedDate()->format('Y-m-d H:i:s'));
+        $this->setBonusStatus(CeeJourneyService::BONUS_STATUS_PENDING);
     }
 
     /**
@@ -155,6 +183,7 @@ class ShortDistanceJourney
 
     /**
      * @ORM\PrePersist
+     *
      * @ORM\PreUpdate
      */
     public function preUpdate()
@@ -362,21 +391,19 @@ class ShortDistanceJourney
     }
 
     /**
-     * Get the value of shortDistanceSubscription.
+     * Get the value of subscription.
      */
-    public function getShortDistanceSubscription(): ShortDistanceSubscription
+    public function getSubscription(): ShortDistanceSubscription
     {
-        return $this->shortDistanceSubscription;
+        return $this->subscription;
     }
 
     /**
-     * Set the value of shortDistanceSubscription.
-     *
-     * @param mixed $shortDistanceSubscription
+     * Set the value of subscription.
      */
-    public function setShortDistanceSubscription(ShortDistanceSubscription $shortDistanceSubscription): self
+    public function setSubscription(ShortDistanceSubscription $subscription): self
     {
-        $this->shortDistanceSubscription = $shortDistanceSubscription;
+        $this->subscription = $subscription;
 
         return $this;
     }
@@ -417,6 +444,64 @@ class ShortDistanceJourney
     public function setCarpoolProof(CarpoolProof $carpoolProof): self
     {
         $this->carpoolProof = $carpoolProof;
+
+        return $this;
+    }
+
+    /**
+     * Get status of http request to mobConnect.
+     */
+    public function getHttpRequestStatus(): ?int
+    {
+        return $this->httpRequestStatus;
+    }
+
+    /**
+     * Set status of http request to mobConnect.
+     */
+    public function setHttpRequestStatus(int $httpRequestStatus): self
+    {
+        $this->httpRequestStatus = $httpRequestStatus;
+
+        return $this;
+    }
+
+    /**
+     * Get status of http request to mobConnect.
+     */
+    public function getVerificationStatus(): int
+    {
+        return $this->verificationStatus;
+    }
+
+    /**
+     * Set status of http request to mobConnect.
+     *
+     * @param int $verificationStatus status of http request to mobConnect
+     */
+    public function setVerificationStatus(int $verificationStatus): self
+    {
+        $this->verificationStatus = $verificationStatus;
+
+        return $this;
+    }
+
+    /**
+     * Get rank of the journey for the user.
+     */
+    public function getRank(): int
+    {
+        return $this->rank;
+    }
+
+    /**
+     * Set rank of the journey for the user.
+     *
+     * @param int $rank rank of the journey for the user
+     */
+    public function setRank(int $rank): self
+    {
+        $this->rank = $rank;
 
         return $this;
     }

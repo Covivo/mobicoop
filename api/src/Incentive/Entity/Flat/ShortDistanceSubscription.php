@@ -30,7 +30,7 @@ class ShortDistanceSubscription extends Subscription
 
     public function __construct(ShortDistanceJourney $shortDistanceJourney)
     {
-        $this->subscription = $shortDistanceJourney->getShortDistanceSubscription();
+        $this->subscription = $shortDistanceJourney->getSubscription();
 
         $this->familyName = $this->subscription->getFamilyName();
         $this->givenName = $this->subscription->getGivenName();

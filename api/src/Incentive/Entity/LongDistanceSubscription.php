@@ -9,7 +9,9 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity
+ *
  * @ORM\Table(name="mobconnect__long_distance_subscription")
+ *
  * @ORM\HasLifecycleCallbacks
  */
 class LongDistanceSubscription
@@ -17,14 +19,13 @@ class LongDistanceSubscription
     public const INITIAL_COMMITMENT_PROOF_PATH = '/api/public/upload/eec-incentives/initial-commitment-proof';
     public const HONOUR_CERTIFICATE_PATH = '/api/public/upload/eec-incentives/long-distance-subscription/honour-certificate/';
 
-    public const STATUS_REJECTED = 'VALIDEE';
-    public const STATUS_VALIDATED = 'REJETEE';
-
     /**
      * @var int The user subscription ID
      *
      * @ORM\Column(name="id", type="integer")
+     *
      * @ORM\Id
+     *
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
@@ -33,6 +34,7 @@ class LongDistanceSubscription
      * @var User The user
      *
      * @ORM\OneToOne(targetEntity="\App\User\Entity\User", inversedBy="longDistanceSubscription")
+     *
      * @ORM\JoinColumn(onDelete="SET NULL", unique=true)
      */
     private $user;
@@ -40,7 +42,7 @@ class LongDistanceSubscription
     /**
      * @var ArrayCollection The long distance log associated with the user
      *
-     * @ORM\OneToMany(targetEntity="\App\Incentive\Entity\LongDistanceJourney", mappedBy="longDistanceSubscription", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="\App\Incentive\Entity\LongDistanceJourney", mappedBy="subscription", cascade={"persist"})
      */
     private $longDistanceJourneys;
 
@@ -211,6 +213,7 @@ class LongDistanceSubscription
 
     /**
      * @ORM\PrePersist
+     *
      * @ORM\PreUpdate
      */
     public function preUpdate()
@@ -249,7 +252,7 @@ class LongDistanceSubscription
     public function addLongDistanceJourney(LongDistanceJourney $longDistanceJourney): self
     {
         $this->longDistanceJourneys[] = $longDistanceJourney;
-        $longDistanceJourney->setLongDistanceSubscription($this);
+        $longDistanceJourney->setSubscription($this);
 
         return $this;
     }

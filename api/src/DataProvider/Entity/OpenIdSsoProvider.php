@@ -70,6 +70,18 @@ class OpenIdSsoProvider implements SsoProviderInterface
             self::AUTHORIZATION_URL => 'auth/realms/mcm/protocol/openid-connect/auth?redirect_uri={REDIRECT_URI}&client_id={CLIENT_ID}&state={SERVICE_NAME}&response_mode={RESPONSE_MODE}&response_type={RESPONSE_TYPE}&scope=offline_access&nonce=21a8befa-b65f-41c5-916b-29c9e8d70177&code_challenge_method=S256&code_challenge={CODE_CHALLENGE}&kc_idp_hint=franceconnect-particulier',
             self::TOKEN_URL => 'auth/realms/mcm/protocol/openid-connect/token',
             self::USERINFOS_URL => 'auth/realms/mcm/protocol/openid-connect/userinfo',
+            self::LOGOUT_URL => '',
+        ],
+        self::SSO_PROVIDER_MOBCONNECTAUTH => [
+            self::AUTHORIZATION_URL => 'auth/realms/mcm/protocol/openid-connect/auth?redirect_uri={REDIRECT_URI}&client_id={CLIENT_ID}&state={SERVICE_NAME}&response_mode={RESPONSE_MODE}&response_type={RESPONSE_TYPE}&scope=offline_access&nonce=21a8befa-b65f-41c5-916b-29c9e8d70177&code_challenge_method=S256&code_challenge={CODE_CHALLENGE}',
+            self::TOKEN_URL => 'auth/realms/mcm/protocol/openid-connect/token',
+            self::USERINFOS_URL => 'auth/realms/mcm/protocol/openid-connect/userinfo',
+            self::LOGOUT_URL => '',
+        ],
+        self::SSO_PROVIDER_MOBCONNECTAUTH => [
+            self::AUTHORIZATION_URL => 'auth/realms/mcm/protocol/openid-connect/auth?redirect_uri={REDIRECT_URI}&client_id={CLIENT_ID}&state={SERVICE_NAME}&response_mode={RESPONSE_MODE}&response_type={RESPONSE_TYPE}&scope=offline_access&nonce=21a8befa-b65f-41c5-916b-29c9e8d70177&code_challenge_method=S256&code_challenge={CODE_CHALLENGE}&kc_idp_hint=franceconnect-particulier',
+            self::TOKEN_URL => 'auth/realms/mcm/protocol/openid-connect/token',
+            self::USERINFOS_URL => 'auth/realms/mcm/protocol/openid-connect/userinfo',
             self::LOGOUT_URL => 'auth/realms/mcm/protocol/openid-connect/logout?post_logout_redirect_uri={REDIRECT_URI}',
         ],
         self::SSO_PROVIDER_MOBCONNECTAUTH => [
@@ -82,7 +94,7 @@ class OpenIdSsoProvider implements SsoProviderInterface
             self::AUTHORIZATION_URL => 'auth/realms/mcm/protocol/openid-connect/auth?redirect_uri={REDIRECT_URI}&client_id={CLIENT_ID}&state={SERVICE_NAME}&response_mode={RESPONSE_MODE}&response_type={RESPONSE_TYPE}&scope=openid&nonce=21a8befa-b65f-41c5-916b-29c9e8d70177&code_challenge_method=S256&code_challenge={CODE_CHALLENGE}',
             self::TOKEN_URL => 'auth/realms/mcm/protocol/openid-connect/token',
             self::USERINFOS_URL => 'auth/realms/mcm/protocol/openid-connect/userinfo',
-            self::LOGOUT_URL => 'auth/realms/mcm/protocol/openid-connect/logout?post_logout_redirect_uri={REDIRECT_URI}',
+            self::LOGOUT_URL => '',
         ],
         self::SSO_PROVIDER_MOBIGO => [
             self::AUTHORIZATION_URL => 'connect/authorize?client_id={CLIENT_ID}&state={SERVICE_NAME}&response_mode={RESPONSE_MODE}&response_type={RESPONSE_TYPE}&scope=openid+profile+email+phone&nonce=963378f1-5e39-40b9-95dc-dff120a10694&redirect_uri={REDIRECT_URI}',
@@ -240,7 +252,7 @@ class OpenIdSsoProvider implements SsoProviderInterface
     public function getLogoutUrl(): ?string
     {
         $url = null;
-        if (isset(self::URLS[$this->serviceName][self::LOGOUT_URL])) {
+        if (isset(self::URLS[$this->serviceName][self::LOGOUT_URL]) && '' !== $this->logOutRedirectUri) {
             $url = $this->baseUri.''.self::URLS[$this->serviceName][self::LOGOUT_URL];
             $url = str_replace('{REDIRECT_URI}', $this->logOutRedirectUri, $url);
         }
@@ -250,7 +262,7 @@ class OpenIdSsoProvider implements SsoProviderInterface
 
     public function getLogoutUrls(): ?string
     {
-        return (isset(self::URLS[$this->serviceName][self::LOGOUT_URL])) ? $this->baseUri.''.self::URLS[$this->serviceName][self::LOGOUT_URL] : null;
+        return (isset(self::URLS[$this->serviceName][self::LOGOUT_URL]) && '' !== $this->logOutRedirectUri) ? $this->baseUri.''.self::URLS[$this->serviceName][self::LOGOUT_URL] : null;
     }
 
     protected function getToken($code)

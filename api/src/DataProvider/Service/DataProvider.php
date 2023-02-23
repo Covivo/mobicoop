@@ -185,9 +185,11 @@ class DataProvider
                 $options[RequestOptions::AUTH] = $auth;
             }
 
-            // echo json_encode($body);
+            // var_dump($body);
             // var_dump($options);
-            // die;
+            // var_dump($this->resource);
+
+            // exit;
 
             $clientResponse = $this->client->post($this->resource, $options);
 
@@ -198,7 +200,10 @@ class DataProvider
                     return new Response($clientResponse->getStatusCode(), $clientResponse->getBody());
             }
         } catch (TransferException $e) {
-            // var_dump($e->getMessage());die;
+            // var_dump($e->getMessage());
+
+            // exit;
+
             return new Response($e->getCode(), $e->getMessage());
         }
 

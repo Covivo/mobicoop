@@ -47,7 +47,7 @@
           :outward-time="ad.schedule.outwardTime"
           :multiple-return="ad.schedule.returnTime=='multiple'"
           :return-time="ad.schedule.returnTime"
-          :is-return="ad.returnFromDate !== null"
+          :is-return="ad.type == 2"
           :is-regular="ad.frequency == 2"
           :has-days="true"
         />
@@ -57,7 +57,7 @@
           :outward-time="ad.driver.schedule.pickUpTime"
           :multiple-return="ad.driver.schedule.returnPickUpTime=='multiple'"
           :return-time="ad.driver.schedule.returnPickUpTime"
-          :is-return="ad.driver.returnFromDate !== null"
+          :is-return="ad.type == 2"
           :is-regular="ad.frequency == 2"
           :has-days="true"
         />

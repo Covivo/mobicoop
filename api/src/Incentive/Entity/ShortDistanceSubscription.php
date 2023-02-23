@@ -10,7 +10,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity
+ *
  * @ORM\Table(name="mobconnect__short_distance_subscription")
+ *
  * @ORM\HasLifecycleCallbacks
  */
 class ShortDistanceSubscription
@@ -18,14 +20,13 @@ class ShortDistanceSubscription
     public const INITIAL_COMMITMENT_PROOF_PATH = '/api/public/upload/eec-incentives/initial-commitment-proof';
     public const HONOUR_CERTIFICATE_PATH = '/api/public/upload/eec-incentives/short-distance-subscription/honour-certificate/';
 
-    public const STATUS_REJECTED = 'REJETEE';
-    public const STATUS_VALIDATED = 'VALIDEE';
-
     /**
      * @var int The user subscription ID
      *
      * @ORM\Column(name="id", type="integer")
+     *
      * @ORM\Id
+     *
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
@@ -34,6 +35,7 @@ class ShortDistanceSubscription
      * @var User The user
      *
      * @ORM\OneToOne(targetEntity="\App\User\Entity\User", inversedBy="shortDistanceSubscription")
+     *
      * @ORM\JoinColumn(onDelete="SET NULL", unique=true)
      */
     private $user;
@@ -41,7 +43,7 @@ class ShortDistanceSubscription
     /**
      * @var ArrayCollection The short distance log associated with the user
      *
-     * @ORM\OneToMany(targetEntity="\App\Incentive\Entity\ShortDistanceJourney", mappedBy="shortDistanceSubscription", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="\App\Incentive\Entity\ShortDistanceJourney", mappedBy="subscription", cascade={"persist"})
      */
     private $shortDistanceJourneys;
 
@@ -112,6 +114,7 @@ class ShortDistanceSubscription
      * @var string the driving licence number of the user
      *
      * @ORM\Column(type="string", length=15)
+     *
      * @Groups({"readSubscription"})
      */
     private $drivingLicenceNumber;
@@ -213,6 +216,7 @@ class ShortDistanceSubscription
 
     /**
      * @ORM\PrePersist
+     *
      * @ORM\PreUpdate
      */
     public function preUpdate()
@@ -251,14 +255,14 @@ class ShortDistanceSubscription
     public function addShortDistanceJourney(ShortDistanceJourney $shortDistanceJourney): self
     {
         $this->shortDistanceJourneys[] = $shortDistanceJourney;
-        $shortDistanceJourney->setShortDistanceSubscription($this);
+        $shortDistanceJourney->setSubscription($this);
 
         return $this;
     }
 
     public function removeShortDistanceJourney(ShortDistanceJourney $shortDistanceJourney)
     {
-        return $this->shortDistanceJourney->removeElement($shortDistanceJourney);
+        return $this->shortDistanceJourneys->removeElement($shortDistanceJourney);
     }
 
     public function getShortDistanceJourneys()

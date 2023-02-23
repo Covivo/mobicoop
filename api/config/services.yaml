@@ -309,6 +309,13 @@ services:
       $userReview: "%env(bool:USER_REVIEW)%"
       $carpoolNoticeableDetourDurationPercent: "%env(int:CARPOOL_NOTICEABLE_DETOUR_DURATION_PERCENT)%"
       $carpoolNoticeableDetourDistancePercent: "%env(int:CARPOOL_NOTICEABLE_DETOUR_DISTANCE_PERCENT)%"
+  
+  # CarpoolStandard
+  App\CarpoolStandard\Service\CarpoolStandardProvider:
+    arguments:
+      $provider: "%env(string:CARPOOL_STANDARD_PROVIDER)%"
+      $apiKey: "%env(string:CARPOOL_STANDARD_API_KEY)%"
+      $baseUri: "%env(string:CARPOOL_STANDARD_BASE_URI)%"
 
   # Commands
   App\Command\CarpoolAskPostedRelaunch1Command:
@@ -742,12 +749,23 @@ services:
       - { name: monolog.logger, channel: faker }
 
   # INCENTIVE
-  App\Incentive\Service\LoggerService:
-    arguments:
-      $globalForcingLogs: "%env(bool:EEC_FORCING_LOGS)%"
+  App\Incentive\JourneysVerificationCommand:
     tags:
-      - { name: monolog.logger, channel: incentive_subscription }
+      - { name: "console.command", command: "app:incentive:journeys-verification" }
 
+  App\Incentive\Repository\LongDistanceJourneyRepository:
+    arguments:
+      $deadline: "%env(int:EEC_JOURNEY_DECLARATION_DEADLINE)%"
+  App\Incentive\Repository\ShortDistanceJourneyRepository:
+    arguments:
+      $deadline: "%env(int:EEC_JOURNEY_DECLARATION_DEADLINE)%"
+
+  App\Incentive\Service\LoggerService:
+      arguments:
+          $globalForcingLogs: "%env(bool:EEC_FORCING_LOGS)%"
+      tags:
+          - { name: monolog.logger, channel: incentive_subscription }
+          
   App\Incentive\Service\MobConnectSubscriptionManager:
     arguments:
       $ssoServices: "%env(json:file:resolve:SSO_SERVICES)%"
@@ -759,6 +777,7 @@ services:
         subscription_ids:
           short_distance: "%env(string:MOBCONNECT_SHORTDISTANCE_SUBSCRIPTIONID)%"
           long_distance: "%env(string:MOBCONNECT_LONGDISTANCE_SUBSCRIPTIONID)%"
+      $proofDeadline: "%env(int:EEC_JOURNEY_DECLARATION_DEADLINE)%"
     tags:
       - { name: monolog.logger, channel: incentive_subscription }
 
