@@ -85,6 +85,11 @@ monolog:
       level: debug
       path: "%kernel.logs_dir%/solidary.log"
       channels: [solidary]
+    user_auto_delete:
+      type: stream
+      level: debug
+      path: "%kernel.logs_dir%/user_auto_delete.log"
+      channels: [user_auto_delete]
     main:
       type: stream
       path: "%kernel.logs_dir%/%kernel.environment%.log"
@@ -109,6 +114,7 @@ monolog:
           "!mass",
           "!notification",
           "!solidary",
+          "!user_auto_delete",
         ]
 
     console:
