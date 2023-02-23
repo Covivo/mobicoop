@@ -283,14 +283,14 @@ class MobConnectSubscriptionManager
     /**
      * Create or update a moBConnect journey.
      */
-    private function __associateJourneyToSubscription(array $journeys, CarpoolProof $carpoolProof, CarpoolPayment $carpoolPayment = null)
+    private function __associateJourneyToSubscription(bool $isLongProcess, array $journeys, CarpoolProof $carpoolProof, CarpoolPayment $carpoolPayment = null)
     {
-        $filteredJourneys = array_filter($journeys, function ($journey) use ($carpoolProof) {
+        $filteredJourneys = array_values(array_filter($journeys, function ($journey) use ($carpoolProof) {
             return $journey->getCarpoolProof() === $carpoolProof;
-        });
+        }));
 
-        switch (is_null($carpoolPayment)) {
-            case true:
+        switch ($isLongProcess) {
+            case false:
                 if (empty($filteredJourneys)) {
                     $journey = new ShortDistanceJourney(
                         $carpoolProof,
@@ -309,18 +309,22 @@ class MobConnectSubscriptionManager
 
                 break;
 
-            default:
-                if (empty($filteredJourneys)) {
-                    $journey = new LongDistanceJourney(
-                        $carpoolPayment,
-                        $carpoolProof,
-                        $this->__getCarpoolersNumber($carpoolProof->getAsk()->getId())
-                    );
+            case true:
+                if (!is_null($carpoolPayment)) {
+                    if (empty($filteredJourneys)) {
+                        $journey = new LongDistanceJourney(
+                            $carpoolPayment,
+                            $carpoolProof,
+                            $this->__getCarpoolersNumber($carpoolProof->getAsk()->getId())
+                        );
 
-                    $this->_userSubscription->addLongDistanceJourney($journey);
+                        $this->_userSubscription->addLongDistanceJourney($journey);
+                    } else {
+                        $journey = $filteredJourneys[0];
+                        $journey->setCarpoolersNumber($this->__getCarpoolersNumber($carpoolProof->getAsk()->getId()));
+                    }
                 } else {
-                    $journey = $filteredJourneys[0];
-                    $journey->setCarpoolersNumber($this->__getCarpoolersNumber($carpoolProof->getAsk()->getId()));
+                    return null;
                 }
 
                 break;
@@ -472,6 +476,7 @@ class MobConnectSubscriptionManager
                  * @var LongDistanceJourney
                  */
                 $journey = $this->__associateJourneyToSubscription(
+                    true,
                     $this->_userSubscription->getLongDistanceJourneys()->toArray(),
                     $carpoolProof,
                     $carpoolPayment
@@ -497,10 +502,11 @@ class MobConnectSubscriptionManager
                     return;
                 }
 
-                /**
-                 * @var ShortDistanceJourney
-                 */
-                $journey = $this->__associateJourneyToSubscription($this->_userSubscription->getShortDistanceJourneys()->toArray(), $carpoolProof);
+                $journey = $this->__associateJourneyToSubscription(
+                    false,
+                    $this->_userSubscription->getShortDistanceJourneys()->toArray(),
+                    $carpoolProof
+                );
 
                 break;
 
@@ -512,7 +518,7 @@ class MobConnectSubscriptionManager
 
         $paymentDate = !is_null($carpoolPayment) && !is_null($carpoolPayment->getUpdatedDate()) ? $carpoolPayment->getUpdatedDate() : null;
 
-        if (isset($journey) && $this->_userSubscription) {
+        if (isset($journey) && !is_null($journey) && $this->_userSubscription) {
             $this->__setApiProviderParams();
 
             switch (true) {
