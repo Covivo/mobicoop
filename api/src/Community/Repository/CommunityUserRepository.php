@@ -127,6 +127,65 @@ class CommunityUserRepository
     }
 
     /**
+     * Find community all users for a given community. (pending, refused, accepted, ...).
+     *
+     * @param Community $community The community
+     *
+     * @return array The members
+     */
+    public function findAllCommunityMembers(Community $community, array $context = [], string $operationName): PaginatorInterface
+    {
+        $query = $this->repository->createQueryBuilder('cu');
+        $query->where('cu.community = :community')
+            ->join('cu.user', 'u')
+            ->setParameter('community', $community)
+        ;
+
+        // Sort and Filters
+        if (isset($context['filters'])) {
+            // Filters
+            $excludedFilters = ['page', 'perPage', 'order'];
+            foreach ($context['filters'] as $filter => $value) {
+                if (!in_array($filter, $excludedFilters)) {
+                    switch ($filter) {
+                        case 'givenName':
+                        case 'familyName':$query->andWhere('u.'.$filter." like '%".$value."%'");
+
+                            break;
+
+                        default: $query->andWhere('cu.'.$filter." like '%".$value."%'");
+                    }
+                }
+            }
+
+            // Sort
+            if (isset($context['filters']['order'])) {
+                foreach ($context['filters']['order'] as $sort => $order) {
+                    switch ($sort) {
+                        case 'givenName':
+                        case 'familyName':$query->addOrderBy('u.'.$sort, $order);
+
+                            break;
+
+                        default: $query->addOrderBy('cu.'.$sort, $order);
+                    }
+                }
+            }
+        }
+
+        $queryNameGenerator = new QueryNameGenerator();
+
+        foreach ($this->collectionExtensions as $extension) {
+            $extension->applyToCollection($query, $queryNameGenerator, CommunityUser::class, $operationName, $context);
+            if ($extension instanceof QueryResultCollectionExtensionInterface && $extension->supportsResult(CommunityUser::class, $operationName)) {
+                return $extension->getResult($query, CommunityUser::class, $operationName);
+            }
+        }
+
+        return $query->getQuery()->getResult();
+    }
+
+    /**
      * Get accepted members by their id if they accept emailing.
      *
      * @param array $ids The ids of the users

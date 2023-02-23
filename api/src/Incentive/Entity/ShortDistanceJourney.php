@@ -32,7 +32,7 @@ class ShortDistanceJourney
     /**
      * @ORM\ManyToOne(targetEntity="\App\Incentive\Entity\ShortDistanceSubscription", inversedBy="shortDistanceSubscriptions")
      */
-    private $shortDistanceSubscription;
+    private $subscription;
 
     /**
      * @var string the start locality of the journey
@@ -116,7 +116,7 @@ class ShortDistanceJourney
      *
      * @var int
      *
-     * @ORM\Column(type="smallint", options={"default": 1, "comment":"Bonus Status of the EEC form"})
+     * @ORM\Column(type="smallint", options={"default": 0, "comment":"Bonus Status of the EEC form"})
      */
     private $bonusStatus = CeeJourneyService::BONUS_STATUS_NO;
 
@@ -170,6 +170,7 @@ class ShortDistanceJourney
         $this->setRpcNumberStatus($rpcStatus);
         $this->setStartDate($carpoolProof->getAsk()->getMatching()->getProposalOffer()->getCreatedDate()->format('Y-m-d H:i:s'));
         $this->setEndDate($carpoolProof->getCreatedDate()->format('Y-m-d H:i:s'));
+        $this->setBonusStatus(CeeJourneyService::BONUS_STATUS_PENDING);
     }
 
     /**
@@ -390,21 +391,19 @@ class ShortDistanceJourney
     }
 
     /**
-     * Get the value of shortDistanceSubscription.
+     * Get the value of subscription.
      */
-    public function getShortDistanceSubscription(): ShortDistanceSubscription
+    public function getSubscription(): ShortDistanceSubscription
     {
-        return $this->shortDistanceSubscription;
+        return $this->subscription;
     }
 
     /**
-     * Set the value of shortDistanceSubscription.
-     *
-     * @param mixed $shortDistanceSubscription
+     * Set the value of subscription.
      */
-    public function setShortDistanceSubscription(ShortDistanceSubscription $shortDistanceSubscription): self
+    public function setSubscription(ShortDistanceSubscription $subscription): self
     {
-        $this->shortDistanceSubscription = $shortDistanceSubscription;
+        $this->subscription = $subscription;
 
         return $this;
     }

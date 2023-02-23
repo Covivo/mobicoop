@@ -23,8 +23,10 @@
 
 namespace App\Match\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiProperty;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
 use App\Community\Entity\Community;
 use App\Geography\Entity\Address;
 use App\Match\Controller\CreateMassImportAction;
@@ -46,7 +48,9 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  * A mass matching file import.
  *
  * @ORM\Entity()
+ *
  * @ORM\HasLifecycleCallbacks
+ *
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
@@ -263,7 +267,10 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
  *          }
  *      }
  * )
+ *
  * @Vich\Uploadable
+ *
+ * @ApiFilter(OrderFilter::class, properties={"id"}, arguments={"orderParameterName"="order"})
  */
 class Mass
 {
@@ -292,9 +299,13 @@ class Mass
      * @var int the id of this import
      *
      * @ORM\Id
+     *
      * @ORM\GeneratedValue
+     *
      * @ORM\Column(type="integer")
+     *
      * @Groups({"mass","massPost", "massAnalyze","massMatch", "massCompute", "massMigrate", "massPTPotential"})
+     *
      * @ApiProperty(identifier=true)
      */
     private $id;
@@ -303,6 +314,7 @@ class Mass
      * @var int the status of this import
      *
      * @ORM\Column(type="integer")
+     *
      * @Groups({"mass","massPost", "massCompute", "massMigrate", "massPTPotential"})
      */
     private $status;
@@ -311,6 +323,7 @@ class Mass
      * @var string the final file name of the import
      *
      * @ORM\Column(type="string", length=255)
+     *
      * @Groups({"mass","massPost","write", "massCompute"})
      */
     private $fileName;
@@ -319,6 +332,7 @@ class Mass
      * @var string the original file name of the import
      *
      * @ORM\Column(type="string", length=255)
+     *
      * @Groups({"mass","massPost","write", "massCompute"})
      */
     private $originalName;
@@ -327,6 +341,7 @@ class Mass
      * @var int the size in bytes of the import
      *
      * @ORM\Column(type="integer")
+     *
      * @Groups({"mass","massPost","write", "massCompute"})
      */
     private $size;
@@ -335,6 +350,7 @@ class Mass
      * @var string the mime type of the import
      *
      * @ORM\Column(type="string", length=255)
+     *
      * @Groups({"mass","massPost", "massCompute"})
      */
     private $mimeType;
@@ -343,6 +359,7 @@ class Mass
      * @var \DateTimeInterface creation date of the import
      *
      * @ORM\Column(type="datetime")
+     *
      * @Groups({"mass","massPost", "massCompute"})
      */
     private $createdDate;
@@ -351,6 +368,7 @@ class Mass
      * @var \DateTimeInterface updated date of the import
      *
      * @ORM\Column(type="datetime", nullable=true)
+     *
      * @Groups({"mass","massPost", "massCompute"})
      */
     private $updatedDate;
@@ -359,7 +377,9 @@ class Mass
      * @var User the user that imports the file
      *
      * @ORM\ManyToOne(targetEntity="App\User\Entity\User", inversedBy="masses")
+     *
      * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
+     *
      * @Groups("write")
      */
     private $user;
@@ -368,6 +388,7 @@ class Mass
      * @var \DateTimeInterface analyzed date of the import
      *
      * @ORM\Column(type="datetime", nullable=true)
+     *
      * @Groups({"mass","massPost", "massCompute"})
      */
     private $analyzingDate;
@@ -376,6 +397,7 @@ class Mass
      * @var \DateTimeInterface analyzing start date of the import
      *
      * @ORM\Column(type="datetime", nullable=true)
+     *
      * @Groups({"mass","massPost", "massCompute"})
      */
     private $analyzedDate;
@@ -384,6 +406,7 @@ class Mass
      * @var \DateTimeInterface calculation start date of the import
      *
      * @ORM\Column(type="datetime", nullable=true)
+     *
      * @Groups({"mass","massPost", "massCompute"})
      */
     private $calculationDate;
@@ -392,6 +415,7 @@ class Mass
      * @var \DateTimeInterface calculated date of the import
      *
      * @ORM\Column(type="datetime", nullable=true)
+     *
      * @Groups({"mass","massPost", "massCompute"})
      */
     private $calculatedDate;
@@ -406,73 +430,86 @@ class Mass
 
     /**
      * @var int Number of persons in this Mass
+     *
      * @Groups({"mass", "massCompute", "massPTPotential"})
      */
     private $numberOfPersons;
 
     /**
      * @var null|File
+     *
      * @Vich\UploadableField(mapping="mass", fileNameProperty="fileName", originalName="originalName", size="size", mimeType="mimeType")
      */
     private $file;
 
     /**
      * @var null|int the user id associated with the file
+     *
      * @Groups({"write"})
      */
     private $userId;
 
     /**
      * @var array the errors
+     *
      * @Groups({"mass","massPost"})
      */
     private $errors;
 
     /**
      * @var array the abberant addresses
+     *
      * @Groups({"massCompute"})
      */
     private $aberrantAddresses;
 
     /**
      * @var array people's coordinates of this mass
+     *
      * @Groups({"massCompute"})
      */
     private $personsCoords;
 
     /**
      * @var array Working Places of this Mass
+     *
      * @Groups({"massCompute", "massWorkingPlaces"})
      */
     private $workingPlaces;
 
     /**
      * @var array computed data of this mass
+     *
      * @Groups({"massCompute"})
      */
     private $computedData;
 
     /**
      * @var MassMatrix Matrix of carpools
+     *
      * @Groups({"massCompute"})
      */
     private $massMatrix;
 
     /**
      * @var int Type of Mass (0 : Anonymous, 1 : Qualified)
+     *
      * @ORM\Column(type="integer", nullable=true)
+     *
      * @Groups({"mass","massPost", "massAnalyze","massMatch", "massCompute", "massMigrate"})
      */
     private $massType;
 
     /**
      * @var bool If the checkbox about the legitimity of the import has been checked
+     *
      * @Groups({"mass"})
      */
     private $checkLegit;
 
     /**
      * @var \DateTimeInterface The date of the legitimacy check
+     *
      * @ORM\Column(type="datetime", nullable=true)
      *
      * @Groups({"mass", "massMigrate"})
@@ -483,13 +520,16 @@ class Mass
      * @var Community The community created after the migration of this mass users
      *
      * @ORM\ManyToOne(targetEntity="App\Community\Entity\Community", inversedBy="mass")
+     *
      * @ORM\JoinColumn(nullable=true, onDelete="SET NULL")
+     *
      * @Groups({"mass","massMigrate"})
      */
     private $community;
 
     /**
      * @var null|array The migrated users
+     *
      * @Groups({"massMigrate"})
      */
     private $migratedUsers;
@@ -498,6 +538,7 @@ class Mass
      * @var \DateTimeInterface date of migration's beginning
      *
      * @ORM\Column(type="datetime", nullable=true)
+     *
      * @Groups({"mass"})
      */
     private $migrationDate;
@@ -506,12 +547,14 @@ class Mass
      * @var \DateTimeInterface date of migration's end
      *
      * @ORM\Column(type="datetime", nullable=true)
+     *
      * @Groups({"mass"})
      */
     private $migratedDate;
 
     /**
      * @var bool Set the first address as the home address of the users that will be migrated
+     *
      * @Groups({"mass","massMigrate"})
      */
     private $setHomeAddress;
@@ -519,6 +562,7 @@ class Mass
     /**
      * @var int The id of an existing community. The migrated users will be joining this community.
      *          If there is a communityId, the other community fields (name, desc etc...) will be ignored
+     *
      * @Groups({"mass","massMigrate"})
      */
     private $communityId;
@@ -526,24 +570,28 @@ class Mass
     /**
      * @var string The name of the new community that will be created if we migrate the users.
      *             All the migrated user will join this new community.
+     *
      * @Groups({"mass","massMigrate"})
      */
     private $communityName;
 
     /**
      * @var string the short description of the community
+     *
      * @Groups({"mass","massMigrate"})
      */
     private $communityDescription;
 
     /**
      * @var string the full description of the community
+     *
      * @Groups({"mass","massMigrate"})
      */
     private $communityFullDescription;
 
     /**
      * @var Address Address of the community
+     *
      * @Groups({"mass","massMigrate"})
      */
     private $communityAddress;
@@ -552,6 +600,7 @@ class Mass
      * @var \DateTimeInterface Date of getting the public transportation information from external API
      *
      * @ORM\Column(type="datetime", nullable=true)
+     *
      * @Groups({"mass"})
      */
     private $gettingPublicTransportationPotentialDate;
@@ -560,12 +609,14 @@ class Mass
      * @var \DateTimeInterface Date of getting the public transportation information from external API end
      *
      * @ORM\Column(type="datetime", nullable=true)
+     *
      * @Groups({"mass", "massPTPotential", "massAnalyze", "massMatch", "massCompute", "massMigrate"})
      */
     private $gotPublicTransportationPotentialDate;
 
     /**
      * @var array Potential of Public Transport of this Mass
+     *
      * @Groups({"massPTPotential"})
      */
     private $publicTransportPotential;
@@ -1051,7 +1102,7 @@ class Mass
      */
     public function setAutoCreatedDate()
     {
-        $this->setCreatedDate(new \Datetime());
+        $this->setCreatedDate(new \DateTime());
     }
 
     /**
@@ -1061,6 +1112,6 @@ class Mass
      */
     public function setAutoUpdatedDate()
     {
-        $this->setUpdatedDate(new \Datetime());
+        $this->setUpdatedDate(new \DateTime());
     }
 }

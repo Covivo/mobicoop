@@ -32,7 +32,7 @@ class LongDistanceJourney
     /**
      * @ORM\ManyToOne(targetEntity="\App\Incentive\Entity\LongDistanceSubscription", inversedBy="longDistanceJourneys")
      */
-    private $longDistanceSubscription;
+    private $subscription;
 
     /**
      * @var string the start locality of the journey
@@ -95,7 +95,7 @@ class LongDistanceJourney
      *
      * @var int
      *
-     * @ORM\Column(type="smallint", options={"default": 1, "comment":"Bonus Status of the EEC form"})
+     * @ORM\Column(type="smallint", options={"default": 0, "comment":"Bonus Status of the EEC form"})
      */
     private $bonusStatus = CeeJourneyService::BONUS_STATUS_NO;
 
@@ -158,6 +158,7 @@ class LongDistanceJourney
         $this->setCarpoolersNumber($carpoolersNumber);
         $this->setStartDate($this->carpoolProof->getAsk()->getMatching()->getProposalOffer()->getCreatedDate()->format('Y-m-d H:i:s'));
         $this->setEndDate($carpoolPayment->getCreatedDate()->format('Y-m-d H:i:s'));
+        $this->setBonusStatus(CeeJourneyService::BONUS_STATUS_PENDING);
     }
 
     /**
@@ -322,19 +323,19 @@ class LongDistanceJourney
     }
 
     /**
-     * Get the value of longDistanceSubscription.
+     * Get the value of subscription.
      */
-    public function getlongDistanceSubscription(): LongDistanceSubscription
+    public function getSubscription(): LongDistanceSubscription
     {
-        return $this->longDistanceSubscription;
+        return $this->subscription;
     }
 
     /**
-     * Set the value of longDistanceSubscription.
+     * Set the value of subscription.
      */
-    public function setLongDistanceSubscription(LongDistanceSubscription $longDistanceSubscription): self
+    public function setSubscription(LongDistanceSubscription $subscription): self
     {
-        $this->longDistanceSubscription = $longDistanceSubscription;
+        $this->subscription = $subscription;
 
         return $this;
     }
