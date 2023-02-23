@@ -39,6 +39,7 @@ class UserVoter extends Voter
     public const ADMIN_USER_PROOF = 'admin_user_proof';
     public const ADMIN_USER_DELETE = 'admin_user_delete';
     public const ADMIN_USER_LIST = 'admin_user_list';
+    public const ADMIN_USER_EXPORT_ALL = 'admin_user_export_all';
     public const USER_CREATE = 'user_create';
     public const USER_READ = 'user_read';
     public const USER_UPDATE = 'user_update';
@@ -64,6 +65,7 @@ class UserVoter extends Voter
             self::ADMIN_USER_PROOF,
             self::ADMIN_USER_DELETE,
             self::ADMIN_USER_LIST,
+            self::ADMIN_USER_EXPORT_ALL,
         ])) {
             return false;
         }
@@ -76,6 +78,7 @@ class UserVoter extends Voter
             self::ADMIN_USER_PROOF,
             self::ADMIN_USER_DELETE,
             self::ADMIN_USER_LIST,
+            self::ADMIN_USER_EXPORT_ALL,
         ]) && !($subject instanceof Paginator) && !($subject instanceof User) && !($subject instanceof IdentityProof)) {
             return false;
         }
@@ -105,6 +108,9 @@ class UserVoter extends Voter
 
             case self::ADMIN_USER_LIST:
                 return $this->canListUser();
+
+            case self::ADMIN_USER_EXPORT_ALL:
+                return $this->canExportAllUsers();
         }
 
         throw new \LogicException('This code should not be reached!');
@@ -133,5 +139,10 @@ class UserVoter extends Voter
     private function canListUser()
     {
         return $this->authManager->isAuthorized(self::USER_LIST);
+    }
+
+    private function canExportAllUsers()
+    {
+        return $this->authManager->isAuthorized(self::ADMIN_USER_EXPORT_ALL);
     }
 }

@@ -262,4 +262,20 @@ class UserRepository
 
         return $stmt->fetchAll();
     }
+
+    public function findTerritoriesUsers(array $territoryIds)
+    {
+        $qb = $this->repository->createQueryBuilder('u');
+
+        $qb
+            ->innerJoin('u.addresses', 'a', 'WITH', 'a.home = 1')
+            ->innerJoin('a.territories', 't')
+            ->where('t.id IN(:territoryIds)')
+            ->setParameters([
+                'territoryIds' => $territoryIds,
+            ])
+        ;
+
+        return $qb->getQuery()->getResult();
+    }
 }
