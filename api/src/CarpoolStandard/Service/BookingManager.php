@@ -23,12 +23,12 @@
 
 namespace App\CarpoolStandard\Service;
 
-use App\CarpoolStandard\Entity\Message;
+use App\CarpoolStandard\Entity\Booking;
 
 /**
  * @author Remi Wortemann <remi.wortemann@mobicoop.org>
  */
-class MessageManager
+class BookingManager
 {
     private $carpoolStandardProvider;
 
@@ -37,8 +37,8 @@ class MessageManager
         $this->carpoolStandardProvider = $carpoolStandardProvider;
     }
 
-    public function postMessage(Message $message)
+    public function postBooking(Booking $booking)
     {
-        $this->carpoolStandardProvider->postMessage($message);
+        $this->carpoolStandardProvider->postBooking($booking);
     }
 }
