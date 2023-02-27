@@ -195,30 +195,44 @@ abstract class CeeJourneyService
         $isUserValid = self::__isUserValid($user);
         $carpoolProofs = $user->getCarpoolProofsAsDriver();
 
+        // The user is valid and he has not made any trips
         if ($isUserValid && (is_null($carpoolProofs) || empty($carpoolProofs))) {
-            $isEmptyCarpoolProof = true;
-            new Log($logger, self::ACCOUNT_READY_FOR_LONG_SUBSCRIPTION, $user, [Log::IS_USER_VALID => $isUserValid, Log::IS_CARPOOL_PROOFS_VALID => $isEmptyCarpoolProof]);
+            new Log(
+                $logger,
+                self::ACCOUNT_READY_FOR_LONG_SUBSCRIPTION,
+                $user,
+                [
+                    Log::IS_USER_VALID => $isUserValid,
+                    Log::IS_CARPOOL_PROOFS_VALID => true,
+                ]
+            );
 
-            return $isEmptyCarpoolProof;
+            return true;
         }
-
-        $today = new \DateTime('now');
 
         $filteredCarpoolProofs = array_filter($carpoolProofs, function (CarpoolProof $carpoolProof) {
             self::__setMatchingFromCarpoolProof($carpoolProof);
 
             return
                 !is_null(self::$_matching)
-                && self::__isLongDistance(self::$_matching->getCommonDistance())
-                && CarpoolProof::TYPE_HIGH === $carpoolProof->getType()
-                && self::__isOriginOrDestinationFromReferenceCountry()
-                && self::isDateInPeriod($carpoolProof->getStartDriverDate())
+                && self::__isLongDistance(self::$_matching->getCommonDistance())            // The trip must have a distance greater than or equal to 80km
+                && CarpoolProof::TYPE_HIGH === $carpoolProof->getType()                     // The trip must have a carpool class C
+                && self::__isOriginOrDestinationFromReferenceCountry()                      // The trip must depart or arrive from the reference country
+                && !self::isDateInPeriod($carpoolProof->getStartDriverDate())               // User must not have traveled long distance for a period of 3 months
             ;
         });
 
-        new Log($logger, self::ACCOUNT_READY_FOR_LONG_SUBSCRIPTION, $user, [Log::IS_USER_VALID => $isUserValid, Log::IS_CARPOOL_PROOFS_VALID => is_null($carpoolProofs) || !empty($carpoolProofs) || empty($filteredCarpoolProofs)]);
+        new Log(
+            $logger,
+            self::ACCOUNT_READY_FOR_LONG_SUBSCRIPTION,
+            $user,
+            [
+                Log::IS_USER_VALID => $isUserValid,
+                Log::IS_CARPOOL_PROOFS_VALID => is_null($carpoolProofs) || !empty($carpoolProofs) || empty($filteredCarpoolProofs),
+            ]
+        );
 
-        if (!self::__isUserValid($user)) {
+        if (!$isUserValid) {
             return false;
         }
 
@@ -233,11 +247,19 @@ abstract class CeeJourneyService
         $isUserValid = self::__isUserValid($user);
         $carpoolProofs = $user->getCarpoolProofsAsDriver();
 
+        // The user is valid and he has not made any trips
         if ($isUserValid && (is_null($carpoolProofs) || empty($carpoolProofs))) {
-            $isEmptyCarpoolProof = true;
-            new Log($logger, self::ACCOUNT_READY_FOR_SHORT_SUBSCRIPTION, $user, [Log::IS_USER_VALID => $isUserValid, Log::IS_CARPOOL_PROOFS_VALID => $isEmptyCarpoolProof]);
+            new Log(
+                $logger,
+                self::ACCOUNT_READY_FOR_SHORT_SUBSCRIPTION,
+                $user,
+                [
+                    Log::IS_USER_VALID => $isUserValid,
+                    Log::IS_CARPOOL_PROOFS_VALID => true,
+                ]
+            );
 
-            return $isEmptyCarpoolProof;
+            return true;
         }
 
         $filteredCarpoolProofs = array_filter($carpoolProofs, function (CarpoolProof $carpoolProof) {
@@ -245,16 +267,24 @@ abstract class CeeJourneyService
 
             return
                 !is_null(self::$_matching)
-                && self::__isShortDistance(self::$_matching->getCommonDistance())
-                && CarpoolProof::TYPE_HIGH === $carpoolProof->getType()
-                && self::__isOriginOrDestinationFromReferenceCountry()
-                && self::isDateAfterReferenceDate($carpoolProof->getStartDriverDate())
+                && self::__isShortDistance(self::$_matching->getCommonDistance())           // The trip must have a distance of less than 80km
+                && CarpoolProof::TYPE_HIGH === $carpoolProof->getType()                     // The trip must have a carpool class C
+                && self::__isOriginOrDestinationFromReferenceCountry()                      // The trip must depart or arrive from the reference country
+                && !self::isDateAfterReferenceDate($carpoolProof->getStartDriverDate())     // The user must not have made a short distance trip before the reference date
             ;
         });
 
-        new Log($logger, self::ACCOUNT_READY_FOR_SHORT_SUBSCRIPTION, $user, [Log::IS_USER_VALID => $isUserValid, Log::IS_CARPOOL_PROOFS_VALID => is_null($carpoolProofs) || empty($carpoolProofs) || empty($filteredCarpoolProofs)]);
+        new Log(
+            $logger,
+            self::ACCOUNT_READY_FOR_SHORT_SUBSCRIPTION,
+            $user,
+            [
+                Log::IS_USER_VALID => $isUserValid,
+                Log::IS_CARPOOL_PROOFS_VALID => is_null($carpoolProofs) || empty($carpoolProofs) || empty($filteredCarpoolProofs),
+            ]
+        );
 
-        if (!self::__isUserValid($user)) {
+        if (!$isUserValid) {
             return false;
         }
 
