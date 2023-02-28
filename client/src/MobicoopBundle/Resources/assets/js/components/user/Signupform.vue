@@ -741,7 +741,7 @@ export default {
 
             var diffYears = Math.abs(Math.floor(diff / 365.24));
             return (
-              diffYears >= 16 || this.$t("birthDay.errors.notadult")
+              diffYears >= this.ageMin || this.$t("birthDay.errors.notadult", {age:this.ageMin})
             );
           },
         },
