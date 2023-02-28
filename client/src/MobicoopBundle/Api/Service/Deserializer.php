@@ -30,6 +30,7 @@ use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ad;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Ask;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Matching;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\MyAd;
+use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\MyAdCommunity;
 use Mobicoop\Bundle\MobicoopBundle\Carpool\Entity\Proposal;
 use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\Contact;
 use Mobicoop\Bundle\MobicoopBundle\Communication\Entity\ContactType;
@@ -463,7 +464,21 @@ class Deserializer
     {
         $myAd = new MyAd();
 
-        return $this->autoSet($myAd, $data);
+        $myAd = $this->autoSet($myAd, $data);
+        if (isset($data['communities'])) {
+            foreach ($data['communities'] as $community) {
+                $myAd->addCommunity($this->deserializeMyAdCommunity($community));
+            }
+        }
+
+        return $myAd;
+    }
+
+    private function deserializeMyAdCommunity(array $data): ?MyAdCommunity
+    {
+        $myAdCommunity = new MyAdCommunity();
+
+        return $this->autoSet($myAdCommunity, $data);
     }
 
     private function deserializeProposal(array $data): ?Proposal
