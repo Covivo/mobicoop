@@ -190,9 +190,10 @@ class CarpoolProofRepository
             $qb
                 ->innerJoin('a.carpoolItems', 'c', 'WITH', 'c.creditorUser = :driver')
                 ->andWhere('m.commonDistance >= :distance')
-                ->andWhere('c.creditorStatus = :creditorStatus')
+                ->andWhere('c.creditorStatus = :creditorStatusOnline OR c.creditorStatus = :creditorStatusDirect')
             ;
-            $parameters['creditorStatus'] = CarpoolItem::DEBTOR_STATUS_ONLINE;
+            $parameters['creditorStatusOnline'] = CarpoolItem::DEBTOR_STATUS_ONLINE;
+            $parameters['creditorStatusDirect'] = CarpoolItem::DEBTOR_STATUS_DIRECT;
         } else {
             $qb->andWhere('m.commonDistance < :distance');
         }
