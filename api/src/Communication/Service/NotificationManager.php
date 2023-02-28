@@ -498,6 +498,7 @@ class NotificationManager
                         'community' => $object,
                     ];
                     $bodyContext = [
+                        'user' => $recipient,
                         'recipient' => $recipient,
                         'community' => $object,
                     ];
@@ -507,6 +508,7 @@ class NotificationManager
                 case CommunityUser::class:
                     $sender = null;
                     $bodyContext = [
+                        'user' => $recipient,
                         'recipient' => $recipient,
                         'community' => $object->getCommunity(),
                         'senderGivenName' => $object->getUser()->getGivenName(),
