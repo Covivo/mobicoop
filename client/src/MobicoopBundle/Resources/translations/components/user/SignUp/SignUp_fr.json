@@ -1,125 +1,125 @@
 {
-    "title": "Inscription",
-    "urlSignUp": "/utilisateur/inscription",
-    "urlSignUpResult": "/utilisateur/inscription/{id}",
-    "urlSignUpEvent": "/utilisateur/inscription/evenement/{id}",
-    "urlRedirectAfterSignUp": "/utilisateur/inscription/validation/{email}",
-    "urlRedirectAfterSignUpResult": "/utilisateur/connexion/{id}",
-    "urlRedirectAfterSignUpEvent": "/utilisateur/connexion/evenement/{id}",
-    "urlRedirectAfterSignUpCommunity": "/utilisateur/connexion/communaute/{id}",
-    "urlRedirectAfterSignUpPublish": "/utilisateur/connexion/redirect/publier",
-    "gender": {
-        "label": "Civilité",
-        "placeholder": "Civilité",
-        "values": {
-            "male": "Monsieur",
-            "female": "Madame",
-            "other": "Autre"
-        },
-        "errors": {
-            "required": "La civilité est requise"
-        }
+  "title": "Inscription",
+  "urlSignUp": "/utilisateur/inscription",
+  "urlSignUpResult": "/utilisateur/inscription/{id}",
+  "urlSignUpEvent": "/utilisateur/inscription/evenement/{id}",
+  "urlRedirectAfterSignUp": "/utilisateur/inscription/validation/{email}",
+  "urlRedirectAfterSignUpResult": "/utilisateur/connexion/{id}",
+  "urlRedirectAfterSignUpEvent": "/utilisateur/connexion/evenement/{id}",
+  "urlRedirectAfterSignUpCommunity": "/utilisateur/connexion/communaute/{id}",
+  "urlRedirectAfterSignUpPublish": "/utilisateur/connexion/redirect/publier",
+  "gender": {
+    "label": "Civilité",
+    "placeholder": "Civilité",
+    "values": {
+      "male": "Monsieur",
+      "female": "Madame",
+      "other": "Autre"
     },
-    "givenName": {
-        "placeholder": "Prénom",
-        "errors": {
-            "required": "Le prénom est requis"
-        }
-    },
-    "familyName": {
-        "placeholder": "Nom",
-        "errors": {
-            "required": "Le nom est requis"
-        }
-    },
-    "birthDate": {
-        "placeholder": "Date de naissance"
-    },
-    "birthDay": {
-        "errors": {
-            "required": "La date de naissance est requise",
-            "notadult": "Vous devez avoir 16 ans pour vous inscrire sur la plateforme"
-        }
-    },
-    "homeTown": {
-        "placeholder": "Commune de résidence"
-    },
-    "email": {
-        "placeholder": "Email",
-        "errors": {
-            "required": "L'adresse email est requise",
-            "valid": "L'adresse email doit être valide"
-        }
-    },
-    "phone": {
-        "placeholder": "Téléphone portable",
-        "errors": {
-            "required": "Le numéro de téléphone est requis",
-            "valid": "Le numéro de téléphone doit être valide"
-        }
-    },
-    "password": {
-        "placeholder": "Mot de passe",
-        "errors": {
-            "required": "Le mot de passe est requis",
-            "min": "Le mot de passe doit comprendre 8 caractères min.",
-            "upper": "Le mot de passe doit comprendre 1 majuscule.",
-            "lower": "Le mot de passe doit comprendre 1 minuscule.",
-            "number": "Le mot de passe doit comprendre 1 chiffre."
-        }
-    },
-    "checkEmail": {
-        "url": "/utilisateur/verif/email",
-        "error": "Cet email est déjà pris"
-    },
-    "checkPhoneValidity": {
-        "url": "/utilisateur/verif/telephone",
-        "error": "Ce numéro de téléphone n'est pas valide"
-    },
-    "chart": {
-        "text": "J'accepte <a class='primary--text' target='_blank' href='/cgu' aria-label='la charte de la plateforme et sa politique de protection des données lien')> la charte de la plateforme et sa politique de protection des données</a>",
-        "required": "La validation de la charte est requise"
-    },
-    "newsSubscription":{
-        "text":"J'accepte de recevoir les actualités du service (informations utiles pour covoiturer, et nouveaux services ou nouvelles fonctionnalités)"
-    },
-    "legalAge": {
-        "text": "Je confirme être âgé d'au moins 18 ans",
-        "required": "Requis"
-    },
-    "communities": {
-        "label": "Rejoindre une communauté",
-        "route": "/utilisateur/inscription/liste-des-communautes"
-    },
-    "step": "Etape",
-    "steps": {
-        "1": "Identifiants",
-        "2": "Identité",
-        "3": "Genre",
-        "4": "Date de naissance",
-        "5": "Ville de résidence"
-    },
-    "snackbar": {
-        "joinCommunity": {
-            "textOkManualValidation": "Votre demande d'adhésion est bien envoyée au référent. Vous serez informé par email.",
-            "textOkAutoValidation": "Votre demande d'adhésion est validée.",
-            "textError": "Une erreur est survenue veuillez essayer à nouveau."
-        }
-    },
-    "login": "Vous avez déjà un compte ? Identifiez-vous !",
-    "urlLogin": "/utilisateur/connexion/",
-    "button": {
-        "previous": "Précédent",
-        "next": "Suivant",
-        "register": "Je m'inscris"
-    },
-    "rgpd": {
-        "infos": "Les informations recueillies à partir de ce formulaire sont nécessaires à l’utilisation des services proposés par l’application Mobicoop.",
-        "link": {
-            "label": "Pour en savoir plus sur la gestion de vos données et vos droits.",
-            "route": "/cgu"
-        },
-        "consent":"Pour pouvoir vous connecter vous devez avoir accepté de \"Maintenir votre connexion active\" grâce à l'outil de \"Gestion des cookies\" accessible par un lien en pied de page puis rafraichir la page.",
-        "socialServicesUnavailableWithoutConsent":"Pour être utilisée, la fonctionnalité de connexion via les réseaux sociaux doit être acceptée grâce à l'outil de \"Gestion des cookies\" accessible par un lien en pied de page."
+    "errors": {
+      "required": "La civilité est requise"
     }
+  },
+  "givenName": {
+    "placeholder": "Prénom",
+    "errors": {
+      "required": "Le prénom est requis"
+    }
+  },
+  "familyName": {
+    "placeholder": "Nom",
+    "errors": {
+      "required": "Le nom est requis"
+    }
+  },
+  "birthDate": {
+    "placeholder": "Date de naissance"
+  },
+  "birthDay": {
+    "errors": {
+      "required": "La date de naissance est requise",
+      "notadult": "Vous devez avoir {age} ans pour vous inscrire sur la plateforme"
+    }
+  },
+  "homeTown": {
+    "placeholder": "Commune de résidence"
+  },
+  "email": {
+    "placeholder": "Email",
+    "errors": {
+      "required": "L'adresse email est requise",
+      "valid": "L'adresse email doit être valide"
+    }
+  },
+  "phone": {
+    "placeholder": "Téléphone portable",
+    "errors": {
+      "required": "Le numéro de téléphone est requis",
+      "valid": "Le numéro de téléphone doit être valide"
+    }
+  },
+  "password": {
+    "placeholder": "Mot de passe",
+    "errors": {
+      "required": "Le mot de passe est requis",
+      "min": "Le mot de passe doit comprendre 8 caractères min.",
+      "upper": "Le mot de passe doit comprendre 1 majuscule.",
+      "lower": "Le mot de passe doit comprendre 1 minuscule.",
+      "number": "Le mot de passe doit comprendre 1 chiffre."
+    }
+  },
+  "checkEmail": {
+    "url": "/utilisateur/verif/email",
+    "error": "Cet email est déjà pris"
+  },
+  "checkPhoneValidity": {
+    "url": "/utilisateur/verif/telephone",
+    "error": "Ce numéro de téléphone n'est pas valide"
+  },
+  "chart": {
+    "text": "J'accepte <a class='primary--text' target='_blank' href='/cgu' aria-label='la charte de la plateforme et sa politique de protection des données lien')> la charte de la plateforme et sa politique de protection des données</a>",
+    "required": "La validation de la charte est requise"
+  },
+  "newsSubscription": {
+    "text": "J'accepte de recevoir les actualités du service (informations utiles pour covoiturer, et nouveaux services ou nouvelles fonctionnalités)"
+  },
+  "legalAge": {
+    "text": "Je confirme être âgé d'au moins 18 ans",
+    "required": "Requis"
+  },
+  "communities": {
+    "label": "Rejoindre une communauté",
+    "route": "/utilisateur/inscription/liste-des-communautes"
+  },
+  "step": "Etape",
+  "steps": {
+    "1": "Identifiants",
+    "2": "Identité",
+    "3": "Genre",
+    "4": "Date de naissance",
+    "5": "Ville de résidence"
+  },
+  "snackbar": {
+    "joinCommunity": {
+      "textOkManualValidation": "Votre demande d'adhésion est bien envoyée au référent. Vous serez informé par email.",
+      "textOkAutoValidation": "Votre demande d'adhésion est validée.",
+      "textError": "Une erreur est survenue veuillez essayer à nouveau."
+    }
+  },
+  "login": "Vous avez déjà un compte ? Identifiez-vous !",
+  "urlLogin": "/utilisateur/connexion/",
+  "button": {
+    "previous": "Précédent",
+    "next": "Suivant",
+    "register": "Je m'inscris"
+  },
+  "rgpd": {
+    "infos": "Les informations recueillies à partir de ce formulaire sont nécessaires à l’utilisation des services proposés par l’application Mobicoop.",
+    "link": {
+      "label": "Pour en savoir plus sur la gestion de vos données et vos droits.",
+      "route": "/cgu"
+    },
+    "consent": "Pour pouvoir vous connecter vous devez avoir accepté de \"Maintenir votre connexion active\" grâce à l'outil de \"Gestion des cookies\" accessible par un lien en pied de page puis rafraichir la page.",
+    "socialServicesUnavailableWithoutConsent": "Pour être utilisée, la fonctionnalité de connexion via les réseaux sociaux doit être acceptée grâce à l'outil de \"Gestion des cookies\" accessible par un lien en pied de page."
+  }
 }
