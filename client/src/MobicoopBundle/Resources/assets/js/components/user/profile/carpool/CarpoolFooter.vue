@@ -4,6 +4,14 @@
     class="pa-0"
   >
     <v-row
+      v-if="communities.length > 0"
+      class="px-2"
+    >
+      <v-col cols="12">
+        <AdCommunities :communities="communities" />
+      </v-col>
+    </v-row>
+    <v-row
       class="px-2"
     >
       <v-col
@@ -63,7 +71,7 @@
             <carpooler
               :carpooler="carpooler"
               :passenger="ad.passengers.length>0"
-              :driver="!Array.isArray(ad.driver)" 
+              :driver="!Array.isArray(ad.driver)"
               :frequency="carpooler.askFrequency"
               :user="user"
               :payment-electronic-active="paymentElectronicActive"
@@ -82,6 +90,7 @@
 <script>
 import {messages_en, messages_fr, messages_eu, messages_nl} from "@translations/components/user/profile/carpool/CarpoolFooter/";
 import Carpooler from '@components/user/profile/carpool/Carpooler.vue';
+import AdCommunities from "@components/utilities/carpool/AdCommunities";
 
 export default {
   i18n: {
@@ -93,7 +102,8 @@ export default {
     }
   },
   components: {
-    Carpooler
+    Carpooler,
+    AdCommunities
   },
   props: {
     ad: {
@@ -112,6 +122,10 @@ export default {
       type: Boolean,
       default: false
     },
+    communities:{
+      type: Array,
+      default: () => []
+    }
   },
   data () {
     return {
