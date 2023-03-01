@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-tooltip
-      v-for="community in uniqueCommunities"
+      v-for="community in communities"
       :key="community.id"
       color="info"
       right
@@ -51,11 +51,6 @@ export default {
       type: Array,
       default: () => []
     }
-  },
-  computed:{
-    uniqueCommunities(){
-      return new Set(this.communities);
-    },
   }
 }
 </script>
