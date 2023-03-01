@@ -788,6 +788,7 @@ services:
           short_distance: "%env(string:MOBCONNECT_SHORTDISTANCE_SUBSCRIPTIONID)%"
           long_distance: "%env(string:MOBCONNECT_LONGDISTANCE_SUBSCRIPTIONID)%"
       $proofDeadline: "%env(int:EEC_JOURNEY_DECLARATION_DEADLINE)%"
+      $prefix: "%env(string:CARPOOL_PROOF_PREFIX)%"
     tags:
       - { name: monolog.logger, channel: incentive_subscription }
 
