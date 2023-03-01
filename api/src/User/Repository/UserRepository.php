@@ -40,6 +40,8 @@ class UserRepository
      */
     private $repository;
 
+    private $entityManager;
+
     private $logger;
 
     public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger)
@@ -261,5 +263,58 @@ class UserRepository
         $stmt->execute();
 
         return $stmt->fetchAll();
+    }
+
+    public function findByLastActivityDate(\DateTime $lastActivityDate): ?array
+    {
+        $dateCondition = '
+            (u.lastActivityDate is not null and u.lastActivityDate >= :lastActivityDateBottom and u.lastActivityDate <= :lastActivityDateUp)
+            OR
+            (u.lastActivityDate is null and u.createdDate >= :lastActivityDateBottom and u.createdDate <= :lastActivityDateUp)
+        ';
+
+        $query = $this->repository->createQueryBuilder('u')
+            ->where($dateCondition)
+            ->andwhere('u.status <> :statusPseudonymized')
+            ->setParameter('lastActivityDateBottom', $lastActivityDate->format('Y-m-d').' 00:00:00')
+            ->setParameter('lastActivityDateUp', $lastActivityDate->format('Y-m-d').' 23:59:59')
+            ->setParameter('statusPseudonymized', User::STATUS_PSEUDONYMIZED)
+        ;
+
+        return $query->getQuery()->getResult();
+    }
+
+    public function findBeforeLastActivityDate(\DateTime $lastActivityDate): ?array
+    {
+        $dateCondition = '
+            (u.lastActivityDate is not null u.lastActivityDate <= :lastActivityDateUp)
+            OR
+            (u.lastActivityDate is null and u.createdDate <= :lastActivityDateUp)
+        ';
+
+        $query = $this->repository->createQueryBuilder('u')
+            ->andwhere($dateCondition)
+            ->andwhere('u.status <> :statusPseudonymized')
+            ->setParameter('lastActivityDateUp', $lastActivityDate->format('Y-m-d').' 23:59:59')
+            ->setParameter('statusPseudonymized', User::STATUS_PSEUDONYMIZED)
+        ;
+
+        return $query->getQuery()->getResult();
+    }
+
+    public function findTerritoriesUsers(array $territoryIds)
+    {
+        $qb = $this->repository->createQueryBuilder('u');
+
+        $qb
+            ->innerJoin('u.addresses', 'a', 'WITH', 'a.home = 1')
+            ->innerJoin('a.territories', 't')
+            ->where('t.id IN(:territoryIds)')
+            ->setParameters([
+                'territoryIds' => $territoryIds,
+            ])
+        ;
+
+        return $qb->getQuery()->getResult();
     }
 }

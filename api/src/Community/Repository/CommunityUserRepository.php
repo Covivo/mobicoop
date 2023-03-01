@@ -28,11 +28,17 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Util\QueryNameGenerator;
 use ApiPlatform\Core\DataProvider\PaginatorInterface;
 use App\Community\Entity\Community;
 use App\Community\Entity\CommunityUser;
+use App\User\Entity\User as EntityUser;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 
 class CommunityUserRepository
 {
+    /**
+     * @var EntityManagerInterface
+     */
+    private $_em;
+
     /**
      * @var EntityRepository
      */
@@ -42,6 +48,7 @@ class CommunityUserRepository
 
     public function __construct(EntityManagerInterface $entityManager, iterable $collectionExtensions, int $communityNbLastUser)
     {
+        $this->_em = $entityManager;
         $this->repository = $entityManager->getRepository(CommunityUser::class);
         $this->collectionExtensions = $collectionExtensions;
         $this->communityNbLastUser = $communityNbLastUser;
@@ -120,6 +127,65 @@ class CommunityUserRepository
     }
 
     /**
+     * Find community all users for a given community. (pending, refused, accepted, ...).
+     *
+     * @param Community $community The community
+     *
+     * @return array The members
+     */
+    public function findAllCommunityMembers(Community $community, array $context = [], string $operationName): PaginatorInterface
+    {
+        $query = $this->repository->createQueryBuilder('cu');
+        $query->where('cu.community = :community')
+            ->join('cu.user', 'u')
+            ->setParameter('community', $community)
+        ;
+
+        // Sort and Filters
+        if (isset($context['filters'])) {
+            // Filters
+            $excludedFilters = ['page', 'perPage', 'order'];
+            foreach ($context['filters'] as $filter => $value) {
+                if (!in_array($filter, $excludedFilters)) {
+                    switch ($filter) {
+                        case 'givenName':
+                        case 'familyName':$query->andWhere('u.'.$filter." like '%".$value."%'");
+
+                            break;
+
+                        default: $query->andWhere('cu.'.$filter." like '%".$value."%'");
+                    }
+                }
+            }
+
+            // Sort
+            if (isset($context['filters']['order'])) {
+                foreach ($context['filters']['order'] as $sort => $order) {
+                    switch ($sort) {
+                        case 'givenName':
+                        case 'familyName':$query->addOrderBy('u.'.$sort, $order);
+
+                            break;
+
+                        default: $query->addOrderBy('cu.'.$sort, $order);
+                    }
+                }
+            }
+        }
+
+        $queryNameGenerator = new QueryNameGenerator();
+
+        foreach ($this->collectionExtensions as $extension) {
+            $extension->applyToCollection($query, $queryNameGenerator, CommunityUser::class, $operationName, $context);
+            if ($extension instanceof QueryResultCollectionExtensionInterface && $extension->supportsResult(CommunityUser::class, $operationName)) {
+                return $extension->getResult($query, CommunityUser::class, $operationName);
+            }
+        }
+
+        return $query->getQuery()->getResult();
+    }
+
+    /**
      * Get accepted members by their id if they accept emailing.
      *
      * @param array $ids The ids of the users
@@ -151,5 +217,16 @@ class CommunityUserRepository
             ->setParameter('pending', CommunityUser::STATUS_PENDING)
             ->setParameter('refused', CommunityUser::STATUS_REFUSED)
             ->getQuery()->getResult();
+    }
+
+    public function findUserCommunities(EntityUser $user)
+    {
+        $query = 'SELECT tcu_extended.user_id, GROUP_CONCAT(tcu_extended.Communauté1) as Communauté1, GROUP_CONCAT(tcu_extended.Communauté2) as Communauté2, GROUP_CONCAT(tcu_extended.Communauté3) as Communauté3 FROM ( SELECT tcu.user_id, case when tcu.OrdreCommunaute = 1 then tcu.NomCommunaute end as Communauté1, case when tcu.OrdreCommunaute = 2 then tcu.NomCommunaute end as Communauté2, case when tcu.OrdreCommunaute = 3 then tcu.NomCommunaute end as Communauté3 FROM ( SELECT cu.user_id, ROW_NUMBER() OVER ( PARTITION BY cu.user_id ORDER BY cu.accepted_date ASC ) as OrdreCommunaute, c.name as NomCommunaute, cu.accepted_date as DateAcceptationCommunaute FROM community_user cu inner join community c on c.id = cu.community_id WHERE cu.accepted_date is not null AND cu.user_id = :user GROUP by cu.id ORDER BY cu.accepted_date ) as tcu ) as tcu_extended GROUP BY tcu_extended.user_id';
+
+        $conn = $this->_em->getConnection();
+        $stmt = $conn->prepare($query);
+        $stmt->execute(['user' => $user->getId()]);
+
+        return $stmt->fetch();
     }
 }

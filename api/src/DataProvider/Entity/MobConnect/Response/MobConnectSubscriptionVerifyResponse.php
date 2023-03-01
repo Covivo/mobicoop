@@ -25,14 +25,6 @@ class MobConnectSubscriptionVerifyResponse extends MobConnectResponse
 
         if (!in_array($this->getCode(), self::ERROR_CODES) && !is_null($this->_content)) {
             $this->setStatus($this->_content->status);
-
-            if (isset($this->_content->rejectionReason)) {
-                $this->setRejectReason($this->_content->motif_de_rejet);
-            }
-
-            if (isset($this->_content->comments)) {
-                $this->setComment($this->_content->comments);
-            }
         }
     }
 

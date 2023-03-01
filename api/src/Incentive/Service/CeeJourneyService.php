@@ -36,6 +36,9 @@ abstract class CeeJourneyService
     public const VERIFICATION_STATUS_PENDING = 0;
     public const VERIFICATION_STATUS_ENDED = 1;
 
+    public const STATUS_REJECTED = 'REJETEE';
+    public const STATUS_VALIDATED = 'VALIDEE';
+
     // LOG
     private const ACCOUNT_READY_FOR_LONG_SUBSCRIPTION = 'is_user_account_ready_for_long_subscription';
     private const ACCOUNT_READY_FOR_SHORT_SUBSCRIPTION = 'is_user_account_ready_for_short_subscription';
@@ -189,10 +192,10 @@ abstract class CeeJourneyService
      */
     public static function isUserAccountReadyForLongDistanceSubscription(User $user, LoggerInterface $logger): bool
     {
-        $carpoolProofs = $user->getCarpoolProofsAsDriver();
         $isUserValid = self::__isUserValid($user);
+        $carpoolProofs = $user->getCarpoolProofsAsDriver();
 
-        if (is_null($carpoolProofs) || empty($carpoolProofs)) {
+        if ($isUserValid && (is_null($carpoolProofs) || empty($carpoolProofs))) {
             $isEmptyCarpoolProof = true;
             new Log($logger, self::ACCOUNT_READY_FOR_LONG_SUBSCRIPTION, $user, [Log::IS_USER_VALID => $isUserValid, Log::IS_CARPOOL_PROOFS_VALID => $isEmptyCarpoolProof]);
 
@@ -227,11 +230,10 @@ abstract class CeeJourneyService
      */
     public static function isUserAccountReadyForShortDistanceSubscription(User $user, LoggerInterface $logger): bool
     {
+        $isUserValid = self::__isUserValid($user);
         $carpoolProofs = $user->getCarpoolProofsAsDriver();
 
-        $isUserValid = self::__isUserValid($user);
-
-        if (is_null($carpoolProofs) || empty($carpoolProofs)) {
+        if ($isUserValid && (is_null($carpoolProofs) || empty($carpoolProofs))) {
             $isEmptyCarpoolProof = true;
             new Log($logger, self::ACCOUNT_READY_FOR_SHORT_SUBSCRIPTION, $user, [Log::IS_USER_VALID => $isUserValid, Log::IS_CARPOOL_PROOFS_VALID => $isEmptyCarpoolProof]);
 

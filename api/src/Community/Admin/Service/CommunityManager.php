@@ -91,7 +91,7 @@ class CommunityManager
     public function getMembers(int $communityId, array $context = [], string $operationName)
     {
         if ($community = $this->communityRepository->find($communityId)) {
-            return $this->communityUserRepository->findForCommunity($community, $context, $operationName);
+            return $this->communityUserRepository->findAllCommunityMembers($community, $context, $operationName);
         }
 
         throw new CommunityException('Community not found');
