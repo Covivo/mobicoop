@@ -1386,8 +1386,6 @@ class UserManager
      */
     public function deleteUser(User $user)
     {
-        $user = $this->pseudonymisedUser($user);
-
         // We check if the user have ads.
         // If he have ads we check if a carpool is initiated if yes we send an email to the carpooler
         foreach ($user->getProposals() as $proposal) {
@@ -1417,6 +1415,8 @@ class UserManager
         }
 
         $this->deleteUserImages($user);
+
+        $user = $this->pseudonymisedUser($user);
 
         $this->entityManager->flush();
     }
