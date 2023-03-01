@@ -25,21 +25,13 @@ class MobConnectSubscriptionVerifyResponse extends MobConnectResponse
 
         if (!in_array($this->getCode(), self::ERROR_CODES) && !is_null($this->_content)) {
             $this->setStatus($this->_content->status);
-
-            if (isset($this->_content->rejectionReason)) {
-                $this->setRejectReason($this->_content->motif_de_rejet);
-            }
-
-            if (isset($this->_content->comments)) {
-                $this->setComment($this->_content->comments);
-            }
         }
     }
 
     /**
      * Get the value of _status.
      */
-    public function getStatus(): string
+    public function getStatus(): ?string
     {
         return $this->_status;
     }
@@ -47,7 +39,7 @@ class MobConnectSubscriptionVerifyResponse extends MobConnectResponse
     /**
      * Set the value of _status.
      */
-    public function setStatus(string $_status): self
+    public function setStatus(?string $_status): self
     {
         $this->_status = $_status;
 
@@ -67,7 +59,7 @@ class MobConnectSubscriptionVerifyResponse extends MobConnectResponse
     /**
      * Set the value of _rejectReason.
      */
-    public function setRejectReason(string $_rejectReason): self
+    public function setRejectReason(?string $_rejectReason): self
     {
         $this->_rejectReason = $_rejectReason;
 
@@ -87,7 +79,7 @@ class MobConnectSubscriptionVerifyResponse extends MobConnectResponse
     /**
      * Set the value of _comment.
      */
-    public function setComment(string $_comments): self
+    public function setComment(?string $_comments): self
     {
         $this->_comments = $_comments;
 

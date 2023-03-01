@@ -8,7 +8,7 @@ class LongDistanceSubscription extends Subscription
 {
     public function __construct(LongDistanceJourney $longDistanceJourney)
     {
-        $this->subscription = $longDistanceJourney->getLongDistanceSubscription();
+        $this->subscription = $longDistanceJourney->getSubscription();
 
         $this->familyName = $this->subscription->getFamilyName();
         $this->givenName = $this->subscription->getGivenName();

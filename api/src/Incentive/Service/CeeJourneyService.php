@@ -7,7 +7,7 @@ use App\Carpool\Entity\Matching;
 use App\Geography\Entity\Address;
 use App\Incentive\Entity\Log;
 use App\Incentive\Resource\CeeSubscriptions;
-use App\Payment\Entity\CarpoolItem;
+use App\Payment\Entity\CarpoolPayment;
 use App\User\Entity\User;
 use Psr\Log\LoggerInterface;
 
@@ -35,6 +35,9 @@ abstract class CeeJourneyService
 
     public const VERIFICATION_STATUS_PENDING = 0;
     public const VERIFICATION_STATUS_ENDED = 1;
+
+    public const STATUS_REJECTED = 'REJETEE';
+    public const STATUS_VALIDATED = 'VALIDEE';
 
     // LOG
     private const ACCOUNT_READY_FOR_LONG_SUBSCRIPTION = 'is_user_account_ready_for_long_subscription';
@@ -136,17 +139,11 @@ abstract class CeeJourneyService
      */
     private function __hasBeenCarpoolPaymentRegularized(CarpoolProof $carpoolProof): bool
     {
-        if (is_null($carpoolProof->getAsk()) || is_null($carpoolProof->getAsk()->getCarpoolItems())) {
-            return false;
-        }
+        $carpoolPayment = self::getCarpoolPaymentFromCarpoolProof($carpoolProof);
 
-        return !empty(array_filter($carpoolProof->getAsk()->getCarpoolItems(), function (CarpoolItem $carpoolItem) use ($carpoolProof) {
-            return
-                (CarpoolItem::CREDITOR_STATUS_ONLINE === $carpoolItem->getCreditorStatus() || CarpoolItem::CREDITOR_STATUS_DIRECT === $carpoolItem->getCreditorStatus())
-                && $carpoolItem->getCreditorUser() === $carpoolProof->getDriver()
-                && $carpoolItem->getDebtorUser() === $carpoolProof->getPassenger()
-            ;
-        }));
+        return
+            !is_null($carpoolPayment)
+            && CarpoolPayment::STATUS_SUCCESS === $carpoolPayment->getStatus();
     }
 
     /**
@@ -195,10 +192,10 @@ abstract class CeeJourneyService
      */
     public static function isUserAccountReadyForLongDistanceSubscription(User $user, LoggerInterface $logger): bool
     {
-        $carpoolProofs = $user->getCarpoolProofsAsDriver();
         $isUserValid = self::__isUserValid($user);
+        $carpoolProofs = $user->getCarpoolProofsAsDriver();
 
-        if (is_null($carpoolProofs) || empty($carpoolProofs)) {
+        if ($isUserValid && (is_null($carpoolProofs) || empty($carpoolProofs))) {
             $isEmptyCarpoolProof = true;
             new Log($logger, self::ACCOUNT_READY_FOR_LONG_SUBSCRIPTION, $user, [Log::IS_USER_VALID => $isUserValid, Log::IS_CARPOOL_PROOFS_VALID => $isEmptyCarpoolProof]);
 
@@ -233,11 +230,10 @@ abstract class CeeJourneyService
      */
     public static function isUserAccountReadyForShortDistanceSubscription(User $user, LoggerInterface $logger): bool
     {
+        $isUserValid = self::__isUserValid($user);
         $carpoolProofs = $user->getCarpoolProofsAsDriver();
 
-        $isUserValid = self::__isUserValid($user);
-
-        if (is_null($carpoolProofs) || empty($carpoolProofs)) {
+        if ($isUserValid && (is_null($carpoolProofs) || empty($carpoolProofs))) {
             $isEmptyCarpoolProof = true;
             new Log($logger, self::ACCOUNT_READY_FOR_SHORT_SUBSCRIPTION, $user, [Log::IS_USER_VALID => $isUserValid, Log::IS_CARPOOL_PROOFS_VALID => $isEmptyCarpoolProof]);
 
@@ -330,5 +326,58 @@ abstract class CeeJourneyService
             && self::__isOriginOrDestinationFromReferenceCountry()
             && self::isDateAfterReferenceDate($carpoolProof->getStartDriverDate())
         ;
+    }
+
+    public static function isUserProperlyConnectToMob(User $user): bool
+    {
+        return
+            !is_null($user->getMobConnectAuth())
+            && $user->getMobConnectAuth()->getRefreshTokenExpiresDate() > new \DateTime('now')
+        ;
+    }
+
+    public static function getCarpoolPaymentFromCarpoolProof(CarpoolProof $carpoolProof): ?CarpoolPayment
+    {
+        if (is_null($carpoolProof->getAsk()) || is_null($carpoolProof->getAsk()->getCarpoolItems())) {
+            return null;
+        }
+
+        $carpoolItems = array_filter($carpoolProof->getAsk()->getCarpoolItems(), function ($item) use ($carpoolProof) {
+            return
+                $item->getCreditorUser()->getId() === $carpoolProof->getDriver()->getId()
+                && $item->getDebtorUser()->getId() === $carpoolProof->getPassenger()->getId()
+                && $item->getItemDate()->format('Y-m-d') === $carpoolProof->getStartDriverDate()->format('Y-m-d')
+            ;
+        });
+
+        if (!empty($carpoolItems)) {
+            if (count($carpoolItems) > 1) {
+                return null;
+            }
+
+            $carpoolItem = array_values($carpoolItems)[0];
+
+            $carpoolPayments = array_filter($carpoolItem->getCarpoolPayments(), function ($payment) use ($carpoolProof) {
+                return $payment->getUser()->getId() === $carpoolProof->getPassenger()->getId();
+            });
+
+            if (count($carpoolPayments) > 1) {
+                return null;
+            }
+
+            if (!empty($carpoolPayments)) {
+                return $carpoolPayments[0];
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * TODO.
+     */
+    public static function getCarpoolProofFromCarpoolPayment(CarpoolPayment $carpoolPayment): ?CarpoolProof
+    {
+        return null;
     }
 }

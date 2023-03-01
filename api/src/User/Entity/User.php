@@ -68,6 +68,7 @@ use App\User\Controller\UserAlertsUpdate;
 use App\User\Controller\UserAsks;
 use App\User\Controller\UserCheckPhoneToken;
 use App\User\Controller\UserDelete;
+use App\User\Controller\UserExport;
 use App\User\Controller\UserGeneratePhoneToken;
 use App\User\Controller\UserRegistration;
 use App\User\Controller\UserSendValidationEmail;
@@ -87,6 +88,7 @@ use App\User\Filter\HomeAddressWaypointTerritoryFilter;
 use App\User\Filter\IdentityStatusFilter;
 use App\User\Filter\IsInCommunityFilter;
 use App\User\Filter\LoginFilter;
+use App\User\Filter\NewsSubscriptionFilter;
 use App\User\Filter\ODRangeDestinationFilter;
 use App\User\Filter\ODRangeOriginFilter;
 use App\User\Filter\ODRangeRadiusFilter;
@@ -97,6 +99,7 @@ use App\User\Filter\RezoKitFilter;
 use App\User\Filter\SolidaryCandidateFilter;
 use App\User\Filter\SolidaryExclusiveFilter;
 use App\User\Filter\SolidaryFilter;
+use App\User\Filter\TerritoryFilter;
 use App\User\Filter\UnsubscribeTokenFilter;
 use App\User\Filter\WaypointTerritoryFilter;
 use DateTime;
@@ -332,6 +335,17 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "security"="is_granted('admin_user_list',object)",
  *              "swagger_context" = {
  *                  "tags"={"Administration"}
+ *              }
+ *          },
+ *          "ADMIN_exportAll"={
+ *              "method"="GET",
+ *              "path"="/admin/users/export",
+ *              "controller"=UserExport::class,
+ *              "formats"={"csv"={"text/csv"}},
+ *              "normalization_context"={"groups"={"user-export"}},
+ *              "security"="is_granted('admin_user_export_all',object)",
+ *              "swagger_context" = {
+ *                  "tags"={"Administration"},
  *              }
  *          },
  *          "ADMIN_post"={
@@ -624,9 +638,11 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ApiFilter(SolidaryExclusiveFilter::class)
  * @ApiFilter(RezoKitFilter::class, properties={"rezoKit"})
  * @ApiFilter(CardLetterFilter::class, properties={"cardLetter"})
+ * @ApiFilter(NewsSubscriptionFilter::class, properties={"newsSubscription"})
  * @ApiFilter(HitchHikerFilter::class)
  * @ApiFilter(DateFilter::class, properties={"createdDate": DateFilter::EXCLUDE_NULL,"lastActivityDate": DateFilter::EXCLUDE_NULL})
  * @ApiFilter(OrderFilter::class, properties={"id", "givenName", "status","familyName", "email", "gender", "identityStatus", "nationality", "birthDate", "createdDate", "validatedDate", "lastActivityDate", "telephone", "rezoKit", "cardLetter"}, arguments={"orderParameterName"="order"})
+ * @ApiFilter(TerritoryFilter::class, properties={"territory"})
  */
 class User implements UserInterface, EquatableInterface
 {
@@ -829,6 +845,13 @@ class User implements UserInterface, EquatableInterface
      * @Groups({"readUser","results"})
      */
     private $birthYear;
+
+    /**
+     * @var null|int Age of the user
+     *
+     * @Groups({"readUser","results"})
+     */
+    private $age;
 
     /**
      * @var null|string the telephone number of the user
@@ -2053,6 +2076,18 @@ class User implements UserInterface, EquatableInterface
     public function getBirthYear(): ?int
     {
         return $this->birthDate ? $this->birthDate->format('Y') : null;
+    }
+
+    public function getAge(): ?int
+    {
+        if (!$this->birthDate) {
+            return null;
+        }
+
+        $now = new \DateTime('now');
+        $age = $now->diff($this->birthDate);
+
+        return floor((int) $age->format('%y'));
     }
 
     public function getTelephone(): ?string

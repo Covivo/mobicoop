@@ -23,7 +23,6 @@
 
 namespace Mobicoop\Bundle\MobicoopBundle\User\Entity;
 
-use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Mobicoop\Bundle\MobicoopBundle\Api\Entity\ResourceInterface;
@@ -104,7 +103,9 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
      * @var string the email of the user
      *
      * @Groups({"post","put","checkValidationToken","passwordUpdateRequest"})
+     *
      * @Assert\NotBlank(groups={"signUp","update"})
+     *
      * @Assert\Email()
      */
     private $email;
@@ -113,6 +114,7 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
      * @var null|string the encoded password of the user
      *
      * @Groups({"post","put","password","passwordUpdate"})
+     *
      * @Assert\NotBlank(groups={"signUp","password"})
      */
     private $password;
@@ -149,6 +151,7 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
      * @var int phone display configuration (1 = restricted; 2 = all)
      *
      * @Assert\NotBlank
+     *
      * @Groups({"post","put"})
      */
     private $phoneDisplay;
@@ -305,6 +308,11 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
      * @var null|int the birth year of the user
      */
     private $birthYear;
+
+    /**
+     * @var null|int the age of the user
+     */
+    private $age;
 
     /**
      * @var int Validation of conditions
@@ -990,7 +998,16 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
     public function setBirthYear(?int $birthYear)
     {
         $this->birthYear = $birthYear;
-        // $this->birthDate = DateTime::createFromFormat('Y-m-d', $birthYear . '-1-1');
+    }
+
+    public function getAge(): ?int
+    {
+        return $this->age;
+    }
+
+    public function setAge(?int $age)
+    {
+        $this->age = $age;
     }
 
     public function getConditions(): ?int
@@ -1462,6 +1479,7 @@ class User extends GamificationEntity implements ResourceInterface, UserInterfac
             'token' => $this->getToken(),
             'birthYear' => $this->getBirthYear(),
             'birthDate' => $this->getBirthDate(),
+            'age' => $this->getAge(),
             'homeAddress' => $this->getHomeAddress(),
             'images' => $this->getImages(),
             'avatars' => $this->getAvatars(),
