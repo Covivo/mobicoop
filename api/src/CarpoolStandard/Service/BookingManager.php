@@ -24,6 +24,8 @@
 namespace App\CarpoolStandard\Service;
 
 use App\CarpoolStandard\Entity\Booking;
+use App\Event\Event\BookingReceivedEvent;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @author Remi Wortemann <remi.wortemann@mobicoop.org>
@@ -31,10 +33,12 @@ use App\CarpoolStandard\Entity\Booking;
 class BookingManager
 {
     private $carpoolStandardProvider;
+    private $eventDispatcher;
 
-    public function __construct(CarpoolStandardProvider $carpoolStandardProvider)
+    public function __construct(CarpoolStandardProvider $carpoolStandardProvider, EventDispatcherInterface $eventDispatcher)
     {
         $this->carpoolStandardProvider = $carpoolStandardProvider;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     public function postBooking(Booking $booking)
@@ -44,6 +48,7 @@ class BookingManager
 
     public function treatExternalBooking(Booking $booking)
     {
-        return 'data send';
+        $event = new BookingReceivedEvent($booking);
+        $this->eventDispatcher->dispatch(BookingReceivedEvent::NAME, $event);
     }
 }

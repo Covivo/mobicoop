@@ -662,8 +662,20 @@ class NotificationManager
                     break;
 
                 case Booking::class:
+                    if ($recipient->getId() == $object->getPassenger()->getId()) {
+                        $senderAlias = $object->getDriver()->getAlias();
+                        $senderOperator = $object->getDriver()->getOperator();
+                    } elseif ($recipient->getId() == $object->getDriver()->getId()) {
+                        $senderAlias = $object->getPassenger()->getAlias();
+                        $senderOperator = $object->getPassenger()->getOperator();
+                    }
                     $titleContext = [];
-                    $bodyContext = ['booking' => $object];
+                    $bodyContext = [
+                        'booking' => $object,
+                        'user' => $recipient,
+                        'senderAlias' => $senderAlias,
+                        'senderOperator' => $senderOperator,
+                    ];
 
                     break;
 
@@ -879,6 +891,23 @@ class NotificationManager
                     $bodyContext = [
                         'givenName' => $object->getReviewer()->getGivenName(),
                         'shortFamilyName' => $object->getReviewer()->getShortFamilyName(),
+                    ];
+
+                    break;
+
+                case Booking::class:
+                    if ($recipient->getId() == $object->getPassenger()->getId()) {
+                        $senderAlias = $object->getDriver()->getAlias();
+                        $senderOperator = $object->getDriver()->getOperator();
+                    } elseif ($recipient->getId() == $object->getDriver()->getId()) {
+                        $senderAlias = $object->getPassenger()->getAlias();
+                        $senderOperator = $object->getPassenger()->getOperator();
+                    }
+                    $bodyContext = [
+                        'booking' => $object,
+                        'user' => $recipient,
+                        'senderAlias' => $senderAlias,
+                        'senderOperator' => $senderOperator,
                     ];
 
                     break;
@@ -1104,6 +1133,24 @@ class NotificationManager
                     $bodyContext = [
                         'givenName' => $object->getReviewer()->getGivenName(),
                         'shortFamilyName' => $object->getReviewer()->getShortFamilyName(),
+                    ];
+
+                    break;
+
+                case Booking::class:
+                    if ($recipient->getId() == $object->getPassenger()->getId()) {
+                        $senderAlias = $object->getDriver()->getAlias();
+                        $senderOperator = $object->getDriver()->getOperator();
+                    } elseif ($recipient->getId() == $object->getDriver()->getId()) {
+                        $senderAlias = $object->getPassenger()->getAlias();
+                        $senderOperator = $object->getPassenger()->getOperator();
+                    }
+                    $titleContext = [];
+                    $bodyContext = [
+                        'booking' => $object,
+                        'user' => $recipient,
+                        'senderAlias' => $senderAlias,
+                        'senderOperator' => $senderOperator,
                     ];
 
                     break;

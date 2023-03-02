@@ -22,6 +22,7 @@
 
 namespace App\Communication\EventSubscriber;
 
+use App\CarpoolStandard\Exception\CarpoolStandardException;
 use App\Communication\Service\NotificationManager;
 use App\Event\Event\BookingReceivedEvent;
 use App\User\Service\UserManager;
@@ -31,11 +32,13 @@ class BookingSubscriber implements EventSubscriberInterface
 {
     private $notificationManager;
     private $userManager;
+    private $operatorIdentifier;
 
-    public function __construct(NotificationManager $notificationManager, UserManager $userManager)
+    public function __construct(NotificationManager $notificationManager, UserManager $userManager, string $operatorIdentifier)
     {
         $this->notificationManager = $notificationManager;
         $this->userManager = $userManager;
+        $this->operatorIdentifier = $operatorIdentifier;
     }
 
     public static function getSubscribedEvents()
@@ -47,6 +50,12 @@ class BookingSubscriber implements EventSubscriberInterface
 
     public function onBookingReceived(BookingReceivedEvent $event)
     {
-        $this->notificationManager->notifies(BookingReceivedEvent::NAME, $this->userManager->getUser((int) $event->getBooking()->getPassenger()->getId()), $event->getBooking());
+        if ($event->getBooking()->getPassenger()->getOperator() == $this->operatorIdentifier) {
+            $this->notificationManager->notifies(BookingReceivedEvent::NAME, $this->userManager->getUser((int) $event->getBooking()->getDriver()->getId()), $event->getBooking());
+        } elseif ($event->getBooking()->getDriver()->getOperator() == $this->operatorIdentifier) {
+            $this->notificationManager->notifies(BookingReceivedEvent::NAME, $this->userManager->getUser((int) $event->getBooking()->getPassenger()->getId()), $event->getBooking());
+        } else {
+            throw new CarpoolStandardException(CarpoolStandardException::CARPOOLERS_PLATFORM_ERROR);
+        }
     }
 }

@@ -316,7 +316,10 @@ services:
       $provider: "%env(string:CARPOOL_STANDARD_PROVIDER)%"
       $apiKey: "%env(string:CARPOOL_STANDARD_API_KEY)%"
       $baseUri: "%env(string:CARPOOL_STANDARD_BASE_URI)%"
-
+  App\Communication\EventSubscriber\BookingSubscriber:    
+    arguments:
+      $operatorIdentifier: "%env(string:CARPOOL_STANDARD_OPERATOR_IDENTIFIER)%"
+      
   # Commands
   App\Command\CarpoolAskPostedRelaunch1Command:
     tags:
