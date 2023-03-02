@@ -1,5 +1,8 @@
 <template>
-  <div class="mb-8">
+  <div
+    :id="$t('EEC-form')"
+    class="mb-8"
+  >
     <div v-if="!loading">
       <EECIncentiveInitiateSubscription
         v-if="!subscriptionInitiated"
