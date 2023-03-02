@@ -1,6 +1,6 @@
 <template>
   <v-card
-    :class="textColor"
+    :class="textColor+' '+cardRounded"
     :color="backgroundColor"
     :height="height"
     :flat="flat"
@@ -37,7 +37,7 @@
           <v-row
             justify="center"
           >
-            <v-col 
+            <v-col
               :align="alignButton"
             >
               <v-btn
@@ -97,6 +97,10 @@
 <script>
 export default {
   props: {
+    cardRounded: {
+      type: String,
+      default: ""
+    },
     cardTitle: {
       type: String,
       default: ""
@@ -104,15 +108,15 @@ export default {
     cardText: {
       type: String,
       default: ""
-    },    
+    },
     backgroundColor: {
       type: String,
       default: "secondary"
-    },    
+    },
     textColor: {
       type: String,
       default: "white--text"
-    }, 
+    },
     classButton: {
       type: String,
       default:"mb-4 text-body-2"
@@ -124,7 +128,7 @@ export default {
     sizeButton: {
       type: String,
       default: "95%"
-    }, 
+    },
     alignButton: {
       type: String,
       default:"center"
@@ -140,11 +144,11 @@ export default {
     cardTextButton: {
       type: String,
       default: ""
-    },    
+    },
     cardTextColorButton: {
       type: String,
       default: "white--text"
-    }, 
+    },
     cardColorButton: {
       type: String,
       default: "secondary"
@@ -164,15 +168,15 @@ export default {
     cardTextButtonTwo: {
       type: String,
       default: ""
-    },    
+    },
     cardTextColorButtonTwo: {
       type: String,
       default: "secondary--text"
-    }, 
+    },
     cardColorButtonTwo: {
       type: String,
       default: "secondary"
-    }, 
+    },
     hrefButtonTwo: {
       type: String,
       default: "#"
