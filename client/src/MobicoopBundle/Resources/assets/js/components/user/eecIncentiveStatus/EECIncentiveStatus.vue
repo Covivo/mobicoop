@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="mb-8">
     <div v-if="!loading">
       <EECIncentiveInitiateSubscription
         v-if="!subscriptionInitiated"
