@@ -8,22 +8,22 @@
                     <td style="width:70%">
                         <p>Bonjour<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{context.recipient.givenName|capitalize}} {{context.recipient.shortFamilyName|capitalize}}</b></p>
                         <p>{{context.senderAlias|capitalize}} de la plateforme {{context.senderOperator}} vous a fait une demande formelle pour le covoiturage ci-dessous.</p>
-                        <p>Vous pouvez répondre à ce message, donner suite ou refuser le covoiturage, via la messagerie de {{NomSite}} en cliquant ici {{ URL de la page de messagerie correspondante}}</p>
+                        <p>Vous pouvez répondre à ce message, donner suite ou refuser le covoiturage, via la messagerie de {{api_env('EMAILS_PLATFORM_NAME')}} en cliquant <a href="{{api_env('EMAILS_PLATFORM_URL')}}/utilisateur/messages}}">ici</a></p>
                         <p>Trajet occasionnel:</p>
                         <ul>
                          {% if context.booking.distance %}
                             <li>Distance covoiturée : {{context.booking.distance}}km</li>
-                         {% endif %}   
+                         {% endif %}
                             <li>Date: {{context.booking.passengerPickupDate|date}}</li>
-                         {% if context.booking.passengerPickupAddress %}   
-                            <li>Prise en charge à {{context.booking.passengerPickupAddress}}</li>
-                         {% endif %}  
+                         {% if context.booking.passengerPickupAddress %}
+                            <li>Prise en charge à {{context.booking.passengerPickupAddress}}.</li>
+                         {% endif %}
                          {% if context.booking.passengerDropAddress %}
-                            <li>Dépose à {{context.booking.passengerDropAddress}}</li>
-                         {% endif %}   
+                            <li>Dépose à {{context.booking.passengerDropAddress}}.</li>
+                         {% endif %}
                          {% if context.booking.price %}
-                            <li>Prix indicatif: {{context.booking.price.amount}} {{context.booking.price.currency}}</li> 
-                        {% endif %}   
+                            <li>Prix indicatif: {{context.booking.price.amount}} {{context.booking.price.currency}}.</li>
+                        {% endif %}
                         </ul>
 
                    </td>
