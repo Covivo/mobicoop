@@ -8,4 +8,6 @@ SELECT
     created_date,
     last_activity_date
 FROM
-    `user`;
+    `user`
+WHERE
+    user.status <> 4;
