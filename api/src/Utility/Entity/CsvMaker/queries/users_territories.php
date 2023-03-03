@@ -5,15 +5,17 @@ $multipleQueries = [];
 $multipleQueries[] = 'CREATE TEMPORARY TABLE user_territory (
     user_id int NOT NULL,
     territory_id int NOT NULL,
+    territory_name varchar(100) NOT NULL,
     PRIMARY KEY(user_id, territory_id)
 );';
 
 $multipleQueries[] = '
 INSERT
-    IGNORE INTO user_territory (user_id, territory_id)
+    IGNORE INTO user_territory (user_id, territory_id, territory_name)
 SELECT
     user.id,
-    territory_id
+    territory_id,
+    homeTerritory.name
 FROM
     user
     inner join address as homeAddress on homeAddress.user_id = user.id
@@ -33,10 +35,11 @@ WHERE
 
 $multipleQueries[] = '
 INSERT
-    IGNORE INTO user_territory (user_id, territory_id)
+    IGNORE INTO user_territory (user_id, territory_id, territory_name)
 SELECT
     user.id,
-    territory_id
+    territory_id,
+    destination_territory.name
 FROM
     user
     inner join proposal ON user.id = proposal.user_id
@@ -61,10 +64,11 @@ WHERE
 
 $multipleQueries[] = '
 INSERT
-    IGNORE INTO user_territory (user_id, territory_id)
+    IGNORE INTO user_territory (user_id, territory_id, territory_name)
 SELECT
     user.id,
-    territory_id
+    territory_id,
+    ask_destination_territory.name
 FROM
     user
     inner join ask on ask.user_id = user.id
