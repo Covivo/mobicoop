@@ -34,8 +34,10 @@ use Psr\Log\LoggerInterface;
 class CsvMaker
 {
     public const PATH_TO_FILES = __DIR__.'/../../../../public/upload/csvExport';
-    public const PATH_TO_QUERIES = __DIR__.'/queries/';
+    public const PATH_TO_QUERIES = __DIR__.'/queries';
     public const CSV_DELIMITER = ';';
+    public const SINGLE_QUERY_FILE_EXTENTION = 'sql';
+    public const MULTI_QUERY_FILE_EXTENTION = 'php';
     private $_entityManager;
     private $_queryResults;
     private $_logger;
@@ -54,22 +56,32 @@ class CsvMaker
         foreach ($this->_csvExports as $service => $csvExport) {
             $this->_service = $service;
             foreach ($csvExport['queries'] as $query) {
-                $this->_makeCsvFile($query);
+                if (file_exists(self::PATH_TO_QUERIES.'/'.$query.'.'.self::SINGLE_QUERY_FILE_EXTENTION)) {
+                    $this->_makeCsvFileFromSingleQuery($query);
+                } elseif (file_exists(self::PATH_TO_QUERIES.'/'.$query.'.'.self::MULTI_QUERY_FILE_EXTENTION)) {
+                    $this->_makeCsvFileFromMultipleQuery($query);
+                } else {
+                    $this->_logger->error($query.' not found in queries folder');
+                }
             }
         }
     }
 
-    private function _makeCsvFile(string $query)
+    private function _makeCsvFileFromMultipleQuery(string $file)
     {
-        try {
-            $query_in_file = file_get_contents(self::PATH_TO_QUERIES.$query.'.sql');
-        } catch (\Exception $e) {
-            $this->_logger->error('No file : '.self::PATH_TO_QUERIES.$query.'.sql');
+        $this->_logger->info('makeCsvFileFromMultipleQuery : '.$file);
 
-            return;
-        }
+        include self::PATH_TO_QUERIES.'/'.$file.'.'.self::MULTI_QUERY_FILE_EXTENTION;
+        $this->_executeMultipleQuery($multipleQueries);
+        $this->_writeResults($file);
+    }
 
-        $this->_executeQuery($query_in_file);
+    private function _makeCsvFileFromSingleQuery(string $query)
+    {
+        $this->_logger->info('makeCsvFileFromSingleQuery : '.$query);
+        $query_in_file = file_get_contents(self::PATH_TO_QUERIES.'/'.$query.'.'.self::SINGLE_QUERY_FILE_EXTENTION);
+
+        $this->_executeSingleQuery($query_in_file);
         $this->_writeResults($query);
     }
 
@@ -95,9 +107,21 @@ class CsvMaker
         fclose($file);
     }
 
-    private function _executeQuery(string $query)
+    private function _executeMultipleQuery(array $multipleQueries)
     {
-        $this->_logger->info('Execute query');
+        $this->_logger->info('Execute multiple queries');
+        foreach ($multipleQueries as $query) {
+            $this->_logger->info($query);
+            $stmt = $this->_entityManager->getConnection()->prepare($query);
+            $stmt->execute();
+        }
+
+        $this->_queryResults = $stmt->fetchAll();
+    }
+
+    private function _executeSingleQuery(string $query)
+    {
+        $this->_logger->info('Execute single query');
         $this->_logger->info($query);
         $stmt = $this->_entityManager->getConnection()->prepare($query);
 
