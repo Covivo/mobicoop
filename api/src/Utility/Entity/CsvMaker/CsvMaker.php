@@ -35,6 +35,7 @@ class CsvMaker
 {
     public const PATH_TO_FILES = __DIR__.'/../../../../public/upload/csvExport';
     public const PATH_TO_QUERIES = __DIR__.'/queries/';
+    public const CSV_DELIMITER = ';';
     private $_entityManager;
     private $_queryResults;
     private $_logger;
@@ -83,8 +84,13 @@ class CsvMaker
         }
 
         $file = fopen($folder.'/'.$resultsFileName.'.csv', 'w+');
+        $header = false;
         foreach ($this->_queryResults as $result) {
-            fputcsv($file, $result, ';');
+            if (!$header) {
+                fputcsv($file, array_keys($result), self::CSV_DELIMITER);
+                $header = true;
+            }
+            fputcsv($file, $result, self::CSV_DELIMITER);
         }
         fclose($file);
     }

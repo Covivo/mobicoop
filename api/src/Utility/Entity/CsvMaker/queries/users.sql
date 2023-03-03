@@ -1,5 +1,5 @@
 SELECT
-    id,
+    id as 'userId',
     given_name,
     family_name,
     gender,
