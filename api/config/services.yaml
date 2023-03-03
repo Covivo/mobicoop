@@ -1155,6 +1155,10 @@ services:
       $repositoryFile: "%env(string:MOBILE_JSON_REPOSITORY)%"
       $appId: "%env(string:MOBILE_APP_ID)%"
 
+  App\Utility\Entity\CsvMaker:
+    tags:
+      - { name: monolog.logger, channel: csvMaker }
+
   App\Validator\Phone\PhoneValidator:
     arguments:
       $phoneValidationRegions: "%env(json:USER_PHONE_VALIDATION_REGIONS)%"
