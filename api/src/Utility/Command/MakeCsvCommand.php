@@ -23,7 +23,7 @@
 
 namespace App\Utility\Command;
 
-use App\Utility\Entity\CsvMaker;
+use App\Utility\Entity\CsvMaker\CsvMaker;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -53,8 +53,6 @@ class MakeCsvCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->_csvMaker->setQuery('SELECT id, given_name, family_name, gender, email, telephone, created_date, last_activity_date FROM `user`');
-
         return $this->_csvMaker->make();
     }
 }

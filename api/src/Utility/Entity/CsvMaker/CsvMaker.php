@@ -21,7 +21,7 @@
  *    LICENSE
  */
 
-namespace App\Utility\Entity;
+namespace App\Utility\Entity\CsvMaker;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
@@ -33,44 +33,67 @@ use Psr\Log\LoggerInterface;
  */
 class CsvMaker
 {
-    public const PATH_TO_FILES = __DIR__.'/../../../public/upload';
-    private $_query;
+    public const PATH_TO_FILES = __DIR__.'/../../../../public/upload/csvExport';
+    public const PATH_TO_QUERIES = __DIR__.'/queries/';
     private $_entityManager;
     private $_queryResults;
     private $_logger;
+    private $_csvExports;
+    private $_service;
 
-    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger)
+    public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, array $csvExports)
     {
         $this->_entityManager = $entityManager;
         $this->_logger = $logger;
-    }
-
-    public function setQuery(string $query)
-    {
-        $this->_query = $query;
+        $this->_csvExports = $csvExports;
     }
 
     public function make()
     {
-        $this->_executeQuery();
-        $this->_writeResults();
+        foreach ($this->_csvExports as $service => $csvExport) {
+            $this->_service = $service;
+            foreach ($csvExport['queries'] as $query) {
+                $this->_makeCsvFile($query);
+            }
+        }
     }
 
-    private function _writeResults()
+    private function _makeCsvFile(string $query)
+    {
+        try {
+            $query_in_file = file_get_contents(self::PATH_TO_QUERIES.$query.'.sql');
+        } catch (\Exception $e) {
+            $this->_logger->error('No file : '.self::PATH_TO_QUERIES.$query.'.sql');
+
+            return;
+        }
+
+        $this->_executeQuery($query_in_file);
+        $this->_writeResults($query);
+    }
+
+    private function _writeResults(string $resultsFileName)
     {
         $this->_logger->info('Writing results in file');
-        $file = fopen(self::PATH_TO_FILES.'/testCsv.csv', 'w+');
+
+        $folder = self::PATH_TO_FILES.'/'.$this->_service;
+
+        if (!file_exists($folder)) {
+            mkdir($folder);
+        }
+
+        $file = fopen($folder.'/'.$resultsFileName.'.csv', 'w+');
         foreach ($this->_queryResults as $result) {
             fputcsv($file, $result, ';');
         }
         fclose($file);
     }
 
-    private function _executeQuery()
+    private function _executeQuery(string $query)
     {
         $this->_logger->info('Execute query');
-        $this->_logger->info($this->_query);
-        $stmt = $this->_entityManager->getConnection()->prepare($this->_query);
+        $this->_logger->info($query);
+        $stmt = $this->_entityManager->getConnection()->prepare($query);
 
         $stmt->execute();
 
