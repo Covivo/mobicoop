@@ -23,6 +23,7 @@
 
 namespace App\Utility\Entity\CsvMaker;
 
+use App\Utility\Entity\FtpUploader;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 
@@ -43,19 +44,26 @@ class CsvMaker
     private $_logger;
     private $_csvExports;
     private $_service;
+    private $_ftpUploader;
 
     public function __construct(EntityManagerInterface $entityManager, LoggerInterface $logger, array $csvExports)
     {
         $this->_entityManager = $entityManager;
         $this->_logger = $logger;
         $this->_csvExports = $csvExports;
+        $this->_ftpUploader = null;
     }
 
     public function make()
     {
         foreach ($this->_csvExports as $service => $csvExport) {
             $this->_service = $service;
+
             foreach ($csvExport['queries'] as $query) {
+                if (is_array($csvExport['upload'])) {
+                    $this->_initFtpUploader($csvExport['upload']);
+                }
+
                 if (file_exists(self::PATH_TO_QUERIES.'/'.$query.'.'.self::SINGLE_QUERY_FILE_EXTENTION)) {
                     $this->_makeCsvFileFromSingleQuery($query);
                 } elseif (file_exists(self::PATH_TO_QUERIES.'/'.$query.'.'.self::MULTI_QUERY_FILE_EXTENTION)) {
@@ -64,6 +72,25 @@ class CsvMaker
                     $this->_logger->error($query.' not found in queries folder');
                 }
             }
+        }
+    }
+
+    private function _initFtpUploader(array $csvExport)
+    {
+        $this->_ftpUploader = new FtpUploader(
+            $csvExport['protocol'],
+            $csvExport['serverUri'],
+            $csvExport['login'],
+            $csvExport['password'],
+            $csvExport['remotePath']
+        );
+    }
+
+    private function _uploadFile(string $file)
+    {
+        if (!is_null($this->_ftpUploader)) {
+            $this->_logger->info('upload : '.$file);
+            $this->_ftpUploader->upload($file);
         }
     }
 
@@ -95,7 +122,8 @@ class CsvMaker
             mkdir($folder);
         }
 
-        $file = fopen($folder.'/'.$resultsFileName.'.csv', 'w+');
+        $path = $folder.'/'.$resultsFileName.'.csv';
+        $file = fopen($path, 'w+');
         $header = false;
         foreach ($this->_queryResults as $result) {
             if (!$header) {
@@ -105,6 +133,8 @@ class CsvMaker
             fputcsv($file, $result, self::CSV_DELIMITER);
         }
         fclose($file);
+
+        $this->_uploadFile($path);
     }
 
     private function _executeMultipleQuery(array $multipleQueries)
