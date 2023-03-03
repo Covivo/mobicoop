@@ -37,7 +37,7 @@ class CarpoolStandardManager
         $this->apiKey = $apiKey;
     }
 
-    public function checkKey(Request $request)
+    public function validate(Request $request)
     {
         return $request->headers->get('x-api-key') === $this->apiKey;
     }

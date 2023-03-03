@@ -58,7 +58,7 @@ final class BookingFromExternalCollectionDataPersister implements ContextAwareDa
 
     public function persist($data, array $context = [])
     {
-        if (!$this->carpoolStandardManager->checkKey($this->request)) {
+        if (!$this->carpoolStandardManager->validate($this->request)) {
             $response = new Response();
             $response->setContent('access_denied');
             $response->setStatusCode(401);

@@ -25,7 +25,7 @@ namespace App\CarpoolStandard\Service;
 
 use App\CarpoolStandard\Entity\Booking;
 use App\CarpoolStandard\Event\BookingReceivedEvent;
-use App\Geography\Service\GeoSearcher;
+use App\Geography\Service\PointSearcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -35,16 +35,16 @@ class BookingManager
 {
     private $carpoolStandardProvider;
     private $eventDispatcher;
-    private $geoSearcher;
+    private $pointSearcher;
 
     public function __construct(
         CarpoolStandardProvider $carpoolStandardProvider,
         EventDispatcherInterface $eventDispatcher,
-        GeoSearcher $geoSearcher
+        PointSearcher $pointSearcher
     ) {
         $this->carpoolStandardProvider = $carpoolStandardProvider;
         $this->eventDispatcher = $eventDispatcher;
-        $this->geoSearcher = $geoSearcher;
+        $this->pointSearcher = $pointSearcher;
     }
 
     public function postBooking(Booking $booking)
@@ -56,9 +56,6 @@ class BookingManager
     {
         $this->reverseGeocodeAddresses($booking);
 
-        var_dump($booking);
-
-        exit;
         $event = new BookingReceivedEvent($booking);
         $this->eventDispatcher->dispatch(BookingReceivedEvent::NAME, $event);
     }
@@ -66,17 +63,18 @@ class BookingManager
     public function reverseGeocodeAddresses(Booking $booking)
     {
         $reversedGeocodePickUpAddress = null;
-        if ($foundAddresses = $this->geoSearcher->reverseGeoCode($booking->getPassengerPickupLat(), $booking->getPassengerPickupLng())) {
+
+        if ($foundAddresses = $this->pointSearcher->reverse($booking->getPassengerPickupLng(), $booking->getPassengerPickupLat())) {
             $reversedGeocodePickUpAddress = $foundAddresses[0];
         }
 
         $reversedGeocodeDropOffAddress = null;
-        if ($foundAddresses = $this->geoSearcher->reverseGeoCode($booking->getPassengerDropLat(), $booking->getPassengerDropLng())) {
+        if ($foundAddresses = $this->pointSearcher->reverse($booking->getPassengerDropLng(), $booking->getPassengerDropLat())) {
             $reversedGeocodeDropOffAddress = $foundAddresses[0];
         }
 
-        $booking->setPassengerPickupAddress($reversedGeocodePickUpAddress->getDisplayLabel());
-        $booking->setPassengerDropAddress($reversedGeocodeDropOffAddress->getDisplayLabel());
+        $booking->setPassengerPickupAddress($reversedGeocodePickUpAddress->getLocality());
+        $booking->setPassengerDropAddress($reversedGeocodeDropOffAddress->getLocality());
 
         return $booking;
     }

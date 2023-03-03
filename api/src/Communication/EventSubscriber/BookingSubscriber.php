@@ -51,9 +51,9 @@ class BookingSubscriber implements EventSubscriberInterface
     public function onBookingReceived(BookingReceivedEvent $event)
     {
         if ($event->getBooking()->getPassenger()->getOperator() == $this->operatorIdentifier) {
-            $this->notificationManager->notifies(BookingReceivedEvent::NAME, $this->userManager->getUser((int) $event->getBooking()->getDriver()->getId()), $event->getBooking());
-        } elseif ($event->getBooking()->getDriver()->getOperator() == $this->operatorIdentifier) {
             $this->notificationManager->notifies(BookingReceivedEvent::NAME, $this->userManager->getUser((int) $event->getBooking()->getPassenger()->getId()), $event->getBooking());
+        } elseif ($event->getBooking()->getDriver()->getOperator() == $this->operatorIdentifier) {
+            $this->notificationManager->notifies(BookingReceivedEvent::NAME, $this->userManager->getUser((int) $event->getBooking()->getDriver()->getId()), $event->getBooking());
         } else {
             throw new CarpoolStandardException(CarpoolStandardException::CARPOOLERS_PLATFORM_ERROR);
         }
