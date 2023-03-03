@@ -21,24 +21,24 @@
  *    LICENSE
  */
 
-namespace App\CarpoolStandard\Event;
+namespace App\CarpoolStandard\Service;
 
-use App\CarpoolStandard\Entity\Booking;
-use Symfony\Contracts\EventDispatcher\Event;
+use Symfony\Component\HttpFoundation\Request;
 
-class BookingReceivedEvent extends Event
+/**
+ * @author Remi Wortemann <remi.wortemann@mobicoop.org>
+ */
+class CarpoolStandardManager
 {
-    public const NAME = 'booking_received';
+    protected $apiKey;
 
-    protected $booking;
-
-    public function __construct(Booking $booking)
+    public function __construct(string $apiKey)
     {
-        $this->booking = $booking;
+        $this->apiKey = $apiKey;
     }
 
-    public function getBooking()
+    public function checkKey(Request $request)
     {
-        return $this->booking;
+        return $request->headers->get('x-api-key') === $this->apiKey;
     }
 }

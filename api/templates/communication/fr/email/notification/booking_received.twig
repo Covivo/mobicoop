@@ -15,12 +15,8 @@
                             <li>Distance covoiturée : {{context.booking.distance}}km</li>
                          {% endif %}
                             <li>Date: {{context.booking.passengerPickupDate|date}}</li>
-                         {% if context.booking.passengerPickupAddress %}
                             <li>Prise en charge à {{context.booking.passengerPickupAddress}}.</li>
-                         {% endif %}
-                         {% if context.booking.passengerDropAddress %}
                             <li>Dépose à {{context.booking.passengerDropAddress}}.</li>
-                         {% endif %}
                          {% if context.booking.price %}
                             <li>Prix indicatif: {{context.booking.price.amount}} {{context.booking.price.currency}}.</li>
                         {% endif %}

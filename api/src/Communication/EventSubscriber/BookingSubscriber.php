@@ -22,9 +22,9 @@
 
 namespace App\Communication\EventSubscriber;
 
+use App\CarpoolStandard\Event\BookingReceivedEvent;
 use App\CarpoolStandard\Exception\CarpoolStandardException;
 use App\Communication\Service\NotificationManager;
-use App\Event\Event\BookingReceivedEvent;
 use App\User\Service\UserManager;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
