@@ -53,6 +53,13 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "swagger_context" = {
  *                  "tags"={"Carpool Standard"}
  *              }
+ *          },
+ *          "carpool_standard_post_from_external"={
+ *              "method"="POST",
+ *              "path"="/from_external/bookings",
+ *              "swagger_context" = {
+ *                  "tags"={"Carpool Standard"}
+ *              }
  *          }
  *      },
  *      itemOperations={

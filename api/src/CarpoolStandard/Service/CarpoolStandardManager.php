@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2023, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
@@ -20,14 +21,24 @@
  *    LICENSE
  */
 
-namespace App\CarpoolStandard\Exception;
+namespace App\CarpoolStandard\Service;
+
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @author Remi Wortemann <remi.wortemann@mobicoop.org>
  */
-class CarpoolStandardException extends \LogicException
+class CarpoolStandardManager
 {
-    public const NO_PROVIDER = 'No provider given';
-    public const UNSUPPORTED_PROVIDER = 'This provider is not yet supported';
-    public const CARPOOLERS_PLATFORM_ERROR = 'One of the carpoolers must be from the platform';
+    protected $apiKey;
+
+    public function __construct(string $apiKey)
+    {
+        $this->apiKey = $apiKey;
+    }
+
+    public function validate(Request $request)
+    {
+        return $request->headers->get('x-api-key') === $this->apiKey;
+    }
 }

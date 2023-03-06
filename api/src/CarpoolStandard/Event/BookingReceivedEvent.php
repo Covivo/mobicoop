@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Copyright (c) 2023, MOBICOOP. All rights reserved.
  * This project is dual licensed under AGPL and proprietary licence.
@@ -20,14 +21,24 @@
  *    LICENSE
  */
 
-namespace App\CarpoolStandard\Exception;
+namespace App\CarpoolStandard\Event;
 
-/**
- * @author Remi Wortemann <remi.wortemann@mobicoop.org>
- */
-class CarpoolStandardException extends \LogicException
+use App\CarpoolStandard\Entity\Booking;
+use Symfony\Contracts\EventDispatcher\Event;
+
+class BookingReceivedEvent extends Event
 {
-    public const NO_PROVIDER = 'No provider given';
-    public const UNSUPPORTED_PROVIDER = 'This provider is not yet supported';
-    public const CARPOOLERS_PLATFORM_ERROR = 'One of the carpoolers must be from the platform';
+    public const NAME = 'booking_received';
+
+    protected $booking;
+
+    public function __construct(Booking $booking)
+    {
+        $this->booking = $booking;
+    }
+
+    public function getBooking()
+    {
+        return $this->booking;
+    }
 }
