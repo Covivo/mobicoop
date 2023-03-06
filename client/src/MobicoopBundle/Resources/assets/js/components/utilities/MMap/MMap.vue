@@ -442,6 +442,7 @@ export default {
     }
   },
   mounted() {
+    window.L = L;
     if (this.territoryId) {
       this.getTerritory();
     }
