@@ -1,0 +1,21 @@
+(*) Nom du signataire : {{NomConducteur}}
+(*) Prénom du signataire : {{PrenomConducteur}}
+(*) Adresse : {{AdresseConducteur}}
+Compléments d'adresse : {{ComplementAdresseConducteur}}
+(*) Code postal : {{CodePostalConducteur}}
+(*) Ville : {{VilleConducteur}}
+Pays : {{PaysConducteur}}
+(*) Téléphone : {{TelephoneConducteur}}
+(*) Courriel : {{CourrielConducteur}}
+(indiquer : « néant » si le bénéficiaire ne dispose pas d'une adresse de courriel)
+Le bénéficiaire ne peut prétendre pour une même opération qu'à une seule contribution versée dans le cadre du dispositif des certificats d'économies d'énergie.
+
+En tant que bénéficiaire de l'opération d'économies d'énergie, j'atteste sur l'honneur :
+- que ESSO S.A.F m'a apporté une contribution individualisée (action personnalisée de sensibilisation ou d'accompagnement, aide financière ou équivalent). Cette contribution m'a incité à réaliser cette opération d'économies d'énergie ;
+- que je fournirai exclusivement à ESSO S.A.F l'ensemble des documents permettant de valoriser cette opération au titre du dispositif des certificats d'économies d'énergie ;
+- que je mettrai en œuvre les préconisations demandées par l'opérateur de covoiturage, permettant notamment de certifier mon identité et mes trajets de covoiturage ;
+- que je ne signerai pas, pour cette opération, d'attestation sur l'honneur semblable avec une autre personne morale ;
+- l'exactitude des informations que j'ai communiquées ci-dessus sur mon identité et les caractéristiques de mon trajet de covoiturage et que l'opération d'économies d'énergie décrite ci-dessus a été intégralement réalisée. Je suis informé que je suis susceptible d'être contacté par les services du ministère chargé de l'énergie (ou tout organisme désigné par le ministère chargé de l'énergie) ou par ESSO S.A.F ou son partenaire (ou tout organisme désigné par ceux-ci), dans le cadre d'un contrôle concernant la nature de l'opération et la réalisation effective de celle-ci. La réalisation effective d'un contrôle à la demande du demandeur ou de son partenaire (ou tout organisme désigné par ceux-ci) peut être une des conditions imposées par ces derniers pour le versement de leur contribution au financement de l'opération. Je m'engage à répondre aux demandes qui me seront faites dans le cadre des contrôles.
+
+Fait à {{VilleConducteur}}
+(*) Le {{DateAttestationHonneur}}

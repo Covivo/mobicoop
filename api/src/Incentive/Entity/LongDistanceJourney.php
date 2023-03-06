@@ -132,11 +132,6 @@ class LongDistanceJourney
      */
     private $initialProposal;
 
-    public function __construct(Proposal $proposal)
-    {
-        $this->setInitialProposal($proposal);
-    }
-
     /**
      * @ORM\PrePersist
      */

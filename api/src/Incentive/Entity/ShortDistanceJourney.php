@@ -17,6 +17,8 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class ShortDistanceJourney
 {
+    public const RPC_NUMBER_STATUS = 'OK';
+
     /**
      * @var int The cee ID
      *
@@ -129,11 +131,6 @@ class ShortDistanceJourney
      * @ORM\JoinColumn(nullable=true)
      */
     private $carpoolProof;
-
-    public function __construct(CarpoolProof $carpoolProof)
-    {
-        $this->setCarpoolProof($carpoolProof);
-    }
 
     /**
      * @ORM\PrePersist
@@ -271,9 +268,9 @@ class ShortDistanceJourney
      *
      * @param string $rpcNumberStatus the status of the user
      */
-    public function setRpcNumberStatus(string $rpcNumberStatus): self
+    public function setRpcNumberStatus(): self
     {
-        $this->rpcNumberStatus = $rpcNumberStatus;
+        $this->rpcNumberStatus = self::RPC_NUMBER_STATUS;
 
         return $this;
     }
@@ -408,7 +405,7 @@ class ShortDistanceJourney
         return $this;
     }
 
-    public function updateJourney(CarpoolProof $carpoolProof, string $rpcJourneyId, string $rpcStatus, int $carpoolersNumber)
+    public function updateJourney(CarpoolProof $carpoolProof, string $rpcJourneyId, int $carpoolersNumber)
     {
         $this->setStartAddressLocality($carpoolProof->getOriginDriverAddress()->getAddressLocality());
         $this->setEndAddressLocality($carpoolProof->getDestinationDriverAddress()->getAddressLocality());
@@ -417,7 +414,7 @@ class ShortDistanceJourney
         $this->setStartDate($carpoolProof->getAsk()->getMatching()->getProposalOffer()->getCreatedDate()->format('Y-m-d H:i:s'));
         $this->setEndDate($carpoolProof->getCreatedDate()->format('Y-m-d H:i:s'));
         $this->setRpcJourneyId($rpcJourneyId);
-        $this->setRpcNumberStatus($rpcStatus);
+        $this->setRpcNumberStatus();
         $this->setCarpoolersNumber($carpoolersNumber);
     }
 }

@@ -122,7 +122,7 @@ class JourneyChecker extends Checker
 
         $this->setDriver($carpoolProof->getDriver());
 
-        if (!$this->isFirstValidLongECCJourney()) {
+        if (!$this->isFirstValidShortECCJourney()) {
             return false;
         }
 

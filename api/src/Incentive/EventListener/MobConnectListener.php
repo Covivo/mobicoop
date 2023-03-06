@@ -95,7 +95,7 @@ class MobConnectListener implements EventSubscriberInterface
      */
     public function onPaymentValidated(ElectronicPaymentValidatedEvent $event): void
     {
-        $this->_subscriptionManager->updateLongDistanceSubscriptionAfterPayment($event->getCarpoolPayment());
+        $this->_journeyManager->receivingPayment($event->getCarpoolPayment());
     }
 
     /**
@@ -103,6 +103,6 @@ class MobConnectListener implements EventSubscriberInterface
      */
     public function onProofValidated(CarpoolProofValidatedEvent $event): void
     {
-        $this->_subscriptionManager->updateSubscription($event->getCarpoolProof());
+        $this->_journeyManager->validationOfProof($event->getCarpoolProof());
     }
 }

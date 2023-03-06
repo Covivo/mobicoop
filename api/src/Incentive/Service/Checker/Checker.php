@@ -2,6 +2,8 @@
 
 namespace App\Incentive\Service\Checker;
 
+use App\Carpool\Entity\CarpoolProof;
+use App\Carpool\Entity\Matching;
 use App\Carpool\Entity\Proposal;
 use App\Incentive\Resource\CeeSubscriptions;
 use App\Incentive\Service\LoggerService;
@@ -27,14 +29,20 @@ abstract class Checker
         $this->_loggerService = $loggerService;
     }
 
-    protected function isDistanceLongDistance(int $distance): bool
+    public function isDistanceLongDistance(int $distance): bool
     {
         return self::LONG_DISTANCE_THRESHOLD <= $distance;
     }
 
-    protected function isOriginOrDestinationFromFrance($journey): bool
+    public function isOriginOrDestinationFromFrance($journey): bool
     {
         switch (true) {
+            case $journey instanceof CarpoolProof:
+                return $this->_isOriginOrDestinationFromFranceForCarpoolProof($journey);
+
+            case $journey instanceof Matching:
+                return $this->_isOriginOrDestinationFromFranceForMatching($journey);
+
             case $journey instanceof Proposal:
                 return $this->_isOriginOrDestinationFromFranceForProposal($journey);
 
@@ -54,18 +62,33 @@ abstract class Checker
         return $this;
     }
 
+    private function _isOriginOrDestinationFromFranceForCarpoolProof(CarpoolProof $carpoolProof)
+    {
+        return $this->_isOriginOrDestinationFromFranceForMatching($carpoolProof->getAsk()->getMatching());
+    }
+
+    private function _isOriginOrDestinationFromFranceForMatching(Matching $matching)
+    {
+        return $this->_isOriginOrDestinationFromFranceForWaypoints($matching->getWaypoints());
+    }
+
     private function _isOriginOrDestinationFromFranceForProposal(Proposal $proposal): bool
     {
-        $waypoints = $proposal->getWaypoints();
+        return $this->_isOriginOrDestinationFromFranceForWaypoints($proposal->getWaypoints());
+    }
 
+    private function _isOriginOrDestinationFromFranceForWaypoints($waypoints)
+    {
         if (empty($waypoints)) {
-            $this->_loggerService->log('There is no origin or destination point for the journey '.$proposal->getId());
-
             return false;
         }
 
         foreach ($waypoints as $waypoint) {
-            if (self::REFERENCE_COUNTRY === $waypoint->getAddress()->getAddressCountry()) {
+            if (
+                !is_null($waypoint->getAddress())
+                && !is_null($waypoint->getAddress()->getAddressCountry())
+                && self::REFERENCE_COUNTRY === $waypoint->getAddress()->getAddressCountry()
+            ) {
                 return true;
             }
         }
