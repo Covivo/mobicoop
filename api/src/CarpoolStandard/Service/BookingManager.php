@@ -65,6 +65,14 @@ class BookingManager
         $this->eventDispatcher->dispatch(BookingReceivedEvent::NAME, $event);
     }
 
+    public function treatExternalPatchBooking(Booking $booking)
+    {
+        $this->reverseGeocodeAddresses($booking);
+
+        $event = new BookingReceivedEvent($booking);
+        $this->eventDispatcher->dispatch(BookingReceivedEvent::NAME, $event);
+    }
+
     public function reverseGeocodeAddresses(Booking $booking)
     {
         $reversedGeocodePickUpAddress = null;

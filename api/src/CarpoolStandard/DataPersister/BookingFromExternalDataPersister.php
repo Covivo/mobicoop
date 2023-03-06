@@ -53,7 +53,26 @@ final class BookingFromExternalDataPersister implements ContextAwareDataPersiste
 
     public function supports($data, array $context = []): bool
     {
-        return $data instanceof Booking && isset($context['collection_operation_name']) && 'carpool_standard_post_from_external' == $context['collection_operation_name'];
+        if ($data instanceof Booking) {
+            switch ($context) {
+                case isset($context['collection_operation_name']):
+                    return 'carpool_standard_post_from_external' == $context['collection_operation_name'];
+
+                    break;
+
+                case isset($context['item_operation_name']):
+                    return 'carpool_standard_patch_from_external' == $context['item_operation_name'];
+
+                    break;
+
+                default:
+                    return false;
+
+                    break;
+            }
+        } else {
+            return false;
+        }
     }
 
     public function persist($data, array $context = [])
@@ -63,7 +82,14 @@ final class BookingFromExternalDataPersister implements ContextAwareDataPersiste
             $response->setContent('access_denied');
             $response->setStatusCode(401);
         } else {
-            return $this->bookingManager->treatExternalPostBooking($data);
+            if (isset($context['collection_operation_name']) && 'carpool_standard_post' == $context['collection_operation_name']) {
+                $data = $this->bookingManager->treatExternalPostBooking($data);
+            } elseif (isset($context['item_operation_name']) && 'carpool_standard_patch' == $context['item_operation_name']) {
+                // for a patch operation, we update only some fields, we pass them to the method for further checkings
+                $data = $this->bookingManager->patchBooking($data);
+            }
+
+            return $data;
         }
 
         return $response;
