@@ -1,0 +1,31 @@
+{% extends 'communication/fr/email/notification/base.html.twig' %}
+{% block body %}
+<table style="width:100%;font-family:{{api_env('EMAILS_FONT')}}, sans-serif;">
+    <tr>
+        <td>
+            <table style="width:100%;">
+                <tr>
+                    <td style="width:70%">
+                        <p>Bonjour<b style="color:{{api_env('EMAILS_COLOR_PRIMARY')}}"> {{context.user.givenName|capitalize}} {{context.user.shortFamilyName|capitalize}}</b></p>
+                        <p>{{context.senderAlias|capitalize}} de la plateforme {{context.senderOperator}} vous a fait une demande formelle pour le covoiturage ci-dessous.</p>
+                        <p>Trajet occasionnel:</p>
+                        <ul>
+                         {% if context.booking.distance %}
+                            <li>Distance covoiturée : {{context.booking.distance}}km</li>
+                         {% endif %}
+                            <li>Date: le {{context.booking.passengerPickupDate|date("d-m-Y à H:i","Europe/Paris")}}</li>
+                            <li>Prise en charge à {{context.booking.passengerPickupAddress}}.</li>
+                            <li>Dépose à {{context.booking.passengerDropAddress}}.</li>
+                         {% if context.booking.price %}
+                            <li>Prix indicatif: {{context.booking.price.amount}} {{context.booking.price.currency}}.</li>
+                        {% endif %}
+                        </ul>
+                        <p>Vous pouvez répondre à ce message, donner suite ou refuser le covoiturage, via la messagerie de {{api_env('EMAILS_PLATFORM_NAME')}} en cliquant <a href="{{api_env('EMAILS_PLATFORM_URL')}}/utilisateur/messages">ici</a></p>
+                   </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    </hr>
+</table>
+{% endblock %}
