@@ -36,6 +36,7 @@
         :id-message="lastMessageId"
         :nb-matchings="ad.carpoolers"
         :is-archived="isArchived"
+        :communities="ad.communities ? ad.communities : []"
       />
     </v-card-actions>
   </v-card>
