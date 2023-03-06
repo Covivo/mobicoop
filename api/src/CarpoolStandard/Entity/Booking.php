@@ -70,7 +70,14 @@ use Symfony\Component\Validator\Constraints as Assert;
  *              "swagger_context" = {
  *                  "tags"={"Carpool Standard"}
  *              }
- *          }
+ *          },
+ *           "carpool_standard_patch"={
+ *              "path"="/bookings/{id}",
+ *              "method"="PATCH",
+ *              "swagger_context" = {
+ *                  "tags"={"Carpool Standard"}
+ *              }
+ *          },
  *      }
  * )
  *
@@ -218,6 +225,13 @@ class Booking
      * @Groups({"read", "write"})
      */
     private $passengerJourneyId;
+
+    /**
+     * @var null|string Free text content of a message. The message can contain explanations on the status change
+     *
+     * @Groups({"read", "write"})
+     */
+    private $message;
 
     public function __construct($id = null)
     {
@@ -427,6 +441,18 @@ class Booking
     public function setPassengerJourneyId(?string $passengerJourneyId): self
     {
         $this->passengerJourneyId = $passengerJourneyId;
+
+        return $this;
+    }
+
+    public function getMessage(): ?string
+    {
+        return $this->message;
+    }
+
+    public function setMessage(?string $message): self
+    {
+        $this->message = $message;
 
         return $this;
     }

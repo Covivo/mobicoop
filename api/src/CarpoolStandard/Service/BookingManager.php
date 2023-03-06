@@ -52,7 +52,12 @@ class BookingManager
         $this->carpoolStandardProvider->postBooking($booking);
     }
 
-    public function treatExternalBooking(Booking $booking)
+    public function patchBooking(Booking $booking)
+    {
+        $this->carpoolStandardProvider->patchBooking($booking);
+    }
+
+    public function treatExternalPostBooking(Booking $booking)
     {
         $this->reverseGeocodeAddresses($booking);
 

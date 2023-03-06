@@ -24,49 +24,36 @@
 namespace App\CarpoolStandard\DataPersister;
 
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
-use App\CarpoolStandard\Entity\Booking;
-use App\CarpoolStandard\Service\BookingManager;
-use App\CarpoolStandard\Service\CarpoolStandardManager;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\HttpFoundation\Response;
+use App\CarpoolStandard\Entity\Message;
+use App\CarpoolStandard\Service\MessageManager;
+use Symfony\Component\Security\Core\Security;
 
 /**
- * Post from external Booking.
+ * Post a Message.
  *
  * @author Remi Wortemann <remi.wortemann@mobicoop.org>
  */
-final class BookingFromExternalCollectionDataPersister implements ContextAwareDataPersisterInterface
+final class MessageDataPersister implements ContextAwareDataPersisterInterface
 {
-    private $bookingManager;
-    private $request;
-    private $carpoolStandardManager;
+    private $security;
+    private $messageManager;
 
     public function __construct(
-        BookingManager $bookingManager,
-        RequestStack $requestStack,
-        CarpoolStandardManager $carpoolStandardManager
+        Security $security,
+        MessageManager $messageManager
     ) {
-        $this->bookingManager = $bookingManager;
-        $this->request = $requestStack->getCurrentRequest();
-        $this->carpoolStandardManager = $carpoolStandardManager;
+        $this->security = $security;
+        $this->messageManager = $messageManager;
     }
 
     public function supports($data, array $context = []): bool
     {
-        return $data instanceof Booking && isset($context['collection_operation_name']) && 'carpool_standard_post_from_external' == $context['collection_operation_name'];
+        return $data instanceof Message && isset($context['collection_operation_name']) && 'carpool_standard_post' == $context['collection_operation_name'];
     }
 
     public function persist($data, array $context = [])
     {
-        if (!$this->carpoolStandardManager->validate($this->request)) {
-            $response = new Response();
-            $response->setContent('access_denied');
-            $response->setStatusCode(401);
-        } else {
-            return $this->bookingManager->treatExternalBooking($data);
-        }
-
-        return $response;
+        return $this->messageManager->postMessage($data);
     }
 
     public function remove($data, array $context = [])

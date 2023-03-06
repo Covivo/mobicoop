@@ -26,34 +26,47 @@ namespace App\CarpoolStandard\DataPersister;
 use ApiPlatform\Core\DataPersister\ContextAwareDataPersisterInterface;
 use App\CarpoolStandard\Entity\Booking;
 use App\CarpoolStandard\Service\BookingManager;
-use Symfony\Component\Security\Core\Security;
+use App\CarpoolStandard\Service\CarpoolStandardManager;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Post a Message.
+ * Post from external Booking.
  *
  * @author Remi Wortemann <remi.wortemann@mobicoop.org>
  */
-final class BookingCollectionDataPersister implements ContextAwareDataPersisterInterface
+final class BookingFromExternalDataPersister implements ContextAwareDataPersisterInterface
 {
-    private $security;
     private $bookingManager;
+    private $request;
+    private $carpoolStandardManager;
 
     public function __construct(
-        Security $security,
-        BookingManager $bookingManager
+        BookingManager $bookingManager,
+        RequestStack $requestStack,
+        CarpoolStandardManager $carpoolStandardManager
     ) {
-        $this->security = $security;
         $this->bookingManager = $bookingManager;
+        $this->request = $requestStack->getCurrentRequest();
+        $this->carpoolStandardManager = $carpoolStandardManager;
     }
 
     public function supports($data, array $context = []): bool
     {
-        return $data instanceof Booking && isset($context['collection_operation_name']) && 'carpool_standard_post' == $context['collection_operation_name'];
+        return $data instanceof Booking && isset($context['collection_operation_name']) && 'carpool_standard_post_from_external' == $context['collection_operation_name'];
     }
 
     public function persist($data, array $context = [])
     {
-        return $this->bookingManager->postBooking($data);
+        if (!$this->carpoolStandardManager->validate($this->request)) {
+            $response = new Response();
+            $response->setContent('access_denied');
+            $response->setStatusCode(401);
+        } else {
+            return $this->bookingManager->treatExternalPostBooking($data);
+        }
+
+        return $response;
     }
 
     public function remove($data, array $context = [])
