@@ -129,6 +129,7 @@
 /api/public/upload/masscommunication/images/versions/*.jpg
 /api/public/upload/masscommunication/images/versions/*.jpeg
 /api/public/upload/masscommunication/images/versions/*.png
+/api/public/upload/csvExport/*.*
 /client/.env.dev.local
 /client/.env.test.local
 /client/.env.prod.local
