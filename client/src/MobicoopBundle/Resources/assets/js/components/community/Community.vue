@@ -213,7 +213,7 @@
                 :url-tiles="urlTiles"
                 :attribution-copyright="attributionCopyright"
                 :markers-draggable="false"
-                :can-select-point="isMember && user"
+                :can-select-point="canSelectPoint"
                 class="pa-4 mt-5"
                 :relay-points="true"
                 @SelectedAsDestination="selectedAsDestination"
@@ -532,7 +532,8 @@ export default {
       params: { communityId: this.community.id },
       isCreator: false,
       selectedDestination: null,
-      selectedOrigin: null
+      selectedOrigin: null,
+      canSelectPoint: (this.isMember && this.user) ? true : false
     };
   },
   computed: {
@@ -812,7 +813,7 @@ export default {
             this.buildPoint(
               proposal.origin.latitude,
               proposal.origin.longitude,
-              "",
+              proposal.origin,
               proposal.origin.displayLabel[0],
               "",
               [],
@@ -825,7 +826,7 @@ export default {
             this.buildPoint(
               proposal.destination.latitude,
               proposal.destination.longitude,
-              "",
+              proposal.destination,
               proposal.destination.displayLabel[0],
               "",
               [],
