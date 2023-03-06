@@ -43,7 +43,9 @@ use Symfony\Component\Validator\Constraints as Assert;
  * Carpooling : ask from/to a driver and/or a passenger (after a matching between an offer and a request).
  *
  * @ORM\Entity
+ *
  * @ORM\HasLifecycleCallbacks
+ *
  * @ApiResource(
  *      attributes={
  *          "force_eager"=false,
@@ -131,8 +133,11 @@ class Ask
      * @var int the id of this ask
      *
      * @ORM\Id
+     *
      * @ORM\GeneratedValue
+     *
      * @ORM\Column(type="integer")
+     *
      * @Groups({"read","threads","thread","readPaymentStatus"})
      */
     private $id;
@@ -141,7 +146,9 @@ class Ask
      * @var int ask status (1 = initiated; 2 = pending as driver, 3 = pending as passenger, 4 = accepted as driver; 5 = accepted as passenger, 6 = declined as driver, 7 = declined as passenger)
      *
      * @Assert\NotBlank
+     *
      * @ORM\Column(type="smallint")
+     *
      * @Groups({"read","write","threads","thread"})
      */
     private $status;
@@ -150,7 +157,9 @@ class Ask
      * @var int the ask type (1 = one way trip; 2 = outward of a round trip; 3 = return of a round trip))
      *
      * @Assert\NotBlank
+     *
      * @ORM\Column(type="smallint")
+     *
      * @Groups({"read","write","threads","thread"})
      */
     private $type;
@@ -159,6 +168,7 @@ class Ask
      * @var \DateTimeInterface creation date of the solicitation
      *
      * @ORM\Column(type="datetime")
+     *
      * @Groups({"threads","thread"})
      */
     private $createdDate;
@@ -167,6 +177,7 @@ class Ask
      * @var \DateTimeInterface updated date of the solicitation
      *
      * @ORM\Column(type="datetime", nullable=true)
+     *
      * @Groups({"threads","thread"})
      */
     private $updatedDate;
@@ -175,9 +186,13 @@ class Ask
      * @var User the user that creates the ask
      *
      * @Assert\NotBlank
+     *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="asks")
+     *
      * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
+     *
      * @Groups({"read","write","thread"})
+     *
      * @MaxDepth(1)
      */
     private $user;
@@ -187,9 +202,13 @@ class Ask
      *           This field is nullable for migration purpose but it can't be null
      *
      * @Assert\NotBlank
+     *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="asksRelated")
+     *
      * @ORM\JoinColumn(nullable=true, onDelete="CASCADE")
+     *
      * @Groups({"read","write","thread"})
+     *
      * @MaxDepth(1)
      */
     private $userRelated;
@@ -198,8 +217,11 @@ class Ask
      * @var null|User user that create the ask for another user
      *
      * @ORM\ManyToOne(targetEntity="\App\User\Entity\User", inversedBy="asksDelegate")
+     *
      * @ORM\JoinColumn(onDelete="SET NULL")
+     *
      * @Groups({"read","write"})
+     *
      * @MaxDepth(1)
      */
     private $userDelegate;
@@ -208,9 +230,13 @@ class Ask
      * @var Matching the matching at the origin of the ask
      *
      * @Assert\NotBlank
+     *
      * @ORM\ManyToOne(targetEntity="\App\Carpool\Entity\Matching", inversedBy="asks")
+     *
      * @ORM\JoinColumn(onDelete="CASCADE", nullable=false)
+     *
      * @Groups({"read","write","threads","thread"})
+     *
      * @MaxDepth(1)
      */
     private $matching;
@@ -219,8 +245,11 @@ class Ask
      * @var null|Ask the linked ask if a user proposes another ask
      *
      * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Ask")
+     *
      * @ORM\JoinColumn(onDelete="SET NULL")
+     *
      * @Groups({"read","threads","thread"})
+     *
      * @MaxDepth(1)
      */
     private $ask;
@@ -229,8 +258,11 @@ class Ask
      * @var null|Ask the linked ask for return trips
      *
      * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Ask", cascade={"persist"})
+     *
      * @ORM\JoinColumn(onDelete="CASCADE")
+     *
      * @Groups({"read","threads","thread"})
+     *
      * @MaxDepth(1)
      */
     private $askLinked;
@@ -238,9 +270,13 @@ class Ask
     /**
      * @var null|Ask Related ask for opposite role : driver ask if the current ask is as passenger, passenger ask if the current ask is as driver.
      *               Used when the ask is created with an undefined role.
+     *
      * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Ask", cascade={"persist"})
+     *
      * @ORM\JoinColumn(onDelete="CASCADE")
+     *
      * @Groups({"read","threads","thread"})
+     *
      * @MaxDepth(1)
      */
     private $askOpposite;
@@ -249,9 +285,13 @@ class Ask
      * @var Criteria the criteria applied to the ask
      *
      * @Assert\NotBlank
+     *
      * @ORM\OneToOne(targetEntity="\App\Carpool\Entity\Criteria", cascade={"persist"})
+     *
      * @ORM\JoinColumn(nullable=false)
+     *
      * @Groups({"read","write"})
+     *
      * @MaxDepth(1)
      */
     private $criteria;
@@ -260,9 +300,13 @@ class Ask
      * @var ArrayCollection the waypoints of the ask
      *
      * @Assert\NotBlank
+     *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\Waypoint", mappedBy="ask", cascade={"persist"})
+     *
      * @ORM\OrderBy({"position" = "ASC"})
+     *
      * @Groups({"read","write","threads","thread"})
+     *
      * @MaxDepth(1)
      * ApiSubresource(maxDepth=1)
      */
@@ -272,8 +316,11 @@ class Ask
      * @var ArrayCollection the ask history items linked with the ask
      *
      * @ORM\OneToMany(targetEntity="\App\Carpool\Entity\AskHistory", mappedBy="ask", cascade={"persist"})
+     *
      * @ORM\OrderBy({"id" = "ASC"})
+     *
      * @Groups({"read","write"})
+     *
      * @MaxDepth(1)
      * ApiSubresource(maxDepth=1)
      */
@@ -289,6 +336,7 @@ class Ask
     /**
      * @var null|Matching Related matching for a round trip (return or outward journey).
      *                    Not persisted : used only to get the return trip information.
+     *
      * @Groups("write")
      */
     private $matchingRelated;
@@ -296,12 +344,14 @@ class Ask
     /**
      * @var null|Matching opposite matching (if proposal and request can be switched, so if driver and passenger can switch roles)
      *                    Not persisted : used only to get the link information
+     *
      * @Groups("write")
      */
     private $matchingOpposite;
 
     /**
      * @var array The filters returned to the user. The user can then filter and sort the results.
+     *
      * @Groups({"read","write"})
      */
     private $filters;
@@ -310,6 +360,7 @@ class Ask
      * @var null|SolidaryAsk The SolidaryAsk possibly linked to this Ask
      *
      * @ORM\OneToOne(targetEntity="\App\Solidary\Entity\SolidaryAsk", mappedBy="ask", cascade={"persist"})
+     *
      * @Groups({"read"})
      */
     private $solidaryAsk;
@@ -318,36 +369,42 @@ class Ask
      * @var null|ArrayCollection an ask may have many carpool items
      *
      * @ORM\OneToMany(targetEntity="\App\Payment\Entity\CarpoolItem", mappedBy="ask", cascade={"persist"})
+     *
      * @ORM\OrderBy({"itemDate" = "ASC"})
      */
     private $carpoolItems;
 
     /**
      * @var null|int The payment status of the Ask
+     *
      * @Groups({"read","readPaymentStatus"})
      */
     private $paymentStatus;
 
     /**
      * @var array the weeks with a pending payment
+     *
      * @Groups({"readPayment"})
      */
     private $weekItems;
 
     /**
      * @var null|int The id of the PaymentItem of the Ask
+     *
      * @Groups({"read","readPaymentStatus"})
      */
     private $paymentItemId;
 
     /**
      * @var null|int The default week of the PaymentItem
+     *
      * @Groups({"read","readPaymentStatus"})
      */
     private $paymentItemWeek;
 
     /**
      * @var null|\DateTimeInterface The date of an unpaid declaration for this Ask
+     *
      * @Groups({"read","readPaymentStatus"})
      */
     private $unpaidDate;
@@ -355,6 +412,7 @@ class Ask
     /**
      * @var null|Ad Related matching for a round trip (return or outward journey).
      *              Not persisted : used only to get the return trip information.
+     *
      * @Groups({"read","write"})
      */
     private $ad;
@@ -761,7 +819,7 @@ class Ask
         return $this;
     }
 
-    public function getAd(): Ad
+    public function getAd(): ?Ad
     {
         return $this->ad;
     }

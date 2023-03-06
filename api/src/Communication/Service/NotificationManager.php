@@ -351,6 +351,7 @@ class NotificationManager
                     $titleContext = [];
                     $outwardOrigin = null;
                     $outwardDestination = null;
+                    $result = null;
                     $returnOrigin = null;
                     $returnDestination = null;
                     foreach ($object->getMatching()->getProposalRequest()->getWaypoints() as $waypoint) {
@@ -360,39 +361,41 @@ class NotificationManager
                             $passengerDestinationWaypoint = $waypoint;
                         }
                     }
-                    if (null !== $object->getAd()->getResults()[0]->getResultPassenger()) {
-                        $result = $object->getAd()->getResults()[0]->getResultPassenger();
-                    } else {
-                        $result = $object->getAd()->getResults()[0]->getResultDriver();
-                    }
-                    if (null !== $result->getOutward()) {
-                        foreach ($result->getOutward()->getWaypoints() as $waypoint) {
-                            if ('passenger' == $waypoint['role'] && 'origin' == $waypoint['type']) {
-                                $outwardOrigin = $waypoint;
-                            } elseif ('passenger' == $waypoint['role'] && 'destination' == $waypoint['type']) {
-                                $outwardDestination = $waypoint;
+                    if (!is_null($object->getAd())) {
+                        if (null !== $object->getAd()->getResults()[0]->getResultPassenger()) {
+                            $result = $object->getAd()->getResults()[0]->getResultPassenger();
+                        } else {
+                            $result = $object->getAd()->getResults()[0]->getResultDriver();
+                        }
+                        if (null !== $result->getOutward()) {
+                            foreach ($result->getOutward()->getWaypoints() as $waypoint) {
+                                if ('passenger' == $waypoint['role'] && 'origin' == $waypoint['type']) {
+                                    $outwardOrigin = $waypoint;
+                                } elseif ('passenger' == $waypoint['role'] && 'destination' == $waypoint['type']) {
+                                    $outwardDestination = $waypoint;
+                                }
+                            }
+                            // We check if there is really at least one day checked. Otherwide, we force the $result->outward at null to hide it in the mail
+                            // It's the case when the user who made the ask only checked return days
+                            if (Criteria::FREQUENCY_REGULAR == $object->getAd()->getFrequency()
+                            && !$result->getOutward()->isMonCheck()
+                            && !$result->getOutward()->isTueCheck()
+                            && !$result->getOutward()->isWedCheck()
+                            && !$result->getOutward()->isThuCheck()
+                            && !$result->getOutward()->isFriCheck()
+                            && !$result->getOutward()->isSatCheck()
+                            && !$result->getOutward()->isSunCheck()
+                            ) {
+                                $result->setOutward(null);
                             }
                         }
-                        // We check if there is really at least one day checked. Otherwide, we force the $result->outward at null to hide it in the mail
-                        // It's the case when the user who made the ask only checked return days
-                        if (Criteria::FREQUENCY_REGULAR == $object->getAd()->getFrequency()
-                        && !$result->getOutward()->isMonCheck()
-                        && !$result->getOutward()->isTueCheck()
-                        && !$result->getOutward()->isWedCheck()
-                        && !$result->getOutward()->isThuCheck()
-                        && !$result->getOutward()->isFriCheck()
-                        && !$result->getOutward()->isSatCheck()
-                        && !$result->getOutward()->isSunCheck()
-                        ) {
-                            $result->setOutward(null);
-                        }
-                    }
-                    if (null !== $result->getReturn()) {
-                        foreach ($result->getReturn()->getWaypoints() as $waypoint) {
-                            if ('passenger' == $waypoint['role'] && 'origin' == $waypoint['type']) {
-                                $returnOrigin = $waypoint;
-                            } elseif ('passenger' == $waypoint['role'] && 'destination' == $waypoint['type']) {
-                                $returnDestination = $waypoint;
+                        if (null !== $result->getReturn()) {
+                            foreach ($result->getReturn()->getWaypoints() as $waypoint) {
+                                if ('passenger' == $waypoint['role'] && 'origin' == $waypoint['type']) {
+                                    $returnOrigin = $waypoint;
+                                } elseif ('passenger' == $waypoint['role'] && 'destination' == $waypoint['type']) {
+                                    $returnDestination = $waypoint;
+                                }
                             }
                         }
                     }
