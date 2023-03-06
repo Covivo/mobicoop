@@ -14,6 +14,58 @@ class JourneyChecker extends Checker
     }
 
     /**
+     * Checks if the journey is a valid first long distance journey.
+     */
+    public function isFirstValidLongECCJourney(): bool
+    {
+        if (is_null($this->_driver->getLongDistanceSubscription())) {
+            $this->_loggerService->log('The driver '.$this->_driver->getId().' has not subscribed to long distance incentive');
+
+            return false;
+        }
+
+        if (!is_null($this->_driver->getLongDistanceSubscription()->getCommitmentProofDate())) {
+            $this->_loggerService->log('The long distance subscription has already been initialized with a journey');
+
+            return false;
+        }
+
+        if (!empty($this->_driver->getLongDistanceSubscription()->getLongDistanceJourneys()->toArray())) {
+            $this->_loggerService->log('There is already at least one declared long-distance journey');
+
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Checks if the journey is a valid first short distance journey.
+     */
+    public function isFirstValidShortECCJourney(): bool
+    {
+        if (is_null($this->_driver->getShortDistanceSubscription())) {
+            $this->_loggerService->log('The driver '.$this->_driver->getId().' has not subscribed to short distance incentive');
+
+            return false;
+        }
+
+        if (!is_null($this->_driver->getShortDistanceSubscription()->getCommitmentProofDate())) {
+            $this->_loggerService->log('The short distance subscription has already been initialized with a journey');
+
+            return false;
+        }
+
+        if (!empty($this->_driver->getShortDistanceSubscription()->getShortDistanceJourneys()->toArray())) {
+            $this->_loggerService->log('There is already at least one declared short-distance journey');
+
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Checks if the published journey corresponding with the long distance EEC standard.
      */
     public function isPublishedJourneyValidLongECCJourney(Proposal $proposal): bool
@@ -22,30 +74,16 @@ class JourneyChecker extends Checker
 
         if (
             is_null($proposal->getCriteria())
-            || !$proposal->getCriteria()->isDriver()
+            || is_null($proposal->getCriteria()->isDriver())
         ) {
             $this->_loggerService->log('The journey '.$proposal->getId().' is not a driver journey');
 
             return false;
         }
 
-        $driver = $proposal->getUser();
+        $this->setDriver($proposal->getUser());
 
-        if (is_null($driver)) {
-            $this->_loggerService->log('The journey '.$proposal->getId().' must have a driver');
-
-            return false;
-        }
-
-        if (is_null($driver->getLongDistanceSubscription())) {
-            $this->_loggerService->log('The driver '.$driver->getId().' has not subscribed to long distance incentive');
-
-            return false;
-        }
-
-        if (!empty($driver->getLongDistanceSubscription()->getLongDistanceJourneys()->toArray())) {
-            $this->_loggerService->log('There is already at least one declared long-distance journey');
-
+        if (!$this->isFirstValidLongECCJourney($proposal)) {
             return false;
         }
 
@@ -76,23 +114,15 @@ class JourneyChecker extends Checker
     {
         $this->_loggerService->log('Checks if the '.$carpoolProof->getId().' carpool proof corresponding to the short distance EEC standard');
 
-        $driver = $carpoolProof->getDriver();
-
-        if (is_null($driver)) {
-            $this->_loggerService->log('The proof must have a driver');
+        if (is_null($carpoolProof->getDriver())) {
+            $this->_loggerService->log('The journey '.$carpoolProof->getId().' has no defined driver');
 
             return false;
         }
 
-        if (is_null($driver->getShortDistanceSubscription())) {
-            $this->_loggerService->log('The driver '.$driver->getId().' has not subscribed to short distance incentive');
+        $this->setDriver($carpoolProof->getDriver());
 
-            return false;
-        }
-
-        if (!empty($driver->getShortDistanceSubscription()->getShortDistanceJourneys()->toArray())) {
-            $this->_loggerService->log('There is already at least one declared short-distance journey');
-
+        if (!$this->isFirstValidLongECCJourney()) {
             return false;
         }
 

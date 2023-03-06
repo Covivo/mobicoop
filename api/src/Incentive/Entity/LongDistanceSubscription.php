@@ -3,6 +3,7 @@
 namespace App\Incentive\Entity;
 
 use App\DataProvider\Entity\MobConnect\Response\MobConnectSubscriptionResponse;
+use App\Incentive\Service\CeeJourneyService;
 use App\User\Entity\User;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
@@ -52,20 +53,6 @@ class LongDistanceSubscription
      * @ORM\Column(type="string", length=255)
      */
     private $subscriptionId;
-
-    /**
-     * @var string the initial timestamp of the mobConnect subscription
-     *
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $initialTimestamp;
-
-    /**
-     * @var string the last timestamp of the mobConnect subscription
-     *
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $lastTimestamp;
 
     /**
      * @var string the subscription status
@@ -183,13 +170,39 @@ class LongDistanceSubscription
      */
     private $honourCertificate;
 
+    /**
+     * Bonus Status of the subscription.
+     *
+     * @var int
+     *
+     * @ORM\Column(type="smallint", options={"default": 0, "comment":"Bonus Status of the EEC form"})
+     */
+    private $bonusStatus = CeeJourneyService::BONUS_STATUS_PENDING;
+
+    /**
+     * The long distance ECC commitment proof date.
+     *
+     * @var \DateTimeInterface
+     *
+     * @ORM\Column(type="datetime", nullable=true, options={"comment": "The long distance ECC commitment proof date"})
+     */
+    private $commitmentProofDate;
+
+    /**
+     * The long distance ECC commitment proof timestamp.
+     *
+     * @var string
+     *
+     * @ORM\Column(type="string", length=255, nullable=true, options={"comment": "The long distance ECC commitment proof timestamp"})
+     */
+    private $commitmentProofTimestamp;
+
     public function __construct(User $user, MobConnectSubscriptionResponse $mobConnectSubscriptionResponse)
     {
         $this->longDistanceJourneys = new ArrayCollection();
 
         $this->setUser($user);
         $this->setSubscriptionId($mobConnectSubscriptionResponse->getId());
-        $this->setInitialTimestamp($mobConnectSubscriptionResponse->getTimestamp());
 
         $this->setGivenName($user->getGivenName());
         $this->setFamilyName($user->getFamilyName());
@@ -283,48 +296,6 @@ class LongDistanceSubscription
     public function setSubscriptionId(string $subscriptionId): self
     {
         $this->subscriptionId = $subscriptionId;
-
-        return $this;
-    }
-
-    /**
-     * Get the initial timestamp of the mobConnect subscription.
-     */
-    public function getInitialTimestamp(): ?string
-    {
-        return $this->initialTimestamp;
-    }
-
-    /**
-     * Set the initial timestamp of the mobConnect subscription.
-     *
-     * @param string $initialTimestamp the initial timestamp of the mobConnect subscription
-     */
-    public function setInitialTimestamp(?string $initialTimestamp): self
-    {
-        $this->initialTimestamp = $initialTimestamp;
-
-        return $this;
-    }
-
-    /**
-     * Get the last timestamp of the mobConnect subscription.
-     *
-     * @return string
-     */
-    public function getLastTimestamp(): ?string
-    {
-        return $this->lastTimestamp;
-    }
-
-    /**
-     * Set the last timestamp of the mobConnect subscription.
-     *
-     * @param string $lastTimestamp the last timestamp of the mobConnect subscription
-     */
-    public function setLastTimestamp(?string $lastTimestamp): self
-    {
-        $this->lastTimestamp = $lastTimestamp;
 
         return $this;
     }
@@ -615,6 +586,68 @@ class LongDistanceSubscription
     public function setVerificationDate(): self
     {
         $this->verificationDate = new \DateTime('now');
+
+        return $this;
+    }
+
+    /**
+     * Get bonus Status of the subscription.
+     */
+    public function getBonusStatus(): int
+    {
+        return $this->bonusStatus;
+    }
+
+    /**
+     * Set bonus Status of the subscription.
+     *
+     * @param int $bonusStatus bonus Status of the subscription
+     */
+    public function setBonusStatus(int $bonusStatus): self
+    {
+        $this->bonusStatus = $bonusStatus;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of commitmentProofDate.
+     *
+     * @return \DateTimeInterface
+     */
+    public function getCommitmentProofDate(): ?\DateTime
+    {
+        return $this->commitmentProofDate;
+    }
+
+    /**
+     * Set the value of commitmentProofDate.
+     */
+    public function setCommitmentProofDate(\DateTimeInterface $commitmentProofDate): self
+    {
+        $this->commitmentProofDate = $commitmentProofDate;
+
+        return $this;
+    }
+
+    /**
+     * Get the long distance ECC commitment proof timestamp.
+     *
+     * @return string
+     */
+    public function getCommitmentProofTimestamp(): ?string
+    {
+        return $this->commitmentProofTimestamp;
+    }
+
+    /**
+     * Set the long distance ECC commitment proof timestamp.
+     *
+     * @param string $commitmentProofTimestamp the long distance ECC commitment proof timestamp
+     */
+    public function setCommitmentProofTimestamp(string $commitmentProofTimestamp): self
+    {
+        $this->commitmentProofTimestamp = $commitmentProofTimestamp;
 
         return $this;
     }

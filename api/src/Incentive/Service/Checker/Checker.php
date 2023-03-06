@@ -43,6 +43,17 @@ abstract class Checker
         }
     }
 
+    protected function setDriver(User $driver): self
+    {
+        $this->_driver = $driver;
+
+        if (is_null($this->_driver)) {
+            $this->_loggerService->log('The proof must have a driver');
+        }
+
+        return $this;
+    }
+
     private function _isOriginOrDestinationFromFranceForProposal(Proposal $proposal): bool
     {
         $waypoints = $proposal->getWaypoints();

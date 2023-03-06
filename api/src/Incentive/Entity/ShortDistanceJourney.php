@@ -3,7 +3,6 @@
 namespace App\Incentive\Entity;
 
 use App\Carpool\Entity\CarpoolProof;
-use App\Incentive\Service\CeeJourneyService;
 use App\User\Entity\User;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -112,15 +111,6 @@ class ShortDistanceJourney
     private $updatedAt;
 
     /**
-     * Bonus Status of the journey.
-     *
-     * @var int
-     *
-     * @ORM\Column(type="smallint", options={"default": 0, "comment":"Bonus Status of the EEC form"})
-     */
-    private $bonusStatus = CeeJourneyService::BONUS_STATUS_NO;
-
-    /**
      * Status of http request to mobConnect.
      *
      * @var int
@@ -128,24 +118,6 @@ class ShortDistanceJourney
      * @ORM\Column(type="integer", nullable=true, options={"comment":"Status of http request to mobConnect"})
      */
     private $httpRequestStatus;
-
-    /**
-     * Status of verification.
-     *
-     * @var int
-     *
-     * @ORM\Column(type="integer", nullable=true, options={"default":0, "comment":"Status of verification"})
-     */
-    private $verificationStatus = CeeJourneyService::VERIFICATION_STATUS_PENDING;
-
-    /**
-     * Rank of the journey for the user.
-     *
-     * @var int
-     *
-     * @ORM\Column(type="integer", nullable=true, options={"comment":"Rank of the journey for the user"})
-     */
-    private $rank;
 
     /**
      * The carpool proof associate with the journey.
@@ -158,19 +130,9 @@ class ShortDistanceJourney
      */
     private $carpoolProof;
 
-    public function __construct(CarpoolProof $carpoolProof, int $carpoolersNumber, string $rpcJourneyId, string $rpcStatus)
+    public function __construct(CarpoolProof $carpoolProof)
     {
         $this->setCarpoolProof($carpoolProof);
-        $this->setStartAddressLocality($carpoolProof->getOriginDriverAddress()->getAddressLocality());
-        $this->setEndAddressLocality($carpoolProof->getDestinationDriverAddress()->getAddressLocality());
-        $this->setDistance($carpoolProof->getAsk()->getMatching()->getCommonDistance());
-        $this->setCarpoolersNumber($carpoolersNumber);
-        $this->setOperatorUserId($carpoolProof->getDriver()->getId());
-        $this->setRpcJourneyId($rpcJourneyId);
-        $this->setRpcNumberStatus($rpcStatus);
-        $this->setStartDate($carpoolProof->getAsk()->getMatching()->getProposalOffer()->getCreatedDate()->format('Y-m-d H:i:s'));
-        $this->setEndDate($carpoolProof->getCreatedDate()->format('Y-m-d H:i:s'));
-        $this->setBonusStatus(CeeJourneyService::BONUS_STATUS_PENDING);
     }
 
     /**
@@ -409,26 +371,6 @@ class ShortDistanceJourney
     }
 
     /**
-     * Get bonus Status of the EEC form.
-     */
-    public function getBonusStatus(): int
-    {
-        return $this->bonusStatus;
-    }
-
-    /**
-     * Set bonus Status of the EEC form.
-     *
-     * @param int $bonusStatus bonus Status of the EEC form
-     */
-    public function setBonusStatus(int $bonusStatus): self
-    {
-        $this->bonusStatus = $bonusStatus;
-
-        return $this;
-    }
-
-    /**
      * Get the carpool proof associate with the journey.
      */
     public function getCarpoolProof(): CarpoolProof
@@ -466,43 +408,16 @@ class ShortDistanceJourney
         return $this;
     }
 
-    /**
-     * Get status of http request to mobConnect.
-     */
-    public function getVerificationStatus(): int
+    public function updateJourney(CarpoolProof $carpoolProof, string $rpcJourneyId, string $rpcStatus, int $carpoolersNumber)
     {
-        return $this->verificationStatus;
-    }
-
-    /**
-     * Set status of http request to mobConnect.
-     *
-     * @param int $verificationStatus status of http request to mobConnect
-     */
-    public function setVerificationStatus(int $verificationStatus): self
-    {
-        $this->verificationStatus = $verificationStatus;
-
-        return $this;
-    }
-
-    /**
-     * Get rank of the journey for the user.
-     */
-    public function getRank(): int
-    {
-        return $this->rank;
-    }
-
-    /**
-     * Set rank of the journey for the user.
-     *
-     * @param int $rank rank of the journey for the user
-     */
-    public function setRank(int $rank): self
-    {
-        $this->rank = $rank;
-
-        return $this;
+        $this->setStartAddressLocality($carpoolProof->getOriginDriverAddress()->getAddressLocality());
+        $this->setEndAddressLocality($carpoolProof->getDestinationDriverAddress()->getAddressLocality());
+        $this->setDistance($carpoolProof->getAsk()->getMatching()->getCommonDistance());
+        $this->setOperatorUserId($carpoolProof->getDriver()->getId());
+        $this->setStartDate($carpoolProof->getAsk()->getMatching()->getProposalOffer()->getCreatedDate()->format('Y-m-d H:i:s'));
+        $this->setEndDate($carpoolProof->getCreatedDate()->format('Y-m-d H:i:s'));
+        $this->setRpcJourneyId($rpcJourneyId);
+        $this->setRpcNumberStatus($rpcStatus);
+        $this->setCarpoolersNumber($carpoolersNumber);
     }
 }

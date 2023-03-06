@@ -4,6 +4,9 @@ namespace App\Incentive\EventListener;
 
 use App\Carpool\Event\CarpoolProofValidatedEvent;
 use App\DataProvider\Entity\OpenIdSsoProvider;
+use App\Incentive\Event\FirstLongDistanceJourneyPublishedEvent;
+use App\Incentive\Event\FirstShortDistanceJourneyPublishedEvent;
+use App\Incentive\Service\Manager\JourneyManager;
 use App\Incentive\Service\MobConnectSubscriptionManager;
 use App\Payment\Event\ElectronicPaymentValidatedEvent;
 use App\User\Entity\User;
@@ -31,13 +34,19 @@ class MobConnectListener implements EventSubscriberInterface
     private $_request;
 
     /**
+     * @var JourneyManager
+     */
+    private $_journeyManager;
+
+    /**
      * @var MobConnectSubscriptionManager
      */
     private $_subscriptionManager;
 
-    public function __construct(RequestStack $requestStack, MobConnectSubscriptionManager $subscriptionManager)
+    public function __construct(RequestStack $requestStack, JourneyManager $journeyManager, MobConnectSubscriptionManager $subscriptionManager)
     {
         $this->_request = $requestStack->getCurrentRequest();
+        $this->_journeyManager = $journeyManager;
         $this->_subscriptionManager = $subscriptionManager;
     }
 
@@ -46,8 +55,20 @@ class MobConnectListener implements EventSubscriberInterface
         return [
             CarpoolProofValidatedEvent::NAME => 'onProofValidated',
             ElectronicPaymentValidatedEvent::NAME => 'onPaymentValidated',
+            FirstLongDistanceJourneyPublishedEvent::NAME => 'onFirstLongDistanceJourneyPublished',
+            FirstShortDistanceJourneyPublishedEvent::NAME => 'onFirstShortDistanceJourneyPublished',
             SsoAssociationEvent::NAME => 'onUserAssociated',
         ];
+    }
+
+    public function onFirstLongDistanceJourneyPublished(FirstLongDistanceJourneyPublishedEvent $event)
+    {
+        $this->_journeyManager->declareFirstLongDistanceJourney($event->getProposal());
+    }
+
+    public function onFirstShortDistanceJourneyPublished(FirstShortDistanceJourneyPublishedEvent $event)
+    {
+        $this->_journeyManager->declareFirstShortDistanceJourney($event->getCarpoolProof());
     }
 
     /**

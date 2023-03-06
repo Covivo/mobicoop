@@ -148,20 +148,8 @@ class MobConnectApiProvider extends MobConnectProvider
      * @param bool              $isShortDistance Specifies whether the trip is a short distance trip
      * @param DateTimeInterface $costSharingDate The date of payment for the trip
      */
-    public function patchUserSubscription(
-        string $subscriptionId,
-        ?string $rpcJourneyId = null,
-        bool $isShortDistance = false,
-        ?\DateTimeInterface $costSharingDate = null
-    ): MobConnectSubscriptionResponse {
-        $data = [];
-
-        if (true === $isShortDistance) {
-            $data['Identifiant du trajet'] = $rpcJourneyId;
-        } else {
-            $data['Date de partage des frais'] = $costSharingDate->format('Y-m-d');
-        }
-
+    public function patchUserSubscription(string $subscriptionId, array $data): MobConnectSubscriptionResponse
+    {
         $this->_loggerService->log('We PATCH the subscription on mobConnect', 'info', true);
         $this->_createDataProvider(self::ROUTE_PATCH_SUBSCRIPTIONS, $subscriptionId);
 
